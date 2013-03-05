@@ -242,48 +242,43 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<Object> evaluate(String arg0, Document arg1) {
 		try {
 			return getDelegate().evaluate(arg0, arg1);
-		} catch (NotesException e) {
+		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
-
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<Object> evaluate(String arg0) {
 		try {
 			return getDelegate().evaluate(arg0);
-		} catch (NotesException e) {
+		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
 
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Vector<DateRange> freeTimeSearch(DateRange arg0, int arg1, Object arg2, boolean arg3) {
+	public Vector<org.openntf.domino.DateRange> freeTimeSearch(DateRange arg0, int arg1, Object arg2, boolean arg3) {
 		try {
 			return getDelegate().freeTimeSearch(arg0, arg1, arg2, arg3);
-		} catch (NotesException e) {
+		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
 
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Vector<Database> getAddressBooks() {
+	public Vector<org.openntf.domino.Database> getAddressBooks() {
 		try {
 			return getDelegate().getAddressBooks();
-		} catch (NotesException e) {
+		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
 
@@ -576,12 +571,11 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Vector<Name> getUserGroupNameList() {
+	public Vector<org.openntf.domino.Name> getUserGroupNameList() {
 		try {
 			return getDelegate().getUserGroupNameList();
-		} catch (NotesException e) {
+		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
 
@@ -599,12 +593,11 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Vector<Name> getUserNameList() {
+	public Vector<org.openntf.domino.Name> getUserNameList() {
 		try {
 			return getDelegate().getUserNameList();
-		} catch (NotesException e) {
+		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
 
