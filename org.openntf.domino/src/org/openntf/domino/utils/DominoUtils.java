@@ -71,9 +71,9 @@ public enum DominoUtils {
 		// TODO implement standard logging approaches
 		boolean someMeansOfControllingThrows = false;
 		if (someMeansOfControllingThrows) {
-			return t;
+			throw new RuntimeException(t);
 		} else {
-			return null; // we already handled the exception
+			return t; // we already handled it, but maybe somebody wants to do something....
 		}
 	}
 
