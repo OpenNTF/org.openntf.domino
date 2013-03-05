@@ -4,6 +4,7 @@ org.openntf.domino
 Open replacement for lotus.domino package in IBM Domino
 
 Project goals:
+
 1. Eliminate ham-fisted Exception handling in lotus.domino API by allowing static exception delegation
 2. Modernize getters/setters to use Java standard interfaces
 3. Modernize collection objects to implement Iterators where appropriate
