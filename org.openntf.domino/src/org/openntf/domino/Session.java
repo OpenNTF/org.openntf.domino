@@ -1,10 +1,11 @@
 package org.openntf.domino;
 
+import java.util.Collection;
 import java.util.Vector;
 
 import lotus.domino.Document;
 
-public interface Session extends lotus.domino.Session, Base {
+public interface Session extends lotus.domino.Session, Base<lotus.domino.Session> {
 	@Override
 	public Vector<Object> evaluate(String arg0);
 
@@ -21,7 +22,11 @@ public interface Session extends lotus.domino.Session, Base {
 	public Vector<Name> getUserGroupNameList(); // TODO should we use a Vector of names? Or allow someone to request it as String-only so
 												// there's no recycle burden?
 
+	public Collection<String> getUserGroupNameListSafe();
+
 	@Override
 	public Vector<Name> getUserNameList(); // TODO should we use a Vector of names? Or allow someone to request it as String-only so there's
 											// no recycle burden?
+
+	public Collection<String> getUserNameListSafe();
 }

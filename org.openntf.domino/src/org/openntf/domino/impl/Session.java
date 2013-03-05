@@ -3,7 +3,9 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Vector;
 
@@ -22,7 +24,6 @@ import lotus.domino.DxlExporter;
 import lotus.domino.DxlImporter;
 import lotus.domino.International;
 import lotus.domino.Log;
-import lotus.domino.Name;
 import lotus.domino.Newsletter;
 import lotus.domino.NotesCalendar;
 import lotus.domino.NotesException;
@@ -32,13 +33,18 @@ import lotus.domino.RichTextParagraphStyle;
 import lotus.domino.RichTextStyle;
 import lotus.domino.Stream;
 
+import org.openntf.domino.Name;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
+
+//import lotus.domino.Name;
 
 /**
  * @author nfreeman
  * 
  */
-public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Session> implements org.openntf.domino.Session {
+public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Session, lotus.domino.Session> implements
+		org.openntf.domino.Session {
 
 	/**
 	 * 
@@ -168,7 +174,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public Name createName(String arg0, String arg1) {
 		try {
-			return getDelegate().createName(arg0, arg1);
+			return Factory.fromLotus(getDelegate().createName(arg0, arg1), Name.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -179,7 +185,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public Name createName(String arg0) {
 		try {
-			return getDelegate().createName(arg0);
+			return Factory.fromLotus(getDelegate().createName(arg0), Name.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -596,7 +602,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public Vector<org.openntf.domino.Name> getUserNameList() {
 		try {
-			return getDelegate().getUserNameList();
+			return Factory.fromLotusAsVector(getDelegate().getUserNameList(), Name.class);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -607,7 +613,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public Name getUserNameObject() {
 		try {
-			return getDelegate().getUserNameObject();
+			return Factory.fromLotus(getDelegate().getUserNameObject(), Name.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -831,6 +837,32 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 			return false;
 
 		}
+	}
+
+	@Override
+	public Collection<String> getUserGroupNameListSafe() {
+		Collection<String> result = new ArrayList<String>();
+		Vector<Name> v = this.getUserGroupNameList();
+		if (!v.isEmpty()) {
+			for (Name name : v) {
+				result.add(name.getCanonical());
+				name.recycle();
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public Collection<String> getUserNameListSafe() {
+		Collection<String> result = new ArrayList<String>();
+		Vector<Name> v = this.getUserNameList();
+		if (!v.isEmpty()) {
+			for (Name name : v) {
+				result.add(name.getCanonical());
+				name.recycle();
+			}
+		}
+		return result;
 	}
 
 }
