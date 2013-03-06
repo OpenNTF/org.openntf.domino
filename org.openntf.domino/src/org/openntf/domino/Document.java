@@ -16,67 +16,67 @@ import lotus.domino.XSLTResultTarget;
 
 public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document {
 	@Override
-	public Item appendItemValue(String arg0);
+	public Item appendItemValue(String name);
 
 	@Override
-	public Item appendItemValue(String arg0, double arg1);
+	public Item appendItemValue(String name, double value);
 
 	@Override
-	public Item appendItemValue(String arg0, int arg1);
+	public Item appendItemValue(String name, int value);
 
 	@Override
-	public Item appendItemValue(String arg0, Object arg1);
+	public Item appendItemValue(String name, Object value);
 
 	@Override
-	public void attachVCard(lotus.domino.Base arg0);
+	public void attachVCard(lotus.domino.Base document);
 
 	@Override
-	public void attachVCard(lotus.domino.Base arg0, String arg1);
+	public void attachVCard(lotus.domino.Base document, String arg1);
 
 	@Override
 	public boolean closeMIMEEntities();
 
 	@Override
-	public boolean closeMIMEEntities(boolean arg0);
+	public boolean closeMIMEEntities(boolean savechanges);
 
 	@Override
-	public boolean closeMIMEEntities(boolean arg0, String arg1);
+	public boolean closeMIMEEntities(boolean savechanges, String entityitemname);
 
 	@Override
-	public boolean computeWithForm(boolean arg0, boolean arg1);
+	public boolean computeWithForm(boolean dodatatypes, boolean raiseerror);
 
 	@Override
 	public void convertToMIME();
 
 	@Override
-	public void convertToMIME(int arg0);
+	public void convertToMIME(int conversiontype);
 
 	@Override
-	public void convertToMIME(int arg0, int arg1);
+	public void convertToMIME(int conversiontype, int options);
 
 	@Override
-	public void copyAllItems(lotus.domino.Document arg0, boolean arg1);
+	public void copyAllItems(lotus.domino.Document doc, boolean replace);
 
 	@Override
-	public Item copyItem(Item arg0);
+	public Item copyItem(Item item);
 
 	@Override
-	public Item copyItem(Item arg0, String arg1);
+	public Item copyItem(Item item, String newname);
 
 	@Override
-	public lotus.domino.Document copyToDatabase(Database arg0);
+	public lotus.domino.Document copyToDatabase(Database db);
 
 	@Override
 	public MIMEEntity createMIMEEntity();
 
 	@Override
-	public MIMEEntity createMIMEEntity(String arg0);
+	public MIMEEntity createMIMEEntity(String itemName);
 
 	@Override
-	public lotus.domino.Document createReplyMessage(boolean arg0);
+	public lotus.domino.Document createReplyMessage(boolean toall);
 
 	@Override
-	public RichTextItem createRichTextItem(String arg0);
+	public RichTextItem createRichTextItem(String name);
 
 	@Override
 	public void encrypt();
@@ -85,17 +85,19 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public String generateXML();
 
 	@Override
-	public void generateXML(Object arg0, XSLTResultTarget arg1) throws IOException, NotesException;
+	public void generateXML(Object style, XSLTResultTarget target) throws IOException, NotesException;
 
 	@Override
-	public void generateXML(Writer arg0) throws NotesException, IOException;
+	public void generateXML(Writer w) throws NotesException, IOException;
 
 	@Override
-	public EmbeddedObject getAttachment(String arg0);
+	public EmbeddedObject getAttachment(String filename);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Vector getAuthors();
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Vector getColumnValues();
 
@@ -105,15 +107,18 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	@Override
 	public lotus.domino.Document getDelegate();
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Vector getEmbeddedObjects();
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Vector getEncryptionKeys();
 
 	@Override
-	public Item getFirstItem(String arg0);
+	public Item getFirstItem(String name);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Vector getFolderReferences();
 
@@ -126,32 +131,35 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	@Override
 	public DateTime getInitiallyModified();
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Vector getItems();
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getItemValue(String arg0);
+	public Vector getItemValue(String name);
 
 	@Override
-	public Object getItemValueCustomData(String arg0) throws IOException, ClassNotFoundException, NotesException;
+	public Object getItemValueCustomData(String itemname) throws IOException, ClassNotFoundException, NotesException;
 
 	@Override
-	public Object getItemValueCustomData(String arg0, String arg1) throws IOException, ClassNotFoundException, NotesException;
+	public Object getItemValueCustomData(String itemname, String datatypename) throws IOException, ClassNotFoundException, NotesException;
 
 	@Override
-	public byte[] getItemValueCustomDataBytes(String arg0, String arg1) throws IOException, NotesException;
+	public byte[] getItemValueCustomDataBytes(String itemname, String datatypename) throws IOException, NotesException;
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Vector getItemValueDateTimeArray(String name);
 
 	@Override
-	public Vector getItemValueDateTimeArray(String arg0);
+	public double getItemValueDouble(String name);
 
 	@Override
-	public double getItemValueDouble(String arg0);
+	public int getItemValueInteger(String name);
 
 	@Override
-	public int getItemValueInteger(String arg0);
-
-	@Override
-	public String getItemValueString(String arg0);
+	public String getItemValueString(String name);
 
 	@Override
 	public String getKey();
@@ -162,6 +170,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	@Override
 	public DateTime getLastModified();
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Vector getLockHolders();
 
@@ -169,7 +178,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public MIMEEntity getMIMEEntity();
 
 	@Override
-	public MIMEEntity getMIMEEntity(String arg0);
+	public MIMEEntity getMIMEEntity(String itemName);
 
 	@Override
 	public String getNameOfProfile();
@@ -193,8 +202,9 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public boolean getRead();
 
 	@Override
-	public boolean getRead(String arg0);
+	public boolean getRead(String username);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Vector getReceivedItemText();
 
@@ -220,7 +230,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public boolean hasEmbedded();
 
 	@Override
-	public boolean hasItem(String arg0);
+	public boolean hasItem(String name);
 
 	@Override
 	public boolean isDeleted();
@@ -262,130 +272,137 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public boolean lock();
 
 	@Override
-	public boolean lock(boolean arg0);
+	public boolean lock(boolean provisionalok);
 
 	@Override
-	public boolean lock(String arg0);
+	public boolean lock(String name);
 
 	@Override
-	public boolean lock(String arg0, boolean arg1);
+	public boolean lock(String name, boolean provisionalok);
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public boolean lock(Vector arg0);
+	public boolean lock(Vector names);
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public boolean lock(Vector arg0, boolean arg1);
+	public boolean lock(Vector names, boolean provisionalok);
 
 	@Override
 	public boolean lockProvisional();
 
 	@Override
-	public boolean lockProvisional(String arg0);
+	public boolean lockProvisional(String name);
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean lockProvisional(Vector names);
 
 	@Override
-	public boolean lockProvisional(Vector arg0);
-
-	@Override
-	public void makeResponse(lotus.domino.Document arg0);
+	public void makeResponse(lotus.domino.Document doc);
 
 	@Override
 	public void markRead();
 
 	@Override
-	public void markRead(String arg0);
+	public void markRead(String username);
 
 	@Override
 	public void markUnread();
 
 	@Override
-	public void markUnread(String arg0);
+	public void markUnread(String username);
 
 	@Override
-	public void putInFolder(String arg0);
+	public void putInFolder(String name);
 
 	@Override
-	public void putInFolder(String arg0, boolean arg1);
+	public void putInFolder(String name, boolean createonfail);
 
 	@Override
 	public void recycle();
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void recycle(Vector arg0) throws NotesException;
 
 	@Override
-	public boolean remove(boolean arg0);
+	public boolean remove(boolean force);
 
 	@Override
-	public void removeFromFolder(String arg0);
+	public void removeFromFolder(String name);
 
 	@Override
-	public void removeItem(String arg0);
+	public void removeItem(String name);
 
 	@Override
-	public boolean removePermanently(boolean arg0);
+	public boolean removePermanently(boolean force);
 
 	@Override
-	public boolean renderToRTItem(RichTextItem arg0);
+	public boolean renderToRTItem(RichTextItem rtitem);
 
 	@Override
-	public Item replaceItemValue(String arg0, Object arg1);
+	public Item replaceItemValue(String name, Object arg1);
 
 	@Override
-	public Item replaceItemValueCustomData(String arg0, Object arg1) throws IOException, NotesException;
+	public Item replaceItemValueCustomData(String name, Object userobj) throws IOException, NotesException;
 
 	@Override
-	public Item replaceItemValueCustomData(String arg0, String arg1, Object arg2) throws IOException, NotesException;
+	public Item replaceItemValueCustomData(String name, String datatypename, Object userobj) throws IOException, NotesException;
 
 	@Override
-	public Item replaceItemValueCustomDataBytes(String arg0, String arg1, byte[] arg2) throws IOException, NotesException;
+	public Item replaceItemValueCustomDataBytes(String name, String datatypename, byte[] bytearray) throws IOException, NotesException;
 
 	@Override
 	public boolean save();
 
 	@Override
-	public boolean save(boolean arg0);
+	public boolean save(boolean force);
 
 	@Override
-	public boolean save(boolean arg0, boolean arg1);
+	public boolean save(boolean force, boolean makeresponse);
 
 	@Override
-	public boolean save(boolean arg0, boolean arg1, boolean arg2);
+	public boolean save(boolean force, boolean makeresponse, boolean markread);
 
 	@Override
 	public void send();
 
 	@Override
-	public void send(boolean arg0);
+	public void send(boolean attachform);
 
 	@Override
-	public void send(boolean arg0, String arg1);
+	public void send(boolean attachform, String recipient);
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void send(boolean attachform, Vector recipients);
 
 	@Override
-	public void send(boolean arg0, Vector arg1);
+	public void send(String recipient);
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void send(Vector recipients);
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void setEncryptionKeys(Vector keys);
 
 	@Override
-	public void send(String arg0);
+	public void setEncryptOnSend(boolean flag);
 
 	@Override
-	public void send(Vector arg0);
+	public void setPreferJavaDates(boolean flag);
 
 	@Override
-	public void setEncryptionKeys(Vector arg0);
+	public void setSaveMessageOnSend(boolean flag);
 
 	@Override
-	public void setEncryptOnSend(boolean arg0);
+	public void setSignOnSend(boolean flag);
 
 	@Override
-	public void setPreferJavaDates(boolean arg0);
-
-	@Override
-	public void setSaveMessageOnSend(boolean arg0);
-
-	@Override
-	public void setSignOnSend(boolean arg0);
-
-	@Override
-	public void setUniversalID(String arg0);
+	public void setUniversalID(String unid);
 
 	@Override
 	public void sign();
