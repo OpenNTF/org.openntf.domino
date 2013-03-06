@@ -44,8 +44,11 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	@Override
 	public Database getParent() {
 		try {
-			Database parent = getDelegate().getParent();
-			return new org.openntf.domino.impl.Database(parent);
+			Database result = getDelegate().getParent();
+			if (!(result instanceof org.openntf.domino.impl.Database)) {
+				result = new org.openntf.domino.impl.Database(result);
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -76,9 +79,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public Document getNextDocument(Document paramDocument) {
+	public Document getNextDocument(Document doc) {
 		try {
-			return getDelegate().getNextDocument(paramDocument);
+			return getDelegate().getNextDocument(doc);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -87,9 +90,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public Document getPrevDocument(Document paramDocument) {
+	public Document getPrevDocument(Document doc) {
 		try {
-			return getDelegate().getPrevDocument(paramDocument);
+			return getDelegate().getPrevDocument(doc);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -98,9 +101,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public Document getNthDocument(int paramInt) {
+	public Document getNthDocument(int n) {
 		try {
-			return getDelegate().getNthDocument(paramInt);
+			return getDelegate().getNthDocument(n);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -131,9 +134,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public Document getDocument(Document paramDocument) {
+	public Document getDocument(Document doc) {
 		try {
-			return getDelegate().getDocument(paramDocument);
+			return getDelegate().getDocument(doc);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -162,9 +165,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void deleteDocument(Document paramDocument) {
+	public void deleteDocument(Document doc) {
 		try {
-			getDelegate().addDocument(paramDocument);
+			getDelegate().deleteDocument(doc);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -172,9 +175,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void FTSearch(String paramString) {
+	public void FTSearch(String query) {
 		try {
-			getDelegate().FTSearch(paramString);
+			getDelegate().FTSearch(query);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -182,9 +185,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void FTSearch(String paramString, int paramInt) {
+	public void FTSearch(String query, int maxDocs) {
 		try {
-			getDelegate().FTSearch(paramString, paramInt);
+			getDelegate().FTSearch(query, maxDocs);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -203,9 +206,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void putAllInFolder(String paramString) {
+	public void putAllInFolder(String folderName) {
 		try {
-			getDelegate().putAllInFolder(paramString);
+			getDelegate().putAllInFolder(folderName);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -213,9 +216,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void putAllInFolder(String paramString, boolean paramBoolean) {
+	public void putAllInFolder(String folderName, boolean createOnFail) {
 		try {
-			getDelegate().putAllInFolder(paramString);
+			getDelegate().putAllInFolder(folderName, createOnFail);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -223,9 +226,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void removeAll(boolean paramBoolean) {
+	public void removeAll(boolean force) {
 		try {
-			getDelegate().removeAll(paramBoolean);
+			getDelegate().removeAll(force);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -233,9 +236,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void removeAllFromFolder(String paramString) {
+	public void removeAllFromFolder(String folderName) {
 		try {
-			getDelegate().removeAllFromFolder(paramString);
+			getDelegate().removeAllFromFolder(folderName);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -243,9 +246,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void stampAll(String paramString, Object paramObject) {
+	public void stampAll(String itemName, Object value) {
 		try {
-			getDelegate().stampAll(paramString, paramObject);
+			getDelegate().stampAll(itemName, value);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -274,9 +277,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void markAllRead(String paramString) {
+	public void markAllRead(String userName) {
 		try {
-			getDelegate().markAllRead(paramString);
+			getDelegate().markAllRead(userName);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -284,9 +287,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void markAllUnread(String paramString) {
+	public void markAllUnread(String userName) {
 		try {
-			getDelegate().markAllUnread(paramString);
+			getDelegate().markAllUnread(userName);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -314,9 +317,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void intersect(int paramInt) {
+	public void intersect(int noteID) {
 		try {
-			getDelegate().intersect(paramInt);
+			getDelegate().intersect(noteID);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -324,9 +327,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void intersect(String paramString) {
+	public void intersect(String noteID) {
 		try {
-			getDelegate().intersect(paramString);
+			getDelegate().intersect(noteID);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -334,9 +337,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void intersect(lotus.domino.Base paramBase) {
+	public void intersect(lotus.domino.Base documents) {
 		try {
-			getDelegate().intersect(paramBase);
+			getDelegate().intersect(documents);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -344,9 +347,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void merge(int paramInt) {
+	public void merge(int noteID) {
 		try {
-			getDelegate().merge(paramInt);
+			getDelegate().merge(noteID);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -354,9 +357,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void merge(String paramString) {
+	public void merge(String noteID) {
 		try {
-			getDelegate().merge(paramString);
+			getDelegate().merge(noteID);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -364,9 +367,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void merge(lotus.domino.Base paramBase) {
+	public void merge(lotus.domino.Base documents) {
 		try {
-			getDelegate().merge(paramBase);
+			getDelegate().merge(documents);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -374,9 +377,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void subtract(int paramInt) {
+	public void subtract(int noteID) {
 		try {
-			getDelegate().subtract(paramInt);
+			getDelegate().subtract(noteID);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -384,9 +387,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void subtract(String paramString) {
+	public void subtract(String noteID) {
 		try {
-			getDelegate().subtract(paramString);
+			getDelegate().subtract(noteID);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -394,9 +397,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void subtract(lotus.domino.Base paramBase) {
+	public void subtract(lotus.domino.Base documents) {
 		try {
-			getDelegate().subtract(paramBase);
+			getDelegate().subtract(documents);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -426,9 +429,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public boolean contains(lotus.domino.Base paramBase) {
+	public boolean contains(lotus.domino.Base documents) {
 		try {
-			return getDelegate().contains(paramBase);
+			return getDelegate().contains(documents);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -444,8 +447,8 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 			org.openntf.domino.DocumentCollection result = new org.openntf.domino.impl.DocumentCollection(emptyCollection);
 			result.merge(this);
 			return result;
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+		} catch (Throwable t) {
+			DominoUtils.handleException(t);
 			return null;
 
 		}
