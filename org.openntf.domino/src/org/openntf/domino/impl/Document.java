@@ -1,7 +1,12 @@
 package org.openntf.domino.impl;
 
+import java.io.Externalizable;
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.Writer;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
 import java.util.Vector;
 
 import lotus.domino.Database;
@@ -1023,6 +1028,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Item replaceItemValue(String name, Object value) {
 		try {
@@ -1030,10 +1036,30 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				return getDelegate().replaceItemValue(name, ((DateTime) value).getDelegate());
 			} else if (value instanceof Number && !(value instanceof Integer || value instanceof Double)) {
 				return getDelegate().replaceItemValue(name, ((Number) value).intValue());
+			} else if (value instanceof Date) {
+				// TODO: make sure this use of DateTime isn't a bug when Session and createDateTime are extended
+				lotus.domino.DateTime dt = DominoUtils.getSession(this).createDateTime((Date) value);
+				Item result = getDelegate().replaceItemValue(name, dt);
+				dt.recycle();
+				return result;
+			} else if (value instanceof Calendar) {
+				lotus.domino.DateTime dt = DominoUtils.getSession(this).createDateTime((Calendar) value);
+				Item result = getDelegate().replaceItemValue(name, dt);
+				dt.recycle();
+				return result;
+			} else if (value instanceof Collection) {
+				// TODO: make this filter the collection for newly-supported types
+				return getDelegate().replaceItemValue(name, new java.util.Vector((Collection) value));
+			} else if (value instanceof Externalizable) {
+				// TODO: implement this - saveState will likely have to store the class name as a header, to be read by restoreState
+			} else if (value instanceof Serializable) {
+				DominoUtils.saveState((Serializable) value, this, name);
 			}
 			return getDelegate().replaceItemValue(name, value);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} catch (Throwable t) {
+			DominoUtils.handleException(t);
 		}
 		return null;
 	}
