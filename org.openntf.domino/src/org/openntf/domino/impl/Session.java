@@ -34,6 +34,7 @@ import lotus.domino.RichTextStyle;
 import lotus.domino.Stream;
 
 import org.openntf.domino.Name;
+import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -249,9 +250,10 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	}
 
 	@Override
+	@Legacy({ "Methods should return interfaces instead of classes", "Use generics" })
 	public Vector<Object> evaluate(String arg0, Document arg1) {
 		try {
-			return getDelegate().evaluate(arg0, arg1);
+			return getDelegate().evaluate(arg0, arg1); // TODO still needs Factory wrapper
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -259,9 +261,10 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	}
 
 	@Override
+	@Legacy({ "Methods should return interfaces instead of classes", "Use generics" })
 	public Vector<Object> evaluate(String arg0) {
 		try {
-			return getDelegate().evaluate(arg0);
+			return getDelegate().evaluate(arg0); // TODO still needs Factory wrapper
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -270,9 +273,10 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	}
 
 	@Override
+	@Legacy("Methods should return interfaces instead of classes")
 	public Vector<org.openntf.domino.DateRange> freeTimeSearch(DateRange arg0, int arg1, Object arg2, boolean arg3) {
 		try {
-			return getDelegate().freeTimeSearch(arg0, arg1, arg2, arg3);
+			return getDelegate().freeTimeSearch(arg0, arg1, arg2, arg3); // TODO still needs Factory wrapper
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -281,9 +285,10 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	}
 
 	@Override
+	@Legacy("Methods should return interfaces instead of classes")
 	public Vector<org.openntf.domino.Database> getAddressBooks() {
 		try {
-			return getDelegate().getAddressBooks();
+			return getDelegate().getAddressBooks(); // TODO still needs Factory wrapper
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -840,7 +845,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	}
 
 	@Override
-	public Collection<String> getUserGroupNameListSafe() {
+	public Collection<String> getUserGroupNameCollection() {
 		Collection<String> result = new ArrayList<String>();
 		Vector<Name> v = this.getUserGroupNameList();
 		if (!v.isEmpty()) {
@@ -853,13 +858,52 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	}
 
 	@Override
-	public Collection<String> getUserNameListSafe() {
+	public Collection<String> getUserNameCollection() {
 		Collection<String> result = new ArrayList<String>();
 		Vector<Name> v = this.getUserNameList();
 		if (!v.isEmpty()) {
 			for (Name name : v) {
 				result.add(name.getCanonical());
 				name.recycle();
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public Collection<org.openntf.domino.Database> getAddressBookCollection() {
+		Collection<org.openntf.domino.Database> result = new ArrayList<org.openntf.domino.Database>();
+		Vector<org.openntf.domino.Database> v = this.getAddressBooks();
+		if (!v.isEmpty()) {
+			for (org.openntf.domino.Database db : v) {
+				result.add(db);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public Collection<org.openntf.domino.DateRange> freeTimeSearch(org.openntf.domino.DateRange arg0, int arg1, String arg2, boolean arg3) {
+		Collection<org.openntf.domino.DateRange> result = new ArrayList<org.openntf.domino.DateRange>();
+		Vector<org.openntf.domino.DateRange> v = this
+				.freeTimeSearch((lotus.domino.DateRange) arg0.getDelegate(), arg1, (Object) arg2, arg3);
+		if (!v.isEmpty()) {
+			for (org.openntf.domino.DateRange dr : v) {
+				result.add(dr);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public Collection<org.openntf.domino.DateRange> freeTimeSearch(org.openntf.domino.DateRange arg0, int arg1, Collection<String> arg2,
+			boolean arg3) {
+		Collection<org.openntf.domino.DateRange> result = new ArrayList<org.openntf.domino.DateRange>();
+		Vector<org.openntf.domino.DateRange> v = this
+				.freeTimeSearch((lotus.domino.DateRange) arg0.getDelegate(), arg1, (Object) arg2, arg3);
+		if (!v.isEmpty()) {
+			for (org.openntf.domino.DateRange dr : v) {
+				result.add(dr);
 			}
 		}
 		return result;
