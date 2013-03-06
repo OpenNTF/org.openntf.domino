@@ -1026,6 +1026,11 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public Item replaceItemValue(String name, Object value) {
 		try {
+			if (value instanceof DateTime) {
+				return getDelegate().replaceItemValue(name, ((DateTime) value).getDelegate());
+			} else if (value instanceof Number && !(value instanceof Integer || value instanceof Double)) {
+				return getDelegate().replaceItemValue(name, ((Number) value).intValue());
+			}
 			return getDelegate().replaceItemValue(name, value);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
