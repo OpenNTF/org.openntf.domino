@@ -1,14 +1,27 @@
 package org.openntf.domino.impl;
 
 import lotus.domino.Database;
-import lotus.domino.DateTime;
 import lotus.domino.Document;
 import lotus.domino.NotesException;
 
+import org.openntf.domino.DateTime;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 public class DocumentCollection extends Base<org.openntf.domino.DocumentCollection, lotus.domino.DocumentCollection> implements
 		org.openntf.domino.DocumentCollection {
+
+	private static boolean BLOCK_NTH = true; // TODO replace with some static determination from a policy or permissions rule or
+												// something...
+
+	static class NthDocumentMethodNotPermittedException extends RuntimeException {
+
+		private static final long serialVersionUID = 1L;
+
+		NthDocumentMethodNotPermittedException() {
+			super("The OpenNTF Domino API does not permit the use of GetNthDocument methods in DocumentCollections");
+		}
+	}
 
 	public DocumentCollection() {
 		// TODO Auto-generated constructor stub
@@ -102,6 +115,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 
 	@Override
 	public Document getNthDocument(int n) {
+		if (BLOCK_NTH) {
+			throw new NthDocumentMethodNotPermittedException();
+		}
 		try {
 			return getDelegate().getNthDocument(n);
 		} catch (NotesException e) {
@@ -266,9 +282,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public DateTime getUntilTime() {
+	public org.openntf.domino.DateTime getUntilTime() {
 		try {
-			return getDelegate().getUntilTime();
+			return Factory.fromLotus(getDelegate().getUntilTime(), DateTime.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -453,4 +469,5 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 
 		}
 	}
+
 }
