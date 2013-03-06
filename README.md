@@ -14,3 +14,4 @@ Project goals:
 7. Provide useful global convenience settings like alwaysUseJavaDates and alwaysStoreGMTTime
 8. Provide useful static utility methods like incinerate(), toDxl() and toUnid(String)
 9. Have some operations that currently throw Exceptions unnecessarily instead simply return null (ie: Database.getDocumentByUnid())
+10. Provide coherent content assist via Javadoc annotations and retention of parameter names in byte code

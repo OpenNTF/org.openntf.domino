@@ -3,7 +3,9 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Vector;
 
@@ -22,7 +24,6 @@ import lotus.domino.DxlExporter;
 import lotus.domino.DxlImporter;
 import lotus.domino.International;
 import lotus.domino.Log;
-import lotus.domino.Name;
 import lotus.domino.Newsletter;
 import lotus.domino.NotesCalendar;
 import lotus.domino.NotesException;
@@ -32,19 +33,29 @@ import lotus.domino.RichTextParagraphStyle;
 import lotus.domino.RichTextStyle;
 import lotus.domino.Stream;
 
+import org.openntf.domino.Name;
+import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
+
+//import lotus.domino.Name;
 
 /**
  * @author nfreeman
  * 
  */
-public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Session> implements org.openntf.domino.Session {
+public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Session, lotus.domino.Session> implements
+		org.openntf.domino.Session {
 
 	/**
 	 * 
 	 */
 	public Session() {
 		// TODO Auto-generated constructor stub
+	}
+
+	public Session(lotus.domino.Session lotus) {
+		super(lotus);
 	}
 
 	@Override
@@ -168,7 +179,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public Name createName(String arg0, String arg1) {
 		try {
-			return getDelegate().createName(arg0, arg1);
+			return Factory.fromLotus(getDelegate().createName(arg0, arg1), Name.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -179,7 +190,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public Name createName(String arg0) {
 		try {
-			return getDelegate().createName(arg0);
+			return Factory.fromLotus(getDelegate().createName(arg0), Name.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -242,48 +253,47 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
+	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(String arg0, Document arg1) {
 		try {
-			return getDelegate().evaluate(arg0, arg1);
-		} catch (NotesException e) {
+			return getDelegate().evaluate(arg0, arg1); // TODO still needs Factory wrapper
+		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
-
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
+	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(String arg0) {
 		try {
-			return getDelegate().evaluate(arg0);
-		} catch (NotesException e) {
+			return getDelegate().evaluate(arg0); // TODO still needs Factory wrapper
+		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
 
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Vector<DateRange> freeTimeSearch(DateRange arg0, int arg1, Object arg2, boolean arg3) {
+	@Legacy(Legacy.INTERFACES_WARNING)
+	public Vector<org.openntf.domino.DateRange> freeTimeSearch(DateRange arg0, int arg1, Object arg2, boolean arg3) {
 		try {
-			return getDelegate().freeTimeSearch(arg0, arg1, arg2, arg3);
-		} catch (NotesException e) {
+			return getDelegate().freeTimeSearch(arg0, arg1, arg2, arg3); // TODO still needs Factory wrapper
+		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
 
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Vector<Database> getAddressBooks() {
+	@Legacy(Legacy.INTERFACES_WARNING)
+	public Vector<org.openntf.domino.Database> getAddressBooks() {
 		try {
-			return getDelegate().getAddressBooks();
-		} catch (NotesException e) {
+			return getDelegate().getAddressBooks(); // TODO still needs Factory wrapper
+		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
 
@@ -576,12 +586,11 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Vector<Name> getUserGroupNameList() {
+	public Vector<org.openntf.domino.Name> getUserGroupNameList() {
 		try {
 			return getDelegate().getUserGroupNameList();
-		} catch (NotesException e) {
+		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
 
@@ -599,12 +608,11 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Vector<Name> getUserNameList() {
+	public Vector<org.openntf.domino.Name> getUserNameList() {
 		try {
-			return getDelegate().getUserNameList();
-		} catch (NotesException e) {
+			return Factory.fromLotusAsVector(getDelegate().getUserNameList(), Name.class);
+		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
 
@@ -614,7 +622,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public Name getUserNameObject() {
 		try {
-			return getDelegate().getUserNameObject();
+			return Factory.fromLotus(getDelegate().getUserNameObject(), Name.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -838,6 +846,71 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 			return false;
 
 		}
+	}
+
+	@Override
+	public Collection<String> getUserGroupNameCollection() {
+		Collection<String> result = new ArrayList<String>();
+		Vector<Name> v = this.getUserGroupNameList();
+		if (!v.isEmpty()) {
+			for (Name name : v) {
+				result.add(name.getCanonical());
+				name.recycle();
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public Collection<String> getUserNameCollection() {
+		Collection<String> result = new ArrayList<String>();
+		Vector<Name> v = this.getUserNameList();
+		if (!v.isEmpty()) {
+			for (Name name : v) {
+				result.add(name.getCanonical());
+				name.recycle();
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public Collection<org.openntf.domino.Database> getAddressBookCollection() {
+		Collection<org.openntf.domino.Database> result = new ArrayList<org.openntf.domino.Database>();
+		Vector<org.openntf.domino.Database> v = this.getAddressBooks();
+		if (!v.isEmpty()) {
+			for (org.openntf.domino.Database db : v) {
+				result.add(db);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public Collection<org.openntf.domino.DateRange> freeTimeSearch(org.openntf.domino.DateRange arg0, int arg1, String arg2, boolean arg3) {
+		Collection<org.openntf.domino.DateRange> result = new ArrayList<org.openntf.domino.DateRange>();
+		Vector<org.openntf.domino.DateRange> v = this
+				.freeTimeSearch((lotus.domino.DateRange) arg0.getDelegate(), arg1, (Object) arg2, arg3);
+		if (!v.isEmpty()) {
+			for (org.openntf.domino.DateRange dr : v) {
+				result.add(dr);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public Collection<org.openntf.domino.DateRange> freeTimeSearch(org.openntf.domino.DateRange arg0, int arg1, Collection<String> arg2,
+			boolean arg3) {
+		Collection<org.openntf.domino.DateRange> result = new ArrayList<org.openntf.domino.DateRange>();
+		Vector<org.openntf.domino.DateRange> v = this
+				.freeTimeSearch((lotus.domino.DateRange) arg0.getDelegate(), arg1, (Object) arg2, arg3);
+		if (!v.isEmpty()) {
+			for (org.openntf.domino.DateRange dr : v) {
+				result.add(dr);
+			}
+		}
+		return result;
 	}
 
 }

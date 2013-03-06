@@ -6,16 +6,22 @@ import lotus.domino.NotesException;
 
 import org.openntf.domino.utils.DominoUtils;
 
-public abstract class Base<T extends org.openntf.domino.Base> implements org.openntf.domino.Base {
+public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base> implements org.openntf.domino.Base<D> {
+
 	protected boolean recycled_;
-	protected T delegate_;
+	protected D delegate_; // NTF final???
 
 	protected Base() {
 		// TODO Auto-generated constructor stub
 		recycled_ = false;
 	}
 
-	T getDelegate() {
+	protected Base(D delegate) {
+		this();
+		delegate_ = delegate;
+	}
+
+	public D getDelegate() {
 		return delegate_;
 	}
 
