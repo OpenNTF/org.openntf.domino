@@ -10,4 +10,7 @@ import java.lang.annotation.Target;
 public @interface Legacy {
 
 	String[] value() default { "Generics are best practice" };
+
+	public static final String INTERFACES_WARNING = "Methods should return interfaces instead of classes";
+	public static final String GENERICS_WARNING = "Use generics";
 }

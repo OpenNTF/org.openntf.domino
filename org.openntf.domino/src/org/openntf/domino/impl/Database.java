@@ -904,9 +904,10 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public Vector getViews() {
+	@SuppressWarnings("unchecked")
+	public org.openntf.domino.impl.Vector<View> getViews() {
 		try {
-			return getDelegate().getViews();
+			return new org.openntf.domino.impl.Vector<View>(getDelegate().getViews());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

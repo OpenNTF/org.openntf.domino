@@ -54,6 +54,10 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		// TODO Auto-generated constructor stub
 	}
 
+	public Session(lotus.domino.Session lotus) {
+		super(lotus);
+	}
+
 	@Override
 	public AdministrationProcess createAdministrationProcess(String arg0) {
 		try {
@@ -250,7 +254,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	}
 
 	@Override
-	@Legacy({ "Methods should return interfaces instead of classes", "Use generics" })
+	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(String arg0, Document arg1) {
 		try {
 			return getDelegate().evaluate(arg0, arg1); // TODO still needs Factory wrapper
@@ -261,7 +265,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	}
 
 	@Override
-	@Legacy({ "Methods should return interfaces instead of classes", "Use generics" })
+	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(String arg0) {
 		try {
 			return getDelegate().evaluate(arg0); // TODO still needs Factory wrapper
@@ -273,7 +277,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	}
 
 	@Override
-	@Legacy("Methods should return interfaces instead of classes")
+	@Legacy(Legacy.INTERFACES_WARNING)
 	public Vector<org.openntf.domino.DateRange> freeTimeSearch(DateRange arg0, int arg1, Object arg2, boolean arg3) {
 		try {
 			return getDelegate().freeTimeSearch(arg0, arg1, arg2, arg3); // TODO still needs Factory wrapper
@@ -285,7 +289,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	}
 
 	@Override
-	@Legacy("Methods should return interfaces instead of classes")
+	@Legacy(Legacy.INTERFACES_WARNING)
 	public Vector<org.openntf.domino.Database> getAddressBooks() {
 		try {
 			return getDelegate().getAddressBooks(); // TODO still needs Factory wrapper
