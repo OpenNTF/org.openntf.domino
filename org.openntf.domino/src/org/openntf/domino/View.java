@@ -3,7 +3,7 @@ package org.openntf.domino;
 import java.util.Vector;
 
 import lotus.domino.Database;
-import lotus.domino.DateTime;
+import org.openntf.domino.DateTime;
 import lotus.domino.Document;
 import lotus.domino.DocumentCollection;
 import lotus.domino.ViewColumn;
@@ -224,9 +224,6 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View> {
 
 	@Override
 	public DateTime getCreated();
-
-	@Override
-	public lotus.domino.View getDelegate();
 
 	@Override
 	public Document getDocumentByKey(Object arg0);

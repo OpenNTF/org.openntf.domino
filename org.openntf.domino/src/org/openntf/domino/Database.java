@@ -4,7 +4,6 @@ import java.util.Vector;
 
 import lotus.domino.ACL;
 import lotus.domino.Agent;
-import lotus.domino.DateTime;
 import lotus.domino.Document;
 import lotus.domino.DocumentCollection;
 import lotus.domino.Form;
@@ -225,10 +224,10 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public DocumentCollection getModifiedDocuments();
 
 	@Override
-	public DocumentCollection getModifiedDocuments(DateTime arg0);
+	public DocumentCollection getModifiedDocuments(lotus.domino.DateTime arg0);
 
 	@Override
-	public DocumentCollection getModifiedDocuments(DateTime arg0, int arg1);
+	public DocumentCollection getModifiedDocuments(lotus.domino.DateTime arg0, int arg1);
 
 	@Override
 	public String getNotesURL();

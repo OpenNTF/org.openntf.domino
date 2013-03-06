@@ -4,7 +4,6 @@ import java.util.Vector;
 
 import lotus.domino.ACL;
 import lotus.domino.Agent;
-import lotus.domino.DateTime;
 import lotus.domino.Document;
 import lotus.domino.DocumentCollection;
 import lotus.domino.Form;
@@ -15,7 +14,9 @@ import lotus.domino.Replication;
 import lotus.domino.Session;
 import lotus.domino.View;
 
+import org.openntf.domino.DateTime;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 public class Database extends Base<org.openntf.domino.Database, lotus.domino.Database> implements org.openntf.domino.Database {
 	public Database() {
@@ -435,7 +436,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DateTime getCreated() {
 		try {
-			return getDelegate().getCreated();
+			return Factory.fromLotus(getDelegate().getCreated(), DateTime.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -596,7 +597,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DateTime getLastFTIndexed() {
 		try {
-			return getDelegate().getLastFTIndexed();
+			return Factory.fromLotus(getDelegate().getLastFTIndexed(), DateTime.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -606,7 +607,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DateTime getLastFixup() {
 		try {
-			return getDelegate().getLastFixup();
+			return Factory.fromLotus(getDelegate().getLastFixup(), DateTime.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -616,7 +617,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DateTime getLastModified() {
 		try {
-			return getDelegate().getLastModified();
+			return Factory.fromLotus(getDelegate().getLastModified(), DateTime.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -684,7 +685,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public DocumentCollection getModifiedDocuments(DateTime arg0, int arg1) {
+	public DocumentCollection getModifiedDocuments(lotus.domino.DateTime arg0, int arg1) {
 		try {
 			return getDelegate().getModifiedDocuments(arg0, arg1);
 		} catch (NotesException e) {
@@ -694,7 +695,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public DocumentCollection getModifiedDocuments(DateTime arg0) {
+	public DocumentCollection getModifiedDocuments(lotus.domino.DateTime arg0) {
 		try {
 			return getDelegate().getModifiedDocuments(arg0);
 		} catch (NotesException e) {
@@ -1143,7 +1144,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public boolean openIfModified(String arg0, String arg1, DateTime arg2) {
+	public boolean openIfModified(String arg0, String arg1, lotus.domino.DateTime arg2) {
 		try {
 			return getDelegate().openIfModified(arg0, arg1, arg2);
 		} catch (NotesException e) {
@@ -1250,7 +1251,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public DocumentCollection search(String arg0, DateTime arg1, int arg2) {
+	public DocumentCollection search(String arg0, lotus.domino.DateTime arg1, int arg2) {
 		try {
 			return getDelegate().search(arg0, arg1, arg2);
 		} catch (NotesException e) {
@@ -1260,7 +1261,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public DocumentCollection search(String arg0, DateTime arg1) {
+	public DocumentCollection search(String arg0, lotus.domino.DateTime arg1) {
 		try {
 			return getDelegate().search(arg0, arg1);
 		} catch (NotesException e) {
