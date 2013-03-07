@@ -10,13 +10,13 @@ import lotus.domino.Database;
 public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL {
 
 	@Override
-	public void addRole(String arg0);
+	public void addRole(String name);
 
 	@Override
-	public ACLEntry createACLEntry(String arg0, int arg1);
+	public ACLEntry createACLEntry(String name, int level);
 
 	@Override
-	public void deleteRole(String arg0);
+	public void deleteRole(String name);
 
 	@Override
 	public String getAdministrationServer();
@@ -25,7 +25,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL {
 	public lotus.domino.ACL getDelegate();
 
 	@Override
-	public ACLEntry getEntry(String arg0);
+	public ACLEntry getEntry(String name);
 
 	@Override
 	public ACLEntry getFirstEntry();
@@ -37,7 +37,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL {
 	public ACLEntry getNextEntry();
 
 	@Override
-	public ACLEntry getNextEntry(ACLEntry arg0);
+	public ACLEntry getNextEntry(ACLEntry entry);
 
 	@Override
 	public Database getParent();
@@ -58,30 +58,30 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL {
 	public boolean isUniformAccess();
 
 	@Override
-	public void removeACLEntry(String arg0);
+	public void removeACLEntry(String name);
 
 	@Override
-	public void renameRole(String arg0, String arg1);
+	public void renameRole(String oldName, String newName);
 
 	@Override
 	public void save();
 
 	@Override
-	public void setAdministrationServer(String arg0);
+	public void setAdministrationServer(String server);
 
 	@Override
-	public void setAdminNames(boolean arg0);
+	public void setAdminNames(boolean flag);
 
 	@Override
-	public void setAdminReaderAuthor(boolean arg0);
+	public void setAdminReaderAuthor(boolean flag);
 
 	@Override
-	public void setExtendedAccess(boolean arg0);
+	public void setExtendedAccess(boolean flag);
 
 	@Override
-	public void setInternetLevel(int arg0);
+	public void setInternetLevel(int level);
 
 	@Override
-	public void setUniformAccess(boolean arg0);
+	public void setUniformAccess(boolean flag);
 
 }
