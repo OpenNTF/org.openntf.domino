@@ -152,9 +152,6 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public String getDB2Schema();
 
 	@Override
-	public lotus.domino.Database getDelegate();
-
-	@Override
 	public String getDesignTemplateName();
 
 	@Override

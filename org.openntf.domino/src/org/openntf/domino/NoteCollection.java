@@ -50,9 +50,6 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	public int getCount();
 
 	@Override
-	public lotus.domino.NoteCollection getDelegate();
-
-	@Override
 	public String getFirstNoteID();
 
 	@Override

@@ -7,8 +7,6 @@ public interface NotesProperty extends Base<lotus.domino.NotesProperty>, lotus.d
 	@Override
 	public void clear();
 
-	public lotus.domino.NotesProperty getDelegate();
-
 	public String getDescription();
 
 	@Override

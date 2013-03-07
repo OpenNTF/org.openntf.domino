@@ -107,9 +107,6 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 	public String getCertifierPassword();
 
 	@Override
-	public lotus.domino.AdministrationProcess getDelegate();
-
-	@Override
 	public Session getParent();
 
 	@Override

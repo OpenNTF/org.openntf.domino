@@ -15,7 +15,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public void addRole(String name) throws NotesException {
+	public void addRole(String name) {
 		try {
 			getDelegate().addRole(name);
 		} catch (NotesException e) {
@@ -24,7 +24,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public ACLEntry createACLEntry(String name, int level) throws NotesException {
+	public ACLEntry createACLEntry(String name, int level) {
 		try {
 			return getDelegate().createACLEntry(name, level);
 		} catch (NotesException e) {
@@ -34,7 +34,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public void deleteRole(String name) throws NotesException {
+	public void deleteRole(String name) {
 		try {
 			getDelegate().deleteRole(name);
 		} catch (NotesException e) {
@@ -43,7 +43,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public String getAdministrationServer() throws NotesException {
+	public String getAdministrationServer() {
 		try {
 			return getDelegate().getAdministrationServer();
 		} catch (NotesException e) {
@@ -53,7 +53,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public ACLEntry getEntry(String ename) throws NotesException {
+	public ACLEntry getEntry(String ename) {
 		try {
 			return getDelegate().getEntry(ename);
 		} catch (NotesException e) {
@@ -63,7 +63,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public ACLEntry getFirstEntry() throws NotesException {
+	public ACLEntry getFirstEntry() {
 		try {
 			return getDelegate().getFirstEntry();
 		} catch (NotesException e) {
@@ -73,7 +73,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public int getInternetLevel() throws NotesException {
+	public int getInternetLevel() {
 		try {
 			return getDelegate().getInternetLevel();
 		} catch (NotesException e) {
@@ -83,7 +83,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public ACLEntry getNextEntry() throws NotesException {
+	public ACLEntry getNextEntry() {
 		try {
 			return getDelegate().getNextEntry();
 		} catch (NotesException e) {
@@ -93,7 +93,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public ACLEntry getNextEntry(ACLEntry entry) throws NotesException {
+	public ACLEntry getNextEntry(ACLEntry entry) {
 		try {
 			return getDelegate().getNextEntry(entry);
 		} catch (NotesException e) {
@@ -103,7 +103,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public Database getParent() throws NotesException {
+	public Database getParent() {
 		try {
 			return getDelegate().getParent();
 		} catch (NotesException e) {
@@ -114,7 +114,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getRoles() throws NotesException {
+	public Vector getRoles() {
 		try {
 			return getDelegate().getRoles();
 		} catch (NotesException e) {
@@ -124,7 +124,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public boolean isAdminNames() throws NotesException {
+	public boolean isAdminNames() {
 		try {
 			return getDelegate().isAdminNames();
 		} catch (NotesException e) {
@@ -134,7 +134,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public boolean isAdminReaderAuthor() throws NotesException {
+	public boolean isAdminReaderAuthor() {
 		try {
 			return getDelegate().isAdminReaderAuthor();
 		} catch (NotesException e) {
@@ -144,7 +144,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public boolean isExtendedAccess() throws NotesException {
+	public boolean isExtendedAccess() {
 		try {
 			return getDelegate().isExtendedAccess();
 		} catch (NotesException e) {
@@ -154,7 +154,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public boolean isUniformAccess() throws NotesException {
+	public boolean isUniformAccess() {
 		try {
 			return getDelegate().isUniformAccess();
 		} catch (NotesException e) {
@@ -164,7 +164,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public void removeACLEntry(String name) throws NotesException {
+	public void removeACLEntry(String name) {
 		try {
 			getDelegate().removeACLEntry(name);
 		} catch (NotesException e) {
@@ -173,7 +173,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public void renameRole(String oldname, String newname) throws NotesException {
+	public void renameRole(String oldname, String newname) {
 		try {
 			getDelegate().renameRole(oldname, newname);
 		} catch (NotesException e) {
@@ -182,7 +182,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public void save() throws NotesException {
+	public void save() {
 		try {
 			getDelegate().save();
 		} catch (NotesException e) {
@@ -191,7 +191,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public void setAdminNames(boolean flag) throws NotesException {
+	public void setAdminNames(boolean flag) {
 		try {
 			getDelegate().setAdminNames(flag);
 		} catch (NotesException e) {
@@ -200,7 +200,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public void setAdminReaderAuthor(boolean flag) throws NotesException {
+	public void setAdminReaderAuthor(boolean flag) {
 		try {
 			getDelegate().setAdminReaderAuthor(flag);
 		} catch (NotesException e) {
@@ -209,7 +209,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public void setAdministrationServer(String servername) throws NotesException {
+	public void setAdministrationServer(String servername) {
 		try {
 			getDelegate().setAdministrationServer(servername);
 		} catch (NotesException e) {
@@ -218,7 +218,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public void setExtendedAccess(boolean flag) throws NotesException {
+	public void setExtendedAccess(boolean flag) {
 		try {
 			getDelegate().setExtendedAccess(flag);
 		} catch (NotesException e) {
@@ -227,7 +227,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public void setInternetLevel(int level) throws NotesException {
+	public void setInternetLevel(int level) {
 		try {
 			getDelegate().setInternetLevel(level);
 		} catch (NotesException e) {
@@ -236,7 +236,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public void setUniformAccess(boolean flag) throws NotesException {
+	public void setUniformAccess(boolean flag) {
 		try {
 			getDelegate().setUniformAccess(flag);
 		} catch (NotesException e) {

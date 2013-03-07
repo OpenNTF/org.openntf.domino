@@ -15,9 +15,6 @@ public interface RichTextRange extends Base<lotus.domino.RichTextRange>, lotus.d
 	public int findandReplace(String arg0, String arg1, long arg2);
 
 	@Override
-	public lotus.domino.RichTextRange getDelegate();
-
-	@Override
 	public RichTextNavigator getNavigator();
 
 	@Override

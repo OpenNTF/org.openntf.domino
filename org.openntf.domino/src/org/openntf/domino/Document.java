@@ -5,7 +5,6 @@ import java.io.Writer;
 import java.util.Vector;
 
 import lotus.domino.Database;
-import org.openntf.domino.DateTime;
 import lotus.domino.DocumentCollection;
 import lotus.domino.EmbeddedObject;
 import lotus.domino.Item;
@@ -102,9 +101,6 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 
 	@Override
 	public DateTime getCreated();
-
-	@Override
-	public lotus.domino.Document getDelegate();
 
 	@Override
 	public Vector getEmbeddedObjects();

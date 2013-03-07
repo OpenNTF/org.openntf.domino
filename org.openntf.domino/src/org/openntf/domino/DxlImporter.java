@@ -18,9 +18,6 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	public boolean getCreateFTIndex();
 
 	@Override
-	public lotus.domino.DxlImporter getDelegate();
-
-	@Override
 	public int getDesignImportOption();
 
 	@Override

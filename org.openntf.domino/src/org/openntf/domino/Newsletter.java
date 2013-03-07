@@ -11,9 +11,6 @@ public interface Newsletter extends Base<lotus.domino.Newsletter>, lotus.domino.
 	public lotus.domino.Document formatMsgWithDoclinks(lotus.domino.Database arg0);
 
 	@Override
-	public lotus.domino.Newsletter getDelegate();
-
-	@Override
 	public Session getParent();
 
 	@Override

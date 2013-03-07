@@ -11,10 +11,6 @@ import org.openntf.domino.utils.DominoUtils;
 public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.DateTime> implements org.openntf.domino.DateTime {
 	lotus.domino.DateTime temp_;
 
-	public DateTime() {
-
-	}
-
 	public DateTime(lotus.domino.DateTime delegate) {
 		super(delegate);
 	}

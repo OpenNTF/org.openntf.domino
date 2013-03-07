@@ -148,9 +148,6 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	public DateTime getDateTimeValue();
 
 	@Override
-	public lotus.domino.RichTextItem getDelegate();
-
-	@Override
 	public EmbeddedObject getEmbeddedObject(String arg0);
 
 	@Override

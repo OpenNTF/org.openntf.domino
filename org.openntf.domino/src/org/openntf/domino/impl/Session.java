@@ -51,7 +51,8 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 * 
 	 */
 	public Session() {
-		// TODO Auto-generated constructor stub
+		// TODO come up with some static methods for finding a Session based on run context (XPages, Agent, DOTS, etc)
+		this(null);
 	}
 
 	public Session(lotus.domino.Session lotus) {
@@ -854,7 +855,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		if (!v.isEmpty()) {
 			for (Name name : v) {
 				result.add(name.getCanonical());
-				name.recycle();
+				DominoUtils.incinerate(name);
 			}
 		}
 		return result;
@@ -867,7 +868,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		if (!v.isEmpty()) {
 			for (Name name : v) {
 				result.add(name.getCanonical());
-				name.recycle();
+				DominoUtils.incinerate(name);
 			}
 		}
 		return result;
@@ -887,9 +888,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 
 	@Override
 	public Collection<org.openntf.domino.DateRange> freeTimeSearch(org.openntf.domino.DateRange arg0, int arg1, String arg2, boolean arg3) {
+		// TODO verify that we don't end up with an ambiguous method signature
 		Collection<org.openntf.domino.DateRange> result = new ArrayList<org.openntf.domino.DateRange>();
-		Vector<org.openntf.domino.DateRange> v = this
-				.freeTimeSearch((lotus.domino.DateRange) arg0.getDelegate(), arg1, (Object) arg2, arg3);
+		Vector<org.openntf.domino.DateRange> v = this.freeTimeSearch((lotus.domino.DateRange) arg0, arg1, (Object) arg2, arg3);
 		if (!v.isEmpty()) {
 			for (org.openntf.domino.DateRange dr : v) {
 				result.add(dr);
@@ -901,9 +902,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public Collection<org.openntf.domino.DateRange> freeTimeSearch(org.openntf.domino.DateRange arg0, int arg1, Collection<String> arg2,
 			boolean arg3) {
+		// TODO verify that we don't end up with an ambiguous method signature
 		Collection<org.openntf.domino.DateRange> result = new ArrayList<org.openntf.domino.DateRange>();
-		Vector<org.openntf.domino.DateRange> v = this
-				.freeTimeSearch((lotus.domino.DateRange) arg0.getDelegate(), arg1, (Object) arg2, arg3);
+		Vector<org.openntf.domino.DateRange> v = this.freeTimeSearch((lotus.domino.DateRange) arg0, arg1, (Object) arg2, arg3);
 		if (!v.isEmpty()) {
 			for (org.openntf.domino.DateRange dr : v) {
 				result.add(dr);

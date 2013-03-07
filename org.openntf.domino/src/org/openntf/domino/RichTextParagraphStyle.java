@@ -11,9 +11,6 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 	public int getAlignment();
 
 	@Override
-	public lotus.domino.RichTextParagraphStyle getDelegate();
-
-	@Override
 	public int getFirstLineLeftMargin();
 
 	@Override

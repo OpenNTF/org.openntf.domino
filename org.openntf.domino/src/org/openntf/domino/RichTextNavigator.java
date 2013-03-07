@@ -38,9 +38,6 @@ public interface RichTextNavigator extends Base<lotus.domino.RichTextNavigator>,
 	public boolean findNthElement(int arg0, int arg1);
 
 	@Override
-	public lotus.domino.RichTextNavigator getDelegate();
-
-	@Override
 	public lotus.domino.Base getElement();
 
 	@Override

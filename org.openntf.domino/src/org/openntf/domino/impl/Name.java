@@ -7,10 +7,6 @@ import org.openntf.domino.utils.DominoUtils;
 
 public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> implements org.openntf.domino.Name {
 
-	public Name() {
-		// TODO Auto-generated constructor stub
-	}
-
 	public Name(lotus.domino.Name delegate) {
 		super(delegate);
 		// TODO Auto-generated constructor stub

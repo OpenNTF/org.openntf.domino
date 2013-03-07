@@ -18,9 +18,6 @@ public interface Replication extends Base<lotus.domino.Replication>, lotus.domin
 	public long getCutoffInterval() throws NotesException;
 
 	@Override
-	public lotus.domino.Replication getDelegate();
-
-	@Override
 	public boolean getDontSendLocalSecurityUpdates() throws NotesException;
 
 	@Override

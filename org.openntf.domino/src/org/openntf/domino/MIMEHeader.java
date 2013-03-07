@@ -11,9 +11,6 @@ public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.
 	public boolean addValText(String arg0, String arg1);
 
 	@Override
-	public lotus.domino.MIMEHeader getDelegate();
-
-	@Override
 	public String getHeaderName();
 
 	@Override

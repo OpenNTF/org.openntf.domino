@@ -12,9 +12,6 @@ public interface RichTextStyle extends Base<lotus.domino.RichTextStyle>, lotus.d
 	public int getColor();
 
 	@Override
-	public lotus.domino.RichTextStyle getDelegate();
-
-	@Override
 	public int getEffects();
 
 	@Override

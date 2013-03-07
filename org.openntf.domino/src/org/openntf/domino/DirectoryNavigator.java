@@ -38,9 +38,6 @@ public interface DirectoryNavigator extends Base<lotus.domino.DirectoryNavigator
 	public String getCurrentView();
 
 	@Override
-	public lotus.domino.DirectoryNavigator getDelegate();
-
-	@Override
 	public Vector getFirstItemValue();
 
 	@Override

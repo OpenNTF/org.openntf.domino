@@ -4,9 +4,6 @@ import java.util.Vector;
 
 public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, lotus.domino.ReplicationEntry {
 
-	@Override
-	public lotus.domino.ReplicationEntry getDelegate();
-
 	public String getDestination();
 
 	@Override

@@ -20,9 +20,6 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 	public String getClusterName(String arg0);
 
 	@Override
-	public lotus.domino.DbDirectory getDelegate();
-
-	@Override
 	public lotus.domino.Database getFirstDatabase(int arg0);
 
 	@Override

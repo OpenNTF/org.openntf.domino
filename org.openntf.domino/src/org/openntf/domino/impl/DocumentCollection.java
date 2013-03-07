@@ -23,10 +23,6 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
-	public DocumentCollection() {
-		// TODO Auto-generated constructor stub
-	}
-
 	public DocumentCollection(lotus.domino.DocumentCollection delegate) {
 		super(delegate);
 		// TODO Auto-generated constructor stub

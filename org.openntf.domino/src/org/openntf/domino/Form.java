@@ -10,9 +10,6 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form {
 	public Vector getAliases();
 
 	@Override
-	public lotus.domino.Form getDelegate();
-
-	@Override
 	public Vector getFields();
 
 	@Override

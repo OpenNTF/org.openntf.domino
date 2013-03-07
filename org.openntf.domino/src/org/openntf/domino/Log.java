@@ -10,9 +10,6 @@ public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log {
 	public void close();
 
 	@Override
-	public lotus.domino.Log getDelegate();
-
-	@Override
 	public int getNumActions();
 
 	@Override

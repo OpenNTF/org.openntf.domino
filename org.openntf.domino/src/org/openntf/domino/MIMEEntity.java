@@ -63,9 +63,6 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	public String getContentType();
 
 	@Override
-	public lotus.domino.MIMEEntity getDelegate();
-
-	@Override
 	public int getEncoding();
 
 	@Override

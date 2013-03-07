@@ -1,60 +1,90 @@
 package org.openntf.domino.impl;
 
-import lotus.domino.DateTime;
 import lotus.domino.NotesException;
-import lotus.domino.Session;
+
+import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.DateRange> implements org.openntf.domino.DateRange,
 		lotus.domino.DateRange {
-
-	public DateRange() {
-
-	}
 
 	public DateRange(lotus.domino.DateRange delegate) {
 		super(delegate);
 	}
 
 	@Override
-	public DateTime getEndDateTime() throws NotesException {
-		// TODO Auto-generated method stub
-		return null;
+	public DateTime getEndDateTime() {
+		try {
+			return Factory.fromLotus(getDelegate().getEndDateTime(), DateTime.class);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+
+		}
 	}
 
 	@Override
-	public Session getParent() throws NotesException {
-		// TODO Auto-generated method stub
-		return null;
+	public Session getParent() {
+		try {
+			return Factory.fromLotus(getDelegate().getParent(), Session.class);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+
+		}
 	}
 
 	@Override
-	public DateTime getStartDateTime() throws NotesException {
-		// TODO Auto-generated method stub
-		return null;
+	public DateTime getStartDateTime() {
+		try {
+			return Factory.fromLotus(getDelegate().getStartDateTime(), DateTime.class);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+
+		}
 	}
 
 	@Override
-	public String getText() throws NotesException {
-		// TODO Auto-generated method stub
-		return null;
+	public String getText() {
+		try {
+			return getDelegate().getText();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+
+		}
 	}
 
 	@Override
-	public void setEndDateTime(DateTime arg0) throws NotesException {
-		// TODO Auto-generated method stub
+	public void setEndDateTime(lotus.domino.DateTime arg0) {
+		try {
+			getDelegate().setEndDateTime(arg0);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+
+		}
 
 	}
 
 	@Override
-	public void setStartDateTime(DateTime arg0) throws NotesException {
-		// TODO Auto-generated method stub
+	public void setStartDateTime(lotus.domino.DateTime arg0) {
+		try {
+			getDelegate().setStartDateTime(arg0);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
 	@Override
-	public void setText(String arg0) throws NotesException {
-		// TODO Auto-generated method stub
+	public void setText(String arg0) {
+		try {
+			getDelegate().setText(arg0);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
 }

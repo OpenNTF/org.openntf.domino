@@ -26,9 +26,6 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	public boolean getConvertNotesBitmapsToGIF();
 
 	@Override
-	public lotus.domino.DxlExporter getDelegate();
-
-	@Override
 	public String getDoctypeSYSTEM();
 
 	@Override

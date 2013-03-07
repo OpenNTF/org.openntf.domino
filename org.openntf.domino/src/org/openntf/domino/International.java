@@ -20,9 +20,6 @@ public interface International extends Base<lotus.domino.International>, lotus.d
 	public String getDecimalSep();
 
 	@Override
-	public lotus.domino.International getDelegate();
-
-	@Override
 	public Session getParent();
 
 	@Override

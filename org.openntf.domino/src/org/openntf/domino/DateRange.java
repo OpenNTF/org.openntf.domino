@@ -1,11 +1,7 @@
 package org.openntf.domino;
 
-import java.util.Vector;
 
 public interface DateRange extends Base<lotus.domino.DateRange>, lotus.domino.DateRange {
-
-	@Override
-	public lotus.domino.DateRange getDelegate();
 
 	@Override
 	public lotus.domino.DateTime getEndDateTime();
@@ -18,12 +14,6 @@ public interface DateRange extends Base<lotus.domino.DateRange>, lotus.domino.Da
 
 	@Override
 	public String getText();
-
-	@Override
-	public void recycle();
-
-	@Override
-	public void recycle(Vector arg0);
 
 	@Override
 	public void setEndDateTime(lotus.domino.DateTime arg0);

@@ -14,8 +14,6 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 
 	public void enableRole(String arg0);
 
-	public lotus.domino.ACLEntry getDelegate();
-
 	@Override
 	public int getLevel();
 

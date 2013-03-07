@@ -15,9 +15,6 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent {
 	public String getCommonOwner();
 
 	@Override
-	public lotus.domino.Agent getDelegate();
-
-	@Override
 	public String getHttpURL();
 
 	@Override

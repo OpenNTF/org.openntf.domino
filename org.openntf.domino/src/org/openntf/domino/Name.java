@@ -1,7 +1,5 @@
 package org.openntf.domino;
 
-import java.util.Vector;
-
 import lotus.domino.Session;
 
 public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name {
@@ -38,9 +36,6 @@ public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name {
 
 	@Override
 	public String getCountry();
-
-	@Override
-	public lotus.domino.Name getDelegate();
 
 	@Override
 	public String getGeneration();
@@ -83,12 +78,6 @@ public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name {
 
 	@Override
 	public boolean isHierarchical();
-
-	@Override
-	public void recycle();
-
-	@Override
-	public void recycle(Vector arg0);
 
 	@Override
 	public boolean equals(Object obj);

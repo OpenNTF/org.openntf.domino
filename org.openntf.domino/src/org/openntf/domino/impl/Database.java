@@ -19,9 +19,6 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 public class Database extends Base<org.openntf.domino.Database, lotus.domino.Database> implements org.openntf.domino.Database {
-	public Database() {
-		// TODO Auto-generated constructor stub
-	}
 
 	public Database(lotus.domino.Database delegate) {
 		super(delegate);

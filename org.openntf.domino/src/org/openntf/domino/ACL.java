@@ -22,9 +22,6 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL {
 	public String getAdministrationServer();
 
 	@Override
-	public lotus.domino.ACL getDelegate();
-
-	@Override
 	public ACLEntry getEntry(String arg0);
 
 	@Override

@@ -14,9 +14,6 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	public lotus.domino.Database getDatabase();
 
 	@Override
-	public lotus.domino.OutlineEntry getDelegate();
-
-	@Override
 	public Document getDocument();
 
 	@Override

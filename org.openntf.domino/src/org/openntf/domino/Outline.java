@@ -50,9 +50,6 @@ public interface Outline extends Base<lotus.domino.Outline>, lotus.domino.Outlin
 	public String getComment();
 
 	@Override
-	public lotus.domino.Outline getDelegate();
-
-	@Override
 	public OutlineEntry getFirst();
 
 	@Override

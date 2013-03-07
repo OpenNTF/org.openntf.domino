@@ -67,9 +67,6 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	public boolean getCreateMailDb();
 
 	@Override
-	public lotus.domino.Registration getDelegate();
-
-	@Override
 	public DateTime getExpiration();
 
 	@Override
