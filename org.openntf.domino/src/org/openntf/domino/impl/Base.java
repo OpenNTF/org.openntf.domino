@@ -5,7 +5,6 @@ import java.util.Vector;
 import org.openntf.domino.thread.DominoReference;
 import org.openntf.domino.thread.DominoReferenceQueue;
 import org.openntf.domino.thread.DominoReferenceSet;
-import org.openntf.domino.utils.DominoUtils;
 
 public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base> implements org.openntf.domino.Base<D> {
 	private static ThreadLocal<DominoReferenceQueue> recycleQueue = new ThreadLocal<DominoReferenceQueue>() {
@@ -40,9 +39,37 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		refSet.lock(base);
 	}
 
+	public static void lock(lotus.domino.Base... allYourBase) {
+		for (lotus.domino.Base everyZig : allYourBase) {
+			refSet.lock(everyZig);
+		}
+	}
+
+	public static void recycleAll() {
+		refSet.clear();
+	}
+
 	public void recycle() {
-		DominoUtils.incinerate(getDelegate());
-		recycled_ = true;
+		recycle(this);
+	}
+
+	public static boolean recycle(lotus.domino.local.NotesBase base) {
+		boolean result = false;
+		if (!isLocked(base)) {
+			try {
+				base.recycle();
+				result = true;
+			} catch (Throwable t) {
+				// shikata ga nai
+			}
+		}
+		return true;
+	}
+
+	public static void recycle(org.openntf.domino.impl.Base<?, ?> base) {
+		if (recycle((lotus.domino.local.NotesBase) base.getDelegate())) {
+			base.recycled_ = true;
+		}
 	}
 
 	public boolean isRecycled() {
@@ -51,7 +78,13 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	@SuppressWarnings("rawtypes")
 	public void recycle(Vector arg0) {
-		DominoUtils.incinerate(arg0);
+		for (Object o : arg0) {
+			if (o instanceof org.openntf.domino.impl.Base) {
+				recycle((org.openntf.domino.impl.Base) o);
+			} else if (o instanceof lotus.domino.local.NotesBase) {
+				recycle((lotus.domino.local.NotesBase) o);
+			}
+		}
 	}
 
 }

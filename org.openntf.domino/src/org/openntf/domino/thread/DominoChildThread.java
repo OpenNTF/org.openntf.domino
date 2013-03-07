@@ -1,5 +1,7 @@
 package org.openntf.domino.thread;
 
+import org.openntf.domino.impl.Base;
+
 public class DominoChildThread extends DominoThread {
 	// This will be the Thread for executing Runnables that are given a Domino object starting point, such as a Session or Document or
 	// Database.
@@ -38,9 +40,7 @@ public class DominoChildThread extends DominoThread {
 		// TODO Auto-generated constructor stub
 	}
 
-	public DominoChildThread(ThreadGroup group, Runnable runnable, String threadName, long stack) {
-		super(group, runnable, threadName, stack);
-		// TODO Auto-generated constructor stub
+	public void setContext(lotus.domino.Base... bases) {
+		Base.lock(bases);
 	}
-
 }

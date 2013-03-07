@@ -11,6 +11,8 @@ import java.util.Set;
 
 import lotus.domino.Base;
 
+import org.openntf.domino.utils.DominoUtils;
+
 /**
  * @author nfreeman
  * 
@@ -25,6 +27,12 @@ public class DominoReferenceSet extends ThreadLocal<Set<Base>> implements Set<Ba
 
 	public void lock(Base base) {
 		lockCollection.add(base);
+	}
+
+	public void lock(Base... bases) {
+		for (Base base : bases) {
+			lockCollection.add(base);
+		}
 	}
 
 	public boolean isLocked(Base base) {
@@ -49,7 +57,7 @@ public class DominoReferenceSet extends ThreadLocal<Set<Base>> implements Set<Ba
 			try {
 				b.recycle();
 			} catch (Throwable t) {
-				// IGNORE
+				DominoUtils.handleException(t);
 			}
 		}
 	}

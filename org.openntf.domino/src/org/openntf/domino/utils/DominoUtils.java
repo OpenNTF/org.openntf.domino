@@ -69,7 +69,7 @@ public enum DominoUtils {
 
 	public static Throwable handleException(Throwable t) {
 		// TODO implement standard logging approaches
-		boolean someMeansOfControllingThrows = false;
+		boolean someMeansOfControllingThrows = true;
 		if (someMeansOfControllingThrows) {
 			throw new RuntimeException(t);
 		} else {

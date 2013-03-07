@@ -49,4 +49,14 @@ public enum Factory {
 
 	}
 
+	public static org.openntf.domino.Session getSession() {
+		try {
+			lotus.domino.Session s = lotus.domino.NotesFactory.createSession();
+			return fromLotus(s, org.openntf.domino.Session.class);
+		} catch (lotus.domino.NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
+		return null;
+	}
+
 }

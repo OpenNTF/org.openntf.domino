@@ -1,5 +1,7 @@
 package org.openntf.domino.thread;
 
+import org.openntf.domino.impl.Base;
+
 public class DominoThread extends Thread {
 	// This will be the Thread for executing Runnables that need Domino objects created from scratch
 
@@ -37,15 +39,17 @@ public class DominoThread extends Thread {
 		// TODO Auto-generated constructor stub
 	}
 
-	public DominoThread(ThreadGroup group, Runnable runnable, String threadName, long stack) {
-		super(group, runnable, threadName, stack);
-		// TODO Auto-generated constructor stub
-	}
-
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-		super.run();
+		try {
+			lotus.domino.NotesThread.sinitThread();
+			super.run();
+		} catch (Throwable t) {
+			throw new RuntimeException(t);
+		} finally {
+			Base.recycleAll();
+			lotus.domino.NotesThread.stermThread();
+		}
 	}
 
 	@Override
