@@ -184,7 +184,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	@Override
 	@Legacy(Legacy.INTERFACES_WARNING)
-	public Vector<Form> getForms();
+	public Vector<org.openntf.domino.Form> getForms();
 
 	@Override
 	public int getFTIndexFrequency();

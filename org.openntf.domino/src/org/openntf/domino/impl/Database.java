@@ -572,9 +572,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public Vector getForms() {
+	public Vector<org.openntf.domino.Form> getForms() {
 		try {
-			return getDelegate().getForms();
+			return Factory.fromLotusAsVector(getDelegate().getForms(), org.openntf.domino.Form.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

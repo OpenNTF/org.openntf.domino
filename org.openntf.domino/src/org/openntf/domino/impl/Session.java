@@ -367,9 +367,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	}
 
 	@Override
-	public Database getDatabase(String arg0, String arg1) {
+	public org.openntf.domino.Database getDatabase(String arg0, String arg1) {
 		try {
-			return getDelegate().getDatabase(arg0, arg1);
+			return Factory.fromLotus(getDelegate().getDatabase(arg0, arg1), org.openntf.domino.Database.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

@@ -1,5 +1,7 @@
 package org.openntf.domino.impl;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
 import org.openntf.domino.thread.DominoReference;
@@ -13,6 +15,13 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			return new DominoReferenceQueue();
 		};
 	};
+
+	private static ThreadLocal<Set<DominoReference>> referenceBag = new ThreadLocal<Set<DominoReference>>() {
+		@Override
+		protected Set<DominoReference> initialValue() {
+			return new HashSet<DominoReference>();
+		};
+	};
 	private static final DominoReferenceSet refSet = new DominoReferenceSet();
 
 	protected boolean recycled_;
@@ -23,8 +32,13 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		if (delegate != null) {
 			delegate_ = delegate;
 			ref_ = new DominoReference(this, recycleQueue.get(), delegate);
+			referenceBag.get().add(ref_);
 			refSet.add(delegate);
 		}
+	}
+
+	public static DominoReferenceQueue _getRecycleQueue() {
+		return recycleQueue.get();
 	}
 
 	protected D getDelegate() {

@@ -1,18 +1,26 @@
 package org.openntf.domino.thread;
 
 import java.lang.ref.PhantomReference;
-import java.lang.ref.ReferenceQueue;
 
 import org.openntf.domino.Base;
 import org.openntf.domino.utils.DominoUtils;
 
 public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>> {
 	private lotus.domino.Base delegate_;
+	private boolean isRecycled_;
+	private Class<?> delegateType_;
 
-	public DominoReference(Base<?> r, ReferenceQueue<? super Base<?>> q, lotus.domino.Base delegate) {
+	public DominoReference(Base<?> r, DominoReferenceQueue q, lotus.domino.Base delegate) {
 		super(r, q);
 		delegate_ = delegate; // Because the reference separately contains a pointer to the delegate object, it's still available even
 								// though the wrapper is null
+		isRecycled_ = false;
+		delegateType_ = delegate.getClass();
+		System.out.println("Domino reference created for a " + r.getClass().getName() + " (" + delegate.getClass().getSimpleName() + ")");
+	}
+
+	public Class<?> getType() {
+		return delegateType_;
 	}
 
 	@Override
@@ -33,8 +41,24 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 				// TODO
 				DominoUtils.handleException(t);
 			}
+			isRecycled_ = true;
 		}
 		return super.enqueue();
+	}
+
+	public void recycle() {
+		if (!org.openntf.domino.impl.Base.isLocked(delegate_)) {
+			System.out.println("Recycling a " + getType().getName() + "!");
+			try {
+				delegate_.recycle();
+			} catch (Throwable t) {
+				// TODO
+				DominoUtils.handleException(t);
+			}
+			isRecycled_ = true;
+		} else {
+			System.out.println("Not recycling a " + getType().getName() + " because its locked.");
+		}
 	}
 
 }

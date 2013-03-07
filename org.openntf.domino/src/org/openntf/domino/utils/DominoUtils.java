@@ -25,6 +25,7 @@ import lotus.domino.View;
 import lotus.domino.ViewColumn;
 
 import org.openntf.domino.DateTime;
+import org.openntf.domino.exceptions.InvalidNotesUrlException;
 
 public enum DominoUtils {
 	;
@@ -75,6 +76,35 @@ public enum DominoUtils {
 		} else {
 			return t; // we already handled it, but maybe somebody wants to do something....
 		}
+	}
+
+	public static String getUnidFromNotesUrl(String notesurl) {
+		String result = null;
+		String trimmed = notesurl.toLowerCase().trim();
+		if (trimmed.startsWith("notes://")) {
+			int arg = trimmed.lastIndexOf('?');
+			if (arg == -1) { // there's no ? so we'll just start from the end
+				String chk = trimmed.substring(trimmed.length() - 32, trimmed.length());
+				if (isUnid(chk)) {
+					result = chk;
+				} else {
+					System.out.println("Not a unid. We got " + chk);
+				}
+			} else {
+				String chk = trimmed.substring(0, arg);
+				chk = chk.substring(chk.length() - 32, chk.length());
+				// String chk = trimmed.substring(trimmed.length() - 32 - (arg + 1), trimmed.length() - (arg + 1));
+				if (isUnid(chk)) {
+					result = chk;
+				} else {
+					System.out.println("Not a unid. We got " + chk);
+				}
+			}
+		} else {
+			throw new InvalidNotesUrlException(notesurl);
+		}
+
+		return result;
 	}
 
 	public static Session getSession(Base base) throws Throwable {

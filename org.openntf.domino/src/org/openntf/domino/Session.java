@@ -136,7 +136,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	public lotus.domino.Database getCurrentDatabase();
 
 	@Override
-	public lotus.domino.Database getDatabase(String paramString1, String paramString2);
+	public org.openntf.domino.Database getDatabase(String paramString1, String paramString2);
 
 	@Override
 	public lotus.domino.Database getDatabase(String paramString1, String paramString2, boolean paramBoolean);
