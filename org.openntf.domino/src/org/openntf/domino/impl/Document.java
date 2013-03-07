@@ -23,6 +23,10 @@ import org.openntf.domino.utils.DominoUtils;
 
 public class Document extends Base<org.openntf.domino.Document, lotus.domino.Document> implements org.openntf.domino.Document {
 
+	public Document(lotus.domino.Document delegate) {
+		super(delegate);
+	}
+
 	@Override
 	public Item appendItemValue(String name) {
 		try {

@@ -3,7 +3,6 @@ package org.openntf.domino;
 import java.util.Vector;
 
 import lotus.domino.Database;
-import org.openntf.domino.DateTime;
 import lotus.domino.Document;
 import lotus.domino.DocumentCollection;
 import lotus.domino.ViewColumn;
@@ -14,38 +13,39 @@ import lotus.domino.ViewNavigator;
 import org.openntf.domino.annotations.Legacy;
 
 public interface View extends lotus.domino.View, Base<lotus.domino.View> {
+
 	@Override
 	public void clear();
 
 	@Override
-	public ViewColumn copyColumn(int arg0);
+	public ViewColumn copyColumn(int sourceColumn);
 
 	@Override
-	public ViewColumn copyColumn(int arg0, int arg1);
+	public ViewColumn copyColumn(int sourceColumn, int destinationIndex);
 
 	@Override
-	public ViewColumn copyColumn(String arg0);
+	public ViewColumn copyColumn(String sourceColumn);
 
 	@Override
-	public ViewColumn copyColumn(String arg0, int arg1);
+	public ViewColumn copyColumn(String sourceColumn, int destinationIndex);
 
 	@Override
-	public ViewColumn copyColumn(ViewColumn arg0);
+	public ViewColumn copyColumn(ViewColumn sourceColumn);
 
 	@Override
-	public ViewColumn copyColumn(ViewColumn arg0, int arg1);
+	public ViewColumn copyColumn(ViewColumn sourceColumn, int destinationIndex);
 
 	@Override
 	public ViewColumn createColumn();
 
 	@Override
-	public ViewColumn createColumn(int arg0);
+	public ViewColumn createColumn(int position);
 
 	@Override
-	public ViewColumn createColumn(int arg0, String arg1);
+	public ViewColumn createColumn(int position, String columnTitle);
 
 	@Override
-	public ViewColumn createColumn(int arg0, String arg1, String arg2);
+	public ViewColumn createColumn(int position, String columnTitle, String formula);
 
 	@Override
 	public ViewEntryCollection createViewEntryCollection();
@@ -54,157 +54,157 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View> {
 	public ViewNavigator createViewNav();
 
 	@Override
-	public ViewNavigator createViewNav(int arg0);
+	public ViewNavigator createViewNav(int cacheSize);
 
 	@Override
-	public ViewNavigator createViewNavFrom(Object arg0);
+	public ViewNavigator createViewNavFrom(Object entry);
 
 	@Override
-	public ViewNavigator createViewNavFrom(Object arg0, int arg1);
+	public ViewNavigator createViewNavFrom(Object entry, int cacheSize);
 
 	@Override
 	public ViewNavigator createViewNavFromAllUnread();
 
 	@Override
-	public ViewNavigator createViewNavFromAllUnread(String arg0);
+	public ViewNavigator createViewNavFromAllUnread(String userName);
 
 	@Override
-	public ViewNavigator createViewNavFromCategory(String arg0);
+	public ViewNavigator createViewNavFromCategory(String categoryName);
 
 	@Override
-	public ViewNavigator createViewNavFromCategory(String arg0, int arg1);
+	public ViewNavigator createViewNavFromCategory(String categoryName, int cacheSize);
 
 	@Override
-	public ViewNavigator createViewNavFromChildren(Object arg0);
+	public ViewNavigator createViewNavFromChildren(Object entry);
 
 	@Override
-	public ViewNavigator createViewNavFromChildren(Object arg0, int arg1);
+	public ViewNavigator createViewNavFromChildren(Object entry, int cacheSize);
 
 	@Override
-	public ViewNavigator createViewNavFromDescendants(Object arg0);
+	public ViewNavigator createViewNavFromDescendants(Object entry);
 
 	@Override
-	public ViewNavigator createViewNavFromDescendants(Object arg0, int arg1);
+	public ViewNavigator createViewNavFromDescendants(Object entry, int cacheSize);
 
 	@Override
-	public ViewNavigator createViewNavMaxLevel(int arg0);
+	public ViewNavigator createViewNavMaxLevel(int level);
 
 	@Override
-	public ViewNavigator createViewNavMaxLevel(int arg0, int arg1);
+	public ViewNavigator createViewNavMaxLevel(int level, int cacheSize);
 
 	@Override
-	public int FTSearch(String arg0);
+	public int FTSearch(String query);
 
 	@Override
-	public int FTSearch(String arg0, int arg1);
+	public int FTSearch(String query, int maxDocs);
 
 	@Override
-	public int FTSearchSorted(String arg0);
+	public int FTSearchSorted(String query);
 
 	@Override
-	public int FTSearchSorted(String arg0, int arg1);
+	public int FTSearchSorted(String query, int maxDocs);
 
 	@Override
-	public int FTSearchSorted(String arg0, int arg1, int arg2);
+	public int FTSearchSorted(String query, int maxDocs, int column);
 
 	@Override
-	public int FTSearchSorted(String arg0, int arg1, int arg2, boolean arg3, boolean arg4, boolean arg5, boolean arg6);
+	public int FTSearchSorted(String query, int maxDocs, int column, boolean ascending, boolean exact, boolean variants, boolean fuzzy);
 
 	@Override
-	public int FTSearchSorted(String arg0, int arg1, String arg2);
+	public int FTSearchSorted(String query, int maxDocs, String column);
 
 	@Override
-	public int FTSearchSorted(String arg0, int arg1, String arg2, boolean arg3, boolean arg4, boolean arg5, boolean arg6);
-
-	@Override
-	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public int FTSearchSorted(Vector arg0);
+	public int FTSearchSorted(String query, int maxDocs, String column, boolean ascending, boolean exact, boolean variants, boolean fuzzy);
 
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public int FTSearchSorted(Vector arg0, int arg1);
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public int FTSearchSorted(Vector query);
 
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public int FTSearchSorted(Vector arg0, int arg1, int arg2);
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public int FTSearchSorted(Vector query, int maxDocs);
 
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public int FTSearchSorted(Vector arg0, int arg1, int arg2, boolean arg3, boolean arg4, boolean arg5, boolean arg6);
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public int FTSearchSorted(Vector query, int maxDocs, int column);
 
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public int FTSearchSorted(Vector arg0, int arg1, String arg2);
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public int FTSearchSorted(Vector query, int maxDocs, int column, boolean ascending, boolean exact, boolean variants, boolean fuzzy);
 
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public int FTSearchSorted(Vector arg0, int arg1, String arg2, boolean arg3, boolean arg4, boolean arg5, boolean arg6);
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public int FTSearchSorted(Vector query, int maxDocs, String column);
+
+	@Override
+	@Deprecated
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public int FTSearchSorted(Vector query, int maxDocs, String column, boolean ascending, boolean exact, boolean variants, boolean fuzzy);
 
 	@Override
 	@Legacy(Legacy.INTERFACES_WARNING)
 	public Vector<String> getAliases();
 
 	@Override
-	public DocumentCollection getAllDocumentsByKey(Object arg0);
+	public DocumentCollection getAllDocumentsByKey(Object key);
 
 	@Override
-	public DocumentCollection getAllDocumentsByKey(Object arg0, boolean arg1);
-
-	@Override
-	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public DocumentCollection getAllDocumentsByKey(Vector arg0);
+	public DocumentCollection getAllDocumentsByKey(Object key, boolean exact);
 
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public DocumentCollection getAllDocumentsByKey(Vector arg0, boolean arg1);
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public DocumentCollection getAllDocumentsByKey(Vector keys);
+
+	@Override
+	@Deprecated
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public DocumentCollection getAllDocumentsByKey(Vector keys, boolean exact);
 
 	@Override
 	public ViewEntryCollection getAllEntries();
 
 	@Override
-	public ViewEntryCollection getAllEntriesByKey(Object arg0);
+	public ViewEntryCollection getAllEntriesByKey(Object key);
 
 	@Override
-	public ViewEntryCollection getAllEntriesByKey(Object arg0, boolean arg1);
-
-	@Override
-	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public ViewEntryCollection getAllEntriesByKey(Vector arg0);
+	public ViewEntryCollection getAllEntriesByKey(Object key, boolean exact);
 
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public ViewEntryCollection getAllEntriesByKey(Vector arg0, boolean arg1);
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public ViewEntryCollection getAllEntriesByKey(Vector keys);
+
+	@Override
+	@Deprecated
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public ViewEntryCollection getAllEntriesByKey(Vector keys, boolean exact);
 
 	@Override
 	public ViewEntryCollection getAllReadEntries();
 
 	@Override
-	public ViewEntryCollection getAllReadEntries(String arg0);
+	public ViewEntryCollection getAllReadEntries(String userName);
 
 	@Override
 	public ViewEntryCollection getAllUnreadEntries();
 
 	@Override
-	public ViewEntryCollection getAllUnreadEntries(String arg0);
+	public ViewEntryCollection getAllUnreadEntries(String userName);
 
 	@Override
 	public int getBackgroundColor();
 
 	@Override
-	public Document getChild(Document arg0);
+	public Document getChild(Document doc);
 
 	@Override
-	public ViewColumn getColumn(int arg0);
+	public ViewColumn getColumn(int columnNumber);
 
 	@Override
 	public int getColumnCount();
@@ -219,43 +219,43 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View> {
 
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public Vector getColumnValues(int arg0);
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public Vector getColumnValues(int column);
 
 	@Override
 	public DateTime getCreated();
 
 	@Override
-	public Document getDocumentByKey(Object arg0);
+	public Document getDocumentByKey(Object key);
 
 	@Override
-	public Document getDocumentByKey(Object arg0, boolean arg1);
-
-	@Override
-	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public Document getDocumentByKey(Vector arg0);
+	public Document getDocumentByKey(Object key, boolean exact);
 
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public Document getDocumentByKey(Vector arg0, boolean arg1);
-
-	@Override
-	public ViewEntry getEntryByKey(Object arg0);
-
-	@Override
-	public ViewEntry getEntryByKey(Object arg0, boolean arg1);
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public Document getDocumentByKey(Vector keys);
 
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public ViewEntry getEntryByKey(Vector arg0);
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public Document getDocumentByKey(Vector keys, boolean exact);
+
+	@Override
+	public ViewEntry getEntryByKey(Object key);
+
+	@Override
+	public ViewEntry getEntryByKey(Object key, boolean exact);
 
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public ViewEntry getEntryByKey(Vector arg0, boolean arg1);
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public ViewEntry getEntryByKey(Vector keys);
+
+	@Override
+	@Deprecated
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public ViewEntry getEntryByKey(Vector keys, boolean exact);
 
 	@Override
 	public int getEntryCount();
@@ -284,28 +284,28 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View> {
 	public String getName();
 
 	@Override
-	public Document getNextDocument(Document arg0);
+	public Document getNextDocument(Document doc);
 
 	@Override
-	public Document getNextSibling(Document arg0);
+	public Document getNextSibling(Document doc);
 
 	@Override
 	public String getNotesURL();
 
 	@Override
-	public Document getNthDocument(int arg0);
+	public Document getNthDocument(int n);
 
 	@Override
 	public Database getParent();
 
 	@Override
-	public Document getParentDocument(Document arg0);
+	public Document getParentDocument(Document doc);
 
 	@Override
-	public Document getPrevDocument(Document arg0);
+	public Document getPrevDocument(Document doc);
 
 	@Override
-	public Document getPrevSibling(Document arg0);
+	public Document getPrevSibling(Document doc);
 
 	@Override
 	@Deprecated
@@ -379,46 +379,46 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View> {
 	public boolean lock();
 
 	@Override
-	public boolean lock(boolean arg0);
+	public boolean lock(boolean provisionalOk);
 
 	@Override
-	public boolean lock(String arg0);
+	public boolean lock(String name);
 
 	@Override
-	public boolean lock(String arg0, boolean arg1);
-
-	@Override
-	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public boolean lock(Vector arg0);
+	public boolean lock(String name, boolean provisionalOk);
 
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public boolean lock(Vector arg0, boolean arg1);
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public boolean lock(Vector names);
+
+	@Override
+	@Deprecated
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public boolean lock(Vector names, boolean provisionalOk);
 
 	@Override
 	public boolean lockProvisional();
 
 	@Override
-	public boolean lockProvisional(String arg0);
+	public boolean lockProvisional(String name);
 
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public boolean lockProvisional(Vector arg0);
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public boolean lockProvisional(Vector names);
 
 	@Override
 	public void markAllRead();
 
 	@Override
-	public void markAllRead(String arg0);
+	public void markAllRead(String userName);
 
 	@Override
 	public void markAllUnread();
 
 	@Override
-	public void markAllUnread(String arg0);
+	public void markAllUnread(String userName);
 
 	@Override
 	public void refresh();
@@ -430,63 +430,68 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View> {
 	public void removeColumn();
 
 	@Override
-	public void removeColumn(int arg0);
+	public void removeColumn(int column);
 
 	@Override
-	public void removeColumn(String arg0);
+	public void removeColumn(String column);
 
 	@Override
 	public void resortView();
 
 	@Override
-	public void resortView(String arg0);
+	public void resortView(String column);
 
 	@Override
-	public void resortView(String arg0, boolean arg1);
+	public void resortView(String column, boolean ascending);
 
 	@Override
-	public void setAliases(String arg0);
-
-	@Override
-	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public void setAliases(Vector arg0);
-
-	@Override
-	public void setAutoUpdate(boolean arg0);
-
-	@Override
-	public void setBackgroundColor(int arg0);
-
-	@Override
-	public void setDefaultView(boolean arg0);
-
-	@Override
-	public void setEnableNoteIDsForCategories(boolean arg0);
-
-	@Override
-	public void setName(String arg0);
-
-	@Override
-	public void setProhibitDesignRefresh(boolean arg0);
-
-	@Override
-	public void setProtectReaders(boolean arg0);
+	public void setAliases(String alias);
 
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public void setReaders(Vector arg0);
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public void setAliases(Vector aliases);
 
 	@Override
-	public void setSelectionFormula(String arg0);
+	public void setAutoUpdate(boolean flag);
 
 	@Override
-	public void setSelectionQuery(String arg0);
+	public void setBackgroundColor(int color);
 
 	@Override
-	public void setSpacing(int arg0);
+	public void setDefaultView(boolean flag);
+
+	@Override
+	public void setEnableNoteIDsForCategories(boolean flag);
+
+	@Override
+	public void setName(String name);
+
+	@Override
+	public void setProhibitDesignRefresh(boolean flag);
+
+	@Override
+	public void setProtectReaders(boolean flag);
+
+	@Override
+	@Deprecated
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public void setReaders(Vector readers);
+
+	@Override
+	public void setSelectionFormula(String formula);
+
+	@Override
+	public void setSelectionQuery(String query);
+
+	@Override
+	public void setSpacing(int spacing);
 
 	@Override
 	public void unlock();
+
+	/*
+	 * New methods
+	 */
+	public Document getDocument();
 }

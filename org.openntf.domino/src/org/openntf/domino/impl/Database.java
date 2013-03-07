@@ -4,7 +4,6 @@ import java.util.Vector;
 
 import lotus.domino.ACL;
 import lotus.domino.Agent;
-import lotus.domino.Document;
 import lotus.domino.DocumentCollection;
 import lotus.domino.Form;
 import lotus.domino.NoteCollection;
@@ -30,7 +29,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public Document FTDomainSearch(String arg0, int arg1, int arg2, int arg3, int arg4, int arg5, String arg6) {
 		try {
-			return getDelegate().FTDomainSearch(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+			return new Document(getDelegate().FTDomainSearch(arg0, arg1, arg2, arg3, arg4, arg5, arg6));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -140,7 +139,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public Document createDocument() {
 		try {
-			return getDelegate().createDocument();
+			return new Document(getDelegate().createDocument());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -476,7 +475,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public Document getDocumentByID(String arg0) {
 		try {
-			return getDelegate().getDocumentByID(arg0);
+			return new Document(getDelegate().getDocumentByID(arg0));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -486,7 +485,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public Document getDocumentByUNID(String arg0) {
 		try {
-			return getDelegate().getDocumentByUNID(arg0);
+			return new Document(getDelegate().getDocumentByUNID(arg0));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -497,7 +496,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	public Document getDocumentByURL(String arg0, boolean arg1, boolean arg2, boolean arg3, String arg4, String arg5, String arg6,
 			String arg7, String arg8, boolean arg9) {
 		try {
-			return getDelegate().getDocumentByURL(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
+			return new Document(getDelegate().getDocumentByURL(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -507,7 +506,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public Document getDocumentByURL(String arg0, boolean arg1) {
 		try {
-			return getDelegate().getDocumentByURL(arg0, arg1);
+			return new Document(getDelegate().getDocumentByURL(arg0, arg1));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -767,7 +766,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public Document getProfileDocument(String arg0, String arg1) {
 		try {
-			return getDelegate().getProfileDocument(arg0, arg1);
+			return new Document(getDelegate().getProfileDocument(arg0, arg1));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
