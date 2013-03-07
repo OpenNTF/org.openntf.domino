@@ -34,7 +34,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		return recycled_;
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings( { "rawtypes", "unchecked" })
 	public void recycle(Vector arg0) throws NotesException {
 		DominoUtils.incinerate(arg0);
 	}

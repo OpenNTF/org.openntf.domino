@@ -326,5 +326,4 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 
 		}
 	}
-
 }

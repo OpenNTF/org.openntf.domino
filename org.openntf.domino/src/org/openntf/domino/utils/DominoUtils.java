@@ -21,14 +21,14 @@ import lotus.domino.ACL;
 import lotus.domino.Agent;
 import lotus.domino.Base;
 import lotus.domino.Database;
-import lotus.domino.DateTime;
 import lotus.domino.Document;
 import lotus.domino.Form;
 import lotus.domino.Item;
-import lotus.domino.NotesException;
 import lotus.domino.Session;
 import lotus.domino.View;
 import lotus.domino.ViewColumn;
+
+import org.openntf.domino.DateTime;
 
 public enum DominoUtils {
 	;
@@ -193,13 +193,11 @@ public enum DominoUtils {
 		return result;
 	}
 
-	public static Date toJavaDateSafe(DateTime dt) {
+	public static Date toJavaDateSafe(org.openntf.domino.DateTime dt) {
 		Date date = null;
 		if (dt != null) {
 			try {
 				date = dt.toJavaDate();
-			} catch (NotesException ne) {
-				// do nothing
 			} catch (Throwable t) {
 				t.printStackTrace();
 			} finally {

@@ -17,7 +17,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public String addGroupMembers(String group, Vector members) throws NotesException {
+	public String addGroupMembers(String group, Vector members) {
 		try {
 			return getDelegate().addGroupMembers(group, members);
 		} catch (NotesException e) {
@@ -27,7 +27,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String addInternetCertificateToUser(String user, String keyringfile, String keyringpassword) throws NotesException {
+	public String addInternetCertificateToUser(String user, String keyringfile, String keyringpassword) {
 		try {
 			return getDelegate().addInternetCertificateToUser(user, keyringfile, keyringpassword);
 		} catch (NotesException e) {
@@ -37,8 +37,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String addInternetCertificateToUser(String user, String keyringfile, String keyringpassword, DateTime expiration)
-			throws NotesException {
+	public String addInternetCertificateToUser(String user, String keyringfile, String keyringpassword, DateTime expiration) {
 		try {
 			return getDelegate().addInternetCertificateToUser(user, keyringfile, keyringpassword, expiration);
 		} catch (NotesException e) {
@@ -48,7 +47,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String addServerToCluster(String server, String cluster) throws NotesException {
+	public String addServerToCluster(String server, String cluster) {
 		try {
 			return getDelegate().addServerToCluster(server, cluster);
 		} catch (NotesException e) {
@@ -58,7 +57,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String approveDeletePersonInDirectory(String noteid) throws NotesException {
+	public String approveDeletePersonInDirectory(String noteid) {
 		try {
 			return getDelegate().approveDeletePersonInDirectory(noteid);
 		} catch (NotesException e) {
@@ -68,7 +67,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String approveDeleteServerInDirectory(String noteid) throws NotesException {
+	public String approveDeleteServerInDirectory(String noteid) {
 		try {
 			return getDelegate().approveDeleteServerInDirectory(noteid);
 		} catch (NotesException e) {
@@ -78,7 +77,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String approveDesignElementDeletion(String noteid) throws NotesException {
+	public String approveDesignElementDeletion(String noteid) {
 		try {
 			return getDelegate().approveDesignElementDeletion(noteid);
 		} catch (NotesException e) {
@@ -88,7 +87,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String approveHostedOrgStorageDeletion(String noteid) throws NotesException {
+	public String approveHostedOrgStorageDeletion(String noteid) {
 		try {
 			return getDelegate().approveHostedOrgStorageDeletion(noteid);
 		} catch (NotesException e) {
@@ -98,7 +97,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String approveMailFileDeletion(String noteid) throws NotesException {
+	public String approveMailFileDeletion(String noteid) {
 		try {
 			return getDelegate().approveMailFileDeletion(noteid);
 		} catch (NotesException e) {
@@ -108,7 +107,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String approveMovedReplicaDeletion(String noteid) throws NotesException {
+	public String approveMovedReplicaDeletion(String noteid) {
 		try {
 			return getDelegate().approveMovedReplicaDeletion(noteid);
 		} catch (NotesException e) {
@@ -118,7 +117,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String approveNameChangeRetraction(String noteid) throws NotesException {
+	public String approveNameChangeRetraction(String noteid) {
 		try {
 			return getDelegate().approveNameChangeRetraction(noteid);
 		} catch (NotesException e) {
@@ -128,7 +127,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String approveRenamePersonInDirectory(String noteid) throws NotesException {
+	public String approveRenamePersonInDirectory(String noteid) {
 		try {
 			return getDelegate().approveRenamePersonInDirectory(noteid);
 		} catch (NotesException e) {
@@ -138,7 +137,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String approveRenameServerInDirectory(String noteid) throws NotesException {
+	public String approveRenameServerInDirectory(String noteid) {
 		try {
 			return getDelegate().approveRenameServerInDirectory(noteid);
 		} catch (NotesException e) {
@@ -148,7 +147,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String approveReplicaDeletion(String noteid) throws NotesException {
+	public String approveReplicaDeletion(String noteid) {
 		try {
 			return getDelegate().approveReplicaDeletion(noteid);
 		} catch (NotesException e) {
@@ -158,7 +157,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String approveResourceDeletion(String noteid) throws NotesException {
+	public String approveResourceDeletion(String noteid) {
 		try {
 			return getDelegate().approveResourceDeletion(noteid);
 		} catch (NotesException e) {
@@ -168,7 +167,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String changeHTTPPassword(String username, String oldpassword, String newpassword) throws NotesException {
+	public String changeHTTPPassword(String username, String oldpassword, String newpassword) {
 		try {
 			return getDelegate().changeHTTPPassword(username, oldpassword, newpassword);
 		} catch (NotesException e) {
@@ -178,7 +177,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String configureMailAgent(String username, String agentname) throws NotesException {
+	public String configureMailAgent(String username, String agentname) {
 		try {
 			return getDelegate().configureMailAgent(username, agentname);
 		} catch (NotesException e) {
@@ -188,7 +187,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String configureMailAgent(String username, String agentname, boolean activatable, boolean enable) throws NotesException {
+	public String configureMailAgent(String username, String agentname, boolean activatable, boolean enable) {
 		try {
 			return getDelegate().configureMailAgent(username, agentname, activatable, enable);
 		} catch (NotesException e) {
@@ -198,7 +197,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String createReplica(String sourceserver, String sourcedbfile, String destserver) throws NotesException {
+	public String createReplica(String sourceserver, String sourcedbfile, String destserver) {
 		try {
 			return getDelegate().createReplica(sourceserver, sourcedbfile, destserver);
 		} catch (NotesException e) {
@@ -209,7 +208,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 
 	@Override
 	public String createReplica(String sourceserver, String sourcedbfile, String destserver, String destdbfile, boolean copyacl,
-			boolean createftindex) throws NotesException {
+			boolean createftindex) {
 		try {
 			return getDelegate().createReplica(sourceserver, sourcedbfile, destserver, destdbfile, copyacl, createftindex);
 		} catch (NotesException e) {
@@ -219,7 +218,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String deleteGroup(String groupname, boolean immediate) throws NotesException {
+	public String deleteGroup(String groupname, boolean immediate) {
 		try {
 			return getDelegate().deleteGroup(groupname, immediate);
 		} catch (NotesException e) {
@@ -229,7 +228,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String deleteGroup(String groupname, boolean immediate, boolean deletewindowsgroup) throws NotesException {
+	public String deleteGroup(String groupname, boolean immediate, boolean deletewindowsgroup) {
 		try {
 			return getDelegate().deleteGroup(groupname, immediate, deletewindowsgroup);
 		} catch (NotesException e) {
@@ -239,7 +238,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String deleteReplicas(String servername, String filename) throws NotesException {
+	public String deleteReplicas(String servername, String filename) {
 		try {
 			return getDelegate().deleteReplicas(servername, filename);
 		} catch (NotesException e) {
@@ -249,7 +248,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String deleteServer(String servername, boolean immediate) throws NotesException {
+	public String deleteServer(String servername, boolean immediate) {
 		try {
 			return getDelegate().deleteServer(servername, immediate);
 		} catch (NotesException e) {
@@ -259,7 +258,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String deleteUser(String username, boolean immediate, int mailfileaction, String denygroup) throws NotesException {
+	public String deleteUser(String username, boolean immediate, int mailfileaction, String denygroup) {
 		try {
 			return getDelegate().deleteUser(username, immediate, mailfileaction, denygroup);
 		} catch (NotesException e) {
@@ -269,8 +268,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String deleteUser(String username, boolean immediate, int mailfileaction, String denygroup, boolean deletewindowsuser)
-			throws NotesException {
+	public String deleteUser(String username, boolean immediate, int mailfileaction, String denygroup, boolean deletewindowsuser) {
 		try {
 			return getDelegate().deleteUser(username, immediate, mailfileaction, denygroup, deletewindowsuser);
 		} catch (NotesException e) {
@@ -280,7 +278,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String findGroupInDomain(String group) throws NotesException {
+	public String findGroupInDomain(String group) {
 		try {
 			return getDelegate().findGroupInDomain(group);
 		} catch (NotesException e) {
@@ -290,7 +288,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String findServerInDomain(String server) throws NotesException {
+	public String findServerInDomain(String server) {
 		try {
 			return getDelegate().findServerInDomain(server);
 		} catch (NotesException e) {
@@ -300,7 +298,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String findUserInDomain(String user) throws NotesException {
+	public String findUserInDomain(String user) {
 		try {
 			return getDelegate().findUserInDomain(user);
 		} catch (NotesException e) {
@@ -310,7 +308,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String getCertificateAuthorityOrg() throws NotesException {
+	public String getCertificateAuthorityOrg() {
 		try {
 			return getDelegate().getCertificateAuthorityOrg();
 		} catch (NotesException e) {
@@ -320,7 +318,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public DateTime getCertificateExpiration() throws NotesException {
+	public DateTime getCertificateExpiration() {
 		try {
 			return getDelegate().getCertificateExpiration();
 		} catch (NotesException e) {
@@ -330,7 +328,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String getCertifierFile() throws NotesException {
+	public String getCertifierFile() {
 		try {
 			return getDelegate().getCertifierFile();
 		} catch (NotesException e) {
@@ -340,7 +338,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String getCertifierPassword() throws NotesException {
+	public String getCertifierPassword() {
 		try {
 			return getDelegate().getCertifierPassword();
 		} catch (NotesException e) {
@@ -350,7 +348,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public Session getParent() throws NotesException {
+	public Session getParent() {
 		try {
 			return getDelegate().getParent();
 		} catch (NotesException e) {
@@ -360,7 +358,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public boolean isCertificateAuthorityAvailable() throws NotesException {
+	public boolean isCertificateAuthorityAvailable() {
 		try {
 			return getDelegate().isCertificateAuthorityAvailable();
 		} catch (NotesException e) {
@@ -370,7 +368,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public boolean isUseCertificateAuthority() throws NotesException {
+	public boolean isUseCertificateAuthority() {
 		try {
 			return getDelegate().isUseCertificateAuthority();
 		} catch (NotesException e) {
@@ -380,7 +378,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String moveMailUser(String username, String newhomeserver, String newhomeservermailpath) throws NotesException {
+	public String moveMailUser(String username, String newhomeserver, String newhomeservermailpath) {
 		try {
 			return getDelegate().moveMailUser(username, newhomeserver, newhomeservermailpath);
 		} catch (NotesException e) {
@@ -392,7 +390,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	@SuppressWarnings("unchecked")
 	@Override
 	public String moveMailUser(String username, String newhomeserver, String newhomeservermailpath, boolean usescos,
-			Vector newclusterreplicas, boolean deleteoldclusterreplicas) throws NotesException {
+			Vector newclusterreplicas, boolean deleteoldclusterreplicas) {
 		try {
 			return getDelegate().moveMailUser(username, newhomeserver, newhomeservermailpath, usescos, newclusterreplicas,
 					deleteoldclusterreplicas);
@@ -403,7 +401,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String moveReplica(String sourceserver, String sourcedbfile, String destserver) throws NotesException {
+	public String moveReplica(String sourceserver, String sourcedbfile, String destserver) {
 		try {
 			return getDelegate().moveReplica(sourceserver, sourcedbfile, destserver);
 		} catch (NotesException e) {
@@ -414,7 +412,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 
 	@Override
 	public String moveReplica(String sourceserver, String sourcedbfile, String destserver, String destdbfile, boolean copyacl,
-			boolean createftindex) throws NotesException {
+			boolean createftindex) {
 		try {
 			return getDelegate().moveReplica(sourceserver, sourcedbfile, destserver, destdbfile, copyacl, createftindex);
 		} catch (NotesException e) {
@@ -424,7 +422,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String moveRoamingUser(String username, String destserver, String destserverpath) throws NotesException {
+	public String moveRoamingUser(String username, String destserver, String destserverpath) {
 		try {
 			return getDelegate().moveRoamingUser(username, destserver, destserverpath);
 		} catch (NotesException e) {
@@ -434,7 +432,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String moveUserInHierarchyComplete(String requestnoteid) throws NotesException {
+	public String moveUserInHierarchyComplete(String requestnoteid) {
 		try {
 			return getDelegate().moveUserInHierarchyComplete(requestnoteid);
 		} catch (NotesException e) {
@@ -445,7 +443,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 
 	@Override
 	public String moveUserInHierarchyComplete(String requestnoteid, String lastname, String firstname, String middleinitial,
-			String orgunit, String altcommonname, String altorgunit, String altlanguage, boolean renamewindowsuser) throws NotesException {
+			String orgunit, String altcommonname, String altorgunit, String altlanguage, boolean renamewindowsuser) {
 		try {
 			return getDelegate().moveUserInHierarchyComplete(requestnoteid, lastname, firstname, middleinitial, orgunit, altcommonname,
 					altorgunit, altlanguage, renamewindowsuser);
@@ -456,7 +454,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String moveUserInHierarchyRequest(String username, String targetcertifier) throws NotesException {
+	public String moveUserInHierarchyRequest(String username, String targetcertifier) {
 		try {
 			return getDelegate().moveUserInHierarchyRequest(username, targetcertifier);
 		} catch (NotesException e) {
@@ -466,7 +464,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String moveUserInHierarchyRequest(String username, String targetcertifier, boolean allowprimarynamechange) throws NotesException {
+	public String moveUserInHierarchyRequest(String username, String targetcertifier, boolean allowprimarynamechange) {
 		try {
 			return getDelegate().moveUserInHierarchyRequest(username, targetcertifier, allowprimarynamechange);
 		} catch (NotesException e) {
@@ -476,7 +474,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String recertifyServer(String server) throws NotesException {
+	public String recertifyServer(String server) {
 		try {
 			return getDelegate().recertifyServer(server);
 		} catch (NotesException e) {
@@ -486,7 +484,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String recertifyUser(String username) throws NotesException {
+	public String recertifyUser(String username) {
 		try {
 			return getDelegate().recertifyUser(username);
 		} catch (NotesException e) {
@@ -496,7 +494,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String removeServerFromCluster(String server) throws NotesException {
+	public String removeServerFromCluster(String server) {
 		try {
 			return getDelegate().removeServerFromCluster(server);
 		} catch (NotesException e) {
@@ -506,7 +504,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String renameGroup(String group, String newgroup) throws NotesException {
+	public String renameGroup(String group, String newgroup) {
 		try {
 			return getDelegate().renameGroup(group, newgroup);
 		} catch (NotesException e) {
@@ -516,8 +514,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String renameNotesUser(String username, String lastname, String firstname, String middleinitial, String orgunit)
-			throws NotesException {
+	public String renameNotesUser(String username, String lastname, String firstname, String middleinitial, String orgunit) {
 		try {
 			return getDelegate().renameNotesUser(username, lastname, firstname, middleinitial, orgunit);
 		} catch (NotesException e) {
@@ -528,7 +525,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 
 	@Override
 	public String renameNotesUser(String username, String lastname, String firstname, String middleinitial, String orgunit,
-			String altcommonname, String altorgunit, String altlanguage, boolean renamewindowsuser) throws NotesException {
+			String altcommonname, String altorgunit, String altlanguage, boolean renamewindowsuser) {
 		try {
 			return getDelegate().renameNotesUser(username, lastname, firstname, middleinitial, orgunit, altcommonname, altorgunit,
 					altlanguage, renamewindowsuser);
@@ -540,7 +537,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 
 	@Override
 	public String renameWebUser(String username, String newfullname, String newlastname, String newfirstname, String newmiddleinitial,
-			String newshortname, String newinternetaccess) throws NotesException {
+			String newshortname, String newinternetaccess) {
 		try {
 			return getDelegate().renameWebUser(username, newfullname, newlastname, newfirstname, newmiddleinitial, newshortname,
 					newinternetaccess);
@@ -551,7 +548,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public void setCertificateAuthorityOrg(String org) throws NotesException {
+	public void setCertificateAuthorityOrg(String org) {
 		try {
 			getDelegate().setCertificateAuthorityOrg(org);
 		} catch (NotesException e) {
@@ -560,7 +557,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public void setCertificateExpiration(DateTime expiration) throws NotesException {
+	public void setCertificateExpiration(DateTime expiration) {
 		try {
 			getDelegate().setCertificateExpiration(expiration);
 		} catch (NotesException e) {
@@ -569,7 +566,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public void setCertifierFile(String filespec) throws NotesException {
+	public void setCertifierFile(String filespec) {
 		try {
 			getDelegate().setCertifierFile(filespec);
 		} catch (NotesException e) {
@@ -578,7 +575,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public void setCertifierPassword(String password) throws NotesException {
+	public void setCertifierPassword(String password) {
 		try {
 			getDelegate().setCertifierPassword(password);
 		} catch (NotesException e) {
@@ -587,7 +584,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String setServerDirectoryAssistanceSettings(String server, String dbfile) throws NotesException {
+	public String setServerDirectoryAssistanceSettings(String server, String dbfile) {
 		try {
 			return getDelegate().setServerDirectoryAssistanceSettings(server, dbfile);
 		} catch (NotesException e) {
@@ -597,7 +594,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public void setUseCertificateAuthority(boolean flag) throws NotesException {
+	public void setUseCertificateAuthority(boolean flag) {
 		try {
 			getDelegate().setUseCertificateAuthority(flag);
 		} catch (NotesException e) {
@@ -607,7 +604,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 
 	@Override
 	public String setUserPasswordSettings(String username, Integer notespasswordchecksetting, Integer notespasswordchangeinterval,
-			Integer notespasswordgraceperiod, Boolean internetpasswordforcechange) throws NotesException {
+			Integer notespasswordgraceperiod, Boolean internetpasswordforcechange) {
 		try {
 			return getDelegate().setUserPasswordSettings(username, notespasswordchecksetting, notespasswordchangeinterval,
 					notespasswordgraceperiod, internetpasswordforcechange);
@@ -618,7 +615,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String signDatabaseWithServerID(String server, String dbfile) throws NotesException {
+	public String signDatabaseWithServerID(String server, String dbfile) {
 		try {
 			return getDelegate().signDatabaseWithServerID(server, dbfile);
 		} catch (NotesException e) {
@@ -628,7 +625,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String signDatabaseWithServerID(String server, String dbfile, boolean updateonly) throws NotesException {
+	public String signDatabaseWithServerID(String server, String dbfile, boolean updateonly) {
 		try {
 			return getDelegate().signDatabaseWithServerID(server, dbfile, updateonly);
 		} catch (NotesException e) {
@@ -638,7 +635,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String upgradeUserToHierarchical(String username) throws NotesException {
+	public String upgradeUserToHierarchical(String username) {
 		try {
 			return getDelegate().upgradeUserToHierarchical(username);
 		} catch (NotesException e) {
@@ -648,8 +645,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String upgradeUserToHierarchical(String username, String orgunit, String altcommonname, String altorgunit, String altlanguage)
-			throws NotesException {
+	public String upgradeUserToHierarchical(String username, String orgunit, String altcommonname, String altorgunit, String altlanguage) {
 		try {
 			return getDelegate().upgradeUserToHierarchical(username, orgunit, altcommonname, altorgunit, altlanguage);
 		} catch (NotesException e) {

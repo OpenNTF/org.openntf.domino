@@ -17,6 +17,10 @@ public enum Factory {
 			return (T) new org.openntf.domino.impl.Session((lotus.domino.Session) lotus);
 		} else if (lotus instanceof lotus.domino.Database) {
 			return (T) new org.openntf.domino.impl.Database((lotus.domino.Database) lotus);
+		} else if (lotus instanceof lotus.domino.DateTime) {
+			return (T) new org.openntf.domino.impl.DateTime((lotus.domino.DateTime) lotus);
+		} else if (lotus instanceof lotus.domino.DateRange) {
+			return (T) new org.openntf.domino.impl.DateRange((lotus.domino.DateRange) lotus);
 		}
 		throw new UndefinedDelegateTypeException();
 	}

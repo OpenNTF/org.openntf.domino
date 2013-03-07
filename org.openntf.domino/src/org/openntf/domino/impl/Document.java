@@ -1055,6 +1055,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			} else if (value instanceof Serializable) {
 				DominoUtils.saveState((Serializable) value, this, name);
 			}
+			// TODO: also cover StateHolder? That could probably be done with reflection without actually requiring the XSP classes to
+			// build
+
 			return getDelegate().replaceItemValue(name, value);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);

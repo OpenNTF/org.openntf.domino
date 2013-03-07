@@ -15,7 +15,6 @@ import lotus.domino.Base;
 import lotus.domino.ColorObject;
 import lotus.domino.Database;
 import lotus.domino.DateRange;
-import lotus.domino.DateTime;
 import lotus.domino.DbDirectory;
 import lotus.domino.Directory;
 import lotus.domino.Document;
@@ -33,6 +32,7 @@ import lotus.domino.RichTextParagraphStyle;
 import lotus.domino.RichTextStyle;
 import lotus.domino.Stream;
 
+import org.openntf.domino.DateTime;
 import org.openntf.domino.Name;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.utils.DominoUtils;
@@ -80,9 +80,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	}
 
 	@Override
-	public DateRange createDateRange() {
+	public org.openntf.domino.DateRange createDateRange() {
 		try {
-			return getDelegate().createDateRange();
+			return Factory.fromLotus(getDelegate().createDateRange(), org.openntf.domino.DateRange.class);
 		} catch (NotesException ne) {
 			DominoUtils.handleException(ne);
 		}
@@ -99,11 +99,10 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		return null;
 	}
 
-	@Override
-	public DateRange createDateRange(DateTime arg0, DateTime arg1) {
+	public DateRange createDateRange(lotus.domino.DateTime arg0, lotus.domino.DateTime arg1) {
 		try {
-			return getDelegate().createDateRange(arg0, arg1);
-		} catch (NotesException e) {
+			return Factory.fromLotus(createDateRange(arg0, arg1), org.openntf.domino.DateRange.class);
+		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
 
@@ -113,7 +112,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public DateTime createDateTime(Calendar arg0) {
 		try {
-			return getDelegate().createDateTime(arg0);
+			return Factory.fromLotus(getDelegate().createDateTime(arg0), DateTime.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -124,7 +123,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public DateTime createDateTime(Date arg0) {
 		try {
-			return getDelegate().createDateTime(arg0);
+			return Factory.fromLotus(getDelegate().createDateTime(arg0), DateTime.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -135,7 +134,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public DateTime createDateTime(String arg0) {
 		try {
-			return getDelegate().createDateTime(arg0);
+			return Factory.fromLotus(getDelegate().createDateTime(arg0), DateTime.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
