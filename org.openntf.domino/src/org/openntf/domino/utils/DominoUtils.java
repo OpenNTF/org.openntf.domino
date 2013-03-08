@@ -25,6 +25,7 @@ import lotus.domino.View;
 import lotus.domino.ViewColumn;
 
 import org.openntf.domino.DateTime;
+import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.exceptions.InvalidNotesUrlException;
 
 public enum DominoUtils {
@@ -127,6 +128,8 @@ public enum DominoUtils {
 			result = DominoUtils.getSession(((ACL) base).getParent());
 		} else if (base instanceof Item) {
 			result = DominoUtils.getSession(((Item) base).getParent());
+		} else if (base instanceof DocumentCollection) {
+			result = DominoUtils.getSession(((DocumentCollection) base).getParent());
 		}
 		return result;
 	}

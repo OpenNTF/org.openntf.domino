@@ -22,45 +22,48 @@ public enum ScratchTest {
 		// TODO Auto-generated constructor stub
 	}
 
-	private static void doSomeLotusStuff() {
-		Session s = Factory.getSession();
-		System.out.println("Name: " + s.getEffectiveUserName());
-		Database db = s.getDatabase("", "log.nsf");
-		Vector<Form> forms = db.getForms();
-		for (Form form : forms) {
-			System.out.println("Form : " + form.getName() + " (" + DominoUtils.getUnidFromNotesUrl(form.getNotesURL()) + ")");
-		}
-
-	}
-
 	static class Doer implements Runnable {
 
 		@Override
 		public void run() {
+			long start = System.nanoTime();
+			int nameCount = 0;
+			int docCount = 0;
 			Session s = Factory.getSession();
 			Name sname = s.getUserNameObject();
 			DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
 			System.out.println(df.format(new Date()) + " Name: " + sname.getCanonical());
 			Database db = s.getDatabase("", "events4.nsf");
 			Vector<Form> forms = db.getForms();
-			System.out.println("BEGINNING ITERATION of Forms");
+			System.out.println("Thread " + Thread.currentThread().getName() + " BEGINNING ITERATION of Forms");
 			for (Form form : forms) {
-				System.out.println("Form : " + form.getName() + " (" + DominoUtils.getUnidFromNotesUrl(form.getNotesURL()) + ")");
+				// System.out.println("Form : " + form.getName() + " (" + DominoUtils.getUnidFromNotesUrl(form.getNotesURL()) + ")");
 				Document d = form.getDocument();
 				Vector v = d.getItemValue("$UpdatedBy");
 				Name n = s.createName((String) v.get(0));
-				System.out.println("Last Editor: " + n);
+				nameCount++;
+				docCount++;
+				// System.out.println("Last Editor: " + n);
 			}
 			System.out.println("ENDING ITERATION of Forms");
+			System.out.println("Thread " + Thread.currentThread().getName() + " BEGINNING ITERATION of Documents");
 			DocumentCollection dc = db.getAllDocuments();
-			Document doc = dc.getFirstDocument();
-			while (doc != null) {
+			for (Document doc : dc) {
+				docCount++;
 				Vector v = doc.getItemValue("$UpdatedBy");
-				Name n = s.createName((String) v.get(0));
-				// System.out.println("Last Editor: " + n);
-				doc = dc.getNextDocument(doc);
+				for (Object o : v) {
+					if (o instanceof String) {
+						Name n = s.createName((String) o);
+						nameCount++;
+					}
+				}
 			}
 
+			System.out.println("ENDING ITERATION of Documents");
+			System.out.println("Thread " + Thread.currentThread().getName() + " processed " + nameCount + " names and " + docCount
+					+ " docs without recycling.");
+			long elapsed = System.nanoTime() - start;
+			System.out.println("Thread " + Thread.currentThread().getName() + " elapsed time: " + elapsed / 1000000 + "ms");
 		}
 
 	}
@@ -75,6 +78,7 @@ public enum ScratchTest {
 		DominoThread dt3 = new DominoThread(new Doer(), "Scratch Test3");
 		DominoThread dt4 = new DominoThread(new Doer(), "Scratch Test4");
 		DominoThread dt5 = new DominoThread(new Doer(), "Scratch Test5");
+
 		DominoThread dt6 = new DominoThread(new Doer(), "Scratch Test6");
 		dt.start();
 		try {
@@ -129,13 +133,6 @@ public enum ScratchTest {
 		// }
 		// ref = drq.poll();
 		// }
-
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			DominoUtils.handleException(e);
-
-		}
 
 		// NotesThread.stermThread();
 	}

@@ -125,7 +125,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			}
 			if (o instanceof org.openntf.domino.impl.Base) {
 				Base base = (org.openntf.domino.impl.Base) o;
-				System.out.println("Recycling an OpenNTF object of type " + base.getClass().getName());
+				// System.out.println("Recycling an OpenNTF object of type " + base.getClass().getName());
 				if (recycle((lotus.domino.local.NotesBase) base.getDelegate())) {
 					base.recycled_ = true;
 				}
