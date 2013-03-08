@@ -1,7 +1,5 @@
 package org.openntf.domino;
 
-import java.util.Vector;
-
 import lotus.domino.DateTime;
 import lotus.domino.DocumentCollection;
 
@@ -10,9 +8,7 @@ public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.dom
 	@Override
 	public Agent getCurrentAgent();
 
-	public lotus.domino.Database getCurrentDatabase();
-
-	public lotus.domino.AgentContext getDelegate();
+	public Database getCurrentDatabase();
 
 	@Override
 	public Document getDocumentContext();
@@ -33,36 +29,21 @@ public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.dom
 	public DocumentCollection getUnprocessedDocuments();
 
 	@Override
-	public void recycle();
+	public DocumentCollection unprocessedFTSearch(String query, int maxDocs);
 
 	@Override
-	public void recycle(Vector arg0);
+	public DocumentCollection unprocessedFTSearch(String query, int maxDocs, int sortOpt, int otherOpt);
 
 	@Override
-	public DocumentCollection unprocessedFTSearch(String arg0, int arg1);
+	public DocumentCollection unprocessedFTSearchRange(String query, int maxDocs, int sortOpt);
 
 	@Override
-	public DocumentCollection unprocessedFTSearch(String arg0, int arg1, int arg2, int arg3);
+	public DocumentCollection unprocessedFTSearchRange(String query, int maxDocs, int sortOpt, int otherOpt, int start);
 
 	@Override
-	public DocumentCollection unprocessedFTSearchRange(String arg0, int arg1, int arg2);
+	public DocumentCollection unprocessedSearch(String formula, DateTime limit, int maxDocs);
 
 	@Override
-	public DocumentCollection unprocessedFTSearchRange(String arg0, int arg1, int arg2, int arg3, int arg4);
-
-	@Override
-	public DocumentCollection unprocessedSearch(String arg0, DateTime arg1, int arg2);
-
-	@Override
-	public void updateProcessedDoc(lotus.domino.Document arg0);
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
+	public void updateProcessedDoc(lotus.domino.Document doc);
 
 }

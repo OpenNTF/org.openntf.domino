@@ -117,9 +117,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public lotus.domino.Database createCopy(String arg0, String arg1, int arg2) {
+	public Database createCopy(String arg0, String arg1, int arg2) {
 		try {
-			return getDelegate().createCopy(arg0, arg1, arg2);
+			return Factory.fromLotus(getDelegate().createCopy(arg0, arg1, arg2), Database.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -127,9 +127,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public lotus.domino.Database createCopy(String arg0, String arg1) {
+	public Database createCopy(String arg0, String arg1) {
 		try {
-			return getDelegate().createCopy(arg0, arg1);
+			return Factory.fromLotus(getDelegate().createCopy(arg0, arg1), Database.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -246,9 +246,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public lotus.domino.Database createReplica(String arg0, String arg1) {
+	public Database createReplica(String arg0, String arg1) {
 		try {
-			return getDelegate().createReplica(arg0, arg1);
+			return Factory.fromLotus(getDelegate().createReplica(arg0, arg1), Database.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

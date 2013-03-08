@@ -5,8 +5,6 @@ import java.util.Vector;
 import lotus.domino.ACLEntry;
 import lotus.domino.Database;
 
-;
-
 public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL {
 
 	@Override
@@ -20,9 +18,6 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL {
 
 	@Override
 	public String getAdministrationServer();
-
-	@Override
-	public lotus.domino.ACL getDelegate();
 
 	@Override
 	public ACLEntry getEntry(String name);

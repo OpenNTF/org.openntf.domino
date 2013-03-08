@@ -15,9 +15,6 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent {
 	public String getCommonOwner();
 
 	@Override
-	public lotus.domino.Agent getDelegate();
-
-	@Override
 	public String getHttpURL();
 
 	@Override
@@ -81,34 +78,28 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent {
 	public boolean lock();
 
 	@Override
-	public boolean lock(boolean arg0);
+	public boolean lock(boolean provisionalOk);
 
 	@Override
-	public boolean lock(String arg0);
+	public boolean lock(String name);
 
 	@Override
-	public boolean lock(String arg0, boolean arg1);
+	public boolean lock(String name, boolean provisionalOk);
 
 	@Override
-	public boolean lock(Vector arg0);
+	public boolean lock(Vector names);
 
 	@Override
-	public boolean lock(Vector arg0, boolean arg1);
+	public boolean lock(Vector names, boolean provisionalOk);
 
 	@Override
 	public boolean lockProvisional();
 
 	@Override
-	public boolean lockProvisional(String arg0);
+	public boolean lockProvisional(String name);
 
 	@Override
-	public boolean lockProvisional(Vector arg0);
-
-	@Override
-	public void recycle();
-
-	@Override
-	public void recycle(Vector arg0);
+	public boolean lockProvisional(Vector names);
 
 	@Override
 	public void remove();
@@ -117,42 +108,33 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent {
 	public void run();
 
 	@Override
-	public void run(String arg0);
+	public void run(String noteid);
 
 	@Override
 	public int runOnServer();
 
 	@Override
-	public int runOnServer(String arg0);
+	public int runOnServer(String noteid);
 
 	@Override
-	public void runWithDocumentContext(Document arg0);
+	public void runWithDocumentContext(Document doc);
 
 	@Override
-	public void runWithDocumentContext(Document arg0, String arg1);
+	public void runWithDocumentContext(Document doc, String noteid);
 
 	@Override
 	public void save();
 
 	@Override
-	public void setEnabled(boolean arg0);
+	public void setEnabled(boolean flag);
 
 	@Override
-	public void setProhibitDesignUpdate(boolean arg0);
+	public void setProhibitDesignUpdate(boolean flag);
 
 	@Override
-	public void setServerName(String arg0);
+	public void setServerName(String server);
 
 	@Override
 	public void unlock();
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
 
 }
