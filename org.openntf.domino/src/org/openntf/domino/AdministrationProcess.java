@@ -2,9 +2,6 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
-import lotus.domino.DateTime;
-import lotus.domino.Session;
-
 public interface AdministrationProcess extends Base<lotus.domino.AdministrationProcess>, lotus.domino.AdministrationProcess {
 
 	@Override
@@ -173,7 +170,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 	public void setCertificateAuthorityOrg(String org);
 
 	@Override
-	public void setCertificateExpiration(DateTime expiration);
+	public void setCertificateExpiration(lotus.domino.DateTime expiration);
 
 	@Override
 	public void setCertifierFile(String fileSpec);

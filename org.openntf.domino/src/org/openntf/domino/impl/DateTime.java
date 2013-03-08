@@ -4,9 +4,9 @@ import java.util.Calendar;
 import java.util.Date;
 
 import lotus.domino.NotesException;
-import lotus.domino.Session;
 
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.DateTime> implements org.openntf.domino.DateTime {
 	lotus.domino.DateTime temp_;
@@ -168,7 +168,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 
 	public Session getParent() {
 		try {
-			return getDelegate().getParent();
+			return Factory.fromLotus(getDelegate().getParent(), Session.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -299,7 +299,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 
 	public int timeDifference(lotus.domino.DateTime arg0) {
 		try {
-			return getDelegate().timeDifference(arg0);
+			return getDelegate().timeDifference((lotus.domino.DateTime) Factory.toLotus(arg0));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return 0;
@@ -309,7 +309,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 
 	public double timeDifferenceDouble(lotus.domino.DateTime arg0) {
 		try {
-			return getDelegate().timeDifferenceDouble(arg0);
+			return getDelegate().timeDifferenceDouble((lotus.domino.DateTime) Factory.toLotus(arg0));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return 0d;

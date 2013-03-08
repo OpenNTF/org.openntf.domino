@@ -1,7 +1,5 @@
 package org.openntf.domino.impl;
 
-import lotus.domino.Session;
-
 public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.DateRange> implements org.openntf.domino.DateRange,
 		lotus.domino.DateRange {
 

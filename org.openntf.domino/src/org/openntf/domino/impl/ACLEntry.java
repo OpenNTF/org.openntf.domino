@@ -2,11 +2,10 @@ package org.openntf.domino.impl;
 
 import java.util.Vector;
 
-import lotus.domino.ACL;
-import lotus.domino.Name;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACLEntry> implements org.openntf.domino.ACLEntry {
 
@@ -55,7 +54,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	@Override
 	public Name getNameObject() {
 		try {
-			return getDelegate().getNameObject();
+			return Factory.fromLotus(getDelegate().getNameObject(), Name.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -65,7 +64,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	@Override
 	public ACL getParent() {
 		try {
-			return getDelegate().getParent();
+			return Factory.fromLotus(getDelegate().getParent(), ACL.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -361,9 +360,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	}
 
 	@Override
-	public void setName(Name n) {
+	public void setName(lotus.domino.Name n) {
 		try {
-			getDelegate().setName(n);
+			getDelegate().setName((lotus.domino.Name) Factory.toLotus(n));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

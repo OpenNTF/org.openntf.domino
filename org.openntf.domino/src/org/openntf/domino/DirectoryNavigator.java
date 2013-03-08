@@ -17,10 +17,10 @@ public interface DirectoryNavigator extends Base<lotus.domino.DirectoryNavigator
 	public long findNextName();
 
 	@Override
-	public boolean findNthMatch(long arg0);
+	public boolean findNthMatch(long n);
 
 	@Override
-	public long findNthName(int arg0);
+	public long findNthName(int n);
 
 	@Override
 	public String getCurrentItem();
@@ -38,36 +38,18 @@ public interface DirectoryNavigator extends Base<lotus.domino.DirectoryNavigator
 	public String getCurrentView();
 
 	@Override
-	public lotus.domino.DirectoryNavigator getDelegate();
-
-	@Override
 	public Vector getFirstItemValue();
 
 	@Override
 	public Vector getNextItemValue();
 
 	@Override
-	public Vector getNthItemValue(int arg0);
+	public Vector getNthItemValue(int n);
 
 	@Override
 	public boolean isMatchLocated();
 
 	@Override
 	public boolean isNameLocated();
-
-	@Override
-	public void recycle();
-
-	@Override
-	public void recycle(Vector arg0);
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
 
 }

@@ -2,9 +2,6 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
-import lotus.domino.ACLEntry;
-import lotus.domino.Database;
-
 public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL {
 
 	@Override
@@ -32,7 +29,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL {
 	public ACLEntry getNextEntry();
 
 	@Override
-	public ACLEntry getNextEntry(ACLEntry entry);
+	public ACLEntry getNextEntry(lotus.domino.ACLEntry entry);
 
 	@Override
 	public Database getParent();

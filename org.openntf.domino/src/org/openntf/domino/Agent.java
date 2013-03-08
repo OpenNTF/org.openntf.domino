@@ -2,10 +2,6 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
-import lotus.domino.Database;
-import lotus.domino.DateTime;
-import lotus.domino.Document;
-
 public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent {
 
 	@Override
@@ -117,10 +113,10 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent {
 	public int runOnServer(String noteid);
 
 	@Override
-	public void runWithDocumentContext(Document doc);
+	public void runWithDocumentContext(lotus.domino.Document doc);
 
 	@Override
-	public void runWithDocumentContext(Document doc, String noteid);
+	public void runWithDocumentContext(lotus.domino.Document doc, String noteid);
 
 	@Override
 	public void save();

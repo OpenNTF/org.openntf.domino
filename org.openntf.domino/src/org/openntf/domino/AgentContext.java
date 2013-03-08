@@ -1,8 +1,5 @@
 package org.openntf.domino;
 
-import lotus.domino.DateTime;
-import lotus.domino.DocumentCollection;
-
 public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.domino.AgentContext {
 
 	@Override
@@ -41,7 +38,7 @@ public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.dom
 	public DocumentCollection unprocessedFTSearchRange(String query, int maxDocs, int sortOpt, int otherOpt, int start);
 
 	@Override
-	public DocumentCollection unprocessedSearch(String formula, DateTime limit, int maxDocs);
+	public DocumentCollection unprocessedSearch(String formula, lotus.domino.DateTime limit, int maxDocs);
 
 	@Override
 	public void updateProcessedDoc(lotus.domino.Document doc);

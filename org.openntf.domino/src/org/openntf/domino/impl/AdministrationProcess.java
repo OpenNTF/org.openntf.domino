@@ -38,11 +38,8 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	@Override
 	public String addInternetCertificateToUser(String user, String keyringFile, String keyringPassword, lotus.domino.DateTime expiration) {
 		try {
-			if (expiration instanceof DateTime) {
-				return getDelegate()
-						.addInternetCertificateToUser(user, keyringFile, keyringPassword, ((DateTime) expiration).getDelegate());
-			}
-			return getDelegate().addInternetCertificateToUser(user, keyringFile, keyringPassword, expiration);
+			return getDelegate().addInternetCertificateToUser(user, keyringFile, keyringPassword,
+					(lotus.domino.DateTime) Factory.toLotus(expiration));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -562,11 +559,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	@Override
 	public void setCertificateExpiration(lotus.domino.DateTime expiration) {
 		try {
-			if (expiration instanceof DateTime) {
-				getDelegate().setCertificateExpiration(((DateTime) expiration).getDelegate());
-			} else {
-				getDelegate().setCertificateExpiration(expiration);
-			}
+			getDelegate().setCertificateExpiration((lotus.domino.DateTime) Factory.toLotus(expiration));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

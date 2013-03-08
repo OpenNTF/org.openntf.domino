@@ -9,17 +9,15 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Vector;
 
-import lotus.domino.Database;
-import lotus.domino.DocumentCollection;
 import lotus.domino.EmbeddedObject;
 import lotus.domino.Item;
 import lotus.domino.MIMEEntity;
 import lotus.domino.NotesException;
 import lotus.domino.RichTextItem;
-import lotus.domino.View;
 import lotus.domino.XSLTResultTarget;
 
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 public class Document extends Base<org.openntf.domino.Document, lotus.domino.Document> implements org.openntf.domino.Document {
 
@@ -70,7 +68,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void attachVCard(lotus.domino.Base document) {
 		try {
-			getDelegate().attachVCard(document);
+			getDelegate().attachVCard(Factory.toLotus(document));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -79,7 +77,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void attachVCard(lotus.domino.Base document, String arg1) {
 		try {
-			getDelegate().attachVCard(document, arg1);
+			getDelegate().attachVCard(Factory.toLotus(document), arg1);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -155,26 +153,16 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void copyAllItems(lotus.domino.Document doc, boolean replace) {
 		try {
-			getDelegate().copyAllItems(doc, replace);
+			getDelegate().copyAllItems((lotus.domino.Document) Factory.toLotus(doc), replace);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 	}
 
 	@Override
-	public Item copyItem(Item item) {
+	public Item copyItem(lotus.domino.Item item) {
 		try {
-			return getDelegate().copyItem(item);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
-	}
-
-	@Override
-	public Item copyItem(Item item, String newname) {
-		try {
-			return getDelegate().copyItem(item, newname);
+			return getDelegate().copyItem((lotus.domino.Item) Factory.toLotus(item));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -182,9 +170,19 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public lotus.domino.Document copyToDatabase(Database db) {
+	public Item copyItem(lotus.domino.Item item, String newname) {
 		try {
-			return getDelegate().copyToDatabase(db);
+			return getDelegate().copyItem((lotus.domino.Item) Factory.toLotus(item), newname);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
+	}
+
+	@Override
+	public Document copyToDatabase(lotus.domino.Database db) {
+		try {
+			return Factory.fromLotus(getDelegate().copyToDatabase((lotus.domino.Database) Factory.toLotus(db)), Document.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -212,9 +210,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public lotus.domino.Document createReplyMessage(boolean toall) {
+	public Document createReplyMessage(boolean toall) {
 		try {
-			return getDelegate().createReplyMessage(toall);
+			return Factory.fromLotus(getDelegate().createReplyMessage(toall), Document.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -395,7 +393,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public Object getItemValueCustomData(String itemname) throws IOException, ClassNotFoundException, NotesException {
+	public Object getItemValueCustomData(String itemname) throws IOException, ClassNotFoundException {
 		try {
 			return getDelegate().getItemValueCustomData(itemname);
 		} catch (NotesException e) {
@@ -405,7 +403,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public Object getItemValueCustomData(String itemname, String datatypename) throws IOException, ClassNotFoundException, NotesException {
+	public Object getItemValueCustomData(String itemname, String datatypename) throws IOException, ClassNotFoundException {
 		try {
 			return getDelegate().getItemValueCustomData(itemname, datatypename);
 		} catch (NotesException e) {
@@ -566,7 +564,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public Database getParentDatabase() {
 		try {
-			return getDelegate().getParentDatabase();
+			return Factory.fromLotus(getDelegate().getParentDatabase(), Database.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -586,7 +584,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public View getParentView() {
 		try {
-			return getDelegate().getParentView();
+			return Factory.fromLotus(getDelegate().getParentView(), View.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -627,7 +625,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public DocumentCollection getResponses() {
 		try {
-			return getDelegate().getResponses();
+			return Factory.fromLotus(getDelegate().getResponses(), DocumentCollection.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -924,7 +922,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void makeResponse(lotus.domino.Document doc) {
 		try {
-			getDelegate().makeResponse(doc);
+			getDelegate().makeResponse((lotus.domino.Document) Factory.toLotus(doc));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1023,9 +1021,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public boolean renderToRTItem(RichTextItem rtitem) {
+	public boolean renderToRTItem(lotus.domino.RichTextItem rtitem) {
 		try {
-			getDelegate().renderToRTItem(rtitem);
+			getDelegate().renderToRTItem((lotus.domino.RichTextItem) Factory.toLotus(rtitem));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

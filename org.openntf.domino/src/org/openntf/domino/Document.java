@@ -4,28 +4,25 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Vector;
 
-import lotus.domino.Database;
-import lotus.domino.DocumentCollection;
-import lotus.domino.EmbeddedObject;
-import lotus.domino.Item;
-import lotus.domino.MIMEEntity;
 import lotus.domino.NotesException;
-import lotus.domino.RichTextItem;
-import lotus.domino.View;
 import lotus.domino.XSLTResultTarget;
 
 public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document {
 	@Override
-	public Item appendItemValue(String name);
+	// TODO Switch to new class
+	public lotus.domino.Item appendItemValue(String name);
 
 	@Override
-	public Item appendItemValue(String name, double value);
+	// TODO Switch to new class
+	public lotus.domino.Item appendItemValue(String name, double value);
 
 	@Override
-	public Item appendItemValue(String name, int value);
+	// TODO Switch to new class
+	public lotus.domino.Item appendItemValue(String name, int value);
 
 	@Override
-	public Item appendItemValue(String name, Object value);
+	// TODO Switch to new class
+	public lotus.domino.Item appendItemValue(String name, Object value);
 
 	@Override
 	public void attachVCard(lotus.domino.Base document);
@@ -58,25 +55,30 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public void copyAllItems(lotus.domino.Document doc, boolean replace);
 
 	@Override
-	public Item copyItem(Item item);
+	// TODO Switch to new class
+	public lotus.domino.Item copyItem(lotus.domino.Item item);
 
 	@Override
-	public Item copyItem(Item item, String newname);
+	// TODO Switch to new class
+	public lotus.domino.Item copyItem(lotus.domino.Item item, String newname);
 
 	@Override
-	public lotus.domino.Document copyToDatabase(Database db);
+	public Document copyToDatabase(lotus.domino.Database db);
 
 	@Override
-	public MIMEEntity createMIMEEntity();
+	// TODO Switch to new class
+	public lotus.domino.MIMEEntity createMIMEEntity();
 
 	@Override
-	public MIMEEntity createMIMEEntity(String itemName);
+	// TODO Switch to new class
+	public lotus.domino.MIMEEntity createMIMEEntity(String itemName);
 
 	@Override
-	public lotus.domino.Document createReplyMessage(boolean toall);
+	public Document createReplyMessage(boolean toall);
 
 	@Override
-	public RichTextItem createRichTextItem(String name);
+	// TODO Switch to new class
+	public lotus.domino.RichTextItem createRichTextItem(String name);
 
 	@Override
 	public void encrypt();
@@ -91,7 +93,8 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public void generateXML(Writer w) throws NotesException, IOException;
 
 	@Override
-	public EmbeddedObject getAttachment(String filename);
+	// TODO Switch to new class
+	public lotus.domino.EmbeddedObject getAttachment(String filename);
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -104,9 +107,6 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	@Override
 	public DateTime getCreated();
 
-	@Override
-	public lotus.domino.Document getDelegate();
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector getEmbeddedObjects();
@@ -116,7 +116,8 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public Vector getEncryptionKeys();
 
 	@Override
-	public Item getFirstItem(String name);
+	// TODO Switch to new class
+	public lotus.domino.Item getFirstItem(String name);
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -175,10 +176,12 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public Vector getLockHolders();
 
 	@Override
-	public MIMEEntity getMIMEEntity();
+	// TODO Switch to new class
+	public lotus.domino.MIMEEntity getMIMEEntity();
 
 	@Override
-	public MIMEEntity getMIMEEntity(String itemName);
+	// TODO Switch to new class
+	public lotus.domino.MIMEEntity getMIMEEntity(String itemName);
 
 	@Override
 	public String getNameOfProfile();
@@ -339,19 +342,25 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public boolean removePermanently(boolean force);
 
 	@Override
-	public boolean renderToRTItem(RichTextItem rtitem);
+	public boolean renderToRTItem(lotus.domino.RichTextItem rtitem);
 
 	@Override
-	public Item replaceItemValue(String name, Object arg1);
+	// TODO Switch to new class
+	public lotus.domino.Item replaceItemValue(String name, Object arg1);
 
 	@Override
-	public Item replaceItemValueCustomData(String name, Object userobj) throws IOException, NotesException;
+	// TODO Switch to new class
+	public lotus.domino.Item replaceItemValueCustomData(String name, Object userobj) throws IOException, NotesException;
 
 	@Override
-	public Item replaceItemValueCustomData(String name, String datatypename, Object userobj) throws IOException, NotesException;
+	// TODO Switch to new class
+	public lotus.domino.Item replaceItemValueCustomData(String name, String datatypename, Object userobj) throws IOException,
+			NotesException;
 
 	@Override
-	public Item replaceItemValueCustomDataBytes(String name, String datatypename, byte[] bytearray) throws IOException, NotesException;
+	// TODO Switch to new class
+	public lotus.domino.Item replaceItemValueCustomDataBytes(String name, String datatypename, byte[] bytearray) throws IOException,
+			NotesException;
 
 	@Override
 	public boolean save();

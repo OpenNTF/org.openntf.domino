@@ -2,17 +2,6 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
-import lotus.domino.ACL;
-import lotus.domino.Agent;
-import lotus.domino.Document;
-import lotus.domino.DocumentCollection;
-import lotus.domino.Form;
-import lotus.domino.NoteCollection;
-import lotus.domino.Outline;
-import lotus.domino.Replication;
-import lotus.domino.Session;
-import lotus.domino.View;
-
 import org.openntf.domino.annotations.Legacy;
 
 public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database> {
@@ -55,22 +44,24 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public void createFTIndex(int options, boolean recreate);
 
 	@Override
-	public NoteCollection createNoteCollection(boolean selectAllFlag);
+	// TODO Switch to new class
+	public lotus.domino.NoteCollection createNoteCollection(boolean selectAllFlag);
 
 	@Override
-	public Outline createOutline(String name);
+	// TODO Switch to new class
+	public lotus.domino.Outline createOutline(String name);
 
 	@Override
-	public Outline createOutline(String name, boolean defaultOutline);
+	public lotus.domino.Outline createOutline(String name, boolean defaultOutline);
 
 	@Override
 	public View createQueryView(String viewName, String query);
 
 	@Override
-	public View createQueryView(String viewName, String query, View templateView);
+	public View createQueryView(String viewName, String query, lotus.domino.View templateView);
 
 	@Override
-	public View createQueryView(String viewName, String query, View templateView, boolean prohibitDesignRefresh);
+	public View createQueryView(String viewName, String query, lotus.domino.View templateView, boolean prohibitDesignRefresh);
 
 	@Override
 	public Database createReplica(String server, String dbFile);
@@ -85,10 +76,10 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public View createView(String viewName, String selectionFormula);
 
 	@Override
-	public View createView(String viewName, String selectionFormula, View templateView);
+	public View createView(String viewName, String selectionFormula, lotus.domino.View templateView);
 
 	@Override
-	public View createView(String viewName, String selectionFormula, View templateView, boolean prohibitDesignRefresh);
+	public View createView(String viewName, String selectionFormula, lotus.domino.View templateView, boolean prohibitDesignRefresh);
 
 	@Override
 	public void enableFolder(String folder);
@@ -118,11 +109,12 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public ACL getACL();
 
 	@Override
-	public Agent getAgent(String name);
+	// TODO Switch to new class
+	public lotus.domino.Agent getAgent(String name);
 
 	@Override
 	@Legacy(Legacy.INTERFACES_WARNING)
-	public Vector<Agent> getAgents();
+	public Vector<lotus.domino.Agent> getAgents();
 
 	@Override
 	public DocumentCollection getAllDocuments();
@@ -180,7 +172,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public boolean getFolderReferencesEnabled();
 
 	@Override
-	public Form getForm(String name);
+	// TODO Switch to new class
+	public lotus.domino.Form getForm(String name);
 
 	@Override
 	@Legacy(Legacy.INTERFACES_WARNING)
@@ -233,7 +226,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public boolean getOption(int optionName);
 
 	@Override
-	public Outline getOutline(String outlineName);
+	// TODO Switch to new class
+	public lotus.domino.Outline getOutline(String outlineName);
 
 	@Override
 	public Session getParent();
@@ -251,7 +245,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public String getReplicaID();
 
 	@Override
-	public Replication getReplicationInfo();
+	// TODO Switch to new class
+	public lotus.domino.Replication getReplicationInfo();
 
 	@Override
 	public String getServer();
@@ -288,7 +283,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	@Override
 	@Legacy(Legacy.INTERFACES_WARNING)
-	public org.openntf.domino.impl.Vector<View> getViews();
+	public Vector<View> getViews();
 
 	@Override
 	public void grantAccess(String name, int level);

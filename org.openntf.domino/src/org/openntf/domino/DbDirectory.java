@@ -1,35 +1,30 @@
 package org.openntf.domino;
 
-import java.util.Vector;
-
-import lotus.domino.DateTime;
-import lotus.domino.Session;
-
 public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domino.DbDirectory {
 
 	@Override
-	public Database createDatabase(String arg0);
+	public Database createDatabase(String dbFile);
 
 	@Override
-	public Database createDatabase(String arg0, boolean arg1);
+	public Database createDatabase(String dbFile, boolean open);
 
 	@Override
 	public String getClusterName();
 
 	@Override
-	public String getClusterName(String arg0);
+	public String getClusterName(String server);
 
 	@Override
-	public lotus.domino.DbDirectory getDelegate();
+	public DbDirectory getDelegate();
 
 	@Override
-	public lotus.domino.Database getFirstDatabase(int arg0);
+	public Database getFirstDatabase(int type);
 
 	@Override
 	public String getName();
 
 	@Override
-	public lotus.domino.Database getNextDatabase();
+	public Database getNextDatabase();
 
 	@Override
 	public Session getParent();
@@ -38,36 +33,21 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 	public boolean isHonorShowInOpenDatabaseDialog();
 
 	@Override
-	public lotus.domino.Database openDatabase(String arg0);
+	public Database openDatabase(String dbFile);
 
 	@Override
-	public lotus.domino.Database openDatabase(String arg0, boolean arg1);
+	public Database openDatabase(String dbFile, boolean failover);
 
 	@Override
-	public lotus.domino.Database openDatabaseByReplicaID(String arg0);
+	public Database openDatabaseByReplicaID(String replicaId);
 
 	@Override
-	public lotus.domino.Database openDatabaseIfModified(String arg0, DateTime arg1);
+	public Database openDatabaseIfModified(String dbFile, lotus.domino.DateTime date);
 
 	@Override
-	public lotus.domino.Database openMailDatabase();
+	public Database openMailDatabase();
 
 	@Override
-	public void recycle();
-
-	@Override
-	public void recycle(Vector arg0);
-
-	@Override
-	public void setHonorShowInOpenDatabaseDialog(boolean arg0);
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
+	public void setHonorShowInOpenDatabaseDialog(boolean flag);
 
 }
