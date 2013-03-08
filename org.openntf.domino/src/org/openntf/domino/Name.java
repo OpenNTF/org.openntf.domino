@@ -38,9 +38,6 @@ public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name {
 	public String getCountry();
 
 	@Override
-	public lotus.domino.Name getDelegate();
-
-	@Override
 	public String getGeneration();
 
 	@Override
@@ -82,15 +79,5 @@ public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name {
 	@Override
 	public boolean isHierarchical();
 
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
-
-	@Override
 	public void recycle();
 }

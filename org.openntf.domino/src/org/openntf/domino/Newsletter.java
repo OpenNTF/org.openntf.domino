@@ -1,17 +1,12 @@
 package org.openntf.domino;
 
-import java.util.Vector;
-
 public interface Newsletter extends Base<lotus.domino.Newsletter>, lotus.domino.Newsletter {
 
 	@Override
-	public lotus.domino.Document formatDocument(lotus.domino.Database arg0, int arg1);
+	public lotus.domino.Document formatDocument(lotus.domino.Database database, int index);
 
 	@Override
-	public lotus.domino.Document formatMsgWithDoclinks(lotus.domino.Database arg0);
-
-	@Override
-	public lotus.domino.Newsletter getDelegate();
+	public lotus.domino.Document formatMsgWithDoclinks(lotus.domino.Database database);
 
 	@Override
 	public Session getParent();
@@ -26,27 +21,12 @@ public interface Newsletter extends Base<lotus.domino.Newsletter>, lotus.domino.
 	public boolean isDoSubject();
 
 	@Override
-	public void recycle();
+	public void setDoScore(boolean flag);
 
 	@Override
-	public void recycle(Vector arg0);
+	public void setDoSubject(boolean flag);
 
 	@Override
-	public void setDoScore(boolean arg0);
-
-	@Override
-	public void setDoSubject(boolean arg0);
-
-	@Override
-	public void setSubjectItemName(String arg0);
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
+	public void setSubjectItemName(String name);
 
 }
