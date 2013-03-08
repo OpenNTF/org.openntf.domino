@@ -28,6 +28,29 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	protected D delegate_; // NTF final???
 	private DominoReference ref_; // this is the PhantomReference that will be enqueued when this Base object HAS BEEN be GC'ed
 	private boolean encapsulated_ = false;
+	private lotus.domino.Base parent_;
+	private Set<lotus.domino.Base> children_;
+
+	protected Set<lotus.domino.Base> getChildren() {
+		if (children_ == null) {
+			children_ = new HashSet<lotus.domino.Base>();
+		}
+		return children_;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	void parent(org.openntf.domino.impl.Base child) {
+		child.parent_ = this;
+		getChildren().add(child);
+	}
+
+	lotus.domino.Base getParent() {
+		return parent_;
+	}
+
+	void setParent(lotus.domino.Base parent) {
+		parent_ = parent;
+	}
 
 	protected Base(D delegate) {
 		if (delegate != null) {
@@ -37,6 +60,13 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			refSet.add(delegate);
 		} else {
 			encapsulated_ = true;
+		}
+	}
+
+	protected Base(D delegate, Base<?, ?> parent) {
+		this(delegate);
+		if (parent != null) {
+			parent(parent);
 		}
 	}
 

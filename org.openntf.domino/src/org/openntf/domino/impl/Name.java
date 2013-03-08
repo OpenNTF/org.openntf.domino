@@ -6,6 +6,9 @@ import lotus.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 
 public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> implements org.openntf.domino.Name {
+
+	private static final long serialVersionUID = 1L;
+
 	private static final String DEFAULT_STR = "";
 
 	private String abbreviated = DEFAULT_STR;
@@ -169,6 +172,176 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 
 	public boolean isHierarchical() {
 		return hierarchical;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((abbreviated == null) ? 0 : abbreviated.hashCode());
+		result = prime * result + ((addr821 == null) ? 0 : addr821.hashCode());
+		result = prime * result + ((addr822comment1 == null) ? 0 : addr822comment1.hashCode());
+		result = prime * result + ((addr822comment2 == null) ? 0 : addr822comment2.hashCode());
+		result = prime * result + ((addr822comment3 == null) ? 0 : addr822comment3.hashCode());
+		result = prime * result + ((addr822localpart == null) ? 0 : addr822localpart.hashCode());
+		result = prime * result + ((addr822phrase == null) ? 0 : addr822phrase.hashCode());
+		result = prime * result + ((admd == null) ? 0 : admd.hashCode());
+		result = prime * result + ((canonical == null) ? 0 : canonical.hashCode());
+		result = prime * result + ((common == null) ? 0 : common.hashCode());
+		result = prime * result + ((country == null) ? 0 : country.hashCode());
+		result = prime * result + ((generation == null) ? 0 : generation.hashCode());
+		result = prime * result + ((given == null) ? 0 : given.hashCode());
+		result = prime * result + (hierarchical ? 1231 : 1237);
+		result = prime * result + ((initials == null) ? 0 : initials.hashCode());
+		result = prime * result + ((keyword == null) ? 0 : keyword.hashCode());
+		result = prime * result + ((language == null) ? 0 : language.hashCode());
+		result = prime * result + ((organization == null) ? 0 : organization.hashCode());
+		result = prime * result + ((orgunit1 == null) ? 0 : orgunit1.hashCode());
+		result = prime * result + ((orgunit2 == null) ? 0 : orgunit2.hashCode());
+		result = prime * result + ((orgunit3 == null) ? 0 : orgunit3.hashCode());
+		result = prime * result + ((orgunit4 == null) ? 0 : orgunit4.hashCode());
+		result = prime * result + ((prmd == null) ? 0 : prmd.hashCode());
+		result = prime * result + ((surname == null) ? 0 : surname.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Name other = (Name) obj;
+		if (abbreviated == null) {
+			if (other.abbreviated != null)
+				return false;
+		} else if (!abbreviated.equals(other.abbreviated))
+			return false;
+		if (addr821 == null) {
+			if (other.addr821 != null)
+				return false;
+		} else if (!addr821.equals(other.addr821))
+			return false;
+		if (addr822comment1 == null) {
+			if (other.addr822comment1 != null)
+				return false;
+		} else if (!addr822comment1.equals(other.addr822comment1))
+			return false;
+		if (addr822comment2 == null) {
+			if (other.addr822comment2 != null)
+				return false;
+		} else if (!addr822comment2.equals(other.addr822comment2))
+			return false;
+		if (addr822comment3 == null) {
+			if (other.addr822comment3 != null)
+				return false;
+		} else if (!addr822comment3.equals(other.addr822comment3))
+			return false;
+		if (addr822localpart == null) {
+			if (other.addr822localpart != null)
+				return false;
+		} else if (!addr822localpart.equals(other.addr822localpart))
+			return false;
+		if (addr822phrase == null) {
+			if (other.addr822phrase != null)
+				return false;
+		} else if (!addr822phrase.equals(other.addr822phrase))
+			return false;
+		if (admd == null) {
+			if (other.admd != null)
+				return false;
+		} else if (!admd.equals(other.admd))
+			return false;
+		if (canonical == null) {
+			if (other.canonical != null)
+				return false;
+		} else if (!canonical.equals(other.canonical))
+			return false;
+		if (common == null) {
+			if (other.common != null)
+				return false;
+		} else if (!common.equals(other.common))
+			return false;
+		if (country == null) {
+			if (other.country != null)
+				return false;
+		} else if (!country.equals(other.country))
+			return false;
+		if (generation == null) {
+			if (other.generation != null)
+				return false;
+		} else if (!generation.equals(other.generation))
+			return false;
+		if (given == null) {
+			if (other.given != null)
+				return false;
+		} else if (!given.equals(other.given))
+			return false;
+		if (hierarchical != other.hierarchical)
+			return false;
+		if (initials == null) {
+			if (other.initials != null)
+				return false;
+		} else if (!initials.equals(other.initials))
+			return false;
+		if (keyword == null) {
+			if (other.keyword != null)
+				return false;
+		} else if (!keyword.equals(other.keyword))
+			return false;
+		if (language == null) {
+			if (other.language != null)
+				return false;
+		} else if (!language.equals(other.language))
+			return false;
+		if (organization == null) {
+			if (other.organization != null)
+				return false;
+		} else if (!organization.equals(other.organization))
+			return false;
+		if (orgunit1 == null) {
+			if (other.orgunit1 != null)
+				return false;
+		} else if (!orgunit1.equals(other.orgunit1))
+			return false;
+		if (orgunit2 == null) {
+			if (other.orgunit2 != null)
+				return false;
+		} else if (!orgunit2.equals(other.orgunit2))
+			return false;
+		if (orgunit3 == null) {
+			if (other.orgunit3 != null)
+				return false;
+		} else if (!orgunit3.equals(other.orgunit3))
+			return false;
+		if (orgunit4 == null) {
+			if (other.orgunit4 != null)
+				return false;
+		} else if (!orgunit4.equals(other.orgunit4))
+			return false;
+		if (prmd == null) {
+			if (other.prmd != null)
+				return false;
+		} else if (!prmd.equals(other.prmd))
+			return false;
+		if (surname == null) {
+			if (other.surname != null)
+				return false;
+		} else if (!surname.equals(other.surname))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Name [abbreviated=" + abbreviated + ", addr821=" + addr821 + ", addr822comment1=" + addr822comment1 + ", addr822comment2="
+				+ addr822comment2 + ", addr822comment3=" + addr822comment3 + ", addr822localpart=" + addr822localpart + ", addr822phrase="
+				+ addr822phrase + ", admd=" + admd + ", canonical=" + canonical + ", common=" + common + ", country=" + country
+				+ ", generation=" + generation + ", given=" + given + ", initials=" + initials + ", keyword=" + keyword + ", language="
+				+ language + ", organization=" + organization + ", orgunit1=" + orgunit1 + ", orgunit2=" + orgunit2 + ", orgunit3="
+				+ orgunit3 + ", orgunit4=" + orgunit4 + ", prmd=" + prmd + ", surname=" + surname + ", hierarchical=" + hierarchical + "]";
 	}
 
 }

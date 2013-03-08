@@ -1,6 +1,9 @@
 package org.openntf.domino.thread;
 
 import java.lang.ref.Reference;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.openntf.domino.impl.Base;
 
@@ -53,11 +56,11 @@ public class DominoThread extends Thread {
 		} finally {
 			// Base.recycleAll();
 			System.gc();
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-
-			}
+			// try {
+			// Thread.sleep(500);
+			// } catch (InterruptedException e) {
+			//
+			// }
 			DominoReferenceQueue drq = Base._getRecycleQueue();
 			System.out
 					.println("Got a queue on thread " + Thread.currentThread().getName() + " (" + Thread.currentThread().hashCode() + ")");
@@ -65,12 +68,13 @@ public class DominoThread extends Thread {
 
 			while (ref != null) {
 				if (ref instanceof DominoReference) {
-					System.out.println("Found a phantom reference of type " + ((DominoReference) ref).getType().getName());
+					// System.out.println("Found a phantom reference of type " + ((DominoReference) ref).getType().getName());
 					((DominoReference) ref).recycle();
 				}
 				ref = drq.poll();
 			}
-			System.out.println("DominoReferenceQueue drained");
+			DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
+			System.out.println(df.format(new Date()) + "DominoReferenceQueue drained");
 			lotus.domino.NotesThread.stermThread();
 		}
 	}

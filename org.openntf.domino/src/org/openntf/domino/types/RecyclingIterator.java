@@ -1,5 +1,7 @@
 package org.openntf.domino.types;
 
-public interface RecyclingIterator {
+import java.util.Iterator;
+
+public interface RecyclingIterator<T> extends Iterator<T> {
 
 }

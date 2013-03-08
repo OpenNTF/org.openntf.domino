@@ -1,5 +1,8 @@
 package org.openntf.domino.tests.ntf;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Vector;
 
 import org.openntf.domino.Database;
@@ -36,8 +39,9 @@ public enum ScratchTest {
 		public void run() {
 			Session s = Factory.getSession();
 			Name sname = s.getUserNameObject();
-			System.out.println("Name: " + sname.getCanonical());
-			Database db = s.getDatabase("", "log.nsf");
+			DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
+			System.out.println(df.format(new Date()) + " Name: " + sname.getCanonical());
+			Database db = s.getDatabase("", "events4.nsf");
 			Vector<Form> forms = db.getForms();
 			System.out.println("BEGINNING ITERATION of Forms");
 			for (Form form : forms) {
@@ -45,7 +49,7 @@ public enum ScratchTest {
 				Document d = form.getDocument();
 				Vector v = d.getItemValue("$UpdatedBy");
 				Name n = s.createName((String) v.get(0));
-				System.out.println("Last Editor: " + n.getCommon());
+				System.out.println("Last Editor: " + n);
 			}
 			System.out.println("ENDING ITERATION of Forms");
 			DocumentCollection dc = db.getAllDocuments();
@@ -53,7 +57,7 @@ public enum ScratchTest {
 			while (doc != null) {
 				Vector v = doc.getItemValue("$UpdatedBy");
 				Name n = s.createName((String) v.get(0));
-				System.out.println("Last Editor: " + n.getCommon());
+				// System.out.println("Last Editor: " + n);
 				doc = dc.getNextDocument(doc);
 			}
 
@@ -65,11 +69,49 @@ public enum ScratchTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-
+		int delay = 300;
 		DominoThread dt = new DominoThread(new Doer(), "Scratch Test");
 		DominoThread dt2 = new DominoThread(new Doer(), "Scratch Test2");
+		DominoThread dt3 = new DominoThread(new Doer(), "Scratch Test3");
+		DominoThread dt4 = new DominoThread(new Doer(), "Scratch Test4");
+		DominoThread dt5 = new DominoThread(new Doer(), "Scratch Test5");
+		DominoThread dt6 = new DominoThread(new Doer(), "Scratch Test6");
 		dt.start();
+		try {
+			Thread.sleep(delay);
+		} catch (InterruptedException e1) {
+			DominoUtils.handleException(e1);
+
+		}
 		dt2.start();
+		try {
+			Thread.sleep(delay);
+		} catch (InterruptedException e1) {
+			DominoUtils.handleException(e1);
+
+		}
+		dt3.start();
+		try {
+			Thread.sleep(delay);
+		} catch (InterruptedException e1) {
+			DominoUtils.handleException(e1);
+
+		}
+		dt4.start();
+		try {
+			Thread.sleep(delay);
+		} catch (InterruptedException e1) {
+			DominoUtils.handleException(e1);
+
+		}
+		dt5.start();
+		try {
+			Thread.sleep(delay);
+		} catch (InterruptedException e1) {
+			DominoUtils.handleException(e1);
+
+		}
+		dt6.start();
 
 		// // NotesThread.sinitThread();
 		//

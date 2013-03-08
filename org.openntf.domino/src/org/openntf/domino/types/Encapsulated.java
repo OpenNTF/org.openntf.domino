@@ -1,5 +1,7 @@
 package org.openntf.domino.types;
 
-public interface Encapsulated {
+import java.io.Serializable;
+
+public interface Encapsulated extends Serializable {
 
 }

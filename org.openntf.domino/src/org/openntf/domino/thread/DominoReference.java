@@ -16,8 +16,8 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 								// though the wrapper is null
 		isRecycled_ = false;
 		delegateType_ = delegate.getClass();
-		System.out.println("Domino reference created for a " + r.getClass().getName() + " (" + delegate.getClass().getSimpleName()
-				+ ") on thread " + Thread.currentThread().getName() + " (" + Thread.currentThread().hashCode() + ")");
+		// System.out.println("Domino reference created for a " + r.getClass().getName() + " (" + delegate.getClass().getSimpleName()
+		// + ") on thread " + Thread.currentThread().getName() + " (" + Thread.currentThread().hashCode() + ")");
 	}
 
 	public Class<?> getType() {
@@ -50,7 +50,7 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 
 	public void recycle() {
 		if (!org.openntf.domino.impl.Base.isLocked(delegate_)) {
-			System.out.println("Recycling a " + getType().getName() + "!");
+			// System.out.println("Recycling a " + getType().getName() + "!");
 			try {
 				delegate_.recycle();
 			} catch (Throwable t) {

@@ -19,6 +19,9 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 public class Database extends Base<org.openntf.domino.Database, lotus.domino.Database> implements org.openntf.domino.Database {
+	private String server_;
+	private String path_;
+	private String replid_;
 
 	public Database(lotus.domino.Database delegate) {
 		super(delegate);
@@ -732,6 +735,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
+	@Override
 	public Session getParent() {
 		try {
 			return getDelegate().getParent();

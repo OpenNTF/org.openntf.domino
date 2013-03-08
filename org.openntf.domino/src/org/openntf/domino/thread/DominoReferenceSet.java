@@ -5,9 +5,7 @@ package org.openntf.domino.thread;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 import lotus.domino.Base;
 
@@ -17,8 +15,8 @@ import org.openntf.domino.utils.DominoUtils;
  * @author nfreeman
  * 
  */
-public class DominoReferenceSet extends ThreadLocal<Set<Base>> implements Set<Base> {
-	private final Set<Base> objectSet = new HashSet<Base>();
+public class DominoReferenceSet extends ThreadLocal<Collection<Base>> implements Collection<Base> {
+	private final Collection<Base> objectSet = new ArrayList<Base>();
 	private final Collection<Base> lockCollection = new ArrayList<Base>();
 
 	public DominoReferenceSet() {
@@ -40,7 +38,7 @@ public class DominoReferenceSet extends ThreadLocal<Set<Base>> implements Set<Ba
 	}
 
 	@Override
-	protected Set<Base> initialValue() {
+	protected Collection<Base> initialValue() {
 		return objectSet;
 	}
 

@@ -2,7 +2,9 @@ package org.openntf.domino;
 
 import lotus.domino.Session;
 
-public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name {
+import org.openntf.domino.types.Encapsulated;
+
+public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, Encapsulated {
 
 	@Override
 	public String getAbbreviated();
