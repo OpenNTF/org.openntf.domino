@@ -1038,6 +1038,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				return getDelegate().replaceItemValue(name, ((DateTime) value).getDelegate());
 			} else if (value instanceof Number && !(value instanceof Integer || value instanceof Double)) {
 				return getDelegate().replaceItemValue(name, ((Number) value).intValue());
+			} else if (value instanceof Boolean) {
+				return getDelegate().replaceItemValue(name, (Boolean) value ? 1 : 0);
 			} else if (value instanceof Date) {
 				// TODO: make sure this use of DateTime isn't a bug when Session and createDateTime are extended
 				lotus.domino.DateTime dt = DominoUtils.getSession(this).createDateTime((Date) value);

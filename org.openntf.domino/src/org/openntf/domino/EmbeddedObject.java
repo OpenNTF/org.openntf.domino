@@ -14,13 +14,13 @@ import org.xml.sax.InputSource;
 public interface EmbeddedObject extends Base<lotus.domino.EmbeddedObject>, lotus.domino.EmbeddedObject {
 
 	@Override
-	public int activate(boolean arg0);
+	public int activate(boolean flag);
 
 	@Override
-	public void doVerb(String arg0);
+	public void doVerb(String verb);
 
 	@Override
-	public void extractFile(String arg0);
+	public void extractFile(String path);
 
 	@Override
 	public String getClassName();
@@ -59,27 +59,12 @@ public interface EmbeddedObject extends Base<lotus.domino.EmbeddedObject>, lotus
 	public Vector getVerbs();
 
 	@Override
-	public Document parseXML(boolean arg0) throws IOException;
-
-	@Override
-	public void recycle();
-
-	@Override
-	public void recycle(Vector arg0);
+	public Document parseXML(boolean validate) throws IOException;
 
 	@Override
 	public void remove();
 
 	@Override
-	public void transformXML(Object arg0, XSLTResultTarget arg1);
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
+	public void transformXML(Object style, XSLTResultTarget result);
 
 }

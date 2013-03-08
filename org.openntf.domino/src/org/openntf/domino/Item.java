@@ -14,22 +14,22 @@ import org.xml.sax.InputSource;
 
 public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item {
 	@Override
-	public String abstractText(int arg0, boolean arg1, boolean arg2);
+	public String abstractText(int maxLen, boolean dropVowels, boolean userDict);
 
 	@Override
-	public void appendToTextList(String arg0);
+	public void appendToTextList(String value);
 
 	@Override
-	public void appendToTextList(Vector arg0);
+	public void appendToTextList(Vector values);
 
 	@Override
-	public boolean containsValue(Object arg0);
+	public boolean containsValue(Object value);
 
 	@Override
-	public lotus.domino.Item copyItemToDocument(Document arg0);
+	public lotus.domino.Item copyItemToDocument(Document doc);
 
 	@Override
-	public lotus.domino.Item copyItemToDocument(Document arg0, String arg1);
+	public lotus.domino.Item copyItemToDocument(Document doc, String newName);
 
 	@Override
 	public DateTime getDateTimeValue();
@@ -62,7 +62,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item {
 	public String getText();
 
 	@Override
-	public String getText(int arg0);
+	public String getText(int maxLen);
 
 	@Override
 	public int getType();
@@ -71,10 +71,10 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item {
 	public Object getValueCustomData() throws IOException, ClassNotFoundException, NotesException;
 
 	@Override
-	public Object getValueCustomData(String arg0) throws IOException, ClassNotFoundException, NotesException;
+	public Object getValueCustomData(String dataTypeName) throws IOException, ClassNotFoundException, NotesException;
 
 	@Override
-	public byte[] getValueCustomDataBytes(String arg0) throws IOException, NotesException;
+	public byte[] getValueCustomDataBytes(String dataTypeName) throws IOException, NotesException;
 
 	@Override
 	public Vector getValueDateTimeArray();
@@ -119,65 +119,59 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item {
 	public boolean isSummary();
 
 	@Override
-	public org.w3c.dom.Document parseXML(boolean arg0) throws IOException, NotesException;
-
-	@Override
-	public void recycle();
-
-	@Override
-	public void recycle(Vector arg0);
+	public org.w3c.dom.Document parseXML(boolean validate) throws IOException, NotesException;
 
 	@Override
 	public void remove();
 
 	@Override
-	public void setAuthors(boolean arg0);
+	public void setAuthors(boolean flag);
 
 	@Override
-	public void setDateTimeValue(lotus.domino.DateTime arg0);
+	public void setDateTimeValue(lotus.domino.DateTime dateTime);
 
 	@Override
-	public void setEncrypted(boolean arg0);
+	public void setEncrypted(boolean flag);
 
 	@Override
-	public void setNames(boolean arg0);
+	public void setNames(boolean flag);
 
 	@Override
-	public void setProtected(boolean arg0);
+	public void setProtected(boolean flag);
 
 	@Override
-	public void setReaders(boolean arg0);
+	public void setReaders(boolean flag);
 
 	@Override
-	public void setSaveToDisk(boolean arg0);
+	public void setSaveToDisk(boolean flag);
 
 	@Override
-	public void setSigned(boolean arg0);
+	public void setSigned(boolean flag);
 
 	@Override
-	public void setSummary(boolean arg0);
+	public void setSummary(boolean flag);
 
 	@Override
-	public void setValueCustomData(Object arg0) throws IOException, NotesException;
+	public void setValueCustomData(Object userObj) throws IOException, NotesException;
 
 	@Override
-	public void setValueCustomData(String arg0, Object arg1) throws IOException, NotesException;
+	public void setValueCustomData(String dataTypeName, Object userObj) throws IOException, NotesException;
 
 	@Override
-	public void setValueCustomDataBytes(String arg0, byte[] arg1) throws IOException, NotesException;
+	public void setValueCustomDataBytes(String dataTypeName, byte[] byteArray) throws IOException, NotesException;
 
 	@Override
-	public void setValueDouble(double arg0);
+	public void setValueDouble(double value);
 
 	@Override
-	public void setValueInteger(int arg0);
+	public void setValueInteger(int value);
 
 	@Override
-	public void setValues(Vector arg0);
+	public void setValues(Vector values);
 
 	@Override
-	public void setValueString(String arg0);
+	public void setValueString(String value);
 
 	@Override
-	public void transformXML(Object arg0, XSLTResultTarget arg1);
+	public void transformXML(Object style, XSLTResultTarget result);
 }
