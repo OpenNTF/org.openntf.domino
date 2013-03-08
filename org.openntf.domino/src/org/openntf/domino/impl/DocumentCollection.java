@@ -1,10 +1,13 @@
 package org.openntf.domino.impl;
 
+import java.util.Iterator;
+
 import lotus.domino.Database;
 import lotus.domino.Document;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.DateTime;
+import org.openntf.domino.iterators.DocumentIterator;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -329,9 +332,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void intersect(int noteID) {
+	public void intersect(int noteId) {
 		try {
-			getDelegate().intersect(noteID);
+			getDelegate().intersect(noteId);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -339,9 +342,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void intersect(String noteID) {
+	public void intersect(String noteId) {
 		try {
-			getDelegate().intersect(noteID);
+			getDelegate().intersect(noteId);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -359,9 +362,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void merge(int noteID) {
+	public void merge(int noteId) {
 		try {
-			getDelegate().merge(noteID);
+			getDelegate().merge(noteId);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -369,9 +372,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void merge(String noteID) {
+	public void merge(String noteId) {
 		try {
-			getDelegate().merge(noteID);
+			getDelegate().merge(noteId);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -389,9 +392,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void subtract(int noteID) {
+	public void subtract(int noteId) {
 		try {
-			getDelegate().subtract(noteID);
+			getDelegate().subtract(noteId);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -399,9 +402,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void subtract(String noteID) {
+	public void subtract(String noteId) {
 		try {
-			getDelegate().subtract(noteID);
+			getDelegate().subtract(noteId);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -419,9 +422,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public boolean contains(int noteID) {
+	public boolean contains(int noteId) {
 		try {
-			return getDelegate().contains(noteID);
+			return getDelegate().contains(noteId);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -430,13 +433,12 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public boolean contains(String noteID) {
+	public boolean contains(String noteId) {
 		try {
-			return getDelegate().contains(noteID);
+			return getDelegate().contains(noteId);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
-
 		}
 	}
 
@@ -447,23 +449,23 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
-
 		}
 	}
 
 	@Override
 	public org.openntf.domino.DocumentCollection cloneCollection() {
 		try {
-			org.openntf.domino.Database parent = (org.openntf.domino.Database) getParent();
-			lotus.domino.DocumentCollection emptyCollection = parent.createDocumentCollection();
-			org.openntf.domino.DocumentCollection result = new org.openntf.domino.impl.DocumentCollection(emptyCollection);
-			result.merge(this);
+			org.openntf.domino.DocumentCollection result = Factory.fromLotus(getDelegate().cloneCollection(), DocumentCollection.class);
 			return result;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 			return null;
-
 		}
+	}
+
+	@Override
+	public Iterator<Document> iterator() {
+		return new DocumentIterator(this);
 	}
 
 }

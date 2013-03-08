@@ -3,7 +3,10 @@ package org.openntf.domino;
 import lotus.domino.View;
 import lotus.domino.ViewEntry;
 
-public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollection>, lotus.domino.ViewEntryCollection {
+import org.openntf.domino.annotations.Legacy;
+
+public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollection>, lotus.domino.ViewEntryCollection,
+		Iterable<lotus.domino.ViewEntry> {
 	@Override
 	public void addEntry(Object arg0);
 
@@ -44,12 +47,18 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	public ViewEntry getLastEntry();
 
 	@Override
+	@Deprecated
+	@Legacy(Legacy.ITERATION_WARNING)
 	public ViewEntry getNextEntry();
 
 	@Override
+	@Deprecated
+	@Legacy(Legacy.ITERATION_WARNING)
 	public ViewEntry getNextEntry(ViewEntry arg0);
 
 	@Override
+	@Deprecated
+	@Legacy(Legacy.ITERATION_WARNING)
 	public ViewEntry getNthEntry(int arg0);
 
 	@Override

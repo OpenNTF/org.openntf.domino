@@ -5,7 +5,8 @@ import lotus.domino.Document;
 
 import org.openntf.domino.annotations.Legacy;
 
-public interface DocumentCollection extends lotus.domino.DocumentCollection, org.openntf.domino.Base<lotus.domino.DocumentCollection> {
+public interface DocumentCollection extends lotus.domino.DocumentCollection, org.openntf.domino.Base<lotus.domino.DocumentCollection>,
+		Iterable<lotus.domino.Document> {
 	public abstract int getCount();
 
 	public abstract String getQuery();
@@ -16,14 +17,17 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 
 	public abstract Document getLastDocument();
 
+	@Deprecated
 	@Legacy(Legacy.ITERATION_WARNING)
 	public abstract Document getNextDocument(Document paramDocument);
 
 	public abstract Document getPrevDocument(Document paramDocument);
 
+	@Deprecated
 	@Legacy(Legacy.ITERATION_WARNING)
 	public abstract Document getNthDocument(int paramInt);
 
+	@Deprecated
 	@Legacy(Legacy.ITERATION_WARNING)
 	public abstract Document getNextDocument();
 
