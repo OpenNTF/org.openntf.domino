@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Form;
 import org.openntf.domino.Name;
 import org.openntf.domino.Session;
@@ -25,8 +26,8 @@ public enum ScratchTest {
 		Vector<Form> forms = db.getForms();
 		for (Form form : forms) {
 			System.out.println("Form : " + form.getName() + " (" + DominoUtils.getUnidFromNotesUrl(form.getNotesURL()) + ")");
-
 		}
+
 	}
 
 	static class Doer implements Runnable {
@@ -45,9 +46,17 @@ public enum ScratchTest {
 				Vector v = d.getItemValue("$UpdatedBy");
 				Name n = s.createName((String) v.get(0));
 				System.out.println("Last Editor: " + n.getCommon());
-
 			}
 			System.out.println("ENDING ITERATION of Forms");
+			DocumentCollection dc = db.getAllDocuments();
+			Document doc = dc.getFirstDocument();
+			while (doc != null) {
+				Vector v = doc.getItemValue("$UpdatedBy");
+				Name n = s.createName((String) v.get(0));
+				System.out.println("Last Editor: " + n.getCommon());
+				doc = dc.getNextDocument(doc);
+			}
+
 		}
 
 	}

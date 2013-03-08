@@ -371,9 +371,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public DocumentCollection getAllDocuments() {
+	public org.openntf.domino.DocumentCollection getAllDocuments() {
 		try {
-			return getDelegate().getAllDocuments();
+			return Factory.fromLotus(getDelegate().getAllDocuments(), org.openntf.domino.DocumentCollection.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

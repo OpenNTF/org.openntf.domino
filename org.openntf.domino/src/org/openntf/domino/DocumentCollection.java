@@ -12,24 +12,24 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 
 	public abstract Database getParent();
 
-	public abstract Document getFirstDocument();
+	public abstract org.openntf.domino.Document getFirstDocument();
 
-	public abstract Document getLastDocument();
-
-	@Legacy(Legacy.ITERATION_WARNING)
-	public abstract Document getNextDocument(Document paramDocument);
-
-	public abstract Document getPrevDocument(Document paramDocument);
+	public abstract org.openntf.domino.Document getLastDocument();
 
 	@Legacy(Legacy.ITERATION_WARNING)
-	public abstract Document getNthDocument(int paramInt);
+	public abstract org.openntf.domino.Document getNextDocument(Document paramDocument);
+
+	public abstract org.openntf.domino.Document getPrevDocument(Document paramDocument);
 
 	@Legacy(Legacy.ITERATION_WARNING)
-	public abstract Document getNextDocument();
+	public abstract org.openntf.domino.Document getNthDocument(int paramInt);
 
-	public abstract Document getPrevDocument();
+	@Legacy(Legacy.ITERATION_WARNING)
+	public abstract org.openntf.domino.Document getNextDocument();
 
-	public abstract Document getDocument(Document paramDocument);
+	public abstract org.openntf.domino.Document getPrevDocument();
+
+	public abstract org.openntf.domino.Document getDocument(Document paramDocument);
 
 	public abstract void addDocument(Document paramDocument);
 

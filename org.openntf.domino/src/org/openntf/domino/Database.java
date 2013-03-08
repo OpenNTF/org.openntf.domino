@@ -125,7 +125,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public Vector<Agent> getAgents();
 
 	@Override
-	public DocumentCollection getAllDocuments();
+	public org.openntf.domino.DocumentCollection getAllDocuments();
 
 	@Override
 	public DocumentCollection getAllReadDocuments();

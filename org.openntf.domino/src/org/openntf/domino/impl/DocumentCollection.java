@@ -66,9 +66,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public Document getFirstDocument() {
+	public org.openntf.domino.Document getFirstDocument() {
 		try {
-			return getDelegate().getFirstDocument();
+			return Factory.fromLotus(getDelegate().getFirstDocument(), org.openntf.domino.Document.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -77,9 +77,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public Document getLastDocument() {
+	public org.openntf.domino.Document getLastDocument() {
 		try {
-			return getDelegate().getLastDocument();
+			return Factory.fromLotus(getDelegate().getLastDocument(), org.openntf.domino.Document.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -88,9 +88,12 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public Document getNextDocument(Document doc) {
+	public org.openntf.domino.Document getNextDocument(Document doc) {
 		try {
-			return getDelegate().getNextDocument(doc);
+			if (doc instanceof org.openntf.domino.impl.Document) {
+				doc = ((org.openntf.domino.impl.Document) doc).getDelegate();
+			}
+			return Factory.fromLotus(getDelegate().getNextDocument(doc), org.openntf.domino.Document.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -99,9 +102,12 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public Document getPrevDocument(Document doc) {
+	public org.openntf.domino.Document getPrevDocument(Document doc) {
 		try {
-			return getDelegate().getPrevDocument(doc);
+			if (doc instanceof org.openntf.domino.impl.Document) {
+				doc = ((org.openntf.domino.impl.Document) doc).getDelegate();
+			}
+			return Factory.fromLotus(getDelegate().getPrevDocument(doc), org.openntf.domino.Document.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -110,12 +116,12 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public Document getNthDocument(int n) {
+	public org.openntf.domino.Document getNthDocument(int n) {
 		if (BLOCK_NTH) {
 			throw new NthDocumentMethodNotPermittedException();
 		}
 		try {
-			return getDelegate().getNthDocument(n);
+			return Factory.fromLotus(getDelegate().getNthDocument(n), org.openntf.domino.Document.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -124,9 +130,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public Document getNextDocument() {
+	public org.openntf.domino.Document getNextDocument() {
 		try {
-			return getDelegate().getNextDocument();
+			return Factory.fromLotus(getDelegate().getNextDocument(), org.openntf.domino.Document.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -135,9 +141,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public Document getPrevDocument() {
+	public org.openntf.domino.Document getPrevDocument() {
 		try {
-			return getDelegate().getPrevDocument();
+			return Factory.fromLotus(getDelegate().getPrevDocument(), org.openntf.domino.Document.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -146,9 +152,12 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public Document getDocument(Document doc) {
+	public org.openntf.domino.Document getDocument(Document doc) {
 		try {
-			return getDelegate().getDocument(doc);
+			if (doc instanceof org.openntf.domino.impl.Document) {
+				doc = ((org.openntf.domino.impl.Document) doc).getDelegate();
+			}
+			return Factory.fromLotus(getDelegate().getDocument(doc), org.openntf.domino.Document.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
