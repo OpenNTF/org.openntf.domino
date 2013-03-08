@@ -44,13 +44,15 @@ public enum Factory {
 	public static <T> org.openntf.domino.impl.Vector<T> fromLotusAsVector(Collection<?> lotusColl,
 			Class<? extends org.openntf.domino.Base> T) {
 		org.openntf.domino.impl.Vector<T> result = new org.openntf.domino.impl.Vector<T>(); // TODO anyone got a better implementation?
+		System.out.println("START creation new Vector from lotus objects...");
 		if (!lotusColl.isEmpty()) {
 			for (Object lotus : lotusColl) {
-				if (lotus instanceof lotus.domino.Base) {
+				if (lotus instanceof lotus.domino.local.NotesBase) {
 					result.add((T) fromLotus((lotus.domino.Base) lotus, T));
 				}
 			}
 		}
+		System.out.println("END creation new Vector from lotus objects...");
 		return result;
 
 	}

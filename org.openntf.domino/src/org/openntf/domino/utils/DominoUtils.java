@@ -134,12 +134,13 @@ public enum DominoUtils {
 	public static void incinerate(Object... args) {
 		for (Object o : args) {
 			if (o != null) {
-				if (o instanceof Base) {
-					try {
-						((Base) o).recycle();
-					} catch (Throwable t) {
-						// who cares?
-					}
+				if (o instanceof lotus.domino.Base) {
+					// try {
+					// ((Base) o).recycle();
+					// } catch (Throwable t) {
+					// // who cares?
+					// }
+					org.openntf.domino.impl.Base.recycle(o);
 				} else if (o instanceof Collection) {
 					if (o instanceof Map) {
 						Set<Map.Entry> entries = ((Map) o).entrySet();

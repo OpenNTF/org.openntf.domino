@@ -77,12 +77,22 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 				// shikata ga nai
 			}
 		}
-		return true;
+		return result;
 	}
 
-	public static void recycle(org.openntf.domino.impl.Base<?, ?> base) {
-		if (recycle((lotus.domino.local.NotesBase) base.getDelegate())) {
-			base.recycled_ = true;
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void recycle(Object o) {
+		if (o instanceof lotus.domino.Base) {
+			if (o instanceof lotus.domino.local.NotesBase) {
+				recycle((lotus.domino.local.NotesBase) o);
+			}
+			if (o instanceof org.openntf.domino.impl.Base) {
+				Base base = (org.openntf.domino.impl.Base) o;
+				System.out.println("Recycling an OpenNTF object of type " + base.getClass().getName());
+				if (recycle((lotus.domino.local.NotesBase) base.getDelegate())) {
+					base.recycled_ = true;
+				}
+			}
 		}
 	}
 

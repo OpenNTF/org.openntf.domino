@@ -16,7 +16,8 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 								// though the wrapper is null
 		isRecycled_ = false;
 		delegateType_ = delegate.getClass();
-		System.out.println("Domino reference created for a " + r.getClass().getName() + " (" + delegate.getClass().getSimpleName() + ")");
+		System.out.println("Domino reference created for a " + r.getClass().getName() + " (" + delegate.getClass().getSimpleName()
+				+ ") on thread " + Thread.currentThread().getName() + " (" + Thread.currentThread().hashCode() + ")");
 	}
 
 	public Class<?> getType() {
@@ -25,6 +26,7 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 
 	@Override
 	public boolean enqueue() {
+		System.out.println("enqueue a reference");
 		// FIXME NTF - this needs to be tested to verify that the enqueue() call will be on the same thread as the reference queue itself
 		// If not, we'll have to do some polling on the proper thread...
 

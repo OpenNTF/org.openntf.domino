@@ -1,5 +1,7 @@
 package org.openntf.domino.thread;
 
+import java.lang.ref.Reference;
+
 import org.openntf.domino.impl.Base;
 
 public class DominoThread extends Thread {
@@ -44,10 +46,31 @@ public class DominoThread extends Thread {
 		try {
 			lotus.domino.NotesThread.sinitThread();
 			super.run();
+			// System.out.println("Completed run. GCing...");
+			// System.out.println("GC complete");
 		} catch (Throwable t) {
 			throw new RuntimeException(t);
 		} finally {
-			Base.recycleAll();
+			// Base.recycleAll();
+			System.gc();
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+
+			}
+			DominoReferenceQueue drq = Base._getRecycleQueue();
+			System.out
+					.println("Got a queue on thread " + Thread.currentThread().getName() + " (" + Thread.currentThread().hashCode() + ")");
+			Reference<?> ref = drq.poll();
+
+			while (ref != null) {
+				if (ref instanceof DominoReference) {
+					System.out.println("Found a phantom reference of type " + ((DominoReference) ref).getType().getName());
+					((DominoReference) ref).recycle();
+				}
+				ref = drq.poll();
+			}
+			System.out.println("DominoReferenceQueue drained");
 			lotus.domino.NotesThread.stermThread();
 		}
 	}
