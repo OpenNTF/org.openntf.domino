@@ -100,6 +100,18 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
+	public org.openntf.domino.Document getDocument() {
+		try {
+			Database db = getDelegate().getParent();
+			String url = this.getNotesURL();
+			String unid = DominoUtils.getUnidFromNotesUrl(url);
+			return Factory.fromLotus(db.getDocumentByUNID(unid), org.openntf.domino.Database.class);
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return null;
+		}
+	}
+
 	public Database getParent() {
 		// FIXME NTF - in the case of parenting, we really should be passing the wrapper objects around when they create children
 		try {

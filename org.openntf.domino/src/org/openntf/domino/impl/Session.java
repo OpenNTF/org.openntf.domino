@@ -188,7 +188,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	}
 
 	@Override
-	public Name createName(String arg0) {
+	public org.openntf.domino.Name createName(String arg0) {
 		try {
 			return Factory.fromLotus(getDelegate().createName(arg0), Name.class);
 		} catch (NotesException e) {
@@ -620,9 +620,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	}
 
 	@Override
-	public Name getUserNameObject() {
+	public org.openntf.domino.Name getUserNameObject() {
 		try {
-			return Factory.fromLotus(getDelegate().getUserNameObject(), Name.class);
+			return Factory.fromLotus(getDelegate().getUserNameObject(), org.openntf.domino.Name.class);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

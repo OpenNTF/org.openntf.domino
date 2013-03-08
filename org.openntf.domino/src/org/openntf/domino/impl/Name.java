@@ -6,260 +6,169 @@ import lotus.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 
 public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> implements org.openntf.domino.Name {
+	private static final String DEFAULT_STR = "";
+
+	private String abbreviated = DEFAULT_STR;
+	private String addr821 = DEFAULT_STR;
+	private String addr822comment1 = DEFAULT_STR;
+	private String addr822comment2 = DEFAULT_STR;
+	private String addr822comment3 = DEFAULT_STR;
+	private String addr822localpart = DEFAULT_STR;
+	private String addr822phrase = DEFAULT_STR;
+	private String admd = DEFAULT_STR;
+	private String canonical = DEFAULT_STR;
+	private String common = DEFAULT_STR;
+	private String country = DEFAULT_STR;
+	private String generation = DEFAULT_STR;
+	private String given = DEFAULT_STR;
+	private String initials = DEFAULT_STR;
+	private String keyword = DEFAULT_STR;
+	private String language = DEFAULT_STR;
+	private String organization = DEFAULT_STR;
+	private String orgunit1 = DEFAULT_STR;
+	private String orgunit2 = DEFAULT_STR;
+	private String orgunit3 = DEFAULT_STR;
+	private String orgunit4 = DEFAULT_STR;
+	private String prmd = DEFAULT_STR;
+	private String surname = DEFAULT_STR;
+	private boolean hierarchical = false;
 
 	public Name(lotus.domino.Name delegate) {
-		super(delegate);
-		// TODO Auto-generated constructor stub
+		super(null);
+		initialize(delegate);
+		Base.recycle(delegate);
+	}
+
+	private void initialize(lotus.domino.Name delegate) {
+		try {
+			abbreviated = delegate.getAbbreviated();
+			addr821 = delegate.getAddr821();
+			addr822comment1 = delegate.getAddr822Comment1();
+			addr822comment2 = delegate.getAddr822Comment2();
+			addr822comment3 = delegate.getAddr822Comment3();
+			addr822localpart = delegate.getAddr822LocalPart();
+			addr822phrase = delegate.getAddr822Phrase();
+			admd = delegate.getADMD();
+			canonical = delegate.getCanonical();
+			common = delegate.getCommon();
+			country = delegate.getCountry();
+			generation = delegate.getGeneration();
+			given = delegate.getGiven();
+			initials = delegate.getInitials();
+			keyword = delegate.getKeyword();
+			language = delegate.getLanguage();
+			organization = delegate.getOrganization();
+			orgunit1 = delegate.getOrgUnit1();
+			orgunit2 = delegate.getOrgUnit2();
+			orgunit3 = delegate.getOrgUnit3();
+			orgunit4 = delegate.getOrgUnit4();
+			prmd = delegate.getPRMD();
+			surname = delegate.getSurname();
+			hierarchical = delegate.isHierarchical();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
 	}
 
 	public String getADMD() {
-		try {
-			return getDelegate().getADMD();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return admd;
 	}
 
 	public String getAbbreviated() {
-		try {
-			return getDelegate().getAbbreviated();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return abbreviated;
 	}
 
 	public String getAddr821() {
-		try {
-			return getDelegate().getAddr821();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return this.addr821;
 	}
 
 	public String getAddr822Comment1() {
-		try {
-			return getDelegate().getAddr822Comment1();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return this.addr822comment1;
 	}
 
 	public String getAddr822Comment2() {
-		try {
-			return getDelegate().getAddr822Comment2();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return this.addr822comment2;
 	}
 
 	public String getAddr822Comment3() {
-		try {
-			return getDelegate().getAddr822Comment3();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return this.addr822comment3;
 	}
 
 	public String getAddr822LocalPart() {
-		try {
-			return getDelegate().getAddr822LocalPart();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return this.addr822localpart;
 	}
 
 	public String getAddr822Phrase() {
-		try {
-			return getDelegate().getAddr822Phrase();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return this.addr822phrase;
 	}
 
 	public String getCanonical() {
-		try {
-			return getDelegate().getCanonical();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return canonical;
 	}
 
 	public String getCommon() {
-		try {
-			return getDelegate().getCommon();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return common;
 	}
 
 	public String getCountry() {
-		try {
-			return getDelegate().getCountry();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return country;
 	}
 
 	public String getGeneration() {
-		try {
-			return getDelegate().getGeneration();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return generation;
 	}
 
 	public String getGiven() {
-		try {
-			return getDelegate().getGiven();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return given;
 	}
 
 	public String getInitials() {
-		try {
-			return getDelegate().getInitials();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return initials;
 	}
 
 	public String getKeyword() {
-		try {
-			return getDelegate().getKeyword();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return keyword;
 	}
 
 	public String getLanguage() {
-		try {
-			return getDelegate().getLanguage();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return language;
 	}
 
 	public String getOrgUnit1() {
-		try {
-			return getDelegate().getOrgUnit1();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return orgunit1;
 	}
 
 	public String getOrgUnit2() {
-		try {
-			return getDelegate().getOrgUnit2();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return orgunit2;
 	}
 
 	public String getOrgUnit3() {
-		try {
-			return getDelegate().getOrgUnit3();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return orgunit3;
 	}
 
 	public String getOrgUnit4() {
-		try {
-			return getDelegate().getOrgUnit4();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return orgunit4;
 	}
 
 	public String getOrganization() {
-		try {
-			return getDelegate().getOrganization();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return organization;
 	}
 
 	public String getPRMD() {
-		try {
-			return getDelegate().getPRMD();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return prmd;
 	}
 
 	public Session getParent() {
-		try {
-			return getDelegate().getParent();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		// FIXME NTF - the fact that this exists is silly. But we should address it somehow.
+		return null;
 	}
 
 	public String getSurname() {
-		try {
-			return getDelegate().getSurname();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return surname;
 	}
 
 	public boolean isHierarchical() {
-		try {
-			return getDelegate().isHierarchical();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return false;
-
-		}
+		return hierarchical;
 	}
 
 }

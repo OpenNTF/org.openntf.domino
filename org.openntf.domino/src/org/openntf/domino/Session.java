@@ -100,7 +100,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	public Log createLog(String paramString);
 
 	@Override
-	public lotus.domino.Name createName(String paramString);
+	public org.openntf.domino.Name createName(String paramString);
 
 	@Override
 	public lotus.domino.Name createName(String paramString1, String paramString2);
@@ -202,7 +202,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	public String getUserName();
 
 	@Override
-	public lotus.domino.Name getUserNameObject();
+	public org.openntf.domino.Name getUserNameObject();
 
 	@Override
 	public Document getUserPolicySettings(String paramString1, String paramString2, int paramInt);

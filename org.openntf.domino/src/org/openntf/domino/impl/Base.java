@@ -27,6 +27,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	protected boolean recycled_;
 	protected D delegate_; // NTF final???
 	private DominoReference ref_; // this is the PhantomReference that will be enqueued when this Base object HAS BEEN be GC'ed
+	private boolean encapsulated_ = false;
 
 	protected Base(D delegate) {
 		if (delegate != null) {
@@ -34,6 +35,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			ref_ = new DominoReference(this, recycleQueue.get(), delegate);
 			referenceBag.get().add(ref_);
 			refSet.add(delegate);
+		} else {
+			encapsulated_ = true;
 		}
 	}
 
@@ -43,6 +46,10 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	protected D getDelegate() {
 		return delegate_;
+	}
+
+	public boolean isEncapsulated() {
+		return encapsulated_;
 	}
 
 	public static boolean isLocked(lotus.domino.Base base) {

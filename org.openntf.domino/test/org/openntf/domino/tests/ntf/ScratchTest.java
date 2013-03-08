@@ -3,7 +3,9 @@ package org.openntf.domino.tests.ntf;
 import java.util.Vector;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.Document;
 import org.openntf.domino.Form;
+import org.openntf.domino.Name;
 import org.openntf.domino.Session;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
@@ -32,12 +34,17 @@ public enum ScratchTest {
 		@Override
 		public void run() {
 			Session s = Factory.getSession();
-			System.out.println("Name: " + s.getEffectiveUserName());
+			Name sname = s.getUserNameObject();
+			System.out.println("Name: " + sname.getCanonical());
 			Database db = s.getDatabase("", "log.nsf");
 			Vector<Form> forms = db.getForms();
 			System.out.println("BEGINNING ITERATION of Forms");
 			for (Form form : forms) {
 				System.out.println("Form : " + form.getName() + " (" + DominoUtils.getUnidFromNotesUrl(form.getNotesURL()) + ")");
+				Document d = form.getDocument();
+				Vector v = d.getItemValue("$UpdatedBy");
+				Name n = s.createName((String) v.get(0));
+				System.out.println("Last Editor: " + n.getCommon());
 
 			}
 			System.out.println("ENDING ITERATION of Forms");

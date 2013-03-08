@@ -6,6 +6,8 @@ import lotus.domino.Database;
 
 public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form {
 
+	public org.openntf.domino.Document getDocument();
+
 	@Override
 	public Vector getAliases();
 

@@ -16,6 +16,8 @@ public enum Factory {
 			return (T) new org.openntf.domino.impl.Session((lotus.domino.Session) lotus);
 		} else if (lotus instanceof lotus.domino.Database) {
 			return (T) new org.openntf.domino.impl.Database((lotus.domino.Database) lotus);
+		} else if (lotus instanceof lotus.domino.Document) {
+			return (T) new org.openntf.domino.impl.Document((lotus.domino.Document) lotus);
 		} else if (lotus instanceof lotus.domino.Form) {
 			return (T) new org.openntf.domino.impl.Form((lotus.domino.Form) lotus);
 		} else if (lotus instanceof lotus.domino.DateTime) {
