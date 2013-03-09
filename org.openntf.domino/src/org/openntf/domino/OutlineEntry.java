@@ -1,7 +1,5 @@
 package org.openntf.domino;
 
-import java.util.Vector;
-
 import lotus.domino.Database;
 import lotus.domino.Outline;
 import lotus.domino.View;
@@ -12,9 +10,6 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	public String getAlias();
 
 	public lotus.domino.Database getDatabase();
-
-	@Override
-	public lotus.domino.OutlineEntry getDelegate();
 
 	@Override
 	public Document getDocument();
@@ -80,66 +75,50 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	public boolean isPrivate();
 
 	@Override
-	public void recycle();
+	public boolean setAction(String action);
 
 	@Override
-	public void recycle(Vector arg0);
+	public void setAlias(String alias);
 
 	@Override
-	public boolean setAction(String arg0);
+	public void setFrameText(String frameText);
 
 	@Override
-	public void setAlias(String arg0);
+	public void setHidden(boolean flag);
 
 	@Override
-	public void setFrameText(String arg0);
+	public void setHiddenFromNotes(boolean flag);
 
 	@Override
-	public void setHidden(boolean arg0);
+	public void setHiddenFromWeb(boolean flag);
 
 	@Override
-	public void setHiddenFromNotes(boolean arg0);
+	public void setHideFormula(String formula);
 
 	@Override
-	public void setHiddenFromWeb(boolean arg0);
+	public void setImagesText(String imagesText);
 
 	@Override
-	public void setHideFormula(String arg0);
+	public void setKeepSelectionFocus(boolean flag);
 
 	@Override
-	public void setImagesText(String arg0);
+	public void setLabel(String label);
 
 	@Override
-	public void setKeepSelectionFocus(boolean arg0);
+	public boolean setNamedElement(Database database, String elementName, int entryClass);
 
 	@Override
-	public void setLabel(String arg0);
+	public boolean setNoteLink(Database database);
 
 	@Override
-	public boolean setNamedElement(Database arg0, String arg1, int arg2);
+	public boolean setNoteLink(lotus.domino.Document doc);
 
 	@Override
-	public boolean setNoteLink(Database arg0);
+	public boolean setNoteLink(View view);
 
 	@Override
-	public boolean setNoteLink(lotus.domino.Document arg0);
+	public boolean setURL(String url);
 
 	@Override
-	public boolean setNoteLink(View arg0);
-
-	@Override
-	public boolean setURL(String arg0);
-
-	@Override
-	public void setUseHideFormula(boolean arg0);
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
-
+	public void setUseHideFormula(boolean flag);
 }

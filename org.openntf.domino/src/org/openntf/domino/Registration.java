@@ -9,47 +9,47 @@ import lotus.domino.Session;
 public interface Registration extends Base<lotus.domino.Registration>, lotus.domino.Registration {
 
 	@Override
-	public boolean addCertifierToAddressBook(String arg0);
+	public boolean addCertifierToAddressBook(String idFile);
 
-	public boolean addCertifierToAddressBook(String arg0, String arg1);
-
-	@Override
-	public boolean addCertifierToAddressBook(String arg0, String arg1, String arg2, String arg3);
+	public boolean addCertifierToAddressBook(String idFile, String password);
 
 	@Override
-	public boolean addServerToAddressBook(String arg0, String arg1, String arg2);
+	public boolean addCertifierToAddressBook(String idFile, String password, String location, String comment);
 
 	@Override
-	public boolean addServerToAddressBook(String arg0, String arg1, String arg2, String arg3);
+	public boolean addServerToAddressBook(String idFile, String server, String domain);
 
 	@Override
-	public boolean addServerToAddressBook(String arg0, String arg1, String arg2, String arg3, String arg4, String arg5, String arg6,
-			String arg7, String arg8);
+	public boolean addServerToAddressBook(String idFile, String server, String domain, String userPassword);
 
 	@Override
-	public void addUserProfile(String arg0, String arg1);
+	public boolean addServerToAddressBook(String idFile, String server, String domain, String userPassword, String network,
+			String adminName, String title, String location, String comment);
 
 	@Override
-	public boolean addUserToAddressBook(String arg0, String arg1, String arg2);
+	public void addUserProfile(String userName, String profile);
 
 	@Override
-	public boolean addUserToAddressBook(String arg0, String arg1, String arg2, String arg3);
+	public boolean addUserToAddressBook(String idFile, String fullName, String lastName);
 
 	@Override
-	public boolean addUserToAddressBook(String arg0, String arg1, String arg2, String arg3, String arg4, String arg5, String arg6,
-			String arg7, String arg8, String arg9, String arg10);
+	public boolean addUserToAddressBook(String idFile, String fullName, String lastName, String userPassword);
 
 	@Override
-	public boolean crossCertify(String arg0);
+	public boolean addUserToAddressBook(String idFile, String fullName, String lastName, String userPassword, String firstName,
+			String middleName, String mailServer, String mailFilePath, String forwardingAddress, String location, String comment);
 
 	@Override
-	public boolean crossCertify(String arg0, String arg1);
+	public boolean crossCertify(String idFile);
 
 	@Override
-	public boolean crossCertify(String arg0, String arg1, String arg2);
+	public boolean crossCertify(String idFile, String certPassword);
 
 	@Override
-	public void deleteIDOnServer(String arg0, boolean arg1);
+	public boolean crossCertify(String idFile, String certPassword, String comment);
+
+	@Override
+	public void deleteIDOnServer(String userName, boolean isServerID);
 
 	@Override
 	public Vector getAltOrgUnit();
@@ -67,9 +67,6 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	public boolean getCreateMailDb();
 
 	@Override
-	public lotus.domino.Registration getDelegate();
-
-	@Override
 	public DateTime getExpiration();
 
 	@Override
@@ -79,7 +76,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	public Vector getGroupList();
 
 	@Override
-	public void getIDFromServer(String arg0, String arg1, boolean arg2);
+	public void getIDFromServer(String userName, String filePath, boolean isServerID);
 
 	@Override
 	public int getIDType();
@@ -151,8 +148,8 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	public boolean getUpdateAddressBook();
 
 	@Override
-	public void getUserInfo(String arg0, StringBuffer arg1, StringBuffer arg2, StringBuffer arg3, StringBuffer arg4, Vector arg5)
-			throws NotesException;
+	public void getUserInfo(String userName, StringBuffer mailServer, StringBuffer mailFile, StringBuffer mailDomain,
+			StringBuffer mailSystem, Vector profile);
 
 	@Override
 	public boolean isEnforceUniqueShortName();
@@ -179,174 +176,158 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	public boolean isUseCertificateAuthority();
 
 	@Override
-	public boolean recertify(String arg0);
+	public boolean recertify(String idFile);
 
 	@Override
-	public boolean recertify(String arg0, String arg1);
+	public boolean recertify(String idFile, String certPassword);
 
 	@Override
-	public boolean recertify(String arg0, String arg1, String arg2);
+	public boolean recertify(String idFile, String certPassword, String comment);
 
 	@Override
-	public void recycle();
+	public boolean registerNewCertifier(String org, String idFile, String certPassword);
 
 	@Override
-	public void recycle(Vector arg0);
+	public boolean registerNewCertifier(String org, String idFile, String certPassword, String country);
 
 	@Override
-	public boolean registerNewCertifier(String arg0, String arg1, String arg2);
+	public boolean registerNewServer(String server, String idFile, String domain, String password);
 
 	@Override
-	public boolean registerNewCertifier(String arg0, String arg1, String arg2, String arg3);
+	public boolean registerNewServer(String server, String idFile, String domain, String serverPassword, String certPassword);
 
 	@Override
-	public boolean registerNewServer(String arg0, String arg1, String arg2, String arg3);
+	public boolean registerNewServer(String server, String idFile, String domain, String serverPassword, String certPassword,
+			String location, String comment, String network, String adminName, String title);
 
 	@Override
-	public boolean registerNewServer(String arg0, String arg1, String arg2, String arg3, String arg4);
+	public boolean registerNewUser(String lastName, String idFile, String server);
 
 	@Override
-	public boolean registerNewServer(String arg0, String arg1, String arg2, String arg3, String arg4, String arg5, String arg6,
-			String arg7, String arg8, String arg9);
+	public boolean registerNewUser(String lastName, String idFile, String server, String firstName, String middleName, String certPassword);
 
 	@Override
-	public boolean registerNewUser(String arg0, String arg1, String arg2);
+	public boolean registerNewUser(String lastName, String idFile, String server, String firstName, String middleName, String certPassword,
+			String location, String comment, String mailDBPath, String forward, String userPassword);
 
 	@Override
-	public boolean registerNewUser(String arg0, String arg1, String arg2, String arg3, String arg4, String arg5);
+	public boolean registerNewUser(String lastName, String idFile, String server, String firstName, String middleName, String certPassword,
+			String location, String comment, String mailDBPath, String forward, String userPassword, String altName, String altNameLang);
 
 	@Override
-	public boolean registerNewUser(String arg0, String arg1, String arg2, String arg3, String arg4, String arg5, String arg6, String arg7,
-			String arg8, String arg9, String arg10);
+	public void setAltOrgUnit(Vector names) throws NotesException;
 
 	@Override
-	public boolean registerNewUser(String arg0, String arg1, String arg2, String arg3, String arg4, String arg5, String arg6, String arg7,
-			String arg8, String arg9, String arg10, String arg11, String arg12);
+	public void setAltOrgUnitLang(Vector languages) throws NotesException;
 
 	@Override
-	public void setAltOrgUnit(Vector arg0) throws NotesException;
+	public void setCertifierIDFile(String idFile) throws NotesException;
 
 	@Override
-	public void setAltOrgUnitLang(Vector arg0) throws NotesException;
+	public void setCertifierName(String name) throws NotesException;
 
 	@Override
-	public void setCertifierIDFile(String arg0) throws NotesException;
+	public void setCreateMailDb(boolean flag) throws NotesException;
 
 	@Override
-	public void setCertifierName(String arg0) throws NotesException;
+	public void setEnforceUniqueShortName(boolean flag) throws NotesException;
 
 	@Override
-	public void setCreateMailDb(boolean arg0) throws NotesException;
+	public void setExpiration(DateTime expiration) throws NotesException;
 
 	@Override
-	public void setEnforceUniqueShortName(boolean arg0) throws NotesException;
+	public void setForeignDN(String dn) throws NotesException;
 
 	@Override
-	public void setExpiration(DateTime arg0) throws NotesException;
+	public void setGroupList(Vector groups) throws NotesException;
 
 	@Override
-	public void setForeignDN(String arg0) throws NotesException;
+	public void setIDType(int type) throws NotesException;
 
 	@Override
-	public void setGroupList(Vector arg0) throws NotesException;
+	public void setMailACLManager(String name) throws NotesException;
 
 	@Override
-	public void setIDType(int arg0) throws NotesException;
+	public void setMailCreateFTIndex(boolean flag) throws NotesException;
 
 	@Override
-	public void setMailACLManager(String arg0) throws NotesException;
+	public void setMailInternetAddress(String address) throws NotesException;
 
 	@Override
-	public void setMailCreateFTIndex(boolean arg0) throws NotesException;
+	public void setMailOwnerAccess(int access) throws NotesException;
 
 	@Override
-	public void setMailInternetAddress(String arg0) throws NotesException;
+	public void setMailQuotaSizeLimit(int limit) throws NotesException;
 
 	@Override
-	public void setMailOwnerAccess(int arg0) throws NotesException;
+	public void setMailQuotaWarningThreshold(int threshold) throws NotesException;
 
 	@Override
-	public void setMailQuotaSizeLimit(int arg0) throws NotesException;
+	public void setMailReplicaServers(Vector servers) throws NotesException;
 
 	@Override
-	public void setMailQuotaWarningThreshold(int arg0) throws NotesException;
+	public void setMailSystem(int system) throws NotesException;
 
 	@Override
-	public void setMailReplicaServers(Vector arg0) throws NotesException;
+	public void setMailTemplateName(String name) throws NotesException;
 
 	@Override
-	public void setMailSystem(int arg0) throws NotesException;
+	public void setMinPasswordLength(int length) throws NotesException;
 
 	@Override
-	public void setMailTemplateName(String arg0) throws NotesException;
+	public void setNoIDFile(boolean flag) throws NotesException;
 
 	@Override
-	public void setMinPasswordLength(int arg0) throws NotesException;
+	public void setNorthAmerican(boolean flag) throws NotesException;
 
 	@Override
-	public void setNoIDFile(boolean arg0) throws NotesException;
+	public void setOrgUnit(String unit) throws NotesException;
 
 	@Override
-	public void setNorthAmerican(boolean arg0) throws NotesException;
+	public void setPolicyName(String name) throws NotesException;
 
 	@Override
-	public void setOrgUnit(String arg0) throws NotesException;
+	public void setPublicKeySize(int size) throws NotesException;
 
 	@Override
-	public void setPolicyName(String arg0) throws NotesException;
+	public void setRegistrationLog(String name) throws NotesException;
 
 	@Override
-	public void setPublicKeySize(int arg0) throws NotesException;
+	public void setRegistrationServer(String server) throws NotesException;
 
 	@Override
-	public void setRegistrationLog(String arg0) throws NotesException;
+	public void setRoamingCleanupPeriod(int period) throws NotesException;
 
 	@Override
-	public void setRegistrationServer(String arg0) throws NotesException;
+	public void setRoamingCleanupSetting(int setting) throws NotesException;
 
 	@Override
-	public void setRoamingCleanupPeriod(int arg0) throws NotesException;
+	public void setRoamingServer(String server) throws NotesException;
 
 	@Override
-	public void setRoamingCleanupSetting(int arg0) throws NotesException;
+	public void setRoamingSubdir(String dirPath) throws NotesException;
 
 	@Override
-	public void setRoamingServer(String arg0) throws NotesException;
+	public void setRoamingUser(boolean flag) throws NotesException;
 
 	@Override
-	public void setRoamingSubdir(String arg0) throws NotesException;
+	public void setShortName(String shortName) throws NotesException;
 
 	@Override
-	public void setRoamingUser(boolean arg0) throws NotesException;
+	public void setStoreIDInAddressBook(boolean flag) throws NotesException;
 
 	@Override
-	public void setShortName(String arg0) throws NotesException;
+	public void setStoreIDInMailfile(boolean flag) throws NotesException;
 
 	@Override
-	public void setStoreIDInAddressBook(boolean arg0) throws NotesException;
+	public void setSynchInternetPassword(boolean flag) throws NotesException;
 
 	@Override
-	public void setStoreIDInMailfile(boolean arg0) throws NotesException;
+	public void setUpdateAddressBook(boolean flag) throws NotesException;
 
 	@Override
-	public void setSynchInternetPassword(boolean arg0) throws NotesException;
+	public void setUseCertificateAuthority(boolean flag) throws NotesException;
 
 	@Override
-	public void setUpdateAddressBook(boolean arg0) throws NotesException;
-
-	@Override
-	public void setUseCertificateAuthority(boolean arg0) throws NotesException;
-
-	@Override
-	public String switchToID(String arg0, String arg1) throws NotesException;
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
-
+	public String switchToID(String idFile, String userPassword) throws NotesException;
 }
