@@ -3,7 +3,6 @@ package org.openntf.domino.impl;
 import java.util.Iterator;
 
 import lotus.domino.NotesException;
-import lotus.domino.View;
 import lotus.domino.ViewEntry;
 
 import org.openntf.domino.iterators.ViewEntryIterator;
@@ -13,10 +12,12 @@ import org.openntf.domino.utils.Factory;
 public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollection, lotus.domino.ViewEntryCollection> implements
 		org.openntf.domino.ViewEntryCollection {
 
-	protected ViewEntryCollection(lotus.domino.ViewEntryCollection delegate) {
-		super(delegate);
+	protected ViewEntryCollection(lotus.domino.ViewEntryCollection delegate, org.openntf.domino.View parent) {
+		super(delegate, parent);
 	}
 
+	// FIXME NTF -- all method that return a ViewEntry probably need to parent to the View rather than the Collection. Someone should verify
+	// the defined behavior.
 	@Override
 	public void addEntry(Object obj) {
 		try {
@@ -38,7 +39,8 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	@Override
 	public lotus.domino.ViewEntryCollection cloneCollection() {
 		try {
-			org.openntf.domino.ViewEntryCollection result = Factory.fromLotus(getDelegate().cloneCollection(), ViewEntryCollection.class);
+			org.openntf.domino.ViewEntryCollection result = Factory.fromLotus(getDelegate().cloneCollection(), ViewEntryCollection.class,
+					getParent());
 			return result;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
@@ -124,7 +126,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	@Override
 	public ViewEntry getEntry(Object entry) {
 		try {
-			return Factory.fromLotus(getDelegate().getEntry(entry), org.openntf.domino.ViewEntry.class);
+			return Factory.fromLotus(getDelegate().getEntry(entry), org.openntf.domino.ViewEntry.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -134,7 +136,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	@Override
 	public ViewEntry getFirstEntry() {
 		try {
-			return Factory.fromLotus(getDelegate().getFirstEntry(), org.openntf.domino.ViewEntry.class);
+			return Factory.fromLotus(getDelegate().getFirstEntry(), org.openntf.domino.ViewEntry.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -144,7 +146,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	@Override
 	public ViewEntry getLastEntry() {
 		try {
-			return Factory.fromLotus(getDelegate().getLastEntry(), org.openntf.domino.ViewEntry.class);
+			return Factory.fromLotus(getDelegate().getLastEntry(), org.openntf.domino.ViewEntry.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -154,7 +156,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	@Override
 	public ViewEntry getNextEntry() {
 		try {
-			return Factory.fromLotus(getDelegate().getNextEntry(), org.openntf.domino.ViewEntry.class);
+			return Factory.fromLotus(getDelegate().getNextEntry(), org.openntf.domino.ViewEntry.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -164,7 +166,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	@Override
 	public ViewEntry getNextEntry(ViewEntry entry) {
 		try {
-			ViewEntry result = Factory.fromLotus(getDelegate().getNextEntry(entry), org.openntf.domino.ViewEntry.class);
+			ViewEntry result = Factory.fromLotus(getDelegate().getNextEntry(entry), org.openntf.domino.ViewEntry.class, this);
 			entry.recycle();
 			return result;
 		} catch (NotesException e) {
@@ -176,7 +178,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	@Override
 	public ViewEntry getNthEntry(int n) {
 		try {
-			return Factory.fromLotus(getDelegate().getNthEntry(n), org.openntf.domino.ViewEntry.class);
+			return Factory.fromLotus(getDelegate().getNthEntry(n), org.openntf.domino.ViewEntry.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -184,19 +186,14 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	}
 
 	@Override
-	public View getParent() {
-		try {
-			return Factory.fromLotus(getDelegate().getParent(), org.openntf.domino.View.class);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
+	public org.openntf.domino.View getParent() {
+		return (org.openntf.domino.View) super.getParent();
 	}
 
 	@Override
 	public ViewEntry getPrevEntry() {
 		try {
-			return Factory.fromLotus(getDelegate().getPrevEntry(), org.openntf.domino.ViewEntry.class);
+			return Factory.fromLotus(getDelegate().getPrevEntry(), org.openntf.domino.ViewEntry.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -206,7 +203,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	@Override
 	public ViewEntry getPrevEntry(ViewEntry entry) {
 		try {
-			ViewEntry result = Factory.fromLotus(getDelegate().getPrevEntry(entry), org.openntf.domino.ViewEntry.class);
+			ViewEntry result = Factory.fromLotus(getDelegate().getPrevEntry(entry), org.openntf.domino.ViewEntry.class, this);
 			entry.recycle();
 			return result;
 		} catch (NotesException e) {

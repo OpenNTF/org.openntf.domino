@@ -4,15 +4,16 @@ import java.util.Calendar;
 import java.util.Date;
 
 import lotus.domino.NotesException;
-import lotus.domino.Session;
 
+import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.DateTime> implements org.openntf.domino.DateTime {
 	lotus.domino.DateTime temp_;
 
-	public DateTime(lotus.domino.DateTime delegate) {
-		super(delegate);
+	public DateTime(lotus.domino.DateTime delegate, org.openntf.domino.Base<?> parent) {
+		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
 	}
 
 	public void adjustDay(int arg0, boolean arg1) {
@@ -162,14 +163,9 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		}
 	}
 
+	@Override
 	public Session getParent() {
-		try {
-			return getDelegate().getParent();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return (org.openntf.domino.Session) super.getParent();
 	}
 
 	public String getTimeOnly() {

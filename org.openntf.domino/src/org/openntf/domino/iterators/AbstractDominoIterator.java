@@ -99,17 +99,20 @@ public abstract class AbstractDominoIterator<T> implements Iterator<T> {
 	public void setCollection(Base collection) {
 		if (collection != null) {
 			if (collection instanceof DocumentCollection) {
-				lotus.domino.Database parent = ((DocumentCollection) collection).getParent();
-				database_ = Factory.fromLotus(parent, Database.class);
-				session_ = Factory.fromLotus(database_.getParent(), Session.class); // FIXME NTF - this is suboptimal, but we still need to
-																					// sort out the parent/child pattern
+				org.openntf.domino.Database parent = ((org.openntf.domino.DocumentCollection) collection).getParent();
+				database_ = Factory.fromLotus(parent, Database.class, parent);
+				session_ = Factory.fromLotus(database_.getParent(), Session.class, parent.getParent()); // FIXME NTF - this is suboptimal,
+																										// but we still need to
+				// sort out the parent/child pattern
 			} else if (collection instanceof ViewEntryCollection) {
 				lotus.domino.View vw = ((ViewEntryCollection) collection).getParent();
 				try {
-					lotus.domino.Database parent = vw.getParent();
-					database_ = Factory.fromLotus(parent, Database.class);
-					session_ = Factory.fromLotus(database_.getParent(), Session.class); // FIXME NTF - this is suboptimal, but we still need
-																						// to sort out the parent/child pattern
+					database_ = Factory.fromLotus(vw.getParent(), org.openntf.domino.Database.class, null); // FIXME NTF -- just trying to
+																											// compile!!!
+					session_ = Factory.fromLotus(database_.getParent(), Session.class, database_.getParent()); // FIXME NTF - this is
+																												// suboptimal, but we still
+																												// need
+					// to sort out the parent/child pattern
 				} catch (NotesException e) {
 					DominoUtils.handleException(e);
 				} finally {

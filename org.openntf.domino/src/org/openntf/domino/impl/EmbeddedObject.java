@@ -6,10 +6,10 @@ import java.io.Reader;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
-import lotus.domino.RichTextItem;
 import lotus.domino.XSLTResultTarget;
 
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -17,8 +17,8 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		org.openntf.domino.EmbeddedObject {
 	private lotus.domino.EmbeddedObject temp;
 
-	protected EmbeddedObject(lotus.domino.EmbeddedObject delegate) {
-		super(delegate);
+	protected EmbeddedObject(lotus.domino.EmbeddedObject delegate, org.openntf.domino.Base<?> parent) {
+		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
 	}
 
 	public int activate(boolean paramBoolean) {
@@ -94,9 +94,11 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 	}
 
 	@Override
-	public RichTextItem getParent() {
+	public org.openntf.domino.RichTextItem getParent() {
 		try {
-			return getDelegate().getParent();
+			return Factory.fromLotus(getDelegate().getParent(), org.openntf.domino.RichTextItem.class, null); // FIXME NTF - this ain't
+																												// gonna work. Need an
+			// RTItem implementation
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

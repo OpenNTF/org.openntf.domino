@@ -178,7 +178,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public String getNotesURL();
 
 	@Override
-	public Database getParentDatabase();
+	public org.openntf.domino.Database getParentDatabase();
 
 	@Override
 	public String getParentDocumentUNID();

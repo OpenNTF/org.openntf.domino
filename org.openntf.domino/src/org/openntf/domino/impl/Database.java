@@ -11,7 +11,6 @@ import lotus.domino.NoteCollection;
 import lotus.domino.NotesException;
 import lotus.domino.Outline;
 import lotus.domino.Replication;
-import lotus.domino.Session;
 import lotus.domino.View;
 
 import org.openntf.domino.DateTime;
@@ -23,9 +22,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	private String path_;
 	private String replid_;
 
-	public Database(lotus.domino.Database delegate) {
-		super(delegate);
-		// TODO Auto-generated constructor stub
+	public Database(lotus.domino.Database delegate, org.openntf.domino.Base parent) {
+		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
 	}
 
 	public Document FTDomainSearch(String arg0, int arg1, int arg2, int arg3, int arg4, int arg5, String arg6) {
@@ -376,7 +374,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public org.openntf.domino.DocumentCollection getAllDocuments() {
 		try {
-			return Factory.fromLotus(getDelegate().getAllDocuments(), org.openntf.domino.DocumentCollection.class);
+			return Factory.fromLotus(getDelegate().getAllDocuments(), org.openntf.domino.DocumentCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -436,7 +434,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DateTime getCreated() {
 		try {
-			return Factory.fromLotus(getDelegate().getCreated(), DateTime.class);
+			return Factory.fromLotus(getDelegate().getCreated(), DateTime.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -577,7 +575,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public Vector<org.openntf.domino.Form> getForms() {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getForms(), org.openntf.domino.Form.class);
+			return Factory.fromLotusAsVector(getDelegate().getForms(), org.openntf.domino.Form.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -597,7 +595,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DateTime getLastFTIndexed() {
 		try {
-			return Factory.fromLotus(getDelegate().getLastFTIndexed(), DateTime.class);
+			return Factory.fromLotus(getDelegate().getLastFTIndexed(), DateTime.class, Factory.getSession(this));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -605,9 +603,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public DateTime getLastFixup() {
+	public org.openntf.domino.DateTime getLastFixup() {
 		try {
-			return Factory.fromLotus(getDelegate().getLastFixup(), DateTime.class);
+			return Factory.fromLotus(getDelegate().getLastFixup(), org.openntf.domino.DateTime.class, Factory.getSession(this));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -617,7 +615,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DateTime getLastModified() {
 		try {
-			return Factory.fromLotus(getDelegate().getLastModified(), DateTime.class);
+			return Factory.fromLotus(getDelegate().getLastModified(), org.openntf.domino.DateTime.class, Factory.getSession(this));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -736,14 +734,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	@Override
-	public Session getParent() {
-		try {
-			return getDelegate().getParent();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+	public org.openntf.domino.Session getParent() {
+		return (org.openntf.domino.Session) super.getParent();
 	}
 
 	public double getPercentUsed() {

@@ -10,8 +10,8 @@ import org.openntf.domino.utils.DominoUtils;
 
 public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACLEntry> implements org.openntf.domino.ACLEntry {
 
-	public ACLEntry(lotus.domino.ACLEntry delegate) {
-		super(delegate);
+	public ACLEntry(lotus.domino.ACLEntry delegate, org.openntf.domino.ACL parent) {
+		super(delegate, parent);
 	}
 
 	@Override
@@ -63,13 +63,8 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	}
 
 	@Override
-	public ACL getParent() {
-		try {
-			return getDelegate().getParent();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+	public org.openntf.domino.ACL getParent() {
+		return (org.openntf.domino.ACL) super.getParent();
 	}
 
 	@SuppressWarnings("unchecked")
