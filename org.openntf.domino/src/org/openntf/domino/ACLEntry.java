@@ -5,8 +5,6 @@ import java.util.Vector;
 import lotus.domino.ACL;
 import lotus.domino.Name;
 
-;
-
 public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLEntry {
 
 	@Override
