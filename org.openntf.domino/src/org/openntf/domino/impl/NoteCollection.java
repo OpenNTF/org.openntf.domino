@@ -17,61 +17,61 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	}
 
 	@Override
-	public void add(Agent arg0) {
+	public void add(Agent additionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void add(Document arg0) {
+	public void add(Document additionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void add(lotus.domino.Agent arg0) {
+	public void add(lotus.domino.Agent additionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void add(DocumentCollection arg0) {
+	public void add(DocumentCollection additionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void add(Form arg0) {
+	public void add(Form additionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void add(int arg0) {
+	public void add(int additionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void add(int[] arg0) {
+	public void add(int[] additionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void add(lotus.domino.NoteCollection arg0) {
+	public void add(lotus.domino.NoteCollection additionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void add(String arg0) {
+	public void add(String additionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void add(View arg0) {
+	public void add(View additionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
@@ -113,7 +113,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	}
 
 	@Override
-	public String getNextNoteID(String arg0) {
+	public String getNextNoteID(String noteId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -131,7 +131,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	}
 
 	@Override
-	public String getPrevNoteID(String arg0) {
+	public String getPrevNoteID(String noteId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -317,7 +317,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	}
 
 	@Override
-	public String getUNID(String arg0) {
+	public String getUNID(String unid) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -329,319 +329,319 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	}
 
 	@Override
-	public void intersect(lotus.domino.Agent arg0) {
+	public void intersect(lotus.domino.Agent intersectionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void intersect(Document arg0) {
+	public void intersect(Document intersectionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void intersect(DocumentCollection arg0) {
+	public void intersect(DocumentCollection intersectionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void intersect(Form arg0) {
+	public void intersect(Form intersectionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void intersect(int arg0) {
+	public void intersect(int intersectionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void intersect(lotus.domino.NoteCollection arg0) {
+	public void intersect(lotus.domino.NoteCollection intersectionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void intersect(String arg0) {
+	public void intersect(String intersectionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void intersect(View arg0) {
+	public void intersect(View intersectionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void remove(lotus.domino.Agent arg0) {
+	public void remove(lotus.domino.Agent removalSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void remove(Document arg0) {
+	public void remove(Document removalSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void remove(DocumentCollection arg0) {
+	public void remove(DocumentCollection removalSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void remove(Form arg0) {
+	public void remove(Form removalSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void remove(int arg0) {
+	public void remove(int removalSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void remove(lotus.domino.NoteCollection arg0) {
+	public void remove(lotus.domino.NoteCollection removalSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void remove(String arg0) {
+	public void remove(String removalSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void remove(View arg0) {
+	public void remove(View removalSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void selectAllAdminNotes(boolean arg0) {
+	public void selectAllAdminNotes(boolean selectorValue) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void selectAllCodeElements(boolean arg0) {
+	public void selectAllCodeElements(boolean selectorValue) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void selectAllDataNotes(boolean arg0) {
+	public void selectAllDataNotes(boolean selectorValue) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void selectAllDesignElements(boolean arg0) {
+	public void selectAllDesignElements(boolean selectorValue) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void selectAllFormatElements(boolean arg0) {
+	public void selectAllFormatElements(boolean selectorValue) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void selectAllIndexElements(boolean arg0) {
+	public void selectAllIndexElements(boolean selectorValue) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void selectAllNotes(boolean arg0) {
+	public void selectAllNotes(boolean selectorValue) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectAcl(boolean arg0) {
+	public void setSelectAcl(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectActions(boolean arg0) {
+	public void setSelectActions(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectAgents(boolean arg0) {
+	public void setSelectAgents(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectDatabaseScript(boolean arg0) {
+	public void setSelectDatabaseScript(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectDataConnections(boolean arg0) {
+	public void setSelectDataConnections(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectDocuments(boolean arg0) {
+	public void setSelectDocuments(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectFolders(boolean arg0) {
+	public void setSelectFolders(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectForms(boolean arg0) {
+	public void setSelectForms(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectFramesets(boolean arg0) {
+	public void setSelectFramesets(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectHelpAbout(boolean arg0) {
+	public void setSelectHelpAbout(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectHelpIndex(boolean arg0) {
+	public void setSelectHelpIndex(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectHelpUsing(boolean arg0) {
+	public void setSelectHelpUsing(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectIcon(boolean arg0) {
+	public void setSelectIcon(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectImageResources(boolean arg0) {
+	public void setSelectImageResources(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectionFormula(String arg0) {
+	public void setSelectionFormula(String flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectJavaResources(boolean arg0) {
+	public void setSelectJavaResources(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectMiscCodeElements(boolean arg0) {
+	public void setSelectMiscCodeElements(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectMiscFormatElements(boolean arg0) {
+	public void setSelectMiscFormatElements(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectMiscIndexElements(boolean arg0) {
+	public void setSelectMiscIndexElements(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectNavigators(boolean arg0) {
+	public void setSelectNavigators(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectOutlines(boolean arg0) {
+	public void setSelectOutlines(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectPages(boolean arg0) {
+	public void setSelectPages(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectProfiles(boolean arg0) {
+	public void setSelectProfiles(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectReplicationFormulas(boolean arg0) {
+	public void setSelectReplicationFormulas(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectScriptLibraries(boolean arg0) {
+	public void setSelectScriptLibraries(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectSharedFields(boolean arg0) {
+	public void setSelectSharedFields(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectStylesheetResources(boolean arg0) {
+	public void setSelectStylesheetResources(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectSubforms(boolean arg0) {
+	public void setSelectSubforms(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectViews(boolean arg0) {
+	public void setSelectViews(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSinceTime(DateTime arg0) {
+	public void setSinceTime(DateTime sinceTime) {
 		// TODO Auto-generated method stub
 
 	}
