@@ -11,7 +11,7 @@ import lotus.domino.View;
 
 public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus.domino.NoteCollection {
 
-	public void add(Agent arg0);
+	public void add(Agent additionSpecifier);
 
 	@Override
 	public void add(lotus.domino.Document additionSpecifier);
@@ -194,22 +194,22 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	public void recycle();
 
 	@Override
-	public void recycle(Vector arg0);
+	public void recycle(Vector objects);
 
 	@Override
-	public void remove(lotus.domino.Agent arg0);
+	public void remove(lotus.domino.Agent removalSpecifier);
 
 	@Override
-	public void remove(Document arg0);
+	public void remove(Document removalSpecifier);
 
 	@Override
-	public void remove(DocumentCollection arg0);
+	public void remove(DocumentCollection removalSpecifier);
 
 	@Override
-	public void remove(Form arg0);
+	public void remove(Form removalSpecifier);
 
 	@Override
-	public void remove(int arg0);
+	public void remove(int removalSpecifier);
 
 	@Override
 	public void remove(lotus.domino.NoteCollection removalSpecifier);
