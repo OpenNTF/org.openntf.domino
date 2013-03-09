@@ -3,7 +3,6 @@ package org.openntf.domino;
 import java.util.Vector;
 
 import lotus.domino.DateTime;
-import lotus.domino.NotesException;
 import lotus.domino.Session;
 
 public interface Registration extends Base<lotus.domino.Registration>, lotus.domino.Registration {
@@ -215,119 +214,119 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 			String location, String comment, String mailDBPath, String forward, String userPassword, String altName, String altNameLang);
 
 	@Override
-	public void setAltOrgUnit(Vector names) throws NotesException;
+	public void setAltOrgUnit(Vector names);
 
 	@Override
-	public void setAltOrgUnitLang(Vector languages) throws NotesException;
+	public void setAltOrgUnitLang(Vector languages);
 
 	@Override
-	public void setCertifierIDFile(String idFile) throws NotesException;
+	public void setCertifierIDFile(String idFile);
 
 	@Override
-	public void setCertifierName(String name) throws NotesException;
+	public void setCertifierName(String name);
 
 	@Override
-	public void setCreateMailDb(boolean flag) throws NotesException;
+	public void setCreateMailDb(boolean flag);
 
 	@Override
-	public void setEnforceUniqueShortName(boolean flag) throws NotesException;
+	public void setEnforceUniqueShortName(boolean flag);
 
 	@Override
-	public void setExpiration(DateTime expiration) throws NotesException;
+	public void setExpiration(DateTime expiration);
 
 	@Override
-	public void setForeignDN(String dn) throws NotesException;
+	public void setForeignDN(String dn);
 
 	@Override
-	public void setGroupList(Vector groups) throws NotesException;
+	public void setGroupList(Vector groups);
 
 	@Override
-	public void setIDType(int type) throws NotesException;
+	public void setIDType(int type);
 
 	@Override
-	public void setMailACLManager(String name) throws NotesException;
+	public void setMailACLManager(String name);
 
 	@Override
-	public void setMailCreateFTIndex(boolean flag) throws NotesException;
+	public void setMailCreateFTIndex(boolean flag);
 
 	@Override
-	public void setMailInternetAddress(String address) throws NotesException;
+	public void setMailInternetAddress(String address);
 
 	@Override
-	public void setMailOwnerAccess(int access) throws NotesException;
+	public void setMailOwnerAccess(int access);
 
 	@Override
-	public void setMailQuotaSizeLimit(int limit) throws NotesException;
+	public void setMailQuotaSizeLimit(int limit);
 
 	@Override
-	public void setMailQuotaWarningThreshold(int threshold) throws NotesException;
+	public void setMailQuotaWarningThreshold(int threshold);
 
 	@Override
-	public void setMailReplicaServers(Vector servers) throws NotesException;
+	public void setMailReplicaServers(Vector servers);
 
 	@Override
-	public void setMailSystem(int system) throws NotesException;
+	public void setMailSystem(int system);
 
 	@Override
-	public void setMailTemplateName(String name) throws NotesException;
+	public void setMailTemplateName(String name);
 
 	@Override
-	public void setMinPasswordLength(int length) throws NotesException;
+	public void setMinPasswordLength(int length);
 
 	@Override
-	public void setNoIDFile(boolean flag) throws NotesException;
+	public void setNoIDFile(boolean flag);
 
 	@Override
-	public void setNorthAmerican(boolean flag) throws NotesException;
+	public void setNorthAmerican(boolean flag);
 
 	@Override
-	public void setOrgUnit(String unit) throws NotesException;
+	public void setOrgUnit(String unit);
 
 	@Override
-	public void setPolicyName(String name) throws NotesException;
+	public void setPolicyName(String name);
 
 	@Override
-	public void setPublicKeySize(int size) throws NotesException;
+	public void setPublicKeySize(int size);
 
 	@Override
-	public void setRegistrationLog(String name) throws NotesException;
+	public void setRegistrationLog(String name);
 
 	@Override
-	public void setRegistrationServer(String server) throws NotesException;
+	public void setRegistrationServer(String server);
 
 	@Override
-	public void setRoamingCleanupPeriod(int period) throws NotesException;
+	public void setRoamingCleanupPeriod(int period);
 
 	@Override
-	public void setRoamingCleanupSetting(int setting) throws NotesException;
+	public void setRoamingCleanupSetting(int setting);
 
 	@Override
-	public void setRoamingServer(String server) throws NotesException;
+	public void setRoamingServer(String server);
 
 	@Override
-	public void setRoamingSubdir(String dirPath) throws NotesException;
+	public void setRoamingSubdir(String dirPath);
 
 	@Override
-	public void setRoamingUser(boolean flag) throws NotesException;
+	public void setRoamingUser(boolean flag);
 
 	@Override
-	public void setShortName(String shortName) throws NotesException;
+	public void setShortName(String shortName);
 
 	@Override
-	public void setStoreIDInAddressBook(boolean flag) throws NotesException;
+	public void setStoreIDInAddressBook(boolean flag);
 
 	@Override
-	public void setStoreIDInMailfile(boolean flag) throws NotesException;
+	public void setStoreIDInMailfile(boolean flag);
 
 	@Override
-	public void setSynchInternetPassword(boolean flag) throws NotesException;
+	public void setSynchInternetPassword(boolean flag);
 
 	@Override
-	public void setUpdateAddressBook(boolean flag) throws NotesException;
+	public void setUpdateAddressBook(boolean flag);
 
 	@Override
-	public void setUseCertificateAuthority(boolean flag) throws NotesException;
+	public void setUseCertificateAuthority(boolean flag);
 
 	@Override
-	public String switchToID(String idFile, String userPassword) throws NotesException;
+	public String switchToID(String idFile, String userPassword);
 }
