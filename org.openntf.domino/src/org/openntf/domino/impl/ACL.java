@@ -3,15 +3,14 @@ package org.openntf.domino.impl;
 import java.util.Vector;
 
 import lotus.domino.ACLEntry;
-import lotus.domino.Database;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.utils.DominoUtils;
 
 public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implements org.openntf.domino.ACL {
 
-	public ACL(lotus.domino.ACL delegate) {
-		super(delegate);
+	public ACL(lotus.domino.ACL delegate, org.openntf.domino.Base<?> parent) {
+		super(delegate, parent);
 	}
 
 	@Override
@@ -103,13 +102,8 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	}
 
 	@Override
-	public Database getParent() {
-		try {
-			return getDelegate().getParent();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+	public org.openntf.domino.Database getParent() {
+		return (org.openntf.domino.Database) super.getParent();
 	}
 
 	@SuppressWarnings("unchecked")

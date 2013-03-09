@@ -10,7 +10,6 @@ import lotus.domino.Form;
 import lotus.domino.NoteCollection;
 import lotus.domino.Outline;
 import lotus.domino.Replication;
-import lotus.domino.Session;
 import lotus.domino.View;
 
 import org.openntf.domino.annotations.Legacy;
@@ -236,7 +235,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public Outline getOutline(String arg0);
 
 	@Override
-	public Session getParent();
+	public org.openntf.domino.Session getParent();
 
 	@Override
 	public double getPercentUsed();

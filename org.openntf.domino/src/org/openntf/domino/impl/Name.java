@@ -1,7 +1,6 @@
 package org.openntf.domino.impl;
 
 import lotus.domino.NotesException;
-import lotus.domino.Session;
 
 import org.openntf.domino.utils.DominoUtils;
 
@@ -36,8 +35,8 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	private String surname = DEFAULT_STR;
 	private boolean hierarchical = false;
 
-	public Name(lotus.domino.Name delegate) {
-		super(null);
+	public Name(lotus.domino.Name delegate, org.openntf.domino.Base parent) {
+		super(null, parent);
 		initialize(delegate);
 		Base.recycle(delegate);
 	}
@@ -161,9 +160,9 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 		return prmd;
 	}
 
-	public Session getParent() {
-		// FIXME NTF - the fact that this exists is silly. But we should address it somehow.
-		return null;
+	@Override
+	public org.openntf.domino.Session getParent() {
+		return (org.openntf.domino.Session) super.getParent();
 	}
 
 	public String getSurname() {

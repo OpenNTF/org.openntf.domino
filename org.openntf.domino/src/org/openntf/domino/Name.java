@@ -1,7 +1,5 @@
 package org.openntf.domino;
 
-import lotus.domino.Session;
-
 import org.openntf.domino.types.Encapsulated;
 
 public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, Encapsulated {
@@ -70,7 +68,7 @@ public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, Encaps
 	public String getOrgUnit4();
 
 	@Override
-	public Session getParent();
+	public org.openntf.domino.Session getParent();
 
 	@Override
 	public String getPRMD();

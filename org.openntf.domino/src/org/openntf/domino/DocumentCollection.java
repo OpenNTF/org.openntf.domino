@@ -1,6 +1,5 @@
 package org.openntf.domino;
 
-import lotus.domino.Database;
 import lotus.domino.Document;
 
 import org.openntf.domino.annotations.Legacy;
@@ -11,7 +10,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 
 	public abstract String getQuery();
 
-	public abstract Database getParent();
+	public abstract org.openntf.domino.Database getParent();
 
 	public abstract org.openntf.domino.Document getFirstDocument();
 

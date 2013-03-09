@@ -12,8 +12,8 @@ import org.openntf.domino.utils.Factory;
 public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, lotus.domino.Form> implements org.openntf.domino.Form {
 	lotus.domino.Form temp_;
 
-	public Form(lotus.domino.Form delegate) {
-		super(delegate);
+	public Form(lotus.domino.Form delegate, org.openntf.domino.Base<?> parent) {
+		super(delegate, parent);
 	}
 
 	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
@@ -105,22 +105,16 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 			Database db = getDelegate().getParent();
 			String url = this.getNotesURL();
 			String unid = DominoUtils.getUnidFromNotesUrl(url);
-			return Factory.fromLotus(db.getDocumentByUNID(unid), org.openntf.domino.Database.class);
+			return Factory.fromLotus(db.getDocumentByUNID(unid), org.openntf.domino.Database.class, this);
 		} catch (NotesException ne) {
 			DominoUtils.handleException(ne);
 			return null;
 		}
 	}
 
-	public Database getParent() {
-		// FIXME NTF - in the case of parenting, we really should be passing the wrapper objects around when they create children
-		try {
-			return Factory.fromLotus(getDelegate().getParent(), org.openntf.domino.Database.class);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+	@Override
+	public org.openntf.domino.Database getParent() {
+		return (org.openntf.domino.Database) super.getParent();
 	}
 
 	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })

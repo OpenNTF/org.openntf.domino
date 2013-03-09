@@ -4,15 +4,14 @@ import java.util.Vector;
 
 import lotus.domino.DateTime;
 import lotus.domino.NotesException;
-import lotus.domino.Session;
 
 import org.openntf.domino.utils.DominoUtils;
 
 public class AdministrationProcess extends Base<org.openntf.domino.AdministrationProcess, lotus.domino.AdministrationProcess> implements
 		org.openntf.domino.AdministrationProcess {
 
-	public AdministrationProcess(lotus.domino.AdministrationProcess delegate) {
-		super(delegate);
+	public AdministrationProcess(lotus.domino.AdministrationProcess delegate, org.openntf.domino.Base<?> parent) {
+		super(delegate, parent);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -348,13 +347,8 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public Session getParent() {
-		try {
-			return getDelegate().getParent();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+	public org.openntf.domino.Session getParent() {
+		return (org.openntf.domino.Session) super.getParent();
 	}
 
 	@Override

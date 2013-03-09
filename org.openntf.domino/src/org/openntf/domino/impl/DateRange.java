@@ -2,20 +2,21 @@ package org.openntf.domino.impl;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.DateRange> implements org.openntf.domino.DateRange,
 		lotus.domino.DateRange {
 
-	public DateRange(lotus.domino.DateRange delegate) {
-		super(delegate);
+	public DateRange(lotus.domino.DateRange delegate, org.openntf.domino.Base<?> parent) {
+		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
 	}
 
 	@Override
 	public DateTime getEndDateTime() {
 		try {
-			return Factory.fromLotus(getDelegate().getEndDateTime(), DateTime.class);
+			return Factory.fromLotus(getDelegate().getEndDateTime(), DateTime.class, getParent());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -25,19 +26,13 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 
 	@Override
 	public Session getParent() {
-		try {
-			return Factory.fromLotus(getDelegate().getParent(), Session.class);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return (org.openntf.domino.Session) super.getParent();
 	}
 
 	@Override
 	public DateTime getStartDateTime() {
 		try {
-			return Factory.fromLotus(getDelegate().getStartDateTime(), DateTime.class);
+			return Factory.fromLotus(getDelegate().getStartDateTime(), DateTime.class, getParent());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

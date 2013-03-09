@@ -1,6 +1,5 @@
 package org.openntf.domino;
 
-import lotus.domino.View;
 import lotus.domino.ViewEntry;
 
 import org.openntf.domino.annotations.Legacy;
@@ -62,7 +61,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	public ViewEntry getNthEntry(int arg0);
 
 	@Override
-	public View getParent();
+	public org.openntf.domino.View getParent();
 
 	@Override
 	public ViewEntry getPrevEntry();

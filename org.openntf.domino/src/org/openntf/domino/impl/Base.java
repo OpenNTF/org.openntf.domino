@@ -1,8 +1,10 @@
 package org.openntf.domino.impl;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
+import java.util.WeakHashMap;
 
 import org.openntf.domino.thread.DominoReference;
 import org.openntf.domino.thread.DominoReferenceQueue;
@@ -28,31 +30,33 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	protected D delegate_; // NTF final???
 	private DominoReference ref_; // this is the PhantomReference that will be enqueued when this Base object HAS BEEN be GC'ed
 	private boolean encapsulated_ = false;
-	private lotus.domino.Base parent_;
-	private Set<lotus.domino.Base> children_;
+	private org.openntf.domino.Base<?> parent_;
 
-	protected Set<lotus.domino.Base> getChildren() {
-		if (children_ == null) {
-			children_ = new HashSet<lotus.domino.Base>();
-		}
-		return children_;
+	// TODO NTF - not sure about maintaining a set pointer to children. Not using for now. Just setting up (no pun intended)
+	private final Set<org.openntf.domino.Base<?>> children_ = Collections
+			.newSetFromMap(new WeakHashMap<org.openntf.domino.Base<?>, Boolean>());
+
+	// protected Set<org.openntf.domino.Base<?>> getChildren() {
+	// if (children_ == null) {
+	// children_ = new HashSet<org.openntf.domino.Base<?>>();
+	// }
+	// return children_;
+	// }
+
+	void setParent(org.openntf.domino.Base<?> parent) {
+		parent_ = parent;
+		// TODO NTF - add to parent's children set?
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	void parent(org.openntf.domino.impl.Base child) {
-		child.parent_ = this;
-		getChildren().add(child);
-	}
-
-	lotus.domino.Base getParent() {
+	org.openntf.domino.Base<?> getParent() {
 		return parent_;
 	}
 
-	void setParent(lotus.domino.Base parent) {
-		parent_ = parent;
-	}
+	// void setParent(lotus.domino.Base parent) {
+	// parent_ = parent;
+	// }
 
-	protected Base(D delegate) {
+	protected Base(D delegate, org.openntf.domino.Base<?> parent) {
 		if (delegate != null) {
 			delegate_ = delegate;
 			ref_ = new DominoReference(this, recycleQueue.get(), delegate);
@@ -61,12 +65,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		} else {
 			encapsulated_ = true;
 		}
-	}
-
-	protected Base(D delegate, Base<?, ?> parent) {
-		this(delegate);
 		if (parent != null) {
-			parent(parent);
+			setParent(parent);
 		}
 	}
 

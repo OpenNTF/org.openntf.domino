@@ -15,12 +15,13 @@ import lotus.domino.View;
 import lotus.domino.XSLTResultTarget;
 
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 public class Document extends Base<org.openntf.domino.Document, lotus.domino.Document> implements org.openntf.domino.Document {
 	lotus.domino.Document temp;
 
-	public Document(lotus.domino.Document delegate) {
-		super(delegate);
+	public Document(lotus.domino.Document delegate, org.openntf.domino.Base<?> parent) {
+		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
 	}
 
 	@Override
@@ -297,9 +298,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public DateTime getCreated() {
+	public org.openntf.domino.DateTime getCreated() {
 		try {
-			return new DateTime(getDelegate().getCreated());
+			return Factory.fromLotus(getDelegate().getCreated(), org.openntf.domino.DateTime.class, Factory.getSession(this));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -372,7 +373,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public DateTime getInitiallyModified() {
 		try {
-			return new DateTime(getDelegate().getInitiallyModified());
+			return Factory.fromLotus(getDelegate().getInitiallyModified(), org.openntf.domino.DateTime.class, Factory.getSession(this));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -491,7 +492,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public DateTime getLastModified() {
 		try {
-			return new DateTime(getDelegate().getLastModified());
+			return Factory.fromLotus(getDelegate().getLastModified(), org.openntf.domino.DateTime.class, Factory.getSession(this));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -560,13 +561,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public Database getParentDatabase() {
-		try {
-			return getDelegate().getParentDatabase();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+	public org.openntf.domino.Database getParentDatabase() {
+		return (org.openntf.domino.Database) super.getParent();
 	}
 
 	@Override

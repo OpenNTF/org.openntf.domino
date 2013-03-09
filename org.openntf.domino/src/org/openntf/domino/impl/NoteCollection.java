@@ -1,6 +1,5 @@
 package org.openntf.domino.impl;
 
-import lotus.domino.Database;
 import lotus.domino.DateTime;
 import lotus.domino.Document;
 import lotus.domino.DocumentCollection;
@@ -12,8 +11,8 @@ import org.openntf.domino.Agent;
 public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.domino.NoteCollection, lotus.domino.NoteCollection> implements
 		org.openntf.domino.NoteCollection {
 
-	protected NoteCollection(lotus.domino.NoteCollection delegate) {
-		super(delegate);
+	protected NoteCollection(lotus.domino.NoteCollection delegate, org.openntf.domino.Database parent) {
+		super(delegate, parent);
 	}
 
 	@Override
@@ -125,9 +124,8 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	}
 
 	@Override
-	public Database getParent() {
-		// TODO Auto-generated method stub
-		return null;
+	public org.openntf.domino.Database getParent() {
+		return (org.openntf.domino.Database) super.getParent();
 	}
 
 	@Override
