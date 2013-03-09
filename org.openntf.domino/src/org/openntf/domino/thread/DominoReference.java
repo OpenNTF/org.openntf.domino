@@ -4,6 +4,7 @@ import java.lang.ref.PhantomReference;
 
 import org.openntf.domino.Base;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>> {
 	private lotus.domino.Base delegate_;
@@ -49,18 +50,9 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 	}
 
 	public void recycle() {
-		if (!org.openntf.domino.impl.Base.isLocked(delegate_)) {
-			// System.out.println("Recycling a " + getType().getName() + "!");
-			try {
-				delegate_.recycle();
-			} catch (Throwable t) {
-				// TODO
-				DominoUtils.handleException(t);
-			}
-			isRecycled_ = true;
-		} else {
-			System.out.println("Not recycling a " + getType().getName() + " because its locked.");
-		}
+
+		org.openntf.domino.impl.Base.recycle(delegate_);
+		Factory.countAutoRecycle();
 	}
 
 }

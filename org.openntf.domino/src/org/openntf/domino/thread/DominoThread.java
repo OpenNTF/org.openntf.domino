@@ -3,6 +3,7 @@ package org.openntf.domino.thread;
 import java.lang.ref.Reference;
 
 import org.openntf.domino.impl.Base;
+import org.openntf.domino.utils.Factory;
 
 public class DominoThread extends Thread {
 	// This will be the Thread for executing Runnables that need Domino objects created from scratch
@@ -58,6 +59,10 @@ public class DominoThread extends Thread {
 			// } catch (InterruptedException e) {
 			//
 			// }
+			// System.out.println("Thread " + Thread.currentThread().getName() + " still has " + Factory.getLotusCount()
+			// + " lotus objects. Auto-recycling those...");
+			int runRecycleCount = Factory.getAutoRecycleCount();
+			int drCount = 0;
 			DominoReferenceQueue drq = Base._getRecycleQueue();
 			// System.out
 			// .println("Got a queue on thread " + Thread.currentThread().getName() + " (" + Thread.currentThread().hashCode() + ")");
@@ -67,9 +72,13 @@ public class DominoThread extends Thread {
 				if (ref instanceof DominoReference) {
 					// System.out.println("Found a phantom reference of type " + ((DominoReference) ref).getType().getName());
 					((DominoReference) ref).recycle();
+					drCount++;
 				}
 				ref = drq.poll();
 			}
+			System.out.println("Thread " + Thread.currentThread().getName() + " auto-recycled " + runRecycleCount
+					+ " lotus references during run. Then recycled " + drCount + " lotus references on completion and had "
+					+ Factory.getRecycleErrorCount() + " recycle errors");
 			// DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
 			// System.out.println(df.format(new Date()) + "DominoReferenceQueue drained");
 			lotus.domino.NotesThread.stermThread();
