@@ -115,9 +115,6 @@ public abstract class AbstractDominoIterator<T> implements Iterator<T> {
 					// to sort out the parent/child pattern
 				} catch (NotesException e) {
 					DominoUtils.handleException(e);
-				} finally {
-					DominoUtils.incinerate(vw); // TODO NTF - Tim, this shouldn't be recycled. In fact, we should hold on to the overall
-												// parent objects
 				}
 			}
 			if (database_ != null) {
