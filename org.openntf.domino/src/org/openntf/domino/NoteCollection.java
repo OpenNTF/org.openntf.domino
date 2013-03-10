@@ -11,34 +11,34 @@ import lotus.domino.View;
 
 public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus.domino.NoteCollection {
 
-	public void add(Agent arg0);
+	public void add(Agent additionSpecifier);
 
 	@Override
-	public void add(lotus.domino.Document arg0);
+	public void add(lotus.domino.Document additionSpecifier);
 
 	@Override
-	public void add(lotus.domino.Agent arg0);
+	public void add(lotus.domino.Agent additionSpecifier);
 
 	@Override
-	public void add(DocumentCollection arg0);
+	public void add(DocumentCollection additionSpecifier);
 
 	@Override
-	public void add(Form arg0);
+	public void add(Form additionSpecifier);
 
 	@Override
-	public void add(int arg0);
+	public void add(int additionSpecifier);
 
 	@Override
-	public void add(int[] arg0);
+	public void add(int[] additionSpecifier);
 
 	@Override
-	public void add(lotus.domino.NoteCollection arg0);
+	public void add(lotus.domino.NoteCollection additionSpecifier);
 
 	@Override
-	public void add(String arg0);
+	public void add(String additionSpecifier);
 
 	@Override
-	public void add(View arg0);
+	public void add(View additionSpecifier);
 
 	@Override
 	public void buildCollection();
@@ -59,7 +59,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	public String getLastNoteID();
 
 	@Override
-	public String getNextNoteID(String arg0);
+	public String getNextNoteID(String noteId);
 
 	@Override
 	public int[] getNoteIDs();
@@ -68,7 +68,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	public Database getParent();
 
 	@Override
-	public String getPrevNoteID(String arg0);
+	public String getPrevNoteID(String noteId);
 
 	@Override
 	public boolean getSelectAcl();
@@ -161,166 +161,166 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	public DateTime getSinceTime();
 
 	@Override
-	public String getUNID(String arg0);
+	public String getUNID(String unid);
 
 	@Override
 	public DateTime getUntilTime();
 
 	@Override
-	public void intersect(lotus.domino.Agent arg0);
+	public void intersect(lotus.domino.Agent intersectionSpecifier);
 
 	@Override
-	public void intersect(Document arg0);
+	public void intersect(Document intersectionSpecifier);
 
 	@Override
-	public void intersect(DocumentCollection arg0);
+	public void intersect(DocumentCollection intersectionSpecifier);
 
 	@Override
-	public void intersect(Form arg0);
+	public void intersect(Form intersectionSpecifier);
 
 	@Override
-	public void intersect(int arg0);
+	public void intersect(int intersectionSpecifier);
 
 	@Override
-	public void intersect(lotus.domino.NoteCollection arg0);
+	public void intersect(lotus.domino.NoteCollection intersectionSpecifier);
 
 	@Override
-	public void intersect(String arg0);
+	public void intersect(String intersectionSpecifier);
 
 	@Override
-	public void intersect(View arg0);
+	public void intersect(View intersectionSpecifier);
 
 	@Override
 	public void recycle();
 
 	@Override
-	public void recycle(Vector arg0);
+	public void recycle(Vector objects);
 
 	@Override
-	public void remove(lotus.domino.Agent arg0);
+	public void remove(lotus.domino.Agent removalSpecifier);
 
 	@Override
-	public void remove(Document arg0);
+	public void remove(Document removalSpecifier);
 
 	@Override
-	public void remove(DocumentCollection arg0);
+	public void remove(DocumentCollection removalSpecifier);
 
 	@Override
-	public void remove(Form arg0);
+	public void remove(Form removalSpecifier);
 
 	@Override
-	public void remove(int arg0);
+	public void remove(int removalSpecifier);
 
 	@Override
-	public void remove(lotus.domino.NoteCollection arg0);
+	public void remove(lotus.domino.NoteCollection removalSpecifier);
 
 	@Override
-	public void remove(String arg0);
+	public void remove(String removalSpecifier);
 
 	@Override
-	public void remove(View arg0);
+	public void remove(View removalSpecifier);
 
 	@Override
-	public void selectAllAdminNotes(boolean arg0);
+	public void selectAllAdminNotes(boolean selectorValue);
 
 	@Override
-	public void selectAllCodeElements(boolean arg0);
+	public void selectAllCodeElements(boolean selectorValue);
 
 	@Override
-	public void selectAllDataNotes(boolean arg0);
+	public void selectAllDataNotes(boolean selectorValue);
 
 	@Override
-	public void selectAllDesignElements(boolean arg0);
+	public void selectAllDesignElements(boolean selectorValue);
 
 	@Override
-	public void selectAllFormatElements(boolean arg0);
+	public void selectAllFormatElements(boolean selectorValue);
 
-	public void selectAllIndexElements(boolean arg0);
-
-	@Override
-	public void selectAllNotes(boolean arg0);
+	public void selectAllIndexElements(boolean selectorValue);
 
 	@Override
-	public void setSelectAcl(boolean arg0);
-
-	public void setSelectActions(boolean arg0);
-
-	public void setSelectAgents(boolean arg0);
-
-	public void setSelectDatabaseScript(boolean arg0);
-
-	public void setSelectDataConnections(boolean arg0);
+	public void selectAllNotes(boolean selectorValue);
 
 	@Override
-	public void setSelectDocuments(boolean arg0);
+	public void setSelectAcl(boolean flag);
+
+	public void setSelectActions(boolean flag);
+
+	public void setSelectAgents(boolean flag);
+
+	public void setSelectDatabaseScript(boolean flag);
+
+	public void setSelectDataConnections(boolean flag);
 
 	@Override
-	public void setSelectFolders(boolean arg0);
+	public void setSelectDocuments(boolean flag);
 
 	@Override
-	public void setSelectForms(boolean arg0);
+	public void setSelectFolders(boolean flag);
 
 	@Override
-	public void setSelectFramesets(boolean arg0);
+	public void setSelectForms(boolean flag);
 
 	@Override
-	public void setSelectHelpAbout(boolean arg0);
+	public void setSelectFramesets(boolean flag);
 
 	@Override
-	public void setSelectHelpIndex(boolean arg0);
+	public void setSelectHelpAbout(boolean flag);
 
 	@Override
-	public void setSelectHelpUsing(boolean arg0);
+	public void setSelectHelpIndex(boolean flag);
 
 	@Override
-	public void setSelectIcon(boolean arg0);
+	public void setSelectHelpUsing(boolean flag);
 
 	@Override
-	public void setSelectImageResources(boolean arg0);
+	public void setSelectIcon(boolean flag);
 
 	@Override
-	public void setSelectionFormula(String arg0);
+	public void setSelectImageResources(boolean flag);
 
 	@Override
-	public void setSelectJavaResources(boolean arg0);
+	public void setSelectionFormula(String flag);
 
 	@Override
-	public void setSelectMiscCodeElements(boolean arg0);
+	public void setSelectJavaResources(boolean flag);
 
 	@Override
-	public void setSelectMiscFormatElements(boolean arg0);
+	public void setSelectMiscCodeElements(boolean flag);
 
 	@Override
-	public void setSelectMiscIndexElements(boolean arg0);
+	public void setSelectMiscFormatElements(boolean flag);
 
 	@Override
-	public void setSelectNavigators(boolean arg0);
+	public void setSelectMiscIndexElements(boolean flag);
 
 	@Override
-	public void setSelectOutlines(boolean arg0);
+	public void setSelectNavigators(boolean flag);
 
 	@Override
-	public void setSelectPages(boolean arg0);
-
-	public void setSelectProfiles(boolean arg0);
-
-	public void setSelectReplicationFormulas(boolean arg0);
-
-	public void setSelectScriptLibraries(boolean arg0);
+	public void setSelectOutlines(boolean flag);
 
 	@Override
-	public void setSelectSharedFields(boolean arg0);
+	public void setSelectPages(boolean flag);
+
+	public void setSelectProfiles(boolean flag);
+
+	public void setSelectReplicationFormulas(boolean flag);
+
+	public void setSelectScriptLibraries(boolean flag);
 
 	@Override
-	public void setSelectStylesheetResources(boolean arg0);
+	public void setSelectSharedFields(boolean flag);
 
-	public void setSelectSubforms(boolean arg0);
+	@Override
+	public void setSelectStylesheetResources(boolean flag);
 
-	public void setSelectViews(boolean arg0);
+	public void setSelectSubforms(boolean flag);
 
-	public void setSinceTime(DateTime arg0);
+	public void setSelectViews(boolean flag);
 
-	public boolean equals(Object o);
+	public void setSinceTime(DateTime sinceTime);
+
+	public boolean equals(Object otherCollection);
 
 	@Override
 	public int hashCode();
