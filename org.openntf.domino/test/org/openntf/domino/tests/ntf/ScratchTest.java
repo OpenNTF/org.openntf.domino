@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Vector;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Form;
@@ -29,6 +30,7 @@ public enum ScratchTest {
 			long start = System.nanoTime();
 			int nameCount = 0;
 			int docCount = 0;
+			int dateCount = 0;
 			Session s = Factory.getSession();
 			Name sname = s.getUserNameObject();
 			DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
@@ -57,11 +59,17 @@ public enum ScratchTest {
 						nameCount++;
 					}
 				}
+				DateTime toxic = doc.getLastModified();
+				String busyWork = toxic.getGMTTime();
+				DateTime toxic2 = doc.getLastModified();
+				String busyWork2 = toxic2.getDateOnly();
+				// System.out.println("LastMod: " + toxic.getGMTTime());
+				dateCount++;
 			}
 
 			System.out.println("ENDING ITERATION of Documents");
-			System.out.println("Thread " + Thread.currentThread().getName() + " processed " + nameCount + " names and " + docCount
-					+ " docs without recycling.");
+			System.out.println("Thread " + Thread.currentThread().getName() + " processed " + nameCount + " names, " + docCount
+					+ " docs, and " + dateCount + " datetimes without recycling.");
 			long elapsed = System.nanoTime() - start;
 			System.out.println("Thread " + Thread.currentThread().getName() + " elapsed time: " + elapsed / 1000000 + "ms");
 		}
@@ -72,7 +80,7 @@ public enum ScratchTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		int delay = 300;
+		int delay = 500;
 		DominoThread dt = new DominoThread(new Doer(), "Scratch Test");
 		DominoThread dt2 = new DominoThread(new Doer(), "Scratch Test2");
 		DominoThread dt3 = new DominoThread(new Doer(), "Scratch Test3");

@@ -6,11 +6,15 @@ import java.util.Collection;
 
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
 import org.openntf.domino.impl.Base;
+import org.openntf.domino.impl.Session;
 import org.openntf.domino.thread.DominoReference;
 import org.openntf.domino.thread.DominoReferenceQueue;
 
 public enum Factory {
 	;
+
+	private static final boolean TRACE_COUNTERS = true;
+
 	static class Counter extends ThreadLocal<Integer> {
 		// TODO NTF - I'm open to a faster implementation of this. Maybe a mutable int of some kind?
 		@Override
@@ -36,11 +40,13 @@ public enum Factory {
 	}
 
 	public static void countRecycleError() {
-		recycleErrCounter.increment();
+		if (TRACE_COUNTERS)
+			recycleErrCounter.increment();
 	}
 
 	public static void countAutoRecycle() {
-		autoRecycleCounter.increment();
+		if (TRACE_COUNTERS)
+			autoRecycleCounter.increment();
 	}
 
 	public static int getAutoRecycleCount() {
@@ -79,7 +85,8 @@ public enum Factory {
 		}
 		drainQueue();
 		if (result != null) {
-			lotusCounter.increment();
+			if (TRACE_COUNTERS)
+				lotusCounter.increment();
 			return result;
 		}
 		throw new UndefinedDelegateTypeException();
@@ -92,7 +99,8 @@ public enum Factory {
 		while (ref != null) {
 			if (ref instanceof DominoReference) {
 				((DominoReference) ref).recycle();
-				lotusCounter.decrement();
+				if (TRACE_COUNTERS)
+					lotusCounter.decrement();
 			}
 			ref = drq.poll();
 		}
@@ -140,9 +148,29 @@ public enum Factory {
 		return null;
 	}
 
+	public static org.openntf.domino.Database getParentDatabase(org.openntf.domino.Base<?> base) {
+		org.openntf.domino.Database result = null;
+		if (base instanceof org.openntf.domino.Database) {
+			result = (org.openntf.domino.Database) base;
+		} else if (base instanceof org.openntf.domino.Document) {
+			result = ((org.openntf.domino.Document) base).getParentDatabase();
+		} else if (base instanceof org.openntf.domino.DocumentCollection) {
+			result = (org.openntf.domino.Database) ((org.openntf.domino.DocumentCollection) base).getParent();
+		} else if (base instanceof org.openntf.domino.View) {
+			result = (org.openntf.domino.Database) ((org.openntf.domino.View) base).getParent();
+		} else if (base instanceof org.openntf.domino.Form) {
+			result = ((org.openntf.domino.Form) base).getParent();
+		} else {
+			throw new UndefinedDelegateTypeException();
+		}
+		return result;
+	}
+
 	public static org.openntf.domino.Session getSession(org.openntf.domino.Base<?> base) {
 		org.openntf.domino.Session result = null;
-		if (base instanceof org.openntf.domino.Database) {
+		if (base instanceof org.openntf.domino.Session) {
+			result = (org.openntf.domino.Session) base;
+		} else if (base instanceof org.openntf.domino.Database) {
 			result = ((org.openntf.domino.Database) base).getParent();
 		} else if (base instanceof org.openntf.domino.Document) {
 			result = ((org.openntf.domino.Document) base).getParentDatabase().getParent();
@@ -161,6 +189,8 @@ public enum Factory {
 		} else {
 			throw new UndefinedDelegateTypeException();
 		}
+		if (result == null)
+			result = Session.getDefaultSession(); // last ditch, get the primary Session;
 		return result;
 	}
 

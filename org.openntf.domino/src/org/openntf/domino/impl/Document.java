@@ -2,6 +2,7 @@ package org.openntf.domino.impl;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Date;
 import java.util.Vector;
 
 import lotus.domino.Database;
@@ -14,14 +15,37 @@ import lotus.domino.RichTextItem;
 import lotus.domino.View;
 import lotus.domino.XSLTResultTarget;
 
+import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 public class Document extends Base<org.openntf.domino.Document, lotus.domino.Document> implements org.openntf.domino.Document {
-	lotus.domino.Document temp;
+	// NTF - these are immutable by definition, so we should just copy it when we read in the doc
+	// yes, we're creating objects we might not need, but that's better than risking the toxicity of evil, wicked DateTime
+	// these ought to be final, since they can't change, but it makes the constructor really messy
+
+	// NTF - Okay, after testing, maybe these just need to be JIT getters. It added about 10% to Document iteration time.
+	// NTF - Done. And yeah, it make quite a performance difference. More like 20%, really
+	private Date created_;
+	private Date initiallyModified_;
+	private Date lastModified_;
+	private Date lastAccessed_;
 
 	public Document(lotus.domino.Document delegate, org.openntf.domino.Base<?> parent) {
-		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
+		super(delegate, Factory.getParentDatabase(parent));
+		// initialize(delegate);
+	}
+
+	private void initialize(lotus.domino.Document delegate) {
+		try {
+			delegate.setPreferJavaDates(true);
+			// created_ = DominoUtils.toJavaDateSafe(delegate.getCreated());
+			// initiallyModified_ = DominoUtils.toJavaDateSafe(delegate.getInitiallyModified());
+			// lastModified_ = DominoUtils.toJavaDateSafe(delegate.getLastModified());
+			// lastAccessed_ = DominoUtils.toJavaDateSafe(delegate.getLastAccessed());
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 	@Override
@@ -298,13 +322,29 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
+	@Deprecated
+	@Legacy(Legacy.DATETIME_WARNING)
 	public org.openntf.domino.DateTime getCreated() {
 		try {
-			return Factory.fromLotus(getDelegate().getCreated(), org.openntf.domino.DateTime.class, Factory.getSession(this));
+			if (created_ == null) {
+				created_ = DominoUtils.toJavaDateSafe(getDelegate().getCreated());
+			}
+			return new DateTime(created_, this); // TODO NTF - maybe ditch the parent?
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 		return null;
+	}
+
+	public Date getCreatedDate() {
+		if (created_ == null) {
+			try {
+				created_ = DominoUtils.toJavaDateSafe(getDelegate().getCreated());
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+			}
+		}
+		return created_;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -371,13 +411,31 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
+	@Deprecated
+	@Legacy(Legacy.DATETIME_WARNING)
 	public DateTime getInitiallyModified() {
 		try {
-			return Factory.fromLotus(getDelegate().getInitiallyModified(), org.openntf.domino.DateTime.class, Factory.getSession(this));
+			if (initiallyModified_ == null) {
+				initiallyModified_ = DominoUtils.toJavaDateSafe(getDelegate().getInitiallyModified());
+			}
+			return new DateTime(initiallyModified_, this); // TODO NTF - maybe ditch the parent?
+
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 		return null;
+	}
+
+	public Date getInitiallyModifiedDate() {
+		if (initiallyModified_ == null) {
+			try {
+				initiallyModified_ = DominoUtils.toJavaDateSafe(getDelegate().getInitiallyModified());
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+
+			}
+		}
+		return initiallyModified_;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -484,19 +542,59 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
+	@Deprecated
+	@Legacy(Legacy.DATETIME_WARNING)
 	public DateTime getLastAccessed() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public DateTime getLastModified() {
 		try {
-			return Factory.fromLotus(getDelegate().getLastModified(), org.openntf.domino.DateTime.class, Factory.getSession(this));
+			if (lastAccessed_ == null) {
+				lastAccessed_ = DominoUtils.toJavaDateSafe(getDelegate().getLastAccessed());
+			}
+			return new DateTime(lastAccessed_, this); // TODO NTF - maybe ditch the parent?
+
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 		return null;
+	}
+
+	public Date getLastAccessedDate() {
+		if (lastAccessed_ == null) {
+			try {
+				lastAccessed_ = DominoUtils.toJavaDateSafe(getDelegate().getLastAccessed());
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+
+			}
+		}
+		return lastAccessed_;
+	}
+
+	@Override
+	@Deprecated
+	@Legacy(Legacy.DATETIME_WARNING)
+	public DateTime getLastModified() {
+		try {
+			if (lastModified_ == null) {
+				lastModified_ = DominoUtils.toJavaDateSafe(getDelegate().getLastModified());
+			}
+			return new DateTime(lastModified_, this); // TODO NTF - maybe ditch the parent?
+
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
+	}
+
+	public Date getLastModifiedDate() {
+		if (lastModified_ == null) {
+			try {
+				lastModified_ = DominoUtils.toJavaDateSafe(getDelegate().getLastModified());
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+
+			}
+		}
+		return lastModified_;
 	}
 
 	@SuppressWarnings("unchecked")

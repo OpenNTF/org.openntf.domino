@@ -35,6 +35,7 @@ import lotus.domino.Stream;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Name;
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.utils.DominoFormatter;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -47,17 +48,44 @@ import org.openntf.domino.utils.Factory;
 public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Session, lotus.domino.Session> implements
 		org.openntf.domino.Session {
 
-	/**
-	 * 
-	 */
+	private static DominoFormatter formatter_;
+
+	private static ThreadLocal<Session> defaultSession = new ThreadLocal<Session>() {
+		@Override
+		protected Session initialValue() {
+			return null;
+		}
+	};
+
+	public static Session getDefaultSession() {
+		return defaultSession.get();
+	}
+
 	public Session() {
 		// TODO come up with some static methods for finding a Session based on run context (XPages, Agent, DOTS, etc)
 		super(null, null);
 	}
 
 	// FIXME NTF - not sure if there's a context where this makes sense...
-	public Session(lotus.domino.Session lotus, org.openntf.domino.Base parent) {
+	public Session(lotus.domino.Session lotus, org.openntf.domino.Base<?> parent) {
 		super(lotus, parent);
+		initialize(lotus);
+	}
+
+	private void initialize(lotus.domino.Session session) {
+		try {
+			formatter_ = new DominoFormatter(session.getInternational());
+			if (defaultSession.get() == null) {
+				defaultSession.set(this);
+			}
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+
+		}
+	}
+
+	public static DominoFormatter getFormatter() {
+		return formatter_;
 	}
 
 	@Override

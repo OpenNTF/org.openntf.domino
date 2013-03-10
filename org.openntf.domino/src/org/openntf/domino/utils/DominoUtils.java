@@ -24,7 +24,6 @@ import lotus.domino.Session;
 import lotus.domino.View;
 import lotus.domino.ViewColumn;
 
-import org.openntf.domino.DateTime;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.exceptions.InvalidNotesUrlException;
 
@@ -202,9 +201,9 @@ public enum DominoUtils {
 		return DominoUtils.md5(value);
 	}
 
-	public static Calendar toJavaCalendarSafe(DateTime dt) {
+	public static Calendar toJavaCalendarSafe(lotus.domino.DateTime dt) {
 		Date d = DominoUtils.toJavaDateSafe(dt);
-		Calendar c = new GregorianCalendar();
+		Calendar c = GregorianCalendar.getInstance();
 		c.setTime(d);
 		return c;
 	}
@@ -223,7 +222,7 @@ public enum DominoUtils {
 		return result;
 	}
 
-	public static Date toJavaDateSafe(org.openntf.domino.DateTime dt) {
+	public static Date toJavaDateSafe(lotus.domino.DateTime dt) {
 		Date date = null;
 		if (dt != null) {
 			try {
@@ -236,4 +235,5 @@ public enum DominoUtils {
 		}
 		return date;
 	}
+
 }
