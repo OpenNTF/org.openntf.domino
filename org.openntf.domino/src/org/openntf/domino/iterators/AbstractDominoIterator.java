@@ -17,11 +17,12 @@ package org.openntf.domino.iterators;
 
 import java.util.Iterator;
 
+import lotus.domino.NotesException;
+
 import org.openntf.domino.Base;
 import org.openntf.domino.Database;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Session;
-import org.openntf.domino.View;
 import org.openntf.domino.ViewEntryCollection;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -103,11 +104,18 @@ public abstract class AbstractDominoIterator<T> implements Iterator<T> {
 				session_ = Factory.fromLotus(database_.getParent(), Session.class); // FIXME NTF - this is suboptimal, but we still need to
 																					// sort out the parent/child pattern
 			} else if (collection instanceof ViewEntryCollection) {
-				View vw = Factory.fromLotus(((ViewEntryCollection) collection).getParent(), View.class);
-				lotus.domino.Database parent = vw.getParent();
-				database_ = Factory.fromLotus(parent, Database.class);
-				session_ = Factory.fromLotus(database_.getParent(), Session.class); // FIXME NTF - this is suboptimal, but we still need
-																					// to sort out the parent/child pattern
+				lotus.domino.View vw = ((ViewEntryCollection) collection).getParent();
+				try {
+					lotus.domino.Database parent = vw.getParent();
+					database_ = Factory.fromLotus(parent, Database.class);
+					session_ = Factory.fromLotus(database_.getParent(), Session.class); // FIXME NTF - this is suboptimal, but we still need
+																						// to sort out the parent/child pattern
+				} catch (NotesException e) {
+					DominoUtils.handleException(e);
+				} finally {
+					DominoUtils.incinerate(vw); // TODO NTF - Tim, this shouldn't be recycled. In fact, we should hold on to the overall
+												// parent objects
+				}
 			}
 			if (database_ != null) {
 				setDatabase(database_);
