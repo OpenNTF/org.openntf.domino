@@ -1,5 +1,6 @@
 package org.openntf.domino.impl;
 
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -9,9 +10,13 @@ import java.util.WeakHashMap;
 import org.openntf.domino.thread.DominoReference;
 import org.openntf.domino.thread.DominoReferenceQueue;
 import org.openntf.domino.thread.DominoReferenceSet;
+import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base> implements org.openntf.domino.Base<D> {
+	// TODO NTF - we really should keep a Map of lotus objects to references, so we can only auto-recycle when we know there are no other
+	// references to the same shared object.
+	// problem today is: there's no clear way to determine an identity for the NotesBase object.
 	private static ThreadLocal<DominoReferenceQueue> recycleQueue = new ThreadLocal<DominoReferenceQueue>() {
 		@Override
 		protected DominoReferenceQueue initialValue() {
@@ -26,6 +31,16 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		};
 	};
 	private static final DominoReferenceSet refSet = new DominoReferenceSet();
+	private static Method getCppMethod;
+	static {
+		try {
+			getCppMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("GetCppObj", (Class<?>[]) null);
+			getCppMethod.setAccessible(true);
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+	}
 
 	protected boolean recycled_;
 	protected D delegate_; // NTF final???
@@ -63,6 +78,15 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			ref_ = new DominoReference(this, recycleQueue.get(), delegate);
 			referenceBag.get().add(ref_);
 			refSet.add(delegate);
+			if (delegate instanceof lotus.domino.local.NotesBase) {
+				try {
+					Long nref = (Long) getCppMethod.invoke((lotus.domino.local.NotesBase) delegate, (Object[]) null);
+					// System.out.println("CppId: " + nref);
+				} catch (Exception e) {
+					DominoUtils.handleException(e);
+
+				}
+			}
 		} else {
 			encapsulated_ = true;
 		}
