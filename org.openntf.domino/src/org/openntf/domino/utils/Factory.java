@@ -1,12 +1,55 @@
 package org.openntf.domino.utils;
 
+import java.lang.ref.Reference;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
+import org.openntf.domino.impl.Base;
+import org.openntf.domino.thread.DominoReference;
+import org.openntf.domino.thread.DominoReferenceQueue;
 
 public enum Factory {
 	;
+	static class Counter extends ThreadLocal<Integer> {
+		// TODO NTF - I'm open to a faster implementation of this. Maybe a mutable int of some kind?
+		@Override
+		protected Integer initialValue() {
+			return Integer.valueOf(0);
+		}
+
+		public void increment() {
+			set(get() + 1);
+		}
+
+		public void decrement() {
+			set(get() - 1);
+		}
+	};
+
+	private static Counter lotusCounter = new Counter();
+	private static Counter recycleErrCounter = new Counter();
+	private static Counter autoRecycleCounter = new Counter();
+
+	public static int getLotusCount() {
+		return lotusCounter.get().intValue();
+	}
+
+	public static void countRecycleError() {
+		recycleErrCounter.increment();
+	}
+
+	public static void countAutoRecycle() {
+		autoRecycleCounter.increment();
+	}
+
+	public static int getAutoRecycleCount() {
+		return autoRecycleCounter.get().intValue();
+	}
+
+	public static int getRecycleErrorCount() {
+		return recycleErrCounter.get().intValue();
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T> T fromLotus(lotus.domino.Base lotus, Class<? extends org.openntf.domino.Base> T, org.openntf.domino.Base parent) {
@@ -15,24 +58,44 @@ public enum Factory {
 		}
 		if (lotus == null) {
 			return null;
-		} else if (lotus instanceof lotus.domino.Name) {
-			return (T) new org.openntf.domino.impl.Name((lotus.domino.Name) lotus, parent);
+		}
+		T result = null;
+		if (lotus instanceof lotus.domino.Name) {
+			result = (T) new org.openntf.domino.impl.Name((lotus.domino.Name) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Session) {
-			return (T) new org.openntf.domino.impl.Session((lotus.domino.Session) lotus, parent);
+			result = (T) new org.openntf.domino.impl.Session((lotus.domino.Session) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Database) {
-			return (T) new org.openntf.domino.impl.Database((lotus.domino.Database) lotus, parent);
+			result = (T) new org.openntf.domino.impl.Database((lotus.domino.Database) lotus, parent);
 		} else if (lotus instanceof lotus.domino.DocumentCollection) {
-			return (T) new org.openntf.domino.impl.DocumentCollection((lotus.domino.DocumentCollection) lotus, parent);
+			result = (T) new org.openntf.domino.impl.DocumentCollection((lotus.domino.DocumentCollection) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Document) {
-			return (T) new org.openntf.domino.impl.Document((lotus.domino.Document) lotus, parent);
+			result = (T) new org.openntf.domino.impl.Document((lotus.domino.Document) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Form) {
-			return (T) new org.openntf.domino.impl.Form((lotus.domino.Form) lotus, parent);
+			result = (T) new org.openntf.domino.impl.Form((lotus.domino.Form) lotus, parent);
 		} else if (lotus instanceof lotus.domino.DateTime) {
-			return (T) new org.openntf.domino.impl.DateTime((lotus.domino.DateTime) lotus, parent);
+			result = (T) new org.openntf.domino.impl.DateTime((lotus.domino.DateTime) lotus, parent);
 		} else if (lotus instanceof lotus.domino.DateRange) {
-			return (T) new org.openntf.domino.impl.DateRange((lotus.domino.DateRange) lotus, parent);
+			result = (T) new org.openntf.domino.impl.DateRange((lotus.domino.DateRange) lotus, parent);
+		}
+		drainQueue();
+		if (result != null) {
+			lotusCounter.increment();
+			return result;
 		}
 		throw new UndefinedDelegateTypeException();
+	}
+
+	private static void drainQueue() {
+		DominoReferenceQueue drq = Base._getRecycleQueue();
+		Reference<?> ref = drq.poll();
+
+		while (ref != null) {
+			if (ref instanceof DominoReference) {
+				((DominoReference) ref).recycle();
+				lotusCounter.decrement();
+			}
+			ref = drq.poll();
+		}
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
