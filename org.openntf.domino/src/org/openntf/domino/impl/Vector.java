@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.ConcurrentModificationException;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.NoSuchElementException;
+
+import org.openntf.domino.iterators.VectorIterator;
 
 public class Vector<E> extends java.util.Vector<E> implements Collection<E> {
 	private final java.util.ArrayList<E> delegate_;
@@ -156,66 +156,13 @@ public class Vector<E> extends java.util.Vector<E> implements Collection<E> {
 		return delegate_.isEmpty();
 	}
 
-	@Override
-	public Iterator<E> iterator() {
-		return new RecyclingIterator();
+	public int getModCount() {
+		return modCount;
 	}
 
-	private class RecyclingIterator implements Iterator<E> {
-		int pos = -1;
-		int expectedModCount;
-		int lastPosition = -1;
-		E lastitem = null;
-
-		RecyclingIterator() {
-			this.expectedModCount = Vector.this.modCount;
-		}
-
-		public boolean hasNext() {
-			return (this.pos + 1 < Vector.this.size());
-		}
-
-		private void recycle(E b) {
-			org.openntf.domino.impl.Base.recycle(b);
-		}
-
-		public E next() {
-			if (lastitem != null) {
-				recycle(lastitem);
-			}
-			if (this.expectedModCount == Vector.this.modCount) {
-				try {
-					E localObject = Vector.this.get(this.pos + 1);
-					this.lastPosition = (++this.pos);
-					lastitem = localObject;
-					return localObject;
-				} catch (IndexOutOfBoundsException localIndexOutOfBoundsException) {
-					throw new NoSuchElementException();
-				}
-			}
-			throw new ConcurrentModificationException();
-		}
-
-		public void remove() {
-			if (this.lastPosition == -1) {
-				throw new IllegalStateException();
-			}
-
-			if (this.expectedModCount != Vector.this.modCount) {
-				throw new ConcurrentModificationException();
-			}
-			try {
-				Vector.this.remove(this.lastPosition);
-			} catch (IndexOutOfBoundsException localIndexOutOfBoundsException) {
-				throw new ConcurrentModificationException();
-			}
-
-			this.expectedModCount = Vector.this.modCount;
-			if (this.pos == this.lastPosition) {
-				this.pos -= 1;
-			}
-			this.lastPosition = -1;
-		}
+	@Override
+	public Iterator<E> iterator() {
+		return new VectorIterator(this, modCount);
 	}
 
 	@Override

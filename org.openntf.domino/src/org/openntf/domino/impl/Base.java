@@ -8,12 +8,20 @@ import java.util.Vector;
 import java.util.WeakHashMap;
 
 import org.openntf.domino.thread.DominoReference;
+import org.openntf.domino.thread.DominoReferenceCounter;
 import org.openntf.domino.thread.DominoReferenceQueue;
 import org.openntf.domino.thread.DominoReferenceSet;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base> implements org.openntf.domino.Base<D> {
+
+	private static DominoReferenceCounter lotusReferenceCounter_ = new DominoReferenceCounter();
+
+	public static DominoReferenceCounter _getReferenceCounter() {
+		return lotusReferenceCounter_;
+	}
+
 	// TODO NTF - we really should keep a Map of lotus objects to references, so we can only auto-recycle when we know there are no other
 	// references to the same shared object.
 	// problem today is: there's no clear way to determine an identity for the NotesBase object.
@@ -32,10 +40,13 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	};
 	private static final DominoReferenceSet refSet = new DominoReferenceSet();
 	private static Method getCppMethod;
+	private static Method isInvalidMethod;
 	static {
 		try {
 			getCppMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("GetCppObj", (Class<?>[]) null);
 			getCppMethod.setAccessible(true);
+			isInvalidMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("isInvalid", (Class<?>[]) null);
+			isInvalidMethod.setAccessible(true);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}
@@ -79,19 +90,21 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			referenceBag.get().add(ref_);
 			refSet.add(delegate);
 			if (delegate instanceof lotus.domino.local.NotesBase) {
-				try {
-					Long nref = (Long) getCppMethod.invoke((lotus.domino.local.NotesBase) delegate, (Object[]) null);
-					// System.out.println("CppId: " + nref);
-				} catch (Exception e) {
-					DominoUtils.handleException(e);
-
-				}
+				int count = lotusReferenceCounter_.increment((lotus.domino.local.NotesBase) delegate_);
 			}
 		} else {
 			encapsulated_ = true;
 		}
 		if (parent != null) {
 			setParent(parent);
+		}
+	}
+
+	public static long getLotusId(lotus.domino.local.NotesBase base) {
+		try {
+			return ((Long) getCppMethod.invoke(base, (Object[]) null)).longValue();
+		} catch (Exception e) {
+			return 0L;
 		}
 	}
 
@@ -129,15 +142,53 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		recycle(this);
 	}
 
+	public static boolean isRecycled(lotus.domino.local.NotesBase base) {
+		try {
+			return ((Boolean) isInvalidMethod.invoke(base, (Object[]) null)).booleanValue();
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public static int decrementCounter(lotus.domino.local.NotesBase base) {
+		int count = lotusReferenceCounter_.decrement(base);
+		return count;
+	}
+
+	public static int incrementCounter(lotus.domino.local.NotesBase base) {
+		int count = lotusReferenceCounter_.increment(base);
+		return count;
+	}
+
 	public static boolean recycle(lotus.domino.local.NotesBase base) {
 		boolean result = false;
+
 		if (!isLocked(base)) {
-			try {
-				base.recycle();
-				result = true;
-			} catch (Throwable t) {
-				Factory.countRecycleError();
-				// shikata ga nai
+			int count = lotusReferenceCounter_.getCount(base);
+			if (count < 2) {
+
+				try {
+					if (isRecycled(base)) {
+						// System.out.println("NotesBase object " + getLotusId(base) + " (" + base.getClass().getSimpleName()
+						// + ") has already been recycled...");
+					} else {
+						if (count == 1)
+							System.out.println("Recycling a " + base.getClass().getName() + " (" + getLotusId(base)
+									+ ") because we have only this reference remaining");
+						if (count == 0)
+							System.out.println("Recycling a " + base.getClass().getName() + " (" + getLotusId(base)
+									+ ") because we have ZERO references remaining");
+						base.recycle();
+						result = true;
+					}
+
+				} catch (Throwable t) {
+					Factory.countRecycleError();
+					// shikata ga nai
+				}
+			} else {
+				// System.out.println("Not recycling a " + base.getClass().getName() + " (" + getLotusId(base) + ") because it still has "
+				// + count + " references.");
 			}
 		} else {
 			System.out.println("Not recycling a " + base.getClass().getName() + " because its locked.");
