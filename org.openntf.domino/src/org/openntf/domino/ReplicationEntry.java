@@ -1,11 +1,6 @@
 package org.openntf.domino;
 
-import java.util.Vector;
-
 public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, lotus.domino.ReplicationEntry {
-
-	@Override
-	public lotus.domino.ReplicationEntry getDelegate();
 
 	public String getDestination();
 
@@ -34,45 +29,30 @@ public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, l
 	public boolean isIncludeFormulas();
 
 	@Override
-	public void recycle();
-
-	@Override
-	public void recycle(Vector arg0);
-
-	@Override
 	public int remove();
 
 	@Override
 	public int save();
 
 	@Override
-	public void setFormula(String arg0);
+	public void setFormula(String formula);
 
 	@Override
-	public void setIncludeACL(boolean arg0);
+	public void setIncludeACL(boolean flag);
 
 	@Override
-	public void setIncludeAgents(boolean arg0);
+	public void setIncludeAgents(boolean flag);
 
 	@Override
-	public void setIncludeDocuments(boolean arg0);
+	public void setIncludeDocuments(boolean flag);
 
 	@Override
-	public void setIncludeForms(boolean arg0);
+	public void setIncludeForms(boolean flag);
 
 	@Override
-	public void setIncludeFormulas(boolean arg0);
+	public void setIncludeFormulas(boolean flag);
 
 	@Override
-	public void setViews(String arg0);
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
+	public void setViews(String views);
 
 }

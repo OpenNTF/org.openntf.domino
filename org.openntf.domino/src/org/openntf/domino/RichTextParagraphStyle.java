@@ -11,9 +11,6 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 	public int getAlignment();
 
 	@Override
-	public lotus.domino.RichTextParagraphStyle getDelegate();
-
-	@Override
 	public int getFirstLineLeftMargin();
 
 	@Override
@@ -35,54 +32,39 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 	public int getSpacingBelow();
 
 	@Override
-	public Vector getTabs();
+	public Vector<lotus.domino.RichTextTab> getTabs();
 
 	@Override
-	public void recycle();
+	public void setAlignment(int value);
 
 	@Override
-	public void recycle(Vector arg0);
+	public void setFirstLineLeftMargin(int value);
 
 	@Override
-	public void setAlignment(int arg0);
+	public void setInterLineSpacing(int value);
 
 	@Override
-	public void setFirstLineLeftMargin(int arg0);
+	public void setLeftMargin(int value);
 
 	@Override
-	public void setInterLineSpacing(int arg0);
+	public void setPagination(int value);
 
 	@Override
-	public void setLeftMargin(int arg0);
+	public void setRightMargin(int value);
 
 	@Override
-	public void setPagination(int arg0);
+	public void setSpacingAbove(int value);
 
 	@Override
-	public void setRightMargin(int arg0);
+	public void setSpacingBelow(int value);
 
 	@Override
-	public void setSpacingAbove(int arg0);
+	public void setTab(int position, int type);
 
 	@Override
-	public void setSpacingBelow(int arg0);
+	public void setTabs(int count, int startPos, int interval);
 
 	@Override
-	public void setTab(int arg0, int arg1);
-
-	@Override
-	public void setTabs(int arg0, int arg1, int arg2);
-
-	@Override
-	public void setTabs(int arg0, int arg1, int arg2, int arg3);
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
+	public void setTabs(int count, int startPos, int interval, int type);
 
 }

@@ -1,7 +1,5 @@
 package org.openntf.domino;
 
-import java.util.Vector;
-
 import lotus.domino.RichTextStyle;
 
 public interface RichTextRange extends Base<lotus.domino.RichTextRange>, lotus.domino.RichTextRange {
@@ -9,13 +7,10 @@ public interface RichTextRange extends Base<lotus.domino.RichTextRange>, lotus.d
 	@Override
 	public lotus.domino.RichTextRange Clone();
 
-	public int findandReplace(String arg0, String arg1);
+	public int findandReplace(String target, String replacement);
 
 	@Override
-	public int findandReplace(String arg0, String arg1, long arg2);
-
-	@Override
-	public lotus.domino.RichTextRange getDelegate();
+	public int findandReplace(String target, String replacement, long options);
 
 	@Override
 	public RichTextNavigator getNavigator();
@@ -33,33 +28,18 @@ public interface RichTextRange extends Base<lotus.domino.RichTextRange>, lotus.d
 	public int getType();
 
 	@Override
-	public void recycle();
-
-	@Override
-	public void recycle(Vector arg0);
-
-	@Override
 	public void remove();
 
 	@Override
-	public void reset(boolean arg0, boolean arg1);
+	public void reset(boolean begin, boolean end);
 
 	@Override
-	public void setBegin(lotus.domino.Base arg0);
+	public void setBegin(lotus.domino.Base element);
 
 	@Override
-	public void setEnd(lotus.domino.Base arg0);
+	public void setEnd(lotus.domino.Base element);
 
 	@Override
-	public void setStyle(RichTextStyle arg0);
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
+	public void setStyle(RichTextStyle style);
 
 }
