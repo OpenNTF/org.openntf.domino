@@ -9,6 +9,7 @@ import java.util.WeakHashMap;
 import org.openntf.domino.thread.DominoReference;
 import org.openntf.domino.thread.DominoReferenceQueue;
 import org.openntf.domino.thread.DominoReferenceSet;
+import org.openntf.domino.utils.Factory;
 
 public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base> implements org.openntf.domino.Base<D> {
 	private static ThreadLocal<DominoReferenceQueue> recycleQueue = new ThreadLocal<DominoReferenceQueue>() {
@@ -111,8 +112,11 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 				base.recycle();
 				result = true;
 			} catch (Throwable t) {
+				Factory.countRecycleError();
 				// shikata ga nai
 			}
+		} else {
+			System.out.println("Not recycling a " + base.getClass().getName() + " because its locked.");
 		}
 		return result;
 	}
