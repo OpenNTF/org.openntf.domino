@@ -1,55 +1,126 @@
 package org.openntf.domino.logging;
 
 import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
+/**
+ * @author withersp
+ * 
+ */
 public class DefaultConsoleHandler extends ConsoleHandler {
 
+	// this variable sets the "debug level" of all the methods. Right now
+	// the valid debug levels are:
+	// 0 -- internal errors are discarded
+	// 1 -- Exception messages from internal errors are printed
+	// 2 -- stack traces from internal errors are also printed
+	private static String olDebugLevel = getXspProperty("xsp.openlog.debugLevel", "1");
+
 	public DefaultConsoleHandler() {
-		// TODO Auto-generated constructor stub
+
 	}
+
+	public static String getOlDebugLevel() {
+		return olDebugLevel;
+	}
+
+	public static void setOlDebugLevel(String olDebugLevel) {
+		DefaultConsoleHandler.olDebugLevel = olDebugLevel;
+	}
+
+	// Date formatter
+	private static ThreadLocal<DateFormat> formatter = new ThreadLocal<DateFormat>() {
+		@Override
+		protected DateFormat initialValue() {
+			return new SimpleDateFormat("MM-dd-yyyy HH:mm:ss.SSS");
+		}
+	};
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
 		super.close();
 	}
 
 	@Override
-	public void publish(LogRecord arg0) {
-		// TODO Auto-generated method stub
-		super.publish(arg0);
+	public void publish(LogRecord logRecord) {
+		int debugLevel = 0;
+		try {
+			debugLevel = Integer.parseInt(olDebugLevel);
+		} catch (Exception e) {
+			System.out.println(this.getClass().getName() + ": Error getting debug level - non-numeric");
+		}
+		if (debugLevel > 0) {
+			Date date = new Date(logRecord.getMillis());
+			StringBuffer sb = new StringBuffer();
+			sb.append(formatter.get().format(date));
+			sb.append(" [");
+			sb.append(logRecord.getLevel().getName());
+			sb.append("]: ");
+			sb.append(logRecord.getSourceClassName());
+			sb.append(".");
+			sb.append(logRecord.getSourceMethodName());
+			sb.append("() - ");
+			sb.append(logRecord.getMessage());
+			System.out.println(sb.toString());
+		}
+		if (debugLevel > 1) {
+			if (logRecord.getThrown() != null && logRecord.getThrown() instanceof Exception) {
+				Exception ee = (Exception) logRecord.getThrown();
+				ee.printStackTrace();
+			}
+		}
+	}
+
+	// TODO Get debug level from XSP property, if XPages context
+	private static String getXspProperty(String propertyName, String defaultValue) {
+		String retVal = defaultValue;
+		// ApplicationEx.getInstance().getApplicationProperty(propertyName,
+		// getIniVar(propertyName, defaultValue));
+		return retVal;
+	}
+
+	@SuppressWarnings("finally")
+	private static String getIniVar(String propertyName, String defaultValue) {
+		String retVal = defaultValue;
+		try {
+			String newVal = "";
+			// TODO Once Nathan's work is incorporated, uncomment the next line
+			// Session.getDefaultSession().getEnvironmentString(propertyName, true);
+			if (!"".equals(newVal)) {
+				retVal = newVal;
+			}
+		} finally {
+			return retVal;
+		}
 	}
 
 	@Override
 	public void flush() {
-		// TODO Auto-generated method stub
 		super.flush();
 	}
 
 	@Override
-	protected void setOutputStream(OutputStream arg0) {
-		// TODO Auto-generated method stub
-		super.setOutputStream(arg0);
+	protected void setOutputStream(OutputStream stream) {
+		super.setOutputStream(stream);
 	}
 
 	@Override
 	public Formatter getFormatter() {
-		// TODO Auto-generated method stub
 		return super.getFormatter();
 	}
 
 	@Override
 	protected void reportError(String msg, Exception ex, int code) {
-		// TODO Auto-generated method stub
 		super.reportError(msg, ex, code);
 	}
 
 	@Override
 	public void setFormatter(Formatter newFormatter) {
-		// TODO Auto-generated method stub
 		super.setFormatter(newFormatter);
 	}
 
