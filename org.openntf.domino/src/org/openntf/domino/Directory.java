@@ -21,10 +21,6 @@ public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Di
 	public String getAvailableView();
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Directory getDelegate();
-
-	@Override
 	public Vector getMailInfo(String userName);
 
 	@Override

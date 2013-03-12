@@ -1,35 +1,38 @@
 package org.openntf.domino;
 
-import lotus.domino.Database;
 import lotus.domino.Document;
 
 import org.openntf.domino.annotations.Legacy;
 
-public interface DocumentCollection extends lotus.domino.DocumentCollection, org.openntf.domino.Base<lotus.domino.DocumentCollection> {
+public interface DocumentCollection extends lotus.domino.DocumentCollection, org.openntf.domino.Base<lotus.domino.DocumentCollection>,
+		Iterable<org.openntf.domino.Document> {
 	public abstract int getCount();
 
 	public abstract String getQuery();
 
-	public abstract Database getParent();
+	public abstract org.openntf.domino.Database getParent();
 
-	public abstract Document getFirstDocument();
+	public abstract org.openntf.domino.Document getFirstDocument();
 
-	public abstract Document getLastDocument();
+	public abstract org.openntf.domino.Document getLastDocument();
 
+	@Deprecated
 	@Legacy(Legacy.ITERATION_WARNING)
-	public abstract Document getNextDocument(Document doc);
+	public abstract org.openntf.domino.Document getNextDocument(Document doc);
 
-	public abstract Document getPrevDocument(Document doc);
+	public abstract org.openntf.domino.Document getPrevDocument(Document doc);
 
+	@Deprecated
 	@Legacy(Legacy.ITERATION_WARNING)
-	public abstract Document getNthDocument(int n);
+	public abstract org.openntf.domino.Document getNthDocument(int n);
 
+	@Deprecated
 	@Legacy(Legacy.ITERATION_WARNING)
-	public abstract Document getNextDocument();
+	public abstract org.openntf.domino.Document getNextDocument();
 
-	public abstract Document getPrevDocument();
+	public abstract org.openntf.domino.Document getPrevDocument();
 
-	public abstract Document getDocument(Document doc);
+	public abstract org.openntf.domino.Document getDocument(Document doc);
 
 	public abstract void addDocument(Document doc);
 

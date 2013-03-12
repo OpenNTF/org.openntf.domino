@@ -109,12 +109,11 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public ACL getACL();
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Agent getAgent(String name);
+	public Agent getAgent(String name);
 
 	@Override
 	@Legacy(Legacy.INTERFACES_WARNING)
-	public Vector<lotus.domino.Agent> getAgents();
+	public Vector<Agent> getAgents();
 
 	@Override
 	public DocumentCollection getAllDocuments();
@@ -177,7 +176,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	@Override
 	@Legacy(Legacy.INTERFACES_WARNING)
-	public Vector<Form> getForms();
+	public Vector<org.openntf.domino.Form> getForms();
 
 	@Override
 	public int getFTIndexFrequency();
@@ -230,7 +229,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public lotus.domino.Outline getOutline(String outlineName);
 
 	@Override
-	public Session getParent();
+	public org.openntf.domino.Session getParent();
 
 	@Override
 	public double getPercentUsed();
@@ -367,7 +366,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public int queryAccessPrivileges(String name);
 
 	@Override
-	public Vector queryAccessRoles(String roles);
+	public Vector<String> queryAccessRoles(String roles);
 
 	@Override
 	public void remove();

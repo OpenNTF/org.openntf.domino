@@ -2,15 +2,12 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
-import lotus.domino.Database;
-
 public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form {
+
+	public org.openntf.domino.Document getDocument();
 
 	@Override
 	public Vector getAliases();
-
-	@Override
-	public lotus.domino.Form getDelegate();
 
 	@Override
 	public Vector getFields();
@@ -34,7 +31,7 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form {
 	public String getNotesURL();
 
 	@Override
-	public Database getParent();
+	public org.openntf.domino.Database getParent();
 
 	@Override
 	public Vector getReaders();

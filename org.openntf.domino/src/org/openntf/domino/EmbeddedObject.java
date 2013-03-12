@@ -26,9 +26,6 @@ public interface EmbeddedObject extends Base<lotus.domino.EmbeddedObject>, lotus
 	public String getClassName();
 
 	@Override
-	public lotus.domino.EmbeddedObject getDelegate();
-
-	@Override
 	public int getFileSize();
 
 	@Override

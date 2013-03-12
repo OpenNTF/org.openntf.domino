@@ -1,56 +1,85 @@
 package org.openntf.domino.impl;
 
+import lotus.domino.NotesException;
+
+import org.openntf.domino.Session;
+import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
+
 public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.DateRange> implements org.openntf.domino.DateRange,
 		lotus.domino.DateRange {
 
-	public DateRange() {
-
-	}
-
-	public DateRange(lotus.domino.DateRange delegate) {
-		super(delegate);
+	public DateRange(lotus.domino.DateRange delegate, org.openntf.domino.Base<?> parent) {
+		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
 	}
 
 	@Override
 	public DateTime getEndDateTime() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return Factory.fromLotus(getDelegate().getEndDateTime(), DateTime.class, getParent());
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+
+		}
 	}
 
 	@Override
 	public Session getParent() {
-		// TODO Auto-generated method stub
-		return null;
+		return (org.openntf.domino.Session) super.getParent();
 	}
 
 	@Override
 	public DateTime getStartDateTime() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return Factory.fromLotus(getDelegate().getStartDateTime(), DateTime.class, getParent());
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+
+		}
 	}
 
 	@Override
 	public String getText() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return getDelegate().getText();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+
+		}
 	}
 
 	@Override
 	public void setEndDateTime(lotus.domino.DateTime arg0) {
-		// TODO Auto-generated method stub
+		try {
+			getDelegate().setEndDateTime(arg0);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+
+		}
 
 	}
 
 	@Override
 	public void setStartDateTime(lotus.domino.DateTime arg0) {
-		// TODO Auto-generated method stub
+		try {
+			getDelegate().setStartDateTime(arg0);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
 	@Override
 	public void setText(String arg0) {
-		// TODO Auto-generated method stub
+		try {
+			getDelegate().setText(arg0);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
 }

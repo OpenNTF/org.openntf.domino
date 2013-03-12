@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Vector;
 
+import lotus.domino.DocumentCollection;
+import lotus.domino.EmbeddedObject;
+import lotus.domino.Item;
 import lotus.domino.NotesException;
 import lotus.domino.XSLTResultTarget;
 
@@ -107,13 +110,11 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	@Override
 	public DateTime getCreated();
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getEmbeddedObjects();
+	public Vector<EmbeddedObject> getEmbeddedObjects();
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getEncryptionKeys();
+	public Vector<String> getEncryptionKeys();
 
 	@Override
 	// TODO Switch to new class
@@ -132,9 +133,8 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	@Override
 	public DateTime getInitiallyModified();
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getItems();
+	public Vector<Item> getItems();
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -149,9 +149,8 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	@Override
 	public byte[] getItemValueCustomDataBytes(String itemname, String datatypename) throws IOException, NotesException;
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getItemValueDateTimeArray(String name);
+	public Vector<DateTime> getItemValueDateTimeArray(String name);
 
 	@Override
 	public double getItemValueDouble(String name);
@@ -171,9 +170,8 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	@Override
 	public DateTime getLastModified();
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getLockHolders();
+	public Vector<String> getLockHolders();
 
 	@Override
 	// TODO Switch to new class
@@ -193,7 +191,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public String getNotesURL();
 
 	@Override
-	public Database getParentDatabase();
+	public org.openntf.domino.Database getParentDatabase();
 
 	@Override
 	public String getParentDocumentUNID();
@@ -207,9 +205,8 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	@Override
 	public boolean getRead(String username);
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getReceivedItemText();
+	public Vector<String> getReceivedItemText();
 
 	@Override
 	public DocumentCollection getResponses();

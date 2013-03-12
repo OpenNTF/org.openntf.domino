@@ -35,9 +35,6 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item {
 	public DateTime getDateTimeValue();
 
 	@Override
-	public lotus.domino.Item getDelegate();
-
-	@Override
 	public InputSource getInputSource();
 
 	@Override

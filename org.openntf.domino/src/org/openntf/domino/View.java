@@ -2,7 +2,6 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
-import lotus.domino.Database;
 import lotus.domino.Document;
 import lotus.domino.DocumentCollection;
 import lotus.domino.ViewColumn;
@@ -220,7 +219,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View> {
 	@Override
 	@Deprecated
 	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public Vector getColumnValues(int column);
+	public Vector<Object> getColumnValues(int column);
 
 	@Override
 	public DateTime getCreated();
@@ -296,7 +295,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View> {
 	public Document getNthDocument(int n);
 
 	@Override
-	public Database getParent();
+	public org.openntf.domino.Database getParent();
 
 	@Override
 	public Document getParentDocument(Document doc);

@@ -1,14 +1,12 @@
 package org.openntf.domino.impl;
 
-import java.io.Externalizable;
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.Writer;
-import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Vector;
 
+import lotus.domino.Database;
+import lotus.domino.DocumentCollection;
 import lotus.domino.EmbeddedObject;
 import lotus.domino.Item;
 import lotus.domino.MIMEEntity;
@@ -16,13 +14,37 @@ import lotus.domino.NotesException;
 import lotus.domino.RichTextItem;
 import lotus.domino.XSLTResultTarget;
 
+import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 public class Document extends Base<org.openntf.domino.Document, lotus.domino.Document> implements org.openntf.domino.Document {
+	// NTF - these are immutable by definition, so we should just copy it when we read in the doc
+	// yes, we're creating objects we might not need, but that's better than risking the toxicity of evil, wicked DateTime
+	// these ought to be final, since they can't change, but it makes the constructor really messy
 
-	public Document(lotus.domino.Document delegate) {
-		super(delegate);
+	// NTF - Okay, after testing, maybe these just need to be JIT getters. It added about 10% to Document iteration time.
+	// NTF - Done. And yeah, it make quite a performance difference. More like 20%, really
+	private Date created_;
+	private Date initiallyModified_;
+	private Date lastModified_;
+	private Date lastAccessed_;
+
+	public Document(lotus.domino.Document delegate, org.openntf.domino.Base<?> parent) {
+		super(delegate, Factory.getParentDatabase(parent));
+		// initialize(delegate);
+	}
+
+	private void initialize(lotus.domino.Document delegate) {
+		try {
+			delegate.setPreferJavaDates(true);
+			// created_ = DominoUtils.toJavaDateSafe(delegate.getCreated());
+			// initiallyModified_ = DominoUtils.toJavaDateSafe(delegate.getInitiallyModified());
+			// lastModified_ = DominoUtils.toJavaDateSafe(delegate.getLastModified());
+			// lastAccessed_ = DominoUtils.toJavaDateSafe(delegate.getLastAccessed());
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 	@Override
@@ -68,7 +90,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void attachVCard(lotus.domino.Base document) {
 		try {
-			getDelegate().attachVCard(Factory.toLotus(document));
+			getDelegate().attachVCard(document);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -77,7 +99,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void attachVCard(lotus.domino.Base document, String arg1) {
 		try {
-			getDelegate().attachVCard(Factory.toLotus(document), arg1);
+			getDelegate().attachVCard(document, arg1);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -153,26 +175,16 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void copyAllItems(lotus.domino.Document doc, boolean replace) {
 		try {
-			getDelegate().copyAllItems((lotus.domino.Document) Factory.toLotus(doc), replace);
+			getDelegate().copyAllItems(doc, replace);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 	}
 
 	@Override
-	public Item copyItem(lotus.domino.Item item) {
+	public Item copyItem(Item item) {
 		try {
-			return getDelegate().copyItem((lotus.domino.Item) Factory.toLotus(item));
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
-	}
-
-	@Override
-	public Item copyItem(lotus.domino.Item item, String newname) {
-		try {
-			return getDelegate().copyItem((lotus.domino.Item) Factory.toLotus(item), newname);
+			return getDelegate().copyItem(item);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -180,9 +192,19 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public Document copyToDatabase(lotus.domino.Database db) {
+	public Item copyItem(Item item, String newname) {
 		try {
-			return Factory.fromLotus(getDelegate().copyToDatabase((lotus.domino.Database) Factory.toLotus(db)), Document.class);
+			return getDelegate().copyItem(item, newname);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
+	}
+
+	@Override
+	public Document copyToDatabase(Database db) {
+		try {
+			return Factory.fromLotus(getDelegate().copyToDatabase(db), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -212,7 +234,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public Document createReplyMessage(boolean toall) {
 		try {
-			return Factory.fromLotus(getDelegate().createReplyMessage(toall), Document.class);
+			return Factory.fromLotus(getDelegate().createReplyMessage(toall), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -299,13 +321,29 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public DateTime getCreated() {
+	@Deprecated
+	@Legacy(Legacy.DATETIME_WARNING)
+	public org.openntf.domino.DateTime getCreated() {
 		try {
-			return new DateTime(getDelegate().getCreated());
+			if (created_ == null) {
+				created_ = DominoUtils.toJavaDateSafe(getDelegate().getCreated());
+			}
+			return new DateTime(created_, this); // TODO NTF - maybe ditch the parent?
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 		return null;
+	}
+
+	public Date getCreatedDate() {
+		if (created_ == null) {
+			try {
+				created_ = DominoUtils.toJavaDateSafe(getDelegate().getCreated());
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+			}
+		}
+		return created_;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -372,13 +410,31 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
+	@Deprecated
+	@Legacy(Legacy.DATETIME_WARNING)
 	public DateTime getInitiallyModified() {
 		try {
-			return new DateTime(getDelegate().getInitiallyModified());
+			if (initiallyModified_ == null) {
+				initiallyModified_ = DominoUtils.toJavaDateSafe(getDelegate().getInitiallyModified());
+			}
+			return new DateTime(initiallyModified_, this); // TODO NTF - maybe ditch the parent?
+
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 		return null;
+	}
+
+	public Date getInitiallyModifiedDate() {
+		if (initiallyModified_ == null) {
+			try {
+				initiallyModified_ = DominoUtils.toJavaDateSafe(getDelegate().getInitiallyModified());
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+
+			}
+		}
+		return initiallyModified_;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -393,7 +449,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public Object getItemValueCustomData(String itemname) throws IOException, ClassNotFoundException {
+	public Object getItemValueCustomData(String itemname) throws IOException, ClassNotFoundException, NotesException {
 		try {
 			return getDelegate().getItemValueCustomData(itemname);
 		} catch (NotesException e) {
@@ -403,7 +459,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public Object getItemValueCustomData(String itemname, String datatypename) throws IOException, ClassNotFoundException {
+	public Object getItemValueCustomData(String itemname, String datatypename) throws IOException, ClassNotFoundException, NotesException {
 		try {
 			return getDelegate().getItemValueCustomData(itemname, datatypename);
 		} catch (NotesException e) {
@@ -485,19 +541,59 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
+	@Deprecated
+	@Legacy(Legacy.DATETIME_WARNING)
 	public DateTime getLastAccessed() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public DateTime getLastModified() {
 		try {
-			return new DateTime(getDelegate().getLastModified());
+			if (lastAccessed_ == null) {
+				lastAccessed_ = DominoUtils.toJavaDateSafe(getDelegate().getLastAccessed());
+			}
+			return new DateTime(lastAccessed_, this); // TODO NTF - maybe ditch the parent?
+
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 		return null;
+	}
+
+	public Date getLastAccessedDate() {
+		if (lastAccessed_ == null) {
+			try {
+				lastAccessed_ = DominoUtils.toJavaDateSafe(getDelegate().getLastAccessed());
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+
+			}
+		}
+		return lastAccessed_;
+	}
+
+	@Override
+	@Deprecated
+	@Legacy(Legacy.DATETIME_WARNING)
+	public DateTime getLastModified() {
+		try {
+			if (lastModified_ == null) {
+				lastModified_ = DominoUtils.toJavaDateSafe(getDelegate().getLastModified());
+			}
+			return new DateTime(lastModified_, this); // TODO NTF - maybe ditch the parent?
+
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
+	}
+
+	public Date getLastModifiedDate() {
+		if (lastModified_ == null) {
+			try {
+				lastModified_ = DominoUtils.toJavaDateSafe(getDelegate().getLastModified());
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+
+			}
+		}
+		return lastModified_;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -562,13 +658,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public Database getParentDatabase() {
-		try {
-			return Factory.fromLotus(getDelegate().getParentDatabase(), Database.class);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+	public org.openntf.domino.Database getParentDatabase() {
+		return (org.openntf.domino.Database) super.getParent();
 	}
 
 	@Override
@@ -584,7 +675,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public View getParentView() {
 		try {
-			return Factory.fromLotus(getDelegate().getParentView(), View.class);
+			return Factory.fromLotus(getDelegate().getParentView(), View.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -625,7 +716,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public DocumentCollection getResponses() {
 		try {
-			return Factory.fromLotus(getDelegate().getResponses(), DocumentCollection.class);
+			return getDelegate().getResponses();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -922,7 +1013,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void makeResponse(lotus.domino.Document doc) {
 		try {
-			getDelegate().makeResponse((lotus.domino.Document) Factory.toLotus(doc));
+			getDelegate().makeResponse(doc);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1021,9 +1112,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public boolean renderToRTItem(lotus.domino.RichTextItem rtitem) {
+	public boolean renderToRTItem(RichTextItem rtitem) {
 		try {
-			getDelegate().renderToRTItem((lotus.domino.RichTextItem) Factory.toLotus(rtitem));
+			getDelegate().renderToRTItem(rtitem);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1038,26 +1129,24 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				return getDelegate().replaceItemValue(name, ((DateTime) value).getDelegate());
 			} else if (value instanceof Number && !(value instanceof Integer || value instanceof Double)) {
 				return getDelegate().replaceItemValue(name, ((Number) value).intValue());
-			} else if (value instanceof Boolean) {
-				return getDelegate().replaceItemValue(name, (Boolean) value ? 1 : 0);
-			} else if (value instanceof Date) {
-				// TODO: make sure this use of DateTime isn't a bug when Session and createDateTime are extended
-				lotus.domino.DateTime dt = DominoUtils.getSession(this).createDateTime((Date) value);
-				Item result = getDelegate().replaceItemValue(name, dt);
-				dt.recycle();
-				return result;
-			} else if (value instanceof Calendar) {
-				lotus.domino.DateTime dt = DominoUtils.getSession(this).createDateTime((Calendar) value);
-				Item result = getDelegate().replaceItemValue(name, dt);
-				dt.recycle();
-				return result;
-			} else if (value instanceof Collection) {
-				// TODO: make this filter the collection for newly-supported types
-				return getDelegate().replaceItemValue(name, new java.util.Vector((Collection) value));
-			} else if (value instanceof Externalizable) {
-				// TODO: implement this - saveState will likely have to store the class name as a header, to be read by restoreState
-			} else if (value instanceof Serializable) {
-				DominoUtils.saveState((Serializable) value, this, name);
+				// } else if (value instanceof Date) {
+				// // TODO: make sure this use of DateTime isn't a bug when Session and createDateTime are extended
+				// lotus.domino.DateTime dt = DominoUtils.getSession(this).createDateTime((Date) value);
+				// Item result = getDelegate().replaceItemValue(name, dt);
+				// dt.recycle();
+				// return result;
+				// } else if (value instanceof Calendar) {
+				// lotus.domino.DateTime dt = DominoUtils.getSession(this).createDateTime((Calendar) value);
+				// Item result = getDelegate().replaceItemValue(name, dt);
+				// dt.recycle();
+				// return result;
+				// } else if (value instanceof Collection) {
+				// // TODO: make this filter the collection for newly-supported types
+				// return getDelegate().replaceItemValue(name, new java.util.Vector((Collection) value));
+				// } else if (value instanceof Externalizable) {
+				// // TODO: implement this - saveState will likely have to store the class name as a header, to be read by restoreState
+				// } else if (value instanceof Serializable) {
+				// DominoUtils.saveState((Serializable) value, this, name);
 			}
 			// TODO: also cover StateHolder? That could probably be done with reflection without actually requiring the XSP classes to
 			// build

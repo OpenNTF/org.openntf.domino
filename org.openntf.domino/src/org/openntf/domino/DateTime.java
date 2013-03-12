@@ -53,7 +53,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	public String getLocalTime();
 
 	@Override
-	public Session getParent();
+	public org.openntf.domino.Session getParent();
 
 	@Override
 	public String getTimeOnly();

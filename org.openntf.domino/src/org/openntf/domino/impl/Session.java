@@ -11,10 +11,7 @@ import java.util.Vector;
 
 import lotus.domino.AdministrationProcess;
 import lotus.domino.AgentContext;
-import lotus.domino.Base;
 import lotus.domino.ColorObject;
-import lotus.domino.Database;
-import lotus.domino.DateRange;
 import lotus.domino.DbDirectory;
 import lotus.domino.Directory;
 import lotus.domino.Document;
@@ -35,6 +32,7 @@ import lotus.domino.Stream;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Name;
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.utils.DominoFormatter;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -47,15 +45,44 @@ import org.openntf.domino.utils.Factory;
 public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Session, lotus.domino.Session> implements
 		org.openntf.domino.Session {
 
-	/**
-	 * 
-	 */
-	public Session() {
-		// TODO Auto-generated constructor stub
+	private static DominoFormatter formatter_;
+
+	private static ThreadLocal<Session> defaultSession = new ThreadLocal<Session>() {
+		@Override
+		protected Session initialValue() {
+			return null;
+		}
+	};
+
+	public static Session getDefaultSession() {
+		return defaultSession.get();
 	}
 
-	public Session(lotus.domino.Session lotus) {
-		super(lotus);
+	public Session() {
+		// TODO come up with some static methods for finding a Session based on run context (XPages, Agent, DOTS, etc)
+		super(null, null);
+	}
+
+	// FIXME NTF - not sure if there's a context where this makes sense...
+	public Session(lotus.domino.Session lotus, org.openntf.domino.Base<?> parent) {
+		super(lotus, parent);
+		initialize(lotus);
+	}
+
+	private void initialize(lotus.domino.Session session) {
+		try {
+			formatter_ = new DominoFormatter(session.getInternational());
+			if (defaultSession.get() == null) {
+				defaultSession.set(this);
+			}
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+
+		}
+	}
+
+	public static DominoFormatter getFormatter() {
+		return formatter_;
 	}
 
 	@Override
@@ -82,7 +109,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public org.openntf.domino.DateRange createDateRange() {
 		try {
-			return Factory.fromLotus(getDelegate().createDateRange(), org.openntf.domino.DateRange.class);
+			return Factory.fromLotus(getDelegate().createDateRange(), org.openntf.domino.DateRange.class, this);
 		} catch (NotesException ne) {
 			DominoUtils.handleException(ne);
 		}
@@ -92,7 +119,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public DateRange createDateRange(Date arg0, Date arg1) {
 		try {
-			return getDelegate().createDateRange(arg0, arg1);
+			return Factory.fromLotus(getDelegate().createDateRange(arg0, arg1), DateRange.class, this);
 		} catch (NotesException ne) {
 			DominoUtils.handleException(ne);
 		}
@@ -101,7 +128,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 
 	public DateRange createDateRange(lotus.domino.DateTime arg0, lotus.domino.DateTime arg1) {
 		try {
-			return Factory.fromLotus(createDateRange(arg0, arg1), org.openntf.domino.DateRange.class);
+			return Factory.fromLotus(createDateRange(arg0, arg1), org.openntf.domino.DateRange.class, this);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -112,7 +139,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public DateTime createDateTime(Calendar arg0) {
 		try {
-			return Factory.fromLotus(getDelegate().createDateTime(arg0), DateTime.class);
+			return Factory.fromLotus(getDelegate().createDateTime(arg0), DateTime.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -123,7 +150,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public DateTime createDateTime(Date arg0) {
 		try {
-			return Factory.fromLotus(getDelegate().createDateTime(arg0), DateTime.class);
+			return Factory.fromLotus(getDelegate().createDateTime(arg0), DateTime.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -134,7 +161,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public DateTime createDateTime(String arg0) {
 		try {
-			return Factory.fromLotus(getDelegate().createDateTime(arg0), DateTime.class);
+			return Factory.fromLotus(getDelegate().createDateTime(arg0), DateTime.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -178,7 +205,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public Name createName(String arg0, String arg1) {
 		try {
-			return Factory.fromLotus(getDelegate().createName(arg0, arg1), Name.class);
+			return Factory.fromLotus(getDelegate().createName(arg0, arg1), Name.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -187,9 +214,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	}
 
 	@Override
-	public Name createName(String arg0) {
+	public org.openntf.domino.Name createName(String arg0) {
 		try {
-			return Factory.fromLotus(getDelegate().createName(arg0), Name.class);
+			return Factory.fromLotus(getDelegate().createName(arg0), Name.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -253,7 +280,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	}
 
 	@Override
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(String arg0, Document arg1) {
 		try {
 			return getDelegate().evaluate(arg0, arg1); // TODO still needs Factory wrapper
@@ -264,7 +291,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	}
 
 	@Override
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(String arg0) {
 		try {
 			return getDelegate().evaluate(arg0); // TODO still needs Factory wrapper
@@ -277,13 +304,18 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 
 	@Override
 	@Legacy(Legacy.INTERFACES_WARNING)
-	public Vector<org.openntf.domino.DateRange> freeTimeSearch(DateRange arg0, int arg1, Object arg2, boolean arg3) {
+	public Vector<org.openntf.domino.DateRange> freeTimeSearch(lotus.domino.DateRange arg0, int arg1, Object arg2, boolean arg3) {
 		try {
-			return getDelegate().freeTimeSearch(arg0, arg1, arg2, arg3); // TODO still needs Factory wrapper
+			java.util.Vector<lotus.domino.DateRange> searchResults = getDelegate().freeTimeSearch(((DateRange) arg0).getDelegate(), arg1,
+					arg2, arg3);
+			Vector<org.openntf.domino.DateRange> result = new Vector<org.openntf.domino.DateRange>();
+			for (lotus.domino.DateRange searchResult : searchResults) {
+				result.add((DateRange) Factory.fromLotus(searchResult, DateRange.class, this));
+			}
+			return result;
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
-
 		}
 	}
 
@@ -311,7 +343,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	}
 
 	@Override
-	public NotesCalendar getCalendar(Database arg0) {
+	public NotesCalendar getCalendar(lotus.domino.Database arg0) {
 		try {
 			return getDelegate().getCalendar(arg0);
 		} catch (NotesException e) {
@@ -346,7 +378,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public Database getCurrentDatabase() {
 		try {
-			return getDelegate().getCurrentDatabase();
+			return Factory.fromLotus(getDelegate().getCurrentDatabase(), Database.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -357,7 +389,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public Database getDatabase(String arg0, String arg1, boolean arg2) {
 		try {
-			return getDelegate().getDatabase(arg0, arg1, arg2);
+			return Factory.fromLotus(getDelegate().getDatabase(arg0, arg1, arg2), Database.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -366,9 +398,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	}
 
 	@Override
-	public Database getDatabase(String arg0, String arg1) {
+	public org.openntf.domino.Database getDatabase(String arg0, String arg1) {
 		try {
-			return getDelegate().getDatabase(arg0, arg1);
+			return Factory.fromLotus(getDelegate().getDatabase(arg0, arg1), org.openntf.domino.Database.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -577,7 +609,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public Database getURLDatabase() {
 		try {
-			return getDelegate().getURLDatabase();
+			return Factory.fromLotus(getDelegate().getURLDatabase(), Database.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -610,7 +642,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public Vector<org.openntf.domino.Name> getUserNameList() {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getUserNameList(), Name.class);
+			return Factory.fromLotusAsVector(getDelegate().getUserNameList(), Name.class, this);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -619,9 +651,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	}
 
 	@Override
-	public Name getUserNameObject() {
+	public org.openntf.domino.Name getUserNameObject() {
 		try {
-			return Factory.fromLotus(getDelegate().getUserNameObject(), Name.class);
+			return Factory.fromLotus(getDelegate().getUserNameObject(), org.openntf.domino.Name.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -757,7 +789,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public Base resolve(String arg0) {
 		try {
-			return getDelegate().resolve(arg0);
+			return Factory.fromLotus(getDelegate().resolve(arg0), Base.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -854,7 +886,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		if (!v.isEmpty()) {
 			for (Name name : v) {
 				result.add(name.getCanonical());
-				name.recycle();
+				DominoUtils.incinerate(name);
 			}
 		}
 		return result;
@@ -867,7 +899,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		if (!v.isEmpty()) {
 			for (Name name : v) {
 				result.add(name.getCanonical());
-				name.recycle();
+				DominoUtils.incinerate(name);
 			}
 		}
 		return result;
@@ -887,9 +919,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 
 	@Override
 	public Collection<org.openntf.domino.DateRange> freeTimeSearch(org.openntf.domino.DateRange arg0, int arg1, String arg2, boolean arg3) {
+		// TODO verify that we don't end up with an ambiguous method signature
 		Collection<org.openntf.domino.DateRange> result = new ArrayList<org.openntf.domino.DateRange>();
-		Vector<org.openntf.domino.DateRange> v = this
-				.freeTimeSearch((lotus.domino.DateRange) arg0.getDelegate(), arg1, (Object) arg2, arg3);
+		Vector<org.openntf.domino.DateRange> v = this.freeTimeSearch((lotus.domino.DateRange) arg0, arg1, (Object) arg2, arg3);
 		if (!v.isEmpty()) {
 			for (org.openntf.domino.DateRange dr : v) {
 				result.add(dr);
@@ -901,9 +933,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public Collection<org.openntf.domino.DateRange> freeTimeSearch(org.openntf.domino.DateRange arg0, int arg1, Collection<String> arg2,
 			boolean arg3) {
+		// TODO verify that we don't end up with an ambiguous method signature
 		Collection<org.openntf.domino.DateRange> result = new ArrayList<org.openntf.domino.DateRange>();
-		Vector<org.openntf.domino.DateRange> v = this
-				.freeTimeSearch((lotus.domino.DateRange) arg0.getDelegate(), arg1, (Object) arg2, arg3);
+		Vector<org.openntf.domino.DateRange> v = this.freeTimeSearch((lotus.domino.DateRange) arg0, arg1, (Object) arg2, arg3);
 		if (!v.isEmpty()) {
 			for (org.openntf.domino.DateRange dr : v) {
 				result.add(dr);

@@ -28,7 +28,8 @@ import lotus.domino.Session;
 import lotus.domino.View;
 import lotus.domino.ViewColumn;
 
-import org.openntf.domino.DateTime;
+import org.openntf.domino.DocumentCollection;
+import org.openntf.domino.exceptions.InvalidNotesUrlException;
 
 public enum DominoUtils {
 	;
@@ -73,12 +74,41 @@ public enum DominoUtils {
 
 	public static Throwable handleException(Throwable t) {
 		// TODO implement standard logging approaches
-		boolean someMeansOfControllingThrows = false;
+		boolean someMeansOfControllingThrows = true;
 		if (someMeansOfControllingThrows) {
 			throw new RuntimeException(t);
 		} else {
 			return t; // we already handled it, but maybe somebody wants to do something....
 		}
+	}
+
+	public static String getUnidFromNotesUrl(String notesurl) {
+		String result = null;
+		String trimmed = notesurl.toLowerCase().trim();
+		if (trimmed.startsWith("notes://")) {
+			int arg = trimmed.lastIndexOf('?');
+			if (arg == -1) { // there's no ? so we'll just start from the end
+				String chk = trimmed.substring(trimmed.length() - 32, trimmed.length());
+				if (isUnid(chk)) {
+					result = chk;
+				} else {
+					System.out.println("Not a unid. We got " + chk);
+				}
+			} else {
+				String chk = trimmed.substring(0, arg);
+				chk = chk.substring(chk.length() - 32, chk.length());
+				// String chk = trimmed.substring(trimmed.length() - 32 - (arg + 1), trimmed.length() - (arg + 1));
+				if (isUnid(chk)) {
+					result = chk;
+				} else {
+					System.out.println("Not a unid. We got " + chk);
+				}
+			}
+		} else {
+			throw new InvalidNotesUrlException(notesurl);
+		}
+
+		return result;
 	}
 
 	public static Session getSession(Base base) throws Throwable {
@@ -101,6 +131,8 @@ public enum DominoUtils {
 			result = DominoUtils.getSession(((ACL) base).getParent());
 		} else if (base instanceof Item) {
 			result = DominoUtils.getSession(((Item) base).getParent());
+		} else if (base instanceof DocumentCollection) {
+			result = DominoUtils.getSession(((DocumentCollection) base).getParent());
 		}
 		return result;
 	}
@@ -108,12 +140,13 @@ public enum DominoUtils {
 	public static void incinerate(Object... args) {
 		for (Object o : args) {
 			if (o != null) {
-				if (o instanceof Base) {
-					try {
-						((Base) o).recycle();
-					} catch (Throwable t) {
-						// who cares?
-					}
+				if (o instanceof lotus.domino.Base) {
+					// try {
+					// ((Base) o).recycle();
+					// } catch (Throwable t) {
+					// // who cares?
+					// }
+					org.openntf.domino.impl.Base.recycle(o);
 				} else if (o instanceof Collection) {
 					if (o instanceof Map) {
 						Set<Map.Entry> entries = ((Map) o).entrySet();
@@ -172,9 +205,9 @@ public enum DominoUtils {
 		return DominoUtils.md5(value);
 	}
 
-	public static Calendar toJavaCalendarSafe(DateTime dt) {
+	public static Calendar toJavaCalendarSafe(lotus.domino.DateTime dt) {
 		Date d = DominoUtils.toJavaDateSafe(dt);
-		Calendar c = new GregorianCalendar();
+		Calendar c = GregorianCalendar.getInstance();
 		c.setTime(d);
 		return c;
 	}
@@ -193,7 +226,7 @@ public enum DominoUtils {
 		return result;
 	}
 
-	public static Date toJavaDateSafe(org.openntf.domino.DateTime dt) {
+	public static Date toJavaDateSafe(lotus.domino.DateTime dt) {
 		Date date = null;
 		if (dt != null) {
 			try {

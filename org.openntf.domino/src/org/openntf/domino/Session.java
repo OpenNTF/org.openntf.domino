@@ -76,13 +76,13 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	public ColorObject createColorObject();
 
 	@Override
-	public lotus.domino.DateRange createDateRange();
+	public DateRange createDateRange();
 
 	@Override
-	public lotus.domino.DateRange createDateRange(Date startTime, Date endTime);
+	public DateRange createDateRange(Date startTime, Date endTime);
 
 	@Override
-	public lotus.domino.DateRange createDateRange(DateTime startTime, DateTime endTime);
+	public DateRange createDateRange(DateTime startTime, DateTime endTime);
 
 	@Override
 	public DateTime createDateTime(Calendar date);
@@ -103,10 +103,10 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	public Log createLog(String name);
 
 	@Override
-	public lotus.domino.Name createName(String name);
+	public Name createName(String name);
 
 	@Override
-	public lotus.domino.Name createName(String name, String lang);
+	public Name createName(String name, String lang);
 
 	@Override
 	public Newsletter createNewsletter(DocumentCollection collection);
@@ -136,13 +136,13 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	public Object getCredentials();
 
 	@Override
-	public lotus.domino.Database getCurrentDatabase();
+	public Database getCurrentDatabase();
 
 	@Override
-	public lotus.domino.Database getDatabase(String server, String db);
+	public Database getDatabase(String server, String db);
 
 	@Override
-	public lotus.domino.Database getDatabase(String server, String db, boolean createOnFail);
+	public Database getDatabase(String server, String db, boolean createOnFail);
 
 	@Override
 	public DbDirectory getDbDirectory(String server);
@@ -199,13 +199,13 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	public String getURL();
 
 	@Override
-	public lotus.domino.Database getURLDatabase();
+	public Database getURLDatabase();
 
 	@Override
 	public String getUserName();
 
 	@Override
-	public lotus.domino.Name getUserNameObject();
+	public Name getUserNameObject();
 
 	@Override
 	public Document getUserPolicySettings(String server, String name, int type);
@@ -244,7 +244,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	public boolean resetUserPassword(String serverName, String userName, String password, int downloadCount);
 
 	@Override
-	public lotus.domino.Base resolve(String url);
+	public Base resolve(String url);
 
 	@Override
 	public String sendConsoleCommand(String serverName, String consoleCommand);

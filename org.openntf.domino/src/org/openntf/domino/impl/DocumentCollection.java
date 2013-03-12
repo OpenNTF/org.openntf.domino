@@ -1,10 +1,13 @@
 package org.openntf.domino.impl;
 
+import java.util.Iterator;
+
 import lotus.domino.Database;
 import lotus.domino.Document;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.DateTime;
+import org.openntf.domino.iterators.DocumentIterator;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -23,13 +26,26 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
-	public DocumentCollection() {
-		// TODO Auto-generated constructor stub
+	public DocumentCollection(lotus.domino.DocumentCollection delegate, org.openntf.domino.Base<?> parent) {
+		super(delegate, parent);
 	}
 
-	public DocumentCollection(lotus.domino.DocumentCollection delegate) {
-		super(delegate);
-		// TODO Auto-generated constructor stub
+	public static lotus.domino.NoteCollection toLotusNoteCollection(lotus.domino.DocumentCollection collection) {
+		lotus.domino.NoteCollection result = null;
+		try {
+			if (collection instanceof org.openntf.domino.impl.DocumentCollection) {
+				Database db = ((org.openntf.domino.impl.DocumentCollection) collection).getDelegate().getParent();
+				result = db.createNoteCollection(false);
+				result.add(((org.openntf.domino.impl.DocumentCollection) collection).getDelegate());
+			} else if (collection instanceof lotus.domino.DocumentCollection) {
+				Database db = ((lotus.domino.DocumentCollection) collection).getParent();
+				result = db.createNoteCollection(false);
+				result.add((lotus.domino.DocumentCollection) collection);
+			}
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
+		return result;
 	}
 
 	@Override
@@ -55,13 +71,42 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public Database getParent() {
+	public org.openntf.domino.Database getParent() {
+		Object o = super.getParent();
+		// System.out.println("o is a " + o.getClass().getName());
+		org.openntf.domino.Base<?> parent = (org.openntf.domino.Base<?>) o;
+		return (org.openntf.domino.Database) parent;
+	}
+
+	@Override
+	public org.openntf.domino.Document getFirstDocument() {
 		try {
-			Database result = getDelegate().getParent();
-			if (!(result instanceof org.openntf.domino.impl.Database)) {
-				result = new org.openntf.domino.impl.Database(result);
+			return Factory.fromLotus(getDelegate().getFirstDocument(), org.openntf.domino.Document.class, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+
+		}
+	}
+
+	@Override
+	public org.openntf.domino.Document getLastDocument() {
+		try {
+			return Factory.fromLotus(getDelegate().getLastDocument(), org.openntf.domino.Document.class, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+
+		}
+	}
+
+	@Override
+	public org.openntf.domino.Document getNextDocument(Document doc) {
+		try {
+			if (doc instanceof org.openntf.domino.impl.Document) {
+				doc = ((org.openntf.domino.impl.Document) doc).getDelegate();
 			}
-			return result;
+			return Factory.fromLotus(getDelegate().getNextDocument(doc), org.openntf.domino.Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -70,9 +115,12 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public Document getFirstDocument() {
+	public org.openntf.domino.Document getPrevDocument(Document doc) {
 		try {
-			return getDelegate().getFirstDocument();
+			if (doc instanceof org.openntf.domino.impl.Document) {
+				doc = ((org.openntf.domino.impl.Document) doc).getDelegate();
+			}
+			return Factory.fromLotus(getDelegate().getPrevDocument(doc), org.openntf.domino.Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -81,45 +129,12 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public Document getLastDocument() {
-		try {
-			return getDelegate().getLastDocument();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
-	}
-
-	@Override
-	public Document getNextDocument(Document doc) {
-		try {
-			return getDelegate().getNextDocument(doc);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
-	}
-
-	@Override
-	public Document getPrevDocument(Document doc) {
-		try {
-			return getDelegate().getPrevDocument(doc);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
-	}
-
-	@Override
-	public Document getNthDocument(int n) {
+	public org.openntf.domino.Document getNthDocument(int n) {
 		if (BLOCK_NTH) {
 			throw new NthDocumentMethodNotPermittedException();
 		}
 		try {
-			return getDelegate().getNthDocument(n);
+			return Factory.fromLotus(getDelegate().getNthDocument(n), org.openntf.domino.Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -128,9 +143,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public Document getNextDocument() {
+	public org.openntf.domino.Document getNextDocument() {
 		try {
-			return getDelegate().getNextDocument();
+			return Factory.fromLotus(getDelegate().getNextDocument(), org.openntf.domino.Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -139,9 +154,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public Document getPrevDocument() {
+	public org.openntf.domino.Document getPrevDocument() {
 		try {
-			return getDelegate().getPrevDocument();
+			return Factory.fromLotus(getDelegate().getPrevDocument(), org.openntf.domino.Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -150,9 +165,12 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public Document getDocument(Document doc) {
+	public org.openntf.domino.Document getDocument(Document doc) {
 		try {
-			return getDelegate().getDocument(doc);
+			if (doc instanceof org.openntf.domino.impl.Document) {
+				doc = ((org.openntf.domino.impl.Document) doc).getDelegate();
+			}
+			return Factory.fromLotus(getDelegate().getDocument(doc), org.openntf.domino.Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -284,7 +302,7 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	@Override
 	public org.openntf.domino.DateTime getUntilTime() {
 		try {
-			return Factory.fromLotus(getDelegate().getUntilTime(), DateTime.class);
+			return Factory.fromLotus(getDelegate().getUntilTime(), DateTime.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -333,9 +351,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void intersect(int noteID) {
+	public void intersect(int noteId) {
 		try {
-			getDelegate().intersect(noteID);
+			getDelegate().intersect(noteId);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -343,9 +361,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void intersect(String noteID) {
+	public void intersect(String noteId) {
 		try {
-			getDelegate().intersect(noteID);
+			getDelegate().intersect(noteId);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -363,9 +381,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void merge(int noteID) {
+	public void merge(int noteId) {
 		try {
-			getDelegate().merge(noteID);
+			getDelegate().merge(noteId);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -373,9 +391,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void merge(String noteID) {
+	public void merge(String noteId) {
 		try {
-			getDelegate().merge(noteID);
+			getDelegate().merge(noteId);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -393,9 +411,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void subtract(int noteID) {
+	public void subtract(int noteId) {
 		try {
-			getDelegate().subtract(noteID);
+			getDelegate().subtract(noteId);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -403,9 +421,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public void subtract(String noteID) {
+	public void subtract(String noteId) {
 		try {
-			getDelegate().subtract(noteID);
+			getDelegate().subtract(noteId);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -423,9 +441,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public boolean contains(int noteID) {
+	public boolean contains(int noteId) {
 		try {
-			return getDelegate().contains(noteID);
+			return getDelegate().contains(noteId);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -434,13 +452,12 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	}
 
 	@Override
-	public boolean contains(String noteID) {
+	public boolean contains(String noteId) {
 		try {
-			return getDelegate().contains(noteID);
+			return getDelegate().contains(noteId);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
-
 		}
 	}
 
@@ -451,23 +468,22 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
-
 		}
 	}
 
 	@Override
 	public org.openntf.domino.DocumentCollection cloneCollection() {
 		try {
-			org.openntf.domino.Database parent = (org.openntf.domino.Database) getParent();
-			lotus.domino.DocumentCollection emptyCollection = parent.createDocumentCollection();
-			org.openntf.domino.DocumentCollection result = new org.openntf.domino.impl.DocumentCollection(emptyCollection);
-			result.merge(this);
-			return result;
+			return Factory.fromLotus(getDelegate().cloneCollection(), DocumentCollection.class, this);
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 			return null;
-
 		}
+	}
+
+	@Override
+	public Iterator<org.openntf.domino.Document> iterator() {
+		return new DocumentIterator(this);
 	}
 
 }

@@ -20,7 +20,7 @@ public interface Replication extends Base<lotus.domino.Replication>, lotus.domin
 	public boolean getDontSendLocalSecurityUpdates();
 
 	@Override
-	public Vector getEntries();
+	public Vector<lotus.domino.ReplicationEntry> getEntries();
 
 	@Override
 	public ReplicationEntry getEntry(String source, String destination);

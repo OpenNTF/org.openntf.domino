@@ -14,8 +14,8 @@ import org.openntf.domino.utils.Factory;
 
 public class View extends Base<org.openntf.domino.View, lotus.domino.View> implements org.openntf.domino.View {
 
-	public View(lotus.domino.View delegate) {
-		super(delegate);
+	public View(lotus.domino.View delegate, org.openntf.domino.Database parent) {
+		super(delegate, parent);
 	}
 
 	@Override
@@ -216,7 +216,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewColumn copyColumn(ViewColumn sourceColumn) {
 		try {
-			return getDelegate().copyColumn((lotus.domino.ViewColumn) Factory.toLotus(sourceColumn));
+			return getDelegate().copyColumn(sourceColumn);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -226,7 +226,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewColumn copyColumn(ViewColumn sourceColumn, int destinationIndex) {
 		try {
-			return getDelegate().copyColumn((lotus.domino.ViewColumn) Factory.toLotus(sourceColumn), destinationIndex);
+			return getDelegate().copyColumn(sourceColumn, destinationIndex);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -581,7 +581,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getChild(lotus.domino.Document doc) {
 		try {
-			return new Document(getDelegate().getChild((lotus.domino.Document) Factory.toLotus(doc)));
+			return Factory.fromLotus(getDelegate().getChild(((Document) doc).getDelegate()), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -644,7 +644,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public DateTime getCreated() {
 		try {
-			return new DateTime(getDelegate().getCreated());
+			return Factory.fromLotus(getDelegate().getCreated(), DateTime.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -654,7 +654,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getDocumentByKey(Object key) {
 		try {
-			return new Document(getDelegate().getDocumentByKey(key));
+			return Factory.fromLotus(getDelegate().getDocumentByKey(key), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -664,7 +664,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getDocumentByKey(Object key, boolean exact) {
 		try {
-			return new Document(getDelegate().getDocumentByKey(key, exact));
+			return Factory.fromLotus(getDelegate().getDocumentByKey(key, exact), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -675,7 +675,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getDocumentByKey(Vector keys) {
 		try {
-			return new Document(getDelegate().getDocumentByKey(keys));
+			return Factory.fromLotus(getDelegate().getDocumentByKey(keys), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -686,7 +686,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getDocumentByKey(Vector keys, boolean exact) {
 		try {
-			return new Document(getDelegate().getDocumentByKey(keys, exact));
+			return Factory.fromLotus(getDelegate().getDocumentByKey(keys, exact), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -748,7 +748,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getFirstDocument() {
 		try {
-			return new Document(getDelegate().getFirstDocument());
+			return Factory.fromLotus(getDelegate().getFirstDocument(), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -778,7 +778,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getLastDocument() {
 		try {
-			return new Document(getDelegate().getLastDocument());
+			return Factory.fromLotus(getDelegate().getLastDocument(), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -788,7 +788,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public DateTime getLastModified() {
 		try {
-			return new DateTime(getDelegate().getLastModified());
+			return Factory.fromLotus(getDelegate().getLastModified(), DateTime.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -819,7 +819,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getNextDocument(lotus.domino.Document doc) {
 		try {
-			return new Document(getDelegate().getNextDocument((lotus.domino.Document) Factory.toLotus(doc)));
+			return Factory.fromLotus(getDelegate().getNextDocument(((Document) doc).getDelegate()), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -829,7 +829,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getNextSibling(lotus.domino.Document doc) {
 		try {
-			return new Document(getDelegate().getNextSibling((lotus.domino.Document) Factory.toLotus(doc)));
+			return Factory.fromLotus(getDelegate().getNextSibling(((Document) doc).getDelegate()), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -849,7 +849,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getNthDocument(int n) {
 		try {
-			return new Document(getDelegate().getNthDocument(n));
+			return Factory.fromLotus(getDelegate().getNthDocument(n), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -859,7 +859,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Database getParent() {
 		try {
-			return new Database(getDelegate().getParent());
+			return Factory.fromLotus(getDelegate().getParent(), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -869,7 +869,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getParentDocument(lotus.domino.Document doc) {
 		try {
-			return new Document(getDelegate().getParentDocument((lotus.domino.Document) Factory.toLotus(doc)));
+			return Factory.fromLotus(getDelegate().getParentDocument(((Document) doc).getDelegate()), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -879,7 +879,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getPrevDocument(lotus.domino.Document doc) {
 		try {
-			return new Document(getDelegate().getPrevDocument((lotus.domino.Document) Factory.toLotus(doc)));
+			return Factory.fromLotus(getDelegate().getPrevDocument(((Document) doc).getDelegate()), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -889,7 +889,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getPrevSibling(lotus.domino.Document doc) {
 		try {
-			return new Document(getDelegate().getPrevSibling((lotus.domino.Document) Factory.toLotus(doc)));
+			return Factory.fromLotus(getDelegate().getPrevSibling(((Document) doc).getDelegate()), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
