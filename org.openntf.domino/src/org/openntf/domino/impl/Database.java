@@ -7,7 +7,6 @@ import lotus.domino.Agent;
 import lotus.domino.Document;
 import lotus.domino.DocumentCollection;
 import lotus.domino.Form;
-import lotus.domino.NoteCollection;
 import lotus.domino.NotesException;
 import lotus.domino.Outline;
 import lotus.domino.Replication;
@@ -185,9 +184,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public NoteCollection createNoteCollection(boolean arg0) {
+	public org.openntf.domino.NoteCollection createNoteCollection(boolean arg0) {
 		try {
-			return getDelegate().createNoteCollection(arg0);
+			return Factory.fromLotus(getDelegate().createNoteCollection(arg0), org.openntf.domino.NoteCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

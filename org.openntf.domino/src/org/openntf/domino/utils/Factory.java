@@ -59,12 +59,16 @@ public enum Factory {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T> T fromLotus(lotus.domino.Base lotus, Class<? extends org.openntf.domino.Base> T, org.openntf.domino.Base parent) {
-		if (T.isAssignableFrom(lotus.getClass())) {
-			return (T) lotus;
-		}
 		if (lotus == null) {
 			return null;
 		}
+		if (lotus instanceof org.openntf.domino.Base) {
+			return (T) lotus;
+		}
+		if (T.isAssignableFrom(lotus.getClass())) {
+			return (T) lotus;
+		}
+
 		T result = null;
 		if (lotus instanceof lotus.domino.Name) {
 			result = (T) new org.openntf.domino.impl.Name((lotus.domino.Name) lotus, parent);
@@ -74,6 +78,9 @@ public enum Factory {
 			result = (T) new org.openntf.domino.impl.Database((lotus.domino.Database) lotus, parent);
 		} else if (lotus instanceof lotus.domino.DocumentCollection) {
 			result = (T) new org.openntf.domino.impl.DocumentCollection((lotus.domino.DocumentCollection) lotus, parent);
+		} else if (lotus instanceof lotus.domino.NoteCollection) {
+			result = (T) new org.openntf.domino.impl.NoteCollection((lotus.domino.NoteCollection) lotus,
+					(org.openntf.domino.Database) parent);
 		} else if (lotus instanceof lotus.domino.Document) {
 			result = (T) new org.openntf.domino.impl.Document((lotus.domino.Document) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Form) {

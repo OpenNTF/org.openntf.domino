@@ -95,35 +95,35 @@ public enum ScratchTest {
 			DominoUtils.handleException(e1);
 
 		}
-		dt2.start();
-		try {
-			Thread.sleep(delay);
-		} catch (InterruptedException e1) {
-			DominoUtils.handleException(e1);
-
-		}
-		dt3.start();
-		try {
-			Thread.sleep(delay);
-		} catch (InterruptedException e1) {
-			DominoUtils.handleException(e1);
-
-		}
-		dt4.start();
-		try {
-			Thread.sleep(delay);
-		} catch (InterruptedException e1) {
-			DominoUtils.handleException(e1);
-
-		}
-		dt5.start();
-		try {
-			Thread.sleep(delay);
-		} catch (InterruptedException e1) {
-			DominoUtils.handleException(e1);
-
-		}
-		dt6.start();
+		// dt2.start();
+		// try {
+		// Thread.sleep(delay);
+		// } catch (InterruptedException e1) {
+		// DominoUtils.handleException(e1);
+		//
+		// }
+		// dt3.start();
+		// try {
+		// Thread.sleep(delay);
+		// } catch (InterruptedException e1) {
+		// DominoUtils.handleException(e1);
+		//
+		// }
+		// dt4.start();
+		// try {
+		// Thread.sleep(delay);
+		// } catch (InterruptedException e1) {
+		// DominoUtils.handleException(e1);
+		//
+		// }
+		// dt5.start();
+		// try {
+		// Thread.sleep(delay);
+		// } catch (InterruptedException e1) {
+		// DominoUtils.handleException(e1);
+		//
+		// }
+		// dt6.start();
 
 		// // NotesThread.sinitThread();
 		//

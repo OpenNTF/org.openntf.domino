@@ -90,7 +90,21 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			referenceBag.get().add(ref_);
 			refSet.add(delegate);
 			if (delegate instanceof lotus.domino.local.NotesBase) {
-				int count = lotusReferenceCounter_.increment((lotus.domino.local.NotesBase) delegate_);
+				lotus.domino.local.NotesBase base = (lotus.domino.local.NotesBase) delegate;
+				int curCount = lotusReferenceCounter_.getCount(base);
+				if (curCount > 0) {
+					// there's already a reference to this object. WTF is it?
+					System.out.println("There's already a reference to " + base.getClass().getSimpleName() + " (" + getLotusId(base)
+							+ "). The current call stack is...");
+					// Exception e = new RuntimeException();
+					// e.printStackTrace();
+				} else {
+					// System.out.println("No references to " + base.getClass().getSimpleName() + " (" + getLotusId(base)
+					// + "). The current call stack is...");
+					// Exception e = new RuntimeException();
+					// e.printStackTrace();
+				}
+				int count = lotusReferenceCounter_.increment(base);
 			}
 		} else {
 			encapsulated_ = true;
@@ -172,12 +186,15 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 						// System.out.println("NotesBase object " + getLotusId(base) + " (" + base.getClass().getSimpleName()
 						// + ") has already been recycled...");
 					} else {
-						if (count == 1)
-							System.out.println("Recycling a " + base.getClass().getName() + " (" + getLotusId(base)
-									+ ") because we have only this reference remaining");
-						if (count == 0)
-							System.out.println("Recycling a " + base.getClass().getName() + " (" + getLotusId(base)
-									+ ") because we have ZERO references remaining");
+						// if (count == 1)
+						// System.out.println("Recycling a " + base.getClass().getName() + " (" + getLotusId(base)
+						// + ") because we have only this reference remaining");
+						// if (count == 0)
+						// System.out.println("Recycling a " + base.getClass().getName() + " (" + getLotusId(base)
+						// + ") because we have ZERO references remaining");
+						// Long id = getLotusId(base);
+						// lotusReferenceCounter_.forcedRecycle(id);
+						lotusReferenceCounter_.decrement(base);
 						base.recycle();
 						result = true;
 					}

@@ -15,11 +15,10 @@
  */
 package org.openntf.domino.iterators;
 
-import lotus.domino.NoteCollection;
-
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
+import org.openntf.domino.NoteCollection;
 import org.openntf.domino.impl.Base;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -39,17 +38,21 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 		if (collection != null) {
 			NoteCollection nc = null;
 			try {
-				Database db = Factory.fromLotus(collection.getParent(), Database.class, collection.getParent());
+				Database db = Factory.fromLotus(collection.getParent(), Database.class, collection);
 				setDatabase(db);
 				nc = org.openntf.domino.impl.DocumentCollection.toLotusNoteCollection(collection);
 				if (nc.getCount() > 0) {
 					result = nc.getNoteIDs();
+				} else {
+					System.out.println("NOTE COLLECTION COUNT WAS ZERO");
 				}
 			} catch (Throwable t) {
 				DominoUtils.handleException(t);
 			} finally {
 				Base.recycle(nc);
 			}
+		} else {
+			System.out.println("COLLECTION IS NULL!?!? How'd that happen?");
 		}
 		return result;
 	}
@@ -71,11 +74,15 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 		if (hasNext()) {
 			String noteId = Integer.toHexString(getIdArray()[getIndex()]);
 			setIndex(getIndex() + 1);
-			Database db = getDatabase();
+			Base.recycle(current_);
 			try {
-				Base.recycle(current_);
+				Database db = getDatabase();
 				lotus.domino.Document doc = db.getDocumentByID(noteId);
-				result = Factory.fromLotus(doc, Document.class, getDatabase());
+				if (doc instanceof org.openntf.domino.Document) {
+					result = (org.openntf.domino.Document) doc;
+				} else {
+					result = Factory.fromLotus(doc, Document.class, db);
+				}
 				current_ = result;
 			} catch (Throwable t) {
 				DominoUtils.handleException(t);
@@ -90,6 +97,7 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 
 	protected void setIdArray(int[] idArray) {
 		idArray_ = idArray;
+		System.out.println("DocumentIterator set up idArray of " + idArray.length);
 	}
 
 	protected void setIndex(int index) {

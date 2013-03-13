@@ -7,7 +7,6 @@ import lotus.domino.Agent;
 import lotus.domino.Document;
 import lotus.domino.DocumentCollection;
 import lotus.domino.Form;
-import lotus.domino.NoteCollection;
 import lotus.domino.Outline;
 import lotus.domino.Replication;
 import lotus.domino.View;
@@ -54,7 +53,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public void createFTIndex(int arg0, boolean arg1);
 
 	@Override
-	public NoteCollection createNoteCollection(boolean arg0);
+	public org.openntf.domino.NoteCollection createNoteCollection(boolean arg0);
 
 	@Override
 	public Outline createOutline(String arg0);

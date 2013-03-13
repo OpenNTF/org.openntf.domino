@@ -2,7 +2,6 @@ package org.openntf.domino.impl;
 
 import java.util.Iterator;
 
-import lotus.domino.Database;
 import lotus.domino.Document;
 import lotus.domino.NotesException;
 
@@ -30,20 +29,28 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		super(delegate, parent);
 	}
 
-	public static lotus.domino.NoteCollection toLotusNoteCollection(lotus.domino.DocumentCollection collection) {
-		lotus.domino.NoteCollection result = null;
-		try {
-			if (collection instanceof org.openntf.domino.impl.DocumentCollection) {
-				Database db = ((org.openntf.domino.impl.DocumentCollection) collection).getDelegate().getParent();
-				result = db.createNoteCollection(false);
-				result.add(((org.openntf.domino.impl.DocumentCollection) collection).getDelegate());
-			} else if (collection instanceof lotus.domino.DocumentCollection) {
-				Database db = ((lotus.domino.DocumentCollection) collection).getParent();
-				result = db.createNoteCollection(false);
-				result.add((lotus.domino.DocumentCollection) collection);
+	public static org.openntf.domino.NoteCollection toLotusNoteCollection(lotus.domino.DocumentCollection collection) {
+		org.openntf.domino.NoteCollection result = null;
+		if (collection instanceof org.openntf.domino.impl.DocumentCollection) {
+			System.out.println("Received an OpenNTF object");
+			org.openntf.domino.Database db = ((org.openntf.domino.impl.DocumentCollection) collection).getParent();
+			result = db.createNoteCollection(false);
+			result.buildCollection();
+			System.out.println("Created a blank nc with " + result.getCount() + " entries");
+			lotus.domino.DocumentCollection dc = ((org.openntf.domino.impl.DocumentCollection) collection).getDelegate();
+			result.add(dc);
+			try {
+				System.out.println("Added a collection with " + dc.getCount() + " entries");
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+
 			}
-		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
+		} else if (collection instanceof lotus.domino.DocumentCollection) {
+			org.openntf.domino.Database db = ((org.openntf.domino.DocumentCollection) collection).getParent();
+			result = db.createNoteCollection(false);
+			result.add((lotus.domino.DocumentCollection) collection);
+		} else {
+			System.out.println("We received some other kind of parameter? " + collection.getClass().getName());
 		}
 		return result;
 	}

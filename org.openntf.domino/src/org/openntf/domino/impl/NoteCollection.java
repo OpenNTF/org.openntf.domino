@@ -11,7 +11,7 @@ import org.openntf.domino.Agent;
 public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.domino.NoteCollection, lotus.domino.NoteCollection> implements
 		org.openntf.domino.NoteCollection {
 
-	protected NoteCollection(lotus.domino.NoteCollection delegate, org.openntf.domino.Database parent) {
+	public NoteCollection(lotus.domino.NoteCollection delegate, org.openntf.domino.Database parent) {
 		super(delegate, parent);
 	}
 

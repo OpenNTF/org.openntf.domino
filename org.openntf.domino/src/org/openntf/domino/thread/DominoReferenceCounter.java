@@ -85,7 +85,10 @@ public class DominoReferenceCounter extends ThreadLocal<Object> {
 		Long id = org.openntf.domino.impl.Base.getLotusId((lotus.domino.local.NotesBase) lotus);
 		Map<Long, Counter> map = (Map<Long, Counter>) get();
 		if (map.containsKey(id)) {
-			return map.get(id).decrement();
+			int result = map.get(id).decrement();
+			if (result == 0)
+				map.remove(id);
+			return result;
 		} else {
 			return 0;
 		}
@@ -100,5 +103,21 @@ public class DominoReferenceCounter extends ThreadLocal<Object> {
 		} else {
 			return 0;
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public int getCount(Long id) {
+		Map<Long, Counter> map = (Map<Long, Counter>) get();
+		if (map.containsKey(id)) {
+			return map.get(id).intValue();
+		} else {
+			return 0;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void forcedRecycle(Long id) {
+		Map<Long, Counter> map = (Map<Long, Counter>) get();
+		map.remove(id);
 	}
 }
