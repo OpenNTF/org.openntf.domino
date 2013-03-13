@@ -52,13 +52,13 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	public int getUnknownTokenLogOption();
 
 	@Override
-	public void importDxl(RichTextItem rtitem, Database database);
+	public void importDxl(RichTextItem rtitem, Database db);
 
 	@Override
-	public void importDxl(Stream stream, Database database);
+	public void importDxl(Stream stream, Database db);
 
 	@Override
-	public void importDxl(String dxl, Database database);
+	public void importDxl(String dxl, Database db);
 
 	@Override
 	public void setAclImportOption(int option);

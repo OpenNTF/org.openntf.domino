@@ -45,7 +45,7 @@ public interface Outline extends Base<lotus.domino.Outline>, lotus.domino.Outlin
 	public String getAlias();
 
 	@Override
-	public OutlineEntry getChild(OutlineEntry arg0);
+	public OutlineEntry getChild(OutlineEntry entry);
 
 	@Override
 	public String getComment();

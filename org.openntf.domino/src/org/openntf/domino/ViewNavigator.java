@@ -171,23 +171,19 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	public void markAllUnread(String userName);
 
 	@Override
-	// TODO Figure out what these parameters are
-	public void setAutoExpandGuidance(int arg0, int[] arg1, int[] arg2);
+	public void setAutoExpandGuidance(int maxEntries, int[] collapsedNoteIds, int[] expandedNoteIds);
 
 	@Override
-	// TODO Figure out what these parameters are
-	public void setAutoExpandGuidance(int arg0, NoteCollection arg1, NoteCollection arg2);
+	public void setAutoExpandGuidance(int maxEntries, NoteCollection collapsedNoteIds, NoteCollection expandedNoteIds);
 
 	@Override
 	public void setBufferMaxEntries(int entryCount);
 
 	@Override
-	// TODO Figure out what these parameters are
-	public void setCacheGuidance(int arg0);
+	public void setCacheGuidance(int maxEntries);
 
 	@Override
-	// TODO Figure out what these parameters are
-	public void setCacheGuidance(int arg0, int arg1);
+	public void setCacheGuidance(int maxEntries, int readMode);
 
 	@Override
 	public void setCacheSize(int size);

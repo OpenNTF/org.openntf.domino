@@ -13,7 +13,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	public void add(lotus.domino.Document doc);
 
 	@Override
-	public void add(lotus.domino.Agent arg0);
+	public void add(lotus.domino.Agent agent);
 
 	@Override
 	public void add(DocumentCollection docs);

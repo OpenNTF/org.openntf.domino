@@ -105,10 +105,10 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	public void setLabel(String label);
 
 	@Override
-	public boolean setNamedElement(Database database, String elementName, int entryClass);
+	public boolean setNamedElement(Database db, String elementName, int entryClass);
 
 	@Override
-	public boolean setNoteLink(Database database);
+	public boolean setNoteLink(Database db);
 
 	@Override
 	public boolean setNoteLink(lotus.domino.Document doc);

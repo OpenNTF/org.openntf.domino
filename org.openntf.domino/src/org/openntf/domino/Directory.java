@@ -61,7 +61,7 @@ public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Di
 
 	@Override
 	// TODO Switch to new class
-	public lotus.domino.DirectoryNavigator lookupNames(String arg0, Vector names, Vector items, boolean partialMatches);
+	public lotus.domino.DirectoryNavigator lookupNames(String view, Vector names, Vector items, boolean partialMatches);
 
 	@Override
 	public void setGroupAuthorizationOnly(boolean flag);
