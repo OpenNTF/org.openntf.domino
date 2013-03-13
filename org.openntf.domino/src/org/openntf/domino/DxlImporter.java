@@ -1,7 +1,5 @@
 package org.openntf.domino;
 
-import java.util.Vector;
-
 import lotus.domino.Database;
 import lotus.domino.RichTextItem;
 import lotus.domino.Stream;
@@ -42,7 +40,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	public String getLogComment();
 
 	@Override
-	public String getNextImportedNoteID(String arg0);
+	public String getNextImportedNoteID(String noteid);
 
 	@Override
 	public boolean getReplaceDbProperties();
@@ -54,60 +52,44 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	public int getUnknownTokenLogOption();
 
 	@Override
-	public void importDxl(RichTextItem arg0, Database arg1);
+	public void importDxl(RichTextItem rtitem, Database database);
 
 	@Override
-	public void importDxl(Stream arg0, Database arg1);
+	public void importDxl(Stream stream, Database database);
 
 	@Override
-	public void importDxl(String arg0, Database arg1);
+	public void importDxl(String dxl, Database database);
 
 	@Override
-	public void recycle();
+	public void setAclImportOption(int option);
 
 	@Override
-	public void recycle(Vector arg0);
+	public void setCompileLotusScript(boolean flag);
 
 	@Override
-	public void setAclImportOption(int arg0);
+	public void setCreateFTIndex(boolean flag);
 
 	@Override
-	public void setCompileLotusScript(boolean arg0);
+	public void setDesignImportOption(int option);
 
 	@Override
-	public void setCreateFTIndex(boolean arg0);
+	public void setDocumentImportOption(int option);
 
 	@Override
-	public void setDesignImportOption(int arg0);
+	public void setExitOnFirstFatalError(boolean flag);
 
 	@Override
-	public void setDocumentImportOption(int arg0);
+	public void setInputValidationOption(int option);
 
 	@Override
-	public void setExitOnFirstFatalError(boolean arg0);
+	public void setLogComment(String comment);
 
 	@Override
-	public void setInputValidationOption(int arg0);
+	public void setReplaceDbProperties(boolean flag);
 
 	@Override
-	public void setLogComment(String arg0);
+	public void setReplicaRequiredForReplaceOrUpdate(boolean flag);
 
 	@Override
-	public void setReplaceDbProperties(boolean arg0);
-
-	@Override
-	public void setReplicaRequiredForReplaceOrUpdate(boolean arg0);
-
-	@Override
-	public void setUnknownTokenLogOption(int arg0);
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
-
+	public void setUnknownTokenLogOption(int option);
 }

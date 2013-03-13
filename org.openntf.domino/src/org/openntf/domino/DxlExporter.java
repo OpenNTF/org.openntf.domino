@@ -8,16 +8,16 @@ import lotus.domino.NoteCollection;
 public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domino.DxlExporter {
 
 	@Override
-	public String exportDxl(lotus.domino.Document arg0);
+	public String exportDxl(lotus.domino.Document doc);
 
 	@Override
-	public String exportDxl(lotus.domino.Database arg0);
+	public String exportDxl(lotus.domino.Database database);
 
 	@Override
-	public String exportDxl(DocumentCollection arg0);
+	public String exportDxl(DocumentCollection docs);
 
 	@Override
-	public String exportDxl(NoteCollection arg0);
+	public String exportDxl(NoteCollection notes);
 
 	@Override
 	public String getAttachmentOmittedText();
@@ -77,72 +77,57 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	public boolean getUncompressAttachments();
 
 	@Override
-	public void recycle();
+	public void setAttachmentOmittedText(String replacementText);
 
 	@Override
-	public void recycle(Vector arg0);
+	public void setConvertNotesBitmapsToGIF(boolean flag);
 
 	@Override
-	public void setAttachmentOmittedText(String arg0);
+	public void setDoctypeSYSTEM(String system);
 
 	@Override
-	public void setConvertNotesBitmapsToGIF(boolean arg0);
+	public void setExitOnFirstFatalError(boolean flag);
 
 	@Override
-	public void setDoctypeSYSTEM(String arg0);
+	public void setForceNoteFormat(boolean flag);
 
 	@Override
-	public void setExitOnFirstFatalError(boolean arg0);
+	public void setLogComment(String comment);
 
 	@Override
-	public void setForceNoteFormat(boolean arg0);
+	public void setMIMEOption(int option);
 
 	@Override
-	public void setLogComment(String arg0);
+	public void setOLEObjectOmittedText(String replacementText);
 
 	@Override
-	public void setMIMEOption(int arg0);
+	public void setOmitItemNames(Vector names);
 
 	@Override
-	public void setOLEObjectOmittedText(String arg0);
+	public void setOmitMiscFileObjects(boolean flag);
 
 	@Override
-	public void setOmitItemNames(Vector arg0);
+	public void setOmitOLEObjects(boolean flag);
 
 	@Override
-	public void setOmitMiscFileObjects(boolean arg0);
+	public void setOmitRichtextAttachments(boolean flag);
 
 	@Override
-	public void setOmitOLEObjects(boolean arg0);
+	public void setOmitRichtextPictures(boolean flag);
 
 	@Override
-	public void setOmitRichtextAttachments(boolean arg0);
+	public void setOutputDOCTYPE(boolean flag);
 
 	@Override
-	public void setOmitRichtextPictures(boolean arg0);
+	public void setPictureOmittedText(String replacementText);
 
 	@Override
-	public void setOutputDOCTYPE(boolean arg0);
+	public void setRestrictToItemNames(Vector names);
 
 	@Override
-	public void setPictureOmittedText(String arg0);
+	public void setRichTextOption(int option);
 
 	@Override
-	public void setRestrictToItemNames(Vector arg0);
-
-	@Override
-	public void setRichTextOption(int arg0);
-
-	@Override
-	public void setUncompressAttachments(boolean arg0);
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
+	public void setUncompressAttachments(boolean flag);
 
 }

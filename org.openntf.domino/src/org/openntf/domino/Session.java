@@ -29,10 +29,10 @@ import org.openntf.domino.annotations.Legacy;
 
 public interface Session extends lotus.domino.Session, Base<lotus.domino.Session> {
 	@Override
-	public Vector<Object> evaluate(String arg0);
+	public Vector<Object> evaluate(String formula);
 
 	@Override
-	public Vector<Object> evaluate(String arg0, Document arg1);
+	public Vector<Object> evaluate(String formula, Document doc);
 
 	@Override
 	@Deprecated
@@ -44,17 +44,19 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING })
-	public Vector<DateRange> freeTimeSearch(lotus.domino.DateRange arg0, int arg1, Object arg2, boolean arg3);
+	public Vector<DateRange> freeTimeSearch(lotus.domino.DateRange window, int duration, Object names, boolean firstFit);
 
-	public Collection<DateRange> freeTimeSearch(org.openntf.domino.DateRange arg0, int arg1, String arg2, boolean arg3);
+	public Collection<DateRange> freeTimeSearch(org.openntf.domino.DateRange window, int duration, String names, boolean firstFit);
 
-	public Collection<DateRange> freeTimeSearch(org.openntf.domino.DateRange arg0, int arg1, Collection<String> arg2, boolean arg3);
+	public Collection<DateRange> freeTimeSearch(org.openntf.domino.DateRange window, int duration, Collection<String> names,
+			boolean firstFit);
 
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING })
 	public Vector<Name> getUserGroupNameList(); // TODO should we use a Vector of names? Or allow someone to request it as String-only so
-												// there's no recycle burden?
+
+	// there's no recycle burden?
 
 	public Collection<String> getUserGroupNameCollection();
 
@@ -62,12 +64,13 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING })
 	public Vector<Name> getUserNameList(); // TODO should we use a Vector of names? Or allow someone to request it as String-only so there's
-											// no recycle burden?
+
+	// no recycle burden?
 
 	public Collection<String> getUserNameCollection();
 
 	@Override
-	public AdministrationProcess createAdministrationProcess(String paramString);
+	public AdministrationProcess createAdministrationProcess(String server);
 
 	@Override
 	public ColorObject createColorObject();
@@ -76,19 +79,19 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	public lotus.domino.DateRange createDateRange();
 
 	@Override
-	public lotus.domino.DateRange createDateRange(Date paramDate1, Date paramDate2);
+	public lotus.domino.DateRange createDateRange(Date startTime, Date endTime);
 
 	@Override
-	public lotus.domino.DateRange createDateRange(DateTime paramDateTime1, DateTime paramDateTime2);
+	public lotus.domino.DateRange createDateRange(DateTime startTime, DateTime endTime);
 
 	@Override
-	public DateTime createDateTime(Calendar paramCalendar);
+	public DateTime createDateTime(Calendar date);
 
 	@Override
-	public DateTime createDateTime(Date paramDate);
+	public DateTime createDateTime(Date date);
 
 	@Override
-	public DateTime createDateTime(String paramString);
+	public DateTime createDateTime(String date);
 
 	@Override
 	public DxlExporter createDxlExporter();
@@ -97,16 +100,16 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	public DxlImporter createDxlImporter();
 
 	@Override
-	public Log createLog(String paramString);
+	public Log createLog(String name);
 
 	@Override
-	public org.openntf.domino.Name createName(String paramString);
+	public Name createName(String name);
 
 	@Override
-	public lotus.domino.Name createName(String paramString1, String paramString2);
+	public Name createName(String name, String lang);
 
 	@Override
-	public Newsletter createNewsletter(DocumentCollection paramDocumentCollection);
+	public Newsletter createNewsletter(DocumentCollection collection);
 
 	@Override
 	public Registration createRegistration();
@@ -124,7 +127,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	public AgentContext getAgentContext();
 
 	@Override
-	public NotesCalendar getCalendar(lotus.domino.Database paramDatabase);
+	public NotesCalendar getCalendar(lotus.domino.Database db);
 
 	@Override
 	public String getCommonUserName();
@@ -133,37 +136,37 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	public Object getCredentials();
 
 	@Override
-	public lotus.domino.Database getCurrentDatabase();
+	public Database getCurrentDatabase();
 
 	@Override
-	public org.openntf.domino.Database getDatabase(String paramString1, String paramString2);
+	public Database getDatabase(String server, String db);
 
 	@Override
-	public lotus.domino.Database getDatabase(String paramString1, String paramString2, boolean paramBoolean);
+	public Database getDatabase(String server, String db, boolean createOnFail);
 
 	@Override
-	public DbDirectory getDbDirectory(String paramString);
+	public DbDirectory getDbDirectory(String server);
 
 	@Override
 	public Directory getDirectory();
 
 	@Override
-	public Directory getDirectory(String paramString);
+	public Directory getDirectory(String server);
 
 	@Override
 	public String getEffectiveUserName();
 
 	@Override
-	public String getEnvironmentString(String paramString);
+	public String getEnvironmentString(String vname);
 
 	@Override
-	public String getEnvironmentString(String paramString, boolean paramBoolean);
+	public String getEnvironmentString(String vname, boolean isSystem);
 
 	@Override
-	public Object getEnvironmentValue(String paramString);
+	public Object getEnvironmentValue(String vname);
 
 	@Override
-	public Object getEnvironmentValue(String paramString, boolean paramBoolean);
+	public Object getEnvironmentValue(String vname, boolean isSystem);
 
 	@Override
 	public String getHttpURL();
@@ -190,28 +193,28 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	public String getSessionToken();
 
 	@Override
-	public String getSessionToken(String paramString);
+	public String getSessionToken(String serverName);
 
 	@Override
 	public String getURL();
 
 	@Override
-	public lotus.domino.Database getURLDatabase();
+	public Database getURLDatabase();
 
 	@Override
 	public String getUserName();
 
 	@Override
-	public org.openntf.domino.Name getUserNameObject();
+	public Name getUserNameObject();
 
 	@Override
-	public Document getUserPolicySettings(String paramString1, String paramString2, int paramInt);
+	public Document getUserPolicySettings(String server, String name, int type);
 
 	@Override
-	public Document getUserPolicySettings(String paramString1, String paramString2, int paramInt, String paramString3);
+	public Document getUserPolicySettings(String server, String name, int type, String explicitPolicy);
 
 	@Override
-	public String hashPassword(String paramString);
+	public String hashPassword(String password);
 
 	@Override
 	public boolean isConvertMime();
@@ -235,35 +238,35 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	public boolean isValid();
 
 	@Override
-	public boolean resetUserPassword(String paramString1, String paramString2, String paramString3);
+	public boolean resetUserPassword(String serverName, String userName, String password);
 
 	@Override
-	public boolean resetUserPassword(String paramString1, String paramString2, String paramString3, int paramInt);
+	public boolean resetUserPassword(String serverName, String userName, String password, int downloadCount);
 
 	@Override
-	public lotus.domino.Base resolve(String paramString);
+	public lotus.domino.Base resolve(String url);
 
 	@Override
-	public String sendConsoleCommand(String paramString1, String paramString2);
+	public String sendConsoleCommand(String serverName, String consoleCommand);
 
 	@Override
-	public void setAllowLoopBack(boolean paramBoolean);
+	public void setAllowLoopBack(boolean flag);
 
 	@Override
-	public void setConvertMime(boolean paramBoolean);
+	public void setConvertMime(boolean flag);
 
 	@Override
-	public void setConvertMIME(boolean paramBoolean);
+	public void setConvertMIME(boolean flag);
 
 	@Override
-	public void setEnvironmentVar(String paramString, Object paramObject);
+	public void setEnvironmentVar(String vname, Object value);
 
 	@Override
-	public void setEnvironmentVar(String paramString, Object paramObject, boolean paramBoolean);
+	public void setEnvironmentVar(String vname, Object value, boolean isSystem);
 
 	@Override
-	public void setTrackMillisecInJavaDates(boolean paramBoolean);
+	public void setTrackMillisecInJavaDates(boolean flag);
 
 	@Override
-	public boolean verifyPassword(String paramString1, String paramString2);
+	public boolean verifyPassword(String password, String hashedPassword);
 }

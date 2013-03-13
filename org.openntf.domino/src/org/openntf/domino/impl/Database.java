@@ -2,17 +2,10 @@ package org.openntf.domino.impl;
 
 import java.util.Vector;
 
-import lotus.domino.ACL;
-import lotus.domino.Agent;
-import lotus.domino.Document;
-import lotus.domino.DocumentCollection;
-import lotus.domino.Form;
 import lotus.domino.NotesException;
-import lotus.domino.Outline;
-import lotus.domino.Replication;
-import lotus.domino.View;
 
 import org.openntf.domino.DateTime;
+import org.openntf.domino.View;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -23,11 +16,12 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public Database(lotus.domino.Database delegate, org.openntf.domino.Base parent) {
 		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
+
 	}
 
 	public Document FTDomainSearch(String arg0, int arg1, int arg2, int arg3, int arg4, int arg5, String arg6) {
 		try {
-			return getDelegate().FTDomainSearch(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+			return Factory.fromLotus(getDelegate().FTDomainSearch(arg0, arg1, arg2, arg3, arg4, arg5, arg6), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -37,7 +31,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DocumentCollection FTSearch(String arg0, int arg1, int arg2, int arg3) {
 		try {
-			return getDelegate().FTSearch(arg0, arg1, arg2, arg3);
+			return Factory.fromLotus(getDelegate().FTSearch(arg0, arg1, arg2, arg3), DocumentCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -47,7 +41,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DocumentCollection FTSearch(String arg0, int arg1) {
 		try {
-			return getDelegate().FTSearch(arg0, arg1);
+			return Factory.fromLotus(getDelegate().FTSearch(arg0, arg1), DocumentCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -57,7 +51,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DocumentCollection FTSearch(String arg0) {
 		try {
-			return getDelegate().FTSearch(arg0);
+			return Factory.fromLotus(getDelegate().FTSearch(arg0), DocumentCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -67,7 +61,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DocumentCollection FTSearchRange(String arg0, int arg1, int arg2, int arg3, int arg4) {
 		try {
-			return getDelegate().FTSearchRange(arg0, arg1, arg2, arg3, arg4);
+			return Factory.fromLotus(getDelegate().FTSearchRange(arg0, arg1, arg2, arg3, arg4), DocumentCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -115,9 +109,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public lotus.domino.Database createCopy(String arg0, String arg1, int arg2) {
+	public Database createCopy(String arg0, String arg1, int arg2) {
 		try {
-			return getDelegate().createCopy(arg0, arg1, arg2);
+			return Factory.fromLotus(getDelegate().createCopy(arg0, arg1, arg2), Database.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -125,9 +119,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public lotus.domino.Database createCopy(String arg0, String arg1) {
+	public Database createCopy(String arg0, String arg1) {
 		try {
-			return getDelegate().createCopy(arg0, arg1);
+			return Factory.fromLotus(getDelegate().createCopy(arg0, arg1), Database.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -137,7 +131,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public Document createDocument() {
 		try {
-			return getDelegate().createDocument();
+			return Factory.fromLotus(getDelegate().createDocument(), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -147,7 +141,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DocumentCollection createDocumentCollection() {
 		try {
-			return getDelegate().createDocumentCollection();
+			return Factory.fromLotus(getDelegate().createDocumentCollection(), DocumentCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -164,9 +158,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public lotus.domino.Database createFromTemplate(String arg0, String arg1, boolean arg2, int arg3) {
+	public Database createFromTemplate(String arg0, String arg1, boolean arg2, int arg3) {
 		try {
-			return getDelegate().createFromTemplate(arg0, arg1, arg2, arg3);
+			return Factory.fromLotus(getDelegate().createFromTemplate(arg0, arg1, arg2, arg3), Database.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -174,9 +168,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public lotus.domino.Database createFromTemplate(String arg0, String arg1, boolean arg2) {
+	public Database createFromTemplate(String arg0, String arg1, boolean arg2) {
 		try {
-			return getDelegate().createFromTemplate(arg0, arg1, arg2);
+			return Factory.fromLotus(getDelegate().createFromTemplate(arg0, arg1, arg2), Database.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -194,7 +188,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public Outline createOutline(String arg0, boolean arg1) {
+	public lotus.domino.Outline createOutline(String arg0, boolean arg1) {
 		try {
 			return getDelegate().createOutline(arg0, arg1);
 		} catch (NotesException e) {
@@ -204,7 +198,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public Outline createOutline(String arg0) {
+	public lotus.domino.Outline createOutline(String arg0) {
 		try {
 			return getDelegate().createOutline(arg0);
 		} catch (NotesException e) {
@@ -214,9 +208,10 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public View createQueryView(String arg0, String arg1, View arg2, boolean arg3) {
+	public View createQueryView(String arg0, String arg1, lotus.domino.View arg2, boolean arg3) {
 		try {
-			return getDelegate().createQueryView(arg0, arg1, arg2, arg3);
+			return Factory.fromLotus(getDelegate().createQueryView(arg0, arg1, (lotus.domino.View) Factory.toLotus(arg2), arg3),
+					View.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -224,9 +219,10 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public View createQueryView(String arg0, String arg1, View arg2) {
+	public View createQueryView(String arg0, String arg1, lotus.domino.View arg2) {
 		try {
-			return getDelegate().createQueryView(arg0, arg1, arg2);
+			return Factory
+					.fromLotus(getDelegate().createQueryView(arg0, arg1, (lotus.domino.View) Factory.toLotus(arg2)), View.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -236,7 +232,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public View createQueryView(String arg0, String arg1) {
 		try {
-			return getDelegate().createQueryView(arg0, arg1);
+			return Factory.fromLotus(getDelegate().createQueryView(arg0, arg1), View.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -244,9 +240,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public lotus.domino.Database createReplica(String arg0, String arg1) {
+	public Database createReplica(String arg0, String arg1) {
 		try {
-			return getDelegate().createReplica(arg0, arg1);
+			return Factory.fromLotus(getDelegate().createReplica(arg0, arg1), Database.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -256,7 +252,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public View createView() {
 		try {
-			return getDelegate().createView();
+			return Factory.fromLotus(getDelegate().createView(), View.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -264,9 +260,10 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public View createView(String arg0, String arg1, View arg2, boolean arg3) {
+	public View createView(String arg0, String arg1, lotus.domino.View arg2, boolean arg3) {
 		try {
-			return getDelegate().createView(arg0, arg1, arg2, arg3);
+			return Factory.fromLotus(getDelegate().createView(arg0, arg1, (lotus.domino.View) Factory.toLotus(arg2), arg3), View.class,
+					this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -274,9 +271,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public View createView(String arg0, String arg1, View arg2) {
+	public View createView(String arg0, String arg1, lotus.domino.View arg2) {
 		try {
-			return getDelegate().createView(arg0, arg1, arg2);
+			return Factory.fromLotus(getDelegate().createView(arg0, arg1, (lotus.domino.View) Factory.toLotus(arg2)), View.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -286,7 +283,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public View createView(String arg0, String arg1) {
 		try {
-			return getDelegate().createView(arg0, arg1);
+			return Factory.fromLotus(getDelegate().createView(arg0, arg1), View.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -296,7 +293,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public View createView(String arg0) {
 		try {
-			return getDelegate().createView(arg0);
+			return Factory.fromLotus(getDelegate().createView(arg0), View.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -333,7 +330,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public ACL getACL() {
 		try {
-			return getDelegate().getACL();
+			return Factory.fromLotus(getDelegate().getACL(), ACL.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -351,7 +348,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public Agent getAgent(String arg0) {
+	public lotus.domino.Agent getAgent(String arg0) {
 		try {
 			return getDelegate().getAgent(arg0);
 		} catch (NotesException e) {
@@ -383,7 +380,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DocumentCollection getAllReadDocuments() {
 		try {
-			return getDelegate().getAllReadDocuments();
+			return Factory.fromLotus(getDelegate().getAllReadDocuments(), DocumentCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -393,7 +390,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DocumentCollection getAllReadDocuments(String arg0) {
 		try {
-			return getDelegate().getAllReadDocuments(arg0);
+			return Factory.fromLotus(getDelegate().getAllReadDocuments(arg0), DocumentCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -403,7 +400,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DocumentCollection getAllUnreadDocuments() {
 		try {
-			return getDelegate().getAllUnreadDocuments();
+			return Factory.fromLotus(getDelegate().getAllUnreadDocuments(), DocumentCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -413,7 +410,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DocumentCollection getAllUnreadDocuments(String arg0) {
 		try {
-			return getDelegate().getAllUnreadDocuments(arg0);
+			return Factory.fromLotus(getDelegate().getAllUnreadDocuments(arg0), DocumentCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -473,7 +470,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public Document getDocumentByID(String arg0) {
 		try {
-			return getDelegate().getDocumentByID(arg0);
+			return Factory.fromLotus(getDelegate().getDocumentByID(arg0), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -483,7 +480,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public Document getDocumentByUNID(String arg0) {
 		try {
-			return getDelegate().getDocumentByUNID(arg0);
+			return Factory.fromLotus(getDelegate().getDocumentByUNID(arg0), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -494,7 +491,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	public Document getDocumentByURL(String arg0, boolean arg1, boolean arg2, boolean arg3, String arg4, String arg5, String arg6,
 			String arg7, String arg8, boolean arg9) {
 		try {
-			return getDelegate().getDocumentByURL(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
+			return Factory.fromLotus(getDelegate().getDocumentByURL(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9),
+					Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -504,7 +502,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public Document getDocumentByURL(String arg0, boolean arg1) {
 		try {
-			return getDelegate().getDocumentByURL(arg0, arg1);
+			return Factory.fromLotus(getDelegate().getDocumentByURL(arg0, arg1), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -562,7 +560,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public Form getForm(String arg0) {
+	public lotus.domino.Form getForm(String arg0) {
 		try {
 			return getDelegate().getForm(arg0);
 		} catch (NotesException e) {
@@ -674,7 +672,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DocumentCollection getModifiedDocuments() {
 		try {
-			return getDelegate().getModifiedDocuments();
+			return Factory.fromLotus(getDelegate().getModifiedDocuments(), DocumentCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -684,7 +682,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DocumentCollection getModifiedDocuments(lotus.domino.DateTime arg0, int arg1) {
 		try {
-			return getDelegate().getModifiedDocuments(arg0, arg1);
+			return Factory.fromLotus(getDelegate().getModifiedDocuments((lotus.domino.DateTime) Factory.toLotus(arg0)),
+					DocumentCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -694,7 +693,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DocumentCollection getModifiedDocuments(lotus.domino.DateTime arg0) {
 		try {
-			return getDelegate().getModifiedDocuments(arg0);
+			return Factory.fromLotus(getDelegate().getModifiedDocuments((lotus.domino.DateTime) Factory.toLotus(arg0)),
+					DocumentCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -722,7 +722,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public Outline getOutline(String arg0) {
+	public lotus.domino.Outline getOutline(String arg0) {
 		try {
 			return getDelegate().getOutline(arg0);
 		} catch (NotesException e) {
@@ -749,7 +749,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DocumentCollection getProfileDocCollection(String arg0) {
 		try {
-			return getDelegate().getProfileDocCollection(arg0);
+			return Factory.fromLotus(getDelegate().getProfileDocCollection(arg0), DocumentCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -759,7 +759,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public Document getProfileDocument(String arg0, String arg1) {
 		try {
-			return getDelegate().getProfileDocument(arg0, arg1);
+			return Factory.fromLotus(getDelegate().getProfileDocument(arg0, arg1), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -777,7 +777,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public Replication getReplicationInfo() {
+	public lotus.domino.Replication getReplicationInfo() {
 		try {
 			return getDelegate().getReplicationInfo();
 		} catch (NotesException e) {
@@ -889,7 +889,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public View getView(String arg0) {
 		try {
-			return getDelegate().getView(arg0);
+			return Factory.fromLotus(getDelegate().getView(arg0), View.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -898,9 +898,14 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	@SuppressWarnings("unchecked")
-	public org.openntf.domino.impl.Vector<View> getViews() {
+	public Vector<View> getViews() {
 		try {
-			return new org.openntf.domino.impl.Vector<View>(getDelegate().getViews());
+			Vector<lotus.domino.View> views = getDelegate().getViews();
+			org.openntf.domino.impl.Vector<View> result = new org.openntf.domino.impl.Vector<View>();
+			for (lotus.domino.View view : views) {
+				result.add((View) Factory.fromLotus(view, View.class, this));
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -1138,7 +1143,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public boolean openIfModified(String arg0, String arg1, lotus.domino.DateTime arg2) {
 		try {
-			return getDelegate().openIfModified(arg0, arg1, arg2);
+			return getDelegate().openIfModified(arg0, arg1, (lotus.domino.DateTime) Factory.toLotus(arg2));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -1245,7 +1250,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DocumentCollection search(String arg0, lotus.domino.DateTime arg1, int arg2) {
 		try {
-			return getDelegate().search(arg0, arg1, arg2);
+			return Factory.fromLotus(getDelegate().search(arg0, (lotus.domino.DateTime) Factory.toLotus(arg1), arg2),
+					DocumentCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -1255,7 +1261,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DocumentCollection search(String arg0, lotus.domino.DateTime arg1) {
 		try {
-			return getDelegate().search(arg0, arg1);
+			return Factory.fromLotus(getDelegate().search(arg0, (lotus.domino.DateTime) Factory.toLotus(arg1)), DocumentCollection.class,
+					this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -1265,7 +1272,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DocumentCollection search(String arg0) {
 		try {
-			return getDelegate().search(arg0);
+			return Factory.fromLotus(getDelegate().search(arg0), DocumentCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

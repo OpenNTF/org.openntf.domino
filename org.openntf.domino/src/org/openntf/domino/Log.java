@@ -31,51 +31,36 @@ public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log {
 	public boolean isOverwriteFile();
 
 	@Override
-	public void logAction(String arg0);
+	public void logAction(String action);
 
 	@Override
-	public void logError(int arg0, String arg1);
+	public void logError(int code, String text);
 
 	@Override
-	public void logEvent(String arg0, String arg1, int arg2, int arg3);
+	public void logEvent(String text, String queue, int event, int severity);
 
 	@Override
 	public void openAgentLog();
 
 	@Override
-	public void openFileLog(String arg0);
+	public void openFileLog(String filePath);
 
 	@Override
-	public void openMailLog(Vector arg0, String arg1);
+	public void openMailLog(Vector recipients, String subject);
 
 	@Override
-	public void openNotesLog(String arg0, String arg1);
+	public void openNotesLog(String server, String database);
 
 	@Override
-	public void recycle();
+	public void setLogActions(boolean flag);
 
 	@Override
-	public void recycle(Vector arg0);
+	public void setLogErrors(boolean flag);
 
 	@Override
-	public void setLogActions(boolean arg0);
+	public void setOverwriteFile(boolean flag);
 
 	@Override
-	public void setLogErrors(boolean arg0);
-
-	@Override
-	public void setOverwriteFile(boolean arg0);
-
-	@Override
-	public void setProgramName(String arg0);
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
+	public void setProgramName(String name);
 
 }

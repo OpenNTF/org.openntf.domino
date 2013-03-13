@@ -178,149 +178,149 @@ public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.
 	public boolean isSorted();
 
 	@Override
-	public void setAccentSensitiveSort(boolean arg0);
+	public void setAccentSensitiveSort(boolean flag);
 
 	@Override
-	public void setAlignment(int arg0);
+	public void setAlignment(int alignment);
 
 	@Override
-	public void setCaseSensitiveSort(boolean arg0);
+	public void setCaseSensitiveSort(boolean flag);
 
 	@Override
-	public void setDateFmt(int arg0);
+	public void setDateFmt(int format);
 
 	@Override
-	public void setFontBold(boolean arg0);
+	public void setFontBold(boolean flag);
 
 	@Override
-	public void setFontColor(int arg0);
+	public void setFontColor(int color);
 
 	@Override
-	public void setFontFace(String arg0);
+	public void setFontFace(String face);
 
 	@Override
-	public void setFontItalic(boolean arg0);
+	public void setFontItalic(boolean flag);
 
 	@Override
-	public void setFontPointSize(int arg0);
+	public void setFontPointSize(int size);
 
 	@Override
-	public void setFontStrikethrough(boolean arg0);
+	public void setFontStrikethrough(boolean flag);
 
 	@Override
-	public void setFontStyle(int arg0);
+	public void setFontStyle(int style);
 
 	@Override
-	public void setFontUnderline(boolean arg0);
+	public void setFontUnderline(boolean flag);
 
 	@Override
-	public void setFormula(String arg0);
+	public void setFormula(String formula);
 
 	@Override
-	public void setHeaderAlignment(int arg0);
+	public void setHeaderAlignment(int alignment);
 
 	@Override
-	public void setHeaderFontBold(boolean arg0);
+	public void setHeaderFontBold(boolean flag);
 
 	@Override
-	public void setHeaderFontColor(int arg0);
+	public void setHeaderFontColor(int color);
 
 	@Override
-	public void setHeaderFontFace(String arg0);
+	public void setHeaderFontFace(String face);
 
 	@Override
-	public void setHeaderFontItalic(boolean arg0);
+	public void setHeaderFontItalic(boolean flag);
 
 	@Override
-	public void setHeaderFontPointSize(int arg0);
+	public void setHeaderFontPointSize(int size);
 
 	@Override
-	public void setHeaderFontStrikethrough(boolean arg0);
+	public void setHeaderFontStrikethrough(boolean flag);
 
 	@Override
-	public void setHeaderFontStyle(int arg0);
+	public void setHeaderFontStyle(int style);
 
 	@Override
-	public void setHeaderFontUnderline(boolean arg0);
+	public void setHeaderFontUnderline(boolean flag);
 
 	@Override
-	public void setHidden(boolean arg0);
+	public void setHidden(boolean flag);
 
 	@Override
-	public void setHideDetail(boolean arg0);
+	public void setHideDetail(boolean flag);
 
 	@Override
-	public void setHideFormula(boolean arg0);
+	public void setHideFormula(boolean flag);
 
 	@Override
-	public void setListSep(int arg0);
+	public void setListSep(int separator);
 
 	@Override
-	public void setNumberAttrib(int arg0);
+	public void setNumberAttrib(int attributes);
 
 	@Override
-	public void setNumberAttribParens(boolean arg0);
+	public void setNumberAttribParens(boolean flag);
 
 	@Override
-	public void setNumberAttribPercent(boolean arg0);
+	public void setNumberAttribPercent(boolean flag);
 
 	@Override
-	public void setNumberAttribPunctuated(boolean arg0);
+	public void setNumberAttribPunctuated(boolean flag);
 
 	@Override
-	public void setNumberDigits(int arg0);
+	public void setNumberDigits(int digits);
 
 	@Override
-	public void setNumberFormat(int arg0);
+	public void setNumberFormat(int format);
 
 	@Override
-	public void setPosition(int arg0);
+	public void setPosition(int position);
 
 	@Override
-	public void setResize(boolean arg0);
+	public void setResize(boolean flag);
 
 	@Override
-	public void setResortAscending(boolean arg0);
+	public void setResortAscending(boolean flag);
 
 	@Override
-	public void setResortDescending(boolean arg0);
+	public void setResortDescending(boolean flag);
 
 	@Override
-	public void setResortToView(boolean arg0);
+	public void setResortToView(boolean flag);
 
 	@Override
-	public void setResortToViewName(String arg0);
+	public void setResortToViewName(String name);
 
 	@Override
-	public void setSecondaryResort(boolean arg0);
+	public void setSecondaryResort(boolean flag);
 
 	@Override
-	public void setSecondaryResortColumnIndex(int arg0);
+	public void setSecondaryResortColumnIndex(int index);
 
 	@Override
-	public void setSecondaryResortDescending(boolean arg0);
+	public void setSecondaryResortDescending(boolean flag);
 
 	@Override
-	public void setShowTwistie(boolean arg0);
+	public void setShowTwistie(boolean flag);
 
 	@Override
-	public void setSortDescending(boolean arg0);
+	public void setSortDescending(boolean flag);
 
 	@Override
-	public void setSorted(boolean arg0);
+	public void setSorted(boolean flag);
 
 	@Override
-	public void setTimeDateFmt(int arg0);
+	public void setTimeDateFmt(int format);
 
 	@Override
-	public void setTimeFmt(int arg0);
+	public void setTimeFmt(int format);
 
 	@Override
-	public void setTimeZoneFmt(int arg0);
+	public void setTimeZoneFmt(int format);
 
 	@Override
-	public void setTitle(String arg0);
+	public void setTitle(String title);
 
 	@Override
-	public void setWidth(int arg0);
+	public void setWidth(int width);
 }

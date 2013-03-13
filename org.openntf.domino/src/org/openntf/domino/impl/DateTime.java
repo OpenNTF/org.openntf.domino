@@ -284,7 +284,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 
 	public int timeDifference(lotus.domino.DateTime arg0) {
 		try {
-			return getDelegate().timeDifference(arg0);
+			return getDelegate().timeDifference((lotus.domino.DateTime) Factory.toLotus(arg0));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return 0;
@@ -294,7 +294,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 
 	public double timeDifferenceDouble(lotus.domino.DateTime arg0) {
 		try {
-			return getDelegate().timeDifferenceDouble(arg0);
+			return getDelegate().timeDifferenceDouble((lotus.domino.DateTime) Factory.toLotus(arg0));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return 0d;
@@ -311,5 +311,4 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 
 		}
 	}
-
 }

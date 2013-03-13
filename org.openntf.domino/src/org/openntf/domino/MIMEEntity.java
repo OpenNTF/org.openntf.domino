@@ -18,10 +18,10 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	public lotus.domino.MIMEEntity createChildEntity();
 
 	@Override
-	public lotus.domino.MIMEEntity createChildEntity(lotus.domino.MIMEEntity arg0);
+	public lotus.domino.MIMEEntity createChildEntity(lotus.domino.MIMEEntity nextSibling);
 
 	@Override
-	public MIMEHeader createHeader(String arg0);
+	public MIMEHeader createHeader(String headerName);
 
 	@Override
 	public lotus.domino.MIMEEntity createParentEntity();
@@ -30,7 +30,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	public void decodeContent();
 
 	@Override
-	public void encodeContent(int arg0);
+	public void encodeContent(int encoding);
 
 	@Override
 	public String getBoundaryEnd();
@@ -42,19 +42,19 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	public String getCharset();
 
 	@Override
-	public void getContentAsBytes(Stream arg0);
+	public void getContentAsBytes(Stream stream);
 
 	@Override
-	public void getContentAsBytes(Stream arg0, boolean arg1);
+	public void getContentAsBytes(Stream stream, boolean decoded);
 
 	@Override
 	public String getContentAsText();
 
 	@Override
-	public void getContentAsText(Stream arg0);
+	public void getContentAsText(Stream stream);
 
 	@Override
-	public void getContentAsText(Stream arg0, boolean arg1);
+	public void getContentAsText(Stream stream, boolean decoded);
 
 	@Override
 	public String getContentSubType();
@@ -66,13 +66,13 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	public int getEncoding();
 
 	@Override
-	public void getEntityAsText(Stream arg0);
+	public void getEntityAsText(Stream stream);
 
 	@Override
-	public void getEntityAsText(Stream arg0, Vector arg1);
+	public void getEntityAsText(Stream stream, Vector headerFilters);
 
 	@Override
-	public void getEntityAsText(Stream arg0, Vector arg1, boolean arg2);
+	public void getEntityAsText(Stream stream, Vector headerFilters, boolean inclusive);
 
 	@Override
 	public lotus.domino.MIMEEntity getFirstChildEntity();
@@ -93,16 +93,16 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	public lotus.domino.MIMEEntity getNextEntity();
 
 	@Override
-	public lotus.domino.MIMEEntity getNextEntity(int arg0);
+	public lotus.domino.MIMEEntity getNextEntity(int search);
 
 	@Override
 	public lotus.domino.MIMEEntity getNextSibling();
 
 	@Override
-	public MIMEHeader getNthHeader(String arg0);
+	public MIMEHeader getNthHeader(String headerName);
 
 	@Override
-	public MIMEHeader getNthHeader(String arg0, int arg1);
+	public MIMEHeader getNthHeader(String headerName, int instance);
 
 	@Override
 	public lotus.domino.MIMEEntity getParentEntity();
@@ -114,7 +114,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	public lotus.domino.MIMEEntity getPrevEntity();
 
 	@Override
-	public lotus.domino.MIMEEntity getPrevEntity(int arg0);
+	public lotus.domino.MIMEEntity getPrevEntity(int search);
 
 	@Override
 	public lotus.domino.MIMEEntity getPrevSibling();
@@ -126,42 +126,27 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	public String getSomeHeaders();
 
 	@Override
-	public String getSomeHeaders(Vector arg0);
+	public String getSomeHeaders(Vector headerFilters);
 
 	@Override
-	public String getSomeHeaders(Vector arg0, boolean arg1);
+	public String getSomeHeaders(Vector headerFilters, boolean inclusive);
 
 	@Override
-	public Document parseXML(boolean arg0) throws IOException;
-
-	@Override
-	public void recycle();
-
-	@Override
-	public void recycle(Vector arg0);
+	public Document parseXML(boolean validate) throws IOException;
 
 	@Override
 	public void remove();
 
 	@Override
-	public void setContentFromBytes(Stream arg0, String arg1, int arg2);
+	public void setContentFromBytes(Stream stream, String contentType, int encoding);
 
 	@Override
-	public void setContentFromText(Stream arg0, String arg1, int arg2);
+	public void setContentFromText(Stream stream, String contentType, int encoding);
 
 	@Override
-	public void setPreamble(String arg0);
+	public void setPreamble(String preamble);
 
 	@Override
-	public void transformXML(Object arg0, XSLTResultTarget arg1);
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
+	public void transformXML(Object style, XSLTResultTarget result);
 
 }

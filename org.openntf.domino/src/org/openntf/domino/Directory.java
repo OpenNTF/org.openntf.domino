@@ -2,18 +2,17 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
-import lotus.domino.DirectoryNavigator;
-
 public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Directory {
 
 	@Override
-	public DirectoryNavigator createNavigator();
+	// TODO Switch to new class
+	public lotus.domino.DirectoryNavigator createNavigator();
 
 	@Override
 	public void freeLookupBuffer();
 
 	@Override
-	public java.util.Vector getAvailableItems();
+	public Vector getAvailableItems();
 
 	@Override
 	public Vector getAvailableNames();
@@ -22,10 +21,10 @@ public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Di
 	public String getAvailableView();
 
 	@Override
-	public Vector getMailInfo(String arg0);
+	public Vector getMailInfo(String userName);
 
 	@Override
-	public Vector getMailInfo(String arg0, boolean arg1, boolean arg2);
+	public Vector getMailInfo(String userName, boolean getVersion, boolean errorOnMultipleMatches);
 
 	@Override
 	public String getServer();
@@ -49,45 +48,34 @@ public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Di
 	public boolean isUseContextServer();
 
 	@Override
-	public DirectoryNavigator lookupAllNames(String arg0, String arg1);
+	// TODO Switch to new class
+	public lotus.domino.DirectoryNavigator lookupAllNames(String view, String item);
 
 	@Override
-	public DirectoryNavigator lookupAllNames(String arg0, Vector arg1);
+	// TODO Switch to new class
+	public lotus.domino.DirectoryNavigator lookupAllNames(String view, Vector items);
 
 	@Override
-	public DirectoryNavigator lookupNames(String arg0, String arg1, String arg2);
+	// TODO Switch to new class
+	public lotus.domino.DirectoryNavigator lookupNames(String view, String name, String item);
 
 	@Override
-	public DirectoryNavigator lookupNames(String arg0, Vector arg1, Vector arg2, boolean arg3);
+	// TODO Switch to new class
+	public lotus.domino.DirectoryNavigator lookupNames(String arg0, Vector names, Vector items, boolean partialMatches);
 
 	@Override
-	public void recycle();
+	public void setGroupAuthorizationOnly(boolean flag);
 
 	@Override
-	public void recycle(Vector arg0);
+	public void setLimitMatches(boolean flag);
 
 	@Override
-	public void setGroupAuthorizationOnly(boolean arg0);
+	public void setSearchAllDirectories(boolean flag);
 
 	@Override
-	public void setLimitMatches(boolean arg0);
+	public void setTrustedOnly(boolean flag);
 
 	@Override
-	public void setSearchAllDirectories(boolean arg0);
-
-	@Override
-	public void setTrustedOnly(boolean arg0);
-
-	@Override
-	public void setUseContextServer(boolean arg0);
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
+	public void setUseContextServer(boolean flag);
 
 }

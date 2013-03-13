@@ -2,17 +2,16 @@ package org.openntf.domino.impl;
 
 import java.util.Vector;
 
-import lotus.domino.DateTime;
-import lotus.domino.Document;
 import lotus.domino.NotesException;
 
+import org.openntf.domino.DateTime;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> implements org.openntf.domino.Agent {
 
 	protected Agent(lotus.domino.Agent delegate, org.openntf.domino.Base<?> parent) {
-		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
+		super(delegate, Factory.getParentDatabase(parent));
 	}
 
 	@Override
@@ -48,7 +47,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	@Override
 	public DateTime getLastRun() {
 		try {
-			return getDelegate().getLastRun();
+			return Factory.fromLotus(getDelegate().getLastRun(), DateTime.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -368,7 +367,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	}
 
 	@Override
-	public void runWithDocumentContext(Document arg0) {
+	public void runWithDocumentContext(lotus.domino.Document arg0) {
 		try {
 			getDelegate().runWithDocumentContext(arg0);
 		} catch (NotesException e) {
@@ -377,7 +376,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	}
 
 	@Override
-	public void runWithDocumentContext(Document arg0, String arg1) {
+	public void runWithDocumentContext(lotus.domino.Document arg0, String arg1) {
 		try {
 			getDelegate().runWithDocumentContext(arg0, arg1);
 		} catch (NotesException e) {

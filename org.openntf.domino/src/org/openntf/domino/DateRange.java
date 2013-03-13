@@ -15,21 +15,12 @@ public interface DateRange extends Base<lotus.domino.DateRange>, lotus.domino.Da
 	public String getText();
 
 	@Override
-	public void setEndDateTime(lotus.domino.DateTime arg0);
+	public void setEndDateTime(lotus.domino.DateTime end);
 
 	@Override
-	public void setStartDateTime(lotus.domino.DateTime arg0);
+	public void setStartDateTime(lotus.domino.DateTime start);
 
 	@Override
-	public void setText(String arg0);
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
+	public void setText(String text);
 
 }

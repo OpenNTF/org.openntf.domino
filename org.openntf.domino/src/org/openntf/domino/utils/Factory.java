@@ -95,6 +95,7 @@ public enum Factory {
 			if (TRACE_COUNTERS)
 				lotusCounter.increment();
 			return result;
+
 		}
 		throw new UndefinedDelegateTypeException();
 	}
@@ -132,7 +133,6 @@ public enum Factory {
 	public static <T> org.openntf.domino.impl.Vector<T> fromLotusAsVector(Collection<?> lotusColl,
 			Class<? extends org.openntf.domino.Base> T, org.openntf.domino.Base<?> parent) {
 		org.openntf.domino.impl.Vector<T> result = new org.openntf.domino.impl.Vector<T>(); // TODO anyone got a better implementation?
-		System.out.println("START creation new Vector from lotus objects...");
 		if (!lotusColl.isEmpty()) {
 			for (Object lotus : lotusColl) {
 				if (lotus instanceof lotus.domino.local.NotesBase) {
@@ -140,7 +140,6 @@ public enum Factory {
 				}
 			}
 		}
-		System.out.println("END creation new Vector from lotus objects...");
 		return result;
 
 	}
@@ -199,6 +198,26 @@ public enum Factory {
 		if (result == null)
 			result = Session.getDefaultSession(); // last ditch, get the primary Session;
 		return result;
+	}
+
+	// For passing arguments to delegates
+	@SuppressWarnings("unchecked")
+	public static <T> T toLotus(lotus.domino.Base obj, Class<? extends lotus.domino.Base> T) {
+		if (obj instanceof org.openntf.domino.Base) {
+			return (T) org.openntf.domino.impl.Base.getDelegate(obj);
+		} else if (T.isAssignableFrom(obj.getClass())) {
+			return (T) obj;
+		} else {
+			return null; // TODO NTF - throw Exception
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static lotus.domino.Base toLotus(lotus.domino.Base obj) {
+		if (obj instanceof org.openntf.domino.Base) {
+			return org.openntf.domino.impl.Base.getDelegate(obj);
+		}
+		return obj;
 	}
 
 }

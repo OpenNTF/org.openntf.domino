@@ -13,7 +13,6 @@ import lotus.domino.AdministrationProcess;
 import lotus.domino.AgentContext;
 import lotus.domino.Base;
 import lotus.domino.ColorObject;
-import lotus.domino.Database;
 import lotus.domino.DateRange;
 import lotus.domino.DbDirectory;
 import lotus.domino.Directory;
@@ -341,7 +340,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	}
 
 	@Override
-	public NotesCalendar getCalendar(Database arg0) {
+	public NotesCalendar getCalendar(lotus.domino.Database arg0) {
 		try {
 			return getDelegate().getCalendar(arg0);
 		} catch (NotesException e) {
@@ -376,7 +375,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public Database getCurrentDatabase() {
 		try {
-			return getDelegate().getCurrentDatabase();
+			return Factory.fromLotus(getDelegate().getCurrentDatabase(), Database.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -387,7 +386,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public Database getDatabase(String arg0, String arg1, boolean arg2) {
 		try {
-			return getDelegate().getDatabase(arg0, arg1, arg2);
+			return Factory.fromLotus(getDelegate().getDatabase(arg0, arg1, arg2), Database.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -607,7 +606,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public Database getURLDatabase() {
 		try {
-			return getDelegate().getURLDatabase();
+			return Factory.fromLotus(getDelegate().getURLDatabase(), Database.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

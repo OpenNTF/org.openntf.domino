@@ -15,7 +15,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	public ViewEntry getChild();
 
 	@Override
-	public ViewEntry getChild(ViewEntry arg0);
+	public ViewEntry getChild(ViewEntry entry);
 
 	@Override
 	public int getCount();
@@ -45,7 +45,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	public ViewEntry getNext();
 
 	@Override
-	public ViewEntry getNext(ViewEntry arg0);
+	public ViewEntry getNext(ViewEntry entry);
 
 	@Override
 	public ViewEntry getNextCategory();
@@ -57,28 +57,28 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	public ViewEntry getNextSibling();
 
 	@Override
-	public ViewEntry getNextSibling(ViewEntry arg0);
+	public ViewEntry getNextSibling(ViewEntry entry);
 
 	@Override
-	public ViewEntry getNth(int arg0);
+	public ViewEntry getNth(int n);
 
 	@Override
 	public ViewEntry getParent();
 
 	@Override
-	public ViewEntry getParent(ViewEntry arg0);
+	public ViewEntry getParent(ViewEntry entry);
 
 	@Override
 	public View getParentView();
 
 	@Override
-	public ViewEntry getPos(String arg0, char arg1);
+	public ViewEntry getPos(String pos, char separator);
 
 	@Override
 	public ViewEntry getPrev();
 
 	@Override
-	public ViewEntry getPrev(ViewEntry arg0);
+	public ViewEntry getPrev(ViewEntry entry);
 
 	@Override
 	public ViewEntry getPrevCategory();
@@ -90,16 +90,16 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	public ViewEntry getPrevSibling();
 
 	@Override
-	public ViewEntry getPrevSibling(ViewEntry arg0);
+	public ViewEntry getPrevSibling(ViewEntry entry);
 
 	@Override
 	public boolean gotoChild();
 
 	@Override
-	public boolean gotoChild(ViewEntry arg0);
+	public boolean gotoChild(ViewEntry entry);
 
 	@Override
-	public boolean gotoEntry(Object arg0);
+	public boolean gotoEntry(Object entry);
 
 	@Override
 	public boolean gotoFirst();
@@ -117,7 +117,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	public boolean gotoNext();
 
 	@Override
-	public boolean gotoNext(ViewEntry arg0);
+	public boolean gotoNext(ViewEntry entry);
 
 	@Override
 	public boolean gotoNextCategory();
@@ -129,22 +129,22 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	public boolean gotoNextSibling();
 
 	@Override
-	public boolean gotoNextSibling(ViewEntry arg0);
+	public boolean gotoNextSibling(ViewEntry entry);
 
 	@Override
 	public boolean gotoParent();
 
 	@Override
-	public boolean gotoParent(ViewEntry arg0);
+	public boolean gotoParent(ViewEntry entry);
 
 	@Override
-	public boolean gotoPos(String arg0, char arg1);
+	public boolean gotoPos(String pos, char separator);
 
 	@Override
 	public boolean gotoPrev();
 
 	@Override
-	public boolean gotoPrev(ViewEntry arg0);
+	public boolean gotoPrev(ViewEntry entry);
 
 	@Override
 	public boolean gotoPrevCategory();
@@ -156,44 +156,48 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	public boolean gotoPrevSibling();
 
 	@Override
-	public boolean gotoPrevSibling(ViewEntry arg0);
+	public boolean gotoPrevSibling(ViewEntry entry);
 
 	@Override
 	public void markAllRead();
 
 	@Override
-	public void markAllRead(String arg0);
+	public void markAllRead(String userName);
 
 	@Override
 	public void markAllUnread();
 
 	@Override
-	public void markAllUnread(String arg0);
+	public void markAllUnread(String userName);
 
 	@Override
+	// TODO Figure out what these parameters are
 	public void setAutoExpandGuidance(int arg0, int[] arg1, int[] arg2);
 
 	@Override
+	// TODO Figure out what these parameters are
 	public void setAutoExpandGuidance(int arg0, NoteCollection arg1, NoteCollection arg2);
 
 	@Override
-	public void setBufferMaxEntries(int arg0);
+	public void setBufferMaxEntries(int entryCount);
 
 	@Override
+	// TODO Figure out what these parameters are
 	public void setCacheGuidance(int arg0);
 
 	@Override
+	// TODO Figure out what these parameters are
 	public void setCacheGuidance(int arg0, int arg1);
 
 	@Override
-	public void setCacheSize(int arg0);
+	public void setCacheSize(int size);
 
 	@Override
-	public void setEntryOptions(int arg0);
+	public void setEntryOptions(int options);
 
 	@Override
-	public void setMaxLevel(int arg0);
+	public void setMaxLevel(int maxLevel);
 
 	@Override
-	public int skip(int arg0);
+	public int skip(int count);
 }

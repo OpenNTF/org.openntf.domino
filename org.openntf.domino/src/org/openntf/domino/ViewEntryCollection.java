@@ -7,37 +7,37 @@ import org.openntf.domino.annotations.Legacy;
 public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollection>, lotus.domino.ViewEntryCollection,
 		Iterable<lotus.domino.ViewEntry> {
 	@Override
-	public void addEntry(Object arg0);
+	public void addEntry(Object obh);
 
 	@Override
-	public void addEntry(Object arg0, boolean arg1);
+	public void addEntry(Object obj, boolean checkDups);
 
 	@Override
 	public lotus.domino.ViewEntryCollection cloneCollection();
 
 	@Override
-	public boolean contains(lotus.domino.Base arg0);
+	public boolean contains(lotus.domino.Base obj);
 
 	@Override
-	public boolean contains(int arg0);
+	public boolean contains(int noteid);
 
 	@Override
-	public boolean contains(String arg0);
+	public boolean contains(String noteid);
 
 	@Override
-	public void deleteEntry(ViewEntry arg0);
+	public void deleteEntry(ViewEntry entry);
 
 	@Override
-	public void FTSearch(String arg0);
+	public void FTSearch(String query);
 
 	@Override
-	public void FTSearch(String arg0, int arg1);
+	public void FTSearch(String query, int maxDocs);
 
 	@Override
 	public int getCount();
 
 	@Override
-	public ViewEntry getEntry(Object arg0);
+	public ViewEntry getEntry(Object entry);
 
 	@Override
 	public ViewEntry getFirstEntry();
@@ -53,12 +53,12 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	@Override
 	@Deprecated
 	@Legacy(Legacy.ITERATION_WARNING)
-	public ViewEntry getNextEntry(ViewEntry arg0);
+	public ViewEntry getNextEntry(ViewEntry entry);
 
 	@Override
 	@Deprecated
 	@Legacy(Legacy.ITERATION_WARNING)
-	public ViewEntry getNthEntry(int arg0);
+	public ViewEntry getNthEntry(int n);
 
 	@Override
 	public org.openntf.domino.View getParent();
@@ -67,64 +67,64 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	public ViewEntry getPrevEntry();
 
 	@Override
-	public ViewEntry getPrevEntry(ViewEntry arg0);
+	public ViewEntry getPrevEntry(ViewEntry entry);
 
 	@Override
 	public String getQuery();
 
 	@Override
-	public void intersect(lotus.domino.Base arg0);
+	public void intersect(lotus.domino.Base obj);
 
 	@Override
-	public void intersect(int arg0);
+	public void intersect(int noteid);
 
 	@Override
-	public void intersect(String arg0);
+	public void intersect(String noteid);
 
 	@Override
 	public void markAllRead();
 
 	@Override
-	public void markAllRead(String arg0);
+	public void markAllRead(String userName);
 
 	@Override
 	public void markAllUnread();
 
 	@Override
-	public void markAllUnread(String arg0);
+	public void markAllUnread(String userName);
 
 	@Override
-	public void merge(lotus.domino.Base arg0);
+	public void merge(lotus.domino.Base obj);
 
 	@Override
-	public void merge(int arg0);
+	public void merge(int noteid);
 
 	@Override
-	public void merge(String arg0);
+	public void merge(String noteid);
 
 	@Override
-	public void putAllInFolder(String arg0);
+	public void putAllInFolder(String folderName);
 
 	@Override
-	public void putAllInFolder(String arg0, boolean arg1);
+	public void putAllInFolder(String folderName, boolean createOnFail);
 
 	@Override
-	public void removeAll(boolean arg0);
+	public void removeAll(boolean force);
 
 	@Override
-	public void removeAllFromFolder(String arg0);
+	public void removeAllFromFolder(String folderName);
 
 	@Override
-	public void stampAll(String arg0, Object arg1);
+	public void stampAll(String itemName, Object value);
 
 	@Override
-	public void subtract(lotus.domino.Base arg0);
+	public void subtract(lotus.domino.Base obj);
 
 	@Override
-	public void subtract(int arg0);
+	public void subtract(int noteid);
 
 	@Override
-	public void subtract(String arg0);
+	public void subtract(String noteid);
 
 	@Override
 	public void updateAll();

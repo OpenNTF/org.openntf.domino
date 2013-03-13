@@ -33,19 +33,4 @@ public interface NotesProperty extends Base<lotus.domino.NotesProperty>, lotus.d
 	@Override
 	public void publish();
 
-	@Override
-	public void recycle();
-
-	@Override
-	public void recycle(Vector arg0);
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
-
 }

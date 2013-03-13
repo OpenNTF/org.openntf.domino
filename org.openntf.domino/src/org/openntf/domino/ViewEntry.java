@@ -36,13 +36,13 @@ public interface ViewEntry extends lotus.domino.ViewEntry, Base<lotus.domino.Vie
 	public Object getParent();
 
 	@Override
-	public String getPosition(char arg0);
+	public String getPosition(char separator);
 
 	@Override
 	public boolean getRead();
 
 	@Override
-	public boolean getRead(String arg0);
+	public boolean getRead(String userName);
 
 	@Override
 	public int getSiblingCount();
@@ -69,5 +69,5 @@ public interface ViewEntry extends lotus.domino.ViewEntry, Base<lotus.domino.Vie
 	public boolean isValid();
 
 	@Override
-	public void setPreferJavaDates(boolean arg0);
+	public void setPreferJavaDates(boolean flag);
 }

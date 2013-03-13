@@ -1,6 +1,8 @@
 package org.openntf.domino.utils;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.security.MessageDigest;
@@ -12,6 +14,8 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import lotus.domino.ACL;
 import lotus.domino.Agent;
@@ -236,4 +240,80 @@ public enum DominoUtils {
 		return date;
 	}
 
+	// MIMEBean methods
+
+	public static Serializable restoreState(Document doc, String itemName) throws Throwable {
+		Session session = getSession(doc);
+		boolean convertMime = session.isConvertMime();
+		session.setConvertMime(false);
+
+		Serializable result = null;
+		lotus.domino.Stream mimeStream = session.createStream();
+		lotus.domino.MIMEEntity entity = doc.getMIMEEntity(itemName);
+		entity.getContentAsBytes(mimeStream);
+
+		ByteArrayOutputStream streamOut = new ByteArrayOutputStream();
+		mimeStream.getContents(streamOut);
+		mimeStream.recycle();
+
+		byte[] stateBytes = streamOut.toByteArray();
+		ByteArrayInputStream byteStream = new ByteArrayInputStream(stateBytes);
+		ObjectInputStream objectStream;
+		if (entity.getHeaders().toLowerCase().contains("content-encoding: gzip")) {
+			GZIPInputStream zipStream = new GZIPInputStream(byteStream);
+			objectStream = new ObjectInputStream(zipStream);
+		} else {
+			objectStream = new ObjectInputStream(byteStream);
+		}
+		Serializable restored = (Serializable) objectStream.readObject();
+		result = restored;
+
+		entity.recycle();
+
+		session.setConvertMime(convertMime);
+
+		return result;
+	}
+
+	public static void saveState(Serializable object, Document doc, String itemName) throws Throwable {
+		saveState(object, doc, itemName, true);
+	}
+
+	public static void saveState(Serializable object, Document doc, String itemName, boolean compress) throws Throwable {
+		Session session = getSession(doc);
+		boolean convertMime = session.isConvertMime();
+		session.setConvertMime(false);
+
+		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+		ObjectOutputStream objectStream = compress ? new ObjectOutputStream(new GZIPOutputStream(byteStream)) : new ObjectOutputStream(
+				byteStream);
+		objectStream.writeObject(object);
+		objectStream.flush();
+		objectStream.close();
+
+		lotus.domino.Stream mimeStream = session.createStream();
+		lotus.domino.MIMEEntity previousState = doc.getMIMEEntity(itemName);
+		lotus.domino.MIMEEntity entity = previousState == null ? doc.createMIMEEntity(itemName) : previousState;
+		ByteArrayInputStream byteIn = new ByteArrayInputStream(byteStream.toByteArray());
+		mimeStream.setContents(byteIn);
+		entity.setContentFromBytes(mimeStream, "application/x-java-serialized-object", lotus.domino.MIMEEntity.ENC_NONE);
+		lotus.domino.MIMEHeader header = entity.getNthHeader("Content-Encoding");
+		if (compress) {
+			if (header == null) {
+				header = entity.createHeader("Content-Encoding");
+			}
+			header.setHeaderVal("gzip");
+			header.recycle();
+		} else {
+			if (header != null) {
+				header.remove();
+				header.recycle();
+			}
+		}
+
+		entity.recycle();
+		mimeStream.recycle();
+
+		session.setConvertMime(convertMime);
+	}
 }

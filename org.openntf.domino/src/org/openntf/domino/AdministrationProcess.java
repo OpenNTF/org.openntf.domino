@@ -2,97 +2,95 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
-import lotus.domino.DateTime;
-import lotus.domino.Session;
-
 public interface AdministrationProcess extends Base<lotus.domino.AdministrationProcess>, lotus.domino.AdministrationProcess {
 
 	@Override
-	public String addGroupMembers(String arg0, Vector arg1);
+	public String addGroupMembers(String group, Vector members);
 
 	@Override
-	public String addInternetCertificateToUser(String arg0, String arg1, String arg2);
+	public String addInternetCertificateToUser(String user, String keyringFile, String keyringPassword);
 
 	@Override
-	public String addInternetCertificateToUser(String arg0, String arg1, String arg2, lotus.domino.DateTime arg3);
+	public String addInternetCertificateToUser(String user, String keyringFile, String keyringPassword, lotus.domino.DateTime expiration);
 
 	@Override
-	public String addServerToCluster(String arg0, String arg1);
+	public String addServerToCluster(String server, String cluster);
 
 	@Override
-	public String approveDeletePersonInDirectory(String arg0);
+	public String approveDeletePersonInDirectory(String noteid);
 
 	@Override
-	public String approveDeleteServerInDirectory(String arg0);
+	public String approveDeleteServerInDirectory(String noteid);
 
 	@Override
-	public String approveDesignElementDeletion(String arg0);
+	public String approveDesignElementDeletion(String noteid);
 
 	@Override
-	public String approveHostedOrgStorageDeletion(String arg0);
+	public String approveHostedOrgStorageDeletion(String noteid);
 
 	@Override
-	public String approveMailFileDeletion(String arg0);
+	public String approveMailFileDeletion(String noteid);
 
 	@Override
-	public String approveMovedReplicaDeletion(String arg0);
+	public String approveMovedReplicaDeletion(String noteid);
 
 	@Override
-	public String approveNameChangeRetraction(String arg0);
+	public String approveNameChangeRetraction(String noteid);
 
 	@Override
-	public String approveRenamePersonInDirectory(String arg0);
+	public String approveRenamePersonInDirectory(String noteid);
 
 	@Override
-	public String approveRenameServerInDirectory(String arg0);
+	public String approveRenameServerInDirectory(String noteid);
 
 	@Override
-	public String approveReplicaDeletion(String arg0);
+	public String approveReplicaDeletion(String noteid);
 
 	@Override
-	public String approveResourceDeletion(String arg0);
+	public String approveResourceDeletion(String noteid);
 
 	@Override
-	public String changeHTTPPassword(String arg0, String arg1, String arg2);
+	public String changeHTTPPassword(String userName, String oldPassword, String newPassword);
 
 	@Override
-	public String configureMailAgent(String arg0, String arg1);
+	public String configureMailAgent(String userName, String agentName);
 
 	@Override
-	public String configureMailAgent(String arg0, String arg1, boolean arg2, boolean arg3);
+	public String configureMailAgent(String userName, String agentName, boolean activatable, boolean enable);
 
 	@Override
-	public String createReplica(String arg0, String arg1, String arg2);
+	public String createReplica(String sourceServer, String sourceDBFile, String destServer);
 
 	@Override
-	public String createReplica(String arg0, String arg1, String arg2, String arg3, boolean arg4, boolean arg5);
+	public String createReplica(String sourceServer, String sourceDBFile, String destServer, String destDBFile, boolean copyACL,
+			boolean createFTIndex);
 
 	@Override
-	public String deleteGroup(String arg0, boolean arg1);
+	public String deleteGroup(String groupName, boolean immediate);
 
 	@Override
-	public String deleteGroup(String arg0, boolean arg1, boolean arg2);
+	public String deleteGroup(String groupName, boolean immediate, boolean deleteWindowsGroup);
 
 	@Override
-	public String deleteReplicas(String arg0, String arg1);
+	public String deleteReplicas(String serverName, String fileName);
 
 	@Override
-	public String deleteServer(String arg0, boolean arg1);
+	public String deleteServer(String serverName, boolean immediate);
 
 	@Override
-	public String deleteUser(String arg0, boolean arg1, int arg2, String arg3);
+	public String deleteUser(String userName, boolean immediate, int mailFileAction, String denyGroup);
 
 	@Override
-	public String deleteUser(String arg0, boolean arg1, int arg2, String arg3, boolean arg4);
+	public String deleteUser(String userName, boolean immediate, int mailFileAction, String denyGroup, boolean deleteWindowsUser);
 
 	@Override
-	public String findGroupInDomain(String arg0);
+	public String findGroupInDomain(String group);
 
 	@Override
-	public String findServerInDomain(String arg0);
+	public String findServerInDomain(String server);
 
 	@Override
-	public String findUserInDomain(String arg0);
+	public String findUserInDomain(String userName);
 
 	@Override
 	public String getCertificateAuthorityOrg();
@@ -116,95 +114,90 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 	public boolean isUseCertificateAuthority();
 
 	@Override
-	public String moveMailUser(String arg0, String arg1, String arg2);
+	public String moveMailUser(String userName, String newHomeServer, String newHomeServerMailPath);
 
 	@Override
-	public String moveMailUser(String arg0, String arg1, String arg2, boolean arg3, Vector arg4, boolean arg5);
+	public String moveMailUser(String userName, String newHomeServer, String newHomeServerMailPath, boolean useSCOS,
+			Vector newClusterReplicas, boolean deleteOldClusterReplicas);
 
 	@Override
-	public String moveReplica(String arg0, String arg1, String arg2);
+	public String moveReplica(String sourceServer, String sourceDBFile, String destServer);
 
 	@Override
-	public String moveReplica(String arg0, String arg1, String arg2, String arg3, boolean arg4, boolean arg5);
+	public String moveReplica(String sourceServer, String sourceDBFile, String destServer, String destDBFile, boolean copyACL,
+			boolean createFTIndex);
 
 	@Override
-	public String moveRoamingUser(String arg0, String arg1, String arg2);
+	public String moveRoamingUser(String userName, String destServer, String destServerPath);
 
 	@Override
-	public String moveUserInHierarchyComplete(String arg0);
+	public String moveUserInHierarchyComplete(String requestNoteid);
 
 	@Override
-	public String moveUserInHierarchyComplete(String arg0, String arg1, String arg2, String arg3, String arg4, String arg5, String arg6,
-			String arg7, boolean arg8);
+	public String moveUserInHierarchyComplete(String requestNoteid, String lastName, String firstName, String middleInitial,
+			String orgUnit, String altCommonName, String altOrgUnit, String altLanguage, boolean renameWindowsUser);
 
 	@Override
-	public String moveUserInHierarchyRequest(String arg0, String arg1);
+	public String moveUserInHierarchyRequest(String userName, String targetCertifier);
 
 	@Override
-	public String moveUserInHierarchyRequest(String arg0, String arg1, boolean arg2);
+	public String moveUserInHierarchyRequest(String userName, String targetCertifier, boolean allowPrimaryNameChange);
 
 	@Override
-	public String recertifyServer(String arg0);
+	public String recertifyServer(String server);
 
 	@Override
-	public String recertifyUser(String arg0);
+	public String recertifyUser(String userName);
 
 	@Override
-	public void recycle();
+	public String removeServerFromCluster(String server);
 
 	@Override
-	public void recycle(Vector arg0);
+	public String renameGroup(String group, String newGroup);
 
 	@Override
-	public String removeServerFromCluster(String arg0);
+	public String renameNotesUser(String userName, String lastName, String firstName, String middleInitial, String orgUnit);
 
 	@Override
-	public String renameGroup(String arg0, String arg1);
+	public String renameNotesUser(String userName, String lastName, String firstName, String middleInitial, String orgUnit,
+			String altCommonName, String altOrgUnit, String altLanguage, boolean renameWindowsUser);
 
 	@Override
-	public String renameNotesUser(String arg0, String arg1, String arg2, String arg3, String arg4);
+	public String renameWebUser(String userName, String newFullName, String newLastName, String newFirstName, String newMiddleInitial,
+			String newShortName, String newInternetAddress);
 
 	@Override
-	public String renameNotesUser(String arg0, String arg1, String arg2, String arg3, String arg4, String arg5, String arg6, String arg7,
-			boolean arg8);
+	public void setCertificateAuthorityOrg(String org);
 
 	@Override
-	public String renameWebUser(String arg0, String arg1, String arg2, String arg3, String arg4, String arg5, String arg6);
+	public void setCertificateExpiration(lotus.domino.DateTime expiration);
 
 	@Override
-	public void setCertificateAuthorityOrg(String arg0);
+	public void setCertifierFile(String fileSpec);
 
 	@Override
-	public void setCertificateExpiration(DateTime arg0);
+	public void setCertifierPassword(String password);
 
 	@Override
-	public void setCertifierFile(String arg0);
+	public String setServerDirectoryAssistanceSettings(String server, String dbFile);
 
 	@Override
-	public void setCertifierPassword(String arg0);
+	public void setUseCertificateAuthority(boolean flag);
 
 	@Override
-	public String setServerDirectoryAssistanceSettings(String arg0, String arg1);
+	public String setUserPasswordSettings(String userName, Integer notesPasswordCheckSetting, Integer notesPasswordChangeInterval,
+			Integer notesPasswordGracePeriod, Boolean internetPasswordForceChange);
 
 	@Override
-	public void setUseCertificateAuthority(boolean arg0);
+	public String signDatabaseWithServerID(String server, String dbFile);
 
 	@Override
-	public String setUserPasswordSettings(String arg0, Integer arg1, Integer arg2, Integer arg3, Boolean arg4);
+	public String signDatabaseWithServerID(String server, String dbFile, boolean updateOnly);
 
 	@Override
-	public String signDatabaseWithServerID(String arg0, String arg1);
+	public String upgradeUserToHierarchical(String userName);
 
 	@Override
-	public String signDatabaseWithServerID(String arg0, String arg1, boolean arg2);
-
-	@Override
-	public String upgradeUserToHierarchical(String arg0);
-
-	@Override
-	public String upgradeUserToHierarchical(String arg0, String arg1, String arg2, String arg3, String arg4);
-
-	@Override
-	public boolean equals(Object obj);
+	public String upgradeUserToHierarchical(String userName, String orgUnit, String altCommonName, String altOrgUnit, String altLanguage);
 
 }

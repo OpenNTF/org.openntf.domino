@@ -15,7 +15,6 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		super(delegate, parent);
 	}
 
-	@Override
 	public void add(Agent arg0) {
 		// TODO Auto-generated method stub
 

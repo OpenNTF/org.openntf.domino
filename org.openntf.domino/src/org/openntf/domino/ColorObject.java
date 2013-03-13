@@ -1,7 +1,5 @@
 package org.openntf.domino;
 
-import java.util.Vector;
-
 public interface ColorObject extends Base<lotus.domino.ColorObject>, lotus.domino.ColorObject {
 
 	@Override
@@ -25,27 +23,12 @@ public interface ColorObject extends Base<lotus.domino.ColorObject>, lotus.domin
 	public int getSaturation();
 
 	@Override
-	public void recycle();
+	public int setHSL(int hue, int saturation, int luminance);
 
 	@Override
-	public void recycle(Vector arg0);
+	public void setNotesColor(int notesColor);
 
 	@Override
-	public int setHSL(int arg0, int arg1, int arg2);
-
-	@Override
-	public void setNotesColor(int arg0);
-
-	@Override
-	public int setRGB(int arg0, int arg1, int arg2);
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
+	public int setRGB(int red, int green, int blue);
 
 }

@@ -25,109 +25,109 @@ import org.xml.sax.InputSource;
 public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.domino.Base<lotus.domino.RichTextItem> {
 
 	@Override
-	public String abstractText(int arg0, boolean arg1, boolean arg2);
+	public String abstractText(int maxLen, boolean dropVowels, boolean userDict);
 
 	@Override
 	public void addNewLine();
 
 	@Override
-	public void addNewLine(int arg0);
+	public void addNewLine(int count);
 
 	@Override
-	public void addNewLine(int arg0, boolean arg1);
+	public void addNewLine(int count, boolean newParagraph);
 
 	@Override
 	public void addPageBreak();
 
 	@Override
-	public void addPageBreak(RichTextParagraphStyle arg0);
+	public void addPageBreak(RichTextParagraphStyle pstyle);
 
 	@Override
 	public void addTab();
 
 	@Override
-	public void addTab(int arg0);
+	public void addTab(int count);
 
 	@Override
-	public void appendDocLink(Database arg0);
+	public void appendDocLink(Database db);
 
 	@Override
-	public void appendDocLink(Database arg0, String arg1);
+	public void appendDocLink(Database db, String comment);
 
 	@Override
-	public void appendDocLink(Database arg0, String arg1, String arg2);
+	public void appendDocLink(Database db, String comment, String hotspotText);
 
 	@Override
-	public void appendDocLink(Document arg0);
+	public void appendDocLink(Document doc);
 
 	@Override
-	public void appendDocLink(Document arg0, String arg1);
+	public void appendDocLink(Document doc, String comment);
 
 	@Override
-	public void appendDocLink(Document arg0, String arg1, String arg2);
+	public void appendDocLink(Document doc, String comment, String hotspotText);
 
 	@Override
-	public void appendDocLink(View arg0);
+	public void appendDocLink(View view);
 
 	@Override
-	public void appendDocLink(View arg0, String arg1);
+	public void appendDocLink(View view, String comment);
 
 	@Override
-	public void appendDocLink(View arg0, String arg1, String arg2);
+	public void appendDocLink(View view, String comment, String hotspotText);
 
 	@Override
-	public void appendParagraphStyle(RichTextParagraphStyle arg0);
+	public void appendParagraphStyle(RichTextParagraphStyle pstyle);
 
 	@Override
-	public void appendRTItem(lotus.domino.RichTextItem arg0);
+	public void appendRTItem(lotus.domino.RichTextItem rtitem);
 
 	@Override
-	public void appendStyle(RichTextStyle arg0);
+	public void appendStyle(RichTextStyle rstyle);
 
 	@Override
-	public void appendTable(int arg0, int arg1);
+	public void appendTable(int rows, int columns);
 
 	@Override
-	public void appendTable(int arg0, int arg1, Vector arg2);
+	public void appendTable(int rows, int columns, Vector labels);
 
 	@Override
-	public void appendTable(int arg0, int arg1, Vector arg2, int arg3, Vector arg4);
+	public void appendTable(int rows, int columns, Vector labels, int leftMargin, Vector pstyles);
 
 	@Override
-	public void appendText(String arg0);
+	public void appendText(String text);
 
 	@Override
-	public void appendToTextList(String arg0);
+	public void appendToTextList(String value);
 
 	@Override
-	public void appendToTextList(Vector arg0);
+	public void appendToTextList(Vector values);
 
 	@Override
-	public void beginInsert(Base arg0);
+	public void beginInsert(Base element);
 
 	@Override
-	public void beginInsert(Base arg0, boolean arg1);
+	public void beginInsert(Base element, boolean after);
 
 	@Override
-	public void beginSection(String arg0);
+	public void beginSection(String title);
 
 	@Override
-	public void beginSection(String arg0, RichTextStyle arg1);
+	public void beginSection(String title, RichTextStyle titleStyle);
 
 	@Override
-	public void beginSection(String arg0, RichTextStyle arg1, ColorObject arg2, boolean arg3);
+	public void beginSection(String title, RichTextStyle titleStyle, ColorObject barColor, boolean expand);
 
 	@Override
 	public void compact();
 
 	@Override
-	public boolean containsValue(Object arg0);
+	public boolean containsValue(Object value);
 
 	@Override
-	public Item copyItemToDocument(Document arg0);
+	public Item copyItemToDocument(Document doc);
 
 	@Override
-	public Item copyItemToDocument(Document arg0, String arg1);
+	public Item copyItemToDocument(Document doc, String newName);
 
 	@Override
 	public RichTextNavigator createNavigator();
@@ -136,7 +136,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	public RichTextRange createRange();
 
 	@Override
-	public EmbeddedObject embedObject(int arg0, String arg1, String arg2, String arg3);
+	public EmbeddedObject embedObject(int type, String className, String source, String name);
 
 	@Override
 	public void endInsert();
@@ -148,13 +148,13 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	public DateTime getDateTimeValue();
 
 	@Override
-	public EmbeddedObject getEmbeddedObject(String arg0);
+	public EmbeddedObject getEmbeddedObject(String name);
 
 	@Override
-	public Vector getEmbeddedObjects();
+	public Vector<EmbeddedObject> getEmbeddedObjects();
 
 	@Override
-	public String getFormattedText(boolean arg0, int arg1, int arg2);
+	public String getFormattedText(boolean tabStrip, int lineLen, int maxLen);
 
 	@Override
 	public InputSource getInputSource();
@@ -172,7 +172,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	public String getName();
 
 	@Override
-	public int getNotesFont(String arg0, boolean arg1);
+	public int getNotesFont(String faceName, boolean addOnFail);
 
 	@Override
 	public Document getParent();
@@ -184,7 +184,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	public String getText();
 
 	@Override
-	public String getText(int arg0);
+	public String getText(int maxLen);
 
 	@Override
 	public int getType();
@@ -193,16 +193,16 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	public String getUnformattedText();
 
 	@Override
-	public Object getValueCustomData() throws IOException, ClassNotFoundException, NotesException;
+	public Object getValueCustomData() throws IOException, ClassNotFoundException;
 
 	@Override
-	public Object getValueCustomData(String arg0) throws IOException, ClassNotFoundException, NotesException;
+	public Object getValueCustomData(String dataTypeName) throws IOException, ClassNotFoundException;
 
 	@Override
-	public byte[] getValueCustomDataBytes(String arg0) throws IOException, NotesException;
+	public byte[] getValueCustomDataBytes(String dataTypeName) throws IOException;
 
 	@Override
-	public Vector getValueDateTimeArray();
+	public Vector<Object> getValueDateTimeArray();
 
 	@Override
 	public double getValueDouble();
@@ -214,7 +214,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	public int getValueLength();
 
 	@Override
-	public Vector getValues();
+	public Vector<Object> getValues();
 
 	@Override
 	public String getValueString();
@@ -244,67 +244,61 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	public boolean isSummary();
 
 	@Override
-	public org.w3c.dom.Document parseXML(boolean arg0) throws IOException, NotesException;
-
-	@Override
-	public void recycle();
-
-	@Override
-	public void recycle(Vector arg0);
+	public org.w3c.dom.Document parseXML(boolean validate) throws IOException, NotesException;
 
 	@Override
 	public void remove();
 
 	@Override
-	public void setAuthors(boolean arg0);
+	public void setAuthors(boolean flag);
 
 	@Override
-	public void setDateTimeValue(lotus.domino.DateTime arg0);
+	public void setDateTimeValue(lotus.domino.DateTime dt);
 
 	@Override
-	public void setEncrypted(boolean arg0);
+	public void setEncrypted(boolean flag);
 
 	@Override
-	public void setNames(boolean arg0);
+	public void setNames(boolean flag);
 
 	@Override
-	public void setProtected(boolean arg0);
+	public void setProtected(boolean flag);
 
 	@Override
-	public void setReaders(boolean arg0);
+	public void setReaders(boolean flag);
 
 	@Override
-	public void setSaveToDisk(boolean arg0);
+	public void setSaveToDisk(boolean flag);
 
 	@Override
-	public void setSigned(boolean arg0);
+	public void setSigned(boolean flag);
 
 	@Override
-	public void setSummary(boolean arg0);
+	public void setSummary(boolean flag);
 
 	@Override
-	public void setValueCustomData(Object arg0) throws IOException, NotesException;
+	public void setValueCustomData(Object userObj) throws IOException;
 
 	@Override
-	public void setValueCustomData(String arg0, Object arg1) throws IOException, NotesException;
+	public void setValueCustomData(String dataTypeName, Object userObj) throws IOException;
 
 	@Override
-	public void setValueCustomDataBytes(String arg0, byte[] arg1) throws IOException, NotesException;
+	public void setValueCustomDataBytes(String dataTypeName, byte[] byteArray) throws IOException;
 
 	@Override
-	public void setValueDouble(double arg0);
+	public void setValueDouble(double value);
 
 	@Override
-	public void setValueInteger(int arg0);
+	public void setValueInteger(int value);
 
 	@Override
-	public void setValues(Vector arg0);
+	public void setValues(Vector values);
 
 	@Override
-	public void setValueString(String arg0);
+	public void setValueString(String value);
 
 	@Override
-	public void transformXML(Object arg0, XSLTResultTarget arg1);
+	public void transformXML(Object style, XSLTResultTarget result);
 
 	@Override
 	public void update();

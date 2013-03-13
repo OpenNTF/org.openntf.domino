@@ -88,4 +88,5 @@ public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, Encaps
 	@Override
 	public String toString();
 
+	public void recycle();
 }

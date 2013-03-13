@@ -126,6 +126,14 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		return recycleQueue.get();
 	}
 
+	@SuppressWarnings("rawtypes")
+	public static lotus.domino.Base getDelegate(lotus.domino.Base wrapper) {
+		if (wrapper instanceof org.openntf.domino.impl.Base) {
+			return ((org.openntf.domino.impl.Base) wrapper).getDelegate();
+		}
+		return wrapper;
+	}
+
 	protected D getDelegate() {
 		return delegate_;
 	}

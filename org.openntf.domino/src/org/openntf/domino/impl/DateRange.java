@@ -22,6 +22,7 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 			return null;
 
 		}
+
 	}
 
 	@Override

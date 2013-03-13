@@ -1,14 +1,12 @@
 package org.openntf.domino;
 
-import java.util.Vector;
-
 public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.MIMEHeader {
 
 	@Override
-	public boolean addValText(String arg0);
+	public boolean addValText(String valueText);
 
 	@Override
-	public boolean addValText(String arg0, String arg1);
+	public boolean addValText(String valueText, String charSet);
 
 	@Override
 	public String getHeaderName();
@@ -17,51 +15,36 @@ public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.
 	public String getHeaderVal();
 
 	@Override
-	public String getHeaderVal(boolean arg0);
+	public String getHeaderVal(boolean folded);
 
 	@Override
-	public String getHeaderVal(boolean arg0, boolean arg1);
+	public String getHeaderVal(boolean folded, boolean decoded);
 
 	@Override
 	public String getHeaderValAndParams();
 
 	@Override
-	public String getHeaderValAndParams(boolean arg0);
+	public String getHeaderValAndParams(boolean folded);
 
 	@Override
-	public String getHeaderValAndParams(boolean arg0, boolean arg1);
+	public String getHeaderValAndParams(boolean folded, boolean decoded);
 
 	@Override
-	public String getParamVal(String arg0);
+	public String getParamVal(String paramName);
 
 	@Override
-	public String getParamVal(String arg0, boolean arg1);
-
-	@Override
-	public void recycle();
-
-	@Override
-	public void recycle(Vector arg0);
+	public String getParamVal(String paramName, boolean folded);
 
 	@Override
 	public void remove();
 
 	@Override
-	public boolean setHeaderVal(String arg0);
+	public boolean setHeaderVal(String headerValue);
 
 	@Override
-	public boolean setHeaderValAndParams(String arg0);
+	public boolean setHeaderValAndParams(String headerParamValue);
 
 	@Override
-	public boolean setParamVal(String arg0, String arg1);
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
+	public boolean setParamVal(String parameterName, String parameterValue);
 
 }

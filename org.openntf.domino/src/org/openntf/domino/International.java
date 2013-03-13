@@ -1,6 +1,5 @@
 package org.openntf.domino;
 
-import java.util.Vector;
 
 public interface International extends Base<lotus.domino.International>, lotus.domino.International {
 
@@ -66,20 +65,5 @@ public interface International extends Base<lotus.domino.International>, lotus.d
 
 	@Override
 	public boolean isTime24Hour();
-
-	@Override
-	public void recycle();
-
-	@Override
-	public void recycle(Vector arg0);
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
 
 }

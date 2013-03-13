@@ -13,7 +13,7 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form {
 	public Vector getFields();
 
 	@Override
-	public int getFieldType(String arg0);
+	public int getFieldType(String name);
 
 	@Override
 	public Vector getFormUsers();
@@ -52,60 +52,44 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form {
 	public boolean lock();
 
 	@Override
-	public boolean lock(boolean arg0);
+	public boolean lock(boolean provisionalOk);
 
 	@Override
-	public boolean lock(String arg0);
+	public boolean lock(String name);
 
 	@Override
-	public boolean lock(String arg0, boolean arg1);
+	public boolean lock(String name, boolean provisionalOk);
 
 	@Override
-	public boolean lock(Vector arg0);
+	public boolean lock(Vector names);
 
 	@Override
-	public boolean lock(Vector arg0, boolean arg1);
+	public boolean lock(Vector names, boolean provisionalOk);
 
 	@Override
 	public boolean lockProvisional();
 
 	@Override
-	public boolean lockProvisional(String arg0);
+	public boolean lockProvisional(String name);
 
 	@Override
-	public boolean lockProvisional(Vector arg0);
-
-	@Override
-	public void recycle();
-
-	@Override
-	public void recycle(Vector arg0);
+	public boolean lockProvisional(Vector names);
 
 	@Override
 	public void remove();
 
 	@Override
-	public void setFormUsers(Vector arg0);
+	public void setFormUsers(Vector names);
 
 	@Override
-	public void setProtectReaders(boolean arg0);
+	public void setProtectReaders(boolean flag);
 
 	@Override
-	public void setProtectUsers(boolean arg0);
+	public void setProtectUsers(boolean flag);
 
 	@Override
-	public void setReaders(Vector arg0);
+	public void setReaders(Vector names);
 
 	@Override
 	public void unlock();
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
-
 }

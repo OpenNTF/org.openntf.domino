@@ -3,93 +3,77 @@ package org.openntf.domino;
 import java.util.Vector;
 
 import lotus.domino.DateTime;
-import lotus.domino.NotesException;
 import lotus.domino.ReplicationEntry;
 
 public interface Replication extends Base<lotus.domino.Replication>, lotus.domino.Replication {
 
 	@Override
-	public int clearHistory() throws NotesException;
+	public int clearHistory();
 
 	@Override
-	public DateTime getCutoffDate() throws NotesException;
+	public DateTime getCutoffDate();
 
 	@Override
-	public long getCutoffInterval() throws NotesException;
+	public long getCutoffInterval();
 
 	@Override
-	public boolean getDontSendLocalSecurityUpdates() throws NotesException;
+	public boolean getDontSendLocalSecurityUpdates();
 
 	@Override
-	public Vector getEntries() throws NotesException;
+	public Vector getEntries();
 
 	@Override
-	public ReplicationEntry getEntry(String arg0, String arg1) throws NotesException;
+	public ReplicationEntry getEntry(String source, String destination);
 
 	@Override
-	public ReplicationEntry getEntry(String arg0, String arg1, boolean arg2) throws NotesException;
+	public ReplicationEntry getEntry(String source, String destination, boolean createFlag);
 
 	@Override
-	public int getPriority() throws NotesException;
+	public int getPriority();
 
 	@Override
-	public boolean isAbstract() throws NotesException;
+	public boolean isAbstract();
 
 	@Override
-	public boolean isCutoffDelete() throws NotesException;
+	public boolean isCutoffDelete();
 
 	@Override
-	public boolean isDisabled() throws NotesException;
+	public boolean isDisabled();
 
 	@Override
-	public boolean isIgnoreDeletes() throws NotesException;
+	public boolean isIgnoreDeletes();
 
 	@Override
-	public boolean isIgnoreDestDeletes() throws NotesException;
+	public boolean isIgnoreDestDeletes();
 
 	@Override
-	public void recycle() throws NotesException;
+	public int reset();
 
 	@Override
-	public void recycle(Vector arg0) throws NotesException;
+	public int save();
 
 	@Override
-	public int reset() throws NotesException;
+	public void setAbstract(boolean flag);
 
 	@Override
-	public int save() throws NotesException;
+	public void setCutoffDelete(boolean flag);
 
 	@Override
-	public void setAbstract(boolean arg0) throws NotesException;
+	public void setCutoffInterval(long interval);
 
 	@Override
-	public void setCutoffDelete(boolean arg0) throws NotesException;
+	public void setDisabled(boolean flag);
 
 	@Override
-	public void setCutoffInterval(long arg0) throws NotesException;
+	public void setDontSendLocalSecurityUpdates(boolean flag);
 
 	@Override
-	public void setDisabled(boolean arg0) throws NotesException;
+	public void setIgnoreDeletes(boolean flag);
 
 	@Override
-	public void setDontSendLocalSecurityUpdates(boolean arg0) throws NotesException;
+	public void setIgnoreDestDeletes(boolean flag);
 
 	@Override
-	public void setIgnoreDeletes(boolean arg0) throws NotesException;
-
-	@Override
-	public void setIgnoreDestDeletes(boolean arg0) throws NotesException;
-
-	@Override
-	public void setPriority(int arg0) throws NotesException;
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
+	public void setPriority(int priority);
 
 }

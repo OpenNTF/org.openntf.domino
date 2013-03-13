@@ -1,15 +1,11 @@
 package org.openntf.domino;
 
-import java.util.Vector;
-
 import lotus.domino.RichTextStyle;
 
 public interface RichTextDoclink extends Base<lotus.domino.RichTextDoclink>, lotus.domino.RichTextDoclink {
 
 	@Override
 	public String getDBReplicaID();
-
-	public lotus.domino.RichTextDoclink getDelegate();
 
 	@Override
 	public String getDisplayComment();
@@ -30,42 +26,27 @@ public interface RichTextDoclink extends Base<lotus.domino.RichTextDoclink>, lot
 	public String getViewUnID();
 
 	@Override
-	public void recycle();
-
-	@Override
-	public void recycle(Vector arg0);
-
-	@Override
 	public void remove();
 
 	@Override
-	public void setDBReplicaID(String arg0);
+	public void setDBReplicaID(String replicaId);
 
 	@Override
-	public void setDisplayComment(String arg0);
+	public void setDisplayComment(String comment);
 
 	@Override
-	public void setDocUnID(String arg0);
+	public void setDocUnID(String unid);
 
 	@Override
-	public void setHotSpotText(String arg0);
+	public void setHotSpotText(String text);
 
 	@Override
-	public void setHotSpotTextStyle(RichTextStyle arg0);
+	public void setHotSpotTextStyle(RichTextStyle rtstyle);
 
 	@Override
-	public void setServerHint(String arg0);
+	public void setServerHint(String server);
 
 	@Override
-	public void setViewUnID(String arg0);
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
+	public void setViewUnID(String unid);
 
 }

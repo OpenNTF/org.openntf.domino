@@ -1,7 +1,5 @@
 package org.openntf.domino;
 
-import java.util.Vector;
-
 import lotus.domino.Session;
 
 public interface RichTextStyle extends Base<lotus.domino.RichTextStyle>, lotus.domino.RichTextStyle {
@@ -39,45 +37,30 @@ public interface RichTextStyle extends Base<lotus.domino.RichTextStyle>, lotus.d
 	public boolean isDefault();
 
 	@Override
-	public void recycle();
+	public void setBold(int value);
 
 	@Override
-	public void recycle(Vector arg0);
+	public void setColor(int value);
 
 	@Override
-	public void setBold(int arg0);
+	public void setEffects(int value);
 
 	@Override
-	public void setColor(int arg0);
+	public void setFont(int value);
 
 	@Override
-	public void setEffects(int arg0);
+	public void setFontSize(int value);
 
 	@Override
-	public void setFont(int arg0);
+	public void setItalic(int value);
 
 	@Override
-	public void setFontSize(int arg0);
+	public void setPassThruHTML(int value);
 
 	@Override
-	public void setItalic(int arg0);
+	public void setStrikeThrough(int value);
 
 	@Override
-	public void setPassThruHTML(int arg0);
-
-	@Override
-	public void setStrikeThrough(int arg0);
-
-	@Override
-	public void setUnderline(int arg0);
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
+	public void setUnderline(int value);
 
 }

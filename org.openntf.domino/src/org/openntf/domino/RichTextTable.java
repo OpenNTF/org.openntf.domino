@@ -9,10 +9,10 @@ public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.d
 	@Override
 	public void addRow();
 
-	public void addRow(int arg0);
+	public void addRow(int count);
 
 	@Override
-	public void addRow(int arg0, int arg1);
+	public void addRow(int count, int targetRow);
 
 	@Override
 	public ColorObject getAlternateColor();
@@ -27,7 +27,7 @@ public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.d
 	public int getRowCount();
 
 	@Override
-	public Vector getRowLabels();
+	public Vector<String> getRowLabels();
 
 	@Override
 	public int getStyle();
@@ -36,44 +36,29 @@ public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.d
 	public boolean isRightToLeft();
 
 	@Override
-	public void recycle();
-
-	@Override
-	public void recycle(Vector arg0);
-
-	@Override
 	public void remove();
 
 	@Override
 	public void removeRow();
 
 	@Override
-	public void removeRow(int arg0);
+	public void removeRow(int count);
 
 	@Override
-	public void removeRow(int arg0, int arg1);
+	public void removeRow(int count, int targetRow);
 
 	@Override
-	public void setAlternateColor(ColorObject arg0);
+	public void setAlternateColor(ColorObject color);
 
 	@Override
-	public void setColor(ColorObject arg0);
+	public void setColor(ColorObject color);
 
 	@Override
-	public void setRightToLeft(boolean arg0);
+	public void setRightToLeft(boolean flag);
 
 	@Override
-	public void setRowLabels(Vector arg0);
+	public void setRowLabels(Vector labels);
 
 	@Override
-	public void setStyle(int arg0);
-
-	@Override
-	public boolean equals(Object obj);
-
-	@Override
-	public int hashCode();
-
-	@Override
-	public String toString();
+	public void setStyle(int tableStyle);
 }
