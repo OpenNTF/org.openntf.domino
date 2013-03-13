@@ -26,9 +26,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String addInternetCertificateToUser(String user, String keyringfile, String keyringpassword) {
+	public String addInternetCertificateToUser(String user, String keyringFile, String keyringPassword) {
 		try {
-			return getDelegate().addInternetCertificateToUser(user, keyringfile, keyringpassword);
+			return getDelegate().addInternetCertificateToUser(user, keyringFile, keyringPassword);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -36,9 +36,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String addInternetCertificateToUser(String user, String keyringfile, String keyringpassword, lotus.domino.DateTime expiration) {
+	public String addInternetCertificateToUser(String user, String keyringFile, String keyringPassword, lotus.domino.DateTime expiration) {
 		try {
-			return getDelegate().addInternetCertificateToUser(user, keyringfile, keyringpassword, expiration);
+			return getDelegate().addInternetCertificateToUser(user, keyringFile, keyringPassword, expiration);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
