@@ -19,7 +19,7 @@ public class DefaultConsoleHandler extends ConsoleHandler {
 	// 0 -- internal errors are discarded
 	// 1 -- Exception messages from internal errors are printed
 	// 2 -- stack traces from internal errors are also printed
-	private static String olDebugLevel = getXspProperty("xsp.openlog.debugLevel", "1");
+	private static String olDebugLevel = "1";
 
 	public DefaultConsoleHandler() {
 
@@ -73,29 +73,6 @@ public class DefaultConsoleHandler extends ConsoleHandler {
 				Exception ee = (Exception) logRecord.getThrown();
 				ee.printStackTrace();
 			}
-		}
-	}
-
-	// TODO Get debug level from XSP property, if XPages context
-	private static String getXspProperty(String propertyName, String defaultValue) {
-		String retVal = defaultValue;
-		// ApplicationEx.getInstance().getApplicationProperty(propertyName,
-		// getIniVar(propertyName, defaultValue));
-		return retVal;
-	}
-
-	@SuppressWarnings("finally")
-	private static String getIniVar(String propertyName, String defaultValue) {
-		String retVal = defaultValue;
-		try {
-			String newVal = "";
-			// TODO Once Nathan's work is incorporated, uncomment the next line
-			// Session.getDefaultSession().getEnvironmentString(propertyName, true);
-			if (!"".equals(newVal)) {
-				retVal = newVal;
-			}
-		} finally {
-			return retVal;
 		}
 	}
 

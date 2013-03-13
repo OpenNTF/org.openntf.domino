@@ -6,29 +6,40 @@ import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
+import org.openntf.domino.impl.Session;
+
 public class DefaultFileHandler extends FileHandler {
 
 	public DefaultFileHandler() throws IOException {
 		// TODO Auto-generated constructor stub
 	}
 
-	public DefaultFileHandler(String arg0) throws IOException {
-		super(arg0);
+	public static String getIniVar(String propertyName, String defaultValue) {
+		String newVal = Session.getDefaultSession().getEnvironmentString(propertyName, true);
+		if (!"".equals(newVal)) {
+			return newVal;
+		} else {
+			return defaultValue;
+		}
+	}
+
+	public DefaultFileHandler(String pattern) throws IOException {
+		super(pattern);
 		// TODO Auto-generated constructor stub
 	}
 
-	public DefaultFileHandler(String arg0, boolean arg1) throws IOException {
-		super(arg0, arg1);
+	public DefaultFileHandler(String pattern, boolean append) throws IOException {
+		super(pattern, append);
 		// TODO Auto-generated constructor stub
 	}
 
-	public DefaultFileHandler(String arg0, int arg1, int arg2) throws IOException {
-		super(arg0, arg1, arg2);
+	public DefaultFileHandler(String pattern, int limit, int count) throws IOException {
+		super(pattern, limit, count);
 		// TODO Auto-generated constructor stub
 	}
 
-	public DefaultFileHandler(String arg0, int arg1, int arg2, boolean arg3) throws IOException {
-		super(arg0, arg1, arg2, arg3);
+	public DefaultFileHandler(String pattern, int limit, int count, boolean append) throws IOException {
+		super(pattern, limit, count, append);
 		// TODO Auto-generated constructor stub
 	}
 
