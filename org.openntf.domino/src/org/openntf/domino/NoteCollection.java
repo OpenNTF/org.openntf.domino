@@ -2,7 +2,6 @@ package org.openntf.domino;
 
 import lotus.domino.Database;
 import lotus.domino.DateTime;
-import lotus.domino.Document;
 import lotus.domino.DocumentCollection;
 import lotus.domino.Form;
 import lotus.domino.View;
@@ -10,37 +9,39 @@ import lotus.domino.View;
 public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus.domino.NoteCollection {
 
 	@Override
-	public void add(lotus.domino.Document doc);
+	public void add(lotus.domino.DocumentCollection additionSpecifier);
 
 	@Override
-	public void add(lotus.domino.Agent arg0);
+	public void add(lotus.domino.Form additionSpecifier);
 
 	@Override
-	public void add(DocumentCollection docs);
+	public void add(int additionSpecifier);
 
 	@Override
-	public void add(Form form);
+	public void add(int[] additionSpecifier);
 
 	@Override
-	public void add(int noteid);
+	public void add(lotus.domino.Agent additionSpecifier);
 
 	@Override
-	public void add(int[] noteids);
+	public void add(lotus.domino.Document additionSpecifier);
 
 	@Override
-	public void add(lotus.domino.NoteCollection collection);
+	public void add(lotus.domino.NoteCollection additionSpecifier);
 
 	@Override
 	public void add(String noteid);
 
 	@Override
-	public void add(View view);
+	public void add(lotus.domino.View additionSpecifier);
 
 	@Override
 	public void buildCollection();
 
 	@Override
 	public void clearCollection();
+
+	public boolean equals(Object otherCollection);
 
 	@Override
 	public int getCount();
@@ -55,7 +56,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	public String getLastNoteID();
 
 	@Override
-	public String getNextNoteID(String noteid);
+	public String getNextNoteID(String noteId);
 
 	@Override
 	public int[] getNoteIDs();
@@ -64,7 +65,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	public Database getParent();
 
 	@Override
-	public String getPrevNoteID(String noteid);
+	public String getPrevNoteID(String noteId);
 
 	@Override
 	public boolean getSelectAcl();
@@ -163,83 +164,75 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	public DateTime getUntilTime();
 
 	@Override
-	public void intersect(lotus.domino.Agent agent);
+	public int hashCode();
 
 	@Override
-	public void intersect(Document doc);
+	public void intersect(lotus.domino.Document intersectionSpecifier);
 
 	@Override
-	public void intersect(DocumentCollection docs);
+	public void intersect(lotus.domino.DocumentCollection intersectionSpecifier);
 
 	@Override
-	public void intersect(Form form);
+	public void intersect(lotus.domino.Form intersectionSpecifier);
 
 	@Override
-	public void intersect(int noteid);
+	public void intersect(int intersectionSpecifier);
 
 	@Override
-	public void intersect(lotus.domino.NoteCollection collection);
+	public void intersect(lotus.domino.Agent intersectionSpecifier);
+
+	@Override
+	public void intersect(lotus.domino.NoteCollection intersectionSpecifier);
 
 	@Override
 	public void intersect(String noteid);
 
 	@Override
-	public void intersect(View view);
+	public void intersect(lotus.domino.View intersectionSpecifier);
 
 	@Override
-	public void remove(lotus.domino.Agent agent);
+	public void remove(lotus.domino.Document removalSpecifier);
 
 	@Override
-	public void remove(Document doc);
+	public void remove(DocumentCollection removalSpecifier);
 
 	@Override
-	public void remove(DocumentCollection docs);
+	public void remove(Form removalSpecifier);
+
+	public void remove(int removalSpecifier);
 
 	@Override
-	public void remove(Form form);
+	public void remove(lotus.domino.Agent removalSpecifier);
 
 	@Override
-	public void remove(int noteid);
-
-	@Override
-	public void remove(lotus.domino.NoteCollection collection);
+	public void remove(lotus.domino.NoteCollection removalSpecifier);
 
 	@Override
 	public void remove(String noteid);
 
 	@Override
-	public void remove(View view);
+	public void remove(View removalSpecifier);
 
 	@Override
-	public void selectAllAdminNotes(boolean flag);
+	public void selectAllAdminNotes(boolean selectorValue);
 
 	@Override
-	public void selectAllCodeElements(boolean flag);
+	public void selectAllCodeElements(boolean selectorValue);
 
 	@Override
-	public void selectAllDataNotes(boolean flag);
+	public void selectAllDataNotes(boolean selectorValue);
 
 	@Override
-	public void selectAllDesignElements(boolean flag);
+	public void selectAllDesignElements(boolean selectorValue);
 
 	@Override
-	public void selectAllFormatElements(boolean flag);
-
-	public void selectAllIndexElements(boolean flag);
+	public void selectAllFormatElements(boolean selectorValue);
 
 	@Override
-	public void selectAllNotes(boolean flag);
+	public void selectAllIndexElements(boolean selectorValue);
 
 	@Override
-	public void setSelectAcl(boolean flag);
-
-	public void setSelectActions(boolean flag);
-
-	public void setSelectAgents(boolean flag);
-
-	public void setSelectDatabaseScript(boolean flag);
-
-	public void setSelectDataConnections(boolean flag);
+	public void selectAllNotes(boolean selectorValue);
 
 	@Override
 	public void setSelectDocuments(boolean flag);
@@ -292,10 +285,13 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	@Override
 	public void setSelectPages(boolean flag);
 
+	@Override
 	public void setSelectProfiles(boolean flag);
 
+	@Override
 	public void setSelectReplicationFormulas(boolean flag);
 
+	@Override
 	public void setSelectScriptLibraries(boolean flag);
 
 	@Override
@@ -304,10 +300,16 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	@Override
 	public void setSelectStylesheetResources(boolean flag);
 
+	@Override
 	public void setSelectSubforms(boolean flag);
 
+	@Override
 	public void setSelectViews(boolean flag);
 
-	public void setSinceTime(DateTime since);
+	@Override
+	public void setSinceTime(lotus.domino.DateTime sinceTime);
+
+	@Override
+	public String toString();
 
 }

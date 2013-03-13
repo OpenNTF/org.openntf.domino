@@ -1,124 +1,174 @@
 package org.openntf.domino.impl;
 
-import lotus.domino.DateTime;
-import lotus.domino.Document;
-import lotus.domino.DocumentCollection;
-import lotus.domino.Form;
-import lotus.domino.View;
+import lotus.domino.NotesException;
 
-import org.openntf.domino.Agent;
+import org.openntf.domino.DateTime;
+import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.domino.NoteCollection, lotus.domino.NoteCollection> implements
 		org.openntf.domino.NoteCollection {
 
-	public NoteCollection(lotus.domino.NoteCollection delegate, org.openntf.domino.Database parent) {
-		super(delegate, parent);
-	}
-
-	public void add(Agent arg0) {
-		// TODO Auto-generated method stub
-
+	public NoteCollection(lotus.domino.NoteCollection delegate, org.openntf.domino.Base<?> parent) {
+		super(delegate, Factory.getParentDatabase(parent));
 	}
 
 	@Override
-	public void add(Document arg0) {
-		// TODO Auto-generated method stub
-
+	public void add(lotus.domino.Document additionSpecifier) {
+		try {
+			getDelegate().add(additionSpecifier);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 	@Override
-	public void add(lotus.domino.Agent arg0) {
-		// TODO Auto-generated method stub
-
+	public void add(lotus.domino.Agent additionSpecifier) {
+		try {
+			getDelegate().add(additionSpecifier);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 	@Override
-	public void add(DocumentCollection arg0) {
-		// TODO Auto-generated method stub
-
+	public void add(lotus.domino.DocumentCollection additionSpecifier) {
+		try {
+			getDelegate().add(additionSpecifier);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 	@Override
-	public void add(Form arg0) {
-		// TODO Auto-generated method stub
-
+	public void add(lotus.domino.Form additionSpecifier) {
+		try {
+			getDelegate().add(additionSpecifier);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 	@Override
-	public void add(int arg0) {
-		// TODO Auto-generated method stub
-
+	public void add(int additionSpecifier) {
+		try {
+			getDelegate().add(additionSpecifier);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 	@Override
-	public void add(int[] arg0) {
-		// TODO Auto-generated method stub
-
+	public void add(int[] additionSpecifier) {
+		try {
+			getDelegate().add(additionSpecifier);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 	@Override
-	public void add(lotus.domino.NoteCollection arg0) {
-		// TODO Auto-generated method stub
-
+	public void add(lotus.domino.NoteCollection additionSpecifier) {
+		try {
+			getDelegate().add(additionSpecifier);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 	@Override
-	public void add(String arg0) {
-		// TODO Auto-generated method stub
-
+	public void add(String additionSpecifier) {
+		try {
+			getDelegate().add(additionSpecifier);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 	@Override
-	public void add(View arg0) {
-		// TODO Auto-generated method stub
-
+	public void add(lotus.domino.View additionSpecifier) {
+		try {
+			getDelegate().add(additionSpecifier);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 	@Override
 	public void buildCollection() {
-		// TODO Auto-generated method stub
-
+		try {
+			getDelegate().buildCollection();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 	@Override
 	public void clearCollection() {
-		// TODO Auto-generated method stub
-
+		try {
+			getDelegate().clearCollection();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 	@Override
 	public int getCount() {
-		// TODO Auto-generated method stub
+		try {
+			return getDelegate().getCount();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 		return 0;
 	}
 
 	@Override
 	public String getFirstNoteID() {
-		// TODO Auto-generated method stub
+		try {
+			return getDelegate().getFirstNoteID();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 		return null;
 	}
 
 	@Override
 	public DateTime getLastBuildTime() {
-		// TODO Auto-generated method stub
+		try {
+			return Factory.fromLotus(getDelegate().getLastBuildTime(), DateTime.class, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 		return null;
 	}
 
 	@Override
 	public String getLastNoteID() {
-		// TODO Auto-generated method stub
+		try {
+			return getDelegate().getLastNoteID();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 		return null;
 	}
 
 	@Override
-	public String getNextNoteID(String arg0) {
-		// TODO Auto-generated method stub
+	public String getNextNoteID(String noteId) {
+		try {
+			return getDelegate().getNextNoteID(noteId);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 		return null;
 	}
 
 	@Override
 	public int[] getNoteIDs() {
-		// TODO Auto-generated method stub
+		try {
+			return getDelegate().getNoteIDs();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 		return null;
 	}
 
@@ -128,153 +178,253 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	}
 
 	@Override
-	public String getPrevNoteID(String arg0) {
-		// TODO Auto-generated method stub
+	public String getPrevNoteID(String noteId) {
+		try {
+			return getDelegate().getPrevNoteID(noteId);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 		return null;
 	}
 
 	@Override
 	public boolean getSelectAcl() {
-		// TODO Auto-generated method stub
+		try {
+			return getDelegate().getSelectAcl();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 		return false;
 	}
 
 	@Override
 	public boolean getSelectActions() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectActions();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 	@Override
 	public boolean getSelectAgents() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectAgents();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 	@Override
 	public boolean getSelectDatabaseScript() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectDatabaseScript();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 	@Override
 	public boolean getSelectDataConnections() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectDataConnections();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 	@Override
 	public boolean getSelectDocuments() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectDocuments();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 	@Override
 	public boolean getSelectFolders() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectFolders();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 	@Override
 	public boolean getSelectForms() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectForms();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 	@Override
 	public boolean getSelectFramesets() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectFramesets();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 	@Override
 	public boolean getSelectHelpAbout() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectHelpAbout();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 	@Override
 	public boolean getSelectHelpIndex() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectHelpIndex();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 	@Override
 	public boolean getSelectHelpUsing() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectHelpUsing();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 	@Override
 	public boolean getSelectIcon() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectIcon();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 	@Override
 	public boolean getSelectImageResources() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectImageResources();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 	@Override
 	public String getSelectionFormula() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return getDelegate().getSelectionFormula();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
 	}
 
 	@Override
 	public boolean getSelectJavaResources() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectJavaResources();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 	@Override
 	public boolean getSelectMiscCodeElements() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectMiscCodeElements();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 	@Override
 	public boolean getSelectMiscFormatElements() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectMiscFormatElements();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 	@Override
 	public boolean getSelectMiscIndexElements() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectMiscIndexElements();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 	@Override
 	public boolean getSelectNavigators() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectNavigators();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 	@Override
 	public boolean getSelectOutlines() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectOutlines();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 	@Override
 	public boolean getSelectPages() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectPages();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 	@Override
 	public boolean getSelectProfiles() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectProfiles();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 	@Override
 	public boolean getSelectReplicationFormulas() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectReplicationFormulas();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
 	@Override
@@ -314,7 +464,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	}
 
 	@Override
-	public String getUNID(String arg0) {
+	public String getUNID(String unid) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -326,319 +476,319 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	}
 
 	@Override
-	public void intersect(lotus.domino.Agent arg0) {
+	public void intersect(lotus.domino.Agent intersectionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void intersect(Document arg0) {
+	public void intersect(lotus.domino.Document intersectionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void intersect(DocumentCollection arg0) {
+	public void intersect(lotus.domino.DocumentCollection intersectionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void intersect(Form arg0) {
+	public void intersect(lotus.domino.Form intersectionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void intersect(int arg0) {
+	public void intersect(int intersectionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void intersect(lotus.domino.NoteCollection arg0) {
+	public void intersect(lotus.domino.NoteCollection intersectionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void intersect(String arg0) {
+	public void intersect(String intersectionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void intersect(View arg0) {
+	public void intersect(lotus.domino.View intersectionSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void remove(lotus.domino.Agent arg0) {
+	public void remove(lotus.domino.Agent removalSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void remove(Document arg0) {
+	public void remove(lotus.domino.Document removalSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void remove(DocumentCollection arg0) {
+	public void remove(lotus.domino.DocumentCollection removalSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void remove(Form arg0) {
+	public void remove(lotus.domino.Form removalSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void remove(int arg0) {
+	public void remove(int removalSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void remove(lotus.domino.NoteCollection arg0) {
+	public void remove(lotus.domino.NoteCollection removalSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void remove(String arg0) {
+	public void remove(String removalSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void remove(View arg0) {
+	public void remove(lotus.domino.View removalSpecifier) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void selectAllAdminNotes(boolean arg0) {
+	public void selectAllAdminNotes(boolean selectorValue) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void selectAllCodeElements(boolean arg0) {
+	public void selectAllCodeElements(boolean selectorValue) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void selectAllDataNotes(boolean arg0) {
+	public void selectAllDataNotes(boolean selectorValue) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void selectAllDesignElements(boolean arg0) {
+	public void selectAllDesignElements(boolean selectorValue) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void selectAllFormatElements(boolean arg0) {
+	public void selectAllFormatElements(boolean selectorValue) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void selectAllIndexElements(boolean arg0) {
+	public void selectAllIndexElements(boolean selectorValue) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void selectAllNotes(boolean arg0) {
+	public void selectAllNotes(boolean selectorValue) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectAcl(boolean arg0) {
+	public void setSelectAcl(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectActions(boolean arg0) {
+	public void setSelectActions(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectAgents(boolean arg0) {
+	public void setSelectAgents(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectDatabaseScript(boolean arg0) {
+	public void setSelectDatabaseScript(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectDataConnections(boolean arg0) {
+	public void setSelectDataConnections(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectDocuments(boolean arg0) {
+	public void setSelectDocuments(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectFolders(boolean arg0) {
+	public void setSelectFolders(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectForms(boolean arg0) {
+	public void setSelectForms(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectFramesets(boolean arg0) {
+	public void setSelectFramesets(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectHelpAbout(boolean arg0) {
+	public void setSelectHelpAbout(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectHelpIndex(boolean arg0) {
+	public void setSelectHelpIndex(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectHelpUsing(boolean arg0) {
+	public void setSelectHelpUsing(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectIcon(boolean arg0) {
+	public void setSelectIcon(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectImageResources(boolean arg0) {
+	public void setSelectImageResources(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectionFormula(String arg0) {
+	public void setSelectionFormula(String flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectJavaResources(boolean arg0) {
+	public void setSelectJavaResources(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectMiscCodeElements(boolean arg0) {
+	public void setSelectMiscCodeElements(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectMiscFormatElements(boolean arg0) {
+	public void setSelectMiscFormatElements(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectMiscIndexElements(boolean arg0) {
+	public void setSelectMiscIndexElements(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectNavigators(boolean arg0) {
+	public void setSelectNavigators(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectOutlines(boolean arg0) {
+	public void setSelectOutlines(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectPages(boolean arg0) {
+	public void setSelectPages(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectProfiles(boolean arg0) {
+	public void setSelectProfiles(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectReplicationFormulas(boolean arg0) {
+	public void setSelectReplicationFormulas(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectScriptLibraries(boolean arg0) {
+	public void setSelectScriptLibraries(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectSharedFields(boolean arg0) {
+	public void setSelectSharedFields(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectStylesheetResources(boolean arg0) {
+	public void setSelectStylesheetResources(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectSubforms(boolean arg0) {
+	public void setSelectSubforms(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSelectViews(boolean arg0) {
+	public void setSelectViews(boolean flag) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setSinceTime(DateTime arg0) {
+	public void setSinceTime(lotus.domino.DateTime sinceTime) {
 		// TODO Auto-generated method stub
 
 	}
