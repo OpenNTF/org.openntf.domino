@@ -8,7 +8,7 @@ import org.openntf.domino.utils.Factory;
 
 public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domino.DbDirectory> implements org.openntf.domino.DbDirectory {
 
-	protected DbDirectory(lotus.domino.DbDirectory delegate, org.openntf.domino.Base<?> parent) {
+	public DbDirectory(lotus.domino.DbDirectory delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 

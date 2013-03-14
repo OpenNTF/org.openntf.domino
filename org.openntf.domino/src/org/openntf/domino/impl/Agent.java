@@ -9,7 +9,7 @@ import org.openntf.domino.utils.Factory;
 
 public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> implements org.openntf.domino.Agent {
 
-	protected Agent(lotus.domino.Agent delegate, org.openntf.domino.Base<?> parent) {
+	public Agent(lotus.domino.Agent delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
 	}
 

@@ -9,7 +9,7 @@ import org.openntf.domino.utils.Factory;
 
 public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.Directory> implements org.openntf.domino.Directory {
 
-	protected Directory(lotus.domino.Directory delegate, org.openntf.domino.Base<?> parent) {
+	public Directory(lotus.domino.Directory delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 

@@ -13,7 +13,7 @@ import org.openntf.domino.utils.Factory;
 public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.domino.AgentContext> implements
 		org.openntf.domino.AgentContext {
 
-	protected AgentContext(lotus.domino.AgentContext delegate, org.openntf.domino.Base<?> parent) {
+	public AgentContext(lotus.domino.AgentContext delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 

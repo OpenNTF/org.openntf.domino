@@ -9,7 +9,7 @@ import org.openntf.domino.utils.DominoUtils;
 public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigator, lotus.domino.DirectoryNavigator> implements
 		org.openntf.domino.DirectoryNavigator {
 
-	protected DirectoryNavigator(lotus.domino.DirectoryNavigator delegate, org.openntf.domino.Base<?> parent) {
+	public DirectoryNavigator(lotus.domino.DirectoryNavigator delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 

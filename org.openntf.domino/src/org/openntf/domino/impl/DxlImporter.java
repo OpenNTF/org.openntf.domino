@@ -9,7 +9,7 @@ import org.openntf.domino.utils.DominoUtils;
 
 public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domino.DxlImporter> implements org.openntf.domino.DxlImporter {
 
-	protected DxlImporter(lotus.domino.DxlImporter delegate, org.openntf.domino.Base<?> parent) {
+	public DxlImporter(lotus.domino.DxlImporter delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
