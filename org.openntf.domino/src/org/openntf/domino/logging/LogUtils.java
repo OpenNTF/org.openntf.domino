@@ -95,6 +95,12 @@ public class LogUtils {
 		return result;
 	}
 
+	/**
+	 * @param relative
+	 *            boolean whether filepath is relative to <data> folder
+	 * @param filePath
+	 *            String of filepath for logging properties file, or empty string to use defaults
+	 */
 	static public void setupLogger(boolean relative, String filePath) {
 		try {
 			LogManager manager = LogManager.getLogManager();
