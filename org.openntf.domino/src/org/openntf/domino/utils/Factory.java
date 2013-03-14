@@ -117,10 +117,14 @@ public enum Factory {
 			result = (T) new org.openntf.domino.impl.Newsletter((lotus.domino.Newsletter)lotus, parent);
 		} else if(lotus instanceof lotus.domino.NoteCollection) {
 			result = (T) new org.openntf.domino.impl.NoteCollection((lotus.domino.NoteCollection)lotus, (org.openntf.domino.Database)parent);
+		} else if(lotus instanceof lotus.domino.NotesProperty) {
+			result = (T) new org.openntf.domino.impl.NotesProperty((lotus.domino.NotesProperty)lotus, parent);
 		} else if(lotus instanceof lotus.domino.Outline) {
 			result = (T) new org.openntf.domino.impl.Outline((lotus.domino.Outline)lotus, parent);
 		} else if(lotus instanceof lotus.domino.OutlineEntry) {
 			result = (T) new org.openntf.domino.impl.OutlineEntry((lotus.domino.OutlineEntry)lotus, parent);
+		} else if(lotus instanceof lotus.domino.Registration) {
+			result = (T) new org.openntf.domino.impl.Registration((lotus.domino.Registration)lotus, parent);
 		} else if(lotus instanceof lotus.domino.Replication) {
 			result = (T) new org.openntf.domino.impl.Replication((lotus.domino.Replication)lotus, parent);
 		} else if(lotus instanceof lotus.domino.ReplicationEntry) {

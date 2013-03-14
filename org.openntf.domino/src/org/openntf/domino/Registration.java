@@ -2,9 +2,6 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
-import lotus.domino.DateTime;
-import lotus.domino.Session;
-
 public interface Registration extends Base<lotus.domino.Registration>, lotus.domino.Registration {
 
 	@Override
@@ -51,10 +48,10 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	public void deleteIDOnServer(String userName, boolean isServerID);
 
 	@Override
-	public Vector getAltOrgUnit();
+	public Vector<String> getAltOrgUnit();
 
 	@Override
-	public Vector getAltOrgUnitLang();
+	public Vector<String> getAltOrgUnitLang();
 
 	@Override
 	public String getCertifierIDFile();
@@ -72,7 +69,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	public String getForeignDN();
 
 	@Override
-	public Vector getGroupList();
+	public Vector<String> getGroupList();
 
 	@Override
 	public void getIDFromServer(String userName, String filePath, boolean isServerID);
@@ -96,7 +93,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	public int getMailQuotaWarningThreshold();
 
 	@Override
-	public Vector getMailReplicaServers();
+	public Vector<String> getMailReplicaServers();
 
 	@Override
 	public int getMailSystem();
@@ -146,6 +143,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	@Override
 	public boolean getUpdateAddressBook();
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void getUserInfo(String userName, StringBuffer mailServer, StringBuffer mailFile, StringBuffer mailDomain,
 			StringBuffer mailSystem, Vector profile);
@@ -213,9 +211,11 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	public boolean registerNewUser(String lastName, String idFile, String server, String firstName, String middleName, String certPassword,
 			String location, String comment, String mailDBPath, String forward, String userPassword, String altName, String altNameLang);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setAltOrgUnit(Vector names);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setAltOrgUnitLang(Vector languages);
 
@@ -232,11 +232,12 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	public void setEnforceUniqueShortName(boolean flag);
 
 	@Override
-	public void setExpiration(DateTime expiration);
+	public void setExpiration(lotus.domino.DateTime expiration);
 
 	@Override
 	public void setForeignDN(String dn);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setGroupList(Vector groups);
 
@@ -261,6 +262,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	@Override
 	public void setMailQuotaWarningThreshold(int threshold);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setMailReplicaServers(Vector servers);
 
