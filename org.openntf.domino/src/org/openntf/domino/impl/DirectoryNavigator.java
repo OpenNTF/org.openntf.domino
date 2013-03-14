@@ -125,7 +125,7 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getFirstItemValue() {
+	public Vector<Object> getFirstItemValue() {
 		try {
 			return getDelegate().getFirstItemValue();
 		} catch (NotesException e) {
@@ -136,7 +136,7 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getNextItemValue() {
+	public Vector<Object> getNextItemValue() {
 		try {
 			return getDelegate().getNextItemValue();
 		} catch (NotesException e) {
@@ -147,7 +147,7 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getNthItemValue(int n) {
+	public Vector<Object> getNthItemValue(int n) {
 		try {
 			return getDelegate().getNthItemValue(n);
 		} catch (NotesException e) {
