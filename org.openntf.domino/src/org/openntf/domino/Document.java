@@ -4,12 +4,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Vector;
 
-import lotus.domino.DocumentCollection;
-import lotus.domino.EmbeddedObject;
-import lotus.domino.Item;
-import lotus.domino.NotesException;
-import lotus.domino.XSLTResultTarget;
-
 public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document {
 	@Override
 	// TODO Switch to new class
@@ -91,22 +85,19 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public String generateXML();
 
 	@Override
-	public void generateXML(Object style, XSLTResultTarget target) throws IOException, NotesException;
+	public void generateXML(Object style, lotus.domino.XSLTResultTarget target) throws IOException;
 
 	@Override
-	public void generateXML(Writer w) throws NotesException, IOException;
+	public void generateXML(Writer w) throws IOException;
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.EmbeddedObject getAttachment(String fileName);
+	public EmbeddedObject getAttachment(String fileName);
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getAuthors();
+	public Vector<String> getAuthors();
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getColumnValues();
+	public Vector<Object> getColumnValues();
 
 	@Override
 	public DateTime getCreated();
@@ -142,13 +133,13 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public Vector getItemValue(String name);
 
 	@Override
-	public Object getItemValueCustomData(String itemName) throws IOException, ClassNotFoundException, NotesException;
+	public Object getItemValueCustomData(String itemName) throws IOException, ClassNotFoundException;
 
 	@Override
-	public Object getItemValueCustomData(String itemName, String dataTypeName) throws IOException, ClassNotFoundException, NotesException;
+	public Object getItemValueCustomData(String itemName, String dataTypeName) throws IOException, ClassNotFoundException;
 
 	@Override
-	public byte[] getItemValueCustomDataBytes(String itemName, String dataTypeName) throws IOException, NotesException;
+	public byte[] getItemValueCustomDataBytes(String itemName, String dataTypeName) throws IOException;
 
 	@Override
 	public Vector<DateTime> getItemValueDateTimeArray(String name);
@@ -321,13 +312,6 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public void putInFolder(String name, boolean createOnFail);
 
 	@Override
-	public void recycle();
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void recycle(Vector obj) throws NotesException;
-
-	@Override
 	public boolean remove(boolean force);
 
 	@Override
@@ -344,21 +328,19 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 
 	@Override
 	// TODO Switch to new class
-	public lotus.domino.Item replaceItemValue(String name, Object value);
+	public lotus.domino.Item replaceItemValue(String itemName, Object value);
 
 	@Override
 	// TODO Switch to new class
-	public lotus.domino.Item replaceItemValueCustomData(String name, Object userObj) throws IOException, NotesException;
+	public lotus.domino.Item replaceItemValueCustomData(String itemName, Object userObj) throws IOException;
 
 	@Override
 	// TODO Switch to new class
-	public lotus.domino.Item replaceItemValueCustomData(String name, String dataTypeName, Object userObj) throws IOException,
-			NotesException;
+	public lotus.domino.Item replaceItemValueCustomData(String itemName, String dataTypeName, Object userObj) throws IOException;
 
 	@Override
 	// TODO Switch to new class
-	public lotus.domino.Item replaceItemValueCustomDataBytes(String name, String dataTypeName, byte[] byteArray) throws IOException,
-			NotesException;
+	public lotus.domino.Item replaceItemValueCustomDataBytes(String itemName, String dataTypeName, byte[] byteArray) throws IOException;
 
 	@Override
 	public boolean save();

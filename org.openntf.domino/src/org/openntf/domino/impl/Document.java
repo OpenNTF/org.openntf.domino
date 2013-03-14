@@ -5,14 +5,7 @@ import java.io.Writer;
 import java.util.Date;
 import java.util.Vector;
 
-import lotus.domino.Database;
-import lotus.domino.DocumentCollection;
-import lotus.domino.EmbeddedObject;
-import lotus.domino.Item;
-import lotus.domino.MIMEEntity;
 import lotus.domino.NotesException;
-import lotus.domino.RichTextItem;
-import lotus.domino.XSLTResultTarget;
 
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.utils.DominoUtils;
@@ -35,6 +28,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		// initialize(delegate);
 	}
 
+	@SuppressWarnings("unused")
 	private void initialize(lotus.domino.Document delegate) {
 		try {
 			delegate.setPreferJavaDates(true);
@@ -48,7 +42,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public Item appendItemValue(String name) {
+	public lotus.domino.Item appendItemValue(String name) {
 		try {
 			return getDelegate().appendItemValue(name);
 		} catch (NotesException e) {
@@ -58,7 +52,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public Item appendItemValue(String name, double value) {
+	public lotus.domino.Item appendItemValue(String name, double value) {
 		try {
 			return getDelegate().appendItemValue(name, value);
 		} catch (NotesException e) {
@@ -68,7 +62,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public Item appendItemValue(String name, int value) {
+	public lotus.domino.Item appendItemValue(String name, int value) {
 		try {
 			return getDelegate().appendItemValue(name, value);
 		} catch (NotesException e) {
@@ -78,7 +72,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public Item appendItemValue(String name, Object value) {
+	public lotus.domino.Item appendItemValue(String name, Object value) {
 		try {
 			return getDelegate().appendItemValue(name, value);
 		} catch (NotesException e) {
@@ -97,9 +91,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public void attachVCard(lotus.domino.Base document, String arg1) {
+	public void attachVCard(lotus.domino.Base document, String charset) {
 		try {
-			getDelegate().attachVCard(document, arg1);
+			getDelegate().attachVCard(document, charset);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -116,9 +110,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public boolean closeMIMEEntities(boolean savechanges) {
+	public boolean closeMIMEEntities(boolean saveChanges) {
 		try {
-			return getDelegate().closeMIMEEntities(savechanges);
+			return getDelegate().closeMIMEEntities(saveChanges);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -126,9 +120,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public boolean closeMIMEEntities(boolean savechanges, String entityitemname) {
+	public boolean closeMIMEEntities(boolean saveChanges, String entityItemName) {
 		try {
-			return getDelegate().closeMIMEEntities(savechanges, entityitemname);
+			return getDelegate().closeMIMEEntities(saveChanges, entityItemName);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -136,9 +130,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public boolean computeWithForm(boolean dodatatypes, boolean raiseerror) {
+	public boolean computeWithForm(boolean doDataTypes, boolean raiseError) {
 		try {
-			return getDelegate().computeWithForm(dodatatypes, raiseerror);
+			return getDelegate().computeWithForm(doDataTypes, raiseError);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -155,18 +149,18 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public void convertToMIME(int conversiontype) {
+	public void convertToMIME(int conversionType) {
 		try {
-			getDelegate().convertToMIME(conversiontype);
+			getDelegate().convertToMIME(conversionType);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 	}
 
 	@Override
-	public void convertToMIME(int conversiontype, int options) {
+	public void convertToMIME(int conversionType, int options) {
 		try {
-			getDelegate().convertToMIME(conversiontype, options);
+			getDelegate().convertToMIME(conversionType, options);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -175,16 +169,16 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void copyAllItems(lotus.domino.Document doc, boolean replace) {
 		try {
-			getDelegate().copyAllItems(doc, replace);
+			getDelegate().copyAllItems((lotus.domino.Document) toLotus(doc), replace);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 	}
 
 	@Override
-	public Item copyItem(Item item) {
+	public lotus.domino.Item copyItem(lotus.domino.Item item) {
 		try {
-			return getDelegate().copyItem(item);
+			return getDelegate().copyItem((lotus.domino.Item) toLotus(item));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -192,9 +186,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public Item copyItem(Item item, String newname) {
+	public lotus.domino.Item copyItem(lotus.domino.Item item, String newName) {
 		try {
-			return getDelegate().copyItem(item, newname);
+			return getDelegate().copyItem((lotus.domino.Item) toLotus(item), newName);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -202,9 +196,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public Document copyToDatabase(Database db) {
+	public Document copyToDatabase(lotus.domino.Database db) {
 		try {
-			return Factory.fromLotus(getDelegate().copyToDatabase(db), Document.class, this);
+			return Factory.fromLotus(getDelegate().copyToDatabase((lotus.domino.Database) toLotus(db)), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -212,7 +206,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public MIMEEntity createMIMEEntity() {
+	public lotus.domino.MIMEEntity createMIMEEntity() {
 		try {
 			return getDelegate().createMIMEEntity();
 		} catch (NotesException e) {
@@ -222,7 +216,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public MIMEEntity createMIMEEntity(String itemName) {
+	public lotus.domino.MIMEEntity createMIMEEntity(String itemName) {
 		try {
 			return getDelegate().createMIMEEntity(itemName);
 		} catch (NotesException e) {
@@ -232,9 +226,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public Document createReplyMessage(boolean toall) {
+	public Document createReplyMessage(boolean toAll) {
 		try {
-			return Factory.fromLotus(getDelegate().createReplyMessage(toall), Document.class, this);
+			return Factory.fromLotus(getDelegate().createReplyMessage(toAll), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -242,7 +236,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public RichTextItem createRichTextItem(String name) {
+	public lotus.domino.RichTextItem createRichTextItem(String name) {
 		try {
 			return getDelegate().createRichTextItem(name);
 		} catch (NotesException e) {
@@ -271,7 +265,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public void generateXML(Object style, XSLTResultTarget result) throws IOException, NotesException {
+	public void generateXML(Object style, lotus.domino.XSLTResultTarget result) throws IOException {
 		try {
 			getDelegate().generateXML(style, result);
 		} catch (NotesException e) {
@@ -280,7 +274,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public void generateXML(Writer w) throws NotesException, IOException {
+	public void generateXML(Writer w) throws IOException {
 		try {
 			getDelegate().generateXML(w);
 		} catch (NotesException e) {
@@ -289,9 +283,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public EmbeddedObject getAttachment(String filename) {
+	public EmbeddedObject getAttachment(String fileName) {
 		try {
-			return getDelegate().getAttachment(filename);
+			return Factory.fromLotus(getDelegate().getAttachment(fileName), EmbeddedObject.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -300,7 +294,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getAuthors() {
+	public Vector<String> getAuthors() {
 		try {
 			return getDelegate().getAuthors();
 		} catch (NotesException e) {
@@ -309,11 +303,18 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getColumnValues() {
+	public Vector<Object> getColumnValues() {
 		try {
-			return getDelegate().getColumnValues();
+			Vector<Object> result = new Vector<Object>();
+			for (Object value : getDelegate().getColumnValues()) {
+				if (value instanceof lotus.domino.DateTime) {
+					result.add(Factory.fromLotus((lotus.domino.DateTime) value, DateTime.class, this));
+				} else {
+					result.add(value);
+				}
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -346,11 +347,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return created_;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getEmbeddedObjects() {
+	public Vector<org.openntf.domino.EmbeddedObject> getEmbeddedObjects() {
 		try {
-			return getDelegate().getEmbeddedObjects();
+			return Factory.fromLotusAsVector(getDelegate().getEmbeddedObjects(), org.openntf.domino.EmbeddedObject.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -379,7 +379,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public Item getFirstItem(String name) {
+	public lotus.domino.Item getFirstItem(String name) {
 		try {
 			return getDelegate().getFirstItem(name);
 		} catch (NotesException e) {
@@ -449,9 +449,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public Object getItemValueCustomData(String itemname) throws IOException, ClassNotFoundException, NotesException {
+	public Object getItemValueCustomData(String itemName) throws IOException, ClassNotFoundException {
 		try {
-			return getDelegate().getItemValueCustomData(itemname);
+			return getDelegate().getItemValueCustomData(itemName);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -459,9 +459,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public Object getItemValueCustomData(String itemname, String datatypename) throws IOException, ClassNotFoundException, NotesException {
+	public Object getItemValueCustomData(String itemName, String dataTypeName) throws IOException, ClassNotFoundException {
 		try {
-			return getDelegate().getItemValueCustomData(itemname, datatypename);
+			return getDelegate().getItemValueCustomData(itemName, dataTypeName);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -469,9 +469,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public byte[] getItemValueCustomDataBytes(String itemname, String datatypename) throws IOException, NotesException {
+	public byte[] getItemValueCustomDataBytes(String itemName, String dataTypeName) throws IOException {
 		try {
-			return getDelegate().getItemValueCustomDataBytes(itemname, datatypename);
+			return getDelegate().getItemValueCustomDataBytes(itemName, dataTypeName);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -608,7 +608,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public MIMEEntity getMIMEEntity() {
+	public lotus.domino.MIMEEntity getMIMEEntity() {
 		try {
 			return getDelegate().getMIMEEntity();
 		} catch (NotesException e) {
@@ -618,7 +618,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public MIMEEntity getMIMEEntity(String itemName) {
+	public lotus.domino.MIMEEntity getMIMEEntity(String itemName) {
 		try {
 			return getDelegate().getMIMEEntity(itemName);
 		} catch (NotesException e) {
@@ -693,9 +693,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public boolean getRead(String username) {
+	public boolean getRead(String userName) {
 		try {
-			return getDelegate().getRead(username);
+			return getDelegate().getRead(userName);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -704,7 +704,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getReceivedItemText() {
+	public Vector<String> getReceivedItemText() {
 		try {
 			return getDelegate().getReceivedItemText();
 		} catch (NotesException e) {
@@ -716,7 +716,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public DocumentCollection getResponses() {
 		try {
-			return getDelegate().getResponses();
+			return Factory.fromLotus(getDelegate().getResponses(), DocumentCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -928,9 +928,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public boolean lock(boolean provisionalok) {
+	public boolean lock(boolean provisionalOk) {
 		try {
-			return getDelegate().lock(provisionalok);
+			return getDelegate().lock(provisionalOk);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -948,9 +948,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public boolean lock(String name, boolean provisionalok) {
+	public boolean lock(String name, boolean provisionalOk) {
 		try {
-			return getDelegate().lock(name, provisionalok);
+			return getDelegate().lock(name, provisionalOk);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -970,9 +970,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean lock(Vector names, boolean provisionalok) {
+	public boolean lock(Vector names, boolean provisionalOk) {
 		try {
-			return getDelegate().lock(names, provisionalok);
+			return getDelegate().lock(names, provisionalOk);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1013,7 +1013,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void makeResponse(lotus.domino.Document doc) {
 		try {
-			getDelegate().makeResponse(doc);
+			getDelegate().makeResponse((lotus.domino.Document) toLotus(doc));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1029,9 +1029,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public void markRead(String username) {
+	public void markRead(String userName) {
 		try {
-			getDelegate().markRead(username);
+			getDelegate().markRead(userName);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1047,9 +1047,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public void markUnread(String username) {
+	public void markUnread(String userName) {
 		try {
-			getDelegate().markUnread(username);
+			getDelegate().markUnread(userName);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1065,9 +1065,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public void putInFolder(String name, boolean createonfail) {
+	public void putInFolder(String name, boolean createOnFail) {
 		try {
-			getDelegate().putInFolder(name, createonfail);
+			getDelegate().putInFolder(name, createOnFail);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1112,7 +1112,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public boolean renderToRTItem(RichTextItem rtitem) {
+	public boolean renderToRTItem(lotus.domino.RichTextItem rtitem) {
 		try {
 			getDelegate().renderToRTItem(rtitem);
 		} catch (NotesException e) {
@@ -1121,14 +1121,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Item replaceItemValue(String name, Object value) {
+	public lotus.domino.Item replaceItemValue(String itemName, Object value) {
 		try {
 			if (value instanceof DateTime) {
-				return getDelegate().replaceItemValue(name, ((DateTime) value).getDelegate());
+				return getDelegate().replaceItemValue(itemName, ((DateTime) value).getDelegate());
 			} else if (value instanceof Number && !(value instanceof Integer || value instanceof Double)) {
-				return getDelegate().replaceItemValue(name, ((Number) value).intValue());
+				return getDelegate().replaceItemValue(itemName, ((Number) value).intValue());
 				// } else if (value instanceof Date) {
 				// // TODO: make sure this use of DateTime isn't a bug when Session and createDateTime are extended
 				// lotus.domino.DateTime dt = DominoUtils.getSession(this).createDateTime((Date) value);
@@ -1151,7 +1150,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			// TODO: also cover StateHolder? That could probably be done with reflection without actually requiring the XSP classes to
 			// build
 
-			return getDelegate().replaceItemValue(name, value);
+			return getDelegate().replaceItemValue(itemName, value);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} catch (Throwable t) {
@@ -1161,9 +1160,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public Item replaceItemValueCustomData(String itemname, Object userobj) throws IOException, NotesException {
+	public lotus.domino.Item replaceItemValueCustomData(String itemName, Object userObj) throws IOException {
 		try {
-			return getDelegate().replaceItemValueCustomData(itemname, userobj);
+			return getDelegate().replaceItemValueCustomData(itemName, userObj);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1171,9 +1170,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public Item replaceItemValueCustomData(String itemname, String datatypename, Object userobj) throws IOException, NotesException {
+	public lotus.domino.Item replaceItemValueCustomData(String itemname, String dataTypeName, Object userObj) throws IOException {
 		try {
-			return getDelegate().replaceItemValueCustomData(itemname, datatypename, userobj);
+			return getDelegate().replaceItemValueCustomData(itemname, dataTypeName, userObj);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1181,9 +1180,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public Item replaceItemValueCustomDataBytes(String itemname, String datatypename, byte[] bytearray) throws IOException, NotesException {
+	public lotus.domino.Item replaceItemValueCustomDataBytes(String itemname, String dataTypeName, byte[] byteArray) throws IOException {
 		try {
-			return getDelegate().replaceItemValueCustomDataBytes(itemname, datatypename, bytearray);
+			return getDelegate().replaceItemValueCustomDataBytes(itemname, dataTypeName, byteArray);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1211,9 +1210,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public boolean save(boolean force, boolean makeresponse) {
+	public boolean save(boolean force, boolean makeResponse) {
 		try {
-			return getDelegate().save(force, makeresponse);
+			return getDelegate().save(force, makeResponse);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1221,9 +1220,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public boolean save(boolean force, boolean makeresponse, boolean markread) {
+	public boolean save(boolean force, boolean makeResponse, boolean markRead) {
 		try {
-			return getDelegate().save(force, makeresponse, markread);
+			return getDelegate().save(force, makeResponse, markRead);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1240,18 +1239,18 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public void send(boolean attachform) {
+	public void send(boolean attachForm) {
 		try {
-			getDelegate().send(attachform);
+			getDelegate().send(attachForm);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 	}
 
 	@Override
-	public void send(boolean attachform, String recipient) {
+	public void send(boolean attachForm, String recipient) {
 		try {
-			getDelegate().send(attachform, recipient);
+			getDelegate().send(attachForm, recipient);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1259,9 +1258,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void send(boolean attachform, Vector recipients) {
+	public void send(boolean attachForm, Vector recipients) {
 		try {
-			getDelegate().send(attachform, recipients);
+			getDelegate().send(attachForm, recipients);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
