@@ -6,7 +6,6 @@ import java.io.Reader;
 import java.util.Vector;
 
 import lotus.domino.Document;
-import lotus.domino.MIMEEntity;
 import lotus.domino.NotesException;
 import lotus.domino.XSLTResultTarget;
 
@@ -19,6 +18,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item {
 	@Override
 	public void appendToTextList(String value);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void appendToTextList(Vector values);
 
@@ -26,10 +26,10 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item {
 	public boolean containsValue(Object value);
 
 	@Override
-	public lotus.domino.Item copyItemToDocument(Document doc);
+	public Item copyItemToDocument(Document doc);
 
 	@Override
-	public lotus.domino.Item copyItemToDocument(Document doc, String newName);
+	public Item copyItemToDocument(Document doc, String newName);
 
 	@Override
 	public DateTime getDateTimeValue();
@@ -44,7 +44,8 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item {
 	public DateTime getLastModified();
 
 	@Override
-	public MIMEEntity getMIMEEntity();
+	// TODO Switch to new class
+	public lotus.domino.MIMEEntity getMIMEEntity();
 
 	@Override
 	public String getName();
@@ -65,16 +66,16 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item {
 	public int getType();
 
 	@Override
-	public Object getValueCustomData() throws IOException, ClassNotFoundException, NotesException;
+	public Object getValueCustomData() throws IOException, ClassNotFoundException;
 
 	@Override
-	public Object getValueCustomData(String dataTypeName) throws IOException, ClassNotFoundException, NotesException;
+	public Object getValueCustomData(String dataTypeName) throws IOException, ClassNotFoundException;
 
 	@Override
-	public byte[] getValueCustomDataBytes(String dataTypeName) throws IOException, NotesException;
+	public byte[] getValueCustomDataBytes(String dataTypeName) throws IOException;
 
 	@Override
-	public Vector getValueDateTimeArray();
+	public Vector<DateTime> getValueDateTimeArray();
 
 	@Override
 	public double getValueDouble();
@@ -86,7 +87,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item {
 	public int getValueLength();
 
 	@Override
-	public Vector getValues();
+	public Vector<Object> getValues();
 
 	@Override
 	public String getValueString();
@@ -149,13 +150,13 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item {
 	public void setSummary(boolean flag);
 
 	@Override
-	public void setValueCustomData(Object userObj) throws IOException, NotesException;
+	public void setValueCustomData(Object userObj) throws IOException;
 
 	@Override
-	public void setValueCustomData(String dataTypeName, Object userObj) throws IOException, NotesException;
+	public void setValueCustomData(String dataTypeName, Object userObj) throws IOException;
 
 	@Override
-	public void setValueCustomDataBytes(String dataTypeName, byte[] byteArray) throws IOException, NotesException;
+	public void setValueCustomDataBytes(String dataTypeName, byte[] byteArray) throws IOException;
 
 	@Override
 	public void setValueDouble(double value);
@@ -163,6 +164,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item {
 	@Override
 	public void setValueInteger(int value);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setValues(Vector values);
 

@@ -72,6 +72,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
+	// TODO Account for DateTime
 	public lotus.domino.Item appendItemValue(String name, Object value) {
 		try {
 			return getDelegate().appendItemValue(name, value);
@@ -1124,8 +1125,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public lotus.domino.Item replaceItemValue(String itemName, Object value) {
 		try {
-			if (value instanceof DateTime) {
-				return getDelegate().replaceItemValue(itemName, ((DateTime) value).getDelegate());
+			if (value instanceof lotus.domino.DateTime) {
+				return getDelegate().replaceItemValue(itemName, (lotus.domino.DateTime) toLotus((lotus.domino.DateTime) value));
+			} else if (value instanceof lotus.domino.DateRange) {
+				return getDelegate().replaceItemValue(itemName, (lotus.domino.DateRange) toLotus((lotus.domino.DateRange) value));
 			} else if (value instanceof Number && !(value instanceof Integer || value instanceof Double)) {
 				return getDelegate().replaceItemValue(itemName, ((Number) value).intValue());
 				// } else if (value instanceof Date) {

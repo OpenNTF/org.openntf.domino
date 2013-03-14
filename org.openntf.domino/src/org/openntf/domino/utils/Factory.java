@@ -65,6 +65,9 @@ public enum Factory {
 		if (lotus == null) {
 			return null;
 		}
+		if(lotus instanceof org.openntf.domino.Base) {
+			return (T)lotus;
+		}
 		T result = null;
 		if(lotus instanceof lotus.domino.ACL) {
 			result = (T) new org.openntf.domino.impl.ACL((lotus.domino.ACL)lotus, parent);
