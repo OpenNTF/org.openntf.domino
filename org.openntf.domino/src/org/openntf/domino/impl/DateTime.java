@@ -57,87 +57,87 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		}
 	}
 
-	public void adjustDay(int arg0, boolean arg1) {
+	public void adjustDay(int n, boolean preserveLocalTime) {
 		try {
-			getDelegate().adjustDay(arg0, arg1);
+			getDelegate().adjustDay(n, preserveLocalTime);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
 		}
 	}
 
-	public void adjustDay(int arg0) {
-		adjustDay(arg0, false);
+	public void adjustDay(int n) {
+		adjustDay(n, false);
 	}
 
-	public void adjustHour(int arg0, boolean arg1) {
+	public void adjustHour(int n, boolean preserveLocalTime) {
 		try {
-			getDelegate().adjustHour(arg0, arg1);
+			getDelegate().adjustHour(n, preserveLocalTime);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
 		}
 	}
 
-	public void adjustHour(int arg0) {
-		adjustHour(arg0, false);
+	public void adjustHour(int n) {
+		adjustHour(n, false);
 	}
 
-	public void adjustMinute(int arg0, boolean arg1) {
+	public void adjustMinute(int n, boolean preserveLocalTime) {
 		try {
-			getDelegate().adjustMinute(arg0, arg1);
+			getDelegate().adjustMinute(n, preserveLocalTime);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
 		}
 	}
 
-	public void adjustMinute(int arg0) {
-		adjustMinute(arg0, false);
+	public void adjustMinute(int n) {
+		adjustMinute(n, false);
 	}
 
-	public void adjustMonth(int arg0, boolean arg1) {
+	public void adjustMonth(int n, boolean preserveLocalTime) {
 		try {
-			getDelegate().adjustMonth(arg0, arg1);
+			getDelegate().adjustMonth(n, preserveLocalTime);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
 		}
 	}
 
-	public void adjustMonth(int arg0) {
-		adjustMonth(arg0, false);
+	public void adjustMonth(int n) {
+		adjustMonth(n, false);
 	}
 
-	public void adjustSecond(int arg0, boolean arg1) {
+	public void adjustSecond(int n, boolean preserveLocalTime) {
 		try {
-			getDelegate().adjustSecond(arg0, arg1);
+			getDelegate().adjustSecond(n, preserveLocalTime);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
 		}
 	}
 
-	public void adjustSecond(int arg0) {
-		adjustSecond(arg0, false);
+	public void adjustSecond(int n) {
+		adjustSecond(n, false);
 	}
 
-	public void adjustYear(int arg0, boolean arg1) {
+	public void adjustYear(int n, boolean preserveLocalTime) {
 		try {
-			getDelegate().adjustYear(arg0, arg1);
+			getDelegate().adjustYear(n, preserveLocalTime);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
 		}
 	}
 
-	public void adjustYear(int arg0) {
-		adjustYear(arg0, false);
+	public void adjustYear(int n) {
+		adjustYear(n, false);
 	}
 
-	public void convertToZone(int arg0, boolean arg1) {
+	public void convertToZone(int zone, boolean isDST) {
 		try {
-			getDelegate().convertToZone(arg0, arg1);
+			getDelegate().convertToZone(zone, isDST);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -224,54 +224,54 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		}
 	}
 
-	public void setLocalDate(int arg0, int arg1, int arg2, boolean arg3) {
+	public void setLocalDate(int year, int month, int day, boolean preserveLocalTime) {
 		try {
-			getDelegate().setLocalDate(arg0, arg1, arg2, arg3);
+			getDelegate().setLocalDate(year, month, day, preserveLocalTime);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
 		}
 	}
 
-	public void setLocalDate(int arg0, int arg1, int arg2) {
+	public void setLocalDate(int year, int month, int day) {
 		try {
-			getDelegate().setLocalDate(arg0, arg1, arg2);
+			getDelegate().setLocalDate(year, month, day);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
 		}
 	}
 
-	public void setLocalTime(Calendar arg0) {
+	public void setLocalTime(Calendar calendar) {
 		try {
-			getDelegate().setLocalTime(arg0);
+			getDelegate().setLocalTime(calendar);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
 		}
 	}
 
-	public void setLocalTime(Date arg0) {
+	public void setLocalTime(Date date) {
 		try {
-			getDelegate().setLocalTime(arg0);
+			getDelegate().setLocalTime(date);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
 		}
 	}
 
-	public void setLocalTime(int arg0, int arg1, int arg2, int arg3) {
+	public void setLocalTime(int hour, int minute, int second, int hundredth) {
 		try {
-			getDelegate().setLocalTime(arg0, arg1, arg2, arg3);
+			getDelegate().setLocalTime(hour, minute, second, hundredth);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
 		}
 	}
 
-	public void setLocalTime(String arg0) {
+	public void setLocalTime(String time) {
 		try {
-			getDelegate().setLocalTime(arg0);
+			getDelegate().setLocalTime(time);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -287,9 +287,9 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		}
 	}
 
-	public int timeDifference(lotus.domino.DateTime arg0) {
+	public int timeDifference(lotus.domino.DateTime dt) {
 		try {
-			return getDelegate().timeDifference(arg0);
+			return getDelegate().timeDifference(dt);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return 0;
@@ -297,9 +297,9 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		}
 	}
 
-	public double timeDifferenceDouble(lotus.domino.DateTime arg0) {
+	public double timeDifferenceDouble(lotus.domino.DateTime dt) {
 		try {
-			return getDelegate().timeDifferenceDouble(arg0);
+			return getDelegate().timeDifferenceDouble(dt);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return 0d;
