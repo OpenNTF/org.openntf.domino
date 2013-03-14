@@ -42,6 +42,7 @@ public enum ScratchTest {
 				// System.out.println("Form : " + form.getName() + " (" + DominoUtils.getUnidFromNotesUrl(form.getNotesURL()) + ")");
 				Document d = form.getDocument();
 				Vector v = d.getItemValue("$UpdatedBy");
+
 				Name n = s.createName((String) v.get(0));
 				nameCount++;
 				docCount++;
