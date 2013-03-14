@@ -22,7 +22,7 @@ public interface NotesProperty extends Base<lotus.domino.NotesProperty>, lotus.d
 	public String getTypeName();
 
 	@Override
-	public Vector getValues();
+	public Vector<Object> getValues();
 
 	@Override
 	public String getValueString();
