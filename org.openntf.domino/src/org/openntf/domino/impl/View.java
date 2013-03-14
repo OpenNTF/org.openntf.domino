@@ -619,11 +619,10 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getColumnValues(int column) {
+	public Vector<Object> getColumnValues(int column) {
 		try {
-			return getDelegate().getColumnValues(column);
+			return Factory.wrapColumnValues(getDelegate().getColumnValues(column));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

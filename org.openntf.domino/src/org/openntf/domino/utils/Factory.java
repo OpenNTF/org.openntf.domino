@@ -144,6 +144,22 @@ public enum Factory {
 		return result;
 
 	}
+	
+	public static java.util.Vector<Object> wrapColumnValues(Collection<?> values) {
+		java.util.Vector<Object> result = new org.openntf.domino.impl.Vector<Object>();
+		for(Object value : values) {
+			if(value instanceof lotus.domino.DateTime) {
+				result.add(fromLotus((lotus.domino.DateTime)value, org.openntf.domino.impl.DateTime.class, getSession()));
+			} else if(value instanceof lotus.domino.DateRange) {
+				result.add(fromLotus((lotus.domino.DateRange)value, org.openntf.domino.impl.DateRange.class, getSession()));
+			} else if(value instanceof Collection) {
+				result.add(wrapColumnValues((Collection<?>)value));
+			} else {
+				result.add(value);
+			}
+		}
+		return result;
+	}
 
 	public static org.openntf.domino.Session getSession() {
 		try {

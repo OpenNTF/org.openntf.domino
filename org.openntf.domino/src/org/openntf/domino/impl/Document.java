@@ -42,9 +42,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public lotus.domino.Item appendItemValue(String name) {
+	public Item appendItemValue(String name) {
 		try {
-			return getDelegate().appendItemValue(name);
+			return Factory.fromLotus(getDelegate().appendItemValue(name), Item.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -52,9 +52,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public lotus.domino.Item appendItemValue(String name, double value) {
+	public Item appendItemValue(String name, double value) {
 		try {
-			return getDelegate().appendItemValue(name, value);
+			return Factory.fromLotus(getDelegate().appendItemValue(name, value), Item.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -62,9 +62,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public lotus.domino.Item appendItemValue(String name, int value) {
+	public Item appendItemValue(String name, int value) {
 		try {
-			return getDelegate().appendItemValue(name, value);
+			return Factory.fromLotus(getDelegate().appendItemValue(name, value), Item.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -72,10 +72,14 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	// TODO Account for DateTime
-	public lotus.domino.Item appendItemValue(String name, Object value) {
+	public Item appendItemValue(String name, Object value) {
 		try {
-			return getDelegate().appendItemValue(name, value);
+			if (value instanceof org.openntf.domino.DateTime) {
+				value = toLotus((org.openntf.domino.DateTime) value);
+			} else if (value instanceof org.openntf.domino.DateRange) {
+				value = toLotus((org.openntf.domino.DateRange) value);
+			}
+			return Factory.fromLotus(getDelegate().appendItemValue(name, value), Item.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -85,7 +89,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void attachVCard(lotus.domino.Base document) {
 		try {
-			getDelegate().attachVCard(document);
+			getDelegate().attachVCard(toLotus(document));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -94,7 +98,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void attachVCard(lotus.domino.Base document, String charset) {
 		try {
-			getDelegate().attachVCard(document, charset);
+			getDelegate().attachVCard(toLotus(document), charset);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -177,9 +181,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public lotus.domino.Item copyItem(lotus.domino.Item item) {
+	public Item copyItem(lotus.domino.Item item) {
 		try {
-			return getDelegate().copyItem((lotus.domino.Item) toLotus(item));
+			return Factory.fromLotus(getDelegate().copyItem((lotus.domino.Item) toLotus(item)), Item.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -187,9 +191,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public lotus.domino.Item copyItem(lotus.domino.Item item, String newName) {
+	public Item copyItem(lotus.domino.Item item, String newName) {
 		try {
-			return getDelegate().copyItem((lotus.domino.Item) toLotus(item), newName);
+			return Factory.fromLotus(getDelegate().copyItem((lotus.domino.Item) toLotus(item), newName), Item.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -307,15 +311,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public Vector<Object> getColumnValues() {
 		try {
-			Vector<Object> result = new Vector<Object>();
-			for (Object value : getDelegate().getColumnValues()) {
-				if (value instanceof lotus.domino.DateTime) {
-					result.add(Factory.fromLotus((lotus.domino.DateTime) value, DateTime.class, this));
-				} else {
-					result.add(value);
-				}
-			}
-			return result;
+			return Factory.wrapColumnValues(getDelegate().getColumnValues());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -380,9 +376,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public lotus.domino.Item getFirstItem(String name) {
+	public Item getFirstItem(String name) {
 		try {
-			return getDelegate().getFirstItem(name);
+			return Factory.fromLotus(getDelegate().getFirstItem(name), Item.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -438,11 +434,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return initiallyModified_;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getItemValue(String name) {
+	public Vector<Object> getItemValue(String name) {
 		try {
-			return getDelegate().getItemValue(name);
+			return Factory.wrapColumnValues(getDelegate().getItemValue(name));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -481,9 +476,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getItemValueDateTimeArray(String name) {
+	public Vector<org.openntf.domino.DateTime> getItemValueDateTimeArray(String name) {
 		try {
-			return getDelegate().getItemValueDateTimeArray(name);
+			return Factory.fromLotusAsVector(getDelegate().getItemValueDateTimeArray(name), org.openntf.domino.DateTime.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -522,9 +517,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getItems() {
+	public Vector<org.openntf.domino.Item> getItems() {
 		try {
-			return getDelegate().getItems();
+			return Factory.fromLotusAsVector(getDelegate().getItems(), org.openntf.domino.Item.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1123,14 +1118,16 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public lotus.domino.Item replaceItemValue(String itemName, Object value) {
+	// TODO make this properly handle vectors of random stuff
+	public Item replaceItemValue(String itemName, Object value) {
 		try {
+			lotus.domino.Item result = null;
 			if (value instanceof lotus.domino.DateTime) {
-				return getDelegate().replaceItemValue(itemName, (lotus.domino.DateTime) toLotus((lotus.domino.DateTime) value));
+				result = getDelegate().replaceItemValue(itemName, (lotus.domino.DateTime) toLotus((lotus.domino.DateTime) value));
 			} else if (value instanceof lotus.domino.DateRange) {
-				return getDelegate().replaceItemValue(itemName, (lotus.domino.DateRange) toLotus((lotus.domino.DateRange) value));
+				result = getDelegate().replaceItemValue(itemName, (lotus.domino.DateRange) toLotus((lotus.domino.DateRange) value));
 			} else if (value instanceof Number && !(value instanceof Integer || value instanceof Double)) {
-				return getDelegate().replaceItemValue(itemName, ((Number) value).intValue());
+				result = getDelegate().replaceItemValue(itemName, ((Number) value).intValue());
 				// } else if (value instanceof Date) {
 				// // TODO: make sure this use of DateTime isn't a bug when Session and createDateTime are extended
 				// lotus.domino.DateTime dt = DominoUtils.getSession(this).createDateTime((Date) value);
@@ -1149,11 +1146,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				// // TODO: implement this - saveState will likely have to store the class name as a header, to be read by restoreState
 				// } else if (value instanceof Serializable) {
 				// DominoUtils.saveState((Serializable) value, this, name);
+			} else {
+				result = getDelegate().replaceItemValue(itemName, value);
 			}
 			// TODO: also cover StateHolder? That could probably be done with reflection without actually requiring the XSP classes to
 			// build
 
-			return getDelegate().replaceItemValue(itemName, value);
+			return Factory.fromLotus(result, Item.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} catch (Throwable t) {
@@ -1163,9 +1162,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public lotus.domino.Item replaceItemValueCustomData(String itemName, Object userObj) throws IOException {
+	public Item replaceItemValueCustomData(String itemName, Object userObj) throws IOException {
 		try {
-			return getDelegate().replaceItemValueCustomData(itemName, userObj);
+			return Factory.fromLotus(getDelegate().replaceItemValueCustomData(itemName, userObj), Item.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1173,9 +1172,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public lotus.domino.Item replaceItemValueCustomData(String itemname, String dataTypeName, Object userObj) throws IOException {
+	public Item replaceItemValueCustomData(String itemname, String dataTypeName, Object userObj) throws IOException {
 		try {
-			return getDelegate().replaceItemValueCustomData(itemname, dataTypeName, userObj);
+			return Factory.fromLotus(getDelegate().replaceItemValueCustomData(itemname, dataTypeName, userObj), Item.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1183,9 +1182,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public lotus.domino.Item replaceItemValueCustomDataBytes(String itemname, String dataTypeName, byte[] byteArray) throws IOException {
+	public Item replaceItemValueCustomDataBytes(String itemname, String dataTypeName, byte[] byteArray) throws IOException {
 		try {
-			return getDelegate().replaceItemValueCustomDataBytes(itemname, dataTypeName, byteArray);
+			return Factory.fromLotus(getDelegate().replaceItemValueCustomDataBytes(itemname, dataTypeName, byteArray), Item.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

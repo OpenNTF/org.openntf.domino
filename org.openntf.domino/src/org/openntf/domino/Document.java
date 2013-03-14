@@ -6,20 +6,16 @@ import java.util.Vector;
 
 public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document {
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Item appendItemValue(String name);
+	public Item appendItemValue(String name);
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Item appendItemValue(String name, double value);
+	public Item appendItemValue(String name, double value);
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Item appendItemValue(String name, int value);
+	public Item appendItemValue(String name, int value);
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Item appendItemValue(String name, Object value);
+	public Item appendItemValue(String name, Object value);
 
 	@Override
 	public void attachVCard(lotus.domino.Base document);
@@ -53,12 +49,10 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public void copyAllItems(lotus.domino.Document doc, boolean replace);
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Item copyItem(lotus.domino.Item item);
+	public Item copyItem(lotus.domino.Item item);
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Item copyItem(lotus.domino.Item item, String newName);
+	public Item copyItem(lotus.domino.Item item, String newName);
 
 	@Override
 	public Document copyToDatabase(lotus.domino.Database db);
@@ -109,8 +103,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public Vector<String> getEncryptionKeys();
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Item getFirstItem(String name);
+	public Item getFirstItem(String name);
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -327,20 +320,16 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public boolean renderToRTItem(lotus.domino.RichTextItem rtitem);
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Item replaceItemValue(String itemName, Object value);
+	public Item replaceItemValue(String itemName, Object value);
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Item replaceItemValueCustomData(String itemName, Object userObj) throws IOException;
+	public Item replaceItemValueCustomData(String itemName, Object userObj) throws IOException;
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Item replaceItemValueCustomData(String itemName, String dataTypeName, Object userObj) throws IOException;
+	public Item replaceItemValueCustomData(String itemName, String dataTypeName, Object userObj) throws IOException;
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Item replaceItemValueCustomDataBytes(String itemName, String dataTypeName, byte[] byteArray) throws IOException;
+	public Item replaceItemValueCustomDataBytes(String itemName, String dataTypeName, byte[] byteArray) throws IOException;
 
 	@Override
 	public boolean save();
