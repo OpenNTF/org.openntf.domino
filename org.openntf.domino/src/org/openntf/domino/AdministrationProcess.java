@@ -121,10 +121,10 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 			Vector newClusterReplicas, boolean deleteOldClusterReplicas);
 
 	@Override
-	public String moveReplica(String sourceServer, String sourceDBFile, String destServer);
+	public String moveReplica(String sourceServer, String sourceDbFile, String destServer);
 
 	@Override
-	public String moveReplica(String sourceServer, String sourceDBFile, String destServer, String destDBFile, boolean copyACL,
+	public String moveReplica(String sourceServer, String sourceDbFile, String destServer, String destDbFile, boolean copyACL,
 			boolean createFTIndex);
 
 	@Override

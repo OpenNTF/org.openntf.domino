@@ -30,29 +30,30 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	@Override
 	public void attachVCard(lotus.domino.Base document);
 
+	// TODO Check what this method does (String param isn't documented!), probably setting the charset.
 	@Override
-	public void attachVCard(lotus.domino.Base document, String arg1);
+	public void attachVCard(lotus.domino.Base document, String charset);
 
 	@Override
 	public boolean closeMIMEEntities();
 
 	@Override
-	public boolean closeMIMEEntities(boolean savechanges);
+	public boolean closeMIMEEntities(boolean saveChanges);
 
 	@Override
-	public boolean closeMIMEEntities(boolean savechanges, String entityitemname);
+	public boolean closeMIMEEntities(boolean saveChanges, String entityItemName);
 
 	@Override
-	public boolean computeWithForm(boolean dodatatypes, boolean raiseerror);
+	public boolean computeWithForm(boolean doDataTypes, boolean raiseError);
 
 	@Override
 	public void convertToMIME();
 
 	@Override
-	public void convertToMIME(int conversiontype);
+	public void convertToMIME(int conversionType);
 
 	@Override
-	public void convertToMIME(int conversiontype, int options);
+	public void convertToMIME(int conversionType, int options);
 
 	@Override
 	public void copyAllItems(lotus.domino.Document doc, boolean replace);
@@ -63,7 +64,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 
 	@Override
 	// TODO Switch to new class
-	public lotus.domino.Item copyItem(lotus.domino.Item item, String newname);
+	public lotus.domino.Item copyItem(lotus.domino.Item item, String newName);
 
 	@Override
 	public Document copyToDatabase(lotus.domino.Database db);
@@ -77,7 +78,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public lotus.domino.MIMEEntity createMIMEEntity(String itemName);
 
 	@Override
-	public Document createReplyMessage(boolean toall);
+	public Document createReplyMessage(boolean toAll);
 
 	@Override
 	// TODO Switch to new class
@@ -97,7 +98,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 
 	@Override
 	// TODO Switch to new class
-	public lotus.domino.EmbeddedObject getAttachment(String filename);
+	public lotus.domino.EmbeddedObject getAttachment(String fileName);
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -141,13 +142,13 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public Vector getItemValue(String name);
 
 	@Override
-	public Object getItemValueCustomData(String itemname) throws IOException, ClassNotFoundException, NotesException;
+	public Object getItemValueCustomData(String itemName) throws IOException, ClassNotFoundException, NotesException;
 
 	@Override
-	public Object getItemValueCustomData(String itemname, String datatypename) throws IOException, ClassNotFoundException, NotesException;
+	public Object getItemValueCustomData(String itemName, String dataTypeName) throws IOException, ClassNotFoundException, NotesException;
 
 	@Override
-	public byte[] getItemValueCustomDataBytes(String itemname, String datatypename) throws IOException, NotesException;
+	public byte[] getItemValueCustomDataBytes(String itemName, String dataTypeName) throws IOException, NotesException;
 
 	@Override
 	public Vector<DateTime> getItemValueDateTimeArray(String name);
@@ -203,7 +204,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public boolean getRead();
 
 	@Override
-	public boolean getRead(String username);
+	public boolean getRead(String userName);
 
 	@Override
 	public Vector<String> getReceivedItemText();
@@ -272,13 +273,13 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public boolean lock();
 
 	@Override
-	public boolean lock(boolean provisionalok);
+	public boolean lock(boolean provisionalOk);
 
 	@Override
 	public boolean lock(String name);
 
 	@Override
-	public boolean lock(String name, boolean provisionalok);
+	public boolean lock(String name, boolean provisionalOk);
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -286,7 +287,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean lock(Vector names, boolean provisionalok);
+	public boolean lock(Vector names, boolean provisionalOk);
 
 	@Override
 	public boolean lockProvisional();
@@ -305,26 +306,26 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public void markRead();
 
 	@Override
-	public void markRead(String username);
+	public void markRead(String userName);
 
 	@Override
 	public void markUnread();
 
 	@Override
-	public void markUnread(String username);
+	public void markUnread(String userName);
 
 	@Override
 	public void putInFolder(String name);
 
 	@Override
-	public void putInFolder(String name, boolean createonfail);
+	public void putInFolder(String name, boolean createOnFail);
 
 	@Override
 	public void recycle();
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void recycle(Vector arg0) throws NotesException;
+	public void recycle(Vector obj) throws NotesException;
 
 	@Override
 	public boolean remove(boolean force);
@@ -343,20 +344,20 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 
 	@Override
 	// TODO Switch to new class
-	public lotus.domino.Item replaceItemValue(String name, Object arg1);
+	public lotus.domino.Item replaceItemValue(String name, Object value);
 
 	@Override
 	// TODO Switch to new class
-	public lotus.domino.Item replaceItemValueCustomData(String name, Object userobj) throws IOException, NotesException;
+	public lotus.domino.Item replaceItemValueCustomData(String name, Object userObj) throws IOException, NotesException;
 
 	@Override
 	// TODO Switch to new class
-	public lotus.domino.Item replaceItemValueCustomData(String name, String datatypename, Object userobj) throws IOException,
+	public lotus.domino.Item replaceItemValueCustomData(String name, String dataTypeName, Object userObj) throws IOException,
 			NotesException;
 
 	@Override
 	// TODO Switch to new class
-	public lotus.domino.Item replaceItemValueCustomDataBytes(String name, String datatypename, byte[] bytearray) throws IOException,
+	public lotus.domino.Item replaceItemValueCustomDataBytes(String name, String dataTypeName, byte[] byteArray) throws IOException,
 			NotesException;
 
 	@Override
@@ -366,23 +367,23 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public boolean save(boolean force);
 
 	@Override
-	public boolean save(boolean force, boolean makeresponse);
+	public boolean save(boolean force, boolean makeResponse);
 
 	@Override
-	public boolean save(boolean force, boolean makeresponse, boolean markread);
+	public boolean save(boolean force, boolean makeResponse, boolean markRead);
 
 	@Override
 	public void send();
 
 	@Override
-	public void send(boolean attachform);
+	public void send(boolean attachForm);
 
 	@Override
-	public void send(boolean attachform, String recipient);
+	public void send(boolean attachForm, String recipient);
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void send(boolean attachform, Vector recipients);
+	public void send(boolean attachForm, Vector recipients);
 
 	@Override
 	public void send(String recipient);

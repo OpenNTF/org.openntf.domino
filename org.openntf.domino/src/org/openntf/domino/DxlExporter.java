@@ -11,7 +11,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	public String exportDxl(lotus.domino.Document doc);
 
 	@Override
-	public String exportDxl(lotus.domino.Database database);
+	public String exportDxl(lotus.domino.Database db);
 
 	@Override
 	public String exportDxl(DocumentCollection docs);

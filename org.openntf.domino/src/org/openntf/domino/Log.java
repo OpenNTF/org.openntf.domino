@@ -49,7 +49,7 @@ public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log {
 	public void openMailLog(Vector recipients, String subject);
 
 	@Override
-	public void openNotesLog(String server, String database);
+	public void openNotesLog(String server, String db);
 
 	@Override
 	public void setLogActions(boolean flag);

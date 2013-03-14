@@ -3,10 +3,10 @@ package org.openntf.domino;
 public interface Newsletter extends Base<lotus.domino.Newsletter>, lotus.domino.Newsletter {
 
 	@Override
-	public Document formatDocument(lotus.domino.Database database, int index);
+	public Document formatDocument(lotus.domino.Database db, int index);
 
 	@Override
-	public Document formatMsgWithDoclinks(lotus.domino.Database database);
+	public Document formatMsgWithDoclinks(lotus.domino.Database db);
 
 	@Override
 	public Session getParent();

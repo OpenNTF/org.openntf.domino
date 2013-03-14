@@ -36,14 +36,14 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 
 	@Override
 	@Deprecated
-	@Legacy( { Legacy.INTERFACES_WARNING })
+	@Legacy({ Legacy.INTERFACES_WARNING })
 	public Vector<Database> getAddressBooks();
 
 	public Collection<Database> getAddressBookCollection();
 
 	@Override
 	@Deprecated
-	@Legacy( { Legacy.INTERFACES_WARNING })
+	@Legacy({ Legacy.INTERFACES_WARNING })
 	public Vector<DateRange> freeTimeSearch(lotus.domino.DateRange window, int duration, Object names, boolean firstFit);
 
 	public Collection<DateRange> freeTimeSearch(org.openntf.domino.DateRange window, int duration, String names, boolean firstFit);
@@ -53,7 +53,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 
 	@Override
 	@Deprecated
-	@Legacy( { Legacy.INTERFACES_WARNING })
+	@Legacy({ Legacy.INTERFACES_WARNING })
 	public Vector<Name> getUserGroupNameList(); // TODO should we use a Vector of names? Or allow someone to request it as String-only so
 
 	// there's no recycle burden?
@@ -62,7 +62,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 
 	@Override
 	@Deprecated
-	@Legacy( { Legacy.INTERFACES_WARNING })
+	@Legacy({ Legacy.INTERFACES_WARNING })
 	public Vector<Name> getUserNameList(); // TODO should we use a Vector of names? Or allow someone to request it as String-only so there's
 
 	// no recycle burden?
@@ -157,16 +157,16 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	public String getEffectiveUserName();
 
 	@Override
-	public String getEnvironmentString(String vname);
+	public String getEnvironmentString(String name);
 
 	@Override
-	public String getEnvironmentString(String vname, boolean isSystem);
+	public String getEnvironmentString(String name, boolean isSystem);
 
 	@Override
-	public Object getEnvironmentValue(String vname);
+	public Object getEnvironmentValue(String name);
 
 	@Override
-	public Object getEnvironmentValue(String vname, boolean isSystem);
+	public Object getEnvironmentValue(String name, boolean isSystem);
 
 	@Override
 	public String getHttpURL();
@@ -259,10 +259,10 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	public void setConvertMIME(boolean flag);
 
 	@Override
-	public void setEnvironmentVar(String vname, Object value);
+	public void setEnvironmentVar(String name, Object value);
 
 	@Override
-	public void setEnvironmentVar(String vname, Object value, boolean isSystem);
+	public void setEnvironmentVar(String name, Object value, boolean isSystem);
 
 	@Override
 	public void setTrackMillisecInJavaDates(boolean flag);

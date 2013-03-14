@@ -730,7 +730,6 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
-
 		}
 	}
 
