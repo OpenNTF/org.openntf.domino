@@ -6,7 +6,7 @@ import java.util.logging.LogRecord;
 public class OpenLogHandler extends Handler {
 
 	public OpenLogHandler() {
-		// TODO Auto-generated constructor stub
+
 	}
 
 	@Override
