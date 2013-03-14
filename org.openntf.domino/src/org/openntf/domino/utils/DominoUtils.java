@@ -17,6 +17,8 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -27,6 +29,8 @@ import org.openntf.domino.exceptions.InvalidNotesUrlException;
 
 public enum DominoUtils {
 	;
+	private final static Logger log_ = Logger.getLogger("org.openntf.domino");
+
 	public static String checksum(byte[] bytes, String alg) {
 		String hashed = "";
 		byte[] defaultBytes = bytes;
@@ -67,13 +71,13 @@ public enum DominoUtils {
 	}
 
 	public static Throwable handleException(Throwable t) {
-		// TODO implement standard logging approaches
-		boolean someMeansOfControllingThrows = true;
-		if (someMeansOfControllingThrows) {
-			throw new RuntimeException(t);
-		} else {
-			return t; // we already handled it, but maybe somebody wants to do something....
+		try {
+			log_.log(Level.WARNING, "", t);
+			return null;
+		} catch (Throwable e) {
+			return t;
 		}
+
 	}
 
 	public static String getUnidFromNotesUrl(String notesurl) {
@@ -285,6 +289,13 @@ public enum DominoUtils {
 		session.setConvertMime(convertMime);
 	}
 
+	/**
+	 * @param propertyName
+	 *            String property to retrieve from notes.ini
+	 * @param defaultValue
+	 *            String default to use if property is not found
+	 * @return String return value from the notes.ini
+	 */
 	public static String getDominoIniVar(String propertyName, String defaultValue) {
 		String newVal = Factory.getSession().getEnvironmentString(propertyName, true);
 		if (!"".equals(newVal)) {
@@ -294,6 +305,18 @@ public enum DominoUtils {
 		}
 	}
 
+	/**
+	 * Gets properties file and returns as an InputStream
+	 * 
+	 * @param fileType
+	 *            int passed to switch statement. <br/>
+	 *            1 -> name of a properties file in this package<br/>
+	 *            2 -> literal path of a properties file<br/>
+	 *            3 -> relative path of a properties file, relative to Domino <data> directory
+	 * @param fileLoc
+	 *            String filepath location of properties file
+	 * @return InputStream (or BufferedInputStream) of properties file content
+	 */
 	public static InputStream getDominoProps(int fileType, String fileLoc) {
 		InputStream returnStream = null;
 		InputStream is;
