@@ -2,9 +2,6 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
-import lotus.domino.ACL;
-import lotus.domino.Name;
-
 public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLEntry {
 
 	@Override
@@ -25,7 +22,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 	public ACL getParent();
 
 	@Override
-	public Vector getRoles();
+	public Vector<String> getRoles();
 
 	@Override
 	public int getUserType();

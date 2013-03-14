@@ -160,6 +160,15 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		return count;
 	}
 
+	// Convert a wrapper object to its delegate form
+	@SuppressWarnings("unchecked")
+	public static lotus.domino.Base toLotus(lotus.domino.Base baseObj) {
+		if (baseObj instanceof org.openntf.domino.Base) {
+			return ((Base) baseObj).getDelegate();
+		}
+		return baseObj;
+	}
+
 	public static boolean recycle(lotus.domino.local.NotesBase base) {
 		boolean result = false;
 

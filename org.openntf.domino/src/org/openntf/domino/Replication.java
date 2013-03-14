@@ -2,9 +2,6 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
-import lotus.domino.DateTime;
-import lotus.domino.ReplicationEntry;
-
 public interface Replication extends Base<lotus.domino.Replication>, lotus.domino.Replication {
 
 	@Override
@@ -20,7 +17,7 @@ public interface Replication extends Base<lotus.domino.Replication>, lotus.domin
 	public boolean getDontSendLocalSecurityUpdates();
 
 	@Override
-	public Vector<lotus.domino.ReplicationEntry> getEntries();
+	public Vector<ReplicationEntry> getEntries();
 
 	@Override
 	public ReplicationEntry getEntry(String source, String destination);

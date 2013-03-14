@@ -141,7 +141,8 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public DocumentCollection unprocessedSearch(String formula, lotus.domino.DateTime limit, int maxDocs) {
 		try {
-			return Factory.fromLotus(getDelegate().unprocessedSearch(formula, limit, maxDocs), DocumentCollection.class, this);
+			return Factory.fromLotus(getDelegate().unprocessedSearch(formula, (DateTime) toLotus(limit), maxDocs),
+					DocumentCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

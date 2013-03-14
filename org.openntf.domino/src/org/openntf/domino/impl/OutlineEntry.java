@@ -1,22 +1,21 @@
 package org.openntf.domino.impl;
 
-import java.util.Vector;
-
 import lotus.domino.NotesException;
 
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
-public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> implements org.openntf.domino.Agent {
+public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.domino.OutlineEntry> implements
+		org.openntf.domino.OutlineEntry {
 
-	protected Agent(lotus.domino.Agent delegate, org.openntf.domino.Base<?> parent) {
-		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
+	public OutlineEntry(lotus.domino.OutlineEntry delegate, org.openntf.domino.Base<?> parent) {
+		super(delegate, parent);
 	}
 
 	@Override
-	public String getComment() {
+	public String getAlias() {
 		try {
-			return getDelegate().getComment();
+			return getDelegate().getAlias();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -24,9 +23,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	}
 
 	@Override
-	public String getCommonOwner() {
+	public Database getDatabase() {
 		try {
-			return getDelegate().getCommonOwner();
+			return Factory.fromLotus(getDelegate().getDatabase(), Database.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -34,9 +33,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	}
 
 	@Override
-	public String getHttpURL() {
+	public Document getDocument() {
 		try {
-			return getDelegate().getHttpURL();
+			return Factory.fromLotus(getDelegate().getDocument(), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -44,105 +43,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	}
 
 	@Override
-	public DateTime getLastRun() {
+	public int getEntryClass() {
 		try {
-			return Factory.fromLotus(getDelegate().getLastRun(), DateTime.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Vector<String> getLockHolders() {
-		try {
-			return getDelegate().getLockHolders();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
-	}
-
-	@Override
-	public String getName() {
-		try {
-			return getDelegate().getName();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
-	}
-
-	@Override
-	public String getNotesURL() {
-		try {
-			return getDelegate().getNotesURL();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
-	}
-
-	@Override
-	public String getOnBehalfOf() {
-		try {
-			return getDelegate().getOnBehalfOf();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
-	}
-
-	@Override
-	public String getOwner() {
-		try {
-			return getDelegate().getOwner();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
-	}
-
-	@Override
-	public String getParameterDocID() {
-		try {
-			return getDelegate().getParameterDocID();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
-	}
-
-	@Override
-	public Database getParent() {
-		return (Database) super.getParent();
-	}
-
-	@Override
-	public String getQuery() {
-		try {
-			return getDelegate().getQuery();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
-	}
-
-	@Override
-	public String getServerName() {
-		try {
-			return getDelegate().getServerName();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
-	}
-
-	@Override
-	public int getTarget() {
-		try {
-			return getDelegate().getTarget();
+			return getDelegate().getEntryClass();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return 0;
@@ -150,9 +53,99 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	}
 
 	@Override
-	public int getTrigger() {
+	public String getFormula() {
 		try {
-			return getDelegate().getTrigger();
+			return getDelegate().getFormula();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@Override
+	public String getFrameText() {
+		try {
+			return getDelegate().getFrameText();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@Override
+	public String getHideFormula() {
+		try {
+			return getDelegate().getHideFormula();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@Override
+	public String getImagesText() {
+		try {
+			return getDelegate().getImagesText();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@Override
+	public boolean getKeepSelectionFocus() {
+		try {
+			return getDelegate().getKeepSelectionFocus();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
+	}
+
+	@Override
+	public String getLabel() {
+		try {
+			return getDelegate().getLabel();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@Override
+	public int getLevel() {
+		try {
+			return getDelegate().getLevel();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return 0;
+		}
+	}
+
+	@Override
+	public String getNamedElement() {
+		try {
+			return getDelegate().getNamedElement();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@Override
+	public Outline getParent() {
+		try {
+			return Factory.fromLotus(getDelegate().getParent(), Outline.class, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@Override
+	public int getType() {
+		try {
+			return getDelegate().getType();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return 0;
@@ -170,9 +163,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	}
 
 	@Override
-	public boolean isActivatable() {
+	public boolean getUseHideFormula() {
 		try {
-			return getDelegate().isActivatable();
+			return getDelegate().getUseHideFormula();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -180,9 +173,19 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	}
 
 	@Override
-	public boolean isEnabled() {
+	public View getView() {
 		try {
-			return getDelegate().isEnabled();
+			return Factory.fromLotus(getDelegate().getView(), View.class, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@Override
+	public boolean hasChildren() {
+		try {
+			return getDelegate().hasChildren();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -190,9 +193,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	}
 
 	@Override
-	public boolean isNotesAgent() {
+	public boolean isHidden() {
 		try {
-			return getDelegate().isNotesAgent();
+			return getDelegate().isHidden();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -200,9 +203,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	}
 
 	@Override
-	public boolean isProhibitDesignUpdate() {
+	public boolean isHiddenFromNotes() {
 		try {
-			return getDelegate().isProhibitDesignUpdate();
+			return getDelegate().isHiddenFromNotes();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -210,9 +213,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	}
 
 	@Override
-	public boolean isPublic() {
+	public boolean isHiddenFromWeb() {
 		try {
-			return getDelegate().isPublic();
+			return getDelegate().isHiddenFromWeb();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -220,9 +223,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	}
 
 	@Override
-	public boolean isWebAgent() {
+	public boolean isInThisDB() {
 		try {
-			return getDelegate().isWebAgent();
+			return getDelegate().isInThisDB();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -230,9 +233,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	}
 
 	@Override
-	public boolean lock() {
+	public boolean isPrivate() {
 		try {
-			return getDelegate().lock();
+			return getDelegate().isPrivate();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -240,9 +243,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	}
 
 	@Override
-	public boolean lock(boolean provisionalOk) {
+	public boolean setAction(String action) {
 		try {
-			return getDelegate().lock(provisionalOk);
+			return getDelegate().setAction(action);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -250,9 +253,90 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	}
 
 	@Override
-	public boolean lock(String name) {
+	public void setAlias(String alias) {
 		try {
-			return getDelegate().lock(name);
+			getDelegate().setAlias(alias);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void setFrameText(String frameText) {
+		try {
+			getDelegate().setFrameText(frameText);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void setHidden(boolean flag) {
+		try {
+			getDelegate().setHidden(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void setHiddenFromNotes(boolean flag) {
+		try {
+			getDelegate().setHiddenFromNotes(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void setHiddenFromWeb(boolean flag) {
+		try {
+			getDelegate().setHiddenFromWeb(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void setHideFormula(String formula) {
+		try {
+			getDelegate().setHideFormula(formula);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void setImagesText(String imagesText) {
+		try {
+			getDelegate().setImagesText(imagesText);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void setKeepSelectionFocus(boolean flag) {
+		try {
+			getDelegate().setKeepSelectionFocus(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void setLabel(String label) {
+		try {
+			getDelegate().setLabel(label);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public boolean setNamedElement(lotus.domino.Database db, String elementName, int entryClass) {
+		try {
+			return getDelegate().setNamedElement((lotus.domino.Database) toLotus(db), elementName, entryClass);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -260,31 +344,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	}
 
 	@Override
-	public boolean lock(String name, boolean provisionalOk) {
+	public boolean setNoteLink(lotus.domino.Database db) {
 		try {
-			return getDelegate().lock(name, provisionalOk);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return false;
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public boolean lock(Vector names) {
-		try {
-			return getDelegate().lock(names);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return false;
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public boolean lock(Vector names, boolean provisionalOk) {
-		try {
-			return getDelegate().lock(names, provisionalOk);
+			return getDelegate().setNoteLink((lotus.domino.Database) toLotus(db));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -292,9 +354,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	}
 
 	@Override
-	public boolean lockProvisional() {
+	public boolean setNoteLink(lotus.domino.Document doc) {
 		try {
-			return getDelegate().lockProvisional();
+			return getDelegate().setNoteLink((lotus.domino.Document) toLotus(doc));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -302,20 +364,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	}
 
 	@Override
-	public boolean lockProvisional(String name) {
+	public boolean setNoteLink(lotus.domino.View view) {
 		try {
-			return getDelegate().lockProvisional(name);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return false;
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public boolean lockProvisional(Vector names) {
-		try {
-			return getDelegate().lockProvisional(names);
+			return getDelegate().setNoteLink((lotus.domino.View) toLotus(view));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -323,113 +374,21 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	}
 
 	@Override
-	public void remove() {
+	public boolean setURL(String url) {
 		try {
-			getDelegate().remove();
+			return getDelegate().setURL(url);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+			return false;
 		}
 	}
 
 	@Override
-	public void run() {
+	public void setUseHideFormula(boolean flag) {
 		try {
-			getDelegate().run();
+			getDelegate().setUseHideFormula(flag);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 	}
-
-	@Override
-	public void run(String noteid) {
-		try {
-			getDelegate().run(noteid);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-	}
-
-	@Override
-	public int runOnServer() {
-		try {
-			return getDelegate().runOnServer();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return 0;
-		}
-	}
-
-	@Override
-	public int runOnServer(String noteid) {
-		try {
-			return getDelegate().runOnServer(noteid);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return 0;
-		}
-	}
-
-	@Override
-	public void runWithDocumentContext(lotus.domino.Document doc) {
-		try {
-			getDelegate().runWithDocumentContext((lotus.domino.Document) toLotus(doc));
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-	}
-
-	@Override
-	public void runWithDocumentContext(lotus.domino.Document doc, String noteid) {
-		try {
-			getDelegate().runWithDocumentContext((lotus.domino.Document) toLotus(doc), noteid);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-	}
-
-	@Override
-	public void save() {
-		try {
-			getDelegate().save();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-	}
-
-	@Override
-	public void setEnabled(boolean flag) {
-		try {
-			getDelegate().setEnabled(flag);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-	}
-
-	@Override
-	public void setProhibitDesignUpdate(boolean flag) {
-		try {
-			getDelegate().setProhibitDesignUpdate(flag);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-	}
-
-	@Override
-	public void setServerName(String server) {
-		try {
-			getDelegate().setServerName(server);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-	}
-
-	@Override
-	public void unlock() {
-		try {
-			getDelegate().unlock();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-	}
-
 }

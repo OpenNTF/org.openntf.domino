@@ -38,7 +38,8 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	@Override
 	public String addInternetCertificateToUser(String user, String keyringFile, String keyringPassword, lotus.domino.DateTime expiration) {
 		try {
-			return getDelegate().addInternetCertificateToUser(user, keyringFile, keyringPassword, expiration);
+			return getDelegate().addInternetCertificateToUser(user, keyringFile, keyringPassword,
+					(lotus.domino.DateTime) toLotus(expiration));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -166,9 +167,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String changeHTTPPassword(String username, String oldpassword, String newpassword) {
+	public String changeHTTPPassword(String userName, String oldPassword, String newPassword) {
 		try {
-			return getDelegate().changeHTTPPassword(username, oldpassword, newpassword);
+			return getDelegate().changeHTTPPassword(userName, oldPassword, newPassword);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -176,9 +177,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String configureMailAgent(String username, String agentname) {
+	public String configureMailAgent(String userName, String agentName) {
 		try {
-			return getDelegate().configureMailAgent(username, agentname);
+			return getDelegate().configureMailAgent(userName, agentName);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -186,9 +187,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String configureMailAgent(String username, String agentname, boolean activatable, boolean enable) {
+	public String configureMailAgent(String userName, String agentName, boolean activatable, boolean enable) {
 		try {
-			return getDelegate().configureMailAgent(username, agentname, activatable, enable);
+			return getDelegate().configureMailAgent(userName, agentName, activatable, enable);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -196,9 +197,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String createReplica(String sourceserver, String sourcedbfile, String destserver) {
+	public String createReplica(String sourceServer, String sourceDBFile, String destServer) {
 		try {
-			return getDelegate().createReplica(sourceserver, sourcedbfile, destserver);
+			return getDelegate().createReplica(sourceServer, sourceDBFile, destServer);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -206,10 +207,10 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String createReplica(String sourceserver, String sourcedbfile, String destserver, String destdbfile, boolean copyacl,
-			boolean createftindex) {
+	public String createReplica(String sourceServer, String sourceDBFile, String destServer, String destDBFile, boolean copyACL,
+			boolean createFTIndex) {
 		try {
-			return getDelegate().createReplica(sourceserver, sourcedbfile, destserver, destdbfile, copyacl, createftindex);
+			return getDelegate().createReplica(sourceServer, sourceDBFile, destServer, destDBFile, copyACL, createFTIndex);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -217,9 +218,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String deleteGroup(String groupname, boolean immediate) {
+	public String deleteGroup(String groupName, boolean immediate) {
 		try {
-			return getDelegate().deleteGroup(groupname, immediate);
+			return getDelegate().deleteGroup(groupName, immediate);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -227,9 +228,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String deleteGroup(String groupname, boolean immediate, boolean deletewindowsgroup) {
+	public String deleteGroup(String groupName, boolean immediate, boolean deleteWindowsGroup) {
 		try {
-			return getDelegate().deleteGroup(groupname, immediate, deletewindowsgroup);
+			return getDelegate().deleteGroup(groupName, immediate, deleteWindowsGroup);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -237,9 +238,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String deleteReplicas(String servername, String filename) {
+	public String deleteReplicas(String serverName, String fileName) {
 		try {
-			return getDelegate().deleteReplicas(servername, filename);
+			return getDelegate().deleteReplicas(serverName, fileName);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -247,9 +248,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String deleteServer(String servername, boolean immediate) {
+	public String deleteServer(String serverName, boolean immediate) {
 		try {
-			return getDelegate().deleteServer(servername, immediate);
+			return getDelegate().deleteServer(serverName, immediate);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -257,9 +258,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String deleteUser(String username, boolean immediate, int mailfileaction, String denygroup) {
+	public String deleteUser(String userName, boolean immediate, int mailFileAction, String denyGroup) {
 		try {
-			return getDelegate().deleteUser(username, immediate, mailfileaction, denygroup);
+			return getDelegate().deleteUser(userName, immediate, mailFileAction, denyGroup);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -267,9 +268,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String deleteUser(String username, boolean immediate, int mailfileaction, String denygroup, boolean deletewindowsuser) {
+	public String deleteUser(String username, boolean immediate, int mailFileAction, String denyGroup, boolean deleteWindowsUser) {
 		try {
-			return getDelegate().deleteUser(username, immediate, mailfileaction, denygroup, deletewindowsuser);
+			return getDelegate().deleteUser(username, immediate, mailFileAction, denyGroup, deleteWindowsUser);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -347,8 +348,8 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public org.openntf.domino.Session getParent() {
-		return (org.openntf.domino.Session) super.getParent();
+	public Session getParent() {
+		return (Session) super.getParent();
 	}
 
 	@Override
@@ -372,9 +373,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String moveMailUser(String username, String newhomeserver, String newhomeservermailpath) {
+	public String moveMailUser(String userName, String newHomeServer, String newHomeServerMailPath) {
 		try {
-			return getDelegate().moveMailUser(username, newhomeserver, newhomeservermailpath);
+			return getDelegate().moveMailUser(userName, newHomeServer, newHomeServerMailPath);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -383,11 +384,11 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public String moveMailUser(String username, String newhomeserver, String newhomeservermailpath, boolean usescos,
-			Vector newclusterreplicas, boolean deleteoldclusterreplicas) {
+	public String moveMailUser(String userName, String newHomeServer, String newHomeServerMailPath, boolean useSCOS,
+			Vector newClusterReplicas, boolean deleteOldClusterReplicas) {
 		try {
-			return getDelegate().moveMailUser(username, newhomeserver, newhomeservermailpath, usescos, newclusterreplicas,
-					deleteoldclusterreplicas);
+			return getDelegate().moveMailUser(userName, newHomeServer, newHomeServerMailPath, useSCOS, newClusterReplicas,
+					deleteOldClusterReplicas);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -395,9 +396,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String moveReplica(String sourceserver, String sourcedbfile, String destserver) {
+	public String moveReplica(String sourceServer, String sourceDbFile, String destServer) {
 		try {
-			return getDelegate().moveReplica(sourceserver, sourcedbfile, destserver);
+			return getDelegate().moveReplica(sourceServer, sourceDbFile, destServer);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -405,10 +406,10 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String moveReplica(String sourceserver, String sourcedbfile, String destserver, String destdbfile, boolean copyacl,
-			boolean createftindex) {
+	public String moveReplica(String sourceServer, String sourceDbFile, String destServer, String destDbFile, boolean copyACL,
+			boolean createFTIndex) {
 		try {
-			return getDelegate().moveReplica(sourceserver, sourcedbfile, destserver, destdbfile, copyacl, createftindex);
+			return getDelegate().moveReplica(sourceServer, sourceDbFile, destServer, destDbFile, copyACL, createFTIndex);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -416,9 +417,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String moveRoamingUser(String username, String destserver, String destserverpath) {
+	public String moveRoamingUser(String userName, String destServer, String destServerPath) {
 		try {
-			return getDelegate().moveRoamingUser(username, destserver, destserverpath);
+			return getDelegate().moveRoamingUser(userName, destServer, destServerPath);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -426,9 +427,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String moveUserInHierarchyComplete(String requestnoteid) {
+	public String moveUserInHierarchyComplete(String requestNoteid) {
 		try {
-			return getDelegate().moveUserInHierarchyComplete(requestnoteid);
+			return getDelegate().moveUserInHierarchyComplete(requestNoteid);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -436,11 +437,11 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String moveUserInHierarchyComplete(String requestnoteid, String lastname, String firstname, String middleinitial,
-			String orgunit, String altcommonname, String altorgunit, String altlanguage, boolean renamewindowsuser) {
+	public String moveUserInHierarchyComplete(String requestNoteid, String lastName, String firstName, String middleInitial,
+			String orgUnit, String altCommonName, String altOrgUnit, String altLanguage, boolean renameWindowsUser) {
 		try {
-			return getDelegate().moveUserInHierarchyComplete(requestnoteid, lastname, firstname, middleinitial, orgunit, altcommonname,
-					altorgunit, altlanguage, renamewindowsuser);
+			return getDelegate().moveUserInHierarchyComplete(requestNoteid, lastName, firstName, middleInitial, orgUnit, altCommonName,
+					altOrgUnit, altLanguage, renameWindowsUser);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -448,9 +449,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String moveUserInHierarchyRequest(String username, String targetcertifier) {
+	public String moveUserInHierarchyRequest(String userName, String targetCertifier) {
 		try {
-			return getDelegate().moveUserInHierarchyRequest(username, targetcertifier);
+			return getDelegate().moveUserInHierarchyRequest(userName, targetCertifier);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -458,9 +459,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String moveUserInHierarchyRequest(String username, String targetcertifier, boolean allowprimarynamechange) {
+	public String moveUserInHierarchyRequest(String userName, String targetCertifier, boolean allowPrimaryNameChange) {
 		try {
-			return getDelegate().moveUserInHierarchyRequest(username, targetcertifier, allowprimarynamechange);
+			return getDelegate().moveUserInHierarchyRequest(userName, targetCertifier, allowPrimaryNameChange);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -478,9 +479,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String recertifyUser(String username) {
+	public String recertifyUser(String userName) {
 		try {
-			return getDelegate().recertifyUser(username);
+			return getDelegate().recertifyUser(userName);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -498,9 +499,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String renameGroup(String group, String newgroup) {
+	public String renameGroup(String group, String newGroup) {
 		try {
-			return getDelegate().renameGroup(group, newgroup);
+			return getDelegate().renameGroup(group, newGroup);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -508,9 +509,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String renameNotesUser(String username, String lastname, String firstname, String middleinitial, String orgunit) {
+	public String renameNotesUser(String userName, String lastName, String firstName, String middleInitial, String orgUnit) {
 		try {
-			return getDelegate().renameNotesUser(username, lastname, firstname, middleinitial, orgunit);
+			return getDelegate().renameNotesUser(userName, lastName, firstName, middleInitial, orgUnit);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -518,11 +519,11 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String renameNotesUser(String username, String lastname, String firstname, String middleinitial, String orgunit,
-			String altcommonname, String altorgunit, String altlanguage, boolean renamewindowsuser) {
+	public String renameNotesUser(String userName, String lastName, String firstName, String middleInitial, String orgUnit,
+			String altCommonName, String altOrgUnit, String altLanguage, boolean renameWindowsUser) {
 		try {
-			return getDelegate().renameNotesUser(username, lastname, firstname, middleinitial, orgunit, altcommonname, altorgunit,
-					altlanguage, renamewindowsuser);
+			return getDelegate().renameNotesUser(userName, lastName, firstName, middleInitial, orgUnit, altCommonName, altOrgUnit,
+					altLanguage, renameWindowsUser);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -530,11 +531,11 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String renameWebUser(String username, String newfullname, String newlastname, String newfirstname, String newmiddleinitial,
-			String newshortname, String newinternetaccess) {
+	public String renameWebUser(String userName, String newFullName, String newLastName, String newFirstName, String newMiddleInitial,
+			String newShortName, String newInternetAddress) {
 		try {
-			return getDelegate().renameWebUser(username, newfullname, newlastname, newfirstname, newmiddleinitial, newshortname,
-					newinternetaccess);
+			return getDelegate().renameWebUser(userName, newFullName, newLastName, newFirstName, newMiddleInitial, newShortName,
+					newInternetAddress);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -553,16 +554,16 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	@Override
 	public void setCertificateExpiration(lotus.domino.DateTime expiration) {
 		try {
-			getDelegate().setCertificateExpiration(expiration);
+			getDelegate().setCertificateExpiration((DateTime) toLotus(expiration));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 	}
 
 	@Override
-	public void setCertifierFile(String filespec) {
+	public void setCertifierFile(String fileSpec) {
 		try {
-			getDelegate().setCertifierFile(filespec);
+			getDelegate().setCertifierFile(fileSpec);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -578,9 +579,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String setServerDirectoryAssistanceSettings(String server, String dbfile) {
+	public String setServerDirectoryAssistanceSettings(String server, String dbFile) {
 		try {
-			return getDelegate().setServerDirectoryAssistanceSettings(server, dbfile);
+			return getDelegate().setServerDirectoryAssistanceSettings(server, dbFile);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -597,11 +598,11 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String setUserPasswordSettings(String username, Integer notespasswordchecksetting, Integer notespasswordchangeinterval,
-			Integer notespasswordgraceperiod, Boolean internetpasswordforcechange) {
+	public String setUserPasswordSettings(String userName, Integer notesPasswordCheckSetting, Integer notesPasswordChangeInterval,
+			Integer notesPasswordGracePeriod, Boolean internetPasswordForceChange) {
 		try {
-			return getDelegate().setUserPasswordSettings(username, notespasswordchecksetting, notespasswordchangeinterval,
-					notespasswordgraceperiod, internetpasswordforcechange);
+			return getDelegate().setUserPasswordSettings(userName, notesPasswordCheckSetting, notesPasswordChangeInterval,
+					notesPasswordGracePeriod, internetPasswordForceChange);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -609,9 +610,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String signDatabaseWithServerID(String server, String dbfile) {
+	public String signDatabaseWithServerID(String server, String dbFile) {
 		try {
-			return getDelegate().signDatabaseWithServerID(server, dbfile);
+			return getDelegate().signDatabaseWithServerID(server, dbFile);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -619,9 +620,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String signDatabaseWithServerID(String server, String dbfile, boolean updateonly) {
+	public String signDatabaseWithServerID(String server, String dbFile, boolean updateonly) {
 		try {
-			return getDelegate().signDatabaseWithServerID(server, dbfile, updateonly);
+			return getDelegate().signDatabaseWithServerID(server, dbFile, updateonly);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -639,9 +640,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String upgradeUserToHierarchical(String username, String orgunit, String altcommonname, String altorgunit, String altlanguage) {
+	public String upgradeUserToHierarchical(String userName, String orgUnit, String altCommonName, String altOrgUnit, String altLanguage) {
 		try {
-			return getDelegate().upgradeUserToHierarchical(username, orgunit, altcommonname, altorgunit, altlanguage);
+			return getDelegate().upgradeUserToHierarchical(userName, orgUnit, altCommonName, altOrgUnit, altLanguage);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
