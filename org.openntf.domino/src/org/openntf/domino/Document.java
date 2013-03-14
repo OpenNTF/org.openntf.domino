@@ -58,12 +58,10 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public Document copyToDatabase(lotus.domino.Database db);
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.MIMEEntity createMIMEEntity();
+	public MIMEEntity createMIMEEntity();
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.MIMEEntity createMIMEEntity(String itemName);
+	public MIMEEntity createMIMEEntity(String itemName);
 
 	@Override
 	public Document createReplyMessage(boolean toAll);
@@ -159,12 +157,10 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public Vector<String> getLockHolders();
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.MIMEEntity getMIMEEntity();
+	public MIMEEntity getMIMEEntity();
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.MIMEEntity getMIMEEntity(String itemName);
+	public MIMEEntity getMIMEEntity(String itemName);
 
 	@Override
 	public String getNameOfProfile();

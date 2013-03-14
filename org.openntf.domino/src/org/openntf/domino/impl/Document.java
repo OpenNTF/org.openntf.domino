@@ -211,9 +211,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public lotus.domino.MIMEEntity createMIMEEntity() {
+	public MIMEEntity createMIMEEntity() {
 		try {
-			return getDelegate().createMIMEEntity();
+			return Factory.fromLotus(getDelegate().createMIMEEntity(), MIMEEntity.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -221,9 +221,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public lotus.domino.MIMEEntity createMIMEEntity(String itemName) {
+	public MIMEEntity createMIMEEntity(String itemName) {
 		try {
-			return getDelegate().createMIMEEntity(itemName);
+			return Factory.fromLotus(getDelegate().createMIMEEntity(itemName), MIMEEntity.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -474,7 +474,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<org.openntf.domino.DateTime> getItemValueDateTimeArray(String name) {
 		try {
@@ -515,7 +514,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<org.openntf.domino.Item> getItems() {
 		try {
@@ -604,9 +602,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public lotus.domino.MIMEEntity getMIMEEntity() {
+	public MIMEEntity getMIMEEntity() {
 		try {
-			return getDelegate().getMIMEEntity();
+			return Factory.fromLotus(getDelegate().getMIMEEntity(), MIMEEntity.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -614,9 +612,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public lotus.domino.MIMEEntity getMIMEEntity(String itemName) {
+	public MIMEEntity getMIMEEntity(String itemName) {
 		try {
-			return getDelegate().getMIMEEntity(itemName);
+			return Factory.fromLotus(getDelegate().getMIMEEntity(itemName), MIMEEntity.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

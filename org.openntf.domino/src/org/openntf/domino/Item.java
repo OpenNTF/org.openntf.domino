@@ -44,8 +44,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item {
 	public DateTime getLastModified();
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.MIMEEntity getMIMEEntity();
+	public MIMEEntity getMIMEEntity();
 
 	@Override
 	public String getName();

@@ -121,9 +121,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	}
 
 	@Override
-	public lotus.domino.MIMEEntity getMIMEEntity() {
+	public MIMEEntity getMIMEEntity() {
 		try {
-			return getDelegate().getMIMEEntity();
+			return Factory.fromLotus(getDelegate().getMIMEEntity(), MIMEEntity.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
