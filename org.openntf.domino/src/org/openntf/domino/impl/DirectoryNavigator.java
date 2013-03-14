@@ -123,6 +123,7 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Vector getFirstItemValue() {
 		try {
@@ -133,6 +134,7 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Vector getNextItemValue() {
 		try {
@@ -143,6 +145,7 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Vector getNthItemValue(int n) {
 		try {
