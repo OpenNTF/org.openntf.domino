@@ -113,6 +113,8 @@ public enum Factory {
 			result = (T) new org.openntf.domino.impl.MIMEHeader((lotus.domino.MIMEHeader)lotus, parent);
 		} else if (lotus instanceof lotus.domino.Name) {
 			result = (T) new org.openntf.domino.impl.Name((lotus.domino.Name) lotus, parent);
+		} else if(lotus instanceof lotus.domino.Newsletter) {
+			result = (T) new org.openntf.domino.impl.Newsletter((lotus.domino.Newsletter)lotus, parent);
 		} else if(lotus instanceof lotus.domino.NoteCollection) {
 			result = (T) new org.openntf.domino.impl.NoteCollection((lotus.domino.NoteCollection)lotus, (org.openntf.domino.Database)parent);
 		} else if(lotus instanceof lotus.domino.Outline) {
