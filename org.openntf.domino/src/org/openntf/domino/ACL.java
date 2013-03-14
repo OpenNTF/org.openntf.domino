@@ -2,7 +2,7 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
-public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL {
+public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<org.openntf.domino.ACLEntry> {
 
 	@Override
 	public void addRole(String name);

@@ -1,10 +1,12 @@
 package org.openntf.domino.impl;
 
+import java.util.Iterator;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
 
 import org.openntf.domino.ACLEntry;
+import org.openntf.domino.iterators.AclIterator;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -237,6 +239,11 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+	}
+
+	@Override
+	public Iterator<ACLEntry> iterator() {
+		return new AclIterator(this);
 	}
 
 }
