@@ -14,7 +14,7 @@ public class AclIterator implements Iterator<ACLEntry> {
 	private boolean started_;
 	private boolean done_;
 
-	protected AclIterator(ACL acl) {
+	public AclIterator(ACL acl) {
 		setAcl(acl);
 	}
 
