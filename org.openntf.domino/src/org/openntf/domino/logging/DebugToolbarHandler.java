@@ -3,9 +3,9 @@ package org.openntf.domino.logging;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
-public class OpenLogHandler extends Handler {
+public class DebugToolbarHandler extends Handler {
 
-	public OpenLogHandler() {
+	public DebugToolbarHandler() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -22,7 +22,7 @@ public class OpenLogHandler extends Handler {
 	}
 
 	@Override
-	public void publish(LogRecord arg0) {
+	public void publish(LogRecord record) {
 		// TODO Auto-generated method stub
 
 	}
