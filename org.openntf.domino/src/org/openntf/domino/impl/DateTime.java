@@ -357,6 +357,35 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.openntf.domino.DateTime#isAfter(org.openntf.domino.DateTime)
+	 */
+	public boolean isAfter(org.openntf.domino.DateTime comparDate) {
+		try {
+			return cal_.after(comparDate.toJavaDate());
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.DateTime#isBefore(org.openntf.domino.DateTime)
+	 */
+	@Override
+	public boolean isBefore(org.openntf.domino.DateTime comparDate) {
+		try {
+			return cal_.before(comparDate.toJavaDate());
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DateTime#isDST()
 	 */
 	public boolean isDST() {
@@ -366,6 +395,21 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 			DominoUtils.handleException(e);
 			return false;
 
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.DateTime#isEqual(org.openntf.domino.DateTime)
+	 */
+	@Override
+	public boolean isEqual(org.openntf.domino.DateTime comparDate) {
+		try {
+			return cal_.equals(comparDate.toJavaDate());
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+			return false;
 		}
 	}
 
