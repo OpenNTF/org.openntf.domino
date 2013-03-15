@@ -82,15 +82,6 @@ public enum Factory {
 			result = (T) new org.openntf.domino.impl.AgentContext((lotus.domino.AgentContext) lotus, parent);
 		} else if (lotus instanceof lotus.domino.ColorObject) {
 			result = (T) new org.openntf.domino.impl.ColorObject((lotus.domino.ColorObject) lotus, parent);
-		} else if (lotus instanceof lotus.domino.DocumentCollection) {
-			result = (T) new org.openntf.domino.impl.DocumentCollection((lotus.domino.DocumentCollection) lotus, parent);
-		} else if (lotus instanceof lotus.domino.NoteCollection) {
-			result = (T) new org.openntf.domino.impl.NoteCollection((lotus.domino.NoteCollection) lotus,
-					(org.openntf.domino.Database) parent);
-		} else if (lotus instanceof lotus.domino.Document) {
-			result = (T) new org.openntf.domino.impl.Document((lotus.domino.Document) lotus, parent);
-		} else if (lotus instanceof lotus.domino.Form) {
-			result = (T) new org.openntf.domino.impl.Form((lotus.domino.Form) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Database) {
 			result = (T) new org.openntf.domino.impl.Database((lotus.domino.Database) lotus, parent);
 		} else if (lotus instanceof lotus.domino.DateRange) {
