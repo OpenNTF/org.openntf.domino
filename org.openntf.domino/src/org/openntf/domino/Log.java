@@ -2,8 +2,6 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
-import lotus.domino.Session;
-
 public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log {
 
 	@Override
@@ -45,6 +43,7 @@ public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log {
 	@Override
 	public void openFileLog(String filePath);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void openMailLog(Vector recipients, String subject);
 

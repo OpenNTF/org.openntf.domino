@@ -53,7 +53,7 @@ public interface EmbeddedObject extends Base<lotus.domino.EmbeddedObject>, lotus
 	public int getType();
 
 	@Override
-	public Vector getVerbs();
+	public Vector<String> getVerbs();
 
 	@Override
 	public Document parseXML(boolean validate) throws IOException;

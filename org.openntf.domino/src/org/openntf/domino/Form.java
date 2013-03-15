@@ -4,25 +4,25 @@ import java.util.Vector;
 
 public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form {
 
-	public org.openntf.domino.Document getDocument();
+	public Document getDocument();
 
 	@Override
-	public Vector getAliases();
+	public Vector<String> getAliases();
 
 	@Override
-	public Vector getFields();
+	public Vector<String> getFields();
 
 	@Override
 	public int getFieldType(String name);
 
 	@Override
-	public Vector getFormUsers();
+	public Vector<String> getFormUsers();
 
 	@Override
 	public String getHttpURL();
 
 	@Override
-	public Vector getLockHolders();
+	public Vector<String> getLockHolders();
 
 	@Override
 	public String getName();
@@ -31,10 +31,10 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form {
 	public String getNotesURL();
 
 	@Override
-	public org.openntf.domino.Database getParent();
+	public Database getParent();
 
 	@Override
-	public Vector getReaders();
+	public Vector<String> getReaders();
 
 	@Override
 	public String getURL();
@@ -60,9 +60,11 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form {
 	@Override
 	public boolean lock(String name, boolean provisionalOk);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean lock(Vector names);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean lock(Vector names, boolean provisionalOk);
 
@@ -72,12 +74,14 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form {
 	@Override
 	public boolean lockProvisional(String name);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean lockProvisional(Vector names);
 
 	@Override
 	public void remove();
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setFormUsers(Vector names);
 
@@ -87,6 +91,7 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form {
 	@Override
 	public void setProtectUsers(boolean flag);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setReaders(Vector names);
 
