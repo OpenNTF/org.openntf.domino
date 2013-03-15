@@ -6,6 +6,7 @@ import org.openntf.domino.annotations.Legacy;
 
 public interface DocumentCollection extends lotus.domino.DocumentCollection, org.openntf.domino.Base<lotus.domino.DocumentCollection>,
 		Iterable<org.openntf.domino.Document> {
+
 	public abstract int getCount();
 
 	public abstract String getQuery();

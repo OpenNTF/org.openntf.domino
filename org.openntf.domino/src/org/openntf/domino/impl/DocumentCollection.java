@@ -32,25 +32,15 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	public static org.openntf.domino.NoteCollection toLotusNoteCollection(lotus.domino.DocumentCollection collection) {
 		org.openntf.domino.NoteCollection result = null;
 		if (collection instanceof org.openntf.domino.impl.DocumentCollection) {
-			System.out.println("Received an OpenNTF object");
 			org.openntf.domino.Database db = ((org.openntf.domino.impl.DocumentCollection) collection).getParent();
 			result = db.createNoteCollection(false);
 			result.buildCollection();
-			System.out.println("Created a blank nc with " + result.getCount() + " entries");
 			lotus.domino.DocumentCollection dc = ((org.openntf.domino.impl.DocumentCollection) collection).getDelegate();
 			result.add(dc);
-			try {
-				System.out.println("Added a collection with " + dc.getCount() + " entries");
-			} catch (NotesException e) {
-				DominoUtils.handleException(e);
-
-			}
 		} else if (collection instanceof lotus.domino.DocumentCollection) {
 			org.openntf.domino.Database db = ((org.openntf.domino.DocumentCollection) collection).getParent();
 			result = db.createNoteCollection(false);
 			result.add((lotus.domino.DocumentCollection) collection);
-		} else {
-			System.out.println("We received some other kind of parameter? " + collection.getClass().getName());
 		}
 		return result;
 	}
