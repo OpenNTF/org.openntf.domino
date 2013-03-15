@@ -1,8 +1,5 @@
 package org.openntf.domino.logging;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.LogRecord;
 
@@ -31,14 +28,6 @@ public class DefaultConsoleHandler extends ConsoleHandler {
 		DefaultConsoleHandler.olDebugLevel = olDebugLevel;
 	}
 
-	// Date formatter
-	private static ThreadLocal<DateFormat> formatter = new ThreadLocal<DateFormat>() {
-		@Override
-		protected DateFormat initialValue() {
-			return new SimpleDateFormat("MM-dd-yyyy HH:mm:ss.SSS");
-		}
-	};
-
 	@Override
 	public void close() {
 		super.close();
@@ -53,18 +42,7 @@ public class DefaultConsoleHandler extends ConsoleHandler {
 			System.out.println(this.getClass().getName() + ": Error getting debug level - non-numeric");
 		}
 		if (debugLevel > 0) {
-			Date date = new Date(logRecord.getMillis());
-			StringBuffer sb = new StringBuffer();
-			sb.append(formatter.get().format(date));
-			sb.append(" [");
-			sb.append(logRecord.getLevel().getName());
-			sb.append("]: ");
-			sb.append(logRecord.getSourceClassName());
-			sb.append(".");
-			sb.append(logRecord.getSourceMethodName());
-			sb.append("() - ");
-			sb.append(logRecord.getMessage());
-			System.out.println(sb.toString());
+			super.publish(logRecord);
 		}
 		if (debugLevel > 1) {
 			if (logRecord.getThrown() != null && logRecord.getThrown() instanceof Exception) {
