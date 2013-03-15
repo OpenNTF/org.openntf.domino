@@ -194,6 +194,12 @@ public enum Factory {
 		} else if (lotus instanceof lotus.domino.NoteCollection) {
 			result = (T) new org.openntf.domino.impl.NoteCollection((lotus.domino.NoteCollection) lotus,
 					(org.openntf.domino.Database) parent);
+		} else if (lotus instanceof lotus.domino.NotesCalendar) {
+			result = (T) new org.openntf.domino.impl.NotesCalendar((lotus.domino.NotesCalendar) lotus, parent);
+		} else if (lotus instanceof lotus.domino.NotesCalendarEntry) {
+			result = (T) new org.openntf.domino.impl.NotesCalendarEntry((lotus.domino.NotesCalendarEntry) lotus, parent);
+		} else if (lotus instanceof lotus.domino.NotesCalendarNotice) {
+			result = (T) new org.openntf.domino.impl.NotesCalendarNotice((lotus.domino.NotesCalendarNotice) lotus, parent);
 		} else if (lotus instanceof lotus.domino.NotesProperty) {
 			result = (T) new org.openntf.domino.impl.NotesProperty((lotus.domino.NotesProperty) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Outline) {
