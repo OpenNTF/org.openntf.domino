@@ -17,152 +17,340 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Interface ACL.
+ * The Interface that represents the access control list (ACL) of an IBM Domino database.
  */
 public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<org.openntf.domino.ACLEntry> {
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#addRole(java.lang.String)
+	/**
+	 * Adds a role with the specified name to an ACL.
+	 * 
+	 * @param name
+	 *            The name of the role to add
 	 */
 	@Override
 	public void addRole(String name);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#createACLEntry(java.lang.String, int)
+	/**
+	 * Creates an entry in the ACL with the name and level that you specify.
+	 * 
+	 * @param name
+	 *            The name of the person, group, or server for whom you want to create an entry in the ACL. You must supply the complete
+	 *            name, but hierarchical names can be in abbreviated format. Case is not significant.
+	 * @param level
+	 *            The level that you want to assign to this person, group, or server in the ACL. May be any of the following :<br>
+	 * <br>
+	 *            <ul>
+	 *            <li>ACL.LEVEL_NOACCESS</li>
+	 *            <li>ACL.LEVEL_DEPOSITOR</li>
+	 *            <li>ACL.LEVEL_READER</li>
+	 *            <li>ACL.LEVEL_AUTHOR</li>
+	 *            <li>ACL.LEVEL_EDITOR</li>
+	 *            <li>ACL.LEVEL_DESIGNER</li>
+	 *            <li>ACL.LEVEL_MANAGER</li>
+	 *            </ul>
+	 * 
+	 * @return The newly-created {@link org.openntf.domino.ACLEntry}.
+	 * 
 	 */
 	@Override
 	public ACLEntry createACLEntry(String name, int level);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#deleteRole(java.lang.String)
+	/**
+	 * Deletes a role with the specified name from an ACL.
+	 * 
+	 * @param name
+	 *            The name of the role to delete
 	 */
 	@Override
 	public void deleteRole(String name);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#getAdministrationServer()
+	/**
+	 * Returns the name of the administration server for an IBM Domino database.
+	 * 
+	 * <p>
+	 * The administration server is also the master lock server.<br>
+	 * This property is an <code>empty string</code> if the database does not have an administration server.
+	 * </p>
 	 */
 	@Override
 	public String getAdministrationServer();
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#getEntry(java.lang.String)
+	/**
+	 * Given a name, finds its entry in an ACL.
+	 * 
+	 * @param name
+	 *            The name whose ACL Entry you want to find. You must supply the complete name, but hierarchical names can be in abbreviated
+	 *            format. Case is not significant.
+	 * @return The {@link org.openntf.domino.ACLEntry} that matches the name. If name is not in the ACL, returns <code>null</code>.
 	 */
 	@Override
 	public ACLEntry getEntry(String name);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#getFirstEntry()
+	/**
+	 * Returns the first entry in an ACL.
+	 * 
+	 * <p>
+	 * The first entry is typically the -Default- entry.
+	 * </p>
+	 * 
+	 * @return The first {@link org.openntf.domino.ACLEntry} in the ACL.
 	 */
 	@Override
 	public ACLEntry getFirstEntry();
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#getInternetLevel()
+	/**
+	 * The maximum Internet access level for this database.
+	 * 
+	 * @return The current maximum internet access level of the database. May be any of the following :<br>
+	 * <br>
+	 *         <ul>
+	 *         <li>ACL.LEVEL_NOACCESS</li>
+	 *         <li>ACL.LEVEL_DEPOSITOR</li>
+	 *         <li>ACL.LEVEL_READER</li>
+	 *         <li>ACL.LEVEL_AUTHOR</li>
+	 *         <li>ACL.LEVEL_EDITOR</li>
+	 *         <li>ACL.LEVEL_DESIGNER</li>
+	 *         <li>ACL.LEVEL_MANAGER</li>
+	 *         </ul>
 	 */
 	@Override
 	public int getInternetLevel();
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#getNextEntry()
+	/**
+	 * Returns the ACL Entry following the last ACL Entry retrieved.
+	 * 
+	 * <p>
+	 * The no-parameter method improves performance for remote operations because ACL entries are cached locally.
+	 * </p>
+	 * 
+	 * <p>
+	 * The order of the ACL entries is unspecified. The order is not alphabetical and does not correspond to UI displays.
+	 * </p>
+	 * 
+	 * @return The next {@link org.openntf.domino.ACLEntry} in the ACL. Returns <code>null</code> if there are no more entries.
 	 */
 	@Override
 	public ACLEntry getNextEntry();
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#getNextEntry(lotus.domino.ACLEntry)
+	/**
+	 * Returns the ACL entry following the entry specified as the parameter.
+	 * 
+	 * <p>
+	 * The order of the ACL entries is unspecified. The order is not alphabetical and does not correspond to UI displays.
+	 * </p>
+	 * 
+	 * @param entry
+	 *            Any entry in the ACL. Cannot be <code>null</code>.
+	 * 
+	 * @return The the {@link org.openntf.domino.ACLEntry} following the entry specified as the parameter. Returns <code>null</code> if
+	 *         there are no more entries.
 	 */
 	@Override
 	public ACLEntry getNextEntry(lotus.domino.ACLEntry entry);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#getParent()
+	/**
+	 * Returns the IBM Domino database that owns the ACL.
+	 * 
+	 * @return The {@link org.openntf.domino.Database} that this ACL belongs to.
 	 */
 	@Override
 	public Database getParent();
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#getRoles()
+	/**
+	 * Returns all the roles defined in an access control list.
+	 * 
+	 * <p>
+	 * Each element in the vector is the name of a role. Each role name is surrounded by square brackets, for example, "[Supervisor]."
+	 * </p>
+	 * 
+	 * <p>
+	 * Notes® Release 2 "privileges" are surrounded by parentheses. Properties and methods affecting roles, such as disableRole and
+	 * enableRole, do not work on privileges.
+	 * </p>
+	 * 
+	 * @return A Vector of all the roles in the ACL. Elements are of type {@link java.lang.String}
 	 */
 	@Override
 	public Vector<String> getRoles();
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#isAdminNames()
+	/**
+	 * Indicates whether the administration server for the database can modify all Names fields in a database.
+	 * 
+	 * <p>
+	 * The database must have an administration server. See {@link org.openntf.domino.ACL#getAdministrationServer()} in ACL and
+	 * {@link org.openntf.domino.ACLEntry#isAdminServer()} in {@link org.openntf.domino.ACLEntry} to check for the administration server.
+	 * </p>
+	 * 
+	 * @return Returns <code>true</code> if the administration server can modify all names fields, <code>false</code> if it cannot.
 	 */
 	@Override
 	public boolean isAdminNames();
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#isAdminReaderAuthor()
+	/**
+	 * Indicates whether the administration server for the database can modify Readers and Authors fields in a database.
+	 * 
+	 * <p>
+	 * The database must have an administration server. See {@link org.openntf.domino.ACL#getAdministrationServer()} in ACL and
+	 * {@link org.openntf.domino.ACLEntry#isAdminServer()} in {@link org.openntf.domino.ACLEntry} to check for the administration server.
+	 * </p>
+	 * 
+	 * @return Returns <code>true</code> if the administration server can modify Readers and Authors fields, <code>false</code> if it
+	 *         cannot.
 	 */
 	@Override
 	public boolean isAdminReaderAuthor();
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#isExtendedAccess()
+	/**
+	 * Indicates whether extended access is enabled.
+	 * 
+	 * <p>
+	 * In the Notes UI, this property is in the advanced section of ACL properties: "Enable Extended Access." and only applies to Domino
+	 * Directory, Extended Directory Catalog, and Administration Requests databases.
+	 * </p>
+	 * 
+	 * @return Returns <code>true</code> if extended access is enabled, <code>false</code> if it is not enabled.
 	 */
 	@Override
 	public boolean isExtendedAccess();
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#isUniformAccess()
+	/**
+	 * Indicates whether a consistent access control list is enforced across all replicas of a database.
+	 * 
+	 * @return Returns <code>true</code> if uniform access is enabled, <code>false</code> if it is not enabled.
 	 */
 	@Override
 	public boolean isUniformAccess();
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#removeACLEntry(java.lang.String)
+	/**
+	 * Removes an entry from the ACL.
+	 * 
+	 * <p>
+	 * After calling this method, you must call {@link org.openntf.domino.ACL#save()} for the changes to take effect. If you do not call
+	 * save, your changes to the ACL are lost.
+	 * </p>
+	 * 
+	 * @param name
+	 *            The name of the person, group, or server whose entry you want to remove. You must supply the complete name, but
+	 *            hierarchical names can be in abbreviated format. Case is not significant.
+	 * 
 	 */
 	@Override
 	public void removeACLEntry(String name);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#renameRole(java.lang.String, java.lang.String)
+	/**
+	 * Changes the name of a role.
+	 * 
+	 * <p>
+	 * After calling this method, you must call {@link org.openntf.domino.ACL#save()} for the changes to take effect. If you do not call
+	 * save, your changes to the ACL are lost.
+	 * </p>
+	 * 
+	 * <p>
+	 * When you rename a role, any entries in the ACL that had the old role get the new role.
+	 * </p>
+	 * 
+	 * @param oldName
+	 *            The current name of the role. Do not put square brackets around the name.
+	 * @param newName
+	 *            The current name of the role. Do not put square brackets around the name.
+	 * 
 	 */
 	@Override
 	public void renameRole(String oldName, String newName);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#save()
+	/**
+	 * Saves changes that you've made to the ACL.
+	 * 
+	 * <p>
+	 * If you don't call save before closing a database, the changes you've made to its ACL are lost.
+	 * </p>
 	 */
 	@Override
 	public void save();
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#setAdministrationServer(java.lang.String)
-	 */
 	@Override
 	public void setAdministrationServer(String server);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#setAdminNames(boolean)
+	/**
+	 * Sets whether the administration server for the database can modify all Names fields in a database.
+	 * 
+	 * <p>
+	 * The database must have an administration server. See {@link org.openntf.domino.ACL#getAdministrationServer()} in ACL and
+	 * {@link org.openntf.domino.ACLEntry#isAdminServer()} in {@link org.openntf.domino.ACLEntry} to set the administration server.
+	 * </p>
+	 * 
+	 * <p>
+	 * After setting this property, you must call {@link org.openntf.domino.ACL#save()} for the changes to take effect. If you do not call
+	 * save, your changes to the ACL are lost.
+	 * </p>
 	 */
 	@Override
 	public void setAdminNames(boolean flag);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#setAdminReaderAuthor(boolean)
+	/**
+	 * Sets whether the administration server for the database can modify Readers and Authors fields in a database.
+	 * 
+	 * <p>
+	 * The database must have an administration server. See {@link org.openntf.domino.ACL#getAdministrationServer()} in ACL and
+	 * {@link org.openntf.domino.ACLEntry#isAdminServer()} in {@link org.openntf.domino.ACLEntry} to set the administration server.
+	 * </p>
+	 * 
+	 * <p>
+	 * After setting this property, you must call {@link org.openntf.domino.ACL#save()} for the changes to take effect. If you do not call
+	 * save, your changes to the ACL are lost.
+	 * </p>
 	 */
 	@Override
 	public void setAdminReaderAuthor(boolean flag);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#setExtendedAccess(boolean)
+	/**
+	 * Sets whether extended access is enabled.
+	 * 
+	 * <p>
+	 * In the Notes UI, this property is in the advanced section of ACL properties: "Enable Extended Access." and only applies to Domino
+	 * Directory, Extended Directory Catalog, and Administration Requests databases.
+	 * </p>
+	 * 
+	 * <p>
+	 * Setting this property true automatically sets {@link #setUniformAccess(boolean)} true. Setting this property false does not
+	 * automatically set {@link #setUniformAccess(boolean)} false.
+	 * </p>
+	 * 
+	 * <p>
+	 * After setting this property, you must call {@link org.openntf.domino.ACL#save()} for the changes to take effect. If you do not call
+	 * save, your changes to the ACL are lost.
+	 * </p>
 	 */
 	@Override
 	public void setExtendedAccess(boolean flag);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#setInternetLevel(int)
+	/**
+	 * Sets the maximum Internet access level for this database.
+	 * 
+	 * @param level
+	 *            The new maximum Internet level you want to set in the ACL. May be any of the following :<br>
+	 * <br>
+	 *            <ul>
+	 *            <li>ACL.LEVEL_NOACCESS</li>
+	 *            <li>ACL.LEVEL_DEPOSITOR</li>
+	 *            <li>ACL.LEVEL_READER</li>
+	 *            <li>ACL.LEVEL_AUTHOR</li>
+	 *            <li>ACL.LEVEL_EDITOR</li>
+	 *            <li>ACL.LEVEL_DESIGNER</li>
+	 *            <li>ACL.LEVEL_MANAGER</li>
+	 *            </ul>
 	 */
 	@Override
 	public void setInternetLevel(int level);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.ACL#setUniformAccess(boolean)
+	/**
+	 * Sets whether a consistent access control list is enforced across all replicas of a database.
+	 * 
+	 * <p>
+	 * After setting this property, you must call {@link org.openntf.domino.ACL#save()} for the changes to take effect. If you do not call
+	 * save, your changes to the ACL are lost.
+	 * </p>
 	 */
 	@Override
 	public void setUniformAccess(boolean flag);
