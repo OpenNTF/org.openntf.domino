@@ -1,11 +1,9 @@
 package org.openntf.domino.logging;
 
-import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.ConsoleHandler;
-import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
 /**
@@ -74,31 +72,6 @@ public class DefaultConsoleHandler extends ConsoleHandler {
 				ee.printStackTrace();
 			}
 		}
-	}
-
-	@Override
-	public void flush() {
-		super.flush();
-	}
-
-	@Override
-	protected void setOutputStream(OutputStream stream) {
-		super.setOutputStream(stream);
-	}
-
-	@Override
-	public Formatter getFormatter() {
-		return super.getFormatter();
-	}
-
-	@Override
-	protected void reportError(String msg, Exception ex, int code) {
-		super.reportError(msg, ex, code);
-	}
-
-	@Override
-	public void setFormatter(Formatter newFormatter) {
-		super.setFormatter(newFormatter);
 	}
 
 }

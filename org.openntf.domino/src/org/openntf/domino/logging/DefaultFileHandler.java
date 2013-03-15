@@ -6,21 +6,10 @@ import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
-import org.openntf.domino.impl.Session;
-
 public class DefaultFileHandler extends FileHandler {
 
 	public DefaultFileHandler() throws IOException {
 		// TODO Auto-generated constructor stub
-	}
-
-	public static String getIniVar(String propertyName, String defaultValue) {
-		String newVal = Session.getDefaultSession().getEnvironmentString(propertyName, true);
-		if (!"".equals(newVal)) {
-			return newVal;
-		} else {
-			return defaultValue;
-		}
 	}
 
 	public DefaultFileHandler(String pattern) throws IOException {

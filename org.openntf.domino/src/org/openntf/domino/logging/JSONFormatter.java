@@ -1,9 +1,7 @@
 package org.openntf.domino.logging;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TimeZone;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
@@ -15,8 +13,6 @@ public class JSONFormatter extends Formatter {
 	private int indentLevel;
 	// private Writer _writer;
 	private StringBuilder _builder;
-	private static SimpleDateFormat ISO8601_UTC = null;
-	private static SimpleDateFormat ISO8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 	private boolean UTC_Format = false;
 	private int objectLevels = 0;
 	private boolean first[] = new boolean[32]; // max 32 for now...
@@ -56,7 +52,7 @@ public class JSONFormatter extends Formatter {
 
 			startProperty("datetime");
 			Date recordDate = new Date(record.getMillis());
-			out(dateToString(recordDate, UTC_Format));
+			out(LogUtils.dateToString(recordDate, UTC_Format));
 			endProperty();
 
 			formatThrowable(record);
@@ -165,36 +161,6 @@ public class JSONFormatter extends Formatter {
 
 	public void endProperty() throws IOException {
 		decIndent();
-	}
-
-	/**
-	 * Converts a date to an ISO8601 string.
-	 * 
-	 * @param value
-	 *            The date.
-	 * @param utc
-	 *            If <code>true</code>, format the time in UTC. If <code>false</code>, format the time in the local time zone.
-	 * @return The ISO8601 string.
-	 * @throws IOException
-	 */
-	private String dateToString(Date value, boolean utc) throws IOException {
-
-		String result = null;
-
-		if (utc) {
-			if (ISO8601_UTC == null) {
-				// Initialize the UTC formatter once
-				TimeZone tz = TimeZone.getTimeZone("UTC");
-				ISO8601_UTC = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); //$NON-NLS-1$
-				ISO8601_UTC.setTimeZone(tz);
-			}
-
-			result = ISO8601_UTC.format(value);
-		} else {
-			result = ISO8601.format(value);
-		}
-
-		return result;
 	}
 
 	public void out(char paramChar) throws IOException {

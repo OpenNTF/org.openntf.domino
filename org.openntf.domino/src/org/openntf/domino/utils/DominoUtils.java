@@ -1,7 +1,10 @@
 package org.openntf.domino.utils;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -17,18 +20,9 @@ import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import lotus.domino.ACL;
-import lotus.domino.Agent;
-import lotus.domino.Base;
-import lotus.domino.Database;
 import lotus.domino.Document;
-import lotus.domino.Form;
-import lotus.domino.Item;
 import lotus.domino.Session;
-import lotus.domino.View;
-import lotus.domino.ViewColumn;
 
-import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.exceptions.InvalidNotesUrlException;
 
 public enum DominoUtils {
@@ -108,32 +102,6 @@ public enum DominoUtils {
 			throw new InvalidNotesUrlException(notesurl);
 		}
 
-		return result;
-	}
-
-	public static Session getSession(Base base) throws Throwable {
-		Session result = null;
-		if (base instanceof Database) {
-			result = ((Database) base).getParent();
-		} else if (base instanceof Document) {
-			result = DominoUtils.getSession(((Document) base).getParentDatabase());
-		} else if (base instanceof View) {
-			result = DominoUtils.getSession(((View) base).getParent());
-		} else if (base instanceof Form) {
-			result = DominoUtils.getSession(((Form) base).getParent());
-		} else if (base instanceof Item) {
-			result = DominoUtils.getSession(((Item) base).getParent());
-		} else if (base instanceof ViewColumn) {
-			result = DominoUtils.getSession(((ViewColumn) base).getParent());
-		} else if (base instanceof Agent) {
-			result = DominoUtils.getSession(((Agent) base).getParent());
-		} else if (base instanceof ACL) {
-			result = DominoUtils.getSession(((ACL) base).getParent());
-		} else if (base instanceof Item) {
-			result = DominoUtils.getSession(((Item) base).getParent());
-		} else if (base instanceof DocumentCollection) {
-			result = DominoUtils.getSession(((DocumentCollection) base).getParent());
-		}
 		return result;
 	}
 
@@ -243,7 +211,7 @@ public enum DominoUtils {
 	// MIMEBean methods
 
 	public static Serializable restoreState(Document doc, String itemName) throws Throwable {
-		Session session = getSession(doc);
+		Session session = Factory.getSession((org.openntf.domino.Base<?>) doc);
 		boolean convertMime = session.isConvertMime();
 		session.setConvertMime(false);
 
@@ -280,7 +248,7 @@ public enum DominoUtils {
 	}
 
 	public static void saveState(Serializable object, Document doc, String itemName, boolean compress) throws Throwable {
-		Session session = getSession(doc);
+		Session session = Factory.getSession((org.openntf.domino.Base<?>) doc);
 		boolean convertMime = session.isConvertMime();
 		session.setConvertMime(false);
 
@@ -315,5 +283,43 @@ public enum DominoUtils {
 		mimeStream.recycle();
 
 		session.setConvertMime(convertMime);
+	}
+
+	public static String getDominoIniVar(String propertyName, String defaultValue) {
+		String newVal = Factory.getSession().getEnvironmentString(propertyName, true);
+		if (!"".equals(newVal)) {
+			return newVal;
+		} else {
+			return defaultValue;
+		}
+	}
+
+	public static InputStream getDominoProps(int fileType, String fileLoc) {
+		InputStream returnStream = null;
+		InputStream is;
+		try {
+			switch (fileType) {
+			case 1:
+				// Properties file in this package
+				DominoUtils.class.getResourceAsStream(fileLoc);
+				break;
+			case 2:
+				// File in file system at literal path
+				is = new FileInputStream(fileLoc);
+				returnStream = new BufferedInputStream(is);
+				break;
+			case 3:
+				// File in file system relative to data directory
+				String dirPath = getDominoIniVar("Directory", "");
+				is = new FileInputStream(dirPath + "/" + fileLoc);
+				returnStream = new BufferedInputStream(is);
+				break;
+			// TODO Need to work out how to get from properties file in NSF
+			}
+			return returnStream;
+		} catch (Throwable e) {
+			handleException(e);
+			return returnStream;
+		}
 	}
 }
