@@ -1,5 +1,5 @@
 /*
- * © Copyright Tim Tripcony 2013
+ * Copyright OpenNTF 2013
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -23,16 +23,39 @@ import org.openntf.domino.impl.Base;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class DocumentIterator.
+ */
 public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.Document> {
+	
+	/** The index_. */
 	private int index_ = 0;
+	
+	/** The id array_. */
 	private int[] idArray_;
+	
+	/** The current_. */
 	private transient Document current_;
 
+	/**
+	 * Instantiates a new document iterator.
+	 * 
+	 * @param collection
+	 *            the collection
+	 */
 	public DocumentIterator(DocumentCollection collection) {
 		super(collection);
 		setIdArray(getCollectionIds(collection));
 	}
 
+	/**
+	 * Gets the collection ids.
+	 * 
+	 * @param collection
+	 *            the collection
+	 * @return the collection ids
+	 */
 	protected int[] getCollectionIds(DocumentCollection collection) {
 		int[] result = null;
 		if (collection != null) {
@@ -57,18 +80,34 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 		return result;
 	}
 
+	/**
+	 * Gets the id array.
+	 * 
+	 * @return the id array
+	 */
 	protected int[] getIdArray() {
 		return idArray_;
 	}
 
+	/**
+	 * Gets the index.
+	 * 
+	 * @return the index
+	 */
 	protected int getIndex() {
 		return index_;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.Iterator#hasNext()
+	 */
 	public boolean hasNext() {
 		return !((getIndex() + 1) > getIdArray().length);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.Iterator#next()
+	 */
 	public Document next() {
 		Document result = null;
 		if (hasNext()) {
@@ -91,15 +130,30 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.Iterator#remove()
+	 */
 	public void remove() {
 		// NOOP
 	}
 
+	/**
+	 * Sets the id array.
+	 * 
+	 * @param idArray
+	 *            the new id array
+	 */
 	protected void setIdArray(int[] idArray) {
 		idArray_ = idArray;
 		System.out.println("DocumentIterator set up idArray of " + idArray.length);
 	}
 
+	/**
+	 * Sets the index.
+	 * 
+	 * @param index
+	 *            the new index
+	 */
 	protected void setIndex(int index) {
 		index_ = index;
 	}

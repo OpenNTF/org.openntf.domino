@@ -1,5 +1,17 @@
-/**
+/*
+ * Copyright OpenNTF 2013
  * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
  */
 package org.openntf.domino.impl;
 
@@ -38,17 +50,21 @@ import org.openntf.domino.utils.DominoFormatter;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
+// TODO: Auto-generated Javadoc
 //import lotus.domino.Name;
 
 /**
- * @author nfreeman
+ * The Class Session.
  * 
+ * @author nfreeman
  */
 public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Session, lotus.domino.Session> implements
 		org.openntf.domino.Session {
 
+	/** The formatter_. */
 	private static DominoFormatter formatter_;
 
+	/** The default session. */
 	private static ThreadLocal<Session> defaultSession = new ThreadLocal<Session>() {
 		@Override
 		protected Session initialValue() {
@@ -56,21 +72,43 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	};
 
+	/**
+	 * Gets the default session.
+	 * 
+	 * @return the default session
+	 */
 	public static Session getDefaultSession() {
 		return defaultSession.get();
 	}
 
+	/**
+	 * Instantiates a new session.
+	 */
 	public Session() {
 		// TODO come up with some static methods for finding a Session based on run context (XPages, Agent, DOTS, etc)
 		super(null, null);
 	}
 
 	// FIXME NTF - not sure if there's a context where this makes sense...
+	/**
+	 * Instantiates a new session.
+	 * 
+	 * @param lotus
+	 *            the lotus
+	 * @param parent
+	 *            the parent
+	 */
 	public Session(lotus.domino.Session lotus, org.openntf.domino.Base<?> parent) {
 		super(lotus, parent);
 		initialize(lotus);
 	}
 
+	/**
+	 * Initialize.
+	 * 
+	 * @param session
+	 *            the session
+	 */
 	private void initialize(lotus.domino.Session session) {
 		try {
 			formatter_ = new DominoFormatter(session.getInternational());
@@ -83,10 +121,18 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/**
+	 * Gets the formatter.
+	 * 
+	 * @return the formatter
+	 */
 	public static DominoFormatter getFormatter() {
 		return formatter_;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#createAdministrationProcess(java.lang.String)
+	 */
 	@Override
 	public AdministrationProcess createAdministrationProcess(String arg0) {
 		try {
@@ -98,6 +144,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#createColorObject()
+	 */
 	@Override
 	public ColorObject createColorObject() {
 		try {
@@ -108,6 +157,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#createDateRange()
+	 */
 	@Override
 	public org.openntf.domino.DateRange createDateRange() {
 		try {
@@ -118,6 +170,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#createDateRange(java.util.Date, java.util.Date)
+	 */
 	@Override
 	public DateRange createDateRange(Date arg0, Date arg1) {
 		try {
@@ -128,6 +183,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#createDateRange(lotus.domino.DateTime, lotus.domino.DateTime)
+	 */
 	public DateRange createDateRange(lotus.domino.DateTime arg0, lotus.domino.DateTime arg1) {
 		try {
 			return Factory.fromLotus(createDateRange(arg0, arg1), org.openntf.domino.DateRange.class, this);
@@ -138,6 +196,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#createDateTime(java.util.Calendar)
+	 */
 	@Override
 	public DateTime createDateTime(Calendar arg0) {
 		try {
@@ -149,6 +210,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#createDateTime(java.util.Date)
+	 */
 	@Override
 	public DateTime createDateTime(Date arg0) {
 		try {
@@ -160,6 +224,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#createDateTime(java.lang.String)
+	 */
 	@Override
 	public DateTime createDateTime(String arg0) {
 		try {
@@ -171,6 +238,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#createDxlExporter()
+	 */
 	@Override
 	public DxlExporter createDxlExporter() {
 		try {
@@ -182,6 +252,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#createDxlImporter()
+	 */
 	@Override
 	public DxlImporter createDxlImporter() {
 		try {
@@ -193,6 +266,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#createLog(java.lang.String)
+	 */
 	@Override
 	public Log createLog(String arg0) {
 		try {
@@ -204,6 +280,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#createName(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public Name createName(String arg0, String arg1) {
 		try {
@@ -215,6 +294,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#createName(java.lang.String)
+	 */
 	@Override
 	public org.openntf.domino.Name createName(String arg0) {
 		try {
@@ -226,6 +308,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#createNewsletter(lotus.domino.DocumentCollection)
+	 */
 	@Override
 	public Newsletter createNewsletter(DocumentCollection arg0) {
 		try {
@@ -237,6 +322,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#createRegistration()
+	 */
 	@Override
 	public Registration createRegistration() {
 		try {
@@ -248,6 +336,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#createRichTextParagraphStyle()
+	 */
 	@Override
 	public RichTextParagraphStyle createRichTextParagraphStyle() {
 		try {
@@ -259,6 +350,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#createRichTextStyle()
+	 */
 	@Override
 	public RichTextStyle createRichTextStyle() {
 		try {
@@ -270,6 +364,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#createStream()
+	 */
 	@Override
 	public Stream createStream() {
 		try {
@@ -281,6 +378,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#evaluate(java.lang.String, lotus.domino.Document)
+	 */
 	@Override
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(String arg0, Document arg1) {
@@ -292,6 +392,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#evaluate(java.lang.String)
+	 */
 	@Override
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(String arg0) {
@@ -304,6 +407,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#freeTimeSearch(lotus.domino.DateRange, int, java.lang.Object, boolean)
+	 */
 	@Override
 	@Legacy(Legacy.INTERFACES_WARNING)
 	public Vector<org.openntf.domino.DateRange> freeTimeSearch(DateRange arg0, int arg1, Object arg2, boolean arg3) {
@@ -316,6 +422,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getAddressBooks()
+	 */
 	@Override
 	@Legacy(Legacy.INTERFACES_WARNING)
 	public Vector<org.openntf.domino.Database> getAddressBooks() {
@@ -328,6 +437,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getAgentContext()
+	 */
 	@Override
 	public AgentContext getAgentContext() {
 		try {
@@ -339,6 +451,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getCalendar(lotus.domino.Database)
+	 */
 	@Override
 	public NotesCalendar getCalendar(lotus.domino.Database arg0) {
 		try {
@@ -350,6 +465,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getCommonUserName()
+	 */
 	@Override
 	public String getCommonUserName() {
 		try {
@@ -361,6 +479,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getCredentials()
+	 */
 	@Override
 	public Object getCredentials() {
 		try {
@@ -372,6 +493,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getCurrentDatabase()
+	 */
 	@Override
 	public Database getCurrentDatabase() {
 		try {
@@ -383,6 +507,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getDatabase(java.lang.String, java.lang.String, boolean)
+	 */
 	@Override
 	public Database getDatabase(String arg0, String arg1, boolean arg2) {
 		try {
@@ -394,6 +521,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getDatabase(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public org.openntf.domino.Database getDatabase(String arg0, String arg1) {
 		try {
@@ -405,6 +535,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getDbDirectory(java.lang.String)
+	 */
 	@Override
 	public DbDirectory getDbDirectory(String arg0) {
 		try {
@@ -416,6 +549,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getDirectory()
+	 */
 	@Override
 	public Directory getDirectory() {
 		try {
@@ -427,6 +563,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getDirectory(java.lang.String)
+	 */
 	@Override
 	public Directory getDirectory(String arg0) {
 		try {
@@ -438,6 +577,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getEffectiveUserName()
+	 */
 	@Override
 	public String getEffectiveUserName() {
 		try {
@@ -449,6 +591,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getEnvironmentString(java.lang.String, boolean)
+	 */
 	@Override
 	public String getEnvironmentString(String arg0, boolean arg1) {
 		try {
@@ -460,6 +605,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getEnvironmentString(java.lang.String)
+	 */
 	@Override
 	public String getEnvironmentString(String arg0) {
 		try {
@@ -471,6 +619,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getEnvironmentValue(java.lang.String, boolean)
+	 */
 	@Override
 	public Object getEnvironmentValue(String arg0, boolean arg1) {
 		try {
@@ -482,6 +633,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getEnvironmentValue(java.lang.String)
+	 */
 	@Override
 	public Object getEnvironmentValue(String arg0) {
 		try {
@@ -493,6 +647,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getHttpURL()
+	 */
 	@Override
 	public String getHttpURL() {
 		try {
@@ -504,6 +661,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getInternational()
+	 */
 	@Override
 	public International getInternational() {
 		try {
@@ -515,6 +675,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getNotesVersion()
+	 */
 	@Override
 	public String getNotesVersion() {
 		try {
@@ -526,6 +689,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getOrgDirectoryPath()
+	 */
 	@Override
 	public String getOrgDirectoryPath() {
 		try {
@@ -537,6 +703,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getPlatform()
+	 */
 	@Override
 	public String getPlatform() {
 		try {
@@ -548,6 +717,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getPropertyBroker()
+	 */
 	@Override
 	public PropertyBroker getPropertyBroker() {
 		try {
@@ -559,6 +731,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getServerName()
+	 */
 	@Override
 	public String getServerName() {
 		try {
@@ -570,6 +745,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getSessionToken()
+	 */
 	@Override
 	public String getSessionToken() {
 		try {
@@ -581,6 +759,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getSessionToken(java.lang.String)
+	 */
 	@Override
 	public String getSessionToken(String arg0) {
 		try {
@@ -592,6 +773,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getURL()
+	 */
 	@Override
 	public String getURL() {
 		try {
@@ -603,6 +787,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getURLDatabase()
+	 */
 	@Override
 	public Database getURLDatabase() {
 		try {
@@ -614,6 +801,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getUserGroupNameList()
+	 */
 	@Override
 	public Vector<org.openntf.domino.Name> getUserGroupNameList() {
 		try {
@@ -625,6 +815,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getUserName()
+	 */
 	@Override
 	public String getUserName() {
 		try {
@@ -636,6 +829,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getUserNameList()
+	 */
 	@Override
 	public Vector<org.openntf.domino.Name> getUserNameList() {
 		try {
@@ -647,6 +843,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getUserNameObject()
+	 */
 	@Override
 	public org.openntf.domino.Name getUserNameObject() {
 		try {
@@ -658,6 +857,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getUserPolicySettings(java.lang.String, java.lang.String, int, java.lang.String)
+	 */
 	@Override
 	public Document getUserPolicySettings(String arg0, String arg1, int arg2, String arg3) {
 		try {
@@ -669,6 +871,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getUserPolicySettings(java.lang.String, java.lang.String, int)
+	 */
 	@Override
 	public Document getUserPolicySettings(String arg0, String arg1, int arg2) {
 		try {
@@ -680,6 +885,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#hashPassword(java.lang.String)
+	 */
 	@Override
 	public String hashPassword(String arg0) {
 		try {
@@ -691,6 +899,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#isConvertMIME()
+	 */
 	@Override
 	public boolean isConvertMIME() {
 		try {
@@ -702,6 +913,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#isConvertMime()
+	 */
 	@Override
 	public boolean isConvertMime() {
 		try {
@@ -713,6 +927,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#isOnServer()
+	 */
 	@Override
 	public boolean isOnServer() {
 		try {
@@ -724,6 +941,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#isRestricted()
+	 */
 	@Override
 	public boolean isRestricted() {
 		try {
@@ -735,6 +955,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#isTrackMillisecInJavaDates()
+	 */
 	@Override
 	public boolean isTrackMillisecInJavaDates() {
 		try {
@@ -746,6 +969,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#isTrustedSession()
+	 */
 	@Override
 	public boolean isTrustedSession() {
 		try {
@@ -757,11 +983,17 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#isValid()
+	 */
 	@Override
 	public boolean isValid() {
 		return getDelegate().isValid();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#resetUserPassword(java.lang.String, java.lang.String, java.lang.String, int)
+	 */
 	@Override
 	public boolean resetUserPassword(String arg0, String arg1, String arg2, int arg3) {
 		try {
@@ -772,6 +1004,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#resetUserPassword(java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean resetUserPassword(String arg0, String arg1, String arg2) {
 		try {
@@ -783,6 +1018,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#resolve(java.lang.String)
+	 */
 	@Override
 	public Base resolve(String arg0) {
 		try {
@@ -794,6 +1032,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#sendConsoleCommand(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public String sendConsoleCommand(String arg0, String arg1) {
 		try {
@@ -805,6 +1046,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#setAllowLoopBack(boolean)
+	 */
 	@Override
 	public void setAllowLoopBack(boolean arg0) {
 		try {
@@ -815,6 +1059,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#setConvertMIME(boolean)
+	 */
 	@Override
 	public void setConvertMIME(boolean arg0) {
 		try {
@@ -825,6 +1072,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#setConvertMime(boolean)
+	 */
 	@Override
 	public void setConvertMime(boolean arg0) {
 		try {
@@ -835,6 +1085,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#setEnvironmentVar(java.lang.String, java.lang.Object, boolean)
+	 */
 	@Override
 	public void setEnvironmentVar(String arg0, Object arg1, boolean arg2) {
 		try {
@@ -845,6 +1098,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#setEnvironmentVar(java.lang.String, java.lang.Object)
+	 */
 	@Override
 	public void setEnvironmentVar(String arg0, Object arg1) {
 		try {
@@ -855,6 +1111,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#setTrackMillisecInJavaDates(boolean)
+	 */
 	@Override
 	public void setTrackMillisecInJavaDates(boolean arg0) {
 		try {
@@ -865,6 +1124,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#verifyPassword(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean verifyPassword(String arg0, String arg1) {
 		try {
@@ -876,6 +1138,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getUserGroupNameCollection()
+	 */
 	@Override
 	public Collection<String> getUserGroupNameCollection() {
 		Collection<String> result = new ArrayList<String>();
@@ -889,6 +1154,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getUserNameCollection()
+	 */
 	@Override
 	public Collection<String> getUserNameCollection() {
 		Collection<String> result = new ArrayList<String>();
@@ -902,6 +1170,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getAddressBookCollection()
+	 */
 	@Override
 	public Collection<org.openntf.domino.Database> getAddressBookCollection() {
 		Collection<org.openntf.domino.Database> result = new ArrayList<org.openntf.domino.Database>();
@@ -914,6 +1185,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#freeTimeSearch(org.openntf.domino.DateRange, int, java.lang.String, boolean)
+	 */
 	@Override
 	public Collection<org.openntf.domino.DateRange> freeTimeSearch(org.openntf.domino.DateRange arg0, int arg1, String arg2, boolean arg3) {
 		// TODO verify that we don't end up with an ambiguous method signature
@@ -927,6 +1201,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#freeTimeSearch(org.openntf.domino.DateRange, int, java.util.Collection, boolean)
+	 */
 	@Override
 	public Collection<org.openntf.domino.DateRange> freeTimeSearch(org.openntf.domino.DateRange arg0, int arg1, Collection<String> arg2,
 			boolean arg3) {

@@ -1,3 +1,18 @@
+/*
+ * Copyright OpenNTF 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ */
 package org.openntf.domino.impl;
 
 import java.util.Iterator;
@@ -10,12 +25,27 @@ import org.openntf.domino.iterators.AclIterator;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ACL.
+ */
 public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implements org.openntf.domino.ACL {
 
+	/**
+	 * Instantiates a new acl.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 */
 	public ACL(lotus.domino.ACL delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#addRole(java.lang.String)
+	 */
 	@Override
 	public void addRole(String name) {
 		try {
@@ -25,6 +55,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#createACLEntry(java.lang.String, int)
+	 */
 	@Override
 	public ACLEntry createACLEntry(String name, int level) {
 		try {
@@ -35,6 +68,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#deleteRole(java.lang.String)
+	 */
 	@Override
 	public void deleteRole(String name) {
 		try {
@@ -44,6 +80,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#getAdministrationServer()
+	 */
 	@Override
 	public String getAdministrationServer() {
 		try {
@@ -54,6 +93,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#getEntry(java.lang.String)
+	 */
 	@Override
 	public ACLEntry getEntry(String ename) {
 		try {
@@ -64,6 +106,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#getFirstEntry()
+	 */
 	@Override
 	public ACLEntry getFirstEntry() {
 		try {
@@ -74,6 +119,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#getInternetLevel()
+	 */
 	@Override
 	public int getInternetLevel() {
 		try {
@@ -84,6 +132,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		return ACL.LEVEL_NOACCESS;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#getNextEntry()
+	 */
 	@Override
 	public ACLEntry getNextEntry() {
 		try {
@@ -94,6 +145,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#getNextEntry(lotus.domino.ACLEntry)
+	 */
 	@Override
 	public ACLEntry getNextEntry(lotus.domino.ACLEntry entry) {
 		try {
@@ -104,11 +158,17 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#getParent()
+	 */
 	@Override
 	public Database getParent() {
 		return (Database) super.getParent();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#getRoles()
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<String> getRoles() {
@@ -120,6 +180,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#isAdminNames()
+	 */
 	@Override
 	public boolean isAdminNames() {
 		try {
@@ -130,6 +193,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#isAdminReaderAuthor()
+	 */
 	@Override
 	public boolean isAdminReaderAuthor() {
 		try {
@@ -140,6 +206,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#isExtendedAccess()
+	 */
 	@Override
 	public boolean isExtendedAccess() {
 		try {
@@ -150,6 +219,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#isUniformAccess()
+	 */
 	@Override
 	public boolean isUniformAccess() {
 		try {
@@ -160,6 +232,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#removeACLEntry(java.lang.String)
+	 */
 	@Override
 	public void removeACLEntry(String name) {
 		try {
@@ -169,6 +244,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#renameRole(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public void renameRole(String oldName, String newName) {
 		try {
@@ -178,6 +256,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#save()
+	 */
 	@Override
 	public void save() {
 		try {
@@ -187,6 +268,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#setAdminNames(boolean)
+	 */
 	@Override
 	public void setAdminNames(boolean flag) {
 		try {
@@ -196,6 +280,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#setAdminReaderAuthor(boolean)
+	 */
 	@Override
 	public void setAdminReaderAuthor(boolean flag) {
 		try {
@@ -205,6 +292,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#setAdministrationServer(java.lang.String)
+	 */
 	@Override
 	public void setAdministrationServer(String serverName) {
 		try {
@@ -214,6 +304,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#setExtendedAccess(boolean)
+	 */
 	@Override
 	public void setExtendedAccess(boolean flag) {
 		try {
@@ -223,6 +316,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#setInternetLevel(int)
+	 */
 	@Override
 	public void setInternetLevel(int level) {
 		try {
@@ -232,6 +328,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#setUniformAccess(boolean)
+	 */
 	@Override
 	public void setUniformAccess(boolean flag) {
 		try {
@@ -241,6 +340,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Iterable#iterator()
+	 */
 	@Override
 	public Iterator<ACLEntry> iterator() {
 		return new AclIterator(this);

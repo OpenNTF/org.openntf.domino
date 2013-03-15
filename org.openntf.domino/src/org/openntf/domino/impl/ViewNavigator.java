@@ -1,3 +1,18 @@
+/*
+ * Copyright OpenNTF 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ */
 package org.openntf.domino.impl;
 
 import lotus.domino.NotesException;
@@ -7,23 +22,44 @@ import org.openntf.domino.ViewEntry;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ViewNavigator.
+ */
 public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.domino.ViewNavigator> implements
 		org.openntf.domino.ViewNavigator {
 
+	/**
+	 * Instantiates a new view navigator.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 */
 	public ViewNavigator(lotus.domino.ViewNavigator delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getBufferMaxEntries()
+	 */
 	@Override
 	public int getBufferMaxEntries() {
 		return getDelegate().getBufferMaxEntries();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getCacheSize()
+	 */
 	@Override
 	public int getCacheSize() {
 		return getDelegate().getCacheSize();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getChild()
+	 */
 	@Override
 	public ViewEntry getChild() {
 		try {
@@ -34,6 +70,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getChild(lotus.domino.ViewEntry)
+	 */
 	@Override
 	public ViewEntry getChild(lotus.domino.ViewEntry entry) {
 		try {
@@ -44,11 +83,17 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getCount()
+	 */
 	@Override
 	public int getCount() {
 		return getDelegate().getCount();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getCurrent()
+	 */
 	@Override
 	public ViewEntry getCurrent() {
 		try {
@@ -59,11 +104,17 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getEntryOptions()
+	 */
 	@Override
 	public int getEntryOptions() {
 		return getDelegate().getEntryOptions();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getFirst()
+	 */
 	@Override
 	public ViewEntry getFirst() {
 		try {
@@ -74,6 +125,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getFirstDocument()
+	 */
 	@Override
 	public ViewEntry getFirstDocument() {
 		try {
@@ -84,6 +138,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getLast()
+	 */
 	@Override
 	public ViewEntry getLast() {
 		try {
@@ -94,6 +151,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getLastDocument()
+	 */
 	@Override
 	public ViewEntry getLastDocument() {
 		try {
@@ -104,11 +164,17 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getMaxLevel()
+	 */
 	@Override
 	public int getMaxLevel() {
 		return getDelegate().getMaxLevel();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getNext()
+	 */
 	@Override
 	public ViewEntry getNext() {
 		try {
@@ -119,6 +185,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getNext(lotus.domino.ViewEntry)
+	 */
 	@Override
 	public ViewEntry getNext(lotus.domino.ViewEntry entry) {
 		try {
@@ -129,6 +198,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getNextCategory()
+	 */
 	@Override
 	public ViewEntry getNextCategory() {
 		try {
@@ -139,6 +211,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getNextDocument()
+	 */
 	@Override
 	public ViewEntry getNextDocument() {
 		try {
@@ -149,6 +224,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getNextSibling()
+	 */
 	@Override
 	public ViewEntry getNextSibling() {
 		try {
@@ -159,6 +237,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getNextSibling(lotus.domino.ViewEntry)
+	 */
 	@Override
 	public ViewEntry getNextSibling(lotus.domino.ViewEntry entry) {
 		try {
@@ -169,6 +250,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getNth(int)
+	 */
 	@Override
 	public ViewEntry getNth(int n) {
 		try {
@@ -179,6 +263,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#getParent()
+	 */
 	@Override
 	public ViewEntry getParent() {
 		try {
@@ -189,6 +276,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getParent(lotus.domino.ViewEntry)
+	 */
 	@Override
 	public ViewEntry getParent(lotus.domino.ViewEntry entry) {
 		try {
@@ -199,11 +289,17 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getParentView()
+	 */
 	@Override
 	public View getParentView() {
 		return (View) super.getParent();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getPos(java.lang.String, char)
+	 */
 	@Override
 	public ViewEntry getPos(String pos, char separator) {
 		try {
@@ -214,6 +310,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getPrev()
+	 */
 	@Override
 	public ViewEntry getPrev() {
 		try {
@@ -224,6 +323,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getPrev(lotus.domino.ViewEntry)
+	 */
 	@Override
 	public ViewEntry getPrev(lotus.domino.ViewEntry entry) {
 		try {
@@ -234,6 +336,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getPrevCategory()
+	 */
 	@Override
 	public ViewEntry getPrevCategory() {
 		try {
@@ -244,6 +349,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getPrevDocument()
+	 */
 	@Override
 	public ViewEntry getPrevDocument() {
 		try {
@@ -254,6 +362,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getPrevSibling()
+	 */
 	@Override
 	public ViewEntry getPrevSibling() {
 		try {
@@ -264,6 +375,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#getPrevSibling(lotus.domino.ViewEntry)
+	 */
 	@Override
 	public ViewEntry getPrevSibling(lotus.domino.ViewEntry entry) {
 		try {
@@ -274,6 +388,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoChild()
+	 */
 	@Override
 	public boolean gotoChild() {
 		try {
@@ -284,6 +401,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoChild(lotus.domino.ViewEntry)
+	 */
 	@Override
 	public boolean gotoChild(lotus.domino.ViewEntry entry) {
 		try {
@@ -294,6 +414,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoEntry(java.lang.Object)
+	 */
 	@Override
 	public boolean gotoEntry(Object entry) {
 		try {
@@ -304,6 +427,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoFirst()
+	 */
 	@Override
 	public boolean gotoFirst() {
 		try {
@@ -314,6 +440,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoFirstDocument()
+	 */
 	@Override
 	public boolean gotoFirstDocument() {
 		try {
@@ -324,6 +453,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoLast()
+	 */
 	@Override
 	public boolean gotoLast() {
 		try {
@@ -334,6 +466,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoLastDocument()
+	 */
 	@Override
 	public boolean gotoLastDocument() {
 		try {
@@ -344,6 +479,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoNext()
+	 */
 	@Override
 	public boolean gotoNext() {
 		try {
@@ -354,6 +492,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoNext(lotus.domino.ViewEntry)
+	 */
 	@Override
 	public boolean gotoNext(lotus.domino.ViewEntry entry) {
 		try {
@@ -364,6 +505,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoNextCategory()
+	 */
 	@Override
 	public boolean gotoNextCategory() {
 		try {
@@ -374,6 +518,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoNextDocument()
+	 */
 	@Override
 	public boolean gotoNextDocument() {
 		try {
@@ -384,6 +531,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoNextSibling()
+	 */
 	@Override
 	public boolean gotoNextSibling() {
 		try {
@@ -394,6 +544,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoNextSibling(lotus.domino.ViewEntry)
+	 */
 	@Override
 	public boolean gotoNextSibling(lotus.domino.ViewEntry entry) {
 		try {
@@ -404,6 +557,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoParent()
+	 */
 	@Override
 	public boolean gotoParent() {
 		try {
@@ -414,6 +570,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoParent(lotus.domino.ViewEntry)
+	 */
 	@Override
 	public boolean gotoParent(lotus.domino.ViewEntry entry) {
 		try {
@@ -424,6 +583,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoPos(java.lang.String, char)
+	 */
 	@Override
 	public boolean gotoPos(String pos, char separator) {
 		try {
@@ -434,6 +596,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoPrev()
+	 */
 	@Override
 	public boolean gotoPrev() {
 		try {
@@ -444,6 +609,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoPrev(lotus.domino.ViewEntry)
+	 */
 	@Override
 	public boolean gotoPrev(lotus.domino.ViewEntry entry) {
 		try {
@@ -454,6 +622,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoPrevCategory()
+	 */
 	@Override
 	public boolean gotoPrevCategory() {
 		try {
@@ -464,6 +635,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoPrevDocument()
+	 */
 	@Override
 	public boolean gotoPrevDocument() {
 		try {
@@ -474,6 +648,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoPrevSibling()
+	 */
 	@Override
 	public boolean gotoPrevSibling() {
 		try {
@@ -484,6 +661,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoPrevSibling(lotus.domino.ViewEntry)
+	 */
 	@Override
 	public boolean gotoPrevSibling(lotus.domino.ViewEntry entry) {
 		try {
@@ -494,6 +674,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#markAllRead()
+	 */
 	@Override
 	public void markAllRead() {
 		try {
@@ -503,6 +686,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#markAllRead(java.lang.String)
+	 */
 	@Override
 	public void markAllRead(String userName) {
 		try {
@@ -512,6 +698,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#markAllUnread()
+	 */
 	@Override
 	public void markAllUnread() {
 		try {
@@ -521,6 +710,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#markAllUnread(java.lang.String)
+	 */
 	@Override
 	public void markAllUnread(String userName) {
 		try {
@@ -530,6 +722,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#setAutoExpandGuidance(int, int[], int[])
+	 */
 	@Override
 	public void setAutoExpandGuidance(int maxEntries, int[] collapsedNoteIds, int[] expandedNoteIds) {
 		try {
@@ -539,6 +734,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#setAutoExpandGuidance(int, lotus.domino.NoteCollection, lotus.domino.NoteCollection)
+	 */
 	@Override
 	public void setAutoExpandGuidance(int maxEntries, lotus.domino.NoteCollection collapsedNoteIds,
 			lotus.domino.NoteCollection expandedNoteIds) {
@@ -550,6 +748,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#setBufferMaxEntries(int)
+	 */
 	@Override
 	public void setBufferMaxEntries(int entryCount) {
 		try {
@@ -559,6 +760,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#setCacheGuidance(int)
+	 */
 	@Override
 	public void setCacheGuidance(int maxEntries) {
 		try {
@@ -568,6 +772,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#setCacheGuidance(int, int)
+	 */
 	@Override
 	public void setCacheGuidance(int maxEntries, int readMode) {
 		try {
@@ -577,6 +784,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#setCacheSize(int)
+	 */
 	@Override
 	public void setCacheSize(int size) {
 		try {
@@ -586,6 +796,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#setEntryOptions(int)
+	 */
 	@Override
 	public void setEntryOptions(int options) {
 		try {
@@ -595,6 +808,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#setMaxLevel(int)
+	 */
 	@Override
 	public void setMaxLevel(int maxLevel) {
 		try {
@@ -604,6 +820,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#skip(int)
+	 */
 	@Override
 	public int skip(int count) {
 		try {

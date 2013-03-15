@@ -1,3 +1,18 @@
+/*
+ * Copyright OpenNTF 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ */
 package org.openntf.domino.impl;
 
 import java.util.Vector;
@@ -7,13 +22,28 @@ import lotus.domino.NotesException;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Registration.
+ */
 public class Registration extends Base<org.openntf.domino.Registration, lotus.domino.Registration> implements
 		org.openntf.domino.Registration {
 
+	/**
+	 * Instantiates a new registration.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 */
 	public Registration(lotus.domino.Registration delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#addCertifierToAddressBook(java.lang.String)
+	 */
 	@Override
 	public boolean addCertifierToAddressBook(String idFile) {
 		try {
@@ -24,6 +54,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#addCertifierToAddressBook(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean addCertifierToAddressBook(String idFile, String password) {
 		try {
@@ -34,6 +67,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#addCertifierToAddressBook(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean addCertifierToAddressBook(String idFile, String password, String location, String comment) {
 		try {
@@ -44,6 +80,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#addServerToAddressBook(java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean addServerToAddressBook(String idFile, String server, String domain) {
 		try {
@@ -54,6 +93,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#addServerToAddressBook(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean addServerToAddressBook(String idFile, String server, String domain, String userPassword) {
 		try {
@@ -64,6 +106,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#addServerToAddressBook(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean addServerToAddressBook(String idFile, String server, String domain, String userPassword, String network,
 			String adminName, String title, String location, String comment) {
@@ -75,6 +120,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#addUserProfile(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public void addUserProfile(String userName, String profile) {
 		try {
@@ -84,6 +132,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#addUserToAddressBook(java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean addUserToAddressBook(String idFile, String fullName, String lastName) {
 		try {
@@ -94,6 +145,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#addUserToAddressBook(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean addUserToAddressBook(String idFile, String fullName, String lastName, String userPassword) {
 		try {
@@ -104,6 +158,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#addUserToAddressBook(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean addUserToAddressBook(String idFile, String fullName, String lastName, String userPassword, String firstName,
 			String middleName, String mailServer, String mailFilePath, String forwardingAddress, String location, String comment) {
@@ -116,6 +173,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#crossCertify(java.lang.String)
+	 */
 	@Override
 	public boolean crossCertify(String idFile) {
 		try {
@@ -126,6 +186,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#crossCertify(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean crossCertify(String idFile, String certPassword) {
 		try {
@@ -136,6 +199,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#crossCertify(java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean crossCertify(String idFile, String certPassword, String comment) {
 		try {
@@ -146,6 +212,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#deleteIDOnServer(java.lang.String, boolean)
+	 */
 	@Override
 	public void deleteIDOnServer(String userName, boolean isServerID) {
 		try {
@@ -155,6 +224,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getAltOrgUnit()
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<String> getAltOrgUnit() {
@@ -166,6 +238,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getAltOrgUnitLang()
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<String> getAltOrgUnitLang() {
@@ -177,6 +252,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getCertifierIDFile()
+	 */
 	@Override
 	public String getCertifierIDFile() {
 		try {
@@ -187,6 +265,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getCertifierName()
+	 */
 	@Override
 	public String getCertifierName() {
 		try {
@@ -197,6 +278,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getCreateMailDb()
+	 */
 	@Override
 	public boolean getCreateMailDb() {
 		try {
@@ -207,6 +291,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getExpiration()
+	 */
 	@Override
 	public DateTime getExpiration() {
 		try {
@@ -217,6 +304,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getForeignDN()
+	 */
 	@Override
 	public String getForeignDN() {
 		try {
@@ -227,6 +317,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getGroupList()
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<String> getGroupList() {
@@ -238,6 +331,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getIDFromServer(java.lang.String, java.lang.String, boolean)
+	 */
 	@Override
 	public void getIDFromServer(String userName, String filePath, boolean isServerID) {
 		try {
@@ -247,6 +343,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getIDType()
+	 */
 	@Override
 	public int getIDType() {
 		try {
@@ -257,6 +356,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getMailACLManager()
+	 */
 	@Override
 	public String getMailACLManager() {
 		try {
@@ -267,6 +369,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getMailInternetAddress()
+	 */
 	@Override
 	public String getMailInternetAddress() {
 		try {
@@ -277,6 +382,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getMailOwnerAccess()
+	 */
 	@Override
 	public int getMailOwnerAccess() {
 		try {
@@ -287,6 +395,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getMailQuotaSizeLimit()
+	 */
 	@Override
 	public int getMailQuotaSizeLimit() {
 		try {
@@ -297,6 +408,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getMailQuotaWarningThreshold()
+	 */
 	@Override
 	public int getMailQuotaWarningThreshold() {
 		try {
@@ -307,6 +421,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getMailReplicaServers()
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<String> getMailReplicaServers() {
@@ -318,6 +435,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getMailSystem()
+	 */
 	@Override
 	public int getMailSystem() {
 		try {
@@ -328,6 +448,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getMailTemplateName()
+	 */
 	@Override
 	public String getMailTemplateName() {
 		try {
@@ -338,6 +461,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getMinPasswordLength()
+	 */
 	@Override
 	public int getMinPasswordLength() {
 		try {
@@ -348,6 +474,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getOrgUnit()
+	 */
 	@Override
 	public String getOrgUnit() {
 		try {
@@ -358,6 +487,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#getParent()
+	 */
 	@Override
 	public Session getParent() {
 		try {
@@ -368,6 +500,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getPolicyName()
+	 */
 	@Override
 	public String getPolicyName() {
 		try {
@@ -378,6 +513,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getPublicKeySize()
+	 */
 	@Override
 	public int getPublicKeySize() {
 		try {
@@ -388,6 +526,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getRegistrationLog()
+	 */
 	@Override
 	public String getRegistrationLog() {
 		try {
@@ -398,6 +539,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getRegistrationServer()
+	 */
 	@Override
 	public String getRegistrationServer() {
 		try {
@@ -408,6 +552,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getRoamingCleanupPeriod()
+	 */
 	@Override
 	public int getRoamingCleanupPeriod() {
 		try {
@@ -418,6 +565,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getRoamingCleanupSetting()
+	 */
 	@Override
 	public int getRoamingCleanupSetting() {
 		try {
@@ -428,6 +578,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getRoamingServer()
+	 */
 	@Override
 	public String getRoamingServer() {
 		try {
@@ -438,6 +591,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getRoamingSubdir()
+	 */
 	@Override
 	public String getRoamingSubdir() {
 		try {
@@ -448,6 +604,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getShortName()
+	 */
 	@Override
 	public String getShortName() {
 		try {
@@ -458,6 +617,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getStoreIDInAddressBook()
+	 */
 	@Override
 	public boolean getStoreIDInAddressBook() {
 		try {
@@ -468,6 +630,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getUpdateAddressBook()
+	 */
 	@Override
 	public boolean getUpdateAddressBook() {
 		try {
@@ -478,6 +643,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#getUserInfo(java.lang.String, java.lang.StringBuffer, java.lang.StringBuffer, java.lang.StringBuffer, java.lang.StringBuffer, java.util.Vector)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void getUserInfo(String userName, StringBuffer mailServer, StringBuffer mailFile, StringBuffer mailDomain,
@@ -489,6 +657,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#isEnforceUniqueShortName()
+	 */
 	@Override
 	public boolean isEnforceUniqueShortName() {
 		try {
@@ -499,6 +670,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#isMailCreateFTIndex()
+	 */
 	@Override
 	public boolean isMailCreateFTIndex() {
 		try {
@@ -509,6 +683,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#isNoIDFile()
+	 */
 	@Override
 	public boolean isNoIDFile() {
 		try {
@@ -519,6 +696,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#isNorthAmerican()
+	 */
 	@Override
 	public boolean isNorthAmerican() {
 		try {
@@ -529,6 +709,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#isRoamingUser()
+	 */
 	@Override
 	public boolean isRoamingUser() {
 		try {
@@ -539,6 +722,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#isStoreIDInMailfile()
+	 */
 	@Override
 	public boolean isStoreIDInMailfile() {
 		try {
@@ -549,6 +735,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#isSynchInternetPassword()
+	 */
 	@Override
 	public boolean isSynchInternetPassword() {
 		try {
@@ -559,6 +748,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#isUseCertificateAuthority()
+	 */
 	@Override
 	public boolean isUseCertificateAuthority() {
 		try {
@@ -569,6 +761,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#recertify(java.lang.String)
+	 */
 	@Override
 	public boolean recertify(String idFile) {
 		try {
@@ -579,6 +774,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#recertify(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean recertify(String idFile, String certPassword) {
 		try {
@@ -589,6 +787,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#recertify(java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean recertify(String idFile, String certPassword, String comment) {
 		try {
@@ -599,6 +800,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#registerNewCertifier(java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean registerNewCertifier(String org, String idFile, String certPassword) {
 		try {
@@ -609,6 +813,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#registerNewCertifier(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean registerNewCertifier(String org, String idFile, String certPassword, String country) {
 		try {
@@ -619,6 +826,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#registerNewServer(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean registerNewServer(String server, String idFile, String domain, String password) {
 		try {
@@ -629,6 +839,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#registerNewServer(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean registerNewServer(String server, String idFile, String domain, String serverPassword, String certPassword) {
 		try {
@@ -639,6 +852,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#registerNewServer(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean registerNewServer(String server, String idFile, String domain, String serverPassword, String certPassword,
 			String location, String comment, String network, String adminName, String title) {
@@ -651,6 +867,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#registerNewUser(java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean registerNewUser(String lastName, String idFile, String server) {
 		try {
@@ -661,6 +880,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#registerNewUser(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean registerNewUser(String lastName, String idFile, String server, String firstName, String middleName, String certPassword) {
 		try {
@@ -671,6 +893,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#registerNewUser(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean registerNewUser(String lastName, String idFile, String server, String firstName, String middleName, String certPassword,
 			String location, String comment, String mailDBPath, String forward, String userPassword) {
@@ -683,6 +908,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#registerNewUser(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public boolean registerNewUser(String lastName, String idFile, String server, String firstName, String middleName, String certPassword,
 			String location, String comment, String mailDBPath, String forward, String userPassword, String altName, String altNameLang) {
@@ -695,6 +923,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setAltOrgUnit(java.util.Vector)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setAltOrgUnit(Vector names) {
@@ -705,6 +936,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setAltOrgUnitLang(java.util.Vector)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setAltOrgUnitLang(Vector languages) {
@@ -715,6 +949,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setCertifierIDFile(java.lang.String)
+	 */
 	@Override
 	public void setCertifierIDFile(String idFile) {
 		try {
@@ -724,6 +961,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setCertifierName(java.lang.String)
+	 */
 	@Override
 	public void setCertifierName(String name) {
 		try {
@@ -733,6 +973,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setCreateMailDb(boolean)
+	 */
 	@Override
 	public void setCreateMailDb(boolean flag) {
 		try {
@@ -742,6 +985,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setEnforceUniqueShortName(boolean)
+	 */
 	@Override
 	public void setEnforceUniqueShortName(boolean flag) {
 		try {
@@ -751,6 +997,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setExpiration(lotus.domino.DateTime)
+	 */
 	@Override
 	public void setExpiration(lotus.domino.DateTime expiration) {
 		try {
@@ -760,6 +1009,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setForeignDN(java.lang.String)
+	 */
 	@Override
 	public void setForeignDN(String dn) {
 		try {
@@ -769,6 +1021,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setGroupList(java.util.Vector)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setGroupList(Vector groups) {
@@ -779,6 +1034,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setIDType(int)
+	 */
 	@Override
 	public void setIDType(int type) {
 		try {
@@ -788,6 +1046,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setMailACLManager(java.lang.String)
+	 */
 	@Override
 	public void setMailACLManager(String name) {
 		try {
@@ -797,6 +1058,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setMailCreateFTIndex(boolean)
+	 */
 	@Override
 	public void setMailCreateFTIndex(boolean flag) {
 		try {
@@ -806,6 +1070,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setMailInternetAddress(java.lang.String)
+	 */
 	@Override
 	public void setMailInternetAddress(String address) {
 		try {
@@ -815,6 +1082,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setMailOwnerAccess(int)
+	 */
 	@Override
 	public void setMailOwnerAccess(int access) {
 		try {
@@ -824,6 +1094,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setMailQuotaSizeLimit(int)
+	 */
 	@Override
 	public void setMailQuotaSizeLimit(int limit) {
 		try {
@@ -833,6 +1106,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setMailQuotaWarningThreshold(int)
+	 */
 	@Override
 	public void setMailQuotaWarningThreshold(int threshold) {
 		try {
@@ -842,6 +1118,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setMailReplicaServers(java.util.Vector)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setMailReplicaServers(Vector servers) {
@@ -852,6 +1131,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setMailSystem(int)
+	 */
 	@Override
 	public void setMailSystem(int system) {
 		try {
@@ -861,6 +1143,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setMailTemplateName(java.lang.String)
+	 */
 	@Override
 	public void setMailTemplateName(String name) {
 		try {
@@ -870,6 +1155,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setMinPasswordLength(int)
+	 */
 	@Override
 	public void setMinPasswordLength(int length) {
 		try {
@@ -879,6 +1167,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setNoIDFile(boolean)
+	 */
 	@Override
 	public void setNoIDFile(boolean flag) {
 		try {
@@ -888,6 +1179,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setNorthAmerican(boolean)
+	 */
 	@Override
 	public void setNorthAmerican(boolean flag) {
 		try {
@@ -897,6 +1191,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setOrgUnit(java.lang.String)
+	 */
 	@Override
 	public void setOrgUnit(String unit) {
 		try {
@@ -906,6 +1203,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setPolicyName(java.lang.String)
+	 */
 	@Override
 	public void setPolicyName(String name) {
 		try {
@@ -915,6 +1215,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setPublicKeySize(int)
+	 */
 	@Override
 	public void setPublicKeySize(int size) {
 		try {
@@ -924,6 +1227,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setRegistrationLog(java.lang.String)
+	 */
 	@Override
 	public void setRegistrationLog(String name) {
 		try {
@@ -933,6 +1239,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setRegistrationServer(java.lang.String)
+	 */
 	@Override
 	public void setRegistrationServer(String server) {
 		try {
@@ -942,6 +1251,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setRoamingCleanupPeriod(int)
+	 */
 	@Override
 	public void setRoamingCleanupPeriod(int period) {
 		try {
@@ -951,6 +1263,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setRoamingCleanupSetting(int)
+	 */
 	@Override
 	public void setRoamingCleanupSetting(int setting) {
 		try {
@@ -960,6 +1275,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setRoamingServer(java.lang.String)
+	 */
 	@Override
 	public void setRoamingServer(String server) {
 		try {
@@ -969,6 +1287,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setRoamingSubdir(java.lang.String)
+	 */
 	@Override
 	public void setRoamingSubdir(String dirPath) {
 		try {
@@ -978,6 +1299,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setRoamingUser(boolean)
+	 */
 	@Override
 	public void setRoamingUser(boolean flag) {
 		try {
@@ -987,6 +1311,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setShortName(java.lang.String)
+	 */
 	@Override
 	public void setShortName(String shortName) {
 		try {
@@ -996,6 +1323,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setStoreIDInAddressBook(boolean)
+	 */
 	@Override
 	public void setStoreIDInAddressBook(boolean flag) {
 		try {
@@ -1005,6 +1335,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setStoreIDInMailfile(boolean)
+	 */
 	@Override
 	public void setStoreIDInMailfile(boolean flag) {
 		try {
@@ -1014,6 +1347,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setSynchInternetPassword(boolean)
+	 */
 	@Override
 	public void setSynchInternetPassword(boolean flag) {
 		try {
@@ -1023,6 +1359,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setUpdateAddressBook(boolean)
+	 */
 	@Override
 	public void setUpdateAddressBook(boolean flag) {
 		try {
@@ -1032,6 +1371,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#setUseCertificateAuthority(boolean)
+	 */
 	@Override
 	public void setUseCertificateAuthority(boolean flag) {
 		try {
@@ -1041,6 +1383,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Registration#switchToID(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public String switchToID(String idFile, String userPassword) {
 		try {

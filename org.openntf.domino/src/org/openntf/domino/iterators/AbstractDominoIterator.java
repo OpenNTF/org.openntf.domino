@@ -1,5 +1,5 @@
 /*
- * © Copyright OpenNTF 2013
+ * Copyright OpenNTF 2013
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -27,18 +27,46 @@ import org.openntf.domino.ViewEntryCollection;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class AbstractDominoIterator.
+ * 
+ * @param <T>
+ *            the generic type
+ */
 @SuppressWarnings({ "rawtypes" })
 public abstract class AbstractDominoIterator<T> implements Iterator<T> {
+	
+	/** The server name_. */
 	private String serverName_;
+	
+	/** The file path_. */
 	private String filePath_;
+	
+	/** The collection_. */
 	private Base collection_;
+	
+	/** The session_. */
 	private transient Session session_;
+	
+	/** The database_. */
 	private transient Database database_;
 
+	/**
+	 * Instantiates a new abstract domino iterator.
+	 * 
+	 * @param collection
+	 *            the collection
+	 */
 	protected AbstractDominoIterator(Base collection) {
 		setCollection(collection);
 	}
 
+	/**
+	 * Gets the session.
+	 * 
+	 * @return the session
+	 */
 	protected Session getSession() {
 		if (session_ == null) {
 			try {
@@ -51,6 +79,11 @@ public abstract class AbstractDominoIterator<T> implements Iterator<T> {
 		return session_;
 	}
 
+	/**
+	 * Gets the database.
+	 * 
+	 * @return the database
+	 */
 	protected Database getDatabase() {
 		if (database_ == null) {
 			Session session = getSession();
@@ -65,14 +98,30 @@ public abstract class AbstractDominoIterator<T> implements Iterator<T> {
 
 	}
 
+	/**
+	 * Gets the file path.
+	 * 
+	 * @return the file path
+	 */
 	protected String getFilePath() {
 		return filePath_;
 	}
 
+	/**
+	 * Gets the server name.
+	 * 
+	 * @return the server name
+	 */
 	protected String getServerName() {
 		return serverName_;
 	}
 
+	/**
+	 * Sets the database.
+	 * 
+	 * @param database
+	 *            the new database
+	 */
 	protected void setDatabase(Database database) {
 		if (database != null) {
 			try {
@@ -84,18 +133,41 @@ public abstract class AbstractDominoIterator<T> implements Iterator<T> {
 		}
 	}
 
+	/**
+	 * Sets the file path.
+	 * 
+	 * @param filePath
+	 *            the new file path
+	 */
 	protected void setFilePath(String filePath) {
 		filePath_ = filePath;
 	}
 
+	/**
+	 * Sets the server name.
+	 * 
+	 * @param serverName
+	 *            the new server name
+	 */
 	protected void setServerName(String serverName) {
 		serverName_ = serverName;
 	}
 
+	/**
+	 * Gets the collection.
+	 * 
+	 * @return the collection
+	 */
 	public Base getCollection() {
 		return collection_;
 	}
 
+	/**
+	 * Sets the collection.
+	 * 
+	 * @param collection
+	 *            the new collection
+	 */
 	public void setCollection(Base collection) {
 		if (collection != null) {
 			if (collection instanceof DocumentCollection) {

@@ -1,3 +1,18 @@
+/*
+ * Copyright OpenNTF 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ */
 package org.openntf.domino.impl;
 
 import java.util.Vector;
@@ -6,13 +21,28 @@ import lotus.domino.NotesException;
 
 import org.openntf.domino.utils.DominoUtils;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class DirectoryNavigator.
+ */
 public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigator, lotus.domino.DirectoryNavigator> implements
 		org.openntf.domino.DirectoryNavigator {
 
+	/**
+	 * Instantiates a new directory navigator.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 */
 	public DirectoryNavigator(lotus.domino.DirectoryNavigator delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DirectoryNavigator#findFirstMatch()
+	 */
 	@Override
 	public boolean findFirstMatch() {
 		try {
@@ -23,6 +53,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DirectoryNavigator#findFirstName()
+	 */
 	@Override
 	public long findFirstName() {
 		try {
@@ -33,6 +66,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DirectoryNavigator#findNextMatch()
+	 */
 	@Override
 	public boolean findNextMatch() {
 		try {
@@ -43,6 +79,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DirectoryNavigator#findNextName()
+	 */
 	@Override
 	public long findNextName() {
 		try {
@@ -53,6 +92,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DirectoryNavigator#findNthMatch(long)
+	 */
 	@Override
 	public boolean findNthMatch(long n) {
 		try {
@@ -63,6 +105,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DirectoryNavigator#findNthName(int)
+	 */
 	@Override
 	public long findNthName(int n) {
 		try {
@@ -73,6 +118,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DirectoryNavigator#getCurrentItem()
+	 */
 	@Override
 	public String getCurrentItem() {
 		try {
@@ -83,6 +131,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DirectoryNavigator#getCurrentMatch()
+	 */
 	@Override
 	public long getCurrentMatch() {
 		try {
@@ -93,6 +144,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DirectoryNavigator#getCurrentMatches()
+	 */
 	@Override
 	public long getCurrentMatches() {
 		try {
@@ -103,6 +157,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DirectoryNavigator#getCurrentName()
+	 */
 	@Override
 	public String getCurrentName() {
 		try {
@@ -113,6 +170,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DirectoryNavigator#getCurrentView()
+	 */
 	@Override
 	public String getCurrentView() {
 		try {
@@ -123,6 +183,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DirectoryNavigator#getFirstItemValue()
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<Object> getFirstItemValue() {
@@ -134,6 +197,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DirectoryNavigator#getNextItemValue()
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<Object> getNextItemValue() {
@@ -145,6 +211,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DirectoryNavigator#getNthItemValue(int)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<Object> getNthItemValue(int n) {
@@ -156,6 +225,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DirectoryNavigator#isMatchLocated()
+	 */
 	@Override
 	public boolean isMatchLocated() {
 		try {
@@ -166,6 +238,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DirectoryNavigator#isNameLocated()
+	 */
 	@Override
 	public boolean isNameLocated() {
 		try {
