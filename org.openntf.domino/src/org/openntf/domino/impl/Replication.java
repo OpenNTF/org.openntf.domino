@@ -1,3 +1,18 @@
+/*
+ * Copyright OpenNTF 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ */
 package org.openntf.domino.impl;
 
 import java.util.Vector;
@@ -7,12 +22,27 @@ import lotus.domino.NotesException;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Replication.
+ */
 public class Replication extends Base<org.openntf.domino.Replication, lotus.domino.Replication> implements org.openntf.domino.Replication {
 
+	/**
+	 * Instantiates a new replication.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 */
 	public Replication(lotus.domino.Replication delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#clearHistory()
+	 */
 	@Override
 	public int clearHistory() {
 		try {
@@ -23,6 +53,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#getCutoffDate()
+	 */
 	@Override
 	public DateTime getCutoffDate() {
 		try {
@@ -33,6 +66,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#getCutoffInterval()
+	 */
 	@Override
 	public long getCutoffInterval() {
 		try {
@@ -43,6 +79,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#getDontSendLocalSecurityUpdates()
+	 */
 	@Override
 	public boolean getDontSendLocalSecurityUpdates() {
 		try {
@@ -53,6 +92,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#getEntries()
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<org.openntf.domino.ReplicationEntry> getEntries() {
@@ -70,6 +112,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#getEntry(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public ReplicationEntry getEntry(String source, String destination) {
 		try {
@@ -80,6 +125,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#getEntry(java.lang.String, java.lang.String, boolean)
+	 */
 	@Override
 	public ReplicationEntry getEntry(String source, String destination, boolean createFlag) {
 		try {
@@ -90,6 +138,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#getPriority()
+	 */
 	@Override
 	public int getPriority() {
 		try {
@@ -100,6 +151,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#isAbstract()
+	 */
 	@Override
 	public boolean isAbstract() {
 		try {
@@ -110,6 +164,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#isCutoffDelete()
+	 */
 	@Override
 	public boolean isCutoffDelete() {
 		try {
@@ -120,6 +177,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#isDisabled()
+	 */
 	@Override
 	public boolean isDisabled() {
 		try {
@@ -130,6 +190,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#isIgnoreDeletes()
+	 */
 	@Override
 	public boolean isIgnoreDeletes() {
 		try {
@@ -140,6 +203,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#isIgnoreDestDeletes()
+	 */
 	@Override
 	public boolean isIgnoreDestDeletes() {
 		try {
@@ -150,6 +216,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#reset()
+	 */
 	@Override
 	public int reset() {
 		try {
@@ -160,6 +229,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#save()
+	 */
 	@Override
 	public int save() {
 		try {
@@ -170,6 +242,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#setAbstract(boolean)
+	 */
 	@Override
 	public void setAbstract(boolean flag) {
 		try {
@@ -179,6 +254,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#setCutoffDelete(boolean)
+	 */
 	@Override
 	public void setCutoffDelete(boolean flag) {
 		try {
@@ -188,6 +266,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#setCutoffInterval(long)
+	 */
 	@Override
 	public void setCutoffInterval(long interval) {
 		try {
@@ -197,6 +278,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#setDisabled(boolean)
+	 */
 	@Override
 	public void setDisabled(boolean flag) {
 		try {
@@ -206,6 +290,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#setDontSendLocalSecurityUpdates(boolean)
+	 */
 	@Override
 	public void setDontSendLocalSecurityUpdates(boolean flag) {
 		try {
@@ -215,6 +302,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#setIgnoreDeletes(boolean)
+	 */
 	@Override
 	public void setIgnoreDeletes(boolean flag) {
 		try {
@@ -224,6 +314,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#setIgnoreDestDeletes(boolean)
+	 */
 	@Override
 	public void setIgnoreDestDeletes(boolean flag) {
 		try {
@@ -233,6 +326,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Replication#setPriority(int)
+	 */
 	@Override
 	public void setPriority(int priority) {
 		try {

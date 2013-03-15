@@ -1,3 +1,18 @@
+/*
+ * Copyright OpenNTF 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ */
 package org.openntf.domino.helpers;
 
 import java.util.Date;
@@ -13,28 +28,82 @@ import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.utils.Factory;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class DocumentSyncHelper.
+ */
 public class DocumentSyncHelper {
+	
+	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(DocumentSyncHelper.class.getName());
 
+	/**
+	 * The Enum Strategy.
+	 */
 	public static enum Strategy {
-		REPLACE_IF_NEWER, CREATE_AND_REPLACE, REPLACE_ONLY
+		
+		/** The replace if newer. */
+		REPLACE_IF_NEWER, 
+ /** The create and replace. */
+ CREATE_AND_REPLACE, 
+ /** The replace only. */
+ REPLACE_ONLY
 	}
 
+	/**
+	 * The Enum Controls.
+	 */
 	public static enum Controls {
-		TARGET_SERVER, TARGET_FILEPATH, TARGET_LOOKUP_VIEW, SOURCE_KEY_FORMULA, STRATEGY, SYNC_SOURCE_FIELD, SYNC_TARGET_FIELD;
+		
+		/** The target server. */
+		TARGET_SERVER, 
+ /** The target filepath. */
+ TARGET_FILEPATH, 
+ /** The target lookup view. */
+ TARGET_LOOKUP_VIEW, 
+ /** The source key formula. */
+ SOURCE_KEY_FORMULA, 
+ /** The strategy. */
+ STRATEGY, 
+ /** The sync source field. */
+ SYNC_SOURCE_FIELD, 
+ /** The sync target field. */
+ SYNC_TARGET_FIELD;
 	}
 
+	/** The target server_. */
 	private String targetServer_;
+	
+	/** The target filepath_. */
 	private String targetFilepath_;
+	
+	/** The target lookup view_. */
 	private String targetLookupView_;
+	
+	/** The source key formula_. */
 	private String sourceKeyFormula_;
+	
+	/** The strategy_. */
 	private Strategy strategy_;
+	
+	/** The sync map_. */
 	private Map<String, String> syncMap_;
 
+	/**
+	 * Instantiates a new document sync helper.
+	 */
 	public DocumentSyncHelper() {
 		// TODO allow for constructor arguments to configure
 	}
 
+	/**
+	 * Instantiates a new document sync helper.
+	 * 
+	 * @param controlDoc
+	 *            the control doc
+	 * @param controlMap
+	 *            the control map
+	 */
 	public DocumentSyncHelper(Document controlDoc, Map<Controls, String> controlMap) {
 		if (controlMap == null)
 			controlMap = new HashMap<Controls, String>();
@@ -96,6 +165,16 @@ public class DocumentSyncHelper {
 		setSyncMap(syncMap);
 	}
 
+	/**
+	 * Instantiates a new document sync helper.
+	 * 
+	 * @param strategy
+	 *            the strategy
+	 * @param syncMap
+	 *            the sync map
+	 * @param args
+	 *            the args
+	 */
 	public DocumentSyncHelper(Strategy strategy, Map<String, String> syncMap, String... args) {
 		setStrategy(strategy);
 		setSyncMap(syncMap);
@@ -114,6 +193,12 @@ public class DocumentSyncHelper {
 
 	}
 
+	/**
+	 * Process.
+	 * 
+	 * @param coll
+	 *            the coll
+	 */
 	public void process(DocumentCollection coll) {
 		// TODO Check to make sure properties are all set up before running
 		Session session = org.openntf.domino.utils.Factory.getSession(coll);
@@ -155,50 +240,116 @@ public class DocumentSyncHelper {
 		}
 	}
 
+	/**
+	 * Gets the target server.
+	 * 
+	 * @return the target server
+	 */
 	public String getTargetServer() {
 		return targetServer_;
 	}
 
+	/**
+	 * Sets the target server.
+	 * 
+	 * @param targetServer
+	 *            the new target server
+	 */
 	public void setTargetServer(String targetServer) {
 		targetServer_ = targetServer;
 	}
 
+	/**
+	 * Gets the target filepath.
+	 * 
+	 * @return the target filepath
+	 */
 	public String getTargetFilepath() {
 		return targetFilepath_;
 	}
 
+	/**
+	 * Sets the target filepath.
+	 * 
+	 * @param targetFilepath
+	 *            the new target filepath
+	 */
 	public void setTargetFilepath(String targetFilepath) {
 		targetFilepath_ = targetFilepath;
 	}
 
+	/**
+	 * Gets the target lookup view.
+	 * 
+	 * @return the target lookup view
+	 */
 	public String getTargetLookupView() {
 		return targetLookupView_;
 	}
 
+	/**
+	 * Sets the target lookup view.
+	 * 
+	 * @param targetLookupView
+	 *            the new target lookup view
+	 */
 	public void setTargetLookupView(String targetLookupView) {
 		targetLookupView_ = targetLookupView;
 	}
 
+	/**
+	 * Gets the source key formula.
+	 * 
+	 * @return the source key formula
+	 */
 	public String getSourceKeyFormula() {
 		return sourceKeyFormula_;
 	}
 
+	/**
+	 * Sets the source key formula.
+	 * 
+	 * @param sourceKeyFormula
+	 *            the new source key formula
+	 */
 	public void setSourceKeyFormula(String sourceKeyFormula) {
 		sourceKeyFormula_ = sourceKeyFormula;
 	}
 
+	/**
+	 * Gets the strategy.
+	 * 
+	 * @return the strategy
+	 */
 	public Strategy getStrategy() {
 		return strategy_;
 	}
 
+	/**
+	 * Sets the strategy.
+	 * 
+	 * @param strategy
+	 *            the new strategy
+	 */
 	public void setStrategy(Strategy strategy) {
 		strategy_ = strategy;
 	}
 
+	/**
+	 * Gets the sync map.
+	 * 
+	 * @return the sync map
+	 */
 	public Map<String, String> getSyncMap() {
 		return syncMap_;
 	}
 
+	/**
+	 * Sets the sync map.
+	 * 
+	 * @param syncMap
+	 *            the sync map
+	 */
 	public void setSyncMap(Map<String, String> syncMap) {
 		syncMap_ = syncMap;
 	}

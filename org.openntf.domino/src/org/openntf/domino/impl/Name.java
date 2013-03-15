@@ -1,46 +1,128 @@
+/*
+ * Copyright OpenNTF 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ */
 package org.openntf.domino.impl;
 
 import lotus.domino.NotesException;
 
 import org.openntf.domino.utils.DominoUtils;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Name.
+ */
 public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> implements org.openntf.domino.Name {
 
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
+	/** The Constant DEFAULT_STR. */
 	private static final String DEFAULT_STR = "";
 
+	/** The abbreviated. */
 	private String abbreviated = DEFAULT_STR;
+	
+	/** The addr821. */
 	private String addr821 = DEFAULT_STR;
+	
+	/** The addr822comment1. */
 	private String addr822comment1 = DEFAULT_STR;
+	
+	/** The addr822comment2. */
 	private String addr822comment2 = DEFAULT_STR;
+	
+	/** The addr822comment3. */
 	private String addr822comment3 = DEFAULT_STR;
+	
+	/** The addr822localpart. */
 	private String addr822localpart = DEFAULT_STR;
+	
+	/** The addr822phrase. */
 	private String addr822phrase = DEFAULT_STR;
+	
+	/** The admd. */
 	private String admd = DEFAULT_STR;
+	
+	/** The canonical. */
 	private String canonical = DEFAULT_STR;
+	
+	/** The common. */
 	private String common = DEFAULT_STR;
+	
+	/** The country. */
 	private String country = DEFAULT_STR;
+	
+	/** The generation. */
 	private String generation = DEFAULT_STR;
+	
+	/** The given. */
 	private String given = DEFAULT_STR;
+	
+	/** The initials. */
 	private String initials = DEFAULT_STR;
+	
+	/** The keyword. */
 	private String keyword = DEFAULT_STR;
+	
+	/** The language. */
 	private String language = DEFAULT_STR;
+	
+	/** The organization. */
 	private String organization = DEFAULT_STR;
+	
+	/** The orgunit1. */
 	private String orgunit1 = DEFAULT_STR;
+	
+	/** The orgunit2. */
 	private String orgunit2 = DEFAULT_STR;
+	
+	/** The orgunit3. */
 	private String orgunit3 = DEFAULT_STR;
+	
+	/** The orgunit4. */
 	private String orgunit4 = DEFAULT_STR;
+	
+	/** The prmd. */
 	private String prmd = DEFAULT_STR;
+	
+	/** The surname. */
 	private String surname = DEFAULT_STR;
+	
+	/** The hierarchical. */
 	private boolean hierarchical = false;
 
+	/**
+	 * Instantiates a new name.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 */
 	public Name(lotus.domino.Name delegate, org.openntf.domino.Base parent) {
 		super(null, parent);
 		initialize(delegate);
 		Base.recycle(delegate);
 	}
 
+	/**
+	 * Initialize.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 */
 	private void initialize(lotus.domino.Name delegate) {
 		try {
 			abbreviated = delegate.getAbbreviated();
@@ -72,107 +154,185 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getADMD()
+	 */
 	public String getADMD() {
 		return admd;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getAbbreviated()
+	 */
 	public String getAbbreviated() {
 		return abbreviated;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getAddr821()
+	 */
 	public String getAddr821() {
 		return this.addr821;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getAddr822Comment1()
+	 */
 	public String getAddr822Comment1() {
 		return this.addr822comment1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getAddr822Comment2()
+	 */
 	public String getAddr822Comment2() {
 		return this.addr822comment2;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getAddr822Comment3()
+	 */
 	public String getAddr822Comment3() {
 		return this.addr822comment3;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getAddr822LocalPart()
+	 */
 	public String getAddr822LocalPart() {
 		return this.addr822localpart;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getAddr822Phrase()
+	 */
 	public String getAddr822Phrase() {
 		return this.addr822phrase;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getCanonical()
+	 */
 	public String getCanonical() {
 		return canonical;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getCommon()
+	 */
 	public String getCommon() {
 		return common;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getCountry()
+	 */
 	public String getCountry() {
 		return country;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getGeneration()
+	 */
 	public String getGeneration() {
 		return generation;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getGiven()
+	 */
 	public String getGiven() {
 		return given;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getInitials()
+	 */
 	public String getInitials() {
 		return initials;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getKeyword()
+	 */
 	public String getKeyword() {
 		return keyword;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getLanguage()
+	 */
 	public String getLanguage() {
 		return language;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getOrgUnit1()
+	 */
 	public String getOrgUnit1() {
 		return orgunit1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getOrgUnit2()
+	 */
 	public String getOrgUnit2() {
 		return orgunit2;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getOrgUnit3()
+	 */
 	public String getOrgUnit3() {
 		return orgunit3;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getOrgUnit4()
+	 */
 	public String getOrgUnit4() {
 		return orgunit4;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getOrganization()
+	 */
 	public String getOrganization() {
 		return organization;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getPRMD()
+	 */
 	public String getPRMD() {
 		return prmd;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#getParent()
+	 */
 	@Override
 	public org.openntf.domino.Session getParent() {
 		return (org.openntf.domino.Session) super.getParent();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#getSurname()
+	 */
 	public String getSurname() {
 		return surname;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Name#isHierarchical()
+	 */
 	public boolean isHierarchical() {
 		return hierarchical;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -204,6 +364,9 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -333,6 +496,9 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return "Name [abbreviated=" + abbreviated + ", addr821=" + addr821 + ", addr822comment1=" + addr822comment1 + ", addr822comment2="

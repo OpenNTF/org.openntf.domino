@@ -1,0 +1,11 @@
+lotus.domino.local
+org.openntf.domino
+org.openntf.domino.annotations
+org.openntf.domino.exceptions
+org.openntf.domino.helpers
+org.openntf.domino.impl
+org.openntf.domino.iterators
+org.openntf.domino.logging
+org.openntf.domino.thread
+org.openntf.domino.types
+org.openntf.domino.utils

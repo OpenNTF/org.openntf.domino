@@ -1,3 +1,18 @@
+/*
+ * Copyright OpenNTF 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ */
 package org.openntf.domino.impl;
 
 import java.util.Vector;
@@ -7,13 +22,28 @@ import lotus.domino.NotesException;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class RichTextParagraphStyle.
+ */
 public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextParagraphStyle, lotus.domino.RichTextParagraphStyle> implements
 		org.openntf.domino.RichTextParagraphStyle {
 
+	/**
+	 * Instantiates a new rich text paragraph style.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 */
 	public RichTextParagraphStyle(lotus.domino.RichTextParagraphStyle delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextParagraphStyle#clearAllTabs()
+	 */
 	@Override
 	public void clearAllTabs() {
 		try {
@@ -23,6 +53,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextParagraphStyle#getAlignment()
+	 */
 	@Override
 	public int getAlignment() {
 		try {
@@ -33,6 +66,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextParagraphStyle#getFirstLineLeftMargin()
+	 */
 	@Override
 	public int getFirstLineLeftMargin() {
 		try {
@@ -43,6 +79,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextParagraphStyle#getInterLineSpacing()
+	 */
 	@Override
 	public int getInterLineSpacing() {
 		try {
@@ -53,6 +92,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextParagraphStyle#getLeftMargin()
+	 */
 	@Override
 	public int getLeftMargin() {
 		try {
@@ -63,6 +105,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextParagraphStyle#getPagination()
+	 */
 	@Override
 	public int getPagination() {
 		try {
@@ -73,6 +118,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextParagraphStyle#getRightMargin()
+	 */
 	@Override
 	public int getRightMargin() {
 		try {
@@ -83,6 +131,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextParagraphStyle#getSpacingAbove()
+	 */
 	@Override
 	public int getSpacingAbove() {
 		try {
@@ -93,6 +144,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextParagraphStyle#getSpacingBelow()
+	 */
 	@Override
 	public int getSpacingBelow() {
 		try {
@@ -103,6 +157,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextParagraphStyle#getTabs()
+	 */
 	@Override
 	public Vector<org.openntf.domino.RichTextTab> getTabs() {
 		try {
@@ -113,6 +170,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextParagraphStyle#setAlignment(int)
+	 */
 	@Override
 	public void setAlignment(int value) {
 		try {
@@ -122,6 +182,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextParagraphStyle#setFirstLineLeftMargin(int)
+	 */
 	@Override
 	public void setFirstLineLeftMargin(int value) {
 		try {
@@ -131,6 +194,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextParagraphStyle#setInterLineSpacing(int)
+	 */
 	@Override
 	public void setInterLineSpacing(int value) {
 		try {
@@ -140,6 +206,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextParagraphStyle#setLeftMargin(int)
+	 */
 	@Override
 	public void setLeftMargin(int value) {
 		try {
@@ -149,6 +218,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextParagraphStyle#setPagination(int)
+	 */
 	@Override
 	public void setPagination(int value) {
 		try {
@@ -158,6 +230,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextParagraphStyle#setRightMargin(int)
+	 */
 	@Override
 	public void setRightMargin(int value) {
 		try {
@@ -167,6 +242,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextParagraphStyle#setSpacingAbove(int)
+	 */
 	@Override
 	public void setSpacingAbove(int value) {
 		try {
@@ -176,6 +254,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextParagraphStyle#setSpacingBelow(int)
+	 */
 	@Override
 	public void setSpacingBelow(int value) {
 		try {
@@ -185,6 +266,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextParagraphStyle#setTab(int, int)
+	 */
 	@Override
 	public void setTab(int position, int type) {
 		try {
@@ -194,6 +278,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextParagraphStyle#setTabs(int, int, int)
+	 */
 	@Override
 	public void setTabs(int count, int startPos, int interval) {
 		try {
@@ -203,6 +290,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextParagraphStyle#setTabs(int, int, int, int)
+	 */
 	@Override
 	public void setTabs(int count, int startPos, int interval, int type) {
 		try {

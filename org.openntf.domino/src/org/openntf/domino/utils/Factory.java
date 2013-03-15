@@ -1,3 +1,18 @@
+/*
+ * Copyright OpenNTF 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ */
 package org.openntf.domino.utils;
 
 import java.lang.ref.Reference;
@@ -10,53 +25,109 @@ import org.openntf.domino.impl.Session;
 import org.openntf.domino.thread.DominoReference;
 import org.openntf.domino.thread.DominoReferenceQueue;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Enum Factory.
+ */
 public enum Factory {
 	;
 
+	/** The Constant TRACE_COUNTERS. */
 	private static final boolean TRACE_COUNTERS = true;
 
+	/**
+	 * The Class Counter.
+	 */
 	static class Counter extends ThreadLocal<Integer> {
 		// TODO NTF - I'm open to a faster implementation of this. Maybe a mutable int of some kind?
+		/* (non-Javadoc)
+		 * @see java.lang.ThreadLocal#initialValue()
+		 */
 		@Override
 		protected Integer initialValue() {
 			return Integer.valueOf(0);
 		}
 
+		/**
+		 * Increment.
+		 */
 		public void increment() {
 			set(get() + 1);
 		}
 
+		/**
+		 * Decrement.
+		 */
 		public void decrement() {
 			set(get() - 1);
 		}
 	};
 
+	/** The lotus counter. */
 	private static Counter lotusCounter = new Counter();
+	
+	/** The recycle err counter. */
 	private static Counter recycleErrCounter = new Counter();
+	
+	/** The auto recycle counter. */
 	private static Counter autoRecycleCounter = new Counter();
 
+	/**
+	 * Gets the lotus count.
+	 * 
+	 * @return the lotus count
+	 */
 	public static int getLotusCount() {
 		return lotusCounter.get().intValue();
 	}
 
+	/**
+	 * Count recycle error.
+	 */
 	public static void countRecycleError() {
 		if (TRACE_COUNTERS)
 			recycleErrCounter.increment();
 	}
 
+	/**
+	 * Count auto recycle.
+	 */
 	public static void countAutoRecycle() {
 		if (TRACE_COUNTERS)
 			autoRecycleCounter.increment();
 	}
 
+	/**
+	 * Gets the auto recycle count.
+	 * 
+	 * @return the auto recycle count
+	 */
 	public static int getAutoRecycleCount() {
 		return autoRecycleCounter.get().intValue();
 	}
 
+	/**
+	 * Gets the recycle error count.
+	 * 
+	 * @return the recycle error count
+	 */
 	public static int getRecycleErrorCount() {
 		return recycleErrCounter.get().intValue();
 	}
 
+	/**
+	 * From lotus.
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param lotus
+	 *            the lotus
+	 * @param T
+	 *            the t
+	 * @param parent
+	 *            the parent
+	 * @return the t
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T> T fromLotus(lotus.domino.Base lotus, Class<? extends org.openntf.domino.Base> T, org.openntf.domino.Base parent) {
 		if (lotus == null) {
@@ -179,6 +250,9 @@ public enum Factory {
 		throw new UndefinedDelegateTypeException();
 	}
 
+	/**
+	 * Drain queue.
+	 */
 	private static void drainQueue() {
 		DominoReferenceQueue drq = Base._getRecycleQueue();
 		Reference<?> ref = drq.poll();
@@ -193,6 +267,19 @@ public enum Factory {
 		}
 	}
 
+	/**
+	 * From lotus.
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param lotusColl
+	 *            the lotus coll
+	 * @param T
+	 *            the t
+	 * @param parent
+	 *            the parent
+	 * @return the collection
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> Collection<T> fromLotus(Collection<?> lotusColl, Class<? extends org.openntf.domino.Base> T,
 			org.openntf.domino.Base<?> parent) {
@@ -208,6 +295,19 @@ public enum Factory {
 
 	}
 
+	/**
+	 * From lotus as vector.
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param lotusColl
+	 *            the lotus coll
+	 * @param T
+	 *            the t
+	 * @param parent
+	 *            the parent
+	 * @return the org.openntf.domino.impl. vector
+	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> org.openntf.domino.impl.Vector<T> fromLotusAsVector(Collection<?> lotusColl,
 			Class<? extends org.openntf.domino.Base> T, org.openntf.domino.Base<?> parent) {
@@ -223,6 +323,13 @@ public enum Factory {
 
 	}
 
+	/**
+	 * Wrap column values.
+	 * 
+	 * @param values
+	 *            the values
+	 * @return the java.util. vector
+	 */
 	public static java.util.Vector<Object> wrapColumnValues(Collection<?> values) {
 		java.util.Vector<Object> result = new org.openntf.domino.impl.Vector<Object>();
 		for (Object value : values) {
@@ -239,6 +346,15 @@ public enum Factory {
 		return result;
 	}
 
+	/**
+	 * Wrapped evaluate.
+	 * 
+	 * @param session
+	 *            the session
+	 * @param formula
+	 *            the formula
+	 * @return the java.util. vector
+	 */
 	public static java.util.Vector<Object> wrappedEvaluate(org.openntf.domino.Session session, String formula) {
 		java.util.Vector<Object> result = new org.openntf.domino.impl.Vector<Object>();
 		java.util.Vector<Object> values = session.evaluate(formula);
@@ -256,6 +372,17 @@ public enum Factory {
 		return result;
 	}
 
+	/**
+	 * Wrapped evaluate.
+	 * 
+	 * @param session
+	 *            the session
+	 * @param formula
+	 *            the formula
+	 * @param contextDocument
+	 *            the context document
+	 * @return the java.util. vector
+	 */
 	public static java.util.Vector<Object> wrappedEvaluate(org.openntf.domino.Session session, String formula,
 			lotus.domino.Document contextDocument) {
 		java.util.Vector<Object> result = new org.openntf.domino.impl.Vector<Object>();
@@ -274,6 +401,11 @@ public enum Factory {
 		return result;
 	}
 
+	/**
+	 * Gets the session.
+	 * 
+	 * @return the session
+	 */
 	public static org.openntf.domino.Session getSession() {
 		try {
 			lotus.domino.Session s = lotus.domino.NotesFactory.createSession();
@@ -284,6 +416,13 @@ public enum Factory {
 		return null;
 	}
 
+	/**
+	 * Gets the parent database.
+	 * 
+	 * @param base
+	 *            the base
+	 * @return the parent database
+	 */
 	public static org.openntf.domino.Database getParentDatabase(org.openntf.domino.Base<?> base) {
 		org.openntf.domino.Database result = null;
 		if (base instanceof org.openntf.domino.Database) {
@@ -302,6 +441,13 @@ public enum Factory {
 		return result;
 	}
 
+	/**
+	 * Gets the session.
+	 * 
+	 * @param base
+	 *            the base
+	 * @return the session
+	 */
 	public static org.openntf.domino.Session getSession(org.openntf.domino.Base<?> base) {
 		org.openntf.domino.Session result = null;
 		if (base instanceof org.openntf.domino.Session) {
@@ -331,6 +477,17 @@ public enum Factory {
 	}
 
 	// For passing arguments to delegates
+	/**
+	 * To lotus.
+	 * 
+	 * @param <T>
+	 *            the generic type
+	 * @param obj
+	 *            the obj
+	 * @param T
+	 *            the t
+	 * @return the t
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T toLotus(lotus.domino.Base obj, Class<? extends lotus.domino.Base> T) {
 		if (obj instanceof org.openntf.domino.Base) {
@@ -342,6 +499,13 @@ public enum Factory {
 		}
 	}
 
+	/**
+	 * To lotus.
+	 * 
+	 * @param obj
+	 *            the obj
+	 * @return the lotus.domino. base
+	 */
 	@SuppressWarnings("unchecked")
 	public static lotus.domino.Base toLotus(lotus.domino.Base obj) {
 		if (obj instanceof org.openntf.domino.Base) {

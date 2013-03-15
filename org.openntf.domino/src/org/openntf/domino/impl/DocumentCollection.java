@@ -1,3 +1,18 @@
+/*
+ * Copyright OpenNTF 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ */
 package org.openntf.domino.impl;
 
 import java.util.Iterator;
@@ -10,25 +25,52 @@ import org.openntf.domino.iterators.DocumentIterator;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class DocumentCollection.
+ */
 public class DocumentCollection extends Base<org.openntf.domino.DocumentCollection, lotus.domino.DocumentCollection> implements
 		org.openntf.domino.DocumentCollection {
 
+	/** The block nth. */
 	private static boolean BLOCK_NTH = true; // TODO replace with some static determination from a policy or permissions rule or
 												// something...
 
-	static class NthDocumentMethodNotPermittedException extends RuntimeException {
+	/**
+												 * The Class NthDocumentMethodNotPermittedException.
+												 */
+												static class NthDocumentMethodNotPermittedException extends RuntimeException {
 
+		/** The Constant serialVersionUID. */
 		private static final long serialVersionUID = 1L;
 
+		/**
+		 * Instantiates a new nth document method not permitted exception.
+		 */
 		NthDocumentMethodNotPermittedException() {
 			super("The OpenNTF Domino API does not permit the use of GetNthDocument methods in DocumentCollections");
 		}
 	}
 
+	/**
+	 * Instantiates a new document collection.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 */
 	public DocumentCollection(lotus.domino.DocumentCollection delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
+	/**
+	 * To lotus note collection.
+	 * 
+	 * @param collection
+	 *            the collection
+	 * @return the org.openntf.domino. note collection
+	 */
 	public static org.openntf.domino.NoteCollection toLotusNoteCollection(lotus.domino.DocumentCollection collection) {
 		org.openntf.domino.NoteCollection result = null;
 		if (collection instanceof org.openntf.domino.impl.DocumentCollection) {
@@ -45,6 +87,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#getCount()
+	 */
 	@Override
 	public int getCount() {
 		try {
@@ -56,6 +101,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#getQuery()
+	 */
 	@Override
 	public String getQuery() {
 		try {
@@ -67,6 +115,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#getParent()
+	 */
 	@Override
 	public org.openntf.domino.Database getParent() {
 		Object o = super.getParent();
@@ -75,6 +126,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		return (org.openntf.domino.Database) parent;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#getFirstDocument()
+	 */
 	@Override
 	public org.openntf.domino.Document getFirstDocument() {
 		try {
@@ -86,6 +140,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#getLastDocument()
+	 */
 	@Override
 	public org.openntf.domino.Document getLastDocument() {
 		try {
@@ -97,6 +154,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#getNextDocument(lotus.domino.Document)
+	 */
 	@Override
 	public org.openntf.domino.Document getNextDocument(Document doc) {
 		try {
@@ -111,6 +171,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#getPrevDocument(lotus.domino.Document)
+	 */
 	@Override
 	public org.openntf.domino.Document getPrevDocument(Document doc) {
 		try {
@@ -125,6 +188,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#getNthDocument(int)
+	 */
 	@Override
 	public org.openntf.domino.Document getNthDocument(int n) {
 		if (BLOCK_NTH) {
@@ -139,6 +205,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#getNextDocument()
+	 */
 	@Override
 	public org.openntf.domino.Document getNextDocument() {
 		try {
@@ -150,6 +219,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#getPrevDocument()
+	 */
 	@Override
 	public org.openntf.domino.Document getPrevDocument() {
 		try {
@@ -161,6 +233,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#getDocument(lotus.domino.Document)
+	 */
 	@Override
 	public org.openntf.domino.Document getDocument(Document doc) {
 		try {
@@ -175,6 +250,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#addDocument(lotus.domino.Document)
+	 */
 	@Override
 	public void addDocument(Document doc) {
 		try {
@@ -185,6 +263,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#addDocument(lotus.domino.Document, boolean)
+	 */
 	@Override
 	public void addDocument(Document doc, boolean checkDups) {
 		try {
@@ -195,6 +276,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#deleteDocument(lotus.domino.Document)
+	 */
 	@Override
 	public void deleteDocument(Document doc) {
 		try {
@@ -205,6 +289,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#FTSearch(java.lang.String)
+	 */
 	@Override
 	public void FTSearch(String query) {
 		try {
@@ -215,6 +302,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#FTSearch(java.lang.String, int)
+	 */
 	@Override
 	public void FTSearch(String query, int maxDocs) {
 		try {
@@ -225,6 +315,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#isSorted()
+	 */
 	@Override
 	public boolean isSorted() {
 		try {
@@ -236,6 +329,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#putAllInFolder(java.lang.String)
+	 */
 	@Override
 	public void putAllInFolder(String folderName) {
 		try {
@@ -246,6 +342,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#putAllInFolder(java.lang.String, boolean)
+	 */
 	@Override
 	public void putAllInFolder(String folderName, boolean createOnFail) {
 		try {
@@ -256,6 +355,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#removeAll(boolean)
+	 */
 	@Override
 	public void removeAll(boolean force) {
 		try {
@@ -266,6 +368,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#removeAllFromFolder(java.lang.String)
+	 */
 	@Override
 	public void removeAllFromFolder(String folderName) {
 		try {
@@ -276,6 +381,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#stampAll(java.lang.String, java.lang.Object)
+	 */
 	@Override
 	public void stampAll(String itemName, Object value) {
 		try {
@@ -286,6 +394,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#updateAll()
+	 */
 	@Override
 	public void updateAll() {
 		try {
@@ -296,6 +407,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#getUntilTime()
+	 */
 	@Override
 	public org.openntf.domino.DateTime getUntilTime() {
 		try {
@@ -307,6 +421,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#markAllRead(java.lang.String)
+	 */
 	@Override
 	public void markAllRead(String userName) {
 		try {
@@ -317,6 +434,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#markAllUnread(java.lang.String)
+	 */
 	@Override
 	public void markAllUnread(String userName) {
 		try {
@@ -327,6 +447,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#markAllRead()
+	 */
 	@Override
 	public void markAllRead() {
 		try {
@@ -337,6 +460,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#markAllUnread()
+	 */
 	@Override
 	public void markAllUnread() {
 		try {
@@ -347,6 +473,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#intersect(int)
+	 */
 	@Override
 	public void intersect(int noteId) {
 		try {
@@ -357,6 +486,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#intersect(java.lang.String)
+	 */
 	@Override
 	public void intersect(String noteId) {
 		try {
@@ -367,6 +499,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#intersect(lotus.domino.Base)
+	 */
 	@Override
 	public void intersect(lotus.domino.Base documents) {
 		try {
@@ -377,6 +512,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#merge(int)
+	 */
 	@Override
 	public void merge(int noteId) {
 		try {
@@ -387,6 +525,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#merge(java.lang.String)
+	 */
 	@Override
 	public void merge(String noteId) {
 		try {
@@ -397,6 +538,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#merge(lotus.domino.Base)
+	 */
 	@Override
 	public void merge(lotus.domino.Base documents) {
 		try {
@@ -407,6 +551,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#subtract(int)
+	 */
 	@Override
 	public void subtract(int noteId) {
 		try {
@@ -417,6 +564,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#subtract(java.lang.String)
+	 */
 	@Override
 	public void subtract(String noteId) {
 		try {
@@ -427,6 +577,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#subtract(lotus.domino.Base)
+	 */
 	@Override
 	public void subtract(lotus.domino.Base documents) {
 		try {
@@ -437,6 +590,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#contains(int)
+	 */
 	@Override
 	public boolean contains(int noteId) {
 		try {
@@ -448,6 +604,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#contains(java.lang.String)
+	 */
 	@Override
 	public boolean contains(String noteId) {
 		try {
@@ -458,6 +617,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#contains(lotus.domino.Base)
+	 */
 	@Override
 	public boolean contains(lotus.domino.Base documents) {
 		try {
@@ -468,6 +630,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DocumentCollection#cloneCollection()
+	 */
 	@Override
 	public org.openntf.domino.DocumentCollection cloneCollection() {
 		try {
@@ -478,6 +643,9 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Iterable#iterator()
+	 */
 	@Override
 	public Iterator<org.openntf.domino.Document> iterator() {
 		return new DocumentIterator(this);

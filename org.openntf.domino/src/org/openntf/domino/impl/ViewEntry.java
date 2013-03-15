@@ -1,3 +1,18 @@
+/*
+ * Copyright OpenNTF 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ */
 package org.openntf.domino.impl;
 
 import java.util.Vector;
@@ -7,12 +22,27 @@ import lotus.domino.NotesException;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class ViewEntry.
+ */
 public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.ViewEntry> implements org.openntf.domino.ViewEntry {
 
+	/**
+	 * Instantiates a new view entry.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 */
 	public ViewEntry(lotus.domino.ViewEntry delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewEntry#getChildCount()
+	 */
 	@Override
 	public int getChildCount() {
 		try {
@@ -23,6 +53,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewEntry#getColumnIndentLevel()
+	 */
 	@Override
 	public int getColumnIndentLevel() {
 		try {
@@ -33,6 +66,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewEntry#getColumnValues()
+	 */
 	@Override
 	public Vector<Object> getColumnValues() {
 		try {
@@ -43,6 +79,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewEntry#getDescendantCount()
+	 */
 	@Override
 	public int getDescendantCount() {
 		try {
@@ -53,6 +92,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewEntry#getDocument()
+	 */
 	@Override
 	public Document getDocument() {
 		try {
@@ -63,6 +105,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewEntry#getFTSearchScore()
+	 */
 	@Override
 	public int getFTSearchScore() {
 		try {
@@ -73,6 +118,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewEntry#getIndentLevel()
+	 */
 	@Override
 	public int getIndentLevel() {
 		try {
@@ -83,6 +131,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewEntry#getNoteID()
+	 */
 	@Override
 	public String getNoteID() {
 		try {
@@ -93,6 +144,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewEntry#getNoteIDAsInt()
+	 */
 	@Override
 	public int getNoteIDAsInt() {
 		try {
@@ -103,11 +157,17 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#getParent()
+	 */
 	@Override
 	public org.openntf.domino.Base<?> getParent() {
 		return super.getParent();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewEntry#getPosition(char)
+	 */
 	@Override
 	public String getPosition(char separator) {
 		try {
@@ -118,6 +178,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewEntry#getRead()
+	 */
 	@Override
 	public boolean getRead() {
 		try {
@@ -128,6 +191,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewEntry#getRead(java.lang.String)
+	 */
 	@Override
 	public boolean getRead(String userName) {
 		try {
@@ -138,6 +204,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewEntry#getSiblingCount()
+	 */
 	@Override
 	public int getSiblingCount() {
 		try {
@@ -148,6 +217,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewEntry#getUniversalID()
+	 */
 	@Override
 	public String getUniversalID() {
 		try {
@@ -158,6 +230,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewEntry#isCategory()
+	 */
 	@Override
 	public boolean isCategory() {
 		try {
@@ -168,6 +243,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewEntry#isConflict()
+	 */
 	@Override
 	public boolean isConflict() {
 		try {
@@ -178,6 +256,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewEntry#isDocument()
+	 */
 	@Override
 	public boolean isDocument() {
 		try {
@@ -188,6 +269,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewEntry#isPreferJavaDates()
+	 */
 	@Override
 	public boolean isPreferJavaDates() {
 		try {
@@ -198,6 +282,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewEntry#isTotal()
+	 */
 	@Override
 	public boolean isTotal() {
 		try {
@@ -208,6 +295,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewEntry#isValid()
+	 */
 	@Override
 	public boolean isValid() {
 		try {
@@ -218,6 +308,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewEntry#setPreferJavaDates(boolean)
+	 */
 	@Override
 	public void setPreferJavaDates(boolean flag) {
 		try {
