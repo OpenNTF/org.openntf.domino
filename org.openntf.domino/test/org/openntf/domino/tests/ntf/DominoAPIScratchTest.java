@@ -16,10 +16,10 @@ import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
-public enum ScratchTest {
+public enum DominoAPIScratchTest {
 	INSTANCE;
 
-	private ScratchTest() {
+	private DominoAPIScratchTest() {
 		// TODO Auto-generated constructor stub
 	}
 

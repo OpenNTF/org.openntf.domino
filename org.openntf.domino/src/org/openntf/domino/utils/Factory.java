@@ -91,9 +91,8 @@ public enum Factory {
 			result = (T) new org.openntf.domino.impl.Document((lotus.domino.Document) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Form) {
 			result = (T) new org.openntf.domino.impl.Form((lotus.domino.Form) lotus, parent);
-		} else if (lotus instanceof lotus.domino.DateTime) {
-			result = (T) new org.openntf.domino.impl.DateTime((lotus.domino.DateTime) lotus, parent);
-
+		} else if (lotus instanceof lotus.domino.Database) {
+			result = (T) new org.openntf.domino.impl.Database((lotus.domino.Database) lotus, parent);
 		} else if (lotus instanceof lotus.domino.DateRange) {
 			result = (T) new org.openntf.domino.impl.DateRange((lotus.domino.DateRange) lotus, parent);
 		} else if (lotus instanceof lotus.domino.DateTime) {
