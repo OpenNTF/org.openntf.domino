@@ -1,7 +1,5 @@
 package org.openntf.domino;
 
-import lotus.domino.RichTextStyle;
-
 public interface RichTextSection extends Base<lotus.domino.RichTextSection>, lotus.domino.RichTextSection {
 
 	@Override
@@ -29,6 +27,6 @@ public interface RichTextSection extends Base<lotus.domino.RichTextSection>, lot
 	public void setTitle(String title);
 
 	@Override
-	public void setTitleStyle(RichTextStyle style);
+	public void setTitleStyle(lotus.domino.RichTextStyle style);
 
 }

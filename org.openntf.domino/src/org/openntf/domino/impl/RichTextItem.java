@@ -3,16 +3,19 @@ package org.openntf.domino.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.DateTime;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.xml.sax.InputSource;
 
-public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> implements org.openntf.domino.Item {
+public class RichTextItem extends Base<org.openntf.domino.RichTextItem, lotus.domino.RichTextItem> implements
+		org.openntf.domino.RichTextItem {
 
-	public Item(lotus.domino.Item delegate, org.openntf.domino.Base<?> parent) {
+	public RichTextItem(lotus.domino.RichTextItem delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -27,6 +30,215 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	}
 
 	@Override
+	public void addNewLine() {
+		try {
+			getDelegate().addNewLine();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void addNewLine(int count) {
+		try {
+			getDelegate().addNewLine(count);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void addNewLine(int count, boolean newParagraph) {
+		try {
+			getDelegate().addNewLine(count, newParagraph);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void addPageBreak() {
+		try {
+			getDelegate().addPageBreak();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void addPageBreak(lotus.domino.RichTextParagraphStyle pstyle) {
+		try {
+			getDelegate().addPageBreak((lotus.domino.RichTextParagraphStyle) toLotus(pstyle));
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void addTab() {
+		try {
+			getDelegate().addTab();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void addTab(int count) {
+		try {
+			getDelegate().addTab(count);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void appendDocLink(lotus.domino.Database db) {
+		try {
+			getDelegate().appendDocLink((lotus.domino.Database) toLotus(db));
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void appendDocLink(lotus.domino.Database db, String comment) {
+		try {
+			getDelegate().appendDocLink((lotus.domino.Database) db, comment);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void appendDocLink(lotus.domino.Database db, String comment, String hotspotText) {
+		try {
+			getDelegate().appendDocLink((lotus.domino.Database) db, comment, hotspotText);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void appendDocLink(lotus.domino.Document doc) {
+		try {
+			getDelegate().appendDocLink((lotus.domino.Document) toLotus(doc));
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void appendDocLink(lotus.domino.Document doc, String comment) {
+		try {
+			getDelegate().appendDocLink((lotus.domino.Document) toLotus(doc), comment);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void appendDocLink(lotus.domino.Document doc, String comment, String hotspotText) {
+		try {
+			getDelegate().appendDocLink((lotus.domino.Document) toLotus(doc), comment, hotspotText);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void appendDocLink(lotus.domino.View view) {
+		try {
+			getDelegate().appendDocLink((lotus.domino.View) toLotus(view));
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void appendDocLink(lotus.domino.View view, String comment) {
+		try {
+			getDelegate().appendDocLink((lotus.domino.View) toLotus(view), comment);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void appendDocLink(lotus.domino.View view, String comment, String hotspotText) {
+		try {
+			getDelegate().appendDocLink((lotus.domino.View) toLotus(view), hotspotText);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void appendParagraphStyle(lotus.domino.RichTextParagraphStyle pstyle) {
+		try {
+			getDelegate().appendParagraphStyle((lotus.domino.RichTextParagraphStyle) toLotus(pstyle));
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void appendRTItem(lotus.domino.RichTextItem rtitem) {
+		try {
+			getDelegate().appendRTItem((lotus.domino.RichTextItem) toLotus(rtitem));
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void appendStyle(lotus.domino.RichTextStyle rstyle) {
+		try {
+			getDelegate().appendStyle((lotus.domino.RichTextStyle) toLotus(rstyle));
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void appendTable(int rows, int columns) {
+		try {
+			getDelegate().appendTable(rows, columns);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void appendTable(int rows, int columns, Vector labels) {
+		try {
+			getDelegate().appendTable(rows, columns, labels);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void appendTable(int rows, int columns, Vector labels, int leftMargin, Vector pstyles) {
+		try {
+			getDelegate().appendTable(rows, columns, labels, leftMargin, toLotus(pstyles));
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void appendText(String text) {
+		try {
+			getDelegate().appendText(text);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
 	public void appendToTextList(String value) {
 		try {
 			getDelegate().appendToTextList(value);
@@ -37,9 +249,64 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void appendToTextList(java.util.Vector values) {
+	public void appendToTextList(Vector values) {
 		try {
 			getDelegate().appendToTextList(values);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void beginInsert(lotus.domino.Base element) {
+		try {
+			getDelegate().beginInsert(toLotus(element));
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void beginInsert(lotus.domino.Base element, boolean after) {
+		try {
+			getDelegate().beginInsert(toLotus(element), after);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void beginSection(String title) {
+		try {
+			getDelegate().beginSection(title);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void beginSection(String title, lotus.domino.RichTextStyle titleStyle) {
+		try {
+			getDelegate().beginSection(title, (lotus.domino.RichTextStyle) toLotus(titleStyle));
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void beginSection(String title, lotus.domino.RichTextStyle titleStyle, lotus.domino.ColorObject barColor, boolean expand) {
+		try {
+			getDelegate().beginSection(title, (lotus.domino.RichTextStyle) toLotus(titleStyle),
+					(lotus.domino.ColorObject) toLotus(barColor), expand);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void compact() {
+		try {
+			getDelegate().compact();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -81,9 +348,87 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	}
 
 	@Override
+	public RichTextNavigator createNavigator() {
+		try {
+			return Factory.fromLotus(getDelegate().createNavigator(), RichTextNavigator.class, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@Override
+	public org.openntf.domino.RichTextRange createRange() {
+		try {
+			return Factory.fromLotus(getDelegate().createRange(), org.openntf.domino.RichTextRange.class, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@Override
+	public EmbeddedObject embedObject(int type, String className, String source, String name) {
+		try {
+			return Factory.fromLotus(getDelegate().embedObject(type, className, source, name), EmbeddedObject.class, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@Override
+	public void endInsert() {
+		try {
+			getDelegate().endInsert();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void endSection() {
+		try {
+			getDelegate().endSection();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
 	public DateTime getDateTimeValue() {
 		try {
 			return Factory.fromLotus(getDelegate().getDateTimeValue(), DateTime.class, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@Override
+	public EmbeddedObject getEmbeddedObject(String name) {
+		try {
+			return Factory.fromLotus(getDelegate().getEmbeddedObject(name), EmbeddedObject.class, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@Override
+	public Vector<org.openntf.domino.EmbeddedObject> getEmbeddedObjects() {
+		try {
+			return Factory.fromLotusAsVector(getDelegate().getEmbeddedObjects(), org.openntf.domino.EmbeddedObject.class, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@Override
+	public String getFormattedText(boolean tabStrip, int lineLen, int maxLen) {
+		try {
+			return getDelegate().getFormattedText(tabStrip, lineLen, maxLen);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -141,11 +486,21 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	}
 
 	@Override
+	public int getNotesFont(String faceName, boolean addOnFail) {
+		try {
+			return getDelegate().getNotesFont(faceName, addOnFail);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return 0;
+		}
+	}
+
+	@Override
 	public Document getParent() {
 		try {
 			return Factory.fromLotus(getDelegate().getParent(), Document.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
 			return null;
 		}
 	}
@@ -187,6 +542,16 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return 0;
+		}
+	}
+
+	@Override
+	public String getUnformattedText() {
+		try {
+			return getDelegate().getUnformattedText();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
 		}
 	}
 
@@ -548,6 +913,15 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	public void transformXML(Object style, lotus.domino.XSLTResultTarget result) {
 		try {
 			getDelegate().transformXML(style, result);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void update() {
+		try {
+			getDelegate().update();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

@@ -1,9 +1,5 @@
 package org.openntf.domino;
 
-import lotus.domino.NoteCollection;
-import lotus.domino.View;
-import lotus.domino.ViewEntry;
-
 public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.domino.ViewNavigator {
 	@Override
 	public int getBufferMaxEntries();
@@ -15,7 +11,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	public ViewEntry getChild();
 
 	@Override
-	public ViewEntry getChild(ViewEntry entry);
+	public ViewEntry getChild(lotus.domino.ViewEntry entry);
 
 	@Override
 	public int getCount();
@@ -45,7 +41,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	public ViewEntry getNext();
 
 	@Override
-	public ViewEntry getNext(ViewEntry entry);
+	public ViewEntry getNext(lotus.domino.ViewEntry entry);
 
 	@Override
 	public ViewEntry getNextCategory();
@@ -57,7 +53,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	public ViewEntry getNextSibling();
 
 	@Override
-	public ViewEntry getNextSibling(ViewEntry entry);
+	public ViewEntry getNextSibling(lotus.domino.ViewEntry entry);
 
 	@Override
 	public ViewEntry getNth(int n);
@@ -66,7 +62,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	public ViewEntry getParent();
 
 	@Override
-	public ViewEntry getParent(ViewEntry entry);
+	public ViewEntry getParent(lotus.domino.ViewEntry entry);
 
 	@Override
 	public View getParentView();
@@ -78,7 +74,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	public ViewEntry getPrev();
 
 	@Override
-	public ViewEntry getPrev(ViewEntry entry);
+	public ViewEntry getPrev(lotus.domino.ViewEntry entry);
 
 	@Override
 	public ViewEntry getPrevCategory();
@@ -90,13 +86,13 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	public ViewEntry getPrevSibling();
 
 	@Override
-	public ViewEntry getPrevSibling(ViewEntry entry);
+	public ViewEntry getPrevSibling(lotus.domino.ViewEntry entry);
 
 	@Override
 	public boolean gotoChild();
 
 	@Override
-	public boolean gotoChild(ViewEntry entry);
+	public boolean gotoChild(lotus.domino.ViewEntry entry);
 
 	@Override
 	public boolean gotoEntry(Object entry);
@@ -117,7 +113,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	public boolean gotoNext();
 
 	@Override
-	public boolean gotoNext(ViewEntry entry);
+	public boolean gotoNext(lotus.domino.ViewEntry entry);
 
 	@Override
 	public boolean gotoNextCategory();
@@ -129,13 +125,13 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	public boolean gotoNextSibling();
 
 	@Override
-	public boolean gotoNextSibling(ViewEntry entry);
+	public boolean gotoNextSibling(lotus.domino.ViewEntry entry);
 
 	@Override
 	public boolean gotoParent();
 
 	@Override
-	public boolean gotoParent(ViewEntry entry);
+	public boolean gotoParent(lotus.domino.ViewEntry entry);
 
 	@Override
 	public boolean gotoPos(String pos, char separator);
@@ -144,7 +140,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	public boolean gotoPrev();
 
 	@Override
-	public boolean gotoPrev(ViewEntry entry);
+	public boolean gotoPrev(lotus.domino.ViewEntry entry);
 
 	@Override
 	public boolean gotoPrevCategory();
@@ -156,7 +152,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	public boolean gotoPrevSibling();
 
 	@Override
-	public boolean gotoPrevSibling(ViewEntry entry);
+	public boolean gotoPrevSibling(lotus.domino.ViewEntry entry);
 
 	@Override
 	public void markAllRead();
@@ -175,8 +171,8 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	public void setAutoExpandGuidance(int arg0, int[] arg1, int[] arg2);
 
 	@Override
-	// TODO Figure out what these parameters are
-	public void setAutoExpandGuidance(int arg0, NoteCollection arg1, NoteCollection arg2);
+	public void setAutoExpandGuidance(int maxEntries, lotus.domino.NoteCollection collapsedNoteIds,
+			lotus.domino.NoteCollection expandedNoteIds);
 
 	@Override
 	public void setBufferMaxEntries(int entryCount);

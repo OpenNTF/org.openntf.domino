@@ -2,8 +2,6 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
-import lotus.domino.Document;
-
 public interface ViewEntry extends lotus.domino.ViewEntry, Base<lotus.domino.ViewEntry> {
 	@Override
 	public int getChildCount();
@@ -12,7 +10,7 @@ public interface ViewEntry extends lotus.domino.ViewEntry, Base<lotus.domino.Vie
 	public int getColumnIndentLevel();
 
 	@Override
-	public Vector getColumnValues();
+	public Vector<Object> getColumnValues();
 
 	@Override
 	public int getDescendantCount();
@@ -33,7 +31,7 @@ public interface ViewEntry extends lotus.domino.ViewEntry, Base<lotus.domino.Vie
 	public int getNoteIDAsInt();
 
 	@Override
-	public Object getParent();
+	public Base<?> getParent();
 
 	@Override
 	public String getPosition(char separator);

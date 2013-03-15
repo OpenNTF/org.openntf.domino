@@ -106,8 +106,12 @@ public enum Factory {
 			result = (T) new org.openntf.domino.impl.EmbeddedObject((lotus.domino.EmbeddedObject) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Form) {
 			result = (T) new org.openntf.domino.impl.Form((lotus.domino.Form) lotus, parent);
+		} else if (lotus instanceof lotus.domino.International) {
+			result = (T) new org.openntf.domino.impl.International((lotus.domino.International) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Item) {
 			result = (T) new org.openntf.domino.impl.Item((lotus.domino.Item) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Log) {
+			result = (T) new org.openntf.domino.impl.Log((lotus.domino.Log) lotus, parent);
 		} else if (lotus instanceof lotus.domino.MIMEEntity) {
 			result = (T) new org.openntf.domino.impl.MIMEEntity((lotus.domino.MIMEEntity) lotus, parent);
 		} else if (lotus instanceof lotus.domino.MIMEHeader) {
@@ -131,15 +135,39 @@ public enum Factory {
 			result = (T) new org.openntf.domino.impl.Replication((lotus.domino.Replication) lotus, parent);
 		} else if (lotus instanceof lotus.domino.ReplicationEntry) {
 			result = (T) new org.openntf.domino.impl.ReplicationEntry((lotus.domino.ReplicationEntry) lotus, parent);
+		} else if (lotus instanceof lotus.domino.RichTextDoclink) {
+			result = (T) new org.openntf.domino.impl.RichTextDoclink((lotus.domino.RichTextDoclink) lotus, parent);
+		} else if (lotus instanceof lotus.domino.RichTextItem) {
+			result = (T) new org.openntf.domino.impl.RichTextItem((lotus.domino.RichTextItem) lotus, parent);
+		} else if (lotus instanceof lotus.domino.RichTextNavigator) {
+			result = (T) new org.openntf.domino.impl.RichTextNavigator((lotus.domino.RichTextNavigator) lotus, parent);
+		} else if (lotus instanceof lotus.domino.RichTextParagraphStyle) {
+			result = (T) new org.openntf.domino.impl.RichTextParagraphStyle((lotus.domino.RichTextParagraphStyle) lotus, parent);
+		} else if (lotus instanceof lotus.domino.RichTextRange) {
+			result = (T) new org.openntf.domino.impl.RichTextRange((lotus.domino.RichTextRange) lotus, parent);
+		} else if (lotus instanceof lotus.domino.RichTextSection) {
+			result = (T) new org.openntf.domino.impl.RichTextSection((lotus.domino.RichTextSection) lotus, parent);
+		} else if (lotus instanceof lotus.domino.RichTextStyle) {
+			result = (T) new org.openntf.domino.impl.RichTextStyle((lotus.domino.RichTextStyle) lotus, parent);
+		} else if (lotus instanceof lotus.domino.RichTextTab) {
+			result = (T) new org.openntf.domino.impl.RichTextTab((lotus.domino.RichTextTab) lotus, parent);
+		} else if (lotus instanceof lotus.domino.RichTextTable) {
+			result = (T) new org.openntf.domino.impl.RichTextTable((lotus.domino.RichTextTable) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Session) {
 			result = (T) new org.openntf.domino.impl.Session((lotus.domino.Session) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Stream) {
 			result = (T) new org.openntf.domino.impl.Stream((lotus.domino.Stream) lotus, parent);
 		} else if (lotus instanceof lotus.domino.View) {
 			result = (T) new org.openntf.domino.impl.View((lotus.domino.View) lotus, (org.openntf.domino.Database) parent);
+		} else if (lotus instanceof lotus.domino.ViewColumn) {
+			result = (T) new org.openntf.domino.impl.ViewColumn((lotus.domino.ViewColumn) lotus, (org.openntf.domino.Database) parent);
+		} else if (lotus instanceof lotus.domino.ViewEntry) {
+			result = (T) new org.openntf.domino.impl.ViewEntry((lotus.domino.ViewEntry) lotus, (org.openntf.domino.Database) parent);
 		} else if (lotus instanceof lotus.domino.ViewEntryCollection) {
 			result = (T) new org.openntf.domino.impl.ViewEntryCollection((lotus.domino.ViewEntryCollection) lotus,
 					(org.openntf.domino.View) parent);
+		} else if (lotus instanceof lotus.domino.ViewNavigator) {
+			result = (T) new org.openntf.domino.impl.ViewNavigator((lotus.domino.ViewNavigator) lotus, (org.openntf.domino.Database) parent);
 		}
 		drainQueue();
 		if (result != null) {

@@ -32,7 +32,7 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 	public int getSpacingBelow();
 
 	@Override
-	public Vector<lotus.domino.RichTextTab> getTabs();
+	public Vector<RichTextTab> getTabs();
 
 	@Override
 	public void setAlignment(int value);

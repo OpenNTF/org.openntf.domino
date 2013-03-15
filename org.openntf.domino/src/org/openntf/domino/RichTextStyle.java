@@ -1,7 +1,5 @@
 package org.openntf.domino;
 
-import lotus.domino.Session;
-
 public interface RichTextStyle extends Base<lotus.domino.RichTextStyle>, lotus.domino.RichTextStyle {
 
 	@Override

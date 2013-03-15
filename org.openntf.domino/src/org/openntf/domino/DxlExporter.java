@@ -2,9 +2,6 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
-import lotus.domino.DocumentCollection;
-import lotus.domino.NoteCollection;
-
 public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domino.DxlExporter {
 
 	@Override
@@ -14,10 +11,10 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	public String exportDxl(lotus.domino.Database database);
 
 	@Override
-	public String exportDxl(DocumentCollection docs);
+	public String exportDxl(lotus.domino.DocumentCollection docs);
 
 	@Override
-	public String exportDxl(NoteCollection notes);
+	public String exportDxl(lotus.domino.NoteCollection notes);
 
 	@Override
 	public String getAttachmentOmittedText();
@@ -47,7 +44,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	public String getOLEObjectOmittedText();
 
 	@Override
-	public Vector getOmitItemNames();
+	public Vector<String> getOmitItemNames();
 
 	@Override
 	public boolean getOmitMiscFileObjects();
@@ -68,7 +65,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	public String getPictureOmittedText();
 
 	@Override
-	public Vector getRestrictToItemNames();
+	public Vector<String> getRestrictToItemNames();
 
 	@Override
 	public int getRichTextOption();
@@ -100,6 +97,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	@Override
 	public void setOLEObjectOmittedText(String replacementText);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setOmitItemNames(Vector names);
 
@@ -121,6 +119,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	@Override
 	public void setPictureOmittedText(String replacementText);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setRestrictToItemNames(Vector names);
 

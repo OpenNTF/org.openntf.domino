@@ -115,31 +115,37 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View> {
 	@Override
 	public int FTSearchSorted(String query, int maxDocs, String column, boolean ascending, boolean exact, boolean variants, boolean fuzzy);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public int FTSearchSorted(Vector query);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public int FTSearchSorted(Vector query, int maxDocs);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public int FTSearchSorted(Vector query, int maxDocs, int column);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public int FTSearchSorted(Vector query, int maxDocs, int column, boolean ascending, boolean exact, boolean variants, boolean fuzzy);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public int FTSearchSorted(Vector query, int maxDocs, String column);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -155,11 +161,13 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View> {
 	@Override
 	public DocumentCollection getAllDocumentsByKey(Object key, boolean exact);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public DocumentCollection getAllDocumentsByKey(Vector keys);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -174,11 +182,13 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View> {
 	@Override
 	public ViewEntryCollection getAllEntriesByKey(Object key, boolean exact);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public ViewEntryCollection getAllEntriesByKey(Vector keys);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -230,11 +240,13 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View> {
 	@Override
 	public Document getDocumentByKey(Object key, boolean exact);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Document getDocumentByKey(Vector keys);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -246,11 +258,13 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View> {
 	@Override
 	public ViewEntry getEntryByKey(Object key, boolean exact);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public ViewEntry getEntryByKey(Vector keys);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -386,11 +400,13 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View> {
 	@Override
 	public boolean lock(String name, boolean provisionalOk);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public boolean lock(Vector names);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -402,6 +418,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View> {
 	@Override
 	public boolean lockProvisional(String name);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -446,6 +463,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View> {
 	@Override
 	public void setAliases(String alias);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -472,6 +490,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View> {
 	@Override
 	public void setProtectReaders(boolean flag);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
