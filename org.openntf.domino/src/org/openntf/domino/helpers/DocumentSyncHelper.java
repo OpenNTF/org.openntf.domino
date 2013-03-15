@@ -30,6 +30,24 @@ public class DocumentSyncHelper {
 		// TODO allow for constructor arguments to configure
 	}
 
+	public DocumentSyncHelper(Strategy strategy, Map<String, String> syncMap, String... args) {
+		setStrategy(strategy);
+		setSyncMap(syncMap);
+		if (args.length >= 1) {
+			setTargetServer(args[0]);
+		}
+		if (args.length >= 2) {
+			setTargetFilepath(args[1]);
+		}
+		if (args.length >= 3) {
+			setTargetLookupView(args[2]);
+		}
+		if (args.length >= 4) {
+			setSourceKeyFormula(args[3]);
+		}
+
+	}
+
 	public void process(DocumentCollection coll) {
 		// TODO Check to make sure properties are all set up before running
 		Session session = org.openntf.domino.utils.Factory.getSession(coll);
