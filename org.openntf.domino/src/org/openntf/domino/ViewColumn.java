@@ -1,7 +1,5 @@
 package org.openntf.domino;
 
-import lotus.domino.View;
-
 public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.ViewColumn {
 	@Override
 	public int getAlignment();
