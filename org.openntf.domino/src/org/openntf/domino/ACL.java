@@ -41,13 +41,13 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<
 	 *            The level that you want to assign to this person, group, or server in the ACL. May be any of the following :<br>
 	 * <br>
 	 *            <ul>
-	 *            <li>ACL.LEVEL_NOACCESS</li>
-	 *            <li>ACL.LEVEL_DEPOSITOR</li>
-	 *            <li>ACL.LEVEL_READER</li>
-	 *            <li>ACL.LEVEL_AUTHOR</li>
-	 *            <li>ACL.LEVEL_EDITOR</li>
-	 *            <li>ACL.LEVEL_DESIGNER</li>
-	 *            <li>ACL.LEVEL_MANAGER</li>
+	 *            <li>ACL.LEVEL_NOACCESS (0)</li>
+	 *            <li>ACL.LEVEL_DEPOSITOR (1)</li>
+	 *            <li>ACL.LEVEL_READER (2)</li>
+	 *            <li>ACL.LEVEL_AUTHOR (3)</li>
+	 *            <li>ACL.LEVEL_EDITOR (4)</li>
+	 *            <li>ACL.LEVEL_DESIGNER (5)</li>
+	 *            <li>ACL.LEVEL_MANAGER (6)</li>
 	 *            </ul>
 	 * 
 	 * @return The newly-created {@link org.openntf.domino.ACLEntry}.
@@ -105,13 +105,13 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<
 	 * @return The current maximum internet access level of the database. May be any of the following :<br>
 	 * <br>
 	 *         <ul>
-	 *         <li>ACL.LEVEL_NOACCESS</li>
-	 *         <li>ACL.LEVEL_DEPOSITOR</li>
-	 *         <li>ACL.LEVEL_READER</li>
-	 *         <li>ACL.LEVEL_AUTHOR</li>
-	 *         <li>ACL.LEVEL_EDITOR</li>
-	 *         <li>ACL.LEVEL_DESIGNER</li>
-	 *         <li>ACL.LEVEL_MANAGER</li>
+	 *         <li>ACL.LEVEL_NOACCESS (0)</li>
+	 *         <li>ACL.LEVEL_DEPOSITOR (1)</li>
+	 *         <li>ACL.LEVEL_READER (2)</li>
+	 *         <li>ACL.LEVEL_AUTHOR (3)</li>
+	 *         <li>ACL.LEVEL_EDITOR (4)</li>
+	 *         <li>ACL.LEVEL_DESIGNER (5)</li>
+	 *         <li>ACL.LEVEL_MANAGER (6)</li>
 	 *         </ul>
 	 */
 	@Override
@@ -269,6 +269,17 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<
 	@Override
 	public void save();
 
+	/**
+	 * Sets the name of the administration server for a database.
+	 * 
+	 * <p>
+	 * The administration server is also the master lock server.<br>
+	 * This property is an <code>empty string</code> if the database does not have an administration server.
+	 * </p>
+	 * 
+	 * @param server
+	 *            the name of the server you want to set as the Administration Server.
+	 */
 	@Override
 	public void setAdministrationServer(String server);
 
@@ -284,6 +295,9 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<
 	 * After setting this property, you must call {@link org.openntf.domino.ACL#save()} for the changes to take effect. If you do not call
 	 * save, your changes to the ACL are lost.
 	 * </p>
+	 * 
+	 * @param flag
+	 *            The boolean value to set
 	 */
 	@Override
 	public void setAdminNames(boolean flag);
@@ -300,6 +314,9 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<
 	 * After setting this property, you must call {@link org.openntf.domino.ACL#save()} for the changes to take effect. If you do not call
 	 * save, your changes to the ACL are lost.
 	 * </p>
+	 * 
+	 * @param flag
+	 *            The boolean value to set
 	 */
 	@Override
 	public void setAdminReaderAuthor(boolean flag);
@@ -321,6 +338,9 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<
 	 * After setting this property, you must call {@link org.openntf.domino.ACL#save()} for the changes to take effect. If you do not call
 	 * save, your changes to the ACL are lost.
 	 * </p>
+	 * 
+	 * @param flag
+	 *            The boolean value to set
 	 */
 	@Override
 	public void setExtendedAccess(boolean flag);
@@ -332,13 +352,13 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<
 	 *            The new maximum Internet level you want to set in the ACL. May be any of the following :<br>
 	 * <br>
 	 *            <ul>
-	 *            <li>ACL.LEVEL_NOACCESS</li>
-	 *            <li>ACL.LEVEL_DEPOSITOR</li>
-	 *            <li>ACL.LEVEL_READER</li>
-	 *            <li>ACL.LEVEL_AUTHOR</li>
-	 *            <li>ACL.LEVEL_EDITOR</li>
-	 *            <li>ACL.LEVEL_DESIGNER</li>
-	 *            <li>ACL.LEVEL_MANAGER</li>
+	 *            <li>ACL.LEVEL_NOACCESS (0)</li>
+	 *            <li>ACL.LEVEL_DEPOSITOR (1)</li>
+	 *            <li>ACL.LEVEL_READER (2)</li>
+	 *            <li>ACL.LEVEL_AUTHOR (3)</li>
+	 *            <li>ACL.LEVEL_EDITOR (4)</li>
+	 *            <li>ACL.LEVEL_DESIGNER (5)</li>
+	 *            <li>ACL.LEVEL_MANAGER (6)</li>
 	 *            </ul>
 	 */
 	@Override
@@ -351,6 +371,9 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<
 	 * After setting this property, you must call {@link org.openntf.domino.ACL#save()} for the changes to take effect. If you do not call
 	 * save, your changes to the ACL are lost.
 	 * </p>
+	 * 
+	 * @param flag
+	 *            The boolean value to set
 	 */
 	@Override
 	public void setUniformAccess(boolean flag);
