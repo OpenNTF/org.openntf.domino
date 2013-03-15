@@ -5,26 +5,21 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.Vector;
 
-import lotus.domino.MIMEHeader;
-import lotus.domino.Stream;
-import lotus.domino.XSLTResultTarget;
-
-import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.MIMEEntity {
 
 	@Override
-	public lotus.domino.MIMEEntity createChildEntity();
+	public MIMEEntity createChildEntity();
 
 	@Override
-	public lotus.domino.MIMEEntity createChildEntity(lotus.domino.MIMEEntity nextSibling);
+	public MIMEEntity createChildEntity(lotus.domino.MIMEEntity nextSibling);
 
 	@Override
 	public MIMEHeader createHeader(String headerName);
 
 	@Override
-	public lotus.domino.MIMEEntity createParentEntity();
+	public MIMEEntity createParentEntity();
 
 	@Override
 	public void decodeContent();
@@ -42,19 +37,19 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	public String getCharset();
 
 	@Override
-	public void getContentAsBytes(Stream stream);
+	public void getContentAsBytes(lotus.domino.Stream stream);
 
 	@Override
-	public void getContentAsBytes(Stream stream, boolean decoded);
+	public void getContentAsBytes(lotus.domino.Stream stream, boolean decoded);
 
 	@Override
 	public String getContentAsText();
 
 	@Override
-	public void getContentAsText(Stream stream);
+	public void getContentAsText(lotus.domino.Stream stream);
 
 	@Override
-	public void getContentAsText(Stream stream, boolean decoded);
+	public void getContentAsText(lotus.domino.Stream stream, boolean decoded);
 
 	@Override
 	public String getContentSubType();
@@ -66,19 +61,21 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	public int getEncoding();
 
 	@Override
-	public void getEntityAsText(Stream stream);
+	public void getEntityAsText(lotus.domino.Stream stream);
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void getEntityAsText(lotus.domino.Stream stream, Vector headerFilters);
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void getEntityAsText(lotus.domino.Stream stream, Vector headerFilters, boolean inclusive);
 
 	@Override
-	public void getEntityAsText(Stream stream, Vector headerFilters);
+	public MIMEEntity getFirstChildEntity();
 
 	@Override
-	public void getEntityAsText(Stream stream, Vector headerFilters, boolean inclusive);
-
-	@Override
-	public lotus.domino.MIMEEntity getFirstChildEntity();
-
-	@Override
-	public Vector getHeaderObjects();
+	public Vector<MIMEHeader> getHeaderObjects();
 
 	@Override
 	public String getHeaders();
@@ -90,13 +87,13 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	public InputStream getInputStream();
 
 	@Override
-	public lotus.domino.MIMEEntity getNextEntity();
+	public MIMEEntity getNextEntity();
 
 	@Override
-	public lotus.domino.MIMEEntity getNextEntity(int search);
+	public MIMEEntity getNextEntity(int search);
 
 	@Override
-	public lotus.domino.MIMEEntity getNextSibling();
+	public MIMEEntity getNextSibling();
 
 	@Override
 	public MIMEHeader getNthHeader(String headerName);
@@ -105,19 +102,19 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	public MIMEHeader getNthHeader(String headerName, int instance);
 
 	@Override
-	public lotus.domino.MIMEEntity getParentEntity();
+	public MIMEEntity getParentEntity();
 
 	@Override
 	public String getPreamble();
 
 	@Override
-	public lotus.domino.MIMEEntity getPrevEntity();
+	public MIMEEntity getPrevEntity();
 
 	@Override
-	public lotus.domino.MIMEEntity getPrevEntity(int search);
+	public MIMEEntity getPrevEntity(int search);
 
 	@Override
-	public lotus.domino.MIMEEntity getPrevSibling();
+	public MIMEEntity getPrevSibling();
 
 	@Override
 	public Reader getReader();
@@ -125,28 +122,30 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	@Override
 	public String getSomeHeaders();
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public String getSomeHeaders(Vector headerFilters);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public String getSomeHeaders(Vector headerFilters, boolean inclusive);
 
 	@Override
-	public Document parseXML(boolean validate) throws IOException;
+	public org.w3c.dom.Document parseXML(boolean validate) throws IOException;
 
 	@Override
 	public void remove();
 
 	@Override
-	public void setContentFromBytes(Stream stream, String contentType, int encoding);
+	public void setContentFromBytes(lotus.domino.Stream stream, String contentType, int encoding);
 
 	@Override
-	public void setContentFromText(Stream stream, String contentType, int encoding);
+	public void setContentFromText(lotus.domino.Stream stream, String contentType, int encoding);
 
 	@Override
 	public void setPreamble(String preamble);
 
 	@Override
-	public void transformXML(Object style, XSLTResultTarget result);
+	public void transformXML(Object style, lotus.domino.XSLTResultTarget result);
 
 }

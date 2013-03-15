@@ -12,7 +12,7 @@ import org.openntf.domino.utils.DominoUtils;
 
 public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domino.DxlExporter> implements org.openntf.domino.DxlExporter {
 
-	protected DxlExporter(lotus.domino.DxlExporter delegate, org.openntf.domino.Base<?> parent) {
+	public DxlExporter(lotus.domino.DxlExporter delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 

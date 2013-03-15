@@ -6,7 +6,7 @@ import org.openntf.domino.utils.DominoUtils;
 
 public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domino.ColorObject> implements org.openntf.domino.ColorObject {
 
-	protected ColorObject(lotus.domino.ColorObject delegate, org.openntf.domino.Base<?> parent) {
+	public ColorObject(lotus.domino.ColorObject delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 

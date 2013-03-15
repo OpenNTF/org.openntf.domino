@@ -4,6 +4,7 @@ import java.util.Vector;
 
 public interface AdministrationProcess extends Base<lotus.domino.AdministrationProcess>, lotus.domino.AdministrationProcess {
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public String addGroupMembers(String group, Vector members);
 
@@ -116,6 +117,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 	@Override
 	public String moveMailUser(String userName, String newHomeServer, String newHomeServerMailPath);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public String moveMailUser(String userName, String newHomeServer, String newHomeServerMailPath, boolean useSCOS,
 			Vector newClusterReplicas, boolean deleteOldClusterReplicas);

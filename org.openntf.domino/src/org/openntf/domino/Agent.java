@@ -17,7 +17,7 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent {
 	public DateTime getLastRun();
 
 	@Override
-	public Vector getLockHolders();
+	public Vector<String> getLockHolders();
 
 	@Override
 	public String getName();
@@ -82,9 +82,11 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent {
 	@Override
 	public boolean lock(String name, boolean provisionalOk);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean lock(Vector names);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean lock(Vector names, boolean provisionalOk);
 
@@ -94,6 +96,7 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent {
 	@Override
 	public boolean lockProvisional(String name);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean lockProvisional(Vector names);
 

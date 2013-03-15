@@ -3,13 +3,13 @@ package org.openntf.domino;
 public interface DateRange extends Base<lotus.domino.DateRange>, lotus.domino.DateRange {
 
 	@Override
-	public org.openntf.domino.DateTime getEndDateTime();
+	public DateTime getEndDateTime();
 
 	@Override
-	public org.openntf.domino.Session getParent();
+	public Session getParent();
 
 	@Override
-	public org.openntf.domino.DateTime getStartDateTime();
+	public DateTime getStartDateTime();
 
 	@Override
 	public String getText();

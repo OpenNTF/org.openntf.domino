@@ -12,7 +12,7 @@ import org.openntf.domino.utils.Factory;
 public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollection, lotus.domino.ViewEntryCollection> implements
 		org.openntf.domino.ViewEntryCollection {
 
-	protected ViewEntryCollection(lotus.domino.ViewEntryCollection delegate, org.openntf.domino.View parent) {
+	public ViewEntryCollection(lotus.domino.ViewEntryCollection delegate, org.openntf.domino.View parent) {
 		super(delegate, parent);
 	}
 

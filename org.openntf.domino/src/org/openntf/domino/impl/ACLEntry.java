@@ -62,13 +62,13 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	}
 
 	@Override
-	public org.openntf.domino.ACL getParent() {
-		return (org.openntf.domino.ACL) super.getParent();
+	public ACL getParent() {
+		return (ACL) super.getParent();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getRoles() {
+	public Vector<String> getRoles() {
 		try {
 			return getDelegate().getRoles();
 		} catch (NotesException e) {
@@ -357,7 +357,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	@Override
 	public void setName(lotus.domino.Name n) {
 		try {
-			getDelegate().setName((lotus.domino.Name) Factory.toLotus(n));
+			getDelegate().setName((lotus.domino.Name) toLotus(n));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

@@ -17,7 +17,7 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		org.openntf.domino.EmbeddedObject {
 	private lotus.domino.EmbeddedObject temp;
 
-	protected EmbeddedObject(lotus.domino.EmbeddedObject delegate, org.openntf.domino.Base<?> parent) {
+	public EmbeddedObject(lotus.domino.EmbeddedObject delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
 	}
 
@@ -97,7 +97,7 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 	public org.openntf.domino.RichTextItem getParent() {
 		try {
 			return Factory.fromLotus(getDelegate().getParent(), org.openntf.domino.RichTextItem.class, null); // FIXME NTF - this ain't
-																												// gonna work. Need an
+			// gonna work. Need an
 			// RTItem implementation
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);

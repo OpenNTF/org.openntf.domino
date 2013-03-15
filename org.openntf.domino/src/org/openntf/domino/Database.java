@@ -35,22 +35,22 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public DocumentCollection createDocumentCollection();
 
 	@Override
-	public lotus.domino.Database createFromTemplate(String server, String dbFile, boolean inherit);
+	public Database createFromTemplate(String server, String dbFile, boolean inherit);
 
 	@Override
-	public lotus.domino.Database createFromTemplate(String server, String dbFile, boolean inherit, int maxSize);
+	public Database createFromTemplate(String server, String dbFile, boolean inherit, int maxSize);
 
 	@Override
 	public void createFTIndex(int options, boolean recreate);
 
-	public org.openntf.domino.NoteCollection createNoteCollection(boolean selectAllFlag);
+	@Override
+	public NoteCollection createNoteCollection(boolean selectAllFlag);
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Outline createOutline(String name);
+	public Outline createOutline(String name);
 
 	@Override
-	public lotus.domino.Outline createOutline(String name, boolean defaultOutline);
+	public Outline createOutline(String name, boolean defaultOutline);
 
 	@Override
 	public View createQueryView(String viewName, String query);
@@ -170,8 +170,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public boolean getFolderReferencesEnabled();
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Form getForm(String name);
+	public Form getForm(String name);
 
 	@Override
 	@Legacy(Legacy.INTERFACES_WARNING)
@@ -224,11 +223,10 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public boolean getOption(int optionName);
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Outline getOutline(String outlineName);
+	public Outline getOutline(String outlineName);
 
 	@Override
-	public org.openntf.domino.Session getParent();
+	public Session getParent();
 
 	@Override
 	public double getPercentUsed();
@@ -243,8 +241,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public String getReplicaID();
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Replication getReplicationInfo();
+	public Replication getReplicationInfo();
 
 	@Override
 	public String getServer();
@@ -364,8 +361,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public int queryAccessPrivileges(String name);
 
-	@Override
-	public Vector queryAccessRoles(String roles);
+	public Vector<String> queryAccessRoles(String name);
 
 	@Override
 	public void remove();
@@ -392,7 +388,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public void setAllowOpenSoftDeleted(boolean flag);
 
 	@Override
-	public void setCategories(String flag);
+	public void setCategories(String categories);
 
 	@Override
 	public void setDelayUpdates(boolean flag);

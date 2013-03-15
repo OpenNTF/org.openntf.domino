@@ -35,7 +35,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<
 	public Database getParent();
 
 	@Override
-	public Vector getRoles();
+	public Vector<String> getRoles();
 
 	@Override
 	public boolean isAdminNames();

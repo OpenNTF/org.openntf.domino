@@ -1,11 +1,12 @@
 package org.openntf.domino.impl;
 
+import static org.openntf.domino.utils.Factory.fromLotus;
+
 import java.util.Vector;
 
 import lotus.domino.NotesException;
 
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 public class AdministrationProcess extends Base<org.openntf.domino.AdministrationProcess, lotus.domino.AdministrationProcess> implements
 		org.openntf.domino.AdministrationProcess {
@@ -39,7 +40,8 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	public String addInternetCertificateToUser(String user, String keyringFile, String keyringPassword, lotus.domino.DateTime expiration) {
 		try {
 			return getDelegate().addInternetCertificateToUser(user, keyringFile, keyringPassword,
-					(lotus.domino.DateTime) Factory.toLotus(expiration));
+
+			(lotus.domino.DateTime) toLotus(expiration));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -268,9 +270,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String deleteUser(String userName, boolean immediate, int mailFileAction, String denyGroup, boolean deleteWindowsUser) {
+	public String deleteUser(String username, boolean immediate, int mailFileAction, String denyGroup, boolean deleteWindowsUser) {
 		try {
-			return getDelegate().deleteUser(userName, immediate, mailFileAction, denyGroup, deleteWindowsUser);
+			return getDelegate().deleteUser(username, immediate, mailFileAction, denyGroup, deleteWindowsUser);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -320,7 +322,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	@Override
 	public DateTime getCertificateExpiration() {
 		try {
-			return Factory.fromLotus(getDelegate().getCertificateExpiration(), DateTime.class, this);
+			return fromLotus(getDelegate().getCertificateExpiration(), DateTime.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -348,8 +350,8 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public org.openntf.domino.Session getParent() {
-		return (org.openntf.domino.Session) super.getParent();
+	public Session getParent() {
+		return (Session) super.getParent();
 	}
 
 	@Override
@@ -396,9 +398,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String moveReplica(String sourceServer, String sourceDBFile, String destServer) {
+	public String moveReplica(String sourceServer, String sourceDbFile, String destServer) {
 		try {
-			return getDelegate().moveReplica(sourceServer, sourceDBFile, destServer);
+			return getDelegate().moveReplica(sourceServer, sourceDbFile, destServer);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -406,10 +408,10 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String moveReplica(String sourceServer, String sourceDBFile, String destServer, String destDBFile, boolean copyACL,
+	public String moveReplica(String sourceServer, String sourceDbFile, String destServer, String destDbFile, boolean copyACL,
 			boolean createFTIndex) {
 		try {
-			return getDelegate().moveReplica(sourceServer, sourceDBFile, destServer, destDBFile, copyACL, createFTIndex);
+			return getDelegate().moveReplica(sourceServer, sourceDbFile, destServer, destDbFile, copyACL, createFTIndex);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -554,7 +556,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	@Override
 	public void setCertificateExpiration(lotus.domino.DateTime expiration) {
 		try {
-			getDelegate().setCertificateExpiration((lotus.domino.DateTime) Factory.toLotus(expiration));
+			getDelegate().setCertificateExpiration((DateTime) toLotus(expiration));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -620,9 +622,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	}
 
 	@Override
-	public String signDatabaseWithServerID(String server, String dbFile, boolean updateOnly) {
+	public String signDatabaseWithServerID(String server, String dbFile, boolean updateonly) {
 		try {
-			return getDelegate().signDatabaseWithServerID(server, dbFile, updateOnly);
+			return getDelegate().signDatabaseWithServerID(server, dbFile, updateonly);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

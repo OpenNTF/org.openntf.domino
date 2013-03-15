@@ -1,15 +1,11 @@
 package org.openntf.domino;
 
-import lotus.domino.Database;
-import lotus.domino.Outline;
-import lotus.domino.View;
-
 public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.domino.OutlineEntry {
 
 	@Override
 	public String getAlias();
 
-	public lotus.domino.Database getDatabase();
+	public Database getDatabase();
 
 	@Override
 	public Document getDocument();
@@ -105,16 +101,16 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	public void setLabel(String label);
 
 	@Override
-	public boolean setNamedElement(Database database, String elementName, int entryClass);
+	public boolean setNamedElement(lotus.domino.Database db, String elementName, int entryClass);
 
 	@Override
-	public boolean setNoteLink(Database database);
+	public boolean setNoteLink(lotus.domino.Database db);
 
 	@Override
 	public boolean setNoteLink(lotus.domino.Document doc);
 
 	@Override
-	public boolean setNoteLink(View view);
+	public boolean setNoteLink(lotus.domino.View view);
 
 	@Override
 	public boolean setURL(String url);

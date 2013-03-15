@@ -70,12 +70,18 @@ public enum Factory {
 		}
 
 		T result = null;
-		if (lotus instanceof lotus.domino.Name) {
-			result = (T) new org.openntf.domino.impl.Name((lotus.domino.Name) lotus, parent);
-		} else if (lotus instanceof lotus.domino.Session) {
-			result = (T) new org.openntf.domino.impl.Session((lotus.domino.Session) lotus, parent);
-		} else if (lotus instanceof lotus.domino.Database) {
-			result = (T) new org.openntf.domino.impl.Database((lotus.domino.Database) lotus, parent);
+		if (lotus instanceof lotus.domino.ACL) {
+			result = (T) new org.openntf.domino.impl.ACL((lotus.domino.ACL) lotus, parent);
+		} else if (lotus instanceof lotus.domino.ACLEntry) {
+			result = (T) new org.openntf.domino.impl.ACLEntry((lotus.domino.ACLEntry) lotus, (org.openntf.domino.ACL) parent);
+		} else if (lotus instanceof lotus.domino.AdministrationProcess) {
+			result = (T) new org.openntf.domino.impl.AdministrationProcess((lotus.domino.AdministrationProcess) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Agent) {
+			result = (T) new org.openntf.domino.impl.Agent((lotus.domino.Agent) lotus, parent);
+		} else if (lotus instanceof lotus.domino.AgentContext) {
+			result = (T) new org.openntf.domino.impl.AgentContext((lotus.domino.AgentContext) lotus, parent);
+		} else if (lotus instanceof lotus.domino.ColorObject) {
+			result = (T) new org.openntf.domino.impl.ColorObject((lotus.domino.ColorObject) lotus, parent);
 		} else if (lotus instanceof lotus.domino.DocumentCollection) {
 			result = (T) new org.openntf.domino.impl.DocumentCollection((lotus.domino.DocumentCollection) lotus, parent);
 		} else if (lotus instanceof lotus.domino.NoteCollection) {
@@ -87,8 +93,63 @@ public enum Factory {
 			result = (T) new org.openntf.domino.impl.Form((lotus.domino.Form) lotus, parent);
 		} else if (lotus instanceof lotus.domino.DateTime) {
 			result = (T) new org.openntf.domino.impl.DateTime((lotus.domino.DateTime) lotus, parent);
+
 		} else if (lotus instanceof lotus.domino.DateRange) {
 			result = (T) new org.openntf.domino.impl.DateRange((lotus.domino.DateRange) lotus, parent);
+		} else if (lotus instanceof lotus.domino.DateTime) {
+			result = (T) new org.openntf.domino.impl.DateTime((lotus.domino.DateTime) lotus, parent);
+		} else if (lotus instanceof lotus.domino.DbDirectory) {
+			result = (T) new org.openntf.domino.impl.DbDirectory((lotus.domino.DbDirectory) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Directory) {
+			result = (T) new org.openntf.domino.impl.Directory((lotus.domino.Directory) lotus, parent);
+		} else if (lotus instanceof lotus.domino.DirectoryNavigator) {
+			result = (T) new org.openntf.domino.impl.DirectoryNavigator((lotus.domino.DirectoryNavigator) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Document) {
+			result = (T) new org.openntf.domino.impl.Document((lotus.domino.Document) lotus, parent);
+		} else if (lotus instanceof lotus.domino.DocumentCollection) {
+			result = (T) new org.openntf.domino.impl.DocumentCollection((lotus.domino.DocumentCollection) lotus, parent);
+		} else if (lotus instanceof lotus.domino.DxlExporter) {
+			result = (T) new org.openntf.domino.impl.DxlExporter((lotus.domino.DxlExporter) lotus, parent);
+		} else if (lotus instanceof lotus.domino.DxlImporter) {
+			result = (T) new org.openntf.domino.impl.DxlImporter((lotus.domino.DxlImporter) lotus, parent);
+		} else if (lotus instanceof lotus.domino.EmbeddedObject) {
+			result = (T) new org.openntf.domino.impl.EmbeddedObject((lotus.domino.EmbeddedObject) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Form) {
+			result = (T) new org.openntf.domino.impl.Form((lotus.domino.Form) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Item) {
+			result = (T) new org.openntf.domino.impl.Item((lotus.domino.Item) lotus, parent);
+		} else if (lotus instanceof lotus.domino.MIMEEntity) {
+			result = (T) new org.openntf.domino.impl.MIMEEntity((lotus.domino.MIMEEntity) lotus, parent);
+		} else if (lotus instanceof lotus.domino.MIMEHeader) {
+			result = (T) new org.openntf.domino.impl.MIMEHeader((lotus.domino.MIMEHeader) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Name) {
+			result = (T) new org.openntf.domino.impl.Name((lotus.domino.Name) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Newsletter) {
+			result = (T) new org.openntf.domino.impl.Newsletter((lotus.domino.Newsletter) lotus, parent);
+		} else if (lotus instanceof lotus.domino.NoteCollection) {
+			result = (T) new org.openntf.domino.impl.NoteCollection((lotus.domino.NoteCollection) lotus,
+					(org.openntf.domino.Database) parent);
+		} else if (lotus instanceof lotus.domino.NotesProperty) {
+			result = (T) new org.openntf.domino.impl.NotesProperty((lotus.domino.NotesProperty) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Outline) {
+			result = (T) new org.openntf.domino.impl.Outline((lotus.domino.Outline) lotus, parent);
+		} else if (lotus instanceof lotus.domino.OutlineEntry) {
+			result = (T) new org.openntf.domino.impl.OutlineEntry((lotus.domino.OutlineEntry) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Registration) {
+			result = (T) new org.openntf.domino.impl.Registration((lotus.domino.Registration) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Replication) {
+			result = (T) new org.openntf.domino.impl.Replication((lotus.domino.Replication) lotus, parent);
+		} else if (lotus instanceof lotus.domino.ReplicationEntry) {
+			result = (T) new org.openntf.domino.impl.ReplicationEntry((lotus.domino.ReplicationEntry) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Session) {
+			result = (T) new org.openntf.domino.impl.Session((lotus.domino.Session) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Stream) {
+			result = (T) new org.openntf.domino.impl.Stream((lotus.domino.Stream) lotus, parent);
+		} else if (lotus instanceof lotus.domino.View) {
+			result = (T) new org.openntf.domino.impl.View((lotus.domino.View) lotus, (org.openntf.domino.Database) parent);
+		} else if (lotus instanceof lotus.domino.ViewEntryCollection) {
+			result = (T) new org.openntf.domino.impl.ViewEntryCollection((lotus.domino.ViewEntryCollection) lotus,
+					(org.openntf.domino.View) parent);
 		}
 		drainQueue();
 		if (result != null) {
@@ -142,6 +203,22 @@ public enum Factory {
 		}
 		return result;
 
+	}
+
+	public static java.util.Vector<Object> wrapColumnValues(Collection<?> values) {
+		java.util.Vector<Object> result = new org.openntf.domino.impl.Vector<Object>();
+		for (Object value : values) {
+			if (value instanceof lotus.domino.DateTime) {
+				result.add(fromLotus((lotus.domino.DateTime) value, org.openntf.domino.impl.DateTime.class, getSession()));
+			} else if (value instanceof lotus.domino.DateRange) {
+				result.add(fromLotus((lotus.domino.DateRange) value, org.openntf.domino.impl.DateRange.class, getSession()));
+			} else if (value instanceof Collection) {
+				result.add(wrapColumnValues((Collection<?>) value));
+			} else {
+				result.add(value);
+			}
+		}
+		return result;
 	}
 
 	public static org.openntf.domino.Session getSession() {

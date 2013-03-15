@@ -2,21 +2,21 @@ package org.openntf.domino.impl;
 
 import java.util.Vector;
 
-import lotus.domino.DirectoryNavigator;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.Directory> implements org.openntf.domino.Directory {
 
-	protected Directory(lotus.domino.Directory delegate, org.openntf.domino.Base<?> parent) {
+	public Directory(lotus.domino.Directory delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
 	@Override
 	public DirectoryNavigator createNavigator() {
 		try {
-			return getDelegate().createNavigator();
+			return Factory.fromLotus(getDelegate().createNavigator(), DirectoryNavigator.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -32,8 +32,9 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getAvailableItems() {
+	public Vector<String> getAvailableItems() {
 		try {
 			return getDelegate().getAvailableItems();
 		} catch (NotesException e) {
@@ -42,8 +43,9 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getAvailableNames() {
+	public Vector<String> getAvailableNames() {
 		try {
 			return getDelegate().getAvailableNames();
 		} catch (NotesException e) {
@@ -62,20 +64,22 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getMailInfo(String arg0) {
+	public Vector<String> getMailInfo(String userName) {
 		try {
-			return getDelegate().getMailInfo(arg0);
+			return getDelegate().getMailInfo(userName);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getMailInfo(String arg0, boolean arg1, boolean arg2) {
+	public Vector<String> getMailInfo(String userName, boolean getVersion, boolean errorOnMultipleMatches) {
 		try {
-			return getDelegate().getMailInfo(arg0, arg1, arg2);
+			return getDelegate().getMailInfo(userName, getVersion, errorOnMultipleMatches);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -153,9 +157,20 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	}
 
 	@Override
-	public DirectoryNavigator lookupAllNames(String arg0, String arg1) {
+	public DirectoryNavigator lookupAllNames(String view, String item) {
 		try {
-			return getDelegate().lookupAllNames(arg0, arg1);
+			return Factory.fromLotus(getDelegate().lookupAllNames(view, item), DirectoryNavigator.class, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public DirectoryNavigator lookupAllNames(String view, Vector items) {
+		try {
+			return Factory.fromLotus(getDelegate().lookupAllNames(view, items), DirectoryNavigator.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -163,9 +178,20 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	}
 
 	@Override
-	public DirectoryNavigator lookupAllNames(String arg0, Vector arg1) {
+	public DirectoryNavigator lookupNames(String view, String name, String item) {
 		try {
-			return getDelegate().lookupAllNames(arg0, arg1);
+			return Factory.fromLotus(getDelegate().lookupNames(view, name, item), DirectoryNavigator.class, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public DirectoryNavigator lookupNames(String view, Vector names, Vector items, boolean partialMatches) {
+		try {
+			return Factory.fromLotus(getDelegate().lookupNames(view, names, items, partialMatches), DirectoryNavigator.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -173,65 +199,45 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	}
 
 	@Override
-	public DirectoryNavigator lookupNames(String arg0, String arg1, String arg2) {
+	public void setGroupAuthorizationOnly(boolean flag) {
 		try {
-			return getDelegate().lookupNames(arg0, arg1, arg2);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
-	}
-
-	@Override
-	public DirectoryNavigator lookupNames(String arg0, Vector arg1, Vector arg2, boolean arg3) {
-		try {
-			return getDelegate().lookupNames(arg0, arg1, arg2, arg3);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
-	}
-
-	@Override
-	public void setGroupAuthorizationOnly(boolean arg0) {
-		try {
-			getDelegate().setGroupAuthorizationOnly(arg0);
+			getDelegate().setGroupAuthorizationOnly(flag);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 	}
 
 	@Override
-	public void setLimitMatches(boolean arg0) {
+	public void setLimitMatches(boolean flag) {
 		try {
-			getDelegate().setLimitMatches(arg0);
+			getDelegate().setLimitMatches(flag);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 	}
 
 	@Override
-	public void setSearchAllDirectories(boolean arg0) {
+	public void setSearchAllDirectories(boolean flag) {
 		try {
-			getDelegate().setSearchAllDirectories(arg0);
+			getDelegate().setSearchAllDirectories(flag);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 	}
 
 	@Override
-	public void setTrustedOnly(boolean arg0) {
+	public void setTrustedOnly(boolean flag) {
 		try {
-			getDelegate().setTrustedOnly(arg0);
+			getDelegate().setTrustedOnly(flag);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 	}
 
 	@Override
-	public void setUseContextServer(boolean arg0) {
+	public void setUseContextServer(boolean flag) {
 		try {
-			getDelegate().setUseContextServer(arg0);
+			getDelegate().setUseContextServer(flag);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

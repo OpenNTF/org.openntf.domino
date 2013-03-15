@@ -4,25 +4,18 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Vector;
 
-import lotus.domino.NotesException;
-import lotus.domino.XSLTResultTarget;
-
 public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document {
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Item appendItemValue(String name);
+	public Item appendItemValue(String name);
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Item appendItemValue(String name, double value);
+	public Item appendItemValue(String name, double value);
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Item appendItemValue(String name, int value);
+	public Item appendItemValue(String name, int value);
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Item appendItemValue(String name, Object value);
+	public Item appendItemValue(String name, Object value);
 
 	@Override
 	public void attachVCard(lotus.domino.Base document);
@@ -55,23 +48,19 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public void copyAllItems(lotus.domino.Document doc, boolean replace);
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Item copyItem(lotus.domino.Item item);
+	public Item copyItem(lotus.domino.Item item);
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Item copyItem(lotus.domino.Item item, String newname);
+	public Item copyItem(lotus.domino.Item item, String newName);
 
 	@Override
 	public Document copyToDatabase(lotus.domino.Database db);
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.MIMEEntity createMIMEEntity();
+	public MIMEEntity createMIMEEntity();
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.MIMEEntity createMIMEEntity(String itemName);
+	public MIMEEntity createMIMEEntity(String itemName);
 
 	@Override
 	public Document createReplyMessage(boolean toall);
@@ -87,22 +76,19 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public String generateXML();
 
 	@Override
-	public void generateXML(Object style, XSLTResultTarget target) throws IOException, NotesException;
+	public void generateXML(Object style, lotus.domino.XSLTResultTarget target) throws IOException;
 
 	@Override
-	public void generateXML(Writer w) throws NotesException, IOException;
+	public void generateXML(Writer w) throws IOException;
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.EmbeddedObject getAttachment(String filename);
+	public EmbeddedObject getAttachment(String fileName);
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getAuthors();
+	public Vector<String> getAuthors();
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getColumnValues();
+	public Vector<Object> getColumnValues();
 
 	@Override
 	public DateTime getCreated();
@@ -116,8 +102,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public Vector getEncryptionKeys();
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Item getFirstItem(String name);
+	public Item getFirstItem(String name);
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -141,13 +126,13 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public Vector getItemValue(String name);
 
 	@Override
-	public Object getItemValueCustomData(String itemname) throws IOException, ClassNotFoundException, NotesException;
+	public Object getItemValueCustomData(String itemName) throws IOException, ClassNotFoundException;
 
 	@Override
-	public Object getItemValueCustomData(String itemname, String datatypename) throws IOException, ClassNotFoundException, NotesException;
+	public Object getItemValueCustomData(String itemName, String dataTypeName) throws IOException, ClassNotFoundException;
 
 	@Override
-	public byte[] getItemValueCustomDataBytes(String itemname, String datatypename) throws IOException, NotesException;
+	public byte[] getItemValueCustomDataBytes(String itemName, String dataTypeName) throws IOException;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -176,12 +161,10 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public Vector getLockHolders();
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.MIMEEntity getMIMEEntity();
+	public MIMEEntity getMIMEEntity();
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.MIMEEntity getMIMEEntity(String itemName);
+	public MIMEEntity getMIMEEntity(String itemName);
 
 	@Override
 	public String getNameOfProfile();
@@ -322,14 +305,6 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	@Override
 	public void putInFolder(String name, boolean createonfail);
 
-	@Override
-	public void recycle();
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void recycle(Vector arg0) throws NotesException;
-
-	@Override
 	public boolean remove(boolean force);
 
 	@Override
@@ -345,22 +320,16 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	public boolean renderToRTItem(lotus.domino.RichTextItem rtitem);
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Item replaceItemValue(String name, Object arg1);
+	public Item replaceItemValue(String itemName, Object value);
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Item replaceItemValueCustomData(String name, Object userobj) throws IOException, NotesException;
+	public Item replaceItemValueCustomData(String itemName, Object userObj) throws IOException;
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Item replaceItemValueCustomData(String name, String datatypename, Object userobj) throws IOException,
-			NotesException;
+	public Item replaceItemValueCustomData(String itemName, String dataTypeName, Object userObj) throws IOException;
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Item replaceItemValueCustomDataBytes(String name, String datatypename, byte[] bytearray) throws IOException,
-			NotesException;
+	public Item replaceItemValueCustomDataBytes(String itemName, String dataTypeName, byte[] byteArray) throws IOException;
 
 	@Override
 	public boolean save();

@@ -38,13 +38,13 @@ public interface DirectoryNavigator extends Base<lotus.domino.DirectoryNavigator
 	public String getCurrentView();
 
 	@Override
-	public Vector getFirstItemValue();
+	public Vector<Object> getFirstItemValue();
 
 	@Override
-	public Vector getNextItemValue();
+	public Vector<Object> getNextItemValue();
 
 	@Override
-	public Vector getNthItemValue(int n);
+	public Vector<Object> getNthItemValue(int n);
 
 	@Override
 	public boolean isMatchLocated();

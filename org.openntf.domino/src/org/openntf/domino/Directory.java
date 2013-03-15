@@ -5,26 +5,25 @@ import java.util.Vector;
 public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Directory {
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.DirectoryNavigator createNavigator();
+	public DirectoryNavigator createNavigator();
 
 	@Override
 	public void freeLookupBuffer();
 
 	@Override
-	public Vector getAvailableItems();
+	public Vector<String> getAvailableItems();
 
 	@Override
-	public Vector getAvailableNames();
+	public Vector<String> getAvailableNames();
 
 	@Override
 	public String getAvailableView();
 
 	@Override
-	public Vector getMailInfo(String userName);
+	public Vector<String> getMailInfo(String userName);
 
 	@Override
-	public Vector getMailInfo(String userName, boolean getVersion, boolean errorOnMultipleMatches);
+	public Vector<String> getMailInfo(String userName, boolean getVersion, boolean errorOnMultipleMatches);
 
 	@Override
 	public String getServer();
@@ -48,20 +47,17 @@ public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Di
 	public boolean isUseContextServer();
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.DirectoryNavigator lookupAllNames(String view, String item);
+	public DirectoryNavigator lookupAllNames(String view, String item);
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public DirectoryNavigator lookupAllNames(String view, Vector items);
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.DirectoryNavigator lookupAllNames(String view, Vector items);
+	public DirectoryNavigator lookupNames(String view, String name, String item);
 
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.DirectoryNavigator lookupNames(String view, String name, String item);
-
-	@Override
-	// TODO Switch to new class
-	public lotus.domino.DirectoryNavigator lookupNames(String arg0, Vector names, Vector items, boolean partialMatches);
+	public DirectoryNavigator lookupNames(String view, Vector names, Vector items, boolean partialMatches);
 
 	@Override
 	public void setGroupAuthorizationOnly(boolean flag);

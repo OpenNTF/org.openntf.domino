@@ -22,7 +22,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 	public ACL getParent();
 
 	@Override
-	public Vector getRoles();
+	public Vector<String> getRoles();
 
 	@Override
 	public int getUserType();
