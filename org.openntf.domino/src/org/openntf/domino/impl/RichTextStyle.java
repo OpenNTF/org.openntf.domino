@@ -1,3 +1,18 @@
+/*
+ * Copyright OpenNTF 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ */
 package org.openntf.domino.impl;
 
 import lotus.domino.NotesException;
@@ -5,13 +20,28 @@ import lotus.domino.NotesException;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class RichTextStyle.
+ */
 public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.domino.RichTextStyle> implements
 		org.openntf.domino.RichTextStyle {
 
+	/**
+	 * Instantiates a new rich text style.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 */
 	public RichTextStyle(lotus.domino.RichTextStyle delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextStyle#getBold()
+	 */
 	@Override
 	public int getBold() {
 		try {
@@ -22,6 +52,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextStyle#getColor()
+	 */
 	@Override
 	public int getColor() {
 		try {
@@ -32,6 +65,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextStyle#getEffects()
+	 */
 	@Override
 	public int getEffects() {
 		try {
@@ -42,6 +78,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextStyle#getFont()
+	 */
 	@Override
 	public int getFont() {
 		try {
@@ -52,6 +91,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextStyle#getFontSize()
+	 */
 	@Override
 	public int getFontSize() {
 		try {
@@ -62,6 +104,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextStyle#getItalic()
+	 */
 	@Override
 	public int getItalic() {
 		try {
@@ -72,6 +117,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#getParent()
+	 */
 	@Override
 	public Session getParent() {
 		try {
@@ -82,6 +130,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextStyle#getPassThruHTML()
+	 */
 	@Override
 	public int getPassThruHTML() {
 		try {
@@ -92,6 +143,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextStyle#getStrikeThrough()
+	 */
 	@Override
 	public int getStrikeThrough() {
 		try {
@@ -102,6 +156,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextStyle#getUnderline()
+	 */
 	@Override
 	public int getUnderline() {
 		try {
@@ -112,6 +169,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextStyle#isDefault()
+	 */
 	@Override
 	public boolean isDefault() {
 		try {
@@ -122,6 +182,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextStyle#setBold(int)
+	 */
 	@Override
 	public void setBold(int value) {
 		try {
@@ -131,6 +194,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextStyle#setColor(int)
+	 */
 	@Override
 	public void setColor(int value) {
 		try {
@@ -140,6 +206,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextStyle#setEffects(int)
+	 */
 	@Override
 	public void setEffects(int value) {
 		try {
@@ -149,6 +218,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextStyle#setFont(int)
+	 */
 	@Override
 	public void setFont(int value) {
 		try {
@@ -158,6 +230,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextStyle#setFontSize(int)
+	 */
 	@Override
 	public void setFontSize(int value) {
 		try {
@@ -167,6 +242,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextStyle#setItalic(int)
+	 */
 	@Override
 	public void setItalic(int value) {
 		try {
@@ -176,6 +254,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextStyle#setPassThruHTML(int)
+	 */
 	@Override
 	public void setPassThruHTML(int value) {
 		try {
@@ -185,6 +266,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextStyle#setStrikeThrough(int)
+	 */
 	@Override
 	public void setStrikeThrough(int value) {
 		try {
@@ -194,6 +278,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextStyle#setUnderline(int)
+	 */
 	@Override
 	public void setUnderline(int value) {
 		try {

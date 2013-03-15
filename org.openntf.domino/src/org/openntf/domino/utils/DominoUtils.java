@@ -1,3 +1,18 @@
+/*
+ * Copyright OpenNTF 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ */
 package org.openntf.domino.utils;
 
 import java.io.BufferedInputStream;
@@ -25,12 +40,26 @@ import java.util.zip.GZIPOutputStream;
 import lotus.domino.Document;
 import lotus.domino.Session;
 
+import org.openntf.domino.Base;
 import org.openntf.domino.exceptions.InvalidNotesUrlException;
 
+//TODO: Auto-generated Javadoc
+/**
+ * The Enum DominoUtils.
+ */
 public enum DominoUtils {
 	;
 	private final static Logger log_ = Logger.getLogger("org.openntf.domino");
 
+	/**
+	 * Checksum.
+	 * 
+	 * @param bytes
+	 *            the bytes
+	 * @param alg
+	 *            the alg
+	 * @return the string
+	 */
 	public static String checksum(byte[] bytes, String alg) {
 		String hashed = "";
 		byte[] defaultBytes = bytes;
@@ -56,6 +85,15 @@ public enum DominoUtils {
 		return hashed;
 	}
 
+	/**
+	 * Checksum.
+	 * 
+	 * @param object
+	 *            the object
+	 * @param algorithm
+	 *            the algorithm
+	 * @return the string
+	 */
 	public static String checksum(Serializable object, String algorithm) {
 		String result = null;
 		try {
@@ -70,6 +108,13 @@ public enum DominoUtils {
 		return result;
 	}
 
+	/**
+	 * Handle exception.
+	 * 
+	 * @param t
+	 *            the t
+	 * @return the throwable
+	 */
 	public static Throwable handleException(Throwable t) {
 		try {
 			log_.log(Level.WARNING, "", t);
@@ -80,6 +125,13 @@ public enum DominoUtils {
 
 	}
 
+	/**
+	 * Gets the unid from notes url.
+	 * 
+	 * @param notesurl
+	 *            the notesurl
+	 * @return the unid from notes url
+	 */
 	public static String getUnidFromNotesUrl(String notesurl) {
 		String result = null;
 		String trimmed = notesurl.toLowerCase().trim();
@@ -109,6 +161,12 @@ public enum DominoUtils {
 		return result;
 	}
 
+	/**
+	 * Incinerate.
+	 * 
+	 * @param args
+	 *            the args
+	 */
 	public static void incinerate(Object... args) {
 		for (Object o : args) {
 			if (o != null) {
@@ -146,6 +204,13 @@ public enum DominoUtils {
 		}
 	}
 
+	/**
+	 * Checks if is hex.
+	 * 
+	 * @param value
+	 *            the value
+	 * @return true, if is hex
+	 */
 	public static boolean isHex(String value) {
 		String chk = value.trim().toLowerCase();
 		for (int i = 0; i < chk.length(); i++) {
@@ -161,22 +226,50 @@ public enum DominoUtils {
 		return true;
 	}
 
+	/**
+	 * Checks if is unid.
+	 * 
+	 * @param value
+	 *            the value
+	 * @return true, if is unid
+	 */
 	public static boolean isUnid(String value) {
 		if (value.length() != 32)
 			return false;
 		return DominoUtils.isHex(value);
 	}
 
+	/**
+	 * Md5.
+	 * 
+	 * @param object
+	 *            the object
+	 * @return the string
+	 */
 	public static String md5(Serializable object) {
 		return DominoUtils.checksum(object, "MD5");
 	}
 
+	/**
+	 * To unid.
+	 * 
+	 * @param value
+	 *            the value
+	 * @return the string
+	 */
 	public static String toUnid(String value) {
 		if (DominoUtils.isUnid(value))
 			return value;
 		return DominoUtils.md5(value);
 	}
 
+	/**
+	 * To java calendar safe.
+	 * 
+	 * @param dt
+	 *            the dt
+	 * @return the calendar
+	 */
 	public static Calendar toJavaCalendarSafe(lotus.domino.DateTime dt) {
 		Date d = DominoUtils.toJavaDateSafe(dt);
 		Calendar c = GregorianCalendar.getInstance();
@@ -184,12 +277,26 @@ public enum DominoUtils {
 		return c;
 	}
 
+	/**
+	 * To java date.
+	 * 
+	 * @param l
+	 *            the l
+	 * @return the date
+	 */
 	public static Date toJavaDate(long l) {
 		Date result = new Date();
 		result.setTime(l);
 		return result;
 	}
 
+	/**
+	 * To java date.
+	 * 
+	 * @param ls
+	 *            the ls
+	 * @return the collection
+	 */
 	public static Collection<Date> toJavaDate(long[] ls) {
 		Collection<Date> result = new ArrayList<Date>();
 		for (long l : ls) {
@@ -198,6 +305,13 @@ public enum DominoUtils {
 		return result;
 	}
 
+	/**
+	 * To java date safe.
+	 * 
+	 * @param dt
+	 *            the dt
+	 * @return the date
+	 */
 	public static Date toJavaDateSafe(lotus.domino.DateTime dt) {
 		Date date = null;
 		if (dt != null) {
@@ -214,8 +328,19 @@ public enum DominoUtils {
 
 	// MIMEBean methods
 
+	/**
+	 * Restore state.
+	 * 
+	 * @param doc
+	 *            the doc
+	 * @param itemName
+	 *            the item name
+	 * @return the serializable
+	 * @throws Throwable
+	 *             the throwable
+	 */
 	public static Serializable restoreState(Document doc, String itemName) throws Throwable {
-		Session session = Factory.getSession((org.openntf.domino.Base<?>) doc);
+		Session session = Factory.getSession((Base<?>) doc);
 		boolean convertMime = session.isConvertMime();
 		session.setConvertMime(false);
 
@@ -247,12 +372,38 @@ public enum DominoUtils {
 		return result;
 	}
 
+	/**
+	 * Save state.
+	 * 
+	 * @param object
+	 *            the object
+	 * @param doc
+	 *            the doc
+	 * @param itemName
+	 *            the item name
+	 * @throws Throwable
+	 *             the throwable
+	 */
 	public static void saveState(Serializable object, Document doc, String itemName) throws Throwable {
 		saveState(object, doc, itemName, true);
 	}
 
+	/**
+	 * Save state.
+	 * 
+	 * @param object
+	 *            the object
+	 * @param doc
+	 *            the doc
+	 * @param itemName
+	 *            the item name
+	 * @param compress
+	 *            the compress
+	 * @throws Throwable
+	 *             the throwable
+	 */
 	public static void saveState(Serializable object, Document doc, String itemName, boolean compress) throws Throwable {
-		Session session = Factory.getSession((org.openntf.domino.Base<?>) doc);
+		Session session = Factory.getSession((Base<?>) doc);
 		boolean convertMime = session.isConvertMime();
 		session.setConvertMime(false);
 

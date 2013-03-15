@@ -1,3 +1,18 @@
+/*
+ * Copyright OpenNTF 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ */
 package org.openntf.domino.impl;
 
 import java.util.Vector;
@@ -12,12 +27,27 @@ import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class View.
+ */
 public class View extends Base<org.openntf.domino.View, lotus.domino.View> implements org.openntf.domino.View {
 
+	/**
+	 * Instantiates a new view.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 */
 	public View(lotus.domino.View delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, Factory.getParentDatabase(parent));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#FTSearch(java.lang.String)
+	 */
 	@Override
 	public int FTSearch(String query) {
 		try {
@@ -28,6 +58,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return -1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#FTSearch(java.lang.String, int)
+	 */
 	@Override
 	public int FTSearch(String query, int maxDocs) {
 		try {
@@ -38,6 +71,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return -1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#FTSearchSorted(java.lang.String)
+	 */
 	@Override
 	public int FTSearchSorted(String query) {
 		try {
@@ -48,6 +84,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return -1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#FTSearchSorted(java.lang.String, int)
+	 */
 	@Override
 	public int FTSearchSorted(String query, int maxDocs) {
 		try {
@@ -58,6 +97,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return -1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#FTSearchSorted(java.lang.String, int, int)
+	 */
 	@Override
 	public int FTSearchSorted(String query, int maxDocs, int column) {
 		try {
@@ -68,6 +110,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return -1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#FTSearchSorted(java.lang.String, int, int, boolean, boolean, boolean, boolean)
+	 */
 	@Override
 	public int FTSearchSorted(String query, int maxDocs, int column, boolean ascending, boolean exact, boolean variants, boolean fuzzy) {
 		try {
@@ -78,6 +123,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return -1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#FTSearchSorted(java.lang.String, int, java.lang.String)
+	 */
 	@Override
 	public int FTSearchSorted(String query, int maxDocs, String column) {
 		try {
@@ -88,6 +136,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return -1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#FTSearchSorted(java.lang.String, int, java.lang.String, boolean, boolean, boolean, boolean)
+	 */
 	@Override
 	public int FTSearchSorted(String query, int maxDocs, String column, boolean ascending, boolean exact, boolean variants, boolean fuzzy) {
 		try {
@@ -98,6 +149,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return -1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public int FTSearchSorted(Vector query) {
@@ -109,6 +163,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return -1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public int FTSearchSorted(Vector query, int maxDocs) {
@@ -120,6 +177,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return -1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int, int)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public int FTSearchSorted(Vector query, int maxDocs, int column) {
@@ -131,6 +191,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return -1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int, int, boolean, boolean, boolean, boolean)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public int FTSearchSorted(Vector query, int maxDocs, int column, boolean ascending, boolean exact, boolean variants, boolean fuzzy) {
@@ -142,6 +205,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return -1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int, java.lang.String)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public int FTSearchSorted(Vector query, int maxDocs, String column) {
@@ -153,6 +219,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return -1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int, java.lang.String, boolean, boolean, boolean, boolean)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public int FTSearchSorted(Vector query, int maxDocs, String column, boolean ascending, boolean exact, boolean variants, boolean fuzzy) {
@@ -164,6 +233,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return -1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#clear()
+	 */
 	@Override
 	public void clear() {
 		try {
@@ -173,6 +245,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#copyColumn(int)
+	 */
 	@Override
 	public ViewColumn copyColumn(int sourceColumn) {
 		try {
@@ -183,6 +258,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#copyColumn(int, int)
+	 */
 	@Override
 	public ViewColumn copyColumn(int sourceColumn, int destinationIndex) {
 		try {
@@ -193,6 +271,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#copyColumn(java.lang.String)
+	 */
 	@Override
 	public ViewColumn copyColumn(String sourceColumn) {
 		try {
@@ -203,6 +284,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#copyColumn(java.lang.String, int)
+	 */
 	@Override
 	public ViewColumn copyColumn(String sourceColumn, int destinationIndex) {
 		try {
@@ -213,6 +297,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#copyColumn(lotus.domino.ViewColumn)
+	 */
 	@Override
 	public ViewColumn copyColumn(ViewColumn sourceColumn) {
 		try {
@@ -223,6 +310,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#copyColumn(lotus.domino.ViewColumn, int)
+	 */
 	@Override
 	public ViewColumn copyColumn(ViewColumn sourceColumn, int destinationIndex) {
 		try {
@@ -233,6 +323,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#createColumn()
+	 */
 	@Override
 	public ViewColumn createColumn() {
 		try {
@@ -243,6 +336,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#createColumn(int)
+	 */
 	@Override
 	public ViewColumn createColumn(int position) {
 		try {
@@ -253,6 +349,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#createColumn(int, java.lang.String)
+	 */
 	@Override
 	public ViewColumn createColumn(int position, String columnTitle) {
 		try {
@@ -263,6 +362,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#createColumn(int, java.lang.String, java.lang.String)
+	 */
 	@Override
 	public ViewColumn createColumn(int position, String columnTitle, String formula) {
 		try {
@@ -273,6 +375,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#createViewEntryCollection()
+	 */
 	@Override
 	public ViewEntryCollection createViewEntryCollection() {
 		try {
@@ -283,6 +388,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#createViewNav()
+	 */
 	@Override
 	public ViewNavigator createViewNav() {
 		try {
@@ -293,6 +401,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#createViewNav(int)
+	 */
 	@Override
 	public ViewNavigator createViewNav(int cacheSize) {
 		try {
@@ -303,6 +414,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#createViewNavFrom(java.lang.Object)
+	 */
 	@Override
 	public ViewNavigator createViewNavFrom(Object entry) {
 		try {
@@ -313,6 +427,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#createViewNavFrom(java.lang.Object, int)
+	 */
 	@Override
 	public ViewNavigator createViewNavFrom(Object entry, int cacheSize) {
 		try {
@@ -323,6 +440,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#createViewNavFromAllUnread()
+	 */
 	@Override
 	public ViewNavigator createViewNavFromAllUnread() {
 		try {
@@ -333,6 +453,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#createViewNavFromAllUnread(java.lang.String)
+	 */
 	@Override
 	public ViewNavigator createViewNavFromAllUnread(String userName) {
 		try {
@@ -343,6 +466,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#createViewNavFromCategory(java.lang.String)
+	 */
 	@Override
 	public ViewNavigator createViewNavFromCategory(String categoryName) {
 		try {
@@ -353,6 +479,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#createViewNavFromCategory(java.lang.String, int)
+	 */
 	@Override
 	public ViewNavigator createViewNavFromCategory(String categoryName, int cacheSize) {
 		try {
@@ -363,6 +492,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#createViewNavFromChildren(java.lang.Object)
+	 */
 	@Override
 	public ViewNavigator createViewNavFromChildren(Object entry) {
 		try {
@@ -373,6 +505,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#createViewNavFromChildren(java.lang.Object, int)
+	 */
 	@Override
 	public ViewNavigator createViewNavFromChildren(Object entry, int cacheSize) {
 		try {
@@ -383,6 +518,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#createViewNavFromDescendants(java.lang.Object)
+	 */
 	@Override
 	public ViewNavigator createViewNavFromDescendants(Object entry) {
 		try {
@@ -393,6 +531,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#createViewNavFromDescendants(java.lang.Object, int)
+	 */
 	@Override
 	public ViewNavigator createViewNavFromDescendants(Object entry, int cacheSize) {
 		try {
@@ -403,6 +544,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#createViewNavMaxLevel(int)
+	 */
 	@Override
 	public ViewNavigator createViewNavMaxLevel(int level) {
 		try {
@@ -413,6 +557,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#createViewNavMaxLevel(int, int)
+	 */
 	@Override
 	public ViewNavigator createViewNavMaxLevel(int level, int cacheSize) {
 		try {
@@ -423,6 +570,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getAliases()
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<String> getAliases() {
@@ -434,6 +584,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getAllDocumentsByKey(java.lang.Object)
+	 */
 	@Override
 	public DocumentCollection getAllDocumentsByKey(Object key) {
 		try {
@@ -444,6 +597,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getAllDocumentsByKey(java.lang.Object, boolean)
+	 */
 	@Override
 	public DocumentCollection getAllDocumentsByKey(Object key, boolean exact) {
 		try {
@@ -454,6 +610,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getAllDocumentsByKey(java.util.Vector)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public DocumentCollection getAllDocumentsByKey(Vector keys) {
@@ -465,6 +624,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getAllDocumentsByKey(java.util.Vector, boolean)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public DocumentCollection getAllDocumentsByKey(Vector keys, boolean exact) {
@@ -476,6 +638,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getAllEntries()
+	 */
 	@Override
 	public ViewEntryCollection getAllEntries() {
 		try {
@@ -486,6 +651,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getAllEntriesByKey(java.lang.Object)
+	 */
 	@Override
 	public ViewEntryCollection getAllEntriesByKey(Object key) {
 		try {
@@ -496,6 +664,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getAllEntriesByKey(java.lang.Object, boolean)
+	 */
 	@Override
 	public ViewEntryCollection getAllEntriesByKey(Object key, boolean exact) {
 		try {
@@ -506,6 +677,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getAllEntriesByKey(java.util.Vector)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public ViewEntryCollection getAllEntriesByKey(Vector keys) {
@@ -517,6 +691,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getAllEntriesByKey(java.util.Vector, boolean)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public ViewEntryCollection getAllEntriesByKey(Vector keys, boolean exact) {
@@ -528,6 +705,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getAllReadEntries()
+	 */
 	@Override
 	public ViewEntryCollection getAllReadEntries() {
 		try {
@@ -538,6 +718,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getAllReadEntries(java.lang.String)
+	 */
 	@Override
 	public ViewEntryCollection getAllReadEntries(String userName) {
 		try {
@@ -548,6 +731,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getAllUnreadEntries()
+	 */
 	@Override
 	public ViewEntryCollection getAllUnreadEntries() {
 		try {
@@ -558,6 +744,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getAllUnreadEntries(java.lang.String)
+	 */
 	@Override
 	public ViewEntryCollection getAllUnreadEntries(String userName) {
 		try {
@@ -568,6 +757,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getBackgroundColor()
+	 */
 	@Override
 	public int getBackgroundColor() {
 		try {
@@ -578,6 +770,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return 0;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getChild(lotus.domino.Document)
+	 */
 	@Override
 	public Document getChild(lotus.domino.Document doc) {
 		try {
@@ -588,6 +783,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getColumn(int)
+	 */
 	@Override
 	public ViewColumn getColumn(int columnNumber) {
 		try {
@@ -598,6 +796,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getColumnCount()
+	 */
 	@Override
 	public int getColumnCount() {
 		try {
@@ -608,6 +809,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return -1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getColumnNames()
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<String> getColumnNames() {
@@ -619,6 +823,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getColumnValues(int)
+	 */
 	@Override
 	public Vector<Object> getColumnValues(int column) {
 		try {
@@ -629,6 +836,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getColumns()
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<ViewColumn> getColumns() {
@@ -640,6 +850,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getCreated()
+	 */
 	@Override
 	public DateTime getCreated() {
 		try {
@@ -650,6 +863,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getDocumentByKey(java.lang.Object)
+	 */
 	@Override
 	public Document getDocumentByKey(Object key) {
 		try {
@@ -660,6 +876,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getDocumentByKey(java.lang.Object, boolean)
+	 */
 	@Override
 	public Document getDocumentByKey(Object key, boolean exact) {
 		try {
@@ -670,6 +889,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getDocumentByKey(java.util.Vector)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Document getDocumentByKey(Vector keys) {
@@ -681,6 +903,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getDocumentByKey(java.util.Vector, boolean)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Document getDocumentByKey(Vector keys, boolean exact) {
@@ -692,6 +917,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getEntryByKey(java.lang.Object)
+	 */
 	@Override
 	public ViewEntry getEntryByKey(Object key) {
 		try {
@@ -702,6 +930,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getEntryByKey(java.lang.Object, boolean)
+	 */
 	@Override
 	public ViewEntry getEntryByKey(Object key, boolean exact) {
 		try {
@@ -712,6 +943,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getEntryByKey(java.util.Vector)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public ViewEntry getEntryByKey(Vector keys) {
@@ -723,6 +957,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getEntryByKey(java.util.Vector, boolean)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public ViewEntry getEntryByKey(Vector keys, boolean exact) {
@@ -734,6 +971,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getEntryCount()
+	 */
 	@Override
 	public int getEntryCount() {
 		try {
@@ -744,6 +984,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return -1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getFirstDocument()
+	 */
 	@Override
 	public Document getFirstDocument() {
 		try {
@@ -754,6 +997,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getHeaderLines()
+	 */
 	@Override
 	public int getHeaderLines() {
 		try {
@@ -764,6 +1010,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return -1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getHttpURL()
+	 */
 	@Override
 	public String getHttpURL() {
 		try {
@@ -774,6 +1023,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getLastDocument()
+	 */
 	@Override
 	public Document getLastDocument() {
 		try {
@@ -784,6 +1036,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getLastModified()
+	 */
 	@Override
 	public DateTime getLastModified() {
 		try {
@@ -794,6 +1049,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getLockHolders()
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<String> getLockHolders() {
@@ -805,6 +1063,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getName()
+	 */
 	@Override
 	public String getName() {
 		try {
@@ -815,6 +1076,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getNextDocument(lotus.domino.Document)
+	 */
 	@Override
 	public Document getNextDocument(lotus.domino.Document doc) {
 		try {
@@ -825,6 +1089,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getNextSibling(lotus.domino.Document)
+	 */
 	@Override
 	public Document getNextSibling(lotus.domino.Document doc) {
 		try {
@@ -835,6 +1102,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getNotesURL()
+	 */
 	@Override
 	public String getNotesURL() {
 		try {
@@ -845,6 +1115,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getNthDocument(int)
+	 */
 	@Override
 	public Document getNthDocument(int n) {
 		try {
@@ -855,11 +1128,17 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#getParent()
+	 */
 	@Override
 	public Database getParent() {
 		return (Database) super.getParent();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getParentDocument(lotus.domino.Document)
+	 */
 	@Override
 	public Document getParentDocument(lotus.domino.Document doc) {
 		try {
@@ -870,6 +1149,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getPrevDocument(lotus.domino.Document)
+	 */
 	@Override
 	public Document getPrevDocument(lotus.domino.Document doc) {
 		try {
@@ -880,6 +1162,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getPrevSibling(lotus.domino.Document)
+	 */
 	@Override
 	public Document getPrevSibling(lotus.domino.Document doc) {
 		try {
@@ -890,6 +1175,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getReaders()
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<String> getReaders() {
@@ -901,6 +1189,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getRowLines()
+	 */
 	@Override
 	public int getRowLines() {
 		try {
@@ -911,6 +1202,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return -1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getSelectionFormula()
+	 */
 	@Override
 	public String getSelectionFormula() {
 		try {
@@ -921,6 +1215,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getSelectionQuery()
+	 */
 	@Override
 	public String getSelectionQuery() {
 		try {
@@ -931,6 +1228,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getSpacing()
+	 */
 	@Override
 	public int getSpacing() {
 		try {
@@ -941,6 +1241,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return -1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getTopLevelEntryCount()
+	 */
 	@Override
 	public int getTopLevelEntryCount() {
 		try {
@@ -951,6 +1254,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return -1;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getURL()
+	 */
 	@Override
 	public String getURL() {
 		try {
@@ -961,6 +1267,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getUniversalID()
+	 */
 	@Override
 	public String getUniversalID() {
 		try {
@@ -971,6 +1280,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getViewInheritedName()
+	 */
 	@Override
 	public String getViewInheritedName() {
 		try {
@@ -981,6 +1293,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#isAutoUpdate()
+	 */
 	@Override
 	public boolean isAutoUpdate() {
 		try {
@@ -991,6 +1306,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#isCalendar()
+	 */
 	@Override
 	public boolean isCalendar() {
 		try {
@@ -1001,6 +1319,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#isCategorized()
+	 */
 	@Override
 	public boolean isCategorized() {
 		try {
@@ -1011,6 +1332,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#isConflict()
+	 */
 	@Override
 	public boolean isConflict() {
 		try {
@@ -1021,6 +1345,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#isDefaultView()
+	 */
 	@Override
 	public boolean isDefaultView() {
 		try {
@@ -1031,6 +1358,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#isEnableNoteIDsForCategories()
+	 */
 	@Override
 	public boolean isEnableNoteIDsForCategories() {
 		try {
@@ -1041,6 +1371,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#isFolder()
+	 */
 	@Override
 	public boolean isFolder() {
 		try {
@@ -1051,6 +1384,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#isHierarchical()
+	 */
 	@Override
 	public boolean isHierarchical() {
 		try {
@@ -1061,6 +1397,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#isModified()
+	 */
 	@Override
 	public boolean isModified() {
 		try {
@@ -1071,6 +1410,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#isPrivate()
+	 */
 	@Override
 	public boolean isPrivate() {
 		try {
@@ -1081,6 +1423,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#isProhibitDesignRefresh()
+	 */
 	@Override
 	public boolean isProhibitDesignRefresh() {
 		try {
@@ -1091,6 +1436,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#isProtectReaders()
+	 */
 	@Override
 	public boolean isProtectReaders() {
 		try {
@@ -1101,6 +1449,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#isQueryView()
+	 */
 	@Override
 	public boolean isQueryView() {
 		try {
@@ -1111,6 +1462,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#lock()
+	 */
 	@Override
 	public boolean lock() {
 		try {
@@ -1121,6 +1475,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#lock(boolean)
+	 */
 	@Override
 	public boolean lock(boolean provisionalOk) {
 		try {
@@ -1131,6 +1488,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#lock(java.lang.String)
+	 */
 	@Override
 	public boolean lock(String name) {
 		try {
@@ -1141,6 +1501,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#lock(java.lang.String, boolean)
+	 */
 	@Override
 	public boolean lock(String name, boolean provisionalOk) {
 		try {
@@ -1151,6 +1514,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#lock(java.util.Vector)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean lock(Vector names) {
@@ -1162,6 +1528,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#lock(java.util.Vector, boolean)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean lock(Vector names, boolean provisionalOk) {
@@ -1173,6 +1542,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#lockProvisional()
+	 */
 	@Override
 	public boolean lockProvisional() {
 		try {
@@ -1183,6 +1555,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#lockProvisional(java.lang.String)
+	 */
 	@Override
 	public boolean lockProvisional(String name) {
 		try {
@@ -1193,6 +1568,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#lockProvisional(java.util.Vector)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean lockProvisional(Vector names) {
@@ -1204,6 +1582,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#markAllRead()
+	 */
 	@Override
 	public void markAllRead() {
 		try {
@@ -1213,6 +1594,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#markAllRead(java.lang.String)
+	 */
 	@Override
 	public void markAllRead(String userName) {
 		try {
@@ -1222,6 +1606,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#markAllUnread()
+	 */
 	@Override
 	public void markAllUnread() {
 		try {
@@ -1231,6 +1618,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#markAllUnread(java.lang.String)
+	 */
 	@Override
 	public void markAllUnread(String userName) {
 		try {
@@ -1240,6 +1630,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#refresh()
+	 */
 	@Override
 	public void refresh() {
 		try {
@@ -1249,6 +1642,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#remove()
+	 */
 	@Override
 	public void remove() {
 		try {
@@ -1258,6 +1654,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#removeColumn()
+	 */
 	@Override
 	public void removeColumn() {
 		try {
@@ -1267,6 +1666,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#removeColumn(int)
+	 */
 	@Override
 	public void removeColumn(int column) {
 		try {
@@ -1276,6 +1678,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#removeColumn(java.lang.String)
+	 */
 	@Override
 	public void removeColumn(String column) {
 		try {
@@ -1285,6 +1690,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#resortView()
+	 */
 	@Override
 	public void resortView() {
 		try {
@@ -1294,6 +1702,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#resortView(java.lang.String)
+	 */
 	@Override
 	public void resortView(String column) {
 		try {
@@ -1303,6 +1714,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#resortView(java.lang.String, boolean)
+	 */
 	@Override
 	public void resortView(String column, boolean ascending) {
 		try {
@@ -1312,6 +1726,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#setAliases(java.lang.String)
+	 */
 	@Override
 	public void setAliases(String alias) {
 		try {
@@ -1321,6 +1738,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#setAliases(java.util.Vector)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setAliases(Vector aliases) {
@@ -1331,6 +1751,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#setAutoUpdate(boolean)
+	 */
 	@Override
 	public void setAutoUpdate(boolean flag) {
 		try {
@@ -1340,6 +1763,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#setBackgroundColor(int)
+	 */
 	@Override
 	public void setBackgroundColor(int color) {
 		try {
@@ -1349,6 +1775,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#setDefaultView(boolean)
+	 */
 	@Override
 	public void setDefaultView(boolean flag) {
 		try {
@@ -1358,6 +1787,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#setEnableNoteIDsForCategories(boolean)
+	 */
 	@Override
 	public void setEnableNoteIDsForCategories(boolean flag) {
 		try {
@@ -1367,6 +1799,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#setName(java.lang.String)
+	 */
 	@Override
 	public void setName(String name) {
 		try {
@@ -1376,6 +1811,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#setProhibitDesignRefresh(boolean)
+	 */
 	@Override
 	public void setProhibitDesignRefresh(boolean flag) {
 		try {
@@ -1385,6 +1823,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#setProtectReaders(boolean)
+	 */
 	@Override
 	public void setProtectReaders(boolean flag) {
 		try {
@@ -1394,6 +1835,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#setReaders(java.util.Vector)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setReaders(Vector readers) {
@@ -1404,6 +1848,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#setSelectionFormula(java.lang.String)
+	 */
 	@Override
 	public void setSelectionFormula(String formula) {
 		try {
@@ -1413,6 +1860,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#setSelectionQuery(java.lang.String)
+	 */
 	@Override
 	public void setSelectionQuery(String query) {
 		try {
@@ -1422,6 +1872,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#setSpacing(int)
+	 */
 	@Override
 	public void setSpacing(int spacing) {
 		try {
@@ -1431,6 +1884,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#unlock()
+	 */
 	@Override
 	public void unlock() {
 		try {
@@ -1444,6 +1900,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 * New methods
 	 */
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getDocument()
+	 */
 	@Override
 	public Document getDocument() {
 		Database parent = this.getParent();
