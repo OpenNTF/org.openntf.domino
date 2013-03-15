@@ -1,6 +1,13 @@
 package org.openntf.domino.impl;
 
+import java.util.Vector;
+
+import lotus.domino.Agent;
+import lotus.domino.Document;
+import lotus.domino.DocumentCollection;
+import lotus.domino.Form;
 import lotus.domino.NotesException;
+import lotus.domino.View;
 
 import org.openntf.domino.DateTime;
 import org.openntf.domino.utils.DominoUtils;
@@ -8,13 +15,21 @@ import org.openntf.domino.utils.Factory;
 
 public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.domino.NoteCollection, lotus.domino.NoteCollection> implements
 		org.openntf.domino.NoteCollection {
-
 	public NoteCollection(lotus.domino.NoteCollection delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, Factory.getParentDatabase(parent));
 	}
 
 	@Override
-	public void add(lotus.domino.Document additionSpecifier) {
+	public void add(int additionSpecifier) {
+		try {
+			getDelegate().add(additionSpecifier);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void add(int[] additionSpecifier) {
 		try {
 			getDelegate().add(additionSpecifier);
 		} catch (NotesException e) {
@@ -24,6 +39,15 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 
 	@Override
 	public void add(lotus.domino.Agent additionSpecifier) {
+		try {
+			getDelegate().add(additionSpecifier);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void add(lotus.domino.Document additionSpecifier) {
 		try {
 			getDelegate().add(additionSpecifier);
 		} catch (NotesException e) {
@@ -50,24 +74,6 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	}
 
 	@Override
-	public void add(int additionSpecifier) {
-		try {
-			getDelegate().add(additionSpecifier);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-	}
-
-	@Override
-	public void add(int[] additionSpecifier) {
-		try {
-			getDelegate().add(additionSpecifier);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-	}
-
-	@Override
 	public void add(lotus.domino.NoteCollection additionSpecifier) {
 		try {
 			getDelegate().add(additionSpecifier);
@@ -77,7 +83,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	}
 
 	@Override
-	public void add(String additionSpecifier) {
+	public void add(lotus.domino.View additionSpecifier) {
 		try {
 			getDelegate().add(additionSpecifier);
 		} catch (NotesException e) {
@@ -86,7 +92,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	}
 
 	@Override
-	public void add(lotus.domino.View additionSpecifier) {
+	public void add(String additionSpecifier) {
 		try {
 			getDelegate().add(additionSpecifier);
 		} catch (NotesException e) {
@@ -429,368 +435,558 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 
 	@Override
 	public boolean getSelectScriptLibraries() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectScriptLibraries();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
-	@Override
 	public boolean getSelectSharedFields() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectSharedFields();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
-	@Override
 	public boolean getSelectStylesheetResources() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectStylesheetResources();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
-	@Override
 	public boolean getSelectSubforms() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectSubforms();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
-	@Override
 	public boolean getSelectViews() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().getSelectViews();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
 	}
 
-	@Override
 	public DateTime getSinceTime() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return Factory.fromLotus(getDelegate().getSinceTime(), DateTime.class, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+
+		}
 	}
 
-	@Override
 	public String getUNID(String unid) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return getDelegate().getUNID(unid);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+
+		}
 	}
 
-	@Override
 	public DateTime getUntilTime() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return Factory.fromLotus(getDelegate().getUntilTime(), DateTime.class, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+
+		}
+	}
+
+	public void intersect(Agent agent) {
+		try {
+			getDelegate().intersect(agent);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+
+		}
+	}
+
+	public void intersect(Document document) {
+		try {
+			getDelegate().intersect(document);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+
+		}
+	}
+
+	public void intersect(DocumentCollection collection) {
+		try {
+			getDelegate().intersect(collection);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+
+		}
+	}
+
+	public void intersect(Form form) {
+		try {
+			getDelegate().intersect(form);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+
+		}
+	}
+
+	public void intersect(int noteId) {
+		try {
+			getDelegate().intersect(noteId);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+
+		}
+	}
+
+	public void intersect(lotus.domino.NoteCollection collection) {
+		try {
+			getDelegate().intersect(collection);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+
+		}
+	}
+
+	public void intersect(String noteId) {
+		try {
+			getDelegate().intersect(noteId);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+
+		}
+	}
+
+	public void intersect(View view) {
+		try {
+			getDelegate().intersect(view);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+
+		}
 	}
 
 	@Override
-	public void intersect(lotus.domino.Agent intersectionSpecifier) {
-		// TODO Auto-generated method stub
+	public void recycle() {
+		try {
+			getDelegate().recycle();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
 	@Override
-	public void intersect(lotus.domino.Document intersectionSpecifier) {
-		// TODO Auto-generated method stub
+	public void recycle(Vector objects) {
+		try {
+			getDelegate().recycle(objects);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
-	public void intersect(lotus.domino.DocumentCollection intersectionSpecifier) {
-		// TODO Auto-generated method stub
+	public void remove(Agent agent) {
+		try {
+			getDelegate().remove(agent);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
-	public void intersect(lotus.domino.Form intersectionSpecifier) {
-		// TODO Auto-generated method stub
+	public void remove(Document document) {
+		try {
+			getDelegate().remove(document);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
-	public void intersect(int intersectionSpecifier) {
-		// TODO Auto-generated method stub
+	public void remove(DocumentCollection collection) {
+		try {
+			getDelegate().remove(collection);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
-	public void intersect(lotus.domino.NoteCollection intersectionSpecifier) {
-		// TODO Auto-generated method stub
+	public void remove(Form form) {
+		try {
+			getDelegate().remove(form);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
-	public void intersect(String intersectionSpecifier) {
-		// TODO Auto-generated method stub
+	public void remove(int noteId) {
+		try {
+			getDelegate().remove(noteId);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
-	public void intersect(lotus.domino.View intersectionSpecifier) {
-		// TODO Auto-generated method stub
+	public void remove(lotus.domino.NoteCollection collection) {
+		try {
+			getDelegate().remove(collection);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
-	public void remove(lotus.domino.Agent removalSpecifier) {
-		// TODO Auto-generated method stub
+	public void remove(String noteId) {
+		try {
+			getDelegate().remove(noteId);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
-	public void remove(lotus.domino.Document removalSpecifier) {
-		// TODO Auto-generated method stub
+	public void remove(View view) {
+		try {
+			getDelegate().remove(view);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
-	public void remove(lotus.domino.DocumentCollection removalSpecifier) {
-		// TODO Auto-generated method stub
+	public void selectAllAdminNotes(boolean flag) {
+		try {
+			getDelegate().selectAllAdminNotes(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
-	public void remove(lotus.domino.Form removalSpecifier) {
-		// TODO Auto-generated method stub
+	public void selectAllCodeElements(boolean flag) {
+		try {
+			getDelegate().selectAllCodeElements(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
-	public void remove(int removalSpecifier) {
-		// TODO Auto-generated method stub
+	public void selectAllDataNotes(boolean flag) {
+		try {
+			getDelegate().selectAllDataNotes(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
-	public void remove(lotus.domino.NoteCollection removalSpecifier) {
-		// TODO Auto-generated method stub
+	public void selectAllDesignElements(boolean flag) {
+		try {
+			getDelegate().selectAllDesignElements(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
-	public void remove(String removalSpecifier) {
-		// TODO Auto-generated method stub
+	public void selectAllFormatElements(boolean flag) {
+		try {
+			getDelegate().selectAllFormatElements(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
-	public void remove(lotus.domino.View removalSpecifier) {
-		// TODO Auto-generated method stub
+	public void selectAllIndexElements(boolean flag) {
+		try {
+			getDelegate().selectAllIndexElements(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
-	public void selectAllAdminNotes(boolean selectorValue) {
-		// TODO Auto-generated method stub
+	public void selectAllNotes(boolean flag) {
+		try {
+			getDelegate().selectAllNotes(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
-	public void selectAllCodeElements(boolean selectorValue) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void selectAllDataNotes(boolean selectorValue) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void selectAllDesignElements(boolean selectorValue) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void selectAllFormatElements(boolean selectorValue) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void selectAllIndexElements(boolean selectorValue) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void selectAllNotes(boolean selectorValue) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void setSelectAcl(boolean flag) {
-		// TODO Auto-generated method stub
+		try {
+			getDelegate().setSelectAcl(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
 	public void setSelectActions(boolean flag) {
-		// TODO Auto-generated method stub
+		try {
+			getDelegate().setSelectActions(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
 	public void setSelectAgents(boolean flag) {
-		// TODO Auto-generated method stub
+		try {
+			getDelegate().setSelectAgents(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
 	public void setSelectDatabaseScript(boolean flag) {
-		// TODO Auto-generated method stub
+		try {
+			getDelegate().setSelectDatabaseScript(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
 	public void setSelectDataConnections(boolean flag) {
-		// TODO Auto-generated method stub
+		try {
+			getDelegate().setSelectDataConnections(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
 	public void setSelectDocuments(boolean flag) {
-		// TODO Auto-generated method stub
+		try {
+			getDelegate().setSelectDocuments(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
 	public void setSelectFolders(boolean flag) {
-		// TODO Auto-generated method stub
+		try {
+			getDelegate().setSelectFolders(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
 	public void setSelectForms(boolean flag) {
-		// TODO Auto-generated method stub
+		try {
+			getDelegate().setSelectForms(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
 	public void setSelectFramesets(boolean flag) {
-		// TODO Auto-generated method stub
+		try {
+			getDelegate().setSelectFramesets(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
 	public void setSelectHelpAbout(boolean flag) {
-		// TODO Auto-generated method stub
+		try {
+			getDelegate().setSelectHelpAbout(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
 	public void setSelectHelpIndex(boolean flag) {
-		// TODO Auto-generated method stub
+		try {
+			getDelegate().setSelectHelpIndex(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
 	public void setSelectHelpUsing(boolean flag) {
-		// TODO Auto-generated method stub
+		try {
+			getDelegate().setSelectHelpUsing(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
 	public void setSelectIcon(boolean flag) {
-		// TODO Auto-generated method stub
-
+		try {
+			getDelegate().setSelectIcon(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
-	@Override
 	public void setSelectImageResources(boolean flag) {
-		// TODO Auto-generated method stub
-
+		try {
+			getDelegate().setSelectImageResources(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
-	@Override
 	public void setSelectionFormula(String flag) {
-		// TODO Auto-generated method stub
-
+		try {
+			getDelegate().setSelectionFormula(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
-	@Override
 	public void setSelectJavaResources(boolean flag) {
-		// TODO Auto-generated method stub
-
+		try {
+			getDelegate().setSelectJavaResources(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
-	@Override
 	public void setSelectMiscCodeElements(boolean flag) {
-		// TODO Auto-generated method stub
-
+		try {
+			getDelegate().setSelectMiscCodeElements(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
-	@Override
 	public void setSelectMiscFormatElements(boolean flag) {
-		// TODO Auto-generated method stub
+		try {
+			getDelegate().setSelectMiscFormatElements(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 
+		}
 	}
 
-	@Override
 	public void setSelectMiscIndexElements(boolean flag) {
-		// TODO Auto-generated method stub
-
+		try {
+			getDelegate().setSelectMiscIndexElements(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
-	@Override
 	public void setSelectNavigators(boolean flag) {
-		// TODO Auto-generated method stub
-
+		try {
+			getDelegate().setSelectNavigators(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
-	@Override
 	public void setSelectOutlines(boolean flag) {
-		// TODO Auto-generated method stub
-
+		try {
+			getDelegate().setSelectOutlines(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
-	@Override
 	public void setSelectPages(boolean flag) {
-		// TODO Auto-generated method stub
-
+		try {
+			getDelegate().setSelectPages(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
-	@Override
 	public void setSelectProfiles(boolean flag) {
-		// TODO Auto-generated method stub
-
+		try {
+			getDelegate().setSelectProfiles(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
-	@Override
 	public void setSelectReplicationFormulas(boolean flag) {
-		// TODO Auto-generated method stub
-
+		try {
+			getDelegate().setSelectReplicationFormulas(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
-	@Override
 	public void setSelectScriptLibraries(boolean flag) {
-		// TODO Auto-generated method stub
-
+		try {
+			getDelegate().setSelectScriptLibraries(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
-	@Override
 	public void setSelectSharedFields(boolean flag) {
-		// TODO Auto-generated method stub
-
+		try {
+			getDelegate().setSelectSharedFields(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
-	@Override
 	public void setSelectStylesheetResources(boolean flag) {
-		// TODO Auto-generated method stub
-
+		try {
+			getDelegate().setSelectStylesheetResources(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
-	@Override
 	public void setSelectSubforms(boolean flag) {
-		// TODO Auto-generated method stub
-
+		try {
+			getDelegate().setSelectSubforms(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
-	@Override
 	public void setSelectViews(boolean flag) {
-		// TODO Auto-generated method stub
-
+		try {
+			getDelegate().setSelectViews(flag);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
-	@Override
-	public void setSinceTime(lotus.domino.DateTime sinceTime) {
-		// TODO Auto-generated method stub
-
+	public void setSinceTime(lotus.domino.DateTime date) {
+		try {
+			getDelegate().setSinceTime(date);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 }
