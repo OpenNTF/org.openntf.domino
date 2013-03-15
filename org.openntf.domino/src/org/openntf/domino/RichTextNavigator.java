@@ -3,7 +3,7 @@ package org.openntf.domino;
 public interface RichTextNavigator extends Base<lotus.domino.RichTextNavigator>, lotus.domino.RichTextNavigator {
 
 	@Override
-	public lotus.domino.RichTextNavigator Clone();
+	public RichTextNavigator Clone();
 
 	@Override
 	public boolean findFirstElement(int type);
@@ -36,25 +36,25 @@ public interface RichTextNavigator extends Base<lotus.domino.RichTextNavigator>,
 	public boolean findNthElement(int type, int occurrence);
 
 	@Override
-	public lotus.domino.Base getElement();
+	public Base<?> getElement();
 
 	@Override
-	public lotus.domino.Base getFirstElement(int type);
+	public Base<?> getFirstElement(int type);
 
 	@Override
-	public lotus.domino.Base getLastElement(int type);
+	public Base<?> getLastElement(int type);
 
 	@Override
-	public lotus.domino.Base getNextElement();
+	public Base<?> getNextElement();
 
 	@Override
-	public lotus.domino.Base getNextElement(int type);
+	public Base<?> getNextElement(int type);
 
 	@Override
-	public lotus.domino.Base getNextElement(int type, int occurrence);
+	public Base<?> getNextElement(int type, int occurrence);
 
 	@Override
-	public lotus.domino.Base getNthElement(int type, int occurrence);
+	public Base<?> getNthElement(int type, int occurrence);
 
 	@Override
 	public void setCharOffset(int offset);

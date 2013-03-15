@@ -5,19 +5,6 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.Vector;
 
-import lotus.domino.Base;
-import lotus.domino.ColorObject;
-import lotus.domino.Database;
-import lotus.domino.Document;
-import lotus.domino.EmbeddedObject;
-import lotus.domino.Item;
-import lotus.domino.MIMEEntity;
-import lotus.domino.NotesException;
-import lotus.domino.RichTextNavigator;
-import lotus.domino.RichTextParagraphStyle;
-import lotus.domino.RichTextRange;
-import lotus.domino.RichTextStyle;
-import lotus.domino.View;
 import lotus.domino.XSLTResultTarget;
 
 import org.xml.sax.InputSource;
@@ -40,7 +27,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	public void addPageBreak();
 
 	@Override
-	public void addPageBreak(RichTextParagraphStyle pstyle);
+	public void addPageBreak(lotus.domino.RichTextParagraphStyle pstyle);
 
 	@Override
 	public void addTab();
@@ -49,47 +36,49 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	public void addTab(int count);
 
 	@Override
-	public void appendDocLink(Database db);
+	public void appendDocLink(lotus.domino.Database db);
 
 	@Override
-	public void appendDocLink(Database db, String comment);
+	public void appendDocLink(lotus.domino.Database db, String comment);
 
 	@Override
-	public void appendDocLink(Database db, String comment, String hotspotText);
+	public void appendDocLink(lotus.domino.Database db, String comment, String hotspotText);
 
 	@Override
-	public void appendDocLink(Document doc);
+	public void appendDocLink(lotus.domino.Document doc);
 
 	@Override
-	public void appendDocLink(Document doc, String comment);
+	public void appendDocLink(lotus.domino.Document doc, String comment);
 
 	@Override
-	public void appendDocLink(Document doc, String comment, String hotspotText);
+	public void appendDocLink(lotus.domino.Document doc, String comment, String hotspotText);
 
 	@Override
-	public void appendDocLink(View view);
+	public void appendDocLink(lotus.domino.View view);
 
 	@Override
-	public void appendDocLink(View view, String comment);
+	public void appendDocLink(lotus.domino.View view, String comment);
 
 	@Override
-	public void appendDocLink(View view, String comment, String hotspotText);
+	public void appendDocLink(lotus.domino.View view, String comment, String hotspotText);
 
 	@Override
-	public void appendParagraphStyle(RichTextParagraphStyle pstyle);
+	public void appendParagraphStyle(lotus.domino.RichTextParagraphStyle pstyle);
 
 	@Override
 	public void appendRTItem(lotus.domino.RichTextItem rtitem);
 
 	@Override
-	public void appendStyle(RichTextStyle rstyle);
+	public void appendStyle(lotus.domino.RichTextStyle rstyle);
 
 	@Override
 	public void appendTable(int rows, int columns);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void appendTable(int rows, int columns, Vector labels);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void appendTable(int rows, int columns, Vector labels, int leftMargin, Vector pstyles);
 
@@ -99,23 +88,24 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	@Override
 	public void appendToTextList(String value);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void appendToTextList(Vector values);
 
 	@Override
-	public void beginInsert(Base element);
+	public void beginInsert(lotus.domino.Base element);
 
 	@Override
-	public void beginInsert(Base element, boolean after);
+	public void beginInsert(lotus.domino.Base element, boolean after);
 
 	@Override
 	public void beginSection(String title);
 
 	@Override
-	public void beginSection(String title, RichTextStyle titleStyle);
+	public void beginSection(String title, lotus.domino.RichTextStyle titleStyle);
 
 	@Override
-	public void beginSection(String title, RichTextStyle titleStyle, ColorObject barColor, boolean expand);
+	public void beginSection(String title, lotus.domino.RichTextStyle titleStyle, lotus.domino.ColorObject barColor, boolean expand);
 
 	@Override
 	public void compact();
@@ -124,10 +114,10 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	public boolean containsValue(Object value);
 
 	@Override
-	public Item copyItemToDocument(Document doc);
+	public Item copyItemToDocument(lotus.domino.Document doc);
 
 	@Override
-	public Item copyItemToDocument(Document doc, String newName);
+	public Item copyItemToDocument(lotus.domino.Document doc, String newName);
 
 	@Override
 	public RichTextNavigator createNavigator();
@@ -202,7 +192,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	public byte[] getValueCustomDataBytes(String dataTypeName) throws IOException;
 
 	@Override
-	public Vector<Object> getValueDateTimeArray();
+	public Vector<DateTime> getValueDateTimeArray();
 
 	@Override
 	public double getValueDouble();
@@ -244,7 +234,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	public boolean isSummary();
 
 	@Override
-	public org.w3c.dom.Document parseXML(boolean validate) throws IOException, NotesException;
+	public org.w3c.dom.Document parseXML(boolean validate) throws IOException;
 
 	@Override
 	public void remove();
@@ -291,6 +281,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	@Override
 	public void setValueInteger(int value);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setValues(Vector values);
 

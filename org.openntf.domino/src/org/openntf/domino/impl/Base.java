@@ -1,6 +1,7 @@
 package org.openntf.domino.impl;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -167,6 +168,18 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			return ((Base) baseObj).getDelegate();
 		}
 		return baseObj;
+	}
+
+	public static java.util.Vector<Object> toLotus(Collection<?> values) {
+		java.util.Vector<Object> result = new java.util.Vector<Object>(values.size());
+		for (Object value : values) {
+			if (value instanceof lotus.domino.Base) {
+				result.add(toLotus((lotus.domino.Base) value));
+			} else {
+				result.add(value);
+			}
+		}
+		return result;
 	}
 
 	public static boolean recycle(lotus.domino.local.NotesBase base) {

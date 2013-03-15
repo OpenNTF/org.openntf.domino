@@ -2,8 +2,6 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
-import lotus.domino.ColorObject;
-
 public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.domino.RichTextTable {
 
 	@Override
@@ -48,14 +46,15 @@ public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.d
 	public void removeRow(int count, int targetRow);
 
 	@Override
-	public void setAlternateColor(ColorObject color);
+	public void setAlternateColor(lotus.domino.ColorObject color);
 
 	@Override
-	public void setColor(ColorObject color);
+	public void setColor(lotus.domino.ColorObject color);
 
 	@Override
 	public void setRightToLeft(boolean flag);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setRowLabels(Vector labels);
 

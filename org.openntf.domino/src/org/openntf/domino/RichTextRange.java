@@ -1,7 +1,5 @@
 package org.openntf.domino;
 
-import lotus.domino.RichTextStyle;
-
 public interface RichTextRange extends Base<lotus.domino.RichTextRange>, lotus.domino.RichTextRange {
 
 	@Override
@@ -40,6 +38,6 @@ public interface RichTextRange extends Base<lotus.domino.RichTextRange>, lotus.d
 	public void setEnd(lotus.domino.Base element);
 
 	@Override
-	public void setStyle(RichTextStyle style);
+	public void setStyle(lotus.domino.RichTextStyle style);
 
 }
