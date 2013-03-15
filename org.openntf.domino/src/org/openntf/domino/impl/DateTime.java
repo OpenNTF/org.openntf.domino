@@ -274,41 +274,35 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	}
 
 	public void setNow() {
-		try {
-			getDelegate().setNow();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-
-		}
+		cal_.setTime(new Date());
 	}
 
 	public int timeDifference(lotus.domino.DateTime dt) {
-		try {
-			return getDelegate().timeDifference(dt);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return 0;
-
+		int result = 0;
+		if (dt instanceof org.openntf.domino.impl.DateTime) {
+			DateTime otherDT = (org.openntf.domino.impl.DateTime) dt; // so we can access private members directly.
+			long left = cal_.getTimeInMillis() / 1000; // math is in seconds
+			long right = otherDT.toJavaDate().getTime() / 1000; // math is also in seconds
+			result = Long.valueOf(left - right).intValue();
+		} else {
+			long left = cal_.getTimeInMillis() / 1000; // math is in seconds
+			long right = 0;
+			try {
+				right = dt.toJavaDate().getTime() / 1000; // math is also in seconds
+			} catch (NotesException ne) {
+				DominoUtils.handleException(ne);
+			}
+			result = Long.valueOf(left - right).intValue();
 		}
+		return result;
 	}
 
 	public double timeDifferenceDouble(lotus.domino.DateTime dt) {
-		try {
-			return getDelegate().timeDifferenceDouble(dt);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return 0d;
-
-		}
+		int i = this.timeDifference(dt);
+		return Double.valueOf(i).doubleValue();
 	}
 
 	public Date toJavaDate() {
-		try {
-			return getDelegate().toJavaDate();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return cal_.getTime();
 	}
 }
