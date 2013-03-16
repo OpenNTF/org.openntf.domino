@@ -71,6 +71,7 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 	 */
 	public void recycle() {
 		org.openntf.domino.impl.Base.recycle(delegate_);
+		org.openntf.domino.impl.Base.removeReference(this);
 		Factory.countAutoRecycle();
 		// FIXME NTF - take the dead reference out of the reference set!!!
 	}

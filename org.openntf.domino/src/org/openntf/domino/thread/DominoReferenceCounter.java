@@ -15,8 +15,8 @@
  */
 package org.openntf.domino.thread;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.logging.Logger;
 
 // TODO: Auto-generated Javadoc
@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  * The Class DominoReferenceCounter.
  */
 public class DominoReferenceCounter extends ThreadLocal<Object> {
-	
+
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(DominoReferenceCounter.class.getName());
 
@@ -32,7 +32,7 @@ public class DominoReferenceCounter extends ThreadLocal<Object> {
 	 * The Class Counter.
 	 */
 	public static class Counter extends Number {
-		
+
 		/** The value. */
 		private int value;
 
@@ -96,7 +96,9 @@ public class DominoReferenceCounter extends ThreadLocal<Object> {
 			return value;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Number#doubleValue()
 		 */
 		@Override
@@ -104,7 +106,9 @@ public class DominoReferenceCounter extends ThreadLocal<Object> {
 			return value;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Number#floatValue()
 		 */
 		@Override
@@ -112,7 +116,9 @@ public class DominoReferenceCounter extends ThreadLocal<Object> {
 			return value;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Number#intValue()
 		 */
 		@Override
@@ -120,7 +126,9 @@ public class DominoReferenceCounter extends ThreadLocal<Object> {
 			return value;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Number#longValue()
 		 */
 		@Override
@@ -137,12 +145,14 @@ public class DominoReferenceCounter extends ThreadLocal<Object> {
 		// TODO Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.ThreadLocal#initialValue()
 	 */
 	@Override
 	protected Object initialValue() {
-		return new HashMap<Long, Counter>();
+		return new WeakHashMap<Long, Counter>();
 	}
 
 	/**

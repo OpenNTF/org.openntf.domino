@@ -69,15 +69,16 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		@Override
 		protected Set<DominoReference> initialValue() {
 			return new HashSet<DominoReference>();
+			// return Collections.newSetFromMap(new WeakHashMap<DominoReference, Boolean>());
 		};
 	};
-	
-	/** The Constant refSet. */
-	private static final DominoReferenceSet refSet = new DominoReferenceSet();
-	
+
+	/** The Constant lockedRefSet. */
+	private static final DominoReferenceSet lockedRefSet = new DominoReferenceSet();
+
 	/** The get cpp method. */
 	private static Method getCppMethod;
-	
+
 	/** The is invalid method. */
 	private static Method isInvalidMethod;
 	static {
@@ -94,16 +95,16 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/** The recycled_. */
 	protected boolean recycled_;
-	
+
 	/** The delegate_. */
 	protected D delegate_; // NTF final???
-	
+
 	/** The ref_. */
 	private DominoReference ref_; // this is the PhantomReference that will be enqueued when this Base object HAS BEEN be GC'ed
-	
+
 	/** The encapsulated_. */
 	private boolean encapsulated_ = false;
-	
+
 	/** The parent_. */
 	private org.openntf.domino.Base<?> parent_;
 
@@ -156,7 +157,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			delegate_ = delegate;
 			ref_ = new DominoReference(this, recycleQueue.get(), delegate);
 			referenceBag.get().add(ref_);
-			refSet.add(delegate);
+			// lockedRefSet.add(delegate);
 			if (delegate instanceof lotus.domino.local.NotesBase) {
 				lotus.domino.local.NotesBase base = (lotus.domino.local.NotesBase) delegate;
 				int curCount = lotusReferenceCounter_.getCount(base);
@@ -206,6 +207,10 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		return recycleQueue.get();
 	}
 
+	public static void removeReference(DominoReference dr) {
+		referenceBag.get().remove(dr);
+	}
+
 	/**
 	 * Gets the delegate.
 	 * 
@@ -247,7 +252,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @return true, if is locked
 	 */
 	public static boolean isLocked(lotus.domino.Base base) {
-		return refSet.isLocked(base);
+		return lockedRefSet.isLocked(base);
 	}
 
 	/**
@@ -257,7 +262,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the base
 	 */
 	public static void lock(lotus.domino.Base base) {
-		refSet.lock(base);
+		lockedRefSet.lock(base);
 	}
 
 	/**
@@ -268,7 +273,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 */
 	public static void lock(lotus.domino.Base... allYourBase) {
 		for (lotus.domino.Base everyZig : allYourBase) {
-			refSet.lock(everyZig);
+			lockedRefSet.lock(everyZig);
 		}
 	}
 
@@ -276,10 +281,12 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * Recycle all.
 	 */
 	public static void recycleAll() {
-		refSet.clear();
+		lockedRefSet.clear();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Base#recycle()
 	 */
 	public void recycle() {
@@ -370,8 +377,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	public static boolean recycle(lotus.domino.local.NotesBase base) {
 		boolean result = false;
 
+		int count = lotusReferenceCounter_.decrement(base);
 		if (!isLocked(base)) {
-			int count = lotusReferenceCounter_.getCount(base);
 			if (count < 2) {
 
 				try {
@@ -387,7 +394,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 						// + ") because we have ZERO references remaining");
 						// Long id = getLotusId(base);
 						// lotusReferenceCounter_.forcedRecycle(id);
-						lotusReferenceCounter_.decrement(base);
+
 						base.recycle();
 						result = true;
 					}
@@ -437,7 +444,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		return recycled_;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Base#recycle(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
