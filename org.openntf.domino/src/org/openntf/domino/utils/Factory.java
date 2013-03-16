@@ -65,10 +65,10 @@ public enum Factory {
 
 	/** The lotus counter. */
 	private static Counter lotusCounter = new Counter();
-	
+
 	/** The recycle err counter. */
 	private static Counter recycleErrCounter = new Counter();
-	
+
 	/** The auto recycle counter. */
 	private static Counter autoRecycleCounter = new Counter();
 
@@ -239,14 +239,13 @@ public enum Factory {
 		} else if (lotus instanceof lotus.domino.View) {
 			result = (T) new org.openntf.domino.impl.View((lotus.domino.View) lotus, (org.openntf.domino.Database) parent);
 		} else if (lotus instanceof lotus.domino.ViewColumn) {
-			result = (T) new org.openntf.domino.impl.ViewColumn((lotus.domino.ViewColumn) lotus, (org.openntf.domino.Database) parent);
+			result = (T) new org.openntf.domino.impl.ViewColumn((lotus.domino.ViewColumn) lotus, parent);
 		} else if (lotus instanceof lotus.domino.ViewEntry) {
-			result = (T) new org.openntf.domino.impl.ViewEntry((lotus.domino.ViewEntry) lotus, (org.openntf.domino.Database) parent);
+			result = (T) new org.openntf.domino.impl.ViewEntry((lotus.domino.ViewEntry) lotus, parent);
 		} else if (lotus instanceof lotus.domino.ViewEntryCollection) {
-			result = (T) new org.openntf.domino.impl.ViewEntryCollection((lotus.domino.ViewEntryCollection) lotus,
-					(org.openntf.domino.View) parent);
+			result = (T) new org.openntf.domino.impl.ViewEntryCollection((lotus.domino.ViewEntryCollection) lotus, (org.openntf.domino.View)parent);
 		} else if (lotus instanceof lotus.domino.ViewNavigator) {
-			result = (T) new org.openntf.domino.impl.ViewNavigator((lotus.domino.ViewNavigator) lotus, (org.openntf.domino.Database) parent);
+			result = (T) new org.openntf.domino.impl.ViewNavigator((lotus.domino.ViewNavigator) lotus, parent);
 		}
 		drainQueue();
 		if (result != null) {
@@ -458,7 +457,9 @@ public enum Factory {
 	 */
 	public static org.openntf.domino.Session getSession(org.openntf.domino.Base<?> base) {
 		org.openntf.domino.Session result = null;
-		if (base instanceof org.openntf.domino.Session) {
+		if(base instanceof org.openntf.domino.AgentContext) {
+			result = ((org.openntf.domino.AgentContext)base).getParentSession();
+		} else if (base instanceof org.openntf.domino.Session) {
 			result = (org.openntf.domino.Session) base;
 		} else if (base instanceof org.openntf.domino.Database) {
 			result = ((org.openntf.domino.Database) base).getParent();

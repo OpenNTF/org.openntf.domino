@@ -18,7 +18,6 @@ package org.openntf.domino.impl;
 import java.util.Iterator;
 
 import lotus.domino.NotesException;
-import lotus.domino.ViewEntry;
 
 import org.openntf.domino.iterators.ViewEntryIterator;
 import org.openntf.domino.utils.DominoUtils;
@@ -45,68 +44,77 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 
 	// FIXME NTF -- all method that return a ViewEntry probably need to parent to the View rather than the Collection. Someone should verify
 	// the defined behavior.
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#addEntry(java.lang.Object)
 	 */
 	@Override
 	public void addEntry(Object obj) {
 		try {
-			getDelegate().addEntry(obj);
+			getDelegate().addEntry(toLotus(obj));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#addEntry(java.lang.Object, boolean)
 	 */
 	@Override
 	public void addEntry(Object obj, boolean checkDups) {
 		try {
-			getDelegate().addEntry(obj, checkDups);
+			getDelegate().addEntry(toLotus(obj), checkDups);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#cloneCollection()
 	 */
 	@Override
 	public lotus.domino.ViewEntryCollection cloneCollection() {
 		try {
-			org.openntf.domino.ViewEntryCollection result = Factory.fromLotus(getDelegate().cloneCollection(), ViewEntryCollection.class,
-					getParent());
-			return result;
+			return Factory.fromLotus(getDelegate().cloneCollection(), ViewEntryCollection.class, getParent());
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 			return null;
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
-	public Iterator<ViewEntry> iterator() {
+	public Iterator<lotus.domino.ViewEntry> iterator() {
 		return new ViewEntryIterator(this);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#contains(lotus.domino.Base)
 	 */
 	@Override
 	public boolean contains(lotus.domino.Base entries) {
 		try {
-			boolean result = getDelegate().contains(entries);
-			return result;
+			return getDelegate().contains(toLotus(entries));
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 			return false;
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#contains(int)
 	 */
 	@Override
@@ -120,7 +128,9 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#contains(java.lang.String)
 	 */
 	@Override
@@ -134,19 +144,23 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#deleteEntry(lotus.domino.ViewEntry)
 	 */
 	@Override
-	public void deleteEntry(ViewEntry entry) {
+	public void deleteEntry(lotus.domino.ViewEntry entry) {
 		try {
-			getDelegate().deleteEntry(entry);
+			getDelegate().deleteEntry((lotus.domino.ViewEntry) toLotus(entry));
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#FTSearch(java.lang.String)
 	 */
 	@Override
@@ -158,7 +172,9 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#FTSearch(java.lang.String, int)
 	 */
 	@Override
@@ -170,7 +186,9 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#getCount()
 	 */
 	@Override
@@ -183,20 +201,24 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#getEntry(java.lang.Object)
 	 */
 	@Override
 	public ViewEntry getEntry(Object entry) {
 		try {
-			return Factory.fromLotus(getDelegate().getEntry(entry), org.openntf.domino.ViewEntry.class, this);
+			return Factory.fromLotus(getDelegate().getEntry(toLotus(entry)), org.openntf.domino.ViewEntry.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#getFirstEntry()
 	 */
 	@Override
@@ -209,7 +231,9 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#getLastEntry()
 	 */
 	@Override
@@ -222,7 +246,9 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#getNextEntry()
 	 */
 	@Override
@@ -235,13 +261,16 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#getNextEntry(lotus.domino.ViewEntry)
 	 */
 	@Override
-	public ViewEntry getNextEntry(ViewEntry entry) {
+	public ViewEntry getNextEntry(lotus.domino.ViewEntry entry) {
 		try {
-			ViewEntry result = Factory.fromLotus(getDelegate().getNextEntry(entry), org.openntf.domino.ViewEntry.class, this);
+			ViewEntry result = Factory.fromLotus(getDelegate().getNextEntry((lotus.domino.ViewEntry) toLotus(entry)),
+					org.openntf.domino.ViewEntry.class, this);
 			entry.recycle();
 			return result;
 		} catch (NotesException e) {
@@ -250,7 +279,9 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#getNthEntry(int)
 	 */
 	@Override
@@ -263,7 +294,9 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -271,7 +304,9 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		return (org.openntf.domino.View) super.getParent();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#getPrevEntry()
 	 */
 	@Override
@@ -284,13 +319,16 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#getPrevEntry(lotus.domino.ViewEntry)
 	 */
 	@Override
-	public ViewEntry getPrevEntry(ViewEntry entry) {
+	public ViewEntry getPrevEntry(lotus.domino.ViewEntry entry) {
 		try {
-			ViewEntry result = Factory.fromLotus(getDelegate().getPrevEntry(entry), org.openntf.domino.ViewEntry.class, this);
+			ViewEntry result = Factory.fromLotus(getDelegate().getPrevEntry((lotus.domino.ViewEntry) toLotus(entry)),
+					org.openntf.domino.ViewEntry.class, this);
 			entry.recycle();
 			return result;
 		} catch (NotesException e) {
@@ -299,7 +337,9 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#getQuery()
 	 */
 	@Override
@@ -312,19 +352,23 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#intersect(lotus.domino.Base)
 	 */
 	@Override
 	public void intersect(lotus.domino.Base entries) {
 		try {
-			getDelegate().intersect(entries);
+			getDelegate().intersect(toLotus(entries));
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#intersect(int)
 	 */
 	@Override
@@ -336,7 +380,9 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#intersect(java.lang.String)
 	 */
 	@Override
@@ -348,7 +394,9 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#markAllRead()
 	 */
 	@Override
@@ -360,7 +408,9 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#markAllRead(java.lang.String)
 	 */
 	@Override
@@ -372,7 +422,9 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#markAllUnread()
 	 */
 	@Override
@@ -384,7 +436,9 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#markAllUnread(java.lang.String)
 	 */
 	@Override
@@ -396,19 +450,23 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#merge(lotus.domino.Base)
 	 */
 	@Override
 	public void merge(lotus.domino.Base entries) {
 		try {
-			getDelegate().merge(entries);
+			getDelegate().merge(toLotus(entries));
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#merge(int)
 	 */
 	@Override
@@ -420,7 +478,9 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#merge(java.lang.String)
 	 */
 	@Override
@@ -432,7 +492,9 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#putAllInFolder(java.lang.String)
 	 */
 	@Override
@@ -444,7 +506,9 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#putAllInFolder(java.lang.String, boolean)
 	 */
 	@Override
@@ -456,7 +520,9 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#removeAll(boolean)
 	 */
 	@Override
@@ -468,7 +534,9 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#removeAllFromFolder(java.lang.String)
 	 */
 	@Override
@@ -480,7 +548,9 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#stampAll(java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -492,19 +562,23 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#subtract(lotus.domino.Base)
 	 */
 	@Override
 	public void subtract(lotus.domino.Base entries) {
 		try {
-			getDelegate().subtract(entries);
+			getDelegate().subtract(toLotus(entries));
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#subtract(int)
 	 */
 	@Override
@@ -516,7 +590,9 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#subtract(java.lang.String)
 	 */
 	@Override
@@ -528,7 +604,9 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntryCollection#updateAll()
 	 */
 	@Override

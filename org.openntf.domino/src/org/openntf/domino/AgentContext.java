@@ -21,84 +21,114 @@ package org.openntf.domino;
  */
 public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.domino.AgentContext {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.AgentContext#getCurrentAgent()
 	 */
 	@Override
 	public Agent getCurrentAgent();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.AgentContext#getCurrentDatabase()
 	 */
 	public Database getCurrentDatabase();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.AgentContext#getDocumentContext()
 	 */
 	@Override
 	public Document getDocumentContext();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.AgentContext#getEffectiveUserName()
 	 */
 	@Override
 	public String getEffectiveUserName();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.AgentContext#getLastExitStatus()
 	 */
 	@Override
 	public int getLastExitStatus();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.AgentContext#getLastRun()
 	 */
 	@Override
 	public DateTime getLastRun();
 
-	/* (non-Javadoc)
+	public Session getParentSession();
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.AgentContext#getSavedData()
 	 */
 	@Override
 	public lotus.domino.Document getSavedData();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.AgentContext#getUnprocessedDocuments()
 	 */
 	@Override
 	public DocumentCollection getUnprocessedDocuments();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.AgentContext#unprocessedFTSearch(java.lang.String, int)
 	 */
 	@Override
 	public DocumentCollection unprocessedFTSearch(String query, int maxDocs);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.AgentContext#unprocessedFTSearch(java.lang.String, int, int, int)
 	 */
 	@Override
 	public DocumentCollection unprocessedFTSearch(String query, int maxDocs, int sortOpt, int otherOpt);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.AgentContext#unprocessedFTSearchRange(java.lang.String, int, int)
 	 */
 	@Override
 	public DocumentCollection unprocessedFTSearchRange(String query, int maxDocs, int sortOpt);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.AgentContext#unprocessedFTSearchRange(java.lang.String, int, int, int, int)
 	 */
 	@Override
 	public DocumentCollection unprocessedFTSearchRange(String query, int maxDocs, int sortOpt, int otherOpt, int start);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.AgentContext#unprocessedSearch(java.lang.String, lotus.domino.DateTime, int)
 	 */
 	@Override
 	public DocumentCollection unprocessedSearch(String formula, lotus.domino.DateTime limit, int maxDocs);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.AgentContext#updateProcessedDoc(lotus.domino.Document)
 	 */
 	@Override
