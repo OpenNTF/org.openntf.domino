@@ -20,8 +20,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Vector;
 
-import lotus.domino.PropertyBroker;
-
 import org.openntf.domino.annotations.Legacy;
 
 /**

@@ -786,9 +786,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 * @see org.openntf.domino.Session#getPropertyBroker()
 	 */
 	@Override
-	public lotus.domino.PropertyBroker getPropertyBroker() {
+	public PropertyBroker getPropertyBroker() {
 		try {
-			return getDelegate().getPropertyBroker();
+			return Factory.fromLotus(getDelegate().getPropertyBroker(), PropertyBroker.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

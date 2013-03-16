@@ -206,6 +206,8 @@ public enum Factory {
 			result = (T) new org.openntf.domino.impl.Outline((lotus.domino.Outline) lotus, parent);
 		} else if (lotus instanceof lotus.domino.OutlineEntry) {
 			result = (T) new org.openntf.domino.impl.OutlineEntry((lotus.domino.OutlineEntry) lotus, parent);
+		} else if (lotus instanceof lotus.domino.PropertyBroker) {
+			result = (T) new org.openntf.domino.impl.PropertyBroker((lotus.domino.PropertyBroker) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Registration) {
 			result = (T) new org.openntf.domino.impl.Registration((lotus.domino.Registration) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Replication) {

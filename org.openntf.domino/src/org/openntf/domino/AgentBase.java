@@ -1,6 +1,5 @@
-package org.openntf.domino.adapters;
+package org.openntf.domino;
 
-import org.openntf.domino.Session;
 import org.openntf.domino.utils.Factory;
 
 public class AgentBase extends lotus.domino.AgentBase {
