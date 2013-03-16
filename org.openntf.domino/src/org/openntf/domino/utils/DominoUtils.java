@@ -420,19 +420,23 @@ public enum DominoUtils {
 		ByteArrayInputStream byteIn = new ByteArrayInputStream(byteStream.toByteArray());
 		mimeStream.setContents(byteIn);
 		entity.setContentFromBytes(mimeStream, "application/x-java-serialized-object", lotus.domino.MIMEEntity.ENC_NONE);
-		lotus.domino.MIMEHeader header = entity.getNthHeader("Content-Encoding");
+		lotus.domino.MIMEHeader contentEncoding = entity.getNthHeader("Content-Encoding");
 		if (compress) {
-			if (header == null) {
-				header = entity.createHeader("Content-Encoding");
+			if (contentEncoding == null) {
+				contentEncoding = entity.createHeader("Content-Encoding");
 			}
-			header.setHeaderVal("gzip");
-			header.recycle();
+			contentEncoding.setHeaderVal("gzip");
+			contentEncoding.recycle();
 		} else {
-			if (header != null) {
-				header.remove();
-				header.recycle();
+			if (contentEncoding != null) {
+				contentEncoding.remove();
+				contentEncoding.recycle();
 			}
 		}
+		lotus.domino.MIMEHeader javaClass = entity.getNthHeader("X-Java-Class");
+		if(javaClass == null) { javaClass = entity.createHeader("X-Java-Class"); }
+		javaClass.setHeaderVal(object.getClass().getName());
+		javaClass.recycle();
 
 		entity.recycle();
 		mimeStream.recycle();
