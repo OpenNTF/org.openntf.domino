@@ -35,6 +35,9 @@ public class ViewEntryIterator extends AbstractDominoIterator<ViewEntry> {
 	/** The done_. */
 	private boolean done_;
 
+	private int count_ = 0;
+	private int currentIndex_ = 0;
+
 	/**
 	 * Instantiates a new view entry iterator.
 	 * 
@@ -43,6 +46,9 @@ public class ViewEntryIterator extends AbstractDominoIterator<ViewEntry> {
 	 */
 	public ViewEntryIterator(ViewEntryCollection collection) {
 		super(collection);
+
+		// TODO replace this with a less-expensive operation
+		count_ = collection.getCount();
 	}
 
 	/*
@@ -74,18 +80,8 @@ public class ViewEntryIterator extends AbstractDominoIterator<ViewEntry> {
 	 * 
 	 * @see java.util.Iterator#hasNext()
 	 */
-	@SuppressWarnings("deprecation")
 	public boolean hasNext() {
-		boolean result = false;
-		ViewEntry currentEntry = getCurrentEntry();
-		ViewEntry nextEntry = null;
-		try {
-			nextEntry = ((currentEntry == null) ? (isDone() ? null : getCollection().getFirstEntry()) : getCollection().getNextEntry());
-			result = (nextEntry != null);
-		} catch (Throwable t) {
-			DominoUtils.handleException(t);
-		}
-		return result;
+		return currentIndex_ < count_;
 	}
 
 	/**
@@ -117,6 +113,7 @@ public class ViewEntryIterator extends AbstractDominoIterator<ViewEntry> {
 		ViewEntry currentEntry = getCurrentEntry();
 		try {
 			result = ((currentEntry == null) ? getCollection().getFirstEntry() : getCollection().getNextEntry(currentEntry));
+			currentIndex_++;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		} finally {
