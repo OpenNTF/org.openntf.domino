@@ -21,8 +21,7 @@ import org.openntf.domino.annotations.Legacy;
 /**
  * The Interface ViewEntryCollection.
  */
-public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollection>, lotus.domino.ViewEntryCollection,
-		Iterable<lotus.domino.ViewEntry> {
+public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollection>, lotus.domino.ViewEntryCollection, Iterable<ViewEntry> {
 
 	/*
 	 * (non-Javadoc)
@@ -46,7 +45,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#cloneCollection()
 	 */
 	@Override
-	public lotus.domino.ViewEntryCollection cloneCollection();
+	public ViewEntryCollection cloneCollection();
 
 	/*
 	 * (non-Javadoc)

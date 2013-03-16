@@ -78,7 +78,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#cloneCollection()
 	 */
 	@Override
-	public lotus.domino.ViewEntryCollection cloneCollection() {
+	public ViewEntryCollection cloneCollection() {
 		try {
 			return Factory.fromLotus(getDelegate().cloneCollection(), ViewEntryCollection.class, getParent());
 		} catch (Throwable t) {
@@ -93,7 +93,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
-	public Iterator<lotus.domino.ViewEntry> iterator() {
+	public Iterator<org.openntf.domino.ViewEntry> iterator() {
 		return new ViewEntryIterator(this);
 	}
 
