@@ -22,7 +22,6 @@ import java.util.GregorianCalendar;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Session;
-import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -86,9 +85,14 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		initialize(date);
 	}
 
-	@Legacy(Legacy.DATETIME_WARNING)
-	public lotus.domino.DateTime toRawDateTime() {
-		return getParent().createDateTime(cal_);
+	@Override
+	protected lotus.domino.DateTime getDelegate() {
+		try {
+			return ((org.openntf.domino.impl.Session) getParent()).getDelegate().createDateTime(cal_);
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return null;
+		}
 	}
 
 	/**
