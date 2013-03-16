@@ -295,7 +295,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * @param folderName
 	 *            The name of the folder in which to place the documents. If the folder is within another folder, specify a path to it,
 	 *            separating folder names with backward slashes, for example, "Vehicles\\Bikes".
-	 * @param createonFail
+	 * @param createOnFail
 	 *            If true (default), creates the folder if it does not exist.
 	 */
 	public abstract void putAllInFolder(String folderName, boolean createOnFail);

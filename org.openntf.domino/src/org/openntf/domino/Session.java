@@ -329,7 +329,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 * @param date
 	 *            The date, time, and time zone you want the object to represent using a {@link java.util.Calendar} object.
 	 * 
-	 * @return The newly created {@link org.openntf.domino.DateTime}.
+	 * @return The newly created {@link org.openntf.domino.DateTime} object.
 	 */
 	@Override
 	public DateTime createDateTime(Calendar date);
@@ -340,7 +340,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 * @param date
 	 *            The date, time you want the object to represent using a {@link java.util.Date} object.
 	 * 
-	 * @return The newly created {@link org.openntf.domino.DateTime}.
+	 * @return The newly created {@link org.openntf.domino.DateTime} object.
 	 */
 	@Override
 	public DateTime createDateTime(Date date);
@@ -351,7 +351,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 * @param date
 	 *            The date, time you want the object to represent using a string. @see org.openntf.domino.DateTime for formats.
 	 * 
-	 * @return The newly created {@link org.openntf.domino.DateTime}.
+	 * @return The newly created {@link org.openntf.domino.DateTime} object.
 	 */
 	@Override
 	public DateTime createDateTime(String date);
@@ -372,194 +372,285 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	@Override
 	public DxlImporter createDxlImporter();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a new Log object with the name you specify.
 	 * 
-	 * @see lotus.domino.Session#createLog(java.lang.String)
+	 * @param name
+	 *            A name that identifies the log.
+	 * 
+	 * @return The newly created {@link org.openntf.domino.Log} object with the specified name.
 	 */
 	@Override
 	public Log createLog(String name);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a new Name object.
 	 * 
-	 * @see lotus.domino.Session#createName(java.lang.String)
+	 * @param name
+	 *            A user or server name. If the name is not in the format of an abbreviated or canonical hierarchical name, it is treated as
+	 *            a flat name.
+	 * 
+	 * @return The newly created {@link org.openntf.domino.Name} object.
 	 */
 	@Override
 	public Name createName(String name);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a new Name object with the specified language.
 	 * 
-	 * @see lotus.domino.Session#createName(java.lang.String, java.lang.String)
+	 * @param name
+	 *            A user or server name. If the name is not in the format of an abbreviated or canonical hierarchical name, it is treated as
+	 *            a flat name.
+	 * @param lang
+	 *            A language associated with the user name. For primary user names, the language should be <code>null</code>. For alternate
+	 *            user names, a language can be specified. Typical language codes look like
+	 *            <p>
+	 *            <ul>
+	 *            <li>en
+	 *            <li>en-IE
+	 *            <li>de
+	 *            <li>zh-CN
+	 *            </ul>
+	 * 
+	 * @return The newly created {@link org.openntf.domino.Name} object.
 	 */
 	@Override
 	public Name createName(String name, String lang);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Given a DocumentCollection containing the documents you want, creates a new Newsletter.
 	 * 
-	 * @see lotus.domino.Session#createNewsletter(lotus.domino.DocumentCollection)
+	 * @param collection
+	 *            The documents that you want included in the newsletter. Can be null.
+	 * 
+	 * @return The newly created {@link org.openntf.domino.Newsletter} object.
 	 */
 	@Override
 	public Newsletter createNewsletter(DocumentCollection collection);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a new Registration object.
 	 * 
-	 * @see lotus.domino.Session#createRegistration()
+	 * @return The newly created {@link org.openntf.domino.Registration} object.
 	 */
 	@Override
 	public Registration createRegistration();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a new RichTextParagraphStyle object.
 	 * 
-	 * @see lotus.domino.Session#createRichTextParagraphStyle()
+	 * @return The newly created {@link org.openntf.domino.RichTextParagraphStyle} object.
 	 */
 	@Override
 	public RichTextParagraphStyle createRichTextParagraphStyle();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a new RichTextStyle object.
 	 * 
-	 * @see lotus.domino.Session#createRichTextStyle()
+	 * @return The newly created {@link org.openntf.domino.RichTextStyle} object.
 	 */
 	@Override
 	public RichTextStyle createRichTextStyle();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a new Stream object.
 	 * 
-	 * @see lotus.domino.Session#createStream()
+	 * @return The newly created {@link org.openntf.domino.Stream} object.
 	 */
 	@Override
 	public Stream createStream();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Represents the agent environment of the current program, if an agent is running it.
 	 * 
-	 * @see lotus.domino.Session#getAgentContext()
+	 * @return If the current program is not running from an agent, this property returns <code>null</code>, otherwise it returns the
+	 *         current {@link org.openntf.domino.AgentContext}.
+	 * 
 	 */
 	@Override
 	public AgentContext getAgentContext();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a new NotesCalendar object.
 	 * 
-	 * @see lotus.domino.Session#getCalendar(lotus.domino.Database)
+	 * @param db
+	 *            A standard Domino mail application, for example, an application based on the template StdR85Mail.
+	 * @return The newly created {@link org.openntf.domino.Notescalendar} object.
 	 */
 	@Override
 	public NotesCalendar getCalendar(lotus.domino.Database db);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * The common name of the user that created the session.
+	 * <p>
+	 * This is the name of the user running the script, which for a server-side code is the server name. For the name of the user logged
+	 * into the server, use {@link #getEffectiveUserName()}.
+	 * <p>
+	 * If the user name is flat (non-hierarchical), this is the same as {@link #getUserName()}.
 	 * 
-	 * @see lotus.domino.Session#getCommonUserName()
+	 * @return The session creators common user name.
 	 */
 	@Override
 	public String getCommonUserName();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Gets the session's credentials.
 	 * 
-	 * @see lotus.domino.Session#getCredentials()
+	 * @deprecated As per IBM help documentation. No replacement.
+	 * @return A {@link java.lang.Object} representing the current credentials.
 	 */
+	@Deprecated
 	@Override
+	@Legacy({ Legacy.IBM_DEP_WARNING })
 	public Object getCredentials();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a NotesDatabase object that represents the current database and opens the database.
 	 * 
-	 * @see lotus.domino.Session#getCurrentDatabase()
+	 * @return A {@link org.openntf.domino.Database} object that can be used to access the current database.
 	 */
 	@Override
 	public Database getCurrentDatabase();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a NotesDatabase object that represents the database located at the server and file name you specify, and opens the database,
+	 * if possible.
 	 * 
-	 * @see lotus.domino.Session#getDatabase(java.lang.String, java.lang.String)
+	 * @param server
+	 *            The name of the server on which the database resides. Use <code>null</code> to indicate the session's environment, for
+	 *            example, the current computer.
+	 * @param db
+	 *            The file name and location of the database within the Domino data directory. Use a full path name if the database is not
+	 *            within the Domino data directory.
+	 * 
+	 * @return A {@link org.openntf.domino.Database} object that can be used to access the database you have specified, or null if the
+	 *         database cannot be opened and createonfail is false. If the database cannot be opened
+	 *         {@link org.openntf.domino.Database#isOpen()} is false for the NotesDatabase object.
 	 */
 	@Override
 	public Database getDatabase(String server, String db);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a NotesDatabase object that represents the database located at the server and file name you specify with an option to create
+	 * the database if it does not already exist.
 	 * 
-	 * @see lotus.domino.Session#getDatabase(java.lang.String, java.lang.String, boolean)
+	 * @param server
+	 *            The name of the server on which the database resides. Use <code>null</code> to indicate the session's environment, for
+	 *            example, the current computer.
+	 * @param db
+	 *            The file name and location of the database within the Domino data directory. Use a full path name if the database is not
+	 *            within the Domino data directory.
+	 * @param createOnFail
+	 *            If true creates a Database object even if the specified database cannot be opened. If false, returns <code>null</code> if
+	 *            the database cannot be opened.
+	 * 
+	 * @return A {@link org.openntf.domino.Database} object that can be used to access the database you have specified, or <code>null</code>
+	 *         if the database cannot be opened and <code>createOnFail</code> is false. If the database cannot be opened and
+	 *         <code>createOnFail</code> is true, {@link org.openntf.domino.Database#isOpen()} is false for the NotesDatabase object.
 	 */
 	@Override
 	public Database getDatabase(String server, String db, boolean createOnFail);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Gets a directory of databases.
 	 * 
-	 * @see lotus.domino.Session#getDbDirectory(java.lang.String)
+	 * @param server
+	 *            The name of the server with database files you want to navigate. Use the empty string to indicate the current session's
+	 *            environment
+	 * 
+	 * @return A {@link org.openntf.domino.DbDirectory} of databases on the server.
 	 */
 	@Override
 	public DbDirectory getDbDirectory(String server);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a new NotesDirectory object using the name of the current server.
 	 * 
-	 * @see lotus.domino.Session#getDirectory()
+	 * @return A {@link org.openntf.domino.Directory} object.
 	 */
 	@Override
 	public Directory getDirectory();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Creates a new NotesDirectory object using the name of the server you want to access.
+	 * <p>
+	 * If this method is run on a server, and the server parameter is the name of a different server, the current server must have a trusted
+	 * relationship with the specified server.
 	 * 
-	 * @see lotus.domino.Session#getDirectory(java.lang.String)
+	 * @param server
+	 *            The name of the server whose database files you want to navigate. Use no parameter method or an empty string to indicate
+	 *            the current server.
+	 * @return A {@link org.openntf.domino.Directory} object.
 	 */
 	@Override
 	public Directory getDirectory(String server);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * The login name of the user that created the session.
 	 * 
-	 * @see lotus.domino.Session#getEffectiveUserName()
+	 * @return The name of the user logged into the server session running the code.
 	 */
 	@Override
 	public String getEffectiveUserName();
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Gets the value of a non-system string environment variable.
 	 * 
-	 * @see lotus.domino.Session#getEnvironmentString(java.lang.String)
+	 * @param vname
+	 *            The name of the environment variable.
+	 * 
+	 * @return The value of the environment variable.
 	 */
 	@Override
 	public String getEnvironmentString(String vname);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Gets the value of a string environment variable.
 	 * 
-	 * @see lotus.domino.Session#getEnvironmentString(java.lang.String, boolean)
+	 * @param vname
+	 *            The name of the environment variable.
+	 * @param isSystem
+	 *            If <code>true</code>, the method uses the exact name of the environment variable. If <code>false</code>, the method
+	 *            prefixes a dollar sign to the name.
+	 * 
+	 * @return The value of the environment variable.
 	 */
 	@Override
 	public String getEnvironmentString(String vname, boolean isSystem);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Gets the value of a non-system numeric environment variable.
+	 * <p>
+	 * <b>Note:</b> Do not use this method for string values.
 	 * 
-	 * @see lotus.domino.Session#getEnvironmentValue(java.lang.String)
+	 * @param vname
+	 *            The name of the environment variable.
+	 * 
+	 * @return The value of the environment variable.
 	 */
 	@Override
 	public Object getEnvironmentValue(String vname);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Gets the value of a numeric environment variable.
+	 * <p>
+	 * <b>Note:</b> Do not use this method for string values.
 	 * 
-	 * @see lotus.domino.Session#getEnvironmentValue(java.lang.String, boolean)
+	 * @param vname
+	 *            The name of the environment variable.
+	 * @param isSystem
+	 *            If <code>true</code>, the method uses the exact name of the environment variable. If <code>false</code>, the method
+	 *            prefixes a dollar sign to the name.
+	 * 
+	 * @return The value of the environment variable.
 	 */
 	@Override
 	public Object getEnvironmentValue(String vname, boolean isSystem);
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * The Domino URL of a server when HTTP protocols are in effect.
 	 * 
-	 * @see lotus.domino.Session#getHttpURL()
+	 * @return The URL as a string. If HTTP protocols are not available, this property returns an <code>empty string</code>.
 	 */
 	@Override
 	public String getHttpURL();
