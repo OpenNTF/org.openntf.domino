@@ -20,25 +20,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Vector;
 
-import lotus.domino.AdministrationProcess;
-import lotus.domino.AgentContext;
-import lotus.domino.ColorObject;
-import lotus.domino.DateTime;
-import lotus.domino.DbDirectory;
-import lotus.domino.Directory;
-import lotus.domino.Document;
-import lotus.domino.DocumentCollection;
-import lotus.domino.DxlExporter;
-import lotus.domino.DxlImporter;
-import lotus.domino.International;
-import lotus.domino.Log;
-import lotus.domino.Newsletter;
-import lotus.domino.NotesCalendar;
 import lotus.domino.PropertyBroker;
-import lotus.domino.Registration;
-import lotus.domino.RichTextParagraphStyle;
-import lotus.domino.RichTextStyle;
-import lotus.domino.Stream;
 
 import org.openntf.domino.annotations.Legacy;
 
@@ -123,7 +105,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 * @return The result of the evaluation. A scalar result is returned in firstElement.
 	 */
 	@Override
-	public Vector<Object> evaluate(String formula, Document doc);
+	public Vector<Object> evaluate(String formula, lotus.domino.Document doc);
 
 	/**
 	 * The Domino Directories and Personal Address Books, including directory catalogs, known to the current session.
@@ -143,7 +125,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 */
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING })
 	public Vector<Database> getAddressBooks();
 
 	/**
@@ -169,7 +151,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 */
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING })
 	public Vector<DateRange> freeTimeSearch(lotus.domino.DateRange window, int duration, Object names, boolean firstFit);
 
 	/**
@@ -212,7 +194,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 * </p>
 	 * 
 	 * <p>
-	 * The groups include those to which the user name belongs in the Domino® Directory or Personal Address Book where the program is
+	 * The groups include those to which the user name belongs in the Dominoï¿½ Directory or Personal Address Book where the program is
 	 * running.
 	 * </p>
 	 * 
@@ -222,7 +204,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 */
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING })
 	public Vector<Name> getUserGroupNameList(); // TODO should we use a Vector of names? Or allow someone to request it as String-only so
 
 	// there's no recycle burden?
@@ -236,7 +218,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 * </p>
 	 * 
 	 * <p>
-	 * The groups include those to which the user name belongs in the Domino® Directory or Personal Address Book where the program is
+	 * The groups include those to which the user name belongs in the Dominoï¿½ Directory or Personal Address Book where the program is
 	 * running.
 	 * </p>
 	 * 
@@ -255,7 +237,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 */
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING })
 	public Vector<Name> getUserNameList(); // TODO should we use a Vector of names? Or allow someone to request it as String-only so there's
 
 	// no recycle burden?
@@ -272,7 +254,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 * 
 	 * @param server
 	 *            The name of the server containing the Administration Requests database (ADMIN4.NSF). An empty string means the local
-	 *            computer. The server must contain a replica of the Certification Log. You must have access privileges to the Domino®
+	 *            computer. The server must contain a replica of the Certification Log. You must have access privileges to the Dominoï¿½
 	 *            Directory on the server for Administration Process requests that use it.
 	 * 
 	 * @return The newly created {@link org.openntf.domino.AdministrationProcess} object.
@@ -321,7 +303,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 * @return The newly created {@link org.openntf.domino.DateRange} object.
 	 */
 	@Override
-	public lotus.domino.DateRange createDateRange(DateTime startTime, DateTime endTime);
+	public lotus.domino.DateRange createDateRange(lotus.domino.DateTime startTime, lotus.domino.DateTime endTime);
 
 	/**
 	 * Creates a DateTime object that represents a specified date and time.
@@ -402,7 +384,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 * @see lotus.domino.Session#createNewsletter(lotus.domino.DocumentCollection)
 	 */
 	@Override
-	public Newsletter createNewsletter(DocumentCollection collection);
+	public Newsletter createNewsletter(lotus.domino.DocumentCollection collection);
 
 	/*
 	 * (non-Javadoc)
