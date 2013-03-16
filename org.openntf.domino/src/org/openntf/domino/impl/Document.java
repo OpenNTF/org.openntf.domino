@@ -1711,7 +1711,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				if (value instanceof Externalizable) {
 					// TODO Implement Externalizable storage
 				} else if (value instanceof Serializable) {
-					DominoUtils.saveState((Serializable) value, getDelegate(), itemName);
+					DominoUtils.saveState((Serializable) value, this, itemName);
 					result = getDelegate().getFirstItem(itemName);
 				} else if (value.getClass().getName().equals("javax.faces.component.StateHolder")) {
 					Class<?> stateHolderClass = Class.forName("javax.faces.component.StateHolder");
@@ -1719,7 +1719,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
 					Method saveState = stateHolderClass.getMethod("saveState", facesContextClass);
 					Serializable state = (Serializable) saveState.invoke(value, getCurrentInstance.invoke(null));
-					DominoUtils.saveState(state, getDelegate(), itemName);
+					DominoUtils.saveState(state, this, itemName);
 					result = getDelegate().getFirstItem(itemName);
 				}
 
