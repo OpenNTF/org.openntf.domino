@@ -534,4 +534,8 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		return cal_.getTime();
 	}
 
+	@Override
+	public String toString() {
+		return cal_.getTime().toString();
+	}
 }
