@@ -17,12 +17,11 @@ package org.openntf.domino.iterators;
 
 import java.util.Iterator;
 
-import lotus.domino.NotesException;
-
 import org.openntf.domino.Base;
 import org.openntf.domino.Database;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Session;
+import org.openntf.domino.View;
 import org.openntf.domino.ViewEntryCollection;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -34,21 +33,21 @@ import org.openntf.domino.utils.Factory;
  * @param <T>
  *            the generic type
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings( { "rawtypes" })
 public abstract class AbstractDominoIterator<T> implements Iterator<T> {
-	
+
 	/** The server name_. */
 	private String serverName_;
-	
+
 	/** The file path_. */
 	private String filePath_;
-	
+
 	/** The collection_. */
-	private Base collection_;
-	
+	private Base<?> collection_;
+
 	/** The session_. */
 	private transient Session session_;
-	
+
 	/** The database_. */
 	private transient Database database_;
 
@@ -58,7 +57,7 @@ public abstract class AbstractDominoIterator<T> implements Iterator<T> {
 	 * @param collection
 	 *            the collection
 	 */
-	protected AbstractDominoIterator(Base collection) {
+	protected AbstractDominoIterator(Base<?> collection) {
 		setCollection(collection);
 	}
 
@@ -158,7 +157,7 @@ public abstract class AbstractDominoIterator<T> implements Iterator<T> {
 	 * 
 	 * @return the collection
 	 */
-	public Base getCollection() {
+	public Base<?> getCollection() {
 		return collection_;
 	}
 
@@ -168,26 +167,18 @@ public abstract class AbstractDominoIterator<T> implements Iterator<T> {
 	 * @param collection
 	 *            the new collection
 	 */
-	public void setCollection(Base collection) {
+	public void setCollection(Base<?> collection) {
 		if (collection != null) {
 			if (collection instanceof DocumentCollection) {
 				org.openntf.domino.Database parent = ((org.openntf.domino.DocumentCollection) collection).getParent();
 				database_ = Factory.fromLotus(parent, Database.class, parent);
 				session_ = Factory.fromLotus(database_.getParent(), Session.class, parent.getParent()); // FIXME NTF - this is suboptimal,
-																										// but we still need to
+				// but we still need to
 				// sort out the parent/child pattern
 			} else if (collection instanceof ViewEntryCollection) {
-				lotus.domino.View vw = ((ViewEntryCollection) collection).getParent();
-				try {
-					database_ = Factory.fromLotus(vw.getParent(), org.openntf.domino.Database.class, null); // FIXME NTF -- just trying to
-																											// compile!!!
-					session_ = Factory.fromLotus(database_.getParent(), Session.class, database_.getParent()); // FIXME NTF - this is
-																												// suboptimal, but we still
-																												// need
-					// to sort out the parent/child pattern
-				} catch (NotesException e) {
-					DominoUtils.handleException(e);
-				}
+				View vw = ((ViewEntryCollection) collection).getParent();
+				database_ = vw.getParent();
+				session_ = Factory.getSession(database_);
 			}
 			if (database_ != null) {
 				setDatabase(database_);

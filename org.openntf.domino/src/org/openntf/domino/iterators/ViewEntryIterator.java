@@ -80,8 +80,7 @@ public class ViewEntryIterator extends AbstractDominoIterator<ViewEntry> {
 		ViewEntry currentEntry = getCurrentEntry();
 		ViewEntry nextEntry = null;
 		try {
-			nextEntry = ((currentEntry == null) ? (isDone() ? null : getCollection().getFirstEntry()) : getCollection().getNextEntry(
-					currentEntry));
+			nextEntry = ((currentEntry == null) ? (isDone() ? null : getCollection().getFirstEntry()) : getCollection().getNextEntry());
 			result = (nextEntry != null);
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
