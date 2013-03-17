@@ -15,9 +15,8 @@
  */
 package org.openntf.domino.iterators;
 
-import lotus.domino.ViewEntry;
-
 import org.openntf.domino.Base;
+import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewEntryCollection;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -26,15 +25,18 @@ import org.openntf.domino.utils.DominoUtils;
  * The Class ViewEntryIterator.
  */
 public class ViewEntryIterator extends AbstractDominoIterator<ViewEntry> {
-	
+
 	/** The current entry_. */
 	private transient ViewEntry currentEntry_;
-	
+
 	/** The started_. */
 	private boolean started_;
-	
+
 	/** The done_. */
 	private boolean done_;
+
+	private int count_ = 0;
+	private int currentIndex_ = 0;
 
 	/**
 	 * Instantiates a new view entry iterator.
@@ -44,9 +46,14 @@ public class ViewEntryIterator extends AbstractDominoIterator<ViewEntry> {
 	 */
 	public ViewEntryIterator(ViewEntryCollection collection) {
 		super(collection);
+
+		// TODO replace this with a less-expensive operation
+		count_ = collection.getCount();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.iterators.AbstractDominoIterator#getCollection()
 	 */
 	@Override
@@ -68,23 +75,13 @@ public class ViewEntryIterator extends AbstractDominoIterator<ViewEntry> {
 		return currentEntry_;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.Iterator#hasNext()
 	 */
 	public boolean hasNext() {
-		boolean result = false;
-		ViewEntry currentEntry = getCurrentEntry();
-		ViewEntry nextEntry = null;
-		try {
-			nextEntry = ((currentEntry == null) ? (isDone() ? null : getCollection().getFirstEntry()) : getCollection().getNextEntry(
-					currentEntry));
-			result = (nextEntry != null);
-		} catch (Throwable t) {
-			DominoUtils.handleException(t);
-		} finally {
-			DominoUtils.incinerate(nextEntry);
-		}
-		return result;
+		return currentIndex_ < count_;
 	}
 
 	/**
@@ -105,24 +102,29 @@ public class ViewEntryIterator extends AbstractDominoIterator<ViewEntry> {
 		return started_;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.Iterator#next()
 	 */
+	@SuppressWarnings("deprecation")
 	public ViewEntry next() {
 		ViewEntry result = null;
 		ViewEntry currentEntry = getCurrentEntry();
 		try {
 			result = ((currentEntry == null) ? getCollection().getFirstEntry() : getCollection().getNextEntry(currentEntry));
+			currentIndex_++;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		} finally {
-			DominoUtils.incinerate(currentEntry);
 			setCurrentEntry(result);
 		}
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.Iterator#remove()
 	 */
 	public void remove() {

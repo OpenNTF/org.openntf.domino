@@ -648,7 +648,12 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public Vector<Object> getColumnValues() {
 		try {
-			return Factory.wrapColumnValues(getDelegate().getColumnValues());
+			Vector<?> values = getDelegate().getColumnValues();
+			if (values != null) {
+				return Factory.wrapColumnValues(values);
+			} else {
+				return null;
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

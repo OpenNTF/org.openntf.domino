@@ -44,7 +44,9 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AgentContext#getCurrentAgent()
 	 */
 	@Override
@@ -57,7 +59,9 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AgentContext#getCurrentDatabase()
 	 */
 	@Override
@@ -70,7 +74,9 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AgentContext#getDocumentContext()
 	 */
 	@Override
@@ -83,7 +89,9 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AgentContext#getEffectiveUserName()
 	 */
 	@Override
@@ -96,7 +104,9 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AgentContext#getLastExitStatus()
 	 */
 	@Override
@@ -109,7 +119,9 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 		return 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AgentContext#getLastRun()
 	 */
 	@Override
@@ -122,7 +134,13 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 		return null;
 	}
 
-	/* (non-Javadoc)
+	public Session getParentSession() {
+		return (Session) super.getParent();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AgentContext#getSavedData()
 	 */
 	@Override
@@ -135,7 +153,9 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AgentContext#getUnprocessedDocuments()
 	 */
 	@Override
@@ -148,7 +168,9 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AgentContext#unprocessedFTSearch(java.lang.String, int)
 	 */
 	@Override
@@ -161,7 +183,9 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AgentContext#unprocessedFTSearch(java.lang.String, int, int, int)
 	 */
 	@Override
@@ -174,7 +198,9 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AgentContext#unprocessedFTSearchRange(java.lang.String, int, int)
 	 */
 	@Override
@@ -187,7 +213,9 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AgentContext#unprocessedFTSearchRange(java.lang.String, int, int, int, int)
 	 */
 	@Override
@@ -201,7 +229,9 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AgentContext#unprocessedSearch(java.lang.String, lotus.domino.DateTime, int)
 	 */
 	@Override
@@ -215,7 +245,9 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AgentContext#updateProcessedDoc(lotus.domino.Document)
 	 */
 	@Override
