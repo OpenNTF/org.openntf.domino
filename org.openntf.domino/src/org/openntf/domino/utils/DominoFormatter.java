@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Logger;
@@ -156,7 +157,12 @@ public class DominoFormatter extends ThreadLocal<Object> {
 	public Date parseDateFromString(String dateString) {
 		synchronized (df_) {
 			df_.applyPattern(dateTimeFormat_);
-			return df_.parse(dateString);
+			try {
+				return df_.parse(dateString);
+			} catch (ParseException e) {
+				DominoUtils.handleException(e);
+				return null;
+			}
 		}
 	}
 

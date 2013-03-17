@@ -1,9 +1,12 @@
 package org.openntf.domino.tests.paul;
 
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.openntf.domino.Session;
 import org.openntf.domino.impl.DateTime;
+import org.openntf.domino.logging.LogUtils;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -12,6 +15,17 @@ public enum DominoAPIScratchTest {
 	INSTANCE;
 
 	private DominoAPIScratchTest() {
+
+	}
+
+	static class LoggingTest implements Runnable {
+		private final static Logger log_ = Logger.getLogger("org.openntf.domino");
+
+		@Override
+		public void run() {
+			LogUtils.setupLogger(false, "");
+			log_.log(Level.WARNING, "", new Throwable());
+		}
 
 	}
 
@@ -67,8 +81,10 @@ public enum DominoAPIScratchTest {
 	 */
 	public static void main(String[] args) {
 		int delay = 500;
-		DominoThread dt = new DominoThread(new DateTimeTest(), "Scratch Test");
+		DominoThread dt = new DominoThread(new DateTimeTest(), "DateTime Test");
 		dt.start();
+		DominoThread dt1 = new DominoThread(new LoggingTest(), "Logging Test");
+		dt1.start();
 		try {
 			Thread.sleep(delay);
 		} catch (InterruptedException e1) {
