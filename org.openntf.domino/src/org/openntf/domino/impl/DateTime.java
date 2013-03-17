@@ -253,6 +253,44 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.openntf.domino.DateTime#isEqual(org.openntf.domino.DateTime)
+	 */
+	@Override
+	public boolean equals(org.openntf.domino.DateTime comparDate) {
+		return cal_.equals(comparDate.toJavaCal());
+	}
+
+	@Override
+	public boolean equalsIgnoreDate(org.openntf.domino.DateTime comparDate) {
+		Calendar c1 = cal_;
+		c1.set(Calendar.DAY_OF_MONTH, 1);
+		c1.set(Calendar.MONTH, 1);
+		c1.set(Calendar.YEAR, 2000);
+		Calendar c2 = comparDate.toJavaCal();
+		c2.set(Calendar.DAY_OF_MONTH, 1);
+		c2.set(Calendar.MONTH, 1);
+		c2.set(Calendar.YEAR, 2000);
+		return c1.equals(c2);
+	}
+
+	@Override
+	public boolean equalsIgnoreTime(org.openntf.domino.DateTime comparDate) {
+		Calendar c1 = cal_;
+		c1.set(Calendar.HOUR_OF_DAY, 0);
+		c1.set(Calendar.MINUTE, 0);
+		c1.set(Calendar.SECOND, 0);
+		c1.set(Calendar.MILLISECOND, 0);
+		Calendar c2 = comparDate.toJavaCal();
+		c2.set(Calendar.HOUR_OF_DAY, 0);
+		c2.set(Calendar.MINUTE, 0);
+		c2.set(Calendar.SECOND, 0);
+		c2.set(Calendar.MILLISECOND, 0);
+		return c1.equals(c2);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DateTime#getDateOnly()
 	 */
 	public String getDateOnly() {
@@ -314,6 +352,25 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	public String getZoneTime() {
 		// TODO NTF - find out what this really does
 		throw new UnimplementedException("getZoneTime is not yet implemented.");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.DateTime#isAfter(org.openntf.domino.DateTime)
+	 */
+	public boolean isAfter(org.openntf.domino.DateTime comparDate) {
+		return cal_.after(comparDate.toJavaCal());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.DateTime#isBefore(org.openntf.domino.DateTime)
+	 */
+	@Override
+	public boolean isBefore(org.openntf.domino.DateTime comparDate) {
+		return cal_.before(comparDate.toJavaCal());
 	}
 
 	/*
@@ -461,6 +518,15 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 */
 	public Date toJavaDate() {
 		return cal_.getTime();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.DateTime#toJavaCal()
+	 */
+	public Calendar toJavaCal() {
+		return cal_;
 	}
 
 }
