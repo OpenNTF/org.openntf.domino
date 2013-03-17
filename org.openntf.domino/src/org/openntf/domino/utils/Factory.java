@@ -40,7 +40,9 @@ public enum Factory {
 	 */
 	static class Counter extends ThreadLocal<Integer> {
 		// TODO NTF - I'm open to a faster implementation of this. Maybe a mutable int of some kind?
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.ThreadLocal#initialValue()
 		 */
 		@Override
@@ -243,7 +245,8 @@ public enum Factory {
 		} else if (lotus instanceof lotus.domino.ViewEntry) {
 			result = (T) new org.openntf.domino.impl.ViewEntry((lotus.domino.ViewEntry) lotus, parent);
 		} else if (lotus instanceof lotus.domino.ViewEntryCollection) {
-			result = (T) new org.openntf.domino.impl.ViewEntryCollection((lotus.domino.ViewEntryCollection) lotus, (org.openntf.domino.View)parent);
+			result = (T) new org.openntf.domino.impl.ViewEntryCollection((lotus.domino.ViewEntryCollection) lotus,
+					(org.openntf.domino.View) parent);
 		} else if (lotus instanceof lotus.domino.ViewNavigator) {
 			result = (T) new org.openntf.domino.impl.ViewNavigator((lotus.domino.ViewNavigator) lotus, parent);
 		}
@@ -443,13 +446,13 @@ public enum Factory {
 		} else if (base instanceof org.openntf.domino.Form) {
 			result = ((org.openntf.domino.Form) base).getParent();
 		} else if (base instanceof org.openntf.domino.ViewEntry) {
-			org.openntf.domino.Base<?> intermediary = ((org.openntf.domino.ViewEntry)base).getParent();
-			if(intermediary instanceof org.openntf.domino.ViewEntryCollection) {
-				result = ((org.openntf.domino.ViewEntryCollection)intermediary).getParent().getParent();
-			} else if(intermediary instanceof org.openntf.domino.ViewNavigator) {
-				result = ((org.openntf.domino.ViewNavigator)intermediary).getParentView().getParent();
-			} else if(intermediary instanceof org.openntf.domino.View) {
-				result = ((org.openntf.domino.View)intermediary).getParent();
+			org.openntf.domino.Base<?> intermediary = ((org.openntf.domino.ViewEntry) base).getParent();
+			if (intermediary instanceof org.openntf.domino.ViewEntryCollection) {
+				result = ((org.openntf.domino.ViewEntryCollection) intermediary).getParent().getParent();
+			} else if (intermediary instanceof org.openntf.domino.ViewNavigator) {
+				result = ((org.openntf.domino.ViewNavigator) intermediary).getParentView().getParent();
+			} else if (intermediary instanceof org.openntf.domino.View) {
+				result = ((org.openntf.domino.View) intermediary).getParent();
 			} else {
 				throw new UndefinedDelegateTypeException();
 			}
@@ -468,8 +471,8 @@ public enum Factory {
 	 */
 	public static org.openntf.domino.Session getSession(org.openntf.domino.Base<?> base) {
 		org.openntf.domino.Session result = null;
-		if(base instanceof org.openntf.domino.AgentContext) {
-			result = ((org.openntf.domino.AgentContext)base).getParentSession();
+		if (base instanceof org.openntf.domino.AgentContext) {
+			result = ((org.openntf.domino.AgentContext) base).getParentSession();
 		} else if (base instanceof org.openntf.domino.Session) {
 			result = (org.openntf.domino.Session) base;
 		} else if (base instanceof org.openntf.domino.Database) {
@@ -488,6 +491,8 @@ public enum Factory {
 			result = ((org.openntf.domino.Form) base).getParent().getParent();
 		} else if (base instanceof org.openntf.domino.Name) {
 			result = ((org.openntf.domino.Name) base).getParent();
+		} else if (base instanceof org.openntf.domino.DbDirectory) {
+			result = ((org.openntf.domino.DbDirectory) base).getParent();
 		} else {
 			throw new UndefinedDelegateTypeException();
 		}
