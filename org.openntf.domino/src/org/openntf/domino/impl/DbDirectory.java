@@ -169,6 +169,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		Database template = getFirstDatabase(TEMPLATE);
 		while (template != null) {
 			result.add(template);
+			template = getNextDatabase();
 		}
 		return result;
 	}
@@ -199,6 +200,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		Database database = getFirstDatabase(DATABASE);
 		while (database != null) {
 			result.add(database);
+			database = getNextDatabase();
 		}
 		return result.iterator();
 	}
