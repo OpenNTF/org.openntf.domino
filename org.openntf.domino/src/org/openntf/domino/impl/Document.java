@@ -760,9 +760,35 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public Vector<Object> getItemValue(String name) {
 		try {
+			// Check the item type to see if it's MIME - if so, then see if it's a MIMEBean
+			// This is a bit more expensive than I'd like
+			lotus.domino.Session session = Factory.getSession(this);
+			boolean convertMime = session.isConvertMIME();
+			session.setConvertMIME(false);
+			Item item = this.getFirstItem(name);
+			if (item.getType() == Item.MIME_PART) {
+				MIMEEntity entity = this.getMIMEEntity(name);
+				MIMEHeader javaClass = entity.getNthHeader("X-Java-Class");
+				if (javaClass != null) {
+					// Then it's a MIMEBean
+					Serializable resultObj = DominoUtils.restoreState(this, name);
+					// If it's a List, return it - otherwise, store it in a Vector for consistency
+					if (resultObj instanceof java.util.List) {
+						return new java.util.Vector<Object>((java.util.List<?>) resultObj);
+					}
+					Vector<Object> result = new Vector<Object>(1);
+					result.add(resultObj);
+					session.setConvertMIME(convertMime);
+					return result;
+				}
+			}
+			session.setConvertMIME(convertMime);
 			return Factory.wrapColumnValues(getDelegate().getItemValue(name));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} catch (Throwable t) {
+			// From DominoUtils.restoreState(...)
+			DominoUtils.handleException(t);
 		}
 		return null;
 	}
@@ -1704,8 +1730,18 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			try {
 				if (value instanceof Iterable) {
 					Vector<Object> resultList = new Vector<Object>();
+					Class<?> objectClass = null;
 					for (Object valNode : (Iterable<?>) value) {
-						resultList.add(toDominoFriendly(valNode, this));
+						Object domNode = toDominoFriendly(valNode, this);
+						if (objectClass == null) {
+							objectClass = domNode.getClass();
+						} else {
+							if (!objectClass.equals(domNode.getClass())) {
+								// Domino only allows uniform lists
+								throw new IllegalArgumentException();
+							}
+						}
+						resultList.add(domNode);
 					}
 					result = getDelegate().replaceItemValue(itemName, resultList);
 				} else {
@@ -1756,6 +1792,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 		// Now for the illegal-but-convertible types
 		if (value instanceof Number) {
+			// TODO Check if this is greater than what Domino can handle and serialize if so
 			return ((Number) value).doubleValue();
 		} else if (value instanceof Date) {
 			return toLotus(Factory.getSession(context).createDateTime((Date) value));
