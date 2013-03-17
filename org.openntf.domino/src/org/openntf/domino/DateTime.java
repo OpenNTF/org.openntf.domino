@@ -130,6 +130,29 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	@Override
 	public void convertToZone(int zone, boolean isDST);
 
+	/**
+	 * Compares current date with another and returns boolean of whether they are the same.
+	 * 
+	 * @param comparDate
+	 *            DateTime to compare to current date
+	 * @return boolean, whether or not the two dates are the same
+	 */
+	public boolean equals(DateTime comparDate);
+
+	/**
+	 * @param comparDate
+	 *            DateTime to compare to the current DateTime
+	 * @return boolean is time is the same, including millisecond
+	 */
+	public boolean equalsIgnoreDate(DateTime comparDate);
+
+	/**
+	 * @param comparDate
+	 *            DateTime to compare to the current DateTime
+	 * @return boolean is date is the same
+	 */
+	public boolean equalsIgnoreTime(DateTime comparDate);
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -185,6 +208,24 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 */
 	@Override
 	public String getZoneTime();
+
+	/**
+	 * Compares current date with another and returns boolean of whether current date is after parameter.
+	 * 
+	 * @param comparDate
+	 *            DateTime to compare to current date
+	 * @return boolean, whether or not current date is after the parameter
+	 */
+	public boolean isAfter(DateTime comparDate);
+
+	/**
+	 * Compares current date with another and returns boolean of whether current date is before parameter.
+	 * 
+	 * @param comparDate
+	 *            DateTime to compare to current date
+	 * @return boolean, whether or not current date is before the parameter
+	 */
+	public boolean isBefore(DateTime comparDate);
 
 	/*
 	 * (non-Javadoc)
@@ -289,4 +330,9 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 */
 	@Override
 	public Date toJavaDate();
+
+	/**
+	 * @return Java Calendar object, same as used internally by org.openntf.domino.DateTime class
+	 */
+	public Calendar toJavaCal();
 }
