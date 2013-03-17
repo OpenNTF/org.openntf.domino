@@ -15,97 +15,136 @@
  */
 package org.openntf.domino;
 
+import java.util.Collection;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface DbDirectory.
  */
 public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domino.DbDirectory {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DbDirectory#createDatabase(java.lang.String)
 	 */
 	@Override
 	public Database createDatabase(String dbFile);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DbDirectory#createDatabase(java.lang.String, boolean)
 	 */
 	@Override
 	public Database createDatabase(String dbFile, boolean open);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DbDirectory#getClusterName()
 	 */
 	@Override
 	public String getClusterName();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DbDirectory#getClusterName(java.lang.String)
 	 */
 	@Override
 	public String getClusterName(String server);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DbDirectory#getFirstDatabase(int)
 	 */
 	@Override
 	public Database getFirstDatabase(int type);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DbDirectory#getName()
 	 */
 	@Override
 	public String getName();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DbDirectory#getNextDatabase()
 	 */
 	@Override
 	public Database getNextDatabase();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DbDirectory#getParent()
 	 */
 	@Override
 	public Session getParent();
 
-	/* (non-Javadoc)
+	/*
+	 * Convenience method for obtaining only the templates
+	 * 
+	 * @return {@link java.util.Collection} of type {@link org.openntf.domino.Database}
+	 */
+	public Collection<Database> getTemplates();
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DbDirectory#isHonorShowInOpenDatabaseDialog()
 	 */
 	@Override
 	public boolean isHonorShowInOpenDatabaseDialog();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DbDirectory#openDatabase(java.lang.String)
 	 */
 	@Override
 	public Database openDatabase(String dbFile);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DbDirectory#openDatabase(java.lang.String, boolean)
 	 */
 	@Override
 	public Database openDatabase(String dbFile, boolean failover);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DbDirectory#openDatabaseByReplicaID(java.lang.String)
 	 */
 	@Override
 	public Database openDatabaseByReplicaID(String replicaId);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DbDirectory#openDatabaseIfModified(java.lang.String, lotus.domino.DateTime)
 	 */
 	@Override
 	public Database openDatabaseIfModified(String dbFile, lotus.domino.DateTime date);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DbDirectory#openMailDatabase()
 	 */
 	@Override
 	public Database openMailDatabase();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DbDirectory#setHonorShowInOpenDatabaseDialog(boolean)
 	 */
 	@Override
