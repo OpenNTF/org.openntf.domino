@@ -71,6 +71,13 @@ public enum DominoIteratorScratchTest {
 		public void run() {
 			long start = System.nanoTime();
 			Session s = Factory.getSession();
+			if (s == null) {
+				try {
+					s = Factory.fromLotus(lotus.domino.NotesFactory.createTrustedSession(), Session.class, null);
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
 			String server = s.getServerName();
 			DbDirectory dbDirectory = s.getDbDirectory(server);
 
@@ -80,18 +87,19 @@ public enum DominoIteratorScratchTest {
 			System.out.println("Thread " + Thread.currentThread().getName() + " BEGINNING ITERATION of Databases");
 			int dbCount = 0;
 			for (Database database : dbDirectory) {
-				if (!database.isOpen()) {
-					database.open();
+				if (database != null) {
+					if (!database.isOpen()) {
+						database.open();
+					}
+
+					DateTime toxic = database.getCreated();
+					dateCount++;
+
+					for (ACLEntry entry : database.getACL()) {
+						Name entryName = entry.getNameObject();
+						nameCount++;
+					}
 				}
-
-				DateTime toxic = database.getCreated();
-				dateCount++;
-
-				for (ACLEntry entry : database.getACL()) {
-					Name entryName = entry.getNameObject();
-					nameCount++;
-				}
-
 				dbCount++;
 			}
 			System.out.println("ENDING ITERATION of Databases");
@@ -99,19 +107,21 @@ public enum DominoIteratorScratchTest {
 			System.out.println("Thread " + Thread.currentThread().getName() + " BEGINNING ITERATION of Templates");
 			int templateCount = 0;
 			for (Database template : dbDirectory.getTemplates()) {
-				if (!template.isOpen()) {
-					template.open();
+				if (template != null) {
+					if (!template.isOpen()) {
+						template.open();
+					}
+
+					DateTime toxic = template.getCreated();
+					dateCount++;
+
+					for (ACLEntry entry : template.getACL()) {
+						Name entryName = entry.getNameObject();
+						nameCount++;
+					}
+
+					templateCount++;
 				}
-
-				DateTime toxic = template.getCreated();
-				dateCount++;
-
-				for (ACLEntry entry : template.getACL()) {
-					Name entryName = entry.getNameObject();
-					nameCount++;
-				}
-
-				templateCount++;
 			}
 			System.out.println("ENDING ITERATION of Templates");
 
