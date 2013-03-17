@@ -22,6 +22,7 @@ import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
@@ -768,13 +769,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			Item item = this.getFirstItem(name);
 			if (item.getType() == Item.MIME_PART) {
 				MIMEEntity entity = this.getMIMEEntity(name);
-				MIMEHeader javaClass = entity.getNthHeader("X-Java-Class");
-				if (javaClass != null) {
+				MIMEHeader contentType = entity.getNthHeader("Content-Type");
+				if (contentType != null && contentType.getHeaderVal().equals("application/x-java-serialized-object")) {
 					// Then it's a MIMEBean
 					Serializable resultObj = DominoUtils.restoreState(this, name);
 					// If it's a List, return it - otherwise, store it in a Vector for consistency
-					if (resultObj instanceof java.util.List) {
-						return new java.util.Vector<Object>((java.util.List<?>) resultObj);
+					if (resultObj instanceof List) {
+						return new java.util.Vector<Object>((List<?>) resultObj);
 					}
 					Vector<Object> result = new Vector<Object>(1);
 					result.add(resultObj);
@@ -1728,10 +1729,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		try {
 			lotus.domino.Item result = null;
 			try {
-				if (value instanceof Iterable) {
+				if (value instanceof List) {
 					Vector<Object> resultList = new Vector<Object>();
 					Class<?> objectClass = null;
-					for (Object valNode : (Iterable<?>) value) {
+					for (Object valNode : (List<?>) value) {
 						Object domNode = toDominoFriendly(valNode, this);
 						if (objectClass == null) {
 							objectClass = domNode.getClass();
@@ -1762,6 +1763,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					Serializable state = (Serializable) saveState.invoke(value, getCurrentInstance.invoke(null));
 					DominoUtils.saveState(state, this, itemName);
 					result = getDelegate().getFirstItem(itemName);
+				} else if (value instanceof lotus.domino.DocumentCollection) {
+					// TODO implement this
+				} else if (value instanceof lotus.domino.NoteCollection) {
+					// TODO implement this
 				}
 
 			}
