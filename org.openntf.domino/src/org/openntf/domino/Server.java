@@ -206,21 +206,21 @@ public interface Server {
 	/**
 	 * Checks if the current Domino server is a member of a cluster.
 	 * 
-	 * @return True if the Domino server is a member of a cluster, otherwise returns false.
+	 * @return <code>True</code> if the Domino server is a member of a cluster, otherwise returns <code>false</code>.
 	 */
 	public boolean isCluster();
 
 	/**
 	 * Checks if the current Domino server is a Notes client or a real Domino server.
 	 * 
-	 * @return True if the current server is a Notes client, otherwise returns false.
+	 * @return <code>True</code> if the current server is a Notes client, otherwise returns <code>false</code>.
 	 */
 	public boolean isLocal();
 
 	/**
 	 * Checks if the current Domino server runs the Social Edition (SE) addons.
 	 * 
-	 * @return True if the Social Edition components are installed, otherwise returns false.
+	 * @return <code>True</code> if the Social Edition components are installed, otherwise returns <code>false</code>.
 	 */
 	public boolean isSocial();
 
@@ -239,7 +239,7 @@ public interface Server {
 	 * @param db
 	 *            The {@link org.openntf.domino.Database} which's design should be refreshed.
 	 * @param refresh
-	 *            True if the database refresh should enforced, otherwise false.
+	 *            <code>True</code> if the database refresh should enforced, otherwise <code>false</code>.
 	 */
 	public void refreshDesign(Database db, boolean refresh);
 
@@ -258,7 +258,7 @@ public interface Server {
 	 * @param dbFilePath
 	 *            The file path {@link org.openntf.domino.Database} which's design should be refreshed.
 	 * @param refresh
-	 *            True if the database refresh should enforced, otherwise false.
+	 *            <code>True</code> if the database refresh should enforced, otherwise <code>false</code>.
 	 */
 	public void refreshDesign(String dbFilePath, boolean refresh);
 
@@ -277,7 +277,7 @@ public interface Server {
 	 * @param db
 	 *            The {@link org.openntf.domino.Database} which's design should be refreshed.
 	 * @param refresh
-	 *            True if the database refresh should enforced, otherwise false.
+	 *            <code>True</code> if the database refresh should enforced, otherwise <code>false</code>.
 	 */
 	public void refreshDesignFromLocal(Database db, boolean refresh);
 
@@ -296,7 +296,7 @@ public interface Server {
 	 * @param dbFilePath
 	 *            The file path {@link org.openntf.domino.Database} which's design should be refreshed.
 	 * @param refresh
-	 *            True if the database refresh should enforced, otherwise false.
+	 *            <code>True</code> if the database refresh should enforced, otherwise <code>false</code>.
 	 */
 	public void refreshDesignFromLocal(String dbFilePath, boolean refresh);
 
@@ -319,7 +319,7 @@ public interface Server {
 	 * @param serverName
 	 *            The name of the template server
 	 * @param refresh
-	 *            True if the database refresh should enforced, otherwise false.
+	 *            <code>True</code> if the database refresh should enforced, otherwise <code>false</code>.
 	 */
 	public void refreshDesignFromServer(Database db, String serverName, boolean refresh);
 
@@ -342,7 +342,7 @@ public interface Server {
 	 * @param serverName
 	 *            The name of the template server
 	 * @param refresh
-	 *            True if the database refresh should enforced, otherwise false.
+	 *            <code>True</code> if the database refresh should enforced, otherwise <code>false</code>.
 	 */
 	public void refreshDesignFromServer(String dbFilePath, String serverName, boolean refresh);
 
