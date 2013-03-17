@@ -959,7 +959,6 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 * 
 	 * @see org.openntf.domino.View#getColumns()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<org.openntf.domino.ViewColumn> getColumns() {
 		try {
