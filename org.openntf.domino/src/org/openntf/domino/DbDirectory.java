@@ -16,12 +16,13 @@
 package org.openntf.domino;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Interface DbDirectory.
  */
-public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domino.DbDirectory {
+public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domino.DbDirectory, Iterable<Database> {
 
 	/*
 	 * (non-Javadoc)
@@ -109,6 +110,13 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 	 */
 	@Override
 	public Database openDatabase(String dbFile);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Iterable#iterator()
+	 */
+	public Iterator<Database> iterator();
 
 	/*
 	 * (non-Javadoc)

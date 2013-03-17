@@ -16,6 +16,7 @@
 package org.openntf.domino.impl;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import lotus.domino.NotesException;
 
@@ -185,6 +186,21 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 			DominoUtils.handleException(e);
 			return false;
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.DbDirectory#iterator()
+	 */
+	@Override
+	public Iterator<Database> iterator() {
+		Collection<Database> result = new DatabaseCollection();
+		Database database = getFirstDatabase(DATABASE);
+		while (database != null) {
+			result.add(database);
+		}
+		return result.iterator();
 	}
 
 	/*
