@@ -4,6 +4,7 @@ import org.openntf.domino.ACLEntry;
 import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.DbDirectory;
+import org.openntf.domino.Document;
 import org.openntf.domino.Name;
 import org.openntf.domino.Session;
 import org.openntf.domino.thread.DominoThread;
@@ -83,6 +84,7 @@ public enum DominoIteratorScratchTest {
 
 			int dateCount = 0;
 			int nameCount = 0;
+			int docCount = 0;
 
 			System.out.println("Thread " + Thread.currentThread().getName() + " BEGINNING ITERATION of Databases");
 			int dbCount = 0;
@@ -99,6 +101,11 @@ public enum DominoIteratorScratchTest {
 						Name entryName = entry.getNameObject();
 						nameCount++;
 					}
+
+					for (Document doc : database.getAllDocuments()) {
+						docCount++;
+					}
+
 				}
 				dbCount++;
 			}
@@ -126,7 +133,7 @@ public enum DominoIteratorScratchTest {
 			System.out.println("ENDING ITERATION of Templates");
 
 			System.out.println("Thread " + Thread.currentThread().getName() + " processed " + (dbCount + templateCount) + " databases, "
-					+ nameCount + " names, and " + dateCount + " datetimes without recycling.");
+					+ docCount + " documents, " + nameCount + " names, and " + dateCount + " datetimes without recycling.");
 			long elapsed = System.nanoTime() - start;
 			System.out.println("Thread " + Thread.currentThread().getName() + " elapsed time: " + elapsed / 1000000 + "ms");
 
