@@ -262,25 +262,29 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 
 	@Override
 	public boolean equalsIgnoreDate(org.openntf.domino.DateTime comparDate) {
-		Calendar c1 = cal_;
+		Calendar c1 = GregorianCalendar.getInstance();
+		Calendar c2 = GregorianCalendar.getInstance();
+		c1.setTime(toJavaDate());
 		c1.set(Calendar.DAY_OF_MONTH, 1);
-		c1.set(Calendar.MONTH, 1);
+		c1.set(Calendar.MONTH, 0);
 		c1.set(Calendar.YEAR, 2000);
-		Calendar c2 = comparDate.toJavaCal();
+		c2.setTime(comparDate.toJavaDate());
 		c2.set(Calendar.DAY_OF_MONTH, 1);
-		c2.set(Calendar.MONTH, 1);
+		c2.set(Calendar.MONTH, 0);
 		c2.set(Calendar.YEAR, 2000);
 		return c1.equals(c2);
 	}
 
 	@Override
 	public boolean equalsIgnoreTime(org.openntf.domino.DateTime comparDate) {
-		Calendar c1 = cal_;
+		Calendar c1 = GregorianCalendar.getInstance();
+		Calendar c2 = GregorianCalendar.getInstance();
+		c1.setTime(toJavaDate());
 		c1.set(Calendar.HOUR_OF_DAY, 0);
 		c1.set(Calendar.MINUTE, 0);
 		c1.set(Calendar.SECOND, 0);
 		c1.set(Calendar.MILLISECOND, 0);
-		Calendar c2 = comparDate.toJavaCal();
+		c2.setTime(comparDate.toJavaDate());
 		c2.set(Calendar.HOUR_OF_DAY, 0);
 		c2.set(Calendar.MINUTE, 0);
 		c2.set(Calendar.SECOND, 0);
