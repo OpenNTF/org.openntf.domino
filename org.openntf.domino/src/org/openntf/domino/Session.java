@@ -123,7 +123,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 */
 	@Override
 	@Deprecated
-	@Legacy( { Legacy.INTERFACES_WARNING })
+	@Legacy({ Legacy.INTERFACES_WARNING })
 	public Vector<Database> getAddressBooks();
 
 	/**
@@ -149,7 +149,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 */
 	@Override
 	@Deprecated
-	@Legacy( { Legacy.INTERFACES_WARNING })
+	@Legacy({ Legacy.INTERFACES_WARNING })
 	public Vector<DateRange> freeTimeSearch(lotus.domino.DateRange window, int duration, Object names, boolean firstFit);
 
 	/**
@@ -202,7 +202,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 */
 	@Override
 	@Deprecated
-	@Legacy( { Legacy.INTERFACES_WARNING })
+	@Legacy({ Legacy.INTERFACES_WARNING })
 	public Vector<Name> getUserGroupNameList(); // TODO should we use a Vector of names? Or allow someone to request it as String-only so
 
 	// there's no recycle burden?
@@ -235,7 +235,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 */
 	@Override
 	@Deprecated
-	@Legacy( { Legacy.INTERFACES_WARNING })
+	@Legacy({ Legacy.INTERFACES_WARNING })
 	public Vector<Name> getUserNameList(); // TODO should we use a Vector of names? Or allow someone to request it as String-only so there's
 
 	// no recycle burden?
@@ -674,6 +674,26 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 */
 	@Override
 	public PropertyBroker getPropertyBroker();
+
+	/**
+	 * Gets a Server object from the current session.
+	 * 
+	 * @param serverName
+	 *            The name of the server which should be accessed
+	 * 
+	 * @return A {@link org.openntf.domino.Server} object
+	 */
+	public Server getServer();
+
+	/**
+	 * Gets a Server object from the current session using the specified server name.
+	 * 
+	 * @param serverName
+	 *            The name of the server which should be accessed
+	 * 
+	 * @return A {@link org.openntf.domino.Server} object
+	 */
+	public Server getServer(String serverName);
 
 	/*
 	 * (non-Javadoc)

@@ -398,7 +398,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 * @see org.openntf.domino.Session#evaluate(java.lang.String, lotus.domino.Document)
 	 */
 	@Override
-	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(String arg0, lotus.domino.Document arg1) {
 		try {
 			return getDelegate().evaluate(arg0, arg1); // TODO still needs Factory wrapper
@@ -414,7 +414,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 * @see org.openntf.domino.Session#evaluate(java.lang.String)
 	 */
 	@Override
-	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(String arg0) {
 		try {
 			return getDelegate().evaluate(arg0); // TODO still needs Factory wrapper
@@ -794,6 +794,19 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 			return null;
 
 		}
+	}
+
+	public Server getServer() {
+		try {
+			return new Server(getDelegate().getServerName());
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	public Server getServer(String serverName) {
+		return new Server(serverName);
 	}
 
 	/*
