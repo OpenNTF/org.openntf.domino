@@ -327,10 +327,24 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the base obj
 	 * @return the lotus.domino. base
 	 */
-	@SuppressWarnings("unchecked")
 	public static lotus.domino.Base toLotus(lotus.domino.Base baseObj) {
 		if (baseObj instanceof org.openntf.domino.Base) {
-			return ((Base) baseObj).getDelegate();
+			return ((Base<?, ?>) baseObj).getDelegate();
+		}
+		return baseObj;
+	}
+
+	// Convert a wrapper object to its delegate form, allowing for non-Lotus objects (e.g. for getDocumentByKey)
+	/**
+	 * To lotus.
+	 * 
+	 * @param baseObj
+	 *            the base obj
+	 * @return the lotus.domino. base version or the object itself, as appropriate
+	 */
+	public static Object toLotus(Object baseObj) {
+		if (baseObj instanceof org.openntf.domino.Base) {
+			return ((Base<?, ?>) baseObj).getDelegate();
 		}
 		return baseObj;
 	}
@@ -383,7 +397,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @param o
 	 *            the o
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings( { "rawtypes", "unchecked" })
 	public static void recycle(Object o) {
 		if (o instanceof lotus.domino.Base) {
 			if (o instanceof lotus.domino.local.NotesBase) {
