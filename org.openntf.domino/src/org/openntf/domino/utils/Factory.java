@@ -442,6 +442,17 @@ public enum Factory {
 			result = (org.openntf.domino.Database) ((org.openntf.domino.View) base).getParent();
 		} else if (base instanceof org.openntf.domino.Form) {
 			result = ((org.openntf.domino.Form) base).getParent();
+		} else if (base instanceof org.openntf.domino.ViewEntry) {
+			org.openntf.domino.Base<?> intermediary = ((org.openntf.domino.ViewEntry)base).getParent();
+			if(intermediary instanceof org.openntf.domino.ViewEntryCollection) {
+				result = ((org.openntf.domino.ViewEntryCollection)intermediary).getParent().getParent();
+			} else if(intermediary instanceof org.openntf.domino.ViewNavigator) {
+				result = ((org.openntf.domino.ViewNavigator)intermediary).getParentView().getParent();
+			} else if(intermediary instanceof org.openntf.domino.View) {
+				result = ((org.openntf.domino.View)intermediary).getParent();
+			} else {
+				throw new UndefinedDelegateTypeException();
+			}
 		} else {
 			throw new UndefinedDelegateTypeException();
 		}
