@@ -15,15 +15,11 @@
  */
 package org.openntf.domino.utils;
 
-import java.lang.ref.Reference;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
-import org.openntf.domino.impl.Base;
 import org.openntf.domino.impl.Session;
-import org.openntf.domino.thread.DominoReference;
-import org.openntf.domino.thread.DominoReferenceQueue;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -40,7 +36,9 @@ public enum Factory {
 	 */
 	static class Counter extends ThreadLocal<Integer> {
 		// TODO NTF - I'm open to a faster implementation of this. Maybe a mutable int of some kind?
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.ThreadLocal#initialValue()
 		 */
 		@Override
@@ -51,24 +49,28 @@ public enum Factory {
 		/**
 		 * Increment.
 		 */
-		public void increment() {
-			set(get() + 1);
+		public int increment() {
+			int result = get() + 1;
+			set(result);
+			return result;
 		}
 
 		/**
 		 * Decrement.
 		 */
-		public void decrement() {
-			set(get() - 1);
+		public int decrement() {
+			int result = get() - 1;
+			set(result);
+			return result;
 		}
 	};
 
 	/** The lotus counter. */
 	private static Counter lotusCounter = new Counter();
-	
+
 	/** The recycle err counter. */
 	private static Counter recycleErrCounter = new Counter();
-	
+
 	/** The auto recycle counter. */
 	private static Counter autoRecycleCounter = new Counter();
 
@@ -92,9 +94,12 @@ public enum Factory {
 	/**
 	 * Count auto recycle.
 	 */
-	public static void countAutoRecycle() {
-		if (TRACE_COUNTERS)
-			autoRecycleCounter.increment();
+	public static int countAutoRecycle() {
+		if (TRACE_COUNTERS) {
+			return autoRecycleCounter.increment();
+		} else {
+			return 0;
+		}
 	}
 
 	/**
@@ -134,9 +139,11 @@ public enum Factory {
 			return null;
 		}
 		if (lotus instanceof org.openntf.domino.Base) {
+			System.out.println("Returning an already OpenNTF object...");
 			return (T) lotus;
 		}
 		if (T.isAssignableFrom(lotus.getClass())) {
+			System.out.println("Returning an assignable object....");
 			return (T) lotus;
 		}
 
@@ -248,31 +255,14 @@ public enum Factory {
 		} else if (lotus instanceof lotus.domino.ViewNavigator) {
 			result = (T) new org.openntf.domino.impl.ViewNavigator((lotus.domino.ViewNavigator) lotus, (org.openntf.domino.Database) parent);
 		}
-		drainQueue();
+
 		if (result != null) {
-			if (TRACE_COUNTERS)
-				lotusCounter.increment();
 			return result;
-
 		}
+		// if (TRACE_COUNTERS)
+		// lotusCounter.increment();
+		//
 		throw new UndefinedDelegateTypeException();
-	}
-
-	/**
-	 * Drain queue.
-	 */
-	private static void drainQueue() {
-		DominoReferenceQueue drq = Base._getRecycleQueue();
-		Reference<?> ref = drq.poll();
-
-		while (ref != null) {
-			if (ref instanceof DominoReference) {
-				((DominoReference) ref).recycle();
-				if (TRACE_COUNTERS)
-					lotusCounter.decrement();
-			}
-			ref = drq.poll();
-		}
 	}
 
 	/**

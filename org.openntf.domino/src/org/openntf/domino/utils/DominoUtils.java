@@ -434,7 +434,9 @@ public enum DominoUtils {
 			}
 		}
 		lotus.domino.MIMEHeader javaClass = entity.getNthHeader("X-Java-Class");
-		if(javaClass == null) { javaClass = entity.createHeader("X-Java-Class"); }
+		if (javaClass == null) {
+			javaClass = entity.createHeader("X-Java-Class");
+		}
 		javaClass.setHeaderVal(object.getClass().getName());
 		javaClass.recycle();
 

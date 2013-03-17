@@ -28,13 +28,13 @@ import org.openntf.domino.utils.Factory;
  * The Class DocumentIterator.
  */
 public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.Document> {
-	
+
 	/** The index_. */
 	private int index_ = 0;
-	
+
 	/** The id array_. */
 	private int[] idArray_;
-	
+
 	/** The current_. */
 	private transient Document current_;
 
@@ -98,14 +98,18 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 		return index_;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.Iterator#hasNext()
 	 */
 	public boolean hasNext() {
 		return !((getIndex() + 1) > getIdArray().length);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.Iterator#next()
 	 */
 	public Document next() {
@@ -113,7 +117,7 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 		if (hasNext()) {
 			String noteId = Integer.toHexString(getIdArray()[getIndex()]);
 			setIndex(getIndex() + 1);
-			Base.recycle(current_);
+			// Base.recycle(current_);
 			try {
 				Database db = getDatabase();
 				lotus.domino.Document doc = db.getDocumentByID(noteId);
@@ -130,7 +134,9 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.Iterator#remove()
 	 */
 	public void remove() {

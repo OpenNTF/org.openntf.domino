@@ -16,6 +16,8 @@
 package org.openntf.domino.thread;
 
 import java.lang.ref.PhantomReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.openntf.domino.Base;
 import org.openntf.domino.utils.Factory;
@@ -25,13 +27,18 @@ import org.openntf.domino.utils.Factory;
  * The Class DominoReference.
  */
 public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>> {
-	// private static DominoReferenceCounter lotusReferenceCounter_ = new DominoReferenceCounter();
+	/** The Constant log_. */
+	private static final Logger log_ = Logger.getLogger(DominoReference.class.getName());
 
 	/** The delegate_. */
-	private lotus.domino.Base delegate_;
-	// private Long delegateId_;
+	private final lotus.domino.Base delegate_;
 	/** The delegate type_. */
-	private Class<?> delegateType_;
+	private final Class<?> delegateType_;
+	private final long delegateId_;
+	private final int referrantHash_;
+	private final int referrantId_;
+
+	private static long watchedCpp = 0l;
 
 	/**
 	 * Instantiates a new domino reference.
@@ -47,22 +54,40 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 		super(r, q);
 		delegate_ = delegate; // Because the reference separately contains a pointer to the delegate object, it's still available even
 								// though the wrapper is null
-		delegateType_ = delegate.getClass();
-		// delegateId_ = org.openntf.domino.impl.Base.getLotusId((lotus.domino.local.NotesBase) delegate);
-		// System.out.println("Domino reference created for a " + r.getClass().getName() + " (" + delegate.getClass().getSimpleName()
-		// + ") on thread " + Thread.currentThread().getName() + " (" + Thread.currentThread().hashCode() + ")");
+		delegateId_ = org.openntf.domino.impl.Base.getLotusId((lotus.domino.local.NotesBase) delegate);
+		if (log_.isLoggable(Level.FINE)) {
+			delegateType_ = delegate.getClass();
+			referrantHash_ = r.hashCode();
+			referrantId_ = System.identityHashCode(r);
+		} else {
+			delegateType_ = null;
+			referrantHash_ = 0;
+			referrantId_ = 0;
+		}
 	}
 
-	// public Long getLotusId() {
-	// return delegateId_;
-	// }
+	public boolean isTraceTarget() {
+		return delegateId_ == watchedCpp;
+	}
+
+	public Long getDelegateId() {
+		return delegateId_;
+	}
+
+	public int _getReferrantHash() {
+		return referrantHash_;
+	}
+
+	public int _getReferrantId() {
+		return referrantId_;
+	}
 
 	/**
 	 * Gets the type.
 	 * 
 	 * @return the type
 	 */
-	public Class<?> getType() {
+	public Class<?> _getType() {
 		return delegateType_;
 	}
 
@@ -71,9 +96,12 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 	 */
 	public void recycle() {
 		org.openntf.domino.impl.Base.recycle(delegate_);
-		org.openntf.domino.impl.Base.removeReference(this);
-		Factory.countAutoRecycle();
-		// FIXME NTF - take the dead reference out of the reference set!!!
+		int total = Factory.countAutoRecycle();
+		if (log_.isLoggable(Level.FINE)) {
+			if (total % 5000 == 0) {
+				log_.log(Level.FINE, "Auto-recycled " + total + " references");
+			}
+		}
 	}
 
 }
