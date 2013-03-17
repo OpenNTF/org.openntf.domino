@@ -1758,9 +1758,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		if (value instanceof Number) {
 			return ((Number) value).doubleValue();
 		} else if (value instanceof Date) {
-			return Factory.getSession(context).createDateTime((Date) value);
+			return toLotus(Factory.getSession(context).createDateTime((Date) value));
 		} else if (value instanceof Calendar) {
-			return Factory.getSession(context).createDateTime((Calendar) value);
+			return toLotus(Factory.getSession(context).createDateTime((Calendar) value));
 		} else if (value instanceof CharSequence) {
 			return value.toString();
 		}
