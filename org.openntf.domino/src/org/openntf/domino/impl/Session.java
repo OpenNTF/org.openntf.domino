@@ -20,6 +20,8 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
@@ -38,6 +40,8 @@ import org.openntf.domino.utils.Factory;
  */
 public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Session, lotus.domino.Session> implements
 		org.openntf.domino.Session {
+	/** The Constant log_. */
+	private static final Logger log_ = Logger.getLogger(Session.class.getName());
 
 	/** The formatter_. */
 	private static DominoFormatter formatter_;
@@ -49,6 +53,21 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 			return null;
 		}
 	};
+
+	public RunContext getRunContext() {
+		RunContext result = RunContext.UNKNOWN;
+		SecurityManager sm = System.getSecurityManager();
+		if (sm == null)
+			return RunContext.CLI;
+
+		Object o = sm.getSecurityContext();
+		if (log_.isLoggable(Level.INFO))
+			log_.log(Level.INFO, "SecurityManager is " + sm.getClass().getName() + " and context is " + o.getClass().getName());
+		if (sm instanceof COM.ibm.JEmpower.applet.AppletSecurity) {
+			COM.ibm.JEmpower.applet.AppletSecurity asm = (COM.ibm.JEmpower.applet.AppletSecurity) sm;
+		}
+		return result;
+	}
 
 	/**
 	 * Gets the default session.
@@ -398,7 +417,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 * @see org.openntf.domino.Session#evaluate(java.lang.String, lotus.domino.Document)
 	 */
 	@Override
-	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(String arg0, lotus.domino.Document arg1) {
 		try {
 			return getDelegate().evaluate(arg0, arg1); // TODO still needs Factory wrapper
@@ -414,7 +433,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 * @see org.openntf.domino.Session#evaluate(java.lang.String)
 	 */
 	@Override
-	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(String arg0) {
 		try {
 			return getDelegate().evaluate(arg0); // TODO still needs Factory wrapper
