@@ -162,7 +162,6 @@ public class DominoFormatter extends ThreadLocal<Object> {
 			} catch (ParseException e) {
 				DominoUtils.handleException(e);
 				return null;
-
 			}
 		}
 	}

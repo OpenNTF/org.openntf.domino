@@ -33,6 +33,7 @@ public class OutputFormatter extends Formatter {
 		sb.append(logRecord.getSourceMethodName());
 		sb.append("() - ");
 		sb.append(logRecord.getMessage());
+		sb.append("\n");
 		return sb.toString();
 	}
 }

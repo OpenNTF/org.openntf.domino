@@ -119,8 +119,12 @@ public class DefaultFileHandler extends FileHandler {
 	 */
 	@Override
 	public synchronized void publish(LogRecord record) {
-		// TODO Auto-generated method stub
-		super.publish(record);
+		try {
+			super.publish(record);
+			flush();
+		} catch (Throwable e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	/*
