@@ -28,13 +28,13 @@ import org.openntf.domino.utils.Factory;
  * The Class DocumentIterator.
  */
 public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.Document> {
-	
+
 	/** The index_. */
 	private int index_ = 0;
-	
+
 	/** The id array_. */
 	private int[] idArray_;
-	
+
 	/** The current_. */
 	private transient Document current_;
 
@@ -61,13 +61,19 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 		if (collection != null) {
 			NoteCollection nc = null;
 			try {
-				Database db = Factory.fromLotus(collection.getParent(), Database.class, collection);
-				setDatabase(db);
-				nc = org.openntf.domino.impl.DocumentCollection.toLotusNoteCollection(collection);
-				if (nc.getCount() > 0) {
-					result = nc.getNoteIDs();
+				if (collection.getCount() > 0) {
+					Database db = Factory.fromLotus(collection.getParent(), Database.class, collection);
+					setDatabase(db);
+					nc = org.openntf.domino.impl.DocumentCollection.toLotusNoteCollection(collection);
+					if (nc.getCount() > 0) {
+						result = nc.getNoteIDs();
+					} else {
+						result = new int[] {};
+						System.out.println("NOTE COLLECTION COUNT WAS ZERO");
+					}
 				} else {
-					System.out.println("NOTE COLLECTION COUNT WAS ZERO");
+					result = new int[] {};
+					System.out.println("DOCUMENT COLLECTION COUNT WAS ZERO");
 				}
 			} catch (Throwable t) {
 				DominoUtils.handleException(t);
@@ -98,14 +104,18 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 		return index_;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.Iterator#hasNext()
 	 */
 	public boolean hasNext() {
 		return !((getIndex() + 1) > getIdArray().length);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.Iterator#next()
 	 */
 	public Document next() {
@@ -130,7 +140,9 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.Iterator#remove()
 	 */
 	public void remove() {

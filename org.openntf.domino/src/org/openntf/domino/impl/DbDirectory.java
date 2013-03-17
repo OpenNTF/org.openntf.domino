@@ -15,9 +15,13 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.collections.DatabaseCollection;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -39,7 +43,9 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DbDirectory#createDatabase(java.lang.String)
 	 */
 	@Override
@@ -52,7 +58,9 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DbDirectory#createDatabase(java.lang.String, boolean)
 	 */
 	@Override
@@ -65,7 +73,9 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DbDirectory#getClusterName()
 	 */
 	@Override
@@ -78,7 +88,9 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DbDirectory#getClusterName(java.lang.String)
 	 */
 	@Override
@@ -91,7 +103,9 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DbDirectory#getFirstDatabase(int)
 	 */
 	@Override
@@ -104,7 +118,9 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DbDirectory#getName()
 	 */
 	@Override
@@ -117,7 +133,9 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DbDirectory#getNextDatabase()
 	 */
 	@Override
@@ -130,7 +148,9 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -138,7 +158,25 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		return (org.openntf.domino.Session) super.getParent();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.DbDirectory#getTemplates()
+	 */
+	@Override
+	public Collection<Database> getTemplates() {
+		Collection<Database> result = new DatabaseCollection();
+		Database template = getFirstDatabase(TEMPLATE);
+		while (template != null) {
+			result.add(template);
+			template = getNextDatabase();
+		}
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DbDirectory#isHonorShowInOpenDatabaseDialog()
 	 */
 	@Override
@@ -151,7 +189,25 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.DbDirectory#iterator()
+	 */
+	@Override
+	public Iterator<Database> iterator() {
+		Collection<Database> result = new DatabaseCollection();
+		Database database = getFirstDatabase(DATABASE);
+		while (database != null) {
+			result.add(database);
+			database = getNextDatabase();
+		}
+		return result.iterator();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DbDirectory#openDatabase(java.lang.String)
 	 */
 	@Override
@@ -164,7 +220,9 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DbDirectory#openDatabase(java.lang.String, boolean)
 	 */
 	@Override
@@ -177,7 +235,9 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DbDirectory#openDatabaseByReplicaID(java.lang.String)
 	 */
 	@Override
@@ -190,7 +250,9 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DbDirectory#openDatabaseIfModified(java.lang.String, lotus.domino.DateTime)
 	 */
 	@Override
@@ -203,7 +265,9 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DbDirectory#openMailDatabase()
 	 */
 	@Override
@@ -216,7 +280,9 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DbDirectory#setHonorShowInOpenDatabaseDialog(boolean)
 	 */
 	@Override

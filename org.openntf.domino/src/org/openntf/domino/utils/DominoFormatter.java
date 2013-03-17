@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Logger;
@@ -26,43 +27,43 @@ import lotus.domino.NotesException;
  * The Class DominoFormatter.
  */
 public class DominoFormatter extends ThreadLocal<Object> {
-	
+
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(DominoFormatter.class.getName());
-	
+
 	/** The date only format_. */
 	private String dateOnlyFormat_;
-	
+
 	/** The time only format_. */
 	private String timeOnlyFormat_;
-	
+
 	/** The date time format_. */
 	private String dateTimeFormat_;
-	
+
 	/** The df_. */
 	private final SimpleDateFormat df_ = new SimpleDateFormat();
-	
+
 	/** The am_. */
 	private String am_;
-	
+
 	/** The date sep_. */
 	private String dateSep_;
-	
+
 	/** The pm_. */
 	private String pm_;
-	
+
 	/** The time sep_. */
 	private String timeSep_;
-	
+
 	/** The time24_. */
 	private boolean time24_;
-	
+
 	/** The dmy_. */
 	private boolean dmy_;
-	
+
 	/** The mdy_. */
 	private boolean mdy_;
-	
+
 	/** The ymd_. */
 	private boolean ymd_;
 
@@ -101,7 +102,9 @@ public class DominoFormatter extends ThreadLocal<Object> {
 		org.openntf.domino.impl.Base.recycle(intl);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.ThreadLocal#initialValue()
 	 */
 	@Override
@@ -130,7 +133,7 @@ public class DominoFormatter extends ThreadLocal<Object> {
 	 *            the date
 	 * @return the time only
 	 */
-	public synchronized String getTimeOnly(Date date) {
+	public String getTimeOnly(Date date) {
 		synchronized (df_) {
 			df_.applyPattern(timeOnlyFormat_);
 			return df_.format(date);
@@ -144,10 +147,24 @@ public class DominoFormatter extends ThreadLocal<Object> {
 	 *            the date
 	 * @return the date time
 	 */
-	public synchronized String getDateTime(Date date) {
+	public String getDateTime(Date date) {
 		synchronized (df_) {
 			df_.applyPattern(dateTimeFormat_);
 			return df_.format(date);
+		}
+	}
+
+	public Date parseDateFromString(String dateString) {
+		synchronized (df_) {
+			Date result = null;
+			df_.applyPattern(dateTimeFormat_);
+			try {
+				result = df_.parse(dateString);
+			} catch (ParseException e) {
+				DominoUtils.handleException(e);
+				return null;
+			}
+			return result;
 		}
 	}
 

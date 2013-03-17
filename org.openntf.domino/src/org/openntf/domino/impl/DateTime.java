@@ -22,6 +22,7 @@ import java.util.GregorianCalendar;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Session;
+import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -84,6 +85,16 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		initialize(date);
 	}
 
+	@Override
+	protected lotus.domino.DateTime getDelegate() {
+		try {
+			return ((org.openntf.domino.impl.Session) getParent()).getDelegate().createDateTime(cal_);
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return null;
+		}
+	}
+
 	/**
 	 * Initialize.
 	 * 
@@ -126,12 +137,8 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#adjustDay(int, boolean)
 	 */
 	public void adjustDay(int n, boolean preserveLocalTime) {
-		try {
-			getDelegate().adjustDay(n, preserveLocalTime);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-
-		}
+		cal_.add(Calendar.DAY_OF_MONTH, n); // TODO NTF - figure out what preserveLocalTime *REALLY* does
+		// getDelegate().adjustDay(n, preserveLocalTime);
 	}
 
 	/*
@@ -149,12 +156,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#adjustHour(int, boolean)
 	 */
 	public void adjustHour(int n, boolean preserveLocalTime) {
-		try {
-			getDelegate().adjustHour(n, preserveLocalTime);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-
-		}
+		cal_.add(Calendar.HOUR_OF_DAY, n); // TODO flag
 	}
 
 	/*
@@ -172,12 +174,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#adjustMinute(int, boolean)
 	 */
 	public void adjustMinute(int n, boolean preserveLocalTime) {
-		try {
-			getDelegate().adjustMinute(n, preserveLocalTime);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-
-		}
+		cal_.add(Calendar.MINUTE, n); // TODO flag
 	}
 
 	/*
@@ -195,12 +192,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#adjustMonth(int, boolean)
 	 */
 	public void adjustMonth(int n, boolean preserveLocalTime) {
-		try {
-			getDelegate().adjustMonth(n, preserveLocalTime);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-
-		}
+		cal_.add(Calendar.MONTH, n); // TODO flag
 	}
 
 	/*
@@ -218,12 +210,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#adjustSecond(int, boolean)
 	 */
 	public void adjustSecond(int n, boolean preserveLocalTime) {
-		try {
-			getDelegate().adjustSecond(n, preserveLocalTime);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-
-		}
+		cal_.add(Calendar.SECOND, n); // TODO flag
 	}
 
 	/*
@@ -241,12 +228,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#adjustYear(int, boolean)
 	 */
 	public void adjustYear(int n, boolean preserveLocalTime) {
-		try {
-			getDelegate().adjustYear(n, preserveLocalTime);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-
-		}
+		cal_.add(Calendar.YEAR, n); // TODO flag
 	}
 
 	/*
@@ -264,12 +246,8 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#convertToZone(int, boolean)
 	 */
 	public void convertToZone(int zone, boolean isDST) {
-		try {
-			getDelegate().convertToZone(zone, isDST);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-
-		}
+		// TODO NTF - find out what this actually does. The documentation is... vague
+		throw new UnimplementedException("convertToZone is not yet implemented.");
 	}
 
 	/*
@@ -296,13 +274,8 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#getLocalTime()
 	 */
 	public String getLocalTime() {
-		try {
-			return getDelegate().getLocalTime();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		// TODO rationalize timezone stuff
+		return org.openntf.domino.impl.Session.getFormatter().getDateTime(cal_.getTime());
 	}
 
 	/*
@@ -330,13 +303,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#getTimeZone()
 	 */
 	public int getTimeZone() {
-		try {
-			return getDelegate().getTimeZone();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return 0;
-
-		}
+		return notesZone_;
 	}
 
 	/*
@@ -345,13 +312,8 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#getZoneTime()
 	 */
 	public String getZoneTime() {
-		try {
-			return getDelegate().getZoneTime();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		// TODO NTF - find out what this really does
+		throw new UnimplementedException("getZoneTime is not yet implemented.");
 	}
 
 	/*
@@ -360,13 +322,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#isDST()
 	 */
 	public boolean isDST() {
-		try {
-			return getDelegate().isDST();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return false;
-
-		}
+		return dst_;
 	}
 
 	/*
@@ -375,12 +331,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#setAnyDate()
 	 */
 	public void setAnyDate() {
-		try {
-			getDelegate().setAnyDate();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-
-		}
+		isTimeOnly_ = true;
 	}
 
 	/*
@@ -389,12 +340,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#setAnyTime()
 	 */
 	public void setAnyTime() {
-		try {
-			getDelegate().setAnyTime();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-
-		}
+		isDateOnly_ = true;
 	}
 
 	/*
@@ -403,12 +349,11 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#setLocalDate(int, int, int, boolean)
 	 */
 	public void setLocalDate(int year, int month, int day, boolean preserveLocalTime) {
-		try {
-			getDelegate().setLocalDate(year, month, day, preserveLocalTime);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+		// TODO NTF - deal with timezone and dst nonsense :-/
+		cal_.set(Calendar.YEAR, year);
+		cal_.set(Calendar.MONTH, month);
+		cal_.set(Calendar.DAY_OF_MONTH, day);
 
-		}
 	}
 
 	/*
@@ -417,12 +362,9 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#setLocalDate(int, int, int)
 	 */
 	public void setLocalDate(int year, int month, int day) {
-		try {
-			getDelegate().setLocalDate(year, month, day);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-
-		}
+		cal_.set(Calendar.YEAR, year);
+		cal_.set(Calendar.MONTH, month);
+		cal_.set(Calendar.DAY_OF_MONTH, day);
 	}
 
 	/*
@@ -431,12 +373,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#setLocalTime(java.util.Calendar)
 	 */
 	public void setLocalTime(Calendar calendar) {
-		try {
-			getDelegate().setLocalTime(calendar);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-
-		}
+		cal_.setTime(calendar.getTime());
 	}
 
 	/*
@@ -445,12 +382,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#setLocalTime(java.util.Date)
 	 */
 	public void setLocalTime(Date date) {
-		try {
-			getDelegate().setLocalTime(date);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-
-		}
+		cal_.setTime(date);
 	}
 
 	/*
@@ -459,12 +391,12 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#setLocalTime(int, int, int, int)
 	 */
 	public void setLocalTime(int hour, int minute, int second, int hundredth) {
-		try {
-			getDelegate().setLocalTime(hour, minute, second, hundredth);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+		// TODO NTF - figure out exactly what this means vis a vis timezones
+		cal_.set(Calendar.HOUR_OF_DAY, hour);
+		cal_.set(Calendar.MINUTE, minute);
+		cal_.set(Calendar.SECOND, second);
+		cal_.set(Calendar.MILLISECOND, hundredth * 10);
 
-		}
 	}
 
 	/*
@@ -473,12 +405,8 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#setLocalTime(java.lang.String)
 	 */
 	public void setLocalTime(String time) {
-		try {
-			getDelegate().setLocalTime(time);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-
-		}
+		Date date = org.openntf.domino.impl.Session.getFormatter().parseDateFromString(time);
+		cal_.setTime(date);
 	}
 
 	/*
@@ -521,6 +449,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#timeDifferenceDouble(lotus.domino.DateTime)
 	 */
 	public double timeDifferenceDouble(lotus.domino.DateTime dt) {
+		// TODO NTF - this probably returns a higher-precision number in the legacy API
 		int i = this.timeDifference(dt);
 		return Double.valueOf(i).doubleValue();
 	}
