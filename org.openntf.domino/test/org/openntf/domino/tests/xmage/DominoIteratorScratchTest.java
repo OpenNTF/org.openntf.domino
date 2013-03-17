@@ -6,6 +6,8 @@ import org.openntf.domino.DateTime;
 import org.openntf.domino.DbDirectory;
 import org.openntf.domino.Name;
 import org.openntf.domino.Session;
+import org.openntf.domino.thread.DominoThread;
+import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 public enum DominoIteratorScratchTest {
@@ -13,6 +15,54 @@ public enum DominoIteratorScratchTest {
 
 	private DominoIteratorScratchTest() {
 		// TODO Auto-generated constructor stub
+	}
+
+	public static void main(String[] args) {
+		int delay = 500;
+		DominoThread dt = new DominoThread(new Doer(), "Scratch Test");
+		DominoThread dt2 = new DominoThread(new Doer(), "Scratch Test2");
+		DominoThread dt3 = new DominoThread(new Doer(), "Scratch Test3");
+		DominoThread dt4 = new DominoThread(new Doer(), "Scratch Test4");
+		DominoThread dt5 = new DominoThread(new Doer(), "Scratch Test5");
+
+		DominoThread dt6 = new DominoThread(new Doer(), "Scratch Test6");
+		dt.start();
+		try {
+			Thread.sleep(delay);
+		} catch (InterruptedException e1) {
+			DominoUtils.handleException(e1);
+
+		}
+		dt2.start();
+		try {
+			Thread.sleep(delay);
+		} catch (InterruptedException e1) {
+			DominoUtils.handleException(e1);
+
+		}
+		dt3.start();
+		try {
+			Thread.sleep(delay);
+		} catch (InterruptedException e1) {
+			DominoUtils.handleException(e1);
+
+		}
+		dt4.start();
+		try {
+			Thread.sleep(delay);
+		} catch (InterruptedException e1) {
+			DominoUtils.handleException(e1);
+
+		}
+		dt5.start();
+		try {
+			Thread.sleep(delay);
+		} catch (InterruptedException e1) {
+			DominoUtils.handleException(e1);
+
+		}
+		dt6.start();
+
 	}
 
 	static class Doer implements Runnable {
