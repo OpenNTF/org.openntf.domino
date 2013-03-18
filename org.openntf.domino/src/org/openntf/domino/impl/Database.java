@@ -29,13 +29,13 @@ import org.openntf.domino.utils.Factory;
  * The Class Database.
  */
 public class Database extends Base<org.openntf.domino.Database, lotus.domino.Database> implements org.openntf.domino.Database {
-	
+
 	/** The server_. */
 	private String server_;
-	
+
 	/** The path_. */
 	private String path_;
-	
+
 	/** The replid_. */
 	private String replid_;
 
@@ -52,7 +52,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#FTDomainSearch(java.lang.String, int, int, int, int, int, java.lang.String)
 	 */
 	public Document FTDomainSearch(String query, int maxDocs, int sortOpt, int otherOpt, int start, int count, String entryForm) {
@@ -66,7 +68,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#FTSearch(java.lang.String, int, int, int)
 	 */
 	public DocumentCollection FTSearch(String query, int maxDocs, int sortOpt, int otherOpt) {
@@ -78,7 +82,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#FTSearch(java.lang.String, int)
 	 */
 	public DocumentCollection FTSearch(String query, int maxDocs) {
@@ -90,7 +96,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#FTSearch(java.lang.String)
 	 */
 	public DocumentCollection FTSearch(String query) {
@@ -103,7 +111,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#FTSearchRange(java.lang.String, int, int, int, int)
 	 */
 	public DocumentCollection FTSearchRange(String query, int maxDocs, int sortOpt, int otherOpt, int start) {
@@ -116,7 +126,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#compact()
 	 */
 	public int compact() {
@@ -128,7 +140,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#compactWithOptions(int, java.lang.String)
 	 */
 	public int compactWithOptions(int options, String spaceThreshold) {
@@ -141,7 +155,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#compactWithOptions(int)
 	 */
 	public int compactWithOptions(int options) {
@@ -154,7 +170,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#compactWithOptions(java.lang.String)
 	 */
 	public int compactWithOptions(String spaceThreshold) {
@@ -167,7 +185,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#createCopy(java.lang.String, java.lang.String, int)
 	 */
 	public Database createCopy(String server, String dbFile, int maxSize) {
@@ -180,7 +200,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#createCopy(java.lang.String, java.lang.String)
 	 */
 	public Database createCopy(String server, String dbFile) {
@@ -193,7 +215,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#createDocument()
 	 */
 	public Document createDocument() {
@@ -206,7 +230,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#createDocumentCollection()
 	 */
 	public DocumentCollection createDocumentCollection() {
@@ -219,7 +245,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#createFTIndex(int, boolean)
 	 */
 	public void createFTIndex(int options, boolean recreate) {
@@ -231,7 +259,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#createFromTemplate(java.lang.String, java.lang.String, boolean, int)
 	 */
 	public Database createFromTemplate(String server, String dbFile, boolean inherit, int maxSize) {
@@ -244,7 +274,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#createFromTemplate(java.lang.String, java.lang.String, boolean)
 	 */
 	public Database createFromTemplate(String server, String dbFile, boolean inherit) {
@@ -257,7 +289,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#createNoteCollection(boolean)
 	 */
 	public NoteCollection createNoteCollection(boolean selectAllFlag) {
@@ -270,7 +304,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#createOutline(java.lang.String, boolean)
 	 */
 	public Outline createOutline(String name, boolean defaultOutline) {
@@ -283,7 +319,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#createOutline(java.lang.String)
 	 */
 	public Outline createOutline(String name) {
@@ -296,7 +334,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#createQueryView(java.lang.String, java.lang.String, lotus.domino.View, boolean)
 	 */
 	public View createQueryView(String viewName, String query, lotus.domino.View templateView, boolean prohibitDesignRefresh) {
@@ -311,7 +351,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#createQueryView(java.lang.String, java.lang.String, lotus.domino.View)
 	 */
 	public View createQueryView(String viewName, String query, lotus.domino.View templateView) {
@@ -325,7 +367,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#createQueryView(java.lang.String, java.lang.String)
 	 */
 	public View createQueryView(String viewName, String query) {
@@ -338,7 +382,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#createReplica(java.lang.String, java.lang.String)
 	 */
 	public Database createReplica(String server, String dbFile) {
@@ -351,7 +397,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#createView()
 	 */
 	public View createView() {
@@ -364,7 +412,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#createView(java.lang.String, java.lang.String, lotus.domino.View, boolean)
 	 */
 	public View createView(String viewName, String selectionFormula, lotus.domino.View templateView, boolean prohibitDesignRefresh) {
@@ -379,7 +429,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#createView(java.lang.String, java.lang.String, lotus.domino.View)
 	 */
 	public View createView(String viewName, String selectionFormula, lotus.domino.View templateView) {
@@ -393,7 +445,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#createView(java.lang.String, java.lang.String)
 	 */
 	public View createView(String viewName, String selectionFormula) {
@@ -406,7 +460,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#createView(java.lang.String)
 	 */
 	public View createView(String viewName) {
@@ -419,7 +475,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#enableFolder(java.lang.String)
 	 */
 	public void enableFolder(String folder) {
@@ -431,7 +489,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#fixup()
 	 */
 	public void fixup() {
@@ -443,7 +503,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#fixup(int)
 	 */
 	public void fixup(int options) {
@@ -455,7 +517,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getACL()
 	 */
 	public ACL getACL() {
@@ -468,7 +532,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getACLActivityLog()
 	 */
 	public Vector getACLActivityLog() {
@@ -481,7 +547,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getAgent(java.lang.String)
 	 */
 	public Agent getAgent(String name) {
@@ -494,7 +562,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getAgents()
 	 */
 	public Vector getAgents() {
@@ -507,7 +577,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getAllDocuments()
 	 */
 	public org.openntf.domino.DocumentCollection getAllDocuments() {
@@ -520,7 +592,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getAllReadDocuments()
 	 */
 	public DocumentCollection getAllReadDocuments() {
@@ -533,7 +607,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getAllReadDocuments(java.lang.String)
 	 */
 	public DocumentCollection getAllReadDocuments(String userName) {
@@ -546,7 +622,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getAllUnreadDocuments()
 	 */
 	public DocumentCollection getAllUnreadDocuments() {
@@ -559,7 +637,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getAllUnreadDocuments(java.lang.String)
 	 */
 	public DocumentCollection getAllUnreadDocuments(String userName) {
@@ -572,7 +652,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getCategories()
 	 */
 	public String getCategories() {
@@ -585,7 +667,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getCreated()
 	 */
 	public DateTime getCreated() {
@@ -598,7 +682,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getCurrentAccessLevel()
 	 */
 	public int getCurrentAccessLevel() {
@@ -611,7 +697,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getDB2Schema()
 	 */
 	public String getDB2Schema() {
@@ -624,7 +712,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getDesignTemplateName()
 	 */
 	public String getDesignTemplateName() {
@@ -637,34 +727,41 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getDocumentByID(java.lang.String)
 	 */
 	public Document getDocumentByID(String noteid) {
 		try {
 			return Factory.fromLotus(getDelegate().getDocumentByID(noteid), Document.class, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			// DominoUtils.handleException(e);
 			return null;
 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getDocumentByUNID(java.lang.String)
 	 */
 	public Document getDocumentByUNID(String unid) {
 		try {
 			return Factory.fromLotus(getDelegate().getDocumentByUNID(unid), Document.class, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			// DominoUtils.handleException(e);
 			return null;
 
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.Database#getDocumentByURL(java.lang.String, boolean, boolean, boolean, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.Database#getDocumentByURL(java.lang.String, boolean, boolean, boolean, java.lang.String, java.lang.String,
+	 * java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
 	public Document getDocumentByURL(String url, boolean reload, boolean reloadIfModified, boolean urlList, String charSet, String webUser,
 			String webPassword, String proxyUser, String proxyPassword, boolean returnImmediately) {
@@ -679,7 +776,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getDocumentByURL(java.lang.String, boolean)
 	 */
 	public Document getDocumentByURL(String url, boolean reload) {
@@ -692,7 +791,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getFTIndexFrequency()
 	 */
 	public int getFTIndexFrequency() {
@@ -705,7 +806,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getFileFormat()
 	 */
 	public int getFileFormat() {
@@ -718,7 +821,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getFileName()
 	 */
 	public String getFileName() {
@@ -731,7 +836,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getFilePath()
 	 */
 	public String getFilePath() {
@@ -744,7 +851,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getFolderReferencesEnabled()
 	 */
 	public boolean getFolderReferencesEnabled() {
@@ -757,7 +866,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getForm(java.lang.String)
 	 */
 	public Form getForm(String name) {
@@ -770,7 +881,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getForms()
 	 */
 	public Vector<org.openntf.domino.Form> getForms() {
@@ -783,7 +896,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getHttpURL()
 	 */
 	public String getHttpURL() {
@@ -796,7 +911,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getLastFTIndexed()
 	 */
 	public DateTime getLastFTIndexed() {
@@ -809,7 +926,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getLastFixup()
 	 */
 	public DateTime getLastFixup() {
@@ -822,7 +941,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getLastModified()
 	 */
 	public DateTime getLastModified() {
@@ -835,7 +956,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getLimitRevisions()
 	 */
 	public double getLimitRevisions() {
@@ -848,7 +971,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getLimitUpdatedBy()
 	 */
 	public double getLimitUpdatedBy() {
@@ -861,7 +986,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getListInDbCatalog()
 	 */
 	public boolean getListInDbCatalog() {
@@ -874,7 +1001,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getManagers()
 	 */
 	public Vector getManagers() {
@@ -887,7 +1016,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getMaxSize()
 	 */
 	public long getMaxSize() {
@@ -900,7 +1031,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getModifiedDocuments()
 	 */
 	public DocumentCollection getModifiedDocuments() {
@@ -913,7 +1046,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getModifiedDocuments(lotus.domino.DateTime, int)
 	 */
 	public DocumentCollection getModifiedDocuments(lotus.domino.DateTime since, int noteClass) {
@@ -927,7 +1062,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getModifiedDocuments(lotus.domino.DateTime)
 	 */
 	public DocumentCollection getModifiedDocuments(lotus.domino.DateTime since) {
@@ -940,7 +1077,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getNotesURL()
 	 */
 	public String getNotesURL() {
@@ -953,7 +1092,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getOption(int)
 	 */
 	public boolean getOption(int optionName) {
@@ -966,7 +1107,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getOutline(java.lang.String)
 	 */
 	public Outline getOutline(String outlineName) {
@@ -979,7 +1122,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -987,7 +1132,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		return (Session) super.getParent();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getPercentUsed()
 	 */
 	public double getPercentUsed() {
@@ -1000,7 +1147,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getProfileDocCollection(java.lang.String)
 	 */
 	public DocumentCollection getProfileDocCollection(String profileName) {
@@ -1013,7 +1162,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getProfileDocument(java.lang.String, java.lang.String)
 	 */
 	public Document getProfileDocument(String profileName, String key) {
@@ -1026,7 +1177,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getReplicaID()
 	 */
 	public String getReplicaID() {
@@ -1039,7 +1192,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getReplicationInfo()
 	 */
 	public Replication getReplicationInfo() {
@@ -1052,7 +1207,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getServer()
 	 */
 	public String getServer() {
@@ -1065,7 +1222,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getSize()
 	 */
 	public double getSize() {
@@ -1078,7 +1237,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getSizeQuota()
 	 */
 	public int getSizeQuota() {
@@ -1091,7 +1252,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getSizeWarning()
 	 */
 	public long getSizeWarning() {
@@ -1104,7 +1267,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getTemplateName()
 	 */
 	public String getTemplateName() {
@@ -1117,7 +1282,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getTitle()
 	 */
 	public String getTitle() {
@@ -1130,7 +1297,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getType()
 	 */
 	public int getType() {
@@ -1143,7 +1312,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getURL()
 	 */
 	public String getURL() {
@@ -1156,8 +1327,11 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.Database#getURLHeaderInfo(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.Database#getURLHeaderInfo(java.lang.String, java.lang.String, java.lang.String, java.lang.String,
+	 * java.lang.String, java.lang.String)
 	 */
 	public String getURLHeaderInfo(String url, String header, String webUser, String webPassword, String proxyUser, String proxyPassword) {
 		try {
@@ -1169,7 +1343,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getUndeleteExpireTime()
 	 */
 	public int getUndeleteExpireTime() {
@@ -1182,7 +1358,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getView(java.lang.String)
 	 */
 	public View getView(String name) {
@@ -1195,7 +1373,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#getViews()
 	 */
 	public Vector<org.openntf.domino.View> getViews() {
@@ -1208,7 +1388,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#grantAccess(java.lang.String, int)
 	 */
 	public void grantAccess(String name, int level) {
@@ -1220,7 +1402,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#isAllowOpenSoftDeleted()
 	 */
 	public boolean isAllowOpenSoftDeleted() {
@@ -1233,7 +1417,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#isClusterReplication()
 	 */
 	public boolean isClusterReplication() {
@@ -1246,7 +1432,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#isConfigurationDirectory()
 	 */
 	public boolean isConfigurationDirectory() {
@@ -1259,7 +1447,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#isCurrentAccessPublicReader()
 	 */
 	public boolean isCurrentAccessPublicReader() {
@@ -1272,7 +1462,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#isCurrentAccessPublicWriter()
 	 */
 	public boolean isCurrentAccessPublicWriter() {
@@ -1285,7 +1477,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#isDB2()
 	 */
 	public boolean isDB2() {
@@ -1298,7 +1492,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#isDelayUpdates()
 	 */
 	public boolean isDelayUpdates() {
@@ -1311,7 +1507,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#isDesignLockingEnabled()
 	 */
 	public boolean isDesignLockingEnabled() {
@@ -1324,7 +1522,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#isDirectoryCatalog()
 	 */
 	public boolean isDirectoryCatalog() {
@@ -1337,7 +1537,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#isDocumentLockingEnabled()
 	 */
 	public boolean isDocumentLockingEnabled() {
@@ -1350,7 +1552,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#isFTIndexed()
 	 */
 	public boolean isFTIndexed() {
@@ -1363,7 +1567,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#isInMultiDbIndexing()
 	 */
 	public boolean isInMultiDbIndexing() {
@@ -1376,7 +1582,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#isInService()
 	 */
 	public boolean isInService() {
@@ -1389,7 +1597,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#isLink()
 	 */
 	public boolean isLink() {
@@ -1402,7 +1612,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#isMultiDbSearch()
 	 */
 	public boolean isMultiDbSearch() {
@@ -1415,7 +1627,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#isOpen()
 	 */
 	public boolean isOpen() {
@@ -1428,7 +1642,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#isPendingDelete()
 	 */
 	public boolean isPendingDelete() {
@@ -1441,7 +1657,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#isPrivateAddressBook()
 	 */
 	public boolean isPrivateAddressBook() {
@@ -1454,7 +1672,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#isPublicAddressBook()
 	 */
 	public boolean isPublicAddressBook() {
@@ -1467,7 +1687,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#markForDelete()
 	 */
 	public void markForDelete() {
@@ -1479,7 +1701,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#open()
 	 */
 	public boolean open() {
@@ -1492,7 +1716,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#openByReplicaID(java.lang.String, java.lang.String)
 	 */
 	public boolean openByReplicaID(String server, String replicaId) {
@@ -1505,7 +1731,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#openIfModified(java.lang.String, java.lang.String, lotus.domino.DateTime)
 	 */
 	public boolean openIfModified(String server, String dbFile, lotus.domino.DateTime modifiedSince) {
@@ -1518,7 +1746,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#openWithFailover(java.lang.String, java.lang.String)
 	 */
 	public boolean openWithFailover(String server, String dbFile) {
@@ -1531,7 +1761,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#queryAccess(java.lang.String)
 	 */
 	public int queryAccess(String name) {
@@ -1544,7 +1776,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#queryAccessPrivileges(java.lang.String)
 	 */
 	public int queryAccessPrivileges(String name) {
@@ -1557,7 +1791,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#queryAccessRoles(java.lang.String)
 	 */
 	@SuppressWarnings("unchecked")
@@ -1570,7 +1806,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#remove()
 	 */
 	public void remove() {
@@ -1582,7 +1820,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#removeFTIndex()
 	 */
 	public void removeFTIndex() {
@@ -1594,7 +1834,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#replicate(java.lang.String)
 	 */
 	public boolean replicate(String server) {
@@ -1607,7 +1849,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#revokeAccess(java.lang.String)
 	 */
 	public void revokeAccess(String name) {
@@ -1619,7 +1863,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#search(java.lang.String, lotus.domino.DateTime, int)
 	 */
 	public DocumentCollection search(String formula, lotus.domino.DateTime startDate, int maxDocs) {
@@ -1633,7 +1879,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#search(java.lang.String, lotus.domino.DateTime)
 	 */
 	public DocumentCollection search(String formula, lotus.domino.DateTime startDate) {
@@ -1647,7 +1895,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#search(java.lang.String)
 	 */
 	public DocumentCollection search(String formula) {
@@ -1660,7 +1910,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#setAllowOpenSoftDeleted(boolean)
 	 */
 	public void setAllowOpenSoftDeleted(boolean flag) {
@@ -1672,7 +1924,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#setCategories(java.lang.String)
 	 */
 	public void setCategories(String categories) {
@@ -1684,7 +1938,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#setDelayUpdates(boolean)
 	 */
 	public void setDelayUpdates(boolean flag) {
@@ -1696,7 +1952,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#setDesignLockingEnabled(boolean)
 	 */
 	public void setDesignLockingEnabled(boolean flag) {
@@ -1708,7 +1966,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#setDocumentLockingEnabled(boolean)
 	 */
 	public void setDocumentLockingEnabled(boolean flag) {
@@ -1720,7 +1980,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#setFTIndexFrequency(int)
 	 */
 	public void setFTIndexFrequency(int frequency) {
@@ -1732,7 +1994,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#setFolderReferencesEnabled(boolean)
 	 */
 	public void setFolderReferencesEnabled(boolean flag) {
@@ -1744,7 +2008,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#setInMultiDbIndexing(boolean)
 	 */
 	public void setInMultiDbIndexing(boolean flag) {
@@ -1756,7 +2022,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#setInService(boolean)
 	 */
 	public void setInService(boolean flag) {
@@ -1768,7 +2036,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#setLimitRevisions(double)
 	 */
 	public void setLimitRevisions(double revisions) {
@@ -1780,7 +2050,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#setLimitUpdatedBy(double)
 	 */
 	public void setLimitUpdatedBy(double updatedBys) {
@@ -1792,7 +2064,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#setListInDbCatalog(boolean)
 	 */
 	public void setListInDbCatalog(boolean flag) {
@@ -1804,7 +2078,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#setOption(int, boolean)
 	 */
 	public void setOption(int optionName, boolean flag) {
@@ -1816,7 +2092,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#setSizeQuota(int)
 	 */
 	public void setSizeQuota(int quota) {
@@ -1828,7 +2106,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#setSizeWarning(int)
 	 */
 	public void setSizeWarning(int warning) {
@@ -1840,7 +2120,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#setTitle(java.lang.String)
 	 */
 	public void setTitle(String title) {
@@ -1852,7 +2134,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#setUndeleteExpireTime(int)
 	 */
 	public void setUndeleteExpireTime(int hours) {
@@ -1864,7 +2148,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#sign()
 	 */
 	public void sign() {
@@ -1876,7 +2162,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#sign(int, boolean, java.lang.String, boolean)
 	 */
 	public void sign(int documentType, boolean existingSigsOnly, String name, boolean nameIsNoteid) {
@@ -1888,7 +2176,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#sign(int, boolean, java.lang.String)
 	 */
 	public void sign(int documentType, boolean existingSigsOnly, String name) {
@@ -1900,7 +2190,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#sign(int, boolean)
 	 */
 	public void sign(int documentType, boolean existingSigsOnly) {
@@ -1912,7 +2204,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#sign(int)
 	 */
 	public void sign(int documentType) {
@@ -1924,7 +2218,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#updateFTIndex(boolean)
 	 */
 	public void updateFTIndex(boolean create) {
