@@ -17,11 +17,13 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
+import org.openntf.domino.types.Design;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface Form.
  */
-public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form {
+public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, Design {
 
 	/**
 	 * Gets the document.
@@ -30,180 +32,238 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form {
 	 */
 	public Document getDocument();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#getAliases()
 	 */
 	@Override
 	public Vector<String> getAliases();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#getFields()
 	 */
 	@Override
 	public Vector<String> getFields();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#getFieldType(java.lang.String)
 	 */
 	@Override
 	public int getFieldType(String name);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#getFormUsers()
 	 */
 	@Override
 	public Vector<String> getFormUsers();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#getHttpURL()
 	 */
 	@Override
 	public String getHttpURL();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#getLockHolders()
 	 */
 	@Override
 	public Vector<String> getLockHolders();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#getName()
 	 */
 	@Override
 	public String getName();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#getNotesURL()
 	 */
 	@Override
 	public String getNotesURL();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#getParent()
 	 */
 	@Override
 	public Database getParent();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#getReaders()
 	 */
 	@Override
 	public Vector<String> getReaders();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#getURL()
 	 */
 	@Override
 	public String getURL();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#isProtectReaders()
 	 */
 	@Override
 	public boolean isProtectReaders();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#isProtectUsers()
 	 */
 	@Override
 	public boolean isProtectUsers();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#isSubForm()
 	 */
 	@Override
 	public boolean isSubForm();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#lock()
 	 */
 	@Override
 	public boolean lock();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#lock(boolean)
 	 */
 	@Override
 	public boolean lock(boolean provisionalOk);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#lock(java.lang.String)
 	 */
 	@Override
 	public boolean lock(String name);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#lock(java.lang.String, boolean)
 	 */
 	@Override
 	public boolean lock(String name, boolean provisionalOk);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#lock(java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean lock(Vector names);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#lock(java.util.Vector, boolean)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean lock(Vector names, boolean provisionalOk);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#lockProvisional()
 	 */
 	@Override
 	public boolean lockProvisional();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#lockProvisional(java.lang.String)
 	 */
 	@Override
 	public boolean lockProvisional(String name);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#lockProvisional(java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean lockProvisional(Vector names);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#remove()
 	 */
 	@Override
 	public void remove();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#setFormUsers(java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setFormUsers(Vector names);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#setProtectReaders(boolean)
 	 */
 	@Override
 	public void setProtectReaders(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#setProtectUsers(boolean)
 	 */
 	@Override
 	public void setProtectUsers(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#setReaders(java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setReaders(Vector names);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Form#unlock()
 	 */
 	@Override

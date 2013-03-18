@@ -15,240 +15,320 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.Design;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface OutlineEntry.
  */
-public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.domino.OutlineEntry {
+public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.domino.OutlineEntry, Design {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#getAlias()
 	 */
 	@Override
 	public String getAlias();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#getDatabase()
 	 */
 	public Database getDatabase();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#getDocument()
 	 */
 	@Override
 	public Document getDocument();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#getEntryClass()
 	 */
 	@Override
 	public int getEntryClass();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#getFormula()
 	 */
 	@Override
 	public String getFormula();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#getFrameText()
 	 */
 	@Override
 	public String getFrameText();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#getHideFormula()
 	 */
 	@Override
 	public String getHideFormula();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#getImagesText()
 	 */
 	@Override
 	public String getImagesText();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#getKeepSelectionFocus()
 	 */
 	@Override
 	public boolean getKeepSelectionFocus();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#getLabel()
 	 */
 	@Override
 	public String getLabel();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#getLevel()
 	 */
 	@Override
 	public int getLevel();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#getNamedElement()
 	 */
 	@Override
 	public String getNamedElement();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#getParent()
 	 */
 	@Override
 	public Outline getParent();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#getType()
 	 */
 	@Override
 	public int getType();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#getURL()
 	 */
 	@Override
 	public String getURL();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#getUseHideFormula()
 	 */
 	@Override
 	public boolean getUseHideFormula();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#getView()
 	 */
 	@Override
 	public View getView();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#hasChildren()
 	 */
 	@Override
 	public boolean hasChildren();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#isHidden()
 	 */
 	@Override
 	public boolean isHidden();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#isHiddenFromNotes()
 	 */
 	@Override
 	public boolean isHiddenFromNotes();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#isHiddenFromWeb()
 	 */
 	@Override
 	public boolean isHiddenFromWeb();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#isInThisDB()
 	 */
 	@Override
 	public boolean isInThisDB();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#isPrivate()
 	 */
 	@Override
 	public boolean isPrivate();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#setAction(java.lang.String)
 	 */
 	@Override
 	public boolean setAction(String action);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#setAlias(java.lang.String)
 	 */
 	@Override
 	public void setAlias(String alias);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#setFrameText(java.lang.String)
 	 */
 	@Override
 	public void setFrameText(String frameText);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#setHidden(boolean)
 	 */
 	@Override
 	public void setHidden(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#setHiddenFromNotes(boolean)
 	 */
 	@Override
 	public void setHiddenFromNotes(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#setHiddenFromWeb(boolean)
 	 */
 	@Override
 	public void setHiddenFromWeb(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#setHideFormula(java.lang.String)
 	 */
 	@Override
 	public void setHideFormula(String formula);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#setImagesText(java.lang.String)
 	 */
 	@Override
 	public void setImagesText(String imagesText);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#setKeepSelectionFocus(boolean)
 	 */
 	@Override
 	public void setKeepSelectionFocus(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#setLabel(java.lang.String)
 	 */
 	@Override
 	public void setLabel(String label);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#setNamedElement(lotus.domino.Database, java.lang.String, int)
 	 */
 	@Override
 	public boolean setNamedElement(lotus.domino.Database db, String elementName, int entryClass);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#setNoteLink(lotus.domino.Database)
 	 */
 	@Override
 	public boolean setNoteLink(lotus.domino.Database db);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#setNoteLink(lotus.domino.Document)
 	 */
 	@Override
 	public boolean setNoteLink(lotus.domino.Document doc);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#setNoteLink(lotus.domino.View)
 	 */
 	@Override
 	public boolean setNoteLink(lotus.domino.View view);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#setURL(java.lang.String)
 	 */
 	@Override
 	public boolean setURL(String url);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.OutlineEntry#setUseHideFormula(boolean)
 	 */
 	@Override
