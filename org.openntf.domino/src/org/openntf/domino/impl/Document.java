@@ -770,7 +770,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			if (item.getType() == Item.MIME_PART) {
 				MIMEEntity entity = this.getMIMEEntity(name);
 				MIMEHeader contentType = entity.getNthHeader("Content-Type");
-				if (contentType != null && contentType.getHeaderVal().equals("application/x-java-serialized-object")) {
+				if (contentType != null
+						&& (contentType.getHeaderVal().equals("application/x-java-serialized-object") || contentType.getHeaderVal().equals(
+								"application/x-java-externalized-object"))) {
 					// Then it's a MIMEBean
 					Serializable resultObj = DominoUtils.restoreState(this, name);
 					// If it's a List, return it - otherwise, store it in a Vector for consistency
@@ -1732,6 +1734,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				if (value instanceof List) {
 					Vector<Object> resultList = new Vector<Object>();
 					Class<?> objectClass = null;
+					long totalStringSize = 0;
 					for (Object valNode : (List<?>) value) {
 						Object domNode = toDominoFriendly(valNode, this);
 						if (objectClass == null) {
@@ -1742,16 +1745,30 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 								throw new IllegalArgumentException();
 							}
 						}
+						if (domNode instanceof String) {
+							totalStringSize += ((String) domNode).length();
+
+							// Escape to serializing if there's too much text data
+							// Leave fudge room for multibyte? This is clearly not the best way to do it
+							if (totalStringSize > 60000) {
+								throw new IllegalArgumentException();
+							}
+						}
 						resultList.add(domNode);
 					}
 					result = getDelegate().replaceItemValue(itemName, resultList);
 				} else {
-					result = getDelegate().replaceItemValue(itemName, toDominoFriendly(value, this));
+					Object domNode = toDominoFriendly(value, this);
+					if (domNode instanceof String && ((String) domNode).length() > 60000) {
+						throw new IllegalArgumentException();
+					}
+					result = getDelegate().replaceItemValue(itemName, domNode);
 				}
 			} catch (IllegalArgumentException iae) {
 				// Then try serialization
 				if (value instanceof Externalizable) {
-					// TODO Implement Externalizable storage
+					DominoUtils.saveState((Externalizable) value, this, itemName);
+					result = getDelegate().getFirstItem(itemName);
 				} else if (value instanceof Serializable) {
 					DominoUtils.saveState((Serializable) value, this, itemName);
 					result = getDelegate().getFirstItem(itemName);

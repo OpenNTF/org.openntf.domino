@@ -18,6 +18,7 @@ package org.openntf.domino.utils;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Externalizable;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -38,7 +39,10 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import lotus.domino.Document;
+import lotus.domino.MIMEEntity;
+import lotus.domino.MIMEHeader;
 import lotus.domino.Session;
+import lotus.domino.Stream;
 
 import org.openntf.domino.Base;
 import org.openntf.domino.exceptions.InvalidNotesUrlException;
@@ -339,6 +343,7 @@ public enum DominoUtils {
 	 * @throws Throwable
 	 *             the throwable
 	 */
+	@SuppressWarnings("unchecked")
 	public static Serializable restoreState(Document doc, String itemName) throws Throwable {
 		Session session = Factory.getSession((Base<?>) doc);
 		boolean convertMime = session.isConvertMime();
@@ -362,8 +367,16 @@ public enum DominoUtils {
 		} else {
 			objectStream = new ObjectInputStream(byteStream);
 		}
-		Serializable restored = (Serializable) objectStream.readObject();
-		result = restored;
+		if(entity.getContentSubType().equals("x-java-externalized-object")) {
+			Class<Externalizable> externalizableClass = (Class<Externalizable>)Class.forName(entity.getNthHeader("X-Java-Class").getHeaderVal());
+			Externalizable restored = externalizableClass.newInstance();
+			restored.readExternal(objectStream);
+			result = restored;
+		} else {
+			Serializable restored = (Serializable) objectStream.readObject();
+			result = restored;
+		}
+		
 
 		entity.recycle();
 
@@ -414,13 +427,13 @@ public enum DominoUtils {
 		objectStream.flush();
 		objectStream.close();
 
-		lotus.domino.Stream mimeStream = session.createStream();
-		lotus.domino.MIMEEntity previousState = doc.getMIMEEntity(itemName);
-		lotus.domino.MIMEEntity entity = previousState == null ? doc.createMIMEEntity(itemName) : previousState;
+		Stream mimeStream = session.createStream();
+		MIMEEntity previousState = doc.getMIMEEntity(itemName);
+		MIMEEntity entity = previousState == null ? doc.createMIMEEntity(itemName) : previousState;
 		ByteArrayInputStream byteIn = new ByteArrayInputStream(byteStream.toByteArray());
 		mimeStream.setContents(byteIn);
-		entity.setContentFromBytes(mimeStream, "application/x-java-serialized-object", lotus.domino.MIMEEntity.ENC_NONE);
-		lotus.domino.MIMEHeader contentEncoding = entity.getNthHeader("Content-Encoding");
+		entity.setContentFromBytes(mimeStream, "application/x-java-serialized-object", MIMEEntity.ENC_NONE);
+		MIMEHeader contentEncoding = entity.getNthHeader("Content-Encoding");
 		if (compress) {
 			if (contentEncoding == null) {
 				contentEncoding = entity.createHeader("Content-Encoding");
@@ -433,7 +446,7 @@ public enum DominoUtils {
 				contentEncoding.recycle();
 			}
 		}
-		lotus.domino.MIMEHeader javaClass = entity.getNthHeader("X-Java-Class");
+		MIMEHeader javaClass = entity.getNthHeader("X-Java-Class");
 		if (javaClass == null) {
 			javaClass = entity.createHeader("X-Java-Class");
 		}
@@ -443,6 +456,52 @@ public enum DominoUtils {
 		entity.recycle();
 		mimeStream.recycle();
 
+		session.setConvertMime(convertMime);
+	}
+	
+	public static void saveState(Externalizable object, Document doc, String itemName) throws Throwable {
+		saveState(object, doc, itemName, true);
+	}
+	public static void saveState(Externalizable object, Document doc, String itemName, boolean compress) throws Throwable {
+		Session session = Factory.getSession((Base<?>) doc);
+		boolean convertMime = session.isConvertMime();
+		session.setConvertMime(false);
+		
+		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+		ObjectOutputStream objectStream = compress ? new ObjectOutputStream(new GZIPOutputStream(byteStream)) : new ObjectOutputStream(byteStream);
+		object.writeExternal(objectStream);
+		objectStream.flush();
+		objectStream.close();
+		
+		Stream mimeStream = session.createStream();
+		MIMEEntity previousState = doc.getMIMEEntity(itemName);
+		MIMEEntity entity = previousState == null ? doc.createMIMEEntity(itemName) : previousState;
+		ByteArrayInputStream byteIn = new ByteArrayInputStream(byteStream.toByteArray());
+		mimeStream.setContents(byteIn);
+		entity.setContentFromBytes(mimeStream, "application/x-java-externalized-object", MIMEEntity.ENC_NONE);
+		MIMEHeader header = entity.getNthHeader("Content-Encoding");
+		if(compress) {
+			if(header == null) {
+				header = entity.createHeader("Content-Encoding");
+			}
+			header.setHeaderVal("gzip");
+			header.recycle();
+		} else {
+			if(header != null) {
+				header.remove();
+				header.recycle();
+			}
+		}
+		MIMEHeader javaClass = entity.getNthHeader("X-Java-Class");
+		if (javaClass == null) {
+			javaClass = entity.createHeader("X-Java-Class");
+		}
+		javaClass.setHeaderVal(object.getClass().getName());
+		javaClass.recycle();
+
+		entity.recycle();
+		mimeStream.recycle();
+		
 		session.setConvertMime(convertMime);
 	}
 
