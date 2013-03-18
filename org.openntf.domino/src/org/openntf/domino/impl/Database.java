@@ -217,6 +217,16 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.openntf.domino.Database#containsKey(java.lang.Object)
+	 */
+	@Override
+	public boolean containsKey(Object key) {
+		return get(key) != null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#createCopy(java.lang.String, java.lang.String)
 	 */
 	public Database createCopy(String server, String dbFile) {

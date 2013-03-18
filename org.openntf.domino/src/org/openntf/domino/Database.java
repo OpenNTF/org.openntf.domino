@@ -70,6 +70,13 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see java.util.Map#containsKey(java.lang.Object)
+	 */
+	public boolean containsKey(Object key);
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Database#createCopy(java.lang.String, java.lang.String)
 	 */
 	@Override
