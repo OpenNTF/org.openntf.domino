@@ -22,7 +22,7 @@ public class DocumentScanner {
 	private Set<String> stopTokenList_;
 
 	public DocumentScanner() {
-		stopTokenList_ = Collections.EMPTY_SET;
+		stopTokenList_ = Collections.emptySet();
 	}
 
 	public DocumentScanner(Set<String> stopTokenList) {
