@@ -54,7 +54,11 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 		super(r, q);
 		delegate_ = delegate; // Because the reference separately contains a pointer to the delegate object, it's still available even
 								// though the wrapper is null
-		delegateId_ = org.openntf.domino.impl.Base.getLotusId((lotus.domino.local.NotesBase) delegate);
+		if (r instanceof org.openntf.domino.impl.Base) {
+			delegateId_ = org.openntf.domino.impl.Base.getDelegateId((org.openntf.domino.impl.Base) r);
+		} else {
+			delegateId_ = org.openntf.domino.impl.Base.getLotusId((lotus.domino.local.NotesBase) delegate);
+		}
 		if (log_.isLoggable(Level.FINE)) {
 			delegateType_ = delegate.getClass();
 			referrantHash_ = r.hashCode();

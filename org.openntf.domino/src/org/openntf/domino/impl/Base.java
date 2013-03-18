@@ -56,6 +56,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		};
 	};
 
+	private long cpp_object = 0l;
+
 	// /** The reference bag. */
 	// private static ThreadLocal<Set<DominoReference>> referenceBag = new ThreadLocal<Set<DominoReference>>() {
 	// @Override
@@ -141,6 +143,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 						new DominoReference(this, recycleQueue.get(), ((org.openntf.domino.impl.Base) delegate).getDelegate()));
 			} else if (delegate instanceof lotus.domino.local.NotesBase) {
 				delegate_ = delegate;
+				cpp_object = getLotusId((lotus.domino.local.NotesBase) delegate);
 				if (delegate instanceof lotus.domino.Name || delegate instanceof lotus.domino.DateTime) {
 					// No reference needed. Will be recycled directly...
 				} else {
@@ -211,6 +214,18 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			return ((org.openntf.domino.impl.Base) wrapper).getDelegate();
 		}
 		return wrapper;
+	}
+
+	/**
+	 * Gets the cpp_object.
+	 * 
+	 * @param wrapper
+	 *            the wrapper
+	 * @return the cpp handle
+	 */
+	@SuppressWarnings("rawtypes")
+	public static long getDelegateId(org.openntf.domino.impl.Base wrapper) {
+		return ((org.openntf.domino.impl.Base) wrapper).cpp_object;
 	}
 
 	/**
