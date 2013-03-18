@@ -34,7 +34,42 @@ import org.openntf.domino.utils.Factory;
  */
 public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.domino.NoteCollection, lotus.domino.NoteCollection> implements
 		org.openntf.domino.NoteCollection {
-	
+
+	/**
+	 * To lotus document collection.
+	 * 
+	 * @param collection
+	 *            the collection
+	 * @return the org.openntf.domino. document collection
+	 */
+	public static org.openntf.domino.DocumentCollection toLotusDocumentCollection(org.openntf.domino.NoteCollection collection) {
+		// TODO NTF - this could be more heavily optimized with a .getNoteIds(). Feel free to replace it.
+		org.openntf.domino.DocumentCollection result = null;
+		if (collection instanceof org.openntf.domino.impl.NoteCollection) {
+			org.openntf.domino.Database db = ((org.openntf.domino.impl.NoteCollection) collection).getParent();
+			result = db.createDocumentCollection();
+			if (collection.getCount() > 0) {
+				String nid = collection.getFirstNoteID();
+				while (nid != null) {
+					result.addDocument(db.getDocumentByID(nid));
+					nid = collection.getNextNoteID(nid);
+				}
+			}
+		} else if (collection instanceof lotus.domino.NoteCollection) {
+			org.openntf.domino.Database db = (org.openntf.domino.Database) collection.getParent();
+			org.openntf.domino.DocumentCollection coll = db.createDocumentCollection();
+			if (collection.getCount() > 0) {
+				String nid = collection.getFirstNoteID();
+				while (nid != null) {
+					coll.addDocument(db.getDocumentByID(nid));
+					nid = collection.getNextNoteID(nid);
+				}
+			}
+			result = Factory.fromLotus(coll, org.openntf.domino.DocumentCollection.class, collection);
+		}
+		return result;
+	}
+
 	/**
 	 * Instantiates a new note collection.
 	 * 
@@ -47,7 +82,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		super(delegate, Factory.getParentDatabase(parent));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#add(int)
 	 */
 	@Override
@@ -59,7 +96,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#add(int[])
 	 */
 	@Override
@@ -71,7 +110,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#add(lotus.domino.Agent)
 	 */
 	@Override
@@ -83,7 +124,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#add(lotus.domino.Document)
 	 */
 	@Override
@@ -95,7 +138,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#add(lotus.domino.DocumentCollection)
 	 */
 	@Override
@@ -107,7 +152,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#add(lotus.domino.Form)
 	 */
 	@Override
@@ -119,7 +166,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#add(lotus.domino.NoteCollection)
 	 */
 	@Override
@@ -131,7 +180,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#add(lotus.domino.View)
 	 */
 	@Override
@@ -143,7 +194,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#add(java.lang.String)
 	 */
 	@Override
@@ -155,7 +208,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#buildCollection()
 	 */
 	@Override
@@ -167,7 +222,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#clearCollection()
 	 */
 	@Override
@@ -179,7 +236,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getCount()
 	 */
 	@Override
@@ -192,7 +251,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		return 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getFirstNoteID()
 	 */
 	@Override
@@ -205,7 +266,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getLastBuildTime()
 	 */
 	@Override
@@ -218,7 +281,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getLastNoteID()
 	 */
 	@Override
@@ -231,7 +296,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getNextNoteID(java.lang.String)
 	 */
 	@Override
@@ -244,7 +311,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getNoteIDs()
 	 */
 	@Override
@@ -257,7 +326,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -265,7 +336,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		return (org.openntf.domino.Database) super.getParent();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getPrevNoteID(java.lang.String)
 	 */
 	@Override
@@ -278,7 +351,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectAcl()
 	 */
 	@Override
@@ -291,7 +366,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectActions()
 	 */
 	@Override
@@ -304,7 +381,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectAgents()
 	 */
 	@Override
@@ -317,7 +396,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectDatabaseScript()
 	 */
 	@Override
@@ -330,7 +411,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectDataConnections()
 	 */
 	@Override
@@ -343,7 +426,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectDocuments()
 	 */
 	@Override
@@ -356,7 +441,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectFolders()
 	 */
 	@Override
@@ -369,7 +456,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectForms()
 	 */
 	@Override
@@ -382,7 +471,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectFramesets()
 	 */
 	@Override
@@ -395,7 +486,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectHelpAbout()
 	 */
 	@Override
@@ -408,7 +501,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectHelpIndex()
 	 */
 	@Override
@@ -421,7 +516,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectHelpUsing()
 	 */
 	@Override
@@ -434,7 +531,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectIcon()
 	 */
 	@Override
@@ -447,7 +546,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectImageResources()
 	 */
 	@Override
@@ -460,7 +561,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectionFormula()
 	 */
 	@Override
@@ -473,7 +576,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectJavaResources()
 	 */
 	@Override
@@ -486,7 +591,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectMiscCodeElements()
 	 */
 	@Override
@@ -499,7 +606,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectMiscFormatElements()
 	 */
 	@Override
@@ -512,7 +621,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectMiscIndexElements()
 	 */
 	@Override
@@ -525,7 +636,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectNavigators()
 	 */
 	@Override
@@ -538,7 +651,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectOutlines()
 	 */
 	@Override
@@ -551,7 +666,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectPages()
 	 */
 	@Override
@@ -564,7 +681,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectProfiles()
 	 */
 	@Override
@@ -577,7 +696,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectReplicationFormulas()
 	 */
 	@Override
@@ -590,7 +711,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectScriptLibraries()
 	 */
 	@Override
@@ -603,7 +726,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectSharedFields()
 	 */
 	public boolean getSelectSharedFields() {
@@ -615,7 +740,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectStylesheetResources()
 	 */
 	public boolean getSelectStylesheetResources() {
@@ -627,7 +754,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectSubforms()
 	 */
 	public boolean getSelectSubforms() {
@@ -639,7 +768,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectViews()
 	 */
 	public boolean getSelectViews() {
@@ -651,7 +782,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getSinceTime()
 	 */
 	public DateTime getSinceTime() {
@@ -664,7 +797,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getUNID(java.lang.String)
 	 */
 	public String getUNID(String unid) {
@@ -677,7 +812,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#getUntilTime()
 	 */
 	public DateTime getUntilTime() {
@@ -690,7 +827,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#intersect(lotus.domino.Agent)
 	 */
 	public void intersect(Agent agent) {
@@ -702,7 +841,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#intersect(lotus.domino.Document)
 	 */
 	public void intersect(Document document) {
@@ -714,7 +855,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#intersect(lotus.domino.DocumentCollection)
 	 */
 	public void intersect(DocumentCollection collection) {
@@ -726,7 +869,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#intersect(lotus.domino.Form)
 	 */
 	public void intersect(Form form) {
@@ -738,7 +883,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#intersect(int)
 	 */
 	public void intersect(int noteId) {
@@ -750,7 +897,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#intersect(lotus.domino.NoteCollection)
 	 */
 	public void intersect(lotus.domino.NoteCollection collection) {
@@ -762,7 +911,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#intersect(java.lang.String)
 	 */
 	public void intersect(String noteId) {
@@ -774,7 +925,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#intersect(lotus.domino.View)
 	 */
 	public void intersect(View view) {
@@ -786,7 +939,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.impl.Base#recycle()
 	 */
 	@Override
@@ -799,7 +954,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.impl.Base#recycle(java.util.Vector)
 	 */
 	@Override
@@ -812,7 +969,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#remove(lotus.domino.Agent)
 	 */
 	public void remove(Agent agent) {
@@ -824,7 +983,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#remove(lotus.domino.Document)
 	 */
 	public void remove(Document document) {
@@ -836,7 +997,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#remove(lotus.domino.DocumentCollection)
 	 */
 	public void remove(DocumentCollection collection) {
@@ -848,7 +1011,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#remove(lotus.domino.Form)
 	 */
 	public void remove(Form form) {
@@ -860,7 +1025,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#remove(int)
 	 */
 	public void remove(int noteId) {
@@ -872,7 +1039,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#remove(lotus.domino.NoteCollection)
 	 */
 	public void remove(lotus.domino.NoteCollection collection) {
@@ -884,7 +1053,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#remove(java.lang.String)
 	 */
 	public void remove(String noteId) {
@@ -896,7 +1067,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#remove(lotus.domino.View)
 	 */
 	public void remove(View view) {
@@ -908,7 +1081,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#selectAllAdminNotes(boolean)
 	 */
 	public void selectAllAdminNotes(boolean flag) {
@@ -920,7 +1095,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#selectAllCodeElements(boolean)
 	 */
 	public void selectAllCodeElements(boolean flag) {
@@ -932,7 +1109,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#selectAllDataNotes(boolean)
 	 */
 	public void selectAllDataNotes(boolean flag) {
@@ -944,7 +1123,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#selectAllDesignElements(boolean)
 	 */
 	public void selectAllDesignElements(boolean flag) {
@@ -956,7 +1137,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#selectAllFormatElements(boolean)
 	 */
 	public void selectAllFormatElements(boolean flag) {
@@ -968,7 +1151,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#selectAllIndexElements(boolean)
 	 */
 	public void selectAllIndexElements(boolean flag) {
@@ -980,7 +1165,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#selectAllNotes(boolean)
 	 */
 	public void selectAllNotes(boolean flag) {
@@ -992,7 +1179,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.NoteCollection#setSelectAcl(boolean)
 	 */
 	public void setSelectAcl(boolean flag) {
@@ -1004,7 +1193,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.NoteCollection#setSelectActions(boolean)
 	 */
 	public void setSelectActions(boolean flag) {
@@ -1016,7 +1207,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.NoteCollection#setSelectAgents(boolean)
 	 */
 	public void setSelectAgents(boolean flag) {
@@ -1028,7 +1221,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.NoteCollection#setSelectDatabaseScript(boolean)
 	 */
 	public void setSelectDatabaseScript(boolean flag) {
@@ -1040,7 +1235,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.NoteCollection#setSelectDataConnections(boolean)
 	 */
 	public void setSelectDataConnections(boolean flag) {
@@ -1052,7 +1249,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectDocuments(boolean)
 	 */
 	public void setSelectDocuments(boolean flag) {
@@ -1064,7 +1263,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectFolders(boolean)
 	 */
 	public void setSelectFolders(boolean flag) {
@@ -1076,7 +1277,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectForms(boolean)
 	 */
 	public void setSelectForms(boolean flag) {
@@ -1088,7 +1291,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectFramesets(boolean)
 	 */
 	public void setSelectFramesets(boolean flag) {
@@ -1100,7 +1305,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectHelpAbout(boolean)
 	 */
 	public void setSelectHelpAbout(boolean flag) {
@@ -1112,7 +1319,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectHelpIndex(boolean)
 	 */
 	public void setSelectHelpIndex(boolean flag) {
@@ -1124,7 +1333,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectHelpUsing(boolean)
 	 */
 	public void setSelectHelpUsing(boolean flag) {
@@ -1136,7 +1347,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectIcon(boolean)
 	 */
 	public void setSelectIcon(boolean flag) {
@@ -1147,7 +1360,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectImageResources(boolean)
 	 */
 	public void setSelectImageResources(boolean flag) {
@@ -1158,7 +1373,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectionFormula(java.lang.String)
 	 */
 	public void setSelectionFormula(String flag) {
@@ -1169,7 +1386,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectJavaResources(boolean)
 	 */
 	public void setSelectJavaResources(boolean flag) {
@@ -1180,7 +1399,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectMiscCodeElements(boolean)
 	 */
 	public void setSelectMiscCodeElements(boolean flag) {
@@ -1191,7 +1412,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectMiscFormatElements(boolean)
 	 */
 	public void setSelectMiscFormatElements(boolean flag) {
@@ -1203,7 +1426,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectMiscIndexElements(boolean)
 	 */
 	public void setSelectMiscIndexElements(boolean flag) {
@@ -1214,7 +1439,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectNavigators(boolean)
 	 */
 	public void setSelectNavigators(boolean flag) {
@@ -1225,7 +1452,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectOutlines(boolean)
 	 */
 	public void setSelectOutlines(boolean flag) {
@@ -1236,7 +1465,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectPages(boolean)
 	 */
 	public void setSelectPages(boolean flag) {
@@ -1247,7 +1478,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectProfiles(boolean)
 	 */
 	public void setSelectProfiles(boolean flag) {
@@ -1258,7 +1491,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectReplicationFormulas(boolean)
 	 */
 	public void setSelectReplicationFormulas(boolean flag) {
@@ -1269,7 +1504,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectScriptLibraries(boolean)
 	 */
 	public void setSelectScriptLibraries(boolean flag) {
@@ -1280,7 +1517,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectSharedFields(boolean)
 	 */
 	public void setSelectSharedFields(boolean flag) {
@@ -1291,7 +1530,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectStylesheetResources(boolean)
 	 */
 	public void setSelectStylesheetResources(boolean flag) {
@@ -1302,7 +1543,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectSubforms(boolean)
 	 */
 	public void setSelectSubforms(boolean flag) {
@@ -1313,7 +1556,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectViews(boolean)
 	 */
 	public void setSelectViews(boolean flag) {
@@ -1324,7 +1569,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NoteCollection#setSinceTime(lotus.domino.DateTime)
 	 */
 	public void setSinceTime(lotus.domino.DateTime date) {
