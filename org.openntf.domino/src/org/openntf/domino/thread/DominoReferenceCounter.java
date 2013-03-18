@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 /**
  * The Class DominoReferenceCounter.
  */
-public class DominoReferenceCounter {
+class DominoReferenceCounter {
 
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(DominoReferenceCounter.class.getName());

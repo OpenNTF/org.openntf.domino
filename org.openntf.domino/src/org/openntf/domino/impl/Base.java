@@ -25,9 +25,9 @@ import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.openntf.domino.thread.DominoLockSet;
 import org.openntf.domino.thread.DominoReference;
 import org.openntf.domino.thread.DominoReferenceQueue;
-import org.openntf.domino.thread.DominoReferenceSet;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -66,7 +66,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	// };
 
 	/** The Constant lockedRefSet. */
-	private static final DominoReferenceSet lockedRefSet = new DominoReferenceSet();
+	private static final DominoLockSet lockedRefSet = new DominoLockSet();
 
 	/** The get cpp method. */
 	private static Method getCppMethod;
@@ -262,13 +262,6 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		for (lotus.domino.Base everyZig : allYourBase) {
 			lockedRefSet.lock(everyZig);
 		}
-	}
-
-	/**
-	 * Recycle all.
-	 */
-	public static void recycleAll() {
-		lockedRefSet.clear();
 	}
 
 	/*
