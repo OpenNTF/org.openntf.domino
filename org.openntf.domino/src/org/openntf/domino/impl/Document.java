@@ -21,7 +21,9 @@ import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
@@ -773,7 +775,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						&& (contentType.getHeaderVal().equals("application/x-java-serialized-object") || contentType.getHeaderVal().equals(
 								"application/x-java-externalized-object"))) {
 					// Then it's a MIMEBean
-					Serializable resultObj = DominoUtils.restoreState(this, name);
+					Object resultObj = DominoUtils.restoreState(this, name);
+
 					// If it's a List, return it - otherwise, store it in a Vector for consistency
 					if (resultObj instanceof List) {
 						return new java.util.Vector<Object>((List<?>) resultObj);
@@ -1774,14 +1777,15 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
 					Method saveState = stateHolderClass.getMethod("saveState", facesContextClass);
 					Serializable state = (Serializable) saveState.invoke(value, getCurrentInstance.invoke(null));
-					DominoUtils.saveState(state, this, itemName);
+					Map<String, String> headers = new HashMap<String, String>();
+					headers.put("X-Storage-Scheme", "StateHolder");
+					DominoUtils.saveState(state, this, itemName, true, headers);
 					result = getDelegate().getFirstItem(itemName);
 				} else if (value instanceof lotus.domino.DocumentCollection) {
 					// TODO implement this
 				} else if (value instanceof lotus.domino.NoteCollection) {
 					// TODO implement this
 				}
-
 			}
 
 			return Factory.fromLotus(result, Item.class, this);

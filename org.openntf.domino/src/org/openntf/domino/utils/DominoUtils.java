@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -171,6 +172,7 @@ public enum DominoUtils {
 	 * @param args
 	 *            the args
 	 */
+	@SuppressWarnings("unchecked")
 	public static void incinerate(Object... args) {
 		for (Object o : args) {
 			if (o != null) {
@@ -344,12 +346,12 @@ public enum DominoUtils {
 	 *             the throwable
 	 */
 	@SuppressWarnings("unchecked")
-	public static Serializable restoreState(Document doc, String itemName) throws Throwable {
+	public static Object restoreState(Document doc, String itemName) throws Throwable {
 		Session session = Factory.getSession((Base<?>) doc);
 		boolean convertMime = session.isConvertMime();
 		session.setConvertMime(false);
 
-		Serializable result = null;
+		Object result = null;
 		lotus.domino.Stream mimeStream = session.createStream();
 		lotus.domino.MIMEEntity entity = doc.getMIMEEntity(itemName);
 		entity.getContentAsBytes(mimeStream);
@@ -367,14 +369,29 @@ public enum DominoUtils {
 		} else {
 			objectStream = new ObjectInputStream(byteStream);
 		}
+		
+		// There are three potential storage forms: Externalizable, Serializable, and StateHolder, distinguished by type or header
 		if(entity.getContentSubType().equals("x-java-externalized-object")) {
 			Class<Externalizable> externalizableClass = (Class<Externalizable>)Class.forName(entity.getNthHeader("X-Java-Class").getHeaderVal());
 			Externalizable restored = externalizableClass.newInstance();
 			restored.readExternal(objectStream);
 			result = restored;
 		} else {
-			Serializable restored = (Serializable) objectStream.readObject();
-			result = restored;
+			Object restored = (Serializable) objectStream.readObject();
+			
+			// But wait! It might be a StateHolder object!
+			MIMEHeader storageScheme = entity.getNthHeader("X-Storage-Scheme");
+			if(storageScheme != null && storageScheme.getHeaderVal().equals("StateHolder")) {
+				Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext");
+				Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
+				
+				Class<?> stateHoldingClass = (Class<?>)Class.forName(entity.getNthHeader("X-Java-Class").getHeaderVal());
+				Method restoreStateMethod = stateHoldingClass.getMethod("restoreState", facesContextClass, Object.class);
+				result = stateHoldingClass.newInstance();
+				restoreStateMethod.invoke(result, getCurrentInstance.invoke(null), restored);
+			} else {
+				result = restored;
+			}
 		}
 		
 
@@ -398,7 +415,7 @@ public enum DominoUtils {
 	 *             the throwable
 	 */
 	public static void saveState(Serializable object, Document doc, String itemName) throws Throwable {
-		saveState(object, doc, itemName, true);
+		saveState(object, doc, itemName, true, null);
 	}
 
 	/**
@@ -415,7 +432,7 @@ public enum DominoUtils {
 	 * @throws Throwable
 	 *             the throwable
 	 */
-	public static void saveState(Serializable object, Document doc, String itemName, boolean compress) throws Throwable {
+	public static void saveState(Serializable object, Document doc, String itemName, boolean compress, Map<String, String> headers) throws Throwable {
 		Session session = Factory.getSession((Base<?>) doc);
 		boolean convertMime = session.isConvertMime();
 		session.setConvertMime(false);
@@ -461,6 +478,17 @@ public enum DominoUtils {
 		}
 		javaClass.setHeaderVal(object.getClass().getName());
 		javaClass.recycle();
+		
+		if(headers != null) {
+			for(Map.Entry<String, String> entry : headers.entrySet()) {
+				MIMEHeader paramHeader = entity.getNthHeader(entry.getKey());
+				if(paramHeader == null) {
+					paramHeader = entity.createHeader(entry.getKey());
+				}
+				paramHeader.setHeaderVal(entry.getValue());
+				paramHeader.recycle();
+			}
+		}
 
 		entity.recycle();
 		mimeStream.recycle();
