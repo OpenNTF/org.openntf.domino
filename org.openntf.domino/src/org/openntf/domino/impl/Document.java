@@ -15,7 +15,6 @@
  */
 package org.openntf.domino.impl;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
@@ -1766,10 +1765,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				}
 			} catch (IllegalArgumentException iae) {
 				// Then try serialization
-				if (value instanceof Externalizable) {
-					DominoUtils.saveState((Externalizable) value, this, itemName);
-					result = getDelegate().getFirstItem(itemName);
-				} else if (value instanceof Serializable) {
+				if (value instanceof Serializable) {
 					DominoUtils.saveState((Serializable) value, this, itemName);
 					result = getDelegate().getFirstItem(itemName);
 				} else if (value.getClass().getName().equals("javax.faces.component.StateHolder")) {

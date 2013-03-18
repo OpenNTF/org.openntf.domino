@@ -423,7 +423,16 @@ public enum DominoUtils {
 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 		ObjectOutputStream objectStream = compress ? new ObjectOutputStream(new GZIPOutputStream(byteStream)) : new ObjectOutputStream(
 				byteStream);
-		objectStream.writeObject(object);
+		String contentType = null;
+		// Prefer externalization if available
+		if(object instanceof Externalizable) {
+			((Externalizable)object).writeExternal(objectStream);
+			contentType = "application/x-java-externalized-object";
+		} else {
+			objectStream.writeObject(object);
+			contentType = "application/x-java-serialized-object";
+		}
+		
 		objectStream.flush();
 		objectStream.close();
 
@@ -432,7 +441,7 @@ public enum DominoUtils {
 		MIMEEntity entity = previousState == null ? doc.createMIMEEntity(itemName) : previousState;
 		ByteArrayInputStream byteIn = new ByteArrayInputStream(byteStream.toByteArray());
 		mimeStream.setContents(byteIn);
-		entity.setContentFromBytes(mimeStream, "application/x-java-serialized-object", MIMEEntity.ENC_NONE);
+		entity.setContentFromBytes(mimeStream, contentType, MIMEEntity.ENC_NONE);
 		MIMEHeader contentEncoding = entity.getNthHeader("Content-Encoding");
 		if (compress) {
 			if (contentEncoding == null) {
@@ -456,52 +465,6 @@ public enum DominoUtils {
 		entity.recycle();
 		mimeStream.recycle();
 
-		session.setConvertMime(convertMime);
-	}
-	
-	public static void saveState(Externalizable object, Document doc, String itemName) throws Throwable {
-		saveState(object, doc, itemName, true);
-	}
-	public static void saveState(Externalizable object, Document doc, String itemName, boolean compress) throws Throwable {
-		Session session = Factory.getSession((Base<?>) doc);
-		boolean convertMime = session.isConvertMime();
-		session.setConvertMime(false);
-		
-		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-		ObjectOutputStream objectStream = compress ? new ObjectOutputStream(new GZIPOutputStream(byteStream)) : new ObjectOutputStream(byteStream);
-		object.writeExternal(objectStream);
-		objectStream.flush();
-		objectStream.close();
-		
-		Stream mimeStream = session.createStream();
-		MIMEEntity previousState = doc.getMIMEEntity(itemName);
-		MIMEEntity entity = previousState == null ? doc.createMIMEEntity(itemName) : previousState;
-		ByteArrayInputStream byteIn = new ByteArrayInputStream(byteStream.toByteArray());
-		mimeStream.setContents(byteIn);
-		entity.setContentFromBytes(mimeStream, "application/x-java-externalized-object", MIMEEntity.ENC_NONE);
-		MIMEHeader header = entity.getNthHeader("Content-Encoding");
-		if(compress) {
-			if(header == null) {
-				header = entity.createHeader("Content-Encoding");
-			}
-			header.setHeaderVal("gzip");
-			header.recycle();
-		} else {
-			if(header != null) {
-				header.remove();
-				header.recycle();
-			}
-		}
-		MIMEHeader javaClass = entity.getNthHeader("X-Java-Class");
-		if (javaClass == null) {
-			javaClass = entity.createHeader("X-Java-Class");
-		}
-		javaClass.setHeaderVal(object.getClass().getName());
-		javaClass.recycle();
-
-		entity.recycle();
-		mimeStream.recycle();
-		
 		session.setConvertMime(convertMime);
 	}
 
