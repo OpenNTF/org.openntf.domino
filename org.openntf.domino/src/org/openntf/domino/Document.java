@@ -24,754 +24,1000 @@ import java.util.Vector;
  * The Interface Document.
  */
 public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document {
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#appendItemValue(java.lang.String)
 	 */
 	@Override
 	public Item appendItemValue(String name);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#appendItemValue(java.lang.String, double)
 	 */
 	@Override
 	public Item appendItemValue(String name, double value);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#appendItemValue(java.lang.String, int)
 	 */
 	@Override
 	public Item appendItemValue(String name, int value);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#appendItemValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
 	public Item appendItemValue(String name, Object value);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#attachVCard(lotus.domino.Base)
 	 */
 	@Override
 	public void attachVCard(lotus.domino.Base document);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#attachVCard(lotus.domino.Base, java.lang.String)
 	 */
 	@Override
 	public void attachVCard(lotus.domino.Base document, String arg1);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#closeMIMEEntities()
 	 */
 	@Override
 	public boolean closeMIMEEntities();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#closeMIMEEntities(boolean)
 	 */
 	@Override
 	public boolean closeMIMEEntities(boolean savechanges);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#closeMIMEEntities(boolean, java.lang.String)
 	 */
 	@Override
 	public boolean closeMIMEEntities(boolean savechanges, String entityitemname);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#computeWithForm(boolean, boolean)
 	 */
 	@Override
 	public boolean computeWithForm(boolean dodatatypes, boolean raiseerror);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#convertToMIME()
 	 */
 	@Override
 	public void convertToMIME();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#convertToMIME(int)
 	 */
 	@Override
 	public void convertToMIME(int conversiontype);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#convertToMIME(int, int)
 	 */
 	@Override
 	public void convertToMIME(int conversiontype, int options);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#copyAllItems(lotus.domino.Document, boolean)
 	 */
 	@Override
 	public void copyAllItems(lotus.domino.Document doc, boolean replace);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#copyItem(lotus.domino.Item)
 	 */
 	@Override
 	public Item copyItem(lotus.domino.Item item);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#copyItem(lotus.domino.Item, java.lang.String)
 	 */
 	@Override
 	public Item copyItem(lotus.domino.Item item, String newName);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#copyToDatabase(lotus.domino.Database)
 	 */
 	@Override
 	public Document copyToDatabase(lotus.domino.Database db);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#createMIMEEntity()
 	 */
 	@Override
 	public MIMEEntity createMIMEEntity();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#createMIMEEntity(java.lang.String)
 	 */
 	@Override
 	public MIMEEntity createMIMEEntity(String itemName);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#createReplyMessage(boolean)
 	 */
 	@Override
 	public Document createReplyMessage(boolean toall);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#createRichTextItem(java.lang.String)
 	 */
 	@Override
 	// TODO Switch to new class
 	public lotus.domino.RichTextItem createRichTextItem(String name);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#encrypt()
 	 */
 	@Override
 	public void encrypt();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#generateXML()
 	 */
 	@Override
 	public String generateXML();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#generateXML(java.lang.Object, lotus.domino.XSLTResultTarget)
 	 */
 	@Override
 	public void generateXML(Object style, lotus.domino.XSLTResultTarget target) throws IOException;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#generateXML(java.io.Writer)
 	 */
 	@Override
 	public void generateXML(Writer w) throws IOException;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getAttachment(java.lang.String)
 	 */
 	@Override
 	public EmbeddedObject getAttachment(String fileName);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getAuthors()
 	 */
 	@Override
 	public Vector<String> getAuthors();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getColumnValues()
 	 */
 	@Override
 	public Vector<Object> getColumnValues();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getCreated()
 	 */
 	@Override
 	public DateTime getCreated();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getEmbeddedObjects()
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector getEmbeddedObjects();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getEncryptionKeys()
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector getEncryptionKeys();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getFirstItem(java.lang.String)
 	 */
 	@Override
 	public Item getFirstItem(String name);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getFolderReferences()
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector getFolderReferences();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getFTSearchScore()
 	 */
 	@Override
 	public int getFTSearchScore();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getHttpURL()
 	 */
 	@Override
 	public String getHttpURL();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getInitiallyModified()
 	 */
 	@Override
 	public DateTime getInitiallyModified();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getItems()
 	 */
-	@SuppressWarnings("unchecked")
+	// @SuppressWarnings("unchecked")
 	@Override
-	public Vector getItems();
+	public Vector<Item> getItems();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getItemValue(java.lang.String)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector getItemValue(String name);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getItemValueCustomData(java.lang.String)
 	 */
 	@Override
 	public Object getItemValueCustomData(String itemName) throws IOException, ClassNotFoundException;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getItemValueCustomData(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public Object getItemValueCustomData(String itemName, String dataTypeName) throws IOException, ClassNotFoundException;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getItemValueCustomDataBytes(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public byte[] getItemValueCustomDataBytes(String itemName, String dataTypeName) throws IOException;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getItemValueDateTimeArray(java.lang.String)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector getItemValueDateTimeArray(String name);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getItemValueDouble(java.lang.String)
 	 */
 	@Override
 	public double getItemValueDouble(String name);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getItemValueInteger(java.lang.String)
 	 */
 	@Override
 	public int getItemValueInteger(String name);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getItemValueString(java.lang.String)
 	 */
 	@Override
 	public String getItemValueString(String name);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getKey()
 	 */
 	@Override
 	public String getKey();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getLastAccessed()
 	 */
 	@Override
 	public DateTime getLastAccessed();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getLastModified()
 	 */
 	@Override
 	public DateTime getLastModified();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getLockHolders()
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector getLockHolders();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getMIMEEntity()
 	 */
 	@Override
 	public MIMEEntity getMIMEEntity();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getMIMEEntity(java.lang.String)
 	 */
 	@Override
 	public MIMEEntity getMIMEEntity(String itemName);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getNameOfProfile()
 	 */
 	@Override
 	public String getNameOfProfile();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getNoteID()
 	 */
 	@Override
 	public String getNoteID();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getNotesURL()
 	 */
 	@Override
 	public String getNotesURL();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getParentDatabase()
 	 */
 	@Override
 	public org.openntf.domino.Database getParentDatabase();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getParentDocumentUNID()
 	 */
 	@Override
 	public String getParentDocumentUNID();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getParentView()
 	 */
 	@Override
 	public View getParentView();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getRead()
 	 */
 	@Override
 	public boolean getRead();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getRead(java.lang.String)
 	 */
 	@Override
 	public boolean getRead(String username);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getReceivedItemText()
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector getReceivedItemText();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getResponses()
 	 */
 	@Override
 	public DocumentCollection getResponses();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getSigner()
 	 */
 	@Override
 	public String getSigner();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getSize()
 	 */
 	@Override
 	public int getSize();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getUniversalID()
 	 */
 	@Override
 	public String getUniversalID();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getURL()
 	 */
 	@Override
 	public String getURL();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#getVerifier()
 	 */
 	@Override
 	public String getVerifier();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#hasEmbedded()
 	 */
 	@Override
 	public boolean hasEmbedded();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#hasItem(java.lang.String)
 	 */
 	@Override
 	public boolean hasItem(String name);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#isDeleted()
 	 */
 	@Override
 	public boolean isDeleted();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#isEncrypted()
 	 */
 	@Override
 	public boolean isEncrypted();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#isEncryptOnSend()
 	 */
 	@Override
 	public boolean isEncryptOnSend();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#isNewNote()
 	 */
 	@Override
 	public boolean isNewNote();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#isPreferJavaDates()
 	 */
 	@Override
 	public boolean isPreferJavaDates();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#isProfile()
 	 */
 	@Override
 	public boolean isProfile();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#isResponse()
 	 */
 	@Override
 	public boolean isResponse();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#isSaveMessageOnSend()
 	 */
 	@Override
 	public boolean isSaveMessageOnSend();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#isSentByAgent()
 	 */
 	@Override
 	public boolean isSentByAgent();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#isSigned()
 	 */
 	@Override
 	public boolean isSigned();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#isSignOnSend()
 	 */
 	@Override
 	public boolean isSignOnSend();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#isValid()
 	 */
 	@Override
 	public boolean isValid();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#lock()
 	 */
 	@Override
 	public boolean lock();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#lock(boolean)
 	 */
 	@Override
 	public boolean lock(boolean provisionalok);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#lock(java.lang.String)
 	 */
 	@Override
 	public boolean lock(String name);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#lock(java.lang.String, boolean)
 	 */
 	@Override
 	public boolean lock(String name, boolean provisionalok);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#lock(java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean lock(Vector names);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#lock(java.util.Vector, boolean)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean lock(Vector names, boolean provisionalok);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#lockProvisional()
 	 */
 	@Override
 	public boolean lockProvisional();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#lockProvisional(java.lang.String)
 	 */
 	@Override
 	public boolean lockProvisional(String name);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#lockProvisional(java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean lockProvisional(Vector names);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#makeResponse(lotus.domino.Document)
 	 */
 	@Override
 	public void makeResponse(lotus.domino.Document doc);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#markRead()
 	 */
 	@Override
 	public void markRead();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#markRead(java.lang.String)
 	 */
 	@Override
 	public void markRead(String username);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#markUnread()
 	 */
 	@Override
 	public void markUnread();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#markUnread(java.lang.String)
 	 */
 	@Override
 	public void markUnread(String username);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#putInFolder(java.lang.String)
 	 */
 	@Override
 	public void putInFolder(String name);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#putInFolder(java.lang.String, boolean)
 	 */
 	@Override
 	public void putInFolder(String name, boolean createonfail);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#remove(boolean)
 	 */
 	public boolean remove(boolean force);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#removeFromFolder(java.lang.String)
 	 */
 	@Override
 	public void removeFromFolder(String name);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#removeItem(java.lang.String)
 	 */
 	@Override
 	public void removeItem(String name);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#removePermanently(boolean)
 	 */
 	@Override
 	public boolean removePermanently(boolean force);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#renderToRTItem(lotus.domino.RichTextItem)
 	 */
 	@Override
 	public boolean renderToRTItem(lotus.domino.RichTextItem rtitem);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#replaceItemValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
 	public Item replaceItemValue(String itemName, Object value);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#replaceItemValueCustomData(java.lang.String, java.lang.Object)
 	 */
 	@Override
 	public Item replaceItemValueCustomData(String itemName, Object userObj) throws IOException;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#replaceItemValueCustomData(java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	@Override
 	public Item replaceItemValueCustomData(String itemName, String dataTypeName, Object userObj) throws IOException;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#replaceItemValueCustomDataBytes(java.lang.String, java.lang.String, byte[])
 	 */
 	@Override
 	public Item replaceItemValueCustomDataBytes(String itemName, String dataTypeName, byte[] byteArray) throws IOException;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#save()
 	 */
 	@Override
 	public boolean save();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#save(boolean)
 	 */
 	@Override
 	public boolean save(boolean force);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#save(boolean, boolean)
 	 */
 	@Override
 	public boolean save(boolean force, boolean makeresponse);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#save(boolean, boolean, boolean)
 	 */
 	@Override
 	public boolean save(boolean force, boolean makeresponse, boolean markread);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#send()
 	 */
 	@Override
 	public void send();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#send(boolean)
 	 */
 	@Override
 	public void send(boolean attachform);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#send(boolean, java.lang.String)
 	 */
 	@Override
 	public void send(boolean attachform, String recipient);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#send(boolean, java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void send(boolean attachform, Vector recipients);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#send(java.lang.String)
 	 */
 	@Override
 	public void send(String recipient);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#send(java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void send(Vector recipients);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#setEncryptionKeys(java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setEncryptionKeys(Vector keys);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#setEncryptOnSend(boolean)
 	 */
 	@Override
 	public void setEncryptOnSend(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#setPreferJavaDates(boolean)
 	 */
 	@Override
 	public void setPreferJavaDates(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#setSaveMessageOnSend(boolean)
 	 */
 	@Override
 	public void setSaveMessageOnSend(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#setSignOnSend(boolean)
 	 */
 	@Override
 	public void setSignOnSend(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#setUniversalID(java.lang.String)
 	 */
 	@Override
 	public void setUniversalID(String unid);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#sign()
 	 */
 	@Override
 	public void sign();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Document#unlock()
 	 */
 	@Override
