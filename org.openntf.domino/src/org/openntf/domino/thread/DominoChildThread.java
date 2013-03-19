@@ -15,6 +15,10 @@
  */
 package org.openntf.domino.thread;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
+
 import org.openntf.domino.impl.Base;
 
 // TODO: Auto-generated Javadoc
@@ -24,6 +28,8 @@ import org.openntf.domino.impl.Base;
 public class DominoChildThread extends DominoThread {
 	// This will be the Thread for executing Runnables that are given a Domino object starting point, such as a Session or Document or
 	// Database.
+	/** The Constant log_. */
+	private static final Logger log_ = Logger.getLogger(DominoChildThread.class.getName());
 
 	/**
 	 * Instantiates a new domino child thread.
@@ -108,6 +114,8 @@ public class DominoChildThread extends DominoThread {
 		// TODO Auto-generated constructor stub
 	}
 
+	private final Map<String, lotus.domino.Base> contextVariables_ = new HashMap<String, lotus.domino.Base>();
+
 	/**
 	 * Sets the context.
 	 * 
@@ -117,4 +125,37 @@ public class DominoChildThread extends DominoThread {
 	public void setContext(lotus.domino.Base... bases) {
 		Base.lock(bases);
 	}
+
+	/**
+	 * Sets the context.
+	 * 
+	 * @param context
+	 *            the new context
+	 */
+	public void setContext(Map<String, lotus.domino.Base> context) {
+		System.out.println("Setting up context variables...");
+
+		for (Map.Entry<String, lotus.domino.Base> entry : context.entrySet()) {
+			System.out.println("Putting an " + entry.getValue().getClass().getSimpleName() + " in entry called " + entry.getKey());
+			contextVariables_.put(entry.getKey(), entry.getValue());
+		}
+	}
+
+	public lotus.domino.Base getContextVar(String name) {
+		System.out.println("Looking for context variable " + name);
+
+		if (!contextVariables_.containsKey(name))
+			System.out.println("No variable found for name: " + name);
+		if (contextVariables_.containsKey(name)) {
+			return contextVariables_.get(name);
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public void run() {
+		super.run();
+	}
+
 }
