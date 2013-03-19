@@ -19,121 +19,272 @@ import java.util.Vector;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Interface Log.
+ * The Interface Log nnables you to record actions and errors that take place during a program's execution. You can record actions and
+ * errors in
+ * <p>
+ * <ul>
+ * <li>A Domino database
+ * <li>A mail memo
+ * <li>A file (for programs that run locally)
+ * <li>An agent log (for agents)
+ * </ul>
  */
 public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log {
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Log#close()
+	/**
+	 * Closes a log.
 	 */
 	@Override
 	public void close();
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Log#getNumActions()
+	/**
+	 * The number of actions logged so far.
+	 * 
+	 * @return The number of actions as an Integer
+	 * @since lotus.domino 4.5.0
 	 */
 	@Override
 	public int getNumActions();
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Log#getNumErrors()
+	/**
+	 * The number of errors logged so far.
+	 * <p>
+	 * The NumErrors property is not incremented until after {@link #logError} is called. To get the correct count at the time of a call to
+	 * logError, increment getNumErrors by 1.
+	 * 
+	 * @return The number of errors as an Integer
+	 * @since lotus.domino 4.5.0
 	 */
 	@Override
 	public int getNumErrors();
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Log#getParent()
+	/**
+	 * The Domino session that contains a Log object.
+	 * 
+	 * @return The {@link Session} that contains the log object.
+	 * @since lotus.domino 4.5.0
 	 */
 	@Override
 	public Session getParent();
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Log#getProgramName()
+	/**
+	 * The name that identifies the agent whose actions and errors you're logging. The name is the same as the name specified with
+	 * {@link Session#createLog}.
+	 * 
+	 * @return The name of the log object.
+	 * @since lotus.domino 4.5.0
 	 */
 	@Override
 	public String getProgramName();
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Log#isLogActions()
+	/**
+	 * Indicates if action logging is enabled or not.
+	 * <p>
+	 * The {@link #logAction} method has no effect while the isLogActions property is false.
+	 * 
+	 * @return Returns <code>true</code> if action logging is enabled, otherwise returns <code>false</code>
+	 * @since lotus.domino 4.5.0
 	 */
 	@Override
 	public boolean isLogActions();
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Log#isLogErrors()
+	/**
+	 * Indicates if error logging is enabled or not.
+	 * <p>
+	 * The {@link #logError} method has no effect while the IsLogErrors property is false.
+	 * 
+	 * @return Returns <code>true</code> if error logging is enabled, otherwise returns <code>false</code>
+	 * @since lotus.domino 4.5.0
 	 */
 	@Override
 	public boolean isLogErrors();
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Log#isOverwriteFile()
+	/**
+	 * For a log that records to a file, indicates if the log should write over the existing file or append to it.
+	 * <p>
+	 * This property has no effect on logs that record to a mail message or database.
+	 * 
+	 * @return Returns <code>true</code> if overwriting is enabled, otherwise returns <code>false</code>
+	 * @since lotus.domino 4.5.0
 	 */
 	@Override
 	public boolean isOverwriteFile();
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Log#logAction(java.lang.String)
+	/**
+	 * Records an action in a log.
+	 * <p>
+	 * The behavior of this method depends upon the type of log you open.
+	 * <p>
+	 * If you open a Domino database using openNotesLog, this method creates a new document in the database. The A$ACTION item in the
+	 * document contains the description.
+	 * <p>
+	 * If you open a mail memo using openMailLog, this method adds the description to the Body item of the memo, along with the current date
+	 * and time.
+	 * <p>
+	 * If you open a file using openFileLog, this method adds the description to the next line of the file, along with the log's ProgramName
+	 * and the current date and time.
+	 * 
+	 * @param action
+	 *            A description of the action, as you want it to appear in the log.
+	 * @since lotus.domino 4.5.0
 	 */
 	@Override
 	public void logAction(String action);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Log#logError(int, java.lang.String)
+	/**
+	 * Records an error in a log.
+	 * <p>
+	 * The behavior of this method depends upon the type of log you open.
+	 * <p>
+	 * If you open a Domino database using openNotesLog, this method creates a new document in the database. The A$ERRMSG item in the
+	 * document contains the description.
+	 * <p>
+	 * If you open a mail memo using openMailLog, this method adds the description to the Body item of the memo, along with the current date
+	 * and time.
+	 * <p>
+	 * If you open a file using openFileLog, this method adds the description to the next line of the file, along with the log's ProgramName
+	 * and the current date and time.
+	 * 
+	 * @param code
+	 *            A number indicating which error occurred.
+	 * @param text
+	 *            A description of the action, as you want it to appear in the log.
+	 * @since lotus.domino 4.5.0
 	 */
 	@Override
 	public void logError(int code, String text);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Log#logEvent(java.lang.String, java.lang.String, int, int)
+	/**
+	 * Sends a Domino event out to the network.
+	 * 
+	 * @param text
+	 *            The message to send to the network.
+	 * @param queue
+	 *            The name of the queue. The queue is picked for you if you send an empty string.
+	 * @param event
+	 *            Indicates the kind of event being logged.
+	 * @param severity
+	 *            Indicates the severity of the event being logged.
+	 * @since lotus.domino 4.5.0
 	 */
 	@Override
 	public void logEvent(String text, String queue, int event, int severity);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Log#openAgentLog()
+	/**
+	 * Opens the agent log for the current agent.
+	 * <p>
+	 * This method stores output in the log for the current agent and fails if the program is not running as an agent. To display an agent
+	 * log, select the agent and choose Agent > Log. The log also displays after you run an agent with Actions > Run.
+	 * 
+	 * @since lotus.domino 4.5.0
 	 */
 	@Override
 	public void openAgentLog();
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Log#openFileLog(java.lang.String)
+	/**
+	 * Starts logging to a file.
+	 * <p>
+	 * This method returns an error if you call it on a server.
+	 * <p>
+	 * To write over an existing log file, you must set the {@link #setOverwriteFile(boolean)} property to <code>true</code> before calling
+	 * openFileLog.
+	 * 
+	 * @param filePath
+	 *            The path and file name of the log file. If the file does not exist, the method creates it for you. If a directory in the
+	 *            path does not exist, the method throws an exception.
+	 * @since lotus.domino 4.5.0
 	 */
 	@Override
 	public void openFileLog(String filePath);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Log#openMailLog(java.util.Vector, java.lang.String)
+	/**
+	 * Opens a new mail memo for logging.
+	 * <p>
+	 * The memo is mailed when the log's close method is called, or when the object is deleted.
+	 * <p>
+	 * When you call this method, Domino uses the current user's mail database to create and send the mail memo. The memo is not saved to
+	 * the database.
+	 * 
+	 * @param recipients
+	 *            The recipients of the mail memo. Each element is an object of type String.
+	 * @param subject
+	 *            The subject of the mail memo.
+	 * @since lotus.domino 4.5.0
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void openMailLog(Vector recipients, String subject);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Log#openNotesLog(java.lang.String, java.lang.String)
+	/**
+	 * Opens a specified Domino® database for logging.
+	 * <p>
+	 * The StdR4AgentLog template (ALOG4.NTF) is designed to display the action and error documents that Log creates. If the database you
+	 * specify inherits its design from this template, you can use the database main view to see each of the items previously listed.
+	 * Several agents can log to the same server and database; the database categorizes each action and error according to the A$PROGNAME
+	 * item.
+	 * <p>
+	 * One document is created in the database for each error or action that you log. Each document contains the following items:
+	 * <p>
+	 * <ul>
+	 * Form - "Log Entry"
+	 * <li>AA$PROGNAME The ProgramName property
+	 * <li>A$LOGTIME The date and time that the error or action is logged
+	 * <li>A$USER The user at the time the error or action is logged
+	 * <li>A$LOGTYPE "Error" or "Action"
+	 * <li>A$ACTION A description of the action (actions only)
+	 * <li>A$ERRCODE The error code (errors only)
+	 * <li>A$ERRMSG A description of the error (errors only)
+	 * </ul>
+	 * 
+	 * @param server
+	 *            The server on which the database log resides. Use <code>null</code> or an empty string to indicate the current computer: a
+	 *            local database if the agent runs on a workstation; a database on that server if the agent runs on a server.
+	 * @param database
+	 *            The path and file name of the database.
 	 */
 	@Override
 	public void openNotesLog(String server, String database);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Log#setLogActions(boolean)
+	/**
+	 * Sets if action logging is enabled or not.
+	 * <p>
+	 * The {@link #logAction} method has no effect while the isLogActions property is false.
+	 * 
+	 * @param flag
+	 *            Set to <code>true</code> if action logging should be enabled, otherwise set to <code>false</code>
+	 * @since lotus.domino 4.5.0
 	 */
 	@Override
 	public void setLogActions(boolean flag);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Log#setLogErrors(boolean)
+	/**
+	 * Sets if error logging is enabled or not.
+	 * <p>
+	 * The {@link #logError} method has no effect while the isLogErrors property is false.
+	 * 
+	 * @param flag
+	 *            Set to <code>true</code> if error logging should be enabled, otherwise set to <code>false</code>
+	 * @since lotus.domino 4.5.0
 	 */
 	@Override
 	public void setLogErrors(boolean flag);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Log#setOverwriteFile(boolean)
+	/**
+	 * Sets if file overwriting is enabled or not.
+	 * 
+	 * @param flag
+	 *            Set to <code>true</code> if log file overwriting should be enabled, otherwise set to <code>false</code>
+	 * @since lotus.domino 4.5.0
 	 */
 	@Override
 	public void setOverwriteFile(boolean flag);
 
-	/* (non-Javadoc)
-	 * @see lotus.domino.Log#setProgramName(java.lang.String)
+	/**
+	 * Sets the name that identifies the agent whose actions and errors you're logging.
+	 * 
+	 * @param name
+	 *            The name you want to set.
+	 * @since lotus.domino 4.5.0
 	 */
 	@Override
 	public void setProgramName(String name);
