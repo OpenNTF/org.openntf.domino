@@ -40,12 +40,12 @@ public enum DominoChildScratchTest {
 			long start = System.nanoTime();
 
 			Session s = Factory.getSession();
-			Database db = s.getDatabase("", "events4.nsf");
+			// Database db = s.getDatabase("", "events4.nsf");
 			int delay = 2000;
 			DominoChildThread[] threads = new DominoChildThread[THREAD_COUNT];
 			Map<String, lotus.domino.Base> context = new HashMap<String, lotus.domino.Base>();
 			context.put("session", s);
-			context.put("database", db);
+			// context.put("database", db);
 			for (int i = 0; i < THREAD_COUNT; i++) {
 				threads[i] = new DominoChildThread(new Doer(), "Scratch Test " + i);
 				threads[i].setContext(context);
@@ -154,10 +154,11 @@ public enum DominoChildScratchTest {
 			if (Thread.currentThread() instanceof DominoChildThread) {
 				s = (org.openntf.domino.Session) ((DominoChildThread) Thread.currentThread()).getContextVar("session");
 			}
-			Database db = null;
-			if (Thread.currentThread() instanceof DominoChildThread) {
-				db = (org.openntf.domino.Database) ((DominoChildThread) Thread.currentThread()).getContextVar("database");
-			}
+			// Database db = null;
+			// if (Thread.currentThread() instanceof DominoChildThread) {
+			// db = (org.openntf.domino.Database) ((DominoChildThread) Thread.currentThread()).getContextVar("database");
+			// }
+			Database db = s.getDatabase("", "events4.nsf");
 
 			RunContext rc = s.getRunContext();
 			System.out.println("RunContext: " + rc.toString());
