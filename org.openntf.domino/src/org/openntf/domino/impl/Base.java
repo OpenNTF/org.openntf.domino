@@ -258,6 +258,16 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	}
 
 	/**
+	 * Unlock.
+	 * 
+	 * @param base
+	 *            the base
+	 */
+	public static void unlock(lotus.domino.Base base) {
+		lockedRefSet.unlock(base);
+	}
+
+	/**
 	 * Lock.
 	 * 
 	 * @param base
@@ -277,6 +287,16 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		for (lotus.domino.Base everyZig : allYourBase) {
 			lockedRefSet.lock(everyZig);
 		}
+	}
+
+	/**
+	 * Unlock.
+	 * 
+	 * @param allYourBase
+	 *            the all your base
+	 */
+	public static void unlock(lotus.domino.Base... allYourBase) {
+		lockedRefSet.unlock(allYourBase);
 	}
 
 	/*

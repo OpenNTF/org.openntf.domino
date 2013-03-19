@@ -18,6 +18,7 @@ import org.openntf.domino.Name;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.Session.RunContext;
+import org.openntf.domino.impl.Base;
 import org.openntf.domino.thread.DominoChildThread;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
@@ -40,8 +41,9 @@ public enum DominoChildScratchTest {
 			long start = System.nanoTime();
 
 			Session s = Factory.getSession();
+			Base.lock(s);
 			// Database db = s.getDatabase("", "events4.nsf");
-			int delay = 2000;
+			int delay = 1000;
 			DominoChildThread[] threads = new DominoChildThread[THREAD_COUNT];
 			Map<String, lotus.domino.Base> context = new HashMap<String, lotus.domino.Base>();
 			context.put("session", s);
@@ -59,15 +61,27 @@ public enum DominoChildScratchTest {
 					DominoUtils.handleException(e1);
 
 				}
+
 			}
 
-			boolean keepGoing = true;
-			while (keepGoing) {
-				for (Thread t : threads) {
-					keepGoing = (keepGoing || t.isAlive());
+			for (DominoThread thread : threads) {
+				try {
+					thread.join();
+				} catch (InterruptedException e) {
+					DominoUtils.handleException(e);
+
 				}
-				Thread.yield();
 			}
+
+			Base.unlock(s);
+
+			// boolean keepGoing = true;
+			// while (keepGoing) {
+			// for (Thread t : threads) {
+			// keepGoing = (keepGoing || t.isAlive());
+			// }
+			// Thread.yield();
+			// }
 
 		}
 
@@ -185,6 +199,7 @@ public enum DominoChildScratchTest {
 			sb.append(docCount + " docs, and ");
 			sb.append(dateCount + " datetimes without recycling.");
 			System.out.println(sb.toString());
+
 		}
 	}
 
