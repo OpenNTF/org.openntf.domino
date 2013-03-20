@@ -19,11 +19,13 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Vector;
 
+import org.openntf.domino.types.DatabaseDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface Document.
  */
-public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document {
+public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document, DatabaseDescendant {
 
 	/*
 	 * (non-Javadoc)

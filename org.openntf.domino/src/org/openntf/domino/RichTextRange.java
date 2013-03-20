@@ -15,84 +15,112 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.DatabaseDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface RichTextRange.
  */
-public interface RichTextRange extends Base<lotus.domino.RichTextRange>, lotus.domino.RichTextRange {
+public interface RichTextRange extends Base<lotus.domino.RichTextRange>, lotus.domino.RichTextRange, DatabaseDescendant {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextRange#Clone()
 	 */
 	@Override
 	public lotus.domino.RichTextRange Clone();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextRange#findandReplace(java.lang.String, java.lang.String)
 	 */
 	public int findandReplace(String target, String replacement);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextRange#findandReplace(java.lang.String, java.lang.String, long)
 	 */
 	@Override
 	public int findandReplace(String target, String replacement, long options);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextRange#getNavigator()
 	 */
 	@Override
 	public RichTextNavigator getNavigator();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextRange#getStyle()
 	 */
 	@Override
 	public RichTextStyle getStyle();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextRange#getTextParagraph()
 	 */
 	@Override
 	public String getTextParagraph();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextRange#getTextRun()
 	 */
 	@Override
 	public String getTextRun();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextRange#getType()
 	 */
 	@Override
 	public int getType();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextRange#remove()
 	 */
 	@Override
 	public void remove();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextRange#reset(boolean, boolean)
 	 */
 	@Override
 	public void reset(boolean begin, boolean end);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextRange#setBegin(lotus.domino.Base)
 	 */
 	@Override
 	public void setBegin(lotus.domino.Base element);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextRange#setEnd(lotus.domino.Base)
 	 */
 	@Override
 	public void setEnd(lotus.domino.Base element);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextRange#setStyle(lotus.domino.RichTextStyle)
 	 */
 	@Override

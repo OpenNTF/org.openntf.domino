@@ -17,97 +17,129 @@ package org.openntf.domino;
 
 import lotus.domino.RichTextStyle;
 
+import org.openntf.domino.types.DatabaseDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface RichTextDoclink.
  */
-public interface RichTextDoclink extends Base<lotus.domino.RichTextDoclink>, lotus.domino.RichTextDoclink {
+public interface RichTextDoclink extends Base<lotus.domino.RichTextDoclink>, lotus.domino.RichTextDoclink, DatabaseDescendant {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextDoclink#getDBReplicaID()
 	 */
 	@Override
 	public String getDBReplicaID();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextDoclink#getDisplayComment()
 	 */
 	@Override
 	public String getDisplayComment();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextDoclink#getDocUnID()
 	 */
 	@Override
 	public String getDocUnID();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextDoclink#getHotSpotText()
 	 */
 	@Override
 	public String getHotSpotText();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextDoclink#getHotSpotTextStyle()
 	 */
 	@Override
 	public RichTextStyle getHotSpotTextStyle();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextDoclink#getServerHint()
 	 */
 	@Override
 	public String getServerHint();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextDoclink#getViewUnID()
 	 */
 	@Override
 	public String getViewUnID();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextDoclink#remove()
 	 */
 	@Override
 	public void remove();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextDoclink#setDBReplicaID(java.lang.String)
 	 */
 	@Override
 	public void setDBReplicaID(String replicaId);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextDoclink#setDisplayComment(java.lang.String)
 	 */
 	@Override
 	public void setDisplayComment(String comment);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextDoclink#setDocUnID(java.lang.String)
 	 */
 	@Override
 	public void setDocUnID(String unid);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextDoclink#setHotSpotText(java.lang.String)
 	 */
 	@Override
 	public void setHotSpotText(String text);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextDoclink#setHotSpotTextStyle(lotus.domino.RichTextStyle)
 	 */
 	@Override
 	public void setHotSpotTextStyle(RichTextStyle rtstyle);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextDoclink#setServerHint(java.lang.String)
 	 */
 	@Override
 	public void setServerHint(String server);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextDoclink#setViewUnID(java.lang.String)
 	 */
 	@Override

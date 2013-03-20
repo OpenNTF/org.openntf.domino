@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.thread.DominoReferenceCounter;
 import org.openntf.domino.utils.DominoFormatter;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -53,6 +54,20 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 			return null;
 		}
 	};
+
+	/** The lotus reference counter_. */
+	private DominoReferenceCounter lotusReferenceCounter_ = new DominoReferenceCounter();
+
+	public int addId(long id) {
+		int result = lotusReferenceCounter_.increment(id);
+		if (result > 8)
+			log_.log(Level.INFO, "Currently tracking more than 8 references for " + id);
+		return result;
+	}
+
+	public int subtractId(long id) {
+		return lotusReferenceCounter_.decrement(id);
+	}
 
 	public RunContext getRunContext() {
 		RunContext result = RunContext.UNKNOWN;

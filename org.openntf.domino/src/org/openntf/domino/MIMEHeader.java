@@ -15,97 +15,129 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.DatabaseDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface MIMEHeader.
  */
-public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.MIMEHeader {
+public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.MIMEHeader, DatabaseDescendant {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.MIMEHeader#addValText(java.lang.String)
 	 */
 	@Override
 	public boolean addValText(String valueText);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.MIMEHeader#addValText(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public boolean addValText(String valueText, String charSet);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.MIMEHeader#getHeaderName()
 	 */
 	@Override
 	public String getHeaderName();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.MIMEHeader#getHeaderVal()
 	 */
 	@Override
 	public String getHeaderVal();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.MIMEHeader#getHeaderVal(boolean)
 	 */
 	@Override
 	public String getHeaderVal(boolean folded);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.MIMEHeader#getHeaderVal(boolean, boolean)
 	 */
 	@Override
 	public String getHeaderVal(boolean folded, boolean decoded);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.MIMEHeader#getHeaderValAndParams()
 	 */
 	@Override
 	public String getHeaderValAndParams();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.MIMEHeader#getHeaderValAndParams(boolean)
 	 */
 	@Override
 	public String getHeaderValAndParams(boolean folded);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.MIMEHeader#getHeaderValAndParams(boolean, boolean)
 	 */
 	@Override
 	public String getHeaderValAndParams(boolean folded, boolean decoded);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.MIMEHeader#getParamVal(java.lang.String)
 	 */
 	@Override
 	public String getParamVal(String paramName);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.MIMEHeader#getParamVal(java.lang.String, boolean)
 	 */
 	@Override
 	public String getParamVal(String paramName, boolean folded);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.MIMEHeader#remove()
 	 */
 	@Override
 	public void remove();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.MIMEHeader#setHeaderVal(java.lang.String)
 	 */
 	@Override
 	public boolean setHeaderVal(String headerValue);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.MIMEHeader#setHeaderValAndParams(java.lang.String)
 	 */
 	@Override
 	public boolean setHeaderValAndParams(String headerParamValue);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.MIMEHeader#setParamVal(java.lang.String, java.lang.String)
 	 */
 	@Override

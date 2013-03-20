@@ -15,126 +15,168 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.DatabaseDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface RichTextStyle.
  */
-public interface RichTextStyle extends Base<lotus.domino.RichTextStyle>, lotus.domino.RichTextStyle {
+public interface RichTextStyle extends Base<lotus.domino.RichTextStyle>, lotus.domino.RichTextStyle, DatabaseDescendant {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextStyle#getBold()
 	 */
 	@Override
 	public int getBold();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextStyle#getColor()
 	 */
 	public int getColor();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextStyle#getEffects()
 	 */
 	@Override
 	public int getEffects();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextStyle#getFont()
 	 */
 	@Override
 	public int getFont();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextStyle#getFontSize()
 	 */
 	@Override
 	public int getFontSize();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextStyle#getItalic()
 	 */
 	@Override
 	public int getItalic();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextStyle#getParent()
 	 */
 	@Override
 	public Session getParent();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextStyle#getPassThruHTML()
 	 */
 	@Override
 	public int getPassThruHTML();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextStyle#getStrikeThrough()
 	 */
 	@Override
 	public int getStrikeThrough();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextStyle#getUnderline()
 	 */
 	@Override
 	public int getUnderline();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextStyle#isDefault()
 	 */
 	@Override
 	public boolean isDefault();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextStyle#setBold(int)
 	 */
 	@Override
 	public void setBold(int value);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextStyle#setColor(int)
 	 */
 	@Override
 	public void setColor(int value);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextStyle#setEffects(int)
 	 */
 	@Override
 	public void setEffects(int value);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextStyle#setFont(int)
 	 */
 	@Override
 	public void setFont(int value);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextStyle#setFontSize(int)
 	 */
 	@Override
 	public void setFontSize(int value);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextStyle#setItalic(int)
 	 */
 	@Override
 	public void setItalic(int value);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextStyle#setPassThruHTML(int)
 	 */
 	@Override
 	public void setPassThruHTML(int value);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextStyle#setStrikeThrough(int)
 	 */
 	@Override
 	public void setStrikeThrough(int value);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextStyle#setUnderline(int)
 	 */
 	@Override

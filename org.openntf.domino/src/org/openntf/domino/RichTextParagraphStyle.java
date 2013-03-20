@@ -17,133 +17,178 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
+import org.openntf.domino.types.DatabaseDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface RichTextParagraphStyle.
  */
-public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagraphStyle>, lotus.domino.RichTextParagraphStyle {
+public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagraphStyle>, lotus.domino.RichTextParagraphStyle,
+		DatabaseDescendant {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextParagraphStyle#clearAllTabs()
 	 */
 	@Override
 	public void clearAllTabs();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextParagraphStyle#getAlignment()
 	 */
 	@Override
 	public int getAlignment();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextParagraphStyle#getFirstLineLeftMargin()
 	 */
 	@Override
 	public int getFirstLineLeftMargin();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextParagraphStyle#getInterLineSpacing()
 	 */
 	@Override
 	public int getInterLineSpacing();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextParagraphStyle#getLeftMargin()
 	 */
 	@Override
 	public int getLeftMargin();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextParagraphStyle#getPagination()
 	 */
 	@Override
 	public int getPagination();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextParagraphStyle#getRightMargin()
 	 */
 	@Override
 	public int getRightMargin();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextParagraphStyle#getSpacingAbove()
 	 */
 	@Override
 	public int getSpacingAbove();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextParagraphStyle#getSpacingBelow()
 	 */
 	@Override
 	public int getSpacingBelow();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextParagraphStyle#getTabs()
 	 */
 	@Override
 	public Vector<RichTextTab> getTabs();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextParagraphStyle#setAlignment(int)
 	 */
 	@Override
 	public void setAlignment(int value);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextParagraphStyle#setFirstLineLeftMargin(int)
 	 */
 	@Override
 	public void setFirstLineLeftMargin(int value);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextParagraphStyle#setInterLineSpacing(int)
 	 */
 	@Override
 	public void setInterLineSpacing(int value);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextParagraphStyle#setLeftMargin(int)
 	 */
 	@Override
 	public void setLeftMargin(int value);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextParagraphStyle#setPagination(int)
 	 */
 	@Override
 	public void setPagination(int value);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextParagraphStyle#setRightMargin(int)
 	 */
 	@Override
 	public void setRightMargin(int value);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextParagraphStyle#setSpacingAbove(int)
 	 */
 	@Override
 	public void setSpacingAbove(int value);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextParagraphStyle#setSpacingBelow(int)
 	 */
 	@Override
 	public void setSpacingBelow(int value);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextParagraphStyle#setTab(int, int)
 	 */
 	@Override
 	public void setTab(int position, int type);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextParagraphStyle#setTabs(int, int, int)
 	 */
 	@Override
 	public void setTabs(int count, int startPos, int interval);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextParagraphStyle#setTabs(int, int, int, int)
 	 */
 	@Override

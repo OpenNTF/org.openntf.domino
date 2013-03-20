@@ -17,10 +17,12 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
+import org.openntf.domino.types.DatabaseDescendant;
+
 /**
  * The Interface that represents the access control list (ACL) of an IBM Domino database.
  */
-public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<org.openntf.domino.ACLEntry> {
+public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<org.openntf.domino.ACLEntry>, DatabaseDescendant {
 
 	/**
 	 * Adds a role with the specified name to an ACL.

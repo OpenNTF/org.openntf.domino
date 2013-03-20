@@ -15,395 +15,525 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.DatabaseDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface ViewNavigator.
  */
-public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.domino.ViewNavigator {
-	
-	/* (non-Javadoc)
+public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.domino.ViewNavigator, DatabaseDescendant {
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getBufferMaxEntries()
 	 */
 	@Override
 	public int getBufferMaxEntries();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getCacheSize()
 	 */
 	@Override
 	public int getCacheSize();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getChild()
 	 */
 	@Override
 	public ViewEntry getChild();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getChild(lotus.domino.ViewEntry)
 	 */
 	@Override
 	public ViewEntry getChild(lotus.domino.ViewEntry entry);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getCount()
 	 */
 	@Override
 	public int getCount();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getCurrent()
 	 */
 	@Override
 	public ViewEntry getCurrent();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getEntryOptions()
 	 */
 	@Override
 	public int getEntryOptions();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getFirst()
 	 */
 	@Override
 	public ViewEntry getFirst();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getFirstDocument()
 	 */
 	@Override
 	public ViewEntry getFirstDocument();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getLast()
 	 */
 	@Override
 	public ViewEntry getLast();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getLastDocument()
 	 */
 	@Override
 	public ViewEntry getLastDocument();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getMaxLevel()
 	 */
 	@Override
 	public int getMaxLevel();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getNext()
 	 */
 	@Override
 	public ViewEntry getNext();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getNext(lotus.domino.ViewEntry)
 	 */
 	@Override
 	public ViewEntry getNext(lotus.domino.ViewEntry entry);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getNextCategory()
 	 */
 	@Override
 	public ViewEntry getNextCategory();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getNextDocument()
 	 */
 	@Override
 	public ViewEntry getNextDocument();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getNextSibling()
 	 */
 	@Override
 	public ViewEntry getNextSibling();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getNextSibling(lotus.domino.ViewEntry)
 	 */
 	@Override
 	public ViewEntry getNextSibling(lotus.domino.ViewEntry entry);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getNth(int)
 	 */
 	@Override
 	public ViewEntry getNth(int n);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getParent()
 	 */
 	@Override
 	public ViewEntry getParent();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getParent(lotus.domino.ViewEntry)
 	 */
 	@Override
 	public ViewEntry getParent(lotus.domino.ViewEntry entry);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getParentView()
 	 */
 	@Override
 	public View getParentView();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getPos(java.lang.String, char)
 	 */
 	@Override
 	public ViewEntry getPos(String pos, char separator);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getPrev()
 	 */
 	@Override
 	public ViewEntry getPrev();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getPrev(lotus.domino.ViewEntry)
 	 */
 	@Override
 	public ViewEntry getPrev(lotus.domino.ViewEntry entry);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getPrevCategory()
 	 */
 	@Override
 	public ViewEntry getPrevCategory();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getPrevDocument()
 	 */
 	@Override
 	public ViewEntry getPrevDocument();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getPrevSibling()
 	 */
 	@Override
 	public ViewEntry getPrevSibling();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#getPrevSibling(lotus.domino.ViewEntry)
 	 */
 	@Override
 	public ViewEntry getPrevSibling(lotus.domino.ViewEntry entry);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoChild()
 	 */
 	@Override
 	public boolean gotoChild();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoChild(lotus.domino.ViewEntry)
 	 */
 	@Override
 	public boolean gotoChild(lotus.domino.ViewEntry entry);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoEntry(java.lang.Object)
 	 */
 	@Override
 	public boolean gotoEntry(Object entry);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoFirst()
 	 */
 	@Override
 	public boolean gotoFirst();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoFirstDocument()
 	 */
 	@Override
 	public boolean gotoFirstDocument();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoLast()
 	 */
 	@Override
 	public boolean gotoLast();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoLastDocument()
 	 */
 	@Override
 	public boolean gotoLastDocument();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoNext()
 	 */
 	@Override
 	public boolean gotoNext();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoNext(lotus.domino.ViewEntry)
 	 */
 	@Override
 	public boolean gotoNext(lotus.domino.ViewEntry entry);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoNextCategory()
 	 */
 	@Override
 	public boolean gotoNextCategory();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoNextDocument()
 	 */
 	@Override
 	public boolean gotoNextDocument();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoNextSibling()
 	 */
 	@Override
 	public boolean gotoNextSibling();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoNextSibling(lotus.domino.ViewEntry)
 	 */
 	@Override
 	public boolean gotoNextSibling(lotus.domino.ViewEntry entry);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoParent()
 	 */
 	@Override
 	public boolean gotoParent();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoParent(lotus.domino.ViewEntry)
 	 */
 	@Override
 	public boolean gotoParent(lotus.domino.ViewEntry entry);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoPos(java.lang.String, char)
 	 */
 	@Override
 	public boolean gotoPos(String pos, char separator);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoPrev()
 	 */
 	@Override
 	public boolean gotoPrev();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoPrev(lotus.domino.ViewEntry)
 	 */
 	@Override
 	public boolean gotoPrev(lotus.domino.ViewEntry entry);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoPrevCategory()
 	 */
 	@Override
 	public boolean gotoPrevCategory();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoPrevDocument()
 	 */
 	@Override
 	public boolean gotoPrevDocument();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoPrevSibling()
 	 */
 	@Override
 	public boolean gotoPrevSibling();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoPrevSibling(lotus.domino.ViewEntry)
 	 */
 	@Override
 	public boolean gotoPrevSibling(lotus.domino.ViewEntry entry);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#markAllRead()
 	 */
 	@Override
 	public void markAllRead();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#markAllRead(java.lang.String)
 	 */
 	@Override
 	public void markAllRead(String userName);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#markAllUnread()
 	 */
 	@Override
 	public void markAllUnread();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#markAllUnread(java.lang.String)
 	 */
 	@Override
 	public void markAllUnread(String userName);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#setAutoExpandGuidance(int, int[], int[])
 	 */
 	@Override
 	// TODO Figure out what these parameters are
 	public void setAutoExpandGuidance(int arg0, int[] arg1, int[] arg2);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#setAutoExpandGuidance(int, lotus.domino.NoteCollection, lotus.domino.NoteCollection)
 	 */
 	@Override
 	public void setAutoExpandGuidance(int maxEntries, lotus.domino.NoteCollection collapsedNoteIds,
 			lotus.domino.NoteCollection expandedNoteIds);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#setBufferMaxEntries(int)
 	 */
 	@Override
 	public void setBufferMaxEntries(int entryCount);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#setCacheGuidance(int)
 	 */
 	@Override
 	// TODO Figure out what these parameters are
 	public void setCacheGuidance(int arg0);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#setCacheGuidance(int, int)
 	 */
 	@Override
 	// TODO Figure out what these parameters are
 	public void setCacheGuidance(int arg0, int arg1);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#setCacheSize(int)
 	 */
 	@Override
 	public void setCacheSize(int size);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#setEntryOptions(int)
 	 */
 	@Override
 	public void setEntryOptions(int options);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#setMaxLevel(int)
 	 */
 	@Override
 	public void setMaxLevel(int maxLevel);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ViewNavigator#skip(int)
 	 */
 	@Override

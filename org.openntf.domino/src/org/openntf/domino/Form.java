@@ -17,13 +17,14 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
+import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.Design;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Interface Form.
  */
-public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, Design {
+public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, Design, DatabaseDescendant {
 
 	/**
 	 * Gets the document.

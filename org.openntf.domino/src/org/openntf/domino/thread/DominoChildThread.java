@@ -17,9 +17,11 @@ package org.openntf.domino.thread;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openntf.domino.impl.Base;
+import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -155,7 +157,23 @@ public class DominoChildThread extends DominoThread {
 
 	@Override
 	public void run() {
-		super.run();
+		super.runChild();
+	}
+
+	public void close() {
+		int drCount = 0;
+		try {
+			drCount = Base.drainQueue();
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+		int runRecycleCount = Factory.getAutoRecycleCount();
+		log_.log(
+				Level.INFO,
+				"Thread " + Thread.currentThread().getName() + " auto-recycled " + runRecycleCount
+						+ " lotus references during run. Then recycled " + drCount + " lotus references on completion and had "
+						+ Factory.getRecycleErrorCount() + " recycle errors");
+		lotus.domino.NotesThread.stermThread();
 	}
 
 }

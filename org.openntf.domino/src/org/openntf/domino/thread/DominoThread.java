@@ -119,8 +119,6 @@ public class DominoThread extends Thread {
 		try {
 			lotus.domino.NotesThread.sinitThread();
 			super.run();
-			// System.out.println("Completed run. GCing...");
-			// System.out.println("GC complete");
 		} catch (Throwable t) {
 			throw new RuntimeException(t);
 		} finally {
@@ -142,6 +140,19 @@ public class DominoThread extends Thread {
 					+ Factory.getRecycleErrorCount() + " recycle errors");
 			lotus.domino.NotesThread.stermThread();
 		}
+	}
+
+	public void runChild() {
+		try {
+			lotus.domino.NotesThread.sinitThread();
+			super.run();
+		} catch (Throwable t) {
+			throw new RuntimeException(t);
+		} finally {
+			System.gc();
+		}
+
+		// deliberately don't close out the thread access...
 	}
 
 	/*

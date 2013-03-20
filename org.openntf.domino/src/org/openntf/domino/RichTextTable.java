@@ -17,121 +17,161 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
+import org.openntf.domino.types.DatabaseDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface RichTextTable.
  */
-public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.domino.RichTextTable {
+public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.domino.RichTextTable, DatabaseDescendant {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextTable#addRow()
 	 */
 	@Override
 	public void addRow();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextTable#addRow(int)
 	 */
 	public void addRow(int count);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextTable#addRow(int, int)
 	 */
 	@Override
 	public void addRow(int count, int targetRow);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextTable#getAlternateColor()
 	 */
 	@Override
 	public ColorObject getAlternateColor();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextTable#getColor()
 	 */
 	@Override
 	public ColorObject getColor();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextTable#getColumnCount()
 	 */
 	@Override
 	public int getColumnCount();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextTable#getRowCount()
 	 */
 	@Override
 	public int getRowCount();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextTable#getRowLabels()
 	 */
 	@Override
 	public Vector<String> getRowLabels();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextTable#getStyle()
 	 */
 	@Override
 	public int getStyle();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextTable#isRightToLeft()
 	 */
 	@Override
 	public boolean isRightToLeft();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextTable#remove()
 	 */
 	@Override
 	public void remove();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextTable#removeRow()
 	 */
 	@Override
 	public void removeRow();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextTable#removeRow(int)
 	 */
 	@Override
 	public void removeRow(int count);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextTable#removeRow(int, int)
 	 */
 	@Override
 	public void removeRow(int count, int targetRow);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextTable#setAlternateColor(lotus.domino.ColorObject)
 	 */
 	@Override
 	public void setAlternateColor(lotus.domino.ColorObject color);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextTable#setColor(lotus.domino.ColorObject)
 	 */
 	@Override
 	public void setColor(lotus.domino.ColorObject color);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextTable#setRightToLeft(boolean)
 	 */
 	@Override
 	public void setRightToLeft(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextTable#setRowLabels(java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setRowLabels(Vector labels);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextTable#setStyle(int)
 	 */
 	@Override

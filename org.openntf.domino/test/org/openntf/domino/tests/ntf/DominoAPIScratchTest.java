@@ -27,7 +27,7 @@ public enum DominoAPIScratchTest {
 		// TODO Auto-generated constructor stub
 	}
 
-	private static final int THREAD_COUNT = 1;
+	private static final int THREAD_COUNT = 10;
 	private static final boolean INCLUDE_FORMS = false;
 
 	static class Doer implements Runnable {

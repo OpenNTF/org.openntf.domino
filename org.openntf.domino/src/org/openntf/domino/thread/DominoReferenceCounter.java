@@ -26,7 +26,9 @@ import java.util.logging.Logger;
 /**
  * The Class DominoReferenceCounter.
  */
-class DominoReferenceCounter {
+public class DominoReferenceCounter {
+	// TODO NTF - move reference counter to session. It would appear that the same handles are used across threads if they have a common
+	// Session. Which is RIDICULOUS, but, whatever...
 
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(DominoReferenceCounter.class.getName());

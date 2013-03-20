@@ -15,13 +15,14 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.Design;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Interface ViewColumn.
  */
-public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.ViewColumn, Design {
+public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.ViewColumn, Design, DatabaseDescendant {
 
 	/*
 	 * (non-Javadoc)

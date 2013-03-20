@@ -17,9 +17,12 @@ package org.openntf.domino.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
 import org.openntf.domino.impl.Session;
+import org.openntf.domino.types.DatabaseDescendant;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -27,6 +30,8 @@ import org.openntf.domino.impl.Session;
  */
 public enum Factory {
 	;
+	/** The Constant log_. */
+	private static final Logger log_ = Logger.getLogger(Factory.class.getName());
 
 	/** The Constant TRACE_COUNTERS. */
 	private static final boolean TRACE_COUNTERS = true;
@@ -139,11 +144,13 @@ public enum Factory {
 			return null;
 		}
 		if (lotus instanceof org.openntf.domino.Base) {
-			System.out.println("Returning an already OpenNTF object...");
+			if (log_.isLoggable(Level.FINE))
+				log_.log(Level.FINE, "Returning an already OpenNTF object...");
 			return (T) lotus;
 		}
 		if (T.isAssignableFrom(lotus.getClass())) {
-			System.out.println("Returning an assignable object....");
+			if (log_.isLoggable(Level.FINE))
+				log_.log(Level.FINE, "Returning an assignable object....");
 			return (T) lotus;
 		}
 
@@ -431,8 +438,20 @@ public enum Factory {
 			result = (org.openntf.domino.Database) base;
 		} else if (base instanceof org.openntf.domino.Document) {
 			result = ((org.openntf.domino.Document) base).getParentDatabase();
+		} else if (base instanceof org.openntf.domino.Agent) {
+			result = ((org.openntf.domino.Agent) base).getParent();
+		} else if (base instanceof org.openntf.domino.Outline) {
+			result = ((org.openntf.domino.Outline) base).getParentDatabase();
+		} else if (base instanceof org.openntf.domino.OutlineEntry) {
+			result = ((org.openntf.domino.OutlineEntry) base).getParent().getParentDatabase();
+		} else if (base instanceof org.openntf.domino.EmbeddedObject) {
+			result = ((org.openntf.domino.EmbeddedObject) base).getParent().getParent().getParentDatabase();
+		} else if (base instanceof org.openntf.domino.Item) { // Note: this includes RichTextItems too
+			result = (org.openntf.domino.Database) ((org.openntf.domino.Item) base).getParent().getParentDatabase();
 		} else if (base instanceof org.openntf.domino.DocumentCollection) {
 			result = (org.openntf.domino.Database) ((org.openntf.domino.DocumentCollection) base).getParent();
+		} else if (base instanceof org.openntf.domino.NoteCollection) {
+			result = (org.openntf.domino.Database) ((org.openntf.domino.NoteCollection) base).getParent();
 		} else if (base instanceof org.openntf.domino.View) {
 			result = (org.openntf.domino.Database) ((org.openntf.domino.View) base).getParent();
 		} else if (base instanceof org.openntf.domino.Form) {
@@ -463,24 +482,18 @@ public enum Factory {
 	 */
 	public static org.openntf.domino.Session getSession(org.openntf.domino.Base<?> base) {
 		org.openntf.domino.Session result = null;
-		if (base instanceof org.openntf.domino.AgentContext) {
+		if (base instanceof DatabaseDescendant) {
+			result = getParentDatabase(base).getParent();
+		} else if (base instanceof org.openntf.domino.AgentContext) {
 			result = ((org.openntf.domino.AgentContext) base).getParentSession();
 		} else if (base instanceof org.openntf.domino.Session) {
 			result = (org.openntf.domino.Session) base;
 		} else if (base instanceof org.openntf.domino.Database) {
 			result = ((org.openntf.domino.Database) base).getParent();
-		} else if (base instanceof org.openntf.domino.Document) {
-			result = ((org.openntf.domino.Document) base).getParentDatabase().getParent();
-		} else if (base instanceof org.openntf.domino.DocumentCollection) {
-			result = (org.openntf.domino.Session) ((org.openntf.domino.DocumentCollection) base).getParent().getParent();
-		} else if (base instanceof org.openntf.domino.View) {
-			result = (org.openntf.domino.Session) ((org.openntf.domino.View) base).getParent().getParent();
 		} else if (base instanceof org.openntf.domino.DateTime) {
 			result = ((org.openntf.domino.DateTime) base).getParent();
 		} else if (base instanceof org.openntf.domino.DateRange) {
 			result = ((org.openntf.domino.DateRange) base).getParent();
-		} else if (base instanceof org.openntf.domino.Form) {
-			result = ((org.openntf.domino.Form) base).getParent().getParent();
 		} else if (base instanceof org.openntf.domino.Name) {
 			result = ((org.openntf.domino.Name) base).getParent();
 		} else {

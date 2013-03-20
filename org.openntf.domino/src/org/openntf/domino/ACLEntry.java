@@ -17,258 +17,344 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
+import org.openntf.domino.types.DatabaseDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface ACLEntry.
  */
-public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLEntry {
+public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLEntry, DatabaseDescendant {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#disableRole(java.lang.String)
 	 */
 	@Override
 	public void disableRole(String role);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#enableRole(java.lang.String)
 	 */
 	public void enableRole(String role);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#getLevel()
 	 */
 	@Override
 	public int getLevel();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#getName()
 	 */
 	@Override
 	public String getName();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#getNameObject()
 	 */
 	@Override
 	public Name getNameObject();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#getParent()
 	 */
 	@Override
 	public ACL getParent();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#getRoles()
 	 */
 	@Override
 	public Vector<String> getRoles();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#getUserType()
 	 */
 	@Override
 	public int getUserType();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#isAdminReaderAuthor()
 	 */
 	@Override
 	public boolean isAdminReaderAuthor();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#isAdminServer()
 	 */
 	@Override
 	public boolean isAdminServer();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#isCanCreateDocuments()
 	 */
 	@Override
 	public boolean isCanCreateDocuments();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#isCanCreateLSOrJavaAgent()
 	 */
 	@Override
 	public boolean isCanCreateLSOrJavaAgent();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#isCanCreatePersonalAgent()
 	 */
 	@Override
 	public boolean isCanCreatePersonalAgent();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#isCanCreatePersonalFolder()
 	 */
 	@Override
 	public boolean isCanCreatePersonalFolder();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#isCanCreateSharedFolder()
 	 */
 	@Override
 	public boolean isCanCreateSharedFolder();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#isCanDeleteDocuments()
 	 */
 	@Override
 	public boolean isCanDeleteDocuments();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#isCanReplicateOrCopyDocuments()
 	 */
 	@Override
 	public boolean isCanReplicateOrCopyDocuments();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#isGroup()
 	 */
 	@Override
 	public boolean isGroup();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#isPerson()
 	 */
 	@Override
 	public boolean isPerson();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#isPublicReader()
 	 */
 	@Override
 	public boolean isPublicReader();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#isPublicWriter()
 	 */
 	@Override
 	public boolean isPublicWriter();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#isRoleEnabled(java.lang.String)
 	 */
 	@Override
 	public boolean isRoleEnabled(String role);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#isServer()
 	 */
 	@Override
 	public boolean isServer();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#remove()
 	 */
 	@Override
 	public void remove();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#setAdminReaderAuthor(boolean)
 	 */
 	@Override
 	public void setAdminReaderAuthor(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#setAdminServer(boolean)
 	 */
 	@Override
 	public void setAdminServer(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#setCanCreateDocuments(boolean)
 	 */
 	@Override
 	public void setCanCreateDocuments(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#setCanCreateLSOrJavaAgent(boolean)
 	 */
 	@Override
 	public void setCanCreateLSOrJavaAgent(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#setCanCreatePersonalAgent(boolean)
 	 */
 	@Override
 	public void setCanCreatePersonalAgent(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#setCanCreatePersonalFolder(boolean)
 	 */
 	@Override
 	public void setCanCreatePersonalFolder(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#setCanCreateSharedFolder(boolean)
 	 */
 	@Override
 	public void setCanCreateSharedFolder(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#setCanDeleteDocuments(boolean)
 	 */
 	@Override
 	public void setCanDeleteDocuments(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#setCanReplicateOrCopyDocuments(boolean)
 	 */
 	@Override
 	public void setCanReplicateOrCopyDocuments(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#setGroup(boolean)
 	 */
 	@Override
 	public void setGroup(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#setLevel(int)
 	 */
 	@Override
 	public void setLevel(int level);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#setName(lotus.domino.Name)
 	 */
 	@Override
 	public void setName(lotus.domino.Name name);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#setName(java.lang.String)
 	 */
 	@Override
 	public void setName(String name);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#setPerson(boolean)
 	 */
 	@Override
 	public void setPerson(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#setPublicReader(boolean)
 	 */
 	@Override
 	public void setPublicReader(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#setPublicWriter(boolean)
 	 */
 	@Override
 	public void setPublicWriter(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#setServer(boolean)
 	 */
 	@Override
 	public void setServer(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ACLEntry#setUserType(int)
 	 */
 	@Override

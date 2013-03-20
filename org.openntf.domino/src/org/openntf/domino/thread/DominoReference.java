@@ -20,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Base;
+import org.openntf.domino.impl.Session;
 import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
@@ -37,6 +38,7 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 	private final long delegateId_;
 	private final int referrantHash_;
 	private final int referrantId_;
+	private Session referrantSession_;
 
 	private static long watchedCpp = 0l;
 
@@ -54,6 +56,7 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 		super(r, q);
 		delegate_ = delegate; // Because the reference separately contains a pointer to the delegate object, it's still available even
 								// though the wrapper is null
+		referrantSession_ = (Session) Factory.getSession(r); // TODO NTF - clean up implementation
 		if (r instanceof org.openntf.domino.impl.Base) {
 			delegateId_ = org.openntf.domino.impl.Base.getDelegateId((org.openntf.domino.impl.Base) r);
 		} else {
@@ -76,6 +79,10 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 
 	public Long getDelegateId() {
 		return delegateId_;
+	}
+
+	public Session getSession() {
+		return referrantSession_;
 	}
 
 	public int _getReferrantHash() {

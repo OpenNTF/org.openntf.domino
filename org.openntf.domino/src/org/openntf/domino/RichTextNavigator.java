@@ -15,133 +15,177 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.DatabaseDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface RichTextNavigator.
  */
-public interface RichTextNavigator extends Base<lotus.domino.RichTextNavigator>, lotus.domino.RichTextNavigator {
+public interface RichTextNavigator extends Base<lotus.domino.RichTextNavigator>, lotus.domino.RichTextNavigator, DatabaseDescendant {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextNavigator#Clone()
 	 */
 	@Override
 	public RichTextNavigator Clone();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextNavigator#findFirstElement(int)
 	 */
 	@Override
 	public boolean findFirstElement(int type);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextNavigator#findFirstString(java.lang.String)
 	 */
 	@Override
 	public boolean findFirstString(String target);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextNavigator#findFirstString(java.lang.String, int)
 	 */
 	@Override
 	public boolean findFirstString(String target, int options);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextNavigator#findLastElement(int)
 	 */
 	@Override
 	public boolean findLastElement(int type);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextNavigator#findNextElement()
 	 */
 	@Override
 	public boolean findNextElement();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextNavigator#findNextElement(int)
 	 */
 	@Override
 	public boolean findNextElement(int type);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextNavigator#findNextElement(int, int)
 	 */
 	@Override
 	public boolean findNextElement(int type, int occurrence);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextNavigator#findNextString(java.lang.String)
 	 */
 	@Override
 	public boolean findNextString(String target);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextNavigator#findNextString(java.lang.String, int)
 	 */
 	@Override
 	public boolean findNextString(String target, int options);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextNavigator#findNthElement(int, int)
 	 */
 	@Override
 	public boolean findNthElement(int type, int occurrence);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextNavigator#getElement()
 	 */
 	@Override
 	public Base<?> getElement();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextNavigator#getFirstElement(int)
 	 */
 	@Override
 	public Base<?> getFirstElement(int type);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextNavigator#getLastElement(int)
 	 */
 	@Override
 	public Base<?> getLastElement(int type);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextNavigator#getNextElement()
 	 */
 	@Override
 	public Base<?> getNextElement();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextNavigator#getNextElement(int)
 	 */
 	@Override
 	public Base<?> getNextElement(int type);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextNavigator#getNextElement(int, int)
 	 */
 	@Override
 	public Base<?> getNextElement(int type, int occurrence);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextNavigator#getNthElement(int, int)
 	 */
 	@Override
 	public Base<?> getNthElement(int type, int occurrence);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextNavigator#setCharOffset(int)
 	 */
 	@Override
 	public void setCharOffset(int offset);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextNavigator#setPosition(lotus.domino.Base)
 	 */
 	@Override
 	public void setPosition(lotus.domino.Base element);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextNavigator#setPositionAtEnd(lotus.domino.Base)
 	 */
 	@Override

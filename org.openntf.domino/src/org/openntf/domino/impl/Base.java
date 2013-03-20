@@ -135,6 +135,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	@SuppressWarnings("rawtypes")
 	protected Base(D delegate, org.openntf.domino.Base<?> parent) {
 		drainQueue();
+		if (parent != null) {
+			setParent(parent);
+		}
 		if (delegate != null) {
 			if (delegate instanceof org.openntf.domino.impl.Base) {
 				if (log_.isLoggable(Level.INFO))
@@ -144,8 +147,11 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			} else if (delegate instanceof lotus.domino.local.NotesBase) {
 				delegate_ = delegate;
 				cpp_object = getLotusId((lotus.domino.local.NotesBase) delegate);
-				if (delegate instanceof lotus.domino.Name || delegate instanceof lotus.domino.DateTime) {
+				if (delegate instanceof lotus.domino.Name || delegate instanceof lotus.domino.DateTime
+						|| delegate instanceof lotus.domino.Session) {
 					// No reference needed. Will be recycled directly...
+					// Not creating auto-recycle references for Sessions
+					// TODO - NTF come up with a better solution for recycling Sessions!!!
 				} else {
 					recycleQueue.get().bagReference(new DominoReference(this, recycleQueue.get(), delegate));
 				}
@@ -157,9 +163,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		// else {
 		// encapsulated_ = true;
 		// }
-		if (parent != null) {
-			setParent(parent);
-		}
+
 	}
 
 	/**

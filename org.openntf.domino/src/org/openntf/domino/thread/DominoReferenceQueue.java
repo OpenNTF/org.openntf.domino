@@ -33,8 +33,8 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(DominoReferenceQueue.class.getName());
 
-	/** The lotus reference counter_. */
-	private DominoReferenceCounter lotusReferenceCounter_ = new DominoReferenceCounter();
+	// /** The lotus reference counter_. */
+	// private DominoReferenceCounter lotusReferenceCounter_ = new DominoReferenceCounter();
 
 	/**
 	 * The reference bag. NTF This is just a junk storehouse for our DominoReference objects BEFORE they get enqueued. if we didn't keep
@@ -48,7 +48,7 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 		DominoReference result = (DominoReference) super.poll();
 		if (result != null) {
 			referenceBag.remove(result);
-			int count = lotusReferenceCounter_.decrement(result.getDelegateId());
+			int count = result.getSession().subtractId(result.getDelegateId());
 			if (count < 1) {
 				result.recycle();
 			} else {
@@ -78,7 +78,7 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 			log_.log(Level.FINE, "Bagged 5000 more. Forcing GC...");
 			System.gc();
 		}
-		int count = lotusReferenceCounter_.increment(ref.getDelegateId());
+		int count = ref.getSession().addId(ref.getDelegateId());
 		referenceBag.add(ref);
 	}
 

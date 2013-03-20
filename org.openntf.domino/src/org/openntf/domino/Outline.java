@@ -15,13 +15,14 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.Design;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Interface Outline.
  */
-public interface Outline extends Base<lotus.domino.Outline>, lotus.domino.Outline, Design {
+public interface Outline extends Base<lotus.domino.Outline>, lotus.domino.Outline, Design, DatabaseDescendant {
 
 	/*
 	 * (non-Javadoc)

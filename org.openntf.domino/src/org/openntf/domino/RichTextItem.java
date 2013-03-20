@@ -17,11 +17,13 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
+import org.openntf.domino.types.DatabaseDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface RichTextItem.
  */
-public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.domino.Item {
+public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.domino.Item, DatabaseDescendant {
 
 	/*
 	 * (non-Javadoc)

@@ -20,9 +20,9 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.Vector;
 
-import lotus.domino.RichTextItem;
 import lotus.domino.XSLTResultTarget;
 
+import org.openntf.domino.types.DatabaseDescendant;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -30,105 +30,139 @@ import org.xml.sax.InputSource;
 /**
  * The Interface EmbeddedObject.
  */
-public interface EmbeddedObject extends Base<lotus.domino.EmbeddedObject>, lotus.domino.EmbeddedObject {
+public interface EmbeddedObject extends Base<lotus.domino.EmbeddedObject>, lotus.domino.EmbeddedObject, DatabaseDescendant {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.EmbeddedObject#activate(boolean)
 	 */
 	@Override
 	public int activate(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.EmbeddedObject#doVerb(java.lang.String)
 	 */
 	@Override
 	public void doVerb(String verb);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.EmbeddedObject#extractFile(java.lang.String)
 	 */
 	@Override
 	public void extractFile(String path);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.EmbeddedObject#getClassName()
 	 */
 	@Override
 	public String getClassName();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.EmbeddedObject#getFileSize()
 	 */
 	@Override
 	public int getFileSize();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.EmbeddedObject#getInputSource()
 	 */
 	@Override
 	public InputSource getInputSource();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.EmbeddedObject#getInputStream()
 	 */
 	@Override
 	public InputStream getInputStream();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.EmbeddedObject#getName()
 	 */
 	@Override
 	public String getName();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.EmbeddedObject#getObject()
 	 */
 	@Override
 	public int getObject();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.EmbeddedObject#getParent()
 	 */
 	@Override
 	public RichTextItem getParent();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.EmbeddedObject#getReader()
 	 */
 	@Override
 	public Reader getReader();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.EmbeddedObject#getSource()
 	 */
 	@Override
 	public String getSource();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.EmbeddedObject#getType()
 	 */
 	@Override
 	public int getType();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.EmbeddedObject#getVerbs()
 	 */
 	@Override
 	public Vector<String> getVerbs();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.EmbeddedObject#parseXML(boolean)
 	 */
 	@Override
 	public Document parseXML(boolean validate) throws IOException;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.EmbeddedObject#remove()
 	 */
 	@Override
 	public void remove();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.EmbeddedObject#transformXML(java.lang.Object, lotus.domino.XSLTResultTarget)
 	 */
 	@Override

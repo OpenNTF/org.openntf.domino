@@ -15,114 +15,151 @@
  */
 package org.openntf.domino;
 
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface ReplicationEntry.
  */
 public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, lotus.domino.ReplicationEntry {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ReplicationEntry#getDestination()
 	 */
 	public String getDestination();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ReplicationEntry#getFormula()
 	 */
 	@Override
 	public String getFormula();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ReplicationEntry#getSource()
 	 */
 	@Override
 	public String getSource();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ReplicationEntry#getViews()
 	 */
 	@Override
 	public String getViews();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ReplicationEntry#isIncludeACL()
 	 */
 	@Override
 	public boolean isIncludeACL();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ReplicationEntry#isIncludeAgents()
 	 */
 	@Override
 	public boolean isIncludeAgents();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ReplicationEntry#isIncludeDocuments()
 	 */
 	@Override
 	public boolean isIncludeDocuments();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ReplicationEntry#isIncludeForms()
 	 */
 	@Override
 	public boolean isIncludeForms();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ReplicationEntry#isIncludeFormulas()
 	 */
 	@Override
 	public boolean isIncludeFormulas();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ReplicationEntry#remove()
 	 */
 	@Override
 	public int remove();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ReplicationEntry#save()
 	 */
 	@Override
 	public int save();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ReplicationEntry#setFormula(java.lang.String)
 	 */
 	@Override
 	public void setFormula(String formula);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ReplicationEntry#setIncludeACL(boolean)
 	 */
 	@Override
 	public void setIncludeACL(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ReplicationEntry#setIncludeAgents(boolean)
 	 */
 	@Override
 	public void setIncludeAgents(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ReplicationEntry#setIncludeDocuments(boolean)
 	 */
 	@Override
 	public void setIncludeDocuments(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ReplicationEntry#setIncludeForms(boolean)
 	 */
 	@Override
 	public void setIncludeForms(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ReplicationEntry#setIncludeFormulas(boolean)
 	 */
 	@Override
 	public void setIncludeFormulas(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ReplicationEntry#setViews(java.lang.String)
 	 */
 	@Override

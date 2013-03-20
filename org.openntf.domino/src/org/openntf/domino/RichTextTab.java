@@ -15,25 +15,32 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.DatabaseDescendant;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Interface RichTextTab.
  */
-public interface RichTextTab extends Base<lotus.domino.RichTextTab>, lotus.domino.RichTextTab {
+public interface RichTextTab extends Base<lotus.domino.RichTextTab>, lotus.domino.RichTextTab, DatabaseDescendant {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextTab#clear()
 	 */
 	@Override
 	public void clear();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextTab#getPosition()
 	 */
 	public int getPosition();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextTab#getType()
 	 */
 	@Override

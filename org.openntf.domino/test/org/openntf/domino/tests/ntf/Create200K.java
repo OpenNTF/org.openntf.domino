@@ -30,12 +30,13 @@ public class Create200K {
 					db.open();
 			}
 
-			for (int i = 1; i < 200000; i++) {
+			for (int i = 1; i < 1000000; i++) {
 
 				doc = db.createDocument();
 				doc.replaceItemValue("form", "doc");
 				doc.replaceItemValue("Subject", String.valueOf(System.nanoTime()));
 				doc.save();
+
 				if (i % 5000 == 0) {
 					// System.gc();
 					docset.add(doc);

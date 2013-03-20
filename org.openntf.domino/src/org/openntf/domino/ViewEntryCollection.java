@@ -16,12 +16,14 @@
 package org.openntf.domino;
 
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.types.DatabaseDescendant;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Interface ViewEntryCollection.
  */
-public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollection>, lotus.domino.ViewEntryCollection, Iterable<ViewEntry> {
+public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollection>, lotus.domino.ViewEntryCollection, Iterable<ViewEntry>,
+		DatabaseDescendant {
 
 	/*
 	 * (non-Javadoc)

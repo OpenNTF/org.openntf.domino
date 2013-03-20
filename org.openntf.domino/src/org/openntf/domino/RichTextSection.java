@@ -15,61 +15,81 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.DatabaseDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface RichTextSection.
  */
-public interface RichTextSection extends Base<lotus.domino.RichTextSection>, lotus.domino.RichTextSection {
+public interface RichTextSection extends Base<lotus.domino.RichTextSection>, lotus.domino.RichTextSection, DatabaseDescendant {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextSection#getBarColor()
 	 */
 	@Override
 	public ColorObject getBarColor();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextSection#getTitle()
 	 */
 	@Override
 	public String getTitle();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextSection#getTitleStyle()
 	 */
 	@Override
 	public RichTextStyle getTitleStyle();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextSection#isExpanded()
 	 */
 	@Override
 	public boolean isExpanded();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextSection#remove()
 	 */
 	@Override
 	public void remove();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextSection#setBarColor(lotus.domino.ColorObject)
 	 */
 	@Override
 	public void setBarColor(lotus.domino.ColorObject color);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextSection#setExpanded(boolean)
 	 */
 	@Override
 	public void setExpanded(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextSection#setTitle(java.lang.String)
 	 */
 	@Override
 	public void setTitle(String title);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.RichTextSection#setTitleStyle(lotus.domino.RichTextStyle)
 	 */
 	@Override

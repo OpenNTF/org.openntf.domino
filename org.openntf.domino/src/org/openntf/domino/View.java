@@ -18,12 +18,13 @@ package org.openntf.domino;
 import java.util.Vector;
 
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.Design;
 
 /**
  * The Interface View.
  */
-public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design {
+public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design, DatabaseDescendant {
 
 	/*
 	 * (non-Javadoc)

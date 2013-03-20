@@ -18,12 +18,13 @@ package org.openntf.domino;
 import lotus.domino.Document;
 
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.types.DatabaseDescendant;
 
 /**
  * The Interface DocumentCollection represents a collection of documents from a database, selected according to specific criteria.
  */
 public interface DocumentCollection extends lotus.domino.DocumentCollection, org.openntf.domino.Base<lotus.domino.DocumentCollection>,
-		Iterable<org.openntf.domino.Document> {
+		Iterable<org.openntf.domino.Document>, DatabaseDescendant {
 
 	/**
 	 * The number of documents in a collection.

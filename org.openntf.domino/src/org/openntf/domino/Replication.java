@@ -23,139 +23,185 @@ import java.util.Vector;
  */
 public interface Replication extends Base<lotus.domino.Replication>, lotus.domino.Replication {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#clearHistory()
 	 */
 	@Override
 	public int clearHistory();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#getCutoffDate()
 	 */
 	@Override
 	public DateTime getCutoffDate();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#getCutoffInterval()
 	 */
 	@Override
 	public long getCutoffInterval();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#getDontSendLocalSecurityUpdates()
 	 */
 	@Override
 	public boolean getDontSendLocalSecurityUpdates();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#getEntries()
 	 */
 	@Override
 	public Vector<ReplicationEntry> getEntries();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#getEntry(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public ReplicationEntry getEntry(String source, String destination);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#getEntry(java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
 	public ReplicationEntry getEntry(String source, String destination, boolean createFlag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#getPriority()
 	 */
 	@Override
 	public int getPriority();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#isAbstract()
 	 */
 	@Override
 	public boolean isAbstract();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#isCutoffDelete()
 	 */
 	@Override
 	public boolean isCutoffDelete();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#isDisabled()
 	 */
 	@Override
 	public boolean isDisabled();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#isIgnoreDeletes()
 	 */
 	@Override
 	public boolean isIgnoreDeletes();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#isIgnoreDestDeletes()
 	 */
 	@Override
 	public boolean isIgnoreDestDeletes();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#reset()
 	 */
 	@Override
 	public int reset();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#save()
 	 */
 	@Override
 	public int save();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#setAbstract(boolean)
 	 */
 	@Override
 	public void setAbstract(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#setCutoffDelete(boolean)
 	 */
 	@Override
 	public void setCutoffDelete(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#setCutoffInterval(long)
 	 */
 	@Override
 	public void setCutoffInterval(long interval);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#setDisabled(boolean)
 	 */
 	@Override
 	public void setDisabled(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#setDontSendLocalSecurityUpdates(boolean)
 	 */
 	@Override
 	public void setDontSendLocalSecurityUpdates(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#setIgnoreDeletes(boolean)
 	 */
 	@Override
 	public void setIgnoreDeletes(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#setIgnoreDestDeletes(boolean)
 	 */
 	@Override
 	public void setIgnoreDestDeletes(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Replication#setPriority(int)
 	 */
 	@Override

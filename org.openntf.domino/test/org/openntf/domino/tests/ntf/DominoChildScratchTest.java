@@ -31,7 +31,7 @@ public enum DominoChildScratchTest {
 		// TODO Auto-generated constructor stub
 	}
 
-	private static final int THREAD_COUNT = 2;
+	private static final int THREAD_COUNT = 4;
 	private static final boolean INCLUDE_FORMS = false;
 
 	static class ParentDoer implements Runnable {
@@ -41,19 +41,20 @@ public enum DominoChildScratchTest {
 			long start = System.nanoTime();
 
 			Session s = Factory.getSession();
-			Base.lock(s);
-			// Database db = s.getDatabase("", "events4.nsf");
-			int delay = 1000;
+			Database db = s.getDatabase("", "events4.nsf");
+			Base.lock(s, db);
+
+			int delay = 500;
 			DominoChildThread[] threads = new DominoChildThread[THREAD_COUNT];
 			Map<String, lotus.domino.Base> context = new HashMap<String, lotus.domino.Base>();
 			context.put("session", s);
-			// context.put("database", db);
+			context.put("database", db);
 			for (int i = 0; i < THREAD_COUNT; i++) {
 				threads[i] = new DominoChildThread(new Doer(), "Scratch Test " + i);
 				threads[i].setContext(context);
 			}
 
-			for (DominoThread thread : threads) {
+			for (DominoChildThread thread : threads) {
 				thread.start();
 				try {
 					Thread.sleep(delay);
@@ -64,7 +65,7 @@ public enum DominoChildScratchTest {
 
 			}
 
-			for (DominoThread thread : threads) {
+			for (DominoChildThread thread : threads) {
 				try {
 					thread.join();
 				} catch (InterruptedException e) {
@@ -73,7 +74,11 @@ public enum DominoChildScratchTest {
 				}
 			}
 
-			Base.unlock(s);
+			for (DominoChildThread thread : threads) {
+				thread.close();
+			}
+
+			Base.unlock(s, db);
 
 			// boolean keepGoing = true;
 			// while (keepGoing) {
@@ -168,11 +173,11 @@ public enum DominoChildScratchTest {
 			if (Thread.currentThread() instanceof DominoChildThread) {
 				s = (org.openntf.domino.Session) ((DominoChildThread) Thread.currentThread()).getContextVar("session");
 			}
-			// Database db = null;
-			// if (Thread.currentThread() instanceof DominoChildThread) {
-			// db = (org.openntf.domino.Database) ((DominoChildThread) Thread.currentThread()).getContextVar("database");
-			// }
-			Database db = s.getDatabase("", "events4.nsf");
+			Database db = null;
+			if (Thread.currentThread() instanceof DominoChildThread) {
+				db = (org.openntf.domino.Database) ((DominoChildThread) Thread.currentThread()).getContextVar("database");
+			}
+			// Database db = s.getDatabase("", "events4.nsf");
 
 			RunContext rc = s.getRunContext();
 			System.out.println("RunContext: " + rc.toString());
