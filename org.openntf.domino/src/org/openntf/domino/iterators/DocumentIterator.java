@@ -61,7 +61,7 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 		if (collection != null) {
 			NoteCollection nc = null;
 			try {
-				Database db = Factory.fromLotus(collection.getParent(), Database.class, collection);
+				Database db = collection.getParent();
 				setDatabase(db);
 				nc = org.openntf.domino.impl.DocumentCollection.toLotusNoteCollection(collection);
 				if (nc.getCount() > 0) {

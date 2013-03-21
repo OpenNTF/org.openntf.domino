@@ -382,6 +382,59 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	}
 
 	/**
+	 * 
+	 * <p>
+	 * Attempts to convert a provided scalar value to a "Domino-friendly" data type like DateTime, String, etc. Currently, the data types
+	 * supported are the already-Domino-friendly ones, Number, Date, Calendar, and CharSequence.
+	 * </p>
+	 * 
+	 * @param value
+	 *            The incoming non-collection value
+	 * @param context
+	 *            The context Base object, for finding the correct session
+	 * @return The Domino-friendly conversion of the object, or the object itself if it is already usable.
+	 * @throws IllegalArgumentException
+	 *             When the object is not convertible.
+	 */
+	protected static Object toDominoFriendly(Object value, Base<?, ?> context) throws IllegalArgumentException {
+
+		// First, go over the normal data types
+		if (value instanceof lotus.domino.DateTime) {
+			return toLotus((lotus.domino.DateTime) value);
+		} else if (value instanceof lotus.domino.DateRange) {
+			return toLotus((lotus.domino.DateRange) value);
+		} else if (value instanceof lotus.domino.Item) {
+			return toLotus((lotus.domino.Item) value);
+		} else if (value instanceof Integer || value instanceof Double) {
+			return value;
+		} else if (value instanceof String) {
+			return value;
+		}
+
+		// Now for the illegal-but-convertible types
+		if (value instanceof Number) {
+			// TODO Check if this is greater than what Domino can handle and serialize if so
+			return ((Number) value).doubleValue();
+		} else if (value instanceof java.util.Date) {
+			return toLotus(Factory.getSession(context).createDateTime((java.util.Date) value));
+		} else if (value instanceof java.util.Calendar) {
+			return toLotus(Factory.getSession(context).createDateTime((java.util.Calendar) value));
+		} else if (value instanceof CharSequence) {
+			return value.toString();
+		}
+
+		throw new IllegalArgumentException();
+	}
+
+	protected static Vector<Object> toDominoFriendly(Collection<?> values, Base<?, ?> context) throws IllegalArgumentException {
+		Vector<Object> result = new Vector<Object>();
+		for (Object value : values) {
+			result.add(toDominoFriendly(value, context));
+		}
+		return result;
+	}
+
+	/**
 	 * To lotus.
 	 * 
 	 * @param values
