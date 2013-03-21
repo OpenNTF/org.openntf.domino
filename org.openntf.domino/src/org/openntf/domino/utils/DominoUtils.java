@@ -46,6 +46,9 @@ import lotus.domino.Session;
 import lotus.domino.Stream;
 
 import org.openntf.domino.Base;
+import org.openntf.domino.Database;
+import org.openntf.domino.DocumentCollection;
+import org.openntf.domino.NoteCollection;
 import org.openntf.domino.exceptions.InvalidNotesUrlException;
 
 //TODO: Auto-generated Javadoc
@@ -382,7 +385,7 @@ public enum DominoUtils {
 	 *             the throwable
 	 */
 	@SuppressWarnings("unchecked")
-	public static Object restoreState(Document doc, String itemName) throws Throwable {
+	public static Object restoreState(org.openntf.domino.Document doc, String itemName) throws Throwable {
 		Session session = Factory.getSession((Base<?>) doc);
 		boolean convertMime = session.isConvertMime();
 		session.setConvertMime(false);
@@ -415,16 +418,38 @@ public enum DominoUtils {
 		} else {
 			Object restored = (Serializable) objectStream.readObject();
 			
-			// But wait! It might be a StateHolder object!
+			// But wait! It might be a StateHolder object or Collection!
 			MIMEHeader storageScheme = entity.getNthHeader("X-Storage-Scheme");
+			MIMEHeader originalJavaClass = entity.getNthHeader("X-Original-Java-Class");
 			if(storageScheme != null && storageScheme.getHeaderVal().equals("StateHolder")) {
 				Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext");
 				Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
 				
-				Class<?> stateHoldingClass = (Class<?>)Class.forName(entity.getNthHeader("X-Original-Java-Class").getHeaderVal());
+				Class<?> stateHoldingClass = (Class<?>)Class.forName(originalJavaClass.getHeaderVal());
 				Method restoreStateMethod = stateHoldingClass.getMethod("restoreState", facesContextClass, Object.class);
 				result = stateHoldingClass.newInstance();
 				restoreStateMethod.invoke(result, getCurrentInstance.invoke(null), restored);
+			} else if(originalJavaClass != null && originalJavaClass.getHeaderVal().equals("org.openntf.domino.DocumentCollection")) {
+				// Maybe this can be sped up by not actually getting the documents
+				try {
+				String[] unids = (String[])restored;
+				Database db = doc.getParentDatabase();
+				DocumentCollection docCollection = db.createDocumentCollection();
+				for(String unid : unids) {
+					docCollection.addDocument(db.getDocumentByUNID(unid));
+				}
+				result = docCollection;
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			} else if(originalJavaClass != null && originalJavaClass.getHeaderVal().equals("org.openntf.domino.NoteCollection")) {
+				String[] unids = (String[])restored;
+				Database db = doc.getParentDatabase();
+				NoteCollection noteCollection = db.createNoteCollection(false);
+				for(String unid : unids) {
+					noteCollection.add(db.getDocumentByUNID(unid));
+				}
+				result = noteCollection;
 			} else {
 				result = restored;
 			}

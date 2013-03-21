@@ -15,8 +15,6 @@
  */
 package org.openntf.domino;
 
-import lotus.domino.Document;
-
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.types.DatabaseDescendant;
 
@@ -64,8 +62,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	/**
 	 * Gets the next document in the collection that occurs after the current document.
 	 * 
-	 * @deprecated Replaced by iterator. Use <code>'for (Document doc : DocumentCollection) {}'</code> instead to process a document
-	 *             collection.
+	 * @deprecated Replaced by iterator. Use <code>'for (Document doc : DocumentCollection) {}'</code> instead to process a document collection.
 	 * 
 	 * @param doc
 	 *            Any document in the collection. Cannot be <code>null</code>.
@@ -75,7 +72,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 */
 	@Deprecated
 	@Legacy(Legacy.ITERATION_WARNING)
-	public abstract Document getNextDocument(Document doc);
+	public abstract Document getNextDocument(lotus.domino.Document doc);
 
 	/**
 	 * Gets the previous document in the collection that occurs before the current document.
@@ -86,13 +83,12 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * @return Returns the previous {@link org.openntf.domino.Document} in the collection. If there is no previous document, returns
 	 *         <code>null</code>.
 	 */
-	public abstract Document getPrevDocument(Document doc);
+	public abstract Document getPrevDocument(lotus.domino.Document doc);
 
 	/**
 	 * Gets the nTh document in the collection.
 	 * 
-	 * @deprecated Replaced by iterator. Use <code>'for (Document doc : DocumentCollection) {}'</code> instead to process a document
-	 *             collection.
+	 * @deprecated Replaced by iterator. Use <code>'for (Document doc : DocumentCollection) {}'</code> instead to process a document collection.
 	 * 
 	 * @param n
 	 *            A number indicating the document to return. Use 1 to indicate the first document in the collection, 2 to indicate the
@@ -109,8 +105,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	/**
 	 * Gets the next document in the collection.
 	 * 
-	 * @deprecated Replaced by iterator. Use <code>'for (Document doc : DocumentCollection) {}'</code> instead to process a document
-	 *             collection.
+	 * @deprecated Replaced by iterator. Use <code>'for (Document doc : DocumentCollection) {}'</code> instead to process a document collection.
 	 * 
 	 * @return Returns the next {@link org.openntf.domino.Document} in the collection. If there is no next document, returns
 	 *         <code>null</code>.
@@ -141,7 +136,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * @return The specified {@link org.openntf.domino.Document} from the collection,If the reference document is not in the collection, you
 	 *         get a <code>null</code> return.
 	 */
-	public abstract Document getDocument(Document doc);
+	public abstract Document getDocument(lotus.domino.Document doc);
 
 	/**
 	 * Adds a document to a collection.
@@ -149,7 +144,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * @param doc
 	 *            The document to be added. Cannot be <code>null</code>.
 	 */
-	public abstract void addDocument(Document doc);
+	public abstract void addDocument(lotus.domino.Document doc);
 
 	/**
 	 * Adds a document to a collection.
@@ -159,7 +154,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * @param checkDups
 	 *            has no effect on local calls and only applies to Remote IIOP operations
 	 */
-	public abstract void addDocument(Document doc, boolean checkDups);
+	public abstract void addDocument(lotus.domino.Document doc, boolean checkDups);
 
 	/**
 	 * Deletes a document from a collection.
@@ -167,7 +162,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * @param doc
 	 *            The document to be deleted. Cannot be <code>null</code>.
 	 */
-	public abstract void deleteDocument(Document doc);
+	public abstract void deleteDocument(lotus.domino.Document doc);
 
 	/**
 	 * Conducts a full-text search of all the documents in a document collection, and reduces the collection to a sorted collection of those
@@ -203,7 +198,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * 
 	 * <p>
 	 * Wildcards, operators, and other syntax are permitted. For the complete syntax rules, see "Refining a search query using operators" in
-	 * Notes® Help. Search for "query syntax" in the Domino® Designer Eclipse help system or information center (for example,
+	 * Notesï¿½ Help. Search for "query syntax" in the Dominoï¿½ Designer Eclipse help system or information center (for example,
 	 * http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/index.jsp), both of which include Notes.
 	 * </p>
 	 * 
@@ -246,7 +241,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * 
 	 * <p>
 	 * Wildcards, operators, and other syntax are permitted. For the complete syntax rules, see "Refining a search query using operators" in
-	 * Notes® Help. Search for "query syntax" in the Domino® Designer Eclipse help system or information center (for example,
+	 * Notesï¿½ Help. Search for "query syntax" in the Dominoï¿½ Designer Eclipse help system or information center (for example,
 	 * http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/index.jsp), both of which include Notes.
 	 * </p>
 	 * 

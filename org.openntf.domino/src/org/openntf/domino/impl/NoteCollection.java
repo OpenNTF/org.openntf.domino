@@ -17,12 +17,7 @@ package org.openntf.domino.impl;
 
 import java.util.Vector;
 
-import lotus.domino.Agent;
-import lotus.domino.Document;
-import lotus.domino.DocumentCollection;
-import lotus.domino.Form;
 import lotus.domino.NotesException;
-import lotus.domino.View;
 
 import org.openntf.domino.DateTime;
 import org.openntf.domino.utils.DominoUtils;
@@ -118,7 +113,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	@Override
 	public void add(lotus.domino.Agent additionSpecifier) {
 		try {
-			getDelegate().add(additionSpecifier);
+			getDelegate().add((lotus.domino.Agent) toLotus(additionSpecifier));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -132,7 +127,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	@Override
 	public void add(lotus.domino.Document additionSpecifier) {
 		try {
-			getDelegate().add(additionSpecifier);
+			getDelegate().add((lotus.domino.Document) toLotus(additionSpecifier));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -146,8 +141,19 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	@Override
 	public void add(lotus.domino.DocumentCollection additionSpecifier) {
 		try {
-			getDelegate().add(additionSpecifier);
+			// TODO Figure out why the normal add() line with the DC throws a NotesException("Invalid object type for method argument")
+			lotus.domino.DocumentCollection adder = (lotus.domino.DocumentCollection) toLotus(additionSpecifier);
+			lotus.domino.Document doc = adder.getFirstDocument();
+			while (doc != null) {
+				getDelegate().add(doc);
+
+				lotus.domino.Document tempDoc = doc;
+				doc = adder.getNextDocument(doc);
+				tempDoc.recycle();
+			}
+			// getDelegate().add((lotus.domino.DocumentCollection) toLotus(additionSpecifier));
 		} catch (NotesException e) {
+			e.printStackTrace();
 			DominoUtils.handleException(e);
 		}
 	}
@@ -160,7 +166,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	@Override
 	public void add(lotus.domino.Form additionSpecifier) {
 		try {
-			getDelegate().add(additionSpecifier);
+			getDelegate().add((lotus.domino.Form) toLotus(additionSpecifier));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -174,7 +180,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	@Override
 	public void add(lotus.domino.NoteCollection additionSpecifier) {
 		try {
-			getDelegate().add(additionSpecifier);
+			getDelegate().add((lotus.domino.NoteCollection) toLotus(additionSpecifier));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -188,7 +194,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	@Override
 	public void add(lotus.domino.View additionSpecifier) {
 		try {
-			getDelegate().add(additionSpecifier);
+			getDelegate().add((lotus.domino.View) toLotus(additionSpecifier));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -832,9 +838,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	 * 
 	 * @see org.openntf.domino.NoteCollection#intersect(lotus.domino.Agent)
 	 */
-	public void intersect(Agent agent) {
+	public void intersect(lotus.domino.Agent agent) {
 		try {
-			getDelegate().intersect(agent);
+			getDelegate().intersect((lotus.domino.Agent) toLotus(agent));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -846,9 +852,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	 * 
 	 * @see org.openntf.domino.NoteCollection#intersect(lotus.domino.Document)
 	 */
-	public void intersect(Document document) {
+	public void intersect(lotus.domino.Document document) {
 		try {
-			getDelegate().intersect(document);
+			getDelegate().intersect((lotus.domino.Document) toLotus(document));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -860,9 +866,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	 * 
 	 * @see org.openntf.domino.NoteCollection#intersect(lotus.domino.DocumentCollection)
 	 */
-	public void intersect(DocumentCollection collection) {
+	public void intersect(lotus.domino.DocumentCollection collection) {
 		try {
-			getDelegate().intersect(collection);
+			getDelegate().intersect((lotus.domino.DocumentCollection) toLotus(collection));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -874,9 +880,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	 * 
 	 * @see org.openntf.domino.NoteCollection#intersect(lotus.domino.Form)
 	 */
-	public void intersect(Form form) {
+	public void intersect(lotus.domino.Form form) {
 		try {
-			getDelegate().intersect(form);
+			getDelegate().intersect((lotus.domino.Form) toLotus(form));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -904,7 +910,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	 */
 	public void intersect(lotus.domino.NoteCollection collection) {
 		try {
-			getDelegate().intersect(collection);
+			getDelegate().intersect((lotus.domino.NoteCollection) toLotus(collection));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -930,9 +936,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	 * 
 	 * @see org.openntf.domino.NoteCollection#intersect(lotus.domino.View)
 	 */
-	public void intersect(View view) {
+	public void intersect(lotus.domino.View view) {
 		try {
-			getDelegate().intersect(view);
+			getDelegate().intersect((lotus.domino.View) toLotus(view));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -959,6 +965,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	 * 
 	 * @see org.openntf.domino.impl.Base#recycle(java.util.Vector)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void recycle(Vector objects) {
 		try {
@@ -974,9 +981,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	 * 
 	 * @see org.openntf.domino.NoteCollection#remove(lotus.domino.Agent)
 	 */
-	public void remove(Agent agent) {
+	public void remove(lotus.domino.Agent agent) {
 		try {
-			getDelegate().remove(agent);
+			getDelegate().remove((lotus.domino.Agent) toLotus(agent));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -988,9 +995,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	 * 
 	 * @see org.openntf.domino.NoteCollection#remove(lotus.domino.Document)
 	 */
-	public void remove(Document document) {
+	public void remove(lotus.domino.Document document) {
 		try {
-			getDelegate().remove(document);
+			getDelegate().remove((lotus.domino.Document) toLotus(document));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -1002,9 +1009,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	 * 
 	 * @see org.openntf.domino.NoteCollection#remove(lotus.domino.DocumentCollection)
 	 */
-	public void remove(DocumentCollection collection) {
+	public void remove(lotus.domino.DocumentCollection collection) {
 		try {
-			getDelegate().remove(collection);
+			getDelegate().remove((lotus.domino.DocumentCollection) toLotus(collection));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -1016,9 +1023,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	 * 
 	 * @see org.openntf.domino.NoteCollection#remove(lotus.domino.Form)
 	 */
-	public void remove(Form form) {
+	public void remove(lotus.domino.Form form) {
 		try {
-			getDelegate().remove(form);
+			getDelegate().remove((lotus.domino.Form) toLotus(form));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -1046,7 +1053,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	 */
 	public void remove(lotus.domino.NoteCollection collection) {
 		try {
-			getDelegate().remove(collection);
+			getDelegate().remove((lotus.domino.NoteCollection) toLotus(collection));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -1072,9 +1079,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	 * 
 	 * @see org.openntf.domino.NoteCollection#remove(lotus.domino.View)
 	 */
-	public void remove(View view) {
+	public void remove(lotus.domino.View view) {
 		try {
-			getDelegate().remove(view);
+			getDelegate().remove((lotus.domino.View) toLotus(view));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -1576,7 +1583,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	 */
 	public void setSinceTime(lotus.domino.DateTime date) {
 		try {
-			getDelegate().setSinceTime(date);
+			getDelegate().setSinceTime((lotus.domino.DateTime) toLotus(date));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

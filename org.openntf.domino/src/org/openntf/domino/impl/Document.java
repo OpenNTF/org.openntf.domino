@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
 import java.lang.reflect.Method;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +29,7 @@ import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.DocumentCollection;
+import org.openntf.domino.NoteCollection;
 import org.openntf.domino.View;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.utils.DominoUtils;
@@ -1771,10 +1771,32 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				if (value instanceof Serializable) {
 					DominoUtils.saveState((Serializable) value, this, itemName);
 					result = getDelegate().getFirstItem(itemName);
-				} else if (value instanceof lotus.domino.DocumentCollection) {
-					// TODO implement this
-				} else if (value instanceof lotus.domino.NoteCollection) {
-					// TODO implement this
+				} else if (value instanceof DocumentCollection) {
+					// NoteIDs would be faster for this and, particularly, NoteCollection, but it should be replica-friendly
+					DocumentCollection docs = (DocumentCollection) value;
+					String[] unids = new String[docs.getCount()];
+					int index = 0;
+					for (org.openntf.domino.Document doc : docs) {
+						unids[index++] = doc.getUniversalID();
+					}
+					Map<String, String> headers = new HashMap<String, String>(1);
+					headers.put("X-Original-Java-Class", "org.openntf.domino.DocumentCollection");
+					DominoUtils.saveState(unids, this, itemName, true, headers);
+					result = getDelegate().getFirstItem(itemName);
+				} else if (value instanceof NoteCollection) {
+					// Maybe it'd be faster to use .getNoteIDs - I'm not sure how the performance compares
+					NoteCollection notes = (NoteCollection) value;
+					String[] unids = new String[notes.getCount()];
+					String noteid = notes.getFirstNoteID();
+					int index = 0;
+					while (noteid != null && !noteid.isEmpty()) {
+						unids[index++] = notes.getUNID(noteid);
+						noteid = notes.getNextNoteID(noteid);
+					}
+					Map<String, String> headers = new HashMap<String, String>(1);
+					headers.put("X-Original-Java-Class", "org.openntf.domino.NoteCollection");
+					DominoUtils.saveState(unids, this, itemName, true, headers);
+					result = getDelegate().getFirstItem(itemName);
 				} else {
 					// Check to see if it's a StateHolder
 					try {
@@ -1808,36 +1830,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return null;
 	}
 
-	protected static Object toDominoFriendly(Object value, Base<?, ?> context) throws IllegalArgumentException {
-
-		// First, go over the normal data types
-		if (value instanceof lotus.domino.DateTime) {
-			return toLotus((lotus.domino.DateTime) value);
-		} else if (value instanceof lotus.domino.DateRange) {
-			return toLotus((lotus.domino.DateRange) value);
-		} else if (value instanceof lotus.domino.Item) {
-			return toLotus((lotus.domino.Item) value);
-		} else if (value instanceof Integer || value instanceof Double) {
-			return value;
-		} else if (value instanceof String) {
-			return value;
-		}
-
-		// Now for the illegal-but-convertible types
-		if (value instanceof Number) {
-			// TODO Check if this is greater than what Domino can handle and serialize if so
-			return ((Number) value).doubleValue();
-		} else if (value instanceof Date) {
-			return toLotus(Factory.getSession(context).createDateTime((Date) value));
-		} else if (value instanceof Calendar) {
-			return toLotus(Factory.getSession(context).createDateTime((Calendar) value));
-		} else if (value instanceof CharSequence) {
-			return value.toString();
-		}
-
-		throw new IllegalArgumentException();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1859,9 +1851,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * @see org.openntf.domino.Document#replaceItemValueCustomData(java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public Item replaceItemValueCustomData(String itemname, String dataTypeName, Object userObj) throws IOException {
+	public Item replaceItemValueCustomData(String itemName, String dataTypeName, Object userObj) throws IOException {
 		try {
-			return Factory.fromLotus(getDelegate().replaceItemValueCustomData(itemname, dataTypeName, userObj), Item.class, this);
+			return Factory.fromLotus(getDelegate().replaceItemValueCustomData(itemName, dataTypeName, userObj), Item.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1874,9 +1866,15 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * @see org.openntf.domino.Document#replaceItemValueCustomDataBytes(java.lang.String, java.lang.String, byte[])
 	 */
 	@Override
-	public Item replaceItemValueCustomDataBytes(String itemname, String dataTypeName, byte[] byteArray) throws IOException {
+	public Item replaceItemValueCustomDataBytes(String itemName, String dataTypeName, byte[] byteArray) throws IOException {
 		try {
-			return Factory.fromLotus(getDelegate().replaceItemValueCustomDataBytes(itemname, dataTypeName, byteArray), Item.class, this);
+			if (byteArray.length > 65535) {
+				// Then fall back to the normal method, which will MIMEBean it
+				return this.replaceItemValue(itemName, byteArray);
+			} else {
+				return Factory
+						.fromLotus(getDelegate().replaceItemValueCustomDataBytes(itemName, dataTypeName, byteArray), Item.class, this);
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
