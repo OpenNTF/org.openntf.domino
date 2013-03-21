@@ -418,7 +418,6 @@ public enum DominoUtils {
 			// But wait! It might be a StateHolder object!
 			MIMEHeader storageScheme = entity.getNthHeader("X-Storage-Scheme");
 			if(storageScheme != null && storageScheme.getHeaderVal().equals("StateHolder")) {
-				try {
 				Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext");
 				Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
 				
@@ -426,9 +425,6 @@ public enum DominoUtils {
 				Method restoreStateMethod = stateHoldingClass.getMethod("restoreState", facesContextClass, Object.class);
 				result = stateHoldingClass.newInstance();
 				restoreStateMethod.invoke(result, getCurrentInstance.invoke(null), restored);
-				} catch(Exception e) {
-					e.printStackTrace();
-				}
 			} else {
 				result = restored;
 			}
