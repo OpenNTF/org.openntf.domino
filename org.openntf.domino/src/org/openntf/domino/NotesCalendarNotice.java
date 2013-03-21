@@ -44,6 +44,9 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	public String getUNID();
 
 	@Override
+	public boolean isOverwriteCheckEnabled();
+
+	@Override
 	public String read();
 
 	@Override
@@ -54,6 +57,9 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 
 	@Override
 	public void sendUpdatedInfo(String comments);
+
+	@Override
+	public void setOverwriteCheckEnabled(boolean flag);
 
 	@Override
 	public void tentativelyAccept(String comments);
