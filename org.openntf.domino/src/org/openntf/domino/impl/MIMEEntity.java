@@ -44,7 +44,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#createChildEntity()
 	 */
 	@Override
@@ -57,7 +59,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#createChildEntity(lotus.domino.MIMEEntity)
 	 */
 	@Override
@@ -71,7 +75,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#createHeader(java.lang.String)
 	 */
 	@Override
@@ -84,7 +90,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#createParentEntity()
 	 */
 	@Override
@@ -97,7 +105,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#decodeContent()
 	 */
 	@Override
@@ -109,7 +119,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#encodeContent(int)
 	 */
 	@Override
@@ -121,7 +133,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getBoundaryEnd()
 	 */
 	@Override
@@ -134,7 +148,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getBoundaryStart()
 	 */
 	@Override
@@ -147,7 +163,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getCharset()
 	 */
 	@Override
@@ -160,7 +178,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getContentAsBytes(lotus.domino.Stream)
 	 */
 	@Override
@@ -172,7 +192,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getContentAsBytes(lotus.domino.Stream, boolean)
 	 */
 	@Override
@@ -184,7 +206,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getContentAsText()
 	 */
 	@Override
@@ -197,7 +221,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getContentAsText(lotus.domino.Stream)
 	 */
 	@Override
@@ -209,7 +235,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getContentAsText(lotus.domino.Stream, boolean)
 	 */
 	@Override
@@ -221,7 +249,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getContentSubType()
 	 */
 	@Override
@@ -234,7 +264,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getContentType()
 	 */
 	@Override
@@ -247,7 +279,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getEncoding()
 	 */
 	@Override
@@ -260,7 +294,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getEntityAsText(lotus.domino.Stream)
 	 */
 	@Override
@@ -272,7 +308,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getEntityAsText(lotus.domino.Stream, java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
@@ -285,7 +323,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getEntityAsText(lotus.domino.Stream, java.util.Vector, boolean)
 	 */
 	@SuppressWarnings("unchecked")
@@ -298,7 +338,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getFirstChildEntity()
 	 */
 	@Override
@@ -311,7 +353,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getHeaderObjects()
 	 */
 	@Override
@@ -324,7 +368,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getHeaders()
 	 */
 	@Override
@@ -337,7 +383,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getInputSource()
 	 */
 	@Override
@@ -350,7 +398,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getInputStream()
 	 */
 	@Override
@@ -363,7 +413,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getNextEntity()
 	 */
 	@Override
@@ -376,7 +428,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getNextEntity(int)
 	 */
 	@Override
@@ -389,7 +443,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getNextSibling()
 	 */
 	@Override
@@ -402,7 +458,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getNthHeader(java.lang.String)
 	 */
 	@Override
@@ -415,7 +473,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getNthHeader(java.lang.String, int)
 	 */
 	@Override
@@ -428,7 +488,14 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	@Override
+	public Document getParent() {
+		return (Document) super.getParent();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getParentEntity()
 	 */
 	@Override
@@ -441,7 +508,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getPreamble()
 	 */
 	@Override
@@ -454,7 +523,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getPrevEntity()
 	 */
 	@Override
@@ -467,7 +538,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getPrevEntity(int)
 	 */
 	@Override
@@ -480,7 +553,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getPrevSibling()
 	 */
 	@Override
@@ -493,7 +568,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getReader()
 	 */
 	@Override
@@ -506,7 +583,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getSomeHeaders()
 	 */
 	@Override
@@ -519,7 +598,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getSomeHeaders(java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
@@ -533,7 +614,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#getSomeHeaders(java.util.Vector, boolean)
 	 */
 	@SuppressWarnings("unchecked")
@@ -547,7 +630,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#parseXML(boolean)
 	 */
 	@Override
@@ -560,7 +645,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#remove()
 	 */
 	@Override
@@ -572,7 +659,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#setContentFromBytes(lotus.domino.Stream, java.lang.String, int)
 	 */
 	@Override
@@ -584,7 +673,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#setContentFromText(lotus.domino.Stream, java.lang.String, int)
 	 */
 	@Override
@@ -596,7 +687,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#setPreamble(java.lang.String)
 	 */
 	@Override
@@ -608,7 +701,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEEntity#transformXML(java.lang.Object, lotus.domino.XSLTResultTarget)
 	 */
 	@Override

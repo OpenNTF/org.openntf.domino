@@ -279,6 +279,8 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	@Override
 	public MIMEEntity getParentEntity();
 
+	public Document getParent();
+
 	/*
 	 * (non-Javadoc)
 	 * 

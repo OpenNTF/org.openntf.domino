@@ -37,7 +37,9 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEHeader#addValText(java.lang.String)
 	 */
 	@Override
@@ -50,7 +52,9 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEHeader#addValText(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -63,7 +67,9 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEHeader#getHeaderName()
 	 */
 	@Override
@@ -76,7 +82,9 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEHeader#getHeaderVal()
 	 */
 	@Override
@@ -89,7 +97,9 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEHeader#getHeaderVal(boolean)
 	 */
 	@Override
@@ -102,7 +112,9 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEHeader#getHeaderVal(boolean, boolean)
 	 */
 	@Override
@@ -115,7 +127,9 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEHeader#getHeaderValAndParams()
 	 */
 	@Override
@@ -128,7 +142,9 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEHeader#getHeaderValAndParams(boolean)
 	 */
 	@Override
@@ -141,7 +157,9 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEHeader#getHeaderValAndParams(boolean, boolean)
 	 */
 	@Override
@@ -154,7 +172,9 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEHeader#getParamVal(java.lang.String)
 	 */
 	@Override
@@ -167,7 +187,9 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEHeader#getParamVal(java.lang.String, boolean)
 	 */
 	@Override
@@ -180,7 +202,14 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	@Override
+	public MIMEEntity getParent() {
+		return (MIMEEntity) super.getParent();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEHeader#remove()
 	 */
 	@Override
@@ -192,7 +221,9 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEHeader#setHeaderVal(java.lang.String)
 	 */
 	@Override
@@ -205,7 +236,9 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEHeader#setHeaderValAndParams(java.lang.String)
 	 */
 	@Override
@@ -218,7 +251,9 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.MIMEHeader#setParamVal(java.lang.String, java.lang.String)
 	 */
 	@Override

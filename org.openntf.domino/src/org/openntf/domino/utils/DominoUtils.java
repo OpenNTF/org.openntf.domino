@@ -381,6 +381,7 @@ public enum DominoUtils {
 	 * @throws Throwable
 	 *             the throwable
 	 */
+	@SuppressWarnings("unchecked")
 	public static Object restoreState(Document doc, String itemName) throws Throwable {
 		Session session = Factory.getSession((Base<?>) doc);
 		boolean convertMime = session.isConvertMime();
@@ -500,11 +501,11 @@ public enum DominoUtils {
 				contentEncoding = entity.createHeader("Content-Encoding");
 			}
 			contentEncoding.setHeaderVal("gzip");
-			contentEncoding.recycle();
+			//contentEncoding.recycle();
 		} else {
 			if (contentEncoding != null) {
 				contentEncoding.remove();
-				contentEncoding.recycle();
+				//contentEncoding.recycle();
 			}
 		}
 		MIMEHeader javaClass = entity.getNthHeader("X-Java-Class");
@@ -512,7 +513,7 @@ public enum DominoUtils {
 			javaClass = entity.createHeader("X-Java-Class");
 		}
 		javaClass.setHeaderVal(object.getClass().getName());
-		javaClass.recycle();
+		//javaClass.recycle();
 		
 		if(headers != null) {
 			for(Map.Entry<String, String> entry : headers.entrySet()) {
@@ -521,12 +522,12 @@ public enum DominoUtils {
 					paramHeader = entity.createHeader(entry.getKey());
 				}
 				paramHeader.setHeaderVal(entry.getValue());
-				paramHeader.recycle();
+				//paramHeader.recycle();
 			}
 		}
 
-		entity.recycle();
-		mimeStream.recycle();
+		//entity.recycle();
+		//mimeStream.recycle();
 
 		session.setConvertMime(convertMime);
 	}

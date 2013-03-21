@@ -467,6 +467,10 @@ public enum Factory {
 			} else {
 				throw new UndefinedDelegateTypeException();
 			}
+		} else if(base instanceof org.openntf.domino.MIMEEntity) {
+			result = ((org.openntf.domino.MIMEEntity)base).getParent().getParentDatabase();
+		} else if(base instanceof org.openntf.domino.MIMEHeader) {
+			result = ((org.openntf.domino.MIMEHeader)base).getParent().getParent().getParentDatabase();
 		} else {
 			throw new UndefinedDelegateTypeException();
 		}
@@ -496,6 +500,12 @@ public enum Factory {
 			result = ((org.openntf.domino.DateRange) base).getParent();
 		} else if (base instanceof org.openntf.domino.Name) {
 			result = ((org.openntf.domino.Name) base).getParent();
+		} else if(base instanceof org.openntf.domino.Stream) {
+			result = ((org.openntf.domino.Stream)base).getParent();
+		} else if(base instanceof org.openntf.domino.MIMEEntity) {
+			result = ((org.openntf.domino.MIMEEntity)base).getParent().getParentDatabase().getParent();
+		} else if(base instanceof org.openntf.domino.MIMEHeader) {
+			result = getParentDatabase(base).getParent();
 		} else {
 			throw new UndefinedDelegateTypeException();
 		}

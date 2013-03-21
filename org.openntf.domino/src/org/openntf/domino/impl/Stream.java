@@ -42,7 +42,9 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Stream#close()
 	 */
 	@Override
@@ -54,7 +56,9 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Stream#getBytes()
 	 */
 	@Override
@@ -67,7 +71,9 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Stream#getCharset()
 	 */
 	@Override
@@ -80,7 +86,9 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Stream#getContents(java.io.OutputStream)
 	 */
 	@Override
@@ -92,7 +100,9 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Stream#getContents(java.io.Writer)
 	 */
 	@Override
@@ -104,7 +114,14 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 		}
 	}
 
-	/* (non-Javadoc)
+	@Override
+	public Session getParent() {
+		return (Session) super.getParent();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Stream#getPosition()
 	 */
 	@Override
@@ -117,7 +134,9 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Stream#isEOS()
 	 */
 	@Override
@@ -130,7 +149,9 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Stream#isReadOnly()
 	 */
 	@Override
@@ -143,7 +164,9 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Stream#open(java.lang.String)
 	 */
 	@Override
@@ -156,7 +179,9 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Stream#open(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -169,7 +194,9 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Stream#read()
 	 */
 	@Override
@@ -182,7 +209,9 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Stream#read(int)
 	 */
 	@Override
@@ -195,7 +224,9 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Stream#readText()
 	 */
 	@Override
@@ -208,7 +239,9 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Stream#readText(int)
 	 */
 	@Override
@@ -221,7 +254,9 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Stream#readText(int, int)
 	 */
 	@Override
@@ -234,7 +269,9 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Stream#setContents(java.io.InputStream)
 	 */
 	@Override
@@ -246,7 +283,9 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Stream#setContents(java.io.Reader)
 	 */
 	@Override
@@ -258,7 +297,9 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Stream#setPosition(int)
 	 */
 	@Override
@@ -270,7 +311,9 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Stream#truncate()
 	 */
 	@Override
@@ -282,7 +325,9 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Stream#write(byte[])
 	 */
 	@Override
@@ -295,7 +340,9 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Stream#writeText(java.lang.String)
 	 */
 	@Override
@@ -308,7 +355,9 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Stream#writeText(java.lang.String, int)
 	 */
 	@Override
