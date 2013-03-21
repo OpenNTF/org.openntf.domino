@@ -136,6 +136,16 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	}
 
 	@Override
+	public boolean isOverwriteCheckEnabled() {
+		try {
+			return getDelegate().isOverwriteCheckEnabled();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return false;
+		}
+	}
+
+	@Override
 	public String read() {
 		try {
 			return getDelegate().read();
@@ -167,6 +177,15 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	public void sendUpdatedInfo(String comments) {
 		try {
 			getDelegate().sendUpdatedInfo(comments);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	@Override
+	public void setOverwriteCheckEnabled(boolean flag) {
+		try {
+			getDelegate().setOverwriteCheckEnabled(flag);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
