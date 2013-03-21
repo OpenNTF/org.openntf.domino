@@ -1786,6 +1786,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 							Serializable state = (Serializable) saveState.invoke(value, getCurrentInstance.invoke(null));
 							Map<String, String> headers = new HashMap<String, String>();
 							headers.put("X-Storage-Scheme", "StateHolder");
+							headers.put("X-Original-Java-Class", value.getClass().getName());
 							DominoUtils.saveState(state, this, itemName, true, headers);
 							result = getDelegate().getFirstItem(itemName);
 						} else {
