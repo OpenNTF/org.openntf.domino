@@ -15,13 +15,15 @@
  */
 package org.openntf.domino.impl;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
@@ -1702,32 +1704,65 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		try {
 			lotus.domino.Item result = null;
 			try {
-				if (value instanceof Iterable) {
+				if (value instanceof List) {
 					Vector<Object> resultList = new Vector<Object>();
-					for (Object valNode : (Iterable<?>) value) {
-						resultList.add(toDominoFriendly(valNode, this));
+					Class<?> objectClass = null;
+					long totalStringSize = 0;
+					for (Object valNode : (List<?>) value) {
+						Object domNode = toDominoFriendly(valNode, this);
+						if (objectClass == null) {
+							objectClass = domNode.getClass();
+						} else {
+							if (!objectClass.equals(domNode.getClass())) {
+								// Domino only allows uniform lists
+								throw new IllegalArgumentException();
+							}
+						}
+						if (domNode instanceof String) {
+							totalStringSize += ((String) domNode).length();
+
+							// Escape to serializing if there's too much text data
+							// Leave fudge room for multibyte? This is clearly not the best way to do it
+							if (totalStringSize > 60000) {
+								throw new IllegalArgumentException();
+							}
+						}
+						resultList.add(domNode);
 					}
 					result = getDelegate().replaceItemValue(itemName, resultList);
 				} else {
-					result = getDelegate().replaceItemValue(itemName, toDominoFriendly(value, this));
+					Object domNode = toDominoFriendly(value, this);
+					if (domNode instanceof String && ((String) domNode).length() > 60000) {
+						throw new IllegalArgumentException();
+					}
+					result = getDelegate().replaceItemValue(itemName, domNode);
 				}
 			} catch (IllegalArgumentException iae) {
 				// Then try serialization
-				if (value instanceof Externalizable) {
-					// TODO Implement Externalizable storage
-				} else if (value instanceof Serializable) {
+				if (value instanceof Serializable) {
 					DominoUtils.saveState((Serializable) value, this, itemName);
 					result = getDelegate().getFirstItem(itemName);
-				} else if (value.getClass().getName().equals("javax.faces.component.StateHolder")) {
+				} else if (value instanceof lotus.domino.DocumentCollection) {
+					// TODO implement this
+				} else if (value instanceof lotus.domino.NoteCollection) {
+					// TODO implement this
+				} else {
+					// Check to see if it's a StateHolder
 					Class<?> stateHolderClass = Class.forName("javax.faces.component.StateHolder");
-					Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext");
-					Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
-					Method saveState = stateHolderClass.getMethod("saveState", facesContextClass);
-					Serializable state = (Serializable) saveState.invoke(value, getCurrentInstance.invoke(null));
-					DominoUtils.saveState(state, this, itemName);
-					result = getDelegate().getFirstItem(itemName);
+					if (stateHolderClass.isInstance(value)) {
+						Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext");
+						Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
+						Method saveState = stateHolderClass.getMethod("saveState", facesContextClass);
+						Serializable state = (Serializable) saveState.invoke(value, getCurrentInstance.invoke(null));
+						Map<String, String> headers = new HashMap<String, String>();
+						headers.put("X-Storage-Scheme", "StateHolder");
+						DominoUtils.saveState(state, this, itemName, true, headers);
+						result = getDelegate().getFirstItem(itemName);
+					} else {
+						// Well, we tried.
+						throw iae;
+					}
 				}
-
 			}
 
 			return Factory.fromLotus(result, Item.class, this);
@@ -1756,11 +1791,12 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 		// Now for the illegal-but-convertible types
 		if (value instanceof Number) {
+			// TODO Check if this is greater than what Domino can handle and serialize if so
 			return ((Number) value).doubleValue();
 		} else if (value instanceof Date) {
-			return Factory.getSession(context).createDateTime((Date) value);
+			return toLotus(Factory.getSession(context).createDateTime((Date) value));
 		} else if (value instanceof Calendar) {
-			return Factory.getSession(context).createDateTime((Calendar) value);
+			return toLotus(Factory.getSession(context).createDateTime((Calendar) value));
 		} else if (value instanceof CharSequence) {
 			return value.toString();
 		}
