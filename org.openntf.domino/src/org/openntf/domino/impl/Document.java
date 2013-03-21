@@ -762,9 +762,38 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public Vector<Object> getItemValue(String name) {
 		try {
+			// Check the item type to see if it's MIME - if so, then see if it's a MIMEBean
+			// This is a bit more expensive than I'd like
+			lotus.domino.Session session = Factory.getSession(this);
+			boolean convertMime = session.isConvertMIME();
+			session.setConvertMIME(false);
+			Item item = this.getFirstItem(name);
+			if (item.getType() == Item.MIME_PART) {
+				MIMEEntity entity = this.getMIMEEntity(name);
+				MIMEHeader contentType = entity.getNthHeader("Content-Type");
+				if (contentType != null
+						&& (contentType.getHeaderVal().equals("application/x-java-serialized-object") || contentType.getHeaderVal().equals(
+								"application/x-java-externalized-object"))) {
+					// Then it's a MIMEBean
+					Object resultObj = DominoUtils.restoreState(this, name);
+
+					// If it's a List, return it - otherwise, store it in a Vector for consistency
+					if (resultObj instanceof List) {
+						return new java.util.Vector<Object>((List<?>) resultObj);
+					}
+					Vector<Object> result = new Vector<Object>(1);
+					result.add(resultObj);
+					session.setConvertMIME(convertMime);
+					return result;
+				}
+			}
+			session.setConvertMIME(convertMime);
 			return Factory.wrapColumnValues(getDelegate().getItemValue(name));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} catch (Throwable t) {
+			// From DominoUtils.restoreState(...)
+			DominoUtils.handleException(t);
 		}
 		return null;
 	}

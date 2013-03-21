@@ -25,134 +25,180 @@ import java.io.Writer;
  * The Interface Stream.
  */
 public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream {
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Stream#close()
 	 */
 	@Override
 	public void close();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Stream#getBytes()
 	 */
 	@Override
 	public int getBytes();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Stream#getCharset()
 	 */
 	@Override
 	public String getCharset();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Stream#getContents(java.io.OutputStream)
 	 */
 	@Override
 	public void getContents(OutputStream stream);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Stream#getContents(java.io.Writer)
 	 */
 	@Override
 	public void getContents(Writer writer);
 
-	/* (non-Javadoc)
+	public Session getParent();
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Stream#getPosition()
 	 */
 	@Override
 	public int getPosition();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Stream#isEOS()
 	 */
 	@Override
 	public boolean isEOS();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Stream#isReadOnly()
 	 */
 	@Override
 	public boolean isReadOnly();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Stream#open(java.lang.String)
 	 */
 	@Override
 	public boolean open(String pathName);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Stream#open(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public boolean open(String pathName, String charSet);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Stream#read()
 	 */
 	@Override
 	public byte[] read();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Stream#read(int)
 	 */
 	@Override
 	public byte[] read(int length);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Stream#readText()
 	 */
 	@Override
 	public String readText();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Stream#readText(int)
 	 */
 	@Override
 	public String readText(int length);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Stream#readText(int, int)
 	 */
 	@Override
 	public String readText(int length, int eolType);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Stream#setContents(java.io.InputStream)
 	 */
 	@Override
 	public void setContents(InputStream stream);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Stream#setContents(java.io.Reader)
 	 */
 	@Override
 	public void setContents(Reader reader);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Stream#setPosition(int)
 	 */
 	@Override
 	public void setPosition(int position);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Stream#truncate()
 	 */
 	@Override
 	public void truncate();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Stream#write(byte[])
 	 */
 	@Override
 	public int write(byte[] buffer);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Stream#writeText(java.lang.String)
 	 */
 	@Override
 	public int writeText(String text);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Stream#writeText(java.lang.String, int)
 	 */
 	@Override

@@ -43,7 +43,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#abstractText(int, boolean, boolean)
 	 */
 	@Override
@@ -56,7 +58,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#appendToTextList(java.lang.String)
 	 */
 	@Override
@@ -68,7 +72,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#appendToTextList(java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
@@ -81,7 +87,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#containsValue(java.lang.Object)
 	 */
 	@Override
@@ -97,7 +105,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#copyItemToDocument(lotus.domino.Document)
 	 */
 	@Override
@@ -111,7 +121,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#copyItemToDocument(lotus.domino.Document, java.lang.String)
 	 */
 	@Override
@@ -125,7 +137,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#getDateTimeValue()
 	 */
 	@Override
@@ -138,7 +152,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#getInputSource()
 	 */
 	@Override
@@ -151,7 +167,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#getInputStream()
 	 */
 	@Override
@@ -164,7 +182,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#getLastModified()
 	 */
 	@Override
@@ -177,20 +197,24 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#getMIMEEntity()
 	 */
 	@Override
 	public MIMEEntity getMIMEEntity() {
 		try {
-			return Factory.fromLotus(getDelegate().getMIMEEntity(), MIMEEntity.class, this);
+			return Factory.fromLotus(getDelegate().getMIMEEntity(), MIMEEntity.class, this.getParent());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#getName()
 	 */
 	@Override
@@ -203,20 +227,19 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
 	public Document getParent() {
-		try {
-			return Factory.fromLotus(getDelegate().getParent(), Document.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
+		return (Document) super.getParent();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#getReader()
 	 */
 	@Override
@@ -229,7 +252,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#getText()
 	 */
 	@Override
@@ -242,7 +267,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#getText(int)
 	 */
 	@Override
@@ -255,7 +282,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#getType()
 	 */
 	@Override
@@ -268,7 +297,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#getValueCustomData()
 	 */
 	@Override
@@ -281,7 +312,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#getValueCustomData(java.lang.String)
 	 */
 	@Override
@@ -294,7 +327,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#getValueCustomDataBytes(java.lang.String)
 	 */
 	@Override
@@ -307,7 +342,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#getValueDateTimeArray()
 	 */
 	@Override
@@ -320,7 +357,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#getValueDouble()
 	 */
 	@Override
@@ -333,7 +372,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#getValueInteger()
 	 */
 	@Override
@@ -346,7 +387,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#getValueLength()
 	 */
 	@Override
@@ -359,7 +402,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#getValueString()
 	 */
 	@Override
@@ -372,7 +417,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#getValues()
 	 */
 	@Override
@@ -395,7 +442,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#isAuthors()
 	 */
 	@Override
@@ -408,7 +457,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#isEncrypted()
 	 */
 	@Override
@@ -421,7 +472,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#isNames()
 	 */
 	@Override
@@ -434,7 +487,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#isProtected()
 	 */
 	@Override
@@ -447,7 +502,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#isReaders()
 	 */
 	@Override
@@ -460,7 +517,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#isSaveToDisk()
 	 */
 	@Override
@@ -473,7 +532,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#isSigned()
 	 */
 	@Override
@@ -486,7 +547,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#isSummary()
 	 */
 	@Override
@@ -499,7 +562,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#parseXML(boolean)
 	 */
 	@Override
@@ -512,7 +577,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#remove()
 	 */
 	@Override
@@ -524,7 +591,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#setAuthors(boolean)
 	 */
 	@Override
@@ -536,7 +605,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#setDateTimeValue(lotus.domino.DateTime)
 	 */
 	@Override
@@ -548,7 +619,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#setEncrypted(boolean)
 	 */
 	@Override
@@ -560,7 +633,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#setNames(boolean)
 	 */
 	@Override
@@ -572,7 +647,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#setProtected(boolean)
 	 */
 	@Override
@@ -584,7 +661,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#setReaders(boolean)
 	 */
 	@Override
@@ -596,7 +675,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#setSaveToDisk(boolean)
 	 */
 	@Override
@@ -608,7 +689,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#setSigned(boolean)
 	 */
 	@Override
@@ -620,7 +703,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#setSummary(boolean)
 	 */
 	@Override
@@ -632,7 +717,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#setValueCustomData(java.lang.Object)
 	 */
 	@Override
@@ -644,7 +731,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#setValueCustomData(java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -656,7 +745,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#setValueCustomDataBytes(java.lang.String, byte[])
 	 */
 	@Override
@@ -668,7 +759,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#setValueDouble(double)
 	 */
 	@Override
@@ -680,7 +773,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#setValueInteger(int)
 	 */
 	@Override
@@ -692,7 +787,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#setValueString(java.lang.String)
 	 */
 	@Override
@@ -704,7 +801,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#setValues(java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
@@ -727,7 +826,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Item#transformXML(java.lang.Object, lotus.domino.XSLTResultTarget)
 	 */
 	@Override
