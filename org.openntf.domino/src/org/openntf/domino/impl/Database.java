@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.Map;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
@@ -230,6 +231,26 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
+	@Override
+	public Document createDocument(Map<String, Object> itemValues) {
+		Document doc = this.createDocument();
+		for (Map.Entry<String, Object> entry : itemValues.entrySet()) {
+			doc.replaceItemValue(entry.getKey(), entry.getValue());
+		}
+		return doc;
+	}
+
+	@Override
+	public Document createDocument(Object... keyValuePairs) {
+		Document doc = this.createDocument();
+		if (keyValuePairs.length >= 2) {
+			for (int i = 0; i < keyValuePairs.length; i += 2) {
+				doc.replaceItemValue(keyValuePairs[i].toString(), keyValuePairs[i + 1]);
+			}
+		}
+		return doc;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -341,9 +362,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public View createQueryView(String viewName, String query, lotus.domino.View templateView, boolean prohibitDesignRefresh) {
 		try {
-			return Factory.fromLotus(
-					getDelegate().createQueryView(viewName, query, (lotus.domino.View) toLotus(templateView), prohibitDesignRefresh),
-					View.class, this);
+			return Factory.fromLotus(getDelegate().createQueryView(viewName, query, (lotus.domino.View) toLotus(templateView),
+					prohibitDesignRefresh), View.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -419,9 +439,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public View createView(String viewName, String selectionFormula, lotus.domino.View templateView, boolean prohibitDesignRefresh) {
 		try {
-			return Factory.fromLotus(
-					getDelegate().createView(viewName, selectionFormula, (lotus.domino.View) toLotus(templateView), prohibitDesignRefresh),
-					View.class, this);
+			return Factory.fromLotus(getDelegate().createView(viewName, selectionFormula, (lotus.domino.View) toLotus(templateView),
+					prohibitDesignRefresh), View.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -766,9 +785,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	public Document getDocumentByURL(String url, boolean reload, boolean reloadIfModified, boolean urlList, String charSet, String webUser,
 			String webPassword, String proxyUser, String proxyPassword, boolean returnImmediately) {
 		try {
-			return Factory.fromLotus(
-					getDelegate().getDocumentByURL(url, reload, reloadIfModified, urlList, charSet, webUser, webPassword, proxyUser,
-							proxyPassword, returnImmediately), Document.class, this);
+			return Factory.fromLotus(getDelegate().getDocumentByURL(url, reload, reloadIfModified, urlList, charSet, webUser, webPassword,
+					proxyUser, proxyPassword, returnImmediately), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
