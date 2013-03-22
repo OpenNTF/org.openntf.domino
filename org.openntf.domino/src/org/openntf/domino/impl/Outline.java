@@ -38,7 +38,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#addEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -50,7 +52,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#addEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry, boolean)
 	 */
 	@Override
@@ -62,7 +66,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#addEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry, boolean, boolean)
 	 */
 	@Override
@@ -75,7 +81,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#createEntry(lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -88,7 +96,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#createEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -102,7 +112,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#createEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry, boolean)
 	 */
 	@Override
@@ -116,7 +128,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#createEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry, boolean, boolean)
 	 */
 	@Override
@@ -131,7 +145,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#createEntry(java.lang.String)
 	 */
 	@Override
@@ -144,7 +160,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#createEntry(java.lang.String, lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -158,7 +176,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#createEntry(java.lang.String, lotus.domino.OutlineEntry, boolean)
 	 */
 	@Override
@@ -172,7 +192,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#createEntry(java.lang.String, lotus.domino.OutlineEntry, boolean, boolean)
 	 */
 	@Override
@@ -186,7 +208,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#getAlias()
 	 */
 	@Override
@@ -199,7 +223,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#getChild(lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -212,7 +238,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#getComment()
 	 */
 	@Override
@@ -225,7 +253,14 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	@Override
+	public Document getDocument() {
+		return this.getParentDatabase().getDocumentByUNID(this.getUniversalID());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#getFirst()
 	 */
 	@Override
@@ -238,7 +273,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#getLast()
 	 */
 	@Override
@@ -251,7 +288,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#getName()
 	 */
 	@Override
@@ -264,7 +303,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#getNext(lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -277,7 +318,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#getNextSibling(lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -290,7 +333,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#getParent(lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -303,20 +348,19 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#getParentDatabase()
 	 */
 	@Override
 	public Database getParentDatabase() {
-		try {
-			return Factory.fromLotus(getDelegate().getParentDatabase(), Database.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
+		return (Database) super.getParent();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#getPrev(lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -329,7 +373,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#getPrevSibling(lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -342,7 +388,18 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	@Override
+	public String getUniversalID() {
+		NoteCollection notes = this.getParentDatabase().createNoteCollection(false);
+		notes.setSelectOutlines(true);
+		notes.setSelectionFormula("$TITLE=\"" + this.getName().replace("\"", "\\\"") + "\"");
+		notes.buildCollection();
+		return notes.getUNID(notes.getFirstNoteID());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#moveEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -354,7 +411,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#moveEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry, boolean)
 	 */
 	@Override
@@ -366,7 +425,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#moveEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry, boolean, boolean)
 	 */
 	@Override
@@ -379,7 +440,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#removeEntry(lotus.domino.OutlineEntry)
 	 */
 	@Override
@@ -391,7 +454,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#save()
 	 */
 	@Override
@@ -404,7 +469,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#setAlias(java.lang.String)
 	 */
 	@Override
@@ -416,7 +483,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#setComment(java.lang.String)
 	 */
 	@Override
@@ -428,7 +497,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Outline#setName(java.lang.String)
 	 */
 	@Override

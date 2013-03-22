@@ -17,19 +17,17 @@ package org.openntf.domino.impl;
 
 import java.util.Vector;
 
-import lotus.domino.Database;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class Form.
  */
 public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, lotus.domino.Form> implements org.openntf.domino.Form {
-	
+
 	/** The temp_. */
 	lotus.domino.Form temp_;
 
@@ -45,11 +43,14 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#getAliases()
 	 */
-	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
-	public Vector getAliases() {
+	@SuppressWarnings("unchecked")
+	@Legacy( { Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
+	public Vector<String> getAliases() {
 		try {
 			return getDelegate().getAliases();
 		} catch (NotesException e) {
@@ -59,7 +60,14 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	@Override
+	public Document getDocument() {
+		return this.getParent().getDocumentByUNID(this.getUniversalID());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#getFieldType(java.lang.String)
 	 */
 	public int getFieldType(String arg0) {
@@ -72,11 +80,14 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#getFields()
 	 */
-	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
-	public Vector getFields() {
+	@SuppressWarnings("unchecked")
+	@Legacy( { Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
+	public Vector<String> getFields() {
 		try {
 			return getDelegate().getFields();
 		} catch (NotesException e) {
@@ -86,11 +97,14 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#getFormUsers()
 	 */
-	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
-	public Vector getFormUsers() {
+	@SuppressWarnings("unchecked")
+	@Legacy( { Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
+	public Vector<String> getFormUsers() {
 		try {
 			return getDelegate().getFormUsers();
 		} catch (NotesException e) {
@@ -100,7 +114,9 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#getHttpURL()
 	 */
 	public String getHttpURL() {
@@ -113,11 +129,14 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#getLockHolders()
 	 */
-	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
-	public Vector getLockHolders() {
+	@SuppressWarnings("unchecked")
+	@Legacy( { Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
+	public Vector<String> getLockHolders() {
 		try {
 			return getDelegate().getLockHolders();
 		} catch (NotesException e) {
@@ -127,7 +146,9 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#getName()
 	 */
 	public String getName() {
@@ -140,7 +161,9 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#getNotesURL()
 	 */
 	public String getNotesURL() {
@@ -153,34 +176,24 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.Form#getDocument()
-	 */
-	public org.openntf.domino.Document getDocument() {
-		try {
-			Database db = getDelegate().getParent();
-			String url = this.getNotesURL();
-			String unid = DominoUtils.getUnidFromNotesUrl(url);
-			return Factory.fromLotus(db.getDocumentByUNID(unid), org.openntf.domino.Database.class, this);
-		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
-			return null;
-		}
-	}
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public org.openntf.domino.Database getParent() {
-		return (org.openntf.domino.Database) super.getParent();
+	public Database getParent() {
+		return (Database) super.getParent();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#getReaders()
 	 */
-	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
-	public Vector getReaders() {
+	@SuppressWarnings("unchecked")
+	@Legacy( { Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
+	public Vector<String> getReaders() {
 		try {
 			return getDelegate().getReaders();
 		} catch (NotesException e) {
@@ -190,7 +203,16 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	@Override
+	public String getUniversalID() {
+		NoteCollection notes = this.getParent().createNoteCollection(false);
+		notes.add(this);
+		return notes.getUNID(notes.getFirstNoteID());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#getURL()
 	 */
 	public String getURL() {
@@ -203,7 +225,9 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#isProtectReaders()
 	 */
 	public boolean isProtectReaders() {
@@ -216,7 +240,9 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#isProtectUsers()
 	 */
 	public boolean isProtectUsers() {
@@ -229,7 +255,9 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#isSubForm()
 	 */
 	public boolean isSubForm() {
@@ -242,7 +270,9 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#lock()
 	 */
 	public boolean lock() {
@@ -255,7 +285,9 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#lock(boolean)
 	 */
 	public boolean lock(boolean arg0) {
@@ -268,7 +300,9 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#lock(java.lang.String, boolean)
 	 */
 	public boolean lock(String arg0, boolean arg1) {
@@ -281,7 +315,9 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#lock(java.lang.String)
 	 */
 	public boolean lock(String arg0) {
@@ -294,9 +330,12 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#lock(java.util.Vector, boolean)
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean lock(Vector arg0, boolean arg1) {
 		try {
 			return getDelegate().lock(arg0, arg1);
@@ -307,9 +346,12 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#lock(java.util.Vector)
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean lock(Vector arg0) {
 		try {
 			return getDelegate().lock(arg0);
@@ -320,7 +362,9 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#lockProvisional()
 	 */
 	public boolean lockProvisional() {
@@ -333,7 +377,9 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#lockProvisional(java.lang.String)
 	 */
 	public boolean lockProvisional(String arg0) {
@@ -346,9 +392,12 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#lockProvisional(java.util.Vector)
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean lockProvisional(Vector arg0) {
 		try {
 			return getDelegate().lockProvisional(arg0);
@@ -359,7 +408,9 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#remove()
 	 */
 	public void remove() {
@@ -371,9 +422,12 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#setFormUsers(java.util.Vector)
 	 */
+	@SuppressWarnings("unchecked")
 	public void setFormUsers(Vector arg0) {
 		try {
 			getDelegate().setFormUsers(arg0);
@@ -383,7 +437,9 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#setProtectReaders(boolean)
 	 */
 	public void setProtectReaders(boolean arg0) {
@@ -395,7 +451,9 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#setProtectUsers(boolean)
 	 */
 	public void setProtectUsers(boolean arg0) {
@@ -407,9 +465,12 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#setReaders(java.util.Vector)
 	 */
+	@SuppressWarnings("unchecked")
 	public void setReaders(Vector arg0) {
 		try {
 			getDelegate().setReaders(arg0);
@@ -419,7 +480,9 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Form#unlock()
 	 */
 	public void unlock() {
