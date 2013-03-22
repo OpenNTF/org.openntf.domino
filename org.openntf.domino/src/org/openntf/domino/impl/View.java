@@ -885,7 +885,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getChild(lotus.domino.Document doc) {
 		try {
-			return Factory.fromLotus(getDelegate().getChild((lotus.domino.Document) Factory.toLotus(doc)), Document.class, this);
+			return Factory.fromLotus(getDelegate().getChild((lotus.domino.Document) toLotus(doc)), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

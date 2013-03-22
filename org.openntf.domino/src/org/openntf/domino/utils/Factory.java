@@ -524,42 +524,4 @@ public enum Factory {
 		return result;
 	}
 
-	// For passing arguments to delegates
-	/**
-	 * To lotus.
-	 * 
-	 * @param <T>
-	 *            the generic type
-	 * @param obj
-	 *            the obj
-	 * @param T
-	 *            the t
-	 * @return the t
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> T toLotus(lotus.domino.Base obj, Class<? extends lotus.domino.Base> T) {
-		if (obj instanceof org.openntf.domino.Base) {
-			return (T) org.openntf.domino.impl.Base.getDelegate(obj);
-		} else if (T.isAssignableFrom(obj.getClass())) {
-			return (T) obj;
-		} else {
-			return null; // TODO NTF - throw Exception
-		}
-	}
-
-	/**
-	 * To lotus.
-	 * 
-	 * @param obj
-	 *            the obj
-	 * @return the lotus.domino. base
-	 */
-	@SuppressWarnings("unchecked")
-	public static lotus.domino.Base toLotus(lotus.domino.Base obj) {
-		if (obj instanceof org.openntf.domino.Base) {
-			return org.openntf.domino.impl.Base.getDelegate(obj);
-		}
-		return obj;
-	}
-
 }
