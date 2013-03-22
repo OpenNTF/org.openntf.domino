@@ -74,6 +74,8 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 	@Override
 	public int getPagination();
 
+	public Session getParent();
+
 	/*
 	 * (non-Javadoc)
 	 * 

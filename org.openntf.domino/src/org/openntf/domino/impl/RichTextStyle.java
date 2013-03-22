@@ -36,10 +36,12 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 	 *            the parent
 	 */
 	public RichTextStyle(lotus.domino.RichTextStyle delegate, org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, Factory.getSession(parent));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextStyle#getBold()
 	 */
 	@Override
@@ -52,7 +54,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextStyle#getColor()
 	 */
 	@Override
@@ -65,7 +69,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextStyle#getEffects()
 	 */
 	@Override
@@ -78,7 +84,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextStyle#getFont()
 	 */
 	@Override
@@ -91,7 +99,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextStyle#getFontSize()
 	 */
 	@Override
@@ -104,7 +114,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextStyle#getItalic()
 	 */
 	@Override
@@ -117,20 +129,19 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
 	public Session getParent() {
-		try {
-			return Factory.fromLotus(getDelegate().getParent(), Session.class, this);
-		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
-			return null;
-		}
+		return (Session) super.getParent();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextStyle#getPassThruHTML()
 	 */
 	@Override
@@ -143,7 +154,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextStyle#getStrikeThrough()
 	 */
 	@Override
@@ -156,7 +169,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextStyle#getUnderline()
 	 */
 	@Override
@@ -169,7 +184,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextStyle#isDefault()
 	 */
 	@Override
@@ -182,7 +199,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextStyle#setBold(int)
 	 */
 	@Override
@@ -194,7 +213,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextStyle#setColor(int)
 	 */
 	@Override
@@ -206,7 +227,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextStyle#setEffects(int)
 	 */
 	@Override
@@ -218,7 +241,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextStyle#setFont(int)
 	 */
 	@Override
@@ -230,7 +255,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextStyle#setFontSize(int)
 	 */
 	@Override
@@ -242,7 +269,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextStyle#setItalic(int)
 	 */
 	@Override
@@ -254,7 +283,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextStyle#setPassThruHTML(int)
 	 */
 	@Override
@@ -266,7 +297,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextStyle#setStrikeThrough(int)
 	 */
 	@Override
@@ -278,7 +311,9 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextStyle#setUnderline(int)
 	 */
 	@Override

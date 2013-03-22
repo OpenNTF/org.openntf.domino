@@ -302,8 +302,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#getAgent(java.lang.String)
 	 */
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.Agent getAgent(String name);
+	public Agent getAgent(String name);
 
 	/*
 	 * (non-Javadoc)
@@ -312,7 +311,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 */
 	@Override
 	@Legacy(Legacy.INTERFACES_WARNING)
-	public Vector<lotus.domino.Agent> getAgents();
+	public Vector<Agent> getAgents();
 
 	/*
 	 * (non-Javadoc)
@@ -320,7 +319,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#getAllDocuments()
 	 */
 	@Override
-	public org.openntf.domino.DocumentCollection getAllDocuments();
+	public DocumentCollection getAllDocuments();
 
 	/*
 	 * (non-Javadoc)
@@ -475,7 +474,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 */
 	@Override
 	@Legacy(Legacy.INTERFACES_WARNING)
-	public Vector<org.openntf.domino.Form> getForms();
+	public Vector<Form> getForms();
 
 	/*
 	 * (non-Javadoc)

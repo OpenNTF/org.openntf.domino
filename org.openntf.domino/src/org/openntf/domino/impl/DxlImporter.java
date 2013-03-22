@@ -15,10 +15,7 @@
  */
 package org.openntf.domino.impl;
 
-import lotus.domino.Database;
 import lotus.domino.NotesException;
-import lotus.domino.RichTextItem;
-import lotus.domino.Stream;
 
 import org.openntf.domino.utils.DominoUtils;
 
@@ -40,7 +37,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#getAclImportOption()
 	 */
 	@Override
@@ -53,7 +52,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#getCompileLotusScript()
 	 */
 	@Override
@@ -66,7 +67,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#getCreateFTIndex()
 	 */
 	@Override
@@ -79,7 +82,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#getDesignImportOption()
 	 */
 	@Override
@@ -92,7 +97,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#getDocumentImportOption()
 	 */
 	@Override
@@ -105,7 +112,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#getExitOnFirstFatalError()
 	 */
 	@Override
@@ -118,7 +127,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#getFirstImportedNoteID()
 	 */
 	@Override
@@ -131,7 +142,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#getImportedNoteCount()
 	 */
 	@Override
@@ -144,7 +157,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#getInputValidationOption()
 	 */
 	@Override
@@ -157,7 +172,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#getLog()
 	 */
 	@Override
@@ -170,7 +187,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#getLogComment()
 	 */
 	@Override
@@ -183,7 +202,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#getNextImportedNoteID(java.lang.String)
 	 */
 	@Override
@@ -196,7 +217,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#getReplaceDbProperties()
 	 */
 	@Override
@@ -209,7 +232,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#getReplicaRequiredForReplaceOrUpdate()
 	 */
 	@Override
@@ -222,7 +247,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#getUnknownTokenLogOption()
 	 */
 	@Override
@@ -235,43 +262,51 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#importDxl(lotus.domino.RichTextItem, lotus.domino.Database)
 	 */
 	@Override
-	public void importDxl(RichTextItem rtitem, Database db) {
+	public void importDxl(lotus.domino.RichTextItem rtitem, lotus.domino.Database db) {
 		try {
-			getDelegate().importDxl(rtitem, db);
+			getDelegate().importDxl((lotus.domino.RichTextItem) toLotus(rtitem), (lotus.domino.Database) toLotus(db));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#importDxl(lotus.domino.Stream, lotus.domino.Database)
 	 */
 	@Override
-	public void importDxl(Stream stream, Database db) {
+	public void importDxl(lotus.domino.Stream stream, lotus.domino.Database db) {
 		try {
-			getDelegate().importDxl(stream, db);
+			getDelegate().importDxl((lotus.domino.Stream) toLotus(stream), (lotus.domino.Database) toLotus(db));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#importDxl(java.lang.String, lotus.domino.Database)
 	 */
 	@Override
-	public void importDxl(String dxl, Database db) {
+	public void importDxl(String dxl, lotus.domino.Database db) {
 		try {
-			getDelegate().importDxl(dxl, db);
+			getDelegate().importDxl(dxl, (lotus.domino.Database) toLotus(db));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#setAclImportOption(int)
 	 */
 	@Override
@@ -283,7 +318,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#setCompileLotusScript(boolean)
 	 */
 	@Override
@@ -295,7 +332,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#setCreateFTIndex(boolean)
 	 */
 	@Override
@@ -307,7 +346,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#setDesignImportOption(int)
 	 */
 	@Override
@@ -319,7 +360,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#setDocumentImportOption(int)
 	 */
 	@Override
@@ -331,7 +374,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#setExitOnFirstFatalError(boolean)
 	 */
 	@Override
@@ -343,7 +388,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#setInputValidationOption(int)
 	 */
 	@Override
@@ -355,7 +402,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#setLogComment(java.lang.String)
 	 */
 	@Override
@@ -367,7 +416,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#setReplaceDbProperties(boolean)
 	 */
 	@Override
@@ -379,7 +430,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#setReplicaRequiredForReplaceOrUpdate(boolean)
 	 */
 	@Override
@@ -391,7 +444,9 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlImporter#setUnknownTokenLogOption(int)
 	 */
 	@Override

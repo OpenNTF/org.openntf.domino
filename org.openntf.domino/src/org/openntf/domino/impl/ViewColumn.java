@@ -18,7 +18,6 @@ package org.openntf.domino.impl;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -34,7 +33,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @param parent
 	 *            the parent
 	 */
-	public ViewColumn(lotus.domino.ViewColumn delegate, org.openntf.domino.Base<?> parent) {
+	public ViewColumn(lotus.domino.ViewColumn delegate, org.openntf.domino.View parent) {
 		super(delegate, parent);
 	}
 
@@ -320,12 +319,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 */
 	@Override
 	public View getParent() {
-		try {
-			return Factory.fromLotus(getDelegate().getParent(), View.class, this);
-		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
-			return null;
-		}
+		return (View) super.getParent();
 	}
 
 	/*

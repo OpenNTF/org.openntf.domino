@@ -42,7 +42,9 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextTable#addRow()
 	 */
 	@Override
@@ -54,7 +56,9 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextTable#addRow(int)
 	 */
 	@Override
@@ -66,7 +70,9 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextTable#addRow(int, int)
 	 */
 	@Override
@@ -78,7 +84,9 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextTable#getAlternateColor()
 	 */
 	@Override
@@ -91,7 +99,9 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextTable#getColor()
 	 */
 	@Override
@@ -104,7 +114,9 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextTable#getColumnCount()
 	 */
 	@Override
@@ -117,7 +129,14 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	@Override
+	public RichTextItem getParent() {
+		return (RichTextItem) super.getParent();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextTable#getRowCount()
 	 */
 	@Override
@@ -130,7 +149,9 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextTable#getRowLabels()
 	 */
 	@SuppressWarnings("unchecked")
@@ -144,7 +165,9 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextTable#getStyle()
 	 */
 	@Override
@@ -157,7 +180,9 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextTable#isRightToLeft()
 	 */
 	@Override
@@ -170,7 +195,9 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextTable#remove()
 	 */
 	@Override
@@ -182,7 +209,9 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextTable#removeRow()
 	 */
 	@Override
@@ -194,7 +223,9 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextTable#removeRow(int)
 	 */
 	@Override
@@ -206,7 +237,9 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextTable#removeRow(int, int)
 	 */
 	@Override
@@ -218,7 +251,9 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextTable#setAlternateColor(lotus.domino.ColorObject)
 	 */
 	@Override
@@ -230,7 +265,9 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextTable#setColor(lotus.domino.ColorObject)
 	 */
 	@Override
@@ -242,7 +279,9 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextTable#setRightToLeft(boolean)
 	 */
 	@Override
@@ -254,20 +293,24 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextTable#setRowLabels(java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setRowLabels(Vector labels) {
 		try {
-			getDelegate().setRowLabels(labels);
+			getDelegate().setRowLabels(toDominoFriendly(labels, this));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextTable#setStyle(int)
 	 */
 	@Override

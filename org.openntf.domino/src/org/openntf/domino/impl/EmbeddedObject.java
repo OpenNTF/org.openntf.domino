@@ -25,7 +25,6 @@ import lotus.domino.XSLTResultTarget;
 
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
-import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 // TODO: Auto-generated Javadoc
@@ -34,7 +33,7 @@ import org.xml.sax.InputSource;
  */
 public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotus.domino.EmbeddedObject> implements
 		org.openntf.domino.EmbeddedObject {
-	
+
 	/** The temp. */
 	private lotus.domino.EmbeddedObject temp;
 
@@ -50,7 +49,9 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.EmbeddedObject#activate(boolean)
 	 */
 	public int activate(boolean paramBoolean) {
@@ -67,7 +68,9 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.EmbeddedObject#doVerb(java.lang.String)
 	 */
 	public void doVerb(String paramString) {
@@ -79,7 +82,9 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.EmbeddedObject#extractFile(java.lang.String)
 	 */
 	public void extractFile(String paramString) {
@@ -91,7 +96,9 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.EmbeddedObject#getClassName()
 	 */
 	public String getClassName() {
@@ -104,7 +111,9 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.EmbeddedObject#getFileSize()
 	 */
 	public int getFileSize() {
@@ -117,7 +126,9 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.EmbeddedObject#getName()
 	 */
 	public String getName() {
@@ -130,7 +141,9 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.EmbeddedObject#getObject()
 	 */
 	public int getObject() {
@@ -143,15 +156,15 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public org.openntf.domino.RichTextItem getParent() {
+	public RichTextItem getParent() {
 		try {
-			return Factory.fromLotus(getDelegate().getParent(), org.openntf.domino.RichTextItem.class, null); // FIXME NTF - this ain't
-			// gonna work. Need an
-			// RTItem implementation
+			return Factory.fromLotus(getDelegate().getParent(), RichTextItem.class, null);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -159,7 +172,9 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.EmbeddedObject#getSource()
 	 */
 	public String getSource() {
@@ -172,7 +187,9 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.EmbeddedObject#getType()
 	 */
 	public int getType() {
@@ -185,10 +202,13 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.EmbeddedObject#getVerbs()
 	 */
-	public Vector getVerbs() {
+	@SuppressWarnings("unchecked")
+	public Vector<String> getVerbs() {
 		try {
 			return getDelegate().getVerbs();
 		} catch (NotesException e) {
@@ -198,7 +218,9 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.EmbeddedObject#remove()
 	 */
 	public void remove() {
@@ -210,7 +232,9 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.EmbeddedObject#getReader()
 	 */
 	public Reader getReader() {
@@ -226,7 +250,9 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.EmbeddedObject#getInputSource()
 	 */
 	public InputSource getInputSource() {
@@ -242,7 +268,9 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.EmbeddedObject#getInputStream()
 	 */
 	public InputStream getInputStream() {
@@ -258,10 +286,12 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.EmbeddedObject#parseXML(boolean)
 	 */
-	public Document parseXML(boolean paramBoolean) throws IOException {
+	public org.w3c.dom.Document parseXML(boolean paramBoolean) throws IOException {
 		try {
 			return getDelegate().parseXML(paramBoolean);
 		} catch (NotesException e) {
@@ -271,7 +301,9 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.EmbeddedObject#transformXML(java.lang.Object, lotus.domino.XSLTResultTarget)
 	 */
 	public void transformXML(Object paramObject, XSLTResultTarget paramXSLTResultTarget) {

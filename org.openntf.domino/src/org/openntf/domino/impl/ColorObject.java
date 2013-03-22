@@ -18,6 +18,7 @@ package org.openntf.domino.impl;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -34,10 +35,12 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 	 *            the parent
 	 */
 	public ColorObject(lotus.domino.ColorObject delegate, org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, Factory.getSession(parent));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ColorObject#getBlue()
 	 */
 	@Override
@@ -50,7 +53,9 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ColorObject#getGreen()
 	 */
 	@Override
@@ -63,7 +68,9 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ColorObject#getHue()
 	 */
 	@Override
@@ -76,7 +83,9 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ColorObject#getLuminance()
 	 */
 	@Override
@@ -89,7 +98,9 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ColorObject#getNotesColor()
 	 */
 	@Override
@@ -102,7 +113,14 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	@Override
+	public Session getParent() {
+		return (Session) super.getParent();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ColorObject#getRed()
 	 */
 	@Override
@@ -115,7 +133,9 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ColorObject#getSaturation()
 	 */
 	@Override
@@ -128,7 +148,9 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ColorObject#setHSL(int, int, int)
 	 */
 	@Override
@@ -141,7 +163,9 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ColorObject#setNotesColor(int)
 	 */
 	@Override
@@ -153,7 +177,9 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ColorObject#setRGB(int, int, int)
 	 */
 	@Override

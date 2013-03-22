@@ -54,6 +54,8 @@ public interface RichTextRange extends Base<lotus.domino.RichTextRange>, lotus.d
 	@Override
 	public RichTextNavigator getNavigator();
 
+	public RichTextItem getParent();
+
 	/*
 	 * (non-Javadoc)
 	 * 

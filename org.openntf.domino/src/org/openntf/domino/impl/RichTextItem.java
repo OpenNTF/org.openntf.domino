@@ -165,7 +165,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	@Override
 	public void appendDocLink(lotus.domino.Database db, String comment) {
 		try {
-			getDelegate().appendDocLink((lotus.domino.Database) db, comment);
+			getDelegate().appendDocLink((lotus.domino.Database) toLotus(db), comment);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -179,7 +179,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	@Override
 	public void appendDocLink(lotus.domino.Database db, String comment, String hotspotText) {
 		try {
-			getDelegate().appendDocLink((lotus.domino.Database) db, comment, hotspotText);
+			getDelegate().appendDocLink((lotus.domino.Database) toLotus(db), comment, hotspotText);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -475,9 +475,9 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 * @see org.openntf.domino.RichTextItem#createRange()
 	 */
 	@Override
-	public org.openntf.domino.RichTextRange createRange() {
+	public RichTextRange createRange() {
 		try {
-			return Factory.fromLotus(getDelegate().createRange(), org.openntf.domino.RichTextRange.class, this);
+			return Factory.fromLotus(getDelegate().createRange(), RichTextRange.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

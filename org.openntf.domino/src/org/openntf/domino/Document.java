@@ -193,8 +193,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#createRichTextItem(java.lang.String)
 	 */
 	@Override
-	// TODO Switch to new class
-	public lotus.domino.RichTextItem createRichTextItem(String name);
+	public RichTextItem createRichTextItem(String name);
 
 	/*
 	 * (non-Javadoc)

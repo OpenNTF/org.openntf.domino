@@ -40,7 +40,9 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DateRange#getEndDateTime()
 	 */
 	@Override
@@ -55,7 +57,9 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -63,7 +67,9 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 		return (org.openntf.domino.Session) super.getParent();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DateRange#getStartDateTime()
 	 */
 	@Override
@@ -77,7 +83,9 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DateRange#getText()
 	 */
 	@Override
@@ -91,13 +99,15 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DateRange#setEndDateTime(lotus.domino.DateTime)
 	 */
 	@Override
 	public void setEndDateTime(lotus.domino.DateTime end) {
 		try {
-			getDelegate().setEndDateTime(end);
+			getDelegate().setEndDateTime((lotus.domino.DateTime) toLotus(end));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -105,20 +115,24 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DateRange#setStartDateTime(lotus.domino.DateTime)
 	 */
 	@Override
 	public void setStartDateTime(lotus.domino.DateTime start) {
 		try {
-			getDelegate().setStartDateTime(start);
+			getDelegate().setStartDateTime((lotus.domino.DateTime) toLotus(start));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DateRange#setText(java.lang.String)
 	 */
 	@Override

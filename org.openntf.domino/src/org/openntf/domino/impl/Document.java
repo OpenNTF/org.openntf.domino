@@ -545,9 +545,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * @see org.openntf.domino.Document#createRichTextItem(java.lang.String)
 	 */
 	@Override
-	public lotus.domino.RichTextItem createRichTextItem(String name) {
+	public RichTextItem createRichTextItem(String name) {
 		try {
-			return getDelegate().createRichTextItem(name);
+			return Factory.fromLotus(getDelegate().createRichTextItem(name), RichTextItem.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -684,7 +684,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getEncryptionKeys() {
+	public Vector<String> getEncryptionKeys() {
 		try {
 			return getDelegate().getEncryptionKeys();
 		} catch (NotesException e) {
@@ -730,7 +730,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getFolderReferences() {
+	public Vector<String> getFolderReferences() {
 		try {
 			return getDelegate().getFolderReferences();
 		} catch (NotesException e) {
@@ -940,7 +940,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getLockHolders() {
+	public Vector<String> getLockHolders() {
 		try {
 			return getDelegate().getLockHolders();
 		} catch (NotesException e) {
@@ -1716,7 +1716,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public boolean renderToRTItem(lotus.domino.RichTextItem rtitem) {
 		try {
-			getDelegate().renderToRTItem((lotus.domino.RichTextItem) Factory.toLotus(rtitem));
+			getDelegate().renderToRTItem((lotus.domino.RichTextItem) toLotus(rtitem));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

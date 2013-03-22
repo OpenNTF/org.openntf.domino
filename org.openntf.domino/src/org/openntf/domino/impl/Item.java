@@ -81,7 +81,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	@Override
 	public void appendToTextList(java.util.Vector values) {
 		try {
-			getDelegate().appendToTextList(values);
+			getDelegate().appendToTextList(toDominoFriendly(values, this));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -95,10 +95,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	@Override
 	public boolean containsValue(Object value) {
 		try {
-			if (value instanceof lotus.domino.Base) {
-				return getDelegate().containsValue(toLotus((lotus.domino.Base) value));
-			}
-			return getDelegate().containsValue(value);
+			return getDelegate().containsValue(toDominoFriendly(value, this));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -810,17 +807,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	@Override
 	public void setValues(java.util.Vector values) {
 		try {
-			java.util.Vector<Object> result = new java.util.Vector<Object>(values.size());
-			for (Object value : values) {
-				if (value instanceof org.openntf.domino.DateTime) {
-					result.add(toLotus((org.openntf.domino.DateTime) value));
-				} else if (value instanceof org.openntf.domino.DateRange) {
-					result.add(toLotus((org.openntf.domino.DateRange) value));
-				} else {
-					result.add(value);
-				}
-			}
-			getDelegate().setValues(result);
+			getDelegate().setValues(toDominoFriendly(values, this));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

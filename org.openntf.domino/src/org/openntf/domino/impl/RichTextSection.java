@@ -39,7 +39,9 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextSection#getBarColor()
 	 */
 	@Override
@@ -52,7 +54,14 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 		}
 	}
 
-	/* (non-Javadoc)
+	@Override
+	public RichTextItem getParent() {
+		return (RichTextItem) getParent();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextSection#getTitle()
 	 */
 	@Override
@@ -65,7 +74,9 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextSection#getTitleStyle()
 	 */
 	@Override
@@ -78,7 +89,9 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextSection#isExpanded()
 	 */
 	@Override
@@ -91,7 +104,9 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextSection#remove()
 	 */
 	@Override
@@ -103,7 +118,9 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextSection#setBarColor(lotus.domino.ColorObject)
 	 */
 	@Override
@@ -115,7 +132,9 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextSection#setExpanded(boolean)
 	 */
 	@Override
@@ -127,7 +146,9 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextSection#setTitle(java.lang.String)
 	 */
 	@Override
@@ -139,7 +160,9 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextSection#setTitleStyle(lotus.domino.RichTextStyle)
 	 */
 	@Override
