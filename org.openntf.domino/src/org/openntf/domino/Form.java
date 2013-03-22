@@ -26,13 +26,6 @@ import org.openntf.domino.types.Design;
  */
 public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, Design, DatabaseDescendant {
 
-	/**
-	 * Gets the document.
-	 * 
-	 * @return the document
-	 */
-	public Document getDocument();
-
 	/*
 	 * (non-Javadoc)
 	 * 

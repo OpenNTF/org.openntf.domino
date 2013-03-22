@@ -1385,9 +1385,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectionFormula(java.lang.String)
 	 */
-	public void setSelectionFormula(String flag) {
+	public void setSelectionFormula(String formula) {
 		try {
-			getDelegate().setSelectionFormula(flag);
+			getDelegate().setSelectionFormula(formula);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

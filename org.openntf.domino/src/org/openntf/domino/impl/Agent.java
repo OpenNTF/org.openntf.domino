@@ -42,7 +42,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#getComment()
 	 */
 	@Override
@@ -55,7 +57,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#getCommonOwner()
 	 */
 	@Override
@@ -68,7 +72,14 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	@Override
+	public Document getDocument() {
+		return this.getParent().getDocumentByUNID(this.getUniversalID());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#getHttpURL()
 	 */
 	@Override
@@ -81,7 +92,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#getLastRun()
 	 */
 	@Override
@@ -94,7 +107,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#getLockHolders()
 	 */
 	@SuppressWarnings("unchecked")
@@ -108,7 +123,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#getName()
 	 */
 	@Override
@@ -121,7 +138,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#getNotesURL()
 	 */
 	@Override
@@ -134,7 +153,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#getOnBehalfOf()
 	 */
 	@Override
@@ -147,7 +168,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#getOwner()
 	 */
 	@Override
@@ -160,7 +183,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#getParameterDocID()
 	 */
 	@Override
@@ -173,7 +198,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -181,7 +208,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		return (Database) super.getParent();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#getQuery()
 	 */
 	@Override
@@ -194,7 +223,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#getServerName()
 	 */
 	@Override
@@ -207,7 +238,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#getTarget()
 	 */
 	@Override
@@ -220,7 +253,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#getTrigger()
 	 */
 	@Override
@@ -233,7 +268,16 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	@Override
+	public String getUniversalID() {
+		NoteCollection notes = this.getParent().createNoteCollection(false);
+		notes.add(this);
+		return notes.getUNID(notes.getFirstNoteID());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#getURL()
 	 */
 	@Override
@@ -246,7 +290,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#isActivatable()
 	 */
 	@Override
@@ -259,7 +305,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#isEnabled()
 	 */
 	@Override
@@ -272,7 +320,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#isNotesAgent()
 	 */
 	@Override
@@ -285,7 +335,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#isProhibitDesignUpdate()
 	 */
 	@Override
@@ -298,7 +350,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#isPublic()
 	 */
 	@Override
@@ -311,7 +365,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#isWebAgent()
 	 */
 	@Override
@@ -324,7 +380,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#lock()
 	 */
 	@Override
@@ -337,7 +395,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#lock(boolean)
 	 */
 	@Override
@@ -350,7 +410,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#lock(java.lang.String)
 	 */
 	@Override
@@ -363,7 +425,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#lock(java.lang.String, boolean)
 	 */
 	@Override
@@ -376,7 +440,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#lock(java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
@@ -390,7 +456,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#lock(java.util.Vector, boolean)
 	 */
 	@SuppressWarnings("unchecked")
@@ -404,7 +472,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#lockProvisional()
 	 */
 	@Override
@@ -417,7 +487,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#lockProvisional(java.lang.String)
 	 */
 	@Override
@@ -430,7 +502,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#lockProvisional(java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
@@ -444,7 +518,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#remove()
 	 */
 	@Override
@@ -456,7 +532,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#run()
 	 */
 	@Override
@@ -468,7 +546,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#run(java.lang.String)
 	 */
 	@Override
@@ -480,7 +560,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#runOnServer()
 	 */
 	@Override
@@ -493,7 +575,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#runOnServer(java.lang.String)
 	 */
 	@Override
@@ -506,7 +590,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#runWithDocumentContext(lotus.domino.Document)
 	 */
 	@Override
@@ -518,7 +604,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#runWithDocumentContext(lotus.domino.Document, java.lang.String)
 	 */
 	@Override
@@ -530,7 +618,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#save()
 	 */
 	@Override
@@ -542,7 +632,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#setEnabled(boolean)
 	 */
 	@Override
@@ -554,7 +646,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#setProhibitDesignUpdate(boolean)
 	 */
 	@Override
@@ -566,7 +660,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#setServerName(java.lang.String)
 	 */
 	@Override
@@ -578,7 +674,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Agent#unlock()
 	 */
 	@Override
