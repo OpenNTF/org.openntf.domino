@@ -288,6 +288,36 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.openntf.domino.Database#createDocument(java.util.Map)
+	 */
+	@Override
+	public Document createDocument(Map<String, Object> itemValues) {
+		Document doc = this.createDocument();
+		for (Map.Entry<String, Object> entry : itemValues.entrySet()) {
+			doc.replaceItemValue(entry.getKey(), entry.getValue());
+		}
+		return doc;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.Database#createDocument(java.lang.Object[])
+	 */
+	@Override
+	public Document createDocument(Object... keyValuePairs) {
+		Document doc = this.createDocument();
+		if (keyValuePairs.length >= 2) {
+			for (int i = 0; i < keyValuePairs.length; i += 2) {
+				doc.replaceItemValue(keyValuePairs[i].toString(), keyValuePairs[i + 1]);
+			}
+		}
+		return doc;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#createDocumentCollection()
 	 */
 	public DocumentCollection createDocumentCollection() {

@@ -134,6 +134,9 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	 * @see lotus.domino.NotesCalendarNotice#read()
 	 */
 	@Override
+	public boolean isOverwriteCheckEnabled();
+
+	@Override
 	public String read();
 
 	/*
@@ -165,6 +168,9 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	 * 
 	 * @see lotus.domino.NotesCalendarNotice#tentativelyAccept(java.lang.String)
 	 */
+	@Override
+	public void setOverwriteCheckEnabled(boolean flag);
+
 	@Override
 	public void tentativelyAccept(String comments);
 }
