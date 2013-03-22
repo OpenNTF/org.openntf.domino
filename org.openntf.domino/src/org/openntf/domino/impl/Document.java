@@ -1777,18 +1777,23 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					// TODO implement this
 				} else {
 					// Check to see if it's a StateHolder
-					Class<?> stateHolderClass = Class.forName("javax.faces.component.StateHolder");
-					if (stateHolderClass.isInstance(value)) {
-						Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext");
-						Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
-						Method saveState = stateHolderClass.getMethod("saveState", facesContextClass);
-						Serializable state = (Serializable) saveState.invoke(value, getCurrentInstance.invoke(null));
-						Map<String, String> headers = new HashMap<String, String>();
-						headers.put("X-Storage-Scheme", "StateHolder");
-						DominoUtils.saveState(state, this, itemName, true, headers);
-						result = getDelegate().getFirstItem(itemName);
-					} else {
-						// Well, we tried.
+					try {
+						Class<?> stateHolderClass = Class.forName("javax.faces.component.StateHolder");
+						if (stateHolderClass.isInstance(value)) {
+							Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext");
+							Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
+							Method saveState = stateHolderClass.getMethod("saveState", facesContextClass);
+							Serializable state = (Serializable) saveState.invoke(value, getCurrentInstance.invoke(null));
+							Map<String, String> headers = new HashMap<String, String>();
+							headers.put("X-Storage-Scheme", "StateHolder");
+							headers.put("X-Original-Java-Class", value.getClass().getName());
+							DominoUtils.saveState(state, this, itemName, true, headers);
+							result = getDelegate().getFirstItem(itemName);
+						} else {
+							// Well, we tried.
+							throw iae;
+						}
+					} catch (ClassNotFoundException cnfe) {
 						throw iae;
 					}
 				}
