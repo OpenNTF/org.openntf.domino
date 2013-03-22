@@ -23,140 +23,187 @@ import java.util.Vector;
  */
 public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Directory {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#createNavigator()
 	 */
 	@Override
 	public DirectoryNavigator createNavigator();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#freeLookupBuffer()
 	 */
 	@Override
 	public void freeLookupBuffer();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#getAvailableItems()
 	 */
 	@Override
 	public Vector<String> getAvailableItems();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#getAvailableNames()
 	 */
 	@Override
 	public Vector<String> getAvailableNames();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#getAvailableView()
 	 */
 	@Override
 	public String getAvailableView();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#getMailInfo(java.lang.String)
 	 */
 	@Override
 	public Vector<String> getMailInfo(String userName);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#getMailInfo(java.lang.String, boolean, boolean)
 	 */
 	@Override
 	public Vector<String> getMailInfo(String userName, boolean getVersion, boolean errorOnMultipleMatches);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#getServer()
 	 */
 	@Override
 	public String getServer();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#isGroupAuthorizationOnly()
 	 */
 	@Override
 	public boolean isGroupAuthorizationOnly();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#isLimitMatches()
 	 */
 	@Override
 	public boolean isLimitMatches();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#isPartialMatches()
 	 */
 	@Override
 	public boolean isPartialMatches();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#isSearchAllDirectories()
 	 */
 	@Override
 	public boolean isSearchAllDirectories();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#isTrustedOnly()
 	 */
 	@Override
 	public boolean isTrustedOnly();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#isUseContextServer()
 	 */
 	@Override
 	public boolean isUseContextServer();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#lookupAllNames(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public DirectoryNavigator lookupAllNames(String view, String item);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#lookupAllNames(java.lang.String, java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public DirectoryNavigator lookupAllNames(String view, Vector items);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#lookupNames(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
 	public DirectoryNavigator lookupNames(String view, String name, String item);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#lookupNames(java.lang.String, java.util.Vector, java.util.Vector, boolean)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public DirectoryNavigator lookupNames(String view, Vector names, Vector items, boolean partialMatches);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#setGroupAuthorizationOnly(boolean)
 	 */
 	@Override
 	public void setGroupAuthorizationOnly(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#setLimitMatches(boolean)
 	 */
 	@Override
 	public void setLimitMatches(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#setSearchAllDirectories(boolean)
 	 */
 	@Override
 	public void setSearchAllDirectories(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#setTrustedOnly(boolean)
 	 */
 	@Override
 	public void setTrustedOnly(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Directory#setUseContextServer(boolean)
 	 */
 	@Override
