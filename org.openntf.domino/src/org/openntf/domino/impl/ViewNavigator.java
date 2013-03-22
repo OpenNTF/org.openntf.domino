@@ -17,6 +17,7 @@ package org.openntf.domino.impl;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Document;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.utils.DominoUtils;
@@ -489,6 +490,14 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 			DominoUtils.handleException(e);
 			return false;
 		}
+	}
+
+	public boolean gotoEntry(Document document) {
+		return gotoEntry((Object) document);
+	}
+
+	public boolean gotoEntry(ViewEntry entry) {
+		return gotoEntry((Object) entry);
 	}
 
 	/*

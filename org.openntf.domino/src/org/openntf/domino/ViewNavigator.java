@@ -282,6 +282,24 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * <<<<<<< HEAD =======
+	 * 
+	 * @see lotus.domino.ViewNavigator#gotoEntry(java.lang.Object)
+	 */
+	public boolean gotoEntry(Document document);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.ViewNavigator#gotoEntry(java.lang.Object)
+	 */
+	public boolean gotoEntry(ViewEntry entry);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * >>>>>>> refs/remotes/origin/timtripcony
+	 * 
 	 * @see lotus.domino.ViewNavigator#gotoFirst()
 	 */
 	@Override

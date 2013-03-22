@@ -71,6 +71,17 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * <<<<<<< HEAD =======
+	 * 
+	 * @see java.util.Map#containsKey(java.lang.Object)
+	 */
+	public boolean containsKey(Object key);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * >>>>>>> refs/remotes/origin/timtripcony
+	 * 
 	 * @see lotus.domino.Database#createCopy(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -290,6 +301,17 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/*
 	 * (non-Javadoc)
+	 * 
+	 * <<<<<<< HEAD =======
+	 * 
+	 * @see java.util.Map#get(java.lang.Object)
+	 */
+	public Document get(Object key);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * >>>>>>> refs/remotes/origin/timtripcony
 	 * 
 	 * @see lotus.domino.Database#getACL()
 	 */

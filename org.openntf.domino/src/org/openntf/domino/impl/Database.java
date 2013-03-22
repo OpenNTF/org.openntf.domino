@@ -130,6 +130,20 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.openntf.domino.Database#get(java.lang.Object)
+	 */
+	@Override
+	public org.openntf.domino.Document get(Object key) {
+		org.openntf.domino.Document result = null;
+		if (key instanceof String) {
+			result = getDocumentByUNID((String) key);
+		}
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Database#compact()
 	 */
 	public int compact() {
@@ -199,6 +213,16 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			return null;
 
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.Database#containsKey(java.lang.Object)
+	 */
+	@Override
+	public boolean containsKey(Object key) {
+		return get(key) != null;
 	}
 
 	/*
