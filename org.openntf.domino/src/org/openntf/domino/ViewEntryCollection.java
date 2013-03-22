@@ -165,7 +165,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#getParent()
 	 */
 	@Override
-	public org.openntf.domino.View getParent();
+	public View getParent();
 
 	/*
 	 * (non-Javadoc)

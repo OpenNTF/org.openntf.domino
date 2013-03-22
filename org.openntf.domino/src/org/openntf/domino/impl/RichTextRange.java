@@ -39,7 +39,9 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextRange#Clone()
 	 */
 	@Override
@@ -52,7 +54,9 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextRange#findandReplace(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -65,7 +69,9 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextRange#findandReplace(java.lang.String, java.lang.String, long)
 	 */
 	@Override
@@ -78,7 +84,9 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextRange#getNavigator()
 	 */
 	@Override
@@ -91,7 +99,14 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	@Override
+	public RichTextItem getParent() {
+		return (RichTextItem) super.getParent();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextRange#getStyle()
 	 */
 	@Override
@@ -104,7 +119,9 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextRange#getTextParagraph()
 	 */
 	@Override
@@ -117,7 +134,9 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextRange#getTextRun()
 	 */
 	@Override
@@ -130,7 +149,9 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextRange#getType()
 	 */
 	@Override
@@ -143,7 +164,9 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextRange#remove()
 	 */
 	@Override
@@ -155,7 +178,9 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextRange#reset(boolean, boolean)
 	 */
 	@Override
@@ -167,7 +192,9 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextRange#setBegin(lotus.domino.Base)
 	 */
 	@Override
@@ -179,7 +206,9 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextRange#setEnd(lotus.domino.Base)
 	 */
 	@Override
@@ -191,7 +220,9 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextRange#setStyle(lotus.domino.RichTextStyle)
 	 */
 	@Override

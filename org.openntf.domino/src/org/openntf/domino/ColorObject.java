@@ -21,60 +21,82 @@ package org.openntf.domino;
  */
 public interface ColorObject extends Base<lotus.domino.ColorObject>, lotus.domino.ColorObject {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ColorObject#getBlue()
 	 */
 	@Override
 	public int getBlue();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ColorObject#getGreen()
 	 */
 	public int getGreen();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ColorObject#getHue()
 	 */
 	@Override
 	public int getHue();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ColorObject#getLuminance()
 	 */
 	@Override
 	public int getLuminance();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ColorObject#getNotesColor()
 	 */
 	@Override
 	public int getNotesColor();
 
-	/* (non-Javadoc)
+	public Session getParent();
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ColorObject#getRed()
 	 */
 	@Override
 	public int getRed();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ColorObject#getSaturation()
 	 */
 	@Override
 	public int getSaturation();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ColorObject#setHSL(int, int, int)
 	 */
 	@Override
 	public int setHSL(int hue, int saturation, int luminance);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ColorObject#setNotesColor(int)
 	 */
 	@Override
 	public void setNotesColor(int notesColor);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.ColorObject#setRGB(int, int, int)
 	 */
 	@Override

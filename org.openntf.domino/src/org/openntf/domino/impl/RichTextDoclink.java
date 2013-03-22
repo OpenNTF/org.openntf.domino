@@ -16,9 +16,9 @@
 package org.openntf.domino.impl;
 
 import lotus.domino.NotesException;
-import lotus.domino.RichTextStyle;
 
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -39,7 +39,9 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextDoclink#getDBReplicaID()
 	 */
 	@Override
@@ -52,7 +54,9 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextDoclink#getDisplayComment()
 	 */
 	@Override
@@ -65,7 +69,9 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextDoclink#getDocUnID()
 	 */
 	@Override
@@ -78,7 +84,9 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextDoclink#getHotSpotText()
 	 */
 	@Override
@@ -91,20 +99,24 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextDoclink#getHotSpotTextStyle()
 	 */
 	@Override
 	public RichTextStyle getHotSpotTextStyle() {
 		try {
-			return getDelegate().getHotSpotTextStyle();
+			return Factory.fromLotus(getDelegate().getHotSpotTextStyle(), RichTextStyle.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextDoclink#getServerHint()
 	 */
 	@Override
@@ -117,7 +129,9 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextDoclink#getViewUnID()
 	 */
 	@Override
@@ -130,7 +144,9 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextDoclink#remove()
 	 */
 	@Override
@@ -142,7 +158,9 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextDoclink#setDBReplicaID(java.lang.String)
 	 */
 	@Override
@@ -154,7 +172,9 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextDoclink#setDisplayComment(java.lang.String)
 	 */
 	@Override
@@ -166,7 +186,9 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextDoclink#setDocUnID(java.lang.String)
 	 */
 	@Override
@@ -178,7 +200,9 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextDoclink#setHotSpotText(java.lang.String)
 	 */
 	@Override
@@ -190,11 +214,13 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextDoclink#setHotSpotTextStyle(lotus.domino.RichTextStyle)
 	 */
 	@Override
-	public void setHotSpotTextStyle(RichTextStyle rtstyle) {
+	public void setHotSpotTextStyle(lotus.domino.RichTextStyle rtstyle) {
 		try {
 			getDelegate().setHotSpotTextStyle((lotus.domino.RichTextStyle) toLotus(rtstyle));
 		} catch (NotesException e) {
@@ -202,7 +228,9 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextDoclink#setServerHint(java.lang.String)
 	 */
 	@Override
@@ -214,7 +242,9 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextDoclink#setViewUnID(java.lang.String)
 	 */
 	@Override

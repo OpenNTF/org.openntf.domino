@@ -72,6 +72,8 @@ public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.d
 	@Override
 	public int getColumnCount();
 
+	public RichTextItem getParent();
+
 	/*
 	 * (non-Javadoc)
 	 * 

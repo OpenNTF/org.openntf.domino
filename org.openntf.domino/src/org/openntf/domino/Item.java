@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.Vector;
 
-import lotus.domino.NotesException;
 import lotus.domino.XSLTResultTarget;
 
 import org.openntf.domino.types.DatabaseDescendant;
@@ -311,7 +310,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, Databa
 	 * @see lotus.domino.Item#parseXML(boolean)
 	 */
 	@Override
-	public org.w3c.dom.Document parseXML(boolean validate) throws IOException, NotesException;
+	public org.w3c.dom.Document parseXML(boolean validate) throws IOException;
 
 	/*
 	 * (non-Javadoc)

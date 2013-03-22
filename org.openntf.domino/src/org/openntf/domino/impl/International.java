@@ -15,6 +15,10 @@
  */
 package org.openntf.domino.impl;
 
+import lotus.domino.NotesException;
+
+import org.openntf.domino.utils.DominoUtils;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class International.
@@ -34,52 +38,84 @@ public class International extends Base<org.openntf.domino.International, lotus.
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.International#getAMString()
 	 */
 	@Override
 	public String getAMString() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return getDelegate().getAMString();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return null;
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.International#getCurrencyDigits()
 	 */
 	@Override
 	public int getCurrencyDigits() {
-		// TODO Auto-generated method stub
-		return 0;
+		try {
+			return getDelegate().getCurrencyDigits();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return 0;
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.International#getCurrencySymbol()
 	 */
 	@Override
 	public String getCurrencySymbol() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return getDelegate().getCurrencySymbol();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return null;
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.International#getDateSep()
 	 */
 	@Override
 	public String getDateSep() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return getDelegate().getDateSep();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return null;
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.International#getDecimalSep()
 	 */
 	@Override
 	public String getDecimalSep() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return getDelegate().getDecimalSep();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return null;
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -87,138 +123,228 @@ public class International extends Base<org.openntf.domino.International, lotus.
 		return (Session) super.getParent();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.International#getPMString()
 	 */
 	@Override
 	public String getPMString() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return getDelegate().getPMString();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return null;
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.International#getThousandsSep()
 	 */
 	@Override
 	public String getThousandsSep() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return getDelegate().getThousandsSep();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return null;
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.International#getTimeSep()
 	 */
 	@Override
 	public String getTimeSep() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return getDelegate().getTimeSep();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return null;
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.International#getTimeZone()
 	 */
 	@Override
 	public int getTimeZone() {
-		// TODO Auto-generated method stub
-		return 0;
+		try {
+			return getDelegate().getTimeZone();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return 0;
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.International#getToday()
 	 */
 	@Override
 	public String getToday() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return getDelegate().getToday();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return null;
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.International#getTomorrow()
 	 */
 	@Override
 	public String getTomorrow() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return getDelegate().getTomorrow();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return null;
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.International#getYesterday()
 	 */
 	@Override
 	public String getYesterday() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return getDelegate().getYesterday();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return null;
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.International#isCurrencySpace()
 	 */
 	@Override
 	public boolean isCurrencySpace() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().isCurrencySpace();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return false;
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.International#isCurrencySuffix()
 	 */
 	@Override
 	public boolean isCurrencySuffix() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().isCurrencySuffix();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return false;
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.International#isCurrencyZero()
 	 */
 	@Override
 	public boolean isCurrencyZero() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().isCurrencyZero();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return false;
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.International#isDST()
 	 */
 	@Override
 	public boolean isDST() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().isDST();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return false;
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.International#isDateDMY()
 	 */
 	@Override
 	public boolean isDateDMY() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().isDateDMY();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return false;
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.International#isDateMDY()
 	 */
 	@Override
 	public boolean isDateMDY() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().isDateMDY();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return false;
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.International#isDateYMD()
 	 */
 	@Override
 	public boolean isDateYMD() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().isDateYMD();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return false;
+		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.International#isTime24Hour()
 	 */
 	@Override
 	public boolean isTime24Hour() {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return getDelegate().isTime24Hour();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+			return false;
+		}
 	}
 }

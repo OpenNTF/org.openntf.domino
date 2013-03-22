@@ -38,7 +38,9 @@ public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Newsletter#formatDocument(lotus.domino.Database, int)
 	 */
 	@Override
@@ -51,7 +53,9 @@ public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Newsletter#formatMsgWithDoclinks(lotus.domino.Database)
 	 */
 	@Override
@@ -64,20 +68,19 @@ public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
 	public Session getParent() {
-		try {
-			return Factory.fromLotus(getDelegate().getParent(), Session.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
+		return (Session) super.getParent();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Newsletter#getSubjectItemName()
 	 */
 	@Override
@@ -90,7 +93,9 @@ public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Newsletter#isDoScore()
 	 */
 	@Override
@@ -103,7 +108,9 @@ public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Newsletter#isDoSubject()
 	 */
 	@Override
@@ -116,7 +123,9 @@ public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Newsletter#setDoScore(boolean)
 	 */
 	@Override
@@ -128,7 +137,9 @@ public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Newsletter#setDoSubject(boolean)
 	 */
 	@Override
@@ -140,7 +151,9 @@ public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Newsletter#setSubjectItemName(java.lang.String)
 	 */
 	@Override

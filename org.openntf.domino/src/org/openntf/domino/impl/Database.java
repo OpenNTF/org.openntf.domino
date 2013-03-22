@@ -48,7 +48,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @param parent
 	 *            the parent
 	 */
-	public Database(lotus.domino.Database delegate, org.openntf.domino.Base parent) {
+	public Database(lotus.domino.Database delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
 
 	}
@@ -231,6 +231,11 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.Database#createDocument(java.util.Map)
+	 */
 	@Override
 	public Document createDocument(Map<String, Object> itemValues) {
 		Document doc = this.createDocument();
@@ -240,6 +245,11 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		return doc;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.Database#createDocument(java.lang.Object[])
+	 */
 	@Override
 	public Document createDocument(Object... keyValuePairs) {
 		Document doc = this.createDocument();
@@ -556,7 +566,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#getACLActivityLog()
 	 */
-	public Vector getACLActivityLog() {
+	@SuppressWarnings("unchecked")
+	public Vector<String> getACLActivityLog() {
 		try {
 			return getDelegate().getACLActivityLog();
 		} catch (NotesException e) {
@@ -586,7 +597,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#getAgents()
 	 */
-	public Vector getAgents() {
+	public Vector<org.openntf.domino.Agent> getAgents() {
 		try {
 			return Factory.fromLotusAsVector(getDelegate().getAgents(), org.openntf.domino.Agent.class, this);
 		} catch (NotesException e) {
@@ -601,9 +612,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#getAllDocuments()
 	 */
-	public org.openntf.domino.DocumentCollection getAllDocuments() {
+	public DocumentCollection getAllDocuments() {
 		try {
-			return Factory.fromLotus(getDelegate().getAllDocuments(), org.openntf.domino.DocumentCollection.class, this);
+			return Factory.fromLotus(getDelegate().getAllDocuments(), DocumentCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -1024,7 +1035,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#getManagers()
 	 */
-	public Vector getManagers() {
+	@SuppressWarnings("unchecked")
+	public Vector<String> getManagers() {
 		try {
 			return getDelegate().getManagers();
 		} catch (NotesException e) {
@@ -1087,7 +1099,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public DocumentCollection getModifiedDocuments(lotus.domino.DateTime since) {
 		try {
-			return Factory.fromLotus(getDelegate().getModifiedDocuments(since), DocumentCollection.class, this);
+			return Factory.fromLotus(getDelegate().getModifiedDocuments((lotus.domino.DateTime) toLotus(since)), DocumentCollection.class,
+					this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -1817,7 +1830,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@SuppressWarnings("unchecked")
 	public Vector<String> queryAccessRoles(String name) {
 		try {
-			return (Vector<String>) getDelegate().queryAccessRoles(name);
+			return getDelegate().queryAccessRoles(name);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

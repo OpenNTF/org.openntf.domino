@@ -20,6 +20,7 @@ import java.util.Vector;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -40,7 +41,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DirectoryNavigator#findFirstMatch()
 	 */
 	@Override
@@ -53,7 +56,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DirectoryNavigator#findFirstName()
 	 */
 	@Override
@@ -66,7 +71,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DirectoryNavigator#findNextMatch()
 	 */
 	@Override
@@ -79,7 +86,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DirectoryNavigator#findNextName()
 	 */
 	@Override
@@ -92,7 +101,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DirectoryNavigator#findNthMatch(long)
 	 */
 	@Override
@@ -105,7 +116,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DirectoryNavigator#findNthName(int)
 	 */
 	@Override
@@ -118,7 +131,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DirectoryNavigator#getCurrentItem()
 	 */
 	@Override
@@ -131,7 +146,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DirectoryNavigator#getCurrentMatch()
 	 */
 	@Override
@@ -144,7 +161,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DirectoryNavigator#getCurrentMatches()
 	 */
 	@Override
@@ -157,7 +176,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DirectoryNavigator#getCurrentName()
 	 */
 	@Override
@@ -170,7 +191,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DirectoryNavigator#getCurrentView()
 	 */
 	@Override
@@ -183,49 +206,54 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DirectoryNavigator#getFirstItemValue()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<Object> getFirstItemValue() {
 		try {
-			return getDelegate().getFirstItemValue();
+			return Factory.wrapColumnValues(getDelegate().getFirstItemValue());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DirectoryNavigator#getNextItemValue()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<Object> getNextItemValue() {
 		try {
-			return getDelegate().getNextItemValue();
+			return Factory.wrapColumnValues(getDelegate().getNextItemValue());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DirectoryNavigator#getNthItemValue(int)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<Object> getNthItemValue(int n) {
 		try {
-			return getDelegate().getNthItemValue(n);
+			return Factory.wrapColumnValues(getDelegate().getNthItemValue(n));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DirectoryNavigator#isMatchLocated()
 	 */
 	@Override
@@ -238,7 +266,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DirectoryNavigator#isNameLocated()
 	 */
 	@Override

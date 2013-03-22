@@ -607,7 +607,7 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	@Override
 	public String getSomeHeaders(Vector headerFilters) {
 		try {
-			return getDelegate().getSomeHeaders(headerFilters);
+			return getDelegate().getSomeHeaders(toDominoFriendly(headerFilters, this));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -623,7 +623,7 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	@Override
 	public String getSomeHeaders(Vector headerFilters, boolean inclusive) {
 		try {
-			return getDelegate().getSomeHeaders(headerFilters, inclusive);
+			return getDelegate().getSomeHeaders(toDominoFriendly(headerFilters, this), inclusive);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

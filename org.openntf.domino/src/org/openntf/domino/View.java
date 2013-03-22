@@ -306,7 +306,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public int FTSearchSorted(Vector query);
 
 	/*
@@ -317,7 +317,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public int FTSearchSorted(Vector query, int maxDocs);
 
 	/*
@@ -328,7 +328,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public int FTSearchSorted(Vector query, int maxDocs, int column);
 
 	/*
@@ -339,7 +339,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public int FTSearchSorted(Vector query, int maxDocs, int column, boolean ascending, boolean exact, boolean variants, boolean fuzzy);
 
 	/*
@@ -350,7 +350,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public int FTSearchSorted(Vector query, int maxDocs, String column);
 
 	/*
@@ -361,7 +361,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public int FTSearchSorted(Vector query, int maxDocs, String column, boolean ascending, boolean exact, boolean variants, boolean fuzzy);
 
 	/*
@@ -397,7 +397,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public DocumentCollection getAllDocumentsByKey(Vector keys);
 
 	/*
@@ -408,7 +408,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public DocumentCollection getAllDocumentsByKey(Vector keys, boolean exact);
 
 	/*
@@ -443,7 +443,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public ViewEntryCollection getAllEntriesByKey(Vector keys);
 
 	/*
@@ -454,7 +454,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public ViewEntryCollection getAllEntriesByKey(Vector keys, boolean exact);
 
 	/*
@@ -546,8 +546,8 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	 */
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public Vector getColumnValues(int column);
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	public Vector<Object> getColumnValues(int column);
 
 	/*
 	 * (non-Javadoc)
@@ -581,7 +581,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Document getDocumentByKey(Vector keys);
 
 	/*
@@ -592,7 +592,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Document getDocumentByKey(Vector keys, boolean exact);
 
 	/*
@@ -619,7 +619,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public ViewEntry getEntryByKey(Vector keys);
 
 	/*
@@ -630,7 +630,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public ViewEntry getEntryByKey(Vector keys, boolean exact);
 
 	/*
@@ -737,7 +737,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	 * @see lotus.domino.View#getParent()
 	 */
 	@Override
-	public org.openntf.domino.Database getParent();
+	public Database getParent();
 
 	/*
 	 * (non-Javadoc)
@@ -981,7 +981,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public boolean lock(Vector names);
 
 	/*
@@ -992,7 +992,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public boolean lock(Vector names, boolean provisionalOk);
 
 	/*
@@ -1019,7 +1019,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public boolean lockProvisional(Vector names);
 
 	/*
@@ -1134,7 +1134,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public void setAliases(Vector aliases);
 
 	/*
@@ -1201,7 +1201,7 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public void setReaders(Vector readers);
 
 	/*
@@ -1235,14 +1235,4 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	 */
 	@Override
 	public void unlock();
-
-	/*
-	 * New methods
-	 */
-	/**
-	 * Gets the document.
-	 * 
-	 * @return the document
-	 */
-	public Document getDocument();
 }

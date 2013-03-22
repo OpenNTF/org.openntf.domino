@@ -17,10 +17,6 @@ package org.openntf.domino.impl;
 
 import java.util.Vector;
 
-import lotus.domino.Database;
-import lotus.domino.Document;
-import lotus.domino.DocumentCollection;
-import lotus.domino.NoteCollection;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.utils.DominoUtils;
@@ -43,59 +39,69 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#exportDxl(lotus.domino.Document)
 	 */
 	@Override
-	public String exportDxl(Document doc) {
+	public String exportDxl(lotus.domino.Document doc) {
 		try {
-			return getDelegate().exportDxl(doc);
+			return getDelegate().exportDxl((lotus.domino.Document) toLotus(doc));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#exportDxl(lotus.domino.Database)
 	 */
 	@Override
-	public String exportDxl(Database db) {
+	public String exportDxl(lotus.domino.Database db) {
 		try {
-			return getDelegate().exportDxl(db);
+			return getDelegate().exportDxl((lotus.domino.Database) toLotus(db));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#exportDxl(lotus.domino.DocumentCollection)
 	 */
 	@Override
-	public String exportDxl(DocumentCollection docs) {
+	public String exportDxl(lotus.domino.DocumentCollection docs) {
 		try {
-			return getDelegate().exportDxl(docs);
+			return getDelegate().exportDxl((lotus.domino.DocumentCollection) toLotus(docs));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#exportDxl(lotus.domino.NoteCollection)
 	 */
 	@Override
-	public String exportDxl(NoteCollection notes) {
+	public String exportDxl(lotus.domino.NoteCollection notes) {
 		try {
-			return getDelegate().exportDxl(notes);
+			return getDelegate().exportDxl((lotus.domino.NoteCollection) toLotus(notes));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#getAttachmentOmittedText()
 	 */
 	@Override
@@ -108,7 +114,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#getConvertNotesBitmapsToGIF()
 	 */
 	@Override
@@ -121,7 +129,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#getDoctypeSYSTEM()
 	 */
 	@Override
@@ -134,7 +144,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#getExitOnFirstFatalError()
 	 */
 	@Override
@@ -147,7 +159,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#getForceNoteFormat()
 	 */
 	@Override
@@ -160,7 +174,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#getLog()
 	 */
 	@Override
@@ -173,7 +189,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#getLogComment()
 	 */
 	@Override
@@ -186,7 +204,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#getMIMEOption()
 	 */
 	@Override
@@ -199,7 +219,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#getOLEObjectOmittedText()
 	 */
 	@Override
@@ -212,11 +234,14 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#getOmitItemNames()
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getOmitItemNames() {
+	public Vector<String> getOmitItemNames() {
 		try {
 			return getDelegate().getOmitItemNames();
 		} catch (NotesException e) {
@@ -225,7 +250,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#getOmitMiscFileObjects()
 	 */
 	@Override
@@ -238,7 +265,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#getOmitOLEObjects()
 	 */
 	@Override
@@ -251,7 +280,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#getOmitRichtextAttachments()
 	 */
 	@Override
@@ -264,7 +295,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#getOmitRichtextPictures()
 	 */
 	@Override
@@ -277,7 +310,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#getOutputDOCTYPE()
 	 */
 	@Override
@@ -290,7 +325,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#getPictureOmittedText()
 	 */
 	@Override
@@ -303,11 +340,14 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#getRestrictToItemNames()
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getRestrictToItemNames() {
+	public Vector<String> getRestrictToItemNames() {
 		try {
 			return getDelegate().getRestrictToItemNames();
 		} catch (NotesException e) {
@@ -316,7 +356,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#getRichTextOption()
 	 */
 	@Override
@@ -329,7 +371,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#getUncompressAttachments()
 	 */
 	@Override
@@ -342,7 +386,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#setAttachmentOmittedText(java.lang.String)
 	 */
 	@Override
@@ -354,7 +400,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#setConvertNotesBitmapsToGIF(boolean)
 	 */
 	@Override
@@ -366,7 +414,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#setDoctypeSYSTEM(java.lang.String)
 	 */
 	@Override
@@ -378,7 +428,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#setExitOnFirstFatalError(boolean)
 	 */
 	@Override
@@ -390,7 +442,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#setForceNoteFormat(boolean)
 	 */
 	@Override
@@ -402,7 +456,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#setLogComment(java.lang.String)
 	 */
 	@Override
@@ -414,7 +470,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#setMIMEOption(int)
 	 */
 	@Override
@@ -426,7 +484,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#setOLEObjectOmittedText(java.lang.String)
 	 */
 	@Override
@@ -438,9 +498,12 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#setOmitItemNames(java.util.Vector)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setOmitItemNames(Vector names) {
 		try {
@@ -450,7 +513,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#setOmitMiscFileObjects(boolean)
 	 */
 	@Override
@@ -462,7 +527,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#setOmitOLEObjects(boolean)
 	 */
 	@Override
@@ -474,7 +541,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#setOmitRichtextAttachments(boolean)
 	 */
 	@Override
@@ -486,7 +555,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#setOmitRichtextPictures(boolean)
 	 */
 	@Override
@@ -498,7 +569,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#setOutputDOCTYPE(boolean)
 	 */
 	@Override
@@ -510,7 +583,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#setPictureOmittedText(java.lang.String)
 	 */
 	@Override
@@ -522,9 +597,12 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#setRestrictToItemNames(java.util.Vector)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setRestrictToItemNames(Vector names) {
 		try {
@@ -534,7 +612,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#setRichTextOption(int)
 	 */
 	@Override
@@ -546,7 +626,9 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DxlExporter#setUncompressAttachments(boolean)
 	 */
 	@Override

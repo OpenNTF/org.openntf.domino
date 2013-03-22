@@ -20,11 +20,13 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 
+import org.openntf.domino.types.SessionDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface Stream.
  */
-public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream {
+public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream, SessionDescendant {
 
 	/*
 	 * (non-Javadoc)

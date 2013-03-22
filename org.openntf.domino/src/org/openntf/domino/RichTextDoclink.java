@@ -15,8 +15,6 @@
  */
 package org.openntf.domino;
 
-import lotus.domino.RichTextStyle;
-
 import org.openntf.domino.types.DatabaseDescendant;
 
 // TODO: Auto-generated Javadoc
@@ -127,7 +125,7 @@ public interface RichTextDoclink extends Base<lotus.domino.RichTextDoclink>, lot
 	 * @see lotus.domino.RichTextDoclink#setHotSpotTextStyle(lotus.domino.RichTextStyle)
 	 */
 	@Override
-	public void setHotSpotTextStyle(RichTextStyle rtstyle);
+	public void setHotSpotTextStyle(lotus.domino.RichTextStyle rtstyle);
 
 	/*
 	 * (non-Javadoc)

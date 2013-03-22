@@ -15,12 +15,6 @@
  */
 package org.openntf.domino;
 
-import lotus.domino.Database;
-import lotus.domino.DateTime;
-import lotus.domino.DocumentCollection;
-import lotus.domino.Form;
-import lotus.domino.View;
-
 import org.openntf.domino.types.DatabaseDescendant;
 
 // TODO: Auto-generated Javadoc
@@ -532,7 +526,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#remove(lotus.domino.DocumentCollection)
 	 */
 	@Override
-	public void remove(DocumentCollection removalSpecifier);
+	public void remove(lotus.domino.DocumentCollection removalSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -540,7 +534,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#remove(lotus.domino.Form)
 	 */
 	@Override
-	public void remove(Form removalSpecifier);
+	public void remove(lotus.domino.Form removalSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -579,7 +573,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#remove(lotus.domino.View)
 	 */
 	@Override
-	public void remove(View removalSpecifier);
+	public void remove(lotus.domino.View removalSpecifier);
 
 	/*
 	 * (non-Javadoc)

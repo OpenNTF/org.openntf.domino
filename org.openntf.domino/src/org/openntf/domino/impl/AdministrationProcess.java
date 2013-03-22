@@ -42,7 +42,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#addGroupMembers(java.lang.String, java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
@@ -56,7 +58,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#addInternetCertificateToUser(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -69,22 +73,26 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.AdministrationProcess#addInternetCertificateToUser(java.lang.String, java.lang.String, java.lang.String, lotus.domino.DateTime)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.AdministrationProcess#addInternetCertificateToUser(java.lang.String, java.lang.String, java.lang.String,
+	 * lotus.domino.DateTime)
 	 */
 	@Override
 	public String addInternetCertificateToUser(String user, String keyringFile, String keyringPassword, lotus.domino.DateTime expiration) {
 		try {
 			return getDelegate().addInternetCertificateToUser(user, keyringFile, keyringPassword,
-
-			(lotus.domino.DateTime) toLotus(expiration));
+					(lotus.domino.DateTime) toLotus(expiration));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#addServerToCluster(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -97,7 +105,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#approveDeletePersonInDirectory(java.lang.String)
 	 */
 	@Override
@@ -110,7 +120,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#approveDeleteServerInDirectory(java.lang.String)
 	 */
 	@Override
@@ -123,7 +135,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#approveDesignElementDeletion(java.lang.String)
 	 */
 	@Override
@@ -136,7 +150,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#approveHostedOrgStorageDeletion(java.lang.String)
 	 */
 	@Override
@@ -149,7 +165,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#approveMailFileDeletion(java.lang.String)
 	 */
 	@Override
@@ -162,7 +180,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#approveMovedReplicaDeletion(java.lang.String)
 	 */
 	@Override
@@ -175,7 +195,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#approveNameChangeRetraction(java.lang.String)
 	 */
 	@Override
@@ -188,7 +210,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#approveRenamePersonInDirectory(java.lang.String)
 	 */
 	@Override
@@ -201,7 +225,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#approveRenameServerInDirectory(java.lang.String)
 	 */
 	@Override
@@ -214,7 +240,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#approveReplicaDeletion(java.lang.String)
 	 */
 	@Override
@@ -227,7 +255,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#approveResourceDeletion(java.lang.String)
 	 */
 	@Override
@@ -240,7 +270,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#changeHTTPPassword(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -253,7 +285,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#configureMailAgent(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -266,7 +300,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#configureMailAgent(java.lang.String, java.lang.String, boolean, boolean)
 	 */
 	@Override
@@ -279,7 +315,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#createReplica(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -292,8 +330,11 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.AdministrationProcess#createReplica(java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.AdministrationProcess#createReplica(java.lang.String, java.lang.String, java.lang.String, java.lang.String,
+	 * boolean, boolean)
 	 */
 	@Override
 	public String createReplica(String sourceServer, String sourceDBFile, String destServer, String destDBFile, boolean copyACL,
@@ -306,7 +347,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#deleteGroup(java.lang.String, boolean)
 	 */
 	@Override
@@ -319,7 +362,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#deleteGroup(java.lang.String, boolean, boolean)
 	 */
 	@Override
@@ -332,7 +377,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#deleteReplicas(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -345,7 +392,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#deleteServer(java.lang.String, boolean)
 	 */
 	@Override
@@ -358,7 +407,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#deleteUser(java.lang.String, boolean, int, java.lang.String)
 	 */
 	@Override
@@ -371,7 +422,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#deleteUser(java.lang.String, boolean, int, java.lang.String, boolean)
 	 */
 	@Override
@@ -384,7 +437,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#findGroupInDomain(java.lang.String)
 	 */
 	@Override
@@ -397,7 +452,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#findServerInDomain(java.lang.String)
 	 */
 	@Override
@@ -410,7 +467,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#findUserInDomain(java.lang.String)
 	 */
 	@Override
@@ -423,7 +482,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#getCertificateAuthorityOrg()
 	 */
 	@Override
@@ -436,7 +497,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#getCertificateExpiration()
 	 */
 	@Override
@@ -449,7 +512,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#getCertifierFile()
 	 */
 	@Override
@@ -462,7 +527,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#getCertifierPassword()
 	 */
 	@Override
@@ -475,7 +542,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -483,7 +552,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return (Session) super.getParent();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#isCertificateAuthorityAvailable()
 	 */
 	@Override
@@ -496,7 +567,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#isUseCertificateAuthority()
 	 */
 	@Override
@@ -509,7 +582,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#moveMailUser(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -522,8 +597,11 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.AdministrationProcess#moveMailUser(java.lang.String, java.lang.String, java.lang.String, boolean, java.util.Vector, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.AdministrationProcess#moveMailUser(java.lang.String, java.lang.String, java.lang.String, boolean,
+	 * java.util.Vector, boolean)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -538,7 +616,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#moveReplica(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -551,8 +631,11 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.AdministrationProcess#moveReplica(java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.AdministrationProcess#moveReplica(java.lang.String, java.lang.String, java.lang.String, java.lang.String,
+	 * boolean, boolean)
 	 */
 	@Override
 	public String moveReplica(String sourceServer, String sourceDbFile, String destServer, String destDbFile, boolean copyACL,
@@ -565,7 +648,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#moveRoamingUser(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -578,7 +663,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#moveUserInHierarchyComplete(java.lang.String)
 	 */
 	@Override
@@ -591,8 +678,11 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.AdministrationProcess#moveUserInHierarchyComplete(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.AdministrationProcess#moveUserInHierarchyComplete(java.lang.String, java.lang.String, java.lang.String,
+	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
 	public String moveUserInHierarchyComplete(String requestNoteid, String lastName, String firstName, String middleInitial,
@@ -606,7 +696,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#moveUserInHierarchyRequest(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -619,7 +711,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#moveUserInHierarchyRequest(java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
@@ -632,7 +726,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#recertifyServer(java.lang.String)
 	 */
 	@Override
@@ -645,7 +741,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#recertifyUser(java.lang.String)
 	 */
 	@Override
@@ -658,7 +756,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#removeServerFromCluster(java.lang.String)
 	 */
 	@Override
@@ -671,7 +771,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#renameGroup(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -684,8 +786,11 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.AdministrationProcess#renameNotesUser(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.AdministrationProcess#renameNotesUser(java.lang.String, java.lang.String, java.lang.String, java.lang.String,
+	 * java.lang.String)
 	 */
 	@Override
 	public String renameNotesUser(String userName, String lastName, String firstName, String middleInitial, String orgUnit) {
@@ -697,8 +802,11 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.AdministrationProcess#renameNotesUser(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.AdministrationProcess#renameNotesUser(java.lang.String, java.lang.String, java.lang.String, java.lang.String,
+	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
 	public String renameNotesUser(String userName, String lastName, String firstName, String middleInitial, String orgUnit,
@@ -712,8 +820,11 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.AdministrationProcess#renameWebUser(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.AdministrationProcess#renameWebUser(java.lang.String, java.lang.String, java.lang.String, java.lang.String,
+	 * java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
 	public String renameWebUser(String userName, String newFullName, String newLastName, String newFirstName, String newMiddleInitial,
@@ -727,7 +838,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#setCertificateAuthorityOrg(java.lang.String)
 	 */
 	@Override
@@ -739,7 +852,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#setCertificateExpiration(lotus.domino.DateTime)
 	 */
 	@Override
@@ -751,7 +866,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#setCertifierFile(java.lang.String)
 	 */
 	@Override
@@ -763,7 +880,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#setCertifierPassword(java.lang.String)
 	 */
 	@Override
@@ -775,7 +894,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#setServerDirectoryAssistanceSettings(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -788,7 +909,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#setUseCertificateAuthority(boolean)
 	 */
 	@Override
@@ -800,8 +923,11 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.AdministrationProcess#setUserPasswordSettings(java.lang.String, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Boolean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.AdministrationProcess#setUserPasswordSettings(java.lang.String, java.lang.Integer, java.lang.Integer,
+	 * java.lang.Integer, java.lang.Boolean)
 	 */
 	@Override
 	public String setUserPasswordSettings(String userName, Integer notesPasswordCheckSetting, Integer notesPasswordChangeInterval,
@@ -815,7 +941,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#signDatabaseWithServerID(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -828,7 +956,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#signDatabaseWithServerID(java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
@@ -841,7 +971,9 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.AdministrationProcess#upgradeUserToHierarchical(java.lang.String)
 	 */
 	@Override
@@ -854,8 +986,11 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.AdministrationProcess#upgradeUserToHierarchical(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.AdministrationProcess#upgradeUserToHierarchical(java.lang.String, java.lang.String, java.lang.String,
+	 * java.lang.String, java.lang.String)
 	 */
 	@Override
 	public String upgradeUserToHierarchical(String userName, String orgUnit, String altCommonName, String altOrgUnit, String altLanguage) {

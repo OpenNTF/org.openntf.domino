@@ -144,9 +144,9 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	 * @see org.openntf.domino.AgentContext#getSavedData()
 	 */
 	@Override
-	public lotus.domino.Document getSavedData() {
+	public Document getSavedData() {
 		try {
-			return getDelegate().getSavedData();
+			return Factory.fromLotus(getDelegate().getSavedData(), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -237,7 +237,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public DocumentCollection unprocessedSearch(String formula, lotus.domino.DateTime limit, int maxDocs) {
 		try {
-			return Factory.fromLotus(getDelegate().unprocessedSearch(formula, (DateTime) toLotus(limit), maxDocs),
+			return Factory.fromLotus(getDelegate().unprocessedSearch(formula, (lotus.domino.DateTime) toLotus(limit), maxDocs),
 					DocumentCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -253,7 +253,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public void updateProcessedDoc(lotus.domino.Document doc) {
 		try {
-			getDelegate().updateProcessedDoc(doc);
+			getDelegate().updateProcessedDoc((lotus.domino.Document) toLotus(doc));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
