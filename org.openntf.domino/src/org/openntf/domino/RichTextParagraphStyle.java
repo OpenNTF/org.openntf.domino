@@ -26,6 +26,10 @@ import org.openntf.domino.types.DatabaseDescendant;
 public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagraphStyle>, lotus.domino.RichTextParagraphStyle,
 		DatabaseDescendant {
 
+	public static enum ALIGN {
+		CENTER, FULL, LEFT, NOWRAP, RIGHT
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
