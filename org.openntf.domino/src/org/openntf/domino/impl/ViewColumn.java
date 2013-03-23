@@ -267,6 +267,11 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 		}
 	}
 
+	@Override
+	public String getNoteID() {
+		throw new UnsupportedOperationException();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

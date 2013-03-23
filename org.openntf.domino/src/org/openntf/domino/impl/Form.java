@@ -161,6 +161,13 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
+	@Override
+	public String getNoteID() {
+		NoteCollection notes = this.getParent().createNoteCollection(false);
+		notes.add(this);
+		return notes.getFirstNoteID();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

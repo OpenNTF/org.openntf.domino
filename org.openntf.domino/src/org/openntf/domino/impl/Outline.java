@@ -333,6 +333,15 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
+	@Override
+	public String getNoteID() {
+		NoteCollection notes = this.getParentDatabase().createNoteCollection(false);
+		notes.setSelectOutlines(true);
+		notes.setSelectionFormula("$TITLE=\"" + this.getName().replace("\"", "\\\"") + "\"");
+		notes.buildCollection();
+		return notes.getFirstNoteID();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

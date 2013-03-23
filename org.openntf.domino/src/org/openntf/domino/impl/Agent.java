@@ -138,6 +138,13 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
+	@Override
+	public String getNoteID() {
+		NoteCollection notes = this.getParent().createNoteCollection(false);
+		notes.add(this);
+		return notes.getFirstNoteID();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

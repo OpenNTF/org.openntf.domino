@@ -219,6 +219,11 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 		}
 	}
 
+	@Override
+	public String getNoteID() {
+		throw new UnsupportedOperationException();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -1258,6 +1258,13 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	@Override
+	public String getNoteID() {
+		NoteCollection notes = this.getParent().createNoteCollection(false);
+		notes.add(this);
+		return notes.getFirstNoteID();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
