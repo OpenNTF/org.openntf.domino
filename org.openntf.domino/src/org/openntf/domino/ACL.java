@@ -24,6 +24,10 @@ import org.openntf.domino.types.DatabaseDescendant;
  */
 public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<org.openntf.domino.ACLEntry>, DatabaseDescendant {
 
+	public static enum Level {
+		NOACCESS, DESPOSITOR, READER, AUTHOR, EDITOR, DESIGNER, MANAGER
+	}
+
 	/**
 	 * Adds a role with the specified name to an ACL.
 	 * 
@@ -59,6 +63,21 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<
 	 */
 	@Override
 	public ACLEntry createACLEntry(String name, int level);
+
+	/**
+	 * Creates an entry in the ACL with the name and level that you specify.
+	 * 
+	 * @param name
+	 *            The name of the person, group, or server for whom you want to create an entry in the ACL. You must supply the complete
+	 *            name, but hierarchical names can be in abbreviated format. Case is not significant.
+	 * @param level
+	 *            The level that you want to assign to this person, group, or server in the ACL, of type ACL.Level.
+	 * 
+	 * @return The newly-created {@link org.openntf.domino.ACLEntry}.
+	 * @since openntf.domino 1.0.0
+	 * 
+	 */
+	public ACLEntry createACLEntry(String name, Level level);
 
 	/**
 	 * Deletes a role with the specified name from an ACL.
@@ -343,6 +362,15 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<
 	 */
 	@Override
 	public void setInternetLevel(int level);
+
+	/**
+	 * Sets the maximum Internet access level for this database.
+	 * 
+	 * @param level
+	 *            The new maximum Internet level you want to set in the ACL, of type ACL.Level.
+	 * @since openntf.domino 1.0.0
+	 */
+	public void setInternetLevel(Level level);
 
 	/**
 	 * Sets whether a consistent access control list is enforced across all replicas of a database.

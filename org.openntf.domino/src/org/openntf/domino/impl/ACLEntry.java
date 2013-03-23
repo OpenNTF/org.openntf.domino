@@ -40,7 +40,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#disableRole(java.lang.String)
 	 */
 	@Override
@@ -52,7 +54,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#enableRole(java.lang.String)
 	 */
 	@Override
@@ -64,7 +68,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#getLevel()
 	 */
 	@Override
@@ -77,7 +83,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		return ACL.LEVEL_NOACCESS;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#getName()
 	 */
 	@Override
@@ -90,7 +98,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#getNameObject()
 	 */
 	@Override
@@ -103,7 +113,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -111,7 +123,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		return (ACL) super.getParent();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#getRoles()
 	 */
 	@SuppressWarnings("unchecked")
@@ -125,7 +139,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#getUserType()
 	 */
 	@Override
@@ -138,7 +154,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		return ACLEntry.TYPE_UNSPECIFIED;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#isAdminReaderAuthor()
 	 */
 	@Override
@@ -151,7 +169,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#isAdminServer()
 	 */
 	@Override
@@ -164,7 +184,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#isCanCreateDocuments()
 	 */
 	@Override
@@ -177,7 +199,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#isCanCreateLSOrJavaAgent()
 	 */
 	@Override
@@ -190,7 +214,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#isCanCreatePersonalAgent()
 	 */
 	@Override
@@ -203,7 +229,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#isCanCreatePersonalFolder()
 	 */
 	@Override
@@ -216,7 +244,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#isCanCreateSharedFolder()
 	 */
 	@Override
@@ -229,7 +259,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#isCanDeleteDocuments()
 	 */
 	@Override
@@ -242,7 +274,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#isCanReplicateOrCopyDocuments()
 	 */
 	@Override
@@ -255,7 +289,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#isGroup()
 	 */
 	@Override
@@ -268,7 +304,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#isPerson()
 	 */
 	@Override
@@ -281,7 +319,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#isPublicReader()
 	 */
 	@Override
@@ -294,7 +334,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#isPublicWriter()
 	 */
 	@Override
@@ -307,7 +349,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#isRoleEnabled(java.lang.String)
 	 */
 	@Override
@@ -320,7 +364,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#isServer()
 	 */
 	@Override
@@ -333,7 +379,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#remove()
 	 */
 	@Override
@@ -345,7 +393,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#setAdminReaderAuthor(boolean)
 	 */
 	@Override
@@ -357,7 +407,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#setAdminServer(boolean)
 	 */
 	@Override
@@ -369,7 +421,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#setCanCreateDocuments(boolean)
 	 */
 	@Override
@@ -381,7 +435,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#setCanCreateLSOrJavaAgent(boolean)
 	 */
 	@Override
@@ -393,7 +449,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#setCanCreatePersonalAgent(boolean)
 	 */
 	@Override
@@ -405,7 +463,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#setCanCreatePersonalFolder(boolean)
 	 */
 	@Override
@@ -417,7 +477,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#setCanCreateSharedFolder(boolean)
 	 */
 	@Override
@@ -429,7 +491,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#setCanDeleteDocuments(boolean)
 	 */
 	@Override
@@ -441,7 +505,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#setCanReplicateOrCopyDocuments(boolean)
 	 */
 	@Override
@@ -453,7 +519,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#setGroup(boolean)
 	 */
 	@Override
@@ -465,7 +533,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#setLevel(int)
 	 */
 	@Override
@@ -477,7 +547,36 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		}
 	}
 
-	/* (non-Javadoc)
+	@Override
+	public void setLevel(ACL.Level level) {
+		switch (level) {
+		case AUTHOR:
+			this.setLevel(ACL.LEVEL_AUTHOR);
+			break;
+		case DESIGNER:
+			this.setLevel(ACL.LEVEL_DESIGNER);
+			break;
+		case DESPOSITOR:
+			this.setLevel(ACL.LEVEL_DEPOSITOR);
+			break;
+		case EDITOR:
+			this.setLevel(ACL.LEVEL_EDITOR);
+			break;
+		case MANAGER:
+			this.setLevel(ACL.LEVEL_MANAGER);
+			break;
+		case NOACCESS:
+			this.setLevel(ACL.LEVEL_NOACCESS);
+			break;
+		case READER:
+			this.setLevel(ACL.LEVEL_READER);
+			break;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#setName(java.lang.String)
 	 */
 	@Override
@@ -489,7 +588,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#setName(lotus.domino.Name)
 	 */
 	@Override
@@ -501,7 +602,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#setPerson(boolean)
 	 */
 	@Override
@@ -513,7 +616,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#setPublicReader(boolean)
 	 */
 	@Override
@@ -525,7 +630,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#setPublicWriter(boolean)
 	 */
 	@Override
@@ -537,7 +644,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#setServer(boolean)
 	 */
 	@Override
@@ -549,7 +658,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ACLEntry#setUserType(int)
 	 */
 	@Override
