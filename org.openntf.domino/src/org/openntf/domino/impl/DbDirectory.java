@@ -113,6 +113,10 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		}
 	}
 
+	public Database getFirstDatabase(Type type) {
+		return getFirstDatabase(type.getValue());
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
