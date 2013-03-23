@@ -210,23 +210,7 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 	}
 
 	public void setAlignment(Align value) {
-		switch (value) {
-		case CENTER:
-			setAlignment(RichTextParagraphStyle.ALIGN_CENTER);
-			break;
-		case FULL:
-			setAlignment(RichTextParagraphStyle.ALIGN_FULL);
-			break;
-		case LEFT:
-			setAlignment(RichTextParagraphStyle.ALIGN_LEFT);
-			break;
-		case NOWRAP:
-			setAlignment(RichTextParagraphStyle.ALIGN_NOWRAP);
-			break;
-		case RIGHT:
-			setAlignment(RichTextParagraphStyle.ALIGN_RIGHT);
-			break;
-		}
+		setAlignment(value.getValue());
 	}
 
 	/*

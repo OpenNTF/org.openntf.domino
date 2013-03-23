@@ -549,29 +549,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 
 	@Override
 	public void setLevel(ACL.Level level) {
-		switch (level) {
-		case AUTHOR:
-			this.setLevel(ACL.LEVEL_AUTHOR);
-			break;
-		case DESIGNER:
-			this.setLevel(ACL.LEVEL_DESIGNER);
-			break;
-		case DESPOSITOR:
-			this.setLevel(ACL.LEVEL_DEPOSITOR);
-			break;
-		case EDITOR:
-			this.setLevel(ACL.LEVEL_EDITOR);
-			break;
-		case MANAGER:
-			this.setLevel(ACL.LEVEL_MANAGER);
-			break;
-		case NOACCESS:
-			this.setLevel(ACL.LEVEL_NOACCESS);
-			break;
-		case READER:
-			this.setLevel(ACL.LEVEL_READER);
-			break;
-		}
+		this.setLevel(level.getValue());
 	}
 
 	/*

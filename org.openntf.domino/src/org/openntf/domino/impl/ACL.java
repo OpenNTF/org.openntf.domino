@@ -74,23 +74,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 
 	@Override
 	public ACLEntry createACLEntry(String name, Level level) {
-		switch (level) {
-		case NOACCESS:
-			return this.createACLEntry(name, ACL.LEVEL_NOACCESS);
-		case AUTHOR:
-			return this.createACLEntry(name, ACL.LEVEL_AUTHOR);
-		case DESIGNER:
-			return this.createACLEntry(name, ACL.LEVEL_DESIGNER);
-		case DESPOSITOR:
-			return this.createACLEntry(name, ACL.LEVEL_DEPOSITOR);
-		case EDITOR:
-			return this.createACLEntry(name, ACL.LEVEL_EDITOR);
-		case MANAGER:
-			return this.createACLEntry(name, ACL.LEVEL_MANAGER);
-		case READER:
-			return this.createACLEntry(name, ACL.LEVEL_READER);
-		}
-		return null;
+		return this.createACLEntry(name, level.getValue());
 	}
 
 	/*
@@ -397,29 +381,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 
 	@Override
 	public void setInternetLevel(Level level) {
-		switch (level) {
-		case AUTHOR:
-			this.setInternetLevel(ACL.LEVEL_AUTHOR);
-			break;
-		case DESIGNER:
-			this.setInternetLevel(ACL.LEVEL_DESIGNER);
-			break;
-		case DESPOSITOR:
-			this.setInternetLevel(ACL.LEVEL_DEPOSITOR);
-			break;
-		case EDITOR:
-			this.setInternetLevel(ACL.LEVEL_EDITOR);
-			break;
-		case MANAGER:
-			this.setInternetLevel(ACL.LEVEL_MANAGER);
-			break;
-		case NOACCESS:
-			this.setInternetLevel(ACL.LEVEL_NOACCESS);
-			break;
-		case READER:
-			this.setInternetLevel(ACL.LEVEL_READER);
-			break;
-		}
+		this.setInternetLevel(level.getValue());
 	}
 
 	/*

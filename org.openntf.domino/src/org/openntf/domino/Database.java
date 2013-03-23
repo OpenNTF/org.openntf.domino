@@ -26,6 +26,55 @@ import org.openntf.domino.annotations.Legacy;
  */
 public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database> {
 
+	public static enum SortOption {
+		SCORES(Database.FT_SCORES), DATE_DES(Database.FT_DATE_DES), DATE_ASC(Database.FT_DATE_ASC);
+
+		private final int value_;
+
+		private SortOption(int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+	}
+
+	public static enum DBOption {
+		LZ1(Database.DBOPT_LZ1), LZCOMPRESSION(Database.DBOPT_LZCOMPRESSION), MAINTAINLASTACCESSED(Database.DBOPT_MAINTAINLASTACCESSED), MOREFIELDS(
+				Database.DBOPT_MOREFIELDS), NOHEADLINEMONITORS(Database.DBOPT_NOHEADLINEMONITORS), NOOVERWRITE(Database.DBOPT_NOOVERWRITE), NORESPONSEINFO(
+				Database.DBOPT_NORESPONSEINFO), NOTRANSACTIONLOGGING(Database.DBOPT_NOTRANSACTIONLOGGING), NOUNREAD(Database.DBOPT_NOUNREAD), OPTIMIZAION(
+				Database.DBOPT_OPTIMIZATION), REPLICATEUNREADMARKSTOANY(Database.DBOPT_REPLICATEUNREADMARKSTOANY), REPLICATEUNREADMARKSTOCLUSTER(
+				Database.DBOPT_REPLICATEUNREADMARKSTOCLUSTER), REPLICATEUNREADMARKSNEVER(Database.DBOPT_REPLICATEUNREADMARKSNEVER), SOFTDELETE(
+				Database.DBOPT_SOFTDELETE);
+
+		private final int value_;
+
+		private DBOption(int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+	}
+
+	public static enum SignDocType {
+		ACL(Database.DBSIGN_DOC_ACL), AGENT(Database.DBSIGN_DOC_AGENT), ALL(Database.DBSIGN_DOC_ALL), DATA(Database.DBSIGN_DOC_DATA), FORM(
+				Database.DBSIGN_DOC_FORM), HELP(Database.DBSIGN_DOC_HELP), ICON(Database.DBSIGN_DOC_ICON), REPLFORMULA(
+				Database.DBSIGN_DOC_REPLFORMULA), SHAREDFIELD(Database.DBSIGN_DOC_SHAREDFIELD), VIEW(Database.DBSIGN_DOC_VIEW);
+
+		private final int value_;
+
+		private SignDocType(int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -71,8 +120,6 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/*
 	 * (non-Javadoc)
 	 * 
-<<<<<<< HEAD
-	 * <<<<<<< HEAD =======
 	 * 
 	 * @see java.util.Map#containsKey(java.lang.Object)
 	 */
@@ -81,10 +128,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * >>>>>>> refs/remotes/origin/timtripcony
 	 * 
-=======
->>>>>>> 0fff23fcff4fe555f97cf2668fb3cf6749dad89c
 	 * @see lotus.domino.Database#createCopy(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -270,6 +314,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public Document FTDomainSearch(String query, int maxDocs, int sortOpt, int otherOpt, int start, int count, String entryForm);
 
+	public Document FTDomainSearch(String query, int maxDocs, SortOption sortOpt, int otherOpt, int start, int count, String entryForm);
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -294,6 +340,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public DocumentCollection FTSearch(String query, int maxDocs, int sortOpt, int otherOpt);
 
+	public DocumentCollection FTSearch(String query, int maxDocs, SortOption sortOpt, int otherOpt);
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -302,11 +350,11 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public DocumentCollection FTSearchRange(String query, int maxDocs, int sortOpt, int otherOpt, int start);
 
+	public DocumentCollection FTSearchRange(String query, int maxDocs, SortOption sortOpt, int otherOpt, int start);
+
 	/*
 	 * (non-Javadoc)
 	 * 
-<<<<<<< HEAD
-	 * <<<<<<< HEAD =======
 	 * 
 	 * @see java.util.Map#get(java.lang.Object)
 	 */
@@ -315,10 +363,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * >>>>>>> refs/remotes/origin/timtripcony
 	 * 
-=======
->>>>>>> 0fff23fcff4fe555f97cf2668fb3cf6749dad89c
 	 * @see lotus.domino.Database#getACL()
 	 */
 	@Override
@@ -787,6 +832,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void grantAccess(String name, int level);
 
+	public void grantAccess(String name, ACL.Level level);
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1162,6 +1209,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void setOption(int optionName, boolean flag);
 
+	public void setOption(DBOption optionName, boolean flag);
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1210,6 +1259,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void sign(int documentType);
 
+	public void sign(SignDocType documentType);
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1217,6 +1268,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 */
 	@Override
 	public void sign(int documentType, boolean existingSigsOnly);
+
+	public void sign(SignDocType documentType, boolean existingSigsOnly);
 
 	/*
 	 * (non-Javadoc)
@@ -1226,6 +1279,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void sign(int documentType, boolean existingSigsOnly, String name);
 
+	public void sign(SignDocType documentType, boolean existingSigsOnly, String name);
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1233,6 +1288,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 */
 	@Override
 	public void sign(int documentType, boolean existingSigsOnly, String name, boolean nameIsNoteid);
+
+	public void sign(SignDocType documentType, boolean existingSigsOnly, String name, boolean nameIsNoteid);
 
 	/*
 	 * (non-Javadoc)

@@ -27,7 +27,18 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 		DatabaseDescendant {
 
 	public static enum Align {
-		CENTER, FULL, LEFT, NOWRAP, RIGHT
+		CENTER(RichTextParagraphStyle.ALIGN_CENTER), FULL(RichTextParagraphStyle.ALIGN_FULL), LEFT(RichTextParagraphStyle.ALIGN_LEFT), NOWRAP(
+				RichTextParagraphStyle.ALIGN_NOWRAP), RIGHT(RichTextParagraphStyle.ALIGN_RIGHT);
+
+		private final int value_;
+
+		private Align(int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
 	}
 
 	/*

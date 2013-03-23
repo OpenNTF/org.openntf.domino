@@ -25,7 +25,18 @@ import org.openntf.domino.types.DatabaseDescendant;
 public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<org.openntf.domino.ACLEntry>, DatabaseDescendant {
 
 	public static enum Level {
-		NOACCESS, DESPOSITOR, READER, AUTHOR, EDITOR, DESIGNER, MANAGER
+		NOACCESS(ACL.LEVEL_NOACCESS), DESPOSITOR(ACL.LEVEL_DEPOSITOR), READER(ACL.LEVEL_READER), AUTHOR(ACL.LEVEL_AUTHOR), EDITOR(
+				ACL.LEVEL_EDITOR), DESIGNER(ACL.LEVEL_DESIGNER), MANAGER(ACL.LEVEL_MANAGER);
+
+		private final int value_;
+
+		private Level(int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
 	}
 
 	/**
