@@ -282,6 +282,8 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 */
 	@Override
 	public ColorObject createColorObject();
+	
+	public ColorObject createColorObject(java.awt.Color color);
 
 	/**
 	 * Creates a new DateRange object.
@@ -716,7 +718,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 * <li>AIX/64
 	 * <li>Linux/64
 	 * <li>Macintosh
-	 * <li>OS/400®
+	 * <li>OS/400ï¿½
 	 * <li>UNIX
 	 * <li>Windows/32
 	 * <li>Windows/64
@@ -778,7 +780,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	public String getSessionToken(String serverName);
 
 	/**
-	 * Gets the Domino® URL for the session.
+	 * Gets the Dominoï¿½ URL for the session.
 	 * <p>
 	 * Effectively this method returns an empty string. Use {@link Database#getURL} to get the URL for a database. See {@link #resolve} for
 	 * URL hints.
@@ -927,7 +929,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	public boolean isRestricted();
 
 	/**
-	 * Indicates whether milliseconds are used in Java™ dates.
+	 * Indicates whether milliseconds are used in Javaï¿½ dates.
 	 * <p>
 	 * By default milliseconds are not tracked. You must set this property to true if you want milliseconds to appear in Java dates
 	 * 

@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.impl;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -173,15 +174,22 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		return null;
 	}
 
+	@Override
+	public ColorObject createColorObject(Color color) {
+		ColorObject result = this.createColorObject();
+		result.setRGB(color.getRed(), color.getGreen(), color.getBlue());
+		return result;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.openntf.domino.Session#createDateRange()
 	 */
 	@Override
-	public org.openntf.domino.DateRange createDateRange() {
+	public DateRange createDateRange() {
 		try {
-			return Factory.fromLotus(getDelegate().createDateRange(), org.openntf.domino.DateRange.class, this);
+			return Factory.fromLotus(getDelegate().createDateRange(), DateRange.class, this);
 		} catch (NotesException ne) {
 			DominoUtils.handleException(ne);
 		}
@@ -432,7 +440,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 * @see org.openntf.domino.Session#evaluate(java.lang.String, lotus.domino.Document)
 	 */
 	@Override
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(String arg0, lotus.domino.Document arg1) {
 		try {
 			return getDelegate().evaluate(arg0, arg1); // TODO still needs Factory wrapper
@@ -448,7 +456,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 * @see org.openntf.domino.Session#evaluate(java.lang.String)
 	 */
 	@Override
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(String arg0) {
 		try {
 			return getDelegate().evaluate(arg0); // TODO still needs Factory wrapper
