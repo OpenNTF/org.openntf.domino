@@ -21,7 +21,8 @@ import org.openntf.domino.types.DatabaseDescendant;
 /**
  * The Interface NoteCollection.
  */
-public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus.domino.NoteCollection, DatabaseDescendant {
+public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus.domino.NoteCollection, Iterable<String>,
+		DatabaseDescendant {
 
 	/*
 	 * (non-Javadoc)

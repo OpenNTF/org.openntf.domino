@@ -15,11 +15,13 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.Iterator;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
 
 import org.openntf.domino.DateTime;
+import org.openntf.domino.iterators.NoteIterator;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -943,6 +945,16 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 			DominoUtils.handleException(e);
 
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Iterable#iterator()
+	 */
+	@Override
+	public Iterator<String> iterator() {
+		return new NoteIterator(this);
 	}
 
 	/*
