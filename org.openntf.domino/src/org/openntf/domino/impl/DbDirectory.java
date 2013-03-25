@@ -15,8 +15,11 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.Iterator;
+
 import lotus.domino.NotesException;
 
+import org.openntf.domino.iterators.DatabaseIterator;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -170,6 +173,17 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 			DominoUtils.handleException(e);
 			return false;
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Iterable#iterator()
+	 */
+	@Override
+	public Iterator<org.openntf.domino.Database> iterator() {
+		// FIXME NTF - come up with a better way to express the database type in advance. (Or don't. The distinction is pedantic!)
+		return new DatabaseIterator(this, org.openntf.domino.DbDirectory.Type.TEMPLATE_CANDIDATE);
 	}
 
 	/*
