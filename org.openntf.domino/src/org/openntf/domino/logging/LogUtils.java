@@ -123,6 +123,8 @@ public class LogUtils {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (Throwable t) {
+			t.printStackTrace();
 		}
 
 	}
@@ -169,7 +171,7 @@ public class LogUtils {
 			}
 			return true;
 		} catch (Throwable t) {
-			DominoUtils.handleException(t);
+			t.printStackTrace();
 			return false;
 		}
 	}
