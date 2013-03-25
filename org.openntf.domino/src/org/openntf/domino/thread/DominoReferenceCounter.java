@@ -27,29 +27,53 @@ import java.util.logging.Logger;
  * The Class DominoReferenceCounter.
  */
 public class DominoReferenceCounter {
-	// TODO NTF - move reference counter to session. It would appear that the same handles are used across threads if they have a common
+	// NTF - move reference counter to session. It would appear that the same handles are used across threads if they have a common
 	// Session. Which is RIDICULOUS, but, whatever...
+
+	// TODO replace the underlying map with an implementation that uses primitive long and a non-synchronized counter.
 
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(DominoReferenceCounter.class.getName());
+	private final boolean synced_;
 
 	/**
 	 * Instantiates a new domino reference counter.
 	 */
 	public DominoReferenceCounter() {
-		// TODO Auto-generated constructor stub
+		synced_ = true;
+		this.map = Collections.synchronizedMap(new HashMap<Long, AtomicInteger>());
 	}
 
-	private final Map<Long, AtomicInteger> map = Collections.synchronizedMap(new HashMap<Long, AtomicInteger>());
+	/**
+	 * Instantiates a new domino reference counter.
+	 */
+	public DominoReferenceCounter(boolean synced) {
+		synced_ = synced;
+		if (synced) {
+			this.map = Collections.synchronizedMap(new HashMap<Long, AtomicInteger>());
+		} else {
+			this.map = new HashMap<Long, AtomicInteger>();
+		}
+	}
 
-	@SuppressWarnings("unchecked")
+	private final Map<Long, AtomicInteger> map;
+
 	private Map<Long, AtomicInteger> getMap() {
 		return map;
 	}
 
 	public int increment(Long id) {
 		Map<Long, AtomicInteger> map = getMap();
-		synchronized (map) {
+		if (synced_) {
+			synchronized (map) {
+				if (map.containsKey(id)) {
+					return map.get(id).incrementAndGet();
+				} else {
+					map.put(id, new AtomicInteger(1));
+					return 1;
+				}
+			}
+		} else {
 			if (map.containsKey(id)) {
 				return map.get(id).incrementAndGet();
 			} else {
@@ -61,7 +85,19 @@ public class DominoReferenceCounter {
 
 	public int decrement(Long id) {
 		Map<Long, AtomicInteger> map = getMap();
-		synchronized (map) {
+		if (synced_) {
+			synchronized (map) {
+				if (map.containsKey(id)) {
+					int result = map.get(id).decrementAndGet();
+					if (result == 0)
+						map.remove(id);
+					return result;
+				} else {
+					log_.log(Level.WARNING, "Attempt to decrement a key not found in the counter map: " + id);
+					return 0;
+				}
+			}
+		} else {
 			if (map.containsKey(id)) {
 				int result = map.get(id).decrementAndGet();
 				if (result == 0)
@@ -83,7 +119,15 @@ public class DominoReferenceCounter {
 	 */
 	public int getCount(Long id) {
 		Map<Long, AtomicInteger> map = getMap();
-		synchronized (map) {
+		if (synced_) {
+			synchronized (map) {
+				if (map.containsKey(id)) {
+					return map.get(id).intValue();
+				} else {
+					return -1;
+				}
+			}
+		} else {
 			if (map.containsKey(id)) {
 				return map.get(id).intValue();
 			} else {

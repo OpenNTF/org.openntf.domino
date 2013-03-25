@@ -33,8 +33,12 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(DominoReferenceQueue.class.getName());
 
-	// /** The lotus reference counter_. */
-	// private DominoReferenceCounter lotusReferenceCounter_ = new DominoReferenceCounter();
+	private final boolean childThread_;
+
+	/** The lotus reference counter_. */
+	private DominoReferenceCounter localLotusReferenceCounter_ = new DominoReferenceCounter(false);
+
+	private Set<DominoReference> originatorSet = new HashSet<DominoReference>();
 
 	/**
 	 * The reference bag. NTF This is just a junk storehouse for our DominoReference objects BEFORE they get enqueued. if we didn't keep
@@ -43,19 +47,43 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 	 * */
 	private Set<DominoReference> referenceBag = new HashSet<DominoReference>();
 
+	public int finalizeQueue() {
+		int result = 0;
+		for (DominoReference ref : originatorSet) {
+			ref.recycle();
+			result++;
+		}
+		return result;
+	}
+
 	@Override
 	public Reference<? extends Base> poll() {
 		DominoReference result = (DominoReference) super.poll();
 		if (result != null) {
 			referenceBag.remove(result);
-			int count = result.getSession().subtractId(result.getDelegateId());
-			if (count < 1) {
+			int count = -1;
+			boolean shouldRecycle = false;
+			if (childThread_) {
+				count = result.getSession().subtractId(result.getDelegateId());
+				if (count == 0) { // if we're the originating thread, and we're also the last to use it. See ya!
+					if (originatorSet.contains(result)) {
+						originatorSet.remove(result);
+						shouldRecycle = true;
+					}
+				}
+			} else {
+				count = localLotusReferenceCounter_.decrement(result.getDelegateId());
+				if (count < 1)
+					shouldRecycle = true;
+			}
+			if (shouldRecycle) {
 				result.recycle();
 			} else {
 				if (log_.isLoggable(Level.FINER))
 					log_.log(Level.FINER, "Not recycling a " + result._getType().getSimpleName() + " (" + result.getDelegateId()
 							+ ") because it still has " + count + " wrappers");
 			}
+
 		}
 		return result;
 	}
@@ -78,7 +106,15 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 			log_.log(Level.FINE, "Bagged 5000 more. Forcing GC...");
 			System.gc();
 		}
-		int count = ref.getSession().addId(ref.getDelegateId());
+		if (childThread_) {
+			int count = ref.getSession().addId(ref.getDelegateId());
+			if (count == 1) { // we're the thread that's accessing the object for the first time
+				originatorSet.add(ref);
+			}
+		} else {
+			int count = localLotusReferenceCounter_.increment(ref.getDelegateId());
+		}
+		// int localCount = ref.getSession().addId(ref.getDelegateId());
 		referenceBag.add(ref);
 	}
 
@@ -86,7 +122,7 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 	 * Instantiates a new domino reference queue.
 	 */
 	public DominoReferenceQueue() {
-		// this should only happen once per-thread
+		childThread_ = DominoChildThread.class.isAssignableFrom(Thread.currentThread().getClass());
 	}
 
 }

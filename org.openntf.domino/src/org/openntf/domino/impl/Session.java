@@ -16,6 +16,9 @@
 package org.openntf.domino.impl;
 
 import java.awt.Color;
+import java.net.URL;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -71,10 +74,16 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	}
 
 	public RunContext getRunContext() {
+		// TODO finish this implementation, which needs a lot of work.
 		RunContext result = RunContext.UNKNOWN;
 		SecurityManager sm = System.getSecurityManager();
+		System.out.println(this.getClass().getProtectionDomain().getCodeSource().getLocation());
 		if (sm == null)
 			return RunContext.CLI;
+
+		ProtectionDomain pd = this.getClass().getProtectionDomain();
+		CodeSource cs = pd.getCodeSource();
+		URL url = cs.getLocation();
 
 		Object o = sm.getSecurityContext();
 		if (log_.isLoggable(Level.INFO))
@@ -440,7 +449,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 * @see org.openntf.domino.Session#evaluate(java.lang.String, lotus.domino.Document)
 	 */
 	@Override
-	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(String arg0, lotus.domino.Document arg1) {
 		try {
 			return getDelegate().evaluate(arg0, arg1); // TODO still needs Factory wrapper
@@ -456,7 +465,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 * @see org.openntf.domino.Session#evaluate(java.lang.String)
 	 */
 	@Override
-	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(String arg0) {
 		try {
 			return getDelegate().evaluate(arg0); // TODO still needs Factory wrapper

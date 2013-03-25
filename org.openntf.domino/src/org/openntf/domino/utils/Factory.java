@@ -340,8 +340,10 @@ public enum Factory {
 	 * @return the java.util. vector
 	 */
 	public static java.util.Vector<Object> wrapColumnValues(Collection<?> values) {
-		if(values == null) { return null; }
-		
+		if (values == null) {
+			return null;
+		}
+
 		java.util.Vector<Object> result = new org.openntf.domino.impl.Vector<Object>();
 		for (Object value : values) {
 			if (value instanceof lotus.domino.DateTime) {
@@ -427,6 +429,26 @@ public enum Factory {
 		return null;
 	}
 
+	public static org.openntf.domino.Session getSessionFullAccess() {
+		try {
+			lotus.domino.Session s = lotus.domino.NotesFactory.createSessionWithFullAccess();
+			return fromLotus(s, org.openntf.domino.Session.class, null);
+		} catch (lotus.domino.NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
+		return null;
+	}
+
+	public static org.openntf.domino.Session getTrustedSession() {
+		try {
+			lotus.domino.Session s = lotus.domino.NotesFactory.createTrustedSession();
+			return fromLotus(s, org.openntf.domino.Session.class, null);
+		} catch (lotus.domino.NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
+		return null;
+	}
+
 	/**
 	 * Gets the parent database.
 	 * 
@@ -469,18 +491,18 @@ public enum Factory {
 			} else {
 				throw new UndefinedDelegateTypeException();
 			}
-		} else if(base instanceof org.openntf.domino.ViewColumn) {
-			result = ((org.openntf.domino.ViewColumn)base).getParent().getParent();
-		} else if(base instanceof org.openntf.domino.MIMEEntity) {
-			result = ((org.openntf.domino.MIMEEntity)base).getParent().getParentDatabase();
-		} else if(base instanceof org.openntf.domino.MIMEHeader) {
-			result = ((org.openntf.domino.MIMEHeader)base).getParent().getParent().getParentDatabase();
-		} else if(base instanceof org.openntf.domino.RichTextSection) {
-			result = ((org.openntf.domino.RichTextSection)base).getParent().getParent().getParentDatabase();
-		} else if(base instanceof org.openntf.domino.RichTextRange) {
-			result = ((org.openntf.domino.RichTextSection)base).getParent().getParent().getParentDatabase();
-		} else if(base instanceof org.openntf.domino.RichTextTable) {
-			result = ((org.openntf.domino.RichTextTable)base).getParent().getParent().getParentDatabase();
+		} else if (base instanceof org.openntf.domino.ViewColumn) {
+			result = ((org.openntf.domino.ViewColumn) base).getParent().getParent();
+		} else if (base instanceof org.openntf.domino.MIMEEntity) {
+			result = ((org.openntf.domino.MIMEEntity) base).getParent().getParentDatabase();
+		} else if (base instanceof org.openntf.domino.MIMEHeader) {
+			result = ((org.openntf.domino.MIMEHeader) base).getParent().getParent().getParentDatabase();
+		} else if (base instanceof org.openntf.domino.RichTextSection) {
+			result = ((org.openntf.domino.RichTextSection) base).getParent().getParent().getParentDatabase();
+		} else if (base instanceof org.openntf.domino.RichTextRange) {
+			result = ((org.openntf.domino.RichTextSection) base).getParent().getParent().getParentDatabase();
+		} else if (base instanceof org.openntf.domino.RichTextTable) {
+			result = ((org.openntf.domino.RichTextTable) base).getParent().getParent().getParentDatabase();
 		} else {
 			throw new UndefinedDelegateTypeException();
 		}
@@ -510,11 +532,11 @@ public enum Factory {
 			result = ((org.openntf.domino.DateRange) base).getParent();
 		} else if (base instanceof org.openntf.domino.Name) {
 			result = ((org.openntf.domino.Name) base).getParent();
-		} else if(base instanceof org.openntf.domino.Stream) {
-			result = ((org.openntf.domino.Stream)base).getParent();
-		} else if(base instanceof org.openntf.domino.MIMEEntity) {
-			result = ((org.openntf.domino.MIMEEntity)base).getParent().getParentDatabase().getParent();
-		} else if(base instanceof org.openntf.domino.MIMEHeader) {
+		} else if (base instanceof org.openntf.domino.Stream) {
+			result = ((org.openntf.domino.Stream) base).getParent();
+		} else if (base instanceof org.openntf.domino.MIMEEntity) {
+			result = ((org.openntf.domino.MIMEEntity) base).getParent().getParentDatabase().getParent();
+		} else if (base instanceof org.openntf.domino.MIMEHeader) {
 			result = getParentDatabase(base).getParent();
 		} else {
 			throw new UndefinedDelegateTypeException();

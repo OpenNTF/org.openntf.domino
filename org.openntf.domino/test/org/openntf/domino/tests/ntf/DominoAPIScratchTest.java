@@ -29,6 +29,7 @@ public enum DominoAPIScratchTest {
 
 	private static final int THREAD_COUNT = 10;
 	private static final boolean INCLUDE_FORMS = false;
+	private static final int delay = 1000;
 
 	static class Doer implements Runnable {
 		int nameCount = 0;
@@ -107,7 +108,7 @@ public enum DominoAPIScratchTest {
 		public void run() {
 			long start = System.nanoTime();
 
-			Session s = Factory.getSession();
+			Session s = Factory.getSessionFullAccess();
 			RunContext rc = s.getRunContext();
 			System.out.println("RunContext: " + rc.toString());
 			Name sname = s.getUserNameObject();
@@ -142,7 +143,7 @@ public enum DominoAPIScratchTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		int delay = 500;
+
 		DominoThread[] threads = new DominoThread[THREAD_COUNT];
 		for (int i = 0; i < THREAD_COUNT; i++) {
 			threads[i] = new DominoThread(new Doer(), "Scratch Test" + i);

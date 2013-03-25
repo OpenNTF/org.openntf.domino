@@ -163,7 +163,7 @@ public class DominoChildThread extends DominoThread {
 	public void close() {
 		int drCount = 0;
 		try {
-			drCount = Base.drainQueue();
+			drCount = Base.finalizeQueue();
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}

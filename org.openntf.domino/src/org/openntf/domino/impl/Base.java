@@ -206,6 +206,16 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	}
 
 	/**
+	 * Finalize queue.
+	 */
+	public static int finalizeQueue() {
+		int result = 0;
+		DominoReferenceQueue drq = _getRecycleQueue();
+		result = drq.finalizeQueue();
+		return result;
+	}
+
+	/**
 	 * Gets the delegate.
 	 * 
 	 * @param wrapper
