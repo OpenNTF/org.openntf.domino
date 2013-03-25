@@ -18,6 +18,8 @@ package org.openntf.domino.logging;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
+import org.openntf.domino.utils.Factory;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class OpenLogHandler.
@@ -28,7 +30,7 @@ public class OpenLogHandler extends Handler {
 	 * Instantiates a new open log handler.
 	 */
 	public OpenLogHandler() {
-		// TODO Auto-generated constructor stub
+
 	}
 
 	/*
@@ -38,7 +40,6 @@ public class OpenLogHandler extends Handler {
 	 */
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -49,19 +50,19 @@ public class OpenLogHandler extends Handler {
 	 */
 	@Override
 	public void flush() {
-		// TODO Auto-generated method stub
 
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * Creates an OpenLog entry in designated database
+	 * 
 	 * @see java.util.logging.Handler#publish(java.util.logging.LogRecord)
 	 */
 	@Override
-	public void publish(LogRecord arg0) {
-		// TODO Auto-generated method stub
-
+	public void publish(LogRecord record) {
+		OpenLogItem.logError(Factory.getSession(), record.getThrown(), record.getMessage(), record.getLevel(), null);
 	}
 
 }

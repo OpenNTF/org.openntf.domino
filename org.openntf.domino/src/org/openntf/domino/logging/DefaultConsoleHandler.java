@@ -73,7 +73,7 @@ public class DefaultConsoleHandler extends ConsoleHandler {
 	 * @see java.util.logging.ConsoleHandler#publish(java.util.logging.LogRecord)
 	 */
 	@Override
-	public void publish(LogRecord logRecord) {
+	public void publish(LogRecord record) {
 		int debugLevel = 0;
 		try {
 			debugLevel = Integer.parseInt(olDebugLevel);
@@ -81,11 +81,11 @@ public class DefaultConsoleHandler extends ConsoleHandler {
 			System.out.println(this.getClass().getName() + ": Error getting debug level - non-numeric");
 		}
 		if (debugLevel > 0) {
-			super.publish(logRecord);
+			super.publish(record);
 		}
 		if (debugLevel > 1) {
-			if (logRecord.getThrown() != null && logRecord.getThrown() instanceof Exception) {
-				Exception ee = (Exception) logRecord.getThrown();
+			if (record.getThrown() != null && record.getThrown() instanceof Exception) {
+				Exception ee = (Exception) record.getThrown();
 				ee.printStackTrace();
 			}
 		}

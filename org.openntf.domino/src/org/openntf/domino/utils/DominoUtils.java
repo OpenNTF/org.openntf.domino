@@ -408,45 +408,46 @@ public enum DominoUtils {
 		} else {
 			objectStream = new ObjectInputStream(byteStream);
 		}
-		
+
 		// There are three potential storage forms: Externalizable, Serializable, and StateHolder, distinguished by type or header
-		if(entity.getContentSubType().equals("x-java-externalized-object")) {
-			Class<Externalizable> externalizableClass = (Class<Externalizable>)Class.forName(entity.getNthHeader("X-Java-Class").getHeaderVal());
+		if (entity.getContentSubType().equals("x-java-externalized-object")) {
+			Class<Externalizable> externalizableClass = (Class<Externalizable>) Class.forName(entity.getNthHeader("X-Java-Class")
+					.getHeaderVal());
 			Externalizable restored = externalizableClass.newInstance();
 			restored.readExternal(objectStream);
 			result = restored;
 		} else {
 			Object restored = (Serializable) objectStream.readObject();
-			
+
 			// But wait! It might be a StateHolder object or Collection!
 			MIMEHeader storageScheme = entity.getNthHeader("X-Storage-Scheme");
 			MIMEHeader originalJavaClass = entity.getNthHeader("X-Original-Java-Class");
-			if(storageScheme != null && storageScheme.getHeaderVal().equals("StateHolder")) {
+			if (storageScheme != null && storageScheme.getHeaderVal().equals("StateHolder")) {
 				Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext");
 				Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
-				
-				Class<?> stateHoldingClass = (Class<?>)Class.forName(originalJavaClass.getHeaderVal());
+
+				Class<?> stateHoldingClass = (Class<?>) Class.forName(originalJavaClass.getHeaderVal());
 				Method restoreStateMethod = stateHoldingClass.getMethod("restoreState", facesContextClass, Object.class);
 				result = stateHoldingClass.newInstance();
 				restoreStateMethod.invoke(result, getCurrentInstance.invoke(null), restored);
-			} else if(originalJavaClass != null && originalJavaClass.getHeaderVal().equals("org.openntf.domino.DocumentCollection")) {
+			} else if (originalJavaClass != null && originalJavaClass.getHeaderVal().equals("org.openntf.domino.DocumentCollection")) {
 				// Maybe this can be sped up by not actually getting the documents
 				try {
-				String[] unids = (String[])restored;
-				Database db = doc.getParentDatabase();
-				DocumentCollection docCollection = db.createDocumentCollection();
-				for(String unid : unids) {
-					docCollection.addDocument(db.getDocumentByUNID(unid));
-				}
-				result = docCollection;
-				} catch(Exception e) {
+					String[] unids = (String[]) restored;
+					Database db = doc.getParentDatabase();
+					DocumentCollection docCollection = db.createDocumentCollection();
+					for (String unid : unids) {
+						docCollection.addDocument(db.getDocumentByUNID(unid));
+					}
+					result = docCollection;
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if(originalJavaClass != null && originalJavaClass.getHeaderVal().equals("org.openntf.domino.NoteCollection")) {
-				String[] unids = (String[])restored;
+			} else if (originalJavaClass != null && originalJavaClass.getHeaderVal().equals("org.openntf.domino.NoteCollection")) {
+				String[] unids = (String[]) restored;
 				Database db = doc.getParentDatabase();
 				NoteCollection noteCollection = db.createNoteCollection(false);
-				for(String unid : unids) {
+				for (String unid : unids) {
 					noteCollection.add(db.getDocumentByUNID(unid));
 				}
 				result = noteCollection;
@@ -454,7 +455,6 @@ public enum DominoUtils {
 				result = restored;
 			}
 		}
-		
 
 		entity.recycle();
 
@@ -493,7 +493,8 @@ public enum DominoUtils {
 	 * @throws Throwable
 	 *             the throwable
 	 */
-	public static void saveState(Serializable object, Document doc, String itemName, boolean compress, Map<String, String> headers) throws Throwable {
+	public static void saveState(Serializable object, Document doc, String itemName, boolean compress, Map<String, String> headers)
+			throws Throwable {
 		Session session = Factory.getSession((Base<?>) doc);
 		boolean convertMime = session.isConvertMime();
 		session.setConvertMime(false);
@@ -503,14 +504,14 @@ public enum DominoUtils {
 				byteStream);
 		String contentType = null;
 		// Prefer externalization if available
-		if(object instanceof Externalizable) {
-			((Externalizable)object).writeExternal(objectStream);
+		if (object instanceof Externalizable) {
+			((Externalizable) object).writeExternal(objectStream);
 			contentType = "application/x-java-externalized-object";
 		} else {
 			objectStream.writeObject(object);
 			contentType = "application/x-java-serialized-object";
 		}
-		
+
 		objectStream.flush();
 		objectStream.close();
 
@@ -526,11 +527,11 @@ public enum DominoUtils {
 				contentEncoding = entity.createHeader("Content-Encoding");
 			}
 			contentEncoding.setHeaderVal("gzip");
-			//contentEncoding.recycle();
+			// contentEncoding.recycle();
 		} else {
 			if (contentEncoding != null) {
 				contentEncoding.remove();
-				//contentEncoding.recycle();
+				// contentEncoding.recycle();
 			}
 		}
 		MIMEHeader javaClass = entity.getNthHeader("X-Java-Class");
@@ -538,21 +539,21 @@ public enum DominoUtils {
 			javaClass = entity.createHeader("X-Java-Class");
 		}
 		javaClass.setHeaderVal(object.getClass().getName());
-		//javaClass.recycle();
-		
-		if(headers != null) {
-			for(Map.Entry<String, String> entry : headers.entrySet()) {
+		// javaClass.recycle();
+
+		if (headers != null) {
+			for (Map.Entry<String, String> entry : headers.entrySet()) {
 				MIMEHeader paramHeader = entity.getNthHeader(entry.getKey());
-				if(paramHeader == null) {
+				if (paramHeader == null) {
 					paramHeader = entity.createHeader(entry.getKey());
 				}
 				paramHeader.setHeaderVal(entry.getValue());
-				//paramHeader.recycle();
+				// paramHeader.recycle();
 			}
 		}
 
-		//entity.recycle();
-		//mimeStream.recycle();
+		// entity.recycle();
+		// mimeStream.recycle();
 
 		session.setConvertMime(convertMime);
 	}
