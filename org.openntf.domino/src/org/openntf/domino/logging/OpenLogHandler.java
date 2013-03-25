@@ -26,11 +26,14 @@ import org.openntf.domino.utils.Factory;
  */
 public class OpenLogHandler extends Handler {
 
+	private String logDbPath;
+	private OpenLogItem ol_;
+
 	/**
 	 * Instantiates a new open log handler.
 	 */
 	public OpenLogHandler() {
-
+		ol_ = new OpenLogItem();
 	}
 
 	/*
@@ -53,6 +56,24 @@ public class OpenLogHandler extends Handler {
 
 	}
 
+	/**
+	 * Retrieves OpenLog database path
+	 * 
+	 * @return
+	 */
+	public String getLogDbPath() {
+		return logDbPath;
+	}
+
+	/**
+	 * Sets the OpenLog database path for the OpenLogItem
+	 * 
+	 * @param logDbPath
+	 */
+	public void setLogDbPath(String logDbPath) {
+		ol_.setLogDbName(logDbPath);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -62,7 +83,7 @@ public class OpenLogHandler extends Handler {
 	 */
 	@Override
 	public void publish(LogRecord record) {
-		OpenLogItem.logError(Factory.getSession(), record.getThrown(), record.getMessage(), record.getLevel(), null);
+		ol_.logError(Factory.getSession(), record.getThrown(), record.getMessage(), record.getLevel(), null);
 	}
 
 }
