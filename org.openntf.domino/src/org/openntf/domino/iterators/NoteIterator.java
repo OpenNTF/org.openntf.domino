@@ -18,29 +18,22 @@ package org.openntf.domino.iterators;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.openntf.domino.Database;
-import org.openntf.domino.Document;
-import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.NoteCollection;
-import org.openntf.domino.impl.Base;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class DocumentIterator.
  */
-public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.Document> {
+public class NoteIterator extends AbstractDominoIterator<String> {
 	/** The Constant log_. */
-	private static final Logger log_ = Logger.getLogger(DocumentIterator.class.getName());
+	private static final Logger log_ = Logger.getLogger(NoteIterator.class.getName());
+
 	/** The index_. */
 	private int index_ = 0;
 
 	/** The id array_. */
 	private int[] idArray_;
-
-	/** The current_. */
-	private transient Document current_;
 
 	/**
 	 * Instantiates a new document iterator.
@@ -48,7 +41,7 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 	 * @param collection
 	 *            the collection
 	 */
-	public DocumentIterator(DocumentCollection collection) {
+	public NoteIterator(NoteCollection collection) {
 		super(collection);
 		setIdArray(getCollectionIds(collection));
 	}
@@ -60,29 +53,23 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 	 *            the collection
 	 * @return the collection ids
 	 */
-	protected int[] getCollectionIds(DocumentCollection collection) {
+	protected int[] getCollectionIds(NoteCollection nc) {
 		int[] result = null;
-		if (collection != null) {
-			NoteCollection nc = null;
+		if (nc != null) {
 			try {
-				Database db = collection.getParent();
-				setDatabase(db);
-				nc = org.openntf.domino.impl.DocumentCollection.toLotusNoteCollection(collection);
 				if (nc.getCount() > 0) {
 					result = nc.getNoteIDs();
 				} else {
 					if (log_.isLoggable(Level.FINER)) {
-						log_.log(Level.FINER, "Attempted to get id array of empty DocumentCollection");
+						log_.log(Level.FINER, "Attempted to get id array of empty NoteCollection");
 					}
 				}
 			} catch (Throwable t) {
 				DominoUtils.handleException(t);
-			} finally {
-				Base.recycle(nc);
 			}
 		} else {
 			if (log_.isLoggable(Level.WARNING)) {
-				log_.log(Level.WARNING, "Attempted to iterate over null DocumentCollection");
+				log_.log(Level.WARNING, "Attempted to iterate over null NoteCollection");
 			}
 		}
 		return result;
@@ -120,24 +107,11 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 	 * 
 	 * @see java.util.Iterator#next()
 	 */
-	public Document next() {
-		Document result = null;
+	public String next() {
+		String result = null;
 		if (hasNext()) {
-			String noteId = Integer.toHexString(getIdArray()[getIndex()]);
+			result = Integer.toHexString(getIdArray()[getIndex()]);
 			setIndex(getIndex() + 1);
-			// Base.recycle(current_);
-			try {
-				Database db = getDatabase();
-				lotus.domino.Document doc = db.getDocumentByID(noteId);
-				if (doc instanceof org.openntf.domino.Document) {
-					result = (org.openntf.domino.Document) doc;
-				} else {
-					result = Factory.fromLotus(doc, Document.class, db);
-				}
-				current_ = result;
-			} catch (Throwable t) {
-				DominoUtils.handleException(t);
-			}
 		}
 		return result;
 	}
@@ -159,9 +133,6 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 	 */
 	protected void setIdArray(int[] idArray) {
 		idArray_ = idArray;
-		if (log_.isLoggable(Level.FINE)) {
-			log_.log(Level.FINE, "Created an iterator from " + idArray.length + " noteids.");
-		}
 	}
 
 	/**

@@ -30,10 +30,10 @@ import org.openntf.domino.impl.Vector;
  *            the generic type
  */
 public class VectorIterator<T> implements Iterator<T> {
-	
+
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(VectorIterator.class.getName());
-	
+
 	/** The v. */
 	private Vector<T> v;
 
@@ -52,45 +52,39 @@ public class VectorIterator<T> implements Iterator<T> {
 
 	/** The pos. */
 	int pos = -1;
-	
+
 	/** The expected mod count. */
 	int expectedModCount;
-	
+
 	/** The last position. */
 	int lastPosition = -1;
-	
+
 	/** The lastitem. */
 	T lastitem = null;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.Iterator#hasNext()
 	 */
 	public boolean hasNext() {
 		return (this.pos + 1 < v.size());
 	}
 
-	/**
-	 * Recycle.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param b
-	 *            the b
-	 */
-	private void recycle(T b) {
-		org.openntf.domino.impl.Base.recycle(b);
-	}
-
-	/* (non-Javadoc)
 	 * @see java.util.Iterator#next()
 	 */
 	public T next() {
-		if (lastitem != null) {
-			recycle(lastitem);
-		}
+		// if (lastitem != null) {
+		// recycle(lastitem);
+		// }
 		if (this.expectedModCount == v.getModCount()) {
 			try {
 				T localObject = v.get(this.pos + 1);
 				this.lastPosition = (++this.pos);
-				lastitem = localObject;
+				// lastitem = localObject;
 				return localObject;
 			} catch (IndexOutOfBoundsException localIndexOutOfBoundsException) {
 				throw new NoSuchElementException();
@@ -99,7 +93,9 @@ public class VectorIterator<T> implements Iterator<T> {
 		throw new ConcurrentModificationException();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.Iterator#remove()
 	 */
 	public void remove() {
