@@ -38,6 +38,8 @@ public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, l
 	@Override
 	public String getFormula();
 
+	public Replication getParent();
+
 	/*
 	 * (non-Javadoc)
 	 * 

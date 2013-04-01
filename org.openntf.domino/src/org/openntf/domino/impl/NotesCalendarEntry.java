@@ -155,7 +155,8 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	@Override
 	public Document getAsDocument() {
 		try {
-			return Factory.fromLotus(getDelegate().getAsDocument(), Document.class, this);
+			// TODO This should really come from the doc's DB
+			return Factory.fromLotus(getDelegate().getAsDocument(), Document.class, this.getParent());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -165,7 +166,8 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	@Override
 	public Document getAsDocument(int flags) {
 		try {
-			return Factory.fromLotus(getDelegate().getAsDocument(flags), Document.class, this);
+			// TODO This should really come from the doc's DB
+			return Factory.fromLotus(getDelegate().getAsDocument(flags), Document.class, this.getParent());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -175,7 +177,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	@Override
 	public Document getAsDocument(int flags, String recurrenceId) {
 		try {
-			return Factory.fromLotus(getDelegate().getAsDocument(flags, recurrenceId), Document.class, this);
+			return Factory.fromLotus(getDelegate().getAsDocument(flags, recurrenceId), Document.class, this.getParent());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -185,11 +187,16 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	@Override
 	public Vector<org.openntf.domino.NotesCalendarNotice> getNotices() {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getNotices(), org.openntf.domino.NotesCalendarNotice.class, this);
+			return Factory.fromLotusAsVector(getDelegate().getNotices(), org.openntf.domino.NotesCalendarNotice.class, this.getParent());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
 		}
+	}
+
+	@Override
+	public NotesCalendar getParent() {
+		return (NotesCalendar) super.getParent();
 	}
 
 	@Override

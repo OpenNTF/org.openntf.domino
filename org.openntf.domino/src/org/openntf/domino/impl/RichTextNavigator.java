@@ -39,20 +39,24 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextNavigator#Clone()
 	 */
 	@Override
 	public RichTextNavigator Clone() {
 		try {
-			return Factory.fromLotus(getDelegate().Clone(), RichTextNavigator.class, this);
+			return Factory.fromLotus(getDelegate().Clone(), RichTextNavigator.class, super.getParent());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextNavigator#findFirstElement(int)
 	 */
 	@Override
@@ -65,7 +69,9 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextNavigator#findFirstString(java.lang.String)
 	 */
 	@Override
@@ -78,7 +84,9 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextNavigator#findFirstString(java.lang.String, int)
 	 */
 	@Override
@@ -91,7 +99,9 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextNavigator#findLastElement(int)
 	 */
 	@Override
@@ -104,7 +114,9 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextNavigator#findNextElement()
 	 */
 	@Override
@@ -117,7 +129,9 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextNavigator#findNextElement(int)
 	 */
 	@Override
@@ -130,7 +144,9 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextNavigator#findNextElement(int, int)
 	 */
 	@Override
@@ -143,7 +159,9 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextNavigator#findNextString(java.lang.String)
 	 */
 	@Override
@@ -156,7 +174,9 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextNavigator#findNextString(java.lang.String, int)
 	 */
 	@Override
@@ -169,7 +189,9 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextNavigator#findNthElement(int, int)
 	 */
 	@Override
@@ -182,7 +204,9 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextNavigator#getElement()
 	 */
 	@Override
@@ -195,7 +219,9 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextNavigator#getFirstElement(int)
 	 */
 	@Override
@@ -208,7 +234,9 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextNavigator#getLastElement(int)
 	 */
 	@Override
@@ -221,7 +249,9 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextNavigator#getNextElement()
 	 */
 	@Override
@@ -234,7 +264,9 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextNavigator#getNextElement(int)
 	 */
 	@Override
@@ -247,7 +279,9 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextNavigator#getNextElement(int, int)
 	 */
 	@Override
@@ -260,7 +294,9 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextNavigator#getNthElement(int, int)
 	 */
 	@Override
@@ -273,7 +309,9 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextNavigator#setCharOffset(int)
 	 */
 	@Override
@@ -285,7 +323,9 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextNavigator#setPosition(lotus.domino.Base)
 	 */
 	@Override
@@ -297,7 +337,9 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextNavigator#setPositionAtEnd(lotus.domino.Base)
 	 */
 	@Override

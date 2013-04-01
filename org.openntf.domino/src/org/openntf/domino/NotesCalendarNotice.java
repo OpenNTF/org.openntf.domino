@@ -1,4 +1,3 @@
-
 /*
  * Copyright OpenNTF 2013
  * 
@@ -119,6 +118,8 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	 */
 	@Override
 	public Vector<NotesCalendarNotice> getOutstandingInvitations();
+
+	public NotesCalendar getParent();
 
 	/*
 	 * (non-Javadoc)

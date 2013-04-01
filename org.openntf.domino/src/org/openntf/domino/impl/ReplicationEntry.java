@@ -70,6 +70,11 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		}
 	}
 
+	@Override
+	public Replication getParent() {
+		return (Replication) super.getParent();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
