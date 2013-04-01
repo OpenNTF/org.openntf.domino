@@ -373,6 +373,8 @@ public interface View extends lotus.domino.View, Base<lotus.domino.View>, Design
 	@Legacy(Legacy.INTERFACES_WARNING)
 	public Vector<String> getAliases();
 
+	public DocumentCollection getAllDocuments();
+
 	/*
 	 * (non-Javadoc)
 	 * 
