@@ -2,10 +2,15 @@ package org.openntf.domino.logging;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.AccessControlException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.logging.Handler;
+import java.util.logging.Level;
 import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import org.openntf.domino.utils.DominoUtils;
 
@@ -96,12 +101,14 @@ public class LogUtils {
 	}
 
 	/**
+	 * Initialise a logger based on a configuration file.
+	 * 
 	 * @param relative
 	 *            boolean whether filepath is relative to <data> folder
 	 * @param filePath
-	 *            String of filepath for logging properties file, or empty string to use defaults
+	 *            String of filepath for logging properties file, or empty string to load the default org.openntf.domino logger
 	 */
-	static public void setupLogger(boolean relative, String filePath) {
+	static public void loadLoggerConfig(boolean relative, String filePath) {
 		try {
 			LogManager manager = LogManager.getLogManager();
 			if ("".equals(filePath)) {
@@ -113,16 +120,100 @@ public class LogUtils {
 				} else {
 					is = getLogConfigFile(2, filePath);
 				}
-				if (null == is) {
-					manager.readConfiguration(getDefaultLogConfigFile());
-				} else {
-					manager.readConfiguration(is);
-				}
+				manager.readConfiguration(is);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (AccessControlException e) {
+			return;
+		} catch (Throwable t) {
+			t.printStackTrace();
 		}
 
+	}
+
+	/**
+	 * Updates a specified Logger with settings passed in. Pass in an ArrayList of Handlers, whether or not to use the parent handler, and a
+	 * new security level. Options for security level are:
+	 * 
+	 * <ul>
+	 * <li>Level.SEVERE</li>
+	 * <li>Level.WARNING</li>
+	 * <li>Level.INFO</li>
+	 * <li>Level.CONFIG</li>
+	 * <li>Level.FINE</li>
+	 * <li>Level.FINER</li>
+	 * <li>Level.FINEST</li>
+	 * </ul>
+	 * 
+	 * @param logName
+	 *            The name of the logger to modify
+	 * @param handlers
+	 *            an array of Handler objects to apply to the logger. Any pre-defined handlers will be removed. To pass in existing
+	 *            handlers, just use myLogger.getHandlers().
+	 * @param useParentHandler
+	 *            boolean of whether or not to use parent handlers
+	 * @param newSeverityLevel
+	 *            the new severity level
+	 * @return success or failure in updating the logger
+	 */
+	public static boolean setupLoggerEx(final String logName, final ArrayList<Handler> handlers, final boolean useParentHandler,
+			final Level newSeverityLevel) {
+		try {
+			Logger loggerToModify = getLogger(logName);
+			for (Handler currHandlers : loggerToModify.getHandlers()) {
+				loggerToModify.removeHandler(currHandlers);
+			}
+			for (Handler newHandler : handlers) {
+				newHandler.setLevel(newSeverityLevel);
+				loggerToModify.addHandler(newHandler);
+			}
+			loggerToModify.setUseParentHandlers(useParentHandler);
+			if (null != newSeverityLevel) {
+				loggerToModify.setLevel(newSeverityLevel);
+			}
+			return true;
+		} catch (AccessControlException e) {
+			return false;
+		} catch (Throwable t) {
+			t.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+	 * Check whether you can change a logger property. XPages and Websphere security is draconian and doesn't allow modifying loggers. One
+	 * option is set java.policy to grant all, but that's not good. This will see whether they work or not. <br/>
+	 * <br/>
+	 * In case of failure, you can either use another, non-standard logging mechanism like OpenLog, or log using com.ibm.xsp.domino and
+	 * Level.SEVERE - that's the only level logged by that logger.
+	 * 
+	 * @param log_
+	 *            Logger to try and change
+	 * @return success or failure.
+	 */
+	public static boolean hasAccessException(Logger log_) {
+		try {
+			log_.setLevel(log_.getLevel());
+			return false;
+		} catch (AccessControlException e) {
+			return true;
+		} catch (Throwable t) {
+			return true;
+		}
+	}
+
+	/**
+	 * Gets a logger from the LogManager
+	 * 
+	 * @param logName
+	 *            name of the logger
+	 * @return The Logger object
+	 */
+	public static Logger getLogger(final String logName) {
+		LogManager manager = LogManager.getLogManager();
+		Logger loggerToModify = manager.getLogger(logName);
+		return loggerToModify;
 	}
 
 }

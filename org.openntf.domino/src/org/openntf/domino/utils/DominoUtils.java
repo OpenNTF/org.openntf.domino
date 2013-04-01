@@ -50,6 +50,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.exceptions.InvalidNotesUrlException;
+import org.openntf.domino.logging.LogUtils;
 
 //TODO: Auto-generated Javadoc
 /**
@@ -58,6 +59,7 @@ import org.openntf.domino.exceptions.InvalidNotesUrlException;
 public enum DominoUtils {
 	;
 	private final static Logger log_ = Logger.getLogger("org.openntf.domino");
+	private final static Logger logBackup_ = Logger.getLogger("org.openntf.domino");
 
 	/**
 	 * Checksum.
@@ -162,7 +164,14 @@ public enum DominoUtils {
 	 */
 	public static Throwable handleException(Throwable t) {
 		try {
-			log_.log(Level.WARNING, "", t);
+			if (log_.getLevel() == null) {
+				LogUtils.loadLoggerConfig(false, "");
+			}
+			if (LogUtils.hasAccessException(log_)) {
+				logBackup_.log(Level.SEVERE, t.getLocalizedMessage(), t);
+			} else {
+				log_.log(Level.WARNING, t.getLocalizedMessage(), t);
+			}
 			return null;
 		} catch (Throwable e) {
 			return t;

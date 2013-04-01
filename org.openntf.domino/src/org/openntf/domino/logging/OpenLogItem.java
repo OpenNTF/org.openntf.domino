@@ -132,38 +132,38 @@ public class OpenLogItem implements Serializable {
 	public static final String TYPE_ERROR = "Error";
 	public static final String TYPE_EVENT = "Event";
 
-	private final static String _logFormName = "LogEvent";
+	private final String _logFormName = "LogEvent";
 
 	// MODIFY THESE FOR YOUR OWN ENVIRONMENT
 	// (don't forget to use double-backslashes if this database
 	// is in a Windows subdirectory -- like "logs\\OpenLog.nsf")
-	private static String _logDbName = "";
+	private String _logDbName = "";
 
-	private static String _thisDatabase;
-	private static String _thisServer;
-	private static String _thisAgent;
+	private String _thisDatabase;
+	private String _thisServer;
+	private String _thisAgent;
 	// why the object? Because the object version is serializable
-	private static Boolean _logSuccess = true;
-	private static String _accessLevel;
-	private static Vector<Object> _userRoles;
-	private static Vector<String> _clientVersion;
+	private Boolean _logSuccess = true;
+	private String _accessLevel;
+	private Vector<Object> _userRoles;
+	private Vector<String> _clientVersion;
 
-	private static Level _severity;
-	private static String _eventType;
-	private static String _message;
+	private Level _severity;
+	private String _eventType;
+	private String _message;
 
-	private static Throwable _baseException;
-	private static Date _eventJavaTime;
-	private static String _errDocUnid;
+	private Throwable _baseException;
+	private Date _eventJavaTime;
+	private String _errDocUnid;
 
-	private transient static Session _session;
-	private transient static Database _logDb;
-	private transient static Database _currentDatabase;
-	private transient static DateTime _startTime;
-	private transient static DateTime _eventTime;
-	private transient static Document _errDoc;
+	private transient Session _session;
+	private transient Database _logDb;
+	private transient Database _currentDatabase;
+	private transient DateTime _startTime;
+	private transient DateTime _eventTime;
+	private transient Document _errDoc;
 
-	public static String olDebugLevel = loadFromProps("org.openntf.domino.logging.OpenLogHandler.OpenLogErrorsLevel");
+	public String olDebugLevel = loadFromProps("org.openntf.domino.logging.OpenLogHandler.OpenLogErrorsLevel");
 
 	// debugOut is the PrintStream that errors will be printed to, for debug
 	// levels greater than 1 (System.err by default)
@@ -176,13 +176,19 @@ public class OpenLogItem implements Serializable {
 
 	}
 
+	public OpenLogItem(Session s) {
+		if (s != null) {
+			setSession(s);
+		}
+	}
+
 	/**
 	 * Sets the Session property of the OpenLogItem
 	 * 
 	 * @param s
 	 *            Session
 	 */
-	private static void setSession(Session s) {
+	private void setSession(Session s) {
 		_session = s;
 	}
 
@@ -191,7 +197,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @return Session
 	 */
-	private static Session getSession() {
+	private Session getSession() {
 		if (_session == null) {
 			_session = Factory.getSession();
 		} else {
@@ -208,7 +214,7 @@ public class OpenLogItem implements Serializable {
 	 * @param base
 	 *            Throwable - base throwable to be logged
 	 */
-	public static void setBase(Throwable base) {
+	public void setBase(Throwable base) {
 		_baseException = base;
 	}
 
@@ -217,7 +223,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @return throwable to be logged
 	 */
-	public static Throwable getBase() {
+	public Throwable getBase() {
 		return _baseException;
 	}
 
@@ -238,7 +244,7 @@ public class OpenLogItem implements Serializable {
 	 *            <li>Level.FINEST</li>
 	 *            </ul>
 	 */
-	public static void setSeverity(Level severity) {
+	public void setSeverity(Level severity) {
 		_severity = severity;
 	}
 
@@ -248,7 +254,7 @@ public class OpenLogItem implements Serializable {
 	 * @param message
 	 *            the message to set
 	 */
-	public static void setMessage(String message) {
+	public void setMessage(String message) {
 		_message = message;
 	}
 
@@ -257,7 +263,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @return the current database path
 	 */
-	public static String getCurrentDatabasePath() {
+	public String getCurrentDatabasePath() {
 		if (_thisDatabase == null) {
 			try {
 				_thisDatabase = getCurrentDatabase().getFilePath();
@@ -273,7 +279,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @return the current servername or a blank String if local
 	 */
-	public static String getThisServer() {
+	public String getThisServer() {
 		if (_thisServer == null) {
 			try {
 				_thisServer = getSession().getServerName();
@@ -284,7 +290,6 @@ public class OpenLogItem implements Serializable {
 			}
 		}
 		return _thisServer;
-
 	}
 
 	/**
@@ -292,7 +297,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @return the agent name / XPage name
 	 */
-	public static String getThisAgent() {
+	public String getThisAgent() {
 		if (_thisAgent == null) {
 			setThisAgent(true);
 		}
@@ -306,7 +311,7 @@ public class OpenLogItem implements Serializable {
 	 * @param currPage
 	 *            whether or not the current XPage should be used or previous (if the user has been re-routed to an Error page)
 	 */
-	public static void setThisAgent(boolean currPage) {
+	public void setThisAgent(boolean currPage) {
 		String fromPage = "";
 		if (currPage) {
 			// fromPage = JSFUtil.getXSPContext().getUrl().toSiteRelativeString(JSFUtil.getXSPContext());
@@ -331,7 +336,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @return the Log Database
 	 */
-	public static Database getLogDb() {
+	public Database getLogDb() {
 		if (_logDb == null) {
 			try {
 				_logDb = getSession().getDatabase(getThisServer(), getLogDbName(), false);
@@ -351,7 +356,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @return current Database object
 	 */
-	public static Database getCurrentDatabase() {
+	public Database getCurrentDatabase() {
 		if (_currentDatabase == null) {
 			try {
 				_currentDatabase = getSession().getCurrentDatabase();
@@ -371,7 +376,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @return the userName property from the Session
 	 */
-	public static String getUserName() {
+	public String getUserName() {
 		try {
 			return getSession().getUserName();
 		} catch (Exception e) {
@@ -385,7 +390,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @return the Effective User Name of the session
 	 */
-	public static String getEffName() {
+	public String getEffName() {
 		try {
 			return getSession().getEffectiveUserName();
 		} catch (Exception e) {
@@ -399,7 +404,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @return the access level for the current user
 	 */
-	public static String getAccessLevel() {
+	public String getAccessLevel() {
 		if (_accessLevel == null) {
 			try {
 				switch (getCurrentDatabase().getCurrentAccessLevel()) {
@@ -437,10 +442,10 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @return the user roles of the current user
 	 */
-	public static Vector<Object> getUserRoles() {
+	public Vector<Object> getUserRoles() {
 		if (_userRoles == null) {
 			try {
-				_userRoles = getSession().evaluate("@UserRoles");
+				_userRoles = Factory.wrappedEvaluate(getSession(), "@UserRoles");
 			} catch (Exception e) {
 				debugPrint(e);
 			}
@@ -453,7 +458,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @return the version of the Notes Client or server, if running on server
 	 */
-	public static Vector<String> getClientVersion() {
+	public Vector<String> getClientVersion() {
 		if (_clientVersion == null) {
 			_clientVersion = new Vector<String>();
 			try {
@@ -478,7 +483,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @return the start time
 	 */
-	public static DateTime getStartTime() {
+	public DateTime getStartTime() {
 		if (_startTime == null) {
 			try {
 				_startTime = getSession().createDateTime("Today");
@@ -498,7 +503,7 @@ public class OpenLogItem implements Serializable {
 	 *            property to be retrieved from the Properties file
 	 * @return the value of the property
 	 */
-	public static String loadFromProps(String propertyName) {
+	public String loadFromProps(String propertyName) {
 		try {
 			Properties prop = new Properties();
 			prop.load(LogUtils.class.getResourceAsStream("logging.properties"));
@@ -514,7 +519,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @return the log database name
 	 */
-	public static String getLogDbName() {
+	public String getLogDbName() {
 		if ("".equals(_logDbName)) {
 			String logDbName = loadFromProps("org.openntf.domino.logging.OpenLogHandler.logDbName");
 			if ("".equals(logDbName)) {
@@ -540,7 +545,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @return the error line of the stack trace
 	 */
-	public static int getErrLine(Throwable ee) {
+	public int getErrLine(Throwable ee) {
 		return ee.getStackTrace()[0].getLineNumber();
 	}
 
@@ -551,7 +556,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @see #setSeverity(Level) for options
 	 */
-	public static Level getSeverity() {
+	public Level getSeverity() {
 		return _severity;
 	}
 
@@ -560,7 +565,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @return the event time
 	 */
-	public static DateTime getEventTime() {
+	public DateTime getEventTime() {
 		if (_eventTime == null) {
 			_eventJavaTime = new Date();
 		} else {
@@ -574,7 +579,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @return the event type
 	 */
-	public static String getEventType() {
+	public String getEventType() {
 		return _eventType;
 	}
 
@@ -583,7 +588,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @return the error message
 	 */
-	public static String getMessage() {
+	public String getMessage() {
 		if (_message.length() > 0)
 			return _message;
 		return getBase().getMessage();
@@ -594,7 +599,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @return the Document to be logged into the log document
 	 */
-	public static Document getErrDoc() {
+	public Document getErrDoc() {
 		if (_errDoc != null) {
 			if (Base.isRecycled((NotesBase) _errDoc)) {
 				_errDoc = getCurrentDatabase().getDocumentByUNID(_errDocUnid);
@@ -609,7 +614,7 @@ public class OpenLogItem implements Serializable {
 	 * @param doc
 	 *            the Document to be logged into the log document
 	 */
-	public static void setErrDoc(Document doc) {
+	public void setErrDoc(Document doc) {
 		if (doc != null) {
 			_errDoc = doc;
 			try {
@@ -626,7 +631,7 @@ public class OpenLogItem implements Serializable {
 	 * @param newLogPath
 	 *            new log database path, to modify initial option
 	 */
-	public static void setLogDbName(String newLogPath) {
+	public void setLogDbName(String newLogPath) {
 		_logDbName = newLogPath;
 	}
 
@@ -644,7 +649,7 @@ public class OpenLogItem implements Serializable {
 	 *            new debug level for any errors generated when creating log document
 	 * 
 	 */
-	public static void setOlDebugLevel(String newDebugLevel) {
+	public void setOlDebugLevel(String newDebugLevel) {
 		olDebugLevel = newDebugLevel;
 	}
 
@@ -667,7 +672,7 @@ public class OpenLogItem implements Serializable {
 	 *            Throwable to be logged
 	 * @return the error message
 	 */
-	public static String logError(Throwable ee) {
+	public String logError(Throwable ee) {
 		try {
 			// TODO: Add to errors block is XPages
 			// StackTraceElement[] s = ee.getStackTrace();
@@ -701,7 +706,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @param typeError
 	 */
-	private static void setEventType(String typeError) {
+	private void setEventType(String typeError) {
 		_eventType = typeError;
 	}
 
@@ -718,7 +723,7 @@ public class OpenLogItem implements Serializable {
 	 *            Document to be added as a link to the OpenLog document
 	 * @return message logged in
 	 */
-	public static String logErrorEx(Throwable ee, String msg, Level severityType, Document doc) {
+	public String logErrorEx(Throwable ee, String msg, Level severityType, Document doc) {
 		try {
 			setBase((ee == null ? new Throwable() : ee));
 			setMessage((msg == null ? "" : msg));
@@ -748,7 +753,7 @@ public class OpenLogItem implements Serializable {
 	 * @return message logged in
 	 * @return
 	 */
-	public static String logEvent(Throwable ee, String msg, Level severityType, Document doc) {
+	public String logEvent(Throwable ee, String msg, Level severityType, Document doc) {
 		try {
 			setMessage(msg);
 			setSeverity(severityType == null ? Level.INFO : severityType);
@@ -779,7 +784,7 @@ public class OpenLogItem implements Serializable {
 	 *            number of elements to skip
 	 * @return ArrayList of elements of stack trace
 	 */
-	private static ArrayList<String> getStackTrace(Throwable ee, int skip) {
+	private ArrayList<String> getStackTrace(Throwable ee, int skip) {
 		ArrayList<String> v = new ArrayList<String>(32);
 		try {
 			StringWriter sw = new StringWriter();
@@ -807,7 +812,7 @@ public class OpenLogItem implements Serializable {
 	 *            Throwable passed into the OpenLogItem
 	 * @return ArrayList of elements of stack trace
 	 */
-	private static ArrayList<String> getStackTrace(Throwable ee) {
+	private ArrayList<String> getStackTrace(Throwable ee) {
 		return getStackTrace(ee, 0);
 	}
 
@@ -819,7 +824,7 @@ public class OpenLogItem implements Serializable {
 	 * @param ee
 	 *            Throwable to be logged
 	 */
-	public static void logError(Session s, Throwable ee) {
+	public void logError(Session s, Throwable ee) {
 		setSession(s);
 		logError(ee);
 	}
@@ -838,7 +843,7 @@ public class OpenLogItem implements Serializable {
 	 * @param doc
 	 *            Document to be added as a link to the OpenLog document
 	 */
-	public static void logError(Session s, Throwable ee, String message, Level severityType, Document doc) {
+	public void logError(Session s, Throwable ee, String message, Level severityType, Document doc) {
 		setSession(s);
 		logErrorEx(ee, message, severityType, doc);
 	}
@@ -857,7 +862,7 @@ public class OpenLogItem implements Serializable {
 	 * @param doc
 	 *            Document to be added as a link to the OpenLog document
 	 */
-	public static void logEvent(Session s, Throwable ee, String message, Level severityType, Document doc) {
+	public void logEvent(Session s, Throwable ee, String message, Level severityType, Document doc) {
 		setSession(s);
 		logEvent(ee, message, severityType, doc);
 	}
@@ -870,7 +875,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @return
 	 */
-	public static boolean writeToLog() {
+	public boolean writeToLog() {
 		// exit early if there is no database
 		Database db = getLogDb();
 		if (db == null) {
@@ -950,7 +955,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @param ee
 	 */
-	private static void debugPrint(Exception ee) {
+	private void debugPrint(Exception ee) {
 		if ((ee == null) || (debugOut == null))
 			return;
 
