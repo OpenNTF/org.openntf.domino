@@ -79,6 +79,8 @@ public interface Replication extends Base<lotus.domino.Replication>, lotus.domin
 	@Override
 	public ReplicationEntry getEntry(String source, String destination, boolean createFlag);
 
+	public Database getParent();
+
 	/*
 	 * (non-Javadoc)
 	 * 
