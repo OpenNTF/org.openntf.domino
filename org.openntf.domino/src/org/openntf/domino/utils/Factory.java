@@ -493,6 +493,10 @@ public enum Factory {
 			}
 		} else if (base instanceof org.openntf.domino.ViewColumn) {
 			result = ((org.openntf.domino.ViewColumn) base).getParent().getParent();
+		} else if(base instanceof org.openntf.domino.ViewNavigator) {
+			result = ((org.openntf.domino.ViewNavigator)base).getParentView().getParent();
+		} else if(base instanceof org.openntf.domino.ViewEntryCollection) {
+			result = ((org.openntf.domino.ViewEntryCollection)base).getParent().getParent();
 		} else if (base instanceof org.openntf.domino.MIMEEntity) {
 			result = ((org.openntf.domino.MIMEEntity) base).getParent().getParentDatabase();
 		} else if (base instanceof org.openntf.domino.MIMEHeader) {
