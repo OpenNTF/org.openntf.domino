@@ -23,7 +23,6 @@ import java.util.Vector;
 import lotus.domino.XSLTResultTarget;
 
 import org.openntf.domino.types.DatabaseDescendant;
-import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 // TODO: Auto-generated Javadoc
@@ -112,6 +111,8 @@ public interface EmbeddedObject extends Base<lotus.domino.EmbeddedObject>, lotus
 	@Override
 	public RichTextItem getParent();
 
+	public Document getParentDocument();
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -150,7 +151,7 @@ public interface EmbeddedObject extends Base<lotus.domino.EmbeddedObject>, lotus
 	 * @see lotus.domino.EmbeddedObject#parseXML(boolean)
 	 */
 	@Override
-	public Document parseXML(boolean validate) throws IOException;
+	public org.w3c.dom.Document parseXML(boolean validate) throws IOException;
 
 	/*
 	 * (non-Javadoc)

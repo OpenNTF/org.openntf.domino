@@ -24,7 +24,6 @@ import lotus.domino.NotesException;
 import lotus.domino.XSLTResultTarget;
 
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 import org.xml.sax.InputSource;
 
 // TODO: Auto-generated Javadoc
@@ -46,7 +45,7 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 	 *            the parent
 	 */
 	public EmbeddedObject(lotus.domino.EmbeddedObject delegate, org.openntf.domino.Base<?> parent) {
-		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
+		super(delegate, parent);
 	}
 
 	/*
@@ -163,13 +162,20 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 	 */
 	@Override
 	public RichTextItem getParent() {
-		try {
-			return Factory.fromLotus(getDelegate().getParent(), RichTextItem.class, null);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
+		// The original spec returns either an RT item or null
+		org.openntf.domino.Base<?> parent = super.getParent();
+		if (parent instanceof org.openntf.domino.RichTextItem) {
+			return (RichTextItem) parent;
 		}
+		return null;
+	}
+
+	public Document getParentDocument() {
+		org.openntf.domino.Base<?> parent = super.getParent();
+		if (parent instanceof org.openntf.domino.RichTextItem) {
+			return ((RichTextItem) parent).getParent();
+		}
+		return (Document) parent;
 	}
 
 	/*

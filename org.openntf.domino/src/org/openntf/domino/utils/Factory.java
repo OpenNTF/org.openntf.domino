@@ -469,7 +469,7 @@ public enum Factory {
 		} else if (base instanceof org.openntf.domino.OutlineEntry) {
 			result = ((org.openntf.domino.OutlineEntry) base).getParent().getParentDatabase();
 		} else if (base instanceof org.openntf.domino.EmbeddedObject) {
-			result = ((org.openntf.domino.EmbeddedObject) base).getParent().getParent().getParentDatabase();
+			result = ((org.openntf.domino.EmbeddedObject) base).getParentDocument().getParentDatabase();
 		} else if (base instanceof org.openntf.domino.Item) { // Note: this includes RichTextItems too
 			result = (org.openntf.domino.Database) ((org.openntf.domino.Item) base).getParent().getParentDatabase();
 		} else if (base instanceof org.openntf.domino.DocumentCollection) {
