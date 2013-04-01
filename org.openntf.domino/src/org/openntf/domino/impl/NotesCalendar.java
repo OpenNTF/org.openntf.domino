@@ -139,6 +139,11 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	}
 
 	@Override
+	public Session getParent() {
+		return (Session) super.getParent();
+	}
+
+	@Override
 	public int getReadRangeMask1() {
 		try {
 			return getDelegate().getReadRangeMask1();

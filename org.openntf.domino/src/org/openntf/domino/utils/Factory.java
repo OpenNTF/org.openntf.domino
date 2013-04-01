@@ -546,6 +546,12 @@ public enum Factory {
 			result = ((org.openntf.domino.MIMEEntity) base).getParent().getParentDatabase().getParent();
 		} else if (base instanceof org.openntf.domino.MIMEHeader) {
 			result = getParentDatabase(base).getParent();
+		} else if(base instanceof org.openntf.domino.NotesCalendar) {
+			result = ((org.openntf.domino.NotesCalendar)base).getParent();
+		} else if(base instanceof org.openntf.domino.NotesCalendarEntry) {
+			result = ((org.openntf.domino.NotesCalendarEntry)base).getParent().getParent();
+		} else if(base instanceof org.openntf.domino.NotesCalendarNotice) {
+			result = ((org.openntf.domino.NotesCalendarNotice)base).getParent().getParent();
 		} else {
 			System.out.println("couldn't find session for object of type " + base.getClass().getName());
 			throw new UndefinedDelegateTypeException();

@@ -98,7 +98,8 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	@Override
 	public Document getAsDocument() {
 		try {
-			return Factory.fromLotus(getDelegate().getAsDocument(), Document.class, this);
+			// TODO This should really come from the doc's database
+			return Factory.fromLotus(getDelegate().getAsDocument(), Document.class, this.getParent());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -118,11 +119,17 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	@Override
 	public Vector<org.openntf.domino.NotesCalendarNotice> getOutstandingInvitations() {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getOutstandingInvitations(), org.openntf.domino.NotesCalendarNotice.class, this);
+			return Factory.fromLotusAsVector(getDelegate().getOutstandingInvitations(), org.openntf.domino.NotesCalendarNotice.class, this
+					.getParent());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
 		}
+	}
+
+	@Override
+	public NotesCalendar getParent() {
+		return (NotesCalendar) super.getParent();
 	}
 
 	@Override
