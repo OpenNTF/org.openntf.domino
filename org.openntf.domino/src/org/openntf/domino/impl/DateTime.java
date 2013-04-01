@@ -526,7 +526,10 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 
 	@Override
 	public String toString() {
-		return cal_.getTime().toString();
+		// return cal_.getTime().toString();
+		// Just re-instantiate the delegate for now to ensure compatibility
+		// TODO Switch to a date formatter that properly mimics the original
+		return this.getDelegate().toString();
 	}
 
 	/*

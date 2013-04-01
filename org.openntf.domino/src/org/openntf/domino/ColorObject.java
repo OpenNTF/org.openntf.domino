@@ -78,6 +78,8 @@ public interface ColorObject extends Base<lotus.domino.ColorObject>, lotus.domin
 	@Override
 	public int getSaturation();
 
+	public void setColor(java.awt.Color color);
+
 	/*
 	 * (non-Javadoc)
 	 * 
