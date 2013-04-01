@@ -15,6 +15,8 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.Collection;
+
 import lotus.domino.NotesException;
 
 import org.openntf.domino.utils.DominoUtils;
@@ -38,7 +40,9 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ReplicationEntry#getDestination()
 	 */
 	@Override
@@ -51,7 +55,9 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ReplicationEntry#getFormula()
 	 */
 	@Override
@@ -64,7 +70,9 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ReplicationEntry#getSource()
 	 */
 	@Override
@@ -77,7 +85,9 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ReplicationEntry#getViews()
 	 */
 	@Override
@@ -90,7 +100,9 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ReplicationEntry#isIncludeACL()
 	 */
 	@Override
@@ -103,7 +115,9 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ReplicationEntry#isIncludeAgents()
 	 */
 	@Override
@@ -116,7 +130,9 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ReplicationEntry#isIncludeDocuments()
 	 */
 	@Override
@@ -129,7 +145,9 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ReplicationEntry#isIncludeForms()
 	 */
 	@Override
@@ -142,7 +160,9 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ReplicationEntry#isIncludeFormulas()
 	 */
 	@Override
@@ -155,7 +175,9 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ReplicationEntry#remove()
 	 */
 	@Override
@@ -168,7 +190,9 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ReplicationEntry#save()
 	 */
 	@Override
@@ -181,7 +205,9 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ReplicationEntry#setFormula(java.lang.String)
 	 */
 	@Override
@@ -193,7 +219,9 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ReplicationEntry#setIncludeACL(boolean)
 	 */
 	@Override
@@ -205,7 +233,9 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ReplicationEntry#setIncludeAgents(boolean)
 	 */
 	@Override
@@ -217,7 +247,9 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ReplicationEntry#setIncludeDocuments(boolean)
 	 */
 	@Override
@@ -229,7 +261,9 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ReplicationEntry#setIncludeForms(boolean)
 	 */
 	@Override
@@ -241,7 +275,9 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ReplicationEntry#setIncludeFormulas(boolean)
 	 */
 	@Override
@@ -253,7 +289,9 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ReplicationEntry#setViews(java.lang.String)
 	 */
 	@Override
@@ -263,5 +301,16 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+	}
+
+	public void setViews(Collection<String> views) {
+		StringBuilder result = new StringBuilder();
+		boolean first = true;
+		for (String view : views) {
+			if (!first || (first = false))
+				result.append(";");
+			result.append(view);
+		}
+		this.setViews(result.toString());
 	}
 }
