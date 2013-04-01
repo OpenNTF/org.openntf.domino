@@ -23,97 +23,131 @@ import java.util.Vector;
  */
 public interface DirectoryNavigator extends Base<lotus.domino.DirectoryNavigator>, lotus.domino.DirectoryNavigator {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DirectoryNavigator#findFirstMatch()
 	 */
 	@Override
 	public boolean findFirstMatch();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DirectoryNavigator#findFirstName()
 	 */
 	@Override
 	public long findFirstName();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DirectoryNavigator#findNextMatch()
 	 */
 	@Override
 	public boolean findNextMatch();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DirectoryNavigator#findNextName()
 	 */
 	@Override
 	public long findNextName();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DirectoryNavigator#findNthMatch(long)
 	 */
 	@Override
 	public boolean findNthMatch(long n);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DirectoryNavigator#findNthName(int)
 	 */
 	@Override
 	public long findNthName(int n);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DirectoryNavigator#getCurrentItem()
 	 */
 	@Override
 	public String getCurrentItem();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DirectoryNavigator#getCurrentMatch()
 	 */
 	@Override
 	public long getCurrentMatch();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DirectoryNavigator#getCurrentMatches()
 	 */
 	@Override
 	public long getCurrentMatches();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DirectoryNavigator#getCurrentName()
 	 */
 	@Override
 	public String getCurrentName();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DirectoryNavigator#getCurrentView()
 	 */
 	@Override
 	public String getCurrentView();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DirectoryNavigator#getFirstItemValue()
 	 */
 	@Override
 	public Vector<Object> getFirstItemValue();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DirectoryNavigator#getNextItemValue()
 	 */
 	@Override
 	public Vector<Object> getNextItemValue();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DirectoryNavigator#getNthItemValue(int)
 	 */
 	@Override
 	public Vector<Object> getNthItemValue(int n);
 
-	/* (non-Javadoc)
+	public Directory getParent();
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DirectoryNavigator#isMatchLocated()
 	 */
 	@Override
 	public boolean isMatchLocated();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DirectoryNavigator#isNameLocated()
 	 */
 	@Override

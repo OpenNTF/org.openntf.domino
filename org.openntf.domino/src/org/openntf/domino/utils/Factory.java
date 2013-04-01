@@ -530,6 +530,10 @@ public enum Factory {
 			result = ((org.openntf.domino.DateTime) base).getParent();
 		} else if (base instanceof org.openntf.domino.DateRange) {
 			result = ((org.openntf.domino.DateRange) base).getParent();
+		} else if(base instanceof org.openntf.domino.Directory) {
+			result = ((org.openntf.domino.Directory)base).getParent();
+		} else if(base instanceof org.openntf.domino.DirectoryNavigator) {
+			result = ((org.openntf.domino.DirectoryNavigator)base).getParent().getParent();
 		} else if (base instanceof org.openntf.domino.Name) {
 			result = ((org.openntf.domino.Name) base).getParent();
 		} else if (base instanceof org.openntf.domino.Stream) {
@@ -539,6 +543,7 @@ public enum Factory {
 		} else if (base instanceof org.openntf.domino.MIMEHeader) {
 			result = getParentDatabase(base).getParent();
 		} else {
+			System.out.println("couldn't find session for object of type " + base.getClass().getName());
 			throw new UndefinedDelegateTypeException();
 		}
 		if (result == null)
