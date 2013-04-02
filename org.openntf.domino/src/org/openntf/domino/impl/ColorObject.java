@@ -148,6 +148,10 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 		}
 	}
 
+	public void setColor(java.awt.Color color) {
+		this.setRGB(color.getRed(), color.getGreen(), color.getBlue());
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
