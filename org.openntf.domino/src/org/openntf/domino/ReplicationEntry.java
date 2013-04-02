@@ -15,6 +15,7 @@
  */
 package org.openntf.domino;
 
+import java.util.Collection;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -164,5 +165,7 @@ public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, l
 	 */
 	@Override
 	public void setViews(String views);
+
+	public void setViews(Collection<String> views);
 
 }
