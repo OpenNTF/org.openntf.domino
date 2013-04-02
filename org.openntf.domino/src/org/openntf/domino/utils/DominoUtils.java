@@ -402,6 +402,7 @@ public enum DominoUtils {
 		Object result = null;
 		lotus.domino.Stream mimeStream = session.createStream();
 		lotus.domino.MIMEEntity entity = doc.getMIMEEntity(itemName);
+		if(entity == null) { return null; }
 		entity.getContentAsBytes(mimeStream);
 
 		ByteArrayOutputStream streamOut = new ByteArrayOutputStream();
