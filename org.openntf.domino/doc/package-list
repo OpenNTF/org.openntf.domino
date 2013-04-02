@@ -6,6 +6,11 @@ org.openntf.domino.helpers
 org.openntf.domino.impl
 org.openntf.domino.iterators
 org.openntf.domino.logging
+org.openntf.domino.tests.eknori
+org.openntf.domino.tests.jpg
+org.openntf.domino.tests.ntf
+org.openntf.domino.tests.paul
+org.openntf.domino.tests.xmage
 org.openntf.domino.thread
 org.openntf.domino.types
 org.openntf.domino.utils

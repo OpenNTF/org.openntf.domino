@@ -28,34 +28,34 @@ import org.openntf.domino.annotations.Legacy;
  * represents the Domino environment of the current program.
  */
 public interface Session extends lotus.domino.Session, Base<lotus.domino.Session> {
-	
+
 	/**
 	 * The Enum RunContext.
 	 */
 	public static enum RunContext {
-		
+
 		/** The agent. */
-		AGENT, 
- /** The applet. */
- APPLET, 
- /** The dots. */
- DOTS, 
- /** The xpages nsf. */
- XPAGES_NSF, 
- /** The xpages osgi. */
- XPAGES_OSGI, 
- /** The plugin. */
- PLUGIN, 
- /** The addin. */
- ADDIN, 
- /** The servlet. */
- SERVLET, 
- /** The cli. */
- CLI, 
- /** The diiop. */
- DIIOP, 
- /** The unknown. */
- UNKNOWN
+		AGENT,
+		/** The applet. */
+		APPLET,
+		/** The dots. */
+		DOTS,
+		/** The xpages nsf. */
+		XPAGES_NSF,
+		/** The xpages osgi. */
+		XPAGES_OSGI,
+		/** The plugin. */
+		PLUGIN,
+		/** The addin. */
+		ADDIN,
+		/** The servlet. */
+		SERVLET,
+		/** The cli. */
+		CLI,
+		/** The diiop. */
+		DIIOP,
+		/** The unknown. */
+		UNKNOWN
 	}
 
 	/**
@@ -311,7 +311,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 */
 	@Override
 	public ColorObject createColorObject();
-	
+
 	/**
 	 * Creates the color object.
 	 * 
@@ -523,7 +523,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 * 
 	 * @param db
 	 *            A standard Domino mail application, for example, an application based on the template StdR85Mail.
-	 * @return The newly created {@link Notescalendar} object.
+	 * @return The newly created {@link NotesCalendar} object.
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
@@ -730,7 +730,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	/**
 	 * The release of Domino the session is running on.
 	 * 
-	 * @return a {@link javalang.String String} containing the current Domino server version.
+	 * @return a {@link java.lang.String String} containing the current Domino server version.
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
@@ -880,7 +880,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 * @param type
 	 *            The type of policy.
 	 * @return the user policy settings
-	 * @see lotus.domino.Session#getUserPolicySettings(java.lang.String, java.lang.String, int)
+	 * @see lotus.domino.Session#getUserPolicySettings
 	 * @since lotus.domino 6.5.0
 	 */
 	@Override
@@ -910,7 +910,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 *            The policy namespace, with slash (/) prefix, that contains the settings. If this parameter is specified, the second
 	 *            parameter is not used.
 	 * @return the user policy settings
-	 * @see lotus.domino.Session#getUserPolicySettings(java.lang.String, java.lang.String, int)
+	 * @see lotus.domino.Session#getUserPolicySettings
 	 * @since lotus.domino 6.5.0
 	 */
 	@Override

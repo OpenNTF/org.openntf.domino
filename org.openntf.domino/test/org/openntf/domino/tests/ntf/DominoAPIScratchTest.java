@@ -1,3 +1,18 @@
+/*
+ * Copyright OpenNTF 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ */
 package org.openntf.domino.tests.ntf;
 
 import java.text.DateFormat;
@@ -20,24 +35,54 @@ import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Enum DominoAPIScratchTest.
+ */
 public enum DominoAPIScratchTest {
+	
+	/** The instance. */
 	INSTANCE;
 
+	/**
+	 * Instantiates a new domino api scratch test.
+	 */
 	private DominoAPIScratchTest() {
 		// TODO Auto-generated constructor stub
 	}
 
+	/** The Constant THREAD_COUNT. */
 	private static final int THREAD_COUNT = 10;
+	
+	/** The Constant INCLUDE_FORMS. */
 	private static final boolean INCLUDE_FORMS = false;
+	
+	/** The Constant delay. */
 	private static final int delay = 1000;
 
+	/**
+	 * The Class Doer.
+	 */
 	static class Doer implements Runnable {
+		
+		/** The name count. */
 		int nameCount = 0;
+		
+		/** The doc count. */
 		int docCount = 0;
+		
+		/** The date count. */
 		int dateCount = 0;
 
+		/** The third reference. */
 		Set<Document> thirdReference = new HashSet<Document>();
 
+		/**
+		 * Iterate forms.
+		 * 
+		 * @param db
+		 *            the db
+		 */
 		private void iterateForms(Database db) {
 			System.out.println("Thread " + Thread.currentThread().getName() + " BEGINNING ITERATION of Forms");
 			Vector<Form> forms = db.getForms();
@@ -55,6 +100,14 @@ public enum DominoAPIScratchTest {
 			System.out.println("ENDING ITERATION of Forms");
 		}
 
+		/**
+		 * Iterate all documents.
+		 * 
+		 * @param db
+		 *            the db
+		 * @param secondReference
+		 *            the second reference
+		 */
 		private void iterateAllDocuments(Database db, Set<Document> secondReference) {
 			System.out.println("Thread " + Thread.currentThread().getName() + " BEGINNING ITERATION of Documents");
 			Session s = db.getParent();
@@ -86,6 +139,12 @@ public enum DominoAPIScratchTest {
 			System.out.println("ENDING ITERATION of Documents");
 		}
 
+		/**
+		 * Iterate second references.
+		 * 
+		 * @param secondReference
+		 *            the second reference
+		 */
 		private void iterateSecondReferences(Set<Document> secondReference) {
 			System.out.println("ITERATING Second reference set");
 			for (Document doc : secondReference) {
@@ -95,6 +154,9 @@ public enum DominoAPIScratchTest {
 			}
 		}
 
+		/**
+		 * Iterate third references.
+		 */
 		private void iterateThirdReferences() {
 			System.out.println("ITERATING Third reference set");
 			for (Document doc : thirdReference) {
@@ -104,6 +166,9 @@ public enum DominoAPIScratchTest {
 			}
 		}
 
+		/* (non-Javadoc)
+		 * @see java.lang.Runnable#run()
+		 */
 		@Override
 		public void run() {
 			long start = System.nanoTime();
@@ -140,7 +205,10 @@ public enum DominoAPIScratchTest {
 	}
 
 	/**
+	 * The main method.
+	 * 
 	 * @param args
+	 *            the arguments
 	 */
 	public static void main(String[] args) {
 
