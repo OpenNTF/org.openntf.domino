@@ -27,12 +27,12 @@ public enum DominoAPIScratchTest {
 		// TODO Auto-generated constructor stub
 	}
 
-	private static final int THREAD_COUNT = 1;
+	private static final int THREAD_COUNT = 4;
 	private static final boolean INCLUDE_FORMS = false;
 	private static final int delay = 1000;
 	// private static final String server = "CN=DevilDog/O=REDPILL";
 	private static final String server = "";
-	private static final String dbPath = "names.nsf";
+	private static final String dbPath = "events4.nsf";
 
 	static class Doer implements Runnable {
 		int nameCount = 0;
