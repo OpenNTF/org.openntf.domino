@@ -16,7 +16,7 @@ public enum LoggerTests {
 
 	}
 
-	static class LoggingTest implements Runnable {
+	static class LoggingConsoleOnly implements Runnable {
 		private final static Logger log_ = Logger.getLogger("org.openntf.domino");
 
 		@Override
@@ -25,9 +25,19 @@ public enum LoggerTests {
 			Handler consoleHandler = new org.openntf.domino.logging.DefaultConsoleHandler();
 			ArrayList<Handler> handlers = new ArrayList<Handler>();
 			handlers.add(consoleHandler);
-			if (LogUtils.setupLogger("org.openntf.domino", handlers, false, Level.FINER)) {
-				log_.log(Level.FINE, "", new Throwable());
+			if (LogUtils.setupLoggerEx("org.openntf.domino", handlers, false, Level.FINER)) {
+				log_.log(Level.FINE, "This is a test just to the console", new Throwable());
 			}
+		}
+	}
+
+	static class DominoException implements Runnable {
+		private final static Logger log_ = Logger.getLogger("org.openntf.domino");
+
+		@Override
+		public void run() {
+			log_.log(Level.FINE, "This should not get thrown", new Throwable());
+			DominoUtils.handleException(new Throwable("Thrown Error2"));
 		}
 
 	}
@@ -37,8 +47,10 @@ public enum LoggerTests {
 	 */
 	public static void main(String[] args) {
 		int delay = 500;
-		DominoThread dt1 = new DominoThread(new LoggingTest(), "Logging Test");
+		DominoThread dt1 = new DominoThread(new DominoException(), "Logging Test");
 		dt1.start();
+		DominoThread dt2 = new DominoThread(new LoggingConsoleOnly(), "Logging Test");
+		dt2.start();
 		try {
 			Thread.sleep(delay);
 		} catch (InterruptedException e1) {

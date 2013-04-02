@@ -2,6 +2,7 @@ package org.openntf.domino.logging;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.AccessControlException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -123,6 +124,8 @@ public class LogUtils {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (AccessControlException e) {
+			return;
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
@@ -154,10 +157,10 @@ public class LogUtils {
 	 *            the new severity level
 	 * @return success or failure in updating the logger
 	 */
-	public static boolean setupLogger(String logName, ArrayList<Handler> handlers, boolean useParentHandler, Level newSeverityLevel) {
+	public static boolean setupLoggerEx(final String logName, final ArrayList<Handler> handlers, final boolean useParentHandler,
+			final Level newSeverityLevel) {
 		try {
-			LogManager manager = LogManager.getLogManager();
-			Logger loggerToModify = manager.getLogger(logName);
+			Logger loggerToModify = getLogger(logName);
 			for (Handler currHandlers : loggerToModify.getHandlers()) {
 				loggerToModify.removeHandler(currHandlers);
 			}
@@ -170,10 +173,47 @@ public class LogUtils {
 				loggerToModify.setLevel(newSeverityLevel);
 			}
 			return true;
+		} catch (AccessControlException e) {
+			return false;
 		} catch (Throwable t) {
 			t.printStackTrace();
 			return false;
 		}
+	}
+
+	/**
+	 * Check whether you can change a logger property. XPages and Websphere security is draconian and doesn't allow modifying loggers. One
+	 * option is set java.policy to grant all, but that's not good. This will see whether they work or not. <br/>
+	 * <br/>
+	 * In case of failure, you can either use another, non-standard logging mechanism like OpenLog, or log using com.ibm.xsp.domino and
+	 * Level.SEVERE - that's the only level logged by that logger.
+	 * 
+	 * @param log_
+	 *            Logger to try and change
+	 * @return success or failure.
+	 */
+	public static boolean hasAccessException(Logger log_) {
+		try {
+			log_.setLevel(log_.getLevel());
+			return false;
+		} catch (AccessControlException e) {
+			return true;
+		} catch (Throwable t) {
+			return true;
+		}
+	}
+
+	/**
+	 * Gets a logger from the LogManager
+	 * 
+	 * @param logName
+	 *            name of the logger
+	 * @return The Logger object
+	 */
+	public static Logger getLogger(final String logName) {
+		LogManager manager = LogManager.getLogManager();
+		Logger loggerToModify = manager.getLogger(logName);
+		return loggerToModify;
 	}
 
 }
