@@ -27,9 +27,12 @@ public enum DominoAPIScratchTest {
 		// TODO Auto-generated constructor stub
 	}
 
-	private static final int THREAD_COUNT = 10;
+	private static final int THREAD_COUNT = 1;
 	private static final boolean INCLUDE_FORMS = false;
 	private static final int delay = 1000;
+	// private static final String server = "CN=DevilDog/O=REDPILL";
+	private static final String server = "";
+	private static final String dbPath = "names.nsf";
 
 	static class Doer implements Runnable {
 		int nameCount = 0;
@@ -106,15 +109,17 @@ public enum DominoAPIScratchTest {
 
 		@Override
 		public void run() {
-			long start = System.nanoTime();
+			// System.out.println("com class is loaded = " + String.valueOf(com.isLoaded()));
 
+			// if (false) {
+			long start = System.nanoTime();
 			Session s = Factory.getSessionFullAccess();
 			RunContext rc = s.getRunContext();
 			System.out.println("RunContext: " + rc.toString());
 			Name sname = s.getUserNameObject();
 			DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
 			System.out.println(df.format(new Date()) + " Name: " + sname.getCanonical());
-			Database db = s.getDatabase("", "events4.nsf");
+			Database db = s.getDatabase(server, dbPath);
 			if (INCLUDE_FORMS) {
 				iterateForms(db);
 			}
@@ -125,7 +130,6 @@ public enum DominoAPIScratchTest {
 			nc.buildCollection();
 			iterateSecondReferences(secondReference);
 			iterateThirdReferences();
-
 			long elapsed = System.nanoTime() - start;
 			StringBuilder sb = new StringBuilder();
 			sb.append("Thread " + Thread.currentThread().getName());
@@ -135,6 +139,7 @@ public enum DominoAPIScratchTest {
 			sb.append(docCount + " docs, and ");
 			sb.append(dateCount + " datetimes without recycling.");
 			System.out.println(sb.toString());
+			// }
 		}
 
 	}
