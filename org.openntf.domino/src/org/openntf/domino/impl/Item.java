@@ -421,22 +421,8 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 */
 	@Override
 	public Vector<Object> getValues() {
-		try {
-			Vector<Object> result = new Vector<Object>();
-			for (Object value : getDelegate().getValues()) {
-				if (value instanceof lotus.domino.DateTime) {
-					result.add(Factory.fromLotus((lotus.domino.DateTime) value, DateTime.class, this));
-				} else if (value instanceof lotus.domino.DateRange) {
-					result.add(Factory.fromLotus((lotus.domino.DateRange) value, DateRange.class, this));
-				} else {
-					result.add(value);
-				}
-			}
-			return result;
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
+		// Just use the parent Doc for this, since it understands MIMEBean
+		return new Vector<Object>(this.getParent().getItemValue(this.getName()));
 	}
 
 	/*
