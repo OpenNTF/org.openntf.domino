@@ -663,6 +663,16 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	public DocumentCollection getAllDocuments() {
+		DocumentCollection result = this.getParent().createDocumentCollection();
+		for (org.openntf.domino.ViewEntry entry : this.getAllEntries()) {
+			if (entry.isDocument()) {
+				result.merge(entry.getNoteID());
+			}
+		}
+		return result;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
