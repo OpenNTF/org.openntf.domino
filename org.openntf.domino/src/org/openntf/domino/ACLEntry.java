@@ -304,6 +304,12 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 	@Override
 	public void setLevel(int level);
 
+	/**
+	 * Sets the level.
+	 * 
+	 * @param level
+	 *            the new level
+	 */
 	public void setLevel(ACL.Level level);
 
 	/*

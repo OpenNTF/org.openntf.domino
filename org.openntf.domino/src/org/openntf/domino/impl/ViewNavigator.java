@@ -492,10 +492,16 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoEntry(org.openntf.domino.Document)
+	 */
 	public boolean gotoEntry(Document document) {
 		return gotoEntry((Object) document);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ViewNavigator#gotoEntry(org.openntf.domino.ViewEntry)
+	 */
 	public boolean gotoEntry(ViewEntry entry) {
 		return gotoEntry((Object) entry);
 	}

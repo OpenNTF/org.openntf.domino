@@ -70,6 +70,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Database#FTDomainSearch(java.lang.String, int, org.openntf.domino.Database.SortOption, int, int, int, java.lang.String)
+	 */
 	@Override
 	public Document FTDomainSearch(String query, int maxDocs, SortOption sortOpt, int otherOpt, int start, int count, String entryForm) {
 		return FTDomainSearch(query, maxDocs, sortOpt.getValue(), otherOpt, start, count, entryForm);
@@ -89,6 +92,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Database#FTSearch(java.lang.String, int, org.openntf.domino.Database.SortOption, int)
+	 */
 	@Override
 	public DocumentCollection FTSearch(String query, int maxDocs, SortOption sortOpt, int otherOpt) {
 		return FTSearch(query, maxDocs, sortOpt.getValue(), otherOpt);
@@ -138,6 +144,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Database#FTSearchRange(java.lang.String, int, org.openntf.domino.Database.SortOption, int, int)
+	 */
 	@Override
 	public DocumentCollection FTSearchRange(String query, int maxDocs, SortOption sortOpt, int otherOpt, int start) {
 		return FTSearchRange(query, maxDocs, sortOpt.getValue(), otherOpt, start);
@@ -1476,6 +1485,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Database#grantAccess(java.lang.String, org.openntf.domino.ACL.Level)
+	 */
 	@Override
 	public void grantAccess(String name, Level level) {
 		grantAccess(name, level.getValue());
@@ -2170,6 +2182,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Database#setOption(org.openntf.domino.Database.DBOption, boolean)
+	 */
 	public void setOption(DBOption optionName, boolean flag) {
 		setOption(optionName.getValue(), flag);
 	}
@@ -2257,6 +2272,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Database#sign(org.openntf.domino.Database.SignDocType, boolean, java.lang.String, boolean)
+	 */
 	public void sign(SignDocType documentType, boolean existingSigsOnly, String name, boolean nameIsNoteid) {
 		this.sign(documentType.getValue(), existingSigsOnly, name, nameIsNoteid);
 	}
@@ -2274,6 +2292,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Database#sign(org.openntf.domino.Database.SignDocType, boolean, java.lang.String)
+	 */
 	public void sign(SignDocType documentType, boolean existingSigsOnly, String name) {
 		this.sign(documentType.getValue(), existingSigsOnly, name);
 	}
@@ -2292,6 +2313,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Database#sign(org.openntf.domino.Database.SignDocType, boolean)
+	 */
 	public void sign(SignDocType documentType, boolean existingSigsOnly) {
 		this.sign(documentType.getValue(), existingSigsOnly);
 	}
@@ -2310,6 +2334,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Database#sign(org.openntf.domino.Database.SignDocType)
+	 */
 	public void sign(SignDocType documentType) {
 		this.sign(documentType.getValue());
 	}

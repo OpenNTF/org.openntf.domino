@@ -219,6 +219,9 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.types.Design#getNoteID()
+	 */
 	@Override
 	public String getNoteID() {
 		throw new UnsupportedOperationException();
@@ -249,6 +252,9 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.types.Design#getUniversalID()
+	 */
 	@Override
 	public String getUniversalID() {
 		throw new UnsupportedOperationException();

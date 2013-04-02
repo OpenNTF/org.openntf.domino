@@ -145,6 +145,9 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#getParent()
+	 */
 	@Override
 	public Database getParent() {
 		return (Database) super.getParent();

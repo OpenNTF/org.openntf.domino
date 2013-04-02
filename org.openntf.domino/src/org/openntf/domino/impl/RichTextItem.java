@@ -40,6 +40,9 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 		super(delegate, parent);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#getDelegate()
+	 */
 	@Override
 	protected lotus.domino.RichTextItem getDelegate() {
 		return (lotus.domino.RichTextItem) super.getDelegate();

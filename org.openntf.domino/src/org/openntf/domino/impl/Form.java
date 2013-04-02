@@ -60,6 +60,9 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.types.Design#getDocument()
+	 */
 	@Override
 	public Document getDocument() {
 		return this.getParent().getDocumentByUNID(this.getUniversalID());
@@ -161,6 +164,9 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.types.Design#getNoteID()
+	 */
 	@Override
 	public String getNoteID() {
 		NoteCollection notes = this.getParent().createNoteCollection(false);
@@ -210,6 +216,9 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.types.Design#getUniversalID()
+	 */
 	@Override
 	public String getUniversalID() {
 		NoteCollection notes = this.getParent().createNoteCollection(false);

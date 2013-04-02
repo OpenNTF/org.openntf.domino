@@ -34,6 +34,8 @@ public class DominoReferenceCounter {
 
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(DominoReferenceCounter.class.getName());
+	
+	/** The synced_. */
 	private final boolean synced_;
 
 	/**
@@ -46,6 +48,9 @@ public class DominoReferenceCounter {
 
 	/**
 	 * Instantiates a new domino reference counter.
+	 * 
+	 * @param synced
+	 *            the synced
 	 */
 	public DominoReferenceCounter(boolean synced) {
 		synced_ = synced;
@@ -56,12 +61,25 @@ public class DominoReferenceCounter {
 		}
 	}
 
+	/** The map. */
 	private final Map<Long, AtomicInteger> map;
 
+	/**
+	 * Gets the map.
+	 * 
+	 * @return the map
+	 */
 	private Map<Long, AtomicInteger> getMap() {
 		return map;
 	}
 
+	/**
+	 * Increment.
+	 * 
+	 * @param id
+	 *            the id
+	 * @return the int
+	 */
 	public int increment(Long id) {
 		Map<Long, AtomicInteger> map = getMap();
 		if (synced_) {
@@ -83,6 +101,13 @@ public class DominoReferenceCounter {
 		}
 	}
 
+	/**
+	 * Decrement.
+	 * 
+	 * @param id
+	 *            the id
+	 * @return the int
+	 */
 	public int decrement(Long id) {
 		Map<Long, AtomicInteger> map = getMap();
 		if (synced_) {

@@ -113,6 +113,9 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#getParent()
+	 */
 	@Override
 	public Session getParent() {
 		return (Session) super.getParent();
@@ -148,6 +151,9 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ColorObject#setColor(java.awt.Color)
+	 */
 	public void setColor(java.awt.Color color) {
 		this.setRGB(color.getRed(), color.getGreen(), color.getBlue());
 	}

@@ -85,6 +85,9 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		initialize(date);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#getDelegate()
+	 */
 	@Override
 	protected lotus.domino.DateTime getDelegate() {
 		try {
@@ -260,6 +263,9 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		return cal_.equals(comparDate.toJavaCal());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DateTime#equalsIgnoreDate(org.openntf.domino.DateTime)
+	 */
 	@Override
 	public boolean equalsIgnoreDate(org.openntf.domino.DateTime comparDate) {
 		Calendar c1 = GregorianCalendar.getInstance();
@@ -275,6 +281,9 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		return c1.equals(c2);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DateTime#equalsIgnoreTime(org.openntf.domino.DateTime)
+	 */
 	@Override
 	public boolean equalsIgnoreTime(org.openntf.domino.DateTime comparDate) {
 		Calendar c1 = GregorianCalendar.getInstance();
@@ -524,6 +533,9 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		return cal_.getTime();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		// return cal_.getTime().toString();

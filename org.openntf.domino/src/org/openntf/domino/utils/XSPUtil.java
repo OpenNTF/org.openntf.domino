@@ -1,3 +1,18 @@
+/*
+ * Copyright OpenNTF 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ */
 package org.openntf.domino.utils;
 
 import java.lang.reflect.Method;
@@ -10,9 +25,22 @@ import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewEntryCollection;
 import org.openntf.domino.ViewNavigator;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Enum XSPUtil.
+ */
 public enum XSPUtil {
+	
+	/** The instance. */
 	INSTANCE;
 
+	/**
+	 * Wrap.
+	 * 
+	 * @param doc
+	 *            the doc
+	 * @return the document
+	 */
 	public static Document wrap(lotus.domino.Document doc) {
 		try {
 			lotus.domino.Database db = doc.getParentDatabase();
@@ -24,6 +52,13 @@ public enum XSPUtil {
 		}
 	}
 
+	/**
+	 * Wrap.
+	 * 
+	 * @param entry
+	 *            the entry
+	 * @return the view entry
+	 */
 	public static ViewEntry wrap(lotus.domino.ViewEntry entry) {
 		try {
 			Object parent = entry.getParent();
@@ -53,6 +88,11 @@ public enum XSPUtil {
 		}
 	}
 
+	/**
+	 * Gets the current database.
+	 * 
+	 * @return the current database
+	 */
 	public static Database getCurrentDatabase() {
 		try {
 			lotus.domino.Database db = (lotus.domino.Database) resolveVariable("database");
@@ -64,6 +104,11 @@ public enum XSPUtil {
 		}
 	}
 
+	/**
+	 * Gets the current session.
+	 * 
+	 * @return the current session
+	 */
 	public static Session getCurrentSession() {
 		try {
 			return Factory.fromLotus((lotus.domino.Session) resolveVariable("session"), Session.class, null);
@@ -73,6 +118,11 @@ public enum XSPUtil {
 		}
 	}
 
+	/**
+	 * Gets the current session as signer.
+	 * 
+	 * @return the current session as signer
+	 */
 	public static Session getCurrentSessionAsSigner() {
 		try {
 			return Factory.fromLotus((lotus.domino.Session) resolveVariable("sessionAsSigner"), Session.class, null);
@@ -82,6 +132,11 @@ public enum XSPUtil {
 		}
 	}
 
+	/**
+	 * Gets the current session as signer with full access.
+	 * 
+	 * @return the current session as signer with full access
+	 */
 	public static Session getCurrentSessionAsSignerWithFullAccess() {
 		try {
 			return Factory.fromLotus((lotus.domino.Session) resolveVariable("sessionAsSignerWithFullAccess"), Session.class, null);
@@ -91,6 +146,15 @@ public enum XSPUtil {
 		}
 	}
 
+	/**
+	 * Resolve variable.
+	 * 
+	 * @param varName
+	 *            the var name
+	 * @return the object
+	 * @throws Exception
+	 *             the exception
+	 */
 	public static Object resolveVariable(String varName) throws Exception {
 		Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext");
 		Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");

@@ -142,6 +142,9 @@ public class DominoThread extends Thread {
 		}
 	}
 
+	/**
+	 * Run child.
+	 */
 	public void runChild() {
 		try {
 			lotus.domino.NotesThread.sinitThread();

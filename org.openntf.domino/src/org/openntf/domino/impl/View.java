@@ -663,6 +663,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getAllDocuments()
+	 */
 	public DocumentCollection getAllDocuments() {
 		DocumentCollection result = this.getParent().createDocumentCollection();
 		for (org.openntf.domino.ViewEntry entry : this.getAllEntries()) {
@@ -1268,6 +1271,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.types.Design#getNoteID()
+	 */
 	@Override
 	public String getNoteID() {
 		NoteCollection notes = this.getParent().createNoteCollection(false);

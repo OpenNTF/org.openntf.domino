@@ -68,6 +68,11 @@ public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream, 
 	@Override
 	public void getContents(Writer writer);
 
+	/**
+	 * Gets the parent.
+	 * 
+	 * @return the parent
+	 */
 	public Session getParent();
 
 	/*

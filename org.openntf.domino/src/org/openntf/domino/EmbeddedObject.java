@@ -111,6 +111,11 @@ public interface EmbeddedObject extends Base<lotus.domino.EmbeddedObject>, lotus
 	@Override
 	public RichTextItem getParent();
 
+	/**
+	 * Gets the parent document.
+	 * 
+	 * @return the parent document
+	 */
 	public Document getParentDocument();
 
 	/*

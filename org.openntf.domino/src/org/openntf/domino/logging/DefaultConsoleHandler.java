@@ -18,12 +18,15 @@ package org.openntf.domino.logging;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.LogRecord;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author withersp
+ * The Class DefaultConsoleHandler.
  * 
+ * @author withersp
  */
 public class DefaultConsoleHandler extends ConsoleHandler {
 
+	/** The ol debug level. */
 	private static String olDebugLevel = "1";
 
 	/**
@@ -35,6 +38,8 @@ public class DefaultConsoleHandler extends ConsoleHandler {
 	}
 
 	/**
+	 * Gets the ol debug level.
+	 * 
 	 * @return String debug level.
 	 * @see #setOlDebugLevel(String) for options
 	 */

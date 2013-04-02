@@ -19,21 +19,51 @@ import java.util.Vector;
 
 import org.openntf.domino.types.DatabaseDescendant;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Interface that represents the access control list (ACL) of an IBM Domino database.
  */
 public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<org.openntf.domino.ACLEntry>, DatabaseDescendant {
 
+	/**
+	 * The Enum Level.
+	 */
 	public static enum Level {
-		NOACCESS(ACL.LEVEL_NOACCESS), DESPOSITOR(ACL.LEVEL_DEPOSITOR), READER(ACL.LEVEL_READER), AUTHOR(ACL.LEVEL_AUTHOR), EDITOR(
-				ACL.LEVEL_EDITOR), DESIGNER(ACL.LEVEL_DESIGNER), MANAGER(ACL.LEVEL_MANAGER);
+		
+		/** The noaccess. */
+		NOACCESS(ACL.LEVEL_NOACCESS), 
+ /** The despositor. */
+ DESPOSITOR(ACL.LEVEL_DEPOSITOR), 
+ /** The reader. */
+ READER(ACL.LEVEL_READER), 
+ /** The author. */
+ AUTHOR(ACL.LEVEL_AUTHOR), 
+ /** The editor. */
+ EDITOR(
+				ACL.LEVEL_EDITOR), 
+ /** The designer. */
+ DESIGNER(ACL.LEVEL_DESIGNER), 
+ /** The manager. */
+ MANAGER(ACL.LEVEL_MANAGER);
 
+		/** The value_. */
 		private final int value_;
 
+		/**
+		 * Instantiates a new level.
+		 * 
+		 * @param value
+		 *            the value
+		 */
 		private Level(int value) {
 			value_ = value;
 		}
 
+		/**
+		 * Gets the value.
+		 * 
+		 * @return the value
+		 */
 		public int getValue() {
 			return value_;
 		}
@@ -106,6 +136,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<
 	 * The administration server is also the master lock server.<br>
 	 * This property is an <code>empty string</code> if the database does not have an administration server.
 	 * 
+	 * @return the administration server
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
@@ -207,9 +238,9 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<
 	 * Indicates whether the administration server for the database can modify all Names fields in a database.
 	 * <p>
 	 * The database must have an administration server. See {@link #getAdministrationServer} in ACL and {@link ACLEntry#isAdminServer} in
-	 * {@link ACLEntry} to check for the administration server.
 	 * 
 	 * @return Returns <code>true</code> if the administration server can modify all names fields, <code>false</code> if it cannot.
+	 *         {@link ACLEntry} to check for the administration server.
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
@@ -219,10 +250,9 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<
 	 * Indicates whether the administration server for the database can modify Readers and Authors fields in a database.
 	 * <p>
 	 * The database must have an administration server. See {@link #getAdministrationServer} in ACL and {@link ACLEntry#isAdminServer} in
-	 * {@link ACLEntry} to check for the administration server.
 	 * 
 	 * @return Returns <code>true</code> if the administration server can modify Readers and Authors fields, <code>false</code> if it
-	 *         cannot.
+	 *         cannot. {@link ACLEntry} to check for the administration server.
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
@@ -307,13 +337,13 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<
 	 * Sets whether the administration server for the database can modify all Names fields in a database.
 	 * <p>
 	 * The database must have an administration server. See {@link ACL#getAdministrationServer} in ACL and
-	 * {@link org.openntf.domino.ACLEntry#isAdminServer()} in {@link ACLEntry} to set the administration server.
-	 * <p>
-	 * After setting this property, you must call {@link #save} for the changes to take effect. If you do not call save, your changes to the
-	 * ACL are lost.
 	 * 
 	 * @param flag
-	 *            The boolean value to set
+	 *            The boolean value to set {@link org.openntf.domino.ACLEntry#isAdminServer()} in {@link ACLEntry} to set the administration
+	 *            server.
+	 *            <p>
+	 *            After setting this property, you must call {@link #save} for the changes to take effect. If you do not call save, your
+	 *            changes to the ACL are lost.
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
@@ -323,13 +353,13 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<
 	 * Sets whether the administration server for the database can modify Readers and Authors fields in a database.
 	 * <p>
 	 * The database must have an administration server. See {@link ACL#getAdministrationServer} in ACL and
-	 * {@link org.openntf.domino.ACLEntry#isAdminServer} in {@link ACLEntry} to set the administration server.
-	 * <p>
-	 * After setting this property, you must call {@link #save} for the changes to take effect. If you do not call save, your changes to the
-	 * ACL are lost.
 	 * 
 	 * @param flag
-	 *            The boolean value to set
+	 *            The boolean value to set {@link org.openntf.domino.ACLEntry#isAdminServer} in {@link ACLEntry} to set the administration
+	 *            server.
+	 *            <p>
+	 *            After setting this property, you must call {@link #save} for the changes to take effect. If you do not call save, your
+	 *            changes to the ACL are lost.
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override

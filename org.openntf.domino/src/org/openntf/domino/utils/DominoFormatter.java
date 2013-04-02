@@ -154,6 +154,13 @@ public class DominoFormatter extends ThreadLocal<Object> {
 		}
 	}
 
+	/**
+	 * Parses the date from string.
+	 * 
+	 * @param dateString
+	 *            the date string
+	 * @return the date
+	 */
 	public Date parseDateFromString(String dateString) {
 		synchronized (df_) {
 			df_.applyPattern(dateTimeFormat_);

@@ -547,6 +547,9 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACLEntry#setLevel(org.openntf.domino.ACL.Level)
+	 */
 	@Override
 	public void setLevel(ACL.Level level) {
 		this.setLevel(level.getValue());

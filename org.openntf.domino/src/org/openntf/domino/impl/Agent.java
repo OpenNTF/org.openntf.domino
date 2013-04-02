@@ -72,6 +72,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.types.Design#getDocument()
+	 */
 	@Override
 	public Document getDocument() {
 		return this.getParent().getDocumentByUNID(this.getUniversalID());
@@ -138,6 +141,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.types.Design#getNoteID()
+	 */
 	@Override
 	public String getNoteID() {
 		NoteCollection notes = this.getParent().createNoteCollection(false);
@@ -275,6 +281,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.types.Design#getUniversalID()
+	 */
 	@Override
 	public String getUniversalID() {
 		NoteCollection notes = this.getParent().createNoteCollection(false);

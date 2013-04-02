@@ -26,50 +26,149 @@ import org.openntf.domino.annotations.Legacy;
  */
 public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database> {
 
+	/**
+	 * The Enum SortOption.
+	 */
 	public static enum SortOption {
-		SCORES(Database.FT_SCORES), DATE_DES(Database.FT_DATE_DES), DATE_ASC(Database.FT_DATE_ASC);
+		
+		/** The scores. */
+		SCORES(Database.FT_SCORES), 
+ /** The date des. */
+ DATE_DES(Database.FT_DATE_DES), 
+ /** The date asc. */
+ DATE_ASC(Database.FT_DATE_ASC);
 
+		/** The value_. */
 		private final int value_;
 
+		/**
+		 * Instantiates a new sort option.
+		 * 
+		 * @param value
+		 *            the value
+		 */
 		private SortOption(int value) {
 			value_ = value;
 		}
 
+		/**
+		 * Gets the value.
+		 * 
+		 * @return the value
+		 */
 		public int getValue() {
 			return value_;
 		}
 	}
 
+	/**
+	 * The Enum DBOption.
+	 */
 	public static enum DBOption {
-		LZ1(Database.DBOPT_LZ1), LZCOMPRESSION(Database.DBOPT_LZCOMPRESSION), MAINTAINLASTACCESSED(Database.DBOPT_MAINTAINLASTACCESSED), MOREFIELDS(
-				Database.DBOPT_MOREFIELDS), NOHEADLINEMONITORS(Database.DBOPT_NOHEADLINEMONITORS), NOOVERWRITE(Database.DBOPT_NOOVERWRITE), NORESPONSEINFO(
-				Database.DBOPT_NORESPONSEINFO), NOTRANSACTIONLOGGING(Database.DBOPT_NOTRANSACTIONLOGGING), NOUNREAD(Database.DBOPT_NOUNREAD), OPTIMIZAION(
-				Database.DBOPT_OPTIMIZATION), REPLICATEUNREADMARKSTOANY(Database.DBOPT_REPLICATEUNREADMARKSTOANY), REPLICATEUNREADMARKSTOCLUSTER(
-				Database.DBOPT_REPLICATEUNREADMARKSTOCLUSTER), REPLICATEUNREADMARKSNEVER(Database.DBOPT_REPLICATEUNREADMARKSNEVER), SOFTDELETE(
+		
+		/** The L z1. */
+		LZ1(Database.DBOPT_LZ1), 
+ /** The lzcompression. */
+ LZCOMPRESSION(Database.DBOPT_LZCOMPRESSION), 
+ /** The maintainlastaccessed. */
+ MAINTAINLASTACCESSED(Database.DBOPT_MAINTAINLASTACCESSED), 
+ /** The morefields. */
+ MOREFIELDS(
+				Database.DBOPT_MOREFIELDS), 
+ /** The noheadlinemonitors. */
+ NOHEADLINEMONITORS(Database.DBOPT_NOHEADLINEMONITORS), 
+ /** The nooverwrite. */
+ NOOVERWRITE(Database.DBOPT_NOOVERWRITE), 
+ /** The noresponseinfo. */
+ NORESPONSEINFO(
+				Database.DBOPT_NORESPONSEINFO), 
+ /** The notransactionlogging. */
+ NOTRANSACTIONLOGGING(Database.DBOPT_NOTRANSACTIONLOGGING), 
+ /** The nounread. */
+ NOUNREAD(Database.DBOPT_NOUNREAD), 
+ /** The optimizaion. */
+ OPTIMIZAION(
+				Database.DBOPT_OPTIMIZATION), 
+ /** The replicateunreadmarkstoany. */
+ REPLICATEUNREADMARKSTOANY(Database.DBOPT_REPLICATEUNREADMARKSTOANY), 
+ /** The replicateunreadmarkstocluster. */
+ REPLICATEUNREADMARKSTOCLUSTER(
+				Database.DBOPT_REPLICATEUNREADMARKSTOCLUSTER), 
+ /** The replicateunreadmarksnever. */
+ REPLICATEUNREADMARKSNEVER(Database.DBOPT_REPLICATEUNREADMARKSNEVER), 
+ /** The softdelete. */
+ SOFTDELETE(
 				Database.DBOPT_SOFTDELETE);
 
+		/** The value_. */
 		private final int value_;
 
+		/**
+		 * Instantiates a new dB option.
+		 * 
+		 * @param value
+		 *            the value
+		 */
 		private DBOption(int value) {
 			value_ = value;
 		}
 
+		/**
+		 * Gets the value.
+		 * 
+		 * @return the value
+		 */
 		public int getValue() {
 			return value_;
 		}
 	}
 
+	/**
+	 * The Enum SignDocType.
+	 */
 	public static enum SignDocType {
-		ACL(Database.DBSIGN_DOC_ACL), AGENT(Database.DBSIGN_DOC_AGENT), ALL(Database.DBSIGN_DOC_ALL), DATA(Database.DBSIGN_DOC_DATA), FORM(
-				Database.DBSIGN_DOC_FORM), HELP(Database.DBSIGN_DOC_HELP), ICON(Database.DBSIGN_DOC_ICON), REPLFORMULA(
-				Database.DBSIGN_DOC_REPLFORMULA), SHAREDFIELD(Database.DBSIGN_DOC_SHAREDFIELD), VIEW(Database.DBSIGN_DOC_VIEW);
+		
+		/** The acl. */
+		ACL(Database.DBSIGN_DOC_ACL), 
+ /** The agent. */
+ AGENT(Database.DBSIGN_DOC_AGENT), 
+ /** The all. */
+ ALL(Database.DBSIGN_DOC_ALL), 
+ /** The data. */
+ DATA(Database.DBSIGN_DOC_DATA), 
+ /** The form. */
+ FORM(
+				Database.DBSIGN_DOC_FORM), 
+ /** The help. */
+ HELP(Database.DBSIGN_DOC_HELP), 
+ /** The icon. */
+ ICON(Database.DBSIGN_DOC_ICON), 
+ /** The replformula. */
+ REPLFORMULA(
+				Database.DBSIGN_DOC_REPLFORMULA), 
+ /** The sharedfield. */
+ SHAREDFIELD(Database.DBSIGN_DOC_SHAREDFIELD), 
+ /** The view. */
+ VIEW(Database.DBSIGN_DOC_VIEW);
 
+		/** The value_. */
 		private final int value_;
 
+		/**
+		 * Instantiates a new sign doc type.
+		 * 
+		 * @param value
+		 *            the value
+		 */
 		private SignDocType(int value) {
 			value_ = value;
 		}
 
+		/**
+		 * Gets the value.
+		 * 
+		 * @return the value
+		 */
 		public int getValue() {
 			return value_;
 		}
@@ -123,6 +222,13 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * 
 	 * @see java.util.Map#containsKey(java.lang.Object)
 	 */
+	/**
+	 * Contains key.
+	 * 
+	 * @param key
+	 *            the key
+	 * @return true, if successful
+	 */
 	public boolean containsKey(Object key);
 
 	/*
@@ -150,8 +256,22 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public Document createDocument();
 
+	/**
+	 * Creates the document.
+	 * 
+	 * @param itemValues
+	 *            the item values
+	 * @return the document
+	 */
 	public Document createDocument(Map<String, Object> itemValues);
 
+	/**
+	 * Creates the document.
+	 * 
+	 * @param keyValuePairs
+	 *            the key value pairs
+	 * @return the document
+	 */
 	public Document createDocument(Object... keyValuePairs);
 
 	/*
@@ -314,6 +434,25 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public Document FTDomainSearch(String query, int maxDocs, int sortOpt, int otherOpt, int start, int count, String entryForm);
 
+	/**
+	 * FT domain search.
+	 * 
+	 * @param query
+	 *            the query
+	 * @param maxDocs
+	 *            the max docs
+	 * @param sortOpt
+	 *            the sort opt
+	 * @param otherOpt
+	 *            the other opt
+	 * @param start
+	 *            the start
+	 * @param count
+	 *            the count
+	 * @param entryForm
+	 *            the entry form
+	 * @return the document
+	 */
 	public Document FTDomainSearch(String query, int maxDocs, SortOption sortOpt, int otherOpt, int start, int count, String entryForm);
 
 	/*
@@ -340,6 +479,19 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public DocumentCollection FTSearch(String query, int maxDocs, int sortOpt, int otherOpt);
 
+	/**
+	 * FT search.
+	 * 
+	 * @param query
+	 *            the query
+	 * @param maxDocs
+	 *            the max docs
+	 * @param sortOpt
+	 *            the sort opt
+	 * @param otherOpt
+	 *            the other opt
+	 * @return the document collection
+	 */
 	public DocumentCollection FTSearch(String query, int maxDocs, SortOption sortOpt, int otherOpt);
 
 	/*
@@ -350,6 +502,21 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public DocumentCollection FTSearchRange(String query, int maxDocs, int sortOpt, int otherOpt, int start);
 
+	/**
+	 * FT search range.
+	 * 
+	 * @param query
+	 *            the query
+	 * @param maxDocs
+	 *            the max docs
+	 * @param sortOpt
+	 *            the sort opt
+	 * @param otherOpt
+	 *            the other opt
+	 * @param start
+	 *            the start
+	 * @return the document collection
+	 */
 	public DocumentCollection FTSearchRange(String query, int maxDocs, SortOption sortOpt, int otherOpt, int start);
 
 	/*
@@ -357,6 +524,13 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * 
 	 * 
 	 * @see java.util.Map#get(java.lang.Object)
+	 */
+	/**
+	 * Gets the.
+	 * 
+	 * @param key
+	 *            the key
+	 * @return the document
 	 */
 	public Document get(Object key);
 
@@ -832,6 +1006,14 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void grantAccess(String name, int level);
 
+	/**
+	 * Grant access.
+	 * 
+	 * @param name
+	 *            the name
+	 * @param level
+	 *            the level
+	 */
 	public void grantAccess(String name, ACL.Level level);
 
 	/*
@@ -1209,6 +1391,14 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void setOption(int optionName, boolean flag);
 
+	/**
+	 * Sets the option.
+	 * 
+	 * @param optionName
+	 *            the option name
+	 * @param flag
+	 *            the flag
+	 */
 	public void setOption(DBOption optionName, boolean flag);
 
 	/*
@@ -1259,6 +1449,12 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void sign(int documentType);
 
+	/**
+	 * Sign.
+	 * 
+	 * @param documentType
+	 *            the document type
+	 */
 	public void sign(SignDocType documentType);
 
 	/*
@@ -1269,6 +1465,14 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void sign(int documentType, boolean existingSigsOnly);
 
+	/**
+	 * Sign.
+	 * 
+	 * @param documentType
+	 *            the document type
+	 * @param existingSigsOnly
+	 *            the existing sigs only
+	 */
 	public void sign(SignDocType documentType, boolean existingSigsOnly);
 
 	/*
@@ -1279,6 +1483,16 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void sign(int documentType, boolean existingSigsOnly, String name);
 
+	/**
+	 * Sign.
+	 * 
+	 * @param documentType
+	 *            the document type
+	 * @param existingSigsOnly
+	 *            the existing sigs only
+	 * @param name
+	 *            the name
+	 */
 	public void sign(SignDocType documentType, boolean existingSigsOnly, String name);
 
 	/*
@@ -1289,6 +1503,18 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void sign(int documentType, boolean existingSigsOnly, String name, boolean nameIsNoteid);
 
+	/**
+	 * Sign.
+	 * 
+	 * @param documentType
+	 *            the document type
+	 * @param existingSigsOnly
+	 *            the existing sigs only
+	 * @param name
+	 *            the name
+	 * @param nameIsNoteid
+	 *            the name is noteid
+	 */
 	public void sign(SignDocType documentType, boolean existingSigsOnly, String name, boolean nameIsNoteid);
 
 	/*

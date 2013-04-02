@@ -62,6 +62,13 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	/** The lotus reference counter_. */
 	private DominoReferenceCounter lotusReferenceCounter_ = new DominoReferenceCounter();
 
+	/**
+	 * Adds the id.
+	 * 
+	 * @param id
+	 *            the id
+	 * @return the int
+	 */
 	public int addId(long id) {
 		int result = lotusReferenceCounter_.increment(id);
 		if (result > 8)
@@ -69,10 +76,20 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		return result;
 	}
 
+	/**
+	 * Subtract id.
+	 * 
+	 * @param id
+	 *            the id
+	 * @return the int
+	 */
 	public int subtractId(long id) {
 		return lotusReferenceCounter_.decrement(id);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#getRunContext()
+	 */
 	public RunContext getRunContext() {
 		// TODO finish this implementation, which needs a lot of work.
 		RunContext result = RunContext.UNKNOWN;
@@ -183,6 +200,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#createColorObject(java.awt.Color)
+	 */
 	@Override
 	public ColorObject createColorObject(Color color) {
 		ColorObject result = this.createColorObject();

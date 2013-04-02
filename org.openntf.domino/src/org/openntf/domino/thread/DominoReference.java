@@ -35,11 +35,20 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 	private final lotus.domino.Base delegate_;
 	/** The delegate type_. */
 	private final Class<?> delegateType_;
+	
+	/** The delegate id_. */
 	private final long delegateId_;
+	
+	/** The referrant hash_. */
 	private final int referrantHash_;
+	
+	/** The referrant id_. */
 	private final int referrantId_;
+	
+	/** The referrant session_. */
 	private Session referrantSession_;
 
+	/** The watched cpp. */
 	private static long watchedCpp = 0l;
 
 	/**
@@ -73,22 +82,47 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 		}
 	}
 
+	/**
+	 * Checks if is trace target.
+	 * 
+	 * @return true, if is trace target
+	 */
 	public boolean isTraceTarget() {
 		return delegateId_ == watchedCpp;
 	}
 
+	/**
+	 * Gets the delegate id.
+	 * 
+	 * @return the delegate id
+	 */
 	public Long getDelegateId() {
 		return delegateId_;
 	}
 
+	/**
+	 * Gets the session.
+	 * 
+	 * @return the session
+	 */
 	public Session getSession() {
 		return referrantSession_;
 	}
 
+	/**
+	 * _get referrant hash.
+	 * 
+	 * @return the int
+	 */
 	public int _getReferrantHash() {
 		return referrantHash_;
 	}
 
+	/**
+	 * _get referrant id.
+	 * 
+	 * @return the int
+	 */
 	public int _getReferrantId() {
 		return referrantId_;
 	}

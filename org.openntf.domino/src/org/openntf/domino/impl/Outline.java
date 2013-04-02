@@ -253,6 +253,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.types.Design#getDocument()
+	 */
 	@Override
 	public Document getDocument() {
 		return this.getParentDatabase().getDocumentByUNID(this.getUniversalID());
@@ -333,6 +336,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.types.Design#getNoteID()
+	 */
 	@Override
 	public String getNoteID() {
 		NoteCollection notes = this.getParentDatabase().createNoteCollection(false);
@@ -397,6 +403,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.types.Design#getUniversalID()
+	 */
 	@Override
 	public String getUniversalID() {
 		NoteCollection notes = this.getParentDatabase().createNoteCollection(false);

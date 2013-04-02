@@ -119,6 +119,11 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	@Override
 	public Vector<NotesCalendarNotice> getOutstandingInvitations();
 
+	/**
+	 * Gets the parent.
+	 * 
+	 * @return the parent
+	 */
 	public NotesCalendar getParent();
 
 	/*
@@ -137,6 +142,9 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	@Override
 	public boolean isOverwriteCheckEnabled();
 
+	/* (non-Javadoc)
+	 * @see lotus.domino.NotesCalendarNotice#read()
+	 */
 	@Override
 	public String read();
 
@@ -172,6 +180,9 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	@Override
 	public void setOverwriteCheckEnabled(boolean flag);
 
+	/* (non-Javadoc)
+	 * @see lotus.domino.NotesCalendarNotice#tentativelyAccept(java.lang.String)
+	 */
 	@Override
 	public void tentativelyAccept(String comments);
 }

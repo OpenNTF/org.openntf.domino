@@ -169,6 +169,11 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	@Override
 	public Document getAsDocument(int flags, String recurrenceId);
 
+	/**
+	 * Gets the parent.
+	 * 
+	 * @return the parent
+	 */
 	public NotesCalendar getParent();
 
 	/*
