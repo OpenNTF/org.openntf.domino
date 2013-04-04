@@ -695,4 +695,8 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
+	public Database getParentDatabase() {
+		return getParent();
+	}
+
 }

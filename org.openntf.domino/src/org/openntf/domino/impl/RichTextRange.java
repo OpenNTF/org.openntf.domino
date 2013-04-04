@@ -17,6 +17,7 @@ package org.openntf.domino.impl;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -61,12 +62,15 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	 */
 	@Override
 	public int findandReplace(String target, String replacement) {
+		int result = 0;
 		try {
-			return getDelegate().findandReplace(target, replacement);
+			result = getDelegate().findandReplace(target, replacement);
+			if (result > 0)
+				markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
-			return 0;
 		}
+		return result;
 	}
 
 	/*
@@ -76,12 +80,15 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	 */
 	@Override
 	public int findandReplace(String target, String replacement, long options) {
+		int result = 0;
 		try {
-			return getDelegate().findandReplace(target, replacement, options);
+			result = getDelegate().findandReplace(target, replacement, options);
+			if (result > 0)
+				markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
-			return 0;
 		}
+		return result;
 	}
 
 	/*
@@ -171,6 +178,7 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	 */
 	@Override
 	public void remove() {
+		markDirty();
 		try {
 			getDelegate().remove();
 		} catch (NotesException e) {
@@ -227,10 +235,23 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	 */
 	@Override
 	public void setStyle(lotus.domino.RichTextStyle style) {
+		markDirty();
 		try {
 			getDelegate().setStyle((lotus.domino.RichTextStyle) toLotus(style));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+	}
+
+	public Document getParentDocument() {
+		return getParent().getParentDocument();
+	}
+
+	public Database getParentDatabase() {
+		return getParent().getParentDatabase();
+	}
+
+	void markDirty() {
+		getParentDocument().markDirty();
 	}
 }

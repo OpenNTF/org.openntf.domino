@@ -15,13 +15,13 @@
  */
 package org.openntf.domino;
 
-import org.openntf.domino.types.DatabaseDescendant;
+import org.openntf.domino.types.DocumentDescendant;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Interface MIMEHeader.
  */
-public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.MIMEHeader, DatabaseDescendant {
+public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.MIMEHeader, DocumentDescendant {
 
 	/*
 	 * (non-Javadoc)

@@ -618,4 +618,10 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 			DominoUtils.handleException(e);
 		}
 	}
+
+	@Override
+	public org.openntf.domino.Database getParentDatabase() {
+		return getParent().getParentDatabase();
+	}
+
 }

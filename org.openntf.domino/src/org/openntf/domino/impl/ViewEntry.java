@@ -16,6 +16,8 @@
 package org.openntf.domino.impl;
 
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
@@ -27,6 +29,7 @@ import org.openntf.domino.utils.Factory;
  * The Class ViewEntry.
  */
 public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.ViewEntry> implements org.openntf.domino.ViewEntry {
+	private static final Logger log_ = Logger.getLogger(ViewEntry.class.getName());
 
 	/**
 	 * Instantiates a new view entry.
@@ -40,7 +43,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntry#getChildCount()
 	 */
 	@Override
@@ -53,7 +58,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntry#getColumnIndentLevel()
 	 */
 	@Override
@@ -66,7 +73,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntry#getColumnValues()
 	 */
 	@Override
@@ -79,7 +88,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntry#getDescendantCount()
 	 */
 	@Override
@@ -92,7 +103,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntry#getDocument()
 	 */
 	@Override
@@ -105,7 +118,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntry#getFTSearchScore()
 	 */
 	@Override
@@ -118,7 +133,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntry#getIndentLevel()
 	 */
 	@Override
@@ -131,7 +148,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntry#getNoteID()
 	 */
 	@Override
@@ -144,7 +163,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntry#getNoteIDAsInt()
 	 */
 	@Override
@@ -157,7 +178,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
@@ -165,7 +188,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		return super.getParent();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntry#getPosition(char)
 	 */
 	@Override
@@ -178,7 +203,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntry#getRead()
 	 */
 	@Override
@@ -191,7 +218,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntry#getRead(java.lang.String)
 	 */
 	@Override
@@ -204,7 +233,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntry#getSiblingCount()
 	 */
 	@Override
@@ -217,7 +248,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntry#getUniversalID()
 	 */
 	@Override
@@ -230,7 +263,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntry#isCategory()
 	 */
 	@Override
@@ -243,7 +278,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntry#isConflict()
 	 */
 	@Override
@@ -256,7 +293,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntry#isDocument()
 	 */
 	@Override
@@ -269,7 +308,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntry#isPreferJavaDates()
 	 */
 	@Override
@@ -282,7 +323,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntry#isTotal()
 	 */
 	@Override
@@ -295,7 +338,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntry#isValid()
 	 */
 	@Override
@@ -308,7 +353,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.ViewEntry#setPreferJavaDates(boolean)
 	 */
 	@Override
@@ -318,5 +365,23 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+	}
+
+	public org.openntf.domino.Database getParentDatabase() {
+		org.openntf.domino.Base<?> parent = getParent();
+		if (parent instanceof org.openntf.domino.View) {
+			return ((org.openntf.domino.View) parent).getParentDatabase();
+		} else if (parent instanceof org.openntf.domino.ViewEntryCollection) {
+			return ((org.openntf.domino.ViewEntryCollection) parent).getParentDatabase();
+		} else if (parent instanceof org.openntf.domino.ViewNavigator) {
+			return ((org.openntf.domino.ViewNavigator) parent).getParentDatabase();
+		} else {
+			if (log_.isLoggable(Level.WARNING)) {
+				log_.log(Level.WARNING,
+						"ViewEntry doesn't have a View, ViewEntryCollection or ViewNavigator as a parent? That's unpossible! But we got a "
+								+ parent.getClass().getName());
+			}
+		}
+		return null;
 	}
 }

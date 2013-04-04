@@ -178,6 +178,10 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		return (Document) parent;
 	}
 
+	public org.openntf.domino.Database getParentDatabase() {
+		return getParentDocument().getParentDatabase();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -230,6 +234,7 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 	 * @see org.openntf.domino.EmbeddedObject#remove()
 	 */
 	public void remove() {
+		markDirty();
 		try {
 			getDelegate().remove();
 		} catch (NotesException e) {
@@ -319,6 +324,10 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 			DominoUtils.handleException(e);
 
 		}
+	}
+
+	void markDirty() {
+		getParentDocument().markDirty();
 	}
 
 }

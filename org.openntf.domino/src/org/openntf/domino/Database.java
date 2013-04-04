@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.transactions.DatabaseTransaction;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -1298,5 +1299,11 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 */
 	@Override
 	public void updateFTIndex(boolean create);
+
+	public DatabaseTransaction startTransaction();
+
+	public void closeTransaction();
+
+	public DatabaseTransaction getTransaction();
 
 }

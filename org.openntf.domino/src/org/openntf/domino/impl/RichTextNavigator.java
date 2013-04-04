@@ -15,6 +15,9 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import lotus.domino.NotesException;
 
 import org.openntf.domino.utils.DominoUtils;
@@ -26,6 +29,8 @@ import org.openntf.domino.utils.Factory;
  */
 public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator, lotus.domino.RichTextNavigator> implements
 		org.openntf.domino.RichTextNavigator {
+
+	private static final Logger log_ = Logger.getLogger(RichTextNavigator.class.getName());
 
 	/**
 	 * Instantiates a new rich text navigator.
@@ -349,5 +354,25 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+	}
+
+	public Document getParentDocument() {
+		org.openntf.domino.Base<?> parent = super.getParent();
+		if (parent instanceof RichTextItem) {
+			return ((RichTextItem) parent).getParentDocument();
+		} else if (parent instanceof RichTextRange) {
+			return ((RichTextRange) parent).getParentDocument();
+		} else {
+			if (log_.isLoggable(Level.WARNING)) {
+				log_.log(Level.WARNING,
+						"RichTextNavigator doesn't have a RichTextItem or RichTextRange as a parent? That's unpossible! But we got a "
+								+ parent.getClass().getName());
+			}
+		}
+		return null;
+	}
+
+	public org.openntf.domino.Database getParentDatabase() {
+		return getParentDocument().getParentDatabase();
 	}
 }
