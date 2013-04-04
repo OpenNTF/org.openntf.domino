@@ -29,6 +29,10 @@ import org.openntf.domino.utils.Factory;
 /**
  * The Class NoteCollection.
  */
+/**
+ * @author withersp
+ * 
+ */
 public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.domino.NoteCollection, lotus.domino.NoteCollection> implements
 		org.openntf.domino.NoteCollection {
 
@@ -977,7 +981,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	 * 
 	 * @see org.openntf.domino.impl.Base#recycle(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void recycle(Vector objects) {
 		try {
@@ -1201,7 +1205,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see lotus.domino.NoteCollection#setSelectAcl(boolean)
+	 * @see org.openntf.domino.NoteCollection#setSelectAcl(boolean)
 	 */
 	public void setSelectAcl(boolean flag) {
 		try {
@@ -1215,7 +1219,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see lotus.domino.NoteCollection#setSelectActions(boolean)
+	 * @see org.openntf.domino.NoteCollection#setSelectActions(boolean)
 	 */
 	public void setSelectActions(boolean flag) {
 		try {
@@ -1229,7 +1233,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see lotus.domino.NoteCollection#setSelectAgents(boolean)
+	 * @see org.openntf.domino.NoteCollection#setSelectAgents(boolean)
 	 */
 	public void setSelectAgents(boolean flag) {
 		try {
@@ -1243,7 +1247,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see lotus.domino.NoteCollection#setSelectDatabaseScript(boolean)
+	 * @see org.openntf.domino.NoteCollection#setSelectDatabaseScript(boolean)
 	 */
 	public void setSelectDatabaseScript(boolean flag) {
 		try {
@@ -1257,7 +1261,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see lotus.domino.NoteCollection#setSelectDataConnections(boolean)
+	 * @see org.openntf.domino.NoteCollection#setSelectDataConnections(boolean)
 	 */
 	public void setSelectDataConnections(boolean flag) {
 		try {

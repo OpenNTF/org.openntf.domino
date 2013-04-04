@@ -110,10 +110,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return null;
 	}
 
-	/**
-	 * Gets the created date.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return the created date
+	 * @see org.openntf.domino.Document#getCreatedDate()
 	 */
 	public Date getCreatedDate() {
 		if (created_ == null) {
@@ -147,10 +147,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return null;
 	}
 
-	/**
-	 * Gets the initially modified date.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return the initially modified date
+	 * @see org.openntf.domino.Document#getInitiallyModifiedDate()
 	 */
 	public Date getInitiallyModifiedDate() {
 		if (initiallyModified_ == null) {
@@ -185,10 +185,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return null;
 	}
 
-	/**
-	 * Gets the last accessed date.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return the last accessed date
+	 * @see org.openntf.domino.Document#getLastAccessedDate()
 	 */
 	public Date getLastAccessedDate() {
 		if (lastAccessed_ == null) {
@@ -223,10 +223,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return null;
 	}
 
-	/**
-	 * Gets the last modified date.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return the last modified date
+	 * @see org.openntf.domino.Document#getLastModifiedDate()
 	 */
 	public Date getLastModifiedDate() {
 		if (lastModified_ == null) {
