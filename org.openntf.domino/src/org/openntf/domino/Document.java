@@ -17,6 +17,7 @@ package org.openntf.domino;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Date;
 import java.util.Vector;
 
 import org.openntf.domino.types.DatabaseDescendant;
@@ -259,6 +260,13 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	@Override
 	public DateTime getCreated();
 
+	/**
+	 * Gets the created date.
+	 * 
+	 * @return the created date
+	 */
+	public Date getCreatedDate();
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -317,6 +325,13 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 */
 	@Override
 	public DateTime getInitiallyModified();
+
+	/**
+	 * Gets the initially modified date.
+	 * 
+	 * @return the initially modified date
+	 */
+	public Date getInitiallyModifiedDate();
 
 	/*
 	 * (non-Javadoc)
@@ -409,6 +424,13 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	@Override
 	public DateTime getLastAccessed();
 
+	/**
+	 * Gets the last accessed date.
+	 * 
+	 * @return the last accessed date
+	 */
+	public Date getLastAccessedDate();
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -416,6 +438,13 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 */
 	@Override
 	public DateTime getLastModified();
+
+	/**
+	 * Gets the last modified date.
+	 * 
+	 * @return the last modified date
+	 */
+	public Date getLastModifiedDate();
 
 	/*
 	 * (non-Javadoc)
