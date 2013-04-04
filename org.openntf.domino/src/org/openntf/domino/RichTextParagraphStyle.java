@@ -17,14 +17,14 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
-import org.openntf.domino.types.DatabaseDescendant;
+import org.openntf.domino.types.SessionDescendant;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Interface RichTextParagraphStyle.
  */
 public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagraphStyle>, lotus.domino.RichTextParagraphStyle,
-		DatabaseDescendant {
+		SessionDescendant {
 
 	public static enum Align {
 		CENTER(RichTextParagraphStyle.ALIGN_CENTER), FULL(RichTextParagraphStyle.ALIGN_FULL), LEFT(RichTextParagraphStyle.ALIGN_LEFT), NOWRAP(

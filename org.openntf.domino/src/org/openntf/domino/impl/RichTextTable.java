@@ -16,6 +16,8 @@
 package org.openntf.domino.impl;
 
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
@@ -29,6 +31,7 @@ import org.openntf.domino.utils.Factory;
  */
 public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.domino.RichTextTable> implements
 		org.openntf.domino.RichTextTable {
+	private static final Logger log_ = Logger.getLogger(RichTextTable.class.getName());
 
 	/**
 	 * Instantiates a new rich text table.
@@ -51,6 +54,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	public void addRow() {
 		try {
 			getDelegate().addRow();
+			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -65,6 +69,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	public void addRow(int count) {
 		try {
 			getDelegate().addRow(count);
+			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -79,6 +84,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	public void addRow(int count, int targetRow) {
 		try {
 			getDelegate().addRow(count, targetRow);
+			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -204,6 +210,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	public void remove() {
 		try {
 			getDelegate().remove();
+			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -217,7 +224,8 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	@Override
 	public void removeRow() {
 		try {
-			getDelegate().remove();
+			getDelegate().removeRow();
+			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -232,6 +240,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	public void removeRow(int count) {
 		try {
 			getDelegate().removeRow(count);
+			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -246,6 +255,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	public void removeRow(int count, int targetRow) {
 		try {
 			getDelegate().removeRow(count, targetRow);
+			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -260,6 +270,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	public void setAlternateColor(lotus.domino.ColorObject color) {
 		try {
 			getDelegate().setAlternateColor((lotus.domino.ColorObject) toLotus(color));
+			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -274,6 +285,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	public void setColor(lotus.domino.ColorObject color) {
 		try {
 			getDelegate().setColor((lotus.domino.ColorObject) toLotus(color));
+			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -288,6 +300,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	public void setRightToLeft(boolean flag) {
 		try {
 			getDelegate().setRightToLeft(flag);
+			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -303,6 +316,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	public void setRowLabels(Vector labels) {
 		try {
 			getDelegate().setRowLabels(toDominoFriendly(labels, this));
+			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -317,8 +331,35 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	public void setStyle(int tableStyle) {
 		try {
 			getDelegate().setStyle(tableStyle);
+			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+	}
+
+	public Document getParentDocument() {
+		org.openntf.domino.Base<?> parent = super.getParent();
+		if (parent instanceof RichTextItem) {
+			return ((RichTextItem) parent).getParentDocument();
+		} else if (parent instanceof RichTextRange) {
+			return ((RichTextRange) parent).getParentDocument();
+		} else if (parent instanceof RichTextNavigator) {
+			return ((RichTextNavigator) parent).getParentDocument();
+		} else {
+			if (log_.isLoggable(Level.WARNING)) {
+				log_.log(Level.WARNING,
+						"RichTextTable doesn't have a RichTextItem, RichTextNavigator or RichTextRange as a parent? That's unpossible! But we got a "
+								+ parent.getClass().getName());
+			}
+		}
+		return null;
+	}
+
+	public org.openntf.domino.Database getParentDatabase() {
+		return getParentDocument().getParentDatabase();
+	}
+
+	void markDirty() {
+		getParentDocument().markDirty();
 	}
 }

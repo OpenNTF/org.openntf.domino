@@ -23,6 +23,7 @@ import lotus.domino.NotesException;
 import org.openntf.domino.ACL.Level;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.View;
+import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -2326,6 +2327,24 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			DominoUtils.handleException(e);
 
 		}
+	}
+
+	private DatabaseTransaction currentTransaction_;
+
+	@Override
+	public DatabaseTransaction startTransaction() {
+		if (currentTransaction_ == null) {
+			currentTransaction_ = new DatabaseTransaction(this);
+		}
+		return currentTransaction_;
+	}
+
+	public void closeTransaction() {
+		currentTransaction_ = null;
+	}
+
+	public DatabaseTransaction getTransaction() {
+		return currentTransaction_;
 	}
 
 }

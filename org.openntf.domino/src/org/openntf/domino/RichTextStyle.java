@@ -15,13 +15,13 @@
  */
 package org.openntf.domino;
 
-import org.openntf.domino.types.DatabaseDescendant;
+import org.openntf.domino.types.SessionDescendant;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Interface RichTextStyle.
  */
-public interface RichTextStyle extends Base<lotus.domino.RichTextStyle>, lotus.domino.RichTextStyle, DatabaseDescendant {
+public interface RichTextStyle extends Base<lotus.domino.RichTextStyle>, lotus.domino.RichTextStyle, SessionDescendant {
 
 	/*
 	 * (non-Javadoc)

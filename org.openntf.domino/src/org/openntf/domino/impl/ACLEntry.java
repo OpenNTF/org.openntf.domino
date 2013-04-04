@@ -650,4 +650,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 		}
 	}
 
+	public Database getParentDatabase() {
+		return getParent().getParentDatabase();
+	}
 }

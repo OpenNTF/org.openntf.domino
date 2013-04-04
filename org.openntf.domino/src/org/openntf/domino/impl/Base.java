@@ -166,6 +166,24 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	}
 
+	void setDelegate(D delegate) {
+
+		delegate_ = delegate;
+		cpp_object = getLotusId((lotus.domino.local.NotesBase) delegate);
+		if (delegate instanceof lotus.domino.Name || delegate instanceof lotus.domino.DateTime || delegate instanceof lotus.domino.Session) {
+			// TODO - NTF come up with a better solution for recycling Sessions!!!
+		} else {
+			recycleQueue.get().bagReference(new DominoReference(this, recycleQueue.get(), delegate));
+		}
+		// if (delegate instanceof lotus.domino.Document) {
+		// try {
+		// System.out.println("Redelegating a document: " + ((lotus.domino.Document) delegate).getNoteID() + " (" + cpp_object + ")");
+		// } catch (NotesException e) {
+		// DominoUtils.handleException(e);
+		// }
+		// }
+	}
+
 	/**
 	 * Gets the lotus id.
 	 * 
@@ -248,6 +266,13 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @return the delegate
 	 */
 	protected D getDelegate() {
+		// if (delegate_ instanceof lotus.domino.local.Document) {
+		// try {
+		// ((lotus.domino.local.Document) delegate_).isProfile();
+		// } catch (NotesException e) {
+		// System.out.println("Delegate validation failed on a document with cpp id " + cpp_object);
+		// }
+		// }
 		return delegate_;
 	}
 

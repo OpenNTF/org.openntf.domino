@@ -15,6 +15,9 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import lotus.domino.NotesException;
 
 import org.openntf.domino.utils.DominoUtils;
@@ -26,6 +29,7 @@ import org.openntf.domino.utils.Factory;
  */
 public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lotus.domino.RichTextSection> implements
 		org.openntf.domino.RichTextSection {
+	private static final Logger log_ = Logger.getLogger(RichTextSection.class.getName());
 
 	/**
 	 * Instantiates a new rich text section.
@@ -111,6 +115,7 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	 */
 	@Override
 	public void remove() {
+		markDirty();
 		try {
 			getDelegate().remove();
 		} catch (NotesException e) {
@@ -125,6 +130,7 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	 */
 	@Override
 	public void setBarColor(lotus.domino.ColorObject color) {
+		markDirty();
 		try {
 			getDelegate().setBarColor((lotus.domino.ColorObject) toLotus(color));
 		} catch (NotesException e) {
@@ -139,6 +145,7 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	 */
 	@Override
 	public void setExpanded(boolean flag) {
+		markDirty();
 		try {
 			getDelegate().setExpanded(flag);
 		} catch (NotesException e) {
@@ -153,6 +160,7 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	 */
 	@Override
 	public void setTitle(String title) {
+		markDirty();
 		try {
 			getDelegate().setTitle(title);
 		} catch (NotesException e) {
@@ -167,10 +175,37 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	 */
 	@Override
 	public void setTitleStyle(lotus.domino.RichTextStyle style) {
+		markDirty();
 		try {
 			getDelegate().setTitleStyle((lotus.domino.RichTextStyle) toLotus(style));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+	}
+
+	public Document getParentDocument() {
+		org.openntf.domino.Base<?> parent = super.getParent();
+		if (parent instanceof RichTextItem) {
+			return ((RichTextItem) parent).getParentDocument();
+		} else if (parent instanceof RichTextRange) {
+			return ((RichTextRange) parent).getParentDocument();
+		} else if (parent instanceof RichTextNavigator) {
+			return ((RichTextNavigator) parent).getParentDocument();
+		} else {
+			if (log_.isLoggable(Level.WARNING)) {
+				log_.log(Level.WARNING,
+						"RichTextSection doesn't have a RichTextItem, RichTextNavigator or RichTextRange as a parent? That's unpossible! But we got a "
+								+ parent.getClass().getName());
+			}
+		}
+		return null;
+	}
+
+	public org.openntf.domino.Database getParentDatabase() {
+		return getParentDocument().getParentDatabase();
+	}
+
+	void markDirty() {
+		getParentDocument().markDirty();
 	}
 }

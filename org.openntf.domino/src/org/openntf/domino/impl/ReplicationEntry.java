@@ -318,4 +318,8 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		}
 		this.setViews(result.toString());
 	}
+
+	public org.openntf.domino.Database getParentDatabase() {
+		return getParent().getParentDatabase();
+	}
 }
