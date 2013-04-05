@@ -819,7 +819,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	public Document getDocumentByKey(String key, boolean createOnFail) {
 		try {
 			if (key != null) {
-				String checksum = DominoUtils.md5(key);
+				String checksum = DominoUtils.toUnid(key);
 				Document doc = this.getDocumentByUNID(checksum);
 				if (doc == null && createOnFail) {
 					doc = this.createDocument();
