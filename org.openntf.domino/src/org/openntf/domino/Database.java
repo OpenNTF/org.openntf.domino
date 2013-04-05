@@ -475,6 +475,36 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public Document getDocumentByID(String noteid);
 
+	/**
+	 * Retrieves a document by a String key.
+	 * <p>
+	 * The key is hased using MD5 and treated as a UNID.
+	 * </p>
+	 * 
+	 * @param key
+	 *            The arbitrary-length string key.
+	 * 
+	 * @return The Document corresponding to the key, or null if no matching document exists.
+	 * @since org.openntf.domino 1.0.0
+	 */
+	public Document getDocumentByKey(String key);
+
+	/**
+	 * Retrieves a document by a String key, allowing for creation of a new document if no match was found.
+	 * <p>
+	 * The key is hased using MD5 and treated as a UNID.
+	 * </p>
+	 * 
+	 * @param key
+	 *            The arbitrary-length string key.
+	 * @param createOnFail
+	 *            Whether or not a new document should be created when the key was not found. Defaults to false.
+	 * 
+	 * @return The Document corresponding to the key, or null if no matching document exists and createOnFail is false.
+	 * @since org.openntf.domino 1.0.0
+	 */
+	public Document getDocumentByKey(String key, boolean createOnFail);
+
 	/*
 	 * (non-Javadoc)
 	 * 
