@@ -15,6 +15,9 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import lotus.domino.NotesException;
 
 import org.openntf.domino.utils.DominoUtils;
@@ -24,6 +27,7 @@ import org.openntf.domino.utils.DominoUtils;
  * The Class RichTextTab.
  */
 public class RichTextTab extends Base<org.openntf.domino.RichTextTab, lotus.domino.RichTextTab> implements org.openntf.domino.RichTextTab {
+	private static final Logger log_ = Logger.getLogger(RichTextTab.class.getName());
 
 	/**
 	 * Instantiates a new rich text tab.
@@ -37,11 +41,14 @@ public class RichTextTab extends Base<org.openntf.domino.RichTextTab, lotus.domi
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextTab#clear()
 	 */
 	@Override
 	public void clear() {
+		markDirty();
 		try {
 			getDelegate().clear();
 		} catch (NotesException e) {
@@ -49,7 +56,9 @@ public class RichTextTab extends Base<org.openntf.domino.RichTextTab, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextTab#getPosition()
 	 */
 	@Override
@@ -62,7 +71,9 @@ public class RichTextTab extends Base<org.openntf.domino.RichTextTab, lotus.domi
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.RichTextTab#getType()
 	 */
 	@Override
@@ -73,5 +84,31 @@ public class RichTextTab extends Base<org.openntf.domino.RichTextTab, lotus.domi
 			DominoUtils.handleException(e);
 			return 0;
 		}
+	}
+
+	public Document getParentDocument() {
+		org.openntf.domino.Base<?> parent = super.getParent();
+		if (parent instanceof RichTextItem) {
+			return ((RichTextItem) parent).getParentDocument();
+		} else if (parent instanceof RichTextRange) {
+			return ((RichTextRange) parent).getParentDocument();
+		} else if (parent instanceof RichTextNavigator) {
+			return ((RichTextNavigator) parent).getParentDocument();
+		} else {
+			if (log_.isLoggable(Level.WARNING)) {
+				log_.log(Level.WARNING,
+						"RichTextTab doesn't have a RichTextItem, RichTextNavigator or RichTextRange as a parent? That's unpossible! But we got a "
+								+ parent.getClass().getName());
+			}
+		}
+		return null;
+	}
+
+	public org.openntf.domino.Database getParentDatabase() {
+		return getParentDocument().getParentDatabase();
+	}
+
+	void markDirty() {
+		getParentDocument().markDirty();
 	}
 }

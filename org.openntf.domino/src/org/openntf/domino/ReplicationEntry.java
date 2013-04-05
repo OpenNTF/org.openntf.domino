@@ -17,11 +17,13 @@ package org.openntf.domino;
 
 import java.util.Collection;
 
+import org.openntf.domino.types.DatabaseDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface ReplicationEntry.
  */
-public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, lotus.domino.ReplicationEntry {
+public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, lotus.domino.ReplicationEntry, DatabaseDescendant {
 
 	/*
 	 * (non-Javadoc)

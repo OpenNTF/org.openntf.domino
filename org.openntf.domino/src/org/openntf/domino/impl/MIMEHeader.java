@@ -44,6 +44,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 */
 	@Override
 	public boolean addValText(String valueText) {
+		markDirty();
 		try {
 			return getDelegate().addValText(valueText);
 		} catch (NotesException e) {
@@ -59,6 +60,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 */
 	@Override
 	public boolean addValText(String valueText, String charSet) {
+		markDirty();
 		try {
 			return getDelegate().addValText(valueText, charSet);
 		} catch (NotesException e) {
@@ -214,6 +216,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 */
 	@Override
 	public void remove() {
+		markDirty();
 		try {
 			getDelegate().remove();
 		} catch (NotesException e) {
@@ -228,6 +231,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 */
 	@Override
 	public boolean setHeaderVal(String headerValue) {
+		markDirty();
 		try {
 			return getDelegate().setHeaderVal(headerValue);
 		} catch (NotesException e) {
@@ -243,6 +247,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 */
 	@Override
 	public boolean setHeaderValAndParams(String headerParamValue) {
+		markDirty();
 		try {
 			return getDelegate().setHeaderValAndParams(headerParamValue);
 		} catch (NotesException e) {
@@ -258,11 +263,24 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 */
 	@Override
 	public boolean setParamVal(String parameterName, String parameterValue) {
+		markDirty();
 		try {
 			return getDelegate().setParamVal(parameterName, parameterValue);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
 		}
+	}
+
+	public Document getParentDocument() {
+		return getParent().getParentDocument();
+	}
+
+	public org.openntf.domino.Database getParentDatabase() {
+		return getParent().getParentDatabase();
+	}
+
+	void markDirty() {
+		getParentDocument().markDirty();
 	}
 }

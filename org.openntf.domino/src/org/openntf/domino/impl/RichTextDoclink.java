@@ -15,6 +15,9 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import lotus.domino.NotesException;
 
 import org.openntf.domino.utils.DominoUtils;
@@ -26,6 +29,7 @@ import org.openntf.domino.utils.Factory;
  */
 public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lotus.domino.RichTextDoclink> implements
 		org.openntf.domino.RichTextDoclink {
+	private static final Logger log_ = Logger.getLogger(RichTextDoclink.class.getName());
 
 	/**
 	 * Instantiates a new rich text doclink.
@@ -151,6 +155,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 */
 	@Override
 	public void remove() {
+		markDirty();
 		try {
 			getDelegate().remove();
 		} catch (NotesException e) {
@@ -165,6 +170,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 */
 	@Override
 	public void setDBReplicaID(String replicaId) {
+		markDirty();
 		try {
 			getDelegate().setDBReplicaID(replicaId);
 		} catch (NotesException e) {
@@ -179,6 +185,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 */
 	@Override
 	public void setDisplayComment(String comment) {
+		markDirty();
 		try {
 			getDelegate().setDisplayComment(comment);
 		} catch (NotesException e) {
@@ -193,6 +200,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 */
 	@Override
 	public void setDocUnID(String unid) {
+		markDirty();
 		try {
 			getDelegate().setDocUnID(unid);
 		} catch (NotesException e) {
@@ -207,6 +215,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 */
 	@Override
 	public void setHotSpotText(String text) {
+		markDirty();
 		try {
 			getDelegate().setHotSpotText(text);
 		} catch (NotesException e) {
@@ -221,6 +230,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 */
 	@Override
 	public void setHotSpotTextStyle(lotus.domino.RichTextStyle rtstyle) {
+		markDirty();
 		try {
 			getDelegate().setHotSpotTextStyle((lotus.domino.RichTextStyle) toLotus(rtstyle));
 		} catch (NotesException e) {
@@ -235,6 +245,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 */
 	@Override
 	public void setServerHint(String server) {
+		markDirty();
 		try {
 			getDelegate().setServerHint(server);
 		} catch (NotesException e) {
@@ -249,10 +260,37 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 */
 	@Override
 	public void setViewUnID(String unid) {
+		markDirty();
 		try {
 			getDelegate().setViewUnID(unid);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+	}
+
+	public Document getParentDocument() {
+		org.openntf.domino.Base<?> parent = super.getParent();
+		if (parent instanceof RichTextItem) {
+			return ((RichTextItem) parent).getParentDocument();
+		} else if (parent instanceof RichTextRange) {
+			return ((RichTextRange) parent).getParentDocument();
+		} else if (parent instanceof RichTextNavigator) {
+			return ((RichTextNavigator) parent).getParentDocument();
+		} else {
+			if (log_.isLoggable(Level.WARNING)) {
+				log_.log(Level.WARNING,
+						"RichTextDoclink doesn't have a RichTextItem, RichTextNavigator or RichTextRange as a parent? That's unpossible! But we got a "
+								+ parent.getClass().getName());
+			}
+		}
+		return null;
+	}
+
+	public org.openntf.domino.Database getParentDatabase() {
+		return getParentDocument().getParentDatabase();
+	}
+
+	void markDirty() {
+		getParentDocument().markDirty();
 	}
 }

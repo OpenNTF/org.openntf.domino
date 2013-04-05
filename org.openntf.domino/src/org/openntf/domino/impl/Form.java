@@ -49,7 +49,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @see org.openntf.domino.Form#getAliases()
 	 */
 	@SuppressWarnings("unchecked")
-	@Legacy( { Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
+	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
 	public Vector<String> getAliases() {
 		try {
 			return getDelegate().getAliases();
@@ -86,7 +86,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @see org.openntf.domino.Form#getFields()
 	 */
 	@SuppressWarnings("unchecked")
-	@Legacy( { Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
+	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
 	public Vector<String> getFields() {
 		try {
 			return getDelegate().getFields();
@@ -103,7 +103,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @see org.openntf.domino.Form#getFormUsers()
 	 */
 	@SuppressWarnings("unchecked")
-	@Legacy( { Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
+	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
 	public Vector<String> getFormUsers() {
 		try {
 			return getDelegate().getFormUsers();
@@ -135,7 +135,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @see org.openntf.domino.Form#getLockHolders()
 	 */
 	@SuppressWarnings("unchecked")
-	@Legacy( { Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
+	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
 	public Vector<String> getLockHolders() {
 		try {
 			return getDelegate().getLockHolders();
@@ -199,7 +199,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @see org.openntf.domino.Form#getReaders()
 	 */
 	@SuppressWarnings("unchecked")
-	@Legacy( { Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
+	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
 	public Vector<String> getReaders() {
 		try {
 			return getDelegate().getReaders();
@@ -499,6 +499,10 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 			DominoUtils.handleException(e);
 
 		}
+	}
+
+	public Database getParentDatabase() {
+		return getParent();
 	}
 
 }

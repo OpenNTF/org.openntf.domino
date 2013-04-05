@@ -200,10 +200,6 @@ public class OpenLogItem implements Serializable {
 	private Session getSession() {
 		if (_session == null) {
 			_session = Factory.getSession();
-		} else {
-			if (Base.isRecycled((NotesBase) _session)) {
-				_session = Factory.getSession();
-			}
 		}
 		return _session;
 	}
@@ -568,8 +564,6 @@ public class OpenLogItem implements Serializable {
 	public DateTime getEventTime() {
 		if (_eventTime == null) {
 			_eventJavaTime = new Date();
-		} else {
-			_eventTime = getSession().createDateTime(_eventJavaTime);
 		}
 		return _eventTime;
 	}
