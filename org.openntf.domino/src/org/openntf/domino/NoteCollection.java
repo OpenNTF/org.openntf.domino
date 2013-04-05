@@ -15,6 +15,8 @@
  */
 package org.openntf.domino;
 
+import java.util.Vector;
+
 import org.openntf.domino.types.DatabaseDescendant;
 
 // TODO: Auto-generated Javadoc
@@ -516,6 +518,21 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see lotus.domino.Base#recycle()
+	 */
+	public void recycle();
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.Base#recycle(java.util.Vector)
+	 */
+	@SuppressWarnings("rawtypes")
+	public void recycle(Vector objects);
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.NoteCollection#remove(lotus.domino.Document)
 	 */
 	@Override
@@ -631,6 +648,41 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 */
 	@Override
 	public void selectAllNotes(boolean selectorValue);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.NoteCollection#setSelectAcl(boolean)
+	 */
+	public void setSelectAcl(boolean flag);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.NoteCollection#setSelectActions(boolean)
+	 */
+	public void setSelectActions(boolean flag);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.NoteCollection#setSelectAgents(boolean)
+	 */
+	public void setSelectAgents(boolean flag);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.NoteCollection#setSelectDatabaseScript(boolean)
+	 */
+	public void setSelectDatabaseScript(boolean flag);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.NoteCollection#setSelectDataConnections(boolean)
+	 */
+	public void setSelectDataConnections(boolean flag);
 
 	/*
 	 * (non-Javadoc)

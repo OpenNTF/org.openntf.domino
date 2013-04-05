@@ -618,4 +618,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 		}
 	}
 
+	public org.openntf.domino.Database getParentDatabase() {
+		return getParent().getParentDatabase();
+	}
 }

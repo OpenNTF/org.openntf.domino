@@ -59,7 +59,7 @@ import org.openntf.domino.logging.LogUtils;
 public enum DominoUtils {
 	;
 	private final static Logger log_ = Logger.getLogger("org.openntf.domino");
-	private final static Logger logBackup_ = Logger.getLogger("org.openntf.domino");
+	private final static Logger logBackup_ = Logger.getLogger("com.ibm.xsp.domino");
 
 	/**
 	 * Checksum.
@@ -171,6 +171,7 @@ public enum DominoUtils {
 				logBackup_.log(Level.SEVERE, t.getLocalizedMessage(), t);
 			} else {
 				log_.log(Level.WARNING, t.getLocalizedMessage(), t);
+				t.printStackTrace();
 			}
 			return null;
 		} catch (Throwable e) {
@@ -402,7 +403,9 @@ public enum DominoUtils {
 		Object result = null;
 		lotus.domino.Stream mimeStream = session.createStream();
 		lotus.domino.MIMEEntity entity = doc.getMIMEEntity(itemName);
-		if(entity == null) { return null; }
+		if (entity == null) {
+			return null;
+		}
 		entity.getContentAsBytes(mimeStream);
 
 		ByteArrayOutputStream streamOut = new ByteArrayOutputStream();

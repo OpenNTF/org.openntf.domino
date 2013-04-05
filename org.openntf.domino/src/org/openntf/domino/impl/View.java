@@ -2209,4 +2209,8 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		Database parent = this.getParent();
 		return parent.getDocumentByUNID(this.getUniversalID());
 	}
+
+	public Database getParentDatabase() {
+		return getParent();
+	}
 }

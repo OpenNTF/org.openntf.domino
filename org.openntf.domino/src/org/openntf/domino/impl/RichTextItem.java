@@ -52,6 +52,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void addNewLine() {
+		markDirty();
 		try {
 			getDelegate().addNewLine();
 		} catch (NotesException e) {
@@ -66,6 +67,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void addNewLine(int count) {
+		markDirty();
 		try {
 			getDelegate().addNewLine(count);
 		} catch (NotesException e) {
@@ -80,6 +82,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void addNewLine(int count, boolean newParagraph) {
+		markDirty();
 		try {
 			getDelegate().addNewLine(count, newParagraph);
 		} catch (NotesException e) {
@@ -94,6 +97,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void addPageBreak() {
+		markDirty();
 		try {
 			getDelegate().addPageBreak();
 		} catch (NotesException e) {
@@ -108,6 +112,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void addPageBreak(lotus.domino.RichTextParagraphStyle pstyle) {
+		markDirty();
 		try {
 			getDelegate().addPageBreak((lotus.domino.RichTextParagraphStyle) toLotus(pstyle));
 		} catch (NotesException e) {
@@ -122,6 +127,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void addTab() {
+		markDirty();
 		try {
 			getDelegate().addTab();
 		} catch (NotesException e) {
@@ -136,6 +142,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void addTab(int count) {
+		markDirty();
 		try {
 			getDelegate().addTab(count);
 		} catch (NotesException e) {
@@ -150,6 +157,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void appendDocLink(lotus.domino.Database db) {
+		markDirty();
 		try {
 			getDelegate().appendDocLink((lotus.domino.Database) toLotus(db));
 		} catch (NotesException e) {
@@ -164,6 +172,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void appendDocLink(lotus.domino.Database db, String comment) {
+		markDirty();
 		try {
 			getDelegate().appendDocLink((lotus.domino.Database) toLotus(db), comment);
 		} catch (NotesException e) {
@@ -178,6 +187,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void appendDocLink(lotus.domino.Database db, String comment, String hotspotText) {
+		markDirty();
 		try {
 			getDelegate().appendDocLink((lotus.domino.Database) toLotus(db), comment, hotspotText);
 		} catch (NotesException e) {
@@ -192,6 +202,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void appendDocLink(lotus.domino.Document doc) {
+		markDirty();
 		try {
 			getDelegate().appendDocLink((lotus.domino.Document) toLotus(doc));
 		} catch (NotesException e) {
@@ -206,6 +217,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void appendDocLink(lotus.domino.Document doc, String comment) {
+		markDirty();
 		try {
 			getDelegate().appendDocLink((lotus.domino.Document) toLotus(doc), comment);
 		} catch (NotesException e) {
@@ -220,6 +232,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void appendDocLink(lotus.domino.Document doc, String comment, String hotspotText) {
+		markDirty();
 		try {
 			getDelegate().appendDocLink((lotus.domino.Document) toLotus(doc), comment, hotspotText);
 		} catch (NotesException e) {
@@ -234,6 +247,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void appendDocLink(lotus.domino.View view) {
+		markDirty();
 		try {
 			getDelegate().appendDocLink((lotus.domino.View) toLotus(view));
 		} catch (NotesException e) {
@@ -248,6 +262,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void appendDocLink(lotus.domino.View view, String comment) {
+		markDirty();
 		try {
 			getDelegate().appendDocLink((lotus.domino.View) toLotus(view), comment);
 		} catch (NotesException e) {
@@ -262,6 +277,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void appendDocLink(lotus.domino.View view, String comment, String hotspotText) {
+		markDirty();
 		try {
 			getDelegate().appendDocLink((lotus.domino.View) toLotus(view), hotspotText);
 		} catch (NotesException e) {
@@ -276,6 +292,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void appendParagraphStyle(lotus.domino.RichTextParagraphStyle pstyle) {
+		markDirty();
 		try {
 			getDelegate().appendParagraphStyle((lotus.domino.RichTextParagraphStyle) toLotus(pstyle));
 		} catch (NotesException e) {
@@ -290,6 +307,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void appendRTItem(lotus.domino.RichTextItem rtitem) {
+		markDirty();
 		try {
 			getDelegate().appendRTItem((lotus.domino.RichTextItem) toLotus(rtitem));
 		} catch (NotesException e) {
@@ -304,6 +322,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void appendStyle(lotus.domino.RichTextStyle rstyle) {
+		markDirty();
 		try {
 			getDelegate().appendStyle((lotus.domino.RichTextStyle) toLotus(rstyle));
 		} catch (NotesException e) {
@@ -318,6 +337,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void appendTable(int rows, int columns) {
+		markDirty();
 		try {
 			getDelegate().appendTable(rows, columns);
 		} catch (NotesException e) {
@@ -333,6 +353,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	@SuppressWarnings("unchecked")
 	@Override
 	public void appendTable(int rows, int columns, Vector labels) {
+		markDirty();
 		try {
 			getDelegate().appendTable(rows, columns, labels);
 		} catch (NotesException e) {
@@ -348,6 +369,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	@SuppressWarnings("unchecked")
 	@Override
 	public void appendTable(int rows, int columns, Vector labels, int leftMargin, Vector pstyles) {
+		markDirty();
 		try {
 			getDelegate().appendTable(rows, columns, labels, leftMargin, toLotus(pstyles));
 		} catch (NotesException e) {
@@ -362,6 +384,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void appendText(String text) {
+		markDirty();
 		try {
 			getDelegate().appendText(text);
 		} catch (NotesException e) {
@@ -376,6 +399,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void beginInsert(lotus.domino.Base element) {
+		markDirty();
 		try {
 			getDelegate().beginInsert(toLotus(element));
 		} catch (NotesException e) {
@@ -390,6 +414,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void beginInsert(lotus.domino.Base element, boolean after) {
+		markDirty();
 		try {
 			getDelegate().beginInsert(toLotus(element), after);
 		} catch (NotesException e) {
@@ -404,6 +429,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void beginSection(String title) {
+		markDirty();
 		try {
 			getDelegate().beginSection(title);
 		} catch (NotesException e) {
@@ -418,6 +444,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void beginSection(String title, lotus.domino.RichTextStyle titleStyle) {
+		markDirty();
 		try {
 			getDelegate().beginSection(title, (lotus.domino.RichTextStyle) toLotus(titleStyle));
 		} catch (NotesException e) {
@@ -432,6 +459,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void beginSection(String title, lotus.domino.RichTextStyle titleStyle, lotus.domino.ColorObject barColor, boolean expand) {
+		markDirty();
 		try {
 			getDelegate().beginSection(title, (lotus.domino.RichTextStyle) toLotus(titleStyle),
 					(lotus.domino.ColorObject) toLotus(barColor), expand);
@@ -447,6 +475,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void compact() {
+		markDirty();
 		try {
 			getDelegate().compact();
 		} catch (NotesException e) {
@@ -491,6 +520,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public EmbeddedObject embedObject(int type, String className, String source, String name) {
+		markDirty();
 		try {
 			return Factory.fromLotus(getDelegate().embedObject(type, className, source, name), EmbeddedObject.class, this);
 		} catch (NotesException e) {
@@ -506,6 +536,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void endInsert() {
+		markDirty();
 		try {
 			getDelegate().endInsert();
 		} catch (NotesException e) {
@@ -520,6 +551,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void endSection() {
+		markDirty();
 		try {
 			getDelegate().endSection();
 		} catch (NotesException e) {
@@ -609,10 +641,16 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 */
 	@Override
 	public void update() {
+		markDirty();
 		try {
 			getDelegate().update();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+	}
+
+	@Override
+	void markDirty() {
+		getParentDocument().markDirty();
 	}
 }

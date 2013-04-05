@@ -408,4 +408,8 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		return new AclIterator(this);
 	}
 
+	public Database getParentDatabase() {
+		return getParent();
+	}
+
 }

@@ -969,4 +969,8 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 			return 0;
 		}
 	}
+
+	public org.openntf.domino.Database getParentDatabase() {
+		return getParentView().getParentDatabase();
+	}
 }

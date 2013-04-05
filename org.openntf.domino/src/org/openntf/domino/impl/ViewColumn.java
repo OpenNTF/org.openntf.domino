@@ -1602,4 +1602,8 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 			DominoUtils.handleException(e);
 		}
 	}
+
+	public Database getParentDatabase() {
+		return getParent().getParentDatabase();
+	}
 }
