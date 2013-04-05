@@ -825,6 +825,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 					doc = this.createDocument();
 					doc.setUniversalID(checksum);
 					doc.replaceItemValue("$Created", new Date());
+					doc.replaceItemValue("$$Key", key);
 				}
 				return doc;
 			}
@@ -2399,7 +2400,17 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	@Override
 	public org.openntf.domino.Document put(String key, org.openntf.domino.Document value) {
-		// TODO Implement this?
+		// Ignore the value for now
+		if (key != null) {
+			Document doc = this.getDocumentByKey(key);
+			if (doc == null) {
+				doc = this.getDocumentByKey(key, true);
+				doc.save();
+				return null;
+			} else {
+				return doc;
+			}
+		}
 		return null;
 	}
 
