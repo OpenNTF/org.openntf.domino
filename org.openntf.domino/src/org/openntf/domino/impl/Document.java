@@ -2351,6 +2351,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			Object previousState = this.get(key);
 			this.removeItem(key);
 			this.replaceItemValue(key, value);
+			this.save();
 			return previousState;
 		}
 		return null;
@@ -2359,8 +2360,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void putAll(Map<? extends String, ? extends Object> m) {
 		for (Map.Entry<? extends String, ? extends Object> entry : m.entrySet()) {
-			this.put(entry.getKey(), entry.getValue());
+			this.removeItem(entry.getKey());
+			this.replaceItemValue(entry.getKey(), entry.getValue());
 		}
+		this.save();
 	}
 
 	@Override
@@ -2368,6 +2371,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		if (key != null) {
 			Object previousState = this.get(key);
 			this.removeItem(key.toString());
+			this.save();
 			return previousState;
 		}
 		return null;
