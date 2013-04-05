@@ -19,10 +19,12 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
@@ -2138,6 +2140,100 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+	}
+
+	/*
+	 * Map methods
+	 */
+
+	@Override
+	public void clear() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean containsKey(Object key) {
+		return this.hasItem(key == null ? null : String.valueOf(key));
+	}
+
+	@Override
+	public boolean containsValue(Object value) {
+		// God, I hope nobody ever actually uses this method
+		for (String key : this.keySet()) {
+			Object itemVal = this.get(key);
+			if ((value == null && itemVal == null) || (value != null && value.equals(itemVal))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public Set<java.util.Map.Entry<String, Object>> entrySet() {
+		// TODO Implement a "viewing" Set and Map.Entry for this or throw an UnsupportedOperationException
+		return null;
+	}
+
+	@Override
+	public Object get(Object key) {
+		if (this.containsKey(key)) {
+			Vector<Object> value = this.getItemValue(key.toString());
+			if (value.size() == 1) {
+				return value.get(0);
+			}
+			return value;
+		}
+		return null;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return false;
+	}
+
+	@Override
+	public Set<String> keySet() {
+		// TODO Implement a "viewing" Set for this or throw an UnsupportedOperationException
+		return null;
+	}
+
+	@Override
+	public Object put(String key, Object value) {
+		if (key != null) {
+			Object previousState = this.get(key);
+			this.removeItem(key);
+			this.replaceItemValue(key, value);
+			return previousState;
+		}
+		return null;
+	}
+
+	@Override
+	public void putAll(Map<? extends String, ? extends Object> m) {
+		for (Map.Entry<? extends String, ? extends Object> entry : m.entrySet()) {
+			this.put(entry.getKey(), entry.getValue());
+		}
+	}
+
+	@Override
+	public Object remove(Object key) {
+		if (key != null) {
+			Object previousState = this.get(key);
+			this.removeItem(key.toString());
+			return previousState;
+		}
+		return null;
+	}
+
+	@Override
+	public int size() {
+		return this.getItems().size();
+	}
+
+	@Override
+	public Collection<Object> values() {
+		// TODO Implement a "viewing" collection for this or throw an UnsupportedOperationException
+		return null;
 	}
 
 }

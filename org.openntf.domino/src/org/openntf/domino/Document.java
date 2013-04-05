@@ -17,6 +17,7 @@ package org.openntf.domino;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Map;
 import java.util.Vector;
 
 import org.openntf.domino.types.DatabaseDescendant;
@@ -25,7 +26,7 @@ import org.openntf.domino.types.DatabaseDescendant;
 /**
  * The Interface Document.
  */
-public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document, DatabaseDescendant {
+public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document, DatabaseDescendant, Map<String, Object> {
 
 	/*
 	 * (non-Javadoc)
