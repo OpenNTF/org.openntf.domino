@@ -2237,11 +2237,12 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			try {
 				lotus.domino.Database delDb = getDelegate().getParentDatabase();
 				getDelegate().recycle();
-				lotus.domino.Document junkDoc = delDb.createDocument(); // NTF - Why? To make sure I get a new cppid. Otherwise the handle
+				// lotus.domino.Document junkDoc = delDb.createDocument(); // NTF - Why? To make sure I get a new cppid. Otherwise the
+				// handle
 				// gets reused
-				lotus.domino.Document resetDoc = delDb.getDocumentByID(nid);
-				setDelegate(resetDoc);
-				junkDoc.recycle();
+				// lotus.domino.Document resetDoc = delDb.getDocumentByID(nid);
+				// setDelegate(resetDoc);
+				// junkDoc.recycle();
 			} catch (NotesException e) {
 				DominoUtils.handleException(e);
 			}

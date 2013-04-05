@@ -16,7 +16,6 @@ import org.openntf.domino.Name;
 import org.openntf.domino.Session;
 import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.thread.DominoThread;
-import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -32,12 +31,13 @@ public enum TransactionScratchTest {
 	private static final int delay = 1000;
 	// private static final String server = "CN=DevilDog/O=REDPILL";
 	private static final String server = "";
-	private static final String dbPath = "names.nsf";
+	private static final String dbPath = "events4.nsf";
 
 	static class Doer implements Runnable {
 		int nameCount = 0;
 		int docCount = 0;
 		int dateCount = 0;
+		Database db;
 
 		Set<Document> thirdReference = new HashSet<Document>();
 
@@ -58,22 +58,23 @@ public enum TransactionScratchTest {
 			System.out.println("ENDING ITERATION of Forms");
 		}
 
-		private void iterateAllDocuments(Database db, Set<Document> secondReference) {
+		private void iterateAllDocuments(Set<Document> secondReference) {
 			System.out.println("Thread " + Thread.currentThread().getName() + " BEGINNING ITERATION of Documents");
 			Session s = db.getParent();
-			DatabaseTransaction txn = db.startTransaction();
+			org.openntf.domino.transactions.DatabaseTransaction txn = db.startTransaction();
 			DocumentCollection dc = db.getAllDocuments();
 			for (Document doc : dc) {
 				docCount++;
 
-				if (docCount % 100 == 0) {
+				if (docCount % 1000 == 0) {
 					secondReference.add(db.getDocumentByID(doc.getNoteID()));
 				}
-				if (docCount % 200 == 0) {
+				if (docCount % 2000 == 0) {
 					thirdReference.add(doc);
 				}
 
 				doc.replaceItemValue("TxnTest", new Date());
+				// doc.save();
 			}
 			System.out.println("ENDING ITERATION of Documents. Committing...");
 			txn.rollback();
@@ -81,6 +82,7 @@ public enum TransactionScratchTest {
 
 		private void iterateSecondReferences(Set<Document> secondReference) {
 			System.out.println("ITERATING Second reference set");
+			org.openntf.domino.transactions.DatabaseTransaction txn = db.startTransaction();
 			for (Document doc : secondReference) {
 				DateTime created = doc.getCreated();
 				if (created != null) {
@@ -89,7 +91,9 @@ public enum TransactionScratchTest {
 				} else {
 					System.out.println("Created was null from document " + doc.getUniversalID());
 				}
+				doc.replaceItemValue("TxnTest2", new Date());
 			}
+			txn.commit();
 		}
 
 		private void iterateThirdReferences() {
@@ -113,16 +117,17 @@ public enum TransactionScratchTest {
 			Name sname = s.getUserNameObject();
 			DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
 			System.out.println(df.format(new Date()) + " Name: " + sname.getCanonical());
-			Database db = s.getDatabase(server, dbPath);
+			db = s.getDatabase(server, dbPath);
 			if (INCLUDE_FORMS) {
 				iterateForms(db);
 			}
 			Set<Document> secondReference = new HashSet<Document>();
-			iterateAllDocuments(db, secondReference);
+			iterateAllDocuments(secondReference);
 			System.gc();
 			// NoteCollection nc = db.createNoteCollection(false);
 			// nc.buildCollection();
 			iterateSecondReferences(secondReference);
+			System.gc();
 			iterateThirdReferences();
 			long elapsed = System.nanoTime() - start;
 			StringBuilder sb = new StringBuilder();
