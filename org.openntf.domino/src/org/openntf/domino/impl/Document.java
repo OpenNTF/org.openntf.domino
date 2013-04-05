@@ -2199,6 +2199,97 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		}
 	}
 
+	void markDirty() {
+		isDirty_ = true;
+		if (!isQueued_) {
+			DatabaseTransaction txn = getParentDatabase().getTransaction();
+			if (txn != null) {
+				txn.queueUpdate(this);
+				isQueued_ = true;
+			}
+		}
+	}
+
+	private boolean queueRemove() {
+		if (!isRemoveQueued_) {
+			DatabaseTransaction txn = getParentDatabase().getTransaction();
+			if (txn != null) {
+				txn.queueRemove(this);
+				isRemoveQueued_ = true;
+				return true; // we queued this, so whoever asked shouldn't do it yet.
+			} else {
+				return false; // calling function should just go ahead and execute
+			}
+		} else { // we already queued this for removal.
+			return false;
+		}
+	}
+
+	void clearDirty() {
+		isDirty_ = false;
+	}
+
+	public void rollback() {
+		if (removeType_ != null)
+			removeType_ = null;
+		if (isDirty()) {
+			String nid = getNoteID();
+			try {
+				lotus.domino.Database delDb = getDelegate().getParentDatabase();
+				getDelegate().recycle();
+				lotus.domino.Document junkDoc = delDb.createDocument(); // NTF - Why? To make sure I get a new cppid. Otherwise the handle
+				// gets reused
+				lotus.domino.Document resetDoc = delDb.getDocumentByID(nid);
+				setDelegate(resetDoc);
+				junkDoc.recycle();
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+			}
+			clearDirty();
+		}
+	}
+
+	public boolean isDirty() {
+		return isDirty_;
+	}
+
+	public boolean forceDelegateRemove() {
+		boolean result = false;
+		RemoveType type = removeType_;
+		try {
+			if (type == RemoveType.SOFT_FALSE) {
+				return getDelegate().remove(false);
+			} else if (type == RemoveType.SOFT_TRUE) {
+				return getDelegate().remove(true);
+			} else if (type == RemoveType.HARD_TRUE) {
+				return getDelegate().removePermanently(true);
+			} else if (type == RemoveType.HARD_FALSE) {
+				return getDelegate().removePermanently(false);
+			}
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		return result;
+	}
+
+	@Override
+	protected lotus.domino.Document getDelegate() {
+		lotus.domino.Document d = super.getDelegate();
+		try {
+			d.isProfile();
+		} catch (NotesException recycleSucks) {
+			if (noteid_ != null) {
+				try {
+					d = ((org.openntf.domino.impl.Database) getParentDatabase()).getDelegate().getDocumentByID(noteid_);
+					setDelegate(d);
+				} catch (NotesException e) {
+					DominoUtils.handleException(e);
+				}
+			}
+		}
+		return d;
+	}
+
 	/*
 	 * Map methods
 	 */
@@ -2291,96 +2382,5 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public Collection<Object> values() {
 		// TODO Implement a "viewing" collection for this or throw an UnsupportedOperationException
 		return null;
-	}
-
-	void markDirty() {
-		isDirty_ = true;
-		if (!isQueued_) {
-			DatabaseTransaction txn = getParentDatabase().getTransaction();
-			if (txn != null) {
-				txn.queueUpdate(this);
-				isQueued_ = true;
-			}
-		}
-	}
-
-	private boolean queueRemove() {
-		if (!isRemoveQueued_) {
-			DatabaseTransaction txn = getParentDatabase().getTransaction();
-			if (txn != null) {
-				txn.queueRemove(this);
-				isRemoveQueued_ = true;
-				return true; // we queued this, so whoever asked shouldn't do it yet.
-			} else {
-				return false; // calling function should just go ahead and execute
-			}
-		} else { // we already queued this for removal.
-			return false;
-		}
-	}
-
-	void clearDirty() {
-		isDirty_ = false;
-	}
-
-	public void rollback() {
-		if (removeType_ != null)
-			removeType_ = null;
-		if (isDirty()) {
-			String nid = getNoteID();
-			try {
-				lotus.domino.Database delDb = getDelegate().getParentDatabase();
-				getDelegate().recycle();
-				lotus.domino.Document junkDoc = delDb.createDocument(); // NTF - Why? To make sure I get a new cppid. Otherwise the handle
-				// gets reused
-				lotus.domino.Document resetDoc = delDb.getDocumentByID(nid);
-				setDelegate(resetDoc);
-				junkDoc.recycle();
-			} catch (NotesException e) {
-				DominoUtils.handleException(e);
-			}
-			clearDirty();
-		}
-	}
-
-	public boolean isDirty() {
-		return isDirty_;
-	}
-
-	public boolean forceDelegateRemove() {
-		boolean result = false;
-		RemoveType type = removeType_;
-		try {
-			if (type == RemoveType.SOFT_FALSE) {
-				return getDelegate().remove(false);
-			} else if (type == RemoveType.SOFT_TRUE) {
-				return getDelegate().remove(true);
-			} else if (type == RemoveType.HARD_TRUE) {
-				return getDelegate().removePermanently(true);
-			} else if (type == RemoveType.HARD_FALSE) {
-				return getDelegate().removePermanently(false);
-			}
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return result;
-	}
-
-	@Override
-	protected lotus.domino.Document getDelegate() {
-		lotus.domino.Document d = super.getDelegate();
-		try {
-			d.isProfile();
-		} catch (NotesException recycleSucks) {
-			if (noteid_ != null) {
-				try {
-					d = ((org.openntf.domino.impl.Database) getParentDatabase()).getDelegate().getDocumentByID(noteid_);
-					setDelegate(d);
-				} catch (NotesException e) {
-					DominoUtils.handleException(e);
-				}
-			}
-		}
-		return d;
 	}
 }
