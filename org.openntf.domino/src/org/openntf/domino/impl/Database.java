@@ -2439,8 +2439,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	@Override
 	public Collection<org.openntf.domino.Document> values() {
-		// TODO Make DocumentCollection implement Collection<Document>
-		return null;
+		return this.createDocumentCollection();
 	}
 
 }

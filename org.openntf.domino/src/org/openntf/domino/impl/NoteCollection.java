@@ -67,7 +67,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 					nid = collection.getNextNoteID(nid);
 				}
 			}
-			result = Factory.fromLotus(coll, org.openntf.domino.DocumentCollection.class, collection);
+			result = coll;
 		}
 		return result;
 	}
