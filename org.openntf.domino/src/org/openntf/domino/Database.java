@@ -25,7 +25,7 @@ import org.openntf.domino.transactions.DatabaseTransaction;
 /**
  * The Interface Database.
  */
-public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database> {
+public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database>, Map<String, Document> {
 
 	public static enum SortOption {
 		SCORES(Database.FT_SCORES), DATE_DES(Database.FT_DATE_DES), DATE_ASC(Database.FT_DATE_ASC);

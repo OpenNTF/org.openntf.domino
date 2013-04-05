@@ -15,8 +15,10 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
@@ -152,11 +154,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	@Override
 	public org.openntf.domino.Document get(Object key) {
-		org.openntf.domino.Document result = null;
-		if (key instanceof String) {
-			result = getDocumentByUNID((String) key);
-		}
-		return result;
+		return this.getDocumentByKey((String) key);
 	}
 
 	/*
@@ -820,19 +818,20 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public Document getDocumentByKey(String key, boolean createOnFail) {
 		try {
-
-			String checksum = DominoUtils.md5(key);
-			Document doc = this.getDocumentByUNID(checksum);
-			if (doc == null && createOnFail) {
-				doc = this.createDocument();
-				doc.setUniversalID(checksum);
-				doc.replaceItemValue("$Created", new Date());
+			if (key != null) {
+				String checksum = DominoUtils.md5(key);
+				Document doc = this.getDocumentByUNID(checksum);
+				if (doc == null && createOnFail) {
+					doc = this.createDocument();
+					doc.setUniversalID(checksum);
+					doc.replaceItemValue("$Created", new Date());
+				}
+				return doc;
 			}
-			return doc;
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
-			return null;
 		}
+		return null;
 	}
 
 	/*
@@ -2364,6 +2363,73 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public DatabaseTransaction getTransaction() {
 		return currentTransaction_;
+	}
+
+	/*
+	 * Map methods
+	 */
+
+	@Override
+	public void clear() {
+		// Oh, dear god, no!
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean containsValue(Object value) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Set<java.util.Map.Entry<String, org.openntf.domino.Document>> entrySet() {
+		// TODO Maybe turn NoteCollection into this?
+		return null;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return this.getAllDocuments().getCount() > 0;
+	}
+
+	@Override
+	public Set<String> keySet() {
+		// TODO Implement this
+		return null;
+	}
+
+	@Override
+	public org.openntf.domino.Document put(String key, org.openntf.domino.Document value) {
+		// TODO Implement this?
+		return null;
+	}
+
+	@Override
+	public void putAll(Map<? extends String, ? extends org.openntf.domino.Document> m) {
+		// TODO Implement this?
+	}
+
+	@Override
+	public org.openntf.domino.Document remove(Object key) {
+		if (key != null) {
+			Document doc = this.getDocumentByKey(key.toString());
+			if (doc != null) {
+				doc.remove(false);
+			}
+
+			return null;
+		}
+		return null;
+	}
+
+	@Override
+	public int size() {
+		return this.getAllDocuments().getCount();
+	}
+
+	@Override
+	public Collection<org.openntf.domino.Document> values() {
+		// TODO Make DocumentCollection implement Collection<Document>
+		return null;
 	}
 
 }

@@ -728,5 +728,4 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	public org.openntf.domino.Database getParentDatabase() {
 		return getParent();
 	}
-
 }
