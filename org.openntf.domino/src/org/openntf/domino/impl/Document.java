@@ -2237,11 +2237,12 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			try {
 				lotus.domino.Database delDb = getDelegate().getParentDatabase();
 				getDelegate().recycle();
-				lotus.domino.Document junkDoc = delDb.createDocument(); // NTF - Why? To make sure I get a new cppid. Otherwise the handle
+				// lotus.domino.Document junkDoc = delDb.createDocument(); // NTF - Why? To make sure I get a new cppid. Otherwise the
+				// handle
 				// gets reused
-				lotus.domino.Document resetDoc = delDb.getDocumentByID(nid);
-				setDelegate(resetDoc);
-				junkDoc.recycle();
+				// lotus.domino.Document resetDoc = delDb.getDocumentByID(nid);
+				// setDelegate(resetDoc);
+				// junkDoc.recycle();
 			} catch (NotesException e) {
 				DominoUtils.handleException(e);
 			}
@@ -2282,6 +2283,25 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				try {
 					d = ((org.openntf.domino.impl.Database) getParentDatabase()).getDelegate().getDocumentByID(noteid_);
 					setDelegate(d);
+					if (log_.isLoggable(Level.FINE)) {
+						Throwable t = new Throwable();
+						StackTraceElement[] elements = t.getStackTrace();
+						log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
+								+ " had been recycled and was auto-restored. Changes may have been lost.");
+						log_.log(Level.FINER,
+								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
+										+ ")");
+						log_.log(Level.FINER,
+								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
+										+ ")");
+						log_.log(Level.FINER,
+								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
+										+ ")");
+						log_.log(Level.FINE,
+								"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
+
+					}
+
 				} catch (NotesException e) {
 					DominoUtils.handleException(e);
 				}
