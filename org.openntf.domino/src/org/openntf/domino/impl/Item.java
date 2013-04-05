@@ -427,7 +427,12 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	@Override
 	public Vector<Object> getValues() {
 		// Just use the parent Doc for this, since it understands MIMEBean
-		return new Vector<Object>(this.getParent().getItemValue(this.getName()));
+		// Check for null in case there was a problem with the parent's method
+		java.util.Vector<Object> values = this.getParent().getItemValue(this.getName());
+		if (values != null) {
+			return new Vector<Object>(values);
+		}
+		return null;
 	}
 
 	/*
