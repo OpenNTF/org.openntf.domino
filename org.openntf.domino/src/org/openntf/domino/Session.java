@@ -31,7 +31,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 		AGENT, APPLET, DOTS, XPAGES_NSF, XPAGES_OSGI, PLUGIN, ADDIN, SERVLET, CLI, DIIOP, UNKNOWN
 	}
 
-	public RunContext getRunContext();
+	// public RunContext getRunContext();
 
 	/**
 	 * Evaluates a Domino formula.
@@ -282,7 +282,7 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 */
 	@Override
 	public ColorObject createColorObject();
-	
+
 	public ColorObject createColorObject(java.awt.Color color);
 
 	/**

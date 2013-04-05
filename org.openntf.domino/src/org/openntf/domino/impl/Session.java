@@ -73,15 +73,14 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		return lotusReferenceCounter_.decrement(id);
 	}
 
-	public RunContext getRunContext() {
+	public static RunContext getRunContext() {
 		// TODO finish this implementation, which needs a lot of work.
 		RunContext result = RunContext.UNKNOWN;
 		SecurityManager sm = System.getSecurityManager();
-		System.out.println(this.getClass().getProtectionDomain().getCodeSource().getLocation());
 		if (sm == null)
 			return RunContext.CLI;
 
-		ProtectionDomain pd = this.getClass().getProtectionDomain();
+		ProtectionDomain pd = Session.class.getProtectionDomain();
 		CodeSource cs = pd.getCodeSource();
 		URL url = cs.getLocation();
 
