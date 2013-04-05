@@ -15,8 +15,7 @@
  */
 package org.openntf.domino.impl;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
+import java.util.Date;
 import java.util.Map;
 import java.util.Vector;
 
@@ -821,24 +820,19 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public Document getDocumentByKey(String key, boolean createOnFail) {
 		try {
-			MessageDigest m = MessageDigest.getInstance("MD5");
-			byte[] digest = m.digest(key.getBytes("UTF-8"));
-			BigInteger bigInt = new BigInteger(1, digest);
-			String hashText = bigInt.toString(16);
-			while (hashText.length() < 32) {
-				hashText = "0" + hashText;
-			}
 
-			Document doc = this.getDocumentByUNID(hashText);
+			String checksum = DominoUtils.md5(key);
+			Document doc = this.getDocumentByUNID(checksum);
 			if (doc == null && createOnFail) {
 				doc = this.createDocument();
-				doc.setUniversalID(hashText);
+				doc.setUniversalID(checksum);
+				doc.replaceItemValue("$Created", new Date());
 			}
 			return doc;
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
+			return null;
 		}
-		return null;
 	}
 
 	/*
