@@ -16,9 +16,6 @@
 package org.openntf.domino.impl;
 
 import java.awt.Color;
-import java.net.URL;
-import java.security.CodeSource;
-import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -71,30 +68,6 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 
 	public int subtractId(long id) {
 		return lotusReferenceCounter_.decrement(id);
-	}
-
-	public static RunContext getRunContext() {
-		// TODO finish this implementation, which needs a lot of work.
-		RunContext result = RunContext.UNKNOWN;
-		SecurityManager sm = System.getSecurityManager();
-		if (sm == null)
-			return RunContext.CLI;
-
-		ProtectionDomain pd = Session.class.getProtectionDomain();
-		CodeSource cs = pd.getCodeSource();
-		URL url = cs.getLocation();
-
-		Object o = sm.getSecurityContext();
-		if (log_.isLoggable(Level.INFO))
-			log_.log(Level.INFO, "SecurityManager is " + sm.getClass().getName() + " and context is " + o.getClass().getName());
-		if (sm instanceof COM.ibm.JEmpower.applet.AppletSecurity) {
-			COM.ibm.JEmpower.applet.AppletSecurity asm = (COM.ibm.JEmpower.applet.AppletSecurity) sm;
-			ThreadGroup tg = asm.getThreadGroup();
-			if (tg instanceof lotus.notes.AgentThreadGroup) {
-				result = RunContext.AGENT;
-			}
-		}
-		return result;
 	}
 
 	/**

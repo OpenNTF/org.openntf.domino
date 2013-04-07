@@ -15,14 +15,12 @@
  */
 package org.openntf.domino.impl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.openntf.domino.iterators.VectorIterator;
 
@@ -33,10 +31,9 @@ import org.openntf.domino.iterators.VectorIterator;
  * @param <E>
  *            the element type
  */
-public class Vector<E> extends java.util.Vector<E> implements List<E> {
+public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 
-	/** The delegate_. */
-	private final List<E> delegate_;
+	private E value_;
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
@@ -44,8 +41,12 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	/**
 	 * Instantiates a new vector.
 	 */
-	public Vector() {
-		delegate_ = new ArrayList<E>();
+	public VectorSingle() {
+
+	}
+
+	public VectorSingle(E value) {
+		value_ = value;
 	}
 
 	/**
@@ -54,22 +55,11 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 * @param source
 	 *            the source
 	 */
-	public Vector(Collection<E> source) {
-		delegate_ = new ArrayList<E>(source);
-	}
-
-	/**
-	 * Instantiates a new vector.
-	 * 
-	 * @param source
-	 *            the source
-	 */
-	public Vector(List<E> source) {
-		delegate_ = source;
-	}
-
-	public List<E> getDelegate() {
-		return delegate_;
+	public VectorSingle(Collection<E> source) {
+		for (E e : source) {
+			value_ = e;
+			break;
+		}
 	}
 
 	/*
@@ -79,7 +69,12 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public boolean add(E arg0) {
-		return delegate_.add(arg0);
+		if (value_ == null) {
+			value_ = arg0;
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/*
@@ -89,7 +84,12 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public void add(int arg0, E arg1) {
-		delegate_.add(arg0, arg1);
+		if (value_ == null) {
+			value_ = arg1;
+
+		} else {
+			// TODO NTF - Exception?
+		}
 	}
 
 	/*
@@ -99,7 +99,15 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public boolean addAll(Collection<? extends E> arg0) {
-		return delegate_.addAll(arg0);
+		boolean result = false;
+		if (value_ == null) {
+			for (E e : arg0) {
+				value_ = e;
+				result = true;
+				break;
+			}
+		}
+		return result;
 	}
 
 	/*
@@ -109,7 +117,15 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public boolean addAll(int arg0, Collection<? extends E> arg1) {
-		return delegate_.addAll(arg0, arg1);
+		boolean result = false;
+		if (value_ == null) {
+			for (E e : arg1) {
+				value_ = e;
+				result = true;
+				break;
+			}
+		}
+		return result;
 	}
 
 	/*
@@ -120,7 +136,8 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	@Override
 	@Deprecated
 	public void addElement(E arg0) {
-		delegate_.add(arg0);
+		if (value_ == null)
+			value_ = arg0;
 	}
 
 	/*
@@ -130,7 +147,7 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public int capacity() {
-		return delegate_.size();
+		return 1;
 	}
 
 	/*
@@ -140,7 +157,7 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public void clear() {
-		delegate_.clear();
+		value_ = null;
 	}
 
 	/*
@@ -150,9 +167,7 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public Object clone() {
-		Vector<E> result = new Vector<E>();
-		Collections.copy(delegate_, result);
-		return result;
+		return new VectorSingle<E>(value_);
 	}
 
 	/*
@@ -162,7 +177,9 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public boolean contains(Object arg0) {
-		return delegate_.contains(arg0);
+		if (arg0 == null)
+			return false;
+		return arg0.equals(value_);
 	}
 
 	/*
@@ -172,7 +189,12 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public boolean containsAll(Collection<?> arg0) {
-		return delegate_.containsAll(arg0);
+		if (arg0.size() > 1)
+			return false;
+		for (Object o : arg0) {
+			return o.equals(value_); // yes, it's a return because we know there's only one item
+		}
+		return false;
 	}
 
 	/*
@@ -194,7 +216,10 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	@Override
 	@Deprecated
 	public E elementAt(int arg0) {
-		return delegate_.get(arg0);
+		if (arg0 == 0)
+			return value_;
+		return null;
+		// TODO NTF - Exception?
 	}
 
 	/*
@@ -205,7 +230,7 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	@Override
 	@Deprecated
 	public Enumeration<E> elements() {
-		return Collections.enumeration(delegate_);
+		return Collections.enumeration(this);
 	}
 
 	/*
@@ -215,9 +240,7 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public void ensureCapacity(int arg0) {
-		// TODO NTF - What backing list would we have that couldn't ensure capacity?
-		// no op.
-		// delegate_.ensureCapacity(arg0);
+		// what would this even mean?
 	}
 
 	/*
@@ -227,7 +250,9 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public boolean equals(Object arg0) {
-		return delegate_.equals(arg0);
+		if (arg0 == null)
+			return false;
+		return arg0.equals(value_);
 	}
 
 	/*
@@ -237,7 +262,7 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public E firstElement() {
-		return delegate_.get(0);
+		return value_;
 	}
 
 	/*
@@ -247,7 +272,10 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public E get(int arg0) {
-		return delegate_.get(arg0);
+		if (arg0 == 0)
+			return value_;
+		return null;
+		// TODO Exception?
 	}
 
 	/*
@@ -257,7 +285,7 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public int hashCode() {
-		return delegate_.hashCode();
+		return value_.hashCode();
 	}
 
 	/*
@@ -268,19 +296,13 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	@Override
 	@Deprecated
 	public int indexOf(Object arg0, int arg1) {
-		int i;
-		if (arg0 != null) {
-			for (i = arg1; i < this.size(); ++i) {
-				if (arg0.equals(delegate_.toArray()[i]))
-					return i;
-			}
-		} else {
-			for (i = arg1; i < this.size(); ++i) {
-				if (delegate_.toArray() == null) {
-					return i;
-				}
-			}
-		}
+		// TODO NTF - come up with an elegant way to express this rather brutal set of conditions...
+		if (arg1 > 0)
+			return -1;
+		if (arg0 == null && value_ == null)
+			return 0;
+		if (arg0 != null && arg0.equals(value_))
+			return 0;
 		return -1;
 
 	}
@@ -292,7 +314,11 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public int indexOf(Object arg0) {
-		return delegate_.indexOf(arg0);
+		if (arg0 == null && value_ == null)
+			return 0;
+		if (arg0 != null && arg0.equals(value_))
+			return 0;
+		return -1;
 	}
 
 	/*
@@ -303,7 +329,9 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	@Override
 	@Deprecated
 	public void insertElementAt(E arg0, int arg1) {
-		delegate_.add(arg1, arg0);
+		if (arg1 > 0)
+			return;
+		value_ = arg0;
 	}
 
 	/*
@@ -313,7 +341,7 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public boolean isEmpty() {
-		return delegate_.isEmpty();
+		return value_ == null;
 	}
 
 	/**
@@ -321,6 +349,7 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 * 
 	 * @return the mod count
 	 */
+	@Override
 	public int getModCount() {
 		return modCount;
 	}
@@ -343,8 +372,7 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	@Override
 	@Deprecated
 	public E lastElement() {
-		return delegate_.get(size() - 1);
-		// return delegate_.lastElement();
+		return value_;
 	}
 
 	/*
@@ -355,8 +383,14 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	@Override
 	@Deprecated
 	public int lastIndexOf(Object arg0, int arg1) {
-		return delegate_.lastIndexOf(arg0);
-		// return delegate_.lastIndexOf(arg0, arg1);
+		// TODO NTF - come up with an elegant way to express this rather brutal set of conditions...
+		if (arg1 > 0)
+			return -1;
+		if (arg0 == null && value_ == null)
+			return 0;
+		if (arg0 != null && arg0.equals(value_))
+			return 0;
+		return -1;
 	}
 
 	/*
@@ -366,27 +400,11 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public int lastIndexOf(Object arg0) {
-		return delegate_.lastIndexOf(arg0);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.AbstractList#listIterator()
-	 */
-	@Override
-	public ListIterator<E> listIterator() {
-		return delegate_.listIterator();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.util.AbstractList#listIterator(int)
-	 */
-	@Override
-	public ListIterator<E> listIterator(int arg0) {
-		return delegate_.listIterator(arg0);
+		if (arg0 == null && value_ == null)
+			return 0;
+		if (arg0 != null && arg0.equals(value_))
+			return 0;
+		return -1;
 	}
 
 	/*
@@ -396,7 +414,12 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public E remove(int arg0) {
-		return delegate_.remove(arg0);
+		if (arg0 == 0) {
+			E result = value_;
+			value_ = null;
+			return result;
+		}
+		return null; // TODO Exception?
 	}
 
 	/*
@@ -406,7 +429,11 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public boolean remove(Object arg0) {
-		return delegate_.remove(arg0);
+		if (arg0 != null && arg0.equals(value_)) {
+			value_ = null;
+			return true;
+		}
+		return false; // TODO Exception?
 	}
 
 	/*
@@ -416,7 +443,11 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public boolean removeAll(Collection<?> arg0) {
-		return delegate_.removeAll(arg0);
+		if (arg0.contains(value_)) {
+			value_ = null;
+			return true;
+		}
+		return false;
 	}
 
 	/*
@@ -426,7 +457,7 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public void removeAllElements() {
-		delegate_.clear();
+		value_ = null;
 	}
 
 	/*
@@ -436,7 +467,7 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public boolean removeElement(Object arg0) {
-		return delegate_.remove(arg0);
+		return remove(arg0);
 	}
 
 	/*
@@ -446,7 +477,7 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public void removeElementAt(int arg0) {
-		delegate_.remove(arg0);
+		remove(arg0);
 	}
 
 	/*
@@ -456,7 +487,11 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public boolean retainAll(Collection<?> arg0) {
-		return delegate_.retainAll(arg0);
+		if (!arg0.contains(value_)) {
+			value_ = null;
+			return true;
+		}
+		return false;
 	}
 
 	/*
@@ -466,7 +501,12 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public E set(int arg0, E arg1) {
-		return delegate_.set(arg0, arg1);
+		if (arg0 == 0) {
+			E result = value_;
+			value_ = arg1;
+			return result;
+		}
+		return null; // TODO Exception?
 	}
 
 	/*
@@ -477,9 +517,11 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	@Override
 	@Deprecated
 	public void setElementAt(E arg0, int arg1) {
-		// TODO make work, since it's a replace
-		delegate_.remove(arg1);
-		delegate_.add(arg1, arg0);
+		if (arg1 == 0) {
+			E result = value_;
+			value_ = arg0;
+		}
+		// TODO Exception?
 	}
 
 	/*
@@ -490,16 +532,11 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	@Override
 	@Deprecated
 	public void setSize(int arg0) {
-		// TODO NTF - absolutely certain that this implementation is wrong
-		if (arg0 == size()) {
-			return;
+		if (arg0 == 1) {
+			// so what?
+		} else {
+			// TODO Exception?
 		}
-		ensureCapacity(arg0);
-		if (size() > arg0) {
-			Arrays.fill(this.elementData, arg0, size(), null);
-		}
-		this.elementCount = arg0;
-		this.modCount += 1;
 	}
 
 	/*
@@ -509,7 +546,7 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public int size() {
-		return delegate_.size();
+		return 1;
 	}
 
 	/*
@@ -519,7 +556,7 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public List<E> subList(int arg0, int arg1) {
-		return delegate_.subList(arg0, arg1);
+		return this;
 	}
 
 	/*
@@ -529,7 +566,9 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public Object[] toArray() {
-		return delegate_.toArray();
+		Object[] result = new Object[1];
+		result[0] = value_;
+		return result;
 	}
 
 	/*
@@ -539,7 +578,14 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public <T> T[] toArray(T[] arg0) {
-		return delegate_.toArray(arg0);
+		T[] result = null;
+		if (arg0.length == 1) {
+			result = arg0;
+		} else {
+			result = Arrays.copyOf(arg0, 1);
+		}
+		result[0] = (T) value_;
+		return result;
 	}
 
 	/*
@@ -549,7 +595,7 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public String toString() {
-		return delegate_.toString();
+		return String.valueOf(value_);
 	}
 
 	/*
@@ -559,9 +605,7 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public void trimToSize() {
-		// TODO NTF - do we actually care to implement this?
-		// no op for now
-		// delegate_.trimToSize();
+		// can't get any smaller, dude
 	}
 
 }

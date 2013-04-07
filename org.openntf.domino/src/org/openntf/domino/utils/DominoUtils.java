@@ -34,21 +34,23 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import lotus.domino.Document;
-import lotus.domino.MIMEEntity;
-import lotus.domino.MIMEHeader;
-import lotus.domino.Session;
-import lotus.domino.Stream;
-
 import org.openntf.domino.Base;
 import org.openntf.domino.Database;
+import org.openntf.domino.DateTime;
+import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
+import org.openntf.domino.Item;
+import org.openntf.domino.MIMEEntity;
+import org.openntf.domino.MIMEHeader;
 import org.openntf.domino.NoteCollection;
+import org.openntf.domino.Session;
+import org.openntf.domino.Stream;
 import org.openntf.domino.exceptions.InvalidNotesUrlException;
 import org.openntf.domino.logging.LogUtils;
 
@@ -312,9 +314,9 @@ public enum DominoUtils {
 	 *            the value
 	 * @return the string
 	 */
-	public static String toUnid(String value) {
-		if (DominoUtils.isUnid(value))
-			return value;
+	public static String toUnid(Serializable value) {
+		if (value instanceof String && DominoUtils.isUnid((String) value))
+			return (String) value;
 		return DominoUtils.md5(value);
 	}
 
@@ -401,8 +403,8 @@ public enum DominoUtils {
 		session.setConvertMime(false);
 
 		Object result = null;
-		lotus.domino.Stream mimeStream = session.createStream();
-		lotus.domino.MIMEEntity entity = doc.getMIMEEntity(itemName);
+		Stream mimeStream = session.createStream();
+		MIMEEntity entity = doc.getMIMEEntity(itemName);
 		if (entity == null) {
 			return null;
 		}
@@ -625,6 +627,55 @@ public enum DominoUtils {
 		} catch (Throwable e) {
 			handleException(e);
 			return returnStream;
+		}
+	}
+
+	public static Item itemFromCalendar(Item item, Calendar cal) {
+		DateTime dt = Factory.getSession(item).createDateTime(cal);
+		item.setDateTimeValue(dt);
+		DominoUtils.incinerate(dt);
+		return item;
+	}
+
+	public static Item itemFromCalendarAppend(Item item, Calendar cal) {
+		DateTime dt = Factory.getSession(item).createDateTime(cal);
+		Vector<DateTime> v = item.getValueDateTimeArray();
+		v.add(dt);
+		item.setValues(v);
+		DominoUtils.incinerate(dt);
+		return item;
+	}
+
+	public static Item itemFromDate(Item item, Date cal) {
+		DateTime dt = Factory.getSession(item).createDateTime(cal);
+		item.setDateTimeValue(dt);
+		DominoUtils.incinerate(dt);
+		return item;
+	}
+
+	public static Item itemFromDateAppend(Item item, Date cal) {
+		DateTime dt = Factory.getSession(item).createDateTime(cal);
+		Vector<DateTime> v = item.getValueDateTimeArray();
+		v.add(dt);
+		DominoUtils.incinerate(dt);
+		return item;
+	}
+
+	public static Calendar itemToCalendar(Item item) {
+		DateTime dt = item.getDateTimeValue();
+		if (dt != null) {
+			return DominoUtils.toJavaCalendarSafe(dt);
+		} else {
+			return null;
+		}
+	}
+
+	public static Date itemToDate(Item item) {
+		DateTime dt = item.getDateTimeValue();
+		if (dt != null) {
+			return DominoUtils.toJavaDateSafe(dt);
+		} else {
+			return null;
 		}
 	}
 }

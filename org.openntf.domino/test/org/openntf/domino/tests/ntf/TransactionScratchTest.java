@@ -112,7 +112,7 @@ public enum TransactionScratchTest {
 			// if (false) {
 			long start = System.nanoTime();
 			Session s = Factory.getSessionFullAccess();
-			RunContext rc = s.getRunContext();
+			RunContext rc = Factory.getRunContext();
 			System.out.println("RunContext: " + rc.toString());
 			Name sname = s.getUserNameObject();
 			DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");

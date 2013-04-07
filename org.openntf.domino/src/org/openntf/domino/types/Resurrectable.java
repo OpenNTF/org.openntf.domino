@@ -20,12 +20,6 @@ package org.openntf.domino.types;
  * The Interface Resurrectable.
  */
 public interface Resurrectable {
-
-	/**
-	 * Resurrect.
-	 * 
-	 * @return true, if successful
-	 */
-	public boolean resurrect();
-
+	// this had a resurrect() method, but such a method really has no business being public, and therefore the interface is really just a
+	// marker to the API that something is recycle-resistant.
 }
