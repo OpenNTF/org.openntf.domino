@@ -1,0 +1,9 @@
+bin
+Snap*
+core*
+javacore*
+/IBM_TECHNICAL_SUPPORT
+features/
+plugins/
+artifacts.jar
+content.jar
