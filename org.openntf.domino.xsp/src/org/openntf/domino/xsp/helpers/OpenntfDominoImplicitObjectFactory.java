@@ -21,7 +21,6 @@ import javax.faces.context.FacesContext;
 
 import org.openntf.domino.utils.Factory;
 
-import com.ibm.domino.xsp.module.nsf.NotesContext;
 import com.ibm.xsp.context.FacesContextEx;
 import com.ibm.xsp.el.ImplicitObjectFactory;
 import com.ibm.xsp.util.TypedUtil;
@@ -38,13 +37,26 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void createImplicitObjects(FacesContextEx paramFacesContextEx) {
-
 		Map localMap = TypedUtil.getRequestMap(paramFacesContextEx.getExternalContext());
-		org.openntf.domino.Session s = Factory.fromLotus(NotesContext.getCurrent().getCurrentSession(), org.openntf.domino.Session.class,
-				null);
-		localMap.put("session", s);
-		org.openntf.domino.Database db = Factory.fromLotus(s.getCurrentDatabase(), org.openntf.domino.Database.class, s);
-		localMap.put("database", db);
+		org.openntf.domino.Session s = null;
+		if (localMap.containsKey("session")) {
+			Object current = localMap.get("session");
+			if (!(current instanceof org.openntf.domino.Session)) {
+				s = Factory.fromLotus((lotus.domino.Session) current, org.openntf.domino.Session.class, null);
+				localMap.put("session", s);
+			} else {
+				s = (org.openntf.domino.Session) current;
+			}
+		}
+		if (localMap.containsKey("database")) {
+			Object current = localMap.get("database");
+			if (!(current instanceof org.openntf.domino.Session)) {
+				org.openntf.domino.Database db = Factory.fromLotus((lotus.domino.Database) current, org.openntf.domino.Database.class, s);
+				localMap.put("database", db);
+				;
+			}
+		}
+
 	}
 
 	@Override

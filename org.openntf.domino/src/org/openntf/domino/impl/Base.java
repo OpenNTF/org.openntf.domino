@@ -17,6 +17,8 @@ package org.openntf.domino.impl;
 
 import java.lang.ref.Reference;
 import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -75,13 +77,21 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/** The is invalid method. */
 	private static Method isInvalidMethod;
+
 	static {
 		try {
-			getCppMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("GetCppObj", (Class<?>[]) null);
-			getCppMethod.setAccessible(true);
-			isInvalidMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("isInvalid", (Class<?>[]) null);
-			isInvalidMethod.setAccessible(true);
+			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				@Override
+				public Object run() throws Exception {
+					getCppMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("GetCppObj", (Class<?>[]) null);
+					getCppMethod.setAccessible(true);
+					isInvalidMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("isInvalid", (Class<?>[]) null);
+					isInvalidMethod.setAccessible(true);
+					return null;
+				}
+			});
 		} catch (Exception e) {
+			e.printStackTrace();
 			DominoUtils.handleException(e);
 		}
 

@@ -109,6 +109,7 @@ public class LogUtils {
 	 *            String of filepath for logging properties file, or empty string to load the default org.openntf.domino logger
 	 */
 	static public void loadLoggerConfig(boolean relative, String filePath) {
+		System.out.println("Loading Logger config...");
 		try {
 			LogManager manager = LogManager.getLogManager();
 			if ("".equals(filePath)) {
@@ -122,10 +123,11 @@ public class LogUtils {
 				}
 				manager.readConfiguration(is);
 			}
+			System.out.println("Completed logger config.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (AccessControlException e) {
-			return;
+			e.printStackTrace();
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
