@@ -19,6 +19,7 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -284,6 +285,16 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 			DominoUtils.handleException(e);
 			return false;
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getParent().getAncestorSession();
 	}
 
 }

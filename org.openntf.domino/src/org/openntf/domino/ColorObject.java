@@ -15,11 +15,13 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.SessionDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface ColorObject.
  */
-public interface ColorObject extends Base<lotus.domino.ColorObject>, lotus.domino.ColorObject {
+public interface ColorObject extends Base<lotus.domino.ColorObject>, lotus.domino.ColorObject, SessionDescendant {
 
 	/*
 	 * (non-Javadoc)

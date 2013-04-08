@@ -18,6 +18,8 @@ package org.openntf.domino.impl;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.Session;
+import org.openntf.domino.types.DocumentDescendant;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -243,15 +245,37 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 		}
 	}
 
-	public Document getParentDocument() {
-		return getParent().getParentDocument();
-	}
-
-	public Database getParentDatabase() {
-		return getParent().getParentDatabase();
-	}
-
 	void markDirty() {
-		getParentDocument().markDirty();
+		getAncestorDocument().markDirty();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
+	 */
+	@Override
+	public Document getAncestorDocument() {
+		return (Document) ((DocumentDescendant) this.getParent()).getAncestorDocument();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
+	 */
+	@Override
+	public Database getAncestorDatabase() {
+		return this.getAncestorDocument().getAncestorDatabase();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getAncestorDocument().getAncestorSession();
 	}
 }

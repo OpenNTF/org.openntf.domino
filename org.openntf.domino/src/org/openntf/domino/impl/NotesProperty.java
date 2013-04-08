@@ -19,6 +19,7 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -41,7 +42,9 @@ public class NotesProperty extends Base<org.openntf.domino.NotesProperty, lotus.
 		super(delegate, parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NotesProperty#clear()
 	 */
 	@Override
@@ -53,7 +56,9 @@ public class NotesProperty extends Base<org.openntf.domino.NotesProperty, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NotesProperty#getDescription()
 	 */
 	@Override
@@ -66,7 +71,9 @@ public class NotesProperty extends Base<org.openntf.domino.NotesProperty, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NotesProperty#getName()
 	 */
 	@Override
@@ -79,7 +86,9 @@ public class NotesProperty extends Base<org.openntf.domino.NotesProperty, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NotesProperty#getNamespace()
 	 */
 	@Override
@@ -92,7 +101,9 @@ public class NotesProperty extends Base<org.openntf.domino.NotesProperty, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NotesProperty#getTitle()
 	 */
 	@Override
@@ -105,7 +116,9 @@ public class NotesProperty extends Base<org.openntf.domino.NotesProperty, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NotesProperty#getTypeName()
 	 */
 	@Override
@@ -118,7 +131,9 @@ public class NotesProperty extends Base<org.openntf.domino.NotesProperty, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NotesProperty#getValueString()
 	 */
 	@Override
@@ -131,7 +146,9 @@ public class NotesProperty extends Base<org.openntf.domino.NotesProperty, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NotesProperty#getValues()
 	 */
 	@Override
@@ -145,7 +162,9 @@ public class NotesProperty extends Base<org.openntf.domino.NotesProperty, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NotesProperty#isInput()
 	 */
 	@Override
@@ -158,7 +177,9 @@ public class NotesProperty extends Base<org.openntf.domino.NotesProperty, lotus.
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.NotesProperty#publish()
 	 */
 	@Override
@@ -168,5 +189,15 @@ public class NotesProperty extends Base<org.openntf.domino.NotesProperty, lotus.
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return (Session) this.getParent();
 	}
 }

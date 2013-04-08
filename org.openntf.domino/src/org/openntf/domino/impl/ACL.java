@@ -106,6 +106,16 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		return null;
 	}
 
+	@Override
+	public Database getAncestorDatabase() {
+		return this.getParent();
+	}
+
+	@Override
+	public Session getAncestorSession() {
+		return this.getAncestorDatabase().getParent();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -406,10 +416,6 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	@Override
 	public Iterator<ACLEntry> iterator() {
 		return new AclIterator(this);
-	}
-
-	public Database getParentDatabase() {
-		return getParent();
 	}
 
 }

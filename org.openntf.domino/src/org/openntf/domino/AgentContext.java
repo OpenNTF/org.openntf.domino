@@ -15,11 +15,13 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.SessionDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface AgentContext.
  */
-public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.domino.AgentContext {
+public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.domino.AgentContext, SessionDescendant {
 
 	/*
 	 * (non-Javadoc)

@@ -19,6 +19,7 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -384,5 +385,25 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 
 	public Database getParentDatabase() {
 		return getParent();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
+	 */
+	@Override
+	public Database getAncestorDatabase() {
+		return this.getParent();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getAncestorDatabase().getAncestorSession();
 	}
 }

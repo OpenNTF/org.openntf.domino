@@ -17,66 +17,88 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
+import org.openntf.domino.types.SessionDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface NotesProperty.
  */
-public interface NotesProperty extends Base<lotus.domino.NotesProperty>, lotus.domino.NotesProperty {
+public interface NotesProperty extends Base<lotus.domino.NotesProperty>, lotus.domino.NotesProperty, SessionDescendant {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.NotesProperty#clear()
 	 */
 	@Override
 	public void clear();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.NotesProperty#getDescription()
 	 */
 	public String getDescription();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.NotesProperty#getName()
 	 */
 	@Override
 	public String getName();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.NotesProperty#getNamespace()
 	 */
 	@Override
 	public String getNamespace();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.NotesProperty#getTitle()
 	 */
 	@Override
 	public String getTitle();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.NotesProperty#getTypeName()
 	 */
 	@Override
 	public String getTypeName();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.NotesProperty#getValues()
 	 */
 	@Override
 	public Vector<Object> getValues();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.NotesProperty#getValueString()
 	 */
 	@Override
 	public String getValueString();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.NotesProperty#isInput()
 	 */
 	@Override
 	public boolean isInput();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.NotesProperty#publish()
 	 */
 	@Override

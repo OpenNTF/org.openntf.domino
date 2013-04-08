@@ -347,4 +347,14 @@ public class International extends Base<org.openntf.domino.International, lotus.
 			return false;
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public org.openntf.domino.Session getAncestorSession() {
+		return this.getParent();
+	}
 }

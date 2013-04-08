@@ -1,8 +1,10 @@
 package org.openntf.domino.impl;
 
+import java.io.InputStream;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Document;
+import org.openntf.domino.Session;
 import org.openntf.domino.utils.Factory;
 
 public class FileResource extends Base<org.openntf.domino.FileResource, lotus.domino.Base> implements org.openntf.domino.FileResource {
@@ -21,14 +23,17 @@ public class FileResource extends Base<org.openntf.domino.FileResource, lotus.do
 		return this.getParent().getDocumentByUNID(document_.getUniversalID());
 	}
 
-	@Override
-	public String getName() {
-		return document_.getItemValueString("$TITLE");
+	public InputStream getInputStream() {
+		return document_.getFirstItem("$FileData").getInputStream();
+	}
+
+	public String getMimeType() {
+		return document_.getItemValueString("$MimeType");
 	}
 
 	@Override
-	public Database getParent() {
-		return (Database) super.getParent();
+	public String getName() {
+		return document_.getItemValueString("$TITLE");
 	}
 
 	@Override
@@ -37,13 +42,13 @@ public class FileResource extends Base<org.openntf.domino.FileResource, lotus.do
 	}
 
 	@Override
-	public String getUniversalID() {
-		return document_.getUniversalID();
+	public Database getParent() {
+		return (Database) super.getParent();
 	}
 
 	@Override
-	public org.openntf.domino.Database getParentDatabase() {
-		return getParent();
+	public String getUniversalID() {
+		return document_.getUniversalID();
 	}
 
 	public boolean isHideFromWeb() {
@@ -76,5 +81,25 @@ public class FileResource extends Base<org.openntf.domino.FileResource, lotus.do
 
 	private String getFlags() {
 		return document_.getItemValueString("$Flags");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
+	 */
+	@Override
+	public Database getAncestorDatabase() {
+		return this.getParent();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getAncestorDatabase().getAncestorSession();
 	}
 }

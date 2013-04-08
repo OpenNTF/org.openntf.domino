@@ -258,4 +258,14 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 			DominoUtils.handleException(e);
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public org.openntf.domino.Session getAncestorSession() {
+		return this.getParentSession();
+	}
 }

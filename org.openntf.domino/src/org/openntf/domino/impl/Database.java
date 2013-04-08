@@ -982,7 +982,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		String noteId = notes.getFirstNoteID();
 		if (!noteId.isEmpty()) {
 			Document resourceDoc = this.getDocumentByID(noteId);
-			return new FileResource(resourceDoc, this);
+			return new FileResource(resourceDoc.getDelegate(), this);
 		}
 		return null;
 	}
@@ -995,7 +995,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		notes.buildCollection();
 		for (String noteId : notes) {
 			Document resourceDoc = this.getDocumentByID(noteId);
-			result.add(new FileResource(resourceDoc, this));
+			result.add(new FileResource(resourceDoc.getDelegate(), this));
 		}
 		return result;
 	}
@@ -2522,6 +2522,16 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getParent();
 	}
 
 }

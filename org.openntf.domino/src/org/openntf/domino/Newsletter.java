@@ -15,61 +15,81 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.SessionDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface Newsletter.
  */
-public interface Newsletter extends Base<lotus.domino.Newsletter>, lotus.domino.Newsletter {
+public interface Newsletter extends Base<lotus.domino.Newsletter>, lotus.domino.Newsletter, SessionDescendant {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Newsletter#formatDocument(lotus.domino.Database, int)
 	 */
 	@Override
 	public lotus.domino.Document formatDocument(lotus.domino.Database database, int index);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Newsletter#formatMsgWithDoclinks(lotus.domino.Database)
 	 */
 	@Override
 	public lotus.domino.Document formatMsgWithDoclinks(lotus.domino.Database database);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Newsletter#getParent()
 	 */
 	@Override
 	public Session getParent();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Newsletter#getSubjectItemName()
 	 */
 	@Override
 	public String getSubjectItemName();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Newsletter#isDoScore()
 	 */
 	@Override
 	public boolean isDoScore();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Newsletter#isDoSubject()
 	 */
 	@Override
 	public boolean isDoSubject();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Newsletter#setDoScore(boolean)
 	 */
 	@Override
 	public void setDoScore(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Newsletter#setDoSubject(boolean)
 	 */
 	@Override
 	public void setDoSubject(boolean flag);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.Newsletter#setSubjectItemName(java.lang.String)
 	 */
 	@Override

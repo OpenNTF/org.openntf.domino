@@ -34,6 +34,7 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Database;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.NoteCollection;
+import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.transactions.DatabaseTransaction;
@@ -2288,17 +2289,15 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
 								+ " had been recycled and was auto-restored. Changes may have been lost.");
-						log_.log(Level.FINER,
-								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-										+ ")");
-						log_.log(Level.FINER,
-								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-										+ ")");
-						log_.log(Level.FINER,
-								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-										+ ")");
-						log_.log(Level.FINE,
-								"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
+						log_.log(Level.FINER, elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line "
+								+ elements[0].getLineNumber() + ")");
+						log_.log(Level.FINER, elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line "
+								+ elements[1].getLineNumber() + ")");
+						log_.log(Level.FINER, elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line "
+								+ elements[2].getLineNumber() + ")");
+						log_
+								.log(Level.FINE,
+										"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
 
 					}
 
@@ -2406,5 +2405,25 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public Collection<Object> values() {
 		// TODO Implement a "viewing" collection for this or throw an UnsupportedOperationException
 		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
+	 */
+	@Override
+	public Database getAncestorDatabase() {
+		return this.getParentDatabase();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getParentDatabase().getParent();
 	}
 }

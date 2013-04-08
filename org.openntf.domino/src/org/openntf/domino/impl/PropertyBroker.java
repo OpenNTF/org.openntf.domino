@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -91,5 +92,15 @@ public class PropertyBroker extends Base<org.openntf.domino.PropertyBroker, lotu
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return (Session) this.getParent();
 	}
 }

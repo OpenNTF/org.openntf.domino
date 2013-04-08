@@ -15,11 +15,13 @@
  */
 package org.openntf.domino.impl;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Database;
+import org.openntf.domino.Session;
+import org.openntf.domino.types.DocumentDescendant;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -183,29 +185,37 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 		}
 	}
 
-	public Document getParentDocument() {
-		org.openntf.domino.Base<?> parent = super.getParent();
-		if (parent instanceof RichTextItem) {
-			return ((RichTextItem) parent).getParentDocument();
-		} else if (parent instanceof RichTextRange) {
-			return ((RichTextRange) parent).getParentDocument();
-		} else if (parent instanceof RichTextNavigator) {
-			return ((RichTextNavigator) parent).getParentDocument();
-		} else {
-			if (log_.isLoggable(Level.WARNING)) {
-				log_.log(Level.WARNING,
-						"RichTextSection doesn't have a RichTextItem, RichTextNavigator or RichTextRange as a parent? That's unpossible! But we got a "
-								+ parent.getClass().getName());
-			}
-		}
-		return null;
-	}
-
-	public org.openntf.domino.Database getParentDatabase() {
-		return getParentDocument().getParentDatabase();
-	}
-
 	void markDirty() {
-		getParentDocument().markDirty();
+		getAncestorDocument().markDirty();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
+	 */
+	@Override
+	public Document getAncestorDocument() {
+		return (Document) ((DocumentDescendant) this.getParent()).getAncestorDocument();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
+	 */
+	@Override
+	public Database getAncestorDatabase() {
+		return this.getAncestorDocument().getAncestorDatabase();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getAncestorDocument().getAncestorSession();
 	}
 }

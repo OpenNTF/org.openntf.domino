@@ -20,6 +20,7 @@ import java.util.Vector;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.DateTime;
+import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -695,8 +696,24 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	public Database getParentDatabase() {
-		return getParent();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
+	 */
+	@Override
+	public Database getAncestorDatabase() {
+		return this.getParent();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getParent().getParent();
 	}
 
 }

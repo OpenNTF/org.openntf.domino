@@ -541,4 +541,14 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		return cal_;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getParent();
+	}
+
 }

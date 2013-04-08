@@ -307,4 +307,14 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log> implemen
 			DominoUtils.handleException(ne);
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getParent();
+	}
 }

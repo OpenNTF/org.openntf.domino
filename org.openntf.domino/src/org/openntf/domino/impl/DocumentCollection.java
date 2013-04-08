@@ -20,7 +20,9 @@ import java.util.Iterator;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
+import org.openntf.domino.Session;
 import org.openntf.domino.iterators.DocumentIterator;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -826,5 +828,25 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	@Override
 	public <T> T[] toArray(T[] arg0) {
 		throw new UnsupportedOperationException();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
+	 */
+	@Override
+	public Database getAncestorDatabase() {
+		return this.getParent();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getParent().getParent();
 	}
 }

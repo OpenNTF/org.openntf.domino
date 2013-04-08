@@ -1612,4 +1612,14 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 			return null;
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public org.openntf.domino.Session getAncestorSession() {
+		return this.getParent();
+	}
 }

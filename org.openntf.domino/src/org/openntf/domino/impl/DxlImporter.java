@@ -17,6 +17,7 @@ package org.openntf.domino.impl;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 
 // TODO: Auto-generated Javadoc
@@ -456,6 +457,16 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return (Session) this.getParent();
 	}
 
 }
