@@ -108,7 +108,7 @@ public enum BigDominoAPIScratchTest {
 			long start = System.nanoTime();
 
 			Session s = Factory.getSession();
-			RunContext rc = s.getRunContext();
+			RunContext rc = Factory.getRunContext();
 			System.out.println("RunContext: " + rc.toString());
 			Name sname = s.getUserNameObject();
 			DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");

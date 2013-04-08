@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
@@ -41,7 +42,7 @@ import org.openntf.domino.utils.Factory;
  * The Class Database.
  */
 public class Database extends Base<org.openntf.domino.Database, lotus.domino.Database> implements org.openntf.domino.Database {
-
+	private static final Logger log_ = Logger.getLogger(Database.class.getName());
 	/** The server_. */
 	private String server_;
 
@@ -61,7 +62,17 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public Database(lotus.domino.Database delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
+		initialize(delegate);
+	}
 
+	private void initialize(lotus.domino.Database delegate) {
+		try {
+			server_ = delegate.getServer();
+			path_ = delegate.getFilePath();
+			replid_ = delegate.getReplicaID();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 	/*
@@ -957,13 +968,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#getFilePath()
 	 */
 	public String getFilePath() {
-		try {
-			return getDelegate().getFilePath();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return path_;
 	}
 
 	public FileResource getFileResource(String name) {
@@ -1329,13 +1334,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#getReplicaID()
 	 */
 	public String getReplicaID() {
-		try {
-			return getDelegate().getReplicaID();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return replid_;
 	}
 
 	/*
@@ -1359,13 +1358,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#getServer()
 	 */
 	public String getServer() {
-		try {
-			return getDelegate().getServer();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return server_;
 	}
 
 	/*
@@ -2492,6 +2485,43 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public Collection<org.openntf.domino.Document> values() {
 		return this.createDocumentCollection();
+	}
+
+	@Override
+	protected lotus.domino.Database getDelegate() {
+		lotus.domino.Database db = super.getDelegate();
+		try {
+			db.isOpen();
+		} catch (NotesException e) {
+			resurrect();
+		}
+		return super.getDelegate();
+	}
+
+	private void resurrect() { // should only happen if the delegate has been destroyed somehow.
+		lotus.domino.Session rawSession = ((org.openntf.domino.impl.Session) getParent()).getDelegate();
+		try {
+			lotus.domino.Database d = rawSession.getDatabase(server_, path_);
+			setDelegate(d);
+			if (log_.isLoggable(java.util.logging.Level.FINE)) {
+				Throwable t = new Throwable();
+				StackTraceElement[] elements = t.getStackTrace();
+				log_.log(java.util.logging.Level.FINE, "Database " + (server_.length() < 1 ? "" : server_ + "!!") + path_
+						+ "had been recycled and was auto-restored. Changes may have been lost.");
+
+				log_.log(java.util.logging.Level.FINER, elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line "
+						+ elements[1].getLineNumber() + ")");
+				log_.log(java.util.logging.Level.FINER, elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line "
+						+ elements[2].getLineNumber() + ")");
+				log_.log(java.util.logging.Level.FINER, elements[3].getClassName() + "." + elements[3].getMethodName() + " ( line "
+						+ elements[3].getLineNumber() + ")");
+				log_.log(java.util.logging.Level.FINE,
+						"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
+
+			}
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 }

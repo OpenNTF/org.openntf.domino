@@ -16,9 +16,6 @@
 package org.openntf.domino.impl;
 
 import java.awt.Color;
-import java.net.URL;
-import java.security.CodeSource;
-import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -71,27 +68,6 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 
 	public int subtractId(long id) {
 		return lotusReferenceCounter_.decrement(id);
-	}
-
-	public RunContext getRunContext() {
-		// TODO finish this implementation, which needs a lot of work.
-		RunContext result = RunContext.UNKNOWN;
-		SecurityManager sm = System.getSecurityManager();
-		System.out.println(this.getClass().getProtectionDomain().getCodeSource().getLocation());
-		if (sm == null)
-			return RunContext.CLI;
-
-		ProtectionDomain pd = this.getClass().getProtectionDomain();
-		CodeSource cs = pd.getCodeSource();
-		URL url = cs.getLocation();
-
-		Object o = sm.getSecurityContext();
-		if (log_.isLoggable(Level.INFO))
-			log_.log(Level.INFO, "SecurityManager is " + sm.getClass().getName() + " and context is " + o.getClass().getName());
-		if (sm instanceof COM.ibm.JEmpower.applet.AppletSecurity) {
-			COM.ibm.JEmpower.applet.AppletSecurity asm = (COM.ibm.JEmpower.applet.AppletSecurity) sm;
-		}
-		return result;
 	}
 
 	/**
@@ -227,8 +203,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 */
 	public DateRange createDateRange(lotus.domino.DateTime startTime, lotus.domino.DateTime endTime) {
 		try {
-			return Factory.fromLotus(getDelegate().createDateRange((lotus.domino.DateTime) toLotus(startTime),
-					(lotus.domino.DateTime) toLotus(endTime)), org.openntf.domino.DateRange.class, this);
+			return Factory.fromLotus(
+					getDelegate().createDateRange((lotus.domino.DateTime) toLotus(startTime), (lotus.domino.DateTime) toLotus(endTime)),
+					org.openntf.domino.DateRange.class, this);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -452,7 +429,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(String formula, lotus.domino.Document doc) {
 		try {
 			return Factory.wrapColumnValues((Vector<Object>) getDelegate().evaluate(formula, (lotus.domino.Document) toLotus(doc)));
@@ -469,7 +446,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	@Legacy( { Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(String formula) {
 		try {
 			return Factory.wrapColumnValues((Vector<Object>) getDelegate().evaluate(formula));
@@ -489,8 +466,9 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Legacy(Legacy.INTERFACES_WARNING)
 	public Vector<org.openntf.domino.DateRange> freeTimeSearch(lotus.domino.DateRange window, int duration, Object names, boolean firstFit) {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().freeTimeSearch((lotus.domino.DateRange) toLotus(window), duration, names,
-					firstFit), org.openntf.domino.DateRange.class, this);
+			return Factory.fromLotusAsVector(
+					getDelegate().freeTimeSearch((lotus.domino.DateRange) toLotus(window), duration, names, firstFit),
+					org.openntf.domino.DateRange.class, this);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;

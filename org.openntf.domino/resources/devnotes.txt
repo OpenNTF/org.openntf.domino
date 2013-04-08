@@ -2,3 +2,135 @@ For future reference, these are the initialization points for the JNI functions 
 
 com.ibm.designer.domino.napi.util.OSLoader.initializeExt();	//loads from nnotes.dll or corresponding platform library
 lotus.domino.NotesThread.load(boolean);	//loads from nslxbe.dll or corresponding platform library
+
+
+
+Here are the Java System Properties as seen by a Java class instantiated in an XPage. Note that Domino is installed at 
+C:\IBMCS\Domino
+
+java.vendor=IBM Corporation
+osgi.bundles.defaultStartLevel=10
+org.osgi.supports.framework.extension=true
+osgi.framework.beginningstartlevel=1
+os.name=Windows 7
+osgi.classloader.define.packages=noattributes
+osgi.ws=win32
+sun.java2d.fontpath=
+java.vm.specification.vendor=Sun Microsystems Inc.
+osgi.startLevel=15
+java.runtime.version=pwi3260sr12ifx-20121108_01 (SR12)
+osgi.noShutdown=true
+user.name=SYSTEM
+use.rcp.logging=true
+java.compiler=j9jit24
+os.encoding=UTF8
+org.osgi.framework.system.packages=javax.accessibility,javax.activation,...
+com.ibm.util.extralibs.properties=
+osgi.contextClassLoaderParent=fwk
+com.ibm.jcl.checkClassPath=
+org.osgi.framework.language=en
+user.language=en
+com.ibm.oti.vm.bootstrap.library.path=C:\IBMCS\Domino\jvm\bin
+org.osgi.framework.processor=x86
+osgi.syspath=c:\IBMCS\Domino\osgi\rcp\eclipse\plugins
+sun.boot.library.path=C:\IBMCS\Domino\jvm\bin
+osgi.compatibility.bootdelegation=true
+java.version=1.6.0
+org.osgi.framework.os.name=windows 7
+user.timezone=America/New_York
+sun.arch.data.model=32
+com.ibm.zero.version=1
+java.endorsed.dirs=C:\IBMCS\Domino\jvm\lib\endorsed
+com.ibm.oti.vm.library.version=24
+sun.jnu.encoding=Cp1252
+org.osgi.framework.vendor=Eclipse
+jxe.current.romimage.version=15
+file.separator=\
+java.specification.name=Java Platform API Specification
+java.class.version=50.0
+user.country=US
+java.home=C:\IBMCS\Domino\jvm
+osgi.os=win32
+os.version=6.1 build 7601 Service Pack 1
+osgi.arch=x86
+java.awt.fonts=
+path.separator=;
+java.vm.version=2.4
+osgi.console=
+org.osgi.supports.framework.fragment=true
+user.variant=
+java.protocol.handler.pkgs=lotus.domino.axis.transport 
+java.awt.printerjob=sun.awt.windows.WPrinterJob
+notes.binary=C:\IBMCS\Domino
+sun.io.unicode.encoding=UnicodeLittle
+org.osgi.framework.version=1.4.0
+awt.toolkit=sun.awt.windows.WToolkit
+com.ibm.domino.http.bootstrap.BootstrapOSGIClassLoader=true
+ibm.signalhandling.sigint=true
+java.assistive=ON
+osgi.install.area=file:/C:/IBMCS/Domino/osgi/rcp/eclipse/
+user.home=C:\Windows\system32\config\systemprofile
+com.ibm.cpu.endian=little
+java.specification.vendor=Sun Microsystems Inc.
+osgi.nl=en_US
+ibm.signalhandling.sigchain=true
+java.vendor.url=http://www.ibm.com/
+org.osgi.framework.os.version=6.1.0
+rcp.data=C:/IBMCS/Domino/data/domino/workspace
+java.vm.vendor=IBM Corporation
+java.runtime.name=Java(TM) SE Runtime Environment
+java.class.path=;.
+osgi.parentClassloader=fwk
+java.vm.specification.name=Java Virtual Machine Specification
+java.vm.specification.version=1.0
+sun.cpu.endian=little
+java.io.tmpdir=C:\data\systemp\notesB2B49F
+java.jcl.version=20121108_01
+notes.init.jvm1=
+ibm.system.encoding=Cp1252
+eclipse.home.location=file:/C:/IBMCS/Domino/osgi/rcp/eclipse/
+ibm.signalhandling.rs=true
+java.awt.graphicsenv=sun.awt.Win32GraphicsEnvironment
+os.arch=x86
+user.dir=C:\IBMCS\Domino
+org.osgi.supports.framework.requirebundle=true
+osgi.clean=true
+com.ibm.pvc.webcontainer.http.server=false
+line.separator=
+java.vm.name=IBM J9 VM
+com.ibm.oti.shared.enabled=false
+com.ibm.vm.bitmode=32
+eclipse.ee.install.verify=false
+jxe.lowest.romimage.version=15
+file.encoding=Cp1252
+com.ibm.common.ExtensionManager=osgi
+com.ibm.oti.configuration=scar
+java.specification.version=1.6
+com.ibm.oti.jcl.build=20120915_0846
+sun.boot.class.path=C:\IBMCS\Domino\jvm\lib\vm.jar;C:\IBMCS\Domino\jvm\lib\ibmallorb.jar;C:\IBMCS\Domino\jvm\lib\rt.jar;C:\IBMCS\Domino\jvm\lib\ibmpkcs.jar;C:\IBMCS\Domino\jvm\lib\ibmjcefw.jar;C:\IBMCS\Domino\jvm\lib\tools.jar
+com.ibm.pvc.webcontainer.vhost.configfile=C:\IBMCS\Domino\data\domino\workspace\.metadata\.plugins\com.ibm.domino.osgi.core\vhost.properties
+osgi.manifest.cache=C:\IBMCS\Domino\data\domino\workspace\.config\org.eclipse.osgi\manifests
+osgi.consoleClass=com.ibm.domino.osgi.core.adaptor.DominoFrameworkConsole
+java.vm.info=JRE 1.6.0 IBM J9 2.4 Windows 7 x86-32 jvmwi3260sr12-20121024_126067 (JIT enabled, AOT enabled)
+J9VM - 20121024_126067
+JIT  - r9_20120914_26057
+GC   - 20120928_AA
+
+java.util.prefs.PreferencesFactory=java.util.prefs.WindowsPreferencesFactory
+osgi.framework=file:/C:/IBMCS/Domino/osgi/rcp/eclipse/plugins/org.eclipse.osgi_3.4.3.R34x_v20081215-1030-RCP20130228-0400.jar
+osgi.bundlestore=C:\IBMCS\Domino\data\domino\workspace\.config\org.eclipse.osgi\bundles
+java.library.path=C:\IBMCS\Domino\jvm\bin;C:\IBMCS\Domino;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\IBMCS\Domino\data
+
+java.fullversion=JRE 1.6.0 IBM J9 2.4 Windows 7 x86-32 jvmwi3260sr12-20121024_126067 (JIT enabled, AOT enabled)
+J9VM - 20121024_126067
+JIT  - r9_20120914_26057
+GC   - 20120928_AA
+
+java.io.tmpdir=C:\data\systemp\notesB2B49F
+java.ext.dirs=C:\IBMCS\Domino\jvm\lib\ext\;C:\IBMCS\Domino\ndext;
+java.util.logging.config.class=com.ibm.domino.http.bootstrap.logger.RCPLoggerConfig
+osgi.framework.version=3.4.3.R34x_v20081215-1030-RCP20130228-0400
+org.osgi.framework.executionenvironment=OSGi/Minimum-1.0,OSGi/Minimum-1.1,JRE-1.1,J2SE-1.2,J2SE-1.3,J2SE-1.4,J2SE-1.5,JavaSE-1.6
+osgi.logfile=C:\IBMCS\Domino\data\domino\workspace\.metadata\.log
+osgi.configuration.area=file:/C:/IBMCS/Domino/data/domino/workspace/.config/
+

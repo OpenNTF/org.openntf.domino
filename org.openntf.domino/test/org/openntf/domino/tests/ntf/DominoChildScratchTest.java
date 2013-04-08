@@ -179,7 +179,7 @@ public enum DominoChildScratchTest {
 			}
 			// Database db = s.getDatabase("", "events4.nsf");
 
-			RunContext rc = s.getRunContext();
+			RunContext rc = Factory.getRunContext();
 			System.out.println("RunContext: " + rc.toString());
 			Name sname = s.getUserNameObject();
 			DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");

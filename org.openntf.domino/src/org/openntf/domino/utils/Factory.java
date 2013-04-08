@@ -15,11 +15,15 @@
  */
 package org.openntf.domino.utils;
 
+import java.net.URL;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
 import org.openntf.domino.impl.Session;
 import org.openntf.domino.types.DatabaseDescendant;
@@ -30,6 +34,19 @@ import org.openntf.domino.types.DatabaseDescendant;
  */
 public enum Factory {
 	;
+
+	private static ThreadLocal<Session> currentSessionHolder_ = new ThreadLocal<Session>() {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.ThreadLocal#initialValue()
+		 */
+		@Override
+		protected Session initialValue() {
+			return super.initialValue();
+		}
+
+	};
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Factory.class.getName());
 
@@ -123,6 +140,28 @@ public enum Factory {
 	 */
 	public static int getRecycleErrorCount() {
 		return recycleErrCounter.get().intValue();
+	}
+
+	public static RunContext getRunContext() {
+		// TODO finish this implementation, which needs a lot of work.
+		RunContext result = RunContext.UNKNOWN;
+		SecurityManager sm = System.getSecurityManager();
+		if (sm == null)
+			return RunContext.CLI;
+
+		ProtectionDomain pd = Factory.class.getProtectionDomain();
+		CodeSource cs = pd.getCodeSource();
+		URL url = cs.getLocation();
+
+		Object o = sm.getSecurityContext();
+		if (log_.isLoggable(Level.INFO))
+			log_.log(Level.INFO, "SecurityManager is " + sm.getClass().getName() + " and context is " + o.getClass().getName());
+		if (sm instanceof lotus.notes.AgentSecurityManager) {
+			lotus.notes.AgentSecurityManager asm = (lotus.notes.AgentSecurityManager) sm;
+			result = RunContext.AGENT;
+		}
+		com.ibm.domino.http.bootstrap.logger.RCPLoggerConfig rcplc;
+		return result;
 	}
 
 	/**
@@ -420,13 +459,18 @@ public enum Factory {
 	 * @return the session
 	 */
 	public static org.openntf.domino.Session getSession() {
-		try {
-			lotus.domino.Session s = lotus.domino.NotesFactory.createSession();
-			return fromLotus(s, org.openntf.domino.Session.class, null);
-		} catch (lotus.domino.NotesException ne) {
-			DominoUtils.handleException(ne);
+		if (currentSessionHolder_.get() == null) {
+			try {
+				setSession(lotus.domino.NotesFactory.createSession());
+			} catch (lotus.domino.NotesException ne) {
+				DominoUtils.handleException(ne);
+			}
 		}
-		return null;
+		return currentSessionHolder_.get();
+	}
+
+	public static void setSession(lotus.domino.Session session) {
+		currentSessionHolder_.set((Session) fromLotus(session, org.openntf.domino.Session.class, null));
 	}
 
 	public static org.openntf.domino.Session getSessionFullAccess() {
@@ -493,10 +537,10 @@ public enum Factory {
 			}
 		} else if (base instanceof org.openntf.domino.ViewColumn) {
 			result = ((org.openntf.domino.ViewColumn) base).getParent().getParent();
-		} else if(base instanceof org.openntf.domino.ViewNavigator) {
-			result = ((org.openntf.domino.ViewNavigator)base).getParentView().getParent();
-		} else if(base instanceof org.openntf.domino.ViewEntryCollection) {
-			result = ((org.openntf.domino.ViewEntryCollection)base).getParent().getParent();
+		} else if (base instanceof org.openntf.domino.ViewNavigator) {
+			result = ((org.openntf.domino.ViewNavigator) base).getParentView().getParent();
+		} else if (base instanceof org.openntf.domino.ViewEntryCollection) {
+			result = ((org.openntf.domino.ViewEntryCollection) base).getParent().getParent();
 		} else if (base instanceof org.openntf.domino.MIMEEntity) {
 			result = ((org.openntf.domino.MIMEEntity) base).getParent().getParentDatabase();
 		} else if (base instanceof org.openntf.domino.MIMEHeader) {
@@ -507,7 +551,7 @@ public enum Factory {
 			result = ((org.openntf.domino.RichTextSection) base).getParent().getParent().getParentDatabase();
 		} else if (base instanceof org.openntf.domino.RichTextTable) {
 			result = ((org.openntf.domino.RichTextTable) base).getParent().getParent().getParentDatabase();
-		} else if (base instanceof org.openntf.domino.types.DatabaseDescendant) {
+		} else if(base instanceof org.openntf.domino.types.DatabaseDescendant) {
 			result = ((org.openntf.domino.types.DatabaseDescendant)base).getParentDatabase();
 		} else {
 			throw new UndefinedDelegateTypeException();
@@ -536,10 +580,10 @@ public enum Factory {
 			result = ((org.openntf.domino.DateTime) base).getParent();
 		} else if (base instanceof org.openntf.domino.DateRange) {
 			result = ((org.openntf.domino.DateRange) base).getParent();
-		} else if(base instanceof org.openntf.domino.Directory) {
-			result = ((org.openntf.domino.Directory)base).getParent();
-		} else if(base instanceof org.openntf.domino.DirectoryNavigator) {
-			result = ((org.openntf.domino.DirectoryNavigator)base).getParent().getParent();
+		} else if (base instanceof org.openntf.domino.Directory) {
+			result = ((org.openntf.domino.Directory) base).getParent();
+		} else if (base instanceof org.openntf.domino.DirectoryNavigator) {
+			result = ((org.openntf.domino.DirectoryNavigator) base).getParent().getParent();
 		} else if (base instanceof org.openntf.domino.Name) {
 			result = ((org.openntf.domino.Name) base).getParent();
 		} else if (base instanceof org.openntf.domino.Stream) {
@@ -548,12 +592,12 @@ public enum Factory {
 			result = ((org.openntf.domino.MIMEEntity) base).getParent().getParentDatabase().getParent();
 		} else if (base instanceof org.openntf.domino.MIMEHeader) {
 			result = getParentDatabase(base).getParent();
-		} else if(base instanceof org.openntf.domino.NotesCalendar) {
-			result = ((org.openntf.domino.NotesCalendar)base).getParent();
-		} else if(base instanceof org.openntf.domino.NotesCalendarEntry) {
-			result = ((org.openntf.domino.NotesCalendarEntry)base).getParent().getParent();
-		} else if(base instanceof org.openntf.domino.NotesCalendarNotice) {
-			result = ((org.openntf.domino.NotesCalendarNotice)base).getParent().getParent();
+		} else if (base instanceof org.openntf.domino.NotesCalendar) {
+			result = ((org.openntf.domino.NotesCalendar) base).getParent();
+		} else if (base instanceof org.openntf.domino.NotesCalendarEntry) {
+			result = ((org.openntf.domino.NotesCalendarEntry) base).getParent().getParent();
+		} else if (base instanceof org.openntf.domino.NotesCalendarNotice) {
+			result = ((org.openntf.domino.NotesCalendarNotice) base).getParent().getParent();
 		} else {
 			System.out.println("couldn't find session for object of type " + base.getClass().getName());
 			throw new UndefinedDelegateTypeException();
