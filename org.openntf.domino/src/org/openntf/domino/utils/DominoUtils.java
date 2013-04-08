@@ -372,12 +372,16 @@ public enum DominoUtils {
 	public static Date toJavaDateSafe(lotus.domino.DateTime dt) {
 		Date date = null;
 		if (dt != null) {
-			try {
-				date = dt.toJavaDate();
-			} catch (Throwable t) {
-				t.printStackTrace();
-			} finally {
-				DominoUtils.incinerate(dt);
+			if (dt instanceof org.openntf.domino.DateTime) {
+				date = ((org.openntf.domino.DateTime) dt).toJavaDate(); // no need to recycle 'cause it's not toxic
+			} else {
+				try {
+					date = dt.toJavaDate();
+				} catch (Throwable t) {
+					t.printStackTrace();
+				} finally {
+					DominoUtils.incinerate(dt);
+				}
 			}
 		}
 		return date;

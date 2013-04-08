@@ -18,13 +18,21 @@ package org.openntf.domino.utils;
 import java.net.URL;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Session.RunContext;
+import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
+import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.impl.Session;
 import org.openntf.domino.types.DatabaseDescendant;
 
@@ -603,6 +611,199 @@ public enum Factory {
 		if (result == null)
 			result = Session.getDefaultSession(); // last ditch, get the primary Session;
 		return result;
+	}
+
+	public static boolean toBoolean(Object value) {
+		if (value instanceof String) {
+			char[] c = ((String) value).toCharArray();
+			if (c.length > 1 || c.length == 0) {
+				return false;
+			} else {
+				return c[0] == '1';
+			}
+		} else if (value instanceof Double) {
+			if (((Double) value).intValue() == 0) {
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			throw new DataNotCompatibleException("Cannot convert a " + value.getClass().getName() + " to boolean primitive.");
+		}
+	}
+
+	public static int toInt(Object value) {
+		if (value instanceof Integer) {
+			return ((Integer) value).intValue();
+		} else if (value instanceof Double) {
+			return ((Double) value).intValue();
+		} else {
+			throw new DataNotCompatibleException("Cannot convert a " + value.getClass().getName() + " to int primitive.");
+		}
+	}
+
+	public static double toDouble(Object value) {
+		if (value instanceof Integer) {
+			return ((Integer) value).doubleValue();
+		} else if (value instanceof Double) {
+			return ((Double) value).doubleValue();
+		} else {
+			throw new DataNotCompatibleException("Cannot convert a " + value.getClass().getName() + " to double primitive.");
+		}
+	}
+
+	public static long toLong(Object value) {
+		if (value instanceof Integer) {
+			return ((Integer) value).longValue();
+		} else if (value instanceof Double) {
+			return ((Double) value).longValue();
+		} else {
+			throw new DataNotCompatibleException("Cannot convert a " + value.getClass().getName() + " to long primitive.");
+		}
+	}
+
+	public static short toShort(Object value) {
+		if (value instanceof Integer) {
+			return ((Integer) value).shortValue();
+		} else if (value instanceof Double) {
+			return ((Double) value).shortValue();
+		} else {
+			throw new DataNotCompatibleException("Cannot convert a " + value.getClass().getName() + " to short primitive.");
+		}
+
+	}
+
+	public static float toFloat(Object value) {
+		if (value instanceof Integer) {
+			return ((Integer) value).floatValue();
+		} else if (value instanceof Double) {
+			return ((Double) value).floatValue();
+		} else {
+			throw new DataNotCompatibleException("Cannot convert a " + value.getClass().getName() + " to float primitive.");
+		}
+
+	}
+
+	public static Object toPrimitive(Vector<Object> values, Class<?> ctype) {
+		if (ctype.isPrimitive()) {
+			throw new DataNotCompatibleException(ctype.getName() + " is not a primitive type.");
+		}
+		if (values.size() > 1) {
+			throw new DataNotCompatibleException("Cannot create a primitive " + ctype + " from data because we have a multiple values.");
+		}
+		if (values.isEmpty()) {
+			throw new DataNotCompatibleException("Cannot create a primitive " + ctype + " from data because we don't have any values.");
+		}
+		if (ctype == Boolean.TYPE)
+			return toBoolean(values.get(0));
+		if (ctype == Integer.TYPE)
+			return toInt(values.get(0));
+		if (ctype == Short.TYPE)
+			return toShort(values.get(0));
+		if (ctype == Long.TYPE)
+			return toLong(values.get(0));
+		if (ctype == Float.TYPE)
+			return toFloat(values.get(0));
+		if (ctype == Double.TYPE)
+			return toDouble(values.get(0));
+		if (ctype == Byte.TYPE)
+			throw new UnimplementedException("Primitive conversion for byte not yet defined");
+		if (ctype == Character.TYPE)
+			throw new UnimplementedException("Primitive conversion for char not yet defined");
+		throw new DataNotCompatibleException("");
+	}
+
+	public static String join(Collection<Object> values, String separator) {
+		StringBuilder sb = new StringBuilder();
+		Iterator<Object> it = values.iterator();
+		while (it.hasNext()) {
+			sb.append(String.valueOf(it.next()));
+			if (it.hasNext())
+				sb.append(separator);
+		}
+		return sb.toString();
+	}
+
+	public static String join(Collection<Object> values) {
+		return join(values, ", ");
+	}
+
+	public static Object toPrimitiveArray(Vector<Object> values, Class<?> ctype) throws DataNotCompatibleException {
+		Object result = null;
+		int size = values.size();
+		if (ctype == Boolean.TYPE) {
+			boolean[] outcome = new boolean[size];
+			// TODO NTF - should allow for String fields that are binary sequences: "1001001" (SOS)
+			for (int i = 0; i < size; i++) {
+				Object o = values.get(i);
+				outcome[i] = toBoolean(o);
+			}
+			result = outcome;
+		} else if (ctype == Byte.TYPE) {
+			byte[] outcome = new byte[size];
+			// TODO
+			result = outcome;
+		} else if (ctype == Character.TYPE) {
+			char[] outcome = new char[size];
+			// TODO How should this work? Just concatenate the char arrays for each String?
+			result = outcome;
+		} else if (ctype == Short.TYPE) {
+			short[] outcome = new short[size];
+			for (int i = 0; i < size; i++) {
+				Object o = values.get(i);
+				outcome[i] = toShort(o);
+			}
+			result = outcome;
+		} else if (ctype == Integer.TYPE) {
+			int[] outcome = new int[size];
+			for (int i = 0; i < size; i++) {
+				Object o = values.get(i);
+				outcome[i] = toInt(o);
+			}
+			result = outcome;
+		} else if (ctype == Long.TYPE) {
+			long[] outcome = new long[size];
+			for (int i = 0; i < size; i++) {
+				Object o = values.get(i);
+				outcome[i] = toLong(o);
+			}
+			result = outcome;
+		} else if (ctype == Float.TYPE) {
+			float[] outcome = new float[size];
+			for (int i = 0; i < size; i++) {
+				Object o = values.get(i);
+				outcome[i] = toFloat(o);
+			}
+			result = outcome;
+		} else if (ctype == Double.TYPE) {
+			double[] outcome = new double[size];
+			for (int i = 0; i < size; i++) {
+				Object o = values.get(i);
+				outcome[i] = toDouble(o);
+			}
+			result = outcome;
+		}
+		return result;
+	}
+
+	public static Date toDate(Object value) throws DataNotCompatibleException {
+		if (value == null)
+			return null;
+		if (value instanceof Long) {
+			return new Date(((Long) value).longValue());
+		} else if (value instanceof String) {
+			// TODO finish
+			DateFormat df = new SimpleDateFormat();
+			try {
+				return df.parse((String) value);
+			} catch (ParseException e) {
+				throw new DataNotCompatibleException("Cannot create a Date from String value " + (String) value);
+			}
+		} else if (value instanceof lotus.domino.DateTime) {
+			return DominoUtils.toJavaDateSafe((lotus.domino.DateTime) value);
+		} else {
+			throw new DataNotCompatibleException("Cannot create a Date from a " + value.getClass().getName());
+		}
 	}
 
 }

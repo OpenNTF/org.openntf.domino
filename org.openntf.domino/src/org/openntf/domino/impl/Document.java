@@ -36,6 +36,8 @@ import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.View;
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.exceptions.DataNotCompatibleException;
+import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -786,6 +788,71 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			DominoUtils.handleException(e);
 		}
 		return null;
+	}
+
+	/*
+	 * Behavior: If the document does not have the item, then we look at the requested class. If it's a primitive or an array of primitives,
+	 * we cannot return a null value that can be assigned to that type, so therefore we throw an Exception. If what was request is an
+	 * object, we return null.
+	 * 
+	 * If the item does exist, then we get it's value and attempt a conversion. If the data cannot be converted, we throw an Exception
+	 */
+
+	public <T> T getItemValue(String name, Class<?> T) throws ItemNotFoundException, DataNotCompatibleException {
+		// TODO NTF - Add type conversion extensibility of some kind, maybe attached to the Database or the Session
+		Object result = null;
+		Class<?> CType = null;
+		if (T.isArray()) {
+			CType = T.getComponentType();
+		}
+		boolean hasItem = hasItem(name);
+		if (!hasItem) {
+			if (T.isArray()) {
+				if (CType.isPrimitive()) {
+					throw new ItemNotFoundException("Item " + name + " was not found on document " + noteid_
+							+ " so we cannot return an array of " + CType.getName());
+				} else {
+					return null;
+				}
+			} else if (T.isPrimitive()) {
+				throw new ItemNotFoundException("Item " + name + " was not found on document " + noteid_ + " so we cannot return a "
+						+ T.getName());
+			} else {
+				return null;
+			}
+		}
+
+		Vector<Object> fieldResult = getItemValue(name);
+		int size = fieldResult.size();
+
+		if (T.isArray()) {
+			if (CType.isPrimitive()) {
+				try {
+					result = Factory.toPrimitiveArray(fieldResult, CType);
+				} catch (DataNotCompatibleException e) {
+					throw new DataNotCompatibleException(e.getMessage() + " for field " + name + " in document " + noteid_);
+				}
+			} else {
+
+			}
+		} else if (T.isPrimitive()) {
+			try {
+				result = Factory.toPrimitive(fieldResult, CType);
+			} catch (DataNotCompatibleException e) {
+				throw new DataNotCompatibleException(e.getMessage() + " for field " + name + " in document " + noteid_);
+			}
+		} else {
+			if (T.isAssignableFrom(String.class)) {
+				result = Factory.join(fieldResult);
+			} else if (T.isAssignableFrom(Date.class)) {
+				result = Factory.toDate(fieldResult);
+			} else if (T.isAssignableFrom(org.openntf.domino.DateTime.class)) {
+
+			} else if (T.isAssignableFrom(org.openntf.domino.Name.class)) {
+
+			}
+		}
+		return (T) result;
 	}
 
 	/*
@@ -2279,35 +2346,39 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		try {
 			d.isProfile();
 		} catch (NotesException recycleSucks) {
-			if (noteid_ != null) {
-				try {
-					d = ((org.openntf.domino.impl.Database) getParentDatabase()).getDelegate().getDocumentByID(noteid_);
-					setDelegate(d);
-					if (log_.isLoggable(Level.FINE)) {
-						Throwable t = new Throwable();
-						StackTraceElement[] elements = t.getStackTrace();
-						log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
-								+ " had been recycled and was auto-restored. Changes may have been lost.");
-						log_.log(Level.FINER,
-								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-										+ ")");
-						log_.log(Level.FINER,
-								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-										+ ")");
-						log_.log(Level.FINER,
-								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-										+ ")");
-						log_.log(Level.FINE,
-								"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
+			resurrect();
+		}
+		return super.getDelegate();
+	}
 
-					}
-
-				} catch (NotesException e) {
-					DominoUtils.handleException(e);
+	private void resurrect() {
+		if (noteid_ != null) {
+			try {
+				lotus.domino.Document d = ((org.openntf.domino.impl.Database) getParentDatabase()).getDelegate().getDocumentByID(noteid_);
+				setDelegate(d);
+				if (log_.isLoggable(Level.FINE)) {
+					Throwable t = new Throwable();
+					StackTraceElement[] elements = t.getStackTrace();
+					log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
+							+ " had been recycled and was auto-restored. Changes may have been lost.");
+					log_.log(Level.FINER,
+							elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber() + ")");
+					log_.log(Level.FINER,
+							elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber() + ")");
+					log_.log(Level.FINER,
+							elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber() + ")");
+					log_.log(Level.FINE,
+							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
 				}
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+			}
+		} else {
+			if (log_.isLoggable(Level.WARNING)) {
+				log_.log(Level.WARNING,
+						"Document doesn't have noteid value. Something went terribly wrong. Nothing good can come of this...");
 			}
 		}
-		return d;
 	}
 
 	/*
