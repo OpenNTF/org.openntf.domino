@@ -20,27 +20,25 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 
 import org.openntf.domino.utils.Factory;
-import org.openntf.domino.xsp.Activator;
 
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 import com.ibm.xsp.context.FacesContextEx;
+import com.ibm.xsp.el.ImplicitObjectFactory;
 import com.ibm.xsp.util.TypedUtil;
 
-public class ImplicitObjectFactory implements com.ibm.xsp.el.ImplicitObjectFactory {
+public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory {
 	// TODO this is really just a sample on how to get to an entry point in the API
 
 	private final String[][] implicitObjectList = { { "session", org.openntf.domino.Session.class.getName() },
 			{ "database", org.openntf.domino.Database.class.getName() } };
-	private final static boolean _debug = Activator.isDebug();
 
-	public ImplicitObjectFactory() {
-		if (_debug)
-			System.out.println(getClass().getName() + " created");
+	public OpenntfDominoImplicitObjectFactory() {
 	}
 
 	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void createImplicitObjects(FacesContextEx paramFacesContextEx) {
+
 		Map localMap = TypedUtil.getRequestMap(paramFacesContextEx.getExternalContext());
 		org.openntf.domino.Session s = Factory.fromLotus(NotesContext.getCurrent().getCurrentSession(), org.openntf.domino.Session.class,
 				null);

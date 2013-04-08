@@ -42,7 +42,7 @@ public class XspLibrary extends AbstractXspLibrary {
 
 	@Override
 	public boolean isGlobalScope() {
-		return true;
+		return false;
 	}
 
 }

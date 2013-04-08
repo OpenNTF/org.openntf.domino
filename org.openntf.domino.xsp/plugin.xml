@@ -9,6 +9,6 @@
       </service>
    </extension>
    <extension point="com.ibm.commons.Extension">
-         <service type="com.ibm.xsp.library.Contributor" class="org.openntf.domino.xsp.XspContributor" />
+         <service type="com.ibm.xsp.library.Contributor" class="org.openntf.domino.xsp.OpenntfDominoXspContributor" />
    </extension>
 </plugin>

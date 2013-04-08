@@ -17,11 +17,12 @@
 <!--                                                                     -->
 <!-- ******************************************************************* -->
 <faces-config>
-<application>
+<!-- <application>
  <variable-resolver>org.openntf.domino.xsp.helpers.VariableResolver</variable-resolver>
 </application>
 <lifecycle
 	id="PhaseListener">
 		<phase-listener>org.openntf.domino.xsp.helpers.PhaseListener</phase-listener>
 	</lifecycle>
+	 -->
 </faces-config>
