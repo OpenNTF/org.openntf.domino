@@ -155,7 +155,7 @@ public class NotesProperty extends Base<org.openntf.domino.NotesProperty, lotus.
 	public Vector<Object> getValues() {
 		try {
 			// Does this even use DateTime? Who knows?
-			return Factory.wrapColumnValues(getDelegate().getValues());
+			return Factory.wrapColumnValues(getDelegate().getValues(), this.getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

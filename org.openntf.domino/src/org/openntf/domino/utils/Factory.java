@@ -379,7 +379,7 @@ public enum Factory {
 	 *            the values
 	 * @return the java.util. vector
 	 */
-	public static java.util.Vector<Object> wrapColumnValues(Collection<?> values) {
+	public static java.util.Vector<Object> wrapColumnValues(Collection<?> values, org.openntf.domino.Session session) {
 		if (values == null) {
 			return null;
 		}
@@ -387,11 +387,11 @@ public enum Factory {
 		java.util.Vector<Object> result = new org.openntf.domino.impl.Vector<Object>();
 		for (Object value : values) {
 			if (value instanceof lotus.domino.DateTime) {
-				result.add(fromLotus((lotus.domino.DateTime) value, org.openntf.domino.impl.DateTime.class, getSession()));
+				result.add(fromLotus((lotus.domino.DateTime) value, org.openntf.domino.impl.DateTime.class, session));
 			} else if (value instanceof lotus.domino.DateRange) {
-				result.add(fromLotus((lotus.domino.DateRange) value, org.openntf.domino.impl.DateRange.class, getSession()));
+				result.add(fromLotus((lotus.domino.DateRange) value, org.openntf.domino.impl.DateRange.class, session));
 			} else if (value instanceof Collection) {
-				result.add(wrapColumnValues((Collection<?>) value));
+				result.add(wrapColumnValues((Collection<?>) value, session));
 			} else {
 				result.add(value);
 			}
@@ -417,7 +417,7 @@ public enum Factory {
 			} else if (value instanceof lotus.domino.DateRange) {
 				result.add(fromLotus((lotus.domino.DateRange) value, org.openntf.domino.impl.DateRange.class, session));
 			} else if (value instanceof Collection) {
-				result.add(wrapColumnValues((Collection<?>) value));
+				result.add(wrapColumnValues((Collection<?>) value, session));
 			} else {
 				result.add(value);
 			}
@@ -446,7 +446,7 @@ public enum Factory {
 			} else if (value instanceof lotus.domino.DateRange) {
 				result.add(fromLotus((lotus.domino.DateRange) value, org.openntf.domino.impl.DateRange.class, session));
 			} else if (value instanceof Collection) {
-				result.add(wrapColumnValues((Collection<?>) value));
+				result.add(wrapColumnValues((Collection<?>) value, session));
 			} else {
 				result.add(value);
 			}
@@ -502,11 +502,15 @@ public enum Factory {
 	 * @return the parent database
 	 */
 	public static org.openntf.domino.Database getParentDatabase(org.openntf.domino.Base<?> base) {
+		org.openntf.domino.Database result = null;
 		if(base instanceof DatabaseDescendant) {
-			return ((DatabaseDescendant)base).getAncestorDatabase();
+			result = ((DatabaseDescendant)base).getAncestorDatabase();
+		} else if(base instanceof org.openntf.domino.Database) {
+			result = (org.openntf.domino.Database)base;
 		} else {
 			throw new UndefinedDelegateTypeException();
 		}
+		return result;
 	}
 
 	/**
@@ -520,6 +524,8 @@ public enum Factory {
 		org.openntf.domino.Session result = null;
 		if (base instanceof SessionDescendant) {
 			result = ((SessionDescendant)base).getAncestorSession();
+		} else if (base instanceof org.openntf.domino.Session) {
+			result = (org.openntf.domino.Session)base;
 		} else {
 			System.out.println("couldn't find session for object of type " + base.getClass().getName());
 			throw new UndefinedDelegateTypeException();

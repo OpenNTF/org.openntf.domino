@@ -83,7 +83,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	@Override
 	public Vector<Object> getColumnValues() {
 		try {
-			return Factory.wrapColumnValues(getDelegate().getColumnValues());
+			return Factory.wrapColumnValues(getDelegate().getColumnValues(), this.getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

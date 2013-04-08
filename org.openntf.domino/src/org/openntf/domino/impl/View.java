@@ -957,7 +957,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Vector<Object> getColumnValues(int column) {
 		try {
-			return Factory.wrapColumnValues(getDelegate().getColumnValues(column));
+			return Factory.wrapColumnValues(getDelegate().getColumnValues(column), this.getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

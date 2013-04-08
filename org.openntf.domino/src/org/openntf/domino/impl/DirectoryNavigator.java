@@ -215,7 +215,7 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 	@Override
 	public Vector<Object> getFirstItemValue() {
 		try {
-			return Factory.wrapColumnValues(getDelegate().getFirstItemValue());
+			return Factory.wrapColumnValues(getDelegate().getFirstItemValue(), this.getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -230,7 +230,7 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 	@Override
 	public Vector<Object> getNextItemValue() {
 		try {
-			return Factory.wrapColumnValues(getDelegate().getNextItemValue());
+			return Factory.wrapColumnValues(getDelegate().getNextItemValue(), this.getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -245,7 +245,7 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 	@Override
 	public Vector<Object> getNthItemValue(int n) {
 		try {
-			return Factory.wrapColumnValues(getDelegate().getNthItemValue(n));
+			return Factory.wrapColumnValues(getDelegate().getNthItemValue(n), this.getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

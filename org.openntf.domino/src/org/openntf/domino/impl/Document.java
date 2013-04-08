@@ -687,7 +687,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		try {
 			Vector<?> values = getDelegate().getColumnValues();
 			if (values != null) {
-				return Factory.wrapColumnValues(values);
+				return Factory.wrapColumnValues(values, this.getAncestorSession());
 			} else {
 				return null;
 			}
@@ -705,7 +705,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public Vector<org.openntf.domino.EmbeddedObject> getEmbeddedObjects() {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getEmbeddedObjects(), org.openntf.domino.EmbeddedObject.class, this);
+			return Factory.fromLotusAsVector(getDelegate().getEmbeddedObjects(), org.openntf.domino.EmbeddedObject.class, this
+					.getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -823,7 +824,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				}
 			}
 			session.setConvertMIME(convertMime);
-			return Factory.wrapColumnValues(getDelegate().getItemValue(name));
+			return Factory.wrapColumnValues(getDelegate().getItemValue(name), this.getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} catch (Throwable t) {
