@@ -8,4 +8,7 @@
             type="com.ibm.xsp.Library">
       </service>
    </extension>
-   </plugin>
+   <extension point="com.ibm.commons.Extension">
+         <service type="com.ibm.xsp.library.Contributor" class="org.openntf.domino.xsp.XspContributor" />
+   </extension>
+</plugin>

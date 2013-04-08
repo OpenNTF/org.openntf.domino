@@ -6,7 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openntf.domino.xsp.Activator
 Bundle-Vendor: OpenNTF.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: com.ibm.xsp.library,
+Import-Package: com.ibm.domino.xsp.module.nsf,
+ com.ibm.xsp.library,
  org.eclipse.core.runtime;version="3.4.0",
  org.openntf.domino,
  org.openntf.domino.annotations,
