@@ -17,6 +17,8 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
+import org.openntf.domino.types.SessionDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface Log nnables you to record actions and errors that take place during a program's execution. You can record actions and
@@ -29,7 +31,7 @@ import java.util.Vector;
  * <li>An agent log (for agents)
  * </ul>
  */
-public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log {
+public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log, SessionDescendant {
 
 	/**
 	 * Closes a log.
@@ -216,7 +218,7 @@ public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log {
 	public void openMailLog(Vector recipients, String subject);
 
 	/**
-	 * Opens a specified Domino® database for logging.
+	 * Opens a specified Dominoï¿½ database for logging.
 	 * <p>
 	 * The StdR4AgentLog template (ALOG4.NTF) is designed to display the action and error documents that Log creates. If the database you
 	 * specify inherits its design from this template, you can use the database main view to see each of the items previously listed.

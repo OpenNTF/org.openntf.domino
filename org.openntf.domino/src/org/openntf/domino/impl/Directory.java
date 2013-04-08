@@ -389,4 +389,14 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 			DominoUtils.handleException(e);
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public org.openntf.domino.Session getAncestorSession() {
+		return this.getParent();
+	}
 }

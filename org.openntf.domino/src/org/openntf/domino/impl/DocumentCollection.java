@@ -15,11 +15,14 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
+import org.openntf.domino.Session;
 import org.openntf.domino.iterators.DocumentIterator;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -729,4 +732,121 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		return getParent();
 	}
 
+	@Override
+	public boolean add(org.openntf.domino.Document doc) {
+		this.addDocument(doc);
+		return true;
+	}
+
+	@Override
+	public boolean addAll(Collection<? extends org.openntf.domino.Document> docs) {
+		if (docs instanceof Base<?, ?>) {
+			this.merge((Base<?, ?>) docs);
+		} else {
+			for (org.openntf.domino.Document doc : docs) {
+				this.addDocument(doc);
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public void clear() {
+		org.openntf.domino.Document iconNote = this.getParentDatabase().getDocumentByID("FFFF0010");
+		this.intersect(iconNote);
+		this.remove(iconNote);
+	}
+
+	@Override
+	public boolean contains(Object value) {
+		if (value instanceof Integer) {
+			return this.contains(((Integer) value).intValue());
+		} else if (value instanceof lotus.domino.Document) {
+			return this.contains((lotus.domino.Document) value);
+		} else if (value instanceof lotus.domino.DocumentCollection) {
+			return this.contains((lotus.domino.DocumentCollection) value);
+		}
+		return false;
+	}
+
+	@Override
+	public boolean containsAll(Collection<?> docs) {
+		if (docs == null) {
+			return false;
+		}
+		for (Object docObj : docs) {
+			if (!this.contains(docObj)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return this.size() > 0;
+	}
+
+	@Override
+	public boolean remove(Object doc) {
+		if (doc instanceof lotus.domino.Document) {
+			this.deleteDocument((lotus.domino.Document) doc);
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean removeAll(Collection<?> docs) {
+		if (docs == null) {
+			return false;
+		}
+		boolean changed = false;
+		for (Object docObj : docs) {
+			if (this.remove(docObj)) {
+				changed = true;
+			}
+		}
+		return changed;
+	}
+
+	@Override
+	public boolean retainAll(Collection<?> docs) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int size() {
+		return this.getCount();
+	}
+
+	@Override
+	public Object[] toArray() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> T[] toArray(T[] arg0) {
+		throw new UnsupportedOperationException();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
+	 */
+	@Override
+	public Database getAncestorDatabase() {
+		return this.getParent();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getParent().getParent();
+	}
 }

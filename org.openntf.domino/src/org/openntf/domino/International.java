@@ -15,134 +15,177 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.SessionDescendant;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Interface International.
  */
-public interface International extends Base<lotus.domino.International>, lotus.domino.International {
+public interface International extends Base<lotus.domino.International>, lotus.domino.International, SessionDescendant {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.International#getAMString()
 	 */
 	@Override
 	public String getAMString();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.International#getCurrencyDigits()
 	 */
 	@Override
 	public int getCurrencyDigits();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.International#getCurrencySymbol()
 	 */
 	@Override
 	public String getCurrencySymbol();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.International#getDateSep()
 	 */
 	@Override
 	public String getDateSep();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.International#getDecimalSep()
 	 */
 	@Override
 	public String getDecimalSep();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.International#getParent()
 	 */
 	@Override
 	public Session getParent();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.International#getPMString()
 	 */
 	@Override
 	public String getPMString();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.International#getThousandsSep()
 	 */
 	@Override
 	public String getThousandsSep();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.International#getTimeSep()
 	 */
 	@Override
 	public String getTimeSep();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.International#getTimeZone()
 	 */
 	@Override
 	public int getTimeZone();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.International#getToday()
 	 */
 	@Override
 	public String getToday();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.International#getTomorrow()
 	 */
 	@Override
 	public String getTomorrow();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.International#getYesterday()
 	 */
 	@Override
 	public String getYesterday();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.International#isCurrencySpace()
 	 */
 	@Override
 	public boolean isCurrencySpace();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.International#isCurrencySuffix()
 	 */
 	@Override
 	public boolean isCurrencySuffix();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.International#isCurrencyZero()
 	 */
 	@Override
 	public boolean isCurrencyZero();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.International#isDateDMY()
 	 */
 	@Override
 	public boolean isDateDMY();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.International#isDateMDY()
 	 */
 	@Override
 	public boolean isDateMDY();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.International#isDateYMD()
 	 */
 	@Override
 	public boolean isDateYMD();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.International#isDST()
 	 */
 	@Override
 	public boolean isDST();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.International#isTime24Hour()
 	 */
 	@Override

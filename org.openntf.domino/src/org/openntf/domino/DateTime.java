@@ -19,12 +19,13 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.openntf.domino.types.Encapsulated;
+import org.openntf.domino.types.SessionDescendant;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Interface DateTime.
  */
-public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.DateTime, Encapsulated {
+public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.DateTime, Encapsulated, SessionDescendant {
 
 	/*
 	 * (non-Javadoc)

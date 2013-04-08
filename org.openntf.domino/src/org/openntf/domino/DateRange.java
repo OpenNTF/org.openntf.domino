@@ -15,49 +15,65 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.SessionDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface DateRange.
  */
-public interface DateRange extends Base<lotus.domino.DateRange>, lotus.domino.DateRange {
+public interface DateRange extends Base<lotus.domino.DateRange>, lotus.domino.DateRange, SessionDescendant {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DateRange#getEndDateTime()
 	 */
 	@Override
 	public DateTime getEndDateTime();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DateRange#getParent()
 	 */
 	@Override
 	public Session getParent();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DateRange#getStartDateTime()
 	 */
 	@Override
 	public DateTime getStartDateTime();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DateRange#getText()
 	 */
 	@Override
 	public String getText();
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DateRange#setEndDateTime(lotus.domino.DateTime)
 	 */
 	@Override
 	public void setEndDateTime(lotus.domino.DateTime end);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DateRange#setStartDateTime(lotus.domino.DateTime)
 	 */
 	@Override
 	public void setStartDateTime(lotus.domino.DateTime start);
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see lotus.domino.DateRange#setText(java.lang.String)
 	 */
 	@Override

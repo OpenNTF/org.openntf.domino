@@ -19,6 +19,7 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Session;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -49,7 +50,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @see org.openntf.domino.Form#getAliases()
 	 */
 	@SuppressWarnings("unchecked")
-	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
+	@Legacy( { Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
 	public Vector<String> getAliases() {
 		try {
 			return getDelegate().getAliases();
@@ -86,7 +87,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @see org.openntf.domino.Form#getFields()
 	 */
 	@SuppressWarnings("unchecked")
-	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
+	@Legacy( { Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
 	public Vector<String> getFields() {
 		try {
 			return getDelegate().getFields();
@@ -103,7 +104,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @see org.openntf.domino.Form#getFormUsers()
 	 */
 	@SuppressWarnings("unchecked")
-	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
+	@Legacy( { Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
 	public Vector<String> getFormUsers() {
 		try {
 			return getDelegate().getFormUsers();
@@ -135,7 +136,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @see org.openntf.domino.Form#getLockHolders()
 	 */
 	@SuppressWarnings("unchecked")
-	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
+	@Legacy( { Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
 	public Vector<String> getLockHolders() {
 		try {
 			return getDelegate().getLockHolders();
@@ -199,7 +200,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @see org.openntf.domino.Form#getReaders()
 	 */
 	@SuppressWarnings("unchecked")
-	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
+	@Legacy( { Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
 	public Vector<String> getReaders() {
 		try {
 			return getDelegate().getReaders();
@@ -501,8 +502,24 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	public Database getParentDatabase() {
-		return getParent();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
+	 */
+	@Override
+	public Database getAncestorDatabase() {
+		return this.getParent();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getAncestorDatabase().getAncestorSession();
 	}
 
 }

@@ -17,11 +17,13 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
+import org.openntf.domino.types.SessionDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface Directory.
  */
-public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Directory {
+public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Directory, SessionDescendant {
 
 	/*
 	 * (non-Javadoc)

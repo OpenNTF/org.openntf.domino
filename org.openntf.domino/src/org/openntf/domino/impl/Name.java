@@ -575,4 +575,14 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 				+ orgunit3 + ", orgunit4=" + orgunit4 + ", prmd=" + prmd + ", surname=" + surname + ", hierarchical=" + hierarchical + "]";
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getParent();
+	}
+
 }

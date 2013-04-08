@@ -651,6 +651,6 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 
 	@Override
 	void markDirty() {
-		getParentDocument().markDirty();
+		getAncestorDocument().markDirty();
 	}
 }

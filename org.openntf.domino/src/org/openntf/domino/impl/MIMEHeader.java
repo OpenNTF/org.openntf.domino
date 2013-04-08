@@ -17,6 +17,8 @@ package org.openntf.domino.impl;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Database;
+import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 
 // TODO: Auto-generated Javadoc
@@ -272,15 +274,37 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 		}
 	}
 
-	public Document getParentDocument() {
-		return getParent().getParentDocument();
-	}
-
-	public org.openntf.domino.Database getParentDatabase() {
-		return getParent().getParentDatabase();
-	}
-
 	void markDirty() {
-		getParentDocument().markDirty();
+		getAncestorDocument().markDirty();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
+	 */
+	@Override
+	public Document getAncestorDocument() {
+		return this.getParent().getAncestorDocument();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
+	 */
+	@Override
+	public Database getAncestorDatabase() {
+		return this.getAncestorDocument().getAncestorDatabase();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getAncestorDocument().getAncestorSession();
 	}
 }

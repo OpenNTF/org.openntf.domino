@@ -15,11 +15,14 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.SessionDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface DbDirectory.
  */
-public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domino.DbDirectory, Iterable<org.openntf.domino.Database> {
+public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domino.DbDirectory, Iterable<org.openntf.domino.Database>,
+		SessionDescendant {
 
 	public static enum Type {
 		DATABASE(DbDirectory.DATABASE), TEMPLATE(DbDirectory.TEMPLATE), REPLICA_CANDIDATE(DbDirectory.REPLICA_CANDIDATE), TEMPLATE_CANDIDATE(

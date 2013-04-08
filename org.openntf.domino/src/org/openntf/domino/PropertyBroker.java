@@ -17,11 +17,13 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
+import org.openntf.domino.types.SessionDescendant;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Interface PropertyBroker.
  */
-public interface PropertyBroker extends Base<lotus.domino.PropertyBroker>, lotus.domino.PropertyBroker {
+public interface PropertyBroker extends Base<lotus.domino.PropertyBroker>, lotus.domino.PropertyBroker, SessionDescendant {
 
 	/*
 	 * (non-Javadoc)

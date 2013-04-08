@@ -15,15 +15,24 @@
  */
 package org.openntf.domino.impl;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
-import org.openntf.domino.ACL.Level;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.View;
+import org.openntf.domino.ACL.Level;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -162,11 +171,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	@Override
 	public org.openntf.domino.Document get(Object key) {
-		org.openntf.domino.Document result = null;
-		if (key instanceof String) {
-			result = getDocumentByUNID((String) key);
-		}
-		return result;
+		return this.getDocumentByKey((String) key);
 	}
 
 	/*
@@ -424,9 +429,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public View createQueryView(String viewName, String query, lotus.domino.View templateView, boolean prohibitDesignRefresh) {
 		try {
-			return Factory.fromLotus(
-					getDelegate().createQueryView(viewName, query, (lotus.domino.View) toLotus(templateView), prohibitDesignRefresh),
-					View.class, this);
+			return Factory.fromLotus(getDelegate().createQueryView(viewName, query, (lotus.domino.View) toLotus(templateView),
+					prohibitDesignRefresh), View.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -502,9 +506,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public View createView(String viewName, String selectionFormula, lotus.domino.View templateView, boolean prohibitDesignRefresh) {
 		try {
-			return Factory.fromLotus(
-					getDelegate().createView(viewName, selectionFormula, (lotus.domino.View) toLotus(templateView), prohibitDesignRefresh),
-					View.class, this);
+			return Factory.fromLotus(getDelegate().createView(viewName, selectionFormula, (lotus.domino.View) toLotus(templateView),
+					prohibitDesignRefresh), View.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -826,6 +829,29 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
+	public Document getDocumentByKey(String key) {
+		return this.getDocumentByKey(key, false);
+	}
+
+	public Document getDocumentByKey(String key, boolean createOnFail) {
+		try {
+			if (key != null) {
+				String checksum = DominoUtils.toUnid(key);
+				Document doc = this.getDocumentByUNID(checksum);
+				if (doc == null && createOnFail) {
+					doc = this.createDocument();
+					doc.setUniversalID(checksum);
+					doc.replaceItemValue("$Created", new Date());
+					doc.replaceItemValue("$$Key", key);
+				}
+				return doc;
+			}
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -850,9 +876,24 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	public Document getDocumentByURL(String url, boolean reload, boolean reloadIfModified, boolean urlList, String charSet, String webUser,
 			String webPassword, String proxyUser, String proxyPassword, boolean returnImmediately) {
 		try {
-			return Factory.fromLotus(
-					getDelegate().getDocumentByURL(url, reload, reloadIfModified, urlList, charSet, webUser, webPassword, proxyUser,
-							proxyPassword, returnImmediately), Document.class, this);
+			// Let's have some fun with this
+			try {
+				URL urlObj = new URL(url);
+				HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection();
+				conn.connect();
+				System.out.println("Headers: " + conn.getHeaderFields());
+				System.out.println("Content-type: " + conn.getContentType());
+				conn.disconnect();
+			} catch (MalformedURLException e) {
+				DominoUtils.handleException(e);
+			} catch (IOException e) {
+				DominoUtils.handleException(e);
+			}
+			if (true)
+				return null;
+
+			return Factory.fromLotus(getDelegate().getDocumentByURL(url, reload, reloadIfModified, urlList, charSet, webUser, webPassword,
+					proxyUser, proxyPassword, returnImmediately), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -866,13 +907,14 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#getDocumentByURL(java.lang.String, boolean)
 	 */
 	public Document getDocumentByURL(String url, boolean reload) {
-		try {
-			return Factory.fromLotus(getDelegate().getDocumentByURL(url, reload), Document.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		// try {
+		// return Factory.fromLotus(getDelegate().getDocumentByURL(url, reload), Document.class, this);
+		// } catch (NotesException e) {
+		// DominoUtils.handleException(e);
+		// return null;
+		//
+		// }
+		return this.getDocumentByURL(url, reload, reload, false, null, null, null, null, null, false);
 	}
 
 	/*
@@ -927,6 +969,35 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public String getFilePath() {
 		return path_;
+	}
+
+	public FileResource getFileResource(String name) {
+		NoteCollection notes = this.createNoteCollection(false);
+		notes.setSelectMiscFormatElements(true);
+		// I wonder if this is sufficient escaping
+		notes.setSelectionFormula(" !@Contains($Flags; '~') & @Contains($Flags; 'g') & $TITLE=\""
+				+ name.replace("\\", "\\\\").replace("\"", "\\\"") + "\" ");
+		notes.buildCollection();
+
+		String noteId = notes.getFirstNoteID();
+		if (!noteId.isEmpty()) {
+			Document resourceDoc = this.getDocumentByID(noteId);
+			return new FileResource(resourceDoc.getDelegate(), this);
+		}
+		return null;
+	}
+
+	public Collection<org.openntf.domino.FileResource> getFileResources() {
+		List<org.openntf.domino.FileResource> result = new ArrayList<org.openntf.domino.FileResource>();
+		NoteCollection notes = this.createNoteCollection(false);
+		notes.setSelectMiscFormatElements(true);
+		notes.setSelectionFormula(" !@Contains($Flags; '~') & @Contains($Flags; 'g') ");
+		notes.buildCollection();
+		for (String noteId : notes) {
+			Document resourceDoc = this.getDocumentByID(noteId);
+			result.add(new FileResource(resourceDoc.getDelegate(), this));
+		}
+		return result;
 	}
 
 	/*
@@ -2340,6 +2411,82 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		return currentTransaction_;
 	}
 
+	/*
+	 * Map methods
+	 */
+
+	@Override
+	public void clear() {
+		// Oh, dear god, no!
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean containsValue(Object value) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Set<java.util.Map.Entry<String, org.openntf.domino.Document>> entrySet() {
+		// TODO Maybe turn NoteCollection into this?
+		return null;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return this.getAllDocuments().getCount() > 0;
+	}
+
+	@Override
+	public Set<String> keySet() {
+		// TODO Implement this
+		return null;
+	}
+
+	@Override
+	public org.openntf.domino.Document put(String key, org.openntf.domino.Document value) {
+		// Ignore the value for now
+		if (key != null) {
+			Document doc = this.getDocumentByKey(key);
+			if (doc == null) {
+				doc = this.getDocumentByKey(key, true);
+				doc.save();
+				return null;
+			} else {
+				return doc;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void putAll(Map<? extends String, ? extends org.openntf.domino.Document> m) {
+		// TODO Implement this?
+	}
+
+	@Override
+	public org.openntf.domino.Document remove(Object key) {
+		if (key != null) {
+			Document doc = this.getDocumentByKey(key.toString());
+			if (doc != null) {
+				doc.remove(false);
+			}
+
+			return null;
+		}
+		return null;
+	}
+
+	@Override
+	public int size() {
+		return this.getAllDocuments().getCount();
+	}
+
+	@Override
+	public Collection<org.openntf.domino.Document> values() {
+		return this.createDocumentCollection();
+	}
+
 	@Override
 	protected lotus.domino.Database getDelegate() {
 		lotus.domino.Database db = super.getDelegate();
@@ -2375,6 +2522,16 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getParent();
 	}
 
 }

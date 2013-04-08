@@ -17,7 +17,9 @@ package org.openntf.domino.impl;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.utils.DominoUtils;
@@ -970,7 +972,23 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 		}
 	}
 
-	public org.openntf.domino.Database getParentDatabase() {
-		return getParentView().getParentDatabase();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
+	 */
+	@Override
+	public Database getAncestorDatabase() {
+		return this.getParentView().getAncestorDatabase();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getAncestorDatabase().getAncestorSession();
 	}
 }

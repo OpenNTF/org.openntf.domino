@@ -22,6 +22,8 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Database;
+import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.xml.sax.InputSource;
@@ -725,15 +727,37 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	public org.openntf.domino.Database getParentDatabase() {
-		return getParentDocument().getParentDatabase();
-	}
-
-	public Document getParentDocument() {
-		return getParent();
-	}
-
 	void markDirty() {
-		getParentDocument().markDirty();
+		getAncestorDocument().markDirty();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
+	 */
+	@Override
+	public Document getAncestorDocument() {
+		return this.getParent();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
+	 */
+	@Override
+	public Database getAncestorDatabase() {
+		return this.getAncestorDocument().getAncestorDatabase();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getAncestorDocument().getAncestorSession();
 	}
 }

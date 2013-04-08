@@ -21,6 +21,8 @@ import java.io.Reader;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Database;
+import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.xml.sax.InputSource;
@@ -427,7 +429,12 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	@Override
 	public Vector<Object> getValues() {
 		// Just use the parent Doc for this, since it understands MIMEBean
-		return new Vector<Object>(this.getParent().getItemValue(this.getName()));
+		// Check for null in case there was a problem with the parent's method
+		java.util.Vector<Object> values = this.getParent().getItemValue(this.getName());
+		if (values != null) {
+			return new Vector<Object>(values);
+		}
+		return null;
 	}
 
 	/*
@@ -835,16 +842,38 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	public Document getParentDocument() {
-		return getParent();
-	}
-
-	public org.openntf.domino.Database getParentDatabase() {
-		return getParentDocument().getParentDatabase();
-	}
-
 	void markDirty() {
-		getParentDocument().markDirty();
+		getAncestorDocument().markDirty();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.DocumentDescendant#getAncestorDocument()
+	 */
+	@Override
+	public Document getAncestorDocument() {
+		return this.getParent();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
+	 */
+	@Override
+	public Database getAncestorDatabase() {
+		return this.getParent().getAncestorDatabase();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getParent().getAncestorSession();
 	}
 
 }

@@ -15,6 +15,7 @@
  */
 package org.openntf.domino;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Vector;
 
@@ -27,7 +28,8 @@ import org.openntf.domino.types.SessionDescendant;
 /**
  * The Interface Database.
  */
-public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database>, Resurrectable, SessionDescendant {
+public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database>, Map<String, Document>,
+		Resurrectable, SessionDescendant {
 
 	public static enum SortOption {
 		SCORES(Database.FT_SCORES), DATE_DES(Database.FT_DATE_DES), DATE_ASC(Database.FT_DATE_ASC);
@@ -477,6 +479,36 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public Document getDocumentByID(String noteid);
 
+	/**
+	 * Retrieves a document by a String key.
+	 * <p>
+	 * The key is hased using MD5 and treated as a UNID.
+	 * </p>
+	 * 
+	 * @param key
+	 *            The arbitrary-length string key.
+	 * 
+	 * @return The Document corresponding to the key, or null if no matching document exists.
+	 * @since org.openntf.domino 1.0.0
+	 */
+	public Document getDocumentByKey(String key);
+
+	/**
+	 * Retrieves a document by a String key, allowing for creation of a new document if no match was found.
+	 * <p>
+	 * The key is hased using MD5 and treated as a UNID.
+	 * </p>
+	 * 
+	 * @param key
+	 *            The arbitrary-length string key.
+	 * @param createOnFail
+	 *            Whether or not a new document should be created when the key was not found. Defaults to false.
+	 * 
+	 * @return The Document corresponding to the key, or null if no matching document exists and createOnFail is false.
+	 * @since org.openntf.domino 1.0.0
+	 */
+	public Document getDocumentByKey(String key, boolean createOnFail);
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -526,6 +558,10 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 */
 	@Override
 	public String getFilePath();
+
+	public FileResource getFileResource(String name);
+
+	public Collection<FileResource> getFileResources();
 
 	/*
 	 * (non-Javadoc)

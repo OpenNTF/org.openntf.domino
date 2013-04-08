@@ -196,4 +196,14 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getParent();
+	}
+
 }

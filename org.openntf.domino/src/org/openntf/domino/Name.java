@@ -16,6 +16,7 @@
 package org.openntf.domino;
 
 import org.openntf.domino.types.Encapsulated;
+import org.openntf.domino.types.SessionDescendant;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -59,7 +60,7 @@ import org.openntf.domino.types.Encapsulated;
  * <li>"John B Goode" <jbg@us.acme.com> (Sales) (East)
  * </ul>
  */
-public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, Encapsulated {
+public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, Encapsulated, SessionDescendant {
 
 	/**
 	 * A hierarchical name in abbreviated form.
@@ -233,7 +234,7 @@ public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, Encaps
 	 * <p>
 	 * This property returns an empty string if the language is undefined.
 	 * <p>
-	 * A primary name created through Domino® administration does not have a language code; an alternate name may have a language code.
+	 * A primary name created through Dominoï¿½ administration does not have a language code; an alternate name may have a language code.
 	 * 
 	 * @return The language code of the alternative name
 	 * @since lotus.domino 4.5.0

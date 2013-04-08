@@ -16,11 +16,13 @@
 package org.openntf.domino.impl;
 
 import java.util.Vector;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Database;
+import org.openntf.domino.Session;
+import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -81,7 +83,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	@Override
 	public Vector<Object> getColumnValues() {
 		try {
-			return Factory.wrapColumnValues(getDelegate().getColumnValues());
+			return Factory.wrapColumnValues(getDelegate().getColumnValues(), this.getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -367,21 +369,23 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
-	public org.openntf.domino.Database getParentDatabase() {
-		org.openntf.domino.Base<?> parent = getParent();
-		if (parent instanceof org.openntf.domino.View) {
-			return ((org.openntf.domino.View) parent).getParentDatabase();
-		} else if (parent instanceof org.openntf.domino.ViewEntryCollection) {
-			return ((org.openntf.domino.ViewEntryCollection) parent).getParentDatabase();
-		} else if (parent instanceof org.openntf.domino.ViewNavigator) {
-			return ((org.openntf.domino.ViewNavigator) parent).getParentDatabase();
-		} else {
-			if (log_.isLoggable(Level.WARNING)) {
-				log_.log(Level.WARNING,
-						"ViewEntry doesn't have a View, ViewEntryCollection or ViewNavigator as a parent? That's unpossible! But we got a "
-								+ parent.getClass().getName());
-			}
-		}
-		return null;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
+	 */
+	@Override
+	public Database getAncestorDatabase() {
+		return (Database) ((DatabaseDescendant) this.getParent()).getAncestorDatabase();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getAncestorDatabase().getAncestorSession();
 	}
 }

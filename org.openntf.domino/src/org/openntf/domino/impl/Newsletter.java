@@ -164,4 +164,14 @@ public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino
 			DominoUtils.handleException(e);
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getParent();
+	}
 }

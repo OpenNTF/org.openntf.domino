@@ -145,4 +145,14 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getParent();
+	}
+
 }

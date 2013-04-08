@@ -34,6 +34,7 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Database;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.NoteCollection;
+import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
@@ -688,7 +689,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		try {
 			Vector<?> values = getDelegate().getColumnValues();
 			if (values != null) {
-				return Factory.wrapColumnValues(values);
+				return Factory.wrapColumnValues(values, this.getAncestorSession());
 			} else {
 				return null;
 			}
@@ -706,7 +707,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public Vector<org.openntf.domino.EmbeddedObject> getEmbeddedObjects() {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getEmbeddedObjects(), org.openntf.domino.EmbeddedObject.class, this);
+			return Factory.fromLotusAsVector(getDelegate().getEmbeddedObjects(), org.openntf.domino.EmbeddedObject.class,
+					this.getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -889,7 +891,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				}
 			}
 			session.setConvertMIME(convertMime);
-			return Factory.wrapColumnValues(getDelegate().getItemValue(name));
+			return Factory.wrapColumnValues(getDelegate().getItemValue(name), this.getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} catch (Throwable t) {
@@ -2442,6 +2444,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			Object previousState = this.get(key);
 			this.removeItem(key);
 			this.replaceItemValue(key, value);
+			this.save();
 			return previousState;
 		}
 		return null;
@@ -2450,8 +2453,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void putAll(Map<? extends String, ? extends Object> m) {
 		for (Map.Entry<? extends String, ? extends Object> entry : m.entrySet()) {
-			this.put(entry.getKey(), entry.getValue());
+			this.removeItem(entry.getKey());
+			this.replaceItemValue(entry.getKey(), entry.getValue());
 		}
+		this.save();
 	}
 
 	@Override
@@ -2459,6 +2464,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		if (key != null) {
 			Object previousState = this.get(key);
 			this.removeItem(key.toString());
+			this.save();
 			return previousState;
 		}
 		return null;
@@ -2473,5 +2479,25 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public Collection<Object> values() {
 		// TODO Implement a "viewing" collection for this or throw an UnsupportedOperationException
 		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
+	 */
+	@Override
+	public Database getAncestorDatabase() {
+		return this.getParentDatabase();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public Session getAncestorSession() {
+		return this.getParentDatabase().getParent();
 	}
 }

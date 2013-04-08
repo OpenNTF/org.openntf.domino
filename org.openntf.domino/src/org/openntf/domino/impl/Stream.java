@@ -369,4 +369,14 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 			return 0;
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
+	 */
+	@Override
+	public org.openntf.domino.Session getAncestorSession() {
+		return this.getParent();
+	}
 }
