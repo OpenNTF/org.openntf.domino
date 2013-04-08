@@ -507,6 +507,8 @@ public enum Factory {
 			result = ((org.openntf.domino.RichTextSection) base).getParent().getParent().getParentDatabase();
 		} else if (base instanceof org.openntf.domino.RichTextTable) {
 			result = ((org.openntf.domino.RichTextTable) base).getParent().getParent().getParentDatabase();
+		} else if (base instanceof org.openntf.domino.types.DatabaseDescendant) {
+			result = ((org.openntf.domino.types.DatabaseDescendant)base).getParentDatabase();
 		} else {
 			throw new UndefinedDelegateTypeException();
 		}

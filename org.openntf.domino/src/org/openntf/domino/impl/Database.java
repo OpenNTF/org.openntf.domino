@@ -15,8 +15,14 @@
  */
 package org.openntf.domino.impl;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -859,6 +865,22 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	public Document getDocumentByURL(String url, boolean reload, boolean reloadIfModified, boolean urlList, String charSet, String webUser,
 			String webPassword, String proxyUser, String proxyPassword, boolean returnImmediately) {
 		try {
+			// Let's have some fun with this
+			try {
+				URL urlObj = new URL(url);
+				HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection();
+				conn.connect();
+				System.out.println("Headers: " + conn.getHeaderFields());
+				System.out.println("Content-type: " + conn.getContentType());
+				conn.disconnect();
+			} catch (MalformedURLException e) {
+				DominoUtils.handleException(e);
+			} catch (IOException e) {
+				DominoUtils.handleException(e);
+			}
+			if (true)
+				return null;
+
 			return Factory.fromLotus(getDelegate().getDocumentByURL(url, reload, reloadIfModified, urlList, charSet, webUser, webPassword,
 					proxyUser, proxyPassword, returnImmediately), Document.class, this);
 		} catch (NotesException e) {
@@ -874,13 +896,14 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#getDocumentByURL(java.lang.String, boolean)
 	 */
 	public Document getDocumentByURL(String url, boolean reload) {
-		try {
-			return Factory.fromLotus(getDelegate().getDocumentByURL(url, reload), Document.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		// try {
+		// return Factory.fromLotus(getDelegate().getDocumentByURL(url, reload), Document.class, this);
+		// } catch (NotesException e) {
+		// DominoUtils.handleException(e);
+		// return null;
+		//
+		// }
+		return this.getDocumentByURL(url, reload, reload, false, null, null, null, null, null, false);
 	}
 
 	/*
@@ -941,6 +964,35 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			return null;
 
 		}
+	}
+
+	public FileResource getFileResource(String name) {
+		NoteCollection notes = this.createNoteCollection(false);
+		notes.setSelectMiscFormatElements(true);
+		// I wonder if this is sufficient escaping
+		notes.setSelectionFormula(" !@Contains($Flags; '~') & @Contains($Flags; 'g') & $TITLE=\""
+				+ name.replace("\\", "\\\\").replace("\"", "\\\"") + "\" ");
+		notes.buildCollection();
+
+		String noteId = notes.getFirstNoteID();
+		if (!noteId.isEmpty()) {
+			Document resourceDoc = this.getDocumentByID(noteId);
+			return new FileResource(resourceDoc, this);
+		}
+		return null;
+	}
+
+	public Collection<org.openntf.domino.FileResource> getFileResources() {
+		List<org.openntf.domino.FileResource> result = new ArrayList<org.openntf.domino.FileResource>();
+		NoteCollection notes = this.createNoteCollection(false);
+		notes.setSelectMiscFormatElements(true);
+		notes.setSelectionFormula(" !@Contains($Flags; '~') & @Contains($Flags; 'g') ");
+		notes.buildCollection();
+		for (String noteId : notes) {
+			Document resourceDoc = this.getDocumentByID(noteId);
+			result.add(new FileResource(resourceDoc, this));
+		}
+		return result;
 	}
 
 	/*

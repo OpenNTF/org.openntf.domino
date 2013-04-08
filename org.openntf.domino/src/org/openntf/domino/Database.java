@@ -15,6 +15,7 @@
  */
 package org.openntf.domino;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Vector;
 
@@ -554,6 +555,10 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 */
 	@Override
 	public String getFilePath();
+
+	public FileResource getFileResource(String name);
+
+	public Collection<FileResource> getFileResources();
 
 	/*
 	 * (non-Javadoc)
