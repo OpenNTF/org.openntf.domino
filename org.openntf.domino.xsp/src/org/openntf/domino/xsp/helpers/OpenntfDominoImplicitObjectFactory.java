@@ -53,7 +53,6 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 			if (!(current instanceof org.openntf.domino.Session)) {
 				org.openntf.domino.Database db = Factory.fromLotus((lotus.domino.Database) current, org.openntf.domino.Database.class, s);
 				localMap.put("database", db);
-				;
 			}
 		}
 
