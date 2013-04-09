@@ -23,7 +23,7 @@ import org.openntf.domino.types.DatabaseDescendant;
 /**
  * The Interface ACLEntry.
  */
-public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLEntry, DatabaseDescendant {
+public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLEntry, org.openntf.domino.ext.ACLEntry, DatabaseDescendant {
 
 	/*
 	 * (non-Javadoc)
@@ -38,6 +38,7 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 	 * 
 	 * @see lotus.domino.ACLEntry#enableRole(java.lang.String)
 	 */
+	@Override
 	public void enableRole(String role);
 
 	/*
@@ -303,8 +304,6 @@ public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLE
 	 */
 	@Override
 	public void setLevel(int level);
-
-	public void setLevel(ACL.Level level);
 
 	/*
 	 * (non-Javadoc)

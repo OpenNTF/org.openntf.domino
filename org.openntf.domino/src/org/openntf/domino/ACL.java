@@ -22,7 +22,8 @@ import org.openntf.domino.types.DatabaseDescendant;
 /**
  * The Interface that represents the access control list (ACL) of an IBM Domino database.
  */
-public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<org.openntf.domino.ACLEntry>, DatabaseDescendant {
+public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openntf.domino.ext.ACL, Iterable<org.openntf.domino.ACLEntry>,
+		DatabaseDescendant {
 
 	public static enum Level {
 		NOACCESS(ACL.LEVEL_NOACCESS), DESPOSITOR(ACL.LEVEL_DEPOSITOR), READER(ACL.LEVEL_READER), AUTHOR(ACL.LEVEL_AUTHOR), EDITOR(
@@ -74,21 +75,6 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, Iterable<
 	 */
 	@Override
 	public ACLEntry createACLEntry(String name, int level);
-
-	/**
-	 * Creates an entry in the ACL with the name and level that you specify.
-	 * 
-	 * @param name
-	 *            The name of the person, group, or server for whom you want to create an entry in the ACL. You must supply the complete
-	 *            name, but hierarchical names can be in abbreviated format. Case is not significant.
-	 * @param level
-	 *            The level that you want to assign to this person, group, or server in the ACL, of type ACL.Level.
-	 * 
-	 * @return The newly-created {@link org.openntf.domino.ACLEntry}.
-	 * @since openntf.domino 1.0.0
-	 * 
-	 */
-	public ACLEntry createACLEntry(String name, Level level);
 
 	/**
 	 * Deletes a role with the specified name from an ACL.
