@@ -504,6 +504,8 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	@Override
 	public org.openntf.domino.Database getParentDatabase();
 
+	public Document getParentDocument();
+
 	/*
 	 * (non-Javadoc)
 	 * 
