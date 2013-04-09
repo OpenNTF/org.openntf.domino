@@ -32,8 +32,19 @@ public class WrapperOpenDomino {
 	 */
 
 	public static abstract class OpenFunction extends GeneratedWrapperObject.Function {
-		protected OpenFunction(JSContext arg0, String arg1, int arg2) {
-			super(arg0, arg1, arg2);
+		/*
+		 * The OpenFunction object extends the SSJS function object. It is a single class that encapsulates 1 to n methods on a Java class.
+		 * For each method in your Java class, you'll need to register a function object with a known signature and give it a corresponding
+		 * index. This index on the individual function object is then used as the switch in both the call() and getCallParameters()
+		 * methods.
+		 * 
+		 * It implements 4 critical methods: 1) getCallParameters() which defines the expected parameters for the method 2) getMethodMap()
+		 * which returns the method map that is supposed to provide this method 3) getWrappedClass() which identifies the Java interface
+		 * that will be used in the call() method 4) call(FBSValueVector, FBSObject) which actually unwraps the SSJS objects and executes
+		 * the explicit Java methods defined
+		 */
+		protected OpenFunction(JSContext context, String methodName, int index) {
+			super(context, methodName, index);
 		}
 
 		@Override
@@ -48,6 +59,12 @@ public class WrapperOpenDomino {
 	}
 
 	public static abstract class OpenObject extends GeneratedWrapperObject {
+		/*
+		 * The OpenObject is base wrapper for the Java classes that defines their names, method maps and unlying Java classes. These objects
+		 * are registered with the WrapperFactory with integer indexes so that the SSJS interpretter can find the appropriate wrapper for
+		 * Java objects at runtime.
+		 */
+
 		protected OpenObject(JSContext paramJSContext, Object paramObject, String paramString) {
 			super(paramJSContext, paramObject, paramString);
 		}
@@ -55,6 +72,13 @@ public class WrapperOpenDomino {
 	}
 
 	public static class OpenMethodMap extends GeneratedWrapperObject.MethodMap {
+		/*
+		 * The MethodMap is a simple static HashMap that binds a String, like "getItemValue" or "isBefore" to an OpenFunction object
+		 * 
+		 * This way when SSJS encounters an org.openntf.domino.DateTime, and it sees .isBefore(DateTime) called on it, it can resolve the
+		 * string to a particular fct_OpenDateTime object, with a specific index value. It then invokes the call() method on that particular
+		 * function object, passing in the DateTime argument from SSJS, as well as the DateTime object on which the .isBefore was invoked.
+		 */
 		public OpenMethodMap(JSContext arg0, Class arg1, Class[] arg2) {
 			super(arg0, arg1, arg2);
 		}
@@ -69,6 +93,9 @@ public class WrapperOpenDomino {
 				if (methodMap_OpenDocument == null) {
 					OpenMethodMap methodMap = new OpenMethodMap(context, Document.class, null);
 					methodMap.put("getCreatedDate", new fct_OpenDocument(context, "getCreatedDate", 0));
+					methodMap.put("getLastModifiedDate", new fct_OpenDocument(context, "getLastModifiedDate", 1));
+					methodMap.put("getInitiallyModifiedDate", new fct_OpenDocument(context, "getInitiallyModifiedDate", 2));
+					methodMap.put("getLastAccessedDate", new fct_OpenDocument(context, "getLastAccessedDate", 3));
 					methodMap_OpenDocument = methodMap;
 				}
 			}
@@ -133,6 +160,9 @@ public class WrapperOpenDomino {
 		protected String[] getCallParameters() {
 			switch (index) {
 			case 0:
+			case 1:
+			case 2:
+			case 3:
 				return new String[] { "():Y" };
 			}
 			return super.getCallParameters();
@@ -146,6 +176,24 @@ public class WrapperOpenDomino {
 				case 0:
 					if ((localDocument != null) && (valueVector.size() == 0)) {
 						java.util.Date d = localDocument.getCreatedDate();
+						FBSValue result = FBSUtility.wrap(getJSContext(), d);
+						return result;
+					}
+				case 1:
+					if ((localDocument != null) && (valueVector.size() == 0)) {
+						java.util.Date d = localDocument.getLastModifiedDate();
+						FBSValue result = FBSUtility.wrap(getJSContext(), d);
+						return result;
+					}
+				case 2:
+					if ((localDocument != null) && (valueVector.size() == 0)) {
+						java.util.Date d = localDocument.getInitiallyModifiedDate();
+						FBSValue result = FBSUtility.wrap(getJSContext(), d);
+						return result;
+					}
+				case 3:
+					if ((localDocument != null) && (valueVector.size() == 0)) {
+						java.util.Date d = localDocument.getLastAccessedDate();
 						FBSValue result = FBSUtility.wrap(getJSContext(), d);
 						return result;
 					}
