@@ -11,4 +11,8 @@
    <extension point="com.ibm.commons.Extension">
          <service type="com.ibm.xsp.library.Contributor" class="org.openntf.domino.xsp.OpenntfDominoXspContributor" />
    </extension>
+   
+     <extension point="com.ibm.commons.Extension">
+         <service type="com.ibm.designer.runtime.extensions.JavaScriptProvider" class="org.openntf.domino.xsp.script.OpenDomJavaScriptExtension" />
+   </extension>
 </plugin>
