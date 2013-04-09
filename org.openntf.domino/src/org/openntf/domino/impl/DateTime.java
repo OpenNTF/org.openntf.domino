@@ -363,7 +363,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#isAfter(org.openntf.domino.DateTime)
 	 */
-	public boolean isAfter(org.openntf.domino.DateTime comparDate) {
+	public boolean isAfter(org.openntf.domino.ext.DateTime comparDate) {
 		return cal_.after(comparDate.toJavaCal());
 	}
 
@@ -373,7 +373,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#isBefore(org.openntf.domino.DateTime)
 	 */
 	@Override
-	public boolean isBefore(org.openntf.domino.DateTime comparDate) {
+	public boolean isBefore(org.openntf.domino.ext.DateTime comparDate) {
 		return cal_.before(comparDate.toJavaCal());
 	}
 
