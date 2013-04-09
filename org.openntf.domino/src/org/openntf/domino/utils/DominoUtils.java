@@ -25,7 +25,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.security.AccessController;
 import java.security.MessageDigest;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -164,17 +166,29 @@ public enum DominoUtils {
 	 *            the t
 	 * @return the throwable
 	 */
-	public static Throwable handleException(Throwable t) {
+	public static Throwable handleException(final Throwable t) {
 		try {
-			if (log_.getLevel() == null) {
-				LogUtils.loadLoggerConfig(false, "");
-			}
-			if (LogUtils.hasAccessException(log_)) {
-				logBackup_.log(Level.SEVERE, t.getLocalizedMessage(), t);
-			} else {
-				log_.log(Level.WARNING, t.getLocalizedMessage(), t);
-				t.printStackTrace();
-			}
+			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				@Override
+				public Object run() throws Exception {
+					if (log_.getLevel() == null) {
+						LogUtils.loadLoggerConfig(false, "");
+					}
+					return null;
+				}
+			});
+			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				@Override
+				public Object run() throws Exception {
+					if (LogUtils.hasAccessException(log_)) {
+						logBackup_.log(Level.SEVERE, t.getLocalizedMessage(), t);
+					} else {
+						log_.log(Level.WARNING, t.getLocalizedMessage(), t);
+						t.printStackTrace();
+					}
+					return null;
+				}
+			});
 			return null;
 		} catch (Throwable e) {
 			return t;
