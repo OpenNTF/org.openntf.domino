@@ -39,6 +39,7 @@ import org.openntf.domino.View;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
+import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -835,7 +836,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					throw new DataNotCompatibleException(e.getMessage() + " for field " + name + " in document " + noteid_);
 				}
 			} else {
-
+				throw new UnimplementedException("Arrays for non-primitives not yet implemented");
 			}
 		} else if (T.isPrimitive()) {
 			try {
@@ -849,6 +850,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			} else if (T.isAssignableFrom(Date.class)) {
 				result = Factory.toDate(fieldResult);
 			} else if (T.isAssignableFrom(org.openntf.domino.DateTime.class)) {
+				Factory.getSession(this).createDateTime(Factory.toDate(fieldResult));
 
 			} else if (T.isAssignableFrom(org.openntf.domino.Name.class)) {
 
