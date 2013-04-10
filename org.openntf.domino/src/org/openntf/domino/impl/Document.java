@@ -878,7 +878,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		try {
 			// Check the item type to see if it's MIME - if so, then see if it's a MIMEBean
 			// This is a bit more expensive than I'd like
-			lotus.domino.Session session = Factory.getSession(this);
+			lotus.domino.Session session = this.getAncestorSession();
 			boolean convertMime = session.isConvertMIME();
 			session.setConvertMIME(false);
 			Item item = this.getFirstItem(name);
@@ -1976,9 +1976,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			} else {
 				infoNode = new HashMap<String, Serializable>();
 			}
-			infoNode.put("valueClass", valueClass);
+			infoNode.put("valueClass", valueClass.getName());
 			infoNode.put("updated", new Date()); // For sanity checking if the value was changed outside of Java
-			DominoUtils.saveState((Serializable) itemInfo, this, "$$ItemInfo");
+			itemInfo.put(itemName, infoNode);
+			DominoUtils.saveState((Serializable) itemInfo, this, "$$ItemInfo", false, null);
 			this.getAncestorSession().setConvertMime(convertMime);
 
 			return Factory.fromLotus(result, Item.class, this);
