@@ -11,6 +11,22 @@ import com.ibm.xsp.library.AbstractXspLibrary;
  */
 public class XspLibrary extends AbstractXspLibrary {
 	private final static String LIBRARY_ID = XspLibrary.class.getName();
+	private static Boolean GLOBAL;
+
+	private static boolean isGlobal() {
+		if (GLOBAL == null) {
+			GLOBAL = Boolean.FALSE;
+			String[] envs = Activator.getEnvironmentStrings();
+			if (envs != null) {
+				for (String s : envs) {
+					if (s.equalsIgnoreCase("global")) {
+						GLOBAL = Boolean.TRUE;
+					}
+				}
+			}
+		}
+		return GLOBAL.booleanValue();
+	}
 
 	/**
 	 * 
@@ -42,7 +58,9 @@ public class XspLibrary extends AbstractXspLibrary {
 
 	@Override
 	public boolean isGlobalScope() {
-		return false;
+		boolean result = isGlobal();
+		System.out.println(Activator.PLUGIN_ID + " global: " + String.valueOf(result));
+		return result;
 	}
 
 }
