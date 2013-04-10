@@ -15,6 +15,9 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Session;
@@ -153,6 +156,61 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	@Override
 	public Session getAncestorSession() {
 		return this.getParent();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.DateRange#contains(org.openntf.domino.DateTime)
+	 */
+	@Override
+	public boolean contains(org.openntf.domino.DateTime dt) {
+		Calendar dtCal = dt.toJavaCal();
+		Calendar startCal = dt.toJavaCal();
+		Calendar endCal = dt.toJavaCal();
+		if (dt.isAnyDate()) {
+			// Compare times only -normalize dates
+			dtCal.set(Calendar.YEAR, 2013);
+			dtCal.set(Calendar.MONTH, 0);
+			dtCal.set(Calendar.DAY_OF_MONTH, 2);
+
+			startCal.set(Calendar.YEAR, 2013);
+			startCal.set(Calendar.MONTH, 0);
+			startCal.set(Calendar.DAY_OF_MONTH, 2);
+
+			endCal.set(Calendar.YEAR, 2013);
+			endCal.set(Calendar.MONTH, 0);
+			endCal.set(Calendar.DAY_OF_MONTH, 2);
+		} else if (dt.isAnyTime()) {
+			// Compare dates only - normalize times
+			dtCal.set(Calendar.HOUR_OF_DAY, 12);
+			dtCal.set(Calendar.MINUTE, 0);
+			dtCal.set(Calendar.SECOND, 0);
+			dtCal.set(Calendar.MILLISECOND, 0);
+
+			startCal.set(Calendar.HOUR_OF_DAY, 12);
+			startCal.set(Calendar.MINUTE, 0);
+			startCal.set(Calendar.SECOND, 0);
+			startCal.set(Calendar.MILLISECOND, 0);
+
+			endCal.set(Calendar.HOUR_OF_DAY, 12);
+			endCal.set(Calendar.MINUTE, 0);
+			endCal.set(Calendar.SECOND, 0);
+			endCal.set(Calendar.MILLISECOND, 0);
+		}
+		return (dtCal.equals(startCal) || dtCal.after(startCal)) && (dtCal.equals(endCal) || dtCal.before(endCal));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.DateRange#contains(java.util.Date)
+	 */
+	@Override
+	public boolean contains(Date date) {
+		Date start = this.getStartDateTime().toJavaDate();
+		Date end = this.getEndDateTime().toJavaDate();
+		return (date.equals(start) || date.after(start)) && (date.equals(end) || date.before(end));
 	}
 
 }
