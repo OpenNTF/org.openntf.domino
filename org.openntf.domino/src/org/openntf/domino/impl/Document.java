@@ -707,8 +707,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public Vector<org.openntf.domino.EmbeddedObject> getEmbeddedObjects() {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getEmbeddedObjects(), org.openntf.domino.EmbeddedObject.class,
-					this.getAncestorSession());
+			return Factory.fromLotusAsVector(getDelegate().getEmbeddedObjects(), org.openntf.domino.EmbeddedObject.class, this
+					.getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2377,14 +2377,15 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					StackTraceElement[] elements = t.getStackTrace();
 					log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
 							+ " had been recycled and was auto-restored. Changes may have been lost.");
-					log_.log(Level.FINER,
-							elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber() + ")");
-					log_.log(Level.FINER,
-							elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber() + ")");
-					log_.log(Level.FINER,
-							elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber() + ")");
-					log_.log(Level.FINE,
-							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
+					log_.log(Level.FINER, elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line "
+							+ elements[0].getLineNumber() + ")");
+					log_.log(Level.FINER, elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line "
+							+ elements[1].getLineNumber() + ")");
+					log_.log(Level.FINER, elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line "
+							+ elements[2].getLineNumber() + ")");
+					log_
+							.log(Level.FINE,
+									"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
 				}
 			} catch (NotesException e) {
 				DominoUtils.handleException(e);
@@ -2431,6 +2432,14 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	@Override
 	public Object get(Object key) {
+		if (key == null) {
+			return null;
+		}
+		// Check for "special" cases
+		if ("parentDocument".equals(key)) {
+			return this.getParentDocument();
+		}
+
 		if (this.containsKey(key)) {
 			Vector<Object> value = this.getItemValue(key.toString());
 			if (value.size() == 1) {
