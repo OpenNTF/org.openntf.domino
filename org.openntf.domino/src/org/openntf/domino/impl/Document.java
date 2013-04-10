@@ -707,8 +707,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public Vector<org.openntf.domino.EmbeddedObject> getEmbeddedObjects() {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getEmbeddedObjects(), org.openntf.domino.EmbeddedObject.class, this
-					.getAncestorSession());
+			return Factory.fromLotusAsVector(getDelegate().getEmbeddedObjects(), org.openntf.domino.EmbeddedObject.class,
+					this.getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -835,7 +835,17 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					throw new DataNotCompatibleException(e.getMessage() + " for field " + name + " in document " + noteid_);
 				}
 			} else {
-				throw new UnimplementedException("Arrays for non-primitives not yet implemented");
+				if (CType.isAssignableFrom(String.class)) {
+					result = Factory.toStrings(fieldResult);
+				} else if (CType.isAssignableFrom(Date.class)) {
+					result = Factory.toDates(fieldResult);
+				} else if (CType.isAssignableFrom(DateTime.class)) {
+					result = Factory.toDateTimes(fieldResult, Factory.getSession(this));
+				} else if (CType.isAssignableFrom(Name.class)) {
+					result = Factory.toNames(fieldResult, Factory.getSession(this));
+				}
+				throw new UnimplementedException("Arrays for " + CType.getName() + " not yet implemented, so cannot auto-box for field "
+						+ name + " in document " + noteid_);
 			}
 		} else if (T.isPrimitive()) {
 			try {
@@ -850,9 +860,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				result = Factory.toDate(fieldResult);
 			} else if (T.isAssignableFrom(org.openntf.domino.DateTime.class)) {
 				Factory.getSession(this).createDateTime(Factory.toDate(fieldResult));
-
 			} else if (T.isAssignableFrom(org.openntf.domino.Name.class)) {
-
+				Factory.getSession(this).createName(String.valueOf(fieldResult.get(0)));
 			}
 		}
 		return (T) result;
@@ -2368,15 +2377,14 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					StackTraceElement[] elements = t.getStackTrace();
 					log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
 							+ " had been recycled and was auto-restored. Changes may have been lost.");
-					log_.log(Level.FINER, elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line "
-							+ elements[0].getLineNumber() + ")");
-					log_.log(Level.FINER, elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line "
-							+ elements[1].getLineNumber() + ")");
-					log_.log(Level.FINER, elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line "
-							+ elements[2].getLineNumber() + ")");
-					log_
-							.log(Level.FINE,
-									"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
+					log_.log(Level.FINER,
+							elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber() + ")");
+					log_.log(Level.FINER,
+							elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber() + ")");
+					log_.log(Level.FINER,
+							elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber() + ")");
+					log_.log(Level.FINE,
+							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
 				}
 			} catch (NotesException e) {
 				DominoUtils.handleException(e);

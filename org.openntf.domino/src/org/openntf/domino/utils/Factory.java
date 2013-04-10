@@ -33,6 +33,7 @@ import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
 import org.openntf.domino.exceptions.UnimplementedException;
+import org.openntf.domino.impl.DateTime;
 import org.openntf.domino.impl.Session;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.SessionDescendant;
@@ -734,6 +735,59 @@ public enum Factory {
 		} else {
 			throw new DataNotCompatibleException("Cannot create a Date from a " + value.getClass().getName());
 		}
+	}
+
+	public static Date[] toDates(Collection<Object> vector) throws DataNotCompatibleException {
+		if (vector == null)
+			return null;
+
+		Date[] result = new Date[vector.size()];
+		int i = 0;
+		for (Object o : vector) {
+			result[i++] = toDate(o);
+		}
+		return result;
+	}
+
+	public static org.openntf.domino.DateTime[] toDateTimes(Collection<Object> vector, org.openntf.domino.Session session)
+			throws DataNotCompatibleException {
+		if (vector == null)
+			return null;
+
+		org.openntf.domino.DateTime[] result = new org.openntf.domino.DateTime[vector.size()];
+		int i = 0;
+		for (Object o : vector) {
+			result[i++] = session.createDateTime(toDate(o));
+		}
+		return result;
+	}
+
+	public static org.openntf.domino.Name[] toNames(Collection<Object> vector, org.openntf.domino.Session session)
+			throws DataNotCompatibleException {
+		if (vector == null)
+			return null;
+
+		org.openntf.domino.Name[] result = new org.openntf.domino.Name[vector.size()];
+		int i = 0;
+		for (Object o : vector) {
+			result[i++] = session.createName(String.valueOf(o));
+		}
+		return result;
+	}
+
+	public static String[] toStrings(Collection<Object> vector) throws DataNotCompatibleException {
+		if (vector == null)
+			return null;
+		String[] strings = new String[vector.size()];
+		int i = 0;
+		for (Object o : vector) {
+			if (o instanceof DateTime) {
+				strings[i++] = ((DateTime) o).getGMTTime();
+			} else {
+				strings[i++] = String.valueOf(o);
+			}
+		}
+		return strings;
 	}
 
 }
