@@ -20,6 +20,7 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.xsp.Activator;
 
 import com.ibm.xsp.context.FacesContextEx;
 import com.ibm.xsp.el.ImplicitObjectFactory;
@@ -27,9 +28,26 @@ import com.ibm.xsp.util.TypedUtil;
 
 public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory {
 	// TODO this is really just a sample on how to get to an entry point in the API
+	private static Boolean GODMODE;
 
-	private final String[][] implicitObjectList = { { "session", org.openntf.domino.Session.class.getName() },
-			{ "database", org.openntf.domino.Database.class.getName() } };
+	private static boolean isGodMode() {
+		if (GODMODE == null) {
+			GODMODE = Boolean.FALSE;
+			String[] envs = Activator.getEnvironmentStrings();
+			if (envs != null) {
+				for (String s : envs) {
+					if (s.equalsIgnoreCase("godmode")) {
+						GODMODE = Boolean.TRUE;
+					}
+				}
+			}
+		}
+		return GODMODE.booleanValue();
+	}
+
+	private final String[][] implicitObjectList = {
+			{ (isGodMode() ? "session" : "opensession"), org.openntf.domino.Session.class.getName() },
+			{ (isGodMode() ? "database" : "opendatabase"), org.openntf.domino.Database.class.getName() } };
 
 	public OpenntfDominoImplicitObjectFactory() {
 	}
@@ -43,7 +61,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 			Object current = localMap.get("session");
 			if (!(current instanceof org.openntf.domino.Session)) {
 				s = Factory.fromLotus((lotus.domino.Session) current, org.openntf.domino.Session.class, null);
-				localMap.put("session", s);
+				localMap.put((isGodMode() ? "session" : "opensession"), s);
 			} else {
 				s = (org.openntf.domino.Session) current;
 			}
@@ -52,7 +70,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 			Object current = localMap.get("database");
 			if (!(current instanceof org.openntf.domino.Session)) {
 				org.openntf.domino.Database db = Factory.fromLotus((lotus.domino.Database) current, org.openntf.domino.Database.class, s);
-				localMap.put("database", db);
+				localMap.put((isGodMode() ? "database" : "opendatabase"), db);
 			}
 		}
 
