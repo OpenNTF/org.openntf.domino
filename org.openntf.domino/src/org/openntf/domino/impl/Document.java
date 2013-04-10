@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -1854,11 +1855,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * 
 	 * @see org.openntf.domino.Document#replaceItemValue(java.lang.String, java.lang.Object)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Item replaceItemValue(String itemName, Object value) {
 		markDirty();
 		try {
 			lotus.domino.Item result = null;
+			Class<?> valueClass = value.getClass();
 			try {
 				if (value instanceof List) {
 					Vector<Object> resultList = new Vector<Object>();
@@ -1885,6 +1888,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						}
 						resultList.add(domNode);
 					}
+					// If it ended up being something we could store, make note of the original class instead of the list class
+					valueClass = ((List<?>) value).get(0).getClass();
+
 					result = getDelegate().replaceItemValue(itemName, resultList);
 				} else {
 					Object domNode = toDominoFriendly(value, this);
@@ -1947,6 +1953,33 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					}
 				}
 			}
+
+			// If we've gotten this far, it must be legal - update or create the item info map
+			boolean convertMime = this.getAncestorSession().isConvertMime();
+			this.getAncestorSession().setConvertMime(false);
+			Map<String, Map<String, Serializable>> itemInfo = null;
+			if (this.hasItem("$$ItemInfo")) {
+				if (this.getFirstItem("$$ItemInfo").getType() == Item.MIME_PART) {
+					// Then use the existing value
+					itemInfo = (Map<String, Map<String, Serializable>>) DominoUtils.restoreState(this, "$$ItemInfo");
+				} else {
+					// Then destroy it (?)
+					this.removeItem("$$ItemInfo");
+					itemInfo = new TreeMap<String, Map<String, Serializable>>();
+				}
+			} else {
+				itemInfo = new TreeMap<String, Map<String, Serializable>>();
+			}
+			Map<String, Serializable> infoNode = null;
+			if (itemInfo.containsKey(itemName)) {
+				infoNode = itemInfo.get(itemName);
+			} else {
+				infoNode = new HashMap<String, Serializable>();
+			}
+			infoNode.put("valueClass", valueClass);
+			infoNode.put("updated", new Date()); // For sanity checking if the value was changed outside of Java
+			DominoUtils.saveState((Serializable) itemInfo, this, "$$ItemInfo");
+			this.getAncestorSession().setConvertMime(convertMime);
 
 			return Factory.fromLotus(result, Item.class, this);
 		} catch (NotesException e) {
