@@ -15,12 +15,10 @@
  */
 package org.openntf.domino;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Vector;
 
 import org.openntf.domino.annotations.Legacy;
-import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.types.Resurrectable;
 import org.openntf.domino.types.SessionDescendant;
 
@@ -28,8 +26,8 @@ import org.openntf.domino.types.SessionDescendant;
 /**
  * The Interface Database.
  */
-public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database>, Map<String, Document>,
-		Resurrectable, SessionDescendant {
+public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database>, org.openntf.domino.ext.Database,
+		Map<String, Document>, Resurrectable, SessionDescendant {
 
 	public static enum SortOption {
 		SCORES(Database.FT_SCORES), DATE_DES(Database.FT_DATE_DES), DATE_ASC(Database.FT_DATE_ASC);
@@ -126,14 +124,6 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * (non-Javadoc)
 	 * 
 	 * 
-	 * @see java.util.Map#containsKey(java.lang.Object)
-	 */
-	public boolean containsKey(Object key);
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * 
 	 * @see lotus.domino.Database#createCopy(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -154,10 +144,6 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 */
 	@Override
 	public Document createDocument();
-
-	public Document createDocument(Map<String, Object> itemValues);
-
-	public Document createDocument(Object... keyValuePairs);
 
 	/*
 	 * (non-Javadoc)
@@ -319,8 +305,6 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public Document FTDomainSearch(String query, int maxDocs, int sortOpt, int otherOpt, int start, int count, String entryForm);
 
-	public Document FTDomainSearch(String query, int maxDocs, SortOption sortOpt, int otherOpt, int start, int count, String entryForm);
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -345,8 +329,6 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public DocumentCollection FTSearch(String query, int maxDocs, int sortOpt, int otherOpt);
 
-	public DocumentCollection FTSearch(String query, int maxDocs, SortOption sortOpt, int otherOpt);
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -354,16 +336,6 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 */
 	@Override
 	public DocumentCollection FTSearchRange(String query, int maxDocs, int sortOpt, int otherOpt, int start);
-
-	public DocumentCollection FTSearchRange(String query, int maxDocs, SortOption sortOpt, int otherOpt, int start);
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * 
-	 * @see java.util.Map#get(java.lang.Object)
-	 */
-	public Document get(Object key);
 
 	/*
 	 * (non-Javadoc)
@@ -479,36 +451,6 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public Document getDocumentByID(String noteid);
 
-	/**
-	 * Retrieves a document by a String key.
-	 * <p>
-	 * The key is hased using MD5 and treated as a UNID.
-	 * </p>
-	 * 
-	 * @param key
-	 *            The arbitrary-length string key.
-	 * 
-	 * @return The Document corresponding to the key, or null if no matching document exists.
-	 * @since org.openntf.domino 1.0.0
-	 */
-	public Document getDocumentByKey(String key);
-
-	/**
-	 * Retrieves a document by a String key, allowing for creation of a new document if no match was found.
-	 * <p>
-	 * The key is hased using MD5 and treated as a UNID.
-	 * </p>
-	 * 
-	 * @param key
-	 *            The arbitrary-length string key.
-	 * @param createOnFail
-	 *            Whether or not a new document should be created when the key was not found. Defaults to false.
-	 * 
-	 * @return The Document corresponding to the key, or null if no matching document exists and createOnFail is false.
-	 * @since org.openntf.domino 1.0.0
-	 */
-	public Document getDocumentByKey(String key, boolean createOnFail);
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -558,10 +500,6 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 */
 	@Override
 	public String getFilePath();
-
-	public FileResource getFileResource(String name);
-
-	public Collection<FileResource> getFileResources();
 
 	/*
 	 * (non-Javadoc)
@@ -871,8 +809,6 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void grantAccess(String name, int level);
 
-	public void grantAccess(String name, ACL.Level level);
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -919,6 +855,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#isDB2()
 	 */
 	@Override
+	@Legacy(Legacy.INTERFACES_WARNING)
 	public boolean isDB2();
 
 	/*
@@ -1248,8 +1185,6 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void setOption(int optionName, boolean flag);
 
-	public void setOption(DBOption optionName, boolean flag);
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1298,8 +1233,6 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void sign(int documentType);
 
-	public void sign(SignDocType documentType);
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1318,8 +1251,6 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void sign(int documentType, boolean existingSigsOnly, String name);
 
-	public void sign(SignDocType documentType, boolean existingSigsOnly, String name);
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1328,8 +1259,6 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	@Override
 	public void sign(int documentType, boolean existingSigsOnly, String name, boolean nameIsNoteid);
 
-	public void sign(SignDocType documentType, boolean existingSigsOnly, String name, boolean nameIsNoteid);
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1337,11 +1266,5 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 */
 	@Override
 	public void updateFTIndex(boolean create);
-
-	public DatabaseTransaction startTransaction();
-
-	public void closeTransaction();
-
-	public DatabaseTransaction getTransaction();
 
 }

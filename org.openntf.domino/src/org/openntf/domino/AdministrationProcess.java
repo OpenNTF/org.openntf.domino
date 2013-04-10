@@ -24,7 +24,7 @@ import org.openntf.domino.types.SessionDescendant;
  * The Interface AdministrationProcess.
  */
 public interface AdministrationProcess extends Base<lotus.domino.AdministrationProcess>, lotus.domino.AdministrationProcess,
-		SessionDescendant {
+		org.openntf.domino.ext.AdministrationProcess, SessionDescendant {
 
 	/*
 	 * (non-Javadoc)

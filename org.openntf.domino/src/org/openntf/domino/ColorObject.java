@@ -21,7 +21,8 @@ import org.openntf.domino.types.SessionDescendant;
 /**
  * The Interface ColorObject.
  */
-public interface ColorObject extends Base<lotus.domino.ColorObject>, lotus.domino.ColorObject, SessionDescendant {
+public interface ColorObject extends Base<lotus.domino.ColorObject>, lotus.domino.ColorObject, org.openntf.domino.ext.ColorObject,
+		SessionDescendant {
 
 	/*
 	 * (non-Javadoc)

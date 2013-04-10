@@ -21,7 +21,8 @@ import org.openntf.domino.types.SessionDescendant;
 /**
  * The Interface AgentContext.
  */
-public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.domino.AgentContext, SessionDescendant {
+public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.domino.AgentContext, org.openntf.domino.ext.AgentContext,
+		SessionDescendant {
 
 	/*
 	 * (non-Javadoc)
@@ -36,6 +37,7 @@ public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.dom
 	 * 
 	 * @see lotus.domino.AgentContext#getCurrentDatabase()
 	 */
+	@Override
 	public Database getCurrentDatabase();
 
 	/*
@@ -69,8 +71,6 @@ public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.dom
 	 */
 	@Override
 	public DateTime getLastRun();
-
-	public Session getParentSession();
 
 	/*
 	 * (non-Javadoc)
