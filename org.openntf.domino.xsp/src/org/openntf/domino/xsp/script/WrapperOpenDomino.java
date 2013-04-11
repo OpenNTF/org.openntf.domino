@@ -227,6 +227,11 @@ public class WrapperOpenDomino {
 					methodMap.put("isBefore", new fct_OpenDateTime(context, "isBefore", 0));
 					methodMap.put("isAfter", new fct_OpenDateTime(context, "isAfter", 1));
 					methodMap.put("toJavaCal", new fct_OpenDateTime(context, "toJavaCal", 2));
+					methodMap.put("equals", new fct_OpenDateTime(context, "equals",3));
+					methodMap.put("equalsIgnoreDate", new fct_OpenDateTime(context, "equalsIgnoreDate",4));
+					methodMap.put("equalsIgnoreTime", new fct_OpenDateTime(context, "equalsIgnoreTime",5));
+					methodMap.put("isAnyDate", new fct_OpenDateTime(context, "isAnyDate", 6));
+					methodMap.put("isAnyTime", new fct_OpenDateTime(context, "isAnyTime", 7));
 					methodMap_OpenDateTime = methodMap;
 				}
 			}
@@ -295,6 +300,16 @@ public class WrapperOpenDomino {
 				return new String[] { "(DateTime:Lorg.openntf.domino.DateTime;):Z" };
 			case 2: // toJavaCal()
 				return new String[] { "():Y" };
+			case 3: // equals(DateTime)
+				return new String[] { "(DateTime:Lorg.openntf.domino.DateTime;):Z" };
+			case 4: // equalsIgnoreDate(DateTime)
+				return new String[] { "(DateTime:Lorg.openntf.domino.DateTime;):Z" };
+			case 5: // equalsIgnoreTime(DateTime)
+				return new String[] { "(DateTime:Lorg.openntf.domino.DateTime;):Z" };
+			case 6: // isAnyDate()
+				return new String[] { "():Y" };
+			case 7: // isAnyTime()
+				return new String[] { "():Y" };
 			}
 			return super.getCallParameters();
 		}
@@ -317,6 +332,31 @@ public class WrapperOpenDomino {
 				case 2:
 					if ((dateTime != null) && (valueVector.size() == 0)) {
 						FBSValue result = FBSUtility.wrap(getJSContext(), dateTime.toJavaCal());
+						return result;
+					}
+				case 3:
+					if ((dateTime != null) && (valueVector.size() == 1)) {
+						org.openntf.domino.DateTime dt = (org.openntf.domino.DateTime) valueVector.getFBSValue(0).toJavaObject();
+						return FBSUtility.wrap(getJSContext(), dateTime.equals(dt));
+					}
+				case 4:
+					if ((dateTime != null) && (valueVector.size() == 1)) {
+						org.openntf.domino.DateTime dt = (org.openntf.domino.DateTime) valueVector.getFBSValue(0).toJavaObject();
+						return FBSUtility.wrap(getJSContext(), dateTime.equalsIgnoreDate(dt));
+					}
+				case 5:
+					if ((dateTime != null) && (valueVector.size() == 1)) {
+						org.openntf.domino.DateTime dt = (org.openntf.domino.DateTime) valueVector.getFBSValue(0).toJavaObject();
+						return FBSUtility.wrap(getJSContext(), dateTime.equalsIgnoreTime(dt));
+					}
+				case 6:
+					if ((dateTime != null) && (valueVector.size() == 0)) {
+						FBSValue result = FBSUtility.wrap(getJSContext(), dateTime.isAnyDate());
+						return result;
+					}
+				case 7:
+					if ((dateTime != null) && (valueVector.size() == 0)) {
+						FBSValue result = FBSUtility.wrap(getJSContext(), dateTime.isAnyTime());
 						return result;
 					}
 				}
