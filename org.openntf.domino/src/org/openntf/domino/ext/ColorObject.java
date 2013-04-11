@@ -9,4 +9,7 @@ package org.openntf.domino.ext;
  */
 public interface ColorObject {
 
+	public String getHex();
+
+	public void setHex(String hex);
 }
