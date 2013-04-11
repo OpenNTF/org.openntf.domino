@@ -1504,7 +1504,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public View getView(String name) {
 		try {
-			return Factory.fromLotus(getDelegate().getView(name), View.class, this);
+			View result = Factory.fromLotus(getDelegate().getView(name), View.class, this);
+			result.setAutoUpdate(false);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
