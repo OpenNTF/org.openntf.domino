@@ -17,11 +17,11 @@ package org.openntf.domino;
 
 import org.openntf.domino.types.DatabaseDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface ViewNavigator.
  */
-public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.domino.ViewNavigator, DatabaseDescendant {
+public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.domino.ViewNavigator, org.openntf.domino.ext.ViewNavigator,
+		DatabaseDescendant {
 
 	/*
 	 * (non-Javadoc)
@@ -487,8 +487,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	 * @see lotus.domino.ViewNavigator#setAutoExpandGuidance(int, int[], int[])
 	 */
 	@Override
-	// TODO Figure out what these parameters are
-	public void setAutoExpandGuidance(int arg0, int[] arg1, int[] arg2);
+	public void setAutoExpandGuidance(int maxEntries, int[] collapsedNoteIds, int[] expandedNoteIds);
 
 	/*
 	 * (non-Javadoc)
@@ -513,8 +512,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	 * @see lotus.domino.ViewNavigator#setCacheGuidance(int)
 	 */
 	@Override
-	// TODO Figure out what these parameters are
-	public void setCacheGuidance(int arg0);
+	public void setCacheGuidance(int maxEntries);
 
 	/*
 	 * (non-Javadoc)
@@ -522,8 +520,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	 * @see lotus.domino.ViewNavigator#setCacheGuidance(int, int)
 	 */
 	@Override
-	// TODO Figure out what these parameters are
-	public void setCacheGuidance(int arg0, int arg1);
+	public void setCacheGuidance(int maxEntries, int readMode);
 
 	/*
 	 * (non-Javadoc)

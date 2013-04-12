@@ -19,11 +19,11 @@ import java.util.Vector;
 
 import org.openntf.domino.types.DocumentDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface RichTextItem.
  */
-public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.domino.Item, DocumentDescendant {
+public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.domino.ext.RichTextItem, org.openntf.domino.Item,
+		DocumentDescendant {
 
 	/*
 	 * (non-Javadoc)

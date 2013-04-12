@@ -19,11 +19,11 @@ import java.util.Vector;
 
 import org.openntf.domino.types.DatabaseDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface ViewEntry.
  */
-public interface ViewEntry extends lotus.domino.ViewEntry, Base<lotus.domino.ViewEntry>, DatabaseDescendant {
+public interface ViewEntry extends lotus.domino.ViewEntry, org.openntf.domino.ext.ViewEntry, Base<lotus.domino.ViewEntry>,
+		DatabaseDescendant {
 
 	/*
 	 * (non-Javadoc)

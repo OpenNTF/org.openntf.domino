@@ -19,11 +19,11 @@ import java.util.Vector;
 
 import org.openntf.domino.types.DatabaseDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface Replication.
  */
-public interface Replication extends Base<lotus.domino.Replication>, lotus.domino.Replication, DatabaseDescendant {
+public interface Replication extends Base<lotus.domino.Replication>, lotus.domino.Replication, org.openntf.domino.ext.Replication,
+		DatabaseDescendant {
 
 	/*
 	 * (non-Javadoc)

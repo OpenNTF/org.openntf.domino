@@ -23,7 +23,6 @@ import java.util.Vector;
 import org.openntf.domino.types.DocumentDescendant;
 import org.xml.sax.InputSource;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface MIMEEntity.
  */

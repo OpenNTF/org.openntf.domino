@@ -19,11 +19,11 @@ import java.util.Vector;
 
 import org.openntf.domino.types.SessionDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface Registration.
  */
-public interface Registration extends Base<lotus.domino.Registration>, lotus.domino.Registration, SessionDescendant {
+public interface Registration extends Base<lotus.domino.Registration>, lotus.domino.Registration, org.openntf.domino.ext.Registration,
+		SessionDescendant {
 
 	/*
 	 * (non-Javadoc)
@@ -38,6 +38,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * 
 	 * @see lotus.domino.Registration#addCertifierToAddressBook(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public boolean addCertifierToAddressBook(String idFile, String password);
 
 	/*

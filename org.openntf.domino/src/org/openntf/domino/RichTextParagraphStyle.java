@@ -19,12 +19,11 @@ import java.util.Vector;
 
 import org.openntf.domino.types.SessionDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface RichTextParagraphStyle.
  */
 public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagraphStyle>, lotus.domino.RichTextParagraphStyle,
-		SessionDescendant {
+		org.openntf.domino.ext.RichTextParagraphStyle, SessionDescendant {
 
 	public static enum Align {
 		CENTER(RichTextParagraphStyle.ALIGN_CENTER), FULL(RichTextParagraphStyle.ALIGN_FULL), LEFT(RichTextParagraphStyle.ALIGN_LEFT), NOWRAP(
@@ -89,8 +88,6 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 	@Override
 	public int getPagination();
 
-	public Session getParent();
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -130,8 +127,6 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 	 */
 	@Override
 	public void setAlignment(int value);
-
-	public void setAlignment(Align value);
 
 	/*
 	 * (non-Javadoc)
