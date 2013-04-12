@@ -23,7 +23,8 @@ import org.openntf.domino.types.SessionDescendant;
 /**
  * The Interface Directory.
  */
-public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Directory, SessionDescendant {
+public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Directory, org.openntf.domino.ext.Directory,
+		SessionDescendant {
 
 	/*
 	 * (non-Javadoc)
@@ -80,8 +81,6 @@ public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Di
 	 */
 	@Override
 	public Vector<String> getMailInfo(String userName, boolean getVersion, boolean errorOnMultipleMatches);
-
-	public Session getParent();
 
 	/*
 	 * (non-Javadoc)
