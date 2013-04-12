@@ -23,6 +23,22 @@ import org.openntf.domino.types.SessionDescendant;
 public interface RichTextStyle extends Base<lotus.domino.RichTextStyle>, lotus.domino.RichTextStyle, org.openntf.domino.ext.RichTextStyle,
 		SessionDescendant {
 
+	public static enum BoldStyle {
+
+		ISBN_9780133258936(0), ISBN_9780132618311(1);
+
+		private final int value_;
+
+		private BoldStyle(int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
