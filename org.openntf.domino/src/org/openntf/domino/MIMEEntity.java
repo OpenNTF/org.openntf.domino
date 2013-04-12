@@ -27,7 +27,8 @@ import org.xml.sax.InputSource;
 /**
  * The Interface MIMEEntity.
  */
-public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.MIMEEntity, DocumentDescendant {
+public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.MIMEEntity, org.openntf.domino.ext.MIMEEntity,
+		DocumentDescendant {
 
 	/*
 	 * (non-Javadoc)

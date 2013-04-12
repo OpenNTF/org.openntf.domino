@@ -21,7 +21,8 @@ import org.openntf.domino.types.SessionDescendant;
 /**
  * The Interface International.
  */
-public interface International extends Base<lotus.domino.International>, lotus.domino.International, SessionDescendant {
+public interface International extends Base<lotus.domino.International>, lotus.domino.International, org.openntf.domino.ext.International,
+		SessionDescendant {
 
 	/*
 	 * (non-Javadoc)

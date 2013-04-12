@@ -23,7 +23,8 @@ import org.openntf.domino.types.SessionDescendant;
 /**
  * The Interface NotesCalendarNotice.
  */
-public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNotice>, lotus.domino.NotesCalendarNotice, SessionDescendant {
+public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNotice>, lotus.domino.NotesCalendarNotice,
+		org.openntf.domino.ext.NotesCalendarNotice, SessionDescendant {
 
 	/*
 	 * (non-Javadoc)
@@ -139,6 +140,11 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	@Override
 	public boolean isOverwriteCheckEnabled();
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.NotesCalendarNotice#read()
+	 */
 	@Override
 	public String read();
 
@@ -174,6 +180,11 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	@Override
 	public void setOverwriteCheckEnabled(boolean flag);
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.NotesCalendarNotice#tentativelyAccept(java.lang.String)
+	 */
 	@Override
 	public void tentativelyAccept(String comments);
 }

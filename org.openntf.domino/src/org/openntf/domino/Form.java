@@ -24,7 +24,7 @@ import org.openntf.domino.types.Design;
 /**
  * The Interface Form.
  */
-public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, Design, DatabaseDescendant {
+public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, org.openntf.domino.ext.Form, Design, DatabaseDescendant {
 
 	/*
 	 * (non-Javadoc)

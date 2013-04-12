@@ -21,7 +21,8 @@ import org.openntf.domino.types.SessionDescendant;
 /**
  * The Interface DxlImporter.
  */
-public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domino.DxlImporter, SessionDescendant {
+public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domino.DxlImporter, org.openntf.domino.ext.DxlImporter,
+		SessionDescendant {
 
 	/*
 	 * (non-Javadoc)

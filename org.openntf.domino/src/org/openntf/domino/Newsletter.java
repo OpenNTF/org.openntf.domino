@@ -21,7 +21,8 @@ import org.openntf.domino.types.SessionDescendant;
 /**
  * The Interface Newsletter.
  */
-public interface Newsletter extends Base<lotus.domino.Newsletter>, lotus.domino.Newsletter, SessionDescendant {
+public interface Newsletter extends Base<lotus.domino.Newsletter>, lotus.domino.Newsletter, org.openntf.domino.ext.Newsletter,
+		SessionDescendant {
 
 	/*
 	 * (non-Javadoc)
