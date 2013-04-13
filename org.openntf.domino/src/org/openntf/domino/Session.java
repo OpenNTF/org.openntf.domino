@@ -16,7 +16,6 @@
 package org.openntf.domino;
 
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Vector;
 
@@ -26,239 +25,10 @@ import org.openntf.domino.annotations.Legacy;
  * The Interface Session is the root of the Domino Objects containment hierarchy, providing access to the other Domino objects, and
  * represents the Domino environment of the current program.
  */
-public interface Session extends lotus.domino.Session, Base<lotus.domino.Session> {
+public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Session, Base<lotus.domino.Session> {
 	public static enum RunContext {
 		AGENT, APPLET, DOTS, XPAGES_NSF, XPAGES_OSGI, PLUGIN, ADDIN, SERVLET, CLI, DIIOP, UNKNOWN
 	}
-
-	// public RunContext getRunContext();
-
-	/**
-	 * Evaluates a Domino formula.
-	 * <p>
-	 * 
-	 * All @Functions that affect the user interface do not work in evaluate. These include:
-	 * </p>
-	 * <p>
-	 * <ul>
-	 * <li>@Command</li>
-	 * <li>@DbManager</li>
-	 * <li>@DbName</li>
-	 * <li>@DbTitle</li>
-	 * <li>@DDEExecute</li>
-	 * <li>@DDEInitiate</li>
-	 * <li>@DDEPoke</li>
-	 * <li>@DDETerminate</li>
-	 * <li>@DialogBox</li>
-	 * <li>@PickList</li>
-	 * <li>@PostedCommand</li>
-	 * <li>@Prompt</li>
-	 * <li>@ViewTitle</li>
-	 * </ul>
-	 * </p>
-	 * 
-	 * @param formula
-	 *            The formula to be evaluated.
-	 * 
-	 * @return The result of the evaluation. A scalar result is returned in firstElement.
-	 * @since lotus.domino 4.5.0
-	 */
-	@Override
-	public Vector<Object> evaluate(String formula);
-
-	/**
-	 * Evaluates a Domino formula against a given document.
-	 * 
-	 * <p>
-	 * If the formula contains the name of a field, you must use the 2-parameter method. The formula takes the field from the document
-	 * specified as parameter 2.
-	 * </p>
-	 * 
-	 * <p>
-	 * You cannot change a document with evaluate; you can only get a result. To change a document, write the result to the document with a
-	 * method such as Document.replaceItemValue.
-	 * </p>
-	 * 
-	 * <p>
-	 * 
-	 * All @Functions that affect the user interface do not work in evaluate. These include:
-	 * </p>
-	 * <p>
-	 * <ul>
-	 * <li>@Command</li>
-	 * <li>@DbManager</li>
-	 * <li>@DbName</li>
-	 * <li>@DbTitle</li>
-	 * <li>@DDEExecute</li>
-	 * <li>@DDEInitiate</li>
-	 * <li>@DDEPoke</li>
-	 * <li>@DDETerminate</li>
-	 * <li>@DialogBox</li>
-	 * <li>@PickList</li>
-	 * <li>@PostedCommand</li>
-	 * <li>@Prompt</li>
-	 * <li>@ViewTitle</li>
-	 * </ul>
-	 * </p>
-	 * 
-	 * @param formula
-	 *            The formula to be evaluated.
-	 * @param doc
-	 *            The document to evaluate against.
-	 * 
-	 * @return The result of the evaluation. A scalar result is returned in firstElement.
-	 * @since lotus.domino 4.5.0
-	 */
-	@Override
-	public Vector<Object> evaluate(String formula, lotus.domino.Document doc);
-
-	/**
-	 * The Domino Directories and Personal Address Books, including directory catalogs, known to the current session.
-	 * 
-	 * <p>
-	 * To distinguish between a Domino Directory and a Personal Address Book, use isPublicAddressBook and isPrivateAddressBook of Database.
-	 * </p>
-	 * 
-	 * <p>
-	 * A database retrieved through getAddressBooks is closed. To access all its properties and methods, you must open the database with the
-	 * open method in NotesDatabase.
-	 * </p>
-	 * 
-	 * @deprecated Use {@link #getAddressBookCollection()} instead
-	 * 
-	 * @return A {@link java.lang.Vector Vector} of Databases.
-	 * @since lotus.domino 4.5.0
-	 */
-	@Override
-	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING })
-	public Vector<Database> getAddressBooks();
-
-	/**
-	 * A collection of Domino Directories and Personal Address Books, including directory catalogs, known to the current session.
-	 * 
-	 * <p>
-	 * To distinguish between a Domino Directory and a Personal Address Book, use isPublicAddressBook and isPrivateAddressBook of Database.
-	 * </p>
-	 * 
-	 * <p>
-	 * A database retrieved through getAddressBooks is closed. To access all its properties and methods, you must open the database with the
-	 * open method in NotesDatabase.
-	 * </p>
-	 * 
-	 * @return A collection of Databases.
-	 * @since openntf.domino 1.0.0
-	 */
-	public Collection<Database> getAddressBookCollection();
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Session#freeTimeSearch(lotus.domino.DateRange, int, java.lang.Object, boolean)
-	 */
-	@Override
-	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING })
-	public Vector<DateRange> freeTimeSearch(lotus.domino.DateRange window, int duration, Object names, boolean firstFit);
-
-	/**
-	 * Free time search.
-	 * 
-	 * @param window
-	 *            the window
-	 * @param duration
-	 *            the duration
-	 * @param names
-	 *            the names
-	 * @param firstFit
-	 *            the first fit
-	 * @return the collection
-	 */
-	public Collection<DateRange> freeTimeSearch(org.openntf.domino.DateRange window, int duration, String names, boolean firstFit);
-
-	/**
-	 * Free time search.
-	 * 
-	 * @param window
-	 *            the window
-	 * @param duration
-	 *            the duration
-	 * @param names
-	 *            the names
-	 * @param firstFit
-	 *            the first fit
-	 * @return the collection
-	 */
-	public Collection<DateRange> freeTimeSearch(org.openntf.domino.DateRange window, int duration, Collection<String> names,
-			boolean firstFit);
-
-	/**
-	 * The groups to which the current user belongs.
-	 * 
-	 * <p>
-	 * The "groups" include the hierarchical parents of the current effective user name and the alternate user name, if available. For Mary
-	 * Smith/Department One/Acme, for example, the groups include /Department One/Acme and /Acme.
-	 * </p>
-	 * 
-	 * <p>
-	 * The groups include those to which the user name belongs in the Domino� Directory or Personal Address Book where the program is
-	 * running.
-	 * </p>
-	 * 
-	 * @deprecated Use {@link #getUserGroupNameCollection} instead.
-	 * 
-	 * @return A {@link java.lang.Vector vector} of group names. Elements of of type {@link org.openntf.domino.Name}
-	 * @since lotus.domino 6.0.0
-	 */
-	@Override
-	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING })
-	public Vector<Name> getUserGroupNameList(); // TODO should we use a Vector of names? Or allow someone to request it as String-only so
-
-	// there's no recycle burden?
-
-	/**
-	 * A collection of groups to which the current user belongs.
-	 * 
-	 * <p>
-	 * The "groups" include the hierarchical parents of the current effective user name and the alternate user name, if available. For Mary
-	 * Smith/Department One/Acme, for example, the groups include /Department One/Acme and /Acme.
-	 * </p>
-	 * 
-	 * <p>
-	 * The groups include those to which the user name belongs in the Domino� Directory or Personal Address Book where the program is
-	 * running.
-	 * </p>
-	 * 
-	 * @return The user group name collection
-	 * @since openntf.domino 1.0.0
-	 */
-	public Collection<String> getUserGroupNameCollection();
-
-	/**
-	 * The name of the user or server that created the session, and the alternate name if it exists.
-	 * 
-	 * @deprecated Use {@link #getUserNameCollection} instead.
-	 * 
-	 * @return If the user does not have an alternate name, getUserNameList returns a vector of one element containing the user name. If the
-	 *         user does have an alternate name, getUserNameList returns a vector of two elements containing the user name and the alternate
-	 *         user name.
-	 * @since lotus.domino 4.5.0
-	 */
-	@Override
-	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING })
-	public Vector<Name> getUserNameList(); // TODO should we use a Vector of names? Or allow someone to request it as String-only so there's
-
-	// no recycle burden?
-
-	/**
-	 * Gets a collection names of the user or server that created the session, and the alternate name if it exists.
-	 * 
-	 * @return The user name collection
-	 * @since openntf.domino 1.0.0
-	 */
-	public Collection<String> getUserNameCollection();
 
 	/**
 	 * Creates a new AdministrationProcess object.
@@ -282,8 +52,6 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 */
 	@Override
 	public ColorObject createColorObject();
-
-	public ColorObject createColorObject(java.awt.Color color);
 
 	/**
 	 * Creates a new DateRange object.
@@ -346,6 +114,8 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	@Override
 	public DateTime createDateTime(Date date);
 
+	// there's no recycle burden?
+
 	/**
 	 * Creates a DateTime object that represents a specified date and time.
 	 * 
@@ -366,6 +136,8 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 */
 	@Override
 	public DxlExporter createDxlExporter();
+
+	// no recycle burden?
 
 	/**
 	 * Creates a DxlImporter object.
@@ -471,6 +243,117 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 */
 	@Override
 	public Stream createStream();
+
+	/**
+	 * Evaluates a Domino formula.
+	 * <p>
+	 * 
+	 * All @Functions that affect the user interface do not work in evaluate. These include:
+	 * </p>
+	 * <p>
+	 * <ul>
+	 * <li>@Command</li>
+	 * <li>@DbManager</li>
+	 * <li>@DbName</li>
+	 * <li>@DbTitle</li>
+	 * <li>@DDEExecute</li>
+	 * <li>@DDEInitiate</li>
+	 * <li>@DDEPoke</li>
+	 * <li>@DDETerminate</li>
+	 * <li>@DialogBox</li>
+	 * <li>@PickList</li>
+	 * <li>@PostedCommand</li>
+	 * <li>@Prompt</li>
+	 * <li>@ViewTitle</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param formula
+	 *            The formula to be evaluated.
+	 * 
+	 * @return The result of the evaluation. A scalar result is returned in firstElement.
+	 * @since lotus.domino 4.5.0
+	 */
+	@Override
+	public Vector<Object> evaluate(String formula);
+
+	/**
+	 * Evaluates a Domino formula against a given document.
+	 * 
+	 * <p>
+	 * If the formula contains the name of a field, you must use the 2-parameter method. The formula takes the field from the document
+	 * specified as parameter 2.
+	 * </p>
+	 * 
+	 * <p>
+	 * You cannot change a document with evaluate; you can only get a result. To change a document, write the result to the document with a
+	 * method such as Document.replaceItemValue.
+	 * </p>
+	 * 
+	 * <p>
+	 * 
+	 * All @Functions that affect the user interface do not work in evaluate. These include:
+	 * </p>
+	 * <p>
+	 * <ul>
+	 * <li>@Command</li>
+	 * <li>@DbManager</li>
+	 * <li>@DbName</li>
+	 * <li>@DbTitle</li>
+	 * <li>@DDEExecute</li>
+	 * <li>@DDEInitiate</li>
+	 * <li>@DDEPoke</li>
+	 * <li>@DDETerminate</li>
+	 * <li>@DialogBox</li>
+	 * <li>@PickList</li>
+	 * <li>@PostedCommand</li>
+	 * <li>@Prompt</li>
+	 * <li>@ViewTitle</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param formula
+	 *            The formula to be evaluated.
+	 * @param doc
+	 *            The document to evaluate against.
+	 * 
+	 * @return The result of the evaluation. A scalar result is returned in firstElement.
+	 * @since lotus.domino 4.5.0
+	 */
+	@Override
+	public Vector<Object> evaluate(String formula, lotus.domino.Document doc);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.Session#freeTimeSearch(lotus.domino.DateRange, int, java.lang.Object, boolean)
+	 */
+	@Override
+	@Deprecated
+	@Legacy({ Legacy.INTERFACES_WARNING })
+	public Vector<DateRange> freeTimeSearch(lotus.domino.DateRange window, int duration, Object names, boolean firstFit);
+
+	/**
+	 * The Domino Directories and Personal Address Books, including directory catalogs, known to the current session.
+	 * 
+	 * <p>
+	 * To distinguish between a Domino Directory and a Personal Address Book, use isPublicAddressBook and isPrivateAddressBook of Database.
+	 * </p>
+	 * 
+	 * <p>
+	 * A database retrieved through getAddressBooks is closed. To access all its properties and methods, you must open the database with the
+	 * open method in NotesDatabase.
+	 * </p>
+	 * 
+	 * @deprecated Use {@link #getAddressBookCollection()} instead
+	 * 
+	 * @return A {@link java.lang.Vector Vector} of Databases.
+	 * @since lotus.domino 4.5.0
+	 */
+	@Override
+	@Deprecated
+	@Legacy({ Legacy.INTERFACES_WARNING })
+	public Vector<Database> getAddressBooks();
 
 	/**
 	 * Represents the agent environment of the current program, if an agent is running it.
@@ -801,6 +684,29 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	public Database getURLDatabase();
 
 	/**
+	 * The groups to which the current user belongs.
+	 * 
+	 * <p>
+	 * The "groups" include the hierarchical parents of the current effective user name and the alternate user name, if available. For Mary
+	 * Smith/Department One/Acme, for example, the groups include /Department One/Acme and /Acme.
+	 * </p>
+	 * 
+	 * <p>
+	 * The groups include those to which the user name belongs in the Domino� Directory or Personal Address Book where the program is
+	 * running.
+	 * </p>
+	 * 
+	 * @deprecated Use {@link #getUserGroupNameCollection} instead.
+	 * 
+	 * @return A {@link java.lang.Vector vector} of group names. Elements of of type {@link org.openntf.domino.Name}
+	 * @since lotus.domino 6.0.0
+	 */
+	@Override
+	@Deprecated
+	@Legacy({ Legacy.INTERFACES_WARNING })
+	public Vector<Name> getUserGroupNameList(); // TODO should we use a Vector of names? Or allow someone to request it as String-only so
+
+	/**
 	 * The full name of the user or server that created the session.
 	 * <p>
 	 * This is the name of the "user" running the script, which for a server-side script is the server name. For the name of the user logged
@@ -814,6 +720,21 @@ public interface Session extends lotus.domino.Session, Base<lotus.domino.Session
 	 */
 	@Override
 	public String getUserName();
+
+	/**
+	 * The name of the user or server that created the session, and the alternate name if it exists.
+	 * 
+	 * @deprecated Use {@link #getUserNameCollection} instead.
+	 * 
+	 * @return If the user does not have an alternate name, getUserNameList returns a vector of one element containing the user name. If the
+	 *         user does have an alternate name, getUserNameList returns a vector of two elements containing the user name and the alternate
+	 *         user name.
+	 * @since lotus.domino 4.5.0
+	 */
+	@Override
+	@Deprecated
+	@Legacy({ Legacy.INTERFACES_WARNING })
+	public Vector<Name> getUserNameList(); // TODO should we use a Vector of names? Or allow someone to request it as String-only so there's
 
 	/**
 	 * The name, in the form of a NotesName object, of the user or server that created the session.

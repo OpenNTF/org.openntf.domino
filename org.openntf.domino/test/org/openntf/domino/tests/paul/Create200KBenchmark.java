@@ -14,7 +14,7 @@ import org.openntf.domino.utils.Factory;
 public class Create200KBenchmark {
 
 	public Create200KBenchmark() {
-		// TODO Auto-generated constructor stub
+
 	}
 
 	static class DocCreator implements Runnable {

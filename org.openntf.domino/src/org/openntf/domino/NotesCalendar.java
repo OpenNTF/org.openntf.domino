@@ -19,11 +19,11 @@ import java.util.Vector;
 
 import org.openntf.domino.types.SessionDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface NotesCalendar.
  */
-public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.domino.NotesCalendar, SessionDescendant {
+public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.domino.NotesCalendar, org.openntf.domino.ext.NotesCalendar,
+		SessionDescendant {
 
 	/*
 	 * (non-Javadoc)

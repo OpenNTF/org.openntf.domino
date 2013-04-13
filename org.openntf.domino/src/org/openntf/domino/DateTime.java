@@ -21,7 +21,6 @@ import java.util.Date;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.types.SessionDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface DateTime.
  */

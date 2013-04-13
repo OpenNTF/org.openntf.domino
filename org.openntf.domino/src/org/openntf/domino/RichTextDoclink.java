@@ -17,11 +17,11 @@ package org.openntf.domino;
 
 import org.openntf.domino.types.DocumentDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface RichTextDoclink.
  */
-public interface RichTextDoclink extends Base<lotus.domino.RichTextDoclink>, lotus.domino.RichTextDoclink, DocumentDescendant {
+public interface RichTextDoclink extends Base<lotus.domino.RichTextDoclink>, lotus.domino.RichTextDoclink,
+		org.openntf.domino.ext.RichTextDocLink, DocumentDescendant {
 
 	/*
 	 * (non-Javadoc)

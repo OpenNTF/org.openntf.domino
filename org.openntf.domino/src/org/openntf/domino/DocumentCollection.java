@@ -23,122 +23,9 @@ import org.openntf.domino.types.DatabaseDescendant;
 /**
  * The Interface DocumentCollection represents a collection of documents from a database, selected according to specific criteria.
  */
-public interface DocumentCollection extends lotus.domino.DocumentCollection, org.openntf.domino.Base<lotus.domino.DocumentCollection>,
-		Iterable<org.openntf.domino.Document>, Collection<org.openntf.domino.Document>, DatabaseDescendant {
-
-	/**
-	 * The number of documents in a collection.
-	 * 
-	 * @return A {@link java.lang.Integer} set to the number of documents in the collection.
-	 */
-	public abstract int getCount();
-
-	/**
-	 * The text of the query that produced a document collection if the collection results from a full-text or other search.
-	 * 
-	 * @return Returns a {@link java.lang.String} of the query that produced the collection.
-	 */
-	public abstract String getQuery();
-
-	/**
-	 * The database that contains the document collection
-	 * 
-	 * @return Returns the {@link org.openntf.domino.Database} in which this document collection was created.
-	 */
-	public abstract org.openntf.domino.Database getParent();
-
-	/**
-	 * Gets the first document in a collection.
-	 * 
-	 * @return Returns the first {@link org.openntf.domino.Document} in the collection.
-	 */
-	public abstract org.openntf.domino.Document getFirstDocument();
-
-	/**
-	 * Gets the last document in a collection.
-	 * 
-	 * @return Returns the last {@link org.openntf.domino.Document} in the collection.
-	 */
-	public abstract org.openntf.domino.Document getLastDocument();
-
-	/**
-	 * Gets the next document in the collection that occurs after the current document.
-	 * 
-	 * @deprecated Replaced by iterator. Use <code>'for (Document doc : DocumentCollection) {}'</code> instead to process a document collection.
-	 * 
-	 * @param doc
-	 *            Any document in the collection. Cannot be <code>null</code>.
-	 * 
-	 * @return Returns the next {@link org.openntf.domino.Document} in the collection. If there is no next document, returns
-	 *         <code>null</code>.
-	 */
-	@Deprecated
-	@Legacy(Legacy.ITERATION_WARNING)
-	public abstract Document getNextDocument(lotus.domino.Document doc);
-
-	/**
-	 * Gets the previous document in the collection that occurs before the current document.
-	 * 
-	 * @param doc
-	 *            Any document in the collection. Cannot be <code>null</code>.
-	 * 
-	 * @return Returns the previous {@link org.openntf.domino.Document} in the collection. If there is no previous document, returns
-	 *         <code>null</code>.
-	 */
-	public abstract Document getPrevDocument(lotus.domino.Document doc);
-
-	/**
-	 * Gets the nTh document in the collection.
-	 * 
-	 * @deprecated Replaced by iterator. Use <code>'for (Document doc : DocumentCollection) {}'</code> instead to process a document collection.
-	 * 
-	 * @param n
-	 *            A number indicating the document to return. Use 1 to indicate the first document in the collection, 2 to indicate the
-	 *            second document, and so on.
-	 * 
-	 * 
-	 * @return Returns the next {@link org.openntf.domino.Document} in the collection. If there is no nTH document, returns
-	 *         <code>null</code>.
-	 */
-	@Deprecated
-	@Legacy(Legacy.ITERATION_WARNING)
-	public abstract Document getNthDocument(int n);
-
-	/**
-	 * Gets the next document in the collection.
-	 * 
-	 * @deprecated Replaced by iterator. Use <code>'for (Document doc : DocumentCollection) {}'</code> instead to process a document collection.
-	 * 
-	 * @return Returns the next {@link org.openntf.domino.Document} in the collection. If there is no next document, returns
-	 *         <code>null</code>.
-	 */
-	@Deprecated
-	@Legacy(Legacy.ITERATION_WARNING)
-	public abstract org.openntf.domino.Document getNextDocument();
-
-	/**
-	 * Gets the previous document in the collection.
-	 * 
-	 * @return Returns the previous {@link org.openntf.domino.Document} in the collection. If there is no previous document, returns
-	 *         <code>null</code>.
-	 */
-	public abstract org.openntf.domino.Document getPrevDocument();
-
-	/**
-	 * Gets a specified document in a collection.
-	 * 
-	 * <p>
-	 * This method gets a document in a document collection that is the same as a reference document that does not necessarily come from the
-	 * collection (for example, a document retrieved from another collection).
-	 * </p>
-	 * 
-	 * @param doc
-	 *            The {@link org.openntf.domino.Document} you are looking for
-	 * 
-	 * @return The specified {@link org.openntf.domino.Document} from the collection,If the reference document is not in the collection, you
-	 *         get a <code>null</code> return.
-	 */
-	public abstract Document getDocument(lotus.domino.Document doc);
+public interface DocumentCollection extends lotus.domino.DocumentCollection, org.openntf.domino.ext.DocumentCollection,
+		org.openntf.domino.Base<lotus.domino.DocumentCollection>, Iterable<org.openntf.domino.Document>,
+		Collection<org.openntf.domino.Document>, DatabaseDescendant {
 
 	/**
 	 * Adds a document to a collection.
@@ -146,6 +33,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * @param doc
 	 *            The document to be added. Cannot be <code>null</code>.
 	 */
+	@Override
 	public abstract void addDocument(lotus.domino.Document doc);
 
 	/**
@@ -156,7 +44,40 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * @param checkDups
 	 *            has no effect on local calls and only applies to Remote IIOP operations
 	 */
+	@Override
 	public abstract void addDocument(lotus.domino.Document doc, boolean checkDups);
+
+	/**
+	 * Returns a collection object which is a copy of the original collection.
+	 * 
+	 * @return a DocumentCollection which is copy of the original.
+	 */
+	@Override
+	public abstract DocumentCollection cloneCollection();
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.DocumentCollection#contains(int)
+	 */
+	@Override
+	public abstract boolean contains(int noteid);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.DocumentCollection#contains(lotus.domino.Base)
+	 */
+	@Override
+	public abstract boolean contains(lotus.domino.Base doc);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.DocumentCollection#contains(java.lang.String)
+	 */
+	@Override
+	public abstract boolean contains(String noteid);
 
 	/**
 	 * Deletes a document from a collection.
@@ -164,6 +85,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * @param doc
 	 *            The document to be deleted. Cannot be <code>null</code>.
 	 */
+	@Override
 	public abstract void deleteDocument(lotus.domino.Document doc);
 
 	/**
@@ -207,6 +129,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * @param query
 	 *            The full-text query.
 	 */
+	@Override
 	public abstract void FTSearch(String query);
 
 	/**
@@ -253,7 +176,223 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 *            The maximum number of documents you want returned from the query. Set this parameter to 0 to receive all matching
 	 *            documents.
 	 */
+	@Override
 	public abstract void FTSearch(String query, int maxDocs);
+
+	/**
+	 * The number of documents in a collection.
+	 * 
+	 * @return A {@link java.lang.Integer} set to the number of documents in the collection.
+	 */
+	@Override
+	public abstract int getCount();
+
+	/**
+	 * Gets a specified document in a collection.
+	 * 
+	 * <p>
+	 * This method gets a document in a document collection that is the same as a reference document that does not necessarily come from the
+	 * collection (for example, a document retrieved from another collection).
+	 * </p>
+	 * 
+	 * @param doc
+	 *            The {@link org.openntf.domino.Document} you are looking for
+	 * 
+	 * @return The specified {@link org.openntf.domino.Document} from the collection,If the reference document is not in the collection, you
+	 *         get a <code>null</code> return.
+	 */
+	@Override
+	public abstract Document getDocument(lotus.domino.Document doc);
+
+	/**
+	 * Gets the first document in a collection.
+	 * 
+	 * @return Returns the first {@link org.openntf.domino.Document} in the collection.
+	 */
+	@Override
+	public abstract org.openntf.domino.Document getFirstDocument();
+
+	/**
+	 * Gets the last document in a collection.
+	 * 
+	 * @return Returns the last {@link org.openntf.domino.Document} in the collection.
+	 */
+	@Override
+	public abstract org.openntf.domino.Document getLastDocument();
+
+	/**
+	 * Gets the next document in the collection.
+	 * 
+	 * @deprecated Replaced by iterator. Use <code>'for (Document doc : DocumentCollection) {}'</code> instead to process a document
+	 *             collection.
+	 * 
+	 * @return Returns the next {@link org.openntf.domino.Document} in the collection. If there is no next document, returns
+	 *         <code>null</code>.
+	 */
+	@Override
+	@Deprecated
+	@Legacy(Legacy.ITERATION_WARNING)
+	public abstract org.openntf.domino.Document getNextDocument();
+
+	/**
+	 * Gets the next document in the collection that occurs after the current document.
+	 * 
+	 * @deprecated Replaced by iterator. Use <code>'for (Document doc : DocumentCollection) {}'</code> instead to process a document
+	 *             collection.
+	 * 
+	 * @param doc
+	 *            Any document in the collection. Cannot be <code>null</code>.
+	 * 
+	 * @return Returns the next {@link org.openntf.domino.Document} in the collection. If there is no next document, returns
+	 *         <code>null</code>.
+	 */
+	@Override
+	@Deprecated
+	@Legacy(Legacy.ITERATION_WARNING)
+	public abstract Document getNextDocument(lotus.domino.Document doc);
+
+	/**
+	 * Gets the nTh document in the collection.
+	 * 
+	 * @deprecated Replaced by iterator. Use <code>'for (Document doc : DocumentCollection) {}'</code> instead to process a document
+	 *             collection.
+	 * 
+	 * @param n
+	 *            A number indicating the document to return. Use 1 to indicate the first document in the collection, 2 to indicate the
+	 *            second document, and so on.
+	 * 
+	 * 
+	 * @return Returns the next {@link org.openntf.domino.Document} in the collection. If there is no nTH document, returns
+	 *         <code>null</code>.
+	 */
+	@Override
+	@Deprecated
+	@Legacy(Legacy.ITERATION_WARNING)
+	public abstract Document getNthDocument(int n);
+
+	/**
+	 * The database that contains the document collection
+	 * 
+	 * @return Returns the {@link org.openntf.domino.Database} in which this document collection was created.
+	 */
+	@Override
+	public abstract org.openntf.domino.Database getParent();
+
+	/**
+	 * Gets the previous document in the collection.
+	 * 
+	 * @return Returns the previous {@link org.openntf.domino.Document} in the collection. If there is no previous document, returns
+	 *         <code>null</code>.
+	 */
+	@Override
+	public abstract org.openntf.domino.Document getPrevDocument();
+
+	/**
+	 * Gets the previous document in the collection that occurs before the current document.
+	 * 
+	 * @param doc
+	 *            Any document in the collection. Cannot be <code>null</code>.
+	 * 
+	 * @return Returns the previous {@link org.openntf.domino.Document} in the collection. If there is no previous document, returns
+	 *         <code>null</code>.
+	 */
+	@Override
+	public abstract Document getPrevDocument(lotus.domino.Document doc);
+
+	/**
+	 * The text of the query that produced a document collection if the collection results from a full-text or other search.
+	 * 
+	 * @return Returns a {@link java.lang.String} of the query that produced the collection.
+	 */
+	@Override
+	public abstract String getQuery();
+
+	/**
+	 * The database end time for a collection obtained through {@link org.openntf.domino.Database#getModifiedDocuments()} in Database.
+	 * 
+	 * <p>
+	 * This time should be specified as the "since" time in a subsequent call to {@link org.openntf.domino.Database#getModifiedDocuments()}
+	 * where you want to get all modified documents since the most recent call.
+	 * </p>
+	 * 
+	 * <p>
+	 * The database time may differ from the system time. Do not use the system time in
+	 * {@link org.openntf.domino.Database#getModifiedDocuments()} where you want to get all modified documents since the most recent call.
+	 * </p>
+	 * 
+	 * 
+	 * 
+	 * 
+	 * @return Returns the end time for a collection obtained through {@link org.openntf.domino.Database#getModifiedDocuments()}, For
+	 *         collections not produced through {@link org.openntf.domino.Database#getModifiedDocuments()}, this property returns
+	 *         <code>null</code>.
+	 * 
+	 */
+	@Override
+	public abstract DateTime getUntilTime();
+
+	/**
+	 * Removes from a document collection any documents not also contained in a second collection.
+	 * 
+	 * <p>
+	 * The document or documents being intersected by this method must be in the same database as the original collection. Otherwise, the
+	 * method will return the error "the specified note or notes do not exist in the database" or, if a noteID was passed to the method that
+	 * matches a noteID in the original collection's database, the method will use the unintended document.
+	 * </p>
+	 * 
+	 * <p>
+	 * On successful completion of this method, the original document collection will contain only the documents it contained prior to the
+	 * call which are also contained in the input argument.
+	 * </p>
+	 * 
+	 * @param noteid
+	 *            A single noteID belonging to the DocumentCollection's database.
+	 * 
+	 */
+	@Override
+	public abstract void intersect(int noteid);
+
+	/**
+	 * Removes from a document collection any documents not also contained in a second collection.
+	 * 
+	 * <p>
+	 * The document or documents being intersected by this method must be in the same database as the original collection. Otherwise, the
+	 * method will return the error "the specified note or notes do not exist in the database" or, if a noteID was passed to the method that
+	 * matches a noteID in the original collection's database, the method will use the unintended document.
+	 * </p>
+	 * 
+	 * <p>
+	 * On successful completion of this method, the original document collection will contain only the documents it contained prior to the
+	 * call which are also contained in the input argument.
+	 * </p>
+	 * 
+	 * @param doc
+	 *            A single document belonging to the DocumentCollection's database.
+	 * 
+	 */
+	@Override
+	public abstract void intersect(lotus.domino.Base doc);
+
+	/**
+	 * Removes from a document collection any documents not also contained in a second collection.
+	 * 
+	 * <p>
+	 * The document or documents being intersected by this method must be in the same database as the original collection. Otherwise, the
+	 * method will return the error "the specified note or notes do not exist in the database" or, if a noteID was passed to the method that
+	 * matches a noteID in the original collection's database, the method will use the unintended document.
+	 * </p>
+	 * 
+	 * <p>
+	 * On successful completion of this method, the original document collection will contain only the documents it contained prior to the
+	 * call which are also contained in the input argument.
+	 * </p>
+	 * 
+	 * @param noteid
+	 *            A single noteID belonging to the DocumentCollection's database.
+	 * 
+	 */
+	@Override
+	public abstract void intersect(String noteid);
 
 	/**
 	 * Indicates whether the documents in a collection are sorted. A collection is sorted only when it results from a full-text search.
@@ -266,7 +405,78 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * 
 	 * @return Returns <code>true</code> if the collection is sorted and <code>false</code> if it is not sorted.
 	 */
+	@Override
 	public abstract boolean isSorted();
+
+	/**
+	 * Marks all the documents in a collection read for the current user.
+	 * 
+	 * <p>
+	 * If the database does not track unread marks, all documents are considered read, and this method has no effect.
+	 * </p>
+	 */
+	@Override
+	public abstract void markAllRead();
+
+	/**
+	 * Marks all the documents in a collection read.
+	 * 
+	 * <p>
+	 * If the database does not track unread marks, all documents are considered read, and this method has no effect.
+	 * </p>
+	 * 
+	 * @param userName
+	 *            Marks all the documents in the collection as read on behalf of the given name.
+	 */
+	@Override
+	public abstract void markAllRead(String userName);
+
+	/**
+	 * Marks all the documents in a collection unread for the current user.
+	 * 
+	 * <p>
+	 * If the database does not track unread marks, all documents are considered read, and this method has no effect.
+	 * </p>
+	 */
+	@Override
+	public abstract void markAllUnread();
+
+	/**
+	 * Marks all the documents in a collection unread.
+	 * 
+	 * <p>
+	 * If the database does not track unread marks, all documents are considered read, and this method has no effect.
+	 * </p>
+	 * 
+	 * @param userName
+	 *            Marks all the documents in the collection as unread on behalf of the given name.
+	 */
+	@Override
+	public abstract void markAllUnread(String userName);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.DocumentCollection#merge(int)
+	 */
+	@Override
+	public abstract void merge(int noteid);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.DocumentCollection#merge(lotus.domino.Base)
+	 */
+	@Override
+	public abstract void merge(lotus.domino.Base doc);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.DocumentCollection#merge(java.lang.String)
+	 */
+	@Override
+	public abstract void merge(String noteid);
 
 	/**
 	 * Adds all the documents in the collection to the specified folder. If the folder does not exist in the document's database, it is
@@ -280,6 +490,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 *            The name of the folder in which to place the documents. If the folder is within another folder, specify a path to it,
 	 *            separating folder names with backward slashes, for example, "Vehicles\\Bikes".
 	 */
+	@Override
 	public abstract void putAllInFolder(String folderName);
 
 	/**
@@ -296,6 +507,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * @param createOnFail
 	 *            If true (default), creates the folder if it does not exist.
 	 */
+	@Override
 	public abstract void putAllInFolder(String folderName, boolean createOnFail);
 
 	/**
@@ -313,6 +525,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 *            If <code>true</code>, a document is removed even if another user modifies the document after it is retrieved. If
 	 *            <code>false</code>, a document is not removed if another user modifies it first.
 	 */
+	@Override
 	public abstract void removeAll(boolean force);
 
 	/**
@@ -331,6 +544,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 *            The name of the folder from which to remove the document. If the folder is within another folder, specify a path to it,
 	 *            separating folder names with backward slashes. For example, "Vehicles\\Bikes".
 	 */
+	@Override
 	public abstract void removeAllFromFolder(String folderName);
 
 	/**
@@ -359,207 +573,37 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 *            A value appropriate for the item type. @see org.openntf.domino.Document#replaceItemValue(String, Object)}.
 	 * 
 	 */
+	@Override
 	public abstract void stampAll(String itemName, Object value);
-
-	/**
-	 * Marks all documents in a collection as processed by an agent.
-	 * 
-	 */
-	public abstract void updateAll();
-
-	/**
-	 * The database end time for a collection obtained through {@link org.openntf.domino.Database#getModifiedDocuments()} in Database.
-	 * 
-	 * <p>
-	 * This time should be specified as the "since" time in a subsequent call to {@link org.openntf.domino.Database#getModifiedDocuments()}
-	 * where you want to get all modified documents since the most recent call.
-	 * </p>
-	 * 
-	 * <p>
-	 * The database time may differ from the system time. Do not use the system time in
-	 * {@link org.openntf.domino.Database#getModifiedDocuments()} where you want to get all modified documents since the most recent call.
-	 * </p>
-	 * 
-	 * 
-	 * 
-	 * 
-	 * @return Returns the end time for a collection obtained through {@link org.openntf.domino.Database#getModifiedDocuments()}, For
-	 *         collections not produced through {@link org.openntf.domino.Database#getModifiedDocuments()}, this property returns
-	 *         <code>null</code>.
-	 * 
-	 */
-	public abstract DateTime getUntilTime();
-
-	/**
-	 * Marks all the documents in a collection read.
-	 * 
-	 * <p>
-	 * If the database does not track unread marks, all documents are considered read, and this method has no effect.
-	 * </p>
-	 * 
-	 * @param userName
-	 *            Marks all the documents in the collection as read on behalf of the given name.
-	 */
-	public abstract void markAllRead(String userName);
-
-	/**
-	 * Marks all the documents in a collection unread.
-	 * 
-	 * <p>
-	 * If the database does not track unread marks, all documents are considered read, and this method has no effect.
-	 * </p>
-	 * 
-	 * @param userName
-	 *            Marks all the documents in the collection as unread on behalf of the given name.
-	 */
-	public abstract void markAllUnread(String userName);
-
-	/**
-	 * Marks all the documents in a collection read for the current user.
-	 * 
-	 * <p>
-	 * If the database does not track unread marks, all documents are considered read, and this method has no effect.
-	 * </p>
-	 */
-	public abstract void markAllRead();
-
-	/**
-	 * Marks all the documents in a collection unread for the current user.
-	 * 
-	 * <p>
-	 * If the database does not track unread marks, all documents are considered read, and this method has no effect.
-	 * </p>
-	 */
-	public abstract void markAllUnread();
-
-	/**
-	 * Removes from a document collection any documents not also contained in a second collection.
-	 * 
-	 * <p>
-	 * The document or documents being intersected by this method must be in the same database as the original collection. Otherwise, the
-	 * method will return the error "the specified note or notes do not exist in the database" or, if a noteID was passed to the method that
-	 * matches a noteID in the original collection's database, the method will use the unintended document.
-	 * </p>
-	 * 
-	 * <p>
-	 * On successful completion of this method, the original document collection will contain only the documents it contained prior to the
-	 * call which are also contained in the input argument.
-	 * </p>
-	 * 
-	 * @param noteid
-	 *            A single noteID belonging to the DocumentCollection's database.
-	 * 
-	 */
-	public abstract void intersect(int noteid);
-
-	/**
-	 * Removes from a document collection any documents not also contained in a second collection.
-	 * 
-	 * <p>
-	 * The document or documents being intersected by this method must be in the same database as the original collection. Otherwise, the
-	 * method will return the error "the specified note or notes do not exist in the database" or, if a noteID was passed to the method that
-	 * matches a noteID in the original collection's database, the method will use the unintended document.
-	 * </p>
-	 * 
-	 * <p>
-	 * On successful completion of this method, the original document collection will contain only the documents it contained prior to the
-	 * call which are also contained in the input argument.
-	 * </p>
-	 * 
-	 * @param noteid
-	 *            A single noteID belonging to the DocumentCollection's database.
-	 * 
-	 */
-	public abstract void intersect(String noteid);
-
-	/**
-	 * Removes from a document collection any documents not also contained in a second collection.
-	 * 
-	 * <p>
-	 * The document or documents being intersected by this method must be in the same database as the original collection. Otherwise, the
-	 * method will return the error "the specified note or notes do not exist in the database" or, if a noteID was passed to the method that
-	 * matches a noteID in the original collection's database, the method will use the unintended document.
-	 * </p>
-	 * 
-	 * <p>
-	 * On successful completion of this method, the original document collection will contain only the documents it contained prior to the
-	 * call which are also contained in the input argument.
-	 * </p>
-	 * 
-	 * @param doc
-	 *            A single document belonging to the DocumentCollection's database.
-	 * 
-	 */
-	public abstract void intersect(lotus.domino.Base doc);
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.DocumentCollection#merge(int)
-	 */
-	public abstract void merge(int noteid);
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.DocumentCollection#merge(java.lang.String)
-	 */
-	public abstract void merge(String noteid);
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.DocumentCollection#merge(lotus.domino.Base)
-	 */
-	public abstract void merge(lotus.domino.Base doc);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.DocumentCollection#subtract(int)
 	 */
+	@Override
 	public abstract void subtract(int noteid);
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.DocumentCollection#subtract(java.lang.String)
-	 */
-	public abstract void subtract(String noteid);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.DocumentCollection#subtract(lotus.domino.Base)
 	 */
+	@Override
 	public abstract void subtract(lotus.domino.Base doc);
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see lotus.domino.DocumentCollection#contains(int)
+	 * @see lotus.domino.DocumentCollection#subtract(java.lang.String)
 	 */
-	public abstract boolean contains(int noteid);
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.DocumentCollection#contains(java.lang.String)
-	 */
-	public abstract boolean contains(String noteid);
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.DocumentCollection#contains(lotus.domino.Base)
-	 */
-	public abstract boolean contains(lotus.domino.Base doc);
+	@Override
+	public abstract void subtract(String noteid);
 
 	/**
-	 * Returns a collection object which is a copy of the original collection.
+	 * Marks all documents in a collection as processed by an agent.
 	 * 
-	 * @return a DocumentCollection which is copy of the original.
 	 */
-	public abstract DocumentCollection cloneCollection();
+	public abstract void updateAll();
 
 }

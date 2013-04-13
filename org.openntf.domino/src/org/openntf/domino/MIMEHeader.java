@@ -17,11 +17,11 @@ package org.openntf.domino;
 
 import org.openntf.domino.types.DocumentDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface MIMEHeader.
  */
-public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.MIMEHeader, DocumentDescendant {
+public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.MIMEHeader, org.openntf.domino.ext.MIMEHeader,
+		DocumentDescendant {
 
 	/*
 	 * (non-Javadoc)
@@ -110,8 +110,6 @@ public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.
 	 */
 	@Override
 	public String getParamVal(String paramName, boolean folded);
-
-	public MIMEEntity getParent();
 
 	/*
 	 * (non-Javadoc)

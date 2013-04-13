@@ -22,11 +22,10 @@ import java.io.Writer;
 
 import org.openntf.domino.types.SessionDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface Stream.
  */
-public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream, SessionDescendant {
+public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream, org.openntf.domino.ext.Stream, SessionDescendant {
 
 	/*
 	 * (non-Javadoc)
@@ -67,8 +66,6 @@ public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream, 
 	 */
 	@Override
 	public void getContents(Writer writer);
-
-	public Session getParent();
 
 	/*
 	 * (non-Javadoc)

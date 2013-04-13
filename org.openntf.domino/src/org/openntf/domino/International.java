@@ -17,11 +17,11 @@ package org.openntf.domino;
 
 import org.openntf.domino.types.SessionDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface International.
  */
-public interface International extends Base<lotus.domino.International>, lotus.domino.International, SessionDescendant {
+public interface International extends Base<lotus.domino.International>, lotus.domino.International, org.openntf.domino.ext.International,
+		SessionDescendant {
 
 	/*
 	 * (non-Javadoc)

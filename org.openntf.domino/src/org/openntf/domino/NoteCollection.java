@@ -19,12 +19,11 @@ import java.util.Vector;
 
 import org.openntf.domino.types.DatabaseDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface NoteCollection.
  */
-public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus.domino.NoteCollection, Iterable<String>,
-		DatabaseDescendant {
+public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus.domino.NoteCollection,
+		org.openntf.domino.ext.NoteCollection, Iterable<String>, DatabaseDescendant {
 
 	/*
 	 * (non-Javadoc)
@@ -113,15 +112,6 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 */
 	@Override
 	public void clearCollection();
-
-	/**
-	 * Equals.
-	 * 
-	 * @param otherCollection
-	 *            the other collection
-	 * @return true, if successful
-	 */
-	public boolean equals(Object otherCollection);
 
 	/*
 	 * (non-Javadoc)
@@ -520,6 +510,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * 
 	 * @see lotus.domino.Base#recycle()
 	 */
+	@Override
 	public void recycle();
 
 	/*
@@ -528,6 +519,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.Base#recycle(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
+	@Override
 	public void recycle(Vector objects);
 
 	/*
@@ -559,6 +551,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * 
 	 * @see lotus.domino.NoteCollection#remove(int)
 	 */
+	@Override
 	public void remove(int removalSpecifier);
 
 	/*
@@ -675,6 +668,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * 
 	 * @see lotus.domino.NoteCollection#setSelectDatabaseScript(boolean)
 	 */
+	@Override
 	public void setSelectDatabaseScript(boolean flag);
 
 	/*
@@ -682,6 +676,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * 
 	 * @see lotus.domino.NoteCollection#setSelectDataConnections(boolean)
 	 */
+	@Override
 	public void setSelectDataConnections(boolean flag);
 
 	/*

@@ -17,11 +17,11 @@ package org.openntf.domino;
 
 import org.openntf.domino.types.DocumentDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface RichTextSection.
  */
-public interface RichTextSection extends Base<lotus.domino.RichTextSection>, lotus.domino.RichTextSection, DocumentDescendant {
+public interface RichTextSection extends Base<lotus.domino.RichTextSection>, lotus.domino.RichTextSection,
+		org.openntf.domino.ext.RichTextSection, DocumentDescendant {
 
 	/*
 	 * (non-Javadoc)
@@ -30,8 +30,6 @@ public interface RichTextSection extends Base<lotus.domino.RichTextSection>, lot
 	 */
 	@Override
 	public ColorObject getBarColor();
-
-	public RichTextItem getParent();
 
 	/*
 	 * (non-Javadoc)

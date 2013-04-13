@@ -19,19 +19,11 @@ import java.util.Vector;
 
 import org.openntf.domino.types.SessionDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface DxlExporter.
  */
-public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domino.DxlExporter, SessionDescendant {
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.DxlExporter#exportDxl(lotus.domino.Document)
-	 */
-	@Override
-	public String exportDxl(lotus.domino.Document doc);
+public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domino.DxlExporter, org.openntf.domino.ext.DxlExporter,
+		SessionDescendant {
 
 	/*
 	 * (non-Javadoc)
@@ -40,6 +32,14 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 */
 	@Override
 	public String exportDxl(lotus.domino.Database database);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.DxlExporter#exportDxl(lotus.domino.Document)
+	 */
+	@Override
+	public String exportDxl(lotus.domino.Document doc);
 
 	/*
 	 * (non-Javadoc)
