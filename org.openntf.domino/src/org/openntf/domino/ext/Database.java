@@ -186,6 +186,8 @@ public interface Database {
 	 */
 	public void sign(SignDocType documentType);
 
+	public void sign(SignDocType documentType, boolean existingSigsOnly);
+
 	/**
 	 * @param documentType
 	 *            sign document type

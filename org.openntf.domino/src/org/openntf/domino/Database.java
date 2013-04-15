@@ -304,6 +304,33 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		}
 	}
 
+	public static enum Type {
+		ADDR_BOOK(Database.DBTYPE_ADDR_BOOK), IMAP_SVR_PROXY(Database.DBTYPE_IMAP_SVR_PROXY), LIBRARY(Database.DBTYPE_LIBRARY), LIGHT_ADDR_BOOK(
+				Database.DBTYPE_LIGHT_ADDR_BOOK), MAILBOX(Database.DBTYPE_MAILBOX), MAILFILE(Database.DBTYPE_MAILFILE), MULTIDB_SRCH(
+				Database.DBTYPE_MULTIDB_SRCH), NEWS_SVR_PROXY(Database.DBTYPE_NEWS_SVR_PROXY), PERS_JOURNAL(Database.DBTYPE_PERS_JOURNAL), PORTFOLIO(
+				Database.DBTYPE_PORTFOLIO), STANDARD(Database.DBTYPE_STANDARD), SUBSCRIPTIONS(Database.DBTYPE_SUBSCRIPTIONS), WEB_APP(
+				Database.DBTYPE_WEB_APP);
+
+		private final int value_;
+
+		private Type(int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+
+		public static Type valueOf(int value) {
+			for (Type opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1420,6 +1447,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#setOption(int, boolean)
 	 */
 	@Override
+	@Deprecated
 	public void setOption(int optionName, boolean flag);
 
 	/*
@@ -1476,9 +1504,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#sign(int, boolean)
 	 */
 	@Override
+	@Deprecated
 	public void sign(int documentType, boolean existingSigsOnly);
-
-	public void sign(SignDocType documentType, boolean existingSigsOnly);
 
 	/*
 	 * (non-Javadoc)
@@ -1486,6 +1513,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#sign(int, boolean, java.lang.String)
 	 */
 	@Override
+	@Deprecated
 	public void sign(int documentType, boolean existingSigsOnly, String name);
 
 	/*
@@ -1494,6 +1522,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#sign(int, boolean, java.lang.String, boolean)
 	 */
 	@Override
+	@Deprecated
 	public void sign(int documentType, boolean existingSigsOnly, String name, boolean nameIsNoteid);
 
 	/*
