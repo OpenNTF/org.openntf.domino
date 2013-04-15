@@ -45,6 +45,15 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		public int getValue() {
 			return value_;
 		}
+
+		public static DBOption valueOf(int value) {
+			for (DBOption opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
 	}
 
 	public static enum SignDocType {
@@ -60,6 +69,15 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 		public int getValue() {
 			return value_;
+		}
+
+		public static SignDocType valueOf(int value) {
+			for (SignDocType opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
 		}
 	}
 
@@ -84,6 +102,15 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		public int getValue() {
 			return value_;
 		}
+
+		public static CompactOption valueOf(int value) {
+			for (CompactOption opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
 	}
 
 	public static enum FTIndexOption {
@@ -100,6 +127,15 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		public int getValue() {
 			return value_;
 		}
+
+		public static FTIndexOption valueOf(int value) {
+			for (FTIndexOption opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
 	}
 
 	public static enum FixupOption {
@@ -114,6 +150,15 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 		public int getValue() {
 			return value_;
+		}
+
+		public static FixupOption valueOf(int value) {
+			for (FixupOption opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
 		}
 	}
 
@@ -130,6 +175,15 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		public int getValue() {
 			return value_;
 		}
+
+		public static FTIndexFrequency valueOf(int value) {
+			for (FTIndexFrequency opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
 	}
 
 	public static enum FTDomainSortOption {
@@ -144,6 +198,15 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		public int getValue() {
 			return value_;
 		}
+
+		public static FTDomainSortOption valueOf(int value) {
+			for (FTDomainSortOption opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
 	}
 
 	public static enum FTDomainSearchOption {
@@ -157,6 +220,15 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 		public int getValue() {
 			return value_;
+		}
+
+		public static FTDomainSearchOption valueOf(int value) {
+			for (FTDomainSearchOption opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
 		}
 	}
 
@@ -173,6 +245,15 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		public int getValue() {
 			return value_;
 		}
+
+		public static FTSortOption valueOf(int value) {
+			for (FTSortOption opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
 	}
 
 	public static enum FTSearchOption {
@@ -186,6 +267,15 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 		public int getValue() {
 			return value_;
+		}
+
+		public static FTSearchOption valueOf(int value) {
+			for (FTSearchOption opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
 		}
 	}
 
@@ -202,6 +292,15 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 		public int getValue() {
 			return value_;
+		}
+
+		public static ModifiedDocClass valueOf(int value) {
+			for (ModifiedDocClass opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
 		}
 	}
 
