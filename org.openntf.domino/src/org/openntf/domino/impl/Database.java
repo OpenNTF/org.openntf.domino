@@ -22,7 +22,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -93,8 +92,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	@Override
-	public Document FTDomainSearch(String query, int maxDocs, FTDomainSortOption sortOpt, EnumSet<FTDomainSearchOption> otherOpt,
-			int start, int count, String entryForm) {
+	public Document FTDomainSearch(String query, int maxDocs, FTDomainSortOption sortOpt, Set<FTDomainSearchOption> otherOpt, int start,
+			int count, String entryForm) {
 		int nativeOptions = 0;
 		for (FTDomainSearchOption option : otherOpt) {
 			nativeOptions += option.getValue();
@@ -118,7 +117,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	@Override
-	public DocumentCollection FTSearch(String query, int maxDocs, FTSortOption sortOpt, EnumSet<FTSearchOption> otherOpt) {
+	public DocumentCollection FTSearch(String query, int maxDocs, FTSortOption sortOpt, Set<FTSearchOption> otherOpt) {
 		int nativeOptions = 0;
 		for (FTSearchOption option : otherOpt) {
 			nativeOptions += option.getValue();
@@ -171,7 +170,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	@Override
-	public DocumentCollection FTSearchRange(String query, int maxDocs, FTSortOption sortOpt, EnumSet<FTSearchOption> otherOpt, int start) {
+	public DocumentCollection FTSearchRange(String query, int maxDocs, FTSortOption sortOpt, Set<FTSearchOption> otherOpt, int start) {
 		int nativeOptions = 0;
 		for (FTSearchOption option : otherOpt) {
 			nativeOptions += option.getValue();
@@ -2557,7 +2556,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.ext.Database#compactWithOptions(java.util.EnumSet)
 	 */
 	@Override
-	public int compactWithOptions(EnumSet<CompactOption> options) {
+	public int compactWithOptions(Set<CompactOption> options) {
 		int nativeOptions = 0;
 		for (CompactOption option : options) {
 			nativeOptions += option.getValue();
@@ -2571,7 +2570,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.ext.Database#compactWithOptions(java.util.EnumSet, java.lang.String)
 	 */
 	@Override
-	public int compactWithOptions(EnumSet<CompactOption> options, String spaceThreshold) {
+	public int compactWithOptions(Set<CompactOption> options, String spaceThreshold) {
 		int nativeOptions = 0;
 		for (CompactOption option : options) {
 			nativeOptions += option.getValue();
@@ -2585,7 +2584,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.ext.Database#createFTIndex(java.util.EnumSet, boolean)
 	 */
 	@Override
-	public void createFTIndex(EnumSet<FTIndexOption> options, boolean recreate) {
+	public void createFTIndex(Set<FTIndexOption> options, boolean recreate) {
 		int nativeOptions = 0;
 		for (FTIndexOption option : options) {
 			nativeOptions += option.getValue();
@@ -2599,7 +2598,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.ext.Database#fixup(java.util.EnumSet)
 	 */
 	@Override
-	public void fixup(EnumSet<FixupOption> options) {
+	public void fixup(Set<FixupOption> options) {
 		int nativeOptions = 0;
 		for (FixupOption option : options) {
 			nativeOptions += option.getValue();

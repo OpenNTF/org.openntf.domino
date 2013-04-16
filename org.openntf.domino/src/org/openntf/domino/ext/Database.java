@@ -4,8 +4,8 @@
 package org.openntf.domino.ext;
 
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.openntf.domino.ACL;
 import org.openntf.domino.Document;
@@ -30,9 +30,9 @@ import org.openntf.domino.transactions.DatabaseTransaction;
  */
 public interface Database {
 
-	public int compactWithOptions(EnumSet<CompactOption> options);
+	public int compactWithOptions(Set<CompactOption> options);
 
-	public int compactWithOptions(EnumSet<CompactOption> options, String spaceThreshold);
+	public int compactWithOptions(Set<CompactOption> options, String spaceThreshold);
 
 	/*
 	 * (non-Javadoc)
@@ -56,9 +56,9 @@ public interface Database {
 	 */
 	public Document createDocument(Object... keyValuePairs);
 
-	public void createFTIndex(EnumSet<FTIndexOption> options, boolean recreate);
+	public void createFTIndex(Set<FTIndexOption> options, boolean recreate);
 
-	public void fixup(EnumSet<FixupOption> options);
+	public void fixup(Set<FixupOption> options);
 
 	/**
 	 * @param query
@@ -77,8 +77,8 @@ public interface Database {
 	 *            the entry form
 	 * @return a document
 	 */
-	public Document FTDomainSearch(String query, int maxDocs, FTDomainSortOption sortOpt, EnumSet<FTDomainSearchOption> otherOpt,
-			int start, int count, String entryForm);
+	public Document FTDomainSearch(String query, int maxDocs, FTDomainSortOption sortOpt, Set<FTDomainSearchOption> otherOpt, int start,
+			int count, String entryForm);
 
 	/**
 	 * @param query
@@ -91,7 +91,7 @@ public interface Database {
 	 *            the other option
 	 * @return a DocumentCollection
 	 */
-	public DocumentCollection FTSearch(String query, int maxDocs, FTSortOption sortOpt, EnumSet<FTSearchOption> otherOpt);
+	public DocumentCollection FTSearch(String query, int maxDocs, FTSortOption sortOpt, Set<FTSearchOption> otherOpt);
 
 	/**
 	 * @param query
@@ -106,7 +106,7 @@ public interface Database {
 	 *            the start
 	 * @return a DocumentCollection
 	 */
-	public DocumentCollection FTSearchRange(String query, int maxDocs, FTSortOption sortOpt, EnumSet<FTSearchOption> otherOpt, int start);
+	public DocumentCollection FTSearchRange(String query, int maxDocs, FTSortOption sortOpt, Set<FTSearchOption> otherOpt, int start);
 
 	/*
 	 * (non-Javadoc)
