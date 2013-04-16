@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -92,8 +93,14 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	@Override
-	public Document FTDomainSearch(String query, int maxDocs, SortOption sortOpt, int otherOpt, int start, int count, String entryForm) {
-		return FTDomainSearch(query, maxDocs, sortOpt.getValue(), otherOpt, start, count, entryForm);
+	public Document FTDomainSearch(String query, int maxDocs, FTDomainSortOption sortOpt, EnumSet<FTDomainSearchOption> otherOpt,
+			int start, int count, String entryForm) {
+		int nativeOptions = 0;
+		for (FTDomainSearchOption option : otherOpt) {
+			nativeOptions += option.getValue();
+		}
+
+		return FTDomainSearch(query, maxDocs, sortOpt.getValue(), nativeOptions, start, count, entryForm);
 	}
 
 	/*
@@ -111,8 +118,12 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	@Override
-	public DocumentCollection FTSearch(String query, int maxDocs, SortOption sortOpt, int otherOpt) {
-		return FTSearch(query, maxDocs, sortOpt.getValue(), otherOpt);
+	public DocumentCollection FTSearch(String query, int maxDocs, FTSortOption sortOpt, EnumSet<FTSearchOption> otherOpt) {
+		int nativeOptions = 0;
+		for (FTSearchOption option : otherOpt) {
+			nativeOptions += option.getValue();
+		}
+		return FTSearch(query, maxDocs, sortOpt.getValue(), nativeOptions);
 	}
 
 	/*
@@ -160,8 +171,12 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	@Override
-	public DocumentCollection FTSearchRange(String query, int maxDocs, SortOption sortOpt, int otherOpt, int start) {
-		return FTSearchRange(query, maxDocs, sortOpt.getValue(), otherOpt, start);
+	public DocumentCollection FTSearchRange(String query, int maxDocs, FTSortOption sortOpt, EnumSet<FTSearchOption> otherOpt, int start) {
+		int nativeOptions = 0;
+		for (FTSearchOption option : otherOpt) {
+			nativeOptions += option.getValue();
+		}
+		return FTSearchRange(query, maxDocs, sortOpt.getValue(), nativeOptions, start);
 	}
 
 	/*
@@ -1504,7 +1519,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public View getView(String name) {
 		try {
-			return Factory.fromLotus(getDelegate().getView(name), View.class, this);
+			View result = Factory.fromLotus(getDelegate().getView(name), View.class, this);
+			result.setAutoUpdate(false);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -2534,4 +2551,89 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		return this.getParent();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.Database#compactWithOptions(java.util.EnumSet)
+	 */
+	@Override
+	public int compactWithOptions(EnumSet<CompactOption> options) {
+		int nativeOptions = 0;
+		for (CompactOption option : options) {
+			nativeOptions += option.getValue();
+		}
+		return compactWithOptions(nativeOptions);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.Database#compactWithOptions(java.util.EnumSet, java.lang.String)
+	 */
+	@Override
+	public int compactWithOptions(EnumSet<CompactOption> options, String spaceThreshold) {
+		int nativeOptions = 0;
+		for (CompactOption option : options) {
+			nativeOptions += option.getValue();
+		}
+		return compactWithOptions(nativeOptions, spaceThreshold);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.Database#createFTIndex(java.util.EnumSet, boolean)
+	 */
+	@Override
+	public void createFTIndex(EnumSet<FTIndexOption> options, boolean recreate) {
+		int nativeOptions = 0;
+		for (FTIndexOption option : options) {
+			nativeOptions += option.getValue();
+		}
+		createFTIndex(nativeOptions, recreate);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.Database#fixup(java.util.EnumSet)
+	 */
+	@Override
+	public void fixup(EnumSet<FixupOption> options) {
+		int nativeOptions = 0;
+		for (FixupOption option : options) {
+			nativeOptions += option.getValue();
+		}
+		fixup(nativeOptions);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.Database#getModifiedDocuments(lotus.domino.DateTime, org.openntf.domino.Database.ModifiedDocClass)
+	 */
+	@Override
+	public DocumentCollection getModifiedDocuments(lotus.domino.DateTime since, ModifiedDocClass noteClass) {
+		return getModifiedDocuments(since, noteClass.getValue());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.Database#getOption(org.openntf.domino.Database.DBOption)
+	 */
+	@Override
+	public boolean getOption(DBOption optionName) {
+		return getOption(optionName.getValue());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.Database#setFTIndexFrequency(org.openntf.domino.Database.FTIndexFrequency)
+	 */
+	@Override
+	public void setFTIndexFrequency(FTIndexFrequency frequency) {
+		setFTIndexFrequency(frequency.getValue());
+	}
 }

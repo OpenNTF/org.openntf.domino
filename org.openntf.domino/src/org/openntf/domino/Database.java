@@ -28,20 +28,6 @@ import org.openntf.domino.types.SessionDescendant;
 public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database>, org.openntf.domino.ext.Database,
 		Map<String, Document>, Resurrectable, SessionDescendant {
 
-	public static enum SortOption {
-		SCORES(Database.FT_SCORES), DATE_DES(Database.FT_DATE_DES), DATE_ASC(Database.FT_DATE_ASC);
-
-		private final int value_;
-
-		private SortOption(int value) {
-			value_ = value;
-		}
-
-		public int getValue() {
-			return value_;
-		}
-	}
-
 	public static enum DBOption {
 		LZ1(Database.DBOPT_LZ1), LZCOMPRESSION(Database.DBOPT_LZCOMPRESSION), MAINTAINLASTACCESSED(Database.DBOPT_MAINTAINLASTACCESSED), MOREFIELDS(
 				Database.DBOPT_MOREFIELDS), NOHEADLINEMONITORS(Database.DBOPT_NOHEADLINEMONITORS), NOOVERWRITE(Database.DBOPT_NOOVERWRITE), NORESPONSEINFO(
@@ -59,6 +45,15 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		public int getValue() {
 			return value_;
 		}
+
+		public static DBOption valueOf(int value) {
+			for (DBOption opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
 	}
 
 	public static enum SignDocType {
@@ -74,6 +69,265 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 		public int getValue() {
 			return value_;
+		}
+
+		public static SignDocType valueOf(int value) {
+			for (SignDocType opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
+	}
+
+	public static enum CompactOption {
+		ARCHIVE_DELETE_COMPACT(Database.CMPC_ARCHIVE_DELETE_COMPACT), ARCHIVE_DELETE_ONLY(Database.CMPC_ARCHIVE_DELETE_ONLY), CHK_OVERLAP(
+				Database.CMPC_CHK_OVERLAP), COPYSTYLE(Database.CMPC_COPYSTYLE), DISABLE_DOCTBLBIT_OPTMZN(
+				Database.CMPC_DISABLE_DOCTBLBIT_OPTMZN), DISABLE_LARGE_UNKTBL(Database.CMPC_DISABLE_LARGE_UNKTBL), DISABLE_RESPONSE_INFO(
+				Database.CMPC_DISABLE_RESPONSE_INFO), DISABLE_TRANSACTIONLOGGING(Database.CMPC_DISABLE_TRANSACTIONLOGGING), DISABLE_UNREAD_MARKS(
+				Database.CMPC_DISABLE_UNREAD_MARKS), DISCARD_VIEW_INDICIES(Database.CMPC_DISCARD_VIEW_INDICES), ENABLE_DOCTBLBIT_OPTMZN(
+				Database.CMPC_ENABLE_DOCTBLBIT_OPTMZN), ENABLE_LARGE_UNKTBL(Database.CMPC_ENABLE_LARGE_UNKTBL), ENABLE_RESPONSE_INFO(
+				Database.CMPC_ENABLE_RESPONSE_INFO), ENABLE_TRANSACTIONLOGGING(Database.CMPC_ENABLE_TRANSACTIONLOGGING), ENABLE_UNREAD_MARKS(
+				Database.CMPC_ENABLE_UNREAD_MARKS), IGNORE_COPYSTYLE_ERRORS(Database.CMPC_IGNORE_COPYSTYLE_ERRORS), MAX_4GB(
+				Database.CMPC_MAX_4GB), NO_LOCKOUT(Database.CMPC_NO_LOCKOUT), RECOVER_INPLACE(Database.CMPC_RECOVER_INPLACE), RECOVER_REDUCE_INPLACE(
+				Database.CMPC_RECOVER_REDUCE_INPLACE), REVERT_FILEFORMAT(Database.CMPC_REVERT_FILEFORMAT);
+
+		private final int value_;
+
+		private CompactOption(int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+
+		public static CompactOption valueOf(int value) {
+			for (CompactOption opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
+	}
+
+	public static enum FTIndexOption {
+		ALL_BREAKS(Database.FTINDEX_ALL_BREAKS), ATTACHED_BIN_FILES(Database.FTINDEX_ATTACHED_BIN_FILES), ATTACHED_FILES(
+				Database.FTINDEX_ATTACHED_FILES), CASE_SENSITIVE(Database.FTINDEX_CASE_SENSITIVE), ENCRYPTED_FIELDS(
+				Database.FTINDEX_ENCRYPTED_FIELDS);
+
+		private final int value_;
+
+		private FTIndexOption(int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+
+		public static FTIndexOption valueOf(int value) {
+			for (FTIndexOption opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
+	}
+
+	public static enum FixupOption {
+		INCREMENTAL(Database.FIXUP_INCREMENTAL), NODELETE(Database.FIXUP_NODELETE), NOVIEWS(Database.FIXUP_NOVIEWS), QUICK(
+				Database.FIXUP_QUICK), REVERT(Database.FIXUP_REVERT), TXLOGGED(Database.FIXUP_TXLOGGED), VERIFY(Database.FIXUP_VERIFY);
+
+		private final int value_;
+
+		private FixupOption(int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+
+		public static FixupOption valueOf(int value) {
+			for (FixupOption opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
+	}
+
+	public static enum FTIndexFrequency {
+		DAILY(Database.FTINDEX_DAILY), HOURLY(Database.FTINDEX_HOURLY), IMMEDIATE(Database.FTINDEX_IMMEDIATE), SCHEDULED(
+				Database.FTINDEX_SCHEDULED);
+
+		private final int value_;
+
+		private FTIndexFrequency(int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+
+		public static FTIndexFrequency valueOf(int value) {
+			for (FTIndexFrequency opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
+	}
+
+	public static enum FTDomainSortOption {
+		SCORES(Database.FT_SCORES), DATE_DES(Database.FT_DATE_DES), DATE_ASC(Database.FT_DATE_ASC);
+
+		private final int value_;
+
+		private FTDomainSortOption(int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+
+		public static FTDomainSortOption valueOf(int value) {
+			for (FTDomainSortOption opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
+	}
+
+	public static enum FTDomainSearchOption {
+		DATABASE(Database.FT_DATABASE), FILESYSTEM(Database.FT_FILESYSTEM), FUZZY(Database.FT_FUZZY), STEMS(Database.FT_STEMS);
+
+		private final int value_;
+
+		private FTDomainSearchOption(int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+
+		public static FTDomainSearchOption valueOf(int value) {
+			for (FTDomainSearchOption opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
+	}
+
+	public static enum FTSortOption {
+		SCORES(Database.FT_SCORES), DATE_DES(Database.FT_DATE_DES), DATE_ASC(Database.FT_DATE_ASC), DATECREATED_DES(
+				Database.FT_DATECREATED_DES), DATECREATED_ASC(Database.FT_DATECREATED_ASC);
+
+		private final int value_;
+
+		private FTSortOption(int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+
+		public static FTSortOption valueOf(int value) {
+			for (FTSortOption opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
+	}
+
+	public static enum FTSearchOption {
+		FUZZY(Database.FT_FUZZY), STEMS(Database.FT_STEMS);
+
+		private final int value_;
+
+		private FTSearchOption(int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+
+		public static FTSearchOption valueOf(int value) {
+			for (FTSearchOption opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
+	}
+
+	public static enum ModifiedDocClass {
+		ACL(Database.DBMOD_DOC_ACL), AGENT(Database.DBMOD_DOC_AGENT), ALL(Database.DBMOD_DOC_ALL), DATA(Database.DBMOD_DOC_DATA), FORM(
+				Database.DBMOD_DOC_FORM), HELP(Database.DBMOD_DOC_HELP), ICON(Database.DBMOD_DOC_ICON), REPLFORMULA(
+				Database.DBMOD_DOC_REPLFORMULA), SHAREDFIELD(Database.DBMOD_DOC_SHAREDFIELD), VIEW(Database.DBMOD_DOC_VIEW);
+
+		private final int value_;
+
+		private ModifiedDocClass(int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+
+		public static ModifiedDocClass valueOf(int value) {
+			for (ModifiedDocClass opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
+	}
+
+	public static enum Type {
+		ADDR_BOOK(Database.DBTYPE_ADDR_BOOK), IMAP_SVR_PROXY(Database.DBTYPE_IMAP_SVR_PROXY), LIBRARY(Database.DBTYPE_LIBRARY), LIGHT_ADDR_BOOK(
+				Database.DBTYPE_LIGHT_ADDR_BOOK), MAILBOX(Database.DBTYPE_MAILBOX), MAILFILE(Database.DBTYPE_MAILFILE), MULTIDB_SRCH(
+				Database.DBTYPE_MULTIDB_SRCH), NEWS_SVR_PROXY(Database.DBTYPE_NEWS_SVR_PROXY), PERS_JOURNAL(Database.DBTYPE_PERS_JOURNAL), PORTFOLIO(
+				Database.DBTYPE_PORTFOLIO), STANDARD(Database.DBTYPE_STANDARD), SUBSCRIPTIONS(Database.DBTYPE_SUBSCRIPTIONS), WEB_APP(
+				Database.DBTYPE_WEB_APP);
+
+		private final int value_;
+
+		private Type(int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+
+		public static Type valueOf(int value) {
+			for (Type opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
 		}
 	}
 
@@ -101,6 +355,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#compactWithOptions(int)
 	 */
 	@Override
+	@Deprecated
 	public int compactWithOptions(int options);
 
 	/*
@@ -109,6 +364,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#compactWithOptions(int, java.lang.String)
 	 */
 	@Override
+	@Deprecated
 	public int compactWithOptions(int options, String spaceThreshold);
 
 	/*
@@ -174,6 +430,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#createFTIndex(int, boolean)
 	 */
 	@Override
+	@Deprecated
 	public void createFTIndex(int options, boolean recreate);
 
 	/*
@@ -294,6 +551,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#fixup(int)
 	 */
 	@Override
+	@Deprecated
 	public void fixup(int options);
 
 	/*
@@ -302,6 +560,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#FTDomainSearch(java.lang.String, int, int, int, int, int, java.lang.String)
 	 */
 	@Override
+	@Deprecated
 	public Document FTDomainSearch(String query, int maxDocs, int sortOpt, int otherOpt, int start, int count, String entryForm);
 
 	/*
@@ -326,6 +585,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#FTSearch(java.lang.String, int, int, int)
 	 */
 	@Override
+	@Deprecated
 	public DocumentCollection FTSearch(String query, int maxDocs, int sortOpt, int otherOpt);
 
 	/*
@@ -334,6 +594,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#FTSearchRange(java.lang.String, int, int, int, int)
 	 */
 	@Override
+	@Deprecated
 	public DocumentCollection FTSearchRange(String query, int maxDocs, int sortOpt, int otherOpt, int start);
 
 	/*
@@ -628,6 +889,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#getModifiedDocuments(lotus.domino.DateTime, int)
 	 */
 	@Override
+	@Deprecated
 	public DocumentCollection getModifiedDocuments(lotus.domino.DateTime since, int noteClass);
 
 	/*
@@ -644,6 +906,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#getOption(int)
 	 */
 	@Override
+	@Deprecated
 	public boolean getOption(int optionName);
 
 	/*
@@ -806,6 +1069,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#grantAccess(java.lang.String, int)
 	 */
 	@Override
+	@Deprecated
 	public void grantAccess(String name, int level);
 
 	/*
@@ -1134,6 +1398,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#setFTIndexFrequency(int)
 	 */
 	@Override
+	@Deprecated
 	public void setFTIndexFrequency(int frequency);
 
 	/*
@@ -1182,6 +1447,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#setOption(int, boolean)
 	 */
 	@Override
+	@Deprecated
 	public void setOption(int optionName, boolean flag);
 
 	/*
@@ -1238,9 +1504,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#sign(int, boolean)
 	 */
 	@Override
+	@Deprecated
 	public void sign(int documentType, boolean existingSigsOnly);
-
-	public void sign(SignDocType documentType, boolean existingSigsOnly);
 
 	/*
 	 * (non-Javadoc)
@@ -1248,6 +1513,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#sign(int, boolean, java.lang.String)
 	 */
 	@Override
+	@Deprecated
 	public void sign(int documentType, boolean existingSigsOnly, String name);
 
 	/*
@@ -1256,6 +1522,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#sign(int, boolean, java.lang.String, boolean)
 	 */
 	@Override
+	@Deprecated
 	public void sign(int documentType, boolean existingSigsOnly, String name, boolean nameIsNoteid);
 
 	/*

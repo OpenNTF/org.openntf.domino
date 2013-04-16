@@ -4,15 +4,24 @@
 package org.openntf.domino.ext;
 
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.Map;
 
 import org.openntf.domino.ACL;
-import org.openntf.domino.Database.DBOption;
-import org.openntf.domino.Database.SignDocType;
-import org.openntf.domino.Database.SortOption;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.FileResource;
+import org.openntf.domino.Database.CompactOption;
+import org.openntf.domino.Database.DBOption;
+import org.openntf.domino.Database.FTDomainSearchOption;
+import org.openntf.domino.Database.FTDomainSortOption;
+import org.openntf.domino.Database.FTIndexFrequency;
+import org.openntf.domino.Database.FTIndexOption;
+import org.openntf.domino.Database.FTSearchOption;
+import org.openntf.domino.Database.FTSortOption;
+import org.openntf.domino.Database.FixupOption;
+import org.openntf.domino.Database.ModifiedDocClass;
+import org.openntf.domino.Database.SignDocType;
 import org.openntf.domino.transactions.DatabaseTransaction;
 
 /**
@@ -20,6 +29,10 @@ import org.openntf.domino.transactions.DatabaseTransaction;
  * 
  */
 public interface Database {
+
+	public int compactWithOptions(EnumSet<CompactOption> options);
+
+	public int compactWithOptions(EnumSet<CompactOption> options, String spaceThreshold);
 
 	/*
 	 * (non-Javadoc)
@@ -43,6 +56,10 @@ public interface Database {
 	 */
 	public Document createDocument(Object... keyValuePairs);
 
+	public void createFTIndex(EnumSet<FTIndexOption> options, boolean recreate);
+
+	public void fixup(EnumSet<FixupOption> options);
+
 	/**
 	 * @param query
 	 *            the query
@@ -60,7 +77,8 @@ public interface Database {
 	 *            the entry form
 	 * @return a document
 	 */
-	public Document FTDomainSearch(String query, int maxDocs, SortOption sortOpt, int otherOpt, int start, int count, String entryForm);
+	public Document FTDomainSearch(String query, int maxDocs, FTDomainSortOption sortOpt, EnumSet<FTDomainSearchOption> otherOpt,
+			int start, int count, String entryForm);
 
 	/**
 	 * @param query
@@ -73,7 +91,7 @@ public interface Database {
 	 *            the other option
 	 * @return a DocumentCollection
 	 */
-	public DocumentCollection FTSearch(String query, int maxDocs, SortOption sortOpt, int otherOpt);
+	public DocumentCollection FTSearch(String query, int maxDocs, FTSortOption sortOpt, EnumSet<FTSearchOption> otherOpt);
 
 	/**
 	 * @param query
@@ -88,7 +106,7 @@ public interface Database {
 	 *            the start
 	 * @return a DocumentCollection
 	 */
-	public DocumentCollection FTSearchRange(String query, int maxDocs, SortOption sortOpt, int otherOpt, int start);
+	public DocumentCollection FTSearchRange(String query, int maxDocs, FTSortOption sortOpt, EnumSet<FTSearchOption> otherOpt, int start);
 
 	/*
 	 * (non-Javadoc)
@@ -140,6 +158,10 @@ public interface Database {
 	 */
 	public Collection<FileResource> getFileResources();
 
+	public DocumentCollection getModifiedDocuments(lotus.domino.DateTime since, ModifiedDocClass noteClass);
+
+	public boolean getOption(DBOption optionName);
+
 	/**
 	 * @param name
 	 *            name of a user to grant access to
@@ -147,6 +169,8 @@ public interface Database {
 	 *            ACL.Level for access
 	 */
 	public void grantAccess(String name, ACL.Level level);
+
+	public void setFTIndexFrequency(FTIndexFrequency frequency);
 
 	/**
 	 * @param optionName
@@ -161,6 +185,8 @@ public interface Database {
 	 *            sign document type
 	 */
 	public void sign(SignDocType documentType);
+
+	public void sign(SignDocType documentType, boolean existingSigsOnly);
 
 	/**
 	 * @param documentType
