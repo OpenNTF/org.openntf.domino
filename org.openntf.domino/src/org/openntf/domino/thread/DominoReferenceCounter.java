@@ -42,6 +42,7 @@ public class DominoReferenceCounter {
 	public DominoReferenceCounter() {
 		synced_ = true;
 		this.map = Collections.synchronizedMap(new HashMap<Long, AtomicInteger>());
+		this.refMap = new DominoReferenceMap();
 	}
 
 	/**
@@ -49,6 +50,7 @@ public class DominoReferenceCounter {
 	 */
 	public DominoReferenceCounter(boolean synced) {
 		synced_ = synced;
+		this.refMap = new DominoReferenceMap();
 		if (synced) {
 			this.map = Collections.synchronizedMap(new HashMap<Long, AtomicInteger>());
 		} else {
@@ -57,12 +59,25 @@ public class DominoReferenceCounter {
 	}
 
 	private final Map<Long, AtomicInteger> map;
+	private final DominoReferenceMap refMap;
 
 	private Map<Long, AtomicInteger> getMap() {
 		return map;
 	}
 
+	private DominoReferenceMap getRefMap() {
+		return refMap;
+	}
+
 	public int increment(Long id) {
+		// DominoReferenceMap refMap = getRefMap();
+		// int key = Long.valueOf(id).intValue();
+		// if (refMap.get(key) == DominoReferenceMap.NO_VALUE) {
+		// refMap.put(key, 1);
+		// return 1;
+		// } else {
+		// return refMap.incrementAndGet(key);
+		// }
 		Map<Long, AtomicInteger> map = getMap();
 		if (synced_) {
 			synchronized (map) {
@@ -84,6 +99,14 @@ public class DominoReferenceCounter {
 	}
 
 	public int decrement(Long id) {
+		// DominoReferenceMap refMap = getRefMap();
+		// int key = Long.valueOf(id).intValue();
+		// if (refMap.get(key) == DominoReferenceMap.NO_VALUE) {
+		// refMap.put(key, 0);
+		// return 0;
+		// } else {
+		// return refMap.decrementAndGet(key);
+		// }
 		Map<Long, AtomicInteger> map = getMap();
 		if (synced_) {
 			synchronized (map) {
@@ -118,6 +141,9 @@ public class DominoReferenceCounter {
 	 * @return the count
 	 */
 	public int getCount(Long id) {
+		// DominoReferenceMap refMap = getRefMap();
+		// int key = Long.valueOf(id).intValue();
+		// return refMap.get(key);
 		Map<Long, AtomicInteger> map = getMap();
 		if (synced_) {
 			synchronized (map) {
