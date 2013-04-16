@@ -19,11 +19,11 @@ import java.util.Vector;
 
 import org.openntf.domino.types.DocumentDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface RichTextTable.
  */
-public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.domino.RichTextTable, DocumentDescendant {
+public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.domino.RichTextTable, org.openntf.domino.ext.RichTextTable,
+		DocumentDescendant {
 
 	/*
 	 * (non-Javadoc)
@@ -38,6 +38,7 @@ public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.d
 	 * 
 	 * @see lotus.domino.RichTextTable#addRow(int)
 	 */
+	@Override
 	public void addRow(int count);
 
 	/*
@@ -71,8 +72,6 @@ public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.d
 	 */
 	@Override
 	public int getColumnCount();
-
-	public RichTextItem getParent();
 
 	/*
 	 * (non-Javadoc)

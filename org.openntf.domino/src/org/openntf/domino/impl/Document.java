@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -707,8 +708,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public Vector<org.openntf.domino.EmbeddedObject> getEmbeddedObjects() {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getEmbeddedObjects(), org.openntf.domino.EmbeddedObject.class,
-					this.getAncestorSession());
+			return Factory.fromLotusAsVector(getDelegate().getEmbeddedObjects(), org.openntf.domino.EmbeddedObject.class, this
+					.getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -877,7 +878,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		try {
 			// Check the item type to see if it's MIME - if so, then see if it's a MIMEBean
 			// This is a bit more expensive than I'd like
-			lotus.domino.Session session = Factory.getSession(this);
+			lotus.domino.Session session = this.getAncestorSession();
 			boolean convertMime = session.isConvertMIME();
 			session.setConvertMIME(false);
 			Item item = this.getFirstItem(name);
@@ -1854,11 +1855,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * 
 	 * @see org.openntf.domino.Document#replaceItemValue(java.lang.String, java.lang.Object)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Item replaceItemValue(String itemName, Object value) {
 		markDirty();
 		try {
 			lotus.domino.Item result = null;
+			Class<?> valueClass = value.getClass();
 			try {
 				if (value instanceof List) {
 					Vector<Object> resultList = new Vector<Object>();
@@ -1885,6 +1888,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						}
 						resultList.add(domNode);
 					}
+					// If it ended up being something we could store, make note of the original class instead of the list class
+					valueClass = ((List<?>) value).get(0).getClass();
+
 					result = getDelegate().replaceItemValue(itemName, resultList);
 				} else {
 					Object domNode = toDominoFriendly(value, this);
@@ -1947,6 +1953,34 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					}
 				}
 			}
+
+			// If we've gotten this far, it must be legal - update or create the item info map
+			boolean convertMime = this.getAncestorSession().isConvertMime();
+			this.getAncestorSession().setConvertMime(false);
+			Map<String, Map<String, Serializable>> itemInfo = null;
+			if (this.hasItem("$$ItemInfo")) {
+				if (this.getFirstItem("$$ItemInfo").getType() == Item.MIME_PART) {
+					// Then use the existing value
+					itemInfo = (Map<String, Map<String, Serializable>>) DominoUtils.restoreState(this, "$$ItemInfo");
+				} else {
+					// Then destroy it (?)
+					this.removeItem("$$ItemInfo");
+					itemInfo = new TreeMap<String, Map<String, Serializable>>();
+				}
+			} else {
+				itemInfo = new TreeMap<String, Map<String, Serializable>>();
+			}
+			Map<String, Serializable> infoNode = null;
+			if (itemInfo.containsKey(itemName)) {
+				infoNode = itemInfo.get(itemName);
+			} else {
+				infoNode = new HashMap<String, Serializable>();
+			}
+			infoNode.put("valueClass", valueClass.getName());
+			infoNode.put("updated", new Date()); // For sanity checking if the value was changed outside of Java
+			itemInfo.put(itemName, infoNode);
+			DominoUtils.saveState((Serializable) itemInfo, this, "$$ItemInfo", false, null);
+			this.getAncestorSession().setConvertMime(convertMime);
 
 			return Factory.fromLotus(result, Item.class, this);
 		} catch (NotesException e) {
@@ -2377,14 +2411,15 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					StackTraceElement[] elements = t.getStackTrace();
 					log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
 							+ " had been recycled and was auto-restored. Changes may have been lost.");
-					log_.log(Level.FINER,
-							elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber() + ")");
-					log_.log(Level.FINER,
-							elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber() + ")");
-					log_.log(Level.FINER,
-							elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber() + ")");
-					log_.log(Level.FINE,
-							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
+					log_.log(Level.FINER, elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line "
+							+ elements[0].getLineNumber() + ")");
+					log_.log(Level.FINER, elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line "
+							+ elements[1].getLineNumber() + ")");
+					log_.log(Level.FINER, elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line "
+							+ elements[2].getLineNumber() + ")");
+					log_
+							.log(Level.FINE,
+									"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
 				}
 			} catch (NotesException e) {
 				DominoUtils.handleException(e);
@@ -2431,6 +2466,14 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	@Override
 	public Object get(Object key) {
+		if (key == null) {
+			return null;
+		}
+		// Check for "special" cases
+		if ("parentDocument".equals(key)) {
+			return this.getParentDocument();
+		}
+
 		if (this.containsKey(key)) {
 			Vector<Object> value = this.getItemValue(key.toString());
 			if (value.size() == 1) {

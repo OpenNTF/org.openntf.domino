@@ -206,4 +206,38 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 		return this.getParent();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.ColorObject#getHex()
+	 */
+	@Override
+	public String getHex() {
+		String r = Integer.toHexString(this.getRed());
+		String g = Integer.toHexString(this.getGreen());
+		String b = Integer.toHexString(this.getBlue());
+		return (r.length() < 2 ? "0" : "") + r + (g.length() < 2 ? "0" : "") + g + (b.length() < 2 ? "0" : "") + b;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.ColorObject#setHex(java.lang.String)
+	 */
+	@Override
+	public void setHex(String hex) {
+		if (hex == null || hex.length() < 6 || hex.length() > 7) {
+			throw new IllegalArgumentException();
+		}
+
+		if (hex.length() == 7) {
+			hex = hex.substring(1);
+		}
+		String r = hex.substring(0, 2);
+		String g = hex.substring(2, 4);
+		String b = hex.substring(4, 6);
+
+		this.setRGB(Integer.valueOf(r, 16), Integer.valueOf(g, 16), Integer.valueOf(b, 16));
+	}
+
 }

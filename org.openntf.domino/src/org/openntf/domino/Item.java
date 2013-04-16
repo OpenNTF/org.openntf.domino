@@ -25,11 +25,10 @@ import lotus.domino.XSLTResultTarget;
 import org.openntf.domino.types.DocumentDescendant;
 import org.xml.sax.InputSource;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface Item.
  */
-public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, DocumentDescendant {
+public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.openntf.domino.ext.Item, DocumentDescendant {
 
 	/*
 	 * (non-Javadoc)

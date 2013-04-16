@@ -19,12 +19,11 @@ import java.util.Vector;
 
 import org.openntf.domino.types.SessionDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface AdministrationProcess.
  */
 public interface AdministrationProcess extends Base<lotus.domino.AdministrationProcess>, lotus.domino.AdministrationProcess,
-		SessionDescendant {
+		org.openntf.domino.ext.AdministrationProcess, SessionDescendant {
 
 	/*
 	 * (non-Javadoc)

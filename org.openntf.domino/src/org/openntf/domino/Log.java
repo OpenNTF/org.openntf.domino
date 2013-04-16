@@ -19,7 +19,6 @@ import java.util.Vector;
 
 import org.openntf.domino.types.SessionDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface Log nnables you to record actions and errors that take place during a program's execution. You can record actions and
  * errors in
@@ -31,7 +30,7 @@ import org.openntf.domino.types.SessionDescendant;
  * <li>An agent log (for agents)
  * </ul>
  */
-public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log, SessionDescendant {
+public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log, org.openntf.domino.ext.Log, SessionDescendant {
 
 	/**
 	 * Closes a log.

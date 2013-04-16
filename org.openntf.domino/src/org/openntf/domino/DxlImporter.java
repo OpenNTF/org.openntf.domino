@@ -17,11 +17,11 @@ package org.openntf.domino;
 
 import org.openntf.domino.types.SessionDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface DxlImporter.
  */
-public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domino.DxlImporter, SessionDescendant {
+public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domino.DxlImporter, org.openntf.domino.ext.DxlImporter,
+		SessionDescendant {
 
 	/*
 	 * (non-Javadoc)

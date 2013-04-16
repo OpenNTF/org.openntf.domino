@@ -21,7 +21,7 @@ package org.openntf.domino;
  * @param <D>
  *            the generic type
  */
-public interface Base<D extends lotus.domino.Base> extends lotus.domino.Base {
+public interface Base<D extends lotus.domino.Base> extends lotus.domino.Base, org.openntf.domino.ext.Base {
 
 	// public abstract D getDelegate();
 

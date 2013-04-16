@@ -14,7 +14,7 @@ import org.openntf.domino.thread.DominoThread;
 public class Create200KLotus {
 
 	public Create200KLotus() {
-		// TODO Auto-generated constructor stub
+
 	}
 
 	static class DocCreator implements Runnable {

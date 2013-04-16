@@ -19,11 +19,11 @@ import java.util.Vector;
 
 import org.openntf.domino.types.SessionDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface DirectoryNavigator.
  */
-public interface DirectoryNavigator extends Base<lotus.domino.DirectoryNavigator>, lotus.domino.DirectoryNavigator, SessionDescendant {
+public interface DirectoryNavigator extends Base<lotus.domino.DirectoryNavigator>, lotus.domino.DirectoryNavigator,
+		org.openntf.domino.ext.DirectoryNavigator, SessionDescendant {
 
 	/*
 	 * (non-Javadoc)
@@ -136,8 +136,6 @@ public interface DirectoryNavigator extends Base<lotus.domino.DirectoryNavigator
 	 */
 	@Override
 	public Vector<Object> getNthItemValue(int n);
-
-	public Directory getParent();
 
 	/*
 	 * (non-Javadoc)

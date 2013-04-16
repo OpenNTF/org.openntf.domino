@@ -17,11 +17,11 @@ package org.openntf.domino;
 
 import org.openntf.domino.types.DocumentDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface RichTextRange.
  */
-public interface RichTextRange extends Base<lotus.domino.RichTextRange>, lotus.domino.RichTextRange, DocumentDescendant {
+public interface RichTextRange extends Base<lotus.domino.RichTextRange>, lotus.domino.RichTextRange, org.openntf.domino.ext.RichTextRange,
+		DocumentDescendant {
 
 	/*
 	 * (non-Javadoc)
@@ -53,8 +53,6 @@ public interface RichTextRange extends Base<lotus.domino.RichTextRange>, lotus.d
 	 */
 	@Override
 	public RichTextNavigator getNavigator();
-
-	public RichTextItem getParent();
 
 	/*
 	 * (non-Javadoc)

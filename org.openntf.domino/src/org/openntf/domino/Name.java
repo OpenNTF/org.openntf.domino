@@ -18,7 +18,6 @@ package org.openntf.domino;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.types.SessionDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface Name represents a user or server name.
  * <p>
@@ -60,7 +59,7 @@ import org.openntf.domino.types.SessionDescendant;
  * <li>"John B Goode" <jbg@us.acme.com> (Sales) (East)
  * </ul>
  */
-public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, Encapsulated, SessionDescendant {
+public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, org.openntf.domino.ext.Name, Encapsulated, SessionDescendant {
 
 	/**
 	 * A hierarchical name in abbreviated form.

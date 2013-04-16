@@ -44,6 +44,18 @@ public interface DateTime {
 	public boolean isAfter(org.openntf.domino.DateTime comparDate);
 
 	/**
+	 * 
+	 * @return whether the DateTime is a date-only value (e.g. [1/1/2013])
+	 */
+	public boolean isAnyTime();
+
+	/*
+	 * 
+	 * @return whether the DateTime is a time-only value (e.g. [1:00 PM])
+	 */
+	public boolean isAnyDate();
+
+	/**
 	 * Compares current date with another and returns boolean of whether current date is before parameter.
 	 * 
 	 * @param comparDate

@@ -551,4 +551,24 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		return this.getParent();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.DateTime#isAnyDate()
+	 */
+	@Override
+	public boolean isAnyDate() {
+		return isTimeOnly_;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.DateTime#isAnyTime()
+	 */
+	@Override
+	public boolean isAnyTime() {
+		return isDateOnly_;
+	}
+
 }

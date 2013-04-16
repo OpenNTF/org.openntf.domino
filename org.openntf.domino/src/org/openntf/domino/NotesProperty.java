@@ -19,11 +19,11 @@ import java.util.Vector;
 
 import org.openntf.domino.types.SessionDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface NotesProperty.
  */
-public interface NotesProperty extends Base<lotus.domino.NotesProperty>, lotus.domino.NotesProperty, SessionDescendant {
+public interface NotesProperty extends Base<lotus.domino.NotesProperty>, lotus.domino.NotesProperty, org.openntf.domino.ext.NotesProperty,
+		SessionDescendant {
 
 	/*
 	 * (non-Javadoc)
@@ -38,6 +38,7 @@ public interface NotesProperty extends Base<lotus.domino.NotesProperty>, lotus.d
 	 * 
 	 * @see lotus.domino.NotesProperty#getDescription()
 	 */
+	@Override
 	public String getDescription();
 
 	/*

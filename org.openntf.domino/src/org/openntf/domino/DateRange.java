@@ -17,11 +17,11 @@ package org.openntf.domino;
 
 import org.openntf.domino.types.SessionDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface DateRange.
  */
-public interface DateRange extends Base<lotus.domino.DateRange>, lotus.domino.DateRange, SessionDescendant {
+public interface DateRange extends Base<lotus.domino.DateRange>, lotus.domino.DateRange, org.openntf.domino.ext.DateRange,
+		SessionDescendant {
 
 	/*
 	 * (non-Javadoc)

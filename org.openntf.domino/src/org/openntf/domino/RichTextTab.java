@@ -17,11 +17,11 @@ package org.openntf.domino;
 
 import org.openntf.domino.types.DocumentDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface RichTextTab.
  */
-public interface RichTextTab extends Base<lotus.domino.RichTextTab>, lotus.domino.RichTextTab, DocumentDescendant {
+public interface RichTextTab extends Base<lotus.domino.RichTextTab>, lotus.domino.RichTextTab, org.openntf.domino.ext.RichTextTab,
+		DocumentDescendant {
 
 	/*
 	 * (non-Javadoc)
@@ -36,6 +36,7 @@ public interface RichTextTab extends Base<lotus.domino.RichTextTab>, lotus.domin
 	 * 
 	 * @see lotus.domino.RichTextTab#getPosition()
 	 */
+	@Override
 	public int getPosition();
 
 	/*
