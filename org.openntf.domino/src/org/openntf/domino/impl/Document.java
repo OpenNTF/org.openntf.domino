@@ -1955,6 +1955,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			}
 
 			// If we've gotten this far, it must be legal - update or create the item info map
+
 			boolean convertMime = this.getAncestorSession().isConvertMime();
 			this.getAncestorSession().setConvertMime(false);
 			Map<String, Map<String, Serializable>> itemInfo = null;
