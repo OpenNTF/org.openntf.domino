@@ -23,9 +23,9 @@ public class KVTest {
 	private KVTest() {
 	}
 
-	// e.g. KVStore.testKVStore(session, "Telamon/Frost", "tests/b");
-	public static void testKVStore(final Session session, final String server, final String baseName) {
-		KeyValueStore store = new KeyValueStore(session, server, baseName);
+	// e.g. KVStore.testKVStore(session, "Telamon/Frost", "tests/b", 2);
+	public static void testKVStore(final Session session, final String server, final String baseName, final int places) {
+		KeyValueStore store = new KeyValueStore(session, server, baseName, places);
 		long initStart = System.nanoTime();
 		store.initializeDatabases();
 		long initEnd = System.nanoTime();
@@ -33,13 +33,13 @@ public class KVTest {
 		long now = (new Date()).getTime();
 
 		long saveStart = System.nanoTime();
-		for (int i = 0; i < 5000; i++) {
-			store.set(i + "_" + now, i);
+		for (int i = 0; i < 500; i++) {
+			store.put(i + "_" + now, i);
 		}
 		long saveEnd = System.nanoTime();
 
 		long readStart = System.nanoTime();
-		for (int i = 0; i < 5000; i++) {
+		for (int i = 0; i < 500; i++) {
 			store.get(i + "_" + now);
 		}
 		long readEnd = System.nanoTime();
@@ -55,31 +55,42 @@ class KeyValueStore {
 	private final String server_;
 	private final String baseName_;
 	private final Map<String, Database> dbCache_ = new HashMap<String, Database>();
-	private final int places = 2;
+	private final int places_;
 
-	public KeyValueStore(final Session session, final String server, final String baseName) {
+	public KeyValueStore(final Session session, final String server, final String baseName, final int places) {
+		if (session == null)
+			throw new IllegalArgumentException("session cannot be null");
+		if (baseName == null || baseName.length() == 0)
+			throw new IllegalArgumentException("baseName cannot be null or zero-length");
+		if (places < 0)
+			throw new IllegalArgumentException("places must be nonnegative");
+
 		session_ = session;
 		server_ = server == null ? "" : server;
 		baseName_ = baseName.toLowerCase().endsWith(".nsf") ? baseName.substring(0, baseName.length() - 4) : baseName;
+		places_ = places;
 	}
 
 	public void initializeDatabases() {
 		DbDirectory dbdir = session_.getDbDirectory(server_);
-		for (int i = 0; i < pow(16, places); i++) {
-			String key = Integer.toString(i, 16).toLowerCase();
-			while (key.length() < places)
-				key = "0" + key;
-			String dbName = baseName_ + "-" + key + ".nsf";
-			Database database = session_.getDatabase(server_, dbName, true);
-			if (!database.isOpen()) {
-				database = dbdir.createDatabase(dbName, true);
-				database.createView();
-				database.setOption(Database.DBOption.LZ1, true);
-				database.setOption(Database.DBOption.COMPRESSDESIGN, true);
-				database.setOption(Database.DBOption.COMPRESSDOCUMENTS, true);
-				database.setOption(Database.DBOption.NOUNREAD, true);
+		if (places_ > 0) {
+			for (int i = 0; i < pow(16, places_); i++) {
+				String key = Integer.toString(i, 16).toLowerCase();
+				while (key.length() < places_)
+					key = "0" + key;
+				String dbName = baseName_ + "-" + key + ".nsf";
+				Database database = session_.getDatabase(server_, dbName, true);
+				if (!database.isOpen()) {
+					database = createDatabase(dbdir, dbName);
+				}
+				dbCache_.put(dbName, database);
 			}
-			dbCache_.put(dbName, database);
+		} else {
+			Database database = session_.getDatabase(server_, baseName_ + ".nsf");
+			if (!database.isOpen()) {
+				database = createDatabase(dbdir, baseName_ + ".nsf");
+			}
+			dbCache_.put(baseName_ + ".nsf", database);
 		}
 	}
 
@@ -91,7 +102,7 @@ class KeyValueStore {
 		return keyDoc == null ? null : keyDoc.get("Value");
 	}
 
-	public void set(final String key, final Object value) {
+	public void put(final String key, final Object value) {
 		String hashKey = checksum(key, "MD5");
 		Database keyDB = getDatabaseForKey(hashKey);
 
@@ -102,22 +113,27 @@ class KeyValueStore {
 	}
 
 	private Database getDatabaseForKey(final String hashKey) {
-		String dbName = baseName_ + "-" + hashKey.substring(0, 2) + ".nsf";
+		String dbName = baseName_ + "-" + hashKey.substring(0, places_) + ".nsf";
 
 		if (!dbCache_.containsKey(dbName)) {
 			Database database = session_.getDatabase(server_, dbName, true);
 			if (!database.isOpen()) {
 				DbDirectory dbdir = session_.getDbDirectory(server_);
-				database = dbdir.createDatabase(dbName, true);
-				database.createView();
-				database.setOption(Database.DBOption.LZ1, true);
-				database.setOption(Database.DBOption.COMPRESSDESIGN, true);
-				database.setOption(Database.DBOption.COMPRESSDOCUMENTS, true);
-				database.setOption(Database.DBOption.NOUNREAD, true);
+				database = createDatabase(dbdir, dbName);
 			}
 			dbCache_.put(dbName, database);
 		}
 
 		return dbCache_.get(dbName);
+	}
+
+	private Database createDatabase(final DbDirectory dbdir, final String dbName) {
+		Database database = dbdir.createDatabase(dbName, true);
+		database.createView();
+		database.setOption(Database.DBOption.LZ1, true);
+		database.setOption(Database.DBOption.COMPRESSDESIGN, true);
+		database.setOption(Database.DBOption.COMPRESSDOCUMENTS, true);
+		database.setOption(Database.DBOption.NOUNREAD, true);
+		return database;
 	}
 }

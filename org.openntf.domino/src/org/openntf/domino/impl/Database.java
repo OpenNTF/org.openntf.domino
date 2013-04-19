@@ -16,6 +16,7 @@
 package org.openntf.domino.impl;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -845,11 +846,11 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public Document getDocumentByKey(String key) {
+	public Document getDocumentByKey(Serializable key) {
 		return this.getDocumentByKey(key, false);
 	}
 
-	public Document getDocumentByKey(String key, boolean createOnFail) {
+	public Document getDocumentByKey(Serializable key, boolean createOnFail) {
 		try {
 			if (key != null) {
 				String checksum = DominoUtils.toUnid(key);

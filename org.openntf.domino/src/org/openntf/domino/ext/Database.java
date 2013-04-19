@@ -3,6 +3,7 @@
  */
 package org.openntf.domino.ext;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -123,12 +124,12 @@ public interface Database {
 	 * </p>
 	 * 
 	 * @param key
-	 *            The arbitrary-length string key.
+	 *            The arbitrary serializable key.
 	 * 
 	 * @return The Document corresponding to the key, or null if no matching document exists.
 	 * @since org.openntf.domino 1.0.0
 	 */
-	public Document getDocumentByKey(String key);
+	public Document getDocumentByKey(Serializable key);
 
 	/**
 	 * Retrieves a document by a String key, allowing for creation of a new document if no match was found.
@@ -137,14 +138,14 @@ public interface Database {
 	 * </p>
 	 * 
 	 * @param key
-	 *            The arbitrary-length string key.
+	 *            The arbitrary serializable key.
 	 * @param createOnFail
 	 *            Whether or not a new document should be created when the key was not found. Defaults to false.
 	 * 
 	 * @return The Document corresponding to the key, or null if no matching document exists and createOnFail is false.
 	 * @since org.openntf.domino 1.0.0
 	 */
-	public Document getDocumentByKey(String key, boolean createOnFail);
+	public Document getDocumentByKey(Serializable key, boolean createOnFail);
 
 	/**
 	 * @param name
