@@ -69,7 +69,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			server_ = delegate.getServer();
 			path_ = delegate.getFilePath();
-			replid_ = delegate.getReplicaID();
+			if (delegate.isOpen()) {
+				replid_ = delegate.getReplicaID();
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
