@@ -31,7 +31,7 @@ public class KeyValueStore {
 
 	public KeyValueStore(final Session session, final String server, final String baseName, final int places) {
 		if (session == null)
-			throw new IllegalArgumentException("session cannot be null");
+			throw new NullPointerException("session cannot be null");
 		if (baseName == null || baseName.length() == 0)
 			throw new IllegalArgumentException("baseName cannot be null or zero-length");
 		if (places < 0)
@@ -48,13 +48,13 @@ public class KeyValueStore {
 
 	public KeyValueStore(final Session session, final ServerStrategy serverStrategy, final String baseName, final int places) {
 		if (session == null)
-			throw new IllegalArgumentException("session cannot be null");
+			throw new NullPointerException("session cannot be null");
 		if (baseName == null || baseName.length() == 0)
 			throw new IllegalArgumentException("baseName cannot be null or zero-length");
 		if (places < 1)
 			throw new IllegalArgumentException("places must be greater than zero");
 		if (serverStrategy == null)
-			throw new IllegalArgumentException("serverStrategy cannot be null");
+			throw new NullPointerException("serverStrategy cannot be null");
 
 		session_ = session;
 		baseName_ = baseName.toLowerCase().endsWith(".nsf") ? baseName.substring(0, baseName.length() - 4) : baseName;
