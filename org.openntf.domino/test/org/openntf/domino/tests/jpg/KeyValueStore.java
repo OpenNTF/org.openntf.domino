@@ -19,6 +19,10 @@ import org.openntf.domino.Session;
  * 
  */
 public class KeyValueStore {
+	public interface ServerStrategy {
+		public String getServerForHashChunk(String hashChunk);
+	}
+
 	private final Session session_;
 
 	private final String server_;
@@ -142,9 +146,5 @@ public class KeyValueStore {
 		database.setOption(Database.DBOption.COMPRESSDOCUMENTS, true);
 		database.setOption(Database.DBOption.NOUNREAD, true);
 		return database;
-	}
-
-	public interface ServerStrategy {
-		public String getServerForHashChunk(String hashChunk);
 	}
 }
