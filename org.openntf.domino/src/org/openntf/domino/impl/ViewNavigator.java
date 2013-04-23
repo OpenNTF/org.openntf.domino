@@ -881,6 +881,7 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 	@Override
 	public void setBufferMaxEntries(int entryCount) {
 		try {
+			getParentView().setAutoUpdate(false);
 			getDelegate().setBufferMaxEntries(entryCount);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -895,6 +896,7 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 	@Override
 	public void setCacheGuidance(int maxEntries) {
 		try {
+			getParentView().setAutoUpdate(false);
 			getDelegate().setCacheGuidance(maxEntries);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -909,6 +911,7 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 	@Override
 	public void setCacheGuidance(int maxEntries, int readMode) {
 		try {
+			getParentView().setAutoUpdate(false);
 			getDelegate().setCacheGuidance(maxEntries, readMode);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
