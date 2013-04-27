@@ -1954,22 +1954,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				}
 			}
 
+			// TODO NTF make this optional
 			// If we've gotten this far, it must be legal - update or create the item info map
-			boolean convertMime = this.getAncestorSession().isConvertMime();
-			this.getAncestorSession().setConvertMime(false);
-			Map<String, Map<String, Serializable>> itemInfo = null;
-			if (this.hasItem("$$ItemInfo")) {
-				if (this.getFirstItem("$$ItemInfo").getType() == Item.MIME_PART) {
-					// Then use the existing value
-					itemInfo = (Map<String, Map<String, Serializable>>) DominoUtils.restoreState(this, "$$ItemInfo");
-				} else {
-					// Then destroy it (?)
-					this.removeItem("$$ItemInfo");
-					itemInfo = new TreeMap<String, Map<String, Serializable>>();
-				}
-			} else {
-				itemInfo = new TreeMap<String, Map<String, Serializable>>();
-			}
+			Map<String, Map<String, Serializable>> itemInfo = getItemInfo();
 			Map<String, Serializable> infoNode = null;
 			if (itemInfo.containsKey(itemName)) {
 				infoNode = itemInfo.get(itemName);
@@ -1979,8 +1966,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			infoNode.put("valueClass", valueClass.getName());
 			infoNode.put("updated", new Date()); // For sanity checking if the value was changed outside of Java
 			itemInfo.put(itemName, infoNode);
-			DominoUtils.saveState((Serializable) itemInfo, this, "$$ItemInfo", false, null);
-			this.getAncestorSession().setConvertMime(convertMime);
 
 			return Factory.fromLotus(result, Item.class, this);
 		} catch (NotesException e) {
@@ -1989,6 +1974,46 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			DominoUtils.handleException(t);
 		}
 		return null;
+	}
+
+	private void writeItemInfo() {
+		// TODO NTF make this optional
+		Map<String, Map<String, Serializable>> itemInfo = getItemInfo();
+		if (itemInfo != null && itemInfo.size() > 0) {
+			boolean convertMime = this.getAncestorSession().isConvertMime();
+			this.getAncestorSession().setConvertMime(false);
+			try {
+				DominoUtils.saveState((Serializable) getItemInfo(), this, "$$ItemInfo", false, null);
+			} catch (Throwable e) {
+				DominoUtils.handleException(e);
+			}
+			this.getAncestorSession().setConvertMime(convertMime);
+		}
+	}
+
+	private Map<String, Map<String, Serializable>> itemInfo_;
+
+	public Map<String, Map<String, Serializable>> getItemInfo() {
+		// TODO NTF make this optional
+		if (itemInfo_ == null) {
+			if (this.hasItem("$$ItemInfo")) {
+				if (this.getFirstItem("$$ItemInfo").getType() == Item.MIME_PART) {
+					// Then use the existing value
+					try {
+						itemInfo_ = (Map<String, Map<String, Serializable>>) DominoUtils.restoreState(this, "$$ItemInfo");
+					} catch (Throwable t) {
+						DominoUtils.handleException(t);
+					}
+				} else {
+					// Then destroy it (?)
+					this.removeItem("$$ItemInfo");
+					itemInfo_ = new TreeMap<String, Map<String, Serializable>>();
+				}
+			} else {
+				itemInfo_ = new TreeMap<String, Map<String, Serializable>>();
+			}
+		}
+		return itemInfo_;
 	}
 
 	/*
@@ -2090,6 +2115,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public boolean save(boolean force, boolean makeResponse, boolean markRead) {
 		boolean result = false;
 		if (isDirty()) {
+			writeItemInfo();
 			try {
 				result = getDelegate().save(force, makeResponse, markRead);
 				if (result)

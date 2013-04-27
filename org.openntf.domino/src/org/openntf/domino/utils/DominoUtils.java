@@ -174,6 +174,9 @@ public enum DominoUtils {
 					if (log_.getLevel() == null) {
 						LogUtils.loadLoggerConfig(false, "");
 					}
+					if (log_.getLevel() == null) {
+						log_.setLevel(Level.WARNING);
+					}
 					return null;
 				}
 			});
@@ -512,6 +515,8 @@ public enum DominoUtils {
 		saveState(object, doc, itemName, true, null);
 	}
 
+	// private static Map<String, Integer> diagCount = new HashMap<String, Integer>();
+
 	/**
 	 * Save state.
 	 * 
@@ -531,6 +536,13 @@ public enum DominoUtils {
 		Session session = Factory.getSession((Base<?>) doc);
 		boolean convertMime = session.isConvertMime();
 		session.setConvertMime(false);
+
+		// String diagKey = doc.getUniversalID() + itemName;
+		// if (diagCount.containsKey(diagKey)) {
+		// diagCount.put(diagKey, diagCount.get(diagKey) + 1);
+		// } else {
+		// diagCount.put(diagKey, 1);
+		// }
 
 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 		ObjectOutputStream objectStream = compress ? new ObjectOutputStream(new GZIPOutputStream(byteStream)) : new ObjectOutputStream(
@@ -563,11 +575,12 @@ public enum DominoUtils {
 		if (javaClass == null) {
 			javaClass = entity.createHeader("X-Java-Class");
 		} else {
-			long jcid = org.openntf.domino.impl.Base.getDelegateId((org.openntf.domino.impl.Base) javaClass);
-			if (jcid < 1) {
-				System.out.println("EXISTING javaClassid: " + jcid);
-
-			}
+			// long jcid = org.openntf.domino.impl.Base.getDelegateId((org.openntf.domino.impl.Base) javaClass);
+			// if (jcid < 1) {
+			// System.out.println("EXISTING javaClassid: " + jcid);
+			// System.out.println("Item: " + itemName + " in document " + doc.getUniversalID() + " (" + doc.getNoteID()
+			// + ") update count: " + diagCount.get(diagKey));
+			// }
 		}
 		try {
 			javaClass.setHeaderVal(object.getClass().getName());
@@ -589,10 +602,6 @@ public enum DominoUtils {
 				// contentEncoding.recycle();
 			}
 		}
-		// long jcid = org.openntf.domino.impl.Base.getDelegateId((org.openntf.domino.impl.Base) javaClass);
-		// if (jcid < 1) {
-		// System.out.println("javaClassid: " + jcid);
-		// }
 
 		// javaClass.recycle();
 

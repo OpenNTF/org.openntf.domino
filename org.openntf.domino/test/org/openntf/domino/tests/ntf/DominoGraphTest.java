@@ -29,7 +29,7 @@ public enum DominoGraphTest {
 			Session s = Factory.getSessionFullAccess();
 			Database db = s.getDatabase(server, dbPath);
 			DominoGraph graph = new DominoGraph(db);
-			for (int i = 0; i < 100; i++) {
+			for (int i = 1; i < 10000; i++) {
 				Vertex v1 = graph.addVertex(null);
 				v1.setProperty("Test1", i);
 
@@ -38,6 +38,7 @@ public enum DominoGraphTest {
 
 				graph.addEdge(null, v1, v2, "IAmInYou");
 				if (i % 1000 == 0) {
+					System.out.println("Iterated test " + i + " times.  Committing...");
 					graph.commit();
 				}
 			}

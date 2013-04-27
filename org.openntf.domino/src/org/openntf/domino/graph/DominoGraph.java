@@ -348,7 +348,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	public void startTransaction() {
 		if (!inTransaction_) {
 			System.out.println("Not yet in transaction. Starting...");
-			txn_ = getDatabase().startTransaction();
+			txn_ = getRawDatabase().startTransaction();
 			inTransaction_ = true;
 		}
 	}
