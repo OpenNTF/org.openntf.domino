@@ -16,13 +16,13 @@
 package org.openntf.domino.impl;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -70,9 +70,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			server_ = delegate.getServer();
 			path_ = delegate.getFilePath();
-			if (delegate.isOpen()) {
-				replid_ = delegate.getReplicaID();
-			}
+			replid_ = delegate.getReplicaID();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -95,8 +93,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	@Override
-	public Document FTDomainSearch(String query, int maxDocs, FTDomainSortOption sortOpt, Set<FTDomainSearchOption> otherOpt, int start,
-			int count, String entryForm) {
+	public Document FTDomainSearch(String query, int maxDocs, FTDomainSortOption sortOpt, EnumSet<FTDomainSearchOption> otherOpt,
+			int start, int count, String entryForm) {
 		int nativeOptions = 0;
 		for (FTDomainSearchOption option : otherOpt) {
 			nativeOptions += option.getValue();
@@ -120,7 +118,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	@Override
-	public DocumentCollection FTSearch(String query, int maxDocs, FTSortOption sortOpt, Set<FTSearchOption> otherOpt) {
+	public DocumentCollection FTSearch(String query, int maxDocs, FTSortOption sortOpt, EnumSet<FTSearchOption> otherOpt) {
 		int nativeOptions = 0;
 		for (FTSearchOption option : otherOpt) {
 			nativeOptions += option.getValue();
@@ -173,7 +171,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	@Override
-	public DocumentCollection FTSearchRange(String query, int maxDocs, FTSortOption sortOpt, Set<FTSearchOption> otherOpt, int start) {
+	public DocumentCollection FTSearchRange(String query, int maxDocs, FTSortOption sortOpt, EnumSet<FTSearchOption> otherOpt, int start) {
 		int nativeOptions = 0;
 		for (FTSearchOption option : otherOpt) {
 			nativeOptions += option.getValue();
@@ -846,11 +844,11 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public Document getDocumentByKey(Serializable key) {
+	public Document getDocumentByKey(String key) {
 		return this.getDocumentByKey(key, false);
 	}
 
-	public Document getDocumentByKey(Serializable key, boolean createOnFail) {
+	public Document getDocumentByKey(String key, boolean createOnFail) {
 		try {
 			if (key != null) {
 				String checksum = DominoUtils.toUnid(key);
@@ -2291,7 +2289,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#setTitle(java.lang.String)
 	 */
-	public void setTitle(String title) {
+	public void setTitle(final String title) {
 		try {
 			getDelegate().setTitle(title);
 		} catch (NotesException e) {
@@ -2559,7 +2557,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.ext.Database#compactWithOptions(java.util.EnumSet)
 	 */
 	@Override
-	public int compactWithOptions(Set<CompactOption> options) {
+	public int compactWithOptions(EnumSet<CompactOption> options) {
 		int nativeOptions = 0;
 		for (CompactOption option : options) {
 			nativeOptions += option.getValue();
@@ -2573,7 +2571,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.ext.Database#compactWithOptions(java.util.EnumSet, java.lang.String)
 	 */
 	@Override
-	public int compactWithOptions(Set<CompactOption> options, String spaceThreshold) {
+	public int compactWithOptions(EnumSet<CompactOption> options, String spaceThreshold) {
 		int nativeOptions = 0;
 		for (CompactOption option : options) {
 			nativeOptions += option.getValue();
@@ -2587,7 +2585,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.ext.Database#createFTIndex(java.util.EnumSet, boolean)
 	 */
 	@Override
-	public void createFTIndex(Set<FTIndexOption> options, boolean recreate) {
+	public void createFTIndex(EnumSet<FTIndexOption> options, boolean recreate) {
 		int nativeOptions = 0;
 		for (FTIndexOption option : options) {
 			nativeOptions += option.getValue();
@@ -2601,7 +2599,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.ext.Database#fixup(java.util.EnumSet)
 	 */
 	@Override
-	public void fixup(Set<FixupOption> options) {
+	public void fixup(EnumSet<FixupOption> options) {
 		int nativeOptions = 0;
 		for (FixupOption option : options) {
 			nativeOptions += option.getValue();

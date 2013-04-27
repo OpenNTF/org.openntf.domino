@@ -2,7 +2,7 @@ package org.openntf.domino.graph;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -15,16 +15,16 @@ import com.tinkerpop.blueprints.util.MultiIterable;
 import com.tinkerpop.blueprints.util.VerticesFromEdgesIterable;
 
 public class DominoVertex extends DominoElement implements Vertex {
-	public static final String GRAPH_TYPE_VALUE = "DVertex";
-	public static final String IN_NAME = "_RPD_IN";
-	public static final String OUT_NAME = "_RPD_OUT";
+	public static final String GRAPH_TYPE_VALUE = "OpenVertex";
+	public static final String IN_NAME = "_OPEN_IN";
+	public static final String OUT_NAME = "_OPEN_OUT";
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private transient boolean inDirty_ = false;
+	// private transient boolean inDirty_ = false;
 	private Set<String> inEdges_;
-	private transient boolean outDirty_ = false;
+	// private transient boolean outDirty_ = false;
 	private Set<String> outEdges_;
 
 	public DominoVertex(DominoGraph parent, org.openntf.domino.Document doc) {
@@ -37,13 +37,17 @@ public class DominoVertex extends DominoElement implements Vertex {
 	}
 
 	void addInEdge(Edge edge) {
+		getParent().startTransaction();
 		getInEdges().add((String) edge.getId());
-		inDirty_ = true;
+		setProperty(DominoVertex.IN_NAME, inEdges_);
+		// inDirty_ = true;
 	}
 
 	void addOutEdge(Edge edge) {
+		getParent().startTransaction();
 		getOutEdges().add((String) edge.getId());
-		outDirty_ = true;
+		setProperty(DominoVertex.OUT_NAME, outEdges_);
+		// outDirty_ = true;
 	}
 
 	public java.util.Set<String> getBothEdges() {
@@ -68,11 +72,11 @@ public class DominoVertex extends DominoElement implements Vertex {
 		if (inEdges_ == null) {
 			Object o = getProperty(DominoVertex.IN_NAME, java.util.Collection.class);
 			if (o != null && o instanceof java.util.Collection) {
-				inEdges_ = new HashSet<String>((Collection<String>) o);
+				inEdges_ = new LinkedHashSet<String>((Collection<String>) o);
 			} else {
-				inEdges_ = new HashSet<String>();
+				inEdges_ = new LinkedHashSet<String>();
 			}
-			inDirty_ = false;
+			// inDirty_ = false;
 		}
 		return inEdges_;
 	}
@@ -82,11 +86,11 @@ public class DominoVertex extends DominoElement implements Vertex {
 		if (outEdges_ == null) {
 			Object o = getProperty(DominoVertex.OUT_NAME, java.util.Collection.class);
 			if (o != null && o instanceof java.util.Collection) {
-				outEdges_ = new HashSet<String>((Collection<String>) o);
+				outEdges_ = new LinkedHashSet<String>((Collection<String>) o);
 			} else {
-				outEdges_ = new HashSet<String>();
+				outEdges_ = new LinkedHashSet<String>();
 			}
-			outDirty_ = false;
+			// outDirty_ = false;
 		}
 		return outEdges_;
 	}
@@ -109,23 +113,24 @@ public class DominoVertex extends DominoElement implements Vertex {
 	}
 
 	public void removeEdge(Edge edge) {
+		getParent().startTransaction();
 		getInEdges().remove(edge.getId());
-		inDirty_ = true;
+		// inDirty_ = true;
 		getOutEdges().remove(edge.getId());
-		outDirty_ = true;
+		// outDirty_ = true;
 	}
 
-	@Override
-	public void save() {
-		if (inDirty_) {
-			setProperty(DominoVertex.IN_NAME, inEdges_);
-			inDirty_ = false;
-		}
-		if (outDirty_) {
-			setProperty(DominoVertex.OUT_NAME, outEdges_);
-			outDirty_ = false;
-		}
-		super.save();
-	}
+	// @Override
+	// public void save() {
+	// if (inDirty_) {
+	// setProperty(DominoVertex.IN_NAME, inEdges_);
+	// inDirty_ = false;
+	// }
+	// if (outDirty_) {
+	// setProperty(DominoVertex.OUT_NAME, outEdges_);
+	// outDirty_ = false;
+	// }
+	// super.save();
+	// }
 
 }

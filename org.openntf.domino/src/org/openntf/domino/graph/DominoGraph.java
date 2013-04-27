@@ -9,12 +9,12 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewEntryCollection;
+import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -24,14 +24,15 @@ import com.tinkerpop.blueprints.Features;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.GraphQuery;
 import com.tinkerpop.blueprints.MetaGraph;
+import com.tinkerpop.blueprints.TransactionalGraph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.DefaultGraphQuery;
 
-public class DominoGraph implements Graph, MetaGraph {
+public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	private static final Logger log_ = Logger.getLogger(DominoGraph.class.getName());
 
-	public static final String EDGE_VIEW_NAME = "(_ONTF_Edges)";
-	public static final String VERTEX_VIEW_NAME = "(_ONTF_Vertices)";
+	public static final String EDGE_VIEW_NAME = "(_OPEN_Edges)";
+	public static final String VERTEX_VIEW_NAME = "(_OPEN_Vertices)";
 	private static final Features FEATURES = new Features();
 	public static final boolean COMPRESS_IDS = false;
 
@@ -99,6 +100,7 @@ public class DominoGraph implements Graph, MetaGraph {
 
 	@Override
 	public Edge addEdge(Object id, Vertex outVertex, Vertex inVertex, String label) {
+		startTransaction();
 		if (id == null)
 			id = (outVertex.getId() + label + inVertex.getId());
 		Document d = getDocument(id, true);
@@ -134,6 +136,7 @@ public class DominoGraph implements Graph, MetaGraph {
 
 	@Override
 	public Vertex addVertex(Object id) {
+		startTransaction();
 		Document d = getDocument(id, true);
 		d.replaceItemValue(DominoElement.TYPE_FIELD, DominoVertex.GRAPH_TYPE_VALUE);
 		DominoVertex result = new DominoVertex(this, d);
@@ -141,7 +144,7 @@ public class DominoGraph implements Graph, MetaGraph {
 		return result;
 	}
 
-	private Database getDatabase() {
+	private org.openntf.domino.Database getDatabase() {
 		return getRawSession().getDatabase(server_, filepath_);
 	}
 
@@ -154,7 +157,7 @@ public class DominoGraph implements Graph, MetaGraph {
 		return session_;
 	}
 
-	public Database getRawDatabase() {
+	public org.openntf.domino.Database getRawDatabase() {
 		if (database_ == null) {
 			database_ = getDatabase();
 		}
@@ -312,6 +315,7 @@ public class DominoGraph implements Graph, MetaGraph {
 
 	@Override
 	public void removeEdge(Edge edge) {
+		startTransaction();
 		Vertex in = edge.getVertex(Direction.IN);
 		((DominoVertex) in).removeEdge(edge);
 		Vertex out = edge.getVertex(Direction.OUT);
@@ -320,6 +324,7 @@ public class DominoGraph implements Graph, MetaGraph {
 
 	@Override
 	public void removeVertex(Vertex vertex) {
+		startTransaction();
 		DominoVertex dv = (DominoVertex) vertex;
 		for (Edge edge : dv.getEdges(Direction.BOTH)) {
 			removeEdge(edge);
@@ -329,14 +334,86 @@ public class DominoGraph implements Graph, MetaGraph {
 
 	@Override
 	public void shutdown() {
-		for (DominoElement d : getCache().values()) {
-			d.save();
-		}
+		commit();
 	}
 
 	@Override
 	public Object getRawGraph() {
 		return getRawDatabase();
+	}
+
+	private boolean inTransaction_ = false;
+	private DatabaseTransaction txn_;
+
+	public void startTransaction() {
+		if (!inTransaction_) {
+			System.out.println("Not yet in transaction. Starting...");
+			txn_ = getRawDatabase().startTransaction();
+			inTransaction_ = true;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.tinkerpop.blueprints.TransactionalGraph#stopTransaction(com.tinkerpop.blueprints.TransactionalGraph.Conclusion)
+	 */
+	@Override
+	@Deprecated
+	public void stopTransaction(Conclusion conclusion) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.tinkerpop.blueprints.TransactionalGraph#commit()
+	 */
+	@Override
+	public void commit() {
+		if (inTransaction_) {
+			System.out.println("Committing transaction");
+
+			if (txn_ == null) {
+				System.out.println("Transaction is null!?!?!");
+			} else {
+				txn_.commit();
+				txn_ = null;
+			}
+			inTransaction_ = false;
+
+		} else {
+			System.out.println("Not in transaction!");
+		}
+		getCache().clear();
+		System.out.println("Transaction complete");
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.tinkerpop.blueprints.TransactionalGraph#rollback()
+	 */
+	@Override
+	public void rollback() {
+		if (inTransaction_) {
+			System.out.println("Rollbacking transaction");
+
+			if (txn_ == null) {
+				System.out.println("Transaction is null!?!?!");
+			} else {
+				txn_.rollback();
+				txn_ = null;
+			}
+			inTransaction_ = false;
+
+		} else {
+			System.out.println("Not in transaction!");
+		}
+		getCache().clear();
+		System.out.println("Transaction rollbacked");
 	}
 
 }

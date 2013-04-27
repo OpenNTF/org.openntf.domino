@@ -3,10 +3,9 @@
  */
 package org.openntf.domino.ext;
 
-import java.io.Serializable;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.openntf.domino.ACL;
 import org.openntf.domino.Document;
@@ -31,9 +30,9 @@ import org.openntf.domino.transactions.DatabaseTransaction;
  */
 public interface Database {
 
-	public int compactWithOptions(Set<CompactOption> options);
+	public int compactWithOptions(EnumSet<CompactOption> options);
 
-	public int compactWithOptions(Set<CompactOption> options, String spaceThreshold);
+	public int compactWithOptions(EnumSet<CompactOption> options, String spaceThreshold);
 
 	/*
 	 * (non-Javadoc)
@@ -57,9 +56,9 @@ public interface Database {
 	 */
 	public Document createDocument(Object... keyValuePairs);
 
-	public void createFTIndex(Set<FTIndexOption> options, boolean recreate);
+	public void createFTIndex(EnumSet<FTIndexOption> options, boolean recreate);
 
-	public void fixup(Set<FixupOption> options);
+	public void fixup(EnumSet<FixupOption> options);
 
 	/**
 	 * @param query
@@ -78,8 +77,8 @@ public interface Database {
 	 *            the entry form
 	 * @return a document
 	 */
-	public Document FTDomainSearch(String query, int maxDocs, FTDomainSortOption sortOpt, Set<FTDomainSearchOption> otherOpt, int start,
-			int count, String entryForm);
+	public Document FTDomainSearch(String query, int maxDocs, FTDomainSortOption sortOpt, EnumSet<FTDomainSearchOption> otherOpt,
+			int start, int count, String entryForm);
 
 	/**
 	 * @param query
@@ -92,7 +91,7 @@ public interface Database {
 	 *            the other option
 	 * @return a DocumentCollection
 	 */
-	public DocumentCollection FTSearch(String query, int maxDocs, FTSortOption sortOpt, Set<FTSearchOption> otherOpt);
+	public DocumentCollection FTSearch(String query, int maxDocs, FTSortOption sortOpt, EnumSet<FTSearchOption> otherOpt);
 
 	/**
 	 * @param query
@@ -107,7 +106,7 @@ public interface Database {
 	 *            the start
 	 * @return a DocumentCollection
 	 */
-	public DocumentCollection FTSearchRange(String query, int maxDocs, FTSortOption sortOpt, Set<FTSearchOption> otherOpt, int start);
+	public DocumentCollection FTSearchRange(String query, int maxDocs, FTSortOption sortOpt, EnumSet<FTSearchOption> otherOpt, int start);
 
 	/*
 	 * (non-Javadoc)
@@ -124,12 +123,12 @@ public interface Database {
 	 * </p>
 	 * 
 	 * @param key
-	 *            The arbitrary serializable key.
+	 *            The arbitrary-length string key.
 	 * 
 	 * @return The Document corresponding to the key, or null if no matching document exists.
 	 * @since org.openntf.domino 1.0.0
 	 */
-	public Document getDocumentByKey(Serializable key);
+	public Document getDocumentByKey(String key);
 
 	/**
 	 * Retrieves a document by a String key, allowing for creation of a new document if no match was found.
@@ -138,14 +137,14 @@ public interface Database {
 	 * </p>
 	 * 
 	 * @param key
-	 *            The arbitrary serializable key.
+	 *            The arbitrary-length string key.
 	 * @param createOnFail
 	 *            Whether or not a new document should be created when the key was not found. Defaults to false.
 	 * 
 	 * @return The Document corresponding to the key, or null if no matching document exists and createOnFail is false.
 	 * @since org.openntf.domino 1.0.0
 	 */
-	public Document getDocumentByKey(Serializable key, boolean createOnFail);
+	public Document getDocumentByKey(String key, boolean createOnFail);
 
 	/**
 	 * @param name
@@ -222,4 +221,5 @@ public interface Database {
 	 * @return Database transaction
 	 */
 	public DatabaseTransaction getTransaction();
+
 }

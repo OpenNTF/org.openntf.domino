@@ -5,6 +5,9 @@ package org.openntf.domino.ext;
 
 import java.util.Date;
 
+import org.openntf.domino.exceptions.DataNotCompatibleException;
+import org.openntf.domino.exceptions.ItemNotFoundException;
+
 /**
  * @author withersp
  * 
@@ -48,5 +51,7 @@ public interface Document {
 	 * @return whether or not the document has been changed, used for transactions
 	 */
 	public boolean isDirty();
+
+	public <T> T getItemValue(String name, Class<?> T) throws ItemNotFoundException, DataNotCompatibleException;
 
 }

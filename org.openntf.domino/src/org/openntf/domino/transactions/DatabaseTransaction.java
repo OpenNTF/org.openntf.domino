@@ -81,6 +81,7 @@ public class DatabaseTransaction {
 	// }
 
 	public void commit() {
+		System.out.println("Committing transaction with update size " + getUpdateQueue().size());
 		isCommitting_ = true;
 		DatabaseDescendant next = getUpdateQueue().poll();
 		while (next != null) {

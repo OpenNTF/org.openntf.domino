@@ -2,10 +2,13 @@ package org.openntf.domino.tests.ntf;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
+
+import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
@@ -13,7 +16,11 @@ import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Form;
 import org.openntf.domino.Name;
+import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
+import org.openntf.domino.View;
+import org.openntf.domino.ViewEntry;
+import org.openntf.domino.ViewEntryCollection;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -103,6 +110,31 @@ public enum OneMillionScratchTest {
 					+ " docs, and " + dateCount + " datetimes without recycling.");
 			long elapsed = System.nanoTime() - start;
 			System.out.println("Thread " + Thread.currentThread().getName() + " elapsed time: " + elapsed / 1000000 + "ms");
+		}
+
+		public void Count(Database db) {
+			try {
+				DocumentCollection dc = db.getAllDocuments();
+				NoteCollection nc = db.createNoteCollection(false);
+				nc.add(dc);
+
+				Set setAll = new HashSet(Arrays.asList(nc.getNoteIDs()));
+
+				View allView = db.getView("All Documents");
+				ViewEntryCollection vec = allView.getAllEntries();
+				ViewEntry entry = vec.getFirstEntry();
+				ViewEntry next = null;
+				while (entry != null) {
+					next = vec.getNextEntry(entry);
+					setAll.remove(entry.getNoteIDAsInt());
+					entry.recycle();
+					entry = next;
+
+				}
+
+			} catch (NotesException hamFisted) {
+				hamFisted.printStackTrace();
+			}
 		}
 
 	}

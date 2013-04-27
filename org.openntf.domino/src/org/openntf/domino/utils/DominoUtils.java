@@ -174,6 +174,9 @@ public enum DominoUtils {
 					if (log_.getLevel() == null) {
 						LogUtils.loadLoggerConfig(false, "");
 					}
+					if (log_.getLevel() == null) {
+						log_.setLevel(Level.WARNING);
+					}
 					return null;
 				}
 			});
@@ -512,6 +515,8 @@ public enum DominoUtils {
 		saveState(object, doc, itemName, true, null);
 	}
 
+	// private static Map<String, Integer> diagCount = new HashMap<String, Integer>();
+
 	/**
 	 * Save state.
 	 * 
@@ -532,6 +537,13 @@ public enum DominoUtils {
 		boolean convertMime = session.isConvertMime();
 		session.setConvertMime(false);
 
+		// String diagKey = doc.getUniversalID() + itemName;
+		// if (diagCount.containsKey(diagKey)) {
+		// diagCount.put(diagKey, diagCount.get(diagKey) + 1);
+		// } else {
+		// diagCount.put(diagKey, 1);
+		// }
+
 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 		ObjectOutputStream objectStream = compress ? new ObjectOutputStream(new GZIPOutputStream(byteStream)) : new ObjectOutputStream(
 				byteStream);
@@ -550,28 +562,47 @@ public enum DominoUtils {
 
 		Stream mimeStream = session.createStream();
 		MIMEEntity previousState = doc.getMIMEEntity(itemName);
-		MIMEEntity entity = previousState == null ? doc.createMIMEEntity(itemName) : previousState;
+		MIMEEntity entity = null;
+		if (previousState == null) {
+			entity = doc.createMIMEEntity(itemName);
+		} else {
+			entity = previousState;
+		}
 		ByteArrayInputStream byteIn = new ByteArrayInputStream(byteStream.toByteArray());
 		mimeStream.setContents(byteIn);
 		entity.setContentFromBytes(mimeStream, contentType, MIMEEntity.ENC_NONE);
+		MIMEHeader javaClass = entity.getNthHeader("X-Java-Class");
+		if (javaClass == null) {
+			javaClass = entity.createHeader("X-Java-Class");
+		} else {
+			// long jcid = org.openntf.domino.impl.Base.getDelegateId((org.openntf.domino.impl.Base) javaClass);
+			// if (jcid < 1) {
+			// System.out.println("EXISTING javaClassid: " + jcid);
+			// System.out.println("Item: " + itemName + " in document " + doc.getUniversalID() + " (" + doc.getNoteID()
+			// + ") update count: " + diagCount.get(diagKey));
+			// }
+		}
+		try {
+			javaClass.setHeaderVal(object.getClass().getName());
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
 		MIMEHeader contentEncoding = entity.getNthHeader("Content-Encoding");
 		if (compress) {
 			if (contentEncoding == null) {
 				contentEncoding = entity.createHeader("Content-Encoding");
 			}
 			contentEncoding.setHeaderVal("gzip");
+
 			// contentEncoding.recycle();
 		} else {
 			if (contentEncoding != null) {
+
 				contentEncoding.remove();
 				// contentEncoding.recycle();
 			}
 		}
-		MIMEHeader javaClass = entity.getNthHeader("X-Java-Class");
-		if (javaClass == null) {
-			javaClass = entity.createHeader("X-Java-Class");
-		}
-		javaClass.setHeaderVal(object.getClass().getName());
+
 		// javaClass.recycle();
 
 		if (headers != null) {
@@ -587,7 +618,8 @@ public enum DominoUtils {
 
 		// entity.recycle();
 		// mimeStream.recycle();
-
+		entity = null;
+		previousState = null;
 		session.setConvertMime(convertMime);
 	}
 
