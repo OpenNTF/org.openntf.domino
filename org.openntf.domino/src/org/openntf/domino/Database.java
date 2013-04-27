@@ -1472,7 +1472,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#setTitle(java.lang.String)
 	 */
 	@Override
-	public void setTitle(String title);
+	public void setTitle(final String title);
 
 	/*
 	 * (non-Javadoc)

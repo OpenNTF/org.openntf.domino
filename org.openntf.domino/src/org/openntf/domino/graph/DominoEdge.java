@@ -5,10 +5,10 @@ import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 
 public class DominoEdge extends DominoElement implements Edge {
-	public static final String GRAPH_TYPE_VALUE = "DEdge";
-	public static final String IN_NAME = "_RPD_IN";
-	public static final String LABEL_NAME = "_RPD_LABEL";
-	public static final String OUT_NAME = "_RPD_OUT";
+	public static final String GRAPH_TYPE_VALUE = "OpenEdge";
+	public static final String IN_NAME = "_OPEN_IN";
+	public static final String LABEL_NAME = "_OPEN_LABEL";
+	public static final String OUT_NAME = "_OPEN_OUT";
 	/**
 	 * 
 	 */
@@ -71,13 +71,13 @@ public class DominoEdge extends DominoElement implements Edge {
 		((DominoVertex) out).addOutEdge(this);
 	}
 
-	@Override
-	public void save() {
-		Object o = getProperty("Form", String.class);
-		if (o == null || ((String) o).length() < 1) {
-			setProperty("Form", DominoEdge.GRAPH_TYPE_VALUE);
-		}
-		super.save();
-	}
+	// @Override
+	// public void save() {
+	// Object o = getProperty("Form", String.class);
+	// if (o == null || ((String) o).length() < 1) {
+	// setProperty("Form", DominoEdge.GRAPH_TYPE_VALUE);
+	// }
+	// super.save();
+	// }
 
 }

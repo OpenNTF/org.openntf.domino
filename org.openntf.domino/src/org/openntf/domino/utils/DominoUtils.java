@@ -550,28 +550,50 @@ public enum DominoUtils {
 
 		Stream mimeStream = session.createStream();
 		MIMEEntity previousState = doc.getMIMEEntity(itemName);
-		MIMEEntity entity = previousState == null ? doc.createMIMEEntity(itemName) : previousState;
+		MIMEEntity entity = null;
+		if (previousState == null) {
+			entity = doc.createMIMEEntity(itemName);
+		} else {
+			entity = previousState;
+		}
 		ByteArrayInputStream byteIn = new ByteArrayInputStream(byteStream.toByteArray());
 		mimeStream.setContents(byteIn);
 		entity.setContentFromBytes(mimeStream, contentType, MIMEEntity.ENC_NONE);
+		MIMEHeader javaClass = entity.getNthHeader("X-Java-Class");
+		if (javaClass == null) {
+			javaClass = entity.createHeader("X-Java-Class");
+		} else {
+			long jcid = org.openntf.domino.impl.Base.getDelegateId((org.openntf.domino.impl.Base) javaClass);
+			if (jcid < 1) {
+				System.out.println("EXISTING javaClassid: " + jcid);
+
+			}
+		}
+		try {
+			javaClass.setHeaderVal(object.getClass().getName());
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
 		MIMEHeader contentEncoding = entity.getNthHeader("Content-Encoding");
 		if (compress) {
 			if (contentEncoding == null) {
 				contentEncoding = entity.createHeader("Content-Encoding");
 			}
 			contentEncoding.setHeaderVal("gzip");
+
 			// contentEncoding.recycle();
 		} else {
 			if (contentEncoding != null) {
+
 				contentEncoding.remove();
 				// contentEncoding.recycle();
 			}
 		}
-		MIMEHeader javaClass = entity.getNthHeader("X-Java-Class");
-		if (javaClass == null) {
-			javaClass = entity.createHeader("X-Java-Class");
-		}
-		javaClass.setHeaderVal(object.getClass().getName());
+		// long jcid = org.openntf.domino.impl.Base.getDelegateId((org.openntf.domino.impl.Base) javaClass);
+		// if (jcid < 1) {
+		// System.out.println("javaClassid: " + jcid);
+		// }
+
 		// javaClass.recycle();
 
 		if (headers != null) {
@@ -587,7 +609,8 @@ public enum DominoUtils {
 
 		// entity.recycle();
 		// mimeStream.recycle();
-
+		entity = null;
+		previousState = null;
 		session.setConvertMime(convertMime);
 	}
 

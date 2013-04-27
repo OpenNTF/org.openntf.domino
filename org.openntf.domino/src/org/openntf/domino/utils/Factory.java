@@ -34,6 +34,7 @@ import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.impl.DateTime;
+import org.openntf.domino.impl.DocumentCollection;
 import org.openntf.domino.impl.Session;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.SessionDescendant;
@@ -788,6 +789,25 @@ public enum Factory {
 			}
 		}
 		return strings;
+	}
+
+	/**
+	 * To lotus note collection.
+	 * 
+	 * @param collection
+	 *            the collection
+	 * @return the org.openntf.domino. note collection
+	 */
+	public static org.openntf.domino.NoteCollection toNoteCollection(lotus.domino.DocumentCollection collection) {
+		org.openntf.domino.NoteCollection result = null;
+		if (collection instanceof org.openntf.domino.impl.DocumentCollection) {
+			org.openntf.domino.Database db = ((org.openntf.domino.DocumentCollection) collection).getParent();
+			result = db.createNoteCollection(false);
+			result.add((DocumentCollection) collection);
+		} else {
+			throw new DataNotCompatibleException("Cannot convert a non-OpenNTF DocumentCollection to a NoteCollection");
+		}
+		return result;
 	}
 
 }
