@@ -1,27 +1,15 @@
 /**
  * 
  */
-package org.openntf.domino.ext;
+package org.openntf.domino.design;
 
-import java.io.InputStream;
-
-import org.openntf.domino.Database;
+import java.util.List;
 
 /**
- * @author withersp
+ * @author jgallagher
  * 
  */
-public interface FileResource {
-
-	/**
-	 * @return File resource as InputStream
-	 */
-	public InputStream getInputStream();
-
-	/**
-	 * @return mime type
-	 */
-	public String getMimeType();
+public interface DesignBase extends org.openntf.domino.types.Design {
 
 	/**
 	 * @return file resource name
@@ -29,9 +17,9 @@ public interface FileResource {
 	public String getName();
 
 	/**
-	 * @return parent database
+	 * @return a List of the design element's aliases
 	 */
-	public Database getParent();
+	public List<String> getAliases();
 
 	/**
 	 * @return whether hidden from web
@@ -53,8 +41,9 @@ public interface FileResource {
 	 */
 	public boolean isPreventChanges();
 
+	/**
+	 * @return whether the design element propagates its prevent-changes settings
+	 */
 	public boolean isPropagatePreventChanges();
-
-	public boolean isReadOnly();
 
 }

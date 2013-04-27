@@ -34,6 +34,7 @@ import lotus.domino.NotesException;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.View;
 import org.openntf.domino.ACL.Level;
+import org.openntf.domino.design.impl.FileResource;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -997,20 +998,20 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		String noteId = notes.getFirstNoteID();
 		if (!noteId.isEmpty()) {
 			Document resourceDoc = this.getDocumentByID(noteId);
-			return new FileResource(resourceDoc.getDelegate(), this);
+			return new FileResource(resourceDoc, this);
 		}
 		return null;
 	}
 
-	public Collection<org.openntf.domino.FileResource> getFileResources() {
-		List<org.openntf.domino.FileResource> result = new ArrayList<org.openntf.domino.FileResource>();
+	public Collection<org.openntf.domino.design.FileResource> getFileResources() {
+		List<org.openntf.domino.design.FileResource> result = new ArrayList<org.openntf.domino.design.FileResource>();
 		NoteCollection notes = this.createNoteCollection(false);
 		notes.setSelectMiscFormatElements(true);
 		notes.setSelectionFormula(" !@Contains($Flags; '~') & @Contains($Flags; 'g') ");
 		notes.buildCollection();
 		for (String noteId : notes) {
 			Document resourceDoc = this.getDocumentByID(noteId);
-			result.add(new FileResource(resourceDoc.getDelegate(), this));
+			result.add(new FileResource(resourceDoc, this));
 		}
 		return result;
 	}

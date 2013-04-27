@@ -10,7 +10,6 @@ import java.util.Map;
 import org.openntf.domino.ACL;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
-import org.openntf.domino.FileResource;
 import org.openntf.domino.Database.CompactOption;
 import org.openntf.domino.Database.DBOption;
 import org.openntf.domino.Database.FTDomainSearchOption;
@@ -22,6 +21,7 @@ import org.openntf.domino.Database.FTSortOption;
 import org.openntf.domino.Database.FixupOption;
 import org.openntf.domino.Database.ModifiedDocClass;
 import org.openntf.domino.Database.SignDocType;
+import org.openntf.domino.design.FileResource;
 import org.openntf.domino.transactions.DatabaseTransaction;
 
 /**
