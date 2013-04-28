@@ -29,7 +29,7 @@ public enum DominoGraphTest {
 			Session s = Factory.getSessionFullAccess();
 			Database db = s.getDatabase(server, dbPath);
 			DominoGraph graph = new DominoGraph(db);
-			for (int i = 1; i < 10000; i++) {
+			for (int i = 1; i <= 10000; i++) {
 				Vertex v1 = graph.addVertex(null);
 				v1.setProperty("Test1", i);
 
