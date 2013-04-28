@@ -469,4 +469,44 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		return (Session) this.getParent();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.DxlImporter#setAclImportOption(org.openntf.domino.DxlImporter.AclImportOption)
+	 */
+	@Override
+	public void setAclImportOption(AclImportOption option) {
+		setAclImportOption(option.getValue());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.DxlImporter#setDesignImportOption(org.openntf.domino.DxlImporter.DesignImportOption)
+	 */
+	@Override
+	public void setDesignImportOption(DesignImportOption option) {
+		setDesignImportOption(option.getValue());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.DxlImporter#setDocumentImportOption(org.openntf.domino.DxlImporter.DocumentImportOption)
+	 */
+	@Override
+	public void setDocumentImportOption(DocumentImportOption option) {
+		setDocumentImportOption(option.getValue());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.DxlImporter#setInputValidationOption(org.openntf.domino.DxlImporter.InputValidationOption)
+	 */
+	@Override
+	public void setInputValidationOption(InputValidationOption option) {
+		setInputValidationOption(option.getValue());
+	}
+
 }

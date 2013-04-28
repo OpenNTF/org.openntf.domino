@@ -23,6 +23,103 @@ import org.openntf.domino.types.SessionDescendant;
 public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domino.DxlImporter, org.openntf.domino.ext.DxlImporter,
 		SessionDescendant {
 
+	public static enum DocumentImportOption {
+		IGNORE(DxlImporter.DXLIMPORTOPTION_IGNORE), CREATE(DxlImporter.DXLIMPORTOPTION_CREATE), REPLACE_ELSE_CREATE(
+				DxlImporter.DXLIMPORTOPTION_REPLACE_ELSE_CREATE), REPLACE_ELSE_IGNORE(DxlImporter.DXLIMPORTOPTION_REPLACE_ELSE_IGNORE), UPDATE_ELSE_CREATE(
+				DxlImporter.DXLIMPORTOPTION_UPDATE_ELSE_CREATE), UPDATE_ELSE_IGNORE(DxlImporter.DXLIMPORTOPTION_UPDATE_ELSE_IGNORE);
+
+		private final int value_;
+
+		private DocumentImportOption(int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+
+		public static DocumentImportOption valueOf(int value) {
+			for (DocumentImportOption opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
+	}
+
+	public static enum DesignImportOption {
+		IGNORE(DxlImporter.DXLIMPORTOPTION_IGNORE), CREATE(DxlImporter.DXLIMPORTOPTION_CREATE), REPLACE_ELSE_CREATE(
+				DxlImporter.DXLIMPORTOPTION_REPLACE_ELSE_CREATE), REPLACE_ELSE_IGNORE(DxlImporter.DXLIMPORTOPTION_REPLACE_ELSE_IGNORE);
+
+		private final int value_;
+
+		private DesignImportOption(int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+
+		public static DesignImportOption valueOf(int value) {
+			for (DesignImportOption opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
+	}
+
+	public static enum AclImportOption {
+		IGNORE(DxlImporter.DXLIMPORTOPTION_IGNORE), REPLACE_ELSE_IGNORE(DxlImporter.DXLIMPORTOPTION_REPLACE_ELSE_IGNORE), UPDATE_ELSE_CREATE(
+				DxlImporter.DXLIMPORTOPTION_UPDATE_ELSE_CREATE), UPDATE_ELSE_IGNORE(DxlImporter.DXLIMPORTOPTION_UPDATE_ELSE_IGNORE);
+
+		private final int value_;
+
+		private AclImportOption(int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+
+		public static AclImportOption valueOf(int value) {
+			for (AclImportOption opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
+	}
+
+	public static enum InputValidationOption {
+		NEVER(DxlImporter.DXLVALIDATIONOPTION_VALIDATE_NEVER), ALWAYS(DxlImporter.DXLVALIDATIONOPTION_VALIDATE_ALWAYS), AUTO(
+				DxlImporter.DXLVALIDATIONOPTION_VALIDATE_AUTO);
+
+		private final int value_;
+
+		private InputValidationOption(int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+
+		public static InputValidationOption valueOf(int value) {
+			for (InputValidationOption opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -173,6 +270,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	 * @see lotus.domino.DxlImporter#setAclImportOption(int)
 	 */
 	@Override
+	@Deprecated
 	public void setAclImportOption(int option);
 
 	/*
@@ -197,6 +295,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	 * @see lotus.domino.DxlImporter#setDesignImportOption(int)
 	 */
 	@Override
+	@Deprecated
 	public void setDesignImportOption(int option);
 
 	/*
@@ -205,6 +304,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	 * @see lotus.domino.DxlImporter#setDocumentImportOption(int)
 	 */
 	@Override
+	@Deprecated
 	public void setDocumentImportOption(int option);
 
 	/*
@@ -221,6 +321,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	 * @see lotus.domino.DxlImporter#setInputValidationOption(int)
 	 */
 	@Override
+	@Deprecated
 	public void setInputValidationOption(int option);
 
 	/*

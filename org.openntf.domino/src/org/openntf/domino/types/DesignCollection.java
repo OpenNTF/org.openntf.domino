@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
+import org.openntf.domino.NoteCollection;
+
 /**
  * @author jgallagher
  * 
@@ -14,6 +16,11 @@ import java.util.logging.Logger;
 public class DesignCollection<T> implements Collection<T> {
 	private static final Logger log_ = Logger.getLogger(DesignCollection.class.getName());
 	private static final long serialVersionUID = 1L;
+	private final NoteCollection collection_;
+
+	public DesignCollection(final NoteCollection collection) {
+		collection_ = collection;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -22,8 +29,7 @@ public class DesignCollection<T> implements Collection<T> {
 	 */
 	@Override
 	public boolean add(T arg0) {
-		// TODO Auto-generated method stub
-		return false;
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -32,9 +38,8 @@ public class DesignCollection<T> implements Collection<T> {
 	 * @see java.util.Collection#addAll(java.util.Collection)
 	 */
 	@Override
-	public boolean addAll(Collection<? extends T> arg0) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean addAll(Collection<? extends T> c) {
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -44,8 +49,7 @@ public class DesignCollection<T> implements Collection<T> {
 	 */
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
-
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -54,7 +58,7 @@ public class DesignCollection<T> implements Collection<T> {
 	 * @see java.util.Collection#contains(java.lang.Object)
 	 */
 	@Override
-	public boolean contains(Object arg0) {
+	public boolean contains(Object o) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -65,7 +69,7 @@ public class DesignCollection<T> implements Collection<T> {
 	 * @see java.util.Collection#containsAll(java.util.Collection)
 	 */
 	@Override
-	public boolean containsAll(Collection<?> arg0) {
+	public boolean containsAll(Collection<?> c) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -99,8 +103,7 @@ public class DesignCollection<T> implements Collection<T> {
 	 */
 	@Override
 	public boolean remove(Object arg0) {
-		// TODO Auto-generated method stub
-		return false;
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -109,9 +112,8 @@ public class DesignCollection<T> implements Collection<T> {
 	 * @see java.util.Collection#removeAll(java.util.Collection)
 	 */
 	@Override
-	public boolean removeAll(Collection<?> arg0) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean removeAll(Collection<?> c) {
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -120,7 +122,7 @@ public class DesignCollection<T> implements Collection<T> {
 	 * @see java.util.Collection#retainAll(java.util.Collection)
 	 */
 	@Override
-	public boolean retainAll(Collection<?> arg0) {
+	public boolean retainAll(Collection<?> c) {
 		// TODO Auto-generated method stub
 		return false;
 	}

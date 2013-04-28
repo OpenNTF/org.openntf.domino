@@ -4,7 +4,6 @@
 package org.openntf.domino.ext;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Map;
 
@@ -22,7 +21,7 @@ import org.openntf.domino.Database.ModifiedDocClass;
 import org.openntf.domino.Database.SignDocType;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
-import org.openntf.domino.FileResource;
+import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.transactions.DatabaseTransaction;
 
 /**
@@ -118,6 +117,11 @@ public interface Database {
 	public Document get(Object key);
 
 	/**
+	 * @return A DatabaseDesign object representing the various design elements of this database.
+	 */
+	public DatabaseDesign getDesign();
+
+	/**
 	 * Retrieves a document by a String key.
 	 * <p>
 	 * The key is hased using MD5 and treated as a UNID.
@@ -146,18 +150,6 @@ public interface Database {
 	 * @since org.openntf.domino 1.0.0
 	 */
 	public Document getDocumentByKey(Serializable key, boolean createOnFail);
-
-	/**
-	 * @param name
-	 *            name of a file resource
-	 * @return a file resource
-	 */
-	public FileResource getFileResource(String name);
-
-	/**
-	 * @return collection of all file resources
-	 */
-	public Collection<FileResource> getFileResources();
 
 	public DocumentCollection getModifiedDocuments(lotus.domino.DateTime since, ModifiedDocClass noteClass);
 

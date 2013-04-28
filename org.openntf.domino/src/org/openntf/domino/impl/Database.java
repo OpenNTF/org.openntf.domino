@@ -20,11 +20,9 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -35,6 +33,7 @@ import lotus.domino.NotesException;
 import org.openntf.domino.ACL.Level;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.View;
+import org.openntf.domino.design.impl.DatabaseDesign;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -71,9 +70,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			server_ = delegate.getServer();
 			path_ = delegate.getFilePath();
-			if (delegate.isOpen()) {
-				replid_ = delegate.getReplicaID();
-			}
+			replid_ = delegate.getReplicaID();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -819,6 +816,10 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
+	public DatabaseDesign getDesign() {
+		return new DatabaseDesign(this);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -990,35 +991,6 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public String getFilePath() {
 		return path_;
-	}
-
-	public FileResource getFileResource(String name) {
-		NoteCollection notes = this.createNoteCollection(false);
-		notes.setSelectMiscFormatElements(true);
-		// I wonder if this is sufficient escaping
-		notes.setSelectionFormula(" !@Contains($Flags; '~') & @Contains($Flags; 'g') & $TITLE=\""
-				+ name.replace("\\", "\\\\").replace("\"", "\\\"") + "\" ");
-		notes.buildCollection();
-
-		String noteId = notes.getFirstNoteID();
-		if (!noteId.isEmpty()) {
-			Document resourceDoc = this.getDocumentByID(noteId);
-			return new FileResource(resourceDoc.getDelegate(), this);
-		}
-		return null;
-	}
-
-	public Collection<org.openntf.domino.FileResource> getFileResources() {
-		List<org.openntf.domino.FileResource> result = new ArrayList<org.openntf.domino.FileResource>();
-		NoteCollection notes = this.createNoteCollection(false);
-		notes.setSelectMiscFormatElements(true);
-		notes.setSelectionFormula(" !@Contains($Flags; '~') & @Contains($Flags; 'g') ");
-		notes.buildCollection();
-		for (String noteId : notes) {
-			Document resourceDoc = this.getDocumentByID(noteId);
-			result.add(new FileResource(resourceDoc.getDelegate(), this));
-		}
-		return result;
 	}
 
 	/*
@@ -2642,5 +2614,4 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	public void setFTIndexFrequency(FTIndexFrequency frequency) {
 		setFTIndexFrequency(frequency.getValue());
 	}
-
 }
