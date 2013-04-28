@@ -9,7 +9,7 @@ import java.util.List;
  * @author jgallagher
  * 
  */
-public interface DesignBase extends org.openntf.domino.types.Design {
+public interface DesignBase extends org.openntf.domino.types.Design, org.openntf.domino.types.DatabaseDescendant {
 
 	/**
 	 * @return file resource name

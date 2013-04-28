@@ -728,4 +728,9 @@ public enum DominoUtils {
 			return null;
 		}
 	}
+	
+	public static String escapeForFormulaString(final String value) {
+		// I wonder if this is sufficient escaping
+		return value.replace("\\", "\\\\").replace("\"", "\\\"");
+	}
 }
