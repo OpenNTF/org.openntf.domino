@@ -12,7 +12,7 @@ public class FileResource extends AbstractDesignBase implements org.openntf.domi
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(FileResource.class.getName());
 
-	public FileResource(final Document document) {
+	protected FileResource(final Document document) {
 		super(document);
 	}
 

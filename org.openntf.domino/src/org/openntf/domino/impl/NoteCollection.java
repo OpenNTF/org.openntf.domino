@@ -16,6 +16,7 @@
 package org.openntf.domino.impl;
 
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
@@ -1625,6 +1626,103 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	@Override
 	public Session getAncestorSession() {
 		return this.getAncestorDatabase().getAncestorSession();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.NoteCollection#setSelectOptions(java.util.Set)
+	 */
+	@Override
+	public void setSelectOptions(Set<SelectOption> options) {
+		for (SelectOption option : options) {
+			switch (option) {
+			case ACL:
+				setSelectAcl(true);
+				break;
+			case ACTIONS:
+				setSelectActions(true);
+				break;
+			case AGENTS:
+				setSelectAgents(true);
+				break;
+			case DATABASE_SCRIPT:
+				setSelectDatabaseScript(true);
+				break;
+			case DATA_CONNECTIONS:
+				setSelectDataConnections(true);
+				break;
+			case DOCUMENTS:
+				setSelectDocuments(true);
+				break;
+			case FOLDERS:
+				setSelectFolders(true);
+				break;
+			case FORMS:
+				setSelectForms(true);
+				break;
+			case FRAMESETS:
+				setSelectFramesets(true);
+				break;
+			case HELP_ABOUT:
+				setSelectHelpAbout(true);
+				break;
+			case HELP_INDEX:
+				setSelectHelpIndex(true);
+				break;
+			case HELP_USING:
+				setSelectHelpUsing(true);
+				break;
+			case ICON:
+				setSelectIcon(true);
+				break;
+			case IMAGE_RESOURCES:
+				setSelectImageResources(true);
+				break;
+			case JAVA_RESOURCES:
+				setSelectJavaResources(true);
+				break;
+			case MISC_CODE:
+				setSelectMiscCodeElements(true);
+				break;
+			case MISC_FORMAT:
+				setSelectMiscFormatElements(true);
+				break;
+			case MISC_INDEX:
+				setSelectMiscIndexElements(true);
+				break;
+			case NAVIGATORS:
+				setSelectNavigators(true);
+				break;
+			case OUTLINES:
+				setSelectOutlines(true);
+				break;
+			case PAGES:
+				setSelectPages(true);
+				break;
+			case PROFILES:
+				setSelectProfiles(true);
+				break;
+			case REPLICATION_FORMULAS:
+				setSelectReplicationFormulas(true);
+				break;
+			case SCRIPT_LIBRARIES:
+				setSelectScriptLibraries(true);
+				break;
+			case SHARED_FIELDS:
+				setSelectSharedFields(true);
+				break;
+			case STYLESHEETS:
+				setSelectStylesheetResources(true);
+				break;
+			case SUBFORMS:
+				setSelectSubforms(true);
+				break;
+			case VIEWS:
+				setSelectViews(true);
+				break;
+			}
+		}
 	}
 
 }
