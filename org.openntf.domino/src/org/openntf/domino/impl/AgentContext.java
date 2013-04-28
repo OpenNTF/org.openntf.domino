@@ -52,7 +52,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public Agent getCurrentAgent() {
 		try {
-			return Factory.fromLotus(getDelegate().getCurrentAgent(), Agent.class, this);
+			return Factory.fromLotus(getDelegate().getCurrentAgent(), Agent.class, getCurrentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
