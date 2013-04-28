@@ -28,11 +28,11 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	}
 
 	@Override
-	public FileResource getFileResource(String name) {
+	public FileResource getFileResource(final String name) {
 		NoteCollection notes = database_.createNoteCollection(false);
 		notes.setSelectMiscFormatElements(true);
-		notes.setSelectionFormula(String.format(" !@Contains($Flags; '~') & @Contains($Flags; 'g') & $TITLE=\"%s\" ", DominoUtils
-				.escapeForFormulaString(name)));
+		notes.setSelectionFormula(String.format(" !@Contains($Flags; '~') & @Contains($Flags; 'g') & @Explode($TITLE; '|')=\"%s\" ",
+				DominoUtils.escapeForFormulaString(name)));
 		notes.buildCollection();
 
 		String noteId = notes.getFirstNoteID();
