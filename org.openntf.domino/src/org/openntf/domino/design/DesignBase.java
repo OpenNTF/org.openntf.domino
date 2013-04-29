@@ -12,7 +12,7 @@ import java.util.List;
 public interface DesignBase extends org.openntf.domino.types.Design, org.openntf.domino.types.DatabaseDescendant {
 
 	/**
-	 * @return file resource name
+	 * @return the design element's name
 	 */
 	public String getName();
 

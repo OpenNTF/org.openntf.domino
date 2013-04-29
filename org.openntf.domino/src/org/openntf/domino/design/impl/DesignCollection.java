@@ -3,14 +3,12 @@
  */
 package org.openntf.domino.design.impl;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Document;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.design.DesignBase;
-import org.openntf.domino.utils.DominoUtils;
 
 /**
  * @author jgallagher
@@ -65,38 +63,11 @@ public class DesignCollection<E extends DesignBase> implements org.openntf.domin
 		 * 
 		 * @see java.util.Iterator#next()
 		 */
-		@SuppressWarnings("unchecked")
 		@Override
 		public T next() {
 			String noteId = iterator_.next();
 			Document doc = collection_.getAncestorDatabase().getDocumentByID(noteId);
-			try {
-				return (T) clazz_.getConstructor(Document.class).newInstance(doc);
-			} catch (IllegalArgumentException e) {
-				DominoUtils.handleException(e);
-				return null;
-
-			} catch (SecurityException e) {
-				DominoUtils.handleException(e);
-				return null;
-
-			} catch (InstantiationException e) {
-				DominoUtils.handleException(e);
-				return null;
-
-			} catch (IllegalAccessException e) {
-				DominoUtils.handleException(e);
-				return null;
-
-			} catch (InvocationTargetException e) {
-				DominoUtils.handleException(e);
-				return null;
-
-			} catch (NoSuchMethodException e) {
-				DominoUtils.handleException(e);
-				return null;
-
-			}
+			return DesignFactory.fromDocument(doc, clazz_);
 		}
 
 		/*

@@ -36,7 +36,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	private String title_ = null;
 	private List<String> aliases_ = null;
 
-	public AbstractDesignBase(final Document document) {
+	protected AbstractDesignBase(final Document document) {
 		document_ = document;
 	}
 
@@ -181,7 +181,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 		document_ = database.getDocumentByID(noteId);
 	}
 
-	protected String getFlags() {
+	public String getFlags() {
 		return document_.getItemValueString("$Flags");
 	}
 
