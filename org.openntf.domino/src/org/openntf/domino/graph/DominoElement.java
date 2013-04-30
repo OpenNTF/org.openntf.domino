@@ -39,6 +39,11 @@ public abstract class DominoElement implements Element, Serializable {
 		return doc_;
 	}
 
+	public String getRawId() {
+		String prefix = getDatabase().getServer() + "!!" + getDatabase().getFilePath();
+		return prefix + ": " + getRawDocument().getNoteID();
+	}
+
 	public int incrementProperty(String propertyName) {
 		int result = getProperty(propertyName, Integer.class);
 		setProperty(propertyName, ++result);

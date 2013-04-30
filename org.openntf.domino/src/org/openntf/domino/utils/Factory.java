@@ -294,6 +294,9 @@ public enum Factory {
 			result = (T) new org.openntf.domino.impl.RichTextTable((lotus.domino.RichTextTable) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Session) {
 			result = (T) new org.openntf.domino.impl.Session((lotus.domino.Session) lotus, parent);
+			if (currentSessionHolder_.get() == null || currentSessionHolder_.get().isValid()) {
+				setSession((org.openntf.domino.Session) result);
+			}
 		} else if (lotus instanceof lotus.domino.Stream) {
 			result = (T) new org.openntf.domino.impl.Stream((lotus.domino.Stream) lotus, parent);
 		} else if (lotus instanceof lotus.domino.View) {
@@ -474,6 +477,10 @@ public enum Factory {
 
 	public static void setSession(lotus.domino.Session session) {
 		currentSessionHolder_.set((Session) fromLotus(session, org.openntf.domino.Session.class, null));
+	}
+
+	public static void clearSession() {
+		currentSessionHolder_.set(null);
 	}
 
 	public static org.openntf.domino.Session getSessionFullAccess() {

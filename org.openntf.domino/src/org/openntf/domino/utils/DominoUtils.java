@@ -50,6 +50,7 @@ import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Item;
 import org.openntf.domino.MIMEEntity;
 import org.openntf.domino.MIMEHeader;
+import org.openntf.domino.Name;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.Stream;
@@ -728,9 +729,61 @@ public enum DominoUtils {
 			return null;
 		}
 	}
-	
+
 	public static String escapeForFormulaString(final String value) {
 		// I wonder if this is sufficient escaping
 		return value.replace("\\", "\\\\").replace("\"", "\\\"");
+	}
+
+	public static boolean isSerializable(Collection<?> values) {
+		if (values == null)
+			return false;
+		boolean result = true;
+		Iterator<?> it = values.iterator();
+		while (it.hasNext()) {
+			Object o = it.next();
+			if (!(o instanceof Serializable)) {
+				result = false;
+				break;
+			}
+		}
+		return result;
+	}
+
+	public static String toNameString(Name name) {
+		String result = "";
+		if (!name.isHierarchical()) {
+			result = name.getCommon();
+		} else {
+			result = name.getCanonical();
+		}
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static Collection<Serializable> toSerializable(Collection<?> values) {
+		if (DominoUtils.isSerializable(values))
+			return (Collection<Serializable>) values;
+		Collection<Serializable> result = new ArrayList<Serializable>();
+		if (values != null && !values.isEmpty()) {
+			Iterator<?> it = values.iterator();
+
+			while (it.hasNext()) {
+				Object o = it.next();
+				if (o instanceof DateTime) {
+					Date date = null;
+					DateTime dt = (DateTime) o;
+					date = dt.toJavaDate();
+					result.add(date);
+				} else if (o instanceof Name) {
+					result.add(DominoUtils.toNameString((Name) o));
+				} else if (o instanceof String) {
+					result.add((String) o);
+				} else if (o instanceof Number) {
+					result.add((Number) o);
+				}
+			}
+		}
+		return result;
 	}
 }
