@@ -2511,7 +2511,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 				log_.log(java.util.logging.Level.FINER, elements[3].getClassName() + "." + elements[3].getMethodName() + " ( line "
 						+ elements[3].getLineNumber() + ")");
 				log_.log(java.util.logging.Level.FINE,
-						"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
+						"If you are using this Database in XPages and have attempted to hold it in an scoped variable between requests, this behavior is normal.");
 
 			}
 		} catch (NotesException e) {

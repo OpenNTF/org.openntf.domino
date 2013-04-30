@@ -88,7 +88,14 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	@Override
 	protected lotus.domino.DateTime getDelegate() {
 		try {
-			return ((org.openntf.domino.impl.Session) getParent()).getDelegate().createDateTime(cal_);
+			lotus.domino.DateTime delegate = ((org.openntf.domino.impl.Session) getParent()).getDelegate().createDateTime(cal_);
+			if (isAnyTime()) {
+				delegate.setAnyTime();
+			}
+			if (isAnyDate()) {
+				delegate.setAnyDate();
+			}
+			return delegate;
 		} catch (NotesException ne) {
 			DominoUtils.handleException(ne);
 			return null;

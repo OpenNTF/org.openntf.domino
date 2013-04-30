@@ -25,6 +25,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.TypeUtils;
 import org.xml.sax.InputSource;
 
 // TODO: Auto-generated Javadoc
@@ -437,6 +438,10 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		return null;
 	}
 
+	public <T> T getValues(Class<?> T) {
+		return TypeUtils.itemValueToClass(this, T);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -817,7 +822,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * 
 	 * @see org.openntf.domino.Item#setValues(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void setValues(java.util.Vector values) {
 		markDirty();
@@ -826,6 +831,10 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+	}
+
+	public void setValues(Object value) {
+		this.getParent().replaceItemValue(this.getName(), value);
 	}
 
 	/*

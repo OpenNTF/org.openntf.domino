@@ -39,10 +39,10 @@ import org.openntf.domino.View;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
-import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.TypeUtils;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -61,6 +61,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	private String noteid_;
 	private boolean isQueued_ = false;
 	private boolean isRemoveQueued_ = false;
+	private boolean shouldWriteItemMeta_ = false; // TODO NTF create rules for making this true
 
 	// NTF - these are immutable by definition, so we should just copy it when we read in the doc
 	// yes, we're creating objects we might not need, but that's better than risking the toxicity of evil, wicked DateTime
@@ -708,8 +709,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public Vector<org.openntf.domino.EmbeddedObject> getEmbeddedObjects() {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getEmbeddedObjects(), org.openntf.domino.EmbeddedObject.class, this
-					.getAncestorSession());
+			return Factory.fromLotusAsVector(getDelegate().getEmbeddedObjects(), org.openntf.domino.EmbeddedObject.class,
+					this.getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -803,69 +804,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	public <T> T getItemValue(String name, Class<?> T) throws ItemNotFoundException, DataNotCompatibleException {
 		// TODO NTF - Add type conversion extensibility of some kind, maybe attached to the Database or the Session
-		Object result = null;
-		Class<?> CType = null;
-		if (T.isArray()) {
-			CType = T.getComponentType();
-		}
-		boolean hasItem = hasItem(name);
-		if (!hasItem) {
-			if (T.isArray()) {
-				if (CType.isPrimitive()) {
-					throw new ItemNotFoundException("Item " + name + " was not found on document " + noteid_
-							+ " so we cannot return an array of " + CType.getName());
-				} else {
-					return null;
-				}
-			} else if (T.isPrimitive()) {
-				throw new ItemNotFoundException("Item " + name + " was not found on document " + noteid_ + " so we cannot return a "
-						+ T.getName());
-			} else {
-				return null;
-			}
-		}
-
-		Vector<Object> fieldResult = getItemValue(name);
-		// int size = fieldResult.size();
-
-		if (T.isArray()) {
-			if (CType.isPrimitive()) {
-				try {
-					result = Factory.toPrimitiveArray(fieldResult, CType);
-				} catch (DataNotCompatibleException e) {
-					throw new DataNotCompatibleException(e.getMessage() + " for field " + name + " in document " + noteid_);
-				}
-			} else {
-				if (CType.isAssignableFrom(String.class)) {
-					result = Factory.toStrings(fieldResult);
-				} else if (CType.isAssignableFrom(Date.class)) {
-					result = Factory.toDates(fieldResult);
-				} else if (CType.isAssignableFrom(DateTime.class)) {
-					result = Factory.toDateTimes(fieldResult, Factory.getSession(this));
-				} else if (CType.isAssignableFrom(Name.class)) {
-					result = Factory.toNames(fieldResult, Factory.getSession(this));
-				}
-				throw new UnimplementedException("Arrays for " + CType.getName() + " not yet implemented, so cannot auto-box for field "
-						+ name + " in document " + noteid_);
-			}
-		} else if (T.isPrimitive()) {
-			try {
-				result = Factory.toPrimitive(fieldResult, CType);
-			} catch (DataNotCompatibleException e) {
-				throw new DataNotCompatibleException(e.getMessage() + " for field " + name + " in document " + noteid_);
-			}
-		} else {
-			if (T.isAssignableFrom(String.class)) {
-				result = Factory.join(fieldResult);
-			} else if (T.isAssignableFrom(Date.class)) {
-				result = Factory.toDate(fieldResult);
-			} else if (T.isAssignableFrom(org.openntf.domino.DateTime.class)) {
-				Factory.getSession(this).createDateTime(Factory.toDate(fieldResult));
-			} else if (T.isAssignableFrom(org.openntf.domino.Name.class)) {
-				Factory.getSession(this).createName(String.valueOf(fieldResult.get(0)));
-			}
-		}
-		return (T) result;
+		return TypeUtils.itemValueToClass(this, name, T);
 	}
 
 	/*
@@ -1977,17 +1916,18 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	private void writeItemInfo() {
-		// TODO NTF make this optional
-		Map<String, Map<String, Serializable>> itemInfo = getItemInfo();
-		if (itemInfo != null && itemInfo.size() > 0) {
-			boolean convertMime = this.getAncestorSession().isConvertMime();
-			this.getAncestorSession().setConvertMime(false);
-			try {
-				DominoUtils.saveState((Serializable) getItemInfo(), this, "$$ItemInfo", false, null);
-			} catch (Throwable e) {
-				DominoUtils.handleException(e);
+		if (this.shouldWriteItemMeta_) {
+			Map<String, Map<String, Serializable>> itemInfo = getItemInfo();
+			if (itemInfo != null && itemInfo.size() > 0) {
+				boolean convertMime = this.getAncestorSession().isConvertMime();
+				this.getAncestorSession().setConvertMime(false);
+				try {
+					DominoUtils.saveState((Serializable) getItemInfo(), this, "$$ItemInfo", false, null);
+				} catch (Throwable e) {
+					DominoUtils.handleException(e);
+				}
+				this.getAncestorSession().setConvertMime(convertMime);
 			}
-			this.getAncestorSession().setConvertMime(convertMime);
 		}
 	}
 
@@ -2437,15 +2377,14 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					StackTraceElement[] elements = t.getStackTrace();
 					log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
 							+ " had been recycled and was auto-restored. Changes may have been lost.");
-					log_.log(Level.FINER, elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line "
-							+ elements[0].getLineNumber() + ")");
-					log_.log(Level.FINER, elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line "
-							+ elements[1].getLineNumber() + ")");
-					log_.log(Level.FINER, elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line "
-							+ elements[2].getLineNumber() + ")");
-					log_
-							.log(Level.FINE,
-									"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
+					log_.log(Level.FINER,
+							elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber() + ")");
+					log_.log(Level.FINER,
+							elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber() + ")");
+					log_.log(Level.FINER,
+							elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber() + ")");
+					log_.log(Level.FINE,
+							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
 				}
 			} catch (NotesException e) {
 				DominoUtils.handleException(e);
