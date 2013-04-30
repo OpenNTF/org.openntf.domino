@@ -3,12 +3,11 @@
  */
 package org.openntf.domino.ext;
 
+import java.io.Serializable;
 import java.util.EnumSet;
 import java.util.Map;
 
 import org.openntf.domino.ACL;
-import org.openntf.domino.Document;
-import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Database.CompactOption;
 import org.openntf.domino.Database.DBOption;
 import org.openntf.domino.Database.FTDomainSearchOption;
@@ -20,6 +19,8 @@ import org.openntf.domino.Database.FTSortOption;
 import org.openntf.domino.Database.FixupOption;
 import org.openntf.domino.Database.ModifiedDocClass;
 import org.openntf.domino.Database.SignDocType;
+import org.openntf.domino.Document;
+import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.transactions.DatabaseTransaction;
 
@@ -132,7 +133,7 @@ public interface Database {
 	 * @return The Document corresponding to the key, or null if no matching document exists.
 	 * @since org.openntf.domino 1.0.0
 	 */
-	public Document getDocumentByKey(String key);
+	public Document getDocumentByKey(Serializable key);
 
 	/**
 	 * Retrieves a document by a String key, allowing for creation of a new document if no match was found.
@@ -148,7 +149,7 @@ public interface Database {
 	 * @return The Document corresponding to the key, or null if no matching document exists and createOnFail is false.
 	 * @since org.openntf.domino 1.0.0
 	 */
-	public Document getDocumentByKey(String key, boolean createOnFail);
+	public Document getDocumentByKey(Serializable key, boolean createOnFail);
 
 	public DocumentCollection getModifiedDocuments(lotus.domino.DateTime since, ModifiedDocClass noteClass);
 

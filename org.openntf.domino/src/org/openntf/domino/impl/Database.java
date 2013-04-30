@@ -16,6 +16,7 @@
 package org.openntf.domino.impl;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,9 +30,9 @@ import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.ACL.Level;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.View;
-import org.openntf.domino.ACL.Level;
 import org.openntf.domino.design.impl.DatabaseDesign;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
@@ -443,8 +444,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public View createQueryView(String viewName, String query, lotus.domino.View templateView, boolean prohibitDesignRefresh) {
 		try {
-			return Factory.fromLotus(getDelegate().createQueryView(viewName, query, (lotus.domino.View) toLotus(templateView),
-					prohibitDesignRefresh), View.class, this);
+			return Factory.fromLotus(
+					getDelegate().createQueryView(viewName, query, (lotus.domino.View) toLotus(templateView), prohibitDesignRefresh),
+					View.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -520,8 +522,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public View createView(String viewName, String selectionFormula, lotus.domino.View templateView, boolean prohibitDesignRefresh) {
 		try {
-			return Factory.fromLotus(getDelegate().createView(viewName, selectionFormula, (lotus.domino.View) toLotus(templateView),
-					prohibitDesignRefresh), View.class, this);
+			return Factory.fromLotus(
+					getDelegate().createView(viewName, selectionFormula, (lotus.domino.View) toLotus(templateView), prohibitDesignRefresh),
+					View.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -847,11 +850,11 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public Document getDocumentByKey(String key) {
+	public Document getDocumentByKey(Serializable key) {
 		return this.getDocumentByKey(key, false);
 	}
 
-	public Document getDocumentByKey(String key, boolean createOnFail) {
+	public Document getDocumentByKey(Serializable key, boolean createOnFail) {
 		try {
 			if (key != null) {
 				String checksum = DominoUtils.toUnid(key);
@@ -910,8 +913,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			if (true)
 				return null;
 
-			return Factory.fromLotus(getDelegate().getDocumentByURL(url, reload, reloadIfModified, urlList, charSet, webUser, webPassword,
-					proxyUser, proxyPassword, returnImmediately), Document.class, this);
+			return Factory.fromLotus(
+					getDelegate().getDocumentByURL(url, reload, reloadIfModified, urlList, charSet, webUser, webPassword, proxyUser,
+							proxyPassword, returnImmediately), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
