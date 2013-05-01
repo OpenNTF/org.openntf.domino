@@ -15,3 +15,8 @@ Project goals:
 8. Provide useful static utility methods like incinerate(), toDxl() and toUnid(String)
 9. Have some operations that currently throw Exceptions unnecessarily instead simply return null (ie: Database.getDocumentByUnid())
 10. Provide coherent content assist via Javadoc annotations and retention of parameter names in byte code
+
+
+OPENNTF
+=======
+This project is an OpenNTF project, and is available under the Apache Licence V2.0. All other aspects of the project, including contributions, defect reports, discussions, feature requests and reviews are subject to the OpenNTF Terms of Use - available at [http://openntf.org/Internal/home.nsf/dx/Terms_of_Use](http://openntf.org/Internal/home.nsf/dx/Terms_of_Use).
