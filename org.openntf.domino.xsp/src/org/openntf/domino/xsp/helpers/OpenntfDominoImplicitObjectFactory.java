@@ -27,6 +27,19 @@ import com.ibm.xsp.el.ImplicitObjectFactory;
 import com.ibm.xsp.util.TypedUtil;
 
 public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory {
+	public static class ContextListener implements com.ibm.xsp.event.FacesContextListener {
+		@Override
+		public void beforeContextReleased(FacesContext paramFacesContext) {
+			Factory.clearSession();
+		}
+
+		@Override
+		public void beforeRenderingPhase(FacesContext paramFacesContext) {
+			// TODO NOOP
+
+		}
+	}
+
 	// TODO this is really just a sample on how to get to an entry point in the API
 	private static Boolean GODMODE;
 
@@ -73,7 +86,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 				localMap.put((isGodMode() ? "database" : "opendatabase"), db);
 			}
 		}
-
+		paramFacesContextEx.addRequestListener(new ContextListener());
 	}
 
 	@Override
