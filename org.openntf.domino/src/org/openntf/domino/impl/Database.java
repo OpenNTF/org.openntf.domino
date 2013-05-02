@@ -1196,8 +1196,11 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public DocumentCollection getModifiedDocuments(lotus.domino.DateTime since, int noteClass) {
 		try {
-			return Factory.fromLotus(getDelegate().getModifiedDocuments((lotus.domino.DateTime) toLotus(since), noteClass),
-					DocumentCollection.class, this);
+			DocumentCollection result;
+			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(since);
+			result = Factory.fromLotus(getDelegate().getModifiedDocuments(dt, noteClass), DocumentCollection.class, this);
+			dt.recycle();
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -1211,14 +1214,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#getModifiedDocuments(lotus.domino.DateTime)
 	 */
 	public DocumentCollection getModifiedDocuments(lotus.domino.DateTime since) {
-		try {
-			return Factory.fromLotus(getDelegate().getModifiedDocuments((lotus.domino.DateTime) toLotus(since)), DocumentCollection.class,
-					this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return getModifiedDocuments(since, 1);
 	}
 
 	/*
@@ -1876,7 +1872,11 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public boolean openIfModified(String server, String dbFile, lotus.domino.DateTime modifiedSince) {
 		try {
-			return getDelegate().openIfModified(server, dbFile, (lotus.domino.DateTime) toLotus(modifiedSince));
+			boolean result = false;
+			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(modifiedSince);
+			result = getDelegate().openIfModified(server, dbFile, dt);
+			dt.recycle();
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -2008,8 +2008,11 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public DocumentCollection search(String formula, lotus.domino.DateTime startDate, int maxDocs) {
 		try {
-			return Factory.fromLotus(getDelegate().search(formula, (lotus.domino.DateTime) toLotus(startDate), maxDocs),
-					DocumentCollection.class, this);
+			DocumentCollection result;
+			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(startDate);
+			result = Factory.fromLotus(getDelegate().search(formula, dt, maxDocs), DocumentCollection.class, this);
+			dt.recycle();
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -2023,14 +2026,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#search(java.lang.String, lotus.domino.DateTime)
 	 */
 	public DocumentCollection search(String formula, lotus.domino.DateTime startDate) {
-		try {
-			return Factory.fromLotus(getDelegate().search(formula, (lotus.domino.DateTime) toLotus(startDate)), DocumentCollection.class,
-					this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return search(formula, startDate, 0);
 	}
 
 	/*

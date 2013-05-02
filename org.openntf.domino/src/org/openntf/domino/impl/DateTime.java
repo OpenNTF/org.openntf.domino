@@ -58,7 +58,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	public DateTime(lotus.domino.DateTime delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, Factory.getSession(parent));
 		initialize(delegate);
-		org.openntf.domino.impl.Base.recycle(delegate);
+		org.openntf.domino.impl.Base.s_recycle(delegate);
 	}
 
 	/**

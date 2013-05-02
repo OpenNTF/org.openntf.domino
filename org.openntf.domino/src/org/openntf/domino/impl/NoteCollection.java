@@ -1601,7 +1601,9 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	 */
 	public void setSinceTime(lotus.domino.DateTime date) {
 		try {
-			getDelegate().setSinceTime((lotus.domino.DateTime) toLotus(date));
+			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(date);
+			getDelegate().setSinceTime(dt);
+			enc_recycle(dt);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

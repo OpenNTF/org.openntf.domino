@@ -99,7 +99,7 @@ public class DominoFormatter extends ThreadLocal<Object> {
 		}
 
 		dateTimeFormat_ = dateOnlyFormat_ + " " + timeOnlyFormat_;
-		org.openntf.domino.impl.Base.recycle(intl);
+		org.openntf.domino.impl.Base.s_recycle(intl);
 	}
 
 	/*

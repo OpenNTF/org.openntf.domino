@@ -1826,6 +1826,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 							}
 						}
 						resultList.add(domNode);
+						enc_recycle(domNode);
 					}
 					// If it ended up being something we could store, make note of the original class instead of the list class
 					valueClass = ((List<?>) value).get(0).getClass();
@@ -1837,6 +1838,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						throw new IllegalArgumentException();
 					}
 					result = getDelegate().replaceItemValue(itemName, domNode);
+					Base.enc_recycle(domNode);
 				}
 			} catch (IllegalArgumentException iae) {
 				// Then try serialization
@@ -1893,19 +1895,20 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				}
 			}
 
-			// TODO NTF make this optional
-			// If we've gotten this far, it must be legal - update or create the item info map
-			Map<String, Map<String, Serializable>> itemInfo = getItemInfo();
-			Map<String, Serializable> infoNode = null;
-			if (itemInfo.containsKey(itemName)) {
-				infoNode = itemInfo.get(itemName);
-			} else {
-				infoNode = new HashMap<String, Serializable>();
-			}
-			infoNode.put("valueClass", valueClass.getName());
-			infoNode.put("updated", new Date()); // For sanity checking if the value was changed outside of Java
-			itemInfo.put(itemName, infoNode);
+			if (this.shouldWriteItemMeta_) {
+				// If we've gotten this far, it must be legal - update or create the item info map
 
+				Map<String, Map<String, Serializable>> itemInfo = getItemInfo();
+				Map<String, Serializable> infoNode = null;
+				if (itemInfo.containsKey(itemName)) {
+					infoNode = itemInfo.get(itemName);
+				} else {
+					infoNode = new HashMap<String, Serializable>();
+				}
+				infoNode.put("valueClass", valueClass.getName());
+				infoNode.put("updated", new Date()); // For sanity checking if the value was changed outside of Java
+				itemInfo.put(itemName, infoNode);
+			}
 			return Factory.fromLotus(result, Item.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);

@@ -317,8 +317,10 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	@Override
 	public void setRowLabels(Vector labels) {
 		try {
-			getDelegate().setRowLabels(toDominoFriendly(labels, this));
+			java.util.Vector v = toDominoFriendly(labels, this);
+			getDelegate().setRowLabels(v);
 			markDirty();
+			s_recycle(v);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

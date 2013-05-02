@@ -114,7 +114,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	public Name(lotus.domino.Name delegate, org.openntf.domino.Base<?> parent) {
 		super(null, parent);
 		initialize(delegate);
-		Base.recycle(delegate);
+		Base.s_recycle(delegate);
 	}
 
 	/**

@@ -47,8 +47,13 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	@Override
 	public Vector<org.openntf.domino.NotesCalendarEntry> getEntries(lotus.domino.DateTime start, lotus.domino.DateTime end) {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getEntries((lotus.domino.DateTime) toLotus(start),
-					(lotus.domino.DateTime) toLotus(end)), org.openntf.domino.NotesCalendarEntry.class, this);
+			Vector<org.openntf.domino.NotesCalendarEntry> result;
+			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
+			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
+			result = Factory.fromLotusAsVector(getDelegate().getEntries(dt1, dt2), org.openntf.domino.NotesCalendarEntry.class, this);
+			enc_recycle(dt1);
+			enc_recycle(dt2);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -59,8 +64,14 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	public Vector<org.openntf.domino.NotesCalendarEntry> getEntries(lotus.domino.DateTime start, lotus.domino.DateTime end, int skipCount,
 			int maxReturn) {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getEntries((lotus.domino.DateTime) toLotus(start),
-					(lotus.domino.DateTime) toLotus(end), skipCount, maxReturn), org.openntf.domino.NotesCalendarEntry.class, this);
+			Vector<org.openntf.domino.NotesCalendarEntry> result;
+			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
+			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
+			result = Factory.fromLotusAsVector(getDelegate().getEntries(dt1, dt2, skipCount, maxReturn),
+					org.openntf.domino.NotesCalendarEntry.class, this);
+			enc_recycle(dt1);
+			enc_recycle(dt2);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -120,8 +131,13 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	@Override
 	public Vector<org.openntf.domino.NotesCalendarNotice> getNewInvitations(lotus.domino.DateTime start, lotus.domino.DateTime since) {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getNewInvitations((lotus.domino.DateTime) toLotus(start),
-					(lotus.domino.DateTime) toLotus(since)), NotesCalendarNotice.class, this);
+			Vector<org.openntf.domino.NotesCalendarNotice> result;
+			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
+			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(since);
+			result = Factory.fromLotusAsVector(getDelegate().getNewInvitations(dt1, dt2), NotesCalendarNotice.class, this);
+			enc_recycle(dt1);
+			enc_recycle(dt2);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -186,7 +202,13 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	@Override
 	public String readRange(lotus.domino.DateTime start, lotus.domino.DateTime end) {
 		try {
-			return getDelegate().readRange((lotus.domino.DateTime) toLotus(start), (lotus.domino.DateTime) toLotus(end));
+			String result;
+			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
+			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
+			result = getDelegate().readRange(dt1, dt2);
+			enc_recycle(dt1);
+			enc_recycle(dt2);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -196,8 +218,13 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	@Override
 	public String readRange(lotus.domino.DateTime start, lotus.domino.DateTime end, int skipCount, int maxRead) {
 		try {
-			return getDelegate()
-					.readRange((lotus.domino.DateTime) toLotus(start), (lotus.domino.DateTime) toLotus(end), skipCount, maxRead);
+			String result;
+			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
+			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
+			result = getDelegate().readRange(dt1, dt2, skipCount, maxRead);
+			enc_recycle(dt1);
+			enc_recycle(dt2);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

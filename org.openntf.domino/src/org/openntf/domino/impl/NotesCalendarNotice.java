@@ -36,7 +36,11 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	@Override
 	public void counter(String comments, lotus.domino.DateTime start, lotus.domino.DateTime end) {
 		try {
-			getDelegate().counter(comments, (lotus.domino.DateTime) toLotus(start), (lotus.domino.DateTime) toLotus(end));
+			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
+			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
+			getDelegate().counter(comments, dt1, dt2);
+			enc_recycle(dt1);
+			enc_recycle(dt2);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -45,7 +49,11 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	@Override
 	public void counter(String comments, lotus.domino.DateTime start, lotus.domino.DateTime end, boolean keepPlaceholder) {
 		try {
-			getDelegate().counter(comments, (lotus.domino.DateTime) toLotus(start), (lotus.domino.DateTime) toLotus(end), keepPlaceholder);
+			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
+			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
+			getDelegate().counter(comments, dt1, dt2, keepPlaceholder);
+			enc_recycle(dt1);
+			enc_recycle(dt2);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -120,8 +128,8 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	@Override
 	public Vector<org.openntf.domino.NotesCalendarNotice> getOutstandingInvitations() {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getOutstandingInvitations(), org.openntf.domino.NotesCalendarNotice.class, this
-					.getParent());
+			return Factory.fromLotusAsVector(getDelegate().getOutstandingInvitations(), org.openntf.domino.NotesCalendarNotice.class,
+					this.getParent());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

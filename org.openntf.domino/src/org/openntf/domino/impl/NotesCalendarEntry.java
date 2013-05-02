@@ -54,7 +54,11 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	@Override
 	public void counter(String comments, lotus.domino.DateTime start, lotus.domino.DateTime end) {
 		try {
-			getDelegate().counter(comments, (lotus.domino.DateTime) toLotus(start), (lotus.domino.DateTime) toLotus(end));
+			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
+			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
+			getDelegate().counter(comments, dt1, dt2);
+			enc_recycle(dt1);
+			enc_recycle(dt2);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -63,7 +67,11 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	@Override
 	public void counter(String comments, lotus.domino.DateTime start, lotus.domino.DateTime end, boolean keepPlaceholder) {
 		try {
-			getDelegate().counter(comments, (lotus.domino.DateTime) toLotus(start), (lotus.domino.DateTime) toLotus(end), keepPlaceholder);
+			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
+			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
+			getDelegate().counter(comments, dt1, dt2, keepPlaceholder);
+			enc_recycle(dt1);
+			enc_recycle(dt2);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -73,8 +81,11 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	public void counter(String comments, lotus.domino.DateTime start, lotus.domino.DateTime end, boolean keepPlaceholder, int scope,
 			String recurrenceId) {
 		try {
-			getDelegate().counter(comments, (lotus.domino.DateTime) toLotus(start), (lotus.domino.DateTime) toLotus(end), keepPlaceholder,
-					scope, recurrenceId);
+			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
+			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
+			getDelegate().counter(comments, dt1, dt2, keepPlaceholder, scope, recurrenceId);
+			enc_recycle(dt1);
+			enc_recycle(dt2);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -83,8 +94,11 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	@Override
 	public void counter(String comments, lotus.domino.DateTime start, lotus.domino.DateTime end, int scope, String recurrenceId) {
 		try {
-			getDelegate().counter(comments, (lotus.domino.DateTime) toLotus(start), (lotus.domino.DateTime) toLotus(end), scope,
-					recurrenceId);
+			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
+			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
+			getDelegate().counter(comments, dt1, dt2, scope, recurrenceId);
+			enc_recycle(dt1);
+			enc_recycle(dt2);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

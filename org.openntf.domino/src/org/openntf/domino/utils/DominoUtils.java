@@ -251,7 +251,7 @@ public enum DominoUtils {
 					// } catch (Throwable t) {
 					// // who cares?
 					// }
-					org.openntf.domino.impl.Base.recycle(o);
+					org.openntf.domino.impl.Base.s_recycle(o);
 				} else if (o instanceof Collection) {
 					if (o instanceof Map) {
 						Set<Map.Entry> entries = ((Map) o).entrySet();

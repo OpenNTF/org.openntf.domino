@@ -232,7 +232,9 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log> implemen
 	@Override
 	public void openMailLog(Vector recipients, String subject) {
 		try {
-			getDelegate().openMailLog(toDominoFriendly(recipients, this), subject);
+			java.util.Vector v = toDominoFriendly(recipients, this);
+			getDelegate().openMailLog(v, subject);
+			s_recycle(v);
 		} catch (NotesException ne) {
 			DominoUtils.handleException(ne);
 		}

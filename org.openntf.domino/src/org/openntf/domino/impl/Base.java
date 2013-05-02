@@ -354,7 +354,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @see lotus.domino.Base#recycle()
 	 */
 	public void recycle() {
-		recycle(this);
+		s_recycle(this);
 	}
 
 	/**
@@ -505,7 +505,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the base
 	 * @return true, if successful
 	 */
-	public static boolean recycle(lotus.domino.local.NotesBase base) {
+	public static boolean s_recycle(lotus.domino.local.NotesBase base) {
 		boolean result = false;
 		if (!isLocked(base)) {
 			try {
@@ -527,12 +527,30 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @param o
 	 *            the o
 	 */
-	public static void recycle(Object o) {
+	public static void s_recycle(Object o) {
 		if (o instanceof lotus.domino.Base) {
 			if (o instanceof lotus.domino.local.NotesBase) {
-				recycle((lotus.domino.local.NotesBase) o);
+				s_recycle((lotus.domino.local.NotesBase) o);
 			}
 		}
+
+	}
+
+	public static void enc_recycle(Object o) {
+		// NTF this is for recycling of encapsulated objects like DateTime and Name
+		if (o instanceof Collection) {
+			if (!((Collection) o).isEmpty()) {
+				for (Object io : (Collection) o) {
+					if (io instanceof lotus.domino.DateTime || io instanceof lotus.domino.Name) {
+						s_recycle(io);
+					}
+				}
+			}
+		}
+		if (o instanceof lotus.domino.DateTime || o instanceof lotus.domino.Name) {
+			s_recycle(o);
+		}
+
 	}
 
 	// /**
@@ -553,9 +571,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	public void recycle(Vector arg0) {
 		for (Object o : arg0) {
 			if (o instanceof org.openntf.domino.impl.Base) {
-				recycle((org.openntf.domino.impl.Base) o);
+				s_recycle((org.openntf.domino.impl.Base) o);
 			} else if (o instanceof lotus.domino.local.NotesBase) {
-				recycle((lotus.domino.local.NotesBase) o);
+				s_recycle((lotus.domino.local.NotesBase) o);
 			}
 		}
 	}

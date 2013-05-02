@@ -106,7 +106,7 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 	 * Recycle.
 	 */
 	public void recycle() {
-		org.openntf.domino.impl.Base.recycle(delegate_);
+		org.openntf.domino.impl.Base.s_recycle(delegate_);
 		int total = Factory.countAutoRecycle();
 		if (log_.isLoggable(Level.FINE)) {
 			if (total % 5000 == 0) {

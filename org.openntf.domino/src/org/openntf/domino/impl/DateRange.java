@@ -110,7 +110,9 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	@Override
 	public void setEndDateTime(lotus.domino.DateTime end) {
 		try {
-			getDelegate().setEndDateTime((lotus.domino.DateTime) toLotus(end));
+			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(end);
+			getDelegate().setEndDateTime(dt);
+			enc_recycle(dt);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -126,7 +128,9 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	@Override
 	public void setStartDateTime(lotus.domino.DateTime start) {
 		try {
-			getDelegate().setStartDateTime((lotus.domino.DateTime) toLotus(start));
+			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(start);
+			getDelegate().setStartDateTime(dt);
+			enc_recycle(dt);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 

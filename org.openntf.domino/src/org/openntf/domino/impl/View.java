@@ -171,7 +171,11 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public int FTSearchSorted(Vector query) {
 		try {
-			return getDelegate().FTSearchSorted(toDominoFriendly(query, this));
+			int result;
+			java.util.Vector v = toDominoFriendly(query, this);
+			result = getDelegate().FTSearchSorted(v);
+			s_recycle(v);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -187,7 +191,11 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public int FTSearchSorted(Vector query, int maxDocs) {
 		try {
-			return getDelegate().FTSearchSorted(toDominoFriendly(query, this), maxDocs);
+			int result;
+			java.util.Vector v = toDominoFriendly(query, this);
+			result = getDelegate().FTSearchSorted(v, maxDocs);
+			s_recycle(v);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -203,7 +211,11 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public int FTSearchSorted(Vector query, int maxDocs, int column) {
 		try {
-			return getDelegate().FTSearchSorted(toDominoFriendly(query, this), maxDocs, column);
+			int result;
+			java.util.Vector v = toDominoFriendly(query, this);
+			result = getDelegate().FTSearchSorted(v, maxDocs, column);
+			s_recycle(v);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -219,7 +231,11 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public int FTSearchSorted(Vector query, int maxDocs, int column, boolean ascending, boolean exact, boolean variants, boolean fuzzy) {
 		try {
-			return getDelegate().FTSearchSorted(toDominoFriendly(query, this), maxDocs, column, ascending, exact, variants, fuzzy);
+			int result;
+			java.util.Vector v = toDominoFriendly(query, this);
+			result = getDelegate().FTSearchSorted(v, maxDocs, column, ascending, exact, variants, fuzzy);
+			s_recycle(v);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -251,7 +267,11 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public int FTSearchSorted(Vector query, int maxDocs, String column, boolean ascending, boolean exact, boolean variants, boolean fuzzy) {
 		try {
-			return getDelegate().FTSearchSorted(toDominoFriendly(query, this), maxDocs, column, ascending, exact, variants, fuzzy);
+			int result;
+			java.util.Vector v = toDominoFriendly(query, this);
+			result = getDelegate().FTSearchSorted(toDominoFriendly(query, this), maxDocs, column, ascending, exact, variants, fuzzy);
+			s_recycle(v);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

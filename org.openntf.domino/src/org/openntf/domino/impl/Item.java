@@ -87,7 +87,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	public void appendToTextList(java.util.Vector values) {
 		markDirty();
 		try {
-			getDelegate().appendToTextList(toDominoFriendly(values, this));
+			java.util.Vector v = toDominoFriendly(values, this);
+			getDelegate().appendToTextList(v);
+			s_recycle(v);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -101,7 +103,11 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	@Override
 	public boolean containsValue(Object value) {
 		try {
-			return getDelegate().containsValue(toDominoFriendly(value, this));
+			boolean result;
+			Object domObj = toDominoFriendly(value, this);
+			result = getDelegate().containsValue(toDominoFriendly(value, this));
+			Base.s_recycle(domObj);
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -616,7 +622,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	public void setDateTimeValue(lotus.domino.DateTime dateTime) {
 		markDirty();
 		try {
-			getDelegate().setDateTimeValue((lotus.domino.DateTime) toLotus(dateTime));
+			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(dateTime);
+			getDelegate().setDateTimeValue(dt);
+			enc_recycle(dt);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -827,7 +835,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	public void setValues(java.util.Vector values) {
 		markDirty();
 		try {
-			getDelegate().setValues(toDominoFriendly(values, this));
+			java.util.Vector v = toDominoFriendly(values, this);
+			getDelegate().setValues(v);
+			s_recycle(v);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

@@ -744,7 +744,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	public void getUserInfo(String userName, StringBuffer mailServer, StringBuffer mailFile, StringBuffer mailDomain,
 			StringBuffer mailSystem, Vector profile) {
 		try {
-			getDelegate().getUserInfo(userName, mailServer, mailFile, mailDomain, mailSystem, toDominoFriendly(profile, this));
+			java.util.Vector v = toDominoFriendly(profile, this);
+			getDelegate().getUserInfo(userName, mailServer, mailFile, mailDomain, mailSystem, v);
+			s_recycle(v);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1086,7 +1088,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	@Override
 	public void setAltOrgUnitLang(Vector languages) {
 		try {
-			getDelegate().setAltOrgUnitLang(toDominoFriendly(languages, this));
+			java.util.Vector v = toDominoFriendly(languages, this);
+			getDelegate().setAltOrgUnitLang(v);
+			s_recycle(v);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1156,7 +1160,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	@Override
 	public void setExpiration(lotus.domino.DateTime expiration) {
 		try {
-			getDelegate().setExpiration((lotus.domino.DateTime) toLotus(expiration));
+			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(expiration);
+			getDelegate().setExpiration(dt);
+			enc_recycle(dt);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1185,7 +1191,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	@Override
 	public void setGroupList(Vector groups) {
 		try {
-			getDelegate().setGroupList(toDominoFriendly(groups, this));
+			java.util.Vector v = toDominoFriendly(groups, this);
+			getDelegate().setGroupList(v);
+			s_recycle(v);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1298,7 +1306,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	@Override
 	public void setMailReplicaServers(Vector servers) {
 		try {
-			getDelegate().setMailReplicaServers(toDominoFriendly(servers, this));
+			java.util.Vector v = toDominoFriendly(servers, this);
+			getDelegate().setMailReplicaServers(v);
+			s_recycle(v);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

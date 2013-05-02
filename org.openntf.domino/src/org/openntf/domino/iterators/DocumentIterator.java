@@ -78,7 +78,7 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 			} catch (Throwable t) {
 				DominoUtils.handleException(t);
 			} finally {
-				Base.recycle(nc);
+				Base.s_recycle(nc);
 			}
 		} else {
 			if (log_.isLoggable(Level.WARNING)) {
