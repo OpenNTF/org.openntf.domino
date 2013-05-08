@@ -565,6 +565,10 @@ public enum DominoUtils {
 		MIMEEntity previousState = doc.getMIMEEntity(itemName);
 		MIMEEntity entity = null;
 		if (previousState == null) {
+			Item itemChk = doc.getFirstItem(itemName);
+			if (itemChk != null) {
+				itemChk.remove();
+			}
 			entity = doc.createMIMEEntity(itemName);
 		} else {
 			entity = previousState;
@@ -742,6 +746,9 @@ public enum DominoUtils {
 		Iterator<?> it = values.iterator();
 		while (it.hasNext()) {
 			Object o = it.next();
+			if (o instanceof DateTime) {
+				return false;
+			}
 			if (!(o instanceof Serializable)) {
 				result = false;
 				break;

@@ -18,13 +18,11 @@ public class DominoVertex extends DominoElement implements Vertex {
 	public static final String GRAPH_TYPE_VALUE = "OpenVertex";
 	public static final String IN_NAME = "_OPEN_IN";
 	public static final String OUT_NAME = "_OPEN_OUT";
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
-	// private transient boolean inDirty_ = false;
+	private transient boolean inDirty_ = false;
 	private Set<String> inEdges_;
-	// private transient boolean outDirty_ = false;
+	private transient boolean outDirty_ = false;
 	private Set<String> outEdges_;
 
 	public DominoVertex(DominoGraph parent, org.openntf.domino.Document doc) {
@@ -37,17 +35,21 @@ public class DominoVertex extends DominoElement implements Vertex {
 	}
 
 	void addInEdge(Edge edge) {
-		getParent().startTransaction();
-		getInEdges().add((String) edge.getId());
-		setProperty(DominoVertex.IN_NAME, inEdges_);
-		// inDirty_ = true;
+		if (!getInEdges().contains((String) edge.getId())) {
+			getParent().startTransaction();
+			inDirty_ = true;
+			getInEdges().add((String) edge.getId());
+		}
+		// setProperty(DominoVertex.IN_NAME, inEdges_);
 	}
 
 	void addOutEdge(Edge edge) {
-		getParent().startTransaction();
-		getOutEdges().add((String) edge.getId());
-		setProperty(DominoVertex.OUT_NAME, outEdges_);
-		// outDirty_ = true;
+		if (!getOutEdges().contains((String) edge.getId())) {
+			getParent().startTransaction();
+			outDirty_ = true;
+			getOutEdges().add((String) edge.getId());
+		}
+		// setProperty(DominoVertex.OUT_NAME, outEdges_);
 	}
 
 	public java.util.Set<String> getBothEdges() {
@@ -115,22 +117,20 @@ public class DominoVertex extends DominoElement implements Vertex {
 	public void removeEdge(Edge edge) {
 		getParent().startTransaction();
 		getInEdges().remove(edge.getId());
-		// inDirty_ = true;
+		inDirty_ = true;
 		getOutEdges().remove(edge.getId());
-		// outDirty_ = true;
+		outDirty_ = true;
 	}
 
-	// @Override
-	// public void save() {
-	// if (inDirty_) {
-	// setProperty(DominoVertex.IN_NAME, inEdges_);
-	// inDirty_ = false;
-	// }
-	// if (outDirty_) {
-	// setProperty(DominoVertex.OUT_NAME, outEdges_);
-	// outDirty_ = false;
-	// }
-	// super.save();
-	// }
+	void writeEdges() {
+		if (inDirty_) {
+			setProperty(DominoVertex.IN_NAME, inEdges_);
+			inDirty_ = false;
+		}
+		if (outDirty_) {
+			setProperty(DominoVertex.OUT_NAME, outEdges_);
+			outDirty_ = false;
+		}
+	}
 
 }

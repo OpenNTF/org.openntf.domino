@@ -144,7 +144,6 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 */
 	@SuppressWarnings("rawtypes")
 	protected Base(D delegate, org.openntf.domino.Base<?> parent) {
-		drainQueue();
 		if (parent != null) {
 			setParent(parent);
 		}
@@ -170,6 +169,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 					log_.log(Level.WARNING, "Why are you wrapping a non-Lotus object? " + delegate.getClass().getName());
 			}
 		}
+		drainQueue(cpp_object);
 		// else {
 		// encapsulated_ = true;
 		// }
@@ -221,13 +221,13 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	/**
 	 * Drain queue.
 	 */
-	public static int drainQueue() {
+	public static int drainQueue(long cppid) {
 		int result = 0;
 		DominoReferenceQueue drq = _getRecycleQueue();
-		Reference<?> ref = drq.poll();
+		Reference<?> ref = drq.poll(cppid);
 
 		while (ref != null) {
-			ref = drq.poll();
+			ref = drq.poll(cppid);
 			result++;
 		}
 		return result;
@@ -454,6 +454,12 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			return value;
 		} else if (value instanceof String) {
 			return value;
+		} else if (value instanceof Boolean) {
+			if ((Boolean) value) {
+				return "1";
+			} else {
+				return "0";
+			}
 		}
 
 		// Now for the illegal-but-convertible types

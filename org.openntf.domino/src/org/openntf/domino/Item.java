@@ -23,12 +23,13 @@ import java.util.Vector;
 import lotus.domino.XSLTResultTarget;
 
 import org.openntf.domino.types.DocumentDescendant;
+import org.openntf.domino.types.Resurrectable;
 import org.xml.sax.InputSource;
 
 /**
  * The Interface Item.
  */
-public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.openntf.domino.ext.Item, DocumentDescendant {
+public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.openntf.domino.ext.Item, Resurrectable, DocumentDescendant {
 
 	/*
 	 * (non-Javadoc)

@@ -217,6 +217,8 @@ public enum TypeUtils {
 	}
 
 	public static String join(Collection<Object> values, String separator) {
+		if (values == null)
+			return "";
 		StringBuilder sb = new StringBuilder();
 		Iterator<Object> it = values.iterator();
 		while (it.hasNext()) {
@@ -292,6 +294,9 @@ public enum TypeUtils {
 	public static Date toDate(Object value) throws DataNotCompatibleException {
 		if (value == null)
 			return null;
+		if (value instanceof Vector) {
+			value = ((Vector) value).get(0);
+		}
 		if (value instanceof Long) {
 			return new Date(((Long) value).longValue());
 		} else if (value instanceof String) {

@@ -18,6 +18,8 @@ package org.openntf.domino.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
@@ -33,7 +35,10 @@ import org.xml.sax.InputSource;
  * The Class Item.
  */
 public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> implements org.openntf.domino.Item {
+	private static final Logger log_ = Logger.getLogger(Item.class.getName());
+
 	// TODO NTF - all setters should check to see if the new value is different from the old and only markDirty if there's a change
+	private String name_;
 
 	/**
 	 * Instantiates a new item.
@@ -45,6 +50,15 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 */
 	public Item(lotus.domino.Item delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
+		initialize(delegate);
+	}
+
+	private void initialize(lotus.domino.Item delegate) {
+		try {
+			name_ = delegate.getName();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
 	}
 
 	/*
@@ -893,6 +907,52 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	@Override
 	public Session getAncestorSession() {
 		return this.getParent().getAncestorSession();
+	}
+
+	@Override
+	protected lotus.domino.Item getDelegate() {
+		lotus.domino.Item item = super.getDelegate();
+		// try {
+		// item.isSummary();
+		// } catch (NotesException recycleSucks) {
+		// resurrect();
+		// }
+		return super.getDelegate();
+	}
+
+	private void resurrect() {
+		if (name_ != null) {
+			try {
+				lotus.domino.Document d = (getAncestorDocument()).getDelegate();
+				lotus.domino.Item item = d.getFirstItem(name_);
+				setDelegate(item);
+				if (log_.isLoggable(Level.INFO)) {
+					log_.log(Level.INFO, "Item " + name_ + " in document path " + getAncestorDocument().getNoteID()
+							+ " had been recycled and was auto-restored. Changes may have been lost.");
+					log_.log(Level.FINE,
+							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
+					if (log_.isLoggable(Level.FINER)) {
+						Throwable t = new Throwable();
+						StackTraceElement[] elements = t.getStackTrace();
+						log_.log(Level.FINER,
+								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
+										+ ")");
+						log_.log(Level.FINER,
+								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
+										+ ")");
+						log_.log(Level.FINER,
+								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
+										+ ")");
+					}
+				}
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+			}
+		} else {
+			if (log_.isLoggable(Level.WARNING)) {
+				log_.log(Level.WARNING, "Item doesn't have name value. Something went terribly wrong. Nothing good can come of this...");
+			}
+		}
 	}
 
 }

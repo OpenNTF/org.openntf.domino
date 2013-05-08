@@ -45,13 +45,17 @@ public abstract class DominoElement implements Element, Serializable {
 	}
 
 	public int incrementProperty(String propertyName) {
-		int result = getProperty(propertyName, Integer.class);
+		Integer result = getProperty(propertyName, Integer.class);
+		if (result == null)
+			result = 0;
 		setProperty(propertyName, ++result);
 		return result;
 	}
 
 	public int decrementProperty(String propertyName) {
-		int result = getProperty(propertyName, Integer.class);
+		Integer result = getProperty(propertyName, Integer.class);
+		if (result == null)
+			result = 0;
 		setProperty(propertyName, --result);
 		return result;
 	}

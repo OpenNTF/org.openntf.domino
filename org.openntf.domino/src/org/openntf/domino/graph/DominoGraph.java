@@ -73,6 +73,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	}
 
 	private java.util.Map<Object, DominoElement> cache_;
+
 	private transient org.openntf.domino.Database database_;
 	private String filepath_;
 	private String server_;
@@ -115,15 +116,22 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 
 	public Edge getOrAddEdge(Object id, Vertex outVertex, Vertex inVertex, String label) {
 		Edge result = null;
+
 		if (id == null) {
 			id = (outVertex.getId() + label + inVertex.getId());
 			result = getEdge(id);
+			((DominoEdge) result).setOutDoc(outVertex);
+			((DominoEdge) result).setInDoc(inVertex);
+			((DominoEdge) result).setLabel(label);
 		}
 		if (result == null) {
 			for (Edge e : outVertex.getEdges(Direction.OUT, label)) {
 				Vertex v = e.getVertex(Direction.IN);
 				if (v.getId().equals(inVertex.getId())) {
 					result = e;
+					((DominoEdge) result).setOutDoc(outVertex);
+					((DominoEdge) result).setInDoc(inVertex);
+					((DominoEdge) result).setLabel(label);
 					break;
 				}
 			}
@@ -204,6 +212,10 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 			Document d = getDocument(id, false);
 			if (d == null)
 				return null;
+			if (d.isDeleted()) {
+				System.out.println("Found edge for id " + String.valueOf(id) + " but it's been deleted.");
+				return null;
+			}
 			DominoEdge result = new DominoEdge(this, d);
 			getCache().put(id, result);
 		}
@@ -273,6 +285,10 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 			Document d = getDocument(id, false);
 			if (d == null)
 				return null;
+			if (d.isDeleted()) {
+				System.out.println("Found vertex for id " + String.valueOf(id) + " but it's been deleted.");
+				return null;
+			}
 			DominoVertex result = new DominoVertex(this, d);
 			getCache().put(id, result);
 		}
@@ -373,11 +389,20 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	@Override
 	public void commit() {
 		if (inTransaction_) {
-			System.out.println("Committing transaction");
+			// System.out.println("Committing transaction");
 
 			if (txn_ == null) {
 				System.out.println("Transaction is null!?!?!");
 			} else {
+				if (getCache().size() > 0) {
+					for (DominoElement elem : getCache().values()) {
+						if (elem instanceof DominoVertex) {
+							((DominoVertex) elem).writeEdges();
+						}
+					}
+				} else {
+					// System.out.println("ELEMENT CACHE IS EMPTY!??!");
+				}
 				txn_.commit();
 				txn_ = null;
 			}
@@ -387,7 +412,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 			System.out.println("Not in transaction!");
 		}
 		getCache().clear();
-		System.out.println("Transaction complete");
+		// System.out.println("Transaction complete");
 
 	}
 

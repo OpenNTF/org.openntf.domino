@@ -54,10 +54,10 @@ public class DominoEdge extends DominoElement implements Edge {
 	}
 
 	public void setInDoc(Vertex in) {
+		((DominoVertex) in).addInEdge(this);
 		in_ = in;
 		inKey_ = (String) in.getId();
 		setProperty(DominoEdge.IN_NAME, inKey_);
-		((DominoVertex) in).addInEdge(this);
 	}
 
 	void setLabel(String label) {
@@ -65,10 +65,10 @@ public class DominoEdge extends DominoElement implements Edge {
 	}
 
 	public void setOutDoc(Vertex out) {
+		((DominoVertex) out).addOutEdge(this);
 		out_ = out;
 		outKey_ = (String) out.getId();
 		setProperty(DominoEdge.OUT_NAME, outKey_);
-		((DominoVertex) out).addOutEdge(this);
 	}
 
 	// @Override

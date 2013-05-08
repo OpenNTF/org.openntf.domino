@@ -58,7 +58,12 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 
 	@Override
 	public Reference<? extends Base> poll() {
+		return poll(0l);
+	}
+
+	public Reference<? extends Base> poll(long cppid) {
 		DominoReference result = (DominoReference) super.poll();
+
 		if (result != null) {
 			referenceBag.remove(result);
 			int count = -1;
@@ -73,8 +78,13 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 				}
 			} else {
 				count = localLotusReferenceCounter_.decrement(result.getDelegateId());
-				if (count < 1)
-					shouldRecycle = true;
+				if (count < 1) {
+					if (result.getDelegateId() == cppid) {
+						System.out.println("ALERT!!! Attemping to auto-recycle the same handle we're currently wrapping. Don't! " + cppid);
+					} else {
+						shouldRecycle = true;
+					}
+				}
 			}
 			if (shouldRecycle) {
 				result.recycle();

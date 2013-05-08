@@ -130,7 +130,7 @@ public class DominoThread extends Thread {
 			}
 			int drCount = 0;
 			try {
-				drCount = Base.drainQueue();
+				drCount = Base.drainQueue(0l);
 			} catch (Throwable t) {
 				t.printStackTrace();
 			}

@@ -33,6 +33,7 @@ import java.util.logging.Logger;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.DocumentCollection;
+import org.openntf.domino.Item;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
@@ -62,6 +63,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	private boolean isQueued_ = false;
 	private boolean isRemoveQueued_ = false;
 	private boolean shouldWriteItemMeta_ = false; // TODO NTF create rules for making this true
+	private boolean shouldResurrect_ = false;
 
 	// NTF - these are immutable by definition, so we should just copy it when we read in the doc
 	// yes, we're creating objects we might not need, but that's better than risking the toxicity of evil, wicked DateTime
@@ -544,6 +546,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return null;
 	}
 
+	private final transient Map<String, MIMEEntity> entityCache_ = new HashMap<String, MIMEEntity>();
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -551,9 +555,30 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public MIMEEntity createMIMEEntity(String itemName) {
-		markDirty();
+		// if (entityCache_.containsKey(itemName)) {
+		// log_.warning("Returning MIMEEntity for " + itemName + " from cache instead of creating...");
+		// return entityCache_.get(itemName);
+		// }
 		try {
-			return Factory.fromLotus(getDelegate().createMIMEEntity(itemName), MIMEEntity.class, this);
+			try {
+				lotus.domino.MIMEEntity me = getDelegate().createMIMEEntity(itemName);
+				markDirty();
+				MIMEEntity wrapped = Factory.fromLotus(me, MIMEEntity.class, this);
+				// entityCache_.put(itemName, wrapped);
+				return wrapped;
+			} catch (NotesException alreadyThere) {
+				Item item = getFirstItem(itemName);
+				if (item != null) {
+					log_.warning("Already have a non-MIME item for " + itemName + ". Removing...");
+					item.remove();
+				}
+				lotus.domino.MIMEEntity me = getDelegate().createMIMEEntity(itemName);
+				markDirty();
+				MIMEEntity wrapped = Factory.fromLotus(me, MIMEEntity.class, this);
+				// entityCache_.put(itemName, wrapped);
+				return wrapped;
+			}
+			// return Factory.fromLotus(getDelegate().createMIMEEntity(itemName), MIMEEntity.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -962,9 +987,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * @see org.openntf.domino.Document#getItems()
 	 */
 	@Override
-	public Vector<org.openntf.domino.Item> getItems() {
+	public Vector<Item> getItems() {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getItems(), org.openntf.domino.Item.class, this);
+			return Factory.fromLotusAsVector(getDelegate().getItems(), Item.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1024,8 +1049,14 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public MIMEEntity getMIMEEntity(String itemName) {
+		// if (entityCache_.containsKey(itemName)) {
+		// log_.warning("Returning MIMEEntity " + itemName + " from local document cache...");
+		// return entityCache_.get(itemName);
+		// }
 		try {
-			return Factory.fromLotus(getDelegate().getMIMEEntity(itemName), MIMEEntity.class, this);
+			MIMEEntity wrapped = Factory.fromLotus(getDelegate().getMIMEEntity(itemName), MIMEEntity.class, this);
+			// entityCache_.put(itemName, wrapped);
+			return wrapped;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1796,11 +1827,14 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Item replaceItemValue(String itemName, Object value) {
+	public Item replaceItemValue(final String itemName, Object value) {
+		if (value == null)
+			value = "";
 		markDirty();
 		try {
 			lotus.domino.Item result = null;
 			Class<?> valueClass = value.getClass();
+
 			try {
 				if (value instanceof List) {
 					Vector<Object> resultList = new Vector<Object>();
@@ -1830,14 +1864,28 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					}
 					// If it ended up being something we could store, make note of the original class instead of the list class
 					valueClass = ((List<?>) value).get(0).getClass();
-
+					MIMEEntity mimeChk = getMIMEEntity(itemName);
+					if (mimeChk != null) {
+						mimeChk.remove();
+					}
 					result = getDelegate().replaceItemValue(itemName, resultList);
 				} else {
 					Object domNode = toDominoFriendly(value, this);
 					if (domNode instanceof String && ((String) domNode).length() > 60000) {
 						throw new IllegalArgumentException();
 					}
-					result = getDelegate().replaceItemValue(itemName, domNode);
+					try {
+						MIMEEntity mimeChk = getMIMEEntity(itemName);
+						if (mimeChk != null) {
+
+							mimeChk.remove();
+						}
+						result = getDelegate().replaceItemValue(itemName, domNode);
+					} catch (NotesException nativeError) {
+						log_.warning("Native error occured when replacing " + itemName + " item on doc " + this.noteid_
+								+ " with a value of type " + (domNode == null ? "null" : domNode.getClass().getName()) + " of value "
+								+ String.valueOf(domNode));
+					}
 					Base.enc_recycle(domNode);
 				}
 			} catch (IllegalArgumentException iae) {
@@ -2323,6 +2371,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			try {
 				lotus.domino.Database delDb = getDelegate().getParentDatabase();
 				getDelegate().recycle();
+				shouldResurrect_ = true;
 				// lotus.domino.Document junkDoc = delDb.createDocument(); // NTF - Why? To make sure I get a new cppid. Otherwise the
 				// handle
 				// gets reused
@@ -2365,7 +2414,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		try {
 			d.isProfile();
 		} catch (NotesException recycleSucks) {
-			resurrect();
+			if (shouldResurrect_) {
+				resurrect();
+			}
 		}
 		return super.getDelegate();
 	}
@@ -2375,17 +2426,23 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			try {
 				lotus.domino.Document d = ((org.openntf.domino.impl.Database) getParentDatabase()).getDelegate().getDocumentByID(noteid_);
 				setDelegate(d);
+				shouldResurrect_ = false;
 				if (log_.isLoggable(Level.FINE)) {
-					Throwable t = new Throwable();
-					StackTraceElement[] elements = t.getStackTrace();
 					log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
 							+ " had been recycled and was auto-restored. Changes may have been lost.");
-					log_.log(Level.FINER,
-							elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber() + ")");
-					log_.log(Level.FINER,
-							elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber() + ")");
-					log_.log(Level.FINER,
-							elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber() + ")");
+					if (log_.isLoggable(Level.FINER)) {
+						Throwable t = new Throwable();
+						StackTraceElement[] elements = t.getStackTrace();
+						log_.log(Level.FINER,
+								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
+										+ ")");
+						log_.log(Level.FINER,
+								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
+										+ ")");
+						log_.log(Level.FINER,
+								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
+										+ ")");
+					}
 					log_.log(Level.FINE,
 							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
 				}
