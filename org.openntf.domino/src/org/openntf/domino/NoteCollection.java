@@ -15,8 +15,6 @@
  */
 package org.openntf.domino;
 
-import java.util.Vector;
-
 import org.openntf.domino.types.DatabaseDescendant;
 
 /**
@@ -24,6 +22,10 @@ import org.openntf.domino.types.DatabaseDescendant;
  */
 public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus.domino.NoteCollection,
 		org.openntf.domino.ext.NoteCollection, Iterable<String>, DatabaseDescendant {
+
+	public static enum SelectOption {
+		ACL, ACTIONS, AGENTS, DATABASE_SCRIPT, DATA_CONNECTIONS, DOCUMENTS, FOLDERS, FORMS, FRAMESETS, HELP_ABOUT, HELP_INDEX, HELP_USING, ICON, IMAGE_RESOURCES, JAVA_RESOURCES, MISC_CODE, MISC_FORMAT, MISC_INDEX, NAVIGATORS, OUTLINES, PAGES, PROFILES, REPLICATION_FORMULAS, SCRIPT_LIBRARIES, SHARED_FIELDS, STYLESHEETS, SUBFORMS, VIEWS;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -433,14 +435,6 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	@Override
 	public DateTime getUntilTime();
 
-	/**
-	 * Hash code.
-	 * 
-	 * @return the int
-	 */
-	@Override
-	public int hashCode();
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -504,23 +498,6 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 */
 	@Override
 	public void intersect(lotus.domino.View intersectionSpecifier);
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Base#recycle()
-	 */
-	@Override
-	public void recycle();
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see lotus.domino.Base#recycle(java.util.Vector)
-	 */
-	@SuppressWarnings("rawtypes")
-	@Override
-	public void recycle(Vector objects);
 
 	/*
 	 * (non-Javadoc)
