@@ -2478,19 +2478,26 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		return this.createDocumentCollection();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.impl.Base#getDelegate()
+	 */
 	@Override
 	protected lotus.domino.Database getDelegate() {
 		lotus.domino.Database db = super.getDelegate();
 		try {
-			db.isOpen();
+			db.getViews().get(0);
 		} catch (NotesException e) {
 			resurrect();
 		}
 		return super.getDelegate();
 	}
 
-	private void resurrect() { // should only happen if the delegate has been destroyed somehow.
-		lotus.domino.Session rawSession = ((org.openntf.domino.impl.Session) getParent()).getDelegate();
+	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
+		// TODO: Currently gets session. Need to get session, sessionAsSigner or sessionAsSignerWithFullAccess, as appropriate somwhow
+		Session rawSessionUs = (Session) Factory.getSession();
+		lotus.domino.Session rawSession = (lotus.domino.Session) rawSessionUs.getDelegate();
 		try {
 			lotus.domino.Database d = rawSession.getDatabase(server_, path_);
 			setDelegate(d);
@@ -2510,7 +2517,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 						"If you are using this Database in XPages and have attempted to hold it in an scoped variable between requests, this behavior is normal.");
 
 			}
-		} catch (NotesException e) {
+		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}
 	}
