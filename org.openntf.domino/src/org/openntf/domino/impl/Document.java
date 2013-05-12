@@ -1206,7 +1206,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public DocumentCollection getResponses() {
 		try {
-			return Factory.fromLotus(getDelegate().getResponses(), DocumentCollection.class, this);
+			return Factory.fromLotus(getDelegate().getResponses(), DocumentCollection.class, Factory.getParentDatabase(this));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

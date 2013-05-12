@@ -1392,4 +1392,19 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		return result;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.impl.Base#getDelegate()
+	 */
+	@Override
+	protected lotus.domino.Session getDelegate() {
+		lotus.domino.Session session = super.getDelegate();
+		try {
+			session.isConvertMIME();
+		} catch (NotesException ne) {
+			setDelegate(((org.openntf.domino.impl.Session) Factory.getSession()).getDelegate());
+		}
+		return super.getDelegate();
+	}
 }

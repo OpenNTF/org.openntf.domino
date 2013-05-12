@@ -160,7 +160,11 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		if (session_ == null) {
 			session_ = Factory.getSession();
 		} else {
-			session_.isTrustedSession();
+			try {
+				session_.isTrustedSession();
+			} catch (Exception xPagesDidThis) {
+				session_ = Factory.getSession();
+			}
 		}
 		return session_;
 	}

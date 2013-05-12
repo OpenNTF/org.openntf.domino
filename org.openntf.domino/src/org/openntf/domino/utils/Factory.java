@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import lotus.domino.NotesException;
+
 import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
@@ -294,7 +296,15 @@ public enum Factory {
 			result = (T) new org.openntf.domino.impl.RichTextTable((lotus.domino.RichTextTable) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Session) {
 			result = (T) new org.openntf.domino.impl.Session((lotus.domino.Session) lotus, parent);
-			if (currentSessionHolder_.get() == null || !currentSessionHolder_.get().isValid()) {
+			if (currentSessionHolder_.get() != null) {
+				try {
+					((lotus.domino.Session) currentSessionHolder_.get()).isConvertMIME();
+				} catch (NotesException ne) {
+					System.out.println("Resetting default local session because we got an exception");
+					setSession((org.openntf.domino.Session) result);
+				}
+			} else {
+				System.out.println("Resetting default local session because it was null");
 				setSession((org.openntf.domino.Session) result);
 			}
 		} else if (lotus instanceof lotus.domino.Stream) {
@@ -469,7 +479,7 @@ public enum Factory {
 			try {
 				setSession(lotus.domino.NotesFactory.createSession());
 			} catch (lotus.domino.NotesException ne) {
-				DominoUtils.handleException(ne);
+				setSession(XSPUtil.getCurrentSession());
 			}
 		}
 		return currentSessionHolder_.get();

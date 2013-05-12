@@ -75,6 +75,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 			if (!(current instanceof org.openntf.domino.Session)) {
 				s = Factory.fromLotus((lotus.domino.Session) current, org.openntf.domino.Session.class, null);
 				localMap.put((isGodMode() ? "session" : "opensession"), s);
+				// System.out.println("Putting OpenNTF session into implicits");
 			} else {
 				s = (org.openntf.domino.Session) current;
 			}
