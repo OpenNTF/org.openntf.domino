@@ -125,10 +125,12 @@ public class DominoVertex extends DominoElement implements Vertex {
 	void writeEdges() {
 		if (inDirty_) {
 			setProperty(DominoVertex.IN_NAME, inEdges_);
+			setProperty(DominoVertex.IN_NAME + "_COUNT", inEdges_.size());
 			inDirty_ = false;
 		}
 		if (outDirty_) {
 			setProperty(DominoVertex.OUT_NAME, outEdges_);
+			setProperty(DominoVertex.OUT_NAME + "_COUNT", outEdges_.size());
 			outDirty_ = false;
 		}
 	}

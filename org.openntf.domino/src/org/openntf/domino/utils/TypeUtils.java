@@ -54,6 +54,7 @@ public enum TypeUtils {
 
 	@SuppressWarnings("rawtypes")
 	public static <T> T itemValueToClass(Item item, Class<?> T) {
+		// Object o = item.getAncestorDocument().getItemValue(item.getName());
 		Vector v = item.getValues();
 		Session session = Factory.getSession(item);
 		T result = null;
@@ -111,6 +112,10 @@ public enum TypeUtils {
 				session.createDateTime(toDate(v));
 			} else if (T.isAssignableFrom(org.openntf.domino.Name.class)) {
 				session.createName(String.valueOf(v.get(0)));
+			} else {
+				if (!v.isEmpty()) {
+					result = v.get(0);
+				}
 			}
 		}
 		return (T) result;

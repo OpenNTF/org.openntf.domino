@@ -2414,9 +2414,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		try {
 			d.isProfile();
 		} catch (NotesException recycleSucks) {
-			if (shouldResurrect_) {
-				resurrect();
-			}
+			// if (shouldResurrect_) {
+			resurrect();
+			// }
 		}
 		return super.getDelegate();
 	}

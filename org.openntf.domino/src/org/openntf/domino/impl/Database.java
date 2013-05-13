@@ -2487,7 +2487,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	protected lotus.domino.Database getDelegate() {
 		lotus.domino.Database db = super.getDelegate();
 		try {
-			db.getViews().get(0);
+			db.isFTIndexed();
 		} catch (NotesException e) {
 			resurrect();
 		}
