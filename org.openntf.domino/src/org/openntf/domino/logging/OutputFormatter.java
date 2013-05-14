@@ -28,10 +28,8 @@ public class OutputFormatter extends Formatter {
 		sb.append(" [");
 		sb.append(logRecord.getLevel().getName());
 		sb.append("]: ");
-		sb.append(logRecord.getSourceClassName());
-		sb.append(".");
-		sb.append(logRecord.getSourceMethodName());
-		sb.append("() - ");
+		sb.append(logRecord.getThrown().getStackTrace()[0].toString());
+		sb.append(" - ");
 		sb.append(logRecord.getMessage());
 		sb.append("\n");
 		return sb.toString();

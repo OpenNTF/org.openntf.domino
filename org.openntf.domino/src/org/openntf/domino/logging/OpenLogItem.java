@@ -359,10 +359,6 @@ public class OpenLogItem implements Serializable {
 			} catch (Exception e) {
 				debugPrint(e);
 			}
-		} else {
-			if (Base.isRecycled((NotesBase) _currentDatabase)) {
-				_currentDatabase = getSession().getCurrentDatabase();
-			}
 		}
 		return _currentDatabase;
 	}
@@ -482,9 +478,8 @@ public class OpenLogItem implements Serializable {
 	public DateTime getStartTime() {
 		if (_startTime == null) {
 			try {
-				_startTime = getSession().createDateTime("Today");
-				_startTime.setNow();
-				DominoUtils.toJavaDateSafe(_startTime);
+				Date _startJavaTime = new Date();
+				_startTime = getSession().createDateTime(_startJavaTime);
 			} catch (Exception e) {
 				debugPrint(e);
 			}
@@ -564,6 +559,8 @@ public class OpenLogItem implements Serializable {
 	public DateTime getEventTime() {
 		if (_eventTime == null) {
 			_eventJavaTime = new Date();
+			_eventTime = getSession().createDateTime(_eventJavaTime);
+
 		}
 		return _eventTime;
 	}
@@ -893,7 +890,8 @@ public class OpenLogItem implements Serializable {
 				logDoc.replaceItemValue("LogErrorNumber", ((NotesException) ee).id);
 				logDoc.replaceItemValue("LogErrorMessage", ((NotesException) ee).text);
 			} else {
-				logDoc.replaceItemValue("LogErrorMessage", ee.getStackTrace()[0].toString());
+				// Fixed next line
+				logDoc.replaceItemValue("LogErrorMessage", getMessage());
 			}
 
 			logDoc.replaceItemValue("LogStackTrace", getStackTrace(ee));
@@ -905,7 +903,8 @@ public class OpenLogItem implements Serializable {
 			logDoc.replaceItemValue("LogFromDatabase", getCurrentDatabasePath());
 			logDoc.replaceItemValue("LogFromServer", getThisServer());
 			logDoc.replaceItemValue("LogFromAgent", getThisAgent());
-			logDoc.replaceItemValue("LogFromMethod", ste.getClass() + "." + ste.getMethodName());
+			// Fixed next line
+			logDoc.replaceItemValue("LogFromMethod", ste.getClassName() + "." + ste.getMethodName());
 			logDoc.replaceItemValue("LogAgentLanguage", "Java");
 			logDoc.replaceItemValue("LogUserName", getUserName());
 			logDoc.replaceItemValue("LogEffectiveName", getEffName());

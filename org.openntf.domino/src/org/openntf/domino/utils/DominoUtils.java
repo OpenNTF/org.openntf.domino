@@ -190,7 +190,7 @@ public enum DominoUtils {
 						log_.log(Level.WARNING, t.getLocalizedMessage(), t);
 						t.printStackTrace();
 					}
-					return null;
+					return t;
 				}
 			});
 			return null;
