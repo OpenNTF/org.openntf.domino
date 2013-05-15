@@ -308,23 +308,31 @@ public class OpenLogItem implements Serializable {
 	 *            whether or not the current XPage should be used or previous (if the user has been re-routed to an Error page)
 	 */
 	public void setThisAgent(boolean currPage) {
-		String fromPage = "";
-		if (currPage) {
-			// fromPage = JSFUtil.getXSPContext().getUrl().toSiteRelativeString(JSFUtil.getXSPContext());
-			fromPage = fromPage.substring(0);
-		} else {
-			String[] historyUrls = null;
-			// historyUrls = JSFUtil.getXSPContext().getHistoryUrls();
-			if (historyUrls.length > 1) {
-				fromPage = historyUrls[1];
-			} else {
-				fromPage = historyUrls[0];
-			}
-		}
-		_thisAgent = fromPage;
-		if (fromPage.indexOf("?") > -1) {
-			_thisAgent = _thisAgent.substring(1, _thisAgent.indexOf("?"));
-		}
+		_thisAgent = "org.openntf.domino";
+		// AgentContext agentContext = getSession().getAgentContext();
+		// if (agentContext != null) {
+		// _thisAgent = agentContext.getCurrentAgent().getName();
+		// } else {
+		// String fromPage = "";
+		// String[] historyUrls = null;
+		// if (null == historyUrls) {
+		// System.out.println("DAMN!");
+		// } else {
+		// if (currPage) {
+		// fromPage = historyUrls[0];
+		// } else {
+		// if (historyUrls.length > 1) {
+		// fromPage = historyUrls[1];
+		// } else {
+		// fromPage = historyUrls[0];
+		// }
+		// }
+		// _thisAgent = fromPage;
+		// if (fromPage.indexOf("?") > -1) {
+		// _thisAgent = _thisAgent.substring(1, _thisAgent.indexOf("?"));
+		// }
+		// }
+		// }
 	}
 
 	/**
@@ -665,7 +673,7 @@ public class OpenLogItem implements Serializable {
 	 */
 	public String logError(Throwable ee) {
 		try {
-			// TODO: Add to errors block is XPages
+			// TODO: Add to errors block in XPages
 			// StackTraceElement[] s = ee.getStackTrace();
 			// FacesMessage m = new FacesMessage("Error in " + s[0].getClassName() + ", line " + s[0].getLineNumber() + ": " +
 			// ee.toString());
@@ -870,7 +878,6 @@ public class OpenLogItem implements Serializable {
 		// exit early if there is no database
 		Database db = getLogDb();
 		if (db == null) {
-			System.out.println("Could not retrieve database at path " + getLogDbName());
 			return false;
 		}
 

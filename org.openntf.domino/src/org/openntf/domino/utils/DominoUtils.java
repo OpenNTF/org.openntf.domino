@@ -188,12 +188,11 @@ public enum DominoUtils {
 						logBackup_.log(Level.SEVERE, t.getLocalizedMessage(), t);
 					} else {
 						log_.log(Level.WARNING, t.getLocalizedMessage(), t);
-						t.printStackTrace();
 					}
-					return t;
+					return null;
 				}
 			});
-			return null;
+			return t;
 		} catch (Throwable e) {
 			return t;
 		}

@@ -1,0 +1,8 @@
+2013-05-15T21:55:02+0100 [WARNING]: org.openntf.domino.tests.paul.LoggerTests$DominoException.run - Thrown Error2
+[Ljava.lang.StackTraceElement;@5a565a56
+2013-05-15T21:58:36+0100 [WARNING]: org.openntf.domino.tests.paul.LoggerTests$DominoException.run - Thrown Error2
+java.lang.Throwable: Thrown Error2
+	at org.openntf.domino.tests.paul.LoggerTests$DominoException.run(LoggerTests.java:37)
+	at java.lang.Thread.run(Thread.java:738)
+	at org.openntf.domino.thread.DominoThread.run(DominoThread.java:121)
+
