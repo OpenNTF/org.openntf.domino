@@ -415,7 +415,7 @@ public class WrapperOpenDomino {
 
 	private static OpenMethodMap generateMethodMap(JSContext context, Class<?> clazz) {
 		OpenMethodMap methodMap = new OpenMethodMap(context, clazz, null);
-		for (Method crystal : clazz.getDeclaredMethods()) {
+		for (Method crystal : clazz.getMethods()) {
 			String name = crystal.getName();
 			Object cur = methodMap.get(name);
 			if (cur == null) {
