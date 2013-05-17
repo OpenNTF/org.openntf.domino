@@ -21,12 +21,14 @@ import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
+import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.utils.Factory;
 
 /**
  * @author nfreeman
  * 
  */
+@Incomplete
 public class BigNoteCollection implements org.openntf.domino.big.BigNoteCollection {
 	private static final Logger log_ = Logger.getLogger(BigNoteCollection.class.getName());
 	private Map<String, int[]> idMap_;

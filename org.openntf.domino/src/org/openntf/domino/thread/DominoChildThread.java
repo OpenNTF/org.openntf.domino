@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.impl.Base;
 import org.openntf.domino.utils.Factory;
 
@@ -27,6 +28,7 @@ import org.openntf.domino.utils.Factory;
 /**
  * The Class DominoChildThread.
  */
+@Incomplete
 public class DominoChildThread extends DominoThread {
 	// This will be the Thread for executing Runnables that are given a Domino object starting point, such as a Session or Document or
 	// Database.

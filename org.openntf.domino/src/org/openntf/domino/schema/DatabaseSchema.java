@@ -19,6 +19,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
+import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.ext.Formula;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -26,6 +27,7 @@ import org.openntf.domino.utils.DominoUtils;
  * @author nfreeman
  * 
  */
+@Incomplete
 public class DatabaseSchema implements Externalizable {
 	private static final Logger log_ = Logger.getLogger(DatabaseSchema.class.getName());
 	private static final long serialVersionUID = 1L;

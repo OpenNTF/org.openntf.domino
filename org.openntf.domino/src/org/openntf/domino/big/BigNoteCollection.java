@@ -5,10 +5,13 @@ package org.openntf.domino.big;
 
 import java.io.Externalizable;
 
+import org.openntf.domino.annotations.Incomplete;
+
 /**
  * @author nfreeman
  * 
  */
+@Incomplete
 public interface BigNoteCollection extends Externalizable, Iterable<String> {
 
 	/*
