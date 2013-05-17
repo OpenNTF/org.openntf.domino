@@ -465,12 +465,6 @@ public class DatabaseSchema implements Externalizable {
 
 	}
 
-	public boolean validate(Document document) {
-		boolean result = false;
-		// TODO
-		return result;
-	}
-
 	public Document createDocument(Database db, String doctype) {
 		DocumentDefinition def = getDocumentDefinitions().get(doctype);
 		if (def == null)
@@ -481,6 +475,21 @@ public class DatabaseSchema implements Externalizable {
 		Set<ItemDefinition> itemDefs = def.getItemDefinitions();
 		for (ItemDefinition itemDef : itemDefs) {
 			Item item = itemDef.createDefaultItem(result, def);
+		}
+
+		return result;
+	}
+
+	public boolean validateDocument(Document doc) {
+		String doctype = doc.getItemValueString("$$SchemaType");
+		DocumentDefinition def = getDocumentDefinitions().get(doctype);
+		if (def == null)
+			return true;
+
+		boolean result = true;
+		Set<ItemDefinition> itemDefs = def.getItemDefinitions();
+		for (ItemDefinition itemDef : itemDefs) {
+			// TODO NTF
 		}
 
 		return result;

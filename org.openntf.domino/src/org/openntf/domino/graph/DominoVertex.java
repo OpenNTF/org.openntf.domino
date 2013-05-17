@@ -73,8 +73,15 @@ public class DominoVertex extends DominoElement implements Vertex {
 	public Set<String> getInEdges() {
 		if (inEdges_ == null) {
 			Object o = getProperty(DominoVertex.IN_NAME, java.util.Collection.class);
-			if (o != null && o instanceof java.util.Collection) {
-				inEdges_ = new LinkedHashSet<String>((Collection<String>) o);
+			if (o != null) {
+				if (o instanceof java.util.Collection) {
+					inEdges_ = new LinkedHashSet<String>((Collection<String>) o);
+				} else if (o instanceof java.lang.String) {
+					inEdges_ = new LinkedHashSet<String>();
+					inEdges_.add((String) o);
+				} else {
+					System.out.println("ALERT! InEdges returned something other than a Collection or String " + o.getClass().getName());
+				}
 			} else {
 				inEdges_ = new LinkedHashSet<String>();
 			}
@@ -87,8 +94,15 @@ public class DominoVertex extends DominoElement implements Vertex {
 	public Set<String> getOutEdges() {
 		if (outEdges_ == null) {
 			Object o = getProperty(DominoVertex.OUT_NAME, java.util.Collection.class);
-			if (o != null && o instanceof java.util.Collection) {
-				outEdges_ = new LinkedHashSet<String>((Collection<String>) o);
+			if (o != null) {
+				if (o instanceof java.util.Collection) {
+					outEdges_ = new LinkedHashSet<String>((Collection<String>) o);
+				} else if (o instanceof java.lang.String) {
+					outEdges_ = new LinkedHashSet<String>();
+					outEdges_.add((String) o);
+				} else {
+					System.out.println("ALERT! OutEdges returned something other than a Collection or String " + o.getClass().getName());
+				}
 			} else {
 				outEdges_ = new LinkedHashSet<String>();
 			}

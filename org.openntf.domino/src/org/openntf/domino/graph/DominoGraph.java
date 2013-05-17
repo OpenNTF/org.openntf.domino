@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
+import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewEntryCollection;
@@ -81,6 +82,8 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 
 	public DominoGraph(org.openntf.domino.Database database) {
 		setRawDatabase(database);
+		RunContext rc = Factory.getRunContext();
+		System.out.println("Context: " + rc.toString());
 	}
 
 	public void setRawDatabase(org.openntf.domino.Database database) {
@@ -217,7 +220,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 			if (d == null)
 				return null;
 			if (d.isDeleted()) {
-				System.out.println("Found edge for id " + String.valueOf(id) + " but it's been deleted.");
+				// System.out.println("Found edge for id " + String.valueOf(id) + " but it's been deleted.");
 				return null;
 			}
 			DominoEdge result = new DominoEdge(this, d);
@@ -290,7 +293,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 			if (d == null)
 				return null;
 			if (d.isDeleted()) {
-				System.out.println("Found vertex for id " + String.valueOf(id) + " but it's been deleted.");
+				// System.out.println("Found vertex for id " + String.valueOf(id) + " but it's been deleted.");
 				return null;
 			}
 			DominoVertex result = new DominoVertex(this, d);
@@ -367,7 +370,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 
 	public void startTransaction() {
 		if (!inTransaction_) {
-			System.out.println("Not yet in transaction. Starting...");
+			// System.out.println("Not yet in transaction. Starting...");
 			txn_ = getRawDatabase().startTransaction();
 			inTransaction_ = true;
 		}
@@ -396,7 +399,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 			// System.out.println("Committing transaction");
 
 			if (txn_ == null) {
-				System.out.println("Transaction is null!?!?!");
+				// System.out.println("Transaction is null!?!?!");
 			} else {
 				if (getCache().size() > 0) {
 					for (DominoElement elem : getCache().values()) {
@@ -413,7 +416,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 			inTransaction_ = false;
 
 		} else {
-			System.out.println("Not in transaction!");
+			// System.out.println("Not in transaction!");
 		}
 		getCache().clear();
 		// System.out.println("Transaction complete");
@@ -428,10 +431,10 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	@Override
 	public void rollback() {
 		if (inTransaction_) {
-			System.out.println("Rollbacking transaction");
+			// System.out.println("Rollbacking transaction");
 
 			if (txn_ == null) {
-				System.out.println("Transaction is null!?!?!");
+				// System.out.println("Transaction is null!?!?!");
 			} else {
 				txn_.rollback();
 				txn_ = null;
@@ -439,7 +442,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 			inTransaction_ = false;
 
 		} else {
-			System.out.println("Not in transaction!");
+			// System.out.println("Not in transaction!");
 		}
 		getCache().clear();
 		System.out.println("Transaction rollbacked");

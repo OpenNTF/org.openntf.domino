@@ -215,4 +215,7 @@ public interface Database {
 	 */
 	public DatabaseTransaction getTransaction();
 
+	public lotus.notes.addins.DominoServer getDominoServer();
+
+	public void refreshDesign();
 }

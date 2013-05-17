@@ -18,6 +18,7 @@ package org.openntf.domino.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,16 +51,23 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 */
 	public Item(lotus.domino.Item delegate, org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
-		initialize(delegate);
+		String name;
+		try {
+			name = delegate.getName();
+		} catch (NotesException ne) {
+			name = "";
+			if (log_.isLoggable(Level.WARNING)) {
+				log_.log(Level.WARNING, "Exception trying to get item from Document "
+						+ ((Document) parent).getAncestorDatabase().getFilePath() + " " + ((Document) parent).getNoteID());
+			}
+			throw new RuntimeException(ne);
+		}
+		name_ = name;
 	}
 
-	private void initialize(lotus.domino.Item delegate) {
-		try {
-			name_ = delegate.getName();
-		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
-		}
-	}
+	// private void initialize(lotus.domino.Item delegate) {
+	//
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -216,6 +224,22 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	public DateTime getLastModified() {
 		try {
 			return Factory.fromLotus(getDelegate().getLastModified(), DateTime.class, this);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.Item#getLastModified()
+	 */
+	public Date getLastModifiedDate() {
+		try {
+			lotus.domino.DateTime dt = getDelegate().getLastModified();
+			java.util.Date jdate = dt.toJavaDate();
+			return jdate;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -912,11 +936,11 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	@Override
 	protected lotus.domino.Item getDelegate() {
 		lotus.domino.Item item = super.getDelegate();
-		// try {
-		// item.isSummary();
-		// } catch (NotesException recycleSucks) {
-		// resurrect();
-		// }
+		try {
+			item.isEncrypted();
+		} catch (NotesException recycleSucks) {
+			resurrect();
+		}
 		return super.getDelegate();
 	}
 
@@ -950,7 +974,8 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 			}
 		} else {
 			if (log_.isLoggable(Level.WARNING)) {
-				log_.log(Level.WARNING, "Item doesn't have name value. Something went terribly wrong. Nothing good can come of this...");
+				log_.log(Level.WARNING, getClass().getSimpleName()
+						+ " doesn't have name value. Something went terribly wrong. Nothing good can come of this...");
 			}
 		}
 	}

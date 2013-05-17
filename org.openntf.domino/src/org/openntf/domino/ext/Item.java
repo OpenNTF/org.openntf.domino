@@ -3,6 +3,8 @@
  */
 package org.openntf.domino.ext;
 
+import java.util.Date;
+
 /**
  * @author withersp
  * 
@@ -10,4 +12,6 @@ package org.openntf.domino.ext;
 public interface Item {
 
 	public <T> T getValues(Class<?> T);
+
+	public Date getLastModifiedDate();
 }

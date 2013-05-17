@@ -2617,4 +2617,23 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	public void setFTIndexFrequency(FTIndexFrequency frequency) {
 		setFTIndexFrequency(frequency.getValue());
 	}
+
+	public lotus.notes.addins.DominoServer getDominoServer() {
+		try {
+			lotus.notes.addins.DominoServer server = new lotus.notes.addins.DominoServer(getServer());
+			return server;
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
+	}
+
+	public void refreshDesign() {
+		try {
+			lotus.notes.addins.DominoServer server = getDominoServer();
+			server.refreshDesign(getFilePath());
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+	}
 }

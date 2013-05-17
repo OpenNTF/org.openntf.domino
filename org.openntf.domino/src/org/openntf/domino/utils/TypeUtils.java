@@ -109,12 +109,16 @@ public enum TypeUtils {
 			} else if (T.isAssignableFrom(Date.class)) {
 				result = toDate(v);
 			} else if (T.isAssignableFrom(org.openntf.domino.DateTime.class)) {
-				session.createDateTime(toDate(v));
+				result = session.createDateTime(toDate(v));
 			} else if (T.isAssignableFrom(org.openntf.domino.Name.class)) {
-				session.createName(String.valueOf(v.get(0)));
+				result = session.createName(String.valueOf(v.get(0)));
 			} else {
 				if (!v.isEmpty()) {
-					result = v.get(0);
+					if (T.isAssignableFrom(Integer.class)) {
+						result = ((Double) v.get(0)).intValue();
+					} else {
+						result = v.get(0);
+					}
 				}
 			}
 		}

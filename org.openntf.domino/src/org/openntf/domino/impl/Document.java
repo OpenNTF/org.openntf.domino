@@ -866,7 +866,15 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				}
 			}
 			session.setConvertMIME(convertMime);
-			return Factory.wrapColumnValues(getDelegate().getItemValue(name), this.getAncestorSession());
+			Vector<?> vals = null;
+			try {
+				vals = getDelegate().getItemValue(name);
+			} catch (NotesException ne) {
+				log_.log(Level.WARNING, "Unable to get value for item " + name + " in Document " + getAncestorDatabase().getFilePath()
+						+ " " + noteid_ + ": " + ne.text);
+				return null;
+			}
+			return Factory.wrapColumnValues(vals, this.getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} catch (Throwable t) {
@@ -988,12 +996,14 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public Vector<Item> getItems() {
-		try {
-			return Factory.fromLotusAsVector(getDelegate().getItems(), Item.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+		ItemVector iv = new ItemVector(this);
+		return iv;
+		// try {
+		// return Factory.fromLotusAsVector(getDelegate().getItems(), Item.class, this);
+		// } catch (NotesException e) {
+		// DominoUtils.handleException(e);
+		// }
+		// return null;
 	}
 
 	/*
@@ -2109,11 +2119,15 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			writeItemInfo();
 			try {
 				result = getDelegate().save(force, makeResponse, markRead);
-				if (result)
-					clearDirty();
+				if (!noteid_.equals(getDelegate().getNoteID())) {
+					noteid_ = getDelegate().getNoteID();
+				}
+
 			} catch (NotesException e) {
 				DominoUtils.handleException(e);
 			}
+			if (result)
+				clearDirty();
 		} else {
 			if (log_.isLoggable(Level.FINE)) {
 				log_.log(Level.FINE, "Document " + getNoteID() + " was not saved because nothing on it was changed.");
@@ -2237,12 +2251,12 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setEncryptionKeys(Vector keys) {
-		markDirty();
 		try {
 			getDelegate().setEncryptionKeys(keys);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+		markDirty();
 	}
 
 	/*
@@ -2296,12 +2310,42 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public void setUniversalID(String unid) {
-		markDirty();
 		try {
-			getDelegate().setUniversalID(unid);
+			try {
+				lotus.domino.Document del = getDelegate().getParentDatabase().getDocumentByUNID(unid);
+				if (del != null) { // this is surprising. Why didn't we already get it?
+					if (isDirty()) { // we've already made other changes that we should tuck away...
+						Document stashDoc = copyToDatabase(getParentDatabase());
+						setDelegate(del);
+						for (Item item : stashDoc.getItems()) {
+							lotus.domino.Item delItem = del.getFirstItem(item.getName());
+							if (delItem != null) {
+								lotus.domino.DateTime delDt = delItem.getLastModified();
+								java.util.Date delDate = delDt.toJavaDate();
+								delDt.recycle();
+								Date modDate = item.getLastModifiedDate();
+								if (modDate.after(delDate)) {
+									item.copyItemToDocument(del);
+								}
+							} else {
+								item.copyItemToDocument(del);
+							}
+							// TODO NTF properties?
+						}
+					} else {
+						setDelegate(del);
+					}
+				} else {
+					getDelegate().setUniversalID(unid);
+				}
+			} catch (NotesException ne) {
+				// this is what's expected
+				getDelegate().setUniversalID(unid);
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+		markDirty();
 	}
 
 	/*
@@ -2311,12 +2355,12 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public void sign() {
-		markDirty();
 		try {
 			getDelegate().sign();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+		markDirty();
 	}
 
 	/*

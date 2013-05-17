@@ -1,6 +1,5 @@
 package org.openntf.domino.helpers;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +10,7 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Document;
@@ -23,13 +23,15 @@ public class DocumentScanner {
 
 	private Map<String, NavigableSet<String>> fieldTokenMap_;
 
-	private Map<String, NavigableSet<Serializable>> fieldValueMap_;
+	private Map<String, NavigableSet<Comparable>> fieldValueMap_;
 
 	private Map<String, Integer> fieldTypeMap_;
 
 	private Set<String> stopTokenList_;
 
 	private NavigableMap<String, Integer> tokenFreqMap_;
+
+	private boolean ignoreDollar_ = true;
 
 	public DocumentScanner() {
 		stopTokenList_ = Collections.emptySet();
@@ -39,6 +41,14 @@ public class DocumentScanner {
 		stopTokenList_ = stopTokenList;
 	}
 
+	public void setIgnoreDollar(boolean ignore) {
+		ignoreDollar_ = ignore;
+	}
+
+	public boolean getIgnoreDollar() {
+		return ignoreDollar_;
+	}
+
 	public Map<String, NavigableSet<String>> getFieldTokenMap() {
 		if (fieldTokenMap_ == null) {
 			fieldTokenMap_ = new HashMap<String, NavigableSet<String>>();
@@ -46,9 +56,9 @@ public class DocumentScanner {
 		return fieldTokenMap_;
 	}
 
-	public Map<String, NavigableSet<Serializable>> getFieldValueMap() {
+	public Map<String, NavigableSet<Comparable>> getFieldValueMap() {
 		if (fieldValueMap_ == null) {
-			fieldValueMap_ = new HashMap<String, NavigableSet<Serializable>>();
+			fieldValueMap_ = new HashMap<String, NavigableSet<Comparable>>();
 		}
 		return fieldValueMap_;
 	}
@@ -67,76 +77,82 @@ public class DocumentScanner {
 		return tokenFreqMap_;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void processDocument(Document doc) {
+
 		Map<String, NavigableSet<String>> tmap = getFieldTokenMap();
-		Map<String, NavigableSet<Serializable>> vmap = getFieldValueMap();
+		Map<String, NavigableSet<Comparable>> vmap = getFieldValueMap();
 		Map<String, Integer> typeMap = getFieldTypeMap();
 		Map<String, Integer> tfmap = getTokenFreqMap();
 		Vector<Item> items = doc.getItems();
 		for (Item item : items) {
-			String name = item.getName();
-			if (!typeMap.containsKey(name)) {
-				typeMap.put(name, item.getType());
-			}
-			if (typeMap.get(name).equals(item.getType())) {
-				try {
+			try {
+				String name = item.getName();
+				if (name.startsWith("$") && getIgnoreDollar())
+					break;
+				if (!typeMap.containsKey(name)) {
+					typeMap.put(name, item.getType());
+				}
+				if (typeMap.get(name).equals(item.getType())) {
 					Vector<Object> vals = null;
 					vals = item.getValues();
 					if (vals != null && !vals.isEmpty()) {
-						NavigableSet<Serializable> valueSet = null;
+						NavigableSet<Comparable> valueSet = null;
 						if (!vmap.containsKey(name)) {
-							valueSet = new ConcurrentSkipListSet<Serializable>();
+							valueSet = new ConcurrentSkipListSet<Comparable>();
 							vmap.put(name, valueSet);
 						} else {
 							valueSet = vmap.get(name);
 						}
-						java.util.Collection<Serializable> c = DominoUtils.toSerializable(vals);
+						java.util.Collection<Comparable> c = DominoUtils.toComparable(vals);
 						if (!c.isEmpty()) {
 							valueSet.addAll(c);
 						}
 					}
-				} catch (Exception e) {
-					DominoUtils.handleException(e);
 				}
-			}
-			String value = null;
-			switch (item.getType()) {
-			case Item.TEXT:
-				value = item.getValueString();
-				break;
-			case Item.RICHTEXT:
-				value = ((RichTextItem) item).getUnformattedText();
-				break;
-			default:
+				String value = null;
+				switch (item.getType()) {
+				case Item.TEXT:
+					value = item.getValueString();
+					break;
+				case Item.RICHTEXT:
+					value = ((RichTextItem) item).getUnformattedText();
+					break;
+				default:
 
-			}
-			if (value != null && value.length() > 0 && !DominoUtils.isNumber(value)) {
-				NavigableSet<String> tokenSet = null;
-
-				if (!tmap.containsKey(item.getName())) {
-					tokenSet = new ConcurrentSkipListSet<String>(String.CASE_INSENSITIVE_ORDER);
-					tmap.put(name, tokenSet);
-				} else {
-					tokenSet = tmap.get(name);
 				}
+				if (value != null && value.length() > 0 && !DominoUtils.isNumber(value)) {
+					NavigableSet<String> tokenSet = null;
 
-				Scanner s = new Scanner(value);
+					if (!tmap.containsKey(item.getName())) {
+						tokenSet = new ConcurrentSkipListSet<String>(String.CASE_INSENSITIVE_ORDER);
+						tmap.put(name, tokenSet);
+					} else {
+						tokenSet = tmap.get(name);
+					}
 
-				while (s.hasNext()) {
-					String token = s.next();
-					token = token.replaceAll("\\W*$", "");
-					token = token.replaceAll("^\\W*", "");
-					token = token.trim();
-					if ((token.length() > 2) && !(stopTokenList_.contains(token))) {
-						tokenSet.add(token);
-						if (tfmap.containsKey(token)) {
-							tfmap.put(token, tfmap.get(token) + 1);
-						} else {
-							tfmap.put(token, 1);
+					Scanner s = new Scanner(value);
+
+					while (s.hasNext()) {
+						String token = s.next();
+						token = token.replaceAll("\\W*$", "");
+						token = token.replaceAll("^\\W*", "");
+						token = token.trim();
+						if ((token.length() > 2) && !(stopTokenList_.contains(token))) {
+							tokenSet.add(token);
+							if (tfmap.containsKey(token)) {
+								tfmap.put(token, tfmap.get(token) + 1);
+							} else {
+								tfmap.put(token, 1);
+							}
 						}
 					}
 				}
+			} catch (Exception e) {
+				log_.log(Level.WARNING, "Unable to scan next item in Document " + doc.getNoteID() + " in database "
+						+ doc.getAncestorDatabase().getFilePath());
 			}
+
 		}
 	}
 
@@ -144,7 +160,7 @@ public class DocumentScanner {
 		fieldTokenMap_ = fieldTokenMap;
 	}
 
-	public void setFieldValueMap(Map<String, NavigableSet<Serializable>> fieldValueMap) {
+	public void setFieldValueMap(Map<String, NavigableSet<Comparable>> fieldValueMap) {
 		fieldValueMap_ = fieldValueMap;
 	}
 

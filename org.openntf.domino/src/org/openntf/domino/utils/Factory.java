@@ -15,9 +15,6 @@
  */
 package org.openntf.domino.utils;
 
-import java.net.URL;
-import java.security.CodeSource;
-import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Level;
@@ -154,18 +151,31 @@ public enum Factory {
 		if (sm == null)
 			return RunContext.CLI;
 
-		ProtectionDomain pd = Factory.class.getProtectionDomain();
-		CodeSource cs = pd.getCodeSource();
-		URL url = cs.getLocation();
-
 		Object o = sm.getSecurityContext();
 		if (log_.isLoggable(Level.INFO))
 			log_.log(Level.INFO, "SecurityManager is " + sm.getClass().getName() + " and context is " + o.getClass().getName());
 		if (sm instanceof lotus.notes.AgentSecurityManager) {
 			lotus.notes.AgentSecurityManager asm = (lotus.notes.AgentSecurityManager) sm;
+			Object xsm = asm.getExtenderSecurityContext();
+			if (xsm instanceof lotus.notes.AgentSecurityContext) {
+				lotus.notes.AgentSecurityContext nasc = (lotus.notes.AgentSecurityContext) xsm;
+			}
+			Object asc = asm.getSecurityContext();
+			if (asc != null) {
+				// System.out.println("Security context is " + asc.getClass().getName());
+			}
+			// ThreadGroup tg = asm.getThreadGroup();
+			// System.out.println("ThreadGroup name: " + tg.getName());
+
 			result = RunContext.AGENT;
 		}
 		com.ibm.domino.http.bootstrap.logger.RCPLoggerConfig rcplc;
+		ClassLoader cl = com.ibm.domino.http.bootstrap.BootstrapClassLoader.getSharedClassLoader();
+		if (cl instanceof com.ibm.domino.http.bootstrap.BootstrapOSGIClassLoader) {
+			com.ibm.domino.http.bootstrap.BootstrapOSGIClassLoader bocl = (com.ibm.domino.http.bootstrap.BootstrapOSGIClassLoader) cl;
+			result = RunContext.XPAGES_OSGI;
+		}
+
 		return result;
 	}
 

@@ -767,6 +767,22 @@ public enum DominoUtils {
 		return result;
 	}
 
+	@SuppressWarnings("rawtypes")
+	public static Collection<Comparable> toComparable(Collection<?> values) {
+		Collection<Serializable> colls = toSerializable(values);
+		Collection<Comparable> result = new ArrayList<Comparable>();
+		if (colls != null && !colls.isEmpty()) {
+			for (Serializable ser : colls) {
+				if (ser instanceof Comparable) {
+					result.add((Comparable) ser);
+				} else {
+					log_.warning("Unable to convert to Comparable from " + ser.getClass().getName());
+				}
+			}
+		}
+		return result;
+	}
+
 	@SuppressWarnings("unchecked")
 	public static Collection<Serializable> toSerializable(Collection<?> values) {
 		if (DominoUtils.isSerializable(values))

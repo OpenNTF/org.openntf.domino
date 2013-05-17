@@ -30,8 +30,11 @@ import org.openntf.domino.iterators.VectorIterator;
 /**
  * The Class Vector.
  * 
+ * withersp: "Shhh!! It's not a Vector really. We're just telling Domino it's a Vector so it doesn't have a hissy fit"
+ * 
  * @param <E>
  *            the element type
+ * 
  */
 public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	private final List<E> delegate_;

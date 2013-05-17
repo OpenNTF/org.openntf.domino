@@ -80,7 +80,8 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 				count = localLotusReferenceCounter_.decrement(result.getDelegateId());
 				if (count < 1) {
 					if (result.getDelegateId() == cppid) {
-						System.out.println("ALERT!!! Attemping to auto-recycle the same handle we're currently wrapping. Don't! " + cppid);
+						// System.out.println("ALERT!!! Attemping to auto-recycle the same handle we're currently wrapping. Don't! " +
+						// cppid);
 					} else {
 						shouldRecycle = true;
 					}
