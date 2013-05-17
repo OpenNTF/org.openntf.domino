@@ -1,6 +1,7 @@
 package org.openntf.domino.xsp.script;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -416,17 +417,18 @@ public class WrapperOpenDomino {
 	private static OpenMethodMap generateMethodMap(JSContext context, Class<?> clazz) {
 		OpenMethodMap methodMap = new OpenMethodMap(context, clazz, null);
 		for (Method crystal : clazz.getMethods()) {
-			String name = crystal.getName();
-			Object cur = methodMap.get(name);
-			if (cur == null) {
-				methodMap.put(crystal.getName(), new OpenFunction(context, crystal));
+			if (Modifier.isPublic(crystal.getModifiers()) && !Modifier.isStatic(crystal.getModifiers())) {
+				String name = crystal.getName();
+				Object cur = methodMap.get(name);
+				if (cur == null) {
+					methodMap.put(crystal.getName(), new OpenFunction(context, crystal));
+				}
+				if (cur instanceof OpenFunction) {
+					((OpenFunction) cur).addMethod(crystal);
+				} else {
+					// TODO NTF - Huh? How'd that happen?
+				}
 			}
-			if (cur instanceof OpenFunction) {
-				((OpenFunction) cur).addMethod(crystal);
-			} else {
-				// TODO NTF - Huh? How'd that happen?
-			}
-
 		}
 		synchronized (WrapperOpenDomino.class) {
 			classMap_.put(clazz, methodMap);
