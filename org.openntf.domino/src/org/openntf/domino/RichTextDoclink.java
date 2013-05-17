@@ -21,7 +21,7 @@ import org.openntf.domino.types.DocumentDescendant;
  * The Interface RichTextDoclink.
  */
 public interface RichTextDoclink extends Base<lotus.domino.RichTextDoclink>, lotus.domino.RichTextDoclink,
-		org.openntf.domino.ext.RichTextDocLink, DocumentDescendant {
+		org.openntf.domino.ext.RichTextDoclink, DocumentDescendant {
 
 	/*
 	 * (non-Javadoc)
