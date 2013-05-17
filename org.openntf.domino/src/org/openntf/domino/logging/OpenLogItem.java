@@ -308,23 +308,31 @@ public class OpenLogItem implements Serializable {
 	 *            whether or not the current XPage should be used or previous (if the user has been re-routed to an Error page)
 	 */
 	public void setThisAgent(boolean currPage) {
-		String fromPage = "";
-		if (currPage) {
-			// fromPage = JSFUtil.getXSPContext().getUrl().toSiteRelativeString(JSFUtil.getXSPContext());
-			fromPage = fromPage.substring(0);
-		} else {
-			String[] historyUrls = null;
-			// historyUrls = JSFUtil.getXSPContext().getHistoryUrls();
-			if (historyUrls.length > 1) {
-				fromPage = historyUrls[1];
-			} else {
-				fromPage = historyUrls[0];
-			}
-		}
-		_thisAgent = fromPage;
-		if (fromPage.indexOf("?") > -1) {
-			_thisAgent = _thisAgent.substring(1, _thisAgent.indexOf("?"));
-		}
+		_thisAgent = "org.openntf.domino";
+		// AgentContext agentContext = getSession().getAgentContext();
+		// if (agentContext != null) {
+		// _thisAgent = agentContext.getCurrentAgent().getName();
+		// } else {
+		// String fromPage = "";
+		// String[] historyUrls = null;
+		// if (null == historyUrls) {
+		// System.out.println("DAMN!");
+		// } else {
+		// if (currPage) {
+		// fromPage = historyUrls[0];
+		// } else {
+		// if (historyUrls.length > 1) {
+		// fromPage = historyUrls[1];
+		// } else {
+		// fromPage = historyUrls[0];
+		// }
+		// }
+		// _thisAgent = fromPage;
+		// if (fromPage.indexOf("?") > -1) {
+		// _thisAgent = _thisAgent.substring(1, _thisAgent.indexOf("?"));
+		// }
+		// }
+		// }
 	}
 
 	/**
@@ -358,10 +366,6 @@ public class OpenLogItem implements Serializable {
 				_currentDatabase = getSession().getCurrentDatabase();
 			} catch (Exception e) {
 				debugPrint(e);
-			}
-		} else {
-			if (Base.isRecycled((NotesBase) _currentDatabase)) {
-				_currentDatabase = getSession().getCurrentDatabase();
 			}
 		}
 		return _currentDatabase;
@@ -482,9 +486,8 @@ public class OpenLogItem implements Serializable {
 	public DateTime getStartTime() {
 		if (_startTime == null) {
 			try {
-				_startTime = getSession().createDateTime("Today");
-				_startTime.setNow();
-				DominoUtils.toJavaDateSafe(_startTime);
+				Date _startJavaTime = new Date();
+				_startTime = getSession().createDateTime(_startJavaTime);
 			} catch (Exception e) {
 				debugPrint(e);
 			}
@@ -564,6 +567,8 @@ public class OpenLogItem implements Serializable {
 	public DateTime getEventTime() {
 		if (_eventTime == null) {
 			_eventJavaTime = new Date();
+			_eventTime = getSession().createDateTime(_eventJavaTime);
+
 		}
 		return _eventTime;
 	}
@@ -668,7 +673,7 @@ public class OpenLogItem implements Serializable {
 	 */
 	public String logError(Throwable ee) {
 		try {
-			// TODO: Add to errors block is XPages
+			// TODO: Add to errors block in XPages
 			// StackTraceElement[] s = ee.getStackTrace();
 			// FacesMessage m = new FacesMessage("Error in " + s[0].getClassName() + ", line " + s[0].getLineNumber() + ": " +
 			// ee.toString());
@@ -873,7 +878,6 @@ public class OpenLogItem implements Serializable {
 		// exit early if there is no database
 		Database db = getLogDb();
 		if (db == null) {
-			System.out.println("Could not retrieve database at path " + getLogDbName());
 			return false;
 		}
 
@@ -893,7 +897,8 @@ public class OpenLogItem implements Serializable {
 				logDoc.replaceItemValue("LogErrorNumber", ((NotesException) ee).id);
 				logDoc.replaceItemValue("LogErrorMessage", ((NotesException) ee).text);
 			} else {
-				logDoc.replaceItemValue("LogErrorMessage", ee.getStackTrace()[0].toString());
+				// Fixed next line
+				logDoc.replaceItemValue("LogErrorMessage", getMessage());
 			}
 
 			logDoc.replaceItemValue("LogStackTrace", getStackTrace(ee));
@@ -905,7 +910,8 @@ public class OpenLogItem implements Serializable {
 			logDoc.replaceItemValue("LogFromDatabase", getCurrentDatabasePath());
 			logDoc.replaceItemValue("LogFromServer", getThisServer());
 			logDoc.replaceItemValue("LogFromAgent", getThisAgent());
-			logDoc.replaceItemValue("LogFromMethod", ste.getClass() + "." + ste.getMethodName());
+			// Fixed next line
+			logDoc.replaceItemValue("LogFromMethod", ste.getClassName() + "." + ste.getMethodName());
 			logDoc.replaceItemValue("LogAgentLanguage", "Java");
 			logDoc.replaceItemValue("LogUserName", getUserName());
 			logDoc.replaceItemValue("LogEffectiveName", getEffName());

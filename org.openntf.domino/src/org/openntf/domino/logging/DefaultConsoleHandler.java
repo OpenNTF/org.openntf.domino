@@ -82,13 +82,12 @@ public class DefaultConsoleHandler extends ConsoleHandler {
 		}
 		if (debugLevel > 0) {
 			super.publish(record);
-		}
-		if (debugLevel > 1) {
-			if (record.getThrown() != null && record.getThrown() instanceof Exception) {
-				Exception ee = (Exception) record.getThrown();
-				ee.printStackTrace();
+			if (debugLevel > 1) {
+				if (record.getThrown() != null && record.getThrown() instanceof Exception) {
+					Exception ee = (Exception) record.getThrown();
+					ee.printStackTrace();
+				}
 			}
 		}
 	}
-
 }
