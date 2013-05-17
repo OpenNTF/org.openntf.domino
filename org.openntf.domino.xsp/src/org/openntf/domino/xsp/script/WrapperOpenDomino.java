@@ -632,7 +632,42 @@ public class WrapperOpenDomino {
 		WRAPPED_CLASSES.add(org.openntf.domino.ext.Item.class);
 		WRAPPED_CLASSES.add(org.openntf.domino.ext.View.class);
 		WRAPPED_CLASSES.add(org.openntf.domino.ext.DocumentCollection.class);
-
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.ViewEntryCollection.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.ViewEntry.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.ViewColumn.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.RichTextItem.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.Name.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.DateRange.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.DbDirectory.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.Form.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.Outline.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.OutlineEntry.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.Agent.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.ACL.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.ACLEntry.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.EmbeddedObject.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.Formula.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.International.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.Log.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.MIMEEntity.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.MIMEHeader.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.Newsletter.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.NoteCollection.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.ViewNavigator.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.Stream.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.RichTextTab.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.RichTextTable.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.RichTextStyle.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.RichTextSection.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.RichTextRange.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.RichTextNavigator.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.RichTextParagraphStyle.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.RichTextDocLink.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.Replication.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.ReplicationEntry.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.Registration.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.DxlExporter.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ext.DxlImporter.class);
 	}
 
 }
