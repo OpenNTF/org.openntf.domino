@@ -320,9 +320,9 @@ public class WrapperOpenDomino {
 		@Override
 		protected String[] getCallParameters() {
 			if (crystals_ == null || crystals_.isEmpty()) {
-				return null;
+				return new String[] { "" };
 			}
-			return (String[]) crystals_.keySet().toArray();
+			return crystals_.keySet().toArray(new String[0]);
 		}
 
 		@Override
