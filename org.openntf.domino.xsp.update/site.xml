@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.openntf.domino.xsp.feature_1.0.0.201305172014.jar" id="org.openntf.domino.xsp.feature" version="1.0.0.201305172014"/>
+   <feature url="features/org.openntf.domino.xsp.feature_1.0.0.201305181049.jar" id="org.openntf.domino.xsp.feature" version="1.0.0.201305181049"/>
 </site>

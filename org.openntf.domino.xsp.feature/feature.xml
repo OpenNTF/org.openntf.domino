@@ -4,16 +4,18 @@
       label="OpenNTF Domino XSP Helper"
       version="1.0.0.qualifier">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description>
+      XPages/OSGi Provider for org.openntf.domino API
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+   <copyright>
+      © Copyright 2012-2013
+Nathan T. Freeman, Jesse Gallagher, Tim Tripcony, Rene Winkermeyer,
+Declan Lynch, Paul Withers
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
+   <license url="http://www.apache.org/licenses/LICENSE-2.0">
+      Apache License, Version 2.0
    </license>
 
    <plugin
