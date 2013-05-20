@@ -37,10 +37,10 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 	private int index_ = 0;
 
 	/** The id array_. */
-	private int[] idArray_;
+	private final int[] idArray_;
 
-	/** The current_. */
-	private transient Document current_;
+	// /** The current_. */
+	// private transient Document current_;
 
 	/**
 	 * Instantiates a new document iterator.
@@ -50,7 +50,7 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 	 */
 	public DocumentIterator(DocumentCollection collection) {
 		super(collection);
-		setIdArray(getCollectionIds(collection));
+		idArray_ = getCollectionIds(collection);
 	}
 
 	/**
@@ -151,18 +151,18 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 		// NOOP
 	}
 
-	/**
-	 * Sets the id array.
-	 * 
-	 * @param idArray
-	 *            the new id array
-	 */
-	protected void setIdArray(int[] idArray) {
-		idArray_ = idArray;
-		if (log_.isLoggable(Level.FINE)) {
-			log_.log(Level.FINE, "Created an iterator from " + idArray.length + " noteids.");
-		}
-	}
+	// /**
+	// * Sets the id array.
+	// *
+	// * @param idArray
+	// * the new id array
+	// */
+	// protected void setIdArray(int[] idArray) {
+	// idArray_ = idArray;
+	// if (log_.isLoggable(Level.FINE)) {
+	// log_.log(Level.FINE, "Created an iterator from " + idArray.length + " noteids.");
+	// }
+	// }
 
 	/**
 	 * Sets the index.
