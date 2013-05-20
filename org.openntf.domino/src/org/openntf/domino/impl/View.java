@@ -685,10 +685,11 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	}
 
 	public DocumentCollection getAllDocuments() {
+		// FIXME - NTF Make efficient
 		DocumentCollection result = this.getParent().createDocumentCollection();
 		for (org.openntf.domino.ViewEntry entry : this.getAllEntries()) {
 			if (entry.isDocument()) {
-				result.merge(entry.getNoteID());
+				result.addDocument(entry.getDocument()); // FIX for JG's admittedly "crappy implementation."
 			}
 		}
 		return result;
