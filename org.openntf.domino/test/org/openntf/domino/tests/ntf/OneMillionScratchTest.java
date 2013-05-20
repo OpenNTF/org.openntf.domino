@@ -8,8 +8,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
-import lotus.domino.NotesException;
-
 import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
@@ -113,27 +111,21 @@ public enum OneMillionScratchTest {
 		}
 
 		public void Count(Database db) {
-			try {
-				DocumentCollection dc = db.getAllDocuments();
-				NoteCollection nc = db.createNoteCollection(false);
-				nc.add(dc);
+			DocumentCollection dc = db.getAllDocuments();
+			NoteCollection nc = db.createNoteCollection(false);
+			nc.add(dc);
 
-				Set setAll = new HashSet(Arrays.asList(nc.getNoteIDs()));
+			Set setAll = new HashSet(Arrays.asList(nc.getNoteIDs()));
 
-				View allView = db.getView("All Documents");
-				ViewEntryCollection vec = allView.getAllEntries();
-				ViewEntry entry = vec.getFirstEntry();
-				ViewEntry next = null;
-				while (entry != null) {
-					next = vec.getNextEntry(entry);
-					setAll.remove(entry.getNoteIDAsInt());
-					entry.recycle();
-					entry = next;
-
-				}
-
-			} catch (NotesException hamFisted) {
-				hamFisted.printStackTrace();
+			View allView = db.getView("All Documents");
+			ViewEntryCollection vec = allView.getAllEntries();
+			ViewEntry entry = vec.getFirstEntry();
+			ViewEntry next = null;
+			while (entry != null) {
+				next = vec.getNextEntry(entry);
+				setAll.remove(entry.getNoteIDAsInt());
+				// entry.recycle();
+				entry = next;
 			}
 		}
 

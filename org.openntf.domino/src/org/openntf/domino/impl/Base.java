@@ -353,6 +353,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * 
 	 * @see lotus.domino.Base#recycle()
 	 */
+	@Deprecated
 	public void recycle() {
 		s_recycle(this);
 	}
@@ -573,6 +574,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * 
 	 * @see lotus.domino.Base#recycle(java.util.Vector)
 	 */
+	@Deprecated
 	@SuppressWarnings("rawtypes")
 	public void recycle(Vector arg0) {
 		for (Object o : arg0) {

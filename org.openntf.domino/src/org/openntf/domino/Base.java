@@ -15,6 +15,10 @@
  */
 package org.openntf.domino;
 
+import java.util.Vector;
+
+import lotus.domino.NotesException;
+
 /**
  * The Interface Base.
  * 
@@ -25,4 +29,21 @@ public interface Base<D extends lotus.domino.Base> extends lotus.domino.Base, or
 
 	// public abstract D getDelegate();
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.Base#recycle()
+	 */
+	@Override
+	@Deprecated
+	public void recycle() throws NotesException;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.Base#recycle(java.util.Vector)
+	 */
+	@Override
+	@Deprecated
+	public void recycle(Vector arg0) throws NotesException;
 }

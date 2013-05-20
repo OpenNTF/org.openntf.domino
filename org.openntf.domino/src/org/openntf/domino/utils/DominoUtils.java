@@ -433,7 +433,7 @@ public enum DominoUtils {
 
 		ByteArrayOutputStream streamOut = new ByteArrayOutputStream();
 		mimeStream.getContents(streamOut);
-		mimeStream.recycle();
+		// mimeStream.recycle();
 
 		byte[] stateBytes = streamOut.toByteArray();
 		ByteArrayInputStream byteStream = new ByteArrayInputStream(stateBytes);
@@ -492,7 +492,7 @@ public enum DominoUtils {
 			}
 		}
 
-		entity.recycle();
+		// entity.recycle();
 
 		session.setConvertMime(convertMime);
 

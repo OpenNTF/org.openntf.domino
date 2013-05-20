@@ -1,3 +1,9 @@
+Things to do...
+
+1) provide switch to force Datetime storage as GMT
+2) Add schema rules for how to store "null" values
+3) Make auto-MIMEing check the size of the stream first. Use custom bytes if < 60K. Will save a lot of I/O
+
 For future reference, these are the initialization points for the JNI functions at the heart...
 
 com.ibm.designer.domino.napi.util.OSLoader.initializeExt();	//loads from nnotes.dll or corresponding platform library
