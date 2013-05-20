@@ -672,12 +672,22 @@ public class OpenLogItem implements Serializable {
 	 * @return the error message
 	 */
 	public String logError(Throwable ee) {
+		for (StackTraceElement elem : ee.getStackTrace()) {
+			if (elem.getClassName().equals(getClass().getName())) {
+				// NTF - we are by definition in a loop
+				System.out.println(ee.toString());
+				debugPrint(ee);
+				_logSuccess = false;
+				return "";
+			}
+		}
 		try {
 			// TODO: Add to errors block in XPages
 			// StackTraceElement[] s = ee.getStackTrace();
 			// FacesMessage m = new FacesMessage("Error in " + s[0].getClassName() + ", line " + s[0].getLineNumber() + ": " +
 			// ee.toString());
 			// JSFUtil.getXSPContext().getFacesContext().addMessage(null, m);
+
 			setBase(ee);
 
 			// if (ee.getMessage().length() > 0) {
@@ -723,6 +733,15 @@ public class OpenLogItem implements Serializable {
 	 * @return message logged in
 	 */
 	public String logErrorEx(Throwable ee, String msg, Level severityType, Document doc) {
+		for (StackTraceElement elem : ee.getStackTrace()) {
+			if (elem.getClassName().equals(getClass().getName())) {
+				// NTF - we are by definition in a loop
+				System.out.println(ee.toString());
+				debugPrint(ee);
+				_logSuccess = false;
+				return "";
+			}
+		}
 		try {
 			setBase((ee == null ? new Throwable() : ee));
 			setMessage((msg == null ? "" : msg));
@@ -955,7 +974,7 @@ public class OpenLogItem implements Serializable {
 	 * 
 	 * @param ee
 	 */
-	private void debugPrint(Exception ee) {
+	private void debugPrint(Throwable ee) {
 		if ((ee == null) || (debugOut == null))
 			return;
 
