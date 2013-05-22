@@ -37,6 +37,8 @@ import org.openntf.domino.types.SessionDescendant;
 public enum Factory {
 	;
 
+	public static final String VERSION = "Milestone2";
+
 	private static ThreadLocal<Session> currentSessionHolder_ = new ThreadLocal<Session>() {
 		/*
 		 * (non-Javadoc)
