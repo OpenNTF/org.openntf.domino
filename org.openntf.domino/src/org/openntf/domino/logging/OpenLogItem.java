@@ -262,7 +262,10 @@ public class OpenLogItem implements Serializable {
 	public String getCurrentDatabasePath() {
 		if (_thisDatabase == null) {
 			try {
-				_thisDatabase = getCurrentDatabase().getFilePath();
+				Database db = getCurrentDatabase();
+				if (db != null) {
+					_thisDatabase = getCurrentDatabase().getFilePath();
+				}
 			} catch (Exception e) {
 				debugPrint(e);
 			}
@@ -407,28 +410,31 @@ public class OpenLogItem implements Serializable {
 	public String getAccessLevel() {
 		if (_accessLevel == null) {
 			try {
-				switch (getCurrentDatabase().getCurrentAccessLevel()) {
-				case 0:
-					_accessLevel = "0: No Access";
-					break;
-				case 1:
-					_accessLevel = "1: Depositor";
-					break;
-				case 2:
-					_accessLevel = "2: Reader";
-					break;
-				case 3:
-					_accessLevel = "3: Author";
-					break;
-				case 4:
-					_accessLevel = "4: Editor";
-					break;
-				case 5:
-					_accessLevel = "5: Designer";
-					break;
-				case 6:
-					_accessLevel = "6: Manager";
-					break;
+				Database db = getCurrentDatabase();
+				if (db != null) {
+					switch (db.getCurrentAccessLevel()) {
+					case 0:
+						_accessLevel = "0: No Access";
+						break;
+					case 1:
+						_accessLevel = "1: Depositor";
+						break;
+					case 2:
+						_accessLevel = "2: Reader";
+						break;
+					case 3:
+						_accessLevel = "3: Author";
+						break;
+					case 4:
+						_accessLevel = "4: Editor";
+						break;
+					case 5:
+						_accessLevel = "5: Designer";
+						break;
+					case 6:
+						_accessLevel = "6: Manager";
+						break;
+					}
 				}
 			} catch (Exception e) {
 				debugPrint(e);
@@ -672,13 +678,15 @@ public class OpenLogItem implements Serializable {
 	 * @return the error message
 	 */
 	public String logError(Throwable ee) {
-		for (StackTraceElement elem : ee.getStackTrace()) {
-			if (elem.getClassName().equals(getClass().getName())) {
-				// NTF - we are by definition in a loop
-				System.out.println(ee.toString());
-				debugPrint(ee);
-				_logSuccess = false;
-				return "";
+		if (ee != null) {
+			for (StackTraceElement elem : ee.getStackTrace()) {
+				if (elem.getClassName().equals(getClass().getName())) {
+					// NTF - we are by definition in a loop
+					System.out.println(ee.toString());
+					debugPrint(ee);
+					_logSuccess = false;
+					return "";
+				}
 			}
 		}
 		try {
@@ -733,13 +741,15 @@ public class OpenLogItem implements Serializable {
 	 * @return message logged in
 	 */
 	public String logErrorEx(Throwable ee, String msg, Level severityType, Document doc) {
-		for (StackTraceElement elem : ee.getStackTrace()) {
-			if (elem.getClassName().equals(getClass().getName())) {
-				// NTF - we are by definition in a loop
-				System.out.println(ee.toString());
-				debugPrint(ee);
-				_logSuccess = false;
-				return "";
+		if (ee != null) {
+			for (StackTraceElement elem : ee.getStackTrace()) {
+				if (elem.getClassName().equals(getClass().getName())) {
+					// NTF - we are by definition in a loop
+					System.out.println(ee.toString());
+					debugPrint(ee);
+					_logSuccess = false;
+					return "";
+				}
 			}
 		}
 		try {

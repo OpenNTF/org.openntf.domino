@@ -21,7 +21,7 @@ import org.openntf.domino.utils.DominoUtils;
 public class LogUtils {
 
 	private static SimpleDateFormat ISO8601_UTC = null;
-	private static SimpleDateFormat ISO8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+	private static SimpleDateFormat ISO8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
 	public LogUtils() {
 
@@ -88,7 +88,7 @@ public class LogUtils {
 			if (ISO8601_UTC == null) {
 				// Initialize the UTC formatter once
 				TimeZone tz = TimeZone.getTimeZone("UTC");
-				ISO8601_UTC = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); //$NON-NLS-1$
+				ISO8601_UTC = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); //$NON-NLS-1$
 				ISO8601_UTC.setTimeZone(tz);
 			}
 

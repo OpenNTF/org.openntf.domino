@@ -83,7 +83,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	public DominoGraph(org.openntf.domino.Database database) {
 		setRawDatabase(database);
 		RunContext rc = Factory.getRunContext();
-		System.out.println("Context: " + rc.toString());
+		// System.out.println("Context: " + rc.toString());
 	}
 
 	public void setRawDatabase(org.openntf.domino.Database database) {
@@ -111,30 +111,29 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		d.replaceItemValue(DominoElement.TYPE_FIELD, DominoEdge.GRAPH_TYPE_VALUE);
 		DominoEdge ed = new DominoEdge(this, d);
 		getCache().put(id == null ? ed.getId() : id, ed);
+		ed.setLabel(label);
 		ed.setOutDoc(outVertex);
 		ed.setInDoc(inVertex);
-		ed.setLabel(label);
 		return ed;
 	}
 
 	public Edge getOrAddEdge(Object id, Vertex outVertex, Vertex inVertex, String label) {
 		Edge result = null;
-
 		if (id == null) {
 			id = (outVertex.getId() + label + inVertex.getId());
 			result = getEdge(id);
+			((DominoEdge) result).setLabel(label);
 			((DominoEdge) result).setOutDoc(outVertex);
 			((DominoEdge) result).setInDoc(inVertex);
-			((DominoEdge) result).setLabel(label);
 		}
 		if (result == null) {
 			for (Edge e : outVertex.getEdges(Direction.OUT, label)) {
 				Vertex v = e.getVertex(Direction.IN);
 				if (v.getId().equals(inVertex.getId())) {
 					result = e;
+					((DominoEdge) result).setLabel(label);
 					((DominoEdge) result).setOutDoc(outVertex);
 					((DominoEdge) result).setInDoc(inVertex);
-					((DominoEdge) result).setLabel(label);
 					break;
 				}
 			}

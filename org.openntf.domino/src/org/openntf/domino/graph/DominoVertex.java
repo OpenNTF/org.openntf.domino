@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
@@ -15,6 +17,7 @@ import com.tinkerpop.blueprints.util.MultiIterable;
 import com.tinkerpop.blueprints.util.VerticesFromEdgesIterable;
 
 public class DominoVertex extends DominoElement implements Vertex {
+	private static final Logger log_ = Logger.getLogger(DominoVertex.class.getName());
 	public static final String GRAPH_TYPE_VALUE = "OpenVertex";
 	public static final String IN_NAME = "_OPEN_IN";
 	public static final String OUT_NAME = "_OPEN_OUT";
@@ -73,19 +76,29 @@ public class DominoVertex extends DominoElement implements Vertex {
 	public Set<String> getInEdges() {
 		if (inEdges_ == null) {
 			Object o = getProperty(DominoVertex.IN_NAME, java.util.Collection.class);
+
 			if (o != null) {
-				if (o instanceof java.util.Collection) {
+				if (o instanceof LinkedHashSet) {
+					inEdges_ = (LinkedHashSet) o;
+					// if (getRawDocument().getItemValueString("form").equalsIgnoreCase("container")) {
+					// log_.log(Level.WARNING,
+					// "Retrieved InEdges for " + getProperty("Filepath") + " to a LinkedHashSet of " + inEdges_.size());
+					// }
+				} else if (o instanceof java.util.Collection) {
 					inEdges_ = new LinkedHashSet<String>((Collection<String>) o);
-				} else if (o instanceof java.lang.String) {
-					inEdges_ = new LinkedHashSet<String>();
-					inEdges_.add((String) o);
+					// if (getRawDocument().getItemValueString("form").equalsIgnoreCase("container")) {
+					// log_.log(Level.WARNING, "Retrieved InEdges for " + getProperty("Filepath")
+					// + " to a Collection that made a new LinkedHashSet of " + inEdges_.size());
+					// }
 				} else {
-					System.out.println("ALERT! InEdges returned something other than a Collection or String " + o.getClass().getName());
+					log_.log(Level.WARNING, "ALERT! InEdges returned something other than a Collection " + o.getClass().getName());
 				}
 			} else {
+				// if (getRawDocument().getItemValueString("form").equalsIgnoreCase("container")) {
+				// log_.log(Level.WARNING, "No InEdges found for Container " + getProperty("Filepath") + " creating new...");
+				// }
 				inEdges_ = new LinkedHashSet<String>();
 			}
-			// inDirty_ = false;
 		}
 		return inEdges_;
 	}
@@ -95,18 +108,17 @@ public class DominoVertex extends DominoElement implements Vertex {
 		if (outEdges_ == null) {
 			Object o = getProperty(DominoVertex.OUT_NAME, java.util.Collection.class);
 			if (o != null) {
-				if (o instanceof java.util.Collection) {
+				if (o instanceof LinkedHashSet) {
+					outEdges_ = (LinkedHashSet) o;
+				} else if (o instanceof java.util.Collection) {
 					outEdges_ = new LinkedHashSet<String>((Collection<String>) o);
-				} else if (o instanceof java.lang.String) {
-					outEdges_ = new LinkedHashSet<String>();
-					outEdges_.add((String) o);
+
 				} else {
-					System.out.println("ALERT! OutEdges returned something other than a Collection or String " + o.getClass().getName());
+					log_.log(Level.WARNING, "ALERT! OutEdges returned something other than a Collection " + o.getClass().getName());
 				}
 			} else {
 				outEdges_ = new LinkedHashSet<String>();
 			}
-			// outDirty_ = false;
 		}
 		return outEdges_;
 	}

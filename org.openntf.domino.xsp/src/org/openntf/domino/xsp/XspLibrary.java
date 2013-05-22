@@ -59,7 +59,7 @@ public class XspLibrary extends AbstractXspLibrary {
 	@Override
 	public boolean isGlobalScope() {
 		boolean result = isGlobal();
-		System.out.println(Activator.PLUGIN_ID + " global: " + String.valueOf(result));
+		// System.out.println(Activator.PLUGIN_ID + " global: " + String.valueOf(result));
 		return result;
 	}
 

@@ -1,10 +1,13 @@
 package org.openntf.domino.graph;
 
+import java.util.logging.Logger;
+
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 
 public class DominoEdge extends DominoElement implements Edge {
+	private static final Logger log_ = Logger.getLogger(DominoEdge.class.getName());
 	public static final String GRAPH_TYPE_VALUE = "OpenEdge";
 	public static final String IN_NAME = "_OPEN_IN";
 	public static final String LABEL_NAME = "_OPEN_LABEL";

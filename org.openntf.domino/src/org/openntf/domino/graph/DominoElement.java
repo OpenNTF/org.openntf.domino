@@ -3,6 +3,7 @@ package org.openntf.domino.graph;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
@@ -11,6 +12,7 @@ import org.openntf.domino.Item;
 import com.tinkerpop.blueprints.Element;
 
 public abstract class DominoElement implements Element, Serializable {
+	private static final Logger log_ = Logger.getLogger(DominoElement.class.getName());
 	private static final long serialVersionUID = 1L;
 	public static final String TYPE_FIELD = "_OPEN_GRAPHTYPE";
 	transient org.openntf.domino.Document doc_;

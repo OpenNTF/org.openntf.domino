@@ -52,6 +52,8 @@ public interface Document {
 	 */
 	public boolean isDirty();
 
+	public boolean hasMIMEEntity(String name);
+
 	public <T> T getItemValue(String name, Class<?> T) throws ItemNotFoundException, DataNotCompatibleException;
 
 }

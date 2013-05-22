@@ -310,11 +310,11 @@ public enum Factory {
 				try {
 					((lotus.domino.Session) currentSessionHolder_.get()).isConvertMIME();
 				} catch (NotesException ne) {
-					System.out.println("Resetting default local session because we got an exception");
+					// System.out.println("Resetting default local session because we got an exception");
 					setSession((org.openntf.domino.Session) result);
 				}
 			} else {
-				System.out.println("Resetting default local session because it was null");
+				// System.out.println("Resetting default local session because it was null");
 				setSession((org.openntf.domino.Session) result);
 			}
 		} else if (lotus instanceof lotus.domino.Stream) {

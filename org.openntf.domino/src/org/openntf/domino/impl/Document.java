@@ -60,6 +60,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	private boolean isDirty_ = false;
 	private String noteid_;
+	private String unid_;
+	private boolean isNew_;
 	private boolean isQueued_ = false;
 	private boolean isRemoveQueued_ = false;
 	private boolean shouldWriteItemMeta_ = false; // TODO NTF create rules for making this true
@@ -107,6 +109,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		try {
 			// delegate.setPreferJavaDates(true);
 			noteid_ = delegate.getNoteID();
+			unid_ = delegate.getUniversalID();
+			isNew_ = delegate.isNewNote();
 			// created_ = DominoUtils.toJavaDateSafe(delegate.getCreated());
 			// initiallyModified_ = DominoUtils.toJavaDateSafe(delegate.getInitiallyModified());
 			// lastModified_ = DominoUtils.toJavaDateSafe(delegate.getLastModified());
@@ -827,9 +831,55 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * If the item does exist, then we get it's value and attempt a conversion. If the data cannot be converted, we throw an Exception
 	 */
 
+	@SuppressWarnings("unchecked")
 	public <T> T getItemValue(String name, Class<?> T) throws ItemNotFoundException, DataNotCompatibleException {
 		// TODO NTF - Add type conversion extensibility of some kind, maybe attached to the Database or the Session
-		return TypeUtils.itemValueToClass(this, name, T);
+		// if (T.equals(java.util.Collection.class) && getItemValueString("form").equalsIgnoreCase("container")) {
+		// System.out.println("Requesting a value of type " + T.getName() + " in name " + name);
+		// }
+		boolean hasMime = hasMIMEEntity(name);
+		if (!hasMime) {
+			Item item = getFirstItem(name);
+			if (item != null && item.getType() == Item.MIME_PART) {
+				return (T) getItemValueMIME(name);
+			}
+			// if (T.equals(java.util.Collection.class) && getItemValueString("form").equalsIgnoreCase("container")) {
+			// System.out.println("No MIMEEntity found for " + name + ". Using regular item API...");
+			// }
+			Object result = TypeUtils.itemValueToClass(this, name, T);
+			// if (T.equals(java.util.Collection.class) && getItemValueString("form").equalsIgnoreCase("container")) {
+			// System.out.println("Returning a value of " + (result == null ? "null" : result.getClass().getSimpleName())
+			// + " for value in " + name + " of type " + T.getSimpleName());
+			// }
+			return (T) result;
+		} else {
+			// if (T.equals(java.util.Collection.class) && getItemValueString("form").equalsIgnoreCase("container")) {
+			// System.out.println("MIMEEntity found for " + name + ". Using MIMEBean strategy...");
+			// }
+			return (T) getItemValueMIME(name);
+		}
+	}
+
+	private Object getItemValueMIME(String name) {
+		Object resultObj = null;
+		try {
+			Session session = this.getAncestorSession();
+			boolean convertMime = session.isConvertMIME();
+			session.setConvertMIME(false);
+
+			MIMEEntity entity = this.getMIMEEntity(name);
+			MIMEHeader contentType = entity.getNthHeader("Content-Type");
+			if (contentType != null
+					&& (contentType.getHeaderVal().equals("application/x-java-serialized-object") || contentType.getHeaderVal().equals(
+							"application/x-java-externalized-object"))) {
+				// Then it's a MIMEBean
+				resultObj = DominoUtils.restoreState(this, name);
+			}
+			session.setConvertMIME(convertMime);
+		} catch (Throwable t) {
+			DominoUtils.handleException(t);
+		}
+		return resultObj;
 	}
 
 	/*
@@ -842,30 +892,12 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		try {
 			// Check the item type to see if it's MIME - if so, then see if it's a MIMEBean
 			// This is a bit more expensive than I'd like
-			lotus.domino.Session session = this.getAncestorSession();
-			boolean convertMime = session.isConvertMIME();
-			session.setConvertMIME(false);
-			Item item = this.getFirstItem(name);
-			if (item.getType() == Item.MIME_PART) {
-				MIMEEntity entity = this.getMIMEEntity(name);
-				MIMEHeader contentType = entity.getNthHeader("Content-Type");
-				if (contentType != null
-						&& (contentType.getHeaderVal().equals("application/x-java-serialized-object") || contentType.getHeaderVal().equals(
-								"application/x-java-externalized-object"))) {
-					// Then it's a MIMEBean
-					Object resultObj = DominoUtils.restoreState(this, name);
-
-					// If it's a List, return it - otherwise, store it in a Vector for consistency
-					if (resultObj instanceof List) {
-						return new java.util.Vector<Object>((List<?>) resultObj);
-					}
-					Vector<Object> result = new Vector<Object>(1);
-					result.add(resultObj);
-					session.setConvertMIME(convertMime);
-					return result;
-				}
+			MIMEEntity entity = this.getMIMEEntity(name);
+			if (entity != null) {
+				Vector<Object> result = new Vector<Object>(1);
+				result.add(getItemValueMIME(name));
+				return result;
 			}
-			session.setConvertMIME(convertMime);
 			Vector<?> vals = null;
 			try {
 				vals = getDelegate().getItemValue(name);
@@ -875,8 +907,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				return null;
 			}
 			return Factory.wrapColumnValues(vals, this.getAncestorSession());
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
 		} catch (Throwable t) {
 			// From DominoUtils.restoreState(...)
 			DominoUtils.handleException(t);
@@ -1330,6 +1360,19 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			DominoUtils.handleException(e);
 		}
 		return false;
+	}
+
+	public boolean hasMIMEEntity(String name) {
+		boolean result = false;
+		Session session = this.getAncestorSession();
+		boolean convertMime = session.isConvertMIME();
+		session.setConvertMIME(false);
+
+		MIMEEntity entity = this.getMIMEEntity(name);
+		if (entity != null)
+			result = true;
+		session.setConvertMIME(convertMime);
+		return result;
 	}
 
 	/*
@@ -1838,8 +1881,17 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@SuppressWarnings("unchecked")
 	@Override
 	public Item replaceItemValue(final String itemName, Object value) {
-		if (value == null)
-			value = "";
+		// if (getItemValueString("form").equalsIgnoreCase("container") && itemName.equals(DominoVertex.IN_NAME)) {
+		// System.out.println("Replacing a value in " + itemName + " with a type of "
+		// + (value == null ? "null" : value.getClass().getSimpleName()));
+		// }
+		if (value == null) {
+			if (hasItem(itemName)) {
+				value = "";
+			} else {
+				return null;
+			}
+		}
 		markDirty();
 		try {
 			lotus.domino.Item result = null;
@@ -1899,10 +1951,16 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					Base.enc_recycle(domNode);
 				}
 			} catch (IllegalArgumentException iae) {
+				// if (getItemValueString("form").equalsIgnoreCase("container") && itemName.equals(DominoVertex.IN_NAME)) {
+				// System.out.println("Writing MIME value to " + itemName + " with a type of "
+				// + (value == null ? "null" : value.getClass().getSimpleName()));
+				// }
 				// Then try serialization
 				if (value instanceof Serializable) {
 					DominoUtils.saveState((Serializable) value, this, itemName);
+
 					result = getDelegate().getFirstItem(itemName);
+					// result = null;
 				} else if (value instanceof DocumentCollection) {
 					// NoteIDs would be faster for this and, particularly, NoteCollection, but it should be replica-friendly
 					DocumentCollection docs = (DocumentCollection) value;
@@ -1914,6 +1972,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					Map<String, String> headers = new HashMap<String, String>(1);
 					headers.put("X-Original-Java-Class", "org.openntf.domino.DocumentCollection");
 					DominoUtils.saveState(unids, this, itemName, true, headers);
+					// result = null;
 					result = getDelegate().getFirstItem(itemName);
 				} else if (value instanceof NoteCollection) {
 					// Maybe it'd be faster to use .getNoteIDs - I'm not sure how the performance compares
@@ -1928,6 +1987,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					Map<String, String> headers = new HashMap<String, String>(1);
 					headers.put("X-Original-Java-Class", "org.openntf.domino.NoteCollection");
 					DominoUtils.saveState(unids, this, itemName, true, headers);
+					// result = null;
 					result = getDelegate().getFirstItem(itemName);
 				} else {
 					// Check to see if it's a StateHolder
@@ -1942,7 +2002,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 							headers.put("X-Storage-Scheme", "StateHolder");
 							headers.put("X-Original-Java-Class", value.getClass().getName());
 							DominoUtils.saveState(state, this, itemName, true, headers);
-							result = getDelegate().getFirstItem(itemName);
+							result = null;
+							// result = getDelegate().getFirstItem(itemName);
 						} else {
 							// Well, we tried.
 							throw iae;
@@ -1967,7 +2028,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				infoNode.put("updated", new Date()); // For sanity checking if the value was changed outside of Java
 				itemInfo.put(itemName, infoNode);
 			}
-			return Factory.fromLotus(result, Item.class, this);
+			if (result != null) {
+				return Factory.fromLotus(result, Item.class, this);
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} catch (Throwable t) {
@@ -2117,14 +2180,34 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		boolean result = false;
 		if (isDirty()) {
 			writeItemInfo();
+			isNew_ = false;
 			try {
+
 				result = getDelegate().save(force, makeResponse, markRead);
+
 				if (!noteid_.equals(getDelegate().getNoteID())) {
 					noteid_ = getDelegate().getNoteID();
 				}
-
+				if (!unid_.equals(getDelegate().getUniversalID())) {
+					unid_ = getDelegate().getUniversalID();
+				}
 			} catch (NotesException e) {
-				DominoUtils.handleException(e);
+				if (e.text.contains("Database already contains a document with this ID")) {
+					log_.log(Level.WARNING, "Unable to save a document with id " + getUniversalID()
+							+ " because that id already exists. Saving to a different unid instead...");
+					setUniversalID(DominoUtils.toUnid(new Date().getTime()));
+					try {
+						getDelegate().save(force, makeResponse, markRead);
+						if (!noteid_.equals(getDelegate().getNoteID())) {
+							noteid_ = getDelegate().getNoteID();
+						}
+					} catch (NotesException ne) {
+						log_.log(Level.SEVERE, "Okay, now it's time to really panic. Sorry...");
+						DominoUtils.handleException(e);
+					}
+				} else {
+					DominoUtils.handleException(e);
+				}
 			}
 			if (result)
 				clearDirty();
@@ -2314,7 +2397,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			try {
 				lotus.domino.Document del = getDelegate().getParentDatabase().getDocumentByUNID(unid);
 				if (del != null) { // this is surprising. Why didn't we already get it?
+					log_.log(Level.WARNING,
+							"Document " + unid + " already existed in the database with noteid " + del.getNoteID()
+									+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
+									+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
 					if (isDirty()) { // we've already made other changes that we should tuck away...
+						log_.log(Level.WARNING,
+								"Attempting to stash changes to this document to apply to other document of the same UNID. This is pretty dangerous...");
 						Document stashDoc = copyToDatabase(getParentDatabase());
 						setDelegate(del);
 						for (Item item : stashDoc.getItems()) {
@@ -2333,6 +2422,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 							// TODO NTF properties?
 						}
 					} else {
+						log_.log(Level.WARNING, "Resetting delegate to existing document for id " + unid);
 						setDelegate(del);
 					}
 				} else {
@@ -2345,6 +2435,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+		unid_ = unid;
 		markDirty();
 	}
 
@@ -2468,7 +2559,28 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	private void resurrect() {
 		if (noteid_ != null) {
 			try {
-				lotus.domino.Document d = ((org.openntf.domino.impl.Database) getParentDatabase()).getDelegate().getDocumentByID(noteid_);
+				lotus.domino.Document d = null;
+				lotus.domino.Database db = ((org.openntf.domino.impl.Database) getParentDatabase()).getDelegate();
+				if (db != null) {
+
+					if (Integer.valueOf(noteid_, 16) == 0) {
+						System.out.println("ALERT! NO NOTEID AVAILABLE for document unid " + String.valueOf(unid_) + " isNew? "
+								+ String.valueOf(isNew_));
+					}
+					d = db.getDocumentByID(noteid_);
+				}
+				// if (noteid_ == null || Integer.valueOf(noteid_, 16) == 0) {
+				// log_.log(Level.WARNING,
+				// "Noteid is null or zero. May not be able to resurrect. Attempting to use UNID " + String.valueOf(unid_));
+				// if (unid_ == null) {
+				// log_.log(Level.SEVERE, "UNID is null. Will not be able to resurrect...");
+				// } else {
+				// d = ((org.openntf.domino.impl.Database) getParentDatabase()).getDelegate().getDocumentByUNID(unid_);
+				// }
+				//
+				// } else {
+				// d = ((org.openntf.domino.impl.Database) getParentDatabase()).getDelegate().getDocumentByID(noteid_);
+				// }
 				setDelegate(d);
 				shouldResurrect_ = false;
 				if (log_.isLoggable(Level.FINE)) {
@@ -2494,8 +2606,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				DominoUtils.handleException(e);
 			}
 		} else {
-			if (log_.isLoggable(Level.WARNING)) {
-				log_.log(Level.WARNING,
+			if (log_.isLoggable(Level.SEVERE)) {
+				log_.log(Level.SEVERE,
 						"Document doesn't have noteid value. Something went terribly wrong. Nothing good can come of this...");
 			}
 		}

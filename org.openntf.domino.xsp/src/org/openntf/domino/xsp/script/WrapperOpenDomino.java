@@ -584,7 +584,7 @@ public class WrapperOpenDomino {
 
 		private OpenWrapperFactory(Class<?> clazz) {
 			clazz_ = clazz;
-			System.out.println("Registering OpenNTF SSJS object " + clazz.getName());
+			// System.out.println("Registering OpenNTF SSJS object " + clazz.getName());
 		}
 
 		@Override

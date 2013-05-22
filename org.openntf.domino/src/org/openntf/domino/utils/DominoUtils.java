@@ -572,7 +572,9 @@ public enum DominoUtils {
 		} else {
 			entity = previousState;
 		}
-		ByteArrayInputStream byteIn = new ByteArrayInputStream(byteStream.toByteArray());
+		byte[] bytes = byteStream.toByteArray();
+		ByteArrayInputStream byteIn = new ByteArrayInputStream(bytes);
+
 		mimeStream.setContents(byteIn);
 		entity.setContentFromBytes(mimeStream, contentType, MIMEEntity.ENC_NONE);
 		MIMEHeader javaClass = entity.getNthHeader("X-Java-Class");
