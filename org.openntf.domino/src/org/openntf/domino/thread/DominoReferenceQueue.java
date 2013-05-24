@@ -17,7 +17,9 @@ package org.openntf.domino.thread;
 
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,7 +47,8 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 	 * this, there would be nothing with a pointer to the reference, and the reference itself would be GC'ed
 	 * 
 	 * */
-	private Set<DominoReference> referenceBag = new HashSet<DominoReference>();
+	// private final Set<DominoReference> referenceBag = new HashSet<DominoReference>();
+	private final List<DominoReference> referenceBag = new ArrayList<DominoReference>();
 
 	public int finalizeQueue() {
 		int result = 0;
@@ -65,11 +68,12 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 		DominoReference result = (DominoReference) super.poll();
 
 		if (result != null) {
+			long did = result.getDelegateId();
 			referenceBag.remove(result);
 			int count = -1;
 			boolean shouldRecycle = false;
 			if (childThread_) {
-				count = result.getSession().subtractId(result.getDelegateId());
+				count = result.getSession().subtractId(did);
 				if (count == 0) { // if we're the originating thread, and we're also the last to use it. See ya!
 					if (originatorSet.contains(result)) {
 						originatorSet.remove(result);
@@ -77,9 +81,9 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 					}
 				}
 			} else {
-				count = localLotusReferenceCounter_.decrement(result.getDelegateId());
+				count = localLotusReferenceCounter_.decrement(did);
 				if (count < 1) {
-					if (result.getDelegateId() == cppid) {
+					if (did == cppid) {
 						// System.out.println("ALERT!!! Attemping to auto-recycle the same handle we're currently wrapping. Don't! " +
 						// cppid);
 					} else {
@@ -113,10 +117,10 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 
 	public void bagReference(DominoReference ref) {
 		bagginses++;
-		if (bagginses % 5000 == 0) {
-			log_.log(Level.FINE, "Bagged 5000 more. Forcing GC...");
-			System.gc();
-		}
+		// if (bagginses % 5000 == 0) {
+		// log_.log(Level.FINE, "Bagged 5000 more. Forcing GC...");
+		// System.gc();
+		// }
 		if (childThread_) {
 			int count = ref.getSession().addId(ref.getDelegateId());
 			if (count == 1) { // we're the thread that's accessing the object for the first time

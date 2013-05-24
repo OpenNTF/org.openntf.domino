@@ -201,6 +201,36 @@ public class ItemVector extends Vector<Item> {
 		add(arg1, arg0);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.impl.Vector#isEmpty()
+	 */
+	@Override
+	public boolean isEmpty() {
+		return itemNames_.isEmpty();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.impl.Vector#size()
+	 */
+	@Override
+	public int size() {
+		return itemNames_.size();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.impl.Vector#capacity()
+	 */
+	@Override
+	public int capacity() {
+		return itemNames_.size();
+	}
+
 	@Override
 	public Iterator<Item> iterator() {
 		return new ItemVectorIterator(doc_, this);
