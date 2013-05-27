@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.openntf.domino.xsp;
 
 import com.ibm.xsp.library.AbstractXspLibrary;
