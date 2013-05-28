@@ -77,8 +77,6 @@ public enum TypeUtils {
 		Class<?> CType = null;
 		if (T.isArray()) {
 			CType = T.getComponentType();
-		}
-		if (T.isArray()) {
 			if (CType.isPrimitive()) {
 				try {
 					result = toPrimitiveArray(v, CType);
@@ -86,16 +84,17 @@ public enum TypeUtils {
 					throw e;
 				}
 			} else {
-				if (CType.isAssignableFrom(String.class)) {
+				if (CType == String.class) {
 					result = toStrings(v);
-				} else if (CType.isAssignableFrom(Date.class)) {
+				} else if (CType == Date.class) {
 					result = toDates(v);
-				} else if (CType.isAssignableFrom(DateTime.class)) {
+				} else if (CType == DateTime.class) {
 					result = toDateTimes(v, session);
-				} else if (CType.isAssignableFrom(Name.class)) {
+				} else if (CType == Name.class) {
 					result = toNames(v, session);
+				} else {
+					throw new UnimplementedException("Arrays for " + CType.getName() + " not yet implemented");
 				}
-				throw new UnimplementedException("Arrays for " + CType.getName() + " not yet implemented");
 			}
 		} else if (T.isPrimitive()) {
 			try {
@@ -104,17 +103,18 @@ public enum TypeUtils {
 				throw e;
 			}
 		} else {
-			if (T.isAssignableFrom(String.class)) {
+
+			if (T == String.class) {
 				result = join(v);
-			} else if (T.isAssignableFrom(Date.class)) {
+			} else if (T == Date.class) {
 				result = toDate(v);
-			} else if (T.isAssignableFrom(org.openntf.domino.DateTime.class)) {
+			} else if (T == org.openntf.domino.DateTime.class) {
 				result = session.createDateTime(toDate(v));
-			} else if (T.isAssignableFrom(org.openntf.domino.Name.class)) {
+			} else if (T == org.openntf.domino.Name.class) {
 				result = session.createName(String.valueOf(v.get(0)));
 			} else {
 				if (!v.isEmpty()) {
-					if (T.isAssignableFrom(Integer.class)) {
+					if (T == Integer.class) {
 						result = ((Double) v.get(0)).intValue();
 					} else {
 						result = v.get(0);

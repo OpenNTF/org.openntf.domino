@@ -491,7 +491,11 @@ public enum Factory {
 			try {
 				setSession(lotus.domino.NotesFactory.createSession());
 			} catch (lotus.domino.NotesException ne) {
-				setSession(XSPUtil.getCurrentSession());
+				try {
+					setSession(XSPUtil.getCurrentSession());
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
 			}
 		}
 		return currentSessionHolder_.get();

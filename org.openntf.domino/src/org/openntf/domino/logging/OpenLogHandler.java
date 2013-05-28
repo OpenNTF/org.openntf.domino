@@ -83,7 +83,21 @@ public class OpenLogHandler extends Handler {
 	 */
 	@Override
 	public void publish(LogRecord record) {
-		ol_.logError(Factory.getSession(), record.getThrown(), record.getMessage(), record.getLevel(), null);
+		Throwable t = record.getThrown();
+		if (t != null) {
+			for (StackTraceElement elem : t.getStackTrace()) {
+				if (elem.getClassName().equals(getClass().getName())) {
+					// NTF - we are by definition in a loop
+					System.out.println(t.toString());
+					t.printStackTrace();
+					return;
+				}
+			}
+		}
+		org.openntf.domino.Session session = Factory.getSession();
+		if (session != null) {
+			ol_.logError(session, t, record.getMessage(), record.getLevel(), null);
+		}
 	}
 
 }

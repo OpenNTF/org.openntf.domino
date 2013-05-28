@@ -1,3 +1,11 @@
+DesignElements.SelectionFormula = "$TITLE = \"$TemplateBuild\""
+  Call DesignElements.BuildCollection()
+  If (DesignElements.Count < 1) Then Exit Sub
+  NoteID$ = DesignElements.GetFirstNoteId()
+  Set BuildDetails = DB.GetDocumentByID(NoteID$)
+  Call BuildDetails.ReplaceItemvalue("$TemplateBuildName",Me.Release$)
+  Call BuildDetails.ReplaceItemvalue("$TemplateBuildDate",Me.ReleaseDate)
+
 Things to do...
 
 1) provide switch to force Datetime storage as GMT
