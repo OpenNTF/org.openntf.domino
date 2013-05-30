@@ -514,7 +514,8 @@ public enum Factory {
 			lotus.domino.Session s = lotus.domino.NotesFactory.createSessionWithFullAccess();
 			return fromLotus(s, org.openntf.domino.Session.class, null);
 		} catch (lotus.domino.NotesException ne) {
-			DominoUtils.handleException(ne);
+			ne.printStackTrace();
+			// DominoUtils.handleException(ne);
 		}
 		return null;
 	}

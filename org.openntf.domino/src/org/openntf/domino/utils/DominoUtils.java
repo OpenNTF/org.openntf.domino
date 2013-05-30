@@ -25,6 +25,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.security.AccessController;
 import java.security.MessageDigest;
 import java.security.PrivilegedExceptionAction;
@@ -82,18 +83,19 @@ public enum DominoUtils {
 			MessageDigest algorithm = MessageDigest.getInstance(alg);
 			algorithm.reset();
 			algorithm.update(defaultBytes);
-			byte messageDigest[] = algorithm.digest();
+			byte[] messageDigest = algorithm.digest();
+			BigInteger bi = new BigInteger(1, messageDigest);
 
-			StringBuffer hexString = new StringBuffer();
-			for (byte element : messageDigest) {
-				String hex = Integer.toHexString(0xFF & element);
-				if (hex.length() == 1) {
-					hexString.append('0');
-				}
-				hexString.append(hex);
-			}
+			// StringBuffer hexString = new StringBuffer();
+			// for (byte element : messageDigest) {
+			// String hex = Integer.toHexString(0xFF & element);
+			// if (hex.length() == 1) {
+			// hexString.append('0');
+			// }
+			// hexString.append(hex);
+			// }
 
-			hashed = hexString.toString();
+			hashed = bi.toString(16);
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
@@ -334,7 +336,11 @@ public enum DominoUtils {
 	public static String toUnid(Serializable value) {
 		if (value instanceof String && DominoUtils.isUnid((String) value))
 			return (String) value;
-		return DominoUtils.md5(value);
+		String hash = DominoUtils.md5(value);
+		while (hash.length() < 32) {
+			hash = "0" + hash;
+		}
+		return hash;
 	}
 
 	/**
