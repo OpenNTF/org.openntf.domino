@@ -54,6 +54,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 			enc_recycle(dt1);
 			enc_recycle(dt2);
 			return result;
+
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
