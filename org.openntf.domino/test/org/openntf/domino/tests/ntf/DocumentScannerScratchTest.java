@@ -50,8 +50,15 @@ public class DocumentScannerScratchTest {
 
 	}
 
+	/** The Constant THREAD_COUNT. */
 	private static final int THREAD_COUNT = 1;
 
+	/**
+	 * The main method.
+	 * 
+	 * @param args
+	 *            the arguments
+	 */
 	public static void main(String[] args) {
 		int delay = 500;
 		DominoThread[] threads = new DominoThread[THREAD_COUNT];

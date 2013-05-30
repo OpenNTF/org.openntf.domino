@@ -206,6 +206,9 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#getParent()
+	 */
 	@Override
 	public MIMEEntity getParent() {
 		return (MIMEEntity) super.getParent();

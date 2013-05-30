@@ -496,6 +496,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#getParent()
+	 */
 	@Override
 	public Document getParent() {
 		return (Document) super.getParent();

@@ -40,6 +40,7 @@ public class DatabaseIterator implements Iterator<Database> {
 	/** The next database. */
 	private transient Database nextDatabase_;
 
+	/** The type_. */
 	private final DbDirectory.Type type_;
 
 	/** The started_. */
@@ -53,6 +54,8 @@ public class DatabaseIterator implements Iterator<Database> {
 	 * 
 	 * @param dbDirectory
 	 *            the dbDirectory
+	 * @param type
+	 *            the type
 	 */
 	public DatabaseIterator(DbDirectory dbDirectory, DbDirectory.Type type) {
 		setDbDirectory(dbDirectory);
@@ -133,8 +136,8 @@ public class DatabaseIterator implements Iterator<Database> {
 	/**
 	 * Sets the current entry.
 	 * 
-	 * @param currentEntry
-	 *            the new current entry
+	 * @param currentDatabase
+	 *            the new current database
 	 */
 	public void setCurrentDatabase(Database currentDatabase) {
 		currentDatabase_ = currentDatabase;
@@ -152,8 +155,8 @@ public class DatabaseIterator implements Iterator<Database> {
 	/**
 	 * Sets the acl.
 	 * 
-	 * @param acl
-	 *            the new acl
+	 * @param dbDirectory
+	 *            the new db directory
 	 */
 	public void setDbDirectory(DbDirectory dbDirectory) {
 		this.dbDirectory = dbDirectory;

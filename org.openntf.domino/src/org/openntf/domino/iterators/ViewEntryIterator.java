@@ -35,7 +35,10 @@ public class ViewEntryIterator extends AbstractDominoIterator<ViewEntry> {
 	/** The done_. */
 	private boolean done_;
 
+	/** The count_. */
 	private int count_ = 0;
+	
+	/** The current index_. */
 	private int currentIndex_ = 0;
 
 	/**

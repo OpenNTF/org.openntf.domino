@@ -52,7 +52,13 @@ public class Create200KLotus {
 	}
 
 	/**
+	 * <<<<<<< HEAD
+	 * 
 	 * @param args
+	 *            ======= The main method.
+	 * 
+	 * @param args
+	 *            the arguments >>>>>>> origin/declan
 	 */
 	public static void main(String[] args) {
 		DominoThread dt = new DominoThread(new DocCreator(), "Create One Million Docs");

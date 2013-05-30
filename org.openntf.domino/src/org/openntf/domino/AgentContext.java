@@ -71,6 +71,13 @@ public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.dom
 	@Override
 	public DateTime getLastRun();
 
+	/**
+	 * Gets the parent session.
+	 * 
+	 * @return the parent session
+	 */
+	public Session getParentSession();
+
 	/*
 	 * (non-Javadoc)
 	 * 

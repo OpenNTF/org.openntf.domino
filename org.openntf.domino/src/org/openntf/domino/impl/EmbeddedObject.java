@@ -172,6 +172,9 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.EmbeddedObject#getParentDocument()
+	 */
 	public Document getParentDocument() {
 		org.openntf.domino.Base<?> parent = super.getParent();
 		if (parent instanceof org.openntf.domino.RichTextItem) {

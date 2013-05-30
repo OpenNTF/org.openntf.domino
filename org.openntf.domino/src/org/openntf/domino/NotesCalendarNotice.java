@@ -121,6 +121,11 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	@Override
 	public Vector<NotesCalendarNotice> getOutstandingInvitations();
 
+	/**
+	 * Gets the parent.
+	 * 
+	 * @return the parent
+	 */
 	public NotesCalendar getParent();
 
 	/*

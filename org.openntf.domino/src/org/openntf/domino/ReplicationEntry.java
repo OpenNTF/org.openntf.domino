@@ -15,6 +15,8 @@
  */
 package org.openntf.domino;
 
+import java.util.Collection;
+
 import org.openntf.domino.types.DatabaseDescendant;
 
 /**
@@ -37,6 +39,13 @@ public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, l
 	 */
 	@Override
 	public String getFormula();
+
+	/**
+	 * Gets the parent.
+	 * 
+	 * @return the parent
+	 */
+	public Replication getParent();
 
 	/*
 	 * (non-Javadoc)
@@ -165,5 +174,13 @@ public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, l
 	 */
 	@Override
 	public void setViews(String views);
+
+	/**
+	 * Sets the views.
+	 * 
+	 * @param views
+	 *            the new views
+	 */
+	public void setViews(Collection<String> views);
 
 }

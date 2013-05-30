@@ -137,6 +137,13 @@ public interface DirectoryNavigator extends Base<lotus.domino.DirectoryNavigator
 	@Override
 	public Vector<Object> getNthItemValue(int n);
 
+	/**
+	 * Gets the parent.
+	 * 
+	 * @return the parent
+	 */
+	public Directory getParent();
+
 	/*
 	 * (non-Javadoc)
 	 * 

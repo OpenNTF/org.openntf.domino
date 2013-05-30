@@ -684,6 +684,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.View#getAllDocuments()
+	 */
 	public DocumentCollection getAllDocuments() {
 		// FIXME - NTF Make efficient
 		DocumentCollection result = this.getParent().createDocumentCollection();
@@ -1290,6 +1293,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.types.Design#getNoteID()
+	 */
 	@Override
 	public String getNoteID() {
 		NoteCollection notes = this.getParent().createNoteCollection(false);

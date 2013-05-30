@@ -148,6 +148,9 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#getParent()
+	 */
 	@Override
 	public Session getParent() {
 		return (Session) super.getParent();

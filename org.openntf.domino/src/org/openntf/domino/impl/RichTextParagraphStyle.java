@@ -130,6 +130,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#getParent()
+	 */
 	@Override
 	public Session getParent() {
 		return (Session) super.getParent();
@@ -209,6 +212,9 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.RichTextParagraphStyle#setAlignment(org.openntf.domino.RichTextParagraphStyle.Align)
+	 */
 	public void setAlignment(Align value) {
 		setAlignment(value.getValue());
 	}

@@ -31,6 +31,13 @@ public interface RichTextSection extends Base<lotus.domino.RichTextSection>, lot
 	@Override
 	public ColorObject getBarColor();
 
+	/**
+	 * Gets the parent.
+	 * 
+	 * @return the parent
+	 */
+	public RichTextItem getParent();
+
 	/*
 	 * (non-Javadoc)
 	 * 

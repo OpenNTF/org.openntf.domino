@@ -1,3 +1,18 @@
+/*
+ * Copyright OpenNTF 2013
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ */
 package org.openntf.domino.logging;
 
 import java.io.IOException;
@@ -14,15 +29,22 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.utils.DominoUtils;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author withersp
+ * The Class LogUtils.
  * 
+ * @author withersp
  */
 public class LogUtils {
 
+	/** The IS o8601_ utc. */
 	private static SimpleDateFormat ISO8601_UTC = null;
+	/** The IS o8601. */
 	private static SimpleDateFormat ISO8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
+	/**
+	 * Instantiates a new log utils.
+	 */
 	public LogUtils() {
 
 	}
@@ -78,7 +100,6 @@ public class LogUtils {
 	 * @param utc
 	 *            If <code>true</code>, format the time in UTC. If <code>false</code>, format the time in the local time zone.
 	 * @return The ISO8601 string.
-	 * @throws IOException
 	 */
 	public static String dateToString(Date value, boolean utc) {
 
@@ -206,7 +227,7 @@ public class LogUtils {
 	}
 
 	/**
-	 * Gets a logger from the LogManager
+	 * Gets a logger from the LogManager.
 	 * 
 	 * @param logName
 	 *            name of the logger

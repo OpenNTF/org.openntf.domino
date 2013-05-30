@@ -35,11 +35,13 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(DominoReferenceQueue.class.getName());
 
+	/** The child thread_. */
 	private final boolean childThread_;
 
 	/** The lotus reference counter_. */
 	private DominoReferenceCounter localLotusReferenceCounter_ = new DominoReferenceCounter(false);
 
+	/** The originator set. */
 	private Set<DominoReference> originatorSet = new HashSet<DominoReference>();
 
 	/**
@@ -50,6 +52,11 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 	// private final Set<DominoReference> referenceBag = new HashSet<DominoReference>();
 	private final List<DominoReference> referenceBag = new ArrayList<DominoReference>();
 
+	/**
+	 * Finalize queue.
+	 * 
+	 * @return the int
+	 */
 	public int finalizeQueue() {
 		int result = 0;
 		for (DominoReference ref : originatorSet) {
@@ -59,6 +66,9 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.ref.ReferenceQueue#poll()
+	 */
 	@Override
 	public Reference<? extends Base> poll() {
 		return poll(0l);
@@ -103,18 +113,31 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.ref.ReferenceQueue#remove()
+	 */
 	@Override
 	public Reference<? extends Base> remove() throws InterruptedException {
 		throw new UnimplementedException("DominoReferenceQueue only supports poll()");
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.ref.ReferenceQueue#remove(long)
+	 */
 	@Override
 	public Reference<? extends Base> remove(long wait) throws InterruptedException {
 		throw new UnimplementedException("DominoReferenceQueue only supports poll()");
 	}
 
+	/** The bagginses. */
 	private int bagginses = 0;
 
+	/**
+	 * Bag reference.
+	 * 
+	 * @param ref
+	 *            the ref
+	 */
 	public void bagReference(DominoReference ref) {
 		bagginses++;
 		// if (bagginses % 5000 == 0) {

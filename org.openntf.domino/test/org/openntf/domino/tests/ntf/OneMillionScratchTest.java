@@ -133,6 +133,12 @@ public enum OneMillionScratchTest {
 
 	/**
 	 * @param args
+	 *            ======= }
+	 * 
+	 *            /** The main method.
+	 * 
+	 * @param args
+	 *            the arguments >>>>>>> origin/declan
 	 */
 	public static void main(String[] args) {
 		int delay = 500;

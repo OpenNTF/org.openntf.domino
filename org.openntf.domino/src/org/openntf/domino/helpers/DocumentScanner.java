@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
 import org.openntf.domino.RichTextItem;
@@ -37,6 +38,12 @@ public class DocumentScanner {
 		stopTokenList_ = Collections.emptySet();
 	}
 
+	/**
+	 * Instantiates a new document scanner.
+	 * 
+	 * @param stopTokenList
+	 *            the stop token list
+	 */
 	public DocumentScanner(Set<String> stopTokenList) {
 		stopTokenList_ = stopTokenList;
 	}
@@ -49,6 +56,11 @@ public class DocumentScanner {
 		return ignoreDollar_;
 	}
 
+	/**
+	 * Gets the field token map.
+	 * 
+	 * @return the field token map
+	 */
 	public Map<String, NavigableSet<String>> getFieldTokenMap() {
 		if (fieldTokenMap_ == null) {
 			fieldTokenMap_ = new HashMap<String, NavigableSet<String>>();
@@ -70,6 +82,11 @@ public class DocumentScanner {
 		return fieldTypeMap_;
 	}
 
+	/**
+	 * Gets the token freq map.
+	 * 
+	 * @return the token freq map
+	 */
 	public NavigableMap<String, Integer> getTokenFreqMap() {
 		if (tokenFreqMap_ == null) {
 			tokenFreqMap_ = new ConcurrentSkipListMap<String, Integer>(String.CASE_INSENSITIVE_ORDER);
@@ -149,8 +166,8 @@ public class DocumentScanner {
 					}
 				}
 			} catch (Exception e) {
-				log_.log(Level.WARNING, "Unable to scan next item in Document " + doc.getNoteID() + " in database "
-						+ doc.getAncestorDatabase().getFilePath());
+				Database db = doc.getAncestorDatabase();
+				log_.log(Level.WARNING, "Unable to scan next item in Document " + doc.getNoteID() + " in database " + db.getFilePath());
 			}
 
 		}

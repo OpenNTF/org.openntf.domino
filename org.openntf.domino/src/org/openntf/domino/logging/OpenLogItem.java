@@ -15,6 +15,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
  * implied. See the License for the specific language governing 
  * permissions and limitations under the License.
+<<<<<<< HEAD
  * 
  * 
  * Paul Withers, Intec March 2013
@@ -45,6 +46,8 @@
  *
  * OpenLogItem.logEvent(session, message, level, document)
  * 
+=======
+>>>>>>> origin/declan
  */
 
 package org.openntf.domino.logging;
@@ -73,6 +76,10 @@ import org.openntf.domino.impl.Base;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class OpenLogItem.
+ */
 public class OpenLogItem implements Serializable {
 	/*
 	 * ======================================================= <HEADER> NAME: OpenLogClass script library VERSION: 20070321a AUTHOR(S):
@@ -129,57 +136,105 @@ public class OpenLogItem implements Serializable {
 	 * to inherit changes from that database.
 	 */
 
-	/**
-	 *
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
+	
+	/** The Constant TYPE_ERROR. */
 	public static final String TYPE_ERROR = "Error";
+	
+	/** The Constant TYPE_EVENT. */
 	public static final String TYPE_EVENT = "Event";
 
+	/** The _log form name. */
 	private final String _logFormName = "LogEvent";
 
 	// MODIFY THESE FOR YOUR OWN ENVIRONMENT
 	// (don't forget to use double-backslashes if this database
 	// is in a Windows subdirectory -- like "logs\\OpenLog.nsf")
+	/** The _log db name. */
 	private String _logDbName = "";
 
+	/** The _this database. */
 	private String _thisDatabase;
+	
+	/** The _this server. */
 	private String _thisServer;
+	
+	/** The _this agent. */
 	private String _thisAgent;
 	// why the object? Because the object version is serializable
+	/** The _log success. */
 	private Boolean _logSuccess = true;
+	
+	/** The _access level. */
 	private String _accessLevel;
+	
+	/** The _user roles. */
 	private Vector<Object> _userRoles;
+	
+	/** The _client version. */
 	private Vector<String> _clientVersion;
 
+	/** The _severity. */
 	private Level _severity;
+	
+	/** The _event type. */
 	private String _eventType;
+	
+	/** The _message. */
 	private String _message;
 
+	/** The _base exception. */
 	private Throwable _baseException;
+	
+	/** The _event java time. */
 	private Date _eventJavaTime;
+	
+	/** The _err doc unid. */
 	private String _errDocUnid;
 
+	/** The _session. */
 	private transient Session _session;
+	
+	/** The _log db. */
 	private transient Database _logDb;
+	
+	/** The _current database. */
 	private transient Database _currentDatabase;
+	
+	/** The _start time. */
 	private transient DateTime _startTime;
+	
+	/** The _event time. */
 	private transient DateTime _eventTime;
+	
+	/** The _err doc. */
 	private transient Document _errDoc;
 
+	/** The ol debug level. */
 	public String olDebugLevel = loadFromProps("org.openntf.domino.logging.OpenLogHandler.OpenLogErrorsLevel");
 
 	// debugOut is the PrintStream that errors will be printed to, for debug
 	// levels greater than 1 (System.err by default)
+	/** The debug out. */
 	public static PrintStream debugOut = System.err;
 
 	/*
 	 * Constructor
 	 */
+	/**
+	 * Instantiates a new open log item.
+	 */
 	public OpenLogItem() {
 
 	}
 
+	/**
+	 * Instantiates a new open log item.
+	 * 
+	 * @param s
+	 *            the s
+	 */
 	public OpenLogItem(Session s) {
 		if (s != null) {
 			setSession(s);
@@ -187,7 +242,7 @@ public class OpenLogItem implements Serializable {
 	}
 
 	/**
-	 * Sets the Session property of the OpenLogItem
+	 * Sets the Session property of the OpenLogItem.
 	 * 
 	 * @param s
 	 *            Session
@@ -197,7 +252,7 @@ public class OpenLogItem implements Serializable {
 	}
 
 	/**
-	 * Gets the _session object, which may have been overridden if passed into logError / logEvent
+	 * Gets the _session object, which may have been overridden if passed into logError / logEvent.
 	 * 
 	 * @return Session
 	 */
@@ -528,6 +583,8 @@ public class OpenLogItem implements Serializable {
 	/**
 	 * Retrieves the error line for the current Throwable.
 	 * 
+	 * @param ee
+	 *            the ee
 	 * @return the error line of the stack trace
 	 */
 	public int getErrLine(Throwable ee) {
@@ -639,7 +696,7 @@ public class OpenLogItem implements Serializable {
 	}
 
 	/**
-	 * Retrieve what the status of the last logging event was
+	 * Retrieve what the status of the last logging event was.
 	 * 
 	 * @return success (true) or failure (false)
 	 */
@@ -701,6 +758,7 @@ public class OpenLogItem implements Serializable {
 	 * Sets the OpenLogItem type - Event or Error.
 	 * 
 	 * @param typeError
+	 *            the new event type
 	 */
 	private void setEventType(String typeError) {
 		_eventType = typeError;
@@ -757,8 +815,9 @@ public class OpenLogItem implements Serializable {
 	 *            Specific event message to be logged
 	 * @param severityType
 	 *            Severity level, @see {@link #setSeverity(Level)}
+	 * @param doc
+	 *            the doc
 	 * @return message logged in
-	 * @return
 	 */
 	public String logEvent(Throwable ee, String msg, Level severityType, Document doc) {
 		try {
@@ -837,7 +896,7 @@ public class OpenLogItem implements Serializable {
 	}
 
 	/**
-	 * Logs an error with extended options using the passed Session
+	 * Logs an error with extended options using the passed Session.
 	 * 
 	 * @param s
 	 *            Session to log the error against
@@ -856,7 +915,7 @@ public class OpenLogItem implements Serializable {
 	}
 
 	/**
-	 * Logs an event with extended options using the passed Session
+	 * Logs an event with extended options using the passed Session.
 	 * 
 	 * @param s
 	 *            Session to log the error against
@@ -880,7 +939,7 @@ public class OpenLogItem implements Serializable {
 	 * This method creates a document in the log database, populates the fields of that document with the values in the global variables,
 	 * and adds some associated information about any Document that needs to be referenced.
 	 * 
-	 * @return
+	 * @return true, if successful
 	 */
 	public boolean writeToLog() {
 		// exit early if there is no database
@@ -962,6 +1021,7 @@ public class OpenLogItem implements Serializable {
 	 * This method decides what to do with any Exceptions that we encounter internal to this class, based on the olDebugLevel variable.
 	 * 
 	 * @param ee
+	 *            the ee
 	 */
 	private void debugPrint(Throwable ee) {
 		if ((ee == null) || (debugOut == null))

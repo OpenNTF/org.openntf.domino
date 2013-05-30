@@ -117,6 +117,9 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.DbDirectory#getFirstDatabase(org.openntf.domino.DbDirectory.Type)
+	 */
 	public Database getFirstDatabase(Type type) {
 		return getFirstDatabase(type.getValue());
 	}

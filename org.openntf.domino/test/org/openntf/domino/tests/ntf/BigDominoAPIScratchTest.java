@@ -54,6 +54,14 @@ public enum BigDominoAPIScratchTest {
 			System.out.println("ENDING ITERATION of Forms");
 		}
 
+		/**
+		 * Iterate all documents.
+		 * 
+		 * @param db
+		 *            the db
+		 * @param secondReference
+		 *            the second reference
+		 */
 		private void iterateAllDocuments(Database db, Set<Document> secondReference) {
 			System.out.println("Thread " + Thread.currentThread().getName() + " BEGINNING ITERATION of Documents");
 			Session s = db.getParent();
@@ -85,6 +93,12 @@ public enum BigDominoAPIScratchTest {
 			System.out.println("ENDING ITERATION of Documents");
 		}
 
+		/**
+		 * Iterate second references.
+		 * 
+		 * @param secondReference
+		 *            the second reference
+		 */
 		private void iterateSecondReferences(Set<Document> secondReference) {
 			System.out.println("ITERATING Second reference set");
 			for (Document doc : secondReference) {
@@ -94,6 +108,9 @@ public enum BigDominoAPIScratchTest {
 			}
 		}
 
+		/**
+		 * Iterate third references.
+		 */
 		private void iterateThirdReferences() {
 			System.out.println("ITERATING Third reference set");
 			for (Document doc : thirdReference) {
@@ -103,6 +120,11 @@ public enum BigDominoAPIScratchTest {
 			}
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Runnable#run()
+		 */
 		@Override
 		public void run() {
 			long start = System.nanoTime();
@@ -139,7 +161,10 @@ public enum BigDominoAPIScratchTest {
 	}
 
 	/**
+	 * The main method.
+	 * 
 	 * @param args
+	 *            the arguments
 	 */
 	public static void main(String[] args) {
 		int delay = 500;

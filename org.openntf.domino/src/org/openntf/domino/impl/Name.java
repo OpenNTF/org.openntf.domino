@@ -253,6 +253,9 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 		return country;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#getDelegate()
+	 */
 	@Override
 	protected lotus.domino.Name getDelegate() {
 		try {

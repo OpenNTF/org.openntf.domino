@@ -74,6 +74,8 @@ public enum Factory {
 
 		/**
 		 * Increment.
+		 * 
+		 * @return the int
 		 */
 		public int increment() {
 			int result = get() + 1;
@@ -83,6 +85,8 @@ public enum Factory {
 
 		/**
 		 * Decrement.
+		 * 
+		 * @return the int
 		 */
 		public int decrement() {
 			int result = get() - 1;
@@ -119,6 +123,8 @@ public enum Factory {
 
 	/**
 	 * Count auto recycle.
+	 * 
+	 * @return the int
 	 */
 	public static int countAutoRecycle() {
 		if (TRACE_COUNTERS) {
@@ -509,6 +515,11 @@ public enum Factory {
 		currentSessionHolder_.set(null);
 	}
 
+	/**
+	 * Gets the session full access.
+	 * 
+	 * @return the session full access
+	 */
 	public static org.openntf.domino.Session getSessionFullAccess() {
 		try {
 			lotus.domino.Session s = lotus.domino.NotesFactory.createSessionWithFullAccess();
@@ -520,6 +531,11 @@ public enum Factory {
 		return null;
 	}
 
+	/**
+	 * Gets the trusted session.
+	 * 
+	 * @return the trusted session
+	 */
 	public static org.openntf.domino.Session getTrustedSession() {
 		try {
 			lotus.domino.Session s = lotus.domino.NotesFactory.createTrustedSession();

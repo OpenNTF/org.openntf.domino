@@ -118,6 +118,7 @@ public class DominoChildThread extends DominoThread {
 		// TODO Auto-generated constructor stub
 	}
 
+	/** The context variables_. */
 	private final Map<String, lotus.domino.Base> contextVariables_ = new HashMap<String, lotus.domino.Base>();
 
 	/**
@@ -145,6 +146,13 @@ public class DominoChildThread extends DominoThread {
 		}
 	}
 
+	/**
+	 * Gets the context var.
+	 * 
+	 * @param name
+	 *            the name
+	 * @return the context var
+	 */
 	public lotus.domino.Base getContextVar(String name) {
 		System.out.println("Looking for context variable " + name);
 
@@ -157,11 +165,17 @@ public class DominoChildThread extends DominoThread {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.thread.DominoThread#run()
+	 */
 	@Override
 	public void run() {
 		super.runChild();
 	}
 
+	/**
+	 * Close.
+	 */
 	public void close() {
 		int drCount = 0;
 		try {

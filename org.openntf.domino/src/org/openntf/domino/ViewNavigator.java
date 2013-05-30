@@ -286,12 +286,26 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	 * 
 	 * @see lotus.domino.ViewNavigator#gotoEntry(java.lang.Object)
 	 */
+	/**
+	 * Goto entry.
+	 * 
+	 * @param document
+	 *            the document
+	 * @return true, if successful
+	 */
 	public boolean gotoEntry(Document document);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.ViewNavigator#gotoEntry(java.lang.Object)
+	 */
+	/**
+	 * Goto entry.
+	 * 
+	 * @param entry
+	 *            the entry
+	 * @return true, if successful
 	 */
 	public boolean gotoEntry(ViewEntry entry);
 

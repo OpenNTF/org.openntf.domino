@@ -81,6 +81,13 @@ public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Di
 	@Override
 	public Vector<String> getMailInfo(String userName, boolean getVersion, boolean errorOnMultipleMatches);
 
+	/**
+	 * Gets the parent.
+	 * 
+	 * @return the parent
+	 */
+	public Session getParent();
+
 	/*
 	 * (non-Javadoc)
 	 * 

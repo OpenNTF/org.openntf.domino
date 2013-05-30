@@ -28,6 +28,12 @@ public enum MassDeleteDocumentsScratchTest {
 		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * The main method.
+	 * 
+	 * @param args
+	 *            the arguments
+	 */
 	public static void main(String[] args) {
 		DominoThread dt = new DominoThread(new Doer(), "MassDeleteDocumentsScratchTest");
 		dt.start();

@@ -72,6 +72,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#createACLEntry(java.lang.String, org.openntf.domino.ACL.Level)
+	 */
 	@Override
 	public ACLEntry createACLEntry(String name, Level level) {
 		return this.createACLEntry(name, level.getValue());
@@ -389,6 +392,9 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ACL#setInternetLevel(org.openntf.domino.ACL.Level)
+	 */
 	@Override
 	public void setInternetLevel(Level level) {
 		this.setInternetLevel(level.getValue());

@@ -33,6 +33,14 @@ public enum DominoAPIScratchTest {
 		}
 	}
 
+	/**
+	 * Do checks.
+	 * 
+	 * @param dt1
+	 *            the dt1
+	 * @param dt2
+	 *            the dt2
+	 */
 	private static void doChecks(DateTime dt1, DateTime dt2) {
 		System.out.println("Comparing Date 1 " + dt1.toJavaDate().toString() + " and Date 2 " + dt2.toJavaDate().toString());
 		if (dt1.isBefore(dt2)) {
@@ -63,7 +71,10 @@ public enum DominoAPIScratchTest {
 	}
 
 	/**
+	 * The main method.
+	 * 
 	 * @param args
+	 *            the arguments
 	 */
 	public static void main(String[] args) {
 		int delay = 500;

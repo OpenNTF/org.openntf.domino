@@ -83,6 +83,9 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.types.Design#getDocument()
+	 */
 	@Override
 	public Document getDocument() {
 		throw new UnsupportedOperationException();
@@ -268,6 +271,9 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.types.Design#getNoteID()
+	 */
 	@Override
 	public String getNoteID() {
 		throw new UnsupportedOperationException();
@@ -433,6 +439,9 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.types.Design#getUniversalID()
+	 */
 	@Override
 	public String getUniversalID() {
 		throw new UnsupportedOperationException();

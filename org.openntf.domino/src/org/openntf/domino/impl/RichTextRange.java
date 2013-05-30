@@ -108,6 +108,9 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#getParent()
+	 */
 	@Override
 	public RichTextItem getParent() {
 		return (RichTextItem) super.getParent();

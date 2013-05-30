@@ -58,14 +58,19 @@ import org.openntf.domino.Stream;
 import org.openntf.domino.exceptions.InvalidNotesUrlException;
 import org.openntf.domino.logging.LogUtils;
 
+// TODO: Auto-generated Javadoc
 //TODO: Auto-generated Javadoc
 /**
  * The Enum DominoUtils.
  */
 public enum DominoUtils {
 	;
+
+	/** The Constant log_. */
 	private final static Logger log_ = Logger.getLogger("org.openntf.domino");
-	private final static Logger logBackup_ = Logger.getLogger("com.ibm.xsp.domino");
+
+	/** The Constant logBackup_. */
+	private final static Logger logBackup_ = Logger.getLogger("org.openntf.domino");
 
 	/**
 	 * Checksum.
@@ -102,6 +107,13 @@ public enum DominoUtils {
 		return hashed;
 	}
 
+	/**
+	 * Checks if is number.
+	 * 
+	 * @param value
+	 *            the value
+	 * @return true, if is number
+	 */
 	public static boolean isNumber(String value) {
 		boolean seenDot = false;
 		boolean seenExp = false;
@@ -534,6 +546,8 @@ public enum DominoUtils {
 	 *            the item name
 	 * @param compress
 	 *            the compress
+	 * @param headers
+	 *            the headers
 	 * @throws Throwable
 	 *             the throwable
 	 */
@@ -636,6 +650,8 @@ public enum DominoUtils {
 	}
 
 	/**
+	 * Gets the domino ini var.
+	 * 
 	 * @param propertyName
 	 *            String property to retrieve from notes.ini
 	 * @param defaultValue
@@ -652,7 +668,7 @@ public enum DominoUtils {
 	}
 
 	/**
-	 * Gets properties file and returns as an InputStream
+	 * Gets properties file and returns as an InputStream.
 	 * 
 	 * @param fileType
 	 *            int passed to switch statement. <br/>

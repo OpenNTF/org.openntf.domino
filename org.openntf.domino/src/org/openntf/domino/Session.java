@@ -21,13 +21,40 @@ import java.util.Vector;
 
 import org.openntf.domino.annotations.Legacy;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Interface Session is the root of the Domino Objects containment hierarchy, providing access to the other Domino objects, and
  * represents the Domino environment of the current program.
  */
 public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Session, Base<lotus.domino.Session> {
+
+	/**
+	 * The Enum RunContext.
+	 */
 	public static enum RunContext {
-		AGENT, APPLET, DOTS, XPAGES_NSF, XPAGES_OSGI, PLUGIN, ADDIN, SERVLET, CLI, DIIOP, UNKNOWN
+
+		/** The agent. */
+		AGENT,
+		/** The applet. */
+		APPLET,
+		/** The dots. */
+		DOTS,
+		/** The xpages nsf. */
+		XPAGES_NSF,
+		/** The xpages osgi. */
+		XPAGES_OSGI,
+		/** The plugin. */
+		PLUGIN,
+		/** The addin. */
+		ADDIN,
+		/** The servlet. */
+		SERVLET,
+		/** The cli. */
+		CLI,
+		/** The diiop. */
+		DIIOP,
+		/** The unknown. */
+		UNKNOWN
 	}
 
 	/**
@@ -52,6 +79,15 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 */
 	@Override
 	public ColorObject createColorObject();
+
+	/**
+	 * Creates the color object.
+	 * 
+	 * @param color
+	 *            the color
+	 * @return the color object
+	 */
+	public ColorObject createColorObject(java.awt.Color color);
 
 	/**
 	 * Creates a new DateRange object.
@@ -370,7 +406,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * 
 	 * @param db
 	 *            A standard Domino mail application, for example, an application based on the template StdR85Mail.
-	 * @return The newly created {@link Notescalendar} object.
+	 * @return The newly created {@link NotesCalendar} object.
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
@@ -393,8 +429,8 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	/**
 	 * Gets the session's credentials.
 	 * 
-	 * @deprecated As per IBM help documentation. No replacement.
 	 * @return An {@link java.lang.Object Object} representing the current credentials.
+	 * @deprecated As per IBM help documentation. No replacement.
 	 * @since lotus.domino 4.5.0
 	 */
 	@Deprecated
@@ -577,7 +613,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	/**
 	 * The release of Domino the session is running on.
 	 * 
-	 * @return a {@link javalang.String String} containing the current Domino server version.
+	 * @return a {@link java.lang.String String} containing the current Domino server version.
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
@@ -614,7 +650,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	public String getPlatform();
 
 	/**
-	 * Gets the current sessions property broker
+	 * Gets the current sessions property broker.
 	 * 
 	 * @return the current {@link PropertyBroker} object
 	 * @since openntf.domino 1.0.0
@@ -713,9 +749,8 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * into the server, use {@link #getEffectiveUserName}.
 	 * <p>
 	 * If the user name is hierarchical, this property returns the fully distinguished name. To get only the common name, use the
-	 * {@link #getCommonUserName} property.
 	 * 
-	 * @return The full name of the user or server that created the session.
+	 * @return The full name of the user or server that created the session. {@link #getCommonUserName} property.
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
@@ -765,8 +800,8 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 *            The name of the effective user of the policy. The name must be fully qualified.
 	 * @param type
 	 *            The type of policy.
-	 * 
-	 * @see lotus.domino.Session#getUserPolicySettings(java.lang.String, java.lang.String, int)
+	 * @return the user policy settings
+	 * @see lotus.domino.Session#getUserPolicySettings
 	 * @since lotus.domino 6.5.0
 	 */
 	@Override
@@ -795,8 +830,8 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @param explicitPolicy
 	 *            The policy namespace, with slash (/) prefix, that contains the settings. If this parameter is specified, the second
 	 *            parameter is not used.
-	 * 
-	 * @see lotus.domino.Session#getUserPolicySettings(java.lang.String, java.lang.String, int)
+	 * @return the user policy settings
+	 * @see lotus.domino.Session#getUserPolicySettings
 	 * @since lotus.domino 6.5.0
 	 */
 	@Override
@@ -806,7 +841,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * Hashes a string value so that it is not recognizable.
 	 * 
 	 * @param password
-	 * 
+	 *            the password
 	 * @return The hashed value.
 	 * @since lotus.domino 6.5.0
 	 */

@@ -62,6 +62,11 @@ public interface ColorObject extends Base<lotus.domino.ColorObject>, lotus.domin
 	@Override
 	public int getNotesColor();
 
+	/**
+	 * Gets the parent.
+	 * 
+	 * @return the parent
+	 */
 	public Session getParent();
 
 	/*
@@ -80,6 +85,12 @@ public interface ColorObject extends Base<lotus.domino.ColorObject>, lotus.domin
 	@Override
 	public int getSaturation();
 
+	/**
+	 * Sets the color.
+	 * 
+	 * @param color
+	 *            the new color
+	 */
 	public void setColor(java.awt.Color color);
 
 	/*

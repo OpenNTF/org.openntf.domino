@@ -20,6 +20,7 @@ import java.util.Collection;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.types.DatabaseDescendant;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Interface DocumentCollection represents a collection of documents from a database, selected according to specific criteria.
  */
@@ -36,14 +37,6 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	@Override
 	public abstract void addDocument(lotus.domino.Document doc);
 
-	/**
-	 * Adds a document to a collection.
-	 * 
-	 * @param doc
-	 *            The document to be added. Cannot be <code>null</code>.
-	 * @param checkDups
-	 *            has no effect on local calls and only applies to Remote IIOP operations
-	 */
 	@Override
 	public abstract void addDocument(lotus.domino.Document doc, boolean checkDups);
 
@@ -103,31 +96,31 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * 
 	 * <p>
 	 * If the database is not full-text indexed, this method works, but less efficiently. To test for an index, use
-	 * {@link org.openntf.domino.Database#isFTIndexed()}. To create an index on a local database, use
-	 * {@link org.openntf.domino.Database#updateFTIndex(boolean)}
-	 * </p>
-	 * 
-	 * <p>
-	 * This method searches all documents in a document collection. To search all documents in a database, use
-	 * {@link org.openntf.domino.Database#FTSearch(String)} in Database. To search only documents found in a particular view, use
-	 * {@link org.openntf.domino.View#FTSearch(String)} in View or {@link org.openntf.domino.ViewEntryCollection#FTSearch(String)} in
-	 * ViewEntryCollection.
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>Query syntax</b><br>
-	 * To search for a word or phrase, enter the word or phrase as is, except that search keywords must be enclosed in quotes. Remember to
-	 * escape quotes if you are inside a literal.
-	 * </p>
-	 * 
-	 * <p>
-	 * Wildcards, operators, and other syntax are permitted. For the complete syntax rules, see "Refining a search query using operators" in
-	 * Notes� Help. Search for "query syntax" in the Domino� Designer Eclipse help system or information center (for example,
-	 * http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/index.jsp), both of which include Notes.
-	 * </p>
 	 * 
 	 * @param query
-	 *            The full-text query.
+	 *            The full-text query. {@link org.openntf.domino.Database#isFTIndexed()}. To create an index on a local database, use
+	 *            {@link org.openntf.domino.Database#updateFTIndex(boolean)}
+	 *            </p>
+	 * 
+	 *            <p>
+	 *            This method searches all documents in a document collection. To search all documents in a database, use
+	 *            {@link org.openntf.domino.Database#FTSearch(String)} in Database. To search only documents found in a particular view, use
+	 *            {@link org.openntf.domino.View#FTSearch(String)} in View or
+	 *            {@link org.openntf.domino.ViewEntryCollection#FTSearch(String)} in ViewEntryCollection.
+	 *            </p>
+	 * 
+	 *            <p>
+	 *            <b>Query syntax</b><br>
+	 *            To search for a word or phrase, enter the word or phrase as is, except that search keywords must be enclosed in quotes.
+	 *            Remember to escape quotes if you are inside a literal.
+	 *            </p>
+	 * 
+	 *            <p>
+	 *            Wildcards, operators, and other syntax are permitted. For the complete syntax rules, see
+	 *            "Refining a search query using operators" in Notes� Help. Search for "query syntax" in the Domino� Designer Eclipse
+	 *            help system or information center (for example, http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/index.jsp), both of
+	 *            which include Notes.
+	 *            </p>
 	 */
 	@Override
 	public abstract void FTSearch(String query);
@@ -147,34 +140,34 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * 
 	 * <p>
 	 * If the database is not full-text indexed, this method works, but less efficiently. To test for an index, use
-	 * {@link org.openntf.domino.Database#isFTIndexed()}. To create an index on a local database, use
-	 * {@link org.openntf.domino.Database#updateFTIndex(boolean)}
-	 * </p>
-	 * 
-	 * <p>
-	 * This method searches all documents in a document collection. To search all documents in a database, use
-	 * {@link org.openntf.domino.Database#FTSearch(String)} in Database. To search only documents found in a particular view, use
-	 * {@link org.openntf.domino.View#FTSearch(String)} in View or {@link org.openntf.domino.ViewEntryCollection#FTSearch(String)} in
-	 * ViewEntryCollection.
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>Query syntax</b><br>
-	 * To search for a word or phrase, enter the word or phrase as is, except that search keywords must be enclosed in quotes. Remember to
-	 * escape quotes if you are inside a literal.
-	 * </p>
-	 * 
-	 * <p>
-	 * Wildcards, operators, and other syntax are permitted. For the complete syntax rules, see "Refining a search query using operators" in
-	 * Notes� Help. Search for "query syntax" in the Domino� Designer Eclipse help system or information center (for example,
-	 * http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/index.jsp), both of which include Notes.
-	 * </p>
 	 * 
 	 * @param query
 	 *            The full-text query.
 	 * @param maxDocs
 	 *            The maximum number of documents you want returned from the query. Set this parameter to 0 to receive all matching
-	 *            documents.
+	 *            documents. {@link org.openntf.domino.Database#isFTIndexed()}. To create an index on a local database, use
+	 *            {@link org.openntf.domino.Database#updateFTIndex(boolean)}
+	 *            </p>
+	 * 
+	 *            <p>
+	 *            This method searches all documents in a document collection. To search all documents in a database, use
+	 *            {@link org.openntf.domino.Database#FTSearch(String)} in Database. To search only documents found in a particular view, use
+	 *            {@link org.openntf.domino.View#FTSearch(String)} in View or
+	 *            {@link org.openntf.domino.ViewEntryCollection#FTSearch(String)} in ViewEntryCollection.
+	 *            </p>
+	 * 
+	 *            <p>
+	 *            <b>Query syntax</b><br>
+	 *            To search for a word or phrase, enter the word or phrase as is, except that search keywords must be enclosed in quotes.
+	 *            Remember to escape quotes if you are inside a literal.
+	 *            </p>
+	 * 
+	 *            <p>
+	 *            Wildcards, operators, and other syntax are permitted. For the complete syntax rules, see
+	 *            "Refining a search query using operators" in Notes� Help. Search for "query syntax" in the Domino� Designer Eclipse
+	 *            help system or information center (for example, http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/index.jsp), both of
+	 *            which include Notes.
+	 *            </p>
 	 */
 	@Override
 	public abstract void FTSearch(String query, int maxDocs);
@@ -317,16 +310,12 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * 
 	 * <p>
 	 * The database time may differ from the system time. Do not use the system time in
-	 * {@link org.openntf.domino.Database#getModifiedDocuments()} where you want to get all modified documents since the most recent call.
-	 * </p>
-	 * 
-	 * 
-	 * 
 	 * 
 	 * @return Returns the end time for a collection obtained through {@link org.openntf.domino.Database#getModifiedDocuments()}, For
 	 *         collections not produced through {@link org.openntf.domino.Database#getModifiedDocuments()}, this property returns
-	 *         <code>null</code>.
-	 * 
+	 *         <code>null</code>. {@link org.openntf.domino.Database#getModifiedDocuments()} where you want to get all modified documents
+	 *         since the most recent call.
+	 *         </p>
 	 */
 	@Override
 	public abstract DateTime getUntilTime();

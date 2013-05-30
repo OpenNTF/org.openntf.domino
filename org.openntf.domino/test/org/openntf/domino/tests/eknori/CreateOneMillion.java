@@ -54,7 +54,10 @@ public class CreateOneMillion {
 	}
 
 	/**
+	 * The main method.
+	 * 
 	 * @param args
+	 *            the arguments
 	 */
 	public static void main(String[] args) {
 		DominoThread dt = new DominoThread(new DocCreator(), "Create One Million Docs");

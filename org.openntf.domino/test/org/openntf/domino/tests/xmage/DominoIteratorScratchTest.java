@@ -18,6 +18,12 @@ public enum DominoIteratorScratchTest {
 		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * The main method.
+	 * 
+	 * @param args
+	 *            the arguments
+	 */
 	public static void main(String[] args) {
 		int delay = 500;
 		DominoThread dt = new DominoThread(new Doer(), "Scratch Test");

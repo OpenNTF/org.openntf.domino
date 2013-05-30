@@ -252,6 +252,9 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#getParent()
+	 */
 	@Override
 	public Directory getParent() {
 		return (Directory) super.getParent();

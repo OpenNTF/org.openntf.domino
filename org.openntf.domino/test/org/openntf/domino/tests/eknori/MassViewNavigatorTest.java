@@ -33,6 +33,12 @@ public enum MassViewNavigatorTest {
 		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * The main method.
+	 * 
+	 * @param args
+	 *            the arguments
+	 */
 	public static void main(String[] args) {
 		DominoThread dt = new DominoThread(new Doer(), "MassViewEntryCollectionTest");
 		dt.start();

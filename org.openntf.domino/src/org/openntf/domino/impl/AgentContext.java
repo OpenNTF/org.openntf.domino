@@ -134,6 +134,9 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.AgentContext#getParentSession()
+	 */
 	public Session getParentSession() {
 		return (Session) super.getParent();
 	}

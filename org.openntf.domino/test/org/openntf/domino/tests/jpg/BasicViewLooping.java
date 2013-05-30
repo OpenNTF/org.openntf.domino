@@ -25,6 +25,14 @@ public enum BasicViewLooping {
 		out.println("done");
 	}
 
+	/**
+	 * Prints the docs.
+	 * 
+	 * @param out
+	 *            the out
+	 * @param view
+	 *            the view
+	 */
 	public static void printDocs(PrintWriter out, View view) {
 		long start = System.nanoTime();
 		Document doc = view.getFirstDocument();

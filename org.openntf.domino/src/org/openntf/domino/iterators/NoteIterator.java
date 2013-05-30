@@ -49,8 +49,8 @@ public class NoteIterator extends AbstractDominoIterator<String> {
 	/**
 	 * Gets the collection ids.
 	 * 
-	 * @param collection
-	 *            the collection
+	 * @param nc
+	 *            the nc
 	 * @return the collection ids
 	 */
 	protected int[] getCollectionIds(NoteCollection nc) {

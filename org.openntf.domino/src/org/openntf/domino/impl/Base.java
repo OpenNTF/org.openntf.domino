@@ -58,6 +58,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		};
 	};
 
+	/** The cpp_object. */
 	private long cpp_object = 0l;
 
 	// /** The reference bag. */
@@ -220,6 +221,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/**
 	 * Drain queue.
+	 * 
+	 * @return the int
 	 */
 	public static int drainQueue(long cppid) {
 		int result = 0;
@@ -235,6 +238,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/**
 	 * Finalize queue.
+	 * 
+	 * @return the int
 	 */
 	public static int finalizeQueue() {
 		int result = 0;
@@ -478,6 +483,17 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		throw new IllegalArgumentException();
 	}
 
+	/**
+	 * To domino friendly.
+	 * 
+	 * @param values
+	 *            the values
+	 * @param context
+	 *            the context
+	 * @return the vector
+	 * @throws IllegalArgumentException
+	 *             the illegal argument exception
+	 */
 	protected static Vector<Object> toDominoFriendly(Collection<?> values, Base<?, ?> context) throws IllegalArgumentException {
 		Vector<Object> result = new Vector<Object>();
 		for (Object value : values) {

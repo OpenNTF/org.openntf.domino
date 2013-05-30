@@ -44,6 +44,11 @@ public class PropertyBroker extends Base<org.openntf.domino.PropertyBroker, lotu
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.PropertyBroker#getPropertyValue(java.lang.String)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<Object> getPropertyValue(String propertyName) {
@@ -55,6 +60,11 @@ public class PropertyBroker extends Base<org.openntf.domino.PropertyBroker, lotu
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.PropertyBroker#getPropertyValueString(java.lang.String)
+	 */
 	@Override
 	public String getPropertyValueString(String propertyName) {
 		try {
@@ -65,6 +75,11 @@ public class PropertyBroker extends Base<org.openntf.domino.PropertyBroker, lotu
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.PropertyBroker#hasProperty(java.lang.String)
+	 */
 	@Override
 	public boolean hasProperty(String propertyName) {
 		try {
@@ -75,6 +90,11 @@ public class PropertyBroker extends Base<org.openntf.domino.PropertyBroker, lotu
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.PropertyBroker#setPropertyValue(java.lang.String, java.lang.Object)
+	 */
 	@Override
 	public NotesProperty setPropertyValue(String propertyName, Object propertyValue) {
 		try {
@@ -85,6 +105,11 @@ public class PropertyBroker extends Base<org.openntf.domino.PropertyBroker, lotu
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.PropertyBroker#publish()
+	 */
 	@Override
 	public void publish() {
 		try {

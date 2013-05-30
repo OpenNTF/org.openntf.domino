@@ -72,6 +72,9 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#getParent()
+	 */
 	@Override
 	public Replication getParent() {
 		return (Replication) super.getParent();
@@ -310,6 +313,9 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ReplicationEntry#setViews(java.util.Collection)
+	 */
 	public void setViews(Collection<String> views) {
 		StringBuilder result = new StringBuilder();
 		boolean first = true;
