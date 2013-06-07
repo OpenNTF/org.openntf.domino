@@ -50,24 +50,24 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	}
 
 	@Override
-	public ACL getACL() {
-		return new ACL(database_.getDocumentByID(ACL_NOTE));
+	public ACLNote getACL() {
+		return new ACLNote(database_.getDocumentByID(ACL_NOTE));
 	}
 
 	@Override
-	public Form getDefaultForm() {
+	public DesignForm getDefaultForm() {
 		Document formDoc = database_.getDocumentByID(DEFAULT_FORM);
 		if (formDoc != null) {
-			return new Form(formDoc);
+			return new DesignForm(formDoc);
 		}
 		return null;
 	}
 
 	@Override
-	public View getDefaultView() {
+	public DesignView getDefaultView() {
 		Document viewDoc = database_.getDocumentByID(DEFAULT_VIEW);
 		if (viewDoc != null) {
-			return new View(viewDoc);
+			return new DesignView(viewDoc);
 		}
 		return null;
 	}
@@ -114,7 +114,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	}
 
 	@Override
-	public Form getForm(String name) {
+	public DesignForm getForm(String name) {
 		// TODO Check if this returns subforms
 		NoteCollection notes = getNoteCollection(String.format(" @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
 				EnumSet.of(SelectOption.FORMS));
@@ -122,15 +122,15 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		String noteId = notes.getFirstNoteID();
 		if (!noteId.isEmpty()) {
 			Document doc = database_.getDocumentByID(noteId);
-			return new Form(doc);
+			return new DesignForm(doc);
 		}
 		return null;
 	}
 
 	@Override
-	public DesignCollection<org.openntf.domino.design.Form> getForms() {
+	public DesignCollection<org.openntf.domino.design.DesignForm> getForms() {
 		NoteCollection notes = getNoteCollection(" @All ", EnumSet.of(SelectOption.FORMS));
-		return new DesignCollection<org.openntf.domino.design.Form>(notes, Form.class);
+		return new DesignCollection<org.openntf.domino.design.DesignForm>(notes, DesignForm.class);
 	}
 
 	@Override
@@ -157,7 +157,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	}
 
 	@Override
-	public org.openntf.domino.design.View getView(String name) {
+	public org.openntf.domino.design.DesignView getView(String name) {
 		// TODO Check if this returns folders
 		NoteCollection notes = getNoteCollection(String.format(" @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
 				EnumSet.of(SelectOption.VIEWS));
@@ -165,15 +165,15 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		String noteId = notes.getFirstNoteID();
 		if (!noteId.isEmpty()) {
 			Document doc = database_.getDocumentByID(noteId);
-			return new View(doc);
+			return new DesignView(doc);
 		}
 		return null;
 	}
 
 	@Override
-	public DesignCollection<org.openntf.domino.design.View> getViews() {
+	public DesignCollection<org.openntf.domino.design.DesignView> getViews() {
 		NoteCollection notes = getNoteCollection(" @All ", EnumSet.of(SelectOption.VIEWS));
-		return new DesignCollection<org.openntf.domino.design.View>(notes, View.class);
+		return new DesignCollection<org.openntf.domino.design.DesignView>(notes, DesignView.class);
 	}
 
 	private NoteCollection getNoteCollection(final String selectionFormula, final Set<SelectOption> options) {

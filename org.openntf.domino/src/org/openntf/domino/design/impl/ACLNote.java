@@ -11,16 +11,16 @@ import org.openntf.domino.Document;
  * @author jgallagher
  * 
  */
-public class ACL extends AbstractDesignBase implements org.openntf.domino.design.ACL {
+public class ACLNote extends AbstractDesignBase implements org.openntf.domino.design.ACLNote {
 	/**
 	 * @param document
 	 */
-	protected ACL(Document document) {
+	protected ACLNote(Document document) {
 		super(document);
 	}
 
 	@SuppressWarnings("unused")
-	private static final Logger log_ = Logger.getLogger(ACL.class.getName());
+	private static final Logger log_ = Logger.getLogger(ACLNote.class.getName());
 	private static final long serialVersionUID = 1L;
 
 	/*

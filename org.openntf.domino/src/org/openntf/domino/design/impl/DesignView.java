@@ -11,14 +11,14 @@ import org.openntf.domino.Document;
  * @author jgallagher
  * 
  */
-public class View extends AbstractDesignBase implements org.openntf.domino.design.View {
-	private static final Logger log_ = Logger.getLogger(View.class.getName());
+public class DesignView extends AbstractDesignBase implements org.openntf.domino.design.DesignView {
+	private static final Logger log_ = Logger.getLogger(DesignView.class.getName());
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @param document
 	 */
-	protected View(final Document document) {
+	protected DesignView(final Document document) {
 		super(document);
 	}
 

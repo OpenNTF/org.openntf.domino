@@ -11,11 +11,11 @@ public interface DatabaseDesign {
 
 	public AboutDocument getAboutDocument();
 
-	public ACL getACL();
+	public ACLNote getACL();
 
-	public Form getDefaultForm();
+	public DesignForm getDefaultForm();
 
-	public View getDefaultView();
+	public DesignView getDefaultView();
 
 	/**
 	 * @param name
@@ -38,9 +38,9 @@ public interface DatabaseDesign {
 
 	public DesignCollection<FileResource> getHiddenFileResources();
 
-	public Form getForm(String name);
+	public DesignForm getForm(String name);
 
-	public DesignCollection<Form> getForms();
+	public DesignCollection<DesignForm> getForms();
 
 	/**
 	 * @return the icon note of the database
@@ -51,7 +51,7 @@ public interface DatabaseDesign {
 
 	public UsingDocument getUsingDocument();
 
-	public View getView(String name);
+	public DesignView getView(String name);
 
-	public DesignCollection<View> getViews();
+	public DesignCollection<DesignView> getViews();
 }
