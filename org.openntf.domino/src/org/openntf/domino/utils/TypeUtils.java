@@ -6,6 +6,7 @@ package org.openntf.domino.utils;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -92,6 +93,8 @@ public enum TypeUtils {
 					result = toDateTimes(v, session);
 				} else if (CType == Name.class) {
 					result = toNames(v, session);
+				} else if (CType == Boolean.class) {
+					result = toBooleans(v);
 				} else {
 					throw new UnimplementedException("Arrays for " + CType.getName() + " not yet implemented");
 				}
@@ -106,12 +109,17 @@ public enum TypeUtils {
 
 			if (T == String.class) {
 				result = join(v);
+			} else if (T == java.util.Collection.class) {
+				result = new ArrayList();
+				((ArrayList) result).addAll(v);
 			} else if (T == Date.class) {
 				result = toDate(v);
 			} else if (T == org.openntf.domino.DateTime.class) {
 				result = session.createDateTime(toDate(v));
 			} else if (T == org.openntf.domino.Name.class) {
 				result = session.createName(String.valueOf(v.get(0)));
+			} else if (T == Boolean.class) {
+				result = toBoolean(v.get(0));
 			} else {
 				if (!v.isEmpty()) {
 					if (T == Integer.class) {
@@ -123,6 +131,17 @@ public enum TypeUtils {
 			}
 		}
 		return (T) result;
+	}
+
+	public static Boolean[] toBooleans(Collection<Object> vector) {
+		if (vector == null)
+			return null;
+		Boolean[] bools = new Boolean[vector.size()];
+		int i = 0;
+		for (Object o : vector) {
+			bools[i++] = toBoolean(o);
+		}
+		return bools;
 	}
 
 	public static boolean toBoolean(Object value) {

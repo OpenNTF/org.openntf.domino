@@ -40,6 +40,7 @@ import org.openntf.domino.View;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
+import org.openntf.domino.exceptions.MIMEConversionException;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -877,7 +878,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			}
 			session.setConvertMIME(convertMime);
 		} catch (Throwable t) {
-			DominoUtils.handleException(t);
+			DominoUtils.handleException(new MIMEConversionException("Unable to getItemValueMIME for item name " + name + " on document "
+					+ getNoteID()));
 		}
 		return resultObj;
 	}
