@@ -15,4 +15,5 @@ Export-Package: org.openntf.domino.xsp,
 Require-Bundle: com.ibm.xsp.core;bundle-version="9.0.0",
  com.ibm.xsp.domino;bundle-version="9.0.0",
  com.ibm.xsp.extsn;bundle-version="9.0.0",
- com.ibm.designer.runtime;bundle-version="9.0.0"
+ com.ibm.designer.runtime;bundle-version="9.0.0",
+ com.ibm.xsp.extlib;bundle-version="9.0.0"
