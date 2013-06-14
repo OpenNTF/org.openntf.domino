@@ -76,30 +76,19 @@ public class DominoVertex extends DominoElement implements Vertex {
 	public Set<String> getInEdges() {
 		if (inEdges_ == null) {
 			Object o = getProperty(DominoVertex.IN_NAME, java.util.Collection.class);
-
 			if (o != null) {
 				if (o instanceof LinkedHashSet) {
 					inEdges_ = (LinkedHashSet) o;
-					// if (getRawDocument().getItemValueString("form").equalsIgnoreCase("container")) {
-					// log_.log(Level.WARNING,
-					// "Retrieved InEdges for " + getProperty("Filepath") + " to a LinkedHashSet of " + inEdges_.size());
-					// }
 				} else if (o instanceof java.util.Collection) {
 					inEdges_ = new LinkedHashSet<String>((Collection<String>) o);
-					// if (getRawDocument().getItemValueString("form").equalsIgnoreCase("container")) {
-					// log_.log(Level.WARNING, "Retrieved InEdges for " + getProperty("Filepath")
-					// + " to a Collection that made a new LinkedHashSet of " + inEdges_.size());
-					// }
 				} else {
 					log_.log(Level.WARNING, "ALERT! InEdges returned something other than a Collection " + o.getClass().getName());
 				}
 			} else {
-				// if (getRawDocument().getItemValueString("form").equalsIgnoreCase("container")) {
-				// log_.log(Level.WARNING, "No InEdges found for Container " + getProperty("Filepath") + " creating new...");
-				// }
 				inEdges_ = new LinkedHashSet<String>();
 			}
 		}
+
 		return inEdges_;
 	}
 
@@ -112,7 +101,6 @@ public class DominoVertex extends DominoElement implements Vertex {
 					outEdges_ = (LinkedHashSet) o;
 				} else if (o instanceof java.util.Collection) {
 					outEdges_ = new LinkedHashSet<String>((Collection<String>) o);
-
 				} else {
 					log_.log(Level.WARNING, "ALERT! OutEdges returned something other than a Collection " + o.getClass().getName());
 				}

@@ -1927,10 +1927,12 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						enc_recycle(domNode);
 					}
 					// If it ended up being something we could store, make note of the original class instead of the list class
-					valueClass = ((List<?>) value).get(0).getClass();
-					MIMEEntity mimeChk = getMIMEEntity(itemName);
-					if (mimeChk != null) {
-						mimeChk.remove();
+					if (!((List<?>) value).isEmpty()) {
+						valueClass = ((List<?>) value).get(0).getClass();
+						MIMEEntity mimeChk = getMIMEEntity(itemName);
+						if (mimeChk != null) {
+							mimeChk.remove();
+						}
 					}
 					result = getDelegate().replaceItemValue(itemName, resultList);
 				} else {

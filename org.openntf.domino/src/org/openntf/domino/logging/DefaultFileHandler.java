@@ -17,6 +17,8 @@ package org.openntf.domino.logging;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
@@ -112,15 +114,26 @@ public class DefaultFileHandler extends FileHandler {
 		super.close();
 	}
 
+	private void superPub(LogRecord record) {
+		super.publish(record);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see java.util.logging.FileHandler#publish(java.util.logging.LogRecord)
 	 */
 	@Override
-	public synchronized void publish(LogRecord record) {
+	public synchronized void publish(final LogRecord record) {
 		try {
-			super.publish(record);
+			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				@Override
+				public Object run() throws Exception {
+					DefaultFileHandler.this.superPub(record);
+					return null;
+				}
+			});
+			// super.publish(record);
 			flush();
 		} catch (Throwable e) {
 			System.out.println(e.getMessage());
