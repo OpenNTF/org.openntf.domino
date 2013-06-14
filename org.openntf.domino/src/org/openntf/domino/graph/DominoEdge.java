@@ -20,6 +20,7 @@ public class DominoEdge extends DominoElement implements Edge {
 	private String inKey_;
 	transient Vertex out_;
 	private String outKey_;
+	private transient String label_;
 
 	public DominoEdge(DominoGraph parent, org.openntf.domino.Document doc) {
 		super(parent, doc);
@@ -27,7 +28,10 @@ public class DominoEdge extends DominoElement implements Edge {
 
 	@Override
 	public String getLabel() {
-		return getProperty(DominoEdge.LABEL_NAME, String.class);
+		if (label_ == null) {
+			label_ = getProperty(DominoEdge.LABEL_NAME, String.class);
+		}
+		return label_;
 	}
 
 	@Override
@@ -64,6 +68,7 @@ public class DominoEdge extends DominoElement implements Edge {
 	}
 
 	void setLabel(String label) {
+		label_ = label;
 		setProperty(DominoEdge.LABEL_NAME, label);
 	}
 

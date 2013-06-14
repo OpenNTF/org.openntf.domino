@@ -352,7 +352,7 @@ public enum DominoUtils {
 		while (hash.length() < 32) {
 			hash = "0" + hash;
 		}
-		return hash;
+		return hash.toUpperCase();
 	}
 
 	/**

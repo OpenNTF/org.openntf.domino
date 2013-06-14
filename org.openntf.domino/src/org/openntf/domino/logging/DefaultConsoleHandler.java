@@ -15,6 +15,8 @@
  */
 package org.openntf.domino.logging;
 
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.LogRecord;
 
@@ -72,13 +74,17 @@ public class DefaultConsoleHandler extends ConsoleHandler {
 		super.close();
 	}
 
+	private void superPub(LogRecord record) {
+		super.publish(record);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see java.util.logging.ConsoleHandler#publish(java.util.logging.LogRecord)
 	 */
 	@Override
-	public void publish(LogRecord record) {
+	public void publish(final LogRecord record) {
 		int debugLevel = 0;
 		try {
 			debugLevel = Integer.parseInt(olDebugLevel);
@@ -86,7 +92,17 @@ public class DefaultConsoleHandler extends ConsoleHandler {
 			System.out.println(this.getClass().getName() + ": Error getting debug level - non-numeric");
 		}
 		if (debugLevel > 0) {
-			super.publish(record);
+			try {
+				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+					@Override
+					public Object run() throws Exception {
+						DefaultConsoleHandler.this.superPub(record);
+						return null;
+					}
+				});
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
 			if (debugLevel > 1) {
 				if (record.getThrown() != null && record.getThrown() instanceof Exception) {
 					Exception ee = (Exception) record.getThrown();
