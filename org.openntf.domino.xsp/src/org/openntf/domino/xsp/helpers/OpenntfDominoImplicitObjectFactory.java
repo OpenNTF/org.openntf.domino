@@ -10,6 +10,7 @@ import org.openntf.domino.xsp.Activator;
 import com.ibm.xsp.context.FacesContextEx;
 import com.ibm.xsp.el.ImplicitObjectFactory;
 import com.ibm.xsp.util.TypedUtil;
+import com.ibm.xsp.extlib.util.ExtLibUtil;
 
 public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory {
 	public static class ContextListener implements com.ibm.xsp.event.FacesContextListener {
@@ -43,12 +44,12 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 		return GODMODE.booleanValue();
 	}
 
-	private static boolean isAppGodMode(FacesContextEx ctx) {
-		Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
+	private static boolean isAppGodMode() {
+		Map<String, Object> appMap = ExtLibUtil.getApplicationScope();
 		Object current = appMap.get(OpenntfDominoImplicitObjectFactory.class.getName());
 		if (current == null) {
 			current = Boolean.FALSE;
-			String[] envs = Activator.getEnvironmentStrings();
+			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
 			if (envs != null) {
 				for (String s : envs) {
 					if (s.equalsIgnoreCase("godmode")) {
@@ -77,7 +78,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 			Object current = localMap.get("session");
 			if (!(current instanceof org.openntf.domino.Session)) {
 				s = Factory.fromLotus((lotus.domino.Session) current, org.openntf.domino.Session.class, null);
-				localMap.put((isAppGodMode(ctx) ? "session" : "opensession"), s);
+				localMap.put((isAppGodMode() ? "session" : "opensession"), s);
 				// System.out.println("Putting OpenNTF session into implicits");
 			} else {
 				s = (org.openntf.domino.Session) current;
@@ -87,7 +88,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 			Object current = localMap.get("database");
 			if (!(current instanceof org.openntf.domino.Session)) {
 				org.openntf.domino.Database db = Factory.fromLotus((lotus.domino.Database) current, org.openntf.domino.Database.class, s);
-				localMap.put((isAppGodMode(ctx) ? "database" : "opendatabase"), db);
+				localMap.put((isAppGodMode() ? "database" : "opendatabase"), db);
 			}
 		}
 		ctx.addRequestListener(new ContextListener());
