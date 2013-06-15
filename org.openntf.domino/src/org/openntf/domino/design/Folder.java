@@ -10,9 +10,9 @@ import java.util.List;
  * 
  */
 public interface Folder extends DesignBaseNamed {
-	public List<Object> getColumns();
+	public List<DesignViewColumn> getColumns();
 
-	public void addColumn();
+	public DesignViewColumn addColumn();
 
 	public void removeColumn(int index);
 

@@ -3,13 +3,18 @@
  */
 package org.openntf.domino.design.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.openntf.domino.Database;
+import javax.xml.xpath.XPathExpressionException;
+
 import org.openntf.domino.Document;
-import org.openntf.domino.Session;
 import org.openntf.domino.design.Folder;
+import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.xml.XMLNode;
+import org.openntf.domino.utils.xml.XMLNodeList;
 
 /**
  * @author jgallagher
@@ -33,9 +38,31 @@ public class AbstractFolder extends AbstractDesignBaseNamed implements Folder {
 	 * @see org.openntf.domino.design.Folder#addColumn()
 	 */
 	@Override
-	public void addColumn() {
-		// TODO Auto-generated method stub
+	public DesignViewColumn addColumn() {
+		// Create the column node and set the defaults
+		// Make sure to add the node before any items
+		try {
+			XMLNode node;
+			XMLNode item = getDxl().selectSingleNode("//item");
+			if (item != null) {
+				node = getDxl().insertChildElementBefore("column", item);
+			} else {
+				node = getDxl().addChildElement("column");
+			}
 
+			node.setAttribute("hidedetailrows", "false");
+			node.setAttribute("width", "10");
+			node.setAttribute("resizable", "true");
+			node.setAttribute("separatemultiplevalues", "false");
+			node.setAttribute("sortnoaccent", "false");
+			node.setAttribute("sortnocase", "true");
+			node.setAttribute("showaslinks", "false");
+
+			return new DesignViewColumn(node);
+		} catch (XPathExpressionException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
 	}
 
 	/*
@@ -44,9 +71,20 @@ public class AbstractFolder extends AbstractDesignBaseNamed implements Folder {
 	 * @see org.openntf.domino.design.Folder#getColumns()
 	 */
 	@Override
-	public List<Object> getColumns() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<org.openntf.domino.design.DesignViewColumn> getColumns() {
+		// TODO Make this a live view on the list of columns
+		try {
+			List<XMLNode> columnNodes = getDxl().selectNodes("//column");
+			List<org.openntf.domino.design.DesignViewColumn> result = new ArrayList<org.openntf.domino.design.DesignViewColumn>(columnNodes
+					.size());
+			for (XMLNode columnNode : columnNodes) {
+				result.add(new DesignViewColumn(columnNode));
+			}
+			return Collections.unmodifiableList(result);
+		} catch (XPathExpressionException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
 	}
 
 	/*
@@ -56,8 +94,12 @@ public class AbstractFolder extends AbstractDesignBaseNamed implements Folder {
 	 */
 	@Override
 	public void removeColumn(int index) {
-		// TODO Auto-generated method stub
-
+		try {
+			List<XMLNode> columnNodes = getDxl().selectNodes("//column");
+			columnNodes.remove(index);
+		} catch (XPathExpressionException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 	/*
@@ -66,184 +108,12 @@ public class AbstractFolder extends AbstractDesignBaseNamed implements Folder {
 	 * @see org.openntf.domino.design.Folder#swapColumns(int, int)
 	 */
 	@Override
-	public void swapColumns(int a, int b) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.DesignBaseNamed#getAliases()
-	 */
-	@Override
-	public List<String> getAliases() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.DesignBaseNamed#getName()
-	 */
-	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.DesignBaseNamed#setAlias(java.lang.String)
-	 */
-	@Override
-	public void setAlias(String alias) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.DesignBaseNamed#setAliases(java.lang.Iterable)
-	 */
-	@Override
-	public void setAliases(Iterable<String> aliases) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.DesignBaseNamed#setName(java.lang.String)
-	 */
-	@Override
-	public void setName(String name) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.DesignBase#isHideFromNotes()
-	 */
-	@Override
-	public boolean isHideFromNotes() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.DesignBase#isHideFromWeb()
-	 */
-	@Override
-	public boolean isHideFromWeb() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.DesignBase#isNeedsRefresh()
-	 */
-	@Override
-	public boolean isNeedsRefresh() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.DesignBase#isPreventChanges()
-	 */
-	@Override
-	public boolean isPreventChanges() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.DesignBase#isPropagatePreventChanges()
-	 */
-	@Override
-	public boolean isPropagatePreventChanges() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.DesignBase#save()
-	 */
-	@Override
-	public void save() {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.types.Design#getDocument()
-	 */
-	@Override
-	public Document getDocument() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.types.Design#getNoteID()
-	 */
-	@Override
-	public String getNoteID() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.types.Design#getUniversalID()
-	 */
-	@Override
-	public String getUniversalID() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.types.DatabaseDescendant#getAncestorDatabase()
-	 */
-	@Override
-	public Database getAncestorDatabase() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
-	 */
-	@Override
-	public Session getAncestorSession() {
-		// TODO Auto-generated method stub
-		return null;
+	public void swapColumns(final int a, final int b) {
+		try {
+			XMLNodeList columnNodes = (XMLNodeList) getDxl().selectNodes("//column");
+			columnNodes.swap(a, b);
+		} catch (XPathExpressionException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 }
