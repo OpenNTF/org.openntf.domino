@@ -5,13 +5,18 @@ package org.openntf.domino.design.impl;
 
 import java.util.logging.Logger;
 
+import javax.xml.xpath.XPathExpressionException;
+
 import org.openntf.domino.Document;
+import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.xml.XMLNode;
 
 /**
  * @author jgallagher
  * 
  */
-public class DesignView extends AbstractDesignBaseNamed implements org.openntf.domino.design.DesignView {
+public class DesignView extends AbstractFolder implements org.openntf.domino.design.DesignView {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DesignView.class.getName());
 	private static final long serialVersionUID = 1L;
 
@@ -22,36 +27,27 @@ public class DesignView extends AbstractDesignBaseNamed implements org.openntf.d
 		super(document);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.DesignBase#setAlias(java.lang.String)
-	 */
-	@Override
-	public void setAlias(final String alias) {
-		// TODO Auto-generated method stub
-
+	public String getSelectionFormula() {
+		try {
+			XMLNode formula = getDxl().selectSingleNode("/view/code[@event='selection']/formula");
+			if (formula != null) {
+				return formula.getText();
+			}
+			return null;
+		} catch (XPathExpressionException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.DesignBase#setAliases(java.lang.Iterable)
-	 */
-	@Override
-	public void setAliases(final Iterable<String> aliases) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.DesignBase#setName(java.lang.String)
-	 */
-	@Override
-	public void setName(final String name) {
-		// TODO Auto-generated method stub
-
+	public void setSelectionFormula(final String selectionFormula) {
+		try {
+			XMLNode formula = getDxl().selectSingleNode("/view/code[@event='selection']/formula");
+			if (formula != null) {
+				formula.setTextContent(selectionFormula);
+			}
+		} catch (XPathExpressionException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 }
