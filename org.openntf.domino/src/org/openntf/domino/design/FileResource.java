@@ -1,6 +1,6 @@
 package org.openntf.domino.design;
 
-public interface FileResource extends DesignBase, org.openntf.domino.types.DatabaseDescendant {
+public interface FileResource extends DesignBaseNamed, org.openntf.domino.types.DatabaseDescendant {
 
 	/**
 	 * @return the file resource's data as a byte array

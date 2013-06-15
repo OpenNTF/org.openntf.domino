@@ -23,36 +23,4 @@ public class ReplicationFormula extends AbstractDesignBase implements org.opennt
 		super(document);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.DesignBase#setAlias(java.lang.String)
-	 */
-	@Override
-	public void setAlias(String alias) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.DesignBase#setAliases(java.lang.Iterable)
-	 */
-	@Override
-	public void setAliases(Iterable<String> aliases) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.DesignBase#setName(java.lang.String)
-	 */
-	@Override
-	public void setName(String name) {
-		// TODO Auto-generated method stub
-
-	}
 }

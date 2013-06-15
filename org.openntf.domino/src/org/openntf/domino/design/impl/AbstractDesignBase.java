@@ -4,8 +4,6 @@
 package org.openntf.domino.design.impl;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -33,37 +31,8 @@ public abstract class AbstractDesignBase implements DesignBase {
 	private Document document_;
 	private XMLDocument dxl_;
 
-	private String title_ = null;
-	private List<String> aliases_ = null;
-
 	public AbstractDesignBase(final Document document) {
 		document_ = document;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.DesignBase#getAliases()
-	 */
-	@Override
-	public List<String> getAliases() {
-		if (title_ == null) {
-			fetchTitle();
-		}
-		return new ArrayList<String>(aliases_);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.DesignBase#getName()
-	 */
-	@Override
-	public String getName() {
-		if (title_ == null) {
-			fetchTitle();
-		}
-		return title_;
 	}
 
 	/*
@@ -183,36 +152,6 @@ public abstract class AbstractDesignBase implements DesignBase {
 
 	protected String getFlags() {
 		return document_.getItemValueString("$Flags");
-	}
-
-	@SuppressWarnings("unchecked")
-	private void fetchTitle() {
-		// Sometimes $TITLE is a multi-value field of title + aliases.
-		// Sometimes it's a |-delimited single value.
-		// Meh!
-
-		List<String> titles = document_.getItemValue("$TITLE");
-		if (titles.size() == 0) {
-			String titleField = document_.getItemValueString("$TITLE");
-			if (titleField.contains("|")) {
-				String[] bits = titleField.split("\\|");
-				title_ = bits[0];
-				aliases_ = new ArrayList<String>(bits.length - 1);
-				for (int i = 1; i < bits.length; i++) {
-					aliases_.add(bits[i]);
-				}
-			} else {
-				title_ = titleField;
-				aliases_ = new ArrayList<String>(0);
-			}
-		} else if (titles.size() == 1) {
-			title_ = titles.get(0);
-			aliases_ = new ArrayList<String>(0);
-		} else {
-			title_ = titles.get(0);
-			aliases_ = titles.subList(1, titles.size());
-		}
-
 	}
 
 	protected XMLDocument getDxl() {

@@ -11,7 +11,7 @@ import org.openntf.domino.Document;
  * @author jgallagher
  * 
  */
-public class DesignView extends AbstractDesignBase implements org.openntf.domino.design.DesignView {
+public class DesignView extends AbstractDesignBaseNamed implements org.openntf.domino.design.DesignView {
 	private static final Logger log_ = Logger.getLogger(DesignView.class.getName());
 	private static final long serialVersionUID = 1L;
 
