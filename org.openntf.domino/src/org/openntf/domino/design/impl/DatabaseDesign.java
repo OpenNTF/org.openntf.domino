@@ -114,7 +114,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	}
 
 	@Override
-	public DesignForm getForm(String name) {
+	public DesignForm getForm(final String name) {
 		// TODO Check if this returns subforms
 		NoteCollection notes = getNoteCollection(String.format(" @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
 				EnumSet.of(SelectOption.FORMS));
@@ -157,7 +157,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	}
 
 	@Override
-	public org.openntf.domino.design.DesignView getView(String name) {
+	public org.openntf.domino.design.DesignView getView(final String name) {
 		// TODO Check if this returns folders
 		NoteCollection notes = getNoteCollection(String.format(" @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
 				EnumSet.of(SelectOption.VIEWS));
