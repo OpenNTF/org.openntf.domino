@@ -15,18 +15,19 @@ import org.openntf.domino.design.DesignBaseNamed;
  * 
  */
 public abstract class AbstractDesignBaseNamed extends AbstractDesignBase implements DesignBaseNamed {
+	@SuppressWarnings("unused")
+	private static final Logger log_ = Logger.getLogger(AbstractDesignBaseNamed.class.getName());
+	private static final long serialVersionUID = 1L;
+
+	private String title_ = null;
+	private List<String> aliases_ = null;
+
 	/**
 	 * @param document
 	 */
 	public AbstractDesignBaseNamed(Document document) {
 		super(document);
 	}
-
-	private static final Logger log_ = Logger.getLogger(AbstractDesignBaseNamed.class.getName());
-	private static final long serialVersionUID = 1L;
-
-	private String title_ = null;
-	private List<String> aliases_ = null;
 
 	/*
 	 * (non-Javadoc)

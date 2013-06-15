@@ -6,7 +6,7 @@ package org.openntf.domino.design;
 import java.util.List;
 
 /**
- * @author jesse
+ * @author jgallagher
  * 
  */
 public interface DesignBaseNamed extends DesignBase {
