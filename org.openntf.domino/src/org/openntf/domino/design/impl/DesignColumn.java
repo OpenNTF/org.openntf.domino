@@ -14,14 +14,14 @@ import org.openntf.domino.utils.xml.XMLNode;
  * @author jgallagher
  * 
  */
-public class DesignViewColumn implements org.openntf.domino.design.DesignViewColumn {
+public class DesignColumn implements org.openntf.domino.design.DesignColumn {
 	@SuppressWarnings("unused")
-	private static final Logger log_ = Logger.getLogger(DesignViewColumn.class.getName());
+	private static final Logger log_ = Logger.getLogger(DesignColumn.class.getName());
 	private static final long serialVersionUID = 1L;
 
 	private XMLNode node_;
 
-	public DesignViewColumn(final XMLNode node) {
+	public DesignColumn(final XMLNode node) {
 		node_ = node;
 	}
 

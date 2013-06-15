@@ -7,7 +7,7 @@ package org.openntf.domino.design;
  * @author jgallagher
  * 
  */
-public interface DesignViewColumn {
+public interface DesignColumn {
 	public static enum SortOrder {
 		NONE, ASCENDING, DESCENDING;
 	}

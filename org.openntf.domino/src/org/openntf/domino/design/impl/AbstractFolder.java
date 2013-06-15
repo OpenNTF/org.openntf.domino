@@ -38,7 +38,7 @@ public class AbstractFolder extends AbstractDesignBaseNamed implements Folder {
 	 * @see org.openntf.domino.design.Folder#addColumn()
 	 */
 	@Override
-	public DesignViewColumn addColumn() {
+	public DesignColumn addColumn() {
 		// Create the column node and set the defaults
 		// Make sure to add the node before any items
 		try {
@@ -58,7 +58,7 @@ public class AbstractFolder extends AbstractDesignBaseNamed implements Folder {
 			node.setAttribute("sortnocase", "true");
 			node.setAttribute("showaslinks", "false");
 
-			return new DesignViewColumn(node);
+			return new DesignColumn(node);
 		} catch (XPathExpressionException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -71,14 +71,14 @@ public class AbstractFolder extends AbstractDesignBaseNamed implements Folder {
 	 * @see org.openntf.domino.design.Folder#getColumns()
 	 */
 	@Override
-	public List<org.openntf.domino.design.DesignViewColumn> getColumns() {
+	public List<org.openntf.domino.design.DesignColumn> getColumns() {
 		// TODO Make this a live view on the list of columns
 		try {
 			List<XMLNode> columnNodes = getDxl().selectNodes("//column");
-			List<org.openntf.domino.design.DesignViewColumn> result = new ArrayList<org.openntf.domino.design.DesignViewColumn>(columnNodes
+			List<org.openntf.domino.design.DesignColumn> result = new ArrayList<org.openntf.domino.design.DesignColumn>(columnNodes
 					.size());
 			for (XMLNode columnNode : columnNodes) {
-				result.add(new DesignViewColumn(columnNode));
+				result.add(new DesignColumn(columnNode));
 			}
 			return Collections.unmodifiableList(result);
 		} catch (XPathExpressionException e) {
