@@ -43,6 +43,24 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 		return GODMODE.booleanValue();
 	}
 
+	private static boolean isAppGodMode(FacesContext ctx) {
+		Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
+		Object current = appMap.get(OpenntfDominoImplicitObjectFactory.class.getName());
+		if (current == null) {
+			current = Boolean.FALSE;
+			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
+			if (envs != null) {
+				for (String s : envs) {
+					if (s.equalsIgnoreCase("godmode")) {
+						current = Boolean.TRUE;
+					}
+				}
+			}
+			appMap.put(OpenntfDominoImplicitObjectFactory.class.getName(), current);
+		}
+		return (Boolean) current;
+	}
+
 	private final String[][] implicitObjectList = {
 			{ (isGodMode() ? "session" : "opensession"), org.openntf.domino.Session.class.getName() },
 			{ (isGodMode() ? "database" : "opendatabase"), org.openntf.domino.Database.class.getName() } };
@@ -52,14 +70,14 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 
 	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void createImplicitObjects(FacesContextEx paramFacesContextEx) {
-		Map localMap = TypedUtil.getRequestMap(paramFacesContextEx.getExternalContext());
+	public void createImplicitObjects(FacesContextEx ctx) {
+		Map localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
 		org.openntf.domino.Session s = null;
 		if (localMap.containsKey("session")) {
 			Object current = localMap.get("session");
 			if (!(current instanceof org.openntf.domino.Session)) {
 				s = Factory.fromLotus((lotus.domino.Session) current, org.openntf.domino.Session.class, null);
-				localMap.put((isGodMode() ? "session" : "opensession"), s);
+				localMap.put((isAppGodMode(ctx) ? "session" : "opensession"), s);
 				// System.out.println("Putting OpenNTF session into implicits");
 			} else {
 				s = (org.openntf.domino.Session) current;
@@ -69,10 +87,10 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 			Object current = localMap.get("database");
 			if (!(current instanceof org.openntf.domino.Session)) {
 				org.openntf.domino.Database db = Factory.fromLotus((lotus.domino.Database) current, org.openntf.domino.Database.class, s);
-				localMap.put((isGodMode() ? "database" : "opendatabase"), db);
+				localMap.put((isAppGodMode(ctx) ? "database" : "opendatabase"), db);
 			}
 		}
-		paramFacesContextEx.addRequestListener(new ContextListener());
+		ctx.addRequestListener(new ContextListener());
 	}
 
 	@Override

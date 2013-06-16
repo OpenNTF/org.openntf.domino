@@ -88,7 +88,8 @@ public abstract class DominoElement implements Element, Serializable {
 	}
 
 	public <T> T getProperty(String propertyName, Class<?> T) {
-		return getRawDocument().getItemValue(propertyName, T);
+		Object result = getRawDocument().getItemValue(propertyName, T);
+		return (T) result;
 	}
 
 	@Override

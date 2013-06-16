@@ -1,13 +1,17 @@
 package org.openntf.domino.xsp;
 
+import javax.faces.context.FacesContext;
+
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 
 import com.ibm.commons.Platform;
 import com.ibm.commons.util.StringUtil;
+import com.ibm.xsp.application.ApplicationEx;
 
 public class Activator extends Plugin {
-	public static final String PLUGIN_ID = Activator.class.getPackage().getName();
+	public static final String PLUGIN_ID = Activator.class.getPackage()
+			.getName();
 	public static final boolean _debug = false;
 
 	public static Activator instance;
@@ -29,13 +33,52 @@ public class Activator extends Plugin {
 
 	public static String getVersion() {
 		if (version == null) {
-			version = (String) instance.getBundle().getHeaders().get("Bundle-Version");
+			version = (String) instance.getBundle().getHeaders()
+					.get("Bundle-Version");
 		}
 		return version;
 	}
 
 	public Activator() {
 		instance = this;
+	}
+
+	/**
+	 * Gets a property. Order of execution is:
+	 * <ol>
+	 * <li>xsp.properties in NSF</li>
+	 * <li>xsp.properties on Server</li>
+	 * <li>System.getProperty</li>
+	 * <li>notes.ini</li>
+	 * <li>default value passed in</li>
+	 * </ol>
+	 * 
+	 * @param propertyName
+	 *            property to retrieve
+	 * @param defaultValue
+	 *            default value to use if the property can't be found anywhere
+	 *            else
+	 * @return String array of property, split on commas
+	 */
+	public static String[] getXspProperty(String propertyName) {
+		String[] result = null;
+		try {
+			ApplicationEx app = ApplicationEx.getInstance(FacesContext
+					.getCurrentInstance());
+			if (null == app) {
+				result = getEnvironmentStrings();
+			} else {
+				String setting = app.getApplicationProperty(propertyName, "");
+				if (StringUtil.isEmpty(setting)) {
+					result = getEnvironmentStrings();
+				} else {
+					result = StringUtil.splitString(setting, ',');
+				}
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+		return result;
 	}
 
 	public static String[] getEnvironmentStrings() {
@@ -45,7 +88,8 @@ public class Activator extends Plugin {
 			if (StringUtil.isEmpty(setting)) {
 				setting = System.getProperty(PLUGIN_ID); // $NON-NLS-1$
 				if (StringUtil.isEmpty(setting)) {
-					setting = com.ibm.xsp.model.domino.DominoUtils.getEnvironmentString(PLUGIN_ID); // $NON-NLS-1$
+					setting = com.ibm.xsp.model.domino.DominoUtils
+							.getEnvironmentString(PLUGIN_ID); // $NON-NLS-1$
 				}
 			}
 			if (StringUtil.isNotEmpty(setting)) {
@@ -62,7 +106,9 @@ public class Activator extends Plugin {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+	 * @see
+	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
+	 * )
 	 */
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
@@ -72,7 +118,8 @@ public class Activator extends Plugin {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 * @see
+	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
