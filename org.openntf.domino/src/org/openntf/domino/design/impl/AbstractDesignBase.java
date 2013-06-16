@@ -44,7 +44,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public boolean isHideFromNotes() {
-		return getDxl().getFirstChild().getAttribute("notes").equals("web");
+		return getDxl().getFirstChild().getAttribute("hide").equals("notes");
 	}
 
 	/*
@@ -85,6 +85,68 @@ public abstract class AbstractDesignBase implements DesignBase {
 	@Override
 	public boolean isPropagatePreventChanges() {
 		return getDxl().getFirstChild().getAttribute("propagatenoreplace").equals("true");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DesignBase#setHideFromNotes(boolean)
+	 */
+	@Override
+	public void setHideFromNotes(final boolean hideFromNotes) {
+		String hide = getDxl().getFirstChild().getAttribute("hide");
+		if (hideFromNotes && !hide.contains("notes")) {
+			hide += " notes";
+		} else if (!hideFromNotes && hide.contains("notes")) {
+			hide = hide.replace("notes", "");
+		}
+		getDxl().getFirstChild().setAttribute("hide", hide.trim());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DesignBase#setHideFromWeb(boolean)
+	 */
+	@Override
+	public void setHideFromWeb(final boolean hideFromWeb) {
+		String hide = getDxl().getFirstChild().getAttribute("hide");
+		if (hideFromWeb && !hide.contains("web")) {
+			hide += " web";
+		} else if (!hideFromWeb && hide.contains("web")) {
+			hide = hide.replace("web", "");
+		}
+		getDxl().getFirstChild().setAttribute("hide", hide.trim());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DesignBase#setNeedsRefresh(boolean)
+	 */
+	@Override
+	public void setNeedsRefresh(final boolean needsRefresh) {
+		getDxl().getFirstChild().setAttribute("refresh", String.valueOf(needsRefresh));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DesignBase#setPreventChanges(boolean)
+	 */
+	@Override
+	public void setPreventChanges(final boolean preventChanges) {
+		getDxl().getFirstChild().setAttribute("noreplace", String.valueOf(preventChanges));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DesignBase#setPropagatePreventChanges(boolean)
+	 */
+	@Override
+	public void setPropagatePreventChanges(final boolean propagatePreventChanges) {
+		getDxl().getFirstChild().setAttribute("propagatenoreplace", String.valueOf(propagatePreventChanges));
 	}
 
 	/*
