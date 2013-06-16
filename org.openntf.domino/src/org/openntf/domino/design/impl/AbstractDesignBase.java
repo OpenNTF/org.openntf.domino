@@ -29,10 +29,12 @@ public abstract class AbstractDesignBase implements DesignBase {
 	private static final long serialVersionUID = 1L;
 
 	private Document document_;
+	private final Database database_;
 	private XMLDocument dxl_;
 
 	public AbstractDesignBase(final Document document) {
 		document_ = document;
+		database_ = document_.getAncestorDatabase();
 	}
 
 	/*
@@ -42,7 +44,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public boolean isHideFromNotes() {
-		return getFlags().contains("n");
+		return getDxl().getFirstChild().getAttribute("notes").equals("web");
 	}
 
 	/*
@@ -52,7 +54,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public boolean isHideFromWeb() {
-		return getFlags().contains("w");
+		return getDxl().getFirstChild().getAttribute("hide").equals("web");
 	}
 
 	/*
@@ -62,7 +64,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public boolean isNeedsRefresh() {
-		return getFlags().contains("$");
+		return getDxl().getFirstChild().getAttribute("refresh").equals("true");
 	}
 
 	/*
@@ -72,7 +74,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public boolean isPreventChanges() {
-		return getFlags().contains("P");
+		return getDxl().getFirstChild().getAttribute("noreplace").equals("true");
 	}
 
 	/*
@@ -82,7 +84,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public boolean isPropagatePreventChanges() {
-		return getFlags().contains("r");
+		return getDxl().getFirstChild().getAttribute("propagatenoreplace").equals("true");
 	}
 
 	/*
@@ -102,7 +104,16 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public String getNoteID() {
-		return getDocument().getNoteID();
+		try {
+			XMLNode node = getDxl().selectSingleNode("//noteinfo");
+			if (node != null) {
+				return node.getAttribute("noteid");
+			}
+			return "";
+		} catch (XPathExpressionException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
 	}
 
 	/*
@@ -112,7 +123,16 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public String getUniversalID() {
-		return getDocument().getUniversalID();
+		try {
+			XMLNode node = getDxl().selectSingleNode("//noteinfo");
+			if (node != null) {
+				return node.getAttribute("unid");
+			}
+			return "";
+		} catch (XPathExpressionException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
 	}
 
 	/*
@@ -122,7 +142,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public Database getAncestorDatabase() {
-		return getDocument().getAncestorDatabase();
+		return database_;
 	}
 
 	/*
@@ -132,7 +152,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public Session getAncestorSession() {
-		return this.getAncestorDatabase().getAncestorSession();
+		return getAncestorDatabase().getAncestorSession();
 	}
 
 	public void save() {
@@ -148,10 +168,10 @@ public abstract class AbstractDesignBase implements DesignBase {
 		}
 		String noteId = importer.getFirstImportedNoteID();
 		document_ = database.getDocumentByID(noteId);
-	}
 
-	protected String getFlags() {
-		return document_.getItemValueString("$Flags");
+		// Reset the DXL so that it can pick up new noteinfo
+		dxl_ = null;
+		getDxl();
 	}
 
 	protected XMLDocument getDxl() {

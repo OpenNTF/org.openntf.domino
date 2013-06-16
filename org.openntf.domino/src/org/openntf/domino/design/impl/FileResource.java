@@ -76,7 +76,8 @@ public class FileResource extends AbstractDesignBaseNamed implements org.openntf
 
 	@Override
 	public boolean isReadOnly() {
-		return getFlags().contains("&");
+		// return getFlags().contains("&");
+		return false;
 	}
 
 }
