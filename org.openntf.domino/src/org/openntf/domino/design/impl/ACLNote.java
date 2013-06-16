@@ -15,7 +15,7 @@ public class ACLNote extends AbstractDesignBase implements org.openntf.domino.de
 	/**
 	 * @param document
 	 */
-	protected ACLNote(Document document) {
+	protected ACLNote(final Document document) {
 		super(document);
 	}
 

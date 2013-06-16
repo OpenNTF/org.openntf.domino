@@ -38,7 +38,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 * @param parent
 	 *            the parent
 	 */
-	public DbDirectory(lotus.domino.DbDirectory delegate, org.openntf.domino.Base<?> parent) {
+	public DbDirectory(final lotus.domino.DbDirectory delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -48,7 +48,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 * @see org.openntf.domino.DbDirectory#createDatabase(java.lang.String)
 	 */
 	@Override
-	public Database createDatabase(String dbFile) {
+	public Database createDatabase(final String dbFile) {
 		try {
 			return Factory.fromLotus(getDelegate().createDatabase(dbFile), Database.class, this);
 		} catch (NotesException e) {
@@ -63,7 +63,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 * @see org.openntf.domino.DbDirectory#createDatabase(java.lang.String, boolean)
 	 */
 	@Override
-	public Database createDatabase(String dbFile, boolean open) {
+	public Database createDatabase(final String dbFile, final boolean open) {
 		try {
 			return Factory.fromLotus(getDelegate().createDatabase(dbFile, open), Database.class, this);
 		} catch (NotesException e) {
@@ -93,7 +93,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 * @see org.openntf.domino.DbDirectory#getClusterName(java.lang.String)
 	 */
 	@Override
-	public String getClusterName(String server) {
+	public String getClusterName(final String server) {
 		try {
 			return getDelegate().getClusterName(server);
 		} catch (NotesException e) {
@@ -108,7 +108,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 * @see org.openntf.domino.DbDirectory#getFirstDatabase(int)
 	 */
 	@Override
-	public Database getFirstDatabase(int type) {
+	public Database getFirstDatabase(final int type) {
 		try {
 			return Factory.fromLotus(getDelegate().getFirstDatabase(type), Database.class, this);
 		} catch (NotesException e) {
@@ -120,7 +120,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.DbDirectory#getFirstDatabase(org.openntf.domino.DbDirectory.Type)
 	 */
-	public Database getFirstDatabase(Type type) {
+	public Database getFirstDatabase(final Type type) {
 		return getFirstDatabase(type.getValue());
 	}
 
@@ -196,7 +196,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 * @see org.openntf.domino.DbDirectory#openDatabase(java.lang.String)
 	 */
 	@Override
-	public Database openDatabase(String dbFile) {
+	public Database openDatabase(final String dbFile) {
 		try {
 			return Factory.fromLotus(getDelegate().openDatabase(dbFile), Database.class, this);
 		} catch (NotesException e) {
@@ -211,7 +211,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 * @see org.openntf.domino.DbDirectory#openDatabase(java.lang.String, boolean)
 	 */
 	@Override
-	public Database openDatabase(String dbFile, boolean failover) {
+	public Database openDatabase(final String dbFile, final boolean failover) {
 		try {
 			return Factory.fromLotus(getDelegate().openDatabase(dbFile, failover), Database.class, this);
 		} catch (NotesException e) {
@@ -226,7 +226,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 * @see org.openntf.domino.DbDirectory#openDatabaseByReplicaID(java.lang.String)
 	 */
 	@Override
-	public Database openDatabaseByReplicaID(String replicaId) {
+	public Database openDatabaseByReplicaID(final String replicaId) {
 		try {
 			return Factory.fromLotus(getDelegate().openDatabaseByReplicaID(replicaId), Database.class, this);
 		} catch (NotesException e) {
@@ -241,7 +241,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 * @see org.openntf.domino.DbDirectory#openDatabaseIfModified(java.lang.String, lotus.domino.DateTime)
 	 */
 	@Override
-	public Database openDatabaseIfModified(String dbFile, lotus.domino.DateTime date) {
+	public Database openDatabaseIfModified(final String dbFile, final lotus.domino.DateTime date) {
 		try {
 			return Factory.fromLotus(getDelegate().openDatabaseIfModified(dbFile, (lotus.domino.DateTime) toLotus(date)), Database.class,
 					this);
@@ -272,7 +272,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 * @see org.openntf.domino.DbDirectory#setHonorShowInOpenDatabaseDialog(boolean)
 	 */
 	@Override
-	public void setHonorShowInOpenDatabaseDialog(boolean flag) {
+	public void setHonorShowInOpenDatabaseDialog(final boolean flag) {
 		try {
 			getDelegate().setHonorShowInOpenDatabaseDialog(flag);
 		} catch (NotesException e) {

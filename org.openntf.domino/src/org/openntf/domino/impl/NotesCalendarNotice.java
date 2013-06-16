@@ -38,7 +38,7 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	 * @param parent
 	 *            the parent
 	 */
-	public NotesCalendarNotice(lotus.domino.NotesCalendarNotice delegate, org.openntf.domino.Base<?> parent) {
+	public NotesCalendarNotice(final lotus.domino.NotesCalendarNotice delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -46,7 +46,7 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	 * @see org.openntf.domino.NotesCalendarNotice#accept(java.lang.String)
 	 */
 	@Override
-	public void accept(String comments) {
+	public void accept(final String comments) {
 		try {
 			getDelegate().accept(comments);
 		} catch (NotesException e) {
@@ -58,7 +58,7 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	 * @see org.openntf.domino.NotesCalendarNotice#acceptCounter(java.lang.String)
 	 */
 	@Override
-	public void acceptCounter(String comments) {
+	public void acceptCounter(final String comments) {
 		try {
 			getDelegate().acceptCounter(comments);
 		} catch (NotesException e) {
@@ -70,7 +70,7 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	 * @see org.openntf.domino.NotesCalendarNotice#counter(java.lang.String, lotus.domino.DateTime, lotus.domino.DateTime)
 	 */
 	@Override
-	public void counter(String comments, lotus.domino.DateTime start, lotus.domino.DateTime end) {
+	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end) {
 		try {
 			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
 			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
@@ -86,7 +86,7 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	 * @see org.openntf.domino.NotesCalendarNotice#counter(java.lang.String, lotus.domino.DateTime, lotus.domino.DateTime, boolean)
 	 */
 	@Override
-	public void counter(String comments, lotus.domino.DateTime start, lotus.domino.DateTime end, boolean keepPlaceholder) {
+	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end, final boolean keepPlaceholder) {
 		try {
 			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
 			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
@@ -102,7 +102,7 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	 * @see org.openntf.domino.NotesCalendarNotice#decline(java.lang.String)
 	 */
 	@Override
-	public void decline(String comments) {
+	public void decline(final String comments) {
 		try {
 			getDelegate().decline(comments);
 		} catch (NotesException e) {
@@ -114,7 +114,7 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	 * @see org.openntf.domino.NotesCalendarNotice#decline(java.lang.String, boolean)
 	 */
 	@Override
-	public void decline(String comments, boolean keepInformed) {
+	public void decline(final String comments, final boolean keepInformed) {
 		try {
 			getDelegate().decline(comments, keepInformed);
 		} catch (NotesException e) {
@@ -126,7 +126,7 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	 * @see org.openntf.domino.NotesCalendarNotice#declineCounter(java.lang.String)
 	 */
 	@Override
-	public void declineCounter(String comments) {
+	public void declineCounter(final String comments) {
 		try {
 			getDelegate().declineCounter(comments);
 		} catch (NotesException e) {
@@ -138,7 +138,7 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	 * @see org.openntf.domino.NotesCalendarNotice#delegate(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void delegate(String commentsToOrganizer, String delegateTo) {
+	public void delegate(final String commentsToOrganizer, final String delegateTo) {
 		try {
 			getDelegate().delegate(commentsToOrganizer, delegateTo);
 		} catch (NotesException e) {
@@ -150,7 +150,7 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	 * @see org.openntf.domino.NotesCalendarNotice#delegate(java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
-	public void delegate(String commentsToOrganizer, String delegateTo, boolean keepInformed) {
+	public void delegate(final String commentsToOrganizer, final String delegateTo, final boolean keepInformed) {
 		try {
 			getDelegate().delegate(commentsToOrganizer, delegateTo, keepInformed);
 		} catch (NotesException e) {
@@ -262,7 +262,7 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	 * @see org.openntf.domino.NotesCalendarNotice#requestInfo(java.lang.String)
 	 */
 	@Override
-	public void requestInfo(String comments) {
+	public void requestInfo(final String comments) {
 		try {
 			getDelegate().requestInfo(comments);
 		} catch (NotesException e) {
@@ -274,7 +274,7 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	 * @see org.openntf.domino.NotesCalendarNotice#sendUpdatedInfo(java.lang.String)
 	 */
 	@Override
-	public void sendUpdatedInfo(String comments) {
+	public void sendUpdatedInfo(final String comments) {
 		try {
 			getDelegate().sendUpdatedInfo(comments);
 		} catch (NotesException e) {
@@ -286,7 +286,7 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	 * @see org.openntf.domino.NotesCalendarNotice#setOverwriteCheckEnabled(boolean)
 	 */
 	@Override
-	public void setOverwriteCheckEnabled(boolean flag) {
+	public void setOverwriteCheckEnabled(final boolean flag) {
 		try {
 			getDelegate().setOverwriteCheckEnabled(flag);
 		} catch (NotesException e) {
@@ -298,7 +298,7 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	 * @see org.openntf.domino.NotesCalendarNotice#tentativelyAccept(java.lang.String)
 	 */
 	@Override
-	public void tentativelyAccept(String comments) {
+	public void tentativelyAccept(final String comments) {
 		try {
 			getDelegate().tentativelyAccept(comments);
 		} catch (NotesException e) {

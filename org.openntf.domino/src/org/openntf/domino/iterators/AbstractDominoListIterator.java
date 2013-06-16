@@ -57,7 +57,7 @@ public abstract class AbstractDominoListIterator<T> implements ListIterator<T> {
 	 * @param collection
 	 *            the collection
 	 */
-	protected AbstractDominoListIterator(Base<?> collection) {
+	protected AbstractDominoListIterator(final Base<?> collection) {
 		setCollection(collection);
 	}
 
@@ -121,7 +121,7 @@ public abstract class AbstractDominoListIterator<T> implements ListIterator<T> {
 	 * @param database
 	 *            the new database
 	 */
-	protected void setDatabase(Database database) {
+	protected void setDatabase(final Database database) {
 		if (database != null) {
 			try {
 				setFilePath(database.getFilePath());
@@ -138,7 +138,7 @@ public abstract class AbstractDominoListIterator<T> implements ListIterator<T> {
 	 * @param filePath
 	 *            the new file path
 	 */
-	protected void setFilePath(String filePath) {
+	protected void setFilePath(final String filePath) {
 		filePath_ = filePath;
 	}
 
@@ -148,7 +148,7 @@ public abstract class AbstractDominoListIterator<T> implements ListIterator<T> {
 	 * @param serverName
 	 *            the new server name
 	 */
-	protected void setServerName(String serverName) {
+	protected void setServerName(final String serverName) {
 		serverName_ = serverName;
 	}
 
@@ -167,7 +167,7 @@ public abstract class AbstractDominoListIterator<T> implements ListIterator<T> {
 	 * @param collection
 	 *            the new collection
 	 */
-	public void setCollection(Base<?> collection) {
+	public void setCollection(final Base<?> collection) {
 		if (collection != null) {
 			if (collection instanceof DocumentCollection) {
 				org.openntf.domino.Database parent = ((org.openntf.domino.DocumentCollection) collection).getParent();
@@ -193,7 +193,7 @@ public abstract class AbstractDominoListIterator<T> implements ListIterator<T> {
 	 * @see java.util.ListIterator#add(java.lang.Object)
 	 */
 	@Override
-	public void add(T arg0) {
+	public void add(final T arg0) {
 		// TODO Auto-generated method stub
 
 	}
@@ -260,5 +260,5 @@ public abstract class AbstractDominoListIterator<T> implements ListIterator<T> {
 	 * @see java.util.ListIterator#set(java.lang.Object)
 	 */
 	@Override
-	public abstract void set(T arg0);
+	public abstract void set(final T arg0);
 }

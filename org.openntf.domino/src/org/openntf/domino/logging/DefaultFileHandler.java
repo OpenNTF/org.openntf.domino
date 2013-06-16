@@ -47,7 +47,7 @@ public class DefaultFileHandler extends FileHandler {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public DefaultFileHandler(String arg0) throws IOException {
+	public DefaultFileHandler(final String arg0) throws IOException {
 		super(arg0);
 		// TODO Auto-generated constructor stub
 	}
@@ -62,7 +62,7 @@ public class DefaultFileHandler extends FileHandler {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public DefaultFileHandler(String arg0, boolean arg1) throws IOException {
+	public DefaultFileHandler(final String arg0, final boolean arg1) throws IOException {
 		super(arg0, arg1);
 		// TODO Auto-generated constructor stub
 	}
@@ -79,7 +79,7 @@ public class DefaultFileHandler extends FileHandler {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public DefaultFileHandler(String arg0, int arg1, int arg2) throws IOException {
+	public DefaultFileHandler(final String arg0, final int arg1, final int arg2) throws IOException {
 		super(arg0, arg1, arg2);
 		// TODO Auto-generated constructor stub
 	}
@@ -98,7 +98,7 @@ public class DefaultFileHandler extends FileHandler {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public DefaultFileHandler(String arg0, int arg1, int arg2, boolean arg3) throws IOException {
+	public DefaultFileHandler(final String arg0, final int arg1, final int arg2, final boolean arg3) throws IOException {
 		super(arg0, arg1, arg2, arg3);
 		// TODO Auto-generated constructor stub
 	}
@@ -114,7 +114,7 @@ public class DefaultFileHandler extends FileHandler {
 		super.close();
 	}
 
-	private void superPub(LogRecord record) {
+	private void superPub(final LogRecord record) {
 		super.publish(record);
 	}
 
@@ -157,7 +157,7 @@ public class DefaultFileHandler extends FileHandler {
 	 * @see java.util.logging.StreamHandler#setOutputStream(java.io.OutputStream)
 	 */
 	@Override
-	protected void setOutputStream(OutputStream out) {
+	protected void setOutputStream(final OutputStream out) {
 		// TODO Auto-generated method stub}
 		super.setOutputStream(out);
 	}
@@ -179,7 +179,7 @@ public class DefaultFileHandler extends FileHandler {
 	 * @see java.util.logging.Handler#reportError(java.lang.String, java.lang.Exception, int)
 	 */
 	@Override
-	protected void reportError(String msg, Exception ex, int code) {
+	protected void reportError(final String msg, final Exception ex, final int code) {
 		// TODO Auto-generated method stub
 		super.reportError(msg, ex, code);
 	}
@@ -190,7 +190,7 @@ public class DefaultFileHandler extends FileHandler {
 	 * @see java.util.logging.Handler#setFormatter(java.util.logging.Formatter)
 	 */
 	@Override
-	public void setFormatter(Formatter newFormatter) {
+	public void setFormatter(final Formatter newFormatter) {
 		// TODO Auto-generated method stub
 		super.setFormatter(newFormatter);
 	}

@@ -28,7 +28,7 @@ public class ConsoleFormatter extends Formatter {
 	 * @param uTC_Format
 	 *            the new uT c_ format
 	 */
-	public void setUTC_Format(boolean uTC_Format) {
+	public void setUTC_Format(final boolean uTC_Format) {
 		UTC_Format = uTC_Format;
 	}
 
@@ -38,7 +38,7 @@ public class ConsoleFormatter extends Formatter {
 	 * @see java.util.logging.Formatter#format(java.util.logging.LogRecord)
 	 */
 	@Override
-	public String format(LogRecord logRecord) {
+	public String format(final LogRecord logRecord) {
 		Date recordDate = new Date(logRecord.getMillis());
 		StringBuffer sb = new StringBuffer();
 		StackTraceElement ste = logRecord.getThrown().getStackTrace()[0];

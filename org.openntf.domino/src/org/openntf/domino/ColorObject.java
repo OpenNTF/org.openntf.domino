@@ -91,7 +91,7 @@ public interface ColorObject extends Base<lotus.domino.ColorObject>, lotus.domin
 	 * @param color
 	 *            the new color
 	 */
-	public void setColor(java.awt.Color color);
+	public void setColor(final java.awt.Color color);
 
 	/*
 	 * (non-Javadoc)
@@ -99,7 +99,7 @@ public interface ColorObject extends Base<lotus.domino.ColorObject>, lotus.domin
 	 * @see lotus.domino.ColorObject#setHSL(int, int, int)
 	 */
 	@Override
-	public int setHSL(int hue, int saturation, int luminance);
+	public int setHSL(final int hue, final int saturation, final int luminance);
 
 	/*
 	 * (non-Javadoc)
@@ -107,7 +107,7 @@ public interface ColorObject extends Base<lotus.domino.ColorObject>, lotus.domin
 	 * @see lotus.domino.ColorObject#setNotesColor(int)
 	 */
 	@Override
-	public void setNotesColor(int notesColor);
+	public void setNotesColor(final int notesColor);
 
 	/*
 	 * (non-Javadoc)
@@ -115,6 +115,6 @@ public interface ColorObject extends Base<lotus.domino.ColorObject>, lotus.domin
 	 * @see lotus.domino.ColorObject#setRGB(int, int, int)
 	 */
 	@Override
-	public int setRGB(int red, int green, int blue);
+	public int setRGB(final int red, final int green, final int blue);
 
 }

@@ -53,7 +53,7 @@ public class DominoReferenceCounter {
 	 * @param synced
 	 *            the synced
 	 */
-	public DominoReferenceCounter(boolean synced) {
+	public DominoReferenceCounter(final boolean synced) {
 		synced_ = synced;
 		this.refMap = new DominoReferenceMap();
 		if (synced) {
@@ -87,7 +87,7 @@ public class DominoReferenceCounter {
 	 *            the id
 	 * @return the int
 	 */
-	public int increment(Long id) {
+	public int increment(final Long id) {
 		// DominoReferenceMap refMap = getRefMap();
 		// int key = Long.valueOf(id).intValue();
 		// if (refMap.get(key) == DominoReferenceMap.NO_VALUE) {
@@ -123,7 +123,7 @@ public class DominoReferenceCounter {
 	 *            the id
 	 * @return the int
 	 */
-	public int decrement(Long id) {
+	public int decrement(final Long id) {
 		// DominoReferenceMap refMap = getRefMap();
 		// int key = Long.valueOf(id).intValue();
 		// if (refMap.get(key) == DominoReferenceMap.NO_VALUE) {
@@ -165,7 +165,7 @@ public class DominoReferenceCounter {
 	 *            the id
 	 * @return the count
 	 */
-	public int getCount(Long id) {
+	public int getCount(final Long id) {
 		// DominoReferenceMap refMap = getRefMap();
 		// int key = Long.valueOf(id).intValue();
 		// return refMap.get(key);

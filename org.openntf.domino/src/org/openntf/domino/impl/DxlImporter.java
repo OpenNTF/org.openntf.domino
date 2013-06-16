@@ -34,7 +34,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	 * @param parent
 	 *            the parent
 	 */
-	public DxlImporter(lotus.domino.DxlImporter delegate, org.openntf.domino.Base<?> parent) {
+	public DxlImporter(final lotus.domino.DxlImporter delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -209,7 +209,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	 * @see org.openntf.domino.DxlImporter#getNextImportedNoteID(java.lang.String)
 	 */
 	@Override
-	public String getNextImportedNoteID(String noteid) {
+	public String getNextImportedNoteID(final String noteid) {
 		try {
 			return getDelegate().getNextImportedNoteID(noteid);
 		} catch (NotesException e) {
@@ -269,7 +269,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	 * @see org.openntf.domino.DxlImporter#importDxl(lotus.domino.RichTextItem, lotus.domino.Database)
 	 */
 	@Override
-	public void importDxl(lotus.domino.RichTextItem rtitem, lotus.domino.Database db) {
+	public void importDxl(final lotus.domino.RichTextItem rtitem, final lotus.domino.Database db) {
 		try {
 			getDelegate().importDxl((lotus.domino.RichTextItem) toLotus(rtitem), (lotus.domino.Database) toLotus(db));
 		} catch (NotesException e) {
@@ -283,7 +283,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	 * @see org.openntf.domino.DxlImporter#importDxl(lotus.domino.Stream, lotus.domino.Database)
 	 */
 	@Override
-	public void importDxl(lotus.domino.Stream stream, lotus.domino.Database db) {
+	public void importDxl(final lotus.domino.Stream stream, final lotus.domino.Database db) {
 		try {
 			getDelegate().importDxl((lotus.domino.Stream) toLotus(stream), (lotus.domino.Database) toLotus(db));
 		} catch (NotesException e) {
@@ -297,7 +297,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	 * @see org.openntf.domino.DxlImporter#importDxl(java.lang.String, lotus.domino.Database)
 	 */
 	@Override
-	public void importDxl(String dxl, lotus.domino.Database db) {
+	public void importDxl(final String dxl, final lotus.domino.Database db) {
 		try {
 			getDelegate().importDxl(dxl, (lotus.domino.Database) toLotus(db));
 		} catch (NotesException e) {
@@ -311,7 +311,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	 * @see org.openntf.domino.DxlImporter#setAclImportOption(int)
 	 */
 	@Override
-	public void setAclImportOption(int option) {
+	public void setAclImportOption(final int option) {
 		try {
 			getDelegate().setAclImportOption(option);
 		} catch (NotesException e) {
@@ -325,7 +325,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	 * @see org.openntf.domino.DxlImporter#setCompileLotusScript(boolean)
 	 */
 	@Override
-	public void setCompileLotusScript(boolean flag) {
+	public void setCompileLotusScript(final boolean flag) {
 		try {
 			getDelegate().setCompileLotusScript(flag);
 		} catch (NotesException e) {
@@ -339,7 +339,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	 * @see org.openntf.domino.DxlImporter#setCreateFTIndex(boolean)
 	 */
 	@Override
-	public void setCreateFTIndex(boolean flag) {
+	public void setCreateFTIndex(final boolean flag) {
 		try {
 			getDelegate().setCreateFTIndex(flag);
 		} catch (NotesException e) {
@@ -353,7 +353,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	 * @see org.openntf.domino.DxlImporter#setDesignImportOption(int)
 	 */
 	@Override
-	public void setDesignImportOption(int option) {
+	public void setDesignImportOption(final int option) {
 		try {
 			getDelegate().setDesignImportOption(option);
 		} catch (NotesException e) {
@@ -367,7 +367,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	 * @see org.openntf.domino.DxlImporter#setDocumentImportOption(int)
 	 */
 	@Override
-	public void setDocumentImportOption(int option) {
+	public void setDocumentImportOption(final int option) {
 		try {
 			getDelegate().setDocumentImportOption(option);
 		} catch (NotesException e) {
@@ -381,7 +381,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	 * @see org.openntf.domino.DxlImporter#setExitOnFirstFatalError(boolean)
 	 */
 	@Override
-	public void setExitOnFirstFatalError(boolean flag) {
+	public void setExitOnFirstFatalError(final boolean flag) {
 		try {
 			getDelegate().setExitOnFirstFatalError(flag);
 		} catch (NotesException e) {
@@ -395,7 +395,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	 * @see org.openntf.domino.DxlImporter#setInputValidationOption(int)
 	 */
 	@Override
-	public void setInputValidationOption(int option) {
+	public void setInputValidationOption(final int option) {
 		try {
 			getDelegate().setInputValidationOption(option);
 		} catch (NotesException e) {
@@ -409,7 +409,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	 * @see org.openntf.domino.DxlImporter#setLogComment(java.lang.String)
 	 */
 	@Override
-	public void setLogComment(String comment) {
+	public void setLogComment(final String comment) {
 		try {
 			getDelegate().setLogComment(comment);
 		} catch (NotesException e) {
@@ -423,7 +423,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	 * @see org.openntf.domino.DxlImporter#setReplaceDbProperties(boolean)
 	 */
 	@Override
-	public void setReplaceDbProperties(boolean flag) {
+	public void setReplaceDbProperties(final boolean flag) {
 		try {
 			getDelegate().setReplaceDbProperties(flag);
 		} catch (NotesException e) {
@@ -437,7 +437,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	 * @see org.openntf.domino.DxlImporter#setReplicaRequiredForReplaceOrUpdate(boolean)
 	 */
 	@Override
-	public void setReplicaRequiredForReplaceOrUpdate(boolean flag) {
+	public void setReplicaRequiredForReplaceOrUpdate(final boolean flag) {
 		try {
 			getDelegate().setReplicaRequiredForReplaceOrUpdate(flag);
 		} catch (NotesException e) {
@@ -451,7 +451,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	 * @see org.openntf.domino.DxlImporter#setUnknownTokenLogOption(int)
 	 */
 	@Override
-	public void setUnknownTokenLogOption(int option) {
+	public void setUnknownTokenLogOption(final int option) {
 		try {
 			getDelegate().setUnknownTokenLogOption(option);
 		} catch (NotesException e) {
@@ -475,7 +475,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	 * @see org.openntf.domino.ext.DxlImporter#setAclImportOption(org.openntf.domino.DxlImporter.AclImportOption)
 	 */
 	@Override
-	public void setAclImportOption(AclImportOption option) {
+	public void setAclImportOption(final AclImportOption option) {
 		setAclImportOption(option.getValue());
 	}
 
@@ -485,7 +485,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	 * @see org.openntf.domino.ext.DxlImporter#setDesignImportOption(org.openntf.domino.DxlImporter.DesignImportOption)
 	 */
 	@Override
-	public void setDesignImportOption(DesignImportOption option) {
+	public void setDesignImportOption(final DesignImportOption option) {
 		setDesignImportOption(option.getValue());
 	}
 
@@ -495,7 +495,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	 * @see org.openntf.domino.ext.DxlImporter#setDocumentImportOption(org.openntf.domino.DxlImporter.DocumentImportOption)
 	 */
 	@Override
-	public void setDocumentImportOption(DocumentImportOption option) {
+	public void setDocumentImportOption(final DocumentImportOption option) {
 		setDocumentImportOption(option.getValue());
 	}
 
@@ -505,7 +505,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	 * @see org.openntf.domino.ext.DxlImporter#setInputValidationOption(org.openntf.domino.DxlImporter.InputValidationOption)
 	 */
 	@Override
-	public void setInputValidationOption(InputValidationOption option) {
+	public void setInputValidationOption(final InputValidationOption option) {
 		setInputValidationOption(option.getValue());
 	}
 

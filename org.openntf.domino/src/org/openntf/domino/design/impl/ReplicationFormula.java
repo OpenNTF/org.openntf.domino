@@ -19,7 +19,7 @@ public class ReplicationFormula extends AbstractDesignBase implements org.opennt
 	/**
 	 * @param document
 	 */
-	protected ReplicationFormula(Document document) {
+	protected ReplicationFormula(final Document document) {
 		super(document);
 	}
 

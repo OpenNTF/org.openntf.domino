@@ -30,7 +30,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 
 		private final int value_;
 
-		private DocumentImportOption(int value) {
+		private DocumentImportOption(final int value) {
 			value_ = value;
 		}
 
@@ -38,7 +38,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 			return value_;
 		}
 
-		public static DocumentImportOption valueOf(int value) {
+		public static DocumentImportOption valueOf(final int value) {
 			for (DocumentImportOption opt : values()) {
 				if (opt.getValue() == value) {
 					return opt;
@@ -54,7 +54,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 
 		private final int value_;
 
-		private DesignImportOption(int value) {
+		private DesignImportOption(final int value) {
 			value_ = value;
 		}
 
@@ -62,7 +62,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 			return value_;
 		}
 
-		public static DesignImportOption valueOf(int value) {
+		public static DesignImportOption valueOf(final int value) {
 			for (DesignImportOption opt : values()) {
 				if (opt.getValue() == value) {
 					return opt;
@@ -78,7 +78,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 
 		private final int value_;
 
-		private AclImportOption(int value) {
+		private AclImportOption(final int value) {
 			value_ = value;
 		}
 
@@ -86,7 +86,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 			return value_;
 		}
 
-		public static AclImportOption valueOf(int value) {
+		public static AclImportOption valueOf(final int value) {
 			for (AclImportOption opt : values()) {
 				if (opt.getValue() == value) {
 					return opt;
@@ -102,7 +102,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 
 		private final int value_;
 
-		private InputValidationOption(int value) {
+		private InputValidationOption(final int value) {
 			value_ = value;
 		}
 
@@ -110,7 +110,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 			return value_;
 		}
 
-		public static InputValidationOption valueOf(int value) {
+		public static InputValidationOption valueOf(final int value) {
 			for (InputValidationOption opt : values()) {
 				if (opt.getValue() == value) {
 					return opt;
@@ -214,7 +214,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	 * @see lotus.domino.DxlImporter#getNextImportedNoteID(java.lang.String)
 	 */
 	@Override
-	public String getNextImportedNoteID(String noteid);
+	public String getNextImportedNoteID(final String noteid);
 
 	/*
 	 * (non-Javadoc)
@@ -246,7 +246,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	 * @see lotus.domino.DxlImporter#importDxl(lotus.domino.RichTextItem, lotus.domino.Database)
 	 */
 	@Override
-	public void importDxl(lotus.domino.RichTextItem rtitem, lotus.domino.Database database);
+	public void importDxl(final lotus.domino.RichTextItem rtitem, final lotus.domino.Database database);
 
 	/*
 	 * (non-Javadoc)
@@ -254,7 +254,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	 * @see lotus.domino.DxlImporter#importDxl(lotus.domino.Stream, lotus.domino.Database)
 	 */
 	@Override
-	public void importDxl(lotus.domino.Stream stream, lotus.domino.Database database);
+	public void importDxl(final lotus.domino.Stream stream, final lotus.domino.Database database);
 
 	/*
 	 * (non-Javadoc)
@@ -262,7 +262,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	 * @see lotus.domino.DxlImporter#importDxl(java.lang.String, lotus.domino.Database)
 	 */
 	@Override
-	public void importDxl(String dxl, lotus.domino.Database database);
+	public void importDxl(final String dxl, final lotus.domino.Database database);
 
 	/*
 	 * (non-Javadoc)
@@ -271,7 +271,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	 */
 	@Override
 	@Deprecated
-	public void setAclImportOption(int option);
+	public void setAclImportOption(final int option);
 
 	/*
 	 * (non-Javadoc)
@@ -279,7 +279,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	 * @see lotus.domino.DxlImporter#setCompileLotusScript(boolean)
 	 */
 	@Override
-	public void setCompileLotusScript(boolean flag);
+	public void setCompileLotusScript(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -287,7 +287,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	 * @see lotus.domino.DxlImporter#setCreateFTIndex(boolean)
 	 */
 	@Override
-	public void setCreateFTIndex(boolean flag);
+	public void setCreateFTIndex(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -296,7 +296,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	 */
 	@Override
 	@Deprecated
-	public void setDesignImportOption(int option);
+	public void setDesignImportOption(final int option);
 
 	/*
 	 * (non-Javadoc)
@@ -305,7 +305,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	 */
 	@Override
 	@Deprecated
-	public void setDocumentImportOption(int option);
+	public void setDocumentImportOption(final int option);
 
 	/*
 	 * (non-Javadoc)
@@ -313,7 +313,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	 * @see lotus.domino.DxlImporter#setExitOnFirstFatalError(boolean)
 	 */
 	@Override
-	public void setExitOnFirstFatalError(boolean flag);
+	public void setExitOnFirstFatalError(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -322,7 +322,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	 */
 	@Override
 	@Deprecated
-	public void setInputValidationOption(int option);
+	public void setInputValidationOption(final int option);
 
 	/*
 	 * (non-Javadoc)
@@ -330,7 +330,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	 * @see lotus.domino.DxlImporter#setLogComment(java.lang.String)
 	 */
 	@Override
-	public void setLogComment(String comment);
+	public void setLogComment(final String comment);
 
 	/*
 	 * (non-Javadoc)
@@ -338,7 +338,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	 * @see lotus.domino.DxlImporter#setReplaceDbProperties(boolean)
 	 */
 	@Override
-	public void setReplaceDbProperties(boolean flag);
+	public void setReplaceDbProperties(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -346,7 +346,7 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	 * @see lotus.domino.DxlImporter#setReplicaRequiredForReplaceOrUpdate(boolean)
 	 */
 	@Override
-	public void setReplicaRequiredForReplaceOrUpdate(boolean flag);
+	public void setReplicaRequiredForReplaceOrUpdate(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -354,5 +354,5 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 	 * @see lotus.domino.DxlImporter#setUnknownTokenLogOption(int)
 	 */
 	@Override
-	public void setUnknownTokenLogOption(int option);
+	public void setUnknownTokenLogOption(final int option);
 }

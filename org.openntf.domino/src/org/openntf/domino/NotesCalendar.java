@@ -31,7 +31,7 @@ public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.d
 	 * @see lotus.domino.NotesCalendar#createEntry(java.lang.String)
 	 */
 	@Override
-	public NotesCalendarEntry createEntry(String iCalEntry);
+	public NotesCalendarEntry createEntry(final String iCalEntry);
 
 	/*
 	 * (non-Javadoc)
@@ -39,7 +39,7 @@ public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.d
 	 * @see lotus.domino.NotesCalendar#createEntry(java.lang.String, int)
 	 */
 	@Override
-	public NotesCalendarEntry createEntry(String iCalEntry, int flags);
+	public NotesCalendarEntry createEntry(final String iCalEntry, final int flags);
 
 	/*
 	 * (non-Javadoc)
@@ -55,7 +55,7 @@ public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.d
 	 * @see lotus.domino.NotesCalendar#getEntries(lotus.domino.DateTime, lotus.domino.DateTime)
 	 */
 	@Override
-	public Vector<NotesCalendarEntry> getEntries(lotus.domino.DateTime start, lotus.domino.DateTime end);
+	public Vector<NotesCalendarEntry> getEntries(final lotus.domino.DateTime start, final lotus.domino.DateTime end);
 
 	/*
 	 * (non-Javadoc)
@@ -63,7 +63,7 @@ public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.d
 	 * @see lotus.domino.NotesCalendar#getEntries(lotus.domino.DateTime, lotus.domino.DateTime, int, int)
 	 */
 	@Override
-	public Vector<NotesCalendarEntry> getEntries(lotus.domino.DateTime start, lotus.domino.DateTime end, int skipCount, int maxReturn);
+	public Vector<NotesCalendarEntry> getEntries(final lotus.domino.DateTime start, final lotus.domino.DateTime end, final int skipCount, final int maxReturn);
 
 	/*
 	 * (non-Javadoc)
@@ -79,7 +79,7 @@ public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.d
 	 * @see lotus.domino.NotesCalendar#getEntry(java.lang.String)
 	 */
 	@Override
-	public NotesCalendarEntry getEntry(String uid);
+	public NotesCalendarEntry getEntry(final String uid);
 
 	/*
 	 * (non-Javadoc)
@@ -87,7 +87,7 @@ public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.d
 	 * @see lotus.domino.NotesCalendar#getEntryByNoteID(java.lang.String)
 	 */
 	@Override
-	public NotesCalendarEntry getEntryByNoteID(String noteid);
+	public NotesCalendarEntry getEntryByNoteID(final String noteid);
 
 	/*
 	 * (non-Javadoc)
@@ -95,7 +95,7 @@ public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.d
 	 * @see lotus.domino.NotesCalendar#getEntryByUNID(java.lang.String)
 	 */
 	@Override
-	public NotesCalendarEntry getEntryByUNID(String unid);
+	public NotesCalendarEntry getEntryByUNID(final String unid);
 
 	/*
 	 * (non-Javadoc)
@@ -111,7 +111,7 @@ public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.d
 	 * @see lotus.domino.NotesCalendar#getNewInvitations(lotus.domino.DateTime, lotus.domino.DateTime)
 	 */
 	@Override
-	public Vector<NotesCalendarNotice> getNewInvitations(lotus.domino.DateTime start, lotus.domino.DateTime since);
+	public Vector<NotesCalendarNotice> getNewInvitations(final lotus.domino.DateTime start, final lotus.domino.DateTime since);
 
 	/*
 	 * (non-Javadoc)
@@ -119,7 +119,7 @@ public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.d
 	 * @see lotus.domino.NotesCalendar#getNoticeByUNID(java.lang.String)
 	 */
 	@Override
-	public NotesCalendarNotice getNoticeByUNID(String unid);
+	public NotesCalendarNotice getNoticeByUNID(final String unid);
 
 	/**
 	 * Gets the parent.
@@ -166,7 +166,7 @@ public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.d
 	 * @see lotus.domino.NotesCalendar#readRange(lotus.domino.DateTime, lotus.domino.DateTime)
 	 */
 	@Override
-	public String readRange(lotus.domino.DateTime start, lotus.domino.DateTime end);
+	public String readRange(final lotus.domino.DateTime start, final lotus.domino.DateTime end);
 
 	/*
 	 * (non-Javadoc)
@@ -174,7 +174,7 @@ public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.d
 	 * @see lotus.domino.NotesCalendar#readRange(lotus.domino.DateTime, lotus.domino.DateTime, int, int)
 	 */
 	@Override
-	public String readRange(lotus.domino.DateTime start, lotus.domino.DateTime end, int skipCount, int maxRead);
+	public String readRange(final lotus.domino.DateTime start, final lotus.domino.DateTime end, final int skipCount, final int maxRead);
 
 	/*
 	 * (non-Javadoc)
@@ -182,7 +182,7 @@ public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.d
 	 * @see lotus.domino.NotesCalendar#setAutoSendNotices(boolean)
 	 */
 	@Override
-	public void setAutoSendNotices(boolean flag);
+	public void setAutoSendNotices(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -190,7 +190,7 @@ public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.d
 	 * @see lotus.domino.NotesCalendar#setReadRangeMask1(int)
 	 */
 	@Override
-	public void setReadRangeMask1(int mask);
+	public void setReadRangeMask1(final int mask);
 
 	/*
 	 * (non-Javadoc)
@@ -198,7 +198,7 @@ public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.d
 	 * @see lotus.domino.NotesCalendar#setReadRangeMask2(int)
 	 */
 	@Override
-	public void setReadRangeMask2(int mask);
+	public void setReadRangeMask2(final int mask);
 
 	/*
 	 * (non-Javadoc)
@@ -206,6 +206,6 @@ public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.d
 	 * @see lotus.domino.NotesCalendar#setReadXLotusPropsOutputLevel(int)
 	 */
 	@Override
-	public void setReadXLotusPropsOutputLevel(int level);
+	public void setReadXLotusPropsOutputLevel(final int level);
 
 }

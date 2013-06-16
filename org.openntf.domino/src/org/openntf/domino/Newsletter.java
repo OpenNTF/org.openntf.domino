@@ -29,7 +29,7 @@ public interface Newsletter extends Base<lotus.domino.Newsletter>, lotus.domino.
 	 * @see lotus.domino.Newsletter#formatDocument(lotus.domino.Database, int)
 	 */
 	@Override
-	public lotus.domino.Document formatDocument(lotus.domino.Database database, int index);
+	public lotus.domino.Document formatDocument(final lotus.domino.Database database, final int index);
 
 	/*
 	 * (non-Javadoc)
@@ -37,7 +37,7 @@ public interface Newsletter extends Base<lotus.domino.Newsletter>, lotus.domino.
 	 * @see lotus.domino.Newsletter#formatMsgWithDoclinks(lotus.domino.Database)
 	 */
 	@Override
-	public lotus.domino.Document formatMsgWithDoclinks(lotus.domino.Database database);
+	public lotus.domino.Document formatMsgWithDoclinks(final lotus.domino.Database database);
 
 	/*
 	 * (non-Javadoc)
@@ -77,7 +77,7 @@ public interface Newsletter extends Base<lotus.domino.Newsletter>, lotus.domino.
 	 * @see lotus.domino.Newsletter#setDoScore(boolean)
 	 */
 	@Override
-	public void setDoScore(boolean flag);
+	public void setDoScore(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -85,7 +85,7 @@ public interface Newsletter extends Base<lotus.domino.Newsletter>, lotus.domino.
 	 * @see lotus.domino.Newsletter#setDoSubject(boolean)
 	 */
 	@Override
-	public void setDoSubject(boolean flag);
+	public void setDoSubject(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -93,6 +93,6 @@ public interface Newsletter extends Base<lotus.domino.Newsletter>, lotus.domino.
 	 * @see lotus.domino.Newsletter#setSubjectItemName(java.lang.String)
 	 */
 	@Override
-	public void setSubjectItemName(String name);
+	public void setSubjectItemName(final String name);
 
 }

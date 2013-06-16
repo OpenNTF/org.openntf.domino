@@ -19,19 +19,19 @@ public interface BigNoteCollection extends Externalizable, Iterable<String> {
 	 * 
 	 * @see lotus.domino.NoteCollection#add(int)
 	 */
-	public void add(String filepath, int additionSpecifier);
+	public void add(final String filepath, final int additionSpecifier);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.NoteCollection#add(int[])
 	 */
-	public void add(String filepath, int[] additionSpecifier);
+	public void add(final String filepath, final int[] additionSpecifier);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.NoteCollection#add(java.lang.String)
 	 */
-	public void add(String filepath, String noteid);
+	public void add(final String filepath, final String noteid);
 }

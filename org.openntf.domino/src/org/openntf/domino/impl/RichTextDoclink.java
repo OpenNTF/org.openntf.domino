@@ -41,7 +41,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 * @param parent
 	 *            the parent
 	 */
-	public RichTextDoclink(lotus.domino.RichTextDoclink delegate, org.openntf.domino.Base<?> parent) {
+	public RichTextDoclink(final lotus.domino.RichTextDoclink delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -171,7 +171,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 * @see org.openntf.domino.RichTextDoclink#setDBReplicaID(java.lang.String)
 	 */
 	@Override
-	public void setDBReplicaID(String replicaId) {
+	public void setDBReplicaID(final String replicaId) {
 		markDirty();
 		try {
 			getDelegate().setDBReplicaID(replicaId);
@@ -186,7 +186,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 * @see org.openntf.domino.RichTextDoclink#setDisplayComment(java.lang.String)
 	 */
 	@Override
-	public void setDisplayComment(String comment) {
+	public void setDisplayComment(final String comment) {
 		markDirty();
 		try {
 			getDelegate().setDisplayComment(comment);
@@ -201,7 +201,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 * @see org.openntf.domino.RichTextDoclink#setDocUnID(java.lang.String)
 	 */
 	@Override
-	public void setDocUnID(String unid) {
+	public void setDocUnID(final String unid) {
 		markDirty();
 		try {
 			getDelegate().setDocUnID(unid);
@@ -216,7 +216,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 * @see org.openntf.domino.RichTextDoclink#setHotSpotText(java.lang.String)
 	 */
 	@Override
-	public void setHotSpotText(String text) {
+	public void setHotSpotText(final String text) {
 		markDirty();
 		try {
 			getDelegate().setHotSpotText(text);
@@ -231,7 +231,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 * @see org.openntf.domino.RichTextDoclink#setHotSpotTextStyle(lotus.domino.RichTextStyle)
 	 */
 	@Override
-	public void setHotSpotTextStyle(lotus.domino.RichTextStyle rtstyle) {
+	public void setHotSpotTextStyle(final lotus.domino.RichTextStyle rtstyle) {
 		markDirty();
 		try {
 			getDelegate().setHotSpotTextStyle((lotus.domino.RichTextStyle) toLotus(rtstyle));
@@ -246,7 +246,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 * @see org.openntf.domino.RichTextDoclink#setServerHint(java.lang.String)
 	 */
 	@Override
-	public void setServerHint(String server) {
+	public void setServerHint(final String server) {
 		markDirty();
 		try {
 			getDelegate().setServerHint(server);
@@ -261,7 +261,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 * @see org.openntf.domino.RichTextDoclink#setViewUnID(java.lang.String)
 	 */
 	@Override
-	public void setViewUnID(String unid) {
+	public void setViewUnID(final String unid) {
 		markDirty();
 		try {
 			getDelegate().setViewUnID(unid);

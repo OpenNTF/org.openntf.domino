@@ -83,13 +83,13 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	private String server_;
 	private transient org.openntf.domino.Session session_;
 
-	public DominoGraph(org.openntf.domino.Database database) {
+	public DominoGraph(final org.openntf.domino.Database database) {
 		setRawDatabase(database);
 		RunContext rc = Factory.getRunContext();
 		// System.out.println("Context: " + rc.toString());
 	}
 
-	public void setRawDatabase(org.openntf.domino.Database database) {
+	public void setRawDatabase(final org.openntf.domino.Database database) {
 		if (database != null) {
 			database_ = database;
 			session_ = database.getParent();
@@ -106,7 +106,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	}
 
 	@Override
-	public Edge addEdge(Object id, Vertex outVertex, Vertex inVertex, String label) {
+	public Edge addEdge(Object id, final Vertex outVertex, final Vertex inVertex, final String label) {
 		startTransaction();
 		if (id == null)
 			id = DominoUtils.toUnid(outVertex.getId() + label + inVertex.getId());
@@ -120,7 +120,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		return ed;
 	}
 
-	public Edge getOrAddEdge(Object id, Vertex outVertex, Vertex inVertex, String label) {
+	public Edge getOrAddEdge(Object id, final Vertex outVertex, final Vertex inVertex, final String label) {
 		Edge result = null;
 		if (id == null) {
 			id = DominoUtils.toUnid(outVertex.getId() + label + inVertex.getId());
@@ -150,7 +150,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	}
 
 	@Override
-	public Vertex addVertex(Object id) {
+	public Vertex addVertex(final Object id) {
 		startTransaction();
 		String vid = DominoUtils.toUnid((Serializable) id);
 		Document d = getDocument(vid, true);
@@ -184,7 +184,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		return database_;
 	}
 
-	private Document getDocument(Object id, boolean createOnFail) {
+	private Document getDocument(final Object id, final boolean createOnFail) {
 		Document result = null;
 		String unid = "";
 		if (id == null && createOnFail) {
@@ -219,7 +219,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	}
 
 	@Override
-	public Edge getEdge(Object id) {
+	public Edge getEdge(final Object id) {
 		Edge result = null;
 		if (id == null) {
 			Document d = getDocument(id, false);
@@ -252,12 +252,12 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	}
 
 	@Override
-	public Iterable<Edge> getEdges(String key, Object value) {
+	public Iterable<Edge> getEdges(final String key, final Object value) {
 		// TODO
 		throw new UnsupportedOperationException();
 	}
 
-	public Iterable<Edge> getEdgesFromIds(Set<String> set) {
+	public Iterable<Edge> getEdgesFromIds(final Set<String> set) {
 		Set<Edge> result = new LinkedHashSet<Edge>();
 		for (String id : set) {
 			result.add(getEdge(id));
@@ -265,7 +265,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		return result;
 	}
 
-	public Iterable<Edge> getEdgesFromIds(Set<String> set, String... labels) {
+	public Iterable<Edge> getEdgesFromIds(final Set<String> set, final String... labels) {
 		Set<Edge> result = new LinkedHashSet<Edge>();
 		for (String id : set) {
 			Edge edge = getEdge(id);
@@ -300,7 +300,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	}
 
 	@Override
-	public Vertex getVertex(Object id) {
+	public Vertex getVertex(final Object id) {
 		String vid = DominoUtils.toUnid((Serializable) id);
 		Vertex result = (Vertex) getCache().get(vid);
 		if (result == null) {
@@ -341,7 +341,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	}
 
 	@Override
-	public Iterable<Vertex> getVertices(String key, Object value) {
+	public Iterable<Vertex> getVertices(final String key, final Object value) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}
@@ -352,7 +352,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	}
 
 	@Override
-	public void removeEdge(Edge edge) {
+	public void removeEdge(final Edge edge) {
 		startTransaction();
 		Vertex in = edge.getVertex(Direction.IN);
 		((DominoVertex) in).removeEdge(edge);
@@ -361,7 +361,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	}
 
 	@Override
-	public void removeVertex(Vertex vertex) {
+	public void removeVertex(final Vertex vertex) {
 		startTransaction();
 		DominoVertex dv = (DominoVertex) vertex;
 		for (Edge edge : dv.getEdges(Direction.BOTH)) {
@@ -398,7 +398,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	 */
 	@Override
 	@Deprecated
-	public void stopTransaction(Conclusion conclusion) {
+	public void stopTransaction(final Conclusion conclusion) {
 		// TODO Auto-generated method stub
 
 	}

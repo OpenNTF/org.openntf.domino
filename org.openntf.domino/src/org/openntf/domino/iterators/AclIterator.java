@@ -49,7 +49,7 @@ public class AclIterator implements Iterator<ACLEntry> {
 	 * @param acl
 	 *            the acl
 	 */
-	public AclIterator(ACL acl) {
+	public AclIterator(final ACL acl) {
 		setAcl(acl);
 	}
 
@@ -118,7 +118,7 @@ public class AclIterator implements Iterator<ACLEntry> {
 	 * @param currentEntry
 	 *            the new current entry
 	 */
-	public void setCurrentEntry(ACLEntry currentEntry) {
+	public void setCurrentEntry(final ACLEntry currentEntry) {
 		currentEntry_ = currentEntry;
 	}
 
@@ -137,7 +137,7 @@ public class AclIterator implements Iterator<ACLEntry> {
 	 * @param acl
 	 *            the new acl
 	 */
-	public void setAcl(ACL acl) {
+	public void setAcl(final ACL acl) {
 		this.acl = acl;
 	}
 
@@ -156,7 +156,7 @@ public class AclIterator implements Iterator<ACLEntry> {
 	 * @param done
 	 *            the new done
 	 */
-	public void setDone(boolean done) {
+	public void setDone(final boolean done) {
 		done_ = done;
 	}
 
@@ -175,7 +175,7 @@ public class AclIterator implements Iterator<ACLEntry> {
 	 * @param started
 	 *            the new started
 	 */
-	public void setStarted(boolean started) {
+	public void setStarted(final boolean started) {
 		started_ = started;
 	}
 }

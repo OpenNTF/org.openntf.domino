@@ -93,7 +93,7 @@ public interface RichTextDoclink extends Base<lotus.domino.RichTextDoclink>, lot
 	 * @see lotus.domino.RichTextDoclink#setDBReplicaID(java.lang.String)
 	 */
 	@Override
-	public void setDBReplicaID(String replicaId);
+	public void setDBReplicaID(final String replicaId);
 
 	/*
 	 * (non-Javadoc)
@@ -101,7 +101,7 @@ public interface RichTextDoclink extends Base<lotus.domino.RichTextDoclink>, lot
 	 * @see lotus.domino.RichTextDoclink#setDisplayComment(java.lang.String)
 	 */
 	@Override
-	public void setDisplayComment(String comment);
+	public void setDisplayComment(final String comment);
 
 	/*
 	 * (non-Javadoc)
@@ -109,7 +109,7 @@ public interface RichTextDoclink extends Base<lotus.domino.RichTextDoclink>, lot
 	 * @see lotus.domino.RichTextDoclink#setDocUnID(java.lang.String)
 	 */
 	@Override
-	public void setDocUnID(String unid);
+	public void setDocUnID(final String unid);
 
 	/*
 	 * (non-Javadoc)
@@ -117,7 +117,7 @@ public interface RichTextDoclink extends Base<lotus.domino.RichTextDoclink>, lot
 	 * @see lotus.domino.RichTextDoclink#setHotSpotText(java.lang.String)
 	 */
 	@Override
-	public void setHotSpotText(String text);
+	public void setHotSpotText(final String text);
 
 	/*
 	 * (non-Javadoc)
@@ -125,7 +125,7 @@ public interface RichTextDoclink extends Base<lotus.domino.RichTextDoclink>, lot
 	 * @see lotus.domino.RichTextDoclink#setHotSpotTextStyle(lotus.domino.RichTextStyle)
 	 */
 	@Override
-	public void setHotSpotTextStyle(lotus.domino.RichTextStyle rtstyle);
+	public void setHotSpotTextStyle(final lotus.domino.RichTextStyle rtstyle);
 
 	/*
 	 * (non-Javadoc)
@@ -133,7 +133,7 @@ public interface RichTextDoclink extends Base<lotus.domino.RichTextDoclink>, lot
 	 * @see lotus.domino.RichTextDoclink#setServerHint(java.lang.String)
 	 */
 	@Override
-	public void setServerHint(String server);
+	public void setServerHint(final String server);
 
 	/*
 	 * (non-Javadoc)
@@ -141,6 +141,6 @@ public interface RichTextDoclink extends Base<lotus.domino.RichTextDoclink>, lot
 	 * @see lotus.domino.RichTextDoclink#setViewUnID(java.lang.String)
 	 */
 	@Override
-	public void setViewUnID(String unid);
+	public void setViewUnID(final String unid);
 
 }

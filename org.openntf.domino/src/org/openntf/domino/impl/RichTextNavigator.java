@@ -42,7 +42,7 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 * @param parent
 	 *            the parent
 	 */
-	public RichTextNavigator(lotus.domino.RichTextNavigator delegate, org.openntf.domino.Base<?> parent) {
+	public RichTextNavigator(final lotus.domino.RichTextNavigator delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -67,7 +67,7 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 * @see org.openntf.domino.RichTextNavigator#findFirstElement(int)
 	 */
 	@Override
-	public boolean findFirstElement(int type) {
+	public boolean findFirstElement(final int type) {
 		try {
 			return getDelegate().findFirstElement(type);
 		} catch (NotesException e) {
@@ -82,7 +82,7 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 * @see org.openntf.domino.RichTextNavigator#findFirstString(java.lang.String)
 	 */
 	@Override
-	public boolean findFirstString(String target) {
+	public boolean findFirstString(final String target) {
 		try {
 			return getDelegate().findFirstString(target);
 		} catch (NotesException e) {
@@ -97,7 +97,7 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 * @see org.openntf.domino.RichTextNavigator#findFirstString(java.lang.String, int)
 	 */
 	@Override
-	public boolean findFirstString(String target, int options) {
+	public boolean findFirstString(final String target, final int options) {
 		try {
 			return getDelegate().findFirstString(target, options);
 		} catch (NotesException e) {
@@ -112,7 +112,7 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 * @see org.openntf.domino.RichTextNavigator#findLastElement(int)
 	 */
 	@Override
-	public boolean findLastElement(int type) {
+	public boolean findLastElement(final int type) {
 		try {
 			return getDelegate().findLastElement(type);
 		} catch (NotesException e) {
@@ -142,7 +142,7 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 * @see org.openntf.domino.RichTextNavigator#findNextElement(int)
 	 */
 	@Override
-	public boolean findNextElement(int type) {
+	public boolean findNextElement(final int type) {
 		try {
 			return getDelegate().findNextElement(type);
 		} catch (NotesException e) {
@@ -157,7 +157,7 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 * @see org.openntf.domino.RichTextNavigator#findNextElement(int, int)
 	 */
 	@Override
-	public boolean findNextElement(int type, int occurrence) {
+	public boolean findNextElement(final int type, final int occurrence) {
 		try {
 			return getDelegate().findNextElement(type, occurrence);
 		} catch (NotesException e) {
@@ -172,7 +172,7 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 * @see org.openntf.domino.RichTextNavigator#findNextString(java.lang.String)
 	 */
 	@Override
-	public boolean findNextString(String target) {
+	public boolean findNextString(final String target) {
 		try {
 			return getDelegate().findNextString(target);
 		} catch (NotesException e) {
@@ -187,7 +187,7 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 * @see org.openntf.domino.RichTextNavigator#findNextString(java.lang.String, int)
 	 */
 	@Override
-	public boolean findNextString(String target, int options) {
+	public boolean findNextString(final String target, final int options) {
 		try {
 			return getDelegate().findNextString(target, options);
 		} catch (NotesException e) {
@@ -202,7 +202,7 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 * @see org.openntf.domino.RichTextNavigator#findNthElement(int, int)
 	 */
 	@Override
-	public boolean findNthElement(int type, int occurrence) {
+	public boolean findNthElement(final int type, final int occurrence) {
 		try {
 			return getDelegate().findNthElement(type, occurrence);
 		} catch (NotesException e) {
@@ -232,7 +232,7 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 * @see org.openntf.domino.RichTextNavigator#getFirstElement(int)
 	 */
 	@Override
-	public org.openntf.domino.Base<?> getFirstElement(int type) {
+	public org.openntf.domino.Base<?> getFirstElement(final int type) {
 		try {
 			return Factory.fromLotus(getDelegate().getFirstElement(type), Base.class, this);
 		} catch (NotesException e) {
@@ -247,7 +247,7 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 * @see org.openntf.domino.RichTextNavigator#getLastElement(int)
 	 */
 	@Override
-	public org.openntf.domino.Base<?> getLastElement(int type) {
+	public org.openntf.domino.Base<?> getLastElement(final int type) {
 		try {
 			return Factory.fromLotus(getDelegate().getLastElement(type), Base.class, this);
 		} catch (NotesException e) {
@@ -277,7 +277,7 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 * @see org.openntf.domino.RichTextNavigator#getNextElement(int)
 	 */
 	@Override
-	public org.openntf.domino.Base<?> getNextElement(int type) {
+	public org.openntf.domino.Base<?> getNextElement(final int type) {
 		try {
 			return Factory.fromLotus(getDelegate().getNextElement(type), Base.class, this);
 		} catch (NotesException e) {
@@ -292,7 +292,7 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 * @see org.openntf.domino.RichTextNavigator#getNextElement(int, int)
 	 */
 	@Override
-	public org.openntf.domino.Base<?> getNextElement(int type, int occurrence) {
+	public org.openntf.domino.Base<?> getNextElement(final int type, final int occurrence) {
 		try {
 			return Factory.fromLotus(getDelegate().getNextElement(type, occurrence), Base.class, this);
 		} catch (NotesException e) {
@@ -307,7 +307,7 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 * @see org.openntf.domino.RichTextNavigator#getNthElement(int, int)
 	 */
 	@Override
-	public org.openntf.domino.Base<?> getNthElement(int type, int occurrence) {
+	public org.openntf.domino.Base<?> getNthElement(final int type, final int occurrence) {
 		try {
 			return Factory.fromLotus(getDelegate().getNthElement(type, occurrence), Base.class, this);
 		} catch (NotesException e) {
@@ -322,7 +322,7 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 * @see org.openntf.domino.RichTextNavigator#setCharOffset(int)
 	 */
 	@Override
-	public void setCharOffset(int offset) {
+	public void setCharOffset(final int offset) {
 		try {
 			getDelegate().setCharOffset(offset);
 		} catch (NotesException e) {
@@ -336,7 +336,7 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 * @see org.openntf.domino.RichTextNavigator#setPosition(lotus.domino.Base)
 	 */
 	@Override
-	public void setPosition(lotus.domino.Base element) {
+	public void setPosition(final lotus.domino.Base element) {
 		try {
 			getDelegate().setPosition(toLotus(element));
 		} catch (NotesException e) {
@@ -350,7 +350,7 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 * @see org.openntf.domino.RichTextNavigator#setPositionAtEnd(lotus.domino.Base)
 	 */
 	@Override
-	public void setPositionAtEnd(lotus.domino.Base element) {
+	public void setPositionAtEnd(final lotus.domino.Base element) {
 		try {
 			getDelegate().setPositionAtEnd(toLotus(element));
 		} catch (NotesException e) {

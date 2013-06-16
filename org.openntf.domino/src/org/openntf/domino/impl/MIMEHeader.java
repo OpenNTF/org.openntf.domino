@@ -35,7 +35,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 * @param parent
 	 *            the parent
 	 */
-	public MIMEHeader(lotus.domino.MIMEHeader delegate, org.openntf.domino.Base<?> parent) {
+	public MIMEHeader(final lotus.domino.MIMEHeader delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -45,7 +45,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 * @see org.openntf.domino.MIMEHeader#addValText(java.lang.String)
 	 */
 	@Override
-	public boolean addValText(String valueText) {
+	public boolean addValText(final String valueText) {
 		markDirty();
 		try {
 			return getDelegate().addValText(valueText);
@@ -61,7 +61,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 * @see org.openntf.domino.MIMEHeader#addValText(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean addValText(String valueText, String charSet) {
+	public boolean addValText(final String valueText, final String charSet) {
 		markDirty();
 		try {
 			return getDelegate().addValText(valueText, charSet);
@@ -107,7 +107,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 * @see org.openntf.domino.MIMEHeader#getHeaderVal(boolean)
 	 */
 	@Override
-	public String getHeaderVal(boolean folded) {
+	public String getHeaderVal(final boolean folded) {
 		try {
 			return getDelegate().getHeaderVal(folded);
 		} catch (NotesException e) {
@@ -122,7 +122,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 * @see org.openntf.domino.MIMEHeader#getHeaderVal(boolean, boolean)
 	 */
 	@Override
-	public String getHeaderVal(boolean folded, boolean decoded) {
+	public String getHeaderVal(final boolean folded, final boolean decoded) {
 		try {
 			return getDelegate().getHeaderVal(folded, decoded);
 		} catch (NotesException e) {
@@ -152,7 +152,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 * @see org.openntf.domino.MIMEHeader#getHeaderValAndParams(boolean)
 	 */
 	@Override
-	public String getHeaderValAndParams(boolean folded) {
+	public String getHeaderValAndParams(final boolean folded) {
 		try {
 			return getDelegate().getHeaderValAndParams(folded);
 		} catch (NotesException e) {
@@ -167,7 +167,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 * @see org.openntf.domino.MIMEHeader#getHeaderValAndParams(boolean, boolean)
 	 */
 	@Override
-	public String getHeaderValAndParams(boolean folded, boolean decoded) {
+	public String getHeaderValAndParams(final boolean folded, final boolean decoded) {
 		try {
 			return getDelegate().getHeaderValAndParams(folded, decoded);
 		} catch (NotesException e) {
@@ -182,7 +182,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 * @see org.openntf.domino.MIMEHeader#getParamVal(java.lang.String)
 	 */
 	@Override
-	public String getParamVal(String paramName) {
+	public String getParamVal(final String paramName) {
 		try {
 			return getDelegate().getParamVal(paramName);
 		} catch (NotesException e) {
@@ -197,7 +197,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 * @see org.openntf.domino.MIMEHeader#getParamVal(java.lang.String, boolean)
 	 */
 	@Override
-	public String getParamVal(String paramName, boolean folded) {
+	public String getParamVal(final String paramName, final boolean folded) {
 		try {
 			return getDelegate().getParamVal(paramName, folded);
 		} catch (NotesException e) {
@@ -235,7 +235,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 * @see org.openntf.domino.MIMEHeader#setHeaderVal(java.lang.String)
 	 */
 	@Override
-	public boolean setHeaderVal(String headerValue) {
+	public boolean setHeaderVal(final String headerValue) {
 		markDirty();
 		try {
 			return getDelegate().setHeaderVal(headerValue);
@@ -251,7 +251,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 * @see org.openntf.domino.MIMEHeader#setHeaderValAndParams(java.lang.String)
 	 */
 	@Override
-	public boolean setHeaderValAndParams(String headerParamValue) {
+	public boolean setHeaderValAndParams(final String headerParamValue) {
 		markDirty();
 		try {
 			return getDelegate().setHeaderValAndParams(headerParamValue);
@@ -267,7 +267,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 * @see org.openntf.domino.MIMEHeader#setParamVal(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean setParamVal(String parameterName, String parameterValue) {
+	public boolean setParamVal(final String parameterName, final String parameterValue) {
 		markDirty();
 		try {
 			return getDelegate().setParamVal(parameterName, parameterValue);

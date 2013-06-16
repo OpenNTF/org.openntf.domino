@@ -43,7 +43,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * @see lotus.domino.MIMEEntity#createChildEntity(lotus.domino.MIMEEntity)
 	 */
 	@Override
-	public MIMEEntity createChildEntity(lotus.domino.MIMEEntity nextSibling);
+	public MIMEEntity createChildEntity(final lotus.domino.MIMEEntity nextSibling);
 
 	/*
 	 * (non-Javadoc)
@@ -51,7 +51,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * @see lotus.domino.MIMEEntity#createHeader(java.lang.String)
 	 */
 	@Override
-	public MIMEHeader createHeader(String headerName);
+	public MIMEHeader createHeader(final String headerName);
 
 	/*
 	 * (non-Javadoc)
@@ -75,7 +75,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * @see lotus.domino.MIMEEntity#encodeContent(int)
 	 */
 	@Override
-	public void encodeContent(int encoding);
+	public void encodeContent(final int encoding);
 
 	/*
 	 * (non-Javadoc)
@@ -107,7 +107,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * @see lotus.domino.MIMEEntity#getContentAsBytes(lotus.domino.Stream)
 	 */
 	@Override
-	public void getContentAsBytes(lotus.domino.Stream stream);
+	public void getContentAsBytes(final lotus.domino.Stream stream);
 
 	/*
 	 * (non-Javadoc)
@@ -115,7 +115,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * @see lotus.domino.MIMEEntity#getContentAsBytes(lotus.domino.Stream, boolean)
 	 */
 	@Override
-	public void getContentAsBytes(lotus.domino.Stream stream, boolean decoded);
+	public void getContentAsBytes(final lotus.domino.Stream stream, final boolean decoded);
 
 	/*
 	 * (non-Javadoc)
@@ -131,7 +131,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * @see lotus.domino.MIMEEntity#getContentAsText(lotus.domino.Stream)
 	 */
 	@Override
-	public void getContentAsText(lotus.domino.Stream stream);
+	public void getContentAsText(final lotus.domino.Stream stream);
 
 	/*
 	 * (non-Javadoc)
@@ -139,7 +139,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * @see lotus.domino.MIMEEntity#getContentAsText(lotus.domino.Stream, boolean)
 	 */
 	@Override
-	public void getContentAsText(lotus.domino.Stream stream, boolean decoded);
+	public void getContentAsText(final lotus.domino.Stream stream, final boolean decoded);
 
 	/*
 	 * (non-Javadoc)
@@ -171,7 +171,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * @see lotus.domino.MIMEEntity#getEntityAsText(lotus.domino.Stream)
 	 */
 	@Override
-	public void getEntityAsText(lotus.domino.Stream stream);
+	public void getEntityAsText(final lotus.domino.Stream stream);
 
 	/*
 	 * (non-Javadoc)
@@ -180,7 +180,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void getEntityAsText(lotus.domino.Stream stream, Vector headerFilters);
+	public void getEntityAsText(final lotus.domino.Stream stream, final Vector headerFilters);
 
 	/*
 	 * (non-Javadoc)
@@ -189,7 +189,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void getEntityAsText(lotus.domino.Stream stream, Vector headerFilters, boolean inclusive);
+	public void getEntityAsText(final lotus.domino.Stream stream, final Vector headerFilters, final boolean inclusive);
 
 	/*
 	 * (non-Javadoc)
@@ -245,7 +245,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * @see lotus.domino.MIMEEntity#getNextEntity(int)
 	 */
 	@Override
-	public MIMEEntity getNextEntity(int search);
+	public MIMEEntity getNextEntity(final int search);
 
 	/*
 	 * (non-Javadoc)
@@ -261,7 +261,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * @see lotus.domino.MIMEEntity#getNthHeader(java.lang.String)
 	 */
 	@Override
-	public MIMEHeader getNthHeader(String headerName);
+	public MIMEHeader getNthHeader(final String headerName);
 
 	/*
 	 * (non-Javadoc)
@@ -269,7 +269,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * @see lotus.domino.MIMEEntity#getNthHeader(java.lang.String, int)
 	 */
 	@Override
-	public MIMEHeader getNthHeader(String headerName, int instance);
+	public MIMEHeader getNthHeader(final String headerName, final int instance);
 
 	/*
 	 * (non-Javadoc)
@@ -308,7 +308,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * @see lotus.domino.MIMEEntity#getPrevEntity(int)
 	 */
 	@Override
-	public MIMEEntity getPrevEntity(int search);
+	public MIMEEntity getPrevEntity(final int search);
 
 	/*
 	 * (non-Javadoc)
@@ -341,7 +341,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public String getSomeHeaders(Vector headerFilters);
+	public String getSomeHeaders(final Vector headerFilters);
 
 	/*
 	 * (non-Javadoc)
@@ -350,7 +350,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public String getSomeHeaders(Vector headerFilters, boolean inclusive);
+	public String getSomeHeaders(final Vector headerFilters, final boolean inclusive);
 
 	/*
 	 * (non-Javadoc)
@@ -358,7 +358,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * @see lotus.domino.MIMEEntity#parseXML(boolean)
 	 */
 	@Override
-	public org.w3c.dom.Document parseXML(boolean validate) throws IOException;
+	public org.w3c.dom.Document parseXML(final boolean validate) throws IOException;
 
 	/*
 	 * (non-Javadoc)
@@ -374,7 +374,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * @see lotus.domino.MIMEEntity#setContentFromBytes(lotus.domino.Stream, java.lang.String, int)
 	 */
 	@Override
-	public void setContentFromBytes(lotus.domino.Stream stream, String contentType, int encoding);
+	public void setContentFromBytes(final lotus.domino.Stream stream, final String contentType, final int encoding);
 
 	/*
 	 * (non-Javadoc)
@@ -382,7 +382,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * @see lotus.domino.MIMEEntity#setContentFromText(lotus.domino.Stream, java.lang.String, int)
 	 */
 	@Override
-	public void setContentFromText(lotus.domino.Stream stream, String contentType, int encoding);
+	public void setContentFromText(final lotus.domino.Stream stream, final String contentType, final int encoding);
 
 	/*
 	 * (non-Javadoc)
@@ -390,7 +390,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * @see lotus.domino.MIMEEntity#setPreamble(java.lang.String)
 	 */
 	@Override
-	public void setPreamble(String preamble);
+	public void setPreamble(final String preamble);
 
 	/*
 	 * (non-Javadoc)
@@ -398,6 +398,6 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * @see lotus.domino.MIMEEntity#transformXML(java.lang.Object, lotus.domino.XSLTResultTarget)
 	 */
 	@Override
-	public void transformXML(Object style, lotus.domino.XSLTResultTarget result);
+	public void transformXML(final Object style, final lotus.domino.XSLTResultTarget result);
 
 }

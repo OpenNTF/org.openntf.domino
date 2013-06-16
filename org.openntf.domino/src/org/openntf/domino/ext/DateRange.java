@@ -10,7 +10,7 @@ import java.util.Date;
  * 
  */
 public interface DateRange {
-	public boolean contains(org.openntf.domino.DateTime dt);
+	public boolean contains(final org.openntf.domino.DateTime dt);
 
-	public boolean contains(Date date);
+	public boolean contains(final Date date);
 }

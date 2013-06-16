@@ -20,12 +20,12 @@ public interface NoteCollection {
 	 *            the other collection
 	 * @return true, if successful
 	 */
-	public boolean equals(Object otherCollection);
+	public boolean equals(final Object otherCollection);
 
 	/**
 	 * 
 	 * @param options
 	 *            a Set of SelectOption enum values corresponding to desired note types
 	 */
-	public void setSelectOptions(Set<SelectOption> options);
+	public void setSelectOptions(final Set<SelectOption> options);
 }

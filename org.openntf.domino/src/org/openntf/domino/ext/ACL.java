@@ -25,5 +25,5 @@ public interface ACL {
 	 * @since openntf.domino 1.0.0
 	 * 
 	 */
-	public ACLEntry createACLEntry(String name, Level level);
+	public ACLEntry createACLEntry(final String name, final Level level);
 }

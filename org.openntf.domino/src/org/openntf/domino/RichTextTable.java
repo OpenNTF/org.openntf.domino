@@ -39,7 +39,7 @@ public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.d
 	 * @see lotus.domino.RichTextTable#addRow(int)
 	 */
 	@Override
-	public void addRow(int count);
+	public void addRow(final int count);
 
 	/*
 	 * (non-Javadoc)
@@ -47,7 +47,7 @@ public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.d
 	 * @see lotus.domino.RichTextTable#addRow(int, int)
 	 */
 	@Override
-	public void addRow(int count, int targetRow);
+	public void addRow(final int count, final int targetRow);
 
 	/*
 	 * (non-Javadoc)
@@ -134,7 +134,7 @@ public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.d
 	 * @see lotus.domino.RichTextTable#removeRow(int)
 	 */
 	@Override
-	public void removeRow(int count);
+	public void removeRow(final int count);
 
 	/*
 	 * (non-Javadoc)
@@ -142,7 +142,7 @@ public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.d
 	 * @see lotus.domino.RichTextTable#removeRow(int, int)
 	 */
 	@Override
-	public void removeRow(int count, int targetRow);
+	public void removeRow(final int count, final int targetRow);
 
 	/*
 	 * (non-Javadoc)
@@ -150,7 +150,7 @@ public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.d
 	 * @see lotus.domino.RichTextTable#setAlternateColor(lotus.domino.ColorObject)
 	 */
 	@Override
-	public void setAlternateColor(lotus.domino.ColorObject color);
+	public void setAlternateColor(final lotus.domino.ColorObject color);
 
 	/*
 	 * (non-Javadoc)
@@ -158,7 +158,7 @@ public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.d
 	 * @see lotus.domino.RichTextTable#setColor(lotus.domino.ColorObject)
 	 */
 	@Override
-	public void setColor(lotus.domino.ColorObject color);
+	public void setColor(final lotus.domino.ColorObject color);
 
 	/*
 	 * (non-Javadoc)
@@ -166,7 +166,7 @@ public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.d
 	 * @see lotus.domino.RichTextTable#setRightToLeft(boolean)
 	 */
 	@Override
-	public void setRightToLeft(boolean flag);
+	public void setRightToLeft(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -175,7 +175,7 @@ public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.d
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setRowLabels(Vector labels);
+	public void setRowLabels(final Vector labels);
 
 	/*
 	 * (non-Javadoc)
@@ -183,5 +183,5 @@ public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.d
 	 * @see lotus.domino.RichTextTable#setStyle(int)
 	 */
 	@Override
-	public void setStyle(int tableStyle);
+	public void setStyle(final int tableStyle);
 }

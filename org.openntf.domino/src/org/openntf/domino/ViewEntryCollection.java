@@ -30,7 +30,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#addEntry(java.lang.Object)
 	 */
 	@Override
-	public void addEntry(Object obh);
+	public void addEntry(final Object obh);
 
 	/*
 	 * (non-Javadoc)
@@ -38,7 +38,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#addEntry(java.lang.Object, boolean)
 	 */
 	@Override
-	public void addEntry(Object obj, boolean checkDups);
+	public void addEntry(final Object obj, final boolean checkDups);
 
 	/*
 	 * (non-Javadoc)
@@ -54,7 +54,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#contains(lotus.domino.Base)
 	 */
 	@Override
-	public boolean contains(lotus.domino.Base obj);
+	public boolean contains(final lotus.domino.Base obj);
 
 	/*
 	 * (non-Javadoc)
@@ -62,7 +62,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#contains(int)
 	 */
 	@Override
-	public boolean contains(int noteid);
+	public boolean contains(final int noteid);
 
 	/*
 	 * (non-Javadoc)
@@ -70,7 +70,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#contains(java.lang.String)
 	 */
 	@Override
-	public boolean contains(String noteid);
+	public boolean contains(final String noteid);
 
 	/*
 	 * (non-Javadoc)
@@ -78,7 +78,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#deleteEntry(lotus.domino.ViewEntry)
 	 */
 	@Override
-	public void deleteEntry(lotus.domino.ViewEntry entry);
+	public void deleteEntry(final lotus.domino.ViewEntry entry);
 
 	/*
 	 * (non-Javadoc)
@@ -86,7 +86,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#FTSearch(java.lang.String)
 	 */
 	@Override
-	public void FTSearch(String query);
+	public void FTSearch(final String query);
 
 	/*
 	 * (non-Javadoc)
@@ -94,7 +94,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#FTSearch(java.lang.String, int)
 	 */
 	@Override
-	public void FTSearch(String query, int maxDocs);
+	public void FTSearch(final String query, final int maxDocs);
 
 	/*
 	 * (non-Javadoc)
@@ -110,7 +110,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#getEntry(java.lang.Object)
 	 */
 	@Override
-	public ViewEntry getEntry(Object entry);
+	public ViewEntry getEntry(final Object entry);
 
 	/*
 	 * (non-Javadoc)
@@ -146,7 +146,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	@Override
 	@Deprecated
 	@Legacy(Legacy.ITERATION_WARNING)
-	public ViewEntry getNextEntry(lotus.domino.ViewEntry entry);
+	public ViewEntry getNextEntry(final lotus.domino.ViewEntry entry);
 
 	/*
 	 * (non-Javadoc)
@@ -156,7 +156,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	@Override
 	@Deprecated
 	@Legacy(Legacy.ITERATION_WARNING)
-	public ViewEntry getNthEntry(int n);
+	public ViewEntry getNthEntry(final int n);
 
 	/*
 	 * (non-Javadoc)
@@ -180,7 +180,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#getPrevEntry(lotus.domino.ViewEntry)
 	 */
 	@Override
-	public ViewEntry getPrevEntry(lotus.domino.ViewEntry entry);
+	public ViewEntry getPrevEntry(final lotus.domino.ViewEntry entry);
 
 	/*
 	 * (non-Javadoc)
@@ -196,7 +196,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#intersect(lotus.domino.Base)
 	 */
 	@Override
-	public void intersect(lotus.domino.Base obj);
+	public void intersect(final lotus.domino.Base obj);
 
 	/*
 	 * (non-Javadoc)
@@ -204,7 +204,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#intersect(int)
 	 */
 	@Override
-	public void intersect(int noteid);
+	public void intersect(final int noteid);
 
 	/*
 	 * (non-Javadoc)
@@ -212,7 +212,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#intersect(java.lang.String)
 	 */
 	@Override
-	public void intersect(String noteid);
+	public void intersect(final String noteid);
 
 	/*
 	 * (non-Javadoc)
@@ -228,7 +228,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#markAllRead(java.lang.String)
 	 */
 	@Override
-	public void markAllRead(String userName);
+	public void markAllRead(final String userName);
 
 	/*
 	 * (non-Javadoc)
@@ -244,7 +244,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#markAllUnread(java.lang.String)
 	 */
 	@Override
-	public void markAllUnread(String userName);
+	public void markAllUnread(final String userName);
 
 	/*
 	 * (non-Javadoc)
@@ -252,7 +252,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#merge(lotus.domino.Base)
 	 */
 	@Override
-	public void merge(lotus.domino.Base obj);
+	public void merge(final lotus.domino.Base obj);
 
 	/*
 	 * (non-Javadoc)
@@ -260,7 +260,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#merge(int)
 	 */
 	@Override
-	public void merge(int noteid);
+	public void merge(final int noteid);
 
 	/*
 	 * (non-Javadoc)
@@ -268,7 +268,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#merge(java.lang.String)
 	 */
 	@Override
-	public void merge(String noteid);
+	public void merge(final String noteid);
 
 	/*
 	 * (non-Javadoc)
@@ -276,7 +276,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#putAllInFolder(java.lang.String)
 	 */
 	@Override
-	public void putAllInFolder(String folderName);
+	public void putAllInFolder(final String folderName);
 
 	/*
 	 * (non-Javadoc)
@@ -284,7 +284,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#putAllInFolder(java.lang.String, boolean)
 	 */
 	@Override
-	public void putAllInFolder(String folderName, boolean createOnFail);
+	public void putAllInFolder(final String folderName, final boolean createOnFail);
 
 	/*
 	 * (non-Javadoc)
@@ -292,7 +292,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#removeAll(boolean)
 	 */
 	@Override
-	public void removeAll(boolean force);
+	public void removeAll(final boolean force);
 
 	/*
 	 * (non-Javadoc)
@@ -300,7 +300,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#removeAllFromFolder(java.lang.String)
 	 */
 	@Override
-	public void removeAllFromFolder(String folderName);
+	public void removeAllFromFolder(final String folderName);
 
 	/*
 	 * (non-Javadoc)
@@ -308,7 +308,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#stampAll(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public void stampAll(String itemName, Object value);
+	public void stampAll(final String itemName, final Object value);
 
 	/*
 	 * (non-Javadoc)
@@ -316,7 +316,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#subtract(lotus.domino.Base)
 	 */
 	@Override
-	public void subtract(lotus.domino.Base obj);
+	public void subtract(final lotus.domino.Base obj);
 
 	/*
 	 * (non-Javadoc)
@@ -324,7 +324,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#subtract(int)
 	 */
 	@Override
-	public void subtract(int noteid);
+	public void subtract(final int noteid);
 
 	/*
 	 * (non-Javadoc)
@@ -332,7 +332,7 @@ public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollecti
 	 * @see lotus.domino.ViewEntryCollection#subtract(java.lang.String)
 	 */
 	@Override
-	public void subtract(String noteid);
+	public void subtract(final String noteid);
 
 	/*
 	 * (non-Javadoc)

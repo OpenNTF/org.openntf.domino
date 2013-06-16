@@ -111,7 +111,7 @@ public interface ViewEntry extends lotus.domino.ViewEntry, org.openntf.domino.ex
 	 * @see lotus.domino.ViewEntry#getPosition(char)
 	 */
 	@Override
-	public String getPosition(char separator);
+	public String getPosition(final char separator);
 
 	/*
 	 * (non-Javadoc)
@@ -127,7 +127,7 @@ public interface ViewEntry extends lotus.domino.ViewEntry, org.openntf.domino.ex
 	 * @see lotus.domino.ViewEntry#getRead(java.lang.String)
 	 */
 	@Override
-	public boolean getRead(String userName);
+	public boolean getRead(final String userName);
 
 	/*
 	 * (non-Javadoc)
@@ -199,5 +199,5 @@ public interface ViewEntry extends lotus.domino.ViewEntry, org.openntf.domino.ex
 	 * @see lotus.domino.ViewEntry#setPreferJavaDates(boolean)
 	 */
 	@Override
-	public void setPreferJavaDates(boolean flag);
+	public void setPreferJavaDates(final boolean flag);
 }

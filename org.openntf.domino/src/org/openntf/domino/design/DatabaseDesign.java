@@ -22,7 +22,7 @@ public interface DatabaseDesign {
 	 *            name of a file resource
 	 * @return a file resource
 	 */
-	public FileResource getFileResource(String name);
+	public FileResource getFileResource(final String name);
 
 	/**
 	 * @return collection of all file resources
@@ -34,11 +34,11 @@ public interface DatabaseDesign {
 	 *            name of a hidden file resource
 	 * @return a hidden file resource
 	 */
-	public FileResource getHiddenFileResource(String name);
+	public FileResource getHiddenFileResource(final String name);
 
 	public DesignCollection<FileResource> getHiddenFileResources();
 
-	public DesignForm getForm(String name);
+	public DesignForm getForm(final String name);
 
 	public DesignCollection<DesignForm> getForms();
 
@@ -51,7 +51,7 @@ public interface DatabaseDesign {
 
 	public UsingDocument getUsingDocument();
 
-	public DesignView getView(String name);
+	public DesignView getView(final String name);
 
 	public DesignCollection<DesignView> getViews();
 }

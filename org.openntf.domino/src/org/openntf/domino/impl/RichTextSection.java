@@ -41,7 +41,7 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	 * @param parent
 	 *            the parent
 	 */
-	public RichTextSection(lotus.domino.RichTextSection delegate, org.openntf.domino.Base<?> parent) {
+	public RichTextSection(final lotus.domino.RichTextSection delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -134,7 +134,7 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	 * @see org.openntf.domino.RichTextSection#setBarColor(lotus.domino.ColorObject)
 	 */
 	@Override
-	public void setBarColor(lotus.domino.ColorObject color) {
+	public void setBarColor(final lotus.domino.ColorObject color) {
 		markDirty();
 		try {
 			getDelegate().setBarColor((lotus.domino.ColorObject) toLotus(color));
@@ -149,7 +149,7 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	 * @see org.openntf.domino.RichTextSection#setExpanded(boolean)
 	 */
 	@Override
-	public void setExpanded(boolean flag) {
+	public void setExpanded(final boolean flag) {
 		markDirty();
 		try {
 			getDelegate().setExpanded(flag);
@@ -164,7 +164,7 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	 * @see org.openntf.domino.RichTextSection#setTitle(java.lang.String)
 	 */
 	@Override
-	public void setTitle(String title) {
+	public void setTitle(final String title) {
 		markDirty();
 		try {
 			getDelegate().setTitle(title);
@@ -179,7 +179,7 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	 * @see org.openntf.domino.RichTextSection#setTitleStyle(lotus.domino.RichTextStyle)
 	 */
 	@Override
-	public void setTitleStyle(lotus.domino.RichTextStyle style) {
+	public void setTitleStyle(final lotus.domino.RichTextStyle style) {
 		markDirty();
 		try {
 			getDelegate().setTitleStyle((lotus.domino.RichTextStyle) toLotus(style));

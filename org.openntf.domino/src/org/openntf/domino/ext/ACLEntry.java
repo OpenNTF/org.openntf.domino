@@ -26,6 +26,6 @@ public interface ACLEntry {
 	 * @param level
 	 *            ACL.Level to set to
 	 */
-	public void setLevel(ACL.Level level);
+	public void setLevel(final ACL.Level level);
 
 }

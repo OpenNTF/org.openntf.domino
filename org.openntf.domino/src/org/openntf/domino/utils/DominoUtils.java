@@ -81,7 +81,7 @@ public enum DominoUtils {
 	 *            the alg
 	 * @return the string
 	 */
-	public static String checksum(byte[] bytes, String alg) {
+	public static String checksum(final byte[] bytes, final String alg) {
 		String hashed = "";
 		byte[] defaultBytes = bytes;
 		try {
@@ -114,7 +114,7 @@ public enum DominoUtils {
 	 *            the value
 	 * @return true, if is number
 	 */
-	public static boolean isNumber(String value) {
+	public static boolean isNumber(final String value) {
 		boolean seenDot = false;
 		boolean seenExp = false;
 		boolean justSeenExp = false;
@@ -160,7 +160,7 @@ public enum DominoUtils {
 	 *            the algorithm
 	 * @return the string
 	 */
-	public static String checksum(Serializable object, String algorithm) {
+	public static String checksum(final Serializable object, final String algorithm) {
 		String result = null;
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -220,7 +220,7 @@ public enum DominoUtils {
 	 *            the notesurl
 	 * @return the unid from notes url
 	 */
-	public static String getUnidFromNotesUrl(String notesurl) {
+	public static String getUnidFromNotesUrl(final String notesurl) {
 		String result = null;
 		String trimmed = notesurl.toLowerCase().trim();
 		if (trimmed.startsWith("notes://")) {
@@ -255,7 +255,7 @@ public enum DominoUtils {
 	 * @param args
 	 *            the args
 	 */
-	public static void incinerate(Object... args) {
+	public static void incinerate(final Object... args) {
 		for (Object o : args) {
 			if (o != null) {
 				if (o instanceof lotus.domino.Base) {
@@ -299,7 +299,7 @@ public enum DominoUtils {
 	 *            the value
 	 * @return true, if is hex
 	 */
-	public static boolean isHex(String value) {
+	public static boolean isHex(final String value) {
 		String chk = value.trim().toLowerCase();
 		for (int i = 0; i < chk.length(); i++) {
 			char c = chk.charAt(i);
@@ -321,7 +321,7 @@ public enum DominoUtils {
 	 *            the value
 	 * @return true, if is unid
 	 */
-	public static boolean isUnid(String value) {
+	public static boolean isUnid(final String value) {
 		if (value.length() != 32)
 			return false;
 		return DominoUtils.isHex(value);
@@ -334,7 +334,7 @@ public enum DominoUtils {
 	 *            the object
 	 * @return the string
 	 */
-	public static String md5(Serializable object) {
+	public static String md5(final Serializable object) {
 		return DominoUtils.checksum(object, "MD5");
 	}
 
@@ -345,7 +345,7 @@ public enum DominoUtils {
 	 *            the value
 	 * @return the string
 	 */
-	public static String toUnid(Serializable value) {
+	public static String toUnid(final Serializable value) {
 		if (value instanceof String && DominoUtils.isUnid((String) value))
 			return (String) value;
 		String hash = DominoUtils.md5(value);
@@ -362,7 +362,7 @@ public enum DominoUtils {
 	 *            the dt
 	 * @return the calendar
 	 */
-	public static Calendar toJavaCalendarSafe(lotus.domino.DateTime dt) {
+	public static Calendar toJavaCalendarSafe(final lotus.domino.DateTime dt) {
 		Date d = DominoUtils.toJavaDateSafe(dt);
 		Calendar c = GregorianCalendar.getInstance();
 		c.setTime(d);
@@ -376,7 +376,7 @@ public enum DominoUtils {
 	 *            the l
 	 * @return the date
 	 */
-	public static Date toJavaDate(long l) {
+	public static Date toJavaDate(final long l) {
 		Date result = new Date();
 		result.setTime(l);
 		return result;
@@ -389,7 +389,7 @@ public enum DominoUtils {
 	 *            the ls
 	 * @return the collection
 	 */
-	public static Collection<Date> toJavaDate(long[] ls) {
+	public static Collection<Date> toJavaDate(final long[] ls) {
 		Collection<Date> result = new ArrayList<Date>();
 		for (long l : ls) {
 			result.add(DominoUtils.toJavaDate(l));
@@ -404,7 +404,7 @@ public enum DominoUtils {
 	 *            the dt
 	 * @return the date
 	 */
-	public static Date toJavaDateSafe(lotus.domino.DateTime dt) {
+	public static Date toJavaDateSafe(final lotus.domino.DateTime dt) {
 		Date date = null;
 		if (dt != null) {
 			if (dt instanceof org.openntf.domino.DateTime) {
@@ -436,7 +436,7 @@ public enum DominoUtils {
 	 *             the throwable
 	 */
 	@SuppressWarnings("unchecked")
-	public static Object restoreState(org.openntf.domino.Document doc, String itemName) throws Throwable {
+	public static Object restoreState(final org.openntf.domino.Document doc, final String itemName) throws Throwable {
 		Session session = Factory.getSession((Base<?>) doc);
 		boolean convertMime = session.isConvertMime();
 		session.setConvertMime(false);
@@ -529,7 +529,7 @@ public enum DominoUtils {
 	 * @throws Throwable
 	 *             the throwable
 	 */
-	public static void saveState(Serializable object, Document doc, String itemName) throws Throwable {
+	public static void saveState(final Serializable object, final Document doc, final String itemName) throws Throwable {
 		saveState(object, doc, itemName, true, null);
 	}
 
@@ -551,7 +551,7 @@ public enum DominoUtils {
 	 * @throws Throwable
 	 *             the throwable
 	 */
-	public static void saveState(Serializable object, Document doc, String itemName, boolean compress, Map<String, String> headers)
+	public static void saveState(final Serializable object, final Document doc, final String itemName, final boolean compress, final Map<String, String> headers)
 			throws Throwable {
 		Session session = Factory.getSession((Base<?>) doc);
 		boolean convertMime = session.isConvertMime();
@@ -658,7 +658,7 @@ public enum DominoUtils {
 	 *            String default to use if property is not found
 	 * @return String return value from the notes.ini
 	 */
-	public static String getDominoIniVar(String propertyName, String defaultValue) {
+	public static String getDominoIniVar(final String propertyName, final String defaultValue) {
 		String newVal = Factory.getSession().getEnvironmentString(propertyName, true);
 		if (!"".equals(newVal)) {
 			return newVal;
@@ -679,7 +679,7 @@ public enum DominoUtils {
 	 *            String filepath location of properties file
 	 * @return InputStream (or BufferedInputStream) of properties file content
 	 */
-	public static InputStream getDominoProps(int fileType, String fileLoc) {
+	public static InputStream getDominoProps(final int fileType, final String fileLoc) {
 		InputStream returnStream = null;
 		InputStream is;
 		try {
@@ -708,14 +708,14 @@ public enum DominoUtils {
 		}
 	}
 
-	public static Item itemFromCalendar(Item item, Calendar cal) {
+	public static Item itemFromCalendar(final Item item, final Calendar cal) {
 		DateTime dt = Factory.getSession(item).createDateTime(cal);
 		item.setDateTimeValue(dt);
 		DominoUtils.incinerate(dt);
 		return item;
 	}
 
-	public static Item itemFromCalendarAppend(Item item, Calendar cal) {
+	public static Item itemFromCalendarAppend(final Item item, final Calendar cal) {
 		DateTime dt = Factory.getSession(item).createDateTime(cal);
 		Vector<DateTime> v = item.getValueDateTimeArray();
 		v.add(dt);
@@ -724,14 +724,14 @@ public enum DominoUtils {
 		return item;
 	}
 
-	public static Item itemFromDate(Item item, Date cal) {
+	public static Item itemFromDate(final Item item, final Date cal) {
 		DateTime dt = Factory.getSession(item).createDateTime(cal);
 		item.setDateTimeValue(dt);
 		DominoUtils.incinerate(dt);
 		return item;
 	}
 
-	public static Item itemFromDateAppend(Item item, Date cal) {
+	public static Item itemFromDateAppend(final Item item, final Date cal) {
 		DateTime dt = Factory.getSession(item).createDateTime(cal);
 		Vector<DateTime> v = item.getValueDateTimeArray();
 		v.add(dt);
@@ -739,7 +739,7 @@ public enum DominoUtils {
 		return item;
 	}
 
-	public static Calendar itemToCalendar(Item item) {
+	public static Calendar itemToCalendar(final Item item) {
 		DateTime dt = item.getDateTimeValue();
 		if (dt != null) {
 			return DominoUtils.toJavaCalendarSafe(dt);
@@ -748,7 +748,7 @@ public enum DominoUtils {
 		}
 	}
 
-	public static Date itemToDate(Item item) {
+	public static Date itemToDate(final Item item) {
 		DateTime dt = item.getDateTimeValue();
 		if (dt != null) {
 			return DominoUtils.toJavaDateSafe(dt);
@@ -762,7 +762,7 @@ public enum DominoUtils {
 		return value.replace("\\", "\\\\").replace("\"", "\\\"");
 	}
 
-	public static boolean isSerializable(Collection<?> values) {
+	public static boolean isSerializable(final Collection<?> values) {
 		if (values == null)
 			return false;
 		boolean result = true;
@@ -780,7 +780,7 @@ public enum DominoUtils {
 		return result;
 	}
 
-	public static String toNameString(Name name) {
+	public static String toNameString(final Name name) {
 		String result = "";
 		if (!name.isHierarchical()) {
 			result = name.getCommon();
@@ -791,7 +791,7 @@ public enum DominoUtils {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static Collection<Comparable> toComparable(Collection<?> values) {
+	public static Collection<Comparable> toComparable(final Collection<?> values) {
 		Collection<Serializable> colls = toSerializable(values);
 		Collection<Comparable> result = new ArrayList<Comparable>();
 		if (colls != null && !colls.isEmpty()) {
@@ -807,7 +807,7 @@ public enum DominoUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Collection<Serializable> toSerializable(Collection<?> values) {
+	public static Collection<Serializable> toSerializable(final Collection<?> values) {
 		if (DominoUtils.isSerializable(values))
 			return (Collection<Serializable>) values;
 		Collection<Serializable> result = new ArrayList<Serializable>();

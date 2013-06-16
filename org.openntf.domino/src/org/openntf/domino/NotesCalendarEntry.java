@@ -31,7 +31,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#accept(java.lang.String)
 	 */
 	@Override
-	public void accept(String comments);
+	public void accept(final String comments);
 
 	/*
 	 * (non-Javadoc)
@@ -39,7 +39,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#accept(java.lang.String, int, java.lang.String)
 	 */
 	@Override
-	public void accept(String comments, int scope, String recurrenceId);
+	public void accept(final String comments, final int scope, final String recurrenceId);
 
 	/*
 	 * (non-Javadoc)
@@ -47,7 +47,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#cancel(java.lang.String)
 	 */
 	@Override
-	public void cancel(String comments);
+	public void cancel(final String comments);
 
 	/*
 	 * (non-Javadoc)
@@ -55,7 +55,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#cancel(java.lang.String, int, java.lang.String)
 	 */
 	@Override
-	public void cancel(String comments, int scope, String recurrenceId);
+	public void cancel(final String comments, final int scope, final String recurrenceId);
 
 	/*
 	 * (non-Javadoc)
@@ -63,7 +63,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#counter(java.lang.String, lotus.domino.DateTime, lotus.domino.DateTime)
 	 */
 	@Override
-	public void counter(String comments, lotus.domino.DateTime start, lotus.domino.DateTime end);
+	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end);
 
 	/*
 	 * (non-Javadoc)
@@ -71,7 +71,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#counter(java.lang.String, lotus.domino.DateTime, lotus.domino.DateTime, boolean)
 	 */
 	@Override
-	public void counter(String comments, lotus.domino.DateTime start, lotus.domino.DateTime end, boolean keepPlaceholder);
+	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end, final boolean keepPlaceholder);
 
 	/*
 	 * (non-Javadoc)
@@ -80,8 +80,8 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * java.lang.String)
 	 */
 	@Override
-	public void counter(String comments, lotus.domino.DateTime start, lotus.domino.DateTime end, boolean keepPlaceholder, int scope,
-			String recurrenceId);
+	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end, final boolean keepPlaceholder, final int scope,
+			final String recurrenceId);
 
 	/*
 	 * (non-Javadoc)
@@ -89,7 +89,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#counter(java.lang.String, lotus.domino.DateTime, lotus.domino.DateTime, int, java.lang.String)
 	 */
 	@Override
-	public void counter(String comments, lotus.domino.DateTime start, lotus.domino.DateTime end, int scope, String recurrenceId);
+	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end, final int scope, final String recurrenceId);
 
 	/*
 	 * (non-Javadoc)
@@ -97,7 +97,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#decline(java.lang.String)
 	 */
 	@Override
-	public void decline(String comments);
+	public void decline(final String comments);
 
 	/*
 	 * (non-Javadoc)
@@ -105,7 +105,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#decline(java.lang.String, boolean)
 	 */
 	@Override
-	public void decline(String comments, boolean keepInformed);
+	public void decline(final String comments, final boolean keepInformed);
 
 	/*
 	 * (non-Javadoc)
@@ -113,7 +113,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#decline(java.lang.String, boolean, int, java.lang.String)
 	 */
 	@Override
-	public void decline(String comments, boolean keepInformed, int scope, String recurrenceId);
+	public void decline(final String comments, final boolean keepInformed, final int scope, final String recurrenceId);
 
 	/*
 	 * (non-Javadoc)
@@ -121,7 +121,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#delegate(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void delegate(String commentsToOrganizer, String delegateTo);
+	public void delegate(final String commentsToOrganizer, final String delegateTo);
 
 	/*
 	 * (non-Javadoc)
@@ -129,7 +129,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#delegate(java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
-	public void delegate(String commentsToOrganizer, String delegateTo, boolean keepInformed);
+	public void delegate(final String commentsToOrganizer, final String delegateTo, final boolean keepInformed);
 
 	/*
 	 * (non-Javadoc)
@@ -137,7 +137,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#delegate(java.lang.String, java.lang.String, boolean, int, java.lang.String)
 	 */
 	@Override
-	public void delegate(String commentsToOrganizer, String delegateTo, boolean keepInformed, int scope, String recurrenceId);
+	public void delegate(final String commentsToOrganizer, final String delegateTo, final boolean keepInformed, final int scope, final String recurrenceId);
 
 	/*
 	 * (non-Javadoc)
@@ -145,7 +145,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#delegate(java.lang.String, java.lang.String, int, java.lang.String)
 	 */
 	@Override
-	public void delegate(String commentsToOrganizer, String delegateTo, int scope, String recurrenceId);
+	public void delegate(final String commentsToOrganizer, final String delegateTo, final int scope, final String recurrenceId);
 
 	/*
 	 * (non-Javadoc)
@@ -161,7 +161,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#getAsDocument(int)
 	 */
 	@Override
-	public Document getAsDocument(int flags);
+	public Document getAsDocument(final int flags);
 
 	/*
 	 * (non-Javadoc)
@@ -169,7 +169,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#getAsDocument(int, java.lang.String)
 	 */
 	@Override
-	public Document getAsDocument(int flags, String recurrenceId);
+	public Document getAsDocument(final int flags, final String recurrenceId);
 
 	/**
 	 * Gets the parent.
@@ -208,7 +208,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#read(java.lang.String)
 	 */
 	@Override
-	public String read(String recurrenceId);
+	public String read(final String recurrenceId);
 
 	/*
 	 * (non-Javadoc)
@@ -224,7 +224,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#remove(int, java.lang.String)
 	 */
 	@Override
-	public void remove(int scope, String recurrenceId);
+	public void remove(final int scope, final String recurrenceId);
 
 	/*
 	 * (non-Javadoc)
@@ -232,7 +232,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#requestInfo(java.lang.String)
 	 */
 	@Override
-	public void requestInfo(String comments);
+	public void requestInfo(final String comments);
 
 	/*
 	 * (non-Javadoc)
@@ -240,7 +240,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#tentativelyAccept(java.lang.String)
 	 */
 	@Override
-	public void tentativelyAccept(String comments);
+	public void tentativelyAccept(final String comments);
 
 	/*
 	 * (non-Javadoc)
@@ -248,7 +248,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#tentativelyAccept(java.lang.String, int, java.lang.String)
 	 */
 	@Override
-	public void tentativelyAccept(String comments, int scope, String recurrenceId);
+	public void tentativelyAccept(final String comments, final int scope, final String recurrenceId);
 
 	/*
 	 * (non-Javadoc)
@@ -256,7 +256,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#update(java.lang.String)
 	 */
 	@Override
-	public void update(String iCalEntry);
+	public void update(final String iCalEntry);
 
 	/*
 	 * (non-Javadoc)
@@ -264,7 +264,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#update(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void update(String iCalEntry, String comments);
+	public void update(final String iCalEntry, final String comments);
 
 	/*
 	 * (non-Javadoc)
@@ -272,7 +272,7 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#update(java.lang.String, java.lang.String, long)
 	 */
 	@Override
-	public void update(String iCalEntry, String comments, long flags);
+	public void update(final String iCalEntry, final String comments, final long flags);
 
 	/*
 	 * (non-Javadoc)
@@ -280,6 +280,6 @@ public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry
 	 * @see lotus.domino.NotesCalendarEntry#update(java.lang.String, java.lang.String, long, java.lang.String)
 	 */
 	@Override
-	public void update(String iCalEntry, String comments, long flags, String recurrenceId);
+	public void update(final String iCalEntry, final String comments, final long flags, final String recurrenceId);
 
 }

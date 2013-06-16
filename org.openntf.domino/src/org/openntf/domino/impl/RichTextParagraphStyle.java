@@ -37,7 +37,7 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 	 * @param parent
 	 *            the parent
 	 */
-	public RichTextParagraphStyle(lotus.domino.RichTextParagraphStyle delegate, org.openntf.domino.Base<?> parent) {
+	public RichTextParagraphStyle(final lotus.domino.RichTextParagraphStyle delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, Factory.getSession(parent));
 	}
 
@@ -204,7 +204,7 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 	 * @see org.openntf.domino.RichTextParagraphStyle#setAlignment(int)
 	 */
 	@Override
-	public void setAlignment(int value) {
+	public void setAlignment(final int value) {
 		try {
 			getDelegate().setAlignment(value);
 		} catch (NotesException e) {
@@ -215,7 +215,7 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.RichTextParagraphStyle#setAlignment(org.openntf.domino.RichTextParagraphStyle.Align)
 	 */
-	public void setAlignment(Align value) {
+	public void setAlignment(final Align value) {
 		setAlignment(value.getValue());
 	}
 
@@ -225,7 +225,7 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 	 * @see org.openntf.domino.RichTextParagraphStyle#setFirstLineLeftMargin(int)
 	 */
 	@Override
-	public void setFirstLineLeftMargin(int value) {
+	public void setFirstLineLeftMargin(final int value) {
 		try {
 			getDelegate().setFirstLineLeftMargin(value);
 		} catch (NotesException e) {
@@ -239,7 +239,7 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 	 * @see org.openntf.domino.RichTextParagraphStyle#setInterLineSpacing(int)
 	 */
 	@Override
-	public void setInterLineSpacing(int value) {
+	public void setInterLineSpacing(final int value) {
 		try {
 			getDelegate().setInterLineSpacing(value);
 		} catch (NotesException e) {
@@ -253,7 +253,7 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 	 * @see org.openntf.domino.RichTextParagraphStyle#setLeftMargin(int)
 	 */
 	@Override
-	public void setLeftMargin(int value) {
+	public void setLeftMargin(final int value) {
 		try {
 			getDelegate().setLeftMargin(value);
 		} catch (NotesException e) {
@@ -267,7 +267,7 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 	 * @see org.openntf.domino.RichTextParagraphStyle#setPagination(int)
 	 */
 	@Override
-	public void setPagination(int value) {
+	public void setPagination(final int value) {
 		try {
 			getDelegate().setPagination(value);
 		} catch (NotesException e) {
@@ -281,7 +281,7 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 	 * @see org.openntf.domino.RichTextParagraphStyle#setRightMargin(int)
 	 */
 	@Override
-	public void setRightMargin(int value) {
+	public void setRightMargin(final int value) {
 		try {
 			getDelegate().setRightMargin(value);
 		} catch (NotesException e) {
@@ -295,7 +295,7 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 	 * @see org.openntf.domino.RichTextParagraphStyle#setSpacingAbove(int)
 	 */
 	@Override
-	public void setSpacingAbove(int value) {
+	public void setSpacingAbove(final int value) {
 		try {
 			getDelegate().setSpacingAbove(value);
 		} catch (NotesException e) {
@@ -309,7 +309,7 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 	 * @see org.openntf.domino.RichTextParagraphStyle#setSpacingBelow(int)
 	 */
 	@Override
-	public void setSpacingBelow(int value) {
+	public void setSpacingBelow(final int value) {
 		try {
 			getDelegate().setSpacingBelow(value);
 		} catch (NotesException e) {
@@ -323,7 +323,7 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 	 * @see org.openntf.domino.RichTextParagraphStyle#setTab(int, int)
 	 */
 	@Override
-	public void setTab(int position, int type) {
+	public void setTab(final int position, final int type) {
 		try {
 			getDelegate().setTab(position, type);
 		} catch (NotesException e) {
@@ -337,7 +337,7 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 	 * @see org.openntf.domino.RichTextParagraphStyle#setTabs(int, int, int)
 	 */
 	@Override
-	public void setTabs(int count, int startPos, int interval) {
+	public void setTabs(final int count, final int startPos, final int interval) {
 		try {
 			getDelegate().setTabs(count, startPos, interval);
 		} catch (NotesException e) {
@@ -351,7 +351,7 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 	 * @see org.openntf.domino.RichTextParagraphStyle#setTabs(int, int, int, int)
 	 */
 	@Override
-	public void setTabs(int count, int startPos, int interval, int type) {
+	public void setTabs(final int count, final int startPos, final int interval, final int type) {
 		try {
 			getDelegate().setTabs(count, startPos, interval, type);
 		} catch (NotesException e) {

@@ -58,7 +58,7 @@ public enum DominoGraphTest {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 
 		DominoThread[] threads = new DominoThread[THREAD_COUNT];
 		for (int i = 0; i < THREAD_COUNT; i++) {

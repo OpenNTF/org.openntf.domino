@@ -61,7 +61,7 @@ public interface DateRange extends Base<lotus.domino.DateRange>, lotus.domino.Da
 	 * @see lotus.domino.DateRange#setEndDateTime(lotus.domino.DateTime)
 	 */
 	@Override
-	public void setEndDateTime(lotus.domino.DateTime end);
+	public void setEndDateTime(final lotus.domino.DateTime end);
 
 	/*
 	 * (non-Javadoc)
@@ -69,7 +69,7 @@ public interface DateRange extends Base<lotus.domino.DateRange>, lotus.domino.Da
 	 * @see lotus.domino.DateRange#setStartDateTime(lotus.domino.DateTime)
 	 */
 	@Override
-	public void setStartDateTime(lotus.domino.DateTime start);
+	public void setStartDateTime(final lotus.domino.DateTime start);
 
 	/*
 	 * (non-Javadoc)
@@ -77,6 +77,6 @@ public interface DateRange extends Base<lotus.domino.DateRange>, lotus.domino.Da
 	 * @see lotus.domino.DateRange#setText(java.lang.String)
 	 */
 	@Override
-	public void setText(String text);
+	public void setText(final String text);
 
 }

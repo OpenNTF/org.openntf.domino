@@ -33,13 +33,13 @@ public class ItemVector extends Vector<Item> {
 	/**
 	 * 
 	 */
-	public ItemVector(Document doc) {
+	public ItemVector(final Document doc) {
 		super();
 		doc_ = doc;
 		initialize();
 	}
 
-	private ItemVector(Document doc, boolean initialize) {
+	private ItemVector(final Document doc, final boolean initialize) {
 		super();
 		doc_ = doc;
 		if (initialize)
@@ -66,24 +66,24 @@ public class ItemVector extends Vector<Item> {
 	}
 
 	@Override
-	public boolean add(Item arg0) {
+	public boolean add(final Item arg0) {
 		size_++;
 		return itemNames_.add(arg0.getName());
 	}
 
-	public boolean add(String arg0) {
+	public boolean add(final String arg0) {
 		size_++;
 		return itemNames_.add(arg0);
 	}
 
 	@Override
-	public void add(int arg0, Item arg1) {
+	public void add(final int arg0, final Item arg1) {
 		size_++;
 		itemNames_.add(arg0, arg1.getName());
 	}
 
 	@Override
-	public boolean addAll(Collection<? extends Item> arg0) {
+	public boolean addAll(final Collection<? extends Item> arg0) {
 		List<String> names = new ArrayList<String>();
 		for (Item i : arg0) {
 			names.add(i.getName());
@@ -91,12 +91,12 @@ public class ItemVector extends Vector<Item> {
 		return itemNames_.addAll(names);
 	}
 
-	protected boolean addAllStrings(Collection<? extends String> arg0) {
+	protected boolean addAllStrings(final Collection<? extends String> arg0) {
 		return itemNames_.addAll(arg0);
 	}
 
 	@Override
-	public boolean addAll(int arg0, Collection<? extends Item> arg1) {
+	public boolean addAll(final int arg0, final Collection<? extends Item> arg1) {
 		List<String> names = new ArrayList<String>();
 		for (Item i : arg1) {
 			names.add(i.getName());
@@ -106,7 +106,7 @@ public class ItemVector extends Vector<Item> {
 
 	@Override
 	@Deprecated
-	public void addElement(Item arg0) {
+	public void addElement(final Item arg0) {
 		add(arg0);
 	}
 
@@ -123,7 +123,7 @@ public class ItemVector extends Vector<Item> {
 	}
 
 	@Override
-	public boolean contains(Object arg0) {
+	public boolean contains(final Object arg0) {
 		if (arg0 instanceof Item) {
 			return itemNames_.contains(((Item) arg0).getName());
 		} else if (arg0 instanceof String) {
@@ -133,7 +133,7 @@ public class ItemVector extends Vector<Item> {
 	}
 
 	@Override
-	public boolean containsAll(Collection<?> arg0) {
+	public boolean containsAll(final Collection<?> arg0) {
 		boolean result = true;
 		for (Object o : arg0) {
 			result = contains(o);
@@ -145,13 +145,13 @@ public class ItemVector extends Vector<Item> {
 
 	@Override
 	@Deprecated
-	public void copyInto(Object[] arg0) {
+	public void copyInto(final Object[] arg0) {
 		throw new UnimplementedException("copyInto not yet implemented because it's a deprecated call anyway!");
 	}
 
 	@Override
 	@Deprecated
-	public Item elementAt(int arg0) {
+	public Item elementAt(final int arg0) {
 		return get(arg0);
 	}
 
@@ -167,7 +167,7 @@ public class ItemVector extends Vector<Item> {
 	}
 
 	@Override
-	public Item get(int arg0) {
+	public Item get(final int arg0) {
 		if (arg0 >= size_) {
 			throw new IndexOutOfBoundsException();
 		}
@@ -181,12 +181,12 @@ public class ItemVector extends Vector<Item> {
 
 	@Override
 	@Deprecated
-	public int indexOf(Object arg0, int arg1) {
+	public int indexOf(final Object arg0, final int arg1) {
 		throw new UnimplementedException("indexOf with two arguments not yet implemented because it's a deprecated call anyway!");
 	}
 
 	@Override
-	public int indexOf(Object arg0) {
+	public int indexOf(final Object arg0) {
 		if (arg0 instanceof Item) {
 			return itemNames_.indexOf(((Item) arg0).getName());
 		} else if (arg0 instanceof String) {
@@ -197,7 +197,7 @@ public class ItemVector extends Vector<Item> {
 
 	@Override
 	@Deprecated
-	public void insertElementAt(Item arg0, int arg1) {
+	public void insertElementAt(final Item arg0, final int arg1) {
 		add(arg1, arg0);
 	}
 
@@ -244,12 +244,12 @@ public class ItemVector extends Vector<Item> {
 
 	@Override
 	@Deprecated
-	public int lastIndexOf(Object arg0, int arg1) {
+	public int lastIndexOf(final Object arg0, final int arg1) {
 		throw new UnimplementedException("lastIndexOf with two arguments not yet implemented because it's a deprecated call anyway!");
 	}
 
 	@Override
-	public int lastIndexOf(Object arg0) {
+	public int lastIndexOf(final Object arg0) {
 		if (arg0 instanceof Item) {
 			return itemNames_.lastIndexOf(((Item) arg0).getName());
 		} else if (arg0 instanceof String) {
@@ -264,18 +264,18 @@ public class ItemVector extends Vector<Item> {
 	}
 
 	@Override
-	public ListIterator<Item> listIterator(int arg0) {
+	public ListIterator<Item> listIterator(final int arg0) {
 		return new ItemVectorIterator(doc_, this);
 	}
 
 	@Override
-	public Item remove(int arg0) {
+	public Item remove(final int arg0) {
 		String name = itemNames_.remove(arg0);
 		return doc_.getFirstItem(name);
 	}
 
 	@Override
-	public boolean remove(Object arg0) {
+	public boolean remove(final Object arg0) {
 		if (arg0 instanceof Item) {
 			String name = ((Item) arg0).getName();
 			return itemNames_.remove(name);
@@ -286,7 +286,7 @@ public class ItemVector extends Vector<Item> {
 	}
 
 	@Override
-	public boolean removeAll(Collection<?> arg0) {
+	public boolean removeAll(final Collection<?> arg0) {
 		List<String> names = new ArrayList<String>();
 		for (Object o : arg0) {
 			if (o instanceof Item) {
@@ -304,17 +304,17 @@ public class ItemVector extends Vector<Item> {
 	}
 
 	@Override
-	public boolean removeElement(Object arg0) {
+	public boolean removeElement(final Object arg0) {
 		return remove(arg0);
 	}
 
 	@Override
-	public void removeElementAt(int arg0) {
+	public void removeElementAt(final int arg0) {
 		remove(arg0);
 	}
 
 	@Override
-	public boolean retainAll(Collection<?> arg0) {
+	public boolean retainAll(final Collection<?> arg0) {
 		List<String> names = new ArrayList<String>();
 		for (Object o : arg0) {
 			if (o instanceof Item) {
@@ -327,19 +327,19 @@ public class ItemVector extends Vector<Item> {
 	}
 
 	@Override
-	public Item set(int arg0, Item arg1) {
+	public Item set(final int arg0, final Item arg1) {
 		itemNames_.set(arg0, arg1.getName());
 		return arg1;
 	}
 
 	@Override
 	@Deprecated
-	public void setElementAt(Item arg0, int arg1) {
+	public void setElementAt(final Item arg0, final int arg1) {
 		set(arg1, arg0);
 	}
 
 	@Override
-	public List<Item> subList(int arg0, int arg1) {
+	public List<Item> subList(final int arg0, final int arg1) {
 		ItemVector result = new ItemVector(doc_, false);
 		for (int i = arg0; i <= arg1; i++) {
 			result.add(itemNames_.get(i));

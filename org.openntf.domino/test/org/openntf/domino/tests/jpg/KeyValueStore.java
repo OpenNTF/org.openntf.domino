@@ -20,7 +20,7 @@ import org.openntf.domino.Session;
  */
 public class KeyValueStore {
 	public interface ServerStrategy {
-		public String getServerForHashChunk(String hashChunk);
+		public String getServerForHashChunk(final String hashChunk);
 	}
 
 	private final Session session_;

@@ -125,7 +125,7 @@ public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, l
 	 * @see lotus.domino.ReplicationEntry#setFormula(java.lang.String)
 	 */
 	@Override
-	public void setFormula(String formula);
+	public void setFormula(final String formula);
 
 	/*
 	 * (non-Javadoc)
@@ -133,7 +133,7 @@ public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, l
 	 * @see lotus.domino.ReplicationEntry#setIncludeACL(boolean)
 	 */
 	@Override
-	public void setIncludeACL(boolean flag);
+	public void setIncludeACL(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -141,7 +141,7 @@ public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, l
 	 * @see lotus.domino.ReplicationEntry#setIncludeAgents(boolean)
 	 */
 	@Override
-	public void setIncludeAgents(boolean flag);
+	public void setIncludeAgents(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -149,7 +149,7 @@ public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, l
 	 * @see lotus.domino.ReplicationEntry#setIncludeDocuments(boolean)
 	 */
 	@Override
-	public void setIncludeDocuments(boolean flag);
+	public void setIncludeDocuments(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -157,7 +157,7 @@ public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, l
 	 * @see lotus.domino.ReplicationEntry#setIncludeForms(boolean)
 	 */
 	@Override
-	public void setIncludeForms(boolean flag);
+	public void setIncludeForms(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -165,7 +165,7 @@ public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, l
 	 * @see lotus.domino.ReplicationEntry#setIncludeFormulas(boolean)
 	 */
 	@Override
-	public void setIncludeFormulas(boolean flag);
+	public void setIncludeFormulas(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -173,7 +173,7 @@ public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, l
 	 * @see lotus.domino.ReplicationEntry#setViews(java.lang.String)
 	 */
 	@Override
-	public void setViews(String views);
+	public void setViews(final String views);
 
 	/**
 	 * Sets the views.
@@ -181,6 +181,6 @@ public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, l
 	 * @param views
 	 *            the new views
 	 */
-	public void setViews(Collection<String> views);
+	public void setViews(final Collection<String> views);
 
 }

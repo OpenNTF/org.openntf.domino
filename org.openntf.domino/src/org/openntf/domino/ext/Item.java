@@ -11,7 +11,7 @@ import java.util.Date;
  */
 public interface Item {
 
-	public <T> T getValues(Class<?> T);
+	public <T> T getValues(final Class<?> T);
 
 	public Date getLastModifiedDate();
 }

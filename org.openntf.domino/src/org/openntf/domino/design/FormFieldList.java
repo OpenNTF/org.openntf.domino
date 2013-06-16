@@ -14,5 +14,5 @@ import org.openntf.domino.design.impl.FormField;
 public interface FormFieldList extends List<FormField> {
 	public FormField addField();
 
-	public void swap(int a, int b);
+	public void swap(final int a, final int b);
 }

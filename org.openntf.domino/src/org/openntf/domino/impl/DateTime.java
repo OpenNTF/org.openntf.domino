@@ -55,7 +55,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @param parent
 	 *            the parent
 	 */
-	public DateTime(lotus.domino.DateTime delegate, org.openntf.domino.Base<?> parent) {
+	public DateTime(final lotus.domino.DateTime delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, Factory.getSession(parent));
 		initialize(delegate);
 		org.openntf.domino.impl.Base.s_recycle(delegate);
@@ -69,7 +69,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @param parent
 	 *            the parent
 	 */
-	public DateTime(Date date, org.openntf.domino.Base<?> parent) {
+	public DateTime(final Date date, final org.openntf.domino.Base<?> parent) {
 		super(null, Factory.getSession(parent));
 		initialize(date);
 	}
@@ -80,7 +80,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @param date
 	 *            the date
 	 */
-	public DateTime(Date date) {
+	public DateTime(final Date date) {
 		super(null, null);
 		initialize(date);
 	}
@@ -111,7 +111,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @param date
 	 *            the date
 	 */
-	private void initialize(java.util.Date date) {
+	private void initialize(final java.util.Date date) {
 		cal_.setTime(date);
 		dst_ = false;
 		notesZone_ = 0;
@@ -123,7 +123,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @param delegate
 	 *            the delegate
 	 */
-	private void initialize(lotus.domino.DateTime delegate) {
+	private void initialize(final lotus.domino.DateTime delegate) {
 		try {
 			dst_ = delegate.isDST();
 			notesZone_ = delegate.getTimeZone();
@@ -146,7 +146,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#adjustDay(int, boolean)
 	 */
-	public void adjustDay(int n, boolean preserveLocalTime) {
+	public void adjustDay(final int n, final boolean preserveLocalTime) {
 		cal_.add(Calendar.DAY_OF_MONTH, n); // TODO NTF - figure out what preserveLocalTime *REALLY* does
 		// getDelegate().adjustDay(n, preserveLocalTime);
 	}
@@ -156,7 +156,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#adjustDay(int)
 	 */
-	public void adjustDay(int n) {
+	public void adjustDay(final int n) {
 		adjustDay(n, false);
 	}
 
@@ -165,7 +165,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#adjustHour(int, boolean)
 	 */
-	public void adjustHour(int n, boolean preserveLocalTime) {
+	public void adjustHour(final int n, final boolean preserveLocalTime) {
 		cal_.add(Calendar.HOUR_OF_DAY, n); // TODO flag
 	}
 
@@ -174,7 +174,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#adjustHour(int)
 	 */
-	public void adjustHour(int n) {
+	public void adjustHour(final int n) {
 		adjustHour(n, false);
 	}
 
@@ -183,7 +183,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#adjustMinute(int, boolean)
 	 */
-	public void adjustMinute(int n, boolean preserveLocalTime) {
+	public void adjustMinute(final int n, final boolean preserveLocalTime) {
 		cal_.add(Calendar.MINUTE, n); // TODO flag
 	}
 
@@ -192,7 +192,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#adjustMinute(int)
 	 */
-	public void adjustMinute(int n) {
+	public void adjustMinute(final int n) {
 		adjustMinute(n, false);
 	}
 
@@ -201,7 +201,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#adjustMonth(int, boolean)
 	 */
-	public void adjustMonth(int n, boolean preserveLocalTime) {
+	public void adjustMonth(final int n, final boolean preserveLocalTime) {
 		cal_.add(Calendar.MONTH, n); // TODO flag
 	}
 
@@ -210,7 +210,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#adjustMonth(int)
 	 */
-	public void adjustMonth(int n) {
+	public void adjustMonth(final int n) {
 		adjustMonth(n, false);
 	}
 
@@ -219,7 +219,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#adjustSecond(int, boolean)
 	 */
-	public void adjustSecond(int n, boolean preserveLocalTime) {
+	public void adjustSecond(final int n, final boolean preserveLocalTime) {
 		cal_.add(Calendar.SECOND, n); // TODO flag
 	}
 
@@ -228,7 +228,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#adjustSecond(int)
 	 */
-	public void adjustSecond(int n) {
+	public void adjustSecond(final int n) {
 		adjustSecond(n, false);
 	}
 
@@ -237,7 +237,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#adjustYear(int, boolean)
 	 */
-	public void adjustYear(int n, boolean preserveLocalTime) {
+	public void adjustYear(final int n, final boolean preserveLocalTime) {
 		cal_.add(Calendar.YEAR, n); // TODO flag
 	}
 
@@ -246,7 +246,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#adjustYear(int)
 	 */
-	public void adjustYear(int n) {
+	public void adjustYear(final int n) {
 		adjustYear(n, false);
 	}
 
@@ -255,7 +255,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#convertToZone(int, boolean)
 	 */
-	public void convertToZone(int zone, boolean isDST) {
+	public void convertToZone(final int zone, final boolean isDST) {
 		// TODO NTF - find out what this actually does. The documentation is... vague
 		throw new UnimplementedException("convertToZone is not yet implemented.");
 	}
@@ -266,7 +266,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#isEqual(org.openntf.domino.DateTime)
 	 */
 	@Override
-	public boolean equals(org.openntf.domino.DateTime comparDate) {
+	public boolean equals(final org.openntf.domino.DateTime comparDate) {
 		return cal_.equals(comparDate.toJavaCal());
 	}
 
@@ -274,7 +274,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#equalsIgnoreDate(org.openntf.domino.DateTime)
 	 */
 	@Override
-	public boolean equalsIgnoreDate(org.openntf.domino.DateTime comparDate) {
+	public boolean equalsIgnoreDate(final org.openntf.domino.DateTime comparDate) {
 		Calendar c1 = GregorianCalendar.getInstance();
 		Calendar c2 = GregorianCalendar.getInstance();
 		c1.setTime(toJavaDate());
@@ -292,7 +292,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#equalsIgnoreTime(org.openntf.domino.DateTime)
 	 */
 	@Override
-	public boolean equalsIgnoreTime(org.openntf.domino.DateTime comparDate) {
+	public boolean equalsIgnoreTime(final org.openntf.domino.DateTime comparDate) {
 		Calendar c1 = GregorianCalendar.getInstance();
 		Calendar c2 = GregorianCalendar.getInstance();
 		c1.setTime(toJavaDate());
@@ -379,7 +379,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#isAfter(org.openntf.domino.DateTime)
 	 */
-	public boolean isAfter(org.openntf.domino.DateTime comparDate) {
+	public boolean isAfter(final org.openntf.domino.DateTime comparDate) {
 		return cal_.after(comparDate.toJavaCal());
 	}
 
@@ -389,7 +389,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#isBefore(org.openntf.domino.DateTime)
 	 */
 	@Override
-	public boolean isBefore(org.openntf.domino.DateTime comparDate) {
+	public boolean isBefore(final org.openntf.domino.DateTime comparDate) {
 		return cal_.before(comparDate.toJavaCal());
 	}
 
@@ -425,7 +425,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#setLocalDate(int, int, int, boolean)
 	 */
-	public void setLocalDate(int year, int month, int day, boolean preserveLocalTime) {
+	public void setLocalDate(final int year, final int month, final int day, final boolean preserveLocalTime) {
 		// TODO NTF - deal with timezone and dst nonsense :-/
 		cal_.set(Calendar.YEAR, year);
 		cal_.set(Calendar.MONTH, month);
@@ -438,7 +438,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#setLocalDate(int, int, int)
 	 */
-	public void setLocalDate(int year, int month, int day) {
+	public void setLocalDate(final int year, final int month, final int day) {
 		cal_.set(Calendar.YEAR, year);
 		cal_.set(Calendar.MONTH, month);
 		cal_.set(Calendar.DAY_OF_MONTH, day);
@@ -449,7 +449,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#setLocalTime(java.util.Calendar)
 	 */
-	public void setLocalTime(Calendar calendar) {
+	public void setLocalTime(final Calendar calendar) {
 		cal_.setTime(calendar.getTime());
 	}
 
@@ -458,7 +458,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#setLocalTime(java.util.Date)
 	 */
-	public void setLocalTime(Date date) {
+	public void setLocalTime(final Date date) {
 		cal_.setTime(date);
 	}
 
@@ -467,7 +467,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#setLocalTime(int, int, int, int)
 	 */
-	public void setLocalTime(int hour, int minute, int second, int hundredth) {
+	public void setLocalTime(final int hour, final int minute, final int second, final int hundredth) {
 		// TODO NTF - figure out exactly what this means vis a vis timezones
 		cal_.set(Calendar.HOUR_OF_DAY, hour);
 		cal_.set(Calendar.MINUTE, minute);
@@ -481,7 +481,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#setLocalTime(java.lang.String)
 	 */
-	public void setLocalTime(String time) {
+	public void setLocalTime(final String time) {
 		Date date = org.openntf.domino.impl.Session.getFormatter().parseDateFromString(time);
 		cal_.setTime(date);
 	}
@@ -500,7 +500,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#timeDifference(lotus.domino.DateTime)
 	 */
-	public int timeDifference(lotus.domino.DateTime dt) {
+	public int timeDifference(final lotus.domino.DateTime dt) {
 		int result = 0;
 		if (dt instanceof org.openntf.domino.impl.DateTime) {
 			DateTime otherDT = (org.openntf.domino.impl.DateTime) dt; // so we can access private members directly.
@@ -525,7 +525,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#timeDifferenceDouble(lotus.domino.DateTime)
 	 */
-	public double timeDifferenceDouble(lotus.domino.DateTime dt) {
+	public double timeDifferenceDouble(final lotus.domino.DateTime dt) {
 		// TODO NTF - this probably returns a higher-precision number in the legacy API
 		int i = this.timeDifference(dt);
 		return Double.valueOf(i).doubleValue();

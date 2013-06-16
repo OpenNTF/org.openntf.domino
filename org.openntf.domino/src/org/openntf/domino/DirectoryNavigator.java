@@ -63,7 +63,7 @@ public interface DirectoryNavigator extends Base<lotus.domino.DirectoryNavigator
 	 * @see lotus.domino.DirectoryNavigator#findNthMatch(long)
 	 */
 	@Override
-	public boolean findNthMatch(long n);
+	public boolean findNthMatch(final long n);
 
 	/*
 	 * (non-Javadoc)
@@ -71,7 +71,7 @@ public interface DirectoryNavigator extends Base<lotus.domino.DirectoryNavigator
 	 * @see lotus.domino.DirectoryNavigator#findNthName(int)
 	 */
 	@Override
-	public long findNthName(int n);
+	public long findNthName(final int n);
 
 	/*
 	 * (non-Javadoc)
@@ -135,7 +135,7 @@ public interface DirectoryNavigator extends Base<lotus.domino.DirectoryNavigator
 	 * @see lotus.domino.DirectoryNavigator#getNthItemValue(int)
 	 */
 	@Override
-	public Vector<Object> getNthItemValue(int n);
+	public Vector<Object> getNthItemValue(final int n);
 
 	/**
 	 * Gets the parent.

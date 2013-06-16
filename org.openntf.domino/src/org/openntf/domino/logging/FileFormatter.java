@@ -18,12 +18,12 @@ public class FileFormatter extends Formatter {
 		return UTC_Format;
 	}
 
-	public void setUTC_Format(boolean uTC_Format) {
+	public void setUTC_Format(final boolean uTC_Format) {
 		UTC_Format = uTC_Format;
 	}
 
 	@Override
-	public String format(LogRecord logRecord) {
+	public String format(final LogRecord logRecord) {
 		Date recordDate = new Date(logRecord.getMillis());
 		StringBuffer sb = new StringBuffer();
 		StackTraceElement ste = logRecord.getThrown().getStackTrace()[0];

@@ -235,7 +235,7 @@ public class OpenLogItem implements Serializable {
 	 * @param s
 	 *            the s
 	 */
-	public OpenLogItem(Session s) {
+	public OpenLogItem(final Session s) {
 		if (s != null) {
 			setSession(s);
 		}
@@ -247,7 +247,7 @@ public class OpenLogItem implements Serializable {
 	 * @param s
 	 *            Session
 	 */
-	private void setSession(Session s) {
+	private void setSession(final Session s) {
 		_session = s;
 	}
 
@@ -269,7 +269,7 @@ public class OpenLogItem implements Serializable {
 	 * @param base
 	 *            Throwable - base throwable to be logged
 	 */
-	public void setBase(Throwable base) {
+	public void setBase(final Throwable base) {
 		_baseException = base;
 	}
 
@@ -299,7 +299,7 @@ public class OpenLogItem implements Serializable {
 	 *            <li>Level.FINEST</li>
 	 *            </ul>
 	 */
-	public void setSeverity(Level severity) {
+	public void setSeverity(final Level severity) {
 		_severity = severity;
 	}
 
@@ -309,7 +309,7 @@ public class OpenLogItem implements Serializable {
 	 * @param message
 	 *            the message to set
 	 */
-	public void setMessage(String message) {
+	public void setMessage(final String message) {
 		_message = message;
 	}
 
@@ -369,7 +369,7 @@ public class OpenLogItem implements Serializable {
 	 * @param currPage
 	 *            whether or not the current XPage should be used or previous (if the user has been re-routed to an Error page)
 	 */
-	public void setThisAgent(boolean currPage) {
+	public void setThisAgent(final boolean currPage) {
 		_thisAgent = "org.openntf.domino";
 	}
 
@@ -543,7 +543,7 @@ public class OpenLogItem implements Serializable {
 	 *            property to be retrieved from the Properties file
 	 * @return the value of the property
 	 */
-	public String loadFromProps(String propertyName) {
+	public String loadFromProps(final String propertyName) {
 		try {
 			Properties prop = new Properties();
 			prop.load(LogUtils.class.getResourceAsStream("logging.properties"));
@@ -587,7 +587,7 @@ public class OpenLogItem implements Serializable {
 	 *            the ee
 	 * @return the error line of the stack trace
 	 */
-	public int getErrLine(Throwable ee) {
+	public int getErrLine(final Throwable ee) {
 		return ee.getStackTrace()[0].getLineNumber();
 	}
 
@@ -656,7 +656,7 @@ public class OpenLogItem implements Serializable {
 	 * @param doc
 	 *            the Document to be logged into the log document
 	 */
-	public void setErrDoc(Document doc) {
+	public void setErrDoc(final Document doc) {
 		if (doc != null) {
 			_errDoc = doc;
 			try {
@@ -673,7 +673,7 @@ public class OpenLogItem implements Serializable {
 	 * @param newLogPath
 	 *            new log database path, to modify initial option
 	 */
-	public void setLogDbName(String newLogPath) {
+	public void setLogDbName(final String newLogPath) {
 		_logDbName = newLogPath;
 	}
 
@@ -691,7 +691,7 @@ public class OpenLogItem implements Serializable {
 	 *            new debug level for any errors generated when creating log document
 	 * 
 	 */
-	public void setOlDebugLevel(String newDebugLevel) {
+	public void setOlDebugLevel(final String newDebugLevel) {
 		olDebugLevel = newDebugLevel;
 	}
 
@@ -714,7 +714,7 @@ public class OpenLogItem implements Serializable {
 	 *            Throwable to be logged
 	 * @return the error message
 	 */
-	public String logError(Throwable ee) {
+	public String logError(final Throwable ee) {
 		if (ee != null) {
 			for (StackTraceElement elem : ee.getStackTrace()) {
 				if (elem.getClassName().equals(getClass().getName())) {
@@ -760,7 +760,7 @@ public class OpenLogItem implements Serializable {
 	 * @param typeError
 	 *            the new event type
 	 */
-	private void setEventType(String typeError) {
+	private void setEventType(final String typeError) {
 		_eventType = typeError;
 	}
 
@@ -777,7 +777,7 @@ public class OpenLogItem implements Serializable {
 	 *            Document to be added as a link to the OpenLog document
 	 * @return message logged in
 	 */
-	public String logErrorEx(Throwable ee, String msg, Level severityType, Document doc) {
+	public String logErrorEx(final Throwable ee, final String msg, final Level severityType, final Document doc) {
 		if (ee != null) {
 			for (StackTraceElement elem : ee.getStackTrace()) {
 				if (elem.getClassName().equals(getClass().getName())) {
@@ -819,7 +819,7 @@ public class OpenLogItem implements Serializable {
 	 *            the doc
 	 * @return message logged in
 	 */
-	public String logEvent(Throwable ee, String msg, Level severityType, Document doc) {
+	public String logEvent(final Throwable ee, final String msg, final Level severityType, final Document doc) {
 		try {
 			setMessage(msg);
 			setSeverity(severityType == null ? Level.INFO : severityType);
@@ -850,7 +850,7 @@ public class OpenLogItem implements Serializable {
 	 *            number of elements to skip
 	 * @return ArrayList of elements of stack trace
 	 */
-	private ArrayList<String> getStackTrace(Throwable ee, int skip) {
+	private ArrayList<String> getStackTrace(final Throwable ee, final int skip) {
 		ArrayList<String> v = new ArrayList<String>(32);
 		try {
 			StringWriter sw = new StringWriter();
@@ -878,7 +878,7 @@ public class OpenLogItem implements Serializable {
 	 *            Throwable passed into the OpenLogItem
 	 * @return ArrayList of elements of stack trace
 	 */
-	private ArrayList<String> getStackTrace(Throwable ee) {
+	private ArrayList<String> getStackTrace(final Throwable ee) {
 		return getStackTrace(ee, 0);
 	}
 
@@ -890,7 +890,7 @@ public class OpenLogItem implements Serializable {
 	 * @param ee
 	 *            Throwable to be logged
 	 */
-	public void logError(Session s, Throwable ee) {
+	public void logError(final Session s, final Throwable ee) {
 		setSession(s);
 		logError(ee);
 	}
@@ -909,7 +909,7 @@ public class OpenLogItem implements Serializable {
 	 * @param doc
 	 *            Document to be added as a link to the OpenLog document
 	 */
-	public void logError(Session s, Throwable ee, String message, Level severityType, Document doc) {
+	public void logError(final Session s, final Throwable ee, final String message, final Level severityType, final Document doc) {
 		setSession(s);
 		logErrorEx(ee, message, severityType, doc);
 	}
@@ -928,7 +928,7 @@ public class OpenLogItem implements Serializable {
 	 * @param doc
 	 *            Document to be added as a link to the OpenLog document
 	 */
-	public void logEvent(Session s, Throwable ee, String message, Level severityType, Document doc) {
+	public void logEvent(final Session s, final Throwable ee, final String message, final Level severityType, final Document doc) {
 		setSession(s);
 		logEvent(ee, message, severityType, doc);
 	}
@@ -1023,7 +1023,7 @@ public class OpenLogItem implements Serializable {
 	 * @param ee
 	 *            the ee
 	 */
-	private void debugPrint(Throwable ee) {
+	private void debugPrint(final Throwable ee) {
 		if ((ee == null) || (debugOut == null))
 			return;
 

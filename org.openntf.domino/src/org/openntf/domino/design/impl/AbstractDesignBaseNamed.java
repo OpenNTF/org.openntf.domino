@@ -3,7 +3,7 @@
  */
 package org.openntf.domino.design.impl;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -19,13 +19,10 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	private static final Logger log_ = Logger.getLogger(AbstractDesignBaseNamed.class.getName());
 	private static final long serialVersionUID = 1L;
 
-	private String title_ = null;
-	private List<String> aliases_ = null;
-
 	/**
 	 * @param document
 	 */
-	public AbstractDesignBaseNamed(Document document) {
+	public AbstractDesignBaseNamed(final Document document) {
 		super(document);
 	}
 
@@ -36,10 +33,7 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	 */
 	@Override
 	public List<String> getAliases() {
-		if (title_ == null) {
-			fetchTitle();
-		}
-		return new ArrayList<String>(aliases_);
+		return Arrays.asList(getDxl().getAttribute("alias").split("\\|"));
 	}
 
 	/*
@@ -49,10 +43,7 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	 */
 	@Override
 	public String getName() {
-		if (title_ == null) {
-			fetchTitle();
-		}
-		return title_;
+		return getDxl().getAttribute("name");
 	}
 
 	/*
@@ -61,9 +52,8 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	 * @see org.openntf.domino.design.DesignBase#setAlias(java.lang.String)
 	 */
 	@Override
-	public void setAlias(String alias) {
-		// TODO Auto-generated method stub
-
+	public void setAlias(final String alias) {
+		getDxl().setAttribute("alias", alias);
 	}
 
 	/*
@@ -72,9 +62,16 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	 * @see org.openntf.domino.design.DesignBase#setAliases(java.lang.Iterable)
 	 */
 	@Override
-	public void setAliases(Iterable<String> aliases) {
-		// TODO Auto-generated method stub
-
+	public void setAliases(final Iterable<String> aliases) {
+		StringBuilder result = new StringBuilder();
+		boolean added = false;
+		for (String alias : aliases) {
+			if (added)
+				result.append("|");
+			result.append(alias);
+			added = true;
+		}
+		getDxl().setAttribute("alias", result.toString());
 	}
 
 	/*
@@ -83,38 +80,7 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	 * @see org.openntf.domino.design.DesignBase#setName(java.lang.String)
 	 */
 	@Override
-	public void setName(String name) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@SuppressWarnings("unchecked")
-	private void fetchTitle() {
-		// Sometimes $TITLE is a multi-value field of title + aliases.
-		// Sometimes it's a |-delimited single value.
-		// Meh!
-
-		List<String> titles = getDocument().getItemValue("$TITLE");
-		if (titles.size() == 0) {
-			String titleField = getDocument().getItemValueString("$TITLE");
-			if (titleField.contains("|")) {
-				String[] bits = titleField.split("\\|");
-				title_ = bits[0];
-				aliases_ = new ArrayList<String>(bits.length - 1);
-				for (int i = 1; i < bits.length; i++) {
-					aliases_.add(bits[i]);
-				}
-			} else {
-				title_ = titleField;
-				aliases_ = new ArrayList<String>(0);
-			}
-		} else if (titles.size() == 1) {
-			title_ = titles.get(0);
-			aliases_ = new ArrayList<String>(0);
-		} else {
-			title_ = titles.get(0);
-			aliases_ = titles.subList(1, titles.size());
-		}
-
+	public void setName(final String name) {
+		getDxl().setAttribute("name", name);
 	}
 }

@@ -13,11 +13,11 @@ import org.openntf.domino.DxlImporter.InputValidationOption;
  * 
  */
 public interface DxlImporter {
-	public void setAclImportOption(AclImportOption option);
+	public void setAclImportOption(final AclImportOption option);
 
-	public void setDesignImportOption(DesignImportOption option);
+	public void setDesignImportOption(final DesignImportOption option);
 
-	public void setDocumentImportOption(DocumentImportOption option);
+	public void setDocumentImportOption(final DocumentImportOption option);
 
-	public void setInputValidationOption(InputValidationOption option);
+	public void setInputValidationOption(final InputValidationOption option);
 }

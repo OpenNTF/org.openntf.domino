@@ -22,7 +22,7 @@ public interface Session {
 	 *            Java color
 	 * @return Color Object
 	 */
-	public ColorObject createColorObject(java.awt.Color color);
+	public ColorObject createColorObject(final java.awt.Color color);
 
 	/**
 	 * Free time search.
@@ -37,8 +37,8 @@ public interface Session {
 	 *            the first fit
 	 * @return the collection
 	 */
-	public Collection<DateRange> freeTimeSearch(org.openntf.domino.DateRange window, int duration, Collection<String> names,
-			boolean firstFit);
+	public Collection<DateRange> freeTimeSearch(final org.openntf.domino.DateRange window, final int duration, final Collection<String> names,
+			final boolean firstFit);
 
 	/**
 	 * Free time search.
@@ -53,7 +53,7 @@ public interface Session {
 	 *            the first fit
 	 * @return the collection
 	 */
-	public Collection<DateRange> freeTimeSearch(org.openntf.domino.DateRange window, int duration, String names, boolean firstFit);
+	public Collection<DateRange> freeTimeSearch(final org.openntf.domino.DateRange window, final int duration, final String names, final boolean firstFit);
 
 	/**
 	 * A collection of Domino Directories and Personal Address Books, including directory catalogs, known to the current session.

@@ -40,7 +40,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @param parent
 	 *            the parent
 	 */
-	public Form(lotus.domino.Form delegate, org.openntf.domino.Base<?> parent) {
+	public Form(final lotus.domino.Form delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -74,7 +74,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * 
 	 * @see org.openntf.domino.Form#getFieldType(java.lang.String)
 	 */
-	public int getFieldType(String arg0) {
+	public int getFieldType(final String arg0) {
 		try {
 			return getDelegate().getFieldType(arg0);
 		} catch (NotesException e) {
@@ -307,7 +307,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * 
 	 * @see org.openntf.domino.Form#lock(boolean)
 	 */
-	public boolean lock(boolean arg0) {
+	public boolean lock(final boolean arg0) {
 		try {
 			return getDelegate().lock(arg0);
 		} catch (NotesException e) {
@@ -322,7 +322,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * 
 	 * @see org.openntf.domino.Form#lock(java.lang.String, boolean)
 	 */
-	public boolean lock(String arg0, boolean arg1) {
+	public boolean lock(final String arg0, final boolean arg1) {
 		try {
 			return getDelegate().lock(arg0, arg1);
 		} catch (NotesException e) {
@@ -337,7 +337,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * 
 	 * @see org.openntf.domino.Form#lock(java.lang.String)
 	 */
-	public boolean lock(String arg0) {
+	public boolean lock(final String arg0) {
 		try {
 			return getDelegate().lock(arg0);
 		} catch (NotesException e) {
@@ -353,7 +353,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @see org.openntf.domino.Form#lock(java.util.Vector, boolean)
 	 */
 	@SuppressWarnings("unchecked")
-	public boolean lock(Vector arg0, boolean arg1) {
+	public boolean lock(final Vector arg0, final boolean arg1) {
 		try {
 			return getDelegate().lock(arg0, arg1);
 		} catch (NotesException e) {
@@ -369,7 +369,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @see org.openntf.domino.Form#lock(java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
-	public boolean lock(Vector arg0) {
+	public boolean lock(final Vector arg0) {
 		try {
 			return getDelegate().lock(arg0);
 		} catch (NotesException e) {
@@ -399,7 +399,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * 
 	 * @see org.openntf.domino.Form#lockProvisional(java.lang.String)
 	 */
-	public boolean lockProvisional(String arg0) {
+	public boolean lockProvisional(final String arg0) {
 		try {
 			return getDelegate().lockProvisional(arg0);
 		} catch (NotesException e) {
@@ -415,7 +415,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @see org.openntf.domino.Form#lockProvisional(java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
-	public boolean lockProvisional(Vector arg0) {
+	public boolean lockProvisional(final Vector arg0) {
 		try {
 			return getDelegate().lockProvisional(arg0);
 		} catch (NotesException e) {
@@ -445,7 +445,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @see org.openntf.domino.Form#setFormUsers(java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
-	public void setFormUsers(Vector arg0) {
+	public void setFormUsers(final Vector arg0) {
 		try {
 			getDelegate().setFormUsers(arg0);
 		} catch (NotesException e) {
@@ -459,7 +459,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * 
 	 * @see org.openntf.domino.Form#setProtectReaders(boolean)
 	 */
-	public void setProtectReaders(boolean arg0) {
+	public void setProtectReaders(final boolean arg0) {
 		try {
 			getDelegate().setProtectReaders(arg0);
 		} catch (NotesException e) {
@@ -473,7 +473,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * 
 	 * @see org.openntf.domino.Form#setProtectUsers(boolean)
 	 */
-	public void setProtectUsers(boolean arg0) {
+	public void setProtectUsers(final boolean arg0) {
 		try {
 			getDelegate().setProtectUsers(arg0);
 		} catch (NotesException e) {
@@ -488,7 +488,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @see org.openntf.domino.Form#setReaders(java.util.Vector)
 	 */
 	@SuppressWarnings("unchecked")
-	public void setReaders(Vector arg0) {
+	public void setReaders(final Vector arg0) {
 		try {
 			getDelegate().setReaders(arg0);
 		} catch (NotesException e) {

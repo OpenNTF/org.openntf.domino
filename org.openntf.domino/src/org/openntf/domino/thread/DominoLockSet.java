@@ -47,7 +47,7 @@ public class DominoLockSet extends ThreadLocal<Collection<Base>> {
 	 * @param base
 	 *            the base
 	 */
-	public void unlock(Base base) {
+	public void unlock(final Base base) {
 		lockCollection.remove(base);
 	}
 
@@ -57,7 +57,7 @@ public class DominoLockSet extends ThreadLocal<Collection<Base>> {
 	 * @param base
 	 *            the base
 	 */
-	public void lock(Base base) {
+	public void lock(final Base base) {
 		lockCollection.add(base);
 	}
 
@@ -67,7 +67,7 @@ public class DominoLockSet extends ThreadLocal<Collection<Base>> {
 	 * @param bases
 	 *            the bases
 	 */
-	public void lock(Base... bases) {
+	public void lock(final Base... bases) {
 		for (Base base : bases) {
 			lockCollection.add(base);
 		}
@@ -79,7 +79,7 @@ public class DominoLockSet extends ThreadLocal<Collection<Base>> {
 	 * @param bases
 	 *            the bases
 	 */
-	public void unlock(Base... bases) {
+	public void unlock(final Base... bases) {
 		for (Base base : bases) {
 			lockCollection.remove(base);
 		}
@@ -92,7 +92,7 @@ public class DominoLockSet extends ThreadLocal<Collection<Base>> {
 	 *            the base
 	 * @return true, if is locked
 	 */
-	public boolean isLocked(Base base) {
+	public boolean isLocked(final Base base) {
 		return lockCollection.contains(base);
 	}
 

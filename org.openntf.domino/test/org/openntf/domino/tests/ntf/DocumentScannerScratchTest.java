@@ -59,7 +59,7 @@ public class DocumentScannerScratchTest {
 	 * @param args
 	 *            the arguments
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		int delay = 500;
 		DominoThread[] threads = new DominoThread[THREAD_COUNT];
 		for (int i = 0; i < THREAD_COUNT; i++) {

@@ -37,7 +37,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#abstractText(int, boolean, boolean)
 	 */
 	@Override
-	public String abstractText(int maxLen, boolean dropVowels, boolean userDict);
+	public String abstractText(final int maxLen, final boolean dropVowels, final boolean userDict);
 
 	/*
 	 * (non-Javadoc)
@@ -45,7 +45,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#appendToTextList(java.lang.String)
 	 */
 	@Override
-	public void appendToTextList(String value);
+	public void appendToTextList(final String value);
 
 	/*
 	 * (non-Javadoc)
@@ -54,7 +54,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void appendToTextList(Vector values);
+	public void appendToTextList(final Vector values);
 
 	/*
 	 * (non-Javadoc)
@@ -62,7 +62,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#containsValue(java.lang.Object)
 	 */
 	@Override
-	public boolean containsValue(Object value);
+	public boolean containsValue(final Object value);
 
 	/*
 	 * (non-Javadoc)
@@ -70,7 +70,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#copyItemToDocument(lotus.domino.Document)
 	 */
 	@Override
-	public Item copyItemToDocument(lotus.domino.Document doc);
+	public Item copyItemToDocument(final lotus.domino.Document doc);
 
 	/*
 	 * (non-Javadoc)
@@ -78,7 +78,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#copyItemToDocument(lotus.domino.Document, java.lang.String)
 	 */
 	@Override
-	public Item copyItemToDocument(lotus.domino.Document doc, String newName);
+	public Item copyItemToDocument(final lotus.domino.Document doc, final String newName);
 
 	/*
 	 * (non-Javadoc)
@@ -158,7 +158,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#getText(int)
 	 */
 	@Override
-	public String getText(int maxLen);
+	public String getText(final int maxLen);
 
 	/*
 	 * (non-Javadoc)
@@ -182,7 +182,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#getValueCustomData(java.lang.String)
 	 */
 	@Override
-	public Object getValueCustomData(String dataTypeName) throws IOException, ClassNotFoundException;
+	public Object getValueCustomData(final String dataTypeName) throws IOException, ClassNotFoundException;
 
 	/*
 	 * (non-Javadoc)
@@ -190,7 +190,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#getValueCustomDataBytes(java.lang.String)
 	 */
 	@Override
-	public byte[] getValueCustomDataBytes(String dataTypeName) throws IOException;
+	public byte[] getValueCustomDataBytes(final String dataTypeName) throws IOException;
 
 	/*
 	 * (non-Javadoc)
@@ -310,7 +310,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#parseXML(boolean)
 	 */
 	@Override
-	public org.w3c.dom.Document parseXML(boolean validate) throws IOException;
+	public org.w3c.dom.Document parseXML(final boolean validate) throws IOException;
 
 	/*
 	 * (non-Javadoc)
@@ -326,7 +326,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#setAuthors(boolean)
 	 */
 	@Override
-	public void setAuthors(boolean flag);
+	public void setAuthors(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -334,7 +334,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#setDateTimeValue(lotus.domino.DateTime)
 	 */
 	@Override
-	public void setDateTimeValue(lotus.domino.DateTime dateTime);
+	public void setDateTimeValue(final lotus.domino.DateTime dateTime);
 
 	/*
 	 * (non-Javadoc)
@@ -342,7 +342,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#setEncrypted(boolean)
 	 */
 	@Override
-	public void setEncrypted(boolean flag);
+	public void setEncrypted(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -350,7 +350,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#setNames(boolean)
 	 */
 	@Override
-	public void setNames(boolean flag);
+	public void setNames(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -358,7 +358,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#setProtected(boolean)
 	 */
 	@Override
-	public void setProtected(boolean flag);
+	public void setProtected(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -366,7 +366,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#setReaders(boolean)
 	 */
 	@Override
-	public void setReaders(boolean flag);
+	public void setReaders(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -374,7 +374,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#setSaveToDisk(boolean)
 	 */
 	@Override
-	public void setSaveToDisk(boolean flag);
+	public void setSaveToDisk(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -382,7 +382,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#setSigned(boolean)
 	 */
 	@Override
-	public void setSigned(boolean flag);
+	public void setSigned(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -390,7 +390,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#setSummary(boolean)
 	 */
 	@Override
-	public void setSummary(boolean flag);
+	public void setSummary(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -398,7 +398,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#setValueCustomData(java.lang.Object)
 	 */
 	@Override
-	public void setValueCustomData(Object userObj) throws IOException;
+	public void setValueCustomData(final Object userObj) throws IOException;
 
 	/*
 	 * (non-Javadoc)
@@ -406,7 +406,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#setValueCustomData(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public void setValueCustomData(String dataTypeName, Object userObj) throws IOException;
+	public void setValueCustomData(final String dataTypeName, final Object userObj) throws IOException;
 
 	/*
 	 * (non-Javadoc)
@@ -414,7 +414,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#setValueCustomDataBytes(java.lang.String, byte[])
 	 */
 	@Override
-	public void setValueCustomDataBytes(String dataTypeName, byte[] byteArray) throws IOException;
+	public void setValueCustomDataBytes(final String dataTypeName, final byte[] byteArray) throws IOException;
 
 	/*
 	 * (non-Javadoc)
@@ -422,7 +422,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#setValueDouble(double)
 	 */
 	@Override
-	public void setValueDouble(double value);
+	public void setValueDouble(final double value);
 
 	/*
 	 * (non-Javadoc)
@@ -430,7 +430,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#setValueInteger(int)
 	 */
 	@Override
-	public void setValueInteger(int value);
+	public void setValueInteger(final int value);
 
 	/*
 	 * (non-Javadoc)
@@ -439,7 +439,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setValues(Vector values);
+	public void setValues(final Vector values);
 
 	/*
 	 * (non-Javadoc)
@@ -447,7 +447,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#setValueString(java.lang.String)
 	 */
 	@Override
-	public void setValueString(String value);
+	public void setValueString(final String value);
 
 	/*
 	 * (non-Javadoc)
@@ -455,5 +455,5 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * @see lotus.domino.Item#transformXML(java.lang.Object, lotus.domino.XSLTResultTarget)
 	 */
 	@Override
-	public void transformXML(Object style, XSLTResultTarget result);
+	public void transformXML(final Object style, final XSLTResultTarget result);
 }

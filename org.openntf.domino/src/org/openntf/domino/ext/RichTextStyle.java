@@ -15,6 +15,6 @@ public interface RichTextStyle {
 	 * @param ISBN
 	 *            BoldStyle as an ISBN number
 	 */
-	public void setBold(BoldStyle ISBN);
+	public void setBold(final BoldStyle ISBN);
 
 }

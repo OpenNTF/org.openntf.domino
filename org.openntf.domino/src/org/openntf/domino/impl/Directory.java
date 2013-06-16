@@ -36,7 +36,7 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	 * @param parent
 	 *            the parent
 	 */
-	public Directory(lotus.domino.Directory delegate, org.openntf.domino.Base<?> parent) {
+	public Directory(final lotus.domino.Directory delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -123,7 +123,7 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Vector<String> getMailInfo(String userName) {
+	public Vector<String> getMailInfo(final String userName) {
 		try {
 			return getDelegate().getMailInfo(userName);
 		} catch (NotesException e) {
@@ -139,7 +139,7 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Vector<String> getMailInfo(String userName, boolean getVersion, boolean errorOnMultipleMatches) {
+	public Vector<String> getMailInfo(final String userName, final boolean getVersion, final boolean errorOnMultipleMatches) {
 		try {
 			return getDelegate().getMailInfo(userName, getVersion, errorOnMultipleMatches);
 		} catch (NotesException e) {
@@ -267,7 +267,7 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	 * @see org.openntf.domino.Directory#lookupAllNames(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public DirectoryNavigator lookupAllNames(String view, String item) {
+	public DirectoryNavigator lookupAllNames(final String view, final String item) {
 		try {
 			return Factory.fromLotus(getDelegate().lookupAllNames(view, item), DirectoryNavigator.class, this);
 		} catch (NotesException e) {
@@ -283,7 +283,7 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public DirectoryNavigator lookupAllNames(String view, Vector items) {
+	public DirectoryNavigator lookupAllNames(final String view, final Vector items) {
 		try {
 			return Factory.fromLotus(getDelegate().lookupAllNames(view, items), DirectoryNavigator.class, this);
 		} catch (NotesException e) {
@@ -298,7 +298,7 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	 * @see org.openntf.domino.Directory#lookupNames(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public DirectoryNavigator lookupNames(String view, String name, String item) {
+	public DirectoryNavigator lookupNames(final String view, final String name, final String item) {
 		try {
 			return Factory.fromLotus(getDelegate().lookupNames(view, name, item), DirectoryNavigator.class, this);
 		} catch (NotesException e) {
@@ -314,7 +314,7 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public DirectoryNavigator lookupNames(String view, Vector names, Vector items, boolean partialMatches) {
+	public DirectoryNavigator lookupNames(final String view, final Vector names, final Vector items, final boolean partialMatches) {
 		try {
 			return Factory.fromLotus(getDelegate().lookupNames(view, names, items, partialMatches), DirectoryNavigator.class, this);
 		} catch (NotesException e) {
@@ -329,7 +329,7 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	 * @see org.openntf.domino.Directory#setGroupAuthorizationOnly(boolean)
 	 */
 	@Override
-	public void setGroupAuthorizationOnly(boolean flag) {
+	public void setGroupAuthorizationOnly(final boolean flag) {
 		try {
 			getDelegate().setGroupAuthorizationOnly(flag);
 		} catch (NotesException e) {
@@ -343,7 +343,7 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	 * @see org.openntf.domino.Directory#setLimitMatches(boolean)
 	 */
 	@Override
-	public void setLimitMatches(boolean flag) {
+	public void setLimitMatches(final boolean flag) {
 		try {
 			getDelegate().setLimitMatches(flag);
 		} catch (NotesException e) {
@@ -357,7 +357,7 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	 * @see org.openntf.domino.Directory#setSearchAllDirectories(boolean)
 	 */
 	@Override
-	public void setSearchAllDirectories(boolean flag) {
+	public void setSearchAllDirectories(final boolean flag) {
 		try {
 			getDelegate().setSearchAllDirectories(flag);
 		} catch (NotesException e) {
@@ -371,7 +371,7 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	 * @see org.openntf.domino.Directory#setTrustedOnly(boolean)
 	 */
 	@Override
-	public void setTrustedOnly(boolean flag) {
+	public void setTrustedOnly(final boolean flag) {
 		try {
 			getDelegate().setTrustedOnly(flag);
 		} catch (NotesException e) {
@@ -385,7 +385,7 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	 * @see org.openntf.domino.Directory#setUseContextServer(boolean)
 	 */
 	@Override
-	public void setUseContextServer(boolean flag) {
+	public void setUseContextServer(final boolean flag) {
 		try {
 			getDelegate().setUseContextServer(flag);
 		} catch (NotesException e) {

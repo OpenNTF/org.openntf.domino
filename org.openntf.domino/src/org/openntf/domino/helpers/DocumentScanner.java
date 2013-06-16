@@ -44,11 +44,11 @@ public class DocumentScanner {
 	 * @param stopTokenList
 	 *            the stop token list
 	 */
-	public DocumentScanner(Set<String> stopTokenList) {
+	public DocumentScanner(final Set<String> stopTokenList) {
 		stopTokenList_ = stopTokenList;
 	}
 
-	public void setIgnoreDollar(boolean ignore) {
+	public void setIgnoreDollar(final boolean ignore) {
 		ignoreDollar_ = ignore;
 	}
 
@@ -95,7 +95,7 @@ public class DocumentScanner {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public void processDocument(Document doc) {
+	public void processDocument(final Document doc) {
 
 		Map<String, NavigableSet<String>> tmap = getFieldTokenMap();
 		Map<String, NavigableSet<Comparable>> vmap = getFieldValueMap();
@@ -173,19 +173,19 @@ public class DocumentScanner {
 		}
 	}
 
-	public void setFieldTokenMap(Map<String, NavigableSet<String>> fieldTokenMap) {
+	public void setFieldTokenMap(final Map<String, NavigableSet<String>> fieldTokenMap) {
 		fieldTokenMap_ = fieldTokenMap;
 	}
 
-	public void setFieldValueMap(Map<String, NavigableSet<Comparable>> fieldValueMap) {
+	public void setFieldValueMap(final Map<String, NavigableSet<Comparable>> fieldValueMap) {
 		fieldValueMap_ = fieldValueMap;
 	}
 
-	public void setFieldTypeMap(Map<String, Integer> fieldTypeMap) {
+	public void setFieldTypeMap(final Map<String, Integer> fieldTypeMap) {
 		fieldTypeMap_ = fieldTypeMap;
 	}
 
-	public void setTokenFreqMap(NavigableMap<String, Integer> tokenFreqMap) {
+	public void setTokenFreqMap(final NavigableMap<String, Integer> tokenFreqMap) {
 		tokenFreqMap_ = tokenFreqMap;
 	}
 

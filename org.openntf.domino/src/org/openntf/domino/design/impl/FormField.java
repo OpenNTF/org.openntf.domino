@@ -21,7 +21,7 @@ public class FormField implements org.openntf.domino.design.FormField {
 
 	private final XMLNode node_;
 
-	public FormField(XMLNode node) {
+	public FormField(final XMLNode node) {
 		node_ = node;
 	}
 

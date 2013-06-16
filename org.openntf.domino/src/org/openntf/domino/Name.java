@@ -369,7 +369,7 @@ public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, org.op
 	 * @return true, if successful
 	 */
 	@Override
-	public boolean equals(Object obj);
+	public boolean equals(final Object obj);
 
 	/**
 	 * Hash code.

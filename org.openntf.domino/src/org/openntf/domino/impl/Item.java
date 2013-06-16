@@ -49,7 +49,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @param parent
 	 *            the parent
 	 */
-	public Item(lotus.domino.Item delegate, org.openntf.domino.Base<?> parent) {
+	public Item(final lotus.domino.Item delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 		String name;
 		try {
@@ -75,7 +75,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#abstractText(int, boolean, boolean)
 	 */
 	@Override
-	public String abstractText(int maxLen, boolean dropVowels, boolean userDict) {
+	public String abstractText(final int maxLen, final boolean dropVowels, final boolean userDict) {
 		try {
 			return getDelegate().abstractText(maxLen, dropVowels, userDict);
 		} catch (NotesException e) {
@@ -90,7 +90,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#appendToTextList(java.lang.String)
 	 */
 	@Override
-	public void appendToTextList(String value) {
+	public void appendToTextList(final String value) {
 		markDirty();
 		try {
 			getDelegate().appendToTextList(value);
@@ -106,7 +106,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void appendToTextList(java.util.Vector values) {
+	public void appendToTextList(final java.util.Vector values) {
 		markDirty();
 		try {
 			java.util.Vector v = toDominoFriendly(values, this);
@@ -123,7 +123,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#containsValue(java.lang.Object)
 	 */
 	@Override
-	public boolean containsValue(Object value) {
+	public boolean containsValue(final Object value) {
 		try {
 			boolean result;
 			Object domObj = toDominoFriendly(value, this);
@@ -142,7 +142,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#copyItemToDocument(lotus.domino.Document)
 	 */
 	@Override
-	public Item copyItemToDocument(lotus.domino.Document doc) {
+	public Item copyItemToDocument(final lotus.domino.Document doc) {
 		// TODO - mark dirty?
 		try {
 			return Factory.fromLotus(getDelegate().copyItemToDocument((lotus.domino.Document) toLotus(doc)), Item.class,
@@ -159,7 +159,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#copyItemToDocument(lotus.domino.Document, java.lang.String)
 	 */
 	@Override
-	public Item copyItemToDocument(lotus.domino.Document doc, String newName) {
+	public Item copyItemToDocument(final lotus.domino.Document doc, final String newName) {
 		// TODO - mark dirty?
 		try {
 			return Factory.fromLotus(getDelegate().copyItemToDocument((lotus.domino.Document) toLotus(doc), newName), Item.class,
@@ -322,7 +322,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#getText(int)
 	 */
 	@Override
-	public String getText(int maxLen) {
+	public String getText(final int maxLen) {
 		try {
 			return getDelegate().getText(maxLen);
 		} catch (NotesException e) {
@@ -367,7 +367,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#getValueCustomData(java.lang.String)
 	 */
 	@Override
-	public Object getValueCustomData(String dataTypeName) throws IOException, ClassNotFoundException {
+	public Object getValueCustomData(final String dataTypeName) throws IOException, ClassNotFoundException {
 		try {
 			return getDelegate().getValueCustomData(dataTypeName);
 		} catch (NotesException e) {
@@ -382,7 +382,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#getValueCustomDataBytes(java.lang.String)
 	 */
 	@Override
-	public byte[] getValueCustomDataBytes(String dataTypeName) throws IOException {
+	public byte[] getValueCustomDataBytes(final String dataTypeName) throws IOException {
 		try {
 			return getDelegate().getValueCustomDataBytes(dataTypeName);
 		} catch (NotesException e) {
@@ -482,7 +482,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		return null;
 	}
 
-	public <T> T getValues(Class<?> T) {
+	public <T> T getValues(final Class<?> T) {
 		return TypeUtils.itemValueToClass(this, T);
 	}
 
@@ -612,7 +612,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#parseXML(boolean)
 	 */
 	@Override
-	public org.w3c.dom.Document parseXML(boolean validate) throws IOException {
+	public org.w3c.dom.Document parseXML(final boolean validate) throws IOException {
 		try {
 			return getDelegate().parseXML(validate);
 		} catch (NotesException e) {
@@ -642,7 +642,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#setAuthors(boolean)
 	 */
 	@Override
-	public void setAuthors(boolean flag) {
+	public void setAuthors(final boolean flag) {
 		markDirty();
 		try {
 			getDelegate().setAuthors(flag);
@@ -657,7 +657,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#setDateTimeValue(lotus.domino.DateTime)
 	 */
 	@Override
-	public void setDateTimeValue(lotus.domino.DateTime dateTime) {
+	public void setDateTimeValue(final lotus.domino.DateTime dateTime) {
 		markDirty();
 		try {
 			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(dateTime);
@@ -674,7 +674,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#setEncrypted(boolean)
 	 */
 	@Override
-	public void setEncrypted(boolean flag) {
+	public void setEncrypted(final boolean flag) {
 		markDirty();
 		try {
 			getDelegate().setEncrypted(flag);
@@ -689,7 +689,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#setNames(boolean)
 	 */
 	@Override
-	public void setNames(boolean flag) {
+	public void setNames(final boolean flag) {
 		markDirty();
 		try {
 			getDelegate().setNames(flag);
@@ -704,7 +704,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#setProtected(boolean)
 	 */
 	@Override
-	public void setProtected(boolean flag) {
+	public void setProtected(final boolean flag) {
 		markDirty();
 		try {
 			getDelegate().setProtected(flag);
@@ -719,7 +719,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#setReaders(boolean)
 	 */
 	@Override
-	public void setReaders(boolean flag) {
+	public void setReaders(final boolean flag) {
 		markDirty();
 		try {
 			getDelegate().setReaders(flag);
@@ -734,7 +734,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#setSaveToDisk(boolean)
 	 */
 	@Override
-	public void setSaveToDisk(boolean flag) {
+	public void setSaveToDisk(final boolean flag) {
 		markDirty();
 		try {
 			getDelegate().setReaders(flag);
@@ -749,7 +749,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#setSigned(boolean)
 	 */
 	@Override
-	public void setSigned(boolean flag) {
+	public void setSigned(final boolean flag) {
 		markDirty();
 		try {
 			getDelegate().setSigned(flag);
@@ -764,7 +764,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#setSummary(boolean)
 	 */
 	@Override
-	public void setSummary(boolean flag) {
+	public void setSummary(final boolean flag) {
 		markDirty();
 		try {
 			getDelegate().setSummary(flag);
@@ -779,7 +779,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#setValueCustomData(java.lang.Object)
 	 */
 	@Override
-	public void setValueCustomData(Object userObj) throws IOException {
+	public void setValueCustomData(final Object userObj) throws IOException {
 		markDirty();
 		try {
 			getDelegate().setValueCustomData(userObj);
@@ -794,7 +794,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#setValueCustomData(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public void setValueCustomData(String dataTypeName, Object userObj) throws IOException {
+	public void setValueCustomData(final String dataTypeName, final Object userObj) throws IOException {
 		markDirty();
 		try {
 			getDelegate().setValueCustomData(dataTypeName, userObj);
@@ -809,7 +809,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#setValueCustomDataBytes(java.lang.String, byte[])
 	 */
 	@Override
-	public void setValueCustomDataBytes(String dataTypeName, byte[] byteArray) throws IOException {
+	public void setValueCustomDataBytes(final String dataTypeName, final byte[] byteArray) throws IOException {
 		markDirty();
 		try {
 			getDelegate().setValueCustomData(dataTypeName, byteArray);
@@ -824,7 +824,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#setValueDouble(double)
 	 */
 	@Override
-	public void setValueDouble(double value) {
+	public void setValueDouble(final double value) {
 		markDirty();
 		try {
 			getDelegate().setValueDouble(value);
@@ -839,7 +839,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#setValueInteger(int)
 	 */
 	@Override
-	public void setValueInteger(int value) {
+	public void setValueInteger(final int value) {
 		markDirty();
 		try {
 			getDelegate().setValueInteger(value);
@@ -854,7 +854,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#setValueString(java.lang.String)
 	 */
 	@Override
-	public void setValueString(String value) {
+	public void setValueString(final String value) {
 		markDirty();
 		try {
 			getDelegate().setValueString(value);
@@ -870,7 +870,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void setValues(java.util.Vector values) {
+	public void setValues(final java.util.Vector values) {
 		markDirty();
 		try {
 			java.util.Vector v = toDominoFriendly(values, this);
@@ -881,7 +881,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		}
 	}
 
-	public void setValues(Object value) {
+	public void setValues(final Object value) {
 		this.getParent().replaceItemValue(this.getName(), value);
 	}
 
@@ -891,7 +891,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#transformXML(java.lang.Object, lotus.domino.XSLTResultTarget)
 	 */
 	@Override
-	public void transformXML(Object style, lotus.domino.XSLTResultTarget result) {
+	public void transformXML(final Object style, final lotus.domino.XSLTResultTarget result) {
 		try {
 			getDelegate().transformXML(style, result);
 		} catch (NotesException e) {

@@ -18,7 +18,7 @@ public class DatabaseTransaction {
 	private Queue<DatabaseDescendant> updateQueue_;
 	private Queue<DatabaseDescendant> removeQueue_;
 
-	public DatabaseTransaction(org.openntf.domino.Database database) {
+	public DatabaseTransaction(final org.openntf.domino.Database database) {
 		database_ = database;
 	}
 
@@ -44,7 +44,7 @@ public class DatabaseTransaction {
 		return removeQueue_;
 	}
 
-	public void queueUpdate(DatabaseDescendant base) {
+	public void queueUpdate(final DatabaseDescendant base) {
 		getUpdateQueue().add(base); // TODO - NTF get locks when stuff is queued
 		if (isDocLock() && base instanceof Document) {
 			((Document) base).lock();
@@ -60,7 +60,7 @@ public class DatabaseTransaction {
 		}
 	}
 
-	public void queueRemove(DatabaseDescendant base) {
+	public void queueRemove(final DatabaseDescendant base) {
 		getRemoveQueue().add(base); // TODO - NTF get locks when stuff is queued
 		if (isDocLock() && base instanceof Document) {
 			((Document) base).lock();

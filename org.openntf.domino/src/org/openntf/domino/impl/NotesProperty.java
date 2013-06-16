@@ -38,7 +38,7 @@ public class NotesProperty extends Base<org.openntf.domino.NotesProperty, lotus.
 	 * @param parent
 	 *            the parent
 	 */
-	public NotesProperty(lotus.domino.NotesProperty delegate, org.openntf.domino.Base<?> parent) {
+	public NotesProperty(final lotus.domino.NotesProperty delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 

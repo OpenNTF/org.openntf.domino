@@ -34,7 +34,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#appendItemValue(java.lang.String)
 	 */
 	@Override
-	public Item appendItemValue(String name);
+	public Item appendItemValue(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -42,7 +42,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#appendItemValue(java.lang.String, double)
 	 */
 	@Override
-	public Item appendItemValue(String name, double value);
+	public Item appendItemValue(final String name, final double value);
 
 	/*
 	 * (non-Javadoc)
@@ -50,7 +50,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#appendItemValue(java.lang.String, int)
 	 */
 	@Override
-	public Item appendItemValue(String name, int value);
+	public Item appendItemValue(final String name, final int value);
 
 	/*
 	 * (non-Javadoc)
@@ -58,7 +58,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#appendItemValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public Item appendItemValue(String name, Object value);
+	public Item appendItemValue(final String name, final Object value);
 
 	/*
 	 * (non-Javadoc)
@@ -66,7 +66,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#attachVCard(lotus.domino.Base)
 	 */
 	@Override
-	public void attachVCard(lotus.domino.Base document);
+	public void attachVCard(final lotus.domino.Base document);
 
 	/*
 	 * (non-Javadoc)
@@ -74,7 +74,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#attachVCard(lotus.domino.Base, java.lang.String)
 	 */
 	@Override
-	public void attachVCard(lotus.domino.Base document, String arg1);
+	public void attachVCard(final lotus.domino.Base document, final String arg1);
 
 	/*
 	 * (non-Javadoc)
@@ -90,7 +90,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#closeMIMEEntities(boolean)
 	 */
 	@Override
-	public boolean closeMIMEEntities(boolean savechanges);
+	public boolean closeMIMEEntities(final boolean savechanges);
 
 	/*
 	 * (non-Javadoc)
@@ -98,7 +98,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#closeMIMEEntities(boolean, java.lang.String)
 	 */
 	@Override
-	public boolean closeMIMEEntities(boolean savechanges, String entityitemname);
+	public boolean closeMIMEEntities(final boolean savechanges, final String entityitemname);
 
 	/*
 	 * (non-Javadoc)
@@ -106,7 +106,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#computeWithForm(boolean, boolean)
 	 */
 	@Override
-	public boolean computeWithForm(boolean dodatatypes, boolean raiseerror);
+	public boolean computeWithForm(final boolean dodatatypes, final boolean raiseerror);
 
 	/*
 	 * (non-Javadoc)
@@ -122,7 +122,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#convertToMIME(int)
 	 */
 	@Override
-	public void convertToMIME(int conversiontype);
+	public void convertToMIME(final int conversiontype);
 
 	/*
 	 * (non-Javadoc)
@@ -130,7 +130,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#convertToMIME(int, int)
 	 */
 	@Override
-	public void convertToMIME(int conversiontype, int options);
+	public void convertToMIME(final int conversiontype, final int options);
 
 	/*
 	 * (non-Javadoc)
@@ -138,7 +138,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#copyAllItems(lotus.domino.Document, boolean)
 	 */
 	@Override
-	public void copyAllItems(lotus.domino.Document doc, boolean replace);
+	public void copyAllItems(final lotus.domino.Document doc, final boolean replace);
 
 	/*
 	 * (non-Javadoc)
@@ -146,7 +146,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#copyItem(lotus.domino.Item)
 	 */
 	@Override
-	public Item copyItem(lotus.domino.Item item);
+	public Item copyItem(final lotus.domino.Item item);
 
 	/*
 	 * (non-Javadoc)
@@ -154,7 +154,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#copyItem(lotus.domino.Item, java.lang.String)
 	 */
 	@Override
-	public Item copyItem(lotus.domino.Item item, String newName);
+	public Item copyItem(final lotus.domino.Item item, final String newName);
 
 	/*
 	 * (non-Javadoc)
@@ -162,7 +162,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#copyToDatabase(lotus.domino.Database)
 	 */
 	@Override
-	public Document copyToDatabase(lotus.domino.Database db);
+	public Document copyToDatabase(final lotus.domino.Database db);
 
 	/*
 	 * (non-Javadoc)
@@ -178,7 +178,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#createMIMEEntity(java.lang.String)
 	 */
 	@Override
-	public MIMEEntity createMIMEEntity(String itemName);
+	public MIMEEntity createMIMEEntity(final String itemName);
 
 	/*
 	 * (non-Javadoc)
@@ -186,7 +186,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#createReplyMessage(boolean)
 	 */
 	@Override
-	public Document createReplyMessage(boolean toall);
+	public Document createReplyMessage(final boolean toall);
 
 	/*
 	 * (non-Javadoc)
@@ -194,7 +194,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#createRichTextItem(java.lang.String)
 	 */
 	@Override
-	public RichTextItem createRichTextItem(String name);
+	public RichTextItem createRichTextItem(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -218,7 +218,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#generateXML(java.lang.Object, lotus.domino.XSLTResultTarget)
 	 */
 	@Override
-	public void generateXML(Object style, lotus.domino.XSLTResultTarget target) throws IOException;
+	public void generateXML(final Object style, final lotus.domino.XSLTResultTarget target) throws IOException;
 
 	/*
 	 * (non-Javadoc)
@@ -226,7 +226,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#generateXML(java.io.Writer)
 	 */
 	@Override
-	public void generateXML(Writer w) throws IOException;
+	public void generateXML(final Writer w) throws IOException;
 
 	/*
 	 * (non-Javadoc)
@@ -234,7 +234,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#getAttachment(java.lang.String)
 	 */
 	@Override
-	public EmbeddedObject getAttachment(String fileName);
+	public EmbeddedObject getAttachment(final String fileName);
 
 	/*
 	 * (non-Javadoc)
@@ -284,7 +284,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#getFirstItem(java.lang.String)
 	 */
 	@Override
-	public Item getFirstItem(String name);
+	public Item getFirstItem(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -335,7 +335,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getItemValue(String name);
+	public Vector getItemValue(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -343,7 +343,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#getItemValueCustomData(java.lang.String)
 	 */
 	@Override
-	public Object getItemValueCustomData(String itemName) throws IOException, ClassNotFoundException;
+	public Object getItemValueCustomData(final String itemName) throws IOException, ClassNotFoundException;
 
 	/*
 	 * (non-Javadoc)
@@ -351,7 +351,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#getItemValueCustomData(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public Object getItemValueCustomData(String itemName, String dataTypeName) throws IOException, ClassNotFoundException;
+	public Object getItemValueCustomData(final String itemName, final String dataTypeName) throws IOException, ClassNotFoundException;
 
 	/*
 	 * (non-Javadoc)
@@ -359,7 +359,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#getItemValueCustomDataBytes(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public byte[] getItemValueCustomDataBytes(String itemName, String dataTypeName) throws IOException;
+	public byte[] getItemValueCustomDataBytes(final String itemName, final String dataTypeName) throws IOException;
 
 	/*
 	 * (non-Javadoc)
@@ -368,7 +368,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Vector getItemValueDateTimeArray(String name);
+	public Vector getItemValueDateTimeArray(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -376,7 +376,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#getItemValueDouble(java.lang.String)
 	 */
 	@Override
-	public double getItemValueDouble(String name);
+	public double getItemValueDouble(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -384,7 +384,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#getItemValueInteger(java.lang.String)
 	 */
 	@Override
-	public int getItemValueInteger(String name);
+	public int getItemValueInteger(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -392,7 +392,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#getItemValueString(java.lang.String)
 	 */
 	@Override
-	public String getItemValueString(String name);
+	public String getItemValueString(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -441,7 +441,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#getMIMEEntity(java.lang.String)
 	 */
 	@Override
-	public MIMEEntity getMIMEEntity(String itemName);
+	public MIMEEntity getMIMEEntity(final String itemName);
 
 	/*
 	 * (non-Javadoc)
@@ -505,7 +505,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#getRead(java.lang.String)
 	 */
 	@Override
-	public boolean getRead(String username);
+	public boolean getRead(final String username);
 
 	/*
 	 * (non-Javadoc)
@@ -578,7 +578,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#hasItem(java.lang.String)
 	 */
 	@Override
-	public boolean hasItem(String name);
+	public boolean hasItem(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -690,7 +690,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#lock(boolean)
 	 */
 	@Override
-	public boolean lock(boolean provisionalok);
+	public boolean lock(final boolean provisionalok);
 
 	/*
 	 * (non-Javadoc)
@@ -698,7 +698,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#lock(java.lang.String)
 	 */
 	@Override
-	public boolean lock(String name);
+	public boolean lock(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -706,7 +706,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#lock(java.lang.String, boolean)
 	 */
 	@Override
-	public boolean lock(String name, boolean provisionalok);
+	public boolean lock(final String name, final boolean provisionalok);
 
 	/*
 	 * (non-Javadoc)
@@ -715,7 +715,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean lock(Vector names);
+	public boolean lock(final Vector names);
 
 	/*
 	 * (non-Javadoc)
@@ -724,7 +724,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean lock(Vector names, boolean provisionalok);
+	public boolean lock(final Vector names, final boolean provisionalok);
 
 	/*
 	 * (non-Javadoc)
@@ -740,7 +740,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#lockProvisional(java.lang.String)
 	 */
 	@Override
-	public boolean lockProvisional(String name);
+	public boolean lockProvisional(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -749,7 +749,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean lockProvisional(Vector names);
+	public boolean lockProvisional(final Vector names);
 
 	/*
 	 * (non-Javadoc)
@@ -757,7 +757,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#makeResponse(lotus.domino.Document)
 	 */
 	@Override
-	public void makeResponse(lotus.domino.Document doc);
+	public void makeResponse(final lotus.domino.Document doc);
 
 	/*
 	 * (non-Javadoc)
@@ -773,7 +773,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#markRead(java.lang.String)
 	 */
 	@Override
-	public void markRead(String username);
+	public void markRead(final String username);
 
 	/*
 	 * (non-Javadoc)
@@ -789,7 +789,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#markUnread(java.lang.String)
 	 */
 	@Override
-	public void markUnread(String username);
+	public void markUnread(final String username);
 
 	/*
 	 * (non-Javadoc)
@@ -797,7 +797,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#putInFolder(java.lang.String)
 	 */
 	@Override
-	public void putInFolder(String name);
+	public void putInFolder(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -805,7 +805,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#putInFolder(java.lang.String, boolean)
 	 */
 	@Override
-	public void putInFolder(String name, boolean createonfail);
+	public void putInFolder(final String name, final boolean createonfail);
 
 	/*
 	 * (non-Javadoc)
@@ -813,7 +813,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#remove(boolean)
 	 */
 	@Override
-	public boolean remove(boolean force);
+	public boolean remove(final boolean force);
 
 	/*
 	 * (non-Javadoc)
@@ -821,7 +821,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#removeFromFolder(java.lang.String)
 	 */
 	@Override
-	public void removeFromFolder(String name);
+	public void removeFromFolder(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -829,7 +829,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#removeItem(java.lang.String)
 	 */
 	@Override
-	public void removeItem(String name);
+	public void removeItem(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -837,7 +837,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#removePermanently(boolean)
 	 */
 	@Override
-	public boolean removePermanently(boolean force);
+	public boolean removePermanently(final boolean force);
 
 	/*
 	 * (non-Javadoc)
@@ -845,7 +845,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#renderToRTItem(lotus.domino.RichTextItem)
 	 */
 	@Override
-	public boolean renderToRTItem(lotus.domino.RichTextItem rtitem);
+	public boolean renderToRTItem(final lotus.domino.RichTextItem rtitem);
 
 	/*
 	 * (non-Javadoc)
@@ -853,7 +853,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#replaceItemValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public Item replaceItemValue(String itemName, Object value);
+	public Item replaceItemValue(final String itemName, final Object value);
 
 	/*
 	 * (non-Javadoc)
@@ -861,7 +861,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#replaceItemValueCustomData(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public Item replaceItemValueCustomData(String itemName, Object userObj) throws IOException;
+	public Item replaceItemValueCustomData(final String itemName, final Object userObj) throws IOException;
 
 	/*
 	 * (non-Javadoc)
@@ -869,7 +869,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#replaceItemValueCustomData(java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public Item replaceItemValueCustomData(String itemName, String dataTypeName, Object userObj) throws IOException;
+	public Item replaceItemValueCustomData(final String itemName, final String dataTypeName, final Object userObj) throws IOException;
 
 	/*
 	 * (non-Javadoc)
@@ -877,7 +877,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#replaceItemValueCustomDataBytes(java.lang.String, java.lang.String, byte[])
 	 */
 	@Override
-	public Item replaceItemValueCustomDataBytes(String itemName, String dataTypeName, byte[] byteArray) throws IOException;
+	public Item replaceItemValueCustomDataBytes(final String itemName, final String dataTypeName, final byte[] byteArray) throws IOException;
 
 	/*
 	 * (non-Javadoc)
@@ -893,7 +893,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#save(boolean)
 	 */
 	@Override
-	public boolean save(boolean force);
+	public boolean save(final boolean force);
 
 	/*
 	 * (non-Javadoc)
@@ -901,7 +901,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#save(boolean, boolean)
 	 */
 	@Override
-	public boolean save(boolean force, boolean makeresponse);
+	public boolean save(final boolean force, final boolean makeresponse);
 
 	/*
 	 * (non-Javadoc)
@@ -909,7 +909,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#save(boolean, boolean, boolean)
 	 */
 	@Override
-	public boolean save(boolean force, boolean makeresponse, boolean markread);
+	public boolean save(final boolean force, final boolean makeresponse, final boolean markread);
 
 	/*
 	 * (non-Javadoc)
@@ -925,7 +925,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#send(boolean)
 	 */
 	@Override
-	public void send(boolean attachform);
+	public void send(final boolean attachform);
 
 	/*
 	 * (non-Javadoc)
@@ -933,7 +933,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#send(boolean, java.lang.String)
 	 */
 	@Override
-	public void send(boolean attachform, String recipient);
+	public void send(final boolean attachform, final String recipient);
 
 	/*
 	 * (non-Javadoc)
@@ -942,7 +942,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void send(boolean attachform, Vector recipients);
+	public void send(final boolean attachform, final Vector recipients);
 
 	/*
 	 * (non-Javadoc)
@@ -950,7 +950,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#send(java.lang.String)
 	 */
 	@Override
-	public void send(String recipient);
+	public void send(final String recipient);
 
 	/*
 	 * (non-Javadoc)
@@ -959,7 +959,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void send(Vector recipients);
+	public void send(final Vector recipients);
 
 	/*
 	 * (non-Javadoc)
@@ -968,7 +968,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setEncryptionKeys(Vector keys);
+	public void setEncryptionKeys(final Vector keys);
 
 	/*
 	 * (non-Javadoc)
@@ -976,7 +976,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#setEncryptOnSend(boolean)
 	 */
 	@Override
-	public void setEncryptOnSend(boolean flag);
+	public void setEncryptOnSend(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -984,7 +984,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#setPreferJavaDates(boolean)
 	 */
 	@Override
-	public void setPreferJavaDates(boolean flag);
+	public void setPreferJavaDates(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -992,7 +992,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#setSaveMessageOnSend(boolean)
 	 */
 	@Override
-	public void setSaveMessageOnSend(boolean flag);
+	public void setSaveMessageOnSend(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -1000,7 +1000,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#setSignOnSend(boolean)
 	 */
 	@Override
-	public void setSignOnSend(boolean flag);
+	public void setSignOnSend(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -1008,7 +1008,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#setUniversalID(java.lang.String)
 	 */
 	@Override
-	public void setUniversalID(String unid);
+	public void setUniversalID(final String unid);
 
 	/*
 	 * (non-Javadoc)

@@ -22,6 +22,6 @@ public interface ReplicationEntry {
 	 * @param views
 	 *            collection of views
 	 */
-	public void setViews(Collection<String> views);
+	public void setViews(final Collection<String> views);
 
 }

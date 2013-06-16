@@ -47,7 +47,7 @@ public class ViewEntryIterator extends AbstractDominoIterator<ViewEntry> {
 	 * @param collection
 	 *            the collection
 	 */
-	public ViewEntryIterator(ViewEntryCollection collection) {
+	public ViewEntryIterator(final ViewEntryCollection collection) {
 		super(collection);
 
 		// TODO replace this with a less-expensive operation
@@ -140,7 +140,7 @@ public class ViewEntryIterator extends AbstractDominoIterator<ViewEntry> {
 	 * @param currentEntry
 	 *            the new current entry
 	 */
-	public void setCurrentEntry(ViewEntry currentEntry) {
+	public void setCurrentEntry(final ViewEntry currentEntry) {
 		currentEntry_ = currentEntry;
 		setStarted(currentEntry != null);
 		setDone(currentEntry == null);
@@ -152,7 +152,7 @@ public class ViewEntryIterator extends AbstractDominoIterator<ViewEntry> {
 	 * @param done
 	 *            the new done
 	 */
-	public void setDone(boolean done) {
+	public void setDone(final boolean done) {
 		done_ = done;
 	}
 
@@ -162,7 +162,7 @@ public class ViewEntryIterator extends AbstractDominoIterator<ViewEntry> {
 	 * @param started
 	 *            the new started
 	 */
-	public void setStarted(boolean started) {
+	public void setStarted(final boolean started) {
 		started_ = started;
 	}
 }

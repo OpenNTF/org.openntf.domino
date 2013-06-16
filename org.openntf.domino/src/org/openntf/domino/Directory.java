@@ -71,7 +71,7 @@ public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Di
 	 * @see lotus.domino.Directory#getMailInfo(java.lang.String)
 	 */
 	@Override
-	public Vector<String> getMailInfo(String userName);
+	public Vector<String> getMailInfo(final String userName);
 
 	/*
 	 * (non-Javadoc)
@@ -79,7 +79,7 @@ public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Di
 	 * @see lotus.domino.Directory#getMailInfo(java.lang.String, boolean, boolean)
 	 */
 	@Override
-	public Vector<String> getMailInfo(String userName, boolean getVersion, boolean errorOnMultipleMatches);
+	public Vector<String> getMailInfo(final String userName, final boolean getVersion, final boolean errorOnMultipleMatches);
 
 	/**
 	 * Gets the parent.
@@ -150,7 +150,7 @@ public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Di
 	 * @see lotus.domino.Directory#lookupAllNames(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public DirectoryNavigator lookupAllNames(String view, String item);
+	public DirectoryNavigator lookupAllNames(final String view, final String item);
 
 	/*
 	 * (non-Javadoc)
@@ -159,7 +159,7 @@ public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Di
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public DirectoryNavigator lookupAllNames(String view, Vector items);
+	public DirectoryNavigator lookupAllNames(final String view, final Vector items);
 
 	/*
 	 * (non-Javadoc)
@@ -167,7 +167,7 @@ public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Di
 	 * @see lotus.domino.Directory#lookupNames(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public DirectoryNavigator lookupNames(String view, String name, String item);
+	public DirectoryNavigator lookupNames(final String view, final String name, final String item);
 
 	/*
 	 * (non-Javadoc)
@@ -176,7 +176,7 @@ public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Di
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public DirectoryNavigator lookupNames(String view, Vector names, Vector items, boolean partialMatches);
+	public DirectoryNavigator lookupNames(final String view, final Vector names, final Vector items, final boolean partialMatches);
 
 	/*
 	 * (non-Javadoc)
@@ -184,7 +184,7 @@ public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Di
 	 * @see lotus.domino.Directory#setGroupAuthorizationOnly(boolean)
 	 */
 	@Override
-	public void setGroupAuthorizationOnly(boolean flag);
+	public void setGroupAuthorizationOnly(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -192,7 +192,7 @@ public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Di
 	 * @see lotus.domino.Directory#setLimitMatches(boolean)
 	 */
 	@Override
-	public void setLimitMatches(boolean flag);
+	public void setLimitMatches(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -200,7 +200,7 @@ public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Di
 	 * @see lotus.domino.Directory#setSearchAllDirectories(boolean)
 	 */
 	@Override
-	public void setSearchAllDirectories(boolean flag);
+	public void setSearchAllDirectories(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -208,7 +208,7 @@ public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Di
 	 * @see lotus.domino.Directory#setTrustedOnly(boolean)
 	 */
 	@Override
-	public void setTrustedOnly(boolean flag);
+	public void setTrustedOnly(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -216,6 +216,6 @@ public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Di
 	 * @see lotus.domino.Directory#setUseContextServer(boolean)
 	 */
 	@Override
-	public void setUseContextServer(boolean flag);
+	public void setUseContextServer(final boolean flag);
 
 }

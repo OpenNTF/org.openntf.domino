@@ -45,7 +45,7 @@ public enum LoggerTests {
 	 * @param args
 	 *            the arguments
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		int delay = 500;
 		DominoThread dt1 = new DominoThread(new DominoException(), "Logging Test");
 		dt1.start();

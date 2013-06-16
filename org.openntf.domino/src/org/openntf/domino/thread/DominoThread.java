@@ -39,7 +39,7 @@ public class DominoThread extends Thread {
 	 * @param runnable
 	 *            the runnable
 	 */
-	public DominoThread(Runnable runnable) {
+	public DominoThread(final Runnable runnable) {
 		super(runnable);
 		// TODO Auto-generated constructor stub
 	}
@@ -50,7 +50,7 @@ public class DominoThread extends Thread {
 	 * @param threadName
 	 *            the thread name
 	 */
-	public DominoThread(String threadName) {
+	public DominoThread(final String threadName) {
 		super(threadName);
 		// TODO Auto-generated constructor stub
 	}
@@ -63,7 +63,7 @@ public class DominoThread extends Thread {
 	 * @param threadName
 	 *            the thread name
 	 */
-	public DominoThread(Runnable runnable, String threadName) {
+	public DominoThread(final Runnable runnable, final String threadName) {
 		super(runnable, threadName);
 		// TODO Auto-generated constructor stub
 	}
@@ -76,7 +76,7 @@ public class DominoThread extends Thread {
 	 * @param runnable
 	 *            the runnable
 	 */
-	public DominoThread(ThreadGroup group, Runnable runnable) {
+	public DominoThread(final ThreadGroup group, final Runnable runnable) {
 		super(group, runnable);
 		// TODO Auto-generated constructor stub
 	}
@@ -89,7 +89,7 @@ public class DominoThread extends Thread {
 	 * @param threadName
 	 *            the thread name
 	 */
-	public DominoThread(ThreadGroup group, String threadName) {
+	public DominoThread(final ThreadGroup group, final String threadName) {
 		super(group, threadName);
 		// TODO Auto-generated constructor stub
 	}
@@ -104,7 +104,7 @@ public class DominoThread extends Thread {
 	 * @param arg2
 	 *            the arg2
 	 */
-	public DominoThread(ThreadGroup arg0, Runnable arg1, String arg2) {
+	public DominoThread(final ThreadGroup arg0, final Runnable arg1, final String arg2) {
 		super(arg0, arg1, arg2);
 		// TODO Auto-generated constructor stub
 	}

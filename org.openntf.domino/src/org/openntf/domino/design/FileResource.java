@@ -11,7 +11,7 @@ public interface FileResource extends DesignBaseNamed, org.openntf.domino.types.
 	 * @param fileData
 	 *            The new data for the file resource, as a byte array
 	 */
-	public void setFileData(byte[] fileData);
+	public void setFileData(final byte[] fileData);
 
 	/**
 	 * @return mime type
@@ -22,7 +22,7 @@ public interface FileResource extends DesignBaseNamed, org.openntf.domino.types.
 	 * @param mimeType
 	 *            The new MIME type for the file resource
 	 */
-	public void setMimeType(String mimeType);
+	public void setMimeType(final String mimeType);
 
 	/**
 	 * @return whether the file resource is marked as read-only

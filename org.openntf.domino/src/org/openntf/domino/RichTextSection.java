@@ -76,7 +76,7 @@ public interface RichTextSection extends Base<lotus.domino.RichTextSection>, lot
 	 * @see lotus.domino.RichTextSection#setBarColor(lotus.domino.ColorObject)
 	 */
 	@Override
-	public void setBarColor(lotus.domino.ColorObject color);
+	public void setBarColor(final lotus.domino.ColorObject color);
 
 	/*
 	 * (non-Javadoc)
@@ -84,7 +84,7 @@ public interface RichTextSection extends Base<lotus.domino.RichTextSection>, lot
 	 * @see lotus.domino.RichTextSection#setExpanded(boolean)
 	 */
 	@Override
-	public void setExpanded(boolean flag);
+	public void setExpanded(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -92,7 +92,7 @@ public interface RichTextSection extends Base<lotus.domino.RichTextSection>, lot
 	 * @see lotus.domino.RichTextSection#setTitle(java.lang.String)
 	 */
 	@Override
-	public void setTitle(String title);
+	public void setTitle(final String title);
 
 	/*
 	 * (non-Javadoc)
@@ -100,6 +100,6 @@ public interface RichTextSection extends Base<lotus.domino.RichTextSection>, lot
 	 * @see lotus.domino.RichTextSection#setTitleStyle(lotus.domino.RichTextStyle)
 	 */
 	@Override
-	public void setTitleStyle(lotus.domino.RichTextStyle style);
+	public void setTitleStyle(final lotus.domino.RichTextStyle style);
 
 }

@@ -18,7 +18,7 @@ public interface Vertex extends Element {
      * @param labels    the labels of the edges to retrieve
      * @return an iterable of incident edges
      */
-    public Iterable<Edge> getEdges(Direction direction, String... labels);
+    public Iterable<Edge> getEdges(final Direction direction, final String... labels);
 
     /**
      * Return the vertices adjacent to the vertex according to the provided direction and edge labels.  This
@@ -28,7 +28,7 @@ public interface Vertex extends Element {
      * @param labels    the labels of the edges of the adjacent vertices
      * @return an iterable of adjacent vertices
      */
-    public Iterable<Vertex> getVertices(Direction direction, String... labels);
+    public Iterable<Vertex> getVertices(final Direction direction, final String... labels);
 
     /**
      * Generate a query object that can be used to fine tune which edges/vertices are retrieved that are incident/adjacent to this vertex.
@@ -44,5 +44,5 @@ public interface Vertex extends Element {
      * @param vertex the vertex to connect to
      * @return the newly created edge
      */
-    public Edge addEdge(String label, Vertex vertex);
+    public Edge addEdge(final String label, final Vertex vertex);
 }

@@ -19,7 +19,7 @@ public class IconNote extends AbstractDesignBaseNamed implements org.openntf.dom
 	/**
 	 * @param document
 	 */
-	protected IconNote(Document document) {
+	protected IconNote(final Document document) {
 		super(document);
 	}
 

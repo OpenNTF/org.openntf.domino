@@ -37,7 +37,7 @@ public interface EmbeddedObject extends Base<lotus.domino.EmbeddedObject>, lotus
 	 * @see lotus.domino.EmbeddedObject#activate(boolean)
 	 */
 	@Override
-	public int activate(boolean flag);
+	public int activate(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -45,7 +45,7 @@ public interface EmbeddedObject extends Base<lotus.domino.EmbeddedObject>, lotus
 	 * @see lotus.domino.EmbeddedObject#doVerb(java.lang.String)
 	 */
 	@Override
-	public void doVerb(String verb);
+	public void doVerb(final String verb);
 
 	/*
 	 * (non-Javadoc)
@@ -53,7 +53,7 @@ public interface EmbeddedObject extends Base<lotus.domino.EmbeddedObject>, lotus
 	 * @see lotus.domino.EmbeddedObject#extractFile(java.lang.String)
 	 */
 	@Override
-	public void extractFile(String path);
+	public void extractFile(final String path);
 
 	/*
 	 * (non-Javadoc)
@@ -156,7 +156,7 @@ public interface EmbeddedObject extends Base<lotus.domino.EmbeddedObject>, lotus
 	 * @see lotus.domino.EmbeddedObject#parseXML(boolean)
 	 */
 	@Override
-	public org.w3c.dom.Document parseXML(boolean validate) throws IOException;
+	public org.w3c.dom.Document parseXML(final boolean validate) throws IOException;
 
 	/*
 	 * (non-Javadoc)
@@ -172,6 +172,6 @@ public interface EmbeddedObject extends Base<lotus.domino.EmbeddedObject>, lotus
 	 * @see lotus.domino.EmbeddedObject#transformXML(java.lang.Object, lotus.domino.XSLTResultTarget)
 	 */
 	@Override
-	public void transformXML(Object style, XSLTResultTarget result);
+	public void transformXML(final Object style, final XSLTResultTarget result);
 
 }

@@ -22,11 +22,11 @@ public class DocumentComparator implements Comparator<Document> {
 
 	String[] sortFields = null;
 
-	public DocumentComparator(String... sortFields) {
+	public DocumentComparator(final String... sortFields) {
 		this.sortFields = sortFields;
 	}
 
-	public int compare(Document doc1, Document doc2) {
+	public int compare(final Document doc1, final Document doc2) {
 
 		int compared = 0;
 		// loop all sortFields

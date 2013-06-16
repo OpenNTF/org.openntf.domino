@@ -57,7 +57,7 @@ public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream, 
 	 * @see lotus.domino.Stream#getContents(java.io.OutputStream)
 	 */
 	@Override
-	public void getContents(OutputStream stream);
+	public void getContents(final OutputStream stream);
 
 	/*
 	 * (non-Javadoc)
@@ -65,7 +65,7 @@ public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream, 
 	 * @see lotus.domino.Stream#getContents(java.io.Writer)
 	 */
 	@Override
-	public void getContents(Writer writer);
+	public void getContents(final Writer writer);
 
 	/**
 	 * Gets the parent.
@@ -104,7 +104,7 @@ public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream, 
 	 * @see lotus.domino.Stream#open(java.lang.String)
 	 */
 	@Override
-	public boolean open(String pathName);
+	public boolean open(final String pathName);
 
 	/*
 	 * (non-Javadoc)
@@ -112,7 +112,7 @@ public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream, 
 	 * @see lotus.domino.Stream#open(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean open(String pathName, String charSet);
+	public boolean open(final String pathName, final String charSet);
 
 	/*
 	 * (non-Javadoc)
@@ -128,7 +128,7 @@ public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream, 
 	 * @see lotus.domino.Stream#read(int)
 	 */
 	@Override
-	public byte[] read(int length);
+	public byte[] read(final int length);
 
 	/*
 	 * (non-Javadoc)
@@ -144,7 +144,7 @@ public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream, 
 	 * @see lotus.domino.Stream#readText(int)
 	 */
 	@Override
-	public String readText(int length);
+	public String readText(final int length);
 
 	/*
 	 * (non-Javadoc)
@@ -152,7 +152,7 @@ public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream, 
 	 * @see lotus.domino.Stream#readText(int, int)
 	 */
 	@Override
-	public String readText(int length, int eolType);
+	public String readText(final int length, final int eolType);
 
 	/*
 	 * (non-Javadoc)
@@ -160,7 +160,7 @@ public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream, 
 	 * @see lotus.domino.Stream#setContents(java.io.InputStream)
 	 */
 	@Override
-	public void setContents(InputStream stream);
+	public void setContents(final InputStream stream);
 
 	/*
 	 * (non-Javadoc)
@@ -168,7 +168,7 @@ public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream, 
 	 * @see lotus.domino.Stream#setContents(java.io.Reader)
 	 */
 	@Override
-	public void setContents(Reader reader);
+	public void setContents(final Reader reader);
 
 	/*
 	 * (non-Javadoc)
@@ -176,7 +176,7 @@ public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream, 
 	 * @see lotus.domino.Stream#setPosition(int)
 	 */
 	@Override
-	public void setPosition(int position);
+	public void setPosition(final int position);
 
 	/*
 	 * (non-Javadoc)
@@ -192,7 +192,7 @@ public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream, 
 	 * @see lotus.domino.Stream#write(byte[])
 	 */
 	@Override
-	public int write(byte[] buffer);
+	public int write(final byte[] buffer);
 
 	/*
 	 * (non-Javadoc)
@@ -200,7 +200,7 @@ public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream, 
 	 * @see lotus.domino.Stream#writeText(java.lang.String)
 	 */
 	@Override
-	public int writeText(String text);
+	public int writeText(final String text);
 
 	/*
 	 * (non-Javadoc)
@@ -208,5 +208,5 @@ public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream, 
 	 * @see lotus.domino.Stream#writeText(java.lang.String, int)
 	 */
 	@Override
-	public int writeText(String text, int eolType);
+	public int writeText(final String text, final int eolType);
 }

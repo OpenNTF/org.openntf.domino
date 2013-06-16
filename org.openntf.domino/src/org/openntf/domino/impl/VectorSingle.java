@@ -45,7 +45,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 
 	}
 
-	public VectorSingle(E value) {
+	public VectorSingle(final E value) {
 		value_ = value;
 	}
 
@@ -55,7 +55,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 * @param source
 	 *            the source
 	 */
-	public VectorSingle(Collection<E> source) {
+	public VectorSingle(final Collection<E> source) {
 		for (E e : source) {
 			value_ = e;
 			break;
@@ -68,7 +68,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 * @see java.util.Vector#add(java.lang.Object)
 	 */
 	@Override
-	public boolean add(E arg0) {
+	public boolean add(final E arg0) {
 		if (value_ == null) {
 			value_ = arg0;
 			return true;
@@ -83,7 +83,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 * @see java.util.Vector#add(int, java.lang.Object)
 	 */
 	@Override
-	public void add(int arg0, E arg1) {
+	public void add(final int arg0, final E arg1) {
 		if (value_ == null) {
 			value_ = arg1;
 
@@ -98,7 +98,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 * @see java.util.Vector#addAll(java.util.Collection)
 	 */
 	@Override
-	public boolean addAll(Collection<? extends E> arg0) {
+	public boolean addAll(final Collection<? extends E> arg0) {
 		boolean result = false;
 		if (value_ == null) {
 			for (E e : arg0) {
@@ -116,7 +116,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 * @see java.util.Vector#addAll(int, java.util.Collection)
 	 */
 	@Override
-	public boolean addAll(int arg0, Collection<? extends E> arg1) {
+	public boolean addAll(final int arg0, final Collection<? extends E> arg1) {
 		boolean result = false;
 		if (value_ == null) {
 			for (E e : arg1) {
@@ -135,7 +135,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 */
 	@Override
 	@Deprecated
-	public void addElement(E arg0) {
+	public void addElement(final E arg0) {
 		if (value_ == null)
 			value_ = arg0;
 	}
@@ -176,7 +176,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 * @see java.util.Vector#contains(java.lang.Object)
 	 */
 	@Override
-	public boolean contains(Object arg0) {
+	public boolean contains(final Object arg0) {
 		if (arg0 == null)
 			return false;
 		return arg0.equals(value_);
@@ -188,7 +188,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 * @see java.util.Vector#containsAll(java.util.Collection)
 	 */
 	@Override
-	public boolean containsAll(Collection<?> arg0) {
+	public boolean containsAll(final Collection<?> arg0) {
 		if (arg0.size() > 1)
 			return false;
 		for (Object o : arg0) {
@@ -204,7 +204,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 */
 	@Override
 	@Deprecated
-	public void copyInto(Object[] arg0) {
+	public void copyInto(final Object[] arg0) {
 		System.arraycopy(this.toArray(), 0, arg0, 0, this.size());
 	}
 
@@ -215,7 +215,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 */
 	@Override
 	@Deprecated
-	public E elementAt(int arg0) {
+	public E elementAt(final int arg0) {
 		if (arg0 == 0)
 			return value_;
 		return null;
@@ -239,7 +239,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 * @see java.util.Vector#ensureCapacity(int)
 	 */
 	@Override
-	public void ensureCapacity(int arg0) {
+	public void ensureCapacity(final int arg0) {
 		// what would this even mean?
 	}
 
@@ -249,7 +249,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 * @see java.util.Vector#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object arg0) {
+	public boolean equals(final Object arg0) {
 		if (arg0 == null)
 			return false;
 		return arg0.equals(value_);
@@ -271,7 +271,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 * @see java.util.Vector#get(int)
 	 */
 	@Override
-	public E get(int arg0) {
+	public E get(final int arg0) {
 		if (arg0 == 0)
 			return value_;
 		return null;
@@ -295,7 +295,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 */
 	@Override
 	@Deprecated
-	public int indexOf(Object arg0, int arg1) {
+	public int indexOf(final Object arg0, final int arg1) {
 		// TODO NTF - come up with an elegant way to express this rather brutal set of conditions...
 		if (arg1 > 0)
 			return -1;
@@ -313,7 +313,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 * @see java.util.Vector#indexOf(java.lang.Object)
 	 */
 	@Override
-	public int indexOf(Object arg0) {
+	public int indexOf(final Object arg0) {
 		if (arg0 == null && value_ == null)
 			return 0;
 		if (arg0 != null && arg0.equals(value_))
@@ -328,7 +328,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 */
 	@Override
 	@Deprecated
-	public void insertElementAt(E arg0, int arg1) {
+	public void insertElementAt(final E arg0, final int arg1) {
 		if (arg1 > 0)
 			return;
 		value_ = arg0;
@@ -382,7 +382,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 */
 	@Override
 	@Deprecated
-	public int lastIndexOf(Object arg0, int arg1) {
+	public int lastIndexOf(final Object arg0, final int arg1) {
 		// TODO NTF - come up with an elegant way to express this rather brutal set of conditions...
 		if (arg1 > 0)
 			return -1;
@@ -399,7 +399,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 * @see java.util.Vector#lastIndexOf(java.lang.Object)
 	 */
 	@Override
-	public int lastIndexOf(Object arg0) {
+	public int lastIndexOf(final Object arg0) {
 		if (arg0 == null && value_ == null)
 			return 0;
 		if (arg0 != null && arg0.equals(value_))
@@ -413,7 +413,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 * @see java.util.Vector#remove(int)
 	 */
 	@Override
-	public E remove(int arg0) {
+	public E remove(final int arg0) {
 		if (arg0 == 0) {
 			E result = value_;
 			value_ = null;
@@ -428,7 +428,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 * @see java.util.Vector#remove(java.lang.Object)
 	 */
 	@Override
-	public boolean remove(Object arg0) {
+	public boolean remove(final Object arg0) {
 		if (arg0 != null && arg0.equals(value_)) {
 			value_ = null;
 			return true;
@@ -442,7 +442,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 * @see java.util.Vector#removeAll(java.util.Collection)
 	 */
 	@Override
-	public boolean removeAll(Collection<?> arg0) {
+	public boolean removeAll(final Collection<?> arg0) {
 		if (arg0.contains(value_)) {
 			value_ = null;
 			return true;
@@ -466,7 +466,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 * @see java.util.Vector#removeElement(java.lang.Object)
 	 */
 	@Override
-	public boolean removeElement(Object arg0) {
+	public boolean removeElement(final Object arg0) {
 		return remove(arg0);
 	}
 
@@ -476,7 +476,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 * @see java.util.Vector#removeElementAt(int)
 	 */
 	@Override
-	public void removeElementAt(int arg0) {
+	public void removeElementAt(final int arg0) {
 		remove(arg0);
 	}
 
@@ -486,7 +486,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 * @see java.util.Vector#retainAll(java.util.Collection)
 	 */
 	@Override
-	public boolean retainAll(Collection<?> arg0) {
+	public boolean retainAll(final Collection<?> arg0) {
 		if (!arg0.contains(value_)) {
 			value_ = null;
 			return true;
@@ -500,7 +500,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 * @see java.util.Vector#set(int, java.lang.Object)
 	 */
 	@Override
-	public E set(int arg0, E arg1) {
+	public E set(final int arg0, final E arg1) {
 		if (arg0 == 0) {
 			E result = value_;
 			value_ = arg1;
@@ -516,7 +516,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 */
 	@Override
 	@Deprecated
-	public void setElementAt(E arg0, int arg1) {
+	public void setElementAt(final E arg0, final int arg1) {
 		if (arg1 == 0) {
 			E result = value_;
 			value_ = arg0;
@@ -531,7 +531,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 */
 	@Override
 	@Deprecated
-	public void setSize(int arg0) {
+	public void setSize(final int arg0) {
 		if (arg0 == 1) {
 			// so what?
 		} else {
@@ -555,7 +555,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 * @see java.util.Vector#subList(int, int)
 	 */
 	@Override
-	public List<E> subList(int arg0, int arg1) {
+	public List<E> subList(final int arg0, final int arg1) {
 		return this;
 	}
 
@@ -577,7 +577,7 @@ public class VectorSingle<E> extends Vector<E> implements Collection<E> {
 	 * @see java.util.Vector#toArray(T[])
 	 */
 	@Override
-	public <T> T[] toArray(T[] arg0) {
+	public <T> T[] toArray(final T[] arg0) {
 		T[] result = null;
 		if (arg0.length == 1) {
 			result = arg0;

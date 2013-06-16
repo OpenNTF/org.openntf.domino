@@ -30,7 +30,7 @@ public class InvalidNotesUrlException extends RuntimeException {
 	 * @param arg0
 	 *            the arg0
 	 */
-	public InvalidNotesUrlException(String arg0) {
+	public InvalidNotesUrlException(final String arg0) {
 		super(arg0);
 
 	}

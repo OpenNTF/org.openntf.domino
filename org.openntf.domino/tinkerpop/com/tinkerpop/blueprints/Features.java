@@ -148,7 +148,8 @@ public class Features {
         return supportsVertexProperties && supportsEdgeProperties;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         try {
             final StringBuilder string = new StringBuilder();
             for (final Field field : this.getClass().getFields()) {

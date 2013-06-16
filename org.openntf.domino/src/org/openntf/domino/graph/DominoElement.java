@@ -20,13 +20,13 @@ public abstract class DominoElement implements Element, Serializable {
 	transient DominoGraph parent_;
 	private String unid_;
 
-	public DominoElement(DominoGraph parent, Document doc) {
+	public DominoElement(final DominoGraph parent, final Document doc) {
 		doc_ = doc;
 		parent_ = parent;
 		unid_ = doc.getUniversalID();
 	}
 
-	public void addProperty(String propertyName, Object value) {
+	public void addProperty(final String propertyName, final Object value) {
 		setProperty(propertyName, value);
 	}
 
@@ -46,7 +46,7 @@ public abstract class DominoElement implements Element, Serializable {
 		return prefix + ": " + getRawDocument().getNoteID();
 	}
 
-	public int incrementProperty(String propertyName) {
+	public int incrementProperty(final String propertyName) {
 		Integer result = getProperty(propertyName, Integer.class);
 		if (result == null)
 			result = 0;
@@ -54,7 +54,7 @@ public abstract class DominoElement implements Element, Serializable {
 		return result;
 	}
 
-	public int decrementProperty(String propertyName) {
+	public int decrementProperty(final String propertyName) {
 		Integer result = getProperty(propertyName, Integer.class);
 		if (result == null)
 			result = 0;
@@ -78,16 +78,16 @@ public abstract class DominoElement implements Element, Serializable {
 		return parent_;
 	}
 
-	public boolean hasProperty(String key) {
+	public boolean hasProperty(final String key) {
 		return getPropertyKeys().contains(key);
 	}
 
 	@Override
-	public <T> T getProperty(String key) {
+	public <T> T getProperty(final String key) {
 		return getProperty(key, java.lang.Object.class);
 	}
 
-	public <T> T getProperty(String propertyName, Class<?> T) {
+	public <T> T getProperty(final String propertyName, final Class<?> T) {
 		Object result = getRawDocument().getItemValue(propertyName, T);
 		return (T) result;
 	}
@@ -108,7 +108,7 @@ public abstract class DominoElement implements Element, Serializable {
 	}
 
 	@Override
-	public <T> T removeProperty(String key) {
+	public <T> T removeProperty(final String key) {
 		getParent().startTransaction();
 		T result = getProperty(key);
 		getRawDocument().removeItem(key);
@@ -119,12 +119,12 @@ public abstract class DominoElement implements Element, Serializable {
 	// getRawDocument().save();
 	// }
 
-	public void setRawDocument(org.openntf.domino.Document doc) {
+	public void setRawDocument(final org.openntf.domino.Document doc) {
 		doc_ = doc;
 	}
 
 	@Override
-	public void setProperty(String propertyName, java.lang.Object value) {
+	public void setProperty(final String propertyName, final java.lang.Object value) {
 		getParent().startTransaction();
 		getRawDocument().replaceItemValue(propertyName, value);
 	}

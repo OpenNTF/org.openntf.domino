@@ -16,7 +16,7 @@ enum DesignFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T fromDocument(Document doc, Class<? extends org.openntf.domino.design.DesignBase> T) {
+	public static <T> T fromDocument(final Document doc, final Class<? extends org.openntf.domino.design.DesignBase> T) {
 		if (T == ACLNote.class) {
 			return (T) (new ACLNote(doc));
 		} else if (T == AboutDocument.class) {

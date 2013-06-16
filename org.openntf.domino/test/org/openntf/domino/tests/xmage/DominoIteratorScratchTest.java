@@ -24,7 +24,7 @@ public enum DominoIteratorScratchTest {
 	 * @param args
 	 *            the arguments
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		int delay = 500;
 		DominoThread dt = new DominoThread(new Doer(), "Scratch Test");
 		DominoThread dt2 = new DominoThread(new Doer(), "Scratch Test2");

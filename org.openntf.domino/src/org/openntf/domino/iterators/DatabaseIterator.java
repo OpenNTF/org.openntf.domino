@@ -57,7 +57,7 @@ public class DatabaseIterator implements Iterator<Database> {
 	 * @param type
 	 *            the type
 	 */
-	public DatabaseIterator(DbDirectory dbDirectory, DbDirectory.Type type) {
+	public DatabaseIterator(final DbDirectory dbDirectory, final DbDirectory.Type type) {
 		setDbDirectory(dbDirectory);
 		type_ = type;
 	}
@@ -139,7 +139,7 @@ public class DatabaseIterator implements Iterator<Database> {
 	 * @param currentDatabase
 	 *            the new current database
 	 */
-	public void setCurrentDatabase(Database currentDatabase) {
+	public void setCurrentDatabase(final Database currentDatabase) {
 		currentDatabase_ = currentDatabase;
 	}
 
@@ -158,7 +158,7 @@ public class DatabaseIterator implements Iterator<Database> {
 	 * @param dbDirectory
 	 *            the new db directory
 	 */
-	public void setDbDirectory(DbDirectory dbDirectory) {
+	public void setDbDirectory(final DbDirectory dbDirectory) {
 		this.dbDirectory = dbDirectory;
 	}
 
@@ -177,7 +177,7 @@ public class DatabaseIterator implements Iterator<Database> {
 	 * @param done
 	 *            the new done
 	 */
-	public void setDone(boolean done) {
+	public void setDone(final boolean done) {
 		done_ = done;
 	}
 
@@ -196,7 +196,7 @@ public class DatabaseIterator implements Iterator<Database> {
 	 * @param started
 	 *            the new started
 	 */
-	public void setStarted(boolean started) {
+	public void setStarted(final boolean started) {
 		started_ = started;
 	}
 }

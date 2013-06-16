@@ -35,7 +35,7 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 	 * @param parent
 	 *            the parent
 	 */
-	public RichTextStyle(lotus.domino.RichTextStyle delegate, org.openntf.domino.Base<?> parent) {
+	public RichTextStyle(final lotus.domino.RichTextStyle delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, Factory.getSession(parent));
 	}
 
@@ -205,7 +205,7 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 	 * @see org.openntf.domino.RichTextStyle#setBold(int)
 	 */
 	@Override
-	public void setBold(int value) {
+	public void setBold(final int value) {
 		try {
 			getDelegate().setBold(value);
 		} catch (NotesException ne) {
@@ -213,7 +213,7 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 		}
 	}
 
-	public void setBold(BoldStyle ISBN) {
+	public void setBold(final BoldStyle ISBN) {
 		try {
 			getDelegate().setBold(ISBN.getValue());
 		} catch (NotesException ne) {
@@ -227,7 +227,7 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 	 * @see org.openntf.domino.RichTextStyle#setColor(int)
 	 */
 	@Override
-	public void setColor(int value) {
+	public void setColor(final int value) {
 		try {
 			getDelegate().setColor(value);
 		} catch (NotesException ne) {
@@ -241,7 +241,7 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 	 * @see org.openntf.domino.RichTextStyle#setEffects(int)
 	 */
 	@Override
-	public void setEffects(int value) {
+	public void setEffects(final int value) {
 		try {
 			getDelegate().setEffects(value);
 		} catch (NotesException ne) {
@@ -255,7 +255,7 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 	 * @see org.openntf.domino.RichTextStyle#setFont(int)
 	 */
 	@Override
-	public void setFont(int value) {
+	public void setFont(final int value) {
 		try {
 			getDelegate().setFont(value);
 		} catch (NotesException ne) {
@@ -269,7 +269,7 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 	 * @see org.openntf.domino.RichTextStyle#setFontSize(int)
 	 */
 	@Override
-	public void setFontSize(int value) {
+	public void setFontSize(final int value) {
 		try {
 			getDelegate().setFontSize(value);
 		} catch (NotesException ne) {
@@ -283,7 +283,7 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 	 * @see org.openntf.domino.RichTextStyle#setItalic(int)
 	 */
 	@Override
-	public void setItalic(int value) {
+	public void setItalic(final int value) {
 		try {
 			getDelegate().setItalic(value);
 		} catch (NotesException ne) {
@@ -297,7 +297,7 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 	 * @see org.openntf.domino.RichTextStyle#setPassThruHTML(int)
 	 */
 	@Override
-	public void setPassThruHTML(int value) {
+	public void setPassThruHTML(final int value) {
 		try {
 			getDelegate().setPassThruHTML(value);
 		} catch (NotesException ne) {
@@ -311,7 +311,7 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 	 * @see org.openntf.domino.RichTextStyle#setStrikeThrough(int)
 	 */
 	@Override
-	public void setStrikeThrough(int value) {
+	public void setStrikeThrough(final int value) {
 		try {
 			getDelegate().setStrikeThrough(value);
 		} catch (NotesException ne) {
@@ -325,7 +325,7 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 	 * @see org.openntf.domino.RichTextStyle#setUnderline(int)
 	 */
 	@Override
-	public void setUnderline(int value) {
+	public void setUnderline(final int value) {
 		try {
 			getDelegate().setUnderline(value);
 		} catch (NotesException ne) {

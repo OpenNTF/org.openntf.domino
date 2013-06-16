@@ -40,7 +40,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @param parent
 	 *            the parent
 	 */
-	public ViewEntryCollection(lotus.domino.ViewEntryCollection delegate, org.openntf.domino.View parent) {
+	public ViewEntryCollection(final lotus.domino.ViewEntryCollection delegate, final org.openntf.domino.View parent) {
 		super(delegate, parent);
 	}
 
@@ -52,7 +52,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#addEntry(java.lang.Object)
 	 */
 	@Override
-	public void addEntry(Object obj) {
+	public void addEntry(final Object obj) {
 		try {
 			getDelegate().addEntry(toLotus(obj));
 		} catch (NotesException e) {
@@ -66,7 +66,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#addEntry(java.lang.Object, boolean)
 	 */
 	@Override
-	public void addEntry(Object obj, boolean checkDups) {
+	public void addEntry(final Object obj, final boolean checkDups) {
 		try {
 			getDelegate().addEntry(toLotus(obj), checkDups);
 		} catch (NotesException e) {
@@ -105,7 +105,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#contains(lotus.domino.Base)
 	 */
 	@Override
-	public boolean contains(lotus.domino.Base entries) {
+	public boolean contains(final lotus.domino.Base entries) {
 		try {
 			return getDelegate().contains(toLotus(entries));
 		} catch (Throwable t) {
@@ -120,7 +120,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#contains(int)
 	 */
 	@Override
-	public boolean contains(int noteId) {
+	public boolean contains(final int noteId) {
 		try {
 			boolean result = getDelegate().contains(noteId);
 			return result;
@@ -136,7 +136,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#contains(java.lang.String)
 	 */
 	@Override
-	public boolean contains(String noteId) {
+	public boolean contains(final String noteId) {
 		try {
 			boolean result = getDelegate().contains(noteId);
 			return result;
@@ -152,7 +152,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#deleteEntry(lotus.domino.ViewEntry)
 	 */
 	@Override
-	public void deleteEntry(lotus.domino.ViewEntry entry) {
+	public void deleteEntry(final lotus.domino.ViewEntry entry) {
 		try {
 			getDelegate().deleteEntry((lotus.domino.ViewEntry) toLotus(entry));
 		} catch (Throwable t) {
@@ -166,7 +166,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#FTSearch(java.lang.String)
 	 */
 	@Override
-	public void FTSearch(String query) {
+	public void FTSearch(final String query) {
 		try {
 			getDelegate().FTSearch(query);
 		} catch (Throwable t) {
@@ -180,7 +180,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#FTSearch(java.lang.String, int)
 	 */
 	@Override
-	public void FTSearch(String query, int maxDocs) {
+	public void FTSearch(final String query, final int maxDocs) {
 		try {
 			getDelegate().FTSearch(query, maxDocs);
 		} catch (Throwable t) {
@@ -209,7 +209,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#getEntry(java.lang.Object)
 	 */
 	@Override
-	public ViewEntry getEntry(Object entry) {
+	public ViewEntry getEntry(final Object entry) {
 		try {
 			return Factory.fromLotus(getDelegate().getEntry(toLotus(entry)), org.openntf.domino.ViewEntry.class, this);
 		} catch (NotesException e) {
@@ -269,7 +269,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#getNextEntry(lotus.domino.ViewEntry)
 	 */
 	@Override
-	public ViewEntry getNextEntry(lotus.domino.ViewEntry entry) {
+	public ViewEntry getNextEntry(final lotus.domino.ViewEntry entry) {
 		try {
 			ViewEntry result = Factory.fromLotus(getDelegate().getNextEntry((lotus.domino.ViewEntry) toLotus(entry)),
 					org.openntf.domino.ViewEntry.class, this);
@@ -287,7 +287,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#getNthEntry(int)
 	 */
 	@Override
-	public ViewEntry getNthEntry(int n) {
+	public ViewEntry getNthEntry(final int n) {
 		try {
 			return Factory.fromLotus(getDelegate().getNthEntry(n), org.openntf.domino.ViewEntry.class, this);
 		} catch (NotesException e) {
@@ -327,7 +327,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#getPrevEntry(lotus.domino.ViewEntry)
 	 */
 	@Override
-	public ViewEntry getPrevEntry(lotus.domino.ViewEntry entry) {
+	public ViewEntry getPrevEntry(final lotus.domino.ViewEntry entry) {
 		try {
 			ViewEntry result = Factory.fromLotus(getDelegate().getPrevEntry((lotus.domino.ViewEntry) toLotus(entry)),
 					org.openntf.domino.ViewEntry.class, this);
@@ -360,7 +360,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#intersect(lotus.domino.Base)
 	 */
 	@Override
-	public void intersect(lotus.domino.Base entries) {
+	public void intersect(final lotus.domino.Base entries) {
 		try {
 			getDelegate().intersect(toLotus(entries));
 		} catch (Throwable t) {
@@ -374,7 +374,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#intersect(int)
 	 */
 	@Override
-	public void intersect(int noteId) {
+	public void intersect(final int noteId) {
 		try {
 			getDelegate().intersect(noteId);
 		} catch (Throwable t) {
@@ -388,7 +388,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#intersect(java.lang.String)
 	 */
 	@Override
-	public void intersect(String noteId) {
+	public void intersect(final String noteId) {
 		try {
 			getDelegate().intersect(noteId);
 		} catch (Throwable t) {
@@ -416,7 +416,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#markAllRead(java.lang.String)
 	 */
 	@Override
-	public void markAllRead(String userName) {
+	public void markAllRead(final String userName) {
 		try {
 			getDelegate().markAllUnread(userName);
 		} catch (Throwable t) {
@@ -444,7 +444,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#markAllUnread(java.lang.String)
 	 */
 	@Override
-	public void markAllUnread(String userName) {
+	public void markAllUnread(final String userName) {
 		try {
 			getDelegate().markAllUnread(userName);
 		} catch (Throwable t) {
@@ -458,7 +458,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#merge(lotus.domino.Base)
 	 */
 	@Override
-	public void merge(lotus.domino.Base entries) {
+	public void merge(final lotus.domino.Base entries) {
 		try {
 			getDelegate().merge(toLotus(entries));
 		} catch (Throwable t) {
@@ -472,7 +472,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#merge(int)
 	 */
 	@Override
-	public void merge(int noteId) {
+	public void merge(final int noteId) {
 		try {
 			getDelegate().merge(noteId);
 		} catch (Throwable t) {
@@ -486,7 +486,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#merge(java.lang.String)
 	 */
 	@Override
-	public void merge(String noteId) {
+	public void merge(final String noteId) {
 		try {
 			getDelegate().merge(noteId);
 		} catch (Throwable t) {
@@ -500,7 +500,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#putAllInFolder(java.lang.String)
 	 */
 	@Override
-	public void putAllInFolder(String folderName) {
+	public void putAllInFolder(final String folderName) {
 		try {
 			getDelegate().putAllInFolder(folderName);
 		} catch (Throwable t) {
@@ -514,7 +514,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#putAllInFolder(java.lang.String, boolean)
 	 */
 	@Override
-	public void putAllInFolder(String folderName, boolean createOnFail) {
+	public void putAllInFolder(final String folderName, final boolean createOnFail) {
 		try {
 			getDelegate().putAllInFolder(folderName, createOnFail);
 		} catch (Throwable t) {
@@ -528,7 +528,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#removeAll(boolean)
 	 */
 	@Override
-	public void removeAll(boolean force) {
+	public void removeAll(final boolean force) {
 		try {
 			getDelegate().removeAll(force);
 		} catch (Throwable t) {
@@ -542,7 +542,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#removeAllFromFolder(java.lang.String)
 	 */
 	@Override
-	public void removeAllFromFolder(String folderName) {
+	public void removeAllFromFolder(final String folderName) {
 		try {
 			getDelegate().removeAllFromFolder(folderName);
 		} catch (Throwable t) {
@@ -556,7 +556,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#stampAll(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public void stampAll(String itemName, Object value) {
+	public void stampAll(final String itemName, final Object value) {
 		try {
 			getDelegate().stampAll(itemName, value);
 		} catch (Throwable t) {
@@ -570,7 +570,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#subtract(lotus.domino.Base)
 	 */
 	@Override
-	public void subtract(lotus.domino.Base entries) {
+	public void subtract(final lotus.domino.Base entries) {
 		try {
 			getDelegate().subtract(toLotus(entries));
 		} catch (Throwable t) {
@@ -584,7 +584,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#subtract(int)
 	 */
 	@Override
-	public void subtract(int noteId) {
+	public void subtract(final int noteId) {
 		try {
 			getDelegate().subtract(noteId);
 		} catch (Throwable t) {
@@ -598,7 +598,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 * @see org.openntf.domino.ViewEntryCollection#subtract(java.lang.String)
 	 */
 	@Override
-	public void subtract(String noteId) {
+	public void subtract(final String noteId) {
 		try {
 			getDelegate().subtract(noteId);
 		} catch (Throwable t) {

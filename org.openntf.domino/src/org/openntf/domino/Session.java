@@ -69,7 +69,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 6.5.0
 	 */
 	@Override
-	public AdministrationProcess createAdministrationProcess(String server);
+	public AdministrationProcess createAdministrationProcess(final String server);
 
 	/**
 	 * Creates a new ColorObject object.
@@ -87,7 +87,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 *            the color
 	 * @return the color object
 	 */
-	public ColorObject createColorObject(java.awt.Color color);
+	public ColorObject createColorObject(final java.awt.Color color);
 
 	/**
 	 * Creates a new DateRange object.
@@ -110,7 +110,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public lotus.domino.DateRange createDateRange(Date startTime, Date endTime);
+	public lotus.domino.DateRange createDateRange(final Date startTime, final Date endTime);
 
 	/**
 	 * Creates a new DateRange object.
@@ -124,7 +124,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public lotus.domino.DateRange createDateRange(lotus.domino.DateTime startTime, lotus.domino.DateTime endTime);
+	public lotus.domino.DateRange createDateRange(final lotus.domino.DateTime startTime, final lotus.domino.DateTime endTime);
 
 	/**
 	 * Creates a DateTime object that represents a specified date and time.
@@ -136,7 +136,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public DateTime createDateTime(Calendar date);
+	public DateTime createDateTime(final Calendar date);
 
 	/**
 	 * Creates a DateTime object that represents a specified date and time.
@@ -148,7 +148,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public DateTime createDateTime(Date date);
+	public DateTime createDateTime(final Date date);
 
 	// there's no recycle burden?
 
@@ -162,7 +162,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public DateTime createDateTime(String date);
+	public DateTime createDateTime(final String date);
 
 	/**
 	 * Creates a DxlExporter object.
@@ -194,7 +194,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public Log createLog(String name);
+	public Log createLog(final String name);
 
 	/**
 	 * Creates a new Name object.
@@ -207,7 +207,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public Name createName(String name);
+	public Name createName(final String name);
 
 	/**
 	 * Creates a new Name object with the specified language.
@@ -230,7 +230,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public Name createName(String name, String lang);
+	public Name createName(final String name, final String lang);
 
 	/**
 	 * Given a DocumentCollection containing the documents you want, creates a new Newsletter.
@@ -242,7 +242,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public Newsletter createNewsletter(lotus.domino.DocumentCollection collection);
+	public Newsletter createNewsletter(final lotus.domino.DocumentCollection collection);
 
 	/**
 	 * Creates a new Registration object.
@@ -311,7 +311,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public Vector<Object> evaluate(String formula);
+	public Vector<Object> evaluate(final String formula);
 
 	/**
 	 * Evaluates a Domino formula against a given document.
@@ -357,7 +357,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public Vector<Object> evaluate(String formula, lotus.domino.Document doc);
+	public Vector<Object> evaluate(final String formula, final lotus.domino.Document doc);
 
 	/*
 	 * (non-Javadoc)
@@ -367,7 +367,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING })
-	public Vector<DateRange> freeTimeSearch(lotus.domino.DateRange window, int duration, Object names, boolean firstFit);
+	public Vector<DateRange> freeTimeSearch(final lotus.domino.DateRange window, final int duration, final Object names, final boolean firstFit);
 
 	/**
 	 * The Domino Directories and Personal Address Books, including directory catalogs, known to the current session.
@@ -410,7 +410,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public NotesCalendar getCalendar(lotus.domino.Database db);
+	public NotesCalendar getCalendar(final lotus.domino.Database db);
 
 	/**
 	 * The common name of the user that created the session.
@@ -464,7 +464,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public Database getDatabase(String server, String db);
+	public Database getDatabase(final String server, final String db);
 
 	/**
 	 * Creates a NotesDatabase object that represents the database located at the server and file name you specify with an option to create
@@ -486,7 +486,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public Database getDatabase(String server, String db, boolean createOnFail);
+	public Database getDatabase(final String server, final String db, final boolean createOnFail);
 
 	/**
 	 * Gets a directory of databases.
@@ -499,7 +499,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public DbDirectory getDbDirectory(String server);
+	public DbDirectory getDbDirectory(final String server);
 
 	/**
 	 * Creates a new NotesDirectory object using the name of the current server.
@@ -523,7 +523,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public Directory getDirectory(String server);
+	public Directory getDirectory(final String server);
 
 	/**
 	 * The login name of the user that created the session.
@@ -544,7 +544,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public String getEnvironmentString(String vname);
+	public String getEnvironmentString(final String vname);
 
 	/**
 	 * Gets the value of a string environment variable.
@@ -559,7 +559,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public String getEnvironmentString(String vname, boolean isSystem);
+	public String getEnvironmentString(final String vname, final boolean isSystem);
 
 	/**
 	 * Gets the value of a non-system numeric environment variable.
@@ -573,7 +573,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public Object getEnvironmentValue(String vname);
+	public Object getEnvironmentValue(final String vname);
 
 	/**
 	 * Gets the value of a numeric environment variable.
@@ -590,7 +590,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public Object getEnvironmentValue(String vname, boolean isSystem);
+	public Object getEnvironmentValue(final String vname, final boolean isSystem);
 
 	/**
 	 * The Domino URL of a server when HTTP protocols are in effect.
@@ -696,7 +696,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public String getSessionToken(String serverName);
+	public String getSessionToken(final String serverName);
 
 	/**
 	 * Gets the Domino� URL for the session.
@@ -805,7 +805,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 6.5.0
 	 */
 	@Override
-	public Document getUserPolicySettings(String server, String name, int type);
+	public Document getUserPolicySettings(final String server, final String name, final int type);
 
 	/**
 	 * Gets a policy document.
@@ -835,7 +835,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 6.5.0
 	 */
 	@Override
-	public Document getUserPolicySettings(String server, String name, int type, String explicitPolicy);
+	public Document getUserPolicySettings(final String server, final String name, final int type, final String explicitPolicy);
 
 	/**
 	 * Hashes a string value so that it is not recognizable.
@@ -846,7 +846,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 6.5.0
 	 */
 	@Override
-	public String hashPassword(String password);
+	public String hashPassword(final String password);
 
 	/**
 	 * Indicates whether items of type NotesItem.MIME_PART are converted to rich text upon NotesDocument instantiation.
@@ -923,7 +923,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @see lotus.domino.Session#resetUserPassword(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean resetUserPassword(String serverName, String userName, String password);
+	public boolean resetUserPassword(final String serverName, final String userName, final String password);
 
 	/*
 	 * (non-Javadoc)
@@ -931,7 +931,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @see lotus.domino.Session#resetUserPassword(java.lang.String, java.lang.String, java.lang.String, int)
 	 */
 	@Override
-	public boolean resetUserPassword(String serverName, String userName, String password, int downloadCount);
+	public boolean resetUserPassword(final String serverName, final String userName, final String password, final int downloadCount);
 
 	/*
 	 * (non-Javadoc)
@@ -939,7 +939,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @see lotus.domino.Session#resolve(java.lang.String)
 	 */
 	@Override
-	public lotus.domino.Base resolve(String url);
+	public lotus.domino.Base resolve(final String url);
 
 	/*
 	 * (non-Javadoc)
@@ -947,7 +947,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @see lotus.domino.Session#sendConsoleCommand(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String sendConsoleCommand(String serverName, String consoleCommand);
+	public String sendConsoleCommand(final String serverName, final String consoleCommand);
 
 	/*
 	 * (non-Javadoc)
@@ -955,7 +955,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @see lotus.domino.Session#setAllowLoopBack(boolean)
 	 */
 	@Override
-	public void setAllowLoopBack(boolean flag);
+	public void setAllowLoopBack(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -963,7 +963,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @see lotus.domino.Session#setConvertMime(boolean)
 	 */
 	@Override
-	public void setConvertMime(boolean flag);
+	public void setConvertMime(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -971,7 +971,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @see lotus.domino.Session#setConvertMIME(boolean)
 	 */
 	@Override
-	public void setConvertMIME(boolean flag);
+	public void setConvertMIME(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -979,7 +979,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @see lotus.domino.Session#setEnvironmentVar(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public void setEnvironmentVar(String vname, Object value);
+	public void setEnvironmentVar(final String vname, final Object value);
 
 	/*
 	 * (non-Javadoc)
@@ -987,7 +987,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @see lotus.domino.Session#setEnvironmentVar(java.lang.String, java.lang.Object, boolean)
 	 */
 	@Override
-	public void setEnvironmentVar(String vname, Object value, boolean isSystem);
+	public void setEnvironmentVar(final String vname, final Object value, final boolean isSystem);
 
 	/*
 	 * (non-Javadoc)
@@ -995,7 +995,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @see lotus.domino.Session#setTrackMillisecInJavaDates(boolean)
 	 */
 	@Override
-	public void setTrackMillisecInJavaDates(boolean flag);
+	public void setTrackMillisecInJavaDates(final boolean flag);
 
 	/**
 	 * Verifies a plain string value against a hashed value.
@@ -1009,5 +1009,5 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * 
 	 */
 	@Override
-	public boolean verifyPassword(String password, String hashedPassword);
+	public boolean verifyPassword(final String password, final String hashedPassword);
 }

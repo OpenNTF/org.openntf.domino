@@ -36,7 +36,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @param parent
 	 *            the parent
 	 */
-	public OutlineEntry(lotus.domino.OutlineEntry delegate, org.openntf.domino.Base<?> parent) {
+	public OutlineEntry(final lotus.domino.OutlineEntry delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -402,7 +402,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @see org.openntf.domino.OutlineEntry#setAction(java.lang.String)
 	 */
 	@Override
-	public boolean setAction(String action) {
+	public boolean setAction(final String action) {
 		try {
 			return getDelegate().setAction(action);
 		} catch (NotesException e) {
@@ -417,7 +417,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @see org.openntf.domino.OutlineEntry#setAlias(java.lang.String)
 	 */
 	@Override
-	public void setAlias(String alias) {
+	public void setAlias(final String alias) {
 		try {
 			getDelegate().setAlias(alias);
 		} catch (NotesException e) {
@@ -431,7 +431,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @see org.openntf.domino.OutlineEntry#setFrameText(java.lang.String)
 	 */
 	@Override
-	public void setFrameText(String frameText) {
+	public void setFrameText(final String frameText) {
 		try {
 			getDelegate().setFrameText(frameText);
 		} catch (NotesException e) {
@@ -445,7 +445,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @see org.openntf.domino.OutlineEntry#setHidden(boolean)
 	 */
 	@Override
-	public void setHidden(boolean flag) {
+	public void setHidden(final boolean flag) {
 		try {
 			getDelegate().setHidden(flag);
 		} catch (NotesException e) {
@@ -459,7 +459,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @see org.openntf.domino.OutlineEntry#setHiddenFromNotes(boolean)
 	 */
 	@Override
-	public void setHiddenFromNotes(boolean flag) {
+	public void setHiddenFromNotes(final boolean flag) {
 		try {
 			getDelegate().setHiddenFromNotes(flag);
 		} catch (NotesException e) {
@@ -473,7 +473,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @see org.openntf.domino.OutlineEntry#setHiddenFromWeb(boolean)
 	 */
 	@Override
-	public void setHiddenFromWeb(boolean flag) {
+	public void setHiddenFromWeb(final boolean flag) {
 		try {
 			getDelegate().setHiddenFromWeb(flag);
 		} catch (NotesException e) {
@@ -487,7 +487,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @see org.openntf.domino.OutlineEntry#setHideFormula(java.lang.String)
 	 */
 	@Override
-	public void setHideFormula(String formula) {
+	public void setHideFormula(final String formula) {
 		try {
 			getDelegate().setHideFormula(formula);
 		} catch (NotesException e) {
@@ -501,7 +501,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @see org.openntf.domino.OutlineEntry#setImagesText(java.lang.String)
 	 */
 	@Override
-	public void setImagesText(String imagesText) {
+	public void setImagesText(final String imagesText) {
 		try {
 			getDelegate().setImagesText(imagesText);
 		} catch (NotesException e) {
@@ -515,7 +515,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @see org.openntf.domino.OutlineEntry#setKeepSelectionFocus(boolean)
 	 */
 	@Override
-	public void setKeepSelectionFocus(boolean flag) {
+	public void setKeepSelectionFocus(final boolean flag) {
 		try {
 			getDelegate().setKeepSelectionFocus(flag);
 		} catch (NotesException e) {
@@ -529,7 +529,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @see org.openntf.domino.OutlineEntry#setLabel(java.lang.String)
 	 */
 	@Override
-	public void setLabel(String label) {
+	public void setLabel(final String label) {
 		try {
 			getDelegate().setLabel(label);
 		} catch (NotesException e) {
@@ -543,7 +543,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @see org.openntf.domino.OutlineEntry#setNamedElement(lotus.domino.Database, java.lang.String, int)
 	 */
 	@Override
-	public boolean setNamedElement(lotus.domino.Database db, String elementName, int entryClass) {
+	public boolean setNamedElement(final lotus.domino.Database db, final String elementName, final int entryClass) {
 		try {
 			return getDelegate().setNamedElement((lotus.domino.Database) toLotus(db), elementName, entryClass);
 		} catch (NotesException e) {
@@ -558,7 +558,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @see org.openntf.domino.OutlineEntry#setNoteLink(lotus.domino.Database)
 	 */
 	@Override
-	public boolean setNoteLink(lotus.domino.Database db) {
+	public boolean setNoteLink(final lotus.domino.Database db) {
 		try {
 			return getDelegate().setNoteLink((lotus.domino.Database) toLotus(db));
 		} catch (NotesException e) {
@@ -573,7 +573,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @see org.openntf.domino.OutlineEntry#setNoteLink(lotus.domino.Document)
 	 */
 	@Override
-	public boolean setNoteLink(lotus.domino.Document doc) {
+	public boolean setNoteLink(final lotus.domino.Document doc) {
 		try {
 			return getDelegate().setNoteLink((lotus.domino.Document) toLotus(doc));
 		} catch (NotesException e) {
@@ -588,7 +588,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @see org.openntf.domino.OutlineEntry#setNoteLink(lotus.domino.View)
 	 */
 	@Override
-	public boolean setNoteLink(lotus.domino.View view) {
+	public boolean setNoteLink(final lotus.domino.View view) {
 		try {
 			return getDelegate().setNoteLink((lotus.domino.View) toLotus(view));
 		} catch (NotesException e) {
@@ -603,7 +603,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @see org.openntf.domino.OutlineEntry#setURL(java.lang.String)
 	 */
 	@Override
-	public boolean setURL(String url) {
+	public boolean setURL(final String url) {
 		try {
 			return getDelegate().setURL(url);
 		} catch (NotesException e) {
@@ -618,7 +618,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @see org.openntf.domino.OutlineEntry#setUseHideFormula(boolean)
 	 */
 	@Override
-	public void setUseHideFormula(boolean flag) {
+	public void setUseHideFormula(final boolean flag) {
 		try {
 			getDelegate().setUseHideFormula(flag);
 		} catch (NotesException e) {

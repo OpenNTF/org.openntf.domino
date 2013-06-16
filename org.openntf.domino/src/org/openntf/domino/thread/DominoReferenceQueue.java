@@ -74,7 +74,7 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 		return poll(0l);
 	}
 
-	public Reference<? extends Base> poll(long cppid) {
+	public Reference<? extends Base> poll(final long cppid) {
 		DominoReference result = (DominoReference) super.poll();
 
 		if (result != null) {
@@ -125,7 +125,7 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 	 * @see java.lang.ref.ReferenceQueue#remove(long)
 	 */
 	@Override
-	public Reference<? extends Base> remove(long wait) throws InterruptedException {
+	public Reference<? extends Base> remove(final long wait) throws InterruptedException {
 		throw new UnimplementedException("DominoReferenceQueue only supports poll()");
 	}
 
@@ -138,7 +138,7 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 	 * @param ref
 	 *            the ref
 	 */
-	public void bagReference(DominoReference ref) {
+	public void bagReference(final DominoReference ref) {
 		bagginses++;
 		// if (bagginses % 5000 == 0) {
 		// log_.log(Level.FINE, "Bagged 5000 more. Forcing GC...");

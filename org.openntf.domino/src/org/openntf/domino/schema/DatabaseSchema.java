@@ -48,7 +48,7 @@ public class DatabaseSchema implements Externalizable {
 
 		}
 
-		public void setParent(DatabaseSchema parent) {
+		public void setParent(final DatabaseSchema parent) {
 			parentSchema_ = parent;
 		}
 
@@ -56,7 +56,7 @@ public class DatabaseSchema implements Externalizable {
 			return name_;
 		}
 
-		public void setName(String name) {
+		public void setName(final String name) {
 			name_ = name;
 		}
 
@@ -64,7 +64,7 @@ public class DatabaseSchema implements Externalizable {
 			return defaultSummary_;
 		}
 
-		public void setDefaultSummary(boolean defaultSummary) {
+		public void setDefaultSummary(final boolean defaultSummary) {
 			defaultSummary_ = defaultSummary;
 		}
 
@@ -85,11 +85,11 @@ public class DatabaseSchema implements Externalizable {
 			return itemDefinitionKeys_;
 		}
 
-		public void setItemDefinitionKeys(Set<String> itemDefinitionKeys) {
+		public void setItemDefinitionKeys(final Set<String> itemDefinitionKeys) {
 			itemDefinitionKeys_ = itemDefinitionKeys;
 		}
 
-		public void addItemDefinition(ItemDefinition itemDef) {
+		public void addItemDefinition(final ItemDefinition itemDef) {
 			if (itemDefs_ != null) {
 				itemDefs_.add(itemDef);
 			}
@@ -97,7 +97,7 @@ public class DatabaseSchema implements Externalizable {
 			addItemDefinitionKey(key);
 		}
 
-		public void addItemDefinitionKey(String key) {
+		public void addItemDefinitionKey(final String key) {
 			itemDefinitionKeys_.add(key);
 		}
 
@@ -115,7 +115,7 @@ public class DatabaseSchema implements Externalizable {
 		 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
 		 */
 		@Override
-		public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 			name_ = in.readUTF();
 			defaultSummary_ = in.readBoolean();
 			int defCount = in.readInt();
@@ -136,7 +136,7 @@ public class DatabaseSchema implements Externalizable {
 		 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
 		 */
 		@Override
-		public void writeExternal(ObjectOutput out) throws IOException {
+		public void writeExternal(final ObjectOutput out) throws IOException {
 			out.writeUTF(name_);
 			out.writeBoolean(defaultSummary_);
 			out.writeInt(itemDefinitionKeys_.size());
@@ -164,7 +164,7 @@ public class DatabaseSchema implements Externalizable {
 
 		}
 
-		public void setParent(DatabaseSchema parent) {
+		public void setParent(final DatabaseSchema parent) {
 			parentSchema_ = parent;
 		}
 
@@ -172,7 +172,7 @@ public class DatabaseSchema implements Externalizable {
 			return name_;
 		}
 
-		public void setName(String name) {
+		public void setName(final String name) {
 			name_ = name;
 		}
 
@@ -180,7 +180,7 @@ public class DatabaseSchema implements Externalizable {
 			return defaultLabel_;
 		}
 
-		public void setDefaultLabel(String defaultLabel) {
+		public void setDefaultLabel(final String defaultLabel) {
 			defaultLabel_ = defaultLabel;
 		}
 
@@ -188,7 +188,7 @@ public class DatabaseSchema implements Externalizable {
 			return type_;
 		}
 
-		public void setType(Class<?> type) {
+		public void setType(final Class<?> type) {
 			type_ = type;
 		}
 
@@ -196,11 +196,11 @@ public class DatabaseSchema implements Externalizable {
 			return flags_;
 		}
 
-		public void setFlags(Set<Flags> flags) {
+		public void setFlags(final Set<Flags> flags) {
 			flags_ = flags;
 		}
 
-		public void addFlag(Flags flag) {
+		public void addFlag(final Flags flag) {
 			flags_.add(flag);
 		}
 
@@ -208,7 +208,7 @@ public class DatabaseSchema implements Externalizable {
 			return defaultValue_;
 		}
 
-		public void setDefaultValue(Object defaultValue) {
+		public void setDefaultValue(final Object defaultValue) {
 			defaultValue_ = defaultValue;
 		}
 
@@ -216,7 +216,7 @@ public class DatabaseSchema implements Externalizable {
 			return validator_;
 		}
 
-		public void setValidator(ItemValidation validator) {
+		public void setValidator(final ItemValidation validator) {
 			validator_ = validator;
 		}
 
@@ -226,7 +226,7 @@ public class DatabaseSchema implements Externalizable {
 		 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
 		 */
 		@Override
-		public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 			name_ = in.readUTF();
 			defaultLabel_ = in.readUTF();
 			type_ = Class.forName(in.readUTF());
@@ -244,7 +244,7 @@ public class DatabaseSchema implements Externalizable {
 		 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
 		 */
 		@Override
-		public void writeExternal(ObjectOutput out) throws IOException {
+		public void writeExternal(final ObjectOutput out) throws IOException {
 			out.writeUTF(name_);
 			out.writeUTF(defaultLabel_);
 			out.writeUTF(type_.getCanonicalName());
@@ -256,7 +256,7 @@ public class DatabaseSchema implements Externalizable {
 			out.writeObject(validator_);
 		}
 
-		public Item createDefaultItem(Document doc, DocumentDefinition def) {
+		public Item createDefaultItem(final Document doc, final DocumentDefinition def) {
 			String name = getName();
 			Object defaultValue = getDefaultValue();
 			if (defaultValue == null) {
@@ -341,7 +341,7 @@ public class DatabaseSchema implements Externalizable {
 			return expression_;
 		}
 
-		public void setRegex(String expression) {
+		public void setRegex(final String expression) {
 			expression_ = Pattern.compile(expression);
 		}
 
@@ -349,7 +349,7 @@ public class DatabaseSchema implements Externalizable {
 			return required_;
 		}
 
-		public void setRequired(boolean required) {
+		public void setRequired(final boolean required) {
 			required_ = required;
 		}
 
@@ -357,7 +357,7 @@ public class DatabaseSchema implements Externalizable {
 			return unique_;
 		}
 
-		public void setUnique(boolean unique) {
+		public void setUnique(final boolean unique) {
 			unique_ = unique;
 		}
 
@@ -365,7 +365,7 @@ public class DatabaseSchema implements Externalizable {
 			return uniqueFormula_;
 		}
 
-		public void setUniqueFormula(Formula uniqueFormula) {
+		public void setUniqueFormula(final Formula uniqueFormula) {
 			uniqueFormula_ = uniqueFormula;
 		}
 
@@ -373,7 +373,7 @@ public class DatabaseSchema implements Externalizable {
 			return maxValue_;
 		}
 
-		public void setMaxValue(long maxValue) {
+		public void setMaxValue(final long maxValue) {
 			maxValue_ = maxValue;
 		}
 
@@ -381,7 +381,7 @@ public class DatabaseSchema implements Externalizable {
 			return minValue_;
 		}
 
-		public void setMinValue(long minValue) {
+		public void setMinValue(final long minValue) {
 			minValue_ = minValue;
 		}
 
@@ -389,7 +389,7 @@ public class DatabaseSchema implements Externalizable {
 			return maxMembers_;
 		}
 
-		public void setMaxMembers(int maxMembers) {
+		public void setMaxMembers(final int maxMembers) {
 			maxMembers_ = maxMembers;
 		}
 
@@ -397,7 +397,7 @@ public class DatabaseSchema implements Externalizable {
 			return minMembers_;
 		}
 
-		public void setMinMembers(int minMembers) {
+		public void setMinMembers(final int minMembers) {
 			minMembers_ = minMembers;
 		}
 
@@ -407,7 +407,7 @@ public class DatabaseSchema implements Externalizable {
 		 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
 		 */
 		@Override
-		public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 			required_ = in.readBoolean();
 			unique_ = in.readBoolean();
 			maxValue_ = in.readLong();
@@ -424,7 +424,7 @@ public class DatabaseSchema implements Externalizable {
 		 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
 		 */
 		@Override
-		public void writeExternal(ObjectOutput out) throws IOException {
+		public void writeExternal(final ObjectOutput out) throws IOException {
 			out.writeBoolean(required_);
 			out.writeBoolean(unique_);
 			out.writeLong(maxValue_);
@@ -451,7 +451,7 @@ public class DatabaseSchema implements Externalizable {
 		return documentDefinitions_;
 	}
 
-	public void setDocumentDefinitions(Map<String, DocumentDefinition> definitions) {
+	public void setDocumentDefinitions(final Map<String, DocumentDefinition> definitions) {
 		documentDefinitions_ = definitions;
 	}
 
@@ -459,15 +459,15 @@ public class DatabaseSchema implements Externalizable {
 		return itemDefinitions_;
 	}
 
-	public void setItemDefinitions(Map<String, ItemDefinition> definitions) {
+	public void setItemDefinitions(final Map<String, ItemDefinition> definitions) {
 		itemDefinitions_ = definitions;
 	}
 
-	public void save(Database db) {
+	public void save(final Database db) {
 
 	}
 
-	public Document createDocument(Database db, String doctype) {
+	public Document createDocument(final Database db, final String doctype) {
 		DocumentDefinition def = getDocumentDefinitions().get(doctype);
 		if (def == null)
 			return null;
@@ -482,7 +482,7 @@ public class DatabaseSchema implements Externalizable {
 		return result;
 	}
 
-	public boolean validateDocument(Document doc) {
+	public boolean validateDocument(final Document doc) {
 		String doctype = doc.getItemValueString("$$SchemaType");
 		DocumentDefinition def = getDocumentDefinitions().get(doctype);
 		if (def == null)
@@ -503,7 +503,7 @@ public class DatabaseSchema implements Externalizable {
 	 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
 	 */
 	@Override
-	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 		int defCount = in.readInt();
 		for (int i = 0; i < defCount; i++) {
 			String key = in.readUTF();
@@ -526,7 +526,7 @@ public class DatabaseSchema implements Externalizable {
 	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
 	 */
 	@Override
-	public void writeExternal(ObjectOutput out) throws IOException {
+	public void writeExternal(final ObjectOutput out) throws IOException {
 		out.writeInt(documentDefinitions_.size());
 		for (Map.Entry<String, DocumentDefinition> entry : documentDefinitions_.entrySet()) {
 			out.writeUTF(entry.getKey());

@@ -11,23 +11,23 @@ import java.util.Vector;
  * 
  */
 public interface Formula extends Externalizable {
-	public void setSession(org.openntf.domino.Session session);
+	public void setSession(final org.openntf.domino.Session session);
 
-	public void setExpression(String expression);
+	public void setExpression(final String expression);
 
 	@SuppressWarnings("rawtypes")
 	public Vector getValue();
 
-	public <T> T getValue(Class<?> T);
+	public <T> T getValue(final Class<?> T);
 
 	@SuppressWarnings("rawtypes")
-	public Vector getValue(org.openntf.domino.Session session);
+	public Vector getValue(final org.openntf.domino.Session session);
 
-	public <T> T getValue(org.openntf.domino.Session session, Class<?> T);
+	public <T> T getValue(final org.openntf.domino.Session session, final Class<?> T);
 
 	@SuppressWarnings("rawtypes")
-	public Vector getValue(org.openntf.domino.Document document);
+	public Vector getValue(final org.openntf.domino.Document document);
 
-	public <T> T getValue(org.openntf.domino.Document document, Class<?> T);
+	public <T> T getValue(final org.openntf.domino.Document document, final Class<?> T);
 
 }

@@ -38,7 +38,7 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 	 * @param parent
 	 *            the parent
 	 */
-	public ReplicationEntry(lotus.domino.ReplicationEntry delegate, org.openntf.domino.Base<?> parent) {
+	public ReplicationEntry(final lotus.domino.ReplicationEntry delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -221,7 +221,7 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 	 * @see org.openntf.domino.ReplicationEntry#setFormula(java.lang.String)
 	 */
 	@Override
-	public void setFormula(String formula) {
+	public void setFormula(final String formula) {
 		try {
 			getDelegate().setFormula(formula);
 		} catch (NotesException e) {
@@ -235,7 +235,7 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 	 * @see org.openntf.domino.ReplicationEntry#setIncludeACL(boolean)
 	 */
 	@Override
-	public void setIncludeACL(boolean flag) {
+	public void setIncludeACL(final boolean flag) {
 		try {
 			getDelegate().setIncludeACL(flag);
 		} catch (NotesException e) {
@@ -249,7 +249,7 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 	 * @see org.openntf.domino.ReplicationEntry#setIncludeAgents(boolean)
 	 */
 	@Override
-	public void setIncludeAgents(boolean flag) {
+	public void setIncludeAgents(final boolean flag) {
 		try {
 			getDelegate().setIncludeAgents(flag);
 		} catch (NotesException e) {
@@ -263,7 +263,7 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 	 * @see org.openntf.domino.ReplicationEntry#setIncludeDocuments(boolean)
 	 */
 	@Override
-	public void setIncludeDocuments(boolean flag) {
+	public void setIncludeDocuments(final boolean flag) {
 		try {
 			getDelegate().setIncludeDocuments(flag);
 		} catch (NotesException e) {
@@ -277,7 +277,7 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 	 * @see org.openntf.domino.ReplicationEntry#setIncludeForms(boolean)
 	 */
 	@Override
-	public void setIncludeForms(boolean flag) {
+	public void setIncludeForms(final boolean flag) {
 		try {
 			getDelegate().setIncludeForms(flag);
 		} catch (NotesException e) {
@@ -291,7 +291,7 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 	 * @see org.openntf.domino.ReplicationEntry#setIncludeFormulas(boolean)
 	 */
 	@Override
-	public void setIncludeFormulas(boolean flag) {
+	public void setIncludeFormulas(final boolean flag) {
 		try {
 			getDelegate().setIncludeFormulas(flag);
 		} catch (NotesException e) {
@@ -305,7 +305,7 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 	 * @see org.openntf.domino.ReplicationEntry#setViews(java.lang.String)
 	 */
 	@Override
-	public void setViews(String views) {
+	public void setViews(final String views) {
 		try {
 			getDelegate().setViews(views);
 		} catch (NotesException e) {
@@ -316,7 +316,7 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.ReplicationEntry#setViews(java.util.Collection)
 	 */
-	public void setViews(Collection<String> views) {
+	public void setViews(final Collection<String> views) {
 		StringBuilder result = new StringBuilder();
 		boolean first = true;
 		for (String view : views) {

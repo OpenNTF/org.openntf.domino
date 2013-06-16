@@ -12,7 +12,7 @@ public enum BasicViewLooping {
 	private BasicViewLooping() {
 	}
 
-	public static void printViewEntries(PrintWriter out, View view) {
+	public static void printViewEntries(final PrintWriter out, final View view) {
 		long start = System.nanoTime();
 		for (ViewEntry entry : view.getAllEntries()) {
 			out.println(entry.getPosition('.') + " - " + entry.getColumnValues());
@@ -33,7 +33,7 @@ public enum BasicViewLooping {
 	 * @param view
 	 *            the view
 	 */
-	public static void printDocs(PrintWriter out, View view) {
+	public static void printDocs(final PrintWriter out, final View view) {
 		long start = System.nanoTime();
 		Document doc = view.getFirstDocument();
 		while (doc != null) {

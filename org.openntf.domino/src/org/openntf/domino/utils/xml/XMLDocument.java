@@ -30,17 +30,17 @@ public class XMLDocument extends XMLNode {
 	public XMLDocument() {
 	}
 
-	public XMLDocument(Node node) {
+	public XMLDocument(final Node node) {
 		super(node);
 	}
 
-	public XMLDocument(String xml) throws SAXException, IOException, ParserConfigurationException {
+	public XMLDocument(final String xml) throws SAXException, IOException, ParserConfigurationException {
 		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 
 		this.node = builder.parse(xml);
 	}
 
-	public void loadURL(String urlString) throws SAXException, IOException, ParserConfigurationException {
+	public void loadURL(final String urlString) throws SAXException, IOException, ParserConfigurationException {
 		URL url = new URL(urlString);
 		URLConnection conn = url.openConnection();
 
@@ -49,13 +49,13 @@ public class XMLDocument extends XMLNode {
 		this.node = builder.parse((InputStream) conn.getContent());
 	}
 
-	public void loadInputStream(InputStream is) throws SAXException, IOException, ParserConfigurationException {
+	public void loadInputStream(final InputStream is) throws SAXException, IOException, ParserConfigurationException {
 		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 
 		this.node = builder.parse(is);
 	}
 
-	public void loadString(String s) throws SAXException, IOException, ParserConfigurationException {
+	public void loadString(final String s) throws SAXException, IOException, ParserConfigurationException {
 		loadInputStream(new ByteArrayInputStream(s.getBytes()));
 	}
 

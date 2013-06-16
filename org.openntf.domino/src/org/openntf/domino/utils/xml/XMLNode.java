@@ -39,16 +39,16 @@ public class XMLNode implements Map<String, Object>, Serializable {
 	protected XMLNode() {
 	}
 
-	public XMLNode(org.w3c.dom.Node node) {
+	public XMLNode(final org.w3c.dom.Node node) {
 		this.node = node;
 	}
 
-	public XMLNode selectSingleNode(String xpathString) throws XPathExpressionException {
+	public XMLNode selectSingleNode(final String xpathString) throws XPathExpressionException {
 		List<XMLNode> result = this.selectNodes(xpathString);
 		return result.size() == 0 ? null : result.get(0);
 	}
 
-	public List<XMLNode> selectNodes(String xpathString) throws XPathExpressionException {
+	public List<XMLNode> selectNodes(final String xpathString) throws XPathExpressionException {
 
 		NodeList nodes = (NodeList) this.getXPath().compile(xpathString).evaluate(node, XPathConstants.NODESET);
 		List<XMLNode> result = new XMLNodeList(nodes.getLength());
@@ -59,7 +59,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return result;
 	}
 
-	public String getAttribute(String attribute) {
+	public String getAttribute(final String attribute) {
 		if (this.node == null) {
 			return "";
 		}
@@ -71,7 +71,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return attr.getTextContent();
 	}
 
-	public void setAttribute(String attribute, String value) {
+	public void setAttribute(final String attribute, final String value) {
 		Node attr = this.node.getAttributes().getNamedItem(attribute);
 		if (attr == null) {
 			attr = getDocument().createAttribute(attribute);
@@ -87,7 +87,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return node.getTextContent();
 	}
 
-	public void setText(String text) {
+	public void setText(final String text) {
 		if (node == null) {
 			return;
 		}
@@ -98,7 +98,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return this.getText();
 	}
 
-	public void setTextContent(String textContent) {
+	public void setTextContent(final String textContent) {
 		this.setText(textContent);
 	}
 
@@ -109,20 +109,20 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return node.getNodeValue();
 	}
 
-	public void setNodeValue(String value) {
+	public void setNodeValue(final String value) {
 		if (node == null) {
 			return;
 		}
 		node.setNodeValue(value);
 	}
 
-	public XMLNode addChildElement(String elementName) {
+	public XMLNode addChildElement(final String elementName) {
 		Node node = this.getDocument().createElement(elementName);
 		this.node.appendChild(node);
 		return new XMLNode(node);
 	}
 
-	public XMLNode insertChildElementBefore(String elementName, XMLNode refNode) {
+	public XMLNode insertChildElementBefore(final String elementName, final XMLNode refNode) {
 		Node node = this.getDocument().createElement(elementName);
 		this.node.insertBefore(node, refNode.getNode());
 		return new XMLNode(node);
@@ -144,7 +144,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return null;
 	}
 
-	public void removeChild(XMLNode childNode) {
+	public void removeChild(final XMLNode childNode) {
 		this.getNode().removeChild(childNode.getNode());
 	}
 
@@ -156,11 +156,11 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return null;
 	}
 
-	public void appendChild(XMLNode node) {
+	public void appendChild(final XMLNode node) {
 		this.getNode().appendChild(node.getNode());
 	}
 
-	public void insertBefore(XMLNode newChild, XMLNode refChild) {
+	public void insertBefore(final XMLNode newChild, final XMLNode refChild) {
 		this.getNode().insertBefore(newChild.getNode(), refChild.getNode());
 	}
 
@@ -168,7 +168,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return this.node;
 	}
 
-	public Object get(Object arg0) {
+	public Object get(final Object arg0) {
 		String path = String.valueOf(arg0);
 
 		if (path.equals("nodeValue")) {
@@ -223,11 +223,11 @@ public class XMLNode implements Map<String, Object>, Serializable {
 	public void clear() {
 	}
 
-	public boolean containsKey(Object arg0) {
+	public boolean containsKey(final Object arg0) {
 		return false;
 	}
 
-	public boolean containsValue(Object arg0) {
+	public boolean containsValue(final Object arg0) {
 		return false;
 	}
 
@@ -243,7 +243,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return null;
 	}
 
-	public Object put(String arg0, Object arg1) {
+	public Object put(final String arg0, final Object arg1) {
 		if (arg0.equals("nodeValue")) {
 			this.getNode().setNodeValue(String.valueOf(arg1));
 			return arg1;
@@ -254,10 +254,10 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return null;
 	}
 
-	public void putAll(Map<? extends String, ? extends Object> arg0) {
+	public void putAll(final Map<? extends String, ? extends Object> arg0) {
 	}
 
-	public Object remove(Object arg0) {
+	public Object remove(final Object arg0) {
 		return null;
 	}
 

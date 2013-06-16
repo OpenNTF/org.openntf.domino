@@ -121,7 +121,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @param parent
 	 *            the new parent
 	 */
-	void setParent(org.openntf.domino.Base<?> parent) {
+	void setParent(final org.openntf.domino.Base<?> parent) {
 		parent_ = parent;
 		// TODO NTF - add to parent's children set?
 	}
@@ -144,7 +144,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the parent
 	 */
 	@SuppressWarnings("rawtypes")
-	protected Base(D delegate, org.openntf.domino.Base<?> parent) {
+	protected Base(final D delegate, final org.openntf.domino.Base<?> parent) {
 		if (parent != null) {
 			setParent(parent);
 		}
@@ -177,7 +177,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	}
 
-	void setDelegate(D delegate) {
+	void setDelegate(final D delegate) {
 
 		delegate_ = delegate;
 		cpp_object = getLotusId((lotus.domino.local.NotesBase) delegate);
@@ -202,7 +202,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the base
 	 * @return the lotus id
 	 */
-	public static long getLotusId(lotus.domino.local.NotesBase base) {
+	public static long getLotusId(final lotus.domino.local.NotesBase base) {
 		try {
 			return ((Long) getCppMethod.invoke(base, (Object[]) null)).longValue();
 		} catch (Exception e) {
@@ -224,7 +224,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * 
 	 * @return the int
 	 */
-	public static int drainQueue(long cppid) {
+	public static int drainQueue(final long cppid) {
 		int result = 0;
 		DominoReferenceQueue drq = _getRecycleQueue();
 		Reference<?> ref = drq.poll(cppid);
@@ -256,7 +256,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @return the delegate
 	 */
 	@SuppressWarnings("rawtypes")
-	public static lotus.domino.Base getDelegate(lotus.domino.Base wrapper) {
+	public static lotus.domino.Base getDelegate(final lotus.domino.Base wrapper) {
 		if (wrapper instanceof org.openntf.domino.impl.Base) {
 			return ((org.openntf.domino.impl.Base) wrapper).getDelegate();
 		}
@@ -271,7 +271,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @return the cpp handle
 	 */
 	@SuppressWarnings("rawtypes")
-	public static long getDelegateId(org.openntf.domino.impl.Base wrapper) {
+	public static long getDelegateId(final org.openntf.domino.impl.Base wrapper) {
 		return ((org.openntf.domino.impl.Base) wrapper).cpp_object;
 	}
 
@@ -307,7 +307,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the base
 	 * @return true, if is locked
 	 */
-	public static boolean isLocked(lotus.domino.Base base) {
+	public static boolean isLocked(final lotus.domino.Base base) {
 		return lockedRefSet.isLocked(base);
 	}
 
@@ -317,7 +317,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @param base
 	 *            the base
 	 */
-	public static void unlock(lotus.domino.Base base) {
+	public static void unlock(final lotus.domino.Base base) {
 		lockedRefSet.unlock(base);
 	}
 
@@ -327,7 +327,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @param base
 	 *            the base
 	 */
-	public static void lock(lotus.domino.Base base) {
+	public static void lock(final lotus.domino.Base base) {
 		lockedRefSet.lock(base);
 	}
 
@@ -337,7 +337,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @param allYourBase
 	 *            the all your base
 	 */
-	public static void lock(lotus.domino.Base... allYourBase) {
+	public static void lock(final lotus.domino.Base... allYourBase) {
 		for (lotus.domino.Base everyZig : allYourBase) {
 			lockedRefSet.lock(everyZig);
 		}
@@ -349,7 +349,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @param allYourBase
 	 *            the all your base
 	 */
-	public static void unlock(lotus.domino.Base... allYourBase) {
+	public static void unlock(final lotus.domino.Base... allYourBase) {
 		lockedRefSet.unlock(allYourBase);
 	}
 
@@ -370,7 +370,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the base
 	 * @return true, if is recycled
 	 */
-	public static boolean isRecycled(lotus.domino.local.NotesBase base) {
+	public static boolean isRecycled(final lotus.domino.local.NotesBase base) {
 		try {
 			return ((Boolean) isInvalidMethod.invoke(base, (Object[]) null)).booleanValue();
 		} catch (Exception e) {
@@ -410,7 +410,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the base obj
 	 * @return the lotus.domino. base
 	 */
-	public static lotus.domino.Base toLotus(lotus.domino.Base baseObj) {
+	public static lotus.domino.Base toLotus(final lotus.domino.Base baseObj) {
 		if (baseObj instanceof org.openntf.domino.Base) {
 			return ((Base<?, ?>) baseObj).getDelegate();
 		}
@@ -425,7 +425,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the base obj
 	 * @return the lotus.domino. base version or the object itself, as appropriate
 	 */
-	public static Object toLotus(Object baseObj) {
+	public static Object toLotus(final Object baseObj) {
 		if (baseObj instanceof org.openntf.domino.Base) {
 			return ((Base<?, ?>) baseObj).getDelegate();
 		}
@@ -447,7 +447,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @throws IllegalArgumentException
 	 *             When the object is not convertible.
 	 */
-	protected static Object toDominoFriendly(Object value, Base<?, ?> context) throws IllegalArgumentException {
+	protected static Object toDominoFriendly(final Object value, final Base<?, ?> context) throws IllegalArgumentException {
 
 		// First, go over the normal data types
 		if (value instanceof lotus.domino.DateTime) {
@@ -494,7 +494,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @throws IllegalArgumentException
 	 *             the illegal argument exception
 	 */
-	protected static Vector<Object> toDominoFriendly(Collection<?> values, Base<?, ?> context) throws IllegalArgumentException {
+	protected static Vector<Object> toDominoFriendly(final Collection<?> values, final Base<?, ?> context) throws IllegalArgumentException {
 		Vector<Object> result = new Vector<Object>();
 		for (Object value : values) {
 			result.add(toDominoFriendly(value, context));
@@ -509,7 +509,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the values
 	 * @return the java.util. vector
 	 */
-	public static java.util.Vector<Object> toLotus(Collection<?> values) {
+	public static java.util.Vector<Object> toLotus(final Collection<?> values) {
 		java.util.Vector<Object> result = new java.util.Vector<Object>(values.size());
 		for (Object value : values) {
 			if (value instanceof lotus.domino.Base) {
@@ -528,7 +528,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the base
 	 * @return true, if successful
 	 */
-	public static boolean s_recycle(lotus.domino.local.NotesBase base) {
+	public static boolean s_recycle(final lotus.domino.local.NotesBase base) {
 		boolean result = false;
 		if (!isLocked(base)) {
 			try {
@@ -550,7 +550,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @param o
 	 *            the o
 	 */
-	public static void s_recycle(Object o) {
+	public static void s_recycle(final Object o) {
 		if (o instanceof lotus.domino.Base) {
 			if (o instanceof lotus.domino.local.NotesBase) {
 				s_recycle((lotus.domino.local.NotesBase) o);
@@ -559,7 +559,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	}
 
-	public static void enc_recycle(Object o) {
+	public static void enc_recycle(final Object o) {
 		// NTF this is for recycling of encapsulated objects like DateTime and Name
 		if (o instanceof Collection) {
 			if (!((Collection) o).isEmpty()) {
@@ -592,7 +592,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 */
 	@Deprecated
 	@SuppressWarnings("rawtypes")
-	public void recycle(Vector arg0) {
+	public void recycle(final Vector arg0) {
 		for (Object o : arg0) {
 			if (o instanceof org.openntf.domino.impl.Base) {
 				s_recycle((org.openntf.domino.impl.Base) o);

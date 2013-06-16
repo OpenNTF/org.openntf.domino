@@ -15,7 +15,7 @@ public class UsingDocument extends AbstractDesignBase implements org.openntf.dom
 	/**
 	 * @param document
 	 */
-	protected UsingDocument(Document document) {
+	protected UsingDocument(final Document document) {
 		super(document);
 	}
 

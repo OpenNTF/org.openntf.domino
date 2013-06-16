@@ -20,7 +20,7 @@ public class AbstractFolder extends AbstractDesignBaseNamed implements Folder {
 	/**
 	 * @param document
 	 */
-	public AbstractFolder(Document document) {
+	public AbstractFolder(final Document document) {
 		super(document);
 	}
 

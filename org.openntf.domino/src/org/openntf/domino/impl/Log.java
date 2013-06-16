@@ -35,7 +35,7 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log> implemen
 	 * @param parent
 	 *            the parent
 	 */
-	public Log(lotus.domino.Log delegate, org.openntf.domino.Base<?> parent) {
+	public Log(final lotus.domino.Log delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -159,7 +159,7 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log> implemen
 	 * @see org.openntf.domino.Log#logAction(java.lang.String)
 	 */
 	@Override
-	public void logAction(String action) {
+	public void logAction(final String action) {
 		try {
 			getDelegate().logAction(action);
 		} catch (NotesException ne) {
@@ -173,7 +173,7 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log> implemen
 	 * @see org.openntf.domino.Log#logError(int, java.lang.String)
 	 */
 	@Override
-	public void logError(int code, String text) {
+	public void logError(final int code, final String text) {
 		try {
 			getDelegate().logError(code, text);
 		} catch (NotesException ne) {
@@ -187,7 +187,7 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log> implemen
 	 * @see org.openntf.domino.Log#logEvent(java.lang.String, java.lang.String, int, int)
 	 */
 	@Override
-	public void logEvent(String text, String queue, int event, int severity) {
+	public void logEvent(final String text, final String queue, final int event, final int severity) {
 		try {
 			getDelegate().logEvent(text, queue, event, severity);
 		} catch (NotesException ne) {
@@ -215,7 +215,7 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log> implemen
 	 * @see org.openntf.domino.Log#openFileLog(java.lang.String)
 	 */
 	@Override
-	public void openFileLog(String filePath) {
+	public void openFileLog(final String filePath) {
 		try {
 			getDelegate().openFileLog(filePath);
 		} catch (NotesException ne) {
@@ -230,7 +230,7 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log> implemen
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void openMailLog(Vector recipients, String subject) {
+	public void openMailLog(final Vector recipients, final String subject) {
 		try {
 			java.util.Vector v = toDominoFriendly(recipients, this);
 			getDelegate().openMailLog(v, subject);
@@ -246,7 +246,7 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log> implemen
 	 * @see org.openntf.domino.Log#openNotesLog(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void openNotesLog(String server, String db) {
+	public void openNotesLog(final String server, final String db) {
 		try {
 			getDelegate().openNotesLog(server, db);
 		} catch (NotesException ne) {
@@ -260,7 +260,7 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log> implemen
 	 * @see org.openntf.domino.Log#setLogActions(boolean)
 	 */
 	@Override
-	public void setLogActions(boolean flag) {
+	public void setLogActions(final boolean flag) {
 		try {
 			getDelegate().setLogActions(flag);
 		} catch (NotesException ne) {
@@ -274,7 +274,7 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log> implemen
 	 * @see org.openntf.domino.Log#setLogErrors(boolean)
 	 */
 	@Override
-	public void setLogErrors(boolean flag) {
+	public void setLogErrors(final boolean flag) {
 		try {
 			getDelegate().setLogErrors(flag);
 		} catch (NotesException ne) {
@@ -288,7 +288,7 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log> implemen
 	 * @see org.openntf.domino.Log#setOverwriteFile(boolean)
 	 */
 	@Override
-	public void setOverwriteFile(boolean flag) {
+	public void setOverwriteFile(final boolean flag) {
 		try {
 			getDelegate().setOverwriteFile(flag);
 		} catch (NotesException ne) {
@@ -302,7 +302,7 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log> implemen
 	 * @see org.openntf.domino.Log#setProgramName(java.lang.String)
 	 */
 	@Override
-	public void setProgramName(String name) {
+	public void setProgramName(final String name) {
 		try {
 			getDelegate().setProgramName(name);
 		} catch (NotesException ne) {

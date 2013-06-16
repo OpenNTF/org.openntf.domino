@@ -60,12 +60,12 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @param parent
 	 *            the parent
 	 */
-	public Database(lotus.domino.Database delegate, org.openntf.domino.Base<?> parent) {
+	public Database(final lotus.domino.Database delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
 		initialize(delegate);
 	}
 
-	private void initialize(lotus.domino.Database delegate) {
+	private void initialize(final lotus.domino.Database delegate) {
 		try {
 			server_ = delegate.getServer();
 			path_ = delegate.getFilePath();
@@ -80,7 +80,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#FTDomainSearch(java.lang.String, int, int, int, int, int, java.lang.String)
 	 */
-	public Document FTDomainSearch(String query, int maxDocs, int sortOpt, int otherOpt, int start, int count, String entryForm) {
+	public Document FTDomainSearch(final String query, final int maxDocs, final int sortOpt, final int otherOpt, final int start, final int count, final String entryForm) {
 		try {
 			return Factory.fromLotus(getDelegate().FTDomainSearch(query, maxDocs, sortOpt, otherOpt, start, count, entryForm),
 					Document.class, this);
@@ -98,8 +98,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * java.lang.String)
 	 */
 	@Override
-	public Document FTDomainSearch(String query, int maxDocs, FTDomainSortOption sortOpt, Set<FTDomainSearchOption> otherOpt, int start,
-			int count, String entryForm) {
+	public Document FTDomainSearch(final String query, final int maxDocs, final FTDomainSortOption sortOpt, final Set<FTDomainSearchOption> otherOpt, final int start,
+			final int count, final String entryForm) {
 		int nativeOptions = 0;
 		for (FTDomainSearchOption option : otherOpt) {
 			nativeOptions += option.getValue();
@@ -113,7 +113,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#FTSearch(java.lang.String, int, int, int)
 	 */
-	public DocumentCollection FTSearch(String query, int maxDocs, int sortOpt, int otherOpt) {
+	public DocumentCollection FTSearch(final String query, final int maxDocs, final int sortOpt, final int otherOpt) {
 		try {
 			return Factory.fromLotus(getDelegate().FTSearch(query, maxDocs, sortOpt, otherOpt), DocumentCollection.class, this);
 		} catch (NotesException e) {
@@ -128,7 +128,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#FTSearch(java.lang.String, int, org.openntf.domino.Database.SortOption, int)
 	 */
 	@Override
-	public DocumentCollection FTSearch(String query, int maxDocs, FTSortOption sortOpt, Set<FTSearchOption> otherOpt) {
+	public DocumentCollection FTSearch(final String query, final int maxDocs, final FTSortOption sortOpt, final Set<FTSearchOption> otherOpt) {
 		int nativeOptions = 0;
 		for (FTSearchOption option : otherOpt) {
 			nativeOptions += option.getValue();
@@ -141,7 +141,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#FTSearch(java.lang.String, int)
 	 */
-	public DocumentCollection FTSearch(String query, int maxDocs) {
+	public DocumentCollection FTSearch(final String query, final int maxDocs) {
 		try {
 			return Factory.fromLotus(getDelegate().FTSearch(query, maxDocs), DocumentCollection.class, this);
 		} catch (NotesException e) {
@@ -155,7 +155,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#FTSearch(java.lang.String)
 	 */
-	public DocumentCollection FTSearch(String query) {
+	public DocumentCollection FTSearch(final String query) {
 		try {
 			return Factory.fromLotus(getDelegate().FTSearch(query), DocumentCollection.class, this);
 		} catch (NotesException e) {
@@ -170,7 +170,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#FTSearchRange(java.lang.String, int, int, int, int)
 	 */
-	public DocumentCollection FTSearchRange(String query, int maxDocs, int sortOpt, int otherOpt, int start) {
+	public DocumentCollection FTSearchRange(final String query, final int maxDocs, final int sortOpt, final int otherOpt, final int start) {
 		try {
 			return Factory.fromLotus(getDelegate().FTSearchRange(query, maxDocs, sortOpt, otherOpt, start), DocumentCollection.class, this);
 		} catch (NotesException e) {
@@ -186,7 +186,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#FTSearchRange(java.lang.String, int, org.openntf.domino.Database.SortOption, int, int)
 	 */
 	@Override
-	public DocumentCollection FTSearchRange(String query, int maxDocs, FTSortOption sortOpt, Set<FTSearchOption> otherOpt, int start) {
+	public DocumentCollection FTSearchRange(final String query, final int maxDocs, final FTSortOption sortOpt, final Set<FTSearchOption> otherOpt, final int start) {
 		int nativeOptions = 0;
 		for (FTSearchOption option : otherOpt) {
 			nativeOptions += option.getValue();
@@ -200,7 +200,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#get(java.lang.Object)
 	 */
 	@Override
-	public org.openntf.domino.Document get(Object key) {
+	public org.openntf.domino.Document get(final Object key) {
 		return this.getDocumentByKey((String) key);
 	}
 
@@ -223,7 +223,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#compactWithOptions(int, java.lang.String)
 	 */
-	public int compactWithOptions(int options, String spaceThreshold) {
+	public int compactWithOptions(final int options, final String spaceThreshold) {
 		try {
 			return getDelegate().compactWithOptions(options, spaceThreshold);
 		} catch (NotesException e) {
@@ -238,7 +238,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#compactWithOptions(int)
 	 */
-	public int compactWithOptions(int options) {
+	public int compactWithOptions(final int options) {
 		try {
 			return getDelegate().compactWithOptions(options);
 		} catch (NotesException e) {
@@ -253,7 +253,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#compactWithOptions(java.lang.String)
 	 */
-	public int compactWithOptions(String spaceThreshold) {
+	public int compactWithOptions(final String spaceThreshold) {
 		try {
 			return getDelegate().compactWithOptions(spaceThreshold);
 		} catch (NotesException e) {
@@ -268,7 +268,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#createCopy(java.lang.String, java.lang.String, int)
 	 */
-	public Database createCopy(String server, String dbFile, int maxSize) {
+	public Database createCopy(final String server, final String dbFile, final int maxSize) {
 		try {
 			return Factory.fromLotus(getDelegate().createCopy(server, dbFile, maxSize), Database.class, this);
 		} catch (NotesException e) {
@@ -284,7 +284,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#containsKey(java.lang.Object)
 	 */
 	@Override
-	public boolean containsKey(Object key) {
+	public boolean containsKey(final Object key) {
 		return get(key) != null;
 	}
 
@@ -293,7 +293,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#createCopy(java.lang.String, java.lang.String)
 	 */
-	public Database createCopy(String server, String dbFile) {
+	public Database createCopy(final String server, final String dbFile) {
 		try {
 			return Factory.fromLotus(getDelegate().createCopy(server, dbFile), Database.class, this);
 		} catch (NotesException e) {
@@ -324,7 +324,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#createDocument(java.util.Map)
 	 */
 	@Override
-	public Document createDocument(Map<String, Object> itemValues) {
+	public Document createDocument(final Map<String, Object> itemValues) {
 		Document doc = this.createDocument();
 		for (Map.Entry<String, Object> entry : itemValues.entrySet()) {
 			doc.replaceItemValue(entry.getKey(), entry.getValue());
@@ -338,7 +338,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#createDocument(java.lang.Object[])
 	 */
 	@Override
-	public Document createDocument(Object... keyValuePairs) {
+	public Document createDocument(final Object... keyValuePairs) {
 		Document doc = this.createDocument();
 		if (keyValuePairs.length >= 2) {
 			for (int i = 0; i < keyValuePairs.length; i += 2) {
@@ -368,7 +368,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#createFTIndex(int, boolean)
 	 */
-	public void createFTIndex(int options, boolean recreate) {
+	public void createFTIndex(final int options, final boolean recreate) {
 		try {
 			getDelegate().createFTIndex(options, recreate);
 		} catch (NotesException e) {
@@ -382,7 +382,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#createFromTemplate(java.lang.String, java.lang.String, boolean, int)
 	 */
-	public Database createFromTemplate(String server, String dbFile, boolean inherit, int maxSize) {
+	public Database createFromTemplate(final String server, final String dbFile, final boolean inherit, final int maxSize) {
 		try {
 			return Factory.fromLotus(getDelegate().createFromTemplate(server, dbFile, inherit, maxSize), Database.class, this);
 		} catch (NotesException e) {
@@ -397,7 +397,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#createFromTemplate(java.lang.String, java.lang.String, boolean)
 	 */
-	public Database createFromTemplate(String server, String dbFile, boolean inherit) {
+	public Database createFromTemplate(final String server, final String dbFile, final boolean inherit) {
 		try {
 			return Factory.fromLotus(getDelegate().createFromTemplate(server, dbFile, inherit), Database.class, this);
 		} catch (NotesException e) {
@@ -412,7 +412,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#createNoteCollection(boolean)
 	 */
-	public NoteCollection createNoteCollection(boolean selectAllFlag) {
+	public NoteCollection createNoteCollection(final boolean selectAllFlag) {
 		try {
 			return Factory.fromLotus(getDelegate().createNoteCollection(selectAllFlag), NoteCollection.class, this);
 		} catch (NotesException e) {
@@ -427,7 +427,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#createOutline(java.lang.String, boolean)
 	 */
-	public Outline createOutline(String name, boolean defaultOutline) {
+	public Outline createOutline(final String name, final boolean defaultOutline) {
 		try {
 			return Factory.fromLotus(getDelegate().createOutline(name, defaultOutline), Outline.class, this);
 		} catch (NotesException e) {
@@ -442,7 +442,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#createOutline(java.lang.String)
 	 */
-	public Outline createOutline(String name) {
+	public Outline createOutline(final String name) {
 		try {
 			return Factory.fromLotus(getDelegate().createOutline(name), Outline.class, this);
 		} catch (NotesException e) {
@@ -457,7 +457,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#createQueryView(java.lang.String, java.lang.String, lotus.domino.View, boolean)
 	 */
-	public View createQueryView(String viewName, String query, lotus.domino.View templateView, boolean prohibitDesignRefresh) {
+	public View createQueryView(final String viewName, final String query, final lotus.domino.View templateView, final boolean prohibitDesignRefresh) {
 		try {
 			return Factory.fromLotus(getDelegate().createQueryView(viewName, query, (lotus.domino.View) toLotus(templateView),
 					prohibitDesignRefresh), View.class, this);
@@ -473,7 +473,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#createQueryView(java.lang.String, java.lang.String, lotus.domino.View)
 	 */
-	public View createQueryView(String viewName, String query, lotus.domino.View templateView) {
+	public View createQueryView(final String viewName, final String query, final lotus.domino.View templateView) {
 		try {
 			return Factory.fromLotus(getDelegate().createQueryView(viewName, query, (lotus.domino.View) toLotus(templateView)), View.class,
 					this);
@@ -489,7 +489,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#createQueryView(java.lang.String, java.lang.String)
 	 */
-	public View createQueryView(String viewName, String query) {
+	public View createQueryView(final String viewName, final String query) {
 		try {
 			return Factory.fromLotus(getDelegate().createQueryView(viewName, query), View.class, this);
 		} catch (NotesException e) {
@@ -504,7 +504,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#createReplica(java.lang.String, java.lang.String)
 	 */
-	public Database createReplica(String server, String dbFile) {
+	public Database createReplica(final String server, final String dbFile) {
 		try {
 			return Factory.fromLotus(getDelegate().createReplica(server, dbFile), Database.class, this);
 		} catch (NotesException e) {
@@ -534,7 +534,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#createView(java.lang.String, java.lang.String, lotus.domino.View, boolean)
 	 */
-	public View createView(String viewName, String selectionFormula, lotus.domino.View templateView, boolean prohibitDesignRefresh) {
+	public View createView(final String viewName, final String selectionFormula, final lotus.domino.View templateView, final boolean prohibitDesignRefresh) {
 		try {
 			return Factory.fromLotus(getDelegate().createView(viewName, selectionFormula, (lotus.domino.View) toLotus(templateView),
 					prohibitDesignRefresh), View.class, this);
@@ -550,7 +550,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#createView(java.lang.String, java.lang.String, lotus.domino.View)
 	 */
-	public View createView(String viewName, String selectionFormula, lotus.domino.View templateView) {
+	public View createView(final String viewName, final String selectionFormula, final lotus.domino.View templateView) {
 		try {
 			return Factory.fromLotus(getDelegate().createView(viewName, selectionFormula, (lotus.domino.View) toLotus(templateView)),
 					View.class, this);
@@ -566,7 +566,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#createView(java.lang.String, java.lang.String)
 	 */
-	public View createView(String viewName, String selectionFormula) {
+	public View createView(final String viewName, final String selectionFormula) {
 		try {
 			return Factory.fromLotus(getDelegate().createView(viewName, selectionFormula), View.class, this);
 		} catch (NotesException e) {
@@ -581,7 +581,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#createView(java.lang.String)
 	 */
-	public View createView(String viewName) {
+	public View createView(final String viewName) {
 		try {
 			return Factory.fromLotus(getDelegate().createView(viewName), View.class, this);
 		} catch (NotesException e) {
@@ -596,7 +596,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#enableFolder(java.lang.String)
 	 */
-	public void enableFolder(String folder) {
+	public void enableFolder(final String folder) {
 		try {
 			getDelegate().enableFolder(folder);
 		} catch (NotesException e) {
@@ -624,7 +624,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#fixup(int)
 	 */
-	public void fixup(int options) {
+	public void fixup(final int options) {
 		try {
 			getDelegate().fixup(options);
 		} catch (NotesException e) {
@@ -669,7 +669,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#getAgent(java.lang.String)
 	 */
-	public Agent getAgent(String name) {
+	public Agent getAgent(final String name) {
 		try {
 			return Factory.fromLotus(getDelegate().getAgent(name), Agent.class, this);
 		} catch (NotesException e) {
@@ -729,7 +729,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#getAllReadDocuments(java.lang.String)
 	 */
-	public DocumentCollection getAllReadDocuments(String userName) {
+	public DocumentCollection getAllReadDocuments(final String userName) {
 		try {
 			return Factory.fromLotus(getDelegate().getAllReadDocuments(userName), DocumentCollection.class, this);
 		} catch (NotesException e) {
@@ -759,7 +759,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#getAllUnreadDocuments(java.lang.String)
 	 */
-	public DocumentCollection getAllUnreadDocuments(String userName) {
+	public DocumentCollection getAllUnreadDocuments(final String userName) {
 		try {
 			return Factory.fromLotus(getDelegate().getAllUnreadDocuments(userName), DocumentCollection.class, this);
 		} catch (NotesException e) {
@@ -853,7 +853,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#getDocumentByID(java.lang.String)
 	 */
-	public Document getDocumentByID(String noteid) {
+	public Document getDocumentByID(final String noteid) {
 		try {
 			return Factory.fromLotus(getDelegate().getDocumentByID(noteid), Document.class, this);
 		} catch (NotesException e) {
@@ -863,11 +863,11 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public Document getDocumentByKey(Serializable key) {
+	public Document getDocumentByKey(final Serializable key) {
 		return this.getDocumentByKey(key, false);
 	}
 
-	public Document getDocumentByKey(Serializable key, boolean createOnFail) {
+	public Document getDocumentByKey(final Serializable key, final boolean createOnFail) {
 		try {
 			if (key != null) {
 				String checksum = DominoUtils.toUnid(key);
@@ -891,7 +891,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#getDocumentByUNID(java.lang.String)
 	 */
-	public Document getDocumentByUNID(String unid) {
+	public Document getDocumentByUNID(final String unid) {
 		try {
 			return Factory.fromLotus(getDelegate().getDocumentByUNID(unid), Document.class, this);
 		} catch (NotesException e) {
@@ -907,8 +907,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#getDocumentByURL(java.lang.String, boolean, boolean, boolean, java.lang.String, java.lang.String,
 	 * java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
-	public Document getDocumentByURL(String url, boolean reload, boolean reloadIfModified, boolean urlList, String charSet, String webUser,
-			String webPassword, String proxyUser, String proxyPassword, boolean returnImmediately) {
+	public Document getDocumentByURL(final String url, final boolean reload, final boolean reloadIfModified, final boolean urlList, final String charSet, final String webUser,
+			final String webPassword, final String proxyUser, final String proxyPassword, final boolean returnImmediately) {
 		try {
 			// Let's have some fun with this
 			try {
@@ -940,7 +940,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#getDocumentByURL(java.lang.String, boolean)
 	 */
-	public Document getDocumentByURL(String url, boolean reload) {
+	public Document getDocumentByURL(final String url, final boolean reload) {
 		// try {
 		// return Factory.fromLotus(getDelegate().getDocumentByURL(url, reload), Document.class, this);
 		// } catch (NotesException e) {
@@ -1025,7 +1025,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#getForm(java.lang.String)
 	 */
-	public Form getForm(String name) {
+	public Form getForm(final String name) {
 		try {
 			return Factory.fromLotus(getDelegate().getForm(name), Form.class, this);
 		} catch (NotesException e) {
@@ -1206,7 +1206,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#getModifiedDocuments(lotus.domino.DateTime, int)
 	 */
-	public DocumentCollection getModifiedDocuments(lotus.domino.DateTime since, int noteClass) {
+	public DocumentCollection getModifiedDocuments(final lotus.domino.DateTime since, final int noteClass) {
 		try {
 			DocumentCollection result;
 			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(since);
@@ -1225,7 +1225,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#getModifiedDocuments(lotus.domino.DateTime)
 	 */
-	public DocumentCollection getModifiedDocuments(lotus.domino.DateTime since) {
+	public DocumentCollection getModifiedDocuments(final lotus.domino.DateTime since) {
 		return getModifiedDocuments(since, 1);
 	}
 
@@ -1249,7 +1249,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#getOption(int)
 	 */
-	public boolean getOption(int optionName) {
+	public boolean getOption(final int optionName) {
 		try {
 			return getDelegate().getOption(optionName);
 		} catch (NotesException e) {
@@ -1264,7 +1264,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#getOutline(java.lang.String)
 	 */
-	public Outline getOutline(String outlineName) {
+	public Outline getOutline(final String outlineName) {
 		try {
 			return Factory.fromLotus(getDelegate().getOutline(outlineName), Outline.class, this);
 		} catch (NotesException e) {
@@ -1304,7 +1304,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#getProfileDocCollection(java.lang.String)
 	 */
-	public DocumentCollection getProfileDocCollection(String profileName) {
+	public DocumentCollection getProfileDocCollection(final String profileName) {
 		try {
 			return Factory.fromLotus(getDelegate().getProfileDocCollection(profileName), DocumentCollection.class, this);
 		} catch (NotesException e) {
@@ -1319,7 +1319,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#getProfileDocument(java.lang.String, java.lang.String)
 	 */
-	public Document getProfileDocument(String profileName, String key) {
+	public Document getProfileDocument(final String profileName, final String key) {
 		try {
 			return Factory.fromLotus(getDelegate().getProfileDocument(profileName, key), Document.class, this);
 		} catch (NotesException e) {
@@ -1473,7 +1473,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#getURLHeaderInfo(java.lang.String, java.lang.String, java.lang.String, java.lang.String,
 	 * java.lang.String, java.lang.String)
 	 */
-	public String getURLHeaderInfo(String url, String header, String webUser, String webPassword, String proxyUser, String proxyPassword) {
+	public String getURLHeaderInfo(final String url, final String header, final String webUser, final String webPassword, final String proxyUser, final String proxyPassword) {
 		try {
 			return getDelegate().getURLHeaderInfo(url, header, webUser, webPassword, proxyUser, proxyPassword);
 		} catch (NotesException e) {
@@ -1503,7 +1503,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#getView(java.lang.String)
 	 */
-	public View getView(String name) {
+	public View getView(final String name) {
 		try {
 			View result = Factory.fromLotus(getDelegate().getView(name), View.class, this);
 			result.setAutoUpdate(false);
@@ -1535,7 +1535,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#grantAccess(java.lang.String, int)
 	 */
-	public void grantAccess(String name, int level) {
+	public void grantAccess(final String name, final int level) {
 		try {
 			getDelegate().grantAccess(name, level);
 		} catch (NotesException e) {
@@ -1550,7 +1550,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#grantAccess(java.lang.String, org.openntf.domino.ACL.Level)
 	 */
 	@Override
-	public void grantAccess(String name, Level level) {
+	public void grantAccess(final String name, final Level level) {
 		grantAccess(name, level.getValue());
 	}
 
@@ -1872,7 +1872,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#openByReplicaID(java.lang.String, java.lang.String)
 	 */
-	public boolean openByReplicaID(String server, String replicaId) {
+	public boolean openByReplicaID(final String server, final String replicaId) {
 		try {
 			return getDelegate().openByReplicaID(server, replicaId);
 		} catch (NotesException e) {
@@ -1887,7 +1887,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#openIfModified(java.lang.String, java.lang.String, lotus.domino.DateTime)
 	 */
-	public boolean openIfModified(String server, String dbFile, lotus.domino.DateTime modifiedSince) {
+	public boolean openIfModified(final String server, final String dbFile, final lotus.domino.DateTime modifiedSince) {
 		try {
 			boolean result = false;
 			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(modifiedSince);
@@ -1906,7 +1906,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#openWithFailover(java.lang.String, java.lang.String)
 	 */
-	public boolean openWithFailover(String server, String dbFile) {
+	public boolean openWithFailover(final String server, final String dbFile) {
 		try {
 			return getDelegate().openWithFailover(server, dbFile);
 		} catch (NotesException e) {
@@ -1921,7 +1921,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#queryAccess(java.lang.String)
 	 */
-	public int queryAccess(String name) {
+	public int queryAccess(final String name) {
 		try {
 			return getDelegate().queryAccess(name);
 		} catch (NotesException e) {
@@ -1936,7 +1936,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#queryAccessPrivileges(java.lang.String)
 	 */
-	public int queryAccessPrivileges(String name) {
+	public int queryAccessPrivileges(final String name) {
 		try {
 			return getDelegate().queryAccessPrivileges(name);
 		} catch (NotesException e) {
@@ -1952,7 +1952,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#queryAccessRoles(java.lang.String)
 	 */
 	@SuppressWarnings("unchecked")
-	public Vector<String> queryAccessRoles(String name) {
+	public Vector<String> queryAccessRoles(final String name) {
 		try {
 			return getDelegate().queryAccessRoles(name);
 		} catch (NotesException e) {
@@ -1994,7 +1994,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#replicate(java.lang.String)
 	 */
-	public boolean replicate(String server) {
+	public boolean replicate(final String server) {
 		try {
 			return getDelegate().replicate(server);
 		} catch (NotesException e) {
@@ -2009,7 +2009,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#revokeAccess(java.lang.String)
 	 */
-	public void revokeAccess(String name) {
+	public void revokeAccess(final String name) {
 		try {
 			getDelegate().revokeAccess(name);
 		} catch (NotesException e) {
@@ -2023,7 +2023,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#search(java.lang.String, lotus.domino.DateTime, int)
 	 */
-	public DocumentCollection search(String formula, lotus.domino.DateTime startDate, int maxDocs) {
+	public DocumentCollection search(final String formula, final lotus.domino.DateTime startDate, final int maxDocs) {
 		try {
 			DocumentCollection result;
 			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(startDate);
@@ -2042,7 +2042,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#search(java.lang.String, lotus.domino.DateTime)
 	 */
-	public DocumentCollection search(String formula, lotus.domino.DateTime startDate) {
+	public DocumentCollection search(final String formula, final lotus.domino.DateTime startDate) {
 		return search(formula, startDate, 0);
 	}
 
@@ -2051,7 +2051,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#search(java.lang.String)
 	 */
-	public DocumentCollection search(String formula) {
+	public DocumentCollection search(final String formula) {
 		try {
 			return Factory.fromLotus(getDelegate().search(formula), DocumentCollection.class, this);
 		} catch (NotesException e) {
@@ -2066,7 +2066,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#setAllowOpenSoftDeleted(boolean)
 	 */
-	public void setAllowOpenSoftDeleted(boolean flag) {
+	public void setAllowOpenSoftDeleted(final boolean flag) {
 		try {
 			getDelegate().setAllowOpenSoftDeleted(flag);
 		} catch (NotesException e) {
@@ -2080,7 +2080,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#setCategories(java.lang.String)
 	 */
-	public void setCategories(String categories) {
+	public void setCategories(final String categories) {
 		try {
 			getDelegate().setCategories(categories);
 		} catch (NotesException e) {
@@ -2094,7 +2094,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#setDelayUpdates(boolean)
 	 */
-	public void setDelayUpdates(boolean flag) {
+	public void setDelayUpdates(final boolean flag) {
 		try {
 			getDelegate().setDelayUpdates(flag);
 		} catch (NotesException e) {
@@ -2108,7 +2108,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#setDesignLockingEnabled(boolean)
 	 */
-	public void setDesignLockingEnabled(boolean flag) {
+	public void setDesignLockingEnabled(final boolean flag) {
 		try {
 			getDelegate().setDesignLockingEnabled(flag);
 		} catch (NotesException e) {
@@ -2122,7 +2122,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#setDocumentLockingEnabled(boolean)
 	 */
-	public void setDocumentLockingEnabled(boolean flag) {
+	public void setDocumentLockingEnabled(final boolean flag) {
 		try {
 			getDelegate().setDocumentLockingEnabled(flag);
 		} catch (NotesException e) {
@@ -2136,7 +2136,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#setFTIndexFrequency(int)
 	 */
-	public void setFTIndexFrequency(int frequency) {
+	public void setFTIndexFrequency(final int frequency) {
 		try {
 			getDelegate().setFTIndexFrequency(frequency);
 		} catch (NotesException e) {
@@ -2150,7 +2150,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#setFolderReferencesEnabled(boolean)
 	 */
-	public void setFolderReferencesEnabled(boolean flag) {
+	public void setFolderReferencesEnabled(final boolean flag) {
 		try {
 			getDelegate().setFolderReferencesEnabled(flag);
 		} catch (NotesException e) {
@@ -2164,7 +2164,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#setInMultiDbIndexing(boolean)
 	 */
-	public void setInMultiDbIndexing(boolean flag) {
+	public void setInMultiDbIndexing(final boolean flag) {
 		try {
 			getDelegate().setInMultiDbIndexing(flag);
 		} catch (NotesException e) {
@@ -2178,7 +2178,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#setInService(boolean)
 	 */
-	public void setInService(boolean flag) {
+	public void setInService(final boolean flag) {
 		try {
 			getDelegate().setInService(flag);
 		} catch (NotesException e) {
@@ -2192,7 +2192,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#setLimitRevisions(double)
 	 */
-	public void setLimitRevisions(double revisions) {
+	public void setLimitRevisions(final double revisions) {
 		try {
 			getDelegate().setLimitRevisions(revisions);
 		} catch (NotesException e) {
@@ -2206,7 +2206,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#setLimitUpdatedBy(double)
 	 */
-	public void setLimitUpdatedBy(double updatedBys) {
+	public void setLimitUpdatedBy(final double updatedBys) {
 		try {
 			getDelegate().setLimitUpdatedBy(updatedBys);
 		} catch (NotesException e) {
@@ -2220,7 +2220,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#setListInDbCatalog(boolean)
 	 */
-	public void setListInDbCatalog(boolean flag) {
+	public void setListInDbCatalog(final boolean flag) {
 		try {
 			getDelegate().setListInDbCatalog(flag);
 		} catch (NotesException e) {
@@ -2234,7 +2234,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#setOption(int, boolean)
 	 */
-	public void setOption(int optionName, boolean flag) {
+	public void setOption(final int optionName, final boolean flag) {
 		try {
 			getDelegate().setOption(optionName, flag);
 		} catch (NotesException e) {
@@ -2248,7 +2248,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#setOption(org.openntf.domino.Database.DBOption, boolean)
 	 */
-	public void setOption(DBOption optionName, boolean flag) {
+	public void setOption(final DBOption optionName, final boolean flag) {
 		setOption(optionName.getValue(), flag);
 	}
 
@@ -2257,7 +2257,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#setSizeQuota(int)
 	 */
-	public void setSizeQuota(int quota) {
+	public void setSizeQuota(final int quota) {
 		try {
 			getDelegate().setSizeQuota(quota);
 		} catch (NotesException e) {
@@ -2271,7 +2271,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#setSizeWarning(int)
 	 */
-	public void setSizeWarning(int warning) {
+	public void setSizeWarning(final int warning) {
 		try {
 			getDelegate().setSizeWarning(warning);
 		} catch (NotesException e) {
@@ -2299,7 +2299,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#setUndeleteExpireTime(int)
 	 */
-	public void setUndeleteExpireTime(int hours) {
+	public void setUndeleteExpireTime(final int hours) {
 		try {
 			getDelegate().setUndeleteExpireTime(hours);
 		} catch (NotesException e) {
@@ -2327,7 +2327,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#sign(int, boolean, java.lang.String, boolean)
 	 */
-	public void sign(int documentType, boolean existingSigsOnly, String name, boolean nameIsNoteid) {
+	public void sign(final int documentType, final boolean existingSigsOnly, final String name, final boolean nameIsNoteid) {
 		try {
 			getDelegate().sign(documentType, existingSigsOnly, name, nameIsNoteid);
 		} catch (NotesException e) {
@@ -2340,7 +2340,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#sign(org.openntf.domino.Database.SignDocType, boolean, java.lang.String, boolean)
 	 */
-	public void sign(SignDocType documentType, boolean existingSigsOnly, String name, boolean nameIsNoteid) {
+	public void sign(final SignDocType documentType, final boolean existingSigsOnly, final String name, final boolean nameIsNoteid) {
 		this.sign(documentType.getValue(), existingSigsOnly, name, nameIsNoteid);
 	}
 
@@ -2349,7 +2349,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#sign(int, boolean, java.lang.String)
 	 */
-	public void sign(int documentType, boolean existingSigsOnly, String name) {
+	public void sign(final int documentType, final boolean existingSigsOnly, final String name) {
 		try {
 			getDelegate().sign(documentType, existingSigsOnly, name);
 		} catch (NotesException e) {
@@ -2362,7 +2362,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#sign(org.openntf.domino.Database.SignDocType, boolean, java.lang.String)
 	 */
-	public void sign(SignDocType documentType, boolean existingSigsOnly, String name) {
+	public void sign(final SignDocType documentType, final boolean existingSigsOnly, final String name) {
 		this.sign(documentType.getValue(), existingSigsOnly, name);
 	}
 
@@ -2371,7 +2371,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#sign(int, boolean)
 	 */
-	public void sign(int documentType, boolean existingSigsOnly) {
+	public void sign(final int documentType, final boolean existingSigsOnly) {
 		try {
 			getDelegate().sign(documentType, existingSigsOnly);
 		} catch (NotesException e) {
@@ -2385,7 +2385,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#sign(org.openntf.domino.Database.SignDocType, boolean)
 	 */
-	public void sign(SignDocType documentType, boolean existingSigsOnly) {
+	public void sign(final SignDocType documentType, final boolean existingSigsOnly) {
 		this.sign(documentType.getValue(), existingSigsOnly);
 	}
 
@@ -2394,7 +2394,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#sign(int)
 	 */
-	public void sign(int documentType) {
+	public void sign(final int documentType) {
 		try {
 			getDelegate().sign(documentType);
 		} catch (NotesException e) {
@@ -2408,7 +2408,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#sign(org.openntf.domino.Database.SignDocType)
 	 */
-	public void sign(SignDocType documentType) {
+	public void sign(final SignDocType documentType) {
 		this.sign(documentType.getValue());
 	}
 
@@ -2417,7 +2417,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#updateFTIndex(boolean)
 	 */
-	public void updateFTIndex(boolean create) {
+	public void updateFTIndex(final boolean create) {
 		try {
 			getDelegate().updateFTIndex(create);
 		} catch (NotesException e) {
@@ -2455,7 +2455,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	@Override
-	public boolean containsValue(Object value) {
+	public boolean containsValue(final Object value) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -2477,7 +2477,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	@Override
-	public org.openntf.domino.Document put(String key, org.openntf.domino.Document value) {
+	public org.openntf.domino.Document put(final String key, final org.openntf.domino.Document value) {
 		// Ignore the value for now
 		if (key != null) {
 			Document doc = this.getDocumentByKey(key);
@@ -2493,12 +2493,12 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	@Override
-	public void putAll(Map<? extends String, ? extends org.openntf.domino.Document> m) {
+	public void putAll(final Map<? extends String, ? extends org.openntf.domino.Document> m) {
 		// TODO Implement this?
 	}
 
 	@Override
-	public org.openntf.domino.Document remove(Object key) {
+	public org.openntf.domino.Document remove(final Object key) {
 		if (key != null) {
 			Document doc = this.getDocumentByKey(key.toString());
 			if (doc != null) {
@@ -2581,7 +2581,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.ext.Database#compactWithOptions(java.util.EnumSet)
 	 */
 	@Override
-	public int compactWithOptions(Set<CompactOption> options) {
+	public int compactWithOptions(final Set<CompactOption> options) {
 		int nativeOptions = 0;
 		for (CompactOption option : options) {
 			nativeOptions += option.getValue();
@@ -2595,7 +2595,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.ext.Database#compactWithOptions(java.util.EnumSet, java.lang.String)
 	 */
 	@Override
-	public int compactWithOptions(Set<CompactOption> options, String spaceThreshold) {
+	public int compactWithOptions(final Set<CompactOption> options, final String spaceThreshold) {
 		int nativeOptions = 0;
 		for (CompactOption option : options) {
 			nativeOptions += option.getValue();
@@ -2609,7 +2609,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.ext.Database#createFTIndex(java.util.EnumSet, boolean)
 	 */
 	@Override
-	public void createFTIndex(Set<FTIndexOption> options, boolean recreate) {
+	public void createFTIndex(final Set<FTIndexOption> options, final boolean recreate) {
 		int nativeOptions = 0;
 		for (FTIndexOption option : options) {
 			nativeOptions += option.getValue();
@@ -2623,7 +2623,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.ext.Database#fixup(java.util.EnumSet)
 	 */
 	@Override
-	public void fixup(Set<FixupOption> options) {
+	public void fixup(final Set<FixupOption> options) {
 		int nativeOptions = 0;
 		for (FixupOption option : options) {
 			nativeOptions += option.getValue();
@@ -2637,7 +2637,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.ext.Database#getModifiedDocuments(lotus.domino.DateTime, org.openntf.domino.Database.ModifiedDocClass)
 	 */
 	@Override
-	public DocumentCollection getModifiedDocuments(lotus.domino.DateTime since, ModifiedDocClass noteClass) {
+	public DocumentCollection getModifiedDocuments(final lotus.domino.DateTime since, final ModifiedDocClass noteClass) {
 		return getModifiedDocuments(since, noteClass.getValue());
 	}
 
@@ -2647,7 +2647,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.ext.Database#getOption(org.openntf.domino.Database.DBOption)
 	 */
 	@Override
-	public boolean getOption(DBOption optionName) {
+	public boolean getOption(final DBOption optionName) {
 		return getOption(optionName.getValue());
 	}
 
@@ -2657,7 +2657,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.ext.Database#setFTIndexFrequency(org.openntf.domino.Database.FTIndexFrequency)
 	 */
 	@Override
-	public void setFTIndexFrequency(FTIndexFrequency frequency) {
+	public void setFTIndexFrequency(final FTIndexFrequency frequency) {
 		setFTIndexFrequency(frequency.getValue());
 	}
 
@@ -2687,8 +2687,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * java.lang.String)
 	 */
 	@Override
-	public org.openntf.domino.Document FTDomainSearch(String query, int maxDocs, FTSortOption sortOpt, int otherOpt, int start, int count,
-			String entryForm) {
+	public org.openntf.domino.Document FTDomainSearch(final String query, final int maxDocs, final FTSortOption sortOpt, final int otherOpt, final int start, final int count,
+			final String entryForm) {
 		return this.FTDomainSearch(query, maxDocs, sortOpt.getValue(), otherOpt, start, count, entryForm);
 	}
 
@@ -2698,7 +2698,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#FTSearch(java.lang.String, int, org.openntf.domino.Database.FTSortOption, int)
 	 */
 	@Override
-	public org.openntf.domino.DocumentCollection FTSearch(String query, int maxDocs, FTSortOption sortOpt, int otherOpt) {
+	public org.openntf.domino.DocumentCollection FTSearch(final String query, final int maxDocs, final FTSortOption sortOpt, final int otherOpt) {
 		return this.FTSearch(query, maxDocs, sortOpt.getValue(), otherOpt);
 	}
 
@@ -2708,7 +2708,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#FTSearchRange(java.lang.String, int, org.openntf.domino.Database.FTSortOption, int, int)
 	 */
 	@Override
-	public org.openntf.domino.DocumentCollection FTSearchRange(String query, int maxDocs, FTSortOption sortOpt, int otherOpt, int start) {
+	public org.openntf.domino.DocumentCollection FTSearchRange(final String query, final int maxDocs, final FTSortOption sortOpt, final int otherOpt, final int start) {
 		return this.FTSearchRange(query, maxDocs, sortOpt.getValue(), otherOpt, start);
 	}
 }

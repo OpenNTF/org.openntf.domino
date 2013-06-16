@@ -26,7 +26,7 @@ public enum XSPUtil {
 	 *            the doc
 	 * @return the document
 	 */
-	public static Document wrap(lotus.domino.Document doc) {
+	public static Document wrap(final lotus.domino.Document doc) {
 		try {
 			lotus.domino.Database db = doc.getParentDatabase();
 			Session session = Factory.fromLotus(db.getParent(), Session.class, null);
@@ -44,7 +44,7 @@ public enum XSPUtil {
 	 *            the entry
 	 * @return the view entry
 	 */
-	public static ViewEntry wrap(lotus.domino.ViewEntry entry) {
+	public static ViewEntry wrap(final lotus.domino.ViewEntry entry) {
 		try {
 			Object parent = entry.getParent();
 			lotus.domino.View view;
@@ -140,7 +140,7 @@ public enum XSPUtil {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public static Object resolveVariable(String varName) throws Exception {
+	public static Object resolveVariable(final String varName) throws Exception {
 		Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext");
 		Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
 		Method getApplication = facesContextClass.getMethod("getApplication");

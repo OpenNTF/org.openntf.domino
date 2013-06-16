@@ -15,7 +15,7 @@ public class AboutDocument extends AbstractDesignBase implements org.openntf.dom
 	/**
 	 * @param document
 	 */
-	protected AboutDocument(Document document) {
+	protected AboutDocument(final Document document) {
 		super(document);
 	}
 

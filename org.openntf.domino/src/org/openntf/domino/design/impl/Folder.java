@@ -19,7 +19,7 @@ public class Folder extends AbstractFolder implements org.openntf.domino.design.
 	/**
 	 * @param document
 	 */
-	public Folder(Document document) {
+	public Folder(final Document document) {
 		super(document);
 		// TODO Auto-generated constructor stub
 	}

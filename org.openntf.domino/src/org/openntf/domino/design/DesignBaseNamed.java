@@ -19,7 +19,7 @@ public interface DesignBaseNamed extends DesignBase {
 	 * @param name
 	 *            The new name for the design element; any |-delimited values will be appended to the aliases
 	 */
-	public void setName(String name);
+	public void setName(final String name);
 
 	/**
 	 * @return a List of the design element's aliases
@@ -31,12 +31,12 @@ public interface DesignBaseNamed extends DesignBase {
 	 * @param alias
 	 *            The new alias(es) for the design element, |-delimited
 	 */
-	public void setAlias(String alias);
+	public void setAlias(final String alias);
 
 	/**
 	 * 
 	 * @param aliases
 	 *            The new aliases for the design element; any |-delimited values will be exploded into the final list
 	 */
-	public void setAliases(Iterable<String> aliases);
+	public void setAliases(final Iterable<String> aliases);
 }

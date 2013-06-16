@@ -41,7 +41,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#copyColumn(int)
 	 */
 	@Override
-	public ViewColumn copyColumn(int sourceColumn);
+	public ViewColumn copyColumn(final int sourceColumn);
 
 	/*
 	 * (non-Javadoc)
@@ -49,7 +49,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#copyColumn(int, int)
 	 */
 	@Override
-	public ViewColumn copyColumn(int sourceColumn, int destinationIndex);
+	public ViewColumn copyColumn(final int sourceColumn, final int destinationIndex);
 
 	/*
 	 * (non-Javadoc)
@@ -57,7 +57,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#copyColumn(java.lang.String)
 	 */
 	@Override
-	public ViewColumn copyColumn(String sourceColumn);
+	public ViewColumn copyColumn(final String sourceColumn);
 
 	/*
 	 * (non-Javadoc)
@@ -65,7 +65,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#copyColumn(java.lang.String, int)
 	 */
 	@Override
-	public ViewColumn copyColumn(String sourceColumn, int destinationIndex);
+	public ViewColumn copyColumn(final String sourceColumn, final int destinationIndex);
 
 	/*
 	 * (non-Javadoc)
@@ -73,7 +73,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#copyColumn(lotus.domino.ViewColumn)
 	 */
 	@Override
-	public ViewColumn copyColumn(lotus.domino.ViewColumn sourceColumn);
+	public ViewColumn copyColumn(final lotus.domino.ViewColumn sourceColumn);
 
 	/*
 	 * (non-Javadoc)
@@ -81,7 +81,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#copyColumn(lotus.domino.ViewColumn, int)
 	 */
 	@Override
-	public ViewColumn copyColumn(lotus.domino.ViewColumn sourceColumn, int destinationIndex);
+	public ViewColumn copyColumn(final lotus.domino.ViewColumn sourceColumn, final int destinationIndex);
 
 	/*
 	 * (non-Javadoc)
@@ -97,7 +97,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#createColumn(int)
 	 */
 	@Override
-	public ViewColumn createColumn(int position);
+	public ViewColumn createColumn(final int position);
 
 	/*
 	 * (non-Javadoc)
@@ -105,7 +105,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#createColumn(int, java.lang.String)
 	 */
 	@Override
-	public ViewColumn createColumn(int position, String columnTitle);
+	public ViewColumn createColumn(final int position, final String columnTitle);
 
 	/*
 	 * (non-Javadoc)
@@ -113,7 +113,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#createColumn(int, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public ViewColumn createColumn(int position, String columnTitle, String formula);
+	public ViewColumn createColumn(final int position, final String columnTitle, final String formula);
 
 	/*
 	 * (non-Javadoc)
@@ -137,7 +137,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#createViewNav(int)
 	 */
 	@Override
-	public ViewNavigator createViewNav(int cacheSize);
+	public ViewNavigator createViewNav(final int cacheSize);
 
 	/*
 	 * (non-Javadoc)
@@ -145,7 +145,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#createViewNavFrom(java.lang.Object)
 	 */
 	@Override
-	public ViewNavigator createViewNavFrom(Object entry);
+	public ViewNavigator createViewNavFrom(final Object entry);
 
 	/*
 	 * (non-Javadoc)
@@ -153,7 +153,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#createViewNavFrom(java.lang.Object, int)
 	 */
 	@Override
-	public ViewNavigator createViewNavFrom(Object entry, int cacheSize);
+	public ViewNavigator createViewNavFrom(final Object entry, final int cacheSize);
 
 	/*
 	 * (non-Javadoc)
@@ -169,7 +169,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#createViewNavFromAllUnread(java.lang.String)
 	 */
 	@Override
-	public ViewNavigator createViewNavFromAllUnread(String userName);
+	public ViewNavigator createViewNavFromAllUnread(final String userName);
 
 	/*
 	 * (non-Javadoc)
@@ -177,7 +177,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#createViewNavFromCategory(java.lang.String)
 	 */
 	@Override
-	public ViewNavigator createViewNavFromCategory(String categoryName);
+	public ViewNavigator createViewNavFromCategory(final String categoryName);
 
 	/*
 	 * (non-Javadoc)
@@ -185,7 +185,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#createViewNavFromCategory(java.lang.String, int)
 	 */
 	@Override
-	public ViewNavigator createViewNavFromCategory(String categoryName, int cacheSize);
+	public ViewNavigator createViewNavFromCategory(final String categoryName, final int cacheSize);
 
 	/*
 	 * (non-Javadoc)
@@ -193,7 +193,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#createViewNavFromChildren(java.lang.Object)
 	 */
 	@Override
-	public ViewNavigator createViewNavFromChildren(Object entry);
+	public ViewNavigator createViewNavFromChildren(final Object entry);
 
 	/*
 	 * (non-Javadoc)
@@ -201,7 +201,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#createViewNavFromChildren(java.lang.Object, int)
 	 */
 	@Override
-	public ViewNavigator createViewNavFromChildren(Object entry, int cacheSize);
+	public ViewNavigator createViewNavFromChildren(final Object entry, final int cacheSize);
 
 	/*
 	 * (non-Javadoc)
@@ -209,7 +209,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#createViewNavFromDescendants(java.lang.Object)
 	 */
 	@Override
-	public ViewNavigator createViewNavFromDescendants(Object entry);
+	public ViewNavigator createViewNavFromDescendants(final Object entry);
 
 	/*
 	 * (non-Javadoc)
@@ -217,7 +217,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#createViewNavFromDescendants(java.lang.Object, int)
 	 */
 	@Override
-	public ViewNavigator createViewNavFromDescendants(Object entry, int cacheSize);
+	public ViewNavigator createViewNavFromDescendants(final Object entry, final int cacheSize);
 
 	/*
 	 * (non-Javadoc)
@@ -225,7 +225,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#createViewNavMaxLevel(int)
 	 */
 	@Override
-	public ViewNavigator createViewNavMaxLevel(int level);
+	public ViewNavigator createViewNavMaxLevel(final int level);
 
 	/*
 	 * (non-Javadoc)
@@ -233,7 +233,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#createViewNavMaxLevel(int, int)
 	 */
 	@Override
-	public ViewNavigator createViewNavMaxLevel(int level, int cacheSize);
+	public ViewNavigator createViewNavMaxLevel(final int level, final int cacheSize);
 
 	/*
 	 * (non-Javadoc)
@@ -241,7 +241,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#FTSearch(java.lang.String)
 	 */
 	@Override
-	public int FTSearch(String query);
+	public int FTSearch(final String query);
 
 	/*
 	 * (non-Javadoc)
@@ -249,7 +249,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#FTSearch(java.lang.String, int)
 	 */
 	@Override
-	public int FTSearch(String query, int maxDocs);
+	public int FTSearch(final String query, final int maxDocs);
 
 	/*
 	 * (non-Javadoc)
@@ -257,7 +257,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#FTSearchSorted(java.lang.String)
 	 */
 	@Override
-	public int FTSearchSorted(String query);
+	public int FTSearchSorted(final String query);
 
 	/*
 	 * (non-Javadoc)
@@ -265,7 +265,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#FTSearchSorted(java.lang.String, int)
 	 */
 	@Override
-	public int FTSearchSorted(String query, int maxDocs);
+	public int FTSearchSorted(final String query, final int maxDocs);
 
 	/*
 	 * (non-Javadoc)
@@ -273,7 +273,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#FTSearchSorted(java.lang.String, int, int)
 	 */
 	@Override
-	public int FTSearchSorted(String query, int maxDocs, int column);
+	public int FTSearchSorted(final String query, final int maxDocs, final int column);
 
 	/*
 	 * (non-Javadoc)
@@ -281,7 +281,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#FTSearchSorted(java.lang.String, int, int, boolean, boolean, boolean, boolean)
 	 */
 	@Override
-	public int FTSearchSorted(String query, int maxDocs, int column, boolean ascending, boolean exact, boolean variants, boolean fuzzy);
+	public int FTSearchSorted(final String query, final int maxDocs, final int column, final boolean ascending, final boolean exact, final boolean variants, final boolean fuzzy);
 
 	/*
 	 * (non-Javadoc)
@@ -289,7 +289,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#FTSearchSorted(java.lang.String, int, java.lang.String)
 	 */
 	@Override
-	public int FTSearchSorted(String query, int maxDocs, String column);
+	public int FTSearchSorted(final String query, final int maxDocs, final String column);
 
 	/*
 	 * (non-Javadoc)
@@ -297,7 +297,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#FTSearchSorted(java.lang.String, int, java.lang.String, boolean, boolean, boolean, boolean)
 	 */
 	@Override
-	public int FTSearchSorted(String query, int maxDocs, String column, boolean ascending, boolean exact, boolean variants, boolean fuzzy);
+	public int FTSearchSorted(final String query, final int maxDocs, final String column, final boolean ascending, final boolean exact, final boolean variants, final boolean fuzzy);
 
 	/*
 	 * (non-Javadoc)
@@ -308,7 +308,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public int FTSearchSorted(Vector query);
+	public int FTSearchSorted(final Vector query);
 
 	/*
 	 * (non-Javadoc)
@@ -319,7 +319,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public int FTSearchSorted(Vector query, int maxDocs);
+	public int FTSearchSorted(final Vector query, final int maxDocs);
 
 	/*
 	 * (non-Javadoc)
@@ -330,7 +330,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public int FTSearchSorted(Vector query, int maxDocs, int column);
+	public int FTSearchSorted(final Vector query, final int maxDocs, final int column);
 
 	/*
 	 * (non-Javadoc)
@@ -341,7 +341,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public int FTSearchSorted(Vector query, int maxDocs, int column, boolean ascending, boolean exact, boolean variants, boolean fuzzy);
+	public int FTSearchSorted(final Vector query, final int maxDocs, final int column, final boolean ascending, final boolean exact, final boolean variants, final boolean fuzzy);
 
 	/*
 	 * (non-Javadoc)
@@ -352,7 +352,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public int FTSearchSorted(Vector query, int maxDocs, String column);
+	public int FTSearchSorted(final Vector query, final int maxDocs, final String column);
 
 	/*
 	 * (non-Javadoc)
@@ -363,7 +363,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public int FTSearchSorted(Vector query, int maxDocs, String column, boolean ascending, boolean exact, boolean variants, boolean fuzzy);
+	public int FTSearchSorted(final Vector query, final int maxDocs, final String column, final boolean ascending, final boolean exact, final boolean variants, final boolean fuzzy);
 
 	/*
 	 * (non-Javadoc)
@@ -387,7 +387,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#getAllDocumentsByKey(java.lang.Object)
 	 */
 	@Override
-	public DocumentCollection getAllDocumentsByKey(Object key);
+	public DocumentCollection getAllDocumentsByKey(final Object key);
 
 	/*
 	 * (non-Javadoc)
@@ -395,7 +395,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#getAllDocumentsByKey(java.lang.Object, boolean)
 	 */
 	@Override
-	public DocumentCollection getAllDocumentsByKey(Object key, boolean exact);
+	public DocumentCollection getAllDocumentsByKey(final Object key, final boolean exact);
 
 	/*
 	 * (non-Javadoc)
@@ -406,7 +406,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public DocumentCollection getAllDocumentsByKey(Vector keys);
+	public DocumentCollection getAllDocumentsByKey(final Vector keys);
 
 	/*
 	 * (non-Javadoc)
@@ -417,7 +417,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public DocumentCollection getAllDocumentsByKey(Vector keys, boolean exact);
+	public DocumentCollection getAllDocumentsByKey(final Vector keys, final boolean exact);
 
 	/*
 	 * (non-Javadoc)
@@ -433,7 +433,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#getAllEntriesByKey(java.lang.Object)
 	 */
 	@Override
-	public ViewEntryCollection getAllEntriesByKey(Object key);
+	public ViewEntryCollection getAllEntriesByKey(final Object key);
 
 	/*
 	 * (non-Javadoc)
@@ -441,7 +441,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#getAllEntriesByKey(java.lang.Object, boolean)
 	 */
 	@Override
-	public ViewEntryCollection getAllEntriesByKey(Object key, boolean exact);
+	public ViewEntryCollection getAllEntriesByKey(final Object key, final boolean exact);
 
 	/*
 	 * (non-Javadoc)
@@ -452,7 +452,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public ViewEntryCollection getAllEntriesByKey(Vector keys);
+	public ViewEntryCollection getAllEntriesByKey(final Vector keys);
 
 	/*
 	 * (non-Javadoc)
@@ -463,7 +463,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public ViewEntryCollection getAllEntriesByKey(Vector keys, boolean exact);
+	public ViewEntryCollection getAllEntriesByKey(final Vector keys, final boolean exact);
 
 	/*
 	 * (non-Javadoc)
@@ -479,7 +479,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#getAllReadEntries(java.lang.String)
 	 */
 	@Override
-	public ViewEntryCollection getAllReadEntries(String userName);
+	public ViewEntryCollection getAllReadEntries(final String userName);
 
 	/*
 	 * (non-Javadoc)
@@ -495,7 +495,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#getAllUnreadEntries(java.lang.String)
 	 */
 	@Override
-	public ViewEntryCollection getAllUnreadEntries(String userName);
+	public ViewEntryCollection getAllUnreadEntries(final String userName);
 
 	/*
 	 * (non-Javadoc)
@@ -511,7 +511,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#getChild(lotus.domino.Document)
 	 */
 	@Override
-	public Document getChild(lotus.domino.Document doc);
+	public Document getChild(final lotus.domino.Document doc);
 
 	/*
 	 * (non-Javadoc)
@@ -519,7 +519,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#getColumn(int)
 	 */
 	@Override
-	public ViewColumn getColumn(int columnNumber);
+	public ViewColumn getColumn(final int columnNumber);
 
 	/*
 	 * (non-Javadoc)
@@ -555,7 +555,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public Vector<Object> getColumnValues(int column);
+	public Vector<Object> getColumnValues(final int column);
 
 	/*
 	 * (non-Javadoc)
@@ -571,7 +571,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#getDocumentByKey(java.lang.Object)
 	 */
 	@Override
-	public Document getDocumentByKey(Object key);
+	public Document getDocumentByKey(final Object key);
 
 	/*
 	 * (non-Javadoc)
@@ -579,7 +579,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#getDocumentByKey(java.lang.Object, boolean)
 	 */
 	@Override
-	public Document getDocumentByKey(Object key, boolean exact);
+	public Document getDocumentByKey(final Object key, final boolean exact);
 
 	/*
 	 * (non-Javadoc)
@@ -590,7 +590,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public Document getDocumentByKey(Vector keys);
+	public Document getDocumentByKey(final Vector keys);
 
 	/*
 	 * (non-Javadoc)
@@ -601,7 +601,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public Document getDocumentByKey(Vector keys, boolean exact);
+	public Document getDocumentByKey(final Vector keys, final boolean exact);
 
 	/*
 	 * (non-Javadoc)
@@ -609,7 +609,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#getEntryByKey(java.lang.Object)
 	 */
 	@Override
-	public ViewEntry getEntryByKey(Object key);
+	public ViewEntry getEntryByKey(final Object key);
 
 	/*
 	 * (non-Javadoc)
@@ -617,7 +617,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#getEntryByKey(java.lang.Object, boolean)
 	 */
 	@Override
-	public ViewEntry getEntryByKey(Object key, boolean exact);
+	public ViewEntry getEntryByKey(final Object key, final boolean exact);
 
 	/*
 	 * (non-Javadoc)
@@ -628,7 +628,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public ViewEntry getEntryByKey(Vector keys);
+	public ViewEntry getEntryByKey(final Vector keys);
 
 	/*
 	 * (non-Javadoc)
@@ -639,7 +639,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public ViewEntry getEntryByKey(Vector keys, boolean exact);
+	public ViewEntry getEntryByKey(final Vector keys, final boolean exact);
 
 	/*
 	 * (non-Javadoc)
@@ -713,7 +713,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#getNextDocument(lotus.domino.Document)
 	 */
 	@Override
-	public Document getNextDocument(lotus.domino.Document doc);
+	public Document getNextDocument(final lotus.domino.Document doc);
 
 	/*
 	 * (non-Javadoc)
@@ -721,7 +721,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#getNextSibling(lotus.domino.Document)
 	 */
 	@Override
-	public Document getNextSibling(lotus.domino.Document doc);
+	public Document getNextSibling(final lotus.domino.Document doc);
 
 	/*
 	 * (non-Javadoc)
@@ -737,7 +737,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#getNthDocument(int)
 	 */
 	@Override
-	public Document getNthDocument(int n);
+	public Document getNthDocument(final int n);
 
 	/*
 	 * (non-Javadoc)
@@ -753,7 +753,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#getParentDocument(lotus.domino.Document)
 	 */
 	@Override
-	public Document getParentDocument(lotus.domino.Document doc);
+	public Document getParentDocument(final lotus.domino.Document doc);
 
 	/*
 	 * (non-Javadoc)
@@ -761,7 +761,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#getPrevDocument(lotus.domino.Document)
 	 */
 	@Override
-	public Document getPrevDocument(lotus.domino.Document doc);
+	public Document getPrevDocument(final lotus.domino.Document doc);
 
 	/*
 	 * (non-Javadoc)
@@ -769,7 +769,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#getPrevSibling(lotus.domino.Document)
 	 */
 	@Override
-	public Document getPrevSibling(lotus.domino.Document doc);
+	public Document getPrevSibling(final lotus.domino.Document doc);
 
 	/*
 	 * (non-Javadoc)
@@ -963,7 +963,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#lock(boolean)
 	 */
 	@Override
-	public boolean lock(boolean provisionalOk);
+	public boolean lock(final boolean provisionalOk);
 
 	/*
 	 * (non-Javadoc)
@@ -971,7 +971,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#lock(java.lang.String)
 	 */
 	@Override
-	public boolean lock(String name);
+	public boolean lock(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -979,7 +979,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#lock(java.lang.String, boolean)
 	 */
 	@Override
-	public boolean lock(String name, boolean provisionalOk);
+	public boolean lock(final String name, final boolean provisionalOk);
 
 	/*
 	 * (non-Javadoc)
@@ -990,7 +990,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public boolean lock(Vector names);
+	public boolean lock(final Vector names);
 
 	/*
 	 * (non-Javadoc)
@@ -1001,7 +1001,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public boolean lock(Vector names, boolean provisionalOk);
+	public boolean lock(final Vector names, final boolean provisionalOk);
 
 	/*
 	 * (non-Javadoc)
@@ -1017,7 +1017,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#lockProvisional(java.lang.String)
 	 */
 	@Override
-	public boolean lockProvisional(String name);
+	public boolean lockProvisional(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -1028,7 +1028,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public boolean lockProvisional(Vector names);
+	public boolean lockProvisional(final Vector names);
 
 	/*
 	 * (non-Javadoc)
@@ -1044,7 +1044,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#markAllRead(java.lang.String)
 	 */
 	@Override
-	public void markAllRead(String userName);
+	public void markAllRead(final String userName);
 
 	/*
 	 * (non-Javadoc)
@@ -1060,7 +1060,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#markAllUnread(java.lang.String)
 	 */
 	@Override
-	public void markAllUnread(String userName);
+	public void markAllUnread(final String userName);
 
 	/*
 	 * (non-Javadoc)
@@ -1092,7 +1092,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#removeColumn(int)
 	 */
 	@Override
-	public void removeColumn(int column);
+	public void removeColumn(final int column);
 
 	/*
 	 * (non-Javadoc)
@@ -1100,7 +1100,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#removeColumn(java.lang.String)
 	 */
 	@Override
-	public void removeColumn(String column);
+	public void removeColumn(final String column);
 
 	/*
 	 * (non-Javadoc)
@@ -1116,7 +1116,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#resortView(java.lang.String)
 	 */
 	@Override
-	public void resortView(String column);
+	public void resortView(final String column);
 
 	/*
 	 * (non-Javadoc)
@@ -1124,7 +1124,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#resortView(java.lang.String, boolean)
 	 */
 	@Override
-	public void resortView(String column, boolean ascending);
+	public void resortView(final String column, final boolean ascending);
 
 	/*
 	 * (non-Javadoc)
@@ -1132,7 +1132,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#setAliases(java.lang.String)
 	 */
 	@Override
-	public void setAliases(String alias);
+	public void setAliases(final String alias);
 
 	/*
 	 * (non-Javadoc)
@@ -1143,7 +1143,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public void setAliases(Vector aliases);
+	public void setAliases(final Vector aliases);
 
 	/*
 	 * (non-Javadoc)
@@ -1151,7 +1151,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#setAutoUpdate(boolean)
 	 */
 	@Override
-	public void setAutoUpdate(boolean flag);
+	public void setAutoUpdate(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -1159,7 +1159,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#setBackgroundColor(int)
 	 */
 	@Override
-	public void setBackgroundColor(int color);
+	public void setBackgroundColor(final int color);
 
 	/*
 	 * (non-Javadoc)
@@ -1167,7 +1167,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#setDefaultView(boolean)
 	 */
 	@Override
-	public void setDefaultView(boolean flag);
+	public void setDefaultView(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -1175,7 +1175,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#setEnableNoteIDsForCategories(boolean)
 	 */
 	@Override
-	public void setEnableNoteIDsForCategories(boolean flag);
+	public void setEnableNoteIDsForCategories(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -1183,7 +1183,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#setName(java.lang.String)
 	 */
 	@Override
-	public void setName(String name);
+	public void setName(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -1191,7 +1191,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#setProhibitDesignRefresh(boolean)
 	 */
 	@Override
-	public void setProhibitDesignRefresh(boolean flag);
+	public void setProhibitDesignRefresh(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -1199,7 +1199,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#setProtectReaders(boolean)
 	 */
 	@Override
-	public void setProtectReaders(boolean flag);
+	public void setProtectReaders(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -1210,7 +1210,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public void setReaders(Vector readers);
+	public void setReaders(final Vector readers);
 
 	/*
 	 * (non-Javadoc)
@@ -1218,7 +1218,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#setSelectionFormula(java.lang.String)
 	 */
 	@Override
-	public void setSelectionFormula(String formula);
+	public void setSelectionFormula(final String formula);
 
 	/*
 	 * (non-Javadoc)
@@ -1226,7 +1226,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#setSelectionQuery(java.lang.String)
 	 */
 	@Override
-	public void setSelectionQuery(String query);
+	public void setSelectionQuery(final String query);
 
 	/*
 	 * (non-Javadoc)
@@ -1234,7 +1234,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#setSpacing(int)
 	 */
 	@Override
-	public void setSpacing(int spacing);
+	public void setSpacing(final int spacing);
 
 	/*
 	 * (non-Javadoc)
