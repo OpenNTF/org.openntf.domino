@@ -1,9 +1,13 @@
 OpenNTF Domino API
 © Copyright 2012-2013
-  Nathan T. Freeman, Jesse Gallagher, Tim Tripcony, Rene Winkermeyer, Declan Lynch, Julian Robichaux, Paul Withers
+  Nathan T. Freeman, Jesse Gallagher, Tim Tripcony, Rene Winkermeyer, Declan Lynch, Paul Withers
 
 Includes content licensed under Apache License 2.0
   Copyright Michael Zischeck from http://in-mood.blogspot.com/
+  
+Includes content from OpenLog under Apache License 2.0
+  http://www.openntf.org/internal/home.nsf/project.xsp?action=openDocument&name=OpenLog
+  Copyright Julian Robichaux  
 
 Also includes the Blueprints API from Tinkerpop.
   https://github.com/tinkerpop/blueprints/blob/master/LICENSE.txt
