@@ -879,7 +879,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			session.setConvertMIME(convertMime);
 		} catch (Throwable t) {
 			DominoUtils.handleException(new MIMEConversionException("Unable to getItemValueMIME for item name " + name + " on document "
-					+ getNoteID()));
+					+ getNoteID(), t));
 		}
 		return resultObj;
 	}

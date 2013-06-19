@@ -15,7 +15,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 	public static class ContextListener implements com.ibm.xsp.event.FacesContextListener {
 		@Override
 		public void beforeContextReleased(FacesContext paramFacesContext) {
-			Factory.clearSession();
+			Factory.terminate();
 		}
 
 		@Override
@@ -71,6 +71,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void createImplicitObjects(FacesContextEx ctx) {
+		Factory.setClassLoader(ctx.getContextClassLoader());
 		Map localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
 		org.openntf.domino.Session s = null;
 		if (localMap.containsKey("session")) {

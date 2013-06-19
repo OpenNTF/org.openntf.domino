@@ -138,6 +138,7 @@ public class DominoThread extends Thread {
 			System.out.println("Thread " + Thread.currentThread().getName() + " auto-recycled " + runRecycleCount
 					+ " lotus references during run. Then recycled " + drCount + " lotus references on completion and had "
 					+ Factory.getRecycleErrorCount() + " recycle errors");
+			Factory.terminate();
 			lotus.domino.NotesThread.stermThread();
 		}
 	}

@@ -160,12 +160,6 @@ public enum DominoAPIScratchTest {
 
 	}
 
-	/**
-	 * The main method.
-	 * 
-	 * @param args
-	 *            the arguments
-	 */
 	public static void main(String[] args) {
 
 		DominoThread[] threads = new DominoThread[THREAD_COUNT];

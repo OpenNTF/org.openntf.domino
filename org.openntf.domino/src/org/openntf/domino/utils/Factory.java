@@ -40,13 +40,16 @@ public enum Factory {
 	public static final String VERSION = "Milestone2";
 
 	private static ThreadLocal<Session> currentSessionHolder_ = new ThreadLocal<Session>() {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.ThreadLocal#initialValue()
-		 */
 		@Override
 		protected Session initialValue() {
+			return super.initialValue();
+		}
+
+	};
+
+	private static ThreadLocal<ClassLoader> currentClassLoader_ = new ThreadLocal<ClassLoader>() {
+		@Override
+		protected ClassLoader initialValue() {
 			return super.initialValue();
 		}
 
@@ -513,6 +516,26 @@ public enum Factory {
 
 	public static void clearSession() {
 		currentSessionHolder_.set(null);
+	}
+
+	public static ClassLoader getClassLoader() {
+		if (currentClassLoader_.get() == null) {
+			setClassLoader(Factory.class.getClassLoader());
+		}
+		return currentClassLoader_.get();
+	}
+
+	public static void setClassLoader(ClassLoader loader) {
+		currentClassLoader_.set(loader);
+	}
+
+	public static void clearClassLoader() {
+		currentClassLoader_.set(null);
+	}
+
+	public static void terminate() {
+		clearSession();
+		clearClassLoader();
 	}
 
 	/**

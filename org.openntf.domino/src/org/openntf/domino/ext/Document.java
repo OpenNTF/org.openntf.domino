@@ -56,4 +56,6 @@ public interface Document {
 
 	public <T> T getItemValue(String name, Class<?> T) throws ItemNotFoundException, DataNotCompatibleException;
 
+	// public <T> T getItemValue(String name, Class<?> T, ClassLoader loader) throws ItemNotFoundException, DataNotCompatibleException;
+
 }
