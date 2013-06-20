@@ -1996,9 +1996,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				} else {
 					// Check to see if it's a StateHolder
 					try {
-						Class<?> stateHolderClass = Class.forName("javax.faces.component.StateHolder");
+						Class<?> stateHolderClass = Class.forName("javax.faces.component.StateHolder", true, Factory.getClassLoader());
 						if (stateHolderClass.isInstance(value)) {
-							Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext");
+							Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext", true, Factory.getClassLoader());
 							Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
 							Method saveState = stateHolderClass.getMethod("saveState", facesContextClass);
 							Serializable state = (Serializable) saveState.invoke(value, getCurrentInstance.invoke(null));

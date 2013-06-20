@@ -56,17 +56,6 @@ public class DominoChildThread extends DominoThread {
 	/**
 	 * Instantiates a new domino child thread.
 	 * 
-	 * @param threadName
-	 *            the thread name
-	 */
-	public DominoChildThread(String threadName) {
-		super(threadName);
-		// TODO Auto-generated constructor stub
-	}
-
-	/**
-	 * Instantiates a new domino child thread.
-	 * 
 	 * @param runnable
 	 *            the runnable
 	 * @param threadName
@@ -74,47 +63,6 @@ public class DominoChildThread extends DominoThread {
 	 */
 	public DominoChildThread(Runnable runnable, String threadName) {
 		super(runnable, threadName);
-		// TODO Auto-generated constructor stub
-	}
-
-	/**
-	 * Instantiates a new domino child thread.
-	 * 
-	 * @param group
-	 *            the group
-	 * @param runnable
-	 *            the runnable
-	 */
-	public DominoChildThread(ThreadGroup group, Runnable runnable) {
-		super(group, runnable);
-		// TODO Auto-generated constructor stub
-	}
-
-	/**
-	 * Instantiates a new domino child thread.
-	 * 
-	 * @param group
-	 *            the group
-	 * @param threadName
-	 *            the thread name
-	 */
-	public DominoChildThread(ThreadGroup group, String threadName) {
-		super(group, threadName);
-		// TODO Auto-generated constructor stub
-	}
-
-	/**
-	 * Instantiates a new domino child thread.
-	 * 
-	 * @param arg0
-	 *            the arg0
-	 * @param arg1
-	 *            the arg1
-	 * @param arg2
-	 *            the arg2
-	 */
-	public DominoChildThread(ThreadGroup arg0, Runnable arg1, String arg2) {
-		super(arg0, arg1, arg2);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -165,7 +113,9 @@ public class DominoChildThread extends DominoThread {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.thread.DominoThread#run()
 	 */
 	@Override

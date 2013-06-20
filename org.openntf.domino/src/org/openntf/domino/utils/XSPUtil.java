@@ -141,12 +141,12 @@ public enum XSPUtil {
 	 *             the exception
 	 */
 	public static Object resolveVariable(String varName) throws Exception {
-		Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext");
+		Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext", true, Factory.getClassLoader());
 		Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
 		Method getApplication = facesContextClass.getMethod("getApplication");
-		Class<?> applicationClass = Class.forName("javax.faces.application.Application");
+		Class<?> applicationClass = Class.forName("javax.faces.application.Application", true, Factory.getClassLoader());
 		Method getVariableResolver = applicationClass.getMethod("getVariableResolver");
-		Class<?> variableResolverClass = Class.forName("javax.faces.el.VariableResolver");
+		Class<?> variableResolverClass = Class.forName("javax.faces.el.VariableResolver", true, Factory.getClassLoader());
 		Method resolveVariable = variableResolverClass.getMethod("resolveVariable", facesContextClass, String.class);
 
 		Object facesContext = getCurrentInstance.invoke(null);

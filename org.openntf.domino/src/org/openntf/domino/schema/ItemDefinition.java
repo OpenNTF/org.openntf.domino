@@ -2,6 +2,7 @@
  * 
  */
 package org.openntf.domino.schema;
+
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -15,6 +16,8 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Item;
 import org.openntf.domino.schema.DatabaseSchema.Flags;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
+
 public class ItemDefinition implements Externalizable {
 	private String name_;
 	private String defaultLabel_;
@@ -93,7 +96,7 @@ public class ItemDefinition implements Externalizable {
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		name_ = in.readUTF();
 		defaultLabel_ = in.readUTF();
-		type_ = Class.forName(in.readUTF());
+		type_ = Class.forName(in.readUTF(), true, Factory.getClassLoader());
 		int flagCount = in.readInt();
 		for (int i = 0; i < flagCount; i++) {
 			flags_.add((Flags) in.readObject());

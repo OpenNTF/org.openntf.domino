@@ -41,18 +41,6 @@ public class DominoThread extends Thread {
 	 */
 	public DominoThread(Runnable runnable) {
 		super(runnable);
-		// TODO Auto-generated constructor stub
-	}
-
-	/**
-	 * Instantiates a new domino thread.
-	 * 
-	 * @param threadName
-	 *            the thread name
-	 */
-	public DominoThread(String threadName) {
-		super(threadName);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -65,47 +53,6 @@ public class DominoThread extends Thread {
 	 */
 	public DominoThread(Runnable runnable, String threadName) {
 		super(runnable, threadName);
-		// TODO Auto-generated constructor stub
-	}
-
-	/**
-	 * Instantiates a new domino thread.
-	 * 
-	 * @param group
-	 *            the group
-	 * @param runnable
-	 *            the runnable
-	 */
-	public DominoThread(ThreadGroup group, Runnable runnable) {
-		super(group, runnable);
-		// TODO Auto-generated constructor stub
-	}
-
-	/**
-	 * Instantiates a new domino thread.
-	 * 
-	 * @param group
-	 *            the group
-	 * @param threadName
-	 *            the thread name
-	 */
-	public DominoThread(ThreadGroup group, String threadName) {
-		super(group, threadName);
-		// TODO Auto-generated constructor stub
-	}
-
-	/**
-	 * Instantiates a new domino thread.
-	 * 
-	 * @param arg0
-	 *            the arg0
-	 * @param arg1
-	 *            the arg1
-	 * @param arg2
-	 *            the arg2
-	 */
-	public DominoThread(ThreadGroup arg0, Runnable arg1, String arg2) {
-		super(arg0, arg1, arg2);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -166,7 +113,16 @@ public class DominoThread extends Thread {
 	 */
 	@Override
 	public synchronized void start() {
-		// TODO Auto-generated method stub
 		super.start();
+	}
+
+	public synchronized void start(ClassLoader loader) {
+		setContextClassLoader(loader);
+		start();
+	}
+
+	@Override
+	public void setContextClassLoader(ClassLoader loader) {
+		Factory.setClassLoader(loader);
 	}
 }

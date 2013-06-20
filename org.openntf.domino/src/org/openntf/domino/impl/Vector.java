@@ -90,7 +90,11 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public void add(int arg0, E arg1) {
-		delegate_.add(arg0, arg1);
+		if (arg0 >= delegate_.size()) {
+			delegate_.add(arg1);
+		} else {
+			delegate_.add(arg0, arg1);
+		}
 	}
 
 	/*

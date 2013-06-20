@@ -513,7 +513,7 @@ public enum DominoUtils {
 			MIMEHeader storageScheme = entity.getNthHeader("X-Storage-Scheme");
 			MIMEHeader originalJavaClass = entity.getNthHeader("X-Original-Java-Class");
 			if (storageScheme != null && storageScheme.getHeaderVal().equals("StateHolder")) {
-				Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext");
+				Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext", true, Factory.getClassLoader());
 				Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
 
 				Class<?> stateHoldingClass = (Class<?>) Class.forName(originalJavaClass.getHeaderVal(), true, Factory.getClassLoader());
