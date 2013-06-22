@@ -64,7 +64,7 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	 *            the parent
 	 */
 	public DocumentCollection(final lotus.domino.DocumentCollection delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent instanceof AgentContext ? ((AgentContext) parent).getCurrentDatabase() : parent);
+		super(delegate, parent);
 	}
 
 	/**
