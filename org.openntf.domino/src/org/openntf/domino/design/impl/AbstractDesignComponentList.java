@@ -22,12 +22,10 @@ public abstract class AbstractDesignComponentList<E> extends AbstractList<E> {
 
 	private final AbstractDesignBase parent_;
 	private final String pattern_;
-	private XMLNodeList nodes_;
 
 	protected AbstractDesignComponentList(final AbstractDesignBase parent, final String pattern) {
 		parent_ = parent;
 		pattern_ = pattern;
-		refreshNodes();
 	}
 
 	/*
@@ -37,7 +35,7 @@ public abstract class AbstractDesignComponentList<E> extends AbstractList<E> {
 	 */
 	@Override
 	public int size() {
-		return nodes_.size();
+		return getNodes().size();
 	}
 
 	/*
@@ -48,12 +46,8 @@ public abstract class AbstractDesignComponentList<E> extends AbstractList<E> {
 	@Override
 	public E remove(final int index) {
 		E current = get(index);
-		nodes_.remove(index);
+		getNodes().remove(index);
 		return current;
-	}
-
-	protected XMLNodeList getNodes() {
-		return nodes_;
 	}
 
 	protected AbstractDesignBase getParent() {
@@ -69,11 +63,12 @@ public abstract class AbstractDesignComponentList<E> extends AbstractList<E> {
 		}
 	}
 
-	protected void refreshNodes() {
+	protected XMLNodeList getNodes() {
 		try {
-			nodes_ = (XMLNodeList) parent_.getDxl().selectNodes(pattern_);
+			return (XMLNodeList) parent_.getDxl().selectNodes(pattern_);
 		} catch (XPathExpressionException e) {
 			DominoUtils.handleException(e);
+			return null;
 		}
 	}
 }

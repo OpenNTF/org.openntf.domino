@@ -3,12 +3,14 @@
  */
 package org.openntf.domino.design;
 
-import java.util.List;
+import org.openntf.domino.design.impl.DesignColumn;
 
 /**
  * @author jgallagher
  * 
  */
 public interface Folder extends DesignBaseNamed {
-	public List<DesignColumn> getColumns();
+	public DesignColumn addColumn();
+
+	public DesignColumnList getColumns();
 }
