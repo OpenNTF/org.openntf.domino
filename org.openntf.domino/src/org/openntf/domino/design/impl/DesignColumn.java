@@ -120,7 +120,12 @@ public class DesignColumn implements org.openntf.domino.design.DesignColumn {
 		} catch (XPathExpressionException xee) {
 		}
 		if (columnHeader == null) {
-			node_.addChildElement("columnheader");
+			XMLNode firstChild = node_.getFirstChild();
+			if (firstChild != null) {
+				columnHeader = node_.insertChildElementBefore("columnheader", firstChild);
+			} else {
+				columnHeader = node_.addChildElement("columnheader");
+			}
 		}
 		columnHeader.setAttribute("title", title);
 	}

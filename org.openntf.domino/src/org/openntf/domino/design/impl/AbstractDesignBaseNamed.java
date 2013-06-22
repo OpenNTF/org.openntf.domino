@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.design.DesignBaseNamed;
 
@@ -22,8 +23,12 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	/**
 	 * @param document
 	 */
-	public AbstractDesignBaseNamed(final Document document) {
+	protected AbstractDesignBaseNamed(final Document document) {
 		super(document);
+	}
+
+	protected AbstractDesignBaseNamed(final Database database) {
+		super(database);
 	}
 
 	/*
@@ -43,7 +48,7 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	 */
 	@Override
 	public String getName() {
-		return getDxl().getAttribute("name");
+		return getDocumentElement().getAttribute("name");
 	}
 
 	/*
@@ -53,7 +58,7 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	 */
 	@Override
 	public void setAlias(final String alias) {
-		getDxl().setAttribute("alias", alias);
+		getDocumentElement().setAttribute("alias", alias);
 	}
 
 	/*
@@ -71,7 +76,7 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 			result.append(alias);
 			added = true;
 		}
-		getDxl().setAttribute("alias", result.toString());
+		getDocumentElement().setAttribute("alias", result.toString());
 	}
 
 	/*
@@ -81,6 +86,6 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	 */
 	@Override
 	public void setName(final String name) {
-		getDxl().setAttribute("name", name);
+		getDocumentElement().setAttribute("name", name);
 	}
 }

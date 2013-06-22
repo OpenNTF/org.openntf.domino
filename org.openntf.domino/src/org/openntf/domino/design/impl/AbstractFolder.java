@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import javax.xml.xpath.XPathExpressionException;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.design.Folder;
 import org.openntf.domino.utils.DominoUtils;
@@ -24,8 +25,12 @@ public abstract class AbstractFolder extends AbstractDesignBaseNamed implements 
 	/**
 	 * @param document
 	 */
-	public AbstractFolder(final Document document) {
+	protected AbstractFolder(final Document document) {
 		super(document);
+	}
+
+	protected AbstractFolder(final Database database) {
+		super(database);
 	}
 
 	/*
@@ -51,9 +56,9 @@ public abstract class AbstractFolder extends AbstractDesignBaseNamed implements 
 			XMLNode node;
 			XMLNode item = getDxl().selectSingleNode("//item");
 			if (item != null) {
-				node = getDxl().insertChildElementBefore("column", item);
+				node = getDocumentElement().insertChildElementBefore("column", item);
 			} else {
-				node = getDxl().addChildElement("column");
+				node = getDocumentElement().addChildElement("column");
 			}
 
 			node.setAttribute("hidedetailrows", "false");

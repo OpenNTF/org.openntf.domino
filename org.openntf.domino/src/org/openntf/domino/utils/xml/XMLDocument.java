@@ -40,6 +40,10 @@ public class XMLDocument extends XMLNode {
 		this.node = builder.parse(xml);
 	}
 
+	public XMLNode getDocumentElement() {
+		return new XMLNode(((Document) this.node).getDocumentElement());
+	}
+
 	public void loadURL(final String urlString) throws SAXException, IOException, ParserConfigurationException {
 		URL url = new URL(urlString);
 		URLConnection conn = url.openConnection();
