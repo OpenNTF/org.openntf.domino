@@ -15,13 +15,14 @@ import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
 import org.openntf.domino.schema.DatabaseSchema.Flags;
+import org.openntf.domino.schema.types.IDominoType;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 public class ItemDefinition implements Externalizable {
 	private String name_;
 	private String defaultLabel_;
-	private Class<?> type_;
+	private Class<? extends IDominoType> type_;
 	private Set<Flags> flags_ = new HashSet<Flags>();
 	private Object defaultValue_;
 	private ItemValidation validator_;
@@ -33,6 +34,10 @@ public class ItemDefinition implements Externalizable {
 
 	public void setParent(DatabaseSchema parent) {
 		parentSchema_ = parent;
+	}
+
+	public DatabaseSchema getParent() {
+		return parentSchema_;
 	}
 
 	public String getName() {
@@ -55,7 +60,7 @@ public class ItemDefinition implements Externalizable {
 		return type_;
 	}
 
-	public void setType(Class<?> type) {
+	public void setType(Class<? extends IDominoType> type) {
 		type_ = type;
 	}
 
@@ -96,13 +101,17 @@ public class ItemDefinition implements Externalizable {
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		name_ = in.readUTF();
 		defaultLabel_ = in.readUTF();
-		type_ = Class.forName(in.readUTF(), true, Factory.getClassLoader());
+		Class<?> cl = (Class<?>) Class.forName(in.readUTF(), true, Factory.getClassLoader());
+		if (cl.isAssignableFrom(IDominoType.class)) {
+			type_ = (Class<? extends IDominoType>) cl;
+		}
 		int flagCount = in.readInt();
 		for (int i = 0; i < flagCount; i++) {
 			flags_.add((Flags) in.readObject());
 		}
 		defaultValue_ = in.readObject();
 		validator_ = (ItemValidation) in.readObject();
+		validator_.setDefinition(this);
 	}
 
 	/*

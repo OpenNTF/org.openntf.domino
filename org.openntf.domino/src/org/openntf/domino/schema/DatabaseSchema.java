@@ -16,6 +16,8 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
 import org.openntf.domino.annotations.Incomplete;
+import org.openntf.domino.schema.types.IDominoType;
+import org.openntf.domino.utils.DominoUtils;
 
 /**
  * @author nfreeman
@@ -32,6 +34,7 @@ public class DatabaseSchema implements Externalizable {
 
 	private Map<String, DocumentDefinition> documentDefinitions_ = new HashMap<String, DocumentDefinition>();
 	private Map<String, ItemDefinition> itemDefinitions_ = new HashMap<String, ItemDefinition>();
+	private Map<Class<? extends IDominoType>, IDominoType> typeDefinitions_ = new HashMap<Class<? extends IDominoType>, IDominoType>();
 
 	/**
 	 * 
@@ -54,6 +57,30 @@ public class DatabaseSchema implements Externalizable {
 
 	public void setItemDefinitions(Map<String, ItemDefinition> definitions) {
 		itemDefinitions_ = definitions;
+	}
+
+	public Map<Class<? extends IDominoType>, IDominoType> getTypeDefinitions() {
+		return typeDefinitions_;
+	}
+
+	public void setTypeDefinitions(Map<Class<? extends IDominoType>, IDominoType> definitions) {
+		typeDefinitions_ = definitions;
+	}
+
+	public IDominoType getTypeDefinition(Class<? extends IDominoType> type) {
+		IDominoType result = getTypeDefinitions().get(type);
+		if (result == null) {
+			// TODO NTF improve exception handling
+			try {
+				result = type.newInstance();
+			} catch (IllegalAccessException e) {
+				DominoUtils.handleException(e);
+			} catch (InstantiationException e) {
+				DominoUtils.handleException(e);
+			}
+			getTypeDefinitions().put(type, result);
+		}
+		return result;
 	}
 
 	public void save(Database db) {

@@ -7,7 +7,11 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.Date;
 import java.util.regex.Pattern;
+
+import lotus.domino.DateTime;
+import lotus.domino.Name;
 
 import org.openntf.domino.ext.Formula;
 import org.openntf.domino.schema.exceptions.ItemException;
@@ -21,6 +25,15 @@ public class ItemValidation implements Externalizable {
 	private long minValue_;
 	private int maxMembers_;
 	private int minMembers_;
+	private transient ItemDefinition definition_;
+
+	public ItemDefinition getDefinition() {
+		return definition_;
+	}
+
+	public void setDefinition(ItemDefinition definition) {
+		definition_ = definition;
+	}
 
 	public Pattern getPattern() {
 		return expression_;
@@ -86,7 +99,33 @@ public class ItemValidation implements Externalizable {
 		minMembers_ = minMembers;
 	}
 
+	private Class<?> getItemClass() {
+		return getDefinition().getClass();
+	}
+
 	public boolean validateItem(org.openntf.domino.Item item) throws ItemException {
+		boolean result = true;
+		Class<?> clazz = getItemClass();
+		if (String.class.equals(clazz)) {
+
+		} else if (Integer.class.equals(clazz)) {
+
+		} else if (Double.class.equals(clazz)) {
+
+		} else if (Long.class.equals(clazz)) {
+		} else if (Short.class.equals(clazz)) {
+		} else if (Float.class.equals(clazz)) {
+		} else if (Boolean.class.equals(clazz)) {
+		} else if (Date.class.equals(clazz)) {
+		} else if (DateTime.class.equals(clazz)) {
+		} else if (Name.class.equals(clazz)) {
+		} else {
+		}
+
+		return result;
+	}
+
+	public boolean validateItemString(org.openntf.domino.Item item) throws ItemException {
 		boolean result = true;
 
 		return result;
