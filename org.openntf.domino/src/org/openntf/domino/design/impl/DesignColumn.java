@@ -5,9 +5,6 @@ package org.openntf.domino.design.impl;
 
 import java.util.logging.Logger;
 
-import javax.xml.xpath.XPathExpressionException;
-
-import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLNode;
 
 /**
@@ -101,11 +98,7 @@ public class DesignColumn implements org.openntf.domino.design.DesignColumn {
 
 	@Override
 	public String getTitle() {
-		XMLNode columnHeader = null;
-		try {
-			columnHeader = node_.selectSingleNode("columnheader");
-		} catch (XPathExpressionException xee) {
-		}
+		XMLNode columnHeader = node_.selectSingleNode("columnheader");
 		if (columnHeader == null) {
 			return "";
 		}
@@ -114,11 +107,7 @@ public class DesignColumn implements org.openntf.domino.design.DesignColumn {
 
 	@Override
 	public void setTitle(final String title) {
-		XMLNode columnHeader = null;
-		try {
-			columnHeader = node_.selectSingleNode("columnheader");
-		} catch (XPathExpressionException xee) {
-		}
+		XMLNode columnHeader = node_.selectSingleNode("columnheader");
 		if (columnHeader == null) {
 			XMLNode firstChild = node_.getFirstChild();
 			if (firstChild != null) {
@@ -132,36 +121,25 @@ public class DesignColumn implements org.openntf.domino.design.DesignColumn {
 
 	@Override
 	public String getFormula() {
-		try {
-			XMLNode formulaNode = node_.selectSingleNode("code[@event='value']/formula");
-			if (formulaNode != null) {
-				return formulaNode.getTextContent();
-			}
-
-			// If there's no formula node then that means it's just an item directly
-			return this.getItemName();
-		} catch (XPathExpressionException e) {
-			DominoUtils.handleException(e);
-			return null;
-
+		XMLNode formulaNode = node_.selectSingleNode("code[@event='value']/formula");
+		if (formulaNode != null) {
+			return formulaNode.getTextContent();
 		}
+
+		// If there's no formula node then that means it's just an item directly
+		return this.getItemName();
 	}
 
 	@Override
 	public void setFormula(final String formula) {
-		try {
-			XMLNode formulaNode = node_.selectSingleNode("code[@event='value']/formula");
-			if (formulaNode != null) {
-				formulaNode.setTextContent(formula);
-			} else {
-				XMLNode code = node_.addChildElement("code");
-				code.setAttribute("event", "value");
-				formulaNode = code.addChildElement("formula");
-				formulaNode.setTextContent(formula);
-			}
-		} catch (XPathExpressionException e) {
-			DominoUtils.handleException(e);
-
+		XMLNode formulaNode = node_.selectSingleNode("code[@event='value']/formula");
+		if (formulaNode != null) {
+			formulaNode.setTextContent(formula);
+		} else {
+			XMLNode code = node_.addChildElement("code");
+			code.setAttribute("event", "value");
+			formulaNode = code.addChildElement("formula");
+			formulaNode.setTextContent(formula);
 		}
 	}
 }

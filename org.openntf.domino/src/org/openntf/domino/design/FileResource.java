@@ -28,4 +28,9 @@ public interface FileResource extends DesignBaseNamed, org.openntf.domino.types.
 	 * @return whether the file resource is marked as read-only
 	 */
 	public boolean isReadOnly();
+
+	/**
+	 * @return whether the file resource is marked as "deployable", whatever that means
+	 */
+	public boolean isDeployable();
 }

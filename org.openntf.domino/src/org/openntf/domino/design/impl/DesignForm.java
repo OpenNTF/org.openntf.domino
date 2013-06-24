@@ -5,10 +5,7 @@ package org.openntf.domino.design.impl;
 
 import java.util.logging.Logger;
 
-import javax.xml.xpath.XPathExpressionException;
-
 import org.openntf.domino.Document;
-import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLNode;
 
 /**
@@ -39,30 +36,25 @@ public class DesignForm extends AbstractDesignBaseNamed implements org.openntf.d
 
 	@Override
 	public FormField addField() {
-		try {
-			XMLNode body = getDxl().selectSingleNode("/form/body/richtext");
+		XMLNode body = getDxl().selectSingleNode("/form/body/richtext");
 
-			// Create an appropriate paragraph definition
-			XMLNode finalPardef = getDxl().selectSingleNode("//pardef[last()]");
-			int nextId = Integer.valueOf(finalPardef.getAttribute("id")) + 1;
-			XMLNode pardef = body.addChildElement("pardef");
-			pardef.setAttribute("id", String.valueOf(nextId));
-			pardef.setAttribute("hide", "notes web mobile");
+		// Create an appropriate paragraph definition
+		XMLNode finalPardef = getDxl().selectSingleNode("//pardef[last()]");
+		int nextId = Integer.valueOf(finalPardef.getAttribute("id")) + 1;
+		XMLNode pardef = body.addChildElement("pardef");
+		pardef.setAttribute("id", String.valueOf(nextId));
+		pardef.setAttribute("hide", "notes web mobile");
 
-			// Now create the par and the field
-			XMLNode par = body.addChildElement("par");
-			par.setAttribute("def", pardef.getAttribute("id"));
+		// Now create the par and the field
+		XMLNode par = body.addChildElement("par");
+		par.setAttribute("def", pardef.getAttribute("id"));
 
-			// Now add the field
-			XMLNode field = par.addChildElement("field");
-			field.setAttribute("kind", "editable");
-			field.setAttribute("name", "");
-			field.setAttribute("type", "text");
+		// Now add the field
+		XMLNode field = par.addChildElement("field");
+		field.setAttribute("kind", "editable");
+		field.setAttribute("name", "");
+		field.setAttribute("type", "text");
 
-			return new FormField(field);
-		} catch (XPathExpressionException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
+		return new FormField(field);
 	}
 }

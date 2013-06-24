@@ -19,6 +19,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
+import org.openntf.domino.utils.DominoUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -43,20 +44,24 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		this.node = node;
 	}
 
-	public XMLNode selectSingleNode(final String xpathString) throws XPathExpressionException {
+	public XMLNode selectSingleNode(final String xpathString) {
 		List<XMLNode> result = this.selectNodes(xpathString);
 		return result.size() == 0 ? null : result.get(0);
 	}
 
-	public List<XMLNode> selectNodes(final String xpathString) throws XPathExpressionException {
+	public List<XMLNode> selectNodes(final String xpathString) {
+		try {
+			NodeList nodes = (NodeList) this.getXPath().compile(xpathString).evaluate(node, XPathConstants.NODESET);
+			List<XMLNode> result = new XMLNodeList(nodes.getLength());
+			for (int i = 0; i < nodes.getLength(); i++) {
+				result.add(new XMLNode(nodes.item(i)));
+			}
 
-		NodeList nodes = (NodeList) this.getXPath().compile(xpathString).evaluate(node, XPathConstants.NODESET);
-		List<XMLNode> result = new XMLNodeList(nodes.getLength());
-		for (int i = 0; i < nodes.getLength(); i++) {
-			result.add(new XMLNode(nodes.item(i)));
+			return result;
+		} catch (XPathExpressionException xee) {
+			DominoUtils.handleException(xee);
+			return null;
 		}
-
-		return result;
 	}
 
 	public String getAttribute(final String attribute) {

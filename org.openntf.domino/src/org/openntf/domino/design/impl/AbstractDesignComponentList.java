@@ -6,9 +6,6 @@ package org.openntf.domino.design.impl;
 import java.util.AbstractList;
 import java.util.logging.Logger;
 
-import javax.xml.xpath.XPathExpressionException;
-
-import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLNodeList;
 
 /**
@@ -55,20 +52,11 @@ public abstract class AbstractDesignComponentList<E> extends AbstractList<E> {
 	}
 
 	public void swap(final int a, final int b) {
-		try {
-			XMLNodeList fieldNodes = (XMLNodeList) getParent().getDxl().selectNodes(pattern_);
-			fieldNodes.swap(a, b);
-		} catch (XPathExpressionException e) {
-			DominoUtils.handleException(e);
-		}
+		XMLNodeList fieldNodes = (XMLNodeList) getParent().getDxl().selectNodes(pattern_);
+		fieldNodes.swap(a, b);
 	}
 
 	protected XMLNodeList getNodes() {
-		try {
-			return (XMLNodeList) parent_.getDxl().selectNodes(pattern_);
-		} catch (XPathExpressionException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
+		return (XMLNodeList) parent_.getDxl().selectNodes(pattern_);
 	}
 }

@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
@@ -185,16 +184,11 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public String getUniversalID() {
-		try {
-			XMLNode node = getDxl().selectSingleNode("//noteinfo");
-			if (node != null) {
-				return node.getAttribute("unid");
-			}
-			return "";
-		} catch (XPathExpressionException e) {
-			DominoUtils.handleException(e);
-			return null;
+		XMLNode node = getDxl().selectSingleNode("//noteinfo");
+		if (node != null) {
+			return node.getAttribute("unid");
 		}
+		return "";
 	}
 
 	/*
@@ -271,11 +265,6 @@ public abstract class AbstractDesignBase implements DesignBase {
 	}
 
 	protected XMLNode getDxlNode(final String xpathString) {
-		try {
-			return getDxl().selectSingleNode(xpathString);
-		} catch (XPathExpressionException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
+		return getDxl().selectSingleNode(xpathString);
 	}
 }

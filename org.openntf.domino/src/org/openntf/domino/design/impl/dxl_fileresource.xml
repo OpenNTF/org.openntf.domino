@@ -1,5 +1,30 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE fileresource SYSTEM "xmlschemas/domino_8_5_3.dtd">
-<fileresource name='' publicaccess='false' mimetype=''>
-	<filedata/>
-</fileresource>
+<?xml version="1.0"?>
+<!DOCTYPE note SYSTEM "xmlschemas/domino_9_0.dtd">
+<note xmlns="http://www.lotus.com/dxl" class="form">
+	<item name="$Flags">
+		<text>345CgQ</text>
+	</item>
+	<item name="$FlagsExt">
+		<text>D</text>
+	</item>
+	<item name="$FileSize" sign="true">
+		<number>0</number>
+	</item>
+	<item name="$FileModDT" sign="true">
+		<datetime dst="true">20101019T162625,00-04</datetime>
+	</item>
+	<item name="$FileData" sign="true">
+		<rawitemdata type="1"/>
+	</item>
+	<item name="$FileNames" sign="true">
+		<text/>
+	</item>
+	<item name="$MimeType">
+		<text/>
+	</item>
+	<item name="$TITLE" sign="true">
+		<textlist>
+			<text/>
+		</textlist>
+	</item>
+</note>

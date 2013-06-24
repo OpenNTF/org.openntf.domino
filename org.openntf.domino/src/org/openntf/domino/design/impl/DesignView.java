@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Logger;
 
-import javax.xml.xpath.XPathExpressionException;
-
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.utils.DominoUtils;
@@ -43,26 +41,17 @@ public class DesignView extends AbstractFolder implements org.openntf.domino.des
 	}
 
 	public String getSelectionFormula() {
-		try {
-			XMLNode formula = getDxl().selectSingleNode("/view/code[@event='selection']/formula");
-			if (formula != null) {
-				return formula.getText();
-			}
-			return null;
-		} catch (XPathExpressionException e) {
-			DominoUtils.handleException(e);
-			return null;
+		XMLNode formula = getDxl().selectSingleNode("/view/code[@event='selection']/formula");
+		if (formula != null) {
+			return formula.getText();
 		}
+		return null;
 	}
 
 	public void setSelectionFormula(final String selectionFormula) {
-		try {
-			XMLNode formula = getDxl().selectSingleNode("/view/code[@event='selection']/formula");
-			if (formula != null) {
-				formula.setTextContent(selectionFormula);
-			}
-		} catch (XPathExpressionException e) {
-			DominoUtils.handleException(e);
+		XMLNode formula = getDxl().selectSingleNode("/view/code[@event='selection']/formula");
+		if (formula != null) {
+			formula.setTextContent(selectionFormula);
 		}
 	}
 }

@@ -5,12 +5,9 @@ package org.openntf.domino.design.impl;
 
 import java.util.logging.Logger;
 
-import javax.xml.xpath.XPathExpressionException;
-
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.design.Folder;
-import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLNode;
 
 /**
@@ -52,27 +49,22 @@ public abstract class AbstractFolder extends AbstractDesignBaseNamed implements 
 	public DesignColumn addColumn() {
 		// Create the column node and set the defaults
 		// Make sure to add the node before any items
-		try {
-			XMLNode node;
-			XMLNode item = getDxl().selectSingleNode("//item");
-			if (item != null) {
-				node = getDocumentElement().insertChildElementBefore("column", item);
-			} else {
-				node = getDocumentElement().addChildElement("column");
-			}
-
-			node.setAttribute("hidedetailrows", "false");
-			node.setAttribute("width", "10");
-			node.setAttribute("resizable", "true");
-			node.setAttribute("separatemultiplevalues", "false");
-			node.setAttribute("sortnoaccent", "false");
-			node.setAttribute("sortnocase", "true");
-			node.setAttribute("showaslinks", "false");
-
-			return new DesignColumn(node);
-		} catch (XPathExpressionException e) {
-			DominoUtils.handleException(e);
-			return null;
+		XMLNode node;
+		XMLNode item = getDxl().selectSingleNode("//item");
+		if (item != null) {
+			node = getDocumentElement().insertChildElementBefore("column", item);
+		} else {
+			node = getDocumentElement().addChildElement("column");
 		}
+
+		node.setAttribute("hidedetailrows", "false");
+		node.setAttribute("width", "10");
+		node.setAttribute("resizable", "true");
+		node.setAttribute("separatemultiplevalues", "false");
+		node.setAttribute("sortnoaccent", "false");
+		node.setAttribute("sortnocase", "true");
+		node.setAttribute("showaslinks", "false");
+
+		return new DesignColumn(node);
 	}
 }

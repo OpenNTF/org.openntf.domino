@@ -9,6 +9,8 @@ package org.openntf.domino.design;
  */
 public interface DatabaseDesign {
 
+	public FileResource createFileResource();
+
 	public DesignView createView();
 
 	public AboutDocument getAboutDocument();

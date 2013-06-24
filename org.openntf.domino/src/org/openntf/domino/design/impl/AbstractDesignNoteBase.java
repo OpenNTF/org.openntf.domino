@@ -5,17 +5,18 @@ package org.openntf.domino.design.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.DxlExporter;
 import org.openntf.domino.DxlImporter;
 import org.openntf.domino.Session;
-import org.openntf.domino.design.DesignBase;
+import org.openntf.domino.design.DesignBaseNamed;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
@@ -25,7 +26,7 @@ import org.xml.sax.SAXException;
  * @author jgallagher
  * 
  */
-public abstract class AbstractDesignNoteBase implements DesignBase {
+public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignNoteBase.class.getName());
 	private static final long serialVersionUID = 1L;
@@ -176,6 +177,78 @@ public abstract class AbstractDesignNoteBase implements DesignBase {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.openntf.domino.design.DesignBaseNamed#getAliases()
+	 */
+	@Override
+	public List<String> getAliases() {
+		// Aliases are all the $TITLE values after the first
+		List<String> titles = getTitles();
+		return new ArrayList<String>(titles.subList(1, titles.size()));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DesignBaseNamed#getName()
+	 */
+	@Override
+	public String getName() {
+		List<String> titles = getTitles();
+		if (titles.size() > 0) {
+			return titles.get(0);
+		}
+		return "";
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DesignBaseNamed#setAlias(java.lang.String)
+	 */
+	@Override
+	public void setAlias(final String alias) {
+		List<String> titles = getTitles();
+		List<String> result = new ArrayList<String>(2);
+		result.add(titles.size() > 0 ? titles.get(0) : "");
+		result.add(alias);
+		setTitles(result);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DesignBaseNamed#setAliases(java.lang.Iterable)
+	 */
+	@Override
+	public void setAliases(final Iterable<String> aliases) {
+		List<String> titles = getTitles();
+		List<String> result = new ArrayList<String>(2);
+		result.add(titles.size() > 0 ? titles.get(0) : "");
+		for (String alias : aliases) {
+			result.add(alias);
+		}
+		setTitles(result);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DesignBaseNamed#setName(java.lang.String)
+	 */
+	@Override
+	public void setName(final String name) {
+		List<String> result = getTitles();
+		if (result.size() > 0) {
+			result.set(0, name);
+		} else {
+			result.add(name);
+		}
+		setTitles(result);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.types.Design#getDocument()
 	 */
 	@Override
@@ -203,16 +276,11 @@ public abstract class AbstractDesignNoteBase implements DesignBase {
 	 */
 	@Override
 	public String getUniversalID() {
-		try {
-			XMLNode node = getDxl().selectSingleNode("//noteinfo");
-			if (node != null) {
-				return node.getAttribute("unid");
-			}
-			return "";
-		} catch (XPathExpressionException e) {
-			DominoUtils.handleException(e);
-			return null;
+		XMLNode node = getDxl().selectSingleNode("//noteinfo");
+		if (node != null) {
+			return node.getAttribute("unid");
 		}
+		return "";
 	}
 
 	/*
@@ -243,11 +311,13 @@ public abstract class AbstractDesignNoteBase implements DesignBase {
 		importer.setReplicaRequiredForReplaceOrUpdate(false);
 		Database database = getAncestorDatabase();
 		try {
+			System.out.println("importing " + getDxl().getXml());
 			importer.importDxl(getDxl().getXml(), database);
 		} catch (IOException e) {
 			DominoUtils.handleException(e);
 			return;
 		}
+		System.out.println("log: " + importer.getLog());
 		noteId_ = importer.getFirstImportedNoteID();
 
 		// Reset the DXL so that it can pick up new noteinfo
@@ -290,12 +360,7 @@ public abstract class AbstractDesignNoteBase implements DesignBase {
 	}
 
 	protected XMLNode getDxlNode(final String xpathString) {
-		try {
-			return getDxl().selectSingleNode(xpathString);
-		} catch (XPathExpressionException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
+		return getDxl().selectSingleNode(xpathString);
 	}
 
 	protected String getFlags() {
@@ -320,20 +385,84 @@ public abstract class AbstractDesignNoteBase implements DesignBase {
 	}
 
 	protected XMLNode getFlagsNode() {
-		try {
-			XMLNode flagsNode = getDxl().selectSingleNode("//item[@name='$Flags']/text");
-			if (flagsNode != null) {
-				return flagsNode;
-			} else {
-				// Better add one!
-				flagsNode = getDocumentElement().addChildElement("item");
-				flagsNode.setAttribute("name", "$Flags");
-				flagsNode = flagsNode.addChildElement("text");
-				return flagsNode;
-			}
-		} catch (XPathExpressionException e) {
-			DominoUtils.handleException(e);
-			return null;
+		XMLNode flagsNode = getDxl().selectSingleNode("//item[@name='$Flags']/text");
+		if (flagsNode != null) {
+			return flagsNode;
+		} else {
+			// Better add one!
+			flagsNode = getDocumentElement().addChildElement("item");
+			flagsNode.setAttribute("name", "$Flags");
+			flagsNode = flagsNode.addChildElement("text");
+			return flagsNode;
 		}
+	}
+
+	protected String getFlagsExt() {
+		return getFlagsExtNode().getText();
+	}
+
+	protected void addFlagExt(final String flag) {
+		XMLNode flagsNode = getFlagsExtNode();
+		String flags = flagsNode.getText();
+		if (!flags.contains(flag)) {
+			flagsNode.setText(flags + flag);
+		}
+	}
+
+	protected void removeFlagExt(final String flag) {
+		XMLNode flagsNode = getFlagsExtNode();
+		String flags = flagsNode.getText();
+		if (flags.contains(flag)) {
+			// Assume this works for now
+			flagsNode.setText(flags.replace(flag, ""));
+		}
+	}
+
+	protected XMLNode getFlagsExtNode() {
+		XMLNode flagsNode = getDxl().selectSingleNode("//item[@name='$FlagExts']/text");
+		if (flagsNode != null) {
+			return flagsNode;
+		} else {
+			// Better add one!
+			flagsNode = getDocumentElement().addChildElement("item");
+			flagsNode.setAttribute("name", "$FlagsExt");
+			flagsNode = flagsNode.addChildElement("text");
+			return flagsNode;
+		}
+	}
+
+	private List<String> getTitles() {
+		List<XMLNode> titleNodes = getTitleNode().selectNodes("//text");
+		List<String> result = new ArrayList<String>(titleNodes.size());
+		for (XMLNode title : titleNodes) {
+			String[] bits = title.getText().split("\\|");
+			for (String bit : bits) {
+				result.add(bit);
+			}
+		}
+		return result;
+	}
+
+	private void setTitles(final Iterable<String> titles) {
+		// Clear out existing titles
+		XMLNode titleNode = getTitleNode();
+		titleNode.getParentNode().removeChild(titleNode);
+
+		// Now re-add them
+		titleNode = getTitleNode();
+		XMLNode listNode = titleNode.addChildElement("textlist");
+		for (String title : titles) {
+			XMLNode text = listNode.addChildElement("text");
+			text.setText(title);
+		}
+	}
+
+	private XMLNode getTitleNode() {
+		XMLNode titleNode = getDxl().selectSingleNode("//item[@name='$TITLE']");
+		if (titleNode == null) {
+			titleNode = getDocumentElement().addChildElement("item");
+			titleNode.setAttribute("name", "$TITLE");
+		}
+		return titleNode;
 	}
 }
