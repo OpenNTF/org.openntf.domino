@@ -5,12 +5,12 @@ import java.util.Arrays;
 public class CDFILEHEADER {
 	public static final int LENGTH = 24;
 
-	LSIG Header;
-	short FileExtLen; // WORD
-	int FileDataSize; // DWORD
-	int SegCount; // DWORD
-	int Flags; // DWORD
-	int Reserved; // DWORD
+	final LSIG Header;
+	final short FileExtLen; // WORD
+	final int FileDataSize; // DWORD
+	final int SegCount; // DWORD
+	final int Flags; // DWORD
+	final int Reserved; // DWORD
 
 	public CDFILEHEADER(final byte[] data) {
 		Header = new LSIG(Arrays.copyOfRange(data, 0, 6));
@@ -20,14 +20,14 @@ public class CDFILEHEADER {
 		Flags = CDUtils.dwordToInt(Arrays.copyOfRange(data, 16, 20));
 		Reserved = CDUtils.dwordToInt(Arrays.copyOfRange(data, 20, 24));
 
-		System.out.println("CDFILEHEADER:");
-		System.out.println("\tHeader.Signature: " + Header.Signature);
-		System.out.println("\tHeader.Length: " + Header.Length);
-		System.out.println("\tFileExtLen: " + FileExtLen);
-		System.out.println("\tFileDataSize: " + FileDataSize);
-		System.out.println("\tSegCount: " + SegCount);
-		System.out.println("\tFlags: " + Flags);
-		System.out.println("\tReserved: " + Reserved);
+		// System.out.println("CDFILEHEADER:");
+		// System.out.println("\tHeader.Signature: " + Header.Signature);
+		// System.out.println("\tHeader.Length: " + Header.Length);
+		// System.out.println("\tFileExtLen: " + FileExtLen);
+		// System.out.println("\tFileDataSize: " + FileDataSize);
+		// System.out.println("\tSegCount: " + SegCount);
+		// System.out.println("\tFlags: " + Flags);
+		// System.out.println("\tReserved: " + Reserved);
 	}
 
 	public byte[] getBytes() {

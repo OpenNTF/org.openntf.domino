@@ -6,9 +6,9 @@ public class LSIG {
 	public static final int LENGTH = 6;
 
 	// Signature indicates the record type. 97 = CD header, 96 = CD segment
-	short Signature; // WORD
+	final short Signature; // WORD
 	// Length is the length of the record, which is the header + data
-	int Length; // DWORD
+	final int Length; // DWORD
 
 	public LSIG(final byte[] data) {
 		Signature = CDUtils.wordToShort(Arrays.copyOfRange(data, 0, 2));

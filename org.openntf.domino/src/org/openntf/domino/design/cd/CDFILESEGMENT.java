@@ -5,11 +5,11 @@ import java.util.Arrays;
 public class CDFILESEGMENT {
 	public static final int LENGTH = 18;
 
-	LSIG Header;
-	short DataSize; // WORD
-	short SegSize; // WORD
-	int Flags; // DWORD
-	int Reserved; // DWORD
+	final LSIG Header;
+	final short DataSize; // WORD
+	final short SegSize; // WORD
+	final int Flags; // DWORD
+	final int Reserved; // DWORD
 
 	byte[] data;
 
@@ -20,13 +20,13 @@ public class CDFILESEGMENT {
 		Flags = CDUtils.dwordToInt(Arrays.copyOfRange(data, 10, 14));
 		Reserved = CDUtils.dwordToInt(Arrays.copyOfRange(data, 14, 18));
 
-		System.out.println("CDFILESEGMENT:");
-		System.out.println("\tHeader.Signature: " + Header.Signature);
-		System.out.println("\tHeader.Length: " + Header.Length);
-		System.out.println("\tDataSize: " + DataSize);
-		System.out.println("\tSegSize: " + SegSize);
-		System.out.println("\tFlags: " + Flags);
-		System.out.println("\tReserved: " + Reserved);
+		// System.out.println("CDFILESEGMENT:");
+		// System.out.println("\tHeader.Signature: " + Header.Signature);
+		// System.out.println("\tHeader.Length: " + Header.Length);
+		// System.out.println("\tDataSize: " + DataSize);
+		// System.out.println("\tSegSize: " + SegSize);
+		// System.out.println("\tFlags: " + Flags);
+		// System.out.println("\tReserved: " + Reserved);
 	}
 
 	public byte[] getBytes() {
