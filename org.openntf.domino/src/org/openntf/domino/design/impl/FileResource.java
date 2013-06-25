@@ -21,6 +21,8 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 	private static final Logger log_ = Logger.getLogger(FileResource.class.getName());
 
 	private static final String DESIGN_FLAGEXT_FILE_DEPLOYABLE = "D";
+	private static final String DESIGN_FLAG_HIDEFROMDESIGNLIST = "~";
+	private static final String DESIGN_FLAG_READONLY = "&";
 
 	protected FileResource(final Document document) {
 		super(document);
@@ -62,7 +64,7 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 		try {
 			// To set the file content, first clear out existing content
 			List<XMLNode> fileDataNodes = getDxl().selectNodes("//item[@name='$FileData']");
-			for (int i = fileDataNodes.size() - 1; i >= 0; i++) {
+			for (int i = fileDataNodes.size() - 1; i >= 0; i--) {
 				fileDataNodes.get(i).getParentNode().removeChild(fileDataNodes.get(i));
 			}
 
@@ -146,11 +148,42 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 
 	@Override
 	public boolean isReadOnly() {
-		return getFlags().contains("&");
+		return getFlags().contains(DESIGN_FLAG_READONLY);
 	}
 
+	@Override
 	public boolean isDeployable() {
 		return getFlagsExt().contains(DESIGN_FLAGEXT_FILE_DEPLOYABLE);
+	}
+
+	@Override
+	public boolean isHideFromDesignList() {
+		return getFlags().contains(DESIGN_FLAG_HIDEFROMDESIGNLIST);
+	}
+
+	@Override
+	public void setReadOnly(final boolean readOnly) {
+		if (readOnly) {
+			addFlag(DESIGN_FLAG_READONLY);
+		} else {
+			removeFlag(DESIGN_FLAG_READONLY);
+		}
+	}
+
+	public void setDeployable(final boolean deployable) {
+		if (deployable) {
+			addFlag(DESIGN_FLAGEXT_FILE_DEPLOYABLE);
+		} else {
+			removeFlag(DESIGN_FLAGEXT_FILE_DEPLOYABLE);
+		}
+	}
+
+	public void setHideFromDesignList(final boolean hideFromDesignList) {
+		if (hideFromDesignList) {
+			addFlag(DESIGN_FLAG_HIDEFROMDESIGNLIST);
+		} else {
+			removeFlag(DESIGN_FLAG_HIDEFROMDESIGNLIST);
+		}
 	}
 
 	private XMLNode getMimeTypeNode() {
