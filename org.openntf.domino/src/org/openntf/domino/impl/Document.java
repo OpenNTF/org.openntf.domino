@@ -41,6 +41,7 @@ import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.MIMEConversionException;
+import org.openntf.domino.helpers.Formula;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -739,8 +740,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public Vector<org.openntf.domino.EmbeddedObject> getEmbeddedObjects() {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getEmbeddedObjects(), org.openntf.domino.EmbeddedObject.class,
-					this.getAncestorSession());
+			return Factory.fromLotusAsVector(getDelegate().getEmbeddedObjects(), org.openntf.domino.EmbeddedObject.class, this
+					.getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2122,7 +2123,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * @see org.openntf.domino.Document#replaceItemValueCustomDataBytes(java.lang.String, java.lang.String, byte[])
 	 */
 	@Override
-	public Item replaceItemValueCustomDataBytes(final String itemName, final String dataTypeName, final byte[] byteArray) throws IOException {
+	public Item replaceItemValueCustomDataBytes(final String itemName, final String dataTypeName, final byte[] byteArray)
+			throws IOException {
 		markDirty();
 		try {
 			if (byteArray.length > 65535) {
@@ -2401,13 +2403,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			try {
 				lotus.domino.Document del = getDelegate().getParentDatabase().getDocumentByUNID(unid);
 				if (del != null) { // this is surprising. Why didn't we already get it?
-					log_.log(Level.WARNING,
-							"Document " + unid + " already existed in the database with noteid " + del.getNoteID()
-									+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
-									+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
+					log_.log(Level.WARNING, "Document " + unid + " already existed in the database with noteid " + del.getNoteID()
+							+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
+							+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
 					if (isDirty()) { // we've already made other changes that we should tuck away...
-						log_.log(Level.WARNING,
-								"Attempting to stash changes to this document to apply to other document of the same UNID. This is pretty dangerous...");
+						log_
+								.log(Level.WARNING,
+										"Attempting to stash changes to this document to apply to other document of the same UNID. This is pretty dangerous...");
 						Document stashDoc = copyToDatabase(getParentDatabase());
 						setDelegate(del);
 						for (Item item : stashDoc.getItems()) {
@@ -2593,18 +2595,16 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					if (log_.isLoggable(Level.FINER)) {
 						Throwable t = new Throwable();
 						StackTraceElement[] elements = t.getStackTrace();
-						log_.log(Level.FINER,
-								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-										+ ")");
-						log_.log(Level.FINER,
-								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-										+ ")");
-						log_.log(Level.FINER,
-								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-										+ ")");
+						log_.log(Level.FINER, elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line "
+								+ elements[0].getLineNumber() + ")");
+						log_.log(Level.FINER, elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line "
+								+ elements[1].getLineNumber() + ")");
+						log_.log(Level.FINER, elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line "
+								+ elements[2].getLineNumber() + ")");
 					}
-					log_.log(Level.FINE,
-							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
+					log_
+							.log(Level.FINE,
+									"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
 				}
 			} catch (NotesException e) {
 				DominoUtils.handleException(e);
@@ -2661,6 +2661,15 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 		if (this.containsKey(key)) {
 			Vector<Object> value = this.getItemValue(key.toString());
+			if (value.size() == 1) {
+				return value.get(0);
+			}
+			return value;
+		} else if (key instanceof CharSequence) {
+			// Execute the key as a formula in the context of the document
+			Formula formula = new Formula(getAncestorSession());
+			formula.setExpression(key.toString());
+			List<?> value = formula.getValue(this);
 			if (value.size() == 1) {
 				return value.get(0);
 			}
