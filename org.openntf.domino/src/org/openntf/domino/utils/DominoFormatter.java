@@ -16,11 +16,12 @@
 package org.openntf.domino.utils;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
+
+import com.ibm.icu.text.SimpleDateFormat;
 
 // TODO: Auto-generated Javadoc
 /**

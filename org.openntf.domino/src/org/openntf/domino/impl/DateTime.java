@@ -15,9 +15,7 @@
  */
 package org.openntf.domino.impl;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import lotus.domino.NotesException;
 
@@ -26,11 +24,19 @@ import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
+import com.ibm.icu.util.Calendar;
+import com.ibm.icu.util.GregorianCalendar;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class DateTime.
  */
 public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.DateTime> implements org.openntf.domino.DateTime {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	/** The cal_. */
 	private final Calendar cal_ = GregorianCalendar.getInstance();
@@ -85,13 +91,15 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		initialize(date);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.impl.Base#getDelegate()
 	 */
 	@Override
 	protected lotus.domino.DateTime getDelegate() {
 		try {
-			lotus.domino.DateTime delegate = ((org.openntf.domino.impl.Session) getParent()).getDelegate().createDateTime(cal_);
+			lotus.domino.DateTime delegate = ((org.openntf.domino.impl.Session) getParent()).getDelegate().createDateTime(cal_.getTime());
 			if (isAnyTime()) {
 				delegate.setAnyTime();
 			}
@@ -270,7 +278,9 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		return cal_.equals(comparDate.toJavaCal());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DateTime#equalsIgnoreDate(org.openntf.domino.DateTime)
 	 */
 	@Override
@@ -288,7 +298,9 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		return c1.equals(c2);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DateTime#equalsIgnoreTime(org.openntf.domino.DateTime)
 	 */
 	@Override
@@ -449,7 +461,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#setLocalTime(java.util.Calendar)
 	 */
-	public void setLocalTime(Calendar calendar) {
+	public void setLocalTime(java.util.Calendar calendar) {
 		cal_.setTime(calendar.getTime());
 	}
 
@@ -540,7 +552,9 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		return cal_.getTime();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -556,8 +570,10 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#toJavaCal()
 	 */
-	public Calendar toJavaCal() {
-		return cal_;
+	public java.util.Calendar toJavaCal() {
+		java.util.Calendar result = new java.util.GregorianCalendar();
+		result.setTime(cal_.getTime());
+		return result;
 	}
 
 	/*
