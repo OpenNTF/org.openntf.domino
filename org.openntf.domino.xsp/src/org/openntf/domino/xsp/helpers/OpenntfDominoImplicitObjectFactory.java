@@ -61,6 +61,24 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 		return (Boolean) current;
 	}
 
+	private static boolean isAppMimeFriendly(FacesContext ctx) {
+		Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
+		Object current = appMap.get(OpenntfDominoImplicitObjectFactory.class.getName());
+		if (current == null) {
+			current = Boolean.FALSE;
+			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
+			if (envs != null) {
+				for (String s : envs) {
+					if (s.equalsIgnoreCase("marcel")) {
+						current = Boolean.TRUE;
+					}
+				}
+			}
+			appMap.put(OpenntfDominoImplicitObjectFactory.class.getName(), current);
+		}
+		return (Boolean) current;
+	}
+
 	private final String[][] implicitObjectList = {
 			{ (isGodMode() ? "session" : "opensession"), org.openntf.domino.Session.class.getName() },
 			{ (isGodMode() ? "database" : "opendatabase"), org.openntf.domino.Database.class.getName() } };
@@ -79,6 +97,8 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 			if (!(current instanceof org.openntf.domino.Session)) {
 				s = Factory.fromLotus((lotus.domino.Session) current, org.openntf.domino.Session.class, null);
 				localMap.put((isAppGodMode(ctx) ? "session" : "opensession"), s);
+				if (isAppMimeFriendly(ctx))
+					s.setConvertMIME(false);
 				// System.out.println("Putting OpenNTF session into implicits");
 			} else {
 				s = (org.openntf.domino.Session) current;
