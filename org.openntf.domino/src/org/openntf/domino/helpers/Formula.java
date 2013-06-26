@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
+import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.TypeUtils;
 
@@ -114,7 +115,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	 */
 	@Override
 	public void setExpression(final String expression) {
-		Vector<Object> vec = getSession().evaluate("@CheckFormulaSyntax(\"" + escapeFormula(expression) + "\")");
+		Vector<Object> vec = getSession().evaluate("@CheckFormulaSyntax(\"" + DominoUtils.escapeForFormulaString(expression) + "\")");
 		if (vec.size() > 2) {
 			throw new FormulaSyntaxException(expression, vec);
 		}
@@ -216,10 +217,5 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	@Override
 	public void writeExternal(final ObjectOutput out) throws IOException {
 		out.writeUTF(expression_);
-	}
-
-	private String escapeFormula(final String formula) {
-		// Just do quotes for now
-		return formula.replace("\"", "\\\"");
 	}
 }
