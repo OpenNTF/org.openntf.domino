@@ -20,6 +20,7 @@ import org.openntf.domino.utils.TypeUtils;
  * 
  */
 public class Formula implements org.openntf.domino.ext.Formula, Serializable {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(Formula.class.getName());
 	private static final long serialVersionUID = 1L;
 
@@ -43,7 +44,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		// "errorMessage" : "errorLine" : "errorColumn" : "errorOffset" : "errorLength" : "errorText"
 		private String expression_;
 
-		FormulaSyntaxException(final String expression, final Vector syntaxDetails) {
+		FormulaSyntaxException(final String expression, final Vector<Object> syntaxDetails) {
 			super();
 			expression_ = expression;
 			syntaxDetails_ = syntaxDetails;
@@ -113,7 +114,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	 */
 	@Override
 	public void setExpression(final String expression) {
-		Vector vec = getSession().evaluate("@CheckFormulaSyntax(" + expression + ")");
+		Vector<Object> vec = getSession().evaluate("@CheckFormulaSyntax(\"" + escapeFormula(expression) + "\")");
 		if (vec.size() > 2) {
 			throw new FormulaSyntaxException(expression, vec);
 		}
@@ -132,12 +133,11 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	 * 
 	 * @see org.openntf.domino.ext.Formula#getValue()
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Vector getValue() {
+	public Vector<Object> getValue() {
 		if (expression_ == null)
 			throw new NoFormulaSetException();
-		Vector vec = getSession().evaluate(expression_);
+		Vector<Object> vec = getSession().evaluate(expression_);
 		return vec;
 	}
 
@@ -146,10 +146,9 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	 * 
 	 * @see org.openntf.domino.ext.Formula#getValue(java.lang.Class)
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
 	public <T> T getValue(final Class<?> T) {
-		Vector v = getValue();
+		Vector<Object> v = getValue();
 		return TypeUtils.vectorToClass(v, T, getSession());
 	}
 
@@ -158,11 +157,10 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	 * 
 	 * @see org.openntf.domino.ext.Formula#getValue()
 	 */
-	@SuppressWarnings("rawtypes")
-	public Vector getValue(final Session session) {
+	public Vector<Object> getValue(final Session session) {
 		if (expression_ == null)
 			throw new NoFormulaSetException();
-		Vector vec = session.evaluate(expression_);
+		Vector<Object> vec = session.evaluate(expression_);
 		return vec;
 	}
 
@@ -171,9 +169,8 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	 * 
 	 * @see org.openntf.domino.ext.Formula#getValue(java.lang.Class)
 	 */
-	@SuppressWarnings("rawtypes")
 	public <T> T getValue(final Session session, final Class<?> T) {
-		Vector v = getValue(session);
+		Vector<Object> v = getValue(session);
 		return TypeUtils.vectorToClass(v, T, session);
 	}
 
@@ -182,12 +179,11 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	 * 
 	 * @see org.openntf.domino.ext.Formula#getValue(org.openntf.domino.Document)
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Vector getValue(final Document document) {
+	public Vector<Object> getValue(final Document document) {
 		if (expression_ == null)
 			throw new NoFormulaSetException();
-		Vector vec = document.getAncestorSession().evaluate(expression_, document);
+		Vector<Object> vec = document.getAncestorSession().evaluate(expression_, document);
 		return vec;
 	}
 
@@ -196,10 +192,9 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	 * 
 	 * @see org.openntf.domino.ext.Formula#getValue(org.openntf.domino.Document, java.lang.Class)
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
 	public <T> T getValue(final Document document, final Class<?> T) {
-		Vector v = getValue(document);
+		Vector<Object> v = getValue(document);
 		return TypeUtils.vectorToClass(v, T, document.getAncestorSession());
 	}
 
@@ -221,5 +216,10 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	@Override
 	public void writeExternal(final ObjectOutput out) throws IOException {
 		out.writeUTF(expression_);
+	}
+
+	private String escapeFormula(final String formula) {
+		// Just do quotes for now
+		return formula.replace("\"", "\\\"");
 	}
 }
