@@ -15,7 +15,6 @@
  */
 package org.openntf.domino;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import org.openntf.domino.types.Encapsulated;
@@ -260,7 +259,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 * @see lotus.domino.DateTime#setLocalTime(java.util.Calendar)
 	 */
 	@Override
-	public void setLocalTime(Calendar calendar);
+	public void setLocalTime(java.util.Calendar calendar);
 
 	/*
 	 * (non-Javadoc)
@@ -318,10 +317,10 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	@Override
 	public Date toJavaDate();
 
-	/**
-	 * To java cal.
-	 * 
-	 * @return Java Calendar object, same as used internally by org.openntf.domino.DateTime class
-	 */
-	public Calendar toJavaCal();
+	// /**
+	// * To java cal.
+	// *
+	// * @return Java Calendar object, same as used internally by org.openntf.domino.DateTime class
+	// */
+	// public Calendar toJavaCal();
 }

@@ -15,7 +15,6 @@
  */
 package org.openntf.domino.impl;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import lotus.domino.NotesException;
@@ -23,6 +22,8 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+
+import com.ibm.icu.util.Calendar;
 
 // TODO: Auto-generated Javadoc
 /**

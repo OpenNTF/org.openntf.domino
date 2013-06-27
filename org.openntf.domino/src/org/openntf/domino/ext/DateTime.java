@@ -3,7 +3,7 @@
  */
 package org.openntf.domino.ext;
 
-import java.util.Calendar;
+import com.ibm.icu.util.Calendar;
 
 /**
  * @author nfreeman
@@ -68,4 +68,7 @@ public interface DateTime {
 	 * @return Java Calendar object, same as used internally by org.openntf.domino.DateTime class
 	 */
 	public Calendar toJavaCal();
+
+	public void setLocalTime(Calendar calendar);
+
 }

@@ -33,9 +33,6 @@ import com.ibm.icu.util.GregorianCalendar;
  */
 public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.DateTime> implements org.openntf.domino.DateTime {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	/** The cal_. */
@@ -468,6 +465,16 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.openntf.domino.ext.DateTime#setLocalTime(com.ibm.icu.util.Calendar)
+	 */
+	@Override
+	public void setLocalTime(Calendar calendar) {
+		cal_.setTime(calendar.getTime());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.DateTime#setLocalTime(java.util.Date)
 	 */
 	public void setLocalTime(Date date) {
@@ -568,17 +575,6 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.openntf.domino.DateTime#toJavaCal()
-	 */
-	public java.util.Calendar toJavaCal() {
-		java.util.Calendar result = new java.util.GregorianCalendar();
-		result.setTime(cal_.getTime());
-		return result;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
 	@Override
@@ -604,6 +600,16 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	@Override
 	public boolean isAnyTime() {
 		return isDateOnly_;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.DateTime#toJavaCal()
+	 */
+	@Override
+	public Calendar toJavaCal() {
+		return cal_;
 	}
 
 }

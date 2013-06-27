@@ -8,6 +8,9 @@ import java.util.Collection;
 import org.openntf.domino.ColorObject;
 import org.openntf.domino.Database;
 import org.openntf.domino.DateRange;
+import org.openntf.domino.DateTime;
+
+import com.ibm.icu.util.Calendar;
 
 /**
  * @author withersp
@@ -97,5 +100,16 @@ public interface Session {
 	 * @since openntf.domino 1.0.0
 	 */
 	public Collection<String> getUserNameCollection();
+
+	/**
+	 * Creates a DateTime object that represents a specified date and time.
+	 * 
+	 * @param date
+	 *            The date, time, and time zone you want the object to represent using a {@link com.ibm.icu.util.Calendar} object.
+	 * 
+	 * @return The newly created {@link DateTime} object.
+	 * @since lotus.domino 4.5.0
+	 */
+	public DateTime createDateTime(Calendar date);
 
 }

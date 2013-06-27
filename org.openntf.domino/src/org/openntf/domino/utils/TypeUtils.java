@@ -3,9 +3,7 @@
  */
 package org.openntf.domino.utils;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -20,6 +18,9 @@ import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.impl.DateTime;
 import org.openntf.domino.impl.Name;
+
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 
 /**
  * @author nfreeman
@@ -240,6 +241,8 @@ public enum TypeUtils {
 		if (ctype == Byte.TYPE)
 			throw new UnimplementedException("Primitive conversion for byte not yet defined");
 		if (ctype == Character.TYPE)
+			throw new UnimplementedException("Primitive conversion for char not yet defined");
+		if (ctype == com.ibm.icu.lang.UCharacter.class)
 			throw new UnimplementedException("Primitive conversion for char not yet defined");
 		throw new DataNotCompatibleException("");
 	}

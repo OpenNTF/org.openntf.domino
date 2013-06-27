@@ -17,7 +17,6 @@ package org.openntf.domino.impl;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Vector;
@@ -32,6 +31,8 @@ import org.openntf.domino.thread.DominoReferenceCounter;
 import org.openntf.domino.utils.DominoFormatter;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+
+import com.ibm.icu.util.Calendar;
 
 // TODO: Auto-generated Javadoc
 //import lotus.domino.Name;
@@ -243,7 +244,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 * @see org.openntf.domino.Session#createDateTime(java.util.Calendar)
 	 */
 	@Override
-	public DateTime createDateTime(Calendar date) {
+	public DateTime createDateTime(java.util.Calendar date) {
 		try {
 			return Factory.fromLotus(getDelegate().createDateTime(date), DateTime.class, this);
 		} catch (NotesException e) {
@@ -251,6 +252,16 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 			return null;
 
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.Session#createDateTime(java.util.Calendar)
+	 */
+	@Override
+	public DateTime createDateTime(Calendar date) {
+		return createDateTime(date.getTime());
 	}
 
 	/*

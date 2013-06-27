@@ -32,10 +32,8 @@ import java.security.AccessController;
 import java.security.MessageDigest;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -60,8 +58,9 @@ import org.openntf.domino.Stream;
 import org.openntf.domino.exceptions.InvalidNotesUrlException;
 import org.openntf.domino.logging.LogUtils;
 
-// TODO: Auto-generated Javadoc
-//TODO: Auto-generated Javadoc
+import com.ibm.icu.util.Calendar;
+import com.ibm.icu.util.ULocale;
+
 /**
  * The Enum DominoUtils.
  */
@@ -385,7 +384,7 @@ public enum DominoUtils {
 	 */
 	public static Calendar toJavaCalendarSafe(lotus.domino.DateTime dt) {
 		Date d = DominoUtils.toJavaDateSafe(dt);
-		Calendar c = GregorianCalendar.getInstance();
+		Calendar c = Calendar.getInstance(ULocale.getDefault());
 		c.setTime(d);
 		return c;
 	}

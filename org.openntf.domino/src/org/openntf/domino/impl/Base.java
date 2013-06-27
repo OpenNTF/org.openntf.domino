@@ -476,6 +476,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			return toLotus(Factory.getSession(context).createDateTime((java.util.Date) value));
 		} else if (value instanceof java.util.Calendar) {
 			return toLotus(Factory.getSession(context).createDateTime((java.util.Calendar) value));
+		} else if (value instanceof com.ibm.icu.util.Calendar) {
+			return toLotus(Factory.getSession(context).createDateTime((com.ibm.icu.util.Calendar) value));
 		} else if (value instanceof CharSequence) {
 			return value.toString();
 		}
