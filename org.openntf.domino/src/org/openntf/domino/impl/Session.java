@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.exceptions.UnableToAcquireSessionException;
 import org.openntf.domino.thread.DominoReferenceCounter;
 import org.openntf.domino.utils.DominoFormatter;
 import org.openntf.domino.utils.DominoUtils;
@@ -1422,7 +1423,17 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		try {
 			session.isConvertMIME();
 		} catch (NotesException ne) {
-			setDelegate(((org.openntf.domino.impl.Session) Factory.getSession()).getDelegate());
+			org.openntf.domino.impl.Session sessionImpl = (org.openntf.domino.impl.Session) Factory.getSession();
+			if (sessionImpl != null) {
+				lotus.domino.Session sessionLotus = sessionImpl.delegate_;
+				if (sessionLotus != null) {
+					setDelegate(sessionLotus);
+				} else {
+					throw new UnableToAcquireSessionException("Factory default Session does not have a valid delegate");
+				}
+			} else {
+				throw new UnableToAcquireSessionException("Factory could not return a default Session");
+			}
 		}
 		return super.getDelegate();
 	}
