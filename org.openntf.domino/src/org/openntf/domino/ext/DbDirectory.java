@@ -17,5 +17,5 @@ public interface DbDirectory {
 	 *            file type
 	 * @return Database
 	 */
-	public Database getFirstDatabase(Type type);
+	public Database getFirstDatabase(final Type type);
 }

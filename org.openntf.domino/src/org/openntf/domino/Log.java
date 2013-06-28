@@ -129,7 +129,7 @@ public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log, org.openn
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public void logAction(String action);
+	public void logAction(final String action);
 
 	/**
 	 * Records an error in a log.
@@ -152,7 +152,7 @@ public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log, org.openn
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public void logError(int code, String text);
+	public void logError(final int code, final String text);
 
 	/**
 	 * Sends a Domino event out to the network.
@@ -168,7 +168,7 @@ public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log, org.openn
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public void logEvent(String text, String queue, int event, int severity);
+	public void logEvent(final String text, final String queue, final int event, final int severity);
 
 	/**
 	 * Opens the agent log for the current agent.
@@ -195,7 +195,7 @@ public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log, org.openn
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public void openFileLog(String filePath);
+	public void openFileLog(final String filePath);
 
 	/**
 	 * Opens a new mail memo for logging.
@@ -213,7 +213,7 @@ public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log, org.openn
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void openMailLog(Vector recipients, String subject);
+	public void openMailLog(final Vector recipients, final String subject);
 
 	/**
 	 * Opens a specified Domino� database for logging.
@@ -243,7 +243,7 @@ public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log, org.openn
 	 *            The path and file name of the database.
 	 */
 	@Override
-	public void openNotesLog(String server, String database);
+	public void openNotesLog(final String server, final String database);
 
 	/**
 	 * Sets if action logging is enabled or not.
@@ -255,7 +255,7 @@ public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log, org.openn
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public void setLogActions(boolean flag);
+	public void setLogActions(final boolean flag);
 
 	/**
 	 * Sets if error logging is enabled or not.
@@ -267,7 +267,7 @@ public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log, org.openn
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public void setLogErrors(boolean flag);
+	public void setLogErrors(final boolean flag);
 
 	/**
 	 * Sets if file overwriting is enabled or not.
@@ -277,7 +277,7 @@ public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log, org.openn
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public void setOverwriteFile(boolean flag);
+	public void setOverwriteFile(final boolean flag);
 
 	/**
 	 * Sets the name that identifies the agent whose actions and errors you're logging.
@@ -287,6 +287,6 @@ public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log, org.openn
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public void setProgramName(String name);
+	public void setProgramName(final String name);
 
 }

@@ -100,7 +100,7 @@ public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.dom
 	 * @see lotus.domino.AgentContext#unprocessedFTSearch(java.lang.String, int)
 	 */
 	@Override
-	public DocumentCollection unprocessedFTSearch(String query, int maxDocs);
+	public DocumentCollection unprocessedFTSearch(final String query, final int maxDocs);
 
 	/*
 	 * (non-Javadoc)
@@ -108,7 +108,7 @@ public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.dom
 	 * @see lotus.domino.AgentContext#unprocessedFTSearch(java.lang.String, int, int, int)
 	 */
 	@Override
-	public DocumentCollection unprocessedFTSearch(String query, int maxDocs, int sortOpt, int otherOpt);
+	public DocumentCollection unprocessedFTSearch(final String query, final int maxDocs, final int sortOpt, final int otherOpt);
 
 	/*
 	 * (non-Javadoc)
@@ -116,7 +116,7 @@ public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.dom
 	 * @see lotus.domino.AgentContext#unprocessedFTSearchRange(java.lang.String, int, int)
 	 */
 	@Override
-	public DocumentCollection unprocessedFTSearchRange(String query, int maxDocs, int sortOpt);
+	public DocumentCollection unprocessedFTSearchRange(final String query, final int maxDocs, final int sortOpt);
 
 	/*
 	 * (non-Javadoc)
@@ -124,7 +124,7 @@ public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.dom
 	 * @see lotus.domino.AgentContext#unprocessedFTSearchRange(java.lang.String, int, int, int, int)
 	 */
 	@Override
-	public DocumentCollection unprocessedFTSearchRange(String query, int maxDocs, int sortOpt, int otherOpt, int start);
+	public DocumentCollection unprocessedFTSearchRange(final String query, final int maxDocs, final int sortOpt, final int otherOpt, final int start);
 
 	/*
 	 * (non-Javadoc)
@@ -132,7 +132,7 @@ public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.dom
 	 * @see lotus.domino.AgentContext#unprocessedSearch(java.lang.String, lotus.domino.DateTime, int)
 	 */
 	@Override
-	public DocumentCollection unprocessedSearch(String formula, lotus.domino.DateTime limit, int maxDocs);
+	public DocumentCollection unprocessedSearch(final String formula, final lotus.domino.DateTime limit, final int maxDocs);
 
 	/*
 	 * (non-Javadoc)
@@ -140,6 +140,6 @@ public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.dom
 	 * @see lotus.domino.AgentContext#updateProcessedDoc(lotus.domino.Document)
 	 */
 	@Override
-	public void updateProcessedDoc(lotus.domino.Document doc);
+	public void updateProcessedDoc(final lotus.domino.Document doc);
 
 }

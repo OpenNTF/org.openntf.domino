@@ -37,7 +37,7 @@ public interface RichTextNavigator extends Base<lotus.domino.RichTextNavigator>,
 	 * @see lotus.domino.RichTextNavigator#findFirstElement(int)
 	 */
 	@Override
-	public boolean findFirstElement(int type);
+	public boolean findFirstElement(final int type);
 
 	/*
 	 * (non-Javadoc)
@@ -45,7 +45,7 @@ public interface RichTextNavigator extends Base<lotus.domino.RichTextNavigator>,
 	 * @see lotus.domino.RichTextNavigator#findFirstString(java.lang.String)
 	 */
 	@Override
-	public boolean findFirstString(String target);
+	public boolean findFirstString(final String target);
 
 	/*
 	 * (non-Javadoc)
@@ -53,7 +53,7 @@ public interface RichTextNavigator extends Base<lotus.domino.RichTextNavigator>,
 	 * @see lotus.domino.RichTextNavigator#findFirstString(java.lang.String, int)
 	 */
 	@Override
-	public boolean findFirstString(String target, int options);
+	public boolean findFirstString(final String target, final int options);
 
 	/*
 	 * (non-Javadoc)
@@ -61,7 +61,7 @@ public interface RichTextNavigator extends Base<lotus.domino.RichTextNavigator>,
 	 * @see lotus.domino.RichTextNavigator#findLastElement(int)
 	 */
 	@Override
-	public boolean findLastElement(int type);
+	public boolean findLastElement(final int type);
 
 	/*
 	 * (non-Javadoc)
@@ -77,7 +77,7 @@ public interface RichTextNavigator extends Base<lotus.domino.RichTextNavigator>,
 	 * @see lotus.domino.RichTextNavigator#findNextElement(int)
 	 */
 	@Override
-	public boolean findNextElement(int type);
+	public boolean findNextElement(final int type);
 
 	/*
 	 * (non-Javadoc)
@@ -85,7 +85,7 @@ public interface RichTextNavigator extends Base<lotus.domino.RichTextNavigator>,
 	 * @see lotus.domino.RichTextNavigator#findNextElement(int, int)
 	 */
 	@Override
-	public boolean findNextElement(int type, int occurrence);
+	public boolean findNextElement(final int type, final int occurrence);
 
 	/*
 	 * (non-Javadoc)
@@ -93,7 +93,7 @@ public interface RichTextNavigator extends Base<lotus.domino.RichTextNavigator>,
 	 * @see lotus.domino.RichTextNavigator#findNextString(java.lang.String)
 	 */
 	@Override
-	public boolean findNextString(String target);
+	public boolean findNextString(final String target);
 
 	/*
 	 * (non-Javadoc)
@@ -101,7 +101,7 @@ public interface RichTextNavigator extends Base<lotus.domino.RichTextNavigator>,
 	 * @see lotus.domino.RichTextNavigator#findNextString(java.lang.String, int)
 	 */
 	@Override
-	public boolean findNextString(String target, int options);
+	public boolean findNextString(final String target, final int options);
 
 	/*
 	 * (non-Javadoc)
@@ -109,7 +109,7 @@ public interface RichTextNavigator extends Base<lotus.domino.RichTextNavigator>,
 	 * @see lotus.domino.RichTextNavigator#findNthElement(int, int)
 	 */
 	@Override
-	public boolean findNthElement(int type, int occurrence);
+	public boolean findNthElement(final int type, final int occurrence);
 
 	/*
 	 * (non-Javadoc)
@@ -125,7 +125,7 @@ public interface RichTextNavigator extends Base<lotus.domino.RichTextNavigator>,
 	 * @see lotus.domino.RichTextNavigator#getFirstElement(int)
 	 */
 	@Override
-	public Base<?> getFirstElement(int type);
+	public Base<?> getFirstElement(final int type);
 
 	/*
 	 * (non-Javadoc)
@@ -133,7 +133,7 @@ public interface RichTextNavigator extends Base<lotus.domino.RichTextNavigator>,
 	 * @see lotus.domino.RichTextNavigator#getLastElement(int)
 	 */
 	@Override
-	public Base<?> getLastElement(int type);
+	public Base<?> getLastElement(final int type);
 
 	/*
 	 * (non-Javadoc)
@@ -149,7 +149,7 @@ public interface RichTextNavigator extends Base<lotus.domino.RichTextNavigator>,
 	 * @see lotus.domino.RichTextNavigator#getNextElement(int)
 	 */
 	@Override
-	public Base<?> getNextElement(int type);
+	public Base<?> getNextElement(final int type);
 
 	/*
 	 * (non-Javadoc)
@@ -157,7 +157,7 @@ public interface RichTextNavigator extends Base<lotus.domino.RichTextNavigator>,
 	 * @see lotus.domino.RichTextNavigator#getNextElement(int, int)
 	 */
 	@Override
-	public Base<?> getNextElement(int type, int occurrence);
+	public Base<?> getNextElement(final int type, final int occurrence);
 
 	/*
 	 * (non-Javadoc)
@@ -165,7 +165,7 @@ public interface RichTextNavigator extends Base<lotus.domino.RichTextNavigator>,
 	 * @see lotus.domino.RichTextNavigator#getNthElement(int, int)
 	 */
 	@Override
-	public Base<?> getNthElement(int type, int occurrence);
+	public Base<?> getNthElement(final int type, final int occurrence);
 
 	/*
 	 * (non-Javadoc)
@@ -173,7 +173,7 @@ public interface RichTextNavigator extends Base<lotus.domino.RichTextNavigator>,
 	 * @see lotus.domino.RichTextNavigator#setCharOffset(int)
 	 */
 	@Override
-	public void setCharOffset(int offset);
+	public void setCharOffset(final int offset);
 
 	/*
 	 * (non-Javadoc)
@@ -181,7 +181,7 @@ public interface RichTextNavigator extends Base<lotus.domino.RichTextNavigator>,
 	 * @see lotus.domino.RichTextNavigator#setPosition(lotus.domino.Base)
 	 */
 	@Override
-	public void setPosition(lotus.domino.Base element);
+	public void setPosition(final lotus.domino.Base element);
 
 	/*
 	 * (non-Javadoc)
@@ -189,6 +189,6 @@ public interface RichTextNavigator extends Base<lotus.domino.RichTextNavigator>,
 	 * @see lotus.domino.RichTextNavigator#setPositionAtEnd(lotus.domino.Base)
 	 */
 	@Override
-	public void setPositionAtEnd(lotus.domino.Base element);
+	public void setPositionAtEnd(final lotus.domino.Base element);
 
 }

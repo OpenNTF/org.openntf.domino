@@ -45,7 +45,7 @@ public class BaseUtils extends NotesBase {
 	 *            the base
 	 * @return true, if is recycled
 	 */
-	public static boolean isRecycled(lotus.domino.local.NotesBase base) {
+	public static boolean isRecycled(final lotus.domino.local.NotesBase base) {
 		return base.isInvalid();
 	}
 
@@ -56,7 +56,7 @@ public class BaseUtils extends NotesBase {
 	 *            the base
 	 * @return the cpp id
 	 */
-	public static long getCppId(lotus.domino.local.NotesBase base) {
+	public static long getCppId(final lotus.domino.local.NotesBase base) {
 		return base.GetCppObj();
 	}
 

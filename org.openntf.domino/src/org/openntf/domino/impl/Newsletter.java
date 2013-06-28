@@ -34,7 +34,7 @@ public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino
 	 * @param parent
 	 *            the parent
 	 */
-	public Newsletter(lotus.domino.Newsletter delegate, org.openntf.domino.Base<?> parent) {
+	public Newsletter(final lotus.domino.Newsletter delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -44,7 +44,7 @@ public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino
 	 * @see org.openntf.domino.Newsletter#formatDocument(lotus.domino.Database, int)
 	 */
 	@Override
-	public Document formatDocument(lotus.domino.Database db, int index) {
+	public Document formatDocument(final lotus.domino.Database db, final int index) {
 		try {
 			return Factory.fromLotus(getDelegate().formatDocument((lotus.domino.Database) toLotus(db), index), Document.class, this);
 		} catch (NotesException e) {
@@ -59,7 +59,7 @@ public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino
 	 * @see org.openntf.domino.Newsletter#formatMsgWithDoclinks(lotus.domino.Database)
 	 */
 	@Override
-	public Document formatMsgWithDoclinks(lotus.domino.Database db) {
+	public Document formatMsgWithDoclinks(final lotus.domino.Database db) {
 		try {
 			return Factory.fromLotus(getDelegate().formatMsgWithDoclinks((lotus.domino.Database) toLotus(db)), Document.class, this);
 		} catch (NotesException e) {
@@ -129,7 +129,7 @@ public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino
 	 * @see org.openntf.domino.Newsletter#setDoScore(boolean)
 	 */
 	@Override
-	public void setDoScore(boolean flag) {
+	public void setDoScore(final boolean flag) {
 		try {
 			getDelegate().setDoScore(flag);
 		} catch (NotesException e) {
@@ -143,7 +143,7 @@ public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino
 	 * @see org.openntf.domino.Newsletter#setDoSubject(boolean)
 	 */
 	@Override
-	public void setDoSubject(boolean flag) {
+	public void setDoSubject(final boolean flag) {
 		try {
 			getDelegate().setDoSubject(flag);
 		} catch (NotesException e) {
@@ -157,7 +157,7 @@ public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino
 	 * @see org.openntf.domino.Newsletter#setSubjectItemName(java.lang.String)
 	 */
 	@Override
-	public void setSubjectItemName(String name) {
+	public void setSubjectItemName(final String name) {
 		try {
 			getDelegate().setSubjectItemName(name);
 		} catch (NotesException e) {

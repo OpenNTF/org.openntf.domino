@@ -204,7 +204,7 @@ public enum Factory {
 	 * @return the t
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T> T fromLotus(lotus.domino.Base lotus, Class<? extends org.openntf.domino.Base> T, org.openntf.domino.Base parent) {
+	public static <T> T fromLotus(final lotus.domino.Base lotus, final Class<? extends org.openntf.domino.Base> T, final org.openntf.domino.Base parent) {
 		if (lotus == null) {
 			return null;
 		}
@@ -366,8 +366,8 @@ public enum Factory {
 	 * @return the collection
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <T> Collection<T> fromLotus(Collection<?> lotusColl, Class<? extends org.openntf.domino.Base> T,
-			org.openntf.domino.Base<?> parent) {
+	public static <T> Collection<T> fromLotus(final Collection<?> lotusColl, final Class<? extends org.openntf.domino.Base> T,
+			final org.openntf.domino.Base<?> parent) {
 		Collection<T> result = new ArrayList<T>(); // TODO anyone got a better implementation?
 		if (!lotusColl.isEmpty()) {
 			for (Object lotus : lotusColl) {
@@ -394,8 +394,8 @@ public enum Factory {
 	 * @return the org.openntf.domino.impl. vector
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <T> org.openntf.domino.impl.Vector<T> fromLotusAsVector(Collection<?> lotusColl,
-			Class<? extends org.openntf.domino.Base> T, org.openntf.domino.Base<?> parent) {
+	public static <T> org.openntf.domino.impl.Vector<T> fromLotusAsVector(final Collection<?> lotusColl,
+			final Class<? extends org.openntf.domino.Base> T, final org.openntf.domino.Base<?> parent) {
 		org.openntf.domino.impl.Vector<T> result = new org.openntf.domino.impl.Vector<T>(); // TODO anyone got a better implementation?
 		if (!lotusColl.isEmpty()) {
 			for (Object lotus : lotusColl) {
@@ -415,7 +415,7 @@ public enum Factory {
 	 *            the values
 	 * @return the java.util. vector
 	 */
-	public static java.util.Vector<Object> wrapColumnValues(Collection<?> values, org.openntf.domino.Session session) {
+	public static java.util.Vector<Object> wrapColumnValues(final Collection<?> values, final org.openntf.domino.Session session) {
 		if (values == null) {
 			return null;
 		}
@@ -444,7 +444,7 @@ public enum Factory {
 	 *            the formula
 	 * @return the java.util. vector
 	 */
-	public static java.util.Vector<Object> wrappedEvaluate(org.openntf.domino.Session session, String formula) {
+	public static java.util.Vector<Object> wrappedEvaluate(final org.openntf.domino.Session session, final String formula) {
 		java.util.Vector<Object> result = new org.openntf.domino.impl.Vector<Object>();
 		java.util.Vector<Object> values = session.evaluate(formula);
 		for (Object value : values) {
@@ -472,8 +472,8 @@ public enum Factory {
 	 *            the context document
 	 * @return the java.util. vector
 	 */
-	public static java.util.Vector<Object> wrappedEvaluate(org.openntf.domino.Session session, String formula,
-			lotus.domino.Document contextDocument) {
+	public static java.util.Vector<Object> wrappedEvaluate(final org.openntf.domino.Session session, final String formula,
+			final lotus.domino.Document contextDocument) {
 		java.util.Vector<Object> result = new org.openntf.domino.impl.Vector<Object>();
 		java.util.Vector<Object> values = session.evaluate(formula, contextDocument);
 		for (Object value : values) {
@@ -510,7 +510,7 @@ public enum Factory {
 		return currentSessionHolder_.get();
 	}
 
-	public static void setSession(lotus.domino.Session session) {
+	public static void setSession(final lotus.domino.Session session) {
 		currentSessionHolder_.set((Session) fromLotus(session, org.openntf.domino.Session.class, null));
 	}
 
@@ -576,7 +576,7 @@ public enum Factory {
 	 *            the base
 	 * @return the parent database
 	 */
-	public static org.openntf.domino.Database getParentDatabase(org.openntf.domino.Base<?> base) {
+	public static org.openntf.domino.Database getParentDatabase(final org.openntf.domino.Base<?> base) {
 		org.openntf.domino.Database result = null;
 		if (base instanceof DatabaseDescendant) {
 			result = ((DatabaseDescendant) base).getAncestorDatabase();
@@ -595,7 +595,7 @@ public enum Factory {
 	 *            the base
 	 * @return the session
 	 */
-	public static org.openntf.domino.Session getSession(org.openntf.domino.Base<?> base) {
+	public static org.openntf.domino.Session getSession(final org.openntf.domino.Base<?> base) {
 		org.openntf.domino.Session result = null;
 		if (base instanceof SessionDescendant) {
 			result = ((SessionDescendant) base).getAncestorSession();
@@ -863,7 +863,7 @@ public enum Factory {
 	 *            the collection
 	 * @return the org.openntf.domino. note collection
 	 */
-	public static org.openntf.domino.NoteCollection toNoteCollection(lotus.domino.DocumentCollection collection) {
+	public static org.openntf.domino.NoteCollection toNoteCollection(final lotus.domino.DocumentCollection collection) {
 		org.openntf.domino.NoteCollection result = null;
 		if (collection instanceof org.openntf.domino.impl.DocumentCollection) {
 			org.openntf.domino.Database db = ((org.openntf.domino.DocumentCollection) collection).getParent();

@@ -37,7 +37,7 @@ public enum BigDominoAPIScratchTest {
 
 		Set<Document> thirdReference = new HashSet<Document>();
 
-		private void iterateForms(Database db) {
+		private void iterateForms(final Database db) {
 			System.out.println("Thread " + Thread.currentThread().getName() + " BEGINNING ITERATION of Forms");
 			Vector<Form> forms = db.getForms();
 			for (Form form : forms) {
@@ -62,7 +62,7 @@ public enum BigDominoAPIScratchTest {
 		 * @param secondReference
 		 *            the second reference
 		 */
-		private void iterateAllDocuments(Database db, Set<Document> secondReference) {
+		private void iterateAllDocuments(final Database db, final Set<Document> secondReference) {
 			System.out.println("Thread " + Thread.currentThread().getName() + " BEGINNING ITERATION of Documents");
 			Session s = db.getParent();
 			DocumentCollection dc = db.getAllDocuments();
@@ -99,7 +99,7 @@ public enum BigDominoAPIScratchTest {
 		 * @param secondReference
 		 *            the second reference
 		 */
-		private void iterateSecondReferences(Set<Document> secondReference) {
+		private void iterateSecondReferences(final Set<Document> secondReference) {
 			System.out.println("ITERATING Second reference set");
 			for (Document doc : secondReference) {
 				DateTime created = doc.getCreated();
@@ -166,7 +166,7 @@ public enum BigDominoAPIScratchTest {
 	 * @param args
 	 *            the arguments
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		int delay = 500;
 		DominoThread[] threads = new DominoThread[THREAD_COUNT];
 		for (int i = 0; i < THREAD_COUNT; i++) {

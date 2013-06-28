@@ -109,7 +109,7 @@ public enum MassCreateDocumentsScratchTest {
 	 * @param args
 	 *            the arguments
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		DominoThread dt = new DominoThread(new Doer(), "MassCreateDocumentsScratchTest");
 		dt.start();
 	}

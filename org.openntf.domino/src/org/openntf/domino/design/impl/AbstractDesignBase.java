@@ -4,8 +4,6 @@
 package org.openntf.domino.design.impl;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -31,39 +29,12 @@ public abstract class AbstractDesignBase implements DesignBase {
 	private static final long serialVersionUID = 1L;
 
 	private Document document_;
+	private final Database database_;
 	private XMLDocument dxl_;
-
-	private String title_ = null;
-	private List<String> aliases_ = null;
 
 	public AbstractDesignBase(final Document document) {
 		document_ = document;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.DesignBase#getAliases()
-	 */
-	@Override
-	public List<String> getAliases() {
-		if (title_ == null) {
-			fetchTitle();
-		}
-		return new ArrayList<String>(aliases_);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.design.DesignBase#getName()
-	 */
-	@Override
-	public String getName() {
-		if (title_ == null) {
-			fetchTitle();
-		}
-		return title_;
+		database_ = document_.getAncestorDatabase();
 	}
 
 	/*
@@ -73,7 +44,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public boolean isHideFromNotes() {
-		return getFlags().contains("n");
+		return getDxl().getFirstChild().getAttribute("hide").equals("notes");
 	}
 
 	/*
@@ -83,7 +54,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public boolean isHideFromWeb() {
-		return getFlags().contains("w");
+		return getDxl().getFirstChild().getAttribute("hide").equals("web");
 	}
 
 	/*
@@ -93,7 +64,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public boolean isNeedsRefresh() {
-		return getFlags().contains("$");
+		return getDxl().getFirstChild().getAttribute("refresh").equals("true");
 	}
 
 	/*
@@ -103,7 +74,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public boolean isPreventChanges() {
-		return getFlags().contains("P");
+		return getDxl().getFirstChild().getAttribute("noreplace").equals("true");
 	}
 
 	/*
@@ -113,7 +84,69 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public boolean isPropagatePreventChanges() {
-		return getFlags().contains("r");
+		return getDxl().getFirstChild().getAttribute("propagatenoreplace").equals("true");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DesignBase#setHideFromNotes(boolean)
+	 */
+	@Override
+	public void setHideFromNotes(final boolean hideFromNotes) {
+		String hide = getDxl().getFirstChild().getAttribute("hide");
+		if (hideFromNotes && !hide.contains("notes")) {
+			hide += " notes";
+		} else if (!hideFromNotes && hide.contains("notes")) {
+			hide = hide.replace("notes", "");
+		}
+		getDxl().getFirstChild().setAttribute("hide", hide.trim());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DesignBase#setHideFromWeb(boolean)
+	 */
+	@Override
+	public void setHideFromWeb(final boolean hideFromWeb) {
+		String hide = getDxl().getFirstChild().getAttribute("hide");
+		if (hideFromWeb && !hide.contains("web")) {
+			hide += " web";
+		} else if (!hideFromWeb && hide.contains("web")) {
+			hide = hide.replace("web", "");
+		}
+		getDxl().getFirstChild().setAttribute("hide", hide.trim());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DesignBase#setNeedsRefresh(boolean)
+	 */
+	@Override
+	public void setNeedsRefresh(final boolean needsRefresh) {
+		getDxl().getFirstChild().setAttribute("refresh", String.valueOf(needsRefresh));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DesignBase#setPreventChanges(boolean)
+	 */
+	@Override
+	public void setPreventChanges(final boolean preventChanges) {
+		getDxl().getFirstChild().setAttribute("noreplace", String.valueOf(preventChanges));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DesignBase#setPropagatePreventChanges(boolean)
+	 */
+	@Override
+	public void setPropagatePreventChanges(final boolean propagatePreventChanges) {
+		getDxl().getFirstChild().setAttribute("propagatenoreplace", String.valueOf(propagatePreventChanges));
 	}
 
 	/*
@@ -133,7 +166,16 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public String getNoteID() {
-		return getDocument().getNoteID();
+		try {
+			XMLNode node = getDxl().selectSingleNode("//noteinfo");
+			if (node != null) {
+				return node.getAttribute("noteid");
+			}
+			return "";
+		} catch (XPathExpressionException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
 	}
 
 	/*
@@ -143,7 +185,16 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public String getUniversalID() {
-		return getDocument().getUniversalID();
+		try {
+			XMLNode node = getDxl().selectSingleNode("//noteinfo");
+			if (node != null) {
+				return node.getAttribute("unid");
+			}
+			return "";
+		} catch (XPathExpressionException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
 	}
 
 	/*
@@ -153,7 +204,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public Database getAncestorDatabase() {
-		return getDocument().getAncestorDatabase();
+		return database_;
 	}
 
 	/*
@@ -163,7 +214,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 	 */
 	@Override
 	public Session getAncestorSession() {
-		return this.getAncestorDatabase().getAncestorSession();
+		return getAncestorDatabase().getAncestorSession();
 	}
 
 	public void save() {
@@ -179,40 +230,10 @@ public abstract class AbstractDesignBase implements DesignBase {
 		}
 		String noteId = importer.getFirstImportedNoteID();
 		document_ = database.getDocumentByID(noteId);
-	}
 
-	protected String getFlags() {
-		return document_.getItemValueString("$Flags");
-	}
-
-	@SuppressWarnings("unchecked")
-	private void fetchTitle() {
-		// Sometimes $TITLE is a multi-value field of title + aliases.
-		// Sometimes it's a |-delimited single value.
-		// Meh!
-
-		List<String> titles = document_.getItemValue("$TITLE");
-		if (titles.size() == 0) {
-			String titleField = document_.getItemValueString("$TITLE");
-			if (titleField.contains("|")) {
-				String[] bits = titleField.split("\\|");
-				title_ = bits[0];
-				aliases_ = new ArrayList<String>(bits.length - 1);
-				for (int i = 1; i < bits.length; i++) {
-					aliases_.add(bits[i]);
-				}
-			} else {
-				title_ = titleField;
-				aliases_ = new ArrayList<String>(0);
-			}
-		} else if (titles.size() == 1) {
-			title_ = titles.get(0);
-			aliases_ = new ArrayList<String>(0);
-		} else {
-			title_ = titles.get(0);
-			aliases_ = titles.subList(1, titles.size());
-		}
-
+		// Reset the DXL so that it can pick up new noteinfo
+		dxl_ = null;
+		getDxl();
 	}
 
 	protected XMLDocument getDxl() {

@@ -21,6 +21,6 @@ public interface RichTextParagraphStyle {
 	 * @param value
 	 *            alignment
 	 */
-	public void setAlignment(Align value);
+	public void setAlignment(final Align value);
 
 }

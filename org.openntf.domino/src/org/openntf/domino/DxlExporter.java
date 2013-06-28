@@ -31,7 +31,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * @see lotus.domino.DxlExporter#exportDxl(lotus.domino.Database)
 	 */
 	@Override
-	public String exportDxl(lotus.domino.Database database);
+	public String exportDxl(final lotus.domino.Database database);
 
 	/*
 	 * (non-Javadoc)
@@ -39,7 +39,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * @see lotus.domino.DxlExporter#exportDxl(lotus.domino.Document)
 	 */
 	@Override
-	public String exportDxl(lotus.domino.Document doc);
+	public String exportDxl(final lotus.domino.Document doc);
 
 	/*
 	 * (non-Javadoc)
@@ -47,7 +47,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * @see lotus.domino.DxlExporter#exportDxl(lotus.domino.DocumentCollection)
 	 */
 	@Override
-	public String exportDxl(lotus.domino.DocumentCollection docs);
+	public String exportDxl(final lotus.domino.DocumentCollection docs);
 
 	/*
 	 * (non-Javadoc)
@@ -55,7 +55,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * @see lotus.domino.DxlExporter#exportDxl(lotus.domino.NoteCollection)
 	 */
 	@Override
-	public String exportDxl(lotus.domino.NoteCollection notes);
+	public String exportDxl(final lotus.domino.NoteCollection notes);
 
 	/*
 	 * (non-Javadoc)
@@ -215,7 +215,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * @see lotus.domino.DxlExporter#setAttachmentOmittedText(java.lang.String)
 	 */
 	@Override
-	public void setAttachmentOmittedText(String replacementText);
+	public void setAttachmentOmittedText(final String replacementText);
 
 	/*
 	 * (non-Javadoc)
@@ -223,7 +223,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * @see lotus.domino.DxlExporter#setConvertNotesBitmapsToGIF(boolean)
 	 */
 	@Override
-	public void setConvertNotesBitmapsToGIF(boolean flag);
+	public void setConvertNotesBitmapsToGIF(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -231,7 +231,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * @see lotus.domino.DxlExporter#setDoctypeSYSTEM(java.lang.String)
 	 */
 	@Override
-	public void setDoctypeSYSTEM(String system);
+	public void setDoctypeSYSTEM(final String system);
 
 	/*
 	 * (non-Javadoc)
@@ -239,7 +239,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * @see lotus.domino.DxlExporter#setExitOnFirstFatalError(boolean)
 	 */
 	@Override
-	public void setExitOnFirstFatalError(boolean flag);
+	public void setExitOnFirstFatalError(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -247,7 +247,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * @see lotus.domino.DxlExporter#setForceNoteFormat(boolean)
 	 */
 	@Override
-	public void setForceNoteFormat(boolean flag);
+	public void setForceNoteFormat(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -255,7 +255,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * @see lotus.domino.DxlExporter#setLogComment(java.lang.String)
 	 */
 	@Override
-	public void setLogComment(String comment);
+	public void setLogComment(final String comment);
 
 	/*
 	 * (non-Javadoc)
@@ -263,7 +263,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * @see lotus.domino.DxlExporter#setMIMEOption(int)
 	 */
 	@Override
-	public void setMIMEOption(int option);
+	public void setMIMEOption(final int option);
 
 	/*
 	 * (non-Javadoc)
@@ -271,7 +271,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * @see lotus.domino.DxlExporter#setOLEObjectOmittedText(java.lang.String)
 	 */
 	@Override
-	public void setOLEObjectOmittedText(String replacementText);
+	public void setOLEObjectOmittedText(final String replacementText);
 
 	/*
 	 * (non-Javadoc)
@@ -280,7 +280,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setOmitItemNames(Vector names);
+	public void setOmitItemNames(final Vector names);
 
 	/*
 	 * (non-Javadoc)
@@ -288,7 +288,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * @see lotus.domino.DxlExporter#setOmitMiscFileObjects(boolean)
 	 */
 	@Override
-	public void setOmitMiscFileObjects(boolean flag);
+	public void setOmitMiscFileObjects(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -296,7 +296,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * @see lotus.domino.DxlExporter#setOmitOLEObjects(boolean)
 	 */
 	@Override
-	public void setOmitOLEObjects(boolean flag);
+	public void setOmitOLEObjects(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -304,7 +304,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * @see lotus.domino.DxlExporter#setOmitRichtextAttachments(boolean)
 	 */
 	@Override
-	public void setOmitRichtextAttachments(boolean flag);
+	public void setOmitRichtextAttachments(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -312,7 +312,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * @see lotus.domino.DxlExporter#setOmitRichtextPictures(boolean)
 	 */
 	@Override
-	public void setOmitRichtextPictures(boolean flag);
+	public void setOmitRichtextPictures(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -320,7 +320,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * @see lotus.domino.DxlExporter#setOutputDOCTYPE(boolean)
 	 */
 	@Override
-	public void setOutputDOCTYPE(boolean flag);
+	public void setOutputDOCTYPE(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -328,7 +328,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * @see lotus.domino.DxlExporter#setPictureOmittedText(java.lang.String)
 	 */
 	@Override
-	public void setPictureOmittedText(String replacementText);
+	public void setPictureOmittedText(final String replacementText);
 
 	/*
 	 * (non-Javadoc)
@@ -337,7 +337,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setRestrictToItemNames(Vector names);
+	public void setRestrictToItemNames(final Vector names);
 
 	/*
 	 * (non-Javadoc)
@@ -345,7 +345,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * @see lotus.domino.DxlExporter#setRichTextOption(int)
 	 */
 	@Override
-	public void setRichTextOption(int option);
+	public void setRichTextOption(final int option);
 
 	/*
 	 * (non-Javadoc)
@@ -353,6 +353,6 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * @see lotus.domino.DxlExporter#setUncompressAttachments(boolean)
 	 */
 	@Override
-	public void setUncompressAttachments(boolean flag);
+	public void setUncompressAttachments(final boolean flag);
 
 }

@@ -29,7 +29,7 @@ public interface RichTextStyle extends Base<lotus.domino.RichTextStyle>, lotus.d
 
 		private final int value_;
 
-		private BoldStyle(int value) {
+		private BoldStyle(final int value) {
 			value_ = value;
 		}
 
@@ -132,7 +132,7 @@ public interface RichTextStyle extends Base<lotus.domino.RichTextStyle>, lotus.d
 	 * @see lotus.domino.RichTextStyle#setBold(int)
 	 */
 	@Override
-	public void setBold(int value);
+	public void setBold(final int value);
 
 	/*
 	 * (non-Javadoc)
@@ -140,7 +140,7 @@ public interface RichTextStyle extends Base<lotus.domino.RichTextStyle>, lotus.d
 	 * @see lotus.domino.RichTextStyle#setColor(int)
 	 */
 	@Override
-	public void setColor(int value);
+	public void setColor(final int value);
 
 	/*
 	 * (non-Javadoc)
@@ -148,7 +148,7 @@ public interface RichTextStyle extends Base<lotus.domino.RichTextStyle>, lotus.d
 	 * @see lotus.domino.RichTextStyle#setEffects(int)
 	 */
 	@Override
-	public void setEffects(int value);
+	public void setEffects(final int value);
 
 	/*
 	 * (non-Javadoc)
@@ -156,7 +156,7 @@ public interface RichTextStyle extends Base<lotus.domino.RichTextStyle>, lotus.d
 	 * @see lotus.domino.RichTextStyle#setFont(int)
 	 */
 	@Override
-	public void setFont(int value);
+	public void setFont(final int value);
 
 	/*
 	 * (non-Javadoc)
@@ -164,7 +164,7 @@ public interface RichTextStyle extends Base<lotus.domino.RichTextStyle>, lotus.d
 	 * @see lotus.domino.RichTextStyle#setFontSize(int)
 	 */
 	@Override
-	public void setFontSize(int value);
+	public void setFontSize(final int value);
 
 	/*
 	 * (non-Javadoc)
@@ -172,7 +172,7 @@ public interface RichTextStyle extends Base<lotus.domino.RichTextStyle>, lotus.d
 	 * @see lotus.domino.RichTextStyle#setItalic(int)
 	 */
 	@Override
-	public void setItalic(int value);
+	public void setItalic(final int value);
 
 	/*
 	 * (non-Javadoc)
@@ -180,7 +180,7 @@ public interface RichTextStyle extends Base<lotus.domino.RichTextStyle>, lotus.d
 	 * @see lotus.domino.RichTextStyle#setPassThruHTML(int)
 	 */
 	@Override
-	public void setPassThruHTML(int value);
+	public void setPassThruHTML(final int value);
 
 	/*
 	 * (non-Javadoc)
@@ -188,7 +188,7 @@ public interface RichTextStyle extends Base<lotus.domino.RichTextStyle>, lotus.d
 	 * @see lotus.domino.RichTextStyle#setStrikeThrough(int)
 	 */
 	@Override
-	public void setStrikeThrough(int value);
+	public void setStrikeThrough(final int value);
 
 	/*
 	 * (non-Javadoc)
@@ -196,6 +196,6 @@ public interface RichTextStyle extends Base<lotus.domino.RichTextStyle>, lotus.d
 	 * @see lotus.domino.RichTextStyle#setUnderline(int)
 	 */
 	@Override
-	public void setUnderline(int value);
+	public void setUnderline(final int value);
 
 }

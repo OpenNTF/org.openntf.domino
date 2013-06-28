@@ -50,7 +50,7 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 		 * @param value
 		 *            the value
 		 */
-		private Align(int value) {
+		private Align(final int value) {
 			value_ = value;
 		}
 
@@ -157,7 +157,7 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 	 * @see lotus.domino.RichTextParagraphStyle#setAlignment(int)
 	 */
 	@Override
-	public void setAlignment(int value);
+	public void setAlignment(final int value);
 
 	/**
 	 * Sets the alignment.
@@ -165,7 +165,7 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 	 * @param value
 	 *            the new alignment
 	 */
-	public void setAlignment(Align value);
+	public void setAlignment(final Align value);
 
 	/*
 	 * (non-Javadoc)
@@ -173,7 +173,7 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 	 * @see lotus.domino.RichTextParagraphStyle#setFirstLineLeftMargin(int)
 	 */
 	@Override
-	public void setFirstLineLeftMargin(int value);
+	public void setFirstLineLeftMargin(final int value);
 
 	/*
 	 * (non-Javadoc)
@@ -181,7 +181,7 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 	 * @see lotus.domino.RichTextParagraphStyle#setInterLineSpacing(int)
 	 */
 	@Override
-	public void setInterLineSpacing(int value);
+	public void setInterLineSpacing(final int value);
 
 	/*
 	 * (non-Javadoc)
@@ -189,7 +189,7 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 	 * @see lotus.domino.RichTextParagraphStyle#setLeftMargin(int)
 	 */
 	@Override
-	public void setLeftMargin(int value);
+	public void setLeftMargin(final int value);
 
 	/*
 	 * (non-Javadoc)
@@ -197,7 +197,7 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 	 * @see lotus.domino.RichTextParagraphStyle#setPagination(int)
 	 */
 	@Override
-	public void setPagination(int value);
+	public void setPagination(final int value);
 
 	/*
 	 * (non-Javadoc)
@@ -205,7 +205,7 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 	 * @see lotus.domino.RichTextParagraphStyle#setRightMargin(int)
 	 */
 	@Override
-	public void setRightMargin(int value);
+	public void setRightMargin(final int value);
 
 	/*
 	 * (non-Javadoc)
@@ -213,7 +213,7 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 	 * @see lotus.domino.RichTextParagraphStyle#setSpacingAbove(int)
 	 */
 	@Override
-	public void setSpacingAbove(int value);
+	public void setSpacingAbove(final int value);
 
 	/*
 	 * (non-Javadoc)
@@ -221,7 +221,7 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 	 * @see lotus.domino.RichTextParagraphStyle#setSpacingBelow(int)
 	 */
 	@Override
-	public void setSpacingBelow(int value);
+	public void setSpacingBelow(final int value);
 
 	/*
 	 * (non-Javadoc)
@@ -229,7 +229,7 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 	 * @see lotus.domino.RichTextParagraphStyle#setTab(int, int)
 	 */
 	@Override
-	public void setTab(int position, int type);
+	public void setTab(final int position, final int type);
 
 	/*
 	 * (non-Javadoc)
@@ -237,7 +237,7 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 	 * @see lotus.domino.RichTextParagraphStyle#setTabs(int, int, int)
 	 */
 	@Override
-	public void setTabs(int count, int startPos, int interval);
+	public void setTabs(final int count, final int startPos, final int interval);
 
 	/*
 	 * (non-Javadoc)
@@ -245,6 +245,6 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 	 * @see lotus.domino.RichTextParagraphStyle#setTabs(int, int, int, int)
 	 */
 	@Override
-	public void setTabs(int count, int startPos, int interval, int type);
+	public void setTabs(final int count, final int startPos, final int interval, final int type);
 
 }

@@ -16,12 +16,12 @@ public class XMLNodeList extends ArrayList<XMLNode> {
 		super();
 	}
 
-	public XMLNodeList(int initialCapacity) {
+	public XMLNodeList(final int initialCapacity) {
 		super(initialCapacity);
 	}
 
 	@Override
-	public XMLNode remove(int i) {
+	public XMLNode remove(final int i) {
 		XMLNode result = super.remove(i);
 		if (result != null) {
 			result.getParentNode().removeChild(result);
@@ -29,13 +29,13 @@ public class XMLNodeList extends ArrayList<XMLNode> {
 		return result;
 	}
 
-	public void swap(int indexA, int indexB) {
+	public void swap(final int indexA, final int indexB) {
 		XMLNode a = this.get(indexA);
 		XMLNode b = this.get(indexB);
 		swap(a, b);
 	}
 
-	public void swap(XMLNode a, XMLNode b) {
+	public void swap(final XMLNode a, final XMLNode b) {
 		XMLNode parentA = a.getParentNode();
 		XMLNode siblingA = a.getNextSibling();
 

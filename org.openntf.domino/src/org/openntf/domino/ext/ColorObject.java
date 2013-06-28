@@ -11,5 +11,5 @@ public interface ColorObject {
 
 	public String getHex();
 
-	public void setHex(String hex);
+	public void setHex(final String hex);
 }

@@ -24,7 +24,7 @@ public interface Graph {
      * @param id the recommended object identifier
      * @return the newly created vertex
      */
-    public Vertex addVertex(Object id);
+    public Vertex addVertex(final Object id);
 
     /**
      * Return the vertex referenced by the provided object identifier.
@@ -33,7 +33,7 @@ public interface Graph {
      * @param id the identifier of the vertex to retrieved from the graph
      * @return the vertex referenced by the provided identifier or null when no such vertex exists
      */
-    public Vertex getVertex(Object id);
+    public Vertex getVertex(final Object id);
 
     /**
      * Remove the provided vertex from the graph.
@@ -41,7 +41,7 @@ public interface Graph {
      *
      * @param vertex the vertex to remove from the graph
      */
-    public void removeVertex(Vertex vertex);
+    public void removeVertex(final Vertex vertex);
 
     /**
      * Return an iterable to all the vertices in the graph.
@@ -60,7 +60,7 @@ public interface Graph {
      * @param value the value of the vertex
      * @return an iterable of vertices with provided key and value
      */
-    public Iterable<Vertex> getVertices(String key, Object value);
+    public Iterable<Vertex> getVertices(final String key, final Object value);
 
     /**
      * Add an edge to the graph. The added edges requires a recommended identifier, a tail vertex, an head vertex, and a label.
@@ -72,7 +72,7 @@ public interface Graph {
      * @param label     the label associated with the edge
      * @return the newly created edge
      */
-    public Edge addEdge(Object id, Vertex outVertex, Vertex inVertex, String label);
+    public Edge addEdge(final Object id, final Vertex outVertex, final Vertex inVertex, final String label);
 
     /**
      * Return the edge referenced by the provided object identifier.
@@ -81,14 +81,14 @@ public interface Graph {
      * @param id the identifier of the edge to retrieved from the graph
      * @return the edge referenced by the provided identifier or null when no such edge exists
      */
-    public Edge getEdge(Object id);
+    public Edge getEdge(final Object id);
 
     /**
      * Remove the provided edge from the graph.
      *
      * @param edge the edge to remove from the graph
      */
-    public void removeEdge(Edge edge);
+    public void removeEdge(final Edge edge);
 
     /**
      * Return an iterable to all the edges in the graph.
@@ -107,7 +107,7 @@ public interface Graph {
      * @param value the value of the edge
      * @return an iterable of edges with provided key and value
      */
-    public Iterable<Edge> getEdges(String key, Object value);
+    public Iterable<Edge> getEdges(final String key, final Object value);
 
     /**
      * Generate a query object that can be used to fine tune which edges/vertices are retrieved from the graph.

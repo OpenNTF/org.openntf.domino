@@ -56,7 +56,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 		 * @param value
 		 *            the value
 		 */
-		private Level(int value) {
+		private Level(final int value) {
 			value_ = value;
 		}
 
@@ -78,7 +78,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public void addRole(String name);
+	public void addRole(final String name);
 
 	/**
 	 * Creates an entry in the ACL with the name and level that you specify.
@@ -104,7 +104,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 * 
 	 */
 	@Override
-	public ACLEntry createACLEntry(String name, int level);
+	public ACLEntry createACLEntry(final String name, final int level);
 
 	/**
 	 * Deletes a role with the specified name from an ACL.
@@ -114,7 +114,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public void deleteRole(String name);
+	public void deleteRole(final String name);
 
 	/**
 	 * Returns the name of the administration server for an IBM Domino database.
@@ -138,7 +138,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public ACLEntry getEntry(String name);
+	public ACLEntry getEntry(final String name);
 
 	/**
 	 * Returns the first entry in an ACL.
@@ -195,7 +195,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public ACLEntry getNextEntry(lotus.domino.ACLEntry entry);
+	public ACLEntry getNextEntry(final lotus.domino.ACLEntry entry);
 
 	/**
 	 * Returns the IBM Domino database that owns the ACL.
@@ -277,7 +277,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public void removeACLEntry(String name);
+	public void removeACLEntry(final String name);
 
 	/**
 	 * Changes the name of a role.
@@ -294,7 +294,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public void renameRole(String oldName, String newName);
+	public void renameRole(final String oldName, final String newName);
 
 	/**
 	 * Saves changes that you've made to the ACL.
@@ -317,7 +317,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public void setAdministrationServer(String server);
+	public void setAdministrationServer(final String server);
 
 	/**
 	 * Sets whether the administration server for the database can modify all Names fields in a database.
@@ -333,7 +333,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public void setAdminNames(boolean flag);
+	public void setAdminNames(final boolean flag);
 
 	/**
 	 * Sets whether the administration server for the database can modify Readers and Authors fields in a database.
@@ -349,7 +349,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public void setAdminReaderAuthor(boolean flag);
+	public void setAdminReaderAuthor(final boolean flag);
 
 	/**
 	 * Sets whether extended access is enabled.
@@ -368,7 +368,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public void setExtendedAccess(boolean flag);
+	public void setExtendedAccess(final boolean flag);
 
 	/**
 	 * Sets the maximum Internet access level for this database.
@@ -388,7 +388,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public void setInternetLevel(int level);
+	public void setInternetLevel(final int level);
 
 	/**
 	 * Sets the maximum Internet access level for this database.
@@ -397,7 +397,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 *            The new maximum Internet level you want to set in the ACL, of type ACL.Level.
 	 * @since openntf.domino 1.0.0
 	 */
-	public void setInternetLevel(Level level);
+	public void setInternetLevel(final Level level);
 
 	/**
 	 * Sets whether a consistent access control list is enforced across all replicas of a database.
@@ -412,6 +412,6 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public void setUniformAccess(boolean flag);
+	public void setUniformAccess(final boolean flag);
 
 }

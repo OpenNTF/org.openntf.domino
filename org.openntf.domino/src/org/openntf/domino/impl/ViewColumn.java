@@ -34,7 +34,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @param parent
 	 *            the parent
 	 */
-	public ViewColumn(lotus.domino.ViewColumn delegate, org.openntf.domino.View parent) {
+	public ViewColumn(final lotus.domino.ViewColumn delegate, final org.openntf.domino.View parent) {
 		super(delegate, parent);
 	}
 
@@ -933,7 +933,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setAccentSensitiveSort(boolean)
 	 */
 	@Override
-	public void setAccentSensitiveSort(boolean flag) {
+	public void setAccentSensitiveSort(final boolean flag) {
 		try {
 			getDelegate().setAccentSensitiveSort(flag);
 		} catch (NotesException e) {
@@ -947,7 +947,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setAlignment(int)
 	 */
 	@Override
-	public void setAlignment(int alignment) {
+	public void setAlignment(final int alignment) {
 		try {
 			getDelegate().setAlignment(alignment);
 		} catch (NotesException e) {
@@ -961,7 +961,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setCaseSensitiveSort(boolean)
 	 */
 	@Override
-	public void setCaseSensitiveSort(boolean flag) {
+	public void setCaseSensitiveSort(final boolean flag) {
 		try {
 			getDelegate().setCaseSensitiveSort(flag);
 		} catch (NotesException e) {
@@ -975,7 +975,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setDateFmt(int)
 	 */
 	@Override
-	public void setDateFmt(int format) {
+	public void setDateFmt(final int format) {
 		try {
 			getDelegate().setDateFmt(format);
 		} catch (NotesException e) {
@@ -989,7 +989,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setFontBold(boolean)
 	 */
 	@Override
-	public void setFontBold(boolean flag) {
+	public void setFontBold(final boolean flag) {
 		try {
 			getDelegate().setFontBold(flag);
 		} catch (NotesException e) {
@@ -1003,7 +1003,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setFontColor(int)
 	 */
 	@Override
-	public void setFontColor(int color) {
+	public void setFontColor(final int color) {
 		try {
 			getDelegate().setFontColor(color);
 		} catch (NotesException e) {
@@ -1017,7 +1017,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setFontFace(java.lang.String)
 	 */
 	@Override
-	public void setFontFace(String face) {
+	public void setFontFace(final String face) {
 		try {
 			getDelegate().setFontFace(face);
 		} catch (NotesException e) {
@@ -1031,7 +1031,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setFontItalic(boolean)
 	 */
 	@Override
-	public void setFontItalic(boolean flag) {
+	public void setFontItalic(final boolean flag) {
 		try {
 			getDelegate().setFontItalic(flag);
 		} catch (NotesException e) {
@@ -1045,7 +1045,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setFontPointSize(int)
 	 */
 	@Override
-	public void setFontPointSize(int size) {
+	public void setFontPointSize(final int size) {
 		try {
 			getDelegate().setFontPointSize(size);
 		} catch (NotesException e) {
@@ -1059,7 +1059,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setFontStrikethrough(boolean)
 	 */
 	@Override
-	public void setFontStrikethrough(boolean flag) {
+	public void setFontStrikethrough(final boolean flag) {
 		try {
 			getDelegate().setFontStrikethrough(flag);
 		} catch (NotesException e) {
@@ -1073,7 +1073,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setFontStyle(int)
 	 */
 	@Override
-	public void setFontStyle(int style) {
+	public void setFontStyle(final int style) {
 		try {
 			getDelegate().setFontStyle(style);
 		} catch (NotesException e) {
@@ -1087,7 +1087,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setFontUnderline(boolean)
 	 */
 	@Override
-	public void setFontUnderline(boolean flag) {
+	public void setFontUnderline(final boolean flag) {
 		try {
 			getDelegate().setFontUnderline(flag);
 		} catch (NotesException e) {
@@ -1101,7 +1101,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setFormula(java.lang.String)
 	 */
 	@Override
-	public void setFormula(String formula) {
+	public void setFormula(final String formula) {
 		try {
 			getDelegate().setFormula(formula);
 		} catch (NotesException e) {
@@ -1115,7 +1115,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setHeaderAlignment(int)
 	 */
 	@Override
-	public void setHeaderAlignment(int alignment) {
+	public void setHeaderAlignment(final int alignment) {
 		try {
 			getDelegate().setHeaderAlignment(alignment);
 		} catch (NotesException e) {
@@ -1129,7 +1129,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setHeaderFontBold(boolean)
 	 */
 	@Override
-	public void setHeaderFontBold(boolean flag) {
+	public void setHeaderFontBold(final boolean flag) {
 		try {
 			getDelegate().setHeaderFontBold(flag);
 		} catch (NotesException e) {
@@ -1143,7 +1143,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setHeaderFontColor(int)
 	 */
 	@Override
-	public void setHeaderFontColor(int color) {
+	public void setHeaderFontColor(final int color) {
 		try {
 			getDelegate().setHeaderFontColor(color);
 		} catch (NotesException e) {
@@ -1157,7 +1157,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setHeaderFontFace(java.lang.String)
 	 */
 	@Override
-	public void setHeaderFontFace(String face) {
+	public void setHeaderFontFace(final String face) {
 		try {
 			getDelegate().setHeaderFontFace(face);
 		} catch (NotesException e) {
@@ -1171,7 +1171,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setHeaderFontItalic(boolean)
 	 */
 	@Override
-	public void setHeaderFontItalic(boolean flag) {
+	public void setHeaderFontItalic(final boolean flag) {
 		try {
 			getDelegate().setHeaderFontItalic(flag);
 		} catch (NotesException e) {
@@ -1185,7 +1185,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setHeaderFontPointSize(int)
 	 */
 	@Override
-	public void setHeaderFontPointSize(int size) {
+	public void setHeaderFontPointSize(final int size) {
 		try {
 			getDelegate().setHeaderFontPointSize(size);
 		} catch (NotesException e) {
@@ -1199,7 +1199,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setHeaderFontStrikethrough(boolean)
 	 */
 	@Override
-	public void setHeaderFontStrikethrough(boolean flag) {
+	public void setHeaderFontStrikethrough(final boolean flag) {
 		try {
 			getDelegate().setHeaderFontStrikethrough(flag);
 		} catch (NotesException e) {
@@ -1213,7 +1213,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setHeaderFontStyle(int)
 	 */
 	@Override
-	public void setHeaderFontStyle(int style) {
+	public void setHeaderFontStyle(final int style) {
 		try {
 			getDelegate().setHeaderFontStyle(style);
 		} catch (NotesException e) {
@@ -1227,7 +1227,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setHeaderFontUnderline(boolean)
 	 */
 	@Override
-	public void setHeaderFontUnderline(boolean flag) {
+	public void setHeaderFontUnderline(final boolean flag) {
 		try {
 			getDelegate().setHeaderFontUnderline(flag);
 		} catch (NotesException e) {
@@ -1241,7 +1241,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setHidden(boolean)
 	 */
 	@Override
-	public void setHidden(boolean flag) {
+	public void setHidden(final boolean flag) {
 		try {
 			getDelegate().setHidden(flag);
 		} catch (NotesException e) {
@@ -1255,7 +1255,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setHideDetail(boolean)
 	 */
 	@Override
-	public void setHideDetail(boolean flag) {
+	public void setHideDetail(final boolean flag) {
 		try {
 			getDelegate().setHideDetail(flag);
 		} catch (NotesException e) {
@@ -1269,7 +1269,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setHideFormula(boolean)
 	 */
 	@Override
-	public void setHideFormula(boolean flag) {
+	public void setHideFormula(final boolean flag) {
 		try {
 			getDelegate().setHideFormula(flag);
 		} catch (NotesException e) {
@@ -1283,7 +1283,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setListSep(int)
 	 */
 	@Override
-	public void setListSep(int separator) {
+	public void setListSep(final int separator) {
 		try {
 			getDelegate().setListSep(separator);
 		} catch (NotesException e) {
@@ -1297,7 +1297,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setNumberAttrib(int)
 	 */
 	@Override
-	public void setNumberAttrib(int attributes) {
+	public void setNumberAttrib(final int attributes) {
 		try {
 			getDelegate().setNumberAttrib(attributes);
 		} catch (NotesException e) {
@@ -1311,7 +1311,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setNumberAttribParens(boolean)
 	 */
 	@Override
-	public void setNumberAttribParens(boolean flag) {
+	public void setNumberAttribParens(final boolean flag) {
 		try {
 			getDelegate().setNumberAttribParens(flag);
 		} catch (NotesException e) {
@@ -1325,7 +1325,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setNumberAttribPercent(boolean)
 	 */
 	@Override
-	public void setNumberAttribPercent(boolean flag) {
+	public void setNumberAttribPercent(final boolean flag) {
 		try {
 			getDelegate().setNumberAttribPercent(flag);
 		} catch (NotesException e) {
@@ -1339,7 +1339,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setNumberAttribPunctuated(boolean)
 	 */
 	@Override
-	public void setNumberAttribPunctuated(boolean flag) {
+	public void setNumberAttribPunctuated(final boolean flag) {
 		try {
 			getDelegate().setNumberAttribPunctuated(flag);
 		} catch (NotesException e) {
@@ -1353,7 +1353,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setNumberDigits(int)
 	 */
 	@Override
-	public void setNumberDigits(int digits) {
+	public void setNumberDigits(final int digits) {
 		try {
 			getDelegate().setNumberDigits(digits);
 		} catch (NotesException e) {
@@ -1367,7 +1367,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setNumberFormat(int)
 	 */
 	@Override
-	public void setNumberFormat(int format) {
+	public void setNumberFormat(final int format) {
 		try {
 			getDelegate().setNumberFormat(format);
 		} catch (NotesException e) {
@@ -1381,7 +1381,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setPosition(int)
 	 */
 	@Override
-	public void setPosition(int position) {
+	public void setPosition(final int position) {
 		try {
 			getDelegate().setPosition(position);
 		} catch (NotesException e) {
@@ -1395,7 +1395,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setResize(boolean)
 	 */
 	@Override
-	public void setResize(boolean flag) {
+	public void setResize(final boolean flag) {
 		try {
 			getDelegate().setResize(flag);
 		} catch (NotesException e) {
@@ -1409,7 +1409,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setResortAscending(boolean)
 	 */
 	@Override
-	public void setResortAscending(boolean flag) {
+	public void setResortAscending(final boolean flag) {
 		try {
 			getDelegate().setResortAscending(flag);
 		} catch (NotesException e) {
@@ -1423,7 +1423,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setResortDescending(boolean)
 	 */
 	@Override
-	public void setResortDescending(boolean flag) {
+	public void setResortDescending(final boolean flag) {
 		try {
 			getDelegate().setResortDescending(flag);
 		} catch (NotesException e) {
@@ -1437,7 +1437,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setResortToView(boolean)
 	 */
 	@Override
-	public void setResortToView(boolean flag) {
+	public void setResortToView(final boolean flag) {
 		try {
 			getDelegate().setResortToView(flag);
 		} catch (NotesException e) {
@@ -1451,7 +1451,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setResortToViewName(java.lang.String)
 	 */
 	@Override
-	public void setResortToViewName(String name) {
+	public void setResortToViewName(final String name) {
 		try {
 			getDelegate().setResortToViewName(name);
 		} catch (NotesException e) {
@@ -1465,7 +1465,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setSecondaryResort(boolean)
 	 */
 	@Override
-	public void setSecondaryResort(boolean flag) {
+	public void setSecondaryResort(final boolean flag) {
 		try {
 			getDelegate().setSecondaryResort(flag);
 		} catch (NotesException e) {
@@ -1479,7 +1479,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setSecondaryResortColumnIndex(int)
 	 */
 	@Override
-	public void setSecondaryResortColumnIndex(int index) {
+	public void setSecondaryResortColumnIndex(final int index) {
 		try {
 			getDelegate().setSecondaryResortColumnIndex(index);
 		} catch (NotesException e) {
@@ -1493,7 +1493,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setSecondaryResortDescending(boolean)
 	 */
 	@Override
-	public void setSecondaryResortDescending(boolean flag) {
+	public void setSecondaryResortDescending(final boolean flag) {
 		try {
 			getDelegate().setSecondaryResortDescending(flag);
 		} catch (NotesException e) {
@@ -1507,7 +1507,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setShowTwistie(boolean)
 	 */
 	@Override
-	public void setShowTwistie(boolean flag) {
+	public void setShowTwistie(final boolean flag) {
 		try {
 			getDelegate().setShowTwistie(flag);
 		} catch (NotesException e) {
@@ -1521,7 +1521,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setSortDescending(boolean)
 	 */
 	@Override
-	public void setSortDescending(boolean flag) {
+	public void setSortDescending(final boolean flag) {
 		try {
 			getDelegate().setSortDescending(flag);
 		} catch (NotesException e) {
@@ -1535,7 +1535,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setSorted(boolean)
 	 */
 	@Override
-	public void setSorted(boolean flag) {
+	public void setSorted(final boolean flag) {
 		try {
 			getDelegate().setSorted(flag);
 		} catch (NotesException e) {
@@ -1549,7 +1549,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setTimeDateFmt(int)
 	 */
 	@Override
-	public void setTimeDateFmt(int format) {
+	public void setTimeDateFmt(final int format) {
 		try {
 			getDelegate().setTimeDateFmt(format);
 		} catch (NotesException e) {
@@ -1563,7 +1563,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setTimeFmt(int)
 	 */
 	@Override
-	public void setTimeFmt(int format) {
+	public void setTimeFmt(final int format) {
 		try {
 			getDelegate().setTimeFmt(format);
 		} catch (NotesException e) {
@@ -1577,7 +1577,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setTimeZoneFmt(int)
 	 */
 	@Override
-	public void setTimeZoneFmt(int format) {
+	public void setTimeZoneFmt(final int format) {
 		try {
 			getDelegate().setTimeZoneFmt(format);
 		} catch (NotesException e) {
@@ -1591,7 +1591,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setTitle(java.lang.String)
 	 */
 	@Override
-	public void setTitle(String title) {
+	public void setTitle(final String title) {
 		try {
 			getDelegate().setTitle(title);
 		} catch (NotesException e) {
@@ -1605,7 +1605,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @see org.openntf.domino.ViewColumn#setWidth(int)
 	 */
 	@Override
-	public void setWidth(int width) {
+	public void setWidth(final int width) {
 		try {
 			getDelegate().setWidth(width);
 		} catch (NotesException e) {

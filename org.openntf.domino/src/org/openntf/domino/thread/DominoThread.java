@@ -39,8 +39,9 @@ public class DominoThread extends Thread {
 	 * @param runnable
 	 *            the runnable
 	 */
-	public DominoThread(Runnable runnable) {
+	public DominoThread(final Runnable runnable) {
 		super(runnable);
+
 	}
 
 	/**
@@ -51,7 +52,7 @@ public class DominoThread extends Thread {
 	 * @param threadName
 	 *            the thread name
 	 */
-	public DominoThread(Runnable runnable, String threadName) {
+	public DominoThread(final Runnable runnable, final String threadName) {
 		super(runnable, threadName);
 		// TODO Auto-generated constructor stub
 	}
@@ -116,13 +117,13 @@ public class DominoThread extends Thread {
 		super.start();
 	}
 
-	public synchronized void start(ClassLoader loader) {
+	public synchronized void start(final ClassLoader loader) {
 		setContextClassLoader(loader);
 		start();
 	}
 
 	@Override
-	public void setContextClassLoader(ClassLoader loader) {
+	public void setContextClassLoader(final ClassLoader loader) {
 		Factory.setClassLoader(loader);
 	}
 }

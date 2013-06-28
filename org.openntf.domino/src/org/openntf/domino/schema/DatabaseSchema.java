@@ -32,9 +32,9 @@ public class DatabaseSchema implements Externalizable {
 		SUMMARY, READERS, AUTHORS, PROTECTED, SIGNED, ENCRYPTED
 	}
 
-	private Map<String, DocumentDefinition> documentDefinitions_ = new HashMap<String, DocumentDefinition>();
-	private Map<String, ItemDefinition> itemDefinitions_ = new HashMap<String, ItemDefinition>();
-	private Map<Class<? extends IDominoType>, IDominoType> typeDefinitions_ = new HashMap<Class<? extends IDominoType>, IDominoType>();
+	private final Map<String, DocumentDefinition> documentDefinitions_ = new HashMap<String, DocumentDefinition>();
+	private final Map<String, ItemDefinition> itemDefinitions_ = new HashMap<String, ItemDefinition>();
+	private final Map<Class<? extends IDominoType>, IDominoType> typeDefinitions_ = new HashMap<Class<? extends IDominoType>, IDominoType>();
 
 	/**
 	 * 
@@ -47,27 +47,27 @@ public class DatabaseSchema implements Externalizable {
 		return documentDefinitions_;
 	}
 
-	public void setDocumentDefinitions(Map<String, DocumentDefinition> definitions) {
-		documentDefinitions_ = definitions;
-	}
+	// public void setDocumentDefinitions(final Map<String, DocumentDefinition> definitions) {
+	// documentDefinitions_ = definitions;
+	// }
 
 	public Map<String, ItemDefinition> getItemDefinitions() {
 		return itemDefinitions_;
 	}
 
-	public void setItemDefinitions(Map<String, ItemDefinition> definitions) {
-		itemDefinitions_ = definitions;
-	}
+	// public void setItemDefinitions(final Map<String, ItemDefinition> definitions) {
+	// itemDefinitions_ = definitions;
+	// }
 
 	public Map<Class<? extends IDominoType>, IDominoType> getTypeDefinitions() {
 		return typeDefinitions_;
 	}
 
-	public void setTypeDefinitions(Map<Class<? extends IDominoType>, IDominoType> definitions) {
-		typeDefinitions_ = definitions;
-	}
+	// public void setTypeDefinitions(final Map<Class<? extends IDominoType>, IDominoType> definitions) {
+	// typeDefinitions_ = definitions;
+	// }
 
-	public IDominoType getTypeDefinition(Class<? extends IDominoType> type) {
+	public IDominoType getTypeDefinition(final Class<? extends IDominoType> type) {
 		IDominoType result = getTypeDefinitions().get(type);
 		if (result == null) {
 			// TODO NTF improve exception handling
@@ -83,11 +83,11 @@ public class DatabaseSchema implements Externalizable {
 		return result;
 	}
 
-	public void save(Database db) {
+	public void save(final Database db) {
 
 	}
 
-	public Document createDocument(Database db, String doctype) {
+	public Document createDocument(final Database db, final String doctype) {
 		DocumentDefinition def = getDocumentDefinitions().get(doctype);
 		if (def == null)
 			return null;
@@ -102,7 +102,7 @@ public class DatabaseSchema implements Externalizable {
 		return result;
 	}
 
-	public boolean validateDocument(Document doc) {
+	public boolean validateDocument(final Document doc) {
 		String doctype = doc.getItemValueString("$$SchemaType");
 		DocumentDefinition def = getDocumentDefinitions().get(doctype);
 		if (def == null)
@@ -123,7 +123,7 @@ public class DatabaseSchema implements Externalizable {
 	 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
 	 */
 	@Override
-	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 		int defCount = in.readInt();
 		for (int i = 0; i < defCount; i++) {
 			String key = in.readUTF();
@@ -146,7 +146,7 @@ public class DatabaseSchema implements Externalizable {
 	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
 	 */
 	@Override
-	public void writeExternal(ObjectOutput out) throws IOException {
+	public void writeExternal(final ObjectOutput out) throws IOException {
 		out.writeInt(documentDefinitions_.size());
 		for (Map.Entry<String, DocumentDefinition> entry : documentDefinitions_.entrySet()) {
 			out.writeUTF(entry.getKey());

@@ -74,7 +74,7 @@ public class LogUtils {
 	 *            String path of file to be used. Can be literal or relative to <data> directory
 	 * @return InputStream content of properties file
 	 */
-	public static InputStream getLogConfigFile(int fileType, String filePath) {
+	public static InputStream getLogConfigFile(final int fileType, final String filePath) {
 		InputStream is = null;
 		try {
 			if ("".equals(filePath)) {
@@ -101,7 +101,7 @@ public class LogUtils {
 	 *            If <code>true</code>, format the time in UTC. If <code>false</code>, format the time in the local time zone.
 	 * @return The ISO8601 string.
 	 */
-	public static String dateToString(Date value, boolean utc) {
+	public static String dateToString(final Date value, final boolean utc) {
 
 		String result = null;
 
@@ -129,7 +129,7 @@ public class LogUtils {
 	 * @param filePath
 	 *            String of filepath for logging properties file, or empty string to load the default org.openntf.domino logger
 	 */
-	static public void loadLoggerConfig(boolean relative, String filePath) {
+	static public void loadLoggerConfig(final boolean relative, final String filePath) {
 		System.out.println("Loading Logger config...");
 		try {
 			LogManager manager = LogManager.getLogManager();
@@ -215,7 +215,7 @@ public class LogUtils {
 	 *            Logger to try and change
 	 * @return success or failure.
 	 */
-	public static boolean hasAccessException(Logger log_) {
+	public static boolean hasAccessException(final Logger log_) {
 		try {
 			log_.setLevel(log_.getLevel());
 			return false;

@@ -46,7 +46,7 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 		 * @param value
 		 *            the value
 		 */
-		private Type(int value) {
+		private Type(final int value) {
 			value_ = value;
 		}
 
@@ -66,7 +66,7 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 	 * @see lotus.domino.DbDirectory#createDatabase(java.lang.String)
 	 */
 	@Override
-	public Database createDatabase(String dbFile);
+	public Database createDatabase(final String dbFile);
 
 	/*
 	 * (non-Javadoc)
@@ -74,7 +74,7 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 	 * @see lotus.domino.DbDirectory#createDatabase(java.lang.String, boolean)
 	 */
 	@Override
-	public Database createDatabase(String dbFile, boolean open);
+	public Database createDatabase(final String dbFile, final boolean open);
 
 	/*
 	 * (non-Javadoc)
@@ -90,7 +90,7 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 	 * @see lotus.domino.DbDirectory#getClusterName(java.lang.String)
 	 */
 	@Override
-	public String getClusterName(String server);
+	public String getClusterName(final String server);
 
 	/*
 	 * (non-Javadoc)
@@ -98,7 +98,7 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 	 * @see lotus.domino.DbDirectory#getFirstDatabase(int)
 	 */
 	@Override
-	public Database getFirstDatabase(int type);
+	public Database getFirstDatabase(final int type);
 
 	/**
 	 * Gets the first database.
@@ -107,7 +107,7 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 	 *            the type
 	 * @return the first database
 	 */
-	public Database getFirstDatabase(Type type);
+	public Database getFirstDatabase(final Type type);
 
 	/*
 	 * (non-Javadoc)
@@ -147,7 +147,7 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 	 * @see lotus.domino.DbDirectory#openDatabase(java.lang.String)
 	 */
 	@Override
-	public Database openDatabase(String dbFile);
+	public Database openDatabase(final String dbFile);
 
 	/*
 	 * (non-Javadoc)
@@ -155,7 +155,7 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 	 * @see lotus.domino.DbDirectory#openDatabase(java.lang.String, boolean)
 	 */
 	@Override
-	public Database openDatabase(String dbFile, boolean failover);
+	public Database openDatabase(final String dbFile, final boolean failover);
 
 	/*
 	 * (non-Javadoc)
@@ -163,7 +163,7 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 	 * @see lotus.domino.DbDirectory#openDatabaseByReplicaID(java.lang.String)
 	 */
 	@Override
-	public Database openDatabaseByReplicaID(String replicaId);
+	public Database openDatabaseByReplicaID(final String replicaId);
 
 	/*
 	 * (non-Javadoc)
@@ -171,7 +171,7 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 	 * @see lotus.domino.DbDirectory#openDatabaseIfModified(java.lang.String, lotus.domino.DateTime)
 	 */
 	@Override
-	public Database openDatabaseIfModified(String dbFile, lotus.domino.DateTime date);
+	public Database openDatabaseIfModified(final String dbFile, final lotus.domino.DateTime date);
 
 	/*
 	 * (non-Javadoc)
@@ -187,6 +187,6 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 	 * @see lotus.domino.DbDirectory#setHonorShowInOpenDatabaseDialog(boolean)
 	 */
 	@Override
-	public void setHonorShowInOpenDatabaseDialog(boolean flag);
+	public void setHonorShowInOpenDatabaseDialog(final boolean flag);
 
 }

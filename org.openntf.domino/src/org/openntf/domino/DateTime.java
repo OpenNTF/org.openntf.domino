@@ -32,7 +32,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 * @see lotus.domino.DateTime#adjustDay(int)
 	 */
 	@Override
-	public void adjustDay(int n);
+	public void adjustDay(final int n);
 
 	/*
 	 * (non-Javadoc)
@@ -40,7 +40,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 * @see lotus.domino.DateTime#adjustDay(int, boolean)
 	 */
 	@Override
-	public void adjustDay(int n, boolean preserveLocalTime);
+	public void adjustDay(final int n, final boolean preserveLocalTime);
 
 	/*
 	 * (non-Javadoc)
@@ -48,7 +48,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 * @see lotus.domino.DateTime#adjustHour(int)
 	 */
 	@Override
-	public void adjustHour(int n);
+	public void adjustHour(final int n);
 
 	/*
 	 * (non-Javadoc)
@@ -56,7 +56,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 * @see lotus.domino.DateTime#adjustHour(int, boolean)
 	 */
 	@Override
-	public void adjustHour(int n, boolean preserveLocalTime);
+	public void adjustHour(final int n, final boolean preserveLocalTime);
 
 	/*
 	 * (non-Javadoc)
@@ -64,7 +64,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 * @see lotus.domino.DateTime#adjustMinute(int)
 	 */
 	@Override
-	public void adjustMinute(int n);
+	public void adjustMinute(final int n);
 
 	/*
 	 * (non-Javadoc)
@@ -72,7 +72,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 * @see lotus.domino.DateTime#adjustMinute(int, boolean)
 	 */
 	@Override
-	public void adjustMinute(int n, boolean preserveLocalTime);
+	public void adjustMinute(final int n, final boolean preserveLocalTime);
 
 	/*
 	 * (non-Javadoc)
@@ -80,7 +80,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 * @see lotus.domino.DateTime#adjustMonth(int)
 	 */
 	@Override
-	public void adjustMonth(int n);
+	public void adjustMonth(final int n);
 
 	/*
 	 * (non-Javadoc)
@@ -88,7 +88,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 * @see lotus.domino.DateTime#adjustMonth(int, boolean)
 	 */
 	@Override
-	public void adjustMonth(int n, boolean preserveLocalTime);
+	public void adjustMonth(final int n, final boolean preserveLocalTime);
 
 	/*
 	 * (non-Javadoc)
@@ -96,7 +96,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 * @see lotus.domino.DateTime#adjustSecond(int)
 	 */
 	@Override
-	public void adjustSecond(int n);
+	public void adjustSecond(final int n);
 
 	/*
 	 * (non-Javadoc)
@@ -104,7 +104,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 * @see lotus.domino.DateTime#adjustSecond(int, boolean)
 	 */
 	@Override
-	public void adjustSecond(int n, boolean preserveLocalTime);
+	public void adjustSecond(final int n, final boolean preserveLocalTime);
 
 	/*
 	 * (non-Javadoc)
@@ -112,7 +112,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 * @see lotus.domino.DateTime#adjustYear(int)
 	 */
 	@Override
-	public void adjustYear(int n);
+	public void adjustYear(final int n);
 
 	/*
 	 * (non-Javadoc)
@@ -120,7 +120,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 * @see lotus.domino.DateTime#adjustYear(int, boolean)
 	 */
 	@Override
-	public void adjustYear(int n, boolean preserveLocalTime);
+	public void adjustYear(final int n, final boolean preserveLocalTime);
 
 	/*
 	 * (non-Javadoc)
@@ -128,7 +128,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 * @see lotus.domino.DateTime#convertToZone(int, boolean)
 	 */
 	@Override
-	public void convertToZone(int zone, boolean isDST);
+	public void convertToZone(final int zone, final boolean isDST);
 
 	/**
 	 * Compares current date with another and returns boolean of whether they are the same.
@@ -137,7 +137,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 *            DateTime to compare to current date
 	 * @return boolean, whether or not the two dates are the same
 	 */
-	public boolean equals(DateTime comparDate);
+	public boolean equals(final DateTime comparDate);
 
 	/**
 	 * Equals ignore date.
@@ -146,7 +146,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 *            DateTime to compare to the current DateTime
 	 * @return boolean is time is the same, including millisecond
 	 */
-	public boolean equalsIgnoreDate(DateTime comparDate);
+	public boolean equalsIgnoreDate(final DateTime comparDate);
 
 	/**
 	 * Equals ignore time.
@@ -155,7 +155,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 *            DateTime to compare to the current DateTime
 	 * @return boolean is date is the same
 	 */
-	public boolean equalsIgnoreTime(DateTime comparDate);
+	public boolean equalsIgnoreTime(final DateTime comparDate);
 
 	/*
 	 * (non-Javadoc)
@@ -243,7 +243,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 * @see lotus.domino.DateTime#setLocalDate(int, int, int)
 	 */
 	@Override
-	public void setLocalDate(int year, int month, int day);
+	public void setLocalDate(final int year, final int month, final int day);
 
 	/*
 	 * (non-Javadoc)
@@ -251,7 +251,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 * @see lotus.domino.DateTime#setLocalDate(int, int, int, boolean)
 	 */
 	@Override
-	public void setLocalDate(int year, int month, int day, boolean preserveLocalTime);
+	public void setLocalDate(final int year, final int month, final int day, final boolean preserveLocalTime);
 
 	/*
 	 * (non-Javadoc)
@@ -259,7 +259,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 * @see lotus.domino.DateTime#setLocalTime(java.util.Calendar)
 	 */
 	@Override
-	public void setLocalTime(java.util.Calendar calendar);
+	public void setLocalTime(final java.util.Calendar calendar);
 
 	/*
 	 * (non-Javadoc)
@@ -267,7 +267,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 * @see lotus.domino.DateTime#setLocalTime(java.util.Date)
 	 */
 	@Override
-	public void setLocalTime(Date date);
+	public void setLocalTime(final Date date);
 
 	/*
 	 * (non-Javadoc)
@@ -275,7 +275,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 * @see lotus.domino.DateTime#setLocalTime(int, int, int, int)
 	 */
 	@Override
-	public void setLocalTime(int hour, int minute, int second, int hundredth);
+	public void setLocalTime(final int hour, final int minute, final int second, final int hundredth);
 
 	/*
 	 * (non-Javadoc)
@@ -283,7 +283,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 * @see lotus.domino.DateTime#setLocalTime(java.lang.String)
 	 */
 	@Override
-	public void setLocalTime(String time);
+	public void setLocalTime(final String time);
 
 	/*
 	 * (non-Javadoc)
@@ -299,7 +299,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 * @see lotus.domino.DateTime#timeDifference(lotus.domino.DateTime)
 	 */
 	@Override
-	public int timeDifference(lotus.domino.DateTime dt);
+	public int timeDifference(final lotus.domino.DateTime dt);
 
 	/*
 	 * (non-Javadoc)
@@ -307,7 +307,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 * @see lotus.domino.DateTime#timeDifferenceDouble(lotus.domino.DateTime)
 	 */
 	@Override
-	public double timeDifferenceDouble(lotus.domino.DateTime dt);
+	public double timeDifferenceDouble(final lotus.domino.DateTime dt);
 
 	/*
 	 * (non-Javadoc)

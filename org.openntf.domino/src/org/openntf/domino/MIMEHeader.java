@@ -29,7 +29,7 @@ public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.
 	 * @see lotus.domino.MIMEHeader#addValText(java.lang.String)
 	 */
 	@Override
-	public boolean addValText(String valueText);
+	public boolean addValText(final String valueText);
 
 	/*
 	 * (non-Javadoc)
@@ -37,7 +37,7 @@ public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.
 	 * @see lotus.domino.MIMEHeader#addValText(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean addValText(String valueText, String charSet);
+	public boolean addValText(final String valueText, final String charSet);
 
 	/*
 	 * (non-Javadoc)
@@ -61,7 +61,7 @@ public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.
 	 * @see lotus.domino.MIMEHeader#getHeaderVal(boolean)
 	 */
 	@Override
-	public String getHeaderVal(boolean folded);
+	public String getHeaderVal(final boolean folded);
 
 	/*
 	 * (non-Javadoc)
@@ -69,7 +69,7 @@ public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.
 	 * @see lotus.domino.MIMEHeader#getHeaderVal(boolean, boolean)
 	 */
 	@Override
-	public String getHeaderVal(boolean folded, boolean decoded);
+	public String getHeaderVal(final boolean folded, final boolean decoded);
 
 	/*
 	 * (non-Javadoc)
@@ -85,7 +85,7 @@ public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.
 	 * @see lotus.domino.MIMEHeader#getHeaderValAndParams(boolean)
 	 */
 	@Override
-	public String getHeaderValAndParams(boolean folded);
+	public String getHeaderValAndParams(final boolean folded);
 
 	/*
 	 * (non-Javadoc)
@@ -93,7 +93,7 @@ public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.
 	 * @see lotus.domino.MIMEHeader#getHeaderValAndParams(boolean, boolean)
 	 */
 	@Override
-	public String getHeaderValAndParams(boolean folded, boolean decoded);
+	public String getHeaderValAndParams(final boolean folded, final boolean decoded);
 
 	/*
 	 * (non-Javadoc)
@@ -101,7 +101,7 @@ public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.
 	 * @see lotus.domino.MIMEHeader#getParamVal(java.lang.String)
 	 */
 	@Override
-	public String getParamVal(String paramName);
+	public String getParamVal(final String paramName);
 
 	/*
 	 * (non-Javadoc)
@@ -109,7 +109,7 @@ public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.
 	 * @see lotus.domino.MIMEHeader#getParamVal(java.lang.String, boolean)
 	 */
 	@Override
-	public String getParamVal(String paramName, boolean folded);
+	public String getParamVal(final String paramName, final boolean folded);
 
 	/**
 	 * Gets the parent.
@@ -132,7 +132,7 @@ public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.
 	 * @see lotus.domino.MIMEHeader#setHeaderVal(java.lang.String)
 	 */
 	@Override
-	public boolean setHeaderVal(String headerValue);
+	public boolean setHeaderVal(final String headerValue);
 
 	/*
 	 * (non-Javadoc)
@@ -140,7 +140,7 @@ public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.
 	 * @see lotus.domino.MIMEHeader#setHeaderValAndParams(java.lang.String)
 	 */
 	@Override
-	public boolean setHeaderValAndParams(String headerParamValue);
+	public boolean setHeaderValAndParams(final String headerParamValue);
 
 	/*
 	 * (non-Javadoc)
@@ -148,6 +148,6 @@ public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.
 	 * @see lotus.domino.MIMEHeader#setParamVal(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean setParamVal(String parameterName, String parameterValue);
+	public boolean setParamVal(final String parameterName, final String parameterValue);
 
 }

@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE form SYSTEM 'xmlschemas/domino_8_5_3.dtd'>
+<form name="" xmlns='http://www.lotus.com/dxl' publicaccess='false' renderpassthrough='true'>
+	<body>
+		<richtext>
+			<pardef id='1'/>
+			<par def='1'/>
+		</richtext>
+	</body>
+	<item name='$$ScriptName' summary='false' sign='true'><text/></item>
+</form>

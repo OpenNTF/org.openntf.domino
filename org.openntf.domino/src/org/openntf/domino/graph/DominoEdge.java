@@ -22,7 +22,7 @@ public class DominoEdge extends DominoElement implements Edge {
 	private String outKey_;
 	private transient String label_;
 
-	public DominoEdge(DominoGraph parent, org.openntf.domino.Document doc) {
+	public DominoEdge(final DominoGraph parent, final org.openntf.domino.Document doc) {
 		super(parent, doc);
 	}
 
@@ -35,11 +35,11 @@ public class DominoEdge extends DominoElement implements Edge {
 	}
 
 	@Override
-	public Vertex getVertex(Direction direction) throws IllegalArgumentException {
+	public Vertex getVertex(final Direction direction) throws IllegalArgumentException {
 		return parent_.getVertex(getVertexId(direction));
 	}
 
-	public String getVertexId(Direction direction) {
+	public String getVertexId(final Direction direction) {
 		if (direction == Direction.IN) {
 			if (inKey_ == null) {
 				inKey_ = getProperty(DominoEdge.IN_NAME, String.class);
@@ -55,24 +55,24 @@ public class DominoEdge extends DominoElement implements Edge {
 		return null;
 	}
 
-	public void relate(DominoVertex in, DominoVertex out) {
+	public void relate(final DominoVertex in, final DominoVertex out) {
 		setInDoc(in);
 		setOutDoc(out);
 	}
 
-	public void setInDoc(Vertex in) {
+	public void setInDoc(final Vertex in) {
 		((DominoVertex) in).addInEdge(this);
 		in_ = in;
 		inKey_ = (String) in.getId();
 		setProperty(DominoEdge.IN_NAME, inKey_);
 	}
 
-	void setLabel(String label) {
+	void setLabel(final String label) {
 		label_ = label;
 		setProperty(DominoEdge.LABEL_NAME, label);
 	}
 
-	public void setOutDoc(Vertex out) {
+	public void setOutDoc(final Vertex out) {
 		((DominoVertex) out).addOutEdge(this);
 		out_ = out;
 		outKey_ = (String) out.getId();

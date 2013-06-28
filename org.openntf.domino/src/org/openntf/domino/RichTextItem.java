@@ -39,7 +39,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#addNewLine(int)
 	 */
 	@Override
-	public void addNewLine(int count);
+	public void addNewLine(final int count);
 
 	/*
 	 * (non-Javadoc)
@@ -47,7 +47,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#addNewLine(int, boolean)
 	 */
 	@Override
-	public void addNewLine(int count, boolean newParagraph);
+	public void addNewLine(final int count, final boolean newParagraph);
 
 	/*
 	 * (non-Javadoc)
@@ -63,7 +63,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#addPageBreak(lotus.domino.RichTextParagraphStyle)
 	 */
 	@Override
-	public void addPageBreak(lotus.domino.RichTextParagraphStyle pstyle);
+	public void addPageBreak(final lotus.domino.RichTextParagraphStyle pstyle);
 
 	/*
 	 * (non-Javadoc)
@@ -79,7 +79,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#addTab(int)
 	 */
 	@Override
-	public void addTab(int count);
+	public void addTab(final int count);
 
 	/*
 	 * (non-Javadoc)
@@ -87,7 +87,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#appendDocLink(lotus.domino.Database)
 	 */
 	@Override
-	public void appendDocLink(lotus.domino.Database db);
+	public void appendDocLink(final lotus.domino.Database db);
 
 	/*
 	 * (non-Javadoc)
@@ -95,7 +95,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#appendDocLink(lotus.domino.Database, java.lang.String)
 	 */
 	@Override
-	public void appendDocLink(lotus.domino.Database db, String comment);
+	public void appendDocLink(final lotus.domino.Database db, final String comment);
 
 	/*
 	 * (non-Javadoc)
@@ -103,7 +103,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#appendDocLink(lotus.domino.Database, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void appendDocLink(lotus.domino.Database db, String comment, String hotspotText);
+	public void appendDocLink(final lotus.domino.Database db, final String comment, final String hotspotText);
 
 	/*
 	 * (non-Javadoc)
@@ -111,7 +111,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#appendDocLink(lotus.domino.Document)
 	 */
 	@Override
-	public void appendDocLink(lotus.domino.Document doc);
+	public void appendDocLink(final lotus.domino.Document doc);
 
 	/*
 	 * (non-Javadoc)
@@ -119,7 +119,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#appendDocLink(lotus.domino.Document, java.lang.String)
 	 */
 	@Override
-	public void appendDocLink(lotus.domino.Document doc, String comment);
+	public void appendDocLink(final lotus.domino.Document doc, final String comment);
 
 	/*
 	 * (non-Javadoc)
@@ -127,7 +127,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#appendDocLink(lotus.domino.Document, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void appendDocLink(lotus.domino.Document doc, String comment, String hotspotText);
+	public void appendDocLink(final lotus.domino.Document doc, final String comment, final String hotspotText);
 
 	/*
 	 * (non-Javadoc)
@@ -135,7 +135,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#appendDocLink(lotus.domino.View)
 	 */
 	@Override
-	public void appendDocLink(lotus.domino.View view);
+	public void appendDocLink(final lotus.domino.View view);
 
 	/*
 	 * (non-Javadoc)
@@ -143,7 +143,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#appendDocLink(lotus.domino.View, java.lang.String)
 	 */
 	@Override
-	public void appendDocLink(lotus.domino.View view, String comment);
+	public void appendDocLink(final lotus.domino.View view, final String comment);
 
 	/*
 	 * (non-Javadoc)
@@ -151,7 +151,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#appendDocLink(lotus.domino.View, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void appendDocLink(lotus.domino.View view, String comment, String hotspotText);
+	public void appendDocLink(final lotus.domino.View view, final String comment, final String hotspotText);
 
 	/*
 	 * (non-Javadoc)
@@ -159,7 +159,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#appendParagraphStyle(lotus.domino.RichTextParagraphStyle)
 	 */
 	@Override
-	public void appendParagraphStyle(lotus.domino.RichTextParagraphStyle pstyle);
+	public void appendParagraphStyle(final lotus.domino.RichTextParagraphStyle pstyle);
 
 	/*
 	 * (non-Javadoc)
@@ -167,7 +167,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#appendRTItem(lotus.domino.RichTextItem)
 	 */
 	@Override
-	public void appendRTItem(lotus.domino.RichTextItem rtitem);
+	public void appendRTItem(final lotus.domino.RichTextItem rtitem);
 
 	/*
 	 * (non-Javadoc)
@@ -175,7 +175,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#appendStyle(lotus.domino.RichTextStyle)
 	 */
 	@Override
-	public void appendStyle(lotus.domino.RichTextStyle rstyle);
+	public void appendStyle(final lotus.domino.RichTextStyle rstyle);
 
 	/*
 	 * (non-Javadoc)
@@ -183,7 +183,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#appendTable(int, int)
 	 */
 	@Override
-	public void appendTable(int rows, int columns);
+	public void appendTable(final int rows, final int columns);
 
 	/*
 	 * (non-Javadoc)
@@ -192,7 +192,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void appendTable(int rows, int columns, Vector labels);
+	public void appendTable(final int rows, final int columns, final Vector labels);
 
 	/*
 	 * (non-Javadoc)
@@ -201,7 +201,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void appendTable(int rows, int columns, Vector labels, int leftMargin, Vector pstyles);
+	public void appendTable(final int rows, final int columns, final Vector labels, final int leftMargin, final Vector pstyles);
 
 	/*
 	 * (non-Javadoc)
@@ -209,7 +209,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#appendText(java.lang.String)
 	 */
 	@Override
-	public void appendText(String text);
+	public void appendText(final String text);
 
 	/*
 	 * (non-Javadoc)
@@ -217,7 +217,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#beginInsert(lotus.domino.Base)
 	 */
 	@Override
-	public void beginInsert(lotus.domino.Base element);
+	public void beginInsert(final lotus.domino.Base element);
 
 	/*
 	 * (non-Javadoc)
@@ -225,7 +225,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#beginInsert(lotus.domino.Base, boolean)
 	 */
 	@Override
-	public void beginInsert(lotus.domino.Base element, boolean after);
+	public void beginInsert(final lotus.domino.Base element, final boolean after);
 
 	/*
 	 * (non-Javadoc)
@@ -233,7 +233,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#beginSection(java.lang.String)
 	 */
 	@Override
-	public void beginSection(String title);
+	public void beginSection(final String title);
 
 	/*
 	 * (non-Javadoc)
@@ -241,7 +241,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#beginSection(java.lang.String, lotus.domino.RichTextStyle)
 	 */
 	@Override
-	public void beginSection(String title, lotus.domino.RichTextStyle titleStyle);
+	public void beginSection(final String title, final lotus.domino.RichTextStyle titleStyle);
 
 	/*
 	 * (non-Javadoc)
@@ -249,7 +249,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#beginSection(java.lang.String, lotus.domino.RichTextStyle, lotus.domino.ColorObject, boolean)
 	 */
 	@Override
-	public void beginSection(String title, lotus.domino.RichTextStyle titleStyle, lotus.domino.ColorObject barColor, boolean expand);
+	public void beginSection(final String title, final lotus.domino.RichTextStyle titleStyle, final lotus.domino.ColorObject barColor, final boolean expand);
 
 	/*
 	 * (non-Javadoc)
@@ -281,7 +281,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#embedObject(int, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public EmbeddedObject embedObject(int type, String className, String source, String name);
+	public EmbeddedObject embedObject(final int type, final String className, final String source, final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -305,7 +305,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#getEmbeddedObject(java.lang.String)
 	 */
 	@Override
-	public EmbeddedObject getEmbeddedObject(String name);
+	public EmbeddedObject getEmbeddedObject(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -321,7 +321,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#getFormattedText(boolean, int, int)
 	 */
 	@Override
-	public String getFormattedText(boolean tabStrip, int lineLen, int maxLen);
+	public String getFormattedText(final boolean tabStrip, final int lineLen, final int maxLen);
 
 	/*
 	 * (non-Javadoc)
@@ -329,7 +329,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#getNotesFont(java.lang.String, boolean)
 	 */
 	@Override
-	public int getNotesFont(String faceName, boolean addOnFail);
+	public int getNotesFont(final String faceName, final boolean addOnFail);
 
 	/*
 	 * (non-Javadoc)

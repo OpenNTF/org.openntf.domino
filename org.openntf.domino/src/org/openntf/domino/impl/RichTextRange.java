@@ -38,7 +38,7 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	 * @param parent
 	 *            the parent
 	 */
-	public RichTextRange(lotus.domino.RichTextRange delegate, org.openntf.domino.Base<?> parent) {
+	public RichTextRange(final lotus.domino.RichTextRange delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -63,7 +63,7 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	 * @see org.openntf.domino.RichTextRange#findandReplace(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public int findandReplace(String target, String replacement) {
+	public int findandReplace(final String target, final String replacement) {
 		int result = 0;
 		try {
 			result = getDelegate().findandReplace(target, replacement);
@@ -81,7 +81,7 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	 * @see org.openntf.domino.RichTextRange#findandReplace(java.lang.String, java.lang.String, long)
 	 */
 	@Override
-	public int findandReplace(String target, String replacement, long options) {
+	public int findandReplace(final String target, final String replacement, final long options) {
 		int result = 0;
 		try {
 			result = getDelegate().findandReplace(target, replacement, options);
@@ -197,7 +197,7 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	 * @see org.openntf.domino.RichTextRange#reset(boolean, boolean)
 	 */
 	@Override
-	public void reset(boolean begin, boolean end) {
+	public void reset(final boolean begin, final boolean end) {
 		try {
 			getDelegate().reset(begin, end);
 		} catch (NotesException e) {
@@ -211,7 +211,7 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	 * @see org.openntf.domino.RichTextRange#setBegin(lotus.domino.Base)
 	 */
 	@Override
-	public void setBegin(lotus.domino.Base element) {
+	public void setBegin(final lotus.domino.Base element) {
 		try {
 			getDelegate().setBegin(toLotus(element));
 		} catch (NotesException e) {
@@ -225,7 +225,7 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	 * @see org.openntf.domino.RichTextRange#setEnd(lotus.domino.Base)
 	 */
 	@Override
-	public void setEnd(lotus.domino.Base element) {
+	public void setEnd(final lotus.domino.Base element) {
 		try {
 			getDelegate().setEnd(toLotus(element));
 		} catch (NotesException e) {
@@ -239,7 +239,7 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	 * @see org.openntf.domino.RichTextRange#setStyle(lotus.domino.RichTextStyle)
 	 */
 	@Override
-	public void setStyle(lotus.domino.RichTextStyle style) {
+	public void setStyle(final lotus.domino.RichTextStyle style) {
 		markDirty();
 		try {
 			getDelegate().setStyle((lotus.domino.RichTextStyle) toLotus(style));

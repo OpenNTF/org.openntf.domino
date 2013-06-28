@@ -80,7 +80,7 @@ public class DominoFormatter extends ThreadLocal<Object> {
 	 * @throws NotesException
 	 *             the notes exception
 	 */
-	public DominoFormatter(lotus.domino.International intl) throws NotesException {
+	public DominoFormatter(final lotus.domino.International intl) throws NotesException {
 		am_ = intl.getAMString();
 		dateSep_ = intl.getDateSep();
 		pm_ = intl.getPMString();
@@ -145,7 +145,7 @@ public class DominoFormatter extends ThreadLocal<Object> {
 	 *            the date
 	 * @return the date only
 	 */
-	public String getDateOnly(Date date) {
+	public String getDateOnly(final Date date) {
 		DateFormat df = getDateOnlyFormat();
 		synchronized (df) {
 			return df.format(date);
@@ -159,7 +159,7 @@ public class DominoFormatter extends ThreadLocal<Object> {
 	 *            the date
 	 * @return the time only
 	 */
-	public String getTimeOnly(Date date) {
+	public String getTimeOnly(final Date date) {
 		DateFormat df = getTimeOnlyFormat();
 		synchronized (df) {
 			return df.format(date);
@@ -173,7 +173,7 @@ public class DominoFormatter extends ThreadLocal<Object> {
 	 *            the date
 	 * @return the date time
 	 */
-	public String getDateTime(Date date) {
+	public String getDateTime(final Date date) {
 		DateFormat df = getDateTimeFormat();
 		synchronized (df) {
 			return df.format(date);
@@ -187,7 +187,7 @@ public class DominoFormatter extends ThreadLocal<Object> {
 	 *            the date string
 	 * @return the date
 	 */
-	public Date parseDateFromString(String dateString) {
+	public Date parseDateFromString(final String dateString) {
 		DateFormat df = getDateTimeFormat();
 		synchronized (df) {
 			try {

@@ -36,7 +36,7 @@ public interface RichTextRange extends Base<lotus.domino.RichTextRange>, lotus.d
 	 * 
 	 * @see lotus.domino.RichTextRange#findandReplace(java.lang.String, java.lang.String)
 	 */
-	public int findandReplace(String target, String replacement);
+	public int findandReplace(final String target, final String replacement);
 
 	/*
 	 * (non-Javadoc)
@@ -44,7 +44,7 @@ public interface RichTextRange extends Base<lotus.domino.RichTextRange>, lotus.d
 	 * @see lotus.domino.RichTextRange#findandReplace(java.lang.String, java.lang.String, long)
 	 */
 	@Override
-	public int findandReplace(String target, String replacement, long options);
+	public int findandReplace(final String target, final String replacement, final long options);
 
 	/*
 	 * (non-Javadoc)
@@ -107,7 +107,7 @@ public interface RichTextRange extends Base<lotus.domino.RichTextRange>, lotus.d
 	 * @see lotus.domino.RichTextRange#reset(boolean, boolean)
 	 */
 	@Override
-	public void reset(boolean begin, boolean end);
+	public void reset(final boolean begin, final boolean end);
 
 	/*
 	 * (non-Javadoc)
@@ -115,7 +115,7 @@ public interface RichTextRange extends Base<lotus.domino.RichTextRange>, lotus.d
 	 * @see lotus.domino.RichTextRange#setBegin(lotus.domino.Base)
 	 */
 	@Override
-	public void setBegin(lotus.domino.Base element);
+	public void setBegin(final lotus.domino.Base element);
 
 	/*
 	 * (non-Javadoc)
@@ -123,7 +123,7 @@ public interface RichTextRange extends Base<lotus.domino.RichTextRange>, lotus.d
 	 * @see lotus.domino.RichTextRange#setEnd(lotus.domino.Base)
 	 */
 	@Override
-	public void setEnd(lotus.domino.Base element);
+	public void setEnd(final lotus.domino.Base element);
 
 	/*
 	 * (non-Javadoc)
@@ -131,6 +131,6 @@ public interface RichTextRange extends Base<lotus.domino.RichTextRange>, lotus.d
 	 * @see lotus.domino.RichTextRange#setStyle(lotus.domino.RichTextStyle)
 	 */
 	@Override
-	public void setStyle(lotus.domino.RichTextStyle style);
+	public void setStyle(final lotus.domino.RichTextStyle style);
 
 }

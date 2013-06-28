@@ -215,7 +215,7 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent, org
 	 * @see lotus.domino.Agent#lock(boolean)
 	 */
 	@Override
-	public boolean lock(boolean provisionalOk);
+	public boolean lock(final boolean provisionalOk);
 
 	/*
 	 * (non-Javadoc)
@@ -223,7 +223,7 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent, org
 	 * @see lotus.domino.Agent#lock(java.lang.String)
 	 */
 	@Override
-	public boolean lock(String name);
+	public boolean lock(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -231,7 +231,7 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent, org
 	 * @see lotus.domino.Agent#lock(java.lang.String, boolean)
 	 */
 	@Override
-	public boolean lock(String name, boolean provisionalOk);
+	public boolean lock(final String name, final boolean provisionalOk);
 
 	/*
 	 * (non-Javadoc)
@@ -240,7 +240,7 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent, org
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean lock(Vector names);
+	public boolean lock(final Vector names);
 
 	/*
 	 * (non-Javadoc)
@@ -249,7 +249,7 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent, org
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean lock(Vector names, boolean provisionalOk);
+	public boolean lock(final Vector names, final boolean provisionalOk);
 
 	/*
 	 * (non-Javadoc)
@@ -265,7 +265,7 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent, org
 	 * @see lotus.domino.Agent#lockProvisional(java.lang.String)
 	 */
 	@Override
-	public boolean lockProvisional(String name);
+	public boolean lockProvisional(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -274,7 +274,7 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent, org
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean lockProvisional(Vector names);
+	public boolean lockProvisional(final Vector names);
 
 	/*
 	 * (non-Javadoc)
@@ -298,7 +298,7 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent, org
 	 * @see lotus.domino.Agent#run(java.lang.String)
 	 */
 	@Override
-	public void run(String noteid);
+	public void run(final String noteid);
 
 	/*
 	 * (non-Javadoc)
@@ -314,7 +314,7 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent, org
 	 * @see lotus.domino.Agent#runOnServer(java.lang.String)
 	 */
 	@Override
-	public int runOnServer(String noteid);
+	public int runOnServer(final String noteid);
 
 	/*
 	 * (non-Javadoc)
@@ -322,7 +322,7 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent, org
 	 * @see lotus.domino.Agent#runWithDocumentContext(lotus.domino.Document)
 	 */
 	@Override
-	public void runWithDocumentContext(lotus.domino.Document doc);
+	public void runWithDocumentContext(final lotus.domino.Document doc);
 
 	/*
 	 * (non-Javadoc)
@@ -330,7 +330,7 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent, org
 	 * @see lotus.domino.Agent#runWithDocumentContext(lotus.domino.Document, java.lang.String)
 	 */
 	@Override
-	public void runWithDocumentContext(lotus.domino.Document doc, String noteid);
+	public void runWithDocumentContext(final lotus.domino.Document doc, final String noteid);
 
 	/*
 	 * (non-Javadoc)
@@ -346,7 +346,7 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent, org
 	 * @see lotus.domino.Agent#setEnabled(boolean)
 	 */
 	@Override
-	public void setEnabled(boolean flag);
+	public void setEnabled(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -354,7 +354,7 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent, org
 	 * @see lotus.domino.Agent#setProhibitDesignUpdate(boolean)
 	 */
 	@Override
-	public void setProhibitDesignUpdate(boolean flag);
+	public void setProhibitDesignUpdate(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -362,7 +362,7 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent, org
 	 * @see lotus.domino.Agent#setServerName(java.lang.String)
 	 */
 	@Override
-	public void setServerName(String server);
+	public void setServerName(final String server);
 
 	/*
 	 * (non-Javadoc)

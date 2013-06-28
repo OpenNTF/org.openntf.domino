@@ -11,7 +11,7 @@ import org.openntf.domino.Document;
  * @author Administrator
  * 
  */
-public class IconNote extends AbstractDesignBase implements org.openntf.domino.design.IconNote {
+public class IconNote extends AbstractDesignBaseNamed implements org.openntf.domino.design.IconNote {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(IconNote.class.getName());
 	private static final long serialVersionUID = 1L;
@@ -19,7 +19,7 @@ public class IconNote extends AbstractDesignBase implements org.openntf.domino.d
 	/**
 	 * @param document
 	 */
-	protected IconNote(Document document) {
+	protected IconNote(final Document document) {
 		super(document);
 	}
 

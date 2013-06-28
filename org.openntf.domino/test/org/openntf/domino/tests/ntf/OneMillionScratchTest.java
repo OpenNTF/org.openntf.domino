@@ -110,7 +110,7 @@ public enum OneMillionScratchTest {
 			System.out.println("Thread " + Thread.currentThread().getName() + " elapsed time: " + elapsed / 1000000 + "ms");
 		}
 
-		public void Count(Database db) {
+		public void Count(final Database db) {
 			DocumentCollection dc = db.getAllDocuments();
 			NoteCollection nc = db.createNoteCollection(false);
 			nc.add(dc);
@@ -140,7 +140,7 @@ public enum OneMillionScratchTest {
 	 * @param args
 	 *            the arguments >>>>>>> origin/declan
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		int delay = 500;
 		DominoThread dt = new DominoThread(new Doer(), "Scratch Test");
 		DominoThread dt2 = new DominoThread(new Doer(), "Scratch Test2");

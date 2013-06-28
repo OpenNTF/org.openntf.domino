@@ -47,7 +47,7 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, org.op
 	 * @see lotus.domino.Form#getFieldType(java.lang.String)
 	 */
 	@Override
-	public int getFieldType(String name);
+	public int getFieldType(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -151,7 +151,7 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, org.op
 	 * @see lotus.domino.Form#lock(boolean)
 	 */
 	@Override
-	public boolean lock(boolean provisionalOk);
+	public boolean lock(final boolean provisionalOk);
 
 	/*
 	 * (non-Javadoc)
@@ -159,7 +159,7 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, org.op
 	 * @see lotus.domino.Form#lock(java.lang.String)
 	 */
 	@Override
-	public boolean lock(String name);
+	public boolean lock(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -167,7 +167,7 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, org.op
 	 * @see lotus.domino.Form#lock(java.lang.String, boolean)
 	 */
 	@Override
-	public boolean lock(String name, boolean provisionalOk);
+	public boolean lock(final String name, final boolean provisionalOk);
 
 	/*
 	 * (non-Javadoc)
@@ -176,7 +176,7 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, org.op
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean lock(Vector names);
+	public boolean lock(final Vector names);
 
 	/*
 	 * (non-Javadoc)
@@ -185,7 +185,7 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, org.op
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean lock(Vector names, boolean provisionalOk);
+	public boolean lock(final Vector names, final boolean provisionalOk);
 
 	/*
 	 * (non-Javadoc)
@@ -201,7 +201,7 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, org.op
 	 * @see lotus.domino.Form#lockProvisional(java.lang.String)
 	 */
 	@Override
-	public boolean lockProvisional(String name);
+	public boolean lockProvisional(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -210,7 +210,7 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, org.op
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean lockProvisional(Vector names);
+	public boolean lockProvisional(final Vector names);
 
 	/*
 	 * (non-Javadoc)
@@ -227,7 +227,7 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, org.op
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setFormUsers(Vector names);
+	public void setFormUsers(final Vector names);
 
 	/*
 	 * (non-Javadoc)
@@ -235,7 +235,7 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, org.op
 	 * @see lotus.domino.Form#setProtectReaders(boolean)
 	 */
 	@Override
-	public void setProtectReaders(boolean flag);
+	public void setProtectReaders(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -243,7 +243,7 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, org.op
 	 * @see lotus.domino.Form#setProtectUsers(boolean)
 	 */
 	@Override
-	public void setProtectUsers(boolean flag);
+	public void setProtectUsers(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -252,7 +252,7 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, org.op
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setReaders(Vector names);
+	public void setReaders(final Vector names);
 
 	/*
 	 * (non-Javadoc)

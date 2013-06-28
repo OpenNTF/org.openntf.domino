@@ -60,7 +60,7 @@ public class DefaultConsoleHandler extends ConsoleHandler {
 	 *            <li>2 -- stack traces from internal errors are also printed</li>
 	 *            </ul>
 	 */
-	public static void setOlDebugLevel(String olDebugLevel) {
+	public static void setOlDebugLevel(final String olDebugLevel) {
 		DefaultConsoleHandler.olDebugLevel = olDebugLevel;
 	}
 
@@ -74,7 +74,7 @@ public class DefaultConsoleHandler extends ConsoleHandler {
 		super.close();
 	}
 
-	private void superPub(LogRecord record) {
+	private void superPub(final LogRecord record) {
 		super.publish(record);
 	}
 

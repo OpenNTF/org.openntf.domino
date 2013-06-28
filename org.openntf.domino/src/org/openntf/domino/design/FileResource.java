@@ -1,6 +1,6 @@
 package org.openntf.domino.design;
 
-public interface FileResource extends DesignBase, org.openntf.domino.types.DatabaseDescendant {
+public interface FileResource extends DesignBaseNamed, org.openntf.domino.types.DatabaseDescendant {
 
 	/**
 	 * @return the file resource's data as a byte array
@@ -11,7 +11,7 @@ public interface FileResource extends DesignBase, org.openntf.domino.types.Datab
 	 * @param fileData
 	 *            The new data for the file resource, as a byte array
 	 */
-	public void setFileData(byte[] fileData);
+	public void setFileData(final byte[] fileData);
 
 	/**
 	 * @return mime type
@@ -22,7 +22,7 @@ public interface FileResource extends DesignBase, org.openntf.domino.types.Datab
 	 * @param mimeType
 	 *            The new MIME type for the file resource
 	 */
-	public void setMimeType(String mimeType);
+	public void setMimeType(final String mimeType);
 
 	/**
 	 * @return whether the file resource is marked as read-only

@@ -74,7 +74,7 @@ public class OpenLogHandler extends Handler {
 	 * @param logDbPath
 	 *            the new log db path
 	 */
-	public void setLogDbPath(String logDbPath) {
+	public void setLogDbPath(final String logDbPath) {
 		ol_.setLogDbName(logDbPath);
 	}
 
@@ -86,7 +86,7 @@ public class OpenLogHandler extends Handler {
 	 * @see java.util.logging.Handler#publish(java.util.logging.LogRecord)
 	 */
 	@Override
-	public void publish(LogRecord record) {
+	public void publish(final LogRecord record) {
 		Throwable t = record.getThrown();
 		if (t != null) {
 			for (StackTraceElement elem : t.getStackTrace()) {

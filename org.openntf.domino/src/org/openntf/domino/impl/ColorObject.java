@@ -34,7 +34,7 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 	 * @param parent
 	 *            the parent
 	 */
-	public ColorObject(lotus.domino.ColorObject delegate, org.openntf.domino.Base<?> parent) {
+	public ColorObject(final lotus.domino.ColorObject delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, Factory.getSession(parent));
 	}
 
@@ -154,7 +154,7 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.ColorObject#setColor(java.awt.Color)
 	 */
-	public void setColor(java.awt.Color color) {
+	public void setColor(final java.awt.Color color) {
 		this.setRGB(color.getRed(), color.getGreen(), color.getBlue());
 	}
 
@@ -164,7 +164,7 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 	 * @see org.openntf.domino.ColorObject#setHSL(int, int, int)
 	 */
 	@Override
-	public int setHSL(int hue, int saturation, int luminance) {
+	public int setHSL(final int hue, final int saturation, final int luminance) {
 		try {
 			return getDelegate().setHSL(hue, saturation, luminance);
 		} catch (NotesException e) {
@@ -179,7 +179,7 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 	 * @see org.openntf.domino.ColorObject#setNotesColor(int)
 	 */
 	@Override
-	public void setNotesColor(int notesColor) {
+	public void setNotesColor(final int notesColor) {
 		try {
 			getDelegate().setNotesColor(notesColor);
 		} catch (NotesException e) {
@@ -193,7 +193,7 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 	 * @see org.openntf.domino.ColorObject#setRGB(int, int, int)
 	 */
 	@Override
-	public int setRGB(int red, int green, int blue) {
+	public int setRGB(final int red, final int green, final int blue) {
 		try {
 			return getDelegate().setRGB(red, green, blue);
 		} catch (NotesException e) {

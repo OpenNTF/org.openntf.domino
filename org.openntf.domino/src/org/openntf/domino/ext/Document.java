@@ -52,9 +52,9 @@ public interface Document {
 	 */
 	public boolean isDirty();
 
-	public boolean hasMIMEEntity(String name);
+	public boolean hasMIMEEntity(final String name);
 
-	public <T> T getItemValue(String name, Class<?> T) throws ItemNotFoundException, DataNotCompatibleException;
+	public <T> T getItemValue(final String name, final Class<?> T) throws ItemNotFoundException, DataNotCompatibleException;
 
 	// public <T> T getItemValue(String name, Class<?> T, ClassLoader loader) throws ItemNotFoundException, DataNotCompatibleException;
 

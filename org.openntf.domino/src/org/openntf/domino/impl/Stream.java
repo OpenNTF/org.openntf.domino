@@ -38,7 +38,7 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 	 * @param parent
 	 *            the parent
 	 */
-	public Stream(lotus.domino.Stream delegate, org.openntf.domino.Base<?> parent) {
+	public Stream(final lotus.domino.Stream delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -92,7 +92,7 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 	 * @see org.openntf.domino.Stream#getContents(java.io.OutputStream)
 	 */
 	@Override
-	public void getContents(OutputStream stream) {
+	public void getContents(final OutputStream stream) {
 		try {
 			getDelegate().getContents(stream);
 		} catch (NotesException e) {
@@ -106,7 +106,7 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 	 * @see org.openntf.domino.Stream#getContents(java.io.Writer)
 	 */
 	@Override
-	public void getContents(Writer writer) {
+	public void getContents(final Writer writer) {
 		try {
 			getDelegate().getContents(writer);
 		} catch (NotesException e) {
@@ -173,7 +173,7 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 	 * @see org.openntf.domino.Stream#open(java.lang.String)
 	 */
 	@Override
-	public boolean open(String pathName) {
+	public boolean open(final String pathName) {
 		try {
 			return getDelegate().open(pathName);
 		} catch (NotesException e) {
@@ -188,7 +188,7 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 	 * @see org.openntf.domino.Stream#open(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean open(String pathName, String charSet) {
+	public boolean open(final String pathName, final String charSet) {
 		try {
 			return getDelegate().open(pathName, charSet);
 		} catch (NotesException e) {
@@ -218,7 +218,7 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 	 * @see org.openntf.domino.Stream#read(int)
 	 */
 	@Override
-	public byte[] read(int length) {
+	public byte[] read(final int length) {
 		try {
 			return getDelegate().read(length);
 		} catch (NotesException e) {
@@ -248,7 +248,7 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 	 * @see org.openntf.domino.Stream#readText(int)
 	 */
 	@Override
-	public String readText(int length) {
+	public String readText(final int length) {
 		try {
 			return getDelegate().readText(length);
 		} catch (NotesException e) {
@@ -263,7 +263,7 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 	 * @see org.openntf.domino.Stream#readText(int, int)
 	 */
 	@Override
-	public String readText(int length, int eolType) {
+	public String readText(final int length, final int eolType) {
 		try {
 			return getDelegate().readText(length, eolType);
 		} catch (NotesException e) {
@@ -278,7 +278,7 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 	 * @see org.openntf.domino.Stream#setContents(java.io.InputStream)
 	 */
 	@Override
-	public void setContents(InputStream stream) {
+	public void setContents(final InputStream stream) {
 		try {
 			getDelegate().setContents(stream);
 		} catch (NotesException e) {
@@ -292,7 +292,7 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 	 * @see org.openntf.domino.Stream#setContents(java.io.Reader)
 	 */
 	@Override
-	public void setContents(Reader reader) {
+	public void setContents(final Reader reader) {
 		try {
 			getDelegate().setContents(reader);
 		} catch (NotesException e) {
@@ -306,7 +306,7 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 	 * @see org.openntf.domino.Stream#setPosition(int)
 	 */
 	@Override
-	public void setPosition(int position) {
+	public void setPosition(final int position) {
 		try {
 			getDelegate().setPosition(position);
 		} catch (NotesException e) {
@@ -334,7 +334,7 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 	 * @see org.openntf.domino.Stream#write(byte[])
 	 */
 	@Override
-	public int write(byte[] buffer) {
+	public int write(final byte[] buffer) {
 		try {
 			return getDelegate().write(buffer);
 		} catch (NotesException e) {
@@ -349,7 +349,7 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 	 * @see org.openntf.domino.Stream#writeText(java.lang.String)
 	 */
 	@Override
-	public int writeText(String text) {
+	public int writeText(final String text) {
 		try {
 			return getDelegate().writeText(text);
 		} catch (NotesException e) {
@@ -364,7 +364,7 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 	 * @see org.openntf.domino.Stream#writeText(java.lang.String, int)
 	 */
 	@Override
-	public int writeText(String text, int eolType) {
+	public int writeText(final String text, final int eolType) {
 		try {
 			return getDelegate().writeText(text, eolType);
 		} catch (NotesException e) {

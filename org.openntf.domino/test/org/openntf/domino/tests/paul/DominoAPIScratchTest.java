@@ -41,7 +41,7 @@ public enum DominoAPIScratchTest {
 	 * @param dt2
 	 *            the dt2
 	 */
-	private static void doChecks(DateTime dt1, DateTime dt2) {
+	private static void doChecks(final DateTime dt1, final DateTime dt2) {
 		System.out.println("Comparing Date 1 " + dt1.toJavaDate().toString() + " and Date 2 " + dt2.toJavaDate().toString());
 		if (dt1.isBefore(dt2)) {
 			System.out.println("Date 1 before Date 2");
@@ -76,7 +76,7 @@ public enum DominoAPIScratchTest {
 	 * @param args
 	 *            the arguments
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		int delay = 500;
 		DominoThread dt = new DominoThread(new DateTimeTest(), "DateTime Test");
 		dt.start();

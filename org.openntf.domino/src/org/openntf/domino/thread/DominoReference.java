@@ -61,7 +61,7 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 	 * @param delegate
 	 *            the delegate
 	 */
-	public DominoReference(Base<?> r, DominoReferenceQueue q, lotus.domino.Base delegate) {
+	public DominoReference(final Base<?> r, final DominoReferenceQueue q, final lotus.domino.Base delegate) {
 		super(r, q);
 		delegate_ = delegate; // Because the reference separately contains a pointer to the delegate object, it's still available even
 								// though the wrapper is null

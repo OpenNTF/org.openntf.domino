@@ -99,7 +99,7 @@ public class BigNoteCollection implements org.openntf.domino.big.BigNoteCollecti
 		private int currentIntLength_;
 		private int currentPos_;
 
-		DocumentIterator(BigNoteCollection coll) {
+		DocumentIterator(final BigNoteCollection coll) {
 			coll_ = coll;
 		}
 
@@ -256,7 +256,7 @@ public class BigNoteCollection implements org.openntf.domino.big.BigNoteCollecti
 	 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
 	 */
 	@Override
-	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 		int keyCount = in.readInt();
 		if (keyCount > 0) {
 			idMap_ = new LinkedHashMap<String, int[]>();
@@ -278,7 +278,7 @@ public class BigNoteCollection implements org.openntf.domino.big.BigNoteCollecti
 	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
 	 */
 	@Override
-	public void writeExternal(ObjectOutput out) throws IOException {
+	public void writeExternal(final ObjectOutput out) throws IOException {
 		Map<String, int[]> map = getIdMap();
 		synchronized (map) {
 			Set<String> keys = map.keySet();
@@ -294,7 +294,7 @@ public class BigNoteCollection implements org.openntf.domino.big.BigNoteCollecti
 		}
 	}
 
-	public int[] getNoteIds(String key) {
+	public int[] getNoteIds(final String key) {
 		Map<String, int[]> map = getIdMap();
 		synchronized (map) {
 			return map.get(key);

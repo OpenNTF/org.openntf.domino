@@ -35,10 +35,10 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 *            The document to be added. Cannot be <code>null</code>.
 	 */
 	@Override
-	public abstract void addDocument(lotus.domino.Document doc);
+	public abstract void addDocument(final lotus.domino.Document doc);
 
 	@Override
-	public abstract void addDocument(lotus.domino.Document doc, boolean checkDups);
+	public abstract void addDocument(final lotus.domino.Document doc, final boolean checkDups);
 
 	/**
 	 * Returns a collection object which is a copy of the original collection.
@@ -54,7 +54,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * @see lotus.domino.DocumentCollection#contains(int)
 	 */
 	@Override
-	public abstract boolean contains(int noteid);
+	public abstract boolean contains(final int noteid);
 
 	/*
 	 * (non-Javadoc)
@@ -62,7 +62,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * @see lotus.domino.DocumentCollection#contains(lotus.domino.Base)
 	 */
 	@Override
-	public abstract boolean contains(lotus.domino.Base doc);
+	public abstract boolean contains(final lotus.domino.Base doc);
 
 	/*
 	 * (non-Javadoc)
@@ -70,7 +70,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * @see lotus.domino.DocumentCollection#contains(java.lang.String)
 	 */
 	@Override
-	public abstract boolean contains(String noteid);
+	public abstract boolean contains(final String noteid);
 
 	/**
 	 * Deletes a document from a collection.
@@ -79,7 +79,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 *            The document to be deleted. Cannot be <code>null</code>.
 	 */
 	@Override
-	public abstract void deleteDocument(lotus.domino.Document doc);
+	public abstract void deleteDocument(final lotus.domino.Document doc);
 
 	/**
 	 * Conducts a full-text search of all the documents in a document collection, and reduces the collection to a sorted collection of those
@@ -123,7 +123,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 *            </p>
 	 */
 	@Override
-	public abstract void FTSearch(String query);
+	public abstract void FTSearch(final String query);
 
 	/**
 	 * Conducts a full-text search of all the documents in a document collection, and reduces the collection to a sorted collection of those
@@ -170,7 +170,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 *            </p>
 	 */
 	@Override
-	public abstract void FTSearch(String query, int maxDocs);
+	public abstract void FTSearch(final String query, final int maxDocs);
 
 	/**
 	 * The number of documents in a collection.
@@ -195,7 +195,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 *         get a <code>null</code> return.
 	 */
 	@Override
-	public abstract Document getDocument(lotus.domino.Document doc);
+	public abstract Document getDocument(final lotus.domino.Document doc);
 
 	/**
 	 * Gets the first document in a collection.
@@ -242,7 +242,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	@Override
 	@Deprecated
 	@Legacy(Legacy.ITERATION_WARNING)
-	public abstract Document getNextDocument(lotus.domino.Document doc);
+	public abstract Document getNextDocument(final lotus.domino.Document doc);
 
 	/**
 	 * Gets the nTh document in the collection.
@@ -261,7 +261,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	@Override
 	@Deprecated
 	@Legacy(Legacy.ITERATION_WARNING)
-	public abstract Document getNthDocument(int n);
+	public abstract Document getNthDocument(final int n);
 
 	/**
 	 * The database that contains the document collection
@@ -290,7 +290,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 *         <code>null</code>.
 	 */
 	@Override
-	public abstract Document getPrevDocument(lotus.domino.Document doc);
+	public abstract Document getPrevDocument(final lotus.domino.Document doc);
 
 	/**
 	 * The text of the query that produced a document collection if the collection results from a full-text or other search.
@@ -339,7 +339,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * 
 	 */
 	@Override
-	public abstract void intersect(int noteid);
+	public abstract void intersect(final int noteid);
 
 	/**
 	 * Removes from a document collection any documents not also contained in a second collection.
@@ -360,7 +360,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * 
 	 */
 	@Override
-	public abstract void intersect(lotus.domino.Base doc);
+	public abstract void intersect(final lotus.domino.Base doc);
 
 	/**
 	 * Removes from a document collection any documents not also contained in a second collection.
@@ -381,7 +381,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * 
 	 */
 	@Override
-	public abstract void intersect(String noteid);
+	public abstract void intersect(final String noteid);
 
 	/**
 	 * Indicates whether the documents in a collection are sorted. A collection is sorted only when it results from a full-text search.
@@ -418,7 +418,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 *            Marks all the documents in the collection as read on behalf of the given name.
 	 */
 	@Override
-	public abstract void markAllRead(String userName);
+	public abstract void markAllRead(final String userName);
 
 	/**
 	 * Marks all the documents in a collection unread for the current user.
@@ -441,7 +441,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 *            Marks all the documents in the collection as unread on behalf of the given name.
 	 */
 	@Override
-	public abstract void markAllUnread(String userName);
+	public abstract void markAllUnread(final String userName);
 
 	/*
 	 * (non-Javadoc)
@@ -449,7 +449,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * @see lotus.domino.DocumentCollection#merge(int)
 	 */
 	@Override
-	public abstract void merge(int noteid);
+	public abstract void merge(final int noteid);
 
 	/*
 	 * (non-Javadoc)
@@ -457,7 +457,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * @see lotus.domino.DocumentCollection#merge(lotus.domino.Base)
 	 */
 	@Override
-	public abstract void merge(lotus.domino.Base doc);
+	public abstract void merge(final lotus.domino.Base doc);
 
 	/*
 	 * (non-Javadoc)
@@ -465,7 +465,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * @see lotus.domino.DocumentCollection#merge(java.lang.String)
 	 */
 	@Override
-	public abstract void merge(String noteid);
+	public abstract void merge(final String noteid);
 
 	/**
 	 * Adds all the documents in the collection to the specified folder. If the folder does not exist in the document's database, it is
@@ -480,7 +480,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 *            separating folder names with backward slashes, for example, "Vehicles\\Bikes".
 	 */
 	@Override
-	public abstract void putAllInFolder(String folderName);
+	public abstract void putAllInFolder(final String folderName);
 
 	/**
 	 * Adds all the documents in the collection to the specified folder. If the folder does not exist in the document's database, it is
@@ -497,7 +497,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 *            If true (default), creates the folder if it does not exist.
 	 */
 	@Override
-	public abstract void putAllInFolder(String folderName, boolean createOnFail);
+	public abstract void putAllInFolder(final String folderName, final boolean createOnFail);
 
 	/**
 	 * Permanently removes the documents in a collection from a database.
@@ -515,7 +515,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 *            <code>false</code>, a document is not removed if another user modifies it first.
 	 */
 	@Override
-	public abstract void removeAll(boolean force);
+	public abstract void removeAll(final boolean force);
 
 	/**
 	 * Removes all documents in the collection from the specified folder.
@@ -534,7 +534,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 *            separating folder names with backward slashes. For example, "Vehicles\\Bikes".
 	 */
 	@Override
-	public abstract void removeAllFromFolder(String folderName);
+	public abstract void removeAllFromFolder(final String folderName);
 
 	/**
 	 * Replaces the value of a specified item in all documents in a collection.
@@ -563,7 +563,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * 
 	 */
 	@Override
-	public abstract void stampAll(String itemName, Object value);
+	public abstract void stampAll(final String itemName, final Object value);
 
 	/*
 	 * (non-Javadoc)
@@ -571,7 +571,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * @see lotus.domino.DocumentCollection#subtract(int)
 	 */
 	@Override
-	public abstract void subtract(int noteid);
+	public abstract void subtract(final int noteid);
 
 	/*
 	 * (non-Javadoc)
@@ -579,7 +579,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * @see lotus.domino.DocumentCollection#subtract(lotus.domino.Base)
 	 */
 	@Override
-	public abstract void subtract(lotus.domino.Base doc);
+	public abstract void subtract(final lotus.domino.Base doc);
 
 	/*
 	 * (non-Javadoc)
@@ -587,7 +587,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * @see lotus.domino.DocumentCollection#subtract(java.lang.String)
 	 */
 	@Override
-	public abstract void subtract(String noteid);
+	public abstract void subtract(final String noteid);
 
 	/**
 	 * Marks all documents in a collection as processed by an agent.

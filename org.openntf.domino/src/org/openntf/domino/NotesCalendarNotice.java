@@ -31,7 +31,7 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	 * @see lotus.domino.NotesCalendarNotice#accept(java.lang.String)
 	 */
 	@Override
-	public void accept(String comments);
+	public void accept(final String comments);
 
 	/*
 	 * (non-Javadoc)
@@ -39,7 +39,7 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	 * @see lotus.domino.NotesCalendarNotice#acceptCounter(java.lang.String)
 	 */
 	@Override
-	public void acceptCounter(String comments);
+	public void acceptCounter(final String comments);
 
 	/*
 	 * (non-Javadoc)
@@ -47,7 +47,7 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	 * @see lotus.domino.NotesCalendarNotice#counter(java.lang.String, lotus.domino.DateTime, lotus.domino.DateTime)
 	 */
 	@Override
-	public void counter(String comments, lotus.domino.DateTime start, lotus.domino.DateTime end);
+	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end);
 
 	/*
 	 * (non-Javadoc)
@@ -55,7 +55,7 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	 * @see lotus.domino.NotesCalendarNotice#counter(java.lang.String, lotus.domino.DateTime, lotus.domino.DateTime, boolean)
 	 */
 	@Override
-	public void counter(String comments, lotus.domino.DateTime start, lotus.domino.DateTime end, boolean keepPlaceholder);
+	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end, final boolean keepPlaceholder);
 
 	/*
 	 * (non-Javadoc)
@@ -63,7 +63,7 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	 * @see lotus.domino.NotesCalendarNotice#decline(java.lang.String)
 	 */
 	@Override
-	public void decline(String comments);
+	public void decline(final String comments);
 
 	/*
 	 * (non-Javadoc)
@@ -71,7 +71,7 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	 * @see lotus.domino.NotesCalendarNotice#decline(java.lang.String, boolean)
 	 */
 	@Override
-	public void decline(String comments, boolean keepInformed);
+	public void decline(final String comments, final boolean keepInformed);
 
 	/*
 	 * (non-Javadoc)
@@ -79,7 +79,7 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	 * @see lotus.domino.NotesCalendarNotice#declineCounter(java.lang.String)
 	 */
 	@Override
-	public void declineCounter(String comments);
+	public void declineCounter(final String comments);
 
 	/*
 	 * (non-Javadoc)
@@ -87,7 +87,7 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	 * @see lotus.domino.NotesCalendarNotice#delegate(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void delegate(String commentsToOrganizer, String delegateTo);
+	public void delegate(final String commentsToOrganizer, final String delegateTo);
 
 	/*
 	 * (non-Javadoc)
@@ -95,7 +95,7 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	 * @see lotus.domino.NotesCalendarNotice#delegate(java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
-	public void delegate(String commentsToOrganizer, String delegateTo, boolean keepInformed);
+	public void delegate(final String commentsToOrganizer, final String delegateTo, final boolean keepInformed);
 
 	/*
 	 * (non-Javadoc)
@@ -166,7 +166,7 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	 * @see lotus.domino.NotesCalendarNotice#requestInfo(java.lang.String)
 	 */
 	@Override
-	public void requestInfo(String comments);
+	public void requestInfo(final String comments);
 
 	/*
 	 * (non-Javadoc)
@@ -174,7 +174,7 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	 * @see lotus.domino.NotesCalendarNotice#sendUpdatedInfo(java.lang.String)
 	 */
 	@Override
-	public void sendUpdatedInfo(String comments);
+	public void sendUpdatedInfo(final String comments);
 
 	/*
 	 * (non-Javadoc)
@@ -182,7 +182,7 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	 * @see lotus.domino.NotesCalendarNotice#tentativelyAccept(java.lang.String)
 	 */
 	@Override
-	public void setOverwriteCheckEnabled(boolean flag);
+	public void setOverwriteCheckEnabled(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -190,5 +190,5 @@ public interface NotesCalendarNotice extends Base<lotus.domino.NotesCalendarNoti
 	 * @see lotus.domino.NotesCalendarNotice#tentativelyAccept(java.lang.String)
 	 */
 	@Override
-	public void tentativelyAccept(String comments);
+	public void tentativelyAccept(final String comments);
 }

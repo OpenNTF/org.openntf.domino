@@ -38,7 +38,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 * @param parent
 	 *            the parent
 	 */
-	public Agent(lotus.domino.Agent delegate, org.openntf.domino.Base<?> parent) {
+	public Agent(final lotus.domino.Agent delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, Factory.getParentDatabase(parent));
 
 	}
@@ -418,7 +418,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 * @see org.openntf.domino.Agent#lock(boolean)
 	 */
 	@Override
-	public boolean lock(boolean provisionalOk) {
+	public boolean lock(final boolean provisionalOk) {
 		try {
 			return getDelegate().lock(provisionalOk);
 		} catch (NotesException e) {
@@ -433,7 +433,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 * @see org.openntf.domino.Agent#lock(java.lang.String)
 	 */
 	@Override
-	public boolean lock(String name) {
+	public boolean lock(final String name) {
 		try {
 			return getDelegate().lock(name);
 		} catch (NotesException e) {
@@ -448,7 +448,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 * @see org.openntf.domino.Agent#lock(java.lang.String, boolean)
 	 */
 	@Override
-	public boolean lock(String name, boolean provisionalOk) {
+	public boolean lock(final String name, final boolean provisionalOk) {
 		try {
 			return getDelegate().lock(name, provisionalOk);
 		} catch (NotesException e) {
@@ -464,7 +464,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean lock(Vector names) {
+	public boolean lock(final Vector names) {
 		try {
 			return getDelegate().lock(names);
 		} catch (NotesException e) {
@@ -480,7 +480,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean lock(Vector names, boolean provisionalOk) {
+	public boolean lock(final Vector names, final boolean provisionalOk) {
 		try {
 			return getDelegate().lock(names, provisionalOk);
 		} catch (NotesException e) {
@@ -510,7 +510,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 * @see org.openntf.domino.Agent#lockProvisional(java.lang.String)
 	 */
 	@Override
-	public boolean lockProvisional(String name) {
+	public boolean lockProvisional(final String name) {
 		try {
 			return getDelegate().lockProvisional(name);
 		} catch (NotesException e) {
@@ -526,7 +526,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean lockProvisional(Vector names) {
+	public boolean lockProvisional(final Vector names) {
 		try {
 			return getDelegate().lockProvisional(names);
 		} catch (NotesException e) {
@@ -569,7 +569,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 * @see org.openntf.domino.Agent#run(java.lang.String)
 	 */
 	@Override
-	public void run(String noteid) {
+	public void run(final String noteid) {
 		try {
 			getDelegate().run(noteid);
 		} catch (NotesException e) {
@@ -598,7 +598,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 * @see org.openntf.domino.Agent#runOnServer(java.lang.String)
 	 */
 	@Override
-	public int runOnServer(String noteid) {
+	public int runOnServer(final String noteid) {
 		try {
 			return getDelegate().runOnServer(noteid);
 		} catch (NotesException e) {
@@ -613,7 +613,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 * @see org.openntf.domino.Agent#runWithDocumentContext(lotus.domino.Document)
 	 */
 	@Override
-	public void runWithDocumentContext(lotus.domino.Document doc) {
+	public void runWithDocumentContext(final lotus.domino.Document doc) {
 		try {
 			getDelegate().runWithDocumentContext((lotus.domino.Document) toLotus(doc));
 		} catch (NotesException e) {
@@ -627,7 +627,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 * @see org.openntf.domino.Agent#runWithDocumentContext(lotus.domino.Document, java.lang.String)
 	 */
 	@Override
-	public void runWithDocumentContext(lotus.domino.Document doc, String noteid) {
+	public void runWithDocumentContext(final lotus.domino.Document doc, final String noteid) {
 		try {
 			getDelegate().runWithDocumentContext((lotus.domino.Document) toLotus(doc), noteid);
 		} catch (NotesException e) {
@@ -655,7 +655,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 * @see org.openntf.domino.Agent#setEnabled(boolean)
 	 */
 	@Override
-	public void setEnabled(boolean flag) {
+	public void setEnabled(final boolean flag) {
 		try {
 			getDelegate().setEnabled(flag);
 		} catch (NotesException e) {
@@ -669,7 +669,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 * @see org.openntf.domino.Agent#setProhibitDesignUpdate(boolean)
 	 */
 	@Override
-	public void setProhibitDesignUpdate(boolean flag) {
+	public void setProhibitDesignUpdate(final boolean flag) {
 		try {
 			getDelegate().setProhibitDesignUpdate(flag);
 		} catch (NotesException e) {
@@ -683,7 +683,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 * @see org.openntf.domino.Agent#setServerName(java.lang.String)
 	 */
 	@Override
-	public void setServerName(String server) {
+	public void setServerName(final String server) {
 		try {
 			getDelegate().setServerName(server);
 		} catch (NotesException e) {

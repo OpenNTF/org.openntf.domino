@@ -31,7 +31,7 @@ public interface PropertyBroker extends Base<lotus.domino.PropertyBroker>, lotus
 	 * @see lotus.domino.PropertyBroker#clearProperty(java.lang.String)
 	 */
 	@Override
-	public void clearProperty(String propertyName);
+	public void clearProperty(final String propertyName);
 
 	/*
 	 * (non-Javadoc)
@@ -47,7 +47,7 @@ public interface PropertyBroker extends Base<lotus.domino.PropertyBroker>, lotus
 	 * @see lotus.domino.PropertyBroker#getProperty(java.lang.String)
 	 */
 	@Override
-	public NotesProperty getProperty(String propertyName);
+	public NotesProperty getProperty(final String propertyName);
 
 	/*
 	 * (non-Javadoc)
@@ -55,7 +55,7 @@ public interface PropertyBroker extends Base<lotus.domino.PropertyBroker>, lotus
 	 * @see lotus.domino.PropertyBroker#getPropertyValue(java.lang.String)
 	 */
 	@Override
-	public Vector<Object> getPropertyValue(String propertyName);
+	public Vector<Object> getPropertyValue(final String propertyName);
 
 	/*
 	 * (non-Javadoc)
@@ -63,7 +63,7 @@ public interface PropertyBroker extends Base<lotus.domino.PropertyBroker>, lotus
 	 * @see lotus.domino.PropertyBroker#getPropertyValueString(java.lang.String)
 	 */
 	@Override
-	public String getPropertyValueString(String propertyName);
+	public String getPropertyValueString(final String propertyName);
 
 	/*
 	 * (non-Javadoc)
@@ -71,7 +71,7 @@ public interface PropertyBroker extends Base<lotus.domino.PropertyBroker>, lotus
 	 * @see lotus.domino.PropertyBroker#hasProperty(java.lang.String)
 	 */
 	@Override
-	public boolean hasProperty(String propertyName);
+	public boolean hasProperty(final String propertyName);
 
 	/*
 	 * (non-Javadoc)
@@ -79,7 +79,7 @@ public interface PropertyBroker extends Base<lotus.domino.PropertyBroker>, lotus
 	 * @see lotus.domino.PropertyBroker#setPropertyValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public NotesProperty setPropertyValue(String propertyName, Object propertyValue);
+	public NotesProperty setPropertyValue(final String propertyName, final Object propertyValue);
 
 	/*
 	 * (non-Javadoc)

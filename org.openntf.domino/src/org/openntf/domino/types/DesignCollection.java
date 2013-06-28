@@ -28,7 +28,7 @@ public class DesignCollection<T> implements Collection<T> {
 	 * @see java.util.Collection#add(java.lang.Object)
 	 */
 	@Override
-	public boolean add(T arg0) {
+	public boolean add(final T arg0) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -38,7 +38,7 @@ public class DesignCollection<T> implements Collection<T> {
 	 * @see java.util.Collection#addAll(java.util.Collection)
 	 */
 	@Override
-	public boolean addAll(Collection<? extends T> c) {
+	public boolean addAll(final Collection<? extends T> c) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -58,7 +58,7 @@ public class DesignCollection<T> implements Collection<T> {
 	 * @see java.util.Collection#contains(java.lang.Object)
 	 */
 	@Override
-	public boolean contains(Object o) {
+	public boolean contains(final Object o) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -69,7 +69,7 @@ public class DesignCollection<T> implements Collection<T> {
 	 * @see java.util.Collection#containsAll(java.util.Collection)
 	 */
 	@Override
-	public boolean containsAll(Collection<?> c) {
+	public boolean containsAll(final Collection<?> c) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -102,7 +102,7 @@ public class DesignCollection<T> implements Collection<T> {
 	 * @see java.util.Collection#remove(java.lang.Object)
 	 */
 	@Override
-	public boolean remove(Object arg0) {
+	public boolean remove(final Object arg0) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -112,7 +112,7 @@ public class DesignCollection<T> implements Collection<T> {
 	 * @see java.util.Collection#removeAll(java.util.Collection)
 	 */
 	@Override
-	public boolean removeAll(Collection<?> c) {
+	public boolean removeAll(final Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -122,7 +122,7 @@ public class DesignCollection<T> implements Collection<T> {
 	 * @see java.util.Collection#retainAll(java.util.Collection)
 	 */
 	@Override
-	public boolean retainAll(Collection<?> c) {
+	public boolean retainAll(final Collection<?> c) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -155,7 +155,7 @@ public class DesignCollection<T> implements Collection<T> {
 	 * @see java.util.Collection#toArray(T[])
 	 */
 	@Override
-	public <T> T[] toArray(T[] arg0) {
+	public <T> T[] toArray(final T[] arg0) {
 		// TODO Auto-generated method stub
 		return null;
 	}

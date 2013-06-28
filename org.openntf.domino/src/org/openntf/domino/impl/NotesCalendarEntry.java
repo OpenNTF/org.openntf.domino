@@ -38,7 +38,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @param parent
 	 *            the parent
 	 */
-	public NotesCalendarEntry(lotus.domino.NotesCalendarEntry delegate, org.openntf.domino.Base<?> parent) {
+	public NotesCalendarEntry(final lotus.domino.NotesCalendarEntry delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -46,7 +46,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#accept(java.lang.String)
 	 */
 	@Override
-	public void accept(String comments) {
+	public void accept(final String comments) {
 		try {
 			getDelegate().accept(comments);
 		} catch (NotesException e) {
@@ -58,7 +58,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#accept(java.lang.String, int, java.lang.String)
 	 */
 	@Override
-	public void accept(String comments, int scope, String recurrenceId) {
+	public void accept(final String comments, final int scope, final String recurrenceId) {
 		try {
 			getDelegate().accept(comments, scope, recurrenceId);
 		} catch (NotesException e) {
@@ -70,7 +70,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#cancel(java.lang.String)
 	 */
 	@Override
-	public void cancel(String comments) {
+	public void cancel(final String comments) {
 		try {
 			getDelegate().cancel(comments);
 		} catch (NotesException e) {
@@ -82,7 +82,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#cancel(java.lang.String, int, java.lang.String)
 	 */
 	@Override
-	public void cancel(String comments, int scope, String recurrenceId) {
+	public void cancel(final String comments, final int scope, final String recurrenceId) {
 		try {
 			getDelegate().cancel(comments, scope, recurrenceId);
 		} catch (NotesException e) {
@@ -94,7 +94,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#counter(java.lang.String, lotus.domino.DateTime, lotus.domino.DateTime)
 	 */
 	@Override
-	public void counter(String comments, lotus.domino.DateTime start, lotus.domino.DateTime end) {
+	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end) {
 		try {
 			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
 			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
@@ -110,7 +110,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#counter(java.lang.String, lotus.domino.DateTime, lotus.domino.DateTime, boolean)
 	 */
 	@Override
-	public void counter(String comments, lotus.domino.DateTime start, lotus.domino.DateTime end, boolean keepPlaceholder) {
+	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end, final boolean keepPlaceholder) {
 		try {
 			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
 			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
@@ -126,8 +126,8 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#counter(java.lang.String, lotus.domino.DateTime, lotus.domino.DateTime, boolean, int, java.lang.String)
 	 */
 	@Override
-	public void counter(String comments, lotus.domino.DateTime start, lotus.domino.DateTime end, boolean keepPlaceholder, int scope,
-			String recurrenceId) {
+	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end, final boolean keepPlaceholder, final int scope,
+			final String recurrenceId) {
 		try {
 			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
 			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
@@ -143,7 +143,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#counter(java.lang.String, lotus.domino.DateTime, lotus.domino.DateTime, int, java.lang.String)
 	 */
 	@Override
-	public void counter(String comments, lotus.domino.DateTime start, lotus.domino.DateTime end, int scope, String recurrenceId) {
+	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end, final int scope, final String recurrenceId) {
 		try {
 			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
 			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
@@ -159,7 +159,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#decline(java.lang.String)
 	 */
 	@Override
-	public void decline(String comments) {
+	public void decline(final String comments) {
 		try {
 			getDelegate().decline(comments);
 		} catch (NotesException e) {
@@ -171,7 +171,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#decline(java.lang.String, boolean)
 	 */
 	@Override
-	public void decline(String comments, boolean keepInformed) {
+	public void decline(final String comments, final boolean keepInformed) {
 		try {
 			getDelegate().decline(comments, keepInformed);
 		} catch (NotesException e) {
@@ -183,7 +183,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#decline(java.lang.String, boolean, int, java.lang.String)
 	 */
 	@Override
-	public void decline(String comments, boolean keepInformed, int scope, String recurrenceId) {
+	public void decline(final String comments, final boolean keepInformed, final int scope, final String recurrenceId) {
 		try {
 			getDelegate().decline(comments, keepInformed, scope, recurrenceId);
 		} catch (NotesException e) {
@@ -195,7 +195,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#delegate(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void delegate(String commentsToOrganizer, String delegateTo) {
+	public void delegate(final String commentsToOrganizer, final String delegateTo) {
 		try {
 			getDelegate().delegate(commentsToOrganizer, delegateTo);
 		} catch (NotesException e) {
@@ -207,7 +207,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#delegate(java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
-	public void delegate(String commentsToOrganizer, String delegateTo, boolean keepInformed) {
+	public void delegate(final String commentsToOrganizer, final String delegateTo, final boolean keepInformed) {
 		try {
 			getDelegate().delegate(commentsToOrganizer, delegateTo, keepInformed);
 		} catch (NotesException e) {
@@ -219,7 +219,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#delegate(java.lang.String, java.lang.String, boolean, int, java.lang.String)
 	 */
 	@Override
-	public void delegate(String commentsToOrganizer, String delegateTo, boolean keepInformed, int scope, String recurrenceId) {
+	public void delegate(final String commentsToOrganizer, final String delegateTo, final boolean keepInformed, final int scope, final String recurrenceId) {
 		try {
 			getDelegate().delegate(commentsToOrganizer, delegateTo, keepInformed, scope, recurrenceId);
 		} catch (NotesException e) {
@@ -231,7 +231,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#delegate(java.lang.String, java.lang.String, int, java.lang.String)
 	 */
 	@Override
-	public void delegate(String commentsToOrganizer, String delegateTo, int scope, String recurrenceId) {
+	public void delegate(final String commentsToOrganizer, final String delegateTo, final int scope, final String recurrenceId) {
 		try {
 			getDelegate().delegate(commentsToOrganizer, delegateTo, scope, recurrenceId);
 		} catch (NotesException e) {
@@ -257,7 +257,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#getAsDocument(int)
 	 */
 	@Override
-	public Document getAsDocument(int flags) {
+	public Document getAsDocument(final int flags) {
 		try {
 			// TODO This should really come from the doc's DB
 			return Factory.fromLotus(getDelegate().getAsDocument(flags), Document.class, this.getParent());
@@ -271,7 +271,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#getAsDocument(int, java.lang.String)
 	 */
 	@Override
-	public Document getAsDocument(int flags, String recurrenceId) {
+	public Document getAsDocument(final int flags, final String recurrenceId) {
 		try {
 			return Factory.fromLotus(getDelegate().getAsDocument(flags, recurrenceId), Document.class, this.getParent());
 		} catch (NotesException e) {
@@ -331,7 +331,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#read(java.lang.String)
 	 */
 	@Override
-	public String read(String recurrenceId) {
+	public String read(final String recurrenceId) {
 		try {
 			return getDelegate().read(recurrenceId);
 		} catch (NotesException e) {
@@ -356,7 +356,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#remove(int, java.lang.String)
 	 */
 	@Override
-	public void remove(int scope, String recurrenceId) {
+	public void remove(final int scope, final String recurrenceId) {
 		try {
 			getDelegate().remove(scope, recurrenceId);
 		} catch (NotesException e) {
@@ -368,7 +368,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#requestInfo(java.lang.String)
 	 */
 	@Override
-	public void requestInfo(String comments) {
+	public void requestInfo(final String comments) {
 		try {
 			getDelegate().requestInfo(comments);
 		} catch (NotesException e) {
@@ -380,7 +380,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#tentativelyAccept(java.lang.String)
 	 */
 	@Override
-	public void tentativelyAccept(String comments) {
+	public void tentativelyAccept(final String comments) {
 		try {
 			getDelegate().tentativelyAccept(comments);
 		} catch (NotesException e) {
@@ -392,7 +392,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#tentativelyAccept(java.lang.String, int, java.lang.String)
 	 */
 	@Override
-	public void tentativelyAccept(String comments, int scope, String recurrenceId) {
+	public void tentativelyAccept(final String comments, final int scope, final String recurrenceId) {
 		try {
 			getDelegate().tentativelyAccept(comments, scope, recurrenceId);
 		} catch (NotesException e) {
@@ -404,7 +404,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#update(java.lang.String)
 	 */
 	@Override
-	public void update(String iCalEntry) {
+	public void update(final String iCalEntry) {
 		try {
 			getDelegate().update(iCalEntry);
 		} catch (NotesException e) {
@@ -416,7 +416,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#update(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void update(String iCalEntry, String comments) {
+	public void update(final String iCalEntry, final String comments) {
 		try {
 			getDelegate().update(iCalEntry, comments);
 		} catch (NotesException e) {
@@ -428,7 +428,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#update(java.lang.String, java.lang.String, long)
 	 */
 	@Override
-	public void update(String iCalEntry, String comments, long flags) {
+	public void update(final String iCalEntry, final String comments, final long flags) {
 		try {
 			getDelegate().update(iCalEntry, comments, flags);
 		} catch (NotesException e) {
@@ -440,7 +440,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#update(java.lang.String, java.lang.String, long, java.lang.String)
 	 */
 	@Override
-	public void update(String iCalEntry, String comments, long flags, String recurrenceId) {
+	public void update(final String iCalEntry, final String comments, final long flags, final String recurrenceId) {
 		try {
 			getDelegate().update(iCalEntry, comments, flags, recurrenceId);
 		} catch (NotesException e) {

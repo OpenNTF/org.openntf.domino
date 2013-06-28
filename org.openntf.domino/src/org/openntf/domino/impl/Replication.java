@@ -37,7 +37,7 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 	 * @param parent
 	 *            the parent
 	 */
-	public Replication(lotus.domino.Replication delegate, org.openntf.domino.Base<?> parent) {
+	public Replication(final lotus.domino.Replication delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -122,7 +122,7 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 	 * @see org.openntf.domino.Replication#getEntry(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public ReplicationEntry getEntry(String source, String destination) {
+	public ReplicationEntry getEntry(final String source, final String destination) {
 		try {
 			return Factory.fromLotus(getDelegate().getEntry(source, destination), ReplicationEntry.class, this);
 		} catch (NotesException e) {
@@ -137,7 +137,7 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 	 * @see org.openntf.domino.Replication#getEntry(java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
-	public ReplicationEntry getEntry(String source, String destination, boolean createFlag) {
+	public ReplicationEntry getEntry(final String source, final String destination, final boolean createFlag) {
 		try {
 			return Factory.fromLotus(getDelegate().getEntry(source, destination, createFlag), ReplicationEntry.class, this);
 		} catch (NotesException e) {
@@ -280,7 +280,7 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 	 * @see org.openntf.domino.Replication#setAbstract(boolean)
 	 */
 	@Override
-	public void setAbstract(boolean flag) {
+	public void setAbstract(final boolean flag) {
 		try {
 			getDelegate().setAbstract(flag);
 		} catch (NotesException e) {
@@ -294,7 +294,7 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 	 * @see org.openntf.domino.Replication#setCutoffDelete(boolean)
 	 */
 	@Override
-	public void setCutoffDelete(boolean flag) {
+	public void setCutoffDelete(final boolean flag) {
 		try {
 			getDelegate().setCutoffDelete(flag);
 		} catch (NotesException e) {
@@ -308,7 +308,7 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 	 * @see org.openntf.domino.Replication#setCutoffInterval(long)
 	 */
 	@Override
-	public void setCutoffInterval(long interval) {
+	public void setCutoffInterval(final long interval) {
 		try {
 			getDelegate().setCutoffInterval(interval);
 		} catch (NotesException e) {
@@ -322,7 +322,7 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 	 * @see org.openntf.domino.Replication#setDisabled(boolean)
 	 */
 	@Override
-	public void setDisabled(boolean flag) {
+	public void setDisabled(final boolean flag) {
 		try {
 			getDelegate().setDisabled(flag);
 		} catch (NotesException e) {
@@ -336,7 +336,7 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 	 * @see org.openntf.domino.Replication#setDontSendLocalSecurityUpdates(boolean)
 	 */
 	@Override
-	public void setDontSendLocalSecurityUpdates(boolean flag) {
+	public void setDontSendLocalSecurityUpdates(final boolean flag) {
 		try {
 			getDelegate().setDontSendLocalSecurityUpdates(flag);
 		} catch (NotesException e) {
@@ -350,7 +350,7 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 	 * @see org.openntf.domino.Replication#setIgnoreDeletes(boolean)
 	 */
 	@Override
-	public void setIgnoreDeletes(boolean flag) {
+	public void setIgnoreDeletes(final boolean flag) {
 		try {
 			getDelegate().setIgnoreDeletes(flag);
 		} catch (NotesException e) {
@@ -364,7 +364,7 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 	 * @see org.openntf.domino.Replication#setIgnoreDestDeletes(boolean)
 	 */
 	@Override
-	public void setIgnoreDestDeletes(boolean flag) {
+	public void setIgnoreDestDeletes(final boolean flag) {
 		try {
 			getDelegate().setIgnoreDestDeletes(flag);
 		} catch (NotesException e) {
@@ -378,7 +378,7 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 	 * @see org.openntf.domino.Replication#setPriority(int)
 	 */
 	@Override
-	public void setPriority(int priority) {
+	public void setPriority(final int priority) {
 		try {
 			getDelegate().setPriority(priority);
 		} catch (NotesException e) {

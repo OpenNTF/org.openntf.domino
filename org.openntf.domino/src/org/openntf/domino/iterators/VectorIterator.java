@@ -45,7 +45,7 @@ public class VectorIterator<T> implements Iterator<T> {
 	 * @param modCount
 	 *            the mod count
 	 */
-	public VectorIterator(Vector<T> v, int modCount) {
+	public VectorIterator(final Vector<T> v, final int modCount) {
 		this.v = v;
 		this.expectedModCount = modCount;
 	}

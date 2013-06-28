@@ -104,7 +104,7 @@ public class DocumentSyncHelper {
 	 * @param controlMap
 	 *            the control map
 	 */
-	public DocumentSyncHelper(Document controlDoc, Map<Controls, String> controlMap) {
+	public DocumentSyncHelper(final Document controlDoc, Map<Controls, String> controlMap) {
 		if (controlMap == null)
 			controlMap = new HashMap<Controls, String>();
 		if (controlMap.containsKey(Controls.TARGET_SERVER)) {
@@ -175,7 +175,7 @@ public class DocumentSyncHelper {
 	 * @param args
 	 *            the args
 	 */
-	public DocumentSyncHelper(Strategy strategy, Map<String, String> syncMap, String... args) {
+	public DocumentSyncHelper(final Strategy strategy, final Map<String, String> syncMap, final String... args) {
 		setStrategy(strategy);
 		setSyncMap(syncMap);
 		if (args.length >= 1) {
@@ -199,7 +199,7 @@ public class DocumentSyncHelper {
 	 * @param coll
 	 *            the coll
 	 */
-	public void process(DocumentCollection coll) {
+	public void process(final DocumentCollection coll) {
 		// TODO Check to make sure properties are all set up before running
 		Session session = org.openntf.domino.utils.Factory.getSession(coll);
 		Database targetDb = session.getDatabase(getTargetServer(), getTargetFilepath());
@@ -255,7 +255,7 @@ public class DocumentSyncHelper {
 	 * @param targetServer
 	 *            the new target server
 	 */
-	public void setTargetServer(String targetServer) {
+	public void setTargetServer(final String targetServer) {
 		targetServer_ = targetServer;
 	}
 
@@ -274,7 +274,7 @@ public class DocumentSyncHelper {
 	 * @param targetFilepath
 	 *            the new target filepath
 	 */
-	public void setTargetFilepath(String targetFilepath) {
+	public void setTargetFilepath(final String targetFilepath) {
 		targetFilepath_ = targetFilepath;
 	}
 
@@ -293,7 +293,7 @@ public class DocumentSyncHelper {
 	 * @param targetLookupView
 	 *            the new target lookup view
 	 */
-	public void setTargetLookupView(String targetLookupView) {
+	public void setTargetLookupView(final String targetLookupView) {
 		targetLookupView_ = targetLookupView;
 	}
 
@@ -312,7 +312,7 @@ public class DocumentSyncHelper {
 	 * @param sourceKeyFormula
 	 *            the new source key formula
 	 */
-	public void setSourceKeyFormula(String sourceKeyFormula) {
+	public void setSourceKeyFormula(final String sourceKeyFormula) {
 		sourceKeyFormula_ = sourceKeyFormula;
 	}
 
@@ -331,7 +331,7 @@ public class DocumentSyncHelper {
 	 * @param strategy
 	 *            the new strategy
 	 */
-	public void setStrategy(Strategy strategy) {
+	public void setStrategy(final Strategy strategy) {
 		strategy_ = strategy;
 	}
 
@@ -350,7 +350,7 @@ public class DocumentSyncHelper {
 	 * @param syncMap
 	 *            the sync map
 	 */
-	public void setSyncMap(Map<String, String> syncMap) {
+	public void setSyncMap(final Map<String, String> syncMap) {
 		syncMap_ = syncMap;
 	}
 

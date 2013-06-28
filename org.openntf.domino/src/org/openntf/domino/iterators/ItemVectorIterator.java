@@ -48,7 +48,7 @@ public class ItemVectorIterator extends AbstractDominoListIterator<Item> {
 	 * @param collection
 	 *            the collection
 	 */
-	public ItemVectorIterator(Document document, ItemVector itemVector) {
+	public ItemVectorIterator(final Document document, final ItemVector itemVector) {
 		super(document);
 		setNames(itemVector.getNames());
 	}
@@ -115,7 +115,7 @@ public class ItemVectorIterator extends AbstractDominoListIterator<Item> {
 	 * @param idArray
 	 *            the new id array
 	 */
-	protected void setNames(String[] names) {
+	protected void setNames(final String[] names) {
 		names_ = names;
 		if (log_.isLoggable(Level.FINE)) {
 			log_.log(Level.FINE, "Created an iterator from " + names.length + " itemnames.");
@@ -128,7 +128,7 @@ public class ItemVectorIterator extends AbstractDominoListIterator<Item> {
 	 * @param index
 	 *            the new index
 	 */
-	protected void setIndex(int index) {
+	protected void setIndex(final int index) {
 		index_ = index;
 	}
 
@@ -187,7 +187,7 @@ public class ItemVectorIterator extends AbstractDominoListIterator<Item> {
 	 * @see org.openntf.domino.iterators.AbstractDominoListIterator#set(java.lang.Object)
 	 */
 	@Override
-	public void set(Item arg0) {
+	public void set(final Item arg0) {
 		throw new UnsupportedOperationException();
 	}
 

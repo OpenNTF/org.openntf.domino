@@ -43,7 +43,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	 * @param parent
 	 *            the parent
 	 */
-	public RichTextTable(lotus.domino.RichTextTable delegate, org.openntf.domino.Base<?> parent) {
+	public RichTextTable(final lotus.domino.RichTextTable delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -68,7 +68,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	 * @see org.openntf.domino.RichTextTable#addRow(int)
 	 */
 	@Override
-	public void addRow(int count) {
+	public void addRow(final int count) {
 		try {
 			getDelegate().addRow(count);
 			markDirty();
@@ -83,7 +83,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	 * @see org.openntf.domino.RichTextTable#addRow(int, int)
 	 */
 	@Override
-	public void addRow(int count, int targetRow) {
+	public void addRow(final int count, final int targetRow) {
 		try {
 			getDelegate().addRow(count, targetRow);
 			markDirty();
@@ -242,7 +242,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	 * @see org.openntf.domino.RichTextTable#removeRow(int)
 	 */
 	@Override
-	public void removeRow(int count) {
+	public void removeRow(final int count) {
 		try {
 			getDelegate().removeRow(count);
 			markDirty();
@@ -257,7 +257,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	 * @see org.openntf.domino.RichTextTable#removeRow(int, int)
 	 */
 	@Override
-	public void removeRow(int count, int targetRow) {
+	public void removeRow(final int count, final int targetRow) {
 		try {
 			getDelegate().removeRow(count, targetRow);
 			markDirty();
@@ -272,7 +272,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	 * @see org.openntf.domino.RichTextTable#setAlternateColor(lotus.domino.ColorObject)
 	 */
 	@Override
-	public void setAlternateColor(lotus.domino.ColorObject color) {
+	public void setAlternateColor(final lotus.domino.ColorObject color) {
 		try {
 			getDelegate().setAlternateColor((lotus.domino.ColorObject) toLotus(color));
 			markDirty();
@@ -287,7 +287,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	 * @see org.openntf.domino.RichTextTable#setColor(lotus.domino.ColorObject)
 	 */
 	@Override
-	public void setColor(lotus.domino.ColorObject color) {
+	public void setColor(final lotus.domino.ColorObject color) {
 		try {
 			getDelegate().setColor((lotus.domino.ColorObject) toLotus(color));
 			markDirty();
@@ -302,7 +302,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	 * @see org.openntf.domino.RichTextTable#setRightToLeft(boolean)
 	 */
 	@Override
-	public void setRightToLeft(boolean flag) {
+	public void setRightToLeft(final boolean flag) {
 		try {
 			getDelegate().setRightToLeft(flag);
 			markDirty();
@@ -318,7 +318,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setRowLabels(Vector labels) {
+	public void setRowLabels(final Vector labels) {
 		try {
 			java.util.Vector v = toDominoFriendly(labels, this);
 			getDelegate().setRowLabels(v);
@@ -335,7 +335,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	 * @see org.openntf.domino.RichTextTable#setStyle(int)
 	 */
 	@Override
-	public void setStyle(int tableStyle) {
+	public void setStyle(final int tableStyle) {
 		try {
 			getDelegate().setStyle(tableStyle);
 			markDirty();

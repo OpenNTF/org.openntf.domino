@@ -71,7 +71,7 @@ public interface Replication extends Base<lotus.domino.Replication>, lotus.domin
 	 * @see lotus.domino.Replication#getEntry(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public ReplicationEntry getEntry(String source, String destination);
+	public ReplicationEntry getEntry(final String source, final String destination);
 
 	/*
 	 * (non-Javadoc)
@@ -79,7 +79,7 @@ public interface Replication extends Base<lotus.domino.Replication>, lotus.domin
 	 * @see lotus.domino.Replication#getEntry(java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
-	public ReplicationEntry getEntry(String source, String destination, boolean createFlag);
+	public ReplicationEntry getEntry(final String source, final String destination, final boolean createFlag);
 
 	/**
 	 * Gets the parent.
@@ -158,7 +158,7 @@ public interface Replication extends Base<lotus.domino.Replication>, lotus.domin
 	 * @see lotus.domino.Replication#setAbstract(boolean)
 	 */
 	@Override
-	public void setAbstract(boolean flag);
+	public void setAbstract(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -166,7 +166,7 @@ public interface Replication extends Base<lotus.domino.Replication>, lotus.domin
 	 * @see lotus.domino.Replication#setCutoffDelete(boolean)
 	 */
 	@Override
-	public void setCutoffDelete(boolean flag);
+	public void setCutoffDelete(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -174,7 +174,7 @@ public interface Replication extends Base<lotus.domino.Replication>, lotus.domin
 	 * @see lotus.domino.Replication#setCutoffInterval(long)
 	 */
 	@Override
-	public void setCutoffInterval(long interval);
+	public void setCutoffInterval(final long interval);
 
 	/*
 	 * (non-Javadoc)
@@ -182,7 +182,7 @@ public interface Replication extends Base<lotus.domino.Replication>, lotus.domin
 	 * @see lotus.domino.Replication#setDisabled(boolean)
 	 */
 	@Override
-	public void setDisabled(boolean flag);
+	public void setDisabled(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -190,7 +190,7 @@ public interface Replication extends Base<lotus.domino.Replication>, lotus.domin
 	 * @see lotus.domino.Replication#setDontSendLocalSecurityUpdates(boolean)
 	 */
 	@Override
-	public void setDontSendLocalSecurityUpdates(boolean flag);
+	public void setDontSendLocalSecurityUpdates(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -198,7 +198,7 @@ public interface Replication extends Base<lotus.domino.Replication>, lotus.domin
 	 * @see lotus.domino.Replication#setIgnoreDeletes(boolean)
 	 */
 	@Override
-	public void setIgnoreDeletes(boolean flag);
+	public void setIgnoreDeletes(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -206,7 +206,7 @@ public interface Replication extends Base<lotus.domino.Replication>, lotus.domin
 	 * @see lotus.domino.Replication#setIgnoreDestDeletes(boolean)
 	 */
 	@Override
-	public void setIgnoreDestDeletes(boolean flag);
+	public void setIgnoreDestDeletes(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -214,6 +214,6 @@ public interface Replication extends Base<lotus.domino.Replication>, lotus.domin
 	 * @see lotus.domino.Replication#setPriority(int)
 	 */
 	@Override
-	public void setPriority(int priority);
+	public void setPriority(final int priority);
 
 }

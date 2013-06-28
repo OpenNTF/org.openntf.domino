@@ -38,7 +38,7 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 	 * @param parent
 	 *            the parent
 	 */
-	public DirectoryNavigator(lotus.domino.DirectoryNavigator delegate, org.openntf.domino.Base<?> parent) {
+	public DirectoryNavigator(final lotus.domino.DirectoryNavigator delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -108,7 +108,7 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 	 * @see org.openntf.domino.DirectoryNavigator#findNthMatch(long)
 	 */
 	@Override
-	public boolean findNthMatch(long n) {
+	public boolean findNthMatch(final long n) {
 		try {
 			return getDelegate().findNthMatch(n);
 		} catch (NotesException e) {
@@ -123,7 +123,7 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 	 * @see org.openntf.domino.DirectoryNavigator#findNthName(int)
 	 */
 	@Override
-	public long findNthName(int n) {
+	public long findNthName(final int n) {
 		try {
 			return getDelegate().findNthName(n);
 		} catch (NotesException e) {
@@ -243,7 +243,7 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 	 * @see org.openntf.domino.DirectoryNavigator#getNthItemValue(int)
 	 */
 	@Override
-	public Vector<Object> getNthItemValue(int n) {
+	public Vector<Object> getNthItemValue(final int n) {
 		try {
 			return Factory.wrapColumnValues(getDelegate().getNthItemValue(n), this.getAncestorSession());
 		} catch (NotesException e) {

@@ -11,18 +11,18 @@ public interface DatabaseDesign {
 
 	public AboutDocument getAboutDocument();
 
-	public ACL getACL();
+	public ACLNote getACL();
 
-	public Form getDefaultForm();
+	public DesignForm getDefaultForm();
 
-	public View getDefaultView();
+	public DesignView getDefaultView();
 
 	/**
 	 * @param name
 	 *            name of a file resource
 	 * @return a file resource
 	 */
-	public FileResource getFileResource(String name);
+	public FileResource getFileResource(final String name);
 
 	/**
 	 * @return collection of all file resources
@@ -34,13 +34,13 @@ public interface DatabaseDesign {
 	 *            name of a hidden file resource
 	 * @return a hidden file resource
 	 */
-	public FileResource getHiddenFileResource(String name);
+	public FileResource getHiddenFileResource(final String name);
 
 	public DesignCollection<FileResource> getHiddenFileResources();
 
-	public Form getForm(String name);
+	public DesignForm getForm(final String name);
 
-	public DesignCollection<Form> getForms();
+	public DesignCollection<DesignForm> getForms();
 
 	/**
 	 * @return the icon note of the database
@@ -51,7 +51,7 @@ public interface DatabaseDesign {
 
 	public UsingDocument getUsingDocument();
 
-	public View getView(String name);
+	public DesignView getView(final String name);
 
-	public DesignCollection<View> getViews();
+	public DesignCollection<DesignView> getViews();
 }

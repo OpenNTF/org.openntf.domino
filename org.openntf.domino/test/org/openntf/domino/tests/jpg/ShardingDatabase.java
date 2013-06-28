@@ -160,11 +160,11 @@ public class ShardingDatabase {
 	}
 
 	public interface ServerStrategy {
-		String getServerForHashChunk(String hashChunk);
+		String getServerForHashChunk(final String hashChunk);
 	}
 
 	public interface HashingStrategy {
-		String getHashForMap(Map<String, Object> doc);
+		String getHashForMap(final Map<String, Object> doc);
 	}
 
 	public class ShardingDocument {
@@ -174,11 +174,11 @@ public class ShardingDatabase {
 			doc_ = origDoc;
 		}
 
-		public Object getItemValue(String itemName) {
+		public Object getItemValue(final String itemName) {
 			return doc_.getItemValue(itemName);
 		}
 
-		public void replaceItemValue(String itemName, Object value) {
+		public void replaceItemValue(final String itemName, final Object value) {
 			doc_.replaceItemValue(itemName, value);
 		}
 
@@ -216,7 +216,7 @@ public class ShardingDatabase {
 		return recalcOnSave_;
 	}
 
-	public void setRecalcOnSave(boolean recalcOnSave) {
+	public void setRecalcOnSave(final boolean recalcOnSave) {
 		this.recalcOnSave_ = recalcOnSave;
 	}
 }

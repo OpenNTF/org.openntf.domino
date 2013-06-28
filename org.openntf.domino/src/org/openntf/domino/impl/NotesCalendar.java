@@ -37,7 +37,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @param parent
 	 *            the parent
 	 */
-	public NotesCalendar(lotus.domino.NotesCalendar delegate, org.openntf.domino.Base<?> parent) {
+	public NotesCalendar(final lotus.domino.NotesCalendar delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -45,7 +45,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @see org.openntf.domino.NotesCalendar#createEntry(java.lang.String)
 	 */
 	@Override
-	public NotesCalendarEntry createEntry(String iCalEntry) {
+	public NotesCalendarEntry createEntry(final String iCalEntry) {
 		try {
 			return Factory.fromLotus(getDelegate().createEntry(iCalEntry), NotesCalendarEntry.class, this);
 		} catch (NotesException e) {
@@ -58,7 +58,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @see org.openntf.domino.NotesCalendar#createEntry(java.lang.String, int)
 	 */
 	@Override
-	public NotesCalendarEntry createEntry(String iCalEntry, int flags) {
+	public NotesCalendarEntry createEntry(final String iCalEntry, final int flags) {
 		try {
 			return Factory.fromLotus(getDelegate().createEntry(iCalEntry, flags), NotesCalendarEntry.class, this);
 		} catch (NotesException e) {
@@ -84,7 +84,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @see org.openntf.domino.NotesCalendar#getEntries(lotus.domino.DateTime, lotus.domino.DateTime)
 	 */
 	@Override
-	public Vector<org.openntf.domino.NotesCalendarEntry> getEntries(lotus.domino.DateTime start, lotus.domino.DateTime end) {
+	public Vector<org.openntf.domino.NotesCalendarEntry> getEntries(final lotus.domino.DateTime start, final lotus.domino.DateTime end) {
 		try {
 			Vector<org.openntf.domino.NotesCalendarEntry> result;
 			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
@@ -104,8 +104,8 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @see org.openntf.domino.NotesCalendar#getEntries(lotus.domino.DateTime, lotus.domino.DateTime, int, int)
 	 */
 	@Override
-	public Vector<org.openntf.domino.NotesCalendarEntry> getEntries(lotus.domino.DateTime start, lotus.domino.DateTime end, int skipCount,
-			int maxReturn) {
+	public Vector<org.openntf.domino.NotesCalendarEntry> getEntries(final lotus.domino.DateTime start, final lotus.domino.DateTime end, final int skipCount,
+			final int maxReturn) {
 		try {
 			Vector<org.openntf.domino.NotesCalendarEntry> result;
 			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
@@ -138,7 +138,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @see org.openntf.domino.NotesCalendar#getEntry(java.lang.String)
 	 */
 	@Override
-	public NotesCalendarEntry getEntry(String uid) {
+	public NotesCalendarEntry getEntry(final String uid) {
 		try {
 			return Factory.fromLotus(getDelegate().getEntry(uid), NotesCalendarEntry.class, this);
 		} catch (NotesException e) {
@@ -151,7 +151,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @see org.openntf.domino.NotesCalendar#getEntryByNoteID(java.lang.String)
 	 */
 	@Override
-	public NotesCalendarEntry getEntryByNoteID(String noteid) {
+	public NotesCalendarEntry getEntryByNoteID(final String noteid) {
 		try {
 			return Factory.fromLotus(getDelegate().getEntryByNoteID(noteid), NotesCalendarEntry.class, this);
 		} catch (NotesException e) {
@@ -164,7 +164,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @see org.openntf.domino.NotesCalendar#getEntryByUNID(java.lang.String)
 	 */
 	@Override
-	public NotesCalendarEntry getEntryByUNID(String unid) {
+	public NotesCalendarEntry getEntryByUNID(final String unid) {
 		try {
 			return Factory.fromLotus(getDelegate().getEntryByUNID(unid), NotesCalendarEntry.class, this);
 		} catch (NotesException e) {
@@ -190,7 +190,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @see org.openntf.domino.NotesCalendar#getNewInvitations(lotus.domino.DateTime, lotus.domino.DateTime)
 	 */
 	@Override
-	public Vector<org.openntf.domino.NotesCalendarNotice> getNewInvitations(lotus.domino.DateTime start, lotus.domino.DateTime since) {
+	public Vector<org.openntf.domino.NotesCalendarNotice> getNewInvitations(final lotus.domino.DateTime start, final lotus.domino.DateTime since) {
 		try {
 			Vector<org.openntf.domino.NotesCalendarNotice> result;
 			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
@@ -209,7 +209,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @see org.openntf.domino.NotesCalendar#getNoticeByUNID(java.lang.String)
 	 */
 	@Override
-	public NotesCalendarNotice getNoticeByUNID(String unid) {
+	public NotesCalendarNotice getNoticeByUNID(final String unid) {
 		try {
 			return Factory.fromLotus(getDelegate().getNoticeByUNID(unid), NotesCalendarNotice.class, this);
 		} catch (NotesException e) {
@@ -282,7 +282,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @see org.openntf.domino.NotesCalendar#readRange(lotus.domino.DateTime, lotus.domino.DateTime)
 	 */
 	@Override
-	public String readRange(lotus.domino.DateTime start, lotus.domino.DateTime end) {
+	public String readRange(final lotus.domino.DateTime start, final lotus.domino.DateTime end) {
 		try {
 			String result;
 			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
@@ -301,7 +301,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @see org.openntf.domino.NotesCalendar#readRange(lotus.domino.DateTime, lotus.domino.DateTime, int, int)
 	 */
 	@Override
-	public String readRange(lotus.domino.DateTime start, lotus.domino.DateTime end, int skipCount, int maxRead) {
+	public String readRange(final lotus.domino.DateTime start, final lotus.domino.DateTime end, final int skipCount, final int maxRead) {
 		try {
 			String result;
 			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
@@ -320,7 +320,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @see org.openntf.domino.NotesCalendar#setAutoSendNotices(boolean)
 	 */
 	@Override
-	public void setAutoSendNotices(boolean flag) {
+	public void setAutoSendNotices(final boolean flag) {
 		try {
 			getDelegate().setAutoSendNotices(flag);
 		} catch (NotesException e) {
@@ -332,7 +332,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @see org.openntf.domino.NotesCalendar#setReadRangeMask1(int)
 	 */
 	@Override
-	public void setReadRangeMask1(int mask) {
+	public void setReadRangeMask1(final int mask) {
 		try {
 			getDelegate().setReadRangeMask1(mask);
 		} catch (NotesException e) {
@@ -344,7 +344,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @see org.openntf.domino.NotesCalendar#setReadRangeMask2(int)
 	 */
 	@Override
-	public void setReadRangeMask2(int mask) {
+	public void setReadRangeMask2(final int mask) {
 		try {
 			getDelegate().setReadRangeMask2(mask);
 		} catch (NotesException e) {
@@ -356,7 +356,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @see org.openntf.domino.NotesCalendar#setReadXLotusPropsOutputLevel(int)
 	 */
 	@Override
-	public void setReadXLotusPropsOutputLevel(int level) {
+	public void setReadXLotusPropsOutputLevel(final int level) {
 		try {
 			getDelegate().setReadXLotusPropsOutputLevel(level);
 		} catch (NotesException e) {

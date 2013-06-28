@@ -41,7 +41,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 * @param parent
 	 *            the parent
 	 */
-	public ViewEntry(lotus.domino.ViewEntry delegate, org.openntf.domino.Base<?> parent) {
+	public ViewEntry(final lotus.domino.ViewEntry delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -196,7 +196,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 * @see org.openntf.domino.ViewEntry#getPosition(char)
 	 */
 	@Override
-	public String getPosition(char separator) {
+	public String getPosition(final char separator) {
 		try {
 			return getDelegate().getPosition(separator);
 		} catch (NotesException e) {
@@ -226,7 +226,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 * @see org.openntf.domino.ViewEntry#getRead(java.lang.String)
 	 */
 	@Override
-	public boolean getRead(String userName) {
+	public boolean getRead(final String userName) {
 		try {
 			return getDelegate().getRead(userName);
 		} catch (NotesException e) {
@@ -361,7 +361,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 * @see org.openntf.domino.ViewEntry#setPreferJavaDates(boolean)
 	 */
 	@Override
-	public void setPreferJavaDates(boolean flag) {
+	public void setPreferJavaDates(final boolean flag) {
 		try {
 			getDelegate().setPreferJavaDates(flag);
 		} catch (NotesException e) {

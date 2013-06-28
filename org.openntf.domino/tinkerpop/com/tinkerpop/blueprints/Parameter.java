@@ -26,12 +26,13 @@ public class Parameter<K, V> implements Map.Entry<K, V> {
         return value;
     }
 
-    public V setValue(V value) {
+    public V setValue(final V value) {
         this.value = value;
         return value;
     }
 
-    public boolean equals(Object object) {
+    @Override
+	public boolean equals(final Object object) {
         if (object.getClass().equals(Parameter.class)) {
             final Object otherKey = ((Parameter) object).getKey();
             final Object otherValue = ((Parameter) object).getValue();
@@ -64,7 +65,8 @@ public class Parameter<K, V> implements Map.Entry<K, V> {
         return result;
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return "parameter[" + key + "," + value + "]";
     }
 }

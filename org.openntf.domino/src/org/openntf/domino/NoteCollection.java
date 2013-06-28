@@ -33,7 +33,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#add(lotus.domino.DocumentCollection)
 	 */
 	@Override
-	public void add(lotus.domino.DocumentCollection additionSpecifier);
+	public void add(final lotus.domino.DocumentCollection additionSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -41,7 +41,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#add(lotus.domino.Form)
 	 */
 	@Override
-	public void add(lotus.domino.Form additionSpecifier);
+	public void add(final lotus.domino.Form additionSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -49,7 +49,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#add(int)
 	 */
 	@Override
-	public void add(int additionSpecifier);
+	public void add(final int additionSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -57,7 +57,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#add(int[])
 	 */
 	@Override
-	public void add(int[] additionSpecifier);
+	public void add(final int[] additionSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -65,7 +65,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#add(lotus.domino.Agent)
 	 */
 	@Override
-	public void add(lotus.domino.Agent additionSpecifier);
+	public void add(final lotus.domino.Agent additionSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -73,7 +73,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#add(lotus.domino.Document)
 	 */
 	@Override
-	public void add(lotus.domino.Document additionSpecifier);
+	public void add(final lotus.domino.Document additionSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -81,7 +81,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#add(lotus.domino.NoteCollection)
 	 */
 	@Override
-	public void add(lotus.domino.NoteCollection additionSpecifier);
+	public void add(final lotus.domino.NoteCollection additionSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -89,7 +89,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#add(java.lang.String)
 	 */
 	@Override
-	public void add(String noteid);
+	public void add(final String noteid);
 
 	/*
 	 * (non-Javadoc)
@@ -97,7 +97,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#add(lotus.domino.View)
 	 */
 	@Override
-	public void add(lotus.domino.View additionSpecifier);
+	public void add(final lotus.domino.View additionSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -153,7 +153,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#getNextNoteID(java.lang.String)
 	 */
 	@Override
-	public String getNextNoteID(String noteId);
+	public String getNextNoteID(final String noteId);
 
 	/*
 	 * (non-Javadoc)
@@ -177,7 +177,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#getPrevNoteID(java.lang.String)
 	 */
 	@Override
-	public String getPrevNoteID(String noteId);
+	public String getPrevNoteID(final String noteId);
 
 	/*
 	 * (non-Javadoc)
@@ -425,7 +425,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#getUNID(java.lang.String)
 	 */
 	@Override
-	public String getUNID(String noteid);
+	public String getUNID(final String noteid);
 
 	/*
 	 * (non-Javadoc)
@@ -441,7 +441,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#intersect(lotus.domino.Document)
 	 */
 	@Override
-	public void intersect(lotus.domino.Document intersectionSpecifier);
+	public void intersect(final lotus.domino.Document intersectionSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -449,7 +449,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#intersect(lotus.domino.DocumentCollection)
 	 */
 	@Override
-	public void intersect(lotus.domino.DocumentCollection intersectionSpecifier);
+	public void intersect(final lotus.domino.DocumentCollection intersectionSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -457,7 +457,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#intersect(lotus.domino.Form)
 	 */
 	@Override
-	public void intersect(lotus.domino.Form intersectionSpecifier);
+	public void intersect(final lotus.domino.Form intersectionSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -465,7 +465,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#intersect(int)
 	 */
 	@Override
-	public void intersect(int intersectionSpecifier);
+	public void intersect(final int intersectionSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -473,7 +473,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#intersect(lotus.domino.Agent)
 	 */
 	@Override
-	public void intersect(lotus.domino.Agent intersectionSpecifier);
+	public void intersect(final lotus.domino.Agent intersectionSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -481,7 +481,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#intersect(lotus.domino.NoteCollection)
 	 */
 	@Override
-	public void intersect(lotus.domino.NoteCollection intersectionSpecifier);
+	public void intersect(final lotus.domino.NoteCollection intersectionSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -489,7 +489,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#intersect(java.lang.String)
 	 */
 	@Override
-	public void intersect(String noteid);
+	public void intersect(final String noteid);
 
 	/*
 	 * (non-Javadoc)
@@ -497,7 +497,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#intersect(lotus.domino.View)
 	 */
 	@Override
-	public void intersect(lotus.domino.View intersectionSpecifier);
+	public void intersect(final lotus.domino.View intersectionSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -505,7 +505,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#remove(lotus.domino.Document)
 	 */
 	@Override
-	public void remove(lotus.domino.Document removalSpecifier);
+	public void remove(final lotus.domino.Document removalSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -513,7 +513,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#remove(lotus.domino.DocumentCollection)
 	 */
 	@Override
-	public void remove(lotus.domino.DocumentCollection removalSpecifier);
+	public void remove(final lotus.domino.DocumentCollection removalSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -521,7 +521,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#remove(lotus.domino.Form)
 	 */
 	@Override
-	public void remove(lotus.domino.Form removalSpecifier);
+	public void remove(final lotus.domino.Form removalSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -529,7 +529,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#remove(int)
 	 */
 	@Override
-	public void remove(int removalSpecifier);
+	public void remove(final int removalSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -537,7 +537,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#remove(lotus.domino.Agent)
 	 */
 	@Override
-	public void remove(lotus.domino.Agent removalSpecifier);
+	public void remove(final lotus.domino.Agent removalSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -545,7 +545,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#remove(lotus.domino.NoteCollection)
 	 */
 	@Override
-	public void remove(lotus.domino.NoteCollection removalSpecifier);
+	public void remove(final lotus.domino.NoteCollection removalSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -553,7 +553,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#remove(java.lang.String)
 	 */
 	@Override
-	public void remove(String noteid);
+	public void remove(final String noteid);
 
 	/*
 	 * (non-Javadoc)
@@ -561,7 +561,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#remove(lotus.domino.View)
 	 */
 	@Override
-	public void remove(lotus.domino.View removalSpecifier);
+	public void remove(final lotus.domino.View removalSpecifier);
 
 	/*
 	 * (non-Javadoc)
@@ -569,7 +569,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#selectAllAdminNotes(boolean)
 	 */
 	@Override
-	public void selectAllAdminNotes(boolean selectorValue);
+	public void selectAllAdminNotes(final boolean selectorValue);
 
 	/*
 	 * (non-Javadoc)
@@ -577,7 +577,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#selectAllCodeElements(boolean)
 	 */
 	@Override
-	public void selectAllCodeElements(boolean selectorValue);
+	public void selectAllCodeElements(final boolean selectorValue);
 
 	/*
 	 * (non-Javadoc)
@@ -585,7 +585,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#selectAllDataNotes(boolean)
 	 */
 	@Override
-	public void selectAllDataNotes(boolean selectorValue);
+	public void selectAllDataNotes(final boolean selectorValue);
 
 	/*
 	 * (non-Javadoc)
@@ -593,7 +593,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#selectAllDesignElements(boolean)
 	 */
 	@Override
-	public void selectAllDesignElements(boolean selectorValue);
+	public void selectAllDesignElements(final boolean selectorValue);
 
 	/*
 	 * (non-Javadoc)
@@ -601,7 +601,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#selectAllFormatElements(boolean)
 	 */
 	@Override
-	public void selectAllFormatElements(boolean selectorValue);
+	public void selectAllFormatElements(final boolean selectorValue);
 
 	/*
 	 * (non-Javadoc)
@@ -609,7 +609,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#selectAllIndexElements(boolean)
 	 */
 	@Override
-	public void selectAllIndexElements(boolean selectorValue);
+	public void selectAllIndexElements(final boolean selectorValue);
 
 	/*
 	 * (non-Javadoc)
@@ -617,28 +617,28 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#selectAllNotes(boolean)
 	 */
 	@Override
-	public void selectAllNotes(boolean selectorValue);
+	public void selectAllNotes(final boolean selectorValue);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.NoteCollection#setSelectAcl(boolean)
 	 */
-	public void setSelectAcl(boolean flag);
+	public void setSelectAcl(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.NoteCollection#setSelectActions(boolean)
 	 */
-	public void setSelectActions(boolean flag);
+	public void setSelectActions(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.NoteCollection#setSelectAgents(boolean)
 	 */
-	public void setSelectAgents(boolean flag);
+	public void setSelectAgents(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -646,7 +646,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectDatabaseScript(boolean)
 	 */
 	@Override
-	public void setSelectDatabaseScript(boolean flag);
+	public void setSelectDatabaseScript(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -654,7 +654,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectDataConnections(boolean)
 	 */
 	@Override
-	public void setSelectDataConnections(boolean flag);
+	public void setSelectDataConnections(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -662,7 +662,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectDocuments(boolean)
 	 */
 	@Override
-	public void setSelectDocuments(boolean flag);
+	public void setSelectDocuments(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -670,7 +670,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectFolders(boolean)
 	 */
 	@Override
-	public void setSelectFolders(boolean flag);
+	public void setSelectFolders(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -678,7 +678,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectForms(boolean)
 	 */
 	@Override
-	public void setSelectForms(boolean flag);
+	public void setSelectForms(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -686,7 +686,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectFramesets(boolean)
 	 */
 	@Override
-	public void setSelectFramesets(boolean flag);
+	public void setSelectFramesets(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -694,7 +694,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectHelpAbout(boolean)
 	 */
 	@Override
-	public void setSelectHelpAbout(boolean flag);
+	public void setSelectHelpAbout(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -702,7 +702,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectHelpIndex(boolean)
 	 */
 	@Override
-	public void setSelectHelpIndex(boolean flag);
+	public void setSelectHelpIndex(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -710,7 +710,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectHelpUsing(boolean)
 	 */
 	@Override
-	public void setSelectHelpUsing(boolean flag);
+	public void setSelectHelpUsing(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -718,7 +718,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectIcon(boolean)
 	 */
 	@Override
-	public void setSelectIcon(boolean flag);
+	public void setSelectIcon(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -726,7 +726,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectImageResources(boolean)
 	 */
 	@Override
-	public void setSelectImageResources(boolean flag);
+	public void setSelectImageResources(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -734,7 +734,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectionFormula(java.lang.String)
 	 */
 	@Override
-	public void setSelectionFormula(String formula);
+	public void setSelectionFormula(final String formula);
 
 	/*
 	 * (non-Javadoc)
@@ -742,7 +742,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectJavaResources(boolean)
 	 */
 	@Override
-	public void setSelectJavaResources(boolean flag);
+	public void setSelectJavaResources(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -750,7 +750,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectMiscCodeElements(boolean)
 	 */
 	@Override
-	public void setSelectMiscCodeElements(boolean flag);
+	public void setSelectMiscCodeElements(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -758,7 +758,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectMiscFormatElements(boolean)
 	 */
 	@Override
-	public void setSelectMiscFormatElements(boolean flag);
+	public void setSelectMiscFormatElements(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -766,7 +766,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectMiscIndexElements(boolean)
 	 */
 	@Override
-	public void setSelectMiscIndexElements(boolean flag);
+	public void setSelectMiscIndexElements(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -774,7 +774,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectNavigators(boolean)
 	 */
 	@Override
-	public void setSelectNavigators(boolean flag);
+	public void setSelectNavigators(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -782,7 +782,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectOutlines(boolean)
 	 */
 	@Override
-	public void setSelectOutlines(boolean flag);
+	public void setSelectOutlines(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -790,7 +790,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectPages(boolean)
 	 */
 	@Override
-	public void setSelectPages(boolean flag);
+	public void setSelectPages(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -798,7 +798,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectProfiles(boolean)
 	 */
 	@Override
-	public void setSelectProfiles(boolean flag);
+	public void setSelectProfiles(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -806,7 +806,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectReplicationFormulas(boolean)
 	 */
 	@Override
-	public void setSelectReplicationFormulas(boolean flag);
+	public void setSelectReplicationFormulas(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -814,7 +814,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectScriptLibraries(boolean)
 	 */
 	@Override
-	public void setSelectScriptLibraries(boolean flag);
+	public void setSelectScriptLibraries(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -822,7 +822,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectSharedFields(boolean)
 	 */
 	@Override
-	public void setSelectSharedFields(boolean flag);
+	public void setSelectSharedFields(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -830,7 +830,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectStylesheetResources(boolean)
 	 */
 	@Override
-	public void setSelectStylesheetResources(boolean flag);
+	public void setSelectStylesheetResources(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -838,7 +838,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectSubforms(boolean)
 	 */
 	@Override
-	public void setSelectSubforms(boolean flag);
+	public void setSelectSubforms(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -846,7 +846,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSelectViews(boolean)
 	 */
 	@Override
-	public void setSelectViews(boolean flag);
+	public void setSelectViews(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -854,7 +854,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * @see lotus.domino.NoteCollection#setSinceTime(lotus.domino.DateTime)
 	 */
 	@Override
-	public void setSinceTime(lotus.domino.DateTime sinceTime);
+	public void setSinceTime(final lotus.domino.DateTime sinceTime);
 
 	/**
 	 * To string.

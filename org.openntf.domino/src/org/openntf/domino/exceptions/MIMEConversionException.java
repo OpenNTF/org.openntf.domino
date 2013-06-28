@@ -16,7 +16,7 @@ public class MIMEConversionException extends RuntimeException {
 	/**
 	 * @param arg0
 	 */
-	public MIMEConversionException(String arg0, Throwable t) {
+	public MIMEConversionException(final String arg0, final Throwable t) {
 		super(arg0, t);
 	}
 

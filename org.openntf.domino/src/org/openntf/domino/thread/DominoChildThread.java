@@ -48,7 +48,7 @@ public class DominoChildThread extends DominoThread {
 	 * @param runnable
 	 *            the runnable
 	 */
-	public DominoChildThread(Runnable runnable) {
+	public DominoChildThread(final Runnable runnable) {
 		super(runnable);
 		// TODO Auto-generated constructor stub
 	}
@@ -61,7 +61,7 @@ public class DominoChildThread extends DominoThread {
 	 * @param threadName
 	 *            the thread name
 	 */
-	public DominoChildThread(Runnable runnable, String threadName) {
+	public DominoChildThread(final Runnable runnable, final String threadName) {
 		super(runnable, threadName);
 		// TODO Auto-generated constructor stub
 	}
@@ -75,7 +75,7 @@ public class DominoChildThread extends DominoThread {
 	 * @param bases
 	 *            the new context
 	 */
-	public void setContext(lotus.domino.Base... bases) {
+	public void setContext(final lotus.domino.Base... bases) {
 		Base.lock(bases);
 	}
 
@@ -85,7 +85,7 @@ public class DominoChildThread extends DominoThread {
 	 * @param context
 	 *            the new context
 	 */
-	public void setContext(Map<String, lotus.domino.Base> context) {
+	public void setContext(final Map<String, lotus.domino.Base> context) {
 		System.out.println("Setting up context variables...");
 
 		for (Map.Entry<String, lotus.domino.Base> entry : context.entrySet()) {
@@ -101,7 +101,7 @@ public class DominoChildThread extends DominoThread {
 	 *            the name
 	 * @return the context var
 	 */
-	public lotus.domino.Base getContextVar(String name) {
+	public lotus.domino.Base getContextVar(final String name) {
 		System.out.println("Looking for context variable " + name);
 
 		if (!contextVariables_.containsKey(name))

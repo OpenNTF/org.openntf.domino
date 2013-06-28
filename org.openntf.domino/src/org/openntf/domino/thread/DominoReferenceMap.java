@@ -26,20 +26,20 @@ public class DominoReferenceMap {
 	private int[] values = new int[1024];
 	private int lastKey = keys.length / 2 - 1;
 
-	public int get(int key) {
+	public int get(final int key) {
 		int hash = key & lastKey;
 		if (keys[hash] == key)
 			return values[hash];
 		return NO_VALUE;
 	}
 
-	public int incrementAndGet(int key) {
+	public int incrementAndGet(final int key) {
 		int cur = get(key);
 		put(key, ++cur);
 		return cur;
 	}
 
-	public int decrementAndGet(int key) {
+	public int decrementAndGet(final int key) {
 		int cur = get(key);
 		if (cur == NO_VALUE) {
 			put(key, 0);
@@ -50,7 +50,7 @@ public class DominoReferenceMap {
 		}
 	}
 
-	public void put(int key, int value) {
+	public void put(final int key, final int value) {
 		int hash = key & lastKey;
 		if (keys[hash] != NO_VALUE && keys[hash] != key) {
 			resize();

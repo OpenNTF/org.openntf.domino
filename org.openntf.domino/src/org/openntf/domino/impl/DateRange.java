@@ -40,7 +40,7 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	 * @param parent
 	 *            the parent
 	 */
-	public DateRange(lotus.domino.DateRange delegate, org.openntf.domino.Base<?> parent) {
+	public DateRange(final lotus.domino.DateRange delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
 	}
 
@@ -109,7 +109,7 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	 * @see org.openntf.domino.DateRange#setEndDateTime(lotus.domino.DateTime)
 	 */
 	@Override
-	public void setEndDateTime(lotus.domino.DateTime end) {
+	public void setEndDateTime(final lotus.domino.DateTime end) {
 		try {
 			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(end);
 			getDelegate().setEndDateTime(dt);
@@ -127,7 +127,7 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	 * @see org.openntf.domino.DateRange#setStartDateTime(lotus.domino.DateTime)
 	 */
 	@Override
-	public void setStartDateTime(lotus.domino.DateTime start) {
+	public void setStartDateTime(final lotus.domino.DateTime start) {
 		try {
 			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(start);
 			getDelegate().setStartDateTime(dt);
@@ -144,7 +144,7 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	 * @see org.openntf.domino.DateRange#setText(java.lang.String)
 	 */
 	@Override
-	public void setText(String text) {
+	public void setText(final String text) {
 		try {
 			getDelegate().setText(text);
 		} catch (NotesException e) {
@@ -169,7 +169,7 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	 * @see org.openntf.domino.ext.DateRange#contains(org.openntf.domino.DateTime)
 	 */
 	@Override
-	public boolean contains(org.openntf.domino.DateTime dt) {
+	public boolean contains(final org.openntf.domino.DateTime dt) {
 		Calendar dtCal = dt.toJavaCal();
 		Calendar startCal = dt.toJavaCal();
 		Calendar endCal = dt.toJavaCal();
@@ -212,7 +212,7 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	 * @see org.openntf.domino.ext.DateRange#contains(java.util.Date)
 	 */
 	@Override
-	public boolean contains(Date date) {
+	public boolean contains(final Date date) {
 		Date start = this.getStartDateTime().toJavaDate();
 		Date end = this.getEndDateTime().toJavaDate();
 		return (date.equals(start) || date.after(start)) && (date.equals(end) || date.before(end));

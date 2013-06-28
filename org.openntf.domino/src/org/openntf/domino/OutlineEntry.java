@@ -213,7 +213,7 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	 * @see lotus.domino.OutlineEntry#setAction(java.lang.String)
 	 */
 	@Override
-	public boolean setAction(String action);
+	public boolean setAction(final String action);
 
 	/*
 	 * (non-Javadoc)
@@ -221,7 +221,7 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	 * @see lotus.domino.OutlineEntry#setAlias(java.lang.String)
 	 */
 	@Override
-	public void setAlias(String alias);
+	public void setAlias(final String alias);
 
 	/*
 	 * (non-Javadoc)
@@ -229,7 +229,7 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	 * @see lotus.domino.OutlineEntry#setFrameText(java.lang.String)
 	 */
 	@Override
-	public void setFrameText(String frameText);
+	public void setFrameText(final String frameText);
 
 	/*
 	 * (non-Javadoc)
@@ -237,7 +237,7 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	 * @see lotus.domino.OutlineEntry#setHidden(boolean)
 	 */
 	@Override
-	public void setHidden(boolean flag);
+	public void setHidden(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -245,7 +245,7 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	 * @see lotus.domino.OutlineEntry#setHiddenFromNotes(boolean)
 	 */
 	@Override
-	public void setHiddenFromNotes(boolean flag);
+	public void setHiddenFromNotes(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -253,7 +253,7 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	 * @see lotus.domino.OutlineEntry#setHiddenFromWeb(boolean)
 	 */
 	@Override
-	public void setHiddenFromWeb(boolean flag);
+	public void setHiddenFromWeb(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -261,7 +261,7 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	 * @see lotus.domino.OutlineEntry#setHideFormula(java.lang.String)
 	 */
 	@Override
-	public void setHideFormula(String formula);
+	public void setHideFormula(final String formula);
 
 	/*
 	 * (non-Javadoc)
@@ -269,7 +269,7 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	 * @see lotus.domino.OutlineEntry#setImagesText(java.lang.String)
 	 */
 	@Override
-	public void setImagesText(String imagesText);
+	public void setImagesText(final String imagesText);
 
 	/*
 	 * (non-Javadoc)
@@ -277,7 +277,7 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	 * @see lotus.domino.OutlineEntry#setKeepSelectionFocus(boolean)
 	 */
 	@Override
-	public void setKeepSelectionFocus(boolean flag);
+	public void setKeepSelectionFocus(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -285,7 +285,7 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	 * @see lotus.domino.OutlineEntry#setLabel(java.lang.String)
 	 */
 	@Override
-	public void setLabel(String label);
+	public void setLabel(final String label);
 
 	/*
 	 * (non-Javadoc)
@@ -293,7 +293,7 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	 * @see lotus.domino.OutlineEntry#setNamedElement(lotus.domino.Database, java.lang.String, int)
 	 */
 	@Override
-	public boolean setNamedElement(lotus.domino.Database db, String elementName, int entryClass);
+	public boolean setNamedElement(final lotus.domino.Database db, final String elementName, final int entryClass);
 
 	/*
 	 * (non-Javadoc)
@@ -301,7 +301,7 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	 * @see lotus.domino.OutlineEntry#setNoteLink(lotus.domino.Database)
 	 */
 	@Override
-	public boolean setNoteLink(lotus.domino.Database db);
+	public boolean setNoteLink(final lotus.domino.Database db);
 
 	/*
 	 * (non-Javadoc)
@@ -309,7 +309,7 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	 * @see lotus.domino.OutlineEntry#setNoteLink(lotus.domino.Document)
 	 */
 	@Override
-	public boolean setNoteLink(lotus.domino.Document doc);
+	public boolean setNoteLink(final lotus.domino.Document doc);
 
 	/*
 	 * (non-Javadoc)
@@ -317,7 +317,7 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	 * @see lotus.domino.OutlineEntry#setNoteLink(lotus.domino.View)
 	 */
 	@Override
-	public boolean setNoteLink(lotus.domino.View view);
+	public boolean setNoteLink(final lotus.domino.View view);
 
 	/*
 	 * (non-Javadoc)
@@ -325,7 +325,7 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	 * @see lotus.domino.OutlineEntry#setURL(java.lang.String)
 	 */
 	@Override
-	public boolean setURL(String url);
+	public boolean setURL(final String url);
 
 	/*
 	 * (non-Javadoc)
@@ -333,5 +333,5 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	 * @see lotus.domino.OutlineEntry#setUseHideFormula(boolean)
 	 */
 	@Override
-	public void setUseHideFormula(boolean flag);
+	public void setUseHideFormula(final boolean flag);
 }

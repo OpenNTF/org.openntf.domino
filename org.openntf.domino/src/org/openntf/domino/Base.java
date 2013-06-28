@@ -45,5 +45,5 @@ public interface Base<D extends lotus.domino.Base> extends lotus.domino.Base, or
 	 */
 	@Override
 	@Deprecated
-	public void recycle(Vector arg0) throws NotesException;
+	public void recycle(final Vector arg0) throws NotesException;
 }

@@ -36,7 +36,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @param parent
 	 *            the parent
 	 */
-	public ACLEntry(lotus.domino.ACLEntry delegate, org.openntf.domino.ACL parent) {
+	public ACLEntry(final lotus.domino.ACLEntry delegate, final org.openntf.domino.ACL parent) {
 		super(delegate, parent);
 	}
 
@@ -46,7 +46,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.ACLEntry#disableRole(java.lang.String)
 	 */
 	@Override
-	public void disableRole(String role) {
+	public void disableRole(final String role) {
 		try {
 			getDelegate().disableRole(role);
 		} catch (NotesException e) {
@@ -60,7 +60,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.ACLEntry#enableRole(java.lang.String)
 	 */
 	@Override
-	public void enableRole(String role) {
+	public void enableRole(final String role) {
 		try {
 			getDelegate().enableRole(role);
 		} catch (NotesException e) {
@@ -355,7 +355,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.ACLEntry#isRoleEnabled(java.lang.String)
 	 */
 	@Override
-	public boolean isRoleEnabled(String role) {
+	public boolean isRoleEnabled(final String role) {
 		try {
 			return getDelegate().isRoleEnabled(role);
 		} catch (NotesException e) {
@@ -399,7 +399,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.ACLEntry#setAdminReaderAuthor(boolean)
 	 */
 	@Override
-	public void setAdminReaderAuthor(boolean flag) {
+	public void setAdminReaderAuthor(final boolean flag) {
 		try {
 			getDelegate().setAdminReaderAuthor(flag);
 		} catch (NotesException e) {
@@ -413,7 +413,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.ACLEntry#setAdminServer(boolean)
 	 */
 	@Override
-	public void setAdminServer(boolean flag) {
+	public void setAdminServer(final boolean flag) {
 		try {
 			getDelegate().setAdminServer(flag);
 		} catch (NotesException e) {
@@ -427,7 +427,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.ACLEntry#setCanCreateDocuments(boolean)
 	 */
 	@Override
-	public void setCanCreateDocuments(boolean flag) {
+	public void setCanCreateDocuments(final boolean flag) {
 		try {
 			getDelegate().setCanCreateDocuments(flag);
 		} catch (NotesException e) {
@@ -441,7 +441,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.ACLEntry#setCanCreateLSOrJavaAgent(boolean)
 	 */
 	@Override
-	public void setCanCreateLSOrJavaAgent(boolean flag) {
+	public void setCanCreateLSOrJavaAgent(final boolean flag) {
 		try {
 			getDelegate().setCanCreateLSOrJavaAgent(flag);
 		} catch (NotesException e) {
@@ -455,7 +455,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.ACLEntry#setCanCreatePersonalAgent(boolean)
 	 */
 	@Override
-	public void setCanCreatePersonalAgent(boolean flag) {
+	public void setCanCreatePersonalAgent(final boolean flag) {
 		try {
 			getDelegate().setCanCreatePersonalAgent(flag);
 		} catch (NotesException e) {
@@ -469,7 +469,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.ACLEntry#setCanCreatePersonalFolder(boolean)
 	 */
 	@Override
-	public void setCanCreatePersonalFolder(boolean flag) {
+	public void setCanCreatePersonalFolder(final boolean flag) {
 		try {
 			getDelegate().setCanCreatePersonalFolder(flag);
 		} catch (NotesException e) {
@@ -483,7 +483,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.ACLEntry#setCanCreateSharedFolder(boolean)
 	 */
 	@Override
-	public void setCanCreateSharedFolder(boolean flag) {
+	public void setCanCreateSharedFolder(final boolean flag) {
 		try {
 			getDelegate().setCanCreateSharedFolder(flag);
 		} catch (NotesException e) {
@@ -497,7 +497,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.ACLEntry#setCanDeleteDocuments(boolean)
 	 */
 	@Override
-	public void setCanDeleteDocuments(boolean flag) {
+	public void setCanDeleteDocuments(final boolean flag) {
 		try {
 			getDelegate().setCanDeleteDocuments(flag);
 		} catch (NotesException e) {
@@ -511,7 +511,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.ACLEntry#setCanReplicateOrCopyDocuments(boolean)
 	 */
 	@Override
-	public void setCanReplicateOrCopyDocuments(boolean flag) {
+	public void setCanReplicateOrCopyDocuments(final boolean flag) {
 		try {
 			getDelegate().setCanReplicateOrCopyDocuments(flag);
 		} catch (NotesException e) {
@@ -525,7 +525,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.ACLEntry#setGroup(boolean)
 	 */
 	@Override
-	public void setGroup(boolean flag) {
+	public void setGroup(final boolean flag) {
 		try {
 			getDelegate().setGroup(flag);
 		} catch (NotesException e) {
@@ -539,7 +539,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.ACLEntry#setLevel(int)
 	 */
 	@Override
-	public void setLevel(int level) {
+	public void setLevel(final int level) {
 		try {
 			getDelegate().setLevel(level);
 		} catch (NotesException e) {
@@ -551,7 +551,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.ACLEntry#setLevel(org.openntf.domino.ACL.Level)
 	 */
 	@Override
-	public void setLevel(ACL.Level level) {
+	public void setLevel(final ACL.Level level) {
 		this.setLevel(level.getValue());
 	}
 
@@ -561,7 +561,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.ACLEntry#setName(java.lang.String)
 	 */
 	@Override
-	public void setName(String name) {
+	public void setName(final String name) {
 		try {
 			getDelegate().setName(name);
 		} catch (NotesException e) {
@@ -575,7 +575,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.ACLEntry#setName(lotus.domino.Name)
 	 */
 	@Override
-	public void setName(lotus.domino.Name n) {
+	public void setName(final lotus.domino.Name n) {
 		try {
 			getDelegate().setName((lotus.domino.Name) toLotus(n));
 		} catch (NotesException e) {
@@ -589,7 +589,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.ACLEntry#setPerson(boolean)
 	 */
 	@Override
-	public void setPerson(boolean flag) {
+	public void setPerson(final boolean flag) {
 		try {
 			getDelegate().setPerson(flag);
 		} catch (NotesException e) {
@@ -603,7 +603,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.ACLEntry#setPublicReader(boolean)
 	 */
 	@Override
-	public void setPublicReader(boolean flag) {
+	public void setPublicReader(final boolean flag) {
 		try {
 			getDelegate().setPublicReader(flag);
 		} catch (NotesException e) {
@@ -617,7 +617,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.ACLEntry#setPublicWriter(boolean)
 	 */
 	@Override
-	public void setPublicWriter(boolean flag) {
+	public void setPublicWriter(final boolean flag) {
 		try {
 			getDelegate().setPublicWriter(flag);
 		} catch (NotesException e) {
@@ -631,7 +631,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.ACLEntry#setServer(boolean)
 	 */
 	@Override
-	public void setServer(boolean flag) {
+	public void setServer(final boolean flag) {
 		try {
 			getDelegate().setServer(flag);
 		} catch (NotesException e) {
@@ -645,7 +645,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @see org.openntf.domino.ACLEntry#setUserType(int)
 	 */
 	@Override
-	public void setUserType(int tp) {
+	public void setUserType(final int tp) {
 		try {
 			getDelegate().setUserType(tp);
 		} catch (NotesException e) {

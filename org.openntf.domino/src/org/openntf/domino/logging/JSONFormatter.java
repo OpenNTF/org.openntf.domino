@@ -53,7 +53,7 @@ public class JSONFormatter extends Formatter {
 	 * @param uTC_Format
 	 *            the new uT c_ format
 	 */
-	public void setUTC_Format(boolean uTC_Format) {
+	public void setUTC_Format(final boolean uTC_Format) {
 		UTC_Format = uTC_Format;
 	}
 
@@ -63,7 +63,7 @@ public class JSONFormatter extends Formatter {
 	 * @see java.util.logging.Formatter#format(java.util.logging.LogRecord)
 	 */
 	@Override
-	public String format(LogRecord record) {
+	public String format(final LogRecord record) {
 		try {
 			startObject();
 
@@ -102,7 +102,7 @@ public class JSONFormatter extends Formatter {
 	 * @param record
 	 *            the record
 	 */
-	private void formatThrowable(LogRecord record) {
+	private void formatThrowable(final LogRecord record) {
 		try {
 			startProperty("exception");
 			startArray();
@@ -138,7 +138,7 @@ public class JSONFormatter extends Formatter {
 	 * @see java.util.logging.Formatter#getHead(java.util.logging.Handler)
 	 */
 	@Override
-	public String getHead(Handler h) {
+	public String getHead(final Handler h) {
 		return "{\"id\": \"0001\",\"records\":";
 
 	}
@@ -149,7 +149,7 @@ public class JSONFormatter extends Formatter {
 	 * @see java.util.logging.Formatter#getTail(java.util.logging.Handler)
 	 */
 	@Override
-	public String getTail(Handler h) {
+	public String getTail(final Handler h) {
 		return "";
 	}
 
@@ -239,7 +239,7 @@ public class JSONFormatter extends Formatter {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public void startProperty(String propertyName) throws IOException {
+	public void startProperty(final String propertyName) throws IOException {
 		if (!first[objectLevels]) {
 			out(',');
 		} else {
@@ -270,7 +270,7 @@ public class JSONFormatter extends Formatter {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public void out(char paramChar) throws IOException {
+	public void out(final char paramChar) throws IOException {
 		_builder.append(paramChar);
 	}
 
@@ -282,7 +282,7 @@ public class JSONFormatter extends Formatter {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public void out(String paramString) throws IOException {
+	public void out(final String paramString) throws IOException {
 		_builder.append(paramString);
 	}
 
@@ -294,7 +294,7 @@ public class JSONFormatter extends Formatter {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public void out(int paramint) throws IOException {
+	public void out(final int paramint) throws IOException {
 		_builder.append(paramint);
 	}
 
@@ -306,7 +306,7 @@ public class JSONFormatter extends Formatter {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public void out(long paramlong) throws IOException {
+	public void out(final long paramlong) throws IOException {
 		_builder.append(paramlong);
 	}
 
@@ -325,7 +325,7 @@ public class JSONFormatter extends Formatter {
 	 * @param paramInt
 	 *            the new indent level
 	 */
-	public void setIndentLevel(int paramInt) {
+	public void setIndentLevel(final int paramInt) {
 		this.indentLevel = paramInt;
 	}
 

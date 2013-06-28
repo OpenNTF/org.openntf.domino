@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.Document;
 
-public class FileResource extends AbstractDesignBase implements org.openntf.domino.design.FileResource {
+public class FileResource extends AbstractDesignBaseNamed implements org.openntf.domino.design.FileResource {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(FileResource.class.getName());
 
@@ -76,7 +76,8 @@ public class FileResource extends AbstractDesignBase implements org.openntf.domi
 
 	@Override
 	public boolean isReadOnly() {
-		return getFlags().contains("&");
+		// return getFlags().contains("&");
+		return false;
 	}
 
 }

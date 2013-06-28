@@ -46,7 +46,7 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 	 * @param parent
 	 *            the parent
 	 */
-	public EmbeddedObject(lotus.domino.EmbeddedObject delegate, org.openntf.domino.Base<?> parent) {
+	public EmbeddedObject(final lotus.domino.EmbeddedObject delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -55,7 +55,7 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 	 * 
 	 * @see org.openntf.domino.EmbeddedObject#activate(boolean)
 	 */
-	public int activate(boolean paramBoolean) {
+	public int activate(final boolean paramBoolean) {
 		try {
 			return getDelegate().activate(paramBoolean);
 		} catch (NotesException e) {
@@ -74,7 +74,7 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 	 * 
 	 * @see org.openntf.domino.EmbeddedObject#doVerb(java.lang.String)
 	 */
-	public void doVerb(String paramString) {
+	public void doVerb(final String paramString) {
 		try {
 			getDelegate().doVerb(paramString);
 		} catch (NotesException e) {
@@ -88,7 +88,7 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 	 * 
 	 * @see org.openntf.domino.EmbeddedObject#extractFile(java.lang.String)
 	 */
-	public void extractFile(String paramString) {
+	public void extractFile(final String paramString) {
 		try {
 			getDelegate().extractFile(paramString);
 		} catch (NotesException e) {
@@ -307,7 +307,7 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 	 * 
 	 * @see org.openntf.domino.EmbeddedObject#parseXML(boolean)
 	 */
-	public org.w3c.dom.Document parseXML(boolean paramBoolean) throws IOException {
+	public org.w3c.dom.Document parseXML(final boolean paramBoolean) throws IOException {
 		try {
 			return getDelegate().parseXML(paramBoolean);
 		} catch (NotesException e) {
@@ -322,7 +322,7 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 	 * 
 	 * @see org.openntf.domino.EmbeddedObject#transformXML(java.lang.Object, lotus.domino.XSLTResultTarget)
 	 */
-	public void transformXML(Object paramObject, XSLTResultTarget paramXSLTResultTarget) {
+	public void transformXML(final Object paramObject, final XSLTResultTarget paramXSLTResultTarget) {
 		try {
 			getDelegate().transformXML(paramObject, paramXSLTResultTarget);
 		} catch (NotesException e) {

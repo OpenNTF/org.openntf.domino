@@ -40,7 +40,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	 * @param parent
 	 *            the parent
 	 */
-	public AgentContext(lotus.domino.AgentContext delegate, org.openntf.domino.Base<?> parent) {
+	public AgentContext(final lotus.domino.AgentContext delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
 
@@ -177,7 +177,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	 * @see org.openntf.domino.AgentContext#unprocessedFTSearch(java.lang.String, int)
 	 */
 	@Override
-	public DocumentCollection unprocessedFTSearch(String query, int maxDocs) {
+	public DocumentCollection unprocessedFTSearch(final String query, final int maxDocs) {
 		try {
 			return Factory.fromLotus(getDelegate().unprocessedFTSearch(query, maxDocs), DocumentCollection.class, this);
 		} catch (NotesException e) {
@@ -192,7 +192,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	 * @see org.openntf.domino.AgentContext#unprocessedFTSearch(java.lang.String, int, int, int)
 	 */
 	@Override
-	public DocumentCollection unprocessedFTSearch(String query, int maxDocs, int sortOpt, int otherOpt) {
+	public DocumentCollection unprocessedFTSearch(final String query, final int maxDocs, final int sortOpt, final int otherOpt) {
 		try {
 			return Factory.fromLotus(getDelegate().unprocessedFTSearch(query, maxDocs, sortOpt, otherOpt), DocumentCollection.class, this);
 		} catch (NotesException e) {
@@ -207,7 +207,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	 * @see org.openntf.domino.AgentContext#unprocessedFTSearchRange(java.lang.String, int, int)
 	 */
 	@Override
-	public DocumentCollection unprocessedFTSearchRange(String query, int maxDocs, int sortOpt) {
+	public DocumentCollection unprocessedFTSearchRange(final String query, final int maxDocs, final int sortOpt) {
 		try {
 			return Factory.fromLotus(getDelegate().unprocessedFTSearchRange(query, maxDocs, sortOpt), DocumentCollection.class, this);
 		} catch (NotesException e) {
@@ -222,7 +222,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	 * @see org.openntf.domino.AgentContext#unprocessedFTSearchRange(java.lang.String, int, int, int, int)
 	 */
 	@Override
-	public DocumentCollection unprocessedFTSearchRange(String query, int maxDocs, int sortOpt, int otherOpt, int start) {
+	public DocumentCollection unprocessedFTSearchRange(final String query, final int maxDocs, final int sortOpt, final int otherOpt, final int start) {
 		try {
 			return Factory.fromLotus(getDelegate().unprocessedFTSearchRange(query, maxDocs, sortOpt, otherOpt, start),
 					DocumentCollection.class, this);
@@ -238,7 +238,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	 * @see org.openntf.domino.AgentContext#unprocessedSearch(java.lang.String, lotus.domino.DateTime, int)
 	 */
 	@Override
-	public DocumentCollection unprocessedSearch(String formula, lotus.domino.DateTime limit, int maxDocs) {
+	public DocumentCollection unprocessedSearch(final String formula, final lotus.domino.DateTime limit, final int maxDocs) {
 		try {
 			DocumentCollection result;
 			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(limit);
@@ -257,7 +257,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	 * @see org.openntf.domino.AgentContext#updateProcessedDoc(lotus.domino.Document)
 	 */
 	@Override
-	public void updateProcessedDoc(lotus.domino.Document doc) {
+	public void updateProcessedDoc(final lotus.domino.Document doc) {
 		try {
 			getDelegate().updateProcessedDoc((lotus.domino.Document) toLotus(doc));
 		} catch (NotesException e) {

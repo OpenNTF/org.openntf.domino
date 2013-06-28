@@ -29,7 +29,7 @@ import com.ibm.icu.text.SimpleDateFormat;
 public enum TypeUtils {
 	;
 
-	public static <T> T itemValueToClass(Document doc, String itemName, Class<?> T) {
+	public static <T> T itemValueToClass(final Document doc, final String itemName, final Class<?> T) {
 		String noteid = doc.getNoteID();
 		boolean hasItem = doc.hasItem(itemName);
 		if (!hasItem) {
@@ -55,7 +55,7 @@ public enum TypeUtils {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static <T> T itemValueToClass(Item item, Class<?> T) {
+	public static <T> T itemValueToClass(final Item item, final Class<?> T) {
 		// Object o = item.getAncestorDocument().getItemValue(item.getName());
 		Vector v = item.getValues();
 		Session session = Factory.getSession(item);
@@ -74,7 +74,7 @@ public enum TypeUtils {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T> T vectorToClass(Vector v, Class<?> T, Session session) {
+	public static <T> T vectorToClass(final Vector v, final Class<?> T, final Session session) {
 		Object result = null;
 		Class<?> CType = null;
 		if (T.isArray()) {
@@ -134,7 +134,7 @@ public enum TypeUtils {
 		return (T) result;
 	}
 
-	public static Boolean[] toBooleans(Collection<Object> vector) {
+	public static Boolean[] toBooleans(final Collection<Object> vector) {
 		if (vector == null)
 			return null;
 		Boolean[] bools = new Boolean[vector.size()];
@@ -145,7 +145,7 @@ public enum TypeUtils {
 		return bools;
 	}
 
-	public static boolean toBoolean(Object value) {
+	public static boolean toBoolean(final Object value) {
 		if (value instanceof String) {
 			char[] c = ((String) value).toCharArray();
 			if (c.length > 1 || c.length == 0) {
@@ -164,7 +164,7 @@ public enum TypeUtils {
 		}
 	}
 
-	public static int toInt(Object value) {
+	public static int toInt(final Object value) {
 		if (value instanceof Integer) {
 			return ((Integer) value).intValue();
 		} else if (value instanceof Double) {
@@ -174,7 +174,7 @@ public enum TypeUtils {
 		}
 	}
 
-	public static double toDouble(Object value) {
+	public static double toDouble(final Object value) {
 		if (value instanceof Integer) {
 			return ((Integer) value).doubleValue();
 		} else if (value instanceof Double) {
@@ -184,7 +184,7 @@ public enum TypeUtils {
 		}
 	}
 
-	public static long toLong(Object value) {
+	public static long toLong(final Object value) {
 		if (value instanceof Integer) {
 			return ((Integer) value).longValue();
 		} else if (value instanceof Double) {
@@ -194,7 +194,7 @@ public enum TypeUtils {
 		}
 	}
 
-	public static short toShort(Object value) {
+	public static short toShort(final Object value) {
 		if (value instanceof Integer) {
 			return ((Integer) value).shortValue();
 		} else if (value instanceof Double) {
@@ -205,7 +205,7 @@ public enum TypeUtils {
 
 	}
 
-	public static float toFloat(Object value) {
+	public static float toFloat(final Object value) {
 		if (value instanceof Integer) {
 			return ((Integer) value).floatValue();
 		} else if (value instanceof Double) {
@@ -216,7 +216,7 @@ public enum TypeUtils {
 
 	}
 
-	public static Object toPrimitive(Vector<Object> values, Class<?> ctype) {
+	public static Object toPrimitive(final Vector<Object> values, final Class<?> ctype) {
 		if (ctype.isPrimitive()) {
 			throw new DataNotCompatibleException(ctype.getName() + " is not a primitive type.");
 		}
@@ -247,7 +247,7 @@ public enum TypeUtils {
 		throw new DataNotCompatibleException("");
 	}
 
-	public static String join(Collection<Object> values, String separator) {
+	public static String join(final Collection<Object> values, final String separator) {
 		if (values == null)
 			return "";
 		StringBuilder sb = new StringBuilder();
@@ -260,11 +260,11 @@ public enum TypeUtils {
 		return sb.toString();
 	}
 
-	public static String join(Collection<Object> values) {
+	public static String join(final Collection<Object> values) {
 		return join(values, ", ");
 	}
 
-	public static Object toPrimitiveArray(Vector<Object> values, Class<?> ctype) throws DataNotCompatibleException {
+	public static Object toPrimitiveArray(final Vector<Object> values, final Class<?> ctype) throws DataNotCompatibleException {
 		Object result = null;
 		int size = values.size();
 		if (ctype == Boolean.TYPE) {
@@ -345,7 +345,7 @@ public enum TypeUtils {
 		}
 	}
 
-	public static Date[] toDates(Collection<Object> vector) throws DataNotCompatibleException {
+	public static Date[] toDates(final Collection<Object> vector) throws DataNotCompatibleException {
 		if (vector == null)
 			return null;
 
@@ -357,7 +357,7 @@ public enum TypeUtils {
 		return result;
 	}
 
-	public static org.openntf.domino.DateTime[] toDateTimes(Collection<Object> vector, org.openntf.domino.Session session)
+	public static org.openntf.domino.DateTime[] toDateTimes(final Collection<Object> vector, final org.openntf.domino.Session session)
 			throws DataNotCompatibleException {
 		if (vector == null)
 			return null;
@@ -370,7 +370,7 @@ public enum TypeUtils {
 		return result;
 	}
 
-	public static org.openntf.domino.Name[] toNames(Collection<Object> vector, org.openntf.domino.Session session)
+	public static org.openntf.domino.Name[] toNames(final Collection<Object> vector, final org.openntf.domino.Session session)
 			throws DataNotCompatibleException {
 		if (vector == null)
 			return null;
@@ -383,7 +383,7 @@ public enum TypeUtils {
 		return result;
 	}
 
-	public static String[] toStrings(Collection<Object> vector) throws DataNotCompatibleException {
+	public static String[] toStrings(final Collection<Object> vector) throws DataNotCompatibleException {
 		if (vector == null)
 			return null;
 		String[] strings = new String[vector.size()];

@@ -28,16 +28,16 @@ public class DominoVertex extends DominoElement implements Vertex {
 	private transient boolean outDirty_ = false;
 	private Set<String> outEdges_;
 
-	public DominoVertex(DominoGraph parent, org.openntf.domino.Document doc) {
+	public DominoVertex(final DominoGraph parent, final org.openntf.domino.Document doc) {
 		super(parent, doc);
 	}
 
 	@Override
-	public Edge addEdge(String label, Vertex vertex) {
+	public Edge addEdge(final String label, final Vertex vertex) {
 		return parent_.addEdge(null, this, vertex, label);
 	}
 
-	void addInEdge(Edge edge) {
+	void addInEdge(final Edge edge) {
 		if (!getInEdges().contains((String) edge.getId())) {
 			getParent().startTransaction();
 			inDirty_ = true;
@@ -46,7 +46,7 @@ public class DominoVertex extends DominoElement implements Vertex {
 		// setProperty(DominoVertex.IN_NAME, inEdges_);
 	}
 
-	void addOutEdge(Edge edge) {
+	void addOutEdge(final Edge edge) {
 		if (!getOutEdges().contains((String) edge.getId())) {
 			getParent().startTransaction();
 			outDirty_ = true;
@@ -62,7 +62,7 @@ public class DominoVertex extends DominoElement implements Vertex {
 	}
 
 	@Override
-	public Iterable<Edge> getEdges(Direction direction, String... labels) {
+	public Iterable<Edge> getEdges(final Direction direction, final String... labels) {
 		if (direction == Direction.IN) {
 			return getParent().getEdgesFromIds(getInEdges(), labels);
 		} else if (direction == Direction.OUT) {
@@ -112,7 +112,7 @@ public class DominoVertex extends DominoElement implements Vertex {
 	}
 
 	@Override
-	public Iterable<Vertex> getVertices(Direction direction, String... labels) {
+	public Iterable<Vertex> getVertices(final Direction direction, final String... labels) {
 		if (direction == Direction.BOTH) {
 			List<Iterable<Vertex>> list = new ArrayList<Iterable<Vertex>>();
 			list.add(new VerticesFromEdgesIterable(this, Direction.IN, labels));
@@ -128,7 +128,7 @@ public class DominoVertex extends DominoElement implements Vertex {
 		return new DefaultVertexQuery(this);
 	}
 
-	public void removeEdge(Edge edge) {
+	public void removeEdge(final Edge edge) {
 		getParent().startTransaction();
 		getInEdges().remove(edge.getId());
 		inDirty_ = true;

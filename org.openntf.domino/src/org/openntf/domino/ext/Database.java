@@ -4,10 +4,12 @@
 package org.openntf.domino.ext;
 
 import java.io.Serializable;
-import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.openntf.domino.ACL;
+import org.openntf.domino.Document;
+import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Database.CompactOption;
 import org.openntf.domino.Database.DBOption;
 import org.openntf.domino.Database.FTDomainSearchOption;
@@ -19,8 +21,6 @@ import org.openntf.domino.Database.FTSortOption;
 import org.openntf.domino.Database.FixupOption;
 import org.openntf.domino.Database.ModifiedDocClass;
 import org.openntf.domino.Database.SignDocType;
-import org.openntf.domino.Document;
-import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.transactions.DatabaseTransaction;
 
@@ -30,9 +30,9 @@ import org.openntf.domino.transactions.DatabaseTransaction;
  */
 public interface Database {
 
-	public int compactWithOptions(EnumSet<CompactOption> options);
+	public int compactWithOptions(final Set<CompactOption> options);
 
-	public int compactWithOptions(EnumSet<CompactOption> options, String spaceThreshold);
+	public int compactWithOptions(final Set<CompactOption> options, final String spaceThreshold);
 
 	/*
 	 * (non-Javadoc)
@@ -40,25 +40,25 @@ public interface Database {
 	 * 
 	 * @see java.util.Map#containsKey(java.lang.Object)
 	 */
-	public boolean containsKey(Object key);
+	public boolean containsKey(final Object key);
 
 	/**
 	 * @param itemValues
 	 *            Map of fields and values with which to initialize a document
 	 * @return the newly created document
 	 */
-	public Document createDocument(Map<String, Object> itemValues);
+	public Document createDocument(final Map<String, Object> itemValues);
 
 	/**
 	 * @param keyValuePairs
 	 *            an object of key value pairs with which to initialize a document
 	 * @return the newly created document
 	 */
-	public Document createDocument(Object... keyValuePairs);
+	public Document createDocument(final Object... keyValuePairs);
 
-	public void createFTIndex(EnumSet<FTIndexOption> options, boolean recreate);
+	public void createFTIndex(final Set<FTIndexOption> options, final boolean recreate);
 
-	public void fixup(EnumSet<FixupOption> options);
+	public void fixup(final Set<FixupOption> options);
 
 	/**
 	 * @param query
@@ -77,8 +77,8 @@ public interface Database {
 	 *            the entry form
 	 * @return a document
 	 */
-	public Document FTDomainSearch(String query, int maxDocs, FTDomainSortOption sortOpt, EnumSet<FTDomainSearchOption> otherOpt,
-			int start, int count, String entryForm);
+	public Document FTDomainSearch(final String query, final int maxDocs, final FTDomainSortOption sortOpt, final Set<FTDomainSearchOption> otherOpt, final int start,
+			final int count, final String entryForm);
 
 	/**
 	 * @param query
@@ -91,7 +91,7 @@ public interface Database {
 	 *            the other option
 	 * @return a DocumentCollection
 	 */
-	public DocumentCollection FTSearch(String query, int maxDocs, FTSortOption sortOpt, EnumSet<FTSearchOption> otherOpt);
+	public DocumentCollection FTSearch(final String query, final int maxDocs, final FTSortOption sortOpt, final Set<FTSearchOption> otherOpt);
 
 	/**
 	 * @param query
@@ -106,7 +106,7 @@ public interface Database {
 	 *            the start
 	 * @return a DocumentCollection
 	 */
-	public DocumentCollection FTSearchRange(String query, int maxDocs, FTSortOption sortOpt, EnumSet<FTSearchOption> otherOpt, int start);
+	public DocumentCollection FTSearchRange(final String query, final int maxDocs, final FTSortOption sortOpt, final Set<FTSearchOption> otherOpt, final int start);
 
 	/*
 	 * (non-Javadoc)
@@ -114,7 +114,7 @@ public interface Database {
 	 * 
 	 * @see java.util.Map#get(java.lang.Object)
 	 */
-	public Document get(Object key);
+	public Document get(final Object key);
 
 	/**
 	 * @return A DatabaseDesign object representing the various design elements of this database.
@@ -133,7 +133,7 @@ public interface Database {
 	 * @return The Document corresponding to the key, or null if no matching document exists.
 	 * @since org.openntf.domino 1.0.0
 	 */
-	public Document getDocumentByKey(Serializable key);
+	public Document getDocumentByKey(final Serializable key);
 
 	/**
 	 * Retrieves a document by a String key, allowing for creation of a new document if no match was found.
@@ -149,11 +149,11 @@ public interface Database {
 	 * @return The Document corresponding to the key, or null if no matching document exists and createOnFail is false.
 	 * @since org.openntf.domino 1.0.0
 	 */
-	public Document getDocumentByKey(Serializable key, boolean createOnFail);
+	public Document getDocumentByKey(final Serializable key, final boolean createOnFail);
 
-	public DocumentCollection getModifiedDocuments(lotus.domino.DateTime since, ModifiedDocClass noteClass);
+	public DocumentCollection getModifiedDocuments(final lotus.domino.DateTime since, final ModifiedDocClass noteClass);
 
-	public boolean getOption(DBOption optionName);
+	public boolean getOption(final DBOption optionName);
 
 	/**
 	 * @param name
@@ -161,9 +161,9 @@ public interface Database {
 	 * @param level
 	 *            ACL.Level for access
 	 */
-	public void grantAccess(String name, ACL.Level level);
+	public void grantAccess(final String name, final ACL.Level level);
 
-	public void setFTIndexFrequency(FTIndexFrequency frequency);
+	public void setFTIndexFrequency(final FTIndexFrequency frequency);
 
 	/**
 	 * @param optionName
@@ -171,15 +171,15 @@ public interface Database {
 	 * @param flag
 	 *            the flag
 	 */
-	public void setOption(DBOption optionName, boolean flag);
+	public void setOption(final DBOption optionName, final boolean flag);
 
 	/**
 	 * @param documentType
 	 *            sign document type
 	 */
-	public void sign(SignDocType documentType);
+	public void sign(final SignDocType documentType);
 
-	public void sign(SignDocType documentType, boolean existingSigsOnly);
+	public void sign(final SignDocType documentType, final boolean existingSigsOnly);
 
 	/**
 	 * @param documentType
@@ -189,7 +189,7 @@ public interface Database {
 	 * @param name
 	 *            the name
 	 */
-	public void sign(SignDocType documentType, boolean existingSigsOnly, String name);
+	public void sign(final SignDocType documentType, final boolean existingSigsOnly, final String name);
 
 	/**
 	 * @param documentType
@@ -201,7 +201,7 @@ public interface Database {
 	 * @param nameIsNoteid
 	 *            whether or not the name is a note id
 	 */
-	public void sign(SignDocType documentType, boolean existingSigsOnly, String name, boolean nameIsNoteid);
+	public void sign(final SignDocType documentType, final boolean existingSigsOnly, final String name, final boolean nameIsNoteid);
 
 	/**
 	 * @return Database transaction

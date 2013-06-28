@@ -31,7 +31,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#addCertifierToAddressBook(java.lang.String)
 	 */
 	@Override
-	public boolean addCertifierToAddressBook(String idFile);
+	public boolean addCertifierToAddressBook(final String idFile);
 
 	/*
 	 * (non-Javadoc)
@@ -39,7 +39,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#addCertifierToAddressBook(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean addCertifierToAddressBook(String idFile, String password);
+	public boolean addCertifierToAddressBook(final String idFile, final String password);
 
 	/*
 	 * (non-Javadoc)
@@ -47,7 +47,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#addCertifierToAddressBook(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean addCertifierToAddressBook(String idFile, String password, String location, String comment);
+	public boolean addCertifierToAddressBook(final String idFile, final String password, final String location, final String comment);
 
 	/*
 	 * (non-Javadoc)
@@ -55,7 +55,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#addServerToAddressBook(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean addServerToAddressBook(String idFile, String server, String domain);
+	public boolean addServerToAddressBook(final String idFile, final String server, final String domain);
 
 	/*
 	 * (non-Javadoc)
@@ -63,7 +63,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#addServerToAddressBook(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean addServerToAddressBook(String idFile, String server, String domain, String userPassword);
+	public boolean addServerToAddressBook(final String idFile, final String server, final String domain, final String userPassword);
 
 	/*
 	 * (non-Javadoc)
@@ -72,8 +72,8 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean addServerToAddressBook(String idFile, String server, String domain, String userPassword, String network,
-			String adminName, String title, String location, String comment);
+	public boolean addServerToAddressBook(final String idFile, final String server, final String domain, final String userPassword, final String network,
+			final String adminName, final String title, final String location, final String comment);
 
 	/*
 	 * (non-Javadoc)
@@ -81,7 +81,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#addUserProfile(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void addUserProfile(String userName, String profile);
+	public void addUserProfile(final String userName, final String profile);
 
 	/*
 	 * (non-Javadoc)
@@ -89,7 +89,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#addUserToAddressBook(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean addUserToAddressBook(String idFile, String fullName, String lastName);
+	public boolean addUserToAddressBook(final String idFile, final String fullName, final String lastName);
 
 	/*
 	 * (non-Javadoc)
@@ -97,7 +97,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#addUserToAddressBook(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean addUserToAddressBook(String idFile, String fullName, String lastName, String userPassword);
+	public boolean addUserToAddressBook(final String idFile, final String fullName, final String lastName, final String userPassword);
 
 	/*
 	 * (non-Javadoc)
@@ -106,8 +106,8 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean addUserToAddressBook(String idFile, String fullName, String lastName, String userPassword, String firstName,
-			String middleName, String mailServer, String mailFilePath, String forwardingAddress, String location, String comment);
+	public boolean addUserToAddressBook(final String idFile, final String fullName, final String lastName, final String userPassword, final String firstName,
+			final String middleName, final String mailServer, final String mailFilePath, final String forwardingAddress, final String location, final String comment);
 
 	/*
 	 * (non-Javadoc)
@@ -115,7 +115,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#crossCertify(java.lang.String)
 	 */
 	@Override
-	public boolean crossCertify(String idFile);
+	public boolean crossCertify(final String idFile);
 
 	/*
 	 * (non-Javadoc)
@@ -123,7 +123,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#crossCertify(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean crossCertify(String idFile, String certPassword);
+	public boolean crossCertify(final String idFile, final String certPassword);
 
 	/*
 	 * (non-Javadoc)
@@ -131,7 +131,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#crossCertify(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean crossCertify(String idFile, String certPassword, String comment);
+	public boolean crossCertify(final String idFile, final String certPassword, final String comment);
 
 	/*
 	 * (non-Javadoc)
@@ -139,7 +139,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#deleteIDOnServer(java.lang.String, boolean)
 	 */
 	@Override
-	public void deleteIDOnServer(String userName, boolean isServerID);
+	public void deleteIDOnServer(final String userName, final boolean isServerID);
 
 	/*
 	 * (non-Javadoc)
@@ -211,7 +211,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#getIDFromServer(java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
-	public void getIDFromServer(String userName, String filePath, boolean isServerID);
+	public void getIDFromServer(final String userName, final String filePath, final boolean isServerID);
 
 	/*
 	 * (non-Javadoc)
@@ -405,8 +405,8 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void getUserInfo(String userName, StringBuffer mailServer, StringBuffer mailFile, StringBuffer mailDomain,
-			StringBuffer mailSystem, Vector profile);
+	public void getUserInfo(final String userName, final StringBuffer mailServer, final StringBuffer mailFile, final StringBuffer mailDomain,
+			final StringBuffer mailSystem, final Vector profile);
 
 	/*
 	 * (non-Javadoc)
@@ -478,7 +478,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#recertify(java.lang.String)
 	 */
 	@Override
-	public boolean recertify(String idFile);
+	public boolean recertify(final String idFile);
 
 	/*
 	 * (non-Javadoc)
@@ -486,7 +486,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#recertify(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean recertify(String idFile, String certPassword);
+	public boolean recertify(final String idFile, final String certPassword);
 
 	/*
 	 * (non-Javadoc)
@@ -494,7 +494,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#recertify(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean recertify(String idFile, String certPassword, String comment);
+	public boolean recertify(final String idFile, final String certPassword, final String comment);
 
 	/*
 	 * (non-Javadoc)
@@ -502,7 +502,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#registerNewCertifier(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean registerNewCertifier(String org, String idFile, String certPassword);
+	public boolean registerNewCertifier(final String org, final String idFile, final String certPassword);
 
 	/*
 	 * (non-Javadoc)
@@ -510,7 +510,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#registerNewCertifier(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean registerNewCertifier(String org, String idFile, String certPassword, String country);
+	public boolean registerNewCertifier(final String org, final String idFile, final String certPassword, final String country);
 
 	/*
 	 * (non-Javadoc)
@@ -518,7 +518,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#registerNewServer(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean registerNewServer(String server, String idFile, String domain, String password);
+	public boolean registerNewServer(final String server, final String idFile, final String domain, final String password);
 
 	/*
 	 * (non-Javadoc)
@@ -527,7 +527,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * java.lang.String)
 	 */
 	@Override
-	public boolean registerNewServer(String server, String idFile, String domain, String serverPassword, String certPassword);
+	public boolean registerNewServer(final String server, final String idFile, final String domain, final String serverPassword, final String certPassword);
 
 	/*
 	 * (non-Javadoc)
@@ -536,8 +536,8 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean registerNewServer(String server, String idFile, String domain, String serverPassword, String certPassword,
-			String location, String comment, String network, String adminName, String title);
+	public boolean registerNewServer(final String server, final String idFile, final String domain, final String serverPassword, final String certPassword,
+			final String location, final String comment, final String network, final String adminName, final String title);
 
 	/*
 	 * (non-Javadoc)
@@ -545,7 +545,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#registerNewUser(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean registerNewUser(String lastName, String idFile, String server);
+	public boolean registerNewUser(final String lastName, final String idFile, final String server);
 
 	/*
 	 * (non-Javadoc)
@@ -554,7 +554,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean registerNewUser(String lastName, String idFile, String server, String firstName, String middleName, String certPassword);
+	public boolean registerNewUser(final String lastName, final String idFile, final String server, final String firstName, final String middleName, final String certPassword);
 
 	/*
 	 * (non-Javadoc)
@@ -563,8 +563,8 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean registerNewUser(String lastName, String idFile, String server, String firstName, String middleName, String certPassword,
-			String location, String comment, String mailDBPath, String forward, String userPassword);
+	public boolean registerNewUser(final String lastName, final String idFile, final String server, final String firstName, final String middleName, final String certPassword,
+			final String location, final String comment, final String mailDBPath, final String forward, final String userPassword);
 
 	/*
 	 * (non-Javadoc)
@@ -574,8 +574,8 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean registerNewUser(String lastName, String idFile, String server, String firstName, String middleName, String certPassword,
-			String location, String comment, String mailDBPath, String forward, String userPassword, String altName, String altNameLang);
+	public boolean registerNewUser(final String lastName, final String idFile, final String server, final String firstName, final String middleName, final String certPassword,
+			final String location, final String comment, final String mailDBPath, final String forward, final String userPassword, final String altName, final String altNameLang);
 
 	/*
 	 * (non-Javadoc)
@@ -584,7 +584,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setAltOrgUnit(Vector names);
+	public void setAltOrgUnit(final Vector names);
 
 	/*
 	 * (non-Javadoc)
@@ -593,7 +593,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setAltOrgUnitLang(Vector languages);
+	public void setAltOrgUnitLang(final Vector languages);
 
 	/*
 	 * (non-Javadoc)
@@ -601,7 +601,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setCertifierIDFile(java.lang.String)
 	 */
 	@Override
-	public void setCertifierIDFile(String idFile);
+	public void setCertifierIDFile(final String idFile);
 
 	/*
 	 * (non-Javadoc)
@@ -609,7 +609,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setCertifierName(java.lang.String)
 	 */
 	@Override
-	public void setCertifierName(String name);
+	public void setCertifierName(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -617,7 +617,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setCreateMailDb(boolean)
 	 */
 	@Override
-	public void setCreateMailDb(boolean flag);
+	public void setCreateMailDb(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -625,7 +625,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setEnforceUniqueShortName(boolean)
 	 */
 	@Override
-	public void setEnforceUniqueShortName(boolean flag);
+	public void setEnforceUniqueShortName(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -633,7 +633,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setExpiration(lotus.domino.DateTime)
 	 */
 	@Override
-	public void setExpiration(lotus.domino.DateTime expiration);
+	public void setExpiration(final lotus.domino.DateTime expiration);
 
 	/*
 	 * (non-Javadoc)
@@ -641,7 +641,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setForeignDN(java.lang.String)
 	 */
 	@Override
-	public void setForeignDN(String dn);
+	public void setForeignDN(final String dn);
 
 	/*
 	 * (non-Javadoc)
@@ -650,7 +650,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setGroupList(Vector groups);
+	public void setGroupList(final Vector groups);
 
 	/*
 	 * (non-Javadoc)
@@ -658,7 +658,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setIDType(int)
 	 */
 	@Override
-	public void setIDType(int type);
+	public void setIDType(final int type);
 
 	/*
 	 * (non-Javadoc)
@@ -666,7 +666,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setMailACLManager(java.lang.String)
 	 */
 	@Override
-	public void setMailACLManager(String name);
+	public void setMailACLManager(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -674,7 +674,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setMailCreateFTIndex(boolean)
 	 */
 	@Override
-	public void setMailCreateFTIndex(boolean flag);
+	public void setMailCreateFTIndex(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -682,7 +682,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setMailInternetAddress(java.lang.String)
 	 */
 	@Override
-	public void setMailInternetAddress(String address);
+	public void setMailInternetAddress(final String address);
 
 	/*
 	 * (non-Javadoc)
@@ -690,7 +690,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setMailOwnerAccess(int)
 	 */
 	@Override
-	public void setMailOwnerAccess(int access);
+	public void setMailOwnerAccess(final int access);
 
 	/*
 	 * (non-Javadoc)
@@ -698,7 +698,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setMailQuotaSizeLimit(int)
 	 */
 	@Override
-	public void setMailQuotaSizeLimit(int limit);
+	public void setMailQuotaSizeLimit(final int limit);
 
 	/*
 	 * (non-Javadoc)
@@ -706,7 +706,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setMailQuotaWarningThreshold(int)
 	 */
 	@Override
-	public void setMailQuotaWarningThreshold(int threshold);
+	public void setMailQuotaWarningThreshold(final int threshold);
 
 	/*
 	 * (non-Javadoc)
@@ -715,7 +715,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setMailReplicaServers(Vector servers);
+	public void setMailReplicaServers(final Vector servers);
 
 	/*
 	 * (non-Javadoc)
@@ -723,7 +723,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setMailSystem(int)
 	 */
 	@Override
-	public void setMailSystem(int system);
+	public void setMailSystem(final int system);
 
 	/*
 	 * (non-Javadoc)
@@ -731,7 +731,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setMailTemplateName(java.lang.String)
 	 */
 	@Override
-	public void setMailTemplateName(String name);
+	public void setMailTemplateName(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -739,7 +739,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setMinPasswordLength(int)
 	 */
 	@Override
-	public void setMinPasswordLength(int length);
+	public void setMinPasswordLength(final int length);
 
 	/*
 	 * (non-Javadoc)
@@ -747,7 +747,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setNoIDFile(boolean)
 	 */
 	@Override
-	public void setNoIDFile(boolean flag);
+	public void setNoIDFile(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -755,7 +755,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setNorthAmerican(boolean)
 	 */
 	@Override
-	public void setNorthAmerican(boolean flag);
+	public void setNorthAmerican(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -763,7 +763,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setOrgUnit(java.lang.String)
 	 */
 	@Override
-	public void setOrgUnit(String unit);
+	public void setOrgUnit(final String unit);
 
 	/*
 	 * (non-Javadoc)
@@ -771,7 +771,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setPolicyName(java.lang.String)
 	 */
 	@Override
-	public void setPolicyName(String name);
+	public void setPolicyName(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -779,7 +779,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setPublicKeySize(int)
 	 */
 	@Override
-	public void setPublicKeySize(int size);
+	public void setPublicKeySize(final int size);
 
 	/*
 	 * (non-Javadoc)
@@ -787,7 +787,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setRegistrationLog(java.lang.String)
 	 */
 	@Override
-	public void setRegistrationLog(String name);
+	public void setRegistrationLog(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -795,7 +795,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setRegistrationServer(java.lang.String)
 	 */
 	@Override
-	public void setRegistrationServer(String server);
+	public void setRegistrationServer(final String server);
 
 	/*
 	 * (non-Javadoc)
@@ -803,7 +803,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setRoamingCleanupPeriod(int)
 	 */
 	@Override
-	public void setRoamingCleanupPeriod(int period);
+	public void setRoamingCleanupPeriod(final int period);
 
 	/*
 	 * (non-Javadoc)
@@ -811,7 +811,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setRoamingCleanupSetting(int)
 	 */
 	@Override
-	public void setRoamingCleanupSetting(int setting);
+	public void setRoamingCleanupSetting(final int setting);
 
 	/*
 	 * (non-Javadoc)
@@ -819,7 +819,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setRoamingServer(java.lang.String)
 	 */
 	@Override
-	public void setRoamingServer(String server);
+	public void setRoamingServer(final String server);
 
 	/*
 	 * (non-Javadoc)
@@ -827,7 +827,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setRoamingSubdir(java.lang.String)
 	 */
 	@Override
-	public void setRoamingSubdir(String dirPath);
+	public void setRoamingSubdir(final String dirPath);
 
 	/*
 	 * (non-Javadoc)
@@ -835,7 +835,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setRoamingUser(boolean)
 	 */
 	@Override
-	public void setRoamingUser(boolean flag);
+	public void setRoamingUser(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -843,7 +843,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setShortName(java.lang.String)
 	 */
 	@Override
-	public void setShortName(String shortName);
+	public void setShortName(final String shortName);
 
 	/*
 	 * (non-Javadoc)
@@ -851,7 +851,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setStoreIDInAddressBook(boolean)
 	 */
 	@Override
-	public void setStoreIDInAddressBook(boolean flag);
+	public void setStoreIDInAddressBook(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -859,7 +859,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setStoreIDInMailfile(boolean)
 	 */
 	@Override
-	public void setStoreIDInMailfile(boolean flag);
+	public void setStoreIDInMailfile(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -867,7 +867,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setSynchInternetPassword(boolean)
 	 */
 	@Override
-	public void setSynchInternetPassword(boolean flag);
+	public void setSynchInternetPassword(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -875,7 +875,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setUpdateAddressBook(boolean)
 	 */
 	@Override
-	public void setUpdateAddressBook(boolean flag);
+	public void setUpdateAddressBook(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -883,7 +883,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#setUseCertificateAuthority(boolean)
 	 */
 	@Override
-	public void setUseCertificateAuthority(boolean flag);
+	public void setUseCertificateAuthority(final boolean flag);
 
 	/*
 	 * (non-Javadoc)
@@ -891,5 +891,5 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#switchToID(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String switchToID(String idFile, String userPassword);
+	public String switchToID(final String idFile, final String userPassword);
 }

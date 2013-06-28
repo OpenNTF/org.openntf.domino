@@ -41,7 +41,7 @@ public class NoteIterator extends AbstractDominoIterator<String> {
 	 * @param collection
 	 *            the collection
 	 */
-	public NoteIterator(NoteCollection collection) {
+	public NoteIterator(final NoteCollection collection) {
 		super(collection);
 		setIdArray(getCollectionIds(collection));
 	}
@@ -53,7 +53,7 @@ public class NoteIterator extends AbstractDominoIterator<String> {
 	 *            the nc
 	 * @return the collection ids
 	 */
-	protected int[] getCollectionIds(NoteCollection nc) {
+	protected int[] getCollectionIds(final NoteCollection nc) {
 		int[] result = null;
 		if (nc != null) {
 			try {
@@ -131,7 +131,7 @@ public class NoteIterator extends AbstractDominoIterator<String> {
 	 * @param idArray
 	 *            the new id array
 	 */
-	protected void setIdArray(int[] idArray) {
+	protected void setIdArray(final int[] idArray) {
 		idArray_ = idArray;
 	}
 
@@ -141,7 +141,7 @@ public class NoteIterator extends AbstractDominoIterator<String> {
 	 * @param index
 	 *            the new index
 	 */
-	protected void setIndex(int index) {
+	protected void setIndex(final int index) {
 		index_ = index;
 	}
 }

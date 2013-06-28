@@ -18,7 +18,7 @@ public interface KeyIndexableGraph extends Graph {
      * @param elementClass the element class that the index is for
      * @param <T>          the element class specification
      */
-    public <T extends Element> void dropKeyIndex(String key, Class<T> elementClass);
+    public <T extends Element> void dropKeyIndex(final String key, final Class<T> elementClass);
 
     /**
      * Create an automatic indexing structure for indexing provided key for element class.
@@ -28,7 +28,7 @@ public interface KeyIndexableGraph extends Graph {
      * @param indexParameters a collection of parameters for the underlying index implementation
      * @param <T>             the element class specification
      */
-    public <T extends Element> void createKeyIndex(String key, Class<T> elementClass, final Parameter... indexParameters);
+    public <T extends Element> void createKeyIndex(final String key, final Class<T> elementClass, final Parameter... indexParameters);
 
     /**
      * Return all the index keys associated with a particular element class.
@@ -37,5 +37,5 @@ public interface KeyIndexableGraph extends Graph {
      * @param <T>          the element class specification
      * @return the indexed keys as a Set
      */
-    public <T extends Element> Set<String> getIndexedKeys(Class<T> elementClass);
+    public <T extends Element> Set<String> getIndexedKeys(final Class<T> elementClass);
 }

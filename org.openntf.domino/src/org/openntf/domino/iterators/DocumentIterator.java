@@ -48,7 +48,7 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 	 * @param collection
 	 *            the collection
 	 */
-	public DocumentIterator(DocumentCollection collection) {
+	public DocumentIterator(final DocumentCollection collection) {
 		super(collection);
 		idArray_ = getCollectionIds(collection);
 	}
@@ -60,7 +60,7 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 	 *            the collection
 	 * @return the collection ids
 	 */
-	protected int[] getCollectionIds(DocumentCollection collection) {
+	protected int[] getCollectionIds(final DocumentCollection collection) {
 		int[] result = null;
 		if (collection != null) {
 			NoteCollection nc = null;
@@ -170,7 +170,7 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 	 * @param index
 	 *            the new index
 	 */
-	protected void setIndex(int index) {
+	protected void setIndex(final int index) {
 		index_ = index;
 	}
 }

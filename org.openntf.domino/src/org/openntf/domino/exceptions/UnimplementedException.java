@@ -30,7 +30,7 @@ public class UnimplementedException extends RuntimeException {
 	 * @param message
 	 *            message
 	 */
-	public UnimplementedException(String message) {
+	public UnimplementedException(final String message) {
 		super(message);
 
 	}

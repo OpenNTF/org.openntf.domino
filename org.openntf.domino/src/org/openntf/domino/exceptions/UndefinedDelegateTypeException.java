@@ -34,7 +34,7 @@ public class UndefinedDelegateTypeException extends RuntimeException {
 	 * @param paramString
 	 *            the param string
 	 */
-	public UndefinedDelegateTypeException(String paramString) {
+	public UndefinedDelegateTypeException(final String paramString) {
 		super(paramString);
 		// TODO Auto-generated constructor stub
 	}
@@ -45,7 +45,7 @@ public class UndefinedDelegateTypeException extends RuntimeException {
 	 * @param paramThrowable
 	 *            the param throwable
 	 */
-	public UndefinedDelegateTypeException(Throwable paramThrowable) {
+	public UndefinedDelegateTypeException(final Throwable paramThrowable) {
 		super(paramThrowable);
 		// TODO Auto-generated constructor stub
 	}
@@ -58,7 +58,7 @@ public class UndefinedDelegateTypeException extends RuntimeException {
 	 * @param paramThrowable
 	 *            the param throwable
 	 */
-	public UndefinedDelegateTypeException(String paramString, Throwable paramThrowable) {
+	public UndefinedDelegateTypeException(final String paramString, final Throwable paramThrowable) {
 		super(paramString, paramThrowable);
 		// TODO Auto-generated constructor stub
 	}
