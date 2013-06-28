@@ -684,16 +684,27 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
-	/* (non-Javadoc)
+	public NoteCollection getNoteCollection() {
+		NoteCollection nc = getAncestorDatabase().createNoteCollection(false);
+		nc.setSelectDocuments(true);
+		nc.setSelectionFormula(getSelectionFormula());
+		nc.buildCollection();
+		return nc;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.View#getAllDocuments()
 	 */
 	public DocumentCollection getAllDocuments() {
-		// FIXME - NTF Make efficient
-		DocumentCollection result = this.getParent().createDocumentCollection();
-		for (org.openntf.domino.ViewEntry entry : this.getAllEntries()) {
-			if (entry.isDocument()) {
-				result.addDocument(entry.getDocument()); // FIX for JG's admittedly "crappy implementation."
-			}
+		// According to Tommy Valand's research, the fastest method is to build a NoteCollection with a matching selection formula
+		// http://dontpanic82.blogspot.com/2013/06/benchmark-fetching-noteids-and.html
+		DocumentCollection result = getAncestorDatabase().createDocumentCollection();
+		NoteCollection nc = getNoteCollection();
+		int[] nids = nc.getNoteIDs();
+		for (int nid : nids) {
+			result.merge(nid);
 		}
 		return result;
 	}
@@ -1293,7 +1304,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.types.Design#getNoteID()
 	 */
 	@Override
