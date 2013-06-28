@@ -16,4 +16,9 @@ public interface View {
 	 */
 	public DocumentCollection getAllDocuments();
 
+	/**
+	 * @return NoteCollection
+	 */
+	public NoteCollection getNoteCollection();
+
 }

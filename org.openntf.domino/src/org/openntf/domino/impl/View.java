@@ -716,12 +716,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@Override
 	public DocumentCollection getAllDocumentsByKey(Object key) {
-		try {
-			return Factory.fromLotus(getDelegate().getAllDocumentsByKey(toLotus(key)), DocumentCollection.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+		return getAllDocumentsByKey(key, false);
 	}
 
 	/*
@@ -747,12 +742,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@SuppressWarnings("unchecked")
 	@Override
 	public DocumentCollection getAllDocumentsByKey(Vector keys) {
-		try {
-			return Factory.fromLotus(getDelegate().getAllDocumentsByKey(toLotus(keys)), DocumentCollection.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+		return getAllDocumentsByKey((Object) keys, false);
 	}
 
 	/*
@@ -763,12 +753,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@SuppressWarnings("unchecked")
 	@Override
 	public DocumentCollection getAllDocumentsByKey(Vector keys, boolean exact) {
-		try {
-			return Factory.fromLotus(getDelegate().getAllDocumentsByKey(toLotus(keys), exact), DocumentCollection.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+		return getAllDocumentsByKey((Object) keys, exact);
 	}
 
 	/*
@@ -793,12 +778,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@Override
 	public ViewEntryCollection getAllEntriesByKey(Object key) {
-		try {
-			return Factory.fromLotus(getDelegate().getAllEntriesByKey(toLotus(key)), ViewEntryCollection.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+		return getAllEntriesByKey(key, false);
 	}
 
 	/*
@@ -824,12 +804,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@SuppressWarnings("unchecked")
 	@Override
 	public ViewEntryCollection getAllEntriesByKey(Vector keys) {
-		try {
-			return Factory.fromLotus(getDelegate().getAllEntriesByKey(toLotus(keys)), ViewEntryCollection.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+		return getAllEntriesByKey((Object) keys, false);
 	}
 
 	/*
@@ -840,12 +815,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@SuppressWarnings("unchecked")
 	@Override
 	public ViewEntryCollection getAllEntriesByKey(Vector keys, boolean exact) {
-		try {
-			return Factory.fromLotus(getDelegate().getAllEntriesByKey(toLotus(keys), exact), ViewEntryCollection.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+		return getAllEntriesByKey((Object) keys, exact);
 	}
 
 	/*
@@ -1036,12 +1006,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@Override
 	public Document getDocumentByKey(Object key) {
-		try {
-			return Factory.fromLotus(getDelegate().getDocumentByKey(toLotus(key)), Document.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+		return getDocumentByKey(key, false);
 	}
 
 	/*
@@ -1067,12 +1032,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@SuppressWarnings("unchecked")
 	@Override
 	public Document getDocumentByKey(Vector keys) {
-		try {
-			return Factory.fromLotus(getDelegate().getDocumentByKey(toLotus(keys)), Document.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+		return getDocumentByKey((Object) keys, false);
 	}
 
 	/*
@@ -1083,12 +1043,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@SuppressWarnings("unchecked")
 	@Override
 	public Document getDocumentByKey(Vector keys, boolean exact) {
-		try {
-			return Factory.fromLotus(getDelegate().getDocumentByKey(toLotus(keys), exact), Document.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+		return getDocumentByKey((Object) keys, exact);
 	}
 
 	/*
@@ -1098,12 +1053,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@Override
 	public ViewEntry getEntryByKey(Object key) {
-		try {
-			return Factory.fromLotus(getDelegate().getEntryByKey(toLotus(key)), ViewEntry.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+		return getEntryByKey(key, false);
 	}
 
 	/*
@@ -1129,12 +1079,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@SuppressWarnings("unchecked")
 	@Override
 	public ViewEntry getEntryByKey(Vector keys) {
-		try {
-			return Factory.fromLotus(getDelegate().getEntryByKey(toLotus(keys)), ViewEntry.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+		return getEntryByKey((Object) keys, false);
 	}
 
 	/*
@@ -1145,12 +1090,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@SuppressWarnings("unchecked")
 	@Override
 	public ViewEntry getEntryByKey(Vector keys, boolean exact) {
-		try {
-			return Factory.fromLotus(getDelegate().getEntryByKey(toLotus(keys), exact), ViewEntry.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+		return getEntryByKey((Object) keys, exact);
 	}
 
 	/*
