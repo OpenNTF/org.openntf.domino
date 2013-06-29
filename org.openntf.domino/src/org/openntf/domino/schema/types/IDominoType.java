@@ -15,4 +15,6 @@ public interface IDominoType {
 
 	public boolean validateItem(org.openntf.domino.Item item) throws ItemException;
 
+	public void setItemToDefault(org.openntf.domino.Item item);
+
 }
