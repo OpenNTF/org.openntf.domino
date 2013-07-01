@@ -21,11 +21,13 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Item;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
+import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
@@ -33,7 +35,7 @@ import org.openntf.domino.utils.Factory;
  * The Class DocumentSyncHelper.
  */
 public class DocumentSyncHelper {
-	
+
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(DocumentSyncHelper.class.getName());
 
@@ -41,53 +43,61 @@ public class DocumentSyncHelper {
 	 * The Enum Strategy.
 	 */
 	public static enum Strategy {
-		
+
 		/** The replace if newer. */
-		REPLACE_IF_NEWER, 
- /** The create and replace. */
- CREATE_AND_REPLACE, 
- /** The replace only. */
- REPLACE_ONLY
+		REPLACE_IF_NEWER,
+		/** The create and replace. */
+		CREATE_AND_REPLACE,
+		/** The replace only. */
+		REPLACE_ONLY
+	}
+
+	public static enum TransactionRule {
+		NO_TRANSACTION, COMMIT_EVERY_SOURCE, COMMIT_AT_END
 	}
 
 	/**
 	 * The Enum Controls.
 	 */
 	public static enum Controls {
-		
+
 		/** The target server. */
-		TARGET_SERVER, 
- /** The target filepath. */
- TARGET_FILEPATH, 
- /** The target lookup view. */
- TARGET_LOOKUP_VIEW, 
- /** The source key formula. */
- SOURCE_KEY_FORMULA, 
- /** The strategy. */
- STRATEGY, 
- /** The sync source field. */
- SYNC_SOURCE_FIELD, 
- /** The sync target field. */
- SYNC_TARGET_FIELD;
+		TARGET_SERVER,
+		/** The target filepath. */
+		TARGET_FILEPATH,
+		/** The target lookup view. */
+		TARGET_LOOKUP_VIEW,
+		/** The source key formula. */
+		SOURCE_KEY_FORMULA,
+		/** The strategy. */
+		STRATEGY,
+		/** The sync source field. */
+		SYNC_SOURCE_FIELD,
+		/** The sync target field. */
+		SYNC_TARGET_FIELD;
 	}
 
 	/** The target server_. */
 	private String targetServer_;
-	
+
 	/** The target filepath_. */
 	private String targetFilepath_;
-	
+
 	/** The target lookup view_. */
 	private String targetLookupView_;
-	
+
 	/** The source key formula_. */
-	private String sourceKeyFormula_;
-	
+	// private String sourceKeyFormula_;
+
+	private Formula sourceKeyFormula_;
+
 	/** The strategy_. */
 	private Strategy strategy_;
-	
+
+	private TransactionRule transactionRule_;
+
 	/** The sync map_. */
-	private Map<String, String> syncMap_;
+	private Map<Formula, String> syncMap_;
 
 	/**
 	 * Instantiates a new document sync helper.
@@ -142,13 +152,15 @@ public class DocumentSyncHelper {
 		} else {
 			setStrategy(Strategy.CREATE_AND_REPLACE);
 		}
-		Map<String, String> syncMap = new HashMap<String, String>();
+		Map<Object, String> syncMap = new HashMap<Object, String>();
 		if (controlMap.containsKey(Controls.SYNC_SOURCE_FIELD) && controlMap.containsKey(Controls.SYNC_TARGET_FIELD)) {
 			java.util.Vector<Object> keyVec = controlDoc.getItemValue(controlMap.get(Controls.SYNC_SOURCE_FIELD));
 			java.util.Vector<Object> valueVec = controlDoc.getItemValue(controlMap.get(Controls.SYNC_TARGET_FIELD));
 			int i = 0;
 			for (Object key : keyVec) {
-				syncMap.put((String) key, (String) valueVec.get(i));
+				Formula Fkey = new Formula();
+				Fkey.setExpression((String) key);
+				syncMap.put(Fkey, (String) valueVec.get(i));
 				i++;
 			}
 		} else if (controlDoc.hasItem(Controls.SYNC_SOURCE_FIELD.toString()) && controlDoc.hasItem(Controls.SYNC_TARGET_FIELD.toString())) {
@@ -156,7 +168,9 @@ public class DocumentSyncHelper {
 			java.util.Vector<Object> valueVec = controlDoc.getItemValue(Controls.SYNC_TARGET_FIELD.toString());
 			int i = 0;
 			for (Object key : keyVec) {
-				syncMap.put((String) key, (String) valueVec.get(i));
+				Formula Fkey = new Formula();
+				Fkey.setExpression((String) key);
+				syncMap.put(Fkey, (String) valueVec.get(i));
 				i++;
 			}
 		} else {
@@ -175,7 +189,7 @@ public class DocumentSyncHelper {
 	 * @param args
 	 *            the args
 	 */
-	public DocumentSyncHelper(final Strategy strategy, final Map<String, String> syncMap, final String... args) {
+	public DocumentSyncHelper(final Strategy strategy, final Map<Object, String> syncMap, final String... args) {
 		setStrategy(strategy);
 		setSyncMap(syncMap);
 		if (args.length >= 1) {
@@ -193,6 +207,12 @@ public class DocumentSyncHelper {
 
 	}
 
+	public void processSince(final Database sourceDb, final Date sinceDate) {
+		DateTime dt = sourceDb.getAncestorSession().createDateTime(sinceDate);
+		DocumentCollection sourceCollection = sourceDb.getModifiedDocuments(dt);
+		process(sourceCollection);
+	}
+
 	/**
 	 * Process.
 	 * 
@@ -201,43 +221,76 @@ public class DocumentSyncHelper {
 	 */
 	public void process(final DocumentCollection coll) {
 		// TODO Check to make sure properties are all set up before running
-		Session session = org.openntf.domino.utils.Factory.getSession(coll);
+		Session session = coll.getAncestorSession();
 		Database targetDb = session.getDatabase(getTargetServer(), getTargetFilepath());
 		View targetView = targetDb.getView(getTargetLookupView());
 		Strategy strategy = getStrategy();
+		DatabaseTransaction txn = null;
+		if (getTransactionRule() == TransactionRule.COMMIT_AT_END) {
+			txn = targetDb.startTransaction();
+		}
 		for (Document source : coll) {
-			Date sourceLastMod = source.getLastModified().toJavaDate();
-			Object lookupKey = Factory.wrappedEvaluate(session, getSourceKeyFormula(), source);
+			if (getTransactionRule() == TransactionRule.COMMIT_EVERY_SOURCE) {
+				txn = targetDb.startTransaction();
+			}
+			DateTime sourceLastMod = source.getLastModified();
+			// Object lookupKey = Factory.wrappedEvaluate(session, getSourceKeyFormula(), source);
+			Object lookupKey = getSourceKeyFormula().getValue(source);
 			DocumentCollection targetColl = targetView.getAllDocumentsByKey(lookupKey, true);
 			for (Document target : targetColl) {
-				boolean targetDirty = false;
-				for (Map.Entry<String, String> entry : getSyncMap().entrySet()) {
+				// boolean targetDirty = false;
+				for (Map.Entry<Formula, String> entry : getSyncMap().entrySet()) {
 					String targetItemName = entry.getValue();
-					java.util.Vector<Object> sourceValue = Factory.wrappedEvaluate(session, entry.getKey(), source);
+					java.util.Vector<?> sourceValue = entry.getKey().getValue(source);
+					// Factory.wrappedEvaluate(session, entry.getKey(), source);
 					if (strategy == Strategy.CREATE_AND_REPLACE) {
 						target.replaceItemValue(targetItemName, sourceValue);
-						targetDirty = true;
+						// targetDirty = true;
 					} else {
 						Item targetItem = target.getFirstItem(targetItemName);
 						if (strategy == Strategy.REPLACE_IF_NEWER) {
-							Date itemLastMod = targetItem.getLastModified().toJavaDate();
-							if (sourceLastMod.after(itemLastMod)) {
+							DateTime itemLastMod = targetItem.getLastModified();
+							if (sourceLastMod.isAfter(itemLastMod)) {
 								targetItem.setValues(sourceValue);
-								targetDirty = true;
+								// targetDirty = true;
 							}
 						} else if (strategy == Strategy.REPLACE_ONLY) {
 							if (targetItem != null) {
 								targetItem.setValues(sourceValue);
-								targetDirty = true;
+								// targetDirty = true;
 							}
 						}
 					}
 				}
-				if (targetDirty) {
+				if (getTransactionRule() == TransactionRule.NO_TRANSACTION || txn == null) {
 					target.save();
 				}
 			}
+			if (getTransactionRule() == TransactionRule.COMMIT_EVERY_SOURCE && txn != null) {
+				txn.commit();
+				txn = null;
+			}
 		}
+		if (getTransactionRule() == TransactionRule.COMMIT_AT_END && txn != null) {
+			txn.commit();
+			txn = null;
+		}
+	}
+
+	public void setTargetView(final org.openntf.domino.View view) {
+		setTargetLookupView(view.getName());
+		setTargetDatabase(view.getAncestorDatabase());
+	}
+
+	public void setTargetDatabase(final Database db) {
+		setTargetServer(db.getServer());
+		setTargetFilepath(db.getFilePath());
+	}
+
+	public void setTargetDatabase(final Database db, final String viewName) {
+		setTargetServer(db.getServer());
+		setTargetFilepath(db.getFilePath());
+		setTargetLookupView(viewName);
 	}
 
 	/**
@@ -302,7 +355,10 @@ public class DocumentSyncHelper {
 	 * 
 	 * @return the source key formula
 	 */
-	public String getSourceKeyFormula() {
+	public Formula getSourceKeyFormula() {
+		if (sourceKeyFormula_ == null) {
+			sourceKeyFormula_ = new Formula();
+		}
 		return sourceKeyFormula_;
 	}
 
@@ -313,7 +369,10 @@ public class DocumentSyncHelper {
 	 *            the new source key formula
 	 */
 	public void setSourceKeyFormula(final String sourceKeyFormula) {
-		sourceKeyFormula_ = sourceKeyFormula;
+		if (sourceKeyFormula == null) {
+			sourceKeyFormula_ = new Formula();
+		}
+		sourceKeyFormula_.setExpression(sourceKeyFormula);
 	}
 
 	/**
@@ -323,6 +382,13 @@ public class DocumentSyncHelper {
 	 */
 	public Strategy getStrategy() {
 		return strategy_;
+	}
+
+	public TransactionRule getTransactionRule() {
+		if (transactionRule_ == null) {
+			transactionRule_ = TransactionRule.NO_TRANSACTION;
+		}
+		return transactionRule_;
 	}
 
 	/**
@@ -335,12 +401,16 @@ public class DocumentSyncHelper {
 		strategy_ = strategy;
 	}
 
+	public void setTransactionRule(final TransactionRule rule) {
+		transactionRule_ = rule;
+	}
+
 	/**
 	 * Gets the sync map.
 	 * 
 	 * @return the sync map
 	 */
-	public Map<String, String> getSyncMap() {
+	public Map<Formula, String> getSyncMap() {
 		return syncMap_;
 	}
 
@@ -350,8 +420,17 @@ public class DocumentSyncHelper {
 	 * @param syncMap
 	 *            the sync map
 	 */
-	public void setSyncMap(final Map<String, String> syncMap) {
-		syncMap_ = syncMap;
+	public void setSyncMap(final Map<java.lang.Object, String> syncMap) {
+		Map<Formula, String> formulaMap = new HashMap<Formula, String>();
+		for (Map.Entry<Object, String> entry : syncMap.entrySet()) {
+			if (entry.getKey() instanceof Formula) {
+				formulaMap.put((Formula) entry.getKey(), entry.getValue());
+			}
+			Formula Fkey = new Formula();
+			Fkey.setExpression(String.valueOf(entry.getKey()));
+			formulaMap.put(Fkey, entry.getValue());
+		}
+		syncMap_ = formulaMap;
 	}
 
 }
