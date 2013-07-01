@@ -114,13 +114,23 @@ public enum TypeUtils {
 				result = new ArrayList();
 				((ArrayList) result).addAll(v);
 			} else if (T == Date.class) {
+
 				result = toDate(v);
+
 			} else if (T == org.openntf.domino.DateTime.class) {
 				result = session.createDateTime(toDate(v));
 			} else if (T == org.openntf.domino.Name.class) {
-				result = session.createName(String.valueOf(v.get(0)));
+				if (v.isEmpty()) {
+					result = session.createName("");
+				} else {
+					result = session.createName(String.valueOf(v.get(0)));
+				}
 			} else if (T == Boolean.class) {
-				result = toBoolean(v.get(0));
+				if (v.isEmpty()) {
+					result = Boolean.FALSE;
+				} else {
+					result = toBoolean(v.get(0));
+				}
 			} else {
 				if (!v.isEmpty()) {
 					if (T == Integer.class) {
