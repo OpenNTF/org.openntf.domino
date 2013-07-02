@@ -473,9 +473,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			// TODO Check if this is greater than what Domino can handle and serialize if so
 			return ((Number) value).doubleValue();
 		} else if (value instanceof java.util.Date) {
-			return ((Session) toLotus(Factory.getSession(context))).createDateTime((java.util.Date) value);
+			return toLotus(Factory.getSession(context).createDateTime((java.util.Date) value));
 		} else if (value instanceof java.util.Calendar) {
-			return ((Session) toLotus(Factory.getSession(context))).createDateTime((java.util.Calendar) value);
+			return toLotus(Factory.getSession(context).createDateTime((java.util.Calendar) value));
 		} else if (value instanceof CharSequence) {
 			return value.toString();
 		}
