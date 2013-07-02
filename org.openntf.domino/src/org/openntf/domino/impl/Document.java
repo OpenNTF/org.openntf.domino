@@ -1912,7 +1912,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 							if (!objectClass.equals(domNode.getClass())) {
 								// Domino only allows uniform lists
 								// There may have been some native DateTimes added in so far; burn them
-								DominoUtils.incinerate(resultList);
+								enc_recycle(resultList);
 								throw new IllegalArgumentException();
 							}
 						}
@@ -1926,7 +1926,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 							}
 						}
 						resultList.add(domNode);
-						enc_recycle(domNode);
 					}
 					// If it ended up being something we could store, make note of the original class instead of the list class
 					if (!((List<?>) value).isEmpty()) {
@@ -1937,6 +1936,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						}
 					}
 					result = getDelegate().replaceItemValue(itemName, resultList);
+					enc_recycle(resultList);
 				} else {
 					Object domNode = toDominoFriendly(value, this);
 					if (domNode instanceof String && ((String) domNode).length() > 60000) {
