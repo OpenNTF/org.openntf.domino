@@ -38,7 +38,7 @@ public class WebinarSamples {
 				} finally {
 					currentEntry.recycle();
 				}
-				currentEntry = nextEntry;		// Note if these entries happen to point to the same document, bad things will happen.
+				currentEntry = nextEntry;		// Note: if these entries happen to point to the same document, bad things will happen.
 			}
 		} catch (lotus.domino.NotesException ne) {
 			ne.printStackTrace();
@@ -162,7 +162,7 @@ public class WebinarSamples {
 		doc.put("foo", "bar");			// puts "bar" in item "foo"
 		doc.clear();					// removes every item from doc (not recommended)
 		doc.size();						// returns the number of items
-		Object eval = doc.get("@Adjust(@LastModified; 1; 0; 0; 0; 0; 0)");	// AVAILABLE IN M3
+		Object eval = doc.get("@Adjust(@Modified; 1; 0; 0; 0; 0; 0)");	// AVAILABLE IN M3
 	}
 
 	public Map<String, NavigableSet<String>> scanDatabase(final org.openntf.domino.Database db) {
@@ -189,15 +189,15 @@ public class WebinarSamples {
 		helper.setTargetServer(targetDb.getServer());
 		helper.setTargetFilepath(targetDb.getFilePath());
 		helper.setTargetLookupView("byCompanyID");
-		// helper.setTargetDatabase(targetDb, "byCompanyID"); // Available in M3!
+		// helper.setTargetDatabase(targetDb, "byCompanyID"); // AVAILABLE IN M3
 
 		helper.setSourceKeyFormula("CompID");
 		java.util.Date sinceDate = new java.util.Date(0);
 		org.openntf.domino.DateTime dt = sourceDb.getAncestorSession().createDateTime(sinceDate);
 		org.openntf.domino.DocumentCollection sourceCollection = sourceDb.getModifiedDocuments(dt);
 		helper.process(sourceCollection);
-		// helper.setTransactionRule(DocumentSyncHelper.TransactionRule.COMMIT_EVERY_SOURCE); //Available in M3!
-		// helper.processSince(sourceDb, sinceDate); // Available in M3!
+		// helper.setTransactionRule(DocumentSyncHelper.TransactionRule.COMMIT_EVERY_SOURCE); // AVAILABLE IN M3
+		// helper.processSince(sourceDb, sinceDate); // AVAILABLE IN M3
 	}
 
 	// ******* END HELPER SAMPLES
