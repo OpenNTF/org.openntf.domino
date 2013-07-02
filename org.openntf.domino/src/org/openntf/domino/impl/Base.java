@@ -539,7 +539,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 				// shikata ga nai
 			}
 		} else {
-			System.out.println("Not recycling a " + base.getClass().getName() + " because its locked.");
+			System.out.println("Not recycling a " + base.getClass().getName() + " because it's locked.");
 		}
 		return result;
 	}
