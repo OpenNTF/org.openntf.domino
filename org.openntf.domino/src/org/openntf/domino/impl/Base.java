@@ -473,11 +473,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			// TODO Check if this is greater than what Domino can handle and serialize if so
 			return ((Number) value).doubleValue();
 		} else if (value instanceof java.util.Date) {
-			return toLotus(Factory.getSession(context).createDateTime((java.util.Date) value));
+			return ((Session) toLotus(Factory.getSession(context))).createDateTime((java.util.Date) value);
 		} else if (value instanceof java.util.Calendar) {
-			return toLotus(Factory.getSession(context).createDateTime((java.util.Calendar) value));
-		} else if (value instanceof com.ibm.icu.util.Calendar) {
-			return toLotus(Factory.getSession(context).createDateTime((com.ibm.icu.util.Calendar) value));
+			return ((Session) toLotus(Factory.getSession(context))).createDateTime((java.util.Calendar) value);
 		} else if (value instanceof CharSequence) {
 			return value.toString();
 		}
@@ -541,7 +539,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 				// shikata ga nai
 			}
 		} else {
-			System.out.println("Not recycling a " + base.getClass().getName() + " because its locked.");
+			System.out.println("Not recycling a " + base.getClass().getName() + " because it's locked.");
 		}
 		return result;
 	}

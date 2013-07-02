@@ -41,6 +41,15 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	}
 
 	@Override
+	public DesignView createView() {
+		return new DesignView(database_);
+	}
+
+	public FileResource createFileResource() {
+		return new FileResource(database_);
+	}
+
+	@Override
 	public AboutDocument getAboutDocument() {
 		Document doc = database_.getDocumentByID(ABOUT_NOTE);
 		if (doc != null) {

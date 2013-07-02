@@ -6,9 +6,6 @@ package org.openntf.domino.design.impl;
 import java.util.AbstractList;
 import java.util.logging.Logger;
 
-import javax.xml.xpath.XPathExpressionException;
-
-import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLNodeList;
 
 /**
@@ -22,12 +19,10 @@ public abstract class AbstractDesignComponentList<E> extends AbstractList<E> {
 
 	private final AbstractDesignBase parent_;
 	private final String pattern_;
-	private XMLNodeList nodes_;
 
 	protected AbstractDesignComponentList(final AbstractDesignBase parent, final String pattern) {
 		parent_ = parent;
 		pattern_ = pattern;
-		refreshNodes();
 	}
 
 	/*
@@ -37,7 +32,7 @@ public abstract class AbstractDesignComponentList<E> extends AbstractList<E> {
 	 */
 	@Override
 	public int size() {
-		return nodes_.size();
+		return getNodes().size();
 	}
 
 	/*
@@ -48,12 +43,8 @@ public abstract class AbstractDesignComponentList<E> extends AbstractList<E> {
 	@Override
 	public E remove(final int index) {
 		E current = get(index);
-		nodes_.remove(index);
+		getNodes().remove(index);
 		return current;
-	}
-
-	protected XMLNodeList getNodes() {
-		return nodes_;
 	}
 
 	protected AbstractDesignBase getParent() {
@@ -61,19 +52,11 @@ public abstract class AbstractDesignComponentList<E> extends AbstractList<E> {
 	}
 
 	public void swap(final int a, final int b) {
-		try {
-			XMLNodeList fieldNodes = (XMLNodeList) getParent().getDxl().selectNodes(pattern_);
-			fieldNodes.swap(a, b);
-		} catch (XPathExpressionException e) {
-			DominoUtils.handleException(e);
-		}
+		XMLNodeList fieldNodes = (XMLNodeList) getParent().getDxl().selectNodes(pattern_);
+		fieldNodes.swap(a, b);
 	}
 
-	protected void refreshNodes() {
-		try {
-			nodes_ = (XMLNodeList) parent_.getDxl().selectNodes(pattern_);
-		} catch (XPathExpressionException e) {
-			DominoUtils.handleException(e);
-		}
+	protected XMLNodeList getNodes() {
+		return (XMLNodeList) parent_.getDxl().selectNodes(pattern_);
 	}
 }

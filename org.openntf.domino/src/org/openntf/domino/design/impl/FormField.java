@@ -5,8 +5,6 @@ package org.openntf.domino.design.impl;
 
 import java.util.logging.Logger;
 
-import javax.xml.xpath.XPathExpressionException;
-
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLNode;
 
@@ -194,11 +192,7 @@ public class FormField implements org.openntf.domino.design.FormField {
 	}
 
 	private XMLNode getKeywordsNode() {
-		XMLNode node = null;
-		try {
-			node = node_.selectSingleNode("keywords");
-		} catch (XPathExpressionException xee) {
-		}
+		XMLNode node = node_.selectSingleNode("keywords");
 
 		if (node == null) {
 			node = node_.addChildElement("keywords");
@@ -207,19 +201,12 @@ public class FormField implements org.openntf.domino.design.FormField {
 	}
 
 	private XMLNode getDefaultValueFormulaNode() {
-		XMLNode node = null;
-		try {
-			node = node_.selectSingleNode("code[@event='defaultvalue']");
-		} catch (XPathExpressionException xee) {
-		}
+		XMLNode node = node_.selectSingleNode("code[@event='defaultvalue']");
 
 		if (node == null) {
 			return null;
 		} else {
-			try {
-				node = node.selectSingleNode("formula");
-			} catch (XPathExpressionException xee) {
-			}
+			node = node.selectSingleNode("formula");
 		}
 		return node;
 	}

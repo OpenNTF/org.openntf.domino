@@ -20,9 +20,9 @@ public class DesignCollection<E extends DesignBase> implements org.openntf.domin
 	private static final long serialVersionUID = 1L;
 
 	private final NoteCollection collection_;
-	private final Class<? extends AbstractDesignBase> clazz_;
+	private final Class<? extends DesignBase> clazz_;
 
-	public DesignCollection(final NoteCollection collection, final Class<? extends AbstractDesignBase> clazz) {
+	public DesignCollection(final NoteCollection collection, final Class<? extends DesignBase> clazz) {
 		collection_ = collection;
 		clazz_ = clazz;
 	}
