@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -1901,11 +1902,14 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			Class<?> valueClass = value.getClass();
 
 			try {
-				if (value instanceof List) {
+				if (value instanceof List || value instanceof Object[]) {
 					Vector<Object> resultList = new Vector<Object>();
 					Class<?> objectClass = null;
 					long totalStringSize = 0;
-					for (Object valNode : (List<?>) value) {
+
+					List<?> listValue = value instanceof List ? (List<?>) value : Arrays.asList((Object[]) value);
+
+					for (Object valNode : listValue) {
 						Object domNode = toDominoFriendly(valNode, this);
 						if (objectClass == null) {
 							objectClass = domNode.getClass();
@@ -1929,8 +1933,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						resultList.add(domNode);
 					}
 					// If it ended up being something we could store, make note of the original class instead of the list class
-					if (!((List<?>) value).isEmpty()) {
-						valueClass = ((List<?>) value).get(0).getClass();
+					if (!(listValue).isEmpty()) {
+						valueClass = (listValue).get(0).getClass();
 						MIMEEntity mimeChk = getMIMEEntity(itemName);
 						if (mimeChk != null) {
 							mimeChk.remove();
