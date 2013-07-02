@@ -41,6 +41,7 @@ import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.MIMEConversionException;
+import org.openntf.domino.helpers.Formula;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -2662,6 +2663,15 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 		if (this.containsKey(key)) {
 			Vector<Object> value = this.getItemValue(key.toString());
+			if (value.size() == 1) {
+				return value.get(0);
+			}
+			return value;
+		} else if (key instanceof CharSequence) {
+			// Execute the key as a formula in the context of the document
+			Formula formula = new Formula(getAncestorSession());
+			formula.setExpression(key.toString());
+			List<?> value = formula.getValue(this);
 			if (value.size() == 1) {
 				return value.get(0);
 			}

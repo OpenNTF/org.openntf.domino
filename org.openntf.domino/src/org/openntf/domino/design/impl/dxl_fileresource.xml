@@ -13,9 +13,6 @@
 	<item name="$FileModDT" sign="true">
 		<datetime dst="true">20101019T162625,00-04</datetime>
 	</item>
-	<item name="$FileData" sign="true">
-		<rawitemdata type="1"/>
-	</item>
 	<item name="$FileNames" sign="true">
 		<text/>
 	</item>

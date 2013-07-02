@@ -305,24 +305,23 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 
 	@Override
 	public void save() {
-
-		DxlImporter importer = getAncestorSession().createDxlImporter();
-		importer.setDesignImportOption(DxlImporter.DesignImportOption.REPLACE_ELSE_CREATE);
-		importer.setReplicaRequiredForReplaceOrUpdate(false);
-		Database database = getAncestorDatabase();
 		try {
-			System.out.println("importing " + getDxl().getXml());
+			DxlImporter importer = getAncestorSession().createDxlImporter();
+			importer.setDesignImportOption(DxlImporter.DesignImportOption.REPLACE_ELSE_CREATE);
+			importer.setReplicaRequiredForReplaceOrUpdate(false);
+			Database database = getAncestorDatabase();
+
 			importer.importDxl(getDxl().getXml(), database);
+
+			noteId_ = importer.getFirstImportedNoteID();
+
+			// Reset the DXL so that it can pick up new noteinfo
+			Document document = database.getDocumentByID(noteId_);
+			loadDxl(document.generateXML());
 		} catch (IOException e) {
 			DominoUtils.handleException(e);
 			return;
 		}
-		System.out.println("log: " + importer.getLog());
-		noteId_ = importer.getFirstImportedNoteID();
-
-		// Reset the DXL so that it can pick up new noteinfo
-		Document document = database.getDocumentByID(noteId_);
-		loadDxl(document.generateXML());
 	}
 
 	protected XMLDocument getDxl() {
