@@ -220,9 +220,7 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 */
 	@Override
 	public void ensureCapacity(final int arg0) {
-		// TODO NTF - What backing list would we have that couldn't ensure capacity?
-		// no op.
-		// delegate_.ensureCapacity(arg0);
+		((ArrayList<?>) delegate_).ensureCapacity(arg0);
 	}
 
 	/*

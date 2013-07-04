@@ -2,8 +2,11 @@ package org.openntf.domino.graph;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,7 +28,11 @@ public class DominoVertex extends DominoElement implements Vertex {
 	private static final long serialVersionUID = 1L;
 	private transient boolean inDirty_ = false;
 	private Set<String> inEdges_;
+	private transient Set<Edge> inEdgesObjects_;
+	private transient Map<String, Set<Edge>> inEdgeCache_;
 	private transient boolean outDirty_ = false;
+	private transient Set<Edge> outEdgesObjects_;
+	private transient Map<String, Set<Edge>> outEdgeCache_;
 	private Set<String> outEdges_;
 
 	public DominoVertex(final DominoGraph parent, final org.openntf.domino.Document doc) {
@@ -38,38 +45,201 @@ public class DominoVertex extends DominoElement implements Vertex {
 	}
 
 	void addInEdge(final Edge edge) {
-		if (!getInEdges().contains((String) edge.getId())) {
+		boolean adding = false;
+		Set<String> ins = getInEdges();
+		synchronized (ins) {
+			if (!ins.contains((String) edge.getId())) {
+				adding = true;
+				ins.add((String) edge.getId());
+			}
+		}
+		if (adding) {
 			getParent().startTransaction();
 			inDirty_ = true;
-			getInEdges().add((String) edge.getId());
+
+			Set<Edge> inObjs = getInEdgeObjects();
+			synchronized (inObjs) {
+				inObjs.add(edge);
+			}
+			Set<Edge> inLabelObjs = getInEdgeCache(edge.getLabel());
+			synchronized (inLabelObjs) {
+				inLabelObjs.add(edge);
+			}
 		}
-		// setProperty(DominoVertex.IN_NAME, inEdges_);
 	}
 
 	void addOutEdge(final Edge edge) {
-		if (!getOutEdges().contains((String) edge.getId())) {
+		boolean adding = false;
+		Set<String> outs = getOutEdges();
+		synchronized (outs) {
+			if (!outs.contains((String) edge.getId())) {
+				adding = true;
+				outs.add((String) edge.getId());
+			}
+		}
+		if (adding) {
 			getParent().startTransaction();
 			outDirty_ = true;
-			getOutEdges().add((String) edge.getId());
+
+			Set<Edge> outObjs = getOutEdgeObjects();
+			synchronized (outObjs) {
+				outObjs.add(edge);
+			}
+			Set<Edge> outLabelObjs = getOutEdgeCache(edge.getLabel());
+			synchronized (outLabelObjs) {
+				outLabelObjs.add(edge);
+			}
 		}
 		// setProperty(DominoVertex.OUT_NAME, outEdges_);
 	}
 
 	public java.util.Set<String> getBothEdges() {
-		Set<String> result = getInEdges();
+		Set<String> result = new LinkedHashSet<String>();
+		result.addAll(getInEdges());
 		result.addAll(getOutEdges());
-		return result;
+		return Collections.unmodifiableSet(result);
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Iterable<Edge> getEdges(final Direction direction, final String... labels) {
 		if (direction == Direction.IN) {
-			return getParent().getEdgesFromIds(getInEdges(), labels);
+			if (labels == null || labels.length == 0) {
+				return Collections.unmodifiableSet(getInEdgeObjects());
+			} else {
+				return getInEdgeObjects(labels);
+			}
 		} else if (direction == Direction.OUT) {
-			return getParent().getEdgesFromIds(getOutEdges(), labels);
+			if (labels == null || labels.length == 0) {
+				return Collections.unmodifiableSet(getOutEdgeObjects());
+			} else {
+				return getOutEdgeObjects(labels);
+			}
 		} else {
-			return getParent().getEdgesFromIds(getBothEdges(), labels);
+			LinkedHashSet result = new LinkedHashSet<Edge>();
+			if (labels == null || labels.length == 0) {
+				result.addAll(getInEdgeObjects());
+				result.addAll(getOutEdgeObjects());
+			} else {
+				result.addAll(getInEdgeObjects(labels));
+				result.addAll(getOutEdgeObjects(labels));
+			}
+			return Collections.unmodifiableSet(result);
 		}
+	}
+
+	private Map<String, Set<Edge>> getInEdgeCache() {
+		if (inEdgeCache_ == null) {
+			inEdgeCache_ = Collections.synchronizedMap(new HashMap<String, Set<Edge>>());
+		}
+		return inEdgeCache_;
+	}
+
+	private Set<Edge> getInEdgeCache(final String label) {
+		Map<String, Set<Edge>> inCache = getInEdgeCache();
+		Set<Edge> result = null;
+		synchronized (inCache) {
+			result = inCache.get(label);
+			if (result == null) {
+				result = Collections.synchronizedSet(new LinkedHashSet<Edge>());
+				inCache.put(label, result);
+			}
+		}
+		return result;
+	}
+
+	private Set<Edge> getOutEdgeCache(final String label) {
+		Map<String, Set<Edge>> outCache = getOutEdgeCache();
+		Set<Edge> result = null;
+		synchronized (outCache) {
+			result = outCache.get(label);
+			if (result == null) {
+				result = Collections.synchronizedSet(new LinkedHashSet<Edge>());
+				outCache.put(label, result);
+			}
+		}
+		return result;
+	}
+
+	private Map<String, Set<Edge>> getOutEdgeCache() {
+		if (outEdgeCache_ == null) {
+			outEdgeCache_ = Collections.synchronizedMap(new HashMap<String, Set<Edge>>());
+		}
+		return outEdgeCache_;
+	}
+
+	protected Set<Edge> getInEdgeObjects(final String... labels) {
+		Map<String, Set<Edge>> inCache = getInEdgeCache();
+		Set<Edge> result = null;
+		if (labels.length == 1) {
+			String label = labels[0];
+			synchronized (inCache) {
+				result = inCache.get(label);
+			}
+			if (result == null) {
+				result = Collections.synchronizedSet(new LinkedHashSet<Edge>());
+				Set<Edge> allEdges = Collections.unmodifiableSet(getInEdgeObjects());
+				for (Edge edge : allEdges) {
+					if (label.equals(edge.getLabel())) {
+						result.add(edge);
+					}
+				}
+				synchronized (inCache) {
+					inCache.put(label, result);
+				}
+			}
+		} else {
+			result = Collections.synchronizedSet(new LinkedHashSet<Edge>());
+			for (String label : labels) {
+				result.addAll(getInEdgeObjects(label));
+			}
+		}
+		return Collections.unmodifiableSet(result);
+	}
+
+	protected Set<Edge> getOutEdgeObjects(final String... labels) {
+		Map<String, Set<Edge>> outCache = getOutEdgeCache();
+		Set<Edge> result = null;
+		if (labels.length == 1) {
+			String label = labels[0];
+			synchronized (outCache) {
+				result = outCache.get(label);
+			}
+			if (result == null) {
+				result = Collections.synchronizedSet(new LinkedHashSet<Edge>());
+				Set<Edge> allEdges = Collections.unmodifiableSet(getOutEdgeObjects());
+				for (Edge edge : allEdges) {
+					if (label.equals(edge.getLabel())) {
+						result.add(edge);
+					}
+				}
+				synchronized (outCache) {
+					outCache.put(label, result);
+				}
+			}
+		} else {
+			result = Collections.synchronizedSet(new LinkedHashSet<Edge>());
+			for (String label : labels) {
+				result.addAll(getOutEdgeObjects(label));
+			}
+		}
+		return Collections.unmodifiableSet(result);
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected Set<Edge> getInEdgeObjects() {
+		if (inEdgesObjects_ == null) {
+			inEdgesObjects_ = Collections.synchronizedSet((LinkedHashSet) getParent().getEdgesFromIds(getInEdges()));
+		}
+		return inEdgesObjects_;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected Set<Edge> getOutEdgeObjects() {
+		if (outEdgesObjects_ == null) {
+			outEdgesObjects_ = Collections.synchronizedSet((LinkedHashSet) getParent().getEdgesFromIds(getOutEdges()));
+		}
+		return outEdgesObjects_;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -78,14 +248,14 @@ public class DominoVertex extends DominoElement implements Vertex {
 			Object o = getProperty(DominoVertex.IN_NAME, java.util.Collection.class);
 			if (o != null) {
 				if (o instanceof LinkedHashSet) {
-					inEdges_ = (LinkedHashSet) o;
+					inEdges_ = Collections.synchronizedSet((LinkedHashSet) o);
 				} else if (o instanceof java.util.Collection) {
-					inEdges_ = new LinkedHashSet<String>((Collection<String>) o);
+					inEdges_ = Collections.synchronizedSet(new LinkedHashSet<String>((Collection<String>) o));
 				} else {
 					log_.log(Level.WARNING, "ALERT! InEdges returned something other than a Collection " + o.getClass().getName());
 				}
 			} else {
-				inEdges_ = new LinkedHashSet<String>();
+				inEdges_ = Collections.synchronizedSet(new LinkedHashSet<String>());
 			}
 		}
 
@@ -98,14 +268,14 @@ public class DominoVertex extends DominoElement implements Vertex {
 			Object o = getProperty(DominoVertex.OUT_NAME, java.util.Collection.class);
 			if (o != null) {
 				if (o instanceof LinkedHashSet) {
-					outEdges_ = (LinkedHashSet) o;
+					outEdges_ = Collections.synchronizedSet((LinkedHashSet) o);
 				} else if (o instanceof java.util.Collection) {
-					outEdges_ = new LinkedHashSet<String>((Collection<String>) o);
+					outEdges_ = Collections.synchronizedSet(new LinkedHashSet<String>((Collection<String>) o));
 				} else {
 					log_.log(Level.WARNING, "ALERT! OutEdges returned something other than a Collection " + o.getClass().getName());
 				}
 			} else {
-				outEdges_ = new LinkedHashSet<String>();
+				outEdges_ = Collections.synchronizedSet(new LinkedHashSet<String>());
 			}
 		}
 		return outEdges_;
@@ -130,9 +300,32 @@ public class DominoVertex extends DominoElement implements Vertex {
 
 	public void removeEdge(final Edge edge) {
 		getParent().startTransaction();
-		getInEdges().remove(edge.getId());
+		Set<String> ins = getInEdges();
+		synchronized (ins) {
+			ins.remove(edge.getId());
+		}
+		Set<Edge> inObjs = getInEdgeObjects();
+		synchronized (inObjs) {
+			inObjs.remove(edge);
+		}
+		Set<Edge> inObjsLabel = getInEdgeCache(edge.getLabel());
+		synchronized (inObjsLabel) {
+			inObjsLabel.remove(edge);
+		}
 		inDirty_ = true;
-		getOutEdges().remove(edge.getId());
+
+		Set<String> outs = getOutEdges();
+		synchronized (outs) {
+			outs.remove(edge.getId());
+		}
+		Set<Edge> outObjs = getOutEdgeObjects();
+		synchronized (outObjs) {
+			outObjs.remove(edge);
+		}
+		Set<Edge> outObjsLabel = getOutEdgeCache(edge.getLabel());
+		synchronized (outObjsLabel) {
+			outObjsLabel.remove(edge);
+		}
 		outDirty_ = true;
 	}
 

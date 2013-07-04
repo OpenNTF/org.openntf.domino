@@ -1,7 +1,10 @@
 package org.openntf.domino.graph;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -19,11 +22,19 @@ public abstract class DominoElement implements Element, Serializable {
 	private String key_;
 	transient DominoGraph parent_;
 	private String unid_;
+	private Map<String, Object> props_;
 
 	public DominoElement(final DominoGraph parent, final Document doc) {
 		doc_ = doc;
 		parent_ = parent;
 		unid_ = doc.getUniversalID();
+	}
+
+	private Map<String, Object> getProps() {
+		if (props_ == null) {
+			props_ = Collections.synchronizedMap(new HashMap<String, Object>());
+		}
+		return props_;
 	}
 
 	public void addProperty(final String propertyName, final Object value) {
@@ -88,12 +99,21 @@ public abstract class DominoElement implements Element, Serializable {
 	}
 
 	public <T> T getProperty(final String propertyName, final Class<?> T) {
-		Object result = getRawDocument().getItemValue(propertyName, T);
+		Object result = null;
+		Map<String, Object> props = getProps();
+		synchronized (props) {
+			result = props.get(propertyName);
+			if (result == null) {
+				result = getRawDocument().getItemValue(propertyName, T);
+				props.put(propertyName, result);
+			}
+		}
 		return (T) result;
 	}
 
 	@Override
 	public Set<String> getPropertyKeys() {
+		// TODO - NTF cache?
 		Set<String> result = new HashSet<String>();
 		for (Item i : getRawDocument().getItems()) {
 			result.add(i.getName());
@@ -111,7 +131,14 @@ public abstract class DominoElement implements Element, Serializable {
 	public <T> T removeProperty(final String key) {
 		getParent().startTransaction();
 		T result = getProperty(key);
-		getRawDocument().removeItem(key);
+		Map<String, Object> props = getProps();
+		synchronized (props) {
+			props.remove(key);
+		}
+		Document doc = getRawDocument();
+		synchronized (doc) {
+			doc.removeItem(key);
+		}
 		return result;
 	}
 
@@ -126,7 +153,14 @@ public abstract class DominoElement implements Element, Serializable {
 	@Override
 	public void setProperty(final String propertyName, final java.lang.Object value) {
 		getParent().startTransaction();
-		getRawDocument().replaceItemValue(propertyName, value);
+		Map<String, Object> props = getProps();
+		synchronized (props) {
+			props.put(propertyName, value);
+		}
+		Document doc = getRawDocument();
+		synchronized (doc) {
+			doc.replaceItemValue(propertyName, value);
+		}
 	}
 
 }
