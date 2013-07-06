@@ -17,6 +17,7 @@ package org.openntf.domino.impl;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 import lotus.domino.NotesException;
 
@@ -427,7 +428,12 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 			getDelegate().stampAll(itemName, value);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		}
+	}
 
+	public void stampAll(final Map<String, Object> map) {
+		for (org.openntf.domino.Document doc : this) {
+			doc.putAll(map);
 		}
 	}
 

@@ -612,4 +612,14 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		return cal_;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(final org.openntf.domino.ext.DateTime arg0) {
+		return cal_.compareTo(arg0.toJavaCal());
+	}
+
 }

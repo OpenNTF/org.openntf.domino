@@ -2,11 +2,14 @@ package org.openntf.domino.graph;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,6 +43,27 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	public static final String VERTEX_VIEW_NAME = "(_OPEN_Vertices)";
 	private static final Features FEATURES = new Features();
 	public static final boolean COMPRESS_IDS = false;
+
+	public static SortedSet<? extends Element> sortElements(final Iterable<? extends Element> elements, final String[] sortproperties) {
+		Comparator<Element> comp = new ElementComparator(sortproperties);
+		SortedSet<Element> result = new TreeSet<Element>(comp);
+		for (Object e : elements) {
+			if (e instanceof Element) {
+				result.add((Element) e);
+			}
+		}
+		return Collections.unmodifiableSortedSet(result);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static SortedSet<? extends Edge> sortEdges(final Iterable<? extends Edge> elements, final String[] sortproperties) {
+		return (SortedSet<Edge>) sortElements(elements, sortproperties);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static SortedSet<? extends Vertex> sortVertexes(final Iterable<? extends Vertex> elements, final String[] sortproperties) {
+		return (SortedSet<Vertex>) sortElements(elements, sortproperties);
+	}
 
 	static {
 		DominoGraph.FEATURES.supportsDuplicateEdges = true;
