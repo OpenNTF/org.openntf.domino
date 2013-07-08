@@ -1,5 +1,6 @@
 package org.openntf.domino.graph;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,18 +20,18 @@ import com.tinkerpop.blueprints.util.DefaultVertexQuery;
 import com.tinkerpop.blueprints.util.MultiIterable;
 import com.tinkerpop.blueprints.util.VerticesFromEdgesIterable;
 
-public class DominoVertex extends DominoElement implements Vertex {
+public class DominoVertex extends DominoElement implements Vertex, Serializable {
 	private static final Logger log_ = Logger.getLogger(DominoVertex.class.getName());
 	public static final String GRAPH_TYPE_VALUE = "OpenVertex";
 	public static final String IN_NAME = "_OPEN_IN";
 	public static final String OUT_NAME = "_OPEN_OUT";
 
 	private static final long serialVersionUID = 1L;
-	private transient boolean inDirty_ = false;
+	private Boolean inDirty_ = false;
 	private Set<String> inEdges_;
 	private transient Set<Edge> inEdgesObjects_;
 	private transient Map<String, Set<Edge>> inEdgeCache_;
-	private transient boolean outDirty_ = false;
+	private Boolean outDirty_ = false;
 	private transient Set<Edge> outEdgesObjects_;
 	private transient Map<String, Set<Edge>> outEdgeCache_;
 	private Set<String> outEdges_;

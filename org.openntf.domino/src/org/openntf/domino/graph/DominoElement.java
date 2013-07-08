@@ -22,7 +22,7 @@ public abstract class DominoElement implements Element, Serializable {
 	private String key_;
 	transient DominoGraph parent_;
 	private String unid_;
-	private Map<String, Object> props_;
+	private Map<String, Serializable> props_;
 
 	public DominoElement(final DominoGraph parent, final Document doc) {
 		doc_ = doc;
@@ -30,9 +30,9 @@ public abstract class DominoElement implements Element, Serializable {
 		unid_ = doc.getUniversalID();
 	}
 
-	private Map<String, Object> getProps() {
+	private Map<String, Serializable> getProps() {
 		if (props_ == null) {
-			props_ = Collections.synchronizedMap(new HashMap<String, Object>());
+			props_ = Collections.synchronizedMap(new HashMap<String, Serializable>());
 		}
 		return props_;
 	}
@@ -100,12 +100,14 @@ public abstract class DominoElement implements Element, Serializable {
 
 	public <T> T getProperty(final String propertyName, final Class<?> T) {
 		Object result = null;
-		Map<String, Object> props = getProps();
+		Map<String, Serializable> props = getProps();
 		synchronized (props) {
 			result = props.get(propertyName);
 			if (result == null) {
 				result = getRawDocument().getItemValue(propertyName, T);
-				props.put(propertyName, result);
+				if (result instanceof Serializable) {
+					props.put(propertyName, (Serializable) result);
+				}
 			}
 		}
 		return (T) result;
@@ -131,7 +133,7 @@ public abstract class DominoElement implements Element, Serializable {
 	public <T> T removeProperty(final String key) {
 		getParent().startTransaction();
 		T result = getProperty(key);
-		Map<String, Object> props = getProps();
+		Map<String, Serializable> props = getProps();
 		synchronized (props) {
 			props.remove(key);
 		}
@@ -153,9 +155,11 @@ public abstract class DominoElement implements Element, Serializable {
 	@Override
 	public void setProperty(final String propertyName, final java.lang.Object value) {
 		getParent().startTransaction();
-		Map<String, Object> props = getProps();
+		Map<String, Serializable> props = getProps();
 		synchronized (props) {
-			props.put(propertyName, value);
+			if (value instanceof Serializable) {
+				props.put(propertyName, (Serializable) value);
+			}
 		}
 		Document doc = getRawDocument();
 		synchronized (doc) {
