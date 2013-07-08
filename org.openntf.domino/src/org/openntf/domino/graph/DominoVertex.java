@@ -203,15 +203,25 @@ public class DominoVertex extends DominoElement implements Vertex, Serializable 
 		Set<Edge> result = null;
 		if (labels.length == 1) {
 			String label = labels[0];
+			if (label == null) {
+				return Collections.unmodifiableSet(getOutEdgeObjects());
+			}
 			synchronized (outCache) {
 				result = outCache.get(label);
 			}
 			if (result == null) {
 				result = Collections.synchronizedSet(new LinkedHashSet<Edge>());
 				Set<Edge> allEdges = Collections.unmodifiableSet(getOutEdgeObjects());
-				for (Edge edge : allEdges) {
-					if (label.equals(edge.getLabel())) {
-						result.add(edge);
+				if (!allEdges.isEmpty()) {
+					for (Edge edge : allEdges) {
+						if (edge == null) {
+
+						} else {
+							String curLabel = edge.getLabel();
+							if (label.equals(curLabel)) {
+								result.add(edge);
+							}
+						}
 					}
 				}
 				synchronized (outCache) {
@@ -238,7 +248,11 @@ public class DominoVertex extends DominoElement implements Vertex, Serializable 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected Set<Edge> getOutEdgeObjects() {
 		if (outEdgesObjects_ == null) {
-			outEdgesObjects_ = Collections.synchronizedSet((LinkedHashSet) getParent().getEdgesFromIds(getOutEdges()));
+			Set<String> outs = getOutEdges();
+			Iterable<Edge> edges = getParent().getEdgesFromIds(outs);
+			if (edges != null) {
+				outEdgesObjects_ = Collections.synchronizedSet((LinkedHashSet) edges);
+			}
 		}
 		return outEdgesObjects_;
 	}

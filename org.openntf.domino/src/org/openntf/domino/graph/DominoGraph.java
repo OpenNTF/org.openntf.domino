@@ -324,7 +324,10 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	public Iterable<Edge> getEdgesFromIds(final Set<String> set) {
 		Set<Edge> result = new LinkedHashSet<Edge>();
 		for (String id : set) {
-			result.add(getEdge(id));
+			Edge edge = getEdge(id);
+			if (edge != null) {
+				result.add(edge);
+			}
 		}
 		return result;
 	}
