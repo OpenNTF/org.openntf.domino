@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
+import org.openntf.domino.Name;
 import org.openntf.domino.RichTextItem;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -128,9 +129,14 @@ public class DocumentScanner {
 					}
 				}
 				String value = null;
+				Vector<String> values = null;
 				switch (item.getType()) {
+				case Item.AUTHORS:
+				case Item.READERS:
+				case Item.NAMES:
 				case Item.TEXT:
 					value = item.getValueString();
+					values = item.getValues(String.class);
 					break;
 				case Item.RICHTEXT:
 					value = ((RichTextItem) item).getUnformattedText();
@@ -148,19 +154,62 @@ public class DocumentScanner {
 						tokenSet = tmap.get(name);
 					}
 
-					Scanner s = new Scanner(value);
-
-					while (s.hasNext()) {
-						String token = s.next();
-						token = token.replaceAll("\\W*$", "");
-						token = token.replaceAll("^\\W*", "");
-						token = token.trim();
-						if ((token.length() > 2) && !(stopTokenList_.contains(token))) {
-							tokenSet.add(token);
-							if (tfmap.containsKey(token)) {
-								tfmap.put(token, tfmap.get(token) + 1);
-							} else {
-								tfmap.put(token, 1);
+					if (item.isNames()) {
+						if (!values.isEmpty()) {
+							for (String val : values) {
+								Name Nname = doc.getAncestorSession().createName(value);
+								if (Nname.isHierarchical()) {
+									String cn = Nname.getCommon();
+									tokenSet.add(cn);
+									if (tfmap.containsKey(cn)) {
+										tfmap.put(cn, tfmap.get(cn) + 1);
+									} else {
+										tfmap.put(cn, 1);
+									}
+								} else {
+									tokenSet.add(value);
+									if (tfmap.containsKey(value)) {
+										tfmap.put(value, tfmap.get(value) + 1);
+									} else {
+										tfmap.put(value, 1);
+									}
+								}
+							}
+						}
+					} else {
+						if (!values.isEmpty()) {
+							for (String val : values) {
+								Scanner s = new Scanner(val);
+								while (s.hasNext()) {
+									String token = s.next();
+									token = token.replaceAll("\\W*$", "");
+									token = token.replaceAll("^\\W*", "");
+									token = token.trim();
+									if ((token.length() > 2) && !(stopTokenList_.contains(token))) {
+										tokenSet.add(token);
+										if (tfmap.containsKey(token)) {
+											tfmap.put(token, tfmap.get(token) + 1);
+										} else {
+											tfmap.put(token, 1);
+										}
+									}
+								}
+							}
+						} else {
+							Scanner s = new Scanner(value);
+							while (s.hasNext()) {
+								String token = s.next();
+								token = token.replaceAll("\\W*$", "");
+								token = token.replaceAll("^\\W*", "");
+								token = token.trim();
+								if ((token.length() > 2) && !(stopTokenList_.contains(token))) {
+									tokenSet.add(token);
+									if (tfmap.containsKey(token)) {
+										tfmap.put(token, tfmap.get(token) + 1);
+									} else {
+										tfmap.put(token, 1);
+									}
+								}
 							}
 						}
 					}

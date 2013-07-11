@@ -184,6 +184,12 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		return ed;
 	}
 
+	public Edge getEdge(final Vertex outVertex, final Vertex inVertex, final String label) {
+		String id = DominoUtils.toUnid(outVertex.getId() + label + inVertex.getId());
+		Edge result = getEdge(id);
+		return result;
+	}
+
 	public Edge getOrAddEdge(Object id, final Vertex outVertex, final Vertex inVertex, final String label) {
 		Edge result = null;
 		if (id == null) {

@@ -29,9 +29,10 @@ import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
-import org.openntf.domino.DateTime;
-import org.openntf.domino.View;
 import org.openntf.domino.ACL.Level;
+import org.openntf.domino.DateTime;
+import org.openntf.domino.NoteCollection.SelectOption;
+import org.openntf.domino.View;
 import org.openntf.domino.design.impl.DatabaseDesign;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
@@ -80,7 +81,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#FTDomainSearch(java.lang.String, int, int, int, int, int, java.lang.String)
 	 */
-	public Document FTDomainSearch(final String query, final int maxDocs, final int sortOpt, final int otherOpt, final int start, final int count, final String entryForm) {
+	public Document FTDomainSearch(final String query, final int maxDocs, final int sortOpt, final int otherOpt, final int start,
+			final int count, final String entryForm) {
 		try {
 			return Factory.fromLotus(getDelegate().FTDomainSearch(query, maxDocs, sortOpt, otherOpt, start, count, entryForm),
 					Document.class, this);
@@ -98,8 +100,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * java.lang.String)
 	 */
 	@Override
-	public Document FTDomainSearch(final String query, final int maxDocs, final FTDomainSortOption sortOpt, final Set<FTDomainSearchOption> otherOpt, final int start,
-			final int count, final String entryForm) {
+	public Document FTDomainSearch(final String query, final int maxDocs, final FTDomainSortOption sortOpt,
+			final Set<FTDomainSearchOption> otherOpt, final int start, final int count, final String entryForm) {
 		int nativeOptions = 0;
 		for (FTDomainSearchOption option : otherOpt) {
 			nativeOptions += option.getValue();
@@ -186,7 +188,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#FTSearchRange(java.lang.String, int, org.openntf.domino.Database.SortOption, int, int)
 	 */
 	@Override
-	public DocumentCollection FTSearchRange(final String query, final int maxDocs, final FTSortOption sortOpt, final Set<FTSearchOption> otherOpt, final int start) {
+	public DocumentCollection FTSearchRange(final String query, final int maxDocs, final FTSortOption sortOpt,
+			final Set<FTSearchOption> otherOpt, final int start) {
 		int nativeOptions = 0;
 		for (FTSearchOption option : otherOpt) {
 			nativeOptions += option.getValue();
@@ -457,10 +460,12 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#createQueryView(java.lang.String, java.lang.String, lotus.domino.View, boolean)
 	 */
-	public View createQueryView(final String viewName, final String query, final lotus.domino.View templateView, final boolean prohibitDesignRefresh) {
+	public View createQueryView(final String viewName, final String query, final lotus.domino.View templateView,
+			final boolean prohibitDesignRefresh) {
 		try {
-			return Factory.fromLotus(getDelegate().createQueryView(viewName, query, (lotus.domino.View) toLotus(templateView),
-					prohibitDesignRefresh), View.class, this);
+			return Factory.fromLotus(
+					getDelegate().createQueryView(viewName, query, (lotus.domino.View) toLotus(templateView), prohibitDesignRefresh),
+					View.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -534,10 +539,12 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.Database#createView(java.lang.String, java.lang.String, lotus.domino.View, boolean)
 	 */
-	public View createView(final String viewName, final String selectionFormula, final lotus.domino.View templateView, final boolean prohibitDesignRefresh) {
+	public View createView(final String viewName, final String selectionFormula, final lotus.domino.View templateView,
+			final boolean prohibitDesignRefresh) {
 		try {
-			return Factory.fromLotus(getDelegate().createView(viewName, selectionFormula, (lotus.domino.View) toLotus(templateView),
-					prohibitDesignRefresh), View.class, this);
+			return Factory.fromLotus(
+					getDelegate().createView(viewName, selectionFormula, (lotus.domino.View) toLotus(templateView), prohibitDesignRefresh),
+					View.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -907,8 +914,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#getDocumentByURL(java.lang.String, boolean, boolean, boolean, java.lang.String, java.lang.String,
 	 * java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
-	public Document getDocumentByURL(final String url, final boolean reload, final boolean reloadIfModified, final boolean urlList, final String charSet, final String webUser,
-			final String webPassword, final String proxyUser, final String proxyPassword, final boolean returnImmediately) {
+	public Document getDocumentByURL(final String url, final boolean reload, final boolean reloadIfModified, final boolean urlList,
+			final String charSet, final String webUser, final String webPassword, final String proxyUser, final String proxyPassword,
+			final boolean returnImmediately) {
 		try {
 			// Let's have some fun with this
 			try {
@@ -926,8 +934,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			if (true)
 				return null;
 
-			return Factory.fromLotus(getDelegate().getDocumentByURL(url, reload, reloadIfModified, urlList, charSet, webUser, webPassword,
-					proxyUser, proxyPassword, returnImmediately), Document.class, this);
+			return Factory.fromLotus(
+					getDelegate().getDocumentByURL(url, reload, reloadIfModified, urlList, charSet, webUser, webPassword, proxyUser,
+							proxyPassword, returnImmediately), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -1473,7 +1482,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#getURLHeaderInfo(java.lang.String, java.lang.String, java.lang.String, java.lang.String,
 	 * java.lang.String, java.lang.String)
 	 */
-	public String getURLHeaderInfo(final String url, final String header, final String webUser, final String webPassword, final String proxyUser, final String proxyPassword) {
+	public String getURLHeaderInfo(final String url, final String header, final String webUser, final String webPassword,
+			final String proxyUser, final String proxyPassword) {
 		try {
 			return getDelegate().getURLHeaderInfo(url, header, webUser, webPassword, proxyUser, proxyPassword);
 		} catch (NotesException e) {
@@ -2557,9 +2567,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 						+ elements[2].getLineNumber() + ")");
 				log_.log(java.util.logging.Level.FINER, elements[3].getClassName() + "." + elements[3].getMethodName() + " ( line "
 						+ elements[3].getLineNumber() + ")");
-				log_
-						.log(java.util.logging.Level.FINE,
-								"If you are using this Database in XPages and have attempted to hold it in an scoped variable between requests, this behavior is normal.");
+				log_.log(java.util.logging.Level.FINE,
+						"If you are using this Database in XPages and have attempted to hold it in an scoped variable between requests, this behavior is normal.");
 
 			}
 		} catch (Exception e) {
@@ -2643,6 +2652,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		return getModifiedDocuments(since, noteClass.getValue());
 	}
 
+	// public org.openntf.domino.DocumentCollection getModifiedDocuments(Date since, ModifiedDocClass noteClass) {
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -2689,8 +2700,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * java.lang.String)
 	 */
 	@Override
-	public org.openntf.domino.Document FTDomainSearch(final String query, final int maxDocs, final FTSortOption sortOpt, final int otherOpt, final int start, final int count,
-			final String entryForm) {
+	public org.openntf.domino.Document FTDomainSearch(final String query, final int maxDocs, final FTSortOption sortOpt,
+			final int otherOpt, final int start, final int count, final String entryForm) {
 		return this.FTDomainSearch(query, maxDocs, sortOpt.getValue(), otherOpt, start, count, entryForm);
 	}
 
@@ -2700,7 +2711,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#FTSearch(java.lang.String, int, org.openntf.domino.Database.FTSortOption, int)
 	 */
 	@Override
-	public org.openntf.domino.DocumentCollection FTSearch(final String query, final int maxDocs, final FTSortOption sortOpt, final int otherOpt) {
+	public org.openntf.domino.DocumentCollection FTSearch(final String query, final int maxDocs, final FTSortOption sortOpt,
+			final int otherOpt) {
 		return this.FTSearch(query, maxDocs, sortOpt.getValue(), otherOpt);
 	}
 
@@ -2710,7 +2722,33 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#FTSearchRange(java.lang.String, int, org.openntf.domino.Database.FTSortOption, int, int)
 	 */
 	@Override
-	public org.openntf.domino.DocumentCollection FTSearchRange(final String query, final int maxDocs, final FTSortOption sortOpt, final int otherOpt, final int start) {
+	public org.openntf.domino.DocumentCollection FTSearchRange(final String query, final int maxDocs, final FTSortOption sortOpt,
+			final int otherOpt, final int start) {
 		return this.FTSearchRange(query, maxDocs, sortOpt.getValue(), otherOpt, start);
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.Database#getModifiedNoteCount(lotus.domino.DateTime, org.openntf.domino.NoteCollection.SelectOption)
+	 */
+	@Override
+	public int getModifiedNoteCount(final java.util.Date since, final Set<SelectOption> noteClass) {
+		if (since.after(this.getLastModified().toJavaDate()))
+			return 0;
+		NoteCollection nc = createNoteCollection(false);
+		nc.setSinceTime(since);
+		nc.setSelectOptions(noteClass);
+		nc.buildCollection();
+		return nc.getCount();
+	}
+
+	public int getModifiedNoteCount(final java.util.Date since) {
+		if (since.after(this.getLastModified().toJavaDate()))
+			return 0;
+		Set<SelectOption> noteClass = new java.util.HashSet<SelectOption>();
+		noteClass.add(SelectOption.DOCUMENTS);
+		return getModifiedNoteCount(since, noteClass);
+	}
+
 }

@@ -36,6 +36,13 @@ public class ElementComparator implements Comparator<Element> {
 			for (String key : props_) {
 				java.lang.Object v0 = arg0.getProperty(key);
 				java.lang.Object v1 = arg1.getProperty(key);
+				if (v0 == null && v1 == null) {
+					return 0;
+				} else if (v0 == null) {
+					return -1;
+				} else if (v1 == null) {
+					return 1;
+				}
 				if (v0 instanceof Number && v1 instanceof Number) {
 					double d0 = ((Number) v0).doubleValue();
 					double d1 = ((Number) v1).doubleValue();

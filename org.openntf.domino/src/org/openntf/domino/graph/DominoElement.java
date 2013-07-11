@@ -45,6 +45,20 @@ public abstract class DominoElement implements Element, Serializable {
 		return getParent().getRawDatabase();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(final Object o) {
+		if (o instanceof DominoElement) {
+			return ((DominoElement) o).getId().equals(getId());
+		} else {
+			return false;
+		}
+	}
+
 	public Document getRawDocument() {
 		if (doc_ == null) {
 			doc_ = getDocument();

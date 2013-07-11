@@ -112,7 +112,9 @@ public enum TypeUtils {
 				result = join(v);
 			} else if (T == java.util.Collection.class) {
 				result = new ArrayList();
-				((ArrayList) result).addAll(v);
+				if (v != null) {
+					((ArrayList) result).addAll(v);
+				}
 			} else if (T == Date.class) {
 
 				result = toDate(v);
