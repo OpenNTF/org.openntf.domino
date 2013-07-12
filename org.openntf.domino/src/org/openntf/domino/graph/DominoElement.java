@@ -127,6 +127,23 @@ public abstract class DominoElement implements Element, Serializable {
 		return (T) result;
 	}
 
+	public <T> T getProperty(final String propertyName, final Class<?> T, final boolean allowNull) {
+		T result = getProperty(propertyName, T);
+		if (allowNull) {
+			return result;
+		} else {
+			if (result == null) {
+				try {
+					return (T) T.newInstance();
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			} else {
+				return result;
+			}
+		}
+	}
+
 	@Override
 	public Set<String> getPropertyKeys() {
 		// TODO - NTF cache?

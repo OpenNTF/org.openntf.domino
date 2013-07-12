@@ -477,13 +477,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.tinkerpop.blueprints.TransactionalGraph#commit()
-	 */
-	@Override
-	public void commit() {
+	public void commit(final boolean clearCache) {
 		if (inTransaction_) {
 			// System.out.println("Committing transaction");
 
@@ -508,9 +502,19 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		} else {
 			// System.out.println("Not in transaction!");
 		}
-		clearCache();
+		if (clearCache)
+			clearCache();
 		// System.out.println("Transaction complete");
+	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.tinkerpop.blueprints.TransactionalGraph#commit()
+	 */
+	@Override
+	public void commit() {
+		commit(true);
 	}
 
 	/*
