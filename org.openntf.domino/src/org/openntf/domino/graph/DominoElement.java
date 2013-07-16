@@ -12,9 +12,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
 
-import com.tinkerpop.blueprints.Element;
-
-public abstract class DominoElement implements Element, Serializable {
+public abstract class DominoElement implements IDominoElement, Serializable {
 	private static final Logger log_ = Logger.getLogger(DominoElement.class.getName());
 	private static final long serialVersionUID = 1L;
 	public static final String TYPE_FIELD = "_OPEN_GRAPHTYPE";

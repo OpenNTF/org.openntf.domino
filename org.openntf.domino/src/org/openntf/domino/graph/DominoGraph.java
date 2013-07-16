@@ -107,11 +107,39 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	private String filepath_;
 	private String server_;
 	private transient org.openntf.domino.Session session_;
+	private transient Map<String, IEdgeHelper> edgeHelpers_ = new HashMap<String, IEdgeHelper>();
 
 	public DominoGraph(final org.openntf.domino.Database database) {
 		setRawDatabase(database);
 		RunContext rc = Factory.getRunContext();
 		// System.out.println("Context: " + rc.toString());
+	}
+
+	public IEdgeHelper getHelper(final String key) {
+		IEdgeHelper helper = edgeHelpers_.get(key);
+		return helper;
+	}
+
+	public void addHelper(final String key, final Class<? extends Vertex> inType, final Class<? extends Vertex> outType) {
+		addHelper(key, inType, outType, true, key);
+	}
+
+	public void addHelper(final String key, final Class<? extends Vertex> inType, final Class<? extends Vertex> outType,
+			final boolean unique) {
+		addHelper(key, inType, outType, unique, key);
+	}
+
+	public void addHelper(final String key, final Class<? extends Vertex> inType, final Class<? extends Vertex> outType,
+			final boolean unique, final String label) {
+		if (getHelper(key) == null) {
+			edgeHelpers_.put(key, new AbstractEdgeHelper(this, label, inType, outType, unique));
+		}
+	}
+
+	public void addHelper(final String key, final IEdgeHelper helper) {
+		if (getHelper(key) == null) {
+			edgeHelpers_.put(key, helper);
+		}
 	}
 
 	public void setRawDatabase(final org.openntf.domino.Database database) {
@@ -179,8 +207,8 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		DominoEdge ed = new DominoEdge(this, d);
 		putCache(ed);
 		ed.setLabel(label);
-		ed.setOutDoc(outVertex);
-		ed.setInDoc(inVertex);
+		ed.setOutDoc((IDominoVertex) outVertex);
+		ed.setInDoc((IDominoVertex) inVertex);
 		return ed;
 	}
 
@@ -197,8 +225,8 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 			result = getEdge(id);
 			if (result != null) {
 				((DominoEdge) result).setLabel(label);
-				((DominoEdge) result).setOutDoc(outVertex);
-				((DominoEdge) result).setInDoc(inVertex);
+				((DominoEdge) result).setOutDoc((IDominoVertex) outVertex);
+				((DominoEdge) result).setInDoc((IDominoVertex) inVertex);
 			}
 		}
 		// if (result == null) {

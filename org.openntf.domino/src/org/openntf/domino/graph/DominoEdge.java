@@ -4,10 +4,9 @@ import java.io.Serializable;
 import java.util.logging.Logger;
 
 import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 
-public class DominoEdge extends DominoElement implements Edge, Serializable {
+public class DominoEdge extends DominoElement implements IDominoEdge, Serializable {
 	private static final Logger log_ = Logger.getLogger(DominoEdge.class.getName());
 	public static final String GRAPH_TYPE_VALUE = "OpenEdge";
 	public static final String IN_NAME = "_OPEN_IN";
@@ -61,8 +60,8 @@ public class DominoEdge extends DominoElement implements Edge, Serializable {
 		setOutDoc(out);
 	}
 
-	public void setInDoc(final Vertex in) {
-		((DominoVertex) in).addInEdge(this);
+	public void setInDoc(final IDominoVertex in) {
+		in.addInEdge(this);
 		in_ = in;
 		inKey_ = (String) in.getId();
 		setProperty(DominoEdge.IN_NAME, inKey_);
@@ -73,8 +72,8 @@ public class DominoEdge extends DominoElement implements Edge, Serializable {
 		setProperty(DominoEdge.LABEL_NAME, label);
 	}
 
-	public void setOutDoc(final Vertex out) {
-		((DominoVertex) out).addOutEdge(this);
+	public void setOutDoc(final IDominoVertex out) {
+		out.addOutEdge(this);
 		out_ = out;
 		outKey_ = (String) out.getId();
 		setProperty(DominoEdge.OUT_NAME, outKey_);

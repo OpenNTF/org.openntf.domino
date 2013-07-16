@@ -20,7 +20,7 @@ import com.tinkerpop.blueprints.util.DefaultVertexQuery;
 import com.tinkerpop.blueprints.util.MultiIterable;
 import com.tinkerpop.blueprints.util.VerticesFromEdgesIterable;
 
-public class DominoVertex extends DominoElement implements Vertex, Serializable {
+public class DominoVertex extends DominoElement implements IDominoVertex, Serializable {
 	private static final Logger log_ = Logger.getLogger(DominoVertex.class.getName());
 	public static final String GRAPH_TYPE_VALUE = "OpenVertex";
 	public static final String IN_NAME = "_OPEN_IN";
@@ -45,7 +45,7 @@ public class DominoVertex extends DominoElement implements Vertex, Serializable 
 		return parent_.addEdge(null, this, vertex, label);
 	}
 
-	void addInEdge(final Edge edge) {
+	public void addInEdge(final Edge edge) {
 		boolean adding = false;
 		Set<String> ins = getInEdges();
 		synchronized (ins) {
@@ -69,7 +69,7 @@ public class DominoVertex extends DominoElement implements Vertex, Serializable 
 		}
 	}
 
-	void addOutEdge(final Edge edge) {
+	public void addOutEdge(final Edge edge) {
 		boolean adding = false;
 		Set<String> outs = getOutEdges();
 		synchronized (outs) {
