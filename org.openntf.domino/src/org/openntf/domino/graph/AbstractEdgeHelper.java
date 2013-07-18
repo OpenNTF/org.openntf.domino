@@ -3,8 +3,13 @@
  */
 package org.openntf.domino.graph;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.SortedSet;
 import java.util.logging.Logger;
 
+import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 
@@ -76,6 +81,79 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 
 	public boolean isSameTypes() {
 		return sameTypes_;
+	}
+
+	public Class<? extends Vertex> getOtherType(final Class<? extends Vertex> type) {
+		if (getInType().equals(type))
+			return getOutType();
+		if (getOutType().equals(type))
+			return getInType();
+		throw new EdgeHelperException(type.getName() + " is not a participating type in edge " + getLabel());
+	}
+
+	public Class<? extends Vertex> getOtherType(final Vertex vertex) {
+		return getOtherType(vertex.getClass());
+	}
+
+	public Set<? extends Edge> getEdges(final Vertex vertex) {
+		if (getInType().equals(vertex.getClass())) {
+			// System.out.println("Request from " + getLabel() + " helper: Requesting IN edges because vertex " +
+			// vertex.getClass().getName()
+			// + " is IN.");
+			return Collections.unmodifiableSet((Set<Edge>) vertex.getEdges(Direction.IN, getLabel()));
+		}
+		if (getOutType().equals(vertex.getClass())) {
+			// System.out.println("Request from " + getLabel() + " helper: Requesting OUT edges because vertex " +
+			// vertex.getClass().getName()
+			// + " is OUT.");
+			return Collections.unmodifiableSet((Set<Edge>) vertex.getEdges(Direction.OUT, getLabel()));
+		}
+		throw new EdgeHelperException(vertex.getClass().getName() + " is not a participating type in edge " + getLabel());
+	}
+
+	public SortedSet<? extends Edge> getSortedEdges(final Vertex vertex, final String... sortproperties) {
+		try {
+			Set<? extends Edge> rawSet = getEdges(vertex);
+			return Collections.unmodifiableSortedSet(DominoGraph.sortEdges(rawSet, sortproperties));
+		} catch (Throwable t) {
+			throw new RuntimeException(t);
+		}
+	}
+
+	public Set<? extends Vertex> getOtherVertexes(final Vertex vertex) {
+		Set<Vertex> result = new LinkedHashSet<Vertex>();
+		Direction od = Direction.IN;
+		if (getInType().equals(vertex.getClass()))
+			od = Direction.OUT;
+
+		// System.out.println("Request from " + getLabel() + " helper: Getting opposite of " + vertex.getClass().getName()
+		// + " with direction " + od.toString() + " (OUT: " + getOutType().getName() + ", IN: " + getInType().getName() + ")");
+		Set<? extends Edge> edges = getEdges(vertex);
+		// System.out.println("Request from " + getLabel() + " helper: Got " + edges.size() + " edges.");
+		for (Edge edge : edges) {
+			result.add(edge.getVertex(od));
+		}
+		return Collections.unmodifiableSet(result);
+	}
+
+	public Set<? extends Vertex> getSortedOtherVertexes(final Vertex vertex, final String... sortproperties) {
+		try {
+			Set<? extends Vertex> rawSet = getOtherVertexes(vertex);
+			return Collections.unmodifiableSortedSet(DominoGraph.sortVertexes(rawSet, sortproperties));
+		} catch (Throwable t) {
+			throw new RuntimeException(t);
+		}
+	}
+
+	public Set<Vertex> getOtherVertexesByEdge(final Vertex vertex, final String... sortproperties) {
+		Set<Vertex> result = new LinkedHashSet<Vertex>();
+		Direction od = Direction.IN;
+		if (getInType().equals(vertex.getClass()))
+			od = Direction.OUT;
+		for (Edge edge : getSortedEdges(vertex, sortproperties)) {
+			result.add(edge.getVertex(od));
+		}
+		return Collections.unmodifiableSet(result);
 	}
 
 	public Edge makeEdge(final Vertex defaultOut, final Vertex defaultIn) {

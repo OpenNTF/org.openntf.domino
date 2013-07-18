@@ -174,17 +174,25 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		Set<Edge> result = null;
 		if (labels.length == 1) {
 			String label = labels[0];
+			// System.out.println("Getting in edges from " + getClass().getName() + " with label: " + label + " ...");
 			synchronized (inCache) {
 				result = inCache.get(label);
 			}
 			if (result == null) {
 				result = Collections.synchronizedSet(new LinkedHashSet<Edge>());
 				Set<Edge> allEdges = Collections.unmodifiableSet(getInEdgeObjects());
+				// if (allEdges.size() < 1) {
+				// System.out.println("No unfiltered in edges. However there are " + getOutEdgeObjects().size() + " out edges!");
+				// System.out.println("And " + getOutEdgeObjects(label).size() + " out edges with the label " + label + "!");
+				// } else {
+				// System.out.println("Unfiltered in edge count: " + allEdges.size());
+				// }
 				for (Edge edge : allEdges) {
 					if (label.equals(edge.getLabel())) {
 						result.add(edge);
 					}
 				}
+				// System.out.println("Filtered in edge count: " + result.size());
 				synchronized (inCache) {
 					inCache.put(label, result);
 				}

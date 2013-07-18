@@ -106,8 +106,8 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	private transient org.openntf.domino.Database database_;
 	private String filepath_;
 	private String server_;
-	private transient org.openntf.domino.Session session_;
-	private transient Map<String, IEdgeHelper> edgeHelpers_ = new HashMap<String, IEdgeHelper>();
+	protected transient org.openntf.domino.Session session_;
+	protected transient Map<String, IEdgeHelper> edgeHelpers_ = new HashMap<String, IEdgeHelper>();
 
 	public DominoGraph(final org.openntf.domino.Database database) {
 		setRawDatabase(database);
