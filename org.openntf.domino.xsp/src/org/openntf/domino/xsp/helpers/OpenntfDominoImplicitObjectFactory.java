@@ -104,50 +104,54 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 	public OpenntfDominoImplicitObjectFactory() {
 	}
 
+	private org.openntf.domino.Session createSession(final FacesContextEx ctx) {
+		org.openntf.domino.Session session = null;
+		String sessionKey = isAppGodMode(ctx) ? "session" : "opensession";
+		Map localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
+		lotus.domino.Session rawSession = (lotus.domino.Session) localMap.get("session");
+		if (rawSession == null) {
+			rawSession = (lotus.domino.Session) ctx.getApplication().getVariableResolver().resolveVariable(ctx, "session");
+		}
+		if (rawSession != null) {
+			session = Factory.fromLotus(rawSession, org.openntf.domino.Session.class, null);
+			if (isAppMimeFriendly(ctx))
+				session.setConvertMIME(false);
+			localMap.put(sessionKey, session);
+		} else {
+			System.out.println("Unable to locate 'session' through request map or variable resolver. Unable to auto-wrap.");
+		}
+		return session;
+	}
+
+	private org.openntf.domino.Database createDatabase(final FacesContextEx ctx, final org.openntf.domino.Session session) {
+		org.openntf.domino.Database database = null;
+		String dbKey = isAppGodMode(ctx) ? "database" : "opendatabase";
+		Map localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
+		lotus.domino.Database rawDatabase = (lotus.domino.Database) localMap.get("database");
+		if (rawDatabase == null) {
+			rawDatabase = (lotus.domino.Database) ctx.getApplication().getVariableResolver().resolveVariable(ctx, "database");
+		}
+		if (rawDatabase != null) {
+			database = Factory.fromLotus(rawDatabase, org.openntf.domino.Database.class, session);
+			localMap.put(dbKey, database);
+		} else {
+			System.out.println("Unable to locate 'database' through request map or variable resolver. Unable to auto-wrap.");
+		}
+		return database;
+	}
+
 	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void createImplicitObjects(final FacesContextEx ctx) {
 		ctx.addRequestListener(new ContextListener());
-		if (isAppDebug(ctx)) {
-			System.out.println("Creating implicit objects...");
-		}
-		String sessionKey = (isAppGodMode(ctx) ? "session" : "opensession");
-		String dbKey = isAppGodMode(ctx) ? "database" : "opendatabase";
 		Factory.setClassLoader(ctx.getContextClassLoader());
-		org.openntf.domino.Session s = null;
-
-		Map localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
-		if (localMap.containsKey("session")) {
-			Object current = localMap.get("session");
-			s = Factory.fromLotus((lotus.domino.Session) current, org.openntf.domino.Session.class, null);
-		} else {
-			if (isAppDebug(ctx)) {
-				System.out.println("RequestMap does not contain session. Trying variable resolver...");
-			}
-			Object current = ctx.getApplication().getVariableResolver().resolveVariable(ctx, "session");
-			if (current != null) {
-				s = Factory.fromLotus((lotus.domino.Session) current, org.openntf.domino.Session.class, null);
-			} else {
-				if (isAppDebug(ctx)) {
-					System.out.println("Variable resolver didn't work either :(");
-				}
-			}
+		if (isAppDebug(ctx)) {
+			System.out.println("Beginning creation of implicit objects...");
 		}
-		if (s != null) {
-			if (isAppDebug(ctx)) {
-				System.out.println("Putting session into map with key " + sessionKey);
-			}
-			localMap.put(sessionKey, s);
-			if (isAppMimeFriendly(ctx))
-				s.setConvertMIME(false);
-		}
-
-		if (localMap.containsKey("database")) {
-			Object current = localMap.get("database");
-			if (!(current instanceof org.openntf.domino.Session)) {
-				org.openntf.domino.Database db = Factory.fromLotus((lotus.domino.Database) current, org.openntf.domino.Database.class, s);
-				localMap.put(dbKey, db);
-			}
+		org.openntf.domino.Session session = createSession(ctx);
+		org.openntf.domino.Database database = createDatabase(ctx, session);
+		if (isAppDebug(ctx)) {
+			System.out.println("Done creating implicit objects.");
 		}
 	}
 

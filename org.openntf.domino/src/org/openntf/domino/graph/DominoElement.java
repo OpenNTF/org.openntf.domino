@@ -131,6 +131,16 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 			return result;
 		} else {
 			if (result == null) {
+				if (Boolean.class.equals(T) || Boolean.TYPE.equals(T))
+					return (T) Boolean.FALSE;
+				if (Integer.class.equals(T) || Integer.TYPE.equals(T))
+					return (T) Integer.valueOf(0);
+				if (Double.class.equals(T) || Double.TYPE.equals(T))
+					return (T) Double.valueOf(0d);
+				if (Float.class.equals(T) || Float.TYPE.equals(T))
+					return (T) Float.valueOf(0f);
+				if (String.class.equals(T))
+					return (T) "";
 				try {
 					return (T) T.newInstance();
 				} catch (Exception e) {
