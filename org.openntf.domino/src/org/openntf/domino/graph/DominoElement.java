@@ -1,6 +1,7 @@
 package org.openntf.domino.graph;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -131,6 +132,8 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 			return result;
 		} else {
 			if (result == null) {
+				if (T.isArray())
+					return (T) Array.newInstance(T, 0);
 				if (Boolean.class.equals(T) || Boolean.TYPE.equals(T))
 					return (T) Boolean.FALSE;
 				if (Integer.class.equals(T) || Integer.TYPE.equals(T))

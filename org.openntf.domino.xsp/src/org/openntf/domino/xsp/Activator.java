@@ -10,8 +10,7 @@ import com.ibm.commons.util.StringUtil;
 import com.ibm.xsp.application.ApplicationEx;
 
 public class Activator extends Plugin {
-	public static final String PLUGIN_ID = Activator.class.getPackage()
-			.getName();
+	public static final String PLUGIN_ID = Activator.class.getPackage().getName();
 	public static final boolean _debug = false;
 
 	public static Activator instance;
@@ -33,8 +32,7 @@ public class Activator extends Plugin {
 
 	public static String getVersion() {
 		if (version == null) {
-			version = (String) instance.getBundle().getHeaders()
-					.get("Bundle-Version");
+			version = (String) instance.getBundle().getHeaders().get("Bundle-Version");
 		}
 		return version;
 	}
@@ -56,15 +54,13 @@ public class Activator extends Plugin {
 	 * @param propertyName
 	 *            property to retrieve
 	 * @param defaultValue
-	 *            default value to use if the property can't be found anywhere
-	 *            else
+	 *            default value to use if the property can't be found anywhere else
 	 * @return String array of property, split on commas
 	 */
-	public static String[] getXspProperty(String propertyName) {
+	public static String[] getXspProperty(final String propertyName) {
 		String[] result = null;
 		try {
-			ApplicationEx app = ApplicationEx.getInstance(FacesContext
-					.getCurrentInstance());
+			ApplicationEx app = ApplicationEx.getInstance(FacesContext.getCurrentInstance());
 			if (null == app) {
 				result = getEnvironmentStrings();
 			} else {
@@ -72,12 +68,18 @@ public class Activator extends Plugin {
 				if (StringUtil.isEmpty(setting)) {
 					result = getEnvironmentStrings();
 				} else {
-					result = StringUtil.splitString(setting, ',');
+					if (setting.indexOf(',') > -1) {
+						result = StringUtil.splitString(setting, ',');
+					} else {
+						result = new String[1];
+						result[0] = setting;
+					}
 				}
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
+		// System.out.println("Result for " + propertyName + ": " + StringUtil.concatStrings(result, ',', true));
 		return result;
 	}
 
@@ -88,12 +90,16 @@ public class Activator extends Plugin {
 			if (StringUtil.isEmpty(setting)) {
 				setting = System.getProperty(PLUGIN_ID); // $NON-NLS-1$
 				if (StringUtil.isEmpty(setting)) {
-					setting = com.ibm.xsp.model.domino.DominoUtils
-							.getEnvironmentString(PLUGIN_ID); // $NON-NLS-1$
+					setting = com.ibm.xsp.model.domino.DominoUtils.getEnvironmentString(PLUGIN_ID); // $NON-NLS-1$
 				}
 			}
 			if (StringUtil.isNotEmpty(setting)) {
-				result = StringUtil.splitString(setting, ',');
+				if (setting.indexOf(',') > -1) {
+					result = StringUtil.splitString(setting, ',');
+				} else {
+					result = new String[1];
+					result[0] = setting;
+				}
 			} else {
 				result = new String[0];
 			}
@@ -106,23 +112,20 @@ public class Activator extends Plugin {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
-	 * )
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext )
 	 */
 	@Override
-	public void start(BundleContext bundleContext) throws Exception {
+	public void start(final BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
-	public void stop(BundleContext bundleContext) throws Exception {
+	public void stop(final BundleContext bundleContext) throws Exception {
 		Activator.context = null;
 	}
 

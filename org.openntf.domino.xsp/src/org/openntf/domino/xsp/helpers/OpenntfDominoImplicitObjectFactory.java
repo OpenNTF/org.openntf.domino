@@ -45,25 +45,34 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 
 	private static boolean isAppGodMode(final FacesContext ctx) {
 		Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
-		Object current = appMap.get(OpenntfDominoImplicitObjectFactory.class.getName());
+		Object current = appMap.get(OpenntfDominoImplicitObjectFactory.class.getName() + "_GODMODE");
 		if (current == null) {
+			// System.out.println("Current not found. Creating...");
 			current = Boolean.FALSE;
 			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
 			if (envs != null) {
+				// if (envs.length == 0) {
+				// System.out.println("Got an empty string array!");
+				// }
 				for (String s : envs) {
+					// System.out.println("Xsp check: " + s);
 					if (s.equalsIgnoreCase("godmode")) {
 						current = Boolean.TRUE;
 					}
 				}
+			} else {
+				// System.out.println("XSP ENV IS NULL!!");
 			}
 			appMap.put(OpenntfDominoImplicitObjectFactory.class.getName(), current);
+		} else {
+			// System.out.println("Current found: " + String.valueOf(current));
 		}
 		return (Boolean) current;
 	}
 
 	private static boolean isAppMimeFriendly(final FacesContext ctx) {
 		Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
-		Object current = appMap.get(OpenntfDominoImplicitObjectFactory.class.getName());
+		Object current = appMap.get(OpenntfDominoImplicitObjectFactory.class.getName() + "_MARCEL");
 		if (current == null) {
 			current = Boolean.FALSE;
 			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
@@ -81,7 +90,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 
 	private static boolean isAppDebug(final FacesContext ctx) {
 		Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
-		Object current = appMap.get(OpenntfDominoImplicitObjectFactory.class.getName());
+		Object current = appMap.get(OpenntfDominoImplicitObjectFactory.class.getName() + "_RAID");
 		if (current == null) {
 			current = Boolean.FALSE;
 			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
