@@ -21,6 +21,10 @@ public interface Document {
 	 */
 	public Date getCreatedDate();
 
+	public String getFormName();
+
+	public org.openntf.domino.Form getForm();
+
 	/**
 	 * Gets the initially modified date.
 	 * 
