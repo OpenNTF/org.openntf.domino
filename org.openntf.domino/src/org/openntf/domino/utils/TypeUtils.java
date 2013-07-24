@@ -38,6 +38,8 @@ public enum TypeUtils {
 		String noteid = doc.getNoteID();
 		boolean hasItem = doc.hasItem(itemName);
 		if (!hasItem) {
+			// System.out.println("Item " + itemName + " doesn't exist in document " + doc.getNoteID() + " in "
+			// + doc.getAncestorDatabase().getFilePath() + " so we can't return a " + T.getName());
 			Class<?> CType = null;
 			if (T.isArray()) {
 				CType = T.getComponentType();
@@ -163,11 +165,13 @@ public enum TypeUtils {
 	}
 
 	public static <T> T toNumber(final Object value, final Class<?> T) throws DataNotCompatibleException {
+		// System.out.println("Starting toNumber to get type " + T.getName() + " from a value of type " + value.getClass().getName());
 		T result = null;
 		Object localValue = value;
 		if (value instanceof Collection) {
 			localValue = ((Collection) value).iterator().next();
 		}
+		// System.out.println("LocalValue is type " + localValue.getClass().getName() + ": " + String.valueOf(localValue));
 
 		if (T == Integer.class) {
 			if (localValue instanceof String) {
@@ -248,7 +252,7 @@ public enum TypeUtils {
 				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
 			}
 		}
-		return null;
+		return result;
 	}
 
 	public static Boolean[] toBooleans(final Collection<Object> vector) {
