@@ -45,6 +45,7 @@ import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.MIMEConversionException;
 import org.openntf.domino.helpers.Formula;
 import org.openntf.domino.transactions.DatabaseTransaction;
+import org.openntf.domino.types.BigString;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.TypeUtils;
@@ -1881,6 +1882,19 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.openntf.domino.ext.Document#replaceItemValue(java.lang.String, java.lang.Object, java.lang.Boolean)
+	 */
+	@Override
+	public Item replaceItemValue(final String itemName, final Object value, final boolean isSummary) {
+		Item result = replaceItemValue(itemName, value);
+		if (result.isSummary() != isSummary)
+			result.setSummary(isSummary);
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Document#replaceItemValue(java.lang.String, java.lang.Object)
 	 */
 	@SuppressWarnings("unchecked")
@@ -1901,7 +1915,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		try {
 			lotus.domino.Item result = null;
 			Class<?> valueClass = value.getClass();
-
+			boolean isNonSummary = false;	// why isNon instead of is? Because we want to default to the existing behavior and only mark
+											// non-summary by exception
 			try {
 				if (value instanceof List || value instanceof Object[]) {
 					Vector<Object> resultList = new Vector<Object>();
@@ -1911,6 +1926,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					List<?> listValue = value instanceof List ? (List<?>) value : Arrays.asList((Object[]) value);
 
 					for (Object valNode : listValue) {
+						if (valNode instanceof BigString)
+							isNonSummary = true;
 						Object domNode = toDominoFriendly(valNode, this);
 						if (objectClass == null) {
 							objectClass = domNode.getClass();
@@ -1942,8 +1959,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						}
 					}
 					result = getDelegate().replaceItemValue(itemName, resultList);
+					if (isNonSummary) {
+						result.setSummary(false);
+					}
 					enc_recycle(resultList);
 				} else {
+					if (value instanceof BigString)
+						isNonSummary = true;
 					Object domNode = toDominoFriendly(value, this);
 					if (domNode instanceof String && ((String) domNode).length() > 60000) {
 						throw new IllegalArgumentException();
@@ -1955,6 +1977,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 							mimeChk.remove();
 						}
 						result = getDelegate().replaceItemValue(itemName, domNode);
+						if (isNonSummary)
+							result.setSummary(false);
 					} catch (NotesException nativeError) {
 						log_.warning("Native error occured when replacing " + itemName + " item on doc " + this.noteid_
 								+ " with a value of type " + (domNode == null ? "null" : domNode.getClass().getName()) + " of value "
@@ -2676,7 +2700,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			return value;
 		} else if (key instanceof CharSequence) {
 			// Execute the key as a formula in the context of the document
-			Formula formula = new Formula(getAncestorSession());
+			Formula formula = new Formula();
 			formula.setExpression(key.toString());
 			List<?> value = formula.getValue(this);
 			if (value.size() == 1) {

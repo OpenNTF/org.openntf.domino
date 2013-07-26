@@ -22,6 +22,7 @@ import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.impl.DateTime;
 import org.openntf.domino.impl.Name;
+import org.openntf.domino.types.BigString;
 
 import com.ibm.icu.math.BigDecimal;
 import com.ibm.icu.text.DateFormat;
@@ -97,6 +98,8 @@ public enum TypeUtils {
 			} else {
 				if (CType == String.class) {
 					result = toStrings(v);
+				} else if (CType == BigString.class) {
+					result = toBigStrings(v);
 				} else if (CType == Date.class) {
 					result = toDates(v);
 				} else if (CType == DateTime.class) {
@@ -119,15 +122,15 @@ public enum TypeUtils {
 
 			if (T == String.class) {
 				result = join(v);
+			} else if (T == BigString.class) {
+				result = new BigString(join(v));
 			} else if (T == java.util.Collection.class) {
 				result = new ArrayList();
 				if (v != null) {
 					((ArrayList) result).addAll(v);
 				}
 			} else if (T == Date.class) {
-
 				result = toDate(v);
-
 			} else if (T == org.openntf.domino.DateTime.class) {
 				result = session.createDateTime(toDate(v));
 			} else if (T == org.openntf.domino.Name.class) {
@@ -514,6 +517,21 @@ public enum TypeUtils {
 				strings[i++] = ((DateTime) o).getGMTTime();
 			} else {
 				strings[i++] = String.valueOf(o);
+			}
+		}
+		return strings;
+	}
+
+	public static BigString[] toBigStrings(final Collection<Object> vector) throws DataNotCompatibleException {
+		if (vector == null)
+			return null;
+		BigString[] strings = new BigString[vector.size()];
+		int i = 0;
+		for (Object o : vector) {
+			if (o instanceof DateTime) {
+				strings[i++] = new BigString(((DateTime) o).getGMTTime());
+			} else {
+				strings[i++] = new BigString(String.valueOf(o));
 			}
 		}
 		return strings;

@@ -60,6 +60,8 @@ public interface Document {
 
 	public <T> T getItemValue(final String name, final Class<?> T) throws ItemNotFoundException, DataNotCompatibleException;
 
+	public Item replaceItemValue(final String name, final Object value, final boolean isSummary);
+
 	// public <T> T getItemValue(String name, Class<?> T, ClassLoader loader) throws ItemNotFoundException, DataNotCompatibleException;
 
 }

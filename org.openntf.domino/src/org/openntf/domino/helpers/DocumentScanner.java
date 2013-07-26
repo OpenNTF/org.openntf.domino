@@ -12,6 +12,8 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
@@ -93,6 +95,18 @@ public class DocumentScanner {
 			tokenFreqMap_ = new ConcurrentSkipListMap<String, Integer>(String.CASE_INSENSITIVE_ORDER);
 		}
 		return tokenFreqMap_;
+	}
+
+	public static final Pattern REGEX_SUFFIX_TRIM = Pattern.compile("\\W*$");
+	public static final Pattern REGEX_PREFIX_TRIM = Pattern.compile("^\\W*");
+
+	public static String scrubToken(final String token) {
+		Matcher pMatch = REGEX_PREFIX_TRIM.matcher(token);
+		String result = pMatch.replaceAll("");
+		Matcher sMatch = REGEX_PREFIX_TRIM.matcher(result);
+		result = sMatch.replaceAll("");
+		result = result.trim();
+		return result;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -181,10 +195,7 @@ public class DocumentScanner {
 							for (String val : values) {
 								Scanner s = new Scanner(val);
 								while (s.hasNext()) {
-									String token = s.next();
-									token = token.replaceAll("\\W*$", "");
-									token = token.replaceAll("^\\W*", "");
-									token = token.trim();
+									String token = scrubToken(s.next());
 									if ((token.length() > 2) && !(stopTokenList_.contains(token))) {
 										tokenSet.add(token);
 										if (tfmap.containsKey(token)) {
@@ -198,10 +209,7 @@ public class DocumentScanner {
 						} else {
 							Scanner s = new Scanner(value);
 							while (s.hasNext()) {
-								String token = s.next();
-								token = token.replaceAll("\\W*$", "");
-								token = token.replaceAll("^\\W*", "");
-								token = token.trim();
+								String token = scrubToken(s.next());
 								if ((token.length() > 2) && !(stopTokenList_.contains(token))) {
 									tokenSet.add(token);
 									if (tfmap.containsKey(token)) {
