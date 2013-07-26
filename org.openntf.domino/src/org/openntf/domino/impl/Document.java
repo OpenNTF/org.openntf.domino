@@ -2601,10 +2601,20 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				if (db != null) {
 
 					if (Integer.valueOf(noteid_, 16) == 0) {
-						System.out.println("ALERT! NO NOTEID AVAILABLE for document unid " + String.valueOf(unid_) + " isNew? "
-								+ String.valueOf(isNew_));
+						if (isNew_) {
+							d = db.createDocument();
+							d.setUniversalID(unid_);
+							if (log_.isLoggable(Level.FINE)) {
+								log_.log(Level.FINE, "NO NOTEID AVAILABLE for document unid " + String.valueOf(unid_)
+										+ ". However the document was new, so we'll just create a new one.");
+							}
+						} else {
+							log_.log(Level.WARNING, "ALERT! NO NOTEID AVAILABLE for document unid " + String.valueOf(unid_)
+									+ ". This document cannot be resurrected.");
+						}
+					} else {
+						d = db.getDocumentByID(noteid_);
 					}
-					d = db.getDocumentByID(noteid_);
 				}
 				// if (noteid_ == null || Integer.valueOf(noteid_, 16) == 0) {
 				// log_.log(Level.WARNING,

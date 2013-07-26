@@ -171,6 +171,8 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		getRawDocument().removePermanently(true);
 	}
 
+	private final Set<String> removedProperties_ = new HashSet<String>();
+
 	@Override
 	public <T> T removeProperty(final String key) {
 		getParent().startTransaction();
@@ -182,6 +184,9 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		Document doc = getRawDocument();
 		synchronized (doc) {
 			doc.removeItem(key);
+		}
+		synchronized (removedProperties_) {
+			removedProperties_.add(key);
 		}
 		return result;
 	}
@@ -206,6 +211,21 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		Document doc = getRawDocument();
 		synchronized (doc) {
 			doc.replaceItemValue(propertyName, value);
+		}
+	}
+
+	protected void reapplyChanges() {
+		Map<String, Serializable> props = getProps();
+		Document doc = getRawDocument();
+		synchronized (props) {
+			for (String key : props.keySet()) {
+				doc.replaceItemValue(key, props.get(key));
+			}
+		}
+		synchronized (removedProperties_) {
+			for (String key : removedProperties_) {
+				doc.removeItem(key);
+			}
 		}
 	}
 

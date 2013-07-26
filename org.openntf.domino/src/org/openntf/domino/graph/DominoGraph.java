@@ -250,8 +250,13 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	@Override
 	public Vertex addVertex(final Object id) {
 		startTransaction();
-		String vid = DominoUtils.toUnid((Serializable) id);
-		Document d = getDocument(vid, true);
+		Document d = null;
+		if (id == null) {
+			d = getDocument(null, true);
+		} else {
+			String vid = DominoUtils.toUnid((Serializable) id);
+			d = getDocument(vid, true);
+		}
 		d.replaceItemValue(DominoElement.TYPE_FIELD, DominoVertex.GRAPH_TYPE_VALUE);
 		DominoVertex result = new DominoVertex(this, d);
 		putCache(result);
@@ -515,6 +520,9 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 				if (getCache().size() > 0) {
 					Set<Element> elems = getCacheValues();
 					for (Element elem : elems) {
+						if (elem instanceof DominoElement) {
+							((DominoElement) elem).reapplyChanges();
+						}
 						if (elem instanceof DominoVertex) {
 							((DominoVertex) elem).writeEdges();
 						}
