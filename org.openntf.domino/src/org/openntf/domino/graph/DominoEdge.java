@@ -79,6 +79,19 @@ public class DominoEdge extends DominoElement implements IDominoEdge, Serializab
 		setProperty(DominoEdge.OUT_NAME, outKey_);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.graph.IDominoEdge#getOtherVertex(com.tinkerpop.blueprint.Vertex)
+	 */
+	@Override
+	public Vertex getOtherVertex(final Vertex vertex) {
+		if (vertex.getId().equals(getVertexId(Direction.IN))) {
+			return getVertex(Direction.OUT);
+		} else {
+			return getVertex(Direction.IN);
+		}
+	}
 	// @Override
 	// public void save() {
 	// Object o = getProperty("Form", String.class);

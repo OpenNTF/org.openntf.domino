@@ -165,9 +165,9 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		if (defaultOut.getClass().equals(defaultIn.getClass()) && isSameTypes()) {
 
 		} else {
-			if (getInType().equals(defaultOut.getClass())) {
+			if (getInType().isAssignableFrom(defaultOut.getClass())/* .equals(defaultOut.getClass()) */) {
 				inVert = defaultOut;
-			} else if (getOutType().equals(defaultOut.getClass())) {
+			} else if (getOutType().isAssignableFrom(defaultOut.getClass())) {
 				outVert = defaultOut;
 			} else {
 				// System.out.println("Cannot create an edge of type " + getLabel() + " with a vertex of type "
@@ -175,9 +175,9 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 				throw new EdgeHelperException("Cannot create an edge of type " + getLabel() + " with a vertex of type "
 						+ defaultOut.getClass().getName());
 			}
-			if (getInType().equals(defaultIn.getClass())) {
+			if (getInType().isAssignableFrom(defaultIn.getClass())) {
 				inVert = defaultIn;
-			} else if (getOutType().equals(defaultIn.getClass())) {
+			} else if (getOutType().isAssignableFrom(defaultIn.getClass())) {
 				outVert = defaultIn;
 			} else {
 				// System.out.println("Cannot create an edge of type " + getLabel() + " with a vertex of type "
