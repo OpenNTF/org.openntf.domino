@@ -138,6 +138,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			// if (created_ == null) {
 			// created_ = DominoUtils.toJavaDateSafe(getDelegate().getCreated());
 			// }
+			if (getDelegate().getCreated() == null)
+				return null;
 			return new DateTime(getDelegate().getCreated(), this); // TODO NTF - maybe ditch the parent?
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -174,6 +176,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			// if (initiallyModified_ == null) {
 			// initiallyModified_ = DominoUtils.toJavaDateSafe(getDelegate().getInitiallyModified());
 			// }
+			if (getDelegate().getInitiallyModified() == null)
+				return null;
 			return new DateTime(getDelegate().getInitiallyModified(), this); // TODO NTF - maybe ditch the parent?
 
 		} catch (NotesException e) {
@@ -212,6 +216,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			// if (lastAccessed_ == null) {
 			// lastAccessed_ = DominoUtils.toJavaDateSafe(getDelegate().getLastAccessed());
 			// }
+			if (getDelegate().getLastAccessed() == null)
+				return null;
 			return new DateTime(getDelegate().getLastAccessed(), this); // TODO NTF - maybe ditch the parent?
 
 		} catch (NotesException e) {
@@ -250,6 +256,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			// if (lastModified_ == null) {
 			// lastModified_ = DominoUtils.toJavaDateSafe(getDelegate().getLastModified());
 			// }
+			if (getDelegate().getLastModified() == null)
+				return null;
 			return new DateTime(getDelegate().getLastModified(), this); // TODO NTF - maybe ditch the parent?
 
 		} catch (NotesException e) {

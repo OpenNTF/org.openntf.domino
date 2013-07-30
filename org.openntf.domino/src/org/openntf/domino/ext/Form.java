@@ -9,4 +9,8 @@ package org.openntf.domino.ext;
  */
 public interface Form {
 
+	public int getModifiedNoteCount(final java.util.Date since);
+
+	public String getSelectionFormula();
+
 }
