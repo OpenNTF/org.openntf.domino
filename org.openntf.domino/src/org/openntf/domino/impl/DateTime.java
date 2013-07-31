@@ -60,8 +60,10 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 */
 	public DateTime(final lotus.domino.DateTime delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, Factory.getSession(parent));
-		initialize(delegate);
-		org.openntf.domino.impl.Base.s_recycle(delegate);
+		if (delegate instanceof lotus.domino.local.DateTime) {
+			initialize(delegate);
+			Base.s_recycle(delegate);
+		}
 	}
 
 	/**
@@ -142,6 +144,8 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 			cal_.setTime(date);
 
 		} catch (NotesException e) {
+			System.out.println("Error attempting to initialize a DateTime handle id "
+					+ Base.getLotusId((lotus.domino.local.NotesBase) delegate));
 			DominoUtils.handleException(e);
 		}
 	}

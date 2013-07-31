@@ -536,9 +536,14 @@ public enum Factory {
 		currentClassLoader_.set(null);
 	}
 
+	public static void clearBubbleExceptions() {
+		DominoUtils.setBubbleExceptions(null);
+	}
+
 	public static void terminate() {
 		clearSession();
 		clearClassLoader();
+		clearBubbleExceptions();
 	}
 
 	/**

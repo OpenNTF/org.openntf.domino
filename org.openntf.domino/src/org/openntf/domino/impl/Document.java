@@ -1894,6 +1894,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public Item replaceItemValue(final String itemName, final Object value, final boolean isSummary) {
+		markDirty();
 		Item result = replaceItemValue(itemName, value);
 		if (result.isSummary() != isSummary)
 			result.setSummary(isSummary);
@@ -1912,6 +1913,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		// System.out.println("Replacing a value in " + itemName + " with a type of "
 		// + (value == null ? "null" : value.getClass().getSimpleName()));
 		// }
+		markDirty();
 		if (value == null) {
 			if (hasItem(itemName)) {
 				value = "";
@@ -1919,7 +1921,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				return null;
 			}
 		}
-		markDirty();
 		try {
 			lotus.domino.Item result = null;
 			Class<?> valueClass = value.getClass();
@@ -2227,14 +2228,17 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			writeItemInfo();
 			isNew_ = false;
 			try {
-
-				result = getDelegate().save(force, makeResponse, markRead);
-
-				if (!noteid_.equals(getDelegate().getNoteID())) {
-					noteid_ = getDelegate().getNoteID();
+				lotus.domino.Document del = getDelegate();
+				if (del != null) {
+					result = del.save(force, makeResponse, markRead);
+				} else {
+					log_.severe("Delegate document for " + unid_ + " is NULL!??!");
 				}
-				if (!unid_.equals(getDelegate().getUniversalID())) {
-					unid_ = getDelegate().getUniversalID();
+				if (!noteid_.equals(del.getNoteID())) {
+					noteid_ = del.getNoteID();
+				}
+				if (!unid_.equals(del.getUniversalID())) {
+					unid_ = del.getUniversalID();
 				}
 			} catch (NotesException e) {
 				if (e.text.contains("Database already contains a document with this ID")) {
@@ -2541,6 +2545,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	void clearDirty() {
 		isDirty_ = false;
+		isQueued_ = false;
 	}
 
 	public void rollback() {

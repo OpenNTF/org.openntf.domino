@@ -167,7 +167,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	@Override
 	public void remove() {
-		getParent().startTransaction();
+		getParent().startTransaction(this);
 		getRawDocument().removePermanently(true);
 	}
 
@@ -175,7 +175,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	@Override
 	public <T> T removeProperty(final String key) {
-		getParent().startTransaction();
+		getParent().startTransaction(this);
 		T result = getProperty(key);
 		Map<String, Serializable> props = getProps();
 		synchronized (props) {
@@ -199,27 +199,53 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		doc_ = doc;
 	}
 
+	private final Set<String> changedProperties_ = new HashSet<String>();
+
 	@Override
 	public void setProperty(final String propertyName, final java.lang.Object value) {
-		getParent().startTransaction();
+		getParent().startTransaction(this);
 		Map<String, Serializable> props = getProps();
+		Object old = null;
 		synchronized (props) {
 			if (value instanceof Serializable) {
-				props.put(propertyName, (Serializable) value);
+				old = props.put(propertyName, (Serializable) value);
+			} else if (value == null) {
+				old = props.put(propertyName, null);
+			} else {
+				System.out.println("Attemped caching of value of type " + value.getClass().getName() + " that isn't Serializable");
 			}
 		}
-		Document doc = getRawDocument();
-		synchronized (doc) {
-			doc.replaceItemValue(propertyName, value);
+		// if ((old == null || value == null) || !value.equals(old)) {
+		synchronized (changedProperties_) {
+			changedProperties_.add(propertyName);
 		}
+		// }
+		// Document doc = getRawDocument();
+		// synchronized (doc) {
+		// doc.replaceItemValue(propertyName, value);
+		// }
 	}
 
 	protected void reapplyChanges() {
 		Map<String, Serializable> props = getProps();
 		Document doc = getRawDocument();
 		synchronized (props) {
-			for (String key : props.keySet()) {
-				doc.replaceItemValue(key, props.get(key));
+			if (props.isEmpty()) {
+				// System.out.println("Cached properties is empty!");
+			} else {
+				synchronized (changedProperties_) {
+					// System.out.println("Re-applying cached properties: " + changedProperties_.size());
+					for (String key : changedProperties_) {
+						Object v = props.get(key);
+						if (v == null) {
+							// System.out.println("Writing a null value for property: " + key
+							// + " to an Element document. Probably not good...");
+						}
+						doc.replaceItemValue(key, v);
+					}
+					changedProperties_.clear();
+				}
+
 			}
 		}
 		synchronized (removedProperties_) {

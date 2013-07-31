@@ -130,11 +130,12 @@ public class DefaultFileHandler extends FileHandler {
 				@Override
 				public Object run() throws Exception {
 					DefaultFileHandler.this.superPub(record);
+					flush();
 					return null;
 				}
 			});
 			// super.publish(record);
-			flush();
+			// flush();
 		} catch (Throwable e) {
 			System.out.println(e.getMessage());
 		}

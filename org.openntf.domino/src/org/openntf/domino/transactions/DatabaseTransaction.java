@@ -30,6 +30,14 @@ public class DatabaseTransaction {
 		return database_.isDesignLockingEnabled();
 	}
 
+	public int getUpdateSize() {
+		return getUpdateQueue().size();
+	}
+
+	public int getRemoveSize() {
+		return getRemoveQueue().size();
+	}
+
 	protected Queue<DatabaseDescendant> getUpdateQueue() {
 		if (updateQueue_ == null) {
 			updateQueue_ = new LinkedList<DatabaseDescendant>(); // TODO NTF - Switch to ArrayBlockingQueue and manage total handles?

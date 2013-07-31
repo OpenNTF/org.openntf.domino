@@ -55,7 +55,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 			}
 		}
 		if (adding) {
-			getParent().startTransaction();
+			getParent().startTransaction(this);
 			inDirty_ = true;
 
 			Set<Edge> inObjs = getInEdgeObjects();
@@ -66,6 +66,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 			synchronized (inLabelObjs) {
 				inLabelObjs.add(edge);
 			}
+			// writeEdges();
 		}
 	}
 
@@ -79,7 +80,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 			}
 		}
 		if (adding) {
-			getParent().startTransaction();
+			getParent().startTransaction(this);
 			outDirty_ = true;
 
 			Set<Edge> outObjs = getOutEdgeObjects();
@@ -90,6 +91,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 			synchronized (outLabelObjs) {
 				outLabelObjs.add(edge);
 			}
+			// writeEdges();
 		}
 		// setProperty(DominoVertex.OUT_NAME, outEdges_);
 	}
@@ -248,7 +250,11 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected Set<Edge> getInEdgeObjects() {
 		if (inEdgesObjects_ == null) {
-			inEdgesObjects_ = Collections.synchronizedSet((LinkedHashSet) getParent().getEdgesFromIds(getInEdges()));
+			Set<String> ins = getInEdges();
+			Iterable<Edge> edges = getParent().getEdgesFromIds(ins);
+			if (edges != null) {
+				inEdgesObjects_ = Collections.synchronizedSet((LinkedHashSet) edges);
+			}
 		}
 		return inEdgesObjects_;
 	}
@@ -322,7 +328,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	}
 
 	public void removeEdge(final Edge edge) {
-		getParent().startTransaction();
+		getParent().startTransaction(this);
 		Set<String> ins = getInEdges();
 		synchronized (ins) {
 			ins.remove(edge.getId());
@@ -352,17 +358,41 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		outDirty_ = true;
 	}
 
-	void writeEdges() {
-		if (inDirty_) {
-			setProperty(DominoVertex.IN_NAME, inEdges_);
-			setProperty(DominoVertex.IN_NAME + "_COUNT", inEdges_.size());
+	boolean writeEdges() {
+		return writeEdges(false);
+	}
+
+	@Override
+	protected void reapplyChanges() {
+		writeEdges(false);
+		super.reapplyChanges();
+	}
+
+	boolean writeEdges(final boolean force) {
+		boolean result = false;
+		if (inDirty_ || force) {
+			if (inEdges_ != null) {
+				setProperty(DominoVertex.IN_NAME, inEdges_);
+				// getRawDocument().replaceItemValue(DominoVertex.IN_NAME, inEdges_);
+				setProperty(DominoVertex.IN_NAME + "_COUNT", inEdges_.size());
+				// getRawDocument().replaceItemValue(DominoVertex.IN_NAME + "_COUNT", inEdges_.size());
+				// System.out.println("Updating " + inEdges_.size() + " inEdges to vertex: " + getRawDocument().getFormName());
+				result = true;
+			}
 			inDirty_ = false;
 		}
-		if (outDirty_) {
-			setProperty(DominoVertex.OUT_NAME, outEdges_);
-			setProperty(DominoVertex.OUT_NAME + "_COUNT", outEdges_.size());
+		if (outDirty_ || force) {
+			if (outEdges_ != null) {
+				setProperty(DominoVertex.OUT_NAME, outEdges_);
+				// getRawDocument().replaceItemValue(DominoVertex.OUT_NAME, outEdges_);
+				setProperty(DominoVertex.OUT_NAME + "_COUNT", outEdges_.size());
+				// getRawDocument().replaceItemValue(DominoVertex.OUT_NAME + "_COUNT", outEdges_.size());
+				// System.out.println("Updating " + outEdges_.size() + " outEdges to vertex: " + getRawDocument().getFormName());
+				result = true;
+			}
 			outDirty_ = false;
 		}
+		return result;
 	}
 
 }

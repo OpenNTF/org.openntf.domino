@@ -15,9 +15,11 @@
  */
 package org.openntf.domino.logging;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.AccessControlException;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -132,25 +134,29 @@ public class LogUtils {
 	static public void loadLoggerConfig(final boolean relative, final String filePath) {
 		System.out.println("Loading Logger config...");
 		try {
-			LogManager manager = LogManager.getLogManager();
-			if ("".equals(filePath)) {
-				manager.readConfiguration(getDefaultLogConfigFile());
-			} else {
-				InputStream is = null;
-				if (relative) {
-					is = getLogConfigFile(3, filePath);
-				} else {
-					is = getLogConfigFile(2, filePath);
+			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				@Override
+				public Object run() throws Exception {
+					LogManager manager = LogManager.getLogManager();
+					if ("".equals(filePath)) {
+						manager.readConfiguration(getDefaultLogConfigFile());
+					} else {
+						InputStream is = null;
+						if (relative) {
+							is = getLogConfigFile(3, filePath);
+						} else {
+							is = getLogConfigFile(2, filePath);
+						}
+						manager.readConfiguration(is);
+					}
+					return null;
 				}
-				manager.readConfiguration(is);
-			}
+			});
 			System.out.println("Completed logger config.");
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (AccessControlException e) {
 			e.printStackTrace();
-		} catch (Throwable t) {
-			t.printStackTrace();
+		} catch (PrivilegedActionException e) {
+			e.printStackTrace();
 		}
 
 	}
@@ -182,26 +188,33 @@ public class LogUtils {
 	 */
 	public static boolean setupLoggerEx(final String logName, final ArrayList<Handler> handlers, final boolean useParentHandler,
 			final Level newSeverityLevel) {
+
 		try {
-			Logger loggerToModify = getLogger(logName);
-			for (Handler currHandlers : loggerToModify.getHandlers()) {
-				loggerToModify.removeHandler(currHandlers);
-			}
-			for (Handler newHandler : handlers) {
-				newHandler.setLevel(newSeverityLevel);
-				loggerToModify.addHandler(newHandler);
-			}
-			loggerToModify.setUseParentHandlers(useParentHandler);
-			if (null != newSeverityLevel) {
-				loggerToModify.setLevel(newSeverityLevel);
-			}
-			return true;
+			boolean result = (Boolean) AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				@Override
+				public Object run() throws Exception {
+					Logger loggerToModify = getLogger(logName);
+					for (Handler currHandlers : loggerToModify.getHandlers()) {
+						loggerToModify.removeHandler(currHandlers);
+					}
+					for (Handler newHandler : handlers) {
+						newHandler.setLevel(newSeverityLevel);
+						loggerToModify.addHandler(newHandler);
+					}
+					loggerToModify.setUseParentHandlers(useParentHandler);
+					if (null != newSeverityLevel) {
+						loggerToModify.setLevel(newSeverityLevel);
+					}
+					return true;
+				}
+			});
+			return result;
 		} catch (AccessControlException e) {
-			return false;
-		} catch (Throwable t) {
-			t.printStackTrace();
-			return false;
+			e.printStackTrace();
+		} catch (PrivilegedActionException e) {
+			e.printStackTrace();
 		}
+		return false;
 	}
 
 	/**
