@@ -2689,14 +2689,62 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	@Override
 	public boolean containsValue(final Object value) {
-		// God, I hope nobody ever actually uses this method
+		// JG - God, I hope nobody ever actually uses this method
+		// NTF - Actually I have some good use cases for it! WHEEEEEE!!
 		for (String key : this.keySet()) {
+			if (hasItem(key) && value instanceof CharSequence) {
+				Item item = getFirstItem(key);
+				if (item instanceof RichTextItem) {
+					String text = ((RichTextItem) item).getText();
+					return text.contains((CharSequence) value);
+				}
+			}
 			Object itemVal = this.get(key);
+			if (itemVal instanceof List) {
+				return ((List) itemVal).contains(value);
+			}
 			if ((value == null && itemVal == null) || (value != null && value.equals(itemVal))) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	public boolean containsValue(final Object value, final String[] itemnames) {
+		for (String key : itemnames) {
+			if (hasItem(key) && value instanceof CharSequence) {
+				Item item = getFirstItem(key);
+				if (item instanceof RichTextItem) {
+					String text = ((RichTextItem) item).getText();
+					return text.contains((CharSequence) value);
+				}
+			}
+			Object itemVal = this.get(key);
+			if (itemVal instanceof List) {
+				return ((List) itemVal).contains(value);
+			}
+			if ((value == null && itemVal == null) || (value != null && value.equals(itemVal))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean containsValue(final Object value, final Collection<String> itemnames) {
+		return containsValue(value, itemnames.toArray(new String[0]));
+	}
+
+	public boolean containsValues(final Map<String, Object> filterMap) {
+		boolean result = false;
+		for (String key : filterMap.keySet()) {
+			String[] args = new String[1];
+			args[0] = key;
+			result = containsValue(filterMap.get(key), args);
+			if (!result)
+				break;
+		}
+
+		return result;
 	}
 
 	@Override
@@ -2835,4 +2883,5 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		}
 		return result;
 	}
+
 }

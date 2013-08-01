@@ -855,4 +855,44 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	public Session getAncestorSession() {
 		return this.getParent().getParent();
 	}
+
+	public org.openntf.domino.DocumentCollection filter(final Object value) {
+		org.openntf.domino.DocumentCollection result = getAncestorDatabase().createDocumentCollection();
+		for (org.openntf.domino.Document doc : this) {
+			if (doc.containsValue(value)) {
+				result.add(doc);
+			}
+		}
+		return result;
+	}
+
+	public org.openntf.domino.DocumentCollection filter(final Object value, final String[] itemnames) {
+		org.openntf.domino.DocumentCollection result = getAncestorDatabase().createDocumentCollection();
+		for (org.openntf.domino.Document doc : this) {
+			if (doc.containsValue(value, itemnames)) {
+				result.add(doc);
+			}
+		}
+		return result;
+	}
+
+	public org.openntf.domino.DocumentCollection filter(final Object value, final Collection<String> itemnames) {
+		org.openntf.domino.DocumentCollection result = getAncestorDatabase().createDocumentCollection();
+		for (org.openntf.domino.Document doc : this) {
+			if (doc.containsValue(value, itemnames)) {
+				result.add(doc);
+			}
+		}
+		return result;
+	}
+
+	public org.openntf.domino.DocumentCollection filter(final Map<String, Object> filterMap) {
+		org.openntf.domino.DocumentCollection result = getAncestorDatabase().createDocumentCollection();
+		for (org.openntf.domino.Document doc : this) {
+			if (doc.containsValues(filterMap)) {
+				result.add(doc);
+			}
+		}
+		return result;
+	}
 }
