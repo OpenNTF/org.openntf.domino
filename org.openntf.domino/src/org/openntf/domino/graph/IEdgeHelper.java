@@ -3,6 +3,7 @@
  */
 package org.openntf.domino.graph;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -40,5 +41,9 @@ public interface IEdgeHelper {
 	public Set<? extends Vertex> getSortedOtherVertexes(final Vertex vertex, final String... sortproperties);
 
 	public Set<Vertex> getOtherVertexesByEdge(final Vertex vertex, final String... sortproperties);
+
+	public Vertex getOtherVertex(final Edge edge, final Vertex vertex);
+
+	public Set<? extends Edge> getFilteredEdges(final Vertex vertex, final Map<String, Object> filterMap);
 
 }

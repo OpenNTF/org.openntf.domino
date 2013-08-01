@@ -5,6 +5,7 @@ package org.openntf.domino.graph;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.logging.Logger;
@@ -111,6 +112,22 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		throw new EdgeHelperException(vertex.getClass().getName() + " is not a participating type in edge " + getLabel());
 	}
 
+	public Set<? extends Edge> getFilteredEdges(final Vertex vertex, final Map<String, Object> filterMap) {
+		Set<Edge> result = new LinkedHashSet<Edge>();
+		Set<? extends Edge> rawset = getEdges(vertex);
+		for (Edge edge : rawset) {
+			for (String key : filterMap.keySet()) {
+				Object value = edge.getProperty(key);
+				if (value != null) {
+					if (value.equals(filterMap.get(key))) {
+						result.add(edge);
+					}
+				}
+			}
+		}
+		return Collections.unmodifiableSet(result);
+	}
+
 	public SortedSet<? extends Edge> getSortedEdges(final Vertex vertex, final String... sortproperties) {
 		try {
 			Set<? extends Edge> rawSet = getEdges(vertex);
@@ -134,6 +151,18 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 			result.add(edge.getVertex(od));
 		}
 		return Collections.unmodifiableSet(result);
+	}
+
+	public Vertex getOtherVertex(final Edge edge, final Vertex vertex) {
+		if (edge instanceof IDominoEdge) {
+			return ((IDominoEdge) edge).getOtherVertex(vertex);
+		} else {
+			if (vertex.getId().equals(edge.getVertex(Direction.IN).getId())) {
+				return edge.getVertex(Direction.OUT);
+			} else {
+				return edge.getVertex(Direction.IN);
+			}
+		}
 	}
 
 	public Set<? extends Vertex> getSortedOtherVertexes(final Vertex vertex, final String... sortproperties) {
