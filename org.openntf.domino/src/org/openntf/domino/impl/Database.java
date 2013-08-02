@@ -69,10 +69,18 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	private void initialize(final lotus.domino.Database delegate) {
 		try {
 			server_ = delegate.getServer();
+		} catch (NotesException e) {
+			// NTF probably not opened yet. No reason to freak out yet...
+		}
+		try {
 			path_ = delegate.getFilePath();
+		} catch (NotesException e) {
+			// NTF probably not opened yet. No reason to freak out yet...
+		}
+		try {
 			replid_ = delegate.getReplicaID();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			// NTF probably not opened yet. No reason to freak out yet...
 		}
 	}
 
@@ -1871,7 +1879,11 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public boolean open() {
 		try {
-			return getDelegate().open();
+			boolean result = getDelegate().open();
+			if (result) {
+				initialize(getDelegate());
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;

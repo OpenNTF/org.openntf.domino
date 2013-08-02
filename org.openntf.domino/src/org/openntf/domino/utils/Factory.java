@@ -422,11 +422,23 @@ public enum Factory {
 		if (values == null) {
 			return null;
 		}
-
+		int i = 0;
 		java.util.Vector<Object> result = new org.openntf.domino.impl.Vector<Object>();
 		for (Object value : values) {
-			if (value instanceof lotus.domino.DateTime) {
-				result.add(fromLotus((lotus.domino.DateTime) value, org.openntf.domino.impl.DateTime.class, session));
+			if (value == null) {
+				result.add(null);
+			} else if (value instanceof lotus.domino.DateTime) {
+				Object wrapped = null;
+				try {
+					wrapped = fromLotus((lotus.domino.DateTime) value, org.openntf.domino.impl.DateTime.class, session);
+				} catch (Throwable t) {
+					System.out.println("Unable to wrap a DateTime found in Vector member " + i + " of " + values.size());
+				}
+				if (wrapped == null) {
+					result.add("");
+				} else {
+					result.add(wrapped);
+				}
 			} else if (value instanceof lotus.domino.DateRange) {
 				result.add(fromLotus((lotus.domino.DateRange) value, org.openntf.domino.impl.DateRange.class, session));
 			} else if (value instanceof Collection) {
@@ -434,6 +446,7 @@ public enum Factory {
 			} else {
 				result.add(value);
 			}
+			i++;
 		}
 		return result;
 	}

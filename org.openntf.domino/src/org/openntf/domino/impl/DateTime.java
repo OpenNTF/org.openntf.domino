@@ -140,13 +140,16 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 			String timeonly = delegate.getTimeOnly();
 			if (timeonly == null || timeonly.length() == 0)
 				isDateOnly_ = true;
-			Date date = delegate.toJavaDate();
-			cal_.setTime(date);
+			try {
+				Date date = delegate.toJavaDate();
+				cal_.setTime(date);
+			} catch (NotesException e1) {
+				// System.out.println("Error attempting to initialize a DateTime: " + delegate.getGMTTime());
+				throw new RuntimeException(e1);
+			}
 
 		} catch (NotesException e) {
-			System.out.println("Error attempting to initialize a DateTime handle id "
-					+ Base.getLotusId((lotus.domino.local.NotesBase) delegate));
-			DominoUtils.handleException(e);
+			throw new RuntimeException(e);
 		}
 	}
 
