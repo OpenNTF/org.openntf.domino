@@ -468,6 +468,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		Vertex out = edge.getVertex(Direction.OUT);
 		((DominoVertex) out).removeEdge(edge);
 		removeCache(edge);
+		edge.remove();
 	}
 
 	@Override
@@ -478,6 +479,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 			removeEdge(edge);
 		}
 		removeCache(vertex);
+		vertex.remove();
 	}
 
 	@Override
