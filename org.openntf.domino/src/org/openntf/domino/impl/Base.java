@@ -20,10 +20,7 @@ import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
 import java.util.Vector;
-import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -112,8 +109,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	// TODO NTF - not sure about maintaining a set pointer to children. Not using for now. Just setting up (no pun intended)
 	/** The children_. */
-	private final Set<org.openntf.domino.Base<?>> children_ = Collections
-			.newSetFromMap(new WeakHashMap<org.openntf.domino.Base<?>, Boolean>());
+	// private final Set<org.openntf.domino.Base<?>> children_ = Collections
+	// .newSetFromMap(new WeakHashMap<org.openntf.domino.Base<?>, Boolean>());
 
 	/**
 	 * Sets the parent.

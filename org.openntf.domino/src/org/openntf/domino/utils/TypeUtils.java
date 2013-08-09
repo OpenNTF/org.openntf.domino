@@ -86,30 +86,34 @@ public enum TypeUtils {
 		Object result = null;
 		Class<?> CType = null;
 		if (T.isArray()) {
-			CType = T.getComponentType();
-			if (CType.isPrimitive()) {
-				try {
-					result = toPrimitiveArray(v, CType);
-				} catch (DataNotCompatibleException e) {
-					throw e;
-				}
-			} else if (Number.class.isAssignableFrom(CType)) {
-				result = toNumberArray(v, CType);
+			if (T == String[].class) {
+				result = toStrings(v);
 			} else {
-				if (CType == String.class) {
-					result = toStrings(v);
-				} else if (CType == BigString.class) {
-					result = toBigStrings(v);
-				} else if (CType == Date.class) {
-					result = toDates(v);
-				} else if (CType == DateTime.class) {
-					result = toDateTimes(v, session);
-				} else if (CType == Name.class) {
-					result = toNames(v, session);
-				} else if (CType == Boolean.class) {
-					result = toBooleans(v);
+				CType = T.getComponentType();
+				if (CType.isPrimitive()) {
+					try {
+						result = toPrimitiveArray(v, CType);
+					} catch (DataNotCompatibleException e) {
+						throw e;
+					}
+				} else if (Number.class.isAssignableFrom(CType)) {
+					result = toNumberArray(v, CType);
 				} else {
-					throw new UnimplementedException("Arrays for " + CType.getName() + " not yet implemented");
+					if (CType == String.class) {
+						result = toStrings(v);
+					} else if (CType == BigString.class) {
+						result = toBigStrings(v);
+					} else if (CType == Date.class) {
+						result = toDates(v);
+					} else if (CType == DateTime.class) {
+						result = toDateTimes(v, session);
+					} else if (CType == Name.class) {
+						result = toNames(v, session);
+					} else if (CType == Boolean.class) {
+						result = toBooleans(v);
+					} else {
+						throw new UnimplementedException("Arrays for " + CType.getName() + " not yet implemented");
+					}
 				}
 			}
 		} else if (T.isPrimitive()) {

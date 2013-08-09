@@ -1,7 +1,7 @@
 package org.openntf.domino.transactions;
 
-import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Agent;
@@ -40,20 +40,25 @@ public class DatabaseTransaction {
 
 	protected Queue<DatabaseDescendant> getUpdateQueue() {
 		if (updateQueue_ == null) {
-			updateQueue_ = new LinkedList<DatabaseDescendant>(); // TODO NTF - Switch to ArrayBlockingQueue and manage total handles?
+			updateQueue_ = new ConcurrentLinkedQueue<DatabaseDescendant>(); // TODO NTF - Switch to ArrayBlockingQueue and manage total
+																			// handles?
 		}
 		return updateQueue_;
 	}
 
 	protected Queue<DatabaseDescendant> getRemoveQueue() {
 		if (removeQueue_ == null) {
-			removeQueue_ = new LinkedList<DatabaseDescendant>(); // TODO NTF - Switch to ArrayBlockingQueue and manage total handles?
+			removeQueue_ = new ConcurrentLinkedQueue<DatabaseDescendant>(); // TODO NTF - Switch to ArrayBlockingQueue and manage total
+																			// handles?
 		}
 		return removeQueue_;
 	}
 
 	public void queueUpdate(final DatabaseDescendant base) {
-		getUpdateQueue().add(base); // TODO - NTF get locks when stuff is queued
+		Queue<DatabaseDescendant> q = getUpdateQueue();
+		synchronized (q) {
+			q.add(base);
+		}
 		if (isDocLock() && base instanceof Document) {
 			((Document) base).lock();
 		}
@@ -69,7 +74,10 @@ public class DatabaseTransaction {
 	}
 
 	public void queueRemove(final DatabaseDescendant base) {
-		getRemoveQueue().add(base); // TODO - NTF get locks when stuff is queued
+		Queue<DatabaseDescendant> q = getRemoveQueue();
+		synchronized (q) {
+			q.add(base);
+		}
 		if (isDocLock() && base instanceof Document) {
 			((Document) base).lock();
 		}
@@ -91,59 +99,70 @@ public class DatabaseTransaction {
 	public void commit() {
 		// System.out.println("Committing transaction with update size " + getUpdateQueue().size());
 		isCommitting_ = true;
-		DatabaseDescendant next = getUpdateQueue().poll();
-		while (next != null) {
-			if (next instanceof Document) {
-				boolean result = ((Document) next).save();
-				if (!result) {
-					// TODO NTF - take some action to indicate that the save failed, potentially cancelling the transaction
-				} else {
-					if (isDocLock())
-						((Document) next).unlock();
+		Queue<DatabaseDescendant> uq = getUpdateQueue();
+		synchronized (uq) {
+			DatabaseDescendant next = uq.poll();
+			while (next != null) {
+				if (next instanceof Document) {
+					boolean result = ((Document) next).save();
+					if (!result) {
+						// TODO NTF - take some action to indicate that the save failed, potentially cancelling the transaction
+					} else {
+						if (isDocLock())
+							((Document) next).unlock();
+					}
 				}
+				// TODO NTF - Implement other database objects
+				next = uq.poll();
 			}
-			// TODO NTF - Implement other database objects
-			next = getUpdateQueue().poll();
 		}
-		next = getRemoveQueue().poll();
-		while (next != null) {
-			if (next instanceof org.openntf.domino.impl.Document) {
-				org.openntf.domino.impl.Document doc = (org.openntf.domino.impl.Document) next;
-				if (isDocLock())
-					doc.unlock();
-				doc.forceDelegateRemove();
+		Queue<DatabaseDescendant> rq = getRemoveQueue();
+		synchronized (rq) {
+			DatabaseDescendant next = rq.poll();
+			while (next != null) {
+				if (next instanceof org.openntf.domino.impl.Document) {
+					org.openntf.domino.impl.Document doc = (org.openntf.domino.impl.Document) next;
+					if (isDocLock())
+						doc.unlock();
+					doc.forceDelegateRemove();
+				}
+				// TODO NTF - Implement other database objects
+				next = rq.poll();
 			}
-			// TODO NTF - Implement other database objects
-			next = getUpdateQueue().poll();
 		}
-
 		database_.closeTransaction();
 	}
 
 	public void rollback() {
 		// TODO - NTF release locks
-		DatabaseDescendant next = getUpdateQueue().poll();
-		while (next != null) {
-			if (next instanceof org.openntf.domino.impl.Document) {
-				org.openntf.domino.impl.Document doc = (org.openntf.domino.impl.Document) next;
-				doc.rollback();
-				if (isDocLock()) {
-					doc.unlock();
+		Queue<DatabaseDescendant> uq = getUpdateQueue();
+		synchronized (uq) {
+			DatabaseDescendant next = uq.poll();
+			while (next != null) {
+				if (next instanceof org.openntf.domino.impl.Document) {
+					org.openntf.domino.impl.Document doc = (org.openntf.domino.impl.Document) next;
+					doc.rollback();
+					if (isDocLock()) {
+						doc.unlock();
+					}
 				}
+				// TODO NTF - Implement other database objects
+				next = uq.poll();
 			}
-			// TODO NTF - Implement other database objects
-			next = getUpdateQueue().poll();
 		}
-		next = getRemoveQueue().poll();
-		while (next != null) {
-			if (next instanceof org.openntf.domino.impl.Document) {
-				org.openntf.domino.impl.Document doc = (org.openntf.domino.impl.Document) next;
-				doc.rollback();
-				if (isDocLock())
-					doc.unlock();
+		Queue<DatabaseDescendant> rq = getRemoveQueue();
+		synchronized (rq) {
+			DatabaseDescendant next = rq.poll();
+			while (next != null) {
+				if (next instanceof org.openntf.domino.impl.Document) {
+					org.openntf.domino.impl.Document doc = (org.openntf.domino.impl.Document) next;
+					doc.rollback();
+					if (isDocLock())
+						doc.unlock();
+				}
+				// TODO NTF - Implement other database objects
+				next = rq.poll();
 			}
-			// TODO NTF - Implement other database objects
-			next = getUpdateQueue().poll();
 		}
 		database_.closeTransaction();
 	}

@@ -20,6 +20,7 @@ public class ElementComparator implements Comparator<Element> {
 	private static final long serialVersionUID = 1L;
 
 	private String[] props_;
+	private final boolean caseSensitive_;
 
 	public ElementComparator(final String... props) {
 		if (props == null || props.length == 0) {
@@ -27,6 +28,16 @@ public class ElementComparator implements Comparator<Element> {
 		} else {
 			props_ = props;
 		}
+		caseSensitive_ = false;
+	}
+
+	public ElementComparator(final boolean caseSensitive, final String... props) {
+		if (props == null || props.length == 0) {
+			props_ = new String[0];
+		} else {
+			props_ = props;
+		}
+		caseSensitive_ = caseSensitive;
 	}
 
 	@Override
@@ -54,7 +65,11 @@ public class ElementComparator implements Comparator<Element> {
 				} else if (v0 instanceof String && v1 instanceof String) {
 					String s0 = (String) v0;
 					String s1 = (String) v1;
-					result = s0.compareTo(s1);
+					if (caseSensitive_) {
+						result = s0.compareTo(s1);
+					} else {
+						result = s0.compareToIgnoreCase(s1);
+					}
 				} else if (v0 instanceof Date && v1 instanceof Date) {
 					Date d0 = (Date) v0;
 					Date d1 = (Date) v1;

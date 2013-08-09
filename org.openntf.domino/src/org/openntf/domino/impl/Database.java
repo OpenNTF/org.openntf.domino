@@ -2450,22 +2450,38 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	private DatabaseTransaction currentTransaction_;
+	// private DatabaseTransaction currentTransaction_;
+	private static ThreadLocal<DatabaseTransaction> txnHolder_ = new ThreadLocal<DatabaseTransaction>() {
+		@Override
+		protected DatabaseTransaction initialValue() {
+			return null;
+		}
+
+		@Override
+		public DatabaseTransaction get() {
+			return super.get();
+		}
+
+		@Override
+		public void set(final DatabaseTransaction value) {
+			super.set(value);
+		}
+	};
 
 	@Override
 	public DatabaseTransaction startTransaction() {
-		if (currentTransaction_ == null) {
-			currentTransaction_ = new DatabaseTransaction(this);
+		if (txnHolder_.get() == null) {
+			txnHolder_.set(new DatabaseTransaction(this));
 		}
-		return currentTransaction_;
+		return txnHolder_.get();
 	}
 
 	public void closeTransaction() {
-		currentTransaction_ = null;
+		txnHolder_.set(null);
 	}
 
 	public DatabaseTransaction getTransaction() {
-		return currentTransaction_;
+		return txnHolder_.get();
 	}
 
 	/*
