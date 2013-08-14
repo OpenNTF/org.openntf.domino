@@ -255,4 +255,24 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		}
 	}
 
+	public int incrementProperty(final IDominoProperties prop) {
+		return incrementProperty(prop.getName());
+	}
+
+	public int decrementProperty(final IDominoProperties prop) {
+		return decrementProperty(prop.getName());
+	}
+
+	public <T> T getProperty(final IDominoProperties prop) {
+		return getProperty(prop.getName(), prop.getType());
+	}
+
+	public <T> T getProperty(final IDominoProperties prop, final boolean allowNull) {
+		return getProperty(prop.getName(), prop.getType(), allowNull);
+	}
+
+	public void setProperty(final IDominoProperties prop, final java.lang.Object value) {
+		setProperty(prop.getName(), value);
+	}
+
 }

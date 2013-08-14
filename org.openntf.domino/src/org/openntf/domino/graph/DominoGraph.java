@@ -53,6 +53,18 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		return Collections.unmodifiableSortedSet(result);
 	}
 
+	public static SortedSet<? extends Element> sortElements(final Iterable<? extends Element> elements,
+			final IDominoProperties[] sortproperties) {
+		Comparator<Element> comp = new ElementComparator(sortproperties);
+		SortedSet<Element> result = new TreeSet<Element>(comp);
+		for (Object e : elements) {
+			if (e instanceof Element) {
+				result.add((Element) e);
+			}
+		}
+		return Collections.unmodifiableSortedSet(result);
+	}
+
 	@SuppressWarnings("unchecked")
 	public static SortedSet<? extends Edge> sortEdges(final Iterable<? extends Edge> elements, final String[] sortproperties) {
 		return (SortedSet<Edge>) sortElements(elements, sortproperties);
@@ -60,6 +72,17 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 
 	@SuppressWarnings("unchecked")
 	public static SortedSet<? extends Vertex> sortVertexes(final Iterable<? extends Vertex> elements, final String[] sortproperties) {
+		return (SortedSet<Vertex>) sortElements(elements, sortproperties);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static SortedSet<? extends Edge> sortEdges(final Iterable<? extends Edge> elements, final IDominoProperties[] sortproperties) {
+		return (SortedSet<Edge>) sortElements(elements, sortproperties);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static SortedSet<? extends Vertex> sortVertexes(final Iterable<? extends Vertex> elements,
+			final IDominoProperties[] sortproperties) {
 		return (SortedSet<Vertex>) sortElements(elements, sortproperties);
 	}
 
@@ -263,6 +286,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 			String vid = DominoUtils.toUnid((Serializable) id);
 			d = getDocument(vid, true);
 		}
+
 		d.replaceItemValue(DominoElement.TYPE_FIELD, DominoVertex.GRAPH_TYPE_VALUE);
 		DominoVertex result = new DominoVertex(this, d);
 		putCache(result);
@@ -316,10 +340,14 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 			unid = DominoUtils.toUnid((Serializable) id);
 		}
 		if (id != null && !DominoUtils.isUnid(unid)) {
-			log_.log(Level.WARNING, "ALERT! INVALID UNID FROM id type " + (id == null ? "null" : id.getClass().getName()) + ": " + id);
+			log_.log(Level.SEVERE, "ALERT! INVALID UNID FROM id type " + (id == null ? "null" : id.getClass().getName()) + ": " + id);
 		}
 		if (result == null) {
 			result = getRawDatabase().getDocumentByKey(unid, createOnFail);
+		}
+		if (result == null && createOnFail) {
+			log_.log(Level.SEVERE, "Returning a null document for id " + String.valueOf(id)
+					+ " even though createOnFail was true. This should be guaranteed to return a real document!");
 		}
 		return result;
 	}

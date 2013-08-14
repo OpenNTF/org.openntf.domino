@@ -23,4 +23,14 @@ public interface IDominoElement extends Element {
 	public Document getRawDocument();
 
 	public void setRawDocument(Document doc);
+
+	public int incrementProperty(IDominoProperties prop);
+
+	public int decrementProperty(IDominoProperties prop);
+
+	public <T> T getProperty(IDominoProperties prop);
+
+	public <T> T getProperty(IDominoProperties prop, boolean allowNull);
+
+	public void setProperty(IDominoProperties prop, java.lang.Object value);
 }

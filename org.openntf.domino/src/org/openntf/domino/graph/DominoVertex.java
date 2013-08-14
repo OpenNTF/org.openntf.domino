@@ -12,6 +12,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.openntf.domino.Document;
+
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
@@ -364,6 +366,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 
 	@Override
 	protected void reapplyChanges() {
+		// validateEdges();
 		writeEdges(false);
 		super.reapplyChanges();
 	}
@@ -393,6 +396,34 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 			outDirty_ = false;
 		}
 		return result;
+	}
+
+	public String validateEdges() {
+		StringBuilder sb = new StringBuilder();
+		Set<String> inIds = getInEdges();
+		for (String id : inIds.toArray(new String[0])) {
+			Document chk = getParent().getRawDatabase().getDocumentByUNID(id);
+			if (chk == null) {
+				inIds.remove(id);
+				inDirty_ = true;
+				sb.append("IN: ");
+				sb.append(id);
+				sb.append(",");
+			}
+		}
+
+		Set<String> outIds = getOutEdges();
+		for (String id : outIds.toArray(new String[0])) {
+			Document chk = getParent().getRawDatabase().getDocumentByUNID(id);
+			if (chk == null) {
+				outIds.remove(id);
+				outDirty_ = true;
+				sb.append("OUT: ");
+				sb.append(id);
+				sb.append(",");
+			}
+		}
+		return sb.toString();
 	}
 
 }
