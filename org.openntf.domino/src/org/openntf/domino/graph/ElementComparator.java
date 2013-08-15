@@ -49,7 +49,7 @@ public class ElementComparator implements Comparator<Element> {
 	@Override
 	public int compare(final Element arg0, final Element arg1) {
 		int result = 0;
-		if (dProps_ == null || dProps_.length > 0) {
+		if (dProps_ != null && dProps_.length > 0) {
 			result = compareProps((IDominoElement) arg0, (IDominoElement) arg1);
 		} else {
 			result = compareStrs(arg0, arg1);
