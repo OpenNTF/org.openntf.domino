@@ -520,15 +520,25 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		return getRawDatabase();
 	}
 
-	private boolean inTransaction_ = false;
-	private DatabaseTransaction txn_;
+	// private boolean inTransaction_ = false;
+	private static ThreadLocal<DatabaseTransaction> txnHolder_ = new ThreadLocal<DatabaseTransaction>() {
+
+	};
+
+	private DatabaseTransaction getTxn() {
+		return txnHolder_.get();
+	}
+
+	public void setTxn(final DatabaseTransaction txn) {
+		txnHolder_.set(txn);
+	}
+
+	// private DatabaseTransaction txn_;
 
 	public void startTransaction(final Element elem) {
 		putCache(elem);
-		if (!inTransaction_) {
-			// System.out.println("Not yet in transaction. Starting...");
-			txn_ = getRawDatabase().startTransaction();
-			inTransaction_ = true;
+		if (getTxn() == null) {
+			setTxn(getRawDatabase().startTransaction());
 		}
 	}
 
@@ -545,43 +555,22 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	}
 
 	public void commit(final boolean clearCache) {
-		if (inTransaction_) {
-			// System.out.println("Committing transaction");
-
-			if (txn_ == null) {
-				// System.out.println("Transaction is null!?!?!");
-			} else {
-				if (getCache().size() > 0) {
-					// System.out.println("Reapplying cache to " + getCache().size() + " elements...");
-					int vCount = 0;
-					Set<Element> elems = getCacheValues();
-					for (Element elem : elems) {
-						if (elem instanceof DominoElement) {
-							((DominoElement) elem).reapplyChanges();
-						}
-						// if (elem instanceof DominoVertex) {
-						// if (((DominoVertex) elem).writeEdges()) {
-						// vCount++;
-						// System.out.println("Updating edges to vertex: " + ((DominoVertex) elem).getRawDocument().getFormName()
-						// + ": " + elem.getId());
-						// // txn_.queueUpdate(((DominoVertex)elem).getRawDocument());
-						// } else {
-						// // System.out.println("No edge updates to vertex: " + ((DominoVertex) elem).getRawDocument().getFormName()
-						// // + ": " + elem.getId());
-						// }
-						// }
+		DatabaseTransaction txn = getTxn();
+		if (txn != null) {
+			if (getCache().size() > 0) {
+				// System.out.println("Reapplying cache to " + getCache().size() + " elements...");
+				int vCount = 0;
+				Set<Element> elems = getCacheValues();
+				for (Element elem : elems) {
+					if (elem instanceof DominoElement) {
+						((DominoElement) elem).reapplyChanges();
 					}
-				} else {
-					// System.out.println("Element cache is empty (so what are we committing?)");
 				}
-				// System.out.println("Committing transaction with " + txn_.getUpdateSize() + " updates...");
-				txn_.commit();
-				txn_ = null;
+			} else {
+				// System.out.println("Element cache is empty (so what are we committing?)");
 			}
-			inTransaction_ = false;
-
-		} else {
-			// System.out.println("Not in transaction!");
+			txn.commit();
+			setTxn(null);
 		}
 		if (clearCache)
 			clearCache();
@@ -605,19 +594,10 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	 */
 	@Override
 	public void rollback() {
-		if (inTransaction_) {
-			// System.out.println("Rollbacking transaction");
-
-			if (txn_ == null) {
-				// System.out.println("Transaction is null!?!?!");
-			} else {
-				txn_.rollback();
-				txn_ = null;
-			}
-			inTransaction_ = false;
-
-		} else {
-			// System.out.println("Not in transaction!");
+		DatabaseTransaction txn = getTxn();
+		if (txn != null) {
+			txn.rollback();
+			setTxn(null);
 		}
 		clearCache();
 		// System.out.println("Transaction rollbacked");

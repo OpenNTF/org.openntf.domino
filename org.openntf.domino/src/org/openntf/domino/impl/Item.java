@@ -238,8 +238,12 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	public Date getLastModifiedDate() {
 		try {
 			lotus.domino.DateTime dt = getDelegate().getLastModified();
-			java.util.Date jdate = dt.toJavaDate();
-			return jdate;
+			if (dt == null) {
+				return getParent().getLastModifiedDate();
+			} else {
+				java.util.Date jdate = dt.toJavaDate();
+				return jdate;
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

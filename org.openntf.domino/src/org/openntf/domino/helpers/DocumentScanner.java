@@ -118,8 +118,9 @@ public class DocumentScanner {
 		Map<String, Integer> tfmap = getTokenFreqMap();
 		Vector<Item> items = doc.getItems();
 		for (Item item : items) {
+			String name = "";
 			try {
-				String name = item.getName();
+				name = item.getName();
 				if (name.startsWith("$") && getIgnoreDollar())
 					break;
 				if (!typeMap.containsKey(name)) {
@@ -143,14 +144,14 @@ public class DocumentScanner {
 					}
 				}
 				String value = null;
-				Vector<String> values = null;
+				Vector<Object> values = null;
 				switch (item.getType()) {
 				case Item.AUTHORS:
 				case Item.READERS:
 				case Item.NAMES:
 				case Item.TEXT:
 					value = item.getValueString();
-					values = item.getValues(String.class);
+					values = item.getValues();
 					break;
 				case Item.RICHTEXT:
 					value = ((RichTextItem) item).getUnformattedText();
@@ -169,39 +170,45 @@ public class DocumentScanner {
 					}
 
 					if (item.isNames()) {
-						if (!values.isEmpty()) {
-							for (String val : values) {
-								Name Nname = doc.getAncestorSession().createName(value);
-								if (Nname.isHierarchical()) {
-									String cn = Nname.getCommon();
-									tokenSet.add(cn);
-									if (tfmap.containsKey(cn)) {
-										tfmap.put(cn, tfmap.get(cn) + 1);
+						if (values != null && !values.isEmpty()) {
+							for (Object o : values) {
+								if (o instanceof String) {
+									String val = (String) o;
+									Name Nname = doc.getAncestorSession().createName(value);
+									if (Nname.isHierarchical()) {
+										String cn = Nname.getCommon();
+										tokenSet.add(cn);
+										if (tfmap.containsKey(cn)) {
+											tfmap.put(cn, tfmap.get(cn) + 1);
+										} else {
+											tfmap.put(cn, 1);
+										}
 									} else {
-										tfmap.put(cn, 1);
-									}
-								} else {
-									tokenSet.add(value);
-									if (tfmap.containsKey(value)) {
-										tfmap.put(value, tfmap.get(value) + 1);
-									} else {
-										tfmap.put(value, 1);
+										tokenSet.add(value);
+										if (tfmap.containsKey(value)) {
+											tfmap.put(value, tfmap.get(value) + 1);
+										} else {
+											tfmap.put(value, 1);
+										}
 									}
 								}
 							}
 						}
 					} else {
-						if (!values.isEmpty()) {
-							for (String val : values) {
-								Scanner s = new Scanner(val);
-								while (s.hasNext()) {
-									String token = scrubToken(s.next());
-									if ((token.length() > 2) && !(stopTokenList_.contains(token))) {
-										tokenSet.add(token);
-										if (tfmap.containsKey(token)) {
-											tfmap.put(token, tfmap.get(token) + 1);
-										} else {
-											tfmap.put(token, 1);
+						if (values != null && !values.isEmpty()) {
+							for (Object o : values) {
+								if (o instanceof String) {
+									String val = (String) o;
+									Scanner s = new Scanner(val);
+									while (s.hasNext()) {
+										String token = scrubToken(s.next());
+										if ((token.length() > 2) && !(stopTokenList_.contains(token))) {
+											tokenSet.add(token);
+											if (tfmap.containsKey(token)) {
+												tfmap.put(token, tfmap.get(token) + 1);
+											} else {
+												tfmap.put(token, 1);
+											}
 										}
 									}
 								}
@@ -224,7 +231,8 @@ public class DocumentScanner {
 				}
 			} catch (Exception e) {
 				Database db = doc.getAncestorDatabase();
-				log_.log(Level.WARNING, "Unable to scan next item in Document " + doc.getNoteID() + " in database " + db.getFilePath());
+				log_.log(Level.WARNING,
+						"Unable to scan item: " + name + " in Document " + doc.getNoteID() + " in database " + db.getFilePath(), e);
 			}
 
 		}

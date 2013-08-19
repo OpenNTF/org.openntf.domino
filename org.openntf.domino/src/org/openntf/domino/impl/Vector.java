@@ -66,7 +66,11 @@ public class Vector<E> extends java.util.Vector<E> implements List<E> {
 	 *            the source
 	 */
 	public Vector(final List<E> source) {
-		delegate_ = source;
+		if (source instanceof java.util.Vector) {
+			delegate_ = new ArrayList<E>(source);
+		} else {
+			delegate_ = source;
+		}
 	}
 
 	public List<E> getDelegate() {

@@ -41,22 +41,29 @@ public class ConsoleFormatter extends Formatter {
 	public String format(final LogRecord logRecord) {
 		Date recordDate = new Date(logRecord.getMillis());
 		StringBuffer sb = new StringBuffer();
-		StackTraceElement ste = logRecord.getThrown().getStackTrace()[0];
-		sb.append(LogUtils.dateToString(recordDate, UTC_Format));
-		sb.append(" [");
-		sb.append(logRecord.getLevel().getName());
-		sb.append("]: ");
-		if (null == ste) {
-			sb.append("***NO STACK TRACE***");
-		} else {
-			sb.append(ste.getClassName() + "." + ste.getMethodName());
-		}
-		sb.append(" - ");
-		sb.append(logRecord.getMessage());
-		sb.append("\n");
-		sb.append("***See IBM_TECHNICAL_SUPPORT\\org.openntf.log.X.Y.txt for full stack trace***");
-		sb.append("\n");
+		try {
+			sb.append(LogUtils.dateToString(recordDate, UTC_Format));
+			sb.append(" [");
+			sb.append(logRecord.getLevel().getName());
+			sb.append("]: ");
+			Throwable t = logRecord.getThrown();
+			StackTraceElement ste = null;
+			if (t != null) {
+				ste = t.getStackTrace()[0];
+				sb.append(ste.getClassName() + "." + ste.getMethodName());
+			}
 
+			sb.append(" - ");
+			sb.append(logRecord.getMessage());
+			if (t != null) {
+				sb.append("\n");
+				sb.append("***See IBM_TECHNICAL_SUPPORT\\org.openntf.log.X.Y.txt for full stack trace***");
+				sb.append("\n");
+			}
+		} catch (Throwable t) {
+			System.out.println("Error trying to format output for error handling. Resorting to standard stack trace...");
+			t.printStackTrace();
+		}
 		return sb.toString();
 	}
 }

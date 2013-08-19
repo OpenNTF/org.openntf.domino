@@ -85,6 +85,10 @@ public enum TypeUtils {
 	public static <T> T vectorToClass(final Vector v, final Class<?> T, final Session session) {
 		Object result = null;
 		Class<?> CType = null;
+		if (T.equals(String[].class)) {
+			result = toStrings(v);
+			return (T) result;
+		}
 		if (T.isArray()) {
 			if (T == String[].class) {
 				result = toStrings(v);
