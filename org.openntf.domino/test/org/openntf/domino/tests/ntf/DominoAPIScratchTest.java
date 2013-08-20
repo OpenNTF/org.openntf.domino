@@ -27,7 +27,7 @@ public enum DominoAPIScratchTest {
 		// TODO Auto-generated constructor stub
 	}
 
-	private static final int THREAD_COUNT = 4;
+	private static final int THREAD_COUNT = 8;
 	private static final boolean INCLUDE_FORMS = false;
 	private static final int delay = 1000;
 	// private static final String server = "CN=DevilDog/O=REDPILL";
@@ -94,6 +94,32 @@ public enum DominoAPIScratchTest {
 				// System.out.println("LastMod: " + toxic.getGMTTime());
 				dateCount++;
 			}
+			System.out.println("REPEATING ITERATION of Documents");
+			for (Document doc : dc) {
+				docCount++;
+				Vector v = doc.getItemValue("$UpdatedBy");
+				for (Object o : v) {
+					if (o instanceof String) {
+						Name n = s.createName((String) o);
+						String cn = n.getCommon();
+						nameCount++;
+					}
+				}
+				if (docCount % 1000 == 0) {
+					secondReference.add(db.getDocumentByID(doc.getNoteID()));
+				}
+				if (docCount % 2000 == 0) {
+					thirdReference.add(doc);
+				}
+
+				DateTime toxic = doc.getLastModified();
+				String busyWork = toxic.getGMTTime();
+				DateTime toxic2 = doc.getLastModified();
+				String busyWork2 = toxic2.getDateOnly();
+				// System.out.println("LastMod: " + toxic.getGMTTime());
+				dateCount++;
+			}
+
 			System.out.println("ENDING ITERATION of Documents");
 		}
 

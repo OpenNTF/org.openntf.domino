@@ -9,7 +9,7 @@ import com.ibm.icu.util.Calendar;
  * @author nfreeman
  * 
  */
-public interface DateTime {
+public interface DateTime extends Comparable<DateTime> {
 
 	/**
 	 * Compares current date with another and returns boolean of whether they are the same.

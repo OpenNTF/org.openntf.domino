@@ -67,16 +67,34 @@ import com.ibm.icu.util.ULocale;
 public enum DominoUtils {
 	;
 
+	private static ThreadLocal<Boolean> bubbleExceptions_ = new ThreadLocal<Boolean>() {
+		@Override
+		protected Boolean initialValue() {
+			return Boolean.FALSE;
+		}
+	};
+
+	public static Boolean getBubbleExceptions() {
+		if (bubbleExceptions_.get() == null) {
+			setBubbleExceptions(Boolean.FALSE);
+		}
+		return bubbleExceptions_.get();
+	}
+
+	public static void setBubbleExceptions(final Boolean value) {
+		bubbleExceptions_.set(value);
+	}
+
 	public static class LoaderObjectInputStream extends ObjectInputStream {
 		private final ClassLoader loader_;
 
-		public LoaderObjectInputStream(ClassLoader classLoader, InputStream in) throws IOException {
+		public LoaderObjectInputStream(final ClassLoader classLoader, final InputStream in) throws IOException {
 			super(in);
 			loader_ = classLoader;
 		}
 
 		@Override
-		protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+		protected Class<?> resolveClass(final ObjectStreamClass desc) throws IOException, ClassNotFoundException {
 			try {
 				String name = desc.getName();
 				return Class.forName(name, false, loader_);
@@ -226,8 +244,12 @@ public enum DominoUtils {
 					return null;
 				}
 			});
+			if (getBubbleExceptions()) {
+				throw new RuntimeException(t);
+			}
 			return t;
 		} catch (Throwable e) {
+			e.printStackTrace();
 			return t;
 		}
 
@@ -586,8 +608,12 @@ public enum DominoUtils {
 	 * @throws Throwable
 	 *             the throwable
 	 */
-	public static void saveState(final Serializable object, final Document doc, final String itemName, final boolean compress, final Map<String, String> headers)
-			throws Throwable {
+	public static void saveState(final Serializable object, final Document doc, final String itemName, final boolean compress,
+			final Map<String, String> headers) throws Throwable {
+		if (object == null) {
+			System.out.println("Ignoring attempt to save MIMEBean value of null");
+			return;
+		}
 		Session session = Factory.getSession((Base<?>) doc);
 		boolean convertMime = session.isConvertMime();
 		session.setConvertMime(false);

@@ -25,6 +25,7 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
+import org.openntf.domino.impl.Base;
 import org.openntf.domino.impl.DocumentCollection;
 import org.openntf.domino.impl.Session;
 import org.openntf.domino.types.DatabaseDescendant;
@@ -204,7 +205,8 @@ public enum Factory {
 	 * @return the t
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T> T fromLotus(final lotus.domino.Base lotus, final Class<? extends org.openntf.domino.Base> T, final org.openntf.domino.Base parent) {
+	public static <T> T fromLotus(final lotus.domino.Base lotus, final Class<? extends org.openntf.domino.Base> T,
+			final org.openntf.domino.Base parent) {
 		if (lotus == null) {
 			return null;
 		}
@@ -319,7 +321,8 @@ public enum Factory {
 			result = (T) new org.openntf.domino.impl.Session((lotus.domino.Session) lotus, parent);
 			if (currentSessionHolder_.get() != null) {
 				try {
-					((lotus.domino.Session) currentSessionHolder_.get()).isConvertMIME();
+					lotus.domino.Session rawSession = (lotus.domino.Session) Base.getDelegate(currentSessionHolder_.get());
+					rawSession.isConvertMime();
 				} catch (NotesException ne) {
 					// System.out.println("Resetting default local session because we got an exception");
 					setSession((org.openntf.domino.Session) result);
@@ -419,11 +422,23 @@ public enum Factory {
 		if (values == null) {
 			return null;
 		}
-
+		int i = 0;
 		java.util.Vector<Object> result = new org.openntf.domino.impl.Vector<Object>();
 		for (Object value : values) {
-			if (value instanceof lotus.domino.DateTime) {
-				result.add(fromLotus((lotus.domino.DateTime) value, org.openntf.domino.impl.DateTime.class, session));
+			if (value == null) {
+				result.add(null);
+			} else if (value instanceof lotus.domino.DateTime) {
+				Object wrapped = null;
+				try {
+					wrapped = fromLotus((lotus.domino.DateTime) value, org.openntf.domino.impl.DateTime.class, session);
+				} catch (Throwable t) {
+					System.out.println("Unable to wrap a DateTime found in Vector member " + i + " of " + values.size());
+				}
+				if (wrapped == null) {
+					result.add("");
+				} else {
+					result.add(wrapped);
+				}
 			} else if (value instanceof lotus.domino.DateRange) {
 				result.add(fromLotus((lotus.domino.DateRange) value, org.openntf.domino.impl.DateRange.class, session));
 			} else if (value instanceof Collection) {
@@ -431,6 +446,7 @@ public enum Factory {
 			} else {
 				result.add(value);
 			}
+			i++;
 		}
 		return result;
 	}
@@ -525,7 +541,7 @@ public enum Factory {
 		return currentClassLoader_.get();
 	}
 
-	public static void setClassLoader(ClassLoader loader) {
+	public static void setClassLoader(final ClassLoader loader) {
 		currentClassLoader_.set(loader);
 	}
 
@@ -533,9 +549,14 @@ public enum Factory {
 		currentClassLoader_.set(null);
 	}
 
+	public static void clearBubbleExceptions() {
+		DominoUtils.setBubbleExceptions(null);
+	}
+
 	public static void terminate() {
 		clearSession();
 		clearClassLoader();
+		clearBubbleExceptions();
 	}
 
 	/**

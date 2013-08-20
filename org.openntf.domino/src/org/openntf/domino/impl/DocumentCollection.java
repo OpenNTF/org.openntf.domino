@@ -17,6 +17,7 @@ package org.openntf.domino.impl;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 import lotus.domino.NotesException;
 
@@ -427,7 +428,12 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 			getDelegate().stampAll(itemName, value);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		}
+	}
 
+	public void stampAll(final Map<String, Object> map) {
+		for (org.openntf.domino.Document doc : this) {
+			doc.putAll(map);
 		}
 	}
 
@@ -848,5 +854,45 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	@Override
 	public Session getAncestorSession() {
 		return this.getParent().getParent();
+	}
+
+	public org.openntf.domino.DocumentCollection filter(final Object value) {
+		org.openntf.domino.DocumentCollection result = getAncestorDatabase().createDocumentCollection();
+		for (org.openntf.domino.Document doc : this) {
+			if (doc.containsValue(value)) {
+				result.add(doc);
+			}
+		}
+		return result;
+	}
+
+	public org.openntf.domino.DocumentCollection filter(final Object value, final String[] itemnames) {
+		org.openntf.domino.DocumentCollection result = getAncestorDatabase().createDocumentCollection();
+		for (org.openntf.domino.Document doc : this) {
+			if (doc.containsValue(value, itemnames)) {
+				result.add(doc);
+			}
+		}
+		return result;
+	}
+
+	public org.openntf.domino.DocumentCollection filter(final Object value, final Collection<String> itemnames) {
+		org.openntf.domino.DocumentCollection result = getAncestorDatabase().createDocumentCollection();
+		for (org.openntf.domino.Document doc : this) {
+			if (doc.containsValue(value, itemnames)) {
+				result.add(doc);
+			}
+		}
+		return result;
+	}
+
+	public org.openntf.domino.DocumentCollection filter(final Map<String, Object> filterMap) {
+		org.openntf.domino.DocumentCollection result = getAncestorDatabase().createDocumentCollection();
+		for (org.openntf.domino.Document doc : this) {
+			if (doc.containsValues(filterMap)) {
+				result.add(doc);
+			}
+		}
+		return result;
 	}
 }

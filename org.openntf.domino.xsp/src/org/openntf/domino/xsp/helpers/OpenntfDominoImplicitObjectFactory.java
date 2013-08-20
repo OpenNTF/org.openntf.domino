@@ -14,12 +14,12 @@ import com.ibm.xsp.util.TypedUtil;
 public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory {
 	public static class ContextListener implements com.ibm.xsp.event.FacesContextListener {
 		@Override
-		public void beforeContextReleased(FacesContext paramFacesContext) {
+		public void beforeContextReleased(final FacesContext paramFacesContext) {
 			Factory.terminate();
 		}
 
 		@Override
-		public void beforeRenderingPhase(FacesContext paramFacesContext) {
+		public void beforeRenderingPhase(final FacesContext paramFacesContext) {
 			// TODO NOOP
 
 		}
@@ -43,15 +43,42 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 		return GODMODE.booleanValue();
 	}
 
-	private static boolean isAppGodMode(FacesContext ctx) {
+	private static boolean isAppGodMode(final FacesContext ctx) {
 		Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
-		Object current = appMap.get(OpenntfDominoImplicitObjectFactory.class.getName());
+		Object current = appMap.get(OpenntfDominoImplicitObjectFactory.class.getName() + "_GODMODE");
+		if (current == null) {
+			// System.out.println("Current not found. Creating...");
+			current = Boolean.FALSE;
+			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
+			if (envs != null) {
+				// if (envs.length == 0) {
+				// System.out.println("Got an empty string array!");
+				// }
+				for (String s : envs) {
+					// System.out.println("Xsp check: " + s);
+					if (s.equalsIgnoreCase("godmode")) {
+						current = Boolean.TRUE;
+					}
+				}
+			} else {
+				// System.out.println("XSP ENV IS NULL!!");
+			}
+			appMap.put(OpenntfDominoImplicitObjectFactory.class.getName(), current);
+		} else {
+			// System.out.println("Current found: " + String.valueOf(current));
+		}
+		return (Boolean) current;
+	}
+
+	private static boolean isAppMimeFriendly(final FacesContext ctx) {
+		Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
+		Object current = appMap.get(OpenntfDominoImplicitObjectFactory.class.getName() + "_MARCEL");
 		if (current == null) {
 			current = Boolean.FALSE;
 			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
 			if (envs != null) {
 				for (String s : envs) {
-					if (s.equalsIgnoreCase("godmode")) {
+					if (s.equalsIgnoreCase("marcel")) {
 						current = Boolean.TRUE;
 					}
 				}
@@ -61,15 +88,15 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 		return (Boolean) current;
 	}
 
-	private static boolean isAppMimeFriendly(FacesContext ctx) {
+	private static boolean isAppDebug(final FacesContext ctx) {
 		Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
-		Object current = appMap.get(OpenntfDominoImplicitObjectFactory.class.getName());
+		Object current = appMap.get(OpenntfDominoImplicitObjectFactory.class.getName() + "_RAID");
 		if (current == null) {
 			current = Boolean.FALSE;
 			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
 			if (envs != null) {
 				for (String s : envs) {
-					if (s.equalsIgnoreCase("marcel")) {
+					if (s.equalsIgnoreCase("raid")) {
 						current = Boolean.TRUE;
 					}
 				}
@@ -86,42 +113,65 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 	public OpenntfDominoImplicitObjectFactory() {
 	}
 
-	@Override
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void createImplicitObjects(FacesContextEx ctx) {
-		Factory.setClassLoader(ctx.getContextClassLoader());
+	private org.openntf.domino.Session createSession(final FacesContextEx ctx) {
+		org.openntf.domino.Session session = null;
+		String sessionKey = isAppGodMode(ctx) ? "session" : "opensession";
 		Map localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
-		org.openntf.domino.Session s = null;
-		if (localMap.containsKey("session")) {
-			Object current = localMap.get("session");
-			if (!(current instanceof org.openntf.domino.Session)) {
-				s = Factory.fromLotus((lotus.domino.Session) current, org.openntf.domino.Session.class, null);
-				localMap.put((isAppGodMode(ctx) ? "session" : "opensession"), s);
-				if (isAppMimeFriendly(ctx))
-					s.setConvertMIME(false);
-				// System.out.println("Putting OpenNTF session into implicits");
-			} else {
-				s = (org.openntf.domino.Session) current;
-			}
+		lotus.domino.Session rawSession = (lotus.domino.Session) localMap.get("session");
+		if (rawSession == null) {
+			rawSession = (lotus.domino.Session) ctx.getApplication().getVariableResolver().resolveVariable(ctx, "session");
 		}
-		if (localMap.containsKey("database")) {
-			Object current = localMap.get("database");
-			if (!(current instanceof org.openntf.domino.Session)) {
-				org.openntf.domino.Database db = Factory.fromLotus((lotus.domino.Database) current, org.openntf.domino.Database.class, s);
-				localMap.put((isAppGodMode(ctx) ? "database" : "opendatabase"), db);
-			}
+		if (rawSession != null) {
+			session = Factory.fromLotus(rawSession, org.openntf.domino.Session.class, null);
+			if (isAppMimeFriendly(ctx))
+				session.setConvertMIME(false);
+			localMap.put(sessionKey, session);
+		} else {
+			System.out.println("Unable to locate 'session' through request map or variable resolver. Unable to auto-wrap.");
 		}
-		ctx.addRequestListener(new ContextListener());
+		return session;
+	}
+
+	private org.openntf.domino.Database createDatabase(final FacesContextEx ctx, final org.openntf.domino.Session session) {
+		org.openntf.domino.Database database = null;
+		String dbKey = isAppGodMode(ctx) ? "database" : "opendatabase";
+		Map localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
+		lotus.domino.Database rawDatabase = (lotus.domino.Database) localMap.get("database");
+		if (rawDatabase == null) {
+			rawDatabase = (lotus.domino.Database) ctx.getApplication().getVariableResolver().resolveVariable(ctx, "database");
+		}
+		if (rawDatabase != null) {
+			database = Factory.fromLotus(rawDatabase, org.openntf.domino.Database.class, session);
+			localMap.put(dbKey, database);
+		} else {
+			System.out.println("Unable to locate 'database' through request map or variable resolver. Unable to auto-wrap.");
+		}
+		return database;
 	}
 
 	@Override
-	public Object getDynamicImplicitObject(FacesContextEx paramFacesContextEx, String paramString) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void createImplicitObjects(final FacesContextEx ctx) {
+		ctx.addRequestListener(new ContextListener());
+		Factory.setClassLoader(ctx.getContextClassLoader());
+		if (isAppDebug(ctx)) {
+			System.out.println("Beginning creation of implicit objects...");
+		}
+		org.openntf.domino.Session session = createSession(ctx);
+		org.openntf.domino.Database database = createDatabase(ctx, session);
+		if (isAppDebug(ctx)) {
+			System.out.println("Done creating implicit objects.");
+		}
+	}
+
+	@Override
+	public Object getDynamicImplicitObject(final FacesContextEx paramFacesContextEx, final String paramString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void destroyImplicitObjects(FacesContext paramFacesContext) {
+	public void destroyImplicitObjects(final FacesContext paramFacesContext) {
 		// TODO Auto-generated method stub
 
 	}

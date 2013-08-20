@@ -1,7 +1,11 @@
 package org.openntf.domino.graph;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -9,9 +13,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
 
-import com.tinkerpop.blueprints.Element;
-
-public abstract class DominoElement implements Element, Serializable {
+public abstract class DominoElement implements IDominoElement, Serializable {
 	private static final Logger log_ = Logger.getLogger(DominoElement.class.getName());
 	private static final long serialVersionUID = 1L;
 	public static final String TYPE_FIELD = "_OPEN_GRAPHTYPE";
@@ -19,11 +21,19 @@ public abstract class DominoElement implements Element, Serializable {
 	private String key_;
 	transient DominoGraph parent_;
 	private String unid_;
+	private Map<String, Serializable> props_;
 
 	public DominoElement(final DominoGraph parent, final Document doc) {
 		doc_ = doc;
 		parent_ = parent;
 		unid_ = doc.getUniversalID();
+	}
+
+	private Map<String, Serializable> getProps() {
+		if (props_ == null) {
+			props_ = Collections.synchronizedMap(new HashMap<String, Serializable>());
+		}
+		return props_;
 	}
 
 	public void addProperty(final String propertyName, final Object value) {
@@ -32,6 +42,20 @@ public abstract class DominoElement implements Element, Serializable {
 
 	private Database getDatabase() {
 		return getParent().getRawDatabase();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(final Object o) {
+		if (o instanceof DominoElement) {
+			return ((DominoElement) o).getId().equals(getId());
+		} else {
+			return false;
+		}
 	}
 
 	public Document getRawDocument() {
@@ -88,12 +112,52 @@ public abstract class DominoElement implements Element, Serializable {
 	}
 
 	public <T> T getProperty(final String propertyName, final Class<?> T) {
-		Object result = getRawDocument().getItemValue(propertyName, T);
+		Object result = null;
+		Map<String, Serializable> props = getProps();
+		synchronized (props) {
+			result = props.get(propertyName);
+			if (result == null) {
+				result = getRawDocument().getItemValue(propertyName, T);
+				if (result instanceof Serializable) {
+					props.put(propertyName, (Serializable) result);
+				}
+			}
+		}
 		return (T) result;
+	}
+
+	public <T> T getProperty(final String propertyName, final Class<?> T, final boolean allowNull) {
+		T result = getProperty(propertyName, T);
+		if (allowNull) {
+			return result;
+		} else {
+			if (result == null) {
+				if (T.isArray())
+					return (T) Array.newInstance(T, 0);
+				if (Boolean.class.equals(T) || Boolean.TYPE.equals(T))
+					return (T) Boolean.FALSE;
+				if (Integer.class.equals(T) || Integer.TYPE.equals(T))
+					return (T) Integer.valueOf(0);
+				if (Double.class.equals(T) || Double.TYPE.equals(T))
+					return (T) Double.valueOf(0d);
+				if (Float.class.equals(T) || Float.TYPE.equals(T))
+					return (T) Float.valueOf(0f);
+				if (String.class.equals(T))
+					return (T) "";
+				try {
+					return (T) T.newInstance();
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			} else {
+				return result;
+			}
+		}
 	}
 
 	@Override
 	public Set<String> getPropertyKeys() {
+		// TODO - NTF cache?
 		Set<String> result = new HashSet<String>();
 		for (Item i : getRawDocument().getItems()) {
 			result.add(i.getName());
@@ -103,15 +167,27 @@ public abstract class DominoElement implements Element, Serializable {
 
 	@Override
 	public void remove() {
-		getParent().startTransaction();
+		getParent().startTransaction(this);
 		getRawDocument().removePermanently(true);
 	}
 
+	private final Set<String> removedProperties_ = new HashSet<String>();
+
 	@Override
 	public <T> T removeProperty(final String key) {
-		getParent().startTransaction();
+		getParent().startTransaction(this);
 		T result = getProperty(key);
-		getRawDocument().removeItem(key);
+		Map<String, Serializable> props = getProps();
+		synchronized (props) {
+			props.remove(key);
+		}
+		Document doc = getRawDocument();
+		synchronized (doc) {
+			doc.removeItem(key);
+		}
+		synchronized (removedProperties_) {
+			removedProperties_.add(key);
+		}
 		return result;
 	}
 
@@ -123,10 +199,80 @@ public abstract class DominoElement implements Element, Serializable {
 		doc_ = doc;
 	}
 
+	private final Set<String> changedProperties_ = new HashSet<String>();
+
 	@Override
 	public void setProperty(final String propertyName, final java.lang.Object value) {
-		getParent().startTransaction();
-		getRawDocument().replaceItemValue(propertyName, value);
+		getParent().startTransaction(this);
+		Map<String, Serializable> props = getProps();
+		Object old = null;
+		synchronized (props) {
+			if (value instanceof Serializable) {
+				old = props.put(propertyName, (Serializable) value);
+			} else if (value == null) {
+				old = props.put(propertyName, null);
+			} else {
+				System.out.println("Attemped caching of value of type " + value.getClass().getName() + " that isn't Serializable");
+			}
+		}
+		// if ((old == null || value == null) || !value.equals(old)) {
+		synchronized (changedProperties_) {
+			changedProperties_.add(propertyName);
+		}
+		// }
+		// Document doc = getRawDocument();
+		// synchronized (doc) {
+		// doc.replaceItemValue(propertyName, value);
+		// }
+	}
+
+	protected void reapplyChanges() {
+		Map<String, Serializable> props = getProps();
+		Document doc = getRawDocument();
+		synchronized (props) {
+			if (props.isEmpty()) {
+				// System.out.println("Cached properties is empty!");
+			} else {
+				synchronized (changedProperties_) {
+					// System.out.println("Re-applying cached properties: " + changedProperties_.size());
+					for (String key : changedProperties_) {
+						Object v = props.get(key);
+						if (v == null) {
+							// System.out.println("Writing a null value for property: " + key
+							// + " to an Element document. Probably not good...");
+						}
+						doc.replaceItemValue(key, v);
+					}
+					changedProperties_.clear();
+				}
+
+			}
+		}
+		synchronized (removedProperties_) {
+			for (String key : removedProperties_) {
+				doc.removeItem(key);
+			}
+		}
+	}
+
+	public int incrementProperty(final IDominoProperties prop) {
+		return incrementProperty(prop.getName());
+	}
+
+	public int decrementProperty(final IDominoProperties prop) {
+		return decrementProperty(prop.getName());
+	}
+
+	public <T> T getProperty(final IDominoProperties prop) {
+		return getProperty(prop.getName(), prop.getType());
+	}
+
+	public <T> T getProperty(final IDominoProperties prop, final boolean allowNull) {
+		return getProperty(prop.getName(), prop.getType(), allowNull);
+	}
+
+	public void setProperty(final IDominoProperties prop, final java.lang.Object value) {
+		setProperty(prop.getName(), value);
 	}
 
 }

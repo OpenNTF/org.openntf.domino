@@ -3,7 +3,9 @@
  */
 package org.openntf.domino.ext;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
@@ -20,6 +22,10 @@ public interface Document {
 	 * @return the created date
 	 */
 	public Date getCreatedDate();
+
+	public String getFormName();
+
+	public org.openntf.domino.Form getForm();
 
 	/**
 	 * Gets the initially modified date.
@@ -55,6 +61,14 @@ public interface Document {
 	public boolean hasMIMEEntity(final String name);
 
 	public <T> T getItemValue(final String name, final Class<?> T) throws ItemNotFoundException, DataNotCompatibleException;
+
+	public Item replaceItemValue(final String name, final Object value, final boolean isSummary);
+
+	public boolean containsValue(final Object value, final String[] itemnames);
+
+	public boolean containsValue(final Object value, final Collection<String> itemnames);
+
+	public boolean containsValues(final Map<String, Object> filterMap);
 
 	// public <T> T getItemValue(String name, Class<?> T, ClassLoader loader) throws ItemNotFoundException, DataNotCompatibleException;
 

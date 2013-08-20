@@ -60,8 +60,10 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 */
 	public DateTime(final lotus.domino.DateTime delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, Factory.getSession(parent));
-		initialize(delegate);
-		org.openntf.domino.impl.Base.s_recycle(delegate);
+		if (delegate instanceof lotus.domino.local.DateTime) {
+			initialize(delegate);
+			Base.s_recycle(delegate);
+		}
 	}
 
 	/**
@@ -138,11 +140,16 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 			String timeonly = delegate.getTimeOnly();
 			if (timeonly == null || timeonly.length() == 0)
 				isDateOnly_ = true;
-			Date date = delegate.toJavaDate();
-			cal_.setTime(date);
+			try {
+				Date date = delegate.toJavaDate();
+				cal_.setTime(date);
+			} catch (NotesException e1) {
+				// System.out.println("Error attempting to initialize a DateTime: " + delegate.getGMTTime());
+				throw new RuntimeException(e1);
+			}
 
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -610,6 +617,16 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	@Override
 	public Calendar toJavaCal() {
 		return cal_;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(final org.openntf.domino.ext.DateTime arg0) {
+		return cal_.compareTo(arg0.toJavaCal());
 	}
 
 }

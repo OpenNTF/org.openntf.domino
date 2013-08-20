@@ -15,9 +15,9 @@
  */
 package org.openntf.domino.thread;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,8 +43,9 @@ public class DominoReferenceCounter {
 	 */
 	public DominoReferenceCounter() {
 		synced_ = true;
-		this.map = Collections.synchronizedMap(new HashMap<Long, AtomicInteger>());
-		this.refMap = new DominoReferenceMap();
+		// this.map = Collections.synchronizedMap(new HashMap<Long, AtomicInteger>());
+		this.map = new ConcurrentHashMap<Long, AtomicInteger>();
+		// this.refMap = new DominoReferenceMap();
 	}
 
 	/**
@@ -55,9 +56,10 @@ public class DominoReferenceCounter {
 	 */
 	public DominoReferenceCounter(final boolean synced) {
 		synced_ = synced;
-		this.refMap = new DominoReferenceMap();
+		// this.refMap = new DominoReferenceMap();
 		if (synced) {
-			this.map = Collections.synchronizedMap(new HashMap<Long, AtomicInteger>());
+			// this.map = Collections.synchronizedMap(new HashMap<Long, AtomicInteger>());
+			this.map = new ConcurrentHashMap<Long, AtomicInteger>();
 		} else {
 			this.map = new HashMap<Long, AtomicInteger>();
 		}
@@ -65,7 +67,8 @@ public class DominoReferenceCounter {
 
 	/** The map. */
 	private final Map<Long, AtomicInteger> map;
-	private final DominoReferenceMap refMap;
+
+	// private final DominoReferenceMap refMap;
 
 	/**
 	 * Gets the map.
@@ -76,9 +79,9 @@ public class DominoReferenceCounter {
 		return map;
 	}
 
-	private DominoReferenceMap getRefMap() {
-		return refMap;
-	}
+	// private DominoReferenceMap getRefMap() {
+	// return refMap;
+	// }
 
 	/**
 	 * Increment.
@@ -171,19 +174,27 @@ public class DominoReferenceCounter {
 		// return refMap.get(key);
 		Map<Long, AtomicInteger> map = getMap();
 		if (synced_) {
-			synchronized (map) {
-				if (map.containsKey(id)) {
-					return map.get(id).intValue();
-				} else {
-					return -1;
-				}
-			}
-		} else {
-			if (map.containsKey(id)) {
-				return map.get(id).intValue();
-			} else {
+			AtomicInteger ai = map.get(id);
+			if (ai == null)
 				return -1;
-			}
+			return ai.intValue();
+			// synchronized (map) {
+			// if (map.containsKey(id)) {
+			// return map.get(id).intValue();
+			// } else {
+			// return -1;
+			// }
+			// }
+		} else {
+			AtomicInteger ai = map.get(id);
+			if (ai == null)
+				return -1;
+			return ai.intValue();
+			// if (map.containsKey(id)) {
+			// return map.get(id).intValue();
+			// } else {
+			// return -1;
+			// }
 		}
 	}
 

@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openntf.domino.ACL;
-import org.openntf.domino.Document;
-import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Database.CompactOption;
 import org.openntf.domino.Database.DBOption;
 import org.openntf.domino.Database.FTDomainSearchOption;
@@ -21,6 +19,9 @@ import org.openntf.domino.Database.FTSortOption;
 import org.openntf.domino.Database.FixupOption;
 import org.openntf.domino.Database.ModifiedDocClass;
 import org.openntf.domino.Database.SignDocType;
+import org.openntf.domino.Document;
+import org.openntf.domino.DocumentCollection;
+import org.openntf.domino.NoteCollection.SelectOption;
 import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.transactions.DatabaseTransaction;
 
@@ -77,8 +78,8 @@ public interface Database {
 	 *            the entry form
 	 * @return a document
 	 */
-	public Document FTDomainSearch(final String query, final int maxDocs, final FTDomainSortOption sortOpt, final Set<FTDomainSearchOption> otherOpt, final int start,
-			final int count, final String entryForm);
+	public Document FTDomainSearch(final String query, final int maxDocs, final FTDomainSortOption sortOpt,
+			final Set<FTDomainSearchOption> otherOpt, final int start, final int count, final String entryForm);
 
 	/**
 	 * @param query
@@ -106,7 +107,8 @@ public interface Database {
 	 *            the start
 	 * @return a DocumentCollection
 	 */
-	public DocumentCollection FTSearchRange(final String query, final int maxDocs, final FTSortOption sortOpt, final Set<FTSearchOption> otherOpt, final int start);
+	public DocumentCollection FTSearchRange(final String query, final int maxDocs, final FTSortOption sortOpt,
+			final Set<FTSearchOption> otherOpt, final int start);
 
 	/*
 	 * (non-Javadoc)
@@ -152,6 +154,10 @@ public interface Database {
 	public Document getDocumentByKey(final Serializable key, final boolean createOnFail);
 
 	public DocumentCollection getModifiedDocuments(final lotus.domino.DateTime since, final ModifiedDocClass noteClass);
+
+	public int getModifiedNoteCount(final java.util.Date since, final Set<SelectOption> noteClass);
+
+	public int getModifiedNoteCount(final java.util.Date since);
 
 	public boolean getOption(final DBOption optionName);
 

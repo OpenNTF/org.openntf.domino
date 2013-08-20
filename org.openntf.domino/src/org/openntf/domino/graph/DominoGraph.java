@@ -2,14 +2,16 @@ package org.openntf.domino.graph;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.Date;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.View;
@@ -39,6 +41,50 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	public static final String VERTEX_VIEW_NAME = "(_OPEN_Vertices)";
 	private static final Features FEATURES = new Features();
 	public static final boolean COMPRESS_IDS = false;
+
+	public static SortedSet<? extends Element> sortElements(final Iterable<? extends Element> elements, final String[] sortproperties) {
+		Comparator<Element> comp = new ElementComparator(sortproperties);
+		SortedSet<Element> result = new TreeSet<Element>(comp);
+		for (Object e : elements) {
+			if (e instanceof Element) {
+				result.add((Element) e);
+			}
+		}
+		return Collections.unmodifiableSortedSet(result);
+	}
+
+	public static SortedSet<? extends Element> sortElements(final Iterable<? extends Element> elements,
+			final IDominoProperties[] sortproperties) {
+		Comparator<Element> comp = new ElementComparator(sortproperties);
+		SortedSet<Element> result = new TreeSet<Element>(comp);
+		for (Object e : elements) {
+			if (e instanceof Element) {
+				result.add((Element) e);
+			}
+		}
+		return Collections.unmodifiableSortedSet(result);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static SortedSet<? extends Edge> sortEdges(final Iterable<? extends Edge> elements, final String[] sortproperties) {
+		return (SortedSet<Edge>) sortElements(elements, sortproperties);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static SortedSet<? extends Vertex> sortVertexes(final Iterable<? extends Vertex> elements, final String[] sortproperties) {
+		return (SortedSet<Vertex>) sortElements(elements, sortproperties);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static SortedSet<? extends Edge> sortEdges(final Iterable<? extends Edge> elements, final IDominoProperties[] sortproperties) {
+		return (SortedSet<Edge>) sortElements(elements, sortproperties);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static SortedSet<? extends Vertex> sortVertexes(final Iterable<? extends Vertex> elements,
+			final IDominoProperties[] sortproperties) {
+		return (SortedSet<Vertex>) sortElements(elements, sortproperties);
+	}
 
 	static {
 		DominoGraph.FEATURES.supportsDuplicateEdges = true;
@@ -81,12 +127,40 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	private transient org.openntf.domino.Database database_;
 	private String filepath_;
 	private String server_;
-	private transient org.openntf.domino.Session session_;
+	protected transient org.openntf.domino.Session session_;
+	protected transient Map<String, IEdgeHelper> edgeHelpers_ = new HashMap<String, IEdgeHelper>();
 
 	public DominoGraph(final org.openntf.domino.Database database) {
 		setRawDatabase(database);
 		RunContext rc = Factory.getRunContext();
 		// System.out.println("Context: " + rc.toString());
+	}
+
+	public IEdgeHelper getHelper(final String key) {
+		IEdgeHelper helper = edgeHelpers_.get(key);
+		return helper;
+	}
+
+	public void addHelper(final String key, final Class<? extends Vertex> inType, final Class<? extends Vertex> outType) {
+		addHelper(key, inType, outType, true, key);
+	}
+
+	public void addHelper(final String key, final Class<? extends Vertex> inType, final Class<? extends Vertex> outType,
+			final boolean unique) {
+		addHelper(key, inType, outType, unique, key);
+	}
+
+	public void addHelper(final String key, final Class<? extends Vertex> inType, final Class<? extends Vertex> outType,
+			final boolean unique, final String label) {
+		if (getHelper(key) == null) {
+			edgeHelpers_.put(key, new AbstractEdgeHelper(this, label, inType, outType, unique));
+		}
+	}
+
+	public void addHelper(final String key, final IEdgeHelper helper) {
+		if (getHelper(key) == null) {
+			edgeHelpers_.put(key, helper);
+		}
 	}
 
 	public void setRawDatabase(final org.openntf.domino.Database database) {
@@ -100,24 +174,77 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 
 	private java.util.Map<Object, Element> getCache() {
 		if (cache_ == null) {
-			cache_ = new HashMap<Object, Element>();
+			cache_ = Collections.synchronizedMap(new HashMap<Object, Element>());
 		}
 		return cache_;
 	}
 
+	public void cache(final Element elem) {
+		putCache(elem);
+	}
+
+	private void putCache(final Element elem) {
+		if (elem != null) {
+			Map<Object, Element> cache = getCache();
+			synchronized (cache) {
+				cache.put(elem.getId(), elem);
+			}
+		}
+	}
+
+	private Element getCache(final Object id) {
+		Map<Object, Element> cache = getCache();
+		Element result = null;
+		synchronized (cache) {
+			result = cache.get(id);
+		}
+		return result;
+	}
+
+	private void removeCache(final Element elem) {
+		Map<Object, Element> cache = getCache();
+		synchronized (cache) {
+			cache.remove(elem);
+		}
+	}
+
+	private Set<Element> getCacheValues() {
+		Map<Object, Element> cache = getCache();
+		Set<Element> result = new LinkedHashSet<Element>();
+		synchronized (cache) {
+			result.addAll(cache.values());
+		}
+		return Collections.unmodifiableSet(result);
+	}
+
+	private void clearCache() {
+		Map<Object, Element> cache = getCache();
+		synchronized (cache) {
+			cache.clear();
+		}
+	}
+
 	@Override
 	public Edge addEdge(Object id, final Vertex outVertex, final Vertex inVertex, final String label) {
-		startTransaction();
+		startTransaction(null);
 		if (id == null)
 			id = DominoUtils.toUnid(outVertex.getId() + label + inVertex.getId());
 		Document d = getDocument(id, true);
 		d.replaceItemValue(DominoElement.TYPE_FIELD, DominoEdge.GRAPH_TYPE_VALUE);
 		DominoEdge ed = new DominoEdge(this, d);
-		getCache().put(ed.getId(), ed);
+		putCache(ed);
+		// putCache(outVertex);
+		// putCache(inVertex);
 		ed.setLabel(label);
-		ed.setOutDoc(outVertex);
-		ed.setInDoc(inVertex);
+		ed.setOutDoc((IDominoVertex) outVertex);
+		ed.setInDoc((IDominoVertex) inVertex);
 		return ed;
+	}
+
+	public Edge getEdge(final Vertex outVertex, final Vertex inVertex, final String label) {
+		String id = DominoUtils.toUnid(outVertex.getId() + label + inVertex.getId());
+		Edge result = getEdge(id);
+		return result;
 	}
 
 	public Edge getOrAddEdge(Object id, final Vertex outVertex, final Vertex inVertex, final String label) {
@@ -127,8 +254,8 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 			result = getEdge(id);
 			if (result != null) {
 				((DominoEdge) result).setLabel(label);
-				((DominoEdge) result).setOutDoc(outVertex);
-				((DominoEdge) result).setInDoc(inVertex);
+				((DominoEdge) result).setOutDoc((IDominoVertex) outVertex);
+				((DominoEdge) result).setInDoc((IDominoVertex) inVertex);
 			}
 		}
 		// if (result == null) {
@@ -151,12 +278,18 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 
 	@Override
 	public Vertex addVertex(final Object id) {
-		startTransaction();
-		String vid = DominoUtils.toUnid((Serializable) id);
-		Document d = getDocument(vid, true);
+		startTransaction(null);
+		Document d = null;
+		if (id == null) {
+			d = getDocument(null, true);
+		} else {
+			String vid = DominoUtils.toUnid((Serializable) id);
+			d = getDocument(vid, true);
+		}
+
 		d.replaceItemValue(DominoElement.TYPE_FIELD, DominoVertex.GRAPH_TYPE_VALUE);
 		DominoVertex result = new DominoVertex(this, d);
-		getCache().put(result.getId(), result);
+		putCache(result);
 		return result;
 	}
 
@@ -167,11 +300,15 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	public org.openntf.domino.Session getRawSession() {
 		if (session_ == null) {
 			session_ = Factory.getSession();
+			System.out.println("DominoGraph re-established root session.");
+			DominoUtils.setBubbleExceptions(Boolean.TRUE);
 		} else {
 			try {
 				session_.isTrustedSession();
 			} catch (Exception xPagesDidThis) {
 				session_ = Factory.getSession();
+				System.out.println("DominoGraph re-established root session.");
+				DominoUtils.setBubbleExceptions(Boolean.TRUE);
 			}
 		}
 		return session_;
@@ -203,17 +340,14 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 			unid = DominoUtils.toUnid((Serializable) id);
 		}
 		if (id != null && !DominoUtils.isUnid(unid)) {
-			log_.log(Level.WARNING, "ALERT! INVALID UNID FROM id type " + (id == null ? "null" : id.getClass().getName()) + ": " + id);
+			log_.log(Level.SEVERE, "ALERT! INVALID UNID FROM id type " + (id == null ? "null" : id.getClass().getName()) + ": " + id);
 		}
 		if (result == null) {
-			result = getRawDatabase().getDocumentByUNID(unid);
-			if (result == null && createOnFail) {
-				// TODO replace with a straight .get call to Database
-				result = getRawDatabase().createDocument();
-				result.setUniversalID(unid);
-				DateTime now = getRawDatabase().getParent().createDateTime(new Date());
-				result.replaceItemValue("$Created", now);
-			}
+			result = getRawDatabase().getDocumentByKey(unid, createOnFail);
+		}
+		if (result == null && createOnFail) {
+			log_.log(Level.SEVERE, "Returning a null document for id " + String.valueOf(id)
+					+ " even though createOnFail was true. This should be guaranteed to return a real document!");
 		}
 		return result;
 	}
@@ -224,15 +358,15 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		if (id == null) {
 			Document d = getDocument(id, false);
 			result = new DominoEdge(this, d);
-			getCache().put(result.getId(), result);
+			putCache(result);
 		} else {
-			result = (Edge) getCache().get(id);
+			result = (Edge) getCache(id);
 			if (result == null) {
 				// System.out.println("Cache miss on edge with id " + id);
 				Document d = getDocument(id, false);
 				if (d != null) {
 					result = new DominoEdge(this, d);
-					getCache().put(result.getId(), result);
+					putCache(result);
 				}
 			}
 
@@ -248,7 +382,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 			result.add(getEdge(entry.getUniversalID()));
 		}
 
-		return result;
+		return Collections.unmodifiableSet(result);
 	}
 
 	@Override
@@ -260,7 +394,10 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	public Iterable<Edge> getEdgesFromIds(final Set<String> set) {
 		Set<Edge> result = new LinkedHashSet<Edge>();
 		for (String id : set) {
-			result.add(getEdge(id));
+			Edge edge = getEdge(id);
+			if (edge != null) {
+				result.add(edge);
+			}
 		}
 		return result;
 	}
@@ -302,7 +439,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	@Override
 	public Vertex getVertex(final Object id) {
 		String vid = DominoUtils.toUnid((Serializable) id);
-		Vertex result = (Vertex) getCache().get(vid);
+		Vertex result = (Vertex) getCache(vid);
 		if (result == null) {
 			Document d = getDocument(vid, false);
 			if (d == null)
@@ -312,7 +449,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 				return null;
 			}
 			result = new DominoVertex(this, d);
-			getCache().put(result.getId(), result);
+			putCache(result);
 		}
 		return result;
 	}
@@ -337,7 +474,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		for (ViewEntry entry : vec) {
 			result.add(getVertex(entry.getUniversalID()));
 		}
-		return result;
+		return Collections.unmodifiableSet(result);
 	}
 
 	@Override
@@ -353,21 +490,24 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 
 	@Override
 	public void removeEdge(final Edge edge) {
-		startTransaction();
+		startTransaction(edge);
 		Vertex in = edge.getVertex(Direction.IN);
 		((DominoVertex) in).removeEdge(edge);
 		Vertex out = edge.getVertex(Direction.OUT);
 		((DominoVertex) out).removeEdge(edge);
+		removeCache(edge);
+		edge.remove();
 	}
 
 	@Override
 	public void removeVertex(final Vertex vertex) {
-		startTransaction();
+		startTransaction(vertex);
 		DominoVertex dv = (DominoVertex) vertex;
 		for (Edge edge : dv.getEdges(Direction.BOTH)) {
 			removeEdge(edge);
 		}
-
+		removeCache(vertex);
+		vertex.remove();
 	}
 
 	@Override
@@ -380,14 +520,25 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		return getRawDatabase();
 	}
 
-	private boolean inTransaction_ = false;
-	private DatabaseTransaction txn_;
+	// private boolean inTransaction_ = false;
+	private static ThreadLocal<DatabaseTransaction> txnHolder_ = new ThreadLocal<DatabaseTransaction>() {
 
-	public void startTransaction() {
-		if (!inTransaction_) {
-			// System.out.println("Not yet in transaction. Starting...");
-			txn_ = getRawDatabase().startTransaction();
-			inTransaction_ = true;
+	};
+
+	private DatabaseTransaction getTxn() {
+		return txnHolder_.get();
+	}
+
+	public void setTxn(final DatabaseTransaction txn) {
+		txnHolder_.set(txn);
+	}
+
+	// private DatabaseTransaction txn_;
+
+	public void startTransaction(final Element elem) {
+		putCache(elem);
+		if (getTxn() == null) {
+			setTxn(getRawDatabase().startTransaction());
 		}
 	}
 
@@ -403,6 +554,29 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 
 	}
 
+	public void commit(final boolean clearCache) {
+		DatabaseTransaction txn = getTxn();
+		if (txn != null) {
+			if (getCache().size() > 0) {
+				// System.out.println("Reapplying cache to " + getCache().size() + " elements...");
+				int vCount = 0;
+				Set<Element> elems = getCacheValues();
+				for (Element elem : elems) {
+					if (elem instanceof DominoElement) {
+						((DominoElement) elem).reapplyChanges();
+					}
+				}
+			} else {
+				// System.out.println("Element cache is empty (so what are we committing?)");
+			}
+			txn.commit();
+			setTxn(null);
+		}
+		if (clearCache)
+			clearCache();
+		// System.out.println("Transaction complete");
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -410,32 +584,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	 */
 	@Override
 	public void commit() {
-		if (inTransaction_) {
-			// System.out.println("Committing transaction");
-
-			if (txn_ == null) {
-				// System.out.println("Transaction is null!?!?!");
-			} else {
-				if (getCache().size() > 0) {
-					for (Element elem : getCache().values()) {
-						if (elem instanceof DominoVertex) {
-							((DominoVertex) elem).writeEdges();
-						}
-					}
-				} else {
-					// System.out.println("ELEMENT CACHE IS EMPTY!??!");
-				}
-				txn_.commit();
-				txn_ = null;
-			}
-			inTransaction_ = false;
-
-		} else {
-			// System.out.println("Not in transaction!");
-		}
-		getCache().clear();
-		// System.out.println("Transaction complete");
-
+		commit(true);
 	}
 
 	/*
@@ -445,21 +594,12 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	 */
 	@Override
 	public void rollback() {
-		if (inTransaction_) {
-			// System.out.println("Rollbacking transaction");
-
-			if (txn_ == null) {
-				// System.out.println("Transaction is null!?!?!");
-			} else {
-				txn_.rollback();
-				txn_ = null;
-			}
-			inTransaction_ = false;
-
-		} else {
-			// System.out.println("Not in transaction!");
+		DatabaseTransaction txn = getTxn();
+		if (txn != null) {
+			txn.rollback();
+			setTxn(null);
 		}
-		getCache().clear();
+		clearCache();
 		// System.out.println("Transaction rollbacked");
 	}
 

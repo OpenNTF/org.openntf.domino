@@ -20,10 +20,7 @@ import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
 import java.util.Vector;
-import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -112,8 +109,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	// TODO NTF - not sure about maintaining a set pointer to children. Not using for now. Just setting up (no pun intended)
 	/** The children_. */
-	private final Set<org.openntf.domino.Base<?>> children_ = Collections
-			.newSetFromMap(new WeakHashMap<org.openntf.domino.Base<?>, Boolean>());
+	// private final Set<org.openntf.domino.Base<?>> children_ = Collections
+	// .newSetFromMap(new WeakHashMap<org.openntf.domino.Base<?>, Boolean>());
 
 	/**
 	 * Sets the parent.
@@ -473,9 +470,23 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			// TODO Check if this is greater than what Domino can handle and serialize if so
 			return ((Number) value).doubleValue();
 		} else if (value instanceof java.util.Date) {
-			return toLotus(Factory.getSession(context).createDateTime((java.util.Date) value));
+			lotus.domino.Session lsess = (lotus.domino.Session) Base.getDelegate(Factory.getSession(context));
+			try {
+				return lsess.createDateTime((java.util.Date) value);
+			} catch (Throwable t) {
+				DominoUtils.handleException(t);
+				return null;
+			}
+			// return toLotus(Factory.getSession(context).createDateTime((java.util.Date) value));
 		} else if (value instanceof java.util.Calendar) {
-			return toLotus(Factory.getSession(context).createDateTime((java.util.Calendar) value));
+			lotus.domino.Session lsess = (lotus.domino.Session) Base.getDelegate(Factory.getSession(context));
+			try {
+				return lsess.createDateTime((java.util.Calendar) value);
+			} catch (Throwable t) {
+				DominoUtils.handleException(t);
+				return null;
+			}
+			// return toLotus(Factory.getSession(context).createDateTime((java.util.Calendar) value));
 		} else if (value instanceof CharSequence) {
 			return value.toString();
 		}

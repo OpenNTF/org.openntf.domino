@@ -3,12 +3,16 @@
  */
 package org.openntf.domino.utils;
 
+import java.lang.reflect.Array;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
@@ -18,7 +22,9 @@ import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.impl.DateTime;
 import org.openntf.domino.impl.Name;
+import org.openntf.domino.types.BigString;
 
+import com.ibm.icu.math.BigDecimal;
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
 
@@ -33,6 +39,8 @@ public enum TypeUtils {
 		String noteid = doc.getNoteID();
 		boolean hasItem = doc.hasItem(itemName);
 		if (!hasItem) {
+			// System.out.println("Item " + itemName + " doesn't exist in document " + doc.getNoteID() + " in "
+			// + doc.getAncestorDatabase().getFilePath() + " so we can't return a " + T.getName());
 			Class<?> CType = null;
 			if (T.isArray()) {
 				CType = T.getComponentType();
@@ -77,27 +85,39 @@ public enum TypeUtils {
 	public static <T> T vectorToClass(final Vector v, final Class<?> T, final Session session) {
 		Object result = null;
 		Class<?> CType = null;
+		if (T.equals(String[].class)) {
+			result = toStrings(v);
+			return (T) result;
+		}
 		if (T.isArray()) {
-			CType = T.getComponentType();
-			if (CType.isPrimitive()) {
-				try {
-					result = toPrimitiveArray(v, CType);
-				} catch (DataNotCompatibleException e) {
-					throw e;
-				}
+			if (T == String[].class) {
+				result = toStrings(v);
 			} else {
-				if (CType == String.class) {
-					result = toStrings(v);
-				} else if (CType == Date.class) {
-					result = toDates(v);
-				} else if (CType == DateTime.class) {
-					result = toDateTimes(v, session);
-				} else if (CType == Name.class) {
-					result = toNames(v, session);
-				} else if (CType == Boolean.class) {
-					result = toBooleans(v);
+				CType = T.getComponentType();
+				if (CType.isPrimitive()) {
+					try {
+						result = toPrimitiveArray(v, CType);
+					} catch (DataNotCompatibleException e) {
+						throw e;
+					}
+				} else if (Number.class.isAssignableFrom(CType)) {
+					result = toNumberArray(v, CType);
 				} else {
-					throw new UnimplementedException("Arrays for " + CType.getName() + " not yet implemented");
+					if (CType == String.class) {
+						result = toStrings(v);
+					} else if (CType == BigString.class) {
+						result = toBigStrings(v);
+					} else if (CType == Date.class) {
+						result = toDates(v);
+					} else if (CType == DateTime.class) {
+						result = toDateTimes(v, session);
+					} else if (CType == Name.class) {
+						result = toNames(v, session);
+					} else if (CType == Boolean.class) {
+						result = toBooleans(v);
+					} else {
+						throw new UnimplementedException("Arrays for " + CType.getName() + " not yet implemented");
+					}
 				}
 			}
 		} else if (T.isPrimitive()) {
@@ -110,13 +130,15 @@ public enum TypeUtils {
 
 			if (T == String.class) {
 				result = join(v);
+			} else if (T == BigString.class) {
+				result = new BigString(join(v));
 			} else if (T == java.util.Collection.class) {
 				result = new ArrayList();
-				((ArrayList) result).addAll(v);
+				if (v != null) {
+					((ArrayList) result).addAll(v);
+				}
 			} else if (T == Date.class) {
-
 				result = toDate(v);
-
 			} else if (T == org.openntf.domino.DateTime.class) {
 				result = session.createDateTime(toDate(v));
 			} else if (T == org.openntf.domino.Name.class) {
@@ -133,8 +155,8 @@ public enum TypeUtils {
 				}
 			} else {
 				if (!v.isEmpty()) {
-					if (T == Integer.class) {
-						result = ((Double) v.get(0)).intValue();
+					if (Number.class.isAssignableFrom(T)) {
+						result = toNumber(v, T);
 					} else {
 						result = v.get(0);
 					}
@@ -142,6 +164,106 @@ public enum TypeUtils {
 			}
 		}
 		return (T) result;
+	}
+
+	public static <T> T toNumberArray(final Vector<Object> value, final Class<?> T) {
+		int size = value.size();
+		Object[] result = (Object[]) Array.newInstance(T, size);
+		for (int i = 0; i < size; i++) {
+			result[i] = toNumber(value.get(i), T);
+		}
+		return (T) result;
+	}
+
+	public static <T> T toNumber(final Object value, final Class<?> T) throws DataNotCompatibleException {
+		// System.out.println("Starting toNumber to get type " + T.getName() + " from a value of type " + value.getClass().getName());
+		T result = null;
+		Object localValue = value;
+		if (value instanceof Collection) {
+			localValue = ((Collection) value).iterator().next();
+		}
+		// System.out.println("LocalValue is type " + localValue.getClass().getName() + ": " + String.valueOf(localValue));
+
+		if (T == Integer.class) {
+			if (localValue instanceof String) {
+				result = (T) Integer.valueOf((String) localValue);
+			} else if (localValue instanceof Double) {
+				result = (T) Integer.valueOf(((Double) localValue).intValue());
+			} else {
+				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
+			}
+		} else if (T == Long.class) {
+			if (localValue instanceof String) {
+				result = (T) Long.valueOf((String) localValue);
+			} else if (localValue instanceof Double) {
+				result = (T) Long.valueOf(((Double) localValue).longValue());
+			} else {
+				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
+			}
+		} else if (T == Double.class) {
+			if (localValue instanceof String) {
+				result = (T) Double.valueOf((String) localValue);
+			} else if (localValue instanceof Double) {
+				result = (T) localValue;
+			} else {
+				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
+			}
+		} else if (T == Short.class) {
+			if (localValue instanceof String) {
+				result = (T) Short.valueOf((String) localValue);
+			} else if (localValue instanceof Double) {
+				result = (T) Short.valueOf(((Double) localValue).shortValue());
+			} else {
+				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
+			}
+		} else if (T == Byte.class) {
+			if (localValue instanceof String) {
+				result = (T) Byte.valueOf((String) localValue);
+			} else if (localValue instanceof Double) {
+				result = (T) Byte.valueOf(((Double) localValue).byteValue());
+			} else {
+				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
+			}
+		} else if (T == Float.class) {
+			if (localValue instanceof String) {
+				result = (T) Float.valueOf((String) localValue);
+			} else if (localValue instanceof Double) {
+				result = (T) Float.valueOf(((Double) localValue).floatValue());
+			} else {
+				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
+			}
+		} else if (T == BigDecimal.class) {
+			if (localValue instanceof String) {
+				result = (T) new BigDecimal((String) localValue);
+			} else if (localValue instanceof Double) {
+				result = (T) new BigDecimal((Double) localValue);
+			} else {
+				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
+			}
+		} else if (T == BigInteger.class) {
+			if (localValue instanceof String) {
+				result = (T) new BigInteger((String) localValue);
+			} else {
+				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
+			}
+		} else if (T == AtomicInteger.class) {
+			if (localValue instanceof String) {
+				result = (T) new AtomicInteger(Integer.valueOf((String) localValue));
+			} else if (localValue instanceof Double) {
+				result = (T) new AtomicInteger(Integer.valueOf(((Double) localValue).intValue()));
+			} else {
+				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
+			}
+		} else if (T == AtomicLong.class) {
+			if (localValue instanceof String) {
+				result = (T) new AtomicLong(Long.valueOf((String) localValue));
+			} else if (localValue instanceof Double) {
+				result = (T) new AtomicLong(Long.valueOf(((Double) localValue).longValue()));
+			} else {
+				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
+			}
+		}
+		return result;
 	}
 
 	public static Boolean[] toBooleans(final Collection<Object> vector) {
@@ -403,6 +525,21 @@ public enum TypeUtils {
 				strings[i++] = ((DateTime) o).getGMTTime();
 			} else {
 				strings[i++] = String.valueOf(o);
+			}
+		}
+		return strings;
+	}
+
+	public static BigString[] toBigStrings(final Collection<Object> vector) throws DataNotCompatibleException {
+		if (vector == null)
+			return null;
+		BigString[] strings = new BigString[vector.size()];
+		int i = 0;
+		for (Object o : vector) {
+			if (o instanceof DateTime) {
+				strings[i++] = new BigString(((DateTime) o).getGMTTime());
+			} else {
+				strings[i++] = new BigString(String.valueOf(o));
 			}
 		}
 		return strings;

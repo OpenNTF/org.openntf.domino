@@ -15,10 +15,13 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.Date;
+import java.util.Set;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.NoteCollection.SelectOption;
 import org.openntf.domino.Session;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.utils.DominoUtils;
@@ -50,7 +53,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @see org.openntf.domino.Form#getAliases()
 	 */
 	@SuppressWarnings("unchecked")
-	@Legacy( { Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
+	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
 	public Vector<String> getAliases() {
 		try {
 			return getDelegate().getAliases();
@@ -61,7 +64,9 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.types.Design#getDocument()
 	 */
 	@Override
@@ -90,7 +95,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @see org.openntf.domino.Form#getFields()
 	 */
 	@SuppressWarnings("unchecked")
-	@Legacy( { Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
+	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
 	public Vector<String> getFields() {
 		try {
 			return getDelegate().getFields();
@@ -107,7 +112,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @see org.openntf.domino.Form#getFormUsers()
 	 */
 	@SuppressWarnings("unchecked")
-	@Legacy( { Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
+	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
 	public Vector<String> getFormUsers() {
 		try {
 			return getDelegate().getFormUsers();
@@ -139,7 +144,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @see org.openntf.domino.Form#getLockHolders()
 	 */
 	@SuppressWarnings("unchecked")
-	@Legacy( { Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
+	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
 	public Vector<String> getLockHolders() {
 		try {
 			return getDelegate().getLockHolders();
@@ -165,7 +170,9 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.types.Design#getNoteID()
 	 */
 	@Override
@@ -206,7 +213,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @see org.openntf.domino.Form#getReaders()
 	 */
 	@SuppressWarnings("unchecked")
-	@Legacy( { Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
+	@Legacy({ Legacy.GENERICS_WARNING, Legacy.INTERFACES_WARNING })
 	public Vector<String> getReaders() {
 		try {
 			return getDelegate().getReaders();
@@ -217,7 +224,9 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.types.Design#getUniversalID()
 	 */
 	@Override
@@ -529,6 +538,44 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	@Override
 	public Session getAncestorSession() {
 		return this.getAncestorDatabase().getAncestorSession();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.Form#getModifiedNoteCount(java.util.Date)
+	 */
+	@Override
+	public int getModifiedNoteCount(final Date since) {
+		if (since.after(getAncestorDatabase().getLastModified().toJavaDate()))
+			return 0;
+		NoteCollection nc = getAncestorDatabase().createNoteCollection(false);
+		nc.setSinceTime(since);
+		Set<SelectOption> noteClass = new java.util.HashSet<SelectOption>();
+		noteClass.add(SelectOption.DOCUMENTS);
+		nc.setSelectOptions(noteClass);
+		String selectionFormula = getSelectionFormula();
+		nc.setSelectionFormula(selectionFormula);
+		nc.buildCollection();
+		return nc.getCount();
+	}
+
+	public String getSelectionFormula() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT ");
+		sb.append("Form=\"");
+		sb.append(this.getName());
+		sb.append("\"");
+		if (!this.getAliases().isEmpty()) {
+			Vector<String> aliases = getAliases();
+			for (String alias : aliases) {
+				sb.append("|");
+				sb.append("Form=\"");
+				sb.append(alias);
+				sb.append("\"");
+			}
+		}
+		return sb.toString();
 	}
 
 }

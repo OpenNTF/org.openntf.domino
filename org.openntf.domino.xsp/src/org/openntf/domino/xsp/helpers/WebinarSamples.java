@@ -63,6 +63,125 @@ public class WebinarSamples {
 
 	// ******* BEGIN AUTO-BOXING SAMPLES
 
+	public org.openntf.domino.DocumentCollection getTermCollectionNew(final org.openntf.domino.Database db, final String searchTerm) {
+		org.openntf.domino.DocumentCollection result = db.createDocumentCollection();
+		for (org.openntf.domino.Document doc : db.getAllDocuments()) {
+			for (org.openntf.domino.Item item : doc.getItems()) {
+				if (item.getValues().contains(searchTerm)) {
+					result.add(doc);
+					break;
+				}
+			}
+		}
+		return result;
+	}
+
+	public lotus.domino.DocumentCollection getTermCollection(final lotus.domino.Database db, final String searchTerm) {
+		lotus.domino.DocumentCollection allDocs = null;
+		lotus.domino.Document curDoc = null;
+		lotus.domino.Document nextDoc = null;
+		lotus.domino.DocumentCollection result = null;
+		try {
+			result = db.createDocumentCollection();
+			allDocs = db.getAllDocuments();
+			curDoc = allDocs.getFirstDocument();
+			while (curDoc != null) {
+				nextDoc = allDocs.getNextDocument(curDoc);
+				if (hasTerm(curDoc, searchTerm)) {
+					result.addDocument(curDoc);
+				}
+				curDoc.recycle();
+				curDoc = nextDoc;
+			}
+		} catch (lotus.domino.NotesException ne) {
+			ne.printStackTrace();
+		} finally {
+			if (curDoc != null) {
+				try {
+					curDoc.recycle();
+				} catch (lotus.domino.NotesException ne) {
+					// do what, then?
+				}
+			}
+			if (nextDoc != null) {
+				try {
+					nextDoc.recycle();
+				} catch (lotus.domino.NotesException ne) {
+					// do what, then?
+				}
+			}
+			if (allDocs != null) {
+				try {
+					allDocs.recycle();
+				} catch (lotus.domino.NotesException ne) {
+					// do what, then?
+				}
+			}
+		}
+		return result;
+	}
+
+	public boolean hasTerm(final lotus.domino.Document doc, final String searchTerm) {
+		boolean result = false;
+		try {
+			java.util.Vector<?> items = doc.getItems();
+			for (Object o : items) {
+				lotus.domino.Item item = (lotus.domino.Item) o;
+				try {
+					java.util.Vector<?> values = item.getValues();
+					for (Object vo : values) {
+						if (vo != null && vo instanceof String) {
+							if (((String) vo).equalsIgnoreCase(searchTerm)) {
+								item.recycle();	// don't forget to recycle if we're going to break the loop and return early!
+								return true; // now we can return safely
+							}
+						}
+					}
+				} catch (lotus.domino.NotesException ne1) {
+					// yes, this can happen. There's no guarantee that the Java API can read the contents of every item successfully.
+				}
+				item.recycle();	// we're good green citizens!
+			}
+		} catch (lotus.domino.NotesException ne) {
+			ne.printStackTrace();
+		}
+		return result;
+	}
+
+	public boolean hasTerm2(final lotus.domino.Document doc, final String searchTerm) {
+		boolean result = false;
+		try {
+			java.util.Vector<?> items = doc.getItems();
+			for (Object o : items) {
+				lotus.domino.Item item = (lotus.domino.Item) o;
+				try {
+					java.util.Vector<?> values = item.getValues();
+					for (Object vo : values) {
+						if (vo != null && vo instanceof String) {
+							if (((String) vo).equalsIgnoreCase(searchTerm)) {
+								item.recycle();	// don't forget to recycle if we're going to break the loop and return early!
+								// Wait... we didn't recycle all the other items in the Vector!
+								// ah! What we really need to do is...
+								doc.recycle(items);
+								// oh wait... the values too! (See below)
+								doc.recycle(values);
+								return true; // now we can return safely
+							}
+						}
+					}
+					// but what if our Vector has DateTime or DateRange objects? We need...
+					item.recycle(values);
+				} catch (lotus.domino.NotesException ne1) {
+					// yes, this can happen. There's no guarantee that the Java API can read the contents of every item successfully.
+				}
+				item.recycle();	// we're good green citizens!
+			}
+		} catch (lotus.domino.NotesException ne) {
+			ne.printStackTrace();
+		}
+		return result;
+	}
+
 	public java.util.Date getProcessedDateOld(final lotus.domino.Document doc) {
 		java.util.Date result = null;
 		try {
@@ -104,7 +223,6 @@ public class WebinarSamples {
 	}
 
 	public void setProcessedDateOld(final lotus.domino.Document doc, final java.util.Date date) {
-		// if this was a List<Date> you could poke yourself in the eye with a pencil instead
 		lotus.domino.Database db = null;
 		lotus.domino.Session session = null;
 		try {
@@ -178,7 +296,7 @@ public class WebinarSamples {
 
 	public void syncDatabases(final org.openntf.domino.Database sourceDb, final org.openntf.domino.Database targetDb) {
 		// Note: I've already improved this substantially after writing this demo. Will be even easier in M3
-		java.util.Map<String, String> syncMap = new java.util.HashMap<String, String>();
+		java.util.Map<Object, String> syncMap = new java.util.HashMap<Object, String>();
 		syncMap.put("Name", "CompanyName");
 		syncMap.put("Address", "CompanyAddress");
 		syncMap.put("City", "CompanyCity");

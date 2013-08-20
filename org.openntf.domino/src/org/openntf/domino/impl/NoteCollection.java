@@ -1610,6 +1610,11 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 		}
 	}
 
+	public void setSinceTime(final java.util.Date date) {
+		org.openntf.domino.DateTime dt = new org.openntf.domino.impl.DateTime(date, getAncestorSession());
+		setSinceTime(dt);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -28,4 +28,6 @@ public interface NoteCollection {
 	 *            a Set of SelectOption enum values corresponding to desired note types
 	 */
 	public void setSelectOptions(final Set<SelectOption> options);
+
+	public void setSinceTime(final java.util.Date since);
 }

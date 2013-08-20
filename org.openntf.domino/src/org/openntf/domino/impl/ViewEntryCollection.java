@@ -16,6 +16,7 @@
 package org.openntf.domino.impl;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import lotus.domino.NotesException;
 
@@ -561,6 +562,12 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 			getDelegate().stampAll(itemName, value);
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
+		}
+	}
+
+	public void stampAll(final Map<String, Object> map) {
+		for (org.openntf.domino.ViewEntry entry : this) {
+			entry.getDocument().putAll(map);
 		}
 	}
 
