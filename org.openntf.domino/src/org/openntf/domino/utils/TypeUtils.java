@@ -13,6 +13,8 @@ import java.util.Iterator;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
@@ -44,8 +46,6 @@ public enum TypeUtils {
 			Class<?> CType = null;
 			if (T.isArray()) {
 				CType = T.getComponentType();
-			}
-			if (T.isArray()) {
 				if (CType.isPrimitive()) {
 					throw new ItemNotFoundException("Item " + itemName + " was not found on document " + noteid
 							+ " so we cannot return an array of " + CType.getName());
@@ -91,6 +91,7 @@ public enum TypeUtils {
 		}
 		if (T.isArray()) {
 			if (T == String[].class) {
+				// System.out.println("Shallow route to string array");
 				result = toStrings(v);
 			} else {
 				CType = T.getComponentType();
@@ -104,6 +105,7 @@ public enum TypeUtils {
 					result = toNumberArray(v, CType);
 				} else {
 					if (CType == String.class) {
+						// System.out.println("Deep route to string array");
 						result = toStrings(v);
 					} else if (CType == BigString.class) {
 						result = toBigStrings(v);
@@ -163,8 +165,16 @@ public enum TypeUtils {
 				}
 			}
 		}
+		if (result != null && !T.isAssignableFrom(result.getClass())) {
+			log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName());
+		}
+		// if (result != null && T.equals(String[].class)) {
+		// log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName());
+		// }
 		return (T) result;
 	}
+
+	private static final Logger log_ = Logger.getLogger(TypeUtils.class.getName());
 
 	public static <T> T toNumberArray(final Vector<Object> value, final Class<?> T) {
 		int size = value.size();
@@ -518,8 +528,10 @@ public enum TypeUtils {
 	public static String[] toStrings(final Collection<Object> vector) throws DataNotCompatibleException {
 		if (vector == null)
 			return null;
+
 		String[] strings = new String[vector.size()];
 		int i = 0;
+		// strings = vector.toArray(new String[0]);
 		for (Object o : vector) {
 			if (o instanceof DateTime) {
 				strings[i++] = ((DateTime) o).getGMTTime();
