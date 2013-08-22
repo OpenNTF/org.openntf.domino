@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
@@ -22,6 +23,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.UnimplementedException;
+import org.openntf.domino.ext.Formula;
 import org.openntf.domino.impl.DateTime;
 import org.openntf.domino.impl.Name;
 import org.openntf.domino.types.BigString;
@@ -109,6 +111,10 @@ public enum TypeUtils {
 						result = toStrings(v);
 					} else if (CType == BigString.class) {
 						result = toBigStrings(v);
+					} else if (CType == Pattern.class) {
+						result = toPatterns(v);
+					} else if (CType == Formula.class) {
+						result = toFormulas(v);
 					} else if (CType == Date.class) {
 						result = toDates(v);
 					} else if (CType == DateTime.class) {
@@ -134,6 +140,11 @@ public enum TypeUtils {
 				result = join(v);
 			} else if (T == BigString.class) {
 				result = new BigString(join(v));
+			} else if (T == Pattern.class) {
+				result = Pattern.compile(join(v));
+			} else if (T == Formula.class) {
+				Formula formula = new org.openntf.domino.helpers.Formula(join(v));
+				result = formula;
 			} else if (T == java.util.Collection.class) {
 				result = new ArrayList();
 				if (v != null) {
@@ -540,6 +551,31 @@ public enum TypeUtils {
 			}
 		}
 		return strings;
+	}
+
+	public static Pattern[] toPatterns(final Collection<Object> vector) throws DataNotCompatibleException {
+		if (vector == null)
+			return null;
+
+		Pattern[] patterns = new Pattern[vector.size()];
+		int i = 0;
+		for (Object o : vector) {
+			patterns[i++] = Pattern.compile(String.valueOf(o));
+		}
+		return patterns;
+	}
+
+	public static Formula[] toFormulas(final Collection<Object> vector) throws DataNotCompatibleException {
+		if (vector == null)
+			return null;
+
+		Formula[] formulas = new Formula[vector.size()];
+		int i = 0;
+		for (Object o : vector) {
+			Formula formula = new org.openntf.domino.helpers.Formula(String.valueOf(o));
+			formulas[i++] = formula;
+		}
+		return formulas;
 	}
 
 	public static BigString[] toBigStrings(final Collection<Object> vector) throws DataNotCompatibleException {

@@ -15,6 +15,8 @@ public interface Formula extends Externalizable {
 
 	public void setExpression(final String expression);
 
+	public String getExpression();
+
 	public Vector<Object> getValue();
 
 	public <T> T getValue(final Class<?> T);

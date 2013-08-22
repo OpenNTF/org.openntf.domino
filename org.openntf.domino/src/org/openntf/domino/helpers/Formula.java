@@ -104,8 +104,17 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		parent_ = parent;
 	}
 
+	public Formula(final String expression) throws FormulaSyntaxException {
+		this();
+		setExpression(expression);
+	}
+
 	public void setSession(final Session session) {
 		parent_ = session;
+	}
+
+	public String getExpression() {
+		return expression_;
 	}
 
 	/*
