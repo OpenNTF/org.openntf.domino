@@ -16,6 +16,8 @@
 package org.openntf.domino.impl;
 
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
@@ -32,7 +34,7 @@ import com.ibm.icu.util.GregorianCalendar;
  * The Class DateTime.
  */
 public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.DateTime> implements org.openntf.domino.DateTime {
-
+	private static final Logger log_ = Logger.getLogger(DateTime.class.getName());
 	private static final long serialVersionUID = 1L;
 
 	/** The cal_. */
@@ -88,6 +90,12 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	public DateTime(final Date date) {
 		super(null, null);
 		initialize(date);
+	}
+
+	DateTime() {	// for deserialization?
+		super(null, null);
+		log_.log(Level.INFO,
+				"Domino objects aren't serializable. You've got a DateTime implementation without a parent session. Could be risky...");
 	}
 
 	/*

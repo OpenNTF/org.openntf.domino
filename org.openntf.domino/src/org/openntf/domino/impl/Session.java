@@ -19,6 +19,8 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -61,6 +63,20 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 
 	/** The lotus reference counter_. */
 	private DominoReferenceCounter lotusReferenceCounter_ = new DominoReferenceCounter();
+
+	private Set<Fixes> fixes_ = EnumSet.noneOf(Fixes.class);
+
+	public boolean isFixEnabled(final Fixes fix) {
+		return fixes_.contains(fix);
+	}
+
+	public void setFixEnable(final Fixes fix, final boolean value) {
+		if (value) {
+			fixes_.add(fix);
+		} else {
+			fixes_.remove(fix);
+		}
+	}
 
 	/**
 	 * Adds the id.

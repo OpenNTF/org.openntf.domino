@@ -17,6 +17,9 @@ import com.ibm.icu.util.Calendar;
  * 
  */
 public interface Session {
+	public static enum Fixes {
+		MIME_CONVERT, REPLACE_ITEM_NULL, REMOVE_ITEM, APPEND_ITEM_VALUE
+	}
 
 	// public RunContext getRunContext();
 
@@ -40,8 +43,8 @@ public interface Session {
 	 *            the first fit
 	 * @return the collection
 	 */
-	public Collection<DateRange> freeTimeSearch(final org.openntf.domino.DateRange window, final int duration, final Collection<String> names,
-			final boolean firstFit);
+	public Collection<DateRange> freeTimeSearch(final org.openntf.domino.DateRange window, final int duration,
+			final Collection<String> names, final boolean firstFit);
 
 	/**
 	 * Free time search.
@@ -56,7 +59,8 @@ public interface Session {
 	 *            the first fit
 	 * @return the collection
 	 */
-	public Collection<DateRange> freeTimeSearch(final org.openntf.domino.DateRange window, final int duration, final String names, final boolean firstFit);
+	public Collection<DateRange> freeTimeSearch(final org.openntf.domino.DateRange window, final int duration, final String names,
+			final boolean firstFit);
 
 	/**
 	 * A collection of Domino Directories and Personal Address Books, including directory catalogs, known to the current session.
@@ -111,5 +115,9 @@ public interface Session {
 	 * @since lotus.domino 4.5.0
 	 */
 	public DateTime createDateTime(Calendar date);
+
+	public boolean isFixEnabled(Fixes fix);
+
+	public void setFixEnable(Fixes fix, boolean value);
 
 }
