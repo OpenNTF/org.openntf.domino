@@ -113,6 +113,8 @@ public enum TypeUtils {
 						result = toBigStrings(v);
 					} else if (CType == Pattern.class) {
 						result = toPatterns(v);
+					} else if (CType == Class.class) {
+						result = toClasses(v);
 					} else if (CType == Formula.class) {
 						result = toFormulas(v);
 					} else if (CType == Date.class) {
@@ -142,6 +144,13 @@ public enum TypeUtils {
 				result = new BigString(join(v));
 			} else if (T == Pattern.class) {
 				result = Pattern.compile(join(v));
+			} else if (T == Class.class) {
+				try {
+					result = Class.forName(join(v));
+				} catch (ClassNotFoundException e) {
+					DominoUtils.handleException(e);
+					result = null;
+				}
 			} else if (T == Formula.class) {
 				Formula formula = new org.openntf.domino.helpers.Formula(join(v));
 				result = formula;
@@ -563,6 +572,24 @@ public enum TypeUtils {
 			patterns[i++] = Pattern.compile(String.valueOf(o));
 		}
 		return patterns;
+	}
+
+	public static Class<?>[] toClasses(final Collection<Object> vector) throws DataNotCompatibleException {
+		if (vector == null)
+			return null;
+
+		Class<?>[] classes = new Class[vector.size()];
+		int i = 0;
+		for (Object o : vector) {
+			int pos = i++;
+			try {
+				classes[pos] = Class.forName(String.valueOf(o));
+			} catch (ClassNotFoundException e) {
+				DominoUtils.handleException(e);
+				classes[pos] = null;
+			}
+		}
+		return classes;
 	}
 
 	public static Formula[] toFormulas(final Collection<Object> vector) throws DataNotCompatibleException {

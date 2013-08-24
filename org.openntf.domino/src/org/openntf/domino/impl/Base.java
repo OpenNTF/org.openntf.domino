@@ -493,6 +493,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			return value.toString();
 		} else if (value instanceof Pattern) {
 			return ((Pattern) value).pattern();
+		} else if (value instanceof Class<?>) {
+			return ((Class<?>) value).getName();
 		} else if (value instanceof Formula) {
 			return ((Formula) value).getExpression();
 		}

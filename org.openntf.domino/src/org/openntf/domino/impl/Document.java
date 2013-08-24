@@ -49,6 +49,7 @@ import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.helpers.Formula;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.types.BigString;
+import org.openntf.domino.types.Null;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.TypeUtils;
@@ -1937,7 +1938,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		if (!keySet().contains(itemName)) {
 			fieldNames_.add(itemName);
 		}
-		if (value == null) {
+		if (value == null || value instanceof Null) {
 			if (hasItem(itemName)) {
 				if (getAncestorSession().isFixEnabled(Fixes.REPLACE_ITEM_NULL)) {
 					removeItem(itemName);
@@ -2821,9 +2822,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public Set<String> keySet() {
 		if (fieldNames_ == null) {
 			fieldNames_ = new LinkedHashSet<String>();
-			for (Item item : getItems()) {
-				fieldNames_.add(item.getName());
-			}
+			ItemVector items = (ItemVector) this.getItems();
+			String[] names = items.getNames();
+			List<String> fieldNames_ = Arrays.asList(names);
 		}
 		return Collections.unmodifiableSet(fieldNames_);
 	}

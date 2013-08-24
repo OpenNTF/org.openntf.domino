@@ -388,7 +388,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		throw new UnsupportedOperationException();
 	}
 
-	public Iterable<Edge> getEdgesFromIds(final Set<String> set) {
+	public Set<Edge> getEdgesFromIds(final Set<String> set) {
 		Set<Edge> result = new LinkedHashSet<Edge>();
 		for (String id : set) {
 			Edge edge = getEdge(id);
@@ -399,7 +399,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		return result;
 	}
 
-	public Iterable<Edge> getEdgesFromIds(final Set<String> set, final String... labels) {
+	public Set<Edge> getEdgesFromIds(final Set<String> set, final String... labels) {
 		Set<Edge> result = new LinkedHashSet<Edge>();
 		for (String id : set) {
 			Edge edge = getEdge(id);
