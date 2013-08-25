@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
@@ -113,15 +114,30 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	public <T> T getProperty(final String propertyName, final Class<?> T) {
 		Object result = null;
+		Document doc = getRawDocument();
+		// if (T == Integer.class) {
+		// System.out.println("getProperty is getting an Integer from the document " + doc.getClass().getName() + " " + doc.getNoteID());
+		// }
 		Map<String, Serializable> props = getProps();
 		synchronized (props) {
 			result = props.get(propertyName);
 			if (result == null) {
-				result = getRawDocument().getItemValue(propertyName, T);
+				result = doc.getItemValue(propertyName, T);
 				if (result instanceof Serializable) {
 					props.put(propertyName, (Serializable) result);
 				}
+			} else {
+				if (result != null && !T.isAssignableFrom(result.getClass())) {
+					// System.out.println("AH! We have the wrong type in the property cache! How did this happen?");
+					result = doc.getItemValue(propertyName, T);
+					if (result instanceof Serializable) {
+						props.put(propertyName, (Serializable) result);
+					}
+				}
 			}
+		}
+		if (result != null && !T.isAssignableFrom(result.getClass())) {
+			log_.log(Level.WARNING, "Returning a " + result.getClass().getName() + " when we asked for a " + T.getName());
 		}
 		return (T) result;
 	}
@@ -133,7 +149,8 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		} else {
 			if (result == null) {
 				if (T.isArray())
-					return (T) Array.newInstance(T, 0);
+					// RedpillUtils.log("Array requested and we got");
+					return (T) Array.newInstance(T.getComponentType(), 0);
 				if (Boolean.class.equals(T) || Boolean.TYPE.equals(T))
 					return (T) Boolean.FALSE;
 				if (Integer.class.equals(T) || Integer.TYPE.equals(T))
@@ -264,11 +281,27 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	}
 
 	public <T> T getProperty(final IDominoProperties prop) {
-		return getProperty(prop.getName(), prop.getType());
+		Class<?> type = prop.getType();
+		Object result = getProperty(prop.getName(), type);
+		if (result != null && type.isAssignableFrom(result.getClass())) {
+			return (T) type.cast(result);
+		} else {
+			// System.out.println("Property returned a " + (result == null ? "null" : result.getClass().getName())
+			// + " even though we requested a " + type.getName());
+		}
+		return (T) result;
 	}
 
 	public <T> T getProperty(final IDominoProperties prop, final boolean allowNull) {
-		return getProperty(prop.getName(), prop.getType(), allowNull);
+		Class<?> type = prop.getType();
+		Object result = getProperty(prop.getName(), type, allowNull);
+		if (result != null && type.isAssignableFrom(result.getClass())) {
+			return (T) type.cast(result);
+		} else {
+			// System.out.println("Property returned a " + (result == null ? "null" : result.getClass().getName())
+			// + " even though we requested a " + type.getName());
+		}
+		return (T) result;
 	}
 
 	public void setProperty(final IDominoProperties prop, final java.lang.Object value) {

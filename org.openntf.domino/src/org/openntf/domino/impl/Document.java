@@ -850,6 +850,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		// if (T.equals(java.util.Collection.class) && getItemValueString("form").equalsIgnoreCase("container")) {
 		// System.out.println("Requesting a value of type " + T.getName() + " in name " + name);
 		// }
+
 		boolean hasMime = hasMIMEEntity(name);
 		if (!hasMime) {
 			Item item = getFirstItem(name);
@@ -864,6 +865,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			// System.out.println("Returning a value of " + (result == null ? "null" : result.getClass().getSimpleName())
 			// + " for value in " + name + " of type " + T.getSimpleName());
 			// }
+
 			return (T) result;
 		} else {
 			// if (T.equals(java.util.Collection.class) && getItemValueString("form").equalsIgnoreCase("container")) {
