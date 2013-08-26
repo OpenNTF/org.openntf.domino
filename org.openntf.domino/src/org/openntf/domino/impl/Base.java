@@ -451,6 +451,15 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			log_.log(Level.WARNING, "Trying to convert a null argument to Domino friendly. Returning null...");
 			return null;
 		}
+		if (value instanceof Collection) {
+			java.util.Vector<Object> result = new java.util.Vector<Object>();
+			Collection<?> coll = (Collection) value;
+			for (Object o : coll) {
+				result.add(toDominoFriendly(o, context));
+			}
+			return result;
+		}
+
 		// First, go over the normal data types
 		if (value instanceof lotus.domino.DateTime) {
 			return toLotus((lotus.domino.DateTime) value);
