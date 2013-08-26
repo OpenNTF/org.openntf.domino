@@ -2,17 +2,17 @@ package org.openntf.domino.graph;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
+import org.openntf.domino.types.Null;
 
 public abstract class DominoElement implements IDominoElement, Serializable {
 	private static final Logger log_ = Logger.getLogger(DominoElement.class.getName());
@@ -32,7 +32,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	private Map<String, Serializable> getProps() {
 		if (props_ == null) {
-			props_ = Collections.synchronizedMap(new HashMap<String, Serializable>());
+			props_ = new ConcurrentHashMap<String, Serializable>();
 		}
 		return props_;
 	}
@@ -119,23 +119,27 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		// System.out.println("getProperty is getting an Integer from the document " + doc.getClass().getName() + " " + doc.getNoteID());
 		// }
 		Map<String, Serializable> props = getProps();
-		synchronized (props) {
-			result = props.get(propertyName);
-			if (result == null) {
-				result = doc.getItemValue(propertyName, T);
-				if (result instanceof Serializable) {
+		// synchronized (props) {
+		result = props.get(propertyName);
+		if (result == null) {
+			result = doc.getItemValue(propertyName, T);
+			if (result instanceof Serializable) {
+				synchronized (props) {
 					props.put(propertyName, (Serializable) result);
 				}
-			} else {
-				if (result != null && !T.isAssignableFrom(result.getClass())) {
-					// System.out.println("AH! We have the wrong type in the property cache! How did this happen?");
-					result = doc.getItemValue(propertyName, T);
-					if (result instanceof Serializable) {
+			}
+		} else {
+			if (result != null && !T.isAssignableFrom(result.getClass())) {
+				// System.out.println("AH! We have the wrong type in the property cache! How did this happen?");
+				result = doc.getItemValue(propertyName, T);
+				if (result instanceof Serializable) {
+					synchronized (props) {
 						props.put(propertyName, (Serializable) result);
 					}
 				}
 			}
 		}
+		// }
 		if (result != null && !T.isAssignableFrom(result.getClass())) {
 			log_.log(Level.WARNING, "Returning a " + result.getClass().getName() + " when we asked for a " + T.getName());
 		}
@@ -223,14 +227,24 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		getParent().startTransaction(this);
 		Map<String, Serializable> props = getProps();
 		Object old = null;
-		synchronized (props) {
-			if (value instanceof Serializable) {
-				old = props.put(propertyName, (Serializable) value);
-			} else if (value == null) {
-				old = props.put(propertyName, null);
+		if (props != null) {
+			if (propertyName != null) {
+				synchronized (props) {
+					if (value instanceof Serializable) {
+						old = props.put(propertyName, (Serializable) value);
+					} else if (value == null) {
+						// TODO set some alternative value for NULL in the event of a null value!!!
+						old = props.put(propertyName, Null.INSTANCE);
+						// old = props.put(propertyName, null);
+					} else {
+						System.out.println("Attemped caching of value of type " + value.getClass().getName() + " that isn't Serializable");
+					}
+				}
 			} else {
-				System.out.println("Attemped caching of value of type " + value.getClass().getName() + " that isn't Serializable");
+				System.out.println("propertyName is null on a setProperty request?");
 			}
+		} else {
+			System.out.println("Properties are null for element!");
 		}
 		// if ((old == null || value == null) || !value.equals(old)) {
 		synchronized (changedProperties_) {

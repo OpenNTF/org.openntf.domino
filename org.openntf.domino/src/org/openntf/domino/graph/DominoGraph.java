@@ -13,7 +13,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Document;
-import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewEntryCollection;
@@ -132,8 +131,6 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 
 	public DominoGraph(final org.openntf.domino.Database database) {
 		setRawDatabase(database);
-		RunContext rc = Factory.getRunContext();
-		// System.out.println("Context: " + rc.toString());
 	}
 
 	public IEdgeHelper getHelper(final String key) {
@@ -391,7 +388,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		throw new UnsupportedOperationException();
 	}
 
-	public Iterable<Edge> getEdgesFromIds(final Set<String> set) {
+	public Set<Edge> getEdgesFromIds(final Set<String> set) {
 		Set<Edge> result = new LinkedHashSet<Edge>();
 		for (String id : set) {
 			Edge edge = getEdge(id);
@@ -402,7 +399,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		return result;
 	}
 
-	public Iterable<Edge> getEdgesFromIds(final Set<String> set, final String... labels) {
+	public Set<Edge> getEdgesFromIds(final Set<String> set, final String... labels) {
 		Set<Edge> result = new LinkedHashSet<Edge>();
 		for (String id : set) {
 			Edge edge = getEdge(id);

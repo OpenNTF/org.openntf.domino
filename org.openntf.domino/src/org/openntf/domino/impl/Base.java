@@ -23,7 +23,9 @@ import java.util.Collection;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
+import org.openntf.domino.ext.Formula;
 import org.openntf.domino.thread.DominoLockSet;
 import org.openntf.domino.thread.DominoReference;
 import org.openntf.domino.thread.DominoReferenceQueue;
@@ -489,6 +491,12 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			// return toLotus(Factory.getSession(context).createDateTime((java.util.Calendar) value));
 		} else if (value instanceof CharSequence) {
 			return value.toString();
+		} else if (value instanceof Pattern) {
+			return ((Pattern) value).pattern();
+		} else if (value instanceof Class<?>) {
+			return ((Class<?>) value).getName();
+		} else if (value instanceof Formula) {
+			return ((Formula) value).getExpression();
 		}
 
 		throw new IllegalArgumentException();

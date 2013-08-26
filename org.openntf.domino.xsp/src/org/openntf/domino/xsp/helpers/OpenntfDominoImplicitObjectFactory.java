@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.faces.context.FacesContext;
 
+import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xsp.Activator;
 
@@ -88,6 +89,24 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 		return (Boolean) current;
 	}
 
+	private static boolean isAppAllFix(final FacesContext ctx) {
+		Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
+		Object current = appMap.get(OpenntfDominoImplicitObjectFactory.class.getName() + "_KHAN");
+		if (current == null) {
+			current = Boolean.FALSE;
+			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
+			if (envs != null) {
+				for (String s : envs) {
+					if (s.equalsIgnoreCase("khan")) {
+						current = Boolean.TRUE;
+					}
+				}
+			}
+			appMap.put(OpenntfDominoImplicitObjectFactory.class.getName(), current);
+		}
+		return (Boolean) current;
+	}
+
 	private static boolean isAppDebug(final FacesContext ctx) {
 		Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
 		Object current = appMap.get(OpenntfDominoImplicitObjectFactory.class.getName() + "_RAID");
@@ -123,6 +142,11 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 		}
 		if (rawSession != null) {
 			session = Factory.fromLotus(rawSession, org.openntf.domino.Session.class, null);
+			if (isAppAllFix(ctx)) {
+				for (Fixes fix : Fixes.values()) {
+					session.setFixEnable(fix, true);
+				}
+			}
 			if (isAppMimeFriendly(ctx))
 				session.setConvertMIME(false);
 			localMap.put(sessionKey, session);

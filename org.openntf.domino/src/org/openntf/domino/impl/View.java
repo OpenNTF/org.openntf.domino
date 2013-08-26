@@ -731,7 +731,8 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public DocumentCollection getAllDocumentsByKey(final Object key, final boolean exact) {
 		try {
-			return Factory.fromLotus(getDelegate().getAllDocumentsByKey(toLotus(key), exact), DocumentCollection.class, this);
+			return Factory
+					.fromLotus(getDelegate().getAllDocumentsByKey(toDominoFriendly(key, this), exact), DocumentCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -793,7 +794,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewEntryCollection getAllEntriesByKey(final Object key, final boolean exact) {
 		try {
-			return Factory.fromLotus(getDelegate().getAllEntriesByKey(toLotus(key), exact), ViewEntryCollection.class, this);
+			return Factory.fromLotus(getDelegate().getAllEntriesByKey(toDominoFriendly(key, this), exact), ViewEntryCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1021,7 +1022,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getDocumentByKey(final Object key, final boolean exact) {
 		try {
-			return Factory.fromLotus(getDelegate().getDocumentByKey(toLotus(key), exact), Document.class, this);
+			return Factory.fromLotus(getDelegate().getDocumentByKey(toDominoFriendly(key, this), exact), Document.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1068,7 +1069,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewEntry getEntryByKey(final Object key, final boolean exact) {
 		try {
-			return Factory.fromLotus(getDelegate().getEntryByKey(toLotus(key), exact), ViewEntry.class, this);
+			return Factory.fromLotus(getDelegate().getEntryByKey(toDominoFriendly(key, this), exact), ViewEntry.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

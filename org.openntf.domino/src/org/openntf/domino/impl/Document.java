@@ -21,8 +21,10 @@ import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,9 +45,11 @@ import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.MIMEConversionException;
+import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.helpers.Formula;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.types.BigString;
+import org.openntf.domino.types.Null;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.TypeUtils;
@@ -306,13 +310,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public Item appendItemValue(final String name, final double value) {
-		markDirty();
-		try {
-			return Factory.fromLotus(getDelegate().appendItemValue(name, value), Item.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+		return appendItemValue(name, Double.valueOf(value));
 	}
 
 	/*
@@ -322,13 +320,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public Item appendItemValue(final String name, final int value) {
-		markDirty();
-		try {
-			return Factory.fromLotus(getDelegate().appendItemValue(name, value), Item.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+		return appendItemValue(name, Integer.valueOf(value));
 	}
 
 	/*
@@ -336,20 +328,40 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * 
 	 * @see org.openntf.domino.Document#appendItemValue(java.lang.String, java.lang.Object)
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public Item appendItemValue(final String name, Object value) {
+	public Item appendItemValue(final String name, final Object value) {
 		markDirty();
+		Item result = null;
 		try {
-			if (value instanceof org.openntf.domino.DateTime) {
-				value = toLotus((org.openntf.domino.DateTime) value);
-			} else if (value instanceof org.openntf.domino.DateRange) {
-				value = toLotus((org.openntf.domino.DateRange) value);
+			if (!hasItem(name)) {
+				result = replaceItemValue(name, value);
+			} else if (value != null) {
+				Object domNode = toDominoFriendly(value, this);
+				if (getAncestorSession().isFixEnabled(Fixes.APPEND_ITEM_VALUE)) {
+					Object current = getItemValue(name);
+					if (current == null) {
+						result = replaceItemValue(name, value);
+					} else if (current instanceof Vector) {
+						Object newVal = ((Vector) current).add(domNode);
+						result = replaceItemValue(name, newVal);
+					} else {
+						log_.log(Level.WARNING, "Unable to append a value of type " + value.getClass().getName()
+								+ " to an existing item returning a " + current.getClass().getName() + ". Reverting to legacy behavior...");
+						result = Factory.fromLotus(getDelegate().appendItemValue(name, domNode), Item.class, this);
+					}
+
+				} else {
+					result = Factory.fromLotus(getDelegate().appendItemValue(name, domNode), Item.class, this);
+				}
+				Base.enc_recycle(domNode);
+			} else {
+				result = appendItemValue(name);
 			}
-			return Factory.fromLotus(getDelegate().appendItemValue(name, value), Item.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
-		return null;
+		return result;
 	}
 
 	/*
@@ -1852,8 +1864,15 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void removeItem(final String name) {
 		markDirty();
+		fieldNames_.remove(name);
 		try {
-			getDelegate().removeItem(name);
+			if (getAncestorSession().isFixEnabled(Fixes.REMOVE_ITEM)) {
+				while (getDelegate().hasItem(name)) {
+					getDelegate().removeItem(name);
+				}
+			} else {
+				getDelegate().removeItem(name);
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1916,9 +1935,17 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		// + (value == null ? "null" : value.getClass().getSimpleName()));
 		// }
 		markDirty();
-		if (value == null) {
+		if (!keySet().contains(itemName)) {
+			fieldNames_.add(itemName);
+		}
+		if (value == null || value instanceof Null) {
 			if (hasItem(itemName)) {
-				value = "";
+				if (getAncestorSession().isFixEnabled(Fixes.REPLACE_ITEM_NULL)) {
+					removeItem(itemName);
+					return null;
+				} else {
+					value = "";
+				}
 			} else {
 				return null;
 			}
@@ -2789,10 +2816,17 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return false;
 	}
 
+	private Set<String> fieldNames_;
+
 	@Override
 	public Set<String> keySet() {
-		// TODO Implement a "viewing" Set for this or throw an UnsupportedOperationException
-		return null;
+		if (fieldNames_ == null) {
+			fieldNames_ = new LinkedHashSet<String>();
+			ItemVector items = (ItemVector) this.getItems();
+			String[] names = items.getNames();
+			List<String> fieldNames_ = Arrays.asList(names);
+		}
+		return Collections.unmodifiableSet(fieldNames_);
 	}
 
 	@Override
@@ -2801,7 +2835,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			Object previousState = this.get(key);
 			this.removeItem(key);
 			this.replaceItemValue(key, value);
-			this.save();
+			// this.save();
 			return previousState;
 		}
 		return null;
@@ -2813,7 +2847,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			this.removeItem(entry.getKey());
 			this.replaceItemValue(entry.getKey(), entry.getValue());
 		}
-		this.save();
+		// this.save();
 	}
 
 	@Override
@@ -2821,7 +2855,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		if (key != null) {
 			Object previousState = this.get(key);
 			this.removeItem(key.toString());
-			this.save();
+			// this.save();
 			return previousState;
 		}
 		return null;

@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Item;
+import org.openntf.domino.Session;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.iterators.ItemVectorIterator;
 import org.openntf.domino.utils.DominoUtils;
@@ -48,11 +49,22 @@ public class ItemVector extends Vector<Item> {
 
 	private void initialize() {
 		try {
+			Session session = doc_.getAncestorSession();
+			boolean convertMime = session.isConvertMIME();
+			session.setConvertMIME(false);
 			java.util.Vector<?> lotusItems = doc_.getDelegate().getItems();
 			if (!lotusItems.isEmpty()) {
+				String lastName = null;
 				for (Object o : lotusItems) {
+					String name = null;
 					if (o instanceof lotus.domino.Item) {
-						itemNames_.add(((lotus.domino.Item) o).getName());
+						try {
+							name = ((lotus.domino.Item) o).getName();
+							itemNames_.add(name);
+							lastName = name;
+						} catch (NotesException ne1) {
+							log_.log(Level.WARNING, "Problem iterating over item following " + String.valueOf(lastName) + ". Skipping...");
+						}
 					} else {
 						log_.log(Level.WARNING, "Object from Document.getItems() Vector is not an Item. It is a "
 								+ (o == null ? "null" : o.getClass().getName()));
@@ -60,6 +72,7 @@ public class ItemVector extends Vector<Item> {
 				}
 				size_ = itemNames_.size();
 			}
+			session.setConvertMIME(convertMime);
 		} catch (NotesException ne) {
 			DominoUtils.handleException(ne);
 		}
