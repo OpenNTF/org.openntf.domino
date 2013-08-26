@@ -513,8 +513,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @throws IllegalArgumentException
 	 *             the illegal argument exception
 	 */
-	protected static Vector<Object> toDominoFriendly(final Collection<?> values, final Base<?, ?> context) throws IllegalArgumentException {
-		Vector<Object> result = new Vector<Object>();
+	protected static java.util.Vector<Object> toDominoFriendly(final Collection<?> values, final Base<?, ?> context)
+			throws IllegalArgumentException {
+		java.util.Vector<Object> result = new java.util.Vector<Object>();
 		for (Object value : values) {
 			result.add(toDominoFriendly(value, context));
 		}
