@@ -369,7 +369,7 @@ public class DocumentSyncHelper {
 	 *            the new source key formula
 	 */
 	public void setSourceKeyFormula(final String sourceKeyFormula) {
-		if (sourceKeyFormula == null) {
+		if (sourceKeyFormula_ == null) {
 			sourceKeyFormula_ = new Formula();
 		}
 		sourceKeyFormula_.setExpression(sourceKeyFormula);
