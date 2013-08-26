@@ -447,7 +447,10 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *             When the object is not convertible.
 	 */
 	protected static Object toDominoFriendly(final Object value, final Base<?, ?> context) throws IllegalArgumentException {
-
+		if (value == null) {
+			log_.log(Level.WARNING, "Trying to convert a null argument to Domino friendly. Returning null...");
+			return null;
+		}
 		// First, go over the normal data types
 		if (value instanceof lotus.domino.DateTime) {
 			return toLotus((lotus.domino.DateTime) value);
@@ -499,7 +502,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			return ((Formula) value).getExpression();
 		}
 
-		throw new IllegalArgumentException();
+		throw new IllegalArgumentException("Cannot convert to Domino friendly from type " + value.getClass().getName());
 	}
 
 	/**

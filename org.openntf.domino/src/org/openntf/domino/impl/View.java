@@ -728,9 +728,14 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 * 
 	 * @see org.openntf.domino.View#getAllDocumentsByKey(java.lang.Object, boolean)
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public DocumentCollection getAllDocumentsByKey(final Object key, final boolean exact) {
 		try {
+			if (key instanceof java.util.Collection) {
+				return Factory.fromLotus(getDelegate().getAllDocumentsByKey(toDominoFriendly((java.util.Collection) key, this), exact),
+						DocumentCollection.class, this);
+			}
 			return Factory
 					.fromLotus(getDelegate().getAllDocumentsByKey(toDominoFriendly(key, this), exact), DocumentCollection.class, this);
 		} catch (NotesException e) {
