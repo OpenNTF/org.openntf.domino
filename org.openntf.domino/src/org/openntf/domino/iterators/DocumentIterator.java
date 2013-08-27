@@ -112,6 +112,10 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 	 * @see java.util.Iterator#hasNext()
 	 */
 	public boolean hasNext() {
+		if (getIdArray() == null) {
+			// Most commonly if no match found
+			return false;
+		}
 		return !((getIndex() + 1) > getIdArray().length);
 	}
 
