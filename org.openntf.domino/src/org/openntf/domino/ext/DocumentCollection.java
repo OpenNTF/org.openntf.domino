@@ -15,11 +15,9 @@ public interface DocumentCollection {
 
 	public org.openntf.domino.DocumentCollection filter(final Object value);
 
-	public org.openntf.domino.DocumentCollection filter(final Object value, final String[] itemnames);
+	public org.openntf.domino.DocumentCollection filter(final Object value, String[] itemnames);
 
-	public org.openntf.domino.DocumentCollection filter(final Object value, final Collection<String> itemnames);
+	public org.openntf.domino.DocumentCollection filter(final Object value, Collection<String> itemnames);
 
 	public org.openntf.domino.DocumentCollection filter(final Map<String, Object> filterMap);
-
-	public org.openntf.domino.View getParentView();
 }
