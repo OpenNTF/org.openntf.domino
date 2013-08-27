@@ -22,6 +22,7 @@ import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
+import org.openntf.domino.View;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -188,6 +189,23 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	@Override
 	public org.openntf.domino.Base<?> getParent() {
 		return super.getParent();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.ViewEntry#getParentView()
+	 */
+	@Override
+	public View getParentView() {
+		org.openntf.domino.Base<?> parent = getParent();
+		if (parent instanceof org.openntf.domino.ViewEntryCollection) {
+			return ((org.openntf.domino.ViewEntryCollection) parent).getParent();
+		} else if (parent instanceof org.openntf.domino.ViewNavigator) {
+			return ((org.openntf.domino.ViewNavigator) parent).getParentView();
+		} else {
+			return (org.openntf.domino.View) parent;
+		}
 	}
 
 	/*

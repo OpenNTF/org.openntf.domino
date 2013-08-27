@@ -8,5 +8,5 @@ package org.openntf.domino.ext;
  * 
  */
 public interface ViewEntry {
-
+	public org.openntf.domino.View getParentView();
 }
