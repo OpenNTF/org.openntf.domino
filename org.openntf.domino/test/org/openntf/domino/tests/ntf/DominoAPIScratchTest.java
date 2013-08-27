@@ -2,10 +2,14 @@ package org.openntf.domino.tests.ntf;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
+
+import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
@@ -13,9 +17,10 @@ import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Form;
 import org.openntf.domino.Name;
-import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.Session.RunContext;
+import org.openntf.domino.View;
+import org.openntf.domino.impl.Base;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -27,7 +32,7 @@ public enum DominoAPIScratchTest {
 		// TODO Auto-generated constructor stub
 	}
 
-	private static final int THREAD_COUNT = 8;
+	private static final int THREAD_COUNT = 1;
 	private static final boolean INCLUDE_FORMS = false;
 	private static final int delay = 1000;
 	// private static final String server = "CN=DevilDog/O=REDPILL";
@@ -69,6 +74,7 @@ public enum DominoAPIScratchTest {
 		private void iterateAllDocuments(final Database db, final Set<Document> secondReference) {
 			System.out.println("Thread " + Thread.currentThread().getName() + " BEGINNING ITERATION of Documents");
 			Session s = db.getParent();
+
 			DocumentCollection dc = db.getAllDocuments();
 			for (Document doc : dc) {
 				docCount++;
@@ -163,16 +169,66 @@ public enum DominoAPIScratchTest {
 			DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
 			System.out.println(df.format(new Date()) + " Name: " + sname.getCanonical());
 			Database db = s.getDatabase(server, dbPath);
-			if (INCLUDE_FORMS) {
-				iterateForms(db);
+			/*
+			 * if (INCLUDE_FORMS) { iterateForms(db); } Set<Document> secondReference = new HashSet<Document>(); iterateAllDocuments(db,
+			 * secondReference); System.gc(); NoteCollection nc = db.createNoteCollection(false); nc.buildCollection();
+			 * iterateSecondReferences(secondReference); iterateThirdReferences();
+			 */
+			DocumentCollection rawColl = db.createDocumentCollection();
+			View view = db.getView("NameMessageEventMessages");
+			List<String> keys = new ArrayList<String>();
+			keys.add("Mail");
+			keys.add("2");
+			DocumentCollection dc = view.getAllDocumentsByKey(keys, false);
+			System.out.println("dc: " + dc.getCount());
+			StringBuilder sbc = new StringBuilder();
+			for (Document doc : dc) {
+				sbc.append(doc.getNoteID());
+				rawColl.merge(doc.getNoteID());
 			}
-			Set<Document> secondReference = new HashSet<Document>();
-			iterateAllDocuments(db, secondReference);
-			System.gc();
-			NoteCollection nc = db.createNoteCollection(false);
-			nc.buildCollection();
-			iterateSecondReferences(secondReference);
-			iterateThirdReferences();
+
+			System.out.println("raw count: " + rawColl.getCount());
+			System.out.println("nids: " + sbc.toString());
+			lotus.domino.View lview = (lotus.domino.View) Base.getDelegate(view);
+			java.util.Vector v = new Vector();
+			v.add("Mail");
+			v.add("2");
+			try {
+				lotus.domino.DocumentCollection ldc = lview.getAllDocumentsByKey(v, false);
+				System.out.println("Native ldc " + ldc.getCount());
+				lotus.domino.DocumentCollection rdc = lview.getParent().getAllDocuments();
+				rdc.intersect(ldc);
+
+				// lotus.domino.Document doc = ldc.getFirstDocument();
+				// // rdc.addDocument(doc);
+				// lotus.domino.Document ndoc = null;
+				// while (doc != null) {
+				// ndoc = ldc.getNextDocument(doc);
+				// rdc.merge(doc.getNoteID());
+				// doc.recycle();
+				// doc = ndoc;
+				// }
+
+				System.out.println("Native raw dc " + rdc.getCount());
+
+				lotus.domino.DocumentCollection rdc2 = lview.getParent().createDocumentCollection();
+				lotus.domino.Document doc2 = ldc.getFirstDocument();
+				lotus.domino.Document ndoc2 = null;
+				while (doc2 != null) {
+					ndoc2 = ldc.getNextDocument(doc2);
+					rdc2.addDocument(doc2);
+					doc2.recycle();
+					doc2 = ndoc2;
+				}
+				System.out.println("Native raw dc2 " + rdc2.getCount());
+
+			} catch (NotesException e) {
+				e.printStackTrace();
+			}
+
+			DocumentCollection allViewDocs = view.getAllDocuments();
+			System.out.println("all view docs: " + allViewDocs.getCount());
+
 			long elapsed = System.nanoTime() - start;
 			StringBuilder sb = new StringBuilder();
 			sb.append("Thread " + Thread.currentThread().getName());
