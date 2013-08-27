@@ -707,9 +707,19 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		Database db = getAncestorDatabase();
 		DocumentCollection result = db.createDocumentCollection();
 		NoteCollection nc = getNoteCollection();
+
 		int[] nids = nc.getNoteIDs();
+
+		// Arrays.sort(nids);
+		// for (org.openntf.domino.Document doc : result) {
+		// int nid = Integer.valueOf(doc.getNoteID(), 16);
+		// if (!(Arrays.binarySearch(nids, nid) >= 0)) {
+		// result.subtract(nid);
+		// }
+		// }
+
 		// for (int nid : nids) {
-		// result.merge(nid);
+		// result.intersect(nid);
 		// }
 
 		// TODO due to a bug in 9.0, this is being reverted to highly inefficient behavior...

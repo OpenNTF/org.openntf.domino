@@ -196,13 +196,15 @@ public enum DominoAPIScratchTest {
 			try {
 				lotus.domino.DocumentCollection ldc = lview.getAllDocumentsByKey(v, false);
 				System.out.println("Native ldc " + ldc.getCount());
-				lotus.domino.DocumentCollection rdc = lview.getParent().createDocumentCollection();
-				rdc.merge(ldc);
+				lotus.domino.DocumentCollection rdc = lview.getParent().getAllDocuments();
+				rdc.intersect(ldc);
 
 				// lotus.domino.Document doc = ldc.getFirstDocument();
+				// // rdc.addDocument(doc);
 				// lotus.domino.Document ndoc = null;
 				// while (doc != null) {
 				// ndoc = ldc.getNextDocument(doc);
+				// rdc.merge(doc.getNoteID());
 				// doc.recycle();
 				// doc = ndoc;
 				// }
