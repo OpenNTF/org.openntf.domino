@@ -816,6 +816,10 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewEntryCollection getAllEntriesByKey(final Object key, final boolean exact) {
 		try {
+			if (key instanceof java.util.Collection) {
+				return Factory.fromLotus(getDelegate().getAllEntriesByKey(toDominoFriendly((java.util.Collection) key, this), exact),
+						ViewEntryCollection.class, this);
+			}
 			return Factory.fromLotus(getDelegate().getAllEntriesByKey(toDominoFriendly(key, this), exact), ViewEntryCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
