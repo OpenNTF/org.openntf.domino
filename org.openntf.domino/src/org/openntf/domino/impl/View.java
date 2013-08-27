@@ -704,11 +704,18 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	public DocumentCollection getAllDocuments() {
 		// According to Tommy Valand's research, the fastest method is to build a NoteCollection with a matching selection formula
 		// http://dontpanic82.blogspot.com/2013/06/benchmark-fetching-noteids-and.html
-		DocumentCollection result = getAncestorDatabase().createDocumentCollection();
+		Database db = getAncestorDatabase();
+		DocumentCollection result = db.createDocumentCollection();
 		NoteCollection nc = getNoteCollection();
 		int[] nids = nc.getNoteIDs();
+		// for (int nid : nids) {
+		// result.merge(nid);
+		// }
+
+		// TODO due to a bug in 9.0, this is being reverted to highly inefficient behavior...
 		for (int nid : nids) {
-			result.merge(nid);
+			Document doc = db.getDocumentByID(Integer.toHexString(nid));
+			result.add(doc);
 		}
 		return result;
 	}

@@ -90,6 +90,16 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		return result;
 	}
 
+	private org.openntf.domino.View parentView_;
+
+	public org.openntf.domino.View getParentView() {
+		Object o = super.getParent();
+		if (o instanceof org.openntf.domino.View) {
+			return (org.openntf.domino.View) o;
+		}
+		return null;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -131,8 +141,11 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	public org.openntf.domino.Database getParent() {
 		Object o = super.getParent();
 		// System.out.println("o is a " + o.getClass().getName());
-		org.openntf.domino.Base<?> parent = (org.openntf.domino.Base<?>) o;
-		return (org.openntf.domino.Database) parent;
+		if (o instanceof org.openntf.domino.View) {
+			return ((org.openntf.domino.View) o).getAncestorDatabase();
+		}
+		// org.openntf.domino.Base<?> parent = (org.openntf.domino.Base<?>) o;
+		return (org.openntf.domino.Database) o;
 	}
 
 	/*
@@ -843,7 +856,7 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	 */
 	@Override
 	public Database getAncestorDatabase() {
-		return this.getParent();
+		return this.getParentDatabase();
 	}
 
 	/*
@@ -853,7 +866,7 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	 */
 	@Override
 	public Session getAncestorSession() {
-		return this.getParent().getParent();
+		return this.getAncestorDatabase().getParent();
 	}
 
 	public org.openntf.domino.DocumentCollection filter(final Object value) {
