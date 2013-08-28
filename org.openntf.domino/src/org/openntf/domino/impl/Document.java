@@ -1864,6 +1864,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void removeItem(final String name) {
 		markDirty();
+		keySet();
 		fieldNames_.remove(name);
 		try {
 			if (getAncestorSession().isFixEnabled(Fixes.REMOVE_ITEM)) {
@@ -2835,6 +2836,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			Object previousState = this.get(key);
 			this.removeItem(key);
 			this.replaceItemValue(key, value);
+			this.get(key);
 			// this.save();
 			return previousState;
 		}
