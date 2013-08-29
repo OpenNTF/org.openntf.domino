@@ -1835,12 +1835,23 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public boolean remove(final boolean force) {
-		removeType_ = force ? RemoveType.SOFT_TRUE : RemoveType.SOFT_FALSE;
-		if (!queueRemove()) {
-			return forceDelegateRemove();
+		boolean result = false;
+		boolean go = true;
+		go = getAncestorDatabase().fireListener(new DatabaseEvent(getAncestorDatabase(), Events.BEFORE_DELETE_DOCUMENT, this, null));
+		if (go) {
+			removeType_ = force ? RemoveType.SOFT_TRUE : RemoveType.SOFT_FALSE;
+			if (!queueRemove()) {
+				result = forceDelegateRemove();
+			} else {
+				result = true;
+			}
 		} else {
-			return true;
+			result = false;
 		}
+		if (result) {
+			getAncestorDatabase().fireListener(new DatabaseEvent(getAncestorDatabase(), Events.AFTER_DELETE_DOCUMENT, this, null));
+		}
+		return result;
 	}
 
 	/*
@@ -1888,12 +1899,23 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public boolean removePermanently(final boolean force) {
-		removeType_ = force ? RemoveType.HARD_TRUE : RemoveType.HARD_FALSE;
-		if (!queueRemove()) {
-			return forceDelegateRemove();
+		boolean result = false;
+		boolean go = true;
+		go = getAncestorDatabase().fireListener(new DatabaseEvent(getAncestorDatabase(), Events.BEFORE_DELETE_DOCUMENT, this, null));
+		if (go) {
+			removeType_ = force ? RemoveType.HARD_TRUE : RemoveType.HARD_FALSE;
+			if (!queueRemove()) {
+				result = forceDelegateRemove();
+			} else {
+				result = true;
+			}
 		} else {
-			return true;
+			result = false;
 		}
+		if (result) {
+			getAncestorDatabase().fireListener(new DatabaseEvent(getAncestorDatabase(), Events.AFTER_DELETE_DOCUMENT, this, null));
+		}
+		return result;
 	}
 
 	/*
