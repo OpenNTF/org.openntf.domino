@@ -20,8 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -30,6 +29,10 @@ import java.util.logging.Logger;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.events.EnumEvent;
+import org.openntf.domino.events.GenericDominoEventFactory;
+import org.openntf.domino.events.IDominoEvent;
+import org.openntf.domino.events.IDominoEventFactory;
 import org.openntf.domino.exceptions.UnableToAcquireSessionException;
 import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.thread.DominoReferenceCounter;
@@ -66,7 +69,10 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	/** The lotus reference counter_. */
 	private DominoReferenceCounter lotusReferenceCounter_ = new DominoReferenceCounter();
 
-	private final Map<String, org.openntf.domino.Database> databases_ = new HashMap<String, org.openntf.domino.Database>();
+	public static final int DEFAULT_NSF_CACHE_SIZE = 16;
+
+	private LinkedHashMap<String, org.openntf.domino.Database> databases_ = new LinkedHashMap<String, org.openntf.domino.Database>(
+			DEFAULT_NSF_CACHE_SIZE, 1.0f);
 
 	private transient Database currentDatabase_;
 
@@ -82,6 +88,24 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		} else {
 			fixes_.remove(fix);
 		}
+	}
+
+	public void setNsfCacheSize(final int cacheSize) {
+		int currentSize = databases_.size();
+		if (cacheSize == currentSize) {
+			if (log_.isLoggable(Level.FINER)) {
+				log_.log(Level.FINER, "Cache size change to " + cacheSize + " requested but cache is already that size.");
+			}
+		} else {
+			LinkedHashMap<String, org.openntf.domino.Database> newMap = new LinkedHashMap<String, org.openntf.domino.Database>(cacheSize,
+					1.0f);
+			newMap.putAll(databases_);
+			this.databases_ = newMap;
+		}
+	}
+
+	public int getNsfCacheSize() {
+		return databases_.size();
 	}
 
 	/**
@@ -1500,5 +1524,29 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 			}
 		}
 		return super.getDelegate();
+	}
+
+	private IDominoEventFactory eventFactory_;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.Session#getEventFactory()
+	 */
+	@Override
+	public IDominoEventFactory getEventFactory() {
+		if (eventFactory_ == null) {
+			eventFactory_ = new GenericDominoEventFactory();
+		}
+		return eventFactory_;
+	}
+
+	public void setEventFactory(final IDominoEventFactory factory) {
+		eventFactory_ = factory;
+	}
+
+	public IDominoEvent generateEvent(final EnumEvent event, final org.openntf.domino.Base source, final org.openntf.domino.Base target,
+			final Object payload) {
+		return getEventFactory().generate(event, source, target, payload);
 	}
 }

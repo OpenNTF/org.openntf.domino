@@ -9,6 +9,9 @@ import org.openntf.domino.ColorObject;
 import org.openntf.domino.Database;
 import org.openntf.domino.DateRange;
 import org.openntf.domino.DateTime;
+import org.openntf.domino.events.EnumEvent;
+import org.openntf.domino.events.IDominoEvent;
+import org.openntf.domino.events.IDominoEventFactory;
 
 import com.ibm.icu.util.Calendar;
 
@@ -20,6 +23,12 @@ public interface Session {
 	public static enum Fixes {
 		MIME_CONVERT, REPLACE_ITEM_NULL, REMOVE_ITEM, APPEND_ITEM_VALUE
 	}
+
+	public IDominoEventFactory getEventFactory();
+
+	public void setEventFactory(IDominoEventFactory factory);
+
+	public IDominoEvent generateEvent(EnumEvent event, org.openntf.domino.Base source, org.openntf.domino.Base target, Object payload);
 
 	// public RunContext getRunContext();
 
