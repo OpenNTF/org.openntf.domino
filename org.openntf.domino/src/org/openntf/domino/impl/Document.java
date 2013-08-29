@@ -45,10 +45,12 @@ import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.MIMEConversionException;
+import org.openntf.domino.ext.Database.Events;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.helpers.Formula;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.types.BigString;
+import org.openntf.domino.types.DatabaseEvent;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -2260,41 +2262,53 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public boolean save(final boolean force, final boolean makeResponse, final boolean markRead) {
 		boolean result = false;
 		if (isDirty()) {
-			writeItemInfo();
-			isNew_ = false;
-			try {
-				lotus.domino.Document del = getDelegate();
-				if (del != null) {
-					result = del.save(force, makeResponse, markRead);
-				} else {
-					log_.severe("Delegate document for " + unid_ + " is NULL!??!");
-				}
-				if (!noteid_.equals(del.getNoteID())) {
-					noteid_ = del.getNoteID();
-				}
-				if (!unid_.equals(del.getUniversalID())) {
-					unid_ = del.getUniversalID();
-				}
-			} catch (NotesException e) {
-				if (e.text.contains("Database already contains a document with this ID")) {
-					log_.log(Level.WARNING, "Unable to save a document with id " + getUniversalID()
-							+ " because that id already exists. Saving to a different unid instead...");
-					setUniversalID(DominoUtils.toUnid(new Date().getTime()));
-					try {
-						getDelegate().save(force, makeResponse, markRead);
-						if (!noteid_.equals(getDelegate().getNoteID())) {
-							noteid_ = getDelegate().getNoteID();
+			boolean go = true;
+			go = getAncestorDatabase().fireListener(new DatabaseEvent(getAncestorDatabase(), Events.BEFORE_UPDATE_DOCUMENT, this, null));
+			if (go) {
+				writeItemInfo();
+				isNew_ = false;
+				try {
+					lotus.domino.Document del = getDelegate();
+					if (del != null) {
+						result = del.save(force, makeResponse, markRead);
+					} else {
+						log_.severe("Delegate document for " + unid_ + " is NULL!??!");
+					}
+					if (!noteid_.equals(del.getNoteID())) {
+						noteid_ = del.getNoteID();
+					}
+					if (!unid_.equals(del.getUniversalID())) {
+						unid_ = del.getUniversalID();
+					}
+				} catch (NotesException e) {
+					if (e.text.contains("Database already contains a document with this ID")) {
+						log_.log(Level.WARNING, "Unable to save a document with id " + getUniversalID()
+								+ " because that id already exists. Saving to a different unid instead...");
+						setUniversalID(DominoUtils.toUnid(new Date().getTime()));
+						try {
+							getDelegate().save(force, makeResponse, markRead);
+							if (!noteid_.equals(getDelegate().getNoteID())) {
+								noteid_ = getDelegate().getNoteID();
+							}
+						} catch (NotesException ne) {
+							log_.log(Level.SEVERE, "Okay, now it's time to really panic. Sorry...");
+							DominoUtils.handleException(e);
 						}
-					} catch (NotesException ne) {
-						log_.log(Level.SEVERE, "Okay, now it's time to really panic. Sorry...");
+					} else {
 						DominoUtils.handleException(e);
 					}
-				} else {
-					DominoUtils.handleException(e);
 				}
+				if (result) {
+					clearDirty();
+					getAncestorDatabase().fireListener(new DatabaseEvent(getAncestorDatabase(), Events.AFTER_UPDATE_DOCUMENT, this, null));
+				}
+			} else {
+				if (log_.isLoggable(Level.FINE)) {
+					log_.log(Level.FINE, "Document " + getNoteID()
+							+ " was not saved because the DatabaseListener for update returned false.");
+				}
+				result = false;
 			}
-			if (result)
-				clearDirty();
 		} else {
 			if (log_.isLoggable(Level.FINE)) {
 				log_.log(Level.FINE, "Document " + getNoteID() + " was not saved because nothing on it was changed.");
