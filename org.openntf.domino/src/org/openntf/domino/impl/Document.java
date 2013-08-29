@@ -42,6 +42,8 @@ import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.events.EnumEvent;
+import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.MIMEConversionException;
@@ -50,7 +52,6 @@ import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.helpers.Formula;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.types.BigString;
-import org.openntf.domino.types.DatabaseEvent;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -1837,7 +1838,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public boolean remove(final boolean force) {
 		boolean result = false;
 		boolean go = true;
-		go = getAncestorDatabase().fireListener(new DatabaseEvent(getAncestorDatabase(), Events.BEFORE_DELETE_DOCUMENT, this, null));
+		go = getAncestorDatabase().fireListener(generateEvent(Events.BEFORE_DELETE_DOCUMENT, null));
 		if (go) {
 			removeType_ = force ? RemoveType.SOFT_TRUE : RemoveType.SOFT_FALSE;
 			if (!queueRemove()) {
@@ -1849,7 +1850,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			result = false;
 		}
 		if (result) {
-			getAncestorDatabase().fireListener(new DatabaseEvent(getAncestorDatabase(), Events.AFTER_DELETE_DOCUMENT, this, null));
+			getAncestorDatabase().fireListener(generateEvent(Events.AFTER_DELETE_DOCUMENT, null));
 		}
 		return result;
 	}
@@ -1901,7 +1902,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public boolean removePermanently(final boolean force) {
 		boolean result = false;
 		boolean go = true;
-		go = getAncestorDatabase().fireListener(new DatabaseEvent(getAncestorDatabase(), Events.BEFORE_DELETE_DOCUMENT, this, null));
+		go = getAncestorDatabase().fireListener(generateEvent(Events.BEFORE_DELETE_DOCUMENT, null));
 		if (go) {
 			removeType_ = force ? RemoveType.HARD_TRUE : RemoveType.HARD_FALSE;
 			if (!queueRemove()) {
@@ -1913,7 +1914,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			result = false;
 		}
 		if (result) {
-			getAncestorDatabase().fireListener(new DatabaseEvent(getAncestorDatabase(), Events.AFTER_DELETE_DOCUMENT, this, null));
+			getAncestorDatabase().fireListener(generateEvent(Events.AFTER_DELETE_DOCUMENT, null));
 		}
 		return result;
 	}
@@ -2285,7 +2286,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		boolean result = false;
 		if (isDirty()) {
 			boolean go = true;
-			go = getAncestorDatabase().fireListener(new DatabaseEvent(getAncestorDatabase(), Events.BEFORE_UPDATE_DOCUMENT, this, null));
+			go = getAncestorDatabase().fireListener(generateEvent(Events.BEFORE_UPDATE_DOCUMENT, null));
 			if (go) {
 				writeItemInfo();
 				isNew_ = false;
@@ -2322,7 +2323,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				}
 				if (result) {
 					clearDirty();
-					getAncestorDatabase().fireListener(new DatabaseEvent(getAncestorDatabase(), Events.AFTER_UPDATE_DOCUMENT, this, null));
+					getAncestorDatabase().fireListener(generateEvent(Events.AFTER_UPDATE_DOCUMENT, null));
 				}
 			} else {
 				if (log_.isLoggable(Level.FINE)) {
@@ -2963,4 +2964,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return result;
 	}
 
+	private IDominoEvent generateEvent(final EnumEvent event, final Object payload) {
+		return getAncestorDatabase().generateEvent(event, this, payload);
+	}
 }

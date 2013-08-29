@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -28,6 +29,10 @@ import java.util.logging.Logger;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.events.EnumEvent;
+import org.openntf.domino.events.GenericDominoEventFactory;
+import org.openntf.domino.events.IDominoEvent;
+import org.openntf.domino.events.IDominoEventFactory;
 import org.openntf.domino.exceptions.UnableToAcquireSessionException;
 import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.thread.DominoReferenceCounter;
@@ -64,6 +69,13 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	/** The lotus reference counter_. */
 	private DominoReferenceCounter lotusReferenceCounter_ = new DominoReferenceCounter();
 
+	public static final int DEFAULT_NSF_CACHE_SIZE = 16;
+
+	private LinkedHashMap<String, org.openntf.domino.Database> databases_ = new LinkedHashMap<String, org.openntf.domino.Database>(
+			DEFAULT_NSF_CACHE_SIZE, 1.0f);
+
+	private transient Database currentDatabase_;
+
 	private Set<Fixes> fixes_ = EnumSet.noneOf(Fixes.class);
 
 	public boolean isFixEnabled(final Fixes fix) {
@@ -76,6 +88,24 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		} else {
 			fixes_.remove(fix);
 		}
+	}
+
+	public void setNsfCacheSize(final int cacheSize) {
+		int currentSize = databases_.size();
+		if (cacheSize == currentSize) {
+			if (log_.isLoggable(Level.FINER)) {
+				log_.log(Level.FINER, "Cache size change to " + cacheSize + " requested but cache is already that size.");
+			}
+		} else {
+			LinkedHashMap<String, org.openntf.domino.Database> newMap = new LinkedHashMap<String, org.openntf.domino.Database>(cacheSize,
+					1.0f);
+			newMap.putAll(databases_);
+			this.databases_ = newMap;
+		}
+	}
+
+	public int getNsfCacheSize() {
+		return databases_.size();
 	}
 
 	/**
@@ -617,13 +647,26 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 */
 	@Override
 	public Database getCurrentDatabase() {
+		Database result = null;
 		try {
-			return Factory.fromLotus(getDelegate().getCurrentDatabase(), Database.class, this);
+			if (currentDatabase_ == null) {
+				result = Factory.fromLotus(getDelegate().getCurrentDatabase(), Database.class, this);
+				String key = result.getFilePath();
+				if (result.getServer().length() > 1) {
+					key = result.getServer() + "!!" + result.getFilePath();
+				}
+				databases_.put(key, result);
+				currentDatabase_ = result;
+			} else {
+				result = currentDatabase_;
+			}
+
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
 
 		}
+		return result;
 	}
 
 	/*
@@ -632,21 +675,32 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 * @see org.openntf.domino.Session#getDatabase(java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
-	public Database getDatabase(final String server, final String db, final boolean createOnFail) {
+	public org.openntf.domino.Database getDatabase(final String server, final String db, final boolean createOnFail) {
 		// try {
 		lotus.domino.Database database = null;
-		try {
-			database = getDelegate().getDatabase(server, db, createOnFail);
-		} catch (NotesException e) {
-			String message = e.text;
-			if (message.contains("cannot open database")) {
-				throw new UserAccessException("User " + getEffectiveUserName() + " cannot open database " + db + " on server " + server, e);
-			} else {
-				DominoUtils.handleException(e);
-				return null;
+		org.openntf.domino.Database result = null;
+		String key = db;
+		if (server.length() > 1) {
+			key = server + "!!" + db;
+		}
+		result = databases_.get(key);
+		if (result == null) {
+			try {
+				database = getDelegate().getDatabase(server, db, createOnFail);
+				result = Factory.fromLotus(database, Database.class, this);
+				databases_.put(key, result);
+			} catch (NotesException e) {
+				String message = e.text;
+				if (message.contains("cannot open database")) {
+					throw new UserAccessException(
+							"User " + getEffectiveUserName() + " cannot open database " + db + " on server " + server, e);
+				} else {
+					DominoUtils.handleException(e);
+					return null;
+				}
 			}
 		}
-		return Factory.fromLotus(database, Database.class, this);
+		return result;
 		// } catch (Exception e) {
 		// DominoUtils.handleException(e);
 		// return null;
@@ -659,7 +713,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 * @see org.openntf.domino.Session#getDatabase(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public Database getDatabase(final String server, final String db) {
+	public org.openntf.domino.Database getDatabase(final String server, final String db) {
 		return getDatabase(server, db, false);
 	}
 
@@ -1470,5 +1524,29 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 			}
 		}
 		return super.getDelegate();
+	}
+
+	private IDominoEventFactory eventFactory_;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.Session#getEventFactory()
+	 */
+	@Override
+	public IDominoEventFactory getEventFactory() {
+		if (eventFactory_ == null) {
+			eventFactory_ = new GenericDominoEventFactory();
+		}
+		return eventFactory_;
+	}
+
+	public void setEventFactory(final IDominoEventFactory factory) {
+		eventFactory_ = factory;
+	}
+
+	public IDominoEvent generateEvent(final EnumEvent event, final org.openntf.domino.Base source, final org.openntf.domino.Base target,
+			final Object payload) {
+		return getEventFactory().generate(event, source, target, payload);
 	}
 }
