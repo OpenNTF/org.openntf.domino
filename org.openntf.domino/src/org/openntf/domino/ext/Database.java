@@ -4,6 +4,7 @@
 package org.openntf.domino.ext;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,12 +25,27 @@ import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.NoteCollection.SelectOption;
 import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.transactions.DatabaseTransaction;
+import org.openntf.domino.types.IDatabaseEvent;
+import org.openntf.domino.types.IDatabaseListener;
 
 /**
  * @author withersp
  * 
  */
 public interface Database {
+	public static enum Events {
+		BEFORE_CREATE_DOCUMENT, AFTER_CREATE_DOCUMENT, BEFORE_DELETE_DOCUMENT, AFTER_DELETE_DOCUMENT, BEFORE_UPDATE_DOCUMENT, AFTER_UPDATE_DOCUMENT, BEFORE_REPLICATION, AFTER_REPLICATION, BEFORE_RUN_AGENT, AFTER_RUN_AGENT;
+	}
+
+	public void addListener(IDatabaseListener listener);
+
+	public void removeListener(IDatabaseListener listener);
+
+	public List<IDatabaseListener> getDatabaseListeners();
+
+	public List<IDatabaseListener> getDatabaseListeners(Events event);
+
+	public boolean fireListener(IDatabaseEvent event);
 
 	public int compactWithOptions(final Set<CompactOption> options);
 

@@ -20,8 +20,10 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -35,6 +37,9 @@ import org.openntf.domino.NoteCollection.SelectOption;
 import org.openntf.domino.View;
 import org.openntf.domino.design.impl.DatabaseDesign;
 import org.openntf.domino.transactions.DatabaseTransaction;
+import org.openntf.domino.types.DatabaseEvent;
+import org.openntf.domino.types.IDatabaseEvent;
+import org.openntf.domino.types.IDatabaseListener;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -82,6 +87,51 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		} catch (NotesException e) {
 			// NTF probably not opened yet. No reason to freak out yet...
 		}
+	}
+
+	private List<IDatabaseListener> listeners_;
+
+	private List<IDatabaseListener> getListeners() {
+		if (listeners_ == null) {
+			listeners_ = new ArrayList<IDatabaseListener>();
+		}
+		return listeners_;
+	}
+
+	public void addListener(final IDatabaseListener listener) {
+		getListeners().add(listener);
+	}
+
+	public void removeListener(final IDatabaseListener listener) {
+		getListeners().remove(listener);
+	}
+
+	public List<IDatabaseListener> getDatabaseListeners() {
+		return getListeners();
+	}
+
+	public List<IDatabaseListener> getDatabaseListeners(final Events event) {
+		List<IDatabaseListener> result = new ArrayList<IDatabaseListener>();
+		for (IDatabaseListener listener : getDatabaseListeners()) {
+			for (Events curEvent : listener.getEventTypes()) {
+				if (curEvent.equals(event)) {
+					result.add(listener);
+					break;
+				}
+			}
+		}
+		return result;
+	}
+
+	public boolean fireListener(final IDatabaseEvent event) {
+		boolean result = true;
+		for (IDatabaseListener listener : getDatabaseListeners(event.getEvent())) {
+			if (!listener.eventHappened(event)) {
+				result = false;
+				break;
+			}
+		}
+		return result;
 	}
 
 	/*
@@ -320,13 +370,18 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#createDocument()
 	 */
 	public Document createDocument() {
-		try {
-			return Factory.fromLotus(getDelegate().createDocument(), Document.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
+		Document result = null;
+		boolean go = true;
+		go = fireListener(new DatabaseEvent(this, Events.BEFORE_CREATE_DOCUMENT, null, null));
+		if (go) {
+			try {
+				result = Factory.fromLotus(getDelegate().createDocument(), Document.class, this);
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+			}
+			fireListener(new DatabaseEvent(this, Events.AFTER_CREATE_DOCUMENT, result, null));
 		}
+		return result;
 	}
 
 	/*
