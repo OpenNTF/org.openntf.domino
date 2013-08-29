@@ -187,7 +187,14 @@ public class DocumentSyncHelper {
 	 * @param syncMap
 	 *            the sync map
 	 * @param args
-	 *            the args
+	 *            the args, up to four, each in order is:
+	 *            <ol>
+	 *            <li>target server</li>
+	 *            <li>target filepath</li>
+	 *            <li>target lookup view</li>
+	 *            <li>formula to apply to each source document to get key for target documents. E.g. "ContactID" = use ContactID field of
+	 *            source document as key value to apply to target lookup view to get the collection to update
+	 *            </ol>
 	 */
 	public DocumentSyncHelper(final Strategy strategy, final Map<Object, String> syncMap, final String... args) {
 		setStrategy(strategy);
@@ -369,7 +376,7 @@ public class DocumentSyncHelper {
 	 *            the new source key formula
 	 */
 	public void setSourceKeyFormula(final String sourceKeyFormula) {
-		if (sourceKeyFormula == null) {
+		if (sourceKeyFormula_ == null) {
 			sourceKeyFormula_ = new Formula();
 		}
 		sourceKeyFormula_.setExpression(sourceKeyFormula);
