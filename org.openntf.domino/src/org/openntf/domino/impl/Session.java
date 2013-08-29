@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -63,6 +65,10 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 
 	/** The lotus reference counter_. */
 	private DominoReferenceCounter lotusReferenceCounter_ = new DominoReferenceCounter();
+
+	private final Map<String, org.openntf.domino.Database> databases_ = new HashMap<String, org.openntf.domino.Database>();
+
+	private transient Database currentDatabase_;
 
 	private Set<Fixes> fixes_ = EnumSet.noneOf(Fixes.class);
 
@@ -617,13 +623,26 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 */
 	@Override
 	public Database getCurrentDatabase() {
+		Database result = null;
 		try {
-			return Factory.fromLotus(getDelegate().getCurrentDatabase(), Database.class, this);
+			if (currentDatabase_ == null) {
+				result = Factory.fromLotus(getDelegate().getCurrentDatabase(), Database.class, this);
+				String key = result.getFilePath();
+				if (result.getServer().length() > 1) {
+					key = result.getServer() + "!!" + result.getFilePath();
+				}
+				databases_.put(key, result);
+				currentDatabase_ = result;
+			} else {
+				result = currentDatabase_;
+			}
+
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
 
 		}
+		return result;
 	}
 
 	/*
@@ -632,21 +651,32 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 * @see org.openntf.domino.Session#getDatabase(java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
-	public Database getDatabase(final String server, final String db, final boolean createOnFail) {
+	public org.openntf.domino.Database getDatabase(final String server, final String db, final boolean createOnFail) {
 		// try {
 		lotus.domino.Database database = null;
-		try {
-			database = getDelegate().getDatabase(server, db, createOnFail);
-		} catch (NotesException e) {
-			String message = e.text;
-			if (message.contains("cannot open database")) {
-				throw new UserAccessException("User " + getEffectiveUserName() + " cannot open database " + db + " on server " + server, e);
-			} else {
-				DominoUtils.handleException(e);
-				return null;
+		org.openntf.domino.Database result = null;
+		String key = db;
+		if (server.length() > 1) {
+			key = server + "!!" + db;
+		}
+		result = databases_.get(key);
+		if (result == null) {
+			try {
+				database = getDelegate().getDatabase(server, db, createOnFail);
+				result = Factory.fromLotus(database, Database.class, this);
+				databases_.put(key, result);
+			} catch (NotesException e) {
+				String message = e.text;
+				if (message.contains("cannot open database")) {
+					throw new UserAccessException(
+							"User " + getEffectiveUserName() + " cannot open database " + db + " on server " + server, e);
+				} else {
+					DominoUtils.handleException(e);
+					return null;
+				}
 			}
 		}
-		return Factory.fromLotus(database, Database.class, this);
+		return result;
 		// } catch (Exception e) {
 		// DominoUtils.handleException(e);
 		// return null;
@@ -659,7 +689,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 * @see org.openntf.domino.Session#getDatabase(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public Database getDatabase(final String server, final String db) {
+	public org.openntf.domino.Database getDatabase(final String server, final String db) {
 		return getDatabase(server, db, false);
 	}
 
