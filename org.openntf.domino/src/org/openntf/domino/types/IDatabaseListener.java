@@ -3,6 +3,8 @@
  */
 package org.openntf.domino.types;
 
+import java.util.List;
+
 import org.openntf.domino.ext.Database.Events;
 
 /**
@@ -12,5 +14,5 @@ import org.openntf.domino.ext.Database.Events;
 public interface IDatabaseListener {
 	public boolean eventHappened(IDatabaseEvent event);
 
-	public Events[] getEventTypes();
+	public List<Events> getEventTypes();
 }

@@ -126,9 +126,13 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	public boolean fireListener(final IDatabaseEvent event) {
 		boolean result = true;
 		for (IDatabaseListener listener : getDatabaseListeners(event.getEvent())) {
-			if (!listener.eventHappened(event)) {
-				result = false;
-				break;
+			try {
+				if (!listener.eventHappened(event)) {
+					result = false;
+					break;
+				}
+			} catch (Throwable t) {
+				DominoUtils.handleException(t);
 			}
 		}
 		return result;
@@ -2074,13 +2078,19 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#replicate(java.lang.String)
 	 */
 	public boolean replicate(final String server) {
-		try {
-			return getDelegate().replicate(server);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return false;
-
+		boolean result = true;
+		boolean go = true;
+		go = fireListener(new DatabaseEvent(this, Events.BEFORE_REPLICATION, null, server));
+		if (go) {
+			try {
+				result = getDelegate().replicate(server);
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+				result = false;
+			}
+			fireListener(new DatabaseEvent(this, Events.AFTER_REPLICATION, null, server));
 		}
+		return result;
 	}
 
 	/*

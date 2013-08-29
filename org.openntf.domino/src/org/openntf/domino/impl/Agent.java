@@ -21,6 +21,8 @@ import lotus.domino.NotesException;
 
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Session;
+import org.openntf.domino.ext.Database.Events;
+import org.openntf.domino.types.DatabaseEvent;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -73,7 +75,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.types.Design#getDocument()
 	 */
 	@Override
@@ -142,7 +146,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.types.Design#getNoteID()
 	 */
 	@Override
@@ -282,7 +288,9 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.types.Design#getUniversalID()
 	 */
 	@Override
@@ -556,10 +564,15 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 */
 	@Override
 	public void run() {
-		try {
-			getDelegate().run();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+		boolean go = true;
+		go = getAncestorDatabase().fireListener(new DatabaseEvent(getAncestorDatabase(), Events.BEFORE_RUN_AGENT, this, null));
+		if (go) {
+			try {
+				getDelegate().run();
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+			}
+			getAncestorDatabase().fireListener(new DatabaseEvent(getAncestorDatabase(), Events.AFTER_RUN_AGENT, this, null));
 		}
 	}
 
@@ -570,10 +583,15 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 */
 	@Override
 	public void run(final String noteid) {
-		try {
-			getDelegate().run(noteid);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+		boolean go = true;
+		go = getAncestorDatabase().fireListener(new DatabaseEvent(getAncestorDatabase(), Events.BEFORE_RUN_AGENT, this, noteid));
+		if (go) {
+			try {
+				getDelegate().run(noteid);
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+			}
+			getAncestorDatabase().fireListener(new DatabaseEvent(getAncestorDatabase(), Events.AFTER_RUN_AGENT, this, noteid));
 		}
 	}
 
@@ -584,12 +602,20 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 */
 	@Override
 	public int runOnServer() {
-		try {
-			return getDelegate().runOnServer();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return 0;
+		int result = -1;
+		boolean go = true;
+		go = getAncestorDatabase().fireListener(
+				new DatabaseEvent(getAncestorDatabase(), Events.BEFORE_RUN_AGENT, this, getAncestorDatabase().getDominoServer()));
+		if (go) {
+			try {
+				result = getDelegate().runOnServer();
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+			}
+			getAncestorDatabase().fireListener(
+					new DatabaseEvent(getAncestorDatabase(), Events.AFTER_RUN_AGENT, this, getAncestorDatabase().getDominoServer()));
 		}
+		return result;
 	}
 
 	/*
@@ -599,12 +625,20 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 */
 	@Override
 	public int runOnServer(final String noteid) {
-		try {
-			return getDelegate().runOnServer(noteid);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return 0;
+		int result = -1;
+		boolean go = true;
+		go = getAncestorDatabase().fireListener(
+				new DatabaseEvent(getAncestorDatabase(), Events.BEFORE_RUN_AGENT, this, getAncestorDatabase().getDominoServer()));
+		if (go) {
+			try {
+				result = getDelegate().runOnServer(noteid);
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+			}
+			getAncestorDatabase().fireListener(
+					new DatabaseEvent(getAncestorDatabase(), Events.AFTER_RUN_AGENT, this, getAncestorDatabase().getDominoServer()));
 		}
+		return result;
 	}
 
 	/*
@@ -614,10 +648,15 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 */
 	@Override
 	public void runWithDocumentContext(final lotus.domino.Document doc) {
-		try {
-			getDelegate().runWithDocumentContext((lotus.domino.Document) toLotus(doc));
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+		boolean go = true;
+		go = getAncestorDatabase().fireListener(new DatabaseEvent(getAncestorDatabase(), Events.BEFORE_RUN_AGENT, this, doc));
+		if (go) {
+			try {
+				getDelegate().runWithDocumentContext((lotus.domino.Document) toLotus(doc));
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+			}
+			getAncestorDatabase().fireListener(new DatabaseEvent(getAncestorDatabase(), Events.AFTER_RUN_AGENT, this, doc));
 		}
 	}
 
@@ -628,10 +667,15 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 */
 	@Override
 	public void runWithDocumentContext(final lotus.domino.Document doc, final String noteid) {
-		try {
-			getDelegate().runWithDocumentContext((lotus.domino.Document) toLotus(doc), noteid);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+		boolean go = true;
+		go = getAncestorDatabase().fireListener(new DatabaseEvent(getAncestorDatabase(), Events.BEFORE_RUN_AGENT, this, doc));
+		if (go) {
+			try {
+				getDelegate().runWithDocumentContext((lotus.domino.Document) toLotus(doc), noteid);
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+			}
+			getAncestorDatabase().fireListener(new DatabaseEvent(getAncestorDatabase(), Events.AFTER_RUN_AGENT, this, doc));
 		}
 	}
 
