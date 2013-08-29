@@ -1968,26 +1968,31 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						if (valNode instanceof BigString)
 							isNonSummary = true;
 						Object domNode = toDominoFriendly(valNode, this);
-						if (objectClass == null) {
-							objectClass = domNode.getClass();
-						} else {
-							if (!objectClass.equals(domNode.getClass())) {
-								// Domino only allows uniform lists
-								// There may have been some native DateTimes added in so far; burn them
-								enc_recycle(resultList);
-								throw new IllegalArgumentException();
+						if (domNode != null) {
+							if (objectClass == null) {
+								objectClass = domNode.getClass();
+							} else {
+								if (!objectClass.equals(domNode.getClass())) {
+									// Domino only allows uniform lists
+									// There may have been some native DateTimes added in so far; burn them
+									enc_recycle(resultList);
+									throw new IllegalArgumentException();
+								}
 							}
-						}
-						if (domNode instanceof String) {
-							totalStringSize += ((String) domNode).length();
+							if (domNode instanceof String) {
+								totalStringSize += ((String) domNode).length();
 
-							// Escape to serializing if there's too much text data
-							// Leave fudge room for multibyte? This is clearly not the best way to do it
-							if (totalStringSize > 60000) {
-								throw new IllegalArgumentException();
+								// Escape to serializing if there's too much text data
+								// Leave fudge room for multibyte? This is clearly not the best way to do it
+								if (totalStringSize > 60000) {
+									throw new IllegalArgumentException();
+								}
 							}
+							resultList.add(domNode);
+						} else {
+							log_.log(Level.WARNING, "toDominoFriendly returned a null value for an original list member value of "
+									+ (valNode == null ? "null" : valNode.getClass().getName()));
 						}
-						resultList.add(domNode);
 					}
 					// If it ended up being something we could store, make note of the original class instead of the list class
 					if (!(listValue).isEmpty()) {
