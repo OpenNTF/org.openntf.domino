@@ -150,7 +150,6 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	public <T> T getProperty(final String propertyName, final Class<?> T) {
 		Object result = null;
-		Document doc = getRawDocument();
 		// if (T == Integer.class) {
 		// System.out.println("getProperty is getting an Integer from the document " + doc.getClass().getName() + " " + doc.getNoteID());
 		// }
@@ -158,20 +157,32 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		// synchronized (props) {
 		result = props.get(propertyName);
 		if (result == null) {
-			result = doc.getItemValue(propertyName, T);
-			if (result instanceof Serializable) {
-				synchronized (props) {
-					props.put(propertyName, (Serializable) result);
-				}
-			}
-		} else {
-			if (result != null && !T.isAssignableFrom(result.getClass())) {
-				// System.out.println("AH! We have the wrong type in the property cache! How did this happen?");
+			try {
+				Document doc = getRawDocument();
 				result = doc.getItemValue(propertyName, T);
 				if (result instanceof Serializable) {
 					synchronized (props) {
 						props.put(propertyName, (Serializable) result);
 					}
+				}
+			} catch (Exception e) {
+				log_.log(Level.SEVERE, "Exception occured attempting to get value from document for " + propertyName
+						+ " so we cannot return a value", e);
+			}
+		} else {
+			if (result != null && !T.isAssignableFrom(result.getClass())) {
+				// System.out.println("AH! We have the wrong type in the property cache! How did this happen?");
+				try {
+					Document doc = getRawDocument();
+					result = doc.getItemValue(propertyName, T);
+					if (result instanceof Serializable) {
+						synchronized (props) {
+							props.put(propertyName, (Serializable) result);
+						}
+					}
+				} catch (Exception e) {
+					log_.log(Level.WARNING, "Exception occured attempting to get value from document for " + propertyName
+							+ " but we have a value in the cache.", e);
 				}
 			}
 		}
