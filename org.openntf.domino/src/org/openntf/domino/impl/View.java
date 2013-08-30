@@ -15,6 +15,8 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
@@ -29,6 +31,8 @@ import org.openntf.domino.utils.Factory;
  * The Class View.
  */
 public class View extends Base<org.openntf.domino.View, lotus.domino.View> implements org.openntf.domino.View {
+
+	private List<DominoColumnInfo> columnInfo_;
 
 	/**
 	 * Instantiates a new view.
@@ -2240,5 +2244,35 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Session getAncestorSession() {
 		return this.getAncestorDatabase().getAncestorSession();
+	}
+
+	protected List<DominoColumnInfo> getColumnInfo() {
+		if (columnInfo_ == null) {
+			List<org.openntf.domino.ViewColumn> columns = getColumns();
+			List<DominoColumnInfo> result = new ArrayList<DominoColumnInfo>(columns.size());
+			for (org.openntf.domino.ViewColumn col : columns) {
+				result.add(new DominoColumnInfo(col));
+			}
+			columnInfo_ = result;
+		}
+		return columnInfo_;
+	}
+
+	public static class DominoColumnInfo {
+		private final String itemName_;
+		private final int columnValuesIndex_;
+
+		public DominoColumnInfo(final org.openntf.domino.ViewColumn column) {
+			itemName_ = column.getItemName();
+			columnValuesIndex_ = column.getColumnValuesIndex();
+		}
+
+		public String getItemName() {
+			return itemName_;
+		}
+
+		public int getColumnValuesIndex() {
+			return columnValuesIndex_;
+		}
 	}
 }

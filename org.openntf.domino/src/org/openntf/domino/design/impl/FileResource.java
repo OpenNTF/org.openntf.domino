@@ -42,9 +42,19 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 
 	@Override
 	public byte[] getFileData() {
+		return getFileData("$FileData");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.FileResource#getFileData(java.lang.String)
+	 */
+	@Override
+	public byte[] getFileData(final String itemName) {
 		try {
 			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-			for (XMLNode rawitemdata : getDxl().selectNodes("//item[@name='$FileData']/rawitemdata")) {
+			for (XMLNode rawitemdata : getDxl().selectNodes("//item[@name='" + itemName + "']/rawitemdata")) {
 				String rawData = rawitemdata.getText();
 				byte[] thisData = parseBase64Binary(rawData);
 				byteStream.write(thisData);

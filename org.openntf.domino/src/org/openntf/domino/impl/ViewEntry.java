@@ -15,6 +15,9 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -22,6 +25,7 @@ import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
+import org.openntf.domino.View;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -32,6 +36,8 @@ import org.openntf.domino.utils.Factory;
  */
 public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.ViewEntry> implements org.openntf.domino.ViewEntry {
 	private static final Logger log_ = Logger.getLogger(ViewEntry.class.getName());
+
+	private Map<String, Object> columnValuesMap_;
 
 	/**
 	 * Instantiates a new view entry.
@@ -188,6 +194,23 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	@Override
 	public org.openntf.domino.Base<?> getParent() {
 		return super.getParent();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.ViewEntry#getParentView()
+	 */
+	@Override
+	public View getParentView() {
+		org.openntf.domino.Base<?> parent = getParent();
+		if (parent instanceof org.openntf.domino.ViewEntryCollection) {
+			return ((org.openntf.domino.ViewEntryCollection) parent).getParent();
+		} else if (parent instanceof org.openntf.domino.ViewNavigator) {
+			return ((org.openntf.domino.ViewNavigator) parent).getParentView();
+		} else {
+			return (org.openntf.domino.View) parent;
+		}
 	}
 
 	/*
@@ -387,5 +410,24 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	@Override
 	public Session getAncestorSession() {
 		return this.getAncestorDatabase().getAncestorSession();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.ext.ViewEntry#getColumnValue(java.lang.String)
+	 */
+	@Override
+	public Object getColumnValue(final String columnName) {
+		if (columnValuesMap_ == null) {
+			List<Object> columnValues = getColumnValues();
+			columnValuesMap_ = new HashMap<String, Object>();
+			for (org.openntf.domino.impl.View.DominoColumnInfo info : ((org.openntf.domino.impl.View) getParentView()).getColumnInfo()) {
+				if (info.getColumnValuesIndex() < 65535) {
+					columnValuesMap_.put(info.getItemName(), columnValues.get(info.getColumnValuesIndex()));
+				}
+			}
+		}
+		return columnValuesMap_.get(columnName);
 	}
 }
