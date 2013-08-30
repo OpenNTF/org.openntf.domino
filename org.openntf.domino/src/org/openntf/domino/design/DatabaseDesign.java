@@ -42,6 +42,13 @@ public interface DatabaseDesign {
 
 	public DesignCollection<FileResource> getHiddenFileResources();
 
+	/**
+	 * @param name
+	 *            name of any type of file resource (file, Java, etc.)
+	 * @return a named file resource
+	 */
+	public FileResource getAnyFileResource(final String name);
+
 	public DesignForm getForm(final String name);
 
 	public DesignCollection<DesignForm> getForms();

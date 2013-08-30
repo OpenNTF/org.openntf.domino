@@ -116,6 +116,19 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	}
 
 	@Override
+	public FileResource getAnyFileResource(final String name) {
+		NoteCollection notes = getNoteCollection(String.format(" @Contains($Flags; 'g') & @Explode($TITLE; '|')=\"%s\" ", DominoUtils
+				.escapeForFormulaString(name)), EnumSet.of(SelectOption.MISC_FORMAT));
+
+		String noteId = notes.getFirstNoteID();
+		if (!noteId.isEmpty()) {
+			Document doc = database_.getDocumentByID(noteId);
+			return new FileResource(doc);
+		}
+		return null;
+	}
+
+	@Override
 	public DesignCollection<org.openntf.domino.design.FileResource> getHiddenFileResources() {
 		NoteCollection notes = getNoteCollection(" @Contains($Flags; '~') & @Contains($Flags; 'g') & !@Contains($Flags; 'K':';':'[':',')",
 				EnumSet.of(SelectOption.MISC_FORMAT));
