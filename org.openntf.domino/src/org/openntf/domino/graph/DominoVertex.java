@@ -536,7 +536,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 					Set<String> edgeIds = inMap.get(key);
 					if (edgeIds != null) {
 						setProperty(DominoVertex.IN_PREFIX + key, edgeIds);
-						setProperty("_COUNT_" + DominoVertex.IN_PREFIX + key, edgeIds.size());
+						setProperty("_COUNT" + DominoVertex.IN_PREFIX + key, edgeIds.size());
 						result = true;
 					}
 					synchronized (inDirtyMap) {
@@ -554,7 +554,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 					Set<String> edgeIds = outMap.get(key);
 					if (edgeIds != null) {
 						setProperty(DominoVertex.OUT_PREFIX + key, edgeIds);
-						setProperty("_COUNT_" + DominoVertex.OUT_PREFIX + key, edgeIds.size());
+						setProperty("_COUNT" + DominoVertex.OUT_PREFIX + key, edgeIds.size());
 						result = true;
 					}
 					synchronized (outDirtyMap) {

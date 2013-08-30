@@ -2,6 +2,7 @@ package org.openntf.domino.graph;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -18,14 +19,47 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	private static final Logger log_ = Logger.getLogger(DominoElement.class.getName());
 	private static final long serialVersionUID = 1L;
 	public static final String TYPE_FIELD = "_OPEN_GRAPHTYPE";
-	transient org.openntf.domino.Document doc_;
+	// transient org.openntf.domino.Document doc_;
 	private String key_;
 	transient DominoGraph parent_;
 	private String unid_;
 	private Map<String, Serializable> props_;
 
+	public static void clearCache() {
+		documentCache.set(null);
+	}
+
+	private static ThreadLocal<Map<String, Document>> documentCache = new ThreadLocal<Map<String, Document>>() {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.ThreadLocal#initialValue()
+		 */
+		@Override
+		protected Map<String, Document> initialValue() {
+			return new HashMap<String, Document>();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.ThreadLocal#get()
+		 */
+		@Override
+		public Map<String, Document> get() {
+			Map<String, Document> map = super.get();
+			if (map == null) {
+				map = new HashMap<String, Document>();
+				super.set(map);
+
+			}
+			return map;
+		}
+
+	};
+
 	public DominoElement(final DominoGraph parent, final Document doc) {
-		doc_ = doc;
+		// doc_ = doc;
 		parent_ = parent;
 		unid_ = doc.getUniversalID();
 	}
@@ -60,10 +94,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	}
 
 	public Document getRawDocument() {
-		if (doc_ == null) {
-			doc_ = getDocument();
-		}
-		return doc_;
+		return getDocument();
 	}
 
 	public String getRawId() {
@@ -88,7 +119,12 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	}
 
 	private Document getDocument() {
-		return getDatabase().getDocumentByKey(unid_, true);
+		Document doc = documentCache.get().get(unid_);
+		if (doc == null) {
+			doc = getDatabase().getDocumentByKey(unid_, true);
+			documentCache.get().put(unid_, doc);
+		}
+		return doc;
 	}
 
 	@Override
@@ -217,7 +253,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	// }
 
 	public void setRawDocument(final org.openntf.domino.Document doc) {
-		doc_ = doc;
+		unid_ = doc.getUniversalID();
 	}
 
 	private final Set<String> changedProperties_ = new HashSet<String>();

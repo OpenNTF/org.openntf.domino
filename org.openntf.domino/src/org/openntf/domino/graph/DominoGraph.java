@@ -123,10 +123,8 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 
 	private java.util.Map<Object, Element> cache_;
 
-	private transient org.openntf.domino.Database database_;
 	private String filepath_;
 	private String server_;
-	protected transient org.openntf.domino.Session session_;
 	protected transient Map<String, IEdgeHelper> edgeHelpers_ = new HashMap<String, IEdgeHelper>();
 
 	public DominoGraph(final org.openntf.domino.Database database) {
@@ -162,8 +160,6 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 
 	public void setRawDatabase(final org.openntf.domino.Database database) {
 		if (database != null) {
-			database_ = database;
-			session_ = database.getParent();
 			server_ = database.getServer();
 			filepath_ = database.getFilePath();
 		}
@@ -219,6 +215,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		synchronized (cache) {
 			cache.clear();
 		}
+		DominoElement.clearCache();
 	}
 
 	@Override
@@ -295,27 +292,11 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	}
 
 	public org.openntf.domino.Session getRawSession() {
-		if (session_ == null) {
-			session_ = Factory.getSession();
-			System.out.println("DominoGraph re-established root session.");
-			DominoUtils.setBubbleExceptions(Boolean.TRUE);
-		} else {
-			try {
-				session_.isTrustedSession();
-			} catch (Exception xPagesDidThis) {
-				session_ = Factory.getSession();
-				System.out.println("DominoGraph re-established root session.");
-				DominoUtils.setBubbleExceptions(Boolean.TRUE);
-			}
-		}
-		return session_;
+		return Factory.getSession();
 	}
 
 	public org.openntf.domino.Database getRawDatabase() {
-		if (database_ == null) {
-			database_ = getDatabase();
-		}
-		return database_;
+		return getDatabase();
 	}
 
 	private Document getDocument(final Object id, final boolean createOnFail) {
