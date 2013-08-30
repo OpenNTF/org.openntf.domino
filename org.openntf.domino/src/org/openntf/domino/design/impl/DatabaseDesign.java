@@ -329,10 +329,12 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 				return defineClass(name, classData, 0, classData.length);
 			}
 
+			String binaryName = DominoUtils.escapeForFormulaString(binaryNameToFilePath(name, "/"));
+
 			// Check for appropriate design elements in the DB
 			NoteCollection notes = getNoteCollection(String.format(
 					" @Contains($Flags; 'g') & (@Contains($Flags; '[') | @Contains($Flags; 'K')) & $ClassIndexItem='WEB-INF/classes/%s' ",
-					DominoUtils.escapeForFormulaString(binaryNameToFilePath(name, "/"))), EnumSet.of(SelectOption.MISC_FORMAT));
+					binaryName), EnumSet.of(SelectOption.MISC_FORMAT));
 			String noteId = notes.getFirstNoteID();
 			if (!noteId.isEmpty()) {
 				Document doc = database_.getDocumentByID(noteId);
@@ -341,6 +343,18 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 				unloadedClasses_.putAll(res.getClassData());
 				// Now attempt to load the named class
 				byte[] classData = unloadedClasses_.remove(name);
+				return defineClass(name, classData, 0, classData.length);
+			}
+
+			// It's also possible that it's stored only as a .class file (e.g. secondary, non-inner classes in a .java)
+			notes = getNoteCollection(
+					String.format(" @Contains($Flags; 'g') & @Contains($Flags; 'C') & $FileNames='WEB-INF/classes/%s' ", binaryName),
+					EnumSet.of(SelectOption.MISC_FORMAT));
+			noteId = notes.getFirstNoteID();
+			if (!noteId.isEmpty()) {
+				Document doc = database_.getDocumentByID(noteId);
+				FileResource res = new FileResource(doc);
+				byte[] classData = res.getFileData();
 				return defineClass(name, classData, 0, classData.length);
 			}
 
