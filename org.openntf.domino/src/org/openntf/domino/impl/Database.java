@@ -2778,5 +2778,4 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		noteClass.add(SelectOption.DOCUMENTS);
 		return getModifiedNoteCount(since, noteClass);
 	}
-
 }
