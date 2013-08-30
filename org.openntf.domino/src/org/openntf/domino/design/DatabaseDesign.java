@@ -57,6 +57,8 @@ public interface DatabaseDesign {
 
 	public DesignCollection<XPage> getXPages();
 
+	public ClassLoader getDatabaseClassLoader(ClassLoader parent);
+
 	public DesignForm getForm(final String name);
 
 	public DesignCollection<DesignForm> getForms();

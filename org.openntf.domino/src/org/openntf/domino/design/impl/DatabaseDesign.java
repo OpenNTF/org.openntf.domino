@@ -4,6 +4,7 @@
 package org.openntf.domino.design.impl;
 
 import java.util.EnumSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -35,6 +36,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	private static final String REPLICATION_FORMULA = "FFFF0800";
 
 	private final Database database_;
+	private transient ClassLoader databaseClassLoader_;
 
 	public DatabaseDesign(final Database database) {
 		database_ = database;
@@ -259,6 +261,19 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		return new DesignCollection<org.openntf.domino.design.DesignView>(notes, DesignView.class);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DatabaseDesign#getDatabaseClassLoader()
+	 */
+	@Override
+	public ClassLoader getDatabaseClassLoader(final ClassLoader parent) {
+		if (databaseClassLoader_ == null) {
+			databaseClassLoader_ = new DatabaseClassLoader(parent);
+		}
+		return databaseClassLoader_;
+	}
+
 	private NoteCollection getNoteCollection(final String selectionFormula, final Set<SelectOption> options) {
 		NoteCollection notes = database_.createNoteCollection(false);
 		notes.setSelectOptions(options);
@@ -267,4 +282,35 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		return notes;
 	}
 
+	class DatabaseClassLoader extends ClassLoader {
+		public DatabaseClassLoader(final ClassLoader parent) {
+			super(parent);
+		}
+
+		@Override
+		protected Class<?> findClass(final String name) throws ClassNotFoundException {
+			// Check for appropriate design elements in the DB
+			NoteCollection notes = getNoteCollection(String.format(
+					" @Contains($Flags; 'g') & (@Contains($Flags; '[') | @Contains($Flags; 'K')) & $ClassIndexItem='WEB-INF/classes/%s' ",
+					DominoUtils.escapeForFormulaString(binaryNameToFilePath(name, "/"))), EnumSet.of(SelectOption.MISC_FORMAT));
+			String noteId = notes.getFirstNoteID();
+			if (!noteId.isEmpty()) {
+				Class<?> result = null;
+				Document doc = database_.getDocumentByID(noteId);
+				JavaResource res = new JavaResource(doc);
+				for (Map.Entry<String, byte[]> classData : res.getClassData().entrySet()) {
+					Class<?> defined = defineClass(classData.getKey(), classData.getValue(), 0, classData.getValue().length);
+					if (classData.getKey().equals(name)) {
+						result = defined;
+					}
+				}
+				return result;
+			}
+			return super.findClass(name);
+		}
+	}
+
+	public static String binaryNameToFilePath(final String binaryName, final String separator) {
+		return binaryName.replace(".", separator) + ".class";
+	}
 }

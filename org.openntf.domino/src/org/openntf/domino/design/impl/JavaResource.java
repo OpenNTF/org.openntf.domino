@@ -60,7 +60,4 @@ public class JavaResource extends FileResource implements org.openntf.domino.des
 		return filePath.substring(0, filePath.length() - 6).replace(separator, ".");
 	}
 
-	public static String binaryNameToFilePath(final String binaryName, final String separator) {
-		return binaryName.replace(".", separator) + ".class";
-	}
 }
