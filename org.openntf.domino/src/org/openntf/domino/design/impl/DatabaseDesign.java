@@ -83,9 +83,9 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 
 	@Override
 	public FileResource getFileResource(final String name) {
-		NoteCollection notes = getNoteCollection(String.format(
-				" !@Contains($Flags; '~') & @Contains($Flags; 'g') & @Explode($TITLE; '|')=\"%s\" ", DominoUtils
-						.escapeForFormulaString(name)), EnumSet.of(SelectOption.MISC_FORMAT));
+		NoteCollection notes = getNoteCollection(
+				String.format(" !@Contains($Flags; '~') & @Contains($Flags; 'g') & @Explode($TITLE; '|')=\"%s\" ",
+						DominoUtils.escapeForFormulaString(name)), EnumSet.of(SelectOption.MISC_FORMAT));
 
 		String noteId = notes.getFirstNoteID();
 		if (!noteId.isEmpty()) {
@@ -116,9 +116,22 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	}
 
 	@Override
-	public FileResource getAnyFileResource(final String name) {
-		NoteCollection notes = getNoteCollection(String.format(" @Contains($Flags; 'g') & @Explode($TITLE; '|')=\"%s\" ", DominoUtils
-				.escapeForFormulaString(name)), EnumSet.of(SelectOption.MISC_FORMAT));
+	public DesignCollection<org.openntf.domino.design.FileResource> getHiddenFileResources() {
+		NoteCollection notes = getNoteCollection(" @Contains($Flags; '~') & @Contains($Flags; 'g') & !@Contains($Flags; 'K':';':'[':',')",
+				EnumSet.of(SelectOption.MISC_FORMAT));
+		return new DesignCollection<org.openntf.domino.design.FileResource>(notes, FileResource.class);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DatabaseDesign#getJavaResource(java.lang.String)
+	 */
+	@Override
+	public org.openntf.domino.design.FileResource getJavaResource(final String name) {
+		NoteCollection notes = getNoteCollection(
+				String.format(" @Contains($Flags; 'g') & @Contains($Flags; '[') & @Explode($TITLE; '|')=\"%s\" ",
+						DominoUtils.escapeForFormulaString(name)), EnumSet.of(SelectOption.MISC_FORMAT));
 
 		String noteId = notes.getFirstNoteID();
 		if (!noteId.isEmpty()) {
@@ -128,11 +141,29 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DatabaseDesign#getJavaResources()
+	 */
 	@Override
-	public DesignCollection<org.openntf.domino.design.FileResource> getHiddenFileResources() {
-		NoteCollection notes = getNoteCollection(" @Contains($Flags; '~') & @Contains($Flags; 'g') & !@Contains($Flags; 'K':';':'[':',')",
-				EnumSet.of(SelectOption.MISC_FORMAT));
+	public org.openntf.domino.design.DesignCollection<org.openntf.domino.design.FileResource> getJavaResources() {
+		NoteCollection notes = getNoteCollection(" @Contains($Flags; 'g') & @Contains($Flags; '[') ", EnumSet.of(SelectOption.MISC_FORMAT));
 		return new DesignCollection<org.openntf.domino.design.FileResource>(notes, FileResource.class);
+	}
+
+	@Override
+	public FileResource getAnyFileResource(final String name) {
+		NoteCollection notes = getNoteCollection(
+				String.format(" @Contains($Flags; 'g') & @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
+				EnumSet.of(SelectOption.MISC_FORMAT));
+
+		String noteId = notes.getFirstNoteID();
+		if (!noteId.isEmpty()) {
+			Document doc = database_.getDocumentByID(noteId);
+			return new FileResource(doc);
+		}
+		return null;
 	}
 
 	@Override
