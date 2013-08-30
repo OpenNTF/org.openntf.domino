@@ -128,7 +128,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	 * @see org.openntf.domino.design.DatabaseDesign#getJavaResource(java.lang.String)
 	 */
 	@Override
-	public org.openntf.domino.design.FileResource getJavaResource(final String name) {
+	public JavaResource getJavaResource(final String name) {
 		NoteCollection notes = getNoteCollection(
 				String.format(" @Contains($Flags; 'g') & @Contains($Flags; '[') & @Explode($TITLE; '|')=\"%s\" ",
 						DominoUtils.escapeForFormulaString(name)), EnumSet.of(SelectOption.MISC_FORMAT));
@@ -136,7 +136,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		String noteId = notes.getFirstNoteID();
 		if (!noteId.isEmpty()) {
 			Document doc = database_.getDocumentByID(noteId);
-			return new FileResource(doc);
+			return new JavaResource(doc);
 		}
 		return null;
 	}
@@ -147,9 +147,39 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	 * @see org.openntf.domino.design.DatabaseDesign#getJavaResources()
 	 */
 	@Override
-	public org.openntf.domino.design.DesignCollection<org.openntf.domino.design.FileResource> getJavaResources() {
+	public DesignCollection<org.openntf.domino.design.JavaResource> getJavaResources() {
 		NoteCollection notes = getNoteCollection(" @Contains($Flags; 'g') & @Contains($Flags; '[') ", EnumSet.of(SelectOption.MISC_FORMAT));
-		return new DesignCollection<org.openntf.domino.design.FileResource>(notes, FileResource.class);
+		return new DesignCollection<org.openntf.domino.design.JavaResource>(notes, JavaResource.class);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DatabaseDesign#getXPage(java.lang.String)
+	 */
+	@Override
+	public XPage getXPage(final String name) {
+		NoteCollection notes = getNoteCollection(
+				String.format(" @Contains($Flags; 'g') & @Contains($Flags; 'K') & @Explode($TITLE; '|')=\"%s\" ",
+						DominoUtils.escapeForFormulaString(name)), EnumSet.of(SelectOption.MISC_FORMAT));
+
+		String noteId = notes.getFirstNoteID();
+		if (!noteId.isEmpty()) {
+			Document doc = database_.getDocumentByID(noteId);
+			return new XPage(doc);
+		}
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DatabaseDesign#getXPages()
+	 */
+	@Override
+	public DesignCollection<org.openntf.domino.design.XPage> getXPages() {
+		NoteCollection notes = getNoteCollection(" @Contains($Flags; 'g') & @Contains($Flags; 'K') ", EnumSet.of(SelectOption.MISC_FORMAT));
+		return new DesignCollection<org.openntf.domino.design.XPage>(notes, XPage.class);
 	}
 
 	@Override

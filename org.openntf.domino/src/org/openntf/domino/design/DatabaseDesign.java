@@ -49,9 +49,13 @@ public interface DatabaseDesign {
 	 */
 	public FileResource getAnyFileResource(final String name);
 
-	public FileResource getJavaResource(String name);
+	public JavaResource getJavaResource(String name);
 
-	public DesignCollection<FileResource> getJavaResources();
+	public DesignCollection<JavaResource> getJavaResources();
+
+	public XPage getXPage(String name);
+
+	public DesignCollection<XPage> getXPages();
 
 	public DesignForm getForm(final String name);
 

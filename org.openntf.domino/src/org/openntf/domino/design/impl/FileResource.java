@@ -218,7 +218,7 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 		return dataNode;
 	}
 
-	private String escapeXPathValue(final String input) {
+	protected String escapeXPathValue(final String input) {
 		return input.replace("'", "\\'");
 	}
 
