@@ -33,6 +33,12 @@ enum DesignFactory {
 			return (T) (new UsingDocument(doc));
 		} else if (T == DesignView.class) {
 			return (T) (new DesignView(doc));
+		} else if (T == JavaResource.class) {
+			return (T) (new JavaResource(doc));
+		} else if (T == JarResource.class) {
+			return (T) (new JarResource(doc));
+		} else if (T == XPage.class) {
+			return (T) (new XPage(doc));
 		}
 		return null;
 	}

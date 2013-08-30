@@ -57,7 +57,13 @@ public interface DatabaseDesign {
 
 	public DesignCollection<XPage> getXPages();
 
+	public JarResource getJarResource(String name);
+
+	public DesignCollection<JarResource> getJarResources();
+
 	public ClassLoader getDatabaseClassLoader(ClassLoader parent);
+
+	public ClassLoader getDatabaseClassLoader(ClassLoader parent, boolean includeJars);
 
 	public DesignForm getForm(final String name);
 

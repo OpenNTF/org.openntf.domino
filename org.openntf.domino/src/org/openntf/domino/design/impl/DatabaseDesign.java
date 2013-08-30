@@ -3,9 +3,15 @@
  */
 package org.openntf.domino.design.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
@@ -36,7 +42,6 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	private static final String REPLICATION_FORMULA = "FFFF0800";
 
 	private final Database database_;
-	private transient ClassLoader databaseClassLoader_;
 
 	public DatabaseDesign(final Database database) {
 		database_ = database;
@@ -184,6 +189,24 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 		return new DesignCollection<org.openntf.domino.design.XPage>(notes, XPage.class);
 	}
 
+	public JarResource getJarResource(final String name) {
+		NoteCollection notes = getNoteCollection(
+				String.format(" @Contains($Flags; 'g') & @Contains($Flags; ',') & @Explode($TITLE; '|')=\"%s\" ",
+						DominoUtils.escapeForFormulaString(name)), EnumSet.of(SelectOption.MISC_FORMAT));
+
+		String noteId = notes.getFirstNoteID();
+		if (!noteId.isEmpty()) {
+			Document doc = database_.getDocumentByID(noteId);
+			return new JarResource(doc);
+		}
+		return null;
+	}
+
+	public DesignCollection<org.openntf.domino.design.JarResource> getJarResources() {
+		NoteCollection notes = getNoteCollection(" @Contains($Flags; 'g') & @Contains($Flags; ',') ", EnumSet.of(SelectOption.MISC_FORMAT));
+		return new DesignCollection<org.openntf.domino.design.JarResource>(notes, JarResource.class);
+	}
+
 	@Override
 	public FileResource getAnyFileResource(final String name) {
 		NoteCollection notes = getNoteCollection(
@@ -268,10 +291,17 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	 */
 	@Override
 	public ClassLoader getDatabaseClassLoader(final ClassLoader parent) {
-		if (databaseClassLoader_ == null) {
-			databaseClassLoader_ = new DatabaseClassLoader(parent);
-		}
-		return databaseClassLoader_;
+		return new DatabaseClassLoader(parent, true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DatabaseDesign#getDatabaseClassLoader(java.lang.ClassLoader, boolean)
+	 */
+	@Override
+	public ClassLoader getDatabaseClassLoader(final ClassLoader parent, final boolean includeJars) {
+		return new DatabaseClassLoader(parent, includeJars);
 	}
 
 	private NoteCollection getNoteCollection(final String selectionFormula, final Set<SelectOption> options) {
@@ -283,34 +313,87 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 	}
 
 	class DatabaseClassLoader extends ClassLoader {
-		public DatabaseClassLoader(final ClassLoader parent) {
+		private final Map<String, byte[]> unloadedClasses_ = new HashMap<String, byte[]>();
+		private final boolean includeJars_;
+
+		public DatabaseClassLoader(final ClassLoader parent, final boolean includeJars) {
 			super(parent);
+			includeJars_ = includeJars;
 		}
 
 		@Override
 		protected Class<?> findClass(final String name) throws ClassNotFoundException {
+			// Check if it's in our pool of in-process classes
+			if (unloadedClasses_.containsKey(name)) {
+				byte[] classData = unloadedClasses_.remove(name);
+				return defineClass(name, classData, 0, classData.length);
+			}
+
 			// Check for appropriate design elements in the DB
 			NoteCollection notes = getNoteCollection(String.format(
 					" @Contains($Flags; 'g') & (@Contains($Flags; '[') | @Contains($Flags; 'K')) & $ClassIndexItem='WEB-INF/classes/%s' ",
 					DominoUtils.escapeForFormulaString(binaryNameToFilePath(name, "/"))), EnumSet.of(SelectOption.MISC_FORMAT));
 			String noteId = notes.getFirstNoteID();
 			if (!noteId.isEmpty()) {
-				Class<?> result = null;
 				Document doc = database_.getDocumentByID(noteId);
 				JavaResource res = new JavaResource(doc);
-				for (Map.Entry<String, byte[]> classData : res.getClassData().entrySet()) {
-					Class<?> defined = defineClass(classData.getKey(), classData.getValue(), 0, classData.getValue().length);
-					if (classData.getKey().equals(name)) {
-						result = defined;
+				// Load up our class queue with the data
+				unloadedClasses_.putAll(res.getClassData());
+				// Now attempt to load the named class
+				byte[] classData = unloadedClasses_.remove(name);
+				return defineClass(name, classData, 0, classData.length);
+			}
+
+			// If we're here, see if we should look through the Jars - load them all now
+			if (includeJars_) {
+				DesignCollection<org.openntf.domino.design.JarResource> jars = getJarResources();
+				for (org.openntf.domino.design.JarResource jar : jars) {
+					try {
+						readJarClasses(jar);
+					} catch (IOException e) {
+						DominoUtils.handleException(e);
 					}
 				}
-				return result;
+
+				if (unloadedClasses_.containsKey(name)) {
+					byte[] classData = unloadedClasses_.remove(name);
+					return defineClass(name, classData, 0, classData.length);
+				}
 			}
+
 			return super.findClass(name);
+		}
+
+		private void readJarClasses(final org.openntf.domino.design.JarResource jar) throws IOException {
+			byte[] jarData = jar.getFileData();
+
+			ByteArrayInputStream bis = new ByteArrayInputStream(jarData);
+			JarInputStream jis = new JarInputStream(bis);
+			JarEntry entry = jis.getNextJarEntry();
+			Map<String, byte[]> classData = new HashMap<String, byte[]>();
+			while (entry != null) {
+				String name = entry.getName();
+				if (name.endsWith(".class")) {
+					ByteArrayOutputStream bos = new ByteArrayOutputStream();
+					while (jis.available() > 0) {
+						bos.write(jis.read());
+					}
+					classData.put(filePathToBinaryName(name, "/"), bos.toByteArray());
+				}
+
+				entry = jis.getNextJarEntry();
+			}
+			jis.close();
+
+			unloadedClasses_.putAll(classData);
 		}
 	}
 
 	public static String binaryNameToFilePath(final String binaryName, final String separator) {
 		return binaryName.replace(".", separator) + ".class";
+	}
+
+	public static String filePathToBinaryName(final String filePath, final String separator) {
+		return filePath.substring(0, filePath.length() - 6).replace(separator, ".");
 	}
 }
