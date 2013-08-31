@@ -11,4 +11,6 @@ import java.util.Map;
  */
 public interface JavaResource extends FileResource {
 	public Map<String, byte[]> getClassData();
+
+	public void setClassData(Map<String, byte[]> classData);
 }

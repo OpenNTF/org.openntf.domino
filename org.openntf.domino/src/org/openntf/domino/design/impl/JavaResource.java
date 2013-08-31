@@ -56,4 +56,40 @@ public class JavaResource extends FileResource implements org.openntf.domino.des
 		}
 		return result;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.JavaResource#setClassData(java.util.Map)
+	 */
+	@Override
+	public void setClassData(final Map<String, byte[]> classData) {
+		// First step, clear out the existing data, index, and size fields
+		XMLNode indexNode = getDxl().selectSingleNode("//item[@name='" + CLASS_INDEX_ITEM + "']");
+		XMLNode itemParent = indexNode.getParentNode();
+		List<XMLNode> names = indexNode.selectNodes("text");
+		for (int i = 0; i < names.size(); i++) {
+			XMLNode dataNode = getDxl().selectSingleNode("//item[@name='$ClassData" + i + "']");
+			dataNode.getParentNode().removeChild(dataNode);
+			XMLNode sizeNode = getDxl().selectSingleNode("//item[@name='$ClassSize" + i + "']");
+			sizeNode.getParentNode().removeChild(sizeNode);
+
+			indexNode.removeChild(names.get(i));
+		}
+
+		int index = 0;
+		for (Map.Entry<String, byte[]> classEntry : classData.entrySet()) {
+			XMLNode sizeNode = itemParent.addChildElement("item");
+			sizeNode.setAttribute("name", "$ClassSize" + index);
+			XMLNode sizeText = sizeNode.addChildElement("number");
+			sizeText.setTextContent(String.valueOf(classEntry.getValue().length));
+
+			setFileData("$ClassData" + index, classEntry.getValue());
+
+			XMLNode name = indexNode.addChildElement("text");
+			name.setTextContent("WEB-INF/classes/" + DominoUtils.javaBinaryNameToFilePath(classEntry.getKey(), "/"));
+
+			index++;
+		}
+	}
 }
