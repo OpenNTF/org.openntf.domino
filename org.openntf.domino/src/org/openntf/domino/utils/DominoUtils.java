@@ -893,4 +893,12 @@ public enum DominoUtils {
 		}
 		return result;
 	}
+
+	public static String javaBinaryNameToFilePath(final String binaryName, final String separator) {
+		return binaryName.replace(".", separator) + ".class";
+	}
+
+	public static String filePathToJavaBinaryName(final String filePath, final String separator) {
+		return filePath.substring(0, filePath.length() - 6).replace(separator, ".");
+	}
 }

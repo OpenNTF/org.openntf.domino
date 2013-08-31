@@ -329,7 +329,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 				return defineClass(name, classData, 0, classData.length);
 			}
 
-			String binaryName = DominoUtils.escapeForFormulaString(binaryNameToFilePath(name, "/"));
+			String binaryName = DominoUtils.escapeForFormulaString(DominoUtils.javaBinaryNameToFilePath(name, "/"));
 
 			// Check for appropriate design elements in the DB
 			NoteCollection notes = getNoteCollection(String.format(
@@ -392,7 +392,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 					while (jis.available() > 0) {
 						bos.write(jis.read());
 					}
-					classData.put(filePathToBinaryName(name, "/"), bos.toByteArray());
+					classData.put(DominoUtils.filePathToJavaBinaryName(name, "/"), bos.toByteArray());
 				}
 
 				entry = jis.getNextJarEntry();
@@ -401,13 +401,5 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign 
 
 			unloadedClasses_.putAll(classData);
 		}
-	}
-
-	public static String binaryNameToFilePath(final String binaryName, final String separator) {
-		return binaryName.replace(".", separator) + ".class";
-	}
-
-	public static String filePathToBinaryName(final String filePath, final String separator) {
-		return filePath.substring(0, filePath.length() - 6).replace(separator, ".");
 	}
 }

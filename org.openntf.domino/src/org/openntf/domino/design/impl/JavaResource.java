@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLNode;
 
 /**
@@ -45,7 +46,7 @@ public class JavaResource extends FileResource implements org.openntf.domino.des
 		for (XMLNode node : getDxl().selectNodes("//item[@name='" + CLASS_INDEX_ITEM + "']//text")) {
 			// Classes begin with "WEB-INF/classes/"
 			String path = node.getText();
-			names.add(filePathToBinaryName(path.substring(16), "/"));
+			names.add(DominoUtils.filePathToJavaBinaryName(path.substring(16), "/"));
 		}
 
 		Map<String, byte[]> result = new HashMap<String, byte[]>();
@@ -55,9 +56,4 @@ public class JavaResource extends FileResource implements org.openntf.domino.des
 		}
 		return result;
 	}
-
-	public static String filePathToBinaryName(final String filePath, final String separator) {
-		return filePath.substring(0, filePath.length() - 6).replace(separator, ".");
-	}
-
 }
