@@ -29,7 +29,6 @@ import org.xml.sax.SAXException;
 public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignNoteBase.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	private String noteId_;
 	private final Database database_;

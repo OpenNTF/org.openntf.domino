@@ -13,7 +13,6 @@ public class DesignColumnList extends AbstractDesignComponentList<org.openntf.do
 		org.openntf.domino.design.DesignColumnList {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DesignColumnList.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	protected DesignColumnList(final AbstractDesignBase parent, final String pattern) {
 		super(parent, pattern);

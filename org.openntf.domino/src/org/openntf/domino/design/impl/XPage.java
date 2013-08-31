@@ -13,8 +13,8 @@ import org.openntf.domino.Document;
  * 
  */
 public class XPage extends JavaResource implements org.openntf.domino.design.XPage {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(XPage.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	protected XPage(final Document document) {
 		super(document);
