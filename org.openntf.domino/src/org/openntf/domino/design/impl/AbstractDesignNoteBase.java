@@ -47,6 +47,7 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 
 		DxlExporter exporter = document.getAncestorSession().createDxlExporter();
 		exporter.setForceNoteFormat(true);
+		exporter.setOutputDOCTYPE(false);
 		loadDxl(exporter.exportDxl(document));
 	}
 
