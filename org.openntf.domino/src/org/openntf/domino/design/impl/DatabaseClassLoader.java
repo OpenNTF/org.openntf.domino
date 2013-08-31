@@ -70,8 +70,7 @@ public class DatabaseClassLoader extends ClassLoader {
 
 		// If we're here, see if we should look through the Jars - load them all now
 		if (includeJars_ && !loadedJars_) {
-			DesignCollection<org.openntf.domino.design.JarResource> jars = design_.getJarResources();
-			for (org.openntf.domino.design.JarResource jar : jars) {
+			for (org.openntf.domino.design.JarResource jar : design_.getJarResources()) {
 				unloadedClasses_.putAll(jar.getClassData());
 			}
 			loadedJars_ = true;
