@@ -3,14 +3,9 @@
  */
 package org.openntf.domino.design.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Document;
@@ -27,6 +22,7 @@ public class DatabaseClassLoader extends ClassLoader {
 
 	private final Map<String, byte[]> unloadedClasses_ = new HashMap<String, byte[]>();
 	private final boolean includeJars_;
+	private boolean loadedJars_ = false;
 	private final DatabaseDesign design_;
 
 	public DatabaseClassLoader(final DatabaseDesign design, final ClassLoader parent, final boolean includeJars) {
@@ -73,15 +69,12 @@ public class DatabaseClassLoader extends ClassLoader {
 		}
 
 		// If we're here, see if we should look through the Jars - load them all now
-		if (includeJars_) {
+		if (includeJars_ && !loadedJars_) {
 			DesignCollection<org.openntf.domino.design.JarResource> jars = design_.getJarResources();
 			for (org.openntf.domino.design.JarResource jar : jars) {
-				try {
-					readJarClasses(jar);
-				} catch (IOException e) {
-					DominoUtils.handleException(e);
-				}
+				unloadedClasses_.putAll(jar.getClassData());
 			}
+			loadedJars_ = true;
 
 			if (unloadedClasses_.containsKey(name)) {
 				byte[] classData = unloadedClasses_.remove(name);
@@ -90,29 +83,5 @@ public class DatabaseClassLoader extends ClassLoader {
 		}
 
 		return super.findClass(name);
-	}
-
-	private void readJarClasses(final org.openntf.domino.design.JarResource jar) throws IOException {
-		byte[] jarData = jar.getFileData();
-
-		ByteArrayInputStream bis = new ByteArrayInputStream(jarData);
-		JarInputStream jis = new JarInputStream(bis);
-		JarEntry entry = jis.getNextJarEntry();
-		Map<String, byte[]> classData = new HashMap<String, byte[]>();
-		while (entry != null) {
-			String name = entry.getName();
-			if (name.endsWith(".class")) {
-				ByteArrayOutputStream bos = new ByteArrayOutputStream();
-				while (jis.available() > 0) {
-					bos.write(jis.read());
-				}
-				classData.put(DominoUtils.filePathToJavaBinaryName(name, "/"), bos.toByteArray());
-			}
-
-			entry = jis.getNextJarEntry();
-		}
-		jis.close();
-
-		unloadedClasses_.putAll(classData);
 	}
 }
