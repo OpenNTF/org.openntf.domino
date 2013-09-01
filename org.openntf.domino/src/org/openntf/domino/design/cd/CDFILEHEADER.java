@@ -19,15 +19,6 @@ public class CDFILEHEADER {
 		SegCount = CDUtils.dwordToInt(Arrays.copyOfRange(data, 12, 16));
 		Flags = CDUtils.dwordToInt(Arrays.copyOfRange(data, 16, 20));
 		Reserved = CDUtils.dwordToInt(Arrays.copyOfRange(data, 20, 24));
-
-		// System.out.println("CDFILEHEADER:");
-		// System.out.println("\tHeader.Signature: " + Header.Signature);
-		// System.out.println("\tHeader.Length: " + Header.Length);
-		// System.out.println("\tFileExtLen: " + FileExtLen);
-		// System.out.println("\tFileDataSize: " + FileDataSize);
-		// System.out.println("\tSegCount: " + SegCount);
-		// System.out.println("\tFlags: " + Flags);
-		// System.out.println("\tReserved: " + Reserved);
 	}
 
 	public byte[] getBytes() {

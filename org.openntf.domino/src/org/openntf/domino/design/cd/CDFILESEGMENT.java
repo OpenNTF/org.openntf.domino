@@ -19,14 +19,6 @@ public class CDFILESEGMENT {
 		SegSize = CDUtils.wordToShort(Arrays.copyOfRange(data, 8, 10));
 		Flags = CDUtils.dwordToInt(Arrays.copyOfRange(data, 10, 14));
 		Reserved = CDUtils.dwordToInt(Arrays.copyOfRange(data, 14, 18));
-
-		// System.out.println("CDFILESEGMENT:");
-		// System.out.println("\tHeader.Signature: " + Header.Signature);
-		// System.out.println("\tHeader.Length: " + Header.Length);
-		// System.out.println("\tDataSize: " + DataSize);
-		// System.out.println("\tSegSize: " + SegSize);
-		// System.out.println("\tFlags: " + Flags);
-		// System.out.println("\tReserved: " + Reserved);
 	}
 
 	public byte[] getBytes() {

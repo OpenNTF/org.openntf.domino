@@ -7,7 +7,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
@@ -23,6 +25,8 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 	private static final String DESIGN_FLAGEXT_FILE_DEPLOYABLE = "D";
 	private static final String DESIGN_FLAG_HIDEFROMDESIGNLIST = "~";
 	private static final String DESIGN_FLAG_READONLY = "&";
+
+	private static final String DEFAULT_FILEDATA_FIELD = "$FileData";
 
 	protected FileResource(final Document document) {
 		super(document);
@@ -42,7 +46,7 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 
 	@Override
 	public byte[] getFileData() {
-		return getFileData("$FileData");
+		return getFileData(DEFAULT_FILEDATA_FIELD);
 	}
 
 	/*
@@ -54,7 +58,7 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 	public byte[] getFileData(final String itemName) {
 		try {
 			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-			for (XMLNode rawitemdata : getDxl().selectNodes("//item[@name='" + itemName + "']/rawitemdata")) {
+			for (XMLNode rawitemdata : getDxl().selectNodes("//item[@name='" + escapeXPathValue(itemName) + "']/rawitemdata")) {
 				String rawData = rawitemdata.getText();
 				byte[] thisData = parseBase64Binary(rawData);
 				byteStream.write(thisData);
@@ -69,11 +73,15 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 		}
 	}
 
-	@Override
 	public void setFileData(final byte[] fileData) {
+		setFileData(DEFAULT_FILEDATA_FIELD, fileData);
+	}
+
+	@Override
+	public void setFileData(final String itemName, final byte[] fileData) {
 		try {
 			// To set the file content, first clear out existing content
-			List<XMLNode> fileDataNodes = getDxl().selectNodes("//item[@name='$FileData']");
+			List<XMLNode> fileDataNodes = getDxl().selectNodes("//item[@name='" + escapeXPathValue(itemName) + "']");
 			for (int i = fileDataNodes.size() - 1; i >= 0; i--) {
 				fileDataNodes.get(i).getParentNode().removeChild(fileDataNodes.get(i));
 			}
@@ -87,7 +95,7 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 			String firstChunkData = printBase64Binary(Arrays.copyOfRange(reconData, 0, firstChunk));
 			XMLNode documentNode = getDxl().selectSingleNode("//note");
 			XMLNode fileDataNode = documentNode.addChildElement("item");
-			fileDataNode.setAttribute("name", "$FileData");
+			fileDataNode.setAttribute("name", itemName);
 			fileDataNode = fileDataNode.addChildElement("rawitemdata");
 			fileDataNode.setAttribute("type", "1");
 			fileDataNode.setText(firstChunkData);
@@ -104,7 +112,7 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 				String chunkData = printBase64Binary(Arrays.copyOfRange(reconData, offset, offset + chunkSize));
 
 				fileDataNode = documentNode.addChildElement("item");
-				fileDataNode.setAttribute("name", "$FileData");
+				fileDataNode.setAttribute("name", itemName);
 				fileDataNode = fileDataNode.addChildElement("rawitemdata");
 				fileDataNode.setAttribute("type", "1");
 				fileDataNode.setText(chunkData);
@@ -113,17 +121,19 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 				offset += chunkSize;
 			}
 
-			// Also set the file size
-			XMLNode fileSizeNode = getDocumentElement().selectSingleNode("//item[@name='$FileSize']");
-			if (fileSizeNode == null) {
-				fileSizeNode = getDocumentElement().addChildElement("item");
-				fileSizeNode.setAttribute("name", "$FileSize");
-				fileSizeNode.setAttribute("sign", "true");
-				fileSizeNode = fileSizeNode.addChildElement("number");
-			} else {
-				fileSizeNode = fileSizeNode.selectSingleNode("number");
+			// Also set the file size if we're setting the main field
+			if (DEFAULT_FILEDATA_FIELD.equals(itemName)) {
+				XMLNode fileSizeNode = getDocumentElement().selectSingleNode("//item[@name='$FileSize']");
+				if (fileSizeNode == null) {
+					fileSizeNode = getDocumentElement().addChildElement("item");
+					fileSizeNode.setAttribute("name", "$FileSize");
+					fileSizeNode.setAttribute("sign", "true");
+					fileSizeNode = fileSizeNode.addChildElement("number");
+				} else {
+					fileSizeNode = fileSizeNode.selectSingleNode("number");
+				}
+				fileSizeNode.setText(String.valueOf(fileData.length));
 			}
-			fileSizeNode.setText(String.valueOf(fileData.length));
 		} catch (IOException ioe) {
 			DominoUtils.handleException(ioe);
 		}
@@ -206,5 +216,28 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 			dataNode = dataNode.selectSingleNode("text");
 		}
 		return dataNode;
+	}
+
+	protected String escapeXPathValue(final String input) {
+		return input.replace("'", "\\'");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.FileResource#getItemNames()
+	 */
+	@Override
+	public Collection<String> getItemNames() {
+		Collection<String> result = new TreeSet<String>();
+
+		for (XMLNode node : getDxl().selectNodes("//item")) {
+			String itemName = node.getAttribute("name");
+			if (!itemName.isEmpty()) {
+				result.add(itemName);
+			}
+		}
+
+		return result;
 	}
 }

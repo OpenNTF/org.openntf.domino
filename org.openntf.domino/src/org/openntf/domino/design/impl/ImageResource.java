@@ -11,14 +11,15 @@ import org.openntf.domino.Document;
  * @author jgallagher
  * 
  */
-public class ACLNote extends AbstractDesignBase implements org.openntf.domino.design.ACLNote {
+public class ImageResource extends FileResource implements org.openntf.domino.design.ImageResource {
 	@SuppressWarnings("unused")
-	private static final Logger log_ = Logger.getLogger(ACLNote.class.getName());
+	private static final Logger log_ = Logger.getLogger(ImageResource.class.getName());
 
 	/**
 	 * @param document
 	 */
-	protected ACLNote(final Document document) {
+	public ImageResource(final Document document) {
 		super(document);
 	}
+
 }

@@ -35,9 +35,7 @@ public class XMLDocument extends XMLNode {
 	}
 
 	public XMLDocument(final String xml) throws SAXException, IOException, ParserConfigurationException {
-		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-
-		this.node = builder.parse(xml);
+		loadString(xml);
 	}
 
 	public XMLNode getDocumentElement() {
@@ -48,19 +46,15 @@ public class XMLDocument extends XMLNode {
 		URL url = new URL(urlString);
 		URLConnection conn = url.openConnection();
 
-		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-
-		this.node = builder.parse((InputStream) conn.getContent());
+		this.node = getBuilder().parse((InputStream) conn.getContent());
 	}
 
 	public void loadInputStream(final InputStream is) throws SAXException, IOException, ParserConfigurationException {
-		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-
-		this.node = builder.parse(is);
+		this.node = getBuilder().parse(is);
 	}
 
 	public void loadString(final String s) throws SAXException, IOException, ParserConfigurationException {
-		loadInputStream(new ByteArrayInputStream(s.getBytes()));
+		loadInputStream(new ByteArrayInputStream(s.getBytes("UTF-8")));
 	}
 
 	@Override
@@ -78,5 +72,12 @@ public class XMLDocument extends XMLNode {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private DocumentBuilder getBuilder() throws ParserConfigurationException {
+		DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
+		fac.setValidating(false);
+		// fac.setNamespaceAware(true);
+		return fac.newDocumentBuilder();
 	}
 }

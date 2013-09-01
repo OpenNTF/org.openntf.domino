@@ -11,6 +11,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.DxlExporter;
 import org.openntf.domino.DxlImporter;
 import org.openntf.domino.Session;
 import org.openntf.domino.design.DesignBase;
@@ -26,7 +27,6 @@ import org.xml.sax.SAXException;
 public abstract class AbstractDesignBase implements DesignBase {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignBase.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	private String noteId_;
 	private final Database database_;
@@ -35,7 +35,10 @@ public abstract class AbstractDesignBase implements DesignBase {
 	protected AbstractDesignBase(final Document document) {
 		database_ = document.getAncestorDatabase();
 		noteId_ = document.getNoteID();
-		loadDxl(document.generateXML());
+
+		DxlExporter exporter = document.getAncestorSession().createDxlExporter();
+		exporter.setOutputDOCTYPE(false);
+		loadDxl(exporter.exportDxl(document));
 	}
 
 	protected AbstractDesignBase(final Database database) {

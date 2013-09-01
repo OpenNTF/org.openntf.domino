@@ -15,7 +15,6 @@ import org.openntf.domino.utils.xml.XMLNode;
 public class DesignForm extends AbstractDesignBaseNamed implements org.openntf.domino.design.DesignForm {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DesignForm.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @param document

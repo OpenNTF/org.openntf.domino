@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<!DOCTYPE form SYSTEM 'xmlschemas/domino_8_5_3.dtd'>
+<!-- <!DOCTYPE form SYSTEM 'xmlschemas/domino_8_5_3.dtd'> -->
 <form name="" xmlns='http://www.lotus.com/dxl' publicaccess='false' renderpassthrough='true'>
 	<body>
 		<richtext>
