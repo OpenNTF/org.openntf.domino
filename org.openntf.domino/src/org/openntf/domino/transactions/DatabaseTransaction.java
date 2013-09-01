@@ -106,6 +106,7 @@ public class DatabaseTransaction {
 				if (next instanceof Document) {
 					boolean result = ((Document) next).save();
 					if (!result) {
+						// System.out.println("Transaction document save failed.");
 						// TODO NTF - take some action to indicate that the save failed, potentially cancelling the transaction
 					} else {
 						if (isDocLock())

@@ -122,6 +122,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			// delegate.setPreferJavaDates(true);
 			noteid_ = delegate.getNoteID();
 			unid_ = delegate.getUniversalID();
+			// System.out.println("initializing new document from " + unid_);
 			isNew_ = delegate.isNewNote();
 			// created_ = DominoUtils.toJavaDateSafe(delegate.getCreated());
 			// initiallyModified_ = DominoUtils.toJavaDateSafe(delegate.getInitiallyModified());
@@ -2283,6 +2284,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public boolean save(final boolean force, final boolean makeResponse, final boolean markRead) {
+		// System.out.println("Starting save operation...");
 		boolean result = false;
 		if (isDirty()) {
 			boolean go = true;
@@ -2294,25 +2296,36 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					lotus.domino.Document del = getDelegate();
 					if (del != null) {
 						result = del.save(force, makeResponse, markRead);
+						// System.out.println("Document saved returned " + String.valueOf(result));
 					} else {
 						log_.severe("Delegate document for " + unid_ + " is NULL!??!");
 					}
 					if (!noteid_.equals(del.getNoteID())) {
+						// System.out.println("Resetting note id from " + noteid_ + " to " + del.getNoteID());
 						noteid_ = del.getNoteID();
 					}
 					if (!unid_.equals(del.getUniversalID())) {
+						// System.out.println("Resetting unid from " + unid_ + " to " + del.getUniversalID());
 						unid_ = del.getUniversalID();
 					}
 				} catch (NotesException e) {
+					// System.out.println("Exception from attempted save...");
+					// e.printStackTrace();
 					if (e.text.contains("Database already contains a document with this ID")) {
-						log_.log(Level.WARNING, "Unable to save a document with id " + getUniversalID()
-								+ " because that id already exists. Saving to a different unid instead...");
-						setUniversalID(DominoUtils.toUnid(new Date().getTime()));
+						Throwable t = new RuntimeException();
+						String newunid = DominoUtils.toUnid(new Date().getTime());
+						String message = "Unable to save a document with id " + getUniversalID()
+								+ " because that id already exists. Saving a " + this.getFormName()
+								+ (this.hasItem("$$Key") ? " (" + getItemValueString("$$Key") + ")" : "")
+								+ " to a different unid instead: " + newunid;
+						setUniversalID(newunid);
 						try {
 							getDelegate().save(force, makeResponse, markRead);
 							if (!noteid_.equals(getDelegate().getNoteID())) {
 								noteid_ = getDelegate().getNoteID();
 							}
+							System.out.println(message);
+							log_.log(Level.WARNING, message/* , t */);
 						} catch (NotesException ne) {
 							log_.log(Level.SEVERE, "Okay, now it's time to really panic. Sorry...");
 							DominoUtils.handleException(e);
@@ -2326,6 +2339,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					getAncestorDatabase().fireListener(generateEvent(Events.AFTER_UPDATE_DOCUMENT, null));
 				}
 			} else {
+				// System.out.println("Before Update listener blocked save.");
 				if (log_.isLoggable(Level.FINE)) {
 					log_.log(Level.FINE, "Document " + getNoteID()
 							+ " was not saved because the DatabaseListener for update returned false.");
@@ -2333,11 +2347,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				result = false;
 			}
 		} else {
+			// System.out.println("No changes occured therefore not saving.");
 			if (log_.isLoggable(Level.FINE)) {
 				log_.log(Level.FINE, "Document " + getNoteID() + " was not saved because nothing on it was changed.");
 			}
 			result = true; // because nothing changed, we don't want to activate any potential failure behavior in the caller
 		}
+		// System.out.println("Save completed returning " + String.valueOf(result));
 		return result;
 	}
 

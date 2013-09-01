@@ -104,29 +104,31 @@ public class JSONFormatter extends Formatter {
 	 */
 	private void formatThrowable(final LogRecord record) {
 		try {
-			startProperty("exception");
-			startArray();
-			for (StackTraceElement element : record.getThrown().getStackTrace()) {
-				startProperty("message");
-				startObject();
+			if (record.getThrown() != null) {
+				startProperty("exception");
+				startArray();
+				for (StackTraceElement element : record.getThrown().getStackTrace()) {
+					startProperty("message");
+					startObject();
 
-				startProperty("class");
-				out(element.getClassName());
-				endProperty();
+					startProperty("class");
+					out(element.getClassName());
+					endProperty();
 
-				startProperty("method");
-				out(element.getMethodName());
-				endProperty();
+					startProperty("method");
+					out(element.getMethodName());
+					endProperty();
 
-				startProperty("line");
-				out(element.getLineNumber());
-				endProperty();
-				out(element.getClassName() + "." + element.getMethodName() + "()");
-				endObject();
+					startProperty("line");
+					out(element.getLineNumber());
+					endProperty();
+					out(element.getClassName() + "." + element.getMethodName() + "()");
+					endObject();
+					endProperty();
+				}
+				endArray();
 				endProperty();
 			}
-			endArray();
-			endProperty();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -2,7 +2,6 @@ package org.openntf.domino.graph;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -24,44 +23,45 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	transient DominoGraph parent_;
 	private String unid_;
 	private Map<String, Serializable> props_;
+	public final String[] DEFAULT_STR_ARRAY = { "" };
 
-	public static void clearCache() {
-		documentCache.set(null);
-	}
-
-	private static ThreadLocal<Map<String, Document>> documentCache = new ThreadLocal<Map<String, Document>>() {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.ThreadLocal#initialValue()
-		 */
-		@Override
-		protected Map<String, Document> initialValue() {
-			return new HashMap<String, Document>();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.ThreadLocal#get()
-		 */
-		@Override
-		public Map<String, Document> get() {
-			Map<String, Document> map = super.get();
-			if (map == null) {
-				map = new HashMap<String, Document>();
-				super.set(map);
-
-			}
-			return map;
-		}
-
-	};
+	// public static void clearCache() {
+	// documentCache.set(null);
+	// }
+	//
+	// private static ThreadLocal<Map<String, Document>> documentCache = new ThreadLocal<Map<String, Document>>() {
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see java.lang.ThreadLocal#initialValue()
+	// */
+	// @Override
+	// protected Map<String, Document> initialValue() {
+	// return new ConcurrentHashMap<String, Document>();
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see java.lang.ThreadLocal#get()
+	// */
+	// @Override
+	// public Map<String, Document> get() {
+	// Map<String, Document> map = super.get();
+	// if (map == null) {
+	// map = new ConcurrentHashMap<String, Document>();
+	// super.set(map);
+	//
+	// }
+	// return map;
+	// }
+	//
+	// };
 
 	public DominoElement(final DominoGraph parent, final Document doc) {
 		// doc_ = doc;
 		parent_ = parent;
-		unid_ = doc.getUniversalID();
+		unid_ = doc.getUniversalID().toUpperCase();
 	}
 
 	private Map<String, Serializable> getProps() {
@@ -119,12 +119,20 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	}
 
 	private Document getDocument() {
-		Document doc = documentCache.get().get(unid_);
-		if (doc == null) {
-			doc = getDatabase().getDocumentByKey(unid_, true);
-			documentCache.get().put(unid_, doc);
-		}
-		return doc;
+		return getParent().getDocument(unid_, true);
+		// Map<String, Document> map = documentCache.get();
+		// Document doc = map.get(unid_);
+		// if (doc == null) {
+		// synchronized (map) {
+		// doc = getDatabase().getDocumentByKey(unid_, true);
+		// String localUnid = doc.getUniversalID().toUpperCase();
+		// if (!unid_.equals(localUnid)) {
+		// log_.log(Level.SEVERE, "UNIDs do not match! Expected: " + unid_ + ", Result: " + localUnid);
+		// }
+		// map.put(unid_, doc);
+		// }
+		// }
+		// return doc;
 	}
 
 	@Override
@@ -166,7 +174,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 					}
 				}
 			} catch (Exception e) {
-				log_.log(Level.SEVERE, "Exception occured attempting to get value from document for " + propertyName
+				log_.log(Level.INFO, "Exception occured attempting to get value from document for " + propertyName
 						+ " so we cannot return a value", e);
 			}
 		} else {
@@ -181,7 +189,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 						}
 					}
 				} catch (Exception e) {
-					log_.log(Level.WARNING, "Exception occured attempting to get value from document for " + propertyName
+					log_.log(Level.INFO, "Exception occured attempting to get value from document for " + propertyName
 							+ " but we have a value in the cache.", e);
 				}
 			}
@@ -200,8 +208,11 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		} else {
 			if (result == null) {
 				if (T.isArray())
-					// RedpillUtils.log("Array requested and we got");
-					return (T) Array.newInstance(T.getComponentType(), 0);
+					if (T.getComponentType() == String.class) {
+						return (T) DEFAULT_STR_ARRAY;
+					} else {
+						return (T) Array.newInstance(T.getComponentType(), 0);
+					}
 				if (Boolean.class.equals(T) || Boolean.TYPE.equals(T))
 					return (T) Boolean.FALSE;
 				if (Integer.class.equals(T) || Integer.TYPE.equals(T))
@@ -264,7 +275,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	// }
 
 	public void setRawDocument(final org.openntf.domino.Document doc) {
-		unid_ = doc.getUniversalID();
+		unid_ = doc.getUniversalID().toUpperCase();
 	}
 
 	private final Set<String> changedProperties_ = new HashSet<String>();
@@ -306,7 +317,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	protected void reapplyChanges() {
 		Map<String, Serializable> props = getProps();
-		Document doc = getRawDocument();
+		Document doc = getDocument();
 		synchronized (props) {
 			if (props.isEmpty()) {
 				// System.out.println("Cached properties is empty!");

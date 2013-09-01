@@ -26,7 +26,11 @@ public class FileFormatter extends Formatter {
 	public String format(final LogRecord logRecord) {
 		Date recordDate = new Date(logRecord.getMillis());
 		StringBuffer sb = new StringBuffer();
-		StackTraceElement ste = logRecord.getThrown().getStackTrace()[0];
+		Throwable t = logRecord.getThrown();
+		StackTraceElement ste = null;
+		if (t != null) {
+			ste = t.getStackTrace()[0];
+		}
 		sb.append(LogUtils.dateToString(recordDate, UTC_Format));
 		sb.append(" [");
 		sb.append(logRecord.getLevel().getName());

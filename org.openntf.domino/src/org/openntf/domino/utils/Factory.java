@@ -25,7 +25,7 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
-import org.openntf.domino.graph.DominoElement;
+import org.openntf.domino.graph.DominoGraph;
 import org.openntf.domino.impl.Base;
 import org.openntf.domino.impl.DocumentCollection;
 import org.openntf.domino.impl.Session;
@@ -551,7 +551,7 @@ public enum Factory {
 	}
 
 	public static void clearDominoGraph() {
-		DominoElement.clearCache();
+		DominoGraph.clearDocumentCache();
 	}
 
 	public static void clearBubbleExceptions() {

@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -215,7 +216,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		synchronized (cache) {
 			cache.clear();
 		}
-		DominoElement.clearCache();
+		clearDocumentCache();
 	}
 
 	@Override
@@ -299,11 +300,15 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		return getDatabase();
 	}
 
-	private Document getDocument(final Object id, final boolean createOnFail) {
+	Document getDocument(final Object id, final boolean createOnFail) {
 		Document result = null;
 		String unid = "";
+		Map<String, Document> map = documentCache.get();
 		if (id == null && createOnFail) {
 			result = getRawDatabase().createDocument();
+			synchronized (map) {
+				map.put(result.getUniversalID(), result);
+			}
 		} else if (id instanceof String) {
 			String sid = (String) id;
 			if (DominoUtils.isUnid(sid)) {
@@ -321,12 +326,25 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 			log_.log(Level.SEVERE, "ALERT! INVALID UNID FROM id type " + (id == null ? "null" : id.getClass().getName()) + ": " + id);
 		}
 		if (result == null) {
-			result = getRawDatabase().getDocumentByKey(unid, createOnFail);
+
+			result = map.get(unid);
+			if (result == null) {
+				result = getRawDatabase().getDocumentByKey(unid, createOnFail);
+				if (result != null) {
+					String localUnid = result.getUniversalID().toUpperCase();
+					if (!unid.equals(localUnid)) {
+						log_.log(Level.SEVERE, "UNIDs do not match! Expected: " + unid + ", Result: " + localUnid);
+					}
+					synchronized (map) {
+						map.put(unid, result);
+					}
+				}
+			}
 		}
-		if (result == null && createOnFail) {
-			log_.log(Level.SEVERE, "Returning a null document for id " + String.valueOf(id)
-					+ " even though createOnFail was true. This should be guaranteed to return a real document!");
-		}
+		// if (result == null && createOnFail) {
+		// log_.log(Level.SEVERE, "Returning a null document for id " + String.valueOf(id)
+		// + " even though createOnFail was true. This should be guaranteed to return a real document!");
+		// }
 		return result;
 	}
 
@@ -500,6 +518,39 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 
 	// private boolean inTransaction_ = false;
 	private static ThreadLocal<DatabaseTransaction> txnHolder_ = new ThreadLocal<DatabaseTransaction>() {
+
+	};
+
+	public static void clearDocumentCache() {
+		documentCache.set(null);
+	}
+
+	private static ThreadLocal<Map<String, Document>> documentCache = new ThreadLocal<Map<String, Document>>() {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.ThreadLocal#initialValue()
+		 */
+		@Override
+		protected Map<String, Document> initialValue() {
+			return new ConcurrentHashMap<String, Document>();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.ThreadLocal#get()
+		 */
+		@Override
+		public Map<String, Document> get() {
+			Map<String, Document> map = super.get();
+			if (map == null) {
+				map = new ConcurrentHashMap<String, Document>();
+				super.set(map);
+
+			}
+			return map;
+		}
 
 	};
 
