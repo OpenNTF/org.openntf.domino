@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
 Name: org/openntf/domino
 Implementation-Title: OpenNTF Domino API
-Implementation-Version: M2.5
+Implementation-Version: M3
 Implementation-Vendor: OpenNTF.org

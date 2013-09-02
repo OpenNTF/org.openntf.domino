@@ -2002,6 +2002,12 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 									// Domino only allows uniform lists
 									// There may have been some native DateTimes added in so far; burn them
 									enc_recycle(resultList);
+									if (log_.isLoggable(Level.WARNING)) {
+										log_.log(Level.WARNING, "Attempt to write a non-uniform list to item " + itemName + " in document "
+												+ getAncestorDatabase().getFilePath() + ": " + getUniversalID()
+												+ ". The list contains items of both " + objectClass.getName() + " and "
+												+ domNode.getClass().getName() + ". A MIME entity will be used instead.");
+									}
 									throw new IllegalArgumentException();
 								}
 							}
@@ -2016,7 +2022,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 							}
 							resultList.add(domNode);
 						} else {
-							log_.log(Level.WARNING, "toDominoFriendly returned a null value for an original list member value of "
+							log_.log(Level.INFO, "toDominoFriendly returned a null value for an original list member value of "
 									+ (valNode == null ? "null" : valNode.getClass().getName()));
 						}
 					}
