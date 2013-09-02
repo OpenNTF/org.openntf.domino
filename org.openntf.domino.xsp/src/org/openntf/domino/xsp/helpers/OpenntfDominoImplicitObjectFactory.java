@@ -12,6 +12,8 @@ import com.ibm.xsp.context.FacesContextEx;
 import com.ibm.xsp.el.ImplicitObjectFactory;
 import com.ibm.xsp.util.TypedUtil;
 
+//import org.openntf.domino.Session;
+@SuppressWarnings("unchecked")
 public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory {
 	public static class ContextListener implements com.ibm.xsp.event.FacesContextListener {
 		@Override
@@ -135,7 +137,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 	private org.openntf.domino.Session createSession(final FacesContextEx ctx) {
 		org.openntf.domino.Session session = null;
 		String sessionKey = isAppGodMode(ctx) ? "session" : "opensession";
-		Map localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
+		Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
 		lotus.domino.Session rawSession = (lotus.domino.Session) localMap.get("session");
 		if (rawSession == null) {
 			rawSession = (lotus.domino.Session) ctx.getApplication().getVariableResolver().resolveVariable(ctx, "session");
@@ -159,7 +161,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 	private org.openntf.domino.Database createDatabase(final FacesContextEx ctx, final org.openntf.domino.Session session) {
 		org.openntf.domino.Database database = null;
 		String dbKey = isAppGodMode(ctx) ? "database" : "opendatabase";
-		Map localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
+		Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
 		lotus.domino.Database rawDatabase = (lotus.domino.Database) localMap.get("database");
 		if (rawDatabase == null) {
 			rawDatabase = (lotus.domino.Database) ctx.getApplication().getVariableResolver().resolveVariable(ctx, "database");
@@ -174,7 +176,6 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 	}
 
 	@Override
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void createImplicitObjects(final FacesContextEx ctx) {
 		ctx.addRequestListener(new ContextListener());
 		Factory.setClassLoader(ctx.getContextClassLoader());
@@ -182,6 +183,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 			System.out.println("Beginning creation of implicit objects...");
 		}
 		org.openntf.domino.Session session = createSession(ctx);
+		@SuppressWarnings("unused")
 		org.openntf.domino.Database database = createDatabase(ctx, session);
 		if (isAppDebug(ctx)) {
 			System.out.println("Done creating implicit objects.");
