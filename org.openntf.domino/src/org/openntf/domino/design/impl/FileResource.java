@@ -19,7 +19,6 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLNode;
 
 public class FileResource extends AbstractDesignNoteBase implements org.openntf.domino.design.FileResource {
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(FileResource.class.getName());
 
 	private static final String DESIGN_FLAGEXT_FILE_DEPLOYABLE = "D";

@@ -12,7 +12,6 @@ import org.openntf.domino.Document;
  * 
  */
 public class ImageResource extends FileResource implements org.openntf.domino.design.ImageResource {
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ImageResource.class.getName());
 
 	/**

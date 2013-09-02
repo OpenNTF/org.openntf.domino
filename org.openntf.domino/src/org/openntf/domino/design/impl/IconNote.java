@@ -12,7 +12,6 @@ import org.openntf.domino.Document;
  * 
  */
 public class IconNote extends AbstractDesignBaseNamed implements org.openntf.domino.design.IconNote {
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(IconNote.class.getName());
 
 	/**

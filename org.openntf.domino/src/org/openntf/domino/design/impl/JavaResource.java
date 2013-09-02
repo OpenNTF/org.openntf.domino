@@ -19,7 +19,6 @@ import org.openntf.domino.utils.xml.XMLNode;
  * 
  */
 public class JavaResource extends FileResource implements org.openntf.domino.design.JavaResource {
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(JavaResource.class.getName());
 
 	private static final String CLASS_INDEX_ITEM = "$ClassIndexItem";

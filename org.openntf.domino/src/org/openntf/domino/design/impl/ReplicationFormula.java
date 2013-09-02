@@ -12,7 +12,6 @@ import org.openntf.domino.Document;
  * 
  */
 public class ReplicationFormula extends AbstractDesignBase implements org.openntf.domino.design.ReplicationFormula {
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ReplicationFormula.class.getName());
 
 	/**

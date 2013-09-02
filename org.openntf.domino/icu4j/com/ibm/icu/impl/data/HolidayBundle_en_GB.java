@@ -14,26 +14,20 @@ import com.ibm.icu.util.EasterHoliday;
 import com.ibm.icu.util.Holiday;
 import com.ibm.icu.util.SimpleHoliday;
 
-public class HolidayBundle_en_GB extends ListResourceBundle
-{
-    static private final Holiday[] fHolidays = {
-        SimpleHoliday.NEW_YEARS_DAY,
-        SimpleHoliday.MAY_DAY,
-        new SimpleHoliday(Calendar.MAY,        31, -Calendar.MONDAY,    "Spring Holiday"),
-        new SimpleHoliday(Calendar.AUGUST,     31, -Calendar.MONDAY,    "Summer Bank Holiday"),
-        SimpleHoliday.CHRISTMAS,
-        SimpleHoliday.BOXING_DAY,
-        new SimpleHoliday(Calendar.DECEMBER,   31, -Calendar.MONDAY,    "Christmas Holiday"),
+public class HolidayBundle_en_GB extends ListResourceBundle {
+	static private final Holiday[] fHolidays = { SimpleHoliday.NEW_YEARS_DAY, SimpleHoliday.MAY_DAY,
+			new SimpleHoliday(Calendar.MAY, 31, -Calendar.MONDAY, "Spring Holiday"),
+			new SimpleHoliday(Calendar.AUGUST, 31, -Calendar.MONDAY, "Summer Bank Holiday"), SimpleHoliday.CHRISTMAS,
+			SimpleHoliday.BOXING_DAY, new SimpleHoliday(Calendar.DECEMBER, 31, -Calendar.MONDAY, "Christmas Holiday"),
 
-        // Easter and related holidays
-        EasterHoliday.GOOD_FRIDAY,
-        EasterHoliday.EASTER_SUNDAY,
-        EasterHoliday.EASTER_MONDAY,
-    };
-    static private final Object[][] fContents = {
-        { "holidays",   fHolidays },
+			// Easter and related holidays
+			EasterHoliday.GOOD_FRIDAY, EasterHoliday.EASTER_SUNDAY, EasterHoliday.EASTER_MONDAY, };
+	static private final Object[][] fContents = { { "holidays", fHolidays },
 
-        { "Labor Day",  "Labour Day" },
-    };
-    public synchronized Object[][] getContents() { return fContents; }
+	{ "Labor Day", "Labour Day" }, };
+
+	@Override
+	public synchronized Object[][] getContents() {
+		return fContents;
+	}
 }

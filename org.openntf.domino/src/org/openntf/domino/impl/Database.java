@@ -937,6 +937,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#getDocumentByURL(java.lang.String, boolean, boolean, boolean, java.lang.String, java.lang.String,
 	 * java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
+	@SuppressWarnings("unused")
 	public Document getDocumentByURL(final String url, final boolean reload, final boolean reloadIfModified, final boolean urlList,
 			final String charSet, final String webUser, final String webPassword, final String proxyUser, final String proxyPassword,
 			final boolean returnImmediately) {
@@ -2813,6 +2814,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		localFactory_ = factory;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public IDominoEvent generateEvent(final EnumEvent event, final org.openntf.domino.Base source, final Object payload) {
 		return getEventFactory().generate(event, source, this, payload);
 	}

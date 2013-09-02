@@ -116,7 +116,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * @param delegate
 	 *            the delegate
 	 */
-	@SuppressWarnings("unused")
 	private void initialize(final lotus.domino.Document delegate) {
 		try {
 			// delegate.setPreferJavaDates(true);

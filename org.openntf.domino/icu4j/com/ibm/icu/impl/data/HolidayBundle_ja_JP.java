@@ -14,11 +14,11 @@ import com.ibm.icu.util.Holiday;
 import com.ibm.icu.util.SimpleHoliday;
 
 public class HolidayBundle_ja_JP extends ListResourceBundle {
-    static private final Holiday[] fHolidays = {
-        new SimpleHoliday(Calendar.FEBRUARY,  11,  0,    "National Foundation Day"),
-    };
-    static private final Object[][] fContents = {
-        {   "holidays",         fHolidays   },
-    };
-    public synchronized Object[][] getContents() { return fContents; }
+	static private final Holiday[] fHolidays = { new SimpleHoliday(Calendar.FEBRUARY, 11, 0, "National Foundation Day"), };
+	static private final Object[][] fContents = { { "holidays", fHolidays }, };
+
+	@Override
+	public synchronized Object[][] getContents() {
+		return fContents;
+	}
 }

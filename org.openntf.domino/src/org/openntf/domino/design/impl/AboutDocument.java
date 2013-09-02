@@ -19,6 +19,5 @@ public class AboutDocument extends AbstractDesignBase implements org.openntf.dom
 		super(document);
 	}
 
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AboutDocument.class.getName());
 }

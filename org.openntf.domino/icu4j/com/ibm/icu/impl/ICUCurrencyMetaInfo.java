@@ -17,250 +17,259 @@ import com.ibm.icu.text.CurrencyMetaInfo;
 /**
  * ICU's currency meta info data.
  */
+@SuppressWarnings("deprecation")
 public class ICUCurrencyMetaInfo extends CurrencyMetaInfo {
-    private ICUResourceBundle regionInfo;
-    private ICUResourceBundle digitInfo;
+	private ICUResourceBundle regionInfo;
+	private ICUResourceBundle digitInfo;
 
-    public ICUCurrencyMetaInfo() {
-        ICUResourceBundle bundle = (ICUResourceBundle) ICUResourceBundle.getBundleInstance(
-            ICUResourceBundle.ICU_CURR_BASE_NAME, "supplementalData",
-            ICUResourceBundle.ICU_DATA_CLASS_LOADER);
-        regionInfo = bundle.findTopLevel("CurrencyMap");
-        digitInfo = bundle.findTopLevel("CurrencyMeta");
-    }
+	public ICUCurrencyMetaInfo() {
+		ICUResourceBundle bundle = (ICUResourceBundle) ICUResourceBundle.getBundleInstance(ICUResourceBundle.ICU_CURR_BASE_NAME,
+				"supplementalData", ICUResourceBundle.ICU_DATA_CLASS_LOADER);
+		regionInfo = bundle.findTopLevel("CurrencyMap");
+		digitInfo = bundle.findTopLevel("CurrencyMeta");
+	}
 
-    @Override
-    public List<CurrencyInfo> currencyInfo(CurrencyFilter filter) {
-        return collect(new InfoCollector(), filter);
-    }
+	@Override
+	public List<CurrencyInfo> currencyInfo(final CurrencyFilter filter) {
+		return collect(new InfoCollector(), filter);
+	}
 
-    @Override
-    public List<String> currencies(CurrencyFilter filter) {
-        return collect(new CurrencyCollector(), filter);
-   }
+	@Override
+	public List<String> currencies(final CurrencyFilter filter) {
+		return collect(new CurrencyCollector(), filter);
+	}
 
-    @Override
-    public List<String> regions(CurrencyFilter filter) {
-        return collect(new RegionCollector(), filter);
-    }
+	@Override
+	public List<String> regions(final CurrencyFilter filter) {
+		return collect(new RegionCollector(), filter);
+	}
 
-    @Override
-    public CurrencyDigits currencyDigits(String isoCode) {
-        ICUResourceBundle b = digitInfo.findWithFallback(isoCode);
-        if (b == null) {
-            b = digitInfo.findWithFallback("DEFAULT");
-        }
-        int[] data = b.getIntVector();
-        return new CurrencyDigits(data[0], data[1]);
-    }
+	@Override
+	public CurrencyDigits currencyDigits(final String isoCode) {
+		ICUResourceBundle b = digitInfo.findWithFallback(isoCode);
+		if (b == null) {
+			b = digitInfo.findWithFallback("DEFAULT");
+		}
+		int[] data = b.getIntVector();
+		return new CurrencyDigits(data[0], data[1]);
+	}
 
-    private <T> List<T> collect(Collector<T> collector, CurrencyFilter filter) {
-        // We rely on the fact that the data lists the regions in order, and the
-        // priorities in order within region.  This means we don't need
-        // to sort the results to ensure the ordering matches the spec.
+	private <T> List<T> collect(final Collector<T> collector, CurrencyFilter filter) {
+		// We rely on the fact that the data lists the regions in order, and the
+		// priorities in order within region.  This means we don't need
+		// to sort the results to ensure the ordering matches the spec.
 
-        if (filter == null) {
-            filter = CurrencyFilter.all();
-        }
-        int needed = collector.collects();
-        if (filter.region != null) {
-            needed |= Region;
-        }
-        if (filter.currency != null) {
-            needed |= Currency;
-        }
-        if (filter.from != Long.MIN_VALUE || filter.to != Long.MAX_VALUE) {
-            needed |= Date;
-        }
-        if (filter.tenderOnly) {
-            needed |= Tender;
-        }
+		if (filter == null) {
+			filter = CurrencyFilter.all();
+		}
+		int needed = collector.collects();
+		if (filter.region != null) {
+			needed |= Region;
+		}
+		if (filter.currency != null) {
+			needed |= Currency;
+		}
+		if (filter.from != Long.MIN_VALUE || filter.to != Long.MAX_VALUE) {
+			needed |= Date;
+		}
+		if (filter.tenderOnly) {
+			needed |= Tender;
+		}
 
-        if (needed != 0) {
-            if (filter.region != null) {
-                ICUResourceBundle b = regionInfo.findWithFallback(filter.region);
-                if (b != null) {
-                    collectRegion(collector, filter, needed, b);
-                }
-            } else {
-                for (int i = 0; i < regionInfo.getSize(); i++) {
-                    collectRegion(collector, filter, needed, regionInfo.at(i));
-                }
-            }
-        }
+		if (needed != 0) {
+			if (filter.region != null) {
+				ICUResourceBundle b = regionInfo.findWithFallback(filter.region);
+				if (b != null) {
+					collectRegion(collector, filter, needed, b);
+				}
+			} else {
+				for (int i = 0; i < regionInfo.getSize(); i++) {
+					collectRegion(collector, filter, needed, regionInfo.at(i));
+				}
+			}
+		}
 
-        return collector.getList();
-    }
+		return collector.getList();
+	}
 
-    private <T> void collectRegion(Collector<T> collector, CurrencyFilter filter,
-            int needed, ICUResourceBundle b) {
+	private <T> void collectRegion(final Collector<T> collector, final CurrencyFilter filter, final int needed, final ICUResourceBundle b) {
 
-        String region = b.getKey();
-        if (needed == Region) {
-            collector.collect(b.getKey(), null, 0, 0, -1, false);
-            return;
-        }
+		String region = b.getKey();
+		if (needed == Region) {
+			collector.collect(b.getKey(), null, 0, 0, -1, false);
+			return;
+		}
 
-        for (int i = 0; i < b.getSize(); i++) {
-            ICUResourceBundle r = b.at(i);
-            if (r.getSize() == 0) {
-                // AQ[0] is an empty array instead of a table, so the bundle is null.
-                // There's no data here, so we skip this entirely.
-                // We'd do a type test, but the ResourceArray type is private.
-                continue;
-            }
-            String currency = null;
-            long from = Long.MIN_VALUE;
-            long to = Long.MAX_VALUE;
-            boolean tender = true;
+		for (int i = 0; i < b.getSize(); i++) {
+			ICUResourceBundle r = b.at(i);
+			if (r.getSize() == 0) {
+				// AQ[0] is an empty array instead of a table, so the bundle is null.
+				// There's no data here, so we skip this entirely.
+				// We'd do a type test, but the ResourceArray type is private.
+				continue;
+			}
+			String currency = null;
+			long from = Long.MIN_VALUE;
+			long to = Long.MAX_VALUE;
+			boolean tender = true;
 
-            if ((needed & Currency) != 0) {
-                ICUResourceBundle currBundle = r.at("id");
-                currency = currBundle.getString();
-                if (filter.currency != null && !filter.currency.equals(currency)) {
-                    continue;
-                }
-            }
+			if ((needed & Currency) != 0) {
+				ICUResourceBundle currBundle = r.at("id");
+				currency = currBundle.getString();
+				if (filter.currency != null && !filter.currency.equals(currency)) {
+					continue;
+				}
+			}
 
-            if ((needed & Date) != 0) {
-                from = getDate(r.at("from"), Long.MIN_VALUE, false);
-                to = getDate(r.at("to"), Long.MAX_VALUE, true);
-                // In the data, to is always > from.  This means that when we have a range
-                // from == to, the comparisons below will always do the right thing, despite
-                // the range being technically empty.  It really should be [from, from+1) but
-                // this way we don't need to fiddle with it.
-                if (filter.from > to) {
-                    continue;
-                }
-                if (filter.to < from) {
-                    continue;
-                }
-            }
-            if ((needed & Tender) != 0) {
-                ICUResourceBundle tenderBundle = r.at("tender");
-                tender = tenderBundle == null || "true".equals(tenderBundle.getString());
-                if (filter.tenderOnly && !tender) {
-                    continue;
-                }
-            }
+			if ((needed & Date) != 0) {
+				from = getDate(r.at("from"), Long.MIN_VALUE, false);
+				to = getDate(r.at("to"), Long.MAX_VALUE, true);
+				// In the data, to is always > from.  This means that when we have a range
+				// from == to, the comparisons below will always do the right thing, despite
+				// the range being technically empty.  It really should be [from, from+1) but
+				// this way we don't need to fiddle with it.
+				if (filter.from > to) {
+					continue;
+				}
+				if (filter.to < from) {
+					continue;
+				}
+			}
+			if ((needed & Tender) != 0) {
+				ICUResourceBundle tenderBundle = r.at("tender");
+				tender = tenderBundle == null || "true".equals(tenderBundle.getString());
+				if (filter.tenderOnly && !tender) {
+					continue;
+				}
+			}
 
-            // data lists elements in priority order, so 'i' suffices
-            collector.collect(region, currency, from, to, i, tender);
-        }
-    }
+			// data lists elements in priority order, so 'i' suffices
+			collector.collect(region, currency, from, to, i, tender);
+		}
+	}
 
-    private static final long MASK = 4294967295L;
-    private long getDate(ICUResourceBundle b, long defaultValue, boolean endOfDay) {
-        if (b == null) {
-            return defaultValue;
-        }
-        int[] values = b.getIntVector();
-        return ((long) values[0] << 32) | (((long) values[1]) & MASK);
-    }
+	private static final long MASK = 4294967295L;
 
-    // Utility, just because I don't like the n^2 behavior of using list.contains to build a
-    // list of unique items.  If we used java 6 we could use their class for this.
-    private static class UniqueList<T> {
-        private Set<T> seen = new HashSet<T>();
-        private List<T> list = new ArrayList<T>();
+	private long getDate(final ICUResourceBundle b, final long defaultValue, final boolean endOfDay) {
+		if (b == null) {
+			return defaultValue;
+		}
+		int[] values = b.getIntVector();
+		return ((long) values[0] << 32) | (((long) values[1]) & MASK);
+	}
 
-        private static <T> UniqueList<T> create() {
-            return new UniqueList<T>();
-        }
+	// Utility, just because I don't like the n^2 behavior of using list.contains to build a
+	// list of unique items.  If we used java 6 we could use their class for this.
+	private static class UniqueList<T> {
+		private Set<T> seen = new HashSet<T>();
+		private List<T> list = new ArrayList<T>();
 
-        void add(T value) {
-            if (!seen.contains(value)) {
-                list.add(value);
-                seen.add(value);
-            }
-        }
+		private static <T> UniqueList<T> create() {
+			return new UniqueList<T>();
+		}
 
-        List<T> list() {
-            return Collections.unmodifiableList(list);
-        }
-    }
+		void add(final T value) {
+			if (!seen.contains(value)) {
+				list.add(value);
+				seen.add(value);
+			}
+		}
 
-    private static class InfoCollector implements Collector<CurrencyInfo> {
-        // Data is already unique by region/priority, so we don't need to be concerned
-        // about duplicates.
-        private List<CurrencyInfo> result = new ArrayList<CurrencyInfo>();
+		List<T> list() {
+			return Collections.unmodifiableList(list);
+		}
+	}
 
-        public void collect(String region, String currency, long from, long to, int priority, boolean tender) {
-            result.add(new CurrencyInfo(region, currency, from, to, priority, tender));
-        }
+	private static class InfoCollector implements Collector<CurrencyInfo> {
+		// Data is already unique by region/priority, so we don't need to be concerned
+		// about duplicates.
+		private List<CurrencyInfo> result = new ArrayList<CurrencyInfo>();
 
-        public List<CurrencyInfo> getList() {
-            return Collections.unmodifiableList(result);
-        }
+		public void collect(final String region, final String currency, final long from, final long to, final int priority,
+				final boolean tender) {
+			result.add(new CurrencyInfo(region, currency, from, to, priority, tender));
+		}
 
-        public int collects() {
-            return Everything;
-        }
-    }
+		public List<CurrencyInfo> getList() {
+			return Collections.unmodifiableList(result);
+		}
 
-    private static class RegionCollector implements Collector<String> {
-        private final UniqueList<String> result = UniqueList.create();
+		public int collects() {
+			return Everything;
+		}
+	}
 
-        public void collect(
-                String region, String currency, long from, long to, int priority, boolean tender) {
-            result.add(region);
-        }
+	private static class RegionCollector implements Collector<String> {
+		private final UniqueList<String> result = UniqueList.create();
 
-        public int collects() {
-            return Region;
-        }
+		public void collect(final String region, final String currency, final long from, final long to, final int priority,
+				final boolean tender) {
+			result.add(region);
+		}
 
-        public List<String> getList() {
-            return result.list();
-        }
-    }
+		public int collects() {
+			return Region;
+		}
 
-    private static class CurrencyCollector implements Collector<String> {
-        private final UniqueList<String> result = UniqueList.create();
+		public List<String> getList() {
+			return result.list();
+		}
+	}
 
-        public void collect(
-                String region, String currency, long from, long to, int priority, boolean tender) {
-            result.add(currency);
-        }
+	private static class CurrencyCollector implements Collector<String> {
+		private final UniqueList<String> result = UniqueList.create();
 
-        public int collects() {
-            return Currency;
-        }
+		public void collect(final String region, final String currency, final long from, final long to, final int priority,
+				final boolean tender) {
+			result.add(currency);
+		}
 
-        public List<String> getList() {
-            return result.list();
-        }
-    }
+		public int collects() {
+			return Currency;
+		}
 
-    private static final int Region = 1;
-    private static final int Currency = 2;
-    private static final int Date = 4;
-    private static final int Tender = 8;
-    private static final int Everything = Integer.MAX_VALUE;
+		public List<String> getList() {
+			return result.list();
+		}
+	}
 
-    private static interface Collector<T> {
-        /**
-         * A bitmask of Region/Currency/Date indicating which features we collect.
-         * @return the bitmask
-         */
-        int collects();
+	private static final int Region = 1;
+	private static final int Currency = 2;
+	private static final int Date = 4;
+	private static final int Tender = 8;
+	private static final int Everything = Integer.MAX_VALUE;
 
-        /**
-         * Called with data passed by filter.  Values not collected by filter should be ignored.
-         * @param region the region code (null if ignored)
-         * @param currency the currency code (null if ignored)
-         * @param from start time (0 if ignored)
-         * @param to end time (0 if ignored)
-         * @param priority priority (-1 if ignored)
-         * @param tender true if currency is legal tender.
-         */
-        void collect(String region, String currency, long from, long to, int priority, boolean tender);
+	private static interface Collector<T> {
+		/**
+		 * A bitmask of Region/Currency/Date indicating which features we collect.
+		 * 
+		 * @return the bitmask
+		 */
+		int collects();
 
-        /**
-         * Return the list of unique items in the order in which we encountered them for the
-         * first time.  The returned list is unmodifiable.
-         * @return the list
-         */
-        List<T> getList();
-    }
+		/**
+		 * Called with data passed by filter. Values not collected by filter should be ignored.
+		 * 
+		 * @param region
+		 *            the region code (null if ignored)
+		 * @param currency
+		 *            the currency code (null if ignored)
+		 * @param from
+		 *            start time (0 if ignored)
+		 * @param to
+		 *            end time (0 if ignored)
+		 * @param priority
+		 *            priority (-1 if ignored)
+		 * @param tender
+		 *            true if currency is legal tender.
+		 */
+		void collect(String region, String currency, long from, long to, int priority, boolean tender);
+
+		/**
+		 * Return the list of unique items in the order in which we encountered them for the first time. The returned list is unmodifiable.
+		 * 
+		 * @return the list
+		 */
+		List<T> getList();
+	}
 }

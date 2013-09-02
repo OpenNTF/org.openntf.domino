@@ -13,7 +13,6 @@ import org.openntf.domino.Document;
  * 
  */
 public class StyleSheet extends FileResource implements org.openntf.domino.design.StyleSheet {
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(StyleSheet.class.getName());
 
 	/**

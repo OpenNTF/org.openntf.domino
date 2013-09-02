@@ -27,7 +27,6 @@ import org.xml.sax.SAXException;
  * 
  */
 public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignNoteBase.class.getName());
 
 	private String noteId_;

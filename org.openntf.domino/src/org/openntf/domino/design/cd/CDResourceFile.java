@@ -104,7 +104,6 @@ public class CDResourceFile {
 		// The low-order byte is the signature value; the high-order determines the whole structure type
 		// In our case, it's always LSIG
 		int lowOrder = data[0];
-		@SuppressWarnings("unused")
 		int highOrder = data[1];
 
 		if (lowOrder != SIG_CD_FILEHEADER) {
