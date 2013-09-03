@@ -129,4 +129,6 @@ public interface Session {
 
 	public void setFixEnable(Fixes fix, boolean value);
 
+	public String toCommonName(String name);
+
 }

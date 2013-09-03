@@ -1549,4 +1549,13 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 			final Object payload) {
 		return getEventFactory().generate(event, source, target, payload);
 	}
+
+	public String toCommonName(final String name) {
+		org.openntf.domino.Name lname = createName(name);
+		if (lname.isHierarchical()) {
+			return lname.getCommon();
+		} else {
+			return name;
+		}
+	}
 }

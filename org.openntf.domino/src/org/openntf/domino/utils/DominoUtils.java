@@ -40,6 +40,8 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -330,6 +332,27 @@ public enum DominoUtils {
 					}
 				}
 			}
+		}
+	}
+
+	public static Pattern IS_HIERARCHICAL_MATCH = Pattern.compile("^CN=[^/]+", Pattern.CASE_INSENSITIVE);
+
+	public static boolean isHierarchicalName(final String name) {
+		return IS_HIERARCHICAL_MATCH.matcher(name).find();
+	}
+
+	public static String toCommonName(final String name) {
+		Matcher m = IS_HIERARCHICAL_MATCH.matcher(name);
+		if (m.find()) {
+			int start = m.start() + 3;
+			int end = m.end();
+			if (start < end) {
+				return name.substring(start, end);
+			} else {
+				return name;
+			}
+		} else {
+			return name;
 		}
 	}
 
