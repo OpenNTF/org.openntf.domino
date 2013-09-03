@@ -25,6 +25,82 @@ import org.openntf.domino.types.SessionDescendant;
 public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domino.DxlExporter, org.openntf.domino.ext.DxlExporter,
 		SessionDescendant {
 
+	/**
+	 * The Enum RichTextOption.
+	 */
+	public static enum RichTextOption {
+		DXL(DxlExporter.DXLRICHTEXTOPTION_DXL), RAW(DxlExporter.DXLRICHTEXTOPTION_RAW);
+
+		/** The value_. */
+		private final int value_;
+
+		/**
+		 * Instantiates a new dB option.
+		 * 
+		 * @param value
+		 *            the value
+		 */
+		private RichTextOption(final int value) {
+			value_ = value;
+		}
+
+		/**
+		 * Gets the value.
+		 * 
+		 * @return the value
+		 */
+		public int getValue() {
+			return value_;
+		}
+
+		public static RichTextOption valueOf(final int value) {
+			for (RichTextOption opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
+	}
+
+	/**
+	 * The Enum MIMEOption.
+	 */
+	public static enum MIMEOption {
+		DXL(DxlExporter.DXLMIMEOPTION_DXL), RAW(DxlExporter.DXLMIMEOPTION_RAW);
+
+		/** The value_. */
+		private final int value_;
+
+		/**
+		 * Instantiates a new dB option.
+		 * 
+		 * @param value
+		 *            the value
+		 */
+		private MIMEOption(final int value) {
+			value_ = value;
+		}
+
+		/**
+		 * Gets the value.
+		 * 
+		 * @return the value
+		 */
+		public int getValue() {
+			return value_;
+		}
+
+		public static MIMEOption valueOf(final int value) {
+			for (MIMEOption opt : values()) {
+				if (opt.getValue() == value) {
+					return opt;
+				}
+			}
+			return null;
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -263,6 +339,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * @see lotus.domino.DxlExporter#setMIMEOption(int)
 	 */
 	@Override
+	@Deprecated
 	public void setMIMEOption(final int option);
 
 	/*
@@ -278,7 +355,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * 
 	 * @see lotus.domino.DxlExporter#setOmitItemNames(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void setOmitItemNames(final Vector names);
 
@@ -335,7 +412,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * 
 	 * @see lotus.domino.DxlExporter#setRestrictToItemNames(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void setRestrictToItemNames(final Vector names);
 
@@ -345,6 +422,7 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	 * @see lotus.domino.DxlExporter#setRichTextOption(int)
 	 */
 	@Override
+	@Deprecated
 	public void setRichTextOption(final int option);
 
 	/*

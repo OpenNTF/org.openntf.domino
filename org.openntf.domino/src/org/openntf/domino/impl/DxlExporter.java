@@ -477,9 +477,22 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 	 * @see org.openntf.domino.DxlExporter#setMIMEOption(int)
 	 */
 	@Override
+	@Deprecated
 	public void setMIMEOption(final int option) {
 		try {
 			getDelegate().setMIMEOption(option);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.DxlExporter#setMIMEOption(org.openntf.domino.DxlExporter.MIMEOption)
+	 */
+	@Override
+	public void setMIMEOption(final MIMEOption option) {
+		try {
+			getDelegate().setMIMEOption(option.getValue());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -504,7 +517,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 	 * 
 	 * @see org.openntf.domino.DxlExporter#setOmitItemNames(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void setOmitItemNames(final Vector names) {
 		try {
@@ -603,7 +616,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 	 * 
 	 * @see org.openntf.domino.DxlExporter#setRestrictToItemNames(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void setRestrictToItemNames(final Vector names) {
 		try {
@@ -619,9 +632,22 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 	 * @see org.openntf.domino.DxlExporter#setRichTextOption(int)
 	 */
 	@Override
+	@Deprecated
 	public void setRichTextOption(final int option) {
 		try {
 			getDelegate().setRichTextOption(option);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.DxlExporter#setRichTextOption(org.openntf.domino.DxlExporter.RichTextOption)
+	 */
+	@Override
+	public void setRichTextOption(final RichTextOption option) {
+		try {
+			getDelegate().setRichTextOption(option.getValue());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
