@@ -38,7 +38,7 @@ public class WrapperOpenDomino {
 		private Map<String, Method> crystals_;
 		private Method defCrystal_;
 
-		private static String getSignature(Method crystal) {
+		private static String getSignature(final Method crystal) {
 			StringBuilder sb = new StringBuilder();
 			Class<?>[] params = crystal.getParameterTypes();
 			if (params.length > 0) {
@@ -170,7 +170,7 @@ public class WrapperOpenDomino {
 			return sb.toString();
 		}
 
-		private Method getMethodFromVector(FBSValueVector vec) throws JavaScriptException {
+		private Method getMethodFromVector(final FBSValueVector vec) throws JavaScriptException {
 			if (vec == null || vec.size() == 0)
 				return defCrystal_;
 			Method result = null;
@@ -260,7 +260,7 @@ public class WrapperOpenDomino {
 			return result;
 		}
 
-		private Object[] toJavaArguments(Method crystal, FBSValueVector vec) throws InterpretException {
+		private Object[] toJavaArguments(final Method crystal, final FBSValueVector vec) throws InterpretException {
 			Object[] result = new Object[vec.size()];
 			Class<?>[] params = crystal.getParameterTypes();
 			for (int i = 0; i < vec.size(); i++) {
@@ -281,13 +281,13 @@ public class WrapperOpenDomino {
 		 * that will be used in the call() method 4) call(FBSValueVector, FBSObject) which actually unwraps the SSJS objects and executes
 		 * the explicit Java methods defined
 		 */
-		protected OpenFunction(JSContext context, Method crystal) {
+		protected OpenFunction(final JSContext context, final Method crystal) {
 			super(context, crystal.getName(), 1);
 			addMethod(crystal);
 			clazz_ = crystal.getDeclaringClass();
 		}
 
-		protected void addMethod(Method crystal) {
+		protected void addMethod(final Method crystal) {
 			if (crystals_ == null) {
 				crystals_ = new HashMap<String, Method>();
 			}
@@ -326,7 +326,7 @@ public class WrapperOpenDomino {
 		}
 
 		@Override
-		public FBSValue call(FBSValueVector valueVector, FBSObject object) throws JavaScriptException {
+		public FBSValue call(final FBSValueVector valueVector, final FBSObject object) throws JavaScriptException {
 			Object base = clazz_.cast(object.toJavaObject(clazz_));
 			try {
 				if (base != null) {
@@ -360,7 +360,7 @@ public class WrapperOpenDomino {
 		 * Java objects at runtime.
 		 */
 
-		protected OpenObject(JSContext paramJSContext, Object paramObject, Class<?> clazz) {
+		protected OpenObject(final JSContext paramJSContext, final Object paramObject, final Class<?> clazz) {
 			super(paramJSContext, paramObject, "Open" + clazz.getSimpleName());
 			uiName_ = "Open" + clazz.getSimpleName();
 			clazz_ = clazz;
@@ -372,7 +372,7 @@ public class WrapperOpenDomino {
 		// clazz_ = null;
 		// }
 
-		protected OpenObject(JSContext paramJSContext, Object paramObject, String paramString, Class<?> clazz) {
+		protected OpenObject(final JSContext paramJSContext, final Object paramObject, final String paramString, final Class<?> clazz) {
 			super(paramJSContext, paramObject, paramString);
 			uiName_ = paramString;
 			clazz_ = clazz;
@@ -402,7 +402,7 @@ public class WrapperOpenDomino {
 		 * string to a particular fct_OpenDateTime object, with a specific index value. It then invokes the call() method on that particular
 		 * function object, passing in the DateTime argument from SSJS, as well as the DateTime object on which the .isBefore was invoked.
 		 */
-		public OpenMethodMap(JSContext arg0, Class arg1, Class[] arg2) {
+		public OpenMethodMap(final JSContext arg0, final Class<?> arg1, final Class<?>[] arg2) {
 			super(arg0, arg1, arg2);
 		}
 
@@ -414,7 +414,7 @@ public class WrapperOpenDomino {
 		return Collections.unmodifiableMap(classMap_);
 	}
 
-	private static OpenMethodMap generateMethodMap(JSContext context, Class<?> clazz) {
+	private static OpenMethodMap generateMethodMap(final JSContext context, final Class<?> clazz) {
 		OpenMethodMap methodMap = new OpenMethodMap(context, clazz, null);
 		for (Method crystal : clazz.getMethods()) {
 			if (Modifier.isPublic(crystal.getModifiers()) && !Modifier.isStatic(crystal.getModifiers())) {
@@ -436,7 +436,7 @@ public class WrapperOpenDomino {
 		return methodMap;
 	}
 
-	private static OpenMethodMap getMethodMap(JSContext context, Class<?> clazz) {
+	private static OpenMethodMap getMethodMap(final JSContext context, final Class<?> clazz) {
 		OpenMethodMap result = getClassMap().get(clazz);
 		if (result == null) {
 			result = generateMethodMap(context, clazz);
@@ -485,10 +485,11 @@ public class WrapperOpenDomino {
 	// }
 
 	private static final class OpenConstructor extends GeneratedWrapperObject.EmptyConstructor {
+		@SuppressWarnings("unused")
 		private final String uiName_;
 		private final Class<?> clazz_;
 
-		private OpenConstructor(JSContext context, Class<?> clazz) {
+		private OpenConstructor(final JSContext context, final Class<?> clazz) {
 			super(context, "Open" + clazz.getSimpleName());
 			uiName_ = "Open" + clazz.getSimpleName();
 			clazz_ = clazz;
@@ -582,18 +583,18 @@ public class WrapperOpenDomino {
 	private static class OpenWrapperFactory implements IWrapperFactory {
 		private final Class<?> clazz_;
 
-		private OpenWrapperFactory(Class<?> clazz) {
+		private OpenWrapperFactory(final Class<?> clazz) {
 			clazz_ = clazz;
 			// System.out.println("Registering OpenNTF SSJS object " + clazz.getName());
 		}
 
 		@Override
-		public OpenMethodMap getMethodMap(JSContext context) {
+		public OpenMethodMap getMethodMap(final JSContext context) {
 			return WrapperOpenDomino.getMethodMap(context, clazz_);
 		}
 
 		@Override
-		public OpenObject wrap(JSContext context, Object object) {
+		public OpenObject wrap(final JSContext context, final Object object) {
 			return new OpenObject(context, object, clazz_);
 		}
 
@@ -601,7 +602,7 @@ public class WrapperOpenDomino {
 
 	private static boolean registered = false;
 
-	public static void register(JSContext context) {
+	public static void register(final JSContext context) {
 		if (registered) {
 			return;
 		}

@@ -23,13 +23,25 @@ import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.NoteCollection.SelectOption;
 import org.openntf.domino.design.DatabaseDesign;
+import org.openntf.domino.events.EnumEvent;
+import org.openntf.domino.events.IDominoEvent;
+import org.openntf.domino.events.IDominoEventFactory;
 import org.openntf.domino.transactions.DatabaseTransaction;
 
 /**
  * @author withersp
  * 
  */
-public interface Database {
+public interface Database extends Base {
+	public static enum Events implements EnumEvent {
+		BEFORE_CREATE_DOCUMENT, AFTER_CREATE_DOCUMENT, BEFORE_DELETE_DOCUMENT, AFTER_DELETE_DOCUMENT, BEFORE_UPDATE_DOCUMENT, AFTER_UPDATE_DOCUMENT, BEFORE_REPLICATION, AFTER_REPLICATION, BEFORE_RUN_AGENT, AFTER_RUN_AGENT;
+	}
+
+	public IDominoEventFactory getEventFactory();
+
+	public void setEventFactory(IDominoEventFactory factory);
+
+	public IDominoEvent generateEvent(EnumEvent event, org.openntf.domino.Base source, Object payload);
 
 	public int compactWithOptions(final Set<CompactOption> options);
 

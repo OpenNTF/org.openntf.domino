@@ -15,9 +15,7 @@ import org.openntf.domino.design.DesignBase;
  * 
  */
 public class DesignCollection<E extends DesignBase> implements org.openntf.domino.design.DesignCollection<E> {
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DesignCollection.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	private final NoteCollection collection_;
 	private final Class<? extends DesignBase> clazz_;

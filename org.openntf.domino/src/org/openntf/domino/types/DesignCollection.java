@@ -155,7 +155,7 @@ public class DesignCollection<T> implements Collection<T> {
 	 * @see java.util.Collection#toArray(T[])
 	 */
 	@Override
-	public <T> T[] toArray(final T[] arg0) {
+	public <C> C[] toArray(final C[] arg0) {
 		// TODO Auto-generated method stub
 		return null;
 	}

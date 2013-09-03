@@ -21,7 +21,6 @@ import org.openntf.domino.utils.TypeUtils;
  * 
  */
 public class Formula implements org.openntf.domino.ext.Formula, Serializable {
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(Formula.class.getName());
 	private static final long serialVersionUID = 1L;
 

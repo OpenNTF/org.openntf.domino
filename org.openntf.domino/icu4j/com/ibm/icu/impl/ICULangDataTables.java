@@ -7,7 +7,7 @@
 package com.ibm.icu.impl;
 
 public class ICULangDataTables extends LocaleDisplayNamesImpl.ICUDataTables {
-    public ICULangDataTables() {
-        super(ICUResourceBundle.ICU_LANG_BASE_NAME);
-    }
+	public ICULangDataTables() {
+		super(ICUResourceBundle.ICU_LANG_BASE_NAME);
+	}
 }

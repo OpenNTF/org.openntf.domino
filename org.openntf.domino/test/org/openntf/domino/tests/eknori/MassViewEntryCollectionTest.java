@@ -51,8 +51,7 @@ public enum MassViewEntryCollectionTest {
 
 				System.out.println(view.getEntryCount());
 
-				for (@SuppressWarnings("unused")
-				ViewEntry entry : view.getAllEntries()) {
+				for (ViewEntry entry : view.getAllEntries()) {
 
 				}
 				/* */

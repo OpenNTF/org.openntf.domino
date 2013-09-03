@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE note SYSTEM "xmlschemas/domino_9_0.dtd">
+<!-- <!DOCTYPE note SYSTEM "xmlschemas/domino_9_0.dtd"> -->
 <note xmlns="http://www.lotus.com/dxl" class="form">
 	<item name="$Flags">
 		<text>345CgQ</text>

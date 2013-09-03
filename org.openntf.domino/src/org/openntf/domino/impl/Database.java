@@ -34,6 +34,9 @@ import org.openntf.domino.DateTime;
 import org.openntf.domino.NoteCollection.SelectOption;
 import org.openntf.domino.View;
 import org.openntf.domino.design.impl.DatabaseDesign;
+import org.openntf.domino.events.EnumEvent;
+import org.openntf.domino.events.IDominoEvent;
+import org.openntf.domino.events.IDominoEventFactory;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -320,13 +323,18 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#createDocument()
 	 */
 	public Document createDocument() {
-		try {
-			return Factory.fromLotus(getDelegate().createDocument(), Document.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
+		Document result = null;
+		boolean go = true;
+		go = fireListener(generateEvent(Events.BEFORE_CREATE_DOCUMENT, this, null));
+		if (go) {
+			try {
+				result = Factory.fromLotus(getDelegate().createDocument(), Document.class, this);
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+			}
+			fireListener(generateEvent(Events.AFTER_CREATE_DOCUMENT, this, null));
 		}
+		return result;
 	}
 
 	/*
@@ -894,6 +902,13 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 					doc.replaceItemValue("$$Key", key);
 				}
 				return doc;
+			} else if (createOnFail) {
+				log_.log(java.util.logging.Level.WARNING,
+						"Document by key requested with null key. This is probably not what you meant to do...");
+				Document doc = this.createDocument();
+				doc.replaceItemValue("$Created", new Date());
+				doc.replaceItemValue("$$Key", "");
+				return doc;
 			}
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
@@ -922,6 +937,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#getDocumentByURL(java.lang.String, boolean, boolean, boolean, java.lang.String, java.lang.String,
 	 * java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
+	@SuppressWarnings("unused")
 	public Document getDocumentByURL(final String url, final boolean reload, final boolean reloadIfModified, final boolean urlList,
 			final String charSet, final String webUser, final String webPassword, final String proxyUser, final String proxyPassword,
 			final boolean returnImmediately) {
@@ -2019,13 +2035,19 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#replicate(java.lang.String)
 	 */
 	public boolean replicate(final String server) {
-		try {
-			return getDelegate().replicate(server);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return false;
-
+		boolean result = true;
+		boolean go = true;
+		go = fireListener(generateEvent(Events.BEFORE_REPLICATION, this, server));
+		if (go) {
+			try {
+				result = getDelegate().replicate(server);
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+				result = false;
+			}
+			fireListener(generateEvent(Events.AFTER_REPLICATION, this, server));
 		}
+		return result;
 	}
 
 	/*
@@ -2777,6 +2799,24 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		Set<SelectOption> noteClass = new java.util.HashSet<SelectOption>();
 		noteClass.add(SelectOption.DOCUMENTS);
 		return getModifiedNoteCount(since, noteClass);
+	}
+
+	private IDominoEventFactory localFactory_;
+
+	public IDominoEventFactory getEventFactory() {
+		if (localFactory_ == null) {
+			return getAncestorSession().getEventFactory();
+		}
+		return localFactory_;
+	}
+
+	public void setEventFactory(final IDominoEventFactory factory) {
+		localFactory_ = factory;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public IDominoEvent generateEvent(final EnumEvent event, final org.openntf.domino.Base source, final Object payload) {
+		return getEventFactory().generate(event, source, this, payload);
 	}
 
 }

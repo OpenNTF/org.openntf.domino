@@ -82,7 +82,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public Document getDocumentContext() {
 		try {
-			return Factory.fromLotus(getDelegate().getDocumentContext(), Document.class, this);
+			return Factory.fromLotus(getDelegate().getDocumentContext(), Document.class, getCurrentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -222,7 +222,8 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	 * @see org.openntf.domino.AgentContext#unprocessedFTSearchRange(java.lang.String, int, int, int, int)
 	 */
 	@Override
-	public DocumentCollection unprocessedFTSearchRange(final String query, final int maxDocs, final int sortOpt, final int otherOpt, final int start) {
+	public DocumentCollection unprocessedFTSearchRange(final String query, final int maxDocs, final int sortOpt, final int otherOpt,
+			final int start) {
 		try {
 			return Factory.fromLotus(getDelegate().unprocessedFTSearchRange(query, maxDocs, sortOpt, otherOpt, start),
 					DocumentCollection.class, this);

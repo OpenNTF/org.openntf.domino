@@ -17,9 +17,7 @@ import org.openntf.domino.utils.xml.XMLNode;
  * 
  */
 public class DesignView extends AbstractFolder implements org.openntf.domino.design.DesignView {
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DesignView.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @param document

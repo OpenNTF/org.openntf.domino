@@ -12,9 +12,7 @@ import org.openntf.domino.utils.xml.XMLNode;
  * 
  */
 public class DesignColumn implements org.openntf.domino.design.DesignColumn {
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DesignColumn.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	private XMLNode node_;
 

@@ -274,6 +274,7 @@ public class WebinarSamples {
 
 	// ******* BEGIN HELPER SAMPLES
 
+	@SuppressWarnings("unused")
 	public void doMapStuff(final org.openntf.domino.Document doc) {
 		// Document implements Map<String, Object>
 		Object val = doc.get("foo");	// gets contents of item "foo" or returns null;

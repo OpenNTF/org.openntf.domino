@@ -8,10 +8,19 @@ public interface FileResource extends DesignBaseNamed, org.openntf.domino.types.
 	public byte[] getFileData();
 
 	/**
+	 * @return the file data in the given item as a byte array
+	 */
+	public byte[] getFileData(final String itemName);
+
+	/**
 	 * @param fileData
 	 *            The new data for the file resource, as a byte array
 	 */
 	public void setFileData(final byte[] fileData);
+
+	public void setFileData(String itemName, byte[] fileData);
+
+	public java.util.Collection<String> getItemNames();
 
 	/**
 	 * @return mime type

@@ -13,9 +13,7 @@ import org.openntf.domino.utils.xml.XMLNodeList;
  * 
  */
 public abstract class AbstractDesignComponentList<E> extends AbstractList<E> {
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignComponentList.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	private final AbstractDesignBase parent_;
 	private final String pattern_;

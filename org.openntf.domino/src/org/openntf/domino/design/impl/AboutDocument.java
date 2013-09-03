@@ -20,5 +20,4 @@ public class AboutDocument extends AbstractDesignBase implements org.openntf.dom
 	}
 
 	private static final Logger log_ = Logger.getLogger(AboutDocument.class.getName());
-	private static final long serialVersionUID = 1L;
 }

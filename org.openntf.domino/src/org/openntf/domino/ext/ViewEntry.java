@@ -9,4 +9,6 @@ package org.openntf.domino.ext;
  */
 public interface ViewEntry {
 	public org.openntf.domino.View getParentView();
+
+	public Object getColumnValue(final String columnName);
 }

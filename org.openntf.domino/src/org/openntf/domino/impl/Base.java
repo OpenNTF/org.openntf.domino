@@ -19,12 +19,17 @@ import java.lang.ref.Reference;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+import org.openntf.domino.events.EnumEvent;
+import org.openntf.domino.events.IDominoEvent;
+import org.openntf.domino.events.IDominoListener;
 import org.openntf.domino.ext.Formula;
 import org.openntf.domino.thread.DominoLockSet;
 import org.openntf.domino.thread.DominoReference;
@@ -632,6 +637,62 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 				s_recycle((lotus.domino.local.NotesBase) o);
 			}
 		}
+	}
+
+	private List<IDominoListener> listeners_;
+
+	public List<IDominoListener> getListeners() {
+		if (listeners_ == null) {
+			listeners_ = new ArrayList<IDominoListener>();
+		}
+		return listeners_;
+	}
+
+	public void addListener(final IDominoListener listener) {
+		getListeners().add(listener);
+	}
+
+	public void removeListener(final IDominoListener listener) {
+		getListeners().remove(listener);
+	}
+
+	public List<IDominoListener> getListeners(final EnumEvent event) {
+		List<IDominoListener> result = new ArrayList<IDominoListener>();
+		for (IDominoListener listener : getListeners()) {
+			for (EnumEvent curEvent : listener.getEventTypes()) {
+				if (curEvent.equals(event)) {
+					result.add(listener);
+					break;
+				}
+			}
+		}
+		return result;
+	}
+
+	public boolean fireListener(final IDominoEvent event) {
+		boolean result = true;
+		for (IDominoListener listener : getListeners(event.getEvent())) {
+			try {
+				if (!listener.eventHappened(event)) {
+					result = false;
+					break;
+				}
+			} catch (Throwable t) {
+				DominoUtils.handleException(t);
+			}
+		}
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return getDelegate().toString();
+
 	}
 
 }

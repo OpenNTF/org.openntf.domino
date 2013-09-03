@@ -15,9 +15,7 @@ import org.openntf.domino.utils.xml.XMLNode;
  * 
  */
 public abstract class AbstractFolder extends AbstractDesignBaseNamed implements Folder {
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractFolder.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @param document

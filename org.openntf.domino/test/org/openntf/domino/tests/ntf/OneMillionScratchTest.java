@@ -23,6 +23,7 @@ import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
+@SuppressWarnings("deprecation")
 public enum OneMillionScratchTest {
 	INSTANCE;
 

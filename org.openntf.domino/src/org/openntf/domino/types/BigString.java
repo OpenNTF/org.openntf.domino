@@ -13,6 +13,7 @@ import java.util.logging.Logger;
  * @author nfreeman
  * 
  */
+
 public class BigString implements CharSequence, Serializable, Comparable<BigString> {
 	private static final Logger log_ = Logger.getLogger(BigString.class.getName());
 	private static final long serialVersionUID = 1L;
@@ -79,6 +80,7 @@ public class BigString implements CharSequence, Serializable, Comparable<BigStri
 		return getDelegate().getBytes();
 	}
 
+	@SuppressWarnings("deprecation")
 	public void getBytes(final int start, final int end, final byte[] data, final int index) {
 		getDelegate().getBytes(start, end, data, index);
 	}

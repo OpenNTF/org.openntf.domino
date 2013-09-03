@@ -42,6 +42,37 @@ public interface DatabaseDesign {
 
 	public DesignCollection<FileResource> getHiddenFileResources();
 
+	/**
+	 * @param name
+	 *            name of any type of file resource (file, Java, etc.)
+	 * @return a named file resource
+	 */
+	public FileResource getAnyFileResource(final String name);
+
+	public ImageResource getImageResource(String name);
+
+	public DesignCollection<ImageResource> getImageResources();
+
+	public StyleSheet getStyleSheet(String name);
+
+	public DesignCollection<StyleSheet> getStyleSheets();
+
+	public JavaResource getJavaResource(String name);
+
+	public DesignCollection<JavaResource> getJavaResources();
+
+	public XPage getXPage(String name);
+
+	public DesignCollection<XPage> getXPages();
+
+	public JarResource getJarResource(String name);
+
+	public DesignCollection<JarResource> getJarResources();
+
+	public ClassLoader getDatabaseClassLoader(ClassLoader parent);
+
+	public ClassLoader getDatabaseClassLoader(ClassLoader parent, boolean includeJars);
+
 	public DesignForm getForm(final String name);
 
 	public DesignCollection<DesignForm> getForms();

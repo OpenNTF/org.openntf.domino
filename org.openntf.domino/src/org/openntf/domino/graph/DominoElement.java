@@ -18,16 +18,50 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	private static final Logger log_ = Logger.getLogger(DominoElement.class.getName());
 	private static final long serialVersionUID = 1L;
 	public static final String TYPE_FIELD = "_OPEN_GRAPHTYPE";
-	transient org.openntf.domino.Document doc_;
+	// transient org.openntf.domino.Document doc_;
 	private String key_;
 	transient DominoGraph parent_;
 	private String unid_;
 	private Map<String, Serializable> props_;
+	public final String[] DEFAULT_STR_ARRAY = { "" };
+
+	// public static void clearCache() {
+	// documentCache.set(null);
+	// }
+	//
+	// private static ThreadLocal<Map<String, Document>> documentCache = new ThreadLocal<Map<String, Document>>() {
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see java.lang.ThreadLocal#initialValue()
+	// */
+	// @Override
+	// protected Map<String, Document> initialValue() {
+	// return new ConcurrentHashMap<String, Document>();
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see java.lang.ThreadLocal#get()
+	// */
+	// @Override
+	// public Map<String, Document> get() {
+	// Map<String, Document> map = super.get();
+	// if (map == null) {
+	// map = new ConcurrentHashMap<String, Document>();
+	// super.set(map);
+	//
+	// }
+	// return map;
+	// }
+	//
+	// };
 
 	public DominoElement(final DominoGraph parent, final Document doc) {
-		doc_ = doc;
+		// doc_ = doc;
 		parent_ = parent;
-		unid_ = doc.getUniversalID();
+		unid_ = doc.getUniversalID().toUpperCase();
 	}
 
 	private Map<String, Serializable> getProps() {
@@ -60,10 +94,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	}
 
 	public Document getRawDocument() {
-		if (doc_ == null) {
-			doc_ = getDocument();
-		}
-		return doc_;
+		return getDocument();
 	}
 
 	public String getRawId() {
@@ -88,7 +119,20 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	}
 
 	private Document getDocument() {
-		return getDatabase().getDocumentByKey(unid_, true);
+		return getParent().getDocument(unid_, true);
+		// Map<String, Document> map = documentCache.get();
+		// Document doc = map.get(unid_);
+		// if (doc == null) {
+		// synchronized (map) {
+		// doc = getDatabase().getDocumentByKey(unid_, true);
+		// String localUnid = doc.getUniversalID().toUpperCase();
+		// if (!unid_.equals(localUnid)) {
+		// log_.log(Level.SEVERE, "UNIDs do not match! Expected: " + unid_ + ", Result: " + localUnid);
+		// }
+		// map.put(unid_, doc);
+		// }
+		// }
+		// return doc;
 	}
 
 	@Override
@@ -114,7 +158,6 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	public <T> T getProperty(final String propertyName, final Class<?> T) {
 		Object result = null;
-		Document doc = getRawDocument();
 		// if (T == Integer.class) {
 		// System.out.println("getProperty is getting an Integer from the document " + doc.getClass().getName() + " " + doc.getNoteID());
 		// }
@@ -122,20 +165,32 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		// synchronized (props) {
 		result = props.get(propertyName);
 		if (result == null) {
-			result = doc.getItemValue(propertyName, T);
-			if (result instanceof Serializable) {
-				synchronized (props) {
-					props.put(propertyName, (Serializable) result);
-				}
-			}
-		} else {
-			if (result != null && !T.isAssignableFrom(result.getClass())) {
-				// System.out.println("AH! We have the wrong type in the property cache! How did this happen?");
+			try {
+				Document doc = getRawDocument();
 				result = doc.getItemValue(propertyName, T);
 				if (result instanceof Serializable) {
 					synchronized (props) {
 						props.put(propertyName, (Serializable) result);
 					}
+				}
+			} catch (Exception e) {
+				log_.log(Level.INFO, "Exception occured attempting to get value from document for " + propertyName
+						+ " so we cannot return a value", e);
+			}
+		} else {
+			if (result != null && !T.isAssignableFrom(result.getClass())) {
+				// System.out.println("AH! We have the wrong type in the property cache! How did this happen?");
+				try {
+					Document doc = getRawDocument();
+					result = doc.getItemValue(propertyName, T);
+					if (result instanceof Serializable) {
+						synchronized (props) {
+							props.put(propertyName, (Serializable) result);
+						}
+					}
+				} catch (Exception e) {
+					log_.log(Level.INFO, "Exception occured attempting to get value from document for " + propertyName
+							+ " but we have a value in the cache.", e);
 				}
 			}
 		}
@@ -153,8 +208,11 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		} else {
 			if (result == null) {
 				if (T.isArray())
-					// RedpillUtils.log("Array requested and we got");
-					return (T) Array.newInstance(T.getComponentType(), 0);
+					if (T.getComponentType() == String.class) {
+						return (T) DEFAULT_STR_ARRAY;
+					} else {
+						return (T) Array.newInstance(T.getComponentType(), 0);
+					}
 				if (Boolean.class.equals(T) || Boolean.TYPE.equals(T))
 					return (T) Boolean.FALSE;
 				if (Integer.class.equals(T) || Integer.TYPE.equals(T))
@@ -217,7 +275,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	// }
 
 	public void setRawDocument(final org.openntf.domino.Document doc) {
-		doc_ = doc;
+		unid_ = doc.getUniversalID().toUpperCase();
 	}
 
 	private final Set<String> changedProperties_ = new HashSet<String>();
@@ -259,7 +317,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	protected void reapplyChanges() {
 		Map<String, Serializable> props = getProps();
-		Document doc = getRawDocument();
+		Document doc = getDocument();
 		synchronized (props) {
 			if (props.isEmpty()) {
 				// System.out.println("Cached properties is empty!");

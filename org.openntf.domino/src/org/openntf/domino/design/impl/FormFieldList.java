@@ -10,7 +10,6 @@ import java.util.logging.Logger;
  * 
  */
 public class FormFieldList extends AbstractDesignComponentList<FormField> implements org.openntf.domino.design.FormFieldList {
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(FormFieldList.class.getName());
 
 	protected FormFieldList(final DesignForm parent, final String pattern) {

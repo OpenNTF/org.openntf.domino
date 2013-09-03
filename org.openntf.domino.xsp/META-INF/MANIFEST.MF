@@ -12,8 +12,8 @@ Import-Package: com.ibm.domino.napi.c.xsp,
  org.osgi.framework;version="1.3.0"
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openntf.domino.xsp,
- org.openntf.domino.xsp.helpers
-Require-Bundle: com.ibm.xsp.core;bundle-version="9.0.0",
- com.ibm.xsp.domino;bundle-version="9.0.0",
+ org.openntf.domino.xsp.helpers,
+ org.openntf.domino.xsp.script
+Require-Bundle: com.ibm.xsp.domino;bundle-version="9.0.0",
  com.ibm.xsp.extsn;bundle-version="9.0.0",
  com.ibm.designer.runtime;bundle-version="9.0.0"

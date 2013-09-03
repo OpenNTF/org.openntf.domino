@@ -307,24 +307,23 @@ public enum DominoUtils {
 					// // who cares?
 					// }
 					org.openntf.domino.impl.Base.s_recycle(o);
-				} else if (o instanceof Collection) {
-					if (o instanceof Map) {
-						Set<Map.Entry> entries = ((Map) o).entrySet();
-						for (Map.Entry<?, ?> entry : entries) {
-							DominoUtils.incinerate(entry.getKey(), entry.getValue());
-						}
-					} else {
-						Iterator i = ((Collection) o).iterator();
-						while (i.hasNext()) {
-							Object obj = i.next();
-							DominoUtils.incinerate(obj);
-						}
+				} else if (o instanceof Map) {
+					Set<Map.Entry> entries = ((Map) o).entrySet();
+					for (Map.Entry<?, ?> entry : entries) {
+						incinerate(entry.getKey(), entry.getValue());
 					}
+				} else if (o instanceof Collection) {
+					Iterator i = ((Collection) o).iterator();
+					while (i.hasNext()) {
+						Object obj = i.next();
+						incinerate(obj);
+					}
+
 				} else if (o.getClass().isArray()) {
 					try {
 						Object[] objs = (Object[]) o;
 						for (Object ao : objs) {
-							DominoUtils.incinerate(ao);
+							incinerate(ao);
 						}
 					} catch (Throwable t) {
 						// who cares?
@@ -892,5 +891,13 @@ public enum DominoUtils {
 			}
 		}
 		return result;
+	}
+
+	public static String javaBinaryNameToFilePath(final String binaryName, final String separator) {
+		return binaryName.replace(".", separator) + ".class";
+	}
+
+	public static String filePathToJavaBinaryName(final String filePath, final String separator) {
+		return filePath.substring(0, filePath.length() - 6).replace(separator, ".");
 	}
 }

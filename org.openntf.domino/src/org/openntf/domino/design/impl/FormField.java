@@ -13,9 +13,7 @@ import org.openntf.domino.utils.xml.XMLNode;
  * 
  */
 public class FormField implements org.openntf.domino.design.FormField {
-	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(FormField.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	private final XMLNode node_;
 
@@ -174,9 +172,8 @@ public class FormField implements org.openntf.domino.design.FormField {
 						this.setKind(Kind.COMPUTED);
 					}
 					if (node_.getAttribute("onlyallow").isEmpty()) {
-						node_
-								.setAttribute("onlyallow",
-										"picture sharedimage attachment view datepicker sharedapplet text object calendar inbox help clear graphic link");
+						node_.setAttribute("onlyallow",
+								"picture sharedimage attachment view datepicker sharedapplet text object calendar inbox help clear graphic link");
 					}
 					if (node_.getAttribute("firstdisplay").isEmpty()) {
 						node_.setAttribute("firstdisplay", "text");

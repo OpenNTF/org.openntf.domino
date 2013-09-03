@@ -125,6 +125,8 @@ public enum TypeUtils {
 						result = toNames(v, session);
 					} else if (CType == Boolean.class) {
 						result = toBooleans(v);
+					} else if (CType == java.lang.Object.class) {
+						result = toObjects(v);
 					} else {
 						throw new UnimplementedException("Arrays for " + CType.getName() + " not yet implemented");
 					}
@@ -146,7 +148,9 @@ public enum TypeUtils {
 				result = Pattern.compile(join(v));
 			} else if (T == Class.class) {
 				try {
-					result = Class.forName(join(v));
+					String cn = join(v);
+					Class<?> cls = Class.forName(cn, false, Factory.getClassLoader());
+					result = cls;
 				} catch (ClassNotFoundException e) {
 					DominoUtils.handleException(e);
 					result = null;
@@ -574,6 +578,18 @@ public enum TypeUtils {
 		return patterns;
 	}
 
+	public static java.lang.Object[] toObjects(final Collection<Object> vector) throws DataNotCompatibleException {
+		if (vector == null)
+			return null;
+
+		Object[] patterns = new Object[vector.size()];
+		int i = 0;
+		for (Object o : vector) {
+			patterns[i++] = o;
+		}
+		return patterns;
+	}
+
 	public static Class<?>[] toClasses(final Collection<Object> vector) throws DataNotCompatibleException {
 		if (vector == null)
 			return null;
@@ -582,9 +598,13 @@ public enum TypeUtils {
 		int i = 0;
 		for (Object o : vector) {
 			int pos = i++;
+			String cn = String.valueOf(o);
+			ClassLoader cl = Factory.getClassLoader();
 			try {
-				classes[pos] = Class.forName(String.valueOf(o));
+				Class<?> cls = Class.forName(cn, false, cl);
+				classes[pos] = cls;
 			} catch (ClassNotFoundException e) {
+				System.out.println("Failed to find class " + cn + " using a classloader of type " + cl.getClass().getName());
 				DominoUtils.handleException(e);
 				classes[pos] = null;
 			}

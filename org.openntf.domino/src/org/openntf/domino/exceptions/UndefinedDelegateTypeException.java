@@ -22,6 +22,11 @@ package org.openntf.domino.exceptions;
 public class UndefinedDelegateTypeException extends RuntimeException {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7324366564552725530L;
+
+	/**
 	 * Instantiates a new undefined delegate type exception.
 	 */
 	public UndefinedDelegateTypeException() {

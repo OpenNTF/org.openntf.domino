@@ -20,6 +20,11 @@ public class DocumentComparator implements Comparator<Document> {
 	private static final long serialVersionUID = 1L;
 
 	public static class ValuesNotComparableException extends RuntimeException {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 4918210702121980155L;
+
 		public ValuesNotComparableException(final Object o1, final Object o2) {
 			super("Cannot compare objects of type " + (o1 == null ? "null" : o1.getClass().getName()) + " and "
 					+ (o2 == null ? "null" : o2.getClass().getName()));
