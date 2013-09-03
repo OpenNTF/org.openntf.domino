@@ -49,6 +49,14 @@ public interface DatabaseDesign {
 	 */
 	public FileResource getAnyFileResource(final String name);
 
+	public ImageResource getImageResource(String name);
+
+	public DesignCollection<ImageResource> getImageResources();
+
+	public StyleSheet getStyleSheet(String name);
+
+	public DesignCollection<StyleSheet> getStyleSheets();
+
 	public JavaResource getJavaResource(String name);
 
 	public DesignCollection<JavaResource> getJavaResources();

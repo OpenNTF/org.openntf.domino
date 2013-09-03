@@ -121,6 +121,58 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 		return new DesignCollection<org.openntf.domino.design.FileResource>(notes, FileResource.class);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#getImageResource(java.lang.String)
+	 */
+	@Override
+	public ImageResource getImageResource(final String name) {
+		NoteCollection notes = getNoteCollection(
+				String.format(" @Contains($Flags; 'i') & @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
+				EnumSet.of(SelectOption.IMAGE_RESOURCES));
+
+		String noteId = notes.getFirstNoteID();
+		if (!noteId.isEmpty()) {
+			Document doc = database_.getDocumentByID(noteId);
+			return new ImageResource(doc);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#getImageResources()
+	 */
+	@Override
+	public org.openntf.domino.design.DesignCollection<org.openntf.domino.design.ImageResource> getImageResources() {
+		NoteCollection notes = getNoteCollection(" @Contains($Flags; 'i') ", EnumSet.of(SelectOption.IMAGE_RESOURCES));
+		return new DesignCollection<org.openntf.domino.design.ImageResource>(notes, ImageResource.class);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#getStyleSheet(java.lang.String)
+	 */
+	@Override
+	public StyleSheet getStyleSheet(final String name) {
+		NoteCollection notes = getNoteCollection(
+				String.format(" @Contains($Flags; '=') & @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
+				EnumSet.of(SelectOption.STYLESHEETS));
+
+		String noteId = notes.getFirstNoteID();
+		if (!noteId.isEmpty()) {
+			Document doc = database_.getDocumentByID(noteId);
+			return new StyleSheet(doc);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#getStyleSheets()
+	 */
+	@Override
+	public org.openntf.domino.design.DesignCollection<org.openntf.domino.design.StyleSheet> getStyleSheets() {
+		NoteCollection notes = getNoteCollection(" @Contains($Flags; '=') ", EnumSet.of(SelectOption.STYLESHEETS));
+		return new DesignCollection<org.openntf.domino.design.StyleSheet>(notes, StyleSheet.class);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
