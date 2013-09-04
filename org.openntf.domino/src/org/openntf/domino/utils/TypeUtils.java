@@ -115,6 +115,8 @@ public enum TypeUtils {
 						result = toPatterns(v);
 					} else if (CType == Class.class) {
 						result = toClasses(v);
+					} else if (CType == Enum.class) {
+						result = toEnums(v);
 					} else if (CType == Formula.class) {
 						result = toFormulas(v);
 					} else if (CType == Date.class) {
@@ -155,6 +157,8 @@ public enum TypeUtils {
 					DominoUtils.handleException(e);
 					result = null;
 				}
+			} else if (T == Enum.class) {
+				result = toEnum(join(v));
 			} else if (T == Formula.class) {
 				Formula formula = new org.openntf.domino.helpers.Formula(join(v));
 				result = formula;
@@ -594,15 +598,75 @@ public enum TypeUtils {
 		if (vector == null)
 			return null;
 
+		ClassLoader cl = Factory.getClassLoader();
 		Class<?>[] classes = new Class[vector.size()];
 		int i = 0;
 		for (Object o : vector) {
 			int pos = i++;
 			String cn = String.valueOf(o);
-			ClassLoader cl = Factory.getClassLoader();
 			try {
 				Class<?> cls = Class.forName(cn, false, cl);
 				classes[pos] = cls;
+			} catch (ClassNotFoundException e) {
+				System.out.println("Failed to find class " + cn + " using a classloader of type " + cl.getClass().getName());
+				DominoUtils.handleException(e);
+				classes[pos] = null;
+			}
+		}
+		return classes;
+	}
+
+	public static Enum<?> toEnum(final Object value) throws DataNotCompatibleException {
+		ClassLoader cl = Factory.getClassLoader();
+		Enum<?> result = null;
+		String en = String.valueOf(value);
+		String ename = null;
+		String cn = null;
+		if (en.indexOf(' ') > 0) {
+			cn = String.valueOf(value).substring(0, en.indexOf(' ') - 1).trim();
+			ename = String.valueOf(value).substring(en.indexOf(' ') + 1).trim();
+		}
+		try {
+			Class<?> cls = Class.forName(cn, false, cl);
+			for (Object obj : cls.getEnumConstants()) {
+				if (obj instanceof Enum) {
+					if (((Enum) obj).name().equals(ename)) {
+						result = (Enum) obj;
+					}
+				}
+			}
+		} catch (ClassNotFoundException e) {
+			System.out.println("Failed to find class " + cn + " using a classloader of type " + cl.getClass().getName());
+			DominoUtils.handleException(e);
+		}
+		return result;
+	}
+
+	public static Enum<?>[] toEnums(final Collection<Object> vector) throws DataNotCompatibleException {
+		if (vector == null)
+			return null;
+
+		ClassLoader cl = Factory.getClassLoader();
+		Enum<?>[] classes = new Enum[vector.size()];
+		int i = 0;
+		for (Object o : vector) {
+			int pos = i++;
+			String en = String.valueOf(o);
+			String ename = null;
+			String cn = null;
+			if (en.indexOf(' ') > 0) {
+				cn = String.valueOf(o).substring(0, en.indexOf(' ') - 1).trim();
+				ename = String.valueOf(o).substring(en.indexOf(' ') + 1).trim();
+			}
+			try {
+				Class<?> cls = Class.forName(cn, false, cl);
+				for (Object obj : cls.getEnumConstants()) {
+					if (obj instanceof Enum) {
+						if (((Enum) obj).name().equals(ename)) {
+							classes[pos] = (Enum) obj;
+						}
+					}
+				}
 			} catch (ClassNotFoundException e) {
 				System.out.println("Failed to find class " + cn + " using a classloader of type " + cl.getClass().getName());
 				DominoUtils.handleException(e);

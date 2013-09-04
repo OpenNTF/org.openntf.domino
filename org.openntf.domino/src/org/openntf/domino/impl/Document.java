@@ -2291,6 +2291,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public boolean save(final boolean force, final boolean makeResponse, final boolean markRead) {
 		// System.out.println("Starting save operation...");
 		boolean result = false;
+		if (removeType_ != null) {
+			log_.log(Level.WARNING, "Save called on a document marked for a transactional delete. So there's no point...");
+			return true;
+		}
 		if (isDirty()) {
 			boolean go = true;
 			go = getAncestorDatabase().fireListener(generateEvent(Events.BEFORE_UPDATE_DOCUMENT, null));
@@ -2301,18 +2305,18 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					lotus.domino.Document del = getDelegate();
 					if (del != null) {
 						result = del.save(force, makeResponse, markRead);
-						// System.out.println("Document saved returned " + String.valueOf(result));
+						if (noteid_ == null || !noteid_.equals(del.getNoteID())) {
+							// System.out.println("Resetting note id from " + noteid_ + " to " + del.getNoteID());
+							noteid_ = del.getNoteID();
+						}
+						if (unid_ == null || !unid_.equals(del.getUniversalID())) {
+							// System.out.println("Resetting unid from " + unid_ + " to " + del.getUniversalID());
+							unid_ = del.getUniversalID();
+						}
 					} else {
 						log_.severe("Delegate document for " + unid_ + " is NULL!??!");
 					}
-					if (!noteid_.equals(del.getNoteID())) {
-						// System.out.println("Resetting note id from " + noteid_ + " to " + del.getNoteID());
-						noteid_ = del.getNoteID();
-					}
-					if (!unid_.equals(del.getUniversalID())) {
-						// System.out.println("Resetting unid from " + unid_ + " to " + del.getUniversalID());
-						unid_ = del.getUniversalID();
-					}
+
 				} catch (NotesException e) {
 					// System.out.println("Exception from attempted save...");
 					// e.printStackTrace();

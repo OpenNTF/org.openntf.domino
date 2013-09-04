@@ -1079,7 +1079,6 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
-
 		}
 	}
 
@@ -1113,6 +1112,16 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
+	public Date getLastFTIndexedDate() {
+		try {
+			return DominoUtils.toJavaDateSafe(getDelegate().getLastFTIndexed());
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1121,6 +1130,16 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	public DateTime getLastFixup() {
 		try {
 			return Factory.fromLotus(getDelegate().getLastFixup(), DateTime.class, Factory.getSession(this));
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+
+		}
+	}
+
+	public Date getLastFixupDate() {
+		try {
+			return DominoUtils.toJavaDateSafe(getDelegate().getLastFixup());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -1140,6 +1159,15 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			DominoUtils.handleException(e);
 			return null;
 
+		}
+	}
+
+	public Date getLastModifiedDate() {
+		try {
+			return DominoUtils.toJavaDateSafe(getDelegate().getLastModified());
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
 		}
 	}
 

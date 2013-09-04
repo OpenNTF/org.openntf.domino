@@ -4,6 +4,7 @@
 package org.openntf.domino.ext;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -170,6 +171,12 @@ public interface Database extends Base {
 	public int getModifiedNoteCount(final java.util.Date since, final Set<SelectOption> noteClass);
 
 	public int getModifiedNoteCount(final java.util.Date since);
+
+	public Date getLastModifiedDate();
+
+	public Date getLastFixupDate();
+
+	public Date getLastFTIndexedDate();
 
 	public boolean getOption(final DBOption optionName);
 
