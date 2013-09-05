@@ -55,6 +55,11 @@ public class DominoEdge extends DominoElement implements IDominoEdge, Serializab
 		return null;
 	}
 
+	@Override
+	public void remove() {
+		getParent().removeEdge(this);
+	}
+
 	public void relate(final DominoVertex in, final DominoVertex out) {
 		setInDoc(in);
 		setOutDoc(out);

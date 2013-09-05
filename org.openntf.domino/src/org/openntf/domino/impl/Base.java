@@ -453,7 +453,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 */
 	protected static Object toDominoFriendly(final Object value, final Base<?, ?> context) throws IllegalArgumentException {
 		if (value == null) {
-			log_.log(Level.WARNING, "Trying to convert a null argument to Domino friendly. Returning null...");
+			log_.log(Level.INFO, "Trying to convert a null argument to Domino friendly. Returning null...");
 			return null;
 		}
 		if (value instanceof Collection) {

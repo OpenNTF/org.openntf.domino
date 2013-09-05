@@ -26,8 +26,8 @@ import com.tinkerpop.blueprints.util.VerticesFromEdgesIterable;
 public class DominoVertex extends DominoElement implements IDominoVertex, Serializable {
 	private static final Logger log_ = Logger.getLogger(DominoVertex.class.getName());
 	public static final String GRAPH_TYPE_VALUE = "OpenVertex";
-	public static final String IN_NAME = "_OPEN_IN";
-	public static final String OUT_NAME = "_OPEN_OUT";
+	//	public static final String IN_NAME = "_OPEN_IN";
+	//	public static final String OUT_NAME = "_OPEN_OUT";
 	// public static final String IN_LABELS = "_OPEN_LABELS_IN";
 	// public static final String OUT_LABELS = "_OPEN_LABELS_OUT";
 	public static final String IN_PREFIX = "_OPEN_IN_";
@@ -473,41 +473,59 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		return new DefaultVertexQuery(this);
 	}
 
+	@Override
+	public void remove() {
+		getParent().removeVertex(this);
+	}
+
 	public void removeEdge(final Edge edge) {
 		getParent().startTransaction(this);
 		String label = edge.getLabel();
 
 		boolean inChanged = false;
 		Set<String> ins = getInEdgesSet(label);
-		synchronized (ins) {
-			inChanged = ins.remove(edge.getId());
+		if (ins != null) {
+			//			System.out.println("Removing an in edge from " + label + " with id " + edge.getId() + " from a vertex of type "
+			//					+ getProperty("Form"));
+			synchronized (ins) {
+				inChanged = ins.remove(edge.getId());
+			}
+		} else {
+			//			System.out.println("in edges were null from a vertex of type " + getProperty("Form") + ": " + getId());
 		}
 		// Set<Edge> inObjs = getInEdgeObjects();
 		// synchronized (inObjs) {
 		// inObjs.remove(edge);
 		// }
 		if (inChanged) {
+			//			System.out.println("Ins were changed so recording cache invalidation...");
 			Set<Edge> inObjsLabel = getInEdgeCache(label);
 			synchronized (inObjsLabel) {
 				inObjsLabel.remove(edge);
 			}
-
+			Map<String, Boolean> inDirtyMap = getInDirtyMap();
+			synchronized (inDirtyMap) {
+				inDirtyMap.put(label, true);
+			}
 		}
 
 		boolean outChanged = false;
 		Set<String> outs = getOutEdgesSet(label);
-		synchronized (outs) {
-			outChanged = outs.remove(edge.getId());
+		if (outs != null) {
+			//			System.out.println("Removing an out edge from " + label + " with id " + edge.getId() + " from a vertex of type "
+			//					+ getProperty("Form"));
+			synchronized (outs) {
+				outChanged = outs.remove(edge.getId());
+			}
+		} else {
+			//			System.out.println("out edges were null from a vertex of type " + getProperty("Form") + ": " + getId());
 		}
 		if (outChanged) {
+			//			System.out.println("Out were changed so recording cache invalidation...");
 			Set<Edge> outObjsLabel = getOutEdgeCache(label);
 			synchronized (outObjsLabel) {
 				outObjsLabel.remove(edge);
 			}
-			// Set<Edge> outObjs = getOutEdgeObjects();
-			// synchronized (outObjs) {
-			// outObjs.remove(edge);
-			// }
 			Map<String, Boolean> outDirtyMap = getOutDirtyMap();
 			synchronized (outDirtyMap) {
 				outDirtyMap.put(label, true);

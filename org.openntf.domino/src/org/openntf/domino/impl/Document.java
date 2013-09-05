@@ -1943,10 +1943,12 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public Item replaceItemValue(final String itemName, final Object value, final boolean isSummary) {
 		markDirty();
 		Item result = replaceItemValue(itemName, value);
-		if (result.isSummary() != isSummary)
+		if (result != null && result.isSummary() != isSummary)
 			result.setSummary(isSummary);
 		return result;
 	}
+
+	public static int MAX_NATIVE_VECTOR_SIZE = 255;
 
 	/*
 	 * (non-Javadoc)
@@ -1982,12 +1984,21 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			boolean isNonSummary = false;	// why isNon instead of is? Because we want to default to the existing behavior and only mark
 											// non-summary by exception
 			try {
-				if (value instanceof List || value instanceof Object[]) {
+				if (value instanceof Collection || value instanceof Object[]) {
+					if (value instanceof Collection) {
+						if (((Collection) value).size() > MAX_NATIVE_VECTOR_SIZE) {
+							throw new IllegalArgumentException();
+						}
+					} else if (value instanceof Object[]) {
+						if (((Object[]) value).length > MAX_NATIVE_VECTOR_SIZE) {
+							throw new IllegalArgumentException();
+						}
+					}
 					Vector<Object> resultList = new Vector<Object>();
 					Class<?> objectClass = null;
 					long totalStringSize = 0;
 
-					List<?> listValue = value instanceof List ? (List<?>) value : Arrays.asList((Object[]) value);
+					Collection<?> listValue = value instanceof Collection ? (Collection<?>) value : Arrays.asList((Object[]) value);
 
 					for (Object valNode : listValue) {
 						if (valNode instanceof BigString)
@@ -2012,6 +2023,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 							}
 							if (domNode instanceof String) {
 								totalStringSize += ((String) domNode).length();
+								if (totalStringSize > 14000)
+									isNonSummary = true;
 
 								// Escape to serializing if there's too much text data
 								// Leave fudge room for multibyte? This is clearly not the best way to do it
@@ -2027,7 +2040,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					}
 					// If it ended up being something we could store, make note of the original class instead of the list class
 					if (!(listValue).isEmpty()) {
-						valueClass = (listValue).get(0).getClass();
+						//						valueClass = (listValue).get(0).getClass();
 						MIMEEntity mimeChk = getMIMEEntity(itemName);
 						if (mimeChk != null) {
 							mimeChk.remove();

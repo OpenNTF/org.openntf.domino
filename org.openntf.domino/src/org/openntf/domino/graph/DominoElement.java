@@ -20,7 +20,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	public static final String TYPE_FIELD = "_OPEN_GRAPHTYPE";
 	// transient org.openntf.domino.Document doc_;
 	private String key_;
-	transient DominoGraph parent_;
+	protected transient DominoGraph parent_;
 	private String unid_;
 	private Map<String, Serializable> props_;
 	public final String[] DEFAULT_STR_ARRAY = { "" };
@@ -245,7 +245,14 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	}
 
 	@Override
-	public void remove() {
+	public abstract void remove();
+
+	//	{
+	//		getParent().startTransaction(this);
+	//		getRawDocument().removePermanently(true);
+	//	}
+
+	void _remove() {
 		getParent().startTransaction(this);
 		getRawDocument().removePermanently(true);
 	}
@@ -330,7 +337,11 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 							// System.out.println("Writing a null value for property: " + key
 							// + " to an Element document. Probably not good...");
 						}
-						doc.replaceItemValue(key, v);
+						if (key.startsWith(DominoVertex.IN_PREFIX) || key.startsWith(DominoVertex.OUT_PREFIX)) {
+							doc.replaceItemValue(key, v, false);
+						} else {
+							doc.replaceItemValue(key, v);
+						}
 					}
 					changedProperties_.clear();
 				}
