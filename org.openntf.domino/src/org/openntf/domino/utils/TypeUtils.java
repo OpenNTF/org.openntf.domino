@@ -113,11 +113,11 @@ public enum TypeUtils {
 						result = toBigStrings(v);
 					} else if (CType == Pattern.class) {
 						result = toPatterns(v);
-					} else if (CType == Class.class) {
-						result = toClasses(v);
 					} else if (CType == Enum.class) {
 						result = toEnums(v);
-					} else if (CType == Formula.class) {
+					} else if (Class.class.isAssignableFrom(CType)) {
+						result = toClasses(v);
+					} else if (Formula.class.isAssignableFrom(CType)) {
 						result = toFormulas(v);
 					} else if (CType == Date.class) {
 						result = toDates(v);
@@ -144,11 +144,13 @@ public enum TypeUtils {
 
 			if (T == String.class) {
 				result = join(v);
+			} else if (T == Enum.class) {
+				result = toEnum(join(v));
 			} else if (T == BigString.class) {
 				result = new BigString(join(v));
 			} else if (T == Pattern.class) {
 				result = Pattern.compile(join(v));
-			} else if (T == Class.class) {
+			} else if (Class.class.isAssignableFrom(T)) {
 				try {
 					String cn = join(v);
 					Class<?> cls = Class.forName(cn, false, Factory.getClassLoader());
@@ -157,9 +159,7 @@ public enum TypeUtils {
 					DominoUtils.handleException(e);
 					result = null;
 				}
-			} else if (T == Enum.class) {
-				result = toEnum(join(v));
-			} else if (T == Formula.class) {
+			} else if (Formula.class.isAssignableFrom(T)) {
 				Formula formula = new org.openntf.domino.helpers.Formula(join(v));
 				result = formula;
 			} else if (T == java.util.Collection.class) {
@@ -623,7 +623,7 @@ public enum TypeUtils {
 		String ename = null;
 		String cn = null;
 		if (en.indexOf(' ') > 0) {
-			cn = String.valueOf(value).substring(0, en.indexOf(' ') - 1).trim();
+			cn = String.valueOf(value).substring(0, en.indexOf(' ')).trim();
 			ename = String.valueOf(value).substring(en.indexOf(' ') + 1).trim();
 		}
 		try {
@@ -655,7 +655,7 @@ public enum TypeUtils {
 			String ename = null;
 			String cn = null;
 			if (en.indexOf(' ') > 0) {
-				cn = String.valueOf(o).substring(0, en.indexOf(' ') - 1).trim();
+				cn = String.valueOf(o).substring(0, en.indexOf(' ')).trim();
 				ename = String.valueOf(o).substring(en.indexOf(' ') + 1).trim();
 			}
 			try {
