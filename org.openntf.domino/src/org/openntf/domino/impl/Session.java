@@ -1550,6 +1550,8 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		return getEventFactory().generate(event, source, target, payload);
 	}
 
+	@Deprecated
+	//use DominoUtils.toCommonName(String) instead
 	public String toCommonName(final String name) {
 		org.openntf.domino.Name lname = createName(name);
 		if (lname.isHierarchical()) {
@@ -1557,5 +1559,20 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		} else {
 			return name;
 		}
+	}
+
+	public void boogie() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("(_|_)");
+		sb.append(" ");
+		sb.append("(_/_)");
+		sb.append(" ");
+		sb.append("(_|_)");
+		sb.append(" ");
+		sb.append("(_\\_)");
+		sb.append(" ");
+		System.out.println(sb.toString());
+		System.out.println(sb.toString());
+		System.out.println(sb.toString());
 	}
 }

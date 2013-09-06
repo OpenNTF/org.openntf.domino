@@ -129,6 +129,9 @@ public interface Session {
 
 	public void setFixEnable(Fixes fix, boolean value);
 
+	@Deprecated
 	public String toCommonName(String name);
+
+	public void boogie();
 
 }
