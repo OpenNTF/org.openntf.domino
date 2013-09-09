@@ -5,10 +5,11 @@ import lotus.domino.NotesFactory;
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.thread.DominoThread;
+import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 public class DominoRunnable implements Runnable {
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		DominoThread thread = new DominoThread(new DominoRunnable(), "My thread");
 		thread.start();
 	}
@@ -19,12 +20,18 @@ public class DominoRunnable implements Runnable {
 
 	@Override
 	public void run() {
+		Session session = this.getSession();
+		Database db = session.getDatabase("", "names.nsf");
+		// whatever you're gonna do, do it fast!
+	}
+
+	protected Session getSession() {
 		try {
 			Session session = Factory.fromLotus(NotesFactory.createSession(), Session.class, null);
-			Database db = session.getDatabase("", "names.nsf");
-			// whatever you're gonna do, do it fast!
+			return session;
 		} catch (Throwable t) {
-			t.printStackTrace();
+			DominoUtils.handleException(t);
+			return null;
 		}
 	}
 }
