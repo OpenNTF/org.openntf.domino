@@ -680,8 +680,10 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		lotus.domino.Database database = null;
 		org.openntf.domino.Database result = null;
 		String key = db;
-		if (server.length() > 1) {
+		if (null != server && server.length() > 0) {
 			key = server + "!!" + db;
+		} else {
+			key = "!!" + db;
 		}
 		result = databases_.get(key);
 		if (result == null) {
