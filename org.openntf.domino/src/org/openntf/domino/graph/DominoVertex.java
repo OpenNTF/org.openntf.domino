@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Document;
+import org.openntf.domino.graph.DominoGraph.DominoGraphException;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
@@ -634,5 +635,47 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		}
 		return sb.toString();
 	}
+
+	public IEdgeHelper getHelper(final IDominoEdgeType edgeType) {
+		return getParent().getHelper(edgeType);
+	}
+
+	public Set<IEdgeHelper> findHelpers(final Vertex other) {
+		return getParent().findHelpers(this, other);
+	}
+
+	public static class MultipleDefinedEdgeHelpers extends DominoGraphException {
+		public MultipleDefinedEdgeHelpers(final DominoVertex element1, final DominoVertex element2) {
+			super("Multiple EdgeHelpers found for vertexes of type " + element1.getClass().getName() + " and "
+					+ element2.getClass().getName(), element1, element2);
+		}
+	}
+
+	public static class UndefinedEdgeHelpers extends DominoGraphException {
+		public UndefinedEdgeHelpers(final DominoVertex element1, final DominoVertex element2) {
+			super("No EdgeHelpers found for vertexes of type " + element1.getClass().getName() + " and " + element2.getClass().getName(),
+					element1, element2);
+		}
+	}
+
+	public Edge relate(final DominoVertex other) throws MultipleDefinedEdgeHelpers {
+		Set<IEdgeHelper> helpers = findHelpers(other);
+		if (helpers.size() == 1) {
+			for (IEdgeHelper helper : helpers) {
+				return helper.makeEdge(other, this);
+			}
+			return null;
+		} else if (helpers.size() == 0) {
+			throw new UndefinedEdgeHelpers(this, other);
+
+		} else {
+			throw new MultipleDefinedEdgeHelpers(this, other);
+		}
+
+	}
+	//
+	//	public Edge find(Vertex other) {
+	//		return getRuleHelper().findEdge(this, other);
+	//	}
 
 }

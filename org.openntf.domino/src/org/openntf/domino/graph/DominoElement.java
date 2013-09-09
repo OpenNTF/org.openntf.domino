@@ -18,50 +18,102 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	private static final Logger log_ = Logger.getLogger(DominoElement.class.getName());
 	private static final long serialVersionUID = 1L;
 	public static final String TYPE_FIELD = "_OPEN_GRAPHTYPE";
-	// transient org.openntf.domino.Document doc_;
 	private String key_;
 	protected transient DominoGraph parent_;
 	private String unid_;
 	private Map<String, Serializable> props_;
 	public final String[] DEFAULT_STR_ARRAY = { "" };
 
-	// public static void clearCache() {
-	// documentCache.set(null);
-	// }
-	//
-	// private static ThreadLocal<Map<String, Document>> documentCache = new ThreadLocal<Map<String, Document>>() {
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see java.lang.ThreadLocal#initialValue()
-	// */
-	// @Override
-	// protected Map<String, Document> initialValue() {
-	// return new ConcurrentHashMap<String, Document>();
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see java.lang.ThreadLocal#get()
-	// */
-	// @Override
-	// public Map<String, Document> get() {
-	// Map<String, Document> map = super.get();
-	// if (map == null) {
-	// map = new ConcurrentHashMap<String, Document>();
-	// super.set(map);
-	//
-	// }
-	// return map;
-	// }
-	//
-	// };
+	public static enum Properties implements IDominoProperties {
+		TITLE(String.class), KEY(String.class), FORM(String.class);
+
+		private Class<?> type_;
+
+		Properties(final Class<?> type) {
+			type_ = type;
+		}
+
+		@Override
+		public Class<?> getType() {
+			return type_;
+		}
+
+		@Override
+		public String getName() {
+			return super.name();
+		}
+	}
 
 	public DominoElement(final DominoGraph parent, final Document doc) {
-		// doc_ = doc;
 		parent_ = parent;
+
 		unid_ = doc.getUniversalID().toUpperCase();
+	}
+
+	private transient java.lang.Object lockHolder_;
+
+	public synchronized boolean hasLock() {
+		return lockHolder_ != null;
+	}
+
+	public synchronized boolean lock(final java.lang.Object lockHolder) {
+		if (lockHolder_ == null) {
+			lockHolder_ = lockHolder;
+			return true;
+		}
+		return false;
+	}
+
+	public synchronized boolean unlock(final java.lang.Object lockHolder) {
+		if (lockHolder.equals(lockHolder_)) {
+			lockHolder_ = null;
+			return true;
+		}
+		return false;
+	}
+
+	synchronized void unlock() {
+		lockHolder_ = null;
+	}
+
+	public String getTitle() {
+		return getProperty(Properties.TITLE, false);
+	}
+
+	public void setTitle(final String value) {
+		setProperty(Properties.TITLE, value);
+	}
+
+	public String getKey() {
+		return getProperty(Properties.KEY, false);
+	}
+
+	public void setKey(final String value) {
+		setProperty(Properties.KEY, value);
+	}
+
+	public String getForm() {
+		return getProperty(Properties.FORM, false);
+	}
+
+	public void setForm(final String value) {
+		String current = getForm();
+		if (current == null || !current.equalsIgnoreCase(value)) {
+			setProperty(Properties.FORM, value);
+		}
+	}
+
+	private Boolean isNew_;
+
+	void setNew(final boolean isnew) {
+		isNew_ = isnew;
+	}
+
+	public boolean isNew() {
+		if (isNew_ == null) {
+			isNew_ = false;
+		}
+		return isNew_;
 	}
 
 	private Map<String, Serializable> getProps() {
@@ -158,9 +210,6 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	public <T> T getProperty(final String propertyName, final Class<?> T) {
 		Object result = null;
-		// if (T == Integer.class) {
-		// System.out.println("getProperty is getting an Integer from the document " + doc.getClass().getName() + " " + doc.getNoteID());
-		// }
 		Map<String, Serializable> props = getProps();
 		// synchronized (props) {
 		result = props.get(propertyName);

@@ -2275,4 +2275,8 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 			return columnValuesIndex_;
 		}
 	}
+
+	public boolean isIndexed() {
+		return getDocument().hasItem("$Collation");
+	}
 }
