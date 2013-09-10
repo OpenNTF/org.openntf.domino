@@ -21,4 +21,6 @@ public interface View {
 	 */
 	public NoteCollection getNoteCollection();
 
+	public boolean isIndexed();
+
 }

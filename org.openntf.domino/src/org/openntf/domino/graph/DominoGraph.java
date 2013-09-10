@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -33,6 +34,35 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.DefaultGraphQuery;
 
 public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
+	public static class DominoGraphException extends RuntimeException {
+
+		final String message_;
+		final DominoElement elem1_;
+		final DominoElement elem2_;
+
+		public DominoGraphException(final String message) {
+			super(message);
+			message_ = message;
+			elem1_ = null;
+			elem2_ = null;
+		}
+
+		public DominoGraphException(final String message, final DominoElement element) {
+			super(message);
+			message_ = message;
+			elem1_ = element;
+			elem2_ = null;
+
+		}
+
+		public DominoGraphException(final String message, final DominoElement element1, final DominoElement element2) {
+			super(message);
+			message_ = message;
+			elem1_ = element1;
+			elem2_ = element2;
+		}
+	}
+
 	private static final Logger log_ = Logger.getLogger(DominoGraph.class.getName());
 
 	public static final Set<String> EMPTY_IDS = Collections.emptySet();
@@ -137,6 +167,27 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		return helper;
 	}
 
+	public IEdgeHelper getHelper(final IDominoEdgeType edgeType) {
+		return getHelper(edgeType.getLabel());
+	}
+
+	public Set<IEdgeHelper> findHelpers(final Vertex in, final Vertex out) {
+		Set<IEdgeHelper> result = new HashSet<IEdgeHelper>();
+		if (in == null || out == null) {
+			return result;
+		}
+		Class<?> inCls = in.getClass();
+		Class<?> outCls = out.getClass();
+		for (IEdgeHelper helper : edgeHelpers_.values()) {
+			boolean inChk = helper.getInType().isAssignableFrom(inCls);
+			boolean outChk = helper.getOutType().isAssignableFrom(outCls);
+			if (inChk && outChk) {
+				result.add(helper);
+			}
+		}
+		return result;
+	}
+
 	public void addHelper(final String key, final Class<? extends Vertex> inType, final Class<? extends Vertex> outType) {
 		addHelper(key, inType, outType, true, key);
 	}
@@ -157,6 +208,10 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		if (getHelper(key) == null) {
 			edgeHelpers_.put(key, helper);
 		}
+	}
+
+	public void removeHelper(final IEdgeHelper helper) {
+		edgeHelpers_.remove(helper);
 	}
 
 	public void setRawDatabase(final org.openntf.domino.Database database) {
