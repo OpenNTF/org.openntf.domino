@@ -21,7 +21,7 @@ import com.ibm.icu.util.Calendar;
  */
 public interface Session {
 	public static enum Fixes {
-		MIME_CONVERT, REPLACE_ITEM_NULL, REMOVE_ITEM, APPEND_ITEM_VALUE
+		MIME_CONVERT, REPLACE_ITEM_NULL, REMOVE_ITEM, APPEND_ITEM_VALUE, VIEW_UPDATE_OFF
 	}
 
 	public IDominoEventFactory getEventFactory();

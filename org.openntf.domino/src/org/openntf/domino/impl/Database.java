@@ -37,6 +37,7 @@ import org.openntf.domino.design.impl.DatabaseDesign;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
+import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -1569,7 +1570,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			View result = Factory.fromLotus(getDelegate().getView(name), View.class, this);
 			if (result != null) {
-				result.setAutoUpdate(false);
+				if (getAncestorSession().isFixEnabled(Fixes.VIEW_UPDATE_OFF)) {
+					result.setAutoUpdate(false);
+				}
 			}
 			return result;
 		} catch (NotesException e) {
