@@ -5,6 +5,7 @@ import lotus.domino.NotesFactory;
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.thread.DominoThread;
+import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 public class DominoRunnable implements Runnable {
@@ -29,7 +30,7 @@ public class DominoRunnable implements Runnable {
 			Session session = Factory.fromLotus(NotesFactory.createSession(), Session.class, null);
 			return session;
 		} catch (Throwable t) {
-			org.openntf.domino.utils.DominoUtils.handleException(t);
+			DominoUtils.handleException(t);
 			return null;
 		}
 	}
