@@ -437,7 +437,10 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	}
 
 	public void setProperty(final IDominoProperties prop, final java.lang.Object value) {
-		setProperty(prop.getName(), value);
+		Object current = getProperty(prop, true);
+		if (current == null || !current.equals(value)) {
+			setProperty(prop.getName(), value);
+		}
 	}
 
 }
