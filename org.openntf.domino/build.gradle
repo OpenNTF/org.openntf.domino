@@ -53,7 +53,6 @@ ext {
  
  dependencies {
 	 compile fileTree(jre)
-	 compile fileTree('libs')
 	 compile 'xerces:xercesImpl:2.8.0'
  }
  
