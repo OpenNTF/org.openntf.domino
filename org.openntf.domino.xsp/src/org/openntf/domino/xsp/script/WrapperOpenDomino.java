@@ -8,7 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openntf.domino.DateTime;
+import lotus.domino.DateTime;
+
 import org.openntf.domino.utils.DominoUtils;
 
 import com.ibm.jscript.InterpretException;
@@ -435,7 +436,7 @@ public class WrapperOpenDomino {
 							System.out.println("Something's gone wrong! " + name + ": " + cur.toString() + ">" + cur.getClass().getName());
 						}
 					} catch (Throwable t) {
-						System.out.println("Hit error on " + name);
+						// System.out.println("Hit error on " + name);
 					}
 				}
 			}

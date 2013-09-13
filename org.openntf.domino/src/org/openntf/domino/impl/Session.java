@@ -680,10 +680,17 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		lotus.domino.Database database = null;
 		org.openntf.domino.Database result = null;
 		String key = db;
-		if (null != server && server.length() > 0) {
-			key = server + "!!" + db;
-		} else {
-			key = "!!" + db;
+		try {
+			if (server == null || server.length() < 1) {
+				key = "!!" + db;
+			} else {
+				key = server + "!!" + db;
+			}
+		} catch (Exception e) {
+			StackTraceElement ste = e.getStackTrace()[0];
+			System.out.println("Failed to build key on attempt to open a database at server " + String.valueOf(server) + " with filepath "
+					+ String.valueOf(db) + " because of an exception " + e.getClass().getSimpleName() + " at " + ste.getClassName() + "."
+					+ ste.getMethodName() + " (line " + ste.getLineNumber() + ")");
 		}
 		result = databases_.get(key);
 		if (result == null) {
