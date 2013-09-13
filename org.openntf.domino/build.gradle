@@ -14,87 +14,92 @@
  * permissions and limitations under the License.
  */
 
- apply plugin: 'java'
- //apply plugin: 'osgi'
+apply plugin: 'java'
+//apply plugin: 'osgi'
  
- defaultTasks 'build'
+defaultTasks 'build'
  
- group = 'org.openntf'
- version = new Version(major: 0, minor: 3, revision: 0, snapshot: true)
- 
- 
+group = 'org.openntf'
+version = new Version(major: 0, minor: 3, revision: 0, snapshot: true)
+  
 ext {
-	 fullName = 'org/openntf/domino'
-	 fullDescription = 'OpenNTF Domino API - Open replacement for lotus.domino package in IBM Domino'
-	 siteUrl = 'http://www.openntf.org'
-	 sourceUrl = 'https://github.com/OpenNTF/org.openntf.domino.git'
+	fullName = 'org/openntf/domino'
+	fullDescription = 'OpenNTF Domino API - Open replacement for lotus.domino package in IBM Domino'
+	siteUrl = 'http://www.openntf.org'
+	sourceUrl = 'https://github.com/OpenNTF/org.openntf.domino.git'
  	teamName = 'org.openntf'
-	 jre = '/opt/ibm/domino/notes/latest/linux/jvm/lib'
+	 
+	// add a gradle.properties file locally to override this, '14.2. Gradle properties and system properties':
+	// http://www.gradle.org/docs/current/userguide/tutorial_this_and_that.html
+	// the path to the jre is added to avoid external dependencies
+	if (!project.hasProperty('domino_jre')) domino_jre = '/opt/ibm/domino/notes/latest/linux/jvm/lib'
+}
+
+
+ 
+repositories {
+	mavenCentral()
 }
  
- repositories {
-	 mavenCentral()
- }
+	sourceCompatibility = 1.6
+	targetCompatibility = 1.6
  
- sourceCompatibility = 1.6
- targetCompatibility = 1.6
- 
- sourceSets {
+sourceSets {
 	main {
         java {
             srcDirs 'src','tinkerpop','icu4j'
-        }
-		resources {
-			srcDirs 'resources', 'icu4j'
-			exclude 'doc', 'devnotes.txt'
+    }
+	resources {
+		srcDirs 'resources', 'icu4j'
+		exclude 'doc', 'devnotes.txt'
 		}
     }
- }
+}
  
- dependencies {
-	 compile fileTree(jre)
-	 compile 'xerces:xercesImpl:2.8.0'
- }
+dependencies {
+	compile fileTree(domino_jre) // this is added to avoid adding external dependencies
+	compile 'xerces:xercesImpl:2.8.0'
+}
  
- javadoc {
-	 title = '<h1>org.openntf.domino</h1>'
+javadoc {
+	title = '<h1>org.openntf.domino</h1>'
  
-	 options.addStringOption('XDignore.symbol.file', '-quiet')
-	 options.author = true
-	 //options.bottom = "<i>Copyright &#169; 2011 - ${Calendar.instance[Calendar.YEAR]} LMAX Ltd. All Rights Reserved.</i>"
-	 options.use = true
-	 options.version = true
-	 options.windowTitle = 'org.openntf.domino API'
+	options.addStringOption('XDignore.symbol.file', '-quiet')
+	options.author = true
+	//options.bottom = "<i>Copyright &#169; ${Calendar.instance[Calendar.YEAR]} OpenNTF.org. All Rights Reserved.</i>"
+	options.use = true
+	options.version = true
+	options.windowTitle = 'org.openntf.domino API'
  }
  
 jar {
-	 manifest.from('META-INF/MANIFEST.MF')
- }
+	manifest.from('META-INF/MANIFEST.MF')
+}
  
- task sourcesJar(type: Jar) {
-	 classifier = 'sources'
-	 from sourceSets.main.allSource
- }
+task sourcesJar(type: Jar) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
  
- task javadocJar(type: Jar, dependsOn: javadoc) {
-	 classifier = 'javadoc'
-	 from javadoc.destinationDir
- }
+task javadocJar(type: Jar, dependsOn: javadoc) {
+	classifier = 'javadoc'
+	from javadoc.destinationDir
+}
  
- artifacts {
-	 archives sourcesJar, javadocJar
- }
+artifacts {
+	archives sourcesJar, javadocJar
+}
  
- task wrapper(type: Wrapper) {
-	 gradleVersion = '1.7'
- }
+task wrapper(type: Wrapper) {
+	gradleVersion = '1.7'
+}
  
- class Version {
-	 int major, minor = 0, revision = 0
-	 boolean snapshot
-	 String stage
+class Version {
+	int major, minor = 0, revision = 0
+	boolean snapshot
+	String stage
  
-	 String toString() {
-		 "$major.$minor.$revision${stage ? '.' + stage : ''}${snapshot ? '-SNAPSHOT' : ''}"
-	 }
- }
+	String toString() {
+		"$major.$minor.$revision${stage ? '.' + stage : ''}${snapshot ? '-SNAPSHOT' : ''}"
+	}
+}
