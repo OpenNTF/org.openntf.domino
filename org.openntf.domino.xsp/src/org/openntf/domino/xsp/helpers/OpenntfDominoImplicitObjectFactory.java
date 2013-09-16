@@ -73,7 +73,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 			} else {
 				// System.out.println("XSP ENV IS NULL!!");
 			}
-			appMap.put(OpenntfDominoImplicitObjectFactory.class.getName(), current);
+			appMap.put(OpenntfDominoImplicitObjectFactory.class.getName() + "_GODMODE", current);
 		} else {
 			// System.out.println("Current found: " + String.valueOf(current));
 		}
@@ -93,7 +93,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 					}
 				}
 			}
-			appMap.put(OpenntfDominoImplicitObjectFactory.class.getName(), current);
+			appMap.put(OpenntfDominoImplicitObjectFactory.class.getName() + "_MARCEL", current);
 		}
 		return (Boolean) current;
 	}
@@ -111,7 +111,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 					}
 				}
 			}
-			appMap.put(OpenntfDominoImplicitObjectFactory.class.getName(), current);
+			appMap.put(OpenntfDominoImplicitObjectFactory.class.getName() + "_KHAN", current);
 		}
 		return (Boolean) current;
 	}
@@ -129,7 +129,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 					}
 				}
 			}
-			appMap.put(OpenntfDominoImplicitObjectFactory.class.getName(), current);
+			appMap.put(OpenntfDominoImplicitObjectFactory.class.getName() + "_RAID", current);
 		}
 		return (Boolean) current;
 	}
