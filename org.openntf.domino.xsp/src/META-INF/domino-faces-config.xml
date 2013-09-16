@@ -1,13 +1,3 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <faces-config>
-  <!-- Phase Listener -->
-  <lifecycle>
-    <phase-listener>org.openntf.domino.xsp.OpenLogPhaseListener</phase-listener>
-  </lifecycle>
-  <!-- Managed bean -->
-  <managed-bean>
-    <managed-bean-name>openLogBean</managed-bean-name>
-    <managed-bean-class>org.openntf.domino.xsp.OpenLogErrorHolder</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
-  </managed-bean>
 </faces-config>
