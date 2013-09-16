@@ -35,14 +35,16 @@ ext {
 	if (!project.hasProperty('domino_jre')) domino_jre = '/opt/ibm/domino/notes/latest/linux/jvm/lib'
 }
 
-
+compileJava {
+	options.bootClasspath = files  ( "${domino_jre}/rt.jar" )
+}
  
 repositories {
 	mavenCentral()
 }
  
-	sourceCompatibility = 1.6
-	targetCompatibility = 1.6
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
  
 sourceSets {
 	main {
