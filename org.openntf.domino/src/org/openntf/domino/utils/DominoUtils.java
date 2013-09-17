@@ -110,7 +110,7 @@ public enum DominoUtils {
 	private final static Logger log_ = Logger.getLogger("org.openntf.domino");
 
 	/** The Constant logBackup_. */
-	private final static Logger logBackup_ = Logger.getLogger("org.openntf.domino");
+	private final static Logger logBackup_ = Logger.getLogger("com.ibm.xsp.domino");
 
 	/**
 	 * Checksum.

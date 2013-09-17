@@ -1,5 +1,4 @@
 /*
-<<<<<<< HEAD
  * Copyright Paul Withers, Intec 2011-2013
 =======
  * Copyright 2013
@@ -15,11 +14,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
  * implied. See the License for the specific language governing 
  * permissions and limitations under the License.
-<<<<<<< HEAD
- * 
- * 
- * Paul Withers, Intec March 2013
->>>>>>> 8bcc4ba53ac549f9bd61dc6172feb2f37e78e12d
+ *
  * Some significant enhancements here from the OpenNTF version
  *
  * 1. Everything is designed to work regardless of ExtLib packages
@@ -46,8 +41,6 @@
  *
  * OpenLogItem.logEvent(session, message, level, document)
  * 
-=======
->>>>>>> origin/declan
  */
 
 package org.openntf.domino.logging;
@@ -55,7 +48,6 @@ package org.openntf.domino.logging;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -68,7 +60,6 @@ import lotus.domino.NotesException;
 import lotus.domino.local.NotesBase;
 
 import org.openntf.domino.Database;
-import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
 import org.openntf.domino.RichTextItem;
 import org.openntf.domino.Session;
@@ -76,11 +67,13 @@ import org.openntf.domino.impl.Base;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
-// TODO: Auto-generated Javadoc
+import com.ibm.commons.util.StringUtil;
+
 /**
- * The Class OpenLogItem.
+ * @author withersp The Class OpenLogItem.
+ * 
  */
-public class OpenLogItem implements Serializable {
+public class BaseOpenLogItem implements IOpenLogItem {
 	/*
 	 * ======================================================= <HEADER> NAME: OpenLogClass script library VERSION: 20070321a AUTHOR(S):
 	 * Julian Robichaux ( http://www.nsftools.com ) ORIGINAL SOURCE: The OpenLog database, available as an open-source project at
@@ -137,86 +130,29 @@ public class OpenLogItem implements Serializable {
 	 */
 
 	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 1L;
-	
-	/** The Constant TYPE_ERROR. */
-	public static final String TYPE_ERROR = "Error";
-	
-	/** The Constant TYPE_EVENT. */
-	public static final String TYPE_EVENT = "Event";
-
-	/** The _log form name. */
-	private final String _logFormName = "LogEvent";
-
-	// MODIFY THESE FOR YOUR OWN ENVIRONMENT
-	// (don't forget to use double-backslashes if this database
-	// is in a Windows subdirectory -- like "logs\\OpenLog.nsf")
-	/** The _log db name. */
-	private String _logDbName = "";
-
-	/** The _this database. */
-	private String _thisDatabase;
-	
-	/** The _this server. */
-	private String _thisServer;
-	
-	/** The _this agent. */
-	private String _thisAgent;
-	// why the object? Because the object version is serializable
-	/** The _log success. */
-	private Boolean _logSuccess = true;
-	
-	/** The _access level. */
-	private String _accessLevel;
-	
-	/** The _user roles. */
-	private Vector<Object> _userRoles;
-	
-	/** The _client version. */
-	private Vector<String> _clientVersion;
-
-	/** The _severity. */
-	private Level _severity;
-	
-	/** The _event type. */
-	private String _eventType;
-	
-	/** The _message. */
-	private String _message;
-
-	/** The _base exception. */
-	private Throwable _baseException;
-	
-	/** The _event java time. */
-	private Date _eventJavaTime;
-	
-	/** The _err doc unid. */
-	private String _errDocUnid;
-
-	/** The _session. */
-	private transient Session _session;
-	
-	/** The _log db. */
-	private transient Database _logDb;
-	
-	/** The _current database. */
-	private transient Database _currentDatabase;
-	
-	/** The _start time. */
-	private transient DateTime _startTime;
-	
-	/** The _event time. */
-	private transient DateTime _eventTime;
-	
-	/** The _err doc. */
-	private transient Document _errDoc;
-
-	/** The ol debug level. */
-	public String olDebugLevel = loadFromProps("org.openntf.domino.logging.OpenLogHandler.OpenLogErrorsLevel");
-
-	// debugOut is the PrintStream that errors will be printed to, for debug
-	// levels greater than 1 (System.err by default)
-	/** The debug out. */
+	protected static final long serialVersionUID = 1L;
+	protected final String _logFormName = "LogEvent";
+	protected String _logDbName = "";
+	protected String _thisDatabase;
+	protected String _thisServer;
+	protected String _thisAgent;
+	protected Boolean _logSuccess = true;
+	protected String _accessLevel;
+	protected Vector<Object> _userRoles;
+	protected Vector<String> _clientVersion;
+	protected Level _severity;
+	protected String _eventType;
+	protected String _message;
+	protected Throwable _baseException;
+	protected String _errDocUnid;
+	protected Session _session;
+	protected Database _logDb;
+	protected Database _currentDatabase;
+	protected Date _startTime;
+	protected Date _eventTime;
+	protected Document _errDoc;
+	private String _currentDbPath;
+	public transient String olDebugLevel = loadFromProps("org.openntf.domino.logging.OpenLogHandler.OpenLogErrorsLevel");
 	public static PrintStream debugOut = System.err;
 
 	/*
@@ -225,7 +161,7 @@ public class OpenLogItem implements Serializable {
 	/**
 	 * Instantiates a new open log item.
 	 */
-	public OpenLogItem() {
+	public BaseOpenLogItem() {
 
 	}
 
@@ -235,112 +171,54 @@ public class OpenLogItem implements Serializable {
 	 * @param s
 	 *            the s
 	 */
-	public OpenLogItem(final Session s) {
+	public BaseOpenLogItem(final Session s) {
 		if (s != null) {
 			setSession(s);
 		}
 	}
 
-	/**
-	 * Sets the Session property of the OpenLogItem.
-	 * 
-	 * @param s
-	 *            Session
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#setSession(org.openntf.domino.Session)
 	 */
-	private void setSession(final Session s) {
+	public void setSession(final Session s) {
 		_session = s;
 	}
 
-	/**
-	 * Gets the _session object, which may have been overridden if passed into logError / logEvent.
-	 * 
-	 * @return Session
-	 */
-	private Session getSession() {
-		if (_session == null) {
-			_session = Factory.getSession();
-		}
-		return _session;
-	}
-
-	/**
-	 * Sets the base Throwable for the OpenLogItem.
-	 * 
-	 * @param base
-	 *            Throwable - base throwable to be logged
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#setBase(java.lang.Throwable)
 	 */
 	public void setBase(final Throwable base) {
 		_baseException = base;
 	}
 
-	/**
-	 * Retrieves the base Throwable passed into the OpenLogItem.
-	 * 
-	 * @return throwable to be logged
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#getBase()
 	 */
 	public Throwable getBase() {
 		return _baseException;
 	}
 
-	/**
-	 * Sets the severity for the current OpenLogItem.
-	 * 
-	 * @param severity
-	 *            java.util.logging.Level
-	 * 
-	 *            Options:
-	 *            <ul>
-	 *            <li>Level.SEVERE</li>
-	 *            <li>Level.WARNING</li>
-	 *            <li>Level.INFO</li>
-	 *            <li>Level.CONFIG</li>
-	 *            <li>Level.FINE</li>
-	 *            <li>Level.FINER</li>
-	 *            <li>Level.FINEST</li>
-	 *            </ul>
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#setSeverity(java.util.logging.Level)
 	 */
 	public void setSeverity(final Level severity) {
 		_severity = severity;
 	}
 
-	/**
-	 * Sets the message to be logged in this OpenLogItem.
-	 * 
-	 * @param message
-	 *            the message to set
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#setMessage(java.lang.String)
 	 */
 	public void setMessage(final String message) {
 		_message = message;
 	}
 
-	/**
-	 * Retrieves the current database path.
-	 * 
-	 * @return the current database path
-	 */
-	public String getCurrentDatabasePath() {
-		if (_thisDatabase == null) {
-			try {
-				Database db = getCurrentDatabase();
-				if (db != null) {
-					_thisDatabase = getCurrentDatabase().getFilePath();
-				}
-			} catch (Exception e) {
-				debugPrint(e);
-			}
-		}
-		return _thisDatabase;
-	}
-
-	/**
-	 * Retrieves the current server name._session = Factory.getSession();
-	 * 
-	 * @return the current servername or a blank String if local
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#getThisServer()
 	 */
 	public String getThisServer() {
 		if (_thisServer == null) {
 			try {
-				_thisServer = getSession().getServerName();
+				_thisServer = Factory.getSession().getServerName();
 				if (_thisServer == null)
 					_thisServer = "";
 			} catch (Exception e) {
@@ -351,57 +229,52 @@ public class OpenLogItem implements Serializable {
 	}
 
 	/**
-	 * Retrieves the agent or XPage name the error occurred on.
-	 * 
-	 * @return the agent name / XPage name
+	 * @return
 	 */
 	public String getThisAgent() {
 		if (_thisAgent == null) {
-			setThisAgent(true);
+			setThisAgent(Factory.getRunContext().name());
 		}
 		return _thisAgent;
 	}
 
-	// TODO Complete setThisAgent
-	/**
-	 * Sets the agent or XPage name the error occurred on.
-	 * 
-	 * @param currPage
-	 *            whether or not the current XPage should be used or previous (if the user has been re-routed to an Error page)
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#setThisAgent()
 	 */
-	public void setThisAgent(final boolean currPage) {
-		_thisAgent = "org.openntf.domino";
+	public void setThisAgent(final String fromContext) {
+		_thisAgent = fromContext;
 	}
 
-	/**
-	 * Gets the OpenLog database to be logged to.
-	 * 
-	 * @return the Log Database
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#getLogDb()
 	 */
 	public Database getLogDb() {
 		if (_logDb == null) {
 			try {
-				_logDb = getSession().getDatabase(getThisServer(), getLogDbName(), false);
+				_logDb = Factory.getSession().getDatabase(getThisServer(), getLogDbName(), false);
 			} catch (Exception e) {
 				debugPrint(e);
 			}
 		} else {
 			if (Base.isLocked(_logDb)) {
-				_logDb = getSession().getDatabase(getThisServer(), getLogDbName(), false);
+				_logDb = Factory.getSession().getDatabase(getThisServer(), getLogDbName(), false);
 			}
 		}
 		return _logDb;
 	}
 
-	/**
-	 * Gets the current database.
-	 * 
-	 * @return current Database object
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#getCurrentDatabase()
 	 */
 	public Database getCurrentDatabase() {
-		if (_currentDatabase == null) {
+		/*
+		 * BaseOpenLogItem gets shared between calls and _currentDatabase is resurrected.
+		 * So check _currentDbPath variable is actual current path
+		 */
+		if (!StringUtil.equals(_currentDbPath, Factory.getSession().getCurrentDatabase().getFilePath())) {
 			try {
-				_currentDatabase = getSession().getCurrentDatabase();
+				_currentDatabase = Factory.getSession().getCurrentDatabase();
+				_currentDbPath = _currentDatabase.getFilePath();
 			} catch (Exception e) {
 				debugPrint(e);
 			}
@@ -409,38 +282,12 @@ public class OpenLogItem implements Serializable {
 		return _currentDatabase;
 	}
 
-	/**
-	 * Retrieves the UserName property of the current Session.
-	 * 
-	 * @return the userName property from the Session
-	 */
-	public String getUserName() {
-		try {
-			return getSession().getUserName();
-		} catch (Exception e) {
-			debugPrint(e);
-			return "";
-		}
+	public String getCurrentDatabasePath() {
+		return _currentDbPath;
 	}
 
-	/**
-	 * Retrieves the EffectiveUserName property of the current Session.
-	 * 
-	 * @return the Effective User Name of the session
-	 */
-	public String getEffName() {
-		try {
-			return getSession().getEffectiveUserName();
-		} catch (Exception e) {
-			debugPrint(e);
-			return "";
-		}
-	}
-
-	/**
-	 * Retrieves the access level of the current user.
-	 * 
-	 * @return the access level for the current user
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#getAccessLevel()
 	 */
 	public String getAccessLevel() {
 		if (_accessLevel == null) {
@@ -478,32 +325,32 @@ public class OpenLogItem implements Serializable {
 		return _accessLevel;
 	}
 
-	/**
-	 * Retrieves the roles for the current user for the current database.
-	 * 
-	 * @return the user roles of the current user
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#getUserRoles()
 	 */
 	public Vector<Object> getUserRoles() {
 		if (_userRoles == null) {
-			try {
-				_userRoles = Factory.wrappedEvaluate(getSession(), "@UserRoles");
-			} catch (Exception e) {
-				debugPrint(e);
-			}
+			setUserRoles(Factory.wrappedEvaluate(Factory.getSession(), "@UserRoles"));
 		}
 		return _userRoles;
 	}
 
-	/**
-	 * Retrieves the Notes Client or Domino Server version.
-	 * 
-	 * @return the version of the Notes Client or server, if running on server
+	public void setUserRoles(final Vector<Object> roles) {
+		try {
+			_userRoles = roles;
+		} catch (Exception e) {
+			debugPrint(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#getClientVersion()
 	 */
 	public Vector<String> getClientVersion() {
 		if (_clientVersion == null) {
 			_clientVersion = new Vector<String>();
 			try {
-				String cver = getSession().getNotesVersion();
+				String cver = Factory.getSession().getNotesVersion();
 				if (cver != null) {
 					if (cver.indexOf("|") > 0) {
 						_clientVersion.addElement(cver.substring(0, cver.indexOf("|")));
@@ -519,16 +366,13 @@ public class OpenLogItem implements Serializable {
 		return _clientVersion;
 	}
 
-	/**
-	 * Retrieves the start time for the OpenLogItem.
-	 * 
-	 * @return the start time
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#getStartTime()
 	 */
-	public DateTime getStartTime() {
+	public Date getStartTime() {
 		if (_startTime == null) {
 			try {
-				Date _startJavaTime = new Date();
-				_startTime = getSession().createDateTime(_startJavaTime);
+				_startTime = new Date();
 			} catch (Exception e) {
 				debugPrint(e);
 			}
@@ -554,10 +398,8 @@ public class OpenLogItem implements Serializable {
 		}
 	}
 
-	/**
-	 * Retrieves the Log Database name to log to.
-	 * 
-	 * @return the log database name
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#getLogDbName()
 	 */
 	public String getLogDbName() {
 		if ("".equals(_logDbName)) {
@@ -571,64 +413,47 @@ public class OpenLogItem implements Serializable {
 		return _logDbName;
 	}
 
-	/**
-	 * Retrieves the Form name for the log document.
-	 * 
-	 * @return the Form name of the log document
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#getLogFormName()
 	 */
 	public String getLogFormName() {
 		return _logFormName;
 	}
 
-	/**
-	 * Retrieves the error line for the current Throwable.
-	 * 
-	 * @param ee
-	 *            the ee
-	 * @return the error line of the stack trace
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#getErrLine(java.lang.Throwable)
 	 */
 	public int getErrLine(final Throwable ee) {
 		return ee.getStackTrace()[0].getLineNumber();
 	}
 
-	/**
-	 * Retrieves the severity level for the OpenLogItem.
-	 * 
-	 * @return the severity level
-	 * 
-	 * @see #setSeverity(Level) for options
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#getSeverity()
 	 */
 	public Level getSeverity() {
 		return _severity;
 	}
 
-	/**
-	 * Retrieves the event time of the OpenLogItem.
-	 * 
-	 * @return the event time
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#getEventTime()
 	 */
-	public DateTime getEventTime() {
+	public Date getEventTime() {
 		if (_eventTime == null) {
-			_eventJavaTime = new Date();
-			_eventTime = getSession().createDateTime(_eventJavaTime);
+			_eventTime = new Date();
 
 		}
 		return _eventTime;
 	}
 
-	/**
-	 * Retrieves the event type - Error or Event.
-	 * 
-	 * @return the event type
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#getEventType()
 	 */
 	public String getEventType() {
 		return _eventType;
 	}
 
-	/**
-	 * Retrieves the error message.
-	 * 
-	 * @return the error message
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#getMessage()
 	 */
 	public String getMessage() {
 		if (_message.length() > 0)
@@ -636,10 +461,8 @@ public class OpenLogItem implements Serializable {
 		return getBase().getMessage();
 	}
 
-	/**
-	 * Retrieves the Document the error occurred on, if one exists.
-	 * 
-	 * @return the Document to be logged into the log document
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#getErrDoc()
 	 */
 	public Document getErrDoc() {
 		if (_errDoc != null) {
@@ -650,11 +473,8 @@ public class OpenLogItem implements Serializable {
 		return _errDoc;
 	}
 
-	/**
-	 * Sets the Document on which the error occurred.
-	 * 
-	 * @param doc
-	 *            the Document to be logged into the log document
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#setErrDoc(org.openntf.domino.Document)
 	 */
 	public void setErrDoc(final Document doc) {
 		if (doc != null) {
@@ -667,52 +487,33 @@ public class OpenLogItem implements Serializable {
 		}
 	}
 
-	/**
-	 * Sets the Log Database name, allowing overriding.
-	 * 
-	 * @param newLogPath
-	 *            new log database path, to modify initial option
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#setLogDbName(java.lang.String)
 	 */
 	public void setLogDbName(final String newLogPath) {
 		_logDbName = newLogPath;
 	}
 
-	/**
-	 * Sets the new debug level. A String is used because the value is initially set from a properties file
-	 * 
-	 * Right now the valid debug levels are:
-	 * <ul>
-	 * <li>0 -- internal errors are discarded</li>
-	 * <li>1 -- Exception messages from internal errors are printed</li>
-	 * <li>2 -- stack traces from internal errors are also printed</li>
-	 * </ul>
-	 * 
-	 * @param newDebugLevel
-	 *            new debug level for any errors generated when creating log document
-	 * 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#setOlDebugLevel(org.openntf.domino.logging.OpenLogItem.DebugLevel)
 	 */
-	public void setOlDebugLevel(final String newDebugLevel) {
-		olDebugLevel = newDebugLevel;
+	public void setOlDebugLevel(final DebugLevel newDebugLevel) {
+		olDebugLevel = newDebugLevel.getValue();
 	}
 
-	/**
-	 * Retrieve what the status of the last logging event was.
-	 * 
-	 * @return success (true) or failure (false)
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#getLogSuccess()
 	 */
 	public boolean getLogSuccess() {
 		return _logSuccess;
 	}
 
-	/*
-	 */
-	/**
-	 * The basic method used to log an error. Just pass the Exception that you caught and this method collects information and saves it to
-	 * the OpenLog database.
-	 * 
-	 * @param ee
-	 *            Throwable to be logged
-	 * @return the error message
+	public void setLogSuccess(final boolean logSuccess) {
+		_logSuccess = logSuccess;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#logError(java.lang.Throwable)
 	 */
 	public String logError(final Throwable ee) {
 		if (ee != null) {
@@ -727,21 +528,15 @@ public class OpenLogItem implements Serializable {
 			}
 		}
 		try {
-			// TODO: Add to errors block in XPages
-			// StackTraceElement[] s = ee.getStackTrace();
-			// FacesMessage m = new FacesMessage("Error in " + s[0].getClassName() + ", line " + s[0].getLineNumber() + ": " +
-			// ee.toString());
-			// JSFUtil.getXSPContext().getFacesContext().addMessage(null, m);
 			setBase(ee);
 
-			// if (ee.getMessage().length() > 0) {
 			if (ee.getMessage() != null) {
 				setMessage(ee.getMessage());
 			} else {
 				setMessage(ee.getClass().getCanonicalName());
 			}
 			setSeverity(Level.WARNING);
-			setEventType(TYPE_ERROR);
+			setEventType(LogType.TYPE_ERROR);
 
 			_logSuccess = writeToLog();
 			return getMessage();
@@ -754,28 +549,15 @@ public class OpenLogItem implements Serializable {
 		}
 	}
 
-	/**
-	 * Sets the OpenLogItem type - Event or Error.
-	 * 
-	 * @param typeError
-	 *            the new event type
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#setEventType(org.openntf.domino.logging.OpenLogItem.LogType)
 	 */
-	private void setEventType(final String typeError) {
-		_eventType = typeError;
+	public void setEventType(final LogType typeError) {
+		_eventType = typeError.getValue();
 	}
 
-	/**
-	 * A More flexible way to send an error to the OpenLog database.
-	 * 
-	 * @param ee
-	 *            Throwable to be logged
-	 * @param msg
-	 *            Specific error message to be logged
-	 * @param severityType
-	 *            Severity level, @see {@link #setSeverity(Level)}
-	 * @param doc
-	 *            Document to be added as a link to the OpenLog document
-	 * @return message logged in
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#logErrorEx(java.lang.Throwable, java.lang.String, java.util.logging.Level, org.openntf.domino.Document)
 	 */
 	public String logErrorEx(final Throwable ee, final String msg, final Level severityType, final Document doc) {
 		if (ee != null) {
@@ -793,7 +575,7 @@ public class OpenLogItem implements Serializable {
 			setBase((ee == null ? new Throwable() : ee));
 			setMessage((msg == null ? "" : msg));
 			setSeverity(severityType == null ? Level.WARNING : severityType);
-			setEventType(TYPE_ERROR);
+			setEventType(LogType.TYPE_ERROR);
 			setErrDoc(doc);
 
 			_logSuccess = writeToLog();
@@ -806,24 +588,14 @@ public class OpenLogItem implements Serializable {
 		}
 	}
 
-	/**
-	 * This method allows you to log an Event to the OpenLog database.
-	 * 
-	 * @param ee
-	 *            Throwable to be logged
-	 * @param msg
-	 *            Specific event message to be logged
-	 * @param severityType
-	 *            Severity level, @see {@link #setSeverity(Level)}
-	 * @param doc
-	 *            the doc
-	 * @return message logged in
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#logEvent(java.lang.Throwable, java.lang.String, java.util.logging.Level, org.openntf.domino.Document)
 	 */
 	public String logEvent(final Throwable ee, final String msg, final Level severityType, final Document doc) {
 		try {
 			setMessage(msg);
 			setSeverity(severityType == null ? Level.INFO : severityType);
-			setEventType(TYPE_EVENT);
+			setEventType(LogType.TYPE_EVENT);
 			setErrDoc(doc);
 			if (ee == null) { // Added PW - LogEvent will not pass a throwable
 				setBase(new Throwable("")); // Added PW
@@ -840,17 +612,10 @@ public class OpenLogItem implements Serializable {
 		}
 	}
 
-	/**
-	 * Retrieves the stack trace of an Exception as an ArrayList without the initial error message. Also skips over a given number of items
-	 * (as determined by the skip parameter)
-	 * 
-	 * @param ee
-	 *            Throwable passed into the OpenLogItem
-	 * @param skip
-	 *            number of elements to skip
-	 * @return ArrayList of elements of stack trace
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#getStackTrace(java.lang.Throwable, int)
 	 */
-	private ArrayList<String> getStackTrace(final Throwable ee, final int skip) {
+	public ArrayList<String> getStackTrace(final Throwable ee, final int skip) {
 		ArrayList<String> v = new ArrayList<String>(32);
 		try {
 			StringWriter sw = new StringWriter();
@@ -871,75 +636,39 @@ public class OpenLogItem implements Serializable {
 		return v;
 	}
 
-	/**
-	 * Gets the Stack Trace from a Throwable, passing to getStackTrace(Throwable, int) passing 0 as second parameter.
-	 * 
-	 * @param ee
-	 *            Throwable passed into the OpenLogItem
-	 * @return ArrayList of elements of stack trace
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#getStackTrace(java.lang.Throwable)
 	 */
-	private ArrayList<String> getStackTrace(final Throwable ee) {
+	public ArrayList<String> getStackTrace(final Throwable ee) {
 		return getStackTrace(ee, 0);
 	}
 
-	/**
-	 * Logs an error using the passed Session.
-	 * 
-	 * @param s
-	 *            Session to log the error against
-	 * @param ee
-	 *            Throwable to be logged
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#logError(org.openntf.domino.Session, java.lang.Throwable)
 	 */
 	public void logError(final Session s, final Throwable ee) {
 		setSession(s);
 		logError(ee);
 	}
 
-	/**
-	 * Logs an error with extended options using the passed Session.
-	 * 
-	 * @param s
-	 *            Session to log the error against
-	 * @param ee
-	 *            Throwable to be logged
-	 * @param message
-	 *            message to be logged
-	 * @param severityType
-	 *            Severity level, @see {@link #setSeverity(Level)}
-	 * @param doc
-	 *            Document to be added as a link to the OpenLog document
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#logError(org.openntf.domino.Session, java.lang.Throwable, java.lang.String, java.util.logging.Level, org.openntf.domino.Document)
 	 */
-	public void logError(final Session s, final Throwable ee, final String message, final Level severityType, final Document doc) {
+	public void logError(final Session s, final Throwable ee, final String msg, final Level severityType, final Document doc) {
 		setSession(s);
-		logErrorEx(ee, message, severityType, doc);
+		logErrorEx(ee, msg, severityType, doc);
 	}
 
-	/**
-	 * Logs an event with extended options using the passed Session.
-	 * 
-	 * @param s
-	 *            Session to log the error against
-	 * @param ee
-	 *            Throwable to be logged
-	 * @param message
-	 *            message to be logged
-	 * @param severityType
-	 *            Severity level, @see {@link #setSeverity(Level)}
-	 * @param doc
-	 *            Document to be added as a link to the OpenLog document
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#logEvent(org.openntf.domino.Session, java.lang.Throwable, java.lang.String, java.util.logging.Level, org.openntf.domino.Document)
 	 */
-	public void logEvent(final Session s, final Throwable ee, final String message, final Level severityType, final Document doc) {
+	public void logEvent(final Session s, final Throwable ee, final String msg, final Level severityType, final Document doc) {
 		setSession(s);
-		logEvent(ee, message, severityType, doc);
+		logEvent(ee, msg, severityType, doc);
 	}
 
-	/**
-	 * This is the method that does the actual logging to the OpenLog database.
-	 * 
-	 * This method creates a document in the log database, populates the fields of that document with the values in the global variables,
-	 * and adds some associated information about any Document that needs to be referenced.
-	 * 
-	 * @return true, if successful
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#writeToLog()
 	 */
 	public boolean writeToLog() {
 		// exit early if there is no database
@@ -974,14 +703,14 @@ public class OpenLogItem implements Serializable {
 			logDoc.replaceItemValue("LogEventTime", getEventTime());
 			logDoc.replaceItemValue("LogEventType", getEventType());
 			logDoc.replaceItemValue("LogMessage", getMessage());
-			logDoc.replaceItemValue("LogFromDatabase", getCurrentDatabasePath());
+			logDoc.replaceItemValue("LogFromDatabase", getCurrentDatabase().getFilePath());
 			logDoc.replaceItemValue("LogFromServer", getThisServer());
 			logDoc.replaceItemValue("LogFromAgent", getThisAgent());
 			// Fixed next line
 			logDoc.replaceItemValue("LogFromMethod", ste.getClassName() + "." + ste.getMethodName());
 			logDoc.replaceItemValue("LogAgentLanguage", "Java");
-			logDoc.replaceItemValue("LogUserName", getUserName());
-			logDoc.replaceItemValue("LogEffectiveName", getEffName());
+			logDoc.replaceItemValue("LogUserName", Factory.getSession().getUserName());
+			logDoc.replaceItemValue("LogEffectiveName", Factory.getSession().getEffectiveUserName());
 			logDoc.replaceItemValue("LogAccessLevel", getAccessLevel());
 			logDoc.replaceItemValue("LogUserRoles", getUserRoles());
 			logDoc.replaceItemValue("LogClientVersion", getClientVersion());
@@ -1017,13 +746,10 @@ public class OpenLogItem implements Serializable {
 		return retval;
 	}
 
-	/**
-	 * This method decides what to do with any Exceptions that we encounter internal to this class, based on the olDebugLevel variable.
-	 * 
-	 * @param ee
-	 *            the ee
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.OpenLogItem#debugPrint(java.lang.Throwable)
 	 */
-	private void debugPrint(final Throwable ee) {
+	public void debugPrint(final Throwable ee) {
 		if ((ee == null) || (debugOut == null))
 			return;
 

@@ -60,21 +60,16 @@ public class Activator extends Plugin {
 	public static String[] getXspProperty(final String propertyName) {
 		String[] result = null;
 		try {
-			ApplicationEx app = ApplicationEx.getInstance(FacesContext.getCurrentInstance());
-			if (null == app) {
-				result = getEnvironmentStrings();
-			} else {
-				String setting = app.getApplicationProperty(propertyName, "");
-				if (StringUtil.isEmpty(setting)) {
-					result = getEnvironmentStrings();
+			String setting = getXspPropertyAsString(propertyName);
+			if (StringUtil.isNotEmpty(setting)) {
+				if (StringUtil.indexOfIgnoreCase(setting, ",") > -1) {
+					result = StringUtil.splitString(setting, ',');
 				} else {
-					if (setting.indexOf(',') > -1) {
-						result = StringUtil.splitString(setting, ',');
-					} else {
-						result = new String[1];
-						result[0] = setting;
-					}
+					result = new String[1];
+					result[0] = setting;
 				}
+			} else {
+				result = new String[0];
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -83,18 +78,30 @@ public class Activator extends Plugin {
 		return result;
 	}
 
+	public static String getXspPropertyAsString(final String propertyName) {
+		String result = "";
+		try {
+			ApplicationEx app = ApplicationEx.getInstance(FacesContext.getCurrentInstance());
+			if (null == app) {
+				result = getEnvironmentStringsAsString();
+			} else {
+				result = app.getApplicationProperty(propertyName, "");
+				if (StringUtil.isEmpty(result)) {
+					result = getEnvironmentStringsAsString();
+				}
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+		return result;
+	}
+
 	public static String[] getEnvironmentStrings() {
 		String[] result = null;
 		try {
-			String setting = Platform.getInstance().getProperty(PLUGIN_ID); // $NON-NLS-1$
-			if (StringUtil.isEmpty(setting)) {
-				setting = System.getProperty(PLUGIN_ID); // $NON-NLS-1$
-				if (StringUtil.isEmpty(setting)) {
-					setting = com.ibm.xsp.model.domino.DominoUtils.getEnvironmentString(PLUGIN_ID); // $NON-NLS-1$
-				}
-			}
+			String setting = getEnvironmentStringsAsString();
 			if (StringUtil.isNotEmpty(setting)) {
-				if (setting.indexOf(',') > -1) {
+				if (StringUtil.indexOfIgnoreCase(setting, ",") > -1) {
 					result = StringUtil.splitString(setting, ',');
 				} else {
 					result = new String[1];
@@ -102,6 +109,22 @@ public class Activator extends Plugin {
 				}
 			} else {
 				result = new String[0];
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+		return result;
+	}
+
+	public static String getEnvironmentStringsAsString() {
+		String result = "";
+		try {
+			result = Platform.getInstance().getProperty(PLUGIN_ID); // $NON-NLS-1$
+			if (StringUtil.isEmpty(result)) {
+				result = System.getProperty(PLUGIN_ID); // $NON-NLS-1$
+				if (StringUtil.isEmpty(result)) {
+					result = com.ibm.xsp.model.domino.DominoUtils.getEnvironmentString(PLUGIN_ID); // $NON-NLS-1$
+				}
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();
