@@ -28,6 +28,10 @@ import java.util.logging.LogRecord;
  */
 public class DefaultConsoleHandler extends ConsoleHandler {
 
+	static {
+		System.out.println(DefaultConsoleHandler.class.getName() + " class is loaded!");
+	}
+
 	/** The ol debug level. */
 	private static String olDebugLevel = "1";
 

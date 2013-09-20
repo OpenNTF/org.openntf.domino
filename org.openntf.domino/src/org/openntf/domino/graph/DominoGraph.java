@@ -400,6 +400,12 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		// log_.log(Level.SEVERE, "Returning a null document for id " + String.valueOf(id)
 		// + " even though createOnFail was true. This should be guaranteed to return a real document!");
 		// }
+		if (result == null && createOnFail) {
+			log_.log(Level.SEVERE,
+					"We are about to return a null result even though createOnFail was true. We should ALWAYS return a Document in that case. For key: "
+							+ String.valueOf(id) + " in database " + String.valueOf(filepath_));
+			new RuntimeException().printStackTrace();
+		}
 		return result;
 	}
 

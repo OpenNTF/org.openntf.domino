@@ -596,6 +596,43 @@ public enum Factory {
 		return null;
 	}
 
+	public static String getDataPath() {
+		org.openntf.domino.Session s = Factory.getSession();
+		if (s != null) {
+			return s.getEnvironmentString("Directory", true);
+		} else {
+			return "";
+		}
+	}
+
+	public static String getProgramPath() {
+		org.openntf.domino.Session s = Factory.getSession();
+		if (s != null) {
+			return s.getEnvironmentString("NotesProgram", true);
+		} else {
+			return "";
+		}
+	}
+
+	public static String getHTTPJVMHeapSize() {
+		String heapSize = "64M (Default)";
+		String heapSet = "";
+		org.openntf.domino.Session s = Factory.getSession();
+		if (s != null) {
+			String heapSizeChk = s.getEnvironmentString("HTTPJVMMaxHeapSize", true);
+			heapSet = s.getEnvironmentString("HTTPJVMMaxHeapSizeSet", true);
+			if ("".equals(heapSizeChk))
+				return heapSize;
+			if ("".equals(heapSet)) {
+				return heapSizeChk + " (But HTTPJVMMaxHeapSizeSet is not set to \"1\" so it has no effect)";
+			} else {
+				return heapSizeChk;
+			}
+		} else {
+			return heapSize;
+		}
+	}
+
 	/**
 	 * Gets the parent database.
 	 * 
