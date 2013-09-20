@@ -1,19 +1,13 @@
 package org.openntf.domino.xsp.helpers;
 
-import java.security.AccessController;
-import java.security.PrivilegedExceptionAction;
 import java.util.Map;
 
-import javax.faces.FactoryFinder;
 import javax.faces.context.FacesContext;
-import javax.faces.lifecycle.Lifecycle;
-import javax.faces.lifecycle.LifecycleFactory;
 
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xsp.Activator;
 import org.openntf.domino.xsp.XspOpenLogErrorHolder;
-import org.openntf.domino.xsp.XspOpenLogPhaseListener;
 
 import com.ibm.xsp.context.FacesContextEx;
 import com.ibm.xsp.el.ImplicitObjectFactory;
@@ -191,25 +185,11 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 
 	@Override
 	public void createImplicitObjects(final FacesContextEx ctx) {
-		Factory.setClassLoader(ctx.getContextClassLoader());
-		ctx.addRequestListener(new ContextListener());
-		try {
-			// Adding a phase listener is a restricted operation
-			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-				@Override
-				public Object run() throws Exception {
-					LifecycleFactory factory = (LifecycleFactory) FactoryFinder.getFactory(FactoryFinder.LIFECYCLE_FACTORY);
-					Lifecycle lifecycle = factory.getLifecycle(LifecycleFactory.DEFAULT_LIFECYCLE);
-					lifecycle.addPhaseListener(new XspOpenLogPhaseListener());
-					return null;
-				}
-			});
-		} catch (Throwable t) {
-			t.printStackTrace();
-		}
 		if (isAppDebug(ctx)) {
 			System.out.println("Beginning creation of implicit objects...");
 		}
+		Factory.setClassLoader(ctx.getContextClassLoader());
+		ctx.addRequestListener(new ContextListener());
 		org.openntf.domino.Session session = createSession(ctx);
 		@SuppressWarnings("unused")
 		org.openntf.domino.Database database = createDatabase(ctx, session);
