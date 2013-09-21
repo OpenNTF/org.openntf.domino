@@ -17,123 +17,143 @@
 package com.ibm.commons.util.io.json;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import com.ibm.commons.util.EmptyIterator;
 
-
-
 /**
  * This factory is used to test if a string is a valid JSON string.
- * <p>No actual object is created by this factory.</p>
+ * <p>
+ * No actual object is created by this factory.
+ * </p>
  * 
  * @ibm-api
  */
 public class JsonEmptyFactory implements JsonFactory {
-	
+
 	public static final JsonEmptyFactory instance = new JsonEmptyFactory();
-	
-	public boolean supportFeature(int feature) throws JsonException {
+
+	public boolean supportFeature(final int feature) throws JsonException {
 		return true;
 	}
 
-	public boolean isValidValue(Object value) throws JsonException {
+	public boolean isValidValue(final Object value) throws JsonException {
 		return true;
 	}
 
 	public Object createNull() {
 		return null;
 	}
-	
+
 	public Object createUndefined() {
 		return null;
 	}
 
-	public Object createString(String value) {
-		return null;
-	}
-	
-	public Object createJavaScriptCode(String code) throws JsonException {
+	public Object createString(final String value) {
 		return null;
 	}
 
-	public Object createNumber(double value) {
-		return null;
-	}
-	
-	public Object createBoolean(boolean value) {
+	public Object createJavaScriptCode(final String code) throws JsonException {
 		return null;
 	}
 
-	public Object createObject(Object parent, String propertyName) {
+	public Object createNumber(final double value) {
 		return null;
 	}
-	
-	public Object createArray(Object parent, String propertyName, List<Object> values) {
+
+	public Object createBoolean(final boolean value) {
 		return null;
 	}
-	
-	public void setProperty(Object parent, String propertyName, Object value) {
-	}
-	
-	public Object getProperty(Object parent, String propertyName) throws JsonException {
+
+	public Object createObject(final Object parent, final String propertyName) {
 		return null;
 	}
-	
+
+	public Object createArray(final Object parent, final String propertyName, final List<Object> values) {
+		return null;
+	}
+
+	public void setProperty(final Object parent, final String propertyName, final Object value) {
+	}
+
+	public Object getProperty(final Object parent, final String propertyName) throws JsonException {
+		return null;
+	}
+
 	// Not used...
-	public boolean isNull(Object value) throws JsonException {
-		return false;
-	}	
-	public boolean isUndefined(Object value) throws JsonException {
+	public boolean isNull(final Object value) throws JsonException {
 		return false;
 	}
-	public boolean isString(Object value) throws JsonException {
+
+	public boolean isUndefined(final Object value) throws JsonException {
 		return false;
 	}
-	public String getString(Object value) throws JsonException {
+
+	public boolean isString(final Object value) throws JsonException {
+		return false;
+	}
+
+	public String getString(final Object value) throws JsonException {
 		return null;
 	}
 
-	public boolean isJavaScriptCode(Object value) throws JsonException {
+	public boolean isDate(final Object value) throws JsonException {
 		return false;
 	}
 
-	public String getJavaScriptCode(Object value) throws JsonException {
+	public Date getDate(final Object value) throws JsonException {
 		return null;
 	}
 
-	public boolean isNumber(Object value) throws JsonException {
+	public boolean isJavaScriptCode(final Object value) throws JsonException {
 		return false;
 	}
-	public double getNumber(Object value) throws JsonException {
+
+	public String getJavaScriptCode(final Object value) throws JsonException {
+		return null;
+	}
+
+	public boolean isNumber(final Object value) throws JsonException {
+		return false;
+	}
+
+	public double getNumber(final Object value) throws JsonException {
 		return 0;
 	}
-	public boolean isBoolean(Object value) throws JsonException {
+
+	public boolean isBoolean(final Object value) throws JsonException {
 		return false;
 	}
-	public boolean getBoolean(Object value) throws JsonException {
+
+	public boolean getBoolean(final Object value) throws JsonException {
 		return false;
 	}
-	public boolean isObject(Object value) throws JsonException {
+
+	public boolean isObject(final Object value) throws JsonException {
 		return false;
 	}
-	@SuppressWarnings("unchecked") //$NON-NLS-1$
-	public Iterator<String> iterateObjectProperties(Object object) throws JsonException {
+
+	@SuppressWarnings("unchecked")//$NON-NLS-1$
+	public Iterator<String> iterateObjectProperties(final Object object) throws JsonException {
 		return EmptyIterator.getInstance();
 	}
-	public boolean isArray(Object value) throws JsonException {
+
+	public boolean isArray(final Object value) throws JsonException {
 		return false;
 	}
-	public int getArrayCount(Object value) throws JsonException {
+
+	public int getArrayCount(final Object value) throws JsonException {
 		return 0;
 	}
+
 	@SuppressWarnings("unchecked")
-	public Iterator<Object> iterateArrayValues(Object array) throws JsonException {
+	public Iterator<Object> iterateArrayValues(final Object array) throws JsonException {
 		return EmptyIterator.getInstance();
 	}
-	
-    public List<Object> createTemporaryArray(Object parent) throws JsonException {
-        return new ArrayList<Object>();
-    }
+
+	public List<Object> createTemporaryArray(final Object parent) throws JsonException {
+		return new ArrayList<Object>();
+	}
 }

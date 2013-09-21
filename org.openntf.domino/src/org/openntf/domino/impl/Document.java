@@ -17,6 +17,7 @@ package org.openntf.domino.impl;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -56,6 +57,11 @@ import org.openntf.domino.types.Null;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.TypeUtils;
+
+import com.ibm.commons.util.io.json.JsonException;
+import com.ibm.commons.util.io.json.util.JsonWriter;
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -2904,8 +2910,12 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		if (fieldNames_ == null) {
 			fieldNames_ = new LinkedHashSet<String>();
 			ItemVector items = (ItemVector) this.getItems();
+			System.out.println("Got item vector of size " + items.size());
 			String[] names = items.getNames();
-			List<String> fieldNames_ = Arrays.asList(names);
+			System.out.println("Got item name array of length " + names.length);
+			for (int i = 0; i < names.length; i++) {
+				fieldNames_.add(names[i]);
+			}
 		}
 		return Collections.unmodifiableSet(fieldNames_);
 	}
@@ -3004,5 +3014,30 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	private IDominoEvent generateEvent(final EnumEvent event, final Object payload) {
 		return getAncestorDatabase().generateEvent(event, this, payload);
+	}
+
+	@Override
+	public String toJson(final boolean compact) {
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+		StringWriter sw = new StringWriter();
+		JsonWriter jw = new JsonWriter(sw, compact);
+		try {
+			jw.startObject();
+			jw.outStringProperty("@unid", getUniversalID());
+			Set<String> keys = keySet();
+			System.out.println("Processing " + keys.size() + " items...");
+			for (String key : keys) {
+				jw.outProperty(key, DominoUtils.toSerializable(getItemValue(key)));
+			}
+			jw.endObject();
+			jw.flush();
+		} catch (IOException e) {
+			DominoUtils.handleException(e);
+			return null;
+		} catch (JsonException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+		return sw.toString();
 	}
 }

@@ -85,9 +85,9 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 	}
 
 	public Class<? extends Vertex> getOtherType(final Class<? extends Vertex> type) {
-		if (getInType().equals(type))
+		if (getInType().isAssignableFrom(type))
 			return getOutType();
-		if (getOutType().equals(type))
+		if (getOutType().isAssignableFrom(type))
 			return getInType();
 		throw new EdgeHelperException(type.getName() + " is not a participating type in edge " + getLabel());
 	}
@@ -97,18 +97,13 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 	}
 
 	public Set<? extends Edge> getEdges(final Vertex vertex) {
-		if (getInType().equals(vertex.getClass())) {
-			// System.out.println("Request from " + getLabel() + " helper: Requesting IN edges because vertex " +
-			// vertex.getClass().getName()
-			// + " is IN.");
+		if (getInType().isAssignableFrom(vertex.getClass())) {
 			return Collections.unmodifiableSet((Set<Edge>) vertex.getEdges(Direction.IN, getLabel()));
 		}
-		if (getOutType().equals(vertex.getClass())) {
-			// System.out.println("Request from " + getLabel() + " helper: Requesting OUT edges because vertex " +
-			// vertex.getClass().getName()
-			// + " is OUT.");
+		if (getOutType().isAssignableFrom(vertex.getClass())) {
 			return Collections.unmodifiableSet((Set<Edge>) vertex.getEdges(Direction.OUT, getLabel()));
 		}
+		System.out.println(vertex.getClass().getName() + " is not a participating type in edge " + getLabel());
 		throw new EdgeHelperException(vertex.getClass().getName() + " is not a participating type in edge " + getLabel());
 	}
 
@@ -140,13 +135,10 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 	public Set<? extends Vertex> getOtherVertexes(final Vertex vertex) {
 		Set<Vertex> result = new LinkedHashSet<Vertex>();
 		Direction od = Direction.IN;
-		if (getInType().equals(vertex.getClass()))
+		if (getInType().isAssignableFrom(vertex.getClass()))
 			od = Direction.OUT;
 
-		// System.out.println("Request from " + getLabel() + " helper: Getting opposite of " + vertex.getClass().getName()
-		// + " with direction " + od.toString() + " (OUT: " + getOutType().getName() + ", IN: " + getInType().getName() + ")");
 		Set<? extends Edge> edges = getEdges(vertex);
-		// System.out.println("Request from " + getLabel() + " helper: Got " + edges.size() + " edges.");
 		for (Edge edge : edges) {
 			result.add(edge.getVertex(od));
 		}
@@ -177,7 +169,7 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 	public Set<Vertex> getOtherVertexesByEdge(final Vertex vertex, final String... sortproperties) {
 		Set<Vertex> result = new LinkedHashSet<Vertex>();
 		Direction od = Direction.IN;
-		if (getInType().equals(vertex.getClass()))
+		if (getInType().isAssignableFrom(vertex.getClass()))
 			od = Direction.OUT;
 		for (Edge edge : getSortedEdges(vertex, sortproperties)) {
 			result.add(edge.getVertex(od));
@@ -232,17 +224,17 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		if (defaultOut.getClass().equals(defaultIn.getClass()) && isSameTypes()) {
 
 		} else {
-			if (getInType().equals(defaultOut.getClass())) {
+			if (getInType().isAssignableFrom(defaultOut.getClass())) {
 				inVert = defaultOut;
-			} else if (getOutType().equals(defaultOut.getClass())) {
+			} else if (getOutType().isAssignableFrom(defaultOut.getClass())) {
 				outVert = defaultOut;
 			} else {
 				throw new EdgeHelperException("Cannot find an edge of type " + getLabel() + " with a vertex of type "
 						+ defaultOut.getClass().getName());
 			}
-			if (getInType().equals(defaultIn.getClass())) {
+			if (getInType().isAssignableFrom(defaultIn.getClass())) {
 				inVert = defaultIn;
-			} else if (getOutType().equals(defaultIn.getClass())) {
+			} else if (getOutType().isAssignableFrom(defaultIn.getClass())) {
 				outVert = defaultIn;
 			} else {
 				throw new EdgeHelperException("Cannot find an edge of type " + getLabel() + " with a vertex of type "
