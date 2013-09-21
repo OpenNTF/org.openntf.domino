@@ -33,7 +33,7 @@ public interface IOpenLogItem {
 	}
 
 	public static enum DebugLevel {
-		DebugLevel_Discard("0"), DebugLevel_Summary("1"), DebugLevel_Full("2");
+		LEVEL_DISCARD("0"), LEVEL_SUMMARY("1"), LEVEL_FULL("2");
 
 		private final String value_;
 

@@ -57,7 +57,6 @@ import java.util.Vector;
 import java.util.logging.Level;
 
 import lotus.domino.NotesException;
-import lotus.domino.local.NotesBase;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
@@ -466,8 +465,10 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	 */
 	public Document getErrDoc() {
 		if (_errDoc != null) {
-			if (Base.isRecycled((NotesBase) _errDoc)) {
+			try {
 				_errDoc = getCurrentDatabase().getDocumentByUNID(_errDocUnid);
+			} catch (Exception ee) {
+				//Attempt to log for document not in current database
 			}
 		}
 		return _errDoc;
