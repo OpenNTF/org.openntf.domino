@@ -10,8 +10,6 @@ import java.util.Map;
 
 import lotus.domino.DateTime;
 
-import org.openntf.domino.utils.DominoUtils;
-
 import com.ibm.jscript.InterpretException;
 import com.ibm.jscript.JSContext;
 import com.ibm.jscript.JavaScriptException;
@@ -344,7 +342,7 @@ public class WrapperOpenDomino {
 					}
 				}
 			} catch (Throwable t) {
-				DominoUtils.handleException(t);
+				t.printStackTrace();
 			}
 			return object;
 		}
@@ -629,7 +627,7 @@ public class WrapperOpenDomino {
 			}
 
 		} catch (Exception e) {
-			DominoUtils.handleException(e);
+			e.printStackTrace();
 		}
 		registered = true;
 	}
