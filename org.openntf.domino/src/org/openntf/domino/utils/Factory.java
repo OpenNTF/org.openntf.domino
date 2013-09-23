@@ -513,18 +513,24 @@ public enum Factory {
 	 * @return the session
 	 */
 	public static org.openntf.domino.Session getSession() {
-		if (currentSessionHolder_.get() == null) {
+		org.openntf.domino.Session result = currentSessionHolder_.get();
+		if (result == null) {
 			try {
-				setSession(lotus.domino.NotesFactory.createSession());
+				result = Factory.fromLotus(lotus.domino.NotesFactory.createSession(), Session.class, null);
 			} catch (lotus.domino.NotesException ne) {
 				try {
-					setSession(XSPUtil.getCurrentSession());
+					result = XSPUtil.getCurrentSession();
 				} catch (Throwable t) {
 					t.printStackTrace();
 				}
 			}
+			setSession(result);
 		}
-		return currentSessionHolder_.get();
+		if (result == null) {
+			System.out
+					.println("SEVERE: Unable to get default session. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation. If you're running in XPages, check the xsp.properties of your database. If you are running in an Agent, make sure you start with a call to Factory.fromLotus() and pass in your lotus.domino.Session");
+		}
+		return result;
 	}
 
 	public static void setSession(final lotus.domino.Session session) {
@@ -597,6 +603,7 @@ public enum Factory {
 	}
 
 	public static String getDataPath() {
+
 		org.openntf.domino.Session s = Factory.getSession();
 		if (s != null) {
 			return s.getEnvironmentString("Directory", true);

@@ -17,7 +17,6 @@ package org.openntf.domino.logging;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.AccessControlException;
 import java.security.AccessController;
@@ -79,7 +78,7 @@ public class LogUtils {
 			props.store(os, "");
 			InputStream result = new ByteArrayInputStream(os.toByteArray());
 			return result;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return is;
 		}
