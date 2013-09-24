@@ -1,80 +1,97 @@
 package org.openntf.domino.xsp.helpers;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 
-import org.openntf.domino.xsp.Activator;
+import org.openntf.domino.utils.Factory;
 
-public class PhaseListener extends AbstractListener implements javax.faces.event.PhaseListener {
+public class PhaseListener extends AbstractListener implements javax.faces.event.PhaseListener, com.ibm.xsp.event.FacesContextListener {
 	public static final long serialVersionUID = -6528380677556637393L;
-	private final static boolean _debug = Activator.isDebug();
+	private final static boolean _debug = true;
 	static {
 		if (_debug)
 			System.out.println(PhaseListener.class.getName() + " loaded");
 	}
 
 	public PhaseListener() {
-		_debugOut("created");
+		if (_debug)
+			System.out.println(PhaseListener.class.getName() + " created");
 	}
 
-	private void doBeforeEveryPhase(PhaseEvent arg0) {
+	@Override
+	public void beforeContextReleased(final FacesContext paramFacesContext) {
+		Factory.terminate();
+	}
+
+	@Override
+	public void beforeRenderingPhase(final FacesContext paramFacesContext) {
+		// TODO NOOP
+
+	}
+
+	private void doBeforeEveryPhase(final PhaseEvent arg0) {
+		FacesContext ctx = arg0.getFacesContext();
+		Factory.setClassLoader(ctx.getContextClassLoader());
+		if (ctx instanceof com.ibm.xsp.context.FacesContextEx) {
+			((com.ibm.xsp.context.FacesContextEx) ctx).addRequestListener(this);
+		}
+	}
+
+	private void doAfterEveryPhase(final PhaseEvent arg0) {
 		// Insert your code here
 	}
 
-	private void doAfterEveryPhase(PhaseEvent arg0) {
+	private void doBeforeRestoreView(final PhaseEvent arg0) {
 		// Insert your code here
 	}
 
-	private void doBeforeRestoreView(PhaseEvent arg0) {
+	private void doAfterRestoreView(final PhaseEvent arg0) {
 		// Insert your code here
 	}
 
-	private void doAfterRestoreView(PhaseEvent arg0) {
+	private void doBeforeApplyRequest(final PhaseEvent arg0) {
 		// Insert your code here
 	}
 
-	private void doBeforeApplyRequest(PhaseEvent arg0) {
+	private void doAfterApplyRequest(final PhaseEvent arg0) {
 		// Insert your code here
 	}
 
-	private void doAfterApplyRequest(PhaseEvent arg0) {
+	private void doBeforeProcessValidations(final PhaseEvent arg0) {
 		// Insert your code here
 	}
 
-	private void doBeforeProcessValidations(PhaseEvent arg0) {
+	private void doAfterProcessValidations(final PhaseEvent arg0) {
 		// Insert your code here
 	}
 
-	private void doAfterProcessValidations(PhaseEvent arg0) {
+	private void doBeforeUpdateModel(final PhaseEvent arg0) {
 		// Insert your code here
 	}
 
-	private void doBeforeUpdateModel(PhaseEvent arg0) {
+	private void doAfterUpdateModel(final PhaseEvent arg0) {
 		// Insert your code here
 	}
 
-	private void doAfterUpdateModel(PhaseEvent arg0) {
+	private void doBeforeInvokeApplication(final PhaseEvent arg0) {
 		// Insert your code here
 	}
 
-	private void doBeforeInvokeApplication(PhaseEvent arg0) {
+	private void doAfterInvokeApplication(final PhaseEvent arg0) {
 		// Insert your code here
 	}
 
-	private void doAfterInvokeApplication(PhaseEvent arg0) {
+	private void doBeforeRenderResponse(final PhaseEvent arg0) {
 		// Insert your code here
 	}
 
-	private void doBeforeRenderResponse(PhaseEvent arg0) {
-		// Insert your code here
-	}
-
-	private void doAfterRenderResponse(PhaseEvent arg0) {
+	private void doAfterRenderResponse(final PhaseEvent arg0) {
 		// Insert your code here
 	}
 
 	@Override
-	public void afterPhase(PhaseEvent arg0) {
+	public void afterPhase(final PhaseEvent arg0) {
 		PhaseId curId = arg0.getPhaseId();
 		if (PhaseId.APPLY_REQUEST_VALUES.equals(curId)) {
 			doAfterApplyRequest(arg0);
@@ -93,7 +110,8 @@ public class PhaseListener extends AbstractListener implements javax.faces.event
 	}
 
 	@Override
-	public void beforePhase(PhaseEvent arg0) {
+	public void beforePhase(final PhaseEvent arg0) {
+		doBeforeEveryPhase(arg0);
 		PhaseId curId = arg0.getPhaseId();
 		if (PhaseId.APPLY_REQUEST_VALUES.equals(curId)) {
 			doBeforeApplyRequest(arg0);
@@ -108,7 +126,6 @@ public class PhaseListener extends AbstractListener implements javax.faces.event
 		} else if (PhaseId.UPDATE_MODEL_VALUES.equals(curId)) {
 			doBeforeUpdateModel(arg0);
 		}
-		doBeforeEveryPhase(arg0);
 	}
 
 	@Override

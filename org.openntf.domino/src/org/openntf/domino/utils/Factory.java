@@ -549,6 +549,9 @@ public enum Factory {
 	}
 
 	public static void setClassLoader(final ClassLoader loader) {
+		if (loader != null) {
+			//			System.out.println("Setting OpenNTF Factory ClassLoader to a " + loader.getClass().getName());
+		}
 		currentClassLoader_.set(loader);
 	}
 
@@ -569,6 +572,7 @@ public enum Factory {
 		clearClassLoader();
 		clearBubbleExceptions();
 		clearDominoGraph();
+		//		System.out.println("Terminating OpenNTF Factory");
 	}
 
 	/**

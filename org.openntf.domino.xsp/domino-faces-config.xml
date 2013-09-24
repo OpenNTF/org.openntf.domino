@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config>
+	<factory>
+		<faces-context-factory>org.openntf.domino.xsp.OpenntfFacesContextFactory
+		</faces-context-factory>
+	</factory>
+	<!-- <lifecycle id="PhaseListener">
+		<phase-listener>org.openntf.domino.xsp.helpers.PhaseListener</phase-listener>
+	</lifecycle> -->
+</faces-config>

@@ -34,10 +34,20 @@ public class XspLibrary extends AbstractXspLibrary {
 	}
 
 	@Override
+	public String[] getDependencies() {
+		return new String[] { "com.ibm.xsp.core.library", "com.ibm.xsp.extsn.library", "com.ibm.xsp.domino.library",
+				"com.ibm.xsp.designer.library" };
+	}
+
+	@Override
 	public String[] getFacesConfigFiles() {
-		System.out.println("Getting faces config files");
-		String[] files = new String[] { "META-INF/domino-faces-config.xml" };
-		System.out.println("Got faces config files");
+		String[] files = new String[] { "domino-faces-config.xml" };
+		return files;
+	}
+
+	@Override
+	public String[] getXspConfigFiles() {
+		String[] files = new String[] {};
 		return files;
 	}
 
