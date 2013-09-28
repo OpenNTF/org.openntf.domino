@@ -800,9 +800,8 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		try {
 			return getDelegate().getEnvironmentString(vname, isSystem);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			e.printStackTrace();
 			return null;
-
 		}
 	}
 
@@ -818,7 +817,6 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
-
 		}
 	}
 
@@ -832,9 +830,8 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		try {
 			return getDelegate().getEnvironmentValue(vname, isSystem);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			e.printStackTrace();
 			return null;
-
 		}
 	}
 
@@ -1291,7 +1288,6 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
-
 		}
 	}
 

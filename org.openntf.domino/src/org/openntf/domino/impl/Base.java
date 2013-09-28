@@ -466,7 +466,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		}
 
 		// First, go over the normal data types
-		if (value instanceof lotus.domino.DateTime) {
+		if (value instanceof org.openntf.domino.Base) {
+			return toLotus((org.openntf.domino.Base) value);
+		} else if (value instanceof lotus.domino.DateTime) {
 			return toLotus((lotus.domino.DateTime) value);
 		} else if (value instanceof lotus.domino.DateRange) {
 			return toLotus((lotus.domino.DateRange) value);

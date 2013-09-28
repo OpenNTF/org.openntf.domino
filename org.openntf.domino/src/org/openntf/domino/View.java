@@ -20,12 +20,14 @@ import java.util.Vector;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.Design;
+import org.openntf.domino.types.Resurrectable;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Interface View.
  */
-public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Base<lotus.domino.View>, Design, DatabaseDescendant {
+public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Base<lotus.domino.View>, Design, Resurrectable,
+		DatabaseDescendant {
 
 	/*
 	 * (non-Javadoc)
@@ -281,7 +283,8 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#FTSearchSorted(java.lang.String, int, int, boolean, boolean, boolean, boolean)
 	 */
 	@Override
-	public int FTSearchSorted(final String query, final int maxDocs, final int column, final boolean ascending, final boolean exact, final boolean variants, final boolean fuzzy);
+	public int FTSearchSorted(final String query, final int maxDocs, final int column, final boolean ascending, final boolean exact,
+			final boolean variants, final boolean fuzzy);
 
 	/*
 	 * (non-Javadoc)
@@ -297,7 +300,8 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * @see lotus.domino.View#FTSearchSorted(java.lang.String, int, java.lang.String, boolean, boolean, boolean, boolean)
 	 */
 	@Override
-	public int FTSearchSorted(final String query, final int maxDocs, final String column, final boolean ascending, final boolean exact, final boolean variants, final boolean fuzzy);
+	public int FTSearchSorted(final String query, final int maxDocs, final String column, final boolean ascending, final boolean exact,
+			final boolean variants, final boolean fuzzy);
 
 	/*
 	 * (non-Javadoc)
@@ -341,7 +345,8 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public int FTSearchSorted(final Vector query, final int maxDocs, final int column, final boolean ascending, final boolean exact, final boolean variants, final boolean fuzzy);
+	public int FTSearchSorted(final Vector query, final int maxDocs, final int column, final boolean ascending, final boolean exact,
+			final boolean variants, final boolean fuzzy);
 
 	/*
 	 * (non-Javadoc)
@@ -363,7 +368,8 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
-	public int FTSearchSorted(final Vector query, final int maxDocs, final String column, final boolean ascending, final boolean exact, final boolean variants, final boolean fuzzy);
+	public int FTSearchSorted(final Vector query, final int maxDocs, final String column, final boolean ascending, final boolean exact,
+			final boolean variants, final boolean fuzzy);
 
 	/*
 	 * (non-Javadoc)
