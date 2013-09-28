@@ -42,6 +42,9 @@ import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
+import com.ibm.icu.util.Calendar;
+import com.ibm.icu.util.GregorianCalendar;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class Database.
@@ -212,16 +215,6 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.openntf.domino.Database#get(java.lang.Object)
-	 */
-	@Override
-	public org.openntf.domino.Document get(final Object key) {
-		return this.getDocumentByKey((String) key);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.openntf.domino.Database#compact()
 	 */
 	public int compact() {
@@ -291,16 +284,6 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			return null;
 
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Database#containsKey(java.lang.Object)
-	 */
-	@Override
-	public boolean containsKey(final Object key) {
-		return get(key) != null;
 	}
 
 	/*
@@ -2537,40 +2520,25 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		return txnHolder_.get();
 	}
 
-	/*
-	 * Map methods
-	 */
-
-	@Override
-	public void clear() {
-		// Oh, dear god, no!
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean containsValue(final Object value) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Set<java.util.Map.Entry<String, org.openntf.domino.Document>> entrySet() {
-		// TODO Maybe turn NoteCollection into this?
-		return null;
-	}
-
-	@Override
 	public boolean isEmpty() {
 		return this.getAllDocuments().getCount() > 0;
 	}
 
-	@Override
-	public Set<String> keySet() {
-		// TODO Implement this
-		return null;
+	public int size() {
+		return this.getAllDocuments().getCount();
 	}
 
 	@Override
-	public org.openntf.domino.Document put(final String key, final org.openntf.domino.Document value) {
+	public boolean containsKey(final Serializable key) {
+		return get(key) != null;
+	}
+
+	@Override
+	public org.openntf.domino.Document get(final Serializable key) {
+		return this.getDocumentByKey(key);
+	}
+
+	public org.openntf.domino.Document put(final Serializable key, final org.openntf.domino.Document value) {
 		// Ignore the value for now
 		if (key != null) {
 			Document doc = this.getDocumentByKey(key);
@@ -2585,32 +2553,19 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		return null;
 	}
 
-	@Override
-	public void putAll(final Map<? extends String, ? extends org.openntf.domino.Document> m) {
-		// TODO Implement this?
-	}
-
-	@Override
-	public org.openntf.domino.Document remove(final Object key) {
+	public org.openntf.domino.Document remove(final Serializable key) {
 		if (key != null) {
 			Document doc = this.getDocumentByKey(key.toString());
 			if (doc != null) {
 				doc.remove(false);
 			}
-
 			return null;
 		}
 		return null;
 	}
 
-	@Override
-	public int size() {
-		return this.getAllDocuments().getCount();
-	}
-
-	@Override
 	public Collection<org.openntf.domino.Document> values() {
-		return this.createDocumentCollection();
+		return getAllDocuments();
 	}
 
 	/*
@@ -2822,6 +2777,41 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		nc.setSelectOptions(noteClass);
 		nc.buildCollection();
 		return nc.getCount();
+	}
+
+	public int[] getDailyModifiedNoteCount(final java.util.Date since) {
+		Set<SelectOption> noteClass = new java.util.HashSet<SelectOption>();
+		noteClass.add(SelectOption.DOCUMENTS);
+		return getDailyModifiedNoteCount(since, noteClass);
+	}
+
+	public static final int DAILY_ARRAY_LIMIT = 31;
+
+	public int[] getDailyModifiedNoteCount(final java.util.Date since, final Set<SelectOption> noteClass) {
+		Date now = new Date();
+		Date endDate = since;
+		Calendar cal = new GregorianCalendar();
+		cal.setTime(since);
+		int diffDays = cal.fieldDifference(now, Calendar.DAY_OF_YEAR);
+		int[] result = null;
+		if (diffDays > DAILY_ARRAY_LIMIT) {
+			result = new int[DAILY_ARRAY_LIMIT];
+		} else {
+			result = new int[diffDays];
+		}
+		cal.setTime(now);
+		for (int i = 0; i < result.length; i++) {
+			if (i == 0) {
+				cal.set(Calendar.HOUR_OF_DAY, 0);
+				cal.set(Calendar.MINUTE, 0);
+				cal.set(Calendar.SECOND, 0);
+				cal.set(Calendar.MILLISECOND, 0);
+			} else {
+				cal.add(Calendar.DAY_OF_YEAR, -1);
+			}
+			result[i] = getModifiedNoteCount(cal.getTime(), noteClass);
+		}
+		return result;
 	}
 
 	public int getModifiedNoteCount(final java.util.Date since) {

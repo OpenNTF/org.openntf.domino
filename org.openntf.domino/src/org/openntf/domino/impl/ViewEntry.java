@@ -91,6 +91,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		try {
 			return Factory.wrapColumnValues(getDelegate().getColumnValues(), this.getAncestorSession());
 		} catch (NotesException e) {
+			if (e.id == 4432) {
+				return new java.util.Vector();
+			}
 			DominoUtils.handleException(e);
 			return null;
 		}
@@ -121,6 +124,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		try {
 			return Factory.fromLotus(getDelegate().getDocument(), Document.class, this);
 		} catch (NotesException e) {
+			if (e.id == 4432) {
+				return null;
+			}
 			DominoUtils.handleException(e);
 			return null;
 		}

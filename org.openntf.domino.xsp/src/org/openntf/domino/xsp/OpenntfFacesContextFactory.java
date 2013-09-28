@@ -65,6 +65,11 @@ public class OpenntfFacesContextFactory extends FacesContextFactory implements c
 			throws FacesException {
 		FacesContext ctx = _delegate.getFacesContext(context, request, response, lifecycle);
 		try {
+			Class<?> vnClass = Class.forName("org.openntf.domino.xsp.helpers.OpenntfViewNavigatorEx");
+		} catch (ClassNotFoundException e) {
+			System.out.println("OpenntfFacesContextFactory unable to resolve ViewNavigatorEx either!");
+		}
+		try {
 			Factory.setClassLoader(ctx.getContextClassLoader());
 			if (ctx instanceof com.ibm.xsp.context.FacesContextEx) {
 				((com.ibm.xsp.context.FacesContextEx) ctx).addRequestListener(this);

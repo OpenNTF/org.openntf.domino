@@ -119,16 +119,16 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	static {
 		DominoGraph.FEATURES.supportsDuplicateEdges = true;
 		DominoGraph.FEATURES.supportsSelfLoops = true;
-		DominoGraph.FEATURES.supportsSerializableObjectProperty = false;
+		DominoGraph.FEATURES.supportsSerializableObjectProperty = true;
 		DominoGraph.FEATURES.supportsBooleanProperty = true;
 		DominoGraph.FEATURES.supportsDoubleProperty = true;
-		DominoGraph.FEATURES.supportsFloatProperty = false;
+		DominoGraph.FEATURES.supportsFloatProperty = true;
 		DominoGraph.FEATURES.supportsIntegerProperty = true;
-		DominoGraph.FEATURES.supportsPrimitiveArrayProperty = false;
+		DominoGraph.FEATURES.supportsPrimitiveArrayProperty = true;
 		DominoGraph.FEATURES.supportsUniformListProperty = true;
-		DominoGraph.FEATURES.supportsMixedListProperty = false;
-		DominoGraph.FEATURES.supportsLongProperty = false;
-		DominoGraph.FEATURES.supportsMapProperty = false;
+		DominoGraph.FEATURES.supportsMixedListProperty = true;
+		DominoGraph.FEATURES.supportsLongProperty = true;
+		DominoGraph.FEATURES.supportsMapProperty = true;
 		DominoGraph.FEATURES.supportsStringProperty = true;
 
 		DominoGraph.FEATURES.ignoresSuppliedIds = false;
@@ -141,13 +141,13 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		DominoGraph.FEATURES.supportsEdgeKeyIndex = false;
 		DominoGraph.FEATURES.supportsVertexIndex = false;
 		DominoGraph.FEATURES.supportsEdgeIndex = false;
-		DominoGraph.FEATURES.supportsTransactions = false;
+		DominoGraph.FEATURES.supportsTransactions = true;
 		DominoGraph.FEATURES.supportsVertexIteration = false;
 		DominoGraph.FEATURES.supportsEdgeIteration = false;
 		DominoGraph.FEATURES.supportsEdgeRetrieval = true;
 		DominoGraph.FEATURES.supportsVertexProperties = true;
 		DominoGraph.FEATURES.supportsEdgeProperties = true;
-		DominoGraph.FEATURES.supportsThreadedTransactions = false;
+		DominoGraph.FEATURES.supportsThreadedTransactions = true;
 		DominoGraph.FEATURES.isPersistent = true;
 
 	}

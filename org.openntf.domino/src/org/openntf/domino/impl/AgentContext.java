@@ -48,6 +48,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	 */
 	public AgentContext(final lotus.domino.AgentContext delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
+
 	}
 
 	/*

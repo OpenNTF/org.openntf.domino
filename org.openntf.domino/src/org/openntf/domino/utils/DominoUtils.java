@@ -335,21 +335,26 @@ public enum DominoUtils {
 		}
 	}
 
-	public static Pattern IS_HIERARCHICAL_MATCH = Pattern.compile("^CN=[^/]+", Pattern.CASE_INSENSITIVE);
+	public static Pattern IS_HIERARCHICAL_MATCH = Pattern.compile("^(CN=)|(OU=)|(O=)|(C=)[^/]+", Pattern.CASE_INSENSITIVE);
+	public static Pattern CN_MATCH = Pattern.compile("^(CN=)[^/]+", Pattern.CASE_INSENSITIVE);
 
 	public static boolean isHierarchicalName(final String name) {
 		return IS_HIERARCHICAL_MATCH.matcher(name).find();
 	}
 
 	public static String toCommonName(final String name) {
-		Matcher m = IS_HIERARCHICAL_MATCH.matcher(name);
-		if (m.find()) {
-			int start = m.start() + 3;
-			int end = m.end();
-			if (start < end) {
-				return name.substring(start, end);
+		if (isHierarchicalName(name)) {
+			Matcher m = CN_MATCH.matcher(name);
+			if (m.find()) {
+				int start = m.start() + 3;
+				int end = m.end();
+				if (start < end) {
+					return name.substring(start, end);
+				} else {
+					return name;
+				}
 			} else {
-				return name;
+				return "";
 			}
 		} else {
 			return name;
