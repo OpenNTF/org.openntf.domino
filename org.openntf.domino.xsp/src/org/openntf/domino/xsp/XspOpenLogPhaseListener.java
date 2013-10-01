@@ -49,23 +49,27 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 
 	@SuppressWarnings("unchecked")
 	public void beforePhase(final PhaseEvent event) {
-		// Add FacesContext messages for anything captured so far
-		if (RENDER_RESPONSE == event.getPhaseId().getOrdinal()) {
-			Map<String, Object> r = FacesContext.getCurrentInstance().getExternalContext().getRequestMap();
-			if (null == r.get("error")) {
-				XspOpenLogUtil.getXspOpenLogItem().setThisAgent(true);
-			}
-			if (null != r.get("openLogBean")) {
-				// requestScope.openLogBean is not null, the developer has called openLogBean.addError(e,this)
-				XspOpenLogErrorHolder errList = (XspOpenLogErrorHolder) r.get("openLogBean");
-				errList.setLoggedErrors(new LinkedHashSet<EventError>());
-				// loop through the ArrayList of EventError objects and add any errors already captured as a facesMessage
-				if (null != errList.getErrors()) {
-					for (EventError error : errList.getErrors()) {
-						errList.addFacesMessageForError(error);
+		try {
+			// Add FacesContext messages for anything captured so far
+			if (RENDER_RESPONSE == event.getPhaseId().getOrdinal()) {
+				Map<String, Object> r = FacesContext.getCurrentInstance().getExternalContext().getRequestMap();
+				if (null == r.get("error")) {
+					XspOpenLogUtil.getXspOpenLogItem().setThisAgent(true);
+				}
+				if (null != r.get("openLogBean")) {
+					// requestScope.openLogBean is not null, the developer has called openLogBean.addError(e,this)
+					XspOpenLogErrorHolder errList = (XspOpenLogErrorHolder) r.get("openLogBean");
+					errList.setLoggedErrors(new LinkedHashSet<EventError>());
+					// loop through the ArrayList of EventError objects and add any errors already captured as a facesMessage
+					if (null != errList.getErrors()) {
+						for (EventError error : errList.getErrors()) {
+							errList.addFacesMessageForError(error);
+						}
 					}
 				}
 			}
+		} catch (Throwable t) {
+			t.printStackTrace();
 		}
 	}
 
@@ -136,8 +140,12 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 				}
 			}
 		} catch (Throwable e) {
-			// We've hit an error in our code here, log the error
-			XspOpenLogUtil.getXspOpenLogItem().logError(e);
+			try {
+				// We've hit an error in our code here, log the error
+				XspOpenLogUtil.getXspOpenLogItem().logError(e);
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
 		}
 	}
 
