@@ -3,6 +3,7 @@ package org.openntf.domino.xsp;
 import javax.faces.context.FacesContext;
 
 import org.eclipse.core.runtime.Plugin;
+import org.openntf.domino.utils.Factory;
 import org.osgi.framework.BundleContext;
 
 import com.ibm.commons.Platform;
@@ -140,6 +141,7 @@ public class Activator extends Plugin {
 	@Override
 	public void start(final BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
+		Factory.setClassLoader(Thread.currentThread().getContextClassLoader());
 	}
 
 	/*

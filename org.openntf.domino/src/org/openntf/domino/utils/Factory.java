@@ -21,6 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
+import lotus.domino.NotesThread;
 
 import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
@@ -29,6 +30,7 @@ import org.openntf.domino.graph.DominoGraph;
 import org.openntf.domino.impl.Base;
 import org.openntf.domino.impl.DocumentCollection;
 import org.openntf.domino.impl.Session;
+import org.openntf.domino.logging.LogSetupRunnable;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.SessionDescendant;
 
@@ -38,6 +40,11 @@ import org.openntf.domino.types.SessionDescendant;
  */
 public enum Factory {
 	;
+
+	static {
+		NotesThread nt = new NotesThread(new LogSetupRunnable());
+		nt.start();
+	}
 
 	public static final String VERSION = "Milestone4";
 
@@ -529,6 +536,8 @@ public enum Factory {
 		if (result == null) {
 			System.out
 					.println("SEVERE: Unable to get default session. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation. If you're running in XPages, check the xsp.properties of your database. If you are running in an Agent, make sure you start with a call to Factory.fromLotus() and pass in your lotus.domino.Session");
+			Throwable t = new Throwable();
+			t.printStackTrace();
 		}
 		return result;
 	}
