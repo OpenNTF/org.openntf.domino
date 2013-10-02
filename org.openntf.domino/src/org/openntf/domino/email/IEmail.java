@@ -38,6 +38,19 @@ public interface IEmail {
 	public void addMimeEntity(final MIMEEntity contentMime);
 
 	/**
+	 * @return ArrayList of MIMEEntities from the email
+	 */
+	public ArrayList<MIMEEntity> getMimeEntities();
+
+	/**
+	 * Removes a MIMEEntity from the email
+	 * 
+	 * @param content
+	 *            MIMEEntity to remove from the email
+	 */
+	public void removeMimeEntity(MIMEEntity content);
+
+	/**
 	 * Adds an on-disk file to the internal ArrayList of EmailAttachment objects, generating and returning a unique identifier for the
 	 * attachment
 	 * 
@@ -141,6 +154,27 @@ public interface IEmail {
 	public String getSender();
 
 	/**
+	 * Removes an individual recipient from the cc ArrayList
+	 * 
+	 * @param cc
+	 */
+	public void removeCCAddress(String cc);
+
+	/**
+	 * Removes an individual recipient from the bcc ArrayList
+	 * 
+	 * @param bcc
+	 */
+	public void removeBCCAddress(String bcc);
+
+	/**
+	 * Removes an individual recipient from the to ArrayList
+	 * 
+	 * @param to
+	 */
+	public void removeToAddress(String to);
+
+	/**
 	 * Sets multiple recipients
 	 * 
 	 * @param to
@@ -154,7 +188,7 @@ public interface IEmail {
 	 * @param to
 	 *            String recipient
 	 */
-	public void setTo(String to);
+	public void setToAddress(String to);
 
 	/**
 	 * Sets multiple CC recipients
@@ -170,7 +204,7 @@ public interface IEmail {
 	 * @param to
 	 *            String recipient
 	 */
-	public void setCC(String cc);
+	public void setCCAddress(String cc);
 
 	/**
 	 * Sets multiple BCC recipients
@@ -186,7 +220,7 @@ public interface IEmail {
 	 * @param to
 	 *            String recipient
 	 */
-	public void setBCC(String bcc);
+	public void setBCCAddress(String bcc);
 
 	/**
 	 * Sets the subject for the email
