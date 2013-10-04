@@ -17,6 +17,6 @@ Bundle-ActivationPolicy: lazy
 Export-Package: org.openntf.domino.xsp,
  org.openntf.domino.xsp.helpers,
  org.openntf.domino.xsp.script
-Require-Bundle: com.ibm.xsp.domino;bundle-version="9.0.0",
- com.ibm.xsp.extsn;bundle-version="9.0.0",
- com.ibm.designer.runtime;bundle-version="9.0.0"
+Require-Bundle: com.ibm.xsp.domino;bundle-version="8.5.3",
+ com.ibm.xsp.extsn;bundle-version="8.5.3",
+ com.ibm.designer.runtime;bundle-version="8.5.3"
