@@ -597,6 +597,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 * 
 	 * @see org.openntf.domino.Session#getCalendar(lotus.domino.Database)
 	 */
+	/* not supported in 8.5.3
 	@Override
 	public NotesCalendar getCalendar(final lotus.domino.Database db) {
 		try {
@@ -607,7 +608,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 
 		}
 	}
-
+	*/
 	/*
 	 * (non-Javadoc)
 	 * 

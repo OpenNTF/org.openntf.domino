@@ -22,6 +22,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
+import org.openntf.domino.exceptions.Notes9onlyException;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -856,11 +857,14 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 	 */
 	@Override
 	public void setAutoExpandGuidance(final int maxEntries, final int[] collapsedNoteIds, final int[] expandedNoteIds) {
+		throw new Notes9onlyException();
+		/*
 		try {
 			getDelegate().setAutoExpandGuidance(maxEntries, collapsedNoteIds, expandedNoteIds);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+		*/
 	}
 
 	/*
@@ -871,12 +875,16 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 	@Override
 	public void setAutoExpandGuidance(final int maxEntries, final lotus.domino.NoteCollection collapsedNoteIds,
 			final lotus.domino.NoteCollection expandedNoteIds) {
+		throw new Notes9onlyException();
+		/*
+		
 		try {
 			getDelegate().setAutoExpandGuidance(maxEntries, (lotus.domino.NoteCollection) toLotus(collapsedNoteIds),
 					(lotus.domino.NoteCollection) toLotus(expandedNoteIds));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+		*/
 	}
 
 	/*

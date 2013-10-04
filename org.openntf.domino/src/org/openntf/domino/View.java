@@ -18,6 +18,7 @@ package org.openntf.domino;
 import java.util.Vector;
 
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.annotations.Notes9only;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.Design;
 import org.openntf.domino.types.Resurrectable;
@@ -896,7 +897,8 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#isEnableNoteIDsForCategories()
 	 */
-	@Override
+
+	@Notes9only
 	public boolean isEnableNoteIDsForCategories();
 
 	/*
@@ -1180,7 +1182,8 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#setEnableNoteIDsForCategories(boolean)
 	 */
-	@Override
+
+	@Notes9only
 	public void setEnableNoteIDsForCategories(final boolean flag);
 
 	/*

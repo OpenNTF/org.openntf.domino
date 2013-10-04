@@ -17,6 +17,7 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
+import org.openntf.domino.annotations.Notes9only;
 import org.openntf.domino.types.DatabaseDescendant;
 
 /**
@@ -94,7 +95,7 @@ public interface ViewEntry extends lotus.domino.ViewEntry, org.openntf.domino.ex
 	 * 
 	 * @see lotus.domino.ViewEntry#getNoteIDAsInt()
 	 */
-	@Override
+	@Notes9only
 	public int getNoteIDAsInt();
 
 	/*

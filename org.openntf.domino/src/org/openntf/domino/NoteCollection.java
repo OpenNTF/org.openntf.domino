@@ -15,6 +15,7 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.annotations.Notes9only;
 import org.openntf.domino.types.DatabaseDescendant;
 
 /**
@@ -56,7 +57,8 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * 
 	 * @see lotus.domino.NoteCollection#add(int[])
 	 */
-	@Override
+
+	@Notes9only
 	public void add(final int[] additionSpecifier);
 
 	/*
@@ -160,7 +162,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * 
 	 * @see lotus.domino.NoteCollection#getNoteIDs()
 	 */
-	@Override
+	@Notes9only
 	public int[] getNoteIDs();
 
 	/*
