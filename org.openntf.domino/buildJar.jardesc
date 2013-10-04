@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<jardesc>
+    <jar path="org.openntf.domino.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/org.openntf.domino/buildJar.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="false" manifestLocation="/org.openntf.domino/META-INF/MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <file path="/org.openntf.domino/MANIFEST.MF"/>
+        <javaElement handleIdentifier="=org.openntf.domino/tinkerpop"/>
+        <file path="/org.openntf.domino/build.properties"/>
+        <javaElement handleIdentifier="=org.openntf.domino/resources"/>
+        <javaElement handleIdentifier="=org.openntf.domino/test"/>
+        <file path="/org.openntf.domino/.project"/>
+        <javaElement handleIdentifier="=org.openntf.domino/commons"/>
+        <file path="/org.openntf.domino/.gitignore"/>
+        <file path="/org.openntf.domino/.classpath"/>
+        <javaElement handleIdentifier="=org.openntf.domino/src"/>
+        <javaElement handleIdentifier="=org.openntf.domino/icu4j"/>
+        <folder path="/org.openntf.domino/META-INF"/>
+    </selectedElements>
+</jardesc>
