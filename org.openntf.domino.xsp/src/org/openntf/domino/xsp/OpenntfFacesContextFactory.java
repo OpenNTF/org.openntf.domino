@@ -3,6 +3,8 @@
  */
 package org.openntf.domino.xsp;
 
+import java.util.List;
+
 import javax.faces.FacesException;
 import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextFactory;
@@ -10,6 +12,7 @@ import javax.faces.lifecycle.Lifecycle;
 
 import org.openntf.domino.utils.Factory;
 
+import com.ibm.commons.extension.ExtensionManager;
 import com.ibm.xsp.FacesExceptionEx;
 import com.ibm.xsp.context.FacesContextFactoryImpl;
 import com.ibm.xsp.domino.context.DominoFacesContextFactoryImpl;
@@ -64,13 +67,14 @@ public class OpenntfFacesContextFactory extends FacesContextFactory implements c
 	public FacesContext getFacesContext(final Object context, final Object request, final Object response, final Lifecycle lifecycle)
 			throws FacesException {
 		FacesContext ctx = _delegate.getFacesContext(context, request, response, lifecycle);
+
 		try {
-			Class<?> vnClass = Class.forName("org.openntf.domino.xsp.helpers.OpenntfViewNavigatorEx");
-		} catch (ClassNotFoundException e) {
-			System.out.println("OpenntfFacesContextFactory unable to resolve ViewNavigatorEx either!");
-		}
-		try {
-			Factory.setClassLoader(ctx.getContextClassLoader());
+			ClassLoader cl = ctx.getContextClassLoader();
+			List<Object> mapperList = ExtensionManager.findApplicationServices(cl, "org.openntf.domino.mapper");
+			System.out.println("Setting up factory. Mapperservices: " + mapperList.size());
+			// TODO FOC: Maybe we can cache this in sessionScope (maybe not, for GC reasons!)
+			Factory.setMapperList(mapperList);
+			Factory.setClassLoader(cl);
 			if (ctx instanceof com.ibm.xsp.context.FacesContextEx) {
 				((com.ibm.xsp.context.FacesContextEx) ctx).addRequestListener(this);
 			}

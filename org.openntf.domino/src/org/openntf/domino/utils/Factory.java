@@ -17,12 +17,14 @@ package org.openntf.domino.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 import lotus.domino.NotesThread;
 
+import org.openntf.domino.Mapper;
 import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
@@ -63,6 +65,14 @@ public enum Factory {
 		}
 
 	};
+
+	private static ThreadLocal<List<Mapper>> mapperList_ = new ThreadLocal<List<Mapper>>() {
+		@Override
+		protected List<Mapper> initialValue() {
+			return new ArrayList<Mapper>();
+		}
+	};
+
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Factory.class.getName());
 
@@ -255,7 +265,18 @@ public enum Factory {
 		} else if (lotus instanceof lotus.domino.DirectoryNavigator) {
 			result = (T) new org.openntf.domino.impl.DirectoryNavigator((lotus.domino.DirectoryNavigator) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Document) {
+
+			// 25.09.13/RPr: what do you think about this idea to pass every document to the database, so that the
+			// mapper can decide how and which object to return
+			for (Mapper mapper : getMapperList()) {
+				result = (T) mapper.map((lotus.domino.Document) lotus, (org.openntf.domino.Database) parent);
+				if (result != null) {
+					return result;
+				}
+			}
+			System.out.println("No 'org.openntf.domino.mapper' service mapped the document");
 			result = (T) new org.openntf.domino.impl.Document((lotus.domino.Document) lotus, parent);
+
 		} else if (lotus instanceof lotus.domino.DocumentCollection) {
 			result = (T) new org.openntf.domino.impl.DocumentCollection((lotus.domino.DocumentCollection) lotus, parent);
 		} else if (lotus instanceof lotus.domino.DxlExporter) {
@@ -570,6 +591,20 @@ public enum Factory {
 		currentClassLoader_.set(null);
 	}
 
+	public static List<Mapper> getMapperList() {
+		return mapperList_.get();
+	}
+
+	public static void setMapperList(final List<?> mapperList) {
+		mapperList_.get().clear();
+		mapperList_.get().addAll((Collection<? extends Mapper>) mapperList);
+
+	}
+
+	public static void clearMapperList() {
+		mapperList_.get().clear();
+	}
+
 	public static void clearDominoGraph() {
 		DominoGraph.clearDocumentCache();
 	}
@@ -583,6 +618,7 @@ public enum Factory {
 		clearClassLoader();
 		clearBubbleExceptions();
 		clearDominoGraph();
+		clearMapperList();
 		//		System.out.println("Terminating OpenNTF Factory");
 	}
 
