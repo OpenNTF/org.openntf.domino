@@ -4,7 +4,13 @@
 		<faces-context-factory>org.openntf.domino.xsp.OpenntfFacesContextFactory
 		</faces-context-factory>
 	</factory>
-	<!-- <lifecycle id="PhaseListener">
-		<phase-listener>org.openntf.domino.xsp.helpers.PhaseListener</phase-listener>
-	</lifecycle> -->
+	<!-- <lifecycle id="PhaseListener"> <phase-listener>org.openntf.domino.xsp.helpers.PhaseListener</phase-listener> 
+		</lifecycle> -->
+
+	<lifecycle>
+		<phase-listener>
+			org.openntf.domino.xsp.XspOpenLogPhaseListener
+		</phase-listener>
+	</lifecycle>
+	
 </faces-config>
