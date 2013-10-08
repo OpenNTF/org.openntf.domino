@@ -19,8 +19,8 @@ import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.impl.Base;
-import org.openntf.domino.thread.DominoChildThread;
 import org.openntf.domino.thread.DominoThread;
+import org.openntf.domino.thread.deprecated.DominoChildThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 

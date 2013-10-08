@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.openntf.domino.thread;
+package org.openntf.domino.thread.deprecated;
 
 import java.util.Arrays;
 import java.util.logging.Logger;

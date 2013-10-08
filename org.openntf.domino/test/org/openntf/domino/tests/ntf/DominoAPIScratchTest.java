@@ -162,6 +162,7 @@ public enum DominoAPIScratchTest {
 
 			// if (false) {
 			long start = System.nanoTime();
+
 			Session s = Factory.getSessionFullAccess();
 			RunContext rc = Factory.getRunContext();
 			System.out.println("RunContext: " + rc.toString());
@@ -243,6 +244,10 @@ public enum DominoAPIScratchTest {
 	}
 
 	public static void main(final String[] args) {
+		//		DominoExecutor de = new DominoExecutor(10);
+		//		for (int i = 0; i < THREAD_COUNT; i++) {
+		//			de.execute(new Doer());
+		//		}
 
 		DominoThread[] threads = new DominoThread[THREAD_COUNT];
 		for (int i = 0; i < THREAD_COUNT; i++) {

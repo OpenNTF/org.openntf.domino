@@ -23,10 +23,6 @@ import org.openntf.domino.utils.Factory;
  * The Class DominoThread.
  */
 public class DominoThread extends Thread {
-	// lotus.domino.NotesThread temp_;
-	// This will be the Thread for executing Runnables that need Domino objects created from scratch
-	private ClassLoader loader_;
-
 	/**
 	 * Instantiates a new domino thread.
 	 */
@@ -65,15 +61,13 @@ public class DominoThread extends Thread {
 	 */
 	@Override
 	public void run() {
+		System.out.println("Running DominoThread...");
 		try {
 			lotus.domino.NotesThread.sinitThread();
-			// if (loader_ != null) {
-			// System.out.println("Setting Factory ClassLoader to a " + loader_.getClass().getName());
-			// } else {
-			// System.out.println("No custom ClassLoader set for thread. Bad things may happen...");
-			// }
-			Factory.setClassLoader(loader_);
+			System.out.println("Inited thread.");
+			Factory.setClassLoader(this.getContextClassLoader());
 			super.run();
+			System.out.println("DominoThread run completed");
 		} catch (Throwable t) {
 			throw new RuntimeException(t);
 		} finally {
@@ -121,6 +115,7 @@ public class DominoThread extends Thread {
 	 */
 	@Override
 	public synchronized void start() {
+		System.out.println("Starting DominoThread...");
 		super.start();
 	}
 
@@ -131,8 +126,6 @@ public class DominoThread extends Thread {
 
 	@Override
 	public void setContextClassLoader(final ClassLoader loader) {
-		// if (loader != null)
-		// System.out.println("Pushing ClassLoader " + loader.getClass().getName() + " to DominoThread");
-		loader_ = loader;
+		super.setContextClassLoader(loader);
 	}
 }

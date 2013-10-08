@@ -13,7 +13,7 @@
  * implied. See the License for the specific language governing 
  * permissions and limitations under the License.
  */
-package org.openntf.domino.thread;
+package org.openntf.domino.thread.deprecated;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.impl.Base;
+import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
