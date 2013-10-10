@@ -3,7 +3,6 @@
  */
 package org.openntf.domino.thread;
 
-import java.io.Serializable;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.logging.Logger;
@@ -15,18 +14,21 @@ import org.openntf.domino.annotations.Incomplete;
  * 
  */
 @Incomplete
-public class DominoFutureTask<V extends Serializable> extends FutureTask<V> {
+public class DominoFutureTask<V> extends FutureTask<V> {
+	protected AbstractDominoRunnable runnable_;
+
 	/**
 	 * @param paramCallable
 	 */
 	public DominoFutureTask(final Callable<V> paramCallable) {
 		super(paramCallable);
-		System.out.println("New DFT created from Callable");
 	}
 
 	public DominoFutureTask(final Runnable runnable, final V result) {
 		super(runnable, result);
-		System.out.println("New DFT created from Runnable");
+		if (runnable instanceof AbstractDominoRunnable) {
+			runnable_ = (AbstractDominoRunnable) runnable;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -34,10 +36,26 @@ public class DominoFutureTask<V extends Serializable> extends FutureTask<V> {
 	 */
 	@Override
 	public void run() {
-		System.out.println("DFT run called");
 		super.run();
-		System.out.println("DFT run completed");
-		done();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.FutureTask#set(java.lang.Object)
+	 */
+	@Override
+	protected void set(final V paramV) {
+		super.set(paramV);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.FutureTask#done()
+	 */
+	@Override
+	protected void done() {
+		if (runnable_ != null) {
+			runnable_.clean();
+		}
+		super.done();
 	}
 
 	private static final Logger log_ = Logger.getLogger(DominoFutureTask.class.getName());

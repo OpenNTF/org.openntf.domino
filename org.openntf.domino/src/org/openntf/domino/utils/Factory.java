@@ -730,12 +730,17 @@ public enum Factory {
 		DominoUtils.setBubbleExceptions(null);
 	}
 
-	public static void terminate() {
+	public static lotus.domino.Session terminate() {
+		lotus.domino.Session result = null;
+		if (currentSessionHolder_.get() != null) {
+			result = (lotus.domino.Session) Base.getDelegate(currentSessionHolder_.get());
+		}
+		Base.drainQueue(0l);
 		clearSession();
 		clearClassLoader();
 		clearBubbleExceptions();
 		clearDominoGraph();
-		//		System.out.println("Terminating OpenNTF Factory");
+		return result;
 	}
 
 	/**

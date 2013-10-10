@@ -3,11 +3,13 @@
  */
 package org.openntf.domino.thread;
 
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import org.openntf.domino.annotations.Incomplete;
+import org.openntf.domino.utils.DominoUtils;
 
 /**
  * @author Nathan T. Freeman
@@ -15,6 +17,19 @@ import org.openntf.domino.annotations.Incomplete;
  */
 @Incomplete
 public class DominoThreadFactory implements ThreadFactory {
+	private static final long THREAD_DELAY = 250l;
+
+	public static class DominoUncaughtExceptionHandler implements UncaughtExceptionHandler {
+		@Override
+		public void uncaughtException(final Thread paramThread, final Throwable paramThrowable) {
+			DominoUtils.handleException(paramThrowable);
+			if (paramThread instanceof DominoThread) {
+				((DominoThread) paramThread).clean();
+			}
+		}
+
+	}
+
 	private static final Logger log_ = Logger.getLogger(DominoThreadFactory.class.getName());
 	private static final long serialVersionUID = 1L;
 	private AtomicInteger count_ = new AtomicInteger();
@@ -32,12 +47,13 @@ public class DominoThreadFactory implements ThreadFactory {
 	 */
 	@Override
 	public Thread newThread(final Runnable paramRunnable) {
-		System.out.println("Maing a new DominoThread...");
 		DominoThread result = null;
 		long time = System.currentTimeMillis() - lastThread_;
-		if (time < 100) {
+		if (time < THREAD_DELAY) {
+			long sleeptime = THREAD_DELAY - time;
+			System.out.println("ThreadFactory autodelaying for " + sleeptime);
 			try {
-				Thread.sleep(100 - time);
+				Thread.sleep(sleeptime);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -45,7 +61,7 @@ public class DominoThreadFactory implements ThreadFactory {
 		result = new DominoThread(paramRunnable);
 		lastThread_ = System.currentTimeMillis();
 		int count = count_.incrementAndGet();
-		System.out.println("Returning a new DominoThread...");
+		result.setUncaughtExceptionHandler(new DominoUncaughtExceptionHandler());
 		return result;
 	}
 

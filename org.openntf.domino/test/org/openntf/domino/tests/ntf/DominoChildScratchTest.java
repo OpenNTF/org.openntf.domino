@@ -31,7 +31,7 @@ public enum DominoChildScratchTest {
 		// TODO Auto-generated constructor stub
 	}
 
-	private static final int THREAD_COUNT = 4;
+	private static final int THREAD_COUNT = 1;
 	private static final boolean INCLUDE_FORMS = false;
 
 	static class ParentDoer implements Runnable {

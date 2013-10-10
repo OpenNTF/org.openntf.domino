@@ -96,7 +96,9 @@ public class DominoExecutor extends ThreadPoolExecutor {
 	@Override
 	protected void afterExecute(final Runnable r, final Throwable t) {
 		super.afterExecute(r, t);
-		System.out.println("Runnable " + r.getClass().getName() + " completed");
+		if (r instanceof AbstractDominoRunnable) {
+			((AbstractDominoRunnable) r).clean();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -104,14 +106,14 @@ public class DominoExecutor extends ThreadPoolExecutor {
 	 */
 	@Override
 	public void execute(final Runnable runnable) {
-		System.out.println("DominoExecutor executing a " + runnable.getClass().getName());
+		//		System.out.println("DominoExecutor executing a " + runnable.getClass().getName());
 		RunnableFuture future = null;
 		if (runnable instanceof RunnableFuture) {
 			future = (RunnableFuture) runnable;
 		} else if (runnable instanceof Callable) {
 			future = new DominoFutureTask((Callable) runnable);
 		} else {
-			future = new DominoFutureTask(runnable, null);
+			future = new DominoFutureTask<Void>(runnable, null);
 		}
 		super.execute(future);
 	}

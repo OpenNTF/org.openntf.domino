@@ -15,7 +15,6 @@
  */
 package org.openntf.domino.thread;
 
-import org.openntf.domino.impl.Base;
 import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
@@ -23,6 +22,9 @@ import org.openntf.domino.utils.Factory;
  * The Class DominoThread.
  */
 public class DominoThread extends Thread {
+	private boolean dirty_ = false;
+	private long starttime_ = 0l;
+
 	/**
 	 * Instantiates a new domino thread.
 	 */
@@ -38,7 +40,11 @@ public class DominoThread extends Thread {
 	 */
 	public DominoThread(final Runnable runnable) {
 		super(runnable);
+	}
 
+	public DominoThread(final AbstractDominoRunnable runnable) {
+		super(runnable);
+		//		runnable.setRunThread(this);
 	}
 
 	/**
@@ -61,34 +67,25 @@ public class DominoThread extends Thread {
 	 */
 	@Override
 	public void run() {
-		System.out.println("Running DominoThread...");
+		dirty_ = true;
+		starttime_ = System.currentTimeMillis();
 		try {
 			lotus.domino.NotesThread.sinitThread();
-			System.out.println("Inited thread.");
 			Factory.setClassLoader(this.getContextClassLoader());
 			super.run();
-			System.out.println("DominoThread run completed");
 		} catch (Throwable t) {
 			throw new RuntimeException(t);
 		} finally {
+			//						clean();
+		}
+	}
+
+	public void clean() {
+		if (dirty_) {
 			System.gc();
-			try {
-				sleep(1000);
-			} catch (Throwable t) {
-				t.printStackTrace();
-			}
-			int drCount = 0;
-			try {
-				drCount = Base.drainQueue(0l);
-			} catch (Throwable t) {
-				t.printStackTrace();
-			}
-			int runRecycleCount = Factory.getAutoRecycleCount();
-			System.out.println("Thread " + Thread.currentThread().getName() + " auto-recycled " + runRecycleCount
-					+ " lotus references during run. Then recycled " + drCount + " lotus references on completion and had "
-					+ Factory.getRecycleErrorCount() + " recycle errors");
-			Factory.terminate();
+			lotus.domino.Session sess = Factory.terminate();
 			lotus.domino.NotesThread.stermThread();
+			dirty_ = false;
 		}
 	}
 
@@ -115,7 +112,6 @@ public class DominoThread extends Thread {
 	 */
 	@Override
 	public synchronized void start() {
-		System.out.println("Starting DominoThread...");
 		super.start();
 	}
 
