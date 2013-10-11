@@ -78,7 +78,10 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	private static final DominoLockSet lockedRefSet = new DominoLockSet();
 
 	/** The get cpp method. */
-	private static Method getCppMethod;
+	private static Method getCppObjMethod;
+
+	/** The getCppSession method. - required for computeWithForm */
+	private static Method getCppSessionMethod;
 
 	/** The is invalid method. */
 	private static Method isInvalidMethod;
@@ -88,8 +91,12 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 				@Override
 				public Object run() throws Exception {
-					getCppMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("GetCppObj", (Class<?>[]) null);
-					getCppMethod.setAccessible(true);
+					getCppObjMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("GetCppObj", (Class<?>[]) null);
+					getCppObjMethod.setAccessible(true);
+
+					getCppSessionMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("GetCppSession", (Class<?>[]) null);
+					getCppSessionMethod.setAccessible(true);
+
 					isInvalidMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("isInvalid", (Class<?>[]) null);
 					isInvalidMethod.setAccessible(true);
 					return null;
@@ -100,6 +107,24 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			DominoUtils.handleException(e);
 		}
 
+	}
+
+	long GetCppSession() {
+		try {
+			return ((Long) getCppSessionMethod.invoke(delegate_, (Object[]) null)).longValue();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0L;
+		}
+	}
+
+	long GetCppObj() {
+		try {
+			return ((Long) getCppObjMethod.invoke(delegate_, (Object[]) null)).longValue();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0L;
+		}
 	}
 
 	// /** The recycled_. */
@@ -208,7 +233,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 */
 	public static long getLotusId(final lotus.domino.local.NotesBase base) {
 		try {
-			return ((Long) getCppMethod.invoke(base, (Object[]) null)).longValue();
+			return ((Long) getCppObjMethod.invoke(base, (Object[]) null)).longValue();
 		} catch (Exception e) {
 			return 0L;
 		}
