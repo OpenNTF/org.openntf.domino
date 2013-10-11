@@ -5,6 +5,7 @@ package org.openntf.domino.email;
 
 import java.util.ArrayList;
 
+import org.openntf.domino.Document;
 import org.openntf.domino.MIMEEntity;
 
 /**
@@ -22,12 +23,33 @@ public interface IEmail {
 	public void addHTML(final StringBuilder content);
 
 	/**
+	 * @return String ArrayList of HTML components
+	 */
+	public ArrayList<String> getHTML();
+
+	/**
 	 * Adds plain text to the body of the email
 	 * 
 	 * @param content
 	 *            stored in StringBuilder, better for performance
 	 */
 	public void addText(final StringBuilder content);
+
+	/**
+	 * @return String ArrayList of plain text components
+	 */
+	public ArrayList<String> getText();
+
+	/**
+	 * @param jsonContent
+	 *            String url for JSON content
+	 */
+	public void setJSON(String jsonContent);
+
+	/**
+	 * @return String url for JSON email data
+	 */
+	public String getJSON();
 
 	/**
 	 * Adds a MIMEEntity to the body of the email
@@ -111,12 +133,25 @@ public interface IEmail {
 	public String addFileAttachment(final String path, final String fileName, final Boolean isInlineImage, String contentId);
 
 	/**
-	 * Adds all attachments to the parent MIMEEntity, using the internal ArrayList of EmailAttachment objects
+	 * Adds an attachment to an ArrayList of EmailAttachments
 	 * 
-	 * @param parent
-	 *            MIMEEntity
+	 * @param attachment
+	 *            EmailAttachment object
 	 */
-	public void addAttachments(MIMEEntity parent);
+	public void addAttachment(EmailAttachment attachment);
+
+	/**
+	 * Removes an attachment from an ArrayList of attachments
+	 * 
+	 * @param attachment
+	 *            EmailAttachment object
+	 */
+	public void removeAttachment(EmailAttachment attachment);
+
+	/**
+	 * @return gets the ArrayList of EmailAttachment objects
+	 */
+	public ArrayList<EmailAttachment> getAttachments();
 
 	/**
 	 * Adds all attachments to the parent MIMEEntity, using a passed ArrayList of EmailAttachment objects
@@ -126,7 +161,7 @@ public interface IEmail {
 	 * @param parent
 	 *            MIMEEntity that the attachments will be added to
 	 */
-	public void addAttachments(final ArrayList<EmailAttachment> attachments, MIMEEntity parent);
+	public void addAttachments(MIMEEntity parent);
 
 	/**
 	 * @return value for the To field of the email
@@ -149,9 +184,14 @@ public interface IEmail {
 	public String getSubject();
 
 	/**
-	 * @return value for the From field (and all its variants) of the email
+	 * @return email address value for the From field (and all its variants) of the email
 	 */
-	public String getSender();
+	public String getSenderEmail();
+
+	/**
+	 * @return name value for the From field (and all its variants) of the email
+	 */
+	public String getSenderName();
 
 	/**
 	 * Removes an individual recipient from the cc ArrayList
@@ -183,12 +223,12 @@ public interface IEmail {
 	public void setTo(ArrayList<String> to);
 
 	/**
-	 * Creates an ArrayList containing the recipient
+	 * Adds an email address to the ArrayList containing the recipients
 	 * 
 	 * @param to
 	 *            String recipient
 	 */
-	public void setToAddress(String to);
+	public void addToAddress(String to);
 
 	/**
 	 * Sets multiple CC recipients
@@ -199,12 +239,12 @@ public interface IEmail {
 	public void setCC(ArrayList<String> cc);
 
 	/**
-	 * Creates an ArrayList containing the CC recipient
+	 * Adds an email address to the ArrayList containing the CC recipients
 	 * 
 	 * @param to
 	 *            String recipient
 	 */
-	public void setCCAddress(String cc);
+	public void addCCAddress(String cc);
 
 	/**
 	 * Sets multiple BCC recipients
@@ -215,12 +255,12 @@ public interface IEmail {
 	public void setBCC(ArrayList<String> bcc);
 
 	/**
-	 * Creates an ArrayList containing the BCC recipient
+	 * Adds an email address to the ArrayList containing the BCC recipients
 	 * 
 	 * @param to
 	 *            String recipient
 	 */
-	public void setBCCAddress(String bcc);
+	public void addBCCAddress(String bcc);
 
 	/**
 	 * Sets the subject for the email
@@ -234,15 +274,23 @@ public interface IEmail {
 	 * Sets From field (and all its variants)
 	 * 
 	 * @param sender
-	 *            email address / user to send from
+	 *            email address to send from
 	 */
-	public void setSender(String sender);
+	public void setSenderEmail(String sender);
+
+	/**
+	 * Sets From field (and all its variants)
+	 * 
+	 * @param sender
+	 *            name to send from
+	 */
+	public void setSenderName(String sender);
 
 	/**
 	 * Sends the email
 	 * 
-	 * @return success or failure
+	 * @return successfully created Document
 	 */
-	public boolean send();
+	public Document send();
 
 }
