@@ -57,11 +57,12 @@ public class DominoEmail implements IEmail {
 	private String senderEmail_;
 	private String senderName_;
 	private String subject_;
-	private ArrayList<String> contentsText_;
-	private ArrayList<String> contentsHTML_;
+	private ArrayList<String> contentsText_ = new ArrayList<String>();
+	private ArrayList<String> contentsHTML_ = new ArrayList<String>();
 	private String urlJSON_;
 	private ArrayList<MIMEEntity> mimeEntities_ = new ArrayList<MIMEEntity>();
 	private ArrayList<EmailAttachment> attachments_ = new ArrayList<EmailAttachment>();
+	private Session currSess_;
 
 	/**
 	 * Cross ref with
@@ -72,6 +73,17 @@ public class DominoEmail implements IEmail {
 	 */
 	public DominoEmail() {
 
+	}
+
+	public DominoEmail(final Session s) {
+		currSess_ = s;
+	}
+
+	public Session getSession() {
+		if (null == currSess_) {
+			currSess_ = Factory.getSession();
+		}
+		return currSess_;
 	}
 
 	/**
@@ -194,8 +206,7 @@ public class DominoEmail implements IEmail {
 
 	private String generateContentId() {
 		try {
-			Session sess = Factory.getSession();
-			Vector evalResult = sess.evaluate("@Unique");
+			Vector evalResult = getSession().evaluate("@Unique");
 			return evalResult.toString();
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
@@ -354,7 +365,6 @@ public class DominoEmail implements IEmail {
 	public void addAttachments(final MIMEEntity parent) {
 		try {
 			Stream streamFile = null;
-			Session currSess = Factory.getSession();
 			for (EmailAttachment attach : getAttachments()) {
 				InputStream is = null;
 				EmbeddedObject eo = null;
@@ -378,7 +388,7 @@ public class DominoEmail implements IEmail {
 				try {
 					if (attach.getAttachmentType() == Type.DOCUMENT) {
 						//retrieve the document containing the attachment to send from the relevant
-						Database dbFile = currSess.getDatabase(currSess.getServerName(), attach.getDbPath());
+						Database dbFile = getSession().getDatabase(getSession().getServerName(), attach.getDbPath());
 						Document docFile = dbFile.getDocumentByUNID(attach.getUnid());
 						if (null != docFile) {
 							eo = docFile.getAttachment(attach.getFileName());
@@ -401,7 +411,7 @@ public class DominoEmail implements IEmail {
 						mimeHeader = mimeChild.createHeader("Content-ID");
 						mimeHeader.setHeaderVal("<" + attach.getContentId() + ">");
 
-						streamFile = currSess.createStream();
+						streamFile = getSession().createStream();
 						streamFile.setContents(is);
 						mimeChild.setContentFromBytes(streamFile, contentType, MIMEEntity.ENC_IDENTITY_BINARY);
 					}
@@ -578,7 +588,7 @@ public class DominoEmail implements IEmail {
 			MIMEEntity mimeEntity;
 			MIMEHeader mimeHeader;
 
-			Session currSess = Factory.getSession();
+			Session currSess = getSession();
 			currSess.setConvertMime(false); // in case Khan is still in suspended animation!
 
 			// Create memo doc
