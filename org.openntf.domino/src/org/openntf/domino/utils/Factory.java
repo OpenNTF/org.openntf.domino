@@ -17,7 +17,6 @@ package org.openntf.domino.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -66,10 +65,10 @@ public enum Factory {
 
 	};
 
-	private static ThreadLocal<List<Mapper>> mapperList_ = new ThreadLocal<List<Mapper>>() {
+	private static ThreadLocal<Mapper> mapper_ = new ThreadLocal<Mapper>() {
 		@Override
-		protected List<Mapper> initialValue() {
-			return new ArrayList<Mapper>();
+		protected Mapper initialValue() {
+			return super.initialValue();
 		}
 	};
 
@@ -268,9 +267,11 @@ public enum Factory {
 
 			// 25.09.13/RPr: what do you think about this idea to pass every document to the database, so that the
 			// mapper can decide how and which object to return
-			for (Mapper mapper : getMapperList()) {
+			Mapper mapper = getMapper();
+			if (mapper != null) {
 				result = (T) mapper.map((lotus.domino.Document) lotus, (org.openntf.domino.Database) parent);
 				if (result != null) {
+					// TODO: What to do if mapper does not map
 					return result;
 				}
 			}
@@ -591,18 +592,17 @@ public enum Factory {
 		currentClassLoader_.set(null);
 	}
 
-	public static List<Mapper> getMapperList() {
-		return mapperList_.get();
+	public static Mapper getMapper() {
+		return mapper_.get();
 	}
 
-	public static void setMapperList(final List<?> mapperList) {
-		mapperList_.get().clear();
-		mapperList_.get().addAll((Collection<? extends Mapper>) mapperList);
+	public static void setMapper(final Mapper mapper) {
+		mapper_.set(mapper);
 
 	}
 
-	public static void clearMapperList() {
-		mapperList_.get().clear();
+	public static void clearMapper() {
+		mapper_.set(null);
 	}
 
 	public static void clearDominoGraph() {
@@ -618,7 +618,7 @@ public enum Factory {
 		clearClassLoader();
 		clearBubbleExceptions();
 		clearDominoGraph();
-		clearMapperList();
+		clearMapper();
 		//		System.out.println("Terminating OpenNTF Factory");
 	}
 
