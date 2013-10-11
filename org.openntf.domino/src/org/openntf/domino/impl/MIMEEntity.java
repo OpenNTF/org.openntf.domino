@@ -501,7 +501,7 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	 */
 	@Override
 	public Document getParent() {
-		return (Document) super.getParent();
+		return getAncestorDocument();
 	}
 
 	/*
@@ -749,7 +749,17 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	 */
 	@Override
 	public Document getAncestorDocument() {
-		return this.getParent();
+		org.openntf.domino.Base<?> result = super.getParent();
+		if (result instanceof MIMEEntity) {
+			result = ((MIMEEntity) result).getAncestorDocument();
+		}
+		if (result instanceof Document) {
+			return (Document) result;
+		} else {
+			throw new org.openntf.domino.exceptions.IHaveNoIdeaHowThisHappenedException(
+					"Expected to find a Document as the parent but instead we found a " + result.getClass().getName());
+		}
+
 	}
 
 	/*
