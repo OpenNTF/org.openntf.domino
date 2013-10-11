@@ -75,10 +75,6 @@ public class DominoEmail implements IEmail {
 
 	}
 
-	public DominoEmail(final Session s) {
-		currSess_ = s;
-	}
-
 	public Session getSession() {
 		if (null == currSess_) {
 			currSess_ = Factory.getSession();
