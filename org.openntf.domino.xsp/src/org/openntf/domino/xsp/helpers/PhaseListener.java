@@ -6,6 +6,8 @@ import javax.faces.event.PhaseId;
 
 import org.openntf.domino.utils.Factory;
 
+import com.ibm.xsp.context.FacesContextEx;
+
 public class PhaseListener extends AbstractListener implements javax.faces.event.PhaseListener, com.ibm.xsp.event.FacesContextListener {
 	public static final long serialVersionUID = -6528380677556637393L;
 	private final static boolean _debug = true;
@@ -31,7 +33,7 @@ public class PhaseListener extends AbstractListener implements javax.faces.event
 	}
 
 	private void doBeforeEveryPhase(final PhaseEvent arg0) {
-		FacesContext ctx = arg0.getFacesContext();
+		FacesContextEx ctx = (FacesContextEx) arg0.getFacesContext();
 		Factory.setClassLoader(ctx.getContextClassLoader());
 		if (ctx instanceof com.ibm.xsp.context.FacesContextEx) {
 			((com.ibm.xsp.context.FacesContextEx) ctx).addRequestListener(this);
