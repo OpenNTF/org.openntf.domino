@@ -110,12 +110,28 @@ public class DominoExecutor extends ThreadPoolExecutor {
 		RunnableFuture future = null;
 		if (runnable instanceof RunnableFuture) {
 			future = (RunnableFuture) runnable;
-		} else if (runnable instanceof Callable) {
-			future = new DominoFutureTask((Callable) runnable);
+			//		} else if (runnable instanceof Callable) {
+			//			future = newTaskFor((Callable) runnable);
 		} else {
-			future = new DominoFutureTask<Void>(runnable, null);
+			future = newTaskFor(runnable, null);
 		}
 		super.execute(future);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.AbstractExecutorService#newTaskFor(java.util.concurrent.Callable)
+	 */
+	@Override
+	protected <T> RunnableFuture<T> newTaskFor(final Callable<T> callable) {
+		return new DominoFutureTask((Callable) callable);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.AbstractExecutorService#newTaskFor(java.lang.Runnable, java.lang.Object)
+	 */
+	@Override
+	protected <T> RunnableFuture<T> newTaskFor(final Runnable runnable, final T value) {
+		return new DominoFutureTask<T>(runnable, value);
 	}
 
 	/* (non-Javadoc)

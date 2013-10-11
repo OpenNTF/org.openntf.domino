@@ -24,7 +24,10 @@ public class DominoThreadFactory implements ThreadFactory {
 		public void uncaughtException(final Thread paramThread, final Throwable paramThrowable) {
 			DominoUtils.handleException(paramThrowable);
 			if (paramThread instanceof DominoThread) {
-				((DominoThread) paramThread).clean();
+				Runnable runnable = ((DominoThread) paramThread).getRunnable();
+				if (runnable instanceof AbstractDominoRunnable) {
+					((AbstractDominoRunnable) runnable).clean();
+				}
 			}
 		}
 
@@ -39,7 +42,7 @@ public class DominoThreadFactory implements ThreadFactory {
 	//private final Deque<DominoThread> idleThreads_ = new ArrayDeque<DominoThread>();
 
 	public DominoThreadFactory() {
-		System.out.println("Created a new DominoThreadFactory");
+		//		System.out.println("Created a new DominoThreadFactory");
 	}
 
 	/* (non-Javadoc)
@@ -58,7 +61,11 @@ public class DominoThreadFactory implements ThreadFactory {
 				e.printStackTrace();
 			}
 		}
-		result = new DominoThread(paramRunnable);
+		if (paramRunnable instanceof AbstractDominoDaemon) {
+			result = new DominoDaemonThread((AbstractDominoDaemon) paramRunnable);
+		} else {
+			result = new DominoThread(paramRunnable);
+		}
 		lastThread_ = System.currentTimeMillis();
 		int count = count_.incrementAndGet();
 		result.setUncaughtExceptionHandler(new DominoUncaughtExceptionHandler());

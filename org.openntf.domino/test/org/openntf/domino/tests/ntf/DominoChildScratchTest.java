@@ -19,6 +19,7 @@ import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.impl.Base;
+import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.thread.deprecated.DominoChildThread;
 import org.openntf.domino.utils.DominoUtils;
@@ -92,7 +93,11 @@ public enum DominoChildScratchTest {
 
 	}
 
-	static class Doer implements Runnable {
+	static class Doer extends AbstractDominoRunnable {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		int nameCount = 0;
 		int docCount = 0;
 		int dateCount = 0;
@@ -227,6 +232,15 @@ public enum DominoChildScratchTest {
 			sb.append(dateCount + " datetimes without recycling.");
 			System.out.println(sb.toString());
 
+		}
+
+		/* (non-Javadoc)
+		 * @see org.openntf.domino.thread.AbstractDominoRunnable#shouldStop()
+		 */
+		@Override
+		public boolean shouldStop() {
+			// TODO Auto-generated method stub
+			return false;
 		}
 	}
 

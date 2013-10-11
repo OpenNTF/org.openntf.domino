@@ -22,8 +22,8 @@ import org.openntf.domino.utils.Factory;
  * The Class DominoThread.
  */
 public class DominoThread extends Thread {
-	private boolean dirty_ = false;
 	private long starttime_ = 0l;
+	private Runnable runnable_;
 
 	/**
 	 * Instantiates a new domino thread.
@@ -40,11 +40,23 @@ public class DominoThread extends Thread {
 	 */
 	public DominoThread(final Runnable runnable) {
 		super(runnable);
+		runnable_ = runnable;
+	}
+
+	/**
+	 * Instantiates a new domino thread.
+	 * 
+	 * @param runnable
+	 *            the runnable
+	 */
+	public DominoThread(final Runnable runnable, final String name) {
+		super(runnable, name);
+		runnable_ = runnable;
 	}
 
 	public DominoThread(final AbstractDominoRunnable runnable) {
 		super(runnable);
-		//		runnable.setRunThread(this);
+		runnable_ = runnable;
 	}
 
 	/**
@@ -55,9 +67,17 @@ public class DominoThread extends Thread {
 	 * @param threadName
 	 *            the thread name
 	 */
-	public DominoThread(final Runnable runnable, final String threadName) {
+	public DominoThread(final AbstractDominoRunnable runnable, final String threadName) {
 		super(runnable, threadName);
-		// TODO Auto-generated constructor stub
+		runnable_ = runnable;
+	}
+
+	public long getStartTime() {
+		return starttime_;
+	}
+
+	public Runnable getRunnable() {
+		return runnable_;
 	}
 
 	/*
@@ -67,8 +87,6 @@ public class DominoThread extends Thread {
 	 */
 	@Override
 	public void run() {
-		dirty_ = true;
-		starttime_ = System.currentTimeMillis();
 		try {
 			lotus.domino.NotesThread.sinitThread();
 			Factory.setClassLoader(this.getContextClassLoader());
@@ -80,31 +98,6 @@ public class DominoThread extends Thread {
 		}
 	}
 
-	public void clean() {
-		if (dirty_) {
-			System.gc();
-			lotus.domino.Session sess = Factory.terminate();
-			lotus.domino.NotesThread.stermThread();
-			dirty_ = false;
-		}
-	}
-
-	/**
-	 * Run child.
-	 */
-	public void runChild() {
-		try {
-			lotus.domino.NotesThread.sinitThread();
-			super.run();
-		} catch (Throwable t) {
-			throw new RuntimeException(t);
-		} finally {
-			System.gc();
-		}
-
-		// deliberately don't close out the thread access...
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -113,6 +106,8 @@ public class DominoThread extends Thread {
 	@Override
 	public synchronized void start() {
 		super.start();
+
+		starttime_ = System.currentTimeMillis();
 	}
 
 	public synchronized void start(final ClassLoader loader) {

@@ -3,8 +3,7 @@
  */
 package org.openntf.domino.thread;
 
-import java.io.Serializable;
-import java.util.Observable;
+import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 import org.openntf.domino.utils.Factory;
@@ -13,18 +12,27 @@ import org.openntf.domino.utils.Factory;
  * @author Nathan T. Freeman
  * 
  */
-public abstract class AbstractDominoRunnable extends Observable implements Runnable, Serializable {
-	private static final Logger log_ = Logger.getLogger(AbstractDominoRunnable.class.getName());
+public abstract class AbstractDominoCallable<V> implements Callable<V> {
+	private static final Logger log_ = Logger.getLogger(AbstractDominoCallable.class.getName());
 	private static final long serialVersionUID = 1L;
 
-	public AbstractDominoRunnable() {
+	/**
+	 * 
+	 */
+	public AbstractDominoCallable() {
+	}
 
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.Callable#call()
+	 */
+	@Override
+	public V call() throws Exception {
+		return null;
 	}
 
 	public abstract boolean shouldStop();
 
 	public void clean() {
-		//		System.out.println("Cleaning runnable off thread " + System.identityHashCode(Thread.currentThread()));
 		try {
 			Factory.terminate().recycle();
 		} catch (lotus.domino.NotesException ne) {
@@ -32,5 +40,4 @@ public abstract class AbstractDominoRunnable extends Observable implements Runna
 		}
 		lotus.domino.NotesThread.stermThread();
 	}
-
 }

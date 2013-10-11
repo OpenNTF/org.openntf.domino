@@ -36,6 +36,10 @@ public enum DominoAPIScratchTest {
 	private static final String dbPath = "events4.nsf";
 
 	static class Doer extends AbstractDominoRunnable {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		int nameCount = 0;
 		int docCount = 0;
 		int dateCount = 0;
@@ -197,6 +201,14 @@ public enum DominoAPIScratchTest {
 			sb.append(docCount + " docs, and ");
 			sb.append(dateCount + " datetimes without recycling.");
 			//			System.out.println(sb.toString());
+		}
+
+		/* (non-Javadoc)
+		 * @see org.openntf.domino.thread.AbstractDominoRunnable#shouldStop()
+		 */
+		@Override
+		public boolean shouldStop() {
+			return false;
 		}
 
 	}

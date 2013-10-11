@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.impl.Base;
+import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;
 
@@ -62,7 +63,7 @@ public class DominoChildThread extends DominoThread {
 	 * @param threadName
 	 *            the thread name
 	 */
-	public DominoChildThread(final Runnable runnable, final String threadName) {
+	public DominoChildThread(final AbstractDominoRunnable runnable, final String threadName) {
 		super(runnable, threadName);
 		// TODO Auto-generated constructor stub
 	}
@@ -121,7 +122,7 @@ public class DominoChildThread extends DominoThread {
 	 */
 	@Override
 	public void run() {
-		super.runChild();
+		super.run();
 	}
 
 	/**

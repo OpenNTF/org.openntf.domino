@@ -750,11 +750,18 @@ public enum Factory {
 	 */
 	public static org.openntf.domino.Session getSessionFullAccess() {
 		try {
-			lotus.domino.Session s = lotus.domino.NotesFactory.createSessionWithFullAccess();
-			return fromLotus(s, org.openntf.domino.Session.class, null);
-		} catch (lotus.domino.NotesException ne) {
-			ne.printStackTrace();
-			// DominoUtils.handleException(ne);
+			Object result = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				@Override
+				public Object run() throws Exception {
+					lotus.domino.Session s = lotus.domino.NotesFactory.createSessionWithFullAccess();
+					return fromLotus(s, org.openntf.domino.Session.class, null);
+				}
+			});
+			if (result instanceof org.openntf.domino.Session) {
+				return (org.openntf.domino.Session) result;
+			}
+		} catch (PrivilegedActionException e) {
+			DominoUtils.handleException(e);
 		}
 		return null;
 	}
@@ -766,10 +773,18 @@ public enum Factory {
 	 */
 	public static org.openntf.domino.Session getTrustedSession() {
 		try {
-			lotus.domino.Session s = lotus.domino.NotesFactory.createTrustedSession();
-			return fromLotus(s, org.openntf.domino.Session.class, null);
-		} catch (lotus.domino.NotesException ne) {
-			DominoUtils.handleException(ne);
+			Object result = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				@Override
+				public Object run() throws Exception {
+					lotus.domino.Session s = lotus.domino.NotesFactory.createTrustedSession();
+					return fromLotus(s, org.openntf.domino.Session.class, null);
+				}
+			});
+			if (result instanceof org.openntf.domino.Session) {
+				return (org.openntf.domino.Session) result;
+			}
+		} catch (PrivilegedActionException e) {
+			DominoUtils.handleException(e);
 		}
 		return null;
 	}
