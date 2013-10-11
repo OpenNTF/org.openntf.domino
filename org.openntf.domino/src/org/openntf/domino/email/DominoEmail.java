@@ -587,14 +587,19 @@ public class DominoEmail implements IEmail {
 			Stream stream;
 			MIMEEntity mimeEntity;
 			MIMEHeader mimeHeader;
+			Database currDb;
 
 			Session currSess = getSession();
 			currSess.setConvertMime(false); // in case Khan is still in suspended animation!
 
 			// Create memo doc
-			Database currDb = currSess.getCurrentDatabase();
-			if (null == currDb) {
-				// Will this work if we're running from DOTS or OSGi plugin??
+			try {
+				currDb = currSess.getCurrentDatabase();
+				if (null == currDb) {
+					// Will this work if we're running from DOTS or OSGi plugin??
+					currDb = currSess.getDatabase(currSess.getServerName(), "mail.box");
+				}
+			} catch (Throwable t) {
 				currDb = currSess.getDatabase(currSess.getServerName(), "mail.box");
 			}
 			Document memo = currDb.createDocument();
