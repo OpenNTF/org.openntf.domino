@@ -21,7 +21,7 @@ import org.openntf.domino.types.DatabaseDescendant;
  * The Interface ViewNavigator.
  */
 public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.domino.ViewNavigator, org.openntf.domino.ext.ViewNavigator,
-		DatabaseDescendant {
+		Iterable<ViewEntry>, DatabaseDescendant {
 
 	/*
 	 * (non-Javadoc)

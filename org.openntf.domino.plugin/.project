@@ -1,20 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.openntf.domino</name>
+	<name>org.openntf.domino.plugin</name>
 	<comment></comment>
 	<projects>
 	</projects>
 	<buildSpec>
-		<buildCommand>
-			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
-			<triggers>full,incremental,</triggers>
-			<arguments>
-				<dictionary>
-					<key>LaunchConfigHandle</key>
-					<value>&lt;project&gt;/.externalToolBuilders/Manifest.launch</value>
-				</dictionary>
-			</arguments>
-		</buildCommand>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
 			<arguments>
@@ -32,7 +22,19 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.pde.PluginNature</nature>
+		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>domino</name>
+			<type>2</type>
+			<location>C:/Data/git/org.openntf.domino/org.openntf.domino/src</location>
+		</link>
+		<link>
+			<name>tinkerpop</name>
+			<type>2</type>
+			<location>C:/Data/git/org.openntf.domino/org.openntf.domino/tinkerpop</location>
+		</link>
+	</linkedResources>
 </projectDescription>

@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.Base;
 import org.openntf.domino.exceptions.UnimplementedException;
+import org.openntf.domino.thread.deprecated.DominoChildThread;
 
 // TODO: Auto-generated Javadoc
 /**

@@ -15,12 +15,24 @@
  */
 package org.openntf.domino.utils;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.AccessControlException;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
+import lotus.domino.NotesFactory;
 import lotus.domino.NotesThread;
 
 import org.openntf.domino.Session.RunContext;
@@ -30,7 +42,11 @@ import org.openntf.domino.graph.DominoGraph;
 import org.openntf.domino.impl.Base;
 import org.openntf.domino.impl.DocumentCollection;
 import org.openntf.domino.impl.Session;
-import org.openntf.domino.logging.LogSetupRunnable;
+import org.openntf.domino.logging.ConsoleFormatter;
+import org.openntf.domino.logging.DefaultConsoleHandler;
+import org.openntf.domino.logging.DefaultFileHandler;
+import org.openntf.domino.logging.FileFormatter;
+import org.openntf.domino.logging.OpenLogHandler;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.SessionDescendant;
 
@@ -41,12 +57,148 @@ import org.openntf.domino.types.SessionDescendant;
 public enum Factory {
 	;
 
+	private static class SetupJob implements Runnable {
+		public void run() {
+			try {
+				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+					@Override
+					public Object run() throws Exception {
+						lotus.domino.Session session = NotesFactory.createSession();
+						Factory.loadEnvironment(session);
+						session.recycle();
+						return null;
+					}
+				});
+			} catch (AccessControlException e) {
+				e.printStackTrace();
+			} catch (PrivilegedActionException e) {
+				e.printStackTrace();
+			}
+
+			try {
+				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+					@Override
+					public Object run() throws Exception {
+						String pattern = Factory.getDataPath() + "/IBM_TECHNICAL_SUPPORT/org.openntf.%u.%g.log";
+						Logger oodLogger = Logger.getLogger("org.openntf.domino");
+						oodLogger.setLevel(Level.WARNING);
+
+						DefaultFileHandler dfh = new DefaultFileHandler(pattern, 50000, 100, true);
+						dfh.setFormatter(new FileFormatter());
+						dfh.setLevel(Level.WARNING);
+						oodLogger.addHandler(dfh);
+
+						DefaultConsoleHandler dch = new DefaultConsoleHandler();
+						dch.setFormatter(new ConsoleFormatter());
+						dch.setLevel(Level.WARNING);
+						oodLogger.addHandler(dch);
+
+						OpenLogHandler olh = new OpenLogHandler();
+						olh.setLogDbPath("OpenLog.nsf");
+						olh.setLevel(Level.WARNING);
+						oodLogger.addHandler(olh);
+
+						LogManager manager = LogManager.getLogManager();
+						manager.addLogger(oodLogger);
+						return null;
+					}
+				});
+			} catch (AccessControlException e) {
+				e.printStackTrace();
+			} catch (PrivilegedActionException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	static {
-		NotesThread nt = new NotesThread(new LogSetupRunnable());
+		NotesThread nt = new NotesThread(new SetupJob());
 		nt.start();
 	}
 
-	public static final String VERSION = "Milestone4";
+	private static Map<String, String> ENVIRONMENT;
+	private static boolean session_init = false;
+	private static boolean jar_init = false;
+
+	public static void loadEnvironment(final lotus.domino.Session session) {
+		if (ENVIRONMENT == null) {
+			ENVIRONMENT = new HashMap<String, String>();
+		}
+		if (session != null && !session_init) {
+			try {
+				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+					@Override
+					public Object run() throws Exception {
+						try {
+							ENVIRONMENT.put("directory", session.getEnvironmentString("Directory", true));
+							ENVIRONMENT.put("notesprogram", session.getEnvironmentString("NotesProgram", true));
+							ENVIRONMENT.put("kittype", session.getEnvironmentString("KitType", true));
+							ENVIRONMENT.put("servicename", session.getEnvironmentString("ServiceName", true));
+							ENVIRONMENT.put("httpjvmmaxheapsize", session.getEnvironmentString("HTTPJVMMaxHeapSize", true));
+							ENVIRONMENT.put("dominocontrollercurrentlog", session.getEnvironmentString("DominoControllerCurrentLog", true));
+						} catch (NotesException ne) {
+							ne.printStackTrace();
+						}
+						return null;
+					}
+				});
+			} catch (AccessControlException e) {
+				e.printStackTrace();
+			} catch (PrivilegedActionException e) {
+				e.printStackTrace();
+			}
+			session_init = true;
+		}
+		if (!jar_init) {
+			try {
+				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+					@Override
+					public Object run() throws Exception {
+						try {
+							InputStream inputStream = Factory.class.getClassLoader().getResourceAsStream("MANIFEST.MF");
+							if (inputStream != null) {
+								Manifest mani;
+								mani = new Manifest(inputStream);
+								Attributes attrib = mani.getMainAttributes();
+								ENVIRONMENT.put("version", attrib.getValue("Implementation-Version"));
+								ENVIRONMENT.put("title", attrib.getValue("Implementation-Title"));
+								ENVIRONMENT.put("url", attrib.getValue("Implementation-Vendor-URL"));
+							}
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						return null;
+					}
+				});
+			} catch (AccessControlException e) {
+				e.printStackTrace();
+			} catch (PrivilegedActionException e) {
+				e.printStackTrace();
+			}
+			jar_init = true;
+		}
+	}
+
+	public static String getTitle() {
+		if (ENVIRONMENT == null) {
+			loadEnvironment(null);
+		}
+		return ENVIRONMENT.get("title");
+	}
+
+	public static String getUrl() {
+		if (ENVIRONMENT == null) {
+			loadEnvironment(null);
+		}
+		return ENVIRONMENT.get("url");
+	}
+
+	public static String getVersion() {
+		if (ENVIRONMENT == null) {
+			loadEnvironment(null);
+		}
+		return ENVIRONMENT.get("version");
+	}
 
 	private static ThreadLocal<Session> currentSessionHolder_ = new ThreadLocal<Session>() {
 		@Override
@@ -332,10 +484,12 @@ public enum Factory {
 					lotus.domino.Session rawSession = (lotus.domino.Session) Base.getDelegate(currentSessionHolder_.get());
 					rawSession.isConvertMime();
 				} catch (NotesException ne) {
+					Factory.loadEnvironment((lotus.domino.Session) lotus);
 					// System.out.println("Resetting default local session because we got an exception");
 					setSession((org.openntf.domino.Session) result);
 				}
 			} else {
+				Factory.loadEnvironment((lotus.domino.Session) lotus);
 				// System.out.println("Resetting default local session because it was null");
 				setSession((org.openntf.domino.Session) result);
 			}
@@ -552,7 +706,7 @@ public enum Factory {
 
 	public static ClassLoader getClassLoader() {
 		if (currentClassLoader_.get() == null) {
-			setClassLoader(Factory.class.getClassLoader());
+			setClassLoader(Thread.currentThread().getContextClassLoader());
 		}
 		return currentClassLoader_.get();
 	}
@@ -576,12 +730,17 @@ public enum Factory {
 		DominoUtils.setBubbleExceptions(null);
 	}
 
-	public static void terminate() {
+	public static lotus.domino.Session terminate() {
+		lotus.domino.Session result = null;
+		if (currentSessionHolder_.get() != null) {
+			result = (lotus.domino.Session) Base.getDelegate(currentSessionHolder_.get());
+		}
+		Base.drainQueue(0l);
 		clearSession();
 		clearClassLoader();
 		clearBubbleExceptions();
 		clearDominoGraph();
-		//		System.out.println("Terminating OpenNTF Factory");
+		return result;
 	}
 
 	/**
@@ -591,11 +750,18 @@ public enum Factory {
 	 */
 	public static org.openntf.domino.Session getSessionFullAccess() {
 		try {
-			lotus.domino.Session s = lotus.domino.NotesFactory.createSessionWithFullAccess();
-			return fromLotus(s, org.openntf.domino.Session.class, null);
-		} catch (lotus.domino.NotesException ne) {
-			ne.printStackTrace();
-			// DominoUtils.handleException(ne);
+			Object result = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				@Override
+				public Object run() throws Exception {
+					lotus.domino.Session s = lotus.domino.NotesFactory.createSessionWithFullAccess();
+					return fromLotus(s, org.openntf.domino.Session.class, null);
+				}
+			});
+			if (result instanceof org.openntf.domino.Session) {
+				return (org.openntf.domino.Session) result;
+			}
+		} catch (PrivilegedActionException e) {
+			DominoUtils.handleException(e);
 		}
 		return null;
 	}
@@ -607,50 +773,41 @@ public enum Factory {
 	 */
 	public static org.openntf.domino.Session getTrustedSession() {
 		try {
-			lotus.domino.Session s = lotus.domino.NotesFactory.createTrustedSession();
-			return fromLotus(s, org.openntf.domino.Session.class, null);
-		} catch (lotus.domino.NotesException ne) {
-			DominoUtils.handleException(ne);
+			Object result = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				@Override
+				public Object run() throws Exception {
+					lotus.domino.Session s = lotus.domino.NotesFactory.createTrustedSession();
+					return fromLotus(s, org.openntf.domino.Session.class, null);
+				}
+			});
+			if (result instanceof org.openntf.domino.Session) {
+				return (org.openntf.domino.Session) result;
+			}
+		} catch (PrivilegedActionException e) {
+			DominoUtils.handleException(e);
 		}
 		return null;
 	}
 
 	public static String getDataPath() {
-
-		org.openntf.domino.Session s = Factory.getSession();
-		if (s != null) {
-			return s.getEnvironmentString("Directory", true);
-		} else {
-			return "";
+		if (ENVIRONMENT == null) {
+			loadEnvironment(null);
 		}
+		return ENVIRONMENT.get("directory");
 	}
 
 	public static String getProgramPath() {
-		org.openntf.domino.Session s = Factory.getSession();
-		if (s != null) {
-			return s.getEnvironmentString("NotesProgram", true);
-		} else {
-			return "";
+		if (ENVIRONMENT == null) {
+			loadEnvironment(null);
 		}
+		return ENVIRONMENT.get("notesprogram");
 	}
 
 	public static String getHTTPJVMHeapSize() {
-		String heapSize = "64M (Default)";
-		String heapSet = "";
-		org.openntf.domino.Session s = Factory.getSession();
-		if (s != null) {
-			String heapSizeChk = s.getEnvironmentString("HTTPJVMMaxHeapSize", true);
-			heapSet = s.getEnvironmentString("HTTPJVMMaxHeapSizeSet", true);
-			if ("".equals(heapSizeChk))
-				return heapSize;
-			if ("".equals(heapSet)) {
-				return heapSizeChk + " (But HTTPJVMMaxHeapSizeSet is not set to \"1\" so it has no effect)";
-			} else {
-				return heapSizeChk;
-			}
-		} else {
-			return heapSize;
+		if (ENVIRONMENT == null) {
+			loadEnvironment(null);
 		}
+		return ENVIRONMENT.get("httpjvmheapsize");
 	}
 
 	/**

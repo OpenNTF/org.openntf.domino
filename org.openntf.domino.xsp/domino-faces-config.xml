@@ -4,7 +4,10 @@
 		<faces-context-factory>org.openntf.domino.xsp.OpenntfFacesContextFactory
 		</faces-context-factory>
 	</factory>
-	<!-- <lifecycle id="PhaseListener">
-		<phase-listener>org.openntf.domino.xsp.helpers.PhaseListener</phase-listener>
-	</lifecycle> -->
+	<managed-bean>
+		<managed-bean-name>LogReader</managed-bean-name>
+		<managed-bean-class>org.openntf.domino.xsp.readers.LogReader
+		</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+	</managed-bean>
 </faces-config>

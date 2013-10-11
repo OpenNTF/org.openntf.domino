@@ -1,30 +1,21 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: OpenNTF Domino API
-Bundle-SymbolicName: org.openntf.domino
+Bundle-Name: OpenNTF Domino API OSGi version
+Bundle-SymbolicName: org.openntf.domino.plugin;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: OpenNTF.org
+Bundle-Activator: org.openntf.domino.plugin.Activator
+Bundle-Vendor: Red Pill Development
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: lotus.domino,
- lotus.domino.local
-Export-Package: com.ibm.icu.impl,
- com.ibm.icu.impl.data,
- com.ibm.icu.impl.duration,
- com.ibm.icu.impl.duration.impl,
- com.ibm.icu.impl.locale,
- com.ibm.icu.lang,
- com.ibm.icu.math,
- com.ibm.icu.text,
- com.ibm.icu.util,
- com.tinkerpop.blueprints,
+Import-Package: org.osgi.framework;version="1.3.0"
+Bundle-ActivationPolicy: lazy
+Export-Package: com.tinkerpop.blueprints,
  com.tinkerpop.blueprints.util,
  org.openntf.domino,
  org.openntf.domino.annotations,
- org.openntf.domino.big,
- org.openntf.domino.big.impl,
  org.openntf.domino.design,
  org.openntf.domino.design.cd,
  org.openntf.domino.design.impl,
+ org.openntf.domino.email,
  org.openntf.domino.events,
  org.openntf.domino.exceptions,
  org.openntf.domino.ext,
@@ -33,6 +24,7 @@ Export-Package: com.ibm.icu.impl,
  org.openntf.domino.impl,
  org.openntf.domino.iterators,
  org.openntf.domino.logging,
+ org.openntf.domino.plugin,
  org.openntf.domino.schema,
  org.openntf.domino.schema.exceptions,
  org.openntf.domino.schema.types,
@@ -41,3 +33,10 @@ Export-Package: com.ibm.icu.impl,
  org.openntf.domino.types,
  org.openntf.domino.utils,
  org.openntf.domino.utils.xml
+Require-Bundle: com.ibm.commons;bundle-version="9.0.0",
+ com.ibm.commons.icu;bundle-version="9.0.0",
+ com.ibm.icu;bundle-version="3.8.1",
+ com.ibm.icu.base;bundle-version="3.8.1"
+Bundle-ClassPath: bin-domino/,
+ bin-tinkerpop/,
+ .
