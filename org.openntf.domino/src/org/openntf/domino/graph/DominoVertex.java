@@ -645,6 +645,8 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	}
 
 	public static class MultipleDefinedEdgeHelpers extends DominoGraphException {
+		private static final long serialVersionUID = 1L;
+
 		public MultipleDefinedEdgeHelpers(final DominoVertex element1, final DominoVertex element2) {
 			super("Multiple EdgeHelpers found for vertexes of type " + element1.getClass().getName() + " and "
 					+ element2.getClass().getName(), element1, element2);
@@ -652,6 +654,8 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	}
 
 	public static class UndefinedEdgeHelpers extends DominoGraphException {
+		private static final long serialVersionUID = 1L;
+
 		public UndefinedEdgeHelpers(final DominoVertex element1, final DominoVertex element2) {
 			super("No EdgeHelpers found for vertexes of type " + element1.getClass().getName() + " and " + element2.getClass().getName(),
 					element1, element2);

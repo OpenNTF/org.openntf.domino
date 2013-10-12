@@ -605,7 +605,8 @@ public enum TypeUtils {
 			int pos = i++;
 			String cn = String.valueOf(o);
 			try {
-				Class<?> cls = Class.forName(cn, false, cl);
+				Class<?> cls = Thread.currentThread().getContextClassLoader().loadClass(cn);
+				//				Class<?> cls = Class.forName(cn, false, cl);
 				classes[pos] = cls;
 			} catch (ClassNotFoundException e) {
 				System.out.println("Failed to find class " + cn + " using a classloader of type " + cl.getClass().getName());
@@ -627,7 +628,8 @@ public enum TypeUtils {
 			ename = String.valueOf(value).substring(en.indexOf(' ') + 1).trim();
 		}
 		try {
-			Class<?> cls = Class.forName(cn, false, cl);
+			Class<?> cls = Thread.currentThread().getContextClassLoader().loadClass(cn);
+			//			Class<?> cls = Class.forName(cn, false, cl);
 			for (Object obj : cls.getEnumConstants()) {
 				if (obj instanceof Enum) {
 					if (((Enum) obj).name().equals(ename)) {

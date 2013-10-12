@@ -60,6 +60,12 @@ import org.openntf.domino.types.SessionDescendant;
  * </ul>
  */
 public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, org.openntf.domino.ext.Name, Encapsulated, SessionDescendant {
+	/**
+	 * The Enum NameType.
+	 */
+	public static enum NameType {
+		COMMON, CANONICAL, ABBREVIATED, ORGUNIT, ORG, COUNTRY
+	}
 
 	/**
 	 * A hierarchical name in abbreviated form.

@@ -15,6 +15,8 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.Iterator;
+
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
@@ -22,6 +24,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
+import org.openntf.domino.iterators.ViewNavigatorEntryIterator;
 import org.openntf.domino.exceptions.Notes9onlyException;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -1007,5 +1010,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 	@Override
 	public Session getAncestorSession() {
 		return this.getAncestorDatabase().getAncestorSession();
+	}
+
+	public Iterator<org.openntf.domino.ViewEntry> iterator() {
+		return new ViewNavigatorEntryIterator(this);
 	}
 }

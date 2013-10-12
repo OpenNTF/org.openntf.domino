@@ -35,6 +35,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -335,11 +338,66 @@ public enum DominoUtils {
 		}
 	}
 
-	public static Pattern IS_HIERARCHICAL_MATCH = Pattern.compile("^(CN=)|(OU=)|(O=)|(C=)[^/]+", Pattern.CASE_INSENSITIVE);
+	public static Pattern IS_HIERARCHICAL_MATCH = Pattern.compile("^((CN=)|(O=)|(OU=)|(C=))[^/]+", Pattern.CASE_INSENSITIVE);
+
 	public static Pattern CN_MATCH = Pattern.compile("^(CN=)[^/]+", Pattern.CASE_INSENSITIVE);
+
+	public static Pattern OU_MATCH = Pattern.compile("(OU=)[^/]+", Pattern.CASE_INSENSITIVE);
+
+	public static Pattern O_MATCH = Pattern.compile("(O=)[^/]+", Pattern.CASE_INSENSITIVE);
+
+	public static Pattern C_MATCH = Pattern.compile("(C=)[^/]+", Pattern.CASE_INSENSITIVE);
 
 	public static boolean isHierarchicalName(final String name) {
 		return IS_HIERARCHICAL_MATCH.matcher(name).find();
+	}
+
+	public static String toAbbreviatedName(final String name) {
+		if (isHierarchicalName(name)) {
+			StringBuilder builder = new StringBuilder();
+			boolean isFirst = true;
+			String cn = toCommonName(name);
+			if (cn.length() > 0) {
+				isFirst = false;
+				builder.append(cn);
+			}
+			String ouString = toOUString(name);
+			if (ouString.length() > 0) {
+				if (!isFirst) {
+					builder.append('/');
+				}
+				isFirst = false;
+				builder.append(toOUString(name));
+			}
+			//			String[] ous = toOU(name);
+			//			if (ous.length > 0) {
+			//				for (String ou : ous) {
+			//					if (ou.length() > 0) {
+			//						if (!isFirst)
+			//							builder.append('/');
+			//						isFirst = false;
+			//						builder.append(ou);
+			//					}
+			//				}
+			//			}
+			String o = toOrgName(name);
+			if (o.length() > 0) {
+				if (!isFirst)
+					builder.append('/');
+				isFirst = false;
+				builder.append(o);
+			}
+			String c = toCountry(name);
+			if (c.length() > 0) {
+				if (!isFirst)
+					builder.append('/');
+				isFirst = false;
+				builder.append(c);
+			}
+			return builder.toString();
+		} else {
+			return name;
+		}
 	}
 
 	public static String toCommonName(final String name) {
@@ -358,6 +416,145 @@ public enum DominoUtils {
 			}
 		} else {
 			return name;
+		}
+	}
+
+	public static String toOrgName(final String name) {
+		if (isHierarchicalName(name)) {
+			Matcher m = O_MATCH.matcher(name);
+			if (m.find()) {
+				int start = m.start() + 2;
+				int end = m.end();
+				if (start < end) {
+					return name.substring(start, end);
+				} else {
+					return name;
+				}
+			} else {
+				return "";
+			}
+		} else {
+			return name;
+		}
+	}
+
+	public static String toOUString(final String name) {
+		if (isHierarchicalName(name)) {
+			Matcher m = OU_MATCH.matcher(name);
+			StringBuilder builder = new StringBuilder();
+			int i = 0;
+			while (m.find()) {
+				int start = m.start() + 3;
+				int end = m.end();
+				if (start < end) {
+					if (i > 0) {
+						builder.append('/');
+					}
+					builder.append(name.substring(start, end));
+					i++;
+				}
+			}
+			if (i == 0) {
+				return "";
+			} else {
+				return builder.toString();
+			}
+		} else {
+			return "";
+		}
+	}
+
+	public static String[] toOU(final String name) {
+		if (isHierarchicalName(name)) {
+			Matcher m = OU_MATCH.matcher(name);
+			String[] ous = new String[4];	//maximum number of OUs according to spec
+			int i = 0;
+			while (m.find()) {
+				int start = m.start() + 3;
+				int end = m.end();
+				if (start < end) {
+					ous[i++] = name.substring(start, end);
+				}
+			}
+			if (i == 0) {
+				return new String[0];
+			} else {
+				String[] result = new String[i];
+				System.arraycopy(ous, 0, result, 0, i);
+				return result;
+			}
+		} else {
+			return new String[0];
+		}
+	}
+
+	public static String toCountry(final String name) {
+		if (isHierarchicalName(name)) {
+			Matcher m = C_MATCH.matcher(name);
+			if (m.find()) {
+				int start = m.start() + 2;
+				int end = m.end();
+				if (start < end) {
+					return name.substring(start, end);
+				} else {
+					return name;
+				}
+			} else {
+				return "";
+			}
+		} else {
+			return name;
+		}
+	}
+
+	public static String toNameType(final String name, final Name.NameType type) {
+		switch (type) {
+		case COMMON:
+			return toCommonName(name);
+		case ABBREVIATED:
+			return toAbbreviatedName(name);
+		case CANONICAL:
+			return name;
+		case ORG:
+			return toOrgName(name);
+		case ORGUNIT:
+			return toOUString(name);
+		case COUNTRY:
+			return toCountry(name);
+		}
+		return name;
+	}
+
+	public static Map<String, String> mapNames(final Collection<String> names, final Name.NameType keyType, final Name.NameType valueType) {
+		if (names != null) {
+			Map<String, String> result = new LinkedHashMap<String, String>();
+			for (String name : names) {
+				String key = toNameType(name, keyType);
+				String value = toNameType(name, valueType);
+				result.put(key, value);
+			}
+			return result;
+		} else {
+			return null;
+		}
+	}
+
+	public static List<String> toSelectionList(final Collection<String> names, final Name.NameType firstType, final Name.NameType secondType) {
+		return toSelectionList(names, firstType, secondType, "|");
+	}
+
+	public static List<String> toSelectionList(final Collection<String> names, final Name.NameType firstType,
+			final Name.NameType secondType, final CharSequence separator) {
+		if (names != null) {
+			List<String> result = new LinkedList<String>();
+			for (String name : names) {
+				String key = toNameType(name, firstType);
+				String value = toNameType(name, secondType);
+				result.add(key + separator + value);
+			}
+			return result;
+		} else {
+			return null;
 		}
 	}
 

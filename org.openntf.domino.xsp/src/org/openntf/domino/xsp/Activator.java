@@ -1,9 +1,13 @@
 package org.openntf.domino.xsp;
 
+import java.io.InputStream;
+import java.net.URL;
+
 import javax.faces.context.FacesContext;
 
 import org.eclipse.core.runtime.Plugin;
 import org.openntf.domino.utils.Factory;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import com.ibm.commons.Platform;
@@ -36,6 +40,18 @@ public class Activator extends Plugin {
 			version = (String) instance.getBundle().getHeaders().get("Bundle-Version");
 		}
 		return version;
+	}
+
+	public InputStream getResourceAsStream(final String path) throws Exception {
+		BundleContext ctx = getContext();
+		Bundle bundle = ctx.getBundle();
+		URL url = bundle.getEntry(path);
+		if (url == null) {
+			return Activator.class.getResourceAsStream(path);
+		} else {
+			InputStream result = url.openStream();
+			return result;
+		}
 	}
 
 	public Activator() {
@@ -133,6 +149,8 @@ public class Activator extends Plugin {
 		return result;
 	}
 
+	private Bundle bundle_;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -141,6 +159,7 @@ public class Activator extends Plugin {
 	@Override
 	public void start(final BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
+		bundle_ = bundleContext.getBundle();
 		Factory.setClassLoader(Thread.currentThread().getContextClassLoader());
 	}
 

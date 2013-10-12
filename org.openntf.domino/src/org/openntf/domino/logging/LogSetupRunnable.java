@@ -15,10 +15,12 @@ import lotus.domino.NotesFactory;
 
 /**
  * @author Nathan T. Freeman
+ * @deprecated Leaving the code here in case anyone wants an example of how to do this. But the functional code has been moved to an inner
+ *             class in the Factory called SetupJob.
  * 
  */
+@Deprecated
 public class LogSetupRunnable implements Runnable {
-	private static final Logger log_ = Logger.getLogger(LogSetupRunnable.class.getName());
 	private static final long serialVersionUID = 1L;
 
 	/**
