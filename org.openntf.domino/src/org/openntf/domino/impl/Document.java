@@ -17,7 +17,6 @@ package org.openntf.domino.impl;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -57,9 +56,6 @@ import org.openntf.domino.types.Null;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.TypeUtils;
-
-import com.ibm.commons.util.io.json.JsonException;
-import com.ibm.commons.util.io.json.util.JsonWriter;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -3014,6 +3010,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	@Override
 	public String toJson(final boolean compact) {
+		// TODO FOC: Not supported in 8.5.3?
+		/*
 		StringWriter sw = new StringWriter();
 		JsonWriter jw = new JsonWriter(sw, compact);
 		try {
@@ -3033,5 +3031,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			return null;
 		}
 		return sw.toString();
+		*/
+		return "";
 	}
 }

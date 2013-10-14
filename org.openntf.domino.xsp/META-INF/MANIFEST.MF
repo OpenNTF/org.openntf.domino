@@ -18,11 +18,12 @@ Import-Package: com.ibm.domino.napi.c.xsp,
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openntf.domino.xsp,
  org.openntf.domino.xsp.helpers,
+ org.openntf.domino.xsp.readers,
  org.openntf.domino.xsp.script
 Require-Bundle: com.ibm.xsp.domino;bundle-version="8.5.3",
  com.ibm.xsp.extsn;bundle-version="8.5.3",
  com.ibm.designer.runtime;bundle-version="8.5.3",
- org.openntf.domino.plugin;bundle-version="1.0.0";resolution:=optional,
- com.ibm.commons.icu;bundle-version="8.5.3";resolution:=optional,
- com.ibm.icu;bundle-version="3.8.1";resolution:=optional,
- com.ibm.icu.base;bundle-version="3.8.1";resolution:=optional
+ org.openntf.domino.plugin;bundle-version="1.0.0",
+ com.ibm.commons.icu;bundle-version="8.5.3",
+ com.ibm.icu;bundle-version="3.8.1",
+ com.ibm.icu.base;bundle-version="3.8.1"

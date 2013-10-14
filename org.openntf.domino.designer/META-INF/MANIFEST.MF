@@ -29,4 +29,5 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.commons;bundle-version="8.5.3"
 Bundle-RequiredExecutionEnvironment: OSGi/Minimum-1.0
 Eclipse-LazyStart: true
-Import-Package: com.ibm.workplace.notes.ipc.xml.util
+Import-Package: com.ibm.workplace.notes.ipc.xml.util,
+ javax.xml.parsers
