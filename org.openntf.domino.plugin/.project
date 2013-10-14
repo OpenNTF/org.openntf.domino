@@ -29,12 +29,12 @@
 		<link>
 			<name>domino</name>
 			<type>2</type>
-			<location>D:/Daten/GitHub/org.openntf.domino/org.openntf.domino/src</location>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/org.openntf.domino/src</locationURI>
 		</link>
 		<link>
 			<name>tinkerpop</name>
 			<type>2</type>
-			<location>D:/Daten/GitHub/org.openntf.domino/org.openntf.domino/tinkerpop</location>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/org.openntf.domino/tinkerpop</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
