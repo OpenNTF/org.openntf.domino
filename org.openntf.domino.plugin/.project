@@ -25,16 +25,4 @@
 		<nature>org.eclipse.pde.PluginNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>domino</name>
-			<type>2</type>
-			<location>${PARENT-1-PROJECT_LOC}/org.openntf.domino/src</location>
-		</link>
-		<link>
-			<name>tinkerpop</name>
-			<type>2</type>
-			<location>${PARENT-1-PROJECT_LOC}/org.openntf.domino/tinkerpop</location>
-		</link>
-	</linkedResources>
 </projectDescription>
