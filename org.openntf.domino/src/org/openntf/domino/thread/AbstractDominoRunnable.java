@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Observable;
 import java.util.logging.Logger;
 
+import org.openntf.domino.impl.Base;
 import org.openntf.domino.utils.Factory;
 
 /**
@@ -16,6 +17,7 @@ import org.openntf.domino.utils.Factory;
 public abstract class AbstractDominoRunnable extends Observable implements Runnable, Serializable {
 	private static final Logger log_ = Logger.getLogger(AbstractDominoRunnable.class.getName());
 	private static final long serialVersionUID = 1L;
+	private transient org.openntf.domino.Session session_;
 
 	public AbstractDominoRunnable() {
 
@@ -23,14 +25,34 @@ public abstract class AbstractDominoRunnable extends Observable implements Runna
 
 	public abstract boolean shouldStop();
 
+	private transient boolean recycle_ = false;
+
+	public boolean shouldRecycle() {
+		return recycle_;
+	}
+
+	public void setSession(final lotus.domino.Session session) {
+		Factory.setSession(session);
+		Base.lock(Factory.getSession());
+	}
+
+	public org.openntf.domino.Session getSession() {
+		return session_;
+	}
+
 	public void clean() {
+		recycle_ = true;
 		//		System.out.println("Cleaning runnable off thread " + System.identityHashCode(Thread.currentThread()));
-		try {
-			Factory.terminate().recycle();
-		} catch (lotus.domino.NotesException ne) {
-			ne.printStackTrace();
-		}
-		lotus.domino.NotesThread.stermThread();
+
+		//		Base.unlock(getSession());
+		//		try {
+		//			lotus.domino.Session s = Factory.terminate();
+		//			if (s != null)
+		//				s.recycle();
+		//		} catch (lotus.domino.NotesException ne) {
+		//			ne.printStackTrace();
+		//		}
+		//		lotus.domino.NotesThread.stermThread();
 	}
 
 }

@@ -1,4 +1,6 @@
 bin
+bin-domino/*.class
+bin-tinkerpop/*.class
 Snap*
 core*
 javacore*

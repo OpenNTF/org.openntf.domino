@@ -21,6 +21,7 @@ public abstract class AbstractDominoDaemon extends AbstractDominoRunnable {
 	private volatile boolean shouldStop_ = false;
 	private long delay_ = 100l;	//default to 100ms delay cycle
 	private transient org.openntf.domino.Session session_;
+	private boolean running_ = false;
 
 	/**
 	 * 
@@ -56,7 +57,7 @@ public abstract class AbstractDominoDaemon extends AbstractDominoRunnable {
 	 * @see java.lang.Runnable#run()
 	 */
 	@Override
-	public final void run() {
+	public void run() {
 		while (!shouldStop()) {
 			try {
 				Object result = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
@@ -80,6 +81,7 @@ public abstract class AbstractDominoDaemon extends AbstractDominoRunnable {
 		setChanged();
 		notifyObservers();
 		clean();
+		running_ = false;
 	}
 
 	@Override
@@ -100,5 +102,11 @@ public abstract class AbstractDominoDaemon extends AbstractDominoRunnable {
 
 	public synchronized void stop() {
 		shouldStop_ = true;
+	}
+
+	public synchronized void start() {
+		if (!running_) {
+			new DominoDaemonThread(this).start();
+		}
 	}
 }

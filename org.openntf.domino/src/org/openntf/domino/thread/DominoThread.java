@@ -94,6 +94,8 @@ public class DominoThread extends Thread {
 		} catch (Throwable t) {
 			throw new RuntimeException(t);
 		} finally {
+			Factory.terminate();
+			lotus.domino.NotesThread.stermThread();
 			//						clean();
 		}
 	}
