@@ -8,9 +8,6 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.logging.Logger;
 
-import org.openntf.domino.Session;
-import org.openntf.domino.utils.Factory;
-
 /**
  * @author Nathan T. Freeman
  * 
@@ -36,21 +33,6 @@ public abstract class AbstractDominoDaemon extends AbstractDominoRunnable {
 
 	public void setThreadDelay(final long delay) {
 		delay_ = delay;
-	}
-
-	public Session getSession() {
-		if (session_ == null) {
-			session_ = Factory.getSession();
-		}
-		return session_;
-	}
-
-	protected void setSession(final lotus.domino.Session session) {
-		if (session instanceof org.openntf.domino.Session) {
-			session_ = (org.openntf.domino.Session) session;
-		} else {
-			session_ = Factory.fromLotus(session, org.openntf.domino.Session.class, null);
-		}
 	}
 
 	/* (non-Javadoc)

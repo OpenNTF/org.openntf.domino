@@ -170,8 +170,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 					recycleQueue.get().bagReference(new DominoReference(this, recycleQueue.get(), delegate));
 				}
 			} else {
-				if (log_.isLoggable(Level.WARNING))
-					log_.log(Level.WARNING, "Why are you wrapping a non-Lotus object? " + delegate.getClass().getName());
+				if (log_.isLoggable(Level.FINE))
+					log_.log(Level.FINE, "Why are you wrapping a non-Lotus object? " + delegate.getClass().getName(),
+							new RuntimeException());
 			}
 		}
 		drainQueue(cpp_object);
