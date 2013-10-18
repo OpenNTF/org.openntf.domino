@@ -55,6 +55,7 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 			super.afterExecute(r, t);
 			if (r instanceof AbstractDominoRunnable) {
 				if (((AbstractDominoRunnable) r).shouldRecycle()) {
+					System.out.println("Queuing a job for on-thread recycling...");
 					dispatcher_.queueJob((AbstractDominoRunnable) r);
 				}
 			}
@@ -142,10 +143,12 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 			if (request instanceof AbstractDominoRunnable) {
 				AbstractDominoRunnable adr = (AbstractDominoRunnable) request;
 				if (adr.shouldRecycle()) {
+					System.out.println("Attempting auto-recycle of session from trusted runnable...");
 					lotus.domino.Session s = (lotus.domino.Session) Base.getDelegate(adr.getSession());
 					if (s != null)
 						try {
 							s.recycle();
+							System.out.println("Session recycled");
 						} catch (NotesException e) {
 							e.printStackTrace();
 						}
@@ -163,12 +166,12 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 
 	@Override
 	public void run() {
-		try {
-			Session session = Factory.getTrustedSession();
-			System.out.println("Got a session with ident " + session.getEffectiveUserName());
-		} catch (Throwable t) {
-			t.printStackTrace();
-		}
+		//		try {
+		//			Session session = Factory.getTrustedSession();
+		//			//			System.out.println("Got a session with ident " + session.getEffectiveUserName());
+		//		} catch (Throwable t) {
+		//			t.printStackTrace();
+		//		}
 		super.run();
 	}
 
@@ -188,6 +191,23 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.thread.AbstractDominoDaemon#stop()
+	 */
+	@Override
+	public synchronized void stop() {
+		intimidator_.shutdown();
+		lotus.domino.Session s = Factory.terminate();
+		if (s != null) {
+			try {
+				s.recycle();
+			} catch (NotesException e) {
+				e.printStackTrace();
+			}
+		}
+		super.stop();
 	}
 
 }

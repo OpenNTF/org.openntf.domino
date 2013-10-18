@@ -24,6 +24,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class DxlImporter.
  */
+@SuppressWarnings("deprecation")
 public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domino.DxlImporter> implements org.openntf.domino.DxlImporter {
 
 	/**

@@ -30,6 +30,7 @@ import org.openntf.domino.utils.Factory;
 /**
  * The Class View.
  */
+@SuppressWarnings("deprecation")
 public class View extends Base<org.openntf.domino.View, lotus.domino.View> implements org.openntf.domino.View {
 
 	private List<DominoColumnInfo> columnInfo_;

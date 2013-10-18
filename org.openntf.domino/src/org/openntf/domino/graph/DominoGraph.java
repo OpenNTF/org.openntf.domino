@@ -33,9 +33,11 @@ import com.tinkerpop.blueprints.TransactionalGraph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.DefaultGraphQuery;
 
+@SuppressWarnings("deprecation")
 public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	public static class DominoGraphException extends RuntimeException {
 
+		private static final long serialVersionUID = 1L;
 		final String message_;
 		final DominoElement elem1_;
 		final DominoElement elem2_;
@@ -639,6 +641,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	 */
 	@Override
 	@Deprecated
+	@SuppressWarnings("deprecation")
 	public void stopTransaction(final Conclusion conclusion) {
 		// TODO Auto-generated method stub
 

@@ -50,6 +50,7 @@ import com.ibm.icu.util.Calendar;
  * 
  * @author nfreeman
  */
+@SuppressWarnings("deprecation")
 public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Session, lotus.domino.Session> implements
 		org.openntf.domino.Session {
 	/** The Constant log_. */

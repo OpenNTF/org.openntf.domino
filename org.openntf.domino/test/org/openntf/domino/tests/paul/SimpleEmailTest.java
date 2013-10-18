@@ -62,7 +62,7 @@ public class SimpleEmailTest {
 			if (this.session != null) {
 				s = this.session;
 				db = this.database;
-				DominoEmail myEmail = new DominoEmail(s);
+				DominoEmail myEmail = new DominoEmail();
 				myEmail.createSimpleEmail("pwithers@intec.co.uk", "", "", "OpenNTF Domino Email",
 						"Please find attached an email from OpenNTF Domino API", "");
 			}

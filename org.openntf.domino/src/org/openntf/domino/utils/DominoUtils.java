@@ -28,8 +28,10 @@ import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
+import java.security.AccessControlException;
 import java.security.AccessController;
 import java.security.MessageDigest;
+import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,6 +74,27 @@ import com.ibm.icu.util.ULocale;
 public enum DominoUtils {
 	;
 
+	public static Class<?> getClass(final String className) {
+		Class<?> result = null;
+		try {
+			result = AccessController.doPrivileged(new PrivilegedExceptionAction<Class<?>>() {
+				@Override
+				public Class<?> run() throws Exception {
+					Class<?> cls = Thread.currentThread().getContextClassLoader().loadClass(className);
+					return cls;
+				}
+			});
+		} catch (AccessControlException e) {
+			e.printStackTrace();
+		} catch (PrivilegedActionException e) {
+			e.printStackTrace();
+		}
+		if (result == null) {
+			log_.log(Level.WARNING, "Unable to resolve class " + className + " Please check logs for more details.");
+		}
+		return result;
+	}
+
 	private static ThreadLocal<Boolean> bubbleExceptions_ = new ThreadLocal<Boolean>() {
 		@Override
 		protected Boolean initialValue() {
@@ -93,6 +116,11 @@ public enum DominoUtils {
 	public static class LoaderObjectInputStream extends ObjectInputStream {
 		private final ClassLoader loader_;
 
+		public LoaderObjectInputStream(final InputStream in) throws IOException {
+			super(in);
+			loader_ = null;
+		}
+
 		public LoaderObjectInputStream(final ClassLoader classLoader, final InputStream in) throws IOException {
 			super(in);
 			loader_ = classLoader;
@@ -100,8 +128,12 @@ public enum DominoUtils {
 
 		@Override
 		protected Class<?> resolveClass(final ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+			String name = desc.getName();
+			if (loader_ == null) {
+				return DominoUtils.getClass(name);
+			}
 			try {
-				String name = desc.getName();
+
 				return Class.forName(name, false, loader_);
 			} catch (ClassNotFoundException e) {
 				return super.resolveClass(desc);
@@ -715,15 +747,16 @@ public enum DominoUtils {
 		}
 		Class<?> chkClass = null;
 		String className = entity.getNthHeader("X-Java-Class").getHeaderVal();
-		ClassLoader cl = Factory.getClassLoader();
-		try {
-			chkClass = (Class<?>) Class.forName(className, true, cl);
-		} catch (Throwable t) {
-			log_.log(Level.SEVERE, "Unable to load class " + className + " from a ClassLoader of " + cl.getClass().getName()
-					+ " so object deserialization is likely to fail...");
-		}
+		chkClass = getClass(className);
+		//		ClassLoader cl = Factory.getClassLoader();
+		//		try {
+		//			chkClass = (Class<?>) Class.forName(className, true, cl);
+		//		} catch (Throwable t) {
+		//			log_.log(Level.SEVERE, "Unable to load class " + className + " from a ClassLoader of " + cl.getClass().getName()
+		//					+ " so object deserialization is likely to fail...");
+		//		}
 		if (chkClass == null) {
-			log_.log(Level.SEVERE, "Unable to load class " + className + " from a ClassLoader of " + cl.getClass().getName()
+			log_.log(Level.SEVERE, "Unable to load class " + className + " from currentThread classLoader"
 					+ " so object deserialization is likely to fail...");
 		}
 
@@ -738,15 +771,14 @@ public enum DominoUtils {
 		ObjectInputStream objectStream;
 		if (entity.getHeaders().toLowerCase().contains("content-encoding: gzip")) {
 			GZIPInputStream zipStream = new GZIPInputStream(byteStream);
-			objectStream = new LoaderObjectInputStream(cl, zipStream);
+			objectStream = new LoaderObjectInputStream(zipStream);
 		} else {
-			objectStream = new LoaderObjectInputStream(cl, byteStream);
+			objectStream = new LoaderObjectInputStream(byteStream);
 		}
 
 		// There are three potential storage forms: Externalizable, Serializable, and StateHolder, distinguished by type or header
 		if (entity.getContentSubType().equals("x-java-externalized-object")) {
-			Class<Externalizable> externalizableClass = (Class<Externalizable>) Class.forName(entity.getNthHeader("X-Java-Class")
-					.getHeaderVal(), true, Factory.getClassLoader());
+			Class<Externalizable> externalizableClass = (Class<Externalizable>) getClass(entity.getNthHeader("X-Java-Class").getHeaderVal());
 			Externalizable restored = externalizableClass.newInstance();
 			restored.readExternal(objectStream);
 			result = restored;
@@ -758,10 +790,10 @@ public enum DominoUtils {
 			MIMEHeader storageScheme = entity.getNthHeader("X-Storage-Scheme");
 			MIMEHeader originalJavaClass = entity.getNthHeader("X-Original-Java-Class");
 			if (storageScheme != null && storageScheme.getHeaderVal().equals("StateHolder")) {
-				Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext", true, Factory.getClassLoader());
+				Class<?> facesContextClass = getClass("javax.faces.context.FacesContext");
 				Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
 
-				Class<?> stateHoldingClass = (Class<?>) Class.forName(originalJavaClass.getHeaderVal(), true, Factory.getClassLoader());
+				Class<?> stateHoldingClass = getClass(originalJavaClass.getHeaderVal());
 				Method restoreStateMethod = stateHoldingClass.getMethod("restoreState", facesContextClass, Object.class);
 				result = stateHoldingClass.newInstance();
 				restoreStateMethod.invoke(result, getCurrentInstance.invoke(null), restored);
