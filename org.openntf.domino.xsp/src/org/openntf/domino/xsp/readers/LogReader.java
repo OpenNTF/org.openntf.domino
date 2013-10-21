@@ -225,6 +225,9 @@ public class LogReader {
 	}
 
 	public String readFileFast(final String filename, final String filter) {
+		if (filename == null || filename.length() < 1 || filename.equalsIgnoreCase("null")) {
+			return "";
+		}
 		StringBuilder result = new StringBuilder();
 		File file = new File(filename);
 		FileReader fileReader = null;
