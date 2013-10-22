@@ -228,8 +228,11 @@ public class LogReader {
 		if (filename == null || filename.length() < 1 || filename.equalsIgnoreCase("null")) {
 			return "";
 		}
-		StringBuilder result = new StringBuilder();
 		File file = new File(filename);
+		if (file.isDirectory() || !file.exists()) {
+			return "";
+		}
+		StringBuilder result = new StringBuilder();
 		FileReader fileReader = null;
 		BufferedReader reader = null;
 		try {

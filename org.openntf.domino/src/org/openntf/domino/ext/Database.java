@@ -225,6 +225,8 @@ public interface Database extends Base {
 	 */
 	public DatabaseTransaction getTransaction();
 
+	public void setTransaction(DatabaseTransaction txn);
+
 	public lotus.notes.addins.DominoServer getDominoServer();
 
 	public void refreshDesign();

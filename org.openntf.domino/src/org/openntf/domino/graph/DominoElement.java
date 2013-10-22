@@ -244,9 +244,9 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 			}
 		}
 		// }
-		if (result != null && !T.isAssignableFrom(result.getClass())) {
-			log_.log(Level.WARNING, "Returning a " + result.getClass().getName() + " when we asked for a " + T.getName());
-		}
+		//		if (result != null && !T.isAssignableFrom(result.getClass())) {
+		//			log_.log(Level.WARNING, "Returning a " + result.getClass().getName() + " when we asked for a " + T.getName());
+		//		}
 		return (T) result;
 	}
 

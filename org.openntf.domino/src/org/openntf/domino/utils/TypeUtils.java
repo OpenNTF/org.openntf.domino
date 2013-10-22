@@ -61,7 +61,12 @@ public enum TypeUtils {
 				return null;
 			}
 		}
-		return itemValueToClass(doc.getFirstItem(itemName), T);
+		Object result = itemValueToClass(doc.getFirstItem(itemName), T);
+		if (result != null && !T.isAssignableFrom(result.getClass())) {
+			log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName()
+					+ " in item " + itemName + " for document id " + noteid);
+		}
+		return (T) result;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -169,6 +174,16 @@ public enum TypeUtils {
 				if (v != null) {
 					((ArrayList) result).addAll(v);
 				}
+			} else if (java.util.Collection.class.isAssignableFrom(T)) {
+				try {
+					result = T.newInstance();
+					Collection coll = (Collection) result;
+					coll.addAll(DominoUtils.toSerializable(v));
+				} catch (IllegalAccessException e) {
+					DominoUtils.handleException(e);
+				} catch (InstantiationException e) {
+					DominoUtils.handleException(e);
+				}
 			} else if (T == Date.class) {
 				result = toDate(v);
 			} else if (T == org.openntf.domino.DateTime.class) {
@@ -194,9 +209,6 @@ public enum TypeUtils {
 					}
 				}
 			}
-		}
-		if (result != null && !T.isAssignableFrom(result.getClass())) {
-			log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName());
 		}
 
 		// if (result != null && T.equals(String[].class)) {

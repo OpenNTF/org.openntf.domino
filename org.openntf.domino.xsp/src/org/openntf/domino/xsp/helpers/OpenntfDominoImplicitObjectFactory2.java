@@ -1,5 +1,6 @@
 package org.openntf.domino.xsp.helpers;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.faces.context.FacesContext;
@@ -20,6 +21,11 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	// TODO this is really just a sample on how to get to an entry point in the API
 	private static Boolean GODMODE;
 
+	private static Map<String, Object> getAppMap(final FacesContext ctx) {
+		Map<String, Object> result = ctx.getExternalContext().getApplicationMap();
+		return result;
+	}
+
 	private static boolean isGodMode() {
 		if (GODMODE == null) {
 			GODMODE = Boolean.FALSE;
@@ -36,8 +42,8 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	}
 
 	private static boolean isAppGodMode(final FacesContext ctx) {
-		Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
-		Object current = appMap.get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_GODMODE");
+		// Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
+		Object current = getAppMap(ctx).get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_GODMODE");
 		if (current == null) {
 			// System.out.println("Current not found. Creating...");
 			current = Boolean.FALSE;
@@ -55,7 +61,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 			} else {
 				// System.out.println("XSP ENV IS NULL!!");
 			}
-			appMap.put(OpenntfDominoImplicitObjectFactory2.class.getName() + "_GODMODE", current);
+			getAppMap(ctx).put(OpenntfDominoImplicitObjectFactory2.class.getName() + "_GODMODE", current);
 		} else {
 			// System.out.println("Current found: " + String.valueOf(current));
 		}
@@ -63,8 +69,8 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	}
 
 	private static boolean isAppMimeFriendly(final FacesContext ctx) {
-		Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
-		Object current = appMap.get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_MARCEL");
+		// Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
+		Object current = getAppMap(ctx).get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_MARCEL");
 		if (current == null) {
 			current = Boolean.FALSE;
 			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
@@ -75,14 +81,14 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 					}
 				}
 			}
-			appMap.put(OpenntfDominoImplicitObjectFactory2.class.getName() + "_MARCEL", current);
+			getAppMap(ctx).put(OpenntfDominoImplicitObjectFactory2.class.getName() + "_MARCEL", current);
 		}
 		return (Boolean) current;
 	}
 
 	private static boolean isAppAllFix(final FacesContext ctx) {
-		Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
-		Object current = appMap.get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_KHAN");
+		// Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
+		Object current = getAppMap(ctx).get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_KHAN");
 		if (current == null) {
 			current = Boolean.FALSE;
 			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
@@ -93,14 +99,14 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 					}
 				}
 			}
-			appMap.put(OpenntfDominoImplicitObjectFactory2.class.getName() + "_KHAN", current);
+			getAppMap(ctx).put(OpenntfDominoImplicitObjectFactory2.class.getName() + "_KHAN", current);
 		}
 		return (Boolean) current;
 	}
 
 	private static boolean isAppDebug(final FacesContext ctx) {
-		Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
-		Object current = appMap.get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_RAID");
+		// Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
+		Object current = getAppMap(ctx).get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_RAID");
 		if (current == null) {
 			current = Boolean.FALSE;
 			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
@@ -111,7 +117,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 					}
 				}
 			}
-			appMap.put(OpenntfDominoImplicitObjectFactory2.class.getName() + "_RAID", current);
+			getAppMap(ctx).put(OpenntfDominoImplicitObjectFactory2.class.getName() + "_RAID", current);
 		}
 		return (Boolean) current;
 	}
@@ -166,6 +172,21 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		return database;
 	}
 
+	private Map<String, Object> createUserScope(final FacesContextEx ctx, final org.openntf.domino.Session session) {
+		String key = session.getEffectiveUserName();
+		Map<String, Object> userscope = null;
+		Object chk = getAppMap(ctx).get(key);
+		if (chk == null) {
+			userscope = new LinkedHashMap<String, Object>();
+			getAppMap(ctx).put(key, userscope);
+		} else {
+			userscope = (Map<String, Object>) chk;
+		}
+		Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
+		localMap.put("userScope", userscope);
+		return userscope;
+	}
+
 	public void createLogHolder(final FacesContextEx ctx) {
 		Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
 		XspOpenLogErrorHolder ol_ = new XspOpenLogErrorHolder();
@@ -182,6 +203,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		org.openntf.domino.Session session = createSession(ctx);
 		@SuppressWarnings("unused")
 		org.openntf.domino.Database database = createDatabase(ctx, session);
+		Map<String, Object> userscope = createUserScope(ctx, session);
 		createLogHolder(ctx);
 		if (isAppDebug(ctx)) {
 			System.out.println("Done creating implicit objects.");

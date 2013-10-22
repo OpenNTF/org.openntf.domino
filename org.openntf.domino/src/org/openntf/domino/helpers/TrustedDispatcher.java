@@ -48,10 +48,20 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 		}
 
 		/* (non-Javadoc)
+		 * @see java.util.concurrent.ThreadPoolExecutor#shutdown()
+		 */
+		@Override
+		public void shutdown() {
+			System.out.println("Executor shutdown requested");
+			super.shutdown();
+		}
+
+		/* (non-Javadoc)
 		 * @see org.openntf.domino.thread.DominoExecutor#afterExecute(java.lang.Runnable, java.lang.Throwable)
 		 */
 		@Override
 		protected void afterExecute(final Runnable r, final Throwable t) {
+			System.out.println("afterExecute triggered on a " + r.getClass().getName());
 			super.afterExecute(r, t);
 			if (r instanceof AbstractDominoRunnable) {
 				if (((AbstractDominoRunnable) r).shouldRecycle()) {
@@ -198,16 +208,22 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 	 */
 	@Override
 	public synchronized void stop() {
+		System.out.println("Shutting down TrustedDispatcher...");
 		intimidator_.shutdown();
+		System.out.println("Executor shutdown requested");
 		lotus.domino.Session s = Factory.terminate();
+		System.out.println("Factory terminated and we got a " + (s == null ? "null" : s.getClass().getName() + " back."));
+
 		if (s != null) {
 			try {
+				System.out.println("Recycling session...");
 				s.recycle();
 			} catch (NotesException e) {
 				e.printStackTrace();
 			}
 		}
 		super.stop();
+		System.out.println("Stop completed.");
 	}
 
 }
