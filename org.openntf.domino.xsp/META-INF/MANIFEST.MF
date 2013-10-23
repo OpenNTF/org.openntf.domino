@@ -22,7 +22,5 @@ Export-Package: org.openntf.domino.xsp,
 Require-Bundle: com.ibm.xsp.domino;bundle-version="9.0.0",
  com.ibm.xsp.extsn;bundle-version="9.0.0",
  com.ibm.designer.runtime;bundle-version="9.0.0",
- org.openntf.domino.plugin;bundle-version="1.0.0";resolution:=optional,
- com.ibm.commons.icu;bundle-version="9.0.0";resolution:=optional,
- com.ibm.icu;bundle-version="3.8.1";resolution:=optional,
- com.ibm.icu.base;bundle-version="3.8.1";resolution:=optional
+ org.openntf.domino.plugin;bundle-version="1.0.0";resolution:=optional;visibility:=reexport,
+ com.ibm.icu;bundle-version="3.8.1";resolution:=optional

@@ -45,13 +45,11 @@
 
 package org.openntf.domino.logging;
 
-import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -387,14 +385,16 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	 * @return the value of the property
 	 */
 	public String loadFromProps(final String propertyName) {
-		try {
+		//TODO NTF - needs alternative based on stuff other than logging.properties, which is deprecated
+		return "";
+		/*try {
 			Properties prop = new Properties();
 			prop.load(LogUtils.class.getResourceAsStream("logging.properties"));
 			return prop.getProperty(propertyName);
 		} catch (IOException e) {
-			DominoUtils.handleException(e);
+						DominoUtils.handleException(e);
 			return "";
-		}
+		}*/
 	}
 
 	/* (non-Javadoc)

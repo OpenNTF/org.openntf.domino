@@ -37,6 +37,7 @@ import org.openntf.domino.design.impl.DatabaseDesign;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
+import org.openntf.domino.exceptions.TransactionAlreadySetException;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
@@ -49,6 +50,7 @@ import com.ibm.icu.util.GregorianCalendar;
 /**
  * The Class Database.
  */
+@SuppressWarnings("deprecation")
 public class Database extends Base<org.openntf.domino.Database, lotus.domino.Database> implements org.openntf.domino.Database {
 	private static final Logger log_ = Logger.getLogger(Database.class.getName());
 	/** The server_. */
@@ -59,6 +61,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	/** The replid_. */
 	private String replid_;
+
+	private String ident_;
 
 	/**
 	 * Instantiates a new database.
@@ -89,6 +93,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		} catch (NotesException e) {
 			// NTF probably not opened yet. No reason to freak out yet...
 		}
+		ident_ = System.identityHashCode(getParent()) + "!!!" + server_ + "!!" + path_;
 	}
 
 	/*
@@ -2520,6 +2525,17 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		return txnHolder_.get();
 	}
 
+	public void setTransaction(final DatabaseTransaction txn) {
+		DatabaseTransaction current = txnHolder_.get();
+		if (current == null) {
+			txnHolder_.set(txn);
+		} else {
+			if (!current.equals(txn)) {
+				throw new TransactionAlreadySetException(getServer().length() == 0 ? getFilePath() : (getServer() + "!!" + getFilePath()));
+			}
+		}
+	}
+
 	public boolean isEmpty() {
 		return this.getAllDocuments().getCount() > 0;
 	}
@@ -2838,6 +2854,10 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@SuppressWarnings("rawtypes")
 	public IDominoEvent generateEvent(final EnumEvent event, final org.openntf.domino.Base source, final Object payload) {
 		return getEventFactory().generate(event, source, this, payload);
+	}
+
+	public boolean equals(final Database database) {
+		return ident_.equalsIgnoreCase(database.ident_);
 	}
 
 }

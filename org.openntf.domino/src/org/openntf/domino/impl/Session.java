@@ -50,6 +50,7 @@ import com.ibm.icu.util.Calendar;
  * 
  * @author nfreeman
  */
+@SuppressWarnings("deprecation")
 public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Session, lotus.domino.Session> implements
 		org.openntf.domino.Session {
 	/** The Constant log_. */
@@ -1513,20 +1514,27 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	protected lotus.domino.Session getDelegate() {
 		lotus.domino.Session session = super.getDelegate();
-		try {
-			session.isConvertMIME();
-		} catch (NotesException ne) {
-			org.openntf.domino.impl.Session sessionImpl = (org.openntf.domino.impl.Session) Factory.getSession();
-			if (sessionImpl != null) {
-				lotus.domino.Session sessionLotus = sessionImpl.delegate_;
-				if (sessionLotus != null) {
-					setDelegate(sessionLotus);
+		if (session != null) {
+			try {
+				session.isTrustedSession();
+			} catch (NotesException ne) {
+				org.openntf.domino.impl.Session sessionImpl = (org.openntf.domino.impl.Session) Factory.getSession();
+				if (sessionImpl != null) {
+					lotus.domino.Session sessionLotus = sessionImpl.delegate_;
+					if (sessionLotus != null) {
+						setDelegate(sessionLotus);
+					} else {
+						throw new UnableToAcquireSessionException("Factory default Session does not have a valid delegate");
+					}
 				} else {
-					throw new UnableToAcquireSessionException("Factory default Session does not have a valid delegate");
+					throw new UnableToAcquireSessionException("Factory could not return a default Session");
 				}
-			} else {
-				throw new UnableToAcquireSessionException("Factory could not return a default Session");
+			} catch (Throwable t) {
+				DominoUtils.handleException(t);
 			}
+		} else {
+			throw new UnableToAcquireSessionException(
+					"This session has a null value for its delegate. How was it created in the first place?");
 		}
 		return super.getDelegate();
 	}

@@ -61,7 +61,12 @@ public enum TypeUtils {
 				return null;
 			}
 		}
-		return itemValueToClass(doc.getFirstItem(itemName), T);
+		Object result = itemValueToClass(doc.getFirstItem(itemName), T);
+		if (result != null && !T.isAssignableFrom(result.getClass())) {
+			log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName()
+					+ " in item " + itemName + " for document id " + noteid);
+		}
+		return (T) result;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -141,24 +146,26 @@ public enum TypeUtils {
 				throw e;
 			}
 		} else {
-
 			if (T == String.class) {
 				result = join(v);
 			} else if (T == Enum.class) {
-				result = toEnum(join(v));
+				String str = join(v);
+				//				System.out.println("Attempting to convert string " + str + " to Enum");
+				result = toEnum(str);
+				//				System.out.println("result was " + (result == null ? "null" : result.getClass().getName()));
 			} else if (T == BigString.class) {
 				result = new BigString(join(v));
 			} else if (T == Pattern.class) {
 				result = Pattern.compile(join(v));
 			} else if (Class.class.isAssignableFrom(T)) {
-				try {
-					String cn = join(v);
-					Class<?> cls = Class.forName(cn, false, Factory.getClassLoader());
-					result = cls;
-				} catch (ClassNotFoundException e) {
-					DominoUtils.handleException(e);
-					result = null;
-				}
+				//				try {
+				String cn = join(v);
+				Class<?> cls = DominoUtils.getClass(cn);
+				result = cls;
+				//				} catch (ClassNotFoundException e) {
+				//					DominoUtils.handleException(e);
+				//					result = null;
+				//				}
 			} else if (Formula.class.isAssignableFrom(T)) {
 				Formula formula = new org.openntf.domino.helpers.Formula(join(v));
 				result = formula;
@@ -166,6 +173,16 @@ public enum TypeUtils {
 				result = new ArrayList();
 				if (v != null) {
 					((ArrayList) result).addAll(v);
+				}
+			} else if (java.util.Collection.class.isAssignableFrom(T)) {
+				try {
+					result = T.newInstance();
+					Collection coll = (Collection) result;
+					coll.addAll(DominoUtils.toSerializable(v));
+				} catch (IllegalAccessException e) {
+					DominoUtils.handleException(e);
+				} catch (InstantiationException e) {
+					DominoUtils.handleException(e);
 				}
 			} else if (T == Date.class) {
 				result = toDate(v);
@@ -193,9 +210,7 @@ public enum TypeUtils {
 				}
 			}
 		}
-		if (result != null && !T.isAssignableFrom(result.getClass())) {
-			log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName());
-		}
+
 		// if (result != null && T.equals(String[].class)) {
 		// log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName());
 		// }
@@ -604,21 +619,22 @@ public enum TypeUtils {
 		for (Object o : vector) {
 			int pos = i++;
 			String cn = String.valueOf(o);
-			try {
-				Class<?> cls = Thread.currentThread().getContextClassLoader().loadClass(cn);
-				//				Class<?> cls = Class.forName(cn, false, cl);
-				classes[pos] = cls;
-			} catch (ClassNotFoundException e) {
-				System.out.println("Failed to find class " + cn + " using a classloader of type " + cl.getClass().getName());
-				DominoUtils.handleException(e);
-				classes[pos] = null;
-			}
+			//			try {
+			Class<?> cls = DominoUtils.getClass(cn);
+			//				Class<?> cls = Class.forName(cn, false, cl);
+			classes[pos] = cls;
+			//			} catch (ClassNotFoundException e) {
+			//				System.out.println("Failed to find class " + cn + " using a classloader of type " + cl.getClass().getName());
+			//				DominoUtils.handleException(e);
+			//				classes[pos] = null;
+			//			}
 		}
 		return classes;
 	}
 
 	public static Enum<?> toEnum(final Object value) throws DataNotCompatibleException {
-		ClassLoader cl = Factory.getClassLoader();
+		//		ClassLoader cl = Factory.getClassLoader();
+		//		System.out.println("Enum coercion requested from value " + String.valueOf(value));
 		Enum<?> result = null;
 		String en = String.valueOf(value);
 		String ename = null;
@@ -627,19 +643,39 @@ public enum TypeUtils {
 			cn = String.valueOf(value).substring(0, en.indexOf(' ')).trim();
 			ename = String.valueOf(value).substring(en.indexOf(' ') + 1).trim();
 		}
-		try {
-			Class<?> cls = Thread.currentThread().getContextClassLoader().loadClass(cn);
-			//			Class<?> cls = Class.forName(cn, false, cl);
-			for (Object obj : cls.getEnumConstants()) {
-				if (obj instanceof Enum) {
-					if (((Enum) obj).name().equals(ename)) {
-						result = (Enum) obj;
+		if (cn == null || ename == null) {
+			//			System.out.println("ALERT! This isn't going to work. cn is " + String.valueOf(cn) + " and ename is " + String.valueOf(ename));
+		} else {
+			try {
+				Class<?> cls = DominoUtils.getClass(cn);
+				//				System.out.println("Enum coercion with class " + cls.getName());
+				Object[] objs = cls.getEnumConstants();
+				if (objs.length > 0) {
+					//					System.out.println("Enum coercion into " + cn + " with value " + ename + " started...");
+					//					StringBuilder typenames = new StringBuilder();
+					for (Object obj : objs) {
+						if (obj instanceof Enum) {
+							if (((Enum) obj).name().equals(ename)) {
+								result = (Enum) obj;
+								//								System.out.println("Found a match between " + result.name() + " and " + ename + "!");
+								return result;
+							} else {
+								//								typenames.append(", " + ((Enum) obj).name());
+							}
+						} else {
+							//							System.out.println("Expected encounter an Enum constant, but didn't. Instead found a "
+							//									+ obj.getClass().getName());
+						}
 					}
+					//					System.out.println("Unable to match " + ename + " with any of: " + typenames.toString());
+				} else {
+					//					System.out.println("No enum constants found for class " + cls.getName());
+
 				}
+			} catch (Exception e) {
+				//				System.out.println("Failed to find class " + cn + " using a thread's current classloader");
+				DominoUtils.handleException(e);
 			}
-		} catch (ClassNotFoundException e) {
-			System.out.println("Failed to find class " + cn + " using a classloader of type " + cl.getClass().getName());
-			DominoUtils.handleException(e);
 		}
 		return result;
 	}

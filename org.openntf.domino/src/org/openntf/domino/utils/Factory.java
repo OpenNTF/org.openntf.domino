@@ -155,7 +155,7 @@ public enum Factory {
 					@Override
 					public Object run() throws Exception {
 						try {
-							InputStream inputStream = Factory.class.getClassLoader().getResourceAsStream("MANIFEST.MF");
+							InputStream inputStream = Factory.class.getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF");
 							if (inputStream != null) {
 								Manifest mani;
 								mani = new Manifest(inputStream);

@@ -25,6 +25,7 @@ import org.openntf.domino.utils.Factory;
 /**
  * The Class Outline.
  */
+@SuppressWarnings("deprecation")
 public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outline> implements org.openntf.domino.Outline {
 
 	/**
@@ -73,7 +74,8 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 	 * @see org.openntf.domino.Outline#addEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry, boolean, boolean)
 	 */
 	@Override
-	public void addEntry(final lotus.domino.OutlineEntry entry, final lotus.domino.OutlineEntry referenceEntry, final boolean after, final boolean asChild) {
+	public void addEntry(final lotus.domino.OutlineEntry entry, final lotus.domino.OutlineEntry referenceEntry, final boolean after,
+			final boolean asChild) {
 		try {
 			getDelegate().addEntry((lotus.domino.OutlineEntry) toLotus(entry), (lotus.domino.OutlineEntry) toLotus(referenceEntry), after,
 					asChild);
@@ -105,8 +107,9 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 	@Override
 	public OutlineEntry createEntry(final lotus.domino.OutlineEntry fromEntry, final lotus.domino.OutlineEntry referenceEntry) {
 		try {
-			return Factory.fromLotus(getDelegate().createEntry((lotus.domino.OutlineEntry) toLotus(fromEntry),
-					(lotus.domino.OutlineEntry) toLotus(referenceEntry)), OutlineEntry.class, this);
+			return Factory.fromLotus(
+					getDelegate().createEntry((lotus.domino.OutlineEntry) toLotus(fromEntry),
+							(lotus.domino.OutlineEntry) toLotus(referenceEntry)), OutlineEntry.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -119,10 +122,12 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 	 * @see org.openntf.domino.Outline#createEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry, boolean)
 	 */
 	@Override
-	public OutlineEntry createEntry(final lotus.domino.OutlineEntry fromEntry, final lotus.domino.OutlineEntry referenceEntry, final boolean after) {
+	public OutlineEntry createEntry(final lotus.domino.OutlineEntry fromEntry, final lotus.domino.OutlineEntry referenceEntry,
+			final boolean after) {
 		try {
-			return Factory.fromLotus(getDelegate().createEntry((lotus.domino.OutlineEntry) toLotus(fromEntry),
-					(lotus.domino.OutlineEntry) toLotus(referenceEntry), after), OutlineEntry.class, this);
+			return Factory.fromLotus(
+					getDelegate().createEntry((lotus.domino.OutlineEntry) toLotus(fromEntry),
+							(lotus.domino.OutlineEntry) toLotus(referenceEntry), after), OutlineEntry.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -135,11 +140,12 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 	 * @see org.openntf.domino.Outline#createEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry, boolean, boolean)
 	 */
 	@Override
-	public OutlineEntry createEntry(final lotus.domino.OutlineEntry fromEntry, final lotus.domino.OutlineEntry referenceEntry, final boolean after,
-			final boolean asChild) {
+	public OutlineEntry createEntry(final lotus.domino.OutlineEntry fromEntry, final lotus.domino.OutlineEntry referenceEntry,
+			final boolean after, final boolean asChild) {
 		try {
-			return Factory.fromLotus(getDelegate().createEntry((lotus.domino.OutlineEntry) toLotus(fromEntry),
-					(lotus.domino.OutlineEntry) toLotus(referenceEntry), after, asChild), OutlineEntry.class, this);
+			return Factory.fromLotus(
+					getDelegate().createEntry((lotus.domino.OutlineEntry) toLotus(fromEntry),
+							(lotus.domino.OutlineEntry) toLotus(referenceEntry), after, asChild), OutlineEntry.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -199,10 +205,12 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 	 * @see org.openntf.domino.Outline#createEntry(java.lang.String, lotus.domino.OutlineEntry, boolean, boolean)
 	 */
 	@Override
-	public OutlineEntry createEntry(final String entryName, final lotus.domino.OutlineEntry referenceEntry, final boolean after, final boolean asChild) {
+	public OutlineEntry createEntry(final String entryName, final lotus.domino.OutlineEntry referenceEntry, final boolean after,
+			final boolean asChild) {
 		try {
-			return Factory.fromLotus(getDelegate().createEntry(entryName, (lotus.domino.OutlineEntry) toLotus(referenceEntry), after,
-					asChild), OutlineEntry.class, this);
+			return Factory.fromLotus(
+					getDelegate().createEntry(entryName, (lotus.domino.OutlineEntry) toLotus(referenceEntry), after, asChild),
+					OutlineEntry.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -450,7 +458,8 @@ public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outli
 	 * @see org.openntf.domino.Outline#moveEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry, boolean, boolean)
 	 */
 	@Override
-	public void moveEntry(final lotus.domino.OutlineEntry entry, final lotus.domino.OutlineEntry referenceEntry, final boolean after, final boolean asChild) {
+	public void moveEntry(final lotus.domino.OutlineEntry entry, final lotus.domino.OutlineEntry referenceEntry, final boolean after,
+			final boolean asChild) {
 		try {
 			getDelegate().moveEntry((lotus.domino.OutlineEntry) toLotus(entry), (lotus.domino.OutlineEntry) toLotus(referenceEntry), after,
 					asChild);
