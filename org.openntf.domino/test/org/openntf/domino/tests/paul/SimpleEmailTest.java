@@ -54,15 +54,15 @@ public class SimpleEmailTest {
 		Session session;
 		Database database;
 
-		// do we get Session from debug member var,
-		// or from agent context?
+		// Fails on checking current database!!
+
 		try {
 			Session s;
 			Database db;
 			if (this.session != null) {
 				s = this.session;
 				db = this.database;
-				DominoEmail myEmail = new DominoEmail(s);
+				DominoEmail myEmail = new DominoEmail();
 				myEmail.createSimpleEmail("pwithers@intec.co.uk", "", "", "OpenNTF Domino Email",
 						"Please find attached an email from OpenNTF Domino API", "");
 			}
