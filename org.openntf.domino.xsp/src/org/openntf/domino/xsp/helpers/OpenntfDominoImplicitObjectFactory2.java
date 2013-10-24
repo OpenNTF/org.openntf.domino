@@ -1,7 +1,7 @@
 package org.openntf.domino.xsp.helpers;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.faces.context.FacesContext;
 
@@ -181,7 +181,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		Map<String, Object> userscope = null;
 		Object chk = getAppMap(ctx).get(key);
 		if (chk == null) {
-			userscope = new LinkedHashMap<String, Object>();
+			userscope = new ConcurrentHashMap<String, Object>();
 			getAppMap(ctx).put(key, userscope);
 		} else {
 			userscope = (Map<String, Object>) chk;
@@ -196,7 +196,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		Map<String, Object> userscope = null;
 		Object chk = getServerMap(ctx).get(key);
 		if (chk == null) {
-			userscope = new LinkedHashMap<String, Object>();
+			userscope = new ConcurrentHashMap<String, Object>();
 			getServerMap(ctx).put(key, userscope);
 		} else {
 			userscope = (Map<String, Object>) chk;
