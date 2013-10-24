@@ -26,6 +26,10 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		return result;
 	}
 
+	private static Map<String, Object> getServerMap(final FacesContext ctx) {
+		return ServerBean.getCurrentInstance();
+	}
+
 	private static boolean isGodMode() {
 		if (GODMODE == null) {
 			GODMODE = Boolean.FALSE;
@@ -187,6 +191,28 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		return userscope;
 	}
 
+	private Map<String, Object> createIdentityScope(final FacesContextEx ctx, final org.openntf.domino.Session session) {
+		String key = session.getEffectiveUserName();
+		Map<String, Object> userscope = null;
+		Object chk = getServerMap(ctx).get(key);
+		if (chk == null) {
+			userscope = new LinkedHashMap<String, Object>();
+			getServerMap(ctx).put(key, userscope);
+		} else {
+			userscope = (Map<String, Object>) chk;
+		}
+		Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
+		localMap.put("identityScope", userscope);
+		return userscope;
+	}
+
+	private Map<String, Object> createServerScope(final FacesContextEx ctx, final org.openntf.domino.Session session) {
+		Map<String, Object> server = getServerMap(ctx);
+		Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
+		localMap.put("serverScope", server);
+		return server;
+	}
+
 	public void createLogHolder(final FacesContextEx ctx) {
 		Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
 		XspOpenLogErrorHolder ol_ = new XspOpenLogErrorHolder();
@@ -203,7 +229,9 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		org.openntf.domino.Session session = createSession(ctx);
 		@SuppressWarnings("unused")
 		org.openntf.domino.Database database = createDatabase(ctx, session);
-		Map<String, Object> userscope = createUserScope(ctx, session);
+		createUserScope(ctx, session);
+		createIdentityScope(ctx, session);
+		createServerScope(ctx, session);
 		createLogHolder(ctx);
 		if (isAppDebug(ctx)) {
 			System.out.println("Done creating implicit objects.");

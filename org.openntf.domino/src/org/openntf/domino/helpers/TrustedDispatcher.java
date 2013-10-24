@@ -190,8 +190,13 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 			Object result = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 				@Override
 				public Object run() throws Exception {
-					lotus.domino.Session s = lotus.domino.NotesFactory.createTrustedSession();
-					return s;
+					try {
+						lotus.domino.Session s = lotus.domino.NotesFactory.createTrustedSession();
+						return s;
+					} catch (NotesException ne) {
+						lotus.domino.Session s = lotus.domino.NotesFactory.createSessionWithFullAccess();
+						return s;
+					}
 				}
 			});
 			if (result instanceof lotus.domino.Session) {

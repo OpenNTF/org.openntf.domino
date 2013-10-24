@@ -24,6 +24,10 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	private Map<String, Serializable> props_;
 	public final String[] DEFAULT_STR_ARRAY = { "" };
 
+	public static Document toDocument(final DominoElement element) {
+		return element.getRawDocument();
+	}
+
 	public static enum Properties implements IDominoProperties {
 		TITLE(String.class), KEY(String.class), FORM(String.class);
 
