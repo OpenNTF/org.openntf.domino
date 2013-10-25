@@ -3,8 +3,6 @@
  */
 package org.openntf.domino.email;
 
-import java.util.ArrayList;
-
 import org.openntf.domino.Document;
 import org.openntf.domino.MIMEEntity;
 
@@ -156,8 +154,6 @@ public interface IEmail {
 	/**
 	 * Adds all attachments to the parent MIMEEntity, using a passed ArrayList of EmailAttachment objects
 	 * 
-	 * @param attachments
-	 *            ArrayList of EmailAttachment elements
 	 * @param parent
 	 *            MIMEEntity that the attachments will be added to
 	 */
@@ -233,7 +229,7 @@ public interface IEmail {
 	/**
 	 * Sets multiple CC recipients
 	 * 
-	 * @param to
+	 * @param cc
 	 *            ArrayList of recipients
 	 */
 	public void setCC(ArrayList<String> cc);
@@ -241,7 +237,7 @@ public interface IEmail {
 	/**
 	 * Adds an email address to the ArrayList containing the CC recipients
 	 * 
-	 * @param to
+	 * @param cc
 	 *            String recipient
 	 */
 	public void addCCAddress(String cc);
@@ -249,7 +245,7 @@ public interface IEmail {
 	/**
 	 * Sets multiple BCC recipients
 	 * 
-	 * @param to
+	 * @param bcc
 	 *            ArrayList of recipients
 	 */
 	public void setBCC(ArrayList<String> bcc);
@@ -257,7 +253,7 @@ public interface IEmail {
 	/**
 	 * Adds an email address to the ArrayList containing the BCC recipients
 	 * 
-	 * @param to
+	 * @param bcc
 	 *            String recipient
 	 */
 	public void addBCCAddress(String bcc);

@@ -3,8 +3,6 @@
  */
 package org.openntf.domino.iterators;
 
-import java.util.logging.Logger;
-
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewNavigator;
 
@@ -38,8 +36,8 @@ public class ViewNavigatorEntryIterator extends AbstractDominoIterator<ViewEntry
 	/**
 	 * Instantiates a new view entry iterator.
 	 * 
-	 * @param collection
-	 *            the collection
+	 * @param navigator
+	 *            the navigator
 	 */
 	public ViewNavigatorEntryIterator(final ViewNavigator navigator) {
 		super(navigator);
