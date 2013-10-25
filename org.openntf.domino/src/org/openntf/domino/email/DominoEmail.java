@@ -52,17 +52,17 @@ import com.ibm.commons.util.StringUtil;
  */
 
 public class DominoEmail implements IEmail {
-	private ArrayList<String> to_ = new ArrayList<String>();
-	private ArrayList<String> cc_ = new ArrayList<String>();
-	private ArrayList<String> bcc_ = new ArrayList<String>();
+	private List<String> to_ = new ArrayList<String>();
+	private List<String> cc_ = new ArrayList<String>();
+	private List<String> bcc_ = new ArrayList<String>();
 	private String senderEmail_;
 	private String senderName_;
 	private String subject_;
-	private ArrayList<String> contentsText_ = new ArrayList<String>();
-	private ArrayList<String> contentsHTML_ = new ArrayList<String>();
+	private List<String> contentsText_ = new ArrayList<String>();
+	private List<String> contentsHTML_ = new ArrayList<String>();
 	private String urlJSON_;
-	private ArrayList<MIMEEntity> mimeEntities_ = new ArrayList<MIMEEntity>();
-	private ArrayList<EmailAttachment> attachments_ = new ArrayList<EmailAttachment>();
+	private List<MIMEEntity> mimeEntities_ = new ArrayList<MIMEEntity>();
+	private List<EmailAttachment> attachments_ = new ArrayList<EmailAttachment>();
 	private Session currSess_;
 
 	/**
@@ -112,8 +112,8 @@ public class DominoEmail implements IEmail {
 			setBCC(convertObjectToList(bccNames, ","));
 			setSubject(subject);
 			setSenderEmail(sender);
-			if (body instanceof StringBuilder) {
-				addHTML((StringBuilder) body);
+			if (body instanceof CharSequence) {
+				addHTML((CharSequence) body);
 			} else if (body instanceof MIMEEntity) {
 				addMimeEntity((MIMEEntity) body);
 			} else {
@@ -170,7 +170,7 @@ public class DominoEmail implements IEmail {
 	 *            String separator to use if obj is a multi-value string, e.g. comma-separated
 	 * @return List of Strings
 	 */
-	public List<String> convertObjectToList(final Object obj, final String separator) {
+	public static List<String> convertObjectToList(final Object obj, final String separator) {
 		try {
 			// Quit out if the parameter was null
 			if (null == obj) {
@@ -179,9 +179,9 @@ public class DominoEmail implements IEmail {
 			// Check for common types, else just call obj.toString
 			List<String> retVal_ = new ArrayList<String>();
 			if (obj instanceof List) {
-				retVal_ = (List<String>) obj;
-			} else if (obj instanceof String) {
-				String tmp = (String) obj;
+				retVal_.addAll((List<String>) obj);
+			} else if (obj instanceof CharSequence) {
+				String tmp = obj.toString();
 				String[] tmpArr = tmp.split(",");
 				for (int i = 0; i < tmpArr.length; i++) {
 					retVal_.add(tmpArr[i]);
@@ -203,8 +203,8 @@ public class DominoEmail implements IEmail {
 
 	private String generateContentId() {
 		try {
-			Vector evalResult = getSession().evaluate("@Unique");
-			return evalResult.toString();
+			Vector<Object> evalResult = getSession().evaluate("@Unique");
+			return evalResult.get(0).toString();
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 			return "";
@@ -241,9 +241,7 @@ public class DominoEmail implements IEmail {
 		contentsText_.add(content.toString());
 
 		// Add HTML part by replacing all line breaks with br tag
-		String tmpHTML = new String();
-		tmpHTML = StringUtil.replace(content.toString(), System.getProperty("line.separator"), "<br/>");
-		contentsHTML_.add(tmpHTML);
+		contentsHTML_.add(StringUtil.replace(content.toString(), System.getProperty("line.separator"), "<br/>"));
 	}
 
 	/* (non-Javadoc)
@@ -411,6 +409,7 @@ public class DominoEmail implements IEmail {
 						streamFile = getSession().createStream();
 						streamFile.setContents(is);
 						mimeChild.setContentFromBytes(streamFile, contentType, MIMEEntity.ENC_IDENTITY_BINARY);
+						streamFile.close();
 					}
 				} catch (Exception e) {
 					DominoUtils.handleException(e);
