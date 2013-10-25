@@ -6,6 +6,7 @@ package org.openntf.domino.email;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
 
@@ -161,24 +162,24 @@ public class DominoEmail implements IEmail {
 	*/
 
 	/**
-	 * Takes an object - String, List, Array - and converts it to an ArrayList for passing into to, cc, bcc
+	 * Takes an object - String, List, Array - and converts it to a List for passing into to, cc, bcc
 	 * 
 	 * @param obj
-	 *            object to be tested / converted into an ArrayList of strings
+	 *            object to be tested / converted into a List of strings
 	 * @param separator
 	 *            String separator to use if obj is a multi-value string, e.g. comma-separated
-	 * @return ArrayList of Strings
+	 * @return List of Strings
 	 */
-	public ArrayList<String> convertObjectToList(final Object obj, final String separator) {
+	public List<String> convertObjectToList(final Object obj, final String separator) {
 		try {
 			// Quit out if the parameter was null
 			if (null == obj) {
 				return null;
 			}
 			// Check for common types, else just call obj.toString
-			ArrayList<String> retVal_ = new ArrayList<String>();
+			List<String> retVal_ = new ArrayList<String>();
 			if (obj instanceof List) {
-				retVal_ = (ArrayList<String>) obj;
+				retVal_ = (List<String>) obj;
 			} else if (obj instanceof String) {
 				String tmp = (String) obj;
 				String[] tmpArr = tmp.split(",");
@@ -214,12 +215,12 @@ public class DominoEmail implements IEmail {
 	 * @see org.openntf.domino.email.IEmail#addHTML(java.lang.StringBuilder)
 	 */
 	@Override
-	public void addHTML(final StringBuilder content) {
+	public void addHTML(final CharSequence content) {
 		contentsHTML_.add(content.toString());
 
 		// Add plain text part of email
 		if (StringUtil.isEmpty(content.toString())) {
-			getText().add("");
+			contentsText_.add("");
 		} else {
 			content.toString().replaceAll("<[a-zA-Z\\/][^>]*>", "");
 		}
@@ -228,28 +229,28 @@ public class DominoEmail implements IEmail {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.email.IEmail#getHTML()
 	 */
-	public ArrayList<String> getHTML() {
-		return contentsHTML_;
+	public List<String> getHTML() {
+		return new ArrayList<String>(contentsHTML_);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.email.IEmail#addText(java.lang.StringBuilder)
 	 */
 	@Override
-	public void addText(final StringBuilder content) {
+	public void addText(final CharSequence content) {
 		contentsText_.add(content.toString());
 
 		// Add HTML part by replacing all line breaks with br tag
 		String tmpHTML = new String();
 		tmpHTML = StringUtil.replace(content.toString(), System.getProperty("line.separator"), "<br/>");
-		getHTML().add(tmpHTML);
+		contentsHTML_.add(tmpHTML);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.email.IEmail#getText()
 	 */
-	public ArrayList<String> getText() {
-		return contentsText_;
+	public List<String> getText() {
+		return new ArrayList<String>(contentsText_);
 	}
 
 	/* (non-Javadoc)
@@ -271,15 +272,15 @@ public class DominoEmail implements IEmail {
 	 */
 	@Override
 	public void addMimeEntity(final MIMEEntity contentMime) {
-		getMimeEntities().add(contentMime);
+		mimeEntities_.add(contentMime);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.email.IEmail#getMimeEntities()
 	 */
 	@Override
-	public ArrayList<MIMEEntity> getMimeEntities() {
-		return mimeEntities_;
+	public List<MIMEEntity> getMimeEntities() {
+		return new ArrayList<MIMEEntity>(mimeEntities_);
 	}
 
 	/* (non-Javadoc)
@@ -287,8 +288,8 @@ public class DominoEmail implements IEmail {
 	 */
 	@Override
 	public void removeMimeEntity(final MIMEEntity content) {
-		if (getMimeEntities().contains(content)) {
-			getMimeEntities().remove(content);
+		if (mimeEntities_.contains(content)) {
+			mimeEntities_.remove(content);
 		}
 	}
 
@@ -296,7 +297,7 @@ public class DominoEmail implements IEmail {
 	 * @see org.openntf.domino.email.IEmail#addDocAttachment(java.lang.String, java.lang.String, java.lang.Boolean)
 	 */
 	@Override
-	public String addDocAttachment(final String unid, final String fileName, final Boolean isInlineImage) {
+	public String addDocAttachment(final String unid, final String fileName, final boolean isInlineImage) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -305,7 +306,7 @@ public class DominoEmail implements IEmail {
 	 * @see org.openntf.domino.email.IEmail#addDocAttachment(java.lang.String, java.lang.String, java.lang.Boolean, java.lang.String)
 	 */
 	@Override
-	public String addDocAttachment(final String unid, final String fileName, final Boolean isInlineImage, final String contentId) {
+	public String addDocAttachment(final String unid, final String fileName, final boolean isInlineImage, final String contentId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -314,7 +315,7 @@ public class DominoEmail implements IEmail {
 	 * @see org.openntf.domino.email.IEmail#addFileAttachment(java.lang.String, java.lang.String, java.lang.Boolean)
 	 */
 	@Override
-	public String addFileAttachment(final String path, final String fileName, final Boolean isInlineImage) {
+	public String addFileAttachment(final String path, final String fileName, final boolean isInlineImage) {
 		EmailAttachment att = new EmailAttachment(path, fileName, isInlineImage);
 		addAttachment(att);
 		return "cid:" + att.getContentId();
@@ -324,7 +325,7 @@ public class DominoEmail implements IEmail {
 	 * @see org.openntf.domino.email.IEmail#addFileAttachment(java.lang.String, java.lang.String, java.lang.Boolean, java.lang.String)
 	 */
 	@Override
-	public String addFileAttachment(final String path, final String fileName, final Boolean isInlineImage, final String contentId) {
+	public String addFileAttachment(final String path, final String fileName, final boolean isInlineImage, final String contentId) {
 		EmailAttachment att = new EmailAttachment(path, fileName, isInlineImage, contentId);
 		addAttachment(att);
 		return "cid:" + contentId;
@@ -335,23 +336,23 @@ public class DominoEmail implements IEmail {
 	 */
 	@Override
 	public void addAttachment(final EmailAttachment attachment) {
-		getAttachments().add(attachment);
+		attachments_.add(attachment);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.email.IEmail#removeAttachment(org.openntf.domino.email.EmailAttachment)
 	 */
 	public void removeAttachment(final EmailAttachment attachment) {
-		if (getAttachments().contains(attachment)) {
-			getAttachments().remove(attachment);
+		if (attachments_.contains(attachment)) {
+			attachments_.remove(attachment);
 		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.email.IEmail#getAttachments()
 	 */
-	public ArrayList<EmailAttachment> getAttachments() {
-		return attachments_;
+	public List<EmailAttachment> getAttachments() {
+		return new ArrayList<EmailAttachment>(attachments_);
 	}
 
 	/* (non-Javadoc)
@@ -428,24 +429,24 @@ public class DominoEmail implements IEmail {
 	 * @see org.openntf.domino.email.IEmail#getTo()
 	 */
 	@Override
-	public ArrayList<String> getTo() {
-		return to_;
+	public List<String> getTo() {
+		return new ArrayList<String>(to_);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.email.IEmail#getCC()
 	 */
 	@Override
-	public ArrayList<String> getCC() {
-		return cc_;
+	public List<String> getCC() {
+		return new ArrayList<String>(cc_);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.email.IEmail#getBCC()
 	 */
 	@Override
-	public ArrayList<String> getBCC() {
-		return bcc_;
+	public List<String> getBCC() {
+		return new ArrayList<String>(bcc_);
 	}
 
 	/* (non-Javadoc)
@@ -477,8 +478,8 @@ public class DominoEmail implements IEmail {
 	 */
 	@Override
 	public void removeCCAddress(final String cc) {
-		if (getCC().contains(cc)) {
-			getCC().remove(cc);
+		if (cc_.contains(cc)) {
+			cc_.remove(cc);
 		}
 	}
 
@@ -487,8 +488,8 @@ public class DominoEmail implements IEmail {
 	 */
 	@Override
 	public void removeBCCAddress(final String bcc) {
-		if (getBCC().contains(bcc)) {
-			getBCC().remove(bcc);
+		if (bcc_.contains(bcc)) {
+			bcc_.remove(bcc);
 		}
 	}
 
@@ -497,8 +498,8 @@ public class DominoEmail implements IEmail {
 	 */
 	@Override
 	public void removeToAddress(final String to) {
-		if (getTo().contains(to)) {
-			getTo().remove(to);
+		if (to_.contains(to)) {
+			to_.remove(to);
 		}
 	}
 
@@ -506,8 +507,8 @@ public class DominoEmail implements IEmail {
 	 * @see org.openntf.domino.email.IEmail#setTo(java.util.ArrayList)
 	 */
 	@Override
-	public void setTo(final ArrayList<String> to) {
-		to_ = to;
+	public void setTo(final Collection<String> to) {
+		to_ = new ArrayList<String>(to);
 	}
 
 	/* (non-Javadoc)
@@ -522,8 +523,8 @@ public class DominoEmail implements IEmail {
 	 * @see org.openntf.domino.email.IEmail#setCC(java.util.ArrayList)
 	 */
 	@Override
-	public void setCC(final ArrayList<String> cc) {
-		cc_ = cc;
+	public void setCC(final Collection<String> cc) {
+		cc_ = new ArrayList<String>(cc);
 	}
 
 	/* (non-Javadoc)
@@ -531,15 +532,15 @@ public class DominoEmail implements IEmail {
 	 */
 	@Override
 	public void addCCAddress(final String cc) {
-		getCC().add(cc);
+		cc_.add(cc);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.email.IEmail#setBCC(java.util.ArrayList)
 	 */
 	@Override
-	public void setBCC(final ArrayList<String> bcc) {
-		bcc_ = bcc;
+	public void setBCC(final Collection<String> bcc) {
+		bcc_ = new ArrayList<String>(bcc);
 	}
 
 	/* (non-Javadoc)
@@ -547,7 +548,7 @@ public class DominoEmail implements IEmail {
 	 */
 	@Override
 	public void addBCCAddress(final String bcc) {
-		getBCC().add(bcc);
+		bcc_.add(bcc);
 	}
 
 	/* (non-Javadoc)
@@ -605,14 +606,14 @@ public class DominoEmail implements IEmail {
 			mimeHeader = mimeRoot.createHeader("To");
 			mimeHeader.setHeaderVal(join(getTo(), ""));
 
-			if (getCC().size() > 0) {
+			if (cc_.size() > 0) {
 				mimeHeader = mimeRoot.createHeader("CC");
-				mimeHeader.setHeaderVal(join(getCC(), ""));
+				mimeHeader.setHeaderVal(join(cc_, ""));
 			}
 
-			if (getBCC().size() > 0) {
+			if (bcc_.size() > 0) {
 				mimeHeader = mimeRoot.createHeader("BCC");
-				mimeHeader.setHeaderVal(join(getBCC(), ""));
+				mimeHeader.setHeaderVal(join(bcc_, ""));
 			}
 
 			//set subject
@@ -635,10 +636,10 @@ public class DominoEmail implements IEmail {
 			}
 
 			//create HTML part
-			if (getHTML().size() > 0) {
+			if (contentsHTML_.size() > 0) {
 				mimeEntity = mimeRootChild.createChildEntity();
 				stream = currSess.createStream();
-				stream.writeText(join(getHTML(), System.getProperty("line.separator")));
+				stream.writeText(join(contentsHTML_, System.getProperty("line.separator")));
 				mimeEntity.setContentFromText(stream, "text/html; charset=\"UTF-8\"", MIMEEntity.ENC_NONE);
 				stream.close();
 			}
@@ -702,15 +703,15 @@ public class DominoEmail implements IEmail {
 	};
 
 	/**
-	 * Take an ArrayList and joi the values TODO: Move to DominoUtils
+	 * Take a Collection and join the values TODO: Move to DominoUtils
 	 * 
 	 * @param vals
-	 *            ArrayList of values
+	 *            Collection of values
 	 * @param separator
 	 *            separator or empty/null to use default of comma
 	 * @return String of joined values
 	 */
-	public static String join(final ArrayList<String> vals, String separator) {
+	public static String join(final Collection<String> vals, String separator) {
 		String retVal_ = "";
 		if (StringUtil.isEmpty(separator)) {
 			separator = ",";
