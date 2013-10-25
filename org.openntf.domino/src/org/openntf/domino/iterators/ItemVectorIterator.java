@@ -15,7 +15,9 @@
  */
 package org.openntf.domino.iterators;
 
-import org.openntf.domino.ACL.Level;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
 import org.openntf.domino.impl.ItemVector;
@@ -75,7 +77,6 @@ public class ItemVectorIterator extends AbstractDominoListIterator<Item> {
 	 * @see java.util.Iterator#hasNext()
 	 */
 	@Override
-	@Override
 	public boolean hasNext() {
 		return !((getIndex() + 1) > getNames().length);
 	}
@@ -85,7 +86,6 @@ public class ItemVectorIterator extends AbstractDominoListIterator<Item> {
 	 * 
 	 * @see java.util.Iterator#next()
 	 */
-	@Override
 	@Override
 	public Item next() {
 		Item result = null;
@@ -104,7 +104,6 @@ public class ItemVectorIterator extends AbstractDominoListIterator<Item> {
 	 * 
 	 * @see java.util.Iterator#remove()
 	 */
-	@Override
 	@Override
 	public void remove() {
 		// NOOP
@@ -139,7 +138,6 @@ public class ItemVectorIterator extends AbstractDominoListIterator<Item> {
 	 * @see org.openntf.domino.iterators.AbstractDominoListIterator#hasPrevious()
 	 */
 	@Override
-	@Override
 	public boolean hasPrevious() {
 		return !((getIndex() - 1) < getNames().length);
 	}
@@ -150,7 +148,6 @@ public class ItemVectorIterator extends AbstractDominoListIterator<Item> {
 	 * @see org.openntf.domino.iterators.AbstractDominoListIterator#nextIndex()
 	 */
 	@Override
-	@Override
 	public int nextIndex() {
 		return getIndex() + 1;
 	}
@@ -160,7 +157,6 @@ public class ItemVectorIterator extends AbstractDominoListIterator<Item> {
 	 * 
 	 * @see org.openntf.domino.iterators.AbstractDominoListIterator#previous()
 	 */
-	@Override
 	@Override
 	public Item previous() {
 		Item result = null;
@@ -181,7 +177,6 @@ public class ItemVectorIterator extends AbstractDominoListIterator<Item> {
 	 * @see org.openntf.domino.iterators.AbstractDominoListIterator#previousIndex()
 	 */
 	@Override
-	@Override
 	public int previousIndex() {
 		return getIndex() - 1;
 	}
@@ -191,7 +186,6 @@ public class ItemVectorIterator extends AbstractDominoListIterator<Item> {
 	 * 
 	 * @see org.openntf.domino.iterators.AbstractDominoListIterator#set(java.lang.Object)
 	 */
-	@Override
 	@Override
 	public void set(final Item arg0) {
 		throw new UnsupportedOperationException();

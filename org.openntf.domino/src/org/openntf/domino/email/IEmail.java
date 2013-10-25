@@ -3,6 +3,8 @@
  */
 package org.openntf.domino.email;
 
+import java.util.ArrayList;
+
 import org.openntf.domino.Document;
 import org.openntf.domino.MIMEEntity;
 

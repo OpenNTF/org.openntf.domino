@@ -3,6 +3,8 @@
  */
 package org.openntf.domino.iterators;
 
+import java.util.logging.Logger;
+
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewNavigator;
 
