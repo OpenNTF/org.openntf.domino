@@ -26,8 +26,6 @@ import org.openntf.domino.impl.ItemVector;
 /**
  * The Class VectorIterator.
  * 
- * @param <T>
- *            the generic type
  */
 public class ItemVectorIterator extends AbstractDominoListIterator<Item> {
 
@@ -45,8 +43,10 @@ public class ItemVectorIterator extends AbstractDominoListIterator<Item> {
 	/**
 	 * Instantiates a new document iterator.
 	 * 
-	 * @param collection
-	 *            the collection
+	 * @param document
+	 *            the document
+	 * @param itemVector
+	 *            the itemVector
 	 */
 	public ItemVectorIterator(final Document document, final ItemVector itemVector) {
 		super(document);

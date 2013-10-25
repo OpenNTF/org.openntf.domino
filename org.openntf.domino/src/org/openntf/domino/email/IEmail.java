@@ -157,8 +157,6 @@ public interface IEmail {
 	/**
 	 * Adds all attachments to the parent MIMEEntity, using a passed ArrayList of EmailAttachment objects
 	 * 
-	 * @param attachments
-	 *            ArrayList of EmailAttachment elements
 	 * @param parent
 	 *            MIMEEntity that the attachments will be added to
 	 */
@@ -234,7 +232,7 @@ public interface IEmail {
 	/**
 	 * Sets multiple CC recipients
 	 * 
-	 * @param to
+	 * @param cc
 	 *            Collection of recipients
 	 */
 	public void setCC(Collection<String> cc);
@@ -242,7 +240,7 @@ public interface IEmail {
 	/**
 	 * Adds an email address to the ArrayList containing the CC recipients
 	 * 
-	 * @param to
+	 * @param cc
 	 *            String recipient
 	 */
 	public void addCCAddress(String cc);
@@ -250,7 +248,7 @@ public interface IEmail {
 	/**
 	 * Sets multiple BCC recipients
 	 * 
-	 * @param to
+	 * @param bcc
 	 *            Collection of recipients
 	 */
 	public void setBCC(Collection<String> bcc);
@@ -258,7 +256,7 @@ public interface IEmail {
 	/**
 	 * Adds an email address to the ArrayList containing the BCC recipients
 	 * 
-	 * @param to
+	 * @param bcc
 	 *            String recipient
 	 */
 	public void addBCCAddress(String bcc);

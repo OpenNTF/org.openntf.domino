@@ -38,8 +38,8 @@ public class ViewNavigatorEntryIterator extends AbstractDominoIterator<ViewEntry
 	/**
 	 * Instantiates a new view entry iterator.
 	 * 
-	 * @param collection
-	 *            the collection
+	 * @param navigator
+	 *            the navigator
 	 */
 	public ViewNavigatorEntryIterator(final ViewNavigator navigator) {
 		super(navigator);
