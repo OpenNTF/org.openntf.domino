@@ -276,7 +276,15 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	protected Set<Edge> getInEdgeObjects(final String... labels) {
 		Map<String, Set<Edge>> inCache = getInEdgeCache();
 		Set<Edge> result = null;
-		if (labels.length == 1) {
+		if (labels == null || labels.length == 0) {
+			result = Collections.synchronizedSet(new LinkedHashSet<Edge>());
+			Set<String> labelSet = this.getInEdgeLabels();
+			//			System.out.println("INFO: Getting all IN edges for a vertex across " + labelSet.size() + " labels.");
+			for (String label : labelSet) {
+				result.addAll(getInEdgeObjects(label));
+			}
+			//			System.out.println("INFO: Found " + result.size() + " IN edges.");
+		} else if (labels.length == 1) {
 			String label = labels[0];
 			// System.out.println("Getting in edges from " + getClass().getName() + " with label: " + label + " ...");
 			synchronized (inCache) {
@@ -313,7 +321,18 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	protected Set<Edge> getOutEdgeObjects(final String... labels) {
 		Map<String, Set<Edge>> outCache = getOutEdgeCache();
 		Set<Edge> result = null;
-		if (labels.length == 1) {
+
+		if (labels == null || labels.length == 0) {
+			result = new LinkedHashSet<Edge>();
+			Set<String> labelSet = this.getOutEdgeLabels();
+			//			System.out.println("INFO: Getting all OUT edges for a vertex across " + labelSet.size() + " labels.");
+			for (String label : labelSet) {
+				Set<Edge> curEdges = getOutEdgeObjects(label);
+				//				System.out.println("INFO: Found " + curEdges.size() + " OUT edges for label " + label);
+				result.addAll(curEdges);
+			}
+			//			System.out.println("INFO: Found " + result.size() + " OUT edges.");
+		} else if (labels.length == 1) {
 			String label = labels[0];
 			if (label == null) {
 				return Collections.unmodifiableSet(getOutEdgeObjects());
@@ -405,7 +424,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		Set<String> rawKeys = getRawDocument().keySet();
 		for (String key : rawKeys) {
 			if (key.startsWith(IN_PREFIX)) {
-				result.add(key.substring(IN_PREFIX.length() + 1));
+				result.add(key.substring(IN_PREFIX.length()));
 			}
 		}
 		return result;
@@ -424,7 +443,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		Set<String> rawKeys = getRawDocument().keySet();
 		for (String key : rawKeys) {
 			if (key.startsWith(OUT_PREFIX)) {
-				result.add(key.substring(OUT_PREFIX.length() + 1));
+				result.add(key.substring(OUT_PREFIX.length()));
 			}
 		}
 		return result;
