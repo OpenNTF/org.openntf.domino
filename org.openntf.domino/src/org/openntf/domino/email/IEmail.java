@@ -3,7 +3,8 @@
  */
 package org.openntf.domino.email;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.openntf.domino.Document;
 import org.openntf.domino.MIMEEntity;
@@ -15,30 +16,30 @@ import org.openntf.domino.MIMEEntity;
 public interface IEmail {
 
 	/**
-	 * Adds a StringBuilder to the body of the email
+	 * Adds to the body of the email
 	 * 
 	 * @param content
-	 *            stored in StringBuilder, better for performance
+	 *            can be any CharSequence, such as a String or StringBuilder
 	 */
-	public void addHTML(final StringBuilder content);
+	public void addHTML(CharSequence content);
 
 	/**
-	 * @return String ArrayList of HTML components
+	 * @return String List of HTML components
 	 */
-	public ArrayList<String> getHTML();
+	public List<String> getHTML();
 
 	/**
 	 * Adds plain text to the body of the email
 	 * 
 	 * @param content
-	 *            stored in StringBuilder, better for performance
+	 *            can be any CharSequence, such as a String or StringBuilder
 	 */
-	public void addText(final StringBuilder content);
+	public void addText(CharSequence content);
 
 	/**
-	 * @return String ArrayList of plain text components
+	 * @return String List of plain text components
 	 */
-	public ArrayList<String> getText();
+	public List<String> getText();
 
 	/**
 	 * @param jsonContent
@@ -57,12 +58,12 @@ public interface IEmail {
 	 * @param contentMime
 	 *            MIMEEntity containing the content
 	 */
-	public void addMimeEntity(final MIMEEntity contentMime);
+	public void addMimeEntity(MIMEEntity contentMime);
 
 	/**
-	 * @return ArrayList of MIMEEntities from the email
+	 * @return List of MIMEEntities from the email
 	 */
-	public ArrayList<MIMEEntity> getMimeEntities();
+	public List<MIMEEntity> getMimeEntities();
 
 	/**
 	 * Removes a MIMEEntity from the email
@@ -84,7 +85,7 @@ public interface IEmail {
 	 *            whether attachment is to be inserted as an inline image
 	 * @return String "cid:" + contentId;
 	 */
-	public String addDocAttachment(final String unid, final String fileName, final Boolean isInlineImage);
+	public String addDocAttachment(String unid, String fileName, boolean isInlineImage);
 
 	/**
 	 * Adds an attachment from a Document to the internal ArrayList of EmailAttachment objects, using a passed string as the unique
@@ -100,7 +101,7 @@ public interface IEmail {
 	 *            a unique reference for each attachment to be inserted into the email
 	 * @return String "cid:" + contentId;
 	 */
-	public String addDocAttachment(final String unid, final String fileName, final Boolean isInlineImage, String contentId);
+	public String addDocAttachment(String unid, String fileName, boolean isInlineImage, String contentId);
 
 	/**
 	 * Adds an on-disk file to the internal ArrayList of EmailAttachment objects, generating and returning a unique identifier for the
@@ -114,7 +115,7 @@ public interface IEmail {
 	 *            whether attachment is to be inserted as an inline image
 	 * @return String "cid:" + contentId;
 	 */
-	public String addFileAttachment(final String path, final String fileName, final Boolean isInlineImage);
+	public String addFileAttachment(String path, String fileName, boolean isInlineImage);
 
 	/**
 	 * Adds an on-disk file to the internal ArrayList of EmailAttachment objects, using a passed string as the unique identifier for the
@@ -130,7 +131,7 @@ public interface IEmail {
 	 *            a unique reference for each attachment to be inserted into the email
 	 * @return String "cid:" + contentId;
 	 */
-	public String addFileAttachment(final String path, final String fileName, final Boolean isInlineImage, String contentId);
+	public String addFileAttachment(String path, String fileName, boolean isInlineImage, String contentId);
 
 	/**
 	 * Adds an attachment to an ArrayList of EmailAttachments
@@ -149,15 +150,13 @@ public interface IEmail {
 	public void removeAttachment(EmailAttachment attachment);
 
 	/**
-	 * @return gets the ArrayList of EmailAttachment objects
+	 * @return gets the List of EmailAttachment objects
 	 */
-	public ArrayList<EmailAttachment> getAttachments();
+	public List<EmailAttachment> getAttachments();
 
 	/**
 	 * Adds all attachments to the parent MIMEEntity, using a passed ArrayList of EmailAttachment objects
 	 * 
-	 * @param attachments
-	 *            ArrayList of EmailAttachment elements
 	 * @param parent
 	 *            MIMEEntity that the attachments will be added to
 	 */
@@ -166,17 +165,17 @@ public interface IEmail {
 	/**
 	 * @return value for the To field of the email
 	 */
-	public ArrayList<String> getTo();
+	public List<String> getTo();
 
 	/**
 	 * @return value for the CopyTo field of the email
 	 */
-	public ArrayList<String> getCC();
+	public List<String> getCC();
 
 	/**
 	 * @return value for the BlindCopyTo field of the email
 	 */
-	public ArrayList<String> getBCC();
+	public List<String> getBCC();
 
 	/**
 	 * @return value for the subject field of the email
@@ -218,9 +217,9 @@ public interface IEmail {
 	 * Sets multiple recipients
 	 * 
 	 * @param to
-	 *            ArrayList of recipients
+	 *            Collection of recipients
 	 */
-	public void setTo(ArrayList<String> to);
+	public void setTo(Collection<String> to);
 
 	/**
 	 * Adds an email address to the ArrayList containing the recipients
@@ -233,15 +232,15 @@ public interface IEmail {
 	/**
 	 * Sets multiple CC recipients
 	 * 
-	 * @param to
-	 *            ArrayList of recipients
+	 * @param cc
+	 *            Collection of recipients
 	 */
-	public void setCC(ArrayList<String> cc);
+	public void setCC(Collection<String> cc);
 
 	/**
 	 * Adds an email address to the ArrayList containing the CC recipients
 	 * 
-	 * @param to
+	 * @param cc
 	 *            String recipient
 	 */
 	public void addCCAddress(String cc);
@@ -249,15 +248,15 @@ public interface IEmail {
 	/**
 	 * Sets multiple BCC recipients
 	 * 
-	 * @param to
-	 *            ArrayList of recipients
+	 * @param bcc
+	 *            Collection of recipients
 	 */
-	public void setBCC(ArrayList<String> bcc);
+	public void setBCC(Collection<String> bcc);
 
 	/**
 	 * Adds an email address to the ArrayList containing the BCC recipients
 	 * 
-	 * @param to
+	 * @param bcc
 	 *            String recipient
 	 */
 	public void addBCCAddress(String bcc);

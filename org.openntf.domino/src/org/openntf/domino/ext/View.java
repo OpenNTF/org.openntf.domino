@@ -27,6 +27,8 @@ public interface View {
 	 */
 	public NoteCollection getNoteCollection();
 
+	public String getXPageAlt();
+
 	public boolean isIndexed();
 
 }

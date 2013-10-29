@@ -2537,7 +2537,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	public boolean isEmpty() {
-		return this.getAllDocuments().getCount() > 0;
+		return this.getAllDocuments().getCount() == 0;
 	}
 
 	public int size() {

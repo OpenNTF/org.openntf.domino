@@ -54,8 +54,8 @@ public class SimpleEmailTest {
 		Session session;
 		Database database;
 
-		// do we get Session from debug member var,
-		// or from agent context?
+		// Fails on checking current database!!
+
 		try {
 			Session s;
 			Database db;

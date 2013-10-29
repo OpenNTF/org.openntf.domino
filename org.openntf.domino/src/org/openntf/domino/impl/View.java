@@ -1542,6 +1542,14 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.View#getXPageAlt()
+	 */
+	@Override
+	public String getXPageAlt() {
+		return getDocument().getItemValueString("$XPageAlt");
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
