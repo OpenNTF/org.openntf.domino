@@ -405,7 +405,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 	 */
 	public void addFacesMessage(final String component, String msg) {
 		try {
-			if (!"".equals(getDisplayErrorGeneric())) {
+			if (StringUtil.isNotEmpty(getDisplayErrorGeneric())) {
 				if (null == ExtLibUtil.getRequestScope().get("genericOpenLogMessage")) {
 					ExtLibUtil.getRequestScope().put("genericOpenLogMessage", "Added");
 				} else {
