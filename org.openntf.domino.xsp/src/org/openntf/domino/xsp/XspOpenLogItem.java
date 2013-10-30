@@ -413,7 +413,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 				}
 				msg = displayErrorGeneric_;
 			}
-			FacesContext.getCurrentInstance().addMessage(component, new FacesMessage(msg));
+			FacesContext.getCurrentInstance().addMessage(component, new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, msg));
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
