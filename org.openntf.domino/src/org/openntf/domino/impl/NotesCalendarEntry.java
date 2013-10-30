@@ -110,7 +110,8 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#counter(java.lang.String, lotus.domino.DateTime, lotus.domino.DateTime, boolean)
 	 */
 	@Override
-	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end, final boolean keepPlaceholder) {
+	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end,
+			final boolean keepPlaceholder) {
 		try {
 			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
 			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
@@ -126,8 +127,8 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#counter(java.lang.String, lotus.domino.DateTime, lotus.domino.DateTime, boolean, int, java.lang.String)
 	 */
 	@Override
-	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end, final boolean keepPlaceholder, final int scope,
-			final String recurrenceId) {
+	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end,
+			final boolean keepPlaceholder, final int scope, final String recurrenceId) {
 		try {
 			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
 			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
@@ -143,7 +144,8 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#counter(java.lang.String, lotus.domino.DateTime, lotus.domino.DateTime, int, java.lang.String)
 	 */
 	@Override
-	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end, final int scope, final String recurrenceId) {
+	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end, final int scope,
+			final String recurrenceId) {
 		try {
 			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
 			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
@@ -219,7 +221,8 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @see org.openntf.domino.NotesCalendarEntry#delegate(java.lang.String, java.lang.String, boolean, int, java.lang.String)
 	 */
 	@Override
-	public void delegate(final String commentsToOrganizer, final String delegateTo, final boolean keepInformed, final int scope, final String recurrenceId) {
+	public void delegate(final String commentsToOrganizer, final String delegateTo, final boolean keepInformed, final int scope,
+			final String recurrenceId) {
 		try {
 			getDelegate().delegate(commentsToOrganizer, delegateTo, keepInformed, scope, recurrenceId);
 		} catch (NotesException e) {
@@ -456,5 +459,151 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	@Override
 	public Session getAncestorSession() {
 		return this.getParent().getAncestorSession();
+	}
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.NotesCalendarEntry#addInvitees(java.util.Vector, java.util.Vector, java.util.Vector)
+	 */
+	public void addInvitees(final Vector arg0, final Vector arg1, final Vector arg2) {
+		try {
+			getDelegate().addInvitees(arg0, arg1, arg2);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.NotesCalendarEntry#addInvitees(java.util.Vector, java.util.Vector, java.util.Vector, java.lang.String)
+	 */
+	public void addInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final String arg3) {
+		try {
+			getDelegate().addInvitees(arg0, arg1, arg2, arg3);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.NotesCalendarEntry#addInvitees(java.util.Vector, java.util.Vector, java.util.Vector, java.lang.String, int)
+	 */
+	public void addInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final String arg3, final int arg4) {
+		try {
+			getDelegate().addInvitees(arg0, arg1, arg2, arg3, arg4);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.NotesCalendarEntry#addInvitees(java.util.Vector, java.util.Vector, java.util.Vector, java.lang.String, int, int, java.lang.String)
+	 */
+	public void addInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final String arg3, final int arg4, final int arg5,
+			final String arg6) {
+		try {
+			getDelegate().addInvitees(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.NotesCalendarEntry#modifyInvitees(java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector)
+	 */
+	public void modifyInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final Vector arg3) {
+		try {
+			getDelegate().modifyInvitees(arg0, arg1, arg2, arg3);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.NotesCalendarEntry#modifyInvitees(java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.lang.String)
+	 */
+	public void modifyInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final Vector arg3, final String arg4) {
+		try {
+			getDelegate().modifyInvitees(arg0, arg1, arg2, arg3, arg4);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.NotesCalendarEntry#modifyInvitees(java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.lang.String, int)
+	 */
+	public void modifyInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final Vector arg3, final String arg4, final int arg5) {
+		try {
+			getDelegate().modifyInvitees(arg0, arg1, arg2, arg3, arg4, arg5);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.NotesCalendarEntry#modifyInvitees(java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.lang.String, int, int, java.lang.String)
+	 */
+	public void modifyInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final Vector arg3, final String arg4,
+			final int arg5, final int arg6, final String arg7) {
+		try {
+			getDelegate().modifyInvitees(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+
+	}
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.NotesCalendarEntry#removeInvitees(java.util.Vector)
+	 */
+	public void removeInvitees(final Vector arg0) {
+		try {
+			getDelegate().removeInvitees(arg0);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.NotesCalendarEntry#removeInvitees(java.util.Vector, java.lang.String)
+	 */
+	public void removeInvitees(final Vector arg0, final String arg1) {
+		try {
+			getDelegate().removeInvitees(arg0, arg1);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.NotesCalendarEntry#removeInvitees(java.util.Vector, java.lang.String, int)
+	 */
+	public void removeInvitees(final Vector arg0, final String arg1, final int arg2) {
+		try {
+			getDelegate().removeInvitees(arg0, arg1, arg2);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.NotesCalendarEntry#removeInvitees(java.util.Vector, java.lang.String, int, int, java.lang.String)
+	 */
+	public void removeInvitees(final Vector arg0, final String arg1, final int arg2, final int arg3, final String arg4) {
+		try {
+			getDelegate().removeInvitees(arg0, arg1, arg2, arg3, arg4);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.NotesCalendarEntry#requestInfo(java.lang.String, java.lang.String)
+	 */
+	public void requestInfo(final String arg0, final String arg1) {
+		try {
+			getDelegate().requestInfo(arg0, arg1);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 }

@@ -20,6 +20,7 @@ import org.openntf.domino.thread.AbstractDominoDaemon;
 import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.thread.DominoFutureTask;
+import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 /**
@@ -213,22 +214,31 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 	 */
 	@Override
 	public synchronized void stop() {
-		System.out.println("Shutting down TrustedDispatcher...");
-		intimidator_.shutdown();
-		System.out.println("Executor shutdown requested");
-		lotus.domino.Session s = Factory.terminate();
-		System.out.println("Factory terminated and we got a " + (s == null ? "null" : s.getClass().getName() + " back."));
-
-		if (s != null) {
-			try {
-				System.out.println("Recycling session...");
-				s.recycle();
-			} catch (NotesException e) {
-				e.printStackTrace();
-			}
+		System.out.println("Stopping TrustedDispatcher...");
+		try {
+			if (intimidator_ != null)
+				intimidator_.shutdown();
+		} catch (Throwable t) {
+			DominoUtils.handleException(t);
 		}
-		super.stop();
-		System.out.println("Stop completed.");
+		try {
+			lotus.domino.Session s = Factory.terminate();
+			if (s != null) {
+				try {
+					s.recycle();
+				} catch (NotesException e) {
+					DominoUtils.handleException(e);
+				}
+			}
+		} catch (Throwable t) {
+			DominoUtils.handleException(t);
+		}
+		try {
+			super.stop();
+		} catch (Throwable t) {
+			DominoUtils.handleException(t);
+		}
+		System.out.println("TrustedDispatcher stopped.");
 	}
 
 }

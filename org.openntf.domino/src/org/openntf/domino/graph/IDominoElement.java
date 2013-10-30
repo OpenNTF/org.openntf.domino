@@ -3,6 +3,8 @@
  */
 package org.openntf.domino.graph;
 
+import java.util.Set;
+
 import org.openntf.domino.Document;
 
 import com.tinkerpop.blueprints.Element;
@@ -27,6 +29,8 @@ public interface IDominoElement extends Element {
 	public int incrementProperty(IDominoProperties prop);
 
 	public int decrementProperty(IDominoProperties prop);
+
+	public Set<String> getPropertyKeys(boolean includeEdgeFields);
 
 	public <T> T getProperty(IDominoProperties prop);
 
