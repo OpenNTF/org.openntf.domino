@@ -8,9 +8,6 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.logging.Logger;
 
-import org.openntf.domino.Session;
-import org.openntf.domino.utils.Factory;
-
 /**
  * @author Nathan T. Freeman
  * 
@@ -21,6 +18,7 @@ public abstract class AbstractDominoDaemon extends AbstractDominoRunnable {
 	private volatile boolean shouldStop_ = false;
 	private long delay_ = 100l;	//default to 100ms delay cycle
 	private transient org.openntf.domino.Session session_;
+	private boolean running_ = false;
 
 	/**
 	 * 
@@ -37,26 +35,11 @@ public abstract class AbstractDominoDaemon extends AbstractDominoRunnable {
 		delay_ = delay;
 	}
 
-	public Session getSession() {
-		if (session_ == null) {
-			session_ = Factory.getSession();
-		}
-		return session_;
-	}
-
-	protected void setSession(final lotus.domino.Session session) {
-		if (session instanceof org.openntf.domino.Session) {
-			session_ = (org.openntf.domino.Session) session;
-		} else {
-			session_ = Factory.fromLotus(session, org.openntf.domino.Session.class, null);
-		}
-	}
-
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
 	 */
 	@Override
-	public final void run() {
+	public void run() {
 		while (!shouldStop()) {
 			try {
 				Object result = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
@@ -80,6 +63,7 @@ public abstract class AbstractDominoDaemon extends AbstractDominoRunnable {
 		setChanged();
 		notifyObservers();
 		clean();
+		running_ = false;
 	}
 
 	@Override
@@ -100,5 +84,11 @@ public abstract class AbstractDominoDaemon extends AbstractDominoRunnable {
 
 	public synchronized void stop() {
 		shouldStop_ = true;
+	}
+
+	public synchronized void start() {
+		if (!running_) {
+			new DominoDaemonThread(this).start();
+		}
 	}
 }

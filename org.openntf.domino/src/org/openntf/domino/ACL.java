@@ -30,22 +30,30 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 * The Enum Level.
 	 */
 	public static enum Level {
-		
+
 		/** The noaccess. */
-		NOACCESS(ACL.LEVEL_NOACCESS), 
- /** The despositor. */
- DESPOSITOR(ACL.LEVEL_DEPOSITOR), 
- /** The reader. */
- READER(ACL.LEVEL_READER), 
- /** The author. */
- AUTHOR(ACL.LEVEL_AUTHOR), 
- /** The editor. */
- EDITOR(
-				ACL.LEVEL_EDITOR), 
- /** The designer. */
- DESIGNER(ACL.LEVEL_DESIGNER), 
- /** The manager. */
- MANAGER(ACL.LEVEL_MANAGER);
+		NOACCESS(ACL.LEVEL_NOACCESS),
+		/** The depositor. */
+		DEPOSITOR(ACL.LEVEL_DEPOSITOR),
+		/** The reader. */
+		READER(ACL.LEVEL_READER),
+		/** The author. */
+		AUTHOR(ACL.LEVEL_AUTHOR),
+		/** The editor. */
+		EDITOR(ACL.LEVEL_EDITOR),
+		/** The designer. */
+		DESIGNER(ACL.LEVEL_DESIGNER),
+		/** The manager. */
+		MANAGER(ACL.LEVEL_MANAGER);
+
+		public static Level getLevel(final int value) {
+			for (Level level : Level.values()) {
+				if (level.getValue() == value) {
+					return level;
+				}
+			}
+			return null;
+		}
 
 		/** The value_. */
 		private final int value_;

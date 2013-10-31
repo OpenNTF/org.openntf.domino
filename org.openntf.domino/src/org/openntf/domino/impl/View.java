@@ -31,6 +31,7 @@ import org.openntf.domino.utils.Factory;
 /**
  * The Class View.
  */
+@SuppressWarnings("deprecation")
 public class View extends Base<org.openntf.domino.View, lotus.domino.View> implements org.openntf.domino.View {
 
 	private List<DominoColumnInfo> columnInfo_;
@@ -1540,6 +1541,14 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 			DominoUtils.handleException(e);
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.View#getXPageAlt()
+	 */
+	@Override
+	public String getXPageAlt() {
+		return getDocument().getItemValueString("$XPageAlt");
 	}
 
 	/*

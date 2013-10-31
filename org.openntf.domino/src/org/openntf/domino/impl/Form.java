@@ -251,6 +251,14 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Form#getXPageAlt()
+	 */
+	@Override
+	public String getXPageAlt() {
+		return getDocument().getItemValueString("$XPageAlt");
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

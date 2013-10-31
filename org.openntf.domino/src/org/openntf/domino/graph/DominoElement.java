@@ -24,6 +24,10 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	private Map<String, Serializable> props_;
 	public final String[] DEFAULT_STR_ARRAY = { "" };
 
+	public static Document toDocument(final DominoElement element) {
+		return element.getRawDocument();
+	}
+
 	public static enum Properties implements IDominoProperties {
 		TITLE(String.class), KEY(String.class), FORM(String.class);
 
@@ -244,9 +248,9 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 			}
 		}
 		// }
-		if (result != null && !T.isAssignableFrom(result.getClass())) {
-			log_.log(Level.WARNING, "Returning a " + result.getClass().getName() + " when we asked for a " + T.getName());
-		}
+		//		if (result != null && !T.isAssignableFrom(result.getClass())) {
+		//			log_.log(Level.WARNING, "Returning a " + result.getClass().getName() + " when we asked for a " + T.getName());
+		//		}
 		return (T) result;
 	}
 
@@ -285,10 +289,21 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	@Override
 	public Set<String> getPropertyKeys() {
+		return getPropertyKeys(true);
+	}
+
+	public Set<String> getPropertyKeys(final boolean includeEdgeFields) {
 		// TODO - NTF cache?
 		Set<String> result = new HashSet<String>();
 		for (Item i : getRawDocument().getItems()) {
-			result.add(i.getName());
+			String name = i.getName();
+			if (includeEdgeFields) {
+				result.add(name);
+			} else {
+				if (!(name.startsWith(DominoVertex.IN_PREFIX) || name.startsWith(DominoVertex.OUT_PREFIX))) {
+					result.add(name);
+				}
+			}
 		}
 		return result;
 	}

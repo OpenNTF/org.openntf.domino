@@ -1,4 +1,5 @@
 bin
+lib\*
 Snap*
 core*
 javacore*

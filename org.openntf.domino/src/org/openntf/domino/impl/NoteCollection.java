@@ -39,6 +39,7 @@ import com.ibm.commons.util.StringUtil;
  * @author withersp
  * 
  */
+@SuppressWarnings("deprecation")
 public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.domino.NoteCollection, lotus.domino.NoteCollection> implements
 		org.openntf.domino.NoteCollection {
 

@@ -20,11 +20,14 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.Vector;
 
+import lotus.domino.DateTime;
 import lotus.domino.NotesException;
 import lotus.domino.XSLTResultTarget;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
+import org.openntf.domino.annotations.Notes9only;
+import org.openntf.domino.exceptions.Notes9onlyException;
 import org.openntf.domino.utils.DominoUtils;
 import org.xml.sax.InputSource;
 
@@ -313,7 +316,6 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
-
 		}
 	}
 
@@ -327,7 +329,6 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 			getDelegate().transformXML(paramObject, paramXSLTResultTarget);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
-
 		}
 	}
 
@@ -363,6 +364,34 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 	@Override
 	public Session getAncestorSession() {
 		return this.getAncestorDocument().getAncestorSession();
+	}
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.EmbeddedObject#getFileCreated()
+	 */
+	@Notes9only
+	public DateTime getFileCreated() {
+		throw new Notes9onlyException();
+		//		try {
+		//			return getDelegate().getFileCreated();
+		//		} catch (NotesException e) {
+		//			DominoUtils.handleException(e);
+		//			return null;
+		//		}
+	}
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.EmbeddedObject#getFileModified()
+	 */
+	@Notes9only
+	public DateTime getFileModified() {
+		throw new Notes9onlyException();
+		//		try {
+		//			return getDelegate().getFileModified();
+		//		} catch (NotesException e) {
+		//			DominoUtils.handleException(e);
+		//			return null;
+		//		}
 	}
 
 }

@@ -29,10 +29,12 @@ import java.util.logging.Logger;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.annotations.Notes9only;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.GenericDominoEventFactory;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
+import org.openntf.domino.exceptions.Notes9onlyException;
 import org.openntf.domino.exceptions.UnableToAcquireSessionException;
 import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.thread.DominoReferenceCounter;
@@ -50,6 +52,7 @@ import com.ibm.icu.util.Calendar;
  * 
  * @author nfreeman
  */
+@SuppressWarnings("deprecation")
 public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Session, lotus.domino.Session> implements
 		org.openntf.domino.Session {
 	/** The Constant log_. */
@@ -1410,7 +1413,6 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
-
 		}
 	}
 
@@ -1514,20 +1516,27 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	protected lotus.domino.Session getDelegate() {
 		lotus.domino.Session session = super.getDelegate();
-		try {
-			session.isConvertMIME();
-		} catch (NotesException ne) {
-			org.openntf.domino.impl.Session sessionImpl = (org.openntf.domino.impl.Session) Factory.getSession();
-			if (sessionImpl != null) {
-				lotus.domino.Session sessionLotus = sessionImpl.delegate_;
-				if (sessionLotus != null) {
-					setDelegate(sessionLotus);
+		if (session != null) {
+			try {
+				session.isTrustedSession();
+			} catch (NotesException ne) {
+				org.openntf.domino.impl.Session sessionImpl = (org.openntf.domino.impl.Session) Factory.getSession();
+				if (sessionImpl != null) {
+					lotus.domino.Session sessionLotus = sessionImpl.delegate_;
+					if (sessionLotus != null) {
+						setDelegate(sessionLotus);
+					} else {
+						throw new UnableToAcquireSessionException("Factory default Session does not have a valid delegate");
+					}
 				} else {
-					throw new UnableToAcquireSessionException("Factory default Session does not have a valid delegate");
+					throw new UnableToAcquireSessionException("Factory could not return a default Session");
 				}
-			} else {
-				throw new UnableToAcquireSessionException("Factory could not return a default Session");
+			} catch (Throwable t) {
+				DominoUtils.handleException(t);
 			}
+		} else {
+			throw new UnableToAcquireSessionException(
+					"This session has a null value for its delegate. How was it created in the first place?");
 		}
 		return super.getDelegate();
 	}
@@ -1580,5 +1589,34 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		System.out.println(sb.toString());
 		System.out.println(sb.toString());
 		System.out.println(sb.toString());
+	}
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.Session#freeResourceSearch(lotus.domino.DateTime, lotus.domino.DateTime, java.lang.String, int, int)
+	 */
+	@Notes9only
+	public Vector freeResourceSearch(final lotus.domino.DateTime arg0, final lotus.domino.DateTime arg1, final String arg2, final int arg3,
+			final int arg4) {
+		throw new Notes9onlyException();
+		//		try {
+		//			return getDelegate().freeResourceSearch(arg0, arg1, arg2, arg3, arg4);
+		//		} catch (NotesException e) {
+		//			DominoUtils.handleException(e);
+		//			return null;
+		//		}
+	}
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.Session#freeResourceSearch(lotus.domino.DateTime, lotus.domino.DateTime, java.lang.String, int, int, java.lang.String, int, java.lang.String, java.lang.String, int)
+	 */
+	public Vector freeResourceSearch(final lotus.domino.DateTime arg0, final lotus.domino.DateTime arg1, final String arg2, final int arg3,
+			final int arg4, final String arg5, final int arg6, final String arg7, final String arg8, final int arg9) {
+		throw new Notes9onlyException();
+		//		try {
+		//			return getDelegate().freeResourceSearch(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
+		//		} catch (NotesException e) {
+		//			DominoUtils.handleException(e);
+		//			return null;
+		//		}
 	}
 }
