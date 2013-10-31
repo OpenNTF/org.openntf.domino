@@ -42,17 +42,6 @@ public abstract class AbstractDominoRunnable extends Observable implements Runna
 
 	public void clean() {
 		recycle_ = true;
-		//		System.out.println("Cleaning runnable off thread " + System.identityHashCode(Thread.currentThread()));
-
-		//		Base.unlock(getSession());
-		//		try {
-		//			lotus.domino.Session s = Factory.terminate();
-		//			if (s != null)
-		//				s.recycle();
-		//		} catch (lotus.domino.NotesException ne) {
-		//			ne.printStackTrace();
-		//		}
-		//		lotus.domino.NotesThread.stermThread();
 	}
 
 }
