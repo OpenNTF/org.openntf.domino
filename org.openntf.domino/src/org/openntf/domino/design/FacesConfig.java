@@ -7,7 +7,11 @@ import java.util.List;
  * @author jgallagher
  * 
  */
+
+// This will help: http://www.horstmann.com/corejsf/faces-config.html
 public interface FacesConfig extends FileResource {
+
+	public Collection<String> getActionListeners();
 
 	public Converter addConverter();
 
@@ -17,7 +21,15 @@ public interface FacesConfig extends FileResource {
 
 	public Collection<ManagedBean> getManagedBeans();
 
+	public Collection<String> getMessageBundles();
+
+	public Collection<String> getNavigationHandlers();
+
 	public Collection<String> getPhaseListeners();
+
+	public Collection<String> getPropertyResolvers();
+
+	public Collection<String> getVariableResolvers();
 
 	public Collection<String> getViewHandlers();
 

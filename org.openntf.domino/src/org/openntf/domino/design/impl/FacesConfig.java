@@ -5,6 +5,7 @@ package org.openntf.domino.design.impl;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,8 +25,6 @@ import org.xml.sax.SAXException;
  * @author jgallagher
  * 
  */
-
-// TODO Switch Collection-returning methods to return "views" on the file for manipulation
 public class FacesConfig extends FileResource implements org.openntf.domino.design.FacesConfig {
 	private static final Logger log_ = Logger.getLogger(FacesConfig.class.getName());
 	private static final long serialVersionUID = 1L;
@@ -67,6 +66,13 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	}
 
 	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.FacesConfig#getActionListeners()
+	 */
+	public Collection<String> getActionListeners() {
+		return new LiveStringNodeList("/faces-config/application", "action-listener");
+	}
+
+	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.FacesConfig#addConverter()
 	 */
 	public org.openntf.domino.design.FacesConfig.Converter addConverter() {
@@ -103,25 +109,45 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	}
 
 	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.FacesConfig#getMessageBundles()
+	 */
+	public Collection<String> getMessageBundles() {
+		return new LiveStringNodeList("/faces-config/application", "message-bundle");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.FacesConfig#getNavigationHandlers()
+	 */
+	public Collection<String> getNavigationHandlers() {
+		return new LiveStringNodeList("/faces-config/application", "navigation-handler");
+	}
+
+	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.FacesConfig#getPhaseListeners()
 	 */
 	public Collection<String> getPhaseListeners() {
-		List<String> result = new ArrayList<String>();
-		for (XMLNode node : xml_.selectNodes("/faces-config/lifecycle/phase-listener")) {
-			result.add(node.getText());
-		}
-		return Collections.unmodifiableList(result);
+		return new LiveStringNodeList("/faces-config/application", "phase-listener");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.FacesConfig#getPropertyResolvers()
+	 */
+	public Collection<String> getPropertyResolvers() {
+		return new LiveStringNodeList("/faces-config/application", "property-resolver");
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.FacesConfig#getVariableResolvers()
+	 */
+	public Collection<String> getVariableResolvers() {
+		return new LiveStringNodeList("/faces-config/application", "variable-resolver");
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.FacesConfig#getViewHandlers()
 	 */
 	public Collection<String> getViewHandlers() {
-		List<String> result = new ArrayList<String>();
-		for (XMLNode node : xml_.selectNodes("/faces-config/lifecycle/phase-listener")) {
-			result.add(node.getText());
-		}
-		return Collections.unmodifiableList(result);
+		return new LiveStringNodeList("/faces-config/application", "view-handler");
 	}
 
 	/* (non-Javadoc)
@@ -142,7 +168,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	public class ManagedBean implements org.openntf.domino.design.FacesConfig.ManagedBean {
 		private final XMLNode node_;
 
-		public ManagedBean(final XMLNode node) {
+		protected ManagedBean(final XMLNode node) {
 			node_ = node;
 		}
 
@@ -220,7 +246,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 		public class Property implements org.openntf.domino.design.FacesConfig.ManagedBean.Property {
 			private final XMLNode node_;
 
-			public Property(final XMLNode node) {
+			protected Property(final XMLNode node) {
 				node_ = node;
 			}
 
@@ -284,7 +310,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	public class Converter implements org.openntf.domino.design.FacesConfig.Converter {
 		private final XMLNode node_;
 
-		public Converter(final XMLNode node) {
+		protected Converter(final XMLNode node) {
 			node_ = node;
 		}
 
@@ -331,6 +357,63 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 			}
 			valueNode.setText(className);
 		}
+	}
 
+	private class LiveStringNodeList extends AbstractList<String> {
+		private final String parentNodePath_;
+		private final String nodeName_;
+
+		protected LiveStringNodeList(final String parentNodePath, final String nodeName) {
+			parentNodePath_ = parentNodePath;
+			nodeName_ = nodeName;
+		}
+
+		/* (non-Javadoc)
+		 * @see java.util.AbstractList#get(int)
+		 */
+		@Override
+		public String get(final int index) {
+			return xml_.selectNodes(parentNodePath_ + "/" + nodeName_).get(index).getText();
+		}
+
+		/* (non-Javadoc)
+		 * @see java.util.AbstractCollection#size()
+		 */
+		@Override
+		public int size() {
+			return xml_.selectNodes(parentNodePath_ + "/" + nodeName_).size();
+		}
+
+		/* (non-Javadoc)
+		 * @see java.util.AbstractList#add(java.lang.Object)
+		 */
+		@Override
+		public boolean add(final String e) {
+			XMLNode parent = xml_.selectSingleNode(parentNodePath_);
+			// TODO Add code to add missing parent trees as needed
+			XMLNode node = parent.addChildElement(nodeName_);
+			node.setText(e);
+			return true;
+		}
+
+		/* (non-Javadoc)
+		 * @see java.util.AbstractList#set(int, java.lang.Object)
+		 */
+		@Override
+		public String set(final int index, final String element) {
+			String current = get(index);
+			xml_.selectNodes(parentNodePath_ + "/" + nodeName_).get(index).setText(element);
+			return current;
+		}
+
+		/* (non-Javadoc)
+		 * @see java.util.AbstractList#remove(int)
+		 */
+		@Override
+		public String remove(final int index) {
+			String current = get(index);
+			xml_.selectNodes(parentNodePath_ + "/" + nodeName_).remove(index);
+			return current;
+		}
 	}
 }
