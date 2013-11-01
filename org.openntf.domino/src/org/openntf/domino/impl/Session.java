@@ -539,6 +539,38 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#freeResourceSearch(lotus.domino.DateTime, lotus.domino.DateTime, java.lang.String, int, int)
+	 */
+	@Override
+	public Vector<String> freeResourceSearch(final lotus.domino.DateTime arg0, final lotus.domino.DateTime arg1, final String arg2,
+			final int arg3, final int arg4) {
+		Vector<String> result = new Vector<String>();
+		try {
+			result.addAll(getDelegate().freeResourceSearch((lotus.domino.DateTime) toLotus(arg0), (lotus.domino.DateTime) toLotus(arg1),
+					arg2, arg3, arg4));
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.Session#freeResourceSearch(lotus.domino.DateTime, lotus.domino.DateTime, java.lang.String, int, int, java.lang.String, int, java.lang.String, java.lang.String, int)
+	 */
+	@Override
+	public Vector<String> freeResourceSearch(final lotus.domino.DateTime arg0, final lotus.domino.DateTime arg1, final String arg2,
+			final int arg3, final int arg4, final String arg5, final int arg6, final String arg7, final String arg8, final int arg9) {
+		Vector<String> result = new Vector<String>();
+		try {
+			result.addAll(getDelegate().freeResourceSearch((lotus.domino.DateTime) toLotus(arg0), (lotus.domino.DateTime) toLotus(arg1),
+					arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9));
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+		return result;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1549,4 +1581,5 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 			final Object payload) {
 		return getEventFactory().generate(event, source, target, payload);
 	}
+
 }
