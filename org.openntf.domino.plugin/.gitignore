@@ -1,5 +1,5 @@
 bin
-lib\*
+lib\*.jar
 Snap*
 core*
 javacore*
