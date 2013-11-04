@@ -40,6 +40,3 @@ Require-Bundle: com.ibm.commons;bundle-version="8.5.3",
  com.ibm.commons.icu;bundle-version="8.5.3",
  com.ibm.icu;bundle-version="3.8.1",
  com.ibm.icu.base;bundle-version="3.8.1"
-Bundle-ClassPath: lib/tinkerpop.jar,
- lib/domino.jar,
- .
