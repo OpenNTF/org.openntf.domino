@@ -421,7 +421,7 @@ public enum Factory {
 			// mapper can decide how and which object to return
 			Mapper mapper = getMapper();
 			if (mapper != null) {
-				result = (T) mapper.map((lotus.domino.Document) lotus, (org.openntf.domino.Database) parent);
+				result = (T) mapper.map((lotus.domino.Document) lotus, parent);
 				if (result != null) {
 					// TODO: What to do if mapper does not map
 					return result;
