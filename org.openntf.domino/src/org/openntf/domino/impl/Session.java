@@ -29,10 +29,12 @@ import java.util.logging.Logger;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.annotations.Notes9only;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.GenericDominoEventFactory;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
+import org.openntf.domino.exceptions.Notes9onlyException;
 import org.openntf.domino.exceptions.UnableToAcquireSessionException;
 import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.thread.DominoReferenceCounter;
@@ -598,6 +600,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 * 
 	 * @see org.openntf.domino.Session#getCalendar(lotus.domino.Database)
 	 */
+	/* not supported in 8.5.3
 	@Override
 	public NotesCalendar getCalendar(final lotus.domino.Database db) {
 		try {
@@ -608,7 +611,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 
 		}
 	}
-
+	*/
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1591,14 +1594,16 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	/* (non-Javadoc)
 	 * @see lotus.domino.Session#freeResourceSearch(lotus.domino.DateTime, lotus.domino.DateTime, java.lang.String, int, int)
 	 */
+	@Notes9only
 	public Vector freeResourceSearch(final lotus.domino.DateTime arg0, final lotus.domino.DateTime arg1, final String arg2, final int arg3,
 			final int arg4) {
-		try {
-			return getDelegate().freeResourceSearch(arg0, arg1, arg2, arg3, arg4);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
+		throw new Notes9onlyException();
+		//		try {
+		//			return getDelegate().freeResourceSearch(arg0, arg1, arg2, arg3, arg4);
+		//		} catch (NotesException e) {
+		//			DominoUtils.handleException(e);
+		//			return null;
+		//		}
 	}
 
 	/* (non-Javadoc)
@@ -1606,11 +1611,12 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 */
 	public Vector freeResourceSearch(final lotus.domino.DateTime arg0, final lotus.domino.DateTime arg1, final String arg2, final int arg3,
 			final int arg4, final String arg5, final int arg6, final String arg7, final String arg8, final int arg9) {
-		try {
-			return getDelegate().freeResourceSearch(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
+		throw new Notes9onlyException();
+		//		try {
+		//			return getDelegate().freeResourceSearch(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
+		//		} catch (NotesException e) {
+		//			DominoUtils.handleException(e);
+		//			return null;
+		//		}
 	}
 }

@@ -23,6 +23,7 @@ import lotus.domino.NotesException;
 
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Session;
+import org.openntf.domino.exceptions.Notes9onlyException;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -1632,12 +1633,15 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@Override
 	public boolean isEnableNoteIDsForCategories() {
+		throw new Notes9onlyException();
+		/*
 		try {
 			return getDelegate().isEnableNoteIDsForCategories();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 		return false;
+		*/
 	}
 
 	/*
@@ -2129,11 +2133,14 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@Override
 	public void setEnableNoteIDsForCategories(final boolean flag) {
+		throw new Notes9onlyException();
+		/*
 		try {
 			getDelegate().setEnableNoteIDsForCategories(flag);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+		*/
 	}
 
 	/*

@@ -35,6 +35,7 @@ import lotus.domino.NotesException;
 import lotus.domino.NotesFactory;
 import lotus.domino.NotesThread;
 
+import org.openntf.domino.Mapper;
 import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
@@ -215,6 +216,14 @@ public enum Factory {
 		}
 
 	};
+
+	private static ThreadLocal<Mapper> mapper_ = new ThreadLocal<Mapper>() {
+		@Override
+		protected Mapper initialValue() {
+			return super.initialValue();
+		}
+	};
+
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Factory.class.getName());
 
@@ -407,7 +416,20 @@ public enum Factory {
 		} else if (lotus instanceof lotus.domino.DirectoryNavigator) {
 			result = (T) new org.openntf.domino.impl.DirectoryNavigator((lotus.domino.DirectoryNavigator) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Document) {
+
+			// 25.09.13/RPr: what do you think about this idea to pass every document to the database, so that the
+			// mapper can decide how and which object to return
+			Mapper mapper = getMapper();
+			if (mapper != null) {
+				result = (T) mapper.map((lotus.domino.Document) lotus, parent);
+				if (result != null) {
+					// TODO: What to do if mapper does not map
+					return result;
+				}
+			}
+			System.out.println("No 'org.openntf.domino.mapper' service mapped the document");
 			result = (T) new org.openntf.domino.impl.Document((lotus.domino.Document) lotus, parent);
+
 		} else if (lotus instanceof lotus.domino.DocumentCollection) {
 			result = (T) new org.openntf.domino.impl.DocumentCollection((lotus.domino.DocumentCollection) lotus, parent);
 		} else if (lotus instanceof lotus.domino.DxlExporter) {
@@ -439,12 +461,14 @@ public enum Factory {
 		} else if (lotus instanceof lotus.domino.NoteCollection) {
 			result = (T) new org.openntf.domino.impl.NoteCollection((lotus.domino.NoteCollection) lotus,
 					(org.openntf.domino.Database) parent);
-		} else if (lotus instanceof lotus.domino.NotesCalendar) {
-			result = (T) new org.openntf.domino.impl.NotesCalendar((lotus.domino.NotesCalendar) lotus, parent);
-		} else if (lotus instanceof lotus.domino.NotesCalendarEntry) {
-			result = (T) new org.openntf.domino.impl.NotesCalendarEntry((lotus.domino.NotesCalendarEntry) lotus, parent);
-		} else if (lotus instanceof lotus.domino.NotesCalendarNotice) {
-			result = (T) new org.openntf.domino.impl.NotesCalendarNotice((lotus.domino.NotesCalendarNotice) lotus, parent);
+			/* not supported in 8.5.3			
+					} else if (lotus instanceof lotus.domino.NotesCalendar) {
+						result = (T) new org.openntf.domino.impl.NotesCalendar((lotus.domino.NotesCalendar) lotus, parent);
+					} else if (lotus instanceof lotus.domino.NotesCalendarEntry) {
+						result = (T) new org.openntf.domino.impl.NotesCalendarEntry((lotus.domino.NotesCalendarEntry) lotus, parent);
+					} else if (lotus instanceof lotus.domino.NotesCalendarNotice) {
+						result = (T) new org.openntf.domino.impl.NotesCalendarNotice((lotus.domino.NotesCalendarNotice) lotus, parent);
+			*/
 		} else if (lotus instanceof lotus.domino.NotesProperty) {
 			result = (T) new org.openntf.domino.impl.NotesProperty((lotus.domino.NotesProperty) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Outline) {
@@ -722,6 +746,19 @@ public enum Factory {
 		currentClassLoader_.set(null);
 	}
 
+	public static Mapper getMapper() {
+		return mapper_.get();
+	}
+
+	public static void setMapper(final Mapper mapper) {
+		mapper_.set(mapper);
+
+	}
+
+	public static void clearMapper() {
+		mapper_.set(null);
+	}
+
 	public static void clearDominoGraph() {
 		DominoGraph.clearDocumentCache();
 	}
@@ -740,6 +777,8 @@ public enum Factory {
 		clearClassLoader();
 		clearBubbleExceptions();
 		clearDominoGraph();
+		clearMapper();
+		//		System.out.println("Terminating OpenNTF Factory");
 		return result;
 	}
 

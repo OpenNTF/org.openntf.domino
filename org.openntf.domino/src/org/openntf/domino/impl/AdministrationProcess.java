@@ -21,6 +21,8 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.annotations.Notes9only;
+import org.openntf.domino.exceptions.Notes9onlyException;
 import org.openntf.domino.utils.DominoUtils;
 
 // TODO: Auto-generated Javadoc
@@ -1021,26 +1023,30 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	/* (non-Javadoc)
 	 * @see lotus.domino.AdministrationProcess#delegateMailFile(java.lang.String, java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.lang.String, java.lang.String)
 	 */
+	@Notes9only
 	public String delegateMailFile(final String arg0, final Vector arg1, final Vector arg2, final Vector arg3, final Vector arg4,
 			final Vector arg5, final Vector arg6, final Vector arg7, final String arg8, final String arg9) {
-		try {
-			return getDelegate().delegateMailFile(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+		throw new Notes9onlyException();
+		//		try {
+		//			return getDelegate().delegateMailFile(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
+		//		} catch (NotesException e) {
+		//			DominoUtils.handleException(e);
+		//		}
+		//		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see lotus.domino.AdministrationProcess#setEnableOutlookSupport(java.lang.String, boolean)
 	 */
+	@Notes9only
 	public String setEnableOutlookSupport(final String arg0, final boolean arg1) {
-		try {
-			return getDelegate().setEnableOutlookSupport(arg0, arg1);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+		throw new Notes9onlyException();
+		//		try {
+		//			return getDelegate().setEnableOutlookSupport(arg0, arg1);
+		//		} catch (NotesException e) {
+		//			DominoUtils.handleException(e);
+		//		}
+		//		return null;
 	}
 
 }

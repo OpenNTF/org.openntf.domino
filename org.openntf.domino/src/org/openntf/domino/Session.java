@@ -409,9 +409,8 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @return The newly created {@link NotesCalendar} object.
 	 * @since lotus.domino 4.5.0
 	 */
-	@Override
-	public NotesCalendar getCalendar(final lotus.domino.Database db);
-
+	// 8.5.3 compat - Calendar is not yet available @Override
+	//public NotesCalendar getCalendar(final lotus.domino.Database db);
 	/**
 	 * The common name of the user that created the session.
 	 * <p>

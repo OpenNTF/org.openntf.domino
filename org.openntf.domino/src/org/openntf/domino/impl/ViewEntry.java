@@ -26,6 +26,7 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
+import org.openntf.domino.exceptions.Notes9onlyException;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -184,12 +185,15 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 */
 	@Override
 	public int getNoteIDAsInt() {
+		throw new Notes9onlyException();
+		/*
 		try {
 			return getDelegate().getNoteIDAsInt();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return 0;
 		}
+		*/
 	}
 
 	/*

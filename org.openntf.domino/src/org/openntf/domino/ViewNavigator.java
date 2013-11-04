@@ -15,6 +15,7 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.annotations.Notes9only;
 import org.openntf.domino.types.DatabaseDescendant;
 
 /**
@@ -500,7 +501,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	 * 
 	 * @see lotus.domino.ViewNavigator#setAutoExpandGuidance(int, int[], int[])
 	 */
-	@Override
+	@Notes9only
 	public void setAutoExpandGuidance(final int maxEntries, final int[] collapsedNoteIds, final int[] expandedNoteIds);
 
 	/*
@@ -508,7 +509,7 @@ public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.d
 	 * 
 	 * @see lotus.domino.ViewNavigator#setAutoExpandGuidance(int, lotus.domino.NoteCollection, lotus.domino.NoteCollection)
 	 */
-	@Override
+	@Notes9only
 	public void setAutoExpandGuidance(final int maxEntries, final lotus.domino.NoteCollection collapsedNoteIds,
 			final lotus.domino.NoteCollection expandedNoteIds);
 

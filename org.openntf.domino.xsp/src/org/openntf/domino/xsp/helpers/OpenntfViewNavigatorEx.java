@@ -10,17 +10,19 @@ import lotus.domino.NotesException;
 import lotus.domino.View;
 import lotus.domino.ViewEntry;
 
+import org.openntf.domino.annotations.Notes9only;
+import org.openntf.domino.exceptions.Notes9onlyException;
 import org.openntf.domino.utils.DominoUtils;
 
 import com.ibm.xsp.model.domino.ViewNavigatorFactory;
-import com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx9;
+import com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx;
 import com.ibm.xsp.model.domino.viewnavigator.PathPosition;
 
 /**
  * @author Nathan T. Freeman
  * 
  */
-public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
+public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx {
 	private static final long serialVersionUID = -5568170248903953533L;
 	private static final Logger log_ = Logger.getLogger(OpenntfViewNavigatorEx.class.getName());
 
@@ -112,14 +114,16 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 	 * @see com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx9#wrapViewEntry(lotus.domino.ViewEntry, java.lang.String,
 	 * com.ibm.xsp.model.domino.viewnavigator.PathPosition)
 	 */
-	@Override
+
+	@Notes9only
 	public ViewEntry wrapViewEntry(ViewEntry paramViewEntry, final String paramString, final PathPosition paramPathPosition)
 			throws NotesException {
 		if (paramViewEntry instanceof org.openntf.domino.ViewEntry) {
 			paramViewEntry = (lotus.domino.ViewEntry) org.openntf.domino.impl.Base.toLotus(paramViewEntry);
 
 		}
-		return super.wrapViewEntry(paramViewEntry, paramString, paramPathPosition);
+		throw new Notes9onlyException();
+		// return super.wrapViewEntry(paramViewEntry, paramString, paramPathPosition);
 	}
 
 }

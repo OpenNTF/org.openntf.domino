@@ -24,9 +24,12 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Session;
+import org.openntf.domino.exceptions.Notes9onlyException;
 import org.openntf.domino.iterators.NoteIterator;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+
+import com.ibm.commons.util.StringUtil;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -108,11 +111,14 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	 */
 	@Override
 	public void add(final int[] additionSpecifier) {
+		throw new Notes9onlyException(); // TODO FOC: Write a Fallback implementation
+		/*
 		try {
 			getDelegate().add(additionSpecifier);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+		*/
 	}
 
 	/*
@@ -334,12 +340,33 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	 */
 	@Override
 	public int[] getNoteIDs() {
+		// TODO FOC: This method is quick'n'dirty fallback implementation
+		System.out.println("TODO: getNoteIDs has a poor fallback implementation in 8.5.3. AVOID USING THIS METHOD!");
+		try {
+			int ret[] = new int[getDelegate().getCount()];
+			int i = 0;
+			String nid = getDelegate().getFirstNoteID();
+
+			while (!StringUtil.isEmpty(nid)) {
+				ret[i++] = Integer.parseInt(nid, 16);
+				nid = getDelegate().getNextNoteID(nid);
+			}
+
+			return ret;
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
+
+		//throw new Notes9onlyException(); // TODO FOC: Write a fallback implementation for 8.5.3 (e.g. iterate manually and return NoteIDs)
+		/*
 		try {
 			return getDelegate().getNoteIDs();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 		return null;
+		 */
 	}
 
 	/*

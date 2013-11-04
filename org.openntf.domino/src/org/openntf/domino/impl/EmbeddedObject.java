@@ -26,6 +26,8 @@ import lotus.domino.XSLTResultTarget;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
+import org.openntf.domino.annotations.Notes9only;
+import org.openntf.domino.exceptions.Notes9onlyException;
 import org.openntf.domino.utils.DominoUtils;
 import org.xml.sax.InputSource;
 
@@ -367,25 +369,29 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 	/* (non-Javadoc)
 	 * @see lotus.domino.EmbeddedObject#getFileCreated()
 	 */
+	@Notes9only
 	public DateTime getFileCreated() {
-		try {
-			return getDelegate().getFileCreated();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
+		throw new Notes9onlyException();
+		//		try {
+		//			return getDelegate().getFileCreated();
+		//		} catch (NotesException e) {
+		//			DominoUtils.handleException(e);
+		//			return null;
+		//		}
 	}
 
 	/* (non-Javadoc)
 	 * @see lotus.domino.EmbeddedObject#getFileModified()
 	 */
+	@Notes9only
 	public DateTime getFileModified() {
-		try {
-			return getDelegate().getFileModified();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
+		throw new Notes9onlyException();
+		//		try {
+		//			return getDelegate().getFileModified();
+		//		} catch (NotesException e) {
+		//			DominoUtils.handleException(e);
+		//			return null;
+		//		}
 	}
 
 }
