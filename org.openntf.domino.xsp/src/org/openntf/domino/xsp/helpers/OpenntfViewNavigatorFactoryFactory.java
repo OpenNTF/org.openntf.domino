@@ -10,7 +10,6 @@ import javax.faces.context.FacesContext;
 import com.ibm.xsp.model.domino.ViewNavigatorEx;
 import com.ibm.xsp.model.domino.ViewNavigatorFactory;
 import com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx;
-import com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx9;
 
 /**
  * @author Nathan T. Freeman
@@ -54,16 +53,16 @@ public class OpenntfViewNavigatorFactoryFactory implements ViewNavigatorFactory.
 			viewName_ = viewName;
 		}
 
-		@Override
-		public int findNavigatorType() {
-			// System.out.println("findNavigatorType requested");
-			return 1337;
-		}
+		// @Override
+		// public int findNavigatorType() {
+		// // System.out.println("findNavigatorType requested");
+		// return 1337;
+		// }
 
 		@Override
 		public ViewNavigatorEx createNavigator() {
 			ViewNavigatorEx result = super.createNavigator();
-			if (result instanceof NOIViewNavigatorEx9 || result instanceof NOIViewNavigatorEx) {
+			if (result instanceof NOIViewNavigatorEx) {
 				if (OpenntfDominoImplicitObjectFactory2.isAppGodMode(FacesContext.getCurrentInstance())) {
 					// FacesContext ctx = FacesContext.getCurrentInstance();
 					// if (ctx instanceof DominoFacesContext) {
