@@ -405,7 +405,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 	 */
 	public void addFacesMessage(final String component, String msg) {
 		try {
-			if (!"".equals(getDisplayErrorGeneric())) {
+			if (StringUtil.isNotEmpty(getDisplayErrorGeneric())) {
 				if (null == ExtLibUtil.getRequestScope().get("genericOpenLogMessage")) {
 					ExtLibUtil.getRequestScope().put("genericOpenLogMessage", "Added");
 				} else {
@@ -413,7 +413,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 				}
 				msg = displayErrorGeneric_;
 			}
-			FacesContext.getCurrentInstance().addMessage(component, new FacesMessage(msg));
+			FacesContext.getCurrentInstance().addMessage(component, new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, msg));
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}

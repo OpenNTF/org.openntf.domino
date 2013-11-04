@@ -45,7 +45,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		return GODMODE.booleanValue();
 	}
 
-	private static boolean isAppGodMode(final FacesContext ctx) {
+	public static boolean isAppGodMode(final FacesContext ctx) {
 		// Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
 		Object current = getAppMap(ctx).get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_GODMODE");
 		if (current == null) {

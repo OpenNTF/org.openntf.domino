@@ -10,11 +10,8 @@
 		</managed-bean-class>
 		<managed-bean-scope>application</managed-bean-scope>
 	</managed-bean>
-
-	<lifecycle>
-		<phase-listener>
-			org.openntf.domino.xsp.XspOpenLogPhaseListener
-		</phase-listener>
-	</lifecycle>
-	
+  <!-- Phase Listener -->
+  <lifecycle>
+    <phase-listener>org.openntf.domino.xsp.XspOpenLogPhaseListener</phase-listener>
+  </lifecycle>
 </faces-config>
