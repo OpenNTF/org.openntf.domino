@@ -1,8 +1,10 @@
 package org.openntf.domino.xsp.helpers;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
 import org.openntf.domino.ext.Session.Fixes;
@@ -22,7 +24,12 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	private static Boolean GODMODE;
 
 	private static Map<String, Object> getAppMap(final FacesContext ctx) {
-		Map<String, Object> result = ctx.getExternalContext().getApplicationMap();
+		if (ctx == null)
+			return new HashMap<String, Object>();
+		ExternalContext ec = ctx.getExternalContext();
+		if (ec == null)
+			return new HashMap<String, Object>();
+		Map<String, Object> result = ec.getApplicationMap();
 		return result;
 	}
 
