@@ -3,14 +3,11 @@
  */
 package org.openntf.domino.xsp;
 
-import java.util.List;
-
 import javax.faces.FacesException;
 import javax.faces.context.FacesContext;
 import javax.faces.context.FacesContextFactory;
 import javax.faces.lifecycle.Lifecycle;
 
-import org.openntf.domino.Mapper;
 import org.openntf.domino.utils.Factory;
 
 import com.ibm.xsp.FacesExceptionEx;
@@ -49,7 +46,7 @@ public class OpenntfFacesContextFactory extends FacesContextFactory implements c
 	}
 
 	public OpenntfFacesContextFactory(final FacesContextFactory delegate) {
-		// System.out.println("Creating new OpenntfFacesContextFactory from delegate");
+		System.out.println("Creating new OpenntfFacesContextFactory from delegate: " + delegate.getClass().getName());
 
 		if (delegate instanceof FacesContextFactoryImpl) {
 			_delegate = ((FacesContextFactoryImpl) delegate).getDelegate();
@@ -71,12 +68,6 @@ public class OpenntfFacesContextFactory extends FacesContextFactory implements c
 
 		try {
 			ClassLoader cl = ctx.getContextClassLoader();
-			@SuppressWarnings("unchecked")
-			List<Object> mapperList = ctx.getApplicationEx().findServices("org.openntf.domino.mapper");
-			System.out.println("Setting up factory. Mapperservices: " + mapperList.size());
-			if (mapperList.size() > 0) {
-				Factory.setMapper((Mapper) mapperList.get(0));
-			}
 			Factory.setClassLoader(cl);
 			if (ctx instanceof com.ibm.xsp.context.FacesContextEx) {
 				((com.ibm.xsp.context.FacesContextEx) ctx).addRequestListener(this);
