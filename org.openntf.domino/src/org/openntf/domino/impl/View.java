@@ -1083,7 +1083,12 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getDocumentByKey(final Object key, final boolean exact) {
 		try {
-			return Factory.fromLotus(getDelegate().getDocumentByKey(toDominoFriendly(key, this), exact), Document.class, this);
+			Object o = toDominoFriendly(key, this);
+			if (o instanceof Vector) {
+				return Factory.fromLotus(getDelegate().getDocumentByKey((Vector) o, exact), Document.class, this);
+			} else {
+				return Factory.fromLotus(getDelegate().getDocumentByKey(o, exact), Document.class, this);
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
