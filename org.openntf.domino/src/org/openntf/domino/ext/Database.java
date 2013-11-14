@@ -259,4 +259,8 @@ public interface Database extends Base {
 	public org.openntf.domino.Document remove(final Serializable key);
 
 	public Collection<org.openntf.domino.Document> values();
+
+	public void openMail();
+
+	public org.openntf.domino.Database getMail();
 }
