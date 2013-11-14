@@ -32,6 +32,9 @@ import com.ibm.icu.util.Calendar;
 public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.DateRange> implements org.openntf.domino.DateRange,
 		lotus.domino.DateRange {
 
+	private java.util.Date startDate_;
+	private java.util.Date endDate_;
+
 	/**
 	 * Instantiates a new date range.
 	 * 
@@ -42,6 +45,34 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	 */
 	public DateRange(final lotus.domino.DateRange delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
+		initialize(delegate);
+	}
+
+	private void initialize(final lotus.domino.DateRange delegate) {
+		try {
+			lotus.domino.DateTime dt = delegate.getStartDateTime();
+			if (dt != null) {
+				startDate_ = dt.toJavaDate();
+			}
+		} catch (NotesException ne) {
+			throw new RuntimeException(ne);
+		}
+		try {
+			lotus.domino.DateTime dt = delegate.getEndDateTime();
+			if (dt != null) {
+				endDate_ = dt.toJavaDate();
+			}
+		} catch (NotesException ne) {
+			throw new RuntimeException(ne);
+		}
+	}
+
+	public Date getEndDate() {
+		return endDate_;
+	}
+
+	public Date getStartDate() {
+		return startDate_;
 	}
 
 	/*
@@ -103,6 +134,14 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 		}
 	}
 
+	public void setEndDate(final java.util.Date date) {
+		endDate_ = date;
+	}
+
+	public void setStartDate(final java.util.Date date) {
+		startDate_ = date;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -113,7 +152,7 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 		try {
 			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(end);
 			getDelegate().setEndDateTime(dt);
-			enc_recycle(dt);
+			//			enc_recycle(dt);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -131,7 +170,7 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 		try {
 			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(start);
 			getDelegate().setStartDateTime(dt);
-			enc_recycle(dt);
+			//			enc_recycle(dt);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
