@@ -15,11 +15,16 @@
  */
 package org.openntf.domino.impl;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Date;
 
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Session;
+import org.openntf.domino.exceptions.BlockedCrashException;
+import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -32,8 +37,10 @@ import com.ibm.icu.util.Calendar;
 public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.DateRange> implements org.openntf.domino.DateRange,
 		lotus.domino.DateRange {
 
-	private java.util.Date startDate_;
-	private java.util.Date endDate_;
+	//	private java.util.Date startDate_;
+	//	private java.util.Date endDate_;
+	private DateTime startDateTime_;
+	private DateTime endDateTime_;
 
 	/**
 	 * Instantiates a new date range.
@@ -44,15 +51,27 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	 *            the parent
 	 */
 	public DateRange(final lotus.domino.DateRange delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
-		initialize(delegate);
+		super(delegate, Factory.getSession(parent));
+		if (delegate instanceof lotus.domino.local.DateRange) {
+			initialize(delegate);
+			Base.s_recycle(delegate);
+		}
+	}
+
+	public DateRange(final java.util.Date start, final java.util.Date end, final org.openntf.domino.Base<?> parent) {
+		super(null, Factory.getSession(parent));
+		//		Session session = Factory.getSession(parent);
+		startDateTime_ = new DateTime(start, Factory.getSession(parent));
+		endDateTime_ = new DateTime(end, Factory.getSession(parent));
+		//		startDate_ = start;
+		//		endDate_ = end;
 	}
 
 	private void initialize(final lotus.domino.DateRange delegate) {
 		try {
 			lotus.domino.DateTime dt = delegate.getStartDateTime();
 			if (dt != null) {
-				startDate_ = dt.toJavaDate();
+				startDateTime_ = Factory.fromLotus(dt, DateTime.class, getParent());
 			}
 		} catch (NotesException ne) {
 			throw new RuntimeException(ne);
@@ -60,7 +79,7 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 		try {
 			lotus.domino.DateTime dt = delegate.getEndDateTime();
 			if (dt != null) {
-				endDate_ = dt.toJavaDate();
+				endDateTime_ = Factory.fromLotus(dt, DateTime.class, getParent());
 			}
 		} catch (NotesException ne) {
 			throw new RuntimeException(ne);
@@ -68,11 +87,15 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	}
 
 	public Date getEndDate() {
-		return endDate_;
+		if (endDateTime_ == null)
+			return null;
+		return endDateTime_.toJavaDate();
 	}
 
 	public Date getStartDate() {
-		return startDate_;
+		if (startDateTime_ == null)
+			return null;
+		return startDateTime_.toJavaDate();
 	}
 
 	/*
@@ -82,13 +105,7 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	 */
 	@Override
 	public DateTime getEndDateTime() {
-		try {
-			return Factory.fromLotus(getDelegate().getEndDateTime(), DateTime.class, getParent());
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return endDateTime_;
 
 	}
 
@@ -109,13 +126,7 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	 */
 	@Override
 	public DateTime getStartDateTime() {
-		try {
-			return Factory.fromLotus(getDelegate().getStartDateTime(), DateTime.class, getParent());
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return startDateTime_;
 	}
 
 	/*
@@ -125,21 +136,30 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	 */
 	@Override
 	public String getText() {
-		try {
-			return getDelegate().getText();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
+		StringBuilder sb = new StringBuilder();
+		if (startDateTime_ != null) {
+			sb.append(startDateTime_.getLocalTime());
+			sb.append(" - ");
 		}
+		if (endDateTime_ != null) {
+			sb.append(endDateTime_.getLocalTime());
+		}
+		return sb.toString();
+		//		try {
+		//			return getDelegate().getText();
+		//		} catch (NotesException e) {
+		//			DominoUtils.handleException(e);
+		//			return null;
+		//
+		//		}
 	}
 
 	public void setEndDate(final java.util.Date date) {
-		endDate_ = date;
+		endDateTime_ = new DateTime(date, getParent());
 	}
 
 	public void setStartDate(final java.util.Date date) {
-		startDate_ = date;
+		startDateTime_ = new DateTime(date, getParent());
 	}
 
 	/*
@@ -149,15 +169,7 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	 */
 	@Override
 	public void setEndDateTime(final lotus.domino.DateTime end) {
-		try {
-			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(end);
-			getDelegate().setEndDateTime(dt);
-			//			enc_recycle(dt);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-
-		}
-
+		endDateTime_ = Factory.fromLotus(end, DateTime.class, getParent());
 	}
 
 	/*
@@ -167,14 +179,7 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	 */
 	@Override
 	public void setStartDateTime(final lotus.domino.DateTime start) {
-		try {
-			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(start);
-			getDelegate().setStartDateTime(dt);
-			//			enc_recycle(dt);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-
-		}
+		startDateTime_ = Factory.fromLotus(start, DateTime.class, getParent());
 	}
 
 	/*
@@ -184,11 +189,26 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	 */
 	@Override
 	public void setText(final String text) {
+		throw new UnimplementedException("DateRange.setText(String) has not yet been implemented.");
+		//		try {
+		//			getDelegate().setText(text);
+		//		} catch (NotesException e) {
+		//			DominoUtils.handleException(e);
+		//
+		//		}
+	}
+
+	public lotus.domino.DateRange toLotus() {
 		try {
-			getDelegate().setText(text);
+			lotus.domino.Session ses = (lotus.domino.Session) Base.getDelegate(getAncestorSession());
+			if (startDateTime_ != null && endDateTime_ != null) {
+				return ses.createDateRange(startDateTime_.toJavaDate(), endDateTime_.toJavaDate());
+			}
+			throw new BlockedCrashException(
+					"Not attempting a return of a valid DateRange because either start date or end date is null and crashes may result.");
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
-
+			return null;
 		}
 	}
 
@@ -255,6 +275,22 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 		Date start = this.getStartDateTime().toJavaDate();
 		Date end = this.getEndDateTime().toJavaDate();
 		return (date.equals(start) || date.after(start)) && (date.equals(end) || date.before(end));
+	}
+
+	/* (non-Javadoc)
+	 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
+	 */
+	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+		startDateTime_ = (DateTime) in.readObject();
+		endDateTime_ = (DateTime) in.readObject();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
+	 */
+	public void writeExternal(final ObjectOutput out) throws IOException {
+		out.writeObject(startDateTime_);
+		out.writeObject(endDateTime_);
 	}
 
 }
