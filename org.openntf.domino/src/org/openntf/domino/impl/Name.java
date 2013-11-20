@@ -15,6 +15,10 @@
  */
 package org.openntf.domino.impl;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
 import lotus.domino.NotesException;
 
 import org.openntf.domino.utils.DominoUtils;
@@ -586,6 +590,66 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	@Override
 	public Session getAncestorSession() {
 		return this.getParent();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
+	 */
+	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+		hierarchical = in.readBoolean();
+		abbreviated = in.readUTF();
+		addr821 = in.readUTF();
+		addr822comment1 = in.readUTF();
+		addr822comment2 = in.readUTF();
+		addr822comment3 = in.readUTF();
+		addr822localpart = in.readUTF();
+		addr822phrase = in.readUTF();
+		admd = in.readUTF();
+		canonical = in.readUTF();
+		common = in.readUTF();
+		country = in.readUTF();
+		generation = in.readUTF();
+		given = in.readUTF();
+		initials = in.readUTF();
+		keyword = in.readUTF();
+		language = in.readUTF();
+		organization = in.readUTF();
+		orgunit1 = in.readUTF();
+		orgunit2 = in.readUTF();
+		orgunit3 = in.readUTF();
+		orgunit4 = in.readUTF();
+		prmd = in.readUTF();
+		surname = in.readUTF();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
+	 */
+	public void writeExternal(final ObjectOutput out) throws IOException {
+		out.writeBoolean(hierarchical);
+		out.writeUTF(abbreviated);
+		out.writeUTF(addr821);
+		out.writeUTF(addr822comment1);
+		out.writeUTF(addr822comment2);
+		out.writeUTF(addr822comment3);
+		out.writeUTF(addr822localpart);
+		out.writeUTF(addr822phrase);
+		out.writeUTF(admd);
+		out.writeUTF(canonical);
+		out.writeUTF(common);
+		out.writeUTF(country);
+		out.writeUTF(generation);
+		out.writeUTF(given);
+		out.writeUTF(initials);
+		out.writeUTF(keyword);
+		out.writeUTF(language);
+		out.writeUTF(organization);
+		out.writeUTF(orgunit1);
+		out.writeUTF(orgunit2);
+		out.writeUTF(orgunit3);
+		out.writeUTF(orgunit4);
+		out.writeUTF(prmd);
+		out.writeUTF(surname);
 	}
 
 }
