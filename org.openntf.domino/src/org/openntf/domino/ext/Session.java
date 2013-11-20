@@ -134,4 +134,6 @@ public interface Session {
 
 	public void boogie();
 
+	public String getUnique();
+
 }
