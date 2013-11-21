@@ -2860,4 +2860,25 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		return ident_.equalsIgnoreCase(database.ident_);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Database#openMail()
+	 */
+	public org.openntf.domino.Database getMail() {
+		return getAncestorSession().getDbDirectory(null).openMailDatabase();
+	}
+
+	public void openMail() {
+		Session s = getAncestorSession();
+		try {
+			lotus.domino.Session rawSess = (lotus.domino.Session) Base.getDelegate(s);
+			lotus.domino.DbDirectory rawDir = rawSess.getDbDirectory(null);
+			lotus.domino.Database rawDb = rawDir.openMailDatabase();
+			Base.s_recycle(getDelegate());
+			this.setDelegate(rawDb);
+			rawDir.recycle();
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
+	}
+
 }

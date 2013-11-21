@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoListener;
+import org.openntf.domino.exceptions.BlockedCrashException;
 import org.openntf.domino.ext.Formula;
 import org.openntf.domino.thread.DominoLockSet;
 import org.openntf.domino.thread.DominoReference;
@@ -417,6 +418,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 */
 	public static lotus.domino.Base toLotus(final lotus.domino.Base baseObj) {
 		if (baseObj instanceof org.openntf.domino.Base) {
+			if (baseObj instanceof DateRange) {
+				return ((DateRange) baseObj).toLotus();
+			}
 			return ((Base<?, ?>) baseObj).getDelegate();
 		}
 		return baseObj;
@@ -574,6 +578,17 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		boolean result = false;
 		if (!isLocked(base)) {
 			try {
+				if (base instanceof lotus.domino.local.DateRange) {	//NTF - check to see if we have valid start/end dates to prevent crashes in 9.0.1
+					lotus.domino.local.DateRange dr = (lotus.domino.local.DateRange) base;
+					lotus.domino.local.DateTime sdt = (lotus.domino.local.DateTime) dr.getStartDateTime();
+					lotus.domino.local.DateTime edt = (lotus.domino.local.DateTime) dr.getEndDateTime();
+					if (sdt == null || edt == null) {
+						//don't recycle. Better to leak some memory than crash the server entirely!
+						String message = "Attempted to recycle a DateRange with a null startDateTime or endDateTime. This would have caused a GPF in the Notes API, so we didn't do it.";
+						log_.log(Level.WARNING, message);
+						throw new BlockedCrashException(message);
+					}
+				}
 				base.recycle();
 				result = true;
 			} catch (Throwable t) {

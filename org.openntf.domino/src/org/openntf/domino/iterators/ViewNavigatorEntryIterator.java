@@ -45,21 +45,11 @@ public class ViewNavigatorEntryIterator extends AbstractDominoIterator<ViewEntry
 		super(navigator);
 		navigator_ = navigator;
 		//		// TODO replace this with a less-expensive operation
-		//		count_ = navigator.getCount();
 	}
 
 	public ViewNavigator getNavigator() {
 		return navigator_;
 	}
-
-	//	/**
-	//	 * Gets the current entry.
-	//	 * 
-	//	 * @return the current entry
-	//	 */
-	//	public ViewEntry getCurrentEntry() {
-	//		return currentEntry_;
-	//	}
 
 	/*
 	 * (non-Javadoc)
@@ -68,30 +58,12 @@ public class ViewNavigatorEntryIterator extends AbstractDominoIterator<ViewEntry
 	 */
 	public boolean hasNext() {
 		if (currentEntry_ != null) {
-			nextEntry_ = getNavigator().getNext(currentEntry_);
+			nextEntry_ = getNavigator().getNextSibling(currentEntry_);
 		} else {
 			nextEntry_ = getNavigator().getFirst();
 		}
 		return nextEntry_ != null;
 	}
-
-	//	/**
-	//	 * Checks if is done.
-	//	 * 
-	//	 * @return true, if is done
-	//	 */
-	//	public boolean isDone() {
-	//		return done_;
-	//	}
-	//
-	//	/**
-	//	 * Checks if is started.
-	//	 * 
-	//	 * @return true, if is started
-	//	 */
-	//	public boolean isStarted() {
-	//		return started_;
-	//	}
 
 	/*
 	 * (non-Javadoc)
@@ -99,7 +71,6 @@ public class ViewNavigatorEntryIterator extends AbstractDominoIterator<ViewEntry
 	 * @see java.util.Iterator#next()
 	 */
 	public ViewEntry next() {
-		//		started_ = true;
 		ViewEntry result = null;
 		if (hasNext()) {
 			previousEntry_ = currentEntry_;	//TODO NTF use if we want to implement a ListIterator
@@ -120,35 +91,4 @@ public class ViewNavigatorEntryIterator extends AbstractDominoIterator<ViewEntry
 		// NOOP
 	}
 
-	//	/**
-	//	 * Sets the current entry.
-	//	 * 
-	//	 * @param currentEntry
-	//	 *            the new current entry
-	//	 */
-	//	public void setCurrentEntry(final ViewEntry currentEntry) {
-	//		currentEntry_ = currentEntry;
-	//		setStarted(currentEntry != null);
-	//		setDone(currentEntry == null);
-	//	}
-	//
-	//	/**
-	//	 * Sets the done.
-	//	 * 
-	//	 * @param done
-	//	 *            the new done
-	//	 */
-	//	public void setDone(final boolean done) {
-	//		done_ = done;
-	//	}
-	//
-	//	/**
-	//	 * Sets the started.
-	//	 * 
-	//	 * @param started
-	//	 *            the new started
-	//	 */
-	//	public void setStarted(final boolean started) {
-	//		started_ = started;
-	//	}
 }

@@ -706,7 +706,20 @@ public enum Factory {
 
 	public static ClassLoader getClassLoader() {
 		if (currentClassLoader_.get() == null) {
-			setClassLoader(Thread.currentThread().getContextClassLoader());
+			ClassLoader loader = null;
+			try {
+				loader = AccessController.doPrivileged(new PrivilegedExceptionAction<ClassLoader>() {
+					@Override
+					public ClassLoader run() throws Exception {
+						return Thread.currentThread().getContextClassLoader();
+					}
+				});
+			} catch (AccessControlException e) {
+				e.printStackTrace();
+			} catch (PrivilegedActionException e) {
+				e.printStackTrace();
+			}
+			setClassLoader(loader);
 		}
 		return currentClassLoader_.get();
 	}

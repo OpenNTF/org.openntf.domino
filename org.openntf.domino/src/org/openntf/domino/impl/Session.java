@@ -1613,4 +1613,19 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 			return null;
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Session#getUnique()
+	 */
+	public String getUnique() {
+		String result = "";
+		try {
+			Vector v = getDelegate().evaluate("@Unique");
+			result = String.valueOf(v.get(0));
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		return result;
+
+	}
 }

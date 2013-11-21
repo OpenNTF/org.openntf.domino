@@ -230,6 +230,10 @@ public enum TypeUtils {
 
 	public static <T> T toNumber(final Object value, final Class<?> T) throws DataNotCompatibleException {
 		// System.out.println("Starting toNumber to get type " + T.getName() + " from a value of type " + value.getClass().getName());
+		if (value == null)
+			return null;
+		if (value instanceof Vector && (((Vector) value).isEmpty()))
+			return null;
 		T result = null;
 		Object localValue = value;
 		if (value instanceof Collection) {
@@ -320,8 +324,8 @@ public enum TypeUtils {
 	}
 
 	public static Boolean[] toBooleans(final Collection<Object> vector) {
-		if (vector == null)
-			return null;
+		if (vector == null || vector.isEmpty())
+			return new Boolean[0];
 		Boolean[] bools = new Boolean[vector.size()];
 		int i = 0;
 		for (Object o : vector) {
@@ -433,7 +437,7 @@ public enum TypeUtils {
 	}
 
 	public static String join(final Collection<Object> values, final String separator) {
-		if (values == null)
+		if (values == null || values.isEmpty())
 			return "";
 		StringBuilder sb = new StringBuilder();
 		Iterator<Object> it = values.iterator();
@@ -510,6 +514,8 @@ public enum TypeUtils {
 	public static Date toDate(Object value) throws DataNotCompatibleException {
 		if (value == null)
 			return null;
+		if (value instanceof Vector && (((Vector) value).isEmpty()))
+			return null;
 		if (value instanceof Vector) {
 			value = ((Vector) value).get(0);
 		}
@@ -518,8 +524,11 @@ public enum TypeUtils {
 		} else if (value instanceof String) {
 			// TODO finish
 			DateFormat df = new SimpleDateFormat();
+			String str = (String) value;
+			if (str.length() < 1)
+				return null;
 			try {
-				return df.parse((String) value);
+				return df.parse(str);
 			} catch (ParseException e) {
 				throw new DataNotCompatibleException("Cannot create a Date from String value " + (String) value);
 			}
@@ -531,8 +540,8 @@ public enum TypeUtils {
 	}
 
 	public static Date[] toDates(final Collection<Object> vector) throws DataNotCompatibleException {
-		if (vector == null)
-			return null;
+		if (vector == null || vector.isEmpty())
+			return new Date[0];
 
 		Date[] result = new Date[vector.size()];
 		int i = 0;
@@ -544,8 +553,8 @@ public enum TypeUtils {
 
 	public static org.openntf.domino.DateTime[] toDateTimes(final Collection<Object> vector, final org.openntf.domino.Session session)
 			throws DataNotCompatibleException {
-		if (vector == null)
-			return null;
+		if (vector == null || vector.isEmpty())
+			return new org.openntf.domino.DateTime[0];
 
 		org.openntf.domino.DateTime[] result = new org.openntf.domino.DateTime[vector.size()];
 		int i = 0;
@@ -557,8 +566,8 @@ public enum TypeUtils {
 
 	public static org.openntf.domino.Name[] toNames(final Collection<Object> vector, final org.openntf.domino.Session session)
 			throws DataNotCompatibleException {
-		if (vector == null)
-			return null;
+		if (vector == null || vector.isEmpty())
+			return new org.openntf.domino.Name[0];
 
 		org.openntf.domino.Name[] result = new org.openntf.domino.Name[vector.size()];
 		int i = 0;
@@ -569,8 +578,8 @@ public enum TypeUtils {
 	}
 
 	public static String[] toStrings(final Collection<Object> vector) throws DataNotCompatibleException {
-		if (vector == null)
-			return null;
+		if (vector == null || vector.isEmpty())
+			return new String[0];
 
 		String[] strings = new String[vector.size()];
 		int i = 0;
@@ -586,8 +595,8 @@ public enum TypeUtils {
 	}
 
 	public static Pattern[] toPatterns(final Collection<Object> vector) throws DataNotCompatibleException {
-		if (vector == null)
-			return null;
+		if (vector == null || vector.isEmpty())
+			return new Pattern[0];
 
 		Pattern[] patterns = new Pattern[vector.size()];
 		int i = 0;
@@ -598,8 +607,8 @@ public enum TypeUtils {
 	}
 
 	public static java.lang.Object[] toObjects(final Collection<Object> vector) throws DataNotCompatibleException {
-		if (vector == null)
-			return null;
+		if (vector == null || vector.isEmpty())
+			return new Object[0];
 
 		Object[] patterns = new Object[vector.size()];
 		int i = 0;
@@ -610,8 +619,8 @@ public enum TypeUtils {
 	}
 
 	public static Class<?>[] toClasses(final Collection<Object> vector) throws DataNotCompatibleException {
-		if (vector == null)
-			return null;
+		if (vector == null || vector.isEmpty())
+			return new Class[0];
 
 		ClassLoader cl = Factory.getClassLoader();
 		Class<?>[] classes = new Class[vector.size()];
@@ -635,6 +644,10 @@ public enum TypeUtils {
 	public static Enum<?> toEnum(final Object value) throws DataNotCompatibleException {
 		//		ClassLoader cl = Factory.getClassLoader();
 		//		System.out.println("Enum coercion requested from value " + String.valueOf(value));
+		if (value == null)
+			return null;
+		if (value instanceof Vector && (((Vector) value).isEmpty()))
+			return null;
 		Enum<?> result = null;
 		String en = String.valueOf(value);
 		String ename = null;
@@ -681,9 +694,8 @@ public enum TypeUtils {
 	}
 
 	public static Enum<?>[] toEnums(final Collection<Object> vector) throws DataNotCompatibleException {
-		if (vector == null)
-			return null;
-
+		if (vector == null || vector.isEmpty())
+			return new Enum[0];
 		ClassLoader cl = Factory.getClassLoader();
 		Enum<?>[] classes = new Enum[vector.size()];
 		int i = 0;
@@ -715,9 +727,8 @@ public enum TypeUtils {
 	}
 
 	public static Formula[] toFormulas(final Collection<Object> vector) throws DataNotCompatibleException {
-		if (vector == null)
-			return null;
-
+		if (vector == null || vector.isEmpty())
+			return new Formula[0];
 		Formula[] formulas = new Formula[vector.size()];
 		int i = 0;
 		for (Object o : vector) {
@@ -728,8 +739,8 @@ public enum TypeUtils {
 	}
 
 	public static BigString[] toBigStrings(final Collection<Object> vector) throws DataNotCompatibleException {
-		if (vector == null)
-			return null;
+		if (vector == null || vector.isEmpty())
+			return new BigString[0];
 		BigString[] strings = new BigString[vector.size()];
 		int i = 0;
 		for (Object o : vector) {

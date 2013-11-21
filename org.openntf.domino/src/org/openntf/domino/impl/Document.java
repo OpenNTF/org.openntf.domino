@@ -2309,7 +2309,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		// System.out.println("Starting save operation...");
 		boolean result = false;
 		if (removeType_ != null) {
-			log_.log(Level.WARNING, "Save called on a document marked for a transactional delete. So there's no point...");
+			log_.log(Level.INFO, "Save called on a document marked for a transactional delete. So there's no point...");
 			return true;
 		}
 		if (isDirty()) {
@@ -2726,7 +2726,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				lotus.domino.Document d = null;
 				lotus.domino.Database db = ((org.openntf.domino.impl.Database) getParentDatabase()).getDelegate();
 				if (db != null) {
-
 					if (Integer.valueOf(noteid_, 16) == 0) {
 						if (isNew_) {
 							d = db.createDocument();
@@ -2736,8 +2735,14 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 										+ ". However the document was new, so we'll just create a new one.");
 							}
 						} else {
-							log_.log(Level.WARNING, "ALERT! NO NOTEID AVAILABLE for document unid " + String.valueOf(unid_)
-									+ ". This document cannot be resurrected.");
+							log_.log(Level.INFO, "ALERT! NO NOTEID AVAILABLE for document unid " + String.valueOf(unid_)
+									+ ". It is questionable whether this document can successfully be resurrected.");
+							try {
+								d = db.getDocumentByUNID(unid_);
+							} catch (NotesException ne) {
+								log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
+										+ ", but the document was not found.");
+							}
 						}
 					} else {
 						d = db.getDocumentByID(noteid_);
