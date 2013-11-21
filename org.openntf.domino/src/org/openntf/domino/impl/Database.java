@@ -22,6 +22,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -50,7 +51,6 @@ import com.ibm.icu.util.GregorianCalendar;
 /**
  * The Class Database.
  */
-@SuppressWarnings("deprecation")
 public class Database extends Base<org.openntf.domino.Database, lotus.domino.Database> implements org.openntf.domino.Database {
 	private static final Logger log_ = Logger.getLogger(Database.class.getName());
 	/** The server_. */
@@ -2536,54 +2536,6 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
-	public boolean isEmpty() {
-		return this.getAllDocuments().getCount() == 0;
-	}
-
-	public int size() {
-		return this.getAllDocuments().getCount();
-	}
-
-	@Override
-	public boolean containsKey(final Serializable key) {
-		return get(key) != null;
-	}
-
-	@Override
-	public org.openntf.domino.Document get(final Serializable key) {
-		return this.getDocumentByKey(key);
-	}
-
-	public org.openntf.domino.Document put(final Serializable key, final org.openntf.domino.Document value) {
-		// Ignore the value for now
-		if (key != null) {
-			Document doc = this.getDocumentByKey(key);
-			if (doc == null) {
-				doc = this.getDocumentByKey(key, true);
-				doc.save();
-				return null;
-			} else {
-				return doc;
-			}
-		}
-		return null;
-	}
-
-	public org.openntf.domino.Document remove(final Serializable key) {
-		if (key != null) {
-			Document doc = this.getDocumentByKey(key.toString());
-			if (doc != null) {
-				doc.remove(false);
-			}
-			return null;
-		}
-		return null;
-	}
-
-	public Collection<org.openntf.domino.Document> values() {
-		return getAllDocuments();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -2881,4 +2833,125 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Database#getDocumentMap()
+	 */
+	public Map<Serializable, org.openntf.domino.Document> getDocumentMap() {
+		return new DocumentMap();
+	}
+
+	private class DocumentMap implements Map<Serializable, org.openntf.domino.Document> {
+
+		@Override
+		public boolean isEmpty() {
+			return getAllDocuments().isEmpty();
+		}
+
+		@Override
+		public int size() {
+			return getAllDocuments().size();
+		}
+
+		@Override
+		public boolean containsKey(final Object key) {
+			if (!(key instanceof Serializable))
+				throw new IllegalArgumentException();
+			return get(key) != null;
+		}
+
+		@Override
+		public org.openntf.domino.Document get(final Object key) {
+			if (!(key instanceof Serializable))
+				throw new IllegalArgumentException();
+			return getDocumentByKey((Serializable) key);
+		}
+
+		@Override
+		public org.openntf.domino.Document put(final Serializable key, final org.openntf.domino.Document value) {
+			// Ignore the value for now
+			if (key != null) {
+				Document doc = getDocumentByKey(key);
+				if (doc == null) {
+					doc = createDocument((Map<String, Object>) value);
+					doc.setUniversalID(DominoUtils.toUnid(key));
+					doc.save();
+					return null;
+				} else {
+					return doc;
+				}
+			}
+			return null;
+		}
+
+		@Override
+		/* (non-Javadoc)
+		 * @see java.util.Map#remove(java.lang.Object)
+		 */
+		public org.openntf.domino.Document remove(final Object key) {
+			if (key != null) {
+				Document doc = getDocumentByKey(key.toString());
+				if (doc != null) {
+					doc.remove(false);
+				}
+				return null;
+			}
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see java.util.Map#values()
+		 */
+		@Override
+		public Collection<org.openntf.domino.Document> values() {
+			return getAllDocuments();
+		}
+
+		/* (non-Javadoc)
+		 * @see java.util.Map#clear()
+		 */
+		@Override
+		public void clear() {
+
+		}
+
+		/* (non-Javadoc)
+		 * @see java.util.Map#containsValue(java.lang.Object)
+		 */
+		@Override
+		public boolean containsValue(final Object value) {
+			return false;
+		}
+
+		/* (non-Javadoc)
+		 * @see java.util.Map#entrySet()
+		 */
+		@Override
+		public Set<java.util.Map.Entry<Serializable, org.openntf.domino.Document>> entrySet() {
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see java.util.Map#keySet()
+		 */
+		@Override
+		public Set<Serializable> keySet() {
+			// Pity NoteCollection doesn't have a .getUNIDs() method
+			Set<Serializable> result = new HashSet(size());
+			for (org.openntf.domino.Document doc : values()) {
+				result.add(doc.getUniversalID());
+			}
+			return result;
+		}
+
+		/* (non-Javadoc)
+		 * @see java.util.Map#putAll(java.util.Map)
+		 */
+		@Override
+		public void putAll(final Map<? extends Serializable, ? extends org.openntf.domino.Document> m) {
+			for (Map.Entry<? extends Serializable, ? extends org.openntf.domino.Document> entry : m.entrySet()) {
+				put(entry.getKey(), entry.getValue());
+			}
+		}
+
+	}
 }

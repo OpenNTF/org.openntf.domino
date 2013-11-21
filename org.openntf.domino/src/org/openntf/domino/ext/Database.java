@@ -4,7 +4,6 @@
 package org.openntf.domino.ext;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
@@ -231,36 +230,12 @@ public interface Database extends Base {
 
 	public void refreshDesign();
 
-	public boolean isEmpty();
-
-	public int size();
-
-	/**
-	 * Contains key.
-	 * 
-	 * @param key
-	 *            the key
-	 * @return true, if successful
-	 */
-
-	public boolean containsKey(final Serializable key);
-
-	/**
-	 * Gets the.
-	 * 
-	 * @param key
-	 *            the key
-	 * @return the document
-	 */
-	public org.openntf.domino.Document get(final Serializable key);
-
-	public org.openntf.domino.Document put(final Serializable key, final org.openntf.domino.Document value);
-
-	public org.openntf.domino.Document remove(final Serializable key);
-
-	public Collection<org.openntf.domino.Document> values();
-
 	public void openMail();
 
 	public org.openntf.domino.Database getMail();
+
+	/**
+	 * @return a Map view of the documents in the database, keyed according to getDocumentByKey
+	 */
+	public Map<Serializable, org.openntf.domino.Document> getDocumentMap();
 }
