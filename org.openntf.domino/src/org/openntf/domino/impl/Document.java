@@ -127,6 +127,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			unid_ = delegate.getUniversalID();
 			// System.out.println("initializing new document from " + unid_);
 			isNew_ = delegate.isNewNote();
+			if (getAncestorSession().isFixEnabled(Fixes.FORCE_JAVA_DATES)) {
+				delegate.setPreferJavaDates(true);
+			}
 			// created_ = DominoUtils.toJavaDateSafe(delegate.getCreated());
 			// initiallyModified_ = DominoUtils.toJavaDateSafe(delegate.getInitiallyModified());
 			// lastModified_ = DominoUtils.toJavaDateSafe(delegate.getLastModified());

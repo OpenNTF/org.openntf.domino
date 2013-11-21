@@ -26,6 +26,7 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
+import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -49,6 +50,13 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 */
 	public ViewEntry(final lotus.domino.ViewEntry delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
+		try {
+			if (getAncestorSession().isFixEnabled(Fixes.FORCE_JAVA_DATES)) {
+				delegate.setPreferJavaDates(true);
+			}
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
 	}
 
 	/*

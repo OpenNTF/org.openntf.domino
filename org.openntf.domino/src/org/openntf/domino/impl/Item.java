@@ -178,7 +178,11 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	@Override
 	public DateTime getDateTimeValue() {
 		try {
-			return Factory.fromLotus(getDelegate().getDateTimeValue(), DateTime.class, this);
+			lotus.domino.DateTime delegate = getDelegate().getDateTimeValue();
+			if (delegate == null) {
+				System.out.println("Delegate DateTime is null for item " + getName() + " in doc " + getAncestorDocument().getUniversalID());
+			}
+			return Factory.fromLotus(delegate, DateTime.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
