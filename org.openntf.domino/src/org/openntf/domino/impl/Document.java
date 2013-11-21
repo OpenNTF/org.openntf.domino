@@ -2309,7 +2309,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		// System.out.println("Starting save operation...");
 		boolean result = false;
 		if (removeType_ != null) {
-			log_.log(Level.WARNING, "Save called on a document marked for a transactional delete. So there's no point...");
+			log_.log(Level.INFO, "Save called on a document marked for a transactional delete. So there's no point...");
 			return true;
 		}
 		if (isDirty()) {

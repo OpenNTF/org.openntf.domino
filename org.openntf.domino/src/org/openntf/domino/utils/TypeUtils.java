@@ -518,8 +518,11 @@ public enum TypeUtils {
 		} else if (value instanceof String) {
 			// TODO finish
 			DateFormat df = new SimpleDateFormat();
+			String str = (String) value;
+			if (str.length() < 1)
+				return null;
 			try {
-				return df.parse((String) value);
+				return df.parse(str);
 			} catch (ParseException e) {
 				throw new DataNotCompatibleException("Cannot create a Date from String value " + (String) value);
 			}
