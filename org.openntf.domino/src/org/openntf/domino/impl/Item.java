@@ -177,10 +177,11 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 */
 	@Override
 	public DateTime getDateTimeValue() {
+		//		System.out.println("Getting DateTime value from item " + getName());
 		try {
 			lotus.domino.DateTime delegate = getDelegate().getDateTimeValue();
 			if (delegate == null) {
-				System.out.println("Delegate DateTime is null for item " + getName() + " in doc " + getAncestorDocument().getUniversalID());
+				//				System.out.println("Delegate DateTime is null for item " + getName() + " in doc " + getAncestorDocument().getUniversalID());
 			}
 			return Factory.fromLotus(delegate, DateTime.class, this);
 		} catch (NotesException e) {
@@ -406,6 +407,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 */
 	@Override
 	public Vector<org.openntf.domino.DateTime> getValueDateTimeArray() {
+		//		System.out.println("Getting DateTimeArray value from item " + getName());
 		try {
 			return Factory.fromLotusAsVector(getDelegate().getValueDateTimeArray(), org.openntf.domino.DateTime.class, this);
 		} catch (NotesException e) {

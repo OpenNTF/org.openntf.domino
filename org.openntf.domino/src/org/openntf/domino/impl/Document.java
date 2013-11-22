@@ -130,11 +130,15 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			if (getAncestorSession().isFixEnabled(Fixes.FORCE_JAVA_DATES)) {
 				delegate.setPreferJavaDates(true);
 			}
+			if (isNew_) {
+				//				System.out.println("Wrapping a new document rather than an existing one...");
+				//				Thread.sleep(100);
+			}
 			// created_ = DominoUtils.toJavaDateSafe(delegate.getCreated());
 			// initiallyModified_ = DominoUtils.toJavaDateSafe(delegate.getInitiallyModified());
 			// lastModified_ = DominoUtils.toJavaDateSafe(delegate.getLastModified());
 			// lastAccessed_ = DominoUtils.toJavaDateSafe(delegate.getLastAccessed());
-		} catch (NotesException e) {
+		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}
 	}

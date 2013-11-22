@@ -312,6 +312,13 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @see org.openntf.domino.Database#createDocument()
 	 */
 	public Document createDocument() {
+		//		System.out.println("Generating a new document in " + this.getFilePath());
+		//		try {
+		//			Thread.sleep(100);
+		//		} catch (InterruptedException e1) {
+		//			DominoUtils.handleException(e1);
+		//			return null;
+		//		}
 		Document result = null;
 		boolean go = true;
 		go = fireListener(generateEvent(Events.BEFORE_CREATE_DOCUMENT, this, null));
@@ -323,6 +330,13 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			}
 			fireListener(generateEvent(Events.AFTER_CREATE_DOCUMENT, this, null));
 		}
+		//		System.out.println("Returning a newly created document in " + this.getFilePath());
+		//		try {
+		//			Thread.sleep(100);
+		//		} catch (InterruptedException e1) {
+		//			DominoUtils.handleException(e1);
+		//			return null;
+		//		}
 		return result;
 	}
 
