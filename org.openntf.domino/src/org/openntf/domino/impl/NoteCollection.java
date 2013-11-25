@@ -152,13 +152,16 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	public void add(final lotus.domino.DocumentCollection additionSpecifier) {
 		try {
 			// TODO Figure out why the normal add() line with the DC throws a NotesException("Invalid object type for method argument")
-			lotus.domino.DocumentCollection adder = (lotus.domino.DocumentCollection) toLotus(additionSpecifier);
-			lotus.domino.Document doc = adder.getFirstDocument();
+			//lotus.domino.DocumentCollection adder = (lotus.domino.DocumentCollection) toLotus(additionSpecifier);
+
+			//we have to do this here, because we must not recycle the notes document (it can be in use elsewhere!)
+			lotus.domino.Document doc = additionSpecifier.getFirstDocument();
 			while (doc != null) {
-				getDelegate().add(doc);
+
+				getDelegate().add((lotus.domino.Document) toLotus(doc));
 
 				lotus.domino.Document tempDoc = doc;
-				doc = adder.getNextDocument(doc);
+				doc = additionSpecifier.getNextDocument(doc);
 				tempDoc.recycle();
 			}
 			// getDelegate().add((lotus.domino.DocumentCollection) toLotus(additionSpecifier));
