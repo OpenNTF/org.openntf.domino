@@ -35,6 +35,3 @@ Export-Package: com.tinkerpop.blueprints,
  org.openntf.domino.utils.xml
 Require-Bundle: com.ibm.commons,
  com.ibm.icu;bundle-version="3.8.1"
-Bundle-ClassPath: lib/tinkerpop.jar,
- lib/domino.jar,
- .
