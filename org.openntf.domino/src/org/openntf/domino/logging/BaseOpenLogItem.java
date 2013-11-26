@@ -142,12 +142,12 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	protected String _message;
 	protected Throwable _baseException;
 	protected String _errDocUnid;
-	protected Session _session;
-	protected Database _logDb;
-	protected Database _currentDatabase;
-	protected Date _startTime;
-	protected Date _eventTime;
-	protected Document _errDoc;
+	protected transient Session _session;
+	protected transient Database _logDb;
+	protected transient Database _currentDatabase;
+	protected transient Date _startTime;
+	protected transient Date _eventTime;
+	protected transient Document _errDoc;
 	private String _currentDbPath;
 	public transient String olDebugLevel = loadFromProps("org.openntf.domino.logging.OpenLogHandler.OpenLogErrorsLevel");
 	public static PrintStream debugOut = System.err;

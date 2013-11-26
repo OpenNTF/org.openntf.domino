@@ -184,6 +184,10 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 				if ("com.ibm.xsp.exception.EvaluationExceptionEx".equals(fe.getCause().getClass().getName())) {
 					// Hit by ErrorOnClick.xsp
 					ee = (EvaluationExceptionEx) fe.getCause();
+				} else if ("javax.faces.el.PropertyNotFoundException".equals(fe.getCause().getClass().getName())) {
+					// Property not found exception, so error is on a component property
+					PropertyNotFoundException pe = (PropertyNotFoundException) fe.getCause();
+					msg = "PropertyNotFoundException Error, cannot locate component:\n\n";
 				} else if ("com.ibm.xsp.exception.EvaluationExceptionEx".equals(fe.getCause().getCause().getClass().getName())) {
 					// Hit by using e.g. currentDocument.isNewDoc()
 					// i.e. using a Variable that relates to a valid Java object but a method that doesn't exist
