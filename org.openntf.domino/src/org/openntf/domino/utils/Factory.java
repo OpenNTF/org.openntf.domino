@@ -215,6 +215,14 @@ public enum Factory {
 		}
 
 	};
+
+	private static ThreadLocal<Mapper> mapper_ = new ThreadLocal<Mapper>() {
+		@Override
+		protected Mapper initialValue() {
+			return super.initialValue();
+		}
+	};
+
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Factory.class.getName());
 
@@ -407,7 +415,19 @@ public enum Factory {
 		} else if (lotus instanceof lotus.domino.DirectoryNavigator) {
 			result = (T) new org.openntf.domino.impl.DirectoryNavigator((lotus.domino.DirectoryNavigator) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Document) {
+
+			// 25.09.13/RPr: what do you think about this idea to pass every document to the database, so that the
+			// mapper can decide how and which object to return
+			Mapper mapper = getMapper();
+			if (mapper != null) {
+				result = (T) mapper.map((lotus.domino.Document) lotus, parent);
+				if (result != null) {
+					// TODO: What to do if mapper does not map
+					return result;
+				}
+			}
 			result = (T) new org.openntf.domino.impl.Document((lotus.domino.Document) lotus, parent);
+
 		} else if (lotus instanceof lotus.domino.DocumentCollection) {
 			result = (T) new org.openntf.domino.impl.DocumentCollection((lotus.domino.DocumentCollection) lotus, parent);
 		} else if (lotus instanceof lotus.domino.DxlExporter) {
@@ -735,6 +755,19 @@ public enum Factory {
 		currentClassLoader_.set(null);
 	}
 
+	public static Mapper getMapper() {
+		return mapper_.get();
+	}
+
+	public static void setMapper(final Mapper mapper) {
+		mapper_.set(mapper);
+
+	}
+
+	public static void clearMapper() {
+		mapper_.set(null);
+	}
+
 	public static void clearDominoGraph() {
 		DominoGraph.clearDocumentCache();
 	}
@@ -753,6 +786,7 @@ public enum Factory {
 		clearClassLoader();
 		clearBubbleExceptions();
 		clearDominoGraph();
+		clearMapper();
 		return result;
 	}
 
