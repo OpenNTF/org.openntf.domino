@@ -16,6 +16,7 @@
 package org.openntf.domino.impl;
 
 import java.lang.ref.Reference;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;

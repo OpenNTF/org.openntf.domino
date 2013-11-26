@@ -35,6 +35,7 @@ import lotus.domino.NotesException;
 import lotus.domino.NotesFactory;
 import lotus.domino.NotesThread;
 
+import org.openntf.domino.Mapper;
 import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
