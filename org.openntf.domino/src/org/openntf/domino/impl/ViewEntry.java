@@ -18,7 +18,6 @@ package org.openntf.domino.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
@@ -95,7 +94,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 * @see org.openntf.domino.ViewEntry#getColumnValues()
 	 */
 	@Override
-	public Vector<Object> getColumnValues() {
+	public java.util.Vector<Object> getColumnValues() {
 		try {
 			return Factory.wrapColumnValues(getDelegate().getColumnValues(), this.getAncestorSession());
 		} catch (NotesException e) {

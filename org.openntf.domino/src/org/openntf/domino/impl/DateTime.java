@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Date;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
@@ -91,14 +90,12 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 *            the date
 	 */
 	public DateTime(final Date date) {
-		super(null, Factory.getSession());
+		super(null, null);
 		initialize(date);
 	}
 
-	DateTime() {	// for deserialization?
-		super(null, Factory.getSession());
-		log_.log(Level.INFO,
-				"Domino objects aren't serializable. You've got a DateTime implementation without a parent session. Could be risky...");
+	public DateTime() {	// for deserialization?
+		super(null, null);
 	}
 
 	/*
@@ -370,7 +367,10 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 */
 	@Override
 	public Session getParent() {
-		return Factory.getSession(super.getParent());
+		org.openntf.domino.Base<?> result = super.getParent();
+		if (result == null)
+			return Factory.getSession();
+		return Factory.getSession(result);
 	}
 
 	/*
