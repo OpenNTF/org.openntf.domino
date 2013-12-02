@@ -783,12 +783,13 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public DocumentCollection getAllDocumentsByKey(final Object key, final boolean exact) {
 		try {
-			if (key instanceof java.util.Collection) {
-				return Factory.fromLotus(getDelegate().getAllDocumentsByKey(toDominoFriendly((java.util.Collection) key, this), exact),
-						DocumentCollection.class, this);
+			Object dominoFriendly = toDominoFriendly(key, this);
+			if (dominoFriendly instanceof Vector) {
+				return Factory
+						.fromLotus(getDelegate().getAllDocumentsByKey((Vector) dominoFriendly, exact), DocumentCollection.class, this);
+			} else {
+				return Factory.fromLotus(getDelegate().getAllDocumentsByKey(dominoFriendly, exact), DocumentCollection.class, this);
 			}
-			return Factory
-					.fromLotus(getDelegate().getAllDocumentsByKey(toDominoFriendly(key, this), exact), DocumentCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -850,11 +851,12 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewEntryCollection getAllEntriesByKey(final Object key, final boolean exact) {
 		try {
-			if (key instanceof java.util.Collection) {
-				return Factory.fromLotus(getDelegate().getAllEntriesByKey(toDominoFriendly((java.util.Collection) key, this), exact),
-						ViewEntryCollection.class, this);
+			Object dominoFriendly = toDominoFriendly(key, this);
+			if (dominoFriendly instanceof Vector) {
+				return Factory.fromLotus(getDelegate().getAllEntriesByKey((Vector) dominoFriendly, exact), ViewEntryCollection.class, this);
+			} else {
+				return Factory.fromLotus(getDelegate().getAllEntriesByKey(dominoFriendly, exact), ViewEntryCollection.class, this);
 			}
-			return Factory.fromLotus(getDelegate().getAllEntriesByKey(toDominoFriendly(key, this), exact), ViewEntryCollection.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
