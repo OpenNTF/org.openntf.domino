@@ -1084,7 +1084,12 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getDocumentByKey(final Object key, final boolean exact) {
 		try {
-			return Factory.fromLotus(getDelegate().getDocumentByKey(toDominoFriendly(key, this), exact), Document.class, this);
+			Object toDominoFriendly = toDominoFriendly(key, this);
+			if (toDominoFriendly instanceof Vector) {
+				return Factory.fromLotus(getDelegate().getDocumentByKey((Vector) toDominoFriendly, exact), Document.class, this);
+			} else {
+				return Factory.fromLotus(getDelegate().getDocumentByKey(toDominoFriendly, exact), Document.class, this);
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1131,7 +1136,12 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewEntry getEntryByKey(final Object key, final boolean exact) {
 		try {
-			return Factory.fromLotus(getDelegate().getEntryByKey(toDominoFriendly(key, this), exact), ViewEntry.class, this);
+			Object toDominoFriendly = toDominoFriendly(key, this);
+			if (toDominoFriendly instanceof Vector) {
+				return Factory.fromLotus(getDelegate().getEntryByKey((Vector) toDominoFriendly, exact), ViewEntry.class, this);
+			} else {
+				return Factory.fromLotus(getDelegate().getEntryByKey(toDominoFriendly, exact), ViewEntry.class, this);
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
