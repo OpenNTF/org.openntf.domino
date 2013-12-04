@@ -2748,7 +2748,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 								d = db.getDocumentByUNID(unid_);
 							} catch (NotesException ne) {
 								log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
-										+ ", but the document was not found.");
+										+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
+										+ getParentDatabase().getFilePath() + " because of: " + ne.text);
 							}
 						}
 					} else {
