@@ -15,7 +15,9 @@
  */
 package org.openntf.domino.impl;
 
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -432,15 +434,31 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 */
 	@Override
 	public Object getColumnValue(final String columnName) {
+		return getColumnValuesMap().get(columnName);
+	}
+
+	public Map<String, Object> getColumnValuesMap() {
 		if (columnValuesMap_ == null) {
 			List<Object> columnValues = getColumnValues();
-			columnValuesMap_ = new HashMap<String, Object>();
+			columnValuesMap_ = new LinkedHashMap<String, Object>();
 			for (org.openntf.domino.impl.View.DominoColumnInfo info : ((org.openntf.domino.impl.View) getParentView()).getColumnInfo()) {
 				if (info.getColumnValuesIndex() < 65535) {
-					columnValuesMap_.put(info.getItemName(), columnValues.get(info.getColumnValuesIndex()));
+					int vindex = info.getColumnValuesIndex();
+					if (columnValues.size() > vindex) {
+						columnValuesMap_.put(info.getItemName(), columnValues.get(vindex));
+					} else {
+						columnValuesMap_.put(info.getItemName(), null);
+					}
+				} else {
+					columnValuesMap_.put(info.getItemName(), null);
 				}
 			}
 		}
-		return columnValuesMap_.get(columnName);
+		return columnValuesMap_;
+	}
+
+	public Collection<Object> getColumnValuesEx() {
+		//TODO - NTF not particularly happy with this. Should it be a List instead? Or should we rely on the caller to decide?
+		return Collections.unmodifiableCollection(getColumnValuesMap().values());
 	}
 }

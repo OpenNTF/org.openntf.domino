@@ -2057,9 +2057,20 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 							mimeChk.remove();
 						}
 					}
-					result = getDelegate().replaceItemValue(itemName, resultList);
-					if (isNonSummary) {
-						result.setSummary(false);
+					try {
+						result = getDelegate().replaceItemValue(itemName, resultList);
+						if (isNonSummary) {
+							result.setSummary(false);
+						}
+					} catch (NotesException ne) {
+						String msg = ne.text;
+						if (msg.equalsIgnoreCase("Cannot convert item to requested datatype")) {
+							throw new DataNotCompatibleException("Unable to write a " + resultList.getClass().getName() + " object ("
+									+ value.getClass().getName() + ") to item " + itemName + " in document " + unid_ + " in "
+									+ getAncestorDatabase().getFilePath());
+						} else {
+							DominoUtils.handleException(ne);
+						}
 					}
 					enc_recycle(resultList);
 				} else {
