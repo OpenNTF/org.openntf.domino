@@ -3,8 +3,10 @@
  */
 package org.openntf.domino.email;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -364,9 +366,12 @@ public class DominoEmail implements IEmail {
 				InputStream is = null;
 				EmbeddedObject eo = null;
 
-				// Get content type
-				String contentType = "application/octet-stream";
 				String fileName = attach.getFileName();
+				// Get content type
+				String contentType = URLConnection.guessContentTypeFromName(fileName);
+				if (null == contentType) {
+					contentType = "application/octet-stream";
+				}
 				int idex = StringUtil.indexOfIgnoreCase(fileName, ".", fileName.length() - 6);
 				if (idex > -1) {
 					String extension = fileName.substring(idex);
@@ -381,7 +386,8 @@ public class DominoEmail implements IEmail {
 				contentType += "; name=\"" + fileName + "\"";
 
 				try {
-					if (attach.getAttachmentType() == Type.DOCUMENT) {
+					Type attachmentType = attach.getAttachmentType();
+					if (attachmentType == Type.DOCUMENT) {
 						//retrieve the document containing the attachment to send from the relevant
 						Database dbFile = getSession().getDatabase(getSession().getServerName(), attach.getDbPath());
 						Document docFile = dbFile.getDocumentByUNID(attach.getUnid());
@@ -389,8 +395,12 @@ public class DominoEmail implements IEmail {
 							eo = docFile.getAttachment(attach.getFileName());
 							is = eo.getInputStream();
 						}
-					} else {
+					} else if (attachmentType == Type.FILE) {
 						is = new FileInputStream(attach.getPath() + attach.getFileName());
+					} else if (attachmentType == Type.STREAM) {
+						is = attach.getInputStream();
+					} else {
+						is = new ByteArrayInputStream(attach.getBytes());
 					}
 
 					if (null != is) {

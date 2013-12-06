@@ -3,6 +3,8 @@
  */
 package org.openntf.domino.email;
 
+import java.io.InputStream;
+
 import org.openntf.domino.Document;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -18,10 +20,12 @@ public class EmailAttachment {
 	private String unid;
 	private String dbPath;
 	private String contentId;
+	private InputStream inputStream;
+	private byte[] bytes;
 	private boolean isInlineImage;
 
 	public static enum Type {
-		DOCUMENT(0), FILE(1);
+		DOCUMENT(0), FILE(1), STREAM(2), BYTES(3);
 
 		private final int value_;
 
@@ -106,6 +110,46 @@ public class EmailAttachment {
 	}
 
 	/**
+	 * @param inputStream
+	 *            of the attachment
+	 * @param fileName
+	 *            of the file
+	 * @param isInlineImage
+	 *            whether it should be inserted as an inline image
+	 */
+	public EmailAttachment(final InputStream inputStream, final String fileName, final boolean isInlineImage) {
+		try {
+			setAttachmentType(Type.STREAM);
+			setInputStream(inputStream);
+			setFileName(fileName);
+			setInlineImage(isInlineImage);
+			setContentId(Factory.getSession().evaluate("@Unique").toString());
+		} catch (Throwable t) {
+			DominoUtils.handleException(t);
+		}
+	}
+
+	/**
+	 * @param bytes
+	 *            byte array of the attachment
+	 * @param fileName
+	 *            of the file
+	 * @param isInlineImage
+	 *            whether it should be inserted as an inline image
+	 */
+	public EmailAttachment(final byte[] bytes, final String fileName, final boolean isInlineImage) {
+		try {
+			setAttachmentType(Type.BYTES);
+			setBytes(bytes);
+			setFileName(fileName);
+			setInlineImage(isInlineImage);
+			setContentId(Factory.getSession().evaluate("@Unique").toString());
+		} catch (Throwable t) {
+			DominoUtils.handleException(t);
+		}
+	}
+
+	/**
 	 * @param filePath
 	 *            of the on-disk attachment
 	 * @param fileName
@@ -181,6 +225,36 @@ public class EmailAttachment {
 
 	public void setPath(final String path) {
 		this.path = path;
+	}
+
+	/**
+	 * @return the inputStream
+	 */
+	public InputStream getInputStream() {
+		return inputStream;
+	}
+
+	/**
+	 * @param inputStream
+	 *            the inputStream to set
+	 */
+	public void setInputStream(final InputStream inputStream) {
+		this.inputStream = inputStream;
+	}
+
+	/**
+	 * @return the bytes
+	 */
+	public byte[] getBytes() {
+		return bytes;
+	}
+
+	/**
+	 * @param bytes
+	 *            the bytes to set
+	 */
+	public void setBytes(final byte[] bytes) {
+		this.bytes = bytes;
 	}
 
 }
