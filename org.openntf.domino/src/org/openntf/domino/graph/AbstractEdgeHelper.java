@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.logging.Logger;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
@@ -210,7 +212,7 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		}
 	}
 
-	public Edge makeEdge(final Vertex defaultOut, final Vertex defaultIn) {
+	public Edge makeEdge(final @NonNull Vertex defaultOut, final @NonNull Vertex defaultIn) {
 		Edge result = null;
 		Vertex inVert = null;
 		Vertex outVert = null;
@@ -309,7 +311,7 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		return result;
 	}
 
-	public Edge findEdge(final Vertex defaultOut, final Vertex defaultIn) {
+	public Edge findEdge(final @NonNull Vertex defaultOut, final @NonNull Vertex defaultIn) {
 		Edge result = null;
 		Vertex inVert = null;
 		Vertex outVert = null;

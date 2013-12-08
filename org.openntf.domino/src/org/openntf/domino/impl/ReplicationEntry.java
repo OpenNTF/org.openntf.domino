@@ -320,8 +320,11 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 		StringBuilder result = new StringBuilder();
 		boolean first = true;
 		for (String view : views) {
-			if (!first || (first = false))
+			if (!first) {	//removed cleverness attempt on advice from FindBugs
 				result.append(";");
+			} else {
+				first = false;
+			}
 			result.append(view);
 		}
 		this.setViews(result.toString());

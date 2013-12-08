@@ -222,7 +222,7 @@ public class DominoEmail implements IEmail {
 		if (StringUtil.isEmpty(content.toString())) {
 			contentsText_.add("");
 		} else {
-			content.toString().replaceAll("<[a-zA-Z\\/][^>]*>", "");
+			contentsText_.add(content.toString().replaceAll("<[a-zA-Z\\/][^>]*>", ""));
 		}
 	}
 
@@ -372,7 +372,7 @@ public class DominoEmail implements IEmail {
 					String extension = fileName.substring(idex);
 					if (StringUtil.equals("gif", extension)) {
 						contentType = "image/gif";
-					} else if (StringUtil.equals("jpg", extension) | StringUtil.equals("jpeg", extension)) {
+					} else if (StringUtil.equals("jpg", extension) || StringUtil.equals("jpeg", extension)) {
 						contentType = "image/jpeg";
 					} else if (StringUtil.equals("png", extension)) {
 						contentType = "image/png";

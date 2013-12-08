@@ -65,7 +65,7 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	 */
 	@Override
 	public RichTextItem getParent() {
-		return (RichTextItem) getParent();
+		return (RichTextItem) super.getParent();
 	}
 
 	/*

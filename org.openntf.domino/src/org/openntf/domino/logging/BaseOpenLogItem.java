@@ -527,15 +527,16 @@ public class BaseOpenLogItem implements IOpenLogItem {
 					return "";
 				}
 			}
-		}
-		try {
-			setBase(ee);
 
 			if (ee.getMessage() != null) {
 				setMessage(ee.getMessage());
 			} else {
 				setMessage(ee.getClass().getCanonicalName());
 			}
+		}
+		try {
+			setBase(ee);
+
 			setSeverity(Level.WARNING);
 			setEventType(LogType.TYPE_ERROR);
 

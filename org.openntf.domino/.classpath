@@ -3,9 +3,10 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path="tinkerpop"/>
-	<classpathentry kind="src" path="icu4j"/>
 	<classpathentry kind="src" path="resources"/>
 	<classpathentry excluding="com/ibm/commons/util/TDiag.java" kind="src" path="commons"/>
+	<classpathentry kind="src" path="icu4j"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/XPages Domino JRE"/>
+	<classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.jdt.annotation_1.1.0.v20130513-1648.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

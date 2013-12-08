@@ -10,6 +10,7 @@
 	<path id="domino.class.path">
 		<pathelement location="lib/" />
 		<pathelement path="${java.class.path}"/>
+		<pathelement path="${eclipse.home}/plugins/org.eclipse.jdt.annotation_1.1.0.v20130513-1648.jar"/>
 		<pathelement path="${domino.rcp.target}/plugins/com.ibm.icu_3.8.1.v20120530.jar"/>
 		<pathelement path="${domino.shared.target}/plugins/com.ibm.commons_9.0.1.20131004-1200/lwpd.commons.jar"/>
 		<pathelement path="${tinkerpopclass.dir}" />
@@ -19,6 +20,8 @@
 
 	<target name="clean" description="Delete all generated files">
 		<delete dir="lib" failonerror="false" />
+		<!-- domino_shared_target-->
+		<echo message="Eclipse home var: ${eclipse.home}"/>
 	</target>
 
 	<target name="compileTP" description="Compiles Tinkerpop">

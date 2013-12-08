@@ -2356,7 +2356,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					// System.out.println("Exception from attempted save...");
 					// e.printStackTrace();
 					if (e.text.contains("Database already contains a document with this ID")) {
-						Throwable t = new RuntimeException();
+						//						Throwable t = new RuntimeException();
 						String newunid = DominoUtils.toUnid(new Date().getTime());
 						String message = "Unable to save a document with id " + getUniversalID()
 								+ " because that id already exists. Saving a " + this.getFormName()

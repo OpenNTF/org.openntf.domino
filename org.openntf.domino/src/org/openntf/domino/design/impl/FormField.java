@@ -171,7 +171,7 @@ public class FormField implements org.openntf.domino.design.FormField {
 				node_.setAttribute("type", "keyword");
 				XMLNode keywords = this.getKeywordsNode();
 				keywords.setAttribute("ui", fieldType.toString().toLowerCase());
-				keywords.setAttribute("helperbutton", String.valueOf(fieldType.equals("dialoglist")));
+				keywords.setAttribute("helperbutton", String.valueOf(fieldType.name().equals("dialoglist")));
 				if (keywords.getAttribute("columns").length() == 0) {
 					keywords.setAttribute("columns", "1");
 				}
