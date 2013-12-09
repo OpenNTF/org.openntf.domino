@@ -15,8 +15,6 @@
 		<pathelement path="${domino.shared.target}/plugins/com.ibm.commons_9.0.1.20131004-1200/lwpd.commons.jar"/>
 		<pathelement path="${tinkerpopclass.dir}" />
 	</path>
-	
-	
 
 	<target name="clean" description="Delete all generated files">
 		<delete dir="lib" failonerror="false" />
