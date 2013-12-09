@@ -57,6 +57,9 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 					XspOpenLogUtil.getXspOpenLogItem().setThisAgent(true);
 				}
 				if (null != r.get("openLogBean")) {
+					if (!Activator.isAPIEnabled()) {
+						return;
+					}
 					// requestScope.openLogBean is not null, the developer has called openLogBean.addError(e,this)
 					XspOpenLogErrorHolder errList = (XspOpenLogErrorHolder) r.get("openLogBean");
 					errList.setLoggedErrors(new LinkedHashSet<EventError>());
@@ -87,6 +90,9 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 					processUncaughtException(r);
 
 				} else if (null != r.get("openLogBean")) {
+					if (!Activator.isAPIEnabled()) {
+						return;
+					}
 					// requestScope.openLogBean is not null, the developer has called openLogBean.addError(e,this)
 					XspOpenLogErrorHolder errList = (XspOpenLogErrorHolder) r.get("openLogBean");
 					// loop through the ArrayList of EventError objects
