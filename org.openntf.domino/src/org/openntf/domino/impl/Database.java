@@ -2825,8 +2825,12 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	@Override
 	public boolean equals(final Object other) {
-		if (other instanceof Database) {
-			return ident_.equalsIgnoreCase(((Database) other).ident_);
+		if (other instanceof lotus.domino.Database) {
+			if (other instanceof Database) {
+				return ident_.equalsIgnoreCase(((Database) other).ident_);
+			} else {
+				return getDelegate().equals((lotus.domino.Database) other);
+			}
 		}
 		throw new IllegalArgumentException("Cannot compare a Database with a " + other == null ? "null" : other.getClass().getName());
 	}
