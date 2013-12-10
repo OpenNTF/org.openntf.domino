@@ -1960,6 +1960,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	public static int MAX_NATIVE_VECTOR_SIZE = 255;
+	public static int MAX_NATIVE_STRING_SIZE = 30000;
+	public static int MAX_NATIVE_SUMMARY_SIZE = 14000;
 
 	/*
 	 * (non-Javadoc)
@@ -2034,12 +2036,12 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 							}
 							if (domNode instanceof String) {
 								totalStringSize += ((String) domNode).length();
-								if (totalStringSize > 14000)
+								if (totalStringSize > MAX_NATIVE_SUMMARY_SIZE)
 									isNonSummary = true;
 
 								// Escape to serializing if there's too much text data
 								// Leave fudge room for multibyte? This is clearly not the best way to do it
-								if (totalStringSize > 60000) {
+								if (totalStringSize > MAX_NATIVE_STRING_SIZE) {
 									throw new IllegalArgumentException();
 								}
 							}
@@ -2066,8 +2068,18 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					if (value instanceof BigString)
 						isNonSummary = true;
 					Object domNode = toDominoFriendly(value, this);
-					if (domNode instanceof String && ((String) domNode).length() > 60000) {
-						throw new IllegalArgumentException();
+					if (domNode instanceof String) {
+						String s = (String) domNode;
+						if (s.equals("\n") || s.equals("\r") || s.equals("\r\n")) {
+							// Domino can't store linefeed only in item
+							throw new IllegalArgumentException();
+						}
+						if (s.length() > MAX_NATIVE_SUMMARY_SIZE) {
+							isNonSummary = true;
+						}
+						if (s.length() > MAX_NATIVE_STRING_SIZE) {
+							throw new IllegalArgumentException();
+						}
 					}
 					try {
 						MIMEEntity mimeChk = getMIMEEntity(itemName);
@@ -2638,7 +2650,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		}
 	}
 
-	void markDirty() {
+	public void markDirty() {
 		isDirty_ = true;
 		if (!isQueued_) {
 			DatabaseTransaction txn = getParentDatabase().getTransaction();
