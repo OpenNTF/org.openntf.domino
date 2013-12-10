@@ -1,5 +1,11 @@
 package org.openntf.domino.xsp;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openntf.domino.xsp.config.DominoConfig;
+
+import com.ibm.xsp.extlib.config.ExtlibPluginConfig;
 import com.ibm.xsp.library.AbstractXspLibrary;
 
 /**
@@ -10,6 +16,7 @@ public class XspLibrary extends AbstractXspLibrary {
 	private final static String LIBRARY_ID = XspLibrary.class.getName();
 	public final static String LIBRARY_BEAN_PREFIX = "org.openntf.domino.xsp";
 	private static Boolean GLOBAL;
+	private List<ExtlibPluginConfig> plugins;
 
 	private static boolean isGlobal() {
 		if (GLOBAL == null) {
@@ -42,12 +49,39 @@ public class XspLibrary extends AbstractXspLibrary {
 	@Override
 	public String[] getFacesConfigFiles() {
 		String[] files = new String[] { "domino-faces-config.xml" };
+		// We might want to take this approach in the future???
+		// List<ExtlibPluginConfig> plugins = getExtlibPluginConfigs();
+		// for( ExtlibPluginConfig plugin: plugins) {
+		// files = plugin.getFacesConfigFiles(files);
+		// }
 		return files;
+	}
+
+	private List<ExtlibPluginConfig> getExtlibPluginConfigs() {
+		if (plugins == null) {
+			// List<ExtlibPluginConfig> _plugins = ExtensionManager.findServices(null,
+			// ExtlibPluginConfig.class.getClassLoader(),
+			// ExtlibPluginConfig.EXTENSION_NAME,
+			// ExtlibPluginConfig.class);
+			/*
+			 * We are blocking any extension point contribution to the Library. Agreed to do this way on Sep 30th, 2011 [AC, MK, PR]
+			 */
+			List<ExtlibPluginConfig> _plugins = new ArrayList<ExtlibPluginConfig>();
+			// note, sort these plugins alphabetically by className
+			_plugins.add(new DominoConfig());
+			plugins = _plugins;
+		}
+		return plugins;
 	}
 
 	@Override
 	public String[] getXspConfigFiles() {
 		String[] files = new String[] {};
+		List<ExtlibPluginConfig> plugins = getExtlibPluginConfigs();
+		for (ExtlibPluginConfig plugin : plugins) {
+			files = plugin.getXspConfigFiles(files);
+			System.out.println(files.toString());
+		}
 		return files;
 	}
 
