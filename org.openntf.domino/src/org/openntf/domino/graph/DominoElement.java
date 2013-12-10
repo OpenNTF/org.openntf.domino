@@ -149,6 +149,11 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		}
 	}
 
+	@Override
+	public int hashCode() {
+		return getId().hashCode();
+	}
+
 	public Document getRawDocument() {
 		return getDocument();
 	}

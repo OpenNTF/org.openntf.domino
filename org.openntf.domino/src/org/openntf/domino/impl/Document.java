@@ -1425,7 +1425,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public boolean isDeleted() {
 		try {
-			return getDelegate().isDeleted();
+			lotus.domino.Document delegate = getDelegate();
+			if (delegate == null)
+				return false;
+			return delegate.isDeleted();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

@@ -18,7 +18,7 @@ public interface IndexableGraph extends Graph {
      * @param <T>             the element class that this index is indexing (can be base class)
      * @return the index created
      */
-    public <T extends Element> Index<T> createIndex(final String indexName, final Class<T> indexClass, final Parameter... indexParameters);
+    public <T extends Element> Index<T> createIndex(String indexName, Class<T> indexClass, Parameter... indexParameters);
 
     /**
      * Get an index from the graph by its name and index class. An index is unique up to name.
@@ -28,7 +28,7 @@ public interface IndexableGraph extends Graph {
      * @param <T>        the class of the elements being indexed (can be base class)
      * @return the retrieved index
      */
-    public <T extends Element> Index<T> getIndex(final String indexName, final Class<T> indexClass);
+    public <T extends Element> Index<T> getIndex(String indexName, Class<T> indexClass);
 
     /**
      * Get all the indices maintained by the graph.
@@ -42,6 +42,6 @@ public interface IndexableGraph extends Graph {
      *
      * @param indexName the name of the index to drop
      */
-    public void dropIndex(final String indexName);
+    public void dropIndex(String indexName);
 
 }
