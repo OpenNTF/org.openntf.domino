@@ -19,8 +19,11 @@
 <!-- DO NOT EDIT. THIS FILE IS GENERATED. -->
 <faces-config>
   <faces-config-extension>
-    <namespace-uri>http://www.ibm.com/xsp/coreex</namespace-uri>
-    <default-prefix>xe</default-prefix>
+		<namespace-uri>http://www.openntf.org/domino/xsp</namespace-uri>
+		<default-prefix>on</default-prefix>
+        <designer-extension>
+            <control-subpackage-name>picker</control-subpackage-name>
+        </designer-extension>
   </faces-config-extension>
   <complex-type>
     <description>%complex-type.dominoNABNamePicker.descr%</description>
@@ -100,7 +103,7 @@
     </property>
     <complex-extension>
       <base-complex-id>com.ibm.xsp.extlib.component.picker.data.INamePickerData</base-complex-id>
-      <tag-name>dominoNABNamePicker</tag-name>
+      <tag-name>openntfNABNamePicker</tag-name>
     </complex-extension>
   </complex-type>
 </faces-config>

@@ -80,6 +80,7 @@ public class XspLibrary extends AbstractXspLibrary {
 		List<ExtlibPluginConfig> plugins = getExtlibPluginConfigs();
 		for (ExtlibPluginConfig plugin : plugins) {
 			files = plugin.getXspConfigFiles(files);
+			System.out.println(files.toString());
 		}
 		return files;
 	}
