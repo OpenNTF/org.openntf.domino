@@ -2042,7 +2042,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 								// Escape to serializing if there's too much text data
 								// Leave fudge room for multibyte? This is clearly not the best way to do it
-								if (totalStringSize > 60000) {
+								if (totalStringSize > 32000) {
 									throw new IllegalArgumentException();
 								}
 							}
