@@ -43,7 +43,7 @@ public class XspLibrary extends AbstractXspLibrary {
 	@Override
 	public String[] getDependencies() {
 		return new String[] { "com.ibm.xsp.core.library", "com.ibm.xsp.extsn.library", "com.ibm.xsp.domino.library",
-				"com.ibm.xsp.designer.library" };
+				"com.ibm.xsp.designer.library", "com.ibm.xsp.extlib.library" };
 	}
 
 	@Override
