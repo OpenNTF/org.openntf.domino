@@ -30,4 +30,10 @@ Require-Bundle: com.ibm.xsp.domino;bundle-version="9.0.0",
  com.ibm.designer.runtime;bundle-version="9.0.0",
  org.openntf.domino.plugin;bundle-version="1.0.0";resolution:=optional;visibility:=reexport,
  com.ibm.icu;bundle-version="3.8.1";resolution:=optional,
- com.ibm.xsp.designer
+ com.ibm.xsp.designer,
+ com.ibm.xsp.extlib;bundle-version="9.0.1",
+ com.ibm.xsp.extlib.controls;bundle-version="9.0.1",
+ com.ibm.xsp.extlib.core;bundle-version="9.0.1",
+ com.ibm.xsp.extlib.domino;bundle-version="9.0.1",
+ com.ibm.xsp.extlib.mobile;bundle-version="9.0.1",
+ com.ibm.xsp.extlib.oneui;bundle-version="9.0.1"
