@@ -620,9 +620,11 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 					try {
 						ViewEntry ve = null;
 						if (key != null) {
-							int searchOptions = DominoUtils.FIND_GREATER_THAN | DominoUtils.FIND_EQUAL | DominoUtils.FIND_PARTIAL
-									| DominoUtils.FIND_CASE_INSENSITIVE;
-							ve = DominoUtils.getViewEntryByKeyWithOptions(view, key, searchOptions);
+							// TODO: Get this working with ViewNavigator
+							// int searchOptions = DominoUtils.FIND_GREATER_THAN | DominoUtils.FIND_EQUAL | DominoUtils.FIND_PARTIAL
+							// | DominoUtils.FIND_CASE_INSENSITIVE;
+							// ve = DominoUtils.getViewEntryByKeyWithOptions(view, key, searchOptions);
+							ve = view.getEntryByKey(key, false);
 						} else {
 							ve = nav.getCurrent();
 						}

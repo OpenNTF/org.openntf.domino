@@ -38,12 +38,12 @@ public class XspLibrary extends AbstractXspLibrary {
 	 */
 	public XspLibrary() {
 		System.out.println("Loading org.openntf.domino.xsp library");
-
 	}
 
 	@Override
 	public String[] getDependencies() {
-		return new String[] { "com.ibm.xsp.extlib.library" };
+		return new String[] { "com.ibm.xsp.core.library", "com.ibm.xsp.extsn.library", "com.ibm.xsp.domino.library",
+				"com.ibm.xsp.designer.library", "com.ibm.xsp.extlib.library" };
 	}
 
 	@Override
@@ -80,9 +80,7 @@ public class XspLibrary extends AbstractXspLibrary {
 		List<ExtlibPluginConfig> plugins = getExtlibPluginConfigs();
 		for (ExtlibPluginConfig plugin : plugins) {
 			files = plugin.getXspConfigFiles(files);
-			for (String file : files) {
-				System.out.println(String.valueOf(file));
-			}
+			System.out.println(files.toString());
 		}
 		return files;
 	}
@@ -107,16 +105,6 @@ public class XspLibrary extends AbstractXspLibrary {
 		boolean result = isGlobal();
 		// System.out.println(Activator.PLUGIN_ID + " global: " + String.valueOf(result));
 		return result;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ibm.xsp.library.AbstractXspLibrary#isEnabled()
-	 */
-	@Override
-	public boolean isEnabled() {
-		return super.isEnabled();
 	}
 
 }
