@@ -18,7 +18,6 @@ public class URLType extends StringType {
 	//URL Regex pattern from http://mathiasbynens.be/demo/url-regex
 	//MIT licensed at https://gist.github.com/dperini/729294
 	//Copyright (c) 2010-2013 Diego Perini (http://www.iport.it)
-
 	public static final String URL_REGEX_SOURCE = "^"
 			+ "(?:(?:https?|ftp)://)"
 			// protocol identifier
