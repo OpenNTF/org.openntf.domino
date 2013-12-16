@@ -78,6 +78,8 @@ public class OpenLogHandler extends Handler {
 		ol_.setLogDbName(logDbPath);
 	}
 
+	private boolean publishing_ = false;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -87,20 +89,27 @@ public class OpenLogHandler extends Handler {
 	 */
 	@Override
 	public void publish(final LogRecord record) {
-		Throwable t = record.getThrown();
-		if (t != null) {
-			for (StackTraceElement elem : t.getStackTrace()) {
-				if (elem.getClassName().equals(getClass().getName())) {
-					// NTF - we are by definition in a loop
-					System.out.println(t.toString());
-					t.printStackTrace();
-					return;
+		if (publishing_)
+			return;
+		publishing_ = true;
+		try {
+			Throwable t = record.getThrown();
+			if (t != null) {
+				for (StackTraceElement elem : t.getStackTrace()) {
+					if (elem.getClassName().equals(getClass().getName())) {
+						// NTF - we are by definition in a loop
+						System.out.println(t.toString());
+						t.printStackTrace();
+						return;
+					}
 				}
 			}
-		}
-		org.openntf.domino.Session session = Factory.getSession();
-		if (session != null) {
-			ol_.logError(session, t, record.getMessage(), record.getLevel(), null);
+			org.openntf.domino.Session session = Factory.getSession();
+			if (session != null) {
+				ol_.logError(session, t, record.getMessage(), record.getLevel(), null);
+			}
+		} finally {
+			publishing_ = false;
 		}
 	}
 

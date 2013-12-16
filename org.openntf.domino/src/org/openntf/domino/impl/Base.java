@@ -16,6 +16,7 @@
 package org.openntf.domino.impl;
 
 import java.lang.ref.Reference;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
@@ -461,6 +462,18 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			log_.log(Level.INFO, "Trying to convert a null argument to Domino friendly. Returning null...");
 			return null;
 		}
+		//Extended in order to deal with Arrays
+		if (value.getClass().isArray()) {
+			int i = Array.getLength(value);
+
+			java.util.Vector<Object> result = new java.util.Vector<Object>(i);
+			for (int k = 0; k < i; ++k) {
+				Object o = Array.get(value, k);
+				result.add(toDominoFriendly(o, context));
+			}
+			return result;
+		}
+
 		if (value instanceof Collection) {
 			java.util.Vector<Object> result = new java.util.Vector<Object>();
 			Collection<?> coll = (Collection) value;
@@ -475,6 +488,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			return toLotus((org.openntf.domino.Base) value);
 		} else if (value instanceof lotus.domino.DateTime) {
 			return toLotus((lotus.domino.DateTime) value);
+		} else if (value instanceof lotus.domino.Name) {
+			return toLotus((lotus.domino.Name) value);
 		} else if (value instanceof lotus.domino.DateRange) {
 			return toLotus((lotus.domino.DateRange) value);
 		} else if (value instanceof lotus.domino.Item) {

@@ -246,6 +246,10 @@ public enum TypeUtils {
 				result = (T) Integer.valueOf((String) localValue);
 			} else if (localValue instanceof Double) {
 				result = (T) Integer.valueOf(((Double) localValue).intValue());
+			} else if (localValue instanceof Integer) {
+				result = (T) localValue;
+			} else if (localValue instanceof Long) {
+				result = (T) Integer.valueOf(((Long) localValue).intValue());
 			} else {
 				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
 			}
@@ -262,6 +266,12 @@ public enum TypeUtils {
 				result = (T) Double.valueOf((String) localValue);
 			} else if (localValue instanceof Double) {
 				result = (T) localValue;
+			} else if (localValue instanceof Integer) {
+				result = (T) Double.valueOf(((Integer) localValue).doubleValue());
+			} else if (localValue instanceof Short) {
+				result = (T) Double.valueOf(((Short) localValue).doubleValue());
+			} else if (localValue instanceof Float) {
+				result = (T) Double.valueOf(((Float) localValue).doubleValue());
 			} else {
 				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
 			}

@@ -40,6 +40,7 @@ import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
 import org.openntf.domino.exceptions.TransactionAlreadySetException;
 import org.openntf.domino.ext.Session.Fixes;
+import org.openntf.domino.schema.IDatabaseSchema;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -2527,7 +2528,11 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	public DatabaseTransaction startTransaction() {
 		if (txnHolder_.get() == null) {
-			txnHolder_.set(new DatabaseTransaction(this));
+			DatabaseTransaction txn = new DatabaseTransaction(this);
+			if (!getFilePath().equalsIgnoreCase("redpill/graph.nsf")) {
+				System.out.println("Creating a new DatabaseTransaction for " + getApiPath());
+			}
+			txnHolder_.set(txn);
 		}
 		return txnHolder_.get();
 	}
@@ -2986,5 +2991,27 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			}
 		}
 
+	}
+
+	public String getApiPath() {
+		if (server_.length() > 0)
+			return server_ + "!!" + path_;
+		return path_;
+	}
+
+	private IDatabaseSchema schema_;
+	private volatile Boolean isSchemaChecked_ = Boolean.FALSE;
+
+	public IDatabaseSchema getSchema() {
+		if (!isSchemaChecked_ && schema_ == null) {
+			//TODO some way to load the schema from the design...
+			isSchemaChecked_ = Boolean.TRUE;
+		}
+		return schema_;
+	}
+
+	public void setSchema(final IDatabaseSchema schema) {
+		schema_ = schema;
+		//TODO serialization of the schema into a design file
 	}
 }

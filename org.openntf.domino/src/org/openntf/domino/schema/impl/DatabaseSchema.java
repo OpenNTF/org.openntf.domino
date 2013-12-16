@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.openntf.domino.schema;
+package org.openntf.domino.schema.impl;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -16,7 +16,9 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
 import org.openntf.domino.annotations.Incomplete;
-import org.openntf.domino.schema.types.IDominoType;
+import org.openntf.domino.schema.IDatabaseSchema;
+import org.openntf.domino.schema.IDominoType;
+import org.openntf.domino.schema.IItemDefinition;
 import org.openntf.domino.utils.DominoUtils;
 
 /**
@@ -24,7 +26,7 @@ import org.openntf.domino.utils.DominoUtils;
  * 
  */
 @Incomplete
-public class DatabaseSchema implements Externalizable {
+public class DatabaseSchema implements IDatabaseSchema, Externalizable {
 	private static final Logger log_ = Logger.getLogger(DatabaseSchema.class.getName());
 	private static final long serialVersionUID = 1L;
 
@@ -34,7 +36,7 @@ public class DatabaseSchema implements Externalizable {
 
 	private final Map<String, DocumentDefinition> documentDefinitions_ = new HashMap<String, DocumentDefinition>();
 	private final Map<String, ItemDefinition> itemDefinitions_ = new HashMap<String, ItemDefinition>();
-	private final Map<Class<? extends IDominoType>, IDominoType> typeDefinitions_ = new HashMap<Class<? extends IDominoType>, IDominoType>();
+	private transient Map<Class<? extends IDominoType>, IDominoType> typeDefinitions_;
 
 	/**
 	 * 
@@ -60,6 +62,9 @@ public class DatabaseSchema implements Externalizable {
 	// }
 
 	public Map<Class<? extends IDominoType>, IDominoType> getTypeDefinitions() {
+		if (typeDefinitions_ == null) {
+			typeDefinitions_ = new HashMap<Class<? extends IDominoType>, IDominoType>();
+		}
 		return typeDefinitions_;
 	}
 
@@ -94,8 +99,8 @@ public class DatabaseSchema implements Externalizable {
 		Document result = db.createDocument();
 		result.replaceItemValue("$$SchemaType", doctype);
 		result.replaceItemValue("form", def.getName());
-		Set<ItemDefinition> itemDefs = def.getItemDefinitions();
-		for (ItemDefinition itemDef : itemDefs) {
+		Set<IItemDefinition> itemDefs = def.getItemDefinitions();
+		for (IItemDefinition itemDef : itemDefs) {
 			Item item = itemDef.createDefaultItem(result, def);
 		}
 
@@ -109,8 +114,8 @@ public class DatabaseSchema implements Externalizable {
 			return true;
 
 		boolean result = true;
-		Set<ItemDefinition> itemDefs = def.getItemDefinitions();
-		for (ItemDefinition itemDef : itemDefs) {
+		Set<IItemDefinition> itemDefs = def.getItemDefinitions();
+		for (IItemDefinition itemDef : itemDefs) {
 			// TODO NTF
 		}
 

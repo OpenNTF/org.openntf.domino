@@ -27,6 +27,7 @@ import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
+import org.openntf.domino.schema.IDatabaseSchema;
 import org.openntf.domino.transactions.DatabaseTransaction;
 
 /**
@@ -43,6 +44,8 @@ public interface Database extends Base {
 	public void setEventFactory(IDominoEventFactory factory);
 
 	public IDominoEvent generateEvent(EnumEvent event, org.openntf.domino.Base source, Object payload);
+
+	public String getApiPath();
 
 	public int compactWithOptions(final Set<CompactOption> options);
 
@@ -238,4 +241,9 @@ public interface Database extends Base {
 	 * @return a Map view of the documents in the database, keyed according to getDocumentByKey
 	 */
 	public Map<Serializable, org.openntf.domino.Document> getDocumentMap();
+
+	public IDatabaseSchema getSchema();
+
+	public void setSchema(IDatabaseSchema schema);
+
 }
