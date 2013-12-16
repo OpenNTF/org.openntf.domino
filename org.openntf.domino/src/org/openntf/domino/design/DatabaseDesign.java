@@ -24,6 +24,8 @@ public interface DatabaseDesign {
 
 	public FileResource createFileResource();
 
+	public Folder createFolder();
+
 	public DesignView createView();
 
 	public AboutDocument getAboutDocument();

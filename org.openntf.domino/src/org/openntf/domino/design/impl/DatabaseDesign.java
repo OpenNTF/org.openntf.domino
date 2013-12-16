@@ -52,6 +52,17 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 		database_ = database;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#createFolder()
+	 */
+	@Override
+	public Folder createFolder() {
+		return new Folder(database_);
+	}
+
+	// TODO Decide whether this should check for an existing view first. Current behavior is
+	// acting like it's creating a whole-cloth new view but then replacing any existing with
+	// the same name on save
 	@Override
 	public DesignView createView() {
 		return new DesignView(database_);
