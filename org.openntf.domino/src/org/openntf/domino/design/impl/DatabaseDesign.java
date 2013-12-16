@@ -104,6 +104,21 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#getFacesConfig()
+	 */
+	@Override
+	public FacesConfig getFacesConfig() {
+		NoteCollection notes = getNoteCollection(" @Contains($Flags; 'g') & @Explode($TITLE; '|')='WEB-INF/faces-config.xml'",
+				EnumSet.of(SelectOption.MISC_FORMAT));
+		String noteId = notes.getFirstNoteID();
+		if (!noteId.isEmpty()) {
+			Document doc = database_.getDocumentByID(noteId);
+			return new FacesConfig(doc);
+		}
+		return null;
+	}
+
 	@Override
 	public FileResource getFileResource(final String name) {
 		NoteCollection notes = getNoteCollection(

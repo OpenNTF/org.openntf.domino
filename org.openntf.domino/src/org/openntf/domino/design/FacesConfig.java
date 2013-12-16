@@ -2,6 +2,7 @@ package org.openntf.domino.design;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author jgallagher
@@ -46,18 +47,46 @@ public interface FacesConfig extends FileResource {
 
 		public void setScope(Scope scope);
 
+		public Property addProperty();
+
+		public List<Property> getProperties();
+
+		public String getListValueClassName();
+
+		public void setListValueClassName(String className);
+
+		public List<String> getListEntries();
+
+		public void setListEntries(Collection<?> listEntries);
+
+		public Map<String, String> getMapEntries();
+
+		public void setMapEntries(Map<?, ?> mapEntries);
+
+		public void remove();
+
 		public static interface Property {
 			public String getName();
 
 			public void setName(String name);
 
-			public String getValueClassName();
+			public String getListValueClassName();
 
-			public void setValueClassName(String className);
+			public void setListValueClassName(String className);
 
-			public List<?> getListEntries();
+			public List<String> getListEntries();
 
 			public void setListEntries(Collection<?> listEntries);
+
+			public Map<String, String> getMapEntries();
+
+			public void setMapEntries(Map<?, ?> mapEntries);
+
+			public String getValue();
+
+			public void setValue(String value);
+
+			public void remove();
 		}
 
 		public enum Scope {
@@ -73,5 +102,7 @@ public interface FacesConfig extends FileResource {
 		public String getClassName();
 
 		public void setClassName(String className);
+
+		public void remove();
 	}
 }

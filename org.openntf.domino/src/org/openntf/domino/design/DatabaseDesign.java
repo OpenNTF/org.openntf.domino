@@ -37,6 +37,11 @@ public interface DatabaseDesign {
 	public DesignView getDefaultView();
 
 	/**
+	 * @return an object representing the faces-config.xml file of the database
+	 */
+	public FacesConfig getFacesConfig();
+
+	/**
 	 * @param name
 	 *            name of a file resource
 	 * @return a file resource
