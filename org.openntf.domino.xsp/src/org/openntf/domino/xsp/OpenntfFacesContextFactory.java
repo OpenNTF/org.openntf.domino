@@ -11,7 +11,6 @@ import javax.faces.lifecycle.Lifecycle;
 import org.openntf.domino.utils.Factory;
 
 import com.ibm.xsp.FacesExceptionEx;
-import com.ibm.xsp.context.FacesContextEx;
 import com.ibm.xsp.context.FacesContextFactoryImpl;
 import com.ibm.xsp.domino.context.DominoFacesContextFactoryImpl;
 
@@ -64,7 +63,7 @@ public class OpenntfFacesContextFactory extends FacesContextFactory implements c
 	@Override
 	public FacesContext getFacesContext(final Object context, final Object request, final Object response, final Lifecycle lifecycle)
 			throws FacesException {
-		FacesContextEx ctx = (FacesContextEx) _delegate.getFacesContext(context, request, response, lifecycle);
+		FacesContext ctx = _delegate.getFacesContext(context, request, response, lifecycle);
 		try {
 			Class<?> vnClass = Class.forName("org.openntf.domino.xsp.helpers.OpenntfViewNavigatorEx");
 		} catch (ClassNotFoundException e) {
