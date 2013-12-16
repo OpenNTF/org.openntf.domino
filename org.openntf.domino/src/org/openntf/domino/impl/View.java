@@ -784,7 +784,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	public DocumentCollection getAllDocumentsByKey(final Object key, final boolean exact) {
 		try {
 			Object domKey = toDominoFriendly(key, this);
-			if (key instanceof java.util.Vector) {
+			if (domKey instanceof java.util.Vector) {
 				return Factory.fromLotus(getDelegate().getAllDocumentsByKey((java.util.Vector) domKey, exact), DocumentCollection.class,
 						this);
 			} else {
