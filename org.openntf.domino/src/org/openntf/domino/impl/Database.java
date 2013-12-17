@@ -53,6 +53,7 @@ import com.ibm.icu.util.GregorianCalendar;
  */
 public class Database extends Base<org.openntf.domino.Database, lotus.domino.Database> implements org.openntf.domino.Database {
 	private static final Logger log_ = Logger.getLogger(Database.class.getName());
+
 	/** The server_. */
 	private String server_;
 
@@ -2822,8 +2823,26 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		return getEventFactory().generate(event, source, this, payload);
 	}
 
-	public boolean equals(final Database database) {
-		return ident_.equalsIgnoreCase(database.ident_);
+	@Override
+	public boolean equals(final Object other) {
+		if (other == null)
+			return false;
+		if (other instanceof lotus.domino.Database) {
+			if (other instanceof Database) {
+				return ident_.equalsIgnoreCase(((Database) other).ident_);
+			} else {
+				return getDelegate().equals((lotus.domino.Database) other);
+			}
+		}
+		throw new IllegalArgumentException("Cannot compare a Database with a " + (other == null ? "null" : other.getClass().getName()));
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return getDelegate().hashCode();
 	}
 
 	/* (non-Javadoc)

@@ -17,7 +17,7 @@ package org.openntf.domino.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
+//import java.util.Vector;
 
 import lotus.domino.NotesException;
 
@@ -189,7 +189,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public int FTSearchSorted(final Vector query) {
+	public int FTSearchSorted(final java.util.Vector query) {
 		try {
 			int result;
 			java.util.Vector v = toDominoFriendly(query, this);
@@ -209,7 +209,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public int FTSearchSorted(final Vector query, final int maxDocs) {
+	public int FTSearchSorted(final java.util.Vector query, final int maxDocs) {
 		try {
 			int result;
 			java.util.Vector v = toDominoFriendly(query, this);
@@ -229,7 +229,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public int FTSearchSorted(final Vector query, final int maxDocs, final int column) {
+	public int FTSearchSorted(final java.util.Vector query, final int maxDocs, final int column) {
 		try {
 			int result;
 			java.util.Vector v = toDominoFriendly(query, this);
@@ -249,8 +249,8 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public int FTSearchSorted(final Vector query, final int maxDocs, final int column, final boolean ascending, final boolean exact,
-			final boolean variants, final boolean fuzzy) {
+	public int FTSearchSorted(final java.util.Vector query, final int maxDocs, final int column, final boolean ascending,
+			final boolean exact, final boolean variants, final boolean fuzzy) {
 		try {
 			int result;
 			java.util.Vector v = toDominoFriendly(query, this);
@@ -270,7 +270,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public int FTSearchSorted(final Vector query, final int maxDocs, final String column) {
+	public int FTSearchSorted(final java.util.Vector query, final int maxDocs, final String column) {
 		try {
 			return getDelegate().FTSearchSorted(toDominoFriendly(query, this), maxDocs, column);
 		} catch (NotesException e) {
@@ -286,8 +286,8 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public int FTSearchSorted(final Vector query, final int maxDocs, final String column, final boolean ascending, final boolean exact,
-			final boolean variants, final boolean fuzzy) {
+	public int FTSearchSorted(final java.util.Vector query, final int maxDocs, final String column, final boolean ascending,
+			final boolean exact, final boolean variants, final boolean fuzzy) {
 		try {
 			int result;
 			java.util.Vector v = toDominoFriendly(query, this);
@@ -783,12 +783,12 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public DocumentCollection getAllDocumentsByKey(final Object key, final boolean exact) {
 		try {
-			Object dominoFriendly = toDominoFriendly(key, this);
-			if (dominoFriendly instanceof Vector) {
-				return Factory
-						.fromLotus(getDelegate().getAllDocumentsByKey((Vector) dominoFriendly, exact), DocumentCollection.class, this);
+			Object domKey = toDominoFriendly(key, this);
+			if (domKey instanceof java.util.Vector) {
+				return Factory.fromLotus(getDelegate().getAllDocumentsByKey((java.util.Vector) domKey, exact), DocumentCollection.class,
+						this);
 			} else {
-				return Factory.fromLotus(getDelegate().getAllDocumentsByKey(dominoFriendly, exact), DocumentCollection.class, this);
+				return Factory.fromLotus(getDelegate().getAllDocumentsByKey(domKey, exact), DocumentCollection.class, this);
 			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -803,7 +803,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public DocumentCollection getAllDocumentsByKey(final Vector keys) {
+	public DocumentCollection getAllDocumentsByKey(final java.util.Vector keys) {
 		return getAllDocumentsByKey((Object) keys, false);
 	}
 
@@ -814,7 +814,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public DocumentCollection getAllDocumentsByKey(final Vector keys, final boolean exact) {
+	public DocumentCollection getAllDocumentsByKey(final java.util.Vector keys, final boolean exact) {
 		return getAllDocumentsByKey((Object) keys, exact);
 	}
 
@@ -851,11 +851,12 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewEntryCollection getAllEntriesByKey(final Object key, final boolean exact) {
 		try {
-			Object dominoFriendly = toDominoFriendly(key, this);
-			if (dominoFriendly instanceof Vector) {
-				return Factory.fromLotus(getDelegate().getAllEntriesByKey((Vector) dominoFriendly, exact), ViewEntryCollection.class, this);
+			Object domKey = toDominoFriendly(key, this);
+			if (domKey instanceof java.util.Vector) {
+				return Factory.fromLotus(getDelegate().getAllEntriesByKey((java.util.Vector) domKey, exact), ViewEntryCollection.class,
+						this);
 			} else {
-				return Factory.fromLotus(getDelegate().getAllEntriesByKey(dominoFriendly, exact), ViewEntryCollection.class, this);
+				return Factory.fromLotus(getDelegate().getAllEntriesByKey(domKey, exact), ViewEntryCollection.class, this);
 			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -870,7 +871,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public ViewEntryCollection getAllEntriesByKey(final Vector keys) {
+	public ViewEntryCollection getAllEntriesByKey(final java.util.Vector keys) {
 		return getAllEntriesByKey((Object) keys, false);
 	}
 
@@ -881,7 +882,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public ViewEntryCollection getAllEntriesByKey(final Vector keys, final boolean exact) {
+	public ViewEntryCollection getAllEntriesByKey(final java.util.Vector keys, final boolean exact) {
 		return getAllEntriesByKey((Object) keys, exact);
 	}
 
@@ -1012,7 +1013,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Vector<String> getColumnNames() {
+	public java.util.Vector<String> getColumnNames() {
 		try {
 			return (Vector<String>) getDelegate().getColumnNames();
 		} catch (NotesException e) {
@@ -1027,7 +1028,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 * @see org.openntf.domino.View#getColumnValues(int)
 	 */
 	@Override
-	public Vector<Object> getColumnValues(final int column) {
+	public java.util.Vector<Object> getColumnValues(final int column) {
 		try {
 			return Factory.wrapColumnValues(getDelegate().getColumnValues(column), this.getAncestorSession());
 		} catch (NotesException e) {
@@ -1084,11 +1085,11 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getDocumentByKey(final Object key, final boolean exact) {
 		try {
-			Object toDominoFriendly = toDominoFriendly(key, this);
-			if (toDominoFriendly instanceof Vector) {
-				return Factory.fromLotus(getDelegate().getDocumentByKey((Vector) toDominoFriendly, exact), Document.class, this);
+			Object domKey = toDominoFriendly(key, this);
+			if (domKey instanceof java.util.Vector) {
+				return Factory.fromLotus(getDelegate().getDocumentByKey((java.util.Vector) domKey, exact), Document.class, this);
 			} else {
-				return Factory.fromLotus(getDelegate().getDocumentByKey(toDominoFriendly, exact), Document.class, this);
+				return Factory.fromLotus(getDelegate().getDocumentByKey(domKey, exact), Document.class, this);
 			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -1103,7 +1104,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Document getDocumentByKey(final Vector keys) {
+	public Document getDocumentByKey(final java.util.Vector keys) {
 		return getDocumentByKey((Object) keys, false);
 	}
 
@@ -1114,7 +1115,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Document getDocumentByKey(final Vector keys, final boolean exact) {
+	public Document getDocumentByKey(final java.util.Vector keys, final boolean exact) {
 		return getDocumentByKey((Object) keys, exact);
 	}
 
@@ -1136,11 +1137,12 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewEntry getEntryByKey(final Object key, final boolean exact) {
 		try {
-			Object toDominoFriendly = toDominoFriendly(key, this);
-			if (toDominoFriendly instanceof Vector) {
-				return Factory.fromLotus(getDelegate().getEntryByKey((Vector) toDominoFriendly, exact), ViewEntry.class, this);
+			Object domKey = toDominoFriendly(key, this);
+			if (domKey instanceof java.util.Vector) {
+				return Factory.fromLotus(getDelegate().getEntryByKey((java.util.Vector) domKey, exact), ViewEntry.class, this);
 			} else {
-				return Factory.fromLotus(getDelegate().getEntryByKey(toDominoFriendly, exact), ViewEntry.class, this);
+				return Factory.fromLotus(getDelegate().getEntryByKey(domKey, exact), ViewEntry.class, this);
+
 			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -1155,7 +1157,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public ViewEntry getEntryByKey(final Vector keys) {
+	public ViewEntry getEntryByKey(final java.util.Vector keys) {
 		return getEntryByKey((Object) keys, false);
 	}
 
@@ -1166,7 +1168,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public ViewEntry getEntryByKey(final Vector keys, final boolean exact) {
+	public ViewEntry getEntryByKey(final java.util.Vector keys, final boolean exact) {
 		return getEntryByKey((Object) keys, exact);
 	}
 
@@ -1824,7 +1826,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean lock(final Vector names) {
+	public boolean lock(final java.util.Vector names) {
 		try {
 			return getDelegate().lock(names);
 		} catch (NotesException e) {
@@ -1840,7 +1842,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean lock(final Vector names, final boolean provisionalOk) {
+	public boolean lock(final java.util.Vector names, final boolean provisionalOk) {
 		try {
 			return getDelegate().lock(names, provisionalOk);
 		} catch (NotesException e) {
@@ -1886,7 +1888,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean lockProvisional(final Vector names) {
+	public boolean lockProvisional(final java.util.Vector names) {
 		try {
 			return getDelegate().lockProvisional(names);
 		} catch (NotesException e) {
@@ -2084,7 +2086,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setAliases(final Vector aliases) {
+	public void setAliases(final java.util.Vector aliases) {
 		try {
 			getDelegate().setAliases(aliases);
 		} catch (NotesException e) {
@@ -2197,7 +2199,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setReaders(final Vector readers) {
+	public void setReaders(final java.util.Vector readers) {
 		try {
 			getDelegate().setReaders(readers);
 		} catch (NotesException e) {

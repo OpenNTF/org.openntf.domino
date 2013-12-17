@@ -141,7 +141,7 @@ public enum TypeUtils {
 			}
 		} else if (T.isPrimitive()) {
 			try {
-				result = toPrimitive(v, CType);
+				result = toPrimitive(v, T);
 			} catch (DataNotCompatibleException e) {
 				throw e;
 			}

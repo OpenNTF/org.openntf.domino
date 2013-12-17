@@ -1425,7 +1425,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public boolean isDeleted() {
 		try {
-			return getDelegate().isDeleted();
+			lotus.domino.Document delegate = getDelegate();
+			if (delegate == null)
+				return false;
+			return delegate.isDeleted();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1960,7 +1963,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	public static int MAX_NATIVE_VECTOR_SIZE = 255;
-	public static int MAX_NATIVE_STRING_SIZE = 30000;
+	public static int MAX_NATIVE_STRING_SIZE = 32000;
 	public static int MAX_NATIVE_SUMMARY_SIZE = 14000;
 
 	/*
@@ -2059,11 +2062,23 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 							mimeChk.remove();
 						}
 					}
-					result = getDelegate().replaceItemValue(itemName, resultList);
-					if (isNonSummary) {
-						result.setSummary(false);
+					try {
+						result = getDelegate().replaceItemValue(itemName, resultList);
+						if (isNonSummary) {
+							result.setSummary(false);
+						}
+					} catch (NotesException ne) {
+						String msg = ne.text;
+						if (msg.equalsIgnoreCase("Cannot convert item to requested datatype")) {
+							throw new DataNotCompatibleException("Unable to write a " + resultList.getClass().getName() + " object ("
+									+ value.getClass().getName() + ") to item " + itemName + " in document " + unid_ + " in "
+									+ getAncestorDatabase().getFilePath());
+						} else {
+							DominoUtils.handleException(ne);
+						}
+					} finally {
+						enc_recycle(resultList);
 					}
-					enc_recycle(resultList);
 				} else {
 					if (value instanceof BigString)
 						isNonSummary = true;
@@ -2094,8 +2109,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						log_.warning("Native error occured when replacing " + itemName + " item on doc " + this.noteid_
 								+ " with a value of type " + (domNode == null ? "null" : domNode.getClass().getName()) + " of value "
 								+ String.valueOf(domNode));
+					} finally {
+						Base.enc_recycle(domNode);
 					}
-					Base.enc_recycle(domNode);
 				}
 			} catch (IllegalArgumentException iae) {
 				// if (getItemValueString("form").equalsIgnoreCase("container") && itemName.equals(DominoVertex.IN_NAME)) {
@@ -2357,7 +2373,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					// System.out.println("Exception from attempted save...");
 					// e.printStackTrace();
 					if (e.text.contains("Database already contains a document with this ID")) {
-						Throwable t = new RuntimeException();
+						//						Throwable t = new RuntimeException();
 						String newunid = DominoUtils.toUnid(new Date().getTime());
 						String message = "Unable to save a document with id " + getUniversalID()
 								+ " because that id already exists. Saving a " + this.getFormName()
@@ -2760,7 +2776,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 								d = db.getDocumentByUNID(unid_);
 							} catch (NotesException ne) {
 								log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
-										+ ", but the document was not found.");
+										+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
+										+ getParentDatabase().getFilePath() + " because of: " + ne.text);
 							}
 						}
 					} else {

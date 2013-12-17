@@ -212,8 +212,8 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		}
 	}
 
-	public void removeHelper(final IEdgeHelper helper) {
-		edgeHelpers_.remove(helper);
+	public void removeHelper(final String key) {
+		edgeHelpers_.remove(key);
 	}
 
 	public void setRawDatabase(final org.openntf.domino.Database database) {

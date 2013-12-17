@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config>
+
+	<faces-config-extension>
+		<namespace-uri>http://www.openntf.org/domino/xsp</namespace-uri>
+		<default-prefix>on</default-prefix>
+        <designer-extension>
+            <control-subpackage-name>picker</control-subpackage-name>
+        </designer-extension>
+	</faces-config-extension>
+<complex-type>
+    	<description>Value picker that gets its content from a property, evaluated using a value binding</description>
+    	<display-name>Simple Value Picker Data Provider</display-name>
+    	<complex-id>com.ibm.xsp.extlib.component.picker.data.SimpleValuePickerData</complex-id>
+    	<complex-class>com.ibm.xsp.extlib.component.picker.data.SimpleValuePickerData</complex-class>
+
+  		<property>
+  		    <!-- # "Array" and "List" are technical terms and should not be translated. "valueListSeparator" should not be translated. -->
+			<description>List of values, which can be provided as an Array, a List or as multiple value text. The text will be split into individual values using the separator in the "valueListSeparator" property.</description>
+			<display-name>Value List</display-name>
+			<property-name>valueList</property-name>
+			<property-class>java.lang.Object</property-class>
+			<property-extension>
+        	<designer-extension>
+          		<editor>com.ibm.std.MultiLine</editor>
+        	</designer-extension>
+			</property-extension>
+		</property>
+  		<property>
+			<description>Separator used between the different entries, if the list is text. Default is the new line character.</description>
+			<display-name>Value List Separator</display-name>
+			<property-name>valueListSeparator</property-name>
+			<property-class>java.lang.String</property-class>
+		</property>
+  		<property>
+  		    <!-- ND has naming convention which is label|value , is there default? comobo editor with suggested seperators deafult | -->
+  		    <!-- # "|" should not be translated -->
+			<description>Separator used between the label and the value of an entry, if the entry is text. It is quite common to use text entries where a "|" character separates a translatable label from a locale-independent value after the separator.</description>
+			<display-name>Label Separator</display-name>
+			<property-name>labelSeparator</property-name>
+			<property-class>java.lang.String</property-class>
+			<property-extension>
+				<designer-extension>
+					<editor>com.ibm.workplace.designer.property.editors.comboParameterEditor</editor>
+					<editor-parameter>
+						|
+					</editor-parameter>
+					<!-- The labelSeparator itself is not localizable - the separator
+					is the same in all languages. The not-localizable tag is added
+					to prevent a fail in LabelsLocalizableTest, which assumes that
+					properties with label in the name should be marked as localizable. -->
+					<tags>
+						not-localizable
+					</tags>
+				</designer-extension>
+			</property-extension>
+		</property>
+  		<property>
+			<description>Specifies if the key being used should be treated as case insensitive</description>
+			<display-name>Case Insensitive Key</display-name>
+			<property-name>caseInsensitive</property-name>
+			<property-class>boolean</property-class>
+			<property-extension>
+			</property-extension>
+		</property>
+
+    	<complex-extension>
+    		<base-complex-id>com.ibm.xsp.extlib.component.picker.data.IValuePickerData</base-complex-id>
+      		<tag-name>simpleValuePicker</tag-name>
+    	</complex-extension>
+  	</complex-type>
+  	</faces-config>

@@ -36,7 +36,7 @@ public interface TransactionalGraph extends Graph {
      * @param conclusion whether or not the current transaction was successful
      */
     @Deprecated
-    public void stopTransaction(final Conclusion conclusion);
+    public void stopTransaction(Conclusion conclusion);
 
     /**
      * When the graph is shutdown, any open transactions should be successfully committed.

@@ -824,7 +824,7 @@ public enum DominoUtils {
 		}
 
 		// entity.recycle();
-
+		doc.closeMIMEEntities();
 		session.setConvertMime(convertMime);
 
 		return result;
@@ -963,6 +963,7 @@ public enum DominoUtils {
 		// mimeStream.recycle();
 		entity = null;
 		previousState = null;
+		doc.closeMIMEEntities(true, itemName);
 		session.setConvertMime(convertMime);
 	}
 

@@ -27,7 +27,7 @@ import org.openntf.domino.utils.Factory;
 public class OpenLogHandler extends Handler {
 
 	/** The log db path. */
-	private String logDbPath;
+	//	private String logDbPath;
 
 	/** The ol_. */
 	private DominoOpenLogItem ol_;
@@ -66,9 +66,9 @@ public class OpenLogHandler extends Handler {
 	 * 
 	 * @return the log db path
 	 */
-	public String getLogDbPath() {
-		return logDbPath;
-	}
+	//	public String getLogDbPath() {
+	//		return logDbPath;
+	//	}
 
 	/**
 	 * Sets the OpenLog database path for the OpenLogItem.
