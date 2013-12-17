@@ -30,6 +30,7 @@ import org.xml.sax.SAXException;
  * 
  */
 // TODO Make the "remove" methods mark the object as unusable in some way
+// TODO Verify that null-value is actually legal in XPages
 public class FacesConfig extends FileResource implements org.openntf.domino.design.FacesConfig {
 	private static final Logger log_ = Logger.getLogger(FacesConfig.class.getName());
 	private static final long serialVersionUID = 1L;

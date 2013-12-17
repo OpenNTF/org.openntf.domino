@@ -16,6 +16,8 @@
 
 package org.openntf.domino.design;
 
+import java.util.SortedSet;
+
 /**
  * @author jgallagher
  * 
@@ -80,6 +82,8 @@ public interface DatabaseDesign {
 	public JavaResource getJavaResource(String name);
 
 	public DesignCollection<JavaResource> getJavaResources();
+
+	public SortedSet<String> getJavaResourceClassNames();
 
 	public XPage getXPage(String name);
 

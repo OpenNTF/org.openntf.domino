@@ -18,6 +18,8 @@ package org.openntf.domino.design.impl;
 
 import java.util.EnumSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
@@ -240,6 +242,22 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	public DesignCollection<org.openntf.domino.design.JavaResource> getJavaResources() {
 		NoteCollection notes = getNoteCollection(" @Contains($Flags; 'g') & @Contains($Flags; '[') ", EnumSet.of(SelectOption.MISC_FORMAT));
 		return new DesignCollection<org.openntf.domino.design.JavaResource>(notes, JavaResource.class);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#getJavaResourceClassNames()
+	 */
+	@Override
+	public SortedSet<String> getJavaResourceClassNames() {
+		SortedSet<String> result = new TreeSet<String>();
+		NoteCollection notes = getNoteCollection(" @Contains($Flags; 'g') & @Contains($Flags; '[') ", EnumSet.of(SelectOption.MISC_FORMAT));
+		for (String noteId : notes) {
+			Document doc = getAncestorDatabase().getDocumentByID(noteId);
+			for (Object pathName : doc.getItemValue("$ClassIndexItem")) {
+				result.add(DominoUtils.filePathToJavaBinaryName(((String) pathName).substring(16), "/"));
+			}
+		}
+		return result;
 	}
 
 	/*
