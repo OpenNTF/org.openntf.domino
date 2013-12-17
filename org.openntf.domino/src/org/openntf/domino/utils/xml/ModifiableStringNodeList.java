@@ -52,17 +52,16 @@ public class ModifiableStringNodeList extends AbstractList<String> {
 		XMLNode parent = xml_.selectSingleNode(parentNodePath_);
 
 		if (parent == null) {
-			System.out.println("parent node does not exist - creating for " + parentNodePath_);
 			String[] parts = parentNodePath_.split("/");
-			XMLNode parentNode = xml_;
+			parent = xml_;
 			for (String part : parts) {
-				System.out.println("checking for parent node part " + part);
-				XMLNode childNode = parentNode.selectSingleNode(part);
-				if (childNode == null) {
-					System.out.println("did not exist - creating");
-					childNode = parentNode.addChildElement(part);
+				if (!part.isEmpty()) {
+					XMLNode childNode = parent.selectSingleNode(part);
+					if (childNode == null) {
+						childNode = parent.addChildElement(part);
+					}
+					parent = childNode;
 				}
-				parentNode = childNode;
 			}
 		}
 

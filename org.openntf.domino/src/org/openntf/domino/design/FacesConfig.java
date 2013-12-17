@@ -12,27 +12,27 @@ import java.util.Map;
 // This will help: http://www.horstmann.com/corejsf/faces-config.html
 public interface FacesConfig extends FileResource {
 
-	public Collection<String> getActionListeners();
+	public List<String> getActionListeners();
 
 	public Converter addConverter();
 
-	public Collection<Converter> getConverters();
+	public List<Converter> getConverters();
 
 	public ManagedBean addManagedBean();
 
-	public Collection<ManagedBean> getManagedBeans();
+	public List<ManagedBean> getManagedBeans();
 
-	public Collection<String> getMessageBundles();
+	public List<String> getMessageBundles();
 
-	public Collection<String> getNavigationHandlers();
+	public List<String> getNavigationHandlers();
 
-	public Collection<String> getPhaseListeners();
+	public List<String> getPhaseListeners();
 
-	public Collection<String> getPropertyResolvers();
+	public List<String> getPropertyResolvers();
 
-	public Collection<String> getVariableResolvers();
+	public List<String> getVariableResolvers();
 
-	public Collection<String> getViewHandlers();
+	public List<String> getViewHandlers();
 
 	public interface ManagedBean {
 		public String getName();

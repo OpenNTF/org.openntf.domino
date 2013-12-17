@@ -74,7 +74,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.FacesConfig#getActionListeners()
 	 */
-	public Collection<String> getActionListeners() {
+	public List<String> getActionListeners() {
 		return new ModifiableStringNodeList(xml_, "/faces-config/application", "action-listener");
 	}
 
@@ -88,7 +88,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.FacesConfig#getConverters()
 	 */
-	public Collection<org.openntf.domino.design.FacesConfig.Converter> getConverters() {
+	public List<org.openntf.domino.design.FacesConfig.Converter> getConverters() {
 		return new ModifiableObjectNodeList<org.openntf.domino.design.FacesConfig.Converter>(this, xml_, "/faces-config", "converter",
 				Converter.class);
 	}
@@ -103,7 +103,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.FacesConfig#getManagedBeans()
 	 */
-	public Collection<org.openntf.domino.design.FacesConfig.ManagedBean> getManagedBeans() {
+	public List<org.openntf.domino.design.FacesConfig.ManagedBean> getManagedBeans() {
 		return new ModifiableObjectNodeList<org.openntf.domino.design.FacesConfig.ManagedBean>(this, xml_, "/faces-config", "managed-bean",
 				ManagedBean.class);
 	}
@@ -111,42 +111,42 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.FacesConfig#getMessageBundles()
 	 */
-	public Collection<String> getMessageBundles() {
+	public List<String> getMessageBundles() {
 		return new ModifiableStringNodeList(xml_, "/faces-config/application", "message-bundle");
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.FacesConfig#getNavigationHandlers()
 	 */
-	public Collection<String> getNavigationHandlers() {
+	public List<String> getNavigationHandlers() {
 		return new ModifiableStringNodeList(xml_, "/faces-config/application", "navigation-handler");
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.FacesConfig#getPhaseListeners()
 	 */
-	public Collection<String> getPhaseListeners() {
+	public List<String> getPhaseListeners() {
 		return new ModifiableStringNodeList(xml_, "/faces-config/application", "phase-listener");
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.FacesConfig#getPropertyResolvers()
 	 */
-	public Collection<String> getPropertyResolvers() {
+	public List<String> getPropertyResolvers() {
 		return new ModifiableStringNodeList(xml_, "/faces-config/application", "property-resolver");
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.FacesConfig#getVariableResolvers()
 	 */
-	public Collection<String> getVariableResolvers() {
+	public List<String> getVariableResolvers() {
 		return new ModifiableStringNodeList(xml_, "/faces-config/application", "variable-resolver");
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.FacesConfig#getViewHandlers()
 	 */
-	public Collection<String> getViewHandlers() {
+	public List<String> getViewHandlers() {
 		return new ModifiableStringNodeList(xml_, "/faces-config/application", "view-handler");
 	}
 
@@ -690,7 +690,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	}
 
 	private static class ModifiableObjectNodeList<E> extends AbstractList<E> {
-		private static final Logger log_ = Logger.getLogger(ModifiableStringNodeList.class.getName());
+		private static final Logger log_ = Logger.getLogger(ModifiableObjectNodeList.class.getName());
 
 		private final Object context_;
 		private final XMLNode xml_;
