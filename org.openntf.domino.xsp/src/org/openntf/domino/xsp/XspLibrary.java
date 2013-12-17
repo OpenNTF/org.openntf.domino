@@ -8,6 +8,7 @@ import com.ibm.xsp.library.AbstractXspLibrary;
  */
 public class XspLibrary extends AbstractXspLibrary {
 	private final static String LIBRARY_ID = XspLibrary.class.getName();
+	public final static String LIBRARY_BEAN_PREFIX = "org.openntf.domino.xsp";
 	private static Boolean GLOBAL;
 
 	private static boolean isGlobal() {
@@ -29,12 +30,24 @@ public class XspLibrary extends AbstractXspLibrary {
 	 * 
 	 */
 	public XspLibrary() {
+		System.out.println("Loading org.openntf.domino.xsp library");
+	}
 
+	@Override
+	public String[] getDependencies() {
+		return new String[] { "com.ibm.xsp.core.library", "com.ibm.xsp.extsn.library", "com.ibm.xsp.domino.library",
+				"com.ibm.xsp.designer.library" };
 	}
 
 	@Override
 	public String[] getFacesConfigFiles() {
-		String[] files = new String[] { "META-INF/domino-faces-config.xml" };
+		String[] files = new String[] { "domino-faces-config.xml" };
+		return files;
+	}
+
+	@Override
+	public String[] getXspConfigFiles() {
+		String[] files = new String[] {};
 		return files;
 	}
 

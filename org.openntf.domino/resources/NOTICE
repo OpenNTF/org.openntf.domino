@@ -42,5 +42,8 @@ Also includes ICU4J, the International Components for Unicode
 Copyright (c) 1995-2013 International Business Machines Corporation and others
  Full details can be found here: http://source.icu-project.org/repos/icu/icu/trunk/license.html
 
-
+Also includes IBM Commons API from the IBM Social Business Toolkit SDK
+Social Business Toolkit SDK
+(c) Copyright IBM Corp. 2010, 2013
+Full details can be found here: https://github.com/OpenNTF/SocialSDK/blob/master/license/LICENSE
 

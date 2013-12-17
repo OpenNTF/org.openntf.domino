@@ -4,6 +4,8 @@
 package org.openntf.domino.ext;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,14 +48,6 @@ public interface Database extends Base {
 	public int compactWithOptions(final Set<CompactOption> options);
 
 	public int compactWithOptions(final Set<CompactOption> options, final String spaceThreshold);
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * 
-	 * @see java.util.Map#containsKey(java.lang.Object)
-	 */
-	public boolean containsKey(final Object key);
 
 	/**
 	 * @param itemValues
@@ -122,14 +116,6 @@ public interface Database extends Base {
 	public DocumentCollection FTSearchRange(final String query, final int maxDocs, final FTSortOption sortOpt,
 			final Set<FTSearchOption> otherOpt, final int start);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * 
-	 * @see java.util.Map#get(java.lang.Object)
-	 */
-	public Document get(final Object key);
-
 	/**
 	 * @return A DatabaseDesign object representing the various design elements of this database.
 	 */
@@ -170,6 +156,12 @@ public interface Database extends Base {
 	public int getModifiedNoteCount(final java.util.Date since, final Set<SelectOption> noteClass);
 
 	public int getModifiedNoteCount(final java.util.Date since);
+
+	public Date getLastModifiedDate();
+
+	public Date getLastFixupDate();
+
+	public Date getLastFTIndexedDate();
 
 	public boolean getOption(final DBOption optionName);
 
@@ -233,7 +225,38 @@ public interface Database extends Base {
 	 */
 	public DatabaseTransaction getTransaction();
 
+	public void setTransaction(DatabaseTransaction txn);
+
 	public lotus.notes.addins.DominoServer getDominoServer();
 
 	public void refreshDesign();
+
+	public boolean isEmpty();
+
+	public int size();
+
+	/**
+	 * Contains key.
+	 * 
+	 * @param key
+	 *            the key
+	 * @return true, if successful
+	 */
+
+	public boolean containsKey(final Serializable key);
+
+	/**
+	 * Gets the.
+	 * 
+	 * @param key
+	 *            the key
+	 * @return the document
+	 */
+	public org.openntf.domino.Document get(final Serializable key);
+
+	public org.openntf.domino.Document put(final Serializable key, final org.openntf.domino.Document value);
+
+	public org.openntf.domino.Document remove(final Serializable key);
+
+	public Collection<org.openntf.domino.Document> values();
 }

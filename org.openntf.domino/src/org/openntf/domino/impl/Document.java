@@ -17,6 +17,7 @@ package org.openntf.domino.impl;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -56,6 +57,9 @@ import org.openntf.domino.types.Null;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.TypeUtils;
+
+import com.ibm.commons.util.io.json.JsonException;
+import com.ibm.commons.util.io.json.util.JsonWriter;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -1943,10 +1947,12 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public Item replaceItemValue(final String itemName, final Object value, final boolean isSummary) {
 		markDirty();
 		Item result = replaceItemValue(itemName, value);
-		if (result.isSummary() != isSummary)
+		if (result != null && result.isSummary() != isSummary)
 			result.setSummary(isSummary);
 		return result;
 	}
+
+	public static int MAX_NATIVE_VECTOR_SIZE = 255;
 
 	/*
 	 * (non-Javadoc)
@@ -1982,12 +1988,21 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			boolean isNonSummary = false;	// why isNon instead of is? Because we want to default to the existing behavior and only mark
 											// non-summary by exception
 			try {
-				if (value instanceof List || value instanceof Object[]) {
+				if (value instanceof Collection || value instanceof Object[]) {
+					if (value instanceof Collection) {
+						if (((Collection) value).size() > MAX_NATIVE_VECTOR_SIZE) {
+							throw new IllegalArgumentException();
+						}
+					} else if (value instanceof Object[]) {
+						if (((Object[]) value).length > MAX_NATIVE_VECTOR_SIZE) {
+							throw new IllegalArgumentException();
+						}
+					}
 					Vector<Object> resultList = new Vector<Object>();
 					Class<?> objectClass = null;
 					long totalStringSize = 0;
 
-					List<?> listValue = value instanceof List ? (List<?>) value : Arrays.asList((Object[]) value);
+					Collection<?> listValue = value instanceof Collection ? (Collection<?>) value : Arrays.asList((Object[]) value);
 
 					for (Object valNode : listValue) {
 						if (valNode instanceof BigString)
@@ -2012,6 +2027,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 							}
 							if (domNode instanceof String) {
 								totalStringSize += ((String) domNode).length();
+								if (totalStringSize > 14000)
+									isNonSummary = true;
 
 								// Escape to serializing if there's too much text data
 								// Leave fudge room for multibyte? This is clearly not the best way to do it
@@ -2027,7 +2044,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					}
 					// If it ended up being something we could store, make note of the original class instead of the list class
 					if (!(listValue).isEmpty()) {
-						valueClass = (listValue).get(0).getClass();
+						//						valueClass = (listValue).get(0).getClass();
 						MIMEEntity mimeChk = getMIMEEntity(itemName);
 						if (mimeChk != null) {
 							mimeChk.remove();
@@ -2291,6 +2308,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public boolean save(final boolean force, final boolean makeResponse, final boolean markRead) {
 		// System.out.println("Starting save operation...");
 		boolean result = false;
+		if (removeType_ != null) {
+			log_.log(Level.WARNING, "Save called on a document marked for a transactional delete. So there's no point...");
+			return true;
+		}
 		if (isDirty()) {
 			boolean go = true;
 			go = getAncestorDatabase().fireListener(generateEvent(Events.BEFORE_UPDATE_DOCUMENT, null));
@@ -2301,18 +2322,18 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					lotus.domino.Document del = getDelegate();
 					if (del != null) {
 						result = del.save(force, makeResponse, markRead);
-						// System.out.println("Document saved returned " + String.valueOf(result));
+						if (noteid_ == null || !noteid_.equals(del.getNoteID())) {
+							// System.out.println("Resetting note id from " + noteid_ + " to " + del.getNoteID());
+							noteid_ = del.getNoteID();
+						}
+						if (unid_ == null || !unid_.equals(del.getUniversalID())) {
+							// System.out.println("Resetting unid from " + unid_ + " to " + del.getUniversalID());
+							unid_ = del.getUniversalID();
+						}
 					} else {
 						log_.severe("Delegate document for " + unid_ + " is NULL!??!");
 					}
-					if (!noteid_.equals(del.getNoteID())) {
-						// System.out.println("Resetting note id from " + noteid_ + " to " + del.getNoteID());
-						noteid_ = del.getNoteID();
-					}
-					if (!unid_.equals(del.getUniversalID())) {
-						// System.out.println("Resetting unid from " + unid_ + " to " + del.getUniversalID());
-						unid_ = del.getUniversalID();
-					}
+
 				} catch (NotesException e) {
 					// System.out.println("Exception from attempted save...");
 					// e.printStackTrace();
@@ -2888,7 +2909,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			fieldNames_ = new LinkedHashSet<String>();
 			ItemVector items = (ItemVector) this.getItems();
 			String[] names = items.getNames();
-			List<String> fieldNames_ = Arrays.asList(names);
+			for (int i = 0; i < names.length; i++) {
+				fieldNames_.add(names[i]);
+			}
 		}
 		return Collections.unmodifiableSet(fieldNames_);
 	}
@@ -2987,5 +3010,28 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	private IDominoEvent generateEvent(final EnumEvent event, final Object payload) {
 		return getAncestorDatabase().generateEvent(event, this, payload);
+	}
+
+	@Override
+	public String toJson(final boolean compact) {
+		StringWriter sw = new StringWriter();
+		JsonWriter jw = new JsonWriter(sw, compact);
+		try {
+			jw.startObject();
+			jw.outStringProperty("@unid", getUniversalID());
+			Set<String> keys = keySet();
+			for (String key : keys) {
+				jw.outProperty(key, DominoUtils.toSerializable(getItemValue(key)));
+			}
+			jw.endObject();
+			jw.flush();
+		} catch (IOException e) {
+			DominoUtils.handleException(e);
+			return null;
+		} catch (JsonException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+		return sw.toString();
 	}
 }

@@ -3,13 +3,10 @@ package org.openntf.domino.tests.ntf;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
-
-import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
@@ -20,9 +17,8 @@ import org.openntf.domino.Name;
 import org.openntf.domino.Session;
 import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.View;
-import org.openntf.domino.impl.Base;
-import org.openntf.domino.thread.DominoThread;
-import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.thread.AbstractDominoRunnable;
+import org.openntf.domino.thread.DominoExecutor;
 import org.openntf.domino.utils.Factory;
 
 public enum DominoAPIScratchTest {
@@ -32,14 +28,18 @@ public enum DominoAPIScratchTest {
 		// TODO Auto-generated constructor stub
 	}
 
-	private static final int THREAD_COUNT = 1;
+	private static final int THREAD_COUNT = 6;
 	private static final boolean INCLUDE_FORMS = false;
-	private static final int delay = 1000;
+	private static final int delay = 200;
 	// private static final String server = "CN=DevilDog/O=REDPILL";
 	private static final String server = "";
 	private static final String dbPath = "events4.nsf";
 
-	static class Doer implements Runnable {
+	static class Doer extends AbstractDominoRunnable {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		int nameCount = 0;
 		int docCount = 0;
 		int dateCount = 0;
@@ -162,19 +162,20 @@ public enum DominoAPIScratchTest {
 
 			// if (false) {
 			long start = System.nanoTime();
+
 			Session s = Factory.getSessionFullAccess();
+			//			this.setup(s);
 			RunContext rc = Factory.getRunContext();
-			System.out.println("RunContext: " + rc.toString());
+			//			System.out.println("RunContext: " + rc.toString());
 			Name sname = s.getUserNameObject();
 			DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
-			System.out.println(df.format(new Date()) + " Name: " + sname.getCanonical());
+			//			System.out.println(df.format(new Date()) + " Name: " + sname.getCanonical());
 			Database db = s.getDatabase(server, dbPath);
 			/*
 			 * if (INCLUDE_FORMS) { iterateForms(db); } Set<Document> secondReference = new HashSet<Document>(); iterateAllDocuments(db,
 			 * secondReference); System.gc(); NoteCollection nc = db.createNoteCollection(false); nc.buildCollection();
 			 * iterateSecondReferences(secondReference); iterateThirdReferences();
 			 */
-			DocumentCollection rawColl = db.createDocumentCollection();
 			View view = db.getView("NameMessageEventMessages");
 			List<String> keys = new ArrayList<String>();
 			keys.add("Mail");
@@ -184,47 +185,9 @@ public enum DominoAPIScratchTest {
 			StringBuilder sbc = new StringBuilder();
 			for (Document doc : dc) {
 				sbc.append(doc.getNoteID());
-				rawColl.merge(doc.getNoteID());
 			}
 
-			System.out.println("raw count: " + rawColl.getCount());
-			System.out.println("nids: " + sbc.toString());
-			lotus.domino.View lview = (lotus.domino.View) Base.getDelegate(view);
-			java.util.Vector v = new Vector();
-			v.add("Mail");
-			v.add("2");
-			try {
-				lotus.domino.DocumentCollection ldc = lview.getAllDocumentsByKey(v, false);
-				System.out.println("Native ldc " + ldc.getCount());
-				lotus.domino.DocumentCollection rdc = lview.getParent().getAllDocuments();
-				rdc.intersect(ldc);
-
-				// lotus.domino.Document doc = ldc.getFirstDocument();
-				// // rdc.addDocument(doc);
-				// lotus.domino.Document ndoc = null;
-				// while (doc != null) {
-				// ndoc = ldc.getNextDocument(doc);
-				// rdc.merge(doc.getNoteID());
-				// doc.recycle();
-				// doc = ndoc;
-				// }
-
-				System.out.println("Native raw dc " + rdc.getCount());
-
-				lotus.domino.DocumentCollection rdc2 = lview.getParent().createDocumentCollection();
-				lotus.domino.Document doc2 = ldc.getFirstDocument();
-				lotus.domino.Document ndoc2 = null;
-				while (doc2 != null) {
-					ndoc2 = ldc.getNextDocument(doc2);
-					rdc2.addDocument(doc2);
-					doc2.recycle();
-					doc2 = ndoc2;
-				}
-				System.out.println("Native raw dc2 " + rdc2.getCount());
-
-			} catch (NotesException e) {
-				e.printStackTrace();
-			}
+			//			System.out.println("nids: " + sbc.toString());
 
 			DocumentCollection allViewDocs = view.getAllDocuments();
 			System.out.println("all view docs: " + allViewDocs.getCount());
@@ -237,27 +200,47 @@ public enum DominoAPIScratchTest {
 			sb.append(nameCount + " names, ");
 			sb.append(docCount + " docs, and ");
 			sb.append(dateCount + " datetimes without recycling.");
-			System.out.println(sb.toString());
+			//			System.out.println(sb.toString());
+		}
+
+		/* (non-Javadoc)
+		 * @see org.openntf.domino.thread.AbstractDominoRunnable#shouldStop()
+		 */
+		@Override
+		public boolean shouldStop() {
+			return false;
 		}
 
 	}
 
 	public static void main(final String[] args) {
-
-		DominoThread[] threads = new DominoThread[THREAD_COUNT];
+		DominoExecutor de = new DominoExecutor(10);
 		for (int i = 0; i < THREAD_COUNT; i++) {
-			threads[i] = new DominoThread(new Doer(), "Scratch Test" + i);
+			de.execute(new Doer());
+		}
+		DominoExecutor de2 = new DominoExecutor(10);
+
+		for (int i = 0; i < THREAD_COUNT; i++) {
+			de2.execute(new Doer());
 		}
 
-		for (DominoThread thread : threads) {
-			thread.start();
-			try {
-				Thread.sleep(delay);
-			} catch (InterruptedException e1) {
-				DominoUtils.handleException(e1);
+		de.shutdown();
+		de2.shutdown();
 
-			}
-		}
+		//		DominoThread[] threads = new DominoThread[THREAD_COUNT];
+		//		for (int i = 0; i < THREAD_COUNT; i++) {
+		//			threads[i] = new DominoThread(new Doer(), "Scratch Test" + i);
+		//		}
+		//
+		//		for (DominoThread thread : threads) {
+		//			thread.start();
+		//			try {
+		//				Thread.sleep(delay);
+		//			} catch (InterruptedException e1) {
+		//				DominoUtils.handleException(e1);
+		//
+		//			}
+		//		}
 
 	}
 }

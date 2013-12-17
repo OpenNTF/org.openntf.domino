@@ -36,7 +36,6 @@ public class DefaultFileHandler extends FileHandler {
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public DefaultFileHandler() throws IOException {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -49,7 +48,6 @@ public class DefaultFileHandler extends FileHandler {
 	 */
 	public DefaultFileHandler(final String arg0) throws IOException {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -64,7 +62,6 @@ public class DefaultFileHandler extends FileHandler {
 	 */
 	public DefaultFileHandler(final String arg0, final boolean arg1) throws IOException {
 		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -81,7 +78,6 @@ public class DefaultFileHandler extends FileHandler {
 	 */
 	public DefaultFileHandler(final String arg0, final int arg1, final int arg2) throws IOException {
 		super(arg0, arg1, arg2);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -100,7 +96,6 @@ public class DefaultFileHandler extends FileHandler {
 	 */
 	public DefaultFileHandler(final String arg0, final int arg1, final int arg2, final boolean arg3) throws IOException {
 		super(arg0, arg1, arg2, arg3);
-		// TODO Auto-generated constructor stub
 	}
 
 	/*
@@ -110,7 +105,6 @@ public class DefaultFileHandler extends FileHandler {
 	 */
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
 		super.close();
 	}
 
@@ -148,7 +142,6 @@ public class DefaultFileHandler extends FileHandler {
 	 */
 	@Override
 	public void flush() {
-		// TODO Auto-generated method stub
 		super.flush();
 	}
 
@@ -159,7 +152,6 @@ public class DefaultFileHandler extends FileHandler {
 	 */
 	@Override
 	protected void setOutputStream(final OutputStream out) {
-		// TODO Auto-generated method stub}
 		super.setOutputStream(out);
 	}
 
@@ -170,7 +162,6 @@ public class DefaultFileHandler extends FileHandler {
 	 */
 	@Override
 	public Formatter getFormatter() {
-		// TODO Auto-generated method stub
 		return super.getFormatter();
 	}
 
@@ -181,7 +172,6 @@ public class DefaultFileHandler extends FileHandler {
 	 */
 	@Override
 	protected void reportError(final String msg, final Exception ex, final int code) {
-		// TODO Auto-generated method stub
 		super.reportError(msg, ex, code);
 	}
 
@@ -192,7 +182,6 @@ public class DefaultFileHandler extends FileHandler {
 	 */
 	@Override
 	public void setFormatter(final Formatter newFormatter) {
-		// TODO Auto-generated method stub
 		super.setFormatter(newFormatter);
 	}
 

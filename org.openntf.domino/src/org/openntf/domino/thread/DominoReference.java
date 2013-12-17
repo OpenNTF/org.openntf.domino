@@ -35,16 +35,18 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 	private final lotus.domino.Base delegate_;
 	/** The delegate type_. */
 	private final Class<?> delegateType_;
-	
+
 	/** The delegate id_. */
 	private final long delegateId_;
-	
+
+	private final int originThreadId_;
+
 	/** The referrant hash_. */
 	private final int referrantHash_;
-	
+
 	/** The referrant id_. */
 	private final int referrantId_;
-	
+
 	/** The referrant session_. */
 	private Session referrantSession_;
 
@@ -71,6 +73,7 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 		} else {
 			delegateId_ = org.openntf.domino.impl.Base.getLotusId((lotus.domino.local.NotesBase) delegate);
 		}
+		originThreadId_ = System.identityHashCode(Thread.currentThread());
 		if (log_.isLoggable(Level.FINE)) {
 			delegateType_ = delegate.getClass();
 			referrantHash_ = r.hashCode();
@@ -98,6 +101,10 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 	 */
 	public Long getDelegateId() {
 		return delegateId_;
+	}
+
+	public int getOriginThreadId() {
+		return originThreadId_;
 	}
 
 	/**
@@ -140,6 +147,12 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 	 * Recycle.
 	 */
 	public void recycle() {
+		int ctid = System.identityHashCode(Thread.currentThread());
+		if (!(ctid == getOriginThreadId())) {
+			log_.log(Level.WARNING, "Attempting to recycle a Domino reference from thread " + ctid
+					+ " which is different from the one that originated it (" + getOriginThreadId()
+					+ "). This is probably going to be very very bad...");
+		}
 		org.openntf.domino.impl.Base.s_recycle(delegate_);
 		int total = Factory.countAutoRecycle();
 		if (log_.isLoggable(Level.FINE)) {

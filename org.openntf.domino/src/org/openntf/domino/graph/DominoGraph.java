@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -32,7 +33,38 @@ import com.tinkerpop.blueprints.TransactionalGraph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.DefaultGraphQuery;
 
+@SuppressWarnings("deprecation")
 public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
+	public static class DominoGraphException extends RuntimeException {
+
+		private static final long serialVersionUID = 1L;
+		final String message_;
+		final DominoElement elem1_;
+		final DominoElement elem2_;
+
+		public DominoGraphException(final String message) {
+			super(message);
+			message_ = message;
+			elem1_ = null;
+			elem2_ = null;
+		}
+
+		public DominoGraphException(final String message, final DominoElement element) {
+			super(message);
+			message_ = message;
+			elem1_ = element;
+			elem2_ = null;
+
+		}
+
+		public DominoGraphException(final String message, final DominoElement element1, final DominoElement element2) {
+			super(message);
+			message_ = message;
+			elem1_ = element1;
+			elem2_ = element2;
+		}
+	}
+
 	private static final Logger log_ = Logger.getLogger(DominoGraph.class.getName());
 
 	public static final Set<String> EMPTY_IDS = Collections.emptySet();
@@ -89,16 +121,16 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	static {
 		DominoGraph.FEATURES.supportsDuplicateEdges = true;
 		DominoGraph.FEATURES.supportsSelfLoops = true;
-		DominoGraph.FEATURES.supportsSerializableObjectProperty = false;
+		DominoGraph.FEATURES.supportsSerializableObjectProperty = true;
 		DominoGraph.FEATURES.supportsBooleanProperty = true;
 		DominoGraph.FEATURES.supportsDoubleProperty = true;
-		DominoGraph.FEATURES.supportsFloatProperty = false;
+		DominoGraph.FEATURES.supportsFloatProperty = true;
 		DominoGraph.FEATURES.supportsIntegerProperty = true;
-		DominoGraph.FEATURES.supportsPrimitiveArrayProperty = false;
+		DominoGraph.FEATURES.supportsPrimitiveArrayProperty = true;
 		DominoGraph.FEATURES.supportsUniformListProperty = true;
-		DominoGraph.FEATURES.supportsMixedListProperty = false;
-		DominoGraph.FEATURES.supportsLongProperty = false;
-		DominoGraph.FEATURES.supportsMapProperty = false;
+		DominoGraph.FEATURES.supportsMixedListProperty = true;
+		DominoGraph.FEATURES.supportsLongProperty = true;
+		DominoGraph.FEATURES.supportsMapProperty = true;
 		DominoGraph.FEATURES.supportsStringProperty = true;
 
 		DominoGraph.FEATURES.ignoresSuppliedIds = false;
@@ -111,13 +143,13 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		DominoGraph.FEATURES.supportsEdgeKeyIndex = false;
 		DominoGraph.FEATURES.supportsVertexIndex = false;
 		DominoGraph.FEATURES.supportsEdgeIndex = false;
-		DominoGraph.FEATURES.supportsTransactions = false;
+		DominoGraph.FEATURES.supportsTransactions = true;
 		DominoGraph.FEATURES.supportsVertexIteration = false;
 		DominoGraph.FEATURES.supportsEdgeIteration = false;
 		DominoGraph.FEATURES.supportsEdgeRetrieval = true;
 		DominoGraph.FEATURES.supportsVertexProperties = true;
 		DominoGraph.FEATURES.supportsEdgeProperties = true;
-		DominoGraph.FEATURES.supportsThreadedTransactions = false;
+		DominoGraph.FEATURES.supportsThreadedTransactions = true;
 		DominoGraph.FEATURES.isPersistent = true;
 
 	}
@@ -135,6 +167,27 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	public IEdgeHelper getHelper(final String key) {
 		IEdgeHelper helper = edgeHelpers_.get(key);
 		return helper;
+	}
+
+	public IEdgeHelper getHelper(final IDominoEdgeType edgeType) {
+		return getHelper(edgeType.getLabel());
+	}
+
+	public Set<IEdgeHelper> findHelpers(final Vertex in, final Vertex out) {
+		Set<IEdgeHelper> result = new HashSet<IEdgeHelper>();
+		if (in == null || out == null) {
+			return result;
+		}
+		Class<?> inCls = in.getClass();
+		Class<?> outCls = out.getClass();
+		for (IEdgeHelper helper : edgeHelpers_.values()) {
+			boolean inChk = helper.getInType().isAssignableFrom(inCls);
+			boolean outChk = helper.getOutType().isAssignableFrom(outCls);
+			if (inChk && outChk) {
+				result.add(helper);
+			}
+		}
+		return result;
 	}
 
 	public void addHelper(final String key, final Class<? extends Vertex> inType, final Class<? extends Vertex> outType) {
@@ -157,6 +210,10 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		if (getHelper(key) == null) {
 			edgeHelpers_.put(key, helper);
 		}
+	}
+
+	public void removeHelper(final IEdgeHelper helper) {
+		edgeHelpers_.remove(helper);
 	}
 
 	public void setRawDatabase(final org.openntf.domino.Database database) {
@@ -345,6 +402,12 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		// log_.log(Level.SEVERE, "Returning a null document for id " + String.valueOf(id)
 		// + " even though createOnFail was true. This should be guaranteed to return a real document!");
 		// }
+		if (result == null && createOnFail) {
+			log_.log(Level.SEVERE,
+					"We are about to return a null result even though createOnFail was true. We should ALWAYS return a Document in that case. For key: "
+							+ String.valueOf(id) + " in database " + String.valueOf(filepath_));
+			new RuntimeException().printStackTrace();
+		}
 		return result;
 	}
 
@@ -492,7 +555,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		Vertex out = edge.getVertex(Direction.OUT);
 		((DominoVertex) out).removeEdge(edge);
 		removeCache(edge);
-		edge.remove();
+		((DominoEdge) edge)._remove();
 	}
 
 	@Override
@@ -503,7 +566,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 			removeEdge(edge);
 		}
 		removeCache(vertex);
-		vertex.remove();
+		dv._remove();
 	}
 
 	@Override
@@ -578,6 +641,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	 */
 	@Override
 	@Deprecated
+	@SuppressWarnings("deprecation")
 	public void stopTransaction(final Conclusion conclusion) {
 		// TODO Auto-generated method stub
 

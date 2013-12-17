@@ -96,9 +96,19 @@ public enum XSPUtil {
 	 */
 	public static Session getCurrentSession() {
 		try {
-			return Factory.fromLotus((lotus.domino.Session) resolveVariable("session"), Session.class, null);
+			lotus.domino.Session s = (lotus.domino.Session) resolveVariable("session");
+			if (s instanceof org.openntf.domino.Session) {
+				return (org.openntf.domino.Session) s;
+			} else {
+				return Factory.fromLotus(s, Session.class, null);
+			}
+		} catch (ClassNotFoundException nfe) {
+			System.out
+					.println("Class not found exception generally indicates that the OpenNTF API has not been initialized from XPages. Please see the installation instructions.");
+			return null;
 		} catch (Exception ne) {
-			DominoUtils.handleException(ne);
+			System.out.println("ALERT! Unable to find current session. Normal log handling not likely available.");
+			ne.printStackTrace();
 			return null;
 		}
 	}

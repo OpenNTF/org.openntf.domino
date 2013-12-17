@@ -7,6 +7,10 @@ import org.openntf.domino.utils.Factory;
  * The Class AgentBase.
  */
 public class AgentBase extends lotus.domino.AgentBase {
+	//	static {
+	//		NotesThread nt = new NotesThread(new LogSetupRunnable());
+	//		nt.start();
+	//	}
 
 	/*
 	 * (non-Javadoc)

@@ -21,7 +21,7 @@ import com.ibm.icu.util.Calendar;
  */
 public interface Session {
 	public static enum Fixes {
-		MIME_CONVERT, REPLACE_ITEM_NULL, REMOVE_ITEM, APPEND_ITEM_VALUE
+		MIME_CONVERT, REPLACE_ITEM_NULL, REMOVE_ITEM, APPEND_ITEM_VALUE, VIEW_UPDATE_OFF
 	}
 
 	public IDominoEventFactory getEventFactory();
@@ -128,5 +128,10 @@ public interface Session {
 	public boolean isFixEnabled(Fixes fix);
 
 	public void setFixEnable(Fixes fix, boolean value);
+
+	@Deprecated
+	public String toCommonName(String name);
+
+	public void boogie();
 
 }

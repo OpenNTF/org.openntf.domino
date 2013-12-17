@@ -15,6 +15,8 @@
  */
 package org.openntf.domino.logging;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.security.AccessControlException;
 import java.security.AccessController;
@@ -23,6 +25,7 @@ import java.security.PrivilegedExceptionAction;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Properties;
 import java.util.TimeZone;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -51,6 +54,37 @@ public class LogUtils {
 
 	}
 
+	private static InputStream parsePropertiesStream(final InputStream is) {
+		//		System.out.println("Parsing properties stream...");
+		Properties props = new Properties();
+		try {
+			props.load(is);
+			String datapath = org.openntf.domino.utils.Factory.getDataPath() + "/";
+			for (Object key : props.keySet()) {
+				if (key instanceof String) {
+					String keyName = (String) key;
+					String value = props.getProperty(keyName);
+					if (value.indexOf("<notesdata>") > -1) {
+						String result = value.replace("<notesdata>", datapath);
+						//						System.out.println("Found notesdata variable in properties value for " + keyName);
+						//						System.out.println("Replacing with " + datapath + " to result in " + result);
+						props.put(keyName, result);
+					}
+					//					value.replace("%notesprogram%", Factory.getProgramPath() + java.io.File.pathSeparator);
+
+				}
+			}
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			props.store(os, "");
+			InputStream result = new ByteArrayInputStream(os.toByteArray());
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return is;
+		}
+
+	}
+
 	/**
 	 * Retrieves default logging properties file from this package as InputStream. <br/>
 	 * Called by getLogConfigFile(int, String) if no file passed to it or file not found.
@@ -59,7 +93,8 @@ public class LogUtils {
 	 */
 	public static InputStream getDefaultLogConfigFile() {
 		try {
-			return LogUtils.class.getResourceAsStream("logging.properties");
+			InputStream raw = LogUtils.class.getResourceAsStream("logging.properties");
+			return parsePropertiesStream(raw);
 		} catch (Throwable e) {
 			System.out.println("SEVERE: Error getting default log config file");
 			return null;
@@ -82,7 +117,7 @@ public class LogUtils {
 			if ("".equals(filePath)) {
 				return getDefaultLogConfigFile();
 			} else {
-				is = DominoUtils.getDominoProps(fileType, filePath);
+				is = parsePropertiesStream(DominoUtils.getDominoProps(fileType, filePath));
 				if (null == is) {
 					is = getDefaultLogConfigFile();
 				}
@@ -139,7 +174,10 @@ public class LogUtils {
 				public Object run() throws Exception {
 					LogManager manager = LogManager.getLogManager();
 					if ("".equals(filePath)) {
-						manager.readConfiguration(getDefaultLogConfigFile());
+						InputStream is = getDefaultLogConfigFile();
+						if (is != null) {
+							manager.readConfiguration(is);
+						}
 					} else {
 						InputStream is = null;
 						if (relative) {

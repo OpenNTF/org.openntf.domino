@@ -28,18 +28,25 @@ import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
+import java.security.AccessControlException;
 import java.security.AccessController;
 import java.security.MessageDigest;
+import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -67,6 +74,27 @@ import com.ibm.icu.util.ULocale;
 public enum DominoUtils {
 	;
 
+	public static Class<?> getClass(final String className) {
+		Class<?> result = null;
+		try {
+			result = AccessController.doPrivileged(new PrivilegedExceptionAction<Class<?>>() {
+				@Override
+				public Class<?> run() throws Exception {
+					Class<?> cls = Thread.currentThread().getContextClassLoader().loadClass(className);
+					return cls;
+				}
+			});
+		} catch (AccessControlException e) {
+			e.printStackTrace();
+		} catch (PrivilegedActionException e) {
+			e.printStackTrace();
+		}
+		if (result == null) {
+			log_.log(Level.WARNING, "Unable to resolve class " + className + " Please check logs for more details.");
+		}
+		return result;
+	}
+
 	private static ThreadLocal<Boolean> bubbleExceptions_ = new ThreadLocal<Boolean>() {
 		@Override
 		protected Boolean initialValue() {
@@ -88,6 +116,11 @@ public enum DominoUtils {
 	public static class LoaderObjectInputStream extends ObjectInputStream {
 		private final ClassLoader loader_;
 
+		public LoaderObjectInputStream(final InputStream in) throws IOException {
+			super(in);
+			loader_ = null;
+		}
+
 		public LoaderObjectInputStream(final ClassLoader classLoader, final InputStream in) throws IOException {
 			super(in);
 			loader_ = classLoader;
@@ -95,8 +128,12 @@ public enum DominoUtils {
 
 		@Override
 		protected Class<?> resolveClass(final ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+			String name = desc.getName();
+			if (loader_ == null) {
+				return DominoUtils.getClass(name);
+			}
 			try {
-				String name = desc.getName();
+
 				return Class.forName(name, false, loader_);
 			} catch (ClassNotFoundException e) {
 				return super.resolveClass(desc);
@@ -108,7 +145,7 @@ public enum DominoUtils {
 	private final static Logger log_ = Logger.getLogger("org.openntf.domino");
 
 	/** The Constant logBackup_. */
-	private final static Logger logBackup_ = Logger.getLogger("org.openntf.domino");
+	private final static Logger logBackup_ = Logger.getLogger("com.ibm.xsp.domino");
 
 	/**
 	 * Checksum.
@@ -333,6 +370,226 @@ public enum DominoUtils {
 		}
 	}
 
+	public static Pattern IS_HIERARCHICAL_MATCH = Pattern.compile("^((CN=)|(O=)|(OU=)|(C=))[^/]+", Pattern.CASE_INSENSITIVE);
+
+	public static Pattern CN_MATCH = Pattern.compile("^(CN=)[^/]+", Pattern.CASE_INSENSITIVE);
+
+	public static Pattern OU_MATCH = Pattern.compile("(OU=)[^/]+", Pattern.CASE_INSENSITIVE);
+
+	public static Pattern O_MATCH = Pattern.compile("(O=)[^/]+", Pattern.CASE_INSENSITIVE);
+
+	public static Pattern C_MATCH = Pattern.compile("(C=)[^/]+", Pattern.CASE_INSENSITIVE);
+
+	public static boolean isHierarchicalName(final String name) {
+		return IS_HIERARCHICAL_MATCH.matcher(name).find();
+	}
+
+	public static String toAbbreviatedName(final String name) {
+		if (isHierarchicalName(name)) {
+			StringBuilder builder = new StringBuilder();
+			boolean isFirst = true;
+			String cn = toCommonName(name);
+			if (cn.length() > 0) {
+				isFirst = false;
+				builder.append(cn);
+			}
+			String ouString = toOUString(name);
+			if (ouString.length() > 0) {
+				if (!isFirst) {
+					builder.append('/');
+				}
+				isFirst = false;
+				builder.append(toOUString(name));
+			}
+			//			String[] ous = toOU(name);
+			//			if (ous.length > 0) {
+			//				for (String ou : ous) {
+			//					if (ou.length() > 0) {
+			//						if (!isFirst)
+			//							builder.append('/');
+			//						isFirst = false;
+			//						builder.append(ou);
+			//					}
+			//				}
+			//			}
+			String o = toOrgName(name);
+			if (o.length() > 0) {
+				if (!isFirst)
+					builder.append('/');
+				isFirst = false;
+				builder.append(o);
+			}
+			String c = toCountry(name);
+			if (c.length() > 0) {
+				if (!isFirst)
+					builder.append('/');
+				isFirst = false;
+				builder.append(c);
+			}
+			return builder.toString();
+		} else {
+			return name;
+		}
+	}
+
+	public static String toCommonName(final String name) {
+		if (isHierarchicalName(name)) {
+			Matcher m = CN_MATCH.matcher(name);
+			if (m.find()) {
+				int start = m.start() + 3;
+				int end = m.end();
+				if (start < end) {
+					return name.substring(start, end);
+				} else {
+					return name;
+				}
+			} else {
+				return "";
+			}
+		} else {
+			return name;
+		}
+	}
+
+	public static String toOrgName(final String name) {
+		if (isHierarchicalName(name)) {
+			Matcher m = O_MATCH.matcher(name);
+			if (m.find()) {
+				int start = m.start() + 2;
+				int end = m.end();
+				if (start < end) {
+					return name.substring(start, end);
+				} else {
+					return name;
+				}
+			} else {
+				return "";
+			}
+		} else {
+			return name;
+		}
+	}
+
+	public static String toOUString(final String name) {
+		if (isHierarchicalName(name)) {
+			Matcher m = OU_MATCH.matcher(name);
+			StringBuilder builder = new StringBuilder();
+			int i = 0;
+			while (m.find()) {
+				int start = m.start() + 3;
+				int end = m.end();
+				if (start < end) {
+					if (i > 0) {
+						builder.append('/');
+					}
+					builder.append(name.substring(start, end));
+					i++;
+				}
+			}
+			if (i == 0) {
+				return "";
+			} else {
+				return builder.toString();
+			}
+		} else {
+			return "";
+		}
+	}
+
+	public static String[] toOU(final String name) {
+		if (isHierarchicalName(name)) {
+			Matcher m = OU_MATCH.matcher(name);
+			String[] ous = new String[4];	//maximum number of OUs according to spec
+			int i = 0;
+			while (m.find()) {
+				int start = m.start() + 3;
+				int end = m.end();
+				if (start < end) {
+					ous[i++] = name.substring(start, end);
+				}
+			}
+			if (i == 0) {
+				return new String[0];
+			} else {
+				String[] result = new String[i];
+				System.arraycopy(ous, 0, result, 0, i);
+				return result;
+			}
+		} else {
+			return new String[0];
+		}
+	}
+
+	public static String toCountry(final String name) {
+		if (isHierarchicalName(name)) {
+			Matcher m = C_MATCH.matcher(name);
+			if (m.find()) {
+				int start = m.start() + 2;
+				int end = m.end();
+				if (start < end) {
+					return name.substring(start, end);
+				} else {
+					return name;
+				}
+			} else {
+				return "";
+			}
+		} else {
+			return name;
+		}
+	}
+
+	public static String toNameType(final String name, final Name.NameType type) {
+		switch (type) {
+		case COMMON:
+			return toCommonName(name);
+		case ABBREVIATED:
+			return toAbbreviatedName(name);
+		case CANONICAL:
+			return name;
+		case ORG:
+			return toOrgName(name);
+		case ORGUNIT:
+			return toOUString(name);
+		case COUNTRY:
+			return toCountry(name);
+		}
+		return name;
+	}
+
+	public static Map<String, String> mapNames(final Collection<String> names, final Name.NameType keyType, final Name.NameType valueType) {
+		if (names != null) {
+			Map<String, String> result = new LinkedHashMap<String, String>();
+			for (String name : names) {
+				String key = toNameType(name, keyType);
+				String value = toNameType(name, valueType);
+				result.put(key, value);
+			}
+			return result;
+		} else {
+			return null;
+		}
+	}
+
+	public static List<String> toSelectionList(final Collection<String> names, final Name.NameType firstType, final Name.NameType secondType) {
+		return toSelectionList(names, firstType, secondType, "|");
+	}
+
+	public static List<String> toSelectionList(final Collection<String> names, final Name.NameType firstType,
+			final Name.NameType secondType, final CharSequence separator) {
+		if (names != null) {
+			List<String> result = new LinkedList<String>();
+			for (String name : names) {
+				String key = toNameType(name, firstType);
+				String value = toNameType(name, secondType);
+				result.add(key + separator + value);
+			}
+			return result;
+		} else {
+			return null;
+		}
+	}
+
 	/**
 	 * Checks if is hex.
 	 * 
@@ -490,15 +747,16 @@ public enum DominoUtils {
 		}
 		Class<?> chkClass = null;
 		String className = entity.getNthHeader("X-Java-Class").getHeaderVal();
-		ClassLoader cl = Factory.getClassLoader();
-		try {
-			chkClass = (Class<?>) Class.forName(className, true, cl);
-		} catch (Throwable t) {
-			log_.log(Level.SEVERE, "Unable to load class " + className + " from a ClassLoader of " + cl.getClass().getName()
-					+ " so object deserialization is likely to fail...");
-		}
+		chkClass = getClass(className);
+		//		ClassLoader cl = Factory.getClassLoader();
+		//		try {
+		//			chkClass = (Class<?>) Class.forName(className, true, cl);
+		//		} catch (Throwable t) {
+		//			log_.log(Level.SEVERE, "Unable to load class " + className + " from a ClassLoader of " + cl.getClass().getName()
+		//					+ " so object deserialization is likely to fail...");
+		//		}
 		if (chkClass == null) {
-			log_.log(Level.SEVERE, "Unable to load class " + className + " from a ClassLoader of " + cl.getClass().getName()
+			log_.log(Level.SEVERE, "Unable to load class " + className + " from currentThread classLoader"
 					+ " so object deserialization is likely to fail...");
 		}
 
@@ -513,15 +771,14 @@ public enum DominoUtils {
 		ObjectInputStream objectStream;
 		if (entity.getHeaders().toLowerCase().contains("content-encoding: gzip")) {
 			GZIPInputStream zipStream = new GZIPInputStream(byteStream);
-			objectStream = new LoaderObjectInputStream(cl, zipStream);
+			objectStream = new LoaderObjectInputStream(zipStream);
 		} else {
-			objectStream = new LoaderObjectInputStream(cl, byteStream);
+			objectStream = new LoaderObjectInputStream(byteStream);
 		}
 
 		// There are three potential storage forms: Externalizable, Serializable, and StateHolder, distinguished by type or header
 		if (entity.getContentSubType().equals("x-java-externalized-object")) {
-			Class<Externalizable> externalizableClass = (Class<Externalizable>) Class.forName(entity.getNthHeader("X-Java-Class")
-					.getHeaderVal(), true, Factory.getClassLoader());
+			Class<Externalizable> externalizableClass = (Class<Externalizable>) getClass(entity.getNthHeader("X-Java-Class").getHeaderVal());
 			Externalizable restored = externalizableClass.newInstance();
 			restored.readExternal(objectStream);
 			result = restored;
@@ -533,10 +790,10 @@ public enum DominoUtils {
 			MIMEHeader storageScheme = entity.getNthHeader("X-Storage-Scheme");
 			MIMEHeader originalJavaClass = entity.getNthHeader("X-Original-Java-Class");
 			if (storageScheme != null && storageScheme.getHeaderVal().equals("StateHolder")) {
-				Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext", true, Factory.getClassLoader());
+				Class<?> facesContextClass = getClass("javax.faces.context.FacesContext");
 				Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
 
-				Class<?> stateHoldingClass = (Class<?>) Class.forName(originalJavaClass.getHeaderVal(), true, Factory.getClassLoader());
+				Class<?> stateHoldingClass = getClass(originalJavaClass.getHeaderVal());
 				Method restoreStateMethod = stateHoldingClass.getMethod("restoreState", facesContextClass, Object.class);
 				result = stateHoldingClass.newInstance();
 				restoreStateMethod.invoke(result, getCurrentInstance.invoke(null), restored);

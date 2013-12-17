@@ -104,8 +104,8 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @see org.openntf.domino.NotesCalendar#getEntries(lotus.domino.DateTime, lotus.domino.DateTime, int, int)
 	 */
 	@Override
-	public Vector<org.openntf.domino.NotesCalendarEntry> getEntries(final lotus.domino.DateTime start, final lotus.domino.DateTime end, final int skipCount,
-			final int maxReturn) {
+	public Vector<org.openntf.domino.NotesCalendarEntry> getEntries(final lotus.domino.DateTime start, final lotus.domino.DateTime end,
+			final int skipCount, final int maxReturn) {
 		try {
 			Vector<org.openntf.domino.NotesCalendarEntry> result;
 			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
@@ -190,7 +190,8 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @see org.openntf.domino.NotesCalendar#getNewInvitations(lotus.domino.DateTime, lotus.domino.DateTime)
 	 */
 	@Override
-	public Vector<org.openntf.domino.NotesCalendarNotice> getNewInvitations(final lotus.domino.DateTime start, final lotus.domino.DateTime since) {
+	public Vector<org.openntf.domino.NotesCalendarNotice> getNewInvitations(final lotus.domino.DateTime start,
+			final lotus.domino.DateTime since) {
 		try {
 			Vector<org.openntf.domino.NotesCalendarNotice> result;
 			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
@@ -372,5 +373,17 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	@Override
 	public org.openntf.domino.Session getAncestorSession() {
 		return this.getParent();
+	}
+
+	/* (non-Javadoc)
+	 * @see lotus.domino.NotesCalendar#getApptunidFromUID(java.lang.String)
+	 */
+	public String getApptunidFromUID(final String arg0) {
+		try {
+			return getDelegate().getApptunidFromUID(arg0);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
 	}
 }

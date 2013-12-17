@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+ <extension
+           id="org.openntf.domino.xsp.Servlet"
+           point="org.eclipse.equinox.http.registry.servlets">
+        <servlet
+              alias="/openntf_domino"
+              class="org.openntf.domino.xsp.OpenntfServlet"
+              load-on-startup="true">
+        </servlet>
+     </extension>
    <extension
          point="com.ibm.commons.Extension">
       <service
@@ -11,6 +20,14 @@
    <extension point="com.ibm.commons.Extension">
          <service type="com.ibm.xsp.library.Contributor" class="org.openntf.domino.xsp.OpenntfDominoXspContributor" />
    </extension>
+   <extension
+         point="com.ibm.commons.Extension">
+      <service
+            class="org.openntf.domino.xsp.helpers.OpenntfViewNavigatorFactoryFactory"
+            type="com.ibm.xsp.model.domino.ViewNavigatorFactory">
+      </service>
+   </extension>
+   
    
      <extension point="com.ibm.commons.Extension">
          <service type="com.ibm.designer.runtime.extensions.JavaScriptProvider" class="org.openntf.domino.xsp.script.OpenDomJavaScriptExtension" />

@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Document;
+import org.openntf.domino.graph.DominoGraph.DominoGraphException;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
@@ -26,8 +27,8 @@ import com.tinkerpop.blueprints.util.VerticesFromEdgesIterable;
 public class DominoVertex extends DominoElement implements IDominoVertex, Serializable {
 	private static final Logger log_ = Logger.getLogger(DominoVertex.class.getName());
 	public static final String GRAPH_TYPE_VALUE = "OpenVertex";
-	public static final String IN_NAME = "_OPEN_IN";
-	public static final String OUT_NAME = "_OPEN_OUT";
+	//	public static final String IN_NAME = "_OPEN_IN";
+	//	public static final String OUT_NAME = "_OPEN_OUT";
 	// public static final String IN_LABELS = "_OPEN_LABELS_IN";
 	// public static final String OUT_LABELS = "_OPEN_LABELS_OUT";
 	public static final String IN_PREFIX = "_OPEN_IN_";
@@ -275,7 +276,15 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	protected Set<Edge> getInEdgeObjects(final String... labels) {
 		Map<String, Set<Edge>> inCache = getInEdgeCache();
 		Set<Edge> result = null;
-		if (labels.length == 1) {
+		if (labels == null || labels.length == 0) {
+			result = Collections.synchronizedSet(new LinkedHashSet<Edge>());
+			Set<String> labelSet = this.getInEdgeLabels();
+			//			System.out.println("INFO: Getting all IN edges for a vertex across " + labelSet.size() + " labels.");
+			for (String label : labelSet) {
+				result.addAll(getInEdgeObjects(label));
+			}
+			//			System.out.println("INFO: Found " + result.size() + " IN edges.");
+		} else if (labels.length == 1) {
 			String label = labels[0];
 			// System.out.println("Getting in edges from " + getClass().getName() + " with label: " + label + " ...");
 			synchronized (inCache) {
@@ -312,7 +321,18 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	protected Set<Edge> getOutEdgeObjects(final String... labels) {
 		Map<String, Set<Edge>> outCache = getOutEdgeCache();
 		Set<Edge> result = null;
-		if (labels.length == 1) {
+
+		if (labels == null || labels.length == 0) {
+			result = new LinkedHashSet<Edge>();
+			Set<String> labelSet = this.getOutEdgeLabels();
+			//			System.out.println("INFO: Getting all OUT edges for a vertex across " + labelSet.size() + " labels.");
+			for (String label : labelSet) {
+				Set<Edge> curEdges = getOutEdgeObjects(label);
+				//				System.out.println("INFO: Found " + curEdges.size() + " OUT edges for label " + label);
+				result.addAll(curEdges);
+			}
+			//			System.out.println("INFO: Found " + result.size() + " OUT edges.");
+		} else if (labels.length == 1) {
 			String label = labels[0];
 			if (label == null) {
 				return Collections.unmodifiableSet(getOutEdgeObjects());
@@ -404,7 +424,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		Set<String> rawKeys = getRawDocument().keySet();
 		for (String key : rawKeys) {
 			if (key.startsWith(IN_PREFIX)) {
-				result.add(key.substring(IN_PREFIX.length() + 1));
+				result.add(key.substring(IN_PREFIX.length()));
 			}
 		}
 		return result;
@@ -423,7 +443,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		Set<String> rawKeys = getRawDocument().keySet();
 		for (String key : rawKeys) {
 			if (key.startsWith(OUT_PREFIX)) {
-				result.add(key.substring(OUT_PREFIX.length() + 1));
+				result.add(key.substring(OUT_PREFIX.length()));
 			}
 		}
 		return result;
@@ -473,41 +493,59 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		return new DefaultVertexQuery(this);
 	}
 
+	@Override
+	public void remove() {
+		getParent().removeVertex(this);
+	}
+
 	public void removeEdge(final Edge edge) {
 		getParent().startTransaction(this);
 		String label = edge.getLabel();
 
 		boolean inChanged = false;
 		Set<String> ins = getInEdgesSet(label);
-		synchronized (ins) {
-			inChanged = ins.remove(edge.getId());
+		if (ins != null) {
+			//			System.out.println("Removing an in edge from " + label + " with id " + edge.getId() + " from a vertex of type "
+			//					+ getProperty("Form"));
+			synchronized (ins) {
+				inChanged = ins.remove(edge.getId());
+			}
+		} else {
+			//			System.out.println("in edges were null from a vertex of type " + getProperty("Form") + ": " + getId());
 		}
 		// Set<Edge> inObjs = getInEdgeObjects();
 		// synchronized (inObjs) {
 		// inObjs.remove(edge);
 		// }
 		if (inChanged) {
+			//			System.out.println("Ins were changed so recording cache invalidation...");
 			Set<Edge> inObjsLabel = getInEdgeCache(label);
 			synchronized (inObjsLabel) {
 				inObjsLabel.remove(edge);
 			}
-
+			Map<String, Boolean> inDirtyMap = getInDirtyMap();
+			synchronized (inDirtyMap) {
+				inDirtyMap.put(label, true);
+			}
 		}
 
 		boolean outChanged = false;
 		Set<String> outs = getOutEdgesSet(label);
-		synchronized (outs) {
-			outChanged = outs.remove(edge.getId());
+		if (outs != null) {
+			//			System.out.println("Removing an out edge from " + label + " with id " + edge.getId() + " from a vertex of type "
+			//					+ getProperty("Form"));
+			synchronized (outs) {
+				outChanged = outs.remove(edge.getId());
+			}
+		} else {
+			//			System.out.println("out edges were null from a vertex of type " + getProperty("Form") + ": " + getId());
 		}
 		if (outChanged) {
+			//			System.out.println("Out were changed so recording cache invalidation...");
 			Set<Edge> outObjsLabel = getOutEdgeCache(label);
 			synchronized (outObjsLabel) {
 				outObjsLabel.remove(edge);
 			}
-			// Set<Edge> outObjs = getOutEdgeObjects();
-			// synchronized (outObjs) {
-			// outObjs.remove(edge);
-			// }
 			Map<String, Boolean> outDirtyMap = getOutDirtyMap();
 			synchronized (outDirtyMap) {
 				outDirtyMap.put(label, true);
@@ -616,5 +654,51 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		}
 		return sb.toString();
 	}
+
+	public IEdgeHelper getHelper(final IDominoEdgeType edgeType) {
+		return getParent().getHelper(edgeType);
+	}
+
+	public Set<IEdgeHelper> findHelpers(final Vertex other) {
+		return getParent().findHelpers(this, other);
+	}
+
+	public static class MultipleDefinedEdgeHelpers extends DominoGraphException {
+		private static final long serialVersionUID = 1L;
+
+		public MultipleDefinedEdgeHelpers(final DominoVertex element1, final DominoVertex element2) {
+			super("Multiple EdgeHelpers found for vertexes of type " + element1.getClass().getName() + " and "
+					+ element2.getClass().getName(), element1, element2);
+		}
+	}
+
+	public static class UndefinedEdgeHelpers extends DominoGraphException {
+		private static final long serialVersionUID = 1L;
+
+		public UndefinedEdgeHelpers(final DominoVertex element1, final DominoVertex element2) {
+			super("No EdgeHelpers found for vertexes of type " + element1.getClass().getName() + " and " + element2.getClass().getName(),
+					element1, element2);
+		}
+	}
+
+	public Edge relate(final DominoVertex other) throws MultipleDefinedEdgeHelpers {
+		Set<IEdgeHelper> helpers = findHelpers(other);
+		if (helpers.size() == 1) {
+			for (IEdgeHelper helper : helpers) {
+				return helper.makeEdge(other, this);
+			}
+			return null;
+		} else if (helpers.size() == 0) {
+			throw new UndefinedEdgeHelpers(this, other);
+
+		} else {
+			throw new MultipleDefinedEdgeHelpers(this, other);
+		}
+
+	}
+	//
+	//	public Edge find(Vertex other) {
+	//		return getRuleHelper().findEdge(this, other);
+	//	}
 
 }

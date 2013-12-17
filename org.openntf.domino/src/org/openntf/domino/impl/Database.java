@@ -37,14 +37,20 @@ import org.openntf.domino.design.impl.DatabaseDesign;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
+import org.openntf.domino.exceptions.TransactionAlreadySetException;
+import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+
+import com.ibm.icu.util.Calendar;
+import com.ibm.icu.util.GregorianCalendar;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class Database.
  */
+@SuppressWarnings("deprecation")
 public class Database extends Base<org.openntf.domino.Database, lotus.domino.Database> implements org.openntf.domino.Database {
 	private static final Logger log_ = Logger.getLogger(Database.class.getName());
 	/** The server_. */
@@ -55,6 +61,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	/** The replid_. */
 	private String replid_;
+
+	private String ident_;
 
 	/**
 	 * Instantiates a new database.
@@ -85,6 +93,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		} catch (NotesException e) {
 			// NTF probably not opened yet. No reason to freak out yet...
 		}
+		ident_ = System.identityHashCode(getParent()) + "!!!" + server_ + "!!" + path_;
 	}
 
 	/*
@@ -211,16 +220,6 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.openntf.domino.Database#get(java.lang.Object)
-	 */
-	@Override
-	public org.openntf.domino.Document get(final Object key) {
-		return this.getDocumentByKey((String) key);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.openntf.domino.Database#compact()
 	 */
 	public int compact() {
@@ -290,16 +289,6 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			return null;
 
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Database#containsKey(java.lang.Object)
-	 */
-	@Override
-	public boolean containsKey(final Object key) {
-		return get(key) != null;
 	}
 
 	/*
@@ -1079,7 +1068,6 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
-
 		}
 	}
 
@@ -1113,6 +1101,16 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
+	public Date getLastFTIndexedDate() {
+		try {
+			return DominoUtils.toJavaDateSafe(getDelegate().getLastFTIndexed());
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1121,6 +1119,16 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	public DateTime getLastFixup() {
 		try {
 			return Factory.fromLotus(getDelegate().getLastFixup(), DateTime.class, Factory.getSession(this));
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+
+		}
+	}
+
+	public Date getLastFixupDate() {
+		try {
+			return DominoUtils.toJavaDateSafe(getDelegate().getLastFixup());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -1140,6 +1148,15 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			DominoUtils.handleException(e);
 			return null;
 
+		}
+	}
+
+	public Date getLastModifiedDate() {
+		try {
+			return DominoUtils.toJavaDateSafe(getDelegate().getLastModified());
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
 		}
 	}
 
@@ -1541,7 +1558,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			View result = Factory.fromLotus(getDelegate().getView(name), View.class, this);
 			if (result != null) {
-				result.setAutoUpdate(false);
+				if (getAncestorSession().isFixEnabled(Fixes.VIEW_UPDATE_OFF)) {
+					result.setAutoUpdate(false);
+				}
 			}
 			return result;
 		} catch (NotesException e) {
@@ -2506,40 +2525,36 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		return txnHolder_.get();
 	}
 
-	/*
-	 * Map methods
-	 */
-
-	@Override
-	public void clear() {
-		// Oh, dear god, no!
-		throw new UnsupportedOperationException();
+	public void setTransaction(final DatabaseTransaction txn) {
+		DatabaseTransaction current = txnHolder_.get();
+		if (current == null) {
+			txnHolder_.set(txn);
+		} else {
+			if (!current.equals(txn)) {
+				throw new TransactionAlreadySetException(getServer().length() == 0 ? getFilePath() : (getServer() + "!!" + getFilePath()));
+			}
+		}
 	}
 
-	@Override
-	public boolean containsValue(final Object value) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Set<java.util.Map.Entry<String, org.openntf.domino.Document>> entrySet() {
-		// TODO Maybe turn NoteCollection into this?
-		return null;
-	}
-
-	@Override
 	public boolean isEmpty() {
-		return this.getAllDocuments().getCount() > 0;
+		return this.getAllDocuments().getCount() == 0;
+	}
+
+	public int size() {
+		return this.getAllDocuments().getCount();
 	}
 
 	@Override
-	public Set<String> keySet() {
-		// TODO Implement this
-		return null;
+	public boolean containsKey(final Serializable key) {
+		return get(key) != null;
 	}
 
 	@Override
-	public org.openntf.domino.Document put(final String key, final org.openntf.domino.Document value) {
+	public org.openntf.domino.Document get(final Serializable key) {
+		return this.getDocumentByKey(key);
+	}
+
+	public org.openntf.domino.Document put(final Serializable key, final org.openntf.domino.Document value) {
 		// Ignore the value for now
 		if (key != null) {
 			Document doc = this.getDocumentByKey(key);
@@ -2554,32 +2569,19 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		return null;
 	}
 
-	@Override
-	public void putAll(final Map<? extends String, ? extends org.openntf.domino.Document> m) {
-		// TODO Implement this?
-	}
-
-	@Override
-	public org.openntf.domino.Document remove(final Object key) {
+	public org.openntf.domino.Document remove(final Serializable key) {
 		if (key != null) {
 			Document doc = this.getDocumentByKey(key.toString());
 			if (doc != null) {
 				doc.remove(false);
 			}
-
 			return null;
 		}
 		return null;
 	}
 
-	@Override
-	public int size() {
-		return this.getAllDocuments().getCount();
-	}
-
-	@Override
 	public Collection<org.openntf.domino.Document> values() {
-		return this.createDocumentCollection();
+		return getAllDocuments();
 	}
 
 	/*
@@ -2793,6 +2795,41 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		return nc.getCount();
 	}
 
+	public int[] getDailyModifiedNoteCount(final java.util.Date since) {
+		Set<SelectOption> noteClass = new java.util.HashSet<SelectOption>();
+		noteClass.add(SelectOption.DOCUMENTS);
+		return getDailyModifiedNoteCount(since, noteClass);
+	}
+
+	public static final int DAILY_ARRAY_LIMIT = 31;
+
+	public int[] getDailyModifiedNoteCount(final java.util.Date since, final Set<SelectOption> noteClass) {
+		Date now = new Date();
+		Date endDate = since;
+		Calendar cal = new GregorianCalendar();
+		cal.setTime(since);
+		int diffDays = cal.fieldDifference(now, Calendar.DAY_OF_YEAR);
+		int[] result = null;
+		if (diffDays > DAILY_ARRAY_LIMIT) {
+			result = new int[DAILY_ARRAY_LIMIT];
+		} else {
+			result = new int[diffDays];
+		}
+		cal.setTime(now);
+		for (int i = 0; i < result.length; i++) {
+			if (i == 0) {
+				cal.set(Calendar.HOUR_OF_DAY, 0);
+				cal.set(Calendar.MINUTE, 0);
+				cal.set(Calendar.SECOND, 0);
+				cal.set(Calendar.MILLISECOND, 0);
+			} else {
+				cal.add(Calendar.DAY_OF_YEAR, -1);
+			}
+			result[i] = getModifiedNoteCount(cal.getTime(), noteClass);
+		}
+		return result;
+	}
+
 	public int getModifiedNoteCount(final java.util.Date since) {
 		if (since.after(this.getLastModified().toJavaDate()))
 			return 0;
@@ -2817,6 +2854,10 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@SuppressWarnings("rawtypes")
 	public IDominoEvent generateEvent(final EnumEvent event, final org.openntf.domino.Base source, final Object payload) {
 		return getEventFactory().generate(event, source, this, payload);
+	}
+
+	public boolean equals(final Database database) {
+		return ident_.equalsIgnoreCase(database.ident_);
 	}
 
 }

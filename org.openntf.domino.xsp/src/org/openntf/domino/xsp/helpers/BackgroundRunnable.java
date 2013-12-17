@@ -7,6 +7,7 @@ import java.security.PrivilegedExceptionAction;
 import lotus.domino.NotesFactory;
 import lotus.domino.Session;
 
+import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 import com.ibm.domino.napi.c.xsp.XSPNative;
@@ -18,7 +19,6 @@ public abstract class BackgroundRunnable implements Runnable {
 		private final String dbpath;
 		private final NSFComponentModule module;
 		private final String servername;
-
 		private final String username;
 
 		public ThreadContext(final String username, final String servername, final String dpath) {
@@ -44,7 +44,7 @@ public abstract class BackgroundRunnable implements Runnable {
 			try {
 				session.getDatabase(this.servername, this.dbpath);
 			} catch (Throwable t) {
-				t.printStackTrace();
+				DominoUtils.handleException(t);
 			}
 			return null;
 		}
@@ -59,7 +59,7 @@ public abstract class BackgroundRunnable implements Runnable {
 					}
 				});
 			} catch (PrivilegedActionException e) {
-				e.printStackTrace();
+				DominoUtils.handleException(e);
 			}
 			return result;
 		}
@@ -74,7 +74,7 @@ public abstract class BackgroundRunnable implements Runnable {
 					}
 				});
 			} catch (PrivilegedActionException e) {
-				e.printStackTrace();
+				DominoUtils.handleException(e);
 			}
 			return result;
 		}
@@ -93,7 +93,7 @@ public abstract class BackgroundRunnable implements Runnable {
 					}
 				});
 			} catch (PrivilegedActionException e) {
-				e.printStackTrace();
+				DominoUtils.handleException(e);
 			}
 			return result;
 		}
@@ -159,7 +159,7 @@ public abstract class BackgroundRunnable implements Runnable {
 				runNrpc();
 			}
 		} catch (Throwable t) {
-			t.printStackTrace();
+			DominoUtils.handleException(t);
 		} finally {
 			termSession();
 		}
@@ -180,7 +180,7 @@ public abstract class BackgroundRunnable implements Runnable {
 			try {
 				s.recycle();
 			} catch (Exception e) {
-				e.printStackTrace();
+				DominoUtils.handleException(e);
 			}
 			BackgroundRunnable.localSession_.set(null);
 		}

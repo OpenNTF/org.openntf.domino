@@ -15,6 +15,12 @@
  */
 package org.openntf.domino.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Agent;
@@ -42,6 +48,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	 */
 	public AgentContext(final lotus.domino.AgentContext delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
+
 	}
 
 	/*
@@ -139,6 +146,38 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	 */
 	public Session getParentSession() {
 		return (Session) super.getParent();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.AgentContext#getQueryStringParameters()
+	 */
+	@Override
+	public Map<String, List<String>> getQueryStringParameters() {
+		Map<String, List<String>> result = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
+
+		Document doc = getDocumentContext();
+		String queryString = doc.getItemValueString("QUERY_STRING");
+
+		for (String pair : queryString.split("&")) {
+			if (!pair.isEmpty()) {
+				String[] bits = pair.split("=");
+				try {
+					String left = java.net.URLDecoder.decode(bits[0], "UTF-8");
+					String right = bits.length > 1 ? java.net.URLDecoder.decode(bits[1], "UTF-8") : "";
+
+					if (!result.containsKey(left)) {
+						result.put(left, new ArrayList<String>());
+					}
+					result.get(left).add(right);
+				} catch (UnsupportedEncodingException uee) {
+					// I can't imagine how we'd get here, so we're free to fail entirely
+					DominoUtils.handleException(uee);
+					return null;
+				}
+			}
+		}
+
+		return result;
 	}
 
 	/*

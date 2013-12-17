@@ -30,6 +30,7 @@ import org.openntf.domino.utils.Factory;
 /**
  * The Class View.
  */
+@SuppressWarnings("deprecation")
 public class View extends Base<org.openntf.domino.View, lotus.domino.View> implements org.openntf.domino.View {
 
 	private List<DominoColumnInfo> columnInfo_;
@@ -44,6 +45,19 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	public View(final lotus.domino.View delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, Factory.getParentDatabase(parent));
+		initialize(delegate);
+	}
+
+	private String notesUrl_;
+	private String name_;
+
+	private void initialize(final lotus.domino.View delegate) {
+		try {
+			notesUrl_ = delegate.getNotesURL();
+			name_ = delegate.getName();
+		} catch (NotesException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/*
@@ -474,6 +488,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewNavigator createViewNav() {
 		try {
+			getDelegate().setAutoUpdate(false);
 			return Factory.fromLotus(getDelegate().createViewNav(), ViewNavigator.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -489,6 +504,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewNavigator createViewNav(final int cacheSize) {
 		try {
+			getDelegate().setAutoUpdate(false);
 			return Factory.fromLotus(getDelegate().createViewNav(cacheSize), ViewNavigator.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -504,7 +520,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewNavigator createViewNavFrom(final Object entry) {
 		try {
-			return Factory.fromLotus(getDelegate().createViewNavFrom(toLotus(entry)), ViewNavigator.class, this);
+			Object lotusObj = Base.toDominoFriendly(entry, this);
+			getDelegate().setAutoUpdate(false);
+			return Factory.fromLotus(getDelegate().createViewNavFrom(lotusObj), ViewNavigator.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -519,7 +537,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewNavigator createViewNavFrom(final Object entry, final int cacheSize) {
 		try {
-			return Factory.fromLotus(getDelegate().createViewNavFrom(toLotus(entry), cacheSize), ViewNavigator.class, this);
+			Object lotusObj = toLotus(entry);
+			getDelegate().setAutoUpdate(false);
+			return Factory.fromLotus(getDelegate().createViewNavFrom(lotusObj, cacheSize), ViewNavigator.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -534,6 +554,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewNavigator createViewNavFromAllUnread() {
 		try {
+			getDelegate().setAutoUpdate(false);
 			return Factory.fromLotus(getDelegate().createViewNavFromAllUnread(), ViewNavigator.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -549,6 +570,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewNavigator createViewNavFromAllUnread(final String userName) {
 		try {
+			getDelegate().setAutoUpdate(false);
 			return Factory.fromLotus(getDelegate().createViewNavFromAllUnread(userName), ViewNavigator.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -564,6 +586,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewNavigator createViewNavFromCategory(final String categoryName) {
 		try {
+			getDelegate().setAutoUpdate(false);
 			return Factory.fromLotus(getDelegate().createViewNavFromCategory(categoryName), ViewNavigator.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -579,6 +602,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewNavigator createViewNavFromCategory(final String categoryName, final int cacheSize) {
 		try {
+			getDelegate().setAutoUpdate(false);
 			return Factory.fromLotus(getDelegate().createViewNavFromCategory(categoryName, cacheSize), ViewNavigator.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -594,6 +618,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewNavigator createViewNavFromChildren(final Object entry) {
 		try {
+			getDelegate().setAutoUpdate(false);
 			return Factory.fromLotus(getDelegate().createViewNavFromChildren(toLotus(entry)), ViewNavigator.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -609,6 +634,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewNavigator createViewNavFromChildren(final Object entry, final int cacheSize) {
 		try {
+			getDelegate().setAutoUpdate(false);
 			return Factory.fromLotus(getDelegate().createViewNavFromChildren(toLotus(entry), cacheSize), ViewNavigator.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -624,6 +650,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewNavigator createViewNavFromDescendants(final Object entry) {
 		try {
+			getDelegate().setAutoUpdate(false);
 			return Factory.fromLotus(getDelegate().createViewNavFromDescendants(toLotus(entry)), ViewNavigator.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -639,6 +666,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewNavigator createViewNavFromDescendants(final Object entry, final int cacheSize) {
 		try {
+			getDelegate().setAutoUpdate(false);
 			return Factory.fromLotus(getDelegate().createViewNavFromDescendants(toLotus(entry), cacheSize), ViewNavigator.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -654,6 +682,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewNavigator createViewNavMaxLevel(final int level) {
 		try {
+			getDelegate().setAutoUpdate(false);
 			return Factory.fromLotus(getDelegate().createViewNavMaxLevel(level), ViewNavigator.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -669,6 +698,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewNavigator createViewNavMaxLevel(final int level, final int cacheSize) {
 		try {
+			getDelegate().setAutoUpdate(false);
 			return Factory.fromLotus(getDelegate().createViewNavMaxLevel(level, cacheSize), ViewNavigator.class, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -1512,6 +1542,14 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.View#getXPageAlt()
+	 */
+	@Override
+	public String getXPageAlt() {
+		return getDocument().getItemValueString("$XPageAlt");
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -2273,6 +2311,40 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 
 		public int getColumnValuesIndex() {
 			return columnValuesIndex_;
+		}
+	}
+
+	public boolean isIndexed() {
+		return getDocument().hasItem("$Collation");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.impl.Base#getDelegate()
+	 */
+	@Override
+	protected lotus.domino.View getDelegate() {
+		lotus.domino.View view = super.getDelegate();
+		try {
+			view.getHttpURL();
+		} catch (NotesException e) {
+			resurrect();
+		}
+		return super.getDelegate();
+	}
+
+	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
+		Database db = getAncestorDatabase();
+		try {
+			lotus.domino.Database d = db.getDelegate();
+			lotus.domino.View view = d.getView(name_);
+			setDelegate(view);
+			//			if (getAncestorSession().isFixEnabled(Fixes.VIEW_UPDATE_OFF)) {
+			view.setAutoUpdate(false);
+			//			}
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
 		}
 	}
 }

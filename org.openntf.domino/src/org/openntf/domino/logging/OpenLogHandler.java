@@ -30,13 +30,13 @@ public class OpenLogHandler extends Handler {
 	private String logDbPath;
 	
 	/** The ol_. */
-	private OpenLogItem ol_;
+	private DominoOpenLogItem ol_;
 
 	/**
 	 * Instantiates a new open log handler.
 	 */
 	public OpenLogHandler() {
-		ol_ = new OpenLogItem();
+		ol_ = new DominoOpenLogItem();
 	}
 
 	/*

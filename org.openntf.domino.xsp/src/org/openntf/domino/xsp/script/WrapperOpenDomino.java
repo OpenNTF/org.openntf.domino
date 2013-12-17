@@ -8,8 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openntf.domino.DateTime;
-import org.openntf.domino.utils.DominoUtils;
+import lotus.domino.DateTime;
 
 import com.ibm.jscript.InterpretException;
 import com.ibm.jscript.JSContext;
@@ -343,7 +342,7 @@ public class WrapperOpenDomino {
 					}
 				}
 			} catch (Throwable t) {
-				DominoUtils.handleException(t);
+				t.printStackTrace();
 			}
 			return object;
 		}
@@ -421,12 +420,22 @@ public class WrapperOpenDomino {
 				String name = crystal.getName();
 				Object cur = methodMap.get(name);
 				if (cur == null) {
+					// Method does not exist in map
 					methodMap.put(crystal.getName(), new OpenFunction(context, crystal));
 				}
 				if (cur instanceof OpenFunction) {
 					((OpenFunction) cur).addMethod(crystal);
 				} else {
-					// TODO NTF - Huh? How'd that happen?
+					// We get here if we add a method that's the same as an existing lotus.domino one
+					try {
+						if ("function:IBMJS built-in function".equals(cur.toString())) {
+							methodMap.put(crystal.getName(), new OpenFunction(context, crystal));
+						} else {
+							System.out.println("Something's gone wrong! " + name + ": " + cur.toString() + ">" + cur.getClass().getName());
+						}
+					} catch (Throwable t) {
+						// System.out.println("Hit error on " + name);
+					}
 				}
 			}
 		}
@@ -618,7 +627,7 @@ public class WrapperOpenDomino {
 			}
 
 		} catch (Exception e) {
-			DominoUtils.handleException(e);
+			e.printStackTrace();
 		}
 		registered = true;
 	}

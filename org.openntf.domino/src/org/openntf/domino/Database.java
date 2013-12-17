@@ -26,7 +26,7 @@ import org.openntf.domino.types.SessionDescendant;
  * The Interface Database.
  */
 public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database>, org.openntf.domino.ext.Database,
-		Map<String, Document>, Resurrectable, SessionDescendant {
+		Resurrectable, SessionDescendant {
 
 	/**
 	 * The Enum DBOption.
@@ -426,30 +426,9 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	public int compactWithOptions(final String options);
 
 	/*
-	 * (non-Javadoc)
-	 * 
-	 * 
-	 * <<<<<<< HEAD =======
-	 * 
-	 * @see java.util.Map#containsKey(java.lang.Object)
-	 */
-	/**
-	 * Contains key.
-	 * 
-	 * @param key
-	 *            the key
-	 * @return true, if successful
-	 */
-	public boolean containsKey(final Object key);
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * 
-	 * >>>>>>> origin/declan
-	 * 
-	 * @see lotus.domino.Database#createCopy(java.lang.String, java.lang.String)
-	 */
+		 * 
+		 * @see lotus.domino.Database#createCopy(java.lang.String, java.lang.String)
+		 */
 	@Override
 	public Database createCopy(final String server, final String dbFile);
 
@@ -566,7 +545,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#createQueryView(java.lang.String, java.lang.String, lotus.domino.View, boolean)
 	 */
 	@Override
-	public View createQueryView(final String viewName, final String query, final lotus.domino.View templateView, final boolean prohibitDesignRefresh);
+	public View createQueryView(final String viewName, final String query, final lotus.domino.View templateView,
+			final boolean prohibitDesignRefresh);
 
 	/*
 	 * (non-Javadoc)
@@ -614,7 +594,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @see lotus.domino.Database#createView(java.lang.String, java.lang.String, lotus.domino.View, boolean)
 	 */
 	@Override
-	public View createView(final String viewName, final String selectionFormula, final lotus.domino.View templateView, final boolean prohibitDesignRefresh);
+	public View createView(final String viewName, final String selectionFormula, final lotus.domino.View templateView,
+			final boolean prohibitDesignRefresh);
 
 	/*
 	 * (non-Javadoc)
@@ -648,7 +629,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 */
 	@Override
 	@Deprecated
-	public Document FTDomainSearch(final String query, final int maxDocs, final int sortOpt, final int otherOpt, final int start, final int count, final String entryForm);
+	public Document FTDomainSearch(final String query, final int maxDocs, final int sortOpt, final int otherOpt, final int start,
+			final int count, final String entryForm);
 
 	/**
 	 * FT domain search.
@@ -669,7 +651,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 *            the entry form
 	 * @return the document
 	 */
-	public Document FTDomainSearch(final String query, final int maxDocs, final FTSortOption sortOpt, final int otherOpt, final int start, final int count, final String entryForm);
+	public Document FTDomainSearch(final String query, final int maxDocs, final FTSortOption sortOpt, final int otherOpt, final int start,
+			final int count, final String entryForm);
 
 	/*
 	 * (non-Javadoc)
@@ -735,22 +718,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 *            the start
 	 * @return the document collection
 	 */
-	public DocumentCollection FTSearchRange(final String query, final int maxDocs, final FTSortOption sortOpt, final int otherOpt, final int start);
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * 
-	 * @see java.util.Map#get(java.lang.Object)
-	 */
-	/**
-	 * Gets the.
-	 * 
-	 * @param key
-	 *            the key
-	 * @return the document
-	 */
-	public Document get(final Object key);
+	public DocumentCollection FTSearchRange(final String query, final int maxDocs, final FTSortOption sortOpt, final int otherOpt,
+			final int start);
 
 	/*
 	 * (non-Javadoc)
@@ -889,8 +858,9 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
-	public Document getDocumentByURL(final String url, final boolean reload, final boolean reloadIfModified, final boolean urlList, final String charSet, final String webUser,
-			final String webPassword, final String proxyUser, final String proxyPassword, final boolean returnImmediately);
+	public Document getDocumentByURL(final String url, final boolean reload, final boolean reloadIfModified, final boolean urlList,
+			final String charSet, final String webUser, final String webPassword, final String proxyUser, final String proxyPassword,
+			final boolean returnImmediately);
 
 	/*
 	 * (non-Javadoc)
@@ -1199,7 +1169,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * java.lang.String)
 	 */
 	@Override
-	public String getURLHeaderInfo(final String url, final String header, final String webUser, final String webPassword, final String proxyUser, final String proxyPassword);
+	public String getURLHeaderInfo(final String url, final String header, final String webUser, final String webPassword,
+			final String proxyUser, final String proxyPassword);
 
 	/*
 	 * (non-Javadoc)

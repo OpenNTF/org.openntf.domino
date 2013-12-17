@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.openntf.domino.xsp.feature"
-      label="OpenNTF Domino XSP Helper"
-      version="1.0.0.qualifier">
+      label="OpenNTF Domino XSP/OSGi version"
+      version="1.0.0.qualifier"
+      provider-name="OpenNTF.org">
 
    <description>
       XPages/OSGi Provider for org.openntf.domino API
@@ -24,5 +25,11 @@ Declan Lynch, Paul Withers
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="org.openntf.domino.plugin"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

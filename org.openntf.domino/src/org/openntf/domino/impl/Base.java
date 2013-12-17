@@ -170,8 +170,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 					recycleQueue.get().bagReference(new DominoReference(this, recycleQueue.get(), delegate));
 				}
 			} else {
-				if (log_.isLoggable(Level.WARNING))
-					log_.log(Level.WARNING, "Why are you wrapping a non-Lotus object? " + delegate.getClass().getName());
+				if (log_.isLoggable(Level.FINE))
+					log_.log(Level.FINE, "Why are you wrapping a non-Lotus object? " + delegate.getClass().getName(),
+							new RuntimeException());
 			}
 		}
 		drainQueue(cpp_object);
@@ -453,7 +454,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 */
 	protected static Object toDominoFriendly(final Object value, final Base<?, ?> context) throws IllegalArgumentException {
 		if (value == null) {
-			log_.log(Level.WARNING, "Trying to convert a null argument to Domino friendly. Returning null...");
+			log_.log(Level.INFO, "Trying to convert a null argument to Domino friendly. Returning null...");
 			return null;
 		}
 		if (value instanceof Collection) {
@@ -466,7 +467,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		}
 
 		// First, go over the normal data types
-		if (value instanceof lotus.domino.DateTime) {
+		if (value instanceof org.openntf.domino.Base) {
+			return toLotus((org.openntf.domino.Base) value);
+		} else if (value instanceof lotus.domino.DateTime) {
 			return toLotus((lotus.domino.DateTime) value);
 		} else if (value instanceof lotus.domino.DateRange) {
 			return toLotus((lotus.domino.DateRange) value);
@@ -512,6 +515,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			return ((Pattern) value).pattern();
 		} else if (value instanceof Class<?>) {
 			return ((Class<?>) value).getName();
+		} else if (value instanceof Enum<?>) {
+			return ((Enum<?>) value).getDeclaringClass().getName() + " " + ((Enum<?>) value).name();
 		} else if (value instanceof Formula) {
 			return ((Formula) value).getExpression();
 		}

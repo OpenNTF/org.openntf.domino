@@ -7,6 +7,7 @@ import javax.faces.context.FacesContext;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xsp.Activator;
+import org.openntf.domino.xsp.XspOpenLogErrorHolder;
 
 import com.ibm.xsp.context.FacesContextEx;
 import com.ibm.xsp.el.ImplicitObjectFactory;
@@ -66,7 +67,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 			} else {
 				// System.out.println("XSP ENV IS NULL!!");
 			}
-			appMap.put(OpenntfDominoImplicitObjectFactory.class.getName(), current);
+			appMap.put(OpenntfDominoImplicitObjectFactory.class.getName() + "_GODMODE", current);
 		} else {
 			// System.out.println("Current found: " + String.valueOf(current));
 		}
@@ -86,7 +87,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 					}
 				}
 			}
-			appMap.put(OpenntfDominoImplicitObjectFactory.class.getName(), current);
+			appMap.put(OpenntfDominoImplicitObjectFactory.class.getName() + "_MARCEL", current);
 		}
 		return (Boolean) current;
 	}
@@ -104,7 +105,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 					}
 				}
 			}
-			appMap.put(OpenntfDominoImplicitObjectFactory.class.getName(), current);
+			appMap.put(OpenntfDominoImplicitObjectFactory.class.getName() + "_KHAN", current);
 		}
 		return (Boolean) current;
 	}
@@ -122,14 +123,15 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 					}
 				}
 			}
-			appMap.put(OpenntfDominoImplicitObjectFactory.class.getName(), current);
+			appMap.put(OpenntfDominoImplicitObjectFactory.class.getName() + "_RAID", current);
 		}
 		return (Boolean) current;
 	}
 
 	private final String[][] implicitObjectList = {
 			{ (isGodMode() ? "session" : "opensession"), org.openntf.domino.Session.class.getName() },
-			{ (isGodMode() ? "database" : "opendatabase"), org.openntf.domino.Database.class.getName() } };
+			{ (isGodMode() ? "database" : "opendatabase"), org.openntf.domino.Database.class.getName() },
+			{ "openLogBean", org.openntf.domino.xsp.XspOpenLogErrorHolder.class.getName() } };
 
 	public OpenntfDominoImplicitObjectFactory() {
 	}
@@ -175,16 +177,23 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 		return database;
 	}
 
+	public void createLogHolder(final FacesContextEx ctx) {
+		Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
+		XspOpenLogErrorHolder ol_ = new XspOpenLogErrorHolder();
+		localMap.put("openLogBean", ol_);
+	}
+
 	@Override
 	public void createImplicitObjects(final FacesContextEx ctx) {
-		ctx.addRequestListener(new ContextListener());
-		Factory.setClassLoader(ctx.getContextClassLoader());
 		if (isAppDebug(ctx)) {
 			System.out.println("Beginning creation of implicit objects...");
 		}
+		Factory.setClassLoader(ctx.getContextClassLoader());
+		ctx.addRequestListener(new ContextListener());
 		org.openntf.domino.Session session = createSession(ctx);
 		@SuppressWarnings("unused")
 		org.openntf.domino.Database database = createDatabase(ctx, session);
+		createLogHolder(ctx);
 		if (isAppDebug(ctx)) {
 			System.out.println("Done creating implicit objects.");
 		}

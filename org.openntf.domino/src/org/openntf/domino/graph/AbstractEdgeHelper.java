@@ -25,7 +25,7 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		private static final long serialVersionUID = 1L;
 
 		public EdgeHelperException(final String message) {
-
+			super(message);
 		}
 	}
 
@@ -85,9 +85,15 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 	}
 
 	public Class<? extends Vertex> getOtherType(final Class<? extends Vertex> type) {
-		if (getInType().equals(type))
+		if (getInType().equals(type)) {
 			return getOutType();
-		if (getOutType().equals(type))
+		}
+		if (getOutType().equals(type)) {
+			return getInType();
+		}
+		if (getInType().isAssignableFrom(type))
+			return getOutType();
+		if (getOutType().isAssignableFrom(type))
 			return getInType();
 		throw new EdgeHelperException(type.getName() + " is not a participating type in edge " + getLabel());
 	}
@@ -98,17 +104,18 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 
 	public Set<? extends Edge> getEdges(final Vertex vertex) {
 		if (getInType().equals(vertex.getClass())) {
-			// System.out.println("Request from " + getLabel() + " helper: Requesting IN edges because vertex " +
-			// vertex.getClass().getName()
-			// + " is IN.");
 			return Collections.unmodifiableSet((Set<Edge>) vertex.getEdges(Direction.IN, getLabel()));
 		}
 		if (getOutType().equals(vertex.getClass())) {
-			// System.out.println("Request from " + getLabel() + " helper: Requesting OUT edges because vertex " +
-			// vertex.getClass().getName()
-			// + " is OUT.");
 			return Collections.unmodifiableSet((Set<Edge>) vertex.getEdges(Direction.OUT, getLabel()));
 		}
+		if (getInType().isAssignableFrom(vertex.getClass())) {
+			return Collections.unmodifiableSet((Set<Edge>) vertex.getEdges(Direction.IN, getLabel()));
+		}
+		if (getOutType().isAssignableFrom(vertex.getClass())) {
+			return Collections.unmodifiableSet((Set<Edge>) vertex.getEdges(Direction.OUT, getLabel()));
+		}
+		//		System.out.println(vertex.getClass().getName() + " is not a participating type in edge " + getLabel());
 		throw new EdgeHelperException(vertex.getClass().getName() + " is not a participating type in edge " + getLabel());
 	}
 
@@ -139,18 +146,25 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 
 	public Set<? extends Vertex> getOtherVertexes(final Vertex vertex) {
 		Set<Vertex> result = new LinkedHashSet<Vertex>();
-		Direction od = Direction.IN;
-		if (getInType().equals(vertex.getClass()))
+		Class<?> vclass = vertex.getClass();
+		Direction od = null;
+		if (getInType().equals(vclass))
 			od = Direction.OUT;
-
-		// System.out.println("Request from " + getLabel() + " helper: Getting opposite of " + vertex.getClass().getName()
-		// + " with direction " + od.toString() + " (OUT: " + getOutType().getName() + ", IN: " + getInType().getName() + ")");
-		Set<? extends Edge> edges = getEdges(vertex);
-		// System.out.println("Request from " + getLabel() + " helper: Got " + edges.size() + " edges.");
-		for (Edge edge : edges) {
-			result.add(edge.getVertex(od));
+		if (od == null && getOutType().equals(vclass))
+			od = Direction.IN;
+		if (od == null && getInType().isAssignableFrom(vclass))
+			od = Direction.OUT;
+		if (od == null && getOutType().isAssignableFrom(vclass))
+			od = Direction.IN;
+		if (od == null) {
+			throw new EdgeHelperException(vertex.getClass().getName() + " is not a participating type in edge " + getLabel());
+		} else {
+			Set<? extends Edge> edges = getEdges(vertex);
+			for (Edge edge : edges) {
+				result.add(edge.getVertex(od));
+			}
+			return Collections.unmodifiableSet(result);
 		}
-		return Collections.unmodifiableSet(result);
 	}
 
 	public Vertex getOtherVertex(final Edge edge, final Vertex vertex) {
@@ -176,43 +190,115 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 
 	public Set<Vertex> getOtherVertexesByEdge(final Vertex vertex, final String... sortproperties) {
 		Set<Vertex> result = new LinkedHashSet<Vertex>();
-		Direction od = Direction.IN;
-		if (getInType().equals(vertex.getClass()))
+		Class<?> vclass = vertex.getClass();
+		Direction od = null;
+		if (getInType().equals(vclass))
 			od = Direction.OUT;
-		for (Edge edge : getSortedEdges(vertex, sortproperties)) {
-			result.add(edge.getVertex(od));
+		if (od == null && getOutType().equals(vclass))
+			od = Direction.IN;
+		if (od == null && getInType().isAssignableFrom(vclass))
+			od = Direction.OUT;
+		if (od == null && getOutType().isAssignableFrom(vclass))
+			od = Direction.IN;
+		if (od == null) {
+			throw new EdgeHelperException(vertex.getClass().getName() + " is not a participating type in edge " + getLabel());
+		} else {
+			for (Edge edge : getSortedEdges(vertex, sortproperties)) {
+				result.add(edge.getVertex(od));
+			}
+			return Collections.unmodifiableSet(result);
 		}
-		return Collections.unmodifiableSet(result);
 	}
 
 	public Edge makeEdge(final Vertex defaultOut, final Vertex defaultIn) {
 		Edge result = null;
-		Vertex inVert = defaultIn;
-		Vertex outVert = defaultOut;
+		Vertex inVert = null;
+		Vertex outVert = null;
+		boolean inExact = false;
+		boolean outExact = false;
+		boolean inPartial = false;
+		boolean outPartial = false;
+		boolean reinExact = false;
+		boolean reoutExact = false;
+		boolean reinPartial = false;
+		boolean reoutPartial = false;
+		Class<?> inClass = defaultIn.getClass();
+		Class<?> outClass = defaultOut.getClass();
+		Class<?> inType = getInType();
+		Class<?> outType = getOutType();
 		if (defaultOut == null || defaultIn == null)
 			throw new EdgeHelperException("Cannot create edges with null vertex");
 		if (defaultOut.getClass().equals(defaultIn.getClass()) && isSameTypes()) {
-
+			inVert = defaultIn;
+			outVert = defaultOut;
 		} else {
-			if (getInType().isAssignableFrom(defaultOut.getClass())/* .equals(defaultOut.getClass()) */) {
-				inVert = defaultOut;
-			} else if (getOutType().isAssignableFrom(defaultOut.getClass())) {
-				outVert = defaultOut;
-			} else {
-				// System.out.println("Cannot create an edge of type " + getLabel() + " with a vertex of type "
-				// + defaultOut.getClass().getName());
-				throw new EdgeHelperException("Cannot create an edge of type " + getLabel() + " with a vertex of type "
-						+ defaultOut.getClass().getName());
-			}
-			if (getInType().isAssignableFrom(defaultIn.getClass())) {
+			inExact = inType.equals(inClass);
+			outExact = outType.equals(outClass);
+			inPartial = inType.isAssignableFrom(inClass);
+			outPartial = outType.isAssignableFrom(outClass);
+			reinExact = outType.equals(inClass);
+			reoutExact = inType.equals(outClass);
+			reinPartial = outType.isAssignableFrom(inClass);
+			reoutPartial = inType.isAssignableFrom(outClass);
+
+			if (inExact && outExact) {	//perfect
 				inVert = defaultIn;
-			} else if (getOutType().isAssignableFrom(defaultIn.getClass())) {
-				outVert = defaultIn;
-			} else {
-				// System.out.println("Cannot create an edge of type " + getLabel() + " with a vertex of type "
-				// + defaultIn.getClass().getName());
-				throw new EdgeHelperException("Cannot create an edge of type " + getLabel() + " with a vertex of type "
-						+ defaultIn.getClass().getName());
+				outVert = defaultOut;
+			} else if ((inExact && outPartial) || (outExact && inPartial)) {  //good enough
+				inVert = defaultIn;
+				outVert = defaultOut;
+			} else if (inPartial && outPartial) {
+				if (reinExact || reoutExact) {	//invert
+					inVert = defaultOut;
+					outVert = defaultIn;
+				} else {	//it'll do
+					inVert = defaultIn;
+					outVert = defaultOut;
+				}
+			}
+
+			if (inVert == null || outVert == null) {
+				if (reinExact && reoutExact) {	//perfectly backwards
+					inVert = defaultOut;
+					outVert = defaultIn;
+				} else if ((reinExact && reoutPartial) || (reoutExact && reinPartial)) {  //backwards, with inheritance
+					inVert = defaultOut;
+					outVert = defaultIn;
+				} else if (reinPartial && reoutPartial) {	//inversion works, so we'll settle for it.
+					inVert = defaultOut;
+					outVert = defaultIn;
+				}
+			}
+
+			if (inVert == null || outVert == null) {
+				StringBuilder sb = new StringBuilder();
+				sb.append("Label: ");
+				sb.append(getLabel());
+				sb.append(" intype: ");
+				sb.append(inType.getSimpleName());
+				sb.append(" outtype: ");
+				sb.append(outType.getSimpleName());
+				sb.append(" invert: ");
+				sb.append(inClass.getSimpleName());
+				sb.append(" outvert: ");
+				sb.append(outClass.getSimpleName());
+				sb.append(" inE: ");
+				sb.append(inExact);
+				sb.append(" outE: ");
+				sb.append(outExact);
+				sb.append(" inP: ");
+				sb.append(inPartial);
+				sb.append(" outP: ");
+				sb.append(outPartial);
+				sb.append(" reinE: ");
+				sb.append(reinExact);
+				sb.append(" reoutE: ");
+				sb.append(reoutExact);
+				sb.append(" reinP: ");
+				sb.append(reinPartial);
+				sb.append(" reoutP: ");
+				sb.append(reoutPartial);
+				throw new EdgeHelperException("Cannot create an edge - " + sb.toString());
 			}
 		}
 		if (isUnique()) {
@@ -225,28 +311,93 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 
 	public Edge findEdge(final Vertex defaultOut, final Vertex defaultIn) {
 		Edge result = null;
-		Vertex inVert = defaultIn;
-		Vertex outVert = defaultOut;
+		Vertex inVert = null;
+		Vertex outVert = null;
+		boolean inExact = false;
+		boolean outExact = false;
+		boolean inPartial = false;
+		boolean outPartial = false;
+		boolean reinExact = false;
+		boolean reoutExact = false;
+		boolean reinPartial = false;
+		boolean reoutPartial = false;
+		Class<?> inClass = defaultIn.getClass();
+		Class<?> outClass = defaultOut.getClass();
+		Class<?> inType = getInType();
+		Class<?> outType = getOutType();
 		if (defaultOut == null || defaultIn == null)
-			throw new EdgeHelperException("Cannot find edges with null vertex");
+			throw new EdgeHelperException("Cannot create edges with null vertex");
 		if (defaultOut.getClass().equals(defaultIn.getClass()) && isSameTypes()) {
-
+			inVert = defaultIn;
+			outVert = defaultOut;
 		} else {
-			if (getInType().equals(defaultOut.getClass())) {
-				inVert = defaultOut;
-			} else if (getOutType().equals(defaultOut.getClass())) {
-				outVert = defaultOut;
-			} else {
-				throw new EdgeHelperException("Cannot find an edge of type " + getLabel() + " with a vertex of type "
-						+ defaultOut.getClass().getName());
-			}
-			if (getInType().equals(defaultIn.getClass())) {
+			inExact = inType.equals(inClass);
+			outExact = outType.equals(outClass);
+			inPartial = inType.isAssignableFrom(inClass);
+			outPartial = outType.isAssignableFrom(outClass);
+			reinExact = outType.equals(inClass);
+			reoutExact = inType.equals(outClass);
+			reinPartial = outType.isAssignableFrom(inClass);
+			reoutPartial = inType.isAssignableFrom(outClass);
+
+			if (inExact && outExact) {	//perfect
 				inVert = defaultIn;
-			} else if (getOutType().equals(defaultIn.getClass())) {
-				outVert = defaultIn;
-			} else {
-				throw new EdgeHelperException("Cannot find an edge of type " + getLabel() + " with a vertex of type "
-						+ defaultIn.getClass().getName());
+				outVert = defaultOut;
+			} else if ((inExact && outPartial) || (outExact && inPartial)) {  //good enough
+				inVert = defaultIn;
+				outVert = defaultOut;
+			} else if (inPartial && outPartial) {
+				if (reinExact || reoutExact) {	//invert
+					inVert = defaultOut;
+					outVert = defaultIn;
+				} else {	//it'll do
+					inVert = defaultIn;
+					outVert = defaultOut;
+				}
+			}
+
+			if (inVert == null || outVert == null) {
+				if (reinExact && reoutExact) {	//perfectly backwards
+					inVert = defaultOut;
+					outVert = defaultIn;
+				} else if ((reinExact && reoutPartial) || (reoutExact && reinPartial)) {  //backwards, with inheritance
+					inVert = defaultOut;
+					outVert = defaultIn;
+				} else if (reinPartial && reoutPartial) {	//inversion works, so we'll settle for it.
+					inVert = defaultOut;
+					outVert = defaultIn;
+				}
+			}
+
+			if (inVert == null || outVert == null) {
+				StringBuilder sb = new StringBuilder();
+				sb.append("Label: ");
+				sb.append(getLabel());
+				sb.append(" intype: ");
+				sb.append(inType.getSimpleName());
+				sb.append(" outtype: ");
+				sb.append(outType.getSimpleName());
+				sb.append(" invert: ");
+				sb.append(inClass.getSimpleName());
+				sb.append(" outvert: ");
+				sb.append(outClass.getSimpleName());
+				sb.append(" inE: ");
+				sb.append(inExact);
+				sb.append(" outE: ");
+				sb.append(outExact);
+				sb.append(" inP: ");
+				sb.append(inPartial);
+				sb.append(" outP: ");
+				sb.append(outPartial);
+				sb.append(" reinE: ");
+				sb.append(reinExact);
+				sb.append(" reoutE: ");
+				sb.append(reoutExact);
+				sb.append(" reinP: ");
+				sb.append(reinPartial);
+				sb.append(" reoutP: ");
+				sb.append(reoutPartial);
+				throw new EdgeHelperException("Cannot create an edge - " + sb.toString());
 			}
 		}
 		result = parent_.getEdge(outVert, inVert, getLabel());

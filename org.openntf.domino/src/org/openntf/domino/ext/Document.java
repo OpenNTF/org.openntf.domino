@@ -16,6 +16,8 @@ import org.openntf.domino.exceptions.ItemNotFoundException;
  */
 public interface Document {
 
+	public String toJson(boolean compact);
+
 	/**
 	 * Gets the created date.
 	 * 

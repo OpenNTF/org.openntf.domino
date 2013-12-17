@@ -15,7 +15,6 @@
  */
 package org.openntf.domino.thread;
 
-import org.openntf.domino.impl.Base;
 import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
@@ -23,9 +22,8 @@ import org.openntf.domino.utils.Factory;
  * The Class DominoThread.
  */
 public class DominoThread extends Thread {
-	// lotus.domino.NotesThread temp_;
-	// This will be the Thread for executing Runnables that need Domino objects created from scratch
-	private ClassLoader loader_;
+	private long starttime_ = 0l;
+	private Runnable runnable_;
 
 	/**
 	 * Instantiates a new domino thread.
@@ -42,7 +40,23 @@ public class DominoThread extends Thread {
 	 */
 	public DominoThread(final Runnable runnable) {
 		super(runnable);
+		runnable_ = runnable;
+	}
 
+	/**
+	 * Instantiates a new domino thread.
+	 * 
+	 * @param runnable
+	 *            the runnable
+	 */
+	public DominoThread(final Runnable runnable, final String name) {
+		super(runnable, name);
+		runnable_ = runnable;
+	}
+
+	public DominoThread(final AbstractDominoRunnable runnable) {
+		super(runnable);
+		runnable_ = runnable;
 	}
 
 	/**
@@ -53,9 +67,17 @@ public class DominoThread extends Thread {
 	 * @param threadName
 	 *            the thread name
 	 */
-	public DominoThread(final Runnable runnable, final String threadName) {
+	public DominoThread(final AbstractDominoRunnable runnable, final String threadName) {
 		super(runnable, threadName);
-		// TODO Auto-generated constructor stub
+		runnable_ = runnable;
+	}
+
+	public long getStartTime() {
+		return starttime_;
+	}
+
+	public Runnable getRunnable() {
+		return runnable_;
 	}
 
 	/*
@@ -67,51 +89,15 @@ public class DominoThread extends Thread {
 	public void run() {
 		try {
 			lotus.domino.NotesThread.sinitThread();
-			// if (loader_ != null) {
-			// System.out.println("Setting Factory ClassLoader to a " + loader_.getClass().getName());
-			// } else {
-			// System.out.println("No custom ClassLoader set for thread. Bad things may happen...");
-			// }
-			Factory.setClassLoader(loader_);
+			Factory.setClassLoader(this.getContextClassLoader());
 			super.run();
 		} catch (Throwable t) {
 			throw new RuntimeException(t);
 		} finally {
-			System.gc();
-			try {
-				sleep(1000);
-			} catch (Throwable t) {
-				t.printStackTrace();
-			}
-			int drCount = 0;
-			try {
-				drCount = Base.drainQueue(0l);
-			} catch (Throwable t) {
-				t.printStackTrace();
-			}
-			int runRecycleCount = Factory.getAutoRecycleCount();
-			System.out.println("Thread " + Thread.currentThread().getName() + " auto-recycled " + runRecycleCount
-					+ " lotus references during run. Then recycled " + drCount + " lotus references on completion and had "
-					+ Factory.getRecycleErrorCount() + " recycle errors");
 			Factory.terminate();
 			lotus.domino.NotesThread.stermThread();
+			//						clean();
 		}
-	}
-
-	/**
-	 * Run child.
-	 */
-	public void runChild() {
-		try {
-			lotus.domino.NotesThread.sinitThread();
-			super.run();
-		} catch (Throwable t) {
-			throw new RuntimeException(t);
-		} finally {
-			System.gc();
-		}
-
-		// deliberately don't close out the thread access...
 	}
 
 	/*
@@ -122,6 +108,8 @@ public class DominoThread extends Thread {
 	@Override
 	public synchronized void start() {
 		super.start();
+
+		starttime_ = System.currentTimeMillis();
 	}
 
 	public synchronized void start(final ClassLoader loader) {
@@ -131,8 +119,6 @@ public class DominoThread extends Thread {
 
 	@Override
 	public void setContextClassLoader(final ClassLoader loader) {
-		// if (loader != null)
-		// System.out.println("Pushing ClassLoader " + loader.getClass().getName() + " to DominoThread");
-		loader_ = loader;
+		super.setContextClassLoader(loader);
 	}
 }
