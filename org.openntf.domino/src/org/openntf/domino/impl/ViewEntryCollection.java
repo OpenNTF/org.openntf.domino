@@ -30,7 +30,6 @@ import org.openntf.domino.utils.Factory;
 /**
  * The Class ViewEntryCollection.
  */
-@SuppressWarnings("deprecation")
 public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollection, lotus.domino.ViewEntryCollection> implements
 		org.openntf.domino.ViewEntryCollection {
 

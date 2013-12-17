@@ -38,7 +38,6 @@ import org.openntf.domino.utils.Factory;
  * @author withersp
  * 
  */
-@SuppressWarnings("deprecation")
 public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.domino.NoteCollection, lotus.domino.NoteCollection> implements
 		org.openntf.domino.NoteCollection {
 	private static final Logger log_ = Logger.getLogger(NoteCollection.class.getName());
