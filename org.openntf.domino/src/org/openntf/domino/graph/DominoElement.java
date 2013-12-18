@@ -358,32 +358,56 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	@Override
 	public void setProperty(final String propertyName, final java.lang.Object value) {
-		getParent().startTransaction(this);
+
 		Map<String, Serializable> props = getProps();
 		Object old = null;
 		if (props != null) {
 			if (propertyName != null) {
+				Object current = getProperty(propertyName);
+				if (current == null && value == null)
+					return;
+				if (value != null && value.equals(current))
+					return;
+				boolean changeMade = false;
 				synchronized (props) {
 					if (value instanceof Serializable) {
-						old = props.put(propertyName, (Serializable) value);
+						if (current == null || Null.INSTANCE.equals(current)) {
+							getParent().startTransaction(this);
+							old = props.put(propertyName, (Serializable) value);
+							synchronized (changedProperties_) {
+								changedProperties_.add(propertyName);
+							}
+						} else if (!current.equals(value)) {
+							//							System.out.println("Setting new value to property " + propertyName + " of " + String.valueOf(value)
+							//									+ " from value " + String.valueOf(current));
+							getParent().startTransaction(this);
+							old = props.put(propertyName, (Serializable) value);
+							synchronized (changedProperties_) {
+								changedProperties_.add(propertyName);
+							}
+						}
 					} else if (value == null) {
-						// TODO set some alternative value for NULL in the event of a null value!!!
-						old = props.put(propertyName, Null.INSTANCE);
-						// old = props.put(propertyName, null);
+						if (!current.equals(Null.INSTANCE)) {
+							getParent().startTransaction(this);
+							old = props.put(propertyName, Null.INSTANCE);
+							synchronized (changedProperties_) {
+								changedProperties_.add(propertyName);
+							}
+						}
 					} else {
-						System.out.println("Attemped caching of value of type " + value.getClass().getName() + " that isn't Serializable");
+						log_.log(Level.WARNING, "Attempted to set property " + propertyName + " to a non-serializable value: "
+								+ value.getClass().getName());
 					}
 				}
+
 			} else {
-				System.out.println("propertyName is null on a setProperty request?");
+				log_.log(Level.WARNING, "propertyName is null on a setProperty request?");
 			}
 		} else {
-			System.out.println("Properties are null for element!");
+			log_.log(Level.WARNING, "Properties are null for element!");
 		}
 		// if ((old == null || value == null) || !value.equals(old)) {
-		synchronized (changedProperties_) {
-			changedProperties_.add(propertyName);
-		}
+
 		// }
 		// Document doc = getRawDocument();
 		// synchronized (doc) {

@@ -2529,9 +2529,12 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	public DatabaseTransaction startTransaction() {
 		if (txnHolder_.get() == null) {
 			DatabaseTransaction txn = new DatabaseTransaction(this);
-			if (!getFilePath().toLowerCase().contains("graph.nsf") || getServer().contains("Shiva")) {
-				System.out.println("Creating a new DatabaseTransaction for " + getApiPath());
-			}
+			//			System.out.println("******START Creating a new DatabaseTransaction for " + getApiPath());
+			//			Throwable t = new Throwable();
+			//			t.printStackTrace();
+			//			System.out.println("******DONE Creating a new DatabaseTransaction for " + getApiPath());
+			//			if (!getFilePath().toLowerCase().contains("graph.nsf") || getServer().contains("Shiva")) {
+			//			}
 			txnHolder_.set(txn);
 		}
 		return txnHolder_.get();
