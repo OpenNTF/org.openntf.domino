@@ -359,6 +359,22 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	@Override
 	public Vector<Object> evaluate(final String formula, final lotus.domino.Document doc);
 
+	/* (non-Javadoc)
+	 * 
+	 * @see lotus.domino.Session#freeResourceSearch(lotus.domino.DateTime, lotus.domino.DateTime, java.lang.String, int, int)
+	 */
+	@Override
+	public Vector<String> freeResourceSearch(final lotus.domino.DateTime arg0, final lotus.domino.DateTime arg1, final String arg2,
+			final int arg3, final int arg4);
+
+	/* (non-Javadoc)
+	 * 
+	 * @see lotus.domino.Session#freeResourceSearch(lotus.domino.DateTime, lotus.domino.DateTime, java.lang.String, int, int, java.lang.String, int, java.lang.String, java.lang.String, int)
+	 */
+	@Override
+	public Vector<String> freeResourceSearch(final lotus.domino.DateTime arg0, final lotus.domino.DateTime arg1, final String arg2,
+			final int arg3, final int arg4, final String arg5, final int arg6, final String arg7, final String arg8, final int arg9);
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -367,7 +383,8 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING })
-	public Vector<DateRange> freeTimeSearch(final lotus.domino.DateRange window, final int duration, final Object names, final boolean firstFit);
+	public Vector<DateRange> freeTimeSearch(final lotus.domino.DateRange window, final int duration, final Object names,
+			final boolean firstFit);
 
 	/**
 	 * The Domino Directories and Personal Address Books, including directory catalogs, known to the current session.
