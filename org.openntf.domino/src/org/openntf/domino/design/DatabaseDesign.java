@@ -16,6 +16,8 @@
 
 package org.openntf.domino.design;
 
+import java.util.SortedSet;
+
 /**
  * @author jgallagher
  * 
@@ -23,6 +25,8 @@ package org.openntf.domino.design;
 public interface DatabaseDesign {
 
 	public FileResource createFileResource();
+
+	public Folder createFolder();
 
 	public DesignView createView();
 
@@ -33,6 +37,11 @@ public interface DatabaseDesign {
 	public DesignForm getDefaultForm();
 
 	public DesignView getDefaultView();
+
+	/**
+	 * @return an object representing the faces-config.xml file of the database
+	 */
+	public FacesConfig getFacesConfig();
 
 	/**
 	 * @param name
@@ -73,6 +82,8 @@ public interface DatabaseDesign {
 	public JavaResource getJavaResource(String name);
 
 	public DesignCollection<JavaResource> getJavaResources();
+
+	public SortedSet<String> getJavaResourceClassNames();
 
 	public XPage getXPage(String name);
 

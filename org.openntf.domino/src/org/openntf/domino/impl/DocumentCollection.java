@@ -32,7 +32,6 @@ import org.openntf.domino.utils.Factory;
 /**
  * The Class DocumentCollection.
  */
-@SuppressWarnings("deprecation")
 public class DocumentCollection extends Base<org.openntf.domino.DocumentCollection, lotus.domino.DocumentCollection> implements
 		org.openntf.domino.DocumentCollection {
 

@@ -4,7 +4,10 @@
 package org.openntf.domino.utils.xml;
 
 import java.util.AbstractList;
+import java.util.concurrent.Callable;
 import java.util.logging.Logger;
+
+import org.openntf.domino.utils.DominoUtils;
 
 /**
  * @author jgallagher
@@ -17,6 +20,7 @@ public class ModifiableStringNodeList extends AbstractList<String> {
 	private final XMLNode xml_;
 	private final String parentNodePath_;
 	private final String nodeName_;
+	private Callable postAdd_;
 
 	public ModifiableStringNodeList(final XMLNode xml, final String parentNodePath, final String nodeName) {
 		xml_ = xml;
@@ -46,9 +50,32 @@ public class ModifiableStringNodeList extends AbstractList<String> {
 	@Override
 	public boolean add(final String e) {
 		XMLNode parent = xml_.selectSingleNode(parentNodePath_);
-		// TODO Add code to add missing parent trees as needed
+
+		if (parent == null) {
+			String[] parts = parentNodePath_.split("/");
+			parent = xml_;
+			for (String part : parts) {
+				if (!part.isEmpty()) {
+					XMLNode childNode = parent.selectSingleNode(part);
+					if (childNode == null) {
+						childNode = parent.addChildElement(part);
+					}
+					parent = childNode;
+				}
+			}
+		}
+
 		XMLNode node = parent.addChildElement(nodeName_);
 		node.setText(e);
+
+		if (postAdd_ != null) {
+			try {
+				postAdd_.call();
+			} catch (Exception e1) {
+				DominoUtils.handleException(e1);
+			}
+		}
+
 		return true;
 	}
 
@@ -70,5 +97,9 @@ public class ModifiableStringNodeList extends AbstractList<String> {
 		String current = get(index);
 		xml_.selectNodes(parentNodePath_ + "/" + nodeName_).remove(index);
 		return current;
+	}
+
+	public void setPostAdd(final Callable proc) {
+		postAdd_ = proc;
 	}
 }

@@ -7,8 +7,12 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -25,6 +29,8 @@ import org.xml.sax.SAXException;
  * @author jgallagher
  * 
  */
+// TODO Make the "remove" methods mark the object as unusable in some way
+// TODO Verify that null-value is actually legal in XPages
 public class FacesConfig extends FileResource implements org.openntf.domino.design.FacesConfig {
 	private static final Logger log_ = Logger.getLogger(FacesConfig.class.getName());
 	private static final long serialVersionUID = 1L;
@@ -68,7 +74,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.FacesConfig#getActionListeners()
 	 */
-	public Collection<String> getActionListeners() {
+	public List<String> getActionListeners() {
 		return new ModifiableStringNodeList(xml_, "/faces-config/application", "action-listener");
 	}
 
@@ -76,14 +82,14 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	 * @see org.openntf.domino.design.FacesConfig#addConverter()
 	 */
 	public org.openntf.domino.design.FacesConfig.Converter addConverter() {
-		return new Converter(xml_.addChildElement("converter"));
+		return new Converter(xml_.selectSingleNode("/faces-config").addChildElement("converter"));
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.FacesConfig#getConverters()
 	 */
-	public Collection<org.openntf.domino.design.FacesConfig.Converter> getConverters() {
-		return new ModifiableObjectNodeList<org.openntf.domino.design.FacesConfig.Converter>(xml_, "/faces-config", "converter",
+	public List<org.openntf.domino.design.FacesConfig.Converter> getConverters() {
+		return new ModifiableObjectNodeList<org.openntf.domino.design.FacesConfig.Converter>(this, xml_, "/faces-config", "converter",
 				Converter.class);
 	}
 
@@ -91,56 +97,56 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	 * @see org.openntf.domino.design.FacesConfig#addManagedBean()
 	 */
 	public org.openntf.domino.design.FacesConfig.ManagedBean addManagedBean() {
-		return new ManagedBean(xml_.addChildElement("managed-bean"));
+		return new ManagedBean(xml_.selectSingleNode("/faces-config").addChildElement("managed-bean"));
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.FacesConfig#getManagedBeans()
 	 */
-	public Collection<org.openntf.domino.design.FacesConfig.ManagedBean> getManagedBeans() {
-		return new ModifiableObjectNodeList<org.openntf.domino.design.FacesConfig.ManagedBean>(xml_, "/faces-config", "converter",
+	public List<org.openntf.domino.design.FacesConfig.ManagedBean> getManagedBeans() {
+		return new ModifiableObjectNodeList<org.openntf.domino.design.FacesConfig.ManagedBean>(this, xml_, "/faces-config", "managed-bean",
 				ManagedBean.class);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.FacesConfig#getMessageBundles()
 	 */
-	public Collection<String> getMessageBundles() {
+	public List<String> getMessageBundles() {
 		return new ModifiableStringNodeList(xml_, "/faces-config/application", "message-bundle");
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.FacesConfig#getNavigationHandlers()
 	 */
-	public Collection<String> getNavigationHandlers() {
+	public List<String> getNavigationHandlers() {
 		return new ModifiableStringNodeList(xml_, "/faces-config/application", "navigation-handler");
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.FacesConfig#getPhaseListeners()
 	 */
-	public Collection<String> getPhaseListeners() {
+	public List<String> getPhaseListeners() {
 		return new ModifiableStringNodeList(xml_, "/faces-config/application", "phase-listener");
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.FacesConfig#getPropertyResolvers()
 	 */
-	public Collection<String> getPropertyResolvers() {
+	public List<String> getPropertyResolvers() {
 		return new ModifiableStringNodeList(xml_, "/faces-config/application", "property-resolver");
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.FacesConfig#getVariableResolvers()
 	 */
-	public Collection<String> getVariableResolvers() {
+	public List<String> getVariableResolvers() {
 		return new ModifiableStringNodeList(xml_, "/faces-config/application", "variable-resolver");
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.FacesConfig#getViewHandlers()
 	 */
-	public Collection<String> getViewHandlers() {
+	public List<String> getViewHandlers() {
 		return new ModifiableStringNodeList(xml_, "/faces-config/application", "view-handler");
 	}
 
@@ -162,7 +168,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	public class ManagedBean implements org.openntf.domino.design.FacesConfig.ManagedBean {
 		private final XMLNode node_;
 
-		protected ManagedBean(final XMLNode node) {
+		public ManagedBean(final XMLNode node) {
 			node_ = node;
 		}
 
@@ -181,9 +187,9 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 		 * @see org.openntf.domino.design.FacesConfig.ManagedBean#setName(java.lang.String)
 		 */
 		public void setName(final String name) {
-			XMLNode valueNode = node_.selectSingleNode("managed-bean-class");
+			XMLNode valueNode = node_.selectSingleNode("managed-bean-name");
 			if (valueNode == null) {
-				valueNode = node_.addChildElement("managed-bean-class");
+				valueNode = node_.addChildElement("managed-bean-name");
 			}
 			valueNode.setText(name);
 		}
@@ -237,10 +243,161 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 			valueNode.setText(scope.toString().toLowerCase());
 		}
 
+		/* (non-Javadoc)
+		 * @see org.openntf.domino.design.FacesConfig.ManagedBean#addProperty()
+		 */
+		public org.openntf.domino.design.FacesConfig.ManagedBean.Property addProperty() {
+			XMLNode propertyNode = node_.addChildElement("managed-property");
+			return new Property(propertyNode);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.openntf.domino.design.FacesConfig.ManagedBean#getProperties()
+		 */
+		public List<org.openntf.domino.design.FacesConfig.ManagedBean.Property> getProperties() {
+			return new ModifiableObjectNodeList<org.openntf.domino.design.FacesConfig.ManagedBean.Property>(this, node_, "/",
+					"managed-property", Property.class);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.openntf.domino.design.FacesConfig.ManagedBean#getListEntries()
+		 */
+		public List<String> getListEntries() {
+			List<String> result = new ArrayList<String>();
+			List<XMLNode> nodes = node_.selectNodes("list-entries/value | list-entries/null-value");
+			for (XMLNode node : nodes) {
+				if ("value".equals(node.getNodeName())) {
+					result.add(node.getText());
+				} else {
+					result.add(null);
+				}
+			}
+
+			return Collections.unmodifiableList(result);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.openntf.domino.design.FacesConfig.ManagedBean#setListEntries(java.util.Collection)
+		 */
+		public void setListEntries(final Collection<?> listEntries) {
+			XMLNode listEntriesNode = node_.selectSingleNode("list-entries");
+			String valueClassName = getListValueClassName();
+			if (listEntriesNode != null) {
+				node_.removeChild(listEntriesNode);
+			}
+			listEntriesNode = node_.addChildElement("list-entries");
+			XMLNode valueClassNode = listEntriesNode.addChildElement("value-class");
+			valueClassNode.setText(valueClassName);
+			for (Object entry : listEntries) {
+				if (entry == null) {
+					listEntriesNode.addChildElement("null-value");
+				} else {
+					XMLNode valueNode = listEntriesNode.addChildElement("value");
+					valueNode.setText(String.valueOf(entry));
+				}
+			}
+
+			// Clear out any map-entries, as they're mutually incompatible with list-entries
+			XMLNode mapEntries = node_.selectSingleNode("map-entries");
+			if (mapEntries != null) {
+				node_.removeChild(mapEntries);
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.openntf.domino.design.FacesConfig.ManagedBean#getValueClassName()
+		 */
+		public String getListValueClassName() {
+			XMLNode valueNode = node_.selectSingleNode("list-entries/value-class");
+			if (valueNode == null) {
+				return "";
+			}
+			return valueNode.getText();
+		}
+
+		/* (non-Javadoc)
+		 * @see org.openntf.domino.design.FacesConfig.ManagedBean#setValueClassName(java.lang.String)
+		 */
+		public void setListValueClassName(final String className) {
+			XMLNode valueNode = node_.selectSingleNode("list-entries/value-class");
+			if (valueNode == null) {
+				XMLNode listEntries = node_.selectSingleNode("list-entries");
+				if (listEntries == null) {
+					listEntries = node_.addChildElement("list-entries");
+				}
+				valueNode = listEntries.addChildElement("value-class");
+			}
+			valueNode.setText(className);
+
+			// Clear out any map-entries, as they're mutually incompatible with list-entries
+			XMLNode mapEntries = node_.selectSingleNode("map-entries");
+			if (mapEntries != null) {
+				node_.removeChild(mapEntries);
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.openntf.domino.design.FacesConfig.ManagedBean#getMapEntries()
+		 */
+		public Map<String, String> getMapEntries() {
+			Map<String, String> result = new LinkedHashMap<String, String>();
+
+			List<XMLNode> mapEntries = node_.selectNodes("map-entries/map-entry");
+			for (XMLNode entry : mapEntries) {
+				XMLNode keyNode = entry.selectSingleNode("key");
+				XMLNode valueNode = entry.selectSingleNode("value | null-value");
+
+				if (keyNode != null) {
+					if (valueNode == null || "null-value".equals(valueNode.getNodeName())) {
+						result.put(keyNode.getText(), null);
+					} else {
+						result.put(keyNode.getText(), valueNode.getText());
+					}
+				}
+			}
+
+			return Collections.unmodifiableMap(result);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.openntf.domino.design.FacesConfig.ManagedBean#setMapEntries(java.util.Map)
+		 */
+		public void setMapEntries(final Map<?, ?> mapEntries) {
+			XMLNode mapEntriesNode = node_.selectSingleNode("map-entries");
+			if (mapEntriesNode != null) {
+				node_.removeChild(mapEntriesNode);
+			}
+			mapEntriesNode = node_.addChildElement("map-entries");
+			for (Map.Entry<?, ?> entry : mapEntries.entrySet()) {
+				XMLNode entryNode = mapEntriesNode.addChildElement("map-entry");
+				XMLNode keyNode = entryNode.addChildElement("key");
+				keyNode.setText(String.valueOf(entry.getKey()));
+				if (entry.getValue() == null) {
+					entryNode.addChildElement("null-value");
+				} else {
+					XMLNode valueNode = entryNode.addChildElement("value");
+					valueNode.setText(String.valueOf(entry.getValue()));
+				}
+			}
+
+			// Clear out any list-entries, as they're mutually incompatible with map-entries
+			XMLNode listEntries = node_.selectSingleNode("list-entries");
+			if (listEntries != null) {
+				node_.removeChild(listEntries);
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.openntf.domino.design.FacesConfig.ManagedBean#remove()
+		 */
+		public void remove() {
+			node_.getParentNode().removeChild(node_);
+		}
+
 		public class Property implements org.openntf.domino.design.FacesConfig.ManagedBean.Property {
 			private final XMLNode node_;
 
-			protected Property(final XMLNode node) {
+			public Property(final XMLNode node) {
 				node_ = node;
 			}
 
@@ -267,44 +424,216 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 			}
 
 			/* (non-Javadoc)
+			 * @see org.openntf.domino.design.FacesConfig.ManagedBean.Property#getValue()
+			 */
+			public String getValue() {
+				XMLNode valueNode = node_.selectSingleNode("null-value");
+				if (valueNode != null) {
+					return null;
+				}
+
+				valueNode = node_.selectSingleNode("value");
+				if (valueNode == null) {
+					return "";
+				}
+				return valueNode.getText();
+			}
+
+			/* (non-Javadoc)
+			 * @see org.openntf.domino.design.FacesConfig.ManagedBean.Property#setValue(java.lang.String)
+			 */
+			public void setValue(final String value) {
+				if (value == null) {
+					XMLNode valueNode = node_.selectSingleNode("value");
+					if (valueNode != null) {
+						node_.removeChild(valueNode);
+					}
+					node_.addChildElement("null-value");
+				} else {
+					XMLNode nullNode = node_.selectSingleNode("null-value");
+					if (nullNode != null) {
+						node_.removeChild(nullNode);
+					}
+
+					XMLNode valueNode = node_.selectSingleNode("value");
+					if (valueNode == null) {
+						valueNode = node_.addChildElement("value");
+					}
+					valueNode.setText(value);
+				}
+
+				// Clear out any list-entries and map-entries, as they're mutually incompatible with single values
+				XMLNode listEntries = node_.selectSingleNode("list-entries");
+				if (listEntries != null) {
+					node_.removeChild(listEntries);
+				}
+				listEntries = node_.selectSingleNode("map-entries");
+				if (listEntries != null) {
+					node_.removeChild(listEntries);
+				}
+			}
+
+			/* (non-Javadoc)
 			 * @see org.openntf.domino.design.FacesConfig.ManagedBean.Property#getValueClassName()
 			 */
-			public String getValueClassName() {
-				// TODO Auto-generated method stub
-				return null;
+			public String getListValueClassName() {
+				XMLNode valueNode = node_.selectSingleNode("list-entries/value-class");
+				if (valueNode == null) {
+					return "";
+				}
+				return valueNode.getText();
 			}
 
 			/* (non-Javadoc)
 			 * @see org.openntf.domino.design.FacesConfig.ManagedBean.Property#setValueClassName(java.lang.String)
 			 */
-			public void setValueClassName(final String className) {
-				// TODO Auto-generated method stub
+			public void setListValueClassName(final String className) {
+				XMLNode valueNode = node_.selectSingleNode("list-entries/value-class");
+				if (valueNode == null) {
+					XMLNode listEntries = node_.selectSingleNode("list-entries");
+					if (listEntries == null) {
+						listEntries = node_.addChildElement("list-entries");
+					}
+					valueNode = listEntries.addChildElement("value-class");
+				}
+				valueNode.setText(className);
 
+				// Clear out any value and map-entries, as they're mutually incompatible with list-entries
+				XMLNode value = node_.selectSingleNode("value");
+				if (value != null) {
+					node_.removeChild(value);
+				}
+				value = node_.selectSingleNode("null-value");
+				if (value != null) {
+					node_.removeChild(value);
+				}
+				value = node_.selectSingleNode("map-entries");
+				if (value != null) {
+					node_.removeChild(value);
+				}
 			}
 
 			/* (non-Javadoc)
 			 * @see org.openntf.domino.design.FacesConfig.ManagedBean.Property#getListEntries()
 			 */
-			public List<?> getListEntries() {
-				// TODO Auto-generated method stub
-				return null;
+			public List<String> getListEntries() {
+				List<String> result = new ArrayList<String>();
+				List<XMLNode> nodes = node_.selectNodes("list-entries/value | list-entries/null-value");
+				for (XMLNode node : nodes) {
+					if ("value".equals(node.getNodeName())) {
+						result.add(node.getText());
+					} else {
+						result.add(null);
+					}
+				}
+
+				return Collections.unmodifiableList(result);
 			}
 
 			/* (non-Javadoc)
 			 * @see org.openntf.domino.design.FacesConfig.ManagedBean.Property#setListEntries(java.util.Collection)
 			 */
 			public void setListEntries(final Collection<?> listEntries) {
-				// TODO Auto-generated method stub
+				XMLNode listEntriesNode = node_.selectSingleNode("list-entries");
+				String valueClassName = getListValueClassName();
+				if (listEntriesNode != null) {
+					node_.removeChild(listEntriesNode);
+				}
+				listEntriesNode = node_.addChildElement("list-entries");
+				XMLNode valueClassNode = listEntriesNode.addChildElement("value-class");
+				valueClassNode.setText(valueClassName);
+				for (Object entry : listEntries) {
+					if (entry == null) {
+						listEntriesNode.addChildElement("null-value");
+					} else {
+						XMLNode valueNode = listEntriesNode.addChildElement("value");
+						valueNode.setText(String.valueOf(entry));
+					}
+				}
 
+				// Clear out any value and map-entries, as they're mutually incompatible with list-entries
+				XMLNode value = node_.selectSingleNode("value");
+				if (value != null) {
+					node_.removeChild(value);
+				}
+				value = node_.selectSingleNode("null-value");
+				if (value != null) {
+					node_.removeChild(value);
+				}
+				value = node_.selectSingleNode("map-entries");
+				if (value != null) {
+					node_.removeChild(value);
+				}
 			}
 
+			/* (non-Javadoc)
+			 * @see org.openntf.domino.design.FacesConfig.ManagedBean.Property#getMapEntries()
+			 */
+			public Map<String, String> getMapEntries() {
+				Map<String, String> result = new LinkedHashMap<String, String>();
+
+				List<XMLNode> mapEntries = node_.selectNodes("map-entries/map-entry");
+				for (XMLNode entry : mapEntries) {
+					XMLNode keyNode = entry.selectSingleNode("key");
+					XMLNode valueNode = entry.selectSingleNode("value | null-value");
+
+					if (keyNode != null) {
+						if (valueNode == null || "null-value".equals(valueNode.getNodeName())) {
+							result.put(keyNode.getText(), null);
+						} else {
+							result.put(keyNode.getText(), valueNode.getText());
+						}
+					}
+				}
+
+				return Collections.unmodifiableMap(result);
+			}
+
+			/* (non-Javadoc)
+			 * @see org.openntf.domino.design.FacesConfig.ManagedBean.Property#setMapEntries(java.util.Map)
+			 */
+			public void setMapEntries(final Map<?, ?> mapEntries) {
+				XMLNode mapEntriesNode = node_.selectSingleNode("map-entries");
+				if (mapEntriesNode != null) {
+					node_.removeChild(mapEntriesNode);
+				}
+				mapEntriesNode = node_.addChildElement("map-entries");
+				for (Map.Entry<?, ?> entry : mapEntries.entrySet()) {
+					XMLNode entryNode = mapEntriesNode.addChildElement("map-entry");
+					XMLNode keyNode = entryNode.addChildElement("key");
+					keyNode.setText(String.valueOf(entry.getKey()));
+					if (entry.getValue() == null) {
+						entryNode.addChildElement("null-value");
+					} else {
+						XMLNode valueNode = entryNode.addChildElement("value");
+						valueNode.setText(String.valueOf(entry.getValue()));
+					}
+				}
+
+				// Clear out any value or list-entries, as they're mutually incompatible with map-entries
+				XMLNode value = node_.selectSingleNode("value");
+				if (value != null) {
+					node_.removeChild(value);
+				}
+				XMLNode listEntries = node_.selectSingleNode("list-entries");
+				if (listEntries != null) {
+					node_.removeChild(listEntries);
+				}
+			}
+
+			/* (non-Javadoc)
+			 * @see org.openntf.domino.design.FacesConfig.ManagedBean.Property#remove()
+			 */
+			public void remove() {
+				node_.getParentNode().removeChild(node_);
+			}
 		}
 	}
 
 	public class Converter implements org.openntf.domino.design.FacesConfig.Converter {
 		private final XMLNode node_;
 
-		protected Converter(final XMLNode node) {
+		public Converter(final XMLNode node) {
 			node_ = node;
 		}
 
@@ -351,18 +680,27 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 			}
 			valueNode.setText(className);
 		}
+
+		/* (non-Javadoc)
+		 * @see org.openntf.domino.design.FacesConfig.Converter#remove()
+		 */
+		public void remove() {
+			node_.getParentNode().removeChild(node_);
+		}
 	}
 
 	private static class ModifiableObjectNodeList<E> extends AbstractList<E> {
-		private static final Logger log_ = Logger.getLogger(ModifiableStringNodeList.class.getName());
+		private static final Logger log_ = Logger.getLogger(ModifiableObjectNodeList.class.getName());
 
+		private final Object context_;
 		private final XMLNode xml_;
 		private final String parentNodePath_;
 		private final String nodeName_;
 		private final Class<? extends E> clazz_;
 
-		public ModifiableObjectNodeList(final XMLNode xml, final String parentNodePath, final String nodeName,
+		public ModifiableObjectNodeList(final Object context, final XMLNode xml, final String parentNodePath, final String nodeName,
 				final Class<? extends E> clazz) {
+			context_ = context;
 			xml_ = xml;
 			parentNodePath_ = parentNodePath;
 			nodeName_ = nodeName;
@@ -376,7 +714,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 		public E get(final int index) {
 			List<XMLNode> nodes = xml_.selectNodes(parentNodePath_ + "/" + nodeName_);
 			try {
-				return clazz_.getConstructor(XMLNode.class).newInstance(nodes);
+				return clazz_.getConstructor(context_.getClass(), XMLNode.class).newInstance(context_, nodes.get(index));
 			} catch (IllegalArgumentException e) {
 				DominoUtils.handleException(e);
 				return null;

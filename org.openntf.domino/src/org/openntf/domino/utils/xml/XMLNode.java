@@ -85,6 +85,10 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		this.node.getAttributes().setNamedItem(attr);
 	}
 
+	public String getNodeName() {
+		return node.getNodeName();
+	}
+
 	public String getText() {
 		if (node == null) {
 			return "";
