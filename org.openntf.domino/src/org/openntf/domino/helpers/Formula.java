@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Document;
@@ -116,6 +117,10 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 
 	public String getExpression() {
 		return expression_;
+	}
+
+	public Parser getParser() {
+		return new Parser(getExpression());
 	}
 
 	/*
@@ -259,6 +264,9 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		//		private boolean inBracket_;
 		//		private boolean inEscape_;
 		private boolean inRightSide_;
+		private boolean justClosedKeyword_;
+		private boolean justClosedExpression_;
+		private int parenDepth_ = 0;
 
 		//		private StringBuilder buffer_;
 
@@ -267,133 +275,59 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		}
 
 		public void parse() {
-			String[] lines = source_.split("\\n");
-			for (String line : lines) {
-				parseLine(line);
-			}
+			parseStatement(source_);
+			//			String[] lines = source_.split("\\n");
+			//			for (String line : lines) {
+			//				parseLine(line);
+			//			}
 		}
 
-		/**
-		 * @return the functions
-		 */
-		public List<String> getFunctions() {
-			if (functions_ == null) {
-				functions_ = new ArrayList<String>();
-			}
-			return functions_;
-		}
-
-		/**
-		 * @return the keywords
-		 */
-		public List<String> getKeywords() {
-			if (keywords_ == null) {
-				keywords_ = new ArrayList<String>();
-			}
-			return keywords_;
-		}
-
-		/**
-		 * @return the localVars
-		 */
-		public List<String> getLocalVars() {
-			if (localVars_ == null) {
-				localVars_ = new ArrayList<String>();
-			}
-			return localVars_;
-		}
-
-		/**
-		 * @return the envVars
-		 */
-		public List<String> getEnvVars() {
-			if (envVars_ == null) {
-				envVars_ = new ArrayList<String>();
-			}
-			return envVars_;
-		}
-
-		/**
-		 * @return the variables
-		 */
-		public List<String> getVariables() {
-			if (variables_ == null) {
-				variables_ = new ArrayList<String>();
-			}
-			return variables_;
-		}
-
-		/**
-		 * @return the commands
-		 */
-		public List<String> getCommands() {
-			if (commands_ == null) {
-				commands_ = new ArrayList<String>();
-			}
-			return commands_;
-		}
-
-		public List<String> getLiterals() {
-			if (literals_ == null) {
-				literals_ = new ArrayList<String>();
-			}
-			return literals_;
-		}
-
-		public List<String> getNumberLiterals() {
-			if (numberLiterals_ == null) {
-				numberLiterals_ = new ArrayList<String>();
-			}
-			return numberLiterals_;
-		}
-
-		public List<String> getFieldVars() {
-			if (fieldVars_ == null) {
-				fieldVars_ = new ArrayList<String>();
-			}
-			return fieldVars_;
-		}
-
-		public void parseLine(final String line) {
+		public void parseStatement(final String statement) {
 			inRightSide_ = false;
-			if (line.startsWith("REM")) {
-				parseComment(line.substring("REM".length()).trim());
-			} else if (line.startsWith("DEFAULT")) {
-				parseDefaultStatement(line.substring("DEFAULT".length()).trim());
-			} else if (line.startsWith("ENVIRONMENT")) {
-				parseEnvironmentStatement(line.substring("ENVIRONMENT".length()).trim());
-			} else if (line.startsWith("FIELD")) {
-				parseFieldStatement(line.substring("FIELD".length()).trim());
-			} else {
-				parseStatement(line);
+			String result = statement;
+			while (result.length() > 0) {
+				if (statement.startsWith("REM")) {
+					result = parseComment(result.substring("REM".length()).trim());
+				} else if (statement.startsWith("DEFAULT")) {
+					result = parseDefaultStatement(result.substring("DEFAULT".length()).trim());
+				} else if (statement.startsWith("ENVIRONMENT")) {
+					result = parseEnvironmentStatement(result.substring("ENVIRONMENT".length()).trim());
+				} else if (statement.startsWith("FIELD")) {
+					result = parseFieldStatement(result.substring("FIELD".length()).trim());
+				} else {
+					result = parseNextStatement(result);
+				}
 			}
 		}
 
-		public void parseDefaultStatement(final String line) {
-
+		public String parseDefaultStatement(final String line) {
+			return line;
 		}
 
-		public void parseFieldStatement(final String line) {
-
+		public String parseFieldStatement(final String line) {
+			return line;
 		}
 
-		public void parseEnvironmentStatement(final String line) {
-
+		public String parseEnvironmentStatement(final String line) {
+			return line;
 		}
 
-		public void parseComment(final String line) {
-			String result = parseNextSegment(line);	//we expect this to immediately lead to a literal and then be done
+		public String parseComment(final String line) {
+			String result = parseNextStatement(line);	//we expect this to immediately lead to a literal and then be done
 			char[] chars = result.toCharArray();
 			int pos = 0;
 			StringBuilder buffer = new StringBuilder();
 			for (char c : chars) {
 				pos++;
 				if (c == ' ' || c == ';') {
-
+					System.out.println("Space or semi reached. We're done.");
+					return line.substring(pos);
 				} else {
 
 				}
 			}
+			System.out.println("End of comment statement reached and no more characters are available");
+			return "";
 		}
 
 		public String parseNextQuoteLiteral(final String statement) {
@@ -512,68 +446,206 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 				} else if (c == ';') {
 					getFunctions().add(buffer.toString());
 					return statement.substring(pos);
+				} else {
+					buffer.append(c);
 				}
 			}
+			String function = buffer.toString();
+			getFunctions().add(function);
+			log_.log(Level.INFO, "Statement ended with a function: " + function);
 			return "";
 		}
 
-		public String parseNextIdentifier(final String statement) {
+		public String parseNextIdentifier(final String statement, final char startingChar) {
 			char[] chars = statement.toCharArray();
 			int pos = 0;
 			StringBuilder buffer = new StringBuilder();
+			buffer.append(startingChar);
 			String result = null;
 			for (char c : chars) {
 				pos++;
 				if (c == ';') {
-					getFunctions().add(buffer.toString());
+					getLocalVars().add(buffer.toString());
+					return statement.substring(pos);
+				} else if (c == ')') {
+					getLocalVars().add(buffer.toString());
+					return statement.substring(pos);
+				} else if (isOperator(c)) {
+					getLocalVars().add(buffer.toString());
 					return statement.substring(pos);
 				} else if (c == ' ') {
-					getFunctions().add(buffer.toString());
+					getLocalVars().add(buffer.toString());
 					return statement.substring(pos);
+				} else {
+					buffer.append(c);
 				}
 			}
 			return "";
 		}
 
-		public String parseNextSegment(final String segment) {
+		public String parseNextStatement(final String segment) {
 			char[] chars = segment.toCharArray();
 			int pos = 0;
 			StringBuilder buffer = new StringBuilder();
 			String result = null;
 			for (char c : chars) {
 				pos++;
+				String nextSegment = segment.substring(pos);
 				if (c == '{') {
-					result = parseNextLiteral(segment.substring(pos), true);
+					result = parseNextLiteral(nextSegment, true);
 					return result;
 				} else if (c == '"') {
-					result = parseNextLiteral(segment.substring(pos), false);
+					result = parseNextLiteral(nextSegment, false);
 					return result;
 				} else if (c == '[') {
-					result = parseNextKeyword(segment.substring(pos));
+					result = parseNextKeyword(nextSegment);
 				} else if (c == '@') {
-					result = parseNextFunction(segment.substring(pos));
+					result = parseNextFunction(nextSegment);
 					return result;
 				} else if (Character.isLetter(c) || c == '_' || c == '$') {
-					result = parseNextIdentifier(segment.substring(pos));
+					result = parseNextIdentifier(nextSegment, c);
 					return result;
 				} else if (Character.isDigit(c)) {
-
+					result = parseNextNumberLiteral(nextSegment, c);
+					return result;
+				} else if (isOperator(c)) {
+					System.out.println("Skipping an operator " + c);
+				} else if (c == '(') {
+					parenDepth_++;
+				} else if (c == ')') {
+					parenDepth_--;
 				} else if (c == ' ') {
-
+					System.out.println("Skipping whitespace");
+				} else if (c == ';') {
+					if (parenDepth_ == 0) {
+						System.out.println("Statement completed");
+						return segment.substring(pos);
+					} else {
+						System.out.println("Next argument...");
+					}
 				}
 			}
 			return result;
 		}
 
-		public void parseStatement(final String line) {
-			char[] chars = line.toCharArray();
-			StringBuilder buffer = new StringBuilder();
+		public void parseAllSegments(final String statement) {
+			char[] chars = statement.toCharArray();
 			int pos = 0;
+			StringBuilder buffer = new StringBuilder();
+			String result = null;
 			for (char c : chars) {
 				pos++;
+				String nextSegment = statement.substring(pos);
 
 			}
+		}
 
+		//		public void parseStatement(final String line) {
+		//			char[] chars = line.toCharArray();
+		//			StringBuilder buffer = new StringBuilder();
+		//			int pos = 0;
+		//			for (char c : chars) {
+		//				pos++;
+		//
+		//			}
+		//
+		//		}
+
+		public static boolean isOperator(final char c) {
+			return isListOp(c) || isMathOp(c) || isLogicOp(c);
+		}
+
+		public static boolean isListOp(final char c) {
+			return c == ':';
+		}
+
+		public static boolean isMathOp(final char c) {
+			return c == '+' || c == '=' || c == '<' || c == '>' || c == '*' || c == '/';
+		}
+
+		public static boolean isLogicOp(final char c) {
+			return c == '|' || c == '!' || c == '&';
+		}
+
+		/**
+		 * @return the functions
+		 */
+		public List<String> getFunctions() {
+			if (functions_ == null) {
+				functions_ = new ArrayList<String>();
+			}
+			return functions_;
+		}
+
+		/**
+		 * @return the keywords
+		 */
+		public List<String> getKeywords() {
+			if (keywords_ == null) {
+				keywords_ = new ArrayList<String>();
+			}
+			return keywords_;
+		}
+
+		/**
+		 * @return the localVars
+		 */
+		public List<String> getLocalVars() {
+			if (localVars_ == null) {
+				localVars_ = new ArrayList<String>();
+			}
+			return localVars_;
+		}
+
+		/**
+		 * @return the envVars
+		 */
+		public List<String> getEnvVars() {
+			if (envVars_ == null) {
+				envVars_ = new ArrayList<String>();
+			}
+			return envVars_;
+		}
+
+		/**
+		 * @return the variables
+		 */
+		public List<String> getVariables() {
+			if (variables_ == null) {
+				variables_ = new ArrayList<String>();
+			}
+			return variables_;
+		}
+
+		/**
+		 * @return the commands
+		 */
+		public List<String> getCommands() {
+			if (commands_ == null) {
+				commands_ = new ArrayList<String>();
+			}
+			return commands_;
+		}
+
+		public List<String> getLiterals() {
+			if (literals_ == null) {
+				literals_ = new ArrayList<String>();
+			}
+			return literals_;
+		}
+
+		public List<String> getNumberLiterals() {
+			if (numberLiterals_ == null) {
+				numberLiterals_ = new ArrayList<String>();
+			}
+			return numberLiterals_;
+		}
+
+		public List<String> getFieldVars() {
+			if (fieldVars_ == null) {
+				fieldVars_ = new ArrayList<String>();
+			}
+			return fieldVars_;
 		}
 
 	}
