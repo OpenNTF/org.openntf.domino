@@ -9,6 +9,7 @@ import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -260,13 +261,17 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		private List<String> numberLiterals_;
 		private List<String> variables_;
 		private List<String> commands_;
+		private Stack<String> identStack_;
 		//		private boolean inLiteral_;
 		//		private boolean inBracket_;
 		//		private boolean inEscape_;
 		private boolean inRightSide_;
+		private Boolean isAssignment_;
 		private boolean justClosedKeyword_;
 		private boolean justClosedExpression_;
 		private int parenDepth_ = 0;
+		private char lastOpChar_;
+		private String curStatementType_;
 
 		//		private StringBuilder buffer_;
 
@@ -286,30 +291,43 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 			inRightSide_ = false;
 			String result = statement;
 			while (result.length() > 0) {
-				if (statement.startsWith("REM")) {
+				if (result.startsWith("REM")) {
+					curStatementType_ = "REM";
+					isAssignment_ = Boolean.FALSE;
 					result = parseComment(result.substring("REM".length()).trim());
-				} else if (statement.startsWith("DEFAULT")) {
+				} else if (result.startsWith("DEFAULT")) {
+					curStatementType_ = "DEFAULT";
+					isAssignment_ = Boolean.TRUE;
 					result = parseDefaultStatement(result.substring("DEFAULT".length()).trim());
-				} else if (statement.startsWith("ENVIRONMENT")) {
+				} else if (result.startsWith("ENVIRONMENT")) {
+					curStatementType_ = "ENVIRONMENT";
+					isAssignment_ = Boolean.TRUE;
 					result = parseEnvironmentStatement(result.substring("ENVIRONMENT".length()).trim());
-				} else if (statement.startsWith("FIELD")) {
+				} else if (result.startsWith("FIELD")) {
+					curStatementType_ = "FIELD";
+					isAssignment_ = Boolean.TRUE;
 					result = parseFieldStatement(result.substring("FIELD".length()).trim());
 				} else {
+					curStatementType_ = "";
+					isAssignment_ = null;	//we don't know whether this will be an assignment until we see ':='
 					result = parseNextStatement(result);
 				}
 			}
 		}
 
 		public String parseDefaultStatement(final String line) {
-			return line;
+			String result = parseNextStatement(line);
+			return result;
 		}
 
 		public String parseFieldStatement(final String line) {
-			return line;
+			String result = parseNextStatement(line);
+			return result;
 		}
 
 		public String parseEnvironmentStatement(final String line) {
-			return line;
+			String result = parseNextStatement(line);
+			return result;
 		}
 
 		public String parseComment(final String line) {
@@ -339,15 +357,17 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 				pos++;
 				if (c == '\\') {
 					if (inEscape) {
-						buffer.append(c);
 						inEscape = false;
+						buffer.append(c);
+						System.out.println("Found escaped quote!");
 					} else {
 						inEscape = true;
 					}
 				} else if (c == '"') {
 					if (inEscape) {
-						buffer.append(c);
 						inEscape = false;
+						buffer.append(c);
+						System.out.println("Found escaped quote!");
 					} else {
 						getLiterals().add(buffer.toString());
 						return statement.substring(pos);
@@ -408,7 +428,13 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 			if (isBrace) {
 				return parseNextBraceLiteral(statement);
 			} else {
-				return parseNextQuoteLiteral(statement);
+				try {
+					return parseNextQuoteLiteral(statement);
+				} catch (ParserException pe) {
+					pe.printStackTrace();
+					System.out.println(pe.getExpression());
+					return "";
+				}
 			}
 		}
 
@@ -465,22 +491,34 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 			for (char c : chars) {
 				pos++;
 				if (c == ';') {
-					getLocalVars().add(buffer.toString());
-					return statement.substring(pos);
+					break;
+				} else if (c == ':') {
+					lastOpChar_ = c;
+					break;
 				} else if (c == ')') {
-					getLocalVars().add(buffer.toString());
-					return statement.substring(pos);
+					break;
 				} else if (isOperator(c)) {
-					getLocalVars().add(buffer.toString());
-					return statement.substring(pos);
+					break;
 				} else if (c == ' ') {
-					getLocalVars().add(buffer.toString());
-					return statement.substring(pos);
+					break;
 				} else {
 					buffer.append(c);
 				}
 			}
-			return "";
+			String identifier = buffer.toString();
+			getIdentStack().push(identifier);
+			if (inRightSide_ && !getLocalVars().contains(identifier)) {
+				getFieldVars().add(identifier);
+			} else {
+				if (curStatementType_.equals("FIELD")) {
+					getFieldVars().add(identifier);
+				} else if (curStatementType_.equals("ENVIRONMENT")) {
+					getEnvVars().add(identifier);
+				} else {
+					getLocalVars().add(identifier);
+				}
+			}
+			return statement.substring(pos);
 		}
 
 		public String parseNextStatement(final String segment) {
@@ -497,6 +535,24 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 				} else if (c == '"') {
 					result = parseNextLiteral(nextSegment, false);
 					return result;
+				} else if (c == ':') {
+					lastOpChar_ = c;
+				} else if (c == '=') {
+					if (lastOpChar_ == ':') {
+						//assignment taking place!
+						String lastIdent = getIdentStack().pop();
+						if (curStatementType_.equals("FIELD")) {
+							getFieldVars().add(lastIdent);
+						} else if (curStatementType_.equals("DEFAULT")) {
+							getLocalVars().add(lastIdent);
+						} else if (curStatementType_.equals("ENVIRONMENT")) {
+							getEnvVars().add(lastIdent);
+						} else if (curStatementType_.equals("")) {
+							getLocalVars().add(lastIdent);
+						}
+						lastOpChar_ = c;
+						inRightSide_ = true;
+					}
 				} else if (c == '[') {
 					result = parseNextKeyword(nextSegment);
 				} else if (c == '@') {
@@ -648,6 +704,12 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 			return fieldVars_;
 		}
 
+		public Stack<String> getIdentStack() {
+			if (identStack_ == null) {
+				identStack_ = new Stack<String>();
+			}
+			return identStack_;
+		}
 	}
 
 }

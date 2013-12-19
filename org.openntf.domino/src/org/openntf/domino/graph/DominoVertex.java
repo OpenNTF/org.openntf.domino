@@ -87,6 +87,15 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		return outEdgesMap_;
 	}
 
+	public int getInEdgeCount(final String label) {
+		Set<String> edgeIds = getInEdgesMap().get(label);
+		if (edgeIds == null) {
+			return getProperty("_COUNT" + DominoVertex.IN_PREFIX + label, Integer.class, false);
+		} else {
+			return edgeIds.size();
+		}
+	}
+
 	Set<String> getInEdgesSet(final String label) {
 		Set<String> edgeIds = getInEdgesMap().get(label);
 		if (edgeIds == null) {
@@ -97,7 +106,8 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 				} else if (o instanceof java.util.Collection) {
 					edgeIds = Collections.synchronizedSet(new LinkedHashSet<String>((Collection<String>) o));
 				} else {
-					log_.log(Level.WARNING, "ALERT! InEdges returned something other than a Collection " + o.getClass().getName());
+					log_.log(Level.WARNING, "ALERT! InEdges for label " + label + " returned something other than a Collection "
+							+ o.getClass().getName() + " in vertex type " + this.getForm() + " id: " + getId());
 				}
 			} else {
 				edgeIds = Collections.synchronizedSet(new LinkedHashSet<String>());
@@ -108,6 +118,15 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 			}
 		}
 		return edgeIds;
+	}
+
+	public int getOutEdgeCount(final String label) {
+		Set<String> edgeIds = getOutEdgesMap().get(label);
+		if (edgeIds == null) {
+			return getProperty("_COUNT" + DominoVertex.OUT_PREFIX + label, Integer.class, false);
+		} else {
+			return edgeIds.size();
+		}
 	}
 
 	Set<String> getOutEdgesSet(final String label) {

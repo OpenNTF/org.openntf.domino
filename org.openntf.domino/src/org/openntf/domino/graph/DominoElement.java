@@ -226,13 +226,20 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 			try {
 				Document doc = getRawDocument();
 				result = doc.getItemValue(propertyName, T);
-				if (result instanceof Serializable) {
+				if (result == null) {
+					synchronized (props) {
+						props.put(propertyName, Null.INSTANCE);
+					}
+				} else if (result instanceof Serializable) {
 					synchronized (props) {
 						props.put(propertyName, (Serializable) result);
 					}
+				} else {
+					log_.log(Level.WARNING, "Got a value from the document but it's not Serializable. It's a "
+							+ result.getClass().getName());
 				}
 			} catch (Exception e) {
-				log_.log(Level.INFO, "Exception occured attempting to get value from document for " + propertyName
+				log_.log(Level.WARNING, "Exception occured attempting to get value from document for " + propertyName
 						+ " so we cannot return a value", e);
 			}
 		} else {
@@ -241,13 +248,17 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 				try {
 					Document doc = getRawDocument();
 					result = doc.getItemValue(propertyName, T);
-					if (result instanceof Serializable) {
+					if (result == null) {
+						synchronized (props) {
+							props.put(propertyName, Null.INSTANCE);
+						}
+					} else if (result instanceof Serializable) {
 						synchronized (props) {
 							props.put(propertyName, (Serializable) result);
 						}
 					}
 				} catch (Exception e) {
-					log_.log(Level.INFO, "Exception occured attempting to get value from document for " + propertyName
+					log_.log(Level.WARNING, "Exception occured attempting to get value from document for " + propertyName
 							+ " but we have a value in the cache.", e);
 				}
 			}
@@ -264,7 +275,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		if (allowNull) {
 			return result;
 		} else {
-			if (result == null) {
+			if (result == null || Null.INSTANCE == result) {
 				if (T.isArray())
 					if (T.getComponentType() == String.class) {
 						return (T) DEFAULT_STR_ARRAY;

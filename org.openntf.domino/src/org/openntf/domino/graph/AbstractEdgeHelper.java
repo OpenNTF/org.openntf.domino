@@ -104,6 +104,26 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		return getOtherType(vertex.getClass());
 	}
 
+	public int getEdgeCount(final Vertex vertex) {
+		if (vertex instanceof DominoVertex) {
+			if (getInType().equals(vertex.getClass())) {
+				return ((DominoVertex) vertex).getInEdgeCount(getLabel());
+			}
+			if (getOutType().equals(vertex.getClass())) {
+				return ((DominoVertex) vertex).getOutEdgeCount(getLabel());
+			}
+			if (getInType().isAssignableFrom(vertex.getClass())) {
+				return ((DominoVertex) vertex).getInEdgeCount(getLabel());
+			}
+			if (getOutType().isAssignableFrom(vertex.getClass())) {
+				return ((DominoVertex) vertex).getOutEdgeCount(getLabel());
+			}
+			return getEdges(vertex).size();
+		} else {
+			return getEdges(vertex).size();
+		}
+	}
+
 	public Set<? extends Edge> getEdges(final Vertex vertex) {
 		if (getInType().equals(vertex.getClass())) {
 			return Collections.unmodifiableSet((Set<Edge>) vertex.getEdges(Direction.IN, getLabel()));

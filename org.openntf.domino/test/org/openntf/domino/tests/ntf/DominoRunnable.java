@@ -4,7 +4,6 @@ import java.util.List;
 
 import lotus.domino.NotesFactory;
 
-import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.helpers.Formula;
 import org.openntf.domino.thread.DominoThread;
@@ -24,10 +23,11 @@ public class DominoRunnable implements Runnable {
 	@Override
 	public void run() {
 		Session session = this.getSession();
-		Database db = session.getDatabase("", "names.nsf");
 		Formula formula = new Formula();
-		String source = "thing := ((\"this\" + \" \") + \"that\") +(\" \" + \"the other\");\r\n"
-				+ "\"me\" + \" \" + (\"myself\"  + thing) + @UserName";
+		String source = "REM {the quick \"brown\" fox jumped};\r\n" + "REM {over the \"lazy\" dog};\r\n"
+				+ "DEFAULT defVar := @if(isThing2; \"thing2\"; thing);\r\n" + "ENVIRONMENT envVar := @Now;\r\n"
+				+ "FIELD field1 := \"the cow jumped over the moon\";\r\n" + "FIELD field2 := \"dish... spoon... you know the score.\";\r\n"
+				+ "tmpVar := field1 + \" rhyming \\\"time\\\" \" + field2;\r\n" + "tmpVar2 := 54938;\r\n" + "tmpVar + tmpVar2";
 		formula.setExpression(source);
 		org.openntf.domino.helpers.Formula.Parser parser = formula.getParser();
 		parser.parse();
