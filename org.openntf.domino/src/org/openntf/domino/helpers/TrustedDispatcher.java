@@ -62,7 +62,7 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 		 */
 		@Override
 		protected void afterExecute(final Runnable r, final Throwable t) {
-			System.out.println("afterExecute triggered on a " + r.getClass().getName());
+			//			System.out.println("afterExecute triggered on a " + r.getClass().getName());
 			super.afterExecute(r, t);
 			if (r instanceof AbstractDominoRunnable) {
 				if (((AbstractDominoRunnable) r).shouldRecycle()) {
@@ -113,10 +113,9 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 		public void run() {
 			Session session = Factory.fromLotus(dispatcher_.getTrustedSession(), org.openntf.domino.Session.class, null);
 			//			Factory.setClassLoader(Thread.currentThread().getContextClassLoader());
-			if (session != null) {
-				System.out.println("session: " + session.getEffectiveUserName());
-				//				Factory.setSession(session);
-			}
+			//			if (session != null) {
+			//				System.out.println("session: " + session.getEffectiveUserName());
+			//			}
 			super.run();
 		}
 	}

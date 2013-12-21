@@ -90,6 +90,11 @@ public enum TypeUtils {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T> T vectorToClass(final Vector v, final Class<?> T, final Session session) {
+		//		if (T == java.lang.Class.class) {
+		//			log_.log(Level.WARNING, "Class type requested from type coersion!");
+		//		} else if (T == java.util.Collection.class) {
+		//			log_.log(Level.WARNING, "Collection type requested from type coersion!");
+		//		}
 		Object result = null;
 		Class<?> CType = null;
 		if (T.equals(String[].class)) {
@@ -211,9 +216,9 @@ public enum TypeUtils {
 			}
 		}
 
-		// if (result != null && T.equals(String[].class)) {
-		// log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName());
-		// }
+		if (result != null && !T.isAssignableFrom(result.getClass())) {
+			log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName());
+		}
 		return (T) result;
 	}
 

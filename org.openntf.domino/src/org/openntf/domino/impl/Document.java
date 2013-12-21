@@ -2183,7 +2183,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					}
 				}
 			} catch (IllegalArgumentException iae) {
-				result = this.replaceItemValueExt(itemName, valueClass, iae);
+				result = this.replaceItemValueExt(itemName, value, iae);
 			}
 
 			if (this.shouldWriteItemMeta_) {

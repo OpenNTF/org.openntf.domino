@@ -242,6 +242,8 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 				log_.log(Level.WARNING, "Exception occured attempting to get value from document for " + propertyName
 						+ " so we cannot return a value", e);
 			}
+		} else if (result == Null.INSTANCE) {
+
 		} else {
 			if (result != null && !T.isAssignableFrom(result.getClass())) {
 				// System.out.println("AH! We have the wrong type in the property cache! How did this happen?");
@@ -267,6 +269,8 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		//		if (result != null && !T.isAssignableFrom(result.getClass())) {
 		//			log_.log(Level.WARNING, "Returning a " + result.getClass().getName() + " when we asked for a " + T.getName());
 		//		}
+		if (result == Null.INSTANCE)
+			result = null;
 		return (T) result;
 	}
 
@@ -367,30 +371,55 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	private final Set<String> changedProperties_ = new HashSet<String>();
 
+	void setProperty(final String propertyName, final java.lang.Object value, final boolean force) {
+
+	}
+
 	@Override
 	public void setProperty(final String propertyName, final java.lang.Object value) {
-
+		boolean isEdgeCollection = false;
+		boolean isEqual = false;
 		Map<String, Serializable> props = getProps();
 		Object old = null;
 		if (props != null) {
 			if (propertyName != null) {
 				Object current = getProperty(propertyName);
-				if (current == null && value == null)
+				if (propertyName.startsWith(DominoVertex.IN_PREFIX) && value instanceof java.util.Collection) {
+					isEdgeCollection = true;
+					//					System.out.println("Setting property of " + propertyName + " with collection of "
+					//							+ ((java.util.Collection) value).size());
+				}
+				if (current == null && value == null) {
+					//					if (isEdgeCollection) {
+					//						System.out.println("Both current and new are NULL. Therefore returning.");
+					//					}
 					return;
-				if (value != null && value.equals(current))
-					return;
+				}
+				if (value != null && current != null) {
+					if (!(value instanceof java.util.Collection) && !value.getClass().isArray()) {
+						isEqual = value.equals(current);
+					}
+				}
+				if (isEqual) {
+					log_.log(Level.FINE, "Not setting property " + propertyName + " because the new value is equal to the existing value");
+				}
 				boolean changeMade = false;
 				synchronized (props) {
 					if (value instanceof Serializable) {
 						if (current == null || Null.INSTANCE.equals(current)) {
+							//							if (isEdgeCollection) {
+							//								System.out.println("Current is null, therefore we're putting the new value in the map.");
+							//							}
 							getParent().startTransaction(this);
 							old = props.put(propertyName, (Serializable) value);
 							synchronized (changedProperties_) {
 								changedProperties_.add(propertyName);
 							}
-						} else if (!current.equals(value)) {
-							//							System.out.println("Setting new value to property " + propertyName + " of " + String.valueOf(value)
-							//									+ " from value " + String.valueOf(current));
+						} else if (!isEqual) {
+							//							if (isEdgeCollection) {
+							//								System.out.println("Setting new value to property " + propertyName + " of " + String.valueOf(value)
+							//										+ " from value " + String.valueOf(current));
+							//							}
 							getParent().startTransaction(this);
 							old = props.put(propertyName, (Serializable) value);
 							synchronized (changedProperties_) {

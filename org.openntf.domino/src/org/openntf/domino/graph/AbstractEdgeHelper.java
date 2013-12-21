@@ -232,7 +232,10 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		}
 	}
 
-	public Edge makeEdge(final @Nonnull Vertex defaultOut, final @Nonnull Vertex defaultIn) {
+	public Edge makeEdge(final Vertex defaultOut, final Vertex defaultIn) {
+		if (defaultOut == null || defaultIn == null) {
+			throw new RuntimeException("Cannot create an edge of type " + getLabel() + " where a vertex is null!");
+		}
 		Edge result = null;
 		Vertex inVert = null;
 		Vertex outVert = null;
