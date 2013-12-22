@@ -303,4 +303,26 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	public Session getAncestorSession() {
 		return this.getAncestorDocument().getAncestorSession();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.RichTextDoclink#getDatabase()
+	 */
+	public Database getDatabase() {
+		Session session = getAncestorSession();
+		Database database = session.getDatabase("", "");
+		database.openByReplicaID(getServerHint(), getDBReplicaID());
+		return database;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.RichTextDoclink#getDocument()
+	 */
+	public org.openntf.domino.Document getDocument() {
+		String documentId = getDocUnID();
+		if (documentId != null && !documentId.isEmpty()) {
+			Database database = getDatabase();
+			return database.getDocumentByUNID(documentId);
+		}
+		return null;
+	}
 }
