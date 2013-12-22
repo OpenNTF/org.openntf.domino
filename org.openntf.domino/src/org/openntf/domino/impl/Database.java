@@ -1981,9 +1981,10 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			}
 			return result;
 		} catch (NotesException e) {
+			if (e.text.contains("database object is already open"))
+				return true;	//NTF it is galactically stupid that opening an already open Database throws an exception instead of just doing it.
 			DominoUtils.handleException(e);
 			return false;
-
 		}
 	}
 
