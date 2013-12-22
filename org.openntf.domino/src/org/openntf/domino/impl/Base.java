@@ -636,13 +636,13 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		if (o instanceof Collection) {
 			if (!((Collection) o).isEmpty()) {
 				for (Object io : (Collection) o) {
-					if (io instanceof lotus.domino.DateTime || io instanceof lotus.domino.Name) {
+					if (io instanceof lotus.domino.DateTime || io instanceof lotus.domino.DateRange || io instanceof lotus.domino.Name) {
 						s_recycle(io);
 					}
 				}
 			}
 		}
-		if (o instanceof lotus.domino.DateTime || o instanceof lotus.domino.Name) {
+		if (o instanceof lotus.domino.DateTime || o instanceof lotus.domino.DateRange || o instanceof lotus.domino.Name) {
 			s_recycle(o);
 		}
 

@@ -64,6 +64,12 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	/** The replid_. */
 	private String replid_;
 
+	private String basedOnTemplate_;
+	private String templateName_;
+	private Date lastModDate_;
+	private String title_;
+	private Boolean isReplicationDisabled_;
+
 	private String ident_;
 
 	/**
@@ -76,24 +82,61 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public Database(final lotus.domino.Database delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
-		initialize(delegate);
+		initialize(delegate, false);
 	}
 
-	private void initialize(final lotus.domino.Database delegate) {
+	public Database(final lotus.domino.Database delegate, final org.openntf.domino.Base<?> parent, final boolean extendedMetadata) {
+		super(delegate, (parent instanceof org.openntf.domino.Session) ? parent : Factory.getSession(parent));
+		initialize(delegate, extendedMetadata);
+		Base.s_recycle(delegate);
+	}
+
+	private void initialize(final lotus.domino.Database delegate, final boolean extended) {
 		try {
 			server_ = delegate.getServer();
 		} catch (NotesException e) {
-			// NTF probably not opened yet. No reason to freak out yet...
+			log_.log(java.util.logging.Level.FINE, "Unable to cache server name for Database due to exception: " + e.text);
 		}
 		try {
 			path_ = delegate.getFilePath();
 		} catch (NotesException e) {
-			// NTF probably not opened yet. No reason to freak out yet...
+			log_.log(java.util.logging.Level.FINE, "Unable to cache filepath for Database due to exception: " + e.text);
 		}
 		try {
 			replid_ = delegate.getReplicaID();
 		} catch (NotesException e) {
-			// NTF probably not opened yet. No reason to freak out yet...
+			log_.log(java.util.logging.Level.FINE, "Unable to cache replica id for Database due to exception: " + e.text);
+		}
+		try {
+			basedOnTemplate_ = delegate.getDesignTemplateName();
+		} catch (NotesException e) {
+			log_.log(java.util.logging.Level.FINE, "Unable to cache design template name for Database due to exception: " + e.text);
+		}
+		try {
+			templateName_ = delegate.getTemplateName();
+		} catch (NotesException e) {
+			log_.log(java.util.logging.Level.FINE, "Unable to cache template name for Database due to exception: " + e.text);
+		}
+		try {
+			title_ = delegate.getTitle();
+		} catch (NotesException e) {
+			log_.log(java.util.logging.Level.FINE, "Unable to cache title for Database due to exception: " + e.text);
+		}
+		if (extended) {
+			try {
+				lotus.domino.DateTime dt = delegate.getLastModified();
+				lastModDate_ = dt.toJavaDate();
+				dt.recycle();
+			} catch (NotesException e) {
+				log_.log(java.util.logging.Level.FINE, "Unable to cache last modification date for Database due to exception: " + e.text);
+			}
+			try {
+				lotus.domino.Replication repl = delegate.getReplicationInfo();
+				isReplicationDisabled_ = repl.isDisabled();
+				Base.s_recycle(repl);
+			} catch (NotesException e) {
+				log_.log(java.util.logging.Level.FINE, "Unable to cache replication status for Database due to exception: " + e.text);
+			}
 		}
 		ident_ = System.identityHashCode(getParent()) + "!!!" + server_ + "!!" + path_;
 	}
@@ -1168,6 +1211,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	public Date getLastModifiedDate() {
+		if (lastModDate_ != null)
+			return lastModDate_;
 		try {
 			return DominoUtils.toJavaDateSafe(getDelegate().getLastModified());
 		} catch (NotesException e) {
@@ -1932,7 +1977,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			boolean result = getDelegate().open();
 			if (result) {
-				initialize(getDelegate());
+				initialize(getDelegate(), false);
 			}
 			return result;
 		} catch (NotesException e) {
@@ -1949,7 +1994,11 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public boolean openByReplicaID(final String server, final String replicaId) {
 		try {
-			return getDelegate().openByReplicaID(server, replicaId);
+			boolean result = getDelegate().openByReplicaID(server, replicaId);
+			if (result) {
+				initialize(getDelegate(), false);
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -1967,12 +2016,14 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			boolean result = false;
 			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(modifiedSince);
 			result = getDelegate().openIfModified(server, dbFile, dt);
+			if (result) {
+				initialize(getDelegate(), false);
+			}
 			dt.recycle();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
-
 		}
 	}
 
@@ -1983,11 +2034,14 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public boolean openWithFailover(final String server, final String dbFile) {
 		try {
-			return getDelegate().openWithFailover(server, dbFile);
+			boolean result = getDelegate().openWithFailover(server, dbFile);
+			if (result) {
+				initialize(getDelegate(), false);
+			}
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
-
 		}
 	}
 
@@ -2508,7 +2562,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	// private DatabaseTransaction currentTransaction_;
-	private static ThreadLocal<DatabaseTransaction> txnHolder_ = new ThreadLocal<DatabaseTransaction>() {
+	private ThreadLocal<DatabaseTransaction> txnHolder_ = new ThreadLocal<DatabaseTransaction>() {
 		@Override
 		protected DatabaseTransaction initialValue() {
 			return null;
@@ -3016,5 +3070,17 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	public void setSchema(final IDatabaseSchema schema) {
 		schema_ = schema;
 		//TODO serialization of the schema into a design file
+	}
+
+	public boolean isReplicationDisabled() {
+		if (this.isReplicationDisabled_ == null) {
+			Replication repl = getReplicationInfo();
+			isReplicationDisabled_ = repl.isDisabled();
+		}
+		return isReplicationDisabled_.booleanValue();
+	}
+
+	void setReplication(final boolean value) {
+		isReplicationDisabled_ = value;
 	}
 }

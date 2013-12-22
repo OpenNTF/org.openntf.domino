@@ -15,6 +15,7 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
@@ -36,6 +37,15 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 		REPLICA_CANDIDATE(DbDirectory.REPLICA_CANDIDATE),
 		/** The template candidate. */
 		TEMPLATE_CANDIDATE(DbDirectory.TEMPLATE_CANDIDATE);
+
+		public static Type getType(final int value) {
+			for (Type type : Type.values()) {
+				if (type.getValue() == value) {
+					return type;
+				}
+			}
+			return null;
+		}
 
 		/** The value_. */
 		private final int value_;
@@ -98,6 +108,8 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 	 * @see lotus.domino.DbDirectory#getFirstDatabase(int)
 	 */
 	@Override
+	@Deprecated
+	@Legacy(Legacy.ITERATION_WARNING)
 	public Database getFirstDatabase(final int type);
 
 	/**
@@ -107,6 +119,8 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 	 *            the type
 	 * @return the first database
 	 */
+	@Deprecated
+	@Legacy(Legacy.ITERATION_WARNING)
 	public Database getFirstDatabase(final Type type);
 
 	/*
@@ -123,6 +137,8 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 	 * @see lotus.domino.DbDirectory#getNextDatabase()
 	 */
 	@Override
+	@Deprecated
+	@Legacy(Legacy.ITERATION_WARNING)
 	public Database getNextDatabase();
 
 	/*

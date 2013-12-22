@@ -49,6 +49,18 @@ public class DominoRunnable implements Runnable {
 			System.out.print(var + ", ");
 		}
 		System.out.println("END VARIABLES");
+		List<String> fieldVars = parser.getFieldVars();
+		System.out.println("BEGIN FIELDS");
+		for (String var : fieldVars) {
+			System.out.print(var + ", ");
+		}
+		System.out.println("END FIELDS");
+		List<String> envVars = parser.getEnvVars();
+		System.out.println("BEGIN ENVIRONMENTS");
+		for (String var : envVars) {
+			System.out.print(var + ", ");
+		}
+		System.out.println("END ENVIRONMENTS");
 	}
 
 	protected Session getSession() {

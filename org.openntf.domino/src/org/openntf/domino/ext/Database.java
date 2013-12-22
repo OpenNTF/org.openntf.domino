@@ -246,4 +246,6 @@ public interface Database extends Base {
 
 	public void setSchema(IDatabaseSchema schema);
 
+	public boolean isReplicationDisabled();
+
 }

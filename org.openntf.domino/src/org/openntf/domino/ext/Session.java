@@ -4,6 +4,7 @@
 package org.openntf.domino.ext;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.openntf.domino.ColorObject;
 import org.openntf.domino.Database;
@@ -135,5 +136,13 @@ public interface Session {
 	public void boogie();
 
 	public String getUnique();
+
+	public org.openntf.domino.Database getDatabaseByReplicaID(String server, String replicaid);
+
+	public org.openntf.domino.Database getDatabaseWithFailover(String server, String dbfile);
+
+	public org.openntf.domino.Database getDatabaseIfModified(String server, String dbfile, lotus.domino.DateTime modifiedsince);
+
+	public org.openntf.domino.Database getDatabaseIfModified(String server, String dbfile, Date modifiedsince);
 
 }
