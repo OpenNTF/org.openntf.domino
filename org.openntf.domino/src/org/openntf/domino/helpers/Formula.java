@@ -248,6 +248,15 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	}
 
 	public static class Parser {
+		/*
+		 * NTF - Please note that this parser is pretty brutal. It's not intended to construct ASTs from Formula.
+		 * It's intended to allow for analytics of Formula code. So searching for the use of specific @functions,
+		 * literals, keywords, and to try to differentiate local variables from field-based variable references.
+		 * 
+		 * A proper AST parser for Formula would be considerably more involved and honestly of questionable value
+		 * since actually having knowledge of the syntax tree would only be useful in an interpretter/converter 
+		 * context.
+		 */
 		private static final Logger log_ = Logger.getLogger(Formula.Parser.class.getName());
 
 		private final String source_;
