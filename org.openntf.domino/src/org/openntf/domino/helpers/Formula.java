@@ -304,6 +304,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 			inRightSide_ = false;
 			String result = statement.replaceAll("\n", "");
 			result = result.replaceAll("\r", "").trim();
+			curStatementType_ = "";
 			while (result.length() > 0) {
 				//				System.out.println("Parsing next statement");
 				if (result.startsWith(REM)) {
