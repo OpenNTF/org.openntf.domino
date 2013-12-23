@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import lotus.domino.NotesError;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.ACL.Level;
@@ -1971,18 +1972,27 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.openntf.domino.Database#open()
 	 */
 	public boolean open() {
 		try {
-			boolean result = getDelegate().open();
+			boolean result = false;
+			try {
+				result = getDelegate().open();
+			} catch (NotesException ne) {
+				if (NotesError.NOTES_ERR_DBALREADY_OPEN == ne.id) {
+					if (log_.isLoggable(java.util.logging.Level.FINE)) {
+						log_.log(java.util.logging.Level.FINE, "Suppressing a db already open error because, why?");
+					}
+				} else {
+					DominoUtils.handleException(ne);
+					return false;
+				}
+			}
 			if (result) {
 				initialize(getDelegate(), false);
 			}
 			return result;
-		} catch (NotesException e) {
-			if (e.text.contains("database object is already open"))
-				return true;	//NTF it is galactically stupid that opening an already open Database throws an exception instead of just doing it.
+		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return false;
 		}

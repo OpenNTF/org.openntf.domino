@@ -372,12 +372,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 */
 	@Override
 	public Database openMailDatabase() {
-		try {
-			return Factory.fromLotus(getDelegate().openMailDatabase(), Database.class, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
+		return getAncestorSession().getMailDatabase();
 	}
 
 	/*

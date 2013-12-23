@@ -1689,4 +1689,18 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 		return null;
 	}
+
+	public org.openntf.domino.Database getMailDatabase() {
+		try {
+			lotus.domino.DbDirectory rawDir = getDelegate().getDbDirectory(null);
+			lotus.domino.Database rawdb = rawDir.openMailDatabase();
+			Base.s_recycle(rawDir);
+			if (rawdb != null) {
+				return Factory.fromLotus(rawdb, Database.class, this);
+			}
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
+		return null;
+	}
 }

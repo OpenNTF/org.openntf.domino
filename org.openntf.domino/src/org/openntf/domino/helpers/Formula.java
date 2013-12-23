@@ -7,11 +7,10 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.Stack;
 import java.util.Vector;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Document;
@@ -252,15 +251,15 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		private static final Logger log_ = Logger.getLogger(Formula.Parser.class.getName());
 
 		private final String source_;
-		private List<String> functions_;
-		private List<String> keywords_;
-		private List<String> localVars_;
-		private List<String> fieldVars_;
-		private List<String> envVars_;
-		private List<String> literals_;
-		private List<String> numberLiterals_;
-		private List<String> variables_;
-		private List<String> commands_;
+		private Set<String> functions_;
+		private Set<String> keywords_;
+		private Set<String> localVars_;
+		private Set<String> fieldVars_;
+		private Set<String> envVars_;
+		private Set<String> literals_;
+		private Set<String> numberLiterals_;
+		private Set<String> variables_;
+		private Set<String> commands_;
 		private Stack<String> identStack_;
 		//		private boolean inLiteral_;
 		//		private boolean inBracket_;
@@ -289,7 +288,8 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 
 		public void parseStatement(final String statement) {
 			inRightSide_ = false;
-			String result = statement;
+			String result = statement.replaceAll("\n", "");
+			result = result.replaceAll("\r", "").trim();
 			while (result.length() > 0) {
 				if (result.startsWith("REM")) {
 					isAssignment_ = Boolean.FALSE;
@@ -305,11 +305,12 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 					isAssignment_ = null;	//we don't know whether this will be an assignment until we see ':='
 					result = parseNextStatement(result);
 				}
+				//				inRightSide_ = false;
 			}
 		}
 
 		public String parseDefaultStatement(final String line) {
-			System.out.println("Parsing Default");
+			//			System.out.println("Parsing Default");
 			curStatementType_ = "DEFAULT";
 			isAssignment_ = Boolean.TRUE;
 			String result = parseNextStatement(line);
@@ -318,7 +319,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		}
 
 		public String parseFieldStatement(final String line) {
-			System.out.println("Parsing Field");
+			//			System.out.println("Parsing Field");
 			curStatementType_ = "FIELD";
 			isAssignment_ = Boolean.TRUE;
 			String result = parseNextStatement(line);
@@ -327,7 +328,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		}
 
 		public String parseEnvironmentStatement(final String line) {
-			System.out.println("Parsing Environment");
+			//			System.out.println("Parsing Environment");
 			curStatementType_ = "ENVIRONMENT";
 			isAssignment_ = Boolean.TRUE;
 			String result = parseNextStatement(line);
@@ -336,7 +337,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		}
 
 		public String parseComment(final String line) {
-			System.out.println("Parsing Comment");
+			//			System.out.println("Parsing Comment");
 			curStatementType_ = "REM";
 			String result = parseNextStatement(line);	//we expect this to immediately lead to a literal and then be done
 			char[] chars = result.toCharArray();
@@ -345,9 +346,9 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 			for (char c : chars) {
 				pos++;
 				if (c == ' ' || c == ';') {
-					System.out.println("Space or semi reached. We're done.");
+					//					System.out.println("Space or semi reached. We're done.");
 					curStatementType_ = "";
-					return line.substring(pos).trim();
+					return result.substring(pos).trim();
 				} else {
 
 				}
@@ -383,12 +384,15 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 					}
 				} else {
 					buffer.append(c);
+					if (inEscape)
+						inEscape = false;
 				}
 			}
 			throw new ParserException("End of line reached before end of string literal", statement);
 		}
 
 		public String parseNextBraceLiteral(final String statement) {
+			//			System.out.println("Parsing brace literal");
 			boolean inEscape = false;
 			char[] chars = statement.toCharArray();
 			int pos = 0;
@@ -412,20 +416,24 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 					}
 				} else {
 					buffer.append(c);
+					if (inEscape)
+						inEscape = false;
 				}
 			}
 			throw new ParserException("End of line reached before end of string literal", statement);
 		}
 
 		public String parseNextKeyword(final String statement) {
-			System.out.println("Parsing Keyword");
+			//			System.out.println("Parsing Keyword");
 			char[] chars = statement.toCharArray();
 			int pos = 0;
 			StringBuilder buffer = new StringBuilder();
 			for (char c : chars) {
 				pos++;
 				if (c == ']') {
-					getLiterals().add(buffer.toString());
+					String keyword = buffer.toString();
+					getKeywords().add(keyword);
+					//					System.out.println("Found keyword: " + keyword);
 					return statement.substring(pos);
 				} else {
 					buffer.append(c);
@@ -435,7 +443,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		}
 
 		public String parseNextLiteral(final String statement, final boolean isBrace) {
-			System.out.println("Parsing Literal");
+			//			System.out.println("Parsing Literal");
 			if (isBrace) {
 				return parseNextBraceLiteral(statement);
 			} else {
@@ -459,16 +467,33 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 				pos++;
 				if (Character.isDigit(c)) {
 					buffer.append(c);
+				} else if (c == ':') {
+					lastOpChar_ = c;
+					break;
+				} else if (c == '(') {
+					parenDepth_++;
+					//					System.out.println("Opening parens " + parenDepth_);
+					break;
+				} else if (c == ')') {
+					parenDepth_--;
+					//					System.out.println("Closing parens " + parenDepth_);
+					break;
+				} else if (c == '[') {
+					pos--;
+					break;
+				} else if (c == ']') {
+					break;
 				} else {
-					getNumberLiterals().add(buffer.toString());
-					return statement.substring(pos);
+					break;
 				}
 			}
-			throw new ParserException("End of line reached before end of number literal", statement);
+			getNumberLiterals().add(buffer.toString());
+			return statement.substring(pos);
+			//			throw new ParserException("End of line reached before end of number literal", statement);
 		}
 
 		public String parseNextFunction(final String statement) {
-			System.out.println("Parsing Function");
+			//			System.out.println("Parsing Function");
 			char[] chars = statement.toCharArray();
 			int pos = 0;
 			StringBuilder buffer = new StringBuilder();
@@ -477,11 +502,24 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 				pos++;
 				if (c == '(') {
 					getFunctions().add(buffer.toString());
+					parenDepth_++;
+					//					System.out.println("Opening parens " + parenDepth_);
+					return statement.substring(pos);
+				} else if (c == ')') {
+					getFunctions().add(buffer.toString());
+					parenDepth_--;
+					//					System.out.println("Closing parens " + parenDepth_);
 					return statement.substring(pos);
 				} else if (c == ' ') {
 					getFunctions().add(buffer.toString());
 					return statement.substring(pos);
 				} else if (c == ';') {
+					getFunctions().add(buffer.toString());
+					return statement.substring(pos);
+				} else if (c == '[') {
+					getFunctions().add(buffer.toString());
+					return statement.substring(pos - 1);
+				} else if (c == ']') {
 					getFunctions().add(buffer.toString());
 					return statement.substring(pos);
 				} else {
@@ -490,7 +528,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 			}
 			String function = buffer.toString();
 			getFunctions().add(function);
-			log_.log(Level.INFO, "Statement ended with a function: " + function);
+			//			log_.log(Level.INFO, "Statement ended with a function: " + function);
 			return "";
 		}
 
@@ -507,7 +545,20 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 				} else if (c == ':') {
 					lastOpChar_ = c;
 					break;
+				} else if (c == '(') {
+					parenDepth_++;
+					//					System.out.println("Opening parens " + parenDepth_);
+					break;
 				} else if (c == ')') {
+					parenDepth_--;
+					//					System.out.println("Closing parens " + parenDepth_);
+					break;
+				} else if (c == '[') {
+					//					parenDepth_++;
+					pos--;
+					break;
+				} else if (c == ']') {
+					//					parenDepth_--;
 					break;
 				} else if (isOperator(c)) {
 					break;
@@ -520,7 +571,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 			String identifier = buffer.toString();
 			getIdentStack().push(identifier);
 			if (inRightSide_ && !getLocalVars().contains(identifier)) {
-				System.out.println("Adding to field Vars because not in localvar list and we're in the right side");
+				//				System.out.println("Adding to field Vars because not in localvar list and we're in the right side");
 				getFieldVars().add(identifier);
 			} else {
 				if (curStatementType_.equals("FIELD")) {
@@ -531,11 +582,12 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 					getLocalVars().add(identifier);
 				}
 			}
+			//			System.out.println("Completed parsing identifier: " + identifier + " on " + (inRightSide_ ? "right" : "left"));
 			return statement.substring(pos);
 		}
 
 		public String parseNextStatement(final String segment) {
-			System.out.println("Parsing " + curStatementType_ + " Statement Type");
+			//			System.out.println("Parsing " + curStatementType_ + " Statement Type");
 			char[] chars = segment.toCharArray();
 			int pos = 0;
 			StringBuilder buffer = new StringBuilder();
@@ -555,24 +607,25 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 				} else if (c == '=') {
 					if (lastOpChar_ == ':') {
 						//assignment taking place!
+						//						System.out.println("Found assignment!");
+						inRightSide_ = true;
 						String lastIdent = getIdentStack().pop();
 						if (curStatementType_.equals("FIELD")) {
-							System.out.println("Adding Field Var");
 							getFieldVars().add(lastIdent);
 						} else if (curStatementType_.equals("DEFAULT")) {
 							getLocalVars().add(lastIdent);
 						} else if (curStatementType_.equals("ENVIRONMENT")) {
-							System.out.println("Adding Environment Var");
+							//							System.out.println("Adding Environment Var");
 							getEnvVars().add(lastIdent);
 						} else if (curStatementType_.equals("")) {
 							getLocalVars().add(lastIdent);
 						}
 						lastOpChar_ = c;
-						inRightSide_ = true;
 					}
 				} else if (c == '[') {
 					String nextSegment = segment.substring(pos);
 					result = parseNextKeyword(nextSegment);
+					return result;
 				} else if (c == '@') {
 					String nextSegment = segment.substring(pos);
 					result = parseNextFunction(nextSegment);
@@ -589,8 +642,10 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 					//					System.out.println("Skipping an operator " + c);
 				} else if (c == '(') {
 					parenDepth_++;
+					//					System.out.println("Opening parens " + parenDepth_);
 				} else if (c == ')') {
 					parenDepth_--;
+					//					System.out.println("Closing parens " + parenDepth_);
 				} else if (c == '\n') {
 					//					System.out.println("Skipping whitespace");
 				} else if (c == '\t') {
@@ -601,8 +656,8 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 					//					System.out.println("Skipping whitespace");
 				} else if (c == ';') {
 					if (parenDepth_ == 0) {
-						System.out.println("Statement completed");
-
+						//						System.out.println("Statement completed");
+						inRightSide_ = false;
 						return segment.substring(pos).trim();
 					} else {
 						//						System.out.println("Next argument...");
@@ -654,9 +709,9 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		/**
 		 * @return the functions
 		 */
-		public List<String> getFunctions() {
+		public Set<String> getFunctions() {
 			if (functions_ == null) {
-				functions_ = new ArrayList<String>();
+				functions_ = new LinkedHashSet<String>();
 			}
 			return functions_;
 		}
@@ -664,9 +719,9 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		/**
 		 * @return the keywords
 		 */
-		public List<String> getKeywords() {
+		public Set<String> getKeywords() {
 			if (keywords_ == null) {
-				keywords_ = new ArrayList<String>();
+				keywords_ = new LinkedHashSet<String>();
 			}
 			return keywords_;
 		}
@@ -674,9 +729,9 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		/**
 		 * @return the localVars
 		 */
-		public List<String> getLocalVars() {
+		public Set<String> getLocalVars() {
 			if (localVars_ == null) {
-				localVars_ = new ArrayList<String>();
+				localVars_ = new LinkedHashSet<String>();
 			}
 			return localVars_;
 		}
@@ -684,9 +739,9 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		/**
 		 * @return the envVars
 		 */
-		public List<String> getEnvVars() {
+		public Set<String> getEnvVars() {
 			if (envVars_ == null) {
-				envVars_ = new ArrayList<String>();
+				envVars_ = new LinkedHashSet<String>();
 			}
 			return envVars_;
 		}
@@ -694,9 +749,9 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		/**
 		 * @return the variables
 		 */
-		public List<String> getVariables() {
+		public Set<String> getVariables() {
 			if (variables_ == null) {
-				variables_ = new ArrayList<String>();
+				variables_ = new LinkedHashSet<String>();
 			}
 			return variables_;
 		}
@@ -704,30 +759,30 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		/**
 		 * @return the commands
 		 */
-		public List<String> getCommands() {
+		public Set<String> getCommands() {
 			if (commands_ == null) {
-				commands_ = new ArrayList<String>();
+				commands_ = new LinkedHashSet<String>();
 			}
 			return commands_;
 		}
 
-		public List<String> getLiterals() {
+		public Set<String> getLiterals() {
 			if (literals_ == null) {
-				literals_ = new ArrayList<String>();
+				literals_ = new LinkedHashSet<String>();
 			}
 			return literals_;
 		}
 
-		public List<String> getNumberLiterals() {
+		public Set<String> getNumberLiterals() {
 			if (numberLiterals_ == null) {
-				numberLiterals_ = new ArrayList<String>();
+				numberLiterals_ = new LinkedHashSet<String>();
 			}
 			return numberLiterals_;
 		}
 
-		public List<String> getFieldVars() {
+		public Set<String> getFieldVars() {
 			if (fieldVars_ == null) {
-				fieldVars_ = new ArrayList<String>();
+				fieldVars_ = new LinkedHashSet<String>();
 			}
 			return fieldVars_;
 		}

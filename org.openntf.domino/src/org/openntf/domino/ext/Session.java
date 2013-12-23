@@ -145,4 +145,6 @@ public interface Session {
 
 	public org.openntf.domino.Database getDatabaseIfModified(String server, String dbfile, Date modifiedsince);
 
+	public org.openntf.domino.Database getMailDatabase();
+
 }
