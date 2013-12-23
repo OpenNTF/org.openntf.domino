@@ -29,7 +29,7 @@ public class DominoRunnable implements Runnable {
 				+ "FIELD field1 := \"the cow jumped over the moon\";\r\n" + "FIELD field2 := \"dish... spoon... you know the score.\";\r\n"
 				+ "FIELD field3 := @Adjust([08/08/2002]; 1; 2; 3; 4; 5; 6);\r\n"
 				+ "tmpVar := field1 + \" rhyming \\\"time\\\" \" + field2[2];\r\n" + "tmpVar2 := 54938 + docField2;\r\n"
-				+ "tmpVar + tmpVar2 + @Name([CN]; @UserName);\r\n" + "@Command([AddBookmark]; \"foo\"; docField);\r\n" + "";
+				+ "tmpVar + tmpVar2 + docField3 + @Name([CN]; @UserName) + 8;\r\n" + "@Command([AddBookmark]; \"foo\"; docField);\r\n" + "";
 		formula.setExpression(source);
 		org.openntf.domino.helpers.Formula.Parser parser = formula.getParser();
 		parser.parse();

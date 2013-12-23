@@ -258,6 +258,11 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		 * context.
 		 */
 		private static final Logger log_ = Logger.getLogger(Formula.Parser.class.getName());
+		public static final String DEFAULT = "DEFAULT";
+		public static final String REM = "REM";
+		public static final String ENVIRONMENT = "ENVIRONMENT";
+		public static final String FIELD = "FIELD";
+		public static final String LOCAL = "LOCAL";
 
 		private final String source_;
 		private Set<String> functions_;
@@ -300,19 +305,21 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 			String result = statement.replaceAll("\n", "");
 			result = result.replaceAll("\r", "").trim();
 			while (result.length() > 0) {
-				if (result.startsWith("REM")) {
+				//				System.out.println("Parsing next statement");
+				if (result.startsWith(REM)) {
 					isAssignment_ = Boolean.FALSE;
-					result = parseComment(result.substring("REM".length()));
-				} else if (result.startsWith("DEFAULT")) {
-					result = parseDefaultStatement(result.substring("DEFAULT".length()));
-				} else if (result.startsWith("ENVIRONMENT")) {
-					result = parseEnvironmentStatement(result.substring("ENVIRONMENT".length()));
-				} else if (result.startsWith("FIELD")) {
-					result = parseFieldStatement(result.substring("FIELD".length()));
+					result = parseComment(result.substring(REM.length()).trim());
+				} else if (result.startsWith(DEFAULT)) {
+					result = parseDefaultStatement(result.substring(DEFAULT.length()).trim());
+				} else if (result.startsWith(ENVIRONMENT)) {
+					result = parseEnvironmentStatement(result.substring(ENVIRONMENT.length()).trim());
+				} else if (result.startsWith(FIELD)) {
+					result = parseFieldStatement(result.substring(FIELD.length()).trim());
 				} else {
 					//					curStatementType_ = "";
 					isAssignment_ = null;	//we don't know whether this will be an assignment until we see ':='
 					result = parseNextStatement(result);
+					//					curStatementType_ = "";
 				}
 				//				inRightSide_ = false;
 			}
@@ -320,34 +327,33 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 
 		public String parseDefaultStatement(final String line) {
 			//			System.out.println("Parsing Default");
-			curStatementType_ = "DEFAULT";
+			curStatementType_ = DEFAULT;
 			isAssignment_ = Boolean.TRUE;
 			String result = parseNextStatement(line);
-			curStatementType_ = "";
 			return result.trim();
 		}
 
 		public String parseFieldStatement(final String line) {
 			//			System.out.println("Parsing Field");
-			curStatementType_ = "FIELD";
+			curStatementType_ = FIELD;
 			isAssignment_ = Boolean.TRUE;
 			String result = parseNextStatement(line);
-			curStatementType_ = "";
+			//			curStatementType_ = "";
 			return result.trim();
 		}
 
 		public String parseEnvironmentStatement(final String line) {
 			//			System.out.println("Parsing Environment");
-			curStatementType_ = "ENVIRONMENT";
+			curStatementType_ = ENVIRONMENT;
 			isAssignment_ = Boolean.TRUE;
 			String result = parseNextStatement(line);
-			curStatementType_ = "";
+			//			curStatementType_ = "";
 			return result.trim();
 		}
 
 		public String parseComment(final String line) {
 			//			System.out.println("Parsing Comment");
-			curStatementType_ = "REM";
+			curStatementType_ = REM;
 			String result = parseNextStatement(line);	//we expect this to immediately lead to a literal and then be done
 			char[] chars = result.toCharArray();
 			int pos = 0;
@@ -355,14 +361,13 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 			for (char c : chars) {
 				pos++;
 				if (c == ' ' || c == ';') {
-					//					System.out.println("Space or semi reached. We're done.");
 					curStatementType_ = "";
 					return result.substring(pos).trim();
 				} else {
 
 				}
 			}
-			curStatementType_ = "";
+			//			curStatementType_ = "";
 			System.out.println("End of comment statement reached and no more characters are available");
 			return "";
 		}
@@ -476,6 +481,9 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 				pos++;
 				if (Character.isDigit(c)) {
 					buffer.append(c);
+				} else if (c == ';') {
+					pos--;
+					break;
 				} else if (c == ':') {
 					lastOpChar_ = c;
 					break;
@@ -524,7 +532,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 					return statement.substring(pos);
 				} else if (c == ';') {
 					getFunctions().add(buffer.toString());
-					return statement.substring(pos);
+					return statement.substring(pos - 1);	//let the calling method handle the end of the statement
 				} else if (c == '[') {
 					getFunctions().add(buffer.toString());
 					return statement.substring(pos - 1);
@@ -550,6 +558,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 			for (char c : chars) {
 				pos++;
 				if (c == ';') {
+					pos--;
 					break;
 				} else if (c == ':') {
 					lastOpChar_ = c;
@@ -583,12 +592,12 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 				//				System.out.println("Adding to field Vars because not in localvar list and we're in the right side");
 				getFieldVars().add(identifier);
 			} else {
-				if (curStatementType_.equals("FIELD")) {
+				if (curStatementType_.equals(FIELD)) {
 					getFieldVars().add(identifier);
-				} else if (curStatementType_.equals("ENVIRONMENT")) {
+				} else if (curStatementType_.equals(ENVIRONMENT)) {
 					getEnvVars().add(identifier);
 				} else {
-					getLocalVars().add(identifier);
+					//					getLocalVars().add(identifier);
 				}
 			}
 			//			System.out.println("Completed parsing identifier: " + identifier + " on " + (inRightSide_ ? "right" : "left"));
@@ -619,14 +628,14 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 						//						System.out.println("Found assignment!");
 						inRightSide_ = true;
 						String lastIdent = getIdentStack().pop();
-						if (curStatementType_.equals("FIELD")) {
+						if (curStatementType_.equals(FIELD)) {
 							getFieldVars().add(lastIdent);
-						} else if (curStatementType_.equals("DEFAULT")) {
+						} else if (curStatementType_.equals(DEFAULT)) {
 							getLocalVars().add(lastIdent);
-						} else if (curStatementType_.equals("ENVIRONMENT")) {
-							//							System.out.println("Adding Environment Var");
+						} else if (curStatementType_.equals(ENVIRONMENT)) {
 							getEnvVars().add(lastIdent);
-						} else if (curStatementType_.equals("")) {
+						} else if (curStatementType_.length() < 1) {
+							curStatementType_ = LOCAL;
 							getLocalVars().add(lastIdent);
 						}
 						lastOpChar_ = c;
@@ -667,6 +676,18 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 					if (parenDepth_ == 0) {
 						//						System.out.println("Statement completed");
 						inRightSide_ = false;
+						if (curStatementType_.length() < 1) {
+							//							System.out.println("Ending result expression");
+							for (String ident : identStack_) {
+								if (!getLocalVars().contains(ident)) {
+									getFieldVars().add(ident);	//if the variable was never defined locally, it's most likely a field
+								}
+							}
+						} else {
+							//							System.out.println("Ending " + curStatementType_ + " expression");
+						}
+						identStack_.clear();
+						curStatementType_ = "";
 						return segment.substring(pos).trim();
 					} else {
 						//						System.out.println("Next argument...");
