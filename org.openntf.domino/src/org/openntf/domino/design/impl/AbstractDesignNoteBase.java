@@ -442,7 +442,7 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 	}
 
 	protected XMLNode getFlagsExtNode() {
-		XMLNode flagsNode = getDxl().selectSingleNode("//item[@name='$FlagExts']/text");
+		XMLNode flagsNode = getDxl().selectSingleNode("//item[@name='$FlagExt']/text");
 		if (flagsNode != null) {
 			return flagsNode;
 		} else {
