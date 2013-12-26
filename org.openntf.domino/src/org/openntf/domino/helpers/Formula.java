@@ -131,7 +131,9 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	@Override
 	public void setExpression(final String expression) {
 		Vector<Object> vec = getSession().evaluate("@CheckFormulaSyntax(\"" + DominoUtils.escapeForFormulaString(expression) + "\")");
-		if (vec.size() > 2) {
+		if (vec == null) {
+			throw new FormulaSyntaxException(expression, null);
+		} else if (vec.size() > 2) {
 			throw new FormulaSyntaxException(expression, vec);
 		}
 		expression_ = expression;
@@ -302,10 +304,10 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 
 		public void parseStatement(final String statement) {
 			inRightSide_ = false;
-			String result = statement.replaceAll("\n", "");
-			result = result.replaceAll("\r", "").trim();
 			curStatementType_ = "";
-			while (result.length() > 0) {
+			String result = statement.replaceAll("\\n", "");
+			result = result.replaceAll("\\r", "").trim();
+			while (result != null && result.length() > 0) {
 				//				System.out.println("Parsing next statement");
 				if (result.startsWith(REM)) {
 					isAssignment_ = Boolean.FALSE;
@@ -610,7 +612,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 			char[] chars = segment.toCharArray();
 			int pos = 0;
 			StringBuilder buffer = new StringBuilder();
-			String result = null;
+			String result = "";
 			for (char c : chars) {
 				pos++;
 				if (c == '{') {
