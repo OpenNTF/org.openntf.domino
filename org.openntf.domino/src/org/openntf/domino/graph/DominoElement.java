@@ -386,17 +386,12 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 				Object current = getProperty(propertyName);
 				if (propertyName.startsWith(DominoVertex.IN_PREFIX) && value instanceof java.util.Collection) {
 					isEdgeCollection = true;
-					//					System.out.println("Setting property of " + propertyName + " with collection of "
-					//							+ ((java.util.Collection) value).size());
 				}
 				if (current == null && value == null) {
-					//					if (isEdgeCollection) {
-					//						System.out.println("Both current and new are NULL. Therefore returning.");
-					//					}
 					return;
 				}
 				if (value != null && current != null) {
-					if (!(value instanceof java.util.Collection) && !value.getClass().isArray()) {
+					if (!(value instanceof java.util.Collection) && !(value instanceof java.util.Map) && !value.getClass().isArray()) {
 						isEqual = value.equals(current);
 					}
 				}
@@ -407,19 +402,12 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 				synchronized (props) {
 					if (value instanceof Serializable) {
 						if (current == null || Null.INSTANCE.equals(current)) {
-							//							if (isEdgeCollection) {
-							//								System.out.println("Current is null, therefore we're putting the new value in the map.");
-							//							}
 							getParent().startTransaction(this);
 							old = props.put(propertyName, (Serializable) value);
 							synchronized (changedProperties_) {
 								changedProperties_.add(propertyName);
 							}
 						} else if (!isEqual) {
-							//							if (isEdgeCollection) {
-							//								System.out.println("Setting new value to property " + propertyName + " of " + String.valueOf(value)
-							//										+ " from value " + String.valueOf(current));
-							//							}
 							getParent().startTransaction(this);
 							old = props.put(propertyName, (Serializable) value);
 							synchronized (changedProperties_) {
@@ -446,13 +434,6 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		} else {
 			log_.log(Level.WARNING, "Properties are null for element!");
 		}
-		// if ((old == null || value == null) || !value.equals(old)) {
-
-		// }
-		// Document doc = getRawDocument();
-		// synchronized (doc) {
-		// doc.replaceItemValue(propertyName, value);
-		// }
 	}
 
 	protected void reapplyChanges() {
