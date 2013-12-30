@@ -15,6 +15,9 @@
  */
 package org.openntf.domino.impl;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.SortedSet;
@@ -25,6 +28,7 @@ import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -32,7 +36,8 @@ import org.openntf.domino.utils.Factory;
 /**
  * The Class DbDirectory.
  */
-public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domino.DbDirectory> implements org.openntf.domino.DbDirectory {
+public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domino.DbDirectory> implements org.openntf.domino.DbDirectory,
+		Encapsulated {
 	private static final Logger log_ = Logger.getLogger(DbDirectory.class.getName());
 
 	private SortedSet<org.openntf.domino.Database> dbSet_;
@@ -421,6 +426,32 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
+	 */
+	public void readExternal(final ObjectInput arg0) throws IOException, ClassNotFoundException {
+		isDateSorted_ = arg0.readBoolean();
+		isInitialized_ = arg0.readBoolean();
+		isHonorOpenDialog_ = arg0.readBoolean();
+		type_ = Type.getType(arg0.readInt());
+		name_ = arg0.readUTF();
+		clusterName_ = arg0.readUTF();
+		dbSet_ = (SortedSet) arg0.readObject();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
+	 */
+	public void writeExternal(final ObjectOutput arg0) throws IOException {
+		arg0.writeBoolean(isDateSorted_);
+		arg0.writeBoolean(isInitialized_);
+		arg0.writeBoolean(isHonorOpenDialog_);
+		arg0.writeInt(type_.getValue());
+		arg0.writeUTF(name_);
+		arg0.writeUTF(clusterName_);
+		arg0.writeObject(dbSet_);
 	}
 
 }

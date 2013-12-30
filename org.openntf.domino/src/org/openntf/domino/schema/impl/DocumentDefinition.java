@@ -23,6 +23,7 @@ public class DocumentDefinition implements IDocumentDefinition, Externalizable {
 	private final Map<String, String> overrideLabels_ = new HashMap<String, String>();
 	private boolean defaultSummary_ = true;
 	private transient IDatabaseSchema parentSchema_;
+	private DocumentValidator validator_;
 
 	public DocumentDefinition() {
 
