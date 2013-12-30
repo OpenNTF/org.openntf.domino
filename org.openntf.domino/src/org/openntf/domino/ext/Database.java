@@ -248,4 +248,6 @@ public interface Database extends Base {
 
 	public boolean isReplicationDisabled();
 
+	public String getHttpURL(final boolean usePath);
+
 }

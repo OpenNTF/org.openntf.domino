@@ -1146,6 +1146,27 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
+	public String getHttpURL(final boolean usePath) {
+		if (usePath) {
+			String baseURL = getHttpURL();
+			URL url;
+			try {
+				url = new URL(baseURL);
+			} catch (MalformedURLException e) {
+				DominoUtils.handleException(e);
+				return null;
+			}
+			String result = url.getProtocol();
+			result += "://";
+			result += url.getHost();
+			result += url.getPort() > -1 ? ":" + url.getPort() : "";
+			result += "/" + getFilePath().replace('\\', '/');
+			return result;
+		} else {
+			return getHttpURL();
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
