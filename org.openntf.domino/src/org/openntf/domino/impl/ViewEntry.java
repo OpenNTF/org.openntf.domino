@@ -31,6 +31,7 @@ import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.TypeUtils;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -435,6 +436,17 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	@Override
 	public Object getColumnValue(final String columnName) {
 		return getColumnValuesMap().get(columnName);
+	}
+
+	public <T> T getColumnValue(final String columnName, final Class<?> T) {
+		Object rawResult = getColumnValue(columnName);
+		if (rawResult instanceof Vector) {
+			return TypeUtils.vectorToClass((Vector) rawResult, T, this.getAncestorSession());
+		} else {
+			Vector v = new Vector();
+			v.add(rawResult);
+			return TypeUtils.vectorToClass(v, T, this.getAncestorSession());
+		}
 	}
 
 	public Map<String, Object> getColumnValuesMap() {

@@ -3,6 +3,7 @@
  */
 package org.openntf.domino.graph;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.logging.Logger;
@@ -15,7 +16,7 @@ import com.tinkerpop.blueprints.Element;
  * @author nfreeman
  * 
  */
-public class ElementComparator implements Comparator<Element> {
+public class ElementComparator implements Comparator<Element>, Serializable {
 	private static final Logger log_ = Logger.getLogger(ElementComparator.class.getName());
 	private static final long serialVersionUID = 1L;
 

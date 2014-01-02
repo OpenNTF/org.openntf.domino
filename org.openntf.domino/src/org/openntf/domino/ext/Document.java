@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
+import org.openntf.domino.Item;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 
@@ -15,6 +16,8 @@ import org.openntf.domino.exceptions.ItemNotFoundException;
  * 
  */
 public interface Document {
+
+	public Item appendItemValue(String name, Object value, boolean unique);
 
 	public String toJson(boolean compact);
 

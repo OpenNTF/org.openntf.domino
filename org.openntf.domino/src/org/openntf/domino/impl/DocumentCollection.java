@@ -908,4 +908,5 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 		return result;
 	}
+
 }

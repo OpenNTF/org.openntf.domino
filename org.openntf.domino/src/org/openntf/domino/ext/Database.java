@@ -155,6 +155,10 @@ public interface Database extends Base {
 
 	public DocumentCollection getModifiedDocuments(final lotus.domino.DateTime since, final ModifiedDocClass noteClass);
 
+	public DocumentCollection getModifiedDocuments(final java.util.Date since, final ModifiedDocClass noteClass);
+
+	public DocumentCollection getModifiedDocuments(final java.util.Date since);
+
 	public int getModifiedNoteCount(final java.util.Date since, final Set<SelectOption> noteClass);
 
 	public int getModifiedNoteCount(final java.util.Date since);

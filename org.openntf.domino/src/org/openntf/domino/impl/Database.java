@@ -1334,6 +1334,24 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		}
 	}
 
+	public DocumentCollection getModifiedDocuments(final java.util.Date since) {
+		return getModifiedDocuments(since, ModifiedDocClass.DATA);
+	}
+
+	public DocumentCollection getModifiedDocuments(final java.util.Date since, final ModifiedDocClass noteClass) {
+		try {
+			DocumentCollection result;
+			lotus.domino.DateTime tempDT = getAncestorSession().createDateTime(since);
+			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(tempDT);
+			result = Factory.fromLotus(getDelegate().getModifiedDocuments(dt, noteClass.getValue()), DocumentCollection.class, this);
+			dt.recycle();
+			return result;
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1349,7 +1367,6 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
-
 		}
 	}
 
@@ -2892,7 +2909,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	public int getModifiedNoteCount(final java.util.Date since) {
-		if (since.after(this.getLastModified().toJavaDate()))
+		java.util.Date last = this.getLastModifiedDate();
+		if (since.after(last))
 			return 0;
 		Set<SelectOption> noteClass = new java.util.HashSet<SelectOption>();
 		noteClass.add(SelectOption.DOCUMENTS);

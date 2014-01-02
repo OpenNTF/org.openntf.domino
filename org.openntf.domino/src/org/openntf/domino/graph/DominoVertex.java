@@ -106,8 +106,9 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 				} else if (o instanceof java.util.Collection) {
 					edgeIds = Collections.synchronizedSet(new LinkedHashSet<String>((Collection<String>) o));
 				} else {
-					log_.log(Level.WARNING, "ALERT! InEdges for label " + label + " returned something other than a Collection "
-							+ o.getClass().getName() + " in vertex type " + this.getForm() + " id: " + getId());
+					log_.log(Level.SEVERE, "ALERT! InEdges returned something other than a Collection " + o.getClass().getName()
+							+ ". We are clearing the values and rebuilding the edges.");
+					edgeIds = Collections.synchronizedSet(new LinkedHashSet<String>());
 				}
 			} else {
 				edgeIds = Collections.synchronizedSet(new LinkedHashSet<String>());
@@ -139,7 +140,9 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 				} else if (o instanceof java.util.Collection) {
 					edgeIds = Collections.synchronizedSet(new LinkedHashSet<String>((Collection<String>) o));
 				} else {
-					log_.log(Level.WARNING, "ALERT! OutEdges returned something other than a Collection " + o.getClass().getName());
+					log_.log(Level.SEVERE, "ALERT! OutEdges returned something other than a Collection " + o.getClass().getName()
+							+ ". We are clearing the values and rebuilding the edges.");
+					edgeIds = Collections.synchronizedSet(new LinkedHashSet<String>());
 				}
 			} else {
 				edgeIds = Collections.synchronizedSet(new LinkedHashSet<String>());

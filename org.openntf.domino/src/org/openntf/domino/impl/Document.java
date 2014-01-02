@@ -337,6 +337,18 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return appendItemValue(name, Integer.valueOf(value));
 	}
 
+	public Item appendItemValue(final String name, final Object value, final boolean unique) {
+		Item result = null;
+		if (unique && hasItem(name)) {
+			result = getFirstItem(name);
+			if (result.containsValue(value)) {
+				return result;
+			}
+		}
+		result = appendItemValue(name, value);
+		return result;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
