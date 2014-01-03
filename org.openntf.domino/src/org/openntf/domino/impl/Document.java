@@ -936,9 +936,20 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			// This is a bit more expensive than I'd like
 			MIMEEntity entity = this.getMIMEEntity(name);
 			if (entity != null) {
+				Object mimeValue = getItemValueMIME(name);
+				if (mimeValue instanceof Vector) {
+					return (Vector<Object>) mimeValue;
+				}
+				if (mimeValue instanceof Collection) {
+					return new Vector((Collection) mimeValue);
+				}
+				if (mimeValue.getClass().isArray()) {
+					return (Vector<Object>) Arrays.asList((Object[]) mimeValue);
+				}
 				Vector<Object> result = new Vector<Object>(1);
-				result.add(getItemValueMIME(name));
+				result.add(mimeValue);
 				return result;
+				// TODO NTF: What if we have a "real" mime item like a body field (Handle RT/MIME correctly)
 			}
 			Vector<?> vals = null;
 			try {
