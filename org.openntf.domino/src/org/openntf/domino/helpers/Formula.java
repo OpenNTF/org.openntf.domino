@@ -11,6 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.Stack;
 import java.util.Vector;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Document;
@@ -108,7 +109,11 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 
 	public Formula(final String expression) throws FormulaSyntaxException {
 		this();
-		setExpression(expression);
+		try {
+			setExpression(expression);
+		} catch (FormulaSyntaxException fe) {
+			log_.log(Level.WARNING, "Error confirming formula syntax: " + fe.getExpression() + " (" + fe.getErrorText() + ")");
+		}
 	}
 
 	public void setSession(final Session session) {

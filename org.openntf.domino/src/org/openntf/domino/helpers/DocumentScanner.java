@@ -138,12 +138,14 @@ public class DocumentScanner {
 					Object subkeyObj = keys.iterator().next();
 					if (CaseInsensitiveString.class.isAssignableFrom(subkeyObj.getClass())) {
 						Object subvalObj = ((Map) valObj).get(subkeyObj);
-						if (Set.class.isAssignableFrom(subvalObj.getClass())) {
-							if (((Set) subvalObj).isEmpty())
-								return false;
-							Object unidObj = ((NavigableSet) subvalObj).iterator().next();
-							if (CaseInsensitiveString.class.isAssignableFrom(unidObj.getClass())) {
-								result = true;
+						if (subvalObj != null) {
+							if (Set.class.isAssignableFrom(subvalObj.getClass())) {
+								if (((Set) subvalObj).isEmpty())
+									return false;
+								Object unidObj = ((Set) subvalObj).iterator().next();
+								if (CaseInsensitiveString.class.isAssignableFrom(unidObj.getClass())) {
+									result = true;
+								}
 							}
 						}
 					}

@@ -948,9 +948,20 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			// This is a bit more expensive than I'd like
 			MIMEEntity entity = this.getMIMEEntity(name);
 			if (entity != null) {
+				Object mimeValue = getItemValueMIME(name);
+				if (mimeValue instanceof Vector) {
+					return (Vector<Object>) mimeValue;
+				}
+				if (mimeValue instanceof Collection) {
+					return new Vector((Collection) mimeValue);
+				}
+				if (mimeValue.getClass().isArray()) {
+					return (Vector<Object>) Arrays.asList((Object[]) mimeValue);
+				}
 				Vector<Object> result = new Vector<Object>(1);
 				result.add(getItemValueMIME(name));
 				return result;
+				// TODO NTF: What if we have a "real" mime item like a body field (Handle RT/MIME correctly)
 			}
 			Vector<?> vals = null;
 			try {
@@ -2153,9 +2164,21 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					} catch (NotesException ne) {
 						String msg = ne.text;
 						if (msg.equalsIgnoreCase("Cannot convert item to requested datatype")) {
-							throw new DataNotCompatibleException("Unable to write a " + resultList.getClass().getName() + " object ("
-									+ value.getClass().getName() + ") to item " + itemName + " in document " + unid_ + " in "
-									+ getAncestorDatabase().getFilePath());
+							String types = "";
+							if (resultList instanceof Vector) {
+								StringBuilder elemType = new StringBuilder();
+								for (Object o : ((Vector) resultList)) {
+									if (o != null) {
+										elemType.append(o.getClass().getSimpleName() + ", ");
+									} else {
+										elemType.append("null, ");
+									}
+								}
+								types = " DETAILS: " + elemType.toString();
+							}
+							throw new DataNotCompatibleException("Unable to write a " + resultList.getClass().getName()
+									+ (resultList.isEmpty() ? " empty" : types) + " object (originally " + value.getClass().getName()
+									+ ") to item " + itemName + " in document " + unid_ + " in " + getAncestorDatabase().getFilePath());
 						} else {
 							DominoUtils.handleException(ne);
 						}
@@ -2954,7 +2977,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 		if (this.containsKey(key)) {
 			Vector<Object> value = this.getItemValue(key.toString());
-			if (value.size() == 1) {
+			if (value == null) {
+				//TODO Throw an exception if the item data can't be read? Null implies the key doesn't exist
+				return null;
+			} else if (value.size() == 1) {
 				return value.get(0);
 			}
 			return value;

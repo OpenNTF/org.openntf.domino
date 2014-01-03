@@ -852,10 +852,11 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		try {
 			Object domKey = toDominoFriendly(key, this);
 			if (domKey instanceof java.util.Vector) {
-				return Factory.fromLotus(getDelegate().getAllEntriesByKey((java.util.Vector) domKey, exact), ViewEntryCollection.class,
-						this);
+				lotus.domino.ViewEntryCollection rawColl = getDelegate().getAllEntriesByKey((java.util.Vector) domKey, exact);
+				return Factory.fromLotus(rawColl, ViewEntryCollection.class, this);
 			} else {
-				return Factory.fromLotus(getDelegate().getAllEntriesByKey(domKey, exact), ViewEntryCollection.class, this);
+				lotus.domino.ViewEntryCollection rawColl = getDelegate().getAllEntriesByKey(domKey, exact);
+				return Factory.fromLotus(rawColl, ViewEntryCollection.class, this);
 			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
