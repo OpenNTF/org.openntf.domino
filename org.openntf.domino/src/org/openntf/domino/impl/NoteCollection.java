@@ -18,6 +18,8 @@ package org.openntf.domino.impl;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
@@ -36,9 +38,9 @@ import org.openntf.domino.utils.Factory;
  * @author withersp
  * 
  */
-@SuppressWarnings("deprecation")
 public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.domino.NoteCollection, lotus.domino.NoteCollection> implements
 		org.openntf.domino.NoteCollection {
+	private static final Logger log_ = Logger.getLogger(NoteCollection.class.getName());
 
 	/**
 	 * To lotus document collection.
@@ -152,21 +154,30 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	public void add(final lotus.domino.DocumentCollection additionSpecifier) {
 		try {
 			// TODO Figure out why the normal add() line with the DC throws a NotesException("Invalid object type for method argument")
-			//lotus.domino.DocumentCollection adder = (lotus.domino.DocumentCollection) toLotus(additionSpecifier);
-
-			//we have to do this here, because we must not recycle the notes document (it can be in use elsewhere!)
-			lotus.domino.Document doc = additionSpecifier.getFirstDocument();
+			if (additionSpecifier instanceof lotus.domino.DocumentCollection) {
+				lotus.domino.Document doc = additionSpecifier.getFirstDocument();
+				lotus.domino.Document nextDoc = null;
 			while (doc != null) {
+					nextDoc = additionSpecifier.getNextDocument(doc);
+					getDelegate().add(doc);
+					doc.recycle();
+					doc = nextDoc;
+				}
+			} else {
+				if (log_.isLoggable(Level.WARNING)) {
+					log_.log(
+							Level.WARNING,
+							"Attempting to add a native lotus.domino.DocumentCollection to an org.openntf.domino.NoteCollection. Because we cannot know the use of the DocumentCollection argument later, we cannot auto-recycle. You really shouldn't mix your API types.");
+				}
+				lotus.domino.Document doc = additionSpecifier.getFirstDocument();
+				while (doc != null) {
+					getDelegate().add((lotus.domino.Document) toLotus(doc));
 
-				getDelegate().add((lotus.domino.Document) toLotus(doc));
-
-				lotus.domino.Document tempDoc = doc;
-				doc = additionSpecifier.getNextDocument(doc);
-				tempDoc.recycle();
+					doc = additionSpecifier.getNextDocument(doc);
 			}
-			// getDelegate().add((lotus.domino.DocumentCollection) toLotus(additionSpecifier));
+			}
 		} catch (NotesException e) {
-			e.printStackTrace();
+			//			e.printStackTrace();
 			DominoUtils.handleException(e);
 		}
 	}

@@ -1,7 +1,8 @@
 /**
  * 
  */
-package org.openntf.domino.schema;
+package org.openntf.domino.schema.impl;
+
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -10,27 +11,37 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-public class DocumentDefinition implements Externalizable {
+
+import org.openntf.domino.schema.IDatabaseSchema;
+import org.openntf.domino.schema.IDocumentDefinition;
+import org.openntf.domino.schema.IItemDefinition;
+
+public class DocumentDefinition implements IDocumentDefinition, Externalizable {
 	private String name_; // will be used as Form field value
-	private Set<String> itemDefinitionKeys_ = new HashSet<String>();
-	private transient Set<ItemDefinition> itemDefs_;
-	private Map<String, String> overrideLabels_ = new HashMap<String, String>();
+	private final Set<String> itemDefinitionKeys_ = new HashSet<String>();
+	private transient Set<IItemDefinition> itemDefs_;
+	private final Map<String, String> overrideLabels_ = new HashMap<String, String>();
 	private boolean defaultSummary_ = true;
-	private transient DatabaseSchema parentSchema_;
+	private transient IDatabaseSchema parentSchema_;
+	private DocumentValidator validator_;
 
 	public DocumentDefinition() {
 
 	}
 
-	public void setParent(DatabaseSchema parent) {
+	public void setParent(final IDatabaseSchema parent) {
 		parentSchema_ = parent;
+	}
+
+	public IDatabaseSchema getParent() {
+		return parentSchema_;
 	}
 
 	public String getName() {
 		return name_;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		name_ = name;
 	}
 
@@ -38,13 +49,13 @@ public class DocumentDefinition implements Externalizable {
 		return defaultSummary_;
 	}
 
-	public void setDefaultSummary(boolean defaultSummary) {
+	public void setDefaultSummary(final boolean defaultSummary) {
 		defaultSummary_ = defaultSummary;
 	}
 
-	public Set<ItemDefinition> getItemDefinitions() {
+	public Set<IItemDefinition> getItemDefinitions() {
 		if (itemDefs_ == null) {
-			itemDefs_ = new HashSet<ItemDefinition>();
+			itemDefs_ = new HashSet<IItemDefinition>();
 			for (String key : getItemDefinitionKeys()) {
 				ItemDefinition id = parentSchema_.getItemDefinitions().get(key);
 				if (id != null) {
@@ -59,11 +70,13 @@ public class DocumentDefinition implements Externalizable {
 		return itemDefinitionKeys_;
 	}
 
-	public void setItemDefinitionKeys(Set<String> itemDefinitionKeys) {
-		itemDefinitionKeys_ = itemDefinitionKeys;
+	public void setItemDefinitionKeys(final Set<String> itemDefinitionKeys) {
+		//TODO NTF - Not really sure this should even have a setter, honestly.
+		itemDefinitionKeys_.clear();
+		itemDefinitionKeys_.addAll(itemDefinitionKeys);
 	}
 
-	public void addItemDefinition(ItemDefinition itemDef) {
+	public void addItemDefinition(final IItemDefinition itemDef) {
 		if (itemDefs_ != null) {
 			itemDefs_.add(itemDef);
 		}
@@ -71,7 +84,7 @@ public class DocumentDefinition implements Externalizable {
 		addItemDefinitionKey(key);
 	}
 
-	public void addItemDefinitionKey(String key) {
+	public void addItemDefinitionKey(final String key) {
 		itemDefinitionKeys_.add(key);
 	}
 
@@ -89,7 +102,7 @@ public class DocumentDefinition implements Externalizable {
 	 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
 	 */
 	@Override
-	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 		name_ = in.readUTF();
 		defaultSummary_ = in.readBoolean();
 		int defCount = in.readInt();
@@ -110,7 +123,7 @@ public class DocumentDefinition implements Externalizable {
 	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
 	 */
 	@Override
-	public void writeExternal(ObjectOutput out) throws IOException {
+	public void writeExternal(final ObjectOutput out) throws IOException {
 		out.writeUTF(name_);
 		out.writeBoolean(defaultSummary_);
 		out.writeInt(itemDefinitionKeys_.size());
@@ -123,4 +136,5 @@ public class DocumentDefinition implements Externalizable {
 			out.writeUTF(entry.getValue());
 		}
 	}
+
 }

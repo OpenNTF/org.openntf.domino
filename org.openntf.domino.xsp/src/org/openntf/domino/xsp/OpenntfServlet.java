@@ -27,18 +27,18 @@ public class OpenntfServlet extends HttpServlet {
 	}
 
 	@Override
-	public void service(final ServletRequest arg0, final ServletResponse arg1) throws ServletException, IOException {
-		super.service(arg0, arg1);
+	public void service(final ServletRequest servletRequest, final ServletResponse servletResponse) throws ServletException, IOException {
+		super.service(servletRequest, servletResponse);
 		String username = "";
-		if (arg0 instanceof HttpServletRequest) {
-			HttpServletRequest request = (HttpServletRequest) arg0;
+		if (servletRequest instanceof HttpServletRequest) {
+			HttpServletRequest request = (HttpServletRequest) servletRequest;
 			Principal principal = request.getUserPrincipal();
 			username = principal.getName();
 		}
-		arg1.getWriter().write(
-				"<html><body>This IBM Domino server is using the " + org.openntf.domino.utils.Factory.getTitle() + " Version: "
-						+ org.openntf.domino.utils.Factory.getVersion() + ".<p/>Find out more at <a href=\""
-						+ org.openntf.domino.utils.Factory.getUrl() + "\">OpenNTF</a><p/>" + "Request Principal: " + username + "<p/>" + ""
+		servletResponse.getWriter().write(
+				"<html><body><p>This IBM Domino server is using the " + org.openntf.domino.utils.Factory.getTitle() + " Version: "
+						+ org.openntf.domino.utils.Factory.getVersion() + ".</p><p>Find out more at <a href=\""
+						+ org.openntf.domino.utils.Factory.getUrl() + "\">OpenNTF</a></p><p>" + "Request Principal: " + username + "</p>"
 						+ NSA.INSTANCE.getReport() + "</body></html>");
 	}
 

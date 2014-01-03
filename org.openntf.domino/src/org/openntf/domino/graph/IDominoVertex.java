@@ -16,4 +16,8 @@ public interface IDominoVertex extends Vertex, IDominoElement {
 	public void addOutEdge(final Edge edge);
 
 	public String validateEdges();
+
+	public int getInEdgeCount(String label);
+
+	public int getOutEdgeCount(String label);
 }

@@ -90,6 +90,11 @@ public enum TypeUtils {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T> T vectorToClass(final Vector v, final Class<?> T, final Session session) {
+		//		if (T == java.lang.Class.class) {
+		//			log_.log(Level.WARNING, "Class type requested from type coersion!");
+		//		} else if (T == java.util.Collection.class) {
+		//			log_.log(Level.WARNING, "Collection type requested from type coersion!");
+		//		}
 		Object result = null;
 		Class<?> CType = null;
 		if (T.equals(String[].class)) {
@@ -211,9 +216,9 @@ public enum TypeUtils {
 			}
 		}
 
-		// if (result != null && T.equals(String[].class)) {
-		// log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName());
-		// }
+		if (result != null && !T.isAssignableFrom(result.getClass())) {
+			log_.log(Level.WARNING, "Auto-boxing requested a " + T.getName() + " but is returning a " + result.getClass().getName());
+		}
 		return (T) result;
 	}
 
@@ -246,6 +251,10 @@ public enum TypeUtils {
 				result = (T) Integer.valueOf((String) localValue);
 			} else if (localValue instanceof Double) {
 				result = (T) Integer.valueOf(((Double) localValue).intValue());
+			} else if (localValue instanceof Integer) {
+				result = (T) localValue;
+			} else if (localValue instanceof Long) {
+				result = (T) Integer.valueOf(((Long) localValue).intValue());
 			} else {
 				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
 			}
@@ -262,6 +271,12 @@ public enum TypeUtils {
 				result = (T) Double.valueOf((String) localValue);
 			} else if (localValue instanceof Double) {
 				result = (T) localValue;
+			} else if (localValue instanceof Integer) {
+				result = (T) Double.valueOf(((Integer) localValue).doubleValue());
+			} else if (localValue instanceof Short) {
+				result = (T) Double.valueOf(((Short) localValue).doubleValue());
+			} else if (localValue instanceof Float) {
+				result = (T) Double.valueOf(((Float) localValue).doubleValue());
 			} else {
 				throw new DataNotCompatibleException("Cannot create a " + T.getName() + " from a " + localValue.getClass().getName());
 			}

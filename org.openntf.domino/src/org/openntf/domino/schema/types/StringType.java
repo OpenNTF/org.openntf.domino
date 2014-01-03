@@ -5,6 +5,8 @@ package org.openntf.domino.schema.types;
 
 import java.util.logging.Logger;
 
+import org.openntf.domino.schema.exceptions.ItemException;
+
 /**
  * @author nfreeman
  * 
@@ -27,7 +29,14 @@ public class StringType extends AbstractDominoType {
 	 */
 	@Override
 	public String getUITypeName() {
-		// TODO allow for i18n translation via properties files
 		return "Text";
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.schema.types.AbstractDominoType#validateValue(java.lang.Object)
+	 */
+	@Override
+	public boolean validateValue(final Object value) throws ItemException {
+		return value instanceof CharSequence;
 	}
 }

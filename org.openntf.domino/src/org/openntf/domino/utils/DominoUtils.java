@@ -734,7 +734,7 @@ public enum DominoUtils {
 	 *             the throwable
 	 */
 	@SuppressWarnings("unchecked")
-	public static Object restoreState(final org.openntf.domino.Document doc, final String itemName) throws Throwable {
+	public static Object restoreState(final org.openntf.domino.Document doc, final String itemName) throws Exception {
 		Session session = Factory.getSession((Base<?>) doc);
 		boolean convertMime = session.isConvertMime();
 		session.setConvertMime(false);
@@ -842,7 +842,7 @@ public enum DominoUtils {
 	 * @throws Throwable
 	 *             the throwable
 	 */
-	public static void saveState(final Serializable object, final Document doc, final String itemName) throws Throwable {
+	public static void saveState(final Serializable object, final Document doc, final String itemName) throws Exception {
 		saveState(object, doc, itemName, true, null);
 	}
 
@@ -865,7 +865,7 @@ public enum DominoUtils {
 	 *             the throwable
 	 */
 	public static void saveState(final Serializable object, final Document doc, final String itemName, final boolean compress,
-			final Map<String, String> headers) throws Throwable {
+			final Map<String, String> headers) throws Exception {
 		if (object == null) {
 			System.out.println("Ignoring attempt to save MIMEBean value of null");
 			return;

@@ -226,28 +226,41 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 			try {
 				Document doc = getRawDocument();
 				result = doc.getItemValue(propertyName, T);
-				if (result instanceof Serializable) {
+				if (result == null) {
+					synchronized (props) {
+						props.put(propertyName, Null.INSTANCE);
+					}
+				} else if (result instanceof Serializable) {
 					synchronized (props) {
 						props.put(propertyName, (Serializable) result);
 					}
+				} else {
+					log_.log(Level.WARNING, "Got a value from the document but it's not Serializable. It's a "
+							+ result.getClass().getName());
 				}
 			} catch (Exception e) {
-				log_.log(Level.INFO, "Exception occured attempting to get value from document for " + propertyName
+				log_.log(Level.WARNING, "Exception occured attempting to get value from document for " + propertyName
 						+ " so we cannot return a value", e);
 			}
+		} else if (result == Null.INSTANCE) {
+
 		} else {
 			if (result != null && !T.isAssignableFrom(result.getClass())) {
 				// System.out.println("AH! We have the wrong type in the property cache! How did this happen?");
 				try {
 					Document doc = getRawDocument();
 					result = doc.getItemValue(propertyName, T);
-					if (result instanceof Serializable) {
+					if (result == null) {
+						synchronized (props) {
+							props.put(propertyName, Null.INSTANCE);
+						}
+					} else if (result instanceof Serializable) {
 						synchronized (props) {
 							props.put(propertyName, (Serializable) result);
 						}
 					}
 				} catch (Exception e) {
-					log_.log(Level.INFO, "Exception occured attempting to get value from document for " + propertyName
+					log_.log(Level.WARNING, "Exception occured attempting to get value from document for " + propertyName
 							+ " but we have a value in the cache.", e);
 				}
 			}
@@ -256,6 +269,8 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		//		if (result != null && !T.isAssignableFrom(result.getClass())) {
 		//			log_.log(Level.WARNING, "Returning a " + result.getClass().getName() + " when we asked for a " + T.getName());
 		//		}
+		if (result == Null.INSTANCE)
+			result = null;
 		return (T) result;
 	}
 
@@ -264,7 +279,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		if (allowNull) {
 			return result;
 		} else {
-			if (result == null) {
+			if (result == null || Null.INSTANCE == result) {
 				if (T.isArray())
 					if (T.getComponentType() == String.class) {
 						return (T) DEFAULT_STR_ARRAY;
@@ -356,39 +371,69 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	private final Set<String> changedProperties_ = new HashSet<String>();
 
+	void setProperty(final String propertyName, final java.lang.Object value, final boolean force) {
+
+	}
+
 	@Override
 	public void setProperty(final String propertyName, final java.lang.Object value) {
-		getParent().startTransaction(this);
+		boolean isEdgeCollection = false;
+		boolean isEqual = false;
 		Map<String, Serializable> props = getProps();
 		Object old = null;
 		if (props != null) {
 			if (propertyName != null) {
-				synchronized (props) {
-					if (value instanceof Serializable) {
-						old = props.put(propertyName, (Serializable) value);
-					} else if (value == null) {
-						// TODO set some alternative value for NULL in the event of a null value!!!
-						old = props.put(propertyName, Null.INSTANCE);
-						// old = props.put(propertyName, null);
-					} else {
-						System.out.println("Attemped caching of value of type " + value.getClass().getName() + " that isn't Serializable");
+				Object current = getProperty(propertyName);
+				if (propertyName.startsWith(DominoVertex.IN_PREFIX) && value instanceof java.util.Collection) {
+					isEdgeCollection = true;
+				}
+				if (current == null && value == null) {
+					return;
+				}
+				if (value != null && current != null) {
+					if (!(value instanceof java.util.Collection) && !(value instanceof java.util.Map) && !value.getClass().isArray()) {
+						isEqual = value.equals(current);
 					}
 				}
+				if (isEqual) {
+					log_.log(Level.FINE, "Not setting property " + propertyName + " because the new value is equal to the existing value");
+				}
+				boolean changeMade = false;
+				synchronized (props) {
+					if (value instanceof Serializable) {
+						if (current == null || Null.INSTANCE.equals(current)) {
+							getParent().startTransaction(this);
+							old = props.put(propertyName, (Serializable) value);
+							synchronized (changedProperties_) {
+								changedProperties_.add(propertyName);
+							}
+						} else if (!isEqual) {
+							getParent().startTransaction(this);
+							old = props.put(propertyName, (Serializable) value);
+							synchronized (changedProperties_) {
+								changedProperties_.add(propertyName);
+							}
+						}
+					} else if (value == null) {
+						if (!current.equals(Null.INSTANCE)) {
+							getParent().startTransaction(this);
+							old = props.put(propertyName, Null.INSTANCE);
+							synchronized (changedProperties_) {
+								changedProperties_.add(propertyName);
+							}
+						}
+					} else {
+						log_.log(Level.WARNING, "Attempted to set property " + propertyName + " to a non-serializable value: "
+								+ value.getClass().getName());
+					}
+				}
+
 			} else {
-				System.out.println("propertyName is null on a setProperty request?");
+				log_.log(Level.WARNING, "propertyName is null on a setProperty request?");
 			}
 		} else {
-			System.out.println("Properties are null for element!");
+			log_.log(Level.WARNING, "Properties are null for element!");
 		}
-		// if ((old == null || value == null) || !value.equals(old)) {
-		synchronized (changedProperties_) {
-			changedProperties_.add(propertyName);
-		}
-		// }
-		// Document doc = getRawDocument();
-		// synchronized (doc) {
-		// doc.replaceItemValue(propertyName, value);
-		// }
 	}
 
 	protected void reapplyChanges() {

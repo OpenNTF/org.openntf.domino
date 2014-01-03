@@ -8,5 +8,7 @@ package org.openntf.domino.ext;
  * 
  */
 public interface RichTextDoclink {
+	public org.openntf.domino.Database getDatabase();
 
+	public org.openntf.domino.Document getDocument();
 }

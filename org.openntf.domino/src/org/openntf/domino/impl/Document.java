@@ -337,6 +337,18 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return appendItemValue(name, Integer.valueOf(value));
 	}
 
+	public Item appendItemValue(final String name, final Object value, final boolean unique) {
+		Item result = null;
+		if (unique && hasItem(name)) {
+			result = getFirstItem(name);
+			if (result.containsValue(value)) {
+				return result;
+			}
+		}
+		result = appendItemValue(name, value);
+		return result;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1865,16 +1877,22 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		boolean go = true;
 		go = getAncestorDatabase().fireListener(generateEvent(Events.BEFORE_DELETE_DOCUMENT, null));
 		if (go) {
+			System.out.println("Listener for BEFORE_DELETE_DOCUMENT allowed the remove call");
 			removeType_ = force ? RemoveType.SOFT_TRUE : RemoveType.SOFT_FALSE;
-			if (!queueRemove()) {
-				result = forceDelegateRemove();
-			} else {
+			System.out.println("Remove type is " + removeType_.name());
+			if (queueRemove()) {
+				System.out.println("We queued the remove as part of a transaction so tell the calling code that its done");
 				result = true;
+			} else {
+				System.out.println("We're not currently in a transaction, so we should force the delegate removal immediately");
+				result = forceDelegateRemove();
 			}
 		} else {
+			System.out.println("Listener for BEFORE_DELETE_DOCUMENT blocked the remove call");
 			result = false;
 		}
 		if (result) {
+			System.out.println("Remove executed, so firing AFTER_DELETE_DOCUMENT listener");
 			getAncestorDatabase().fireListener(generateEvent(Events.AFTER_DELETE_DOCUMENT, null));
 		}
 		return result;
@@ -1975,7 +1993,72 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	public static int MAX_NATIVE_VECTOR_SIZE = 255;
 	public static int MAX_NATIVE_STRING_SIZE = 32000;
-	public static int MAX_NATIVE_SUMMARY_SIZE = 14000;
+	public static int MAX_SUMMARY_STRING_SIZE = 14000;
+
+	private lotus.domino.Item replaceItemValueExt(final String itemName, final Object value, final IllegalArgumentException iae)
+			throws Exception {
+		lotus.domino.Item result = null;
+
+		// Then try serialization
+		if (value instanceof Serializable) {
+			DominoUtils.saveState((Serializable) value, this, itemName);
+
+			result = getDelegate().getFirstItem(itemName);
+			// result = null;
+		} else if (value instanceof DocumentCollection) {
+			// NoteIDs would be faster for this and, particularly, NoteCollection, but it should be replica-friendly
+			DocumentCollection docs = (DocumentCollection) value;
+			String[] unids = new String[docs.getCount()];
+			int index = 0;
+			for (org.openntf.domino.Document doc : docs) {
+				unids[index++] = doc.getUniversalID();
+			}
+			Map<String, String> headers = new HashMap<String, String>(1);
+			headers.put("X-Original-Java-Class", "org.openntf.domino.DocumentCollection");
+			DominoUtils.saveState(unids, this, itemName, true, headers);
+			// result = null;
+			result = getDelegate().getFirstItem(itemName);
+		} else if (value instanceof NoteCollection) {
+			// Maybe it'd be faster to use .getNoteIDs - I'm not sure how the performance compares
+			NoteCollection notes = (NoteCollection) value;
+			String[] unids = new String[notes.getCount()];
+			String noteid = notes.getFirstNoteID();
+			int index = 0;
+			while (noteid != null && !noteid.isEmpty()) {
+				unids[index++] = notes.getUNID(noteid);
+				noteid = notes.getNextNoteID(noteid);
+			}
+			Map<String, String> headers = new HashMap<String, String>(1);
+			headers.put("X-Original-Java-Class", "org.openntf.domino.NoteCollection");
+			DominoUtils.saveState(unids, this, itemName, true, headers);
+			// result = null;
+			result = getDelegate().getFirstItem(itemName);
+		} else {
+			// Check to see if it's a StateHolder
+			try {
+				Class<?> stateHolderClass = Class.forName("javax.faces.component.StateHolder", true, Factory.getClassLoader());
+				if (stateHolderClass.isInstance(value)) {
+					Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext", true, Factory.getClassLoader());
+					Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
+					Method saveState = stateHolderClass.getMethod("saveState", facesContextClass);
+					Serializable state = (Serializable) saveState.invoke(value, getCurrentInstance.invoke(null));
+					Map<String, String> headers = new HashMap<String, String>();
+					headers.put("X-Storage-Scheme", "StateHolder");
+					headers.put("X-Original-Java-Class", value.getClass().getName());
+					DominoUtils.saveState(state, this, itemName, true, headers);
+					//					result = null;
+					result = getDelegate().getFirstItem(itemName);
+				} else {
+					// Well, we tried.
+					throw iae;
+				}
+			} catch (ClassNotFoundException cnfe) {
+				throw iae;
+			}
+		}
+
+		return result;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -2050,7 +2133,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 							}
 							if (domNode instanceof String) {
 								totalStringSize += ((String) domNode).length();
-								if (totalStringSize > MAX_NATIVE_SUMMARY_SIZE)
+								if (totalStringSize > MAX_SUMMARY_STRING_SIZE)
 									isNonSummary = true;
 
 								// Escape to serializing if there's too much text data
@@ -2094,23 +2177,21 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					if (value instanceof BigString)
 						isNonSummary = true;
 					Object domNode = toDominoFriendly(value, this);
-					if (domNode instanceof String) {
-						String s = (String) domNode;
-						if (s.equals("\n") || s.equals("\r") || s.equals("\r\n")) {
-							// Domino can't store linefeed only in item
-							throw new IllegalArgumentException();
-						}
-						if (s.length() > MAX_NATIVE_SUMMARY_SIZE) {
-							isNonSummary = true;
-						}
-						if (s.length() > MAX_NATIVE_STRING_SIZE) {
-							throw new IllegalArgumentException();
-						}
-					}
 					try {
+						if (domNode instanceof String) {
+							String s = (String) domNode;
+							if (s.equals("\n") || s.equals("\r") || s.equals("\r\n")) {
+								// Domino can't store linefeed only in item
+								throw new IllegalArgumentException();
+							}
+							if (s.length() > MAX_SUMMARY_STRING_SIZE)
+								isNonSummary = true;
+							if (s.length() > MAX_NATIVE_STRING_SIZE) {
+								throw new IllegalArgumentException();
+							}
+						}
 						MIMEEntity mimeChk = getMIMEEntity(itemName);
 						if (mimeChk != null) {
-
 							mimeChk.remove();
 						}
 						result = getDelegate().replaceItemValue(itemName, domNode);
@@ -2125,68 +2206,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					}
 				}
 			} catch (IllegalArgumentException iae) {
-				// if (getItemValueString("form").equalsIgnoreCase("container") && itemName.equals(DominoVertex.IN_NAME)) {
-				// System.out.println("Writing MIME value to " + itemName + " with a type of "
-				// + (value == null ? "null" : value.getClass().getSimpleName()));
-				// }
-				// Then try serialization
-				if (value instanceof Serializable) {
-					DominoUtils.saveState((Serializable) value, this, itemName);
-
-					result = getDelegate().getFirstItem(itemName);
-					// result = null;
-				} else if (value instanceof DocumentCollection) {
-					// NoteIDs would be faster for this and, particularly, NoteCollection, but it should be replica-friendly
-					DocumentCollection docs = (DocumentCollection) value;
-					String[] unids = new String[docs.getCount()];
-					int index = 0;
-					for (org.openntf.domino.Document doc : docs) {
-						unids[index++] = doc.getUniversalID();
+				result = this.replaceItemValueExt(itemName, value, iae);
 					}
-					Map<String, String> headers = new HashMap<String, String>(1);
-					headers.put("X-Original-Java-Class", "org.openntf.domino.DocumentCollection");
-					DominoUtils.saveState(unids, this, itemName, true, headers);
-					// result = null;
-					result = getDelegate().getFirstItem(itemName);
-				} else if (value instanceof NoteCollection) {
-					// Maybe it'd be faster to use .getNoteIDs - I'm not sure how the performance compares
-					NoteCollection notes = (NoteCollection) value;
-					String[] unids = new String[notes.getCount()];
-					String noteid = notes.getFirstNoteID();
-					int index = 0;
-					while (noteid != null && !noteid.isEmpty()) {
-						unids[index++] = notes.getUNID(noteid);
-						noteid = notes.getNextNoteID(noteid);
-					}
-					Map<String, String> headers = new HashMap<String, String>(1);
-					headers.put("X-Original-Java-Class", "org.openntf.domino.NoteCollection");
-					DominoUtils.saveState(unids, this, itemName, true, headers);
-					// result = null;
-					result = getDelegate().getFirstItem(itemName);
-				} else {
-					// Check to see if it's a StateHolder
-					try {
-						Class<?> stateHolderClass = Class.forName("javax.faces.component.StateHolder", true, Factory.getClassLoader());
-						if (stateHolderClass.isInstance(value)) {
-							Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext", true, Factory.getClassLoader());
-							Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
-							Method saveState = stateHolderClass.getMethod("saveState", facesContextClass);
-							Serializable state = (Serializable) saveState.invoke(value, getCurrentInstance.invoke(null));
-							Map<String, String> headers = new HashMap<String, String>();
-							headers.put("X-Storage-Scheme", "StateHolder");
-							headers.put("X-Original-Java-Class", value.getClass().getName());
-							DominoUtils.saveState(state, this, itemName, true, headers);
-							result = null;
-							// result = getDelegate().getFirstItem(itemName);
-						} else {
-							// Well, we tried.
-							throw iae;
-						}
-					} catch (ClassNotFoundException cnfe) {
-						throw iae;
-					}
-				}
-			}
 
 			if (this.shouldWriteItemMeta_) {
 				// If we've gotten this far, it must be legal - update or create the item info map
@@ -2205,8 +2226,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			if (result != null) {
 				return Factory.fromLotus(result, Item.class, this);
 			}
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
@@ -2692,6 +2711,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		if (!isRemoveQueued_) {
 			DatabaseTransaction txn = getParentDatabase().getTransaction();
 			if (txn != null) {
+				System.out.println("Found a transaction: " + txn + " from parent Database " + getParentDatabase().getApiPath());
 				txn.queueRemove(this);
 				isRemoveQueued_ = true;
 				return true; // we queued this, so whoever asked shouldn't do it yet.
@@ -2737,19 +2757,33 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public boolean forceDelegateRemove() {
 		boolean result = false;
 		RemoveType type = removeType_;
+		System.out.println("Forcing delegate removal of type " + type == null ? "null!" : type.name());
 		try {
-			if (type == RemoveType.SOFT_FALSE) {
-				return getDelegate().remove(false);
-			} else if (type == RemoveType.SOFT_TRUE) {
-				return getDelegate().remove(true);
-			} else if (type == RemoveType.HARD_TRUE) {
-				return getDelegate().removePermanently(true);
-			} else if (type == RemoveType.HARD_FALSE) {
-				return getDelegate().removePermanently(false);
+			switch (type) {
+			case SOFT_FALSE:
+				result = getDelegate().remove(false);
+				break;
+			case SOFT_TRUE:
+				result = getDelegate().remove(true);
+				break;
+			case HARD_TRUE:
+				lotus.domino.Document delegate = getDelegate();
+				result = delegate.removePermanently(true);
+				if (result) {
+					Base.s_recycle(delegate);
+					this.setDelegate(null);
+			}
+				break;
+			case HARD_FALSE:
+				result = getDelegate().removePermanently(false);
+				break;
+			default:
+				System.out.println("UNKNOWN REMOVE TYPE!");
 			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+		System.out.println("Delegate remove call returned " + String.valueOf(result));
 		return result;
 	}
 

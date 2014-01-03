@@ -80,6 +80,8 @@ public class OpenLogHandler extends Handler {
 		ol_.setLogDbName(logDbPath);
 	}
 
+	private boolean publishing_ = false;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -89,12 +91,10 @@ public class OpenLogHandler extends Handler {
 	 */
 	@Override
 	public void publish(final LogRecord record) {
-		if (publishing)
+		if (publishing_)
 			return;
-
-		publishing = true;
+		publishing_ = true;
 		try {
-
 			Throwable t = record.getThrown();
 			if (t != null) {
 				for (StackTraceElement elem : t.getStackTrace()) {
@@ -111,7 +111,7 @@ public class OpenLogHandler extends Handler {
 				ol_.logError(session, t, record.getMessage(), record.getLevel(), null);
 			}
 		} finally {
-			publishing = false;
+			publishing_ = false;
 		}
 	}
 

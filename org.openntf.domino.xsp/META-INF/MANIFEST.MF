@@ -31,6 +31,6 @@ Require-Bundle: com.ibm.xsp.domino;bundle-version="9.0.0",
  com.ibm.icu;bundle-version="3.8.1";resolution:=optional,
  com.ibm.xsp.designer,
  com.ibm.xsp.extlib.domino,
- com.ibm.xsp.extlib;bundle-version="9.0.1",
- com.ibm.xsp.extlib.controls;bundle-version="9.0.1",
- com.ibm.xsp.extlib.core;bundle-version="9.0.1"
+ com.ibm.xsp.extlib;bundle-version="9.0.0",
+ com.ibm.xsp.extlib.controls;bundle-version="9.0.0",
+ com.ibm.xsp.extlib.core;bundle-version="9.0.0"

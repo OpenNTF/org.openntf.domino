@@ -44,4 +44,13 @@ public class CurrencyType extends AbstractDominoType {
 		}
 		return super.validateItem(item);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.schema.types.AbstractDominoType#validateValue(java.lang.Object)
+	 */
+	@Override
+	public boolean validateValue(final Object value) throws ItemException {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

@@ -462,7 +462,6 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			log_.log(Level.INFO, "Trying to convert a null argument to Domino friendly. Returning null...");
 			return null;
 		}
-
 		//Extended in order to deal with Arrays
 		if (value.getClass().isArray()) {
 			int i = Array.getLength(value);
@@ -489,6 +488,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			return toLotus((org.openntf.domino.Base) value);
 		} else if (value instanceof lotus.domino.DateTime) {
 			return toLotus((lotus.domino.DateTime) value);
+		} else if (value instanceof lotus.domino.Name) {
+			return toLotus((lotus.domino.Name) value);
 		} else if (value instanceof lotus.domino.DateRange) {
 			return toLotus((lotus.domino.DateRange) value);
 		} else if (value instanceof lotus.domino.Item) {
@@ -635,13 +636,13 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		if (o instanceof Collection) {
 			if (!((Collection) o).isEmpty()) {
 				for (Object io : (Collection) o) {
-					if (io instanceof lotus.domino.DateTime || io instanceof lotus.domino.Name) {
+					if (io instanceof lotus.domino.DateTime || io instanceof lotus.domino.DateRange || io instanceof lotus.domino.Name) {
 						s_recycle(io);
 					}
 				}
 			}
 		}
-		if (o instanceof lotus.domino.DateTime || o instanceof lotus.domino.Name) {
+		if (o instanceof lotus.domino.DateTime || o instanceof lotus.domino.DateRange || o instanceof lotus.domino.Name) {
 			s_recycle(o);
 		}
 
