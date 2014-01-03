@@ -380,6 +380,19 @@ public enum DominoUtils {
 
 	public static Pattern C_MATCH = Pattern.compile("(C=)[^/]+", Pattern.CASE_INSENSITIVE);
 
+	public static final String ITEMNAME_ATTACHMENTS = "attachments";
+	public static final String ITEMNAME_BODY = "Body";
+	public static final String ITEMNAME_DESCRIPTION = "description";
+	public static final String ITEMNAME_FORM = "Form";
+	public static final String ITEMNAME_MEMBERS = "Members";
+	public static final String ITEMNAME_RECORDID = "recordID";
+	public static final String ITEMNAME_SUBJECT = "subject";
+	public static final String ITEMNAME_UNIVERSALID = "universalID";
+
+	public static final int LESS_THAN = -1;
+	public static final int EQUAL = 0;
+	public static final int GREATER_THAN = 1;
+
 	public static boolean isHierarchicalName(final String name) {
 		return IS_HIERARCHICAL_MATCH.matcher(name).find();
 	}
