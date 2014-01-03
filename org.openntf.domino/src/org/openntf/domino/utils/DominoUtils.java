@@ -388,6 +388,7 @@ public enum DominoUtils {
 	public static final String ITEMNAME_RECORDID = "recordID";
 	public static final String ITEMNAME_SUBJECT = "subject";
 	public static final String ITEMNAME_UNIVERSALID = "universalID";
+	public static final String VIEWNAME_VIM_PEOPLE_AND_GROUPS = "($VIMPeopleAndGroups)";
 
 	public static final int LESS_THAN = -1;
 	public static final int EQUAL = 0;
