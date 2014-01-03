@@ -3,8 +3,13 @@
  */
 package org.openntf.domino.utils;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 /**
@@ -15,13 +20,117 @@ import java.util.logging.Logger;
  */
 public class Strings {
 	public static final String CLASSNAME = "org.openntf.domino.utils.Strings";
+
+	public static final String MESSAGE_DIGEST_ALGORYTHM = "MD5";
+	public static final String MESSAGE_FORMULA_INVALID = "The Formula syntax is invalid.  ";
+	public static final String REGEX_NEWLINE = "\\r?\\n";
+
+	public static final String CHARSET_NAME = "CP1252";
+	public static final String DEFAULT_DELIMITER = "Ø";
+	// <ALT> + 0216 on numeric keypad
+
 	private static final Logger log_ = Logger.getLogger(Strings.class.getName());
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Zero-Argument Constructor
+	/*
+	 * ************************************************************************
+	 * ************************************************************************
+	 * 
+	 * PUBLIC Methods
+	 * 
+	 * ************************************************************************
+	 * ************************************************************************
 	 */
-	public Strings() {
+	public static enum IDTYPE {
+		BLANK, REPLICA, NOTE, UNIVERSAL;
+
+		@Override
+		public String toString() {
+			return this.name();
+		}
+
+		public String getInfo() {
+			return this.getDeclaringClass() + "." + this.getClass() + ":" + this.name();
+		}
+	};
+
+	/**
+	 * Gets or generates a Vector of Strings from an Object
+	 * 
+	 * @param object
+	 *            Object from which to get or generate the result. Attempts to retrieve the string values from the object.
+	 * 
+	 * @return Vector of Strings retrieved or generated from the input. Returns null on error.
+	 * 
+	 */
+	public static Vector<String> getVectorizedStrings(final Object object) {
+		final List<String> al = CollectionUtils.getListStrings(object);
+		return ((null == al) || (al.size() < 1)) ? null : new Vector<String>(al);
+	}
+
+	public static String getEnvarName(final String identifier) {
+		return (null == identifier) ? "" : identifier.trim().toUpperCase().replaceAll(" ", "_");
+	}
+
+	public static boolean isPotentialID(final String id, final IDTYPE idType) {
+		try {
+			if (null == id) {
+				return IDTYPE.BLANK.equals(idType);
+			}
+
+			if (IDTYPE.UNIVERSAL.equals(idType)) {
+				return ((32 == id.length()) && Strings.isHexadecimalString(id));
+			}
+
+			if (IDTYPE.NOTE.equals(idType)) {
+				boolean result = ((id.length() > 0) && (id.length() <= 8));
+				if (result) {
+					return Strings.isHexadecimalString(id);
+				}
+
+				if ((id.length() > 2) && ("NT".equalsIgnoreCase(id.substring(0, 1)))) {
+					result = Strings.isPotentialID(id.substring(2), idType);
+				}
+
+				return result;
+			}
+
+			if (IDTYPE.REPLICA.equals(idType)) {
+				return ((16 == id.length()) && Strings.isHexadecimalString(id));
+			}
+
+			if (IDTYPE.BLANK.equals(idType)) {
+				return (Strings.isBlankString(id));
+			}
+
+			throw new IllegalArgumentException("Unsupported IDTYPE");
+
+		} catch (final Exception e) {
+			//			if (null == idType) {
+			//				Core.logException(Core.CLASSNAME, e, "id: " + id, "idType: null");
+			//			} else {
+			//				Core.logException(Core.CLASSNAME, e, "id: " + id, "idType: " + idType.name());
+			//			}
+
+			DominoUtils.handleException(e);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Generates a Hash from a string.
+	 * 
+	 * Uses the MD5 Message Digest Algorythm.
+	 * 
+	 * @param string
+	 *            Source from which to generate the hash.
+	 * @return MD5 Message Digest Hash
+	 * 
+	 * @see #md5Hex(String)
+	 */
+	public static String getHash(final String string) {
+		return (Strings.isBlankString(string)) ? "" : Strings.md5Hex(string);
 	}
 
 	/**
@@ -36,24 +145,17 @@ public class Strings {
 	 * @return String consisting c characters repeated length times.
 	 */
 	public static String getFilledString(final int length, final char c) {
-		try {
-			if (0 == length) {
-				return "";
-			}
-
-			final int abslen = Math.abs(length);
-			final StringBuilder sb = new StringBuilder(abslen);
-			for (int i = 0; i < abslen; i++) {
-				sb.append(c);
-			}
-
-			return sb.toString();
-
-		} catch (final Exception e) {
-			CzarCore.logException(Strings.CLASSNAME, e);
+		if (0 == length) {
+			return "";
 		}
 
-		return "";
+		final int abslen = Math.abs(length);
+		final StringBuilder sb = new StringBuilder(abslen);
+		for (int i = 0; i < abslen; i++) {
+			sb.append(c);
+		}
+
+		return sb.toString();
 	}
 
 	public static String toProperCase(final String source) {
@@ -90,27 +192,22 @@ public class Strings {
 	 * @return String values of all elements in source concatenated by delimiter
 	 */
 	public static String join(final Collection source, final String delimiter) {
-		try {
-			if ((null != source) && (source.size() > 0)) {
-				final StringBuilder stringbuilder = new StringBuilder();
-				if (source.iterator().next() instanceof Object) {
-					// treat as an object
-					for (final Object o : source) {
-						stringbuilder.append(o.toString() + delimiter);
-					}
-				} else {
-					// treat as a primitive
-					final Iterator it = source.iterator();
-					while (it.hasNext()) {
-						stringbuilder.append(String.valueOf(it.next()) + delimiter);
-					}
+		if ((null != source) && (source.size() > 0)) {
+			final StringBuilder stringbuilder = new StringBuilder();
+			if (source.iterator().next() instanceof Object) {
+				// treat as an object
+				for (final Object o : source) {
+					stringbuilder.append(o.toString() + delimiter);
 				}
-
-				return stringbuilder.substring(0, stringbuilder.lastIndexOf(delimiter));
+			} else {
+				// treat as a primitive
+				final Iterator it = source.iterator();
+				while (it.hasNext()) {
+					stringbuilder.append(String.valueOf(it.next()) + delimiter);
+				}
 			}
 
-		} catch (final Exception e) {
-			CzarCore.logException(Strings.CLASSNAME, e, "source:" + source.getClass().toString(), "delimiter:" + delimiter);
+			return stringbuilder.substring(0, stringbuilder.lastIndexOf(delimiter));
 		}
 
 		return "";
@@ -130,27 +227,21 @@ public class Strings {
 	 * @return String values of all elements in source concatenated by delimiter
 	 */
 	public static String join(final String delimiter, final Object... objects) {
-		try {
-			final StringBuilder stringbuilder = new StringBuilder();
-			if (Strings.isBlankString(delimiter)) {
-				for (final Object o : objects) {
-					stringbuilder.append(o.toString());
-				}
-
-				return stringbuilder.toString();
-
-			} else {
-				for (final Object o : objects) {
-					stringbuilder.append(o.toString() + delimiter);
-				}
-
-				return stringbuilder.substring(0, stringbuilder.lastIndexOf(delimiter));
+		final StringBuilder stringbuilder = new StringBuilder();
+		if (Strings.isBlankString(delimiter)) {
+			for (final Object o : objects) {
+				stringbuilder.append(o.toString());
 			}
-		} catch (final Exception e) {
-			CzarCore.logException(Strings.CLASSNAME, e, "delimiter:" + delimiter);
-		}
 
-		return "";
+			return stringbuilder.toString();
+
+		} else {
+			for (final Object o : objects) {
+				stringbuilder.append(o.toString() + delimiter);
+			}
+
+			return stringbuilder.substring(0, stringbuilder.lastIndexOf(delimiter));
+		}
 	}
 
 	/**
@@ -167,66 +258,56 @@ public class Strings {
 	 * @return String values of all elements in source concatenated by delimiter
 	 */
 	public static String join(final Object source, final String delimiter) {
-		try {
-			if (null != source) {
-				if (source instanceof Collection) {
-					return Strings.join(source, delimiter);
-				}
-
-				final String classname = source.getClass().getName();
-				if (classname.equalsIgnoreCase("java.lang.String[]") || classname.equalsIgnoreCase("[Ljava.lang.String;")) {
-					final StringBuilder stringbuilder = new StringBuilder();
-					if (Strings.isBlankString(delimiter)) {
-						for (final String s : (String[]) source) {
-							stringbuilder.append(s + delimiter);
-						}
-						return stringbuilder.toString();
-
-					} else {
-
-						for (final String s : (String[]) source) {
-							stringbuilder.append(s + delimiter);
-						}
-						return stringbuilder.substring(0, stringbuilder.lastIndexOf(delimiter));
-					} // if (Strings.isBlankString(delimiter))
-
-				} else {
-					return Strings.join(CollectionUtils.getStringArray(source), delimiter);
-				}
+		if (null != source) {
+			if (source instanceof Collection) {
+				return Strings.join(source, delimiter);
 			}
 
-		} catch (final Exception e) {
-			CzarCore.logException(Strings.CLASSNAME, e, "source:" + source.getClass().toString(), "delimiter:" + delimiter);
+			final String classname = source.getClass().getName();
+			if (classname.equalsIgnoreCase("java.lang.String[]") || classname.equalsIgnoreCase("[Ljava.lang.String;")) {
+				final StringBuilder stringbuilder = new StringBuilder();
+				if (Strings.isBlankString(delimiter)) {
+					for (final String s : (String[]) source) {
+						stringbuilder.append(s + delimiter);
+					}
+					return stringbuilder.toString();
+
+				} else {
+
+					for (final String s : (String[]) source) {
+						stringbuilder.append(s + delimiter);
+					}
+					return stringbuilder.substring(0, stringbuilder.lastIndexOf(delimiter));
+				} // if (Strings.isBlankString(delimiter))
+
+			} else {
+				return Strings.join(CollectionUtils.getStringArray(source), delimiter);
+			}
 		}
 
 		return "";
 	}
 
 	public static StringBuilder removeBlankSpace(final StringBuilder sb) {
-		try {
-			if (null != sb) {
-				int currentEnd = -1;
-				for (int i = sb.length() - 1; i >= 0; i--) {
-					if (Character.isWhitespace(sb.charAt(i))) {
-						if (currentEnd == -1) {
-							currentEnd = i + 1;
-						}
-					} else {
-						// Moved from whitespace to non-whitespace
-						if (currentEnd != -1) {
-							sb.delete(i + 1, currentEnd);
-							currentEnd = -1;
-						}
+		if (null != sb) {
+			int currentEnd = -1;
+			for (int i = sb.length() - 1; i >= 0; i--) {
+				if (Character.isWhitespace(sb.charAt(i))) {
+					if (currentEnd == -1) {
+						currentEnd = i + 1;
+					}
+				} else {
+					// Moved from whitespace to non-whitespace
+					if (currentEnd != -1) {
+						sb.delete(i + 1, currentEnd);
+						currentEnd = -1;
 					}
 				}
-				// All leading whitespace
-				if (currentEnd != -1) {
-					sb.delete(0, currentEnd);
-				}
 			}
-
-		} catch (final Exception e) {
-			CzarCore.logException(Strings.CLASSNAME, e);
+			// All leading whitespace
+			if (currentEnd != -1) {
+				sb.delete(0, currentEnd);
+			}
 		}
 
 		return sb;
@@ -361,14 +442,7 @@ public class Strings {
 	}
 
 	public static String getAlphanumericOnly(final String source) {
-		try {
-			return (null == source) ? "" : source.trim().replaceAll("[^A-Za-z0-9]", "");
-
-		} catch (final Exception e) {
-			CzarCore.logException(Strings.CLASSNAME, e, "Source: " + source);
-		}
-
-		return "";
+		return (null == source) ? "" : source.trim().replaceAll("[^A-Za-z0-9]", "");
 	}
 
 	/**
@@ -388,6 +462,60 @@ public class Strings {
 	 */
 	public static boolean startsWithIgnoreCase(final String source, final String prefix) {
 		return ((null == source) || (null == prefix)) ? false : source.toLowerCase().startsWith(prefix.toLowerCase());
+	}
+
+	/*
+	 * ************************************************************************
+	 * ************************************************************************
+	 * 
+	 * PROTECTED Methods
+	 * 
+	 * ************************************************************************
+	 * ************************************************************************
+	 */
+
+	/**
+	 * Generates a Hexidecimal string from an array of bytes
+	 * 
+	 * @param array
+	 *            bytes from which to generate the string
+	 * 
+	 * @return Hexidecimal String generated from the input array.
+	 */
+	protected static String hex(final byte[] array) {
+		final StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < array.length; ++i) {
+			sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1, 3));
+		}
+
+		return sb.toString().toUpperCase();
+	}
+
+	/**
+	 * Generates an MD5 MessageDigest String from a source string
+	 * 
+	 * @param string
+	 *            Source from which to generate the MessageDigest
+	 * 
+	 * @return Generated Message Digest
+	 * 
+	 * @see java.security.MessageDigest#digest(byte[])
+	 */
+	protected static String md5Hex(final String arg0) {
+		if (Strings.isBlankString(arg0)) {
+			return "";
+		}
+		try {
+			final MessageDigest md = MessageDigest.getInstance(Core.MESSAGE_DIGEST_ALGORYTHM);
+			return Strings.hex(md.digest(arg0.getBytes(Strings.CHARSET_NAME)));
+		} catch (final NoSuchAlgorithmException e) {
+			//			Core.logException(Core.CLASSNAME, e, "NO SUCH ALGORITHM EXCEPTION", "arg0: " + arg0);
+			DominoUtils.handleException(e);
+		} catch (final UnsupportedEncodingException e) {
+			//			Core.logException(Core.CLASSNAME, e, "UNSUPPORTED ENCODING EXCEPTION", "arg0: " + arg0);
+			DominoUtils.handleException(e);
+		}
+		return "";
 	}
 
 }
