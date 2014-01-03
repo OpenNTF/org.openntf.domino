@@ -24,10 +24,7 @@ import java.util.regex.Pattern;
 import lotus.domino.Name;
 import lotus.domino.Session;
 
-import com.czarnowski.base.domino.CzarDomino;
-import com.czarnowski.base.domino.CzarNames;
-import com.czarnowski.base.util.CzarCore;
-import com.czarnowski.base.util.CzarStrings;
+import org.openntf.domino.utils.Strings;
 
 /**
  * Carrier and parsing object for various RFC822 name parts.
@@ -337,7 +334,7 @@ public class RFC822name implements Serializable {
 				if (source.matches(pattern)) {
 					// test matches <useremail@domain.suffix>
 					String common = "";
-					final String username = CzarStrings.left(source, "<").trim();
+					final String username = Strings.left(source, "<").trim();
 					final String patternquoted = "^\".*\"$";
 					/*
 					 * Match Pattern: "username"
@@ -371,7 +368,7 @@ public class RFC822name implements Serializable {
 						final String[] chunks = common.split(",");
 						final StringBuilder sb = new StringBuilder();
 						for (int i = chunks.length - 1; i > -1; i--) {
-							sb.append(CzarStrings.toProperCase(chunks[i].trim()));
+							sb.append(Strings.toProperCase(chunks[i].trim()));
 							sb.append(" ");
 						}
 
@@ -383,14 +380,14 @@ public class RFC822name implements Serializable {
 						final String[] chunks = common.split("\\.");
 						final StringBuilder sb = new StringBuilder();
 						for (final String s : chunks) {
-							sb.append(CzarStrings.toProperCase(s.trim()));
+							sb.append(Strings.toProperCase(s.trim()));
 							sb.append(" ");
 						}
 
 						common = sb.toString();
 					}
 
-					if (!CzarStrings.isBlankString(common)) {
+					if (!Strings.isBlankString(common)) {
 						name = CzarNames.createName(session, common);
 						this.setName(name);
 					}
@@ -399,7 +396,7 @@ public class RFC822name implements Serializable {
 					final Matcher matcheremail = patternemail.matcher(source);
 					matcheremail.find(); // get the text between the <>
 					final String email = matcheremail.group(1);
-					this.setInternetAddress(CzarStrings.isBlankString(email) ? "" : email.toLowerCase());
+					this.setInternetAddress(Strings.isBlankString(email) ? "" : email.toLowerCase());
 				}
 
 	}
