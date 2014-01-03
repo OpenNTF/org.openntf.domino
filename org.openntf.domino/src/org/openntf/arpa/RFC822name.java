@@ -164,6 +164,23 @@ public class RFC822name implements Serializable {
 		return sb.toString();
 	}
 
+	public String getAddr822FullFirstLast() {
+		StringBuilder sb = new StringBuilder(this.getAddr822SimpleFirstLast());
+		if (sb.length() > 0) {
+			if (this.getAddr822Comment1().length() > 0) {
+				sb.append(" " + this.getAddr822Comment1());
+			}
+			if (this.getAddr822Comment2().length() > 0) {
+				sb.append(" " + this.getAddr822Comment2());
+			}
+			if (this.getAddr822Comment3().length() > 0) {
+				sb.append(" " + this.getAddr822Comment3());
+			}
+		}
+
+		return sb.toString();
+	}
+
 	public String getAddr822Simple() {
 		String addr821 = this.getAddr821();
 		if (addr821.length() > 0) {
@@ -240,6 +257,18 @@ public class RFC822name implements Serializable {
 		return phrase;
 	}
 
+	public boolean isHasRFC82xContent() {
+		if (null != this._content) {
+			for (String s : this._content.values()) {
+				if ((null != s) && (s.trim().length() > 0)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 	/*
 	 * ******************************************************************
 	 * ******************************************************************
@@ -249,6 +278,7 @@ public class RFC822name implements Serializable {
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
+
 	public String getPart(final Addr82xParts key) {
 		String result = (null == key) ? "" : this.getContent().get(key);
 		return (null == result) ? "" : result;
