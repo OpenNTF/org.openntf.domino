@@ -2920,6 +2920,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 		if (this.containsKey(key)) {
 			Vector<Object> value = this.getItemValue(key.toString());
+			if (value == null) {
+				// fix RPr: some special fields have no value
+				return null;
+			}
 			if (value.size() == 1) {
 				return value.get(0);
 			}
