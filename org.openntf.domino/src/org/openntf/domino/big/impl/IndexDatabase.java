@@ -1,0 +1,243 @@
+/**
+ * 
+ */
+package org.openntf.domino.big.impl;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
+
+import org.openntf.domino.Database;
+import org.openntf.domino.DbDirectory;
+import org.openntf.domino.Document;
+import org.openntf.domino.Item;
+import org.openntf.domino.Session;
+import org.openntf.domino.View;
+import org.openntf.domino.ViewColumn;
+import org.openntf.domino.helpers.DocumentScanner;
+import org.openntf.domino.types.CaseInsensitiveString;
+
+/**
+ * @author Nathan T. Freeman
+ * 
+ */
+public class IndexDatabase {
+	private static final Logger log_ = Logger.getLogger(IndexDatabase.class.getName());
+	private static final long serialVersionUID = 1L;
+
+	public static final String TERM_VIEW_NAME = "$TermIndex";
+	public static final String TERM_FORM_NAME = "$TermDoc";
+	public static final String TERM_KEY_NAME = "TermKey";
+	public static final String TERM_MAP_PREFIX = "TermMap_";
+	public static final String DBID_NAME = "DbidList";
+	public static final String DB_VIEW_NAME = "$DbIndex";
+	public static final String DB_FORM_NAME = "$DbDoc";
+	public static final String DB_KEY_NAME = "DbKey";
+	public static final String DB_TOKEN_LOCATION_NAME = "TokenLocationMap";
+	public static final String DB_FIELD_TOKEN_NAME = "FieldTokenMap";
+	public static final String DB_LAST_INDEX_NAME = "LastIndexTime";
+	public static final String[] DEFAULT_STOP_WORDS_EN = "a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,only,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your"
+			.split(",");
+
+	private transient Database indexDb_;
+	private transient View termView_;
+	private transient View dbView_;
+	private Set<String> stopList_;
+
+	public IndexDatabase(final Database indexDb) {
+		indexDb_ = indexDb;
+	}
+
+	private void initIndexDb() {
+		View indexView = indexDb_.getView(TERM_VIEW_NAME);
+		if (indexView == null) {
+			indexView = indexDb_.createView(TERM_VIEW_NAME, "Form=\"" + TERM_FORM_NAME + "\"");
+			for (ViewColumn column : indexView.getColumns()) {
+				column.setFormula(TERM_KEY_NAME);
+				column.setTitle("Term");
+				column.setSorted(true);
+				column.setSortDescending(false);
+			}
+		}
+		View dbView = indexDb_.getView(DB_VIEW_NAME);
+		if (dbView == null) {
+			dbView = indexDb_.createView(DB_VIEW_NAME, "Form=\"" + DB_FORM_NAME + "\"");
+			for (ViewColumn column : dbView.getColumns()) {
+				column.setFormula(DB_KEY_NAME);
+				column.setTitle("ID");
+				column.setSorted(true);
+				column.setSortDescending(false);
+			}
+		}
+	}
+
+	public Set<String> getStopList() {
+		if (stopList_ == null) {
+			stopList_ = new HashSet<String>();
+			for (String s : DEFAULT_STOP_WORDS_EN) {
+				stopList_.add(s);
+			}
+		}
+		return stopList_;
+	}
+
+	public void setStopList(final Set<String> list) {
+		stopList_ = list;
+	}
+
+	public View getTermView() {
+		if (dbView_ == null) {
+			initIndexDb();
+			dbView_ = indexDb_.getView(DB_VIEW_NAME);
+		}
+		return dbView_;
+	}
+
+	public View getDbView() {
+		if (termView_ == null) {
+			initIndexDb();
+			termView_ = indexDb_.getView(TERM_VIEW_NAME);
+		}
+		return termView_;
+	}
+
+	public Document getDbDocument(final String dbid) {
+		String key = dbid.toUpperCase();
+		Document result = indexDb_.getDocumentByKey(key, true);
+		if (result.getFormName().length() < 1) {
+			result.replaceItemValue("Form", DB_FORM_NAME);
+			result.replaceItemValue(DB_KEY_NAME, dbid);
+		}
+		return result;
+	}
+
+	public Document getTermDocument(final String token) {
+		String key = token.toLowerCase();
+		Document result = indexDb_.getDocumentByKey(key, true);
+		if (result.getFormName().length() < 1) {
+			result.replaceItemValue("Form", TERM_FORM_NAME);
+			result.replaceItemValue(TERM_KEY_NAME, token);
+		}
+		return result;
+	}
+
+	public void scanServer(final Session session, final String serverName) {
+		initIndexDb();
+		DbDirectory dir = session.getDbDirectory(serverName);
+		dir.setDirectoryType(DbDirectory.Type.DATABASE);
+		for (Database db : dir) {
+			if (!db.getReplicaID().equals(indexDb_.getReplicaID())) {
+				System.out.println("Scanning database " + db.getApiPath());
+				if (!db.getFilePath().equalsIgnoreCase("redpill\\graph.nsf")) {
+					scanDatabase(db);
+				}
+			}
+		}
+	}
+
+	public DocumentScanner scanDatabase(final Database db) {
+		Document dbDoc = getDbDocument(db.getReplicaID());
+		DocumentScanner scanner = new DocumentScanner();
+		if (dbDoc.isNewNote()) {
+			scanner.setStopTokenList(getStopList());
+			scanner.setIgnoreDollar(true);
+		} else {
+			scanner.setLastScanDate((Date) dbDoc.getItemValue(DB_LAST_INDEX_NAME, Date.class));
+			scanner.setStopTokenList(getStopList());
+			scanner.setIgnoreDollar(true);
+			Object tokenLocationObject = dbDoc.getItemValue(DB_TOKEN_LOCATION_NAME, Map.class);
+			scanner.setTokenLocationMap(tokenLocationObject);
+			Object fieldTokenObject = dbDoc.getItemValue(DB_FIELD_TOKEN_NAME, Map.class);
+			scanner.setFieldTokenMap(fieldTokenObject);
+		}
+		Date scanDate = new Date();
+		scanDatabase(db, scanner);
+		String dbid = db.getReplicaID();
+		writeResults(dbid, scanner);
+		dbDoc.replaceItemValue(DB_LAST_INDEX_NAME, scanDate);
+		dbDoc.replaceItemValue(DB_FIELD_TOKEN_NAME, scanner.getFieldTokenMap());
+		dbDoc.save();
+		return scanner;
+	}
+
+	public DocumentScanner scanDatabase(final Database db, final DocumentScanner scanner) {
+		Date last = scanner.getLastScanDate();
+		if (last == null)
+			last = new Date(0);
+		int count = db.getModifiedNoteCount(last);
+		if (count > 0) {
+			for (Document doc : db.getModifiedDocuments(last)) {
+				scanner.processDocument(doc);
+			}
+		}
+		return scanner;
+	}
+
+	public void writeResults(final String dbid, final DocumentScanner scanner) {
+		//		DatabaseTransaction txn = indexDb_.startTransaction();
+		Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> tlMap = scanner.getTokenLocationMap();
+		for (CaseInsensitiveString cis : tlMap.keySet()) {
+			Map<CaseInsensitiveString, Set<String>> tlValue = tlMap.get(cis);
+			String term = cis.getFolded();
+			Document termDoc = getTermDocument(term);
+			termDoc.replaceItemValue(TERM_MAP_PREFIX + dbid, tlValue);
+			termDoc.appendItemValue(DBID_NAME, dbid, true);
+			termDoc.save();
+		}
+		//		txn.commit();
+	}
+
+	public List<String> getTermDbids(final String term) {
+		List<String> result = new ArrayList<String>();
+		Document doc = getTermDocument(term);
+		if (doc.hasItem(DBID_NAME)) {
+			result.addAll(doc.getItemValue(DBID_NAME));
+		}
+		return result;
+	}
+
+	public Map<String, Set<CharSequence>> getTermItemMap(final String term) {
+		Map<String, Set<CharSequence>> result = new LinkedHashMap<String, Set<CharSequence>>();
+		Document doc = getTermDocument(term);
+		for (Item item : doc.getItems()) {
+			String itemName = item.getName();
+			if (itemName.startsWith(TERM_MAP_PREFIX)) {
+				String dbid = itemName.substring(TERM_MAP_PREFIX.length());
+				Map termMap = doc.getItemValue(itemName, Map.class);
+				result.put(dbid, termMap.keySet());
+			}
+		}
+		return result;
+	}
+
+	public Map<String, Set<String>> getTermUnidMap(final String term) {
+		Map<String, Set<String>> result = new LinkedHashMap<String, Set<String>>();
+		Document doc = getTermDocument(term);
+		for (Item item : doc.getItems()) {
+			String itemName = item.getName();
+			if (itemName.startsWith(TERM_MAP_PREFIX)) {
+				String dbid = itemName.substring(TERM_MAP_PREFIX.length());
+				Set<String> unids = new HashSet<String>();
+				Map termMap = doc.getItemValue(itemName, Map.class);
+				for (Object key : termMap.keySet()) {
+					Object termObj = termMap.get(key);
+					if (termObj instanceof Collection) {
+						unids.addAll((Collection) termObj);
+					} else if (termObj instanceof CharSequence) {
+						unids.add(((CharSequence) termObj).toString());
+					} else {
+						unids.add(String.valueOf(termObj));
+					}
+				}
+				result.put(dbid, unids);
+			}
+		}
+		return result;
+	}
+}

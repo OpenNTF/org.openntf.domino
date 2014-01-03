@@ -87,7 +87,7 @@
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li>org.openntf.domino.schema.ItemDefinition</li>
+<li>org.openntf.domino.schema.impl.ItemDefinition</li>
 </ul>
 </li>
 </ul>
@@ -103,7 +103,7 @@
 <pre>public class <span class="strong">ItemDefinition</span>
 extends java.lang.Object
 implements java.io.Externalizable</pre>
-<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../serialized-form.html#org.openntf.domino.schema.ItemDefinition">Serialized Form</a></dd></dl>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../serialized-form.html#org.openntf.domino.schema.impl.ItemDefinition">Serialized Form</a></dd></dl>
 </li>
 </ul>
 </div>
@@ -141,11 +141,11 @@ implements java.io.Externalizable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/openntf/domino/schema/ItemDefinition.html#addFlag(org.openntf.domino.schema.DatabaseSchema.Flags)">addFlag</a></strong>(<a href="../../../../org/openntf/domino/schema/DatabaseSchema.Flags.html" title="enum in org.openntf.domino.schema">DatabaseSchema.Flags</a>&nbsp;flag)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../org/openntf/domino/schema/ItemDefinition.html#addFlag(org.openntf.domino.schema.impl.DatabaseSchema.Flags)">addFlag</a></strong>(<a href="../../../../org/openntf/domino/schema/DatabaseSchema.Flags.html" title="enum in org.openntf.domino.schema">DatabaseSchema.Flags</a>&nbsp;flag)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/openntf/domino/Item.html" title="interface in org.openntf.domino">Item</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/openntf/domino/schema/ItemDefinition.html#createDefaultItem(org.openntf.domino.Document, org.openntf.domino.schema.DocumentDefinition)">createDefaultItem</a></strong>(<a href="../../../../org/openntf/domino/Document.html" title="interface in org.openntf.domino">Document</a>&nbsp;doc,
+<td class="colLast"><code><strong><a href="../../../../org/openntf/domino/schema/ItemDefinition.html#createDefaultItem(org.openntf.domino.Document, org.openntf.domino.schema.impl.DocumentDefinition)">createDefaultItem</a></strong>(<a href="../../../../org/openntf/domino/Document.html" title="interface in org.openntf.domino">Document</a>&nbsp;doc,
                  <a href="../../../../org/openntf/domino/schema/DocumentDefinition.html" title="class in org.openntf.domino.schema">DocumentDefinition</a>&nbsp;def)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
@@ -198,7 +198,7 @@ implements java.io.Externalizable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/openntf/domino/schema/ItemDefinition.html#setParent(org.openntf.domino.schema.DatabaseSchema)">setParent</a></strong>(<a href="../../../../org/openntf/domino/schema/DatabaseSchema.html" title="class in org.openntf.domino.schema">DatabaseSchema</a>&nbsp;parent)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../org/openntf/domino/schema/ItemDefinition.html#setParent(org.openntf.domino.schema.impl.DatabaseSchema)">setParent</a></strong>(<a href="../../../../org/openntf/domino/schema/DatabaseSchema.html" title="class in org.openntf.domino.schema">DatabaseSchema</a>&nbsp;parent)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -206,7 +206,7 @@ implements java.io.Externalizable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/openntf/domino/schema/ItemDefinition.html#setValidator(org.openntf.domino.schema.ItemValidation)">setValidator</a></strong>(<a href="../../../../org/openntf/domino/schema/ItemValidation.html" title="class in org.openntf.domino.schema">ItemValidation</a>&nbsp;validator)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../org/openntf/domino/schema/ItemDefinition.html#setValidator(org.openntf.domino.schema.impl.ItemValidation)">setValidator</a></strong>(<a href="../../../../org/openntf/domino/schema/ItemValidation.html" title="class in org.openntf.domino.schema">ItemValidation</a>&nbsp;validator)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -251,7 +251,7 @@ implements java.io.Externalizable</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="setParent(org.openntf.domino.schema.DatabaseSchema)">
+<a name="setParent(org.openntf.domino.schema.impl.DatabaseSchema)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -341,7 +341,7 @@ implements java.io.Externalizable</pre>
 <pre>public&nbsp;void&nbsp;setFlags(java.util.Set&lt;<a href="../../../../org/openntf/domino/schema/DatabaseSchema.Flags.html" title="enum in org.openntf.domino.schema">DatabaseSchema.Flags</a>&gt;&nbsp;flags)</pre>
 </li>
 </ul>
-<a name="addFlag(org.openntf.domino.schema.DatabaseSchema.Flags)">
+<a name="addFlag(org.openntf.domino.schema.impl.DatabaseSchema.Flags)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -377,7 +377,7 @@ implements java.io.Externalizable</pre>
 <pre>public&nbsp;<a href="../../../../org/openntf/domino/schema/ItemValidation.html" title="class in org.openntf.domino.schema">ItemValidation</a>&nbsp;getValidator()</pre>
 </li>
 </ul>
-<a name="setValidator(org.openntf.domino.schema.ItemValidation)">
+<a name="setValidator(org.openntf.domino.schema.impl.ItemValidation)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -418,7 +418,7 @@ implements java.io.Externalizable</pre>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
-<a name="createDefaultItem(org.openntf.domino.Document, org.openntf.domino.schema.DocumentDefinition)">
+<a name="createDefaultItem(org.openntf.domino.Document, org.openntf.domino.schema.impl.DocumentDefinition)">
 <!--   -->
 </a>
 <ul class="blockListLast">

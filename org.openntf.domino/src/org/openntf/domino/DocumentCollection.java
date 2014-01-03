@@ -25,8 +25,7 @@ import org.openntf.domino.types.DatabaseDescendant;
  * The Interface DocumentCollection represents a collection of documents from a database, selected according to specific criteria.
  */
 public interface DocumentCollection extends lotus.domino.DocumentCollection, org.openntf.domino.ext.DocumentCollection,
-		org.openntf.domino.Base<lotus.domino.DocumentCollection>, Iterable<org.openntf.domino.Document>,
-		Collection<org.openntf.domino.Document>, DatabaseDescendant {
+		org.openntf.domino.Base<lotus.domino.DocumentCollection>, Collection<org.openntf.domino.Document>, DatabaseDescendant {
 
 	/**
 	 * Adds a document to a collection.

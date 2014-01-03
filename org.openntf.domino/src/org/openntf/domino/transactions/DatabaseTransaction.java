@@ -188,4 +188,22 @@ public class DatabaseTransaction {
 		}
 	}
 
+	private String getDbList() {
+		StringBuilder sb = new StringBuilder();
+		for (Database db : databases_) {
+			sb.append(db.getApiPath());
+			sb.append(',');
+		}
+		return sb.toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "DatabaseTransaction [databases=" + getDbList() + ", updateQueue_=" + (updateQueue_ == null ? "0" : updateQueue_.size())
+				+ ", removeQueue_=" + (removeQueue_ == null ? "0" : removeQueue_.size()) + "]";
+	}
+
 }

@@ -6,17 +6,20 @@ package org.openntf.domino.schema;
 import java.io.Externalizable;
 import java.util.Set;
 
-import org.openntf.domino.schema.DatabaseSchema.Flags;
-import org.openntf.domino.schema.types.IDominoType;
+import org.openntf.domino.Document;
+import org.openntf.domino.Item;
+import org.openntf.domino.schema.impl.DatabaseSchema;
+import org.openntf.domino.schema.impl.DatabaseSchema.Flags;
+import org.openntf.domino.schema.impl.DocumentDefinition;
 
 /**
  * @author Nathan T. Freeman
  * 
  */
-public interface IItemDefintion extends Externalizable {
+public interface IItemDefinition extends Externalizable {
 	public void setParent(DatabaseSchema parent);
 
-	public DatabaseSchema getParent();
+	public IDatabaseSchema getParent();
 
 	public String getName();
 
@@ -51,4 +54,11 @@ public interface IItemDefintion extends Externalizable {
 	public Set<IItemListener> getItemListeners();
 
 	public void addItemListener(IItemListener listener);
+
+	/**
+	 * @param result
+	 * @param def
+	 * @return
+	 */
+	public Item createDefaultItem(Document result, DocumentDefinition def);
 }

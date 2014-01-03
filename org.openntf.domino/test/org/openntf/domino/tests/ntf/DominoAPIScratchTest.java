@@ -31,7 +31,6 @@ public enum DominoAPIScratchTest {
 	private static final int THREAD_COUNT = 6;
 	private static final boolean INCLUDE_FORMS = false;
 	private static final int delay = 200;
-	// private static final String server = "CN=DevilDog/O=REDPILL";
 	private static final String server = "";
 	private static final String dbPath = "events4.nsf";
 
@@ -226,21 +225,6 @@ public enum DominoAPIScratchTest {
 
 		de.shutdown();
 		de2.shutdown();
-
-		//		DominoThread[] threads = new DominoThread[THREAD_COUNT];
-		//		for (int i = 0; i < THREAD_COUNT; i++) {
-		//			threads[i] = new DominoThread(new Doer(), "Scratch Test" + i);
-		//		}
-		//
-		//		for (DominoThread thread : threads) {
-		//			thread.start();
-		//			try {
-		//				Thread.sleep(delay);
-		//			} catch (InterruptedException e1) {
-		//				DominoUtils.handleException(e1);
-		//
-		//			}
-		//		}
 
 	}
 }

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.openntf.domino.schema;
+package org.openntf.domino.schema.impl;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -14,12 +14,15 @@ import java.util.Set;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
-import org.openntf.domino.schema.DatabaseSchema.Flags;
-import org.openntf.domino.schema.types.IDominoType;
+import org.openntf.domino.schema.IDominoType;
+import org.openntf.domino.schema.IItemDefinition;
+import org.openntf.domino.schema.IItemListener;
+import org.openntf.domino.schema.IItemValidation;
+import org.openntf.domino.schema.impl.DatabaseSchema.Flags;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
-public class ItemDefinition implements Externalizable {
+public class ItemDefinition implements IItemDefinition, Externalizable {
 	private String name_;
 	private String defaultLabel_;
 	private Class<? extends IDominoType> type_;
@@ -32,7 +35,7 @@ public class ItemDefinition implements Externalizable {
 
 	}
 
-	public void setParent(DatabaseSchema parent) {
+	public void setParent(final DatabaseSchema parent) {
 		parentSchema_ = parent;
 	}
 
@@ -44,7 +47,7 @@ public class ItemDefinition implements Externalizable {
 		return name_;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		name_ = name;
 	}
 
@@ -52,15 +55,15 @@ public class ItemDefinition implements Externalizable {
 		return defaultLabel_;
 	}
 
-	public void setDefaultLabel(String defaultLabel) {
+	public void setDefaultLabel(final String defaultLabel) {
 		defaultLabel_ = defaultLabel;
 	}
 
-	public Class<?> getType() {
+	public Class<? extends IDominoType> getType() {
 		return type_;
 	}
 
-	public void setType(Class<? extends IDominoType> type) {
+	public void setType(final Class<? extends IDominoType> type) {
 		type_ = type;
 	}
 
@@ -68,11 +71,11 @@ public class ItemDefinition implements Externalizable {
 		return flags_;
 	}
 
-	public void setFlags(Set<Flags> flags) {
+	public void setFlags(final Set<Flags> flags) {
 		flags_ = flags;
 	}
 
-	public void addFlag(Flags flag) {
+	public void addFlag(final Flags flag) {
 		flags_.add(flag);
 	}
 
@@ -80,7 +83,7 @@ public class ItemDefinition implements Externalizable {
 		return defaultValue_;
 	}
 
-	public void setDefaultValue(Object defaultValue) {
+	public void setDefaultValue(final Object defaultValue) {
 		defaultValue_ = defaultValue;
 	}
 
@@ -88,7 +91,7 @@ public class ItemDefinition implements Externalizable {
 		return validator_;
 	}
 
-	public void setValidator(ItemValidation validator) {
+	public void setValidator(final ItemValidation validator) {
 		validator_ = validator;
 	}
 
@@ -98,7 +101,7 @@ public class ItemDefinition implements Externalizable {
 	 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
 	 */
 	@Override
-	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 		name_ = in.readUTF();
 		defaultLabel_ = in.readUTF();
 		Class<?> cl = (Class<?>) Class.forName(in.readUTF(), true, Factory.getClassLoader());
@@ -120,7 +123,7 @@ public class ItemDefinition implements Externalizable {
 	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
 	 */
 	@Override
-	public void writeExternal(ObjectOutput out) throws IOException {
+	public void writeExternal(final ObjectOutput out) throws IOException {
 		out.writeUTF(name_);
 		out.writeUTF(defaultLabel_);
 		out.writeUTF(type_.getCanonicalName());
@@ -132,7 +135,7 @@ public class ItemDefinition implements Externalizable {
 		out.writeObject(validator_);
 	}
 
-	public Item createDefaultItem(Document doc, DocumentDefinition def) {
+	public Item createDefaultItem(final Document doc, final DocumentDefinition def) {
 		String name = getName();
 		Object defaultValue = getDefaultValue();
 		if (defaultValue == null) {
@@ -199,6 +202,46 @@ public class ItemDefinition implements Externalizable {
 			}
 		}
 		return item;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.schema.IItemDefinition#getShortName()
+	 */
+	public String getShortName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.schema.IItemDefinition#removeFlag(org.openntf.domino.schema.impl.DatabaseSchema.Flags)
+	 */
+	public void removeFlag(final Flags flag) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.schema.IItemDefinition#setValidator(org.openntf.domino.schema.IItemValidation)
+	 */
+	public void setValidator(final IItemValidation validator) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.schema.IItemDefinition#getItemListeners()
+	 */
+	public Set<IItemListener> getItemListeners() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.schema.IItemDefinition#addItemListener(org.openntf.domino.schema.IItemListener)
+	 */
+	public void addItemListener(final IItemListener listener) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

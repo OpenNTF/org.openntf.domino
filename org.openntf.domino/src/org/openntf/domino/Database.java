@@ -15,6 +15,7 @@
  */
 package org.openntf.domino;
 
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Vector;
 
@@ -27,6 +28,57 @@ import org.openntf.domino.types.SessionDescendant;
  */
 public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database>, org.openntf.domino.ext.Database,
 		Resurrectable, SessionDescendant {
+
+	public enum Utils {
+		;
+		public static boolean isTemplate(final Database db) {
+			boolean result = false;
+			if (db.getFilePath().toLowerCase().endsWith("ntf"))
+				result = true;
+			return result;
+		}
+
+		public static boolean isDatabase(final Database db) {
+			boolean result = false;
+			String path = db.getFilePath().toLowerCase();
+			if (path.endsWith("nsf") || path.endsWith("nsh") || path.endsWith("nsg"))
+				result = true;
+			return result;
+		}
+
+		public static boolean isReplicaCandidate(final Database db) {
+			boolean result = true;
+			result = db.isReplicationDisabled();
+			return result;
+		}
+
+		public static boolean isTemplateCandidate(final Database db) {
+			boolean result = true;
+			//TODO do we actually want to add any future checks for this?
+			return result;
+		}
+	}
+
+	public final static Comparator<Database> FILEPATH_COMPARATOR = new Comparator<Database>() {
+		public int compare(final Database o1, final Database o2) {
+			return o1.getFilePath().compareToIgnoreCase(o2.getFilePath());
+		}
+	};
+	public final static Comparator<Database> LASTMOD_COMPARATOR = new Comparator<Database>() {
+		public int compare(final Database o1, final Database o2) {
+			return o1.getLastModifiedDate().compareTo(o2.getLastModifiedDate());
+		}
+	};
+	public final static Comparator<Database> TITLE_COMPARATOR = new Comparator<Database>() {
+		public int compare(final Database o1, final Database o2) {
+			return o1.getTitle().compareToIgnoreCase(o2.getTitle());
+		}
+	};
+	public final static Comparator<Database> APIPATH_COMPARATOR = new Comparator<Database>() {
+		public int compare(final Database o1, final Database o2) {
+			return o1.getApiPath().compareToIgnoreCase(o2.getApiPath());
+		}
+	};
 
 	/**
 	 * The Enum DBOption.

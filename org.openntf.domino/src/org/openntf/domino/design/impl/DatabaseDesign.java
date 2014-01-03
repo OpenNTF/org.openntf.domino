@@ -18,6 +18,8 @@ package org.openntf.domino.design.impl;
 
 import java.util.EnumSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
@@ -52,6 +54,17 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 		database_ = database;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#createFolder()
+	 */
+	@Override
+	public Folder createFolder() {
+		return new Folder(database_);
+	}
+
+	// TODO Decide whether this should check for an existing view first. Current behavior is
+	// acting like it's creating a whole-cloth new view but then replacing any existing with
+	// the same name on save
 	@Override
 	public DesignView createView() {
 		return new DesignView(database_);
@@ -89,6 +102,21 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 		Document viewDoc = database_.getDocumentByID(DEFAULT_VIEW);
 		if (viewDoc != null) {
 			return new DesignView(viewDoc);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#getFacesConfig()
+	 */
+	@Override
+	public FacesConfig getFacesConfig() {
+		NoteCollection notes = getNoteCollection(" @Contains($Flags; 'g') & @Explode($TITLE; '|')='WEB-INF/faces-config.xml'",
+				EnumSet.of(SelectOption.MISC_FORMAT));
+		String noteId = notes.getFirstNoteID();
+		if (!noteId.isEmpty()) {
+			Document doc = database_.getDocumentByID(noteId);
+			return new FacesConfig(doc);
 		}
 		return null;
 	}
@@ -214,6 +242,22 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	public DesignCollection<org.openntf.domino.design.JavaResource> getJavaResources() {
 		NoteCollection notes = getNoteCollection(" @Contains($Flags; 'g') & @Contains($Flags; '[') ", EnumSet.of(SelectOption.MISC_FORMAT));
 		return new DesignCollection<org.openntf.domino.design.JavaResource>(notes, JavaResource.class);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DatabaseDesign#getJavaResourceClassNames()
+	 */
+	@Override
+	public SortedSet<String> getJavaResourceClassNames() {
+		SortedSet<String> result = new TreeSet<String>();
+		NoteCollection notes = getNoteCollection(" @Contains($Flags; 'g') & @Contains($Flags; '[') ", EnumSet.of(SelectOption.MISC_FORMAT));
+		for (String noteId : notes) {
+			Document doc = getAncestorDatabase().getDocumentByID(noteId);
+			for (Object pathName : doc.getItemValue("$ClassIndexItem")) {
+				result.add(DominoUtils.filePathToJavaBinaryName(((String) pathName).substring(16), "/"));
+			}
+		}
+		return result;
 	}
 
 	/*

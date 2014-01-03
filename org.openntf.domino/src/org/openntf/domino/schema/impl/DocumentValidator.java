@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.openntf.domino.schema;
+package org.openntf.domino.schema.impl;
 
 import java.util.logging.Logger;
 

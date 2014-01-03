@@ -26,4 +26,6 @@ public interface Folder extends DesignBaseNamed {
 	public DesignColumn addColumn();
 
 	public DesignColumnList getColumns();
+
+	public org.openntf.domino.View getView();
 }

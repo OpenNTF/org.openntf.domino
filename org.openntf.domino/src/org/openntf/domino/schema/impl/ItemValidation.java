@@ -1,22 +1,22 @@
 /**
  * 
  */
-package org.openntf.domino.schema;
+package org.openntf.domino.schema.impl;
 
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.Date;
 import java.util.regex.Pattern;
 
-import lotus.domino.DateTime;
-import lotus.domino.Name;
-
 import org.openntf.domino.ext.Formula;
+import org.openntf.domino.schema.IDatabaseSchema;
+import org.openntf.domino.schema.IDominoType;
+import org.openntf.domino.schema.IItemDefinition;
+import org.openntf.domino.schema.IItemValidation;
 import org.openntf.domino.schema.exceptions.ItemException;
 
-public class ItemValidation implements Externalizable {
+public class ItemValidation implements IItemValidation, Externalizable {
 	private boolean required_;
 	private boolean unique_;
 	private Formula uniqueFormula_;
@@ -31,7 +31,7 @@ public class ItemValidation implements Externalizable {
 		return definition_;
 	}
 
-	public void setDefinition(ItemDefinition definition) {
+	public void setDefinition(final ItemDefinition definition) {
 		definition_ = definition;
 	}
 
@@ -39,7 +39,7 @@ public class ItemValidation implements Externalizable {
 		return expression_;
 	}
 
-	public void setRegex(String expression) {
+	public void setRegex(final String expression) {
 		expression_ = Pattern.compile(expression);
 	}
 
@@ -47,7 +47,7 @@ public class ItemValidation implements Externalizable {
 		return required_;
 	}
 
-	public void setRequired(boolean required) {
+	public void setRequired(final boolean required) {
 		required_ = required;
 	}
 
@@ -55,7 +55,7 @@ public class ItemValidation implements Externalizable {
 		return unique_;
 	}
 
-	public void setUnique(boolean unique) {
+	public void setUnique(final boolean unique) {
 		unique_ = unique;
 	}
 
@@ -63,7 +63,7 @@ public class ItemValidation implements Externalizable {
 		return uniqueFormula_;
 	}
 
-	public void setUniqueFormula(Formula uniqueFormula) {
+	public void setUniqueFormula(final Formula uniqueFormula) {
 		uniqueFormula_ = uniqueFormula;
 	}
 
@@ -71,7 +71,7 @@ public class ItemValidation implements Externalizable {
 		return maxValue_;
 	}
 
-	public void setMaxValue(long maxValue) {
+	public void setMaxValue(final long maxValue) {
 		maxValue_ = maxValue;
 	}
 
@@ -79,7 +79,7 @@ public class ItemValidation implements Externalizable {
 		return minValue_;
 	}
 
-	public void setMinValue(long minValue) {
+	public void setMinValue(final long minValue) {
 		minValue_ = minValue;
 	}
 
@@ -87,7 +87,7 @@ public class ItemValidation implements Externalizable {
 		return maxMembers_;
 	}
 
-	public void setMaxMembers(int maxMembers) {
+	public void setMaxMembers(final int maxMembers) {
 		maxMembers_ = maxMembers;
 	}
 
@@ -95,39 +95,22 @@ public class ItemValidation implements Externalizable {
 		return minMembers_;
 	}
 
-	public void setMinMembers(int minMembers) {
+	public void setMinMembers(final int minMembers) {
 		minMembers_ = minMembers;
 	}
 
-	private Class<?> getItemClass() {
-		return getDefinition().getClass();
+	private Class<? extends IDominoType> getItemType() {
+		return getDefinition().getType();
 	}
 
-	public boolean validateItem(org.openntf.domino.Item item) throws ItemException {
+	public boolean validateItem(final org.openntf.domino.Item item) throws ItemException {
 		boolean result = true;
-		Class<?> clazz = getItemClass();
-		if (String.class.equals(clazz)) {
+		Class<? extends IDominoType> clazz = getItemType();
+		IItemDefinition definition = getDefinition();
+		IDatabaseSchema schema = definition.getParent();
 
-		} else if (Integer.class.equals(clazz)) {
-
-		} else if (Double.class.equals(clazz)) {
-
-		} else if (Long.class.equals(clazz)) {
-		} else if (Short.class.equals(clazz)) {
-		} else if (Float.class.equals(clazz)) {
-		} else if (Boolean.class.equals(clazz)) {
-		} else if (Date.class.equals(clazz)) {
-		} else if (DateTime.class.equals(clazz)) {
-		} else if (Name.class.equals(clazz)) {
-		} else {
-		}
-
-		return result;
-	}
-
-	public boolean validateItemString(org.openntf.domino.Item item) throws ItemException {
-		boolean result = true;
-
+		IDominoType type = schema.getTypeDefinition(clazz);
+		type.validateItem(item);
 		return result;
 	}
 
@@ -137,7 +120,7 @@ public class ItemValidation implements Externalizable {
 	 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
 	 */
 	@Override
-	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 		required_ = in.readBoolean();
 		unique_ = in.readBoolean();
 		maxValue_ = in.readLong();
@@ -154,7 +137,7 @@ public class ItemValidation implements Externalizable {
 	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
 	 */
 	@Override
-	public void writeExternal(ObjectOutput out) throws IOException {
+	public void writeExternal(final ObjectOutput out) throws IOException {
 		out.writeBoolean(required_);
 		out.writeBoolean(unique_);
 		out.writeLong(maxValue_);
