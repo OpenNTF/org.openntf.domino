@@ -18,11 +18,6 @@ package org.openntf.arpa;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import lotus.domino.Name;
-import lotus.domino.Session;
 
 import org.openntf.domino.utils.Strings;
 
@@ -66,6 +61,7 @@ public class RFC822name implements Serializable {
 	 *            String from which to construct the object
 	 */
 	public RFC822name(final String source) {
+		this.parseContent(source);
 	}
 
 	/*
@@ -215,15 +211,33 @@ public class RFC822name implements Serializable {
 	}
 
 	public String getAddr822PhraseFirstLast() {
-		String result = this.getAddr822Phrase();
-		int idx = result.indexOf(',');
-		if (idx > 0) {
-			String last = result.substring(0, idx);
-			String first = result.substring(idx);
-			return first + " " + last;
+		String phrase = this.getAddr822Phrase();
+		if (phrase.indexOf(',') > 0) {
+			// assume name format of Lastname, Firstname and reverse
+			// to format of Firstname Lastname
+			final String[] chunks = phrase.split(",");
+			final StringBuilder sb = new StringBuilder();
+			for (int i = chunks.length - 1; i > -1; i--) {
+				sb.append(Strings.toProperCase(chunks[i].trim()));
+				sb.append(" ");
+			}
+
+			return sb.toString();
+
+		} else if (phrase.indexOf('.') > 0) {
+			// assume name format of Firstname.Lastname and strip
+			// out the period
+			final String[] chunks = phrase.split("\\.");
+			final StringBuilder sb = new StringBuilder();
+			for (final String s : chunks) {
+				sb.append(Strings.toProperCase(s.trim()));
+				sb.append(" ");
+			}
+
+			return sb.toString();
 		}
 
-		return result;
+		return phrase;
 	}
 
 	/*
@@ -252,6 +266,17 @@ public class RFC822name implements Serializable {
 		return "RFC822name [content=" + _content + "]";
 	}
 
+	public void clear() {
+		if (null != this._content) {
+			this._content.clear();
+		}
+	}
+
+	public void parseRFC82xContent(final String source) {
+		this.clear();
+		this.parseContent(source);
+	}
+
 	/*
 	 * ******************************************************************
 	 * ******************************************************************
@@ -262,143 +287,113 @@ public class RFC822name implements Serializable {
 	 * ******************************************************************
 	 */
 
-	private void computeInternetAddress(final String source) {
+	public void setAddr822Comment(final int commentnumber, final String comment) {
+		Addr82xParts key = null;
 
+		switch (commentnumber) {
+		case 1:
+			key = Addr82xParts.Comment1;
+			break;
+		case 2:
+			key = Addr82xParts.Comment2;
+			break;
+		case 3:
+			key = Addr82xParts.Comment3;
+			break;
+		default:
+			return;
+		}
+
+		this.setPart(key, comment);
+	}
+
+	/**
+	 * Retrieves and sets the various content values by parsing an input source string.
+	 * 
+	 * @param source
+	 *            String from which to parse the content values.
+	 */
+	private void parseContent(final String source) {
 		if ((null != source) && (source.length() > 0)) {
-	
-				// final String pattern = "^\".*\".*<.*@.*>$";
-				// /*
-				// * Match Pattern: "username" <useremail@domain.suffix>
-				// *
-				// * pattern definition:
-				// *
-				// * ^ match the beginning of the string
-				// *
-				// * \" match a double quote
-				// *
-				// * . match any single character
-				// *
-				// * * match the preceding match character zero or more times.
-				// *
-				// * \" match a double quote
-				// *
-				// * . match any single character
-				// *
-				// * * match the preceding match character zero or more times.
-				// *
-				// * < match a less thank character
-				// *
-				// * . match any single character
-				// *
-				// * * match the preceding match character zero or more times.
-				// *
-				// * @ match an ampersand character
-				// *
-				// * . match any single character
-				// *
-				// * * match the preceding match character zero or more times.
-				// *
-				// * > match a greater than character
-				// *
-				// * $ match the preceding match instructions against the end of
-				// * the string.
-				// */
-				final String pattern = "^.*<.*@.*>$";
-				/*
-				 * Match Pattern: anytext<useremail@domain.suffix>
-				 * 
-				 * pattern definition:
-				 * 
-				 * ^ match the beginning of the string
-				 * 
-				 * . match any single character
-				 * 
-				 * * match the preceding match character zero or more times.
-				 * 
-				 * < match a less thank character
-				 * 
-				 * . match any single character
-				 * 
-				 * * match the preceding match character zero or more times.
-				 * 
-				 * @ match an ampersand character
-				 * 
-				 * . match any single character
-				 * 
-				 * * match the preceding match character zero or more times.
-				 * 
-				 * > match a greater than character
-				 * 
-				 * $ match the preceding match instructions against the end of the string.
-				 */
-				if (source.matches(pattern)) {
-					// test matches <useremail@domain.suffix>
-					String common = "";
-					final String username = Strings.left(source, "<").trim();
-					final String patternquoted = "^\".*\"$";
-					/*
-					 * Match Pattern: "username"
-					 * 
-					 * pattern definition:
-					 * 
-					 * ^ match the beginning of the string
-					 * 
-					 * \" match a double quote
-					 * 
-					 * . match any single character
-					 * 
-					 * * match the preceding match character zero or more times.
-					 * 
-					 * \" match a double quote
-					 * 
-					 * $ match the preceding match instructions against the end of the string.
-					 */
-					if (username.matches(patternquoted)) {
-						final Pattern patternname = Pattern.compile("\"(.+?)\"");
-						final Matcher matchername = patternname.matcher(source);
-						matchername.find(); // get the text between the ""
-						common = matchername.group(1);
-					} else {
-						common = username;
-					}
+			final String pattern = "^.*<.*>.*$";
+			/*
+			 * Match Pattern: anytext<anytext>anytext
+			 * 
+			 * pattern definition:
+			 * 
+			 * ^ match the beginning of the string
+			 * 
+			 * . match any single character
+			 * 
+			 * * match the preceding match character zero or more times.
+			 * 
+			 * < match a less than character
+			 * 
+			 * . match any single character
+			 * 
+			 * * match the preceding match character zero or more times.
+			 * 
+			 * > match a greater than character
+			 * 
+			 * . match any single character
+			 * 
+			 * * match the preceding match character zero or more times.
+			 * 
+			 * $ match the preceding match instructions against the end of the string.
+			 */
+			if (source.matches(pattern)) {
+				// test matches anytext<anytext>anytext
+				// get the three primary chunks as phrase<internetaddress>comments from the source
 
-					if (common.indexOf(',') > 0) {
-						// assume name format of Lastname, Firstname and reverse
-						// to format of Firstname Lastname
-						final String[] chunks = common.split(",");
-						final StringBuilder sb = new StringBuilder();
-						for (int i = chunks.length - 1; i > -1; i--) {
-							sb.append(Strings.toProperCase(chunks[i].trim()));
-							sb.append(" ");
-						}
+				int idxLT = source.indexOf('<');
+				int idxGT = source.indexOf('>', idxLT);
 
-						common = sb.toString();
-
-					} else if (common.indexOf('.') > 0) {
-						// assume name format of Firstname.Lastname and strip
-						// out the period
-						final String[] chunks = common.split("\\.");
-						final StringBuilder sb = new StringBuilder();
-						for (final String s : chunks) {
-							sb.append(Strings.toProperCase(s.trim()));
-							sb.append(" ");
-						}
-
-						common = sb.toString();
-					}
-
-					if (!Strings.isBlankString(common)) {
-						name = CzarNames.createName(session, common);
-						this.setName(name);
-					}
-
-					final Pattern patternemail = Pattern.compile("<(.+?)>");
-					final Matcher matcheremail = patternemail.matcher(source);
-					matcheremail.find(); // get the text between the <>
-					final String email = matcheremail.group(1);
-					this.setInternetAddress(Strings.isBlankString(email) ? "" : email.toLowerCase());
+				// parse the phrase part
+				String phrase = (idxLT > 0) ? source.substring(0, idxLT).trim() : "";
+				if (phrase.length() > 0) {
+					this.setPart(Addr82xParts.Phrase, phrase.replaceAll("\"", "").trim());
 				}
 
+				// parse the internetaddress part
+				String internetaddress = (idxGT > (idxLT + 1)) ? source.substring(idxLT + 1, idxGT).trim() : "";
+				if ((internetaddress.length() > 0) && (internetaddress.indexOf('@') >= 0)) {
+					String[] chunks = internetaddress.split("@");
+					if (null != chunks) {
+						if (null != chunks[0]) {
+							this.setPart(Addr82xParts.Local, chunks[0].trim());
+							if ((2 <= chunks.length) && (null != chunks[1])) {
+								this.setPart(Addr82xParts.Domain, chunks[1].trim());
+							}
+						}
+					}
+				}
+
+				// parse the comments part
+				String comments = (idxGT < source.length()) ? source.substring(idxGT).trim() : "";
+				if (comments.length() > 0) {
+					int idxParenOpen = comments.indexOf('(');
+					int idxParenClose = comments.indexOf(')');
+					if ((idxParenOpen < 0) || (idxParenClose < 0) || (idxParenClose < idxParenOpen)) {
+						// treat the entire comments string as a single comment.
+						this.setAddr822Comment(1, comments.replaceAll("(", "").replaceAll(")", "").trim());
+					} else {
+						for (int commentnumber = 1; commentnumber < 4; commentnumber++) {
+							String comment = comments.substring(idxParenOpen, idxParenClose).trim();
+							this.setAddr822Comment(commentnumber, comment);
+
+							idxParenOpen = comments.indexOf('(', idxParenClose);
+							if (idxParenOpen < idxParenClose) {
+								break;
+							}
+							idxParenClose = comments.indexOf(')', idxParenOpen);
+							if (idxParenClose < idxParenOpen) {
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/*
