@@ -628,7 +628,7 @@ public enum Names {
 				}
 			}
 
-			final Pattern pattern = CzarDACL.getPatternForRoles();
+			final Pattern pattern = DACL.getPatternForRoles();
 
 			// do a case insensitive check for constructed name matches
 			for (final String entry : names) {
