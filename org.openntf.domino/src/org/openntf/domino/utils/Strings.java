@@ -106,12 +106,6 @@ public class Strings {
 			throw new IllegalArgumentException("Unsupported IDTYPE");
 
 		} catch (final Exception e) {
-			//			if (null == idType) {
-			//				Core.logException(Core.CLASSNAME, e, "id: " + id, "idType: null");
-			//			} else {
-			//				Core.logException(Core.CLASSNAME, e, "id: " + id, "idType: " + idType.name());
-			//			}
-
 			DominoUtils.handleException(e);
 		}
 
@@ -506,13 +500,11 @@ public class Strings {
 			return "";
 		}
 		try {
-			final MessageDigest md = MessageDigest.getInstance(Core.MESSAGE_DIGEST_ALGORYTHM);
+			final MessageDigest md = MessageDigest.getInstance(Strings.MESSAGE_DIGEST_ALGORYTHM);
 			return Strings.hex(md.digest(arg0.getBytes(Strings.CHARSET_NAME)));
 		} catch (final NoSuchAlgorithmException e) {
-			//			Core.logException(Core.CLASSNAME, e, "NO SUCH ALGORITHM EXCEPTION", "arg0: " + arg0);
 			DominoUtils.handleException(e);
 		} catch (final UnsupportedEncodingException e) {
-			//			Core.logException(Core.CLASSNAME, e, "UNSUPPORTED ENCODING EXCEPTION", "arg0: " + arg0);
 			DominoUtils.handleException(e);
 		}
 		return "";
