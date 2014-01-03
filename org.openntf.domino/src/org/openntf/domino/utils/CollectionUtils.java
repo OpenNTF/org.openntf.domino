@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.openntf.domino.utils;
 
 import java.util.AbstractCollection;
@@ -11,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
-import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
@@ -20,15 +16,8 @@ import lotus.domino.NotesException;
  * 
  * @author Devin S. Olson (dolson@czarnowski.com)
  */
-public class CollectionUtils {
-	private static final Logger log_ = Logger.getLogger(CollectionUtils.class.getName());
-	private static final long serialVersionUID = 1L;
-
-	public static final String CLASSNAME = "org.openntf.domino.utils.CollectionUtils";
-
-	public CollectionUtils() {
-		super();
-	}
+public enum CollectionUtils {
+	;
 
 	/**
 	 * Gets or generates an List of Strings from an Item on a Document
@@ -53,8 +42,9 @@ public class CollectionUtils {
 			return (source.hasItem(itemname)) ? CollectionUtils.getListStrings(source.getItemValue(itemname)) : null;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
-			return null;
 		}
+
+		return null;
 	}
 
 	/**
