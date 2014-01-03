@@ -157,7 +157,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 			if (additionSpecifier instanceof lotus.domino.DocumentCollection) {
 				lotus.domino.Document doc = additionSpecifier.getFirstDocument();
 				lotus.domino.Document nextDoc = null;
-			while (doc != null) {
+				while (doc != null) {
 					nextDoc = additionSpecifier.getNextDocument(doc);
 					getDelegate().add(doc);
 					doc.recycle();
@@ -174,7 +174,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 					getDelegate().add((lotus.domino.Document) toLotus(doc));
 
 					doc = additionSpecifier.getNextDocument(doc);
-			}
+				}
 			}
 		} catch (NotesException e) {
 			//			e.printStackTrace();

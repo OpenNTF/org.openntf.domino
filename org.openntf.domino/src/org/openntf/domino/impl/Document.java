@@ -2207,7 +2207,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				}
 			} catch (IllegalArgumentException iae) {
 				result = this.replaceItemValueExt(itemName, value, iae);
-					}
+			}
 
 			if (this.shouldWriteItemMeta_) {
 				// If we've gotten this far, it must be legal - update or create the item info map
@@ -2772,7 +2772,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				if (result) {
 					Base.s_recycle(delegate);
 					this.setDelegate(null);
-			}
+				}
 				break;
 			case HARD_FALSE:
 				result = getDelegate().removePermanently(false);

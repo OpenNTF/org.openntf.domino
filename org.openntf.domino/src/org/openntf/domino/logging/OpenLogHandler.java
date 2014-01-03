@@ -39,8 +39,6 @@ public class OpenLogHandler extends Handler {
 		ol_ = new DominoOpenLogItem();
 	}
 
-	private boolean publishing = false;
-
 	/*
 	 * (non-Javadoc)
 	 * 
