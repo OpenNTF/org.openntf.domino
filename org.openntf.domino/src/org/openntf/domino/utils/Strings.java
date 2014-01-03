@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.openntf.domino.utils;
 
 import java.io.UnsupportedEncodingException;
@@ -10,7 +7,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
-import java.util.logging.Logger;
 
 /**
  * String Utilities
@@ -18,19 +14,17 @@ import java.util.logging.Logger;
  * @author Devin S. Olsonm (dolson@czarnowski.com)
  * 
  */
-public class Strings {
-	public static final String CLASSNAME = "org.openntf.domino.utils.Strings";
+public enum Strings {
+	;
 
 	public static final String MESSAGE_DIGEST_ALGORYTHM = "MD5";
 	public static final String MESSAGE_FORMULA_INVALID = "The Formula syntax is invalid.  ";
 	public static final String REGEX_NEWLINE = "\\r?\\n";
 
 	public static final String CHARSET_NAME = "CP1252";
-	public static final String DEFAULT_DELIMITER = "Ø";
-	// <ALT> + 0216 on numeric keypad
 
-	private static final Logger log_ = Logger.getLogger(Strings.class.getName());
-	private static final long serialVersionUID = 1L;
+	// <ALT> + 0216 on numeric keypad
+	public static final String DEFAULT_DELIMITER = "Ø";
 
 	/*
 	 * ************************************************************************
