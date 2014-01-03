@@ -15,96 +15,52 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.HashMap;
+import java.util.TreeSet;
+import java.util.logging.Logger;
+
 import lotus.domino.NotesException;
 
+import org.openntf.arpa.RFC822name;
+import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Names;
+import org.openntf.domino.utils.Strings;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Name.
  */
-public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> implements org.openntf.domino.Name {
-
-	/** The Constant serialVersionUID. */
+public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> implements org.openntf.domino.Name, Comparable<Name> {
+	private static final Logger log_ = Logger.getLogger(Name.class.getName());
 	private static final long serialVersionUID = 1L;
+	private HashMap<NameType, String> _nameParts;
+	private RFC822name _rfc822name;
+	private String SourceString;
+	private boolean Hierarchical;
 
-	/** The Constant DEFAULT_STR. */
-	private static final String DEFAULT_STR = "";
+	public static enum NameType {
+		Abbreviated, ADMD, Canonical, Common, Country, Generation, Given, Initials, Keyword, Language, Organization, OrgUnit1, OrgUnit2, OrgUnit3, OrgUnit4, PRMD, Surname, IDprefix;
 
-	/** The abbreviated. */
-	private String abbreviated = DEFAULT_STR;
+		@Override
+		public String toString() {
+			return this.name();
+		}
 
-	/** The addr821. */
-	private String addr821 = DEFAULT_STR;
-
-	/** The addr822comment1. */
-	private String addr822comment1 = DEFAULT_STR;
-
-	/** The addr822comment2. */
-	private String addr822comment2 = DEFAULT_STR;
-
-	/** The addr822comment3. */
-	private String addr822comment3 = DEFAULT_STR;
-
-	/** The addr822localpart. */
-	private String addr822localpart = DEFAULT_STR;
-
-	/** The addr822phrase. */
-	private String addr822phrase = DEFAULT_STR;
-
-	/** The admd. */
-	private String admd = DEFAULT_STR;
-
-	/** The canonical. */
-	private String canonical = DEFAULT_STR;
-
-	/** The common. */
-	private String common = DEFAULT_STR;
-
-	/** The country. */
-	private String country = DEFAULT_STR;
-
-	/** The generation. */
-	private String generation = DEFAULT_STR;
-
-	/** The given. */
-	private String given = DEFAULT_STR;
-
-	/** The initials. */
-	private String initials = DEFAULT_STR;
-
-	/** The keyword. */
-	private String keyword = DEFAULT_STR;
-
-	/** The language. */
-	private String language = DEFAULT_STR;
-
-	/** The organization. */
-	private String organization = DEFAULT_STR;
-
-	/** The orgunit1. */
-	private String orgunit1 = DEFAULT_STR;
-
-	/** The orgunit2. */
-	private String orgunit2 = DEFAULT_STR;
-
-	/** The orgunit3. */
-	private String orgunit3 = DEFAULT_STR;
-
-	/** The orgunit4. */
-	private String orgunit4 = DEFAULT_STR;
-
-	/** The prmd. */
-	private String prmd = DEFAULT_STR;
-
-	/** The surname. */
-	private String surname = DEFAULT_STR;
-
-	/** The hierarchical. */
-	private boolean hierarchical = false;
+		public String getInfo() {
+			return this.getDeclaringClass() + "." + this.getClass() + ":" + this.name();
+		}
+	};
 
 	/**
-	 * Instantiates a new name.
+	 * * Zero-Argument Constructor
+	 */
+	public Name() {
+		super(null, null);
+	}
+
+	/**
+	 * Default Constructor.
 	 * 
 	 * @param delegate
 	 *            the delegate
@@ -113,153 +69,352 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 */
 	public Name(final lotus.domino.Name delegate, final org.openntf.domino.Base<?> parent) {
 		super(null, parent);
-		initialize(delegate);
+		this.initialize(delegate);
 		Base.s_recycle(delegate);
 	}
 
+	//
+	//	/**
+	//	 * Optional Constructor
+	//	 * 
+	//	 * @param session
+	//	 *            Session used for Name processing
+	//	 * @param name
+	//	 *            Name from which to create the object
+	//	 */
+	//	public Name(final Session session, final Name name) {
+	//		try {
+	//			if (null == session) {
+	//				throw new IllegalArgumentException("Session is null");
+	//			}
+	//			this.initialize(name);
+	//			this.computeInternetAddress(session);
+	//
+	//		} catch (final Exception e) {
+	//			DominoUtils.logException(this, e);
+	//			throw new RuntimeException("EXCEPTION thrown in in Name Constructor()");
+	//		}
+	//	}
+	//
+
 	/**
-	 * Initialize.
+	 * Optional Constructor
 	 * 
-	 * @param delegate
-	 *            the delegate
+	 * @param session
+	 *            Session used for Name processing
 	 */
-	private void initialize(final lotus.domino.Name delegate) {
-		try {
-			abbreviated = delegate.getAbbreviated();
-			addr821 = delegate.getAddr821();
-			addr822comment1 = delegate.getAddr822Comment1();
-			addr822comment2 = delegate.getAddr822Comment2();
-			addr822comment3 = delegate.getAddr822Comment3();
-			addr822localpart = delegate.getAddr822LocalPart();
-			addr822phrase = delegate.getAddr822Phrase();
-			admd = delegate.getADMD();
-			canonical = delegate.getCanonical();
-			common = delegate.getCommon();
-			country = delegate.getCountry();
-			generation = delegate.getGeneration();
-			given = delegate.getGiven();
-			initials = delegate.getInitials();
-			keyword = delegate.getKeyword();
-			language = delegate.getLanguage();
-			organization = delegate.getOrganization();
-			orgunit1 = delegate.getOrgUnit1();
-			orgunit2 = delegate.getOrgUnit2();
-			orgunit3 = delegate.getOrgUnit3();
-			orgunit4 = delegate.getOrgUnit4();
-			prmd = delegate.getPRMD();
-			surname = delegate.getSurname();
-			hierarchical = delegate.isHierarchical();
-		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
+	public Name(final org.openntf.domino.Session session) {
+		super(null, session);
+		this.initialize(session, session.getEffectiveUserName());
+	}
+
+	/**
+	 * Optional Constructor
+	 * 
+	 * @param session
+	 *            Session used for Name processing
+	 */
+	public Name(final lotus.domino.Session session) {
+		super(null, (org.openntf.domino.Base<?>) Factory.fromLotus(session, org.openntf.domino.Session.class, null));
+		org.openntf.domino.Session s = Factory.fromLotus(session, org.openntf.domino.Session.class, null);
+		this.initialize(s, s.getEffectiveUserName());
+	}
+
+	/**
+	 * Optional Constructor
+	 * 
+	 * @param session
+	 *            Session used for Name processing
+	 * 
+	 * @param name
+	 *            String used to construct the Name object
+	 */
+	public Name(final org.openntf.domino.Session session, final String name) {
+		super(null, session);
+		this.initialize(session, name);
+	}
+
+	/**
+	 * Optional Constructor
+	 * 
+	 * @param session
+	 *            Session used for Name processing
+	 * 
+	 * @param name
+	 *            String used to construct the Name object
+	 */
+	public Name(final lotus.domino.Session session, final String name) {
+		super(null, (org.openntf.domino.Base<?>) Factory.fromLotus(session, org.openntf.domino.Session.class, null));
+		org.openntf.domino.Session s = Factory.fromLotus(session, org.openntf.domino.Session.class, null);
+		this.initialize(s, name);
+	}
+
+	/**
+	 * Optional Constructor
+	 * 
+	 * @param name
+	 *            String used to construct the Name object
+	 */
+	public Name(final String name) {
+		super(null, (org.openntf.domino.Base<?>) Factory.getSession());
+		this.initialize(Factory.getSession(), name);
+	}
+
+	/**
+	 * Resets the object.
+	 */
+	public void clear() {
+		this.Hierarchical = false;
+		if (null != this._nameParts) {
+			this._nameParts.clear();
+		}
+
+		if (null != this._rfc822name) {
+			this._rfc822name.clear();
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getADMD()
+	/**
+	 * Reloads the object
 	 */
-	public String getADMD() {
-		return admd;
+	public void reload(final Name name) {
+		this.initialize(name);
 	}
 
 	/*
-	 * (non-Javadoc)
+	 * ******************************************************************
+	 * ******************************************************************
 	 * 
-	 * @see org.openntf.domino.Name#getAbbreviated()
+	 * Serializable getters & setters
+	 * 
+	 * ******************************************************************
+	 * ******************************************************************
 	 */
-	public String getAbbreviated() {
-		return abbreviated;
+
+	public boolean isHierarchical() {
+		return this.Hierarchical;
+	}
+
+	public void setHierarchical(final boolean arg0) {
+		this.Hierarchical = arg0;
+	}
+
+	public RFC822name getRFC822name() {
+		if (null == this._rfc822name) {
+			this._rfc822name = new RFC822name();
+		}
+		return this._rfc822name;
+	}
+
+	public void setRFC822name(final RFC822name rfc822name) {
+		this._rfc822name = rfc822name;
+	}
+
+	public HashMap<NameType, String> getNameParts() {
+		if (null == this._nameParts) {
+			this._nameParts = new HashMap<NameType, String>();
+		}
+
+		return this._nameParts;
+	}
+
+	public void setNameParts(final HashMap<NameType, String> nameParts) {
+		this._nameParts = nameParts;
+	}
+
+	/**
+	 * @param sourceString
+	 *            the sourceString to set
+	 */
+	public void setSourceString(final String sourceString) {
+		this.SourceString = sourceString;
+	}
+
+	/**
+	 * @return the sourceString
+	 */
+	public String getSourceString() {
+		return this.SourceString;
 	}
 
 	/*
-	 * (non-Javadoc)
+	 * ******************************************************************
+	 * ******************************************************************
 	 * 
-	 * @see org.openntf.domino.Name#getAddr821()
+	 * private methods
+	 * 
+	 * ******************************************************************
+	 * ******************************************************************
 	 */
-	public String getAddr821() {
-		return this.addr821;
+	private void initialize(final lotus.domino.Name delegate) {
+		try {
+			if (null == delegate) {
+				throw new IllegalArgumentException("Source Name is null");
+			}
+
+			this.clear();
+			this.setHierarchical(delegate.isHierarchical());
+			this.setName(delegate);
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+			throw new RuntimeException("EXCEPTION thrown in in Name.initialize()");
+		}
 	}
+
+	private void initialize(final Name name) {
+		this.initialize(name.getDelegate());
+	}
+
+	private void initialize(final String name) {
+		try {
+			if (Strings.isBlankString(name)) {
+				throw new IllegalArgumentException("Source name is null or blank");
+			}
+
+			Name n = (Name) Factory.getSession().createName(name);
+			if (null == name) {
+				throw new RuntimeException("Unable to create Name object");
+			}
+
+			this.initialize(name);
+			this.parseRFC82xContent(name);
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+			throw new RuntimeException("EXCEPTION thrown in in Name.initialize()");
+		}
+	}
+
+	//	private void computeInternetAddress(final Session session) {
+	//
+	//		Name name = null;
+	//		try {
+	//			final String sourceString = this.getSourceString();
+	//
+	//			if (!Strings.isBlankString(sourceString)) {
+	//				final String pattern = "^.*<.*@.*>$";
+	//				/*
+	//				 * Match Pattern: anytext<useremail@domain.suffix>
+	//				 * 
+	//				 * pattern definition:
+	//				 * 
+	//				 * ^ match the beginning of the string
+	//				 * 
+	//				 * . match any single character
+	//				 * 
+	//				 * * match the preceding match character zero or more times.
+	//				 * 
+	//				 * < match a less thank character
+	//				 * 
+	//				 * . match any single character
+	//				 * 
+	//				 * * match the preceding match character zero or more times.
+	//				 * 
+	//				 * @ match an ampersand character
+	//				 * 
+	//				 * . match any single character
+	//				 * 
+	//				 * * match the preceding match character zero or more times.
+	//				 * 
+	//				 * > match a greater than character
+	//				 * 
+	//				 * $ match the preceding match instructions against the end of the string.
+	//				 */
+	//				if (sourceString.matches(pattern)) {
+	//					// test matches <useremail@domain.suffix>
+	//					String common = "";
+	//					final String username = Strings.left(sourceString, "<").trim();
+	//					final String patternquoted = "^\".*\"$";
+	//					/*
+	//					 * Match Pattern: "username"
+	//					 * 
+	//					 * pattern definition:
+	//					 * 
+	//					 * ^ match the beginning of the string
+	//					 * 
+	//					 * \" match a double quote
+	//					 * 
+	//					 * . match any single character
+	//					 * 
+	//					 * * match the preceding match character zero or more times.
+	//					 * 
+	//					 * \" match a double quote
+	//					 * 
+	//					 * $ match the preceding match instructions against the end of the string.
+	//					 */
+	//					if (username.matches(patternquoted)) {
+	//						final Pattern patternname = Pattern.compile("\"(.+?)\"");
+	//						final Matcher matchername = patternname.matcher(sourceString);
+	//						matchername.find(); // get the text between the ""
+	//						common = matchername.group(1);
+	//					} else {
+	//						common = username;
+	//					}
+	//
+	//					if (common.indexOf(',') > 0) {
+	//						// assume name format of Lastname, Firstname and reverse
+	//						// to format of Firstname Lastname
+	//						final String[] chunks = common.split(",");
+	//						final StringBuilder sb = new StringBuilder();
+	//						for (int i = chunks.length - 1; i > -1; i--) {
+	//							sb.append(Strings.toProperCase(chunks[i].trim()));
+	//							sb.append(" ");
+	//						}
+	//
+	//						common = sb.toString();
+	//
+	//					} else if (common.indexOf('.') > 0) {
+	//						// assume name format of Firstname.Lastname and strip
+	//						// out the period
+	//						final String[] chunks = common.split("\\.");
+	//						final StringBuilder sb = new StringBuilder();
+	//						for (final String s : chunks) {
+	//							sb.append(Strings.toProperCase(s.trim()));
+	//							sb.append(" ");
+	//						}
+	//
+	//						common = sb.toString();
+	//					}
+	//
+	//					if (!Strings.isBlankString(common)) {
+	//						name = Names.createName(session, common);
+	//						this.setName(name);
+	//					}
+	//
+	//					final Pattern patternemail = Pattern.compile("<(.+?)>");
+	//					final Matcher matcheremail = patternemail.matcher(sourceString);
+	//					matcheremail.find(); // get the text between the <>
+	//					final String email = matcheremail.group(1);
+	//					this.setInternetAddress(Strings.isBlankString(email) ? "" : email.toLowerCase());
+	//				}
+	//			}
+	//
+	//		} catch (final Exception e) {
+	//			DominoUtils.handleException(e);
+	//		} finally {
+	//			DominoUtils.incinerate(name);
+	//		}
+	//	}
 
 	/*
-	 * (non-Javadoc)
+	 * ******************************************************************
+	 * ******************************************************************
 	 * 
-	 * @see org.openntf.domino.Name#getAddr822Comment1()
-	 */
-	public String getAddr822Comment1() {
-		return this.addr822comment1;
-	}
-
-	/*
-	 * (non-Javadoc)
+	 * protected methods
 	 * 
-	 * @see org.openntf.domino.Name#getAddr822Comment2()
+	 * ******************************************************************
+	 * ******************************************************************
 	 */
-	public String getAddr822Comment2() {
-		return this.addr822comment2;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getAddr822Comment3()
-	 */
-	public String getAddr822Comment3() {
-		return this.addr822comment3;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getAddr822LocalPart()
-	 */
-	public String getAddr822LocalPart() {
-		return this.addr822localpart;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getAddr822Phrase()
-	 */
-	public String getAddr822Phrase() {
-		return this.addr822phrase;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getCanonical()
-	 */
-	public String getCanonical() {
-		return canonical;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getCommon()
-	 */
-	public String getCommon() {
-		return common;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getCountry()
-	 */
-	public String getCountry() {
-		return country;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.impl.Base#getDelegate()
 	 */
 	@Override
 	protected lotus.domino.Name getDelegate() {
 		try {
-			return this.getParent().getDelegate().createName(this.getCanonical());
+			//		return this.getParent().getDelegate().createName(this.getCanonical());
+			org.openntf.domino.impl.Session s = (org.openntf.domino.impl.Session) this.getParent();
+			return s.getDelegate().createName(this.getCanonical());
 		} catch (NotesException ne) {
 			DominoUtils.handleException(ne);
 			return null;
@@ -267,102 +422,393 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	}
 
 	/*
-	 * (non-Javadoc)
+	 * ******************************************************************
+	 * ******************************************************************
 	 * 
-	 * @see org.openntf.domino.Name#getGeneration()
+	 * Other public methods
+	 * 
+	 * ******************************************************************
+	 * ******************************************************************
 	 */
+
+	@Override
+	public String toString() {
+		return this.getCanonical();
+	}
+
+	public void parseRFC82xContent(final String source) {
+		this.getRFC822name().parseRFC82xContent(source);
+	}
+
+	public void setName(final lotus.domino.Name name) {
+		try {
+			if (null == name) {
+				throw new IllegalArgumentException("Source Name is null");
+			}
+
+			final HashMap<NameType, String> p = this.getNameParts();
+			p.put(Name.NameType.Abbreviated, name.getAbbreviated());
+			p.put(Name.NameType.ADMD, name.getADMD());
+			p.put(Name.NameType.Canonical, name.getCanonical());
+			p.put(Name.NameType.Common, name.getCommon());
+			p.put(Name.NameType.Country, name.getCountry());
+			p.put(Name.NameType.Generation, name.getGeneration());
+			p.put(Name.NameType.Given, name.getGiven());
+			p.put(Name.NameType.Initials, name.getInitials());
+			p.put(Name.NameType.Keyword, name.getKeyword());
+			p.put(Name.NameType.Language, name.getLanguage());
+			p.put(Name.NameType.Organization, name.getOrganization());
+			p.put(Name.NameType.OrgUnit1, name.getOrgUnit1());
+			p.put(Name.NameType.OrgUnit2, name.getOrgUnit2());
+			p.put(Name.NameType.OrgUnit3, name.getOrgUnit3());
+			p.put(Name.NameType.OrgUnit4, name.getOrgUnit4());
+			p.put(Name.NameType.PRMD, name.getPRMD());
+			p.put(Name.NameType.Surname, name.getSurname());
+
+			String phrase = name.getAddr822Phrase();
+			String addr821 = name.getAddr821();
+			if ((null != addr821) && (addr821.trim().length() > 0)) {
+				StringBuilder sb = new StringBuilder((null == phrase) ? "" : phrase.trim());
+				sb.append("<");
+				sb.append(addr821);
+				sb.append(">");
+
+				String comment1 = name.getAddr822Comment1();
+				if ((null != comment1) && (comment1.trim().length() > 0)) {
+					sb.append("(");
+					sb.append(comment1);
+					sb.append(")");
+				}
+
+				String comment2 = name.getAddr822Comment2();
+				if ((null != comment2) && (comment2.trim().length() > 0)) {
+					sb.append("(");
+					sb.append(comment2);
+					sb.append(")");
+				}
+
+				String comment3 = name.getAddr822Comment3();
+				if ((null != comment3) && (comment3.trim().length() > 0)) {
+					sb.append("(");
+					sb.append(comment3);
+					sb.append(")");
+				}
+
+				this.parseRFC82xContent(sb.toString());
+			}
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	public void setName(final org.openntf.domino.Name name) {
+		try {
+			if (null == name) {
+				throw new IllegalArgumentException("Source Name is null");
+			}
+
+			final HashMap<NameType, String> p = this.getNameParts();
+			p.put(Name.NameType.Abbreviated, name.getAbbreviated());
+			p.put(Name.NameType.ADMD, name.getADMD());
+			p.put(Name.NameType.Canonical, name.getCanonical());
+			p.put(Name.NameType.Common, name.getCommon());
+			p.put(Name.NameType.Country, name.getCountry());
+			p.put(Name.NameType.Generation, name.getGeneration());
+			p.put(Name.NameType.Given, name.getGiven());
+			p.put(Name.NameType.Initials, name.getInitials());
+			p.put(Name.NameType.Keyword, name.getKeyword());
+			p.put(Name.NameType.Language, name.getLanguage());
+			p.put(Name.NameType.Organization, name.getOrganization());
+			p.put(Name.NameType.OrgUnit1, name.getOrgUnit1());
+			p.put(Name.NameType.OrgUnit2, name.getOrgUnit2());
+			p.put(Name.NameType.OrgUnit3, name.getOrgUnit3());
+			p.put(Name.NameType.OrgUnit4, name.getOrgUnit4());
+			p.put(Name.NameType.PRMD, name.getPRMD());
+			p.put(Name.NameType.Surname, name.getSurname());
+
+			String phrase = name.getAddr822Phrase();
+			String addr821 = name.getAddr821();
+			if ((null != addr821) && (addr821.trim().length() > 0)) {
+				StringBuilder sb = new StringBuilder((null == phrase) ? "" : phrase.trim());
+				sb.append("<");
+				sb.append(addr821);
+				sb.append(">");
+
+				String comment1 = name.getAddr822Comment1();
+				if ((null != comment1) && (comment1.trim().length() > 0)) {
+					sb.append("(");
+					sb.append(comment1);
+					sb.append(")");
+				}
+
+				String comment2 = name.getAddr822Comment2();
+				if ((null != comment2) && (comment2.trim().length() > 0)) {
+					sb.append("(");
+					sb.append(comment2);
+					sb.append(")");
+				}
+
+				String comment3 = name.getAddr822Comment3();
+				if ((null != comment3) && (comment3.trim().length() > 0)) {
+					sb.append("(");
+					sb.append(comment3);
+					sb.append(")");
+				}
+
+				this.parseRFC82xContent(sb.toString());
+			}
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	public String getNamePart(final Name.NameType arg0) {
+		try {
+			if (null == arg0) {
+				throw new IllegalArgumentException("NameType is null");
+			}
+
+			final String result = this.getNameParts().get(arg0);
+			return (null == result) ? "" : result;
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return "";
+	}
+
+	public String getAbbreviated() {
+		return this.getNamePart(Name.NameType.Abbreviated);
+	}
+
+	public String getAddr821() {
+		return this.getRFC822name().getAddr821();
+	}
+
+	public String getAddr822Comment1() {
+		return this.getRFC822name().getAddr822Comment1();
+	}
+
+	public String getAddr822Comment2() {
+		return this.getRFC822name().getAddr822Comment2();
+	}
+
+	public String getAddr822Comment3() {
+		return this.getRFC822name().getAddr822Comment3();
+	}
+
+	public String getAddr822LocalPart() {
+		return this.getRFC822name().getAddr822LocalPart();
+	}
+
+	public String getAddr822Phrase() {
+		return this.getRFC822name().getAddr822Phrase();
+	}
+
+	public String getAddr822Full() {
+		return this.getRFC822name().getAddr822Full();
+	}
+
+	public String getAddr822FullFirstLast() {
+		return this.getRFC822name().getAddr822FullFirstLast();
+	}
+
+	public String getADMD() {
+		return this.getNamePart(Name.NameType.ADMD);
+	}
+
+	public String getCanonical() {
+		return this.getNamePart(Name.NameType.Canonical);
+	}
+
+	public String getCommon() {
+		return this.getNamePart(Name.NameType.Common);
+	}
+
+	public String getCountry() {
+		return this.getNamePart(Name.NameType.Country);
+	}
+
 	public String getGeneration() {
-		return generation;
+		return this.getNamePart(Name.NameType.Generation);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getGiven()
-	 */
 	public String getGiven() {
-		return given;
+		return this.getNamePart(Name.NameType.Given);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getInitials()
-	 */
 	public String getInitials() {
-		return initials;
+		return this.getNamePart(Name.NameType.Initials);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getKeyword()
-	 */
 	public String getKeyword() {
-		return keyword;
+		return this.getNamePart(Name.NameType.Keyword);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getLanguage()
-	 */
 	public String getLanguage() {
-		return language;
+		return this.getNamePart(Name.NameType.Language);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getOrgUnit1()
-	 */
-	public String getOrgUnit1() {
-		return orgunit1;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getOrgUnit2()
-	 */
-	public String getOrgUnit2() {
-		return orgunit2;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getOrgUnit3()
-	 */
-	public String getOrgUnit3() {
-		return orgunit3;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getOrgUnit4()
-	 */
-	public String getOrgUnit4() {
-		return orgunit4;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getOrganization()
-	 */
 	public String getOrganization() {
-		return organization;
+		return this.getNamePart(Name.NameType.Organization);
+	}
+
+	public String getOrgUnit1() {
+		return this.getNamePart(Name.NameType.OrgUnit1);
+	}
+
+	public String getOrgUnit2() {
+		return this.getNamePart(Name.NameType.OrgUnit2);
+	}
+
+	public String getOrgUnit3() {
+		return this.getNamePart(Name.NameType.OrgUnit3);
+	}
+
+	public String getOrgUnit4() {
+		return this.getNamePart(Name.NameType.OrgUnit4);
+	}
+
+	public String getPRMD() {
+		return this.getNamePart(Name.NameType.PRMD);
+	}
+
+	public String getSurname() {
+		return this.getNamePart(Name.NameType.Surname);
+	}
+
+	public boolean equalsIgnoreCase(final String checkstring) {
+		try {
+			if (!Strings.isBlankString(checkstring)) {
+
+				if (checkstring.equalsIgnoreCase(this.getCanonical()) || checkstring.equalsIgnoreCase(this.getAbbreviated())
+						|| checkstring.equalsIgnoreCase(this.getCommon())) {
+					return true;
+				} else {
+
+					for (final String s : this.getNameParts().values()) {
+						if (checkstring.equalsIgnoreCase(s)) {
+							return true;
+						}
+					}
+				}
+			}
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determines if one of the Name's properties begins with the prefix.
+	 * 
+	 * Checks the following properties, in order:
+	 * <ul>
+	 * <li>Abbreviated</li>
+	 * <li>Canonical</li>
+	 * </ul>
+	 * 
+	 * @param prefix
+	 *            Value to compare to the properties of the Name
+	 * 
+	 * @param casesensitive
+	 *            Flag indicating if Case-Sensitive comparisons should be enforced.
+	 * 
+	 * @return DocumentHandles whose named String Item Value begins with the prefix. Returns null if no matches found.
+	 */
+	public boolean startsWith(final String prefix, final boolean casesensitive) {
+		try {
+			if (null == prefix) {
+				throw new IllegalArgumentException("Prefix is null");
+			}
+
+			return (casesensitive) ? ((this.getAbbreviated().startsWith(prefix)) || (this.getCanonical().startsWith(prefix))) : ((Strings
+					.startsWithIgnoreCase(this.getAbbreviated(), prefix)) || (Strings.startsWithIgnoreCase(this.getCanonical(), prefix)));
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return false;
+	}
+
+	public String getIDprefix() {
+		String result = this.getNamePart(Name.NameType.IDprefix);
+		if (Strings.isBlankString(result)) {
+
+			final String alphanumericandspacacesonly = this.getCommon().toUpperCase().trim().replaceAll("[^A-Za-z0-9 ]", "");
+			final int idx = alphanumericandspacacesonly.indexOf(" ");
+			String firstname = alphanumericandspacacesonly;
+			String lastname = alphanumericandspacacesonly;
+
+			if (idx > 0) {
+				final String[] chunks = alphanumericandspacacesonly.split(" ");
+				firstname = chunks[0].trim().replaceAll("[^A-Za-z0-9]", "");
+				lastname = chunks[chunks.length - 1].replaceAll("[^A-Za-z0-9]", "");
+			}
+
+			final StringBuilder sb = new StringBuilder(firstname.substring(0, 1));
+			sb.append(lastname.substring(0, 2));
+			sb.append(lastname.substring(lastname.length() - 1));
+			while (sb.length() < 4) {
+				sb.append("X");
+			}
+
+			result = sb.toString();
+			this.getNameParts().put(Name.NameType.IDprefix, result);
+		}
+
+		return result;
+	}
+
+	public boolean isMemberOfNames(final Session session, final TreeSet<String> names, final boolean expandNames) {
+		try {
+			if (null == session) {
+				throw new IllegalArgumentException("Session is null");
+			}
+			if (null == names) {
+				throw new IllegalArgumentException("Names is null");
+			}
+
+			for (final String string : names) {
+				if (this.getCanonical().equalsIgnoreCase(string) || this.getAbbreviated().equalsIgnoreCase(string)
+						|| this.getCommon().equalsIgnoreCase(string)) {
+					return true;
+				}
+			}
+
+			if (expandNames) {
+				final TreeSet<String> expanded = Names.expandNamesList(session, names);
+				if (null != expanded) {
+					for (final String string : expanded) {
+						if (this.getCanonical().equalsIgnoreCase(string) || this.getAbbreviated().equalsIgnoreCase(string)
+								|| this.getCommon().equalsIgnoreCase(string)) {
+							return true;
+						}
+					}
+				}
+			}
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return false;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.openntf.domino.Name#getPRMD()
+	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
 	 */
-	public String getPRMD() {
-		return prmd;
+	@Override
+	public Session getAncestorSession() {
+		return this.getParent();
 	}
 
 	/*
@@ -376,216 +822,125 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	}
 
 	/*
-	 * (non-Javadoc)
+	 * ******************************************************************
+	 * ******************************************************************
 	 * 
-	 * @see org.openntf.domino.Name#getSurname()
+	 * hashcode, equals, and comparison methods
+	 * 
+	 * ******************************************************************
+	 * ******************************************************************
 	 */
-	public String getSurname() {
-		return surname;
+
+	//	/*
+	//	 * (non-Javadoc)
+	//	 * 
+	//	 * @see java.lang.Object.hashCode()
+	//	 */
+	//	@Override
+	//	public int hashCode() {
+	//		final int prime = 31;
+	//		int result = 1;
+	//		result = (prime * result) + (this.Hierarchical ? 1231 : 1237);
+	//		result = (prime * result) + ((null == this.SourceString) ? 0 : this.SourceString.hashCode());
+	//		result = (prime * result) + ((null == this.InternetAddress) ? 0 : this.InternetAddress.hashCode());
+	//		result = (prime * result) + ((Strings.isBlankString(this.getCanonical())) ? 0 : this.getCanonical().hashCode());
+	//		return result;
+	//	}
+	//
+	//	/*
+	//	 * (non-Javadoc)
+	//	 * 
+	//	 * @see java.lang.Object#equals(java.lang.Object)
+	//	 */
+	//	@Override
+	//	public boolean equals(final Object obj) {
+	//		if (this == obj) {
+	//			return true;
+	//		}
+	//		if (null == obj) {
+	//			return false;
+	//		}
+	//		if (!(obj instanceof Name)) {
+	//			return false;
+	//		}
+	//
+	//		final Name other = (Name) obj;
+	//		if (null == this.SourceString) {
+	//			if (null != other.SourceString) {
+	//				return false;
+	//			}
+	//		} else if (!this.SourceString.equals(other.SourceString)) {
+	//			return false;
+	//		}
+	//
+	//		if (this.Hierarchical != other.Hierarchical) {
+	//			return false;
+	//		}
+	//
+	//		if (null == this.InternetAddress) {
+	//			if (null != other.InternetAddress) {
+	//				return false;
+	//			}
+	//		} else if (!this.InternetAddress.equals(other.InternetAddress)) {
+	//			return false;
+	//		}
+	//
+	//		if (Strings.isBlankString(this.getCanonical())) {
+	//			if (!Strings.isBlankString(other.getCanonical())) {
+	//				return false;
+	//			}
+	//		}
+	//
+	//		return (this.getCanonical().equals(other.getCanonical()));
+	//	}
+
+	/**
+	 * Compares this object with another Name
+	 * 
+	 * @param arg0
+	 *            Name object to be compared.
+	 * 
+	 * @return a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.
+	 * 
+	 * 
+	 * @see java.lang.Comparable#compareTo(Object)
+	 * @see packers.czardev.util.Core#LESS_THAN
+	 * @see packers.czardev.util.Core#EQUAL
+	 * @see packers.czardev.util.Core#GREATER_THAN
+	 */
+	public int compareTo(final Name arg0) {
+		return Name.compare(this, arg0);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Default Comparable implementation. (Natural Comparison Method)
 	 * 
-	 * @see org.openntf.domino.Name#isHierarchical()
+	 * <ol>
+	 * <li>Equality using .equals() method</li>
+	 * <li>Abbreviated Name</li>
+	 * </ol>
+	 * 
+	 * @param arg0
+	 *            First Name object for comparison.
+	 * @param arg1
+	 *            Second Name object for comparison.
+	 * 
+	 * @return a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.
+	 * 
+	 * 
+	 * @see java.lang.Comparable#compareTo(Object)
+	 * @see packers.czardev.util.Core#LESS_THAN
+	 * @see packers.czardev.util.Core#EQUAL
+	 * @see packers.czardev.util.Core#GREATER_THAN
 	 */
-	public boolean isHierarchical() {
-		return hierarchical;
-	}
+	public static int compare(final Name arg0, final Name arg1) {
+		if (null == arg0) {
+			return (null == arg1) ? DominoUtils.EQUAL : DominoUtils.LESS_THAN;
+		} else if (null == arg1) {
+			return DominoUtils.GREATER_THAN;
+		}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((abbreviated == null) ? 0 : abbreviated.hashCode());
-		result = prime * result + ((addr821 == null) ? 0 : addr821.hashCode());
-		result = prime * result + ((addr822comment1 == null) ? 0 : addr822comment1.hashCode());
-		result = prime * result + ((addr822comment2 == null) ? 0 : addr822comment2.hashCode());
-		result = prime * result + ((addr822comment3 == null) ? 0 : addr822comment3.hashCode());
-		result = prime * result + ((addr822localpart == null) ? 0 : addr822localpart.hashCode());
-		result = prime * result + ((addr822phrase == null) ? 0 : addr822phrase.hashCode());
-		result = prime * result + ((admd == null) ? 0 : admd.hashCode());
-		result = prime * result + ((canonical == null) ? 0 : canonical.hashCode());
-		result = prime * result + ((common == null) ? 0 : common.hashCode());
-		result = prime * result + ((country == null) ? 0 : country.hashCode());
-		result = prime * result + ((generation == null) ? 0 : generation.hashCode());
-		result = prime * result + ((given == null) ? 0 : given.hashCode());
-		result = prime * result + (hierarchical ? 1231 : 1237);
-		result = prime * result + ((initials == null) ? 0 : initials.hashCode());
-		result = prime * result + ((keyword == null) ? 0 : keyword.hashCode());
-		result = prime * result + ((language == null) ? 0 : language.hashCode());
-		result = prime * result + ((organization == null) ? 0 : organization.hashCode());
-		result = prime * result + ((orgunit1 == null) ? 0 : orgunit1.hashCode());
-		result = prime * result + ((orgunit2 == null) ? 0 : orgunit2.hashCode());
-		result = prime * result + ((orgunit3 == null) ? 0 : orgunit3.hashCode());
-		result = prime * result + ((orgunit4 == null) ? 0 : orgunit4.hashCode());
-		result = prime * result + ((prmd == null) ? 0 : prmd.hashCode());
-		result = prime * result + ((surname == null) ? 0 : surname.hashCode());
-		return result;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Name other = (Name) obj;
-		if (abbreviated == null) {
-			if (other.abbreviated != null)
-				return false;
-		} else if (!abbreviated.equals(other.abbreviated))
-			return false;
-		if (addr821 == null) {
-			if (other.addr821 != null)
-				return false;
-		} else if (!addr821.equals(other.addr821))
-			return false;
-		if (addr822comment1 == null) {
-			if (other.addr822comment1 != null)
-				return false;
-		} else if (!addr822comment1.equals(other.addr822comment1))
-			return false;
-		if (addr822comment2 == null) {
-			if (other.addr822comment2 != null)
-				return false;
-		} else if (!addr822comment2.equals(other.addr822comment2))
-			return false;
-		if (addr822comment3 == null) {
-			if (other.addr822comment3 != null)
-				return false;
-		} else if (!addr822comment3.equals(other.addr822comment3))
-			return false;
-		if (addr822localpart == null) {
-			if (other.addr822localpart != null)
-				return false;
-		} else if (!addr822localpart.equals(other.addr822localpart))
-			return false;
-		if (addr822phrase == null) {
-			if (other.addr822phrase != null)
-				return false;
-		} else if (!addr822phrase.equals(other.addr822phrase))
-			return false;
-		if (admd == null) {
-			if (other.admd != null)
-				return false;
-		} else if (!admd.equals(other.admd))
-			return false;
-		if (canonical == null) {
-			if (other.canonical != null)
-				return false;
-		} else if (!canonical.equals(other.canonical))
-			return false;
-		if (common == null) {
-			if (other.common != null)
-				return false;
-		} else if (!common.equals(other.common))
-			return false;
-		if (country == null) {
-			if (other.country != null)
-				return false;
-		} else if (!country.equals(other.country))
-			return false;
-		if (generation == null) {
-			if (other.generation != null)
-				return false;
-		} else if (!generation.equals(other.generation))
-			return false;
-		if (given == null) {
-			if (other.given != null)
-				return false;
-		} else if (!given.equals(other.given))
-			return false;
-		if (hierarchical != other.hierarchical)
-			return false;
-		if (initials == null) {
-			if (other.initials != null)
-				return false;
-		} else if (!initials.equals(other.initials))
-			return false;
-		if (keyword == null) {
-			if (other.keyword != null)
-				return false;
-		} else if (!keyword.equals(other.keyword))
-			return false;
-		if (language == null) {
-			if (other.language != null)
-				return false;
-		} else if (!language.equals(other.language))
-			return false;
-		if (organization == null) {
-			if (other.organization != null)
-				return false;
-		} else if (!organization.equals(other.organization))
-			return false;
-		if (orgunit1 == null) {
-			if (other.orgunit1 != null)
-				return false;
-		} else if (!orgunit1.equals(other.orgunit1))
-			return false;
-		if (orgunit2 == null) {
-			if (other.orgunit2 != null)
-				return false;
-		} else if (!orgunit2.equals(other.orgunit2))
-			return false;
-		if (orgunit3 == null) {
-			if (other.orgunit3 != null)
-				return false;
-		} else if (!orgunit3.equals(other.orgunit3))
-			return false;
-		if (orgunit4 == null) {
-			if (other.orgunit4 != null)
-				return false;
-		} else if (!orgunit4.equals(other.orgunit4))
-			return false;
-		if (prmd == null) {
-			if (other.prmd != null)
-				return false;
-		} else if (!prmd.equals(other.prmd))
-			return false;
-		if (surname == null) {
-			if (other.surname != null)
-				return false;
-		} else if (!surname.equals(other.surname))
-			return false;
-		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Name [abbreviated=" + abbreviated + ", addr821=" + addr821 + ", addr822comment1=" + addr822comment1 + ", addr822comment2="
-				+ addr822comment2 + ", addr822comment3=" + addr822comment3 + ", addr822localpart=" + addr822localpart + ", addr822phrase="
-				+ addr822phrase + ", admd=" + admd + ", canonical=" + canonical + ", common=" + common + ", country=" + country
-				+ ", generation=" + generation + ", given=" + given + ", initials=" + initials + ", keyword=" + keyword + ", language="
-				+ language + ", organization=" + organization + ", orgunit1=" + orgunit1 + ", orgunit2=" + orgunit2 + ", orgunit3="
-				+ orgunit3 + ", orgunit4=" + orgunit4 + ", prmd=" + prmd + ", surname=" + surname + ", hierarchical=" + hierarchical + "]";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.types.SessionDescendant#getAncestorSession()
-	 */
-	@Override
-	public Session getAncestorSession() {
-		return this.getParent();
+		return (arg0.equals(arg1)) ? DominoUtils.EQUAL : arg0.getAbbreviated().compareTo(arg1.getAbbreviated());
 	}
 
 }
