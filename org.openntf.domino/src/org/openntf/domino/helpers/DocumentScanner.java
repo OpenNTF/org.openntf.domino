@@ -289,7 +289,7 @@ public class DocumentScanner {
 	public static final Pattern REGEX_SUFFIX_TRIM = Pattern.compile("\\W*$");
 	public static final Pattern REGEX_PREFIX_TRIM = Pattern.compile("^\\W*");
 	public static final Pattern REGEX_PUNCTUATION = Pattern.compile("\\p{P}");
-	public static final Pattern REGEX_NONALPHANUMERIC = Pattern.compile("[^a-zA-Z0-9-]");
+	public static final Pattern REGEX_NONALPHANUMERIC = Pattern.compile("[^a-zA-Z0-9-']");
 
 	public static CaseInsensitiveString scrubToken(final String token) {
 		Matcher puncMatch = REGEX_PREFIX_TRIM.matcher(token);
@@ -380,7 +380,7 @@ public class DocumentScanner {
 											while (s.hasNext()) {
 												CaseInsensitiveString token = scrubToken(s.next());
 												if (token != null && (token.length() > 2) && !isStopped(token)) {
-													processToken(token, name, unid);
+													processToken(token, name, unid, doc);
 												}
 											}
 										}
@@ -391,7 +391,7 @@ public class DocumentScanner {
 									while (s.hasNext()) {
 										CaseInsensitiveString token = scrubToken(s.next());
 										if (token != null && (token.length() > 2) && !isStopped(token)) {
-											processToken(token, name, unid);
+											processToken(token, name, unid, doc);
 										}
 									}
 								}
@@ -436,7 +436,7 @@ public class DocumentScanner {
 		}
 	}
 
-	private void processToken(final CaseInsensitiveString token, final CaseInsensitiveString itemName, final String unid) {
+	private void processToken(final CaseInsensitiveString token, final CaseInsensitiveString itemName, final String unid, final Document doc) {
 		Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> tlmap = getTokenLocationMap();
 		Map<CaseInsensitiveString, Integer> tfmap = getTokenFreqMap();
 		Map<CaseInsensitiveString, NavigableSet<CaseInsensitiveString>> tmap = getFieldTokenMap();
@@ -459,18 +459,18 @@ public class DocumentScanner {
 			Map<CaseInsensitiveString, Set<String>> tlval = tlmap.get(token);
 			if (tlval.containsKey(itemName)) {
 				Set<String> tllist = tlval.get(itemName);
-				if (!tllist.contains(unid)) {
-					tllist.add(unid);
+				if (!tllist.contains(unid + doc.getFormName())) {
+					tllist.add(unid + doc.getFormName());
 				}
 			} else {
 				Set<String> tllist = new HashSet<String>();
-				tllist.add(unid);
+				tllist.add(unid + doc.getFormName());
 				tlval.put(itemName, tllist);
 			}
 		} else {
 			Map<CaseInsensitiveString, Set<String>> tlval = new HashMap<CaseInsensitiveString, Set<String>>();
 			Set<String> tllist = new HashSet<String>();
-			tllist.add(unid);
+			tllist.add(unid + doc.getFormName());
 			tlval.put(itemName, tllist);
 			tlmap.put(token, tlval);
 		}

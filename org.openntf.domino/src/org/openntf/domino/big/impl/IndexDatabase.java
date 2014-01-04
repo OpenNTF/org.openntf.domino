@@ -182,7 +182,11 @@ public class IndexDatabase {
 			if (!db.getReplicaID().equals(getIndexDb().getReplicaID())) {
 				System.out.println("Scanning database " + db.getApiPath());
 				if (!db.getFilePath().equalsIgnoreCase("redpill\\graph.nsf")) {
-					scanDatabase(db);
+					try {
+						scanDatabase(db);
+					} catch (Throwable t) {
+						t.printStackTrace();
+					}
 				}
 			}
 		}
