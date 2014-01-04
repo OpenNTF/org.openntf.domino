@@ -66,6 +66,18 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 		database_ = database;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DesignBase#getDxlString()
+	 */
+	public String getDxlString() {
+		try {
+			return getDxl().getXml();
+		} catch (IOException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -430,7 +442,7 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 	}
 
 	protected XMLNode getFlagsExtNode() {
-		XMLNode flagsNode = getDxl().selectSingleNode("//item[@name='$FlagExts']/text");
+		XMLNode flagsNode = getDxl().selectSingleNode("//item[@name='$FlagExt']/text");
 		if (flagsNode != null) {
 			return flagsNode;
 		} else {

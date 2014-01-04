@@ -57,6 +57,18 @@ public abstract class AbstractDesignBase implements DesignBase {
 		database_ = database;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DesignBase#getDxlString()
+	 */
+	public String getDxlString() {
+		try {
+			return getDxl().getXml();
+		} catch (IOException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
