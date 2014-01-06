@@ -75,6 +75,10 @@ public interface Document {
 
 	public boolean containsValues(final Map<String, Object> filterMap);
 
+	public String getMetaversalID();
+
+	public String getMetaversalID(String serverName);
+
 	// public <T> T getItemValue(String name, Class<?> T, ClassLoader loader) throws ItemNotFoundException, DataNotCompatibleException;
 
 }

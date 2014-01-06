@@ -3135,4 +3135,20 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		}
 		return sw.toString();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Document#getMetaversalID()
+	 */
+	public String getMetaversalID() {
+		String replid = getAncestorDatabase().getReplicaID();
+		String unid = getUniversalID();
+		return replid + unid;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Document#getMetaversalID(java.lang.String)
+	 */
+	public String getMetaversalID(final String serverName) {
+		return serverName + "!!" + getMetaversalID();
+	}
 }

@@ -111,6 +111,7 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 			}
 
 		}
+
 		return result;
 	}
 

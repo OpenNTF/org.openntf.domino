@@ -1735,4 +1735,34 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		}
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Session#getDocumentByMetaversalID(java.lang.String)
+	 */
+	public org.openntf.domino.Document getDocumentByMetaversalID(final String metaversalID) {
+		String serverName = "";
+		String id = "";
+		if (metaversalID.contains("!!")) {
+			int pos = metaversalID.indexOf("!!");
+			serverName = metaversalID.substring(0, pos);
+			id = metaversalID.substring(pos + 2);
+		} else {
+			id = metaversalID;
+		}
+		return getDocumentByMetaversalID(serverName, id);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Session#getDocumentByMetaversalID(java.lang.String, java.lang.String)
+	 */
+	public org.openntf.domino.Document getDocumentByMetaversalID(final String metaversalID, final String serverName) {
+		if (metaversalID.length() != 48) {
+			throw new IllegalArgumentException("MetaversalIDs must be 48 characters in length (16 for replicaID, 32 for unid)");
+		}
+		String replid = metaversalID.substring(0, 16);
+		String unid = metaversalID.substring(16);
+		org.openntf.domino.Database db = this.getDatabaseByReplicaID(serverName, replid);
+		org.openntf.domino.Document doc = db.getDocumentByUNID(unid);
+		return doc;
+	}
 }
