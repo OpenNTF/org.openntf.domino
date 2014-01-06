@@ -89,32 +89,6 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 * 
 	 * @param session
 	 *            Session used for Name processing
-	 */
-	public Name(final lotus.domino.Session session) {
-		super(null, (org.openntf.domino.Base<?>) Factory.fromLotus(session, org.openntf.domino.Session.class, null));
-		org.openntf.domino.Session s = Factory.fromLotus(session, org.openntf.domino.Session.class, null);
-		this.initialize(s.getEffectiveUserName());
-	}
-
-	/**
-	 * Optional Constructor
-	 * 
-	 * @param session
-	 *            Session used for Name processing
-	 * 
-	 * @param name
-	 *            String used to construct the Name object
-	 */
-	public Name(final org.openntf.domino.Session session, final String name) {
-		super(null, session);
-		this.initialize(name);
-	}
-
-	/**
-	 * Optional Constructor
-	 * 
-	 * @param session
-	 *            Session used for Name processing
 	 * 
 	 * @param name
 	 *            String used to construct the Name object
@@ -718,69 +692,6 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
-
-	//	/*
-	//	 * (non-Javadoc)
-	//	 * 
-	//	 * @see java.lang.Object.hashCode()
-	//	 */
-	//	@Override
-	//	public int hashCode() {
-	//		final int prime = 31;
-	//		int result = 1;
-	//		result = (prime * result) + (this.Hierarchical ? 1231 : 1237);
-	//		result = (prime * result) + ((null == this.SourceString) ? 0 : this.SourceString.hashCode());
-	//		result = (prime * result) + ((null == this.InternetAddress) ? 0 : this.InternetAddress.hashCode());
-	//		result = (prime * result) + ((Strings.isBlankString(this.getCanonical())) ? 0 : this.getCanonical().hashCode());
-	//		return result;
-	//	}
-	//
-	//	/*
-	//	 * (non-Javadoc)
-	//	 * 
-	//	 * @see java.lang.Object#equals(java.lang.Object)
-	//	 */
-	//	@Override
-	//	public boolean equals(final Object obj) {
-	//		if (this == obj) {
-	//			return true;
-	//		}
-	//		if (null == obj) {
-	//			return false;
-	//		}
-	//		if (!(obj instanceof Name)) {
-	//			return false;
-	//		}
-	//
-	//		final Name other = (Name) obj;
-	//		if (null == this.SourceString) {
-	//			if (null != other.SourceString) {
-	//				return false;
-	//			}
-	//		} else if (!this.SourceString.equals(other.SourceString)) {
-	//			return false;
-	//		}
-	//
-	//		if (this.Hierarchical != other.Hierarchical) {
-	//			return false;
-	//		}
-	//
-	//		if (null == this.InternetAddress) {
-	//			if (null != other.InternetAddress) {
-	//				return false;
-	//			}
-	//		} else if (!this.InternetAddress.equals(other.InternetAddress)) {
-	//			return false;
-	//		}
-	//
-	//		if (Strings.isBlankString(this.getCanonical())) {
-	//			if (!Strings.isBlankString(other.getCanonical())) {
-	//				return false;
-	//			}
-	//		}
-	//
-	//		return (this.getCanonical().equals(other.getCanonical()));
-	//	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
