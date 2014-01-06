@@ -4,24 +4,21 @@
 package org.openntf.domino.utils;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lotus.domino.Database;
-import lotus.domino.Document;
-import lotus.domino.NotesException;
-import lotus.domino.Session;
-import lotus.domino.View;
-import lotus.domino.ViewEntry;
-
+import org.openntf.domino.Database;
+import org.openntf.domino.Document;
 import org.openntf.domino.Name;
+import org.openntf.domino.Session;
+import org.openntf.domino.View;
+import org.openntf.domino.ViewEntry;
 import org.openntf.domino.impl.Name.NamePart;
 
 /**
@@ -32,15 +29,6 @@ import org.openntf.domino.impl.Name.NamePart;
  */
 public enum Names {
 	;
-
-	//	public static enum NAMETYPE {
-	//		Abbreviated, Canonical, Common;
-	//
-	//		@Override
-	//		public String toString() {
-	//			return this.getDeclaringClass() + "." + this.getClass() + ":" + this.name();
-	//		}
-	//	};
 
 	public static enum DIRECTORY_SEARCH_RESULT_TYPE {
 		Person("P"), Group("G"), Unknown("U");
@@ -82,46 +70,6 @@ public enum Names {
 				: ((string.indexOf('[') == 0) && (string.indexOf(']') == (string.length() - 1))) ? string : "[" + string + "]";
 	}
 
-	//	/**
-	//	 * Gets the approprite formatted name string for the given source.
-	//	 * 
-	//	 * @param session
-	//	 *            Session in effect for generating the name.
-	//	 * 
-	//	 * @param source
-	//	 *            Source string from which to generate the name
-	//	 * 
-	//	 * @param nametype
-	//	 *            Type of name string to return
-	//	 * 
-	//	 * @return source string converted to the appropriate name format
-	//	 */
-	//	public static String getNameString(final Session session, final String source, final Names.NAMETYPE nametype) {
-	//		lotus.domino.Name name = null;
-	//		try {
-	//			if (null == session) {
-	//				throw new IllegalArgumentException("Session is null");
-	//			}
-	//			if (null == nametype) {
-	//				throw new IllegalArgumentException("NameType is null");
-	//			}
-	//
-	//			final String seed = (Strings.isBlankString(source)) ? Names.getEffectiveUserName(session) : source;
-	//			name = Names.createName(session, seed);
-	//			final String result = (nametype.equals(Names.NAMETYPE.Abbreviated)) ? name.getAbbreviated() : (nametype
-	//					.equals(Names.NAMETYPE.Canonical)) ? name.getCanonical() : (nametype.equals(Names.NAMETYPE.Common)) ? name.getCommon()
-	//					: null;
-	//			name.recycle();
-	//			return Strings.toProperCase(result);
-	//
-	//		} catch (final Exception e) {
-	//			DominoUtils.handleException(e);
-	//		} finally {
-	//			DominoUtils.incinerate(name);
-	//		}
-	//
-	//		return null;
-	//	}
 	/**
 	 * Gets the approprite formatted name string for the given source.
 	 * 
@@ -145,7 +93,7 @@ public enum Names {
 				throw new IllegalArgumentException("NamePart is null");
 			}
 
-			final String seed = (Strings.isBlankString(source)) ? Names.getEffectiveUserName(session) : source;
+			final String seed = (Strings.isBlankString(source)) ? session.getEffectiveUserName() : source;
 			org.openntf.domino.impl.Name name = (org.openntf.domino.impl.Name) Names.createName(session, seed);
 			return name.getNamePart(part);
 
@@ -336,39 +284,7 @@ public enum Names {
 		return Names.getCommon(session, "");
 	}
 
-	public static String getEffectiveUserName(final Session session) {
-		try {
-			if (null == session) {
-				throw new IllegalArgumentException("Session is null");
-			}
-
-			return session.getEffectiveUserName();
-
-		} catch (final Exception e) {
-			DominoUtils.handleException(e);
-		}
-
-		return "";
-	}
-
-	public static Name createName(final Session session, final String source) {
-		try {
-			if (null == session) {
-				throw new IllegalArgumentException("Session is null");
-			}
-
-			//			return session.createName((Strings.isBlankString(source)) ? session.getEffectiveUserName() : source);
-			return new org.openntf.domino.impl.Name(session, source);
-
-		} catch (final Exception e) {
-			DominoUtils.handleException(e);
-		}
-
-		return null;
-	}
-
 	public static TreeSet<String> getRoles(final Session session, final Database database) {
-		lotus.domino.Name name = null;
 		try {
 			if (null == session) {
 				throw new IllegalArgumentException("Session is null");
@@ -377,20 +293,17 @@ public enum Names {
 				throw new IllegalArgumentException("Database is null");
 			}
 
-			name = Names.createName(session, Names.getEffectiveUserName(session));
-			return Names.getRoles(database, name);
+			return Names.getRoles(database, Names.getCanonical(session));
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
-		} finally {
-			DominoUtils.incinerate(name);
 		}
 
 		return null;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static TreeSet<String> getRoles(final Database database, final lotus.domino.Name name) {
+	public static TreeSet<String> getRoles(final Database database, final Name name) {
 		try {
 			if (null == database) {
 				throw new IllegalArgumentException("Database is null");
@@ -399,8 +312,7 @@ public enum Names {
 				throw new IllegalArgumentException("Name is null");
 			}
 
-			final List<String> roles = database.queryAccessRoles(name.getCanonical());
-			return (roles.size() > 0) ? new TreeSet<String>(roles) : null;
+			return Names.getRoles(database, name.getCanonical());
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
@@ -413,8 +325,6 @@ public enum Names {
 	public static HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> expandNamesList(final Session session, final TreeSet<String> searchfor,
 			final HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> searched) {
 
-		Database database = null;
-
 		HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> result = new HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE>();
 
 		try {
@@ -426,47 +336,36 @@ public enum Names {
 			}
 
 			if ((null != searchfor) && (searchfor.size() > 0)) {
-				final Vector<Database> books = session.getAddressBooks();
-				final Enumeration<Database> e = books.elements();
-				while (e.hasMoreElements()) {
-					database = e.nextElement();
+				final Collection<Database> books = session.getAddressBookCollection();
+				for (Database database : books) {
 					if (database.isPublicAddressBook()) {
-						try {
-							database.open();
-							if (database.isOpen()) {
-								final HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> found = Names.expandNamesList(session, database,
-										searchfor, result);
-								if ((null != found) && (found.size() > 0)) {
-									final Iterator<Map.Entry<String, DIRECTORY_SEARCH_RESULT_TYPE>> it = found.entrySet().iterator();
-									while (it.hasNext()) {
-										final Map.Entry<String, DIRECTORY_SEARCH_RESULT_TYPE> entry = it.next();
-										if (!result.containsKey(entry.getKey())) {
-											result.put(entry.getKey(), entry.getValue());
-										}
+						database.open();
+						if (database.isOpen()) {
+							final HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> found = Names.expandNamesList(session, database, searchfor,
+									result);
+							if ((null != found) && (found.size() > 0)) {
+								final Iterator<Map.Entry<String, DIRECTORY_SEARCH_RESULT_TYPE>> it = found.entrySet().iterator();
+								while (it.hasNext()) {
+									final Map.Entry<String, DIRECTORY_SEARCH_RESULT_TYPE> entry = it.next();
+									if (!result.containsKey(entry.getKey())) {
+										result.put(entry.getKey(), entry.getValue());
 									}
 								}
 							}
-
-						} catch (final NotesException ne) {
-							DominoUtils.handleException(ne);
 						}
 					}
-
-					DominoUtils.incinerate(database);
 				}
+
 			}
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
-		} finally {
-			DominoUtils.incinerate(database);
 		}
 
 		return result;
 	}
 
 	public static TreeSet<String> expandNamesList(final Session session, final Object source, final DIRECTORY_SEARCH_RESULT_TYPE... filters) {
-		lotus.domino.Name name = null;
 		try {
 			if (null == session) {
 				throw new IllegalArgumentException("Session is null");
@@ -485,8 +384,7 @@ public enum Names {
 					}
 					for (final String s : searchfor) {
 						if (!found.containsKey(s)) {
-							name = session.createName(s);
-							final String key = name.getAbbreviated();
+							final String key = Names.getAbbreviated(session, s);
 							if (!found.containsKey(key)) {
 								found.put(key, DIRECTORY_SEARCH_RESULT_TYPE.Unknown);
 							}
@@ -509,9 +407,10 @@ public enum Names {
 							}
 							if (include) {
 								if (DIRECTORY_SEARCH_RESULT_TYPE.Person.equals(value)) {
-									name = session.createName(key);
-									temp.put(name.getAbbreviated().toLowerCase(), name.getAbbreviated());
-									DominoUtils.incinerate(name);
+									String abbrev = Names.getAbbreviated(session, key);
+									if (!Strings.isBlankString(key)) {
+										temp.put(abbrev.toLowerCase(), abbrev);
+									}
 								} else {
 									temp.put(key.toLowerCase(), key);
 								}
@@ -527,8 +426,6 @@ public enum Names {
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
-		} finally {
-			DominoUtils.incinerate(name);
 		}
 
 		return null;
@@ -538,17 +435,18 @@ public enum Names {
 		return Names.expandNamesList(session, source, DIRECTORY_SEARCH_RESULT_TYPE.values());
 	}
 
-	/*
-	 * ************************************************************************
-	 * ************************************************************************
-	 * 
-	 * NAMEHANDLE methods
-	 * 
-	 * ************************************************************************
-	 * ************************************************************************
-	 */
+	public static Name createName(final Session session, final String source) {
+		try {
+			return new org.openntf.domino.impl.Name(session, source);
 
-	public static Name getNameFromDocumentItem(final Session session, final Document document, final String itemname) {
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return null;
+	}
+
+	public static Name createName(final Session session, final Document document, final String itemname) {
 		try {
 			if (null == document) {
 				throw new IllegalArgumentException("Document is null");
@@ -558,10 +456,8 @@ public enum Names {
 			}
 
 			final String string = document.getItemValueString(itemname);
-			//			return (Strings.isBlankString(string)) ? null : Names.getNameHandleFromString(session, string);
-			return (Strings.isBlankString(string)) ? null : new org.openntf.domino.impl.Name(session, string);
+			return (Strings.isBlankString(string)) ? null : Names.createName(session, string);
 
-			// return new NameHandle(session, string);
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
 		}
@@ -585,7 +481,6 @@ public enum Names {
 				if (checkroles.size() > 0) {
 					for (final String s : sourcenames) {
 						if (!Strings.isBlankString(s)) {
-							//							final Name namehandle = Names.getNameHandleFromString(session, s);
 							final Name name = new org.openntf.domino.impl.Name(session, s);
 							if (!result.contains(name)) {
 								final TreeSet<String> roles = CollectionUtils.getTreeSetStrings(database.queryAccessRoles(name
@@ -604,6 +499,7 @@ public enum Names {
 					}
 				}
 			}
+
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
 		}
@@ -619,7 +515,6 @@ public enum Names {
 
 	public static boolean isNamesListMember(final Session session, final TreeSet<String> names, final Name name) {
 
-		lotus.domino.Name entryname = null;
 		try {
 			if (null == session) {
 				throw new IllegalArgumentException("Session is null");
@@ -659,39 +554,19 @@ public enum Names {
 				final Matcher matcher = pattern.matcher(entry);
 				if (!matcher.matches()) {
 					// entry is not a role
-					entryname = Names.createName(session, entry);
+					Name entryname = Names.createName(session, entry);
 					if (entryname.getAbbreviated().equalsIgnoreCase(abbreviated)) {
 						return true;
 					}
-
-					DominoUtils.incinerate(entryname);
 				}
 			}
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
-		} finally {
-			DominoUtils.incinerate(entryname);
 		}
 
 		return false;
 	}
-
-	//	public static boolean isNamesListMember(final Session session, final TreeSet<String> names, final lotus.domino.Name checkname) {
-	//
-	//		try {
-	//			if (null == checkname) {
-	//				throw new IllegalArgumentException("Name is null");
-	//			}
-	//
-	//			return Names.isNamesListMember(session, names, new NameHandle(checkname));
-	//
-	//		} catch (final Exception e) {
-	//			DominoUtils.handleException(e);
-	//		}
-	//
-	//		return false;
-	//	}
 
 	public static boolean isNamesListMember(final Session session, final TreeSet<String> names, final String checkname) {
 		try {
@@ -717,26 +592,6 @@ public enum Names {
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static TreeSet<String> getRoles(final Database database, final Name name) {
-		try {
-			if (null == database) {
-				throw new IllegalArgumentException("Database is null");
-			}
-			if (null == name) {
-				throw new IllegalArgumentException("Name is null");
-			}
-
-			final List<String> roles = database.queryAccessRoles(name.getCanonical());
-			return (roles.size() > 0) ? new TreeSet<String>(roles) : null;
-
-		} catch (final Exception e) {
-			DominoUtils.handleException(e);
-		}
-
-		return null;
-	}
-
 	/*
 	 * ************************************************************************
 	 * ************************************************************************
@@ -746,12 +601,28 @@ public enum Names {
 	 * ************************************************************************
 	 * ************************************************************************
 	 */
+	private static TreeSet<String> getRoles(final Database database, final String canonical) {
+		try {
+			if (null == database) {
+				throw new IllegalArgumentException("Database is null");
+			}
+			if (Strings.isBlankString(canonical)) {
+				throw new IllegalArgumentException("Canonical  is null");
+			}
+
+			final List<String> roles = database.queryAccessRoles(canonical);
+			return (roles.size() > 0) ? new TreeSet<String>(roles) : null;
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return null;
+	}
+
 	private static HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> expandNamesList(final Session session, final View view,
 			final TreeSet<String> searchfor, HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> searched) {
 
-		lotus.domino.Name name = null;
-		Document document = null;
-		ViewEntry vent = null;
 		HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> result = new HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE>();
 
 		try {
@@ -771,10 +642,9 @@ public enum Names {
 				for (final String s : searchfor) {
 					if ((!Strings.isBlankString(s)) && (!result.containsKey(s)) && (!searched.containsKey(s))) {
 						String key = s;
-						vent = view.getEntryByKey(key);
+						ViewEntry vent = view.getEntryByKey(key);
 						if (null == vent) {
-							name = session.createName(s);
-							key = name.getAbbreviated();
+							key = Names.getAbbreviated(session, s);
 							if ((!result.containsKey(key)) && (!searched.containsKey(key))) {
 								vent = view.getEntryByKey(key);
 							}
@@ -787,12 +657,13 @@ public enum Names {
 
 							} else if (DIRECTORY_SEARCH_RESULT_TYPE.Group.getKey().equalsIgnoreCase(tag)) {
 								result.put(key, DIRECTORY_SEARCH_RESULT_TYPE.Group);
-								document = vent.getDocument();
-								final TreeSet<String> treeset = CollectionUtils.getTreeSetStrings(document
+								Document document = vent.getDocument();
+
+								final TreeSet<String> ts = CollectionUtils.getTreeSetStrings(document
 										.getItemValue(DominoUtils.ITEMNAME_MEMBERS));
-								if (null != treeset) {
-									final HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> found = Names.expandNamesList(session, view,
-											treeset, result);
+								if (null != ts) {
+									final HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> found = Names.expandNamesList(session, view, ts,
+											result);
 									if ((null != found) && (found.size() > 0)) {
 										final Iterator<Map.Entry<String, DIRECTORY_SEARCH_RESULT_TYPE>> it = found.entrySet().iterator();
 										while (it.hasNext()) {
@@ -814,8 +685,6 @@ public enum Names {
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
-		} finally {
-			DominoUtils.incinerate(name, document, vent);
 		}
 
 		return result;
@@ -855,8 +724,6 @@ public enum Names {
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
-		} finally {
-			DominoUtils.incinerate(view);
 		}
 
 		return result;
