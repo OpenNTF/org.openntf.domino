@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
 
-import lotus.domino.NotesException;
+import org.openntf.domino.Document;
 
 /**
  * CollectionUtils utilities library
@@ -23,42 +23,14 @@ public enum CollectionUtils {
 	 * Gets or generates an List of Strings from an Item on a Document
 	 * 
 	 * @param source
-	 *            lotus.domino.Document from which to get or generate the result.
+	 *            Document from which to get or generate the result.
 	 * 
 	 * @param itemname
 	 *            Name of item from which to get the content
 	 * 
 	 * @return List of Strings retrieved or generated from the input. Returns null on error.
 	 */
-	public static List<String> getListStrings(final lotus.domino.Document source, final String itemname) {
-		if (null == source) {
-			throw new IllegalArgumentException("Source document is null");
-		}
-		if (Strings.isBlankString(itemname)) {
-			throw new IllegalArgumentException("ItemName is blank or null");
-		}
-
-		try {
-			return (source.hasItem(itemname)) ? CollectionUtils.getListStrings(source.getItemValue(itemname)) : null;
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-
-		return null;
-	}
-
-	/**
-	 * Gets or generates an List of Strings from an Item on a Document
-	 * 
-	 * @param source
-	 *            org.openntf.domino.Document from which to get or generate the result.
-	 * 
-	 * @param itemname
-	 *            Name of item from which to get the content
-	 * 
-	 * @return List of Strings retrieved or generated from the input. Returns null on error.
-	 */
-	public static List<String> getListStrings(final org.openntf.domino.Document source, final String itemname) {
+	public static List<String> getListStrings(final Document source, final String itemname) {
 		if (null == source) {
 			throw new IllegalArgumentException("Source document is null");
 		}
