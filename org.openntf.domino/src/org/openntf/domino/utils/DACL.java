@@ -691,35 +691,6 @@ public enum DACL {
 		return false;
 	}
 
-	//	/**
-	//	 * Determines if the passed in name is a member of the specified DACL for the document.
-	//	 * 
-	//	 * @param session
-	//	 *            Current Session
-	//	 * @param document
-	//	 *            Document to search for DACL
-	//	 * @param name
-	//	 *            Name to check
-	//	 * @param dacltype
-	//	 *            Type of DACL to check
-	//	 * 
-	//	 * @return Flag indicating if the name is a member of the specified DACL for the document.
-	//	 */
-	//	public static boolean isDACLmember(final Session session, final Document document, final Name name, final DACLtype dacltype) {
-	//		try {
-	//			if (null == name) {
-	//				throw new IllegalArgumentException("Name is null");
-	//			}
-	//
-	//			return DACL.isDACLmember(session, document, new NameHandle(name), dacltype);
-	//
-	//		} catch (final Exception e) {
-	//			DominoUtils.handleException(e);
-	//		}
-	//
-	//		return false;
-	//	}
-
 	/**
 	 * Determines if the current user is a member of the specified DACL for the document.
 	 * 
