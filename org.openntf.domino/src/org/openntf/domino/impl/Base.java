@@ -36,6 +36,7 @@ import org.openntf.domino.ext.Formula;
 import org.openntf.domino.thread.DominoLockSet;
 import org.openntf.domino.thread.DominoReference;
 import org.openntf.domino.thread.DominoReferenceQueue;
+import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -529,6 +530,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			}
 			// return toLotus(Factory.getSession(context).createDateTime((java.util.Calendar) value));
 		} else if (value instanceof CharSequence) {
+			return value.toString();
+		} else if (value instanceof CaseInsensitiveString) {
 			return value.toString();
 		} else if (value instanceof Pattern) {
 			return ((Pattern) value).pattern();

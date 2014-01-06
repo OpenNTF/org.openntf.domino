@@ -21,6 +21,7 @@ import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
+import org.openntf.domino.View;
 import org.openntf.domino.types.DocumentDescendant;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -322,6 +323,23 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 		if (documentId != null && !documentId.isEmpty()) {
 			Database database = getDatabase();
 			return database.getDocumentByUNID(documentId);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.RichTextDoclink#getView()
+	 */
+	public View getView() {
+		String viewId = getViewUnID();
+		if (viewId != null && !viewId.isEmpty()) {
+			// Use session.resolve to not run afoul of same-named views
+			Database database = getDatabase();
+			Session session = getAncestorSession();
+			String databaseUrl = database.getURL();
+			String url = databaseUrl.substring(0, databaseUrl.length() - "?OpenDatabase".length()) + "/" + viewId + "?OpenView";
+			return (View) session.resolve(url);
+
 		}
 		return null;
 	}

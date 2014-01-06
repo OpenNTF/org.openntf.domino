@@ -1236,7 +1236,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		if (lastModDate_ != null)
 			return lastModDate_;
 		try {
-			return DominoUtils.toJavaDateSafe(getDelegate().getLastModified());
+			lastModDate_ = DominoUtils.toJavaDateSafe(getDelegate().getLastModified());
+			return lastModDate_;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -2909,12 +2910,18 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	public int getModifiedNoteCount(final java.util.Date since) {
-		java.util.Date last = this.getLastModifiedDate();
-		if (since.after(last))
-			return 0;
-		Set<SelectOption> noteClass = new java.util.HashSet<SelectOption>();
-		noteClass.add(SelectOption.DOCUMENTS);
-		return getModifiedNoteCount(since, noteClass);
+		if (since == null) {
+			Set<SelectOption> noteClass = new java.util.HashSet<SelectOption>();
+			noteClass.add(SelectOption.DOCUMENTS);
+			return getModifiedNoteCount(since, noteClass);
+		} else {
+			java.util.Date last = this.getLastModifiedDate();
+			if (since.after(last))
+				return 0;
+			Set<SelectOption> noteClass = new java.util.HashSet<SelectOption>();
+			noteClass.add(SelectOption.DOCUMENTS);
+			return getModifiedNoteCount(since, noteClass);
+		}
 	}
 
 	private IDominoEventFactory localFactory_;

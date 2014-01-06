@@ -676,6 +676,16 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 */
 	@Override
 	public org.openntf.domino.Database getDatabase(final String server, final String db, final boolean createOnFail) {
+		// Handle quickly the case of .getDatabase("", "")
+		if ((server == null || server.isEmpty()) && (db == null || db.isEmpty())) {
+			try {
+				return Factory.fromLotus(getDelegate().getDatabase("", ""), Database.class, this);
+			} catch (NotesException e) {
+				DominoUtils.handleException(e);
+				return null;
+			}
+		}
+
 		// try {
 		lotus.domino.Database database = null;
 		org.openntf.domino.Database result = null;
@@ -1284,7 +1294,29 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public org.openntf.domino.Base<?> resolve(final String url) {
 		try {
-			return Factory.fromLotus(getDelegate().resolve(url), Base.class, this);
+			// This will return either a Database, View, Form, Document, or Agent
+			// All but the first require finding the parent database
+			lotus.domino.Base result = getDelegate().resolve(url);
+			lotus.domino.Database parent = null;
+			if (result instanceof lotus.domino.View) {
+				lotus.domino.View viewResult = (lotus.domino.View) result;
+				parent = viewResult.getParent();
+			} else if (result instanceof lotus.domino.Form) {
+				lotus.domino.Form formResult = (lotus.domino.Form) result;
+				parent = formResult.getParent();
+			} else if (result instanceof Document) {
+				lotus.domino.Document docResult = (lotus.domino.Document) result;
+				parent = docResult.getParentDatabase();
+			} else if (result instanceof Agent) {
+				lotus.domino.Agent agentResult = (lotus.domino.Agent) result;
+				parent = agentResult.getParent();
+			}
+			if (parent == null) {
+				return Factory.fromLotus(getDelegate().resolve(url), Base.class, this);
+			} else {
+				org.openntf.domino.Database database = Factory.fromLotus(parent, Database.class, this);
+				return Factory.fromLotus(getDelegate().resolve(url), Base.class, database);
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
