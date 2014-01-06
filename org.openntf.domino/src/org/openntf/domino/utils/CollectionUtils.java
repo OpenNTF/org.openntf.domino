@@ -245,9 +245,9 @@ public enum CollectionUtils {
 	 * 
 	 * @throws RuntimeException
 	 * @see java.lang.Comparable#compareTo(Object)
-	 * @see packers.czardev.util.Core#LESS_THAN
-	 * @see packers.czardev.util.Core#EQUAL
-	 * @see packers.czardev.util.Core#GREATER_THAN
+	 * @see DominoUtils#LESS_THAN
+	 * @see DominoUtils#EQUAL
+	 * @see DominoUtils#GREATER_THAN
 	 */
 	public static int compareStringArrays(final String[] stringarray0, final String[] stringarray1, final boolean descending) {
 		if (null == stringarray0) {
@@ -291,9 +291,9 @@ public enum CollectionUtils {
 	 * 
 	 * @throws RuntimeException
 	 * @see java.lang.Comparable#compareTo(Object)
-	 * @see packers.czardev.util.Core#LESS_THAN
-	 * @see packers.czardev.util.Core#EQUAL
-	 * @see packers.czardev.util.Core#GREATER_THAN
+	 * @see DominoUtils#LESS_THAN
+	 * @see DominoUtils#EQUAL
+	 * @see DominoUtils#GREATER_THAN
 	 */
 	public static int compareTreeSetStrings(final TreeSet<String> treeset0, final TreeSet<String> treeset1, final boolean descending) {
 		if (null == treeset0) {

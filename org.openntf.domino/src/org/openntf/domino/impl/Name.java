@@ -759,9 +759,9 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 * 
 	 * 
 	 * @see java.lang.Comparable#compareTo(Object)
-	 * @see packers.czardev.util.Core#LESS_THAN
-	 * @see packers.czardev.util.Core#EQUAL
-	 * @see packers.czardev.util.Core#GREATER_THAN
+	 * @see DominoUtils#LESS_THAN
+	 * @see DominoUtils#EQUAL
+	 * @see DominoUtils#GREATER_THAN
 	 */
 	public int compareTo(final Name arg0) {
 		return Name.compare(this, arg0);
@@ -784,9 +784,9 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 * 
 	 * 
 	 * @see java.lang.Comparable#compareTo(Object)
-	 * @see packers.czardev.util.Core#LESS_THAN
-	 * @see packers.czardev.util.Core#EQUAL
-	 * @see packers.czardev.util.Core#GREATER_THAN
+	 * @see DominoUtils#LESS_THAN
+	 * @see DominoUtils#EQUAL
+	 * @see DominoUtils#GREATER_THAN
 	 */
 	public static int compare(final Name arg0, final Name arg1) {
 		if (null == arg0) {
