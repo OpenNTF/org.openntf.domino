@@ -7,18 +7,12 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.openntf.domino.ACL;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
 import org.openntf.domino.Name;
 import org.openntf.domino.Session;
-//import lotus.domino.ACL;
-//import lotus.domino.Database;
-//import lotus.domino.Document;
-//import lotus.domino.Item;
-//import lotus.domino.Name;
-//import lotus.domino.Session;
-import org.openntf.domino.ACL;
 
 /**
  * Document Access Control List Tools & Utilities
@@ -36,8 +30,6 @@ public enum DACL {
 
 	// starts with "[", has any number of letters, spaces, hyphens, or underscores, ends with "]"
 	public static final String PATTERNTEXT_ROLES = "(?i)^\\[[a-z0-9 -_]+\\]$";
-
-	// public static final String PATTERNTEXT_ROLES = "(?i)^\\[[a-z]+\\]$";
 
 	public static enum DACLtype {
 		DACL_AUTHORS, DACL_READERS;
