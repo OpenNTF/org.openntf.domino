@@ -32,15 +32,8 @@ import org.openntf.domino.utils.Strings;
  * The Class Name.
  */
 public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> implements org.openntf.domino.Name, Comparable<Name> {
-	private static final Logger log_ = Logger.getLogger(Name.class.getName());
-	private static final long serialVersionUID = 1L;
-	private HashMap<NameType, String> _nameParts;
-	private RFC822name _rfc822name;
-	private String SourceString;
-	private boolean Hierarchical;
-
-	public static enum NameType {
-		Abbreviated, ADMD, Canonical, Common, Country, Generation, Given, Initials, Keyword, Language, Organization, OrgUnit1, OrgUnit2, OrgUnit3, OrgUnit4, PRMD, Surname, IDprefix;
+	public static enum NamePart {
+		Abbreviated, Addr821, Addr822Comment1, Addr822Comment2, Addr822Comment3, Addr822LocalPart, Addr822Phrase, ADMD, Canonical, Common, Country, Generation, Given, Initials, Keyword, Language, Organization, OrgUnit1, OrgUnit2, OrgUnit3, OrgUnit4, PRMD, Surname, IDprefix;
 
 		@Override
 		public String toString() {
@@ -51,6 +44,13 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 			return this.getDeclaringClass() + "." + this.getClass() + ":" + this.name();
 		}
 	};
+
+	private static final Logger log_ = Logger.getLogger(Name.class.getName());
+	private static final long serialVersionUID = 1L;
+	private HashMap<NamePart, String> _parts;
+	private RFC822name _rfc822name;
+	private String SourceString;
+	private boolean Hierarchical;
 
 	/**
 	 * * Zero-Argument Constructor
@@ -140,8 +140,8 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 */
 	public void clear() {
 		this.Hierarchical = false;
-		if (null != this._nameParts) {
-			this._nameParts.clear();
+		if (null != this._parts) {
+			this._parts.clear();
 		}
 
 		if (null != this._rfc822name) {
@@ -185,16 +185,16 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 		this._rfc822name = rfc822name;
 	}
 
-	public HashMap<NameType, String> getNameParts() {
-		if (null == this._nameParts) {
-			this._nameParts = new HashMap<NameType, String>();
+	public HashMap<NamePart, String> getNameParts() {
+		if (null == this._parts) {
+			this._parts = new HashMap<NamePart, String>();
 		}
 
-		return this._nameParts;
+		return this._parts;
 	}
 
-	public void setNameParts(final HashMap<NameType, String> nameParts) {
-		this._nameParts = nameParts;
+	public void setNameParts(final HashMap<NamePart, String> nameParts) {
+		this._parts = nameParts;
 	}
 
 	/**
@@ -257,7 +257,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 
 			this.initialize(n);
 
-			// call to initialize(n) may have cleared the RFC82x content
+			// parse again because initialize(n) may have cleared the RFC82x content
 			this.parseRFC82xContent(name);
 
 		} catch (final Exception e) {
@@ -302,7 +302,18 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 
 	@Override
 	public String toString() {
-		return this.getCanonical();
+		StringBuilder sb = new StringBuilder(Name.class.getName());
+		sb.append(" [");
+		for (NamePart key : NamePart.values()) {
+			String s = this.getNamePart(key);
+			if (!Strings.isBlankString(s)) {
+				sb.append(key.name() + "=" + s);
+			}
+		}
+
+		sb.append("]");
+
+		return sb.toString();
 	}
 
 	public void parseRFC82xContent(final String source) {
@@ -319,24 +330,24 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 				throw new IllegalArgumentException("Source Name is null");
 			}
 
-			final HashMap<NameType, String> p = this.getNameParts();
-			p.put(Name.NameType.Abbreviated, name.getAbbreviated());
-			p.put(Name.NameType.ADMD, name.getADMD());
-			p.put(Name.NameType.Canonical, name.getCanonical());
-			p.put(Name.NameType.Common, name.getCommon());
-			p.put(Name.NameType.Country, name.getCountry());
-			p.put(Name.NameType.Generation, name.getGeneration());
-			p.put(Name.NameType.Given, name.getGiven());
-			p.put(Name.NameType.Initials, name.getInitials());
-			p.put(Name.NameType.Keyword, name.getKeyword());
-			p.put(Name.NameType.Language, name.getLanguage());
-			p.put(Name.NameType.Organization, name.getOrganization());
-			p.put(Name.NameType.OrgUnit1, name.getOrgUnit1());
-			p.put(Name.NameType.OrgUnit2, name.getOrgUnit2());
-			p.put(Name.NameType.OrgUnit3, name.getOrgUnit3());
-			p.put(Name.NameType.OrgUnit4, name.getOrgUnit4());
-			p.put(Name.NameType.PRMD, name.getPRMD());
-			p.put(Name.NameType.Surname, name.getSurname());
+			final HashMap<NamePart, String> p = this.getNameParts();
+			p.put(Name.NamePart.Abbreviated, name.getAbbreviated());
+			p.put(Name.NamePart.ADMD, name.getADMD());
+			p.put(Name.NamePart.Canonical, name.getCanonical());
+			p.put(Name.NamePart.Common, name.getCommon());
+			p.put(Name.NamePart.Country, name.getCountry());
+			p.put(Name.NamePart.Generation, name.getGeneration());
+			p.put(Name.NamePart.Given, name.getGiven());
+			p.put(Name.NamePart.Initials, name.getInitials());
+			p.put(Name.NamePart.Keyword, name.getKeyword());
+			p.put(Name.NamePart.Language, name.getLanguage());
+			p.put(Name.NamePart.Organization, name.getOrganization());
+			p.put(Name.NamePart.OrgUnit1, name.getOrgUnit1());
+			p.put(Name.NamePart.OrgUnit2, name.getOrgUnit2());
+			p.put(Name.NamePart.OrgUnit3, name.getOrgUnit3());
+			p.put(Name.NamePart.OrgUnit4, name.getOrgUnit4());
+			p.put(Name.NamePart.PRMD, name.getPRMD());
+			p.put(Name.NamePart.Surname, name.getSurname());
 
 			String phrase = name.getAddr822Phrase();
 			String addr821 = name.getAddr821();
@@ -420,14 +431,35 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 		}
 	}
 
-	public String getNamePart(final Name.NameType key) {
+	public String getNamePart(final Name.NamePart key) {
 		try {
 			if (null == key) {
-				throw new IllegalArgumentException("NameType is null");
+				throw new IllegalArgumentException("NamePart is null");
 			}
 
-			final String result = this.getNameParts().get(key);
-			return (null == result) ? "" : result;
+			switch (key) {
+			case Addr821:
+				return this.getRFC822name().getAddr821();
+
+			case Addr822Comment1:
+				return this.getRFC822name().getAddr822Comment1();
+
+			case Addr822Comment2:
+				return this.getRFC822name().getAddr822Comment2();
+
+			case Addr822Comment3:
+				return this.getRFC822name().getAddr822Comment3();
+
+			case Addr822LocalPart:
+				return this.getRFC822name().getAddr822LocalPart();
+
+			case Addr822Phrase:
+				return this.getRFC822name().getAddr822Phrase();
+
+			default:
+				final String result = this.getNameParts().get(key);
+				return (null == result) ? "" : result;
+			}
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
@@ -437,31 +469,31 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	}
 
 	public String getAbbreviated() {
-		return this.getNamePart(Name.NameType.Abbreviated);
+		return this.getNamePart(Name.NamePart.Abbreviated);
 	}
 
 	public String getAddr821() {
-		return this.getRFC822name().getAddr821();
+		return this.getNamePart(Name.NamePart.Addr821);
 	}
 
 	public String getAddr822Comment1() {
-		return this.getRFC822name().getAddr822Comment1();
+		return this.getNamePart(Name.NamePart.Addr822Comment1);
 	}
 
 	public String getAddr822Comment2() {
-		return this.getRFC822name().getAddr822Comment2();
+		return this.getNamePart(Name.NamePart.Addr822Comment2);
 	}
 
 	public String getAddr822Comment3() {
-		return this.getRFC822name().getAddr822Comment3();
+		return this.getNamePart(Name.NamePart.Addr822Comment3);
 	}
 
 	public String getAddr822LocalPart() {
-		return this.getRFC822name().getAddr822LocalPart();
+		return this.getNamePart(Name.NamePart.Addr822LocalPart);
 	}
 
 	public String getAddr822Phrase() {
-		return this.getRFC822name().getAddr822Phrase();
+		return this.getNamePart(Name.NamePart.Addr822Phrase);
 	}
 
 	public String getAddr822Full() {
@@ -473,71 +505,71 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	}
 
 	public String getADMD() {
-		return this.getNamePart(Name.NameType.ADMD);
+		return this.getNamePart(Name.NamePart.ADMD);
 	}
 
 	public String getCanonical() {
-		return this.getNamePart(Name.NameType.Canonical);
+		return this.getNamePart(Name.NamePart.Canonical);
 	}
 
 	public String getCommon() {
-		return this.getNamePart(Name.NameType.Common);
+		return this.getNamePart(Name.NamePart.Common);
 	}
 
 	public String getCountry() {
-		return this.getNamePart(Name.NameType.Country);
+		return this.getNamePart(Name.NamePart.Country);
 	}
 
 	public String getGeneration() {
-		return this.getNamePart(Name.NameType.Generation);
+		return this.getNamePart(Name.NamePart.Generation);
 	}
 
 	public String getGiven() {
-		return this.getNamePart(Name.NameType.Given);
+		return this.getNamePart(Name.NamePart.Given);
 	}
 
 	public String getInitials() {
-		return this.getNamePart(Name.NameType.Initials);
+		return this.getNamePart(Name.NamePart.Initials);
 	}
 
 	public String getKeyword() {
-		return this.getNamePart(Name.NameType.Keyword);
+		return this.getNamePart(Name.NamePart.Keyword);
 	}
 
 	public String getLanguage() {
-		return this.getNamePart(Name.NameType.Language);
+		return this.getNamePart(Name.NamePart.Language);
 	}
 
 	public String getOrganization() {
-		return this.getNamePart(Name.NameType.Organization);
+		return this.getNamePart(Name.NamePart.Organization);
 	}
 
 	public String getOrgUnit1() {
-		return this.getNamePart(Name.NameType.OrgUnit1);
+		return this.getNamePart(Name.NamePart.OrgUnit1);
 	}
 
 	public String getOrgUnit2() {
-		return this.getNamePart(Name.NameType.OrgUnit2);
+		return this.getNamePart(Name.NamePart.OrgUnit2);
 	}
 
 	public String getOrgUnit3() {
-		return this.getNamePart(Name.NameType.OrgUnit3);
+		return this.getNamePart(Name.NamePart.OrgUnit3);
 	}
 
 	public String getOrgUnit4() {
-		return this.getNamePart(Name.NameType.OrgUnit4);
+		return this.getNamePart(Name.NamePart.OrgUnit4);
 	}
 
 	public String getPRMD() {
-		return this.getNamePart(Name.NameType.PRMD);
+		return this.getNamePart(Name.NamePart.PRMD);
 	}
 
 	public String getSurname() {
-		return this.getNamePart(Name.NameType.Surname);
+		return this.getNamePart(Name.NamePart.Surname);
 	}
 
 	public String getIDprefix() {
-		String result = this.getNamePart(Name.NameType.IDprefix);
+		String result = this.getNamePart(Name.NamePart.IDprefix);
 		if (Strings.isBlankString(result)) {
 
 			final String alphanumericandspacacesonly = this.getCommon().toUpperCase().trim().replaceAll("[^A-Za-z0-9 ]", "");
@@ -559,7 +591,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 			}
 
 			result = sb.toString();
-			this.getNameParts().put(Name.NameType.IDprefix, result);
+			this.getNameParts().put(Name.NamePart.IDprefix, result);
 		}
 
 		return result;
@@ -759,7 +791,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 		int result = 1;
 		result = prime * result + (Hierarchical ? 1231 : 1237);
 		result = prime * result + ((SourceString == null) ? 0 : SourceString.hashCode());
-		result = prime * result + ((_nameParts == null) ? 0 : _nameParts.hashCode());
+		result = prime * result + ((_parts == null) ? 0 : _parts.hashCode());
 		result = prime * result + ((_rfc822name == null) ? 0 : _rfc822name.hashCode());
 		return result;
 	}
@@ -789,11 +821,11 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 		} else if (!SourceString.equals(other.SourceString)) {
 			return false;
 		}
-		if (_nameParts == null) {
-			if (other._nameParts != null) {
+		if (_parts == null) {
+			if (other._parts != null) {
 				return false;
 			}
-		} else if (!_nameParts.equals(other._nameParts)) {
+		} else if (!_parts.equals(other._parts)) {
 			return false;
 		}
 		if (_rfc822name == null) {
