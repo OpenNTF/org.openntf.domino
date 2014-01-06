@@ -7,14 +7,18 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lotus.domino.ACL;
-import lotus.domino.Database;
-import lotus.domino.Document;
-import lotus.domino.Item;
-import lotus.domino.Name;
-import lotus.domino.Session;
-
-import org.openntf.domino.impl.NameHandle;
+import org.openntf.domino.Database;
+import org.openntf.domino.Document;
+import org.openntf.domino.Item;
+import org.openntf.domino.Name;
+import org.openntf.domino.Session;
+//import lotus.domino.ACL;
+//import lotus.domino.Database;
+//import lotus.domino.Document;
+//import lotus.domino.Item;
+//import lotus.domino.Name;
+//import lotus.domino.Session;
+import org.openntf.domino.ACL;
 
 /**
  * Document Access Control List Tools & Utilities
@@ -587,24 +591,23 @@ public enum DACL {
 	 * @param roles
 	 *            ACL Roles belonging to the name to check. (No verification is performed)
 	 * 
-	 * @param namehandle
-	 *            NameHandle to check
+	 * @param name
+	 *            Name to check
 	 * 
 	 * @return Flag indicating if the name (in any form) is a member of the dacl set, or if any intersection exists between dacl and roles.
 	 */
-	public static boolean isDACLmember(final Session session, final TreeSet<String> dacl, final TreeSet<String> roles,
-			final NameHandle namehandle) {
+	public static boolean isDACLmember(final Session session, final TreeSet<String> dacl, final TreeSet<String> roles, final Name name) {
 		try {
 			if (null == session) {
 				throw new IllegalArgumentException("Session is null");
 			}
-			if (null == namehandle) {
-				throw new IllegalArgumentException("NameHandle is null");
+			if (null == name) {
+				throw new IllegalArgumentException("Name is null");
 			}
 
 			if ((null != dacl) && (dacl.size() > 0)) {
 				// do an initial check on the name
-				if (dacl.contains(namehandle.getCanonical()) || dacl.contains(namehandle.getAbbreviated())) {
+				if (dacl.contains(name.getCanonical()) || dacl.contains(name.getAbbreviated())) {
 					return true;
 				}
 
@@ -644,53 +647,11 @@ public enum DACL {
 					}
 				}
 
-				return Names.isNamesListMember(session, dacl, namehandle);
+				return Names.isNamesListMember(session, dacl, name);
 			}
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
-		}
-
-		return false;
-	}
-
-	/**
-	 * Determines if the passed in name is a member of the specified DACL for the document.
-	 * 
-	 * @param session
-	 *            Current Session
-	 * @param document
-	 *            Document to search for DACL
-	 * @param namehandle
-	 *            NameHandle to check
-	 * @param dacltype
-	 *            Type of DACL to check
-	 * 
-	 * @return Flag indicating if the name is a member of the specified DACL for the document.
-	 */
-	public static boolean isDACLmember(final Session session, final Document document, final NameHandle namehandle, final DACLtype dacltype) {
-		try {
-			if (null == session) {
-				throw new IllegalArgumentException("Session is null");
-			}
-			if (null == namehandle) {
-				throw new IllegalArgumentException("Name is null");
-			}
-			if (null == document) {
-				throw new IllegalArgumentException("Document is null");
-			}
-			if (null == dacltype) {
-				throw new IllegalArgumentException("DACLtype is null");
-			}
-
-			final TreeSet<String> roles = Names.getRoles(document.getParentDatabase(), namehandle);
-			final TreeSet<String> dacl = (DACLtype.DACL_AUTHORS.equals(dacltype)) ? DACL.getDACLauthors(document) : (DACLtype.DACL_READERS
-					.equals(dacltype)) ? DACL.getDACLreaders(document) : null;
-
-			return DACL.isDACLmember(session, dacl, roles, namehandle);
-
-		} catch (final Exception e) {
-			CzarCore.logException(DACL.CLASSNAME, e);
 		}
 
 		return false;
@@ -712,11 +673,24 @@ public enum DACL {
 	 */
 	public static boolean isDACLmember(final Session session, final Document document, final Name name, final DACLtype dacltype) {
 		try {
+			if (null == session) {
+				throw new IllegalArgumentException("Session is null");
+			}
 			if (null == name) {
 				throw new IllegalArgumentException("Name is null");
 			}
+			if (null == document) {
+				throw new IllegalArgumentException("Document is null");
+			}
+			if (null == dacltype) {
+				throw new IllegalArgumentException("DACLtype is null");
+			}
 
-			return DACL.isDACLmember(session, document, new NameHandle(name), dacltype);
+			final TreeSet<String> roles = Names.getRoles(document.getParentDatabase(), name);
+			final TreeSet<String> dacl = (DACLtype.DACL_AUTHORS.equals(dacltype)) ? DACL.getDACLauthors(document) : (DACLtype.DACL_READERS
+					.equals(dacltype)) ? DACL.getDACLreaders(document) : null;
+
+			return DACL.isDACLmember(session, dacl, roles, name);
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
@@ -724,6 +698,35 @@ public enum DACL {
 
 		return false;
 	}
+
+	//	/**
+	//	 * Determines if the passed in name is a member of the specified DACL for the document.
+	//	 * 
+	//	 * @param session
+	//	 *            Current Session
+	//	 * @param document
+	//	 *            Document to search for DACL
+	//	 * @param name
+	//	 *            Name to check
+	//	 * @param dacltype
+	//	 *            Type of DACL to check
+	//	 * 
+	//	 * @return Flag indicating if the name is a member of the specified DACL for the document.
+	//	 */
+	//	public static boolean isDACLmember(final Session session, final Document document, final Name name, final DACLtype dacltype) {
+	//		try {
+	//			if (null == name) {
+	//				throw new IllegalArgumentException("Name is null");
+	//			}
+	//
+	//			return DACL.isDACLmember(session, document, new NameHandle(name), dacltype);
+	//
+	//		} catch (final Exception e) {
+	//			DominoUtils.handleException(e);
+	//		}
+	//
+	//		return false;
+	//	}
 
 	/**
 	 * Determines if the current user is a member of the specified DACL for the document.
