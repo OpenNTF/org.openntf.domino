@@ -107,6 +107,22 @@ public enum Strings {
 	}
 
 	/**
+	 * Generates a UniversalID from a String
+	 * 
+	 * wrapper method for {@link #getHash(String)}
+	 * 
+	 * @param string
+	 *            Source from which to generate the UniversalID.
+	 * 
+	 * @return UniversalID (MD5 Message Digest Hash)
+	 * 
+	 * @see #getHash(String)
+	 */
+	public static String generateUniversalID(final String string) {
+		return Strings.getHash(string);
+	}
+
+	/**
 	 * Generates a Hash from a string.
 	 * 
 	 * Uses the MD5 Message Digest Algorythm.
