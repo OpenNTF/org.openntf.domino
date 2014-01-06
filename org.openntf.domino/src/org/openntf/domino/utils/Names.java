@@ -21,7 +21,8 @@ import lotus.domino.Session;
 import lotus.domino.View;
 import lotus.domino.ViewEntry;
 
-import org.openntf.domino.impl.NameHandle;
+import org.openntf.domino.Name;
+import org.openntf.domino.impl.Name.NamePart;
 
 /**
  * Name handling utilities
@@ -32,14 +33,14 @@ import org.openntf.domino.impl.NameHandle;
 public enum Names {
 	;
 
-	public static enum NAMETYPE {
-		Abbreviated, Canonical, Common;
-
-		@Override
-		public String toString() {
-			return this.getDeclaringClass() + "." + this.getClass() + ":" + this.name();
-		}
-	};
+	//	public static enum NAMETYPE {
+	//		Abbreviated, Canonical, Common;
+	//
+	//		@Override
+	//		public String toString() {
+	//			return this.getDeclaringClass() + "." + this.getClass() + ":" + this.name();
+	//		}
+	//	};
 
 	public static enum DIRECTORY_SEARCH_RESULT_TYPE {
 		Person("P"), Group("G"), Unknown("U");
@@ -81,6 +82,46 @@ public enum Names {
 				: ((string.indexOf('[') == 0) && (string.indexOf(']') == (string.length() - 1))) ? string : "[" + string + "]";
 	}
 
+	//	/**
+	//	 * Gets the approprite formatted name string for the given source.
+	//	 * 
+	//	 * @param session
+	//	 *            Session in effect for generating the name.
+	//	 * 
+	//	 * @param source
+	//	 *            Source string from which to generate the name
+	//	 * 
+	//	 * @param nametype
+	//	 *            Type of name string to return
+	//	 * 
+	//	 * @return source string converted to the appropriate name format
+	//	 */
+	//	public static String getNameString(final Session session, final String source, final Names.NAMETYPE nametype) {
+	//		lotus.domino.Name name = null;
+	//		try {
+	//			if (null == session) {
+	//				throw new IllegalArgumentException("Session is null");
+	//			}
+	//			if (null == nametype) {
+	//				throw new IllegalArgumentException("NameType is null");
+	//			}
+	//
+	//			final String seed = (Strings.isBlankString(source)) ? Names.getEffectiveUserName(session) : source;
+	//			name = Names.createName(session, seed);
+	//			final String result = (nametype.equals(Names.NAMETYPE.Abbreviated)) ? name.getAbbreviated() : (nametype
+	//					.equals(Names.NAMETYPE.Canonical)) ? name.getCanonical() : (nametype.equals(Names.NAMETYPE.Common)) ? name.getCommon()
+	//					: null;
+	//			name.recycle();
+	//			return Strings.toProperCase(result);
+	//
+	//		} catch (final Exception e) {
+	//			DominoUtils.handleException(e);
+	//		} finally {
+	//			DominoUtils.incinerate(name);
+	//		}
+	//
+	//		return null;
+	//	}
 	/**
 	 * Gets the approprite formatted name string for the given source.
 	 * 
@@ -90,33 +131,26 @@ public enum Names {
 	 * @param source
 	 *            Source string from which to generate the name
 	 * 
-	 * @param nametype
-	 *            Type of name string to return
+	 * @param part
+	 *            Part of name string to return
 	 * 
 	 * @return source string converted to the appropriate name format
 	 */
-	public static String getNameString(final Session session, final String source, final Names.NAMETYPE nametype) {
-		lotus.domino.Name name = null;
+	public static String getNamePart(final Session session, final String source, final NamePart part) {
 		try {
 			if (null == session) {
 				throw new IllegalArgumentException("Session is null");
 			}
-			if (null == nametype) {
-				throw new IllegalArgumentException("NameType is null");
+			if (null == part) {
+				throw new IllegalArgumentException("NamePart is null");
 			}
 
 			final String seed = (Strings.isBlankString(source)) ? Names.getEffectiveUserName(session) : source;
-			name = Names.createName(session, seed);
-			final String result = (nametype.equals(Names.NAMETYPE.Abbreviated)) ? name.getAbbreviated() : (nametype
-					.equals(Names.NAMETYPE.Canonical)) ? name.getCanonical() : (nametype.equals(Names.NAMETYPE.Common)) ? name.getCommon()
-					: null;
-			name.recycle();
-			return Strings.toProperCase(result);
+			org.openntf.domino.impl.Name name = (org.openntf.domino.impl.Name) Names.createName(session, seed);
+			return name.getNamePart(part);
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
-		} finally {
-			DominoUtils.incinerate(name);
 		}
 
 		return null;
@@ -132,12 +166,12 @@ public enum Names {
 	 * @param source
 	 *            Source strings from which to generate the names.
 	 * 
-	 * @param nametype
-	 *            Type of name string to return
+	 * @param part
+	 *            Part of name string to return
 	 * 
 	 * @return source strings converted to the appropriate name format, in the order in which they exist in source.
 	 */
-	public static String[] getNameStrings(final Session session, final String[] source, final Names.NAMETYPE nametype) {
+	public static String[] getNameParts(final Session session, final String[] source, final NamePart part) {
 		try {
 			if (null == session) {
 				throw new IllegalArgumentException("Session is null");
@@ -147,18 +181,18 @@ public enum Names {
 				throw new IllegalArgumentException("Source Array is null");
 			}
 
-			if (null == nametype) {
-				throw new IllegalArgumentException("NameType is null");
+			if (null == part) {
+				throw new IllegalArgumentException("NamePart is null");
 			}
 
-			if (source.length < 0) {
+			if (source.length < 1) {
 				return null;
 			}
 
 			final List<String> values = new ArrayList<String>();
 			for (final String temp : source) {
 				if (!Strings.isBlankString(temp)) {
-					final String name = Names.getNameString(session, temp, nametype);
+					final String name = Names.getNamePart(session, temp, part);
 
 					if (!Strings.isBlankString(name)) {
 						values.add(name);
@@ -188,7 +222,7 @@ public enum Names {
 	 * @return source strings converted to the appropriate name format, in the order in which they exist in source.
 	 */
 	public static String[] getAbbreviated(final Session session, final String[] source) {
-		return Names.getNameStrings(session, source, Names.NAMETYPE.Abbreviated);
+		return Names.getNameParts(session, source, NamePart.Abbreviated);
 	}
 
 	/**
@@ -203,7 +237,7 @@ public enum Names {
 	 * @return source String converted to the appropriate name format
 	 */
 	public static String getAbbreviated(final Session session, final String source) {
-		return Names.getNameString(session, source, Names.NAMETYPE.Abbreviated);
+		return Names.getNamePart(session, source, NamePart.Abbreviated);
 	}
 
 	/**
@@ -230,7 +264,7 @@ public enum Names {
 	 * @return source strings converted to the appropriate name format, in the order in which they exist in source.
 	 */
 	public static String[] getCanonical(final Session session, final String[] source) {
-		return Names.getNameStrings(session, source, Names.NAMETYPE.Canonical);
+		return Names.getNameParts(session, source, NamePart.Canonical);
 	}
 
 	/**
@@ -245,7 +279,7 @@ public enum Names {
 	 * @return source String converted to the appropriate name format
 	 */
 	public static String getCanonical(final Session session, final String source) {
-		return Names.getNameString(session, source, Names.NAMETYPE.Canonical);
+		return Names.getNamePart(session, source, NamePart.Canonical);
 	}
 
 	/**
@@ -272,7 +306,7 @@ public enum Names {
 	 * @return source strings converted to the appropriate name format, in the order in which they exist in source.
 	 */
 	public static String[] getCommon(final Session session, final String[] source) {
-		return Names.getNameStrings(session, source, Names.NAMETYPE.Common);
+		return Names.getNameParts(session, source, NamePart.Common);
 	}
 
 	/**
@@ -287,7 +321,7 @@ public enum Names {
 	 * @return source String converted to the appropriate name format
 	 */
 	public static String getCommon(final Session session, final String source) {
-		return Names.getNameString(session, source, Names.NAMETYPE.Common);
+		return Names.getNamePart(session, source, NamePart.Common);
 	}
 
 	/**
@@ -317,13 +351,14 @@ public enum Names {
 		return "";
 	}
 
-	public static lotus.domino.Name createName(final Session session, final String source) {
+	public static Name createName(final Session session, final String source) {
 		try {
 			if (null == session) {
 				throw new IllegalArgumentException("Session is null");
 			}
 
-			return session.createName((Strings.isBlankString(source)) ? session.getEffectiveUserName() : source);
+			//			return session.createName((Strings.isBlankString(source)) ? session.getEffectiveUserName() : source);
+			return new org.openntf.domino.impl.Name(session, source);
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
@@ -512,21 +547,8 @@ public enum Names {
 	 * ************************************************************************
 	 * ************************************************************************
 	 */
-	public static lotus.domino.Name createName(final Session session, final NameHandle namehandle) {
-		return Names.createName(session, namehandle.getCanonical());
-	}
 
-	public static NameHandle getNameHandleFromString(final Session session, final String string) {
-		try {
-			return new NameHandle(session, string);
-		} catch (final Exception e) {
-			DominoUtils.handleException(e);
-		}
-
-		return null;
-	}
-
-	public static NameHandle getNameHandleFromDocumentItem(final Session session, final Document document, final String itemname) {
+	public static Name getNameFromDocumentItem(final Session session, final Document document, final String itemname) {
 		try {
 			if (null == document) {
 				throw new IllegalArgumentException("Document is null");
@@ -536,7 +558,8 @@ public enum Names {
 			}
 
 			final String string = document.getItemValueString(itemname);
-			return (Strings.isBlankString(string)) ? null : Names.getNameHandleFromString(session, string);
+			//			return (Strings.isBlankString(string)) ? null : Names.getNameHandleFromString(session, string);
+			return (Strings.isBlankString(string)) ? null : new org.openntf.domino.impl.Name(session, string);
 
 			// return new NameHandle(session, string);
 		} catch (final Exception e) {
@@ -546,10 +569,10 @@ public enum Names {
 		return null;
 	}
 
-	public static TreeSet<NameHandle> getNameHandlesMissingRoles(final Session session, final Database database,
-			final TreeSet<String> sourcenames, final TreeSet<String> sourceroles) {
+	public static TreeSet<Name> getNamesMissingRoles(final Session session, final Database database, final TreeSet<String> sourcenames,
+			final TreeSet<String> sourceroles) {
 
-		final TreeSet<NameHandle> result = new TreeSet<NameHandle>();
+		final TreeSet<Name> result = new TreeSet<Name>();
 		try {
 			if ((null != sourcenames) && (sourcenames.size() > 0) && (null != sourceroles) && (sourceroles.size() > 0)) {
 				final TreeSet<String> checkroles = new TreeSet<String>();
@@ -562,16 +585,17 @@ public enum Names {
 				if (checkroles.size() > 0) {
 					for (final String s : sourcenames) {
 						if (!Strings.isBlankString(s)) {
-							final NameHandle namehandle = Names.getNameHandleFromString(session, s);
-							if (!result.contains(namehandle)) {
-								final TreeSet<String> roles = CollectionUtils.getTreeSetStrings(database.queryAccessRoles(namehandle
+							//							final Name namehandle = Names.getNameHandleFromString(session, s);
+							final Name name = new org.openntf.domino.impl.Name(session, s);
+							if (!result.contains(name)) {
+								final TreeSet<String> roles = CollectionUtils.getTreeSetStrings(database.queryAccessRoles(name
 										.getCanonical()));
 								if (null == roles) {
-									result.add(namehandle);
+									result.add(name);
 								} else {
 									for (final String role : checkroles) {
 										if (!roles.contains(role)) {
-											result.add(namehandle);
+											result.add(name);
 										}
 									}
 								}
@@ -587,13 +611,13 @@ public enum Names {
 		return result;
 	}
 
-	public static TreeSet<NameHandle> getNameHandlesMissingRoles(final Session session, final Database database, final Object sourcenames,
+	public static TreeSet<Name> getNamesMissingRoles(final Session session, final Database database, final Object sourcenames,
 			final Object sourceroles) {
-		return Names.getNameHandlesMissingRoles(session, database, CollectionUtils.getTreeSetStrings(sourcenames),
+		return Names.getNamesMissingRoles(session, database, CollectionUtils.getTreeSetStrings(sourcenames),
 				CollectionUtils.getTreeSetStrings(sourceroles));
 	}
 
-	public static boolean isNamesListMember(final Session session, final TreeSet<String> names, final NameHandle namehandle) {
+	public static boolean isNamesListMember(final Session session, final TreeSet<String> names, final Name name) {
 
 		lotus.domino.Name entryname = null;
 		try {
@@ -603,8 +627,8 @@ public enum Names {
 			if (null == names) {
 				throw new IllegalArgumentException("Names is null");
 			}
-			if (null == namehandle) {
-				throw new IllegalArgumentException("NameHandle is null");
+			if (null == name) {
+				throw new IllegalArgumentException("Name is null");
 			}
 
 			if (names.size() < 1) {
@@ -612,9 +636,9 @@ public enum Names {
 
 			}
 
-			final String abbreviated = namehandle.getAbbreviated();
-			final String common = namehandle.getCommon();
-			final String canonical = namehandle.getCanonical();
+			final String abbreviated = name.getAbbreviated();
+			final String common = name.getCommon();
+			final String canonical = name.getCanonical();
 
 			// do an initial check for membership
 			if (names.contains(canonical) || names.contains(abbreviated) || names.contains(common)) {
@@ -653,24 +677,23 @@ public enum Names {
 		return false;
 	}
 
-	public static boolean isNamesListMember(final Session session, final TreeSet<String> names, final lotus.domino.Name checkname) {
-
-		try {
-			if (null == checkname) {
-				throw new IllegalArgumentException("Name is null");
-			}
-
-			return Names.isNamesListMember(session, names, new NameHandle(checkname));
-
-		} catch (final Exception e) {
-			DominoUtils.handleException(e);
-		}
-
-		return false;
-	}
+	//	public static boolean isNamesListMember(final Session session, final TreeSet<String> names, final lotus.domino.Name checkname) {
+	//
+	//		try {
+	//			if (null == checkname) {
+	//				throw new IllegalArgumentException("Name is null");
+	//			}
+	//
+	//			return Names.isNamesListMember(session, names, new NameHandle(checkname));
+	//
+	//		} catch (final Exception e) {
+	//			DominoUtils.handleException(e);
+	//		}
+	//
+	//		return false;
+	//	}
 
 	public static boolean isNamesListMember(final Session session, final TreeSet<String> names, final String checkname) {
-		lotus.domino.Name name = null;
 		try {
 			if (null == session) {
 				throw new IllegalArgumentException("Session is null");
@@ -685,31 +708,26 @@ public enum Names {
 				return false;
 			}
 
-			name = Names.createName(session, checkname);
-			final boolean result = Names.isNamesListMember(session, names, name);
-			name.recycle();
-			return result;
+			return Names.isNamesListMember(session, names, Names.createName(session, checkname));
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
-		} finally {
-			DominoUtils.incinerate(name);
 		}
 
 		return false;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static TreeSet<String> getRoles(final Database database, final NameHandle namehandle) {
+	public static TreeSet<String> getRoles(final Database database, final Name name) {
 		try {
 			if (null == database) {
 				throw new IllegalArgumentException("Database is null");
 			}
-			if (null == namehandle) {
-				throw new IllegalArgumentException("NameHandle is null");
+			if (null == name) {
+				throw new IllegalArgumentException("Name is null");
 			}
 
-			final List<String> roles = database.queryAccessRoles(namehandle.getCanonical());
+			final List<String> roles = database.queryAccessRoles(name.getCanonical());
 			return (roles.size() > 0) ? new TreeSet<String>(roles) : null;
 
 		} catch (final Exception e) {
