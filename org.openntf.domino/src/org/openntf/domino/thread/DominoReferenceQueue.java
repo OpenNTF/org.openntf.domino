@@ -77,7 +77,6 @@ public class DominoReferenceQueue extends ReferenceQueue<Base> {
 
 	public Reference<? extends Base> poll(final long cppid) {
 		DominoReference result = (DominoReference) super.poll();
-
 		if (result != null) {
 			long did = result.getDelegateId();
 			referenceBag.remove(result);

@@ -12,9 +12,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.openntf.domino.big.impl.IndexDatabase.IndexHit;
-import org.openntf.domino.big.impl.IndexDatabase.IndexResults;
-
 /**
  * @author Nathan T. Freeman
  * 
