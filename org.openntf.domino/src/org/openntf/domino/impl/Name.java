@@ -79,7 +79,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 * @param session
 	 *            Session used for Name processing
 	 */
-	public Name(final org.openntf.domino.Session session) {
+	public Name(final Session session) {
 		super(null, session);
 		this.initialize(session.getEffectiveUserName());
 	}
@@ -93,8 +93,8 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 * @param name
 	 *            String used to construct the Name object
 	 */
-	public Name(final lotus.domino.Session session, final String name) {
-		super(null, (org.openntf.domino.Base<?>) Factory.fromLotus(session, org.openntf.domino.Session.class, null));
+	public Name(final Session session, final String name) {
+		super(null, (org.openntf.domino.Base<?>) Factory.fromLotus(session, Session.class, null));
 		this.initialize(name);
 	}
 
