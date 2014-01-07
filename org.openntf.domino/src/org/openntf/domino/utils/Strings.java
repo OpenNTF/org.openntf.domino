@@ -8,6 +8,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.openntf.domino.Session;
+import org.openntf.domino.impl.Name;
+
 /**
  * String Utilities
  * 
@@ -120,6 +123,39 @@ public enum Strings {
 	 */
 	public static String generateUniversalID(final String string) {
 		return Strings.getHash(string);
+	}
+
+	/**
+	 * Generates a RecordID from a Name
+	 * 
+	 * Format: Name.idPrefix (4 Alpha characters) + "-" + Dates.TimeCode (6 character base36 value representing the time).
+	 * 
+	 * wrapper method for {@link #getSpawnedRecordID(Name)}
+	 * 
+	 * @param name
+	 *            Name for which to generate a RecordID
+	 * 
+	 * @return new RecordID
+	 * 
+	 * @see # #getSpawnedRecordID(Name)
+	 */
+	public static String generateRecordID(final Name name) {
+		return Strings.getSpawnedRecordID(name);
+	}
+
+	/**
+	 * Generates a RecordID from a Name
+	 * 
+	 * Format: Name.idPrefix (4 Alpha characters) + "-" + Dates.TimeCode (6 character base36 value representing the time).
+	 * 
+	 * wrapper method for {@link #getSpawnedRecordID(Session)}
+	 * 
+	 * @return new RecordID
+	 * 
+	 * @see # #getSpawnedRecordID(Session)
+	 */
+	public static String generateRecordID() {
+		return Strings.getSpawnedRecordID(Factory.getSession());
 	}
 
 	/**
@@ -466,6 +502,95 @@ public enum Strings {
 	 */
 	public static boolean startsWithIgnoreCase(final String source, final String prefix) {
 		return ((null == source) || (null == prefix)) ? false : source.toLowerCase().startsWith(prefix.toLowerCase());
+	}
+
+	/**
+	 * Generates a RecordID from a Name
+	 * 
+	 * Format: Name.idPrefix (4 Alpha characters) + "-" + Dates.TimeCode (6 character base36 value representing the time).
+	 * 
+	 * @param name
+	 *            Name for which to generate a RecordID
+	 * 
+	 * @return new RecordID
+	 * 
+	 * @see Name#getIDprefix()
+	 * @see Dates#getTimeCode()
+	 * 
+	 */
+	public static String getSpawnedRecordID(final Name name) {
+		try {
+			if (null == name) {
+				throw new IllegalArgumentException("NameHandle is null");
+			}
+
+			if (name instanceof org.openntf.domino.impl.Name) {
+				String result = name.getIDprefix() + "-" + Dates.getTimeCode();
+				try {
+					// avoid potential duplicate consecutive results by sleeping for 1/4 second 
+					Thread.sleep(250); // 250 milliseconds = 1/4 second
+				} catch (InterruptedException ex) {
+					Thread.currentThread().interrupt();
+					DominoUtils.handleException(ex);
+				}
+
+				return result;
+			}
+
+			return Strings.getSpawnedRecordID(Names.createName(name));
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return "";
+	}
+
+	/**
+	 * Generates a RecordID from a Name
+	 * 
+	 * Format: Name.idPrefix (4 Alpha characters) + "-" + Dates.TimeCode (6 character base36 value representing the time).
+	 * 
+	 * @param name
+	 *            Name for which to generate a RecordID
+	 * 
+	 * @return new RecordID
+	 * 
+	 * @see Name#getIDprefix()
+	 * @see Dates#getTimeCode()
+	 * 
+	 */
+	public static String getSpawnedRecordID(final lotus.domino.Name name) {
+		return Strings.getSpawnedRecordID(Names.createName(name));
+	}
+
+	/**
+	 * Generates a RecordID from a Name
+	 * 
+	 * Format: Name.idPrefix (4 Alpha characters) + "-" + Dates.TimeCode (6 character base36 value representing the time).
+	 * 
+	 * @param session
+	 *            Session from which to get the current effective user name.
+	 * 
+	 * @return new RecordID
+	 * 
+	 * @see Name#getIDprefix()
+	 * @see Dates#getTimeCode()
+	 * 
+	 */
+	public static String getSpawnedRecordID(final Session session) {
+		try {
+			if (null == session) {
+				throw new IllegalArgumentException("Session is null");
+			}
+
+			return Strings.getSpawnedRecordID(new org.openntf.domino.impl.Name(session));
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return "";
 	}
 
 	/*
