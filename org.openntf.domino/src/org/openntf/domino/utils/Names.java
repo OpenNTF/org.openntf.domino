@@ -13,6 +13,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.openntf.domino.Base;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Name;
@@ -457,6 +458,36 @@ public enum Names {
 
 			final String string = document.getItemValueString(itemname);
 			return (Strings.isBlankString(string)) ? null : Names.createName(session, string);
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return null;
+	}
+
+	public static Name createName(final Name name) {
+		try {
+			if (null == name) {
+				throw new IllegalArgumentException("Name is null");
+			}
+
+			return new org.openntf.domino.impl.Name(name, name.getParent());
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return null;
+	}
+
+	public static Name createName(final lotus.domino.Name name) {
+		try {
+			if (null == name) {
+				throw new IllegalArgumentException("Name is null");
+			}
+
+			return new org.openntf.domino.impl.Name(name, (Base<?>) name.getParent());
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
