@@ -130,11 +130,12 @@ public class DominoChildThread extends DominoThread {
 	 */
 	public void close() {
 		int drCount = 0;
-		try {
-			drCount = Base.finalizeQueue();
-		} catch (Throwable t) {
-			t.printStackTrace();
-		}
+		// TODO: What should we do here?
+		//		try {
+		//			drCount = Base.finalizeQueue();
+		//		} catch (Throwable t) {
+		//			t.printStackTrace();
+		//		}
 		int runRecycleCount = Factory.getAutoRecycleCount();
 		log_.log(
 				Level.INFO,

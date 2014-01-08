@@ -34,6 +34,7 @@ import java.util.logging.Logger;
 import lotus.domino.NotesException;
 import lotus.domino.NotesFactory;
 import lotus.domino.NotesThread;
+import lotus.domino.local.NotesBase;
 
 import org.openntf.domino.Mapper;
 import org.openntf.domino.Session.RunContext;
@@ -48,6 +49,7 @@ import org.openntf.domino.logging.DefaultConsoleHandler;
 import org.openntf.domino.logging.DefaultFileHandler;
 import org.openntf.domino.logging.FileFormatter;
 import org.openntf.domino.logging.OpenLogHandler;
+import org.openntf.domino.thread.DominoReferenceHashMap;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.SessionDescendant;
 
@@ -120,6 +122,13 @@ public enum Factory {
 	private static Map<String, String> ENVIRONMENT;
 	private static boolean session_init = false;
 	private static boolean jar_init = false;
+
+	// speical case, sessionMap does not autoRecycle 
+	private static DominoReferenceHashMap<Long> sessionMap = new DominoReferenceHashMap<Long>(false);
+	private static DominoReferenceHashMap<Long> lotusObjectMap = new DominoReferenceHashMap<Long>(true);
+
+	/* Counts the open references, to debug if everything goes right */
+	public static int referenceCounter = 0;
 
 	public static void loadEnvironment(final lotus.domino.Session session) {
 		if (ENVIRONMENT == null) {
@@ -390,7 +399,55 @@ public enum Factory {
 			return (T) lotus;
 		}
 
-		T result = null;
+		// 1) These objects are not cached and returned immediately
+		if (lotus instanceof lotus.domino.Name) {
+			return (T) new org.openntf.domino.impl.Name((lotus.domino.Name) lotus, parent);
+		}
+		if (lotus instanceof lotus.domino.DateTime) {
+			return (T) new org.openntf.domino.impl.DateTime((lotus.domino.DateTime) lotus, parent);
+		}
+
+		// 2) These objects are singletons per cpp.
+		if (!(lotus instanceof NotesBase)) {
+			// TODO: what do we if we don't get a wrappable object at all
+			throw new UndefinedDelegateTypeException("Cannot wrap " + lotus.getClass().getName());
+		}
+
+		Long cpp_id = Base.getLotusId((NotesBase) lotus);
+
+		// 2.1) Session is cached in an own map, that does no recycle
+		if (lotus instanceof lotus.domino.Session) {
+			Session result = null;
+
+			result = (Session) sessionMap.get(cpp_id);
+			if (result == null) {
+				result = new org.openntf.domino.impl.Session((lotus.domino.Session) lotus, parent);
+				sessionMap.put(cpp_id, result);
+			}
+
+			// TODO: Nathan can you take a look at this, don't exactly understand what this does
+			if (currentSessionHolder_.get() != null) {
+				try {
+					lotus.domino.Session rawSession = (lotus.domino.Session) Base.getDelegate(currentSessionHolder_.get());
+					rawSession.isConvertMime();
+				} catch (NotesException ne) {
+					Factory.loadEnvironment((lotus.domino.Session) lotus);
+					// System.out.println("Resetting default local session because we got an exception");
+					setSession((org.openntf.domino.Session) result);
+				}
+			} else {
+				Factory.loadEnvironment((lotus.domino.Session) lotus);
+				// System.out.println("Resetting default local session because it was null");
+				setSession((org.openntf.domino.Session) result);
+			}
+			return (T) result;
+		}
+
+		// 2.2) all other Lotus-Objects are cached in an own map, that recycles the object
+		// query our cache
+		T result = (T) lotusObjectMap.get(cpp_id);
+
+		// wrap the object
 		if (lotus instanceof lotus.domino.ACL) {
 			result = (T) new org.openntf.domino.impl.ACL((lotus.domino.ACL) lotus, parent);
 		} else if (lotus instanceof lotus.domino.ACLEntry) {
@@ -407,8 +464,6 @@ public enum Factory {
 			result = (T) new org.openntf.domino.impl.Database((lotus.domino.Database) lotus, parent);
 		} else if (lotus instanceof lotus.domino.DateRange) {
 			result = (T) new org.openntf.domino.impl.DateRange((lotus.domino.DateRange) lotus, parent);
-		} else if (lotus instanceof lotus.domino.DateTime) {
-			result = (T) new org.openntf.domino.impl.DateTime((lotus.domino.DateTime) lotus, parent);
 		} else if (lotus instanceof lotus.domino.DbDirectory) {
 			result = (T) new org.openntf.domino.impl.DbDirectory((lotus.domino.DbDirectory) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Directory) {
@@ -453,8 +508,6 @@ public enum Factory {
 			result = (T) new org.openntf.domino.impl.MIMEEntity((lotus.domino.MIMEEntity) lotus, parent);
 		} else if (lotus instanceof lotus.domino.MIMEHeader) {
 			result = (T) new org.openntf.domino.impl.MIMEHeader((lotus.domino.MIMEHeader) lotus, parent);
-		} else if (lotus instanceof lotus.domino.Name) {
-			result = (T) new org.openntf.domino.impl.Name((lotus.domino.Name) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Newsletter) {
 			result = (T) new org.openntf.domino.impl.Newsletter((lotus.domino.Newsletter) lotus, parent);
 		} else if (lotus instanceof lotus.domino.NoteCollection) {
@@ -498,22 +551,6 @@ public enum Factory {
 			result = (T) new org.openntf.domino.impl.RichTextTab((lotus.domino.RichTextTab) lotus, parent);
 		} else if (lotus instanceof lotus.domino.RichTextTable) {
 			result = (T) new org.openntf.domino.impl.RichTextTable((lotus.domino.RichTextTable) lotus, parent);
-		} else if (lotus instanceof lotus.domino.Session) {
-			result = (T) new org.openntf.domino.impl.Session((lotus.domino.Session) lotus, parent);
-			if (currentSessionHolder_.get() != null) {
-				try {
-					lotus.domino.Session rawSession = (lotus.domino.Session) Base.getDelegate(currentSessionHolder_.get());
-					rawSession.isConvertMime();
-				} catch (NotesException ne) {
-					Factory.loadEnvironment((lotus.domino.Session) lotus);
-					// System.out.println("Resetting default local session because we got an exception");
-					setSession((org.openntf.domino.Session) result);
-				}
-			} else {
-				Factory.loadEnvironment((lotus.domino.Session) lotus);
-				// System.out.println("Resetting default local session because it was null");
-				setSession((org.openntf.domino.Session) result);
-			}
 		} else if (lotus instanceof lotus.domino.Stream) {
 			result = (T) new org.openntf.domino.impl.Stream((lotus.domino.Stream) lotus, parent);
 		} else if (lotus instanceof lotus.domino.View) {
@@ -530,6 +567,9 @@ public enum Factory {
 		}
 
 		if (result != null) {
+			lotusObjectMap.put(cpp_id, (Base) result);
+			System.out.println("+ " + cpp_id);
+			referenceCounter++;
 			return result;
 		}
 		// if (TRACE_COUNTERS)
@@ -782,7 +822,12 @@ public enum Factory {
 		if (currentSessionHolder_.get() != null) {
 			result = (lotus.domino.Session) Base.getDelegate(currentSessionHolder_.get());
 		}
-		Base.drainQueue(0l);
+		// TODO RPr: drain the maps?
+		// Base.drainQueue(0l);
+		// TODO RPr: remove the debug prints
+		System.out.println("There are " + referenceCounter + " open references BEFORE processing queue");
+		lotusObjectMap.processQueue();
+		System.out.println("There are " + referenceCounter + " open references AFTER processing queue");
 		clearSession();
 		clearClassLoader();
 		clearBubbleExceptions();
