@@ -21,40 +21,23 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Base;
-import org.openntf.domino.impl.Session;
 import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class DominoReference.
+ * The Class DominoReference. T is normally a Long, maybe we change it to a "long" or "Integer" because there may be faster map
+ * implementations.
+ * 
+ * DominoReference should be used only in the DominoReferenceMap
  */
 public class DominoReference<T> extends PhantomReference<org.openntf.domino.Base<?>> {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(DominoReference.class.getName());
 
-	/** The delegate_. */
+	/** The delegate_. This is the wrapped Object */
 	private final lotus.domino.Base delegate_;
-	/** The delegate type_. */
-	private final Class<?> delegateType_;
 
-	/** The delegate id_. */
-	//private final long delegateId_;
-
-	private final int originThreadId_;
-
-	/** The referrant hash_. */
-	private final int referrantHash_;
-
-	/** The referrant id_. */
-	private final int referrantId_;
-
-	/** The referrant session_. */
-	private Session referrantSession_;
-
-	/** The watched cpp. */
-	private static long watchedCpp = 0l;
-
-	/** This is the CPP-ID or a hash value **/
+	/** This is the CPP-ID or an other unique hash value **/
 	private T key_;
 
 	private transient int hashcode_;
@@ -76,77 +59,6 @@ public class DominoReference<T> extends PhantomReference<org.openntf.domino.Base
 		// though the wrapper is null
 		delegate_ = org.openntf.domino.impl.Base.getDelegate(r);
 		key_ = key;
-
-		referrantSession_ = (Session) Factory.getSession(r); // TODO NTF - clean up implementation
-
-		originThreadId_ = System.identityHashCode(Thread.currentThread());
-		if (log_.isLoggable(Level.FINE)) {
-			delegateType_ = delegate_.getClass();
-			referrantHash_ = r.hashCode();
-			referrantId_ = System.identityHashCode(r);
-		} else {
-			delegateType_ = null;
-			referrantHash_ = 0;
-			referrantId_ = 0;
-		}
-	}
-
-	//	/**
-	//	 * Checks if is trace target.
-	//	 * 
-	//	 * @return true, if is trace target
-	//	 */
-	//	public boolean isTraceTarget() {
-	//		return delegateId_ == watchedCpp;
-	//	}
-
-	//	/**
-	//	 * Gets the delegate id.
-	//	 * 
-	//	 * @return the delegate id
-	//	 */
-	//	public Long getDelegateId() {
-	//		return delegateId_;
-	//	}
-
-	public int getOriginThreadId() {
-		return originThreadId_;
-	}
-
-	/**
-	 * Gets the session.
-	 * 
-	 * @return the session
-	 */
-	public Session getSession() {
-		return referrantSession_;
-	}
-
-	/**
-	 * _get referrant hash.
-	 * 
-	 * @return the int
-	 */
-	public int _getReferrantHash() {
-		return referrantHash_;
-	}
-
-	/**
-	 * _get referrant id.
-	 * 
-	 * @return the int
-	 */
-	public int _getReferrantId() {
-		return referrantId_;
-	}
-
-	/**
-	 * Gets the type.
-	 * 
-	 * @return the type
-	 */
-	public Class<?> _getType() {
-		return delegateType_;
 	}
 
 	/**
@@ -154,14 +66,9 @@ public class DominoReference<T> extends PhantomReference<org.openntf.domino.Base
 	 */
 	void recycle() {
 		int ctid = System.identityHashCode(Thread.currentThread());
-		if (!(ctid == getOriginThreadId())) {
-
-			log_.log(Level.WARNING, "Attempting to recycle a Domino reference from thread " + ctid
-					+ " which is different from the one that originated it (" + getOriginThreadId()
-					+ "). This is probably going to be very very bad...");
-		}
 		org.openntf.domino.impl.Base.s_recycle(delegate_);
 		int total = Factory.countAutoRecycle();
+
 		if (log_.isLoggable(Level.FINE)) {
 			if (total % 5000 == 0) {
 				log_.log(Level.FINE, "Auto-recycled " + total + " references");
@@ -171,7 +78,7 @@ public class DominoReference<T> extends PhantomReference<org.openntf.domino.Base
 
 	/**
 	 * A WeakValue is equal to another WeakValue iff they both refer to objects that are, in turn, equal according to their own equals
-	 * methods.
+	 * methods. Key is not checked here, because there might be "dummy" values without a key so that "contains" works
 	 */
 	@Override
 	public boolean equals(final Object obj) {
@@ -182,7 +89,6 @@ public class DominoReference<T> extends PhantomReference<org.openntf.domino.Base
 			return false;
 
 		Object ref1 = this.get();
-		@SuppressWarnings("unchecked")
 		Object ref2 = ((DominoReference<T>) obj).get();
 
 		if (ref1 == ref2)
