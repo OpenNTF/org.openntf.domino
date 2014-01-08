@@ -13,6 +13,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.openntf.arpa.RFC822name;
 import org.openntf.domino.Base;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
@@ -494,6 +495,96 @@ public enum Names {
 		}
 
 		return null;
+	}
+
+	public static RFC822name createRFC822name(final Name name) {
+		try {
+
+			if (null == name) {
+				throw new IllegalArgumentException("Name is null");
+			}
+
+			String addr822 = Names.buildAddr822(name);
+			return (Strings.isBlankString(addr822)) ? new RFC822name() : new RFC822name(addr822);
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return null;
+	}
+
+	public static RFC822name createRFC822name(final lotus.domino.Name name) {
+		try {
+
+			if (null == name) {
+				throw new IllegalArgumentException("Name is null");
+			}
+
+			String addr822 = Names.buildAddr822(name);
+			return (Strings.isBlankString(addr822)) ? new RFC822name() : new RFC822name(addr822);
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return null;
+	}
+
+	public static String buildAddr822(final String phrase, final String addr821, final String... comments) {
+
+		if ((null != addr821) && (addr821.trim().length() > 0)) {
+			StringBuilder sb = new StringBuilder((null == phrase) ? "" : phrase.trim());
+			sb.append("<");
+			sb.append(addr821);
+			sb.append(">");
+
+			if (null != comments) {
+				int idx = 0;
+				for (String comment : comments) {
+					if (!Strings.isBlankString(comment)) {
+						sb.append("(");
+						sb.append(comment);
+						sb.append(")");
+						idx++;
+						if (idx > 2) {
+							break;
+						}
+					}
+				}
+
+			}
+
+			return sb.toString();
+		}
+
+		return "";
+	}
+
+	public static String buildAddr822(final Name name) {
+		try {
+			if (null == name) {
+				throw new IllegalArgumentException("Name is null");
+			}
+
+			return Names.buildAddr822(name.getAddr822Phrase(), name.getAddr821(), name.getAddr822Comment1(), name.getAddr822Comment2(),
+					name.getAddr822Comment3());
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return "";
+	}
+
+	public static String buildAddr822(final lotus.domino.Name name) {
+		try {
+			return Names.buildAddr822(name.getAddr822Phrase(), name.getAddr821(), name.getAddr822Comment1(), name.getAddr822Comment2(),
+					name.getAddr822Comment3());
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return "";
 	}
 
 	public static TreeSet<Name> getNamesMissingRoles(final Session session, final Database database, final TreeSet<String> sourcenames,
