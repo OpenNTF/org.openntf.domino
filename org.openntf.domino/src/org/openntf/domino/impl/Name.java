@@ -33,7 +33,7 @@ import org.openntf.domino.utils.Strings;
  */
 public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> implements org.openntf.domino.Name, Comparable<Name> {
 	public static enum NamePart {
-		Abbreviated, Addr821, Addr822Comment1, Addr822Comment2, Addr822Comment3, Addr822LocalPart, Addr822Phrase, ADMD, Canonical, Common, Country, Generation, Given, Initials, Keyword, Language, Organization, OrgUnit1, OrgUnit2, OrgUnit3, OrgUnit4, PRMD, Surname, IDprefix;
+		Abbreviated, Addr821, Addr822Comment1, Addr822Comment2, Addr822Comment3, Addr822LocalPart, Addr822Phrase, ADMD, Canonical, Common, Country, Generation, Given, Initials, Keyword, Language, Organization, OrgUnit1, OrgUnit2, OrgUnit3, OrgUnit4, PRMD, Surname, IDprefix, SourceString;
 
 		@Override
 		public String toString() {
@@ -49,7 +49,6 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	private static final long serialVersionUID = 1L;
 	private HashMap<NamePart, String> _parts;
 	private RFC822name _rfc822name;
-	private String SourceString;
 	private boolean Hierarchical;
 
 	/**
@@ -144,7 +143,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 		return this.Hierarchical;
 	}
 
-	public void setHierarchical(final boolean arg0) {
+	private void setHierarchical(final boolean arg0) {
 		this.Hierarchical = arg0;
 	}
 
@@ -159,7 +158,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 		this._rfc822name = rfc822name;
 	}
 
-	public HashMap<NamePart, String> getNameParts() {
+	private HashMap<NamePart, String> getNameParts() {
 		if (null == this._parts) {
 			this._parts = new HashMap<NamePart, String>();
 		}
@@ -167,24 +166,17 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 		return this._parts;
 	}
 
-	public void setNameParts(final HashMap<NamePart, String> nameParts) {
+	private void setNameParts(final HashMap<NamePart, String> nameParts) {
 		this._parts = nameParts;
 	}
 
-	/**
-	 * @param sourceString
-	 *            the sourceString to set
-	 */
-	public void setSourceString(final String sourceString) {
-		this.SourceString = sourceString;
-	}
-
-	/**
-	 * @return the sourceString
-	 */
-	public String getSourceString() {
-		return this.SourceString;
-	}
+	//	/**
+	//	 * @param sourceString
+	//	 *            the sourceString to set
+	//	 */
+	//	public void setSourceString(final String sourceString) {
+	//		this.SourceString = sourceString;
+	//	}
 
 	/*
 	 * ******************************************************************
@@ -305,9 +297,13 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 			}
 
 			final HashMap<NamePart, String> p = this.getNameParts();
-			p.put(Name.NamePart.Abbreviated, name.getAbbreviated());
+			//			p.put(Name.NamePart.Abbreviated, name.getAbbreviated());
 			p.put(Name.NamePart.ADMD, name.getADMD());
-			p.put(Name.NamePart.Canonical, name.getCanonical());
+			//			p.put(Name.NamePart.Canonical, name.getCanonical());
+			
+			UNFINISHED - need to deal with Common and Abbreviated
+			
+			
 			p.put(Name.NamePart.Common, name.getCommon());
 			p.put(Name.NamePart.Country, name.getCountry());
 			p.put(Name.NamePart.Generation, name.getGeneration());
@@ -323,37 +319,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 			p.put(Name.NamePart.PRMD, name.getPRMD());
 			p.put(Name.NamePart.Surname, name.getSurname());
 
-			String phrase = name.getAddr822Phrase();
-			String addr821 = name.getAddr821();
-			if ((null != addr821) && (addr821.trim().length() > 0)) {
-				StringBuilder sb = new StringBuilder((null == phrase) ? "" : phrase.trim());
-				sb.append("<");
-				sb.append(addr821);
-				sb.append(">");
-
-				String comment1 = name.getAddr822Comment1();
-				if ((null != comment1) && (comment1.trim().length() > 0)) {
-					sb.append("(");
-					sb.append(comment1);
-					sb.append(")");
-				}
-
-				String comment2 = name.getAddr822Comment2();
-				if ((null != comment2) && (comment2.trim().length() > 0)) {
-					sb.append("(");
-					sb.append(comment2);
-					sb.append(")");
-				}
-
-				String comment3 = name.getAddr822Comment3();
-				if ((null != comment3) && (comment3.trim().length() > 0)) {
-					sb.append("(");
-					sb.append(comment3);
-					sb.append(")");
-				}
-
-				this.parseRFC82xContent(sb.toString());
-			}
+			this.parseRFC82xContent(Names.buildAddr822(name));
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
@@ -367,38 +333,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 			}
 
 			this.setName(name.getDelegate());
-
-			String phrase = name.getAddr822Phrase();
-			String addr821 = name.getAddr821();
-			if ((null != addr821) && (addr821.trim().length() > 0)) {
-				StringBuilder sb = new StringBuilder((null == phrase) ? "" : phrase.trim());
-				sb.append("<");
-				sb.append(addr821);
-				sb.append(">");
-
-				String comment1 = name.getAddr822Comment1();
-				if ((null != comment1) && (comment1.trim().length() > 0)) {
-					sb.append("(");
-					sb.append(comment1);
-					sb.append(")");
-				}
-
-				String comment2 = name.getAddr822Comment2();
-				if ((null != comment2) && (comment2.trim().length() > 0)) {
-					sb.append("(");
-					sb.append(comment2);
-					sb.append(")");
-				}
-
-				String comment3 = name.getAddr822Comment3();
-				if ((null != comment3) && (comment3.trim().length() > 0)) {
-					sb.append("(");
-					sb.append(comment3);
-					sb.append(")");
-				}
-
-				this.parseRFC82xContent(sb.toString());
-			}
+			this.parseRFC82xContent(Names.buildAddr822(name));
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
@@ -440,6 +375,13 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 		}
 
 		return "";
+	}
+
+	/**
+	 * @return the sourceString used to construct this object
+	 */
+	public String getSourceString() {
+		return this.getNamePart(Name.NamePart.SourceString);
 	}
 
 	public String getAbbreviated() {
@@ -701,7 +643,6 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (Hierarchical ? 1231 : 1237);
-		result = prime * result + ((SourceString == null) ? 0 : SourceString.hashCode());
 		result = prime * result + ((_parts == null) ? 0 : _parts.hashCode());
 		result = prime * result + ((_rfc822name == null) ? 0 : _rfc822name.hashCode());
 		return result;
@@ -723,13 +664,6 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 		}
 		Name other = (Name) obj;
 		if (Hierarchical != other.Hierarchical) {
-			return false;
-		}
-		if (SourceString == null) {
-			if (other.SourceString != null) {
-				return false;
-			}
-		} else if (!SourceString.equals(other.SourceString)) {
 			return false;
 		}
 		if (_parts == null) {
