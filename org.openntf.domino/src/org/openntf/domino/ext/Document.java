@@ -30,6 +30,8 @@ public interface Document {
 
 	public String getFormName();
 
+	public boolean hasReaders();
+
 	public org.openntf.domino.Form getForm();
 
 	/**

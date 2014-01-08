@@ -183,13 +183,13 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		}
 		if (rawSession != null) {
 			session = Factory.fromLotus(rawSession, org.openntf.domino.Session.class, null);
+			if (isAppMimeFriendly(ctx))
+				session.setConvertMIME(false);
 			if (isAppAllFix(ctx)) {
 				for (Fixes fix : Fixes.values()) {
 					session.setFixEnable(fix, true);
 				}
 			}
-			if (isAppMimeFriendly(ctx))
-				session.setConvertMIME(false);
 			localMap.put(sessionKey, session);
 		} else {
 			System.out.println("Unable to locate 'session' through request map or variable resolver. Unable to auto-wrap.");

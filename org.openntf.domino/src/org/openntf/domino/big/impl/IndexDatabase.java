@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -56,6 +57,8 @@ public class IndexDatabase {
 
 	public static Set<String> toStringSet(final Object value) {
 		Set<String> result = new HashSet<String>();
+		if (value == null)
+			return result;
 		if (value instanceof Iterable) {
 			Iterable values = (Iterable) value;
 			for (Object o : values) {
@@ -79,6 +82,8 @@ public class IndexDatabase {
 
 	public static Set<CaseInsensitiveString> toCISSet(final Object value) {
 		Set<CaseInsensitiveString> result = new HashSet<CaseInsensitiveString>();
+		if (value == null)
+			return result;
 		if (value instanceof Iterable) {
 			Iterable values = (Iterable) value;
 			for (Object o : values) {
@@ -389,19 +394,25 @@ public class IndexDatabase {
 				Object val = map.get(key);
 				List<IndexHit> hits = null;
 				if (val instanceof Set) {
+					//					System.out.println("Already have a set of " + ((Set) val).size() + " elements");
 					hits = getTermResultsForForms((Set) val, forms, term, dbid, key.toString());
 				} else {
+					//					System.out.println("Converting to a set from a " + (val == null ? "null" : val.getClass().getName()));
 					hits = getTermResultsForForms(toStringSet(val), forms, term, dbid, key.toString());
 				}
 				results.addAll(hits);
 			}
 		} else {
 			for (CaseInsensitiveString key : itemNames) {
+				//				System.out.println("Adding hit results for item " + key);
+
 				Object val = map.get(key);
 				List<IndexHit> hits = null;
 				if (val instanceof Set) {
+					//					System.out.println("Already have a set of " + ((Set) val).size() + " elements");
 					hits = getTermResultsForForms((Set) val, forms, term, dbid, key.toString());
 				} else {
+					//					System.out.println("Converting to a set from a " + (val == null ? "null" : val.getClass().getName()));
 					hits = getTermResultsForForms(toStringSet(val), forms, term, dbid, key.toString());
 				}
 				results.addAll(hits);
@@ -414,14 +425,26 @@ public class IndexDatabase {
 			final String item) {
 		List<IndexHit> results = new ArrayList<IndexHit>();
 		if (forms == null || forms.isEmpty()) {
-			for (String unid : unids) {
-				results.add(new IndexHit(term, dbid, item, unid));
+			if (unids != null && !unids.isEmpty()) {
+				for (String unid : unids) {
+					//					System.out.println("Unid is: " + unid);
+					//					if (unid == null)
+					//						System.out.println("unid is null in a set of " + unids.size() + " values?");
+					try {
+						results.add(new IndexHit(term, dbid, item, unid));
+					} catch (Exception e) {
+						System.out.println("Exception occured trying to create a hit for db " + dbid + " on term " + term
+								+ " with a string of " + String.valueOf(unid) + " from a set of " + unids.size());
+					}
+				}
 			}
 		} else {
 			for (String unid : unids) {
-				String formName = unid.substring(32);
+				String formName = unid.substring(33);
 				for (String form : forms) {
 					if (formName.equalsIgnoreCase(form)) {
+						//						if (unid == null)
+						//							System.out.println("Unid is null in a case of matching form: " + form + "???");
 						results.add(new IndexHit(term, dbid, item, unid));
 						break;
 					}
@@ -578,6 +601,33 @@ public class IndexDatabase {
 			if (db != null) {
 				result.add(db.getTitle() + "|" + dbid);
 			}
+		}
+		return result;
+	}
+
+	public static List<String> dbMapToCheckbox(final Session session, final String serverName, final Map<String, AtomicInteger> dbMap) {
+		List<String> result = new ArrayList<String>();
+		for (String dbid : dbMap.keySet()) {
+			Database db = session.getDatabaseByReplicaID(serverName, dbid);
+			if (db != null) {
+				result.add(db.getTitle() + " (" + dbMap.get(dbid) + ")|" + dbid);
+			}
+		}
+		return result;
+	}
+
+	public static List<String> itemMapToCheckbox(final Map<String, AtomicInteger> itemMap) {
+		List<String> result = new ArrayList<String>();
+		for (String item : itemMap.keySet()) {
+			result.add(item.substring(16) + " (" + itemMap.get(item) + ")|" + item.substring(16));
+		}
+		return result;
+	}
+
+	public static List<String> formMapToCheckbox(final Map<String, AtomicInteger> formMap) {
+		List<String> result = new ArrayList<String>();
+		for (String form : formMap.keySet()) {
+			result.add(form.substring(16) + " (" + formMap.get(form) + ")|" + form.substring(16));
 		}
 		return result;
 	}

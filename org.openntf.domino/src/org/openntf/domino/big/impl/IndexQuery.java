@@ -59,8 +59,21 @@ public class IndexQuery {
 	 * @param terms
 	 *            the terms to set
 	 */
-	public void setTerms(final Collection<Object> terms) {
+	public void setTerms(final java.util.Collection<?> terms) {
 		terms_ = IndexDatabase.toStringSet(terms);
+	}
+
+	public void setMergedTerms(final String terms) {
+		Set<String> set = new HashSet<String>();
+		if (terms.indexOf(' ') > 0) {
+			String[] strings = terms.split(" ");
+			for (String str : strings) {
+				set.add(str);
+			}
+		} else {
+			set.add(terms);
+		}
+		setTerms(set);
 	}
 
 	public void setTerms(final String term) {
@@ -112,7 +125,7 @@ public class IndexQuery {
 		forms_ = IndexDatabase.toStringSet(forms);
 	}
 
-	protected IndexResults execute(final IndexDatabase db) {
+	public IndexResults execute(final IndexDatabase db) {
 		IndexResults result = null;
 		for (String term : getTerms()) {
 			List<IndexHit> hits = db.getTermResults(term, getLimit(), getDbids(), IndexDatabase.toCISSet(getItems()), getForms());

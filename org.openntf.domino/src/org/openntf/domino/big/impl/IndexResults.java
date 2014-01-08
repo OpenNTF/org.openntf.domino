@@ -86,7 +86,7 @@ public class IndexResults {
 		if (forms_ == null) {
 			forms_ = new HashMap<String, AtomicInteger>();
 			for (IndexHit hit : hits_) {
-				String term = hit.getForm();
+				String term = hit.getDbid() + hit.getForm();
 				if (forms_.containsKey(term)) {
 					forms_.get(term).incrementAndGet();
 				} else {
@@ -101,7 +101,7 @@ public class IndexResults {
 		if (items_ == null) {
 			items_ = new HashMap<String, AtomicInteger>();
 			for (IndexHit hit : hits_) {
-				String term = hit.getItem();
+				String term = hit.getDbid() + hit.getItem();
 				if (items_.containsKey(term)) {
 					items_.get(term).incrementAndGet();
 				} else {
