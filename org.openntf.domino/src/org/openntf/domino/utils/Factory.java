@@ -568,7 +568,7 @@ public enum Factory {
 
 		if (result != null) {
 			lotusObjectMap.put(cpp_id, (Base) result);
-			System.out.println("+ " + cpp_id);
+			//System.out.println("+ " + cpp_id);
 			referenceCounter++;
 			return result;
 		}

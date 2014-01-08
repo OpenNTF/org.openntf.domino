@@ -50,7 +50,14 @@ public class DominoReferenceHashMap<T> implements Map<T, Base> {
 
 	/* Reference queue for cleared refs */
 	// TODO: Check if this should be threadLocal!
-	private ReferenceQueue<Base> queue = new ReferenceQueue<Base>();
+	//  private ReferenceQueue<Base> queue = new ReferenceQueue<Base>();
+
+	private ThreadLocal<ReferenceQueue<Base>> queue = new ThreadLocal<ReferenceQueue<Base>>() {
+		@Override
+		protected ReferenceQueue<Base> initialValue() {
+			return new ReferenceQueue<Base>();
+		}
+	};
 
 	private boolean autorecycle_;
 
@@ -168,7 +175,7 @@ public class DominoReferenceHashMap<T> implements Map<T, Base> {
 	 * @return
 	 */
 	protected ReferenceQueue<Base> getQueue() {
-		return queue;
+		return queue.get();
 	}
 
 	/**
@@ -264,7 +271,7 @@ public class DominoReferenceHashMap<T> implements Map<T, Base> {
 	 */
 	@SuppressWarnings("unchecked")
 	public void processQueue() {
-		System.gc(); // TODO TODO
+		// System.gc(); // TODO TODO
 		DominoReference<T> ref = null;
 		ReferenceQueue<Base> queue = getQueue();
 		while ((ref = (DominoReference<T>) queue.poll()) != null) {
@@ -273,7 +280,7 @@ public class DominoReferenceHashMap<T> implements Map<T, Base> {
 				// only recycle refs that have a key
 				delegate.remove(key);
 				if (autorecycle_) {
-					System.out.println("- " + key);
+					// System.out.println("- " + key);
 					ref.recycle();
 				}
 			}
