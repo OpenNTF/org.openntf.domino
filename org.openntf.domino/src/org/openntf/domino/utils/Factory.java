@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
@@ -122,6 +123,12 @@ public enum Factory {
 	private static Map<String, String> ENVIRONMENT;
 	private static boolean session_init = false;
 	private static boolean jar_init = false;
+
+	/**
+	 * needed to call GC periodically. The optimum is somwhere ~1500. 1024 seems to be a good value
+	 */
+	private static AtomicInteger cache_counter = new AtomicInteger();
+	public static int GARBAGE_INTERVAL = 1024;
 
 	private static class Cache {
 
@@ -401,11 +408,13 @@ public enum Factory {
 				log_.log(Level.FINE, "Returning an already OpenNTF object...");
 			return (T) lotus;
 		}
-		if (T.isAssignableFrom(lotus.getClass())) {
-			if (log_.isLoggable(Level.FINE))
-				log_.log(Level.FINE, "Returning an assignable object....");
-			return (T) lotus;
-		}
+
+		// RPr: This check is useless because if T.isAssignableFrom(lotus.getClass() = true then  lotus instanceof org.openntf.domino.Base is also true 
+		//		if (T.isAssignableFrom(lotus.getClass())) {
+		//			if (log_.isLoggable(Level.FINE))
+		//				log_.log(Level.FINE, "Returning an assignable object....");
+		//			return (T) lotus;
+		//		}
 
 		// 1) These objects are not cached and returned immediately
 		if (lotus instanceof lotus.domino.Name) {
@@ -422,7 +431,6 @@ public enum Factory {
 		}
 
 		long cpp_id = Base.getLotusId((NotesBase) lotus);
-
 		Integer cpp_key = (int) ((cpp_id >> 2) & 0xFFFFFFFFL);
 
 		Cache cache = cache_.get();
@@ -578,10 +586,11 @@ public enum Factory {
 
 		if (result != null) {
 			cache.lotusObjects.put(cpp_key, (Base) result);
+			if (cache_counter.incrementAndGet() % GARBAGE_INTERVAL == 0) {
+				System.gc();
+			}
 			if (TRACE_COUNTERS) {
-				if (lotusCounter.increment() % 1000 == 0) {
-					System.gc();
-				}
+				lotusCounter.increment();
 			}
 			return result;
 		}
