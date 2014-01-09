@@ -370,7 +370,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		go = fireListener(generateEvent(Events.BEFORE_CREATE_DOCUMENT, this, null));
 		if (go) {
 			try {
-				result = Factory.fromLotus(getDelegate().createDocument(), Document.class, this);
+				result = Factory.fromLotusDocument(getDelegate().createDocument(), this);
 			} catch (NotesException e) {
 				DominoUtils.handleException(e);
 			}
@@ -927,7 +927,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public Document getDocumentByID(final String noteid) {
 		try {
-			return Factory.fromLotus(getDelegate().getDocumentByID(noteid), Document.class, this);
+			return Factory.fromLotusDocument(getDelegate().getDocumentByID(noteid), this);
 		} catch (NotesException e) {
 			// DominoUtils.handleException(e);
 			return null;
@@ -972,7 +972,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public Document getDocumentByUNID(final String unid) {
 		try {
-			return Factory.fromLotus(getDelegate().getDocumentByUNID(unid), Document.class, this);
+			return Factory.fromLotusDocument(getDelegate().getDocumentByUNID(unid), this);
 		} catch (NotesException e) {
 			// DominoUtils.handleException(e);
 			return null;
@@ -1007,9 +1007,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			if (true)
 				return null;
 
-			return Factory.fromLotus(
+			return Factory.fromLotusDocument(
 					getDelegate().getDocumentByURL(url, reload, reloadIfModified, urlList, charSet, webUser, webPassword, proxyUser,
-							proxyPassword, returnImmediately), Document.class, this);
+							proxyPassword, returnImmediately), this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -1472,7 +1472,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public Document getProfileDocument(final String profileName, final String key) {
 		try {
-			return Factory.fromLotus(getDelegate().getProfileDocument(profileName, key), Document.class, this);
+			return Factory.fromLotusDocument(getDelegate().getProfileDocument(profileName, key), this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

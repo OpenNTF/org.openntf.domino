@@ -1409,6 +1409,20 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return false;
 	}
 
+	//	private Boolean hasReaders_;
+
+	public boolean hasReaders() {
+		//TODO won't that be handy?
+
+		for (Item item : getItems()) {
+			if (item.isReaders()) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1999,7 +2013,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	private lotus.domino.Item replaceItemValueExt(final String itemName, final Object value, final IllegalArgumentException iae)
 			throws Exception {
 		lotus.domino.Item result = null;
-
+		boolean oldConvert = getAncestorSession().isConvertMime();
+		getAncestorSession().setConvertMime(false);
 		// Then try serialization
 		if (value instanceof Serializable) {
 			DominoUtils.saveState((Serializable) value, this, itemName);
@@ -2057,7 +2072,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				throw iae;
 			}
 		}
-
+		getAncestorSession().setConvertMime(oldConvert);
 		return result;
 	}
 
@@ -3135,5 +3150,21 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			return null;
 		}
 		return sw.toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Document#getMetaversalID()
+	 */
+	public String getMetaversalID() {
+		String replid = getAncestorDatabase().getReplicaID();
+		String unid = getUniversalID();
+		return replid + unid;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Document#getMetaversalID(java.lang.String)
+	 */
+	public String getMetaversalID(final String serverName) {
+		return serverName + "!!" + getMetaversalID();
 	}
 }

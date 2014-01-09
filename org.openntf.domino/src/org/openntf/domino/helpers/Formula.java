@@ -61,7 +61,11 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		 */
 		@Override
 		public String getMessage() {
-			return String.valueOf(syntaxDetails_.get(0));
+			if (syntaxDetails_ != null) {
+				return String.valueOf(syntaxDetails_.get(0));
+			} else {
+				return "Details unavailable";
+			}
 		}
 
 		/**
@@ -72,29 +76,50 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		}
 
 		public String getErrorLine() {
-			return String.valueOf(syntaxDetails_.get(1));
+			if (syntaxDetails_ != null) {
+				return String.valueOf(syntaxDetails_.get(1));
+			} else {
+				return "Details unavailable";
+			}
 		}
 
 		public String getErrorColumn() {
-			return String.valueOf(syntaxDetails_.get(2));
+			if (syntaxDetails_ != null) {
+				return String.valueOf(syntaxDetails_.get(2));
+			} else {
+				return "Details unavailable";
+			}
 		}
 
 		public String getErrorOffset() {
-			return String.valueOf(syntaxDetails_.get(3));
+			if (syntaxDetails_ != null) {
+				return String.valueOf(syntaxDetails_.get(3));
+			} else {
+				return "Details unavailable";
+			}
 		}
 
 		public String getErrorLength() {
-			return String.valueOf(syntaxDetails_.get(4));
+			if (syntaxDetails_ != null) {
+				return String.valueOf(syntaxDetails_.get(4));
+			} else {
+				return "Details unavailable";
+			}
 		}
 
 		public String getErrorText() {
-			return String.valueOf(syntaxDetails_.get(5));
+			if (syntaxDetails_ != null) {
+				return String.valueOf(syntaxDetails_.get(5));
+			} else {
+				return "Details unavailable";
+			}
 		}
 
 	}
 
 	private transient Session parent_;
 	private String expression_;
+	private boolean isValid_;
 
 	/**
 	 * 
@@ -112,6 +137,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		try {
 			setExpression(expression);
 		} catch (FormulaSyntaxException fe) {
+			isValid_ = false;
 			log_.log(Level.WARNING, "Error confirming formula syntax: " + fe.getExpression() + " (" + fe.getErrorText() + ")");
 		}
 	}
@@ -125,6 +151,8 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	}
 
 	public Parser getParser() {
+		if (!isValid_)
+			return null;
 		return new Parser(getExpression());
 	}
 
@@ -137,8 +165,10 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	public void setExpression(final String expression) {
 		Vector<Object> vec = getSession().evaluate("@CheckFormulaSyntax(\"" + DominoUtils.escapeForFormulaString(expression) + "\")");
 		if (vec == null) {
+			isValid_ = false;
 			throw new FormulaSyntaxException(expression, null);
 		} else if (vec.size() > 2) {
+			isValid_ = false;
 			throw new FormulaSyntaxException(expression, vec);
 		}
 		expression_ = expression;
@@ -310,26 +340,28 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		public void parseStatement(final String statement) {
 			inRightSide_ = false;
 			curStatementType_ = "";
-			String result = statement.replaceAll("\\n", "");
-			result = result.replaceAll("\\r", "").trim();
-			while (result != null && result.length() > 0) {
-				//				System.out.println("Parsing next statement");
-				if (result.startsWith(REM)) {
-					isAssignment_ = Boolean.FALSE;
-					result = parseComment(result.substring(REM.length()).trim());
-				} else if (result.startsWith(DEFAULT)) {
-					result = parseDefaultStatement(result.substring(DEFAULT.length()).trim());
-				} else if (result.startsWith(ENVIRONMENT)) {
-					result = parseEnvironmentStatement(result.substring(ENVIRONMENT.length()).trim());
-				} else if (result.startsWith(FIELD)) {
-					result = parseFieldStatement(result.substring(FIELD.length()).trim());
-				} else {
-					//					curStatementType_ = "";
-					isAssignment_ = null;	//we don't know whether this will be an assignment until we see ':='
-					result = parseNextStatement(result);
-					//					curStatementType_ = "";
+			if (statement != null) {
+				String result = statement.replaceAll("\\n", "");
+				result = result.replaceAll("\\r", "").trim();
+				while (result != null && result.length() > 0) {
+					//				System.out.println("Parsing next statement");
+					if (result.startsWith(REM)) {
+						isAssignment_ = Boolean.FALSE;
+						result = parseComment(result.substring(REM.length()).trim());
+					} else if (result.startsWith(DEFAULT)) {
+						result = parseDefaultStatement(result.substring(DEFAULT.length()).trim());
+					} else if (result.startsWith(ENVIRONMENT)) {
+						result = parseEnvironmentStatement(result.substring(ENVIRONMENT.length()).trim());
+					} else if (result.startsWith(FIELD)) {
+						result = parseFieldStatement(result.substring(FIELD.length()).trim());
+					} else {
+						//					curStatementType_ = "";
+						isAssignment_ = null;	//we don't know whether this will be an assignment until we see ':='
+						result = parseNextStatement(result);
+						//					curStatementType_ = "";
+					}
+					//				inRightSide_ = false;
 				}
-				//				inRightSide_ = false;
 			}
 		}
 

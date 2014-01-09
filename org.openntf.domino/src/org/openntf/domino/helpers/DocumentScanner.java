@@ -317,7 +317,9 @@ public class DocumentScanner {
 			Map<CaseInsensitiveString, Integer> typeMap = getFieldTypeMap();
 			//		Map<String, Integer> tfmap = getTokenFreqMap();
 			Vector<Item> items = doc.getItems();
-			String unid = doc.getUniversalID();
+			//			String unid = doc.getUniversalID();
+			boolean hasReaders = doc.hasReaders();
+			String address = doc.getUniversalID() + (hasReaders ? "1" : "0") + doc.getFormName();
 			//		Set<String> stopList = getStopTokenList();
 			for (Item item : items) {
 				if (item.getLastModifiedDate().after(getLastScanDate())) {
@@ -380,7 +382,7 @@ public class DocumentScanner {
 											while (s.hasNext()) {
 												CaseInsensitiveString token = scrubToken(s.next());
 												if (token != null && (token.length() > 2) && !isStopped(token)) {
-													processToken(token, name, unid, doc);
+													processToken(token, name, address, doc);
 												}
 											}
 										}
@@ -391,7 +393,7 @@ public class DocumentScanner {
 									while (s.hasNext()) {
 										CaseInsensitiveString token = scrubToken(s.next());
 										if (token != null && (token.length() > 2) && !isStopped(token)) {
-											processToken(token, name, unid, doc);
+											processToken(token, name, address, doc);
 										}
 									}
 								}
@@ -436,7 +438,8 @@ public class DocumentScanner {
 		}
 	}
 
-	private void processToken(final CaseInsensitiveString token, final CaseInsensitiveString itemName, final String unid, final Document doc) {
+	private void processToken(final CaseInsensitiveString token, final CaseInsensitiveString itemName, final String address,
+			final Document doc) {
 		Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> tlmap = getTokenLocationMap();
 		Map<CaseInsensitiveString, Integer> tfmap = getTokenFreqMap();
 		Map<CaseInsensitiveString, NavigableSet<CaseInsensitiveString>> tmap = getFieldTokenMap();
@@ -459,18 +462,19 @@ public class DocumentScanner {
 			Map<CaseInsensitiveString, Set<String>> tlval = tlmap.get(token);
 			if (tlval.containsKey(itemName)) {
 				Set<String> tllist = tlval.get(itemName);
-				if (!tllist.contains(unid + doc.getFormName())) {
-					tllist.add(unid + doc.getFormName());
-				}
+				tllist.add(address);
+				//				if (!tllist.contains(unid)) {
+				//					tllist.add(unid);
+				//				}
 			} else {
 				Set<String> tllist = new HashSet<String>();
-				tllist.add(unid + doc.getFormName());
+				tllist.add(address);
 				tlval.put(itemName, tllist);
 			}
 		} else {
 			Map<CaseInsensitiveString, Set<String>> tlval = new HashMap<CaseInsensitiveString, Set<String>>();
 			Set<String> tllist = new HashSet<String>();
-			tllist.add(unid + doc.getFormName());
+			tllist.add(address);
 			tlval.put(itemName, tllist);
 			tlmap.put(token, tlval);
 		}

@@ -30,6 +30,8 @@ public interface Document {
 
 	public String getFormName();
 
+	public boolean hasReaders();
+
 	public org.openntf.domino.Form getForm();
 
 	/**
@@ -74,6 +76,10 @@ public interface Document {
 	public boolean containsValue(final Object value, final Collection<String> itemnames);
 
 	public boolean containsValues(final Map<String, Object> filterMap);
+
+	public String getMetaversalID();
+
+	public String getMetaversalID(String serverName);
 
 	// public <T> T getItemValue(String name, Class<?> T, ClassLoader loader) throws ItemNotFoundException, DataNotCompatibleException;
 

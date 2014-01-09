@@ -457,7 +457,7 @@ public enum Factory {
 	 * @param parent
 	 * @return
 	 */
-	public static Document fromLotusDocument(final lotus.domino.Document lotus, final org.openntf.domino.Database parent) {
+	public static org.openntf.domino.impl.Document fromLotusDocument(final lotus.domino.Document lotus, final Base parent) {
 		if (lotus == null) {
 			return null;
 		}
@@ -466,7 +466,7 @@ public enum Factory {
 
 		Document result = documents.get(cpp_key);
 		if (result == null) {
-			result = wrapLotusDocument(lotus, parent);
+			result = wrapLotusDocument(lotus, Factory.getParentDatabase(parent));
 
 			documents.put(cpp_key, result);
 
@@ -474,7 +474,7 @@ public enum Factory {
 				lotusCounter.increment();
 			}
 		}
-		return result;
+		return (org.openntf.domino.impl.Document) result;
 	}
 
 	/**
@@ -766,7 +766,19 @@ public enum Factory {
 				try {
 					wrapped = fromLotus((lotus.domino.DateTime) value, org.openntf.domino.impl.DateTime.class, session);
 				} catch (Throwable t) {
-					System.out.println("Unable to wrap a DateTime found in Vector member " + i + " of " + values.size());
+					if (t instanceof NotesException) {
+						String text = ((NotesException) t).text;
+						System.out.println("Unable to wrap a DateTime found in Vector member " + i + " of " + values.size() + " because "
+								+ text);
+						try {
+							lotus.domino.DateTime dt = (lotus.domino.DateTime) value;
+							String gmttime = dt.getGMTTime();
+							System.out.println("GMTTime: " + gmttime);
+						} catch (Exception e) {
+
+						}
+					}
+
 				}
 				if (wrapped == null) {
 					result.add("");
@@ -1019,10 +1031,10 @@ public enum Factory {
 	 */
 	public static org.openntf.domino.Database getParentDatabase(final org.openntf.domino.Base<?> base) {
 		org.openntf.domino.Database result = null;
-		if (base instanceof DatabaseDescendant) {
-			result = ((DatabaseDescendant) base).getAncestorDatabase();
-		} else if (base instanceof org.openntf.domino.Database) {
+		if (base instanceof org.openntf.domino.Database) {
 			result = (org.openntf.domino.Database) base;
+		} else if (base instanceof DatabaseDescendant) {
+			result = ((DatabaseDescendant) base).getAncestorDatabase();
 		} else {
 			throw new UndefinedDelegateTypeException();
 		}
