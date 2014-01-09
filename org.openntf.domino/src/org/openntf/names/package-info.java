@@ -1,5 +1,5 @@
 /**
- * ARPA utilities
+ * Names Utilities
  * 
  * @author Devin S. Olson (dolson@czarnowski.com)
  * 
@@ -22,4 +22,4 @@
  * @author Devin S. Olson (dolson@czarnowski.com) 
  *
  */
-package org.openntf.arpa;
+package org.openntf.names;
