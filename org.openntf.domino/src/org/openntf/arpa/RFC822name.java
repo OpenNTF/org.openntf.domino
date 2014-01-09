@@ -17,6 +17,8 @@ package org.openntf.arpa;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.openntf.domino.utils.Strings;
@@ -29,11 +31,12 @@ import org.openntf.domino.utils.Strings;
  * @see "RFC822: Standard for ARPA Internet Text Messages" http://www.w3.org/Protocols/rfc822/
  * 
  */
-public class RFC822name implements Serializable {
+public class RFC822name extends HashMap<RFC822name.Key, String> implements Serializable {
+
 	private static final Logger log_ = Logger.getLogger(RFC822name.class.getName());
 	private static final long serialVersionUID = 1L;
 
-	public static enum Addr82xParts {
+	public static enum Key {
 		Comment1, Comment2, Comment3, Local, Domain, Phrase;
 
 		@Override
@@ -46,12 +49,11 @@ public class RFC822name implements Serializable {
 		}
 	};
 
-	private HashMap<Addr82xParts, String> _content;
-
 	/**
 	 * Zero Argument Constructor
 	 */
 	public RFC822name() {
+		super();
 	}
 
 	/**
@@ -61,29 +63,8 @@ public class RFC822name implements Serializable {
 	 *            String from which to construct the object
 	 */
 	public RFC822name(final String source) {
-		this.parseContent(source);
-	}
-
-	/*
-	 * ******************************************************************
-	 * ******************************************************************
-	 * 
-	 * Serializable getters & setters
-	 * 
-	 * ******************************************************************
-	 * ******************************************************************
-	 */
-
-	public HashMap<Addr82xParts, String> getContent() {
-		if (null == this._content) {
-			this._content = new HashMap<Addr82xParts, String>();
-		}
-
-		return this._content;
-	}
-
-	public void setContent(final HashMap<Addr82xParts, String> content) {
-		this._content = content;
+		super();
+		this.parse(source);
 	}
 
 	/*
@@ -106,23 +87,23 @@ public class RFC822name implements Serializable {
 	}
 
 	public String getAddr822Comment(final int commentnumber) {
-		Addr82xParts key = null;
+		Key key = null;
 
 		switch (commentnumber) {
 		case 1:
-			key = Addr82xParts.Comment1;
+			key = Key.Comment1;
 			break;
 		case 2:
-			key = Addr82xParts.Comment2;
+			key = Key.Comment2;
 			break;
 		case 3:
-			key = Addr82xParts.Comment3;
+			key = Key.Comment3;
 			break;
 		default:
 			return "";
 		}
 
-		String comment = this.getPart(key);
+		String comment = this.get(key);
 		return (comment.length() < 1) ? "" : "(" + comment + ")";
 
 	}
@@ -140,11 +121,11 @@ public class RFC822name implements Serializable {
 	}
 
 	public String getAddr822Domain() {
-		return this.getPart(Addr82xParts.Domain);
+		return this.get(Key.Domain);
 	}
 
 	public String getAddr822LocalPart() {
-		return this.getPart(Addr82xParts.Local);
+		return this.get(Key.Local);
 	}
 
 	public String getAddr822Full() {
@@ -224,7 +205,7 @@ public class RFC822name implements Serializable {
 	}
 
 	public String getAddr822Phrase() {
-		return this.getPart(Addr82xParts.Phrase);
+		return this.get(Key.Phrase);
 	}
 
 	public String getAddr822PhraseFirstLast() {
@@ -258,8 +239,8 @@ public class RFC822name implements Serializable {
 	}
 
 	public boolean isHasRFC82xContent() {
-		if (null != this._content) {
-			for (String s : this._content.values()) {
+		if (this.size() > 0) {
+			for (String s : this.values()) {
 				if ((null != s) && (s.trim().length() > 0)) {
 					return true;
 				}
@@ -279,13 +260,19 @@ public class RFC822name implements Serializable {
 	 * ******************************************************************
 	 */
 
-	public String getPart(final Addr82xParts key) {
-		String result = (null == key) ? "" : this.getContent().get(key);
+	@Override
+	public String get(final Object key) {
+		return (key instanceof RFC822name.Key) ? this.get((RFC822name.Key) key) : "";
+	}
+
+	public String get(final RFC822name.Key key) {
+		String result = (null == key) ? "" : super.get(key);
 		return (null == result) ? "" : result;
 	}
 
-	public void setPart(final Addr82xParts key, final String value) {
-		this.getContent().put(key, value);
+	@Override
+	public String put(final RFC822name.Key key, final String value) {
+		return "";
 	}
 
 	/* (non-Javadoc)
@@ -293,18 +280,28 @@ public class RFC822name implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "RFC822name [content=" + _content + "]";
-	}
-
-	public void clear() {
-		if (null != this._content) {
-			this._content.clear();
+		StringBuilder sb = new StringBuilder("RFC822name");
+		if (this.size() < 1) {
+			return sb.toString();
 		}
+
+		sb.append(" [");
+		Iterator<Map.Entry<RFC822name.Key, String>> it = this.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<RFC822name.Key, String> entry = it.next();
+			sb.append(entry.getKey() + "=" + entry.getValue());
+			if (it.hasNext()) {
+				sb.append(", ");
+			}
+		}
+
+		sb.append("]");
+		return sb.toString();
 	}
 
 	public void parseRFC82xContent(final String source) {
 		this.clear();
-		this.parseContent(source);
+		this.parse(source);
 	}
 
 	/*
@@ -318,23 +315,23 @@ public class RFC822name implements Serializable {
 	 */
 
 	public void setAddr822Comment(final int commentnumber, final String comment) {
-		Addr82xParts key = null;
+		Key key = null;
 
 		switch (commentnumber) {
 		case 1:
-			key = Addr82xParts.Comment1;
+			key = Key.Comment1;
 			break;
 		case 2:
-			key = Addr82xParts.Comment2;
+			key = Key.Comment2;
 			break;
 		case 3:
-			key = Addr82xParts.Comment3;
+			key = Key.Comment3;
 			break;
 		default:
 			return;
 		}
 
-		this.setPart(key, comment);
+		this.put(key, comment);
 	}
 
 	/**
@@ -343,7 +340,7 @@ public class RFC822name implements Serializable {
 	 * @param source
 	 *            String from which to parse the content values.
 	 */
-	private void parseContent(final String source) {
+	private void parse(final String source) {
 		if ((null != source) && (source.length() > 0)) {
 			final String pattern = "^.*<.*>.*$";
 			/*
@@ -381,7 +378,7 @@ public class RFC822name implements Serializable {
 				// parse the phrase part
 				String phrase = (idxLT > 0) ? source.substring(0, idxLT).trim() : "";
 				if (phrase.length() > 0) {
-					this.setPart(Addr82xParts.Phrase, phrase.replaceAll("\"", "").trim());
+					this.put(Key.Phrase, phrase.replaceAll("\"", "").trim());
 				}
 
 				// parse the internetaddress part
@@ -390,9 +387,9 @@ public class RFC822name implements Serializable {
 					String[] chunks = internetaddress.split("@");
 					if (null != chunks) {
 						if (null != chunks[0]) {
-							this.setPart(Addr82xParts.Local, chunks[0].trim());
+							this.put(Key.Local, chunks[0].trim());
 							if ((2 <= chunks.length) && (null != chunks[1])) {
-								this.setPart(Addr82xParts.Domain, chunks[1].trim());
+								this.put(Key.Domain, chunks[1].trim());
 							}
 						}
 					}
@@ -425,50 +422,4 @@ public class RFC822name implements Serializable {
 			}
 		}
 	}
-
-	/*
-	 * ******************************************************************
-	 * ******************************************************************
-	 * 
-	 * hashCode and equals
-	 * 
-	 * ******************************************************************
-	 * ******************************************************************
-	 */
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((_content == null) ? 0 : _content.hashCode());
-		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof RFC822name)) {
-			return false;
-		}
-		RFC822name other = (RFC822name) obj;
-		if (_content == null) {
-			if (other._content != null) {
-				return false;
-			}
-		} else if (!_content.equals(other._content)) {
-			return false;
-		}
-		return true;
-	}
-
 } // RFC822name
