@@ -27,9 +27,8 @@ import lotus.domino.Session;
  * If we fail to recycle non-date objects and run multiple threads, we get Backend Out of Memory Handles messages
  * 
  */
-public class NotesRunner implements Runnable {
+public class DominoRunner implements Runnable {
 	private static Method getCppMethod;
-	private static int bitMode;
 	private static Field cpp_field;
 	private static Field wr_field;
 
@@ -52,34 +51,6 @@ public class NotesRunner implements Runnable {
 		}
 	};
 
-	private static ThreadLocal<Long> minid = new ThreadLocal<Long>() {
-
-		/* (non-Javadoc)
-		 * @see java.lang.ThreadLocal#initialValue()
-		 */
-		@Override
-		protected Long initialValue() {
-			return Long.MAX_VALUE;
-		}
-
-		@Override
-		public void set(final Long value) {
-			if (value < super.get()) {
-				//				System.out.println("New Min is " + value);
-				super.set(value);
-				if (sessionid.get() > 0) {
-					long delta = (value - sessionid.get()) >> 3;	//difference divided by 8 (is a negative number)
-					//					if (delta > 8192l) {
-					System.out.println(Thread.currentThread().getName() + " is New min: " + value + " session diff: " + delta
-							+ " session: " + sessionid.get());
-					//					}
-				} else {
-					System.out.println("Setting up session id as min");
-				}
-			}
-		};
-	};
-
 	private static ThreadLocal<Long> maxid = new ThreadLocal<Long>() {
 
 		/* (non-Javadoc)
@@ -98,13 +69,11 @@ public class NotesRunner implements Runnable {
 			if (value > super.get()) {
 				super.set(value);
 				if (sessionid.get() > 0) {
-					long delta = (value - sessionid.get()) >> 3;	//difference divided by 8
+					long delta = (value - sessionid.get()) >> 2;
 					if (delta > 8192l) {
 						System.out.println(Thread.currentThread().getName() + " is New max: " + value + " session diff: " + delta
 								+ " session: " + sessionid.get());
 					}
-				} else {
-					System.out.println("Setting up session id as max");
 				}
 			}
 		};
@@ -115,14 +84,6 @@ public class NotesRunner implements Runnable {
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 				@Override
 				public Object run() throws Exception {
-					String bitModeRaw = System.getProperty("com.ibm.vm.bitmode");
-					try {
-						int mode = Integer.valueOf(bitModeRaw);
-						System.out.println("Set bitmode to " + mode);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-
 					getCppMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("GetCppObj", (Class<?>[]) null);
 					getCppMethod.setAccessible(true);
 
@@ -145,7 +106,6 @@ public class NotesRunner implements Runnable {
 			Object o = wr_field.get(base);
 			long result = (Long) cpp_field.get(o);
 			maxid.set(result);
-			minid.set(result);
 			return result;
 		} catch (Exception e) {
 			return 0L;
@@ -164,14 +124,9 @@ public class NotesRunner implements Runnable {
 
 	public static void main(final String[] args) throws InterruptedException {
 		try {
-			//			Properties props = System.getProperties();
-			//			for (Object key : props.keySet()) {
-			//				Object value = props.get(key);
-			//				System.out.println(String.valueOf(key) + " : " + String.valueOf(value));
-			//			}
 			NotesThread.sinitThread();
-			for (int i = 0; i < 8; i++) {
-				NotesRunner run = new NotesRunner();
+			for (int i = 0; i < 20; i++) {
+				DominoRunner run = new DominoRunner();
 				NotesThread nt = new NotesThread(run, "Thread " + i);
 				nt.start();
 				Thread.sleep(500);
@@ -182,7 +137,7 @@ public class NotesRunner implements Runnable {
 
 	}
 
-	public NotesRunner() {
+	public DominoRunner() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -191,10 +146,9 @@ public class NotesRunner implements Runnable {
 		try {
 			System.out.println("Starting NotesRunner");
 			Session session = NotesFactory.createSession();
-			Long sessId = getLotusId(session);
-			sessionid.set(sessId);
-			Database db = session.getDatabase("", "names.nsf");
-			System.out.println("Db id:" + getLotusId(db));
+			sessionid.set(getLotusId(session));
+			Database db = session.getDatabase("", "log.nsf");
+			getLotusId(db);
 			Name name = null;
 			int i = 0;
 			try {
@@ -227,10 +181,10 @@ public class NotesRunner implements Runnable {
 					DateTime create = doc.getCreated();
 					getLotusId(create);
 					String lc = create.getLocalTime();
-					//					if (i % 10000 == 0) {
-					//						System.out.println(Thread.currentThread().getName() + " Name " + i + " is " + name.getCommon() + " "
-					//								+ "Local time is " + lc + "  " + dr.getText());
-					//					}
+					if (i % 10000 == 0) {
+						System.out.println(Thread.currentThread().getName() + " Name " + i + " is " + name.getCommon() + " "
+								+ "Local time is " + lc + "  " + dr.getText());
+					}
 					dr.recycle();
 					doc.recycle();
 					dt.recycle();

@@ -14,6 +14,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Form;
 import org.openntf.domino.Name;
+import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.View;
@@ -170,11 +171,18 @@ public enum DominoAPIScratchTest {
 			DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
 			//			System.out.println(df.format(new Date()) + " Name: " + sname.getCanonical());
 			Database db = s.getDatabase(server, dbPath);
-			/*
-			 * if (INCLUDE_FORMS) { iterateForms(db); } Set<Document> secondReference = new HashSet<Document>(); iterateAllDocuments(db,
-			 * secondReference); System.gc(); NoteCollection nc = db.createNoteCollection(false); nc.buildCollection();
-			 * iterateSecondReferences(secondReference); iterateThirdReferences();
-			 */
+
+			if (INCLUDE_FORMS) {
+				iterateForms(db);
+			}
+			Set<Document> secondReference = new HashSet<Document>();
+			iterateAllDocuments(db, secondReference);
+			//			System.gc();
+			NoteCollection nc = db.createNoteCollection(false);
+			nc.buildCollection();
+			iterateSecondReferences(secondReference);
+			iterateThirdReferences();
+
 			View view = db.getView("NameMessageEventMessages");
 			List<String> keys = new ArrayList<String>();
 			keys.add("Mail");
