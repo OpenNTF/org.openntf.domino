@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
@@ -37,14 +36,16 @@ import lotus.domino.NotesFactory;
 import lotus.domino.NotesThread;
 import lotus.domino.local.NotesBase;
 
+import org.openntf.domino.Base;
+import org.openntf.domino.Database;
+import org.openntf.domino.Document;
+import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Mapper;
+import org.openntf.domino.Session;
 import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
 import org.openntf.domino.graph.DominoGraph;
-import org.openntf.domino.impl.Base;
-import org.openntf.domino.impl.DocumentCollection;
-import org.openntf.domino.impl.Session;
 import org.openntf.domino.logging.ConsoleFormatter;
 import org.openntf.domino.logging.DefaultConsoleHandler;
 import org.openntf.domino.logging.DefaultFileHandler;
@@ -125,32 +126,39 @@ public enum Factory {
 	private static boolean jar_init = false;
 
 	/**
-	 * needed to call GC periodically. The optimum is somwhere ~1500. 1024 seems to be a good value
+	 * Template for the threadCaches to make code more readable
 	 */
-	private static AtomicInteger cache_counter = new AtomicInteger();
-	public static int GARBAGE_INTERVAL = 1024;
+	private static class PerThreadCache<T extends Base> extends ThreadLocal<DominoReferenceCache<Integer, T>> {
+		final boolean autorecycle_;
+
+		PerThreadCache(final boolean autoRecycle) {
+			autorecycle_ = autoRecycle;
+		}
+
+		@Override
+		protected DominoReferenceCache<Integer, T> initialValue() {
+			return new DominoReferenceCache<Integer, T>(autorecycle_);
+		};
+	};
 
 	/** this is the holder for sessions, they are not auto recycled **/
-	private static ThreadLocal<DominoReferenceCache<Integer>> sessions_ = new ThreadLocal<DominoReferenceCache<Integer>>() {
-		@Override
-		protected DominoReferenceCache<Integer> initialValue() {
-			return new DominoReferenceCache<Integer>(false);
-		};
-	};
+	private static PerThreadCache<Session> sessions_ = new PerThreadCache<Session>(false);
+
+	/** this is the holder for all Documents that needs to be recycled. Documents and objects are stored in different maps. **/
+	private static PerThreadCache<Document> documents_ = new PerThreadCache<Document>(true);
 
 	/** this is the holder for all other object that needs to be recycled **/
-	private static ThreadLocal<DominoReferenceCache<Integer>> lotusObjects_ = new ThreadLocal<DominoReferenceCache<Integer>>() {
-		@Override
-		protected DominoReferenceCache<Integer> initialValue() {
-			return new DominoReferenceCache<Integer>(true);
-		};
-	};
+	private static PerThreadCache<Base> lotusObjects_ = new PerThreadCache<Base>(true);
 
 	private static void clearCaches() {
-		DominoReferenceCache<Integer> sessions = sessions_.get();
-		DominoReferenceCache<Integer> lotusObjects = lotusObjects_.get();
+		DominoReferenceCache<?, ?> sessions = sessions_.get();
+		DominoReferenceCache<?, ?> documents = documents_.get();
+		DominoReferenceCache<?, ?> lotusObjects = lotusObjects_.get();
 
+		// call gc once before processing the queues
+		System.gc();
 		// TODO: Recycle all?
+		sessions.processQueue();
 		lotusObjects.processQueue();
 		sessions.processQueue();
 
@@ -395,6 +403,7 @@ public enum Factory {
 		return result;
 	}
 
+	// --- session handling 
 	/**
 	 * Wraps and caches sessions. Sessions are put in a separate map (otherwise you can use fromLotusObject). (you may overwrite this if we
 	 * make a non static IFactory)
@@ -403,22 +412,28 @@ public enum Factory {
 	 * @param parent
 	 * @return
 	 */
-	protected static Session fromLotusSession(final lotus.domino.Session lotus, final org.openntf.domino.Base parent) {
+	public static Session fromLotusSession(final lotus.domino.Session lotus, final Base parent) {
+		if (lotus == null) {
+			return null;
+		}
+		DominoReferenceCache<Integer, org.openntf.domino.Session> sessions = sessions_.get();
+		Integer cpp_key = org.openntf.domino.impl.Base.getLotusKey(lotus);
 
-		DominoReferenceCache<Integer> sessions = sessions_.get();
-		Integer cpp_key = Base.getLotusKey(lotus);
-
-		Session result = (Session) sessions.get(cpp_key);
+		Session result = sessions.get(cpp_key);
 		if (result == null) {
 			// if the session is not in the map, create a new one 
-			result = new org.openntf.domino.impl.Session((lotus.domino.Session) lotus, parent);
+			result = new org.openntf.domino.impl.Session(lotus, parent);
 			sessions.put(cpp_key, result);
 		}
 
 		// Store the first wrapped session in the sessionHolder
-		if (currentSessionHolder_.get() != null) {
+		Session currentSession = currentSessionHolder_.get();
+		if (currentSession == result) {
+			// if this is the identical object, do nothing
+		}
+		if (currentSession != null) {
 			try {
-				lotus.domino.Session rawSession = (lotus.domino.Session) Base.getDelegate(currentSessionHolder_.get());
+				lotus.domino.Session rawSession = (lotus.domino.Session) org.openntf.domino.impl.Base.getDelegate(currentSession);
 				rawSession.isConvertMime(); // Do you check for a "session has been recycled ex. here?"
 			} catch (NotesException ne) {
 				Factory.loadEnvironment((lotus.domino.Session) lotus);
@@ -428,7 +443,7 @@ public enum Factory {
 		} else {
 			Factory.loadEnvironment((lotus.domino.Session) lotus);
 			// System.out.println("Resetting default local session because it was null");
-			setSession((org.openntf.domino.Session) result);
+			setSession(result);
 		}
 
 		return result;
@@ -436,52 +451,93 @@ public enum Factory {
 	}
 
 	/**
-	 * Wraps & caches all lotus object except Names, DateTimes, Sessions
+	 * Wraps & caches a lotus.domino.Document
 	 * 
 	 * @param lotus
 	 * @param parent
 	 * @return
 	 */
-	protected static org.openntf.domino.Base fromLotusObject(final lotus.domino.Base lotus, final org.openntf.domino.Base parent) {
-		DominoReferenceCache<Integer> lotusObjects = lotusObjects_.get();
-		Integer cpp_key = Base.getLotusKey(lotus);
+	public static Document fromLotusDocument(final lotus.domino.Document lotus, final org.openntf.domino.Database parent) {
+		if (lotus == null) {
+			return null;
+		}
+		DominoReferenceCache<Integer, Document> documents = documents_.get();
+		Integer cpp_key = org.openntf.domino.impl.Base.getLotusKey(lotus);
 
-		org.openntf.domino.Base result = lotusObjects.get(cpp_key);
+		Document result = documents.get(cpp_key);
+		if (result == null) {
+			result = wrapLotusDocument(lotus, parent);
+
+			documents.put(cpp_key, result);
+
+			if (TRACE_COUNTERS) {
+				lotusCounter.increment();
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * @param lotus
+	 * @param parent
+	 * @return
+	 */
+	protected static org.openntf.domino.impl.Document wrapLotusDocument(final lotus.domino.Document lotus, final Database parent) {
+
+		// 25.09.13/RPr: what do you think about this idea to pass every document to the database, so that the
+		// mapper can decide how and which object to return
+		//			Mapper mapper = getMapper();
+		//			if (mapper != null) {
+		//				result = (T) mapper.map((lotus.domino.Document) lotus, parent);
+		//				if (result != null) {
+		//					// TODO: What to do if mapper does not map
+		//					return result;
+		//				}
+		//			}
+		return new org.openntf.domino.impl.Document(lotus, parent);
+	}
+
+	// --- others
+	/**
+	 * Wraps & caches all lotus object except Names, DateTimes, Sessions, Documents
+	 * 
+	 * @param lotus
+	 * @param parent
+	 * @return
+	 */
+	public static Base fromLotusObject(final lotus.domino.Base lotus, final Base parent) {
+		if (lotus == null) {
+			return null;
+		}
+		DominoReferenceCache<Integer, Base> lotusObjects = lotusObjects_.get();
+		Integer cpp_key = org.openntf.domino.impl.Base.getLotusKey(lotus);
+
+		Base result = lotusObjects.get(cpp_key);
 		if (result == null) {
 			result = wrapLotusObject(lotus, parent);
+
 			lotusObjects.put(cpp_key, result);
+
+			if (TRACE_COUNTERS) {
+				lotusCounter.increment();
+			}
 		}
 		return result;
 	}
 
 	/**
-	 * Helper, so you can overwrite: Wraps all lotus objects. Does not cache it!
+	 * Helper for fromLotusObject, so you can overwrite this
 	 * 
 	 * @param lotus
 	 * @param parent
 	 * @return
 	 */
-	protected static org.openntf.domino.Base wrapLotusObject(final lotus.domino.Base lotus, final org.openntf.domino.Base parent) {
+	protected static Base wrapLotusObject(final lotus.domino.Base lotus, final Base parent) {
 		// TODO Auto-generated method stub
 		if (lotus instanceof lotus.domino.RichTextItem) { // items & richtextitems are used very often. 
 			return new org.openntf.domino.impl.RichTextItem((lotus.domino.RichTextItem) lotus, parent);
 		} else if (lotus instanceof lotus.domino.Item) {  // check for Item must be behind RichtextItem
 			return new org.openntf.domino.impl.Item((lotus.domino.Item) lotus, parent);
-
-		} else if (lotus instanceof lotus.domino.Document) {// Documents are also very often used
-			// TODO R
-			// 25.09.13/RPr: what do you think about this idea to pass every document to the database, so that the
-			// mapper can decide how and which object to return
-			//			Mapper mapper = getMapper();
-			//			if (mapper != null) {
-			//				result = (T) mapper.map((lotus.domino.Document) lotus, parent);
-			//				if (result != null) {
-			//					// TODO: What to do if mapper does not map
-			//					return result;
-			//				}
-			//			}
-			return new org.openntf.domino.impl.Document((lotus.domino.Document) lotus, parent);
-
 		} else if (lotus instanceof lotus.domino.DocumentCollection) {
 			return new org.openntf.domino.impl.DocumentCollection((lotus.domino.DocumentCollection) lotus, parent);
 		} else if (lotus instanceof lotus.domino.ACL) {
@@ -596,8 +652,7 @@ public enum Factory {
 	 * @return the t
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T> T fromLotus(final lotus.domino.Base lotus, final Class<? extends org.openntf.domino.Base> T,
-			final org.openntf.domino.Base parent) {
+	public static <T> T fromLotus(final lotus.domino.Base lotus, final Class<? extends Base> T, final Base parent) {
 		if (lotus == null) {
 			return null;
 		}
@@ -625,8 +680,14 @@ public enum Factory {
 			return (T) fromLotusSession((lotus.domino.Session) lotus, parent);
 		}
 
+		// Special case for Documents to process them fast
+		if (lotus instanceof lotus.domino.Document) {
+			System.out.println("fromLotus() should not be called for docs!");
+			return (T) fromLotusDocument((lotus.domino.Document) lotus, Factory.getParentDatabase(parent));
+		}
+
 		// 2.2) all other Lotus-Objects are cached in an own map, that recycles the object
-		return (T) fromLotusObject((lotus.domino.Session) lotus, parent);
+		return (T) fromLotusObject(lotus, parent);
 	}
 
 	/**
@@ -643,8 +704,7 @@ public enum Factory {
 	 * @return the collection
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <T> Collection<T> fromLotus(final Collection<?> lotusColl, final Class<? extends org.openntf.domino.Base> T,
-			final org.openntf.domino.Base<?> parent) {
+	public static <T> Collection<T> fromLotus(final Collection<?> lotusColl, final Class<? extends Base> T, final Base<?> parent) {
 		Collection<T> result = new ArrayList<T>(); // TODO anyone got a better implementation?
 		if (!lotusColl.isEmpty()) {
 			for (Object lotus : lotusColl) {
@@ -871,7 +931,7 @@ public enum Factory {
 	public static lotus.domino.Session terminate() {
 		lotus.domino.Session result = null;
 		if (currentSessionHolder_.get() != null) {
-			result = (lotus.domino.Session) Base.getDelegate(currentSessionHolder_.get());
+			result = (lotus.domino.Session) org.openntf.domino.impl.Base.getDelegate(currentSessionHolder_.get());
 		}
 		clearCaches();
 
@@ -987,7 +1047,7 @@ public enum Factory {
 			throw new UndefinedDelegateTypeException();
 		}
 		if (result == null)
-			result = Session.getDefaultSession(); // last ditch, get the primary Session;
+			result = org.openntf.domino.impl.Session.getDefaultSession(); // last ditch, get the primary Session;
 		return result;
 	}
 
@@ -1246,8 +1306,8 @@ public enum Factory {
 	 */
 	public static org.openntf.domino.NoteCollection toNoteCollection(final lotus.domino.DocumentCollection collection) {
 		org.openntf.domino.NoteCollection result = null;
-		if (collection instanceof org.openntf.domino.impl.DocumentCollection) {
-			org.openntf.domino.Database db = ((org.openntf.domino.DocumentCollection) collection).getParent();
+		if (collection instanceof DocumentCollection) {
+			org.openntf.domino.Database db = ((DocumentCollection) collection).getParent();
 			result = db.createNoteCollection(false);
 			result.add((DocumentCollection) collection);
 		} else {
