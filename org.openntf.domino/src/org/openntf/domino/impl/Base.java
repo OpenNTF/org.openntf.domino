@@ -15,7 +15,6 @@
  */
 package org.openntf.domino.impl;
 
-import java.lang.ref.Reference;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.security.AccessController;
@@ -34,8 +33,6 @@ import org.openntf.domino.events.IDominoListener;
 import org.openntf.domino.exceptions.BlockedCrashException;
 import org.openntf.domino.ext.Formula;
 import org.openntf.domino.thread.DominoLockSet;
-import org.openntf.domino.thread.DominoReference;
-import org.openntf.domino.thread.DominoReferenceQueue;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoUtils;
@@ -53,20 +50,6 @@ import org.openntf.domino.utils.Factory;
 public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base> implements org.openntf.domino.Base<D> {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Base.class.getName());
-
-	// TODO NTF - we really should keep a Map of lotus objects to references, so we can only auto-recycle when we know there are no other
-	// references to the same shared object.
-	// problem today is: there's no clear way to determine an identity for the NotesBase object.
-	/** The recycle queue. */
-	private static ThreadLocal<DominoReferenceQueue> recycleQueue = new ThreadLocal<DominoReferenceQueue>() {
-		@Override
-		protected DominoReferenceQueue initialValue() {
-			return new DominoReferenceQueue();
-		};
-	};
-
-	/** The cpp_object. */
-	private long cpp_object = 0l;
 
 	// /** The reference bag. */
 	// private static ThreadLocal<Set<DominoReference>> referenceBag = new ThreadLocal<Set<DominoReference>>() {
@@ -155,52 +138,22 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		if (parent != null) {
 			setParent(parent);
 		}
+
 		if (delegate != null) {
-			DominoReferenceQueue drq = recycleQueue.get();
 			if (delegate instanceof org.openntf.domino.impl.Base) {
-				if (log_.isLoggable(Level.INFO))
-					log_.log(Level.INFO, "Why are you wrapping a non-Lotus object? " + delegate.getClass().getName());
-				drq.bagReference(new DominoReference(this, drq, ((org.openntf.domino.impl.Base) delegate).getDelegate()));
+				// normally you won't get here if you come from Factory.fromLotus
+				throw new IllegalArgumentException("Why are you wrapping a non-Lotus object? " + delegate.getClass().getName());
 			} else if (delegate instanceof lotus.domino.local.NotesBase) {
 				delegate_ = delegate;
-				cpp_object = getLotusId((lotus.domino.local.NotesBase) delegate);
-				if (delegate instanceof lotus.domino.Name || delegate instanceof lotus.domino.DateTime
-						|| delegate instanceof lotus.domino.Session) {
-					// No reference needed. Will be recycled directly...
-					// Not creating auto-recycle references for Sessions
-					// TODO - NTF come up with a better solution for recycling Sessions!!!
-				} else {
-					drq.bagReference(new DominoReference(this, drq, delegate));
-				}
 			} else {
-				if (log_.isLoggable(Level.FINE))
-					log_.log(Level.FINE, "Why are you wrapping a non-Lotus object? " + delegate.getClass().getName(),
-							new RuntimeException());
+				throw new IllegalArgumentException("Why are you wrapping a non-Lotus object? " + delegate.getClass().getName());
 			}
 		}
-		drainQueue(cpp_object);
-		// else {
-		// encapsulated_ = true;
-		// }
 
 	}
 
 	void setDelegate(final D delegate) {
-
 		delegate_ = delegate;
-		cpp_object = getLotusId((lotus.domino.local.NotesBase) delegate);
-		if (delegate instanceof lotus.domino.Name || delegate instanceof lotus.domino.DateTime || delegate instanceof lotus.domino.Session) {
-			// TODO - NTF come up with a better solution for recycling Sessions!!!
-		} else {
-			recycleQueue.get().bagReference(new DominoReference(this, recycleQueue.get(), delegate));
-		}
-		// if (delegate instanceof lotus.domino.Document) {
-		// try {
-		// System.out.println("Redelegating a document: " + ((lotus.domino.Document) delegate).getNoteID() + " (" + cpp_object + ")");
-		// } catch (NotesException e) {
-		// DominoUtils.handleException(e);
-		// }
-		// }
 	}
 
 	/**
@@ -219,44 +172,6 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	}
 
 	/**
-	 * _get recycle queue.
-	 * 
-	 * @return the domino reference queue
-	 */
-	private static DominoReferenceQueue _getRecycleQueue() {
-		return recycleQueue.get();
-	}
-
-	/**
-	 * Drain queue.
-	 * 
-	 * @return the int
-	 */
-	public static int drainQueue(final long cppid) {
-		int result = 0;
-		DominoReferenceQueue drq = _getRecycleQueue();
-		Reference<?> ref = drq.poll(cppid);
-
-		while (ref != null) {
-			ref = drq.poll(cppid);
-			result++;
-		}
-		return result;
-	}
-
-	/**
-	 * Finalize queue.
-	 * 
-	 * @return the int
-	 */
-	public static int finalizeQueue() {
-		int result = 0;
-		DominoReferenceQueue drq = _getRecycleQueue();
-		result = drq.finalizeQueue();
-		return result;
-	}
-
-	/**
 	 * Gets the delegate.
 	 * 
 	 * @param wrapper
@@ -269,18 +184,6 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			return ((org.openntf.domino.impl.Base) wrapper).getDelegate();
 		}
 		return wrapper;
-	}
-
-	/**
-	 * Gets the cpp_object.
-	 * 
-	 * @param wrapper
-	 *            the wrapper
-	 * @return the cpp handle
-	 */
-	@SuppressWarnings("rawtypes")
-	public static long getDelegateId(final org.openntf.domino.impl.Base wrapper) {
-		return ((org.openntf.domino.impl.Base) wrapper).cpp_object;
 	}
 
 	/**

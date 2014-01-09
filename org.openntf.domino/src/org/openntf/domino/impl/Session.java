@@ -35,7 +35,6 @@ import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
 import org.openntf.domino.exceptions.UnableToAcquireSessionException;
 import org.openntf.domino.exceptions.UserAccessException;
-import org.openntf.domino.thread.DominoReferenceCounter;
 import org.openntf.domino.utils.DominoFormatter;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -65,9 +64,6 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 			return null;
 		}
 	};
-
-	/** The lotus reference counter_. */
-	private DominoReferenceCounter lotusReferenceCounter_ = new DominoReferenceCounter();
 
 	public static final int DEFAULT_NSF_CACHE_SIZE = 16;
 
@@ -106,31 +102,6 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 
 	public int getNsfCacheSize() {
 		return databases_.size();
-	}
-
-	/**
-	 * Adds the id.
-	 * 
-	 * @param id
-	 *            the id
-	 * @return the int
-	 */
-	public int addId(final long id) {
-		int result = lotusReferenceCounter_.increment(id);
-		if (result > 8)
-			log_.log(Level.INFO, "Currently tracking more than 8 references for " + id);
-		return result;
-	}
-
-	/**
-	 * Subtract id.
-	 * 
-	 * @param id
-	 *            the id
-	 * @return the int
-	 */
-	public int subtractId(final long id) {
-		return lotusReferenceCounter_.decrement(id);
 	}
 
 	/**

@@ -959,7 +959,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					return (Vector<Object>) Arrays.asList((Object[]) mimeValue);
 				}
 				Vector<Object> result = new Vector<Object>(1);
-				result.add(getItemValueMIME(name));
+				result.add(mimeValue);
 				return result;
 				// TODO NTF: What if we have a "real" mime item like a body field (Handle RT/MIME correctly)
 			}
@@ -2723,7 +2723,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		}
 	}
 
-	void markDirty() {
+	public void markDirty() {
 		isDirty_ = true;
 		if (!isQueued_) {
 			DatabaseTransaction txn = getParentDatabase().getTransaction();

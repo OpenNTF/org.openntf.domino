@@ -16,6 +16,7 @@
 package org.openntf.domino.thread;
 
 import java.lang.ref.PhantomReference;
+import java.lang.ref.ReferenceQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,7 +28,7 @@ import org.openntf.domino.utils.Factory;
 /**
  * The Class DominoReference.
  */
-public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>> {
+public class DominoReference<T> extends PhantomReference<org.openntf.domino.Base<?>> {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(DominoReference.class.getName());
 
@@ -37,7 +38,7 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 	private final Class<?> delegateType_;
 
 	/** The delegate id_. */
-	private final long delegateId_;
+	//private final long delegateId_;
 
 	private final int originThreadId_;
 
@@ -53,6 +54,11 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 	/** The watched cpp. */
 	private static long watchedCpp = 0l;
 
+	/** This is the CPP-ID or a hash value **/
+	private T key_;
+
+	private transient int hashcode_;
+
 	/**
 	 * Instantiates a new domino reference.
 	 * 
@@ -63,19 +69,19 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 	 * @param delegate
 	 *            the delegate
 	 */
-	public DominoReference(final Base<?> r, final DominoReferenceQueue q, final lotus.domino.Base delegate) {
+	public DominoReference(final Base<?> r, final ReferenceQueue<Base> q, final T key) {
 		super(r, q);
-		delegate_ = delegate; // Because the reference separately contains a pointer to the delegate object, it's still available even
-								// though the wrapper is null
+
+		// Because the reference separately contains a pointer to the delegate object, it's still available even
+		// though the wrapper is null
+		delegate_ = org.openntf.domino.impl.Base.getDelegate(r);
+		key_ = key;
+
 		referrantSession_ = (Session) Factory.getSession(r); // TODO NTF - clean up implementation
-		if (r instanceof org.openntf.domino.impl.Base) {
-			delegateId_ = org.openntf.domino.impl.Base.getDelegateId((org.openntf.domino.impl.Base) r);
-		} else {
-			delegateId_ = org.openntf.domino.impl.Base.getLotusId((lotus.domino.local.NotesBase) delegate);
-		}
+
 		originThreadId_ = System.identityHashCode(Thread.currentThread());
 		if (log_.isLoggable(Level.FINE)) {
-			delegateType_ = delegate.getClass();
+			delegateType_ = delegate_.getClass();
 			referrantHash_ = r.hashCode();
 			referrantId_ = System.identityHashCode(r);
 		} else {
@@ -85,23 +91,23 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 		}
 	}
 
-	/**
-	 * Checks if is trace target.
-	 * 
-	 * @return true, if is trace target
-	 */
-	public boolean isTraceTarget() {
-		return delegateId_ == watchedCpp;
-	}
+	//	/**
+	//	 * Checks if is trace target.
+	//	 * 
+	//	 * @return true, if is trace target
+	//	 */
+	//	public boolean isTraceTarget() {
+	//		return delegateId_ == watchedCpp;
+	//	}
 
-	/**
-	 * Gets the delegate id.
-	 * 
-	 * @return the delegate id
-	 */
-	public Long getDelegateId() {
-		return delegateId_;
-	}
+	//	/**
+	//	 * Gets the delegate id.
+	//	 * 
+	//	 * @return the delegate id
+	//	 */
+	//	public Long getDelegateId() {
+	//		return delegateId_;
+	//	}
 
 	public int getOriginThreadId() {
 		return originThreadId_;
@@ -146,9 +152,10 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 	/**
 	 * Recycle.
 	 */
-	public void recycle() {
+	void recycle() {
 		int ctid = System.identityHashCode(Thread.currentThread());
 		if (!(ctid == getOriginThreadId())) {
+
 			log_.log(Level.WARNING, "Attempting to recycle a Domino reference from thread " + ctid
 					+ " which is different from the one that originated it (" + getOriginThreadId()
 					+ "). This is probably going to be very very bad...");
@@ -162,4 +169,45 @@ public class DominoReference extends PhantomReference<org.openntf.domino.Base<?>
 		}
 	}
 
+	/**
+	 * A WeakValue is equal to another WeakValue iff they both refer to objects that are, in turn, equal according to their own equals
+	 * methods.
+	 */
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj)
+			return true;
+
+		if (!(obj instanceof DominoReference))
+			return false;
+
+		Object ref1 = this.get();
+		@SuppressWarnings("unchecked")
+		Object ref2 = ((DominoReference<T>) obj).get();
+
+		if (ref1 == ref2)
+			return true;
+
+		if ((ref1 == null) || (ref2 == null))
+			return false;
+
+		return ref1.equals(ref2);
+	}
+
+	/**
+     *
+     */
+	@Override
+	public int hashCode() {
+		if (hashcode_ == 0) {
+			Object ref = this.get();
+
+			hashcode_ = (ref == null) ? 0 : ref.hashCode();
+		}
+		return hashcode_;
+	}
+
+	T getKey() {
+		return key_;
+	}
 }
