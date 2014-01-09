@@ -132,7 +132,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	@Override
 	public Document getDocument() {
 		try {
-			return Factory.fromLotus(getDelegate().getDocument(), Document.class, this);
+			return Factory.fromLotusDocument(getDelegate().getDocument(), this);
 		} catch (NotesException e) {
 			if (e.id == 4432) {
 				return null;

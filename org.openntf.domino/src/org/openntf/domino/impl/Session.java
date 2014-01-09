@@ -1080,7 +1080,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public Document getUserPolicySettings(final String server, final String name, final int type, final String explicitPolicy) {
 		try {
-			return Factory.fromLotus(getDelegate().getUserPolicySettings(server, name, type, explicitPolicy), Document.class, this);
+			return Factory.fromLotusDocument(getDelegate().getUserPolicySettings(server, name, type, explicitPolicy), this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -1096,7 +1096,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public Document getUserPolicySettings(final String server, final String name, final int type) {
 		try {
-			return Factory.fromLotus(getDelegate().getUserPolicySettings(server, name, type), Document.class, this);
+			return Factory.fromLotusDocument(getDelegate().getUserPolicySettings(server, name, type), this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

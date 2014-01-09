@@ -78,7 +78,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	@Override
 	public Document getDocument() {
 		try {
-			return Factory.fromLotus(getDelegate().getDocument(), Document.class, this);
+			return Factory.fromLotusDocument(getDelegate().getDocument(), this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
