@@ -347,6 +347,25 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 			}
 
 			switch (key) {
+			case Abbreviated: { 
+				String common = this.getNamePart(Name.NamePart.Common);
+				String ou1 = this.getNamePart(Name.NamePart.OrgUnit1);
+				String ou2 = this.getNamePart(Name.NamePart.OrgUnit2);
+				String ou3 = this.getNamePart(Name.NamePart.OrgUnit3);
+				String organization = this.getNamePart(Name.NamePart.Organization);
+				String country = this.getNamePart(Name.NamePart.Country);
+				
+				StringBuffer sb = new StringBuffer(""); 
+				if (!Strings.isBlankString(common)) { sb.append(common); } 
+				if (!Strings.isBlankString(ou3)) { sb.append("/" + ou3); } 
+				if (!Strings.isBlankString(ou2)) { sb.append("/" + ou2); } 
+				if (!Strings.isBlankString(ou1)) { sb.append("/" + ou1); } 
+				if (!Strings.isBlankString(organization)) { sb.append("/" + organization); } 
+				if (!Strings.isBlankString(country)) { sb.append("/" + country); } 
+
+				return sb.toString();
+			}
+			
 			case Addr821:
 				return this.getRFC822name().getAddr821();
 
@@ -365,6 +384,26 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 			case Addr822Phrase:
 				return this.getRFC822name().getAddr822Phrase();
 
+			case Canonical: { 
+				String common = this.getNamePart(Name.NamePart.Common);
+				String ou1 = this.getNamePart(Name.NamePart.OrgUnit1);
+				String ou2 = this.getNamePart(Name.NamePart.OrgUnit2);
+				String ou3 = this.getNamePart(Name.NamePart.OrgUnit3);
+				String organization = this.getNamePart(Name.NamePart.Organization);
+				String country = this.getNamePart(Name.NamePart.Country);
+				
+				StringBuffer sb = new StringBuffer(""); 
+				if (!Strings.isBlankString(common)) { sb.append("CN=" + common); } 
+				if (!Strings.isBlankString(ou3)) { sb.append("/OU=" + ou3); } 
+				if (!Strings.isBlankString(ou2)) { sb.append("/OU=" + ou2); } 
+				if (!Strings.isBlankString(ou1)) { sb.append("/OU=" + ou1); } 
+				if (!Strings.isBlankString(organization)) { sb.append("/O=" + organization); } 
+				if (!Strings.isBlankString(country)) { sb.append("/C=" + country); } 
+
+				return sb.toString();
+			}
+
+			
 			default:
 				final String result = this.getNameParts().get(key);
 				return (null == result) ? "" : result;
