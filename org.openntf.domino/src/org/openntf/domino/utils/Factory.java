@@ -766,7 +766,19 @@ public enum Factory {
 				try {
 					wrapped = fromLotus((lotus.domino.DateTime) value, org.openntf.domino.impl.DateTime.class, session);
 				} catch (Throwable t) {
-					System.out.println("Unable to wrap a DateTime found in Vector member " + i + " of " + values.size());
+					if (t instanceof NotesException) {
+						String text = ((NotesException) t).text;
+						System.out.println("Unable to wrap a DateTime found in Vector member " + i + " of " + values.size() + " because "
+								+ text);
+						try {
+							lotus.domino.DateTime dt = (lotus.domino.DateTime) value;
+							String gmttime = dt.getGMTTime();
+							System.out.println("GMTTime: " + gmttime);
+						} catch (Exception e) {
+
+						}
+					}
+
 				}
 				if (wrapped == null) {
 					result.add("");
