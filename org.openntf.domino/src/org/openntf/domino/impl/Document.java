@@ -601,7 +601,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return null;
 	}
 
-	private final transient Map<String, MIMEEntity> entityCache_ = new HashMap<String, MIMEEntity>();
+	//RPr: currently not used. So I commented this out
+	//private final transient Map<String, MIMEEntity> entityCache_ = new HashMap<String, MIMEEntity>();
 
 	/*
 	 * (non-Javadoc)
