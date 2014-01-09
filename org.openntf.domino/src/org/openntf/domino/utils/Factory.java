@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
@@ -37,14 +36,16 @@ import lotus.domino.NotesFactory;
 import lotus.domino.NotesThread;
 import lotus.domino.local.NotesBase;
 
+import org.openntf.domino.Base;
+import org.openntf.domino.Database;
+import org.openntf.domino.Document;
+import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Mapper;
+import org.openntf.domino.Session;
 import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
 import org.openntf.domino.graph.DominoGraph;
-import org.openntf.domino.impl.Base;
-import org.openntf.domino.impl.DocumentCollection;
-import org.openntf.domino.impl.Session;
 import org.openntf.domino.logging.ConsoleFormatter;
 import org.openntf.domino.logging.DefaultConsoleHandler;
 import org.openntf.domino.logging.DefaultFileHandler;
@@ -125,25 +126,43 @@ public enum Factory {
 	private static boolean jar_init = false;
 
 	/**
-	 * needed to call GC periodically. The optimum is somwhere ~1500. 1024 seems to be a good value
+	 * Template for the threadCaches to make code more readable
 	 */
-	private static AtomicInteger cache_counter = new AtomicInteger();
-	public static int GARBAGE_INTERVAL = 1024;
+	private static class PerThreadCache<T extends Base> extends ThreadLocal<DominoReferenceCache<Integer, T>> {
+		final boolean autorecycle_;
 
-	private static class Cache {
+		PerThreadCache(final boolean autoRecycle) {
+			autorecycle_ = autoRecycle;
+		}
 
-		// TODO: RPr: remove generic and use "long" for efficient maps
-		DominoReferenceCache<Integer> sessions = new DominoReferenceCache<Integer>(false); // speical case, sessionMap does not autoRecycle 
-		// maybe we can also use different caches for each object type to gain performance?
-		DominoReferenceCache<Integer> lotusObjects = new DominoReferenceCache<Integer>(true);
-	};
-
-	private static ThreadLocal<Cache> cache_ = new ThreadLocal<Cache>() {
 		@Override
-		protected Cache initialValue() {
-			return new Cache();
+		protected DominoReferenceCache<Integer, T> initialValue() {
+			return new DominoReferenceCache<Integer, T>(autorecycle_);
 		};
 	};
+
+	/** this is the holder for sessions, they are not auto recycled **/
+	private static PerThreadCache<Session> sessions_ = new PerThreadCache<Session>(false);
+
+	/** this is the holder for all Documents that needs to be recycled. Documents and objects are stored in different maps. **/
+	private static PerThreadCache<Document> documents_ = new PerThreadCache<Document>(true);
+
+	/** this is the holder for all other object that needs to be recycled **/
+	private static PerThreadCache<Base> lotusObjects_ = new PerThreadCache<Base>(true);
+
+	private static void clearCaches() {
+		DominoReferenceCache<?, ?> sessions = sessions_.get();
+		DominoReferenceCache<?, ?> documents = documents_.get();
+		DominoReferenceCache<?, ?> lotusObjects = lotusObjects_.get();
+
+		// call gc once before processing the queues
+		System.gc();
+		// TODO: Recycle all?
+		sessions.processQueue();
+		lotusObjects.processQueue();
+		sessions.processQueue();
+
+	}
 
 	public static void loadEnvironment(final lotus.domino.Session session) {
 		if (ENVIRONMENT == null) {
@@ -384,6 +403,241 @@ public enum Factory {
 		return result;
 	}
 
+	// --- session handling 
+	/**
+	 * Wraps and caches sessions. Sessions are put in a separate map (otherwise you can use fromLotusObject). (you may overwrite this if we
+	 * make a non static IFactory)
+	 * 
+	 * @param lotus
+	 * @param parent
+	 * @return
+	 */
+	public static Session fromLotusSession(final lotus.domino.Session lotus, final Base parent) {
+		if (lotus == null) {
+			return null;
+		}
+		DominoReferenceCache<Integer, org.openntf.domino.Session> sessions = sessions_.get();
+		Integer cpp_key = org.openntf.domino.impl.Base.getLotusKey(lotus);
+
+		Session result = sessions.get(cpp_key);
+		if (result == null) {
+			// if the session is not in the map, create a new one 
+			result = new org.openntf.domino.impl.Session(lotus, parent);
+			sessions.put(cpp_key, result);
+		}
+
+		// Store the first wrapped session in the sessionHolder
+		Session currentSession = currentSessionHolder_.get();
+		if (currentSession == result) {
+			// if this is the identical object, do nothing
+		}
+		if (currentSession != null) {
+			try {
+				lotus.domino.Session rawSession = (lotus.domino.Session) org.openntf.domino.impl.Base.getDelegate(currentSession);
+				rawSession.isConvertMime(); // Do you check for a "session has been recycled ex. here?"
+			} catch (NotesException ne) {
+				Factory.loadEnvironment((lotus.domino.Session) lotus);
+				// System.out.println("Resetting default local session because we got an exception");
+				setSession((org.openntf.domino.Session) result);
+			}
+		} else {
+			Factory.loadEnvironment((lotus.domino.Session) lotus);
+			// System.out.println("Resetting default local session because it was null");
+			setSession(result);
+		}
+
+		return result;
+
+	}
+
+	/**
+	 * Wraps & caches a lotus.domino.Document
+	 * 
+	 * @param lotus
+	 * @param parent
+	 * @return
+	 */
+	public static Document fromLotusDocument(final lotus.domino.Document lotus, final org.openntf.domino.Database parent) {
+		if (lotus == null) {
+			return null;
+		}
+		DominoReferenceCache<Integer, Document> documents = documents_.get();
+		Integer cpp_key = org.openntf.domino.impl.Base.getLotusKey(lotus);
+
+		Document result = documents.get(cpp_key);
+		if (result == null) {
+			result = wrapLotusDocument(lotus, parent);
+
+			documents.put(cpp_key, result);
+
+			if (TRACE_COUNTERS) {
+				lotusCounter.increment();
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * @param lotus
+	 * @param parent
+	 * @return
+	 */
+	protected static org.openntf.domino.impl.Document wrapLotusDocument(final lotus.domino.Document lotus, final Database parent) {
+
+		// 25.09.13/RPr: what do you think about this idea to pass every document to the database, so that the
+		// mapper can decide how and which object to return
+		//			Mapper mapper = getMapper();
+		//			if (mapper != null) {
+		//				result = (T) mapper.map((lotus.domino.Document) lotus, parent);
+		//				if (result != null) {
+		//					// TODO: What to do if mapper does not map
+		//					return result;
+		//				}
+		//			}
+		return new org.openntf.domino.impl.Document(lotus, parent);
+	}
+
+	// --- others
+	/**
+	 * Wraps & caches all lotus object except Names, DateTimes, Sessions, Documents
+	 * 
+	 * @param lotus
+	 * @param parent
+	 * @return
+	 */
+	public static Base fromLotusObject(final lotus.domino.Base lotus, final Base parent) {
+		if (lotus == null) {
+			return null;
+		}
+		DominoReferenceCache<Integer, Base> lotusObjects = lotusObjects_.get();
+		Integer cpp_key = org.openntf.domino.impl.Base.getLotusKey(lotus);
+
+		Base result = lotusObjects.get(cpp_key);
+		if (result == null) {
+			result = wrapLotusObject(lotus, parent);
+
+			lotusObjects.put(cpp_key, result);
+
+			if (TRACE_COUNTERS) {
+				lotusCounter.increment();
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Helper for fromLotusObject, so you can overwrite this
+	 * 
+	 * @param lotus
+	 * @param parent
+	 * @return
+	 */
+	protected static Base wrapLotusObject(final lotus.domino.Base lotus, final Base parent) {
+		// TODO Auto-generated method stub
+		if (lotus instanceof lotus.domino.RichTextItem) { // items & richtextitems are used very often. 
+			return new org.openntf.domino.impl.RichTextItem((lotus.domino.RichTextItem) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Item) {  // check for Item must be behind RichtextItem
+			return new org.openntf.domino.impl.Item((lotus.domino.Item) lotus, parent);
+		} else if (lotus instanceof lotus.domino.DocumentCollection) {
+			return new org.openntf.domino.impl.DocumentCollection((lotus.domino.DocumentCollection) lotus, parent);
+		} else if (lotus instanceof lotus.domino.ACL) {
+			return new org.openntf.domino.impl.ACL((lotus.domino.ACL) lotus, parent);
+		} else if (lotus instanceof lotus.domino.ACLEntry) {
+			return new org.openntf.domino.impl.ACLEntry((lotus.domino.ACLEntry) lotus, (org.openntf.domino.ACL) parent);
+		} else if (lotus instanceof lotus.domino.AdministrationProcess) {
+			return new org.openntf.domino.impl.AdministrationProcess((lotus.domino.AdministrationProcess) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Agent) {
+			return new org.openntf.domino.impl.Agent((lotus.domino.Agent) lotus, parent);
+		} else if (lotus instanceof lotus.domino.AgentContext) {
+			return new org.openntf.domino.impl.AgentContext((lotus.domino.AgentContext) lotus, parent);
+		} else if (lotus instanceof lotus.domino.ColorObject) {
+			return new org.openntf.domino.impl.ColorObject((lotus.domino.ColorObject) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Database) {
+			return new org.openntf.domino.impl.Database((lotus.domino.Database) lotus, parent);
+		} else if (lotus instanceof lotus.domino.DateRange) {
+			return new org.openntf.domino.impl.DateRange((lotus.domino.DateRange) lotus, parent);
+		} else if (lotus instanceof lotus.domino.DbDirectory) {
+			return new org.openntf.domino.impl.DbDirectory((lotus.domino.DbDirectory) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Directory) {
+			return new org.openntf.domino.impl.Directory((lotus.domino.Directory) lotus, parent);
+		} else if (lotus instanceof lotus.domino.DirectoryNavigator) {
+			return new org.openntf.domino.impl.DirectoryNavigator((lotus.domino.DirectoryNavigator) lotus, parent);
+		} else if (lotus instanceof lotus.domino.DxlExporter) {
+			return new org.openntf.domino.impl.DxlExporter((lotus.domino.DxlExporter) lotus, parent);
+		} else if (lotus instanceof lotus.domino.DxlImporter) {
+			return new org.openntf.domino.impl.DxlImporter((lotus.domino.DxlImporter) lotus, parent);
+		} else if (lotus instanceof lotus.domino.EmbeddedObject) {
+			return new org.openntf.domino.impl.EmbeddedObject((lotus.domino.EmbeddedObject) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Form) {
+			return new org.openntf.domino.impl.Form((lotus.domino.Form) lotus, parent);
+		} else if (lotus instanceof lotus.domino.International) {
+			return new org.openntf.domino.impl.International((lotus.domino.International) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Log) {
+			return new org.openntf.domino.impl.Log((lotus.domino.Log) lotus, parent);
+		} else if (lotus instanceof lotus.domino.MIMEEntity) {
+			return new org.openntf.domino.impl.MIMEEntity((lotus.domino.MIMEEntity) lotus, parent);
+		} else if (lotus instanceof lotus.domino.MIMEHeader) {
+			return new org.openntf.domino.impl.MIMEHeader((lotus.domino.MIMEHeader) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Newsletter) {
+			return new org.openntf.domino.impl.Newsletter((lotus.domino.Newsletter) lotus, parent);
+		} else if (lotus instanceof lotus.domino.NoteCollection) {
+			return new org.openntf.domino.impl.NoteCollection((lotus.domino.NoteCollection) lotus, (org.openntf.domino.Database) parent);
+		} else if (lotus instanceof lotus.domino.NotesCalendar) {
+			return new org.openntf.domino.impl.NotesCalendar((lotus.domino.NotesCalendar) lotus, parent);
+		} else if (lotus instanceof lotus.domino.NotesCalendarEntry) {
+			return new org.openntf.domino.impl.NotesCalendarEntry((lotus.domino.NotesCalendarEntry) lotus, parent);
+		} else if (lotus instanceof lotus.domino.NotesCalendarNotice) {
+			return new org.openntf.domino.impl.NotesCalendarNotice((lotus.domino.NotesCalendarNotice) lotus, parent);
+		} else if (lotus instanceof lotus.domino.NotesProperty) {
+			return new org.openntf.domino.impl.NotesProperty((lotus.domino.NotesProperty) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Outline) {
+			return new org.openntf.domino.impl.Outline((lotus.domino.Outline) lotus, parent);
+		} else if (lotus instanceof lotus.domino.OutlineEntry) {
+			return new org.openntf.domino.impl.OutlineEntry((lotus.domino.OutlineEntry) lotus, parent);
+		} else if (lotus instanceof lotus.domino.PropertyBroker) {
+			return new org.openntf.domino.impl.PropertyBroker((lotus.domino.PropertyBroker) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Registration) {
+			return new org.openntf.domino.impl.Registration((lotus.domino.Registration) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Replication) {
+			return new org.openntf.domino.impl.Replication((lotus.domino.Replication) lotus, parent);
+		} else if (lotus instanceof lotus.domino.ReplicationEntry) {
+			return new org.openntf.domino.impl.ReplicationEntry((lotus.domino.ReplicationEntry) lotus, parent);
+		} else if (lotus instanceof lotus.domino.RichTextDoclink) {
+			return new org.openntf.domino.impl.RichTextDoclink((lotus.domino.RichTextDoclink) lotus, parent);
+		} else if (lotus instanceof lotus.domino.RichTextItem) {
+			return new org.openntf.domino.impl.RichTextItem((lotus.domino.RichTextItem) lotus, parent);
+		} else if (lotus instanceof lotus.domino.RichTextNavigator) {
+			return new org.openntf.domino.impl.RichTextNavigator((lotus.domino.RichTextNavigator) lotus, parent);
+		} else if (lotus instanceof lotus.domino.RichTextParagraphStyle) {
+			return new org.openntf.domino.impl.RichTextParagraphStyle((lotus.domino.RichTextParagraphStyle) lotus, parent);
+		} else if (lotus instanceof lotus.domino.RichTextRange) {
+			return new org.openntf.domino.impl.RichTextRange((lotus.domino.RichTextRange) lotus, parent);
+		} else if (lotus instanceof lotus.domino.RichTextSection) {
+			return new org.openntf.domino.impl.RichTextSection((lotus.domino.RichTextSection) lotus, parent);
+		} else if (lotus instanceof lotus.domino.RichTextStyle) {
+			return new org.openntf.domino.impl.RichTextStyle((lotus.domino.RichTextStyle) lotus, parent);
+		} else if (lotus instanceof lotus.domino.RichTextTab) {
+			return new org.openntf.domino.impl.RichTextTab((lotus.domino.RichTextTab) lotus, parent);
+		} else if (lotus instanceof lotus.domino.RichTextTable) {
+			return new org.openntf.domino.impl.RichTextTable((lotus.domino.RichTextTable) lotus, parent);
+		} else if (lotus instanceof lotus.domino.Stream) {
+			return new org.openntf.domino.impl.Stream((lotus.domino.Stream) lotus, parent);
+		} else if (lotus instanceof lotus.domino.View) {
+			return new org.openntf.domino.impl.View((lotus.domino.View) lotus, (org.openntf.domino.Database) parent);
+		} else if (lotus instanceof lotus.domino.ViewColumn) {
+			return new org.openntf.domino.impl.ViewColumn((lotus.domino.ViewColumn) lotus, (org.openntf.domino.View) parent);
+		} else if (lotus instanceof lotus.domino.ViewEntry) {
+			return new org.openntf.domino.impl.ViewEntry((lotus.domino.ViewEntry) lotus, parent);
+		} else if (lotus instanceof lotus.domino.ViewEntryCollection) {
+			return new org.openntf.domino.impl.ViewEntryCollection((lotus.domino.ViewEntryCollection) lotus,
+					(org.openntf.domino.View) parent);
+		} else if (lotus instanceof lotus.domino.ViewNavigator) {
+			return new org.openntf.domino.impl.ViewNavigator((lotus.domino.ViewNavigator) lotus, (org.openntf.domino.View) parent);
+		}
+		throw new UndefinedDelegateTypeException();
+		//		return null;
+	}
+
 	/**
 	 * From lotus.
 	 * 
@@ -398,8 +652,7 @@ public enum Factory {
 	 * @return the t
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static <T> T fromLotus(final lotus.domino.Base lotus, final Class<? extends org.openntf.domino.Base> T,
-			final org.openntf.domino.Base parent) {
+	public static <T> T fromLotus(final lotus.domino.Base lotus, final Class<? extends Base> T, final Base parent) {
 		if (lotus == null) {
 			return null;
 		}
@@ -409,12 +662,10 @@ public enum Factory {
 			return (T) lotus;
 		}
 
-		// RPr: This check is useless because if T.isAssignableFrom(lotus.getClass() = true then  lotus instanceof org.openntf.domino.Base is also true 
-		//		if (T.isAssignableFrom(lotus.getClass())) {
-		//			if (log_.isLoggable(Level.FINE))
-		//				log_.log(Level.FINE, "Returning an assignable object....");
-		//			return (T) lotus;
-		//		}
+		if (!(lotus instanceof NotesBase)) {
+			// TODO RPr: what do we if we don't get a wrappable object at all. This is a programming error, so throw exception
+			throw new UndefinedDelegateTypeException("Cannot wrap " + lotus.getClass().getName());
+		}
 
 		// 1) These objects are not cached and returned immediately
 		if (lotus instanceof lotus.domino.Name) {
@@ -424,177 +675,19 @@ public enum Factory {
 			return (T) new org.openntf.domino.impl.DateTime((lotus.domino.DateTime) lotus, parent);
 		}
 
-		// 2) These objects are singletons per cpp.
-		if (!(lotus instanceof NotesBase)) {
-			// TODO: what do we if we don't get a wrappable object at all
-			throw new UndefinedDelegateTypeException("Cannot wrap " + lotus.getClass().getName());
-		}
-
-		long cpp_id = Base.getLotusId((NotesBase) lotus);
-		Integer cpp_key = (int) ((cpp_id >> 2) & 0xFFFFFFFFL);
-
-		Cache cache = cache_.get();
 		// 2.1) Session is cached in an own map, that does no recycle
 		if (lotus instanceof lotus.domino.Session) {
-			Session result = (Session) cache.sessions.get(cpp_key);
-			if (result == null) {
-				result = new org.openntf.domino.impl.Session((lotus.domino.Session) lotus, parent);
-				cache.sessions.put(cpp_key, result);
-			}
+			return (T) fromLotusSession((lotus.domino.Session) lotus, parent);
+		}
 
-			// TODO: Nathan can you take a look at this, don't exactly understand what this does
-			if (currentSessionHolder_.get() != null) {
-				try {
-					lotus.domino.Session rawSession = (lotus.domino.Session) Base.getDelegate(currentSessionHolder_.get());
-					rawSession.isConvertMime(); // Do you check for a "session has been recycled ex. here?"
-				} catch (NotesException ne) {
-					Factory.loadEnvironment((lotus.domino.Session) lotus);
-					// System.out.println("Resetting default local session because we got an exception");
-					setSession((org.openntf.domino.Session) result);
-				}
-			} else {
-				Factory.loadEnvironment((lotus.domino.Session) lotus);
-				// System.out.println("Resetting default local session because it was null");
-				setSession((org.openntf.domino.Session) result);
-			}
-			return (T) result;
+		// Special case for Documents to process them fast
+		if (lotus instanceof lotus.domino.Document) {
+			System.out.println("fromLotus() should not be called for docs!");
+			return (T) fromLotusDocument((lotus.domino.Document) lotus, Factory.getParentDatabase(parent));
 		}
 
 		// 2.2) all other Lotus-Objects are cached in an own map, that recycles the object
-		// query our cache
-		T result = (T) cache.lotusObjects.get(cpp_key);
-		if (result != null) {
-			return result;
-		}
-
-		// not in cache - wrap the object
-		if (lotus instanceof lotus.domino.RichTextItem) { // items & richtextitems are used very often. 
-			result = (T) new org.openntf.domino.impl.RichTextItem((lotus.domino.RichTextItem) lotus, parent);
-		} else if (lotus instanceof lotus.domino.Item) { // check for Item must be behind RichtextItem
-			result = (T) new org.openntf.domino.impl.Item((lotus.domino.Item) lotus, parent);
-		} else if (lotus instanceof lotus.domino.Document) { // Documents are also very often used
-
-			// 25.09.13/RPr: what do you think about this idea to pass every document to the database, so that the
-			// mapper can decide how and which object to return
-			Mapper mapper = getMapper();
-			if (mapper != null) {
-				result = (T) mapper.map((lotus.domino.Document) lotus, parent);
-				if (result != null) {
-					// TODO: What to do if mapper does not map
-					return result;
-				}
-			}
-			result = (T) new org.openntf.domino.impl.Document((lotus.domino.Document) lotus, parent);
-
-		} else if (lotus instanceof lotus.domino.DocumentCollection) {
-			result = (T) new org.openntf.domino.impl.DocumentCollection((lotus.domino.DocumentCollection) lotus, parent);
-		} else if (lotus instanceof lotus.domino.ACL) {
-			result = (T) new org.openntf.domino.impl.ACL((lotus.domino.ACL) lotus, parent);
-		} else if (lotus instanceof lotus.domino.ACLEntry) {
-			result = (T) new org.openntf.domino.impl.ACLEntry((lotus.domino.ACLEntry) lotus, (org.openntf.domino.ACL) parent);
-		} else if (lotus instanceof lotus.domino.AdministrationProcess) {
-			result = (T) new org.openntf.domino.impl.AdministrationProcess((lotus.domino.AdministrationProcess) lotus, parent);
-		} else if (lotus instanceof lotus.domino.Agent) {
-			result = (T) new org.openntf.domino.impl.Agent((lotus.domino.Agent) lotus, parent);
-		} else if (lotus instanceof lotus.domino.AgentContext) {
-			result = (T) new org.openntf.domino.impl.AgentContext((lotus.domino.AgentContext) lotus, parent);
-		} else if (lotus instanceof lotus.domino.ColorObject) {
-			result = (T) new org.openntf.domino.impl.ColorObject((lotus.domino.ColorObject) lotus, parent);
-		} else if (lotus instanceof lotus.domino.Database) {
-			result = (T) new org.openntf.domino.impl.Database((lotus.domino.Database) lotus, parent);
-		} else if (lotus instanceof lotus.domino.DateRange) {
-			result = (T) new org.openntf.domino.impl.DateRange((lotus.domino.DateRange) lotus, parent);
-		} else if (lotus instanceof lotus.domino.DbDirectory) {
-			result = (T) new org.openntf.domino.impl.DbDirectory((lotus.domino.DbDirectory) lotus, parent);
-		} else if (lotus instanceof lotus.domino.Directory) {
-			result = (T) new org.openntf.domino.impl.Directory((lotus.domino.Directory) lotus, parent);
-		} else if (lotus instanceof lotus.domino.DirectoryNavigator) {
-			result = (T) new org.openntf.domino.impl.DirectoryNavigator((lotus.domino.DirectoryNavigator) lotus, parent);
-		} else if (lotus instanceof lotus.domino.DxlExporter) {
-			result = (T) new org.openntf.domino.impl.DxlExporter((lotus.domino.DxlExporter) lotus, parent);
-		} else if (lotus instanceof lotus.domino.DxlImporter) {
-			result = (T) new org.openntf.domino.impl.DxlImporter((lotus.domino.DxlImporter) lotus, parent);
-		} else if (lotus instanceof lotus.domino.EmbeddedObject) {
-			result = (T) new org.openntf.domino.impl.EmbeddedObject((lotus.domino.EmbeddedObject) lotus, parent);
-		} else if (lotus instanceof lotus.domino.Form) {
-			result = (T) new org.openntf.domino.impl.Form((lotus.domino.Form) lotus, parent);
-		} else if (lotus instanceof lotus.domino.International) {
-			result = (T) new org.openntf.domino.impl.International((lotus.domino.International) lotus, parent);
-		} else if (lotus instanceof lotus.domino.Log) {
-			result = (T) new org.openntf.domino.impl.Log((lotus.domino.Log) lotus, parent);
-		} else if (lotus instanceof lotus.domino.MIMEEntity) {
-			result = (T) new org.openntf.domino.impl.MIMEEntity((lotus.domino.MIMEEntity) lotus, parent);
-		} else if (lotus instanceof lotus.domino.MIMEHeader) {
-			result = (T) new org.openntf.domino.impl.MIMEHeader((lotus.domino.MIMEHeader) lotus, parent);
-		} else if (lotus instanceof lotus.domino.Newsletter) {
-			result = (T) new org.openntf.domino.impl.Newsletter((lotus.domino.Newsletter) lotus, parent);
-		} else if (lotus instanceof lotus.domino.NoteCollection) {
-			result = (T) new org.openntf.domino.impl.NoteCollection((lotus.domino.NoteCollection) lotus,
-					(org.openntf.domino.Database) parent);
-		} else if (lotus instanceof lotus.domino.NotesCalendar) {
-			result = (T) new org.openntf.domino.impl.NotesCalendar((lotus.domino.NotesCalendar) lotus, parent);
-		} else if (lotus instanceof lotus.domino.NotesCalendarEntry) {
-			result = (T) new org.openntf.domino.impl.NotesCalendarEntry((lotus.domino.NotesCalendarEntry) lotus, parent);
-		} else if (lotus instanceof lotus.domino.NotesCalendarNotice) {
-			result = (T) new org.openntf.domino.impl.NotesCalendarNotice((lotus.domino.NotesCalendarNotice) lotus, parent);
-		} else if (lotus instanceof lotus.domino.NotesProperty) {
-			result = (T) new org.openntf.domino.impl.NotesProperty((lotus.domino.NotesProperty) lotus, parent);
-		} else if (lotus instanceof lotus.domino.Outline) {
-			result = (T) new org.openntf.domino.impl.Outline((lotus.domino.Outline) lotus, parent);
-		} else if (lotus instanceof lotus.domino.OutlineEntry) {
-			result = (T) new org.openntf.domino.impl.OutlineEntry((lotus.domino.OutlineEntry) lotus, parent);
-		} else if (lotus instanceof lotus.domino.PropertyBroker) {
-			result = (T) new org.openntf.domino.impl.PropertyBroker((lotus.domino.PropertyBroker) lotus, parent);
-		} else if (lotus instanceof lotus.domino.Registration) {
-			result = (T) new org.openntf.domino.impl.Registration((lotus.domino.Registration) lotus, parent);
-		} else if (lotus instanceof lotus.domino.Replication) {
-			result = (T) new org.openntf.domino.impl.Replication((lotus.domino.Replication) lotus, parent);
-		} else if (lotus instanceof lotus.domino.ReplicationEntry) {
-			result = (T) new org.openntf.domino.impl.ReplicationEntry((lotus.domino.ReplicationEntry) lotus, parent);
-		} else if (lotus instanceof lotus.domino.RichTextDoclink) {
-			result = (T) new org.openntf.domino.impl.RichTextDoclink((lotus.domino.RichTextDoclink) lotus, parent);
-		} else if (lotus instanceof lotus.domino.RichTextItem) {
-			result = (T) new org.openntf.domino.impl.RichTextItem((lotus.domino.RichTextItem) lotus, parent);
-		} else if (lotus instanceof lotus.domino.RichTextNavigator) {
-			result = (T) new org.openntf.domino.impl.RichTextNavigator((lotus.domino.RichTextNavigator) lotus, parent);
-		} else if (lotus instanceof lotus.domino.RichTextParagraphStyle) {
-			result = (T) new org.openntf.domino.impl.RichTextParagraphStyle((lotus.domino.RichTextParagraphStyle) lotus, parent);
-		} else if (lotus instanceof lotus.domino.RichTextRange) {
-			result = (T) new org.openntf.domino.impl.RichTextRange((lotus.domino.RichTextRange) lotus, parent);
-		} else if (lotus instanceof lotus.domino.RichTextSection) {
-			result = (T) new org.openntf.domino.impl.RichTextSection((lotus.domino.RichTextSection) lotus, parent);
-		} else if (lotus instanceof lotus.domino.RichTextStyle) {
-			result = (T) new org.openntf.domino.impl.RichTextStyle((lotus.domino.RichTextStyle) lotus, parent);
-		} else if (lotus instanceof lotus.domino.RichTextTab) {
-			result = (T) new org.openntf.domino.impl.RichTextTab((lotus.domino.RichTextTab) lotus, parent);
-		} else if (lotus instanceof lotus.domino.RichTextTable) {
-			result = (T) new org.openntf.domino.impl.RichTextTable((lotus.domino.RichTextTable) lotus, parent);
-		} else if (lotus instanceof lotus.domino.Stream) {
-			result = (T) new org.openntf.domino.impl.Stream((lotus.domino.Stream) lotus, parent);
-		} else if (lotus instanceof lotus.domino.View) {
-			result = (T) new org.openntf.domino.impl.View((lotus.domino.View) lotus, (org.openntf.domino.Database) parent);
-		} else if (lotus instanceof lotus.domino.ViewColumn) {
-			result = (T) new org.openntf.domino.impl.ViewColumn((lotus.domino.ViewColumn) lotus, (org.openntf.domino.View) parent);
-		} else if (lotus instanceof lotus.domino.ViewEntry) {
-			result = (T) new org.openntf.domino.impl.ViewEntry((lotus.domino.ViewEntry) lotus, parent);
-		} else if (lotus instanceof lotus.domino.ViewEntryCollection) {
-			result = (T) new org.openntf.domino.impl.ViewEntryCollection((lotus.domino.ViewEntryCollection) lotus,
-					(org.openntf.domino.View) parent);
-		} else if (lotus instanceof lotus.domino.ViewNavigator) {
-			result = (T) new org.openntf.domino.impl.ViewNavigator((lotus.domino.ViewNavigator) lotus, (org.openntf.domino.View) parent);
-		}
-
-		if (result != null) {
-			cache.lotusObjects.put(cpp_key, (Base) result);
-			if (cache_counter.incrementAndGet() % GARBAGE_INTERVAL == 0) {
-				System.gc();
-			}
-			if (TRACE_COUNTERS) {
-				lotusCounter.increment();
-			}
-			return result;
-		}
-		throw new UndefinedDelegateTypeException();
+		return (T) fromLotusObject(lotus, parent);
 	}
 
 	/**
@@ -611,8 +704,7 @@ public enum Factory {
 	 * @return the collection
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <T> Collection<T> fromLotus(final Collection<?> lotusColl, final Class<? extends org.openntf.domino.Base> T,
-			final org.openntf.domino.Base<?> parent) {
+	public static <T> Collection<T> fromLotus(final Collection<?> lotusColl, final Class<? extends Base> T, final Base<?> parent) {
 		Collection<T> result = new ArrayList<T>(); // TODO anyone got a better implementation?
 		if (!lotusColl.isEmpty()) {
 			for (Object lotus : lotusColl) {
@@ -839,14 +931,9 @@ public enum Factory {
 	public static lotus.domino.Session terminate() {
 		lotus.domino.Session result = null;
 		if (currentSessionHolder_.get() != null) {
-			result = (lotus.domino.Session) Base.getDelegate(currentSessionHolder_.get());
+			result = (lotus.domino.Session) org.openntf.domino.impl.Base.getDelegate(currentSessionHolder_.get());
 		}
-		// TODO RPr: drain the maps?
-		// Base.drainQueue(0l);
-		// TODO RPr: remove the debug prints
-		Cache cache = cache_.get();
-		cache.lotusObjects.processQueue();
-		cache.sessions.processQueue();
+		clearCaches();
 
 		clearSession();
 		clearClassLoader();
@@ -960,7 +1047,7 @@ public enum Factory {
 			throw new UndefinedDelegateTypeException();
 		}
 		if (result == null)
-			result = Session.getDefaultSession(); // last ditch, get the primary Session;
+			result = org.openntf.domino.impl.Session.getDefaultSession(); // last ditch, get the primary Session;
 		return result;
 	}
 
@@ -1219,8 +1306,8 @@ public enum Factory {
 	 */
 	public static org.openntf.domino.NoteCollection toNoteCollection(final lotus.domino.DocumentCollection collection) {
 		org.openntf.domino.NoteCollection result = null;
-		if (collection instanceof org.openntf.domino.impl.DocumentCollection) {
-			org.openntf.domino.Database db = ((org.openntf.domino.DocumentCollection) collection).getParent();
+		if (collection instanceof DocumentCollection) {
+			org.openntf.domino.Database db = ((DocumentCollection) collection).getParent();
 			result = db.createNoteCollection(false);
 			result.add((DocumentCollection) collection);
 		} else {

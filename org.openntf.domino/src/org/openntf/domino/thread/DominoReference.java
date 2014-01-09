@@ -30,7 +30,7 @@ import org.openntf.domino.utils.Factory;
  * 
  * DominoReference should be used only in the DominoReferenceMap
  */
-public class DominoReference<T> extends PhantomReference<org.openntf.domino.Base<?>> {
+public class DominoReference<T, V extends Base> extends PhantomReference<V> {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(DominoReference.class.getName());
 
@@ -52,7 +52,7 @@ public class DominoReference<T> extends PhantomReference<org.openntf.domino.Base
 	 * @param delegate
 	 *            the delegate
 	 */
-	public DominoReference(final Base<?> r, final ReferenceQueue<Base> q, final T key) {
+	public DominoReference(final V r, final ReferenceQueue<V> q, final T key) {
 		super(r, q);
 
 		// Because the reference separately contains a pointer to the delegate object, it's still available even
@@ -89,7 +89,7 @@ public class DominoReference<T> extends PhantomReference<org.openntf.domino.Base
 			return false;
 
 		Object ref1 = this.get();
-		Object ref2 = ((DominoReference<T>) obj).get();
+		Object ref2 = ((DominoReference<?, ?>) obj).get();
 
 		if (ref1 == ref2)
 			return true;
