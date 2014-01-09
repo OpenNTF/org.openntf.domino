@@ -153,11 +153,30 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the base
 	 * @return the lotus id
 	 */
+	// CHECKME: do we still need this method 
+	@Deprecated
 	public static long getLotusId(final lotus.domino.local.NotesBase base) {
 		try {
 			return ((Long) getCppMethod.invoke(base, (Object[]) null)).longValue();
 		} catch (Exception e) {
 			return 0L;
+		}
+	}
+
+	/**
+	 * Gets a unique key for a lotus object. This is the lotusId where unneccessary bits are removed
+	 * 
+	 * @param base
+	 *            the base
+	 * @return the lotus id
+	 */
+	public static Integer getLotusKey(final lotus.domino.Base base) {
+		try {
+			long cpp_id = ((Long) getCppMethod.invoke((lotus.domino.local.NotesBase) base, (Object[]) null)).longValue();
+
+			return Integer.valueOf((int) ((cpp_id >> 2) & 0xFFFFFFFFL));
+		} catch (Exception e) {
+			return Integer.valueOf(0);
 		}
 	}
 
