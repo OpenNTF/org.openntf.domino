@@ -32,7 +32,6 @@ import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoListener;
 import org.openntf.domino.exceptions.BlockedCrashException;
 import org.openntf.domino.ext.Formula;
-import org.openntf.domino.thread.DominoLockSet;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoUtils;
@@ -51,17 +50,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Base.class.getName());
 
-	// /** The reference bag. */
-	// private static ThreadLocal<Set<DominoReference>> referenceBag = new ThreadLocal<Set<DominoReference>>() {
-	// @Override
-	// protected Set<DominoReference> initialValue() {
-	// return new HashSet<DominoReference>();
-	// // return Collections.newSetFromMap(new WeakHashMap<DominoReference, Boolean>());
-	// };
-	// };
-
 	/** The Constant lockedRefSet. */
-	private static final DominoLockSet lockedRefSet = new DominoLockSet();
+	// private static final DominoLockSet lockedRefSet = new DominoLockSet();
 
 	/** The get cpp method. */
 	private static Method getCppMethod;
@@ -218,8 +208,10 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the base
 	 * @return true, if is locked
 	 */
+	@Deprecated
 	public static boolean isLocked(final lotus.domino.Base base) {
-		return lockedRefSet.isLocked(base);
+		//return lockedRefSet.isLocked(base);
+		return false;
 	}
 
 	/**
@@ -228,8 +220,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @param base
 	 *            the base
 	 */
+	@Deprecated
 	public static void unlock(final lotus.domino.Base base) {
-		lockedRefSet.unlock(base);
+		//lockedRefSet.unlock(base);
 	}
 
 	/**
@@ -238,8 +231,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @param base
 	 *            the base
 	 */
+	@Deprecated
 	public static void lock(final lotus.domino.Base base) {
-		lockedRefSet.lock(base);
+		//lockedRefSet.lock(base);
 	}
 
 	/**
@@ -248,10 +242,11 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @param allYourBase
 	 *            the all your base
 	 */
+	@Deprecated
 	public static void lock(final lotus.domino.Base... allYourBase) {
-		for (lotus.domino.Base everyZig : allYourBase) {
-			lockedRefSet.lock(everyZig);
-		}
+		//for (lotus.domino.Base everyZig : allYourBase) {
+		//	lockedRefSet.lock(everyZig);
+		//}
 	}
 
 	/**
@@ -260,8 +255,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @param allYourBase
 	 *            the all your base
 	 */
+	@Deprecated
 	public static void unlock(final lotus.domino.Base... allYourBase) {
-		lockedRefSet.unlock(allYourBase);
+		//lockedRefSet.unlock(allYourBase);
 	}
 
 	/*
@@ -497,28 +493,28 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 */
 	public static boolean s_recycle(final lotus.domino.local.NotesBase base) {
 		boolean result = false;
-		if (!isLocked(base)) {
-			try {
-				if (base instanceof lotus.domino.local.DateRange) {	//NTF - check to see if we have valid start/end dates to prevent crashes in 9.0.1
-					lotus.domino.local.DateRange dr = (lotus.domino.local.DateRange) base;
-					lotus.domino.local.DateTime sdt = (lotus.domino.local.DateTime) dr.getStartDateTime();
-					lotus.domino.local.DateTime edt = (lotus.domino.local.DateTime) dr.getEndDateTime();
-					if (sdt == null || edt == null) {
-						//don't recycle. Better to leak some memory than crash the server entirely!
-						String message = "Attempted to recycle a DateRange with a null startDateTime or endDateTime. This would have caused a GPF in the Notes API, so we didn't do it.";
-						log_.log(Level.WARNING, message);
-						throw new BlockedCrashException(message);
-					}
+		//if (!isLocked(base)) {
+		try {
+			if (base instanceof lotus.domino.local.DateRange) {	//NTF - check to see if we have valid start/end dates to prevent crashes in 9.0.1
+				lotus.domino.local.DateRange dr = (lotus.domino.local.DateRange) base;
+				lotus.domino.local.DateTime sdt = (lotus.domino.local.DateTime) dr.getStartDateTime();
+				lotus.domino.local.DateTime edt = (lotus.domino.local.DateTime) dr.getEndDateTime();
+				if (sdt == null || edt == null) {
+					//don't recycle. Better to leak some memory than crash the server entirely!
+					String message = "Attempted to recycle a DateRange with a null startDateTime or endDateTime. This would have caused a GPF in the Notes API, so we didn't do it.";
+					log_.log(Level.WARNING, message);
+					throw new BlockedCrashException(message);
 				}
-				base.recycle();
-				result = true;
-			} catch (Throwable t) {
-				Factory.countRecycleError();
-				// shikata ga nai
 			}
-		} else {
-			System.out.println("Not recycling a " + base.getClass().getName() + " because it's locked.");
+			base.recycle();
+			result = true;
+		} catch (Throwable t) {
+			Factory.countRecycleError();
+			// shikata ga nai
 		}
+		//} else {
+		//	System.out.println("Not recycling a " + base.getClass().getName() + " because it's locked.");
+		//}
 		return result;
 	}
 
