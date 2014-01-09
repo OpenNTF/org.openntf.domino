@@ -200,7 +200,7 @@ public class DominoReference<T> extends PhantomReference<org.openntf.domino.Base
 	@Override
 	public int hashCode() {
 		if (hashcode_ == 0) {
-			Object ref = this.get();
+			Base ref = this.get();
 
 			hashcode_ = (ref == null) ? 0 : ref.hashCode();
 		}
@@ -210,4 +210,5 @@ public class DominoReference<T> extends PhantomReference<org.openntf.domino.Base
 	T getKey() {
 		return key_;
 	}
+
 }
