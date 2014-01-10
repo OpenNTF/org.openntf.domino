@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
+import org.openntf.domino.utils.Strings;
+
 /**
  * NamePartsMap carries the various component string values that make up a name.
  * 
@@ -48,10 +50,49 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 	private RFC822name _rfc822name;
 
 	/**
-	 * * Zero-Argument Default Constructor
+	 * * Zero-Argument Constructor
 	 */
 	public NamePartsMap() {
 		super();
+	}
+
+	/**
+	 * Default Constructor
+	 * 
+	 * @param source
+	 *            String from which to construct the object
+	 */
+	public NamePartsMap(final String source) {
+		super();
+		this.parse(source);
+	}
+
+	/**
+	 * Optional Constructor
+	 * 
+	 * @param source
+	 *            String from which to construct the object
+	 * @param rfc822name
+	 *            RFC822name for the object.
+	 */
+	public NamePartsMap(final String source, final RFC822name rfc822name) {
+		super();
+		this.parse(source);
+		this.setRFC822name(rfc822name);
+	}
+
+	/**
+	 * Default Constructor
+	 * 
+	 * @param source
+	 *            String from which to construct the object
+	 * @param rfc822string
+	 *            String from which to construct the RFC822name for the object.
+	 */
+	public NamePartsMap(final String source, final String rfc822string) {
+		super();
+		this.parse(source);
+		this.parseRFC82xContent(rfc822string);
 	}
 
 	/*
@@ -101,10 +142,24 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		return (key instanceof NamePartsMap.Key) ? this.get((NamePartsMap.Key) key) : "";
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder(NamePartsMap.class.getName());
+		sb.append(" [");
+		for (Key key : Key.values()) {
+			String s = this.get(key);
+			if (!Strings.isBlankString(s)) {
+				sb.append(key.name() + "=" + s);
+			}
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
+
 	public String get(final NamePartsMap.Key key) {
-
 		if (null != key) {
-
 			switch (key) {
 			case Abbreviated: {
 				String common = this.get(NamePartsMap.Key.Common);
@@ -243,6 +298,9 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 				return this.get(Key.Canonical);
 			}
 
+			case IDprefix:
+				return this.getIDprefix();
+
 			default:
 				final String result = super.put(key, value);
 				return (null == result) ? "" : result;
@@ -250,6 +308,47 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		}
 
 		return "";
+	}
+
+	public String getIDprefix() {
+		String result = super.get(Key.IDprefix);
+		if (Strings.isBlankString(result)) {
+
+			String common = this.get(Key.Common);
+			if (null != common) {
+
+				final String alphanumericandspacacesonly = common.trim().toUpperCase().replaceAll("[^A-Za-z0-9 ]", "");
+				final int idx = alphanumericandspacacesonly.indexOf(" ");
+				String firstname = alphanumericandspacacesonly;
+				String lastname = alphanumericandspacacesonly;
+
+				if (idx > 0) {
+					final String[] chunks = alphanumericandspacacesonly.split(" ");
+					firstname = chunks[0].trim().replaceAll("[^A-Za-z0-9]", "");
+					lastname = chunks[chunks.length - 1].replaceAll("[^A-Za-z0-9]", "");
+				}
+
+				final StringBuilder sb = new StringBuilder(firstname.substring(0, 1));
+				sb.append(lastname.substring(0, 2));
+				sb.append(lastname.substring(lastname.length() - 1));
+				while (sb.length() < 4) {
+					sb.append("X");
+				}
+
+				result = sb.toString();
+				this.put(Key.IDprefix, result);
+			}
+		}
+
+		return result;
+	}
+
+	public void parseRFC82xContent(final String source) {
+		this.getRFC822name().parseRFC82xContent(source);
+	}
+
+	public boolean isHasRFC82xContent() {
+		return (null == this._rfc822name) ? false : this.getRFC822name().isHasRFC82xContent();
 	}
 
 	/*
@@ -308,9 +407,15 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 						int orgpos = length;
 						organization = words[orgpos];
 						if (ISO.isCountryCode(organization)) {
-							// Organization could be a country code, 
-							// Need to add logic to figure it out here and reset the organization position if needed
+							// organization could be a country code, 
+							if (orgpos > 1) {
+								// Treat organization as a country code and re-aquire the organization
+								country = organization;
+								orgpos--;
+								organization = words[orgpos];
+							}
 						}
+
 						int oupos = orgpos - 1;
 						while (oupos > 0) {
 							ous[idx] = words[oupos];
@@ -333,86 +438,5 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		this.put(Key.OrgUnit4, ous[3]);
 		this.put(Key.Organization, organization);
 		this.put(Key.Country, country);
-
-		//		if ((null != source) && (source.length() > 0)) {
-		//			final String pattern = "^.*<.*>.*$";
-		//			/*
-		//			 * Match Pattern: anytext<anytext>anytext
-		//			 * 
-		//			 * pattern definition:
-		//			 * 
-		//			 * ^ match the beginning of the string
-		//			 * 
-		//			 * . match any single character
-		//			 * 
-		//			 * * match the preceding match character zero or more times.
-		//			 * 
-		//			 * < match a less than character
-		//			 * 
-		//			 * . match any single character
-		//			 * 
-		//			 * * match the preceding match character zero or more times.
-		//			 * 
-		//			 * > match a greater than character
-		//			 * 
-		//			 * . match any single character
-		//			 * 
-		//			 * * match the preceding match character zero or more times.
-		//			 * 
-		//			 * $ match the preceding match instructions against the end of the string.
-		//			 */
-		//			if (source.matches(pattern)) {
-		//				// test matches anytext<anytext>anytext
-		//				// get the three primary chunks as phrase<internetaddress>comments from the source
-		//
-		//				int idxLT = source.indexOf('<');
-		//				int idxGT = source.indexOf('>', idxLT);
-		//
-		//				// parse the phrase part
-		//				String phrase = (idxLT > 0) ? source.substring(0, idxLT).trim() : "";
-		//				if (phrase.length() > 0) {
-		//					this.put(Key.Phrase, phrase.replaceAll("\"", "").trim());
-		//				}
-		//
-		//				// parse the internetaddress part
-		//				String internetaddress = (idxGT > (idxLT + 1)) ? source.substring(idxLT + 1, idxGT).trim() : "";
-		//				if ((internetaddress.length() > 0) && (internetaddress.indexOf('@') >= 0)) {
-		//					String[] chunks = internetaddress.split("@");
-		//					if (null != chunks) {
-		//						if (null != chunks[0]) {
-		//							this.put(Key.Local, chunks[0].trim());
-		//							if ((2 <= chunks.length) && (null != chunks[1])) {
-		//								this.put(Key.Domain, chunks[1].trim());
-		//							}
-		//						}
-		//					}
-		//				}
-		//
-		//				// parse the comments part
-		//				String comments = (idxGT < source.length()) ? source.substring(idxGT).trim() : "";
-		//				if (comments.length() > 0) {
-		//					int idxParenOpen = comments.indexOf('(');
-		//					int idxParenClose = comments.indexOf(')');
-		//					if ((idxParenOpen < 0) || (idxParenClose < 0) || (idxParenClose < idxParenOpen)) {
-		//						// treat the entire comments string as a single comment.
-		//						this.setAddr822Comment(1, comments.replaceAll("(", "").replaceAll(")", "").trim());
-		//					} else {
-		//						for (int commentnumber = 1; commentnumber < 4; commentnumber++) {
-		//							String comment = comments.substring(idxParenOpen, idxParenClose).trim();
-		//							this.setAddr822Comment(commentnumber, comment);
-		//
-		//							idxParenOpen = comments.indexOf('(', idxParenClose);
-		//							if (idxParenOpen < idxParenClose) {
-		//								break;
-		//							}
-		//							idxParenClose = comments.indexOf(')', idxParenOpen);
-		//							if (idxParenClose < idxParenOpen) {
-		//								break;
-		//							}
-		//						}
-		//					}
-		//				}
-		//			}
-		//		}
 	}
 }
