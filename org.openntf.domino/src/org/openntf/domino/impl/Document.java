@@ -2356,6 +2356,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				try {
 					lotus.domino.Document del = getDelegate();
 					if (del != null) {
+
 						result = del.save(force, makeResponse, markRead);
 						if (noteid_ == null || !noteid_.equals(del.getNoteID())) {
 							// System.out.println("Resetting note id from " + noteid_ + " to " + del.getNoteID());
@@ -2365,6 +2366,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 							// System.out.println("Resetting unid from " + unid_ + " to " + del.getUniversalID());
 							unid_ = del.getUniversalID();
 						}
+						lastModified_ = DominoUtils.toJavaDateSafe(del.getLastModified());
 					} else {
 						log_.severe("Delegate document for " + unid_ + " is NULL!??!");
 					}
