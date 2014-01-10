@@ -21,8 +21,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.openntf.domino.utils.Strings;
-
 /**
  * Carrier and parsing object for various RFC822 name parts.
  * 
@@ -216,7 +214,7 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 			final String[] chunks = phrase.split(",");
 			final StringBuilder sb = new StringBuilder();
 			for (int i = chunks.length - 1; i > -1; i--) {
-				sb.append(Strings.toProperCase(chunks[i].trim()));
+				sb.append(ISO.toProperCase(chunks[i].trim()));
 				sb.append(" ");
 			}
 
@@ -228,7 +226,7 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 			final String[] chunks = phrase.split("\\.");
 			final StringBuilder sb = new StringBuilder();
 			for (final String s : chunks) {
-				sb.append(Strings.toProperCase(s.trim()));
+				sb.append(ISO.toProperCase(s.trim()));
 				sb.append(" ");
 			}
 
