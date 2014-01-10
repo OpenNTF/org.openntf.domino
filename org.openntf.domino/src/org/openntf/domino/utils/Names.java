@@ -13,6 +13,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.openntf.arpa.NamePartsMap;
 import org.openntf.arpa.RFC822name;
 import org.openntf.domino.Base;
 import org.openntf.domino.Database;
@@ -21,7 +22,6 @@ import org.openntf.domino.Name;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
-import org.openntf.domino.impl.Name.NamePart;
 
 /**
  * Name handling utilities
@@ -81,23 +81,23 @@ public enum Names {
 	 * @param source
 	 *            Source string from which to generate the name
 	 * 
-	 * @param part
+	 * @param key
 	 *            Part of name string to return
 	 * 
 	 * @return source string converted to the appropriate name format
 	 */
-	public static String getNamePart(final Session session, final String source, final NamePart part) {
+	public static String getNamePart(final Session session, final String source, final NamePartsMap.Key key) {
 		try {
 			if (null == session) {
 				throw new IllegalArgumentException("Session is null");
 			}
-			if (null == part) {
-				throw new IllegalArgumentException("NamePart is null");
+			if (null == key) {
+				throw new IllegalArgumentException("NamePartsMap.Key is null");
 			}
 
 			final String seed = (Strings.isBlankString(source)) ? session.getEffectiveUserName() : source;
 			org.openntf.domino.impl.Name name = (org.openntf.domino.impl.Name) Names.createName(session, seed);
-			return name.getNamePart(part);
+			return name.getNamePart(key);
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
@@ -116,12 +116,12 @@ public enum Names {
 	 * @param source
 	 *            Source strings from which to generate the names.
 	 * 
-	 * @param part
+	 * @param key
 	 *            Part of name string to return
 	 * 
 	 * @return source strings converted to the appropriate name format, in the order in which they exist in source.
 	 */
-	public static String[] getNameParts(final Session session, final String[] source, final NamePart part) {
+	public static String[] getNameParts(final Session session, final String[] source, final NamePartsMap.Key key) {
 		try {
 			if (null == session) {
 				throw new IllegalArgumentException("Session is null");
@@ -131,8 +131,8 @@ public enum Names {
 				throw new IllegalArgumentException("Source Array is null");
 			}
 
-			if (null == part) {
-				throw new IllegalArgumentException("NamePart is null");
+			if (null == key) {
+				throw new IllegalArgumentException("NamePartsMap.Key is null");
 			}
 
 			if (source.length < 1) {
@@ -142,7 +142,7 @@ public enum Names {
 			final List<String> values = new ArrayList<String>();
 			for (final String temp : source) {
 				if (!Strings.isBlankString(temp)) {
-					final String name = Names.getNamePart(session, temp, part);
+					final String name = Names.getNamePart(session, temp, key);
 
 					if (!Strings.isBlankString(name)) {
 						values.add(name);
@@ -172,7 +172,7 @@ public enum Names {
 	 * @return source strings converted to the appropriate name format, in the order in which they exist in source.
 	 */
 	public static String[] getAbbreviated(final Session session, final String[] source) {
-		return Names.getNameParts(session, source, NamePart.Abbreviated);
+		return Names.getNameParts(session, source, NamePartsMap.Key.Abbreviated);
 	}
 
 	/**
@@ -187,7 +187,7 @@ public enum Names {
 	 * @return source String converted to the appropriate name format
 	 */
 	public static String getAbbreviated(final Session session, final String source) {
-		return Names.getNamePart(session, source, NamePart.Abbreviated);
+		return Names.getNamePart(session, source, NamePartsMap.Key.Abbreviated);
 	}
 
 	/**
@@ -214,7 +214,7 @@ public enum Names {
 	 * @return source strings converted to the appropriate name format, in the order in which they exist in source.
 	 */
 	public static String[] getCanonical(final Session session, final String[] source) {
-		return Names.getNameParts(session, source, NamePart.Canonical);
+		return Names.getNameParts(session, source, NamePartsMap.Key.Canonical);
 	}
 
 	/**
@@ -229,7 +229,7 @@ public enum Names {
 	 * @return source String converted to the appropriate name format
 	 */
 	public static String getCanonical(final Session session, final String source) {
-		return Names.getNamePart(session, source, NamePart.Canonical);
+		return Names.getNamePart(session, source, NamePartsMap.Key.Canonical);
 	}
 
 	/**
@@ -256,7 +256,7 @@ public enum Names {
 	 * @return source strings converted to the appropriate name format, in the order in which they exist in source.
 	 */
 	public static String[] getCommon(final Session session, final String[] source) {
-		return Names.getNameParts(session, source, NamePart.Common);
+		return Names.getNameParts(session, source, NamePartsMap.Key.Common);
 	}
 
 	/**
@@ -271,7 +271,7 @@ public enum Names {
 	 * @return source String converted to the appropriate name format
 	 */
 	public static String getCommon(final Session session, final String source) {
-		return Names.getNamePart(session, source, NamePart.Common);
+		return Names.getNamePart(session, source, NamePartsMap.Key.Common);
 	}
 
 	/**
