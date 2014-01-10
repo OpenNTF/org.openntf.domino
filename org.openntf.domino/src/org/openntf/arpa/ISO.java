@@ -13,7 +13,7 @@ public enum ISO {
 	;
 
 	/**
-	 * Carrier for ISO 3166-1-alpha-2 code
+	 * Carrier for ISO 3166-1 alpha 2 and alpha 3 code
 	 * 
 	 * @author Devin S. Olsonm (dolson@czarnowski.com)
 	 * 
@@ -21,7 +21,62 @@ public enum ISO {
 	 * 
 	 */
 	public static enum ISO3166 {
-		AF("AFG", "AFGHANISTAN");
+		AF("AFG", "Afghanistan"), AX("ALA", "Åland Islands"), AL("ALB", "Albania"), DZ("DZA", "Algeria"), AS("ASM", "American Samoa"), AD(
+				"AND", "Andorra"), AO("AGO", "Angola"), AI("AIA", "Anguilla"), AQ("ATA", "Antarctica"), AG("ATG", "Antigua and Barbuda"), AR(
+				"ARG", "Argentina"), AM("ARM", "Armenia"), AW("ABW", "Aruba"), AU("AUS", "Australia"), AT("AUT", "Austria"), AZ("AZE",
+				"Azerbaijan"), BS("BHS", "Bahamas"), BH("BHR", "Bahrain"), BD("BGD", "Bangladesh"), BB("BRB", "Barbados"), BY("BLR",
+				"Belarus"), BE("BEL", "Belgium"), BZ("BLZ", "Belize"), BJ("BEN", "Benin"), BM("BMU", "Bermuda"), BT("BTN", "Bhutan"), BO(
+				"BOL", "Bolivia, Plurinational State of"), BQ("BES", "Bonaire, Sint Eustatius and Saba"), BA("BIH",
+				"Bosnia and Herzegovina"), BW("BWA", "Botswana"), BV("BVT", "Bouvet Island"), BR("BRA", "Brazil"), IO("IOT",
+				"British Indian Ocean Territory"), BN("BRN", "Brunei Darussalam"), BG("BGR", "Bulgaria"), BF("BFA", "Burkina Faso"), BI(
+				"BDI", "Burundi"), KH("KHM", "Cambodia"), CM("CMR", "Cameroon"), CA("CAN", "Canada"), CV("CPV", "Cape Verde"), KY("CYM",
+				"Cayman Islands"), CF("CAF", "Central African Republic"), TD("TCD", "Chad "), CL("CHL", "Chile"), CN("CHN", "China"), CX(
+				"CXR", "Christmas Island"), CC("CCK", "Cocos (Keeling) Islands"), CO("COL", "Colombia"), KM("COM", "Comoros"), CG("COG",
+				"Congo"), CD("COD", "Congo, the Democratic Republic of the"), CK("COK", "Cook Islands"), CR("CRI", "Costa Rica"), CI("CIV",
+				"Côte d'Ivoire"), HR("HRV", "Croatia"), CU("CUB", "Cuba"), CW("CUW", "Curaçao"), CY("CYP", "Cyprus"), CZ("CZE",
+				"Czech Republic"), DK("DNK", "Denmark"), DJ("DJI", "Djibouti"), DM("DMA", "Dominica"), DO("DOM", "Dominican Republic"), EC(
+				"ECU", "Ecuador"), EG("EGY", "Egypt"), SV("SLV", "El Salvador"), GQ("GNQ", "Equatorial Guinea"), ER("ERI", "Eritrea"), EE(
+				"EST", "Estonia"), ET("ETH", "Ethiopia"), FK("FLK", "Falkland Islands (Malvinas)"), FO("FRO", "Faroe Islands"), FJ("FJI",
+				"Fiji"), FI("FIN", "Finland"), FR("FRA", "France"), GF("GUF", "French Guiana"), PF("PYF", "French Polynesia"), TF("ATF",
+				"French Southern Territories"), GA("GAB", "Gabon"), GM("GMB", "Gambia"), GE("GEO", "Georgia"), DE("DEU", "Germany"), GH(
+				"GHA", "Ghana"), GI("GIB", "Gibraltar"), GR("GRC", "Greece"), GL("GRL", "Greenland"), GD("GRD", "Grenada"), GP("GLP",
+				"Guadeloupe"), GU("GUM", "Guam"), GT("GTM", "Guatemala"), GG("GGY", "Guernsey"), GN("GIN", "Guinea"), GW("GNB",
+				"Guinea-Bissau"), GY("GUY", "Guyana"), HT("HTI", "Haiti"), HM("HMD", "Heard Island and McDonald Islands"), VA("VAT",
+				"Holy See (Vatican City State)"), HN("HND", "Honduras"), HK("HKG", "Hong Kong"), HU("HUN", "Hungary"), IS("ISL", "Iceland"), IN(
+				"IND", "India"), ID("IDN", "Indonesia"), IR("IRN", "Iran, Islamic Republic of"), IQ("IRQ", "Iraq"), IE("IRL", "Ireland"), IM(
+				"IMN", "Isle of Man"), IL("ISR", "Israel"), IT("ITA", "Italy"), JM("JAM", "Jamaica"), JP("JPN", "Japan"), JE("JEY",
+				"Jersey"), JO("JOR", "Jordan"), KZ("KAZ", "Kazakhstan"), KE("KEN", "Kenya"), KI("KIR", "Kiribati"), KP("PRK",
+				"Korea, Democratic People's Republic of"), KR("KOR", "Korea, Republic of"), KW("KWT", "Kuwait"), KG("KGZ", "Kyrgyzstan"), LA(
+				"LAO", "Lao People's Democratic Republic"), LV("LVA", "Latvia"), LB("LBN", "Lebanon"), LS("LSO", "Lesotho"), LR("LBR",
+				"Liberia"), LY("LBY", "Libya"), LI("LIE", "Liechtenstein"), LT("LTU", "Lithuania"), LU("LUX", "Luxembourg"), MO("MAC",
+				"Macao"), MK("MKD", "Macedonia, the former Yugoslav Republic of"), MG("MDG", "Madagascar"), MW("MWI", "Malawi"), MY("MYS",
+				"Malaysia"), MV("MDV", "Maldives"), ML("MLI", "Mali"), MT("MLT", "Malta"), MH("MHL", "Marshall Islands"), MQ("MTQ",
+				"Martinique"), MR("MRT", "Mauritania"), MU("MUS", "Mauritius"), YT("MYT", "Mayotte"), MX("MEX", "Mexico"), FM("FSM",
+				"Micronesia, Federated States of"), MD("MDA", "Moldova, Republic of"), MC("MCO", "Monaco"), MN("MNG", "Mongolia"), ME(
+				"MNE", "Montenegro"), MS("MSR", "Montserrat"), MA("MAR", "Morocco"), MZ("MOZ", "Mozambique"), MM("MMR", "Myanmar"), NA(
+				"NAM", "Namibia"), NR("NRU", "Nauru"), NP("NPL", "Nepal"), NL("NLD", "Netherlands"), NC("NCL", "New Caledonia"), NZ("NZL",
+				"New Zealand"), NI("NIC", "Nicaragua"), NE("NER", "Niger"), NG("NGA", "Nigeria"), NU("NIU", "Niue"), NF("NFK",
+				"Norfolk Island"), MP("MNP", "Northern Mariana Islands"), NO("NOR", "Norway"), OM("OMN", "Oman"), PK("PAK", "Pakistan"), PW(
+				"PLW", "Palau"), PS("PSE", "Palestine, State of"), PA("PAN", "Panama"), PG("PNG", "Papua New Guinea"), PY("PRY", "Paraguay"), PE(
+				"PER", "Peru"), PH("PHL", "Philippines"), PN("PCN", "Pitcairn"), PL("POL", "Poland"), PT("PRT", "Portugal"), PR("PRI",
+				"Puerto Rico"), QA("QAT", "Qatar"), RE("REU", "Réunion"), RO("ROU", "Romania"), RU("RUS", "Russian Federation"), RW("RWA",
+				"Rwanda"), BL("BLM", "Saint Barthélemy"), SH("SHN", "Saint Helena, Ascension and Tristan da Cunha"), KN("KNA",
+				"Saint Kitts and Nevis"), LC("LCA", "Saint Lucia"), MF("MAF", "Saint Martin (French part)"), PM("SPM",
+				"Saint Pierre and Miquelon"), VC("VCT", "Saint Vincent and the Grenadines"), WS("WSM", "Samoa"), SM("SMR", "San Marino"), ST(
+				"STP", "Sao Tome and Principe"), SA("SAU", "Saudi Arabia"), SN("SEN", "Senegal"), RS("SRB", "Serbia"), SC("SYC",
+				"Seychelles"), SL("SLE", "Sierra Leone"), SG("SGP", "Singapore"), SX("SXM", "Sint Maarten (Dutch part)"), SK("SVK",
+				"Slovakia"), SI("SVN", "Slovenia"), SB("SLB", "Solomon Islands"), SO("SOM", "Somalia"), ZA("ZAF", "South Africa"), GS(
+				"SGS", "South Georgia and the South Sandwich Islands"), SS("SSD", "South Sudan"), ES("ESP", "Spain"), LK("LKA", "Sri Lanka"), SD(
+				"SDN", "Sudan"), SR("SUR", "Suriname"), SJ("SJM", "Svalbard and Jan Mayen"), SZ("SWZ", "Swaziland"), SE("SWE", "Sweden"), CH(
+				"CHE", "Switzerland"), SY("SYR", "Syrian Arab Republic"), TW("TWN", "Taiwan, Province of China"), TJ("TJK", "Tajikistan"), TZ(
+				"TZA", "Tanzania, United Republic of"), TH("THA", "Thailand"), TL("TLS", "Timor-Leste"), TG("TGO", "Togo"), TK("TKL",
+				"Tokelau"), TO("TON", "Tonga"), TT("TTO", "Trinidad and Tobago"), TN("TUN", "Tunisia"), TR("TUR", "Turkey"), TM("TKM",
+				"Turkmenistan"), TC("TCA", "Turks and Caicos Islands"), TV("TUV", "Tuvalu"), UG("UGA", "Uganda"), UA("UKR", "Ukraine"), AE(
+				"ARE", "United Arab Emirates"), GB("GBR", "United Kingdom"), US("USA", "United States"), UM("UMI",
+				"United States Minor Outlying Islands"), UY("URY", "Uruguay"), UZ("UZB", "Uzbekistan"), VU("VUT", "Vanuatu"), VE("VEN",
+				"Venezuela, Bolivarian Republic of"), VN("VNM", "Viet Nam"), VG("VGB", "Virgin Islands, British"), VI("VIR",
+				"Virgin Islands, U.S."), WF("WLF", "Wallis and Futuna"), EH("ESH", "Western Sahara"), YE("YEM", "Yemen"), ZM("ZMB",
+				"Zambia"), ZW("ZWE", "Zimbabwe");
 
 		private String _country;
 		private String _code3;
@@ -32,6 +87,10 @@ public enum ISO {
 
 		private void setCountry(final String country) {
 			this._country = country;
+		}
+
+		public String getCode2() {
+			return this.name();
 		}
 
 		public String getCode3() {
@@ -46,141 +105,7 @@ public enum ISO {
 			this.setCountry(country);
 			this.setCode3(code3);
 		}
-	}
-
-	/**
-	 * Carrier for ISO 3166-1-alpha-2 code
-	 * 
-	 * @author Devin S. Olsonm (dolson@czarnowski.com)
-	 * 
-	 * @see "ISO 3166-1-alpha-2 code" http://www.iso.org/iso/country_names_and_code_elements
-	 * 
-	 */
-	public static enum ISO3166_1_alpha_2 {
-		AF("AFGHANISTAN"), AX("ÅLAND ISLANDS"), AL("ALBANIA"), DZ("ALGERIA"), AS("AMERICAN SAMOA"), AD("ANDORRA"), AO("ANGOLA"), AI(
-				"ANGUILLA"), AQ("ANTARCTICA"), AG("ANTIGUA AND BARBUDA"), AR("ARGENTINA"), AM("ARMENIA"), AW("ARUBA"), AU("AUSTRALIA"), AT(
-				"AUSTRIA"), AZ("AZERBAIJAN"), BS("BAHAMAS"), BH("BAHRAIN"), BD("BANGLADESH"), BB("BARBADOS"), BY("BELARUS"), BE("BELGIUM"), BZ(
-				"BELIZE"), BJ("BENIN"), BM("BERMUDA"), BT("BHUTAN"), BO("BOLIVIA, PLURINATIONAL STATE OF"), BQ(
-				"BONAIRE, SINT EUSTATIUS AND SABA"), BA("BOSNIA AND HERZEGOVINA"), BW("BOTSWANA"), BV("BOUVET ISLAND"), BR("BRAZIL"), IO(
-				"BRITISH INDIAN OCEAN TERRITORY"), BN("BRUNEI DARUSSALAM"), BG("BULGARIA"), BF("BURKINA FASO"), BI("BURUNDI"), KH(
-				"CAMBODIA"), CM("CAMEROON"), CA("CANADA"), CV("CAPE VERDE"), KY("CAYMAN ISLANDS"), CF("CENTRAL AFRICAN REPUBLIC"), TD(
-				"CHAD"), CL("CHILE"), CN("CHINA"), CX("CHRISTMAS ISLAND"), CC("COCOS (KEELING) ISLANDS"), CO("COLOMBIA"), KM("COMOROS"), CG(
-				"CONGO"), CD("CONGO, THE DEMOCRATIC REPUBLIC OF THE"), CK("COOK ISLANDS"), CR("COSTA RICA"), CI("CÔTE D'IVOIRE"), HR(
-				"CROATIA"), CU("CUBA"), CW("CURAÇAO"), CY("CYPRUS"), CZ("CZECH REPUBLIC"), DK("DENMARK"), DJ("DJIBOUTI"), DM("DOMINICA"), DO(
-				"DOMINICAN REPUBLIC"), EC("ECUADOR"), EG("EGYPT"), SV("EL SALVADOR"), GQ("EQUATORIAL GUINEA"), ER("ERITREA"), EE("ESTONIA"), ET(
-				"ETHIOPIA"), FK("FALKLAND ISLANDS (MALVINAS)"), FO("FAROE ISLANDS"), FJ("FIJI"), FI("FINLAND"), FR("FRANCE"), GF(
-				"FRENCH GUIANA"), PF("FRENCH POLYNESIA"), TF("FRENCH SOUTHERN TERRITORIES"), GA("GABON"), GM("GAMBIA"), GE("GEORGIA"), DE(
-				"GERMANY"), GH("GHANA"), GI("GIBRALTAR"), GR("GREECE"), GL("GREENLAND"), GD("GRENADA"), GP("GUADELOUPE"), GU("GUAM"), GT(
-				"GUATEMALA"), GG("GUERNSEY"), GN("GUINEA"), GW("GUINEA-BISSAU"), GY("GUYANA"), HT("HAITI"), HM(
-				"HEARD ISLAND AND MCDONALD ISLANDS"), VA("HOLY SEE (VATICAN CITY STATE)"), HN("HONDURAS"), HK("HONG KONG"), HU("HUNGARY"), IS(
-				"ICELAND"), IN("INDIA"), ID("INDONESIA"), IR("IRAN, ISLAMIC REPUBLIC OF"), IQ("IRAQ"), IE("IRELAND"), IM("ISLE OF MAN"), IL(
-				"ISRAEL"), IT("ITALY"), JM("JAMAICA"), JP("JAPAN"), JE("JERSEY"), JO("JORDAN"), KZ("KAZAKHSTAN"), KE("KENYA"), KI(
-				"KIRIBATI"), KP("KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF"), KR("KOREA, REPUBLIC OF"), KW("KUWAIT"), KG("KYRGYZSTAN"), LA(
-				"LAO PEOPLE'S DEMOCRATIC REPUBLIC"), LV("LATVIA"), LB("LEBANON"), LS("LESOTHO"), LR("LIBERIA"), LY("LIBYA"), LI(
-				"LIECHTENSTEIN"), LT("LITHUANIA"), LU("LUXEMBOURG"), MO("MACAO"), MK("MACEDONIA, THE FORMER YUGOSLAV REPUBLIC OF"), MG(
-				"MADAGASCAR"), MW("MALAWI"), MY("MALAYSIA"), MV("MALDIVES"), ML("MALI"), MT("MALTA"), MH("MARSHALL ISLANDS"), MQ(
-				"MARTINIQUE"), MR("MAURITANIA"), MU("MAURITIUS"), YT("MAYOTTE"), MX("MEXICO"), FM("MICRONESIA, FEDERATED STATES OF"), MD(
-				"MOLDOVA, REPUBLIC OF"), MC("MONACO"), MN("MONGOLIA"), ME("MONTENEGRO"), MS("MONTSERRAT"), MA("MOROCCO"), MZ("MOZAMBIQUE"), MM(
-				"MYANMAR"), NA("NAMIBIA"), NR("NAURU"), NP("NEPAL"), NL("NETHERLANDS"), NC("NEW CALEDONIA"), NZ("NEW ZEALAND"), NI(
-				"NICARAGUA"), NE("NIGER"), NG("NIGERIA"), NU("NIUE"), NF("NORFOLK ISLAND"), MP("NORTHERN MARIANA ISLANDS"), NO("NORWAY"), OM(
-				"OMAN"), PK("PAKISTAN"), PW("PALAU"), PS("PALESTINE, STATE OF"), PA("PANAMA"), PG("PAPUA NEW GUINEA"), PY("PARAGUAY"), PE(
-				"PERU"), PH("PHILIPPINES"), PN("PITCAIRN"), PL("POLAND"), PT("PORTUGAL"), PR("PUERTO RICO"), QA("QATAR"), RE("RÉUNION"), RO(
-				"ROMANIA"), RU("RUSSIAN FEDERATION"), RW("RWANDA"), BL("SAINT BARTHÉLEMY"), SH(
-				"SAINT HELENA, ASCENSION AND TRISTAN DA CUNHA"), KN("SAINT KITTS AND NEVIS"), LC("SAINT LUCIA"), MF(
-				"SAINT MARTIN (FRENCH PART)"), PM("SAINT PIERRE AND MIQUELON"), VC("SAINT VINCENT AND THE GRENADINES"), WS("SAMOA"), SM(
-				"SAN MARINO"), ST("SAO TOME AND PRINCIPE"), SA("SAUDI ARABIA"), SN("SENEGAL"), RS("SERBIA"), SC("SEYCHELLES"), SL(
-				"SIERRA LEONE"), SG("SINGAPORE"), SX("SINT MAARTEN (DUTCH PART)"), SK("SLOVAKIA"), SI("SLOVENIA"), SB("SOLOMON ISLANDS"), SO(
-				"SOMALIA"), ZA("SOUTH AFRICA"), GS("SOUTH GEORGIA AND THE SOUTH SANDWICH ISLANDS"), SS("SOUTH SUDAN"), ES("SPAIN"), LK(
-				"SRI LANKA"), SD("SUDAN"), SR("SURINAME"), SJ("SVALBARD AND JAN MAYEN"), SZ("SWAZILAND"), SE("SWEDEN"), CH("SWITZERLAND"), SY(
-				"SYRIAN ARAB REPUBLIC"), TW("TAIWAN, PROVINCE OF CHINA"), TJ("TAJIKISTAN"), TZ("TANZANIA, UNITED REPUBLIC OF"), TH(
-				"THAILAND"), TL("TIMOR-LESTE"), TG("TOGO"), TK("TOKELAU"), TO("TONGA"), TT("TRINIDAD AND TOBAGO"), TN("TUNISIA"), TR(
-				"TURKEY"), TM("TURKMENISTAN"), TC("TURKS AND CAICOS ISLANDS"), TV("TUVALU"), UG("UGANDA"), UA("UKRAINE"), AE(
-				"UNITED ARAB EMIRATES"), GB("UNITED KINGDOM"), US("UNITED STATES"), UM("UNITED STATES MINOR OUTLYING ISLANDS"), UY(
-				"URUGUAY"), UZ("UZBEKISTAN"), VU("VANUATU"), VE("VENEZUELA, BOLIVARIAN REPUBLIC OF"), VN("VIET NAM"), VG(
-				"VIRGIN ISLANDS, BRITISH"), VI("VIRGIN ISLANDS, U.S."), WF("WALLIS AND FUTUNA"), EH("WESTERN SAHARA"), YE("YEMEN"), ZM(
-				"ZAMBIA"), ZW("ZIMBABWE");
-
-		private String _country;
-
-		public String getCountry() {
-			return this._country;
-		}
-
-		private void setCountry(final String country) {
-			this._country = country;
-		}
-
-		private ISO3166_1_alpha_2(final String country) {
-			this.setCountry(country);
-		}
-	}
-
-	/**
-	 * Carrier for ISO 3166-1-alpha-3 code
-	 * 
-	 * @author Devin S. Olsonm (dolson@czarnowski.com)
-	 * 
-	 * 
-	 */
-	public static enum ISO3166_1_alpha_3 {
-		ABW("Aruba"), AFG("Afghanistan"), AGO("Angola"), AIA("Anguilla"), ALA("Åland Islands"), ALB("Albania"), AND("Andorra"), ARE(
-				"United Arab Emirates"), ARG("Argentina"), ARM("Armenia"), ASM("American Samoa"), ATA("Antarctica"), ATF(
-				"French Southern Territories"), ATG("Antigua and Barbuda"), AUS("Australia"), AUT("Austria"), AZE("Azerbaijan"), BDI(
-				"Burundi"), BEL("Belgium"), BEN("Benin"), BES("Bonaire, Sint Eustatius and Saba"), BFA("Burkina Faso"), BGD("Bangladesh"), BGR(
-				"Bulgaria"), BHR("Bahrain"), BHS("Bahamas"), BIH("Bosnia and Herzegovina"), BLM("Saint Barthélemy"), BLR("Belarus"), BLZ(
-				"Belize"), BMU("Bermuda"), BOL("Bolivia, Plurinational State of"), BRA("Brazil"), BRB("Barbados"), BRN("Brunei Darussalam"), BTN(
-				"Bhutan"), BVT("Bouvet Island"), BWA("Botswana"), CAF("Central African Republic"), CAN("Canada"), CCK(
-				"Cocos (Keeling) Islands"), CHE("Switzerland"), CHL("Chile"), CHN("China"), CIV("Côte d'Ivoire"), CMR("Cameroon"), COD(
-				"Congo, the Democratic Republic of the"), COG("Congo"), COK("Cook Islands"), COL("Colombia"), COM("Comoros"), CPV(
-				"Cape Verde"), CRI("Costa Rica"), CUB("Cuba"), CUW("Curaçao"), CXR("Christmas Island"), CYM("Cayman Islands"), CYP("Cyprus"), CZE(
-				"Czech Republic"), DEU("Germany"), DJI("Djibouti"), DMA("Dominica"), DNK("Denmark"), DOM("Dominican Republic"), DZA(
-				"Algeria"), ECU("Ecuador"), EGY("Egypt"), ERI("Eritrea"), ESH("Western Sahara"), ESP("Spain"), EST("Estonia"), ETH(
-				"Ethiopia"), FIN("Finland"), FJI("Fiji"), FLK("Falkland Islands (Malvinas)"), FRA("France"), FRO("Faroe Islands"), FSM(
-				"Micronesia, Federated States of"), GAB("Gabon"), GBR("United Kingdom"), GEO("Georgia"), GGY("Guernsey"), GHA("Ghana"), GIB(
-				"Gibraltar"), GIN("Guinea"), GLP("Guadeloupe"), GMB("Gambia"), GNB("Guinea-Bissau"), GNQ("Equatorial Guinea"), GRC("Greece"), GRD(
-				"Grenada"), GRL("Greenland"), GTM("Guatemala"), GUF("French Guiana"), GUM("Guam"), GUY("Guyana"), HKG("Hong Kong"), HMD(
-				"Heard Island and McDonald Islands"), HND("Honduras"), HRV("Croatia"), HTI("Haiti"), HUN("Hungary"), IDN("Indonesia"), IMN(
-				"Isle of Man"), IND("India"), IOT("British Indian Ocean Territory"), IRL("Ireland"), IRN("Iran, Islamic Republic of"), IRQ(
-				"Iraq"), ISL("Iceland"), ISR("Israel"), ITA("Italy"), JAM("Jamaica"), JEY("Jersey"), JOR("Jordan"), JPN("Japan"), KAZ(
-				"Kazakhstan"), KEN("Kenya"), KGZ("Kyrgyzstan"), KHM("Cambodia"), KIR("Kiribati"), KNA("Saint Kitts and Nevis"), KOR(
-				"Korea, Republic of"), KWT("Kuwait"), LAO("Lao People's Democratic Republic"), LBN("Lebanon"), LBR("Liberia"), LBY("Libya"), LCA(
-				"Saint Lucia"), LIE("Liechtenstein"), LKA("Sri Lanka"), LSO("Lesotho"), LTU("Lithuania"), LUX("Luxembourg"), LVA("Latvia"), MAC(
-				"Macao"), MAF("Saint Martin (French part)"), MAR("Morocco"), MCO("Monaco"), MDA("Moldova, Republic of"), MDG("Madagascar"), MDV(
-				"Maldives"), MEX("Mexico"), MHL("Marshall Islands"), MKD("Macedonia, the former Yugoslav Republic of"), MLI("Mali"), MLT(
-				"Malta"), MMR("Myanmar"), MNE("Montenegro"), MNG("Mongolia"), MNP("Northern Mariana Islands"), MOZ("Mozambique"), MRT(
-				"Mauritania"), MSR("Montserrat"), MTQ("Martinique"), MUS("Mauritius"), MWI("Malawi"), MYS("Malaysia"), MYT("Mayotte"), NAM(
-				"Namibia"), NCL("New Caledonia"), NER("Niger"), NFK("Norfolk Island"), NGA("Nigeria"), NIC("Nicaragua"), NIU("Niue"), NLD(
-				"Netherlands"), NOR("Norway"), NPL("Nepal"), NRU("Nauru"), NZL("New Zealand"), OMN("Oman"), PAK("Pakistan"), PAN("Panama"), PCN(
-				"Pitcairn"), PER("Peru"), PHL("Philippines"), PLW("Palau"), PNG("Papua New Guinea"), POL("Poland"), PRI("Puerto Rico"), PRK(
-				"Korea, Democratic People's Republic of"), PRT("Portugal"), PRY("Paraguay"), PSE("Palestine, State of"), PYF(
-				"French Polynesia"), QAT("Qatar"), REU("Réunion"), ROU("Romania"), RUS("Russian Federation"), RWA("Rwanda"), SAU(
-				"Saudi Arabia"), SDN("Sudan"), SEN("Senegal"), SGP("Singapore"), SGS("South Georgia and the South Sandwich Islands"), SHN(
-				"Saint Helena, Ascension and Tristan da Cunha"), SJM("Svalbard and Jan Mayen"), SLB("Solomon Islands"), SLE("Sierra Leone"), SLV(
-				"El Salvador"), SMR("San Marino"), SOM("Somalia"), SPM("Saint Pierre and Miquelon"), SRB("Serbia"), SSD("South Sudan"), STP(
-				"Sao Tome and Principe"), SUR("Suriname"), SVK("Slovakia"), SVN("Slovenia"), SWE("Sweden"), SWZ("Swaziland"), SXM(
-				"Sint Maarten (Dutch part)"), SYC("Seychelles"), SYR("Syrian Arab Republic"), TCA("Turks and Caicos Islands"), TCD("Chad"), TGO(
-				"Togo"), THA("Thailand"), TJK("Tajikistan"), TKL("Tokelau"), TKM("Turkmenistan"), TLS("Timor-Leste"), TON("Tonga"), TTO(
-				"Trinidad and Tobago"), TUN("Tunisia"), TUR("Turkey"), TUV("Tuvalu"), TWN("Taiwan, Province of China"), TZA(
-				"Tanzania, United Republic of"), UGA("Uganda"), UKR("Ukraine"), UMI("United States Minor Outlying Islands"), URY("Uruguay"), USA(
-				"United States"), UZB("Uzbekistan"), VAT("Holy See (Vatican City State)"), VCT("Saint Vincent and the Grenadines"), VEN(
-				"Venezuela, Bolivarian Republic of"), VGB("Virgin Islands, British"), VIR("Virgin Islands, U.S."), VNM("Viet Nam"), VUT(
-				"Vanuatu"), WLF("Wallis and Futuna"), WSM("Samoa"), YEM("Yemen"), ZAF("South Africa"), ZMB("Zambia"), ZWE("Zimbabwe");
-		;
-
-		private String _country;
-
-		public String getCountry() {
-			return this._country;
-		}
-
-		private void setCountry(final String country) {
-			this._country = country;
-		}
-
-		private ISO3166_1_alpha_3(final String country) {
-			this.setCountry(country);
-		}
-	}
+	};
 
 	/*
 	 * ******************************************************************
@@ -192,23 +117,19 @@ public enum ISO {
 	 * ******************************************************************
 	 */
 
-	public static ISO3166_1_alpha_2 getISO3166_1_alpha_2(final String code) {
-		if ((!isBlankString(code)) && (2 == code.length()) && code.matches("^[A-Z]+[A-Z]$")) {
-			for (ISO3166_1_alpha_2 result : ISO3166_1_alpha_2.values()) {
-				if (code.equals(result.name())) {
-					return result;
+	public static ISO3166 getISO3166(final String code) {
+		if (!isBlankString(code)) {
+			if ((2 == code.length()) && code.matches("^[A-Z]+[A-Z]$")) {
+				for (ISO3166 result : ISO3166.values()) {
+					if (code.equals(result.getCode2())) {
+						return result;
+					}
 				}
-			}
-		}
-
-		return null;
-	}
-
-	public static ISO3166_1_alpha_3 getISO3166_1_alpha_3(final String code) {
-		if ((!isBlankString(code)) && (3 == code.length()) && code.matches("^[A-Z]+[A-Z]$")) {
-			for (ISO3166_1_alpha_3 result : ISO3166_1_alpha_3.values()) {
-				if (code.equals(result.name())) {
-					return result;
+			} else if ((3 == code.length()) && code.matches("^[A-Z]+[A-Z]+[A-Z]$")) {
+				for (ISO3166 result : ISO3166.values()) {
+					if (code.equals(result.getCode3())) {
+						return result;
+					}
 				}
 			}
 		}
@@ -217,28 +138,18 @@ public enum ISO {
 	}
 
 	public static String getCountry(final String code) {
-		if (null != code) {
-			switch (code.length()) {
-			case 2: {
-				ISO3166_1_alpha_2 temp = ISO.getISO3166_1_alpha_2(code);
-				return (null == temp) ? "" : temp.getCountry();
-			}
-			case 3: {
-				ISO3166_1_alpha_3 temp = ISO.getISO3166_1_alpha_3(code);
-				return (null == temp) ? "" : temp.getCountry();
-			}
-			}
-		}
-
-		return "";
+		ISO3166 temp = ISO.getISO3166(code);
+		return (null == temp) ? "" : temp.getCountry();
 	}
 
 	public static boolean isCountryCode2(final String code) {
-		return (null != ISO.getISO3166_1_alpha_2(code));
+		ISO3166 temp = ISO.getISO3166(code);
+		return (null == temp) ? false : temp.getCode2().equals(code);
 	}
 
 	public static boolean isCountryCode3(final String code) {
-		return (null != ISO.getISO3166_1_alpha_3(code));
+		ISO3166 temp = ISO.getISO3166(code);
+		return (null == temp) ? false : temp.getCode3().equals(code);
 	}
 
 	public static String toProperCase(final String source) {
