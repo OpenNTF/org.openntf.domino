@@ -15,7 +15,6 @@
  */
 package org.openntf.domino.impl;
 
-import java.lang.ref.Reference;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.security.AccessController;
@@ -33,9 +32,6 @@ import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoListener;
 import org.openntf.domino.exceptions.BlockedCrashException;
 import org.openntf.domino.ext.Formula;
-import org.openntf.domino.thread.DominoLockSet;
-import org.openntf.domino.thread.DominoReference;
-import org.openntf.domino.thread.DominoReferenceQueue;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoUtils;
@@ -54,31 +50,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Base.class.getName());
 
-	// TODO NTF - we really should keep a Map of lotus objects to references, so we can only auto-recycle when we know there are no other
-	// references to the same shared object.
-	// problem today is: there's no clear way to determine an identity for the NotesBase object.
-	/** The recycle queue. */
-	private static ThreadLocal<DominoReferenceQueue> recycleQueue = new ThreadLocal<DominoReferenceQueue>() {
-		@Override
-		protected DominoReferenceQueue initialValue() {
-			return new DominoReferenceQueue();
-		};
-	};
-
-	/** The cpp_object. */
-	private long cpp_object = 0l;
-
-	// /** The reference bag. */
-	// private static ThreadLocal<Set<DominoReference>> referenceBag = new ThreadLocal<Set<DominoReference>>() {
-	// @Override
-	// protected Set<DominoReference> initialValue() {
-	// return new HashSet<DominoReference>();
-	// // return Collections.newSetFromMap(new WeakHashMap<DominoReference, Boolean>());
-	// };
-	// };
-
 	/** The Constant lockedRefSet. */
-	private static final DominoLockSet lockedRefSet = new DominoLockSet();
+	// private static final DominoLockSet lockedRefSet = new DominoLockSet();
 
 	/** The get cpp method. */
 	private static Method getCppMethod;
@@ -155,52 +128,22 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		if (parent != null) {
 			setParent(parent);
 		}
+
 		if (delegate != null) {
 			if (delegate instanceof org.openntf.domino.impl.Base) {
-				if (log_.isLoggable(Level.INFO))
-					log_.log(Level.INFO, "Why are you wrapping a non-Lotus object? " + delegate.getClass().getName());
-				recycleQueue.get().bagReference(
-						new DominoReference(this, recycleQueue.get(), ((org.openntf.domino.impl.Base) delegate).getDelegate()));
+				// normally you won't get here if you come from Factory.fromLotus
+				throw new IllegalArgumentException("Why are you wrapping a non-Lotus object? " + delegate.getClass().getName());
 			} else if (delegate instanceof lotus.domino.local.NotesBase) {
 				delegate_ = delegate;
-				cpp_object = getLotusId((lotus.domino.local.NotesBase) delegate);
-				if (delegate instanceof lotus.domino.Name || delegate instanceof lotus.domino.DateTime
-						|| delegate instanceof lotus.domino.Session) {
-					// No reference needed. Will be recycled directly...
-					// Not creating auto-recycle references for Sessions
-					// TODO - NTF come up with a better solution for recycling Sessions!!!
-				} else {
-					recycleQueue.get().bagReference(new DominoReference(this, recycleQueue.get(), delegate));
-				}
 			} else {
-				if (log_.isLoggable(Level.FINE))
-					log_.log(Level.FINE, "Why are you wrapping a non-Lotus object? " + delegate.getClass().getName(),
-							new RuntimeException());
+				throw new IllegalArgumentException("Why are you wrapping a non-Lotus object? " + delegate.getClass().getName());
 			}
 		}
-		drainQueue(cpp_object);
-		// else {
-		// encapsulated_ = true;
-		// }
 
 	}
 
 	void setDelegate(final D delegate) {
-
 		delegate_ = delegate;
-		cpp_object = getLotusId((lotus.domino.local.NotesBase) delegate);
-		if (delegate instanceof lotus.domino.Name || delegate instanceof lotus.domino.DateTime || delegate instanceof lotus.domino.Session) {
-			// TODO - NTF come up with a better solution for recycling Sessions!!!
-		} else {
-			recycleQueue.get().bagReference(new DominoReference(this, recycleQueue.get(), delegate));
-		}
-		// if (delegate instanceof lotus.domino.Document) {
-		// try {
-		// System.out.println("Redelegating a document: " + ((lotus.domino.Document) delegate).getNoteID() + " (" + cpp_object + ")");
-		// } catch (NotesException e) {
-		// DominoUtils.handleException(e);
-		// }
-		// }
 	}
 
 	/**
@@ -210,6 +153,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the base
 	 * @return the lotus id
 	 */
+	// CHECKME: do we still need this method 
+	@Deprecated
 	public static long getLotusId(final lotus.domino.local.NotesBase base) {
 		try {
 			return ((Long) getCppMethod.invoke(base, (Object[]) null)).longValue();
@@ -219,41 +164,20 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	}
 
 	/**
-	 * _get recycle queue.
+	 * Gets a unique key for a lotus object. This is the lotusId where unneccessary bits are removed
 	 * 
-	 * @return the domino reference queue
+	 * @param base
+	 *            the base
+	 * @return the lotus id
 	 */
-	private static DominoReferenceQueue _getRecycleQueue() {
-		return recycleQueue.get();
-	}
+	public static Integer getLotusKey(final lotus.domino.Base base) {
+		try {
+			long cpp_id = ((Long) getCppMethod.invoke((lotus.domino.local.NotesBase) base, (Object[]) null)).longValue();
 
-	/**
-	 * Drain queue.
-	 * 
-	 * @return the int
-	 */
-	public static int drainQueue(final long cppid) {
-		int result = 0;
-		DominoReferenceQueue drq = _getRecycleQueue();
-		Reference<?> ref = drq.poll(cppid);
-
-		while (ref != null) {
-			ref = drq.poll(cppid);
-			result++;
+			return Integer.valueOf((int) ((cpp_id >> 2) & 0xFFFFFFFFL));
+		} catch (Exception e) {
+			return Integer.valueOf(0);
 		}
-		return result;
-	}
-
-	/**
-	 * Finalize queue.
-	 * 
-	 * @return the int
-	 */
-	public static int finalizeQueue() {
-		int result = 0;
-		DominoReferenceQueue drq = _getRecycleQueue();
-		result = drq.finalizeQueue();
-		return result;
 	}
 
 	/**
@@ -269,18 +193,6 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			return ((org.openntf.domino.impl.Base) wrapper).getDelegate();
 		}
 		return wrapper;
-	}
-
-	/**
-	 * Gets the cpp_object.
-	 * 
-	 * @param wrapper
-	 *            the wrapper
-	 * @return the cpp handle
-	 */
-	@SuppressWarnings("rawtypes")
-	public static long getDelegateId(final org.openntf.domino.impl.Base wrapper) {
-		return ((org.openntf.domino.impl.Base) wrapper).cpp_object;
 	}
 
 	/**
@@ -315,8 +227,10 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the base
 	 * @return true, if is locked
 	 */
+	@Deprecated
 	public static boolean isLocked(final lotus.domino.Base base) {
-		return lockedRefSet.isLocked(base);
+		//return lockedRefSet.isLocked(base);
+		return false;
 	}
 
 	/**
@@ -325,8 +239,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @param base
 	 *            the base
 	 */
+	@Deprecated
 	public static void unlock(final lotus.domino.Base base) {
-		lockedRefSet.unlock(base);
+		//lockedRefSet.unlock(base);
 	}
 
 	/**
@@ -335,8 +250,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @param base
 	 *            the base
 	 */
+	@Deprecated
 	public static void lock(final lotus.domino.Base base) {
-		lockedRefSet.lock(base);
+		//lockedRefSet.lock(base);
 	}
 
 	/**
@@ -345,10 +261,11 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @param allYourBase
 	 *            the all your base
 	 */
+	@Deprecated
 	public static void lock(final lotus.domino.Base... allYourBase) {
-		for (lotus.domino.Base everyZig : allYourBase) {
-			lockedRefSet.lock(everyZig);
-		}
+		//for (lotus.domino.Base everyZig : allYourBase) {
+		//	lockedRefSet.lock(everyZig);
+		//}
 	}
 
 	/**
@@ -357,8 +274,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @param allYourBase
 	 *            the all your base
 	 */
+	@Deprecated
 	public static void unlock(final lotus.domino.Base... allYourBase) {
-		lockedRefSet.unlock(allYourBase);
+		//lockedRefSet.unlock(allYourBase);
 	}
 
 	/*
@@ -594,28 +512,28 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 */
 	public static boolean s_recycle(final lotus.domino.local.NotesBase base) {
 		boolean result = false;
-		if (!isLocked(base)) {
-			try {
-				if (base instanceof lotus.domino.local.DateRange) {	//NTF - check to see if we have valid start/end dates to prevent crashes in 9.0.1
-					lotus.domino.local.DateRange dr = (lotus.domino.local.DateRange) base;
-					lotus.domino.local.DateTime sdt = (lotus.domino.local.DateTime) dr.getStartDateTime();
-					lotus.domino.local.DateTime edt = (lotus.domino.local.DateTime) dr.getEndDateTime();
-					if (sdt == null || edt == null) {
-						//don't recycle. Better to leak some memory than crash the server entirely!
-						String message = "Attempted to recycle a DateRange with a null startDateTime or endDateTime. This would have caused a GPF in the Notes API, so we didn't do it.";
-						log_.log(Level.WARNING, message);
-						throw new BlockedCrashException(message);
-					}
+		//if (!isLocked(base)) {
+		try {
+			if (base instanceof lotus.domino.local.DateRange) {	//NTF - check to see if we have valid start/end dates to prevent crashes in 9.0.1
+				lotus.domino.local.DateRange dr = (lotus.domino.local.DateRange) base;
+				lotus.domino.local.DateTime sdt = (lotus.domino.local.DateTime) dr.getStartDateTime();
+				lotus.domino.local.DateTime edt = (lotus.domino.local.DateTime) dr.getEndDateTime();
+				if (sdt == null || edt == null) {
+					//don't recycle. Better to leak some memory than crash the server entirely!
+					String message = "Attempted to recycle a DateRange with a null startDateTime or endDateTime. This would have caused a GPF in the Notes API, so we didn't do it.";
+					log_.log(Level.WARNING, message);
+					throw new BlockedCrashException(message);
 				}
-				base.recycle();
-				result = true;
-			} catch (Throwable t) {
-				Factory.countRecycleError();
-				// shikata ga nai
 			}
-		} else {
-			System.out.println("Not recycling a " + base.getClass().getName() + " because it's locked.");
+			base.recycle();
+			result = true;
+		} catch (Throwable t) {
+			Factory.countRecycleError();
+			// shikata ga nai
 		}
+		//} else {
+		//	System.out.println("Not recycling a " + base.getClass().getName() + " because it's locked.");
+		//}
 		return result;
 	}
 

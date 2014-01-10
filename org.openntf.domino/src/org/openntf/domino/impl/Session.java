@@ -35,7 +35,6 @@ import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
 import org.openntf.domino.exceptions.UnableToAcquireSessionException;
 import org.openntf.domino.exceptions.UserAccessException;
-import org.openntf.domino.thread.DominoReferenceCounter;
 import org.openntf.domino.utils.DominoFormatter;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -65,9 +64,6 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 			return null;
 		}
 	};
-
-	/** The lotus reference counter_. */
-	private DominoReferenceCounter lotusReferenceCounter_ = new DominoReferenceCounter();
 
 	public static final int DEFAULT_NSF_CACHE_SIZE = 16;
 
@@ -106,31 +102,6 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 
 	public int getNsfCacheSize() {
 		return databases_.size();
-	}
-
-	/**
-	 * Adds the id.
-	 * 
-	 * @param id
-	 *            the id
-	 * @return the int
-	 */
-	public int addId(final long id) {
-		int result = lotusReferenceCounter_.increment(id);
-		if (result > 8)
-			log_.log(Level.INFO, "Currently tracking more than 8 references for " + id);
-		return result;
-	}
-
-	/**
-	 * Subtract id.
-	 * 
-	 * @param id
-	 *            the id
-	 * @return the int
-	 */
-	public int subtractId(final long id) {
-		return lotusReferenceCounter_.decrement(id);
 	}
 
 	/**
@@ -1109,7 +1080,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public Document getUserPolicySettings(final String server, final String name, final int type, final String explicitPolicy) {
 		try {
-			return Factory.fromLotus(getDelegate().getUserPolicySettings(server, name, type, explicitPolicy), Document.class, this);
+			return Factory.fromLotusDocument(getDelegate().getUserPolicySettings(server, name, type, explicitPolicy), this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -1125,7 +1096,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	public Document getUserPolicySettings(final String server, final String name, final int type) {
 		try {
-			return Factory.fromLotus(getDelegate().getUserPolicySettings(server, name, type), Document.class, this);
+			return Factory.fromLotusDocument(getDelegate().getUserPolicySettings(server, name, type), this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -1734,5 +1705,35 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 			DominoUtils.handleException(ne);
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Session#getDocumentByMetaversalID(java.lang.String)
+	 */
+	public org.openntf.domino.Document getDocumentByMetaversalID(final String metaversalID) {
+		String serverName = "";
+		String id = "";
+		if (metaversalID.contains("!!")) {
+			int pos = metaversalID.indexOf("!!");
+			serverName = metaversalID.substring(0, pos);
+			id = metaversalID.substring(pos + 2);
+		} else {
+			id = metaversalID;
+		}
+		return getDocumentByMetaversalID(serverName, id);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Session#getDocumentByMetaversalID(java.lang.String, java.lang.String)
+	 */
+	public org.openntf.domino.Document getDocumentByMetaversalID(final String metaversalID, final String serverName) {
+		if (metaversalID.length() != 48) {
+			throw new IllegalArgumentException("MetaversalIDs must be 48 characters in length (16 for replicaID, 32 for unid)");
+		}
+		String replid = metaversalID.substring(0, 16);
+		String unid = metaversalID.substring(16);
+		org.openntf.domino.Database db = this.getDatabaseByReplicaID(serverName, replid);
+		org.openntf.domino.Document doc = db.getDocumentByUNID(unid);
+		return doc;
 	}
 }

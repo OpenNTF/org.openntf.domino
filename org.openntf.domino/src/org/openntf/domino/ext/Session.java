@@ -147,4 +147,7 @@ public interface Session {
 
 	public org.openntf.domino.Database getMailDatabase();
 
+	public org.openntf.domino.Document getDocumentByMetaversalID(String metaversalID);
+
+	public org.openntf.domino.Document getDocumentByMetaversalID(String metaversalID, String serverName);
 }

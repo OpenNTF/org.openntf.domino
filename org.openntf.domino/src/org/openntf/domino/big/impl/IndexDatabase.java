@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,6 +54,56 @@ public class IndexDatabase {
 	private transient View termView_;
 	private transient View dbView_;
 	private Set<String> stopList_;
+
+	public static Set<String> toStringSet(final Object value) {
+		Set<String> result = new HashSet<String>();
+		if (value == null)
+			return result;
+		if (value instanceof Iterable) {
+			Iterable values = (Iterable) value;
+			for (Object o : values) {
+				if (o instanceof String) {
+					result.add((String) o);
+				} else if (o instanceof CaseInsensitiveString) {
+					result.add(((CaseInsensitiveString) o).toString());
+				} else {
+					result.add(String.valueOf(o));
+				}
+			}
+		} else if (value instanceof String) {
+			result.add((String) value);
+		} else if (value instanceof CharSequence) {
+			result.add(((CharSequence) value).toString());
+		} else {
+			result.add(String.valueOf(value));
+		}
+		return result;
+	}
+
+	public static Set<CaseInsensitiveString> toCISSet(final Object value) {
+		Set<CaseInsensitiveString> result = new HashSet<CaseInsensitiveString>();
+		if (value == null)
+			return result;
+		if (value instanceof Iterable) {
+			Iterable values = (Iterable) value;
+			for (Object o : values) {
+				if (o instanceof CaseInsensitiveString) {
+					result.add((CaseInsensitiveString) o);
+				} else if (o instanceof CharSequence) {
+					result.add(new CaseInsensitiveString(((CharSequence) o).toString()));
+				} else {
+					result.add(new CaseInsensitiveString(String.valueOf(o)));
+				}
+			}
+		} else if (value instanceof CaseInsensitiveString) {
+			result.add((CaseInsensitiveString) value);
+		} else if (value instanceof CharSequence) {
+			result.add(new CaseInsensitiveString(((CharSequence) value).toString()));
+		} else {
+			result.add(new CaseInsensitiveString(String.valueOf(value)));
+		}
+		return result;
+	}
 
 	public IndexDatabase() {
 
@@ -140,7 +191,7 @@ public class IndexDatabase {
 		return result;
 	}
 
-	public List<String> getTermContains(final String contains) {
+	private List<String> getTermContains(final String contains) {
 		List<String> result = new ArrayList<String>();
 		return result;
 	}
@@ -257,6 +308,40 @@ public class IndexDatabase {
 		return result;
 	}
 
+	public int getTermHitCount(final String term) {
+		int result = 0;
+		Document doc = getTermDocument(term);
+		for (Item item : doc.getItems()) {
+			String itemName = item.getName();
+			if (itemName.startsWith(TERM_MAP_PREFIX)) {
+				String dbid = itemName.substring(TERM_MAP_PREFIX.length());
+				Map termMap = doc.getItemValue(itemName, Map.class);
+				for (Object key : termMap.keySet()) {
+					Object val = termMap.get(key);
+					if (val instanceof Collection) {
+						result += ((Collection) val).size();
+					}
+				}
+			}
+		}
+		return result;
+	}
+
+	protected int getTermDbidHitCount(final Document doc, final String dbid) {
+		int result = 0;
+		String itemName = TERM_MAP_PREFIX + dbid;
+		if (doc.hasItem(itemName)) {
+			Map termMap = doc.getItemValue(itemName, Map.class);
+			for (Object key : termMap.keySet()) {
+				Object val = termMap.get(key);
+				if (val instanceof Collection) {
+					result += ((Collection) val).size();
+				}
+			}
+		}
+		return result;
+	}
+
 	public Set<CharSequence> getTermItemsInDbids(final String term, final Collection<String> dbids) {
 		Set<CharSequence> result = new HashSet<CharSequence>();
 		Document doc = getTermDocument(term);
@@ -268,6 +353,105 @@ public class IndexDatabase {
 			}
 		}
 		return result;
+	}
+
+	public List<IndexHit> getTermResults(final String term, final int limit, final Set<String> dbids,
+			final Set<CaseInsensitiveString> itemNames, final Set<String> forms) {
+		List<IndexHit> results = new ArrayList<IndexHit>();
+		Document doc = getTermDocument(term);
+		if (dbids == null || dbids.isEmpty()) {
+			for (Item item : doc.getItems()) {
+				String itemName = item.getName();
+				if (itemName.startsWith(TERM_MAP_PREFIX)) {
+					String dbid = itemName.substring(TERM_MAP_PREFIX.length());
+					Map termMap = doc.getItemValue(itemName, Map.class);
+					results.addAll(getTermResultsForItemsForms(termMap, itemNames, forms, term, dbid));
+					if (limit != 0 && results.size() >= limit) {
+						return results;
+					}
+				}
+			}
+		} else {
+			for (String dbid : dbids) {
+				String itemName = TERM_MAP_PREFIX + dbid;
+				if (doc.hasItem(itemName)) {
+					Map termMap = doc.getItemValue(itemName, Map.class);
+					results.addAll(getTermResultsForItemsForms(termMap, itemNames, forms, term, dbid));
+					if (limit != 0 && results.size() >= limit) {
+						return results;
+					}
+				}
+			}
+		}
+		return results;
+	}
+
+	private List<IndexHit> getTermResultsForItemsForms(final Map map, final Set<CaseInsensitiveString> itemNames, final Set<String> forms,
+			final String term, final String dbid) {
+		List<IndexHit> results = new ArrayList<IndexHit>();
+		if (itemNames == null || itemNames.isEmpty()) {
+			for (Object key : map.keySet()) {
+				Object val = map.get(key);
+				List<IndexHit> hits = null;
+				if (val instanceof Set) {
+					//					System.out.println("Already have a set of " + ((Set) val).size() + " elements");
+					hits = getTermResultsForForms((Set) val, forms, term, dbid, key.toString());
+				} else {
+					//					System.out.println("Converting to a set from a " + (val == null ? "null" : val.getClass().getName()));
+					hits = getTermResultsForForms(toStringSet(val), forms, term, dbid, key.toString());
+				}
+				results.addAll(hits);
+			}
+		} else {
+			for (CaseInsensitiveString key : itemNames) {
+				//				System.out.println("Adding hit results for item " + key);
+
+				Object val = map.get(key);
+				List<IndexHit> hits = null;
+				if (val instanceof Set) {
+					//					System.out.println("Already have a set of " + ((Set) val).size() + " elements");
+					hits = getTermResultsForForms((Set) val, forms, term, dbid, key.toString());
+				} else {
+					//					System.out.println("Converting to a set from a " + (val == null ? "null" : val.getClass().getName()));
+					hits = getTermResultsForForms(toStringSet(val), forms, term, dbid, key.toString());
+				}
+				results.addAll(hits);
+			}
+		}
+		return results;
+	}
+
+	private List<IndexHit> getTermResultsForForms(final Set<String> unids, final Set<String> forms, final String term, final String dbid,
+			final String item) {
+		List<IndexHit> results = new ArrayList<IndexHit>();
+		if (forms == null || forms.isEmpty()) {
+			if (unids != null && !unids.isEmpty()) {
+				for (String unid : unids) {
+					//					System.out.println("Unid is: " + unid);
+					//					if (unid == null)
+					//						System.out.println("unid is null in a set of " + unids.size() + " values?");
+					try {
+						results.add(new IndexHit(term, dbid, item, unid));
+					} catch (Exception e) {
+						System.out.println("Exception occured trying to create a hit for db " + dbid + " on term " + term
+								+ " with a string of " + String.valueOf(unid) + " from a set of " + unids.size());
+					}
+				}
+			}
+		} else {
+			for (String unid : unids) {
+				String formName = unid.substring(33);
+				for (String form : forms) {
+					if (formName.equalsIgnoreCase(form)) {
+						//						if (unid == null)
+						//							System.out.println("Unid is null in a case of matching form: " + form + "???");
+						results.add(new IndexHit(term, dbid, item, unid));
+						break;
+					}
+				}
+			}
+		}
+		return results;
 	}
 
 	public Set<String> getTermUnidInDbsItems(final String term, final Collection<String> dbids, final Collection<?> itemNames) {
@@ -417,6 +601,33 @@ public class IndexDatabase {
 			if (db != null) {
 				result.add(db.getTitle() + "|" + dbid);
 			}
+		}
+		return result;
+	}
+
+	public static List<String> dbMapToCheckbox(final Session session, final String serverName, final Map<String, AtomicInteger> dbMap) {
+		List<String> result = new ArrayList<String>();
+		for (String dbid : dbMap.keySet()) {
+			Database db = session.getDatabaseByReplicaID(serverName, dbid);
+			if (db != null) {
+				result.add(db.getTitle() + " (" + dbMap.get(dbid) + ")|" + dbid);
+			}
+		}
+		return result;
+	}
+
+	public static List<String> itemMapToCheckbox(final Map<String, AtomicInteger> itemMap) {
+		List<String> result = new ArrayList<String>();
+		for (String item : itemMap.keySet()) {
+			result.add(item.substring(16) + " (" + itemMap.get(item) + ")|" + item.substring(16));
+		}
+		return result;
+	}
+
+	public static List<String> formMapToCheckbox(final Map<String, AtomicInteger> formMap) {
+		List<String> result = new ArrayList<String>();
+		for (String form : formMap.keySet()) {
+			result.add(form.substring(16) + " (" + formMap.get(form) + ")|" + form.substring(16));
 		}
 		return result;
 	}

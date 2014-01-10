@@ -89,7 +89,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public Document getDocumentContext() {
 		try {
-			return Factory.fromLotus(getDelegate().getDocumentContext(), Document.class, getCurrentDatabase());
+			return Factory.fromLotusDocument(getDelegate().getDocumentContext(), getCurrentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -188,7 +188,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public Document getSavedData() {
 		try {
-			return Factory.fromLotus(getDelegate().getSavedData(), Document.class, this);
+			return Factory.fromLotusDocument(getDelegate().getSavedData(), this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

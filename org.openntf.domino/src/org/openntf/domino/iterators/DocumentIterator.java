@@ -136,7 +136,7 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 				if (doc instanceof org.openntf.domino.Document) {
 					result = (org.openntf.domino.Document) doc;
 				} else {
-					result = Factory.fromLotus(doc, Document.class, db);
+					result = Factory.fromLotusDocument(doc, db);
 				}
 				// current_ = result;
 			} catch (Throwable t) {

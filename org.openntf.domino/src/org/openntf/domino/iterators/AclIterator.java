@@ -27,19 +27,19 @@ import org.openntf.domino.utils.DominoUtils;
  * The Class AclIterator.
  */
 public class AclIterator implements Iterator<ACLEntry> {
-	
+
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(AclIterator.class.getName());
-	
+
 	/** The acl. */
 	private ACL acl;
-	
+
 	/** The current entry_. */
 	private transient ACLEntry currentEntry_;
-	
+
 	/** The started_. */
 	private boolean started_;
-	
+
 	/** The done_. */
 	private boolean done_;
 
@@ -66,8 +66,6 @@ public class AclIterator implements Iterator<ACLEntry> {
 			result = (nextEntry != null);
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
-		} finally {
-			DominoUtils.incinerate(nextEntry);
 		}
 		return result;
 	}
@@ -89,7 +87,6 @@ public class AclIterator implements Iterator<ACLEntry> {
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		} finally {
-			DominoUtils.incinerate(currentEntry);
 			setCurrentEntry(result);
 		}
 		return result;
