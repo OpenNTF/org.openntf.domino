@@ -28,6 +28,18 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	private static final Logger log_ = Logger.getLogger(Formula.class.getName());
 	private static final long serialVersionUID = 1L;
 
+	public static interface Decompiler {
+		public String decompile(byte[] compiled);
+
+		public String decompileB64(String compiled);
+	}
+
+	private Decompiler decompiler_;
+
+	public void setDecompiler(final Decompiler decomp) {
+		decompiler_ = decomp;
+	}
+
 	static class NoFormulaSetException extends RuntimeException {
 		/**
 		 * 
@@ -39,7 +51,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		}
 	}
 
-	static class FormulaSyntaxException extends RuntimeException {
+	public static class FormulaSyntaxException extends RuntimeException {
 		/**
 		 * 
 		 */
@@ -138,7 +150,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 			setExpression(expression);
 		} catch (FormulaSyntaxException fe) {
 			isValid_ = false;
-			log_.log(Level.WARNING, "Error confirming formula syntax: " + fe.getExpression() + " (" + fe.getErrorText() + ")");
+			log_.log(Level.INFO, "Error confirming formula syntax: " + fe.getExpression() + " (" + fe.getErrorText() + ")");
 		}
 	}
 
@@ -156,22 +168,49 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		return new Parser(getExpression());
 	}
 
+	public void setExpression(final String expression, final boolean force) {
+		isValid_ = true;
+		expression_ = expression;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.openntf.domino.ext.Formula#setExpression(java.lang.String)
 	 */
 	@Override
-	public void setExpression(final String expression) {
-		Vector<Object> vec = getSession().evaluate("@CheckFormulaSyntax(\"" + DominoUtils.escapeForFormulaString(expression) + "\")");
+	public void setExpression(String expression) {
+		if (expression.length() > 2000) {
+			isValid_ = true;
+			expression_ = expression;
+			return;
+		}
+		Vector<Object> vec = getSession().evaluate("@CheckFormulaSyntax({" + DominoUtils.escapeForFormulaString(expression) + "})");
 		if (vec == null) {
 			isValid_ = false;
-			throw new FormulaSyntaxException(expression, null);
 		} else if (vec.size() > 2) {
 			isValid_ = false;
-			throw new FormulaSyntaxException(expression, vec);
+		} else {
+			isValid_ = true;
 		}
-		expression_ = expression;
+		if (!isValid_) {
+			if (decompiler_ != null && !expression.contains("@") && !expression.contains(";")) {//NTF - good chance its compiled
+				expression = decompiler_.decompileB64(expression);
+				vec = getSession().evaluate("@CheckFormulaSyntax({" + DominoUtils.escapeForFormulaString(expression) + "})");
+				if (vec == null || vec.size() > 2) {
+					isValid_ = false;
+					throw new FormulaSyntaxException(expression, vec);
+				} else {
+					System.out.println("Successfully decompiled a formula!");
+					isValid_ = true;
+				}
+			} else {
+				throw new FormulaSyntaxException(expression, vec);
+			}
+		}
+		if (isValid_) {
+			expression_ = expression;
+		}
 	}
 
 	private Session getSession() {
@@ -646,6 +685,8 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 
 		public String parseNextStatement(final String segment) {
 			//			System.out.println("Parsing " + curStatementType_ + " Statement Type");
+			if (segment == null)
+				return "";
 			char[] chars = segment.toCharArray();
 			int pos = 0;
 			StringBuilder buffer = new StringBuilder();
@@ -716,17 +757,19 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 					if (parenDepth_ == 0) {
 						//						System.out.println("Statement completed");
 						inRightSide_ = false;
-						if (curStatementType_.length() < 1) {
+						if (curStatementType_ == null || curStatementType_.length() < 1) {
 							//							System.out.println("Ending result expression");
-							for (String ident : identStack_) {
+
+							for (String ident : getIdentStack()) {
 								if (!getLocalVars().contains(ident)) {
 									getFieldVars().add(ident);	//if the variable was never defined locally, it's most likely a field
 								}
 							}
+
 						} else {
 							//							System.out.println("Ending " + curStatementType_ + " expression");
 						}
-						identStack_.clear();
+						getIdentStack().clear();
 						curStatementType_ = "";
 						return segment.substring(pos).trim();
 					} else {

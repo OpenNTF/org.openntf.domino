@@ -34,6 +34,7 @@ public class DocumentScanner {
 		if (obj == null)
 			return result;
 		Class<?> clazz = obj.getClass();
+		//Map<CaseInsensitiveString, NavigableSet<CaseInsensitiveString>>
 		if (Map.class.isAssignableFrom(clazz)) {
 			if (((Map) obj).isEmpty())
 				return false;
@@ -59,6 +60,7 @@ public class DocumentScanner {
 		if (obj == null)
 			return result;
 		Class<?> clazz = obj.getClass();
+		//Map<CaseInsensitiveString, NavigableSet<Comparable>>
 		if (Map.class.isAssignableFrom(clazz)) {
 			if (((Map) obj).isEmpty())
 				return false;
@@ -84,6 +86,7 @@ public class DocumentScanner {
 		if (obj == null)
 			return result;
 		Class<?> clazz = obj.getClass();
+		//Map<CaseInsensitiveString, Integer>
 		if (Map.class.isAssignableFrom(clazz)) {
 			if (((Map) obj).isEmpty())
 				return false;
@@ -104,6 +107,7 @@ public class DocumentScanner {
 		if (obj == null)
 			return result;
 		Class<?> clazz = obj.getClass();
+		//NavigableMap<CaseInsensitiveString, Integer>
 		if (NavigableMap.class.isAssignableFrom(clazz)) {
 			if (((NavigableMap) obj).isEmpty())
 				return false;
@@ -124,32 +128,51 @@ public class DocumentScanner {
 		if (obj == null)
 			return result;
 		Class<?> clazz = obj.getClass();
+		//Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>>
 		if (Map.class.isAssignableFrom(clazz)) {
-			if (((Map) obj).isEmpty())
+			if (((Map) obj).isEmpty()) {
+				System.out.println("Map is empty so not valid TokenLocationMap");
 				return false;
+			}
 			Set keys = ((Map) obj).keySet();
 			Object keyObj = keys.iterator().next();
 			if (CaseInsensitiveString.class.isAssignableFrom(keyObj.getClass())) {
 				Object valObj = ((Map) obj).get(keyObj);
 				if (Map.class.isAssignableFrom(valObj.getClass())) {
-					if (((Map) valObj).isEmpty())
+					if (((Map) valObj).isEmpty()) {
+						System.out.println("Submap is empty so not valid TokenLocationMap");
 						return false;
+					}
 					Set subkeys = ((Map) valObj).keySet();
-					Object subkeyObj = keys.iterator().next();
-					if (CaseInsensitiveString.class.isAssignableFrom(subkeyObj.getClass())) {
-						Object subvalObj = ((Map) valObj).get(subkeyObj);
-						if (subvalObj != null) {
-							if (Set.class.isAssignableFrom(subvalObj.getClass())) {
-								if (((Set) subvalObj).isEmpty())
-									return false;
-								Object unidObj = ((Set) subvalObj).iterator().next();
-								if (CaseInsensitiveString.class.isAssignableFrom(unidObj.getClass())) {
-									result = true;
+					for (Object subkeyObj : subkeys) {
+						if (CaseInsensitiveString.class.isAssignableFrom(subkeyObj.getClass())) {
+							Object subvalObj = ((Map) valObj).get(subkeyObj);
+							if (subvalObj != null) {
+								if (Set.class.isAssignableFrom(subvalObj.getClass())) {
+									for (Object unidObj : (Set) subvalObj) {
+										if (unidObj != null) {
+											if (String.class.isAssignableFrom(unidObj.getClass())) {
+												result = true;
+												break;
+											} else {
+												System.out.println("Unid is a " + unidObj.getClass().getName()
+														+ " so not valid TokenLocationMap");
+											}
+										}
+									}
+								} else {
+									System.out.println("Subval is a " + subvalObj.getClass().getName() + " so not valid TokenLocationMap");
 								}
 							}
+						} else {
+							System.out.println("Subkey is a " + subkeyObj.getClass().getName() + " empty so not valid TokenLocationMap");
 						}
 					}
+				} else {
+					System.out.println("Value is a " + valObj.getClass().getName() + " so not valid TokenLocationMap");
 				}
+			} else {
+				System.out.println("Key object is a " + keyObj.getClass().getName() + " so not valid TokenLocationMap");
 			}
 		}
 		return result;
