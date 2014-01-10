@@ -406,7 +406,7 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 					if (length > 1) {
 						int orgpos = length;
 						organization = words[orgpos];
-						if (ISO.isCountryCode(organization)) {
+						if (ISO.isCountryCode2(organization)) {
 							// organization could be a country code, 
 							if (orgpos > 1) {
 								// Treat organization as a country code and re-aquire the organization
