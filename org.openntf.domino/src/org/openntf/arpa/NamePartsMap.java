@@ -25,6 +25,24 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		}
 	};
 
+	public static enum CanonicalKey {
+		CN("Common Name"), OU("Organizational Unit"), O("Organization"), C("Country Code");
+		private String _label;
+
+		public String getLabel() {
+			return this._label;
+		}
+
+		private void setLabel(final String label) {
+			this._label = label;
+		}
+
+		private CanonicalKey(final String label) {
+			this.setLabel(label);
+		}
+
+	}
+
 	private static final Logger log_ = Logger.getLogger(NamePartsMap.class.getName());
 	private static final long serialVersionUID = 1L;
 	private RFC822name _rfc822name;
@@ -93,12 +111,16 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 				String ou1 = this.get(NamePartsMap.Key.OrgUnit1);
 				String ou2 = this.get(NamePartsMap.Key.OrgUnit2);
 				String ou3 = this.get(NamePartsMap.Key.OrgUnit3);
+				String ou4 = this.get(NamePartsMap.Key.OrgUnit4);
 				String organization = this.get(NamePartsMap.Key.Organization);
 				String country = this.get(NamePartsMap.Key.Country);
 
 				StringBuffer sb = new StringBuffer("");
 				if (!ISO.isBlankString(common)) {
 					sb.append(common);
+				}
+				if (!ISO.isBlankString(ou4)) {
+					sb.append("/OU=" + ou4);
 				}
 				if (!ISO.isBlankString(ou3)) {
 					sb.append("/" + ou3);
@@ -142,12 +164,16 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 				String ou1 = this.get(NamePartsMap.Key.OrgUnit1);
 				String ou2 = this.get(NamePartsMap.Key.OrgUnit2);
 				String ou3 = this.get(NamePartsMap.Key.OrgUnit3);
+				String ou4 = this.get(NamePartsMap.Key.OrgUnit4);
 				String organization = this.get(NamePartsMap.Key.Organization);
 				String country = this.get(NamePartsMap.Key.Country);
 
 				StringBuffer sb = new StringBuffer("");
 				if (!ISO.isBlankString(common)) {
 					sb.append("CN=" + common);
+				}
+				if (!ISO.isBlankString(ou4)) {
+					sb.append("/OU=" + ou4);
 				}
 				if (!ISO.isBlankString(ou3)) {
 					sb.append("/OU=" + ou3);
@@ -244,48 +270,56 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 	 */
 	private void parse(final String source) {
 		String common = "";
-		String ou1 = "";
-		String ou2 = "";
-		String ou3 = "";
+		String[] ous = new String[] { "", "", "", "" };
 		String organization = "";
 		String country = "";
 
 		if ((!ISO.isBlankString(source)) && (source.indexOf('/') > 0)) {
-			// break the source into it's component chunks and parse them
+			// break the source into it's component words and parse them
 
-			String[] chunks = source.split("/");
-			int length = chunks.length;
+			String[] words = source.split("/");
+			int length = words.length;
 			if (length > 0) {
+				int idx = 0;
+
 				if (source.indexOf('=') > 0) {
 					// use canonical logic
+					for (int i = words.length - 1; i >= 0; i--) {
+						String[] nibbles = words[i].trim().split("=");
+						String key = nibbles[0];
+						String value = nibbles[1];
+
+						if (CanonicalKey.C.name().equals(key)) {
+							country = value;
+						} else if (CanonicalKey.O.name().equals(key)) {
+							organization = value;
+						} else if (CanonicalKey.OU.name().equals(key)) {
+							ous[idx] = value;
+							idx++;
+						} else if (CanonicalKey.CN.name().equals(key)) {
+							common = value;
+						}
+					}
+
 				} else {
 					// use abbreviated logic
-
-					common = chunks[0].trim();
+					common = words[0].trim();
 					if (length > 1) {
 						int orgpos = length;
-						organization = chunks[orgpos];
+						organization = words[orgpos];
 						if (ISO.isCountryCode(organization)) {
 							// Organization could be a country code, 
 							// Need to add logic to figure it out here and reset the organization position if needed
 						}
 						int oupos = orgpos - 1;
-						int idx = 1;
 						while (oupos > 0) {
-							switch (idx) {
-							case 1:
-								ou1 = chunks[oupos];
-								break;
-							case 2:
-								ou2 = chunks[oupos];
-								break;
-							case 3:
-								ou3 = chunks[oupos];
-								break;
-							}
+							ous[idx] = words[oupos];
 
 							oupos--;
 							idx++;
+							if (idx > 3) {
+								break;
+							}
 						}
 					}
 				}
@@ -293,9 +327,10 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		}
 
 		this.put(Key.Common, common);
-		this.put(Key.OrgUnit1, ou1);
-		this.put(Key.OrgUnit2, ou2);
-		this.put(Key.OrgUnit3, ou3);
+		this.put(Key.OrgUnit1, ous[0]);
+		this.put(Key.OrgUnit2, ous[1]);
+		this.put(Key.OrgUnit3, ous[2]);
+		this.put(Key.OrgUnit4, ous[3]);
 		this.put(Key.Organization, organization);
 		this.put(Key.Country, country);
 
@@ -380,5 +415,4 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		//			}
 		//		}
 	}
-
 }
