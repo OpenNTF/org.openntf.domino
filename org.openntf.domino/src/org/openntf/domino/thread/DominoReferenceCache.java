@@ -20,10 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import lotus.domino.local.NotesBase;
-
-import org.openntf.domino.Base;
-
 /**
  * Class to cache OpenNTF-Domino-wrapper objects. The wrapper and its delegate is stored in a phantomReference. This reference is queued if
  * the wrapper Object is GC. Then the delegate gets recycled.
@@ -37,9 +33,9 @@ import org.openntf.domino.Base;
  * @author Roland Praml, Foconis AG
  */
 
-public class DominoReferenceCache<K, V extends Base> {
+public class DominoReferenceCache<K, V extends org.openntf.domino.Base> {
 	/** The delegate map contains the value wrapped in phantomReferences) **/
-	private Map<K, DominoReference<K, V>> delegate = new HashMap<K, DominoReference<K, V>>(16, 0.75F);
+	private Map<K, DominoReference<K, V, lotus.domino.Base>> map = new HashMap<K, DominoReference<K, V, lotus.domino.Base>>(16, 0.75F);
 
 	/** This is the queue with unreachable refs **/
 	private ReferenceQueue<V> queue = new ReferenceQueue<V>();
@@ -74,7 +70,11 @@ public class DominoReferenceCache<K, V extends Base> {
 		// if they are garbage collected, the get() method returns null;
 		// the next put() call with the same key removes the old value
 		// automatically so that it can be completely garbage collected
-		return getReferenceObject(delegate.get(key));
+		if (key == null) {
+			return null;
+		} else {
+			return getReferenceObject(map.get(key));
+		}
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class DominoReferenceCache<K, V extends Base> {
 	 * @return previous value associated with specified key, or null if there was no mapping for key or the value has been garbage collected
 	 *         by the garbage collector.
 	 */
-	public void put(final K key, final V value) {
+	public void put(final K key, final V value, final lotus.domino.Base delegate) {
 		// If the map already contains an equivalent key, the new key
 		// of a (key, value) pair is NOT stored in the map but the new
 		// value only. But as the key is strongly referenced by the
@@ -99,8 +99,12 @@ public class DominoReferenceCache<K, V extends Base> {
 		// new entry is made. We only clean up here to distribute
 		// clean up calls on different operations.
 		processQueue();
-		DominoReference<K, V> ref = new DominoReference(value, queue, key);
-		delegate.put(key, ref);
+		if (value == null)
+			return;
+		DominoReference<K, V, lotus.domino.Base> ref = new DominoReference<K, V, lotus.domino.Base>(key, value, delegate, queue);
+		if (key == null)
+			return;
+		map.put(key, ref);
 	}
 
 	/**
@@ -117,16 +121,15 @@ public class DominoReferenceCache<K, V extends Base> {
 			System.gc();
 		}
 
-		DominoReference<K, V> ref = null;
+		DominoReference<K, V, lotus.domino.Base> ref = null;
 
-		while ((ref = (DominoReference<K, V>) queue.poll()) != null) {
+		while ((ref = (DominoReference<K, V, lotus.domino.Base>) queue.poll()) != null) {
 			K key = ref.getKey();
 			if (key != null) {
-				// only recycle refs that have a key. The others are removed from the map only
-				delegate.remove(key);
-				if (autorecycle_) {
-					ref.recycle();
-				}
+				map.remove(key);
+			}
+			if (autorecycle_) {
+				ref.recycle();
 			}
 		}
 
@@ -135,18 +138,17 @@ public class DominoReferenceCache<K, V extends Base> {
 	/**
 	 * A convenience method to return the object held by the weak reference or <code>null</code> if it does not exist.
 	 */
-	protected final V getReferenceObject(final DominoReference<K, V> ref) {
+	protected final V getReferenceObject(final DominoReference<K, V, lotus.domino.Base> ref) {
 
 		if (ref != null) {
-
 			V result = ref.get();
 			if (result != null) {
-				lotus.domino.Base delegate = org.openntf.domino.impl.Base.getDelegate((org.openntf.domino.Base) result);
-				if (delegate != null) {
+				lotus.domino.Base delegate = org.openntf.domino.impl.Base.getDelegate(result);
+				if (org.openntf.domino.impl.Base.isInvalid(delegate)) {
 					// check if it is not yet recycled
-					if (!org.openntf.domino.impl.Base.isRecycled((NotesBase) delegate)) {
-						return result;
-					}
+					map.remove(ref.getKey());
+				} else {
+					return result;
 				}
 			}
 		}

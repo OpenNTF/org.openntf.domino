@@ -235,7 +235,6 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		return delegate_;
 	}
 
-	// TODO: Remove the stuff from here
 	/**
 	 * Checks if is encapsulated.
 	 * 
@@ -321,11 +320,13 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the base
 	 * @return true, if is recycled
 	 */
-	public static boolean isRecycled(final lotus.domino.local.NotesBase base) {
+	public static boolean isInvalid(final lotus.domino.Base base) {
+		if (base == null)
+			return true;
 		try {
 			return ((Boolean) isInvalidMethod.invoke(base, (Object[]) null)).booleanValue();
 		} catch (Exception e) {
-			return false;
+			return true;
 		}
 	}
 
