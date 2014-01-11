@@ -22,6 +22,7 @@ import java.io.ObjectOutput;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -257,13 +258,16 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 		return country;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * The returned object MUST get recycled
+	 * (non-Javadoc)
 	 * @see org.openntf.domino.impl.Base#getDelegate()
 	 */
 	@Override
 	protected lotus.domino.Name getDelegate() {
 		try {
-			return this.getParent().getDelegate().createName(this.getCanonical());
+			lotus.domino.Session rawsession = (lotus.domino.Session) getDelegate(Factory.getSession(getParent()));
+			return rawsession.createName(this.getCanonical());
 		} catch (NotesException ne) {
 			DominoUtils.handleException(ne);
 			return null;

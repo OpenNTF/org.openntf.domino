@@ -310,7 +310,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 */
 	@Deprecated
 	public void recycle() {
-		s_recycle(this);
+		//s_recycle(this);
+		xs_recycle(delegate_); // RPr: we must recycle the delegate, not "this". Do not call getDelegate as it may reinstantiate it
 	}
 
 	/**
@@ -364,12 +365,10 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 */
 	public static lotus.domino.Base toLotus(final lotus.domino.Base baseObj) {
 		if (baseObj instanceof org.openntf.domino.Base) {
-			if (baseObj instanceof DateRange) {
-				return ((DateRange) baseObj).toLotus();
-			}
 			return ((Base<?, ?>) baseObj).getDelegate();
+		} else {
+			return baseObj;
 		}
-		return baseObj;
 	}
 
 	// Convert a wrapper object to its delegate form, allowing for non-Lotus objects (e.g. for getDocumentByKey)
@@ -556,6 +555,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			result = true;
 		} catch (Throwable t) {
 			Factory.countRecycleError();
+			DominoUtils.handleException(t);
 			// shikata ga nai
 		}
 		//} else {
@@ -576,11 +576,21 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 				s_recycle((lotus.domino.local.NotesBase) o);
 			}
 		}
-
+		if (o instanceof Collection) {
+			Collection c = (Collection) o;
+			if (!c.isEmpty()) {
+				for (Object io : (Collection) o) {
+					if (io instanceof lotus.domino.local.NotesBase) {
+						s_recycle((lotus.domino.local.NotesBase) io);
+					}
+				}
+			}
+		}
 	}
 
 	public static void enc_recycle(final Object o) {
 		// NTF this is for recycling of encapsulated objects like DateTime and Name
+		// RPr ' do we need an extra method here?
 		if (o instanceof Collection) {
 			if (!((Collection) o).isEmpty()) {
 				for (Object io : (Collection) o) {
@@ -615,7 +625,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	public void recycle(final Vector arg0) {
 		for (Object o : arg0) {
 			if (o instanceof org.openntf.domino.impl.Base) {
-				s_recycle((org.openntf.domino.impl.Base) o);
+				((org.openntf.domino.impl.Base) o).recycle();
 			} else if (o instanceof lotus.domino.local.NotesBase) {
 				s_recycle((lotus.domino.local.NotesBase) o);
 			}

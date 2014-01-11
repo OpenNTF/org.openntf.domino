@@ -59,7 +59,12 @@ import org.openntf.domino.types.SessionDescendant;
 public enum Factory {
 	;
 
-	private static ThreadLocal<WrapperFactory> currentWrapperFactory = new ThreadLocal<WrapperFactory>();
+	private static ThreadLocal<WrapperFactory> currentWrapperFactory = new ThreadLocal<WrapperFactory>() {
+		@Override
+		protected WrapperFactory initialValue() {
+			return new org.openntf.domino.impl.WrapperFactory();
+		}
+	};
 
 	private static ThreadLocal<ClassLoader> currentClassLoader_ = new ThreadLocal<ClassLoader>();
 
@@ -734,7 +739,7 @@ public enum Factory {
 			throw new UndefinedDelegateTypeException();
 		}
 		if (result == null)
-			result = org.openntf.domino.impl.Session.getDefaultSession(); // last ditch, get the primary Session;
+			result = getSession(); // org.openntf.domino.impl.Session.getDefaultSession(); // last ditch, get the primary Session;
 		return result;
 	}
 

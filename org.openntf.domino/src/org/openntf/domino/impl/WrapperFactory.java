@@ -115,7 +115,6 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 			return null;
 		}
 		Integer cpp_key = org.openntf.domino.impl.Base.getLotusKey(lotus);
-
 		Document result = documents.get(cpp_key);
 		if (result == null) {
 			result = wrapLotusDocument(lotus, Factory.getParentDatabase(parent));
@@ -123,6 +122,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 			Factory.countLotus();
 		}
 		return result;
+
 	}
 
 	/**

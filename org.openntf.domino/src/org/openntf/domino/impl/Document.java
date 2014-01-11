@@ -89,6 +89,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	// NTF - Okay, after testing, maybe these just need to be JIT getters. It added about 10% to Document iteration time.
 	// NTF - Done. And yeah, it make quite a performance difference. More like 20%, really
+	// RPr - I can confirm this
+
 	/** The created_. */
 	private Date created_;
 
