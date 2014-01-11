@@ -84,6 +84,12 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	/** The delegate_. */
 	protected D delegate_; // NTF final???
 
+	private long cpp_object;
+
+	public long GetCppObj() {
+		return this.cpp_object;
+	}
+
 	// /** The encapsulated_. */
 	// private boolean encapsulated_ = false;
 
@@ -135,6 +141,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 				throw new IllegalArgumentException("Why are you wrapping a non-Lotus object? " + delegate.getClass().getName());
 			} else if (delegate instanceof lotus.domino.local.NotesBase) {
 				delegate_ = delegate;
+				cpp_object = getLotusId((lotus.domino.local.NotesBase) delegate);
 			} else {
 				throw new IllegalArgumentException("Why are you wrapping a non-Lotus object? " + delegate.getClass().getName());
 			}
@@ -144,6 +151,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	void setDelegate(final D delegate) {
 		delegate_ = delegate;
+		cpp_object = getLotusId((lotus.domino.local.NotesBase) delegate);
 	}
 
 	/**

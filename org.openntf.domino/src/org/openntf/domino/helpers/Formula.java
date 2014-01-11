@@ -29,7 +29,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public static interface Decompiler {
-		public String decompile(byte[] compiled);
+		public String decompile(byte[] compiled) throws Exception;
 
 		public String decompileB64(String compiled);
 	}
@@ -48,6 +48,17 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 
 		NoFormulaSetException() {
 			super("No expression has been set. There is nothing to evaluate.");
+		}
+	}
+
+	public static class FormulaUnableToDecompile extends RuntimeException {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		FormulaUnableToDecompile(final String original) {
+			super("Unable to decompile a compiled expression: " + original);
 		}
 	}
 
@@ -196,13 +207,17 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		if (!isValid_) {
 			if (decompiler_ != null && !expression.contains("@") && !expression.contains(";")) {//NTF - good chance its compiled
 				expression = decompiler_.decompileB64(expression);
-				vec = getSession().evaluate("@CheckFormulaSyntax({" + DominoUtils.escapeForFormulaString(expression) + "})");
-				if (vec == null || vec.size() > 2) {
-					isValid_ = false;
-					throw new FormulaSyntaxException(expression, vec);
+				if (expression != null) {
+					vec = getSession().evaluate("@CheckFormulaSyntax({" + DominoUtils.escapeForFormulaString(expression) + "})");
+					if (vec == null || vec.size() > 2) {
+						isValid_ = false;
+						throw new FormulaSyntaxException(expression, vec);
+					} else {
+						System.out.println("Successfully decompiled a formula!");
+						isValid_ = true;
+					}
 				} else {
-					System.out.println("Successfully decompiled a formula!");
-					isValid_ = true;
+					throw new FormulaUnableToDecompile(expression);
 				}
 			} else {
 				throw new FormulaSyntaxException(expression, vec);
