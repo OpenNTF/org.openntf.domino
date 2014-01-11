@@ -200,7 +200,7 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 
 	public lotus.domino.DateRange toLotus() {
 		try {
-			lotus.domino.Session ses = (lotus.domino.Session) Base.getDelegate(getAncestorSession());
+			lotus.domino.Session ses = ((org.openntf.domino.impl.Session) getAncestorSession()).getDelegate();
 			if (startDateTime_ != null && endDateTime_ != null) {
 				return ses.createDateRange(startDateTime_.toJavaDate(), endDateTime_.toJavaDate());
 			}

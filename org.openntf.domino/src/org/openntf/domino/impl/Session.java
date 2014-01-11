@@ -28,6 +28,9 @@ import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Document;
+// TODO: Auto-generated Javadoc
+//import lotus.domino.Name;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.GenericDominoEventFactory;
@@ -40,9 +43,6 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 import com.ibm.icu.util.Calendar;
-
-// TODO: Auto-generated Javadoc
-//import lotus.domino.Name;
 
 /**
  * The Class Session.

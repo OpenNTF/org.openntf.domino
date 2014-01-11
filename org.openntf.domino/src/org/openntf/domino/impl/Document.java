@@ -1224,7 +1224,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return (Database) super.getParent();
 	}
 
-	public Document getParentDocument() {
+	public org.openntf.domino.Document getParentDocument() {
 		return this.getParentDatabase().getDocumentByUNID(this.getParentDocumentUNID());
 	}
 
