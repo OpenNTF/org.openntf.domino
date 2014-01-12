@@ -30,7 +30,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 	 * 
 	 * @see lotus.domino.AdministrationProcess#addGroupMembers(java.lang.String, java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public String addGroupMembers(final String group, final Vector members);
 
@@ -49,7 +49,8 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 	 * lotus.domino.DateTime)
 	 */
 	@Override
-	public String addInternetCertificateToUser(final String user, final String keyringFile, final String keyringPassword, final lotus.domino.DateTime expiration);
+	public String addInternetCertificateToUser(final String user, final String keyringFile, final String keyringPassword,
+			final lotus.domino.DateTime expiration);
 
 	/*
 	 * (non-Javadoc)
@@ -186,8 +187,8 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 	 * boolean, boolean)
 	 */
 	@Override
-	public String createReplica(final String sourceServer, final String sourceDBFile, final String destServer, final String destDBFile, final boolean copyACL,
-			final boolean createFTIndex);
+	public String createReplica(final String sourceServer, final String sourceDBFile, final String destServer, final String destDBFile,
+			final boolean copyACL, final boolean createFTIndex);
 
 	/*
 	 * (non-Javadoc)
@@ -235,7 +236,8 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 	 * @see lotus.domino.AdministrationProcess#deleteUser(java.lang.String, boolean, int, java.lang.String, boolean)
 	 */
 	@Override
-	public String deleteUser(final String userName, final boolean immediate, final int mailFileAction, final String denyGroup, final boolean deleteWindowsUser);
+	public String deleteUser(final String userName, final boolean immediate, final int mailFileAction, final String denyGroup,
+			final boolean deleteWindowsUser);
 
 	/*
 	 * (non-Javadoc)
@@ -331,10 +333,10 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 	 * @see lotus.domino.AdministrationProcess#moveMailUser(java.lang.String, java.lang.String, java.lang.String, boolean, java.util.Vector,
 	 * boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
-	public String moveMailUser(final String userName, final String newHomeServer, final String newHomeServerMailPath, final boolean useSCOS,
-			final Vector newClusterReplicas, final boolean deleteOldClusterReplicas);
+	public String moveMailUser(final String userName, final String newHomeServer, final String newHomeServerMailPath,
+			final boolean useSCOS, final Vector newClusterReplicas, final boolean deleteOldClusterReplicas);
 
 	/*
 	 * (non-Javadoc)
@@ -351,8 +353,8 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 	 * boolean)
 	 */
 	@Override
-	public String moveReplica(final String sourceServer, final String sourceDBFile, final String destServer, final String destDBFile, final boolean copyACL,
-			final boolean createFTIndex);
+	public String moveReplica(final String sourceServer, final String sourceDBFile, final String destServer, final String destDBFile,
+			final boolean copyACL, final boolean createFTIndex);
 
 	/*
 	 * (non-Javadoc)
@@ -377,8 +379,9 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
-	public String moveUserInHierarchyComplete(final String requestNoteid, final String lastName, final String firstName, final String middleInitial,
-			final String orgUnit, final String altCommonName, final String altOrgUnit, final String altLanguage, final boolean renameWindowsUser);
+	public String moveUserInHierarchyComplete(final String requestNoteid, final String lastName, final String firstName,
+			final String middleInitial, final String orgUnit, final String altCommonName, final String altOrgUnit,
+			final String altLanguage, final boolean renameWindowsUser);
 
 	/*
 	 * (non-Javadoc)
@@ -435,7 +438,8 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 	 * java.lang.String)
 	 */
 	@Override
-	public String renameNotesUser(final String userName, final String lastName, final String firstName, final String middleInitial, final String orgUnit);
+	public String renameNotesUser(final String userName, final String lastName, final String firstName, final String middleInitial,
+			final String orgUnit);
 
 	/*
 	 * (non-Javadoc)
@@ -444,8 +448,9 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean)
 	 */
 	@Override
-	public String renameNotesUser(final String userName, final String lastName, final String firstName, final String middleInitial, final String orgUnit,
-			final String altCommonName, final String altOrgUnit, final String altLanguage, final boolean renameWindowsUser);
+	public String renameNotesUser(final String userName, final String lastName, final String firstName, final String middleInitial,
+			final String orgUnit, final String altCommonName, final String altOrgUnit, final String altLanguage,
+			final boolean renameWindowsUser);
 
 	/*
 	 * (non-Javadoc)
@@ -454,8 +459,8 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 	 * java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String renameWebUser(final String userName, final String newFullName, final String newLastName, final String newFirstName, final String newMiddleInitial,
-			final String newShortName, final String newInternetAddress);
+	public String renameWebUser(final String userName, final String newFullName, final String newLastName, final String newFirstName,
+			final String newMiddleInitial, final String newShortName, final String newInternetAddress);
 
 	/*
 	 * (non-Javadoc)
@@ -512,8 +517,8 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 	 * java.lang.Integer, java.lang.Boolean)
 	 */
 	@Override
-	public String setUserPasswordSettings(final String userName, final Integer notesPasswordCheckSetting, final Integer notesPasswordChangeInterval,
-			final Integer notesPasswordGracePeriod, final Boolean internetPasswordForceChange);
+	public String setUserPasswordSettings(final String userName, final Integer notesPasswordCheckSetting,
+			final Integer notesPasswordChangeInterval, final Integer notesPasswordGracePeriod, final Boolean internetPasswordForceChange);
 
 	/*
 	 * (non-Javadoc)
@@ -546,6 +551,7 @@ public interface AdministrationProcess extends Base<lotus.domino.AdministrationP
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String upgradeUserToHierarchical(final String userName, final String orgUnit, final String altCommonName, final String altOrgUnit, final String altLanguage);
+	public String upgradeUserToHierarchical(final String userName, final String orgUnit, final String altCommonName,
+			final String altOrgUnit, final String altLanguage);
 
 }

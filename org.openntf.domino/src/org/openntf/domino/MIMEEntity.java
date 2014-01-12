@@ -178,7 +178,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * 
 	 * @see lotus.domino.MIMEEntity#getEntityAsText(lotus.domino.Stream, java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void getEntityAsText(final lotus.domino.Stream stream, final Vector headerFilters);
 
@@ -187,7 +187,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * 
 	 * @see lotus.domino.MIMEEntity#getEntityAsText(lotus.domino.Stream, java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void getEntityAsText(final lotus.domino.Stream stream, final Vector headerFilters, final boolean inclusive);
 
@@ -339,7 +339,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * 
 	 * @see lotus.domino.MIMEEntity#getSomeHeaders(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public String getSomeHeaders(final Vector headerFilters);
 
@@ -348,7 +348,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * 
 	 * @see lotus.domino.MIMEEntity#getSomeHeaders(java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public String getSomeHeaders(final Vector headerFilters, final boolean inclusive);
 

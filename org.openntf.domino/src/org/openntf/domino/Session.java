@@ -87,6 +87,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 *            the color
 	 * @return the color object
 	 */
+	@Override
 	public ColorObject createColorObject(final java.awt.Color color);
 
 	/**

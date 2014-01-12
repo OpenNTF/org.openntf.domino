@@ -27,6 +27,7 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 	/**
 	 * The Enum Type.
 	 */
+	@SuppressWarnings("hiding")
 	public static enum Type {
 
 		/** The database. */
@@ -119,6 +120,7 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 	 *            the type
 	 * @return the first database
 	 */
+	@Override
 	@Deprecated
 	@Legacy(Legacy.ITERATION_WARNING)
 	public Database getFirstDatabase(final Type type);

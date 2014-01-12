@@ -36,6 +36,7 @@ public interface ColorObject extends Base<lotus.domino.ColorObject>, lotus.domin
 	 * 
 	 * @see lotus.domino.ColorObject#getGreen()
 	 */
+	@Override
 	public int getGreen();
 
 	/*

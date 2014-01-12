@@ -76,6 +76,7 @@ public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.dom
 	 * 
 	 * @return the parent session
 	 */
+	@Override
 	public Session getParentSession();
 
 	/*
@@ -124,7 +125,8 @@ public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.dom
 	 * @see lotus.domino.AgentContext#unprocessedFTSearchRange(java.lang.String, int, int, int, int)
 	 */
 	@Override
-	public DocumentCollection unprocessedFTSearchRange(final String query, final int maxDocs, final int sortOpt, final int otherOpt, final int start);
+	public DocumentCollection unprocessedFTSearchRange(final String query, final int maxDocs, final int sortOpt, final int otherOpt,
+			final int start);
 
 	/*
 	 * (non-Javadoc)

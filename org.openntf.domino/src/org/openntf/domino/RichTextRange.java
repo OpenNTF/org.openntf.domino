@@ -36,6 +36,7 @@ public interface RichTextRange extends Base<lotus.domino.RichTextRange>, lotus.d
 	 * 
 	 * @see lotus.domino.RichTextRange#findandReplace(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public int findandReplace(final String target, final String replacement);
 
 	/*
@@ -59,6 +60,7 @@ public interface RichTextRange extends Base<lotus.domino.RichTextRange>, lotus.d
 	 * 
 	 * @return the parent
 	 */
+	@Override
 	public RichTextItem getParent();
 
 	/*

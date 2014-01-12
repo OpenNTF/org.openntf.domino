@@ -190,7 +190,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * 
 	 * @see lotus.domino.RichTextItem#appendTable(int, int, java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void appendTable(final int rows, final int columns, final Vector labels);
 
@@ -199,7 +199,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * 
 	 * @see lotus.domino.RichTextItem#appendTable(int, int, java.util.Vector, int, java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void appendTable(final int rows, final int columns, final Vector labels, final int leftMargin, final Vector pstyles);
 
@@ -249,7 +249,8 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * @see lotus.domino.RichTextItem#beginSection(java.lang.String, lotus.domino.RichTextStyle, lotus.domino.ColorObject, boolean)
 	 */
 	@Override
-	public void beginSection(final String title, final lotus.domino.RichTextStyle titleStyle, final lotus.domino.ColorObject barColor, final boolean expand);
+	public void beginSection(final String title, final lotus.domino.RichTextStyle titleStyle, final lotus.domino.ColorObject barColor,
+			final boolean expand);
 
 	/*
 	 * (non-Javadoc)

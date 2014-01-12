@@ -398,6 +398,7 @@ public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, org.op
 	 * 
 	 * @see lotus.domino.Base#recycle()
 	 */
+	@Override
 	@Deprecated
 	public void recycle();
 }

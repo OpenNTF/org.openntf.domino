@@ -52,7 +52,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * 
 	 * @see lotus.domino.Item#appendToTextList(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void appendToTextList(final Vector values);
 
@@ -437,7 +437,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * 
 	 * @see lotus.domino.Item#setValues(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void setValues(final Vector values);
 

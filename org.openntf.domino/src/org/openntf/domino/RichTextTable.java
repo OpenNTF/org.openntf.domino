@@ -78,6 +78,7 @@ public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.d
 	 * 
 	 * @return the parent
 	 */
+	@Override
 	public RichTextItem getParent();
 
 	/*
@@ -173,7 +174,7 @@ public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.d
 	 * 
 	 * @see lotus.domino.RichTextTable#setRowLabels(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void setRowLabels(final Vector labels);
 

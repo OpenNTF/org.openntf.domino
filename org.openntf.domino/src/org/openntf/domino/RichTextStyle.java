@@ -52,6 +52,7 @@ public interface RichTextStyle extends Base<lotus.domino.RichTextStyle>, lotus.d
 	 * 
 	 * @see lotus.domino.RichTextStyle#getColor()
 	 */
+	@Override
 	public int getColor();
 
 	/*

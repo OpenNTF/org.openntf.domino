@@ -117,6 +117,7 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 	 * 
 	 * @return the parent
 	 */
+	@Override
 	public Session getParent();
 
 	/*
@@ -165,6 +166,7 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 	 * @param value
 	 *            the new alignment
 	 */
+	@Override
 	public void setAlignment(final Align value);
 
 	/*

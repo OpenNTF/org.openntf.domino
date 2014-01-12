@@ -30,6 +30,7 @@ public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, l
 	 * 
 	 * @see lotus.domino.ReplicationEntry#getDestination()
 	 */
+	@Override
 	public String getDestination();
 
 	/*
@@ -45,6 +46,7 @@ public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, l
 	 * 
 	 * @return the parent
 	 */
+	@Override
 	public Replication getParent();
 
 	/*
@@ -181,6 +183,7 @@ public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, l
 	 * @param views
 	 *            the new views
 	 */
+	@Override
 	public void setViews(final Collection<String> views);
 
 }

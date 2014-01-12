@@ -36,6 +36,7 @@ public interface RichTextSection extends Base<lotus.domino.RichTextSection>, lot
 	 * 
 	 * @return the parent
 	 */
+	@Override
 	public RichTextItem getParent();
 
 	/*

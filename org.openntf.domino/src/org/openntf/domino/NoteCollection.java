@@ -624,6 +624,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * 
 	 * @see lotus.domino.NoteCollection#setSelectAcl(boolean)
 	 */
+	@Override
 	public void setSelectAcl(final boolean flag);
 
 	/*
@@ -631,6 +632,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * 
 	 * @see lotus.domino.NoteCollection#setSelectActions(boolean)
 	 */
+	@Override
 	public void setSelectActions(final boolean flag);
 
 	/*
@@ -638,6 +640,7 @@ public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus
 	 * 
 	 * @see lotus.domino.NoteCollection#setSelectAgents(boolean)
 	 */
+	@Override
 	public void setSelectAgents(final boolean flag);
 
 	/*

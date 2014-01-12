@@ -116,6 +116,7 @@ public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.
 	 * 
 	 * @return the parent
 	 */
+	@Override
 	public MIMEEntity getParent();
 
 	/*

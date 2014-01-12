@@ -72,8 +72,8 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean addServerToAddressBook(final String idFile, final String server, final String domain, final String userPassword, final String network,
-			final String adminName, final String title, final String location, final String comment);
+	public boolean addServerToAddressBook(final String idFile, final String server, final String domain, final String userPassword,
+			final String network, final String adminName, final String title, final String location, final String comment);
 
 	/*
 	 * (non-Javadoc)
@@ -106,8 +106,9 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean addUserToAddressBook(final String idFile, final String fullName, final String lastName, final String userPassword, final String firstName,
-			final String middleName, final String mailServer, final String mailFilePath, final String forwardingAddress, final String location, final String comment);
+	public boolean addUserToAddressBook(final String idFile, final String fullName, final String lastName, final String userPassword,
+			final String firstName, final String middleName, final String mailServer, final String mailFilePath,
+			final String forwardingAddress, final String location, final String comment);
 
 	/*
 	 * (non-Javadoc)
@@ -403,10 +404,10 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * @see lotus.domino.Registration#getUserInfo(java.lang.String, java.lang.StringBuffer, java.lang.StringBuffer, java.lang.StringBuffer,
 	 * java.lang.StringBuffer, java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
-	public void getUserInfo(final String userName, final StringBuffer mailServer, final StringBuffer mailFile, final StringBuffer mailDomain,
-			final StringBuffer mailSystem, final Vector profile);
+	public void getUserInfo(final String userName, final StringBuffer mailServer, final StringBuffer mailFile,
+			final StringBuffer mailDomain, final StringBuffer mailSystem, final Vector profile);
 
 	/*
 	 * (non-Javadoc)
@@ -527,7 +528,8 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * java.lang.String)
 	 */
 	@Override
-	public boolean registerNewServer(final String server, final String idFile, final String domain, final String serverPassword, final String certPassword);
+	public boolean registerNewServer(final String server, final String idFile, final String domain, final String serverPassword,
+			final String certPassword);
 
 	/*
 	 * (non-Javadoc)
@@ -536,8 +538,9 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean registerNewServer(final String server, final String idFile, final String domain, final String serverPassword, final String certPassword,
-			final String location, final String comment, final String network, final String adminName, final String title);
+	public boolean registerNewServer(final String server, final String idFile, final String domain, final String serverPassword,
+			final String certPassword, final String location, final String comment, final String network, final String adminName,
+			final String title);
 
 	/*
 	 * (non-Javadoc)
@@ -554,7 +557,8 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean registerNewUser(final String lastName, final String idFile, final String server, final String firstName, final String middleName, final String certPassword);
+	public boolean registerNewUser(final String lastName, final String idFile, final String server, final String firstName,
+			final String middleName, final String certPassword);
 
 	/*
 	 * (non-Javadoc)
@@ -563,8 +567,9 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean registerNewUser(final String lastName, final String idFile, final String server, final String firstName, final String middleName, final String certPassword,
-			final String location, final String comment, final String mailDBPath, final String forward, final String userPassword);
+	public boolean registerNewUser(final String lastName, final String idFile, final String server, final String firstName,
+			final String middleName, final String certPassword, final String location, final String comment, final String mailDBPath,
+			final String forward, final String userPassword);
 
 	/*
 	 * (non-Javadoc)
@@ -574,15 +579,16 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean registerNewUser(final String lastName, final String idFile, final String server, final String firstName, final String middleName, final String certPassword,
-			final String location, final String comment, final String mailDBPath, final String forward, final String userPassword, final String altName, final String altNameLang);
+	public boolean registerNewUser(final String lastName, final String idFile, final String server, final String firstName,
+			final String middleName, final String certPassword, final String location, final String comment, final String mailDBPath,
+			final String forward, final String userPassword, final String altName, final String altNameLang);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.Registration#setAltOrgUnit(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void setAltOrgUnit(final Vector names);
 
@@ -591,7 +597,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * 
 	 * @see lotus.domino.Registration#setAltOrgUnitLang(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void setAltOrgUnitLang(final Vector languages);
 
@@ -648,7 +654,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * 
 	 * @see lotus.domino.Registration#setGroupList(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void setGroupList(final Vector groups);
 
@@ -713,7 +719,7 @@ public interface Registration extends Base<lotus.domino.Registration>, lotus.dom
 	 * 
 	 * @see lotus.domino.Registration#setMailReplicaServers(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void setMailReplicaServers(final Vector servers);
 

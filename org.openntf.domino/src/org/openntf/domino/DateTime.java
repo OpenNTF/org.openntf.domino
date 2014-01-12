@@ -137,6 +137,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 *            DateTime to compare to current date
 	 * @return boolean, whether or not the two dates are the same
 	 */
+	@Override
 	public boolean equals(final DateTime comparDate);
 
 	/**
@@ -146,6 +147,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 *            DateTime to compare to the current DateTime
 	 * @return boolean is time is the same, including millisecond
 	 */
+	@Override
 	public boolean equalsIgnoreDate(final DateTime comparDate);
 
 	/**
@@ -155,6 +157,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 *            DateTime to compare to the current DateTime
 	 * @return boolean is date is the same
 	 */
+	@Override
 	public boolean equalsIgnoreTime(final DateTime comparDate);
 
 	/*

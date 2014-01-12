@@ -116,9 +116,9 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * 
 	 *            <p>
 	 *            Wildcards, operators, and other syntax are permitted. For the complete syntax rules, see
-	 *            "Refining a search query using operators" in Notes� Help. Search for "query syntax" in the Domino� Designer Eclipse
-	 *            help system or information center (for example, http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/index.jsp), both of
-	 *            which include Notes.
+	 *            "Refining a search query using operators" in Notes� Help. Search for "query syntax" in the Domino� Designer Eclipse help
+	 *            system or information center (for example, http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/index.jsp), both of which
+	 *            include Notes.
 	 *            </p>
 	 */
 	@Override
@@ -163,9 +163,9 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * 
 	 *            <p>
 	 *            Wildcards, operators, and other syntax are permitted. For the complete syntax rules, see
-	 *            "Refining a search query using operators" in Notes� Help. Search for "query syntax" in the Domino� Designer Eclipse
-	 *            help system or information center (for example, http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/index.jsp), both of
-	 *            which include Notes.
+	 *            "Refining a search query using operators" in Notes� Help. Search for "query syntax" in the Domino� Designer Eclipse help
+	 *            system or information center (for example, http://publib.boulder.ibm.com/infocenter/domhelp/v8r0/index.jsp), both of which
+	 *            include Notes.
 	 *            </p>
 	 */
 	@Override
@@ -592,6 +592,7 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	 * Marks all documents in a collection as processed by an agent.
 	 * 
 	 */
+	@Override
 	public abstract void updateAll();
 
 }

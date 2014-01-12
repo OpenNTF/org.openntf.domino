@@ -37,6 +37,7 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	 * 
 	 * @see lotus.domino.OutlineEntry#getDatabase()
 	 */
+	@Override
 	public Database getDatabase();
 
 	/*

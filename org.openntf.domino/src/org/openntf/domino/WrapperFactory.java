@@ -11,24 +11,23 @@ public interface WrapperFactory {
 
 	/**
 	 * @param lotus
-	 * @param parent
 	 * @return
 	 */
-	Session fromLotusSession(lotus.domino.Session lotus, Base parent);
+	Session fromLotusSession(lotus.domino.Session lotus);
 
 	/**
 	 * @param lotus
 	 * @param parent
 	 * @return
 	 */
-	Document fromLotusDocument(lotus.domino.Document lotus, Base parent);
+	Document fromLotusDocument(lotus.domino.Document lotus, Database parent);
 
 	/**
 	 * @param lotus
 	 * @param parent
 	 * @return
 	 */
-	Base fromLotusObject(lotus.domino.Base lotus, Base parent);
+	Base<?> fromLotusObject(lotus.domino.Base lotus, Base<?> parent);
 
 	/**
 	 * @param lotus
@@ -36,17 +35,19 @@ public interface WrapperFactory {
 	 * @param parent
 	 * @return
 	 */
-	<T> T fromLotus(lotus.domino.Base lotus, Class<? extends Base> T, Base parent);
+	<T> T fromLotus(lotus.domino.Base lotus, Class<? extends Base<?>> T, Base<?> parent);
+
+	/**
+	 * Method to unwrap a object
+	 * 
+	 * @param
+	 * @return
+	 */
+	<T extends lotus.domino.Base> T toLotus(T base);
 
 	/**
 	 * 
 	 */
 	void terminate();
-
-	/**
-	 * @param
-	 * @return
-	 */
-	lotus.domino.Base toLotus(lotus.domino.Base base);
 
 }

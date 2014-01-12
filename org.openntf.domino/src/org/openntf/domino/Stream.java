@@ -72,6 +72,7 @@ public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream, 
 	 * 
 	 * @return the parent
 	 */
+	@Override
 	public Session getParent();
 
 	/*

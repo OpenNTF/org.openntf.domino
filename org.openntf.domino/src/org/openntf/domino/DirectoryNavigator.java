@@ -142,6 +142,7 @@ public interface DirectoryNavigator extends Base<lotus.domino.DirectoryNavigator
 	 * 
 	 * @return the parent
 	 */
+	@Override
 	public Directory getParent();
 
 	/*

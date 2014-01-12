@@ -86,6 +86,7 @@ public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Di
 	 * 
 	 * @return the parent
 	 */
+	@Override
 	public Session getParent();
 
 	/*
@@ -157,7 +158,7 @@ public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Di
 	 * 
 	 * @see lotus.domino.Directory#lookupAllNames(java.lang.String, java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public DirectoryNavigator lookupAllNames(final String view, final Vector items);
 
@@ -174,7 +175,7 @@ public interface Directory extends Base<lotus.domino.Directory>, lotus.domino.Di
 	 * 
 	 * @see lotus.domino.Directory#lookupNames(java.lang.String, java.util.Vector, java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public DirectoryNavigator lookupNames(final String view, final Vector names, final Vector items, final boolean partialMatches);
 
