@@ -486,6 +486,9 @@ public enum Factory {
 						} catch (Exception e) {
 
 						}
+					} else {
+						System.out.println("Unable to wrap a DateTime found in Vector member " + i + " of " + values.size() + " because "
+								+ t.getClass().getName() + " (" + t.getLocalizedMessage() + ")");
 					}
 
 				}
