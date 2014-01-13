@@ -94,6 +94,11 @@ public enum ISO {
 		private String _country;
 		private String _code3;
 
+		@Override
+		public String toString() {
+			return ISO3166.class.getName() + ": " + this.getCode2() + "(\"" + this.getCode3() + "\", \"" + this.getCountry() + "\")";
+		}
+
 		/**
 		 * Gets the Country String
 		 * 
@@ -254,6 +259,25 @@ public enum ISO {
 	 */
 	public static boolean isBlankString(final String string) {
 		return ((null == string) || (string.trim().length() < 1));
+	}
+
+	/**
+	 * Checks a String to determine if it begins with a prefix.
+	 * 
+	 * Performs a Case-INSENSITIVE check.
+	 * 
+	 * <strong>Special Behavior</strong>: Returns false if source or prefix are null.
+	 * 
+	 * @param source
+	 *            String to check if begins with prefix.
+	 * 
+	 * @param prefix
+	 *            String to match agains the beginning of source.
+	 * 
+	 * @return Flag indicating if source begins with prefix.
+	 */
+	public static boolean startsWithIgnoreCase(final String source, final String prefix) {
+		return ((null == source) || (null == prefix)) ? false : source.toLowerCase().startsWith(prefix.toLowerCase());
 	}
 
 }
