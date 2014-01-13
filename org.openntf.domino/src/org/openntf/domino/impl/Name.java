@@ -121,14 +121,30 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 * ******************************************************************
 	 */
 
+	/**
+	 * Flag indicating if the object is Hierarchical
+	 * 
+	 * @return Hierarchical indicator flag
+	 */
 	public boolean isHierarchical() {
 		return this.Hierarchical;
 	}
 
+	/**
+	 * Flag indicating if the object is Hierarchical
+	 * 
+	 * @param arg0
+	 *            Hierarchical indicator flag
+	 */
 	private void setHierarchical(final boolean arg0) {
 		this.Hierarchical = arg0;
 	}
 
+	/**
+	 * Gets the NamePartsMap for the object.
+	 * 
+	 * @return NamePartsMap for the object.
+	 */
 	public NamePartsMap getNamePartsMap() {
 		if (null == this._namePartsMap) {
 			this._namePartsMap = new NamePartsMap();
@@ -136,6 +152,12 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 		return this._namePartsMap;
 	}
 
+	/**
+	 * Sets the NamePartsMap for the object.
+	 * 
+	 * @param namePartsMap
+	 *            NamePartsMap for the object.
+	 */
 	public void setNamePartsMap(final NamePartsMap namePartsMap) {
 		this._namePartsMap = namePartsMap;
 	}
@@ -244,14 +266,31 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 		return sb.toString();
 	}
 
+	/**
+	 * Parses the source string and sets the appropriate RFC822 values.
+	 * 
+	 * @param string
+	 *            RFC822 source string from which to set the appropriate RFC822 values.
+	 */
 	public void parseRFC82xContent(final String source) {
 		this.getNamePartsMap().parseRFC82xContent(source);
 	}
 
+	/**
+	 * Indicates whether the object has RFC82xContent
+	 * 
+	 * @return Flag indicating if the object has RFC82xContent
+	 */
 	public boolean isHasRFC82xContent() {
 		return (null == this._namePartsMap) ? false : this.getNamePartsMap().isHasRFC82xContent();
 	}
 
+	/**
+	 * Sets the Name for the object.
+	 * 
+	 * @param name
+	 *            Name for the object.
+	 */
 	public void setName(final lotus.domino.Name name) {
 		try {
 			if (null == name) {
@@ -315,6 +354,12 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 		}
 	}
 
+	/**
+	 * Sets the Name for the object.
+	 * 
+	 * @param name
+	 *            Name for the object.
+	 */
 	public void setName(final Name name) {
 		try {
 			if (null == name) {
@@ -329,6 +374,17 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 		}
 	}
 
+	/**
+	 * Gets the String for the key.
+	 * 
+	 * @param key
+	 *            Key for the mapped String
+	 * 
+	 * @return Mapped String for the key. Empty string "" if no mapping exists.
+	 * 
+	 * @see org.openntf.arpa.NamePartsMap#get(org.openntf.arpa.NamePartsMap.Key)
+	 * @see java.util.HashMap#get(Object)
+	 */
 	public String getNamePart(final NamePartsMap.Key key) {
 		try {
 			if (null == key) {
@@ -346,138 +402,261 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	}
 
 	/**
+	 * Gets the Source String used to construct this object.
+	 * 
 	 * @return the sourceString used to construct this object
 	 */
 	public String getSourceString() {
 		return this.getNamePart(NamePartsMap.Key.SourceString);
 	}
 
+	/**
+	 * Gets the Abbreviated form of the name.
+	 * 
+	 * @see lotus.domino.Name#getAbbreviated()
+	 */
 	public String getAbbreviated() {
 		return this.getNamePart(NamePartsMap.Key.Abbreviated);
 	}
 
+	/**
+	 * Gets the Addr821 portion of the name.
+	 * 
+	 * @see org.openntf.arpa.RFC822name#getAddr821()
+	 */
 	public String getAddr821() {
 		return this.getNamePart(NamePartsMap.Key.Addr821);
 	}
 
+	/**
+	 * Gets the Addr822Comment1 portion of the name.
+	 * 
+	 * @see org.openntf.arpa.RFC822name#getAddr822Comment1()
+	 */
 	public String getAddr822Comment1() {
 		return this.getNamePart(NamePartsMap.Key.Addr822Comment1);
 	}
 
+	/**
+	 * Gets the Addr822Comment2 portion of the name.
+	 * 
+	 * @see org.openntf.arpa.RFC822name#getAddr822Comment2()
+	 */
 	public String getAddr822Comment2() {
 		return this.getNamePart(NamePartsMap.Key.Addr822Comment2);
 	}
 
+	/**
+	 * Gets the Addr822Comment3 portion of the name.
+	 * 
+	 * @see org.openntf.arpa.RFC822name#getAddr822Comment3()
+	 */
 	public String getAddr822Comment3() {
 		return this.getNamePart(NamePartsMap.Key.Addr822Comment3);
 	}
 
+	/**
+	 * Gets the Addr822LocalPart portion of the name.
+	 * 
+	 * @see org.openntf.arpa.RFC822name#getAddr822LocalPart()
+	 */
 	public String getAddr822LocalPart() {
 		return this.getNamePart(NamePartsMap.Key.Addr822LocalPart);
 	}
 
+	/**
+	 * Gets the Addr822Phrase portion of the name.
+	 * 
+	 * @see org.openntf.arpa.RFC822name#getAddr822Phrase()
+	 */
 	public String getAddr822Phrase() {
 		return this.getNamePart(NamePartsMap.Key.Addr822Phrase);
 	}
 
+	/**
+	 * Gets the Addr822Full portion of the name.
+	 * 
+	 * @see org.openntf.arpa.RFC822name#getAddr822Full()
+	 */
 	public String getAddr822Full() {
 		return this.getNamePartsMap().getRFC822name().getAddr822Full();
 	}
 
+	/**
+	 * Gets the Addr822FullFirstLast portion of the name.
+	 * 
+	 * @see org.openntf.arpa.RFC822name#getAddr822FullFirstLast()
+	 */
 	public String getAddr822FullFirstLast() {
 		return this.getNamePartsMap().getRFC822name().getAddr822FullFirstLast();
 	}
 
+	/**
+	 * Gets the Administration Management Domain Name portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getADMD()
+	 */
 	public String getADMD() {
 		return this.getNamePart(NamePartsMap.Key.ADMD);
 	}
 
+	/**
+	 * Gets the Canonical form of the name.
+	 * 
+	 * @see lotus.domino.Name#getCanonical()
+	 */
 	public String getCanonical() {
 		return this.getNamePart(NamePartsMap.Key.Canonical);
 	}
 
+	/**
+	 * Gets the Common portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getCommon()
+	 */
 	public String getCommon() {
 		return this.getNamePart(NamePartsMap.Key.Common);
 	}
 
+	/**
+	 * Gets the Country portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getCountry()
+	 */
 	public String getCountry() {
 		return this.getNamePart(NamePartsMap.Key.Country);
 	}
 
+	/**
+	 * Gets the Generation portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getGeneration()
+	 */
 	public String getGeneration() {
 		return this.getNamePart(NamePartsMap.Key.Generation);
 	}
 
+	/**
+	 * Gets the Given portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getGiven()
+	 */
 	public String getGiven() {
 		return this.getNamePart(NamePartsMap.Key.Given);
 	}
 
+	/**
+	 * Gets the Initials portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getInitials()
+	 */
 	public String getInitials() {
 		return this.getNamePart(NamePartsMap.Key.Initials);
 	}
 
+	/**
+	 * Gets the Keyword portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getKeyword()
+	 */
 	public String getKeyword() {
 		return this.getNamePart(NamePartsMap.Key.Keyword);
 	}
 
+	/**
+	 * Gets the Language portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getLanguage()
+	 */
 	public String getLanguage() {
 		return this.getNamePart(NamePartsMap.Key.Language);
 	}
 
+	/**
+	 * Gets the Organization portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getOrganization()
+	 */
 	public String getOrganization() {
 		return this.getNamePart(NamePartsMap.Key.Organization);
 	}
 
+	/**
+	 * Gets the OrgUnit1 portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getOrgUnit1()
+	 */
 	public String getOrgUnit1() {
 		return this.getNamePart(NamePartsMap.Key.OrgUnit1);
 	}
 
+	/**
+	 * Gets the OrgUnit2 portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getOrgUnit2()
+	 */
 	public String getOrgUnit2() {
 		return this.getNamePart(NamePartsMap.Key.OrgUnit2);
 	}
 
+	/**
+	 * Gets the OrgUnit3 portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getOrgUnit3()
+	 */
 	public String getOrgUnit3() {
 		return this.getNamePart(NamePartsMap.Key.OrgUnit3);
 	}
 
+	/**
+	 * Gets the OrgUnit4 portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getOrgUnit4()
+	 */
 	public String getOrgUnit4() {
 		return this.getNamePart(NamePartsMap.Key.OrgUnit4);
 	}
 
+	/**
+	 * Gets the Private Management Domain Name portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getPRMD()
+	 */
 	public String getPRMD() {
 		return this.getNamePart(NamePartsMap.Key.PRMD);
 	}
 
+	/**
+	 * Gets the Surname portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getSurname()
+	 */
 	public String getSurname() {
 		return this.getNamePart(NamePartsMap.Key.Surname);
 	}
 
+	/**
+	 * Gets the IDprefix portion of the name.
+	 * 
+	 * @see org.openntf.arpa.NamePartsMap#getIDprefix()
+	 */
 	public String getIDprefix() {
 		return this.getNamePartsMap().getIDprefix();
 	}
 
-	public boolean equalsIgnoreCase(final String checkstring) {
-		try {
-			if (!Strings.isBlankString(checkstring)) {
-
-				if (checkstring.equalsIgnoreCase(this.getCanonical()) || checkstring.equalsIgnoreCase(this.getAbbreviated())
-						|| checkstring.equalsIgnoreCase(this.getCommon())) {
-					return true;
-				} else {
-
-					for (final String s : this.getNamePartsMap().values()) {
-						if (checkstring.equalsIgnoreCase(s)) {
-							return true;
-						}
-					}
-				}
-			}
-
-		} catch (final Exception e) {
-			DominoUtils.handleException(e);
-		}
-
-		return false;
+	/**
+	 * Determines if any portion or form of the name object's internal NamePartsMap values are equal to the passed in string. Performs a
+	 * case-insensitive check.
+	 * 
+	 * @param string
+	 *            String tom compare values against
+	 * 
+	 * @return Flag indicating if any of the values are equal to the string.
+	 */
+	public boolean equalsIgnoreCase(final String string) {
+		return (Strings.isBlankString(string)) ? false : (string.equalsIgnoreCase(this.getCanonical())
+				|| string.equalsIgnoreCase(this.getAbbreviated()) || string.equalsIgnoreCase(this.getCommon()) || this.getNamePartsMap()
+				.equalsIgnoreCase(string));
 	}
 
 	/**
@@ -498,21 +677,36 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 * @return DocumentHandles whose named String Item Value begins with the prefix. Returns null if no matches found.
 	 */
 	public boolean startsWith(final String prefix, final boolean casesensitive) {
-		try {
-			if (null == prefix) {
-				throw new IllegalArgumentException("Prefix is null");
+		if (!Strings.isBlankString(prefix)) {
+			if (this.getNamePartsMap().startsWith(prefix, casesensitive)) {
+				return true;
 			}
 
-			return (casesensitive) ? ((this.getAbbreviated().startsWith(prefix)) || (this.getCanonical().startsWith(prefix))) : ((Strings
-					.startsWithIgnoreCase(this.getAbbreviated(), prefix)) || (Strings.startsWithIgnoreCase(this.getCanonical(), prefix)));
-
-		} catch (final Exception e) {
-			DominoUtils.handleException(e);
+			if (casesensitive) {
+				return ((this.getAbbreviated().startsWith(prefix)) || (this.getCanonical().startsWith(prefix)));
+			} else {
+				return ((Strings.startsWithIgnoreCase(this.getAbbreviated(), prefix)) || (Strings.startsWithIgnoreCase(this.getCanonical(),
+						prefix)));
+			}
 		}
 
 		return false;
 	}
 
+	/**
+	 * Determines if the name is a member of the passed in set of name strings.
+	 * 
+	 * Conditionally expands the names list prior to checking.
+	 * 
+	 * @param session
+	 *            Session used for generating Name objects
+	 * @param names
+	 *            String name values to check against
+	 * @param expandNames
+	 *            Flag indicating if the set of name strings should be expanded.
+	 * 
+	 * @return Flag indicating if the Name is a member of the set of strings.
+	 */
 	public boolean isMemberOfNames(final Session session, final TreeSet<String> names, final boolean expandNames) {
 		try {
 			if (null == session) {

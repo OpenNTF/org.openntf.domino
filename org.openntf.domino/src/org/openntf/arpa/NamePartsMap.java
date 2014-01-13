@@ -1,5 +1,5 @@
 /*
- * Copyright 2014
+ * Copyright 2013
  * 
  * @author Devin S. Olson (dolson@czarnowski.com)
  * 
@@ -22,8 +22,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-import org.openntf.domino.utils.Strings;
-
 /**
  * NamePartsMap carries the various component string values that make up a name.
  * 
@@ -37,7 +35,7 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 
 		@Override
 		public String toString() {
-			return this.name();
+			return Key.class.getName() + ": " + this.name();
 		}
 
 		public String getInfo() {
@@ -49,14 +47,36 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		CN("Common Name"), OU("Organizational Unit"), O("Organization"), C("Country Code");
 		private String _label;
 
+		@Override
+		public String toString() {
+			return CanonicalKey.class.getName() + ": " + this.name() + "(\"" + this.getLabel() + "\")";
+		}
+
+		/**
+		 * Gets the Label for the Canonical Key
+		 * 
+		 * @return Label for the Canonical Key
+		 */
 		public String getLabel() {
 			return this._label;
 		}
 
+		/**
+		 * Sets the Label for the Canonical Key
+		 * 
+		 * @param label
+		 *            the Label for the Canonical Key
+		 */
 		private void setLabel(final String label) {
 			this._label = label;
 		}
 
+		/**
+		 * Instance Constructor
+		 * 
+		 * @param label
+		 *            Label for the Canonical Key
+		 */
 		private CanonicalKey(final String label) {
 			this.setLabel(label);
 		}
@@ -80,9 +100,9 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 	 * @param source
 	 *            String from which to construct the object
 	 */
-	public NamePartsMap(final String source) {
+	public NamePartsMap(final String string) {
 		super();
-		this.parse(source);
+		this.parse(string);
 	}
 
 	/**
@@ -90,12 +110,13 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 	 * 
 	 * @param source
 	 *            String from which to construct the object
+	 * 
 	 * @param rfc822name
 	 *            RFC822name for the object.
 	 */
-	public NamePartsMap(final String source, final RFC822name rfc822name) {
+	public NamePartsMap(final String string, final RFC822name rfc822name) {
 		super();
-		this.parse(source);
+		this.parse(string);
 		this.setRFC822name(rfc822name);
 	}
 
@@ -104,12 +125,13 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 	 * 
 	 * @param source
 	 *            String from which to construct the object
+	 * 
 	 * @param rfc822string
 	 *            String from which to construct the RFC822name for the object.
 	 */
-	public NamePartsMap(final String source, final String rfc822string) {
+	public NamePartsMap(final String string, final String rfc822string) {
 		super();
-		this.parse(source);
+		this.parse(string);
 		this.parseRFC82xContent(rfc822string);
 	}
 
@@ -123,6 +145,11 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 	 * ******************************************************************
 	 */
 
+	/**
+	 * Gets the RFC822name for the object
+	 * 
+	 * @return the RFC822name
+	 */
 	public RFC822name getRFC822name() {
 		if (null == this._rfc822name) {
 			this._rfc822name = new RFC822name();
@@ -130,6 +157,12 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		return this._rfc822name;
 	}
 
+	/**
+	 * Sets the RFC822name for the object
+	 * 
+	 * @param rfc822name
+	 *            the RFC822name
+	 */
 	public void setRFC822name(final RFC822name rfc822name) {
 		this._rfc822name = rfc822name;
 	}
@@ -155,6 +188,16 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		}
 	}
 
+	/**
+	 * Gets the String for the key.
+	 * 
+	 * @param key
+	 *            Key for the mapped String
+	 * 
+	 * @return Mapped String for the key. Empty string "" if no mapping exists.
+	 * 
+	 * @see java.util.HashMap#get(Object)
+	 */
 	@Override
 	public String get(final Object key) {
 		return (key instanceof NamePartsMap.Key) ? this.get((NamePartsMap.Key) key) : "";
@@ -166,7 +209,7 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		sb.append(" [");
 		for (Key key : Key.values()) {
 			String s = this.get(key);
-			if (!Strings.isBlankString(s)) {
+			if (!ISO.isBlankString(s)) {
 				sb.append(key.name() + "=" + s);
 			}
 		}
@@ -176,6 +219,16 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		return sb.toString();
 	}
 
+	/**
+	 * Gets the String for the key.
+	 * 
+	 * @param key
+	 *            Key for the mapped String
+	 * 
+	 * @return Mapped String for the key. Empty string "" if no mapping exists.
+	 * 
+	 * @see java.util.HashMap#get(Object)
+	 */
 	public String get(final NamePartsMap.Key key) {
 		if (null != key) {
 			switch (key) {
@@ -276,6 +329,19 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		return "";
 	}
 
+	/**
+	 * Associates the specified String with the specified key in the map.
+	 * 
+	 * @param key
+	 *            Key for the mapped String
+	 * 
+	 * @param value
+	 *            String to be associated with the key.
+	 * 
+	 * @return Previous value associated with the key. Empty string "" if no mapping exists.
+	 * 
+	 * @see java.util.HashMap#put(Object, Object)
+	 */
 	@Override
 	public String put(final NamePartsMap.Key key, final String value) {
 		if (null != key) {
@@ -328,9 +394,16 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		return "";
 	}
 
+	/**
+	 * Gets the IDprefix for the Name.
+	 * 
+	 * If an IDprefix does not exist one will be created.
+	 * 
+	 * @return IDprefix for the Name
+	 */
 	public String getIDprefix() {
 		String result = super.get(Key.IDprefix);
-		if (Strings.isBlankString(result)) {
+		if (ISO.isBlankString(result)) {
 
 			String common = this.get(Key.Common);
 			if (null != common) {
@@ -361,45 +434,110 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		return result;
 	}
 
-	public void parseRFC82xContent(final String source) {
-		this.getRFC822name().parseRFC82xContent(source);
+	/**
+	 * Parses the source string and sets the appropriate RFC822 values.
+	 * 
+	 * @param string
+	 *            RFC822 source string from which to set the appropriate RFC822 values.
+	 */
+	public void parseRFC82xContent(final String string) {
+		this.getRFC822name().parseRFC82xContent(string);
 	}
 
+	/**
+	 * Indicates whether the object has RFC82xContent
+	 * 
+	 * @return Flag indicating if the object has RFC82xContent
+	 */
 	public boolean isHasRFC82xContent() {
 		return (null == this._rfc822name) ? false : this.getRFC822name().isHasRFC82xContent();
 	}
 
-	/*
-	 * ******************************************************************
-	 * ******************************************************************
+	/**
+	 * Determines if any of the mapped values are equal to the passed in string.
 	 * 
-	 * private methods
+	 * Performs a case-insensitive search.
 	 * 
-	 * ******************************************************************
-	 * ******************************************************************
+	 * @param string
+	 *            String tom compare values against
+	 * 
+	 * @return Flag indicating if any of the values are equal to the string.
 	 */
+	public boolean equalsIgnoreCase(final String string) {
+		if (!ISO.isBlankString(string)) {
+			for (final String s : this.values()) {
+				if (string.equalsIgnoreCase(s)) {
+					return true;
+				}
+			}
+
+			return this.getRFC822name().equalsIgnoreCase(string);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determines if any of the mapped values begin with the prefix.
+	 * 
+	 * @param prefix
+	 *            Value to compare to the mapped values.
+	 * 
+	 * @param casesensitive
+	 *            Flag indicating if Case-Sensitive comparisons should be enforced.
+	 * 
+	 * @return Flag indicating if any of the mapped values begin with the prefix
+	 */
+	public boolean startsWith(final String prefix, final boolean casesensitive) {
+		if (!ISO.isBlankString(prefix)) {
+			if (casesensitive) {
+				for (final String s : this.values()) {
+					if ((null != s) && s.startsWith(prefix)) {
+						return true;
+					}
+				}
+
+			} else {
+				for (final String s : this.values()) {
+					if (ISO.startsWithIgnoreCase(s, prefix)) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	} /*
+		* ******************************************************************
+		* ******************************************************************
+		* 
+		* private methods
+		* 
+		* ******************************************************************
+		* ******************************************************************
+		*/
 
 	/**
 	 * Retrieves and sets the various name values by parsing an input source string.
 	 * 
-	 * @param source
+	 * @param string
 	 *            String from which to parse the name values.
 	 */
-	private void parse(final String source) {
+	private void parse(final String string) {
 		String common = "";
 		String[] ous = new String[] { "", "", "", "" };
 		String organization = "";
 		String country = "";
 
-		if ((!ISO.isBlankString(source)) && (source.indexOf('/') > 0)) {
+		if ((!ISO.isBlankString(string)) && (string.indexOf('/') > 0)) {
 			// break the source into it's component words and parse them
 
-			String[] words = source.split("/");
+			String[] words = string.split("/");
 			int length = words.length;
 			if (length > 0) {
 				int idx = 0;
 
-				if (source.indexOf('=') > 0) {
+				if (string.indexOf('=') > 0) {
 					// use canonical logic
 					for (int i = words.length - 1; i >= 0; i--) {
 						String[] nibbles = words[i].trim().split("=");

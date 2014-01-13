@@ -1,5 +1,5 @@
 /*
- * Copyright 2014
+ * Copyright 2013
  * 
  * @author Devin S. Olson (dolson@czarnowski.com)
  * 
@@ -42,7 +42,7 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 
 		@Override
 		public String toString() {
-			return this.name();
+			return Key.class.getName() + ": " + this.name();
 		}
 
 		public String getInfo() {
@@ -63,9 +63,9 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 	 * @param source
 	 *            String from which to construct the object
 	 */
-	public RFC822name(final String source) {
+	public RFC822name(final String string) {
 		super();
-		this.parse(source);
+		this.parse(string);
 	}
 
 	/*
@@ -77,6 +77,12 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
+
+	/**
+	 * Gets the ARPA Internet Name Addr821 component of the object
+	 * 
+	 * @return the Addr821 component
+	 */
 	public String getAddr821() {
 		String local = this.getAddr822LocalPart();
 		if (local.length() > 0) {
@@ -87,6 +93,14 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 		return "";
 	}
 
+	/**
+	 * Gets the ARPA Internet Name getAddr822Comment for the specified comment number (1 - 3)
+	 * 
+	 * @param commentnumber
+	 *            Number of the comment (1 - 3) component to retrieve.
+	 * 
+	 * @return the Addr822Comment component specified by the comment number
+	 */
 	public String getAddr822Comment(final int commentnumber) {
 		Key key = null;
 
@@ -109,26 +123,56 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 
 	}
 
+	/**
+	 * Gets the ARPA Internet Name Addr822Comment1 component of the object
+	 * 
+	 * @return the Addr822Comment1 component
+	 */
 	public String getAddr822Comment1() {
 		return this.getAddr822Comment(1);
 	}
 
+	/**
+	 * Gets the ARPA Internet Name Addr822Comment2 component of the object
+	 * 
+	 * @return the Addr822Comment2 component
+	 */
 	public String getAddr822Comment2() {
 		return this.getAddr822Comment(2);
 	}
 
+	/**
+	 * Gets the ARPA Internet Name Addr822Comment3 component of the object
+	 * 
+	 * @return the Addr822Comment3 component
+	 */
 	public String getAddr822Comment3() {
 		return this.getAddr822Comment(3);
 	}
 
+	/**
+	 * Gets the ARPA Internet Name Addr822Domain component of the object
+	 * 
+	 * @return the Addr822Domain component
+	 */
 	public String getAddr822Domain() {
 		return this.get(Key.Domain);
 	}
 
+	/**
+	 * Gets the ARPA Internet Name Addr822LocalPart component of the object
+	 * 
+	 * @return the Addr822LocalPart component
+	 */
 	public String getAddr822LocalPart() {
 		return this.get(Key.Local);
 	}
 
+	/**
+	 * Gets the ARPA Internet Name Addr822Full component of the object
+	 * 
+	 * @return the Addr822Full component
+	 */
 	public String getAddr822Full() {
 		StringBuilder sb = new StringBuilder(this.getAddr822Simple());
 		if (sb.length() > 0) {
@@ -146,6 +190,11 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 		return sb.toString();
 	}
 
+	/**
+	 * Gets the ARPA Internet Name Addr822Full component of the object, formatted with the Phrase component in FIRST LAST order
+	 * 
+	 * @return the Addr822Full component
+	 */
 	public String getAddr822FullFirstLast() {
 		StringBuilder sb = new StringBuilder(this.getAddr822SimpleFirstLast());
 		if (sb.length() > 0) {
@@ -163,6 +212,11 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 		return sb.toString();
 	}
 
+	/**
+	 * Gets the ARPA Internet Name Addr822Simple component of the object
+	 * 
+	 * @return the Addr822Simple component
+	 */
 	public String getAddr822Simple() {
 		String addr821 = this.getAddr821();
 		if (addr821.length() > 0) {
@@ -184,6 +238,11 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 		return "";
 	}
 
+	/**
+	 * Gets the ARPA Internet Name Addr822Simple component of the object, formatted with the Phrase component in FIRST LAST order
+	 * 
+	 * @return the Addr822Simple component
+	 */
 	public String getAddr822SimpleFirstLast() {
 		String addr821 = this.getAddr821();
 		if (addr821.length() > 0) {
@@ -205,10 +264,20 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 		return "";
 	}
 
+	/**
+	 * Gets the ARPA Internet Name Addr822Phrase component of the object
+	 * 
+	 * @return the Addr822Phrase component
+	 */
 	public String getAddr822Phrase() {
 		return this.get(Key.Phrase);
 	}
 
+	/**
+	 * Gets the ARPA Internet Name Addr822Phrase component of the object, formatted with the Phrase component in FIRST LAST order
+	 * 
+	 * @return the Addr822Phrase component
+	 */
 	public String getAddr822PhraseFirstLast() {
 		String phrase = this.getAddr822Phrase();
 		if (phrase.indexOf(',') > 0) {
@@ -239,11 +308,71 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 		return phrase;
 	}
 
+	/**
+	 * Indicates whether the object has RFC82xContent
+	 * 
+	 * @return Flag indicating if the object has RFC82xContent
+	 */
+
 	public boolean isHasRFC82xContent() {
 		if (this.size() > 0) {
 			for (String s : this.values()) {
 				if ((null != s) && (s.trim().length() > 0)) {
 					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determines if any of the mapped values are equal to the passed in string.
+	 * 
+	 * Performs a case-insensitive search.
+	 * 
+	 * @param string
+	 *            String tom compare values against
+	 * 
+	 * @return Flag indicating if any of the values are equal to the string.
+	 */
+	public boolean equalsIgnoreCase(final String string) {
+		if (!ISO.isBlankString(string)) {
+			for (final String s : this.values()) {
+				if (string.equalsIgnoreCase(s)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determines if any of the mapped values begin with the prefix.
+	 * 
+	 * @param prefix
+	 *            Value to compare to the mapped values.
+	 * 
+	 * @param casesensitive
+	 *            Flag indicating if Case-Sensitive comparisons should be enforced.
+	 * 
+	 * @return Flag indicating if any of the mapped values begin with the prefix
+	 */
+	public boolean startsWith(final String prefix, final boolean casesensitive) {
+		if (!ISO.isBlankString(prefix)) {
+			if (casesensitive) {
+				for (final String s : this.values()) {
+					if ((null != s) && s.startsWith(prefix)) {
+						return true;
+					}
+				}
+
+			} else {
+				for (final String s : this.values()) {
+					if (ISO.startsWithIgnoreCase(s, prefix)) {
+						return true;
+					}
 				}
 			}
 		}
@@ -300,9 +429,15 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 		return sb.toString();
 	}
 
-	public void parseRFC82xContent(final String source) {
+	/**
+	 * Parses the source string and sets the appropriate RFC822 values.
+	 * 
+	 * @param string
+	 *            RFC822 source string from which to set the appropriate RFC822 values.
+	 */
+	public void parseRFC82xContent(final String string) {
 		this.clear();
-		this.parse(source);
+		this.parse(string);
 	}
 
 	/*
@@ -338,11 +473,11 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 	/**
 	 * Retrieves and sets the various content values by parsing an input source string.
 	 * 
-	 * @param source
+	 * @param string
 	 *            String from which to parse the content values.
 	 */
-	private void parse(final String source) {
-		if ((null != source) && (source.length() > 0)) {
+	private void parse(final String string) {
+		if ((null != string) && (string.length() > 0)) {
 			final String pattern = "^.*<.*>.*$";
 			/*
 			 * Match Pattern: anytext<anytext>anytext
@@ -369,21 +504,21 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 			 * 
 			 * $ match the preceding match instructions against the end of the string.
 			 */
-			if (source.matches(pattern)) {
+			if (string.matches(pattern)) {
 				// test matches anytext<anytext>anytext
 				// get the three primary chunks as phrase<internetaddress>comments from the source
 
-				int idxLT = source.indexOf('<');
-				int idxGT = source.indexOf('>', idxLT);
+				int idxLT = string.indexOf('<');
+				int idxGT = string.indexOf('>', idxLT);
 
 				// parse the phrase part
-				String phrase = (idxLT > 0) ? source.substring(0, idxLT).trim() : "";
+				String phrase = (idxLT > 0) ? string.substring(0, idxLT).trim() : "";
 				if (phrase.length() > 0) {
 					this.put(Key.Phrase, phrase.replaceAll("\"", "").trim());
 				}
 
 				// parse the internetaddress part
-				String internetaddress = (idxGT > (idxLT + 1)) ? source.substring(idxLT + 1, idxGT).trim() : "";
+				String internetaddress = (idxGT > (idxLT + 1)) ? string.substring(idxLT + 1, idxGT).trim() : "";
 				if ((internetaddress.length() > 0) && (internetaddress.indexOf('@') >= 0)) {
 					String[] chunks = internetaddress.split("@");
 					if (null != chunks) {
@@ -397,7 +532,7 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 				}
 
 				// parse the comments part
-				String comments = (idxGT < source.length()) ? source.substring(idxGT).trim() : "";
+				String comments = (idxGT < string.length()) ? string.substring(idxGT).trim() : "";
 				if (comments.length() > 0) {
 					int idxParenOpen = comments.indexOf('(');
 					int idxParenClose = comments.indexOf(')');
