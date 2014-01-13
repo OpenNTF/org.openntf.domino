@@ -390,17 +390,19 @@ public class IndexDatabase {
 			final String term, final String dbid) {
 		List<IndexHit> results = new ArrayList<IndexHit>();
 		if (itemNames == null || itemNames.isEmpty()) {
-			for (Object key : map.keySet()) {
-				Object val = map.get(key);
-				List<IndexHit> hits = null;
-				if (val instanceof Set) {
-					//					System.out.println("Already have a set of " + ((Set) val).size() + " elements");
-					hits = getTermResultsForForms((Set) val, forms, term, dbid, key.toString());
-				} else {
-					//					System.out.println("Converting to a set from a " + (val == null ? "null" : val.getClass().getName()));
-					hits = getTermResultsForForms(toStringSet(val), forms, term, dbid, key.toString());
+			if (map.keySet() != null) {
+				for (Object key : map.keySet()) {
+					Object val = map.get(key);
+					List<IndexHit> hits = null;
+					if (val instanceof Set) {
+						//					System.out.println("Already have a set of " + ((Set) val).size() + " elements");
+						hits = getTermResultsForForms((Set) val, forms, term, dbid, key.toString());
+					} else {
+						//					System.out.println("Converting to a set from a " + (val == null ? "null" : val.getClass().getName()));
+						hits = getTermResultsForForms(toStringSet(val), forms, term, dbid, key.toString());
+					}
+					results.addAll(hits);
 				}
-				results.addAll(hits);
 			}
 		} else {
 			for (CaseInsensitiveString key : itemNames) {

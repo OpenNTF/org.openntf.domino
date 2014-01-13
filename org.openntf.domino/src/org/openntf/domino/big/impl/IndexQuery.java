@@ -125,7 +125,12 @@ public class IndexQuery {
 		forms_ = IndexDatabase.toStringSet(forms);
 	}
 
+	private static final boolean profile_ = true;
+
 	public IndexResults execute(final IndexDatabase db) {
+		long startNanos = 0;
+		if (profile_)
+			startNanos = System.nanoTime();
 		IndexResults result = null;
 		for (String term : getTerms()) {
 			List<IndexHit> hits = db.getTermResults(term, getLimit(), getDbids(), IndexDatabase.toCISSet(getItems()), getForms());
@@ -139,6 +144,11 @@ public class IndexQuery {
 					result.merge(temp);
 				}
 			}
+		}
+		if (profile_) {
+			int resultCount = result.getHits().size();
+			System.out
+					.println("IndexQuery executed for " + resultCount + " results in " + ((System.nanoTime() - startNanos) / 1000) + "us");
 		}
 		return result;
 	}
