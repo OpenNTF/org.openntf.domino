@@ -21,9 +21,12 @@ package org.openntf.domino.utils;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.AbstractCollection;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import org.openntf.domino.Session;
@@ -603,6 +606,118 @@ public enum Strings {
 			}
 
 			return Strings.getSpawnedRecordID(new org.openntf.domino.impl.Name(session));
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return "";
+	}
+
+	/**
+	 * Generates a List of Strings from a source String.
+	 * 
+	 * Breaks the source string at all br and at the ends of div and p elements.
+	 * 
+	 * @param source
+	 *            String from which to generate the list.
+	 * 
+	 * @return List constructed of source segments.
+	 */
+	public static List<String> getTextLinesRemoveHTMLtags(final String source) {
+		final List<String> result = new ArrayList<String>();
+		try {
+			if (!Strings.isBlankString(source)) {
+				final String stripped = source.replaceAll("<br></div><div>", "<br>").replaceAll("</p></div><div>", "</p>");
+				final String regex = "</div><div>|<br>|</p>";
+				final String[] chunks = stripped.split(regex);
+				if ((null == chunks) || (chunks.length < 1)) {
+					return CollectionUtils.getListStrings(Strings.stripHTMLtags(source));
+				} else {
+					for (final String s : chunks) {
+						result.add(Strings.stripHTMLtags(s));
+					}
+				}
+			}
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return result;
+	}
+
+	/**
+	 * Wraps String elements of a collection with a prefix and suffix string
+	 * 
+	 * @param collection
+	 *            AbstractCollection from which to get or generate the result.
+	 * @param prefix
+	 *            String to prepend each returned element.
+	 * @param suffix
+	 *            String to append each returned element.
+	 * 
+	 * @return List of Strings retrieved or generated from the input. Returns null on error.
+	 */
+	public static List<String> wrapStringElements(final AbstractCollection collection, final String prefix, final String suffix) {
+		try {
+			final String prepend = Strings.isBlankString(prefix) ? "" : prefix;
+			final String append = Strings.isBlankString(suffix) ? "" : suffix;
+
+			if ((null != collection) && (collection.size() > 0)) {
+				final List<String> result = new ArrayList<String>();
+				if (collection.iterator().next() instanceof Object) {
+					// treat as an object
+					for (final Object o : collection) {
+						result.add(prepend + o.toString() + append);
+					}
+				} else {
+					// treat as a primitive
+					final Iterator it = collection.iterator();
+					while (it.hasNext()) {
+						result.add(prepend + String.valueOf(it.next()) + append);
+					}
+				}
+
+				return result;
+			}
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return null;
+	}
+
+	public static String stripHTMLtags(final String source) {
+		return (Strings.isBlankString(source)) ? "" : source.replaceAll("\\<.*?>", "");
+	}
+
+	/**
+	 * Gets an HTML Unordered List
+	 * 
+	 * Converts TreeSet elements to HTML list item elements.
+	 * 
+	 * @param source
+	 *            TreeSet containing elements to be wrapped as HTML List Items
+	 * 
+	 * @return Concatenated HTML Unordered List
+	 */
+	public static String getHTMLunorderedList(final TreeSet<String> source) {
+
+		try {
+			if (null == source) {
+				throw new IllegalArgumentException("Source is null");
+			}
+
+			if (source.size() > 0) {
+				final StringBuilder sb = new StringBuilder("<ul>");
+				for (final String element : Strings.wrapStringElements(source, "<li>", "</li>")) {
+					sb.append(element);
+				}
+				sb.append("</ul>");
+				return sb.toString();
+			}
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
