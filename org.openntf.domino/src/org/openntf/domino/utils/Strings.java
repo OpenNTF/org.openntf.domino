@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import org.openntf.arpa.ISO;
 import org.openntf.domino.Session;
 import org.openntf.domino.impl.Name;
 
@@ -219,8 +220,8 @@ public enum Strings {
 		return sb.toString();
 	}
 
-	public static String toProperCase(final String source) {
-		return (Strings.isBlankString(source)) ? "" : source.substring(0, 1).toUpperCase() + source.substring(1);
+	public static String toProperCase(final String string) {
+		return ISO.toProperCase(string);
 	}
 
 	/**
@@ -232,7 +233,7 @@ public enum Strings {
 	 * @return Flag indicating if the source string is null or blank.
 	 */
 	public static boolean isBlankString(final String string) {
-		return ((null == string) || (string.trim().length() < 1));
+		return ISO.isBlankString(string);
 	}
 
 	public static boolean isHexadecimalString(final String string) {
