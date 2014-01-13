@@ -18,8 +18,6 @@
  */
 package org.openntf.arpa;
 
-import org.openntf.domino.utils.Strings;
-
 /**
  * @author dolson
  * 
@@ -96,26 +94,61 @@ public enum ISO {
 		private String _country;
 		private String _code3;
 
+		/**
+		 * Gets the Country String
+		 * 
+		 * @return the Country
+		 */
 		public String getCountry() {
 			return this._country;
 		}
 
+		/**
+		 * Sets the Country String
+		 * 
+		 * @param country
+		 *            the Country
+		 */
 		private void setCountry(final String country) {
 			this._country = country;
 		}
 
+		/**
+		 * Gets the 2 digit Alpha Code
+		 * 
+		 * @return 2 digit Alpha Code
+		 */
 		public String getCode2() {
 			return this.name();
 		}
 
+		/**
+		 * Gets the 3 digit Alpha Code
+		 * 
+		 * @return 3 digit Alpha Code
+		 */
 		public String getCode3() {
 			return this._code3;
 		}
 
+		/**
+		 * Sets the 3 digit Alpha Code
+		 * 
+		 * @param code3
+		 *            the 3 digit Alpha Code
+		 */
 		private void setCode3(final String code3) {
 			this._code3 = code3;
 		}
 
+		/**
+		 * Instance Constructor
+		 * 
+		 * @param country
+		 *            Country Name
+		 * @param code3
+		 *            the 3 digit Alpha code
+		 */
 		private ISO3166(final String country, final String code3) {
 			this.setCountry(country);
 			this.setCode3(code3);
@@ -132,6 +165,14 @@ public enum ISO {
 	 * ******************************************************************
 	 */
 
+	/**
+	 * Gets the ISO3166 enum for the specified code
+	 * 
+	 * @param code
+	 *            2 or 3 digit alpha code for the country
+	 * 
+	 * @return ISO2166 enum for the specified code, if found. Null otherwise
+	 */
 	public static ISO3166 getISO3166(final String code) {
 		if (!isBlankString(code)) {
 			if ((2 == code.length()) && code.matches("^[A-Z]+[A-Z]$")) {
@@ -152,23 +193,55 @@ public enum ISO {
 		return null;
 	}
 
+	/**
+	 * Gets the Country String
+	 * 
+	 * @param code
+	 *            2 or 3 digit alpha code for the country
+	 * 
+	 * @return the Country for the code, if found. Empty string "" otherwise.
+	 */
 	public static String getCountry(final String code) {
 		ISO3166 temp = ISO.getISO3166(code);
 		return (null == temp) ? "" : temp.getCountry();
 	}
 
+	/**
+	 * Determines if the code is a valid 2 digit country code
+	 * 
+	 * @param code
+	 *            2 digit alpha code for the country
+	 * 
+	 * @return Flag indicating if the code is valid
+	 */
 	public static boolean isCountryCode2(final String code) {
 		ISO3166 temp = ISO.getISO3166(code);
 		return (null == temp) ? false : temp.getCode2().equals(code);
 	}
 
+	/**
+	 * Determines if the code is a valid 3 digit country code
+	 * 
+	 * @param code
+	 *            3 digit alpha code for the country
+	 * 
+	 * @return Flag indicating if the code is valid
+	 */
 	public static boolean isCountryCode3(final String code) {
 		ISO3166 temp = ISO.getISO3166(code);
 		return (null == temp) ? false : temp.getCode3().equals(code);
 	}
 
-	public static String toProperCase(final String source) {
-		return (Strings.isBlankString(source)) ? "" : source.substring(0, 1).toUpperCase() + source.substring(1);
+	/**
+	 * Converts a source string to Proper case (1st character uppercase, all others lowercase)
+	 * 
+	 * @param string
+	 *            String to convert
+	 * 
+	 * @return Converted string
+	 */
+	public static String toProperCase(final String string) {
+		return (ISO.isBlankString(string)) ? "" : string.substring(0, 1).toUpperCase() + string.substring(1).toLowerCase();
 	}
 
 	/**
