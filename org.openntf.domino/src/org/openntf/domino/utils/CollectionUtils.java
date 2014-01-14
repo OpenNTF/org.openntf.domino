@@ -46,7 +46,10 @@ public enum CollectionUtils {
 	 * @param itemname
 	 *            Name of item from which to get the content
 	 * 
-	 * @return List of Strings retrieved or generated from the input. Returns null on error.
+	 * @return List of Strings retrieved or generated from the input. Returns null if the document does not contain the item.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if source document is null or itemname is blank or null.
 	 */
 	public static List<String> getListStrings(final Document source, final String itemname) {
 		if (null == source) {
@@ -67,7 +70,6 @@ public enum CollectionUtils {
 	 * 
 	 * @return List of Strings retrieved or generated from the input. Returns null on error.
 	 */
-
 	@SuppressWarnings("unchecked")
 	public static List<String> getListStrings(final Vector vector) {
 		return (null == vector) ? null : Collections.list(vector.elements());
@@ -167,32 +169,36 @@ public enum CollectionUtils {
 	 */
 	public static List<String> getListStrings(final Object object) {
 		String classname = null;
-		if (null != object) {
-			classname = object.getClass().getName();
+		try {
+			if (null != object) {
+				classname = object.getClass().getName();
 
-			if (object instanceof Vector) {
-				return CollectionUtils.getListStrings((Vector) object);
-			}
-			if (object instanceof AbstractCollection) {
-				return CollectionUtils.getListStrings((AbstractCollection) object);
-			}
-			if (object instanceof AbstractMap) {
-				return CollectionUtils.getListStrings((AbstractMap) object);
-			}
-			if (object instanceof String) {
-				return CollectionUtils.getListStrings((String) object);
-			}
-			if (object instanceof String[]) {
-				return CollectionUtils.getListStrings((String[]) object);
-			}
-			if (classname.equalsIgnoreCase("java.lang.String[]") || classname.equalsIgnoreCase("[Ljava.lang.String;")) {
-				return CollectionUtils.getListStrings((String[]) object);
-			}
-			if (classname.equalsIgnoreCase("java.lang.String")) {
-				return CollectionUtils.getListStrings((String) object);
-			}
+				if (object instanceof Vector) {
+					return CollectionUtils.getListStrings((Vector) object);
+				}
+				if (object instanceof AbstractCollection) {
+					return CollectionUtils.getListStrings((AbstractCollection) object);
+				}
+				if (object instanceof AbstractMap) {
+					return CollectionUtils.getListStrings((AbstractMap) object);
+				}
+				if (object instanceof String) {
+					return CollectionUtils.getListStrings((String) object);
+				}
+				if (object instanceof String[]) {
+					return CollectionUtils.getListStrings((String[]) object);
+				}
+				if (classname.equalsIgnoreCase("java.lang.String[]") || classname.equalsIgnoreCase("[Ljava.lang.String;")) {
+					return CollectionUtils.getListStrings((String[]) object);
+				}
+				if (classname.equalsIgnoreCase("java.lang.String")) {
+					return CollectionUtils.getListStrings((String) object);
+				}
 
-			throw new IllegalArgumentException("Unsupported Class:" + classname);
+				throw new IllegalArgumentException("Unsupported Class:" + classname);
+			}
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
 		}
 
 		return null;
@@ -261,7 +267,6 @@ public enum CollectionUtils {
 	 * @return a negative integer, zero, or a positive integer indicating if the first object is less than, equal to, or greater than the
 	 *         second object.
 	 * 
-	 * @throws RuntimeException
 	 * @see java.lang.Comparable#compareTo(Object)
 	 * @see DominoUtils#LESS_THAN
 	 * @see DominoUtils#EQUAL
@@ -287,6 +292,7 @@ public enum CollectionUtils {
 				return (descending) ? -result : result;
 			}
 		}
+
 		return DominoUtils.EQUAL;
 	}
 
@@ -307,7 +313,6 @@ public enum CollectionUtils {
 	 * @return a negative integer, zero, or a positive integer indicating if the first object is less than, equal to, or greater than the
 	 *         second object.
 	 * 
-	 * @throws RuntimeException
 	 * @see java.lang.Comparable#compareTo(Object)
 	 * @see DominoUtils#LESS_THAN
 	 * @see DominoUtils#EQUAL
@@ -332,6 +337,21 @@ public enum CollectionUtils {
 				descending);
 	}
 
+	/**
+	 * Gets or generates a TreeSet containing Strings found in the source which begin with the prefix.
+	 * 
+	 * Performs a case-insensitive search.
+	 * 
+	 * @param source
+	 *            Object from which to attempt to extract and match the strings.
+	 * 
+	 * @param prefix
+	 *            String which each extracted string must begin with.
+	 * 
+	 * @return Strings found within source which begin with prefix.
+	 * 
+	 * @see Strings#startsWithIgnoreCase(String, String)
+	 */
 	public static TreeSet<String> getTreeSetStringsBeginsWith(final Object source, final String prefix) {
 		final TreeSet<String> temp = CollectionUtils.getTreeSetStrings(source);
 		if ((null != temp) && (temp.size() > 0)) {
