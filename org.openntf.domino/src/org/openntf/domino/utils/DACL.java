@@ -632,7 +632,6 @@ public enum DACL {
 	 * **************************************************************************
 	 * **************************************************************************
 	 */
-
 	/**
 	 * Gets the Pattern that a string must match in order to be considered as an ACL Role.
 	 * 

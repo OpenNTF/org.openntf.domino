@@ -452,6 +452,14 @@ public class KeyedByteArray extends MappedSerializables implements Comparable<Ke
 	 * ******************************************************************
 	 */
 
+	/**
+	 * Gets an array of bytes from a specified InputStream
+	 * 
+	 * @param input
+	 *            InputStream from which to get the array of bytes.
+	 * 
+	 * @return array of bytes from the InputStream. Null on error.
+	 */
 	public static byte[] getBytesFromInputStream(final InputStream input) {
 		try {
 			final byte[] buffer = new byte[8192];
@@ -472,6 +480,14 @@ public class KeyedByteArray extends MappedSerializables implements Comparable<Ke
 		return null;
 	}
 
+	/**
+	 * Gets the content type for a given filename, if known.
+	 * 
+	 * @param filename
+	 *            Name to check for the content type.
+	 * 
+	 * @return Content type for the filename. Empty string "" if not known.
+	 */
 	public static String getContentType(final String filename) {
 		return (Strings.isBlankString(filename)) ? "" : new MimetypesFileTypeMap().getContentType(filename);
 	}
@@ -512,9 +528,9 @@ public class KeyedByteArray extends MappedSerializables implements Comparable<Ke
 	 * 
 	 * 
 	 * @see java.lang.Comparable#compareTo(Object)
-	 * @see packers.czardev.util.Core#LESS_THAN
-	 * @see packers.czardev.util.Core#EQUAL
-	 * @see packers.czardev.util.Core#GREATER_THAN
+	 * @see org.openntf.domino.utils.DominoUtils#LESS_THAN
+	 * @see org.openntf.domino.utils.DominoUtils#EQUAL
+	 * @see org.openntf.domino.utils.DominoUtils#GREATER_THAN
 	 */
 	public int compareTo(final KeyedByteArray handle) {
 		return KeyedByteArray.compare(this, handle);
@@ -543,9 +559,9 @@ public class KeyedByteArray extends MappedSerializables implements Comparable<Ke
 	 * 
 	 * 
 	 * @see java.lang.Comparable#compareTo(Object)
-	 * @see packers.czardev.util.Core#LESS_THAN
-	 * @see packers.czardev.util.Core#EQUAL
-	 * @see packers.czardev.util.Core#GREATER_THAN
+	 * @see org.openntf.domino.utils.DominoUtils#LESS_THAN
+	 * @see org.openntf.domino.utils.DominoUtils#EQUAL
+	 * @see org.openntf.domino.utils.DominoUtils#GREATER_THAN
 	 */
 	public static int compare(final KeyedByteArray handle0, final KeyedByteArray handle1) {
 		if (null == handle0) {
