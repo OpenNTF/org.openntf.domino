@@ -674,7 +674,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 * @param casesensitive
 	 *            Flag indicating if Case-Sensitive comparisons should be enforced.
 	 * 
-	 * @return DocumentHandles whose named String Item Value begins with the prefix. Returns null if no matches found.
+	 * @return Flag indicating if any of the mapped values begin with the prefix.
 	 */
 	public boolean startsWith(final String prefix, final boolean casesensitive) {
 		if (!Strings.isBlankString(prefix)) {

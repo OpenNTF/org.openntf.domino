@@ -534,10 +534,10 @@ public class KeyedByteArray extends MappedSerializables implements Comparable<Ke
 	 * </ol>
 	 * 
 	 * @param handle0
-	 *            First DocumentHandle object for comparison.
+	 *            First KeyedByteArray object for comparison.
 	 * 
 	 * @param handle1
-	 *            Second DocumentHandle object for comparison.
+	 *            Second KeyedByteArray object for comparison.
 	 * 
 	 * @return a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.
 	 * 
