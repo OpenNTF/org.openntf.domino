@@ -95,24 +95,50 @@ public class MappedSerializables implements Serializable {
 	}
 
 	/**
-	 * Clears all initernal information from the object.
+	 * Clears all internal information from the object.
 	 */
 	public void clear() {
 		this.getContent().clear();
 	}
 
+	/**
+	 * Gets the number of elements in the internal Map.
+	 * 
+	 * @return internal Map's size property
+	 */
 	public int size() {
 		return (null == this._content) ? 0 : this._content.size();
 	}
 
-	public boolean isempty() {
+	/**
+	 * Flag indicating if the internal Map is empty.
+	 * 
+	 * @return internal Map's isEmpty property
+	 */
+	public boolean isEmpty() {
 		return (null == this._content) ? true : this._content.isEmpty();
 	}
 
+	/**
+	 * Indicates if the internal Map contains a specified key.
+	 * 
+	 * @param key
+	 *            Key to check for existence in the internal Map.
+	 * 
+	 * @return internal Map's containsKey() result.
+	 */
 	public boolean containsKey(final String key) {
 		return this.getContent().containsKey(key);
 	}
 
+	/**
+	 * Gets a value from the map for the specified key, if it exists.
+	 * 
+	 * @param key
+	 *            Key for which to retrieve the mapped value.
+	 * 
+	 * @return Value associated with the key. Null if not found or exception occurs.
+	 */
 	public Serializable get(final String key) {
 		try {
 			if (Strings.isBlankString(key)) {
@@ -123,24 +149,51 @@ public class MappedSerializables implements Serializable {
 			DominoUtils.handleException(e);
 		}
 
-		return false;
+		return null;
 	}
 
+	/**
+	 * Puts a value into the inernal Map.
+	 * 
+	 * @param key
+	 *            Key for which the new value should be associated.
+	 * 
+	 * @param value
+	 *            Value to add to the map.
+	 * 
+	 * @return Previous value for the key, if it existed in the map.
+	 */
 	public Serializable put(final String key, final Serializable value) {
 		return (Strings.isBlankString(key)) ? null : this.getContent().put(key, value);
 	}
 
+	/**
+	 * Removes a value from the inernal Map.
+	 * 
+	 * @param key
+	 *            Key whose value should be removed.
+	 * 
+	 * @return Previous value for the key, if it existed in the map.
+	 */
 	public Serializable remove(final String key) {
 		return (Strings.isBlankString(key)) ? null : this.getContent().remove(key);
 	}
 
+	/**
+	 * Gets a Boolean value from the map for the specified key, if it exists.
+	 * 
+	 * @param key
+	 *            Key for which to retrieve the mapped value.
+	 * 
+	 * @return Value associated with the key. Null if not found or exception occurs.
+	 */
 	public Boolean getBoolean(final String key) {
 		final Serializable temp = this.get(key);
 		return (null == temp) ? false : (temp instanceof Boolean) ? (Boolean) temp : Boolean.parseBoolean(temp.toString());
 	}
 
 	public HashMap<String, Boolean> getBooleans() {
-		if (!this.isempty()) {
+		if (!this.isEmpty()) {
 			final HashMap<String, Boolean> result = new HashMap<String, Boolean>();
 			final Iterator<Map.Entry<String, Serializable>> it = this.getContent().entrySet().iterator();
 			while (it.hasNext()) {
@@ -161,13 +214,21 @@ public class MappedSerializables implements Serializable {
 		return (temp instanceof Boolean) ? (Boolean) temp : false;
 	}
 
+	/**
+	 * Gets an Integer value from the map for the specified key, if it exists.
+	 * 
+	 * @param key
+	 *            Key for which to retrieve the mapped value.
+	 * 
+	 * @return Value associated with the key. Null if not found or exception occurs.
+	 */
 	public Integer getInteger(final String key) {
 		final Serializable temp = this.get(key);
 		return (null == temp) ? 0 : (temp instanceof Integer) ? (Integer) temp : Integer.parseInt(temp.toString());
 	}
 
 	public HashMap<String, Integer> getIntegers() {
-		if (!this.isempty()) {
+		if (!this.isEmpty()) {
 			final HashMap<String, Integer> result = new HashMap<String, Integer>();
 			final Iterator<Map.Entry<String, Serializable>> it = this.getContent().entrySet().iterator();
 			while (it.hasNext()) {
@@ -188,13 +249,21 @@ public class MappedSerializables implements Serializable {
 		return (temp instanceof Integer) ? (Integer) temp : 0;
 	}
 
+	/**
+	 * Gets a Date value from the map for the specified key, if it exists.
+	 * 
+	 * @param key
+	 *            Key for which to retrieve the mapped value.
+	 * 
+	 * @return Value associated with the key. Null if not found or exception occurs.
+	 */
 	public Date getDate(final String key) {
 		final Serializable temp = this.get(key);
 		return (null == temp) ? null : (temp instanceof Date) ? (Date) temp : Dates.getDate(temp);
 	}
 
 	public HashMap<String, Date> getDates() {
-		if (!this.isempty()) {
+		if (!this.isEmpty()) {
 			final HashMap<String, Date> result = new HashMap<String, Date>();
 			final Iterator<Map.Entry<String, Serializable>> it = this.getContent().entrySet().iterator();
 			while (it.hasNext()) {
@@ -238,23 +307,50 @@ public class MappedSerializables implements Serializable {
 		}
 	}
 
+	/**
+	 * Gets a Timestamp value from the map for the specified key, if it exists.
+	 * 
+	 * @param key
+	 *            Key for which to retrieve the mapped value.
+	 * 
+	 * @param format
+	 *            Format to use when constructing the timestamp
+	 * 
+	 * @return Value associated with the key. Null if not found or exception occurs.
+	 */
 	public String getTimestamp(final String key, final String format) {
 		final Date temp = this.getDate(key);
 		return (null == temp) ? "" : Dates.getTimestamp(temp, format);
 	}
 
+	/**
+	 * Gets a Timestamp value from the map for the specified key, if it exists.
+	 * 
+	 * @param key
+	 *            Key for which to retrieve the mapped value.
+	 * 
+	 * @return Value associated with the key. Null if not found or exception occurs.
+	 */
 	public String getTimestamp(final String key) {
 		final Date temp = this.getDate(key);
 		return (null == temp) ? "" : Dates.getTimestamp(temp);
 	}
 
+	/**
+	 * Gets a String value from the map for the specified key, if it exists.
+	 * 
+	 * @param key
+	 *            Key for which to retrieve the mapped value.
+	 * 
+	 * @return Value associated with the key. Null if not found or exception occurs.
+	 */
 	public String getString(final String key) {
 		final Serializable temp = this.get(key);
 		return (null == temp) ? "" : (temp instanceof String) ? (String) temp : temp.toString();
 	}
 
 	public HashMap<String, String> getStrings() {
-		if (!this.isempty()) {
+		if (!this.isEmpty()) {
 			final HashMap<String, String> result = new HashMap<String, String>();
 			final Iterator<Map.Entry<String, Serializable>> it = this.getContent().entrySet().iterator();
 			while (it.hasNext()) {
@@ -288,6 +384,14 @@ public class MappedSerializables implements Serializable {
 		return ((null != temp) && (temp instanceof Name));
 	}
 
+	/**
+	 * Gets a Name value from the map for the specified key, if it exists.
+	 * 
+	 * @param key
+	 *            Key for which to retrieve the mapped value.
+	 * 
+	 * @return Value associated with the key. Null if not found or exception occurs.
+	 */
 	public Name getName(final String key) {
 		try {
 			final Serializable temp = this.get(key);
@@ -309,7 +413,7 @@ public class MappedSerializables implements Serializable {
 	}
 
 	public HashMap<String, Name> getNames() {
-		if (!this.isempty()) {
+		if (!this.isEmpty()) {
 			final HashMap<String, Name> result = new HashMap<String, Name>();
 			final Iterator<Map.Entry<String, Serializable>> it = this.getContent().entrySet().iterator();
 			while (it.hasNext()) {
