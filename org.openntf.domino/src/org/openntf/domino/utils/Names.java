@@ -83,8 +83,15 @@ public enum Names {
 	 * @return source string formatted as a role.
 	 */
 	public static String formatAsRole(final String string) {
-		return (Strings.isBlankString(string)) ? ""
-				: ((string.indexOf('[') == 0) && (string.indexOf(']') == (string.length() - 1))) ? string : "[" + string + "]";
+		//		return (Strings.isBlankString(string)) ? ""
+		//				: ((string.indexOf('[') == 0) && (string.indexOf(']') == (string.length() - 1))) ? string : "[" + string + "]";
+
+		if (!Strings.isBlankString(string)) {
+			final String result = "[" + string.replace("[", "").replace("]", "").trim() + "]";
+			return ("[]".equals(result)) ? "" : result;
+		}
+
+		return "";
 	}
 
 	/**
