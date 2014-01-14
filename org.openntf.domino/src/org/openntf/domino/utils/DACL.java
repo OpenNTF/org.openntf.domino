@@ -38,29 +38,249 @@ import org.openntf.domino.Session;
 public enum DACL {
 	;
 
-	public static final String ITEMNAME_DACL_READERS = "DACL_Readers";
-	public static final String ITEMNAME_DACL_AUTHORS = "DACL_Authors";
+	public static final String ITEMNAME_DACL_READERS = "$DACL_Readers";
+	public static final String ITEMNAME_DACL_AUTHORS = "$DACL_Authors";
 	public static final String DEFAULT_DACL_READERS = "[ReadAll]";
 	public static final String DEFAULT_DACL_AUTHORS = "[EditAll]";
 
 	// starts with "[", has any number of letters, spaces, hyphens, or underscores, ends with "]"
 	public static final String PATTERNTEXT_ROLES = "(?i)^\\[[a-z0-9 -_]+\\]$";
 
-	public static enum DACLtype {
-		DACL_AUTHORS, DACL_READERS;
+	public static enum TYPE {
+		AUTHORS(DACL.ITEMNAME_DACL_AUTHORS, DACL.DEFAULT_DACL_AUTHORS), READERS(DACL.ITEMNAME_DACL_AUTHORS, DACL.DEFAULT_DACL_READERS);
+
+		private final String _itemname;
+		private final String _role;
+
+		public String getItemname() {
+			return this._itemname;
+		}
+
+		public String getRole() {
+			return this._role;
+		}
+
+		private TYPE(final String itemname, final String role) {
+			this._itemname = itemname;
+			this._role = role;
+		}
 
 		@Override
 		public String toString() {
-			return this.name();
+			return TYPE.class.getName() + ": " + this.name() + "{\"" + this.getItemname() + "\", \"" + this.getRole() + "\"}";
 		}
 
-		public String getInfo() {
-			return this.getDeclaringClass() + "." + this.getClass() + ":" + this.name();
+		/**
+		 * Gets the DACL Member values from the source document.
+		 * 
+		 * Retreives values ONLY from the item defined by {@link DACL.TYPE#getItemname()}.
+		 * 
+		 * @param document
+		 *            Document from which to retreive the Member values.
+		 * 
+		 * @return DACL Member values. Null if not present or empty.
+		 */
+		public TreeSet<String> getMembers(final Document document) {
+			return DACL.getMembers(document, this, false);
 		}
 
+		/**
+		 * Gets the DACL Member values from the source document.
+		 * 
+		 * Conditionally retreives values from ALL DACL.TYPE items or ONLY from the item defined by {@link DACL.TYPE#getItemname()}.
+		 * 
+		 * @param document
+		 *            Document from which to retreive the Member values.
+		 * 
+		 * @param checkAllItems
+		 *            Flag indicating if all items should be checked. If false then only the {@link DACL.TYPE#getItemname()} will be
+		 *            checked.
+		 * 
+		 * @return DACL Member values. Null if not present or empty.
+		 */
+		public TreeSet<String> getMembers(final Document document, final boolean checkAllItems) {
+			return DACL.getMembers(document, this, checkAllItems);
+		}
+
+		/**
+		 * Determines if the passed in name is a member of the dacl entries.
+		 * 
+		 * Returns true if the name (in any name format), or any member of roles is a member of the dacl entries.
+		 * 
+		 * @param session
+		 *            Current Session
+		 * 
+		 * @param dacl
+		 *            DACL entries to check
+		 * 
+		 * @param roles
+		 *            ACL Roles belonging to the name to check. (No verification is performed)
+		 * 
+		 * @param name
+		 *            Name to check
+		 * 
+		 * @return Flag indicating if the name (in any form) is a member of the dacl set, or if any intersection exists between dacl and
+		 *         roles.
+		 */
+		public boolean isMember(final Session session, final TreeSet<String> dacl, final TreeSet<String> roles, final Name name) {
+			try {
+				if (null == session) {
+					throw new IllegalArgumentException("Session is null");
+				}
+				if (null == name) {
+					throw new IllegalArgumentException("Name is null");
+				}
+
+				if ((null != dacl) && (dacl.size() > 0)) {
+					// do an initial check on the name
+					if (dacl.contains(name.getCanonical()) || dacl.contains(name.getAbbreviated())) {
+						return true;
+					}
+
+					// do an initial check for matching roles
+					if (null != roles) {
+						for (final String role : roles) {
+							if (dacl.contains(role)) {
+								return true;
+							}
+						}
+					}
+
+					// do a more thorough check for roles
+					final Pattern pattern = DACL.getPatternForRoles();
+					if (null != roles) {
+						for (final String entry : dacl) {
+							final Matcher matcher = pattern.matcher(entry);
+							if (matcher.matches()) {
+								// entry represents a role
+								if (roles.contains(entry)) {
+									return true;
+								}
+							}
+						}
+
+						// do a case-insensitive check for roles
+						for (final String entry : dacl) {
+							final Matcher matcher = pattern.matcher(entry);
+							if (matcher.matches()) {
+								// entry represents a role
+								for (final String role : roles) {
+									if (role.equalsIgnoreCase(entry)) {
+										return true;
+									}
+								}
+							}
+						}
+					}
+
+					return Names.isNamesListMember(session, dacl, name);
+				}
+
+			} catch (final Exception e) {
+				DominoUtils.handleException(e);
+			}
+
+			return false;
+		}
+
+		/**
+		 * Determines if the passed in name is a member of the specified DACL for the document.
+		 * 
+		 * Conditionally checks values from ALL DACL.TYPE items or ONLY from the item defined by {@link DACL.TYPE#getItemname()}.
+		 * 
+		 * @param session
+		 *            Current Session
+		 * @param document
+		 *            Document to search for DACL
+		 * @param name
+		 *            Name to check
+		 * 
+		 * @param checkAllItems
+		 *            Flag indicating if all items should be checked. If false then only the {@link DACL.TYPE#getItemname()} will be
+		 *            checked.
+		 * 
+		 * @return Flag indicating if the name is a member of the specified DACL for the document.
+		 */
+		public boolean isMember(final Session session, final Document document, final Name name, final boolean checkAllItems) {
+			try {
+				if (null == session) {
+					throw new IllegalArgumentException("Session is null");
+				}
+				if (null == document) {
+					throw new IllegalArgumentException("Document is null");
+				}
+				if (null == name) {
+					throw new IllegalArgumentException("Name is null");
+				}
+
+				final TreeSet<String> roles = Names.getRoles(document.getParentDatabase(), name);
+				final TreeSet<String> dacl = this.getMembers(document, checkAllItems);
+
+				return this.isMember(session, dacl, roles, name);
+
+			} catch (final Exception e) {
+				DominoUtils.handleException(e);
+			}
+
+			return false;
+		}
+
+		/**
+		 * Determines if the passed in name is a member of the specified DACL for the document.
+		 * 
+		 * Checks values ONLY from the item defined by {@link DACL.TYPE#getItemname()}.
+		 * 
+		 * @param session
+		 *            Current Session
+		 * @param document
+		 *            Document to search for DACL
+		 * @param name
+		 *            Name to check
+		 * 
+		 * @return Flag indicating if the name is a member of the specified DACL for the document.
+		 */
+		public boolean isMember(final Session session, final Document document, final Name name) {
+			return this.isMember(session, document, name, false);
+		}
+
+		/**
+		 * Determines if the current user is a member of the specified DACL for the document.
+		 * 
+		 * Conditionally checks values from ALL DACL.TYPE items or ONLY from the item defined by {@link DACL.TYPE#getItemname()}.
+		 * 
+		 * @param session
+		 *            Current Session
+		 * @param document
+		 *            Document to search for DACL
+		 * 
+		 * @param checkAllItems
+		 *            Flag indicating if all items should be checked. If false then only the {@link DACL.TYPE#getItemname()} will be
+		 *            checked.
+		 * 
+		 * @return Flag indicating if the name is a member of the specified DACL for the document.
+		 */
+		public boolean isMember(final Session session, final Document document, final boolean checkAllItems) {
+			return this.isMember(session, document, Names.createName(session, ""), checkAllItems);
+		}
+
+		/**
+		 * Determines if the current user is a member of the specified DACL for the document.
+		 * 
+		 * Checks values ONLY from the item defined by {@link DACL.TYPE#getItemname()}.
+		 * 
+		 * @param session
+		 *            Current Session
+		 * @param document
+		 *            Document to search for DACL
+		 * @param name
+		 *            Name to check
+		 * 
+		 * @return Flag indicating if the name is a member of the specified DACL for the document.
+		 */
+		public boolean isMember(final Session session, final Document document) {
+			return this.isMember(session, document, false);
+		}
 	};
-
-	private static final long serialVersionUID = 1048L;
 
 	/*
 	 * **************************************************************************
@@ -84,7 +304,7 @@ public enum DACL {
 	 * @return Flag indicating if the name is a member of the DACL_AUTHORS for the document.
 	 */
 	public static boolean isDACLauthor(final Session session, final Document document, final Name name) {
-		return DACL.isDACLmember(session, document, name, DACLtype.DACL_AUTHORS);
+		return TYPE.AUTHORS.isMember(session, document, name);
 	}
 
 	/**
@@ -98,7 +318,7 @@ public enum DACL {
 	 * @return Flag indicating if the current user is a member of the DACL_AUTHORS for the document.
 	 */
 	public static boolean isDACLauthor(final Session session, final Document document) {
-		return DACL.isDACLmember(session, document, DACLtype.DACL_AUTHORS);
+		return TYPE.AUTHORS.isMember(session, document);
 	}
 
 	/**
@@ -110,21 +330,7 @@ public enum DACL {
 	 * @return DACL_AUTHORS values. null if not present or empty.
 	 */
 	public static TreeSet<String> getDACLauthors(final Document document) {
-		try {
-			if (null == document) {
-				throw new IllegalArgumentException("Document is null");
-			}
-
-			if (document.hasItem(DACL.ITEMNAME_DACL_AUTHORS)) {
-				final TreeSet<String> result = CollectionUtils.getTreeSetStrings(document.getItemValue(DACL.ITEMNAME_DACL_AUTHORS));
-				return ((null == result) || (result.size() < 1)) ? null : result;
-			}
-
-		} catch (final Exception e) {
-			DominoUtils.handleException(e);
-		}
-
-		return null;
+		return TYPE.AUTHORS.getMembers(document);
 	}
 
 	/**
@@ -326,6 +532,7 @@ public enum DACL {
 	 * **************************************************************************
 	 * **************************************************************************
 	 */
+
 	/**
 	 * Determines if the passed in name is a member of the DACL_READERS for the document.
 	 * 
@@ -339,7 +546,7 @@ public enum DACL {
 	 * @return Flag indicating if the name is a member of the DACL_READERS for the document.
 	 */
 	public static boolean isDACLreader(final Session session, final Document document, final Name name) {
-		return DACL.isDACLmember(session, document, name, DACLtype.DACL_READERS);
+		return TYPE.READERS.isMember(session, document, name);
 	}
 
 	/**
@@ -353,7 +560,7 @@ public enum DACL {
 	 * @return Flag indicating if the current user is a member of the DACL_READERS for the document.
 	 */
 	public static boolean isDACLreader(final Session session, final Document document) {
-		return DACL.isDACLmember(session, document, DACLtype.DACL_READERS);
+		return TYPE.READERS.isMember(session, document);
 	}
 
 	/**
@@ -365,21 +572,7 @@ public enum DACL {
 	 * @return DACL_READERS values. null if not present or empty.
 	 */
 	public static TreeSet<String> getDACLreaders(final Document document) {
-		try {
-			if (null == document) {
-				throw new IllegalArgumentException("Document is null");
-			}
-
-			if (document.hasItem(DACL.ITEMNAME_DACL_READERS)) {
-				final TreeSet<String> result = CollectionUtils.getTreeSetStrings(document.getItemValue(DACL.ITEMNAME_DACL_READERS));
-				return ((null == result) || (result.size() < 1)) ? null : result;
-			}
-
-		} catch (final Exception e) {
-			DominoUtils.handleException(e);
-		}
-
-		return null;
+		return TYPE.READERS.getMembers(document);
 	}
 
 	/**
@@ -418,6 +611,7 @@ public enum DACL {
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
 		}
+
 		return false;
 	}
 
@@ -475,6 +669,7 @@ public enum DACL {
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
 		}
+
 		return false;
 	}
 
@@ -580,8 +775,98 @@ public enum DACL {
 	 * **************************************************************************
 	 */
 
+	/**
+	 * Gets the Pattern that a string must match in order to be considered as an ACL Role.
+	 * 
+	 * @return Pattern for a role
+	 */
 	public static final Pattern getPatternForRoles() {
 		return Pattern.compile(DACL.PATTERNTEXT_ROLES, Pattern.CASE_INSENSITIVE);
+	}
+
+	/**
+	 * Gets the DACL Member values from the source document.
+	 * 
+	 * Returns the values of all AUTHOR or READER fields found on the document.
+	 * 
+	 * @param document
+	 *            Document from which to retreive the DACL Member values.
+	 * 
+	 * @param daclType
+	 *            DACL.TYPE (AUTHOR or READER) for which to search. If null then returns a combination of all AUTHOR and READER types.
+	 * 
+	 * @param checkAllItems
+	 *            Flag indicating if all items should be checked. If false then only the {@link DACL.TYPE#getItemname()} will be checked.
+	 * 
+	 * @return DACL Member values. Null if not present or empty.
+	 */
+	public static TreeSet<String> getMembers(final Document document, final TYPE daclType, final boolean checkAllItems) {
+
+		try {
+			if (null == document) {
+				throw new IllegalArgumentException("Document is null");
+			}
+
+			TreeSet<String> members = null;
+
+			if (null == daclType) {
+				final TreeSet<String> result = new TreeSet<String>();
+				for (TYPE type : TYPE.values()) {
+					members = DACL.getMembers(document, type, checkAllItems);
+					if ((null != members) && (members.size() > 0)) {
+						result.addAll(members);
+					}
+				}
+				return ((null == result) || (result.size() < 1)) ? null : result;
+
+			} else {
+				if (checkAllItems) {
+					// check every item on the document
+					switch (daclType) {
+					case AUTHORS: {
+						final TreeSet<String> result = new TreeSet<String>();
+						for (Item item : document.getItems()) {
+							if (item.isAuthors()) {
+								members = CollectionUtils.getTreeSetStrings(item.getValues(String.class));
+								if ((null != members) && members.size() > 0) {
+									result.addAll(members);
+								}
+							}
+						}
+						return ((null == result) || (result.size() < 1)) ? null : result;
+					}
+
+					case READERS: {
+						final TreeSet<String> result = new TreeSet<String>();
+						for (Item item : document.getItems()) {
+							if (item.isAuthors()) {
+								members = CollectionUtils.getTreeSetStrings(item.getValues(String.class));
+								if ((null != members) && members.size() > 0) {
+									result.addAll(members);
+								}
+							}
+						}
+						return ((null == result) || (result.size() < 1)) ? null : result;
+					}
+
+					} // switch (daclType)
+
+				} else if (document.hasItem(daclType.getItemname())) {
+					// get the members from the explicitly named item
+					Item item = document.getFirstItem(daclType.getItemname());
+					// verify the item is of the correct type
+					if ((item.isAuthors() && TYPE.AUTHORS.equals(daclType)) || (item.isReaders() && TYPE.READERS.equals(daclType))) {
+						final TreeSet<String> result = CollectionUtils.getTreeSetStrings(item.getValues(String.class));
+						return ((null == result) || (result.size() < 1)) ? null : result;
+					}
+				}
+			}
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return null;
 	}
 
 	/**
@@ -674,11 +959,11 @@ public enum DACL {
 	 * @param name
 	 *            Name to check
 	 * @param dacltype
-	 *            Type of DACL to check
+	 *            DACL.TYPE to check
 	 * 
 	 * @return Flag indicating if the name is a member of the specified DACL for the document.
 	 */
-	public static boolean isDACLmember(final Session session, final Document document, final Name name, final DACLtype dacltype) {
+	public static boolean isDACLmember(final Session session, final Document document, final Name name, final TYPE dacltype) {
 		try {
 			if (null == session) {
 				throw new IllegalArgumentException("Session is null");
@@ -693,11 +978,7 @@ public enum DACL {
 				throw new IllegalArgumentException("DACLtype is null");
 			}
 
-			final TreeSet<String> roles = Names.getRoles(document.getParentDatabase(), name);
-			final TreeSet<String> dacl = (DACLtype.DACL_AUTHORS.equals(dacltype)) ? DACL.getDACLauthors(document) : (DACLtype.DACL_READERS
-					.equals(dacltype)) ? DACL.getDACLreaders(document) : null;
-
-			return DACL.isDACLmember(session, dacl, roles, name);
+			return dacltype.isMember(session, document, name);
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
@@ -714,11 +995,11 @@ public enum DACL {
 	 * @param document
 	 *            Document to search for DACL
 	 * @param dacltype
-	 *            Type of DACL to check
+	 *            DACL.TYPE to check
 	 * 
 	 * @return Flag indicating if the current user is a member of the specified DACL for the document.
 	 */
-	public static boolean isDACLmember(final Session session, final Document document, final DACLtype dacltype) {
+	public static boolean isDACLmember(final Session session, final Document document, final TYPE dacltype) {
 		return DACL.isDACLmember(session, document, Names.createName(session, ""), dacltype);
 	}
 
@@ -730,10 +1011,10 @@ public enum DACL {
 	 * @param role
 	 *            Role to be added to the document.
 	 * @param dacltype
-	 *            Specifies which DACL item (DACL_AUTHORS vs DACL_READERS) should be updated.
+	 *            DACL.TYPE that should be updated.
 	 * @return Flag indicating if the Role was added to the item.
 	 */
-	public static boolean addRole(final Document document, final String role, final DACLtype dacltype) {
+	public static boolean addRole(final Document document, final String role, final TYPE dacltype) {
 		try {
 			if (null == document) {
 				throw new IllegalArgumentException("Document is null");
@@ -750,8 +1031,8 @@ public enum DACL {
 				throw new IllegalArgumentException("Role is null or blank");
 			}
 
-			return (DACLtype.DACL_AUTHORS.equals(dacltype)) ? DACL.addDACLauthor(document, newrole) : (DACLtype.DACL_READERS
-					.equals(dacltype)) ? DACL.addDACLreader(document, newrole) : false;
+			return (TYPE.AUTHORS.equals(dacltype)) ? DACL.addDACLauthor(document, newrole) : (TYPE.READERS.equals(dacltype)) ? DACL
+					.addDACLreader(document, newrole) : false;
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
@@ -770,10 +1051,10 @@ public enum DACL {
 	 * @param role
 	 *            Role to be removed from the document.
 	 * @param dacltype
-	 *            Specifies which DACL item (DACL_AUTHORS vs DACL_READERS) should be updated.
+	 *            DACL.TYPE that should be updated.
 	 * @return Flag indicating if the Role was removed from the item.
 	 */
-	public static boolean removeRole(final Document document, final String role, final DACLtype dacltype) {
+	public static boolean removeRole(final Document document, final String role, final TYPE dacltype) {
 		try {
 			if (null == document) {
 				throw new IllegalArgumentException("Document is null");
@@ -796,8 +1077,8 @@ public enum DACL {
 				throw new IllegalArgumentException(DACL.DEFAULT_DACL_READERS + " may not be removed");
 			}
 
-			return (DACLtype.DACL_AUTHORS.equals(dacltype)) ? DACL.removeDACLauthor(document, newrole) : (DACLtype.DACL_READERS
-					.equals(dacltype)) ? DACL.removeDACLreader(document, newrole) : false;
+			return (TYPE.AUTHORS.equals(dacltype)) ? DACL.removeDACLauthor(document, newrole) : (TYPE.READERS.equals(dacltype)) ? DACL
+					.removeDACLreader(document, newrole) : false;
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
@@ -852,6 +1133,7 @@ public enum DACL {
 							}
 						}
 					}
+
 					if (remove.size() > 0) {
 						result.removeAll(remove);
 					}
@@ -881,10 +1163,10 @@ public enum DACL {
 	 * @param newrole
 	 *            Role to be added from the document.
 	 * @param dacltype
-	 *            Specifies which DACL item (DACL_AUTHORS vs DACL_READERS) should be updated.
+	 *            DACL.TYPE that should be updated.
 	 * @return Flag indicating if the Role was replaced on the item.
 	 */
-	public static boolean replaceRole(final Document document, final String oldrole, final String newrole, final DACLtype dacltype) {
+	public static boolean replaceRole(final Document document, final String oldrole, final String newrole, final TYPE dacltype) {
 		try {
 			if (null == document) {
 				throw new IllegalArgumentException("Document is null");
