@@ -74,6 +74,10 @@ public enum Dates {
 
 	private static final String REGEX_SIMPLETIME = Dates.REGEX_9_4 + Dates.REGEX_ampm;
 
+	/**
+	 * Provides packaged wrapper methods for working with Time Formats using SimpleDateFormat objects.
+	 * 
+	 */
 	public static enum TimeFormatter {
 		DATEONLY(Dates.TIMESTAMP_DATEONLY, Dates.REGEX_DATEONLY),
 
@@ -87,48 +91,115 @@ public enum Dates {
 
 		SIMPLETIME(Dates.TIMESTAMP_SIMPLETIME, Dates.REGEX_SIMPLETIME);
 
-		private final String format;
-		private final Pattern pattern;
-		private SimpleDateFormat sdf;
+		private final String _format;
+		private final String _regex;
+		private Pattern _pattern;
+		private SimpleDateFormat _sdf;
 
+		/**
+		 * Instance Constructor
+		 * 
+		 * @param format
+		 *            Format for the instance
+		 * @param regex
+		 *            String used to generate the pattern
+		 */
 		private TimeFormatter(final String format, final String regex) {
-			this.format = format;
-			this.pattern = Pattern.compile(Dates.REGEX_BEGIN_NOCASE + regex + Dates.REGEX_END);
+			this._format = format;
+			this._regex = Dates.REGEX_BEGIN_NOCASE + regex + Dates.REGEX_END;
+			this._pattern = Pattern.compile(Dates.REGEX_BEGIN_NOCASE + regex + Dates.REGEX_END);
 		}
 
-		public String extendedName() {
-			return this.getDeclaringClass() + ".TimeStamp." + this.name();
+		@Override
+		public String toString() {
+			return TimeFormatter.class.getName() + " " + this.name() + "{\"" + this.getFormat() + "\", " + this.getPattern() + "}";
 		}
 
+		/**
+		 * Gets the format
+		 * 
+		 * @return the format
+		 */
 		public String getFormat() {
-			return this.format;
+			return this._format;
 		}
 
+		/**
+		 * Gets the regex
+		 * 
+		 * @return the regex
+		 */
+		public String getRegex() {
+			return this._regex;
+		}
+
+		/**
+		 * Gets the Pattern object
+		 * 
+		 * @return the Pattern
+		 */
 		public Pattern getPattern() {
-			return this.pattern;
+			if (null == this._pattern) {
+				this._pattern = Pattern.compile(this.getRegex());
+			}
+			return this._pattern;
 		}
 
+		/**
+		 * Gets the SimpleDateFormat object
+		 * 
+		 * @return the SimpleDateFormat
+		 */
 		public SimpleDateFormat getSimpleDateFormat() {
-			if (null == this.sdf) {
-				this.sdf = Dates.getSimpleDateFormat(this.getFormat());
-				this.sdf.setLenient(true);
+			if (null == this._sdf) {
+				this._sdf = Dates.getSimpleDateFormat(this.getFormat());
+				this._sdf.setLenient(true);
 			}
 
-			return this.sdf;
+			return this._sdf;
 		}
 
+		/**
+		 * Gets the timestamp for the current moment.
+		 * 
+		 * @return Timestamp for the current moment.
+		 */
 		public String getTimestamp() {
 			return this.getTimestamp(null);
 		}
 
+		/**
+		 * Gets the timestamp for the specified date.
+		 * 
+		 * @param date
+		 *            moment for which to get the Timestamp. If null the current moment will be used.
+		 * 
+		 * @return Timestamp for the specified date.
+		 */
 		public String getTimestamp(final Date date) {
 			return this.getSimpleDateFormat().format((null == date) ? Dates.getDate() : date);
 		}
 
+		/**
+		 * Gets the timestamp for the specified date.
+		 * 
+		 * @param object
+		 *            Object from which a date can be determined.
+		 * 
+		 * @return Timestamp for the specified date.
+		 */
 		public String getTimestamp(final Object object) {
 			return this.getTimestamp(Dates.getDate(object));
 		}
 
+		/**
+		 * Determines if a given source string matches the Pattern.
+		 * 
+		 * @param source
+		 *            String for which to test for match against Pattern.
+		 * 
+		 * @return Flag indicating if the source string matches the Pattern.
+		 */
 		public boolean matches(final String source) {
 			try {
 				final Matcher m = this.getPattern().matcher(source);
@@ -141,6 +212,15 @@ public enum Dates {
 		}
 	};
 
+	/*
+	 * **************************************************************************
+	 * **************************************************************************
+	 * 
+	 * PUBLIC utiltiy methods
+	 * 
+	 * **************************************************************************
+	 * **************************************************************************
+	 */
 	/**
 	 * Generates a timecode.
 	 * 
@@ -281,11 +361,14 @@ public enum Dates {
 	 * Spawns Calendar objects from the arguments, and returns true if the year, month, and day for the objects are equal.
 	 * 
 	 * @param object0
-	 *            First object from which a Calendar object can be constructred.
+	 *            First object from which a Calendar object can be constructed.
+	 * 
 	 * @param object1
-	 *            Second object from which a Calendar object can be constructred.
+	 *            Second object from which a Calendar object can be constructed.
+	 * 
 	 * 
 	 * @return Flag indicating of the two Dates represent the same day.
+	 * 
 	 */
 	public static boolean isSameDay(final Object object0, final Object object1) {
 		try {
@@ -310,8 +393,31 @@ public enum Dates {
 		return false;
 	}
 
-	// public static boolean isInRange(final Object source, final Object begin,
-	// final Object end, final boolean inclusive) {}
+	/**
+	 * Determines if a date is within a specified range.
+	 * 
+	 * @param source
+	 *            Date to check.
+	 * 
+	 * @param begin
+	 *            Begin date range.
+	 * 
+	 * @param end
+	 *            End date range. (must be after begin)
+	 * 
+	 * @param inclusive
+	 *            Flag indicating to include begin and end as valid dates for checking.
+	 * 
+	 * @return Flag indicating if source is (after begin) AND (before end); OR (if inclusive is true) equal to begin or equal to end.
+	 */
+	public static boolean isInRange(final Object source, final Object begin, final Object end, final boolean inclusive) {
+		final Calendar calSource = Dates.getCalendar(source);
+		final Calendar calBegin = Dates.getCalendar(begin);
+		final Calendar calEnd = Dates.getCalendar(end);
+
+		return (Dates.isAfter(calSource, calBegin) && Dates.isBefore(calSource, calEnd))
+				|| (inclusive && (calSource.equals(calBegin) || calSource.equals(calEnd)));
+	}
 
 	/**
 	 * Gets the days between two Dates.
@@ -320,15 +426,17 @@ public enum Dates {
 	 * argument is after the second argument.
 	 * 
 	 * @param object0
-	 *            First object from which a Calendar object can be constructred.
+	 *            First object from which a Calendar object can be constructed.
+	 * 
 	 * @param object1
-	 *            Second object from which a Calendar object can be constructred.
-	 * @return Days between the two objects.
+	 *            Second object from which a Calendar object can be constructed.
+	 * 
+	 * @return Days between the two objects. Maximum days is 2,147,483,647, a range of nearly 5.9 million years.
+	 * 
 	 */
 	public static int getDaysBetween(final Object object0, final Object object1) {
 		int result = 0;
-		// int maximum days to 2,147,483,647
-		// a range of nearly 5.9 million years.
+		// Maximum days is 2,147,483,647, a range of nearly 5.9 million years.
 
 		try {
 			if (null == object0) {
@@ -370,17 +478,20 @@ public enum Dates {
 	 * argument is after the second argument.
 	 * 
 	 * @param object0
-	 *            First object from which a Calendar object can be constructred.
+	 *            First object from which a Calendar object can be constructed.
+	 * 
 	 * @param object1
-	 *            Second object from which a Calendar object can be constructred.
+	 *            Second object from which a Calendar object can be constructed.
+	 * 
 	 * @param holidays
 	 *            Holiday days (as Calendary.DAY_OF_YEAR) to exclude
-	 * @return Business Days between the two objects.
+	 * 
+	 * @return Business Days between the two objects. Maximum days is 2,147,483,647, a range of nearly 5.9 million years.
+	 * 
 	 */
 	public static int getBusinessDaysBetween(final Object object0, final Object object1, final List<Integer> holidays) {
 		int result = 0;
-		// int maximum days to 2,147,483,647
-		// a range of nearly 5.9 million years.
+		// Maximum days is 2,147,483,647, a range of nearly 5.9 million years.
 
 		try {
 			if (null == object0) {
@@ -428,6 +539,22 @@ public enum Dates {
 		return result;
 	}
 
+	/**
+	 * Gets the hours between two Dates.
+	 * 
+	 * Spawns Calendar objects from the arguments, and returns the number of days between them. Returns a negative value if the first
+	 * argument is after the second argument.
+	 * 
+	 * @param object0
+	 *            First object from which a Calendar object can be constructed.
+	 * 
+	 * @param object1
+	 *            Second object from which a Calendar object can be constructed.
+	 * 
+	 * @return whole number of hours between two values. Assumes object0 < object1, returns negative value otherwise. Maximum hours
+	 *         converted from 9,223,372,036,854,775,807 milliseconds, a range of just over 293 million years
+	 * 
+	 */
 	public static long getHoursBetween(final Object object0, final Object object1) {
 		// whole number of hours between two values. Assumes object0 < object1,
 		// returns negative otherwise
@@ -453,9 +580,29 @@ public enum Dates {
 		return 0;
 	}
 
+	/**
+	 * Gets the minutes between two Dates.
+	 * 
+	 * Spawns Calendar objects from the arguments, and returns the number of days between them. Returns a negative value if the first
+	 * argument is after the second argument.
+	 * 
+	 * @param object0
+	 *            First object from which a Calendar object can be constructed.
+	 * 
+	 * @param object1
+	 *            Second object from which a Calendar object can be constructed.
+	 * 
+	 * @return whole number of minutes between two values. Assumes object0 < object1, returns negative value otherwise. Maximum minutes
+	 *         converted from 9,223,372,036,854,775,807 milliseconds, a range of just over 293 million years
+	 * 
+	 */
 	public static long getMinutesBetween(final Object object0, final Object object1) {
-		// whole number of minutes between two values. Assumes object0 <
-		// object1, returns negative otherwise
+		// whole number of minutes between two values. Assumes object0 < object1,
+		// returns negative otherwise
+		// long maximum minutes converted from 9,223,372,036,854,775,807
+		// milliseconds,
+		// a range of just over 293 million years
+
 		try {
 			if (null == object0) {
 				throw new IllegalArgumentException("object0 is null");
@@ -474,9 +621,29 @@ public enum Dates {
 		return 0;
 	}
 
+	/**
+	 * Gets the seconds between two Dates.
+	 * 
+	 * Spawns Calendar objects from the arguments, and returns the number of days between them. Returns a negative value if the first
+	 * argument is after the second argument.
+	 * 
+	 * @param object0
+	 *            First object from which a Calendar object can be constructed.
+	 * 
+	 * @param object1
+	 *            Second object from which a Calendar object can be constructed.
+	 * 
+	 * @return whole number of seconds between two values. Assumes object0 < object1, returns negative value otherwise. Maximum seconds
+	 *         converted from 9,223,372,036,854,775,807 milliseconds, a range of just over 293 million years
+	 * 
+	 */
 	public static long getSecondsBetween(final Object object0, final Object object1) {
-		// whole number of seconds between two values. Assumes object0 <
-		// object1, returns negative otherwise
+		// whole number of seconds between two values. Assumes object0 < object1,
+		// returns negative otherwise
+		// long maximum seconds converted from 9,223,372,036,854,775,807
+		// milliseconds,
+		// a range of just over 293 million years
+
 		try {
 			if (null == object0) {
 				throw new IllegalArgumentException("object0 is null");
@@ -495,9 +662,26 @@ public enum Dates {
 		return 0;
 	}
 
+	/**
+	 * Gets the milliseconds between two Dates.
+	 * 
+	 * Spawns Calendar objects from the arguments, and returns the number of days between them. Returns a negative value if the first
+	 * argument is after the second argument.
+	 * 
+	 * @param object0
+	 *            First object from which a Calendar object can be constructed.
+	 * 
+	 * @param object1
+	 *            Second object from which a Calendar object can be constructed.
+	 * 
+	 * @return whole number of milliseconds between two values. Assumes object0 < object1, returns negative value otherwise. Maximum
+	 *         milliseconds is 9,223,372,036,854,775,807, a range of just over 293 million years
+	 * 
+	 */
 	public static long getMillisecondsBetween(final Object object0, final Object object1) {
-		// whole number of milliseconds between two values. Assumes object0 <
-		// object1, returns negative otherwise
+		// whole number of milliseconds between two values. Assumes object0 < object1,
+		// returns negative otherwise
+		// long maximum milliseconds is converted from 9,223,372,036,854,775,807, a range of just over 293 million years
 		try {
 			if (null == object0) {
 				throw new IllegalArgumentException("object0 is null");
@@ -516,6 +700,14 @@ public enum Dates {
 		return 0;
 	}
 
+	/**
+	 * Gets the number of hours between the Epoch January 1, 1970, 00:00:00 GMT and the Date value for the passed in object.
+	 * 
+	 * @param object
+	 *            Object from which a Calendar object can be constructed.
+	 * 
+	 * @return Hours between the Epoch and the date value of the object.
+	 */
 	public static long getHours(final Object object) {
 		// whole number of hours from the Epoch January 1, 1970, 00:00:00 GMT
 		try {
@@ -527,8 +719,16 @@ public enum Dates {
 		return 0;
 	}
 
+	/**
+	 * Gets the number of minutes between the Epoch January 1, 1970, 00:00:00 GMT and the Date value for the passed in object.
+	 * 
+	 * @param object
+	 *            Object from which a Calendar object can be constructed.
+	 * 
+	 * @return Minutes between the Epoch and the date value of the object.
+	 */
 	public static long getMinutes(final Object object) {
-		// whole number of seconds from the Epoch January 1, 1970, 00:00:00 GMT
+		// whole number of minutes from the Epoch January 1, 1970, 00:00:00 GMT
 		try {
 			return TimeUnit.MINUTES.convert(Dates.getTime(object), TimeUnit.MILLISECONDS);
 		} catch (final Exception e) {
@@ -538,6 +738,14 @@ public enum Dates {
 		return 0;
 	}
 
+	/**
+	 * Gets the number of seconds between the Epoch January 1, 1970, 00:00:00 GMT and the Date value for the passed in object.
+	 * 
+	 * @param object
+	 *            Object from which a Calendar object can be constructed.
+	 * 
+	 * @return Seconds between the Epoch and the date value of the object.
+	 */
 	public static long getSeconds(final Object object) {
 		// whole number of seconds from the Epoch January 1, 1970, 00:00:00 GMT
 		try {
@@ -549,6 +757,14 @@ public enum Dates {
 		return 0;
 	}
 
+	/**
+	 * Gets the number of milliseconds between the Epoch January 1, 1970, 00:00:00 GMT and the Date value for the passed in object.
+	 * 
+	 * @param object
+	 *            Object from which a Calendar object can be constructed.
+	 * 
+	 * @return Milliseconds between the Epoch and the date value of the object.
+	 */
 	public static long getTime(final Object object) {
 		// whole number of milliseconds from Epoch January 1, 1970, 00:00:00 GMT
 		try {
@@ -783,21 +999,33 @@ public enum Dates {
 		return new Date();
 	}
 
+	/**
+	 * Gets a SimpleDateFormat object for the specified format.
+	 * 
+	 * @param format
+	 *            Format for which to generate a new SimpleDateFormat object.
+	 * 
+	 * @return SimpleDateFormat object for the specified format
+	 */
 	public static SimpleDateFormat getSimpleDateFormat(final String format) {
 		final SimpleDateFormat result = (Strings.isBlankString(format)) ? new SimpleDateFormat() : new SimpleDateFormat(format);
 		result.setLenient(true);
 		return result;
 	}
 
-	public static SimpleDateFormat getSimpleDateFormat() {
-		return Dates.getSimpleDateFormat(null);
-	}
-
+	/**
+	 * Attempts to spawn a new Date by parsing a string.
+	 * 
+	 * @param string
+	 *            Value from which to attempt to construct a new Date object.
+	 * 
+	 * @return new Date object constructed from the string. Null on error.
+	 */
 	public static Date parse(final String string) {
 		if (!Strings.isBlankString(string)) {
 			try {
 				final Dates.TimeFormatter tf = Dates.getTimeFormatter(string);
-				final SimpleDateFormat sdf = (null == tf) ? Dates.getSimpleDateFormat() : tf.getSimpleDateFormat();
+				final SimpleDateFormat sdf = (null == tf) ? new SimpleDateFormat() : tf.getSimpleDateFormat();
 				return sdf.parse(string);
 
 			} catch (final Exception e) {
@@ -808,6 +1036,17 @@ public enum Dates {
 		return null;
 	}
 
+	/**
+	 * Attempts to spawn a new Date by parsing a string.
+	 * 
+	 * @param dateText
+	 *            Value from which to attempt to construct a new Date object.
+	 * 
+	 * @param format
+	 *            Format used to construct the SimpleDateFormatter object.
+	 * 
+	 * @return new Date object constructed from the string. Null on error.
+	 */
 	public static Date parse(final String dateText, final String format) {
 		if (null != dateText) {
 			if (Strings.isBlankString(format)) {
