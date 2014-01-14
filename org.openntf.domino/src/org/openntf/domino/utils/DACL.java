@@ -22,8 +22,6 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openntf.domino.ACL;
-import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
 import org.openntf.domino.Name;
@@ -280,6 +278,90 @@ public enum DACL {
 		public boolean isMember(final Session session, final Document document) {
 			return this.isMember(session, document, false);
 		}
+
+		/**
+		 * Sets the DACL.TYPE item on the source document. Does NOT save the document.
+		 * 
+		 * Conditionally overrides the item name.
+		 * 
+		 * Conditionally adds the Default role {@link DACL.TYPE#getRole()}
+		 * 
+		 * @param document
+		 *            Document upon which to set the DACL_AUTHORS item.
+		 * 
+		 * @param members
+		 *            Person names or roles to be set as the DACL_AUTHORS value.
+		 * 
+		 * @param itemname
+		 *            Name of DACL item to be added. Overrides {@link DACL.TYPE#getItemname()}. If null or blank then
+		 *            {@link DACL.TYPE#getItemname()} will be used.
+		 * 
+		 * @param doNotAddRole
+		 *            Flag indicating if the {@link DACL.TYPE#getRole()} should be explicitly added. If True, the role will not be added
+		 *            NOTE: if the Role is a member of members it will NOT be excluded, regardless of doNotAddRole
+		 * 
+		 * @return Flag indicating the success / failure of the operation.
+		 */
+		public boolean setMembers(final Document document, final TreeSet<String> members, final String itemname, final boolean doNotAddRole) {
+			return DACL
+					.setMembers(document, members, (Strings.isBlankString(itemname)) ? this.getItemname() : itemname, this, doNotAddRole);
+		}
+
+		/**
+		 * Sets the DACL.TYPE item on the source document. Does NOT save the document.
+		 * 
+		 * Conditionally adds the Default role {@link DACL.TYPE#getRole()}
+		 * 
+		 * @param document
+		 *            Document upon which to set the DACL_AUTHORS item.
+		 * 
+		 * @param members
+		 *            Person names or roles to be set as the DACL_AUTHORS value.
+		 * 
+		 * @param doNotAddRole
+		 *            Flag indicating if the {@link DACL.TYPE#getRole()} should be explicitly added. If True, the role will not be added
+		 *            NOTE: if the Role is a member of members it will NOT be excluded, regardless of doNotAddRole
+		 * 
+		 * @return Flag indicating the success / failure of the operation.
+		 */
+		public boolean setMembers(final Document document, final TreeSet<String> members, final boolean doNotAddRole) {
+			return this.setMembers(document, members, null, doNotAddRole);
+		}
+
+		/**
+		 * Sets the DACL.TYPE item on the source document. Does NOT save the document.
+		 * 
+		 * Adds the Default role {@link DACL.TYPE#getRole()}
+		 * 
+		 * @param document
+		 *            Document upon which to set the DACL_AUTHORS item.
+		 * 
+		 * @param members
+		 *            Person names or roles to be set as the DACL_AUTHORS value.
+		 * 
+		 * @return Flag indicating the success / failure of the operation.
+		 */
+		public boolean setMembers(final Document document, final TreeSet<String> members) {
+			return this.setMembers(document, members, null, false);
+		}
+
+		/**
+		 * Sets the DACL.TYPE item on the source document. Does NOT save the document.
+		 * 
+		 * Adds the Default role {@link DACL.TYPE#getRole()}
+		 * 
+		 * @param document
+		 *            Document upon which to set the DACL_AUTHORS item.
+		 * 
+		 * @param values
+		 *            Person names or roles (convertable to a TreeSet) to be set as the DACL_AUTHORS value.
+		 * 
+		 * @return Flag indicating the success / failure of the operation.
+		 */
+		public boolean setMembers(final Document document, final Object values) {
+			return this.setMembers(document, CollectionUtils.getTreeSetStrings(values));
+		}
+
 	};
 
 	/*
@@ -304,7 +386,7 @@ public enum DACL {
 	 * @return Flag indicating if the name is a member of the DACL_AUTHORS for the document.
 	 */
 	public static boolean isDACLauthor(final Session session, final Document document, final Name name) {
-		return TYPE.AUTHORS.isMember(session, document, name);
+		return DACL.TYPE.AUTHORS.isMember(session, document, name);
 	}
 
 	/**
@@ -318,7 +400,7 @@ public enum DACL {
 	 * @return Flag indicating if the current user is a member of the DACL_AUTHORS for the document.
 	 */
 	public static boolean isDACLauthor(final Session session, final Document document) {
-		return TYPE.AUTHORS.isMember(session, document);
+		return DACL.TYPE.AUTHORS.isMember(session, document);
 	}
 
 	/**
@@ -330,7 +412,7 @@ public enum DACL {
 	 * @return DACL_AUTHORS values. null if not present or empty.
 	 */
 	public static TreeSet<String> getDACLauthors(final Document document) {
-		return TYPE.AUTHORS.getMembers(document);
+		return DACL.TYPE.AUTHORS.getMembers(document);
 	}
 
 	/**
@@ -546,7 +628,7 @@ public enum DACL {
 	 * @return Flag indicating if the name is a member of the DACL_READERS for the document.
 	 */
 	public static boolean isDACLreader(final Session session, final Document document, final Name name) {
-		return TYPE.READERS.isMember(session, document, name);
+		return DACL.TYPE.READERS.isMember(session, document, name);
 	}
 
 	/**
@@ -560,7 +642,7 @@ public enum DACL {
 	 * @return Flag indicating if the current user is a member of the DACL_READERS for the document.
 	 */
 	public static boolean isDACLreader(final Session session, final Document document) {
-		return TYPE.READERS.isMember(session, document);
+		return DACL.TYPE.READERS.isMember(session, document);
 	}
 
 	/**
@@ -572,7 +654,7 @@ public enum DACL {
 	 * @return DACL_READERS values. null if not present or empty.
 	 */
 	public static TreeSet<String> getDACLreaders(final Document document) {
-		return TYPE.READERS.getMembers(document);
+		return DACL.TYPE.READERS.getMembers(document);
 	}
 
 	/**
@@ -800,7 +882,7 @@ public enum DACL {
 	 * 
 	 * @return DACL Member values. Null if not present or empty.
 	 */
-	public static TreeSet<String> getMembers(final Document document, final TYPE daclType, final boolean checkAllItems) {
+	public static TreeSet<String> getMembers(final Document document, final DACL.TYPE daclType, final boolean checkAllItems) {
 
 		try {
 			if (null == document) {
@@ -811,7 +893,7 @@ public enum DACL {
 
 			if (null == daclType) {
 				final TreeSet<String> result = new TreeSet<String>();
-				for (TYPE type : TYPE.values()) {
+				for (DACL.TYPE type : DACL.TYPE.values()) {
 					members = DACL.getMembers(document, type, checkAllItems);
 					if ((null != members) && (members.size() > 0)) {
 						result.addAll(members);
@@ -855,7 +937,8 @@ public enum DACL {
 					// get the members from the explicitly named item
 					Item item = document.getFirstItem(daclType.getItemname());
 					// verify the item is of the correct type
-					if ((item.isAuthors() && TYPE.AUTHORS.equals(daclType)) || (item.isReaders() && TYPE.READERS.equals(daclType))) {
+					if ((item.isAuthors() && DACL.TYPE.AUTHORS.equals(daclType))
+							|| (item.isReaders() && DACL.TYPE.READERS.equals(daclType))) {
 						final TreeSet<String> result = CollectionUtils.getTreeSetStrings(item.getValues(String.class));
 						return ((null == result) || (result.size() < 1)) ? null : result;
 					}
@@ -869,380 +952,460 @@ public enum DACL {
 		return null;
 	}
 
+	//	/**
+	//	 * Determines if the passed in name is a member of the set.
+	//	 * 
+	//	 * Returns true if the name (in any name format), or any member of roles is a member of the dacl set.
+	//	 * 
+	//	 * @param session
+	//	 *            Current Session
+	//	 * 
+	//	 * @param dacl
+	//	 *            DACL entries to check
+	//	 * 
+	//	 * @param roles
+	//	 *            ACL Roles belonging to the name to check. (No verification is performed)
+	//	 * 
+	//	 * @param name
+	//	 *            Name to check
+	//	 * 
+	//	 * @return Flag indicating if the name (in any form) is a member of the dacl set, or if any intersection exists between dacl and roles.
+	//	 */
+	//	public static boolean isDACLmember(final Session session, final TreeSet<String> dacl, final TreeSet<String> roles, final Name name) {
+	//		try {
+	//			if (null == session) {
+	//				throw new IllegalArgumentException("Session is null");
+	//			}
+	//			if (null == name) {
+	//				throw new IllegalArgumentException("Name is null");
+	//			}
+	//
+	//			if ((null != dacl) && (dacl.size() > 0)) {
+	//				// do an initial check on the name
+	//				if (dacl.contains(name.getCanonical()) || dacl.contains(name.getAbbreviated())) {
+	//					return true;
+	//				}
+	//
+	//				// do an initial check for matching roles
+	//				if (null != roles) {
+	//					for (final String role : roles) {
+	//						if (dacl.contains(role)) {
+	//							return true;
+	//						}
+	//					}
+	//				}
+	//
+	//				// do a more thorough check for roles
+	//				final Pattern pattern = DACL.getPatternForRoles();
+	//				if (null != roles) {
+	//					for (final String entry : dacl) {
+	//						final Matcher matcher = pattern.matcher(entry);
+	//						if (matcher.matches()) {
+	//							// entry represents a role
+	//							if (roles.contains(entry)) {
+	//								return true;
+	//							}
+	//						}
+	//					}
+	//
+	//					// do a case-insensitive check for roles
+	//					for (final String entry : dacl) {
+	//						final Matcher matcher = pattern.matcher(entry);
+	//						if (matcher.matches()) {
+	//							// entry represents a role
+	//							for (final String role : roles) {
+	//								if (role.equalsIgnoreCase(entry)) {
+	//									return true;
+	//								}
+	//							}
+	//						}
+	//					}
+	//				}
+	//
+	//				return Names.isNamesListMember(session, dacl, name);
+	//			}
+	//
+	//		} catch (final Exception e) {
+	//			DominoUtils.handleException(e);
+	//		}
+	//
+	//		return false;
+	//	}
+	//
+	//	/**
+	//	 * Determines if the passed in name is a member of the specified DACL for the document.
+	//	 * 
+	//	 * @param session
+	//	 *            Current Session
+	//	 * @param document
+	//	 *            Document to search for DACL
+	//	 * @param name
+	//	 *            Name to check
+	//	 * @param dacltype
+	//	 *            DACL.TYPE to check
+	//	 * 
+	//	 * @return Flag indicating if the name is a member of the specified DACL for the document.
+	//	 */
+	//	public static boolean isDACLmember(final Session session, final Document document, final Name name, final DACL.TYPE dacltype) {
+	//		try {
+	//			if (null == session) {
+	//				throw new IllegalArgumentException("Session is null");
+	//			}
+	//			if (null == name) {
+	//				throw new IllegalArgumentException("Name is null");
+	//			}
+	//			if (null == document) {
+	//				throw new IllegalArgumentException("Document is null");
+	//			}
+	//			if (null == dacltype) {
+	//				throw new IllegalArgumentException("DACLtype is null");
+	//			}
+	//
+	//			return dacltype.isMember(session, document, name);
+	//
+	//		} catch (final Exception e) {
+	//			DominoUtils.handleException(e);
+	//		}
+	//
+	//		return false;
+	//	}
+	//
+	//	/**
+	//	 * Determines if the current user is a member of the specified DACL for the document.
+	//	 * 
+	//	 * @param session
+	//	 *            Current Session
+	//	 * @param document
+	//	 *            Document to search for DACL
+	//	 * @param dacltype
+	//	 *            DACL.TYPE to check
+	//	 * 
+	//	 * @return Flag indicating if the current user is a member of the specified DACL for the document.
+	//	 */
+	//	public static boolean isDACLmember(final Session session, final Document document, final DACL.TYPE dacltype) {
+	//		return DACL.isDACLmember(session, document, Names.createName(session, ""), dacltype);
+	//	}
+	//
 	/**
-	 * Determines if the passed in name is a member of the set.
+	 * Sets the DACL.TYPE item on the source document. Does NOT save the document.
 	 * 
-	 * Returns true if the name (in any name format), or any member of roles is a member of the dacl set.
+	 * Conditionally overrides the item name.
 	 * 
-	 * @param session
-	 *            Current Session
-	 * 
-	 * @param dacl
-	 *            DACL entries to check
-	 * 
-	 * @param roles
-	 *            ACL Roles belonging to the name to check. (No verification is performed)
-	 * 
-	 * @param name
-	 *            Name to check
-	 * 
-	 * @return Flag indicating if the name (in any form) is a member of the dacl set, or if any intersection exists between dacl and roles.
-	 */
-	public static boolean isDACLmember(final Session session, final TreeSet<String> dacl, final TreeSet<String> roles, final Name name) {
-		try {
-			if (null == session) {
-				throw new IllegalArgumentException("Session is null");
-			}
-			if (null == name) {
-				throw new IllegalArgumentException("Name is null");
-			}
-
-			if ((null != dacl) && (dacl.size() > 0)) {
-				// do an initial check on the name
-				if (dacl.contains(name.getCanonical()) || dacl.contains(name.getAbbreviated())) {
-					return true;
-				}
-
-				// do an initial check for matching roles
-				if (null != roles) {
-					for (final String role : roles) {
-						if (dacl.contains(role)) {
-							return true;
-						}
-					}
-				}
-
-				// do a more thorough check for roles
-				final Pattern pattern = DACL.getPatternForRoles();
-				if (null != roles) {
-					for (final String entry : dacl) {
-						final Matcher matcher = pattern.matcher(entry);
-						if (matcher.matches()) {
-							// entry represents a role
-							if (roles.contains(entry)) {
-								return true;
-							}
-						}
-					}
-
-					// do a case-insensitive check for roles
-					for (final String entry : dacl) {
-						final Matcher matcher = pattern.matcher(entry);
-						if (matcher.matches()) {
-							// entry represents a role
-							for (final String role : roles) {
-								if (role.equalsIgnoreCase(entry)) {
-									return true;
-								}
-							}
-						}
-					}
-				}
-
-				return Names.isNamesListMember(session, dacl, name);
-			}
-
-		} catch (final Exception e) {
-			DominoUtils.handleException(e);
-		}
-
-		return false;
-	}
-
-	/**
-	 * Determines if the passed in name is a member of the specified DACL for the document.
-	 * 
-	 * @param session
-	 *            Current Session
-	 * @param document
-	 *            Document to search for DACL
-	 * @param name
-	 *            Name to check
-	 * @param dacltype
-	 *            DACL.TYPE to check
-	 * 
-	 * @return Flag indicating if the name is a member of the specified DACL for the document.
-	 */
-	public static boolean isDACLmember(final Session session, final Document document, final Name name, final TYPE dacltype) {
-		try {
-			if (null == session) {
-				throw new IllegalArgumentException("Session is null");
-			}
-			if (null == name) {
-				throw new IllegalArgumentException("Name is null");
-			}
-			if (null == document) {
-				throw new IllegalArgumentException("Document is null");
-			}
-			if (null == dacltype) {
-				throw new IllegalArgumentException("DACLtype is null");
-			}
-
-			return dacltype.isMember(session, document, name);
-
-		} catch (final Exception e) {
-			DominoUtils.handleException(e);
-		}
-
-		return false;
-	}
-
-	/**
-	 * Determines if the current user is a member of the specified DACL for the document.
-	 * 
-	 * @param session
-	 *            Current Session
-	 * @param document
-	 *            Document to search for DACL
-	 * @param dacltype
-	 *            DACL.TYPE to check
-	 * 
-	 * @return Flag indicating if the current user is a member of the specified DACL for the document.
-	 */
-	public static boolean isDACLmember(final Session session, final Document document, final TYPE dacltype) {
-		return DACL.isDACLmember(session, document, Names.createName(session, ""), dacltype);
-	}
-
-	/**
-	 * Adds a Role to the appropriate DACL on a document if it does not already exist.
-	 * 
-	 * @param document
-	 *            Document to which the Role shall be added.
-	 * @param role
-	 *            Role to be added to the document.
-	 * @param dacltype
-	 *            DACL.TYPE that should be updated.
-	 * @return Flag indicating if the Role was added to the item.
-	 */
-	public static boolean addRole(final Document document, final String role, final TYPE dacltype) {
-		try {
-			if (null == document) {
-				throw new IllegalArgumentException("Document is null");
-			}
-			if (Strings.isBlankString(role)) {
-				throw new IllegalArgumentException("Role is null or blank");
-			}
-			if (null == dacltype) {
-				throw new IllegalArgumentException("DACLtype is null");
-			}
-
-			final String newrole = "[" + role.replace("[", "").replace("]", "").trim() + "]";
-			if ("[]".equals(newrole)) {
-				throw new IllegalArgumentException("Role is null or blank");
-			}
-
-			return (TYPE.AUTHORS.equals(dacltype)) ? DACL.addDACLauthor(document, newrole) : (TYPE.READERS.equals(dacltype)) ? DACL
-					.addDACLreader(document, newrole) : false;
-
-		} catch (final Exception e) {
-			DominoUtils.handleException(e);
-		}
-
-		return false;
-	}
-
-	/**
-	 * Removes a Role from the appropriate DACL on a document.
-	 * 
-	 * NOTE: This will NOT remove the DEFAULT_DACL_READERS or DEFAULT_DACL_AUTHORS roles.
+	 * Conditionally adds the Default role {@link DACL.TYPE#getRole()}
 	 * 
 	 * @param document
-	 *            Document from which the Role shall be removed.
-	 * @param role
-	 *            Role to be removed from the document.
-	 * @param dacltype
-	 *            DACL.TYPE that should be updated.
-	 * @return Flag indicating if the Role was removed from the item.
+	 *            Document upon which to set the DACL_AUTHORS item.
+	 * 
+	 * @param values
+	 *            Person names or roles to be set as the DACL_AUTHORS value. If null or empty AND doNotAddRole is true, then the item will
+	 *            be REMOVED from the document.
+	 * 
+	 * @param itemname
+	 *            Name of DACL item to be added.
+	 * 
+	 * @param daclType
+	 *            DACL.TYPE of item to be added.
+	 * 
+	 * @param doNotAddRole
+	 *            Flag indicating if the {@link DACL.TYPE#getRole()} should be explicitly added. If True, the role will not be added NOTE:
+	 *            if the Role is a member of values it will NOT be excluded, regardless of doNotAddRole
+	 * 
+	 * @return Flag indicating the success / failure of the operation.
 	 */
-	public static boolean removeRole(final Document document, final String role, final TYPE dacltype) {
+	public static boolean setMembers(final Document document, final TreeSet<String> values, final String itemname,
+			final DACL.TYPE daclType, final boolean doNotAddRole) {
+
 		try {
 			if (null == document) {
 				throw new IllegalArgumentException("Document is null");
 			}
-			if (Strings.isBlankString(role)) {
-				throw new IllegalArgumentException("Role is null or blank");
+			if (null == daclType) {
+				throw new IllegalArgumentException("DACL.TYPE is null");
 			}
-			if (null == dacltype) {
-				throw new IllegalArgumentException("DACLtype is null");
-			}
-
-			final String newrole = "[" + role.replace("[", "").replace("]", "").trim() + "]";
-			if ("[]".equals(newrole)) {
-				throw new IllegalArgumentException("Role is null or blank");
-			}
-			if (DACL.DEFAULT_DACL_AUTHORS.equalsIgnoreCase(newrole)) {
-				throw new IllegalArgumentException(DACL.DEFAULT_DACL_AUTHORS + " may not be removed");
-			}
-			if (DACL.DEFAULT_DACL_READERS.equalsIgnoreCase(newrole)) {
-				throw new IllegalArgumentException(DACL.DEFAULT_DACL_READERS + " may not be removed");
+			if (Strings.isBlankString(itemname)) {
+				throw new IllegalArgumentException("Item Name is blank or null");
 			}
 
-			return (TYPE.AUTHORS.equals(dacltype)) ? DACL.removeDACLauthor(document, newrole) : (TYPE.READERS.equals(dacltype)) ? DACL
-					.removeDACLreader(document, newrole) : false;
+			final TreeSet<String> dacl = new TreeSet<String>();
+			if (!doNotAddRole) {
+				dacl.add(daclType.getRole());
+			}
 
+			if (null != values) {
+				for (final String entry : values) {
+					if (!Strings.isBlankString(entry)) {
+						dacl.add(entry);
+					}
+				}
+			}
+
+			if (dacl.isEmpty()) {
+				if (document.hasItem(itemname)) {
+					document.removeItem(itemname);
+				}
+
+			} else {
+
+				final Item item = document.replaceItemValue(itemname, Strings.getVectorizedStrings(dacl));
+				switch (daclType) {
+				case AUTHORS: {
+					item.setAuthors(true);
+					break;
+				}
+				case READERS: {
+					item.setReaders(true);
+					break;
+				}
+				} // switch(this)
+
+				return true;
+			}
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
 		}
 
 		return false;
 	}
-
-	/**
-	 * Removes all ACL Roles from a set of strings.
-	 * 
-	 * Removes all bracketed (beginning with "[" and ending with "]") entries from an input set. Optionally comares all entries to all roles
-	 * from the passed in database and removes any matching entries.
-	 * 
-	 * 
-	 * @param source
-	 *            Set of strings to process
-	 * 
-	 * @param database
-	 *            Optional database from which to check ACL roles
-	 * 
-	 * @return source with all roles removed.
-	 */
-	public static TreeSet<String> removeRoles(final TreeSet<String> source, final Database database) {
-		ACL acl = null;
-		try {
-			if (null == source) {
-				throw new IllegalArgumentException("Source TreeSet is null");
-			}
-
-			final TreeSet<String> result = new TreeSet<String>();
-			final Pattern pattern = DACL.getPatternForRoles();
-
-			for (final String entry : source) {
-				final Matcher matcher = pattern.matcher(entry);
-				if (!matcher.matches()) {
-					// entry is not a role
-					result.add(entry);
-				}
-			}
-
-			if (null != database) {
-
-				acl = database.getACL();
-				final TreeSet<String> roles = CollectionUtils.getTreeSetStrings(acl.getRoles());
-				if (null != roles) {
-					final TreeSet<String> remove = new TreeSet<String>();
-					for (final String role : roles) {
-						for (final String string : result) {
-							if (role.equalsIgnoreCase(string)) {
-								remove.add(string);
-							}
-						}
-					}
-
-					if (remove.size() > 0) {
-						result.removeAll(remove);
-					}
-				}
-			}
-
-			return result;
-
-		} catch (final Exception e) {
-			DominoUtils.handleException(e);
-		} finally {
-			DominoUtils.incinerate(acl);
-		}
-
-		return null;
-	}
-
-	/**
-	 * Replaces a Role on the appropriate DACL on a document.
-	 * 
-	 * NOTE: This will NOT remove the DEFAULT_DACL_READERS or DEFAULT_DACL_AUTHORS roles.
-	 * 
-	 * @param document
-	 *            Document from which the Role shall be removed.
-	 * @param oldrole
-	 *            Role to be removed from the document.
-	 * @param newrole
-	 *            Role to be added from the document.
-	 * @param dacltype
-	 *            DACL.TYPE that should be updated.
-	 * @return Flag indicating if the Role was replaced on the item.
-	 */
-	public static boolean replaceRole(final Document document, final String oldrole, final String newrole, final TYPE dacltype) {
-		try {
-			if (null == document) {
-				throw new IllegalArgumentException("Document is null");
-			}
-			if (Strings.isBlankString(newrole)) {
-				throw new IllegalArgumentException("New Role is null or blank");
-			}
-			if (null == dacltype) {
-				throw new IllegalArgumentException("DACLtype is null");
-			}
-
-			if (!Strings.isBlankString(oldrole)) {
-				DACL.removeRole(document, oldrole, dacltype);
-			}
-
-			return DACL.addRole(document, newrole, dacltype);
-
-		} catch (final Exception e) {
-			DominoUtils.handleException(e);
-		}
-
-		return false;
-	}
-
-	/**
-	 * Determines if a specified role is contained within a set of roles.
-	 * 
-	 * Performs a case-insensitive comparison of all entries to check for match. Strips any leading "[" or trailing "]" characters prior to
-	 * comparison.
-	 * 
-	 * @param roles
-	 *            Roles to check for match
-	 * 
-	 * @param role
-	 *            Role to check for existence in Roles
-	 * 
-	 * @return Flag indicating if the specified Role is contained in the set of Roles.
-	 */
-	public static boolean containsRole(final TreeSet<String> roles, final String role) {
-		try {
-			if (null == roles) {
-				throw new IllegalArgumentException("Roles is null");
-			}
-			if (Strings.isBlankString(role)) {
-				throw new IllegalArgumentException("Role is null or blank");
-			}
-
-			if (roles.size() > 0) {
-				if (roles.contains(role)) {
-					return true;
-				}
-
-				final Pattern pattern = DACL.getPatternForRoles();
-				final TreeSet<String> checkroles = new TreeSet<String>();
-				for (final String string : roles) {
-					final Matcher matcher = pattern.matcher(string);
-					if (matcher.matches()) {
-						checkroles.add(string.substring(string.indexOf('[') + 1, string.indexOf(']')).toLowerCase());
-					} else {
-						checkroles.add(string.toLowerCase());
-					}
-				}
-
-				final Matcher matcher = pattern.matcher(role);
-				final String checkrole = (matcher.matches()) ? role.substring(role.indexOf('[') + 1, role.indexOf(']')).toLowerCase()
-						: role.toLowerCase();
-
-				return checkroles.contains(checkrole);
-
-			} // if (roles.size() > 0)
-
-		} catch (final Exception e) {
-			DominoUtils.handleException(e);
-		}
-
-		return false;
-	}
+	//	/**
+	//	 * Adds a Role to the appropriate DACL on a document if it does not already exist.
+	//	 * 
+	//	 * @param document
+	//	 *            Document to which the Role shall be added.
+	//	 * @param role
+	//	 *            Role to be added to the document.
+	//	 * @param dacltype
+	//	 *            DACL.TYPE that should be updated.
+	//	 * @return Flag indicating if the Role was added to the item.
+	//	 */
+	//	public static boolean addRole(final Document document, final String role, final DACL.TYPE dacltype) {
+	//		try {
+	//			if (null == document) {
+	//				throw new IllegalArgumentException("Document is null");
+	//			}
+	//			if (Strings.isBlankString(role)) {
+	//				throw new IllegalArgumentException("Role is null or blank");
+	//			}
+	//			if (null == dacltype) {
+	//				throw new IllegalArgumentException("DACLtype is null");
+	//			}
+	//
+	//			final String newrole = "[" + role.replace("[", "").replace("]", "").trim() + "]";
+	//			if ("[]".equals(newrole)) {
+	//				throw new IllegalArgumentException("Role is null or blank");
+	//			}
+	//
+	//			return (DACL.TYPE.AUTHORS.equals(dacltype)) ? DACL.addDACLauthor(document, newrole)
+	//					: (DACL.TYPE.READERS.equals(dacltype)) ? DACL.addDACLreader(document, newrole) : false;
+	//
+	//		} catch (final Exception e) {
+	//			DominoUtils.handleException(e);
+	//		}
+	//
+	//		return false;
+	//	}
+	//
+	//	/**
+	//	 * Removes a Role from the appropriate DACL on a document.
+	//	 * 
+	//	 * NOTE: This will NOT remove the DEFAULT_DACL_READERS or DEFAULT_DACL_AUTHORS roles.
+	//	 * 
+	//	 * @param document
+	//	 *            Document from which the Role shall be removed.
+	//	 * @param role
+	//	 *            Role to be removed from the document.
+	//	 * @param dacltype
+	//	 *            DACL.TYPE that should be updated.
+	//	 * @return Flag indicating if the Role was removed from the item.
+	//	 */
+	//	public static boolean removeRole(final Document document, final String role, final DACL.TYPE dacltype) {
+	//		try {
+	//			if (null == document) {
+	//				throw new IllegalArgumentException("Document is null");
+	//			}
+	//			if (Strings.isBlankString(role)) {
+	//				throw new IllegalArgumentException("Role is null or blank");
+	//			}
+	//			if (null == dacltype) {
+	//				throw new IllegalArgumentException("DACLtype is null");
+	//			}
+	//
+	//			final String newrole = "[" + role.replace("[", "").replace("]", "").trim() + "]";
+	//			if ("[]".equals(newrole)) {
+	//				throw new IllegalArgumentException("Role is null or blank");
+	//			}
+	//			if (DACL.DEFAULT_DACL_AUTHORS.equalsIgnoreCase(newrole)) {
+	//				throw new IllegalArgumentException(DACL.DEFAULT_DACL_AUTHORS + " may not be removed");
+	//			}
+	//			if (DACL.DEFAULT_DACL_READERS.equalsIgnoreCase(newrole)) {
+	//				throw new IllegalArgumentException(DACL.DEFAULT_DACL_READERS + " may not be removed");
+	//			}
+	//
+	//			return (TYPE.AUTHORS.equals(dacltype)) ? DACL.removeDACLauthor(document, newrole) : (TYPE.READERS.equals(dacltype)) ? DACL
+	//					.removeDACLreader(document, newrole) : false;
+	//
+	//		} catch (final Exception e) {
+	//			DominoUtils.handleException(e);
+	//		}
+	//
+	//		return false;
+	//	}
+	//
+	//	/**
+	//	 * Removes all ACL Roles from a set of strings.
+	//	 * 
+	//	 * Removes all bracketed (beginning with "[" and ending with "]") entries from an input set. Optionally comares all entries to all roles
+	//	 * from the passed in database and removes any matching entries.
+	//	 * 
+	//	 * 
+	//	 * @param source
+	//	 *            Set of strings to process
+	//	 * 
+	//	 * @param database
+	//	 *            Optional database from which to check ACL roles
+	//	 * 
+	//	 * @return source with all roles removed.
+	//	 */
+	//	public static TreeSet<String> removeRoles(final TreeSet<String> source, final Database database) {
+	//		ACL acl = null;
+	//		try {
+	//			if (null == source) {
+	//				throw new IllegalArgumentException("Source TreeSet is null");
+	//			}
+	//
+	//			final TreeSet<String> result = new TreeSet<String>();
+	//			final Pattern pattern = DACL.getPatternForRoles();
+	//
+	//			for (final String entry : source) {
+	//				final Matcher matcher = pattern.matcher(entry);
+	//				if (!matcher.matches()) {
+	//					// entry is not a role
+	//					result.add(entry);
+	//				}
+	//			}
+	//
+	//			if (null != database) {
+	//
+	//				acl = database.getACL();
+	//				final TreeSet<String> roles = CollectionUtils.getTreeSetStrings(acl.getRoles());
+	//				if (null != roles) {
+	//					final TreeSet<String> remove = new TreeSet<String>();
+	//					for (final String role : roles) {
+	//						for (final String string : result) {
+	//							if (role.equalsIgnoreCase(string)) {
+	//								remove.add(string);
+	//							}
+	//						}
+	//					}
+	//
+	//					if (remove.size() > 0) {
+	//						result.removeAll(remove);
+	//					}
+	//				}
+	//			}
+	//
+	//			return result;
+	//
+	//		} catch (final Exception e) {
+	//			DominoUtils.handleException(e);
+	//		} finally {
+	//			DominoUtils.incinerate(acl);
+	//		}
+	//
+	//		return null;
+	//	}
+	//
+	//	/**
+	//	 * Replaces a Role on the appropriate DACL on a document.
+	//	 * 
+	//	 * NOTE: This will NOT remove the DEFAULT_DACL_READERS or DEFAULT_DACL_AUTHORS roles.
+	//	 * 
+	//	 * @param document
+	//	 *            Document from which the Role shall be removed.
+	//	 * @param oldrole
+	//	 *            Role to be removed from the document.
+	//	 * @param newrole
+	//	 *            Role to be added from the document.
+	//	 * @param dacltype
+	//	 *            DACL.TYPE that should be updated.
+	//	 * @return Flag indicating if the Role was replaced on the item.
+	//	 */
+	//	public static boolean replaceRole(final Document document, final String oldrole, final String newrole, final DACL.TYPE dacltype) {
+	//		try {
+	//			if (null == document) {
+	//				throw new IllegalArgumentException("Document is null");
+	//			}
+	//			if (Strings.isBlankString(newrole)) {
+	//				throw new IllegalArgumentException("New Role is null or blank");
+	//			}
+	//			if (null == dacltype) {
+	//				throw new IllegalArgumentException("DACLtype is null");
+	//			}
+	//
+	//			if (!Strings.isBlankString(oldrole)) {
+	//				DACL.removeRole(document, oldrole, dacltype);
+	//			}
+	//
+	//			return DACL.addRole(document, newrole, dacltype);
+	//
+	//		} catch (final Exception e) {
+	//			DominoUtils.handleException(e);
+	//		}
+	//
+	//		return false;
+	//	}
+	//
+	//	/**
+	//	 * Determines if a specified role is contained within a set of roles.
+	//	 * 
+	//	 * Performs a case-insensitive comparison of all entries to check for match. Strips any leading "[" or trailing "]" characters prior to
+	//	 * comparison.
+	//	 * 
+	//	 * @param roles
+	//	 *            Roles to check for match
+	//	 * 
+	//	 * @param role
+	//	 *            Role to check for existence in Roles
+	//	 * 
+	//	 * @return Flag indicating if the specified Role is contained in the set of Roles.
+	//	 */
+	//	public static boolean containsRole(final TreeSet<String> roles, final String role) {
+	//		try {
+	//			if (null == roles) {
+	//				throw new IllegalArgumentException("Roles is null");
+	//			}
+	//			if (Strings.isBlankString(role)) {
+	//				throw new IllegalArgumentException("Role is null or blank");
+	//			}
+	//
+	//			if (roles.size() > 0) {
+	//				if (roles.contains(role)) {
+	//					return true;
+	//				}
+	//
+	//				final Pattern pattern = DACL.getPatternForRoles();
+	//				final TreeSet<String> checkroles = new TreeSet<String>();
+	//				for (final String string : roles) {
+	//					final Matcher matcher = pattern.matcher(string);
+	//					if (matcher.matches()) {
+	//						checkroles.add(string.substring(string.indexOf('[') + 1, string.indexOf(']')).toLowerCase());
+	//					} else {
+	//						checkroles.add(string.toLowerCase());
+	//					}
+	//				}
+	//
+	//				final Matcher matcher = pattern.matcher(role);
+	//				final String checkrole = (matcher.matches()) ? role.substring(role.indexOf('[') + 1, role.indexOf(']')).toLowerCase()
+	//						: role.toLowerCase();
+	//
+	//				return checkroles.contains(checkrole);
+	//
+	//			} // if (roles.size() > 0)
+	//
+	//		} catch (final Exception e) {
+	//			DominoUtils.handleException(e);
+	//		}
+	//
+	//		return false;
+	//	}
 
 }
