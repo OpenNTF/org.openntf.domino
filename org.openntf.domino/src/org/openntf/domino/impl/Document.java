@@ -2083,7 +2083,17 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Item replaceItemValue(final String itemName, Object value) {
+	public Item replaceItemValue(final String itemName, final Object value) {
+		return replaceItemValue(itemName, value, null, true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.Document#replaceItemValue(java.lang.String, java.lang.Object)
+	 */
+	@SuppressWarnings("unchecked")
+	public Item replaceItemValue(final String itemName, Object value, final Boolean isSummary, final boolean returnItem) {
 		// if (getItemValueString("form").equalsIgnoreCase("container") && itemName.equals(DominoVertex.IN_NAME)) {
 		// System.out.println("Replacing a value in " + itemName + " with a type of "
 		// + (value == null ? "null" : value.getClass().getSimpleName()));
@@ -2252,7 +2262,15 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				itemInfo.put(itemName, infoNode);
 			}
 			if (result != null) {
-				return Factory.fromLotus(result, Item.class, this);
+				markDirty();
+				if (isSummary != null && result.isSummary() != isSummary.booleanValue()) {
+					result.setSummary(isSummary.booleanValue());
+				}
+				if (returnItem) {
+					return fromLotus(result, Item.SCHEMA, this);
+				} else {
+					s_recycle(result);
+				}
 			}
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);

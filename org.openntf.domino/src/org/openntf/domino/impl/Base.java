@@ -3,6 +3,7 @@
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
  * 
  * http://www.apache.org/licenses/LICENSE-2.0 
  * 
@@ -34,6 +35,7 @@ import org.openntf.domino.exceptions.BlockedCrashException;
 import org.openntf.domino.ext.Formula;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.types.Encapsulated;
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -46,7 +48,10 @@ import com.ibm.commons.util.NotImplementedException;
  * @param <T>
  *            the generic type
  * @param <D>
- *            the generic type
+ *            the delegate type
+ * @param <P>
+ *            the parent type
+ * 
  */
 public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base> implements org.openntf.domino.Base<D> {
 	public static final int SOLO_NOTES_NAMES = 1000;
@@ -220,6 +225,15 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	}
 
 	/**
+	 * Returns the class-id. Currently not used
+	 * 
+	 * @return
+	 */
+	int GetClassID() {
+		return clsid;
+	}
+
+	/**
 	 * Gets the parent.
 	 * 
 	 * @return the parent
@@ -234,7 +248,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	// .newSetFromMap(new WeakHashMap<org.openntf.domino.Base<?>, Boolean>());
 
 	/**
-	 * /** Use constructor with ClassID in future
+	 * Use constructor with ClassID in future
 	 * 
 	 * @param delegate
 	 * @param parent
@@ -335,6 +349,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @return the delegate
 	 */
 	@SuppressWarnings("rawtypes")
+	@Deprecated
 	public static lotus.domino.Base getDelegate(final lotus.domino.Base wrapper) {
 		if (wrapper instanceof org.openntf.domino.impl.Base) {
 			return ((org.openntf.domino.impl.Base) wrapper).getDelegate();
@@ -348,14 +363,30 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @return the delegate
 	 */
 	protected D getDelegate() {
-		// if (delegate_ instanceof lotus.domino.local.Document) {
-		// try {
-		// ((lotus.domino.local.Document) delegate_).isProfile();
-		// } catch (NotesException e) {
-		// System.out.println("Delegate validation failed on a document with cpp id " + cpp_object);
-		// }
-		// }
 		return delegate_;
+	}
+
+	// wrap objects. Delegate this to the wrapperFactory
+	@SuppressWarnings({ "rawtypes" })
+	<T1 extends org.openntf.domino.Base, D1 extends lotus.domino.Base, P1 extends org.openntf.domino.Base> T1 fromLotus(final D1 lotus,
+			final FactorySchema<T1, D1, P1> schema, final P1 parent) {
+		return factory_.fromLotus(lotus, schema, parent);
+	}
+
+	@SuppressWarnings({ "rawtypes" })
+	<T1 extends org.openntf.domino.Base, D1 extends lotus.domino.Base, P1 extends org.openntf.domino.Base> Collection<T1> fromLotus(
+			final Collection<?> lotusColl, final FactorySchema<T1, D1, P1> schema, final P1 parent) {
+		return factory_.fromLotus(lotusColl, schema, parent);
+	}
+
+	@SuppressWarnings({ "rawtypes" })
+	<T1 extends org.openntf.domino.Base, D1 extends lotus.domino.Base, P1 extends org.openntf.domino.Base> Vector<T1> fromLotusAsVector(
+			final Collection<?> lotusColl, final FactorySchema<T1, D1, P1> schema, final P1 parent) {
+		return factory_.fromLotusAsVector(lotusColl, schema, parent);
+	}
+
+	Vector<Object> wrapColumnValues(final Collection<?> values, final org.openntf.domino.Session session) {
+		return factory_.wrapColumnValues(values, session);
 	}
 
 	/**
@@ -441,46 +472,6 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		Factory.countManualRecycle();
 	}
 
-	/**
-	 * Checks if is recycled.
-	 * 
-	 * @param base
-	 *            the base
-	 * @return true, if is recycled
-	 */
-	public static boolean isRecycled(final lotus.domino.local.NotesBase base) {
-		try {
-			return ((Boolean) isInvalidMethod.invoke(base, (Object[]) null)).booleanValue();
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	// /**
-	// * Decrement counter.
-	// *
-	// * @param base
-	// * the base
-	// * @return the int
-	// */
-	// public static int decrementCounter(lotus.domino.local.NotesBase base) {
-	// int count = lotusReferenceCounter_.decrement(base);
-	// return count;
-	// }
-
-	// /**
-	// * Increment counter.
-	// *
-	// * @param base
-	// * the base
-	// * @return the int
-	// */
-	// public static int incrementCounter(lotus.domino.local.NotesBase base) {
-	// int count = lotusReferenceCounter_.increment(base);
-	// return count;
-	// }
-
-	// Convert a wrapper object to its delegate form
 	// unwrap objects
 	/**
 	 * Gets the delegate.
@@ -695,7 +686,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the base
 	 * @return true, if successful
 	 */
-	public static boolean s_recycle(final lotus.domino.local.NotesBase base) {
+	public static boolean s_recycle(final lotus.domino.Base base) {
 		if (base == null || base instanceof org.openntf.domino.Base) {
 			return false; // wrappers and null objects are not recycled!
 		}

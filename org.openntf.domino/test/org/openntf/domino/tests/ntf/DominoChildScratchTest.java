@@ -18,7 +18,6 @@ import org.openntf.domino.Name;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.Session.RunContext;
-import org.openntf.domino.impl.Base;
 import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.thread.deprecated.DominoChildThread;
@@ -43,7 +42,7 @@ public enum DominoChildScratchTest {
 
 			Session s = Factory.getSession();
 			Database db = s.getDatabase("", "events4.nsf");
-			Base.lock(s, db);
+			//Base.lock(s, db);
 
 			int delay = 500;
 			DominoChildThread[] threads = new DominoChildThread[THREAD_COUNT];
@@ -79,7 +78,7 @@ public enum DominoChildScratchTest {
 				thread.close();
 			}
 
-			Base.unlock(s, db);
+			//Base.unlock(s, db);
 
 			// boolean keepGoing = true;
 			// while (keepGoing) {
