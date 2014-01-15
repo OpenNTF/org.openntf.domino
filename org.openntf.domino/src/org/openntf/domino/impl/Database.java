@@ -33,7 +33,6 @@ import lotus.domino.NotesException;
 
 import org.openntf.domino.ACL.Level;
 import org.openntf.domino.DateTime;
-import org.openntf.domino.Document;
 import org.openntf.domino.NoteCollection.SelectOption;
 import org.openntf.domino.View;
 import org.openntf.domino.design.impl.DatabaseDesign;
@@ -2975,7 +2974,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	public void openMail() {
 		Session s = getAncestorSession();
 		try {
-			lotus.domino.Session rawSess = ((org.openntf.domino.impl.Session) getAncestorSession()).getDelegate();
+			lotus.domino.Session rawSess = (lotus.domino.Session) Base.getDelegate(s);
 			lotus.domino.DbDirectory rawDir = rawSess.getDbDirectory(null);
 			lotus.domino.Database rawDb = rawDir.openMailDatabase();
 			Base.s_recycle(getDelegate());

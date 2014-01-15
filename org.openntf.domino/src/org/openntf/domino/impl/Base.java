@@ -37,8 +37,6 @@ import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
-import com.ibm.commons.util.NotImplementedException;
-
 // TODO: Auto-generated Javadoc
 /**
  * The Class Base.
@@ -52,23 +50,11 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Base.class.getName());
 
-	/** The cpp_object. */
-	private long cpp_object = 0;
-
-	/** The cpp_object. */
-	private final long cpp_session;
-
-	/** the class id of this object type (implemented as precaution) **/
-	final int clsid;
-
 	/** The Constant lockedRefSet. */
 	// private static final DominoLockSet lockedRefSet = new DominoLockSet();
 
 	/** The get cpp method. */
-	private static Method getCppObjMethod;
-
-	///** The get cpp method. */
-	//private static Method getCppSessionMethod;
+	private static Method getCppMethod;
 
 	/** The is invalid method. */
 	private static Method isInvalidMethod;
@@ -78,12 +64,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 				@Override
 				public Object run() throws Exception {
-					getCppObjMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("GetCppObj", (Class<?>[]) null);
-					getCppObjMethod.setAccessible(true);
-
-					//getCppSessionMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("GetCppSession", (Class<?>[]) null);
-					//getCppSessionMethod.setAccessible(true);
-
+					getCppMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("GetCppObj", (Class<?>[]) null);
+					getCppMethod.setAccessible(true);
 					isInvalidMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("isInvalid", (Class<?>[]) null);
 					isInvalidMethod.setAccessible(true);
 					return null;
@@ -96,37 +78,38 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	}
 
+	// /** The recycled_. */
+	// protected boolean recycled_;
+
 	/** The delegate_. */
-	protected D delegate_; // NTF final??? RPr: Final not possible, otherwise ressurect won't work
+	protected D delegate_; // NTF final???
+
+	private long cpp_object;
+
+	public long GetCppObj() {
+		return this.cpp_object;
+	}
+
+	// /** The encapsulated_. */
+	// private boolean encapsulated_ = false;
 
 	/** The parent_. */
-	private final org.openntf.domino.Base<?> parent_;
+	private org.openntf.domino.Base<?> parent_;
+
+	// TODO NTF - not sure about maintaining a set pointer to children. Not using for now. Just setting up (no pun intended)
+	/** The children_. */
+	// private final Set<org.openntf.domino.Base<?>> children_ = Collections
+	// .newSetFromMap(new WeakHashMap<org.openntf.domino.Base<?>, Boolean>());
 
 	/**
-	 * returns the cpp_id. DO NOT REMOVE. Otherwise native funtions won't work
+	 * Sets the parent.
 	 * 
-	 * @return
+	 * @param parent
+	 *            the new parent
 	 */
-	public long GetCppObj() {
-		return cpp_object;
-	}
-
-	/**
-	 * returns the cpp-session id. Needed for some BackendBridge functions
-	 * 
-	 * @return
-	 */
-	public long GetCppSession() {
-		return cpp_session;
-	}
-
-	/**
-	 * Returns the class-id. Currently not used
-	 * 
-	 * @return
-	 */
-	int GetClassID() {
-		return clsid;
+	void setParent(final org.openntf.domino.Base<?> parent) {
+		parent_ = parent;
+		// TODO NTF - add to parent's children set?
 	}
 
 	/**
@@ -139,17 +122,6 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	}
 
 	/**
-	 * Use constructor with ClassID in future
-	 * 
-	 * @param delegate
-	 * @param parent
-	 */
-	@Deprecated
-	protected Base(final D delegate, final org.openntf.domino.Base<?> parent) {
-		this(delegate, parent, 0);
-	}
-
-	/**
 	 * Instantiates a new base.
 	 * 
 	 * @param delegate
@@ -157,39 +129,45 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @param parent
 	 *            the parent
 	 */
-	protected Base(final D delegate, final org.openntf.domino.Base<?> parent, final int classId) {
-		parent_ = parent;
-		clsid = classId;
-
-		if (delegate instanceof lotus.domino.local.NotesBase) {
-			setDelegate(delegate);
-		} else if (delegate != null) {
-			// normally you won't get here if you come from Factory.fromLotus
-			throw new IllegalArgumentException("Why are you wrapping a non-Lotus object? " + delegate.getClass().getName());
-		}
-
-		// copy the cpp_session from the parent
+	@SuppressWarnings("rawtypes")
+	protected Base(final D delegate, final org.openntf.domino.Base<?> parent) {
 		if (parent != null) {
-			cpp_session = ((Base) parent).GetCppSession();
-		} else if (delegate instanceof lotus.domino.Session) {
-			cpp_session = cpp_object;
-		} else {
-			cpp_session = 0;
+			setParent(parent);
 		}
+
+		if (delegate != null) {
+			if (delegate instanceof org.openntf.domino.impl.Base) {
+				// normally you won't get here if you come from Factory.fromLotus
+				throw new IllegalArgumentException("Why are you wrapping a non-Lotus object? " + delegate.getClass().getName());
+			} else if (delegate instanceof lotus.domino.local.NotesBase) {
+				delegate_ = delegate;
+				cpp_object = getLotusId((lotus.domino.local.NotesBase) delegate);
+			} else {
+				throw new IllegalArgumentException("Why are you wrapping a non-Lotus object? " + delegate.getClass().getName());
+			}
+		}
+
+	}
+
+	void setDelegate(final D delegate) {
+		delegate_ = delegate;
+		cpp_object = getLotusId((lotus.domino.local.NotesBase) delegate);
 	}
 
 	/**
-	 * Sets the delegate on init or if resurrect occured
+	 * Gets the lotus id.
 	 * 
-	 * @param delegate
+	 * @param base
+	 *            the base
+	 * @return the lotus id
 	 */
-	void setDelegate(final D delegate) {
-		delegate_ = delegate;
+	// CHECKME: do we still need this method 
+	@Deprecated
+	public static long getLotusId(final lotus.domino.local.NotesBase base) {
 		try {
-			cpp_object = ((Long) getCppObjMethod.invoke(delegate, (Object[]) null)).longValue();
-
+			return ((Long) getCppMethod.invoke(base, (Object[]) null)).longValue();
 		} catch (Exception e) {
-			cpp_object = 0L;
+			return 0L;
 		}
 	}
 
@@ -202,7 +180,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 */
 	public static Integer getLotusKey(final lotus.domino.Base base) {
 		try {
-			long cpp_id = ((Long) getCppObjMethod.invoke((lotus.domino.local.NotesBase) base, (Object[]) null)).longValue();
+			long cpp_id = ((Long) getCppMethod.invoke((lotus.domino.local.NotesBase) base, (Object[]) null)).longValue();
 
 			return Integer.valueOf((int) ((cpp_id >> 2) & 0xFFFFFFFFL));
 		} catch (Exception e) {
@@ -217,8 +195,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the wrapper
 	 * @return the delegate
 	 */
-	//
-	//@SuppressWarnings("rawtypes")
+	@SuppressWarnings("rawtypes")
 	public static lotus.domino.Base getDelegate(final lotus.domino.Base wrapper) {
 		if (wrapper instanceof org.openntf.domino.impl.Base) {
 			return ((org.openntf.domino.impl.Base) wrapper).getDelegate();
@@ -232,6 +209,13 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @return the delegate
 	 */
 	protected D getDelegate() {
+		// if (delegate_ instanceof lotus.domino.local.Document) {
+		// try {
+		// ((lotus.domino.local.Document) delegate_).isProfile();
+		// } catch (NotesException e) {
+		// System.out.println("Delegate validation failed on a document with cpp id " + cpp_object);
+		// }
+		// }
 		return delegate_;
 	}
 
@@ -310,8 +294,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 */
 	@Deprecated
 	public void recycle() {
-		//s_recycle(this);
-		xs_recycle(delegate_); // RPr: we must recycle the delegate, not "this". Do not call getDelegate as it may reinstantiate it
+		s_recycle(this);
 	}
 
 	/**
@@ -321,13 +304,11 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the base
 	 * @return true, if is recycled
 	 */
-	public static boolean isInvalid(final lotus.domino.Base base) {
-		if (base == null)
-			return true;
+	public static boolean isRecycled(final lotus.domino.local.NotesBase base) {
 		try {
 			return ((Boolean) isInvalidMethod.invoke(base, (Object[]) null)).booleanValue();
 		} catch (Exception e) {
-			return true;
+			return false;
 		}
 	}
 
@@ -365,10 +346,12 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 */
 	public static lotus.domino.Base toLotus(final lotus.domino.Base baseObj) {
 		if (baseObj instanceof org.openntf.domino.Base) {
+			if (baseObj instanceof DateRange) {
+				return ((DateRange) baseObj).toLotus();
+			}
 			return ((Base<?, ?>) baseObj).getDelegate();
-		} else {
-			return baseObj;
 		}
+		return baseObj;
 	}
 
 	// Convert a wrapper object to its delegate form, allowing for non-Lotus objects (e.g. for getDocumentByKey)
@@ -392,7 +375,6 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * Attempts to convert a provided scalar value to a "Domino-friendly" data type like DateTime, String, etc. Currently, the data types
 	 * supported are the already-Domino-friendly ones, Number, Date, Calendar, and CharSequence.
 	 * </p>
-	 * <font color='red'>Do not forget to recycle the returned object</font>
 	 * 
 	 * @param value
 	 *            The incoming non-collection value
@@ -456,7 +438,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			// TODO Check if this is greater than what Domino can handle and serialize if so
 			return ((Number) value).doubleValue();
 		} else if (value instanceof java.util.Date) {
-			lotus.domino.Session lsess = ((Session) Factory.getSession(context)).getDelegate();
+			lotus.domino.Session lsess = (lotus.domino.Session) Base.getDelegate(Factory.getSession(context));
 			try {
 				return lsess.createDateTime((java.util.Date) value);
 			} catch (Throwable t) {
@@ -465,7 +447,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			}
 			// return toLotus(Factory.getSession(context).createDateTime((java.util.Date) value));
 		} else if (value instanceof java.util.Calendar) {
-			lotus.domino.Session lsess = ((Session) Factory.getSession(context)).getDelegate();
+			lotus.domino.Session lsess = (lotus.domino.Session) Base.getDelegate(Factory.getSession(context));
 			try {
 				return lsess.createDateTime((java.util.Calendar) value);
 			} catch (Throwable t) {
@@ -555,7 +537,6 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			result = true;
 		} catch (Throwable t) {
 			Factory.countRecycleError();
-			DominoUtils.handleException(t);
 			// shikata ga nai
 		}
 		//} else {
@@ -576,21 +557,11 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 				s_recycle((lotus.domino.local.NotesBase) o);
 			}
 		}
-		if (o instanceof Collection) {
-			Collection c = (Collection) o;
-			if (!c.isEmpty()) {
-				for (Object io : (Collection) o) {
-					if (io instanceof lotus.domino.local.NotesBase) {
-						s_recycle((lotus.domino.local.NotesBase) io);
-					}
-				}
-			}
-		}
+
 	}
 
 	public static void enc_recycle(final Object o) {
 		// NTF this is for recycling of encapsulated objects like DateTime and Name
-		// RPr ' do we need an extra method here?
 		if (o instanceof Collection) {
 			if (!((Collection) o).isEmpty()) {
 				for (Object io : (Collection) o) {
@@ -625,7 +596,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	public void recycle(final Vector arg0) {
 		for (Object o : arg0) {
 			if (o instanceof org.openntf.domino.impl.Base) {
-				((org.openntf.domino.impl.Base) o).recycle();
+				s_recycle((org.openntf.domino.impl.Base) o);
 			} else if (o instanceof lotus.domino.local.NotesBase) {
 				s_recycle((lotus.domino.local.NotesBase) o);
 			}
@@ -686,107 +657,6 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	public String toString() {
 		return getDelegate().toString();
 
-	}
-
-	// ------------ native functions - to be as much compatible to the lotus.domino.local...
-	// Methods that have no meaningful implementation  throw a exception
-
-	@Deprecated
-	public boolean needsGui() {
-		log_.fine("needsGui called");
-		return false;
-	}
-
-	@Deprecated
-	public void dontUseGui() {
-		log_.fine("dontUseGui called");
-	}
-
-	@Deprecated
-	public void okToUseGui() {
-		log_.fine("okToUseGui called");
-	}
-
-	@Deprecated
-	public boolean avoidingGui() {
-		log_.fine("avoidingGui called");
-
-		return true;
-	}
-
-	// ---- package private
-	@Deprecated
-	void markInvalid() {
-		throw new NotImplementedException();
-	}
-
-	@Deprecated
-	void ClearCppObj() {
-		throw new NotImplementedException();
-	}
-
-	@Deprecated
-	Object getWeak() {
-		throw new NotImplementedException();
-	}
-
-	@Deprecated
-	Session getSession() {
-		throw new NotImplementedException();
-	}
-
-	@Deprecated
-	Object getGCParent() {
-		throw new NotImplementedException();
-	}
-
-	@Deprecated
-	boolean isInvalid() {
-		throw new NotImplementedException();
-	}
-
-	void restoreObject(final Session paramSession, final long paramLong) {
-		throw new NotImplementedException();
-	}
-
-	@Deprecated
-	void CheckObject() {
-		throw new NotImplementedException();
-	}
-
-	@Deprecated
-	void CheckObjectActive() {
-		throw new NotImplementedException();
-	}
-
-	@Deprecated
-	boolean isDead() {
-		throw new NotImplementedException();
-	}
-
-	@Deprecated
-	void CheckArg(final Object paramObject) {
-		throw new NotImplementedException();
-	}
-
-	@Deprecated
-	boolean isEqual(final long paramLong) {
-		throw new NotImplementedException();
-	}
-
-	@Deprecated
-	Vector PropGetVector(final int paramInt) {
-		throw new NotImplementedException();
-	}
-
-	@Deprecated
-	void validateObjArg(final Object paramObject, final boolean paramBoolean) {
-		throw new NotImplementedException();
-	}
-
-	@Deprecated
-	Vector getStringArrayProperty(final int paramInt) {
-		throw new NotImplementedException();
 	}
 
 }

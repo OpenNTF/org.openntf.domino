@@ -63,7 +63,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 *            the parent
 	 */
 	public DateTime(final lotus.domino.DateTime delegate, final org.openntf.domino.Base<?> parent) {
-		super(null, Factory.getSession(parent));
+		super(delegate, Factory.getSession(parent));
 		if (delegate instanceof lotus.domino.local.DateTime) {
 			initialize(delegate);
 			Base.s_recycle(delegate);
@@ -99,7 +99,6 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	}
 
 	/*
-	 * The returned object MUST get recycled
 	 * (non-Javadoc)
 	 * 
 	 * @see org.openntf.domino.impl.Base#getDelegate()
@@ -107,8 +106,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	@Override
 	protected lotus.domino.DateTime getDelegate() {
 		try {
-			lotus.domino.Session rawsession = (lotus.domino.Session) getDelegate(Factory.getSession(getParent()));
-			lotus.domino.DateTime delegate = rawsession.createDateTime(cal_.getTime());
+			lotus.domino.DateTime delegate = ((org.openntf.domino.impl.Session) getParent()).getDelegate().createDateTime(cal_.getTime());
 			if (isAnyTime()) {
 				delegate.setAnyTime();
 			}
@@ -589,12 +587,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		// return cal_.getTime().toString();
 		// Just re-instantiate the delegate for now to ensure compatibility
 		// TODO Switch to a date formatter that properly mimics the original
-		lotus.domino.DateTime delegate = this.getDelegate();
-		try {
-			return delegate.toString();
-		} finally {
-			s_recycle(delegate);
-		}
+		return this.getDelegate().toString();
 	}
 
 	/*

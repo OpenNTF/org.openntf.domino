@@ -17,6 +17,7 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
@@ -24,6 +25,25 @@ import org.openntf.domino.types.SessionDescendant;
  */
 public interface Registration extends Base<lotus.domino.Registration>, lotus.domino.Registration, org.openntf.domino.ext.Registration,
 		SessionDescendant {
+
+	public static class Schema extends FactorySchema<Registration, lotus.domino.Registration, Session> {
+		@Override
+		public Class<Registration> typeClass() {
+			return Registration.class;
+		}
+
+		@Override
+		public Class<lotus.domino.Registration> delegateClass() {
+			return lotus.domino.Registration.class;
+		}
+
+		@Override
+		public Class<Session> parentClass() {
+			return Session.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)

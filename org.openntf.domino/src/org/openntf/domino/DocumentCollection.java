@@ -19,6 +19,7 @@ import java.util.Collection;
 
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.types.DatabaseDescendant;
+import org.openntf.domino.types.FactorySchema;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -26,6 +27,25 @@ import org.openntf.domino.types.DatabaseDescendant;
  */
 public interface DocumentCollection extends lotus.domino.DocumentCollection, org.openntf.domino.ext.DocumentCollection,
 		org.openntf.domino.Base<lotus.domino.DocumentCollection>, Collection<org.openntf.domino.Document>, DatabaseDescendant {
+
+	public static class Schema extends FactorySchema<DocumentCollection, lotus.domino.DocumentCollection, Database> {
+		@Override
+		public Class<DocumentCollection> typeClass() {
+			return DocumentCollection.class;
+		}
+
+		@Override
+		public Class<lotus.domino.DocumentCollection> delegateClass() {
+			return lotus.domino.DocumentCollection.class;
+		}
+
+		@Override
+		public Class<Database> parentClass() {
+			return Database.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/**
 	 * Adds a document to a collection.

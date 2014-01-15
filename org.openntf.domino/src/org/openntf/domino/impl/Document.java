@@ -89,8 +89,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	// NTF - Okay, after testing, maybe these just need to be JIT getters. It added about 10% to Document iteration time.
 	// NTF - Done. And yeah, it make quite a performance difference. More like 20%, really
-	// RPr - I can confirm this
-
 	/** The created_. */
 	private Date created_;
 
@@ -1226,7 +1224,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return (Database) super.getParent();
 	}
 
-	public org.openntf.domino.Document getParentDocument() {
+	public Document getParentDocument() {
 		return this.getParentDatabase().getDocumentByUNID(this.getParentDocumentUNID());
 	}
 
@@ -2416,7 +2414,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				try {
 					lotus.domino.Document del = getDelegate();
 					if (del != null) {
-
 						result = del.save(force, makeResponse, markRead);
 						if (noteid_ == null || !noteid_.equals(del.getNoteID())) {
 							// System.out.println("Resetting note id from " + noteid_ + " to " + del.getNoteID());
@@ -2426,8 +2423,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 							// System.out.println("Resetting unid from " + unid_ + " to " + del.getUniversalID());
 							unid_ = del.getUniversalID();
 						}
-// TODO RPr We may invalidate more variables here!
-						lastModified_ = DominoUtils.toJavaDateSafe(del.getLastModified());
 					} else {
 						log_.severe("Delegate document for " + unid_ + " is NULL!??!");
 					}

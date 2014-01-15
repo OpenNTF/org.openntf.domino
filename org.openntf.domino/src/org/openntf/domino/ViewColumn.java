@@ -17,12 +17,32 @@ package org.openntf.domino;
 
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.Design;
+import org.openntf.domino.types.FactorySchema;
 
 /**
  * The Interface ViewColumn.
  */
 public interface ViewColumn extends Base<lotus.domino.ViewColumn>, lotus.domino.ViewColumn, org.openntf.domino.ext.ViewColumn, Design,
 		DatabaseDescendant {
+
+	public static class Schema extends FactorySchema<ViewColumn, lotus.domino.ViewColumn, View> {
+		@Override
+		public Class<ViewColumn> typeClass() {
+			return ViewColumn.class;
+		}
+
+		@Override
+		public Class<lotus.domino.ViewColumn> delegateClass() {
+			return lotus.domino.ViewColumn.class;
+		}
+
+		@Override
+		public Class<View> parentClass() {
+			return View.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)

@@ -16,6 +16,7 @@
 package org.openntf.domino;
 
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
@@ -24,10 +25,28 @@ import org.openntf.domino.types.SessionDescendant;
 public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domino.DbDirectory, org.openntf.domino.ext.DbDirectory,
 		Iterable<org.openntf.domino.Database>, SessionDescendant {
 
+	public static class Schema extends FactorySchema<DbDirectory, lotus.domino.DbDirectory, Session> {
+		@Override
+		public Class<DbDirectory> typeClass() {
+			return DbDirectory.class;
+		}
+
+		@Override
+		public Class<lotus.domino.DbDirectory> delegateClass() {
+			return lotus.domino.DbDirectory.class;
+		}
+
+		@Override
+		public Class<Session> parentClass() {
+			return Session.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
+
 	/**
 	 * The Enum Type.
 	 */
-	@SuppressWarnings("hiding")
 	public static enum Type {
 
 		/** The database. */

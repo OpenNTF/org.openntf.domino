@@ -20,7 +20,6 @@ import java.util.Vector;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.DateTime;
-import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;

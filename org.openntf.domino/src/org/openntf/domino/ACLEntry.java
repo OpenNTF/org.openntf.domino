@@ -18,11 +18,31 @@ package org.openntf.domino;
 import java.util.Vector;
 
 import org.openntf.domino.types.DatabaseDescendant;
+import org.openntf.domino.types.FactorySchema;
 
 /**
  * The Interface ACLEntry.
  */
 public interface ACLEntry extends Base<lotus.domino.ACLEntry>, lotus.domino.ACLEntry, org.openntf.domino.ext.ACLEntry, DatabaseDescendant {
+
+	public static class Schema extends FactorySchema<ACLEntry, lotus.domino.ACLEntry, ACL> {
+		@Override
+		public Class<ACLEntry> typeClass() {
+			return ACLEntry.class;
+		}
+
+		@Override
+		public Class<lotus.domino.ACLEntry> delegateClass() {
+			return lotus.domino.ACLEntry.class;
+		}
+
+		@Override
+		public Class<ACL> parentClass() {
+			return ACL.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)

@@ -20,61 +20,52 @@ import java.lang.ref.ReferenceQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.openntf.domino.Base;
 import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class DominoReference. K is normally a Long, maybe we change it to a "long" or "Integer" because there may be faster map
- * implementations. DominoReference should be used only in the DominoReferenceMap
+ * The Class DominoReference. T is normally a Long, maybe we change it to a "long" or "Integer" because there may be faster map
+ * implementations.
  * 
- * @param <K>
- *            the key type
+ * DominoReference should be used only in the DominoReferenceMap
  */
-/**
- * @author praml
- * 
- * @param <K>
- *            the key (or additonal meta value to remove the )
- * @param <V>
- *            the object to track
- * @param <D>
- *            the delegate to recycle when V dies
- */
-public class DominoReference<K, V, D> extends PhantomReference<V> {
+public class DominoReference<T, V extends Base> extends PhantomReference<V> {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(DominoReference.class.getName());
 
 	/** The delegate_. This is the wrapped Object */
-	private final D delegate_;
+	private final lotus.domino.Base delegate_;
 
 	/** This is the CPP-ID or an other unique hash value **/
-	private K key_;
+	private T key_;
 
 	private transient int hashcode_;
 
 	/**
 	 * Instantiates a new domino reference.
 	 * 
-	 * @param wrapper
-	 *            the wrapper to track
+	 * @param r
+	 *            the r
 	 * @param q
 	 *            the q
 	 * @param delegate
 	 *            the delegate
 	 */
-	public DominoReference(final K key, final V wrapper, final D delegate, final ReferenceQueue<V> q) {
-		super(wrapper, q);
+	public DominoReference(final V r, final ReferenceQueue<V> q, final T key) {
+		super(r, q);
 
 		// Because the reference separately contains a pointer to the delegate object, it's still available even
 		// though the wrapper is null
-		this.delegate_ = delegate;
-		this.key_ = key;
+		delegate_ = org.openntf.domino.impl.Base.getDelegate(r);
+		key_ = key;
 	}
 
 	/**
 	 * Recycle.
 	 */
 	void recycle() {
+		int ctid = System.identityHashCode(Thread.currentThread());
 		org.openntf.domino.impl.Base.s_recycle(delegate_);
 		int total = Factory.countAutoRecycle();
 
@@ -98,7 +89,7 @@ public class DominoReference<K, V, D> extends PhantomReference<V> {
 			return false;
 
 		Object ref1 = this.get();
-		Object ref2 = ((DominoReference<?, ?, ?>) obj).get();
+		Object ref2 = ((DominoReference<?, ?>) obj).get();
 
 		if (ref1 == ref2)
 			return true;
@@ -115,14 +106,14 @@ public class DominoReference<K, V, D> extends PhantomReference<V> {
 	@Override
 	public int hashCode() {
 		if (hashcode_ == 0) {
-			Object ref = this.get();
+			Base ref = this.get();
 
 			hashcode_ = (ref == null) ? 0 : ref.hashCode();
 		}
 		return hashcode_;
 	}
 
-	K getKey() {
+	T getKey() {
 		return key_;
 	}
 

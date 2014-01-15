@@ -17,6 +17,7 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
@@ -24,6 +25,24 @@ import org.openntf.domino.types.SessionDescendant;
  */
 public interface NotesProperty extends Base<lotus.domino.NotesProperty>, lotus.domino.NotesProperty, org.openntf.domino.ext.NotesProperty,
 		SessionDescendant {
+	public static class Schema extends FactorySchema<ColorObject, lotus.domino.ColorObject, PropertyBroker> {
+		@Override
+		public Class<ColorObject> typeClass() {
+			return ColorObject.class;
+		}
+
+		@Override
+		public Class<lotus.domino.ColorObject> delegateClass() {
+			return lotus.domino.ColorObject.class;
+		}
+
+		@Override
+		public Class<PropertyBroker> parentClass() {
+			return PropertyBroker.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)

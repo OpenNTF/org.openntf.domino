@@ -16,12 +16,32 @@
 package org.openntf.domino;
 
 import org.openntf.domino.types.DocumentDescendant;
+import org.openntf.domino.types.FactorySchema;
 
 /**
  * The Interface RichTextTab.
  */
 public interface RichTextTab extends Base<lotus.domino.RichTextTab>, lotus.domino.RichTextTab, org.openntf.domino.ext.RichTextTab,
 		DocumentDescendant {
+
+	public static class Schema extends FactorySchema<Registration, lotus.domino.Registration, Database> {
+		@Override
+		public Class<Registration> typeClass() {
+			return Registration.class;
+		}
+
+		@Override
+		public Class<lotus.domino.Registration> delegateClass() {
+			return lotus.domino.Registration.class;
+		}
+
+		@Override
+		public Class<Database> parentClass() {
+			return Database.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)

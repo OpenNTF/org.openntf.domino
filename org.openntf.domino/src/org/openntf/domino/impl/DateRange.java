@@ -198,22 +198,16 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 		//		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.impl.Base#getDelegate()
-	 */
-	@Override
-	protected lotus.domino.DateRange getDelegate() {
+	public lotus.domino.DateRange toLotus() {
 		try {
-			lotus.domino.Session rawsession = (lotus.domino.Session) getDelegate(Factory.getSession(getParent()));
+			lotus.domino.Session ses = (lotus.domino.Session) Base.getDelegate(getAncestorSession());
 			if (startDateTime_ != null && endDateTime_ != null) {
-				return rawsession.createDateRange(startDateTime_.toJavaDate(), endDateTime_.toJavaDate());
+				return ses.createDateRange(startDateTime_.toJavaDate(), endDateTime_.toJavaDate());
 			}
 			throw new BlockedCrashException(
 					"Not attempting a return of a valid DateRange because either start date or end date is null and crashes may result.");
-		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 			return null;
 		}
 	}
