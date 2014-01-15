@@ -151,7 +151,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	void setDelegate(final D delegate) {
 		delegate_ = delegate;
-		cpp_object = getLotusId((lotus.domino.local.NotesBase) delegate);
+		cpp_object = getLotusId(delegate);
 	}
 
 	/**
@@ -161,9 +161,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the base
 	 * @return the lotus id
 	 */
-	// CHECKME: do we still need this method 
-	@Deprecated
-	public static long getLotusId(final lotus.domino.local.NotesBase base) {
+	public static long getLotusId(final lotus.domino.Base base) {
 		try {
 			return ((Long) getCppMethod.invoke(base, (Object[]) null)).longValue();
 		} catch (Exception e) {
@@ -172,19 +170,19 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	}
 
 	/**
-	 * Gets a unique key for a lotus object. This is the lotusId where unneccessary bits are removed
+	 * Checks if is recycled.
 	 * 
 	 * @param base
 	 *            the base
-	 * @return the lotus id
+	 * @return true, if is recycled
 	 */
-	public static Integer getLotusKey(final lotus.domino.Base base) {
+	public static boolean isInvalid(final lotus.domino.Base base) {
+		if (base == null)
+			return true;
 		try {
-			long cpp_id = ((Long) getCppMethod.invoke((lotus.domino.local.NotesBase) base, (Object[]) null)).longValue();
-
-			return Integer.valueOf((int) ((cpp_id >> 2) & 0xFFFFFFFFL));
+			return ((Boolean) isInvalidMethod.invoke(base, (Object[]) null)).booleanValue();
 		} catch (Exception e) {
-			return Integer.valueOf(0);
+			return true;
 		}
 	}
 

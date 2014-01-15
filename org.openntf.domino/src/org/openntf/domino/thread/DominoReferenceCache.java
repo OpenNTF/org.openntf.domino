@@ -20,29 +20,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import lotus.domino.local.NotesBase;
-
-import org.openntf.domino.Base;
-
 /**
  * Class to cache OpenNTF-Domino-wrapper objects. The wrapper and its delegate is stored in a phantomReference. This reference is queued if
  * the wrapper Object is GC. Then the delegate gets recycled.
  * 
- * K: the Key Type (Integer or Long)
+ * We don't optimize the map key any more (shifting unused bits out), because there was no measurable performance gain
  * 
- * V: the OpenNTF Wrapper
  * 
- * The DominoReference unwraps the Wrapper and caches the delegate and key, so that it can do the cleanup if the wrapper dies!
+ * The DominoReference tracks the wrapper lifetime and caches the delegate and key, so that it can do the cleanup if the wrapper dies!
  * 
  * @author Roland Praml, Foconis AG
  */
 
-public class DominoReferenceCache<K, V extends Base> {
+public class DominoReferenceCache {
 	/** The delegate map contains the value wrapped in phantomReferences) **/
-	private Map<K, DominoReference<K, V>> delegate = new HashMap<K, DominoReference<K, V>>(16, 0.75F);
+	private Map<Long, DominoReference> map = new HashMap<Long, DominoReference>(16, 0.75F);
 
 	/** This is the queue with unreachable refs **/
-	private ReferenceQueue<V> queue = new ReferenceQueue<V>();
+	private ReferenceQueue<Object> queue = new ReferenceQueue<Object>();
 
 	/** Needed for objects that should not get recycled, like sessions **/
 	private boolean autorecycle_;
@@ -69,12 +64,32 @@ public class DominoReferenceCache<K, V extends Base> {
 	 *            key whose associated value, if any, is to be returned
 	 * @return the value to which this map maps the specified key.
 	 */
-	public V get(final K key) {
+	public Object get(final long key) {
 		// We don't need to remove garbage collected values here;
 		// if they are garbage collected, the get() method returns null;
 		// the next put() call with the same key removes the old value
 		// automatically so that it can be completely garbage collected
-		return getReferenceObject(delegate.get(key));
+		if (key == 0) {
+			return null;
+		} else {
+			return getReferenceObject(map.get(key));
+		}
+	}
+
+	/**
+	 * returns a object of Type T
+	 * 
+	 * @param key
+	 * @param t
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T get(final long key, final Class<T> t) {
+		Object o = get(key);
+		if (o != null && t.isAssignableFrom(o.getClass())) {
+			return (T) o;
+		}
+		return null;
 	}
 
 	/**
@@ -88,7 +103,7 @@ public class DominoReferenceCache<K, V extends Base> {
 	 * @return previous value associated with specified key, or null if there was no mapping for key or the value has been garbage collected
 	 *         by the garbage collector.
 	 */
-	public void put(final K key, final V value) {
+	public void put(final long key, final Object value, final lotus.domino.Base delegate) {
 		// If the map already contains an equivalent key, the new key
 		// of a (key, value) pair is NOT stored in the map but the new
 		// value only. But as the key is strongly referenced by the
@@ -99,8 +114,15 @@ public class DominoReferenceCache<K, V extends Base> {
 		// new entry is made. We only clean up here to distribute
 		// clean up calls on different operations.
 		processQueue();
-		DominoReference<K, V> ref = new DominoReference(value, queue, key);
-		delegate.put(key, ref);
+		if (value == null) {
+			return;
+		}
+		// create and enqueue a reference that tracks lifetime of value
+		DominoReference ref = new DominoReference(key, value, delegate, queue);
+		if (key == 0) {
+			return;
+		}
+		map.put(key, ref);
 	}
 
 	/**
@@ -109,7 +131,6 @@ public class DominoReferenceCache<K, V extends Base> {
 	 * 
 	 * @param b
 	 */
-	@SuppressWarnings("unchecked")
 	public void processQueue() {
 
 		int counter = cache_counter.incrementAndGet();
@@ -117,16 +138,15 @@ public class DominoReferenceCache<K, V extends Base> {
 			System.gc();
 		}
 
-		DominoReference<K, V> ref = null;
+		DominoReference ref = null;
 
-		while ((ref = (DominoReference<K, V>) queue.poll()) != null) {
-			K key = ref.getKey();
-			if (key != null) {
-				// only recycle refs that have a key. The others are removed from the map only
-				delegate.remove(key);
-				if (autorecycle_) {
-					ref.recycle();
-				}
+		while ((ref = (DominoReference) queue.poll()) != null) {
+			long key = ref.getKey();
+			if (key != 0) {
+				map.remove(key);
+			}
+			if (autorecycle_) {
+				ref.recycle();
 			}
 		}
 
@@ -135,21 +155,22 @@ public class DominoReferenceCache<K, V extends Base> {
 	/**
 	 * A convenience method to return the object held by the weak reference or <code>null</code> if it does not exist.
 	 */
-	protected final V getReferenceObject(final DominoReference<K, V> ref) {
+	protected final Object getReferenceObject(final DominoReference ref) {
 
-		if (ref != null) {
-
-			V result = ref.get();
-			if (result != null) {
-				lotus.domino.Base delegate = org.openntf.domino.impl.Base.getDelegate((org.openntf.domino.Base) result);
-				if (delegate != null) {
-					// check if it is not yet recycled
-					if (!org.openntf.domino.impl.Base.isRecycled((NotesBase) delegate)) {
-						return result;
-					}
-				}
-			}
+		if (ref == null) {
+			return null;
 		}
-		return null;
+
+		Object result = ref.get();
+		if (result == null) {
+			return null;
+		}
+		if (ref.isInvalid()) {
+			// check if it is not yet recycled
+			map.remove(ref.getKey());
+			return null;
+		} else {
+			return result;
+		}
 	}
 }

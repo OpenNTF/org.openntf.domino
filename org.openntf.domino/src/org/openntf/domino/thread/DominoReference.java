@@ -20,17 +20,18 @@ import java.lang.ref.ReferenceQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.openntf.domino.Base;
+import lotus.domino.NotesException;
+
+import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class DominoReference. T is normally a Long, maybe we change it to a "long" or "Integer" because there may be faster map
- * implementations.
+ * @author praml
  * 
- * DominoReference should be used only in the DominoReferenceMap
+ *         DominoReference tracks the lifetime of reference object and recycles delegate if reference object is GCed
+ * 
  */
-public class DominoReference<T, V extends Base> extends PhantomReference<V> {
+public class DominoReference extends PhantomReference<Object> {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(DominoReference.class.getName());
 
@@ -38,40 +39,50 @@ public class DominoReference<T, V extends Base> extends PhantomReference<V> {
 	private final lotus.domino.Base delegate_;
 
 	/** This is the CPP-ID or an other unique hash value **/
-	private T key_;
+	private long key_;
 
 	private transient int hashcode_;
 
 	/**
 	 * Instantiates a new domino reference.
 	 * 
-	 * @param r
-	 *            the r
+	 * @param reference
+	 *            the wrapper to track
 	 * @param q
 	 *            the q
 	 * @param delegate
 	 *            the delegate
 	 */
-	public DominoReference(final V r, final ReferenceQueue<V> q, final T key) {
-		super(r, q);
+	public DominoReference(final long key, final Object reference, final lotus.domino.Base delegate, final ReferenceQueue<Object> q) {
+		super(reference, q);
 
 		// Because the reference separately contains a pointer to the delegate object, it's still available even
 		// though the wrapper is null
-		delegate_ = org.openntf.domino.impl.Base.getDelegate(r);
-		key_ = key;
+		this.delegate_ = delegate;
+		this.key_ = key;
 	}
 
 	/**
 	 * Recycle.
 	 */
 	void recycle() {
-		int ctid = System.identityHashCode(Thread.currentThread());
-		org.openntf.domino.impl.Base.s_recycle(delegate_);
-		int total = Factory.countAutoRecycle();
+		if (delegate_ != null) {
+			try {
+				if (org.openntf.domino.impl.Base.isInvalid(delegate_)) {
+					// already recycled, do not count twice!
+					return;
+				}
+				delegate_.recycle();
+				int total = Factory.countAutoRecycle();
 
-		if (log_.isLoggable(Level.FINE)) {
-			if (total % 5000 == 0) {
-				log_.log(Level.FINE, "Auto-recycled " + total + " references");
+				if (log_.isLoggable(Level.FINE)) {
+					if (total % 5000 == 0) {
+						log_.log(Level.FINE, "Auto-recycled " + total + " references");
+					}
+				}
+			} catch (NotesException e) {
+				Factory.countRecycleError();
+				DominoUtils.handleException(e);
 			}
 		}
 	}
@@ -89,7 +100,7 @@ public class DominoReference<T, V extends Base> extends PhantomReference<V> {
 			return false;
 
 		Object ref1 = this.get();
-		Object ref2 = ((DominoReference<?, ?>) obj).get();
+		Object ref2 = ((DominoReference) obj).get();
 
 		if (ref1 == ref2)
 			return true;
@@ -106,15 +117,17 @@ public class DominoReference<T, V extends Base> extends PhantomReference<V> {
 	@Override
 	public int hashCode() {
 		if (hashcode_ == 0) {
-			Base ref = this.get();
-
+			Object ref = this.get();
 			hashcode_ = (ref == null) ? 0 : ref.hashCode();
 		}
 		return hashcode_;
 	}
 
-	T getKey() {
+	long getKey() {
 		return key_;
 	}
 
+	boolean isInvalid() {
+		return org.openntf.domino.impl.Base.isInvalid(delegate_);
+	}
 }
