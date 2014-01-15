@@ -65,6 +65,11 @@ public class MappedSerializables implements Serializable {
 	 * ******************************************************************
 	 */
 
+	/**
+	 * Gets the internal Map.
+	 * 
+	 * @return internal Map.
+	 */
 	public HashMap<String, Serializable> getContent() {
 		if (null == this._content) {
 			this._content = new HashMap<String, Serializable>();
@@ -72,6 +77,12 @@ public class MappedSerializables implements Serializable {
 		return this._content;
 	}
 
+	/**
+	 * Sets the internal Map.
+	 * 
+	 * @param content
+	 *            internal Map.
+	 */
 	@SuppressWarnings("unchecked")
 	public void setContent(final HashMap<String, Serializable> content) {
 		this._content = (null == content) ? null : (HashMap<String, Serializable>) content.clone();
@@ -87,10 +98,19 @@ public class MappedSerializables implements Serializable {
 	 * ******************************************************************
 	 */
 
+	/**
+	 * Clones the object
+	 * 
+	 * @return a Clone of the object
+	 */
 	@Override
 	public MappedSerializables clone() {
 		final MappedSerializables result = new MappedSerializables();
-		result.setContent(this.getContent());
+		if (null != this._content) {
+			HashMap<String, Serializable> clone = (HashMap<String, Serializable>) this.getContent().clone();
+			result.setContent(this.getContent());
+		}
+
 		return result;
 	}
 
@@ -132,7 +152,7 @@ public class MappedSerializables implements Serializable {
 	}
 
 	/**
-	 * Gets a value from the map for the specified key, if it exists.
+	 * Gets a value from the internal Map for the specified key, if it exists.
 	 * 
 	 * @param key
 	 *            Key for which to retrieve the mapped value.
@@ -153,34 +173,34 @@ public class MappedSerializables implements Serializable {
 	}
 
 	/**
-	 * Puts a value into the inernal Map.
+	 * Puts a value into the inernal internal Map.
 	 * 
 	 * @param key
 	 *            Key for which the new value should be associated.
 	 * 
 	 * @param value
-	 *            Value to add to the map.
+	 *            Value to add to the internal Map.
 	 * 
-	 * @return Previous value for the key, if it existed in the map.
+	 * @return Previous value for the key, if it existed in the internal Map.
 	 */
 	public Serializable put(final String key, final Serializable value) {
 		return (Strings.isBlankString(key)) ? null : this.getContent().put(key, value);
 	}
 
 	/**
-	 * Removes a value from the inernal Map.
+	 * Removes a value from the inernal internal Map.
 	 * 
 	 * @param key
 	 *            Key whose value should be removed.
 	 * 
-	 * @return Previous value for the key, if it existed in the map.
+	 * @return Previous value for the key, if it existed in the internal Map.
 	 */
 	public Serializable remove(final String key) {
 		return (Strings.isBlankString(key)) ? null : this.getContent().remove(key);
 	}
 
 	/**
-	 * Gets a Boolean value from the map for the specified key, if it exists.
+	 * Gets a Boolean value from the internal Map for the specified key, if it exists.
 	 * 
 	 * @param key
 	 *            Key for which to retrieve the mapped value.
@@ -192,6 +212,11 @@ public class MappedSerializables implements Serializable {
 		return (null == temp) ? false : (temp instanceof Boolean) ? (Boolean) temp : Boolean.parseBoolean(temp.toString());
 	}
 
+	/**
+	 * Gets a Map of all Boolean values from the internal Map.
+	 * 
+	 * @return Map of Boolean values. Null if no Booleans exist in the internal Map.
+	 */
 	public HashMap<String, Boolean> getBooleans() {
 		if (!this.isEmpty()) {
 			final HashMap<String, Boolean> result = new HashMap<String, Boolean>();
@@ -209,13 +234,24 @@ public class MappedSerializables implements Serializable {
 		return null;
 	}
 
+	/**
+	 * Associates the Boolean value with the specified key in the internal Map. If the Map previously contained a mapping for the key, the
+	 * old value is replaced.
+	 * 
+	 * @param key
+	 *            key with which the Boolean value is to be associated.
+	 * @param value
+	 *            Boolean to be associated with the specified key.
+	 * 
+	 * @return previous value associated with the key, IF AND ONLY IF the previous value was a Boolean object. False otherwise.
+	 */
 	public Boolean putBoolean(final String key, final Boolean value) {
 		final Serializable temp = this.put(key, value);
 		return (temp instanceof Boolean) ? (Boolean) temp : false;
 	}
 
 	/**
-	 * Gets an Integer value from the map for the specified key, if it exists.
+	 * Gets an Integer value from the internal Map for the specified key, if it exists.
 	 * 
 	 * @param key
 	 *            Key for which to retrieve the mapped value.
@@ -227,6 +263,11 @@ public class MappedSerializables implements Serializable {
 		return (null == temp) ? 0 : (temp instanceof Integer) ? (Integer) temp : Integer.parseInt(temp.toString());
 	}
 
+	/**
+	 * Gets a Map of all Integer values from the internal Map.
+	 * 
+	 * @return Map of Integer values. Null if no Integers exist in the internal Map.
+	 */
 	public HashMap<String, Integer> getIntegers() {
 		if (!this.isEmpty()) {
 			final HashMap<String, Integer> result = new HashMap<String, Integer>();
@@ -244,13 +285,24 @@ public class MappedSerializables implements Serializable {
 		return null;
 	}
 
+	/**
+	 * Associates the Integer value with the specified key in the internal Map. If the Map previously contained a mapping for the key, the
+	 * old value is replaced.
+	 * 
+	 * @param key
+	 *            key with which the Integer value is to be associated.
+	 * @param value
+	 *            Integer to be associated with the specified key.
+	 * 
+	 * @return previous value associated with the key, IF AND ONLY IF the previous value was a Integer object. Zero otherwise.
+	 */
 	public Integer putInteger(final String key, final Integer value) {
 		final Serializable temp = this.put(key, value);
 		return (temp instanceof Integer) ? (Integer) temp : 0;
 	}
 
 	/**
-	 * Gets a Date value from the map for the specified key, if it exists.
+	 * Gets a Date value from the internal Map for the specified key, if it exists.
 	 * 
 	 * @param key
 	 *            Key for which to retrieve the mapped value.
@@ -262,6 +314,11 @@ public class MappedSerializables implements Serializable {
 		return (null == temp) ? null : (temp instanceof Date) ? (Date) temp : Dates.getDate(temp);
 	}
 
+	/**
+	 * Gets a Map of all Date values from the internal Map.
+	 * 
+	 * @return Map of Date values. Null if no Dates exist in the internal Map.
+	 */
 	public HashMap<String, Date> getDates() {
 		if (!this.isEmpty()) {
 			final HashMap<String, Date> result = new HashMap<String, Date>();
@@ -279,11 +336,33 @@ public class MappedSerializables implements Serializable {
 		return null;
 	}
 
+	/**
+	 * Associates the Date value with the specified key in the internal Map. If the Map previously contained a mapping for the key, the old
+	 * value is replaced.
+	 * 
+	 * @param key
+	 *            key with which the Date value is to be associated.
+	 * @param value
+	 *            Date to be associated with the specified key.
+	 * 
+	 * @return previous value associated with the key, IF AND ONLY IF the previous value was a Date object. Null otherwise.
+	 */
 	public Date putDate(final String key, final Date value) {
 		final Serializable temp = this.put(key, value);
 		return (temp instanceof Date) ? (Date) temp : null;
 	}
 
+	/**
+	 * Sets the time portion of an existing Date object found in the internal map.
+	 * 
+	 * If no mapping is found for the specified key, a new Date object will be created and set to the passed in Date value.
+	 * 
+	 * @param key
+	 *            key with which the Date value is to be associated.
+	 * @param time
+	 *            time to set the existing mapped Date object.
+	 * @return previous value associated with the key, IF AND ONLY IF the previous value was a Date object. Null otherwise.
+	 */
 	public Date setTime(final String key, final Date time) {
 		if (Strings.isBlankString(key)) {
 			throw new IllegalArgumentException("Key is null");
@@ -308,7 +387,7 @@ public class MappedSerializables implements Serializable {
 	}
 
 	/**
-	 * Gets a Timestamp value from the map for the specified key, if it exists.
+	 * Gets a Timestamp value from the internal Map for the specified key, if it exists.
 	 * 
 	 * @param key
 	 *            Key for which to retrieve the mapped value.
@@ -324,7 +403,7 @@ public class MappedSerializables implements Serializable {
 	}
 
 	/**
-	 * Gets a Timestamp value from the map for the specified key, if it exists.
+	 * Gets a Timestamp value from the internal Map for the specified key, if it exists.
 	 * 
 	 * @param key
 	 *            Key for which to retrieve the mapped value.
@@ -337,7 +416,7 @@ public class MappedSerializables implements Serializable {
 	}
 
 	/**
-	 * Gets a String value from the map for the specified key, if it exists.
+	 * Gets a String value from the internal Map for the specified key, if it exists.
 	 * 
 	 * @param key
 	 *            Key for which to retrieve the mapped value.
@@ -349,6 +428,11 @@ public class MappedSerializables implements Serializable {
 		return (null == temp) ? "" : (temp instanceof String) ? (String) temp : temp.toString();
 	}
 
+	/**
+	 * Gets a Map of all String values from the internal Map.
+	 * 
+	 * @return Map of String values. Null if no Strings exist in the internal Map.
+	 */
 	public HashMap<String, String> getStrings() {
 		if (!this.isEmpty()) {
 			final HashMap<String, String> result = new HashMap<String, String>();
@@ -366,9 +450,27 @@ public class MappedSerializables implements Serializable {
 		return null;
 	}
 
+	/**
+	 * Associates the String value with the specified key in the internal Map. If the Map previously contained a mapping for the key, the
+	 * old value is replaced.
+	 * 
+	 * @param key
+	 *            key with which the String value is to be associated.
+	 * @param value
+	 *            String to be associated with the specified key.
+	 * 
+	 * @return previous value associated with the key, IF AND ONLY IF the previous value was a String object. Otherwise will attempt to
+	 *         return the result of previous value's toString() method. Empty string "" on error or no previous value exists.
+	 */
 	public String putString(final String key, final String value) {
 		final Serializable temp = this.put(key, value);
-		return (temp instanceof String) ? (String) temp : "";
+		try {
+			return (temp instanceof String) ? (String) temp : temp.toString();
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return "";
 	}
 
 	/**
@@ -385,7 +487,7 @@ public class MappedSerializables implements Serializable {
 	}
 
 	/**
-	 * Gets a Name value from the map for the specified key, if it exists.
+	 * Gets a Name value from the internal Map for the specified key, if it exists.
 	 * 
 	 * @param key
 	 *            Key for which to retrieve the mapped value.
@@ -412,6 +514,11 @@ public class MappedSerializables implements Serializable {
 		return null;
 	}
 
+	/**
+	 * Gets a Map of all Name values from the internal Map.
+	 * 
+	 * @return Map of Name values. Null if no Names exist in the internal Map.
+	 */
 	public HashMap<String, Name> getNames() {
 		if (!this.isEmpty()) {
 			final HashMap<String, Name> result = new HashMap<String, Name>();
@@ -429,6 +536,17 @@ public class MappedSerializables implements Serializable {
 		return null;
 	}
 
+	/**
+	 * Associates the Name value with the specified key in the internal Map. If the Map previously contained a mapping for the key, the old
+	 * value is replaced.
+	 * 
+	 * @param key
+	 *            key with which the Name value is to be associated.
+	 * @param value
+	 *            Name to be associated with the specified key.
+	 * 
+	 * @return previous value associated with the key, IF AND ONLY IF the previous value was a Name object. Null otherwise.
+	 */
 	public Name putName(final String key, final Name value) {
 		final Serializable temp = this.put(key, value);
 		return (temp instanceof Name) ? (Name) temp : null;
