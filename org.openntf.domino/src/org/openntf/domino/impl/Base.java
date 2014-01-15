@@ -335,24 +335,23 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	// }
 
 	// Convert a wrapper object to its delegate form
+	// unwrap objects
 	/**
-	 * To lotus.
+	 * Gets the delegate.
 	 * 
-	 * @param baseObj
-	 *            the base obj
-	 * @return the lotus.domino. base
+	 * @param wrapper
+	 *            the wrapper
+	 * @return the delegate
 	 */
-	public static lotus.domino.Base toLotus(final lotus.domino.Base baseObj) {
-		if (baseObj instanceof org.openntf.domino.Base) {
-			if (baseObj instanceof DateRange) {
-				return ((DateRange) baseObj).toLotus();
-			}
-			return ((Base<?, ?>) baseObj).getDelegate();
+	//
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <T extends lotus.domino.Base> T toLotus(final T wrapper) {
+		if (wrapper instanceof org.openntf.domino.impl.Base) {
+			return (T) ((org.openntf.domino.impl.Base) wrapper).getDelegate();
 		}
-		return baseObj;
+		return wrapper;
 	}
 
-	// Convert a wrapper object to its delegate form, allowing for non-Lotus objects (e.g. for getDocumentByKey)
 	/**
 	 * To lotus.
 	 * 
@@ -360,9 +359,10 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the base obj
 	 * @return the lotus.domino. base version or the object itself, as appropriate
 	 */
+	@SuppressWarnings("rawtypes")
 	public static Object toLotus(final Object baseObj) {
-		if (baseObj instanceof org.openntf.domino.Base) {
-			return ((Base<?, ?>) baseObj).getDelegate();
+		if (baseObj instanceof org.openntf.domino.impl.Base) {
+			return ((org.openntf.domino.impl.Base) baseObj).getDelegate();
 		}
 		return baseObj;
 	}

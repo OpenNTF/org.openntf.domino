@@ -18,6 +18,7 @@ package org.openntf.domino.impl;
 import java.util.ArrayList;
 import java.util.List;
 //import java.util.Vector;
+import java.util.Vector;
 
 import lotus.domino.NotesException;
 

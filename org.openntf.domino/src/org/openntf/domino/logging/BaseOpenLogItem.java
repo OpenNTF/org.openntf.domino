@@ -327,7 +327,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	 */
 	public Vector<Object> getUserRoles() {
 		if (_userRoles == null) {
-			setUserRoles(Factory.wrappedEvaluate(Factory.getSession(), "@UserRoles"));
+			setUserRoles(Factory.getSession().evaluate("@UserRoles"));
 		}
 		return _userRoles;
 	}
