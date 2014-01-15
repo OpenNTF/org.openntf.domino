@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.openntf.domino.utils.Factory;
+
 /**
  * Class to cache OpenNTF-Domino-wrapper objects. The wrapper and its delegate is stored in a phantomReference. This reference is queued if
  * the wrapper Object is GC. Then the delegate gets recycled.
@@ -135,7 +137,12 @@ public class DominoReferenceCache {
 
 		int counter = cache_counter.incrementAndGet();
 		if (counter % GARBAGE_INTERVAL == 0) {
-			System.gc();
+			// TODO: This may be dangerous when switching off counters. So check for 0
+			int currObjects = Factory.getActiveObjectCount();
+			if (currObjects == 0 || currObjects > 64) {
+				// If you recycle yourself, you do not have to recycle
+				System.gc();
+			}
 		}
 
 		DominoReference ref = null;

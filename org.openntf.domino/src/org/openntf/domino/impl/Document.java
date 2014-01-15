@@ -142,10 +142,10 @@ public class Document extends org.openntf.domino.impl.Base<org.openntf.domino.Do
 			if (getAncestorSession().isFixEnabled(Fixes.FORCE_JAVA_DATES)) {
 				delegate.setPreferJavaDates(true);
 			}
-			if (isNew_) {
-				//				System.out.println("Wrapping a new document rather than an existing one...");
-				//				Thread.sleep(100);
-			}
+			//if (isNew_) {
+			//				System.out.println("Wrapping a new document rather than an existing one...");
+			//				Thread.sleep(100);
+			//}
 			// created_ = DominoUtils.toJavaDateSafe(delegate.getCreated());
 			// initiallyModified_ = DominoUtils.toJavaDateSafe(delegate.getInitiallyModified());
 			// lastModified_ = DominoUtils.toJavaDateSafe(delegate.getLastModified());

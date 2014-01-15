@@ -25,6 +25,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
+import org.openntf.domino.iterators.DocumentIterator;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
