@@ -171,6 +171,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
+
 	private void initialize(final lotus.domino.Name delegate) {
 		try {
 			if (null == delegate) {
@@ -298,9 +299,9 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 			}
 
 			if (!Strings.isBlankString(name.getCanonical())) {
-				this.setNamePartsMap(new NamePartsMap(name.getCanonical(), Names.buildAddr822(name)));
+				this.setNamePartsMap(new NamePartsMap(name.getCanonical(), Names.buildAddr822Full(name)));
 			} else if (!Strings.isBlankString(name.getAbbreviated())) {
-				this.setNamePartsMap(new NamePartsMap(name.getAbbreviated(), Names.buildAddr822(name)));
+				this.setNamePartsMap(new NamePartsMap(name.getAbbreviated(), Names.buildAddr822Full(name)));
 			}
 
 			if (!Strings.isBlankString(name.getADMD())) {
@@ -367,7 +368,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 			}
 
 			this.setName(name.getDelegate());
-			this.parseRFC82xContent(Names.buildAddr822(name));
+			this.parseRFC82xContent(Names.buildAddr822Full(name));
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
