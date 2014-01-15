@@ -27,6 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoListener;
@@ -36,6 +37,8 @@ import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+
+import com.ibm.commons.util.NotImplementedException;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -47,26 +50,147 @@ import org.openntf.domino.utils.Factory;
  *            the generic type
  */
 public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus.domino.Base> implements org.openntf.domino.Base<D> {
+	public static final int SOLO_NOTES_NAMES = 1000;
+	public static final int NOTES_SESSION = 1;
+	public static final int NOTES_DATABASE = 2;
+	public static final int NOTES_VIEW = 3;
+	public static final int NOTES_NOTE = 4;
+	public static final int NOTES_ITEM = 5;
+	public static final int NOTES_RTITEM = 6;
+	public static final int NOTES_REPORT = 7;
+	public static final int NOTES_TIME = 8;
+	public static final int NOTES_MACRO = 9;
+	public static final int NOTES_SERVER = 10;
+	public static final int NOTES_DOCCOLL = 11;
+	public static final int NOTES_AGENTLOG = 12;
+	public static final int NOTES_ACL = 13;
+	public static final int NOTES_ACLENTRY = 14;
+	public static final int NOTES_VIEWCOLUMN = 15;
+	public static final int NOTES_EMBEDOBJ = 16;
+	public static final int NOTES_REGISTRATION = 17;
+	public static final int NOTES_TIMER = 18;
+	public static final int NOTES_NAME = 19;
+	public static final int NOTES_FORM = 20;
+	public static final int NOTES_INTL = 21;
+	public static final int NOTES_DATERNG = 22;
+	public static final int NOTES_AGENTCTX = 25;
+	public static final int NOTES_RTSTYLE = 26;
+	public static final int NOTES_VIEWENTRY = 27;
+	public static final int NOTES_VECOLL = 28;
+	public static final int NOTES_RTPSTYLE = 29;
+	public static final int NOTES_RTTAB = 30;
+	public static final int NOTES_REPLICATION = 43;
+	public static final int NOTES_VIEWNAV = 44;
+	public static final int NOTES_OUTLINEENTRY = 48;
+	public static final int NOTES_OUTLINE = 49;
+	public static final int NOTES_MIMEENTITY = 50;
+	public static final int NOTES_RTTABLE = 51;
+	public static final int NOTES_RTNAVIGATOR = 52;
+	public static final int NOTES_RTRANGE = 53;
+	public static final int NOTES_NOTECOLLECTION = 54;
+	public static final int NOTES_DXLEXPORTER = 55;
+	public static final int NOTES_DXLIMPORTER = 56;
+	public static final int NOTES_MIMEHDR = 78;
+	public static final int NOTES_SESSTRM = 79;
+	public static final int NOTES_ADMINP = 80;
+	public static final int NOTES_RTDOCLNK = 81;
+	public static final int NOTES_COLOR = 82;
+	public static final int NOTES_RTSECTION = 83;
+	public static final int NOTES_REPLENT = 84;
+	public static final int NOTES_XMLREFORMATTER = 85;
+	public static final int NOTES_DOMDOCUMENTFRAGMENTNODE = 86;
+	public static final int NOTES_DOMNOTATIONNODE = 87;
+	public static final int NOTES_DOMCHARACTERDATANODE = 88;
+	public static final int NOTES_PROPERTYBROKER = 89;
+	public static final int NOTES_NOTESPROPERTY = 90;
+	public static final int NOTES_DIRECTORY = 91;
+	public static final int NOTES_DIRNAVIGATOR = 92;
+	public static final int NOTES_DIRENTRY = 93;
+	public static final int NOTES_DIRENTRYCOLLECTION = 94;
+	public static final int NOTES_DOMAIN = 95;
+	public static final int NOTES_CALENDAR = 96;
+	public static final int NOTES_CALENDARENTRY = 97;
+	public static final int NOTES_CALENDARNOTICE = 98;
+
+	// nProp values
+	static final int CNOTES_NPROP_ISSIGNED = 1140;
+	static final int CNOTES_NPROP_LASTMOD = 1141;
+	static final int CNOTES_NPROP_LASTACCESS = 1142;
+	static final int CNOTES_NPROP_CREATED = 1143;
+	static final int CNOTES_NPROP_ISRESPONSE = 1144;
+	static final int CNOTES_NPROP_FTSCORE = 1145;
+	static final int CNOTES_NPROP_ISNEWNOTE = 1146;
+	static final int CNOTES_NPROP_AUTHORS = 1147;
+	static final int CNOTES_NPROP_NOTEID = 1148;
+	static final int CNOTES_NPROP_UNID = 1149;
+	static final int CNOTES_NPROP_ITEMS = 1150;
+	static final int CNOTES_NPROP_HASATT = 1151;
+	static final int CNOTES_NPROP_PARENTDB = 1152;
+	static final int CNOTES_NPROP_PARENTVIEW = 1153;
+	static final int CNOTES_NPROP_PARENTUNID = 1154;
+	static final int CNOTES_NPROP_MENCRYPT = 1155;
+	static final int CNOTES_NPROP_MSIGN = 1156;
+	static final int CNOTES_NPROP_MSAVEMSG = 1157;
+	static final int CNOTES_NPROP_SIGNER = 1158;
+	static final int CNOTES_NPROP_VERIFIER = 1159;
+	static final int CNOTES_NPROP_RESPONSES = 1160;
+	static final int CNOTES_NPROP_ENCRYPTKEYS = 1161;
+	static final int CNOTES_NPROP_SENTBYAGENT = 1162;
+	static final int CNOTES_NPROP_SIZE = 1163;
+	static final int CNOTES_NPROP_COLVALUES = 1164;
+	static final int CNOTES_NPROP_INITIALLYMODIFIED = 1254;
+	static final int CNOTES_NPROP_EMBEDDED = 2950;
+	static final int CNOTES_NPROP_UIDOCOPEN = 2951;
+	static final int CNOTES_NPROP_ISPROFILE = 2952;
+	static final int CNOTES_NPROP_PROFNAME = 2953;
+	static final int CNOTES_NPROP_PROFUNAME = 2954;
+	static final int CNOTES_NPROP_FOLDERREFS = 2957;
+	static final int CNOTES_NPROP_ISDELETED = 2958;
+	static final int CNOTES_NPROP_ISVALID = 2959;
+	static final int CNOTES_NPROP_PREFERJAVADATES = 2963;
+	static final int CNOTES_NPROP_LOCKHOLDERS = 3830;
+	static final int CNOTES_NPROP_ISENCRYPTED = 3834;
+
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Base.class.getName());
+
+	/** The cpp_object. */
+	private long cpp_object = 0;
+
+	/** The cpp_object. */
+	private final long cpp_session;
+
+	/** the class id of this object type (implemented as precaution) **/
+	final int clsid;
 
 	/** The Constant lockedRefSet. */
 	// private static final DominoLockSet lockedRefSet = new DominoLockSet();
 
 	/** The get cpp method. */
-	private static Method getCppMethod;
+	private static Method getCppObjMethod;
 
 	/** The is invalid method. */
 	private static Method isInvalidMethod;
+
+	/** The wrapperFactory we are from **/
+	private final WrapperFactory factory_;
+
+	/** The delegate_. */
+	protected D delegate_; // NTF final??? RPr: Final not possible, otherwise ressurect won't work
+
+	/** The parent_. */
+	@SuppressWarnings("rawtypes")
+	private final org.openntf.domino.Base parent_;
 
 	static {
 		try {
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 				@Override
 				public Object run() throws Exception {
-					getCppMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("GetCppObj", (Class<?>[]) null);
-					getCppMethod.setAccessible(true);
-					isInvalidMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("isInvalid", (Class<?>[]) null);
+					Class<?> lotusClass = lotus.domino.local.NotesBase.class;
+					getCppObjMethod = lotusClass.getDeclaredMethod("GetCppObj", (Class<?>[]) null);
+					getCppObjMethod.setAccessible(true);
+					isInvalidMethod = lotusClass.getDeclaredMethod("isInvalid", (Class<?>[]) null);
 					isInvalidMethod.setAccessible(true);
 					return null;
 				}
@@ -78,40 +202,23 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	}
 
-	// /** The recycled_. */
-	// protected boolean recycled_;
-
-	/** The delegate_. */
-	protected D delegate_; // NTF final???
-
-	private long cpp_object;
-
+	/**
+	 * returns the cpp_id. DO NOT REMOVE. Otherwise native funtions won't work
+	 * 
+	 * @return the cpp_id
+	 */
 	public long GetCppObj() {
-		return this.cpp_object;
+		return cpp_object;
 	}
-
-	// /** The encapsulated_. */
-	// private boolean encapsulated_ = false;
-
-	/** The parent_. */
-	private org.openntf.domino.Base<?> parent_;
-
-	// TODO NTF - not sure about maintaining a set pointer to children. Not using for now. Just setting up (no pun intended)
-	/** The children_. */
-	// private final Set<org.openntf.domino.Base<?>> children_ = Collections
-	// .newSetFromMap(new WeakHashMap<org.openntf.domino.Base<?>, Boolean>());
 
 	/**
-	 * Sets the parent.
+	 * returns the cpp-session id. Needed for some BackendBridge functions
 	 * 
-	 * @param parent
-	 *            the new parent
+	 * @return the cpp_id of the session
 	 */
-	void setParent(final org.openntf.domino.Base<?> parent) {
-		parent_ = parent;
-		// TODO NTF - add to parent's children set?
+	public long GetCppSession() {
+		return cpp_session;
 	}
-
 	/**
 	 * Gets the parent.
 	 * 
@@ -119,6 +226,23 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 */
 	org.openntf.domino.Base<?> getParent() {
 		return parent_;
+	}
+
+	// TODO NTF - not sure about maintaining a set pointer to children. Not using for now. Just setting up (no pun intended)
+	/** The children_. */
+	// private final Set<org.openntf.domino.Base<?>> children_ = Collections
+	// .newSetFromMap(new WeakHashMap<org.openntf.domino.Base<?>, Boolean>());
+
+	/**
+	 * /** Use constructor with ClassID in future
+	 * 
+	 * @param delegate
+	 * @param parent
+	 */
+	@SuppressWarnings("rawtypes")
+	@Deprecated
+	protected Base(final D delegate, final org.openntf.domino.Base parent) {
+		this(delegate, parent, Factory.getWrapperFactory(), 0L, 0);
 	}
 
 	/**
@@ -130,28 +254,45 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 *            the parent
 	 */
 	@SuppressWarnings("rawtypes")
-	protected Base(final D delegate, final org.openntf.domino.Base<?> parent) {
+	protected Base(final D delegate, final org.openntf.domino.Base parent, final WrapperFactory wf, final long cppId, final int classId) {
+		// final, these will never change
+		parent_ = parent;
+		clsid = classId;
+		factory_ = wf;
+
+		if (delegate instanceof lotus.domino.local.NotesBase) {
+			setDelegate(delegate, cppId);
+		} else if (delegate != null) {
+			// normally you won't get here if you come from Factory.fromLotus
+			throw new IllegalArgumentException("Why are you wrapping a non-Lotus object? " + delegate.getClass().getName());
+		}
+
+		// copy the cpp_session from the parent
 		if (parent != null) {
-			setParent(parent);
+			cpp_session = ((Base) parent).GetCppSession();
+		} else if (delegate instanceof lotus.domino.Session) {
+			cpp_session = cpp_object;
+		} else {
+			cpp_session = 0;
 		}
-
-		if (delegate != null) {
-			if (delegate instanceof org.openntf.domino.impl.Base) {
-				// normally you won't get here if you come from Factory.fromLotus
-				throw new IllegalArgumentException("Why are you wrapping a non-Lotus object? " + delegate.getClass().getName());
-			} else if (delegate instanceof lotus.domino.local.NotesBase) {
-				delegate_ = delegate;
-				cpp_object = getLotusId((lotus.domino.local.NotesBase) delegate);
-			} else {
-				throw new IllegalArgumentException("Why are you wrapping a non-Lotus object? " + delegate.getClass().getName());
-			}
-		}
-
 	}
 
 	void setDelegate(final D delegate) {
+		setDelegate(delegate, 0);
+	}
+
+	/**
+	 * Sets the delegate on init or if resurrect occured
+	 * 
+	 * @param delegate
+	 */
+	void setDelegate(final D delegate, final long cppId) {
 		delegate_ = delegate;
-		cpp_object = getLotusId(delegate);
+		if (cppId != 0) {
+			cpp_object = cppId;
+		} else {
+			cpp_object = getLotusId(delegate);
+		}
 	}
 
 	/**
@@ -163,7 +304,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 */
 	public static long getLotusId(final lotus.domino.Base base) {
 		try {
-			return ((Long) getCppMethod.invoke(base, (Object[]) null)).longValue();
+			return ((Long) getCppObjMethod.invoke(base, (Object[]) null)).longValue();
 		} catch (Exception e) {
 			return 0L;
 		}
@@ -655,6 +796,109 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	public String toString() {
 		return getDelegate().toString();
 
+	}
+
+	// ------------ native functions - to be as much compatible to the lotus.domino.local...
+	// Methods that have no meaningful implementation  throw a exception
+
+	@Deprecated
+	public boolean needsGui() {
+		log_.fine("needsGui called");
+		return false;
+	}
+
+	@Deprecated
+	public void dontUseGui() {
+		log_.fine("dontUseGui called");
+	}
+
+	@Deprecated
+	public void okToUseGui() {
+		log_.fine("okToUseGui called");
+	}
+
+	@Deprecated
+	public boolean avoidingGui() {
+		log_.fine("avoidingGui called");
+
+		return true;
+	}
+
+	// ---- package private
+	@Deprecated
+	void markInvalid() {
+		throw new NotImplementedException();
+	}
+
+	@Deprecated
+	void ClearCppObj() {
+		throw new NotImplementedException();
+	}
+
+	@Deprecated
+	Object getWeak() {
+		throw new NotImplementedException();
+	}
+
+	@Deprecated
+	Session getSession() {
+		throw new NotImplementedException();
+	}
+
+	@Deprecated
+	Object getGCParent() {
+		throw new NotImplementedException();
+	}
+
+	@Deprecated
+	boolean isInvalid() {
+		throw new NotImplementedException();
+	}
+
+	void restoreObject(final Session paramSession, final long paramLong) {
+		throw new NotImplementedException();
+	}
+
+	@Deprecated
+	void CheckObject() {
+		throw new NotImplementedException();
+	}
+
+	@Deprecated
+	void CheckObjectActive() {
+		throw new NotImplementedException();
+	}
+
+	@Deprecated
+	boolean isDead() {
+		throw new NotImplementedException();
+	}
+
+	@Deprecated
+	void CheckArg(final Object paramObject) {
+		throw new NotImplementedException();
+	}
+
+	@Deprecated
+	boolean isEqual(final long paramLong) {
+		throw new NotImplementedException();
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Deprecated
+	Vector PropGetVector(final int paramInt) {
+		throw new NotImplementedException();
+	}
+
+	@Deprecated
+	void validateObjArg(final Object paramObject, final boolean paramBoolean) {
+		throw new NotImplementedException();
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Deprecated
+	Vector getStringArrayProperty(final int paramInt) {
+		throw new NotImplementedException();
 	}
 
 }
