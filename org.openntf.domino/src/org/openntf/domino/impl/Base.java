@@ -3,7 +3,6 @@
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at:
  * 
  * http://www.apache.org/licenses/LICENSE-2.0 
  * 
@@ -219,6 +218,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	public long GetCppSession() {
 		return cpp_session;
 	}
+
 	/**
 	 * Gets the parent.
 	 * 
@@ -428,12 +428,17 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	/*
 	 * (non-Javadoc)
+	 * This method recycles the delegate (and counts it as manual recycle)
 	 * 
 	 * @see lotus.domino.Base#recycle()
 	 */
 	@Deprecated
+	@Override
 	public void recycle() {
-		s_recycle(this);
+		if (isInvalid(delegate_))
+			return;
+		s_recycle(delegate_); // RPr: we must recycle the delegate, not "this". Do not call getDelegate as it may reinstantiate it
+		Factory.countManualRecycle();
 	}
 
 	/**
@@ -508,6 +513,11 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		return baseObj;
 	}
 
+	@Deprecated
+	protected static Object toDominoFriendly(final Object value, final Base<?, ?> context) throws IllegalArgumentException {
+		return toDominoFriendly(value, context, null);
+	}
+
 	/**
 	 * 
 	 * <p>
@@ -523,7 +533,10 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @throws IllegalArgumentException
 	 *             When the object is not convertible.
 	 */
-	protected static Object toDominoFriendly(final Object value, final Base<?, ?> context) throws IllegalArgumentException {
+	@SuppressWarnings("rawtypes")
+	protected static Object toDominoFriendly(final Object value, final org.openntf.domino.Base context,
+			final Collection<lotus.domino.Base> recycleThis) throws IllegalArgumentException {
+		// TODO RPr: fill recycleThis
 		if (value == null) {
 			log_.log(Level.INFO, "Trying to convert a null argument to Domino friendly. Returning null...");
 			return null;
@@ -535,7 +548,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			java.util.Vector<Object> result = new java.util.Vector<Object>(i);
 			for (int k = 0; k < i; ++k) {
 				Object o = Array.get(value, k);
-				result.add(toDominoFriendly(o, context));
+				result.add(toDominoFriendly(o, context, recycleThis));
 			}
 			return result;
 		}
@@ -544,23 +557,24 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			java.util.Vector<Object> result = new java.util.Vector<Object>();
 			Collection<?> coll = (Collection) value;
 			for (Object o : coll) {
-				result.add(toDominoFriendly(o, context));
+				result.add(toDominoFriendly(o, context, recycleThis));
 			}
 			return result;
 		}
 
 		// First, go over the normal data types
 		if (value instanceof org.openntf.domino.Base) {
-			return toLotus((org.openntf.domino.Base) value);
-		} else if (value instanceof lotus.domino.DateTime) {
-			return toLotus((lotus.domino.DateTime) value);
-		} else if (value instanceof lotus.domino.Name) {
-			return toLotus((lotus.domino.Name) value);
-		} else if (value instanceof lotus.domino.DateRange) {
-			return toLotus((lotus.domino.DateRange) value);
-		} else if (value instanceof lotus.domino.Item) {
-			return toLotus((lotus.domino.Item) value);
-		} else if (value instanceof Integer || value instanceof Double) {
+			// this is a wrapper
+			lotus.domino.Base ret = toLotus((org.openntf.domino.Base) value);
+			if (value instanceof Encapsulated && recycleThis != null) {
+				recycleThis.add(ret);
+			}
+			return ret;
+		} else if (value instanceof lotus.domino.Base) {
+			return value;
+		}
+
+		if (value instanceof Integer || value instanceof Double) {
 			return value;
 		} else if (value instanceof String) {
 			return value;
@@ -577,18 +591,26 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			// TODO Check if this is greater than what Domino can handle and serialize if so
 			return ((Number) value).doubleValue();
 		} else if (value instanceof java.util.Date) {
-			lotus.domino.Session lsess = (lotus.domino.Session) Base.getDelegate(Factory.getSession(context));
+			lotus.domino.Session lsess = ((Session) Factory.getSession(context)).getDelegate();
 			try {
-				return lsess.createDateTime((java.util.Date) value);
+				lotus.domino.DateTime dt = lsess.createDateTime((java.util.Date) value);
+				if (recycleThis != null) {
+					recycleThis.add(dt);
+				}
+				return dt;
 			} catch (Throwable t) {
 				DominoUtils.handleException(t);
 				return null;
 			}
 			// return toLotus(Factory.getSession(context).createDateTime((java.util.Date) value));
 		} else if (value instanceof java.util.Calendar) {
-			lotus.domino.Session lsess = (lotus.domino.Session) Base.getDelegate(Factory.getSession(context));
+			lotus.domino.Session lsess = ((Session) Factory.getSession(context)).getDelegate();
 			try {
-				return lsess.createDateTime((java.util.Calendar) value);
+				lotus.domino.DateTime dt = lsess.createDateTime((java.util.Calendar) value);
+				if (recycleThis != null) {
+					recycleThis.add(dt);
+				}
+				return dt;
 			} catch (Throwable t) {
 				DominoUtils.handleException(t);
 				return null;
@@ -622,11 +644,23 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @throws IllegalArgumentException
 	 *             the illegal argument exception
 	 */
+	@SuppressWarnings("rawtypes")
+	@Deprecated
 	protected static java.util.Vector<Object> toDominoFriendly(final Collection<?> values, final Base<?, ?> context)
 			throws IllegalArgumentException {
 		java.util.Vector<Object> result = new java.util.Vector<Object>();
 		for (Object value : values) {
 			result.add(toDominoFriendly(value, context));
+		}
+		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	protected static java.util.Vector<Object> toDominoFriendly(final Collection<?> values, final org.openntf.domino.Base context,
+			final Collection<lotus.domino.Base> recycleThis) throws IllegalArgumentException {
+		java.util.Vector<Object> result = new java.util.Vector<Object>();
+		for (Object value : values) {
+			result.add(toDominoFriendly(value, context, recycleThis));
 		}
 		return result;
 	}
@@ -639,15 +673,19 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @return the java.util. vector
 	 */
 	public static java.util.Vector<Object> toLotus(final Collection<?> values) {
-		java.util.Vector<Object> result = new java.util.Vector<Object>(values.size());
-		for (Object value : values) {
-			if (value instanceof lotus.domino.Base) {
-				result.add(toLotus((lotus.domino.Base) value));
-			} else {
-				result.add(value);
+		if (values == null) {
+			return null;
+		} else {
+			java.util.Vector<Object> result = new java.util.Vector<Object>(values.size());
+			for (Object value : values) {
+				if (value instanceof lotus.domino.Base) {
+					result.add(toLotus((lotus.domino.Base) value));
+				} else {
+					result.add(value);
+				}
 			}
+			return result;
 		}
-		return result;
 	}
 
 	/**
@@ -658,6 +696,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @return true, if successful
 	 */
 	public static boolean s_recycle(final lotus.domino.local.NotesBase base) {
+		if (base == null || base instanceof org.openntf.domino.Base) {
+			return false; // wrappers and null objects are not recycled!
+		}
 		boolean result = false;
 		//if (!isLocked(base)) {
 		try {
@@ -676,6 +717,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			result = true;
 		} catch (Throwable t) {
 			Factory.countRecycleError();
+			DominoUtils.handleException(t);
 			// shikata ga nai
 		}
 		//} else {
@@ -685,33 +727,47 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	}
 
 	/**
-	 * Recycle.
+	 * recycle ALL native objects
 	 * 
 	 * @param o
-	 *            the o
+	 *            the object(s) to recycle
 	 */
 	public static void s_recycle(final Object o) {
-		if (o instanceof lotus.domino.Base) {
-			if (o instanceof lotus.domino.local.NotesBase) {
-				s_recycle((lotus.domino.local.NotesBase) o);
+		// NTF this is for recycling of encapsulated objects like DateTime and Name
+		// RPr ' do we need an extra method here?
+		if (o instanceof Collection) {
+			Collection<?> c = (Collection<?>) o;
+			if (!c.isEmpty()) {
+				for (Object io : c) {
+					s_recycle((lotus.domino.Base) io);
+				}
 			}
+		} else if (o instanceof lotus.domino.Base) {
+			s_recycle((lotus.domino.Base) o);
 		}
 
 	}
 
+	/**
+	 * recycle encapsulated objects
+	 * 
+	 * @param o
+	 *            the objects to recycle (only encapsulated are recycled)
+	 */
 	public static void enc_recycle(final Object o) {
 		// NTF this is for recycling of encapsulated objects like DateTime and Name
+		// RPr ' do we need an extra method here?
 		if (o instanceof Collection) {
-			if (!((Collection) o).isEmpty()) {
-				for (Object io : (Collection) o) {
+			Collection<?> c = (Collection<?>) o;
+			if (!c.isEmpty()) {
+				for (Object io : c) {
 					if (io instanceof lotus.domino.DateTime || io instanceof lotus.domino.DateRange || io instanceof lotus.domino.Name) {
-						s_recycle(io);
+						s_recycle((lotus.domino.Base) io);
 					}
 				}
 			}
-		}
-		if (o instanceof lotus.domino.DateTime || o instanceof lotus.domino.DateRange || o instanceof lotus.domino.Name) {
-			s_recycle(o);
+		} else if (o instanceof lotus.domino.DateTime || o instanceof lotus.domino.DateRange || o instanceof lotus.domino.Name) {
+			s_recycle((lotus.domino.Base) o);
 		}
 
 	}
@@ -735,7 +791,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	public void recycle(final Vector arg0) {
 		for (Object o : arg0) {
 			if (o instanceof org.openntf.domino.impl.Base) {
-				s_recycle((org.openntf.domino.impl.Base) o);
+				((org.openntf.domino.impl.Base) o).recycle();
 			} else if (o instanceof lotus.domino.local.NotesBase) {
 				s_recycle((lotus.domino.local.NotesBase) o);
 			}
