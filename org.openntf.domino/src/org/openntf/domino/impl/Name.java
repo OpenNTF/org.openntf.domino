@@ -628,6 +628,26 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	}
 
 	/**
+	 * Gets the RFC821 or RFC822 internet address
+	 * 
+	 * * A name that conforms to RFC 821 or RFC 822 is interpreted as an Internet address. Examples of Internet addresses are as follows:
+	 * <ul>
+	 * <li>jbg@us.acme.com
+	 * <li>"John B Goode" <jbg@us.acme.com>
+	 * <li>"John B Goode" <jbg@us.acme.com> (Sales) (East)
+	 * </ul>
+	 * 
+	 * @return the Internet address, comprised of the at least the minimum RFC821 Address. If no RFC821 Address exists a blank string is
+	 *         returned.
+	 * 
+	 * @see Name#getAddr821()
+	 * @see org.openntf.arpa.RFC822name#getAddr822Full()
+	 */
+	public String getRFC82xInternetAddress() {
+		return this.getAddr822FullFirstLast();
+	}
+
+	/**
 	 * Gets the Surname portion of the name.
 	 * 
 	 * @see lotus.domino.Name#getSurname()

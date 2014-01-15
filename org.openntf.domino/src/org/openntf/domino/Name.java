@@ -344,6 +344,24 @@ public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, org.op
 	public String getPRMD();
 
 	/**
+	 * Gets the RFC821 or RFC822 internet address
+	 * 
+	 * * A name that conforms to RFC 821 or RFC 822 is interpreted as an Internet address. Examples of Internet addresses are as follows:
+	 * <ul>
+	 * <li>jbg@us.acme.com
+	 * <li>"John B Goode" <jbg@us.acme.com>
+	 * <li>"John B Goode" <jbg@us.acme.com> (Sales) (East)
+	 * </ul>
+	 * 
+	 * @return the Internet address, comprised of the at least the minimum RFC821 Address. If no RFC821 Address exists a blank string is
+	 *         returned.
+	 * 
+	 * @see Name#getAddr821()
+	 * @see org.openntf.arpa.RFC822name#getAddr822Full()
+	 */
+	public String getRFC82xInternetAddress();
+
+	/**
 	 * Gets the surname component of a hierarchical name (S=).
 	 * <p>
 	 * This property returns an empty string for a hierarchical name with no surname component.
