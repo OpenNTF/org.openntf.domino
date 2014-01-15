@@ -45,34 +45,53 @@ import org.openntf.domino.ViewEntry;
  * 
  */
 public enum Names {
-	;
+	Person("P"), Group("G"), Unknown("U");
 
-	public static enum DIRECTORY_SEARCH_RESULT_TYPE {
-		Person("P"), Group("G"), Unknown("U");
+	private String _code;
 
-		private String Key;
+	/**
+	 * Instance Constructor
+	 * 
+	 * @param code
+	 *            Code for the Key
+	 */
+	private Names(final String code) {
+		this.setCode(code);
+	}
 
-		private DIRECTORY_SEARCH_RESULT_TYPE(final String key) {
-			this.setKey(key);
-		}
+	@Override
+	public String toString() {
+		return Names.class.getName() + ": " + this.name() + "{\"" + this.getCode() + "\"}";
+	}
 
-		@Override
-		public String toString() {
-			return this.name();
-		}
+	/**
+	 * Gets the Code for the Key.
+	 * 
+	 * @return Key's Code.
+	 */
+	public String getCode() {
+		return this._code;
+	}
 
-		public String getInfo() {
-			return this.getDeclaringClass() + "." + this.getClass() + ":" + this.name();
-		}
+	/**
+	 * Sets the Code for the Key.
+	 * 
+	 * @param code
+	 *            Key's Code.
+	 */
+	public void setCode(final String code) {
+		this._code = code;
+	}
 
-		public String getKey() {
-			return this.Key;
-		}
-
-		public void setKey(final String key) {
-			this.Key = key;
-		}
-	};
+	/*
+	 * **************************************************************************
+	 * **************************************************************************
+	 * 
+	 * STATIC Properties and Methods
+	 * 
+	 * **************************************************************************
+	 * **************************************************************************
+	 */
 
 	/**
 	 * Formats a String as a role (begins with "[", ends with "]")
@@ -308,6 +327,15 @@ public enum Names {
 		return Names.getCommon(session, "");
 	}
 
+	/**
+	 * Gets all the roles the current user has for the Database.
+	 * 
+	 * @param session
+	 *            Session in effect.
+	 * @param database
+	 *            Database for which to check the roles.
+	 * @return All roles the current user has for the Database. Null on exception or no roles found.
+	 */
 	public static TreeSet<String> getRoles(final Session session, final Database database) {
 		try {
 			if (null == session) {
@@ -326,6 +354,15 @@ public enum Names {
 		return null;
 	}
 
+	/**
+	 * Gets all the roles the specified user has for the Database.
+	 * 
+	 * @param database
+	 *            Database for which to check the roles.
+	 * @param name
+	 *            Name for which to get the roles.
+	 * @return All roles the specified user has for the Database. Null on exception or no roles found.
+	 */
 	@SuppressWarnings("unchecked")
 	public static TreeSet<String> getRoles(final Database database, final Name name) {
 		try {
@@ -345,11 +382,26 @@ public enum Names {
 		return null;
 	}
 
+	/**
+	 * Fully expands a list of name strings.
+	 * 
+	 * Searches all public address books available to the specified session for person or group entries. For every group found the members
+	 * of the group will be checked against the searched set. If not in the searched list they will also be searched for (and added to the
+	 * searched list). Found group members will be included in the results.
+	 * 
+	 * @param session
+	 *            Session in effect for the search.
+	 * @param searchfor
+	 *            Set of name strings for which to search.
+	 * @param searched
+	 *            Set of name strings which have already been searched.
+	 * @return Set of all expanded found names & group members. K = name string, V = Result type (Person, Group, Unknown)
+	 */
 	@SuppressWarnings("unchecked")
-	public static HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> expandNamesList(final Session session, final TreeSet<String> searchfor,
-			final HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> searched) {
+	public static HashMap<String, Names> expandNamesList(final Session session, final TreeSet<String> searchfor,
+			final HashMap<String, Names> searched) {
 
-		HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> result = new HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE>();
+		HashMap<String, Names> result = new HashMap<String, Names>();
 
 		try {
 			if (null != searched) {
@@ -365,12 +417,11 @@ public enum Names {
 					if (database.isPublicAddressBook()) {
 						database.open();
 						if (database.isOpen()) {
-							final HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> found = Names.expandNamesList(session, database, searchfor,
-									result);
+							final HashMap<String, Names> found = Names.expandNamesList(session, database, searchfor, result);
 							if ((null != found) && (found.size() > 0)) {
-								final Iterator<Map.Entry<String, DIRECTORY_SEARCH_RESULT_TYPE>> it = found.entrySet().iterator();
+								final Iterator<Map.Entry<String, Names>> it = found.entrySet().iterator();
 								while (it.hasNext()) {
-									final Map.Entry<String, DIRECTORY_SEARCH_RESULT_TYPE> entry = it.next();
+									final Map.Entry<String, Names> entry = it.next();
 									if (!result.containsKey(entry.getKey())) {
 										result.put(entry.getKey(), entry.getValue());
 									}
@@ -389,7 +440,22 @@ public enum Names {
 		return result;
 	}
 
-	public static TreeSet<String> expandNamesList(final Session session, final Object source, final DIRECTORY_SEARCH_RESULT_TYPE... filters) {
+	/**
+	 * Fully expands a list of name strings.
+	 * 
+	 * Searches all public address books available to the specified session for person or group entries. For every group found the members
+	 * of the group will also be searched for and included in the results.
+	 * 
+	 * @param session
+	 *            Session in effect for the search.
+	 * @param source
+	 *            Object which can be converted to a TreeSet of Strings for which to search.
+	 * @param filters
+	 *            Names (Person, Group, Unknown) for which to limit the results.
+	 * @return Set of all expanded found names & group members whose result type is included in filters. K = name string, V = Result type
+	 *         (Person, Group, Unknown)
+	 */
+	public static TreeSet<String> expandNamesList(final Session session, final Object source, final Names... filters) {
 		try {
 			if (null == session) {
 				throw new IllegalArgumentException("Session is null");
@@ -399,38 +465,37 @@ public enum Names {
 			if ((null != filters) && (filters.length > 0)) {
 				final TreeSet<String> searchfor = CollectionUtils.getTreeSetStrings(source);
 				if ((null != searchfor) && (searchfor.size() > 0)) {
-					HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> found = Names.expandNamesList(session, searchfor,
-							new HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE>());
+					HashMap<String, Names> found = Names.expandNamesList(session, searchfor, new HashMap<String, Names>());
 
 					// add the searchfor values to found
 					if (null == found) {
-						found = new HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE>();
+						found = new HashMap<String, Names>();
 					}
 					for (final String s : searchfor) {
 						if (!found.containsKey(s)) {
 							final String key = Names.getAbbreviated(session, s);
 							if (!found.containsKey(key)) {
-								found.put(key, DIRECTORY_SEARCH_RESULT_TYPE.Unknown);
+								found.put(key, Names.Unknown);
 							}
 						}
 					}
 
 					if (found.size() > 0) {
 						final HashMap<String, String> temp = new HashMap<String, String>();
-						final Iterator<Map.Entry<String, DIRECTORY_SEARCH_RESULT_TYPE>> it = found.entrySet().iterator();
+						final Iterator<Map.Entry<String, Names>> it = found.entrySet().iterator();
 						while (it.hasNext()) {
 							boolean include = false;
-							final Map.Entry<String, DIRECTORY_SEARCH_RESULT_TYPE> entry = it.next();
+							final Map.Entry<String, Names> entry = it.next();
 							final String key = entry.getKey();
-							final DIRECTORY_SEARCH_RESULT_TYPE value = entry.getValue();
-							for (final DIRECTORY_SEARCH_RESULT_TYPE filter : filters) {
+							final Names value = entry.getValue();
+							for (final Names filter : filters) {
 								if (filter.equals(value)) {
 									include = true;
 									break;
 								}
 							}
 							if (include) {
-								if (DIRECTORY_SEARCH_RESULT_TYPE.Person.equals(value)) {
+								if (Names.Person.equals(value)) {
 									String abbrev = Names.getAbbreviated(session, key);
 									if (!Strings.isBlankString(key)) {
 										temp.put(abbrev.toLowerCase(), abbrev);
@@ -455,10 +520,31 @@ public enum Names {
 		return null;
 	}
 
+	/**
+	 * Fully expands a list of name strings.
+	 * 
+	 * Searches all public address books available to the specified session for person or group entries. For every group found the members
+	 * of the group will also be searched for and included in the results.
+	 * 
+	 * @param session
+	 *            Session in effect for the search.
+	 * @param source
+	 *            Object which can be converted to a TreeSet of Strings for which to search.
+	 * @return Set of all expanded found names & group members. K = name string, V = Result type (Person, Group, Unknown)
+	 */
 	public static TreeSet<String> expandNamesList(final Session session, final Object source) {
-		return Names.expandNamesList(session, source, DIRECTORY_SEARCH_RESULT_TYPE.values());
+		return Names.expandNamesList(session, source, Names.values());
 	}
 
+	/**
+	 * Creates a new Name object from the specified source.
+	 * 
+	 * @param session
+	 *            Session in effect.
+	 * @param source
+	 *            String from which to create a new Name object.
+	 * @return Name created from the source string. Null on error.
+	 */
 	public static Name createName(final Session session, final String source) {
 		try {
 			return new org.openntf.domino.impl.Name(session, source);
@@ -470,6 +556,17 @@ public enum Names {
 		return null;
 	}
 
+	/**
+	 * Creates a new Name object using the value of a specified item on the Document as the source.
+	 * 
+	 * @param session
+	 *            Session in effect.
+	 * @param document
+	 *            Document from which to get the item value string.
+	 * @param itemname
+	 *            Name of the item from which the value string will be used to create the new Name object.
+	 * @return Name created from the specified item's value. Null on error.
+	 */
 	public static Name createName(final Session session, final Document document, final String itemname) {
 		try {
 			if (null == document) {
@@ -489,6 +586,14 @@ public enum Names {
 		return null;
 	}
 
+	/**
+	 * Creates a new Name object using the specified Name object as it's source.
+	 * 
+	 * @param name
+	 *            Name object from which to construct a new Name object.
+	 * 
+	 * @return Name created from the specified Name. Null on error.
+	 */
 	public static Name createName(final Name name) {
 		try {
 			if (null == name) {
@@ -504,6 +609,14 @@ public enum Names {
 		return null;
 	}
 
+	/**
+	 * Creates a new Name object using the specified Name object as it's source.
+	 * 
+	 * @param name
+	 *            Name object from which to construct a new Name object.
+	 * 
+	 * @return Name created from the specified Name. Null on error.
+	 */
 	public static Name createName(final lotus.domino.Name name) {
 		try {
 			if (null == name) {
@@ -519,6 +632,14 @@ public enum Names {
 		return null;
 	}
 
+	/**
+	 * Creates a new RFC822name object using the specified Name object as it's source.
+	 * 
+	 * @param name
+	 *            Name object from which to construct a new Name object.
+	 * 
+	 * @return RFC822name created from the specified Name. Null on error.
+	 */
 	public static RFC822name createRFC822name(final Name name) {
 		try {
 
@@ -536,6 +657,14 @@ public enum Names {
 		return null;
 	}
 
+	/**
+	 * Creates a new RFC822name object using the specified Name object as it's source.
+	 * 
+	 * @param name
+	 *            Name object from which to construct a new Name object.
+	 * 
+	 * @return RFC822name created from the specified Name. Null on error.
+	 */
 	public static RFC822name createRFC822name(final lotus.domino.Name name) {
 		try {
 
@@ -553,6 +682,18 @@ public enum Names {
 		return null;
 	}
 
+	/**
+	 * Generates an RFC822 Addr822Full Address String from the specified component parts.
+	 * 
+	 * @param phrase
+	 *            Addr822Phrase part used to construct the result.
+	 * @param addr821
+	 *            Addr821 part used to construct the result.
+	 * @param comments
+	 *            Addr822Comment1, Addr822Comment2, and Addr822Comment2 parts used to construct the result.
+	 * @return properly formatted RFC822 Addr822Full string generated from the component parts. Empty string on error or no value for
+	 *         addr821.
+	 */
 	public static String buildAddr822(final String phrase, final String addr821, final String... comments) {
 
 		if ((null != addr821) && (addr821.trim().length() > 0)) {
@@ -583,6 +724,14 @@ public enum Names {
 		return "";
 	}
 
+	/**
+	 * Generates an RFC822 Addr822Full Address String from the specified Name.
+	 * 
+	 * @param name
+	 *            Name from which to construct the result.
+	 * @return properly formatted RFC822 Addr822Full string generated from the specified Name. Empty string on error or no value for
+	 *         name.getAddr821().
+	 */
 	public static String buildAddr822(final Name name) {
 		try {
 			if (null == name) {
@@ -598,6 +747,14 @@ public enum Names {
 		return "";
 	}
 
+	/**
+	 * Generates an RFC822 Addr822Full Address String from the specified Name.
+	 * 
+	 * @param name
+	 *            Name from which to construct the result.
+	 * @return properly formatted RFC822 Addr822Full string generated from the specified Name. Empty string on error or no value for
+	 *         name.getAddr821().
+	 */
 	public static String buildAddr822(final lotus.domino.Name name) {
 		try {
 			return Names.buildAddr822(name.getAddr822Phrase(), name.getAddr821(), name.getAddr822Comment1(), name.getAddr822Comment2(),
@@ -609,12 +766,25 @@ public enum Names {
 		return "";
 	}
 
+	/**
+	 * Gets alll names from a specified source which are missing the specified roles for a specified database.
+	 * 
+	 * @param session
+	 *            Session in effect.
+	 * @param database
+	 *            Database from which to query the ACL roles.
+	 * @param sourcenames
+	 *            Name strings for which to check roles in the Database.
+	 * @param sourceroles
+	 *            Roles to check for in the Database.
+	 * @return Set of Name objects constructed from sourcenames which do NOT have any of the specified roles in the Database.
+	 */
 	public static TreeSet<Name> getNamesMissingRoles(final Session session, final Database database, final TreeSet<String> sourcenames,
 			final TreeSet<String> sourceroles) {
 
 		final TreeSet<Name> result = new TreeSet<Name>();
 		try {
-			if ((null != sourcenames) && (sourcenames.size() > 0) && (null != sourceroles) && (sourceroles.size() > 0)) {
+			if ((null != sourcenames) && !sourcenames.isEmpty() && (null != sourceroles) && !sourceroles.isEmpty()) {
 				final TreeSet<String> checkroles = new TreeSet<String>();
 				for (final String s : sourceroles) {
 					if (!Strings.isBlankString(s)) {
@@ -651,12 +821,37 @@ public enum Names {
 		return result;
 	}
 
+	/**
+	 * Gets alll names from a specified source which are missing the specified roles for a specified database.
+	 * 
+	 * @param session
+	 *            Session in effect.
+	 * @param database
+	 *            Database from which to query the ACL roles.
+	 * @param sourcenames
+	 *            Object from which a TreeSet of Name strings can be constructed for which to check roles in the Database.
+	 * @param sourceroles
+	 *            Object from which a TreeSet of Role strings can be constructed to check for in the Database.
+	 * @return Set of Name objects constructed from sourcenames which do NOT have any of the specified roles in the Database.
+	 */
 	public static TreeSet<Name> getNamesMissingRoles(final Session session, final Database database, final Object sourcenames,
 			final Object sourceroles) {
 		return Names.getNamesMissingRoles(session, database, CollectionUtils.getTreeSetStrings(sourcenames),
 				CollectionUtils.getTreeSetStrings(sourceroles));
 	}
 
+	/**
+	 * Determines if a specified Name is a member of a set of name strings.
+	 * 
+	 * @param session
+	 *            Session in effect.
+	 * @param names
+	 *            Name strings for which to determine if name is a member.
+	 * @param name
+	 *            Name to search for in names.
+	 * 
+	 * @return Flag indicating if name is a member of names.
+	 */
 	public static boolean isNamesListMember(final Session session, final TreeSet<String> names, final Name name) {
 
 		try {
@@ -712,6 +907,18 @@ public enum Names {
 		return false;
 	}
 
+	/**
+	 * Determines if a specified name string is a member of a set of name strings.
+	 * 
+	 * @param session
+	 *            Session in effect.
+	 * @param names
+	 *            Name strings for which to determine if checkname is a member.
+	 * @param checkname
+	 *            Name string for which to construct a Name object which is searched for in names.
+	 * 
+	 * @return Flag indicating if checkname is a member of names.
+	 */
 	public static boolean isNamesListMember(final Session session, final TreeSet<String> names, final String checkname) {
 		try {
 			if (null == session) {
@@ -745,6 +952,16 @@ public enum Names {
 	 * ************************************************************************
 	 * ************************************************************************
 	 */
+	/**
+	 * Gets the ACL Roles associated with a specified canonical name for a specified Database.
+	 * 
+	 * @param database
+	 *            Database from which to get ACL Roles for canonical.
+	 * @param canonical
+	 *            Canonical string for which to search for roles in database.
+	 * 
+	 * @return Set of roles for the specified canonical name. Null on error or none found.
+	 */
 	private static TreeSet<String> getRoles(final Database database, final String canonical) {
 		try {
 			if (null == database) {
@@ -764,14 +981,31 @@ public enum Names {
 		return null;
 	}
 
-	private static HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> expandNamesList(final Session session, final View view,
-			final TreeSet<String> searchfor, HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> searched) {
+	/**
+	 * Fully expands a list of name strings.
+	 * 
+	 * Searches a specified view for person or group entries. For every group found the members of the group will be checked against the
+	 * searched set. If not in the searched list they will also be searched for (and added to the searched list). Found group members will
+	 * be included in the results.
+	 * 
+	 * @param session
+	 *            Session in effect for the search.
+	 * @param view
+	 *            View within which to search for entries.
+	 * @param searchfor
+	 *            Set of name strings for which to search.
+	 * @param searched
+	 *            Set of name strings which have already been searched.
+	 * @return Set of all expanded found names & group members. K = name string, V = Result type (Person, Group, Unknown)
+	 */
+	private static HashMap<String, Names> expandNamesList(final Session session, final View view, final TreeSet<String> searchfor,
+			HashMap<String, Names> searched) {
 
-		HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> result = new HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE>();
+		HashMap<String, Names> result = new HashMap<String, Names>();
 
 		try {
 			if (null == searched) {
-				searched = new HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE>();
+				searched = new HashMap<String, Names>();
 			} else {
 				result = searched;
 			}
@@ -796,22 +1030,21 @@ public enum Names {
 
 						if (null != vent) {
 							final String tag = (String) vent.getColumnValues().get(0);
-							if (DIRECTORY_SEARCH_RESULT_TYPE.Person.getKey().equalsIgnoreCase(tag)) {
-								result.put(key, DIRECTORY_SEARCH_RESULT_TYPE.Person);
+							if (Names.Person.getCode().equalsIgnoreCase(tag)) {
+								result.put(key, Names.Person);
 
-							} else if (DIRECTORY_SEARCH_RESULT_TYPE.Group.getKey().equalsIgnoreCase(tag)) {
-								result.put(key, DIRECTORY_SEARCH_RESULT_TYPE.Group);
+							} else if (Names.Group.getCode().equalsIgnoreCase(tag)) {
+								result.put(key, Names.Group);
 								Document document = vent.getDocument();
 
 								final TreeSet<String> ts = CollectionUtils.getTreeSetStrings(document
 										.getItemValue(DominoUtils.ITEMNAME_MEMBERS));
 								if (null != ts) {
-									final HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> found = Names.expandNamesList(session, view, ts,
-											result);
+									final HashMap<String, Names> found = Names.expandNamesList(session, view, ts, result);
 									if ((null != found) && (found.size() > 0)) {
-										final Iterator<Map.Entry<String, DIRECTORY_SEARCH_RESULT_TYPE>> it = found.entrySet().iterator();
+										final Iterator<Map.Entry<String, Names>> it = found.entrySet().iterator();
 										while (it.hasNext()) {
-											final Map.Entry<String, DIRECTORY_SEARCH_RESULT_TYPE> entry = it.next();
+											final Map.Entry<String, Names> entry = it.next();
 											if (!result.containsKey(entry.getKey())) {
 												result.put(entry.getKey(), entry.getValue());
 											}
@@ -820,7 +1053,7 @@ public enum Names {
 								}
 
 							} else {
-								result.put(key, DIRECTORY_SEARCH_RESULT_TYPE.Unknown);
+								result.put(key, Names.Unknown);
 							}
 						}
 					}
@@ -834,11 +1067,30 @@ public enum Names {
 		return result;
 	}
 
-	private static HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> expandNamesList(final Session session, final Database database,
-			final TreeSet<String> searchfor, final HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> searched) {
+	/**
+	 * Fully expands a list of name strings.
+	 * 
+	 * Searches a specified database for person or group entries. For every group found the members of the group will be checked against the
+	 * searched set. If not in the searched list they will also be searched for (and added to the searched list). Found group members will
+	 * be included in the results.
+	 * 
+	 * NOTE: NO CHECKS ARE PERFORMED TO DETERMINE IF DATABASE IS PUBLIC ADDRESS BOOK
+	 * 
+	 * @param session
+	 *            Session in effect for the search.
+	 * @param database
+	 *            Database within which to search for entries.
+	 * @param searchfor
+	 *            Set of name strings for which to search.
+	 * @param searched
+	 *            Set of name strings which have already been searched.
+	 * @return Set of all expanded found names & group members. K = name string, V = Result type (Person, Group, Unknown)
+	 */
+	private static HashMap<String, Names> expandNamesList(final Session session, final Database database, final TreeSet<String> searchfor,
+			final HashMap<String, Names> searched) {
 
 		View view = null;
-		HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> result = new HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE>();
+		HashMap<String, Names> result = new HashMap<String, Names>();
 
 		try {
 			if (null != searched) {
@@ -854,11 +1106,11 @@ public enum Names {
 			if ((null != searchfor) && (searchfor.size() > 0)) {
 				view = database.getView(DominoUtils.VIEWNAME_VIM_PEOPLE_AND_GROUPS);
 				view.setAutoUpdate(false);
-				final HashMap<String, DIRECTORY_SEARCH_RESULT_TYPE> found = Names.expandNamesList(session, view, searchfor, result);
+				final HashMap<String, Names> found = Names.expandNamesList(session, view, searchfor, result);
 				if ((null != found) && (found.size() > 0)) {
-					final Iterator<Map.Entry<String, DIRECTORY_SEARCH_RESULT_TYPE>> it = found.entrySet().iterator();
+					final Iterator<Map.Entry<String, Names>> it = found.entrySet().iterator();
 					while (it.hasNext()) {
-						final Map.Entry<String, DIRECTORY_SEARCH_RESULT_TYPE> entry = it.next();
+						final Map.Entry<String, Names> entry = it.next();
 						if (!result.containsKey(entry.getKey())) {
 							result.put(entry.getKey(), entry.getValue());
 						}
