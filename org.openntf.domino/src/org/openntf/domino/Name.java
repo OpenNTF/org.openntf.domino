@@ -15,6 +15,7 @@
  */
 package org.openntf.domino;
 
+import org.openntf.arpa.NamePartsMap;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.types.SessionDescendant;
 
@@ -246,6 +247,19 @@ public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, org.op
 	 */
 	@Override
 	public String getLanguage();
+
+	/**
+	 * Gets the String for the key.
+	 * 
+	 * @param key
+	 *            Key for the mapped String
+	 * 
+	 * @return Mapped String for the key. Empty string "" if no mapping exists.
+	 * 
+	 * @see org.openntf.arpa.NamePartsMap#get(org.openntf.arpa.NamePartsMap.Key)
+	 * @see java.util.HashMap#get(Object)
+	 */
+	public String getNamePart(final NamePartsMap.Key key);
 
 	/**
 	 * Gets the organization component of a hierarchical name (O=).
