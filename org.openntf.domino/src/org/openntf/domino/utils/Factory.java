@@ -1013,6 +1013,7 @@ public enum Factory {
 	 *            the base
 	 * @return the parent database
 	 */
+	@Deprecated
 	public static Database getParentDatabase(final Base base) {
 		if (base instanceof org.openntf.domino.Database) {
 			return (org.openntf.domino.Database) base;
