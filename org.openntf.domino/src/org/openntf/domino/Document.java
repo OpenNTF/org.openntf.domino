@@ -1046,5 +1046,4 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	@Override
 	public void unlock();
 
-	Item replaceItemValue(String itemName, Object value, Boolean isSummary, boolean returnItem);
 }
