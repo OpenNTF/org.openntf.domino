@@ -45,43 +45,47 @@ import org.openntf.domino.ViewEntry;
  * 
  */
 public enum Names {
-	Person("P"), Group("G"), Unknown("U");
+	;
 
-	private String _code;
+	public static enum LookupType {
+		Person("P"), Group("G"), Unknown("U");
 
-	/**
-	 * Instance Constructor
-	 * 
-	 * @param code
-	 *            Code for the Key
-	 */
-	private Names(final String code) {
-		this.setCode(code);
-	}
+		private String _code;
 
-	@Override
-	public String toString() {
-		return Names.class.getName() + ": " + this.name() + "{\"" + this.getCode() + "\"}";
-	}
+		/**
+		 * Instance Constructor
+		 * 
+		 * @param code
+		 *            Code for the Key
+		 */
+		private LookupType(final String code) {
+			this.setCode(code);
+		}
 
-	/**
-	 * Gets the Code for the Key.
-	 * 
-	 * @return Key's Code.
-	 */
-	public String getCode() {
-		return this._code;
-	}
+		@Override
+		public String toString() {
+			return Names.class.getName() + ": " + this.name() + "{\"" + this.getCode() + "\"}";
+		}
 
-	/**
-	 * Sets the Code for the Key.
-	 * 
-	 * @param code
-	 *            Key's Code.
-	 */
-	public void setCode(final String code) {
-		this._code = code;
-	}
+		/**
+		 * Gets the Code for the Key.
+		 * 
+		 * @return Key's Code.
+		 */
+		public String getCode() {
+			return this._code;
+		}
+
+		/**
+		 * Sets the Code for the Key.
+		 * 
+		 * @param code
+		 *            Key's Code.
+		 */
+		public void setCode(final String code) {
+			this._code = code;
+		}
+	};
 
 	/*
 	 * **************************************************************************
@@ -398,10 +402,10 @@ public enum Names {
 	 * @return Set of all expanded found names & group members. K = name string, V = Result type (Person, Group, Unknown)
 	 */
 	@SuppressWarnings("unchecked")
-	public static HashMap<String, Names> expandNamesList(final Session session, final TreeSet<String> searchfor,
-			final HashMap<String, Names> searched) {
+	public static HashMap<String, Names.LookupType> expandNamesList(final Session session, final TreeSet<String> searchfor,
+			final HashMap<String, Names.LookupType> searched) {
 
-		HashMap<String, Names> result = new HashMap<String, Names>();
+		HashMap<String, Names.LookupType> result = new HashMap<String, Names.LookupType>();
 
 		try {
 			if (null != searched) {
@@ -417,11 +421,11 @@ public enum Names {
 					if (database.isPublicAddressBook()) {
 						database.open();
 						if (database.isOpen()) {
-							final HashMap<String, Names> found = Names.expandNamesList(session, database, searchfor, result);
+							final HashMap<String, Names.LookupType> found = Names.expandNamesList(session, database, searchfor, result);
 							if ((null != found) && (found.size() > 0)) {
-								final Iterator<Map.Entry<String, Names>> it = found.entrySet().iterator();
+								final Iterator<Map.Entry<String, Names.LookupType>> it = found.entrySet().iterator();
 								while (it.hasNext()) {
-									final Map.Entry<String, Names> entry = it.next();
+									final Map.Entry<String, Names.LookupType> entry = it.next();
 									if (!result.containsKey(entry.getKey())) {
 										result.put(entry.getKey(), entry.getValue());
 									}
@@ -451,11 +455,11 @@ public enum Names {
 	 * @param source
 	 *            Object which can be converted to a TreeSet of Strings for which to search.
 	 * @param filters
-	 *            Names (Person, Group, Unknown) for which to limit the results.
+	 *            Names.LookupType (Person, Group, Unknown) for which to limit the results.
 	 * @return Set of all expanded found names & group members whose result type is included in filters. K = name string, V = Result type
 	 *         (Person, Group, Unknown)
 	 */
-	public static TreeSet<String> expandNamesList(final Session session, final Object source, final Names... filters) {
+	public static TreeSet<String> expandNamesList(final Session session, final Object source, final Names.LookupType... filters) {
 		try {
 			if (null == session) {
 				throw new IllegalArgumentException("Session is null");
@@ -465,37 +469,38 @@ public enum Names {
 			if ((null != filters) && (filters.length > 0)) {
 				final TreeSet<String> searchfor = CollectionUtils.getTreeSetStrings(source);
 				if ((null != searchfor) && (searchfor.size() > 0)) {
-					HashMap<String, Names> found = Names.expandNamesList(session, searchfor, new HashMap<String, Names>());
+					HashMap<String, Names.LookupType> found = Names.expandNamesList(session, searchfor,
+							new HashMap<String, Names.LookupType>());
 
 					// add the searchfor values to found
 					if (null == found) {
-						found = new HashMap<String, Names>();
+						found = new HashMap<String, Names.LookupType>();
 					}
 					for (final String s : searchfor) {
 						if (!found.containsKey(s)) {
 							final String key = Names.getAbbreviated(session, s);
 							if (!found.containsKey(key)) {
-								found.put(key, Names.Unknown);
+								found.put(key, Names.LookupType.Unknown);
 							}
 						}
 					}
 
 					if (found.size() > 0) {
 						final HashMap<String, String> temp = new HashMap<String, String>();
-						final Iterator<Map.Entry<String, Names>> it = found.entrySet().iterator();
+						final Iterator<Map.Entry<String, Names.LookupType>> it = found.entrySet().iterator();
 						while (it.hasNext()) {
 							boolean include = false;
-							final Map.Entry<String, Names> entry = it.next();
+							final Map.Entry<String, Names.LookupType> entry = it.next();
 							final String key = entry.getKey();
-							final Names value = entry.getValue();
-							for (final Names filter : filters) {
+							final Names.LookupType value = entry.getValue();
+							for (final Names.LookupType filter : filters) {
 								if (filter.equals(value)) {
 									include = true;
 									break;
 								}
 							}
 							if (include) {
-								if (Names.Person.equals(value)) {
+								if (Names.LookupType.Person.equals(value)) {
 									String abbrev = Names.getAbbreviated(session, key);
 									if (!Strings.isBlankString(key)) {
 										temp.put(abbrev.toLowerCase(), abbrev);
@@ -533,7 +538,7 @@ public enum Names {
 	 * @return Set of all expanded found names & group members. K = name string, V = Result type (Person, Group, Unknown)
 	 */
 	public static TreeSet<String> expandNamesList(final Session session, final Object source) {
-		return Names.expandNamesList(session, source, Names.values());
+		return Names.expandNamesList(session, source, Names.LookupType.values());
 	}
 
 	/**
@@ -647,7 +652,7 @@ public enum Names {
 				throw new IllegalArgumentException("Name is null");
 			}
 
-			String addr822 = Names.buildAddr822(name);
+			String addr822 = Names.buildAddr822Full(name);
 			return (Strings.isBlankString(addr822)) ? new RFC822name() : new RFC822name(addr822);
 
 		} catch (final Exception e) {
@@ -672,7 +677,7 @@ public enum Names {
 				throw new IllegalArgumentException("Name is null");
 			}
 
-			String addr822 = Names.buildAddr822(name);
+			String addr822 = Names.buildAddr822Full(name);
 			return (Strings.isBlankString(addr822)) ? new RFC822name() : new RFC822name(addr822);
 
 		} catch (final Exception e) {
@@ -683,63 +688,21 @@ public enum Names {
 	}
 
 	/**
-	 * Generates an RFC822 Addr822Full Address String from the specified component parts.
-	 * 
-	 * @param phrase
-	 *            Addr822Phrase part used to construct the result.
-	 * @param addr821
-	 *            Addr821 part used to construct the result.
-	 * @param comments
-	 *            Addr822Comment1, Addr822Comment2, and Addr822Comment2 parts used to construct the result.
-	 * @return properly formatted RFC822 Addr822Full string generated from the component parts. Empty string on error or no value for
-	 *         addr821.
-	 */
-	public static String buildAddr822(final String phrase, final String addr821, final String... comments) {
-
-		if ((null != addr821) && (addr821.trim().length() > 0)) {
-			StringBuilder sb = new StringBuilder((null == phrase) ? "" : phrase.trim());
-			sb.append("<");
-			sb.append(addr821);
-			sb.append(">");
-
-			if (null != comments) {
-				int idx = 0;
-				for (String comment : comments) {
-					if (!Strings.isBlankString(comment)) {
-						sb.append("(");
-						sb.append(comment);
-						sb.append(")");
-						idx++;
-						if (idx > 2) {
-							break;
-						}
-					}
-				}
-
-			}
-
-			return sb.toString();
-		}
-
-		return "";
-	}
-
-	/**
-	 * Generates an RFC822 Addr822Full Address String from the specified Name.
+	 * Generates an RFC822 Addr822 Full Address String from the specified Name.
 	 * 
 	 * @param name
 	 *            Name from which to construct the result.
 	 * @return properly formatted RFC822 Addr822Full string generated from the specified Name. Empty string on error or no value for
 	 *         name.getAddr821().
 	 */
-	public static String buildAddr822(final Name name) {
+	public static String buildAddr822Full(final Name name) {
 		try {
 			if (null == name) {
 				throw new IllegalArgumentException("Name is null");
 			}
 
-			return Names.buildAddr822(name.getAddr822Phrase(), name.getAddr821(), name.getAddr822Comment1(), name.getAddr822Comment2(),
-					name.getAddr822Comment3());
+			return RFC822name.buildAddr822Full(name.getAddr822Phrase(), name.getAddr821(), name.getAddr822Comment1(),
+					name.getAddr822Comment2(), name.getAddr822Comment3());
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}
@@ -748,17 +711,17 @@ public enum Names {
 	}
 
 	/**
-	 * Generates an RFC822 Addr822Full Address String from the specified Name.
+	 * Generates an RFC822 Addr822 Full Address String from the specified Name.
 	 * 
 	 * @param name
 	 *            Name from which to construct the result.
 	 * @return properly formatted RFC822 Addr822Full string generated from the specified Name. Empty string on error or no value for
 	 *         name.getAddr821().
 	 */
-	public static String buildAddr822(final lotus.domino.Name name) {
+	public static String buildAddr822Full(final lotus.domino.Name name) {
 		try {
-			return Names.buildAddr822(name.getAddr822Phrase(), name.getAddr821(), name.getAddr822Comment1(), name.getAddr822Comment2(),
-					name.getAddr822Comment3());
+			return RFC822name.buildAddr822Full(name.getAddr822Phrase(), name.getAddr821(), name.getAddr822Comment1(),
+					name.getAddr822Comment2(), name.getAddr822Comment3());
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}
@@ -998,14 +961,14 @@ public enum Names {
 	 *            Set of name strings which have already been searched.
 	 * @return Set of all expanded found names & group members. K = name string, V = Result type (Person, Group, Unknown)
 	 */
-	private static HashMap<String, Names> expandNamesList(final Session session, final View view, final TreeSet<String> searchfor,
-			HashMap<String, Names> searched) {
+	private static HashMap<String, Names.LookupType> expandNamesList(final Session session, final View view,
+			final TreeSet<String> searchfor, HashMap<String, Names.LookupType> searched) {
 
-		HashMap<String, Names> result = new HashMap<String, Names>();
+		HashMap<String, Names.LookupType> result = new HashMap<String, Names.LookupType>();
 
 		try {
 			if (null == searched) {
-				searched = new HashMap<String, Names>();
+				searched = new HashMap<String, Names.LookupType>();
 			} else {
 				result = searched;
 			}
@@ -1030,21 +993,21 @@ public enum Names {
 
 						if (null != vent) {
 							final String tag = (String) vent.getColumnValues().get(0);
-							if (Names.Person.getCode().equalsIgnoreCase(tag)) {
-								result.put(key, Names.Person);
+							if (Names.LookupType.Person.getCode().equalsIgnoreCase(tag)) {
+								result.put(key, Names.LookupType.Person);
 
-							} else if (Names.Group.getCode().equalsIgnoreCase(tag)) {
-								result.put(key, Names.Group);
+							} else if (Names.LookupType.Group.getCode().equalsIgnoreCase(tag)) {
+								result.put(key, Names.LookupType.Group);
 								Document document = vent.getDocument();
 
 								final TreeSet<String> ts = CollectionUtils.getTreeSetStrings(document
 										.getItemValue(DominoUtils.ITEMNAME_MEMBERS));
 								if (null != ts) {
-									final HashMap<String, Names> found = Names.expandNamesList(session, view, ts, result);
+									final HashMap<String, Names.LookupType> found = Names.expandNamesList(session, view, ts, result);
 									if ((null != found) && (found.size() > 0)) {
-										final Iterator<Map.Entry<String, Names>> it = found.entrySet().iterator();
+										final Iterator<Map.Entry<String, Names.LookupType>> it = found.entrySet().iterator();
 										while (it.hasNext()) {
-											final Map.Entry<String, Names> entry = it.next();
+											final Map.Entry<String, Names.LookupType> entry = it.next();
 											if (!result.containsKey(entry.getKey())) {
 												result.put(entry.getKey(), entry.getValue());
 											}
@@ -1053,7 +1016,7 @@ public enum Names {
 								}
 
 							} else {
-								result.put(key, Names.Unknown);
+								result.put(key, Names.LookupType.Unknown);
 							}
 						}
 					}
@@ -1086,11 +1049,11 @@ public enum Names {
 	 *            Set of name strings which have already been searched.
 	 * @return Set of all expanded found names & group members. K = name string, V = Result type (Person, Group, Unknown)
 	 */
-	private static HashMap<String, Names> expandNamesList(final Session session, final Database database, final TreeSet<String> searchfor,
-			final HashMap<String, Names> searched) {
+	private static HashMap<String, Names.LookupType> expandNamesList(final Session session, final Database database,
+			final TreeSet<String> searchfor, final HashMap<String, Names.LookupType> searched) {
 
 		View view = null;
-		HashMap<String, Names> result = new HashMap<String, Names>();
+		HashMap<String, Names.LookupType> result = new HashMap<String, Names.LookupType>();
 
 		try {
 			if (null != searched) {
@@ -1106,11 +1069,11 @@ public enum Names {
 			if ((null != searchfor) && (searchfor.size() > 0)) {
 				view = database.getView(DominoUtils.VIEWNAME_VIM_PEOPLE_AND_GROUPS);
 				view.setAutoUpdate(false);
-				final HashMap<String, Names> found = Names.expandNamesList(session, view, searchfor, result);
+				final HashMap<String, Names.LookupType> found = Names.expandNamesList(session, view, searchfor, result);
 				if ((null != found) && (found.size() > 0)) {
-					final Iterator<Map.Entry<String, Names>> it = found.entrySet().iterator();
+					final Iterator<Map.Entry<String, Names.LookupType>> it = found.entrySet().iterator();
 					while (it.hasNext()) {
-						final Map.Entry<String, Names> entry = it.next();
+						final Map.Entry<String, Names.LookupType> entry = it.next();
 						if (!result.containsKey(entry.getKey())) {
 							result.put(entry.getKey(), entry.getValue());
 						}
