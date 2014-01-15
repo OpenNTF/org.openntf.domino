@@ -107,7 +107,11 @@ public class IndexHit implements Externalizable {
 			String text = hitItem.getValueString();
 			int pos = text.indexOf(getTerm());
 			if (pos > 30) {
-				result = text.substring(pos - 30, pos + 30);
+				if (text.length() < 60) {
+					result = text.substring(pos - 30, text.length());
+				} else {
+					result = text.substring(pos - 30, pos + 30);
+				}
 			} else {
 				if (text.length() < 60) {
 					result = text;

@@ -290,6 +290,10 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 					return (T) Boolean.FALSE;
 				if (Integer.class.equals(T) || Integer.TYPE.equals(T))
 					return (T) Integer.valueOf(0);
+				if (Long.class.equals(T) || Long.TYPE.equals(T))
+					return (T) Long.valueOf(0l);
+				if (Short.class.equals(T) || Short.TYPE.equals(T))
+					return (T) Short.valueOf("0");
 				if (Double.class.equals(T) || Double.TYPE.equals(T))
 					return (T) Double.valueOf(0d);
 				if (Float.class.equals(T) || Float.TYPE.equals(T))
@@ -478,6 +482,10 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	}
 
 	public <T> T getProperty(final IDominoProperties prop) {
+		if (prop == null) {
+			log_.log(Level.WARNING, "getProperty was called with a null argument, therefore it's impossible to return a property.");
+			return null;
+		}
 		Class<?> type = prop.getType();
 		Object result = getProperty(prop.getName(), type);
 		if (result != null && type.isAssignableFrom(result.getClass())) {
