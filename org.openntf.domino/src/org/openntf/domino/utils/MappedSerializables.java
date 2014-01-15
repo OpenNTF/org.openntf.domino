@@ -411,8 +411,8 @@ public class MappedSerializables implements Serializable {
 	 * @return Value associated with the key. Null if not found or exception occurs.
 	 */
 	public String getTimestamp(final String key) {
-		final Date temp = this.getDate(key);
-		return (null == temp) ? "" : Dates.getTimestamp(temp);
+		final Date date = this.getDate(key);
+		return (null == date) ? "" : Dates.getDefaultTimestamp(date);
 	}
 
 	/**
