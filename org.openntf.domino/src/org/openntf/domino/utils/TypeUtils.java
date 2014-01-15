@@ -95,6 +95,9 @@ public enum TypeUtils {
 		//		} else if (T == java.util.Collection.class) {
 		//			log_.log(Level.WARNING, "Collection type requested from type coersion!");
 		//		}
+		if (v == null) {
+			return null;
+		}
 		Object result = null;
 		Class<?> CType = null;
 		if (T.equals(String[].class)) {
