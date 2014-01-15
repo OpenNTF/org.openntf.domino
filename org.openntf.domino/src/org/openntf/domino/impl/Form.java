@@ -45,6 +45,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public Form(final lotus.domino.Form delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}

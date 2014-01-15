@@ -118,7 +118,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	@Override
 	public DateTime getLastRun() {
 		try {
-			return Factory.fromLotus(getDelegate().getLastRun(), DateTime.class, this);
+			return fromLotus(getDelegate().getLastRun(), DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

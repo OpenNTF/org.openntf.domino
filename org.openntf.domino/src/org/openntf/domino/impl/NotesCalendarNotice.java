@@ -19,6 +19,7 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -38,6 +39,7 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public NotesCalendarNotice(final lotus.domino.NotesCalendarNotice delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
@@ -86,7 +88,8 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	 * @see org.openntf.domino.NotesCalendarNotice#counter(java.lang.String, lotus.domino.DateTime, lotus.domino.DateTime, boolean)
 	 */
 	@Override
-	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end, final boolean keepPlaceholder) {
+	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end,
+			final boolean keepPlaceholder) {
 		try {
 			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
 			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
@@ -165,7 +168,7 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	public Document getAsDocument() {
 		try {
 			// TODO This should really come from the doc's database
-			return Factory.fromLotus(getDelegate().getAsDocument(), Document.class, this.getParent());
+			return Factory.fromLotus(getDelegate().getAsDocument());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -191,7 +194,7 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	@Override
 	public Vector<org.openntf.domino.NotesCalendarNotice> getOutstandingInvitations() {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getOutstandingInvitations(), org.openntf.domino.NotesCalendarNotice.class,
+			return fromLotusAsVector(getDelegate().getOutstandingInvitations(), org.openntf.domino.NotesCalendarNotice.SCHEMA,
 					this.getParent());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);

@@ -24,20 +24,20 @@ import org.openntf.domino.types.FactorySchema;
 public interface RichTextTab extends Base<lotus.domino.RichTextTab>, lotus.domino.RichTextTab, org.openntf.domino.ext.RichTextTab,
 		DocumentDescendant {
 
-	public static class Schema extends FactorySchema<Registration, lotus.domino.Registration, Database> {
+	public static class Schema extends FactorySchema<RichTextTab, lotus.domino.RichTextTab, RichTextParagraphStyle> {
 		@Override
-		public Class<Registration> typeClass() {
-			return Registration.class;
+		public Class<RichTextTab> typeClass() {
+			return RichTextTab.class;
 		}
 
 		@Override
-		public Class<lotus.domino.Registration> delegateClass() {
-			return lotus.domino.Registration.class;
+		public Class<lotus.domino.RichTextTab> delegateClass() {
+			return lotus.domino.RichTextTab.class;
 		}
 
 		@Override
-		public Class<Database> parentClass() {
-			return Database.class;
+		public Class<RichTextParagraphStyle> parentClass() {
+			return RichTextParagraphStyle.class;
 		}
 	};
 

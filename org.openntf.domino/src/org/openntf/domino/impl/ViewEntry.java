@@ -52,6 +52,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public ViewEntry(final lotus.domino.ViewEntry delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 		try {

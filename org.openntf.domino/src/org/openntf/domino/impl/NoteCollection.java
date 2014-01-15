@@ -85,6 +85,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public NoteCollection(final lotus.domino.NoteCollection delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, Factory.getParentDatabase(parent));
 	}
@@ -297,7 +298,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	@Override
 	public DateTime getLastBuildTime() {
 		try {
-			return Factory.fromLotus(getDelegate().getLastBuildTime(), DateTime.class, this);
+			return fromLotus(getDelegate().getLastBuildTime(), DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -812,7 +813,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	 */
 	public DateTime getSinceTime() {
 		try {
-			return Factory.fromLotus(getDelegate().getSinceTime(), DateTime.class, this);
+			return fromLotus(getDelegate().getSinceTime(), DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -842,7 +843,7 @@ public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.dom
 	 */
 	public DateTime getUntilTime() {
 		try {
-			return Factory.fromLotus(getDelegate().getUntilTime(), DateTime.class, this);
+			return fromLotus(getDelegate().getUntilTime(), DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

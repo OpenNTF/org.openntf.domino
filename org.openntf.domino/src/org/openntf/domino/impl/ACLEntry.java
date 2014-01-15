@@ -21,9 +21,10 @@ import lotus.domino.NotesException;
 
 import org.openntf.domino.ACL;
 import org.openntf.domino.Database;
+import org.openntf.domino.Name;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -39,6 +40,14 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 * @param parent
 	 *            the parent
 	 */
+	public ACLEntry(final lotus.domino.ACLEntry delegate, final org.openntf.domino.ACL parent, final WrapperFactory wf, final long cpp_id) {
+		super(delegate, parent, wf, cpp_id, NOTES_ACLENTRY);
+	}
+
+	/**
+	 * @deprecated: use {@link #ACLEntry(lotus.domino.ACLEntry, ACL, WrapperFactory, long)} instead
+	 */
+	@Deprecated
 	public ACLEntry(final lotus.domino.ACLEntry delegate, final org.openntf.domino.ACL parent) {
 		super(delegate, parent);
 	}
@@ -109,7 +118,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	@Override
 	public Name getNameObject() {
 		try {
-			return Factory.fromLotus(getDelegate().getNameObject(), Name.class, this);
+			return fromLotus(getDelegate().getNameObject(), Name.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

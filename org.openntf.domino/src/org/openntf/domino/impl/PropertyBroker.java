@@ -4,13 +4,14 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.NotesProperty;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 public class PropertyBroker extends Base<org.openntf.domino.PropertyBroker, lotus.domino.PropertyBroker> implements
 		org.openntf.domino.PropertyBroker {
 
+	@Deprecated
 	public PropertyBroker(final lotus.domino.PropertyBroker delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
@@ -27,7 +28,7 @@ public class PropertyBroker extends Base<org.openntf.domino.PropertyBroker, lotu
 	@Override
 	public Vector<org.openntf.domino.NotesProperty> getInputPropertyContext() {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getInputPropertyContext(), org.openntf.domino.NotesProperty.class, this);
+			return fromLotusAsVector(getDelegate().getInputPropertyContext(), org.openntf.domino.NotesProperty.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -37,7 +38,7 @@ public class PropertyBroker extends Base<org.openntf.domino.PropertyBroker, lotu
 	@Override
 	public NotesProperty getProperty(final String propertyName) {
 		try {
-			return Factory.fromLotus(getDelegate().getProperty(propertyName), NotesProperty.class, this);
+			return fromLotus(getDelegate().getProperty(propertyName), NotesProperty.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -98,7 +99,7 @@ public class PropertyBroker extends Base<org.openntf.domino.PropertyBroker, lotu
 	@Override
 	public NotesProperty setPropertyValue(final String propertyName, final Object propertyValue) {
 		try {
-			return Factory.fromLotus(getDelegate().setPropertyValue(propertyName, propertyValue), NotesProperty.class, this);
+			return fromLotus(getDelegate().setPropertyValue(propertyName, propertyValue), NotesProperty.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

@@ -34,6 +34,7 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public ColorObject(final lotus.domino.ColorObject delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, Factory.getSession(parent));
 	}

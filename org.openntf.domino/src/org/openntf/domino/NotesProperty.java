@@ -25,15 +25,15 @@ import org.openntf.domino.types.SessionDescendant;
  */
 public interface NotesProperty extends Base<lotus.domino.NotesProperty>, lotus.domino.NotesProperty, org.openntf.domino.ext.NotesProperty,
 		SessionDescendant {
-	public static class Schema extends FactorySchema<ColorObject, lotus.domino.ColorObject, PropertyBroker> {
+	public static class Schema extends FactorySchema<NotesProperty, lotus.domino.NotesProperty, PropertyBroker> {
 		@Override
-		public Class<ColorObject> typeClass() {
-			return ColorObject.class;
+		public Class<NotesProperty> typeClass() {
+			return NotesProperty.class;
 		}
 
 		@Override
-		public Class<lotus.domino.ColorObject> delegateClass() {
-			return lotus.domino.ColorObject.class;
+		public Class<lotus.domino.NotesProperty> delegateClass() {
+			return lotus.domino.NotesProperty.class;
 		}
 
 		@Override

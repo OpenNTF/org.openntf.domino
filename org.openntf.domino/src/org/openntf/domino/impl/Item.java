@@ -29,6 +29,8 @@ import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
+import org.openntf.domino.Document;
+import org.openntf.domino.MIMEEntity;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -53,6 +55,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public Item(final lotus.domino.Item delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 		String name;
@@ -152,11 +155,15 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#copyItemToDocument(lotus.domino.Document)
 	 */
 	@Override
-	public Item copyItemToDocument(final lotus.domino.Document doc) {
+	public org.openntf.domino.Item copyItemToDocument(final lotus.domino.Document lotusDoc) {
 		// TODO - mark dirty?
 		try {
-			return Factory.fromLotus(getDelegate().copyItemToDocument((lotus.domino.Document) toLotus(doc)), Item.class,
-					(org.openntf.domino.Document) doc);
+			if (lotusDoc == null) {
+				throw new IllegalArgumentException();
+			}
+
+			Document doc = Factory.fromLotus(lotusDoc); // TODO: this is not yet optimal. wrap document with it's session & db
+			return fromLotus(getDelegate().copyItemToDocument(toLotus(doc)), Item.SCHEMA, doc);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -169,11 +176,15 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#copyItemToDocument(lotus.domino.Document, java.lang.String)
 	 */
 	@Override
-	public Item copyItemToDocument(final lotus.domino.Document doc, final String newName) {
+	public org.openntf.domino.Item copyItemToDocument(final lotus.domino.Document lotusDoc, final String newName) {
 		// TODO - mark dirty?
 		try {
-			return Factory.fromLotus(getDelegate().copyItemToDocument((lotus.domino.Document) toLotus(doc), newName), Item.class,
-					(org.openntf.domino.Document) doc);
+			if (lotusDoc == null) {
+				throw new IllegalArgumentException();
+			}
+
+			Document doc = Factory.fromLotus(lotusDoc); // TODO: this is not yet optimal. wrap document with it's session & db
+			return fromLotus(getDelegate().copyItemToDocument(toLotus(doc), newName), Item.SCHEMA, doc);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -193,7 +204,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 			if (delegate == null) {
 				//				System.out.println("Delegate DateTime is null for item " + getName() + " in doc " + getAncestorDocument().getUniversalID());
 			}
-			return Factory.fromLotus(delegate, DateTime.class, this);
+			return fromLotus(delegate, DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -238,7 +249,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	@Override
 	public DateTime getLastModified() {
 		try {
-			return Factory.fromLotus(getDelegate().getLastModified(), DateTime.class, this);
+			return fromLotus(getDelegate().getLastModified(), DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -273,7 +284,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	@Override
 	public MIMEEntity getMIMEEntity() {
 		try {
-			return Factory.fromLotus(getDelegate().getMIMEEntity(), MIMEEntity.class, this.getParent());
+			return fromLotus(getDelegate().getMIMEEntity(), MIMEEntity.SCHEMA, this.getParent());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -969,7 +980,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	private void resurrect() {
 		if (name_ != null) {
 			try {
-				lotus.domino.Document d = (getAncestorDocument()).getDelegate();
+				lotus.domino.Document d = toLotus(getAncestorDocument());
 				lotus.domino.Item item = d.getFirstItem(name_);
 				setDelegate(item, 0);
 				if (log_.isLoggable(Level.INFO)) {

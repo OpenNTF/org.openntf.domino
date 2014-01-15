@@ -25,6 +25,7 @@ import lotus.domino.NotesException;
 import lotus.domino.XSLTResultTarget;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 import org.xml.sax.InputSource;
@@ -47,6 +48,7 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public EmbeddedObject(final lotus.domino.EmbeddedObject delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
@@ -331,7 +333,8 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 	}
 
 	void markDirty() {
-		getParentDocument().markDirty();
+		// TODO RPr: put this in interface
+		((org.openntf.domino.impl.Document) getParentDocument()).markDirty();
 	}
 
 	/*

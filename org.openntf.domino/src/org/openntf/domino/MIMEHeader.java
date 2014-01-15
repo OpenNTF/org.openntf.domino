@@ -24,15 +24,15 @@ import org.openntf.domino.types.FactorySchema;
 public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.MIMEHeader, org.openntf.domino.ext.MIMEHeader,
 		DocumentDescendant {
 
-	public static class Schema extends FactorySchema<ColorObject, lotus.domino.ColorObject, MIMEEntity> {
+	public static class Schema extends FactorySchema<MIMEHeader, lotus.domino.MIMEHeader, MIMEEntity> {
 		@Override
-		public Class<ColorObject> typeClass() {
-			return ColorObject.class;
+		public Class<MIMEHeader> typeClass() {
+			return MIMEHeader.class;
 		}
 
 		@Override
-		public Class<lotus.domino.ColorObject> delegateClass() {
-			return lotus.domino.ColorObject.class;
+		public Class<lotus.domino.MIMEHeader> delegateClass() {
+			return lotus.domino.MIMEHeader.class;
 		}
 
 		@Override

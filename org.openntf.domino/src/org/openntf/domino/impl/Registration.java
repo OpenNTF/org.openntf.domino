@@ -21,9 +21,9 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.DateTime;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -40,6 +40,7 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public Registration(final lotus.domino.Registration delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
@@ -348,7 +349,7 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	@Override
 	public DateTime getExpiration() {
 		try {
-			return Factory.fromLotus(getDelegate().getExpiration(), DateTime.class, this);
+			return fromLotus(getDelegate().getExpiration(), DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

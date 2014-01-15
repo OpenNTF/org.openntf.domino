@@ -2375,7 +2375,7 @@ public class Document extends org.openntf.domino.impl.Base<org.openntf.domino.Do
 				// Then fall back to the normal method, which will MIMEBean it
 				return this.replaceItemValue(itemName, byteArray);
 			} else {
-				return Factory.fromLotus(getDelegate().replaceItemValueCustomDataBytes(itemName, dataTypeName, byteArray), Item.SCHEMA,
+				return fromLotus(getDelegate().replaceItemValueCustomDataBytes(itemName, dataTypeName, byteArray), Item.SCHEMA,
 						this);
 			}
 		} catch (NotesException e) {

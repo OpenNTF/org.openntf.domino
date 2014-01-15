@@ -26,15 +26,15 @@ import org.openntf.domino.types.FactorySchema;
 public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, lotus.domino.ReplicationEntry,
 		org.openntf.domino.ext.ReplicationEntry, DatabaseDescendant {
 
-	public static class Schema extends FactorySchema<ColorObject, lotus.domino.ColorObject, Replication> {
+	public static class Schema extends FactorySchema<ReplicationEntry, lotus.domino.ReplicationEntry, Replication> {
 		@Override
-		public Class<ColorObject> typeClass() {
-			return ColorObject.class;
+		public Class<ReplicationEntry> typeClass() {
+			return ReplicationEntry.class;
 		}
 
 		@Override
-		public Class<lotus.domino.ColorObject> delegateClass() {
-			return lotus.domino.ColorObject.class;
+		public Class<lotus.domino.ReplicationEntry> delegateClass() {
+			return lotus.domino.ReplicationEntry.class;
 		}
 
 		@Override

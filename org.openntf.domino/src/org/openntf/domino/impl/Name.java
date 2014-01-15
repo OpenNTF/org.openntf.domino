@@ -116,6 +116,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public Name(final lotus.domino.Name delegate, final org.openntf.domino.Base<?> parent) {
 		super(null, parent);
 		initialize(delegate);

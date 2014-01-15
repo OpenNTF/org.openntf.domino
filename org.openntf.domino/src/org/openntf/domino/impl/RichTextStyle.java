@@ -35,6 +35,7 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public RichTextStyle(final lotus.domino.RichTextStyle delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, Factory.getSession(parent));
 	}

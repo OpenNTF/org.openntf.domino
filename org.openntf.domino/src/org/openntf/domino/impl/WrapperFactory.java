@@ -222,6 +222,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	 * @param cpp
 	 * @return
 	 */
+
 	protected Base wrapLotusObject(final lotus.domino.Base lotus, final Base parent, final long cpp) {
 		// TODO Auto-generated method stub
 

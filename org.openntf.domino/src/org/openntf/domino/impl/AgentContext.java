@@ -30,7 +30,6 @@ import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -47,6 +46,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public AgentContext(final lotus.domino.AgentContext delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 
@@ -64,7 +64,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public Agent getCurrentAgent() {
 		try {
-			return Factory.fromLotus(getDelegate().getCurrentAgent(), Agent.class, getCurrentDatabase());
+			return fromLotus(getDelegate().getCurrentAgent(), Agent.SCHEMA, getCurrentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -139,7 +139,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public DateTime getLastRun() {
 		try {
-			return Factory.fromLotus(getDelegate().getLastRun(), DateTime.class, this);
+			return fromLotus(getDelegate().getLastRun(), DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -223,7 +223,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public DocumentCollection unprocessedFTSearch(final String query, final int maxDocs) {
 		try {
-			return Factory.fromLotus(getDelegate().unprocessedFTSearch(query, maxDocs), DocumentCollection.class, this);
+			return fromLotus(getDelegate().unprocessedFTSearch(query, maxDocs), DocumentCollection.SCHEMA, getCurrentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -238,7 +238,8 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public DocumentCollection unprocessedFTSearch(final String query, final int maxDocs, final int sortOpt, final int otherOpt) {
 		try {
-			return Factory.fromLotus(getDelegate().unprocessedFTSearch(query, maxDocs, sortOpt, otherOpt), DocumentCollection.class, this);
+			return fromLotus(getDelegate().unprocessedFTSearch(query, maxDocs, sortOpt, otherOpt), DocumentCollection.SCHEMA,
+					getCurrentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -253,7 +254,8 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public DocumentCollection unprocessedFTSearchRange(final String query, final int maxDocs, final int sortOpt) {
 		try {
-			return Factory.fromLotus(getDelegate().unprocessedFTSearchRange(query, maxDocs, sortOpt), DocumentCollection.class, this);
+			return fromLotus(getDelegate().unprocessedFTSearchRange(query, maxDocs, sortOpt), DocumentCollection.SCHEMA,
+					getCurrentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -269,8 +271,8 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	public DocumentCollection unprocessedFTSearchRange(final String query, final int maxDocs, final int sortOpt, final int otherOpt,
 			final int start) {
 		try {
-			return Factory.fromLotus(getDelegate().unprocessedFTSearchRange(query, maxDocs, sortOpt, otherOpt, start),
-					DocumentCollection.class, this);
+			return fromLotus(getDelegate().unprocessedFTSearchRange(query, maxDocs, sortOpt, otherOpt, start), DocumentCollection.SCHEMA,
+					getCurrentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -287,7 +289,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 		try {
 			DocumentCollection result;
 			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(limit);
-			result = Factory.fromLotus(getDelegate().unprocessedSearch(formula, dt, maxDocs), DocumentCollection.class, this);
+			result = fromLotus(getDelegate().unprocessedSearch(formula, dt, maxDocs), DocumentCollection.SCHEMA, getCurrentDatabase());
 			enc_recycle(dt);
 			return result;
 		} catch (NotesException e) {

@@ -38,6 +38,7 @@ public class Stream extends Base<org.openntf.domino.Stream, lotus.domino.Stream>
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public Stream(final lotus.domino.Stream delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}

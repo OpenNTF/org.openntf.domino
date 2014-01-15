@@ -20,11 +20,11 @@ import java.util.logging.Logger;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.RichTextStyle;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.types.DocumentDescendant;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -42,6 +42,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public RichTextDoclink(final lotus.domino.RichTextDoclink delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
@@ -114,7 +115,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	@Override
 	public RichTextStyle getHotSpotTextStyle() {
 		try {
-			return Factory.fromLotus(getDelegate().getHotSpotTextStyle(), RichTextStyle.class, this);
+			return fromLotus(getDelegate().getHotSpotTextStyle(), RichTextStyle.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

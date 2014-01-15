@@ -21,8 +21,8 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Outline;
 import org.openntf.domino.Session;
+import org.openntf.domino.View;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -39,6 +39,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public OutlineEntry(final lotus.domino.OutlineEntry delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
@@ -66,7 +67,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	@Override
 	public Database getDatabase() {
 		try {
-			return Factory.fromLotus(getDelegate().getDatabase(), Database.class, this);
+			return fromLotus(getDelegate().getDatabase(), Database.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -302,7 +303,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	@Override
 	public View getView() {
 		try {
-			return Factory.fromLotus(getDelegate().getView(), View.class, this);
+			return fromLotus(getDelegate().getView(), View.SCHEMA, getAncestorDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

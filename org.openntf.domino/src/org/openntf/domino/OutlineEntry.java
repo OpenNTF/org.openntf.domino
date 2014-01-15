@@ -25,15 +25,15 @@ import org.openntf.domino.types.FactorySchema;
 public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.domino.OutlineEntry, org.openntf.domino.ext.OutlineEntry,
 		Design, DatabaseDescendant {
 
-	public static class Schema extends FactorySchema<ColorObject, lotus.domino.ColorObject, Outline> {
+	public static class Schema extends FactorySchema<OutlineEntry, lotus.domino.OutlineEntry, Outline> {
 		@Override
-		public Class<ColorObject> typeClass() {
-			return ColorObject.class;
+		public Class<OutlineEntry> typeClass() {
+			return OutlineEntry.class;
 		}
 
 		@Override
-		public Class<lotus.domino.ColorObject> delegateClass() {
-			return lotus.domino.ColorObject.class;
+		public Class<lotus.domino.OutlineEntry> delegateClass() {
+			return lotus.domino.OutlineEntry.class;
 		}
 
 		@Override

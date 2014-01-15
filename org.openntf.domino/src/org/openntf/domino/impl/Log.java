@@ -37,6 +37,7 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log> implemen
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public Log(final lotus.domino.Log delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}

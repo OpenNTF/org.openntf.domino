@@ -277,7 +277,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		if (delegate instanceof lotus.domino.local.NotesBase) {
 			setDelegate(delegate, cppId);
 		} else if (delegate != null) {
-			// normally you won't get here if you come from Factory.fromLotus
+			// normally you won't get here if you come from fromLotus
 			throw new IllegalArgumentException("Why are you wrapping a non-Lotus object? " + delegate.getClass().getName());
 		}
 
@@ -473,6 +473,19 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	}
 
 	// unwrap objects
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <T extends lotus.domino.Base> T toLotus(final T wrapper, final List recycleThis) {
+		if (wrapper instanceof org.openntf.domino.impl.Base) {
+			lotus.domino.Base ret = ((org.openntf.domino.impl.Base) wrapper).getDelegate();
+			if (wrapper instanceof Encapsulated) {
+				recycleThis.add(ret);
+			}
+			return (T) ret;
+		}
+		return wrapper;
+	}
+
 	/**
 	 * Gets the delegate.
 	 * 
