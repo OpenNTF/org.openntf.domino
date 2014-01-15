@@ -63,14 +63,18 @@ public enum Factory {
 	;
 
 	private static class SetupJob implements Runnable {
+		@Override
 		public void run() {
 			try {
 				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 					@Override
 					public Object run() throws Exception {
 						lotus.domino.Session session = NotesFactory.createSession();
-						Factory.loadEnvironment(session);
-						session.recycle();
+						try {
+							loadEnvironment(session);
+						} finally {
+							session.recycle();
+						}
 						return null;
 					}
 				});
@@ -83,6 +87,7 @@ public enum Factory {
 			try {
 				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 					@Override
+					// TODO RPr: read config from notes.ini / env
 					public Object run() throws Exception {
 						String pattern = Factory.getDataPath() + "/IBM_TECHNICAL_SUPPORT/org.openntf.%u.%g.log";
 						Logger oodLogger = Logger.getLogger("org.openntf.domino");
@@ -223,25 +228,35 @@ public enum Factory {
 		}
 	}
 
-	public static String getTitle() {
+	public static String getEnvironment(final String key) {
 		if (ENVIRONMENT == null) {
 			loadEnvironment(null);
 		}
-		return ENVIRONMENT.get("title");
+		return ENVIRONMENT.get(key);
+	}
+
+	public static String getTitle() {
+		return getEnvironment("title");
 	}
 
 	public static String getUrl() {
-		if (ENVIRONMENT == null) {
-			loadEnvironment(null);
-		}
-		return ENVIRONMENT.get("url");
+		return getEnvironment("url");
 	}
 
 	public static String getVersion() {
-		if (ENVIRONMENT == null) {
-			loadEnvironment(null);
-		}
-		return ENVIRONMENT.get("version");
+		return getEnvironment("version");
+	}
+
+	public static String getDataPath() {
+		return getEnvironment("directory");
+	}
+
+	public static String getProgramPath() {
+		return getEnvironment("notesprogram");
+	}
+
+	public static String getHTTPJVMHeapSize() {
+		return getEnvironment("httpjvmheapsize");
 	}
 
 	private static ThreadLocal<Session> currentSessionHolder_ = new ThreadLocal<Session>() {
@@ -272,53 +287,20 @@ public enum Factory {
 
 	/** The Constant TRACE_COUNTERS. */
 	private static final boolean TRACE_COUNTERS = true;
-
-	/**
-	 * The Class Counter.
-	 */
-	static class Counter extends ThreadLocal<Integer> {
-		// TODO NTF - I'm open to a faster implementation of this. Maybe a mutable int of some kind?
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.ThreadLocal#initialValue()
-		 */
-		@Override
-		protected Integer initialValue() {
-			return Integer.valueOf(0);
-		}
-
-		/**
-		 * Increment.
-		 * 
-		 * @return the int
-		 */
-		public int increment() {
-			int result = get() + 1;
-			set(result);
-			return result;
-		}
-
-		/**
-		 * Decrement.
-		 * 
-		 * @return the int
-		 */
-		public int decrement() {
-			int result = get() - 1;
-			set(result);
-			return result;
-		}
-	};
+	/** use a separate counter in each thread */
+	private static final boolean COUNT_PER_THREAD = true;
 
 	/** The lotus counter. */
-	private static Counter lotusCounter = new Counter();
+	private static Counter lotusCounter = new Counter(COUNT_PER_THREAD);
 
 	/** The recycle err counter. */
-	private static Counter recycleErrCounter = new Counter();
+	private static Counter recycleErrCounter = new Counter(COUNT_PER_THREAD);
 
 	/** The auto recycle counter. */
-	private static Counter autoRecycleCounter = new Counter();
+	private static Counter autoRecycleCounter = new Counter(COUNT_PER_THREAD);
+
+	/** The manual recycle counter. */
+	private static Counter manualRecycleCounter = new Counter(COUNT_PER_THREAD);
 
 	/**
 	 * Gets the lotus count.
@@ -326,7 +308,24 @@ public enum Factory {
 	 * @return the lotus count
 	 */
 	public static int getLotusCount() {
-		return lotusCounter.get().intValue();
+		return lotusCounter.intValue();
+	}
+
+	/**
+	 * Count a created lotus element.
+	 */
+	public static void countLotus() {
+		if (TRACE_COUNTERS)
+			lotusCounter.increment();
+	}
+
+	/**
+	 * Gets the recycle error count.
+	 * 
+	 * @return the recycle error count
+	 */
+	public static int getRecycleErrorCount() {
+		return recycleErrCounter.intValue();
 	}
 
 	/**
@@ -335,6 +334,15 @@ public enum Factory {
 	public static void countRecycleError() {
 		if (TRACE_COUNTERS)
 			recycleErrCounter.increment();
+	}
+
+	/**
+	 * Gets the auto recycle count.
+	 * 
+	 * @return the auto recycle count
+	 */
+	public static int getAutoRecycleCount() {
+		return autoRecycleCounter.intValue();
 	}
 
 	/**
@@ -351,21 +359,32 @@ public enum Factory {
 	}
 
 	/**
-	 * Gets the auto recycle count.
+	 * Gets the manual recycle count.
 	 * 
-	 * @return the auto recycle count
+	 * @return the manual recycle count
 	 */
-	public static int getAutoRecycleCount() {
-		return autoRecycleCounter.get().intValue();
+	public static int getManualRecycleCount() {
+		return manualRecycleCounter.intValue();
 	}
 
 	/**
-	 * Gets the recycle error count.
-	 * 
-	 * @return the recycle error count
+	 * Count a manual recycle
 	 */
-	public static int getRecycleErrorCount() {
-		return recycleErrCounter.get().intValue();
+	public static int countManualRecycle() {
+		if (TRACE_COUNTERS) {
+			return manualRecycleCounter.increment();
+		} else {
+			return 0;
+		}
+	}
+
+	/**
+	 * get the active object count
+	 * 
+	 * @return
+	 */
+	public static int getActiveObjectCount() {
+		return lotusCounter.intValue() - autoRecycleCounter.intValue() - manualRecycleCounter.intValue();
 	}
 
 	public static RunContext getRunContext() {
@@ -1002,27 +1021,6 @@ public enum Factory {
 			DominoUtils.handleException(e);
 		}
 		return null;
-	}
-
-	public static String getDataPath() {
-		if (ENVIRONMENT == null) {
-			loadEnvironment(null);
-		}
-		return ENVIRONMENT.get("directory");
-	}
-
-	public static String getProgramPath() {
-		if (ENVIRONMENT == null) {
-			loadEnvironment(null);
-		}
-		return ENVIRONMENT.get("notesprogram");
-	}
-
-	public static String getHTTPJVMHeapSize() {
-		if (ENVIRONMENT == null) {
-			loadEnvironment(null);
-		}
-		return ENVIRONMENT.get("httpjvmheapsize");
 	}
 
 	/**
