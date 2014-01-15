@@ -19,8 +19,8 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.DirectoryNavigator;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -36,6 +36,7 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public Directory(final lotus.domino.Directory delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
@@ -48,7 +49,7 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	@Override
 	public DirectoryNavigator createNavigator() {
 		try {
-			return Factory.fromLotus(getDelegate().createNavigator(), DirectoryNavigator.class, this);
+			return fromLotus(getDelegate().createNavigator(), DirectoryNavigator.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -269,7 +270,7 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	@Override
 	public DirectoryNavigator lookupAllNames(final String view, final String item) {
 		try {
-			return Factory.fromLotus(getDelegate().lookupAllNames(view, item), DirectoryNavigator.class, this);
+			return fromLotus(getDelegate().lookupAllNames(view, item), DirectoryNavigator.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -285,7 +286,7 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	@Override
 	public DirectoryNavigator lookupAllNames(final String view, final Vector items) {
 		try {
-			return Factory.fromLotus(getDelegate().lookupAllNames(view, items), DirectoryNavigator.class, this);
+			return fromLotus(getDelegate().lookupAllNames(view, items), DirectoryNavigator.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -300,7 +301,7 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	@Override
 	public DirectoryNavigator lookupNames(final String view, final String name, final String item) {
 		try {
-			return Factory.fromLotus(getDelegate().lookupNames(view, name, item), DirectoryNavigator.class, this);
+			return fromLotus(getDelegate().lookupNames(view, name, item), DirectoryNavigator.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -316,7 +317,7 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	@Override
 	public DirectoryNavigator lookupNames(final String view, final Vector names, final Vector items, final boolean partialMatches) {
 		try {
-			return Factory.fromLotus(getDelegate().lookupNames(view, names, items, partialMatches), DirectoryNavigator.class, this);
+			return fromLotus(getDelegate().lookupNames(view, names, items, partialMatches), DirectoryNavigator.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

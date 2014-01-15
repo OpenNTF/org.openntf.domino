@@ -18,12 +18,32 @@ package org.openntf.domino;
 import java.util.Vector;
 
 import org.openntf.domino.types.DocumentDescendant;
+import org.openntf.domino.types.FactorySchema;
 
 /**
  * The Interface RichTextTable.
  */
 public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.domino.RichTextTable, org.openntf.domino.ext.RichTextTable,
 		DocumentDescendant {
+
+	public static class Schema extends FactorySchema<Registration, lotus.domino.Registration, Database> {
+		@Override
+		public Class<Registration> typeClass() {
+			return Registration.class;
+		}
+
+		@Override
+		public Class<lotus.domino.Registration> delegateClass() {
+			return lotus.domino.Registration.class;
+		}
+
+		@Override
+		public Class<Database> parentClass() {
+			return Database.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)
@@ -78,6 +98,7 @@ public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.d
 	 * 
 	 * @return the parent
 	 */
+	@Override
 	public RichTextItem getParent();
 
 	/*
@@ -173,7 +194,7 @@ public interface RichTextTable extends Base<lotus.domino.RichTextTable>, lotus.d
 	 * 
 	 * @see lotus.domino.RichTextTable#setRowLabels(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void setRowLabels(final Vector labels);
 

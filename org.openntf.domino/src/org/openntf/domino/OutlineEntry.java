@@ -17,12 +17,32 @@ package org.openntf.domino;
 
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.Design;
+import org.openntf.domino.types.FactorySchema;
 
 /**
  * The Interface OutlineEntry.
  */
 public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.domino.OutlineEntry, org.openntf.domino.ext.OutlineEntry,
 		Design, DatabaseDescendant {
+
+	public static class Schema extends FactorySchema<OutlineEntry, lotus.domino.OutlineEntry, Outline> {
+		@Override
+		public Class<OutlineEntry> typeClass() {
+			return OutlineEntry.class;
+		}
+
+		@Override
+		public Class<lotus.domino.OutlineEntry> delegateClass() {
+			return lotus.domino.OutlineEntry.class;
+		}
+
+		@Override
+		public Class<Outline> parentClass() {
+			return Outline.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)
@@ -37,6 +57,7 @@ public interface OutlineEntry extends Base<lotus.domino.OutlineEntry>, lotus.dom
 	 * 
 	 * @see lotus.domino.OutlineEntry#getDatabase()
 	 */
+	@Override
 	public Database getDatabase();
 
 	/*

@@ -17,7 +17,9 @@ package org.openntf.domino.impl;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
 // TODO: Auto-generated Javadoc
@@ -34,8 +36,13 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public ViewColumn(final lotus.domino.ViewColumn delegate, final org.openntf.domino.View parent) {
 		super(delegate, parent);
+	}
+
+	public ViewColumn(final lotus.domino.ViewColumn delegate, final View parent, final WrapperFactory wf, final long cpp_id) {
+		super(delegate, parent, wf, cpp_id, NOTES_VIEWCOLUMN);
 	}
 
 	/*

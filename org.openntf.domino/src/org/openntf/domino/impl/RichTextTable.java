@@ -15,6 +15,8 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -25,7 +27,6 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.types.DocumentDescendant;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -43,6 +44,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public RichTextTable(final lotus.domino.RichTextTable delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
@@ -100,7 +102,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	@Override
 	public ColorObject getAlternateColor() {
 		try {
-			return Factory.fromLotus(getDelegate().getAlternateColor(), ColorObject.class, this);
+			return fromLotus(getDelegate().getAlternateColor(), ColorObject.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -115,7 +117,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	@Override
 	public ColorObject getColor() {
 		try {
-			return Factory.fromLotus(getDelegate().getColor(), ColorObject.class, this);
+			return fromLotus(getDelegate().getColor(), ColorObject.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -319,13 +321,15 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setRowLabels(final Vector labels) {
+		List recycleThis = new ArrayList();
 		try {
-			java.util.Vector v = toDominoFriendly(labels, this);
+			java.util.Vector v = toDominoFriendly(labels, this, recycleThis);
 			getDelegate().setRowLabels(v);
 			markDirty();
-			s_recycle(v);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 

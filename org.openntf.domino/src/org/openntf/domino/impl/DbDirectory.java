@@ -56,6 +56,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public DbDirectory(final lotus.domino.DbDirectory delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 		try {
@@ -68,6 +69,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		type_ = Type.TEMPLATE_CANDIDATE;
 	}
 
+	@Deprecated
 	public DbDirectory(final lotus.domino.DbDirectory delegate, final org.openntf.domino.Base<?> parent, final Type type) {
 		super(delegate, parent);
 		try {
@@ -80,6 +82,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		type_ = type;
 	}
 
+	@Deprecated
 	public DbDirectory(final lotus.domino.DbDirectory delegate, final org.openntf.domino.Base<?> parent, final boolean sortByLastModified) {
 		super(delegate, parent);
 		try {
@@ -97,6 +100,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		type_ = Type.TEMPLATE_CANDIDATE;
 	}
 
+	@Deprecated
 	public DbDirectory(final lotus.domino.DbDirectory delegate, final org.openntf.domino.Base<?> parent, final Type type,
 			final boolean sortByLastModified) {
 		super(delegate, parent);
@@ -177,7 +181,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	@Override
 	public Database createDatabase(final String dbFile) {
 		try {
-			return Factory.fromLotus(getDelegate().createDatabase(dbFile), Database.class, this);
+			return fromLotus(getDelegate().createDatabase(dbFile), Database.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -192,7 +196,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	@Override
 	public Database createDatabase(final String dbFile, final boolean open) {
 		try {
-			return Factory.fromLotus(getDelegate().createDatabase(dbFile, open), Database.class, this);
+			return fromLotus(getDelegate().createDatabase(dbFile, open), Database.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -282,7 +286,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	@Legacy(org.openntf.domino.annotations.Legacy.ITERATION_WARNING)
 	public Database getNextDatabase() {
 		try {
-			return Factory.fromLotus(getDelegate().getNextDatabase(), Database.class, this);
+			return fromLotus(getDelegate().getNextDatabase(), Database.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -418,11 +422,11 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 
 	void resurrect() {
 		Session rawSessionUs = (Session) Factory.getSession();
-		lotus.domino.Session rawSession = (lotus.domino.Session) rawSessionUs.getDelegate();
+		lotus.domino.Session rawSession = toLotus(rawSessionUs);
 		try {
 			lotus.domino.DbDirectory dir = rawSession.getDbDirectory(name_);
 			dir.setHonorShowInOpenDatabaseDialog(isHonorOpenDialog_);
-			setDelegate(dir);
+			setDelegate(dir, 0);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}

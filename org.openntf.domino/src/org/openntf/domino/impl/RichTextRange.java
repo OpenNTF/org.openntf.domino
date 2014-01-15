@@ -18,10 +18,12 @@ package org.openntf.domino.impl;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.RichTextItem;
+import org.openntf.domino.RichTextNavigator;
+import org.openntf.domino.RichTextStyle;
 import org.openntf.domino.Session;
 import org.openntf.domino.types.DocumentDescendant;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -38,6 +40,7 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public RichTextRange(final lotus.domino.RichTextRange delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
@@ -48,9 +51,9 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	 * @see org.openntf.domino.RichTextRange#Clone()
 	 */
 	@Override
-	public RichTextRange Clone() {
+	public org.openntf.domino.RichTextRange Clone() {
 		try {
-			return Factory.fromLotus(getDelegate().Clone(), RichTextRange.class, this);
+			return fromLotus(getDelegate().Clone(), RichTextRange.SCHEMA, getParent());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -101,7 +104,7 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	@Override
 	public RichTextNavigator getNavigator() {
 		try {
-			return Factory.fromLotus(getDelegate().getNavigator(), RichTextNavigator.class, this);
+			return fromLotus(getDelegate().getNavigator(), RichTextNavigator.SCHEMA, getParent());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -124,7 +127,7 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	@Override
 	public RichTextStyle getStyle() {
 		try {
-			return Factory.fromLotus(getDelegate().getStyle(), RichTextStyle.class, this);
+			return fromLotus(getDelegate().getStyle(), RichTextStyle.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

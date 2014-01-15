@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Session;
-import org.openntf.domino.impl.Base;
 import org.openntf.domino.thread.AbstractDominoDaemon;
 import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.thread.DominoExecutor;
@@ -111,7 +110,7 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 		 */
 		@Override
 		public void run() {
-			Session session = Factory.fromLotus(dispatcher_.getTrustedSession(), org.openntf.domino.Session.class, null);
+			Session session = Factory.fromLotus(dispatcher_.getTrustedSession(), org.openntf.domino.Session.SCHEMA, null);
 			//			Factory.setClassLoader(Thread.currentThread().getContextClassLoader());
 			//			if (session != null) {
 			//				System.out.println("session: " + session.getEffectiveUserName());
@@ -154,7 +153,7 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 				AbstractDominoRunnable adr = (AbstractDominoRunnable) request;
 				if (adr.shouldRecycle()) {
 					System.out.println("Attempting auto-recycle of session from trusted runnable...");
-					lotus.domino.Session s = (lotus.domino.Session) Base.getDelegate(adr.getSession());
+					lotus.domino.Session s = Factory.toLotus(adr.getSession());
 					if (s != null)
 						try {
 							s.recycle();

@@ -18,6 +18,7 @@ package org.openntf.domino;
 import java.util.Vector;
 
 import org.openntf.domino.types.DatabaseDescendant;
+import org.openntf.domino.types.FactorySchema;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -25,6 +26,30 @@ import org.openntf.domino.types.DatabaseDescendant;
  */
 public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openntf.domino.ext.ACL, Iterable<org.openntf.domino.ACLEntry>,
 		DatabaseDescendant {
+
+	/**
+	 * @author Roland Praml, Foconis AG
+	 * 
+	 */
+	public static class Schema extends FactorySchema<ACL, lotus.domino.ACL, Database> {
+		@Override
+		public Class<ACL> typeClass() {
+			return ACL.class;
+		}
+
+		@Override
+		public Class<lotus.domino.ACL> delegateClass() {
+			return lotus.domino.ACL.class;
+		}
+
+		@Override
+		public Class<Database> parentClass() {
+			return Database.class;
+		}
+	};
+
+	/** the Schema */
+	public static final Schema SCHEMA = new Schema();
 
 	/**
 	 * The Enum Level.

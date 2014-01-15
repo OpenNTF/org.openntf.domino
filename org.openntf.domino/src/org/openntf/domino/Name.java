@@ -16,6 +16,7 @@
 package org.openntf.domino;
 
 import org.openntf.domino.types.Encapsulated;
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
@@ -60,6 +61,26 @@ import org.openntf.domino.types.SessionDescendant;
  * </ul>
  */
 public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, org.openntf.domino.ext.Name, Encapsulated, SessionDescendant {
+
+	public static class Schema extends FactorySchema<Name, lotus.domino.Name, Session> {
+		@Override
+		public Class<Name> typeClass() {
+			return Name.class;
+		}
+
+		@Override
+		public Class<lotus.domino.Name> delegateClass() {
+			return lotus.domino.Name.class;
+		}
+
+		@Override
+		public Class<Session> parentClass() {
+			return Session.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
+
 	/**
 	 * The Enum NameType.
 	 */
@@ -398,6 +419,7 @@ public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, org.op
 	 * 
 	 * @see lotus.domino.Base#recycle()
 	 */
+	@Override
 	@Deprecated
 	public void recycle();
 }

@@ -21,9 +21,9 @@ import java.util.Vector;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.ACLEntry;
+import org.openntf.domino.Session;
 import org.openntf.domino.iterators.AclIterator;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -39,6 +39,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public ACL(final lotus.domino.ACL delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
@@ -65,7 +66,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	@Override
 	public ACLEntry createACLEntry(final String name, final int level) {
 		try {
-			return Factory.fromLotus(getDelegate().createACLEntry(name, level), ACLEntry.class, this);
+			return fromLotus(getDelegate().createACLEntry(name, level), ACLEntry.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -127,7 +128,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	@Override
 	public ACLEntry getEntry(final String ename) {
 		try {
-			return Factory.fromLotus(getDelegate().getEntry(ename), ACLEntry.class, this);
+			return fromLotus(getDelegate().getEntry(ename), ACLEntry.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -142,7 +143,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	@Override
 	public ACLEntry getFirstEntry() {
 		try {
-			return Factory.fromLotus(getDelegate().getFirstEntry(), ACLEntry.class, this);
+			return fromLotus(getDelegate().getFirstEntry(), ACLEntry.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -172,7 +173,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	@Override
 	public ACLEntry getNextEntry() {
 		try {
-			return Factory.fromLotus(getDelegate().getNextEntry(), ACLEntry.class, this);
+			return fromLotus(getDelegate().getNextEntry(), ACLEntry.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -187,7 +188,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	@Override
 	public ACLEntry getNextEntry(final lotus.domino.ACLEntry entry) {
 		try {
-			return Factory.fromLotus(getDelegate().getNextEntry((lotus.domino.ACLEntry) toLotus(entry)), ACLEntry.class, this);
+			return fromLotus(getDelegate().getNextEntry(toLotus(entry)), ACLEntry.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -209,7 +210,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	 * 
 	 * @see org.openntf.domino.ACL#getRoles()
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Vector<String> getRoles() {
 		try {

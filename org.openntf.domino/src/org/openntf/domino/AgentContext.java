@@ -15,6 +15,7 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
@@ -22,6 +23,25 @@ import org.openntf.domino.types.SessionDescendant;
  */
 public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.domino.AgentContext, org.openntf.domino.ext.AgentContext,
 		SessionDescendant {
+
+	public static class Schema extends FactorySchema<AgentContext, lotus.domino.AgentContext, Session> {
+		@Override
+		public Class<AgentContext> typeClass() {
+			return AgentContext.class;
+		}
+
+		@Override
+		public Class<lotus.domino.AgentContext> delegateClass() {
+			return lotus.domino.AgentContext.class;
+		}
+
+		@Override
+		public Class<Session> parentClass() {
+			return Session.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)
@@ -76,6 +96,7 @@ public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.dom
 	 * 
 	 * @return the parent session
 	 */
+	@Override
 	public Session getParentSession();
 
 	/*
@@ -124,7 +145,8 @@ public interface AgentContext extends Base<lotus.domino.AgentContext>, lotus.dom
 	 * @see lotus.domino.AgentContext#unprocessedFTSearchRange(java.lang.String, int, int, int, int)
 	 */
 	@Override
-	public DocumentCollection unprocessedFTSearchRange(final String query, final int maxDocs, final int sortOpt, final int otherOpt, final int start);
+	public DocumentCollection unprocessedFTSearchRange(final String query, final int maxDocs, final int sortOpt, final int otherOpt,
+			final int start);
 
 	/*
 	 * (non-Javadoc)

@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.Vector;
 
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.types.FactorySchema;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -27,6 +28,25 @@ import org.openntf.domino.annotations.Legacy;
  * represents the Domino environment of the current program.
  */
 public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Session, Base<lotus.domino.Session> {
+	@SuppressWarnings("rawtypes")
+	public static class Schema extends FactorySchema<Session, lotus.domino.Session, Base> {
+		@Override
+		public Class<Session> typeClass() {
+			return Session.class;
+		}
+
+		@Override
+		public Class<lotus.domino.Session> delegateClass() {
+			return lotus.domino.Session.class;
+		}
+
+		@Override
+		public Class<Base> parentClass() {
+			return Base.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/**
 	 * The Enum RunContext.
@@ -87,6 +107,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 *            the color
 	 * @return the color object
 	 */
+	@Override
 	public ColorObject createColorObject(final java.awt.Color color);
 
 	/**

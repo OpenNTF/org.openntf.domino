@@ -16,12 +16,32 @@
 package org.openntf.domino;
 
 import org.openntf.domino.types.DatabaseDescendant;
+import org.openntf.domino.types.FactorySchema;
 
 /**
  * The Interface ViewNavigator.
  */
 public interface ViewNavigator extends Base<lotus.domino.ViewNavigator>, lotus.domino.ViewNavigator, org.openntf.domino.ext.ViewNavigator,
 		Iterable<ViewEntry>, DatabaseDescendant {
+
+	public static class Schema extends FactorySchema<ViewNavigator, lotus.domino.ViewNavigator, View> {
+		@Override
+		public Class<ViewNavigator> typeClass() {
+			return ViewNavigator.class;
+		}
+
+		@Override
+		public Class<lotus.domino.ViewNavigator> delegateClass() {
+			return lotus.domino.ViewNavigator.class;
+		}
+
+		@Override
+		public Class<View> parentClass() {
+			return View.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)

@@ -18,12 +18,32 @@ package org.openntf.domino;
 import java.util.Vector;
 
 import org.openntf.domino.types.DocumentDescendant;
+import org.openntf.domino.types.FactorySchema;
 
 /**
  * The Interface RichTextItem.
  */
 public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.domino.ext.RichTextItem, org.openntf.domino.Item,
 		DocumentDescendant {
+
+	public static class Schema extends FactorySchema<RichTextItem, lotus.domino.RichTextItem, Document> {
+		@Override
+		public Class<RichTextItem> typeClass() {
+			return RichTextItem.class;
+		}
+
+		@Override
+		public Class<lotus.domino.RichTextItem> delegateClass() {
+			return lotus.domino.RichTextItem.class;
+		}
+
+		@Override
+		public Class<Document> parentClass() {
+			return Document.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)
@@ -190,7 +210,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * 
 	 * @see lotus.domino.RichTextItem#appendTable(int, int, java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void appendTable(final int rows, final int columns, final Vector labels);
 
@@ -199,7 +219,7 @@ public interface RichTextItem extends lotus.domino.RichTextItem, org.openntf.dom
 	 * 
 	 * @see lotus.domino.RichTextItem#appendTable(int, int, java.util.Vector, int, java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void appendTable(final int rows, final int columns, final Vector labels, final int leftMargin, final Vector pstyles);
 

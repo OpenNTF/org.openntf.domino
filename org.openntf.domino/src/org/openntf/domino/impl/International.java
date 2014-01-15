@@ -34,6 +34,7 @@ public class International extends Base<org.openntf.domino.International, lotus.
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public International(final lotus.domino.International delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}

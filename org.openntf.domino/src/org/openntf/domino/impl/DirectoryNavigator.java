@@ -38,6 +38,7 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public DirectoryNavigator(final lotus.domino.DirectoryNavigator delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}

@@ -17,6 +17,7 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
@@ -31,6 +32,25 @@ import org.openntf.domino.types.SessionDescendant;
  * </ul>
  */
 public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log, org.openntf.domino.ext.Log, SessionDescendant {
+
+	public static class Schema extends FactorySchema<Log, lotus.domino.Log, Session> {
+		@Override
+		public Class<Log> typeClass() {
+			return Log.class;
+		}
+
+		@Override
+		public Class<lotus.domino.Log> delegateClass() {
+			return lotus.domino.Log.class;
+		}
+
+		@Override
+		public Class<Session> parentClass() {
+			return Session.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/**
 	 * Closes a log.
@@ -211,7 +231,7 @@ public interface Log extends Base<lotus.domino.Log>, lotus.domino.Log, org.openn
 	 *            The subject of the mail memo.
 	 * @since lotus.domino 4.5.0
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void openMailLog(final Vector recipients, final String subject);
 

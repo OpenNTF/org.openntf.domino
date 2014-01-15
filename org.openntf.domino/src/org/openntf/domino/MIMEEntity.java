@@ -21,6 +21,7 @@ import java.io.Reader;
 import java.util.Vector;
 
 import org.openntf.domino.types.DocumentDescendant;
+import org.openntf.domino.types.FactorySchema;
 import org.xml.sax.InputSource;
 
 /**
@@ -28,6 +29,25 @@ import org.xml.sax.InputSource;
  */
 public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.MIMEEntity, org.openntf.domino.ext.MIMEEntity,
 		DocumentDescendant {
+
+	public static class Schema extends FactorySchema<MIMEEntity, lotus.domino.MIMEEntity, Document> {
+		@Override
+		public Class<MIMEEntity> typeClass() {
+			return MIMEEntity.class;
+		}
+
+		@Override
+		public Class<lotus.domino.MIMEEntity> delegateClass() {
+			return lotus.domino.MIMEEntity.class;
+		}
+
+		@Override
+		public Class<Document> parentClass() {
+			return Document.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)
@@ -178,7 +198,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * 
 	 * @see lotus.domino.MIMEEntity#getEntityAsText(lotus.domino.Stream, java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void getEntityAsText(final lotus.domino.Stream stream, final Vector headerFilters);
 
@@ -187,7 +207,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * 
 	 * @see lotus.domino.MIMEEntity#getEntityAsText(lotus.domino.Stream, java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void getEntityAsText(final lotus.domino.Stream stream, final Vector headerFilters, final boolean inclusive);
 
@@ -339,7 +359,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * 
 	 * @see lotus.domino.MIMEEntity#getSomeHeaders(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public String getSomeHeaders(final Vector headerFilters);
 
@@ -348,7 +368,7 @@ public interface MIMEEntity extends Base<lotus.domino.MIMEEntity>, lotus.domino.
 	 * 
 	 * @see lotus.domino.MIMEEntity#getSomeHeaders(java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public String getSomeHeaders(final Vector headerFilters, final boolean inclusive);
 

@@ -21,6 +21,8 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Document;
+import org.openntf.domino.NoteCollection;
 import org.openntf.domino.NoteCollection.SelectOption;
 import org.openntf.domino.Session;
 import org.openntf.domino.annotations.Legacy;
@@ -43,6 +45,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public Form(final lotus.domino.Form delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}

@@ -38,6 +38,7 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public ReplicationEntry(final lotus.domino.ReplicationEntry delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}

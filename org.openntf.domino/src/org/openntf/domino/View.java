@@ -20,6 +20,7 @@ import java.util.Vector;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.Design;
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.Resurrectable;
 
 // TODO: Auto-generated Javadoc
@@ -28,6 +29,25 @@ import org.openntf.domino.types.Resurrectable;
  */
 public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Base<lotus.domino.View>, Design, Resurrectable,
 		DatabaseDescendant {
+
+	public static class Schema extends FactorySchema<View, lotus.domino.View, Database> {
+		@Override
+		public Class<View> typeClass() {
+			return View.class;
+		}
+
+		@Override
+		public Class<lotus.domino.View> delegateClass() {
+			return lotus.domino.View.class;
+		}
+
+		@Override
+		public Class<Database> parentClass() {
+			return Database.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)
@@ -308,7 +328,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#FTSearchSorted(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -319,7 +339,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#FTSearchSorted(java.util.Vector, int)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -330,7 +350,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#FTSearchSorted(java.util.Vector, int, int)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -341,7 +361,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#FTSearchSorted(java.util.Vector, int, int, boolean, boolean, boolean, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -353,7 +373,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#FTSearchSorted(java.util.Vector, int, java.lang.String)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -364,7 +384,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#FTSearchSorted(java.util.Vector, int, java.lang.String, boolean, boolean, boolean, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -408,7 +428,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#getAllDocumentsByKey(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -419,7 +439,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#getAllDocumentsByKey(java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -454,7 +474,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#getAllEntriesByKey(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -465,7 +485,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#getAllEntriesByKey(java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -592,7 +612,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#getDocumentByKey(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -603,7 +623,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#getDocumentByKey(java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -630,7 +650,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#getEntryByKey(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -641,7 +661,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#getEntryByKey(java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -992,7 +1012,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#lock(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -1003,7 +1023,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#lock(java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -1030,7 +1050,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#lockProvisional(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -1145,7 +1165,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#setAliases(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
@@ -1212,7 +1232,7 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @see lotus.domino.View#setReaders(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })

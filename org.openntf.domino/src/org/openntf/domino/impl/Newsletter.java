@@ -17,6 +17,7 @@ package org.openntf.domino.impl;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Document;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -34,6 +35,7 @@ public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public Newsletter(final lotus.domino.Newsletter delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
@@ -46,7 +48,8 @@ public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino
 	@Override
 	public Document formatDocument(final lotus.domino.Database db, final int index) {
 		try {
-			return Factory.fromLotus(getDelegate().formatDocument((lotus.domino.Database) toLotus(db), index), Document.class, this);
+			// TODO RPr - this is not nice
+			return Factory.fromLotus(getDelegate().formatDocument(toLotus(db), index));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -61,7 +64,8 @@ public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino
 	@Override
 	public Document formatMsgWithDoclinks(final lotus.domino.Database db) {
 		try {
-			return Factory.fromLotus(getDelegate().formatMsgWithDoclinks((lotus.domino.Database) toLotus(db)), Document.class, this);
+			// TODO RPr
+			return Factory.fromLotus(getDelegate().formatMsgWithDoclinks(toLotus(db)));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

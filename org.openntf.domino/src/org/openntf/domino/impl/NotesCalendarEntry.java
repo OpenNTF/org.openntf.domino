@@ -19,9 +19,9 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -38,6 +38,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public NotesCalendarEntry(final lotus.domino.NotesCalendarEntry delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
@@ -249,7 +250,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	public Document getAsDocument() {
 		try {
 			// TODO This should really come from the doc's DB
-			return Factory.fromLotus(getDelegate().getAsDocument(), Document.class, this.getParent());
+			return fromLotus(getDelegate().getAsDocument(), Document.SCHEMA, null);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -263,7 +264,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	public Document getAsDocument(final int flags) {
 		try {
 			// TODO This should really come from the doc's DB
-			return Factory.fromLotus(getDelegate().getAsDocument(flags), Document.class, this.getParent());
+			return fromLotus(getDelegate().getAsDocument(flags), Document.SCHEMA, null);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -276,7 +277,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	@Override
 	public Document getAsDocument(final int flags, final String recurrenceId) {
 		try {
-			return Factory.fromLotus(getDelegate().getAsDocument(flags, recurrenceId), Document.class, this.getParent());
+			return fromLotus(getDelegate().getAsDocument(flags, recurrenceId), Document.SCHEMA, null);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -289,7 +290,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	@Override
 	public Vector<org.openntf.domino.NotesCalendarNotice> getNotices() {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getNotices(), org.openntf.domino.NotesCalendarNotice.class, this.getParent());
+			return fromLotusAsVector(getDelegate().getNotices(), org.openntf.domino.NotesCalendarNotice.SCHEMA, null);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

@@ -39,6 +39,7 @@ public class RichTextTab extends Base<org.openntf.domino.RichTextTab, lotus.domi
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public RichTextTab(final lotus.domino.RichTextTab delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}

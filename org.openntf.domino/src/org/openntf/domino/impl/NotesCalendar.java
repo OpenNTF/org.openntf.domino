@@ -19,8 +19,10 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.DateTime;
+import org.openntf.domino.NotesCalendarEntry;
+import org.openntf.domino.NotesCalendarNotice;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -37,6 +39,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public NotesCalendar(final lotus.domino.NotesCalendar delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
@@ -47,7 +50,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	@Override
 	public NotesCalendarEntry createEntry(final String iCalEntry) {
 		try {
-			return Factory.fromLotus(getDelegate().createEntry(iCalEntry), NotesCalendarEntry.class, this);
+			return fromLotus(getDelegate().createEntry(iCalEntry), NotesCalendarEntry.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -60,7 +63,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	@Override
 	public NotesCalendarEntry createEntry(final String iCalEntry, final int flags) {
 		try {
-			return Factory.fromLotus(getDelegate().createEntry(iCalEntry, flags), NotesCalendarEntry.class, this);
+			return fromLotus(getDelegate().createEntry(iCalEntry, flags), NotesCalendarEntry.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -89,7 +92,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 			Vector<org.openntf.domino.NotesCalendarEntry> result;
 			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
 			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
-			result = Factory.fromLotusAsVector(getDelegate().getEntries(dt1, dt2), org.openntf.domino.NotesCalendarEntry.class, this);
+			result = fromLotusAsVector(getDelegate().getEntries(dt1, dt2), org.openntf.domino.NotesCalendarEntry.SCHEMA, this);
 			enc_recycle(dt1);
 			enc_recycle(dt2);
 			return result;
@@ -110,8 +113,8 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 			Vector<org.openntf.domino.NotesCalendarEntry> result;
 			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
 			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
-			result = Factory.fromLotusAsVector(getDelegate().getEntries(dt1, dt2, skipCount, maxReturn),
-					org.openntf.domino.NotesCalendarEntry.class, this);
+			result = fromLotusAsVector(getDelegate().getEntries(dt1, dt2, skipCount, maxReturn),
+					org.openntf.domino.NotesCalendarEntry.SCHEMA, this);
 			enc_recycle(dt1);
 			enc_recycle(dt2);
 			return result;
@@ -140,7 +143,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	@Override
 	public NotesCalendarEntry getEntry(final String uid) {
 		try {
-			return Factory.fromLotus(getDelegate().getEntry(uid), NotesCalendarEntry.class, this);
+			return fromLotus(getDelegate().getEntry(uid), NotesCalendarEntry.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -153,7 +156,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	@Override
 	public NotesCalendarEntry getEntryByNoteID(final String noteid) {
 		try {
-			return Factory.fromLotus(getDelegate().getEntryByNoteID(noteid), NotesCalendarEntry.class, this);
+			return fromLotus(getDelegate().getEntryByNoteID(noteid), NotesCalendarEntry.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -166,7 +169,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	@Override
 	public NotesCalendarEntry getEntryByUNID(final String unid) {
 		try {
-			return Factory.fromLotus(getDelegate().getEntryByUNID(unid), NotesCalendarEntry.class, this);
+			return fromLotus(getDelegate().getEntryByUNID(unid), NotesCalendarEntry.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -179,7 +182,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	@Override
 	public Vector<org.openntf.domino.NotesCalendarNotice> getNewInvitations() {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getNewInvitations(), NotesCalendarNotice.class, this);
+			return fromLotusAsVector(getDelegate().getNewInvitations(), NotesCalendarNotice.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -196,7 +199,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 			Vector<org.openntf.domino.NotesCalendarNotice> result;
 			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
 			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(since);
-			result = Factory.fromLotusAsVector(getDelegate().getNewInvitations(dt1, dt2), NotesCalendarNotice.class, this);
+			result = fromLotusAsVector(getDelegate().getNewInvitations(dt1, dt2), NotesCalendarNotice.SCHEMA, this);
 			enc_recycle(dt1);
 			enc_recycle(dt2);
 			return result;
@@ -212,7 +215,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	@Override
 	public NotesCalendarNotice getNoticeByUNID(final String unid) {
 		try {
-			return Factory.fromLotus(getDelegate().getNoticeByUNID(unid), NotesCalendarNotice.class, this);
+			return fromLotus(getDelegate().getNoticeByUNID(unid), NotesCalendarNotice.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -270,9 +273,9 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 * @see org.openntf.domino.NotesCalendar#getUntilTime()
 	 */
 	@Override
-	public org.openntf.domino.DateTime getUntilTime() {
+	public DateTime getUntilTime() {
 		try {
-			return Factory.fromLotus(getDelegate().getUntilTime(), DateTime.class, this);
+			return fromLotus(getDelegate().getUntilTime(), DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

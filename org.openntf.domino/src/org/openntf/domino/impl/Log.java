@@ -15,6 +15,8 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
@@ -35,6 +37,7 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log> implemen
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public Log(final lotus.domino.Log delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
@@ -232,9 +235,10 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log> implemen
 	@Override
 	public void openMailLog(final Vector recipients, final String subject) {
 		try {
-			java.util.Vector v = toDominoFriendly(recipients, this);
+			List recycleThis = new ArrayList();
+			java.util.Vector v = toDominoFriendly(recipients, this, recycleThis);
 			getDelegate().openMailLog(v, subject);
-			s_recycle(v);
+			s_recycle(recycleThis);
 		} catch (NotesException ne) {
 			DominoUtils.handleException(ne);
 		}

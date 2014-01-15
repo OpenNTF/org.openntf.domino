@@ -29,9 +29,9 @@ public enum XSPUtil {
 	public static Document wrap(final lotus.domino.Document doc) {
 		try {
 			lotus.domino.Database db = doc.getParentDatabase();
-			Session session = Factory.fromLotus(db.getParent(), Session.class, null);
-			Database wrappedDB = Factory.fromLotus(db, Database.class, session);
-			return Factory.fromLotusDocument(doc, wrappedDB);
+			Session session = Factory.fromLotus(db.getParent(), Session.SCHEMA, null);
+			Database wrappedDB = Factory.fromLotus(db, Database.SCHEMA, session);
+			return Factory.fromLotus(doc, Document.SCHEMA, wrappedDB);
 		} catch (lotus.domino.NotesException ne) {
 			return null;
 		}

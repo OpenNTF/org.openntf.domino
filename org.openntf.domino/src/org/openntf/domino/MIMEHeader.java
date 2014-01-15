@@ -16,12 +16,32 @@
 package org.openntf.domino;
 
 import org.openntf.domino.types.DocumentDescendant;
+import org.openntf.domino.types.FactorySchema;
 
 /**
  * The Interface MIMEHeader.
  */
 public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.MIMEHeader, org.openntf.domino.ext.MIMEHeader,
 		DocumentDescendant {
+
+	public static class Schema extends FactorySchema<MIMEHeader, lotus.domino.MIMEHeader, MIMEEntity> {
+		@Override
+		public Class<MIMEHeader> typeClass() {
+			return MIMEHeader.class;
+		}
+
+		@Override
+		public Class<lotus.domino.MIMEHeader> delegateClass() {
+			return lotus.domino.MIMEHeader.class;
+		}
+
+		@Override
+		public Class<MIMEEntity> parentClass() {
+			return MIMEEntity.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)
@@ -116,6 +136,7 @@ public interface MIMEHeader extends Base<lotus.domino.MIMEHeader>, lotus.domino.
 	 * 
 	 * @return the parent
 	 */
+	@Override
 	public MIMEEntity getParent();
 
 	/*

@@ -36,6 +36,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public DxlExporter(final lotus.domino.DxlExporter delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}

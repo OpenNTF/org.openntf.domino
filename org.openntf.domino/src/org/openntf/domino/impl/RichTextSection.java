@@ -19,11 +19,12 @@ import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.ColorObject;
 import org.openntf.domino.Database;
+import org.openntf.domino.RichTextStyle;
 import org.openntf.domino.Session;
 import org.openntf.domino.types.DocumentDescendant;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -41,6 +42,7 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public RichTextSection(final lotus.domino.RichTextSection delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
@@ -53,7 +55,7 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	@Override
 	public ColorObject getBarColor() {
 		try {
-			return Factory.fromLotus(getDelegate().getBarColor(), ColorObject.class, this);
+			return fromLotus(getDelegate().getBarColor(), ColorObject.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -91,7 +93,7 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	@Override
 	public RichTextStyle getTitleStyle() {
 		try {
-			return Factory.fromLotus(getDelegate().getTitleStyle(), RichTextStyle.class, this);
+			return fromLotus(getDelegate().getTitleStyle(), RichTextStyle.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

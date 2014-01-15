@@ -19,8 +19,10 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.EmbeddedObject;
+import org.openntf.domino.RichTextNavigator;
+import org.openntf.domino.RichTextRange;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -36,6 +38,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public RichTextItem(final lotus.domino.RichTextItem delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}
@@ -461,7 +464,8 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 * @see org.openntf.domino.RichTextItem#beginSection(java.lang.String, lotus.domino.RichTextStyle, lotus.domino.ColorObject, boolean)
 	 */
 	@Override
-	public void beginSection(final String title, final lotus.domino.RichTextStyle titleStyle, final lotus.domino.ColorObject barColor, final boolean expand) {
+	public void beginSection(final String title, final lotus.domino.RichTextStyle titleStyle, final lotus.domino.ColorObject barColor,
+			final boolean expand) {
 		markDirty();
 		try {
 			getDelegate().beginSection(title, (lotus.domino.RichTextStyle) toLotus(titleStyle),
@@ -494,7 +498,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	@Override
 	public RichTextNavigator createNavigator() {
 		try {
-			return Factory.fromLotus(getDelegate().createNavigator(), RichTextNavigator.class, this);
+			return fromLotus(getDelegate().createNavigator(), RichTextNavigator.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -509,7 +513,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	@Override
 	public RichTextRange createRange() {
 		try {
-			return Factory.fromLotus(getDelegate().createRange(), RichTextRange.class, this);
+			return fromLotus(getDelegate().createRange(), RichTextRange.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -525,7 +529,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	public EmbeddedObject embedObject(final int type, final String className, final String source, final String name) {
 		markDirty();
 		try {
-			return Factory.fromLotus(getDelegate().embedObject(type, className, source, name), EmbeddedObject.class, this);
+			return fromLotus(getDelegate().embedObject(type, className, source, name), EmbeddedObject.SCHEMA, getParent());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -570,7 +574,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	@Override
 	public EmbeddedObject getEmbeddedObject(final String name) {
 		try {
-			return Factory.fromLotus(getDelegate().getEmbeddedObject(name), EmbeddedObject.class, this);
+			return fromLotus(getDelegate().getEmbeddedObject(name), EmbeddedObject.SCHEMA, getAncestorDocument());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -585,7 +589,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	@Override
 	public Vector<org.openntf.domino.EmbeddedObject> getEmbeddedObjects() {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getEmbeddedObjects(), org.openntf.domino.EmbeddedObject.class, this);
+			return fromLotusAsVector(getDelegate().getEmbeddedObjects(), EmbeddedObject.SCHEMA, getParent());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

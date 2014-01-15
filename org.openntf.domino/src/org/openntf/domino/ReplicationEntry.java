@@ -18,6 +18,7 @@ package org.openntf.domino;
 import java.util.Collection;
 
 import org.openntf.domino.types.DatabaseDescendant;
+import org.openntf.domino.types.FactorySchema;
 
 /**
  * The Interface ReplicationEntry.
@@ -25,11 +26,31 @@ import org.openntf.domino.types.DatabaseDescendant;
 public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, lotus.domino.ReplicationEntry,
 		org.openntf.domino.ext.ReplicationEntry, DatabaseDescendant {
 
+	public static class Schema extends FactorySchema<ReplicationEntry, lotus.domino.ReplicationEntry, Replication> {
+		@Override
+		public Class<ReplicationEntry> typeClass() {
+			return ReplicationEntry.class;
+		}
+
+		@Override
+		public Class<lotus.domino.ReplicationEntry> delegateClass() {
+			return lotus.domino.ReplicationEntry.class;
+		}
+
+		@Override
+		public Class<Replication> parentClass() {
+			return Replication.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.ReplicationEntry#getDestination()
 	 */
+	@Override
 	public String getDestination();
 
 	/*
@@ -45,6 +66,7 @@ public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, l
 	 * 
 	 * @return the parent
 	 */
+	@Override
 	public Replication getParent();
 
 	/*
@@ -181,6 +203,7 @@ public interface ReplicationEntry extends Base<lotus.domino.ReplicationEntry>, l
 	 * @param views
 	 *            the new views
 	 */
+	@Override
 	public void setViews(final Collection<String> views);
 
 }
