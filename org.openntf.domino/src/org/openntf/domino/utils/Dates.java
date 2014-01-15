@@ -36,19 +36,19 @@ import org.openntf.domino.Item;
  * 
  */
 public enum Dates {
-	DATEONLY(Dates.TIMESTAMP_DATEONLY, Dates.REGEX_DATEONLY),
+	DATEONLY(Strings.TIMESTAMP_DATEONLY, Strings.REGEX_DATEONLY),
 
-	TIMEONLY(Dates.TIMESTAMP_TIMEONLY, Dates.REGEX_TIMEONLY),
+	TIMEONLY(Strings.TIMESTAMP_TIMEONLY, Strings.REGEX_TIMEONLY),
 
-	DAYMONTH_NAMES(Dates.TIMESTAMP_DAYMONTH_NAMES, Dates.REGEX_DAYMONTH_NAMES),
+	DAYMONTH_NAMES(Strings.TIMESTAMP_DAYMONTH_NAMES, Strings.REGEX_DAYMONTH_NAMES),
 
-	DEFAULT(Dates.TIMESTAMP_DEFAULT, Dates.REGEX_DEFAULT),
+	DEFAULT(Strings.TIMESTAMP_DEFAULT, Strings.REGEX_DEFAULT),
 
-	MILITARY(Dates.TIMESTAMP_MILITARY, Dates.REGEX_MILITARY),
+	MILITARY(Strings.TIMESTAMP_MILITARY, Strings.REGEX_MILITARY),
 
-	SIMPLETIME(Dates.TIMESTAMP_SIMPLETIME, Dates.REGEX_SIMPLETIME);
+	SIMPLETIME(Strings.TIMESTAMP_SIMPLETIME, Strings.REGEX_SIMPLETIME);
 
-	private final String _format;
+	private final String _timestampFormat;
 	private final String _regex;
 	private Pattern _pattern;
 	private SimpleDateFormat _sdf;
@@ -61,15 +61,15 @@ public enum Dates {
 	 * @param regex
 	 *            String used to generate the pattern
 	 */
-	private Dates(final String format, final String regex) {
-		this._format = format;
-		this._regex = Dates.REGEX_BEGIN_NOCASE + regex + Dates.REGEX_END;
-		this._pattern = Pattern.compile(Dates.REGEX_BEGIN_NOCASE + regex + Dates.REGEX_END);
+	private Dates(final String timestampFormat, final String regex) {
+		this._timestampFormat = timestampFormat;
+		this._regex = Strings.REGEX_BEGIN_NOCASE + regex + Strings.REGEX_END;
+		this._pattern = Pattern.compile(Strings.REGEX_BEGIN_NOCASE + regex + Strings.REGEX_END);
 	}
 
 	@Override
 	public String toString() {
-		return Dates.class.getName() + " " + this.name() + "{\"" + this.getFormat() + "\", " + this.getPattern() + "}";
+		return Dates.class.getName() + " " + this.name() + "{\"" + this.getTimestampFormat() + "\", " + this.getPattern() + "}";
 	}
 
 	/**
@@ -77,8 +77,8 @@ public enum Dates {
 	 * 
 	 * @return the format
 	 */
-	public String getFormat() {
-		return this._format;
+	public String getTimestampFormat() {
+		return this._timestampFormat;
 	}
 
 	/**
@@ -109,7 +109,7 @@ public enum Dates {
 	 */
 	public SimpleDateFormat getSimpleDateFormat() {
 		if (null == this._sdf) {
-			this._sdf = Dates.getSimpleDateFormat(this.getFormat());
+			this._sdf = Dates.getSimpleDateFormat(this.getTimestampFormat());
 			this._sdf.setLenient(true);
 		}
 
@@ -172,62 +172,7 @@ public enum Dates {
 	 * **************************************************************************
 	 * **************************************************************************
 	 * 
-	 * PUBLIC STATIC properties and methods
-	 * 
-	 * **************************************************************************
-	 * **************************************************************************
-	 */
-
-	public static final String TIMESTAMP_DATEONLY = "dd MMM yyyy";
-	public static final String TIMESTAMP_TIMEONLY = "HH:mm aa";
-	public static final String TIMESTAMP_DEFAULT = "dd MMM yyyy hh:mm aa zzz";
-	public static final String TIMESTAMP_DAYMONTH_NAMES = "EEE, dd MMM yyyy HH:mm:ss aa zzz";
-	public static final String TIMESTAMP_MILITARY = "yyyyMMdd HHmm:ss, zzz";
-	public static final String TIMESTAMP_SIMPLETIME = "HHmmaa";
-
-	/*
-	 * **************************************************************************
-	 * **************************************************************************
-	 * 
-	 * PRIVATE STATIC properties and methods
-	 * 
-	 * **************************************************************************
-	 * **************************************************************************
-	 */
-	private static final String REGEX_BEGIN_NOCASE = "(?i)^";
-	private static final String REGEX_MONTH = "(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May?|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)";
-	private static final String REGEX_DAYOFWEEK = "(?:Sun(?:day)?|Mon(?:day)?|Tue(?:sday)?|Wed(?:nesday)?|Thu(?:rsday)?|Fri(?:day)?|Sat(?:urday)?)";
-	private static final String REGEX_9_1 = "\\d{1}";
-	private static final String REGEX_9_2 = "\\d{2}";
-	private static final String REGEX_9_3 = "\\d{3}";
-	private static final String REGEX_9_4 = "\\d{4}";
-	private static final String REGEX_9_5 = "\\d{5}";
-	private static final String REGEX_9_6 = "\\d{6}";
-	private static final String REGEX_9_7 = "\\d{7}";
-	private static final String REGEX_9_8 = "\\d{8}";
-	private static final String REGEX_9_9 = "\\d{9}";
-	private static final String REGEX_ampm = "[ap]m";
-	private static final String REGEX_TIMEZONE = "[a-z]{3}";
-	private static final String REGEX_HHmm = Strings.join(":", Dates.REGEX_9_2, Dates.REGEX_9_2);
-	private static final String REGEX_HHmmss = Strings.join(":", Dates.REGEX_9_2, Dates.REGEX_9_2, Dates.REGEX_9_2);
-	private static final String REGEX_END = "$";
-
-	private static final String REGEX_DATEONLY = Strings.join(" ", Dates.REGEX_9_2, Dates.REGEX_MONTH, Dates.REGEX_9_4);
-	private static final String REGEX_TIMEONLY = Strings.join(" ", Dates.REGEX_HHmm, Dates.REGEX_ampm);
-	private static final String REGEX_DEFAULT = Strings.join(" ", Dates.REGEX_DATEONLY, Dates.REGEX_TIMEONLY, Dates.REGEX_TIMEZONE);
-
-	private static final String REGEX_DAYMONTH_NAMES = Strings.join(" ", Dates.REGEX_DAYOFWEEK, Dates.REGEX_DATEONLY, Dates.REGEX_HHmmss,
-			Dates.REGEX_ampm, Dates.REGEX_TIMEZONE);
-
-	private static final String REGEX_MILITARY = Strings.join(" ", Dates.REGEX_9_8, Dates.REGEX_HHmmss + ",", Dates.REGEX_TIMEZONE);
-
-	private static final String REGEX_SIMPLETIME = Dates.REGEX_9_4 + Dates.REGEX_ampm;
-
-	/*
-	 * **************************************************************************
-	 * **************************************************************************
-	 * 
-	 * PUBLIC utiltiy methods
+	 * PUBLIC STATIC methods
 	 * 
 	 * **************************************************************************
 	 * **************************************************************************
@@ -280,11 +225,10 @@ public enum Dates {
 			if (Strings.isBlankString(format)) {
 				return Dates.DEFAULT.getTimestamp(object);
 			}
-kk
-			for (final Dates tf : Dates.values()) {
-				if (format.equals(tf.getFormat())) {
-					return tf.getTimestamp(object);
-				}
+
+			Dates tf = Dates.get(format);
+			if (null != tf) {
+				return tf.getTimestamp(object);
 			}
 
 			final Date date = (Dates.getDate(object));
@@ -791,17 +735,17 @@ kk
 	 * Gets the TimeFormatter for the associated key.
 	 * 
 	 * Searches all TimeFormatters to find one which has a name or format equal to the key. If none found then searches all TimeFormatters
-	 * for one successfully matches() the key. Returns the first one found.
+	 * for one that successfully matches() the key. Returns the first one found.
 	 * 
 	 * @param key
-	 *            String value to either equal the TimeFormatter's name or format or successfully match the TimeFormatter.
+	 *            Key value to check for equality against the the TimeFormatter or a match to the TimeFormatter.
 	 * 
 	 * @return First found TimeFormatter. Null if no name or format equality or match found.
 	 */
 	public static Dates get(final String key) {
-		if (!Strings.isBlankString(key)) {k
+		if (!Strings.isBlankString(key)) {
 			for (final Dates result : Dates.values()) {
-				if (result.name().equalsIgnoreCase(key) || result.getFormat().equalsIgnoreCase(key)) {
+				if (result.name().equalsIgnoreCase(key) || result.getTimestampFormat().equalsIgnoreCase(key)) {
 					return result;
 				}
 			}
@@ -1035,7 +979,7 @@ kk
 	public static Date parse(final String string) {
 		if (!Strings.isBlankString(string)) {
 			try {
-				final Dates.TimeFormatter tf = Dates.getTimeFormatter(string);
+				final Dates tf = Dates.get(string);
 				final SimpleDateFormat sdf = (null == tf) ? new SimpleDateFormat() : tf.getSimpleDateFormat();
 				return sdf.parse(string);
 

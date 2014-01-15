@@ -42,14 +42,58 @@ import org.openntf.domino.impl.Name;
 public enum Strings {
 	;
 
-	public static final String MESSAGE_DIGEST_ALGORYTHM = "MD5";
-	public static final String MESSAGE_FORMULA_INVALID = "The Formula syntax is invalid.  ";
-	public static final String REGEX_NEWLINE = "\\r?\\n";
-
+	/*
+	 * **************************************************************************
+	 * **************************************************************************
+	 * 
+	 * PUBLIC STATIC properties
+	 * 
+	 * **************************************************************************
+	 * **************************************************************************
+	 */
 	public static final String CHARSET_NAME = "CP1252";
 
 	// <ALT> + 0216 on numeric keypad
 	public static final String DEFAULT_DELIMITER = "Ø";
+
+	public static final String MESSAGE_DIGEST_ALGORYTHM = "MD5";
+	public static final String MESSAGE_FORMULA_INVALID = "The Formula syntax is invalid.  ";
+
+	public static final String REGEX_NEWLINE = "\\r?\\n";
+	public static final String REGEX_BEGIN_NOCASE = "(?i)^";
+	public static final String REGEX_MONTH = "(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May?|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)";
+	public static final String REGEX_DAYOFWEEK = "(?:Sun(?:day)?|Mon(?:day)?|Tue(?:sday)?|Wed(?:nesday)?|Thu(?:rsday)?|Fri(?:day)?|Sat(?:urday)?)";
+	public static final String REGEX_9_1 = "\\d{1}";
+	public static final String REGEX_9_2 = "\\d{2}";
+	public static final String REGEX_9_3 = "\\d{3}";
+	public static final String REGEX_9_4 = "\\d{4}";
+	public static final String REGEX_9_5 = "\\d{5}";
+	public static final String REGEX_9_6 = "\\d{6}";
+	public static final String REGEX_9_7 = "\\d{7}";
+	public static final String REGEX_9_8 = "\\d{8}";
+	public static final String REGEX_9_9 = "\\d{9}";
+	public static final String REGEX_ampm = "[ap]m";
+	public static final String REGEX_TIMEZONE = "[a-z]{3}";
+	public static final String REGEX_HHmm = Strings.join(":", Strings.REGEX_9_2, Strings.REGEX_9_2);
+	public static final String REGEX_HHmmss = Strings.join(":", Strings.REGEX_9_2, Strings.REGEX_9_2, Strings.REGEX_9_2);
+	public static final String REGEX_END = "$";
+	public static final String REGEX_DATEONLY = Strings.join(" ", Strings.REGEX_9_2, Strings.REGEX_MONTH, Strings.REGEX_9_4);
+	public static final String REGEX_TIMEONLY = Strings.join(" ", Strings.REGEX_HHmm, Strings.REGEX_ampm);
+	public static final String REGEX_DEFAULT = Strings.join(" ", Strings.REGEX_DATEONLY, Strings.REGEX_TIMEONLY, Strings.REGEX_TIMEZONE);
+
+	public static final String REGEX_DAYMONTH_NAMES = Strings.join(" ", Strings.REGEX_DAYOFWEEK, Strings.REGEX_DATEONLY,
+			Strings.REGEX_HHmmss, Strings.REGEX_ampm, Strings.REGEX_TIMEZONE);
+
+	public static final String REGEX_MILITARY = Strings.join(" ", Strings.REGEX_9_8, Strings.REGEX_HHmmss + ",", Strings.REGEX_TIMEZONE);
+
+	public static final String REGEX_SIMPLETIME = Strings.REGEX_9_4 + Strings.REGEX_ampm;
+
+	public static final String TIMESTAMP_DATEONLY = "dd MMM yyyy";
+	public static final String TIMESTAMP_TIMEONLY = "HH:mm aa";
+	public static final String TIMESTAMP_DEFAULT = "dd MMM yyyy hh:mm aa zzz";
+	public static final String TIMESTAMP_DAYMONTH_NAMES = "EEE, dd MMM yyyy HH:mm:ss aa zzz";
+	public static final String TIMESTAMP_MILITARY = "yyyyMMdd HHmm:ss, zzz";
+	public static final String TIMESTAMP_SIMPLETIME = "HHmmaa";
 
 	/*
 	 * ************************************************************************
