@@ -36,7 +36,147 @@ import org.openntf.domino.Item;
  * 
  */
 public enum Dates {
-	;
+	DATEONLY(Dates.TIMESTAMP_DATEONLY, Dates.REGEX_DATEONLY),
+
+	TIMEONLY(Dates.TIMESTAMP_TIMEONLY, Dates.REGEX_TIMEONLY),
+
+	DAYMONTH_NAMES(Dates.TIMESTAMP_DAYMONTH_NAMES, Dates.REGEX_DAYMONTH_NAMES),
+
+	DEFAULT(Dates.TIMESTAMP_DEFAULT, Dates.REGEX_DEFAULT),
+
+	MILITARY(Dates.TIMESTAMP_MILITARY, Dates.REGEX_MILITARY),
+
+	SIMPLETIME(Dates.TIMESTAMP_SIMPLETIME, Dates.REGEX_SIMPLETIME);
+
+	private final String _format;
+	private final String _regex;
+	private Pattern _pattern;
+	private SimpleDateFormat _sdf;
+
+	/**
+	 * Instance Constructor
+	 * 
+	 * @param format
+	 *            Format for the instance
+	 * @param regex
+	 *            String used to generate the pattern
+	 */
+	private Dates(final String format, final String regex) {
+		this._format = format;
+		this._regex = Dates.REGEX_BEGIN_NOCASE + regex + Dates.REGEX_END;
+		this._pattern = Pattern.compile(Dates.REGEX_BEGIN_NOCASE + regex + Dates.REGEX_END);
+	}
+
+	@Override
+	public String toString() {
+		return Dates.class.getName() + " " + this.name() + "{\"" + this.getFormat() + "\", " + this.getPattern() + "}";
+	}
+
+	/**
+	 * Gets the format
+	 * 
+	 * @return the format
+	 */
+	public String getFormat() {
+		return this._format;
+	}
+
+	/**
+	 * Gets the regex
+	 * 
+	 * @return the regex
+	 */
+	public String getRegex() {
+		return this._regex;
+	}
+
+	/**
+	 * Gets the Pattern object
+	 * 
+	 * @return the Pattern
+	 */
+	public Pattern getPattern() {
+		if (null == this._pattern) {
+			this._pattern = Pattern.compile(this.getRegex());
+		}
+		return this._pattern;
+	}
+
+	/**
+	 * Gets the SimpleDateFormat object
+	 * 
+	 * @return the SimpleDateFormat
+	 */
+	public SimpleDateFormat getSimpleDateFormat() {
+		if (null == this._sdf) {
+			this._sdf = Dates.getSimpleDateFormat(this.getFormat());
+			this._sdf.setLenient(true);
+		}
+
+		return this._sdf;
+	}
+
+	/**
+	 * Gets the timestamp for the current moment.
+	 * 
+	 * @return Timestamp for the current moment.
+	 */
+	public String getTimestamp() {
+		return this.getTimestamp(null);
+	}
+
+	/**
+	 * Gets the timestamp for the specified date.
+	 * 
+	 * @param date
+	 *            moment for which to get the Timestamp. If null the current moment will be used.
+	 * 
+	 * @return Timestamp for the specified date.
+	 */
+	public String getTimestamp(final Date date) {
+		return this.getSimpleDateFormat().format((null == date) ? Dates.getDate() : date);
+	}
+
+	/**
+	 * Gets the timestamp for the specified date.
+	 * 
+	 * @param object
+	 *            Object from which a date can be determined.
+	 * 
+	 * @return Timestamp for the specified date.
+	 */
+	public String getTimestamp(final Object object) {
+		return this.getTimestamp(Dates.getDate(object));
+	}
+
+	/**
+	 * Determines if a given source string matches the Pattern.
+	 * 
+	 * @param source
+	 *            String for which to test for match against Pattern.
+	 * 
+	 * @return Flag indicating if the source string matches the Pattern.
+	 */
+	public boolean matches(final String source) {
+		try {
+			final Matcher m = this.getPattern().matcher(source);
+			return m.matches();
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return false;
+	}
+
+	/*
+	 * **************************************************************************
+	 * **************************************************************************
+	 * 
+	 * PUBLIC STATIC properties and methods
+	 * 
+	 * **************************************************************************
+	 * **************************************************************************
+	 */
 
 	public static final String TIMESTAMP_DATEONLY = "dd MMM yyyy";
 	public static final String TIMESTAMP_TIMEONLY = "HH:mm aa";
@@ -45,6 +185,15 @@ public enum Dates {
 	public static final String TIMESTAMP_MILITARY = "yyyyMMdd HHmm:ss, zzz";
 	public static final String TIMESTAMP_SIMPLETIME = "HHmmaa";
 
+	/*
+	 * **************************************************************************
+	 * **************************************************************************
+	 * 
+	 * PRIVATE STATIC properties and methods
+	 * 
+	 * **************************************************************************
+	 * **************************************************************************
+	 */
 	private static final String REGEX_BEGIN_NOCASE = "(?i)^";
 	private static final String REGEX_MONTH = "(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May?|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)";
 	private static final String REGEX_DAYOFWEEK = "(?:Sun(?:day)?|Mon(?:day)?|Tue(?:sday)?|Wed(?:nesday)?|Thu(?:rsday)?|Fri(?:day)?|Sat(?:urday)?)";
@@ -73,144 +222,6 @@ public enum Dates {
 	private static final String REGEX_MILITARY = Strings.join(" ", Dates.REGEX_9_8, Dates.REGEX_HHmmss + ",", Dates.REGEX_TIMEZONE);
 
 	private static final String REGEX_SIMPLETIME = Dates.REGEX_9_4 + Dates.REGEX_ampm;
-
-	/**
-	 * Provides packaged wrapper methods for working with Time Formats using SimpleDateFormat objects.
-	 * 
-	 */
-	public static enum TimeFormatter {
-		DATEONLY(Dates.TIMESTAMP_DATEONLY, Dates.REGEX_DATEONLY),
-
-		TIMEONLY(Dates.TIMESTAMP_TIMEONLY, Dates.REGEX_TIMEONLY),
-
-		DAYMONTH_NAMES(Dates.TIMESTAMP_DAYMONTH_NAMES, Dates.REGEX_DAYMONTH_NAMES),
-
-		DEFAULT(Dates.TIMESTAMP_DEFAULT, Dates.REGEX_DEFAULT),
-
-		MILITARY(Dates.TIMESTAMP_MILITARY, Dates.REGEX_MILITARY),
-
-		SIMPLETIME(Dates.TIMESTAMP_SIMPLETIME, Dates.REGEX_SIMPLETIME);
-
-		private final String _format;
-		private final String _regex;
-		private Pattern _pattern;
-		private SimpleDateFormat _sdf;
-
-		/**
-		 * Instance Constructor
-		 * 
-		 * @param format
-		 *            Format for the instance
-		 * @param regex
-		 *            String used to generate the pattern
-		 */
-		private TimeFormatter(final String format, final String regex) {
-			this._format = format;
-			this._regex = Dates.REGEX_BEGIN_NOCASE + regex + Dates.REGEX_END;
-			this._pattern = Pattern.compile(Dates.REGEX_BEGIN_NOCASE + regex + Dates.REGEX_END);
-		}
-
-		@Override
-		public String toString() {
-			return TimeFormatter.class.getName() + " " + this.name() + "{\"" + this.getFormat() + "\", " + this.getPattern() + "}";
-		}
-
-		/**
-		 * Gets the format
-		 * 
-		 * @return the format
-		 */
-		public String getFormat() {
-			return this._format;
-		}
-
-		/**
-		 * Gets the regex
-		 * 
-		 * @return the regex
-		 */
-		public String getRegex() {
-			return this._regex;
-		}
-
-		/**
-		 * Gets the Pattern object
-		 * 
-		 * @return the Pattern
-		 */
-		public Pattern getPattern() {
-			if (null == this._pattern) {
-				this._pattern = Pattern.compile(this.getRegex());
-			}
-			return this._pattern;
-		}
-
-		/**
-		 * Gets the SimpleDateFormat object
-		 * 
-		 * @return the SimpleDateFormat
-		 */
-		public SimpleDateFormat getSimpleDateFormat() {
-			if (null == this._sdf) {
-				this._sdf = Dates.getSimpleDateFormat(this.getFormat());
-				this._sdf.setLenient(true);
-			}
-
-			return this._sdf;
-		}
-
-		/**
-		 * Gets the timestamp for the current moment.
-		 * 
-		 * @return Timestamp for the current moment.
-		 */
-		public String getTimestamp() {
-			return this.getTimestamp(null);
-		}
-
-		/**
-		 * Gets the timestamp for the specified date.
-		 * 
-		 * @param date
-		 *            moment for which to get the Timestamp. If null the current moment will be used.
-		 * 
-		 * @return Timestamp for the specified date.
-		 */
-		public String getTimestamp(final Date date) {
-			return this.getSimpleDateFormat().format((null == date) ? Dates.getDate() : date);
-		}
-
-		/**
-		 * Gets the timestamp for the specified date.
-		 * 
-		 * @param object
-		 *            Object from which a date can be determined.
-		 * 
-		 * @return Timestamp for the specified date.
-		 */
-		public String getTimestamp(final Object object) {
-			return this.getTimestamp(Dates.getDate(object));
-		}
-
-		/**
-		 * Determines if a given source string matches the Pattern.
-		 * 
-		 * @param source
-		 *            String for which to test for match against Pattern.
-		 * 
-		 * @return Flag indicating if the source string matches the Pattern.
-		 */
-		public boolean matches(final String source) {
-			try {
-				final Matcher m = this.getPattern().matcher(source);
-				return m.matches();
-			} catch (final Exception e) {
-				DominoUtils.handleException(e);
-			}
-
-			return false;
-		}
-	};
 
 	/*
 	 * **************************************************************************
@@ -267,10 +278,10 @@ public enum Dates {
 	public static String getTimestamp(final Object object, final String format) {
 		try {
 			if (Strings.isBlankString(format)) {
-				return Dates.TimeFormatter.DEFAULT.getTimestamp(object);
+				return Dates.DEFAULT.getTimestamp(object);
 			}
-
-			for (final Dates.TimeFormatter tf : Dates.TimeFormatter.values()) {
+kk
+			for (final Dates tf : Dates.values()) {
 				if (format.equals(tf.getFormat())) {
 					return tf.getTimestamp(object);
 				}
@@ -294,8 +305,8 @@ public enum Dates {
 	 *            the date
 	 * @return the timestamp
 	 */
-	public static String getTimestamp(final Date date) {
-		return Dates.getTimestamp(date, null);
+	public static String getDefaultTimestamp(final Date date) {
+		return Dates.DEFAULT.getTimestamp(date);
 	}
 
 	/**
@@ -303,8 +314,8 @@ public enum Dates {
 	 * 
 	 * @return the timestamp
 	 */
-	public static String getTimestamp() {
-		return Dates.TimeFormatter.DEFAULT.getTimestamp();
+	public static String getDefaultTimestamp() {
+		return Dates.DEFAULT.getTimestamp();
 	}
 
 	/**
@@ -787,14 +798,14 @@ public enum Dates {
 	 * 
 	 * @return First found TimeFormatter. Null if no name or format equality or match found.
 	 */
-	public static Dates.TimeFormatter getTimeFormatter(final String key) {
-		if (!Strings.isBlankString(key)) {
-			for (final Dates.TimeFormatter result : Dates.TimeFormatter.values()) {
+	public static Dates get(final String key) {
+		if (!Strings.isBlankString(key)) {k
+			for (final Dates result : Dates.values()) {
 				if (result.name().equalsIgnoreCase(key) || result.getFormat().equalsIgnoreCase(key)) {
 					return result;
 				}
 			}
-			for (final Dates.TimeFormatter result : Dates.TimeFormatter.values()) {
+			for (final Dates result : Dates.values()) {
 				if (result.matches(key)) {
 					return result;
 				}
