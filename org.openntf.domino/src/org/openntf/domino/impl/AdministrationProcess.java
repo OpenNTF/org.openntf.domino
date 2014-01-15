@@ -19,8 +19,9 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.DateTime;
+import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -514,7 +515,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	@Override
 	public DateTime getCertificateExpiration() {
 		try {
-			return Factory.fromLotus(getDelegate().getCertificateExpiration(), DateTime.class, this);
+			return fromLotus(getDelegate().getCertificateExpiration(), DateTime.SCHEMA, this.getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

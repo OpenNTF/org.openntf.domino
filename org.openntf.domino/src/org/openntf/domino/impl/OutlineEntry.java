@@ -17,6 +17,9 @@ package org.openntf.domino.impl;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Database;
+import org.openntf.domino.Document;
+import org.openntf.domino.Outline;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -78,7 +81,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	@Override
 	public Document getDocument() {
 		try {
-			return Factory.fromLotusDocument(getDelegate().getDocument(), this);
+			return fromLotus(getDelegate().getDocument(), Document.SCHEMA, getParent().getParentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

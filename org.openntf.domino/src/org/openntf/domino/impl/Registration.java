@@ -15,10 +15,13 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -39,6 +42,10 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	 */
 	public Registration(final lotus.domino.Registration delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
+	}
+
+	public Registration(final lotus.domino.Registration delegate, final Session parent, final WrapperFactory wf, final long cpp_id) {
+		super(delegate, parent, wf, cpp_id, NOTES_VIEWCOLUMN);
 	}
 
 	/*
@@ -124,8 +131,8 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean addServerToAddressBook(final String idFile, final String server, final String domain, final String userPassword, final String network,
-			final String adminName, final String title, final String location, final String comment) {
+	public boolean addServerToAddressBook(final String idFile, final String server, final String domain, final String userPassword,
+			final String network, final String adminName, final String title, final String location, final String comment) {
 		try {
 			return getDelegate().addServerToAddressBook(idFile, server, domain, userPassword, network, adminName, title, location, comment);
 		} catch (NotesException e) {
@@ -185,8 +192,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean addUserToAddressBook(final String idFile, final String fullName, final String lastName, final String userPassword, final String firstName,
-			final String middleName, final String mailServer, final String mailFilePath, final String forwardingAddress, final String location, final String comment) {
+	public boolean addUserToAddressBook(final String idFile, final String fullName, final String lastName, final String userPassword,
+			final String firstName, final String middleName, final String mailServer, final String mailFilePath,
+			final String forwardingAddress, final String location, final String comment) {
 		try {
 			return getDelegate().addUserToAddressBook(idFile, fullName, lastName, userPassword, firstName, middleName, mailServer,
 					mailFilePath, forwardingAddress, location, comment);
@@ -741,12 +749,11 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void getUserInfo(final String userName, final StringBuffer mailServer, final StringBuffer mailFile, final StringBuffer mailDomain,
-			final StringBuffer mailSystem, final Vector profile) {
+	public void getUserInfo(final String userName, final StringBuffer mailServer, final StringBuffer mailFile,
+			final StringBuffer mailDomain, final StringBuffer mailSystem, final Vector profile) {
 		try {
-			java.util.Vector v = toDominoFriendly(profile, this);
-			getDelegate().getUserInfo(userName, mailServer, mailFile, mailDomain, mailSystem, v);
-			s_recycle(v);
+			// Vector is a return parameter, do not make it dominofriendly		
+			getDelegate().getUserInfo(userName, mailServer, mailFile, mailDomain, mailSystem, profile);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -969,7 +976,8 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	 * java.lang.String)
 	 */
 	@Override
-	public boolean registerNewServer(final String server, final String idFile, final String domain, final String serverPassword, final String certPassword) {
+	public boolean registerNewServer(final String server, final String idFile, final String domain, final String serverPassword,
+			final String certPassword) {
 		try {
 			return getDelegate().registerNewServer(server, idFile, domain, serverPassword, certPassword);
 		} catch (NotesException e) {
@@ -985,8 +993,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean registerNewServer(final String server, final String idFile, final String domain, final String serverPassword, final String certPassword,
-			final String location, final String comment, final String network, final String adminName, final String title) {
+	public boolean registerNewServer(final String server, final String idFile, final String domain, final String serverPassword,
+			final String certPassword, final String location, final String comment, final String network, final String adminName,
+			final String title) {
 		try {
 			return getDelegate().registerNewServer(server, idFile, domain, serverPassword, certPassword, location, comment, network,
 					adminName, title);
@@ -1018,7 +1027,8 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean registerNewUser(final String lastName, final String idFile, final String server, final String firstName, final String middleName, final String certPassword) {
+	public boolean registerNewUser(final String lastName, final String idFile, final String server, final String firstName,
+			final String middleName, final String certPassword) {
 		try {
 			return getDelegate().registerNewUser(lastName, idFile, server, firstName, middleName, certPassword);
 		} catch (NotesException e) {
@@ -1034,8 +1044,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean registerNewUser(final String lastName, final String idFile, final String server, final String firstName, final String middleName, final String certPassword,
-			final String location, final String comment, final String mailDBPath, final String forward, final String userPassword) {
+	public boolean registerNewUser(final String lastName, final String idFile, final String server, final String firstName,
+			final String middleName, final String certPassword, final String location, final String comment, final String mailDBPath,
+			final String forward, final String userPassword) {
 		try {
 			return getDelegate().registerNewUser(lastName, idFile, server, firstName, middleName, certPassword, location, comment,
 					mailDBPath, forward, userPassword);
@@ -1053,8 +1064,9 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public boolean registerNewUser(final String lastName, final String idFile, final String server, final String firstName, final String middleName, final String certPassword,
-			final String location, final String comment, final String mailDBPath, final String forward, final String userPassword, final String altName, final String altNameLang) {
+	public boolean registerNewUser(final String lastName, final String idFile, final String server, final String firstName,
+			final String middleName, final String certPassword, final String location, final String comment, final String mailDBPath,
+			final String forward, final String userPassword, final String altName, final String altNameLang) {
 		try {
 			return getDelegate().registerNewUser(lastName, idFile, server, firstName, middleName, certPassword, location, comment,
 					mailDBPath, forward, userPassword, altName, altNameLang);
@@ -1087,12 +1099,13 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setAltOrgUnitLang(final Vector languages) {
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			java.util.Vector v = toDominoFriendly(languages, this);
-			getDelegate().setAltOrgUnitLang(v);
-			s_recycle(v);
+			getDelegate().setAltOrgUnitLang(toDominoFriendly(languages, this, recycleThis));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
@@ -1190,12 +1203,13 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setGroupList(final Vector groups) {
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			java.util.Vector v = toDominoFriendly(groups, this);
-			getDelegate().setGroupList(v);
-			s_recycle(v);
+			getDelegate().setGroupList(toDominoFriendly(groups, this, recycleThis));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
@@ -1305,12 +1319,13 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setMailReplicaServers(final Vector servers) {
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			java.util.Vector v = toDominoFriendly(servers, this);
-			getDelegate().setMailReplicaServers(v);
-			s_recycle(v);
+			getDelegate().setMailReplicaServers(toDominoFriendly(servers, this, recycleThis));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 

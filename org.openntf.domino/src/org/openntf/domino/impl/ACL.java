@@ -21,6 +21,7 @@ import java.util.Vector;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.ACLEntry;
+import org.openntf.domino.Session;
 import org.openntf.domino.iterators.AclIterator;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -39,6 +40,7 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public ACL(final lotus.domino.ACL delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 	}

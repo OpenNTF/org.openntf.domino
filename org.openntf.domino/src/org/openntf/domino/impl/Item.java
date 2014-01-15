@@ -18,7 +18,9 @@ package org.openntf.domino.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,6 +28,7 @@ import java.util.logging.Logger;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.DateTime;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -105,16 +108,19 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * 
 	 * @see org.openntf.domino.Item#appendToTextList(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void appendToTextList(final java.util.Vector values) {
+	public void appendToTextList(final Vector values) {
 		markDirty();
+		List<lotus.domino.Base> recycleThis = new ArrayList();
 		try {
-			java.util.Vector v = toDominoFriendly(values, this);
+			Vector v = toDominoFriendly(values, this, recycleThis);
 			getDelegate().appendToTextList(v);
-			s_recycle(v);
+
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
@@ -125,15 +131,18 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 */
 	@Override
 	public boolean containsValue(final Object value) {
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
 			boolean result;
-			Object domObj = toDominoFriendly(value, this);
-			result = getDelegate().containsValue(toDominoFriendly(value, this));
+			Object domObj = toDominoFriendly(value, this, recycleThis);
+			result = getDelegate().containsValue(domObj);
 			Base.s_recycle(domObj);
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
@@ -410,7 +419,8 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	public Vector<org.openntf.domino.DateTime> getValueDateTimeArray() {
 		//		System.out.println("Getting DateTimeArray value from item " + getName());
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getValueDateTimeArray(), org.openntf.domino.DateTime.class, this);
+			return (Vector<org.openntf.domino.DateTime>) fromLotusAsVector(getDelegate().getValueDateTimeArray(),
+					org.openntf.domino.DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -883,8 +893,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	@Override
 	public void setValues(final java.util.Vector values) {
 		markDirty();
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			java.util.Vector v = toDominoFriendly(values, this);
+			java.util.Vector v = toDominoFriendly(values, this, recycleThis);
 			getDelegate().setValues(v);
 			s_recycle(v);
 		} catch (NotesException e) {
@@ -960,7 +971,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 			try {
 				lotus.domino.Document d = (getAncestorDocument()).getDelegate();
 				lotus.domino.Item item = d.getFirstItem(name_);
-				setDelegate(item);
+				setDelegate(item, 0);
 				if (log_.isLoggable(Level.INFO)) {
 					log_.log(Level.INFO, "Item " + name_ + " in document path " + getAncestorDocument().getNoteID()
 							+ " had been recycled and was auto-restored. Changes may have been lost.");

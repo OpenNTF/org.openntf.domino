@@ -15,6 +15,8 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -319,13 +321,15 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setRowLabels(final Vector labels) {
+		List recycleThis = new ArrayList();
 		try {
-			java.util.Vector v = toDominoFriendly(labels, this);
+			java.util.Vector v = toDominoFriendly(labels, this, recycleThis);
 			getDelegate().setRowLabels(v);
 			markDirty();
-			s_recycle(v);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 

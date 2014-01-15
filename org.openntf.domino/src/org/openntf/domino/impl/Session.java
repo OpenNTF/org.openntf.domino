@@ -49,6 +49,7 @@ import org.openntf.domino.Registration;
 import org.openntf.domino.RichTextParagraphStyle;
 import org.openntf.domino.RichTextStyle;
 import org.openntf.domino.Stream;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.GenericDominoEventFactory;
@@ -59,6 +60,7 @@ import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoFormatter;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 import com.ibm.icu.util.Calendar;
 
@@ -145,6 +147,11 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	//		// TODO come up with some static methods for finding a Session based on run context (XPages, Agent, DOTS, etc)
 	//		super(null, null);
 	//	}
+	@Deprecated
+	@SuppressWarnings("rawtypes")
+	public Session(final lotus.domino.Session lotus, final org.openntf.domino.Base parent) {
+		this(lotus, parent, Factory.getWrapperFactory(), 0L);
+	}
 
 	// FIXME NTF - not sure if there's a context where this makes sense...
 	/**
@@ -157,7 +164,8 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 * @param cpp_id
 	 *            the cpp-id
 	 */
-	public Session(final lotus.domino.Session lotus, final WrapperFactory wf, final long cpp_id) {
+	@SuppressWarnings("rawtypes")
+	public Session(final lotus.domino.Session lotus, final org.openntf.domino.Base parent, final WrapperFactory wf, final long cpp_id) {
 		super(lotus, null, wf, cpp_id, NOTES_SESSION);
 		initialize(lotus);
 	}

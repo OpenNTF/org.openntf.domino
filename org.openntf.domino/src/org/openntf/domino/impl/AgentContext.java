@@ -28,6 +28,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -49,6 +50,10 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	public AgentContext(final lotus.domino.AgentContext delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
 
+	}
+
+	public AgentContext(final lotus.domino.AgentContext delegate, final Session parent, final WrapperFactory wf, final long cpp_id) {
+		super(delegate, parent, wf, cpp_id, NOTES_AGENTCTX);
 	}
 
 	/*
@@ -74,7 +79,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public Database getCurrentDatabase() {
 		try {
-			return Factory.fromLotus(getDelegate().getCurrentDatabase(), Database.class, this);
+			return fromLotus(getDelegate().getCurrentDatabase(), Database.SCHEMA, getParentSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -89,7 +94,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public Document getDocumentContext() {
 		try {
-			return Factory.fromLotusDocument(getDelegate().getDocumentContext(), getCurrentDatabase());
+			return fromLotus(getDelegate().getDocumentContext(), Document.SCHEMA, getCurrentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -188,7 +193,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public Document getSavedData() {
 		try {
-			return Factory.fromLotusDocument(getDelegate().getSavedData(), this);
+			return fromLotus(getDelegate().getSavedData(), Document.SCHEMA, getCurrentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -203,7 +208,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public DocumentCollection getUnprocessedDocuments() {
 		try {
-			return Factory.fromLotus(getDelegate().getUnprocessedDocuments(), DocumentCollection.class, this);
+			return fromLotus(getDelegate().getUnprocessedDocuments(), DocumentCollection.SCHEMA, getCurrentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

@@ -20,7 +20,10 @@ import java.util.Vector;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.DateTime;
+import org.openntf.domino.Document;
+import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.ext.Database.Events;
@@ -41,8 +44,14 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public Agent(final lotus.domino.Agent delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, Factory.getParentDatabase(parent));
+
+	}
+
+	public Agent(final lotus.domino.Agent delegate, final org.openntf.domino.Database parent, final WrapperFactory wf, final long cpp_id) {
+		super(delegate, parent, wf, cpp_id, NOTES_MACRO);
 
 	}
 

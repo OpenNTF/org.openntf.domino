@@ -18,6 +18,8 @@ package org.openntf.domino.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
@@ -617,15 +619,17 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	@SuppressWarnings("unchecked")
 	@Override
 	public String getSomeHeaders(final Vector headerFilters) {
+		List recycleThis = new ArrayList();
 		try {
 			String result;
-			java.util.Vector v = toDominoFriendly(headerFilters, this);
+			java.util.Vector v = toDominoFriendly(headerFilters, this, recycleThis);
 			result = getDelegate().getSomeHeaders(v);
-			s_recycle(v);
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
@@ -639,9 +643,10 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	public String getSomeHeaders(final Vector headerFilters, final boolean inclusive) {
 		try {
 			String result;
-			java.util.Vector v = toDominoFriendly(headerFilters, this);
+			List recycleThis = new ArrayList();
+			java.util.Vector v = toDominoFriendly(headerFilters, this, recycleThis);
 			result = getDelegate().getSomeHeaders(v, inclusive);
-			s_recycle(v);
+			s_recycle(recycleThis);
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);

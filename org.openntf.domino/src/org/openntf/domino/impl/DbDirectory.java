@@ -418,11 +418,11 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 
 	void resurrect() {
 		Session rawSessionUs = (Session) Factory.getSession();
-		lotus.domino.Session rawSession = (lotus.domino.Session) rawSessionUs.getDelegate();
+		lotus.domino.Session rawSession = toLotus(rawSessionUs);
 		try {
 			lotus.domino.DbDirectory dir = rawSession.getDbDirectory(name_);
 			dir.setHonorShowInOpenDatabaseDialog(isHonorOpenDialog_);
-			setDelegate(dir);
+			setDelegate(dir, 0);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}

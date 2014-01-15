@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.ext.Session.Fixes;
@@ -34,6 +35,7 @@ import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.TypeUtils;
 
 // TODO: Auto-generated Javadoc
+
 /**
  * The Class ViewEntry.
  */
@@ -132,7 +134,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	@Override
 	public Document getDocument() {
 		try {
-			return Factory.fromLotusDocument(getDelegate().getDocument(), this);
+			return fromLotus(getDelegate().getDocument(), Document.SCHEMA, getParentView().getParent());
 		} catch (NotesException e) {
 			if (e.id == 4432) {
 				return null;
