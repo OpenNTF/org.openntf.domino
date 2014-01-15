@@ -127,6 +127,10 @@ public class IndexQuery {
 
 	private static final boolean profile_ = true;
 
+	protected IndexResults createResultsFromHitList(final List<IndexHit> hits) {
+		return new IndexResults(hits);
+	}
+
 	public IndexResults execute(final IndexDatabase db) {
 		long startNanos = 0;
 		if (profile_)
@@ -135,9 +139,9 @@ public class IndexQuery {
 		for (String term : getTerms()) {
 			List<IndexHit> hits = db.getTermResults(term, getLimit(), getDbids(), IndexDatabase.toCISSet(getItems()), getForms());
 			if (result == null) {
-				result = new IndexResults(hits);
+				result = createResultsFromHitList(hits);
 			} else {
-				IndexResults temp = new IndexResults(hits);
+				IndexResults temp = createResultsFromHitList(hits);
 				if (isAnd()) {
 					result.intersect(temp);
 				} else {
