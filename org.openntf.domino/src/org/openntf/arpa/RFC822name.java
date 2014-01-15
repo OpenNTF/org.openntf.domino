@@ -24,6 +24,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.openntf.domino.utils.Strings;
+
 /**
  * Carrier and parsing object for various RFC822 name parts.
  * 
@@ -438,6 +440,57 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 	public void parseRFC82xContent(final String string) {
 		this.clear();
 		this.parse(string);
+	}
+
+	/*
+	 * ******************************************************************
+	 * ******************************************************************
+	 * 
+	 * PUBLIC STATIC methods
+	 * 
+	 * ******************************************************************
+	 * ******************************************************************
+	 */
+	/**
+	 * Generates an RFC822 Addr822Full Address String from the specified component parts.
+	 * 
+	 * @param phrase
+	 *            Addr822Phrase part used to construct the result.
+	 * @param addr821
+	 *            Addr821 part used to construct the result.
+	 * @param comments
+	 *            Addr822Comment1, Addr822Comment2, and Addr822Comment2 parts used to construct the result.
+	 * @return properly formatted RFC822 Addr822Full string generated from the component parts. Empty string on error or no value for
+	 *         addr821.
+	 */
+	public static String buildAddr822Full(final String phrase, final String addr821, final String... comments) {
+
+		if ((null != addr821) && (addr821.trim().length() > 0)) {
+			StringBuilder sb = new StringBuilder((null == phrase) ? "" : phrase.trim());
+			sb.append("<");
+			sb.append(addr821);
+			sb.append(">");
+
+			if (null != comments) {
+				int idx = 0;
+				for (String comment : comments) {
+					if (!Strings.isBlankString(comment)) {
+						sb.append("(");
+						sb.append(comment);
+						sb.append(")");
+						idx++;
+						if (idx > 2) {
+							break;
+						}
+					}
+				}
+
+			}
+
+			return sb.toString();
+		}
+
+		return "";
 	}
 
 	/*
