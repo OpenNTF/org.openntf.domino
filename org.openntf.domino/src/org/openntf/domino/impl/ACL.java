@@ -425,4 +425,23 @@ public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL> implemen
 		return new AclIterator(this);
 	}
 
+	@Override
+	protected lotus.domino.ACL getDelegate() {
+		lotus.domino.ACL d = super.getDelegate();
+		if (isInvalid(d)) {
+			resurrect();
+		}
+		return super.getDelegate();
+	}
+
+	public void resurrect() {
+		try {
+			lotus.domino.Database db = getParent().getDelegate();
+			lotus.domino.ACL d = db.getACL();
+			setDelegate(d, 0);
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
 }

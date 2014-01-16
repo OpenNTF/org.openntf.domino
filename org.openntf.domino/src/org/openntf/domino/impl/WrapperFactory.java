@@ -358,13 +358,52 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	}
 
 	public Vector<Object> wrapColumnValues(final Collection<?> values, final Session session) {
-		// TODO Auto-generated method stub
-		return null;
+		if (values == null) {
+			return null;
+		}
+		int i = 0;
+		java.util.Vector<Object> result = new org.openntf.domino.impl.Vector<Object>();
+		for (Object value : values) {
+			if (value == null) {
+				result.add(null);
+			} else if (value instanceof lotus.domino.DateTime) {
+				Object wrapped = null;
+				try {
+					wrapped = fromLotus((lotus.domino.DateTime) value, (FactorySchema) null, session);
+				} catch (Throwable t) {
+					if (t instanceof NotesException) {
+						String text = ((NotesException) t).text;
+						System.out.println("Unable to wrap a DateTime found in Vector member " + i + " of " + values.size() + " because "
+								+ text);
+						try {
+							lotus.domino.DateTime dt = (lotus.domino.DateTime) value;
+							String gmttime = dt.getGMTTime();
+							System.out.println("GMTTime: " + gmttime);
+						} catch (Exception e) {
+
+						}
+					}
+
+				}
+				if (wrapped == null) {
+					result.add("");
+				} else {
+					result.add(wrapped);
+				}
+			} else if (value instanceof lotus.domino.DateRange) {
+				result.add(fromLotus((lotus.domino.DateRange) value, (FactorySchema) null, session));
+			} else if (value instanceof Collection) {
+				result.add(wrapColumnValues((Collection<?>) value, session));
+			} else {
+				result.add(value);
+			}
+			i++;
+		}
+		return result;
 	}
 
 	public <T extends lotus.domino.Base> T toLotus(final T base) {
-		// TODO Auto-generated method stub
-		return null;
+		return (T) org.openntf.domino.impl.Base.getDelegate(base);
 	}
 
 }

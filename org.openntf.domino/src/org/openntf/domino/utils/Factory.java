@@ -793,6 +793,7 @@ public enum Factory {
 	 */
 	public static java.util.Vector<Object> wrapColumnValues(final Collection<?> values, final org.openntf.domino.Session session) {
 		if (values == null) {
+			log_.log(Level.WARNING, "Request to wrapColumnValues for a collection of null");
 			return null;
 		}
 		return getWrapperFactory().wrapColumnValues(values, session);
