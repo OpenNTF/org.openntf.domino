@@ -139,12 +139,11 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 	 * ******************************************************************
 	 * ******************************************************************
 	 * 
-	 * Serializable getters & setters
+	 * public methods
 	 * 
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
-
 	/**
 	 * Gets the RFC822name for the object
 	 * 
@@ -163,19 +162,9 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 	 * @param rfc822name
 	 *            the RFC822name
 	 */
-	public void setRFC822name(final RFC822name rfc822name) {
+	private void setRFC822name(final RFC822name rfc822name) {
 		this._rfc822name = rfc822name;
 	}
-
-	/*
-	 * ******************************************************************
-	 * ******************************************************************
-	 * 
-	 * other public methods
-	 * 
-	 * ******************************************************************
-	 * ******************************************************************
-	 */
 
 	/**
 	 * Clears the object.
@@ -507,6 +496,7 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		}
 
 		return false;
+
 	} /*
 		* ******************************************************************
 		* ******************************************************************
