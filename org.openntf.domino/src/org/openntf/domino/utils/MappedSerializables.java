@@ -36,7 +36,7 @@ import org.openntf.domino.Name;
  */
 public class MappedSerializables implements Serializable {
 
-	private HashMap<String, Serializable> _content;
+	private HashMap<Serializable, Serializable> _content;
 	private static final long serialVersionUID = 31L;
 
 	/**
@@ -51,7 +51,7 @@ public class MappedSerializables implements Serializable {
 	 * @param content
 	 *            Content to use for the object
 	 */
-	public MappedSerializables(final HashMap<String, Serializable> content) {
+	public MappedSerializables(final HashMap<Serializable, Serializable> content) {
 		this.setContent(content);
 	}
 
@@ -72,13 +72,8 @@ public class MappedSerializables implements Serializable {
 	 */
 	@Override
 	public MappedSerializables clone() {
-		final MappedSerializables result = new MappedSerializables();
-		if (null != this._content) {
-			HashMap<String, Serializable> clone = (HashMap<String, Serializable>) this.getContent();
-			result.setContent(this.getContent());
-		}
-
-		return result;
+		return (null == this._content) ? new MappedSerializables() : new MappedSerializables(
+				(HashMap<Serializable, Serializable>) this._content.clone());
 	}
 
 	/**
@@ -116,7 +111,7 @@ public class MappedSerializables implements Serializable {
 	 * 
 	 * @return internal Map's containsKey() result.
 	 */
-	public boolean containsKey(final String key) {
+	public boolean containsKey(final Serializable key) {
 		return this.getContent().containsKey(key);
 	}
 
@@ -126,19 +121,10 @@ public class MappedSerializables implements Serializable {
 	 * @param key
 	 *            Key for which to retrieve the mapped value.
 	 * 
-	 * @return Value associated with the key. Null if not found or exception occurs.
+	 * @return Value associated with the key. Null if no mapping exists.
 	 */
-	public Serializable get(final String key) {
-		try {
-			if (Strings.isBlankString(key)) {
-				throw new IllegalArgumentException("Key is blank or null");
-			}
-			return this.getContent().get(key);
-		} catch (final Exception e) {
-			DominoUtils.handleException(e);
-		}
-
-		return null;
+	public Serializable get(final Serializable key) {
+		return this.getContent().get(key);
 	}
 
 	/**
@@ -152,8 +138,8 @@ public class MappedSerializables implements Serializable {
 	 * 
 	 * @return Previous value for the key, if it existed in the internal Map.
 	 */
-	public Serializable put(final String key, final Serializable value) {
-		return (Strings.isBlankString(key)) ? null : this.getContent().put(key, value);
+	public Serializable put(final Serializable key, final Serializable value) {
+		return (null == key) ? null : this.getContent().put(key, value);
 	}
 
 	/**
@@ -164,8 +150,8 @@ public class MappedSerializables implements Serializable {
 	 * 
 	 * @return Previous value for the key, if it existed in the internal Map.
 	 */
-	public Serializable remove(final String key) {
-		return (Strings.isBlankString(key)) ? null : this.getContent().remove(key);
+	public Serializable remove(final Serializable key) {
+		return (null == key) ? null : this.getContent().remove(key);
 	}
 
 	/**
@@ -176,7 +162,7 @@ public class MappedSerializables implements Serializable {
 	 * 
 	 * @return Value associated with the key. Null if not found or exception occurs.
 	 */
-	public Boolean getBoolean(final String key) {
+	public Boolean getBoolean(final Serializable key) {
 		final Serializable temp = this.get(key);
 		return (null == temp) ? false : (temp instanceof Boolean) ? (Boolean) temp : Boolean.parseBoolean(temp.toString());
 	}
@@ -186,12 +172,12 @@ public class MappedSerializables implements Serializable {
 	 * 
 	 * @return Map of Boolean values. Null if no Booleans exist in the internal Map.
 	 */
-	public HashMap<String, Boolean> getBooleans() {
+	public HashMap<Serializable, Boolean> getBooleans() {
 		if (!this.isEmpty()) {
-			final HashMap<String, Boolean> result = new HashMap<String, Boolean>();
-			final Iterator<Map.Entry<String, Serializable>> it = this.getContent().entrySet().iterator();
+			final HashMap<Serializable, Boolean> result = new HashMap<Serializable, Boolean>();
+			final Iterator<Map.Entry<Serializable, Serializable>> it = this.getContent().entrySet().iterator();
 			while (it.hasNext()) {
-				final Map.Entry<String, Serializable> entry = it.next();
+				final Map.Entry<Serializable, Serializable> entry = it.next();
 				if (entry.getValue() instanceof Boolean) {
 					result.put(entry.getKey(), (Boolean) entry.getValue());
 				}
@@ -214,7 +200,7 @@ public class MappedSerializables implements Serializable {
 	 * 
 	 * @return previous value associated with the key, IF AND ONLY IF the previous value was a Boolean object. False otherwise.
 	 */
-	public Boolean putBoolean(final String key, final Boolean value) {
+	public Boolean putBoolean(final Serializable key, final Boolean value) {
 		final Serializable temp = this.put(key, value);
 		return (temp instanceof Boolean) ? (Boolean) temp : false;
 	}
@@ -227,7 +213,7 @@ public class MappedSerializables implements Serializable {
 	 * 
 	 * @return Value associated with the key. Null if not found or exception occurs.
 	 */
-	public Integer getInteger(final String key) {
+	public Integer getInteger(final Serializable key) {
 		final Serializable temp = this.get(key);
 		return (null == temp) ? 0 : (temp instanceof Integer) ? (Integer) temp : Integer.parseInt(temp.toString());
 	}
@@ -237,12 +223,12 @@ public class MappedSerializables implements Serializable {
 	 * 
 	 * @return Map of Integer values. Null if no Integers exist in the internal Map.
 	 */
-	public HashMap<String, Integer> getIntegers() {
+	public HashMap<Serializable, Integer> getIntegers() {
 		if (!this.isEmpty()) {
-			final HashMap<String, Integer> result = new HashMap<String, Integer>();
-			final Iterator<Map.Entry<String, Serializable>> it = this.getContent().entrySet().iterator();
+			final HashMap<Serializable, Integer> result = new HashMap<Serializable, Integer>();
+			final Iterator<Map.Entry<Serializable, Serializable>> it = this.getContent().entrySet().iterator();
 			while (it.hasNext()) {
-				final Map.Entry<String, Serializable> entry = it.next();
+				final Map.Entry<Serializable, Serializable> entry = it.next();
 				if (entry.getValue() instanceof Integer) {
 					result.put(entry.getKey(), (Integer) entry.getValue());
 				}
@@ -265,7 +251,7 @@ public class MappedSerializables implements Serializable {
 	 * 
 	 * @return previous value associated with the key, IF AND ONLY IF the previous value was a Integer object. Zero otherwise.
 	 */
-	public Integer putInteger(final String key, final Integer value) {
+	public Integer putInteger(final Serializable key, final Integer value) {
 		final Serializable temp = this.put(key, value);
 		return (temp instanceof Integer) ? (Integer) temp : 0;
 	}
@@ -278,7 +264,7 @@ public class MappedSerializables implements Serializable {
 	 * 
 	 * @return Value associated with the key. Null if not found or exception occurs.
 	 */
-	public Date getDate(final String key) {
+	public Date getDate(final Serializable key) {
 		final Serializable temp = this.get(key);
 		return (null == temp) ? null : (temp instanceof Date) ? (Date) temp : Dates.getDate(temp);
 	}
@@ -288,12 +274,12 @@ public class MappedSerializables implements Serializable {
 	 * 
 	 * @return Map of Date values. Null if no Dates exist in the internal Map.
 	 */
-	public HashMap<String, Date> getDates() {
+	public HashMap<Serializable, Date> getDates() {
 		if (!this.isEmpty()) {
-			final HashMap<String, Date> result = new HashMap<String, Date>();
-			final Iterator<Map.Entry<String, Serializable>> it = this.getContent().entrySet().iterator();
+			final HashMap<Serializable, Date> result = new HashMap<Serializable, Date>();
+			final Iterator<Map.Entry<Serializable, Serializable>> it = this.getContent().entrySet().iterator();
 			while (it.hasNext()) {
-				final Map.Entry<String, Serializable> entry = it.next();
+				final Map.Entry<Serializable, Serializable> entry = it.next();
 				if (entry.getValue() instanceof Date) {
 					result.put(entry.getKey(), (Date) entry.getValue());
 				}
@@ -316,7 +302,7 @@ public class MappedSerializables implements Serializable {
 	 * 
 	 * @return previous value associated with the key, IF AND ONLY IF the previous value was a Date object. Null otherwise.
 	 */
-	public Date putDate(final String key, final Date value) {
+	public Date putDate(final Serializable key, final Date value) {
 		final Serializable temp = this.put(key, value);
 		return (temp instanceof Date) ? (Date) temp : null;
 	}
@@ -332,8 +318,8 @@ public class MappedSerializables implements Serializable {
 	 *            time to set the existing mapped Date object.
 	 * @return previous value associated with the key, IF AND ONLY IF the previous value was a Date object. Null otherwise.
 	 */
-	public Date setTime(final String key, final Date time) {
-		if (Strings.isBlankString(key)) {
+	public Date setTime(final Serializable key, final Date time) {
+		if (null == key) {
 			throw new IllegalArgumentException("Key is null");
 		}
 		if (null == time) {
@@ -366,7 +352,7 @@ public class MappedSerializables implements Serializable {
 	 * 
 	 * @return Value associated with the key. Null if not found or exception occurs.
 	 */
-	public String getTimestamp(final String key, final String format) {
+	public String getTimestamp(final Serializable key, final String format) {
 		final Date temp = this.getDate(key);
 		return (null == temp) ? "" : Dates.getTimestamp(temp, format);
 	}
@@ -379,7 +365,7 @@ public class MappedSerializables implements Serializable {
 	 * 
 	 * @return Value associated with the key. Null if not found or exception occurs.
 	 */
-	public String getTimestamp(final String key) {
+	public String getTimestamp(final Serializable key) {
 		final Date date = this.getDate(key);
 		return (null == date) ? "" : Dates.getDefaultTimestamp(date);
 	}
@@ -392,7 +378,7 @@ public class MappedSerializables implements Serializable {
 	 * 
 	 * @return Value associated with the key. Null if not found or exception occurs.
 	 */
-	public String getString(final String key) {
+	public String getString(final Serializable key) {
 		final Serializable temp = this.get(key);
 		return (null == temp) ? "" : (temp instanceof String) ? (String) temp : temp.toString();
 	}
@@ -402,12 +388,12 @@ public class MappedSerializables implements Serializable {
 	 * 
 	 * @return Map of String values. Null if no Strings exist in the internal Map.
 	 */
-	public HashMap<String, String> getStrings() {
+	public HashMap<Serializable, String> getStrings() {
 		if (!this.isEmpty()) {
-			final HashMap<String, String> result = new HashMap<String, String>();
-			final Iterator<Map.Entry<String, Serializable>> it = this.getContent().entrySet().iterator();
+			final HashMap<Serializable, String> result = new HashMap<Serializable, String>();
+			final Iterator<Map.Entry<Serializable, Serializable>> it = this.getContent().entrySet().iterator();
 			while (it.hasNext()) {
-				final Map.Entry<String, Serializable> entry = it.next();
+				final Map.Entry<Serializable, Serializable> entry = it.next();
 				if (entry.getValue() instanceof String) {
 					result.put(entry.getKey(), (String) entry.getValue());
 				}
@@ -431,7 +417,7 @@ public class MappedSerializables implements Serializable {
 	 * @return previous value associated with the key, IF AND ONLY IF the previous value was a String object. Otherwise will attempt to
 	 *         return the result of previous value's toString() method. Empty string "" on error or no previous value exists.
 	 */
-	public String putString(final String key, final String value) {
+	public String putString(final Serializable key, final String value) {
 		final Serializable temp = this.put(key, value);
 		try {
 			return (temp instanceof String) ? (String) temp : temp.toString();
@@ -450,7 +436,7 @@ public class MappedSerializables implements Serializable {
 	 * 
 	 * @return Flag indicating if the Names contains a non-null mapping for the key
 	 */
-	public boolean containsName(final String key) {
+	public boolean containsName(final Serializable key) {
 		final Serializable temp = this.get(key);
 		return ((null != temp) && (temp instanceof Name));
 	}
@@ -463,7 +449,7 @@ public class MappedSerializables implements Serializable {
 	 * 
 	 * @return Value associated with the key. Null if not found or exception occurs.
 	 */
-	public Name getName(final String key) {
+	public Name getName(final Serializable key) {
 		try {
 			final Serializable temp = this.get(key);
 			if (temp instanceof Name) {
@@ -488,12 +474,12 @@ public class MappedSerializables implements Serializable {
 	 * 
 	 * @return Map of Name values. Null if no Names exist in the internal Map.
 	 */
-	public HashMap<String, Name> getNames() {
+	public HashMap<Serializable, Name> getNames() {
 		if (!this.isEmpty()) {
-			final HashMap<String, Name> result = new HashMap<String, Name>();
-			final Iterator<Map.Entry<String, Serializable>> it = this.getContent().entrySet().iterator();
+			final HashMap<Serializable, Name> result = new HashMap<Serializable, Name>();
+			final Iterator<Map.Entry<Serializable, Serializable>> it = this.getContent().entrySet().iterator();
 			while (it.hasNext()) {
-				final Map.Entry<String, Serializable> entry = it.next();
+				final Map.Entry<Serializable, Serializable> entry = it.next();
 				if (entry.getValue() instanceof Name) {
 					result.put(entry.getKey(), (Name) entry.getValue());
 				}
@@ -516,9 +502,31 @@ public class MappedSerializables implements Serializable {
 	 * 
 	 * @return previous value associated with the key, IF AND ONLY IF the previous value was a Name object. Null otherwise.
 	 */
-	public Name putName(final String key, final Name value) {
+	public Name putName(final Serializable key, final Name value) {
 		final Serializable temp = this.put(key, value);
 		return (temp instanceof Name) ? (Name) temp : null;
+	}
+
+	/*
+	 * ******************************************************************
+	 * ******************************************************************
+	 * 
+	 * protected methods
+	 * 
+	 * ******************************************************************
+	 * ******************************************************************
+	 */
+
+	/**
+	 * Gets the internal Map.
+	 * 
+	 * @return internal Map.
+	 */
+	protected HashMap<Serializable, Serializable> getContent() {
+		if (null == this._content) {
+			this._content = new HashMap<Serializable, Serializable>();
+		}
+		return this._content;
 	}
 
 	/*
@@ -530,17 +538,6 @@ public class MappedSerializables implements Serializable {
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
-	/**
-	 * Gets the internal Map.
-	 * 
-	 * @return internal Map.
-	 */
-	private HashMap<String, Serializable> getContent() {
-		if (null == this._content) {
-			this._content = new HashMap<String, Serializable>();
-		}
-		return this._content;
-	}
 
 	/**
 	 * Sets the internal Map.
@@ -549,8 +546,8 @@ public class MappedSerializables implements Serializable {
 	 *            internal Map.
 	 */
 	@SuppressWarnings("unchecked")
-	private void setContent(final HashMap<String, Serializable> content) {
-		this._content = (null == content) ? null : (HashMap<String, Serializable>) content.clone();
+	private void setContent(final HashMap<Serializable, Serializable> content) {
+		this._content = (null == content) ? null : (HashMap<Serializable, Serializable>) content.clone();
 	}
 
 	/*
