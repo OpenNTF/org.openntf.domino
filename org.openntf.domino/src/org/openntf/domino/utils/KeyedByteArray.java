@@ -20,6 +20,7 @@ package org.openntf.domino.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -39,7 +40,7 @@ import org.openntf.domino.EmbeddedObject;
  * 
  * @updated 01/2014
  */
-public class KeyedByteArray extends MappedSerializables implements Comparable<KeyedByteArray> {
+public class KeyedByteArray extends StringMappedSerializables implements Comparable<KeyedByteArray> {
 
 	public static enum Key {
 		FileName, ContentType, FileSize, ObjectName, ItemName, CID
@@ -583,8 +584,8 @@ public class KeyedByteArray extends MappedSerializables implements Comparable<Ke
 
 			if (result == DominoUtils.EQUAL) {
 				// compare Integers
-				final HashMap<String, Integer> integers0 = handle0.getIntegers();
-				final HashMap<String, Integer> integers1 = handle1.getIntegers();
+				final HashMap<Serializable, Integer> integers0 = handle0.getIntegers();
+				final HashMap<Serializable, Integer> integers1 = handle1.getIntegers();
 
 				// compare # of Integer elements
 				result = (integers0.size() < integers1.size()) ? DominoUtils.LESS_THAN
@@ -592,9 +593,9 @@ public class KeyedByteArray extends MappedSerializables implements Comparable<Ke
 
 				if (result == DominoUtils.EQUAL) {
 					// compare Integer values
-					final Iterator<Map.Entry<String, Integer>> iit0 = integers0.entrySet().iterator();
+					final Iterator<Map.Entry<Serializable, Integer>> iit0 = integers0.entrySet().iterator();
 					while (iit0.hasNext()) {
-						final Map.Entry<String, Integer> entry = iit0.next();
+						final Map.Entry<Serializable, Integer> entry = iit0.next();
 						if (!integers1.containsKey(entry.getKey())) {
 							return DominoUtils.LESS_THAN;
 						}
@@ -604,9 +605,9 @@ public class KeyedByteArray extends MappedSerializables implements Comparable<Ke
 						}
 					}
 
-					final Iterator<Map.Entry<String, Integer>> iit1 = integers0.entrySet().iterator();
+					final Iterator<Map.Entry<Serializable, Integer>> iit1 = integers0.entrySet().iterator();
 					while (iit1.hasNext()) {
-						final Map.Entry<String, Integer> entry = iit1.next();
+						final Map.Entry<Serializable, Integer> entry = iit1.next();
 						if (!integers0.containsKey(entry.getKey())) {
 							return DominoUtils.LESS_THAN;
 						}
@@ -618,8 +619,8 @@ public class KeyedByteArray extends MappedSerializables implements Comparable<Ke
 
 					if (result == DominoUtils.EQUAL) {
 						// compare Strings
-						final HashMap<String, String> strings0 = handle0.getStrings();
-						final HashMap<String, String> strings1 = handle1.getStrings();
+						final HashMap<Serializable, String> strings0 = handle0.getStrings();
+						final HashMap<Serializable, String> strings1 = handle1.getStrings();
 
 						// compare # of String elements
 						result = (strings0.size() < strings1.size()) ? DominoUtils.LESS_THAN
@@ -627,9 +628,9 @@ public class KeyedByteArray extends MappedSerializables implements Comparable<Ke
 
 						if (result == DominoUtils.EQUAL) {
 							// compare String values
-							final Iterator<Map.Entry<String, String>> sit0 = strings0.entrySet().iterator();
+							final Iterator<Map.Entry<Serializable, String>> sit0 = strings0.entrySet().iterator();
 							while (sit0.hasNext()) {
-								final Map.Entry<String, String> entry = sit0.next();
+								final Map.Entry<Serializable, String> entry = sit0.next();
 								if (!strings1.containsKey(entry.getKey())) {
 									return DominoUtils.LESS_THAN;
 								}
@@ -639,9 +640,9 @@ public class KeyedByteArray extends MappedSerializables implements Comparable<Ke
 								}
 							}
 
-							final Iterator<Map.Entry<String, String>> sit1 = strings1.entrySet().iterator();
+							final Iterator<Map.Entry<Serializable, String>> sit1 = strings1.entrySet().iterator();
 							while (sit1.hasNext()) {
-								final Map.Entry<String, String> entry = sit1.next();
+								final Map.Entry<Serializable, String> entry = sit1.next();
 								if (!strings0.containsKey(entry.getKey())) {
 									return DominoUtils.LESS_THAN;
 								}
