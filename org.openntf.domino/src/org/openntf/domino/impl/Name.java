@@ -115,21 +115,11 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 * ******************************************************************
 	 * ******************************************************************
 	 * 
-	 * Serializable getters & setters
+	 * private methods
 	 * 
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
-
-	/**
-	 * Flag indicating if the object is Hierarchical
-	 * 
-	 * @return Hierarchical indicator flag
-	 */
-	public boolean isHierarchical() {
-		return this.Hierarchical;
-	}
-
 	/**
 	 * Flag indicating if the object is Hierarchical
 	 * 
@@ -145,7 +135,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 * 
 	 * @return NamePartsMap for the object.
 	 */
-	public NamePartsMap getNamePartsMap() {
+	private NamePartsMap getNamePartsMap() {
 		if (null == this._namePartsMap) {
 			this._namePartsMap = new NamePartsMap();
 		}
@@ -158,19 +148,9 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 * @param namePartsMap
 	 *            NamePartsMap for the object.
 	 */
-	public void setNamePartsMap(final NamePartsMap namePartsMap) {
+	private void setNamePartsMap(final NamePartsMap namePartsMap) {
 		this._namePartsMap = namePartsMap;
 	}
-
-	/*
-	 * ******************************************************************
-	 * ******************************************************************
-	 * 
-	 * private methods
-	 * 
-	 * ******************************************************************
-	 * ******************************************************************
-	 */
 
 	private void initialize(final lotus.domino.Name delegate) {
 		try {
@@ -250,6 +230,14 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
+	/**
+	 * Flag indicating if the object is Hierarchical
+	 * 
+	 * @return Hierarchical indicator flag
+	 */
+	public boolean isHierarchical() {
+		return this.Hierarchical;
+	}
 
 	@Override
 	public String toString() {
