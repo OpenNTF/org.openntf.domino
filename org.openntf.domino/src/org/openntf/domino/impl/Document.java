@@ -965,18 +965,23 @@ public class Document extends org.openntf.domino.impl.Base<org.openntf.domino.Do
 			MIMEEntity entity = this.getMIMEEntity(name);
 			if (entity != null) {
 				Object mimeValue = getItemValueMIME(name);
-				if (mimeValue instanceof Vector) {
-					return (Vector<Object>) mimeValue;
+				if (mimeValue != null) {
+					if (mimeValue instanceof Vector) {
+						return (Vector<Object>) mimeValue;
+					}
+					if (mimeValue instanceof Collection) {
+						return new Vector<Object>((Collection<Object>) mimeValue);
+					}
+					if (mimeValue.getClass().isArray()) {
+						return (Vector<Object>) Arrays.asList((Object[]) mimeValue);
+					}
+					Vector<Object> result = new Vector<Object>(1);
+					result.add(mimeValue);
+					return result;
+				} else {
+					log_.log(Level.WARNING, "We found a MIMEEntity for item name " + name
+							+ " but the value from the MIMEEntity is null so we likely need to look at the regular field.");
 				}
-				if (mimeValue instanceof Collection) {
-					return new Vector<Object>((Collection<Object>) mimeValue);
-				}
-				if (mimeValue.getClass().isArray()) {
-					return (Vector<Object>) Arrays.asList((Object[]) mimeValue);
-				}
-				Vector<Object> result = new Vector<Object>(1);
-				result.add(mimeValue);
-				return result;
 				// TODO NTF: What if we have a "real" mime item like a body field (Handle RT/MIME correctly)
 			}
 			Vector<?> vals = null;
@@ -2375,8 +2380,7 @@ public class Document extends org.openntf.domino.impl.Base<org.openntf.domino.Do
 				// Then fall back to the normal method, which will MIMEBean it
 				return this.replaceItemValue(itemName, byteArray);
 			} else {
-				return fromLotus(getDelegate().replaceItemValueCustomDataBytes(itemName, dataTypeName, byteArray), Item.SCHEMA,
-						this);
+				return fromLotus(getDelegate().replaceItemValueCustomDataBytes(itemName, dataTypeName, byteArray), Item.SCHEMA, this);
 			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);

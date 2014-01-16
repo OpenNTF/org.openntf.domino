@@ -19,13 +19,14 @@ import java.util.Vector;
 
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.FactorySchema;
+import org.openntf.domino.types.Resurrectable;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Interface that represents the access control list (ACL) of an IBM Domino database.
  */
 public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openntf.domino.ext.ACL, Iterable<org.openntf.domino.ACLEntry>,
-		DatabaseDescendant {
+		Resurrectable, DatabaseDescendant {
 
 	/**
 	 * @author Roland Praml, Foconis AG

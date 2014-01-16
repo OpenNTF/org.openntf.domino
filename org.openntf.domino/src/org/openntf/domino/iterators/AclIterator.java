@@ -36,6 +36,8 @@ public class AclIterator implements Iterator<ACLEntry> {
 
 	/** The current entry_. */
 	private transient ACLEntry currentEntry_;
+	private transient ACLEntry nextEntry_;
+	private boolean hasChecked_ = false;
 
 	/** The started_. */
 	private boolean started_;
@@ -53,21 +55,33 @@ public class AclIterator implements Iterator<ACLEntry> {
 		setAcl(acl);
 	}
 
+	private ACLEntry getNext() {
+		if (nextEntry_ == null) {
+			ACLEntry currentEntry = getCurrentEntry();
+			ACL acl = getAcl();
+			try {
+				if (currentEntry == null) {
+					if (isDone()) {
+						nextEntry_ = null;
+					} else {
+						nextEntry_ = acl.getFirstEntry();
+					}
+				} else {
+					nextEntry_ = acl.getNextEntry(currentEntry);
+				}
+			} catch (Throwable t) {
+				DominoUtils.handleException(t);
+			}
+		}
+		return nextEntry_;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.util.Iterator#hasNext()
 	 */
 	@Override
 	public boolean hasNext() {
-		boolean result = false;
-		ACLEntry currentEntry = getCurrentEntry();
-		ACLEntry nextEntry = null;
-		try {
-			nextEntry = ((currentEntry == null) ? (isDone() ? null : getAcl().getFirstEntry()) : getAcl().getNextEntry(currentEntry));
-			result = (nextEntry != null);
-		} catch (Throwable t) {
-			DominoUtils.handleException(t);
-		}
-		return result;
+		return (getNext() != null);
 	}
 
 	/* (non-Javadoc)
@@ -76,19 +90,11 @@ public class AclIterator implements Iterator<ACLEntry> {
 	@Override
 	public ACLEntry next() {
 		ACLEntry result = null;
-		ACLEntry currentEntry = getCurrentEntry();
-		try {
-			result = ((currentEntry == null) ? getAcl().getFirstEntry() : getAcl().getNextEntry(currentEntry));
-			if (result == null) {
-				setDone(true);
-			} else {
-				setStarted(true);
-			}
-		} catch (Throwable t) {
-			DominoUtils.handleException(t);
-		} finally {
-			setCurrentEntry(result);
-		}
+		result = getNext();
+		setCurrentEntry(result);
+		nextEntry_ = null;
+		if (result == null)
+			done_ = true;
 		return result;
 	}
 

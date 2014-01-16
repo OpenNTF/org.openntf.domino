@@ -10,6 +10,7 @@ import java.io.ObjectOutput;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Document;
+import org.openntf.domino.Item;
 import org.openntf.domino.Session;
 
 /**
@@ -91,6 +92,35 @@ public class IndexHit implements Externalizable {
 
 	public Document getDocument(final Session session, final String serverName) {
 		return session.getDocumentByMetaversalID(getMetaversalID(), serverName);
+	}
+
+	public String getHitContext(final Session session, final String serverName) {
+		String result = "";
+		Document doc = getDocument(session, serverName);
+		if (doc != null && doc.isValid() && !doc.getItems().isEmpty()) {
+			Item hitItem = doc.getFirstItem(getItem());
+			if (hitItem.getType() == Item.RICHTEXT) {
+				//TODO NTF - possibly add some HTML formatting stuff...
+			} else {
+
+			}
+			String text = hitItem.getValueString();
+			int pos = text.indexOf(getTerm());
+			if (pos > 30) {
+				if (text.length() < 60) {
+					result = text.substring(pos - 30, text.length());
+				} else {
+					result = text.substring(pos - 30, pos + 30);
+				}
+			} else {
+				if (text.length() < 60) {
+					result = text;
+				} else {
+					result = text.substring(0, 60);
+				}
+			}
+		}
+		return result;
 	}
 
 	/**

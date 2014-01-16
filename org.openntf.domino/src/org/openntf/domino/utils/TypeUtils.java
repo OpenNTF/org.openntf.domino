@@ -73,6 +73,9 @@ public enum TypeUtils {
 	public static <T> T itemValueToClass(final Item item, final Class<?> T) {
 		// Object o = item.getAncestorDocument().getItemValue(item.getName());
 		Vector v = item.getValues();
+		if (v == null) {
+			log_.log(Level.WARNING, "Got a null for the value of item " + item.getName());
+		}
 		Session session = Factory.getSession(item);
 		T result = null;
 		try {
@@ -95,6 +98,9 @@ public enum TypeUtils {
 		//		} else if (T == java.util.Collection.class) {
 		//			log_.log(Level.WARNING, "Collection type requested from type coersion!");
 		//		}
+		if (v == null) {
+			return null;
+		}
 		Object result = null;
 		Class<?> CType = null;
 		if (T.equals(String[].class)) {

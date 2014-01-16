@@ -510,6 +510,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 		java.util.Vector<Object> values = this.getParent().getItemValue(this.getName());
 		if (values != null) {
 			return new Vector<Object>(values);
+		} else {
+			log_.log(Level.WARNING, "Item " + getName() + " in document " + getAncestorDatabase().getApiPath() + ": "
+					+ getParent().getNoteID() + " is a NULL");
 		}
 		return null;
 	}

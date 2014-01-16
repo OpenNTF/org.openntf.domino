@@ -158,44 +158,63 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Base.class.getName());
 
-	/** The cpp_object. */
-	private long cpp_object = 0;
-
-	/** The cpp_object. */
-	private final long cpp_session;
+	private static Method getCppObjMethod;
+	private static Method checkArgMethod;
+	private static Method checkObjectMethod;
+	private static Method checkObjectActiveMethod;
+	private static Method clearCppObjMethod;
+	private static Method getCppSessionMethod;
+	private static Method getGCParentMethod;
+	private static Method getSessionMethod;
+	//	private static Method getStringArrayPropertyMethod;
+	private static Method getWeakMethod;
+	private static Method isDeadMethod;
+	private static Method isInvalidMethod;
+	private static Method isEqualMethod;
+	private static Method markInvalidMethod;
+	private static Method notImplementedMethod;
+	private static Method validateObjArgMethod;
+	private static Method restoreObjectMethod;
 
 	/** the class id of this object type (implemented as precaution) **/
 	final int clsid;
-
-	/** The Constant lockedRefSet. */
-	// private static final DominoLockSet lockedRefSet = new DominoLockSet();
-
-	/** The get cpp method. */
-	private static Method getCppObjMethod;
-
-	/** The is invalid method. */
-	private static Method isInvalidMethod;
-
 	/** The wrapperFactory we are from **/
 	private final WrapperFactory factory_;
-
-	/** The delegate_. */
-	protected D delegate_; // NTF final??? RPr: Final not possible, otherwise ressurect won't work
-
-	/** The parent_. */
-	@SuppressWarnings("rawtypes")
-	private final org.openntf.domino.Base parent_;
 
 	static {
 		try {
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 				@Override
 				public Object run() throws Exception {
-					Class<?> lotusClass = lotus.domino.local.NotesBase.class;
-					getCppObjMethod = lotusClass.getDeclaredMethod("GetCppObj", (Class<?>[]) null);
+					checkArgMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("CheckArg", Object.class);
+					checkArgMethod.setAccessible(true);
+					checkObjectMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("CheckObject", (Class<?>[]) null);
+					checkObjectMethod.setAccessible(true);
+					checkObjectActiveMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("CheckObjectActive", (Class<?>[]) null);
+					checkObjectActiveMethod.setAccessible(true);
+					clearCppObjMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("ClearCppObj", (Class<?>[]) null);
+					clearCppObjMethod.setAccessible(true);
+					getCppObjMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("GetCppObj", (Class<?>[]) null);
 					getCppObjMethod.setAccessible(true);
-					isInvalidMethod = lotusClass.getDeclaredMethod("isInvalid", (Class<?>[]) null);
+					getCppSessionMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("GetCppSession", (Class<?>[]) null);
+					getCppSessionMethod.setAccessible(true);
+					getGCParentMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("getGCParent", (Class<?>[]) null);
+					getGCParentMethod.setAccessible(true);
+					getSessionMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("getSession", (Class<?>[]) null);
+					getSessionMethod.setAccessible(true);
+					getWeakMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("getWeak", (Class<?>[]) null);
+					getWeakMethod.setAccessible(true);
+					isDeadMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("isDead", (Class<?>[]) null);
+					isDeadMethod.setAccessible(true);
+					isInvalidMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("isInvalid", (Class<?>[]) null);
 					isInvalidMethod.setAccessible(true);
+					isEqualMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("isEqual", Long.TYPE);
+					isEqualMethod.setAccessible(true);
+					markInvalidMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("markInvalid", (Class<?>[]) null);
+					markInvalidMethod.setAccessible(true);
+					validateObjArgMethod = lotus.domino.local.NotesBase.class.getDeclaredMethod("validateObjArg", Object.class,
+							Boolean.TYPE);
+					validateObjArgMethod.setAccessible(true);
 					return null;
 				}
 			});
@@ -206,6 +225,12 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	}
 
+	/** The delegate_. */
+	protected D delegate_;
+
+	private long cpp_object;
+	private long cpp_session;
+
 	/**
 	 * returns the cpp_id. DO NOT REMOVE. Otherwise native funtions won't work
 	 * 
@@ -214,6 +239,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	public long GetCppObj() {
 		return cpp_object;
 	}
+
+	/** The parent_. */
+	private org.openntf.domino.Base<?> parent_;
 
 	/**
 	 * returns the cpp-session id. Needed for some BackendBridge functions
@@ -224,6 +252,13 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		return cpp_session;
 	}
 
+	void setParent(final org.openntf.domino.Base<?> parent) {
+		parent_ = parent;
+		if (parent != null) {
+			cpp_session = ((org.openntf.domino.impl.Base) parent).GetCppSession();
+		}
+	}
+
 	/**
 	 * Returns the class-id. Currently not used
 	 * 
@@ -232,6 +267,55 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	int GetClassID() {
 		return clsid;
 	}
+
+	public static class WrapCounter extends ThreadLocal<Long> {
+
+		@Override
+		protected Long initialValue() {
+			return new Long(0);
+		}
+
+		public void increment() {
+			long cur = super.get();
+			super.set(cur++);
+		}
+	}
+
+	public static WrapCounter traceWrapCount = new WrapCounter();
+
+	public static ThreadLocal<Long> traceMinDelta = new ThreadLocal<Long>() {
+		@Override
+		protected Long initialValue() {
+			return Long.MAX_VALUE;
+		}
+
+		@Override
+		public void set(final Long value) {
+			if (value < super.get()) {
+				super.set(value);
+				//				System.out.println("New min delta discovered: " + value);
+			}
+		}
+	};
+
+	public static ThreadLocal<Long> traceMaxDelta = new ThreadLocal<Long>() {
+		@Override
+		protected Long initialValue() {
+			return Long.MIN_VALUE;
+		}
+
+		@Override
+		public void set(final Long value) {
+			long curValue = super.get();
+			if (value > curValue) {
+				if ((curValue - value) > 100000) {
+					System.out.println("Jump greater than 100000 when we wrapped object count " + traceWrapCount.get());
+				}
+				super.set(value);
+				//				System.out.println("New max delta discovered: " + value);
+			}
+		}
+	};
 
 	/**
 	 * Gets the parent.
@@ -290,6 +374,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			cpp_session = 0;
 		}
 	}
+
+	private boolean traceCpp = false;
 
 	void setDelegate(final D delegate) {
 		setDelegate(delegate, 0);

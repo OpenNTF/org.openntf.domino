@@ -125,20 +125,34 @@ public class IndexQuery {
 		forms_ = IndexDatabase.toStringSet(forms);
 	}
 
+	private static final boolean profile_ = true;
+
+	protected IndexResults createResultsFromHitList(final List<IndexHit> hits) {
+		return new IndexResults(hits);
+	}
+
 	public IndexResults execute(final IndexDatabase db) {
+		long startNanos = 0;
+		if (profile_)
+			startNanos = System.nanoTime();
 		IndexResults result = null;
 		for (String term : getTerms()) {
 			List<IndexHit> hits = db.getTermResults(term, getLimit(), getDbids(), IndexDatabase.toCISSet(getItems()), getForms());
 			if (result == null) {
-				result = new IndexResults(hits);
+				result = createResultsFromHitList(hits);
 			} else {
-				IndexResults temp = new IndexResults(hits);
+				IndexResults temp = createResultsFromHitList(hits);
 				if (isAnd()) {
 					result.intersect(temp);
 				} else {
 					result.merge(temp);
 				}
 			}
+		}
+		if (profile_) {
+			int resultCount = result.getHits().size();
+			System.out
+					.println("IndexQuery executed for " + resultCount + " results in " + ((System.nanoTime() - startNanos) / 1000) + "us");
 		}
 		return result;
 	}
