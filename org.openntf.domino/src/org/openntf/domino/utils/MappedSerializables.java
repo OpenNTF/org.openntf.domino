@@ -59,39 +59,6 @@ public class MappedSerializables implements Serializable {
 	 * ******************************************************************
 	 * ******************************************************************
 	 * 
-	 * Serializable Methods
-	 * 
-	 * ******************************************************************
-	 * ******************************************************************
-	 */
-
-	/**
-	 * Gets the internal Map.
-	 * 
-	 * @return internal Map.
-	 */
-	public HashMap<String, Serializable> getContent() {
-		if (null == this._content) {
-			this._content = new HashMap<String, Serializable>();
-		}
-		return this._content;
-	}
-
-	/**
-	 * Sets the internal Map.
-	 * 
-	 * @param content
-	 *            internal Map.
-	 */
-	@SuppressWarnings("unchecked")
-	public void setContent(final HashMap<String, Serializable> content) {
-		this._content = (null == content) ? null : (HashMap<String, Serializable>) content.clone();
-	}
-
-	/*
-	 * ******************************************************************
-	 * ******************************************************************
-	 * 
 	 * Public Methods
 	 * 
 	 * ******************************************************************
@@ -107,7 +74,7 @@ public class MappedSerializables implements Serializable {
 	public MappedSerializables clone() {
 		final MappedSerializables result = new MappedSerializables();
 		if (null != this._content) {
-			HashMap<String, Serializable> clone = (HashMap<String, Serializable>) this.getContent().clone();
+			HashMap<String, Serializable> clone = (HashMap<String, Serializable>) this.getContent();
 			result.setContent(this.getContent());
 		}
 
@@ -118,7 +85,9 @@ public class MappedSerializables implements Serializable {
 	 * Clears all internal information from the object.
 	 */
 	public void clear() {
-		this.getContent().clear();
+		if (null != this._content) {
+			this._content.clear();
+		}
 	}
 
 	/**
@@ -550,6 +519,38 @@ public class MappedSerializables implements Serializable {
 	public Name putName(final String key, final Name value) {
 		final Serializable temp = this.put(key, value);
 		return (temp instanceof Name) ? (Name) temp : null;
+	}
+
+	/*
+	 * ******************************************************************
+	 * ******************************************************************
+	 * 
+	 * private methods
+	 * 
+	 * ******************************************************************
+	 * ******************************************************************
+	 */
+	/**
+	 * Gets the internal Map.
+	 * 
+	 * @return internal Map.
+	 */
+	private HashMap<String, Serializable> getContent() {
+		if (null == this._content) {
+			this._content = new HashMap<String, Serializable>();
+		}
+		return this._content;
+	}
+
+	/**
+	 * Sets the internal Map.
+	 * 
+	 * @param content
+	 *            internal Map.
+	 */
+	@SuppressWarnings("unchecked")
+	private void setContent(final HashMap<String, Serializable> content) {
+		this._content = (null == content) ? null : (HashMap<String, Serializable>) content.clone();
 	}
 
 	/*
