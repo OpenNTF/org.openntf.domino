@@ -18,11 +18,11 @@ public class IndexResults {
 	private static final Logger log_ = Logger.getLogger(IndexResults.class.getName());
 	private static final long serialVersionUID = 1L;
 
-	private Map<String, AtomicInteger> terms_;
-	private Map<String, AtomicInteger> dbids_;
-	private Map<String, AtomicInteger> items_;
-	private Map<String, AtomicInteger> forms_;
-	private final List<IndexHit> hits_;
+	protected Map<String, AtomicInteger> terms_;
+	protected Map<String, AtomicInteger> dbids_;
+	protected Map<String, AtomicInteger> items_;
+	protected Map<String, AtomicInteger> forms_;
+	protected final List<IndexHit> hits_;
 
 	public IndexResults(final List<IndexHit> hits) {
 		hits_ = hits;

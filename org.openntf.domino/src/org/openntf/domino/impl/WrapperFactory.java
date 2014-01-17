@@ -31,7 +31,6 @@ import org.openntf.domino.Session;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
 import org.openntf.domino.thread.DominoReferenceCache;
 import org.openntf.domino.types.FactorySchema;
-import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
@@ -52,7 +51,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
-			DominoUtils.handleException(e);
+			//			DominoUtils.handleException(e);
 		}
 		// TODO: Recycle all?
 		lotusObjects.processQueue();

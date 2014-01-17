@@ -117,14 +117,14 @@ public class IndexDatabase {
 		indexDb_ = indexDb;
 	}
 
-	private Database getIndexDb() {
+	protected Database getIndexDb() {
 		if (indexDb_ == null) {
 			indexDb_ = Factory.getSession().getCurrentDatabase();
 		}
 		return indexDb_;
 	}
 
-	private void initIndexDb() {
+	protected void initIndexDb() {
 
 		View indexView = getIndexDb().getView(TERM_VIEW_NAME);
 		if (indexView == null) {
