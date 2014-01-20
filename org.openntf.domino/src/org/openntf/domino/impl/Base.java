@@ -712,7 +712,6 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	@SuppressWarnings("rawtypes")
 	protected static Object toDominoFriendly(final Object value, final org.openntf.domino.Base context,
 			final Collection<lotus.domino.Base> recycleThis) throws IllegalArgumentException {
-		// TODO RPr: fill recycleThis
 		if (value == null) {
 			log_.log(Level.INFO, "Trying to convert a null argument to Domino friendly. Returning null...");
 			return null;

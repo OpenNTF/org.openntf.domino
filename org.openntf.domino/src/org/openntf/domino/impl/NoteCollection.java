@@ -39,8 +39,8 @@ import org.openntf.domino.utils.Factory;
  * @author withersp
  * 
  */
-public class NoteCollection extends org.openntf.domino.impl.Base<org.openntf.domino.NoteCollection, lotus.domino.NoteCollection, Database>
-		implements org.openntf.domino.NoteCollection {
+public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotus.domino.NoteCollection, Database> implements
+		org.openntf.domino.NoteCollection {
 	//private static final Logger log_ = Logger.getLogger(NoteCollection.class.getName());
 
 	/**

@@ -64,8 +64,7 @@ import com.ibm.icu.util.GregorianCalendar;
 /**
  * The Class Database.
  */
-public class Database extends org.openntf.domino.impl.Base<org.openntf.domino.Database, lotus.domino.Database, Session> implements
-		org.openntf.domino.Database {
+public class Database extends Base<org.openntf.domino.Database, lotus.domino.Database, Session> implements org.openntf.domino.Database {
 	private static final Logger log_ = Logger.getLogger(Database.class.getName());
 
 	/** The server_. */
@@ -2722,9 +2721,7 @@ public class Database extends org.openntf.domino.impl.Base<org.openntf.domino.Da
 	@Override
 	protected lotus.domino.Database getDelegate() {
 		lotus.domino.Database db = super.getDelegate();
-		try {
-			db.isFTIndexed();
-		} catch (NotesException e) {
+		if (isDead(db)) {
 			resurrect();
 		}
 		return super.getDelegate();
@@ -2732,10 +2729,14 @@ public class Database extends org.openntf.domino.impl.Base<org.openntf.domino.Da
 
 	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
 		// TODO: Currently gets session. Need to get session, sessionAsSigner or sessionAsSignerWithFullAccess, as appropriate somwhow
-		Session rawSessionUs = org.openntf.domino.utils.Factory.getSession();
+		Session rawSessionUs = getAncestorSession();
+		if (rawSessionUs == null) {
+			rawSessionUs = org.openntf.domino.utils.Factory.getSession();
+		}
 		lotus.domino.Session rawSession = toLotus(rawSessionUs);
 		try {
 			lotus.domino.Database d = rawSession.getDatabase(server_, path_);
+			//d.open();
 			setDelegate(d, 0);
 			if (log_.isLoggable(java.util.logging.Level.FINE)) {
 				Throwable t = new Throwable();

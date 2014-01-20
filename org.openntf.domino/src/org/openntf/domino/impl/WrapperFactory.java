@@ -63,9 +63,11 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		// call gc once before processing the queues
 		System.gc();
 		try {
+			//give the gc some ms
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
-			//			DominoUtils.handleException(e);
+			// and ignore this
+			//DominoUtils.handleException(e);
 		}
 		// TODO: Recycle all?
 		autoRecycle.processQueue();
@@ -104,7 +106,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		}
 
 		if (!(lotus instanceof NotesBase)) {
-			// TODO RPr: what do we if we don't get a wrappable object at all. This is a programming error, so throw exception
+			// RPr: what do we if we don't get a wrappable object at all. This is a programming error, so throw exception
 			throw new UndefinedDelegateTypeException("Cannot wrap " + lotus.getClass().getName());
 		}
 

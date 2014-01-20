@@ -833,7 +833,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 				lotusColl = getDelegate().getAllDocumentsByKey(domKey, exact);
 			}
 			DocumentCollection dc = fromLotus(lotusColl, DocumentCollection.SCHEMA, getAncestorDatabase());
-			dc.setParentView(this);
+			if (dc instanceof org.openntf.domino.impl.DocumentCollection) {
+				((org.openntf.domino.impl.DocumentCollection) dc).setParentView(this);
+			}
 			return dc;
 
 		} catch (NotesException e) {

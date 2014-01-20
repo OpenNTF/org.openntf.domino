@@ -74,8 +74,7 @@ import com.ibm.commons.util.io.json.util.JsonWriter;
 /**
  * The Class Document.
  */
-public class Document extends org.openntf.domino.impl.Base<org.openntf.domino.Document, lotus.domino.Document, Database> implements
-		org.openntf.domino.Document {
+public class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, Database> implements org.openntf.domino.Document {
 	private static final Logger log_ = Logger.getLogger(Document.class.getName());
 
 	public static enum RemoveType {
@@ -2498,8 +2497,8 @@ public class Document extends org.openntf.domino.impl.Base<org.openntf.domino.Do
 							// System.out.println("Resetting unid from " + unid_ + " to " + del.getUniversalID());
 							unid_ = del.getUniversalID();
 						}
-						// TODO RPr We may invalidate more variables here!
-						lastModified_ = DominoUtils.toJavaDateSafe(del.getLastModified());
+
+						invalidateCaches();
 					} else {
 						log_.severe("Delegate document for " + unid_ + " is NULL!??!");
 					}
@@ -2551,6 +2550,12 @@ public class Document extends org.openntf.domino.impl.Base<org.openntf.domino.Do
 		}
 		// System.out.println("Save completed returning " + String.valueOf(result));
 		return result;
+	}
+
+	protected void invalidateCaches() {
+		// RPr: Invalidate cached values
+		lastModified_ = null;
+		lastAccessed_ = null;
 	}
 
 	/*
@@ -2842,6 +2847,7 @@ public class Document extends org.openntf.domino.impl.Base<org.openntf.domino.Do
 				lotus.domino.Database delDb = getDelegate().getParentDatabase();
 				getDelegate().recycle();
 				shouldResurrect_ = true;
+				invalidateCaches();
 				// lotus.domino.Document junkDoc = delDb.createDocument(); // NTF - Why? To make sure I get a new cppid. Otherwise the
 				// handle
 				// gets reused
@@ -2940,18 +2946,6 @@ public class Document extends org.openntf.domino.impl.Base<org.openntf.domino.Do
 						d = db.getDocumentByID(noteid_);
 					}
 				}
-				// if (noteid_ == null || Integer.valueOf(noteid_, 16) == 0) {
-				// log_.log(Level.WARNING,
-				// "Noteid is null or zero. May not be able to resurrect. Attempting to use UNID " + String.valueOf(unid_));
-				// if (unid_ == null) {
-				// log_.log(Level.SEVERE, "UNID is null. Will not be able to resurrect...");
-				// } else {
-				// d = ((org.openntf.domino.impl.Database) getParentDatabase()).getDelegate().getDocumentByUNID(unid_);
-				// }
-				//
-				// } else {
-				// d = ((org.openntf.domino.impl.Database) getParentDatabase()).getDelegate().getDocumentByID(noteid_);
-				// }
 				setDelegate(d, 0);
 				shouldResurrect_ = false;
 				if (log_.isLoggable(Level.FINE)) {
