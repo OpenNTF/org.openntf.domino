@@ -90,18 +90,19 @@ public class IndexHit implements Externalizable {
 		return dbid_ + unid_;
 	}
 
-	private transient Document document_;
+	//	private transient Document document_;
 
 	public Document getDocument(final Session session, final String serverName) {
-		if (document_ == null) {
-			document_ = session.getDocumentByMetaversalID(getMetaversalID(), serverName);
-		} else {
-			String fname = document_.getFormName();
-			if (fname == null || fname.length() < 1) {
-				document_ = session.getDocumentByMetaversalID(getMetaversalID(), serverName);
-			}
-		}
-		return document_;
+		//		if (document_ == null) {
+		//			document_ = session.getDocumentByMetaversalID(getMetaversalID(), serverName);
+		//		} else {
+		//			String fname = document_.getFormName();
+		//			if (fname == null || fname.length() < 1) {
+		//				document_ = session.getDocumentByMetaversalID(getMetaversalID(), serverName);
+		//			}
+		//		}
+		//		return document_;
+		return session.getDocumentByMetaversalID(getMetaversalID(), serverName);
 	}
 
 	public String getHitContext(final Session session, final String serverName) {

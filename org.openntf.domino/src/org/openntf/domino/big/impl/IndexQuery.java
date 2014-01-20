@@ -6,6 +6,7 @@ package org.openntf.domino.big.impl;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -131,22 +132,29 @@ public class IndexQuery {
 		return new IndexResults(hits);
 	}
 
+	private static final List<IndexHit> emptyHits = new ArrayList<IndexHit>();
+
 	public IndexResults execute(final IndexDatabase db) {
 		long startNanos = 0;
 		if (profile_)
 			startNanos = System.nanoTime();
 		IndexResults result = null;
-		for (String term : getTerms()) {
-			List<IndexHit> hits = db.getTermResults(term, getLimit(), getDbids(), IndexDatabase.toCISSet(getItems()), getForms());
-			if (result == null) {
-				result = createResultsFromHitList(hits);
-			} else {
-				IndexResults temp = createResultsFromHitList(hits);
-				if (isAnd()) {
-					result.intersect(temp);
+		if (isAnd()) {
+			for (String term : getTerms()) {
+				List<IndexHit> hits = db.getTermResults(term, getLimit(), getDbids(), IndexDatabase.toCISSet(getItems()), getForms());
+				if (result == null) {
+					result = createResultsFromHitList(hits);
 				} else {
-					result.merge(temp);
+					IndexResults temp = createResultsFromHitList(hits);
+					result.intersect(temp);
 				}
+			}
+		} else {
+			result = createResultsFromHitList(emptyHits);
+			for (String term : getTerms()) {
+				List<IndexHit> hits = db.getTermResults(term, getLimit(), getDbids(), IndexDatabase.toCISSet(getItems()), getForms());
+				IndexResults temp = createResultsFromHitList(hits);
+				result.merge(temp);
 			}
 		}
 		if (profile_) {
