@@ -73,7 +73,7 @@ import com.ibm.icu.util.Calendar;
  * 
  * @author nfreeman
  */
-public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Session, lotus.domino.Session, SessionHasNoParent> implements
+public class Session extends Base<org.openntf.domino.Session, lotus.domino.Session, SessionHasNoParent> implements
 		org.openntf.domino.Session {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Session.class.getName());

@@ -615,11 +615,4 @@ public interface DocumentCollection extends lotus.domino.DocumentCollection, org
 	@Override
 	public abstract void updateAll();
 
-	/**
-	 * Set the parent view. This should be used internally only!
-	 * 
-	 * @param view
-	 */
-	void setParentView(View view);
-
 }

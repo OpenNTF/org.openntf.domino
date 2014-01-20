@@ -17,6 +17,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+import lotus.domino.DateTime;
+import lotus.domino.Name;
+
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
 import org.openntf.domino.Session;
@@ -24,8 +27,6 @@ import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.ext.Formula;
-import org.openntf.domino.impl.DateTime;
-import org.openntf.domino.impl.Name;
 import org.openntf.domino.types.BigString;
 
 import com.ibm.icu.math.BigDecimal;
@@ -137,9 +138,9 @@ public enum TypeUtils {
 						result = toFormulas(v);
 					} else if (CType == Date.class) {
 						result = toDates(v);
-					} else if (CType == DateTime.class) {
+					} else if (DateTime.class.isAssignableFrom(CType)) {
 						result = toDateTimes(v, session);
-					} else if (CType == Name.class) {
+					} else if (Name.class.isAssignableFrom(CType)) {
 						result = toNames(v, session);
 					} else if (CType == Boolean.class) {
 						result = toBooleans(v);
@@ -606,8 +607,8 @@ public enum TypeUtils {
 		int i = 0;
 		// strings = vector.toArray(new String[0]);
 		for (Object o : vector) {
-			if (o instanceof DateTime) {
-				strings[i++] = ((DateTime) o).getGMTTime();
+			if (o instanceof org.openntf.domino.DateTime) {
+				strings[i++] = ((org.openntf.domino.DateTime) o).getGMTTime();
 			} else {
 				strings[i++] = String.valueOf(o);
 			}
@@ -765,8 +766,8 @@ public enum TypeUtils {
 		BigString[] strings = new BigString[vector.size()];
 		int i = 0;
 		for (Object o : vector) {
-			if (o instanceof DateTime) {
-				strings[i++] = new BigString(((DateTime) o).getGMTTime());
+			if (o instanceof org.openntf.domino.DateTime) {
+				strings[i++] = new BigString(((org.openntf.domino.DateTime) o).getGMTTime());
 			} else {
 				strings[i++] = new BigString(String.valueOf(o));
 			}

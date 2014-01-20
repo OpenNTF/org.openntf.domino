@@ -350,7 +350,6 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
-		// TODO RPr move this to inteface?
 		((org.openntf.domino.impl.Database) getAncestorDatabase()).setReplication(flag);
 	}
 

@@ -172,7 +172,6 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 
 	private org.openntf.domino.View parentView_;
 
-	@Override
 	public void setParentView(final View view) {
 		parentView_ = view;
 	}

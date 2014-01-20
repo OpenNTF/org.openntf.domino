@@ -417,8 +417,8 @@ public enum Factory {
 	// --- session handling 
 
 	@Deprecated
-	public static org.openntf.domino.impl.Document fromLotusDocument(final lotus.domino.Document lotus, final Base parent) {
-		return (org.openntf.domino.impl.Document) getWrapperFactory().fromLotus(lotus, Document.SCHEMA, (Database) parent);
+	public static org.openntf.domino.Document fromLotusDocument(final lotus.domino.Document lotus, final Base parent) {
+		return (org.openntf.domino.Document) getWrapperFactory().fromLotus(lotus, Document.SCHEMA, (Database) parent);
 	}
 
 	/*
@@ -560,63 +560,6 @@ public enum Factory {
 	public static <T extends lotus.domino.Base> T toLotus(final T base) {
 		return getWrapperFactory().toLotus(base);
 	}
-
-	// RPr: use session.evaluate directly
-	//	/**
-	//	 * Wrapped evaluate.
-	//	 * 
-	//	 * @param session
-	//	 *            the session
-	//	 * @param formula
-	//	 *            the formula
-	//	 * @return the java.util. vector
-	//	 */
-	//	public static java.util.Vector<Object> wrappedEvaluate(final org.openntf.domino.Session session, final String formula) {
-	//		java.util.Vector<Object> result = new org.openntf.domino.impl.Vector<Object>();
-	//		java.util.Vector<Object> values = session.evaluate(formula);
-	//		for (Object value : values) {
-	//			if (value instanceof lotus.domino.DateTime) {
-	//				result.add(fromLotus((lotus.domino.DateTime) value, org.openntf.domino.impl.DateTime.class, session));
-	//			} else if (value instanceof lotus.domino.DateRange) {
-	//				result.add(fromLotus((lotus.domino.DateRange) value, org.openntf.domino.impl.DateRange.class, session));
-	//			} else if (value instanceof Collection) {
-	//				result.add(wrapColumnValues((Collection<?>) value, session));
-	//			} else {
-	//				result.add(value);
-	//			}
-	//		}
-	//		return result;
-	//	}
-
-	// RPr: use session.evaluate directly
-	//	/**
-	//	 * Wrapped evaluate.
-	//	 * 
-	//	 * @param session
-	//	 *            the session
-	//	 * @param formula
-	//	 *            the formula
-	//	 * @param contextDocument
-	//	 *            the context document
-	//	 * @return the java.util. vector
-	//	 */
-	//	public static java.util.Vector<Object> wrappedEvaluate(final org.openntf.domino.Session session, final String formula,
-	//			final lotus.domino.Document contextDocument) {
-	//		java.util.Vector<Object> result = new org.openntf.domino.impl.Vector<Object>();
-	//		java.util.Vector<Object> values = session.evaluate(formula, contextDocument);
-	//		for (Object value : values) {
-	//			if (value instanceof lotus.domino.DateTime) {
-	//				result.add(fromLotus((lotus.domino.DateTime) value, org.openntf.domino.impl.DateTime.class, session));
-	//			} else if (value instanceof lotus.domino.DateRange) {
-	//				result.add(fromLotus((lotus.domino.DateRange) value, org.openntf.domino.impl.DateRange.class, session));
-	//			} else if (value instanceof Collection) {
-	//				result.add(wrapColumnValues((Collection<?>) value, session));
-	//			} else {
-	//				result.add(value);
-	//			}
-	//		}
-	//		return result;
-	//	}
 
 	/**
 	 * Gets the session.
@@ -794,7 +737,7 @@ public enum Factory {
 			throw new UndefinedDelegateTypeException();
 		}
 		if (result == null)
-			result = getSession(); // org.openntf.domino.impl.Session.getDefaultSession(); // last ditch, get the primary Session;
+			result = getSession(); // last ditch, get the primary Session;
 		return result;
 	}
 
