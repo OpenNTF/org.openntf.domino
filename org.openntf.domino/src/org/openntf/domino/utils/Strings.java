@@ -127,7 +127,7 @@ public enum Strings {
 	 * 
 	 */
 	public static Vector<String> getVectorizedStrings(final Object object) {
-		final List<String> al = CollectionUtils.getListStrings(object);
+		final List<String> al = Congeries.getListStrings(object);
 		return ((null == al) || (al.size() < 1)) ? null : new Vector<String>(al);
 	}
 
@@ -387,7 +387,7 @@ public enum Strings {
 				} // if (Strings.isBlankString(delimiter))
 
 			} else {
-				return Strings.join(CollectionUtils.getStringArray(source), delimiter);
+				return Strings.join(Congeries.getStringArray(source), delimiter);
 			}
 		}
 
@@ -677,7 +677,7 @@ public enum Strings {
 				final String regex = "</div><div>|<br>|</p>";
 				final String[] chunks = stripped.split(regex);
 				if ((null == chunks) || (chunks.length < 1)) {
-					return CollectionUtils.getListStrings(Strings.stripHTMLtags(source));
+					return Congeries.getListStrings(Strings.stripHTMLtags(source));
 				} else {
 					for (final String s : chunks) {
 						result.add(Strings.stripHTMLtags(s));

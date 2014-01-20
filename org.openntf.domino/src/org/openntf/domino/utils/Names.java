@@ -195,7 +195,7 @@ public enum Names {
 				}
 			}
 
-			return (values.size() < 1) ? null : CollectionUtils.getStringArray(values);
+			return (values.size() < 1) ? null : Congeries.getStringArray(values);
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
@@ -467,7 +467,7 @@ public enum Names {
 
 			final TreeSet<String> result = new TreeSet<String>();
 			if ((null != filters) && (filters.length > 0)) {
-				final TreeSet<String> searchfor = CollectionUtils.getTreeSetStrings(source);
+				final TreeSet<String> searchfor = Congeries.getTreeSetStrings(source);
 				if ((null != searchfor) && (searchfor.size() > 0)) {
 					HashMap<String, Names.LookupType> found = Names.expandNamesList(session, searchfor,
 							new HashMap<String, Names.LookupType>());
@@ -760,7 +760,7 @@ public enum Names {
 						if (!Strings.isBlankString(s)) {
 							final Name name = new org.openntf.domino.impl.Name(session, s);
 							if (!result.contains(name)) {
-								final TreeSet<String> roles = CollectionUtils.getTreeSetStrings(database.queryAccessRoles(name
+								final TreeSet<String> roles = Congeries.getTreeSetStrings(database.queryAccessRoles(name
 										.getCanonical()));
 								if (null == roles) {
 									result.add(name);
@@ -799,8 +799,8 @@ public enum Names {
 	 */
 	public static TreeSet<Name> getNamesMissingRoles(final Session session, final Database database, final Object sourcenames,
 			final Object sourceroles) {
-		return Names.getNamesMissingRoles(session, database, CollectionUtils.getTreeSetStrings(sourcenames),
-				CollectionUtils.getTreeSetStrings(sourceroles));
+		return Names.getNamesMissingRoles(session, database, Congeries.getTreeSetStrings(sourcenames),
+				Congeries.getTreeSetStrings(sourceroles));
 	}
 
 	/**
@@ -1000,7 +1000,7 @@ public enum Names {
 								result.put(key, Names.LookupType.Group);
 								Document document = vent.getDocument();
 
-								final TreeSet<String> ts = CollectionUtils.getTreeSetStrings(document
+								final TreeSet<String> ts = Congeries.getTreeSetStrings(document
 										.getItemValue(DominoUtils.ITEMNAME_MEMBERS));
 								if (null != ts) {
 									final HashMap<String, Names.LookupType> found = Names.expandNamesList(session, view, ts, result);

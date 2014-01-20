@@ -30,11 +30,11 @@ import java.util.Vector;
 import org.openntf.domino.Document;
 
 /**
- * CollectionUtils utilities library
+ * Congeries (Sets and Lists) utilities library
  * 
  * @author Devin S. Olson (dolson@czarnowski.com)
  */
-public enum CollectionUtils {
+public enum Congeries {
 	;
 
 	/**
@@ -59,7 +59,7 @@ public enum CollectionUtils {
 			throw new IllegalArgumentException("ItemName is blank or null");
 		}
 
-		return (source.hasItem(itemname)) ? CollectionUtils.getListStrings(source.getItemValue(itemname)) : null;
+		return (source.hasItem(itemname)) ? Congeries.getListStrings(source.getItemValue(itemname)) : null;
 	}
 
 	/**
@@ -117,7 +117,7 @@ public enum CollectionUtils {
 	 * @return List of Strings retrieved or generated from the input. Returns null on error.
 	 */
 	public static List<String> getListStrings(final AbstractMap map) {
-		return ((null != map) && (map.size() > 0)) ? CollectionUtils.getListStrings(map.values()) : null;
+		return ((null != map) && (map.size() > 0)) ? Congeries.getListStrings(map.values()) : null;
 	}
 
 	/**
@@ -174,25 +174,25 @@ public enum CollectionUtils {
 				classname = object.getClass().getName();
 
 				if (object instanceof Vector) {
-					return CollectionUtils.getListStrings((Vector) object);
+					return Congeries.getListStrings((Vector) object);
 				}
 				if (object instanceof AbstractCollection) {
-					return CollectionUtils.getListStrings((AbstractCollection) object);
+					return Congeries.getListStrings((AbstractCollection) object);
 				}
 				if (object instanceof AbstractMap) {
-					return CollectionUtils.getListStrings((AbstractMap) object);
+					return Congeries.getListStrings((AbstractMap) object);
 				}
 				if (object instanceof String) {
-					return CollectionUtils.getListStrings((String) object);
+					return Congeries.getListStrings((String) object);
 				}
 				if (object instanceof String[]) {
-					return CollectionUtils.getListStrings((String[]) object);
+					return Congeries.getListStrings((String[]) object);
 				}
 				if (classname.equalsIgnoreCase("java.lang.String[]") || classname.equalsIgnoreCase("[Ljava.lang.String;")) {
-					return CollectionUtils.getListStrings((String[]) object);
+					return Congeries.getListStrings((String[]) object);
 				}
 				if (classname.equalsIgnoreCase("java.lang.String")) {
-					return CollectionUtils.getListStrings((String) object);
+					return Congeries.getListStrings((String) object);
 				}
 
 				throw new IllegalArgumentException("Unsupported Class:" + classname);
@@ -214,7 +214,7 @@ public enum CollectionUtils {
 	 * 
 	 */
 	public static TreeSet<String> getTreeSetStrings(final Object object) {
-		final List<String> al = CollectionUtils.getListStrings(object);
+		final List<String> al = Congeries.getListStrings(object);
 		return (null == al) ? null : new TreeSet<String>(al);
 	}
 
@@ -228,7 +228,7 @@ public enum CollectionUtils {
 	 * 
 	 */
 	public static String[] getStringArray(final Object object) {
-		final List<String> al = CollectionUtils.getListStrings(object);
+		final List<String> al = Congeries.getListStrings(object);
 		return (null == al) ? null : al.toArray(new String[al.size()]);
 	}
 
@@ -246,7 +246,7 @@ public enum CollectionUtils {
 	 * 
 	 */
 	public static String[] getSortedUnique(final Object object) {
-		final TreeSet<String> ts = CollectionUtils.getTreeSetStrings(object);
+		final TreeSet<String> ts = Congeries.getTreeSetStrings(object);
 		return ((null == ts) || (ts.size() < 1)) ? null : (String[]) ts.toArray();
 	}
 
@@ -333,8 +333,7 @@ public enum CollectionUtils {
 		}
 
 		// Compare as string arrays
-		return CollectionUtils.compareStringArrays(CollectionUtils.getStringArray(treeset0), CollectionUtils.getStringArray(treeset1),
-				descending);
+		return Congeries.compareStringArrays(Congeries.getStringArray(treeset0), Congeries.getStringArray(treeset1), descending);
 	}
 
 	/**
@@ -353,7 +352,7 @@ public enum CollectionUtils {
 	 * @see Strings#startsWithIgnoreCase(String, String)
 	 */
 	public static TreeSet<String> getTreeSetStringsBeginsWith(final Object source, final String prefix) {
-		final TreeSet<String> temp = CollectionUtils.getTreeSetStrings(source);
+		final TreeSet<String> temp = Congeries.getTreeSetStrings(source);
 		if ((null != temp) && (temp.size() > 0)) {
 			final TreeSet<String> result = new TreeSet<String>();
 			for (final String s : temp) {
