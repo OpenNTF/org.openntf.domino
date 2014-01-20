@@ -95,6 +95,11 @@ public class IndexHit implements Externalizable {
 	public Document getDocument(final Session session, final String serverName) {
 		if (document_ == null) {
 			document_ = session.getDocumentByMetaversalID(getMetaversalID(), serverName);
+		} else {
+			String fname = document_.getFormName();
+			if (fname == null || fname.length() < 1) {
+				document_ = session.getDocumentByMetaversalID(getMetaversalID(), serverName);
+			}
 		}
 		return document_;
 	}
