@@ -24,6 +24,7 @@ import lotus.domino.NotesException;
 
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.exceptions.BlockedCrashException;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.utils.DominoUtils;
@@ -35,7 +36,7 @@ import com.ibm.icu.util.Calendar;
 /**
  * The Class DateRange.
  */
-public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.DateRange> implements org.openntf.domino.DateRange,
+public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.DateRange, Session> implements org.openntf.domino.DateRange,
 		lotus.domino.DateRange {
 
 	//	private java.util.Date startDate_;
@@ -43,31 +44,77 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	private DateTime startDateTime_;
 	private DateTime endDateTime_;
 
+	//	/**
+	//	 * Instantiates a new date range.
+	//	 * 
+	//	 * @param delegate
+	//	 *            the delegate
+	//	 * @param parent
+	//	 *            the parent
+	//	 */
+	//	@Deprecated
+	//	public DateRange(final lotus.domino.DateRange delegate, final Session parent, WrapperFactory wf, long cppId) {
+	//		super(delegate, Factory.getSession(parent), wf);
+	//		if (delegate instanceof lotus.domino.local.DateRange) {
+	//			initialize(delegate);
+	//			Base.s_recycle(delegate);
+	//		}
+	//	}
+
 	/**
-	 * Instantiates a new date range.
+	 * Creates a Daterange based on java dates
+	 * 
+	 * @param start
+	 *            the start time
+	 * @param end
+	 *            the end time
+	 * @param parent
+	 *            the session
+	 */
+	public DateRange(final java.util.Date start, final java.util.Date end, final Session parent, final WrapperFactory wf) {
+		super(null, parent, null, 0L, NOTES_DATERNG);
+		startDateTime_ = getFactory().createDateTime(start, parent);
+		endDateTime_ = getFactory().createDateTime(end, parent);
+	}
+
+	/**
+	 * Instantiates a new outline.
 	 * 
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
 	 */
-	@Deprecated
-	public DateRange(final lotus.domino.DateRange delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, Factory.getSession(parent));
-		if (delegate instanceof lotus.domino.local.DateRange) {
-			initialize(delegate);
-			Base.s_recycle(delegate);
-		}
+	public DateRange(final lotus.domino.DateRange delegate, final Session parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_DATERNG);
+		initialize(delegate);
+		Base.s_recycle(delegate);
 	}
 
-	@Deprecated
-	public DateRange(final java.util.Date start, final java.util.Date end, final org.openntf.domino.Base<?> parent) {
-		super(null, Factory.getSession(parent));
-		//		Session session = Factory.getSession(parent);
-		startDateTime_ = new org.openntf.domino.impl.DateTime(start, Factory.getSession(parent));
-		endDateTime_ = new org.openntf.domino.impl.DateTime(end, Factory.getSession(parent));
-		//		startDate_ = start;
-		//		endDate_ = end;
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Session findParent(final lotus.domino.DateRange delegate) {
+		if (delegate == null) {
+			return Factory.getSession(); // the current Session
+		}
+		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
+	}
+
+	/**
+	 * The cpp-id is not used here, so we do not read it
+	 * 
+	 * @param delegate
+	 * @param cppId
+	 */
+	@Override
+	void setDelegate(final lotus.domino.DateRange delegate, final long cppId) {
+		delegate_ = delegate;
 	}
 
 	private void initialize(final lotus.domino.DateRange delegate) {
@@ -119,7 +166,7 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	 */
 	@Override
 	public Session getParent() {
-		return (org.openntf.domino.Session) super.getParent();
+		return getAncestor();
 	}
 
 	/*
@@ -158,11 +205,11 @@ public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.D
 	}
 
 	public void setEndDate(final java.util.Date date) {
-		endDateTime_ = new org.openntf.domino.impl.DateTime(date, getParent());
+		endDateTime_ = getFactory().createDateTime(date, getAncestor());
 	}
 
 	public void setStartDate(final java.util.Date date) {
-		startDateTime_ = new org.openntf.domino.impl.DateTime(date, getParent());
+		startDateTime_ = getFactory().createDateTime(date, getAncestor());
 	}
 
 	/*

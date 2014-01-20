@@ -19,7 +19,9 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Directory;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -27,7 +29,7 @@ import org.openntf.domino.utils.Factory;
 /**
  * The Class DirectoryNavigator.
  */
-public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigator, lotus.domino.DirectoryNavigator> implements
+public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigator, lotus.domino.DirectoryNavigator, Directory> implements
 		org.openntf.domino.DirectoryNavigator {
 
 	/**
@@ -40,7 +42,24 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 	 */
 	@Deprecated
 	public DirectoryNavigator(final lotus.domino.DirectoryNavigator delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, (Directory) parent);
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public DirectoryNavigator(final lotus.domino.DirectoryNavigator delegate, final Directory parent, final WrapperFactory wf,
+			final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_DIRNAVIGATOR);
 	}
 
 	/*
@@ -258,7 +277,7 @@ public class DirectoryNavigator extends Base<org.openntf.domino.DirectoryNavigat
 	 */
 	@Override
 	public Directory getParent() {
-		return (Directory) super.getParent();
+		return getAncestor();
 	}
 
 	/*

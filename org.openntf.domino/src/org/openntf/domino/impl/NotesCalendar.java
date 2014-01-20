@@ -15,6 +15,8 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
@@ -22,13 +24,16 @@ import lotus.domino.NotesException;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.NotesCalendarEntry;
 import org.openntf.domino.NotesCalendarNotice;
+import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class NotesCalendar.
  */
-public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.domino.NotesCalendar> implements
+public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.domino.NotesCalendar, Session> implements
 		org.openntf.domino.NotesCalendar {
 
 	/**
@@ -41,7 +46,31 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 */
 	@Deprecated
 	public NotesCalendar(final lotus.domino.NotesCalendar delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, Factory.getSession(parent));
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public NotesCalendar(final lotus.domino.NotesCalendar delegate, final Session parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_OUTLINE);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Session findParent(final lotus.domino.NotesCalendar delegate) {
+		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
 	}
 
 	/* (non-Javadoc)
@@ -86,41 +115,41 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.NotesCalendar#getEntries(lotus.domino.DateTime, lotus.domino.DateTime)
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Vector<org.openntf.domino.NotesCalendarEntry> getEntries(final lotus.domino.DateTime start, final lotus.domino.DateTime end) {
+		List recycleThis = new ArrayList();
 		try {
-			Vector<org.openntf.domino.NotesCalendarEntry> result;
-			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
-			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
-			result = fromLotusAsVector(getDelegate().getEntries(dt1, dt2), org.openntf.domino.NotesCalendarEntry.SCHEMA, this);
-			enc_recycle(dt1);
-			enc_recycle(dt2);
-			return result;
+			lotus.domino.DateTime dt1 = toLotus(start, recycleThis);
+			lotus.domino.DateTime dt2 = toLotus(end, recycleThis);
+			return fromLotusAsVector(getDelegate().getEntries(dt1, dt2), org.openntf.domino.NotesCalendarEntry.SCHEMA, this);
 
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.NotesCalendar#getEntries(lotus.domino.DateTime, lotus.domino.DateTime, int, int)
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Vector<org.openntf.domino.NotesCalendarEntry> getEntries(final lotus.domino.DateTime start, final lotus.domino.DateTime end,
 			final int skipCount, final int maxReturn) {
+		List recycleThis = new ArrayList();
 		try {
-			Vector<org.openntf.domino.NotesCalendarEntry> result;
-			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
-			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
-			result = fromLotusAsVector(getDelegate().getEntries(dt1, dt2, skipCount, maxReturn),
+			lotus.domino.DateTime dt1 = toLotus(start, recycleThis);
+			lotus.domino.DateTime dt2 = toLotus(end, recycleThis);
+			return fromLotusAsVector(getDelegate().getEntries(dt1, dt2, skipCount, maxReturn),
 					org.openntf.domino.NotesCalendarEntry.SCHEMA, this);
-			enc_recycle(dt1);
-			enc_recycle(dt2);
-			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
@@ -192,20 +221,20 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.NotesCalendar#getNewInvitations(lotus.domino.DateTime, lotus.domino.DateTime)
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Vector<org.openntf.domino.NotesCalendarNotice> getNewInvitations(final lotus.domino.DateTime start,
 			final lotus.domino.DateTime since) {
+		List recycleThis = new ArrayList();
 		try {
-			Vector<org.openntf.domino.NotesCalendarNotice> result;
-			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
-			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(since);
-			result = fromLotusAsVector(getDelegate().getNewInvitations(dt1, dt2), NotesCalendarNotice.SCHEMA, this);
-			enc_recycle(dt1);
-			enc_recycle(dt2);
-			return result;
+			lotus.domino.DateTime dt1 = toLotus(start, recycleThis);
+			lotus.domino.DateTime dt2 = toLotus(since, recycleThis);
+			return fromLotusAsVector(getDelegate().getNewInvitations(dt1, dt2), NotesCalendarNotice.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
@@ -227,7 +256,7 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 */
 	@Override
 	public Session getParent() {
-		return (Session) super.getParent();
+		return getAncestor();
 	}
 
 	/* (non-Javadoc)
@@ -287,17 +316,17 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 */
 	@Override
 	public String readRange(final lotus.domino.DateTime start, final lotus.domino.DateTime end) {
+		@SuppressWarnings("rawtypes")
+		List recycleThis = new ArrayList();
 		try {
-			String result;
-			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
-			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
-			result = getDelegate().readRange(dt1, dt2);
-			enc_recycle(dt1);
-			enc_recycle(dt2);
-			return result;
+			lotus.domino.DateTime dt1 = toLotus(start, recycleThis);
+			lotus.domino.DateTime dt2 = toLotus(end, recycleThis);
+			return getDelegate().readRange(dt1, dt2);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
@@ -306,17 +335,17 @@ public class NotesCalendar extends Base<org.openntf.domino.NotesCalendar, lotus.
 	 */
 	@Override
 	public String readRange(final lotus.domino.DateTime start, final lotus.domino.DateTime end, final int skipCount, final int maxRead) {
+		@SuppressWarnings("rawtypes")
+		List recycleThis = new ArrayList();
 		try {
-			String result;
-			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
-			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
-			result = getDelegate().readRange(dt1, dt2, skipCount, maxRead);
-			enc_recycle(dt1);
-			enc_recycle(dt2);
-			return result;
+			lotus.domino.DateTime dt1 = toLotus(start, recycleThis);
+			lotus.domino.DateTime dt2 = toLotus(end, recycleThis);
+			return getDelegate().readRange(dt1, dt2, skipCount, maxRead);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 

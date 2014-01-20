@@ -39,7 +39,7 @@ import org.openntf.domino.utils.Factory;
 /**
  * The Class View.
  */
-public class View extends Base<org.openntf.domino.View, lotus.domino.View> implements org.openntf.domino.View {
+public class View extends Base<org.openntf.domino.View, lotus.domino.View, Database> implements org.openntf.domino.View {
 
 	private List<DominoColumnInfo> columnInfo_;
 
@@ -57,9 +57,29 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		initialize(delegate);
 	}
 
+	/**
+	 * Instantiates a new view.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
 	public View(final lotus.domino.View delegate, final Database parent, final WrapperFactory wf, final long cpp_id) {
 		super(delegate, parent, wf, cpp_id, NOTES_VIEW);
 		initialize(delegate);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Database findParent(final lotus.domino.View delegate) throws NotesException {
+		return fromLotus(delegate.getParent(), Database.SCHEMA, null);
 	}
 
 	private String notesUrl_;
@@ -806,13 +826,16 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
 			Object domKey = toDominoFriendly(key, this, recycleThis);
-			lotus.domino.DocumentCollection dc;
+			lotus.domino.DocumentCollection lotusColl;
 			if (domKey instanceof java.util.Vector) {
-				dc = getDelegate().getAllDocumentsByKey((java.util.Vector) domKey, exact);
+				lotusColl = getDelegate().getAllDocumentsByKey((java.util.Vector) domKey, exact);
 			} else {
-				dc = getDelegate().getAllDocumentsByKey((java.util.Vector) domKey, exact);
+				lotusColl = getDelegate().getAllDocumentsByKey(domKey, exact);
 			}
-			return fromLotus(dc, DocumentCollection.SCHEMA, getAncestorDatabase());
+			DocumentCollection dc = fromLotus(lotusColl, DocumentCollection.SCHEMA, getAncestorDatabase());
+			dc.setParentView(this);
+			return dc;
+
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		} finally {
@@ -1406,7 +1429,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@Override
 	public Database getParent() {
-		return (Database) super.getParent();
+		return getAncestor();
 	}
 
 	/*

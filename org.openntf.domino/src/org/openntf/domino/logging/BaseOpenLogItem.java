@@ -60,7 +60,6 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.RichTextItem;
 import org.openntf.domino.Session;
-import org.openntf.domino.impl.Base;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -252,11 +251,13 @@ public class BaseOpenLogItem implements IOpenLogItem {
 			} catch (Exception e) {
 				debugPrint(e);
 			}
-		} else {
-			if (Base.isLocked(_logDb)) {
-				_logDb = Factory.getSession().getDatabase(getThisServer(), getLogDbName(), false);
-			}
 		}
+		// RPr: Locking is no longer supported
+		//		} else {
+		//			if (Base.isLocked(_logDb)) {
+		//				_logDb = Factory.getSession().getDatabase(getThisServer(), getLogDbName(), false);
+		//			}
+		//		}
 		return _logDb;
 	}
 

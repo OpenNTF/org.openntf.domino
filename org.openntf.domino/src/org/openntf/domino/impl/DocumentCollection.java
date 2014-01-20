@@ -25,13 +25,15 @@ import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
+import org.openntf.domino.View;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class DocumentCollection.
  */
-public class DocumentCollection extends Base<org.openntf.domino.DocumentCollection, lotus.domino.DocumentCollection> implements
+public class DocumentCollection extends Base<org.openntf.domino.DocumentCollection, lotus.domino.DocumentCollection, Database> implements
 		org.openntf.domino.DocumentCollection {
 
 	/** The block nth. */
@@ -118,7 +120,32 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	 */
 	@Deprecated
 	public DocumentCollection(final lotus.domino.DocumentCollection delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent instanceof AgentContext ? ((AgentContext) parent).getCurrentDatabase() : parent);
+		super(delegate, null);
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public DocumentCollection(final lotus.domino.DocumentCollection delegate, final Database parent, final WrapperFactory wf,
+			final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_DOCCOLL);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Database findParent(final lotus.domino.DocumentCollection delegate) throws NotesException {
+		return fromLotus(delegate.getParent(), Database.SCHEMA, null);
 	}
 
 	/**
@@ -133,24 +160,25 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		if (collection instanceof org.openntf.domino.impl.DocumentCollection) {
 			org.openntf.domino.Database db = ((org.openntf.domino.DocumentCollection) collection).getParent();
 			result = db.createNoteCollection(false);
-			result.add((DocumentCollection) collection);
-		} else if (collection instanceof lotus.domino.DocumentCollection) {
+			result.add(collection);
+		} else if (collection != null) {
 			// TODO Eh?
 			org.openntf.domino.Database db = ((org.openntf.domino.DocumentCollection) collection).getParent();
 			result = db.createNoteCollection(false);
-			result.add((lotus.domino.DocumentCollection) collection);
+			result.add(collection);
 		}
 		return result;
 	}
 
 	private org.openntf.domino.View parentView_;
 
+	@Override
+	public void setParentView(final View view) {
+		parentView_ = view;
+	}
+
 	public org.openntf.domino.View getParentView() {
-		Object o = super.getParent();
-		if (o instanceof org.openntf.domino.View) {
-			return (org.openntf.domino.View) o;
-		}
-		return null;
+		return parentView_;
 	}
 
 	/*
@@ -192,13 +220,7 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	 */
 	@Override
 	public org.openntf.domino.Database getParent() {
-		Object o = super.getParent();
-		// System.out.println("o is a " + o.getClass().getName());
-		if (o instanceof org.openntf.domino.View) {
-			return ((org.openntf.domino.View) o).getAncestorDatabase();
-		}
-		// org.openntf.domino.Base<?> parent = (org.openntf.domino.Base<?>) o;
-		return (org.openntf.domino.Database) o;
+		return getAncestor();
 	}
 
 	/*
@@ -813,8 +835,8 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 
 	@Override
 	public boolean addAll(final Collection<? extends org.openntf.domino.Document> docs) {
-		if (docs instanceof Base<?, ?>) {
-			this.merge((Base<?, ?>) docs);
+		if (docs instanceof Base<?, ?, ?>) {
+			this.merge((Base<?, ?, ?>) docs);
 		} else {
 			for (org.openntf.domino.Document doc : docs) {
 				this.addDocument(doc);

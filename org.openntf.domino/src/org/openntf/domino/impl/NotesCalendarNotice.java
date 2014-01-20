@@ -15,21 +15,24 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Document;
+import org.openntf.domino.NotesCalendar;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class NotesCalendarNotice.
  */
-public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNotice, lotus.domino.NotesCalendarNotice> implements
-		org.openntf.domino.NotesCalendarNotice {
+public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNotice, lotus.domino.NotesCalendarNotice, NotesCalendar>
+		implements org.openntf.domino.NotesCalendarNotice {
 
 	/**
 	 * Instantiates a new notes calendar notice.
@@ -41,7 +44,33 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	 */
 	@Deprecated
 	public NotesCalendarNotice(final lotus.domino.NotesCalendarNotice delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, (NotesCalendar) parent);
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public NotesCalendarNotice(final lotus.domino.NotesCalendarNotice delegate, final NotesCalendar parent, final WrapperFactory wf,
+			final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_CALENDARNOTICE);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected NotesCalendar findParent(final lotus.domino.NotesCalendarNotice delegate) throws NotesException {
+		// TODO Auto-generated method stub
+		throw new IllegalArgumentException();
 	}
 
 	/* (non-Javadoc)
@@ -73,14 +102,16 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	 */
 	@Override
 	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end) {
+		@SuppressWarnings("rawtypes")
+		List recycleThis = new ArrayList();
 		try {
-			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
-			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
+			lotus.domino.DateTime dt1 = toLotus(start, recycleThis);
+			lotus.domino.DateTime dt2 = toLotus(end, recycleThis);
 			getDelegate().counter(comments, dt1, dt2);
-			enc_recycle(dt1);
-			enc_recycle(dt2);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
@@ -90,14 +121,16 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	@Override
 	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end,
 			final boolean keepPlaceholder) {
+		@SuppressWarnings("rawtypes")
+		List recycleThis = new ArrayList();
 		try {
-			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
-			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
+			lotus.domino.DateTime dt1 = toLotus(start, recycleThis);
+			lotus.domino.DateTime dt2 = toLotus(end, recycleThis);
 			getDelegate().counter(comments, dt1, dt2, keepPlaceholder);
-			enc_recycle(dt1);
-			enc_recycle(dt2);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
@@ -167,8 +200,7 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	@Override
 	public Document getAsDocument() {
 		try {
-			// TODO This should really come from the doc's database
-			return Factory.fromLotus(getDelegate().getAsDocument());
+			return fromLotus(getDelegate().getAsDocument(), Document.SCHEMA, null);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -207,7 +239,7 @@ public class NotesCalendarNotice extends Base<org.openntf.domino.NotesCalendarNo
 	 */
 	@Override
 	public NotesCalendar getParent() {
-		return (NotesCalendar) super.getParent();
+		return getAncestor();
 	}
 
 	/* (non-Javadoc)

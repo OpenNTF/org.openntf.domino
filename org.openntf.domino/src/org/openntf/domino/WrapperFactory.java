@@ -4,6 +4,7 @@
 package org.openntf.domino;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Vector;
 
 import org.openntf.domino.types.FactorySchema;
@@ -105,5 +106,24 @@ public interface WrapperFactory {
 	 * shuts down the factory
 	 */
 	void terminate();
+
+	/**
+	 * Wraps a Java-Date into a DateTime object
+	 * 
+	 * @param start
+	 * @param parent
+	 * @return
+	 */
+	DateTime createDateTime(Date start, Session parent);
+
+	/**
+	 * Wraps start and end Java-Date into a DateRange object
+	 * 
+	 * @param start
+	 * @param end
+	 * @param parent
+	 * @return
+	 */
+	DateRange createDateRange(Date start, Date end, Session parent);
 
 }

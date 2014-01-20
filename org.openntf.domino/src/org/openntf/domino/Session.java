@@ -21,6 +21,7 @@ import java.util.Vector;
 
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.types.FactorySchema;
+import org.openntf.domino.utils.DominoFormatter;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -28,8 +29,7 @@ import org.openntf.domino.types.FactorySchema;
  * represents the Domino environment of the current program.
  */
 public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Session, Base<lotus.domino.Session> {
-	@SuppressWarnings("rawtypes")
-	public static class Schema extends FactorySchema<Session, lotus.domino.Session, Base> {
+	public static class Schema extends FactorySchema<Session, lotus.domino.Session, SessionHasNoParent> {
 		@Override
 		public Class<Session> typeClass() {
 			return Session.class;
@@ -41,8 +41,8 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 		}
 
 		@Override
-		public Class<Base> parentClass() {
-			return Base.class;
+		public Class<SessionHasNoParent> parentClass() {
+			return SessionHasNoParent.class;
 		}
 	};
 
@@ -1048,4 +1048,11 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 */
 	@Override
 	public boolean verifyPassword(final String password, final String hashedPassword);
+
+	/**
+	 * Returns a Domino Formatter
+	 * 
+	 * @return the formatter
+	 */
+	DominoFormatter getFormatter();
 }

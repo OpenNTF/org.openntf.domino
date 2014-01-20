@@ -18,13 +18,15 @@ package org.openntf.domino.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
 import org.openntf.domino.ColorObject;
 import org.openntf.domino.Database;
+import org.openntf.domino.Document;
+import org.openntf.domino.RichTextItem;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.types.DocumentDescendant;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -32,9 +34,9 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class RichTextTable.
  */
-public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.domino.RichTextTable> implements
+public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.domino.RichTextTable, RichTextItem> implements
 		org.openntf.domino.RichTextTable {
-	private static final Logger log_ = Logger.getLogger(RichTextTable.class.getName());
+	//private static final Logger log_ = Logger.getLogger(RichTextTable.class.getName());
 
 	/**
 	 * Instantiates a new rich text table.
@@ -46,7 +48,23 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	 */
 	@Deprecated
 	public RichTextTable(final lotus.domino.RichTextTable delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, (RichTextItem) parent);
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public RichTextTable(final lotus.domino.RichTextTable delegate, final RichTextItem parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_RTTABLE);
 	}
 
 	/*
@@ -144,7 +162,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	 */
 	@Override
 	public RichTextItem getParent() {
-		return (RichTextItem) super.getParent();
+		return getAncestor();
 	}
 
 	/*
@@ -276,7 +294,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	@Override
 	public void setAlternateColor(final lotus.domino.ColorObject color) {
 		try {
-			getDelegate().setAlternateColor((lotus.domino.ColorObject) toLotus(color));
+			getDelegate().setAlternateColor(toLotus(color));
 			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -291,7 +309,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	@Override
 	public void setColor(final lotus.domino.ColorObject color) {
 		try {
-			getDelegate().setColor((lotus.domino.ColorObject) toLotus(color));
+			getDelegate().setColor(toLotus(color));
 			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -318,13 +336,12 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	 * 
 	 * @see org.openntf.domino.RichTextTable#setRowLabels(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void setRowLabels(final Vector labels) {
 		List recycleThis = new ArrayList();
 		try {
-			java.util.Vector v = toDominoFriendly(labels, this, recycleThis);
-			getDelegate().setRowLabels(v);
+			getDelegate().setRowLabels(toDominoFriendly(labels, this, recycleThis));
 			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -359,7 +376,7 @@ public class RichTextTable extends Base<org.openntf.domino.RichTextTable, lotus.
 	 */
 	@Override
 	public Document getAncestorDocument() {
-		return (Document) ((DocumentDescendant) this.getParent()).getAncestorDocument();
+		return ((DocumentDescendant) this.getParent()).getAncestorDocument();
 	}
 
 	/*

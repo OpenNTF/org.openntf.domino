@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -48,6 +49,7 @@ import org.openntf.domino.PropertyBroker;
 import org.openntf.domino.Registration;
 import org.openntf.domino.RichTextParagraphStyle;
 import org.openntf.domino.RichTextStyle;
+import org.openntf.domino.SessionHasNoParent;
 import org.openntf.domino.Stream;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.annotations.Legacy;
@@ -60,7 +62,6 @@ import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoFormatter;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 import com.ibm.icu.util.Calendar;
 
@@ -72,13 +73,13 @@ import com.ibm.icu.util.Calendar;
  * 
  * @author nfreeman
  */
-public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Session, lotus.domino.Session> implements
+public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Session, lotus.domino.Session, SessionHasNoParent> implements
 		org.openntf.domino.Session {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(Session.class.getName());
 
 	/** The formatter_. */
-	private static DominoFormatter formatter_;
+	private DominoFormatter formatter_; // RPr: changed to non static as this can cause thread issues
 
 	/** The default session. */
 
@@ -150,7 +151,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Deprecated
 	@SuppressWarnings("rawtypes")
 	public Session(final lotus.domino.Session lotus, final org.openntf.domino.Base parent) {
-		this(lotus, parent, Factory.getWrapperFactory(), 0L);
+		this(lotus, null, null, 0L);
 	}
 
 	// FIXME NTF - not sure if there's a context where this makes sense...
@@ -159,15 +160,24 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 * 
 	 * @param lotus
 	 *            the lotus
+	 * @param parent
+	 *            the parent. is always NULL
 	 * @param wf
 	 *            the wrapperFactory
 	 * @param cpp_id
 	 *            the cpp-id
 	 */
-	@SuppressWarnings("rawtypes")
-	public Session(final lotus.domino.Session lotus, final org.openntf.domino.Base parent, final WrapperFactory wf, final long cpp_id) {
+	public Session(final lotus.domino.Session lotus, final SessionHasNoParent parent, final WrapperFactory wf, final long cpp_id) {
 		super(lotus, null, wf, cpp_id, NOTES_SESSION);
 		initialize(lotus);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected SessionHasNoParent findParent(final lotus.domino.Session delegate) throws NotesException {
+		return null;
 	}
 
 	/**
@@ -189,7 +199,8 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 * 
 	 * @return the formatter
 	 */
-	public static DominoFormatter getFormatter() {
+	@Override
+	public DominoFormatter getFormatter() {
 		return formatter_;
 	}
 
@@ -272,25 +283,18 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 * @see org.openntf.domino.Session#createDateRange(lotus.domino.DateTime, lotus.domino.DateTime)
 	 */
 	public DateRange createDateRange(final lotus.domino.DateTime startTime, final lotus.domino.DateTime endTime) {
-		lotus.domino.DateTime dt1 = toLotus(startTime);
-		lotus.domino.DateTime dt2 = toLotus(endTime);
+		@SuppressWarnings("rawtypes")
+		List recycleThis = new ArrayList();
+		lotus.domino.DateTime dt1 = toLotus(startTime, recycleThis);
+		lotus.domino.DateTime dt2 = toLotus(endTime, recycleThis);
 		try {
-			DateRange result;
-			result = fromLotus(getDelegate().createDateRange(dt1, dt2), DateRange.SCHEMA, this);
-
-			return result;
+			return fromLotus(getDelegate().createDateRange(dt1, dt2), DateRange.SCHEMA, this);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
 
 		} finally {
-			// otherwise we may recycling the caller's object 
-			if (startTime instanceof Encapsulated) {
-				enc_recycle(dt1);
-			}
-			if (startTime instanceof Encapsulated) {
-				enc_recycle(dt2);
-			}
+			s_recycle(recycleThis);
 		}
 	}
 
@@ -327,13 +331,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	 */
 	@Override
 	public DateTime createDateTime(final Date date) {
-		try {
-			return fromLotus(getDelegate().createDateTime(date), DateTime.SCHEMA, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return getFactory().createDateTime(date, this);
 	}
 
 	/*
@@ -348,7 +346,6 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
-
 		}
 	}
 
@@ -1319,34 +1316,34 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 			lotus.domino.Base result = getDelegate().resolve(url);
 			if (result == null) {
 				return null;
-			} else if (result instanceof lotus.domino.View) {
-				lotus.domino.View viewResult = (lotus.domino.View) result;
-				Database parentDb = fromLotus(viewResult.getParent(), Database.SCHEMA, this);
-				return fromLotus(viewResult, View.SCHEMA, parentDb);
-
-			} else if (result instanceof lotus.domino.Form) {
-				lotus.domino.Form formResult = (lotus.domino.Form) result;
-				Database parentDb = fromLotus(formResult.getParent(), Database.SCHEMA, this);
-				return fromLotus(formResult, Form.SCHEMA, parentDb);
-
-			} else if (result instanceof Document) {
-				lotus.domino.Document docResult = (lotus.domino.Document) result;
-				Database parentDb = fromLotus(docResult.getParentDatabase(), Database.SCHEMA, this);
-				return fromLotus(docResult, Document.SCHEMA, parentDb);
-
-			} else if (result instanceof Agent) {
-				lotus.domino.Agent agentResult = (lotus.domino.Agent) result;
-				Database parentDb = fromLotus(agentResult.getParent(), Database.SCHEMA, this);
-				return fromLotus(agentResult, Agent.SCHEMA, parentDb);
-
-			} else if (result instanceof Database) {
-				lotus.domino.Database databaseResult = (lotus.domino.Database) result;
-				return fromLotus(databaseResult, Database.SCHEMA, this);
-
 			} else {
-				// this will probably fail:
+				// this should work now for Form, View, Document, Agent, Database
 				return fromLotus(result, null, null);
 			}
+			//			} else if (result instanceof lotus.domino.View) {
+			//				return fromLotus((lotus.domino.View) result, View.SCHEMA, null);
+			//			} else if (result instanceof lotus.domino.Form) {
+			//				lotus.domino.Form formResult = (lotus.domino.Form) result;
+			//				Database parentDb = fromLotus(formResult.getParent(), Database.SCHEMA, this);
+			//				return fromLotus(formResult, Form.SCHEMA, parentDb);
+			//
+			//			} else if (result instanceof Document) {
+			//				lotus.domino.Document docResult = (lotus.domino.Document) result;
+			//				Database parentDb = fromLotus(docResult.getParentDatabase(), Database.SCHEMA, this);
+			//				return fromLotus(docResult, Document.SCHEMA, parentDb);
+			//
+			//			} else if (result instanceof Agent) {
+			//				lotus.domino.Agent agentResult = (lotus.domino.Agent) result;
+			//				Database parentDb = fromLotus(agentResult.getParent(), Database.SCHEMA, this);
+			//				return fromLotus(agentResult, Agent.SCHEMA, parentDb);
+			//
+			//			} else if (result instanceof Database) {
+			//				lotus.domino.Database databaseResult = (lotus.domino.Database) result;
+			//				return fromLotus(databaseResult, Database.SCHEMA, this);
+			//
+			//			} else {
+			//	
+			//			}
 
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -1575,7 +1572,7 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 	@Override
 	protected lotus.domino.Session getDelegate() {
 		lotus.domino.Session session = super.getDelegate();
-		if (isInvalid(session)) {
+		if (isDead(session)) {
 			Session sessionImpl = (Session) org.openntf.domino.utils.Factory.getSession();
 			if (sessionImpl != null) {
 				lotus.domino.Session sessionLotus = sessionImpl.delegate_;

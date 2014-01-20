@@ -17,13 +17,16 @@ package org.openntf.domino.impl;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class International.
  */
-public class International extends Base<org.openntf.domino.International, lotus.domino.International> implements
+public class International extends Base<org.openntf.domino.International, lotus.domino.International, Session> implements
 		org.openntf.domino.International {
 
 	/**
@@ -36,7 +39,31 @@ public class International extends Base<org.openntf.domino.International, lotus.
 	 */
 	@Deprecated
 	public International(final lotus.domino.International delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, Factory.getSession(parent));
+	}
+
+	/**
+	 * Instantiates a new International.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public International(final lotus.domino.International delegate, final Session parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_INTL);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Session findParent(final lotus.domino.International delegate) throws NotesException {
+		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
 	}
 
 	/*
@@ -121,7 +148,7 @@ public class International extends Base<org.openntf.domino.International, lotus.
 	 */
 	@Override
 	public Session getParent() {
-		return (Session) super.getParent();
+		return getAncestor();
 	}
 
 	/*

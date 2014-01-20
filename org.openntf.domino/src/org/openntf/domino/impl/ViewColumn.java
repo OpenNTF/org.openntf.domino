@@ -18,7 +18,9 @@ package org.openntf.domino.impl;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.Document;
 import org.openntf.domino.Session;
+import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -26,7 +28,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ViewColumn.
  */
-public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino.ViewColumn> implements org.openntf.domino.ViewColumn {
+public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino.ViewColumn, View> implements org.openntf.domino.ViewColumn {
 
 	/**
 	 * Instantiates a new view column.
@@ -41,8 +43,28 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 		super(delegate, parent);
 	}
 
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
 	public ViewColumn(final lotus.domino.ViewColumn delegate, final View parent, final WrapperFactory wf, final long cpp_id) {
 		super(delegate, parent, wf, cpp_id, NOTES_VIEWCOLUMN);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected View findParent(final lotus.domino.ViewColumn delegate) throws NotesException {
+		return fromLotus(delegate.getParent(), View.SCHEMA, null);
 	}
 
 	/*
@@ -338,7 +360,7 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 */
 	@Override
 	public View getParent() {
-		return (View) super.getParent();
+		return getAncestor();
 	}
 
 	/*
