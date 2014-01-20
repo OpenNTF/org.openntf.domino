@@ -90,8 +90,13 @@ public class IndexHit implements Externalizable {
 		return dbid_ + unid_;
 	}
 
+	private transient Document document_;
+
 	public Document getDocument(final Session session, final String serverName) {
-		return session.getDocumentByMetaversalID(getMetaversalID(), serverName);
+		if (document_ == null) {
+			document_ = session.getDocumentByMetaversalID(getMetaversalID(), serverName);
+		}
+		return document_;
 	}
 
 	public String getHitContext(final Session session, final String serverName) {
