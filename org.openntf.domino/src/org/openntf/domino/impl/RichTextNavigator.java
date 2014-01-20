@@ -20,15 +20,17 @@ import java.util.logging.Logger;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.Document;
+import org.openntf.domino.RichTextItem;
 import org.openntf.domino.Session;
-import org.openntf.domino.types.DocumentDescendant;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class RichTextNavigator.
  */
-public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator, lotus.domino.RichTextNavigator> implements
+public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator, lotus.domino.RichTextNavigator, RichTextItem> implements
 		org.openntf.domino.RichTextNavigator {
 
 	private static final Logger log_ = Logger.getLogger(RichTextNavigator.class.getName());
@@ -43,7 +45,24 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 */
 	@Deprecated
 	public RichTextNavigator(final lotus.domino.RichTextNavigator delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, (RichTextItem) parent);
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public RichTextNavigator(final lotus.domino.RichTextNavigator delegate, final RichTextItem parent, final WrapperFactory wf,
+			final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_RTNAVIGATOR);
 	}
 
 	/*
@@ -54,7 +73,7 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	@Override
 	public org.openntf.domino.RichTextNavigator Clone() {
 		try {
-			return fromLotus(getDelegate().Clone(), RichTextNavigator.SCHEMA, null); // todo
+			return fromLotus(getDelegate().Clone(), RichTextNavigator.SCHEMA, getAncestor());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -369,7 +388,7 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 */
 	@Override
 	public Document getAncestorDocument() {
-		return (Document) ((DocumentDescendant) this.getParent()).getAncestorDocument();
+		return this.getAncestor().getAncestorDocument();
 	}
 
 	/*
@@ -379,7 +398,7 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 */
 	@Override
 	public Database getAncestorDatabase() {
-		return this.getAncestorDocument().getAncestorDatabase();
+		return this.getAncestor().getAncestorDatabase();
 	}
 
 	/*
@@ -389,6 +408,6 @@ public class RichTextNavigator extends Base<org.openntf.domino.RichTextNavigator
 	 */
 	@Override
 	public Session getAncestorSession() {
-		return this.getAncestorDocument().getAncestorSession();
+		return this.getAncestor().getAncestorSession();
 	}
 }

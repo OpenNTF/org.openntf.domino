@@ -26,7 +26,9 @@ import lotus.domino.XSLTResultTarget;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.RichTextItem;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.xml.sax.InputSource;
 
@@ -34,11 +36,8 @@ import org.xml.sax.InputSource;
 /**
  * The Class EmbeddedObject.
  */
-public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotus.domino.EmbeddedObject> implements
+public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotus.domino.EmbeddedObject, Document> implements
 		org.openntf.domino.EmbeddedObject {
-
-	/** The temp. */
-	private lotus.domino.EmbeddedObject temp;
 
 	/**
 	 * Instantiates a new embedded object.
@@ -50,7 +49,43 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 	 */
 	@Deprecated
 	public EmbeddedObject(final lotus.domino.EmbeddedObject delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, (Document) parent);
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public EmbeddedObject(final lotus.domino.EmbeddedObject delegate, final Document parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_EMBEDOBJ);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Document findParent(final lotus.domino.EmbeddedObject delegate) throws NotesException {
+		return fromLotus(delegate.getParent().getParent(), Document.SCHEMA, null);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.EmbeddedObject#getParent()
+	 */
+	public RichTextItem getParent() {
+		try {
+			return fromLotus(getDelegate().getParent(), RichTextItem.SCHEMA, getAncestor());
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
 	}
 
 	/*
@@ -160,30 +195,11 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.impl.Base#getParent()
-	 */
-	@Override
-	public RichTextItem getParent() {
-		// The original spec returns either an RT item or null
-		org.openntf.domino.Base<?> parent = super.getParent();
-		if (parent instanceof org.openntf.domino.RichTextItem) {
-			return (RichTextItem) parent;
-		}
-		return null;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.EmbeddedObject#getParentDocument()
 	 */
 	public Document getParentDocument() {
-		org.openntf.domino.Base<?> parent = super.getParent();
-		if (parent instanceof org.openntf.domino.RichTextItem) {
-			return ((RichTextItem) parent).getParent();
-		}
-		return (Document) parent;
+		return getAncestor();
 	}
 
 	public org.openntf.domino.Database getParentDatabase() {
@@ -333,8 +349,7 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 	}
 
 	void markDirty() {
-		// TODO RPr: put this in interface
-		((org.openntf.domino.impl.Document) getParentDocument()).markDirty();
+		getParentDocument().markDirty();
 	}
 
 	/*

@@ -24,6 +24,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.iterators.ViewNavigatorEntryIterator;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -31,7 +32,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ViewNavigator.
  */
-public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.domino.ViewNavigator> implements
+public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.domino.ViewNavigator, View> implements
 		org.openntf.domino.ViewNavigator {
 
 	/**
@@ -45,6 +46,30 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 	@Deprecated
 	public ViewNavigator(final lotus.domino.ViewNavigator delegate, final org.openntf.domino.View parent) {
 		super(delegate, parent);
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public ViewNavigator(final lotus.domino.ViewNavigator delegate, final View parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_OUTLINE);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected View findParent(final lotus.domino.ViewNavigator delegate) throws NotesException {
+		return fromLotus(delegate.getParentView(), View.SCHEMA, null);
 	}
 
 	/*
@@ -344,7 +369,7 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 	 */
 	@Override
 	public View getParentView() {
-		return (View) super.getParent();
+		return getAncestor();
 	}
 
 	/*

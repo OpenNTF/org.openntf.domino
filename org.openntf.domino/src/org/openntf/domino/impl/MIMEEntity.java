@@ -25,8 +25,10 @@ import java.util.Vector;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.Document;
 import org.openntf.domino.MIMEHeader;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.xml.sax.InputSource;
 
@@ -34,19 +36,23 @@ import org.xml.sax.InputSource;
 /**
  * The Class MIMEEntity.
  */
-public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino.MIMEEntity> implements org.openntf.domino.MIMEEntity {
+public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino.MIMEEntity, Document> implements
+		org.openntf.domino.MIMEEntity {
 
 	/**
-	 * Instantiates a new mIME entity.
+	 * Instantiates a new outline.
 	 * 
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
 	 */
-	@Deprecated
-	public MIMEEntity(final lotus.domino.MIMEEntity delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+	public MIMEEntity(final lotus.domino.MIMEEntity delegate, final Document parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_MIMEENTITY);
 	}
 
 	/*
@@ -754,17 +760,7 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	 */
 	@Override
 	public Document getAncestorDocument() {
-		org.openntf.domino.Base<?> result = super.getParent();
-		if (result instanceof MIMEEntity) {
-			result = ((MIMEEntity) result).getAncestorDocument();
-		}
-		if (result instanceof Document) {
-			return (Document) result;
-		} else {
-			throw new org.openntf.domino.exceptions.IHaveNoIdeaHowThisHappenedException(
-					"Expected to find a Document as the parent but instead we found a " + result.getClass().getName());
-		}
-
+		return getAncestor();
 	}
 
 	/*

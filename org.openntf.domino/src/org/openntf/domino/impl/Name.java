@@ -21,6 +21,8 @@ import java.io.ObjectOutput;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -28,7 +30,7 @@ import org.openntf.domino.utils.Factory;
 /**
  * The Class Name.
  */
-public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> implements org.openntf.domino.Name {
+public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Session> implements org.openntf.domino.Name {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
@@ -111,16 +113,56 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	/**
 	 * Instantiates a new name.
 	 * 
+	 * @deprecated Use {@link #Name(lotus.domino.Name, Session, WrapperFactory, long)} instead
+	 * 
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
 	 */
 	@Deprecated
-	public Name(final lotus.domino.Name delegate, final org.openntf.domino.Base<?> parent) {
-		super(null, parent);
+	public Name(final lotus.domino.Name delegate, final Session parent) {
+		super(null, Factory.getSession(parent));
 		initialize(delegate);
 		Base.s_recycle(delegate);
+	}
+
+	/**
+	 * Instantiates a new name.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public Name(final lotus.domino.Name delegate, final Session parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_NAME);
+		initialize(delegate);
+		// TODO: Wrapping recycles the caller's object. This may cause issues.
+		Base.s_recycle(delegate);
+	}
+
+	/**
+	 * The cpp-id is not used here, so we do not read it
+	 * 
+	 * @param delegate
+	 * @param cppId
+	 */
+	@Override
+	void setDelegate(final lotus.domino.Name delegate, final long cppId) {
+		delegate_ = delegate;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Session findParent(final lotus.domino.Name delegate) throws NotesException {
+		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
 	}
 
 	/**
@@ -131,6 +173,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 */
 	private void initialize(final lotus.domino.Name delegate) {
 		try {
+			// TODO RPr: Check if reading all props isn't a bottleneck!
 			abbreviated = delegate.getAbbreviated();
 			addr821 = delegate.getAddr821();
 			addr822comment1 = delegate.getAddr822Comment1();
@@ -381,7 +424,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 */
 	@Override
 	public Session getParent() {
-		return (Session) super.getParent();
+		return getAncestor();
 	}
 
 	/*

@@ -20,13 +20,16 @@ import java.util.Vector;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.DirectoryNavigator;
+import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class Directory.
  */
-public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.Directory> implements org.openntf.domino.Directory {
+public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.Directory, Session> implements org.openntf.domino.Directory {
 
 	/**
 	 * Instantiates a new directory.
@@ -38,7 +41,31 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	 */
 	@Deprecated
 	public Directory(final lotus.domino.Directory delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, Factory.getSession(parent));
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public Directory(final lotus.domino.Directory delegate, final Session parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_DIRECTORY);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Session findParent(final lotus.domino.Directory delegate) {
+		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
 	}
 
 	/*
@@ -154,7 +181,7 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	 */
 	@Override
 	public Session getParent() {
-		return (Session) super.getParent();
+		return getAncestor();
 	}
 
 	/*
@@ -282,7 +309,7 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	 * 
 	 * @see org.openntf.domino.Directory#lookupAllNames(java.lang.String, java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public DirectoryNavigator lookupAllNames(final String view, final Vector items) {
 		try {
@@ -313,7 +340,7 @@ public class Directory extends Base<org.openntf.domino.Directory, lotus.domino.D
 	 * 
 	 * @see org.openntf.domino.Directory#lookupNames(java.lang.String, java.util.Vector, java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public DirectoryNavigator lookupNames(final String view, final Vector names, final Vector items, final boolean partialMatches) {
 		try {

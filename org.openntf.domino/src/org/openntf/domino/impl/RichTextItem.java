@@ -19,9 +19,11 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Document;
 import org.openntf.domino.EmbeddedObject;
 import org.openntf.domino.RichTextNavigator;
 import org.openntf.domino.RichTextRange;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
 // TODO: Auto-generated Javadoc
@@ -41,6 +43,22 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	@Deprecated
 	public RichTextItem(final lotus.domino.RichTextItem delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, parent);
+	}
+
+	/**
+	 * Instantiates a new richtext-item.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public RichTextItem(final lotus.domino.RichTextItem delegate, final Document parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId);
 	}
 
 	/* (non-Javadoc)
@@ -120,7 +138,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	public void addPageBreak(final lotus.domino.RichTextParagraphStyle pstyle) {
 		markDirty();
 		try {
-			getDelegate().addPageBreak((lotus.domino.RichTextParagraphStyle) toLotus(pstyle));
+			getDelegate().addPageBreak(toLotus(pstyle));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -165,7 +183,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	public void appendDocLink(final lotus.domino.Database db) {
 		markDirty();
 		try {
-			getDelegate().appendDocLink((lotus.domino.Database) toLotus(db));
+			getDelegate().appendDocLink(toLotus(db));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -180,7 +198,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	public void appendDocLink(final lotus.domino.Database db, final String comment) {
 		markDirty();
 		try {
-			getDelegate().appendDocLink((lotus.domino.Database) toLotus(db), comment);
+			getDelegate().appendDocLink(toLotus(db), comment);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -195,7 +213,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	public void appendDocLink(final lotus.domino.Database db, final String comment, final String hotspotText) {
 		markDirty();
 		try {
-			getDelegate().appendDocLink((lotus.domino.Database) toLotus(db), comment, hotspotText);
+			getDelegate().appendDocLink(toLotus(db), comment, hotspotText);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -210,7 +228,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	public void appendDocLink(final lotus.domino.Document doc) {
 		markDirty();
 		try {
-			getDelegate().appendDocLink((lotus.domino.Document) toLotus(doc));
+			getDelegate().appendDocLink(toLotus(doc));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -225,7 +243,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	public void appendDocLink(final lotus.domino.Document doc, final String comment) {
 		markDirty();
 		try {
-			getDelegate().appendDocLink((lotus.domino.Document) toLotus(doc), comment);
+			getDelegate().appendDocLink(toLotus(doc), comment);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -240,7 +258,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	public void appendDocLink(final lotus.domino.Document doc, final String comment, final String hotspotText) {
 		markDirty();
 		try {
-			getDelegate().appendDocLink((lotus.domino.Document) toLotus(doc), comment, hotspotText);
+			getDelegate().appendDocLink(toLotus(doc), comment, hotspotText);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -255,7 +273,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	public void appendDocLink(final lotus.domino.View view) {
 		markDirty();
 		try {
-			getDelegate().appendDocLink((lotus.domino.View) toLotus(view));
+			getDelegate().appendDocLink(toLotus(view));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -270,7 +288,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	public void appendDocLink(final lotus.domino.View view, final String comment) {
 		markDirty();
 		try {
-			getDelegate().appendDocLink((lotus.domino.View) toLotus(view), comment);
+			getDelegate().appendDocLink(toLotus(view), comment);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -285,7 +303,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	public void appendDocLink(final lotus.domino.View view, final String comment, final String hotspotText) {
 		markDirty();
 		try {
-			getDelegate().appendDocLink((lotus.domino.View) toLotus(view), hotspotText);
+			getDelegate().appendDocLink(toLotus(view), hotspotText);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -300,7 +318,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	public void appendParagraphStyle(final lotus.domino.RichTextParagraphStyle pstyle) {
 		markDirty();
 		try {
-			getDelegate().appendParagraphStyle((lotus.domino.RichTextParagraphStyle) toLotus(pstyle));
+			getDelegate().appendParagraphStyle(toLotus(pstyle));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -315,7 +333,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	public void appendRTItem(final lotus.domino.RichTextItem rtitem) {
 		markDirty();
 		try {
-			getDelegate().appendRTItem((lotus.domino.RichTextItem) toLotus(rtitem));
+			getDelegate().appendRTItem(toLotus(rtitem));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -330,7 +348,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	public void appendStyle(final lotus.domino.RichTextStyle rstyle) {
 		markDirty();
 		try {
-			getDelegate().appendStyle((lotus.domino.RichTextStyle) toLotus(rstyle));
+			getDelegate().appendStyle(toLotus(rstyle));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -356,7 +374,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 * 
 	 * @see org.openntf.domino.RichTextItem#appendTable(int, int, java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void appendTable(final int rows, final int columns, final Vector labels) {
 		markDirty();
@@ -372,7 +390,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	 * 
 	 * @see org.openntf.domino.RichTextItem#appendTable(int, int, java.util.Vector, int, java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void appendTable(final int rows, final int columns, final Vector labels, final int leftMargin, final Vector pstyles) {
 		markDirty();
@@ -452,7 +470,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	public void beginSection(final String title, final lotus.domino.RichTextStyle titleStyle) {
 		markDirty();
 		try {
-			getDelegate().beginSection(title, (lotus.domino.RichTextStyle) toLotus(titleStyle));
+			getDelegate().beginSection(title, toLotus(titleStyle));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -468,8 +486,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 			final boolean expand) {
 		markDirty();
 		try {
-			getDelegate().beginSection(title, (lotus.domino.RichTextStyle) toLotus(titleStyle),
-					(lotus.domino.ColorObject) toLotus(barColor), expand);
+			getDelegate().beginSection(title, toLotus(titleStyle), toLotus(barColor), expand);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

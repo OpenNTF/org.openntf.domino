@@ -21,13 +21,16 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class Log.
  */
-public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log> implements org.openntf.domino.Log {
+public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log, Session> implements org.openntf.domino.Log {
 
 	/**
 	 * Instantiates a new log.
@@ -39,7 +42,31 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log> implemen
 	 */
 	@Deprecated
 	public Log(final lotus.domino.Log delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, Factory.getSession(parent));
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public Log(final lotus.domino.Log delegate, final Session parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_AGENTLOG);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Session findParent(final lotus.domino.Log delegate) throws NotesException {
+		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
 	}
 
 	/*
@@ -93,7 +120,7 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log> implemen
 	 */
 	@Override
 	public Session getParent() {
-		return (Session) super.getParent();
+		return getAncestor();
 	}
 
 	/*
@@ -231,16 +258,17 @@ public class Log extends Base<org.openntf.domino.Log, lotus.domino.Log> implemen
 	 * 
 	 * @see org.openntf.domino.Log#openMailLog(java.util.Vector, java.lang.String)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void openMailLog(final Vector recipients, final String subject) {
+		List recycleThis = new ArrayList();
 		try {
-			List recycleThis = new ArrayList();
 			java.util.Vector v = toDominoFriendly(recipients, this, recycleThis);
 			getDelegate().openMailLog(v, subject);
-			s_recycle(recycleThis);
 		} catch (NotesException ne) {
 			DominoUtils.handleException(ne);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 

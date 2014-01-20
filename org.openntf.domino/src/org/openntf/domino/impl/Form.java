@@ -21,10 +21,12 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.NoteCollection.SelectOption;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -32,7 +34,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class Form.
  */
-public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, lotus.domino.Form> implements org.openntf.domino.Form {
+public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, lotus.domino.Form, Database> implements
+		org.openntf.domino.Form {
 
 	/** The temp_. */
 	lotus.domino.Form temp_;
@@ -47,7 +50,31 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 */
 	@Deprecated
 	public Form(final lotus.domino.Form delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, null);
+	}
+
+	/**
+	 * Instantiates a new form.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public Form(final lotus.domino.Form delegate, final Database parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_FORM);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Database findParent(final lotus.domino.Form delegate) throws NotesException {
+		return fromLotus(delegate.getParent(), Database.SCHEMA, null);
 	}
 
 	/*
@@ -207,7 +234,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 */
 	@Override
 	public Database getParent() {
-		return (Database) super.getParent();
+		return getAncestor();
 	}
 
 	/*
@@ -372,7 +399,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * 
 	 * @see org.openntf.domino.Form#lock(java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public boolean lock(final Vector arg0, final boolean arg1) {
 		try {
 			return getDelegate().lock(arg0, arg1);
@@ -388,7 +415,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * 
 	 * @see org.openntf.domino.Form#lock(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public boolean lock(final Vector arg0) {
 		try {
 			return getDelegate().lock(arg0);
@@ -434,7 +461,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * 
 	 * @see org.openntf.domino.Form#lockProvisional(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public boolean lockProvisional(final Vector arg0) {
 		try {
 			return getDelegate().lockProvisional(arg0);
@@ -464,7 +491,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * 
 	 * @see org.openntf.domino.Form#setFormUsers(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void setFormUsers(final Vector arg0) {
 		try {
 			getDelegate().setFormUsers(arg0);
@@ -507,7 +534,7 @@ public class Form extends org.openntf.domino.impl.Base<org.openntf.domino.Form, 
 	 * 
 	 * @see org.openntf.domino.Form#setReaders(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public void setReaders(final Vector arg0) {
 		try {
 			getDelegate().setReaders(arg0);

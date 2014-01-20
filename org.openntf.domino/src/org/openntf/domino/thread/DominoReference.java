@@ -68,7 +68,7 @@ public class DominoReference extends PhantomReference<Object> {
 	void recycle() {
 		if (delegate_ != null) {
 			try {
-				if (org.openntf.domino.impl.Base.isInvalid(delegate_)) {
+				if (org.openntf.domino.impl.Base.isDead(delegate_)) {
 					// already recycled, do not count twice!
 					return;
 				}
@@ -127,7 +127,7 @@ public class DominoReference extends PhantomReference<Object> {
 		return key_;
 	}
 
-	boolean isInvalid() {
-		return org.openntf.domino.impl.Base.isInvalid(delegate_);
+	boolean isDead() {
+		return org.openntf.domino.impl.Base.isDead(delegate_);
 	}
 }

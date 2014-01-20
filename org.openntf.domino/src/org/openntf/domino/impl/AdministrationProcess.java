@@ -15,6 +15,8 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
@@ -28,8 +30,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class AdministrationProcess.
  */
-public class AdministrationProcess extends Base<org.openntf.domino.AdministrationProcess, lotus.domino.AdministrationProcess> implements
-		org.openntf.domino.AdministrationProcess {
+public class AdministrationProcess extends Base<org.openntf.domino.AdministrationProcess, lotus.domino.AdministrationProcess, Session>
+		implements org.openntf.domino.AdministrationProcess {
 
 	/**
 	 * Instantiates a new administration process.
@@ -39,14 +41,17 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	 * @param parent
 	 *            the parent
 	 */
-	public AdministrationProcess(final lotus.domino.AdministrationProcess delegate, final org.openntf.domino.ACL parent,
-			final WrapperFactory wf, final long cpp_id) {
+	public AdministrationProcess(final lotus.domino.AdministrationProcess delegate, final Session parent, final WrapperFactory wf,
+			final long cpp_id) {
 		super(delegate, parent, wf, cpp_id, NOTES_ACLENTRY);
 	}
 
-	@Deprecated
-	public AdministrationProcess(final lotus.domino.AdministrationProcess delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Session findParent(final lotus.domino.AdministrationProcess delegate) throws NotesException {
+		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
 	}
 
 	/*
@@ -54,7 +59,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	 * 
 	 * @see org.openntf.domino.AdministrationProcess#addGroupMembers(java.lang.String, java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public String addGroupMembers(final String group, final Vector members) {
 		try {
@@ -89,14 +94,14 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	@Override
 	public String addInternetCertificateToUser(final String user, final String keyringFile, final String keyringPassword,
 			final lotus.domino.DateTime expiration) {
+		@SuppressWarnings("rawtypes")
+		List recycleThis = new ArrayList();
 		try {
-			String result;
-			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(expiration);
-			result = getDelegate().addInternetCertificateToUser(user, keyringFile, keyringPassword, dt);
-			enc_recycle(dt);
-			return result;
+			return getDelegate().addInternetCertificateToUser(user, keyringFile, keyringPassword, toLotus(expiration, recycleThis));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 		return null;
 	}
@@ -566,7 +571,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	 */
 	@Override
 	public Session getParent() {
-		return (Session) super.getParent();
+		return getAncestor();
 	}
 
 	/*
@@ -620,7 +625,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	 * @see org.openntf.domino.AdministrationProcess#moveMailUser(java.lang.String, java.lang.String, java.lang.String, boolean,
 	 * java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public String moveMailUser(final String userName, final String newHomeServer, final String newHomeServerMailPath,
 			final boolean useSCOS, final Vector newClusterReplicas, final boolean deleteOldClusterReplicas) {
@@ -879,12 +884,14 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	 */
 	@Override
 	public void setCertificateExpiration(final lotus.domino.DateTime expiration) {
+		@SuppressWarnings("rawtypes")
+		List recycleThis = new ArrayList();
 		try {
-			lotus.domino.DateTime dt = (DateTime) toLotus(expiration);
-			getDelegate().setCertificateExpiration(dt);
-			s_recycle(dt);
+			getDelegate().setCertificateExpiration(toLotus(expiration, recycleThis));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
@@ -1028,6 +1035,7 @@ public class AdministrationProcess extends Base<org.openntf.domino.Administratio
 	/* (non-Javadoc)
 	 * @see lotus.domino.AdministrationProcess#delegateMailFile(java.lang.String, java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.lang.String, java.lang.String)
 	 */
+	@SuppressWarnings("rawtypes")
 	public String delegateMailFile(final String arg0, final Vector arg1, final Vector arg2, final Vector arg3, final Vector arg4,
 			final Vector arg5, final Vector arg6, final Vector arg7, final String arg8, final String arg9) {
 		try {

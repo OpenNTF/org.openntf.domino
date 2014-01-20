@@ -18,14 +18,18 @@ package org.openntf.domino.impl;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.Document;
+import org.openntf.domino.MIMEEntity;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class MIMEHeader.
  */
-public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino.MIMEHeader> implements org.openntf.domino.MIMEHeader {
+public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino.MIMEHeader, MIMEEntity> implements
+		org.openntf.domino.MIMEHeader {
 
 	/**
 	 * Instantiates a new mIME header.
@@ -35,8 +39,25 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public MIMEHeader(final lotus.domino.MIMEHeader delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, null);
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public MIMEHeader(final lotus.domino.MIMEHeader delegate, final MIMEEntity parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_MIMEENTITY);
 	}
 
 	/*
@@ -211,7 +232,7 @@ public class MIMEHeader extends Base<org.openntf.domino.MIMEHeader, lotus.domino
 	 */
 	@Override
 	public MIMEEntity getParent() {
-		return (MIMEEntity) super.getParent();
+		return getAncestor();
 	}
 
 	/*

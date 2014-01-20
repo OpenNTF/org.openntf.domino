@@ -22,7 +22,9 @@ import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
+import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.iterators.ViewEntryIterator;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -30,7 +32,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ViewEntryCollection.
  */
-public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollection, lotus.domino.ViewEntryCollection> implements
+public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollection, lotus.domino.ViewEntryCollection, View> implements
 		org.openntf.domino.ViewEntryCollection {
 
 	/**
@@ -44,6 +46,30 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	@Deprecated
 	public ViewEntryCollection(final lotus.domino.ViewEntryCollection delegate, final org.openntf.domino.View parent) {
 		super(delegate, parent);
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public ViewEntryCollection(final lotus.domino.ViewEntryCollection delegate, final View parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_VECOLL);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected View findParent(final lotus.domino.ViewEntryCollection delegate) throws NotesException {
+		return fromLotus(delegate.getParent(), View.SCHEMA, null);
 	}
 
 	// FIXME NTF -- all method that return a ViewEntry probably need to parent to the View rather than the Collection. Someone should verify
@@ -156,7 +182,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	@Override
 	public void deleteEntry(final lotus.domino.ViewEntry entry) {
 		try {
-			getDelegate().deleteEntry((lotus.domino.ViewEntry) toLotus(entry));
+			getDelegate().deleteEntry(toLotus(entry));
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
@@ -304,7 +330,7 @@ public class ViewEntryCollection extends Base<org.openntf.domino.ViewEntryCollec
 	 */
 	@Override
 	public org.openntf.domino.View getParent() {
-		return (org.openntf.domino.View) super.getParent();
+		return getAncestor();
 	}
 
 	/*

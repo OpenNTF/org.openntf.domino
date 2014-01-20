@@ -19,11 +19,11 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Date;
-import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -35,8 +35,8 @@ import com.ibm.icu.util.GregorianCalendar;
 /**
  * The Class DateTime.
  */
-public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.DateTime> implements org.openntf.domino.DateTime {
-	private static final Logger log_ = Logger.getLogger(DateTime.class.getName());
+public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.DateTime, Session> implements org.openntf.domino.DateTime {
+	//private static final Logger log_ = Logger.getLogger(DateTime.class.getName());
 	private static final long serialVersionUID = 1L;
 
 	/** The cal_. */
@@ -54,6 +54,23 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	/** The notes zone_. */
 	private int notesZone_;
 
+	//	/**
+	//	 * Instantiates a new date time.
+	//	 * 
+	//	 * @param delegate
+	//	 *            the delegate
+	//	 * @param parent
+	//	 *            the parent
+	//	 */
+	//	@Deprecated
+	//	public DateTime(final lotus.domino.DateTime delegate, final org.openntf.domino.Base<?> parent) {
+	//		super(null, Factory.getSession(parent));
+	//		if (delegate instanceof lotus.domino.local.DateTime) {
+	//			initialize(delegate);
+	//			Base.s_recycle(delegate);
+	//		}
+	//	}
+
 	/**
 	 * Instantiates a new date time.
 	 * 
@@ -61,13 +78,27 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 *            the delegate
 	 * @param parent
 	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
 	 */
-	public DateTime(final lotus.domino.DateTime delegate, final org.openntf.domino.Base<?> parent) {
-		super(null, Factory.getSession(parent));
-		if (delegate instanceof lotus.domino.local.DateTime) {
-			initialize(delegate);
-			Base.s_recycle(delegate);
+	public DateTime(final lotus.domino.DateTime delegate, final Session parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_TIME);
+		initialize(delegate);
+		// TODO: Wrapping recycles the caller's object. This may cause issues.
+		Base.s_recycle(delegate);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Session findParent(final lotus.domino.DateTime delegate) {
+		if (delegate == null) {
+			return Factory.getSession(); // the current Session
 		}
+		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
 	}
 
 	/**
@@ -77,26 +108,32 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 *            the date
 	 * @param parent
 	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
 	 */
-	public DateTime(final Date date, final org.openntf.domino.Base<?> parent) {
-		super(null, Factory.getSession(parent));
+	public DateTime(final Date date, final Session parent, final WrapperFactory wf, final long cppId) {
+		super(null, parent, wf, cppId, NOTES_TIME);
 		initialize(date);
 	}
 
-	/**
-	 * Instantiates a new date time.
-	 * 
-	 * @param date
-	 *            the date
-	 */
-	public DateTime(final Date date) {
-		super(null, null);
-		initialize(date);
-	}
-
-	public DateTime() {	// for deserialization?
-		super(null, null);
-	}
+	//	/**
+	//	 * Instantiates a new date time.
+	//	 * 
+	//	 * @param date
+	//	 *            the date
+	//	 */
+	//	@Deprecated
+	//	public DateTime(final Date date) {
+	//		super(null, null);
+	//		initialize(date);
+	//	}
+	//
+	//	@Deprecated
+	//	public DateTime() {	// for deserialization?
+	//		super(null, null);
+	//	}
 
 	/*
 	 * The returned object MUST get recycled
@@ -340,7 +377,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#getDateOnly()
 	 */
 	public String getDateOnly() {
-		return org.openntf.domino.impl.Session.getFormatter().getDateOnly(cal_.getTime());
+		return getAncestor().getFormatter().getDateOnly(cal_.getTime());
 	}
 
 	/*
@@ -349,7 +386,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#getGMTTime()
 	 */
 	public String getGMTTime() {
-		return org.openntf.domino.impl.Session.getFormatter().getDateTime(cal_.getTime());
+		return getAncestor().getFormatter().getDateTime(cal_.getTime());
 	}
 
 	/*
@@ -359,7 +396,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 */
 	public String getLocalTime() {
 		// TODO rationalize timezone stuff
-		return org.openntf.domino.impl.Session.getFormatter().getDateTime(cal_.getTime());
+		return getAncestor().getFormatter().getDateTime(cal_.getTime());
 	}
 
 	/*
@@ -369,10 +406,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 */
 	@Override
 	public Session getParent() {
-		org.openntf.domino.Base<?> result = super.getParent();
-		if (result == null)
-			return Factory.getSession();
-		return Factory.getSession(result);
+		return getAncestor();
 	}
 
 	/*
@@ -381,7 +415,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#getTimeOnly()
 	 */
 	public String getTimeOnly() {
-		return org.openntf.domino.impl.Session.getFormatter().getTimeOnly(cal_.getTime());
+		return getAncestor().getFormatter().getTimeOnly(cal_.getTime());
 	}
 
 	/*
@@ -521,7 +555,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#setLocalTime(java.lang.String)
 	 */
 	public void setLocalTime(final String time) {
-		Date date = org.openntf.domino.impl.Session.getFormatter().parseDateFromString(time);
+		Date date = getAncestor().getFormatter().parseDateFromString(time);
 		cal_.setTime(date);
 	}
 

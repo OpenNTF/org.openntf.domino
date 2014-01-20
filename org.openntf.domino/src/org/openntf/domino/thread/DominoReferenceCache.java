@@ -172,7 +172,7 @@ public class DominoReferenceCache {
 		if (result == null) {
 			return null;
 		}
-		if (ref.isInvalid()) {
+		if (ref.isDead()) {
 			// check if it is not yet recycled
 			map.remove(ref.getKey());
 			return null;

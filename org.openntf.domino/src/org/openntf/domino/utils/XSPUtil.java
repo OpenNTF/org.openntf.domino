@@ -81,8 +81,7 @@ public enum XSPUtil {
 	public static Database getCurrentDatabase() {
 		try {
 			lotus.domino.Database db = (lotus.domino.Database) resolveVariable("database");
-			Session session = Factory.fromLotus(db.getParent(), Session.class, null);
-			return Factory.fromLotus(db, Database.class, session);
+			return Factory.fromLotus(db, Database.SCHEMA, null);
 		} catch (Exception ne) {
 			DominoUtils.handleException(ne);
 			return null;
@@ -120,7 +119,7 @@ public enum XSPUtil {
 	 */
 	public static Session getCurrentSessionAsSigner() {
 		try {
-			return Factory.fromLotus((lotus.domino.Session) resolveVariable("sessionAsSigner"), Session.class, null);
+			return Factory.fromLotus((lotus.domino.Session) resolveVariable("sessionAsSigner"), Session.SCHEMA, null);
 		} catch (Exception ne) {
 			DominoUtils.handleException(ne);
 			return null;
@@ -151,6 +150,7 @@ public enum XSPUtil {
 	 *             the exception
 	 */
 	public static Object resolveVariable(final String varName) throws Exception {
+		// TODO RPr move to Xpage-Plugin
 		Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext", true, Factory.getClassLoader());
 		Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
 		Method getApplication = facesContextClass.getMethod("getApplication");

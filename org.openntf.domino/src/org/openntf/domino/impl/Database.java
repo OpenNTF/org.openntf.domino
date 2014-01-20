@@ -64,7 +64,7 @@ import com.ibm.icu.util.GregorianCalendar;
 /**
  * The Class Database.
  */
-public class Database extends org.openntf.domino.impl.Base<org.openntf.domino.Database, lotus.domino.Database> implements
+public class Database extends org.openntf.domino.impl.Base<org.openntf.domino.Database, lotus.domino.Database, Session> implements
 		org.openntf.domino.Database {
 	private static final Logger log_ = Logger.getLogger(Database.class.getName());
 
@@ -77,12 +77,9 @@ public class Database extends org.openntf.domino.impl.Base<org.openntf.domino.Da
 	/** The replid_. */
 	private String replid_;
 
-	@SuppressWarnings("unused")
 	private String basedOnTemplate_;
-	@SuppressWarnings("unused")
 	private String templateName_;
 	private Date lastModDate_;
-	@SuppressWarnings("unused")
 	private String title_;
 	private Boolean isReplicationDisabled_;
 
@@ -91,23 +88,37 @@ public class Database extends org.openntf.domino.impl.Base<org.openntf.domino.Da
 	/**
 	 * Instantiates a new database.
 	 * 
+	 * 
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
+	 * @param wf
+	 *            the WrapperFactory
+	 * @param cpp_id
+	 *            the cpp_id
 	 */
 	public Database(final lotus.domino.Database delegate, final Session parent, final WrapperFactory wf, final long cpp_id) {
 		super(delegate, parent, wf, cpp_id, NOTES_DATABASE);
 		initialize(delegate, false);
 	}
 
+	/**
+	 * Instantiates a new database.
+	 * 
+	 * @deprecated Use {@link #Database(lotus.domino.Database, Session, WrapperFactory, long)} instead
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 */
 	@Deprecated
 	public Database(final lotus.domino.Database delegate, final lotus.domino.Base parent) {
 		this(delegate, (Session) parent, Factory.getWrapperFactory(), 0L);
 	}
 
 	/**
-	 * This constructor is used in the dbDirectory
+	 * This constructor is used in the dbDirectory. The Delegate will get recycled!
 	 * 
 	 * @param delegate
 	 *            the delegate
@@ -118,7 +129,7 @@ public class Database extends org.openntf.domino.impl.Base<org.openntf.domino.Da
 	 */
 	public Database(final lotus.domino.Database delegate, final org.openntf.domino.Base<?> parent, final boolean extendedMetadata) {
 		super(delegate, //
-				(parent instanceof org.openntf.domino.Session) ? parent : org.openntf.domino.utils.Factory.getSession(parent), //
+				(parent instanceof Session) ? (Session) parent : org.openntf.domino.utils.Factory.getSession(parent), //
 				org.openntf.domino.utils.Factory.getWrapperFactory(), 0, NOTES_DATABASE);
 		initialize(delegate, extendedMetadata);
 		s_recycle(delegate);
@@ -1470,7 +1481,7 @@ public class Database extends org.openntf.domino.impl.Base<org.openntf.domino.Da
 	 */
 	@Override
 	public Session getParent() {
-		return (Session) super.getParent();
+		return getAncestor();
 	}
 
 	/*
@@ -3178,5 +3189,13 @@ public class Database extends org.openntf.domino.impl.Base<org.openntf.domino.Da
 
 	void setReplication(final boolean value) {
 		isReplicationDisabled_ = value;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Session findParent(final lotus.domino.Database delegate) throws NotesException {
+		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
 	}
 }

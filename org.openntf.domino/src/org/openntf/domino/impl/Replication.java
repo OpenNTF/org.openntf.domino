@@ -19,16 +19,20 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.ReplicationEntry;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class Replication.
  */
-public class Replication extends Base<org.openntf.domino.Replication, lotus.domino.Replication> implements org.openntf.domino.Replication {
+public class Replication extends Base<org.openntf.domino.Replication, lotus.domino.Replication, Database> implements
+		org.openntf.domino.Replication {
 
 	/**
 	 * Instantiates a new replication.
@@ -40,7 +44,23 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 	 */
 	@Deprecated
 	public Replication(final lotus.domino.Replication delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, Factory.getParentDatabase(parent));
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public Replication(final lotus.domino.Replication delegate, final Database parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_REPLICATION);
 	}
 
 	/*
@@ -153,7 +173,7 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 	 */
 	@Override
 	public Database getParent() {
-		return (Database) super.getParent();
+		return getAncestor();
 	}
 
 	/*
@@ -330,7 +350,8 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
-		getAncestorDatabase().setReplication(flag);
+		// TODO RPr move this to inteface?
+		((org.openntf.domino.impl.Database) getAncestorDatabase()).setReplication(flag);
 	}
 
 	/*

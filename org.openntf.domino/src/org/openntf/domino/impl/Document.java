@@ -37,6 +37,7 @@ import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.EmbeddedObject;
@@ -48,6 +49,7 @@ import org.openntf.domino.NoteCollection;
 import org.openntf.domino.RichTextItem;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
@@ -57,6 +59,7 @@ import org.openntf.domino.exceptions.MIMEConversionException;
 import org.openntf.domino.ext.Database.Events;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.helpers.Formula;
+import org.openntf.domino.napi.NapiDocument;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.types.BigString;
 import org.openntf.domino.types.Null;
@@ -71,7 +74,7 @@ import com.ibm.commons.util.io.json.util.JsonWriter;
 /**
  * The Class Document.
  */
-public class Document extends org.openntf.domino.impl.Base<org.openntf.domino.Document, lotus.domino.Document> implements
+public class Document extends org.openntf.domino.impl.Base<org.openntf.domino.Document, lotus.domino.Document, Database> implements
 		org.openntf.domino.Document {
 	private static final Logger log_ = Logger.getLogger(Document.class.getName());
 
@@ -89,7 +92,6 @@ public class Document extends org.openntf.domino.impl.Base<org.openntf.domino.Do
 	private boolean isRemoveQueued_ = false;
 	private boolean shouldWriteItemMeta_ = false; // TODO NTF create rules for making this true
 
-	@SuppressWarnings("unused")
 	private boolean shouldResurrect_ = false;
 
 	// NTF - these are immutable by definition, so we should just copy it when we read in the doc
@@ -125,6 +127,33 @@ public class Document extends org.openntf.domino.impl.Base<org.openntf.domino.Do
 		super(delegate, Factory.getParentDatabase(parent));
 		initialize(delegate);
 	}
+
+	/**
+	 * Instantiates a new Document.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public Document(final lotus.domino.Document delegate, final Database parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_NOTE);
+		initialize(delegate);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Database findParent(final lotus.domino.Document delegate) throws NotesException {
+		return fromLotus(delegate.getParentDatabase(), Database.SCHEMA, null);
+	}
+
+	private NapiDocument napiDocument_ = null;
 
 	/**
 	 * Initialize.
@@ -960,6 +989,7 @@ public class Document extends org.openntf.domino.impl.Base<org.openntf.domino.Do
 	@Override
 	public Vector<Object> getItemValue(final String name) {
 		try {
+
 			// Check the item type to see if it's MIME - if so, then see if it's a MIMEBean
 			// This is a bit more expensive than I'd like
 			MIMEEntity entity = this.getMIMEEntity(name);
@@ -984,6 +1014,13 @@ public class Document extends org.openntf.domino.impl.Base<org.openntf.domino.Do
 				}
 				// TODO NTF: What if we have a "real" mime item like a body field (Handle RT/MIME correctly)
 			}
+
+			// TODO RPr: check if we can convertn a Document to a NAPI-Document
+			//			if (getNapiDocument() != null) {
+			//				List<String> lvals = getNapiDocument().getItemAsTextList(name);
+			//				return new Vector(lvals);
+			//			}
+
 			Vector<?> vals = null;
 			try {
 				vals = getDelegate().getItemValue(name);
@@ -1097,7 +1134,11 @@ public class Document extends org.openntf.domino.impl.Base<org.openntf.domino.Do
 	 */
 	@Override
 	public String getItemValueString(final String name) {
+		if (getNapiDocument() != null) {
+			return getNapiDocument().getItemValueAsString(name);
+		}
 		try {
+
 			return getDelegate().getItemValueString(name);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -1112,6 +1153,7 @@ public class Document extends org.openntf.domino.impl.Base<org.openntf.domino.Do
 	 */
 	@Override
 	public Vector<Item> getItems() {
+		// TODO RPr: Review the ItemVector
 		ItemVector iv = new ItemVector(this);
 		return iv;
 		// try {
@@ -1241,7 +1283,7 @@ public class Document extends org.openntf.domino.impl.Base<org.openntf.domino.Do
 	 */
 	@Override
 	public Database getParentDatabase() {
-		return (Database) super.getParent();
+		return getAncestor();
 	}
 
 	public org.openntf.domino.Document getParentDocument() {
@@ -2791,7 +2833,6 @@ public class Document extends org.openntf.domino.impl.Base<org.openntf.domino.Do
 		isQueued_ = false;
 	}
 
-	@SuppressWarnings("unused")
 	public void rollback() {
 		if (removeType_ != null)
 			removeType_ = null;
@@ -2851,10 +2892,20 @@ public class Document extends org.openntf.domino.impl.Base<org.openntf.domino.Do
 		return result;
 	}
 
+	protected NapiDocument getNapiDocument() {
+		if (napiDocument_ == null) {
+			if (getNapiFactory() != null) {
+				napiDocument_ = getNapiFactory().getNapiDocument(this);
+				//System.out.println("USING NAPI DOCUMENT!");
+			}
+		}
+		return napiDocument_;
+	}
+
 	@Override
 	protected lotus.domino.Document getDelegate() {
 		lotus.domino.Document d = super.getDelegate();
-		if (isInvalid(d)) {
+		if (isDead(d)) {
 			resurrect();
 		}
 		return super.getDelegate();
@@ -2864,7 +2915,7 @@ public class Document extends org.openntf.domino.impl.Base<org.openntf.domino.Do
 		if (noteid_ != null) {
 			try {
 				lotus.domino.Document d = null;
-				lotus.domino.Database db = getParentDatabase().getDelegate();
+				lotus.domino.Database db = toLotus(getParentDatabase());
 				if (db != null) {
 					if (Integer.valueOf(noteid_, 16) == 0) {
 						if (isNew_) {

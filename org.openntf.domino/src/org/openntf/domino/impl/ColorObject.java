@@ -17,6 +17,8 @@ package org.openntf.domino.impl;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -24,7 +26,8 @@ import org.openntf.domino.utils.Factory;
 /**
  * The Class ColorObject.
  */
-public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domino.ColorObject> implements org.openntf.domino.ColorObject {
+public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domino.ColorObject, Session> implements
+		org.openntf.domino.ColorObject {
 
 	/**
 	 * Instantiates a new color object.
@@ -37,6 +40,30 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 	@Deprecated
 	public ColorObject(final lotus.domino.ColorObject delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, Factory.getSession(parent));
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public ColorObject(final lotus.domino.ColorObject delegate, final Session parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_COLOR);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Session findParent(final lotus.domino.ColorObject delegate) {
+		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
 	}
 
 	/*
@@ -119,7 +146,7 @@ public class ColorObject extends Base<org.openntf.domino.ColorObject, lotus.domi
 	 */
 	@Override
 	public Session getParent() {
-		return (Session) super.getParent();
+		return getAncestor();
 	}
 
 	/*

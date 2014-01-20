@@ -22,14 +22,16 @@ import java.util.Vector;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.DateTime;
+import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class Registration.
  */
-public class Registration extends Base<org.openntf.domino.Registration, lotus.domino.Registration> implements
+public class Registration extends Base<org.openntf.domino.Registration, lotus.domino.Registration, Session> implements
 		org.openntf.domino.Registration {
 
 	/**
@@ -42,11 +44,31 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	 */
 	@Deprecated
 	public Registration(final lotus.domino.Registration delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, Factory.getSession(parent));
 	}
 
+	/**
+	 * Instantiates a new registration.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
 	public Registration(final lotus.domino.Registration delegate, final Session parent, final WrapperFactory wf, final long cpp_id) {
 		super(delegate, parent, wf, cpp_id, NOTES_VIEWCOLUMN);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Session findParent(final lotus.domino.Registration delegate) throws NotesException {
+		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
 	}
 
 	/*
@@ -574,7 +596,7 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	 */
 	@Override
 	public Session getParent() {
-		return (Session) super.getParent();
+		return getAncestor();
 	}
 
 	/*
@@ -748,7 +770,7 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	 * @see org.openntf.domino.Registration#getUserInfo(java.lang.String, java.lang.StringBuffer, java.lang.StringBuffer,
 	 * java.lang.StringBuffer, java.lang.StringBuffer, java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public void getUserInfo(final String userName, final StringBuffer mailServer, final StringBuffer mailFile,
 			final StringBuffer mailDomain, final StringBuffer mailSystem, final Vector profile) {
@@ -1082,7 +1104,7 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	 * 
 	 * @see org.openntf.domino.Registration#setAltOrgUnit(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public void setAltOrgUnit(final Vector names) {
 		try {
@@ -1097,7 +1119,7 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	 * 
 	 * @see org.openntf.domino.Registration#setAltOrgUnitLang(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void setAltOrgUnitLang(final Vector languages) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
@@ -1173,12 +1195,14 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	 */
 	@Override
 	public void setExpiration(final lotus.domino.DateTime expiration) {
+		@SuppressWarnings("rawtypes")
+		List recycleThis = new ArrayList();
 		try {
-			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(expiration);
-			getDelegate().setExpiration(dt);
-			enc_recycle(dt);
+			getDelegate().setExpiration(toLotus(expiration, recycleThis));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
@@ -1201,7 +1225,7 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	 * 
 	 * @see org.openntf.domino.Registration#setGroupList(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void setGroupList(final Vector groups) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
@@ -1317,7 +1341,7 @@ public class Registration extends Base<org.openntf.domino.Registration, lotus.do
 	 * 
 	 * @see org.openntf.domino.Registration#setMailReplicaServers(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void setMailReplicaServers(final Vector servers) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
