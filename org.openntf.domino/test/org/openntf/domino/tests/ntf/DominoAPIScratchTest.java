@@ -30,8 +30,8 @@ public enum DominoAPIScratchTest {
 	}
 
 	private static final int THREAD_COUNT = 6;
-	private static final boolean INCLUDE_FORMS = false;
-	private static final int delay = 200;
+	private static final boolean INCLUDE_FORMS = true;
+	private static final int delay = 500;
 	private static final String server = "";
 	private static final String dbPath = "events4.nsf";
 
@@ -207,7 +207,7 @@ public enum DominoAPIScratchTest {
 			sb.append(nameCount + " names, ");
 			sb.append(docCount + " docs, and ");
 			sb.append(dateCount + " datetimes without recycling.");
-			//			System.out.println(sb.toString());
+			System.out.println(sb.toString());
 		}
 
 		/* (non-Javadoc)
@@ -233,6 +233,6 @@ public enum DominoAPIScratchTest {
 
 		de.shutdown();
 		de2.shutdown();
-
+		System.out.println("Main complete");
 	}
 }

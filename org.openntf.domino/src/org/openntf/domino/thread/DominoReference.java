@@ -15,8 +15,8 @@
  */
 package org.openntf.domino.thread;
 
-import java.lang.ref.PhantomReference;
 import java.lang.ref.ReferenceQueue;
+import java.lang.ref.WeakReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,7 +31,7 @@ import org.openntf.domino.utils.Factory;
  *         DominoReference tracks the lifetime of reference object and recycles delegate if reference object is GCed
  * 
  */
-public class DominoReference extends PhantomReference<Object> {
+public class DominoReference extends WeakReference<Object> {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(DominoReference.class.getName());
 
