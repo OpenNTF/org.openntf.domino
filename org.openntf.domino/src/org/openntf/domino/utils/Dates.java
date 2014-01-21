@@ -923,7 +923,7 @@ public enum Dates {
 	 * @throws IllegalArgumentException
 	 *             if both date nor time arguments are null.
 	 * @throws IllegalArgumentException
-	 *             if neither date nor time arguments can be processed as a date.
+	 *             If both arguments cannot be processed as a date.
 	 */
 	public Date getDate(final Object date, final Object time) throws NullPointerException, IllegalArgumentException {
 		if ((null == date) && (null == time)) {
@@ -931,11 +931,14 @@ public enum Dates {
 		}
 
 		try {
-
 			final Date dDate = (null == date) ? Dates.getDate(time) : Dates.getDate(date);
+			if (null == dDate) {
+				throw new RuntimeException("dDate is null");
+			}
+
 			final Date dTime = (null == time) ? Dates.getDate(date) : Dates.getDate(time);
-			if ((null == dDate) && (null == dTime)) {
-				throw new IllegalArgumentException("dDate and dTime are null");
+			if (null == dTime) {
+				throw new RuntimeException("dTime is null");
 			}
 
 			final Calendar cDate = Dates.getCalendar(dDate);
@@ -949,7 +952,7 @@ public enum Dates {
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
-			throw new IllegalArgumentException("Neither DATE nor TIME argument could be processed as a Date.");
+			throw new IllegalArgumentException("Neither DATE nor TIME argument could be processed as a Date object.");
 		}
 	}
 
