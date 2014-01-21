@@ -30,6 +30,7 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 import org.openntf.arpa.ISO;
+import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.impl.Name;
 
@@ -821,6 +822,80 @@ public enum Strings {
 			DominoUtils.handleException(e);
 		}
 		return "";
+	}
+
+	@SuppressWarnings("unchecked")
+	public static Vector safeEvaluate(final Session session, final String formula) {
+		try {
+			if (null == session) {
+				throw new IllegalArgumentException("Session is null");
+			}
+
+			return Strings.safeEvaluate(session, formula, null);
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+			//			Logger.slogException(Core.CLASSNAME, e, "formula:" + formula);
+		}
+
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static Vector safeEvaluate(final Session session, final String formula, final Document context) {
+		String evalformula = "";
+		try {
+			if (null == session) {
+				throw new IllegalArgumentException("Session is null");
+			}
+
+			if (Strings.isBlankString(formula)) {
+				throw new IllegalArgumentException("Parameter is blank or null");
+			}
+			final String unicodeReplacement = "�";
+			evalformula = formula.replaceAll(unicodeReplacement, "\"").replaceAll(unicodeReplacement, "\"");
+			if (Strings.checkFormulaSyntax(session, evalformula)) {
+				return (null == context) ? session.evaluate(evalformula) : session.evaluate(evalformula, context);
+			}
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+			//					Logger.slogException(Core.CLASSNAME, e, "formula:" + formula);
+		}
+
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static boolean checkFormulaSyntax(final Session session, final String formula) {
+		String syntaxformula = "";
+		try {
+			if (null == session) {
+				throw new IllegalArgumentException("Session is null");
+			}
+			if (Strings.isBlankString(formula)) {
+				throw new IllegalArgumentException("Formula is blank or null");
+			}
+
+			syntaxformula = "@CheckFormulaSyntax({" + formula + "})";
+			final Vector syntax = session.evaluate(syntaxformula);
+			if (syntax.elementAt(0).toString().trim().equalsIgnoreCase("1")) {
+				return true;
+			}
+
+			String msg = Strings.MESSAGE_FORMULA_INVALID;
+			msg += "\n syntax.elementAt(0): \"" + syntax.elementAt(0).toString() + "\"";
+			final String[] info = (String[]) syntax.toArray(new String[syntax.size()]);
+			for (int i = 0; i < info.length; i++) {
+				msg += "\n  syntax.elementAt(" + i + "):" + info[i];
+			}
+
+			throw new IllegalArgumentException(msg);
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+			//					Logger.slogException(Core.CLASSNAME, e, "formula:" + formula, "syntaxformula:" + syntaxformula);
+		}
+
+		return false;
 	}
 
 }
