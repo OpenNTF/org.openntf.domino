@@ -925,7 +925,7 @@ public enum Dates {
 	 * @throws IllegalArgumentException
 	 *             If both arguments cannot be processed as a date.
 	 */
-	public Date getDate(final Object date, final Object time) throws NullPointerException, IllegalArgumentException {
+	public static Date getDate(final Object date, final Object time) throws NullPointerException, IllegalArgumentException {
 		if ((null == date) && (null == time)) {
 			throw new NullPointerException("Both DATE and TIME arguments are null");
 		}
