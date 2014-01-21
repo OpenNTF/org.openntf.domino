@@ -15,7 +15,6 @@ import org.openntf.domino.Base;
 import org.openntf.domino.utils.DominoUtils;
 
 import com.ibm.domino.napi.c.BackendBridge;
-import com.ibm.domino.napi.c.Nsf;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 
 /**
@@ -45,7 +44,7 @@ public class NapiFactory implements org.openntf.domino.napi.NapiFactory {
 		}
 	}
 
-	public static long getHandle(final Base base) {
+	public static long getCApiHandle(final Base base) {
 		if (NotesContext.getCurrentUnchecked() == null) {
 			// if context is not present, do not use napi
 			return 0;
@@ -71,20 +70,22 @@ public class NapiFactory implements org.openntf.domino.napi.NapiFactory {
 
 	public NapiDocument getNapiDocument(final org.openntf.domino.Document doc) {
 
-		long handle = getHandle(doc);
+		long handle = getCApiHandle(doc);
 		if (handle == 0) {
 			return null;
 		}
 		try {
-			long dbHandle = getHandle(doc.getAncestorDatabase());
-			System.out.println(Nsf.ACLGetAdminServer(dbHandle));
+			//long dbHandle = getHandle(doc.getAncestorDatabase());
+			//System.out.println(Nsf.ACLGetAdminServer(dbHandle));
 			//com.ibm.designer.domino.napi.NotesSession nSess = new NotesSession();
 			//com.ibm.designer.domino.napi.NotesDatabase nullDB = nSess.getDatabase((int) getHandle(doc.getAncestorDatabase()));
 			//System.out.println("nullDb: " + nullDB.getDatabasePath());
+			//com.ibm.designer.domino.napi.NotesDatabase nullDB = null;
 			//NotesNote napiNote = (NotesNote) notesNoteConstructor.newInstance(nullDB, (int) handle);
-
-			//return new NapiDocument(napiNote);
-			return null;
+			//System.out.println("DOC1:" + doc.getNoteID());
+			//System.out.println("DOC2:" + Integer.toHexString(napiNote.getNoteId()));
+			return new NapiDocument(handle);
+			//return null;
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
