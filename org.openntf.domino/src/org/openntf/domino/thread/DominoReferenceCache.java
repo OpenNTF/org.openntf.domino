@@ -137,10 +137,9 @@ public class DominoReferenceCache {
 
 		int counter = cache_counter.incrementAndGet();
 		if (counter % GARBAGE_INTERVAL == 0) {
-			// TODO: This may be dangerous when switching off counters. So check for 0
+			// We have to run GC from time to time, otherwise objects will die very late :(
 			int currObjects = Factory.getActiveObjectCount();
 			if (currObjects == 0 || currObjects > 64) {
-				// If you recycle yourself, you do not have to recycle
 				System.gc();
 			}
 		}

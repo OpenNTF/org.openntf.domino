@@ -24,7 +24,9 @@ import java.security.PrivilegedExceptionAction;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
@@ -263,6 +265,24 @@ public enum Factory {
 	/** The manual recycle counter. */
 	private static Counter manualRecycleCounter = new Counter(COUNT_PER_THREAD);
 
+	private static Map<Class<?>, Counter> objectCounter = new ConcurrentHashMap<Class<?>, Counter>() {
+
+		/* (non-Javadoc)
+		 * @see java.util.concurrent.ConcurrentHashMap#get(java.lang.Object)
+		 */
+		@Override
+		public Counter get(final Object key) {
+			// TODO Auto-generated method stub
+			Counter ret = super.get(key);
+			if (ret == null) {
+				ret = new Counter(COUNT_PER_THREAD);
+				put((Class<?>) key, ret);
+			}
+			return ret;
+		}
+
+	};
+
 	/**
 	 * Gets the lotus count.
 	 * 
@@ -275,9 +295,11 @@ public enum Factory {
 	/**
 	 * Count a created lotus element.
 	 */
-	public static void countLotus() {
-		if (TRACE_COUNTERS)
+	public static void countLotus(final Class<?> c) {
+		if (TRACE_COUNTERS) {
 			lotusCounter.increment();
+			objectCounter.get(c).increment();
+		}
 	}
 
 	/**
@@ -311,8 +333,9 @@ public enum Factory {
 	 * 
 	 * @return the int
 	 */
-	public static int countAutoRecycle() {
+	public static int countAutoRecycle(final Class<?> c) {
 		if (TRACE_COUNTERS) {
+			objectCounter.get(c).decrement();
 			return autoRecycleCounter.increment();
 		} else {
 			return 0;
@@ -331,8 +354,9 @@ public enum Factory {
 	/**
 	 * Count a manual recycle
 	 */
-	public static int countManualRecycle() {
+	public static int countManualRecycle(final Class<?> c) {
 		if (TRACE_COUNTERS) {
+			objectCounter.get(c).decrement();
 			return manualRecycleCounter.increment();
 		} else {
 			return 0;
@@ -652,6 +676,15 @@ public enum Factory {
 		clearClassLoader();
 		clearBubbleExceptions();
 		clearDominoGraph();
+		if (TRACE_COUNTERS && !objectCounter.isEmpty()) {
+			System.out.println("=== The following objects were left in memory ===");
+			for (Entry<Class<?>, Counter> e : objectCounter.entrySet()) {
+				int i = e.getValue().intValue();
+				if (i != 0) {
+					System.out.println(i + "\t" + e.getKey().getName());
+				}
+			}
+		}
 		return result;
 	}
 

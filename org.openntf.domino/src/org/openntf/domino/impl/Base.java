@@ -344,6 +344,12 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 */
 	@SuppressWarnings("rawtypes")
 	protected Base(final D delegate, P parent, final WrapperFactory wf, final long cppId, final int classId) {
+		if (wf == null) {
+			factory_ = Factory.getWrapperFactory();
+		} else {
+			factory_ = wf;
+		}
+
 		if (parent == null) {
 			try {
 				parent = findParent(delegate);
@@ -355,12 +361,6 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		// final, these will never change
 		parent_ = parent;
 		clsid = classId;
-
-		if (wf == null) {
-			factory_ = Factory.getWrapperFactory();
-		} else {
-			factory_ = wf;
-		}
 
 		if (delegate instanceof lotus.domino.local.NotesBase) {
 			setDelegate(delegate, cppId);
@@ -623,7 +623,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		if (isDead(delegate_))
 			return;
 		s_recycle(delegate_); // RPr: we must recycle the delegate, not "this". Do not call getDelegate as it may reinstantiate it
-		Factory.countManualRecycle();
+		Factory.countManualRecycle(delegate_.getClass());
 	}
 
 	// unwrap objects
@@ -1106,9 +1106,9 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		throw new NotImplementedException();
 	}
 
-	@Deprecated
-	boolean isDead() {
-		throw new NotImplementedException();
+	@Override
+	public boolean isDead() {
+		return isDead(delegate_);
 	}
 
 	@Deprecated
