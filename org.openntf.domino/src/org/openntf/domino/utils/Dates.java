@@ -851,7 +851,8 @@ public enum Dates {
 	 * @param object
 	 *            Source from which to create or cast a Date object.
 	 * 
-	 * @return Newly created or casted Date from the source. Null on exception.
+	 * @return Newly created or casted Date from the source. Null on exception
+	 * 
 	 */
 	public static Date getDate(final Object object) {
 
@@ -912,21 +913,31 @@ public enum Dates {
 	 * Creates a New Date object from the passed in arguments.
 	 * 
 	 * @param date
-	 *            Source from which to get the DATE portion of the new Date object.
+	 *            Source from which to get the DATE portion of the new Date object. If null then the value from time will be used.
 	 * 
 	 * @param time
-	 *            Source from which to get the TIME portion of the new Date object.
+	 *            Source from which to get the TIME portion of the new Date object. If null then the value from date will be used.
 	 * 
-	 * @return Newly created or cast Date from the source. Null on exception.
+	 * @return Newly created or cast Date from the source.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if both date nor time arguments are null.
+	 * @throws IllegalArgumentException
+	 *             if neither date nor time arguments can be processed as a date.
 	 */
-	public Date getDate(final Object date, final Object time) {
+	public Date getDate(final Object date, final Object time) throws NullPointerException, IllegalArgumentException {
+		if ((null == date) && (null == time)) {
+			throw new NullPointerException("Both DATE and TIME arguments are null");
+		}
+
 		try {
-			if ((null == date) && (null == time)) {
-				return Dates.getDate();
-			}
 
 			final Date dDate = (null == date) ? Dates.getDate(time) : Dates.getDate(date);
-			final Date dTime = (null == time) ? Dates.getDate() : Dates.getDate(time);
+			final Date dTime = (null == time) ? Dates.getDate(date) : Dates.getDate(time);
+			if ((null == dDate) && (null == dTime)) {
+				throw new IllegalArgumentException("dDate and dTime are null");
+			}
+
 			final Calendar cDate = Dates.getCalendar(dDate);
 			final Calendar cTime = Dates.getCalendar(dTime);
 
@@ -938,9 +949,8 @@ public enum Dates {
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
+			throw new IllegalArgumentException("Neither DATE nor TIME argument could be processed as a Date.");
 		}
-
-		return null;
 	}
 
 	/**
