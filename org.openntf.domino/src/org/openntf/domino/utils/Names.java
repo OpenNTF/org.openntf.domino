@@ -64,7 +64,7 @@ public enum Names {
 
 		@Override
 		public String toString() {
-			return Names.class.getName() + ": " + this.name() + "{\"" + this.getCode() + "\"}";
+			return LookupType.class.getName() + ": " + this.name() + "{\"" + this.getCode() + "\"}";
 		}
 
 		/**
