@@ -346,7 +346,7 @@ public enum DACL {
 	 * @return Flag indicating the success / failure of the operation.
 	 */
 	public boolean set(final Document document, final Object values) {
-		return this.set(document, Congeries.getTreeSetStrings(values));
+		return this.set(document, CollectionUtils.getTreeSetStrings(values));
 	}
 
 	/**
@@ -400,7 +400,7 @@ public enum DACL {
 	 * @return Flag indicating the success / failure of the operation.
 	 */
 	public boolean add(final Document document, final Object values) {
-		return this.add(document, Congeries.getTreeSetStrings(values));
+		return this.add(document, CollectionUtils.getTreeSetStrings(values));
 	}
 
 	/**
@@ -676,7 +676,7 @@ public enum DACL {
 						final TreeSet<String> result = new TreeSet<String>();
 						for (Item item : document.getItems()) {
 							if (item.isAuthors()) {
-								members = Congeries.getTreeSetStrings(item.getValues(String.class));
+								members = CollectionUtils.getTreeSetStrings(item.getValues(String.class));
 								if ((null != members) && members.size() > 0) {
 									result.addAll(members);
 								}
@@ -689,7 +689,7 @@ public enum DACL {
 						final TreeSet<String> result = new TreeSet<String>();
 						for (Item item : document.getItems()) {
 							if (item.isAuthors()) {
-								members = Congeries.getTreeSetStrings(item.getValues(String.class));
+								members = CollectionUtils.getTreeSetStrings(item.getValues(String.class));
 								if ((null != members) && members.size() > 0) {
 									result.addAll(members);
 								}
@@ -705,7 +705,7 @@ public enum DACL {
 					Item item = document.getFirstItem(daclType.getItemname());
 					// verify the item is of the correct type
 					if ((item.isAuthors() && DACL.AUTHORS.equals(daclType)) || (item.isReaders() && DACL.READERS.equals(daclType))) {
-						final TreeSet<String> result = Congeries.getTreeSetStrings(item.getValues(String.class));
+						final TreeSet<String> result = CollectionUtils.getTreeSetStrings(item.getValues(String.class));
 						return ((null == result) || (result.size() < 1)) ? null : result;
 					}
 				}
@@ -892,7 +892,7 @@ public enum DACL {
 
 			if (null != database) {
 				ACL acl = database.getACL();
-				final TreeSet<String> roles = Congeries.getTreeSetStrings(acl.getRoles());
+				final TreeSet<String> roles = CollectionUtils.getTreeSetStrings(acl.getRoles());
 				if (null != roles) {
 					final TreeSet<String> remove = new TreeSet<String>();
 					for (final String role : roles) {
