@@ -44,11 +44,14 @@ public class OpenntfHttpService extends HttpService {
 		super(lcdEnv);
 		this.services = lcdEnv.getServices();
 		// here is the right place to initialize things on server start
+		Factory.init();
+		Factory.terminate();
 	}
 
 	@Override
 	public void destroyService() {
 		// here you can put code that runs when the Http-Task will shut down.
+
 	}
 
 	/*
