@@ -133,7 +133,7 @@ public enum Strings {
 	}
 
 	public static String getEnvarName(final String identifier) {
-		return (null == identifier) ? "" : identifier.trim().toUpperCase().replaceAll(" ", "_");
+		return (Strings.isBlankString(identifier)) ? "" : identifier.trim().toUpperCase().replaceAll(" ", "_");
 	}
 
 	public static boolean isPotentialID(final String id, final IDTYPE idType) {
