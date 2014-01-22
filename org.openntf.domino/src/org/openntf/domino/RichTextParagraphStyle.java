@@ -17,6 +17,7 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
@@ -24,6 +25,25 @@ import org.openntf.domino.types.SessionDescendant;
  */
 public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagraphStyle>, lotus.domino.RichTextParagraphStyle,
 		org.openntf.domino.ext.RichTextParagraphStyle, SessionDescendant {
+
+	public static class Schema extends FactorySchema<RichTextParagraphStyle, lotus.domino.RichTextParagraphStyle, Session> {
+		@Override
+		public Class<RichTextParagraphStyle> typeClass() {
+			return RichTextParagraphStyle.class;
+		}
+
+		@Override
+		public Class<lotus.domino.RichTextParagraphStyle> delegateClass() {
+			return lotus.domino.RichTextParagraphStyle.class;
+		}
+
+		@Override
+		public Class<Session> parentClass() {
+			return Session.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/**
 	 * The Enum Align.

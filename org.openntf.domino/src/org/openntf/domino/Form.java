@@ -19,11 +19,31 @@ import java.util.Vector;
 
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.Design;
+import org.openntf.domino.types.FactorySchema;
 
 /**
  * The Interface Form.
  */
 public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, org.openntf.domino.ext.Form, Design, DatabaseDescendant {
+
+	public static class Schema extends FactorySchema<Form, lotus.domino.Form, Database> {
+		@Override
+		public Class<Form> typeClass() {
+			return Form.class;
+		}
+
+		@Override
+		public Class<lotus.domino.Form> delegateClass() {
+			return lotus.domino.Form.class;
+		}
+
+		@Override
+		public Class<Database> parentClass() {
+			return Database.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)

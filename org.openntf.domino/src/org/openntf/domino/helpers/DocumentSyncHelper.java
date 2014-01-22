@@ -28,7 +28,6 @@ import org.openntf.domino.Item;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.transactions.DatabaseTransaction;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -122,14 +121,14 @@ public class DocumentSyncHelper {
 		} else if (controlDoc.hasItem(Controls.TARGET_SERVER.toString())) {
 			setTargetServer(controlDoc.getItemValueString(Controls.TARGET_SERVER.toString()));
 		} else {
-			setTargetServer(Factory.getParentDatabase(controlDoc).getServer());
+			setTargetServer(controlDoc.getParentDatabase().getServer());
 		}
 		if (controlMap.containsKey(Controls.TARGET_FILEPATH)) {
 			setTargetFilepath(controlDoc.getItemValueString(controlMap.get(Controls.TARGET_FILEPATH)));
 		} else if (controlDoc.hasItem(Controls.TARGET_FILEPATH.toString())) {
 			setTargetFilepath(controlDoc.getItemValueString(Controls.TARGET_FILEPATH.toString()));
 		} else {
-			setTargetFilepath(Factory.getParentDatabase(controlDoc).getFilePath());
+			setTargetFilepath(controlDoc.getParentDatabase().getFilePath());
 		}
 		if (controlMap.containsKey(Controls.TARGET_LOOKUP_VIEW)) {
 			setTargetLookupView(controlDoc.getItemValueString(controlMap.get(Controls.TARGET_LOOKUP_VIEW)));

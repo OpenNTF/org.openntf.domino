@@ -32,14 +32,14 @@
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/org.openntf.domino/src</locationURI>
 		</link>
 		<link>
+			<name>jsr305</name>
+			<type>2</type>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/org.openntf.domino/jsr305</locationURI>
+		</link>
+		<link>
 			<name>tinkerpop</name>
 			<type>2</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/org.openntf.domino/tinkerpop</locationURI>
 		</link>
-		<link>
-			<name>jsr305</name>
-			<type>2</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/org.openntf.domino/jsr305</locationURI>
-		</link>		
 	</linkedResources>
 </projectDescription>

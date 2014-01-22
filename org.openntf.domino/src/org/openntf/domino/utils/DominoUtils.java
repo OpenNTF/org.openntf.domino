@@ -381,6 +381,8 @@ public enum DominoUtils {
 	public static Pattern C_MATCH = Pattern.compile("(C=)[^/]+", Pattern.CASE_INSENSITIVE);
 
 	public static boolean isHierarchicalName(final String name) {
+		if (name == null)
+			return false;
 		return IS_HIERARCHICAL_MATCH.matcher(name).find();
 	}
 

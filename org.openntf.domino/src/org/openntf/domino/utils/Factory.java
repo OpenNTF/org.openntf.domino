@@ -21,10 +21,14 @@ import java.security.AccessControlException;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.ServiceLoader;
+import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
@@ -36,6 +40,7 @@ import lotus.domino.NotesFactory;
 import lotus.domino.NotesThread;
 
 import org.openntf.domino.Base;
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Session;
@@ -50,35 +55,43 @@ import org.openntf.domino.logging.DefaultFileHandler;
 import org.openntf.domino.logging.FileFormatter;
 import org.openntf.domino.logging.OpenLogHandler;
 import org.openntf.domino.types.DatabaseDescendant;
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Enum Factory.
+ * The Enum Factory. Does the Mapping lotusObject <=> OpenNTF-Object
  */
 public enum Factory {
 	;
 
-	private static ThreadLocal<WrapperFactory> currentWrapperFactory = new ThreadLocal<WrapperFactory>() {
-		@Override
-		protected WrapperFactory initialValue() {
-			return new org.openntf.domino.impl.WrapperFactory();
-		}
-	};
+	/**
+	 * Holder for the wrapper-factory that converts lotus.domino objects to org.openntf.domino objects
+	 */
+	private static ThreadLocal<WrapperFactory> currentWrapperFactory = new ThreadLocal<WrapperFactory>();
 
 	private static ThreadLocal<ClassLoader> currentClassLoader_ = new ThreadLocal<ClassLoader>();
 
 	private static ThreadLocal<Session> currentSessionHolder_ = new ThreadLocal<Session>();
 
+	/**
+	 * setup the environment and loggers
+	 * 
+	 * @author praml
+	 * 
+	 */
 	private static class SetupJob implements Runnable {
+		@Override
 		public void run() {
 			try {
 				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 					@Override
 					public Object run() throws Exception {
 						lotus.domino.Session session = NotesFactory.createSession();
-						Factory.loadEnvironment(session);
-						session.recycle();
+						try {
+							loadEnvironment(session);
+						} finally {
+							session.recycle();
+						}
 						return null;
 					}
 				});
@@ -91,8 +104,9 @@ public enum Factory {
 			try {
 				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 					@Override
+					// TODO RPr: read config from notes.ini / env
 					public Object run() throws Exception {
-						String pattern = Factory.getDataPath() + "/IBM_TECHNICAL_SUPPORT/org.openntf.%u.%g.log";
+						String pattern = getDataPath() + "/IBM_TECHNICAL_SUPPORT/org.openntf.%u.%g.log";
 						Logger oodLogger = Logger.getLogger("org.openntf.domino");
 						oodLogger.setLevel(Level.WARNING);
 
@@ -133,6 +147,11 @@ public enum Factory {
 	private static boolean session_init = false;
 	private static boolean jar_init = false;
 
+	/**
+	 * load the configuration
+	 * 
+	 * @param session
+	 */
 	public static void loadEnvironment(final lotus.domino.Session session) {
 		if (ENVIRONMENT == null) {
 			ENVIRONMENT = new HashMap<String, String>();
@@ -240,6 +259,27 @@ public enum Factory {
 	/** The auto recycle counter. */
 	private static Counter autoRecycleCounter = new Counter(COUNT_PER_THREAD);
 
+	/** The manual recycle counter. */
+	private static Counter manualRecycleCounter = new Counter(COUNT_PER_THREAD);
+
+	private static Map<Class<?>, Counter> objectCounter = new ConcurrentHashMap<Class<?>, Counter>() {
+
+		/* (non-Javadoc)
+		 * @see java.util.concurrent.ConcurrentHashMap#get(java.lang.Object)
+		 */
+		@Override
+		public Counter get(final Object key) {
+			// TODO Auto-generated method stub
+			Counter ret = super.get(key);
+			if (ret == null) {
+				ret = new Counter(COUNT_PER_THREAD);
+				put((Class<?>) key, ret);
+			}
+			return ret;
+		}
+
+	};
+
 	/**
 	 * Gets the lotus count.
 	 * 
@@ -252,9 +292,11 @@ public enum Factory {
 	/**
 	 * Count a created lotus element.
 	 */
-	public static void countLotus() {
-		if (TRACE_COUNTERS)
+	public static void countLotus(final Class<?> c) {
+		if (TRACE_COUNTERS) {
 			lotusCounter.increment();
+			objectCounter.get(c).increment();
+		}
 	}
 
 	/**
@@ -269,7 +311,7 @@ public enum Factory {
 	/**
 	 * Count recycle error.
 	 */
-	public static void countRecycleError() {
+	public static void countRecycleError(final Class<?> c) {
 		if (TRACE_COUNTERS)
 			recycleErrCounter.increment();
 	}
@@ -288,16 +330,60 @@ public enum Factory {
 	 * 
 	 * @return the int
 	 */
-	public static int countAutoRecycle() {
+	public static int countAutoRecycle(final Class<?> c) {
 		if (TRACE_COUNTERS) {
+			objectCounter.get(c).decrement();
 			return autoRecycleCounter.increment();
 		} else {
 			return 0;
 		}
 	}
 
+	/**
+	 * Gets the manual recycle count.
+	 * 
+	 * @return the manual recycle count
+	 */
+	public static int getManualRecycleCount() {
+		return manualRecycleCounter.intValue();
+	}
+
+	/**
+	 * Count a manual recycle
+	 */
+	public static int countManualRecycle(final Class<?> c) {
+		if (TRACE_COUNTERS) {
+			objectCounter.get(c).decrement();
+			return manualRecycleCounter.increment();
+		} else {
+			return 0;
+		}
+	}
+
+	/**
+	 * get the active object count
+	 * 
+	 * @return
+	 */
+	public static int getActiveObjectCount() {
+		return lotusCounter.intValue() - autoRecycleCounter.intValue() - manualRecycleCounter.intValue();
+	}
+
+	/**
+	 * Determine the run context where we are
+	 * 
+	 * @return
+	 */
 	public static RunContext getRunContext() {
 		// TODO finish this implementation, which needs a lot of work.
+		// - ADDIN
+		// - APPLET
+		// - DIIOP
+		// - DOTS
+		// - PLUGIN
+		// - SERVLET
+		// - XPAGES_NSF
+		// maybe a simple way to determine => create a Throwable and look into the stack trace
 		RunContext result = RunContext.UNKNOWN;
 		SecurityManager sm = System.getSecurityManager();
 		if (sm == null)
@@ -337,47 +423,107 @@ public enum Factory {
 	 * @return
 	 */
 	public static WrapperFactory getWrapperFactory() {
-		return currentWrapperFactory.get();
+		WrapperFactory wf = currentWrapperFactory.get();
+		if (wf == null) {
+			ClassLoader cl = getClassLoader();
+			// System.out.println("Got this Classloader: " + cl);
+
+			if (cl != null) {
+				ServiceLoader<WrapperFactory> loader = ServiceLoader.load(WrapperFactory.class, cl);
+				Iterator<WrapperFactory> it = loader.iterator();
+				if (it.hasNext()) {
+					wf = it.next();
+					// TODO RPr remove these debug prints
+					System.out.println("Using alternative WrapperFactory: " + wf);
+				}
+			}
+			if (wf == null) {
+				// System.out.println("Using default WrapperFactory");
+				wf = new org.openntf.domino.impl.WrapperFactory();
+			}
+			currentWrapperFactory.set(wf);
+		}
+		return wf;
+	}
+
+	/**
+	 * Set/changes the wrapperFactory for this thread
+	 * 
+	 * @param wf
+	 */
+	public static void setWrapperFactory(final WrapperFactory wf) {
+		currentWrapperFactory.set(wf);
 	}
 
 	// --- session handling 
-	/**
-	 * Wraps and caches sessions. Sessions are put in a separate map (otherwise you can use fromLotusObject). (you may overwrite this if we
-	 * make a non static IFactory)
+
+	@Deprecated
+	public static org.openntf.domino.Document fromLotusDocument(final lotus.domino.Document lotus, final Base parent) {
+		return (org.openntf.domino.Document) getWrapperFactory().fromLotus(lotus, Document.SCHEMA, (Database) parent);
+	}
+
+	/*
+	 * (non-JavaDoc)
 	 * 
-	 * @param lotus
-	 * @param parent
-	 * @return
+	 * @see org.openntf.domino.WrapperFactory#fromLotus(lotus.domino.Base, FactorySchema, Base)
 	 */
-	public static Session fromLotusSession(final lotus.domino.Session lotus, final Base parent) {
-		return getWrapperFactory().fromLotusSession(lotus, parent);
+	@SuppressWarnings("rawtypes")
+	public static <T extends Base, D extends lotus.domino.Base, P extends Base> T fromLotus(final D lotus,
+			final FactorySchema<T, D, P> schema, final P parent) {
+		return getWrapperFactory().fromLotus(lotus, schema, parent);
 	}
 
 	/**
-	 * Wraps & caches a lotus.domino.Document
+	 * From lotus wraps a given lotus collection in an org.openntf.domino collection
 	 * 
+	 * @param <T>
+	 *            the generic org.openntf.domino type (drapper)
+	 * @param <D>
+	 *            the generic lotus.domino type (delegate)
+	 * @param <P>
+	 *            the generic org.openntf.domino type (parent)
 	 * @param lotus
+	 *            the object to wrap
+	 * @param schema
+	 *            the generic schema to ensure type safeness (may be null)
 	 * @param parent
-	 * @return
+	 *            the parent
+	 * @return the wrapped object
 	 */
-	public static Document fromLotusDocument(final lotus.domino.Document lotus, final Base parent) {
-		return getWrapperFactory().fromLotusDocument(lotus, parent);
+	@SuppressWarnings({ "rawtypes" })
+	public static <T extends Base, D extends lotus.domino.Base, P extends Base> Collection<T> fromLotus(final Collection<?> lotusColl,
+			final FactorySchema<T, D, P> schema, final P parent) {
+		return getWrapperFactory().fromLotus(lotusColl, schema, parent);
 	}
 
-	// --- others
 	/**
-	 * Wraps & caches all lotus object except Names, DateTimes, Sessions, Documents
+	 * From lotus wraps a given lotus collection in an org.openntf.domino collection
 	 * 
+	 * @param <T>
+	 *            the generic org.openntf.domino type (wrapper)
+	 * @param <D>
+	 *            the generic lotus.domino type (delegate)
+	 * @param <P>
+	 *            the generic org.openntf.domino type (parent)
 	 * @param lotus
+	 *            the object to wrap
+	 * @param schema
+	 *            the generic schema to ensure type safeness (may be null)
 	 * @param parent
-	 * @return
+	 *            the parent
+	 * @return the wrapped object
 	 */
-	public static Base fromLotusObject(final lotus.domino.Base lotus, final Base parent) {
-		return getWrapperFactory().fromLotusObject(lotus, parent);
+	@SuppressWarnings("rawtypes")
+	public static <T extends Base, D extends lotus.domino.Base, P extends Base> Vector<T> fromLotusAsVector(final Collection<?> lotusColl,
+			final FactorySchema<T, D, P> schema, final P parent) {
+		return getWrapperFactory().fromLotusAsVector(lotusColl, schema, parent);
 	}
 
 	/**
 	 * From lotus.
+	 * 
+	 * @deprecated Use {@link #fromLotus(lotus.domino.Base, FactorySchema, Base)} instead
+	 * 
 	 * 
 	 * @param <T>
 	 *            the generic type
@@ -390,12 +536,15 @@ public enum Factory {
 	 * @return the t
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Deprecated
 	public static <T> T fromLotus(final lotus.domino.Base lotus, final Class<? extends Base> T, final Base parent) {
-		return getWrapperFactory().fromLotus(lotus, T, parent);
+		return (T) getWrapperFactory().fromLotus(lotus, (FactorySchema) null, parent);
 	}
 
 	/**
 	 * From lotus.
+	 * 
+	 * @deprecated Use {@link #fromLotus(Collection, FactorySchema, Base)} instead
 	 * 
 	 * @param <T>
 	 *            the generic type
@@ -408,49 +557,23 @@ public enum Factory {
 	 * @return the collection
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Deprecated
 	public static <T> Collection<T> fromLotus(final Collection<?> lotusColl, final Class<? extends Base> T, final Base<?> parent) {
-		Collection<T> result = new ArrayList<T>(); // TODO anyone got a better implementation?
-		WrapperFactory wf = getWrapperFactory();
-
-		if (!lotusColl.isEmpty()) {
-			for (Object lotus : lotusColl) {
-				if (lotus instanceof lotus.domino.Base) {
-					result.add((T) wf.fromLotus((lotus.domino.Base) lotus, T, parent));
-				}
-			}
-		}
-		return result;
-
+		return getWrapperFactory().fromLotus(lotusColl, (FactorySchema) null, parent);
 	}
 
 	/**
-	 * From lotus as vector.
-	 * 
-	 * @param <T>
-	 *            the generic type
+	 * @deprecated Use {@link #fromLotusAsVector(Collection, FactorySchema, Base)}
 	 * @param lotusColl
-	 *            the lotus coll
 	 * @param T
-	 *            the t
 	 * @param parent
-	 *            the parent
-	 * @return the org.openntf.domino.impl. vector
+	 * @return
 	 */
+	@Deprecated
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <T> org.openntf.domino.impl.Vector<T> fromLotusAsVector(final Collection<?> lotusColl,
-			final Class<? extends org.openntf.domino.Base> T, final org.openntf.domino.Base<?> parent) {
-		org.openntf.domino.impl.Vector<T> result = new org.openntf.domino.impl.Vector<T>(); // TODO anyone got a better implementation?
-		WrapperFactory wf = getWrapperFactory();
-
-		if (!lotusColl.isEmpty()) {
-			for (Object lotus : lotusColl) {
-				if (lotus instanceof lotus.domino.local.NotesBase) {
-					result.add((T) wf.fromLotus((lotus.domino.Base) lotus, T, parent));
-				}
-			}
-		}
-		return result;
-
+	public static <T> Vector<T> fromLotusAsVector(final Collection<?> lotusColl, final Class<? extends org.openntf.domino.Base> T,
+			final org.openntf.domino.Base<?> parent) {
+		return getWrapperFactory().fromLotusAsVector(lotusColl, (FactorySchema) null, parent);
 	}
 
 	/**
@@ -462,108 +585,22 @@ public enum Factory {
 	 */
 	public static java.util.Vector<Object> wrapColumnValues(final Collection<?> values, final org.openntf.domino.Session session) {
 		if (values == null) {
+			log_.log(Level.WARNING, "Request to wrapColumnValues for a collection of null");
 			return null;
 		}
-		int i = 0;
-		WrapperFactory wf = getWrapperFactory();
-		java.util.Vector<Object> result = new org.openntf.domino.impl.Vector<Object>();
-		for (Object value : values) {
-			if (value == null) {
-				result.add(null);
-			} else if (value instanceof lotus.domino.DateTime) {
-				Object wrapped = null;
-				try {
-					wrapped = wf.fromLotus((lotus.domino.DateTime) value, org.openntf.domino.DateTime.class, session);
-				} catch (Throwable t) {
-					if (t instanceof NotesException) {
-						String text = ((NotesException) t).text;
-						System.out.println("Unable to wrap a DateTime found in Vector member " + i + " of " + values.size() + " because "
-								+ text);
-						try {
-							lotus.domino.DateTime dt = (lotus.domino.DateTime) value;
-							String gmttime = dt.getGMTTime();
-							System.out.println("GMTTime: " + gmttime);
-						} catch (Exception e) {
-
-						}
-					} else {
-						System.out.println("Unable to wrap a DateTime found in Vector member " + i + " of " + values.size() + " because "
-								+ t.getClass().getName() + " (" + t.getLocalizedMessage() + ")");
-					}
-
-				}
-				if (wrapped == null) {
-					result.add("");
-				} else {
-					result.add(wrapped);
-				}
-			} else if (value instanceof lotus.domino.DateRange) {
-				result.add(fromLotus((lotus.domino.DateRange) value, org.openntf.domino.DateRange.class, session));
-			} else if (value instanceof Collection) {
-				result.add(wrapColumnValues((Collection<?>) value, session));
-			} else {
-				result.add(value);
-			}
-			i++;
-		}
-		return result;
+		return getWrapperFactory().wrapColumnValues(values, session);
 	}
 
-	//
-	//	/**
-	//	 * Wrapped evaluate.
-	//	 * 
-	//	 * @param session
-	//	 *            the session
-	//	 * @param formula
-	//	 *            the formula
-	//	 * @return the java.util. vector
-	//	 */
-	//	public static java.util.Vector<Object> wrappedEvaluate(final org.openntf.domino.Session session, final String formula) {
-	//		java.util.Vector<Object> result = new org.openntf.domino.impl.Vector<Object>();
-	//		java.util.Vector<Object> values = session.evaluate(formula);
-	//		for (Object value : values) {
-	//			if (value instanceof lotus.domino.DateTime) {
-	//				result.add(fromLotus((lotus.domino.DateTime) value, org.openntf.domino.impl.DateTime.class, session));
-	//			} else if (value instanceof lotus.domino.DateRange) {
-	//				result.add(fromLotus((lotus.domino.DateRange) value, org.openntf.domino.impl.DateRange.class, session));
-	//			} else if (value instanceof Collection) {
-	//				result.add(wrapColumnValues((Collection<?>) value, session));
-	//			} else {
-	//				result.add(value);
-	//			}
-	//		}
-	//		return result;
-	//	}
-	//
-	//	/**
-	//	 * Wrapped evaluate.
-	//	 * 
-	//	 * @param session
-	//	 *            the session
-	//	 * @param formula
-	//	 *            the formula
-	//	 * @param contextDocument
-	//	 *            the context document
-	//	 * @return the java.util. vector
-	//	 */
-	//	public static java.util.Vector<Object> wrappedEvaluate(final org.openntf.domino.Session session, final String formula,
-	//			final lotus.domino.Document contextDocument) {
-	//		java.util.Vector<Object> result = new org.openntf.domino.impl.Vector<Object>();
-	//		java.util.Vector<Object> values = session.evaluate(formula, contextDocument);
-	//		for (Object value : values) {
-	//			if (value instanceof lotus.domino.DateTime) {
-	//				result.add(fromLotus((lotus.domino.DateTime) value, org.openntf.domino.impl.DateTime.class, session));
-	//			} else if (value instanceof lotus.domino.DateRange) {
-	//				result.add(fromLotus((lotus.domino.DateRange) value, org.openntf.domino.impl.DateRange.class, session));
-	//			} else if (value instanceof Collection) {
-	//				result.add(wrapColumnValues((Collection<?>) value, session));
-	//			} else {
-	//				result.add(value);
-	//			}
-	//		}
-	//		return result;
-	//	}
+	/**
+	 * Method to unwrap a object
+	 * 
+	 * @param the
+	 *            object to unwrap
+	 * @return the unwrapped object
+	 */
+	public static <T extends lotus.domino.Base> T toLotus(final T base) {
+		return getWrapperFactory().toLotus(base);
+	}
 
 	/**
 	 * Gets the session.
@@ -574,7 +611,7 @@ public enum Factory {
 		org.openntf.domino.Session result = currentSessionHolder_.get();
 		if (result == null) {
 			try {
-				result = Factory.fromLotus(lotus.domino.NotesFactory.createSession(), Session.class, null);
+				result = Factory.fromLotus(lotus.domino.NotesFactory.createSession(), Session.SCHEMA, null);
 			} catch (lotus.domino.NotesException ne) {
 				try {
 					result = XSPUtil.getCurrentSession();
@@ -598,7 +635,7 @@ public enum Factory {
 	}
 
 	public static void setSession(final lotus.domino.Session session) {
-		currentSessionHolder_.set((Session) fromLotus(session, org.openntf.domino.Session.class, null));
+		currentSessionHolder_.set(fromLotus(session, Session.SCHEMA, null));
 	}
 
 	public static void clearSession() {
@@ -632,6 +669,10 @@ public enum Factory {
 		currentClassLoader_.set(loader);
 	}
 
+	public static void clearWrapperFactory() {
+		currentWrapperFactory.set(null);
+	}
+
 	public static void clearClassLoader() {
 		currentClassLoader_.set(null);
 	}
@@ -644,19 +685,62 @@ public enum Factory {
 		DominoUtils.setBubbleExceptions(null);
 	}
 
+	/**
+	 * Begin with a clear environment
+	 */
+	public static void init() {
+		// TODO Auto-generated method stub
+
+	}
+
 	public static lotus.domino.Session terminate() {
 		lotus.domino.Session result = null;
 		WrapperFactory wf = getWrapperFactory();
 		if (currentSessionHolder_.get() != null) {
-			result = (lotus.domino.Session) wf.toLotus(currentSessionHolder_.get());
+			result = wf.toLotus(currentSessionHolder_.get());
 		}
-		getWrapperFactory().terminate();
+		wf.terminate();
 
 		clearSession();
-		clearClassLoader();
 		clearBubbleExceptions();
 		clearDominoGraph();
+		clearWrapperFactory();
+		clearClassLoader();
 		return result;
+	}
+
+	/**
+	 * Debug method to get statistics
+	 * 
+	 * @param details
+	 * @return
+	 */
+	public String dumpCounters(final boolean details) {
+		if (!TRACE_COUNTERS)
+			return "Counters are disabled";
+		StringBuilder sb = new StringBuilder();
+		sb.append("LotusCount: ");
+		sb.append(getLotusCount());
+
+		sb.append(" AutoRecycled: ");
+		sb.append(getAutoRecycleCount());
+		sb.append(" ManualRecycled: ");
+		sb.append(getManualRecycleCount());
+		sb.append(" RecycleErrors: ");
+		sb.append(getRecycleErrorCount());
+		sb.append(" ActiveObjects: ");
+		sb.append(getActiveObjectCount());
+
+		if (!objectCounter.isEmpty() && details) {
+			sb.append("\n=== The following objects were left in memory ===");
+			for (Entry<Class<?>, Counter> e : objectCounter.entrySet()) {
+				int i = e.getValue().intValue();
+				if (i != 0) {
+					sb.append("\n" + i + "\t" + e.getKey().getName());
+				}
+			}
+		}
+		return sb.toString();
 	}
 
 	/**
@@ -670,7 +754,7 @@ public enum Factory {
 				@Override
 				public Object run() throws Exception {
 					lotus.domino.Session s = lotus.domino.NotesFactory.createSessionWithFullAccess();
-					return fromLotus(s, org.openntf.domino.Session.class, null);
+					return fromLotus(s, org.openntf.domino.Session.SCHEMA, null);
 				}
 			});
 			if (result instanceof org.openntf.domino.Session) {
@@ -693,7 +777,7 @@ public enum Factory {
 				@Override
 				public Object run() throws Exception {
 					lotus.domino.Session s = lotus.domino.NotesFactory.createTrustedSession();
-					return fromLotus(s, org.openntf.domino.Session.class, null);
+					return fromLotus(s, org.openntf.domino.Session.SCHEMA, null);
 				}
 			});
 			if (result instanceof org.openntf.domino.Session) {
@@ -712,16 +796,15 @@ public enum Factory {
 	 *            the base
 	 * @return the parent database
 	 */
-	public static org.openntf.domino.Database getParentDatabase(final org.openntf.domino.Base<?> base) {
-		org.openntf.domino.Database result = null;
+	@Deprecated
+	public static Database getParentDatabase(final Base base) {
 		if (base instanceof org.openntf.domino.Database) {
-			result = (org.openntf.domino.Database) base;
+			return (org.openntf.domino.Database) base;
 		} else if (base instanceof DatabaseDescendant) {
-			result = ((DatabaseDescendant) base).getAncestorDatabase();
+			return ((DatabaseDescendant) base).getAncestorDatabase();
 		} else {
 			throw new UndefinedDelegateTypeException();
 		}
-		return result;
 	}
 
 	/**
@@ -731,7 +814,7 @@ public enum Factory {
 	 *            the base
 	 * @return the session
 	 */
-	public static org.openntf.domino.Session getSession(final org.openntf.domino.Base<?> base) {
+	public static Session getSession(final lotus.domino.Base base) {
 		org.openntf.domino.Session result = null;
 		if (base instanceof SessionDescendant) {
 			result = ((SessionDescendant) base).getAncestorSession();
@@ -742,7 +825,7 @@ public enum Factory {
 			throw new UndefinedDelegateTypeException();
 		}
 		if (result == null)
-			result = getSession(); // org.openntf.domino.impl.Session.getDefaultSession(); // last ditch, get the primary Session;
+			result = getSession(); // last ditch, get the primary Session;
 		return result;
 	}
 

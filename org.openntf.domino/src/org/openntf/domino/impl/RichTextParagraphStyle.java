@@ -19,6 +19,7 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -26,8 +27,8 @@ import org.openntf.domino.utils.Factory;
 /**
  * The Class RichTextParagraphStyle.
  */
-public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextParagraphStyle, lotus.domino.RichTextParagraphStyle> implements
-		org.openntf.domino.RichTextParagraphStyle {
+public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextParagraphStyle, lotus.domino.RichTextParagraphStyle, Session>
+		implements org.openntf.domino.RichTextParagraphStyle {
 
 	/**
 	 * Instantiates a new rich text paragraph style.
@@ -37,8 +38,34 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public RichTextParagraphStyle(final lotus.domino.RichTextParagraphStyle delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, Factory.getSession(parent));
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public RichTextParagraphStyle(final lotus.domino.RichTextParagraphStyle delegate, final Session parent, final WrapperFactory wf,
+			final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_RTPSTYLE);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Session findParent(final lotus.domino.RichTextParagraphStyle delegate) {
+		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
 	}
 
 	/*
@@ -135,7 +162,7 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 	 */
 	@Override
 	public Session getParent() {
-		return (Session) super.getParent();
+		return getAncestor();
 	}
 
 	/*
@@ -191,7 +218,7 @@ public class RichTextParagraphStyle extends Base<org.openntf.domino.RichTextPara
 	@Override
 	public Vector<org.openntf.domino.RichTextTab> getTabs() {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getTabs(), org.openntf.domino.RichTextTab.class, this);
+			return fromLotusAsVector(getDelegate().getTabs(), org.openntf.domino.RichTextTab.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

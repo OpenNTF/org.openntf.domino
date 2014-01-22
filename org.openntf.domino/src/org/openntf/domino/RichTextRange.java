@@ -16,12 +16,32 @@
 package org.openntf.domino;
 
 import org.openntf.domino.types.DocumentDescendant;
+import org.openntf.domino.types.FactorySchema;
 
 /**
  * The Interface RichTextRange.
  */
 public interface RichTextRange extends Base<lotus.domino.RichTextRange>, lotus.domino.RichTextRange, org.openntf.domino.ext.RichTextRange,
 		DocumentDescendant {
+
+	public static class Schema extends FactorySchema<RichTextRange, lotus.domino.RichTextRange, RichTextItem> {
+		@Override
+		public Class<RichTextRange> typeClass() {
+			return RichTextRange.class;
+		}
+
+		@Override
+		public Class<lotus.domino.RichTextRange> delegateClass() {
+			return lotus.domino.RichTextRange.class;
+		}
+
+		@Override
+		public Class<RichTextItem> parentClass() {
+			return RichTextItem.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)

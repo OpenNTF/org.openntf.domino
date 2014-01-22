@@ -18,12 +18,32 @@ package org.openntf.domino;
 import java.util.Vector;
 
 import org.openntf.domino.types.DatabaseDescendant;
+import org.openntf.domino.types.FactorySchema;
 
 /**
  * The Interface ViewEntry.
  */
 public interface ViewEntry extends lotus.domino.ViewEntry, org.openntf.domino.ext.ViewEntry, Base<lotus.domino.ViewEntry>,
 		DatabaseDescendant {
+
+	public static class Schema extends FactorySchema<ViewEntry, lotus.domino.ViewEntry, View> {
+		@Override
+		public Class<ViewEntry> typeClass() {
+			return ViewEntry.class;
+		}
+
+		@Override
+		public Class<lotus.domino.ViewEntry> delegateClass() {
+			return lotus.domino.ViewEntry.class;
+		}
+
+		@Override
+		public Class<View> parentClass() {
+			return View.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)

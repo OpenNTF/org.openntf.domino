@@ -18,13 +18,16 @@ package org.openntf.domino.impl;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class DxlImporter.
  */
-public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domino.DxlImporter> implements org.openntf.domino.DxlImporter {
+public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domino.DxlImporter, Session> implements
+		org.openntf.domino.DxlImporter {
 
 	/**
 	 * Instantiates a new dxl importer.
@@ -34,8 +37,33 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public DxlImporter(final lotus.domino.DxlImporter delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, Factory.getSession(parent));
+	}
+
+	/**
+	 * Instantiates a new DxlImporter.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public DxlImporter(final lotus.domino.DxlImporter delegate, final Session parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_DXLIMPORTER);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Session findParent(final lotus.domino.DxlImporter delegate) {
+		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
 	}
 
 	/*
@@ -271,7 +299,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	@Override
 	public void importDxl(final lotus.domino.RichTextItem rtitem, final lotus.domino.Database db) {
 		try {
-			getDelegate().importDxl((lotus.domino.RichTextItem) toLotus(rtitem), (lotus.domino.Database) toLotus(db));
+			getDelegate().importDxl(toLotus(rtitem), toLotus(db));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -285,7 +313,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	@Override
 	public void importDxl(final lotus.domino.Stream stream, final lotus.domino.Database db) {
 		try {
-			getDelegate().importDxl((lotus.domino.Stream) toLotus(stream), (lotus.domino.Database) toLotus(db));
+			getDelegate().importDxl(toLotus(stream), toLotus(db));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -299,7 +327,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	@Override
 	public void importDxl(final String dxl, final lotus.domino.Database db) {
 		try {
-			getDelegate().importDxl(dxl, (lotus.domino.Database) toLotus(db));
+			getDelegate().importDxl(dxl, toLotus(db));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -466,7 +494,7 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 	 */
 	@Override
 	public Session getAncestorSession() {
-		return (Session) this.getParent();
+		return getAncestor();
 	}
 
 	/*

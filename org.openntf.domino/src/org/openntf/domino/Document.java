@@ -21,12 +21,32 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.openntf.domino.types.DatabaseDescendant;
+import org.openntf.domino.types.FactorySchema;
 
 /**
  * The Interface Document.
  */
 public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document, org.openntf.domino.ext.Document, DatabaseDescendant,
 		Map<String, Object> {
+
+	public static class Schema extends FactorySchema<Document, lotus.domino.Document, Database> {
+		@Override
+		public Class<Document> typeClass() {
+			return Document.class;
+		}
+
+		@Override
+		public Class<lotus.domino.Document> delegateClass() {
+			return lotus.domino.Document.class;
+		}
+
+		@Override
+		public Class<Database> parentClass() {
+			return Database.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)
@@ -292,7 +312,6 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#getFolderReferences()
 	 */
 	@SuppressWarnings("rawtypes")
-	@Override
 	public Vector getFolderReferences();
 
 	/*
@@ -1026,4 +1045,8 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 */
 	@Override
 	public void unlock();
+
+	Item replaceItemValue(String itemName, Object value, Boolean isSummary, boolean returnItem);
+
+	public void markDirty();
 }

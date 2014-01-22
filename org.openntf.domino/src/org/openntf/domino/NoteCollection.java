@@ -16,12 +16,32 @@
 package org.openntf.domino;
 
 import org.openntf.domino.types.DatabaseDescendant;
+import org.openntf.domino.types.FactorySchema;
 
 /**
  * The Interface NoteCollection.
  */
 public interface NoteCollection extends Base<lotus.domino.NoteCollection>, lotus.domino.NoteCollection,
 		org.openntf.domino.ext.NoteCollection, Iterable<String>, DatabaseDescendant {
+
+	public static class Schema extends FactorySchema<NoteCollection, lotus.domino.NoteCollection, Database> {
+		@Override
+		public Class<NoteCollection> typeClass() {
+			return NoteCollection.class;
+		}
+
+		@Override
+		public Class<lotus.domino.NoteCollection> delegateClass() {
+			return lotus.domino.NoteCollection.class;
+		}
+
+		@Override
+		public Class<Database> parentClass() {
+			return Database.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	public static enum SelectOption {
 		ACL, ACTIONS, AGENTS, DATABASE_SCRIPT, DATA_CONNECTIONS, DOCUMENTS, FOLDERS, FORMS, FRAMESETS, HELP_ABOUT, HELP_INDEX, HELP_USING, ICON, IMAGE_RESOURCES, JAVA_RESOURCES, MISC_CODE, MISC_FORMAT, MISC_INDEX, NAVIGATORS, OUTLINES, PAGES, PROFILES, REPLICATION_FORMULAS, SCRIPT_LIBRARIES, SHARED_FIELDS, STYLESHEETS, SUBFORMS, VIEWS;

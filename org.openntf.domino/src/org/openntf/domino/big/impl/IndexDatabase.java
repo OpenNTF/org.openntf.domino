@@ -32,9 +32,9 @@ import org.openntf.domino.utils.Factory;
  * @author Nathan T. Freeman
  * 
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class IndexDatabase {
 	private static final Logger log_ = Logger.getLogger(IndexDatabase.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	public static final String TERM_VIEW_NAME = "$TermIndex";
 	public static final String TERM_FORM_NAME = "$TermDoc";
@@ -314,7 +314,7 @@ public class IndexDatabase {
 		for (Item item : doc.getItems()) {
 			String itemName = item.getName();
 			if (itemName.startsWith(TERM_MAP_PREFIX)) {
-				String dbid = itemName.substring(TERM_MAP_PREFIX.length());
+				//				String dbid = itemName.substring(TERM_MAP_PREFIX.length());
 				Map termMap = doc.getItemValue(itemName, Map.class);
 				for (Object key : termMap.keySet()) {
 					Object val = termMap.get(key);
@@ -386,21 +386,23 @@ public class IndexDatabase {
 		return results;
 	}
 
-	private List<IndexHit> getTermResultsForItemsForms(final Map map, final Set<CaseInsensitiveString> itemNames, final Set<String> forms,
-			final String term, final String dbid) {
+	protected List<IndexHit> getTermResultsForItemsForms(final Map map, final Set<CaseInsensitiveString> itemNames,
+			final Set<String> forms, final String term, final String dbid) {
 		List<IndexHit> results = new ArrayList<IndexHit>();
 		if (itemNames == null || itemNames.isEmpty()) {
-			for (Object key : map.keySet()) {
-				Object val = map.get(key);
-				List<IndexHit> hits = null;
-				if (val instanceof Set) {
-					//					System.out.println("Already have a set of " + ((Set) val).size() + " elements");
-					hits = getTermResultsForForms((Set) val, forms, term, dbid, key.toString());
-				} else {
-					//					System.out.println("Converting to a set from a " + (val == null ? "null" : val.getClass().getName()));
-					hits = getTermResultsForForms(toStringSet(val), forms, term, dbid, key.toString());
+			if (map.keySet() != null) {
+				for (Object key : map.keySet()) {
+					Object val = map.get(key);
+					List<IndexHit> hits = null;
+					if (val instanceof Set) {
+						//					System.out.println("Already have a set of " + ((Set) val).size() + " elements");
+						hits = getTermResultsForForms((Set) val, forms, term, dbid, key.toString());
+					} else {
+						//					System.out.println("Converting to a set from a " + (val == null ? "null" : val.getClass().getName()));
+						hits = getTermResultsForForms(toStringSet(val), forms, term, dbid, key.toString());
+					}
+					results.addAll(hits);
 				}
-				results.addAll(hits);
 			}
 		} else {
 			for (CaseInsensitiveString key : itemNames) {
@@ -421,17 +423,14 @@ public class IndexDatabase {
 		return results;
 	}
 
-	private List<IndexHit> getTermResultsForForms(final Set<String> unids, final Set<String> forms, final String term, final String dbid,
+	protected List<IndexHit> getTermResultsForForms(final Set<String> unids, final Set<String> forms, final String term, final String dbid,
 			final String item) {
 		List<IndexHit> results = new ArrayList<IndexHit>();
 		if (forms == null || forms.isEmpty()) {
 			if (unids != null && !unids.isEmpty()) {
 				for (String unid : unids) {
-					//					System.out.println("Unid is: " + unid);
-					//					if (unid == null)
-					//						System.out.println("unid is null in a set of " + unids.size() + " values?");
 					try {
-						results.add(new IndexHit(term, dbid, item, unid));
+						results.add(createHit(term, dbid, item, unid));
 					} catch (Exception e) {
 						System.out.println("Exception occured trying to create a hit for db " + dbid + " on term " + term
 								+ " with a string of " + String.valueOf(unid) + " from a set of " + unids.size());
@@ -443,15 +442,17 @@ public class IndexDatabase {
 				String formName = unid.substring(33);
 				for (String form : forms) {
 					if (formName.equalsIgnoreCase(form)) {
-						//						if (unid == null)
-						//							System.out.println("Unid is null in a case of matching form: " + form + "???");
-						results.add(new IndexHit(term, dbid, item, unid));
+						results.add(createHit(term, dbid, item, unid));
 						break;
 					}
 				}
 			}
 		}
 		return results;
+	}
+
+	protected IndexHit createHit(final String term, final String dbid, final String item, final String unid) {
+		return new IndexHit(term, dbid, item, unid);
 	}
 
 	public Set<String> getTermUnidInDbsItems(final String term, final Collection<String> dbids, final Collection<?> itemNames) {
@@ -535,7 +536,7 @@ public class IndexDatabase {
 		for (Item item : doc.getItems()) {
 			String itemName = item.getName();
 			if (itemName.startsWith(TERM_MAP_PREFIX)) {
-				String dbid = itemName.substring(TERM_MAP_PREFIX.length());
+				//				String dbid = itemName.substring(TERM_MAP_PREFIX.length());
 				Map termMap = doc.getItemValue(itemName, Map.class);
 				for (String key : itemNames) {
 					CaseInsensitiveString ciskey = new CaseInsensitiveString(key);

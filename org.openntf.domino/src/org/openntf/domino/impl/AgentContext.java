@@ -28,14 +28,14 @@ import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
+import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class AgentContext.
  */
-public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.domino.AgentContext> implements
+public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.domino.AgentContext, Session> implements
 		org.openntf.domino.AgentContext {
 
 	/**
@@ -46,9 +46,34 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public AgentContext(final lotus.domino.AgentContext delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, (Session) parent);
 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Session findParent(final lotus.domino.AgentContext delegate) {
+		return fromLotus(Base.getSession(delegate), Session.SCHEMA, null);
+	}
+
+	/**
+	 * Instantiates a new agent context.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperFactory
+	 * @param cpp_id
+	 *            the cpp-id
+	 */
+	public AgentContext(final lotus.domino.AgentContext delegate, final Session parent, final WrapperFactory wf, final long cpp_id) {
+		super(delegate, parent, wf, cpp_id, NOTES_AGENTCTX);
 	}
 
 	/*
@@ -59,7 +84,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public Agent getCurrentAgent() {
 		try {
-			return Factory.fromLotus(getDelegate().getCurrentAgent(), Agent.class, getCurrentDatabase());
+			return fromLotus(getDelegate().getCurrentAgent(), Agent.SCHEMA, getCurrentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -74,7 +99,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public Database getCurrentDatabase() {
 		try {
-			return Factory.fromLotus(getDelegate().getCurrentDatabase(), Database.class, this);
+			return fromLotus(getDelegate().getCurrentDatabase(), Database.SCHEMA, getParentSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -89,7 +114,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public Document getDocumentContext() {
 		try {
-			return Factory.fromLotusDocument(getDelegate().getDocumentContext(), getCurrentDatabase());
+			return fromLotus(getDelegate().getDocumentContext(), Document.SCHEMA, getCurrentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -134,7 +159,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public DateTime getLastRun() {
 		try {
-			return Factory.fromLotus(getDelegate().getLastRun(), DateTime.class, this);
+			return fromLotus(getDelegate().getLastRun(), DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -145,7 +170,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	 * @see org.openntf.domino.AgentContext#getParentSession()
 	 */
 	public Session getParentSession() {
-		return (Session) super.getParent();
+		return getAncestor();
 	}
 
 	/* (non-Javadoc)
@@ -188,7 +213,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public Document getSavedData() {
 		try {
-			return Factory.fromLotusDocument(getDelegate().getSavedData(), this);
+			return fromLotus(getDelegate().getSavedData(), Document.SCHEMA, getCurrentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -203,7 +228,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public DocumentCollection getUnprocessedDocuments() {
 		try {
-			return Factory.fromLotus(getDelegate().getUnprocessedDocuments(), DocumentCollection.class, this);
+			return fromLotus(getDelegate().getUnprocessedDocuments(), DocumentCollection.SCHEMA, getCurrentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -218,7 +243,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public DocumentCollection unprocessedFTSearch(final String query, final int maxDocs) {
 		try {
-			return Factory.fromLotus(getDelegate().unprocessedFTSearch(query, maxDocs), DocumentCollection.class, this);
+			return fromLotus(getDelegate().unprocessedFTSearch(query, maxDocs), DocumentCollection.SCHEMA, getCurrentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -233,7 +258,8 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public DocumentCollection unprocessedFTSearch(final String query, final int maxDocs, final int sortOpt, final int otherOpt) {
 		try {
-			return Factory.fromLotus(getDelegate().unprocessedFTSearch(query, maxDocs, sortOpt, otherOpt), DocumentCollection.class, this);
+			return fromLotus(getDelegate().unprocessedFTSearch(query, maxDocs, sortOpt, otherOpt), DocumentCollection.SCHEMA,
+					getCurrentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -248,7 +274,8 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public DocumentCollection unprocessedFTSearchRange(final String query, final int maxDocs, final int sortOpt) {
 		try {
-			return Factory.fromLotus(getDelegate().unprocessedFTSearchRange(query, maxDocs, sortOpt), DocumentCollection.class, this);
+			return fromLotus(getDelegate().unprocessedFTSearchRange(query, maxDocs, sortOpt), DocumentCollection.SCHEMA,
+					getCurrentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -264,8 +291,8 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	public DocumentCollection unprocessedFTSearchRange(final String query, final int maxDocs, final int sortOpt, final int otherOpt,
 			final int start) {
 		try {
-			return Factory.fromLotus(getDelegate().unprocessedFTSearchRange(query, maxDocs, sortOpt, otherOpt, start),
-					DocumentCollection.class, this);
+			lotus.domino.DocumentCollection coll = getDelegate().unprocessedFTSearchRange(query, maxDocs, sortOpt, otherOpt, start);
+			return fromLotus(coll, DocumentCollection.SCHEMA, getCurrentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -279,16 +306,17 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	 */
 	@Override
 	public DocumentCollection unprocessedSearch(final String formula, final lotus.domino.DateTime limit, final int maxDocs) {
+		@SuppressWarnings("rawtypes")
+		List recycleThis = new ArrayList();
 		try {
-			DocumentCollection result;
-			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(limit);
-			result = Factory.fromLotus(getDelegate().unprocessedSearch(formula, dt, maxDocs), DocumentCollection.class, this);
-			enc_recycle(dt);
-			return result;
+			lotus.domino.DocumentCollection coll = getDelegate().unprocessedSearch(formula, toLotus(limit, recycleThis), maxDocs);
+			return fromLotus(coll, DocumentCollection.SCHEMA, getCurrentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+			return null;
+		} finally {
+			s_recycle(recycleThis);
 		}
-		return null;
 	}
 
 	/*
@@ -299,7 +327,7 @@ public class AgentContext extends Base<org.openntf.domino.AgentContext, lotus.do
 	@Override
 	public void updateProcessedDoc(final lotus.domino.Document doc) {
 		try {
-			getDelegate().updateProcessedDoc((lotus.domino.Document) toLotus(doc));
+			getDelegate().updateProcessedDoc(toLotus(doc));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

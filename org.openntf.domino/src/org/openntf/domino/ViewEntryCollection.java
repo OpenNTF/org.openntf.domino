@@ -17,12 +17,32 @@ package org.openntf.domino;
 
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.types.DatabaseDescendant;
+import org.openntf.domino.types.FactorySchema;
 
 /**
  * The Interface ViewEntryCollection.
  */
 public interface ViewEntryCollection extends Base<lotus.domino.ViewEntryCollection>, lotus.domino.ViewEntryCollection,
 		org.openntf.domino.ext.ViewEntryCollection, Iterable<ViewEntry>, DatabaseDescendant {
+
+	public static class Schema extends FactorySchema<ViewEntryCollection, lotus.domino.ViewEntryCollection, View> {
+		@Override
+		public Class<ViewEntryCollection> typeClass() {
+			return ViewEntryCollection.class;
+		}
+
+		@Override
+		public Class<lotus.domino.ViewEntryCollection> delegateClass() {
+			return lotus.domino.ViewEntryCollection.class;
+		}
+
+		@Override
+		public Class<View> parentClass() {
+			return View.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)

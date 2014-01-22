@@ -17,6 +17,7 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
@@ -24,6 +25,25 @@ import org.openntf.domino.types.SessionDescendant;
  */
 public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.domino.NotesCalendar, org.openntf.domino.ext.NotesCalendar,
 		SessionDescendant {
+
+	public static class Schema extends FactorySchema<NotesCalendar, lotus.domino.NotesCalendar, Database> {
+		@Override
+		public Class<NotesCalendar> typeClass() {
+			return NotesCalendar.class;
+		}
+
+		@Override
+		public Class<lotus.domino.NotesCalendar> delegateClass() {
+			return lotus.domino.NotesCalendar.class;
+		}
+
+		@Override
+		public Class<Database> parentClass() {
+			return Database.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)
@@ -63,7 +83,8 @@ public interface NotesCalendar extends Base<lotus.domino.NotesCalendar>, lotus.d
 	 * @see lotus.domino.NotesCalendar#getEntries(lotus.domino.DateTime, lotus.domino.DateTime, int, int)
 	 */
 	@Override
-	public Vector<NotesCalendarEntry> getEntries(final lotus.domino.DateTime start, final lotus.domino.DateTime end, final int skipCount, final int maxReturn);
+	public Vector<NotesCalendarEntry> getEntries(final lotus.domino.DateTime start, final lotus.domino.DateTime end, final int skipCount,
+			final int maxReturn);
 
 	/*
 	 * (non-Javadoc)

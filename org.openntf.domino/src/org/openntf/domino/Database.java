@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.Resurrectable;
 import org.openntf.domino.types.SessionDescendant;
 
@@ -28,6 +29,25 @@ import org.openntf.domino.types.SessionDescendant;
  */
 public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database>, org.openntf.domino.ext.Database,
 		Resurrectable, SessionDescendant {
+
+	public static class Schema extends FactorySchema<Database, lotus.domino.Database, Session> {
+		@Override
+		public Class<Database> typeClass() {
+			return Database.class;
+		}
+
+		@Override
+		public Class<lotus.domino.Database> delegateClass() {
+			return lotus.domino.Database.class;
+		}
+
+		@Override
+		public Class<Session> parentClass() {
+			return Session.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	public enum Utils {
 		;
@@ -52,7 +72,6 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 			return result;
 		}
 
-		@SuppressWarnings("unused")
 		public static boolean isTemplateCandidate(final Database db) {
 			boolean result = true;
 			//TODO do we actually want to add any future checks for this?

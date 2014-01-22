@@ -19,20 +19,38 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
+import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.ext.Database.Events;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class Agent.
  */
-public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> implements org.openntf.domino.Agent {
+public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent, Database> implements org.openntf.domino.Agent {
+
+	/**
+	 * Instantiates a new agent.
+	 * 
+	 * @deprecated use {@link #Agent(lotus.domino.Agent, Database, WrapperFactory, long)} instead
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 */
+	@Deprecated
+	public Agent(final lotus.domino.Agent delegate, final org.openntf.domino.Base<?> parent) {
+		super(delegate, null);
+
+	}
 
 	/**
 	 * Instantiates a new agent.
@@ -41,10 +59,22 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 *            the delegate
 	 * @param parent
 	 *            the parent
+	 * @param wf
+	 *            the wrapperFactory
+	 * @param cpp_id
+	 *            the cpp-id
 	 */
-	public Agent(final lotus.domino.Agent delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, Factory.getParentDatabase(parent));
+	public Agent(final lotus.domino.Agent delegate, final org.openntf.domino.Database parent, final WrapperFactory wf, final long cpp_id) {
+		super(delegate, parent, wf, cpp_id, NOTES_MACRO);
 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Database findParent(final lotus.domino.Agent delegate) throws NotesException {
+		return fromLotus(delegate.getParent(), Database.SCHEMA, null);
 	}
 
 	/*
@@ -110,7 +140,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	@Override
 	public DateTime getLastRun() {
 		try {
-			return Factory.fromLotus(getDelegate().getLastRun(), DateTime.class, this);
+			return fromLotus(getDelegate().getLastRun(), DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -227,7 +257,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 */
 	@Override
 	public Database getParent() {
-		return (Database) super.getParent();
+		return getAncestor();
 	}
 
 	/*
@@ -472,7 +502,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 * 
 	 * @see org.openntf.domino.Agent#lock(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean lock(final Vector names) {
 		try {
@@ -488,7 +518,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 * 
 	 * @see org.openntf.domino.Agent#lock(java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public boolean lock(final Vector names, final boolean provisionalOk) {
 		try {
@@ -534,7 +564,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 	 * 
 	 * @see org.openntf.domino.Agent#lockProvisional(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean lockProvisional(final Vector names) {
 		try {
@@ -653,7 +683,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		go = getAncestorDatabase().fireListener(generateEvent(Events.BEFORE_RUN_AGENT, doc));
 		if (go) {
 			try {
-				getDelegate().runWithDocumentContext((lotus.domino.Document) toLotus(doc));
+				getDelegate().runWithDocumentContext(toLotus(doc));
 			} catch (NotesException e) {
 				DominoUtils.handleException(e);
 			}
@@ -675,7 +705,7 @@ public class Agent extends Base<org.openntf.domino.Agent, lotus.domino.Agent> im
 		go = getAncestorDatabase().fireListener(generateEvent(Events.BEFORE_RUN_AGENT, payload));
 		if (go) {
 			try {
-				getDelegate().runWithDocumentContext((lotus.domino.Document) toLotus(doc), noteid);
+				getDelegate().runWithDocumentContext(toLotus(doc), noteid);
 			} catch (NotesException e) {
 				DominoUtils.handleException(e);
 			}

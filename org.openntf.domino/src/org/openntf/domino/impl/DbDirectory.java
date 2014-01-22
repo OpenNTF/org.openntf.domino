@@ -27,6 +27,8 @@ import java.util.logging.Logger;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoUtils;
@@ -36,8 +38,8 @@ import org.openntf.domino.utils.Factory;
 /**
  * The Class DbDirectory.
  */
-public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domino.DbDirectory> implements org.openntf.domino.DbDirectory,
-		Encapsulated {
+public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domino.DbDirectory, Session> implements
+		org.openntf.domino.DbDirectory, Encapsulated {
 	private static final Logger log_ = Logger.getLogger(DbDirectory.class.getName());
 
 	private SortedSet<org.openntf.domino.Database> dbSet_;
@@ -49,6 +51,30 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	private boolean isHonorOpenDialog_ = false;
 
 	/**
+	 * Instantiates a new DbDirectory.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public DbDirectory(final lotus.domino.DbDirectory delegate, final Session parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_SERVER);
+		try {
+			name_ = delegate.getName();
+			clusterName_ = delegate.getClusterName();
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		dbSet_ = new ConcurrentSkipListSet<Database>(Database.FILEPATH_COMPARATOR);
+		type_ = Type.TEMPLATE_CANDIDATE;
+	}
+
+	/**
 	 * Instantiates a new db directory.
 	 * 
 	 * @param delegate
@@ -56,7 +82,8 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 * @param parent
 	 *            the parent
 	 */
-	public DbDirectory(final lotus.domino.DbDirectory delegate, final org.openntf.domino.Base<?> parent) {
+	@Deprecated
+	public DbDirectory(final lotus.domino.DbDirectory delegate, final Session parent) {
 		super(delegate, parent);
 		try {
 			name_ = delegate.getName();
@@ -68,7 +95,8 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		type_ = Type.TEMPLATE_CANDIDATE;
 	}
 
-	public DbDirectory(final lotus.domino.DbDirectory delegate, final org.openntf.domino.Base<?> parent, final Type type) {
+	@Deprecated
+	public DbDirectory(final lotus.domino.DbDirectory delegate, final Session parent, final Type type) {
 		super(delegate, parent);
 		try {
 			name_ = delegate.getName();
@@ -80,7 +108,8 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		type_ = type;
 	}
 
-	public DbDirectory(final lotus.domino.DbDirectory delegate, final org.openntf.domino.Base<?> parent, final boolean sortByLastModified) {
+	@Deprecated
+	public DbDirectory(final lotus.domino.DbDirectory delegate, final Session parent, final boolean sortByLastModified) {
 		super(delegate, parent);
 		try {
 			name_ = delegate.getName();
@@ -97,8 +126,8 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		type_ = Type.TEMPLATE_CANDIDATE;
 	}
 
-	public DbDirectory(final lotus.domino.DbDirectory delegate, final org.openntf.domino.Base<?> parent, final Type type,
-			final boolean sortByLastModified) {
+	@Deprecated
+	public DbDirectory(final lotus.domino.DbDirectory delegate, final Session parent, final Type type, final boolean sortByLastModified) {
 		super(delegate, parent);
 		try {
 			name_ = delegate.getName();
@@ -108,6 +137,14 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		}
 		isDateSorted_ = sortByLastModified;
 		type_ = type;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Session findParent(final lotus.domino.DbDirectory delegate) throws NotesException {
+		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
 	}
 
 	public boolean isSortByLastModified() {
@@ -146,6 +183,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 			Database db;
 			while (rawdb != null) {
 				nextdb = delegate.getNextDatabase();
+				// TODO RPr: Should we do that with factory
 				db = new org.openntf.domino.impl.Database(rawdb, this, isExtended);
 				if (type_ == Type.REPLICA_CANDIDATE) {
 					if (org.openntf.domino.Database.Utils.isReplicaCandidate(db))
@@ -177,7 +215,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	@Override
 	public Database createDatabase(final String dbFile) {
 		try {
-			return Factory.fromLotus(getDelegate().createDatabase(dbFile), Database.class, this);
+			return fromLotus(getDelegate().createDatabase(dbFile), Database.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -192,7 +230,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	@Override
 	public Database createDatabase(final String dbFile, final boolean open) {
 		try {
-			return Factory.fromLotus(getDelegate().createDatabase(dbFile, open), Database.class, this);
+			return fromLotus(getDelegate().createDatabase(dbFile, open), Database.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -282,7 +320,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	@Legacy(org.openntf.domino.annotations.Legacy.ITERATION_WARNING)
 	public Database getNextDatabase() {
 		try {
-			return Factory.fromLotus(getDelegate().getNextDatabase(), Database.class, this);
+			return fromLotus(getDelegate().getNextDatabase(), Database.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -296,7 +334,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 */
 	@Override
 	public org.openntf.domino.Session getParent() {
-		return (org.openntf.domino.Session) super.getParent();
+		return getAncestor();
 	}
 
 	/*
@@ -418,11 +456,11 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 
 	void resurrect() {
 		Session rawSessionUs = (Session) Factory.getSession();
-		lotus.domino.Session rawSession = (lotus.domino.Session) rawSessionUs.getDelegate();
+		lotus.domino.Session rawSession = toLotus(rawSessionUs);
 		try {
 			lotus.domino.DbDirectory dir = rawSession.getDbDirectory(name_);
 			dir.setHonorShowInOpenDatabaseDialog(isHonorOpenDialog_);
-			setDelegate(dir);
+			setDelegate(dir, 0);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}

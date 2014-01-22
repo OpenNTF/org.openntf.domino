@@ -17,6 +17,7 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
@@ -24,6 +25,25 @@ import org.openntf.domino.types.SessionDescendant;
  */
 public interface AdministrationProcess extends Base<lotus.domino.AdministrationProcess>, lotus.domino.AdministrationProcess,
 		org.openntf.domino.ext.AdministrationProcess, SessionDescendant {
+
+	public static class Schema extends FactorySchema<AdministrationProcess, lotus.domino.AdministrationProcess, Session> {
+		@Override
+		public Class<AdministrationProcess> typeClass() {
+			return AdministrationProcess.class;
+		}
+
+		@Override
+		public Class<lotus.domino.AdministrationProcess> delegateClass() {
+			return lotus.domino.AdministrationProcess.class;
+		}
+
+		@Override
+		public Class<Session> parentClass() {
+			return Session.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)

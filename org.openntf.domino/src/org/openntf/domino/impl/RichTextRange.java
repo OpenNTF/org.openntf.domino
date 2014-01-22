@@ -18,16 +18,19 @@ package org.openntf.domino.impl;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.Document;
+import org.openntf.domino.RichTextItem;
+import org.openntf.domino.RichTextNavigator;
+import org.openntf.domino.RichTextStyle;
 import org.openntf.domino.Session;
-import org.openntf.domino.types.DocumentDescendant;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class RichTextRange.
  */
-public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.domino.RichTextRange> implements
+public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.domino.RichTextRange, RichTextItem> implements
 		org.openntf.domino.RichTextRange {
 
 	/**
@@ -38,8 +41,25 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public RichTextRange(final lotus.domino.RichTextRange delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, (RichTextItem) parent);
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public RichTextRange(final lotus.domino.RichTextRange delegate, final RichTextItem parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_RTRANGE);
 	}
 
 	/*
@@ -48,9 +68,9 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	 * @see org.openntf.domino.RichTextRange#Clone()
 	 */
 	@Override
-	public RichTextRange Clone() {
+	public org.openntf.domino.RichTextRange Clone() {
 		try {
-			return Factory.fromLotus(getDelegate().Clone(), RichTextRange.class, this);
+			return fromLotus(getDelegate().Clone(), RichTextRange.SCHEMA, getParent());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -101,7 +121,7 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	@Override
 	public RichTextNavigator getNavigator() {
 		try {
-			return Factory.fromLotus(getDelegate().getNavigator(), RichTextNavigator.class, this);
+			return fromLotus(getDelegate().getNavigator(), RichTextNavigator.SCHEMA, getParent());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -113,7 +133,7 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	 */
 	@Override
 	public RichTextItem getParent() {
-		return (RichTextItem) super.getParent();
+		return getAncestor();
 	}
 
 	/*
@@ -124,7 +144,7 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	@Override
 	public RichTextStyle getStyle() {
 		try {
-			return Factory.fromLotus(getDelegate().getStyle(), RichTextStyle.class, this);
+			return fromLotus(getDelegate().getStyle(), RichTextStyle.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -242,7 +262,7 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	public void setStyle(final lotus.domino.RichTextStyle style) {
 		markDirty();
 		try {
-			getDelegate().setStyle((lotus.domino.RichTextStyle) toLotus(style));
+			getDelegate().setStyle(toLotus(style));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -259,7 +279,7 @@ public class RichTextRange extends Base<org.openntf.domino.RichTextRange, lotus.
 	 */
 	@Override
 	public Document getAncestorDocument() {
-		return (Document) ((DocumentDescendant) this.getParent()).getAncestorDocument();
+		return getAncestor().getAncestorDocument();
 	}
 
 	/*

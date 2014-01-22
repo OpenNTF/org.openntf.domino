@@ -17,12 +17,21 @@ package org.openntf.domino.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-//import java.util.Vector;
+import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Database;
+import org.openntf.domino.DateTime;
+import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
+import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
+import org.openntf.domino.ViewColumn;
+import org.openntf.domino.ViewEntry;
+import org.openntf.domino.ViewEntryCollection;
+import org.openntf.domino.ViewNavigator;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -30,7 +39,7 @@ import org.openntf.domino.utils.Factory;
 /**
  * The Class View.
  */
-public class View extends Base<org.openntf.domino.View, lotus.domino.View> implements org.openntf.domino.View {
+public class View extends Base<org.openntf.domino.View, lotus.domino.View, Database> implements org.openntf.domino.View {
 
 	private List<DominoColumnInfo> columnInfo_;
 
@@ -42,9 +51,35 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public View(final lotus.domino.View delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, Factory.getParentDatabase(parent));
 		initialize(delegate);
+	}
+
+	/**
+	 * Instantiates a new view.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public View(final lotus.domino.View delegate, final Database parent, final WrapperFactory wf, final long cpp_id) {
+		super(delegate, parent, wf, cpp_id, NOTES_VIEW);
+		initialize(delegate);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Database findParent(final lotus.domino.View delegate) throws NotesException {
+		return fromLotus(delegate.getParent(), Database.SCHEMA, null);
 	}
 
 	private String notesUrl_;
@@ -186,17 +221,16 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 * 
 	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
-	public int FTSearchSorted(final java.util.Vector query) {
+	public int FTSearchSorted(final Vector query) {
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			int result;
-			java.util.Vector v = toDominoFriendly(query, this);
-			result = getDelegate().FTSearchSorted(v);
-			s_recycle(v);
-			return result;
+			return getDelegate().FTSearchSorted(toDominoFriendly(query, this, recycleThis));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 		return -1;
 	}
@@ -206,17 +240,16 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 * 
 	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
-	public int FTSearchSorted(final java.util.Vector query, final int maxDocs) {
+	public int FTSearchSorted(final Vector query, final int maxDocs) {
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			int result;
-			java.util.Vector v = toDominoFriendly(query, this);
-			result = getDelegate().FTSearchSorted(v, maxDocs);
-			s_recycle(v);
-			return result;
+			return getDelegate().FTSearchSorted(toDominoFriendly(query, this, recycleThis), maxDocs);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 		return -1;
 	}
@@ -226,17 +259,16 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 * 
 	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int, int)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
-	public int FTSearchSorted(final java.util.Vector query, final int maxDocs, final int column) {
+	public int FTSearchSorted(final Vector query, final int maxDocs, final int column) {
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			int result;
-			java.util.Vector v = toDominoFriendly(query, this);
-			result = getDelegate().FTSearchSorted(v, maxDocs, column);
-			s_recycle(v);
-			return result;
+			return getDelegate().FTSearchSorted(toDominoFriendly(query, this, recycleThis), maxDocs, column);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 		return -1;
 	}
@@ -246,18 +278,18 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 * 
 	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int, int, boolean, boolean, boolean, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public int FTSearchSorted(final java.util.Vector query, final int maxDocs, final int column, final boolean ascending,
-			final boolean exact, final boolean variants, final boolean fuzzy) {
+	public int FTSearchSorted(final Vector query, final int maxDocs, final int column, final boolean ascending, final boolean exact,
+			final boolean variants, final boolean fuzzy) {
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			int result;
-			java.util.Vector v = toDominoFriendly(query, this);
-			result = getDelegate().FTSearchSorted(v, maxDocs, column, ascending, exact, variants, fuzzy);
-			s_recycle(v);
-			return result;
+			return getDelegate().FTSearchSorted(toDominoFriendly(query, this, recycleThis), maxDocs, column, ascending, exact, variants,
+					fuzzy);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 		return -1;
 	}
@@ -267,13 +299,16 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 * 
 	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int, java.lang.String)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public int FTSearchSorted(final java.util.Vector query, final int maxDocs, final String column) {
+	public int FTSearchSorted(final Vector query, final int maxDocs, final String column) {
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			return getDelegate().FTSearchSorted(toDominoFriendly(query, this), maxDocs, column);
+			return getDelegate().FTSearchSorted(toDominoFriendly(query, this, recycleThis), maxDocs, column);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 		return -1;
 	}
@@ -283,18 +318,18 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 * 
 	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int, java.lang.String, boolean, boolean, boolean, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes" })
 	@Override
-	public int FTSearchSorted(final java.util.Vector query, final int maxDocs, final String column, final boolean ascending,
-			final boolean exact, final boolean variants, final boolean fuzzy) {
+	public int FTSearchSorted(final Vector query, final int maxDocs, final String column, final boolean ascending, final boolean exact,
+			final boolean variants, final boolean fuzzy) {
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			int result;
-			java.util.Vector v = toDominoFriendly(query, this);
-			result = getDelegate().FTSearchSorted(toDominoFriendly(query, this), maxDocs, column, ascending, exact, variants, fuzzy);
-			s_recycle(v);
-			return result;
+			return getDelegate().FTSearchSorted(toDominoFriendly(query, this, recycleThis), maxDocs, column, ascending, exact, variants,
+					fuzzy);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 		return -1;
 	}
@@ -321,7 +356,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewColumn copyColumn(final int sourceColumn) {
 		try {
-			return Factory.fromLotus(getDelegate().copyColumn(sourceColumn), ViewColumn.class, this);
+			return fromLotus(getDelegate().copyColumn(sourceColumn), ViewColumn.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -336,7 +371,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewColumn copyColumn(final int sourceColumn, final int destinationIndex) {
 		try {
-			return Factory.fromLotus(getDelegate().copyColumn(sourceColumn, destinationIndex), ViewColumn.class, this);
+			return fromLotus(getDelegate().copyColumn(sourceColumn, destinationIndex), ViewColumn.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -351,7 +386,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewColumn copyColumn(final String sourceColumn) {
 		try {
-			return Factory.fromLotus(getDelegate().copyColumn(sourceColumn), ViewColumn.class, this);
+			return fromLotus(getDelegate().copyColumn(sourceColumn), ViewColumn.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -366,7 +401,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewColumn copyColumn(final String sourceColumn, final int destinationIndex) {
 		try {
-			return Factory.fromLotus(getDelegate().copyColumn(sourceColumn, destinationIndex), ViewColumn.class, this);
+			return fromLotus(getDelegate().copyColumn(sourceColumn, destinationIndex), ViewColumn.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -381,7 +416,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewColumn copyColumn(final lotus.domino.ViewColumn sourceColumn) {
 		try {
-			return Factory.fromLotus(getDelegate().copyColumn((lotus.domino.ViewColumn) toLotus(sourceColumn)), ViewColumn.class, this);
+			return fromLotus(getDelegate().copyColumn((lotus.domino.ViewColumn) toLotus(sourceColumn)), ViewColumn.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -396,8 +431,8 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewColumn copyColumn(final lotus.domino.ViewColumn sourceColumn, final int destinationIndex) {
 		try {
-			return Factory.fromLotus(getDelegate().copyColumn((lotus.domino.ViewColumn) toLotus(sourceColumn), destinationIndex),
-					ViewColumn.class, this);
+			return fromLotus(getDelegate().copyColumn((lotus.domino.ViewColumn) toLotus(sourceColumn), destinationIndex),
+					ViewColumn.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -412,7 +447,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewColumn createColumn() {
 		try {
-			return Factory.fromLotus(getDelegate().createColumn(), ViewColumn.class, this);
+			return fromLotus(getDelegate().createColumn(), ViewColumn.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -427,7 +462,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewColumn createColumn(final int position) {
 		try {
-			return Factory.fromLotus(getDelegate().createColumn(position), ViewColumn.class, this);
+			return fromLotus(getDelegate().createColumn(position), ViewColumn.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -442,7 +477,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewColumn createColumn(final int position, final String columnTitle) {
 		try {
-			return Factory.fromLotus(getDelegate().createColumn(position, columnTitle), ViewColumn.class, this);
+			return fromLotus(getDelegate().createColumn(position, columnTitle), ViewColumn.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -457,7 +492,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewColumn createColumn(final int position, final String columnTitle, final String formula) {
 		try {
-			return Factory.fromLotus(getDelegate().createColumn(position, columnTitle, formula), ViewColumn.class, this);
+			return fromLotus(getDelegate().createColumn(position, columnTitle, formula), ViewColumn.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -472,7 +507,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewEntryCollection createViewEntryCollection() {
 		try {
-			return Factory.fromLotus(getDelegate().createViewEntryCollection(), ViewEntryCollection.class, this);
+			return fromLotus(getDelegate().createViewEntryCollection(), ViewEntryCollection.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -488,7 +523,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	public ViewNavigator createViewNav() {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return Factory.fromLotus(getDelegate().createViewNav(), ViewNavigator.class, this);
+			return fromLotus(getDelegate().createViewNav(), ViewNavigator.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -504,7 +539,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	public ViewNavigator createViewNav(final int cacheSize) {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return Factory.fromLotus(getDelegate().createViewNav(cacheSize), ViewNavigator.class, this);
+			return fromLotus(getDelegate().createViewNav(cacheSize), ViewNavigator.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -518,12 +553,15 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@Override
 	public ViewNavigator createViewNavFrom(final Object entry) {
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			Object lotusObj = Base.toDominoFriendly(entry, this);
+			Object lotusObj = toDominoFriendly(entry, this, recycleThis);
 			getDelegate().setAutoUpdate(false);
-			return Factory.fromLotus(getDelegate().createViewNavFrom(lotusObj), ViewNavigator.class, this);
+			return fromLotus(getDelegate().createViewNavFrom(lotusObj), ViewNavigator.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 		return null;
 	}
@@ -538,7 +576,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		try {
 			Object lotusObj = toLotus(entry);
 			getDelegate().setAutoUpdate(false);
-			return Factory.fromLotus(getDelegate().createViewNavFrom(lotusObj, cacheSize), ViewNavigator.class, this);
+			return fromLotus(getDelegate().createViewNavFrom(lotusObj, cacheSize), ViewNavigator.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -554,7 +592,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	public ViewNavigator createViewNavFromAllUnread() {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return Factory.fromLotus(getDelegate().createViewNavFromAllUnread(), ViewNavigator.class, this);
+			return fromLotus(getDelegate().createViewNavFromAllUnread(), ViewNavigator.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -570,7 +608,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	public ViewNavigator createViewNavFromAllUnread(final String userName) {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return Factory.fromLotus(getDelegate().createViewNavFromAllUnread(userName), ViewNavigator.class, this);
+			return fromLotus(getDelegate().createViewNavFromAllUnread(userName), ViewNavigator.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -586,7 +624,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	public ViewNavigator createViewNavFromCategory(final String categoryName) {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return Factory.fromLotus(getDelegate().createViewNavFromCategory(categoryName), ViewNavigator.class, this);
+			return fromLotus(getDelegate().createViewNavFromCategory(categoryName), ViewNavigator.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -602,7 +640,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	public ViewNavigator createViewNavFromCategory(final String categoryName, final int cacheSize) {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return Factory.fromLotus(getDelegate().createViewNavFromCategory(categoryName, cacheSize), ViewNavigator.class, this);
+			return fromLotus(getDelegate().createViewNavFromCategory(categoryName, cacheSize), ViewNavigator.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -618,7 +656,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	public ViewNavigator createViewNavFromChildren(final Object entry) {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return Factory.fromLotus(getDelegate().createViewNavFromChildren(toLotus(entry)), ViewNavigator.class, this);
+			return fromLotus(getDelegate().createViewNavFromChildren(toLotus(entry)), ViewNavigator.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -634,7 +672,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	public ViewNavigator createViewNavFromChildren(final Object entry, final int cacheSize) {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return Factory.fromLotus(getDelegate().createViewNavFromChildren(toLotus(entry), cacheSize), ViewNavigator.class, this);
+			return fromLotus(getDelegate().createViewNavFromChildren(toLotus(entry), cacheSize), ViewNavigator.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -650,7 +688,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	public ViewNavigator createViewNavFromDescendants(final Object entry) {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return Factory.fromLotus(getDelegate().createViewNavFromDescendants(toLotus(entry)), ViewNavigator.class, this);
+			return fromLotus(getDelegate().createViewNavFromDescendants(toLotus(entry)), ViewNavigator.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -666,7 +704,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	public ViewNavigator createViewNavFromDescendants(final Object entry, final int cacheSize) {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return Factory.fromLotus(getDelegate().createViewNavFromDescendants(toLotus(entry), cacheSize), ViewNavigator.class, this);
+			return fromLotus(getDelegate().createViewNavFromDescendants(toLotus(entry), cacheSize), ViewNavigator.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -682,7 +720,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	public ViewNavigator createViewNavMaxLevel(final int level) {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return Factory.fromLotus(getDelegate().createViewNavMaxLevel(level), ViewNavigator.class, this);
+			return fromLotus(getDelegate().createViewNavMaxLevel(level), ViewNavigator.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -698,7 +736,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	public ViewNavigator createViewNavMaxLevel(final int level, final int cacheSize) {
 		try {
 			getDelegate().setAutoUpdate(false);
-			return Factory.fromLotus(getDelegate().createViewNavMaxLevel(level, cacheSize), ViewNavigator.class, this);
+			return fromLotus(getDelegate().createViewNavMaxLevel(level, cacheSize), ViewNavigator.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -721,6 +759,10 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 		return null;
 	}
 
+	/**
+	 * @deprecated RPr: This might be very slow, so I suggest not to use this
+	 */
+	@Deprecated
 	public NoteCollection getNoteCollection() {
 		NoteCollection nc = getAncestorDatabase().createNoteCollection(false);
 		nc.setSelectDocuments(true);
@@ -781,16 +823,25 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@SuppressWarnings("rawtypes")
 	@Override
 	public DocumentCollection getAllDocumentsByKey(final Object key, final boolean exact) {
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			Object domKey = toDominoFriendly(key, this);
+			Object domKey = toDominoFriendly(key, this, recycleThis);
+			lotus.domino.DocumentCollection lotusColl;
 			if (domKey instanceof java.util.Vector) {
-				return Factory.fromLotus(getDelegate().getAllDocumentsByKey((java.util.Vector) domKey, exact), DocumentCollection.class,
-						this);
+				lotusColl = getDelegate().getAllDocumentsByKey((java.util.Vector) domKey, exact);
 			} else {
-				return Factory.fromLotus(getDelegate().getAllDocumentsByKey(domKey, exact), DocumentCollection.class, this);
+				lotusColl = getDelegate().getAllDocumentsByKey(domKey, exact);
 			}
+			DocumentCollection dc = fromLotus(lotusColl, DocumentCollection.SCHEMA, getAncestorDatabase());
+			if (dc instanceof org.openntf.domino.impl.DocumentCollection) {
+				((org.openntf.domino.impl.DocumentCollection) dc).setParentView(this);
+			}
+			return dc;
+
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 		return null;
 	}
@@ -800,7 +851,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 * 
 	 * @see org.openntf.domino.View#getAllDocumentsByKey(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public DocumentCollection getAllDocumentsByKey(final java.util.Vector keys) {
 		return getAllDocumentsByKey((Object) keys, false);
@@ -825,7 +876,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewEntryCollection getAllEntries() {
 		try {
-			return Factory.fromLotus(getDelegate().getAllEntries(), ViewEntryCollection.class, this);
+			return fromLotus(getDelegate().getAllEntries(), ViewEntryCollection.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -849,15 +900,16 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@Override
 	public ViewEntryCollection getAllEntriesByKey(final Object key, final boolean exact) {
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			Object domKey = toDominoFriendly(key, this);
+			Object domKey = toDominoFriendly(key, this, recycleThis);
+			lotus.domino.ViewEntryCollection rawColl;
 			if (domKey instanceof java.util.Vector) {
-				lotus.domino.ViewEntryCollection rawColl = getDelegate().getAllEntriesByKey((java.util.Vector) domKey, exact);
-				return Factory.fromLotus(rawColl, ViewEntryCollection.class, this);
+				rawColl = getDelegate().getAllEntriesByKey((Vector) domKey, exact);
 			} else {
-				lotus.domino.ViewEntryCollection rawColl = getDelegate().getAllEntriesByKey(domKey, exact);
-				return Factory.fromLotus(rawColl, ViewEntryCollection.class, this);
+				rawColl = getDelegate().getAllEntriesByKey(domKey, exact);
 			}
+			return fromLotus(rawColl, ViewEntryCollection.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -871,7 +923,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public ViewEntryCollection getAllEntriesByKey(final java.util.Vector keys) {
+	public ViewEntryCollection getAllEntriesByKey(final Vector keys) {
 		return getAllEntriesByKey((Object) keys, false);
 	}
 
@@ -882,7 +934,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public ViewEntryCollection getAllEntriesByKey(final java.util.Vector keys, final boolean exact) {
+	public ViewEntryCollection getAllEntriesByKey(final Vector keys, final boolean exact) {
 		return getAllEntriesByKey((Object) keys, exact);
 	}
 
@@ -894,7 +946,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewEntryCollection getAllReadEntries() {
 		try {
-			return Factory.fromLotus(getDelegate().getAllReadEntries(), ViewEntryCollection.class, this);
+			return fromLotus(getDelegate().getAllReadEntries(), ViewEntryCollection.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -909,7 +961,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewEntryCollection getAllReadEntries(final String userName) {
 		try {
-			return Factory.fromLotus(getDelegate().getAllReadEntries(userName), ViewEntryCollection.class, this);
+			return fromLotus(getDelegate().getAllReadEntries(userName), ViewEntryCollection.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -924,7 +976,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewEntryCollection getAllUnreadEntries() {
 		try {
-			return Factory.fromLotus(getDelegate().getAllUnreadEntries(), ViewEntryCollection.class, this);
+			return fromLotus(getDelegate().getAllUnreadEntries(), ViewEntryCollection.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -939,7 +991,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewEntryCollection getAllUnreadEntries(final String userName) {
 		try {
-			return Factory.fromLotus(getDelegate().getAllUnreadEntries(userName), ViewEntryCollection.class, this);
+			return fromLotus(getDelegate().getAllUnreadEntries(userName), ViewEntryCollection.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -969,7 +1021,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getChild(final lotus.domino.Document doc) {
 		try {
-			return Factory.fromLotus(getDelegate().getChild((lotus.domino.Document) toLotus(doc)), Document.class, this);
+			return fromLotus(getDelegate().getChild(toLotus(doc)), Document.SCHEMA, getAncestorDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -984,7 +1036,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public ViewColumn getColumn(final int columnNumber) {
 		try {
-			return Factory.fromLotus(getDelegate().getColumn(columnNumber), ViewColumn.class, this);
+			return fromLotus(getDelegate().getColumn(columnNumber), ViewColumn.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1045,7 +1097,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Vector<org.openntf.domino.ViewColumn> getColumns() {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getColumns(), org.openntf.domino.ViewColumn.class, this);
+			return fromLotusAsVector(getDelegate().getColumns(), org.openntf.domino.ViewColumn.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1060,7 +1112,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public DateTime getCreated() {
 		try {
-			return Factory.fromLotus(getDelegate().getCreated(), DateTime.class, this);
+			return fromLotus(getDelegate().getCreated(), DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1084,15 +1136,19 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@Override
 	public Document getDocumentByKey(final Object key, final boolean exact) {
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
+
 		try {
-			Object domKey = toDominoFriendly(key, this);
+			Object domKey = toDominoFriendly(key, this, recycleThis);
 			if (domKey instanceof java.util.Vector) {
-				return Factory.fromLotusDocument(getDelegate().getDocumentByKey((java.util.Vector) domKey, exact), this);
+				return fromLotus(getDelegate().getDocumentByKey((java.util.Vector) domKey, exact), Document.SCHEMA, getAncestorDatabase());
 			} else {
-				return Factory.fromLotusDocument(getDelegate().getDocumentByKey(domKey, exact), this);
+				return fromLotus(getDelegate().getDocumentByKey(domKey, exact), Document.SCHEMA, getAncestorDatabase());
 			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 		return null;
 	}
@@ -1136,16 +1192,19 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@Override
 	public ViewEntry getEntryByKey(final Object key, final boolean exact) {
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			Object domKey = toDominoFriendly(key, this);
+			Object domKey = toDominoFriendly(key, this, recycleThis);
 			if (domKey instanceof java.util.Vector) {
-				return Factory.fromLotus(getDelegate().getEntryByKey((java.util.Vector) domKey, exact), ViewEntry.class, this);
+				return fromLotus(getDelegate().getEntryByKey((java.util.Vector) domKey, exact), ViewEntry.SCHEMA, this);
 			} else {
-				return Factory.fromLotus(getDelegate().getEntryByKey(domKey, exact), ViewEntry.class, this);
+				return fromLotus(getDelegate().getEntryByKey(domKey, exact), ViewEntry.SCHEMA, this);
 
 			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 		return null;
 	}
@@ -1195,7 +1254,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getFirstDocument() {
 		try {
-			return Factory.fromLotusDocument(getDelegate().getFirstDocument(), this);
+			return fromLotus(getDelegate().getFirstDocument(), Document.SCHEMA, getAncestorDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1240,7 +1299,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getLastDocument() {
 		try {
-			return Factory.fromLotusDocument(getDelegate().getLastDocument(), this);
+			return fromLotus(getDelegate().getLastDocument(), Document.SCHEMA, getAncestorDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1255,7 +1314,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public DateTime getLastModified() {
 		try {
-			return Factory.fromLotus(getDelegate().getLastModified(), DateTime.class, this);
+			return fromLotus(getDelegate().getLastModified(), DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1301,7 +1360,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getNextDocument(final lotus.domino.Document doc) {
 		try {
-			return Factory.fromLotusDocument(getDelegate().getNextDocument((lotus.domino.Document) toLotus(doc)), this);
+			return fromLotus(getDelegate().getNextDocument(toLotus(doc)), Document.SCHEMA, getAncestorDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1316,7 +1375,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getNextSibling(final lotus.domino.Document doc) {
 		try {
-			return Factory.fromLotusDocument(getDelegate().getNextSibling((lotus.domino.Document) toLotus(doc)), this);
+			return fromLotus(getDelegate().getNextSibling(toLotus(doc)), Document.SCHEMA, getAncestorDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1358,7 +1417,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getNthDocument(final int n) {
 		try {
-			return Factory.fromLotusDocument(getDelegate().getNthDocument(n), this);
+			return fromLotus(getDelegate().getNthDocument(n), Document.SCHEMA, getAncestorDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1372,7 +1431,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	 */
 	@Override
 	public Database getParent() {
-		return (Database) super.getParent();
+		return getAncestor();
 	}
 
 	/*
@@ -1383,7 +1442,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getParentDocument(final lotus.domino.Document doc) {
 		try {
-			return Factory.fromLotusDocument(getDelegate().getParentDocument((lotus.domino.Document) toLotus(doc)), this);
+			return fromLotus(getDelegate().getParentDocument(toLotus(doc)), Document.SCHEMA, getAncestorDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1398,7 +1457,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getPrevDocument(final lotus.domino.Document doc) {
 		try {
-			return Factory.fromLotusDocument(getDelegate().getPrevDocument((lotus.domino.Document) toLotus(doc)), this);
+			return fromLotus(getDelegate().getPrevDocument(toLotus(doc)), Document.SCHEMA, getAncestorDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1413,7 +1472,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	@Override
 	public Document getPrevSibling(final lotus.domino.Document doc) {
 		try {
-			return Factory.fromLotusDocument(getDelegate().getPrevSibling((lotus.domino.Document) toLotus(doc)), this);
+			return fromLotus(getDelegate().getPrevSibling(toLotus(doc)), Document.SCHEMA, getAncestorDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2351,9 +2410,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View> imple
 	public void resurrect() { // should only happen if the delegate has been destroyed somehow.
 		Database db = getAncestorDatabase();
 		try {
-			lotus.domino.Database d = db.getDelegate();
+			lotus.domino.Database d = toLotus(db);
 			lotus.domino.View view = d.getView(name_);
-			setDelegate(view);
+			setDelegate(view, 0);
 			//			if (getAncestorSession().isFixEnabled(Fixes.VIEW_UPDATE_OFF)) {
 			view.setAutoUpdate(false);
 			//			}

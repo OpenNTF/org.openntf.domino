@@ -20,6 +20,7 @@ import java.util.Vector;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.Design;
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.Resurrectable;
 
 // TODO: Auto-generated Javadoc
@@ -28,6 +29,25 @@ import org.openntf.domino.types.Resurrectable;
  */
 public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Base<lotus.domino.View>, Design, Resurrectable,
 		DatabaseDescendant {
+
+	public static class Schema extends FactorySchema<View, lotus.domino.View, Database> {
+		@Override
+		public Class<View> typeClass() {
+			return View.class;
+		}
+
+		@Override
+		public Class<lotus.domino.View> delegateClass() {
+			return lotus.domino.View.class;
+		}
+
+		@Override
+		public Class<Database> parentClass() {
+			return Database.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)
@@ -385,7 +405,6 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * 
 	 * @return the all documents
 	 */
-	@Override
 	public DocumentCollection getAllDocuments();
 
 	/*

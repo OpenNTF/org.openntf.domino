@@ -18,6 +18,7 @@ package org.openntf.domino;
 import java.util.Date;
 
 import org.openntf.domino.types.Encapsulated;
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
@@ -25,6 +26,25 @@ import org.openntf.domino.types.SessionDescendant;
  */
 public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.DateTime, org.openntf.domino.ext.DateTime, Encapsulated,
 		SessionDescendant {
+
+	public static class Schema extends FactorySchema<DateTime, lotus.domino.DateTime, Session> {
+		@Override
+		public Class<DateTime> typeClass() {
+			return DateTime.class;
+		}
+
+		@Override
+		public Class<lotus.domino.DateTime> delegateClass() {
+			return lotus.domino.DateTime.class;
+		}
+
+		@Override
+		public Class<Session> parentClass() {
+			return Session.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)

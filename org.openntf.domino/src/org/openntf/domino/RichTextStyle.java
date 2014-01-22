@@ -15,6 +15,7 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
@@ -22,6 +23,25 @@ import org.openntf.domino.types.SessionDescendant;
  */
 public interface RichTextStyle extends Base<lotus.domino.RichTextStyle>, lotus.domino.RichTextStyle, org.openntf.domino.ext.RichTextStyle,
 		SessionDescendant {
+
+	public static class Schema extends FactorySchema<RichTextStyle, lotus.domino.RichTextStyle, Session> {
+		@Override
+		public Class<RichTextStyle> typeClass() {
+			return RichTextStyle.class;
+		}
+
+		@Override
+		public Class<lotus.domino.RichTextStyle> delegateClass() {
+			return lotus.domino.RichTextStyle.class;
+		}
+
+		@Override
+		public Class<Session> parentClass() {
+			return Session.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	public static enum BoldStyle {
 

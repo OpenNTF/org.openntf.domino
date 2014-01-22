@@ -17,14 +17,15 @@ package org.openntf.domino.impl;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class RichTextStyle.
  */
-public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.domino.RichTextStyle> implements
+public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.domino.RichTextStyle, Session> implements
 		org.openntf.domino.RichTextStyle {
 
 	/**
@@ -35,8 +36,33 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public RichTextStyle(final lotus.domino.RichTextStyle delegate, final org.openntf.domino.Base<?> parent) {
 		super(delegate, Factory.getSession(parent));
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public RichTextStyle(final lotus.domino.RichTextStyle delegate, final Session parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_SESSION);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Session findParent(final lotus.domino.RichTextStyle delegate) throws NotesException {
+		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
 	}
 
 	/*
@@ -136,7 +162,7 @@ public class RichTextStyle extends Base<org.openntf.domino.RichTextStyle, lotus.
 	 */
 	@Override
 	public Session getParent() {
-		return (Session) super.getParent();
+		return getAncestor();
 	}
 
 	/*

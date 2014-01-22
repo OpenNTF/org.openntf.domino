@@ -7,7 +7,8 @@ Bundle-Vendor: OpenNTF.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: lotus.domino,
  lotus.domino.local,
- org.openntf.domino
+ org.openntf.domino,
+ org.openntf.domino.utils
 Export-Package: com.ibm.icu.impl,
  com.ibm.icu.impl.data,
  com.ibm.icu.impl.duration,
