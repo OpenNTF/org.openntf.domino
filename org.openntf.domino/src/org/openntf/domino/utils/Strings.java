@@ -37,7 +37,7 @@ import org.openntf.domino.impl.Name;
 /**
  * String Utilities
  * 
- * @author Devin S. Olsonm (dolson@czarnowski.com)
+ * @author Devin S. Olson (dolson@czarnowski.com)
  * 
  */
 public enum Strings {
@@ -96,15 +96,6 @@ public enum Strings {
 	public static final String TIMESTAMP_MILITARY = "yyyyMMdd HHmm:ss, zzz";
 	public static final String TIMESTAMP_SIMPLETIME = "HHmmaa";
 
-	/*
-	 * ************************************************************************
-	 * ************************************************************************
-	 * 
-	 * PUBLIC Methods
-	 * 
-	 * ************************************************************************
-	 * ************************************************************************
-	 */
 	public static enum IDTYPE {
 		BLANK, REPLICA, NOTE, UNIVERSAL;
 
@@ -117,6 +108,16 @@ public enum Strings {
 			return this.getDeclaringClass() + "." + this.getClass() + ":" + this.name();
 		}
 	};
+
+	/*
+	 * ************************************************************************
+	 * ************************************************************************
+	 * 
+	 * PUBLIC Methods
+	 * 
+	 * ************************************************************************
+	 * ************************************************************************
+	 */
 
 	/**
 	 * Gets or generates a Vector of Strings from an Object
@@ -132,10 +133,29 @@ public enum Strings {
 		return ((null == al) || (al.size() < 1)) ? null : new Vector<String>(al);
 	}
 
+	/**
+	 * Generates a properly formatted String which can be used as an Environment Variable name.
+	 * 
+	 * Returns trimmed identifier converted to all uppercase with spaces converted to underscores.
+	 * 
+	 * @param identifier
+	 *            String from which to generate an Environment Variable name.
+	 * 
+	 * @return Environment Variable name generated from identifier. Empty string "" if blank.
+	 */
 	public static String getEnvarName(final String identifier) {
 		return (Strings.isBlankString(identifier)) ? "" : identifier.trim().toUpperCase().replaceAll(" ", "_");
 	}
 
+	/**
+	 * Determines if a specified id is a potential id based upon the specified idType.
+	 * 
+	 * @param id
+	 *            String to check if potential ID for type.
+	 * @param idType
+	 *            Type of id for which to check id.
+	 * @return Flag indicating if the specified id is an allowed potential id for the specified type.
+	 */
 	public static boolean isPotentialID(final String id, final IDTYPE idType) {
 		try {
 			if (null == id) {
@@ -265,6 +285,14 @@ public enum Strings {
 		return sb.toString();
 	}
 
+	/**
+	 * Generates a Proper Case (first character capitalized, all other characters unchanged) string from an input string.
+	 * 
+	 * @param string
+	 *            Source string for which to generate a Proper Case string.
+	 * 
+	 * @return Proper Case string from the specified source string.
+	 */
 	public static String toProperCase(final String string) {
 		return ISO.toProperCase(string);
 	}
@@ -281,6 +309,13 @@ public enum Strings {
 		return ISO.isBlankString(string);
 	}
 
+	/**
+	 * Determines if a specified string is a Hexadecimal string (comprised of characters 0-9 or A-F, case insensitive)
+	 * 
+	 * @param string
+	 *            Source string to check.
+	 * @return Flag indicating if string is comprised only of Hexadecimal characters.
+	 */
 	public static boolean isHexadecimalString(final String string) {
 		return (null != string) && (string.matches("^[A-Fa-f0-9]+$"));
 	}
@@ -395,6 +430,13 @@ public enum Strings {
 		return "";
 	}
 
+	/**
+	 * Removes all blank spaces from a specified StringBuilder object.
+	 * 
+	 * @param sb
+	 *            StringBuilder object from which to remove all blank spaces.
+	 * @return StringBuilder object with all blank spaces removed.
+	 */
 	public static StringBuilder removeBlankSpace(final StringBuilder sb) {
 		if (null != sb) {
 			int currentEnd = -1;
@@ -548,6 +590,15 @@ public enum Strings {
 		return (idx > -1) ? source.substring(idx + 1) : "";
 	}
 
+	/**
+	 * Strips all non-alphanumeric characters from a source string.
+	 * 
+	 * Alphanumeric is defined as all characters from A-Z, a-z, and 0-9
+	 * 
+	 * @param source
+	 *            String from which to strip the non-alphanumeric characters.
+	 * @return source with all non-alphanumeric characters removed.
+	 */
 	public static String getAlphanumericOnly(final String source) {
 		return (null == source) ? "" : source.trim().replaceAll("[^A-Za-z0-9]", "");
 	}
@@ -735,6 +786,14 @@ public enum Strings {
 		return null;
 	}
 
+	/**
+	 * Strips all HTML tags from a source string.
+	 * 
+	 * @param source
+	 *            String from which to strip HTML tags.
+	 * 
+	 * @return source with all HTML tags removed.
+	 */
 	public static String stripHTMLtags(final String source) {
 		return (Strings.isBlankString(source)) ? "" : source.replaceAll("\\<.*?>", "");
 	}
