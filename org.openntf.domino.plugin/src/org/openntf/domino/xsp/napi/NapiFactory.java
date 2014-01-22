@@ -34,7 +34,7 @@ public class NapiFactory implements org.openntf.domino.napi.NapiFactory {
 					notesNoteConstructor = com.ibm.designer.domino.napi.NotesNote.class.getDeclaredConstructor(
 							com.ibm.designer.domino.napi.NotesDatabase.class, int.class);
 					notesNoteConstructor.setAccessible(true);
-					System.out.println("got Constructor ");
+					// System.out.println("got Constructor ");
 					return null;
 				}
 			});

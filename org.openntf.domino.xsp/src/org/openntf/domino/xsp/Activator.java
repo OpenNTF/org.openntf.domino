@@ -6,7 +6,6 @@ import java.net.URL;
 import javax.faces.context.FacesContext;
 
 import org.eclipse.core.runtime.Plugin;
-import org.openntf.domino.utils.Factory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -183,7 +182,6 @@ public class Activator extends Plugin {
 	public void start(final BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 		bundle_ = bundleContext.getBundle();
-		Factory.setClassLoader(Thread.currentThread().getContextClassLoader());
 	}
 
 	/*

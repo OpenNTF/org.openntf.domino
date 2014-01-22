@@ -205,7 +205,6 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		if (result == null) {
 			result = wrapLotusObject(lotus, parent, cpp_key);
 			cache.put(cpp_key, result, lotus);
-			Factory.countLotus(lotus.getClass());
 		}
 		return result;
 	}

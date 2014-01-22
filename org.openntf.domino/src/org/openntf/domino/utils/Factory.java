@@ -23,8 +23,10 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.ServiceLoader;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.Attributes;
@@ -65,12 +67,7 @@ public enum Factory {
 	/**
 	 * Holder for the wrapper-factory that converts lotus.domino objects to org.openntf.domino objects
 	 */
-	private static ThreadLocal<WrapperFactory> currentWrapperFactory = new ThreadLocal<WrapperFactory>() {
-		@Override
-		protected WrapperFactory initialValue() {
-			return new org.openntf.domino.impl.WrapperFactory();
-		}
-	};
+	private static ThreadLocal<WrapperFactory> currentWrapperFactory = new ThreadLocal<WrapperFactory>();
 
 	private static ThreadLocal<ClassLoader> currentClassLoader_ = new ThreadLocal<ClassLoader>();
 
@@ -314,7 +311,7 @@ public enum Factory {
 	/**
 	 * Count recycle error.
 	 */
-	public static void countRecycleError() {
+	public static void countRecycleError(final Class<?> c) {
 		if (TRACE_COUNTERS)
 			recycleErrCounter.increment();
 	}
@@ -426,7 +423,27 @@ public enum Factory {
 	 * @return
 	 */
 	public static WrapperFactory getWrapperFactory() {
-		return currentWrapperFactory.get();
+		WrapperFactory wf = currentWrapperFactory.get();
+		if (wf == null) {
+			ClassLoader cl = getClassLoader();
+			// System.out.println("Got this Classloader: " + cl);
+
+			if (cl != null) {
+				ServiceLoader<WrapperFactory> loader = ServiceLoader.load(WrapperFactory.class, cl);
+				Iterator<WrapperFactory> it = loader.iterator();
+				if (it.hasNext()) {
+					wf = it.next();
+					// TODO RPr remove these debug prints
+					System.out.println("Using alternative WrapperFactory: " + wf);
+				}
+			}
+			if (wf == null) {
+				// System.out.println("Using default WrapperFactory");
+				wf = new org.openntf.domino.impl.WrapperFactory();
+			}
+			currentWrapperFactory.set(wf);
+		}
+		return wf;
 	}
 
 	/**
@@ -652,6 +669,10 @@ public enum Factory {
 		currentClassLoader_.set(loader);
 	}
 
+	public static void clearWrapperFactory() {
+		currentWrapperFactory.set(null);
+	}
+
 	public static void clearClassLoader() {
 		currentClassLoader_.set(null);
 	}
@@ -664,28 +685,62 @@ public enum Factory {
 		DominoUtils.setBubbleExceptions(null);
 	}
 
+	/**
+	 * Begin with a clear environment
+	 */
+	public static void init() {
+		// TODO Auto-generated method stub
+
+	}
+
 	public static lotus.domino.Session terminate() {
 		lotus.domino.Session result = null;
 		WrapperFactory wf = getWrapperFactory();
 		if (currentSessionHolder_.get() != null) {
 			result = wf.toLotus(currentSessionHolder_.get());
 		}
-		getWrapperFactory().terminate();
+		wf.terminate();
 
 		clearSession();
-		clearClassLoader();
 		clearBubbleExceptions();
 		clearDominoGraph();
-		if (TRACE_COUNTERS && !objectCounter.isEmpty()) {
-			System.out.println("=== The following objects were left in memory ===");
+		clearWrapperFactory();
+		clearClassLoader();
+		return result;
+	}
+
+	/**
+	 * Debug method to get statistics
+	 * 
+	 * @param details
+	 * @return
+	 */
+	public String dumpCounters(final boolean details) {
+		if (!TRACE_COUNTERS)
+			return "Counters are disabled";
+		StringBuilder sb = new StringBuilder();
+		sb.append("LotusCount: ");
+		sb.append(getLotusCount());
+
+		sb.append(" AutoRecycled: ");
+		sb.append(getAutoRecycleCount());
+		sb.append(" ManualRecycled: ");
+		sb.append(getManualRecycleCount());
+		sb.append(" RecycleErrors: ");
+		sb.append(getRecycleErrorCount());
+		sb.append(" ActiveObjects: ");
+		sb.append(getActiveObjectCount());
+
+		if (!objectCounter.isEmpty() && details) {
+			sb.append("\n=== The following objects were left in memory ===");
 			for (Entry<Class<?>, Counter> e : objectCounter.entrySet()) {
 				int i = e.getValue().intValue();
 				if (i != 0) {
-					System.out.println(i + "\t" + e.getKey().getName());
+					sb.append("\n" + i + "\t" + e.getKey().getName());
 				}
 			}
 		}
-		return result;
+		return sb.toString();
 	}
 
 	/**
@@ -1038,4 +1093,5 @@ public enum Factory {
 		}
 		return result;
 	}
+
 }

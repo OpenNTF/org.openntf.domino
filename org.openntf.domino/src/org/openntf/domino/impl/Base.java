@@ -422,7 +422,29 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	}
 
 	/**
-	 * Checks if is recycled.
+	 * Checks if the lotus object is invalid. A object is invalid if it is recycled by the java side.
+	 * 
+	 * i.E.: Some Java code has called base.recycle();
+	 * 
+	 * @param base
+	 *            the base
+	 * @return true, if is recycled
+	 */
+	public static boolean isInvalid(final lotus.domino.Base base) {
+		if (base == null)
+			return true;
+		try {
+			return ((Boolean) isInvalidMethod.invoke(base, (Object[]) null)).booleanValue();
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+			return true;
+		}
+	}
+
+	/**
+	 * Checks if is dead. A object is dead if it is invalid (=recycled by java) or if it's cpp-object = 0.
+	 * 
+	 * This happens if the parent was recycled.
 	 * 
 	 * @param base
 	 *            the base
@@ -897,7 +919,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			base.recycle();
 			result = true;
 		} catch (Throwable t) {
-			Factory.countRecycleError();
+			Factory.countRecycleError(base.getClass());
 			DominoUtils.handleException(t);
 			// shikata ga nai
 		}
