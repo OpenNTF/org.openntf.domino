@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -829,6 +830,74 @@ public enum Strings {
 		}
 
 		return "";
+	}
+
+	/**
+	 * Generates an XML Node
+	 * 
+	 * @param node
+	 *            Node name
+	 * @param content
+	 *            Node content
+	 * 
+	 * @return XML Node constructed from name and content
+	 */
+	public static String getXMLnode(String node, final String content) {
+		String result = "";
+		node = (null == node) ? "" : node.trim().toLowerCase();
+		if (0 == node.length()) {
+			return result;
+		}
+
+		// TODO: Fail if "xml" is in node
+
+		if (Strings.isBlankString(content)) {
+			result = "<" + node + " />";
+		} else {
+			result = "<" + node + ">" + content + "</" + node + ">";
+		}
+
+		return result;
+	}
+
+	/**
+	 * Generates an XML Node
+	 * 
+	 * @param node
+	 *            Node name
+	 * @param content
+	 *            Node content
+	 * @param attributes
+	 *            Attributes for the node.
+	 * 
+	 * @return XML Node constructed from name, attributes and content
+	 */
+	public static String getXMLnode(String node, final String content, final Map<String, String> attribs) {
+		node = (null == node) ? "" : node.trim().toLowerCase();
+		if (0 == node.length()) {
+			return "";
+		}
+
+		// TODO: Fail if "xml" is in node
+
+		if (null == attribs) {
+			return Strings.getXMLnode(node, content);
+		}
+
+		String result = "<" + node;
+		for (String key : attribs.keySet()) {
+			if (key.trim().length() > 0) {
+				result += " " + key + "=\"" + attribs.get(key) + "\"";
+			}
+		} // for (String key : attribs.keySet())
+
+		if (Strings.isBlankString(content)) {
+			result += " />";
+		} else {
+			result += ">" + content + "</" + node + ">";
+		}
+
+		return result;
 	}
 
 	/*
