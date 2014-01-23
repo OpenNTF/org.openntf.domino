@@ -63,6 +63,7 @@ import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.Stream;
 import org.openntf.domino.exceptions.InvalidNotesUrlException;
+import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.logging.LogUtils;
 
 import com.ibm.icu.util.Calendar;
@@ -257,6 +258,10 @@ public enum DominoUtils {
 	 * @return the throwable
 	 */
 	public static Throwable handleException(final Throwable t) {
+		return (handleException(t, null));
+	}
+
+	public static Throwable handleException(final Throwable t, final String details) {
 		try {
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 				@Override
@@ -281,15 +286,14 @@ public enum DominoUtils {
 					return null;
 				}
 			});
-			if (getBubbleExceptions()) {
-				throw new RuntimeException(t);
-			}
-			return t;
 		} catch (Throwable e) {
 			e.printStackTrace();
-			return t;
 		}
 
+		if (getBubbleExceptions()) {
+			throw new OpenNTFNotesException(t);
+		}
+		return t;
 	}
 
 	/**

@@ -84,6 +84,7 @@ public class OpenntfFacesContextFactory extends FacesContextFactory implements c
 	@Override
 	public void beforeContextReleased(final FacesContext paramFacesContext) {
 		try {
+			System.out.println("Terminating the factory in " + getClass().getName());
 			Factory.terminate();
 		} catch (Throwable t) {
 			t.printStackTrace();

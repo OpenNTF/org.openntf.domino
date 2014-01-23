@@ -16,19 +16,6 @@ import com.ibm.xsp.util.TypedUtil;
 //import org.openntf.domino.Session;
 @SuppressWarnings("unchecked")
 public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory {
-	public static class ContextListener implements com.ibm.xsp.event.FacesContextListener {
-		@Override
-		public void beforeContextReleased(final FacesContext paramFacesContext) {
-			Factory.terminate();
-		}
-
-		@Override
-		public void beforeRenderingPhase(final FacesContext paramFacesContext) {
-			// TODO NOOP
-
-		}
-	}
-
 	// TODO this is really just a sample on how to get to an entry point in the API
 	private static Boolean GODMODE;
 
@@ -189,6 +176,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 			System.out.println("Beginning creation of implicit objects...");
 		}
 		Factory.setClassLoader(ctx.getContextClassLoader());
+
 		ctx.addRequestListener(new ContextListener());
 		org.openntf.domino.Session session = createSession(ctx);
 		@SuppressWarnings("unused")

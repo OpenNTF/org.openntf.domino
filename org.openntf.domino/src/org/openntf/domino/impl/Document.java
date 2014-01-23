@@ -1015,10 +1015,12 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			}
 
 			// TODO RPr: check if we can convertn a Document to a NAPI-Document
-			//			if (getNapiDocument() != null) {
-			//				List<String> lvals = getNapiDocument().getItemAsTextList(name);
-			//				return new Vector(lvals);
-			//			}
+			if (getNapiDocument() != null) {
+				//System.out.println("using NAPI");
+				List<String> lvals = getNapiDocument().getItemAsTextList(name);
+				//System.out.println("Got from NAPI" + lvals);
+				return new Vector(lvals);
+			}
 
 			Vector<?> vals = null;
 			try {
@@ -1134,7 +1136,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public String getItemValueString(final String name) {
 		if (getNapiDocument() != null) {
-			return getNapiDocument().getItemValueAsString(name);
+			String s = getNapiDocument().getItemValueAsString(name);
+			if (s == null)
+				return "";
+			return s;
 		}
 		try {
 

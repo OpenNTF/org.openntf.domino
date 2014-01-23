@@ -3,25 +3,56 @@
  */
 package org.openntf.domino.xsp.napi;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
+import java.util.Arrays;
 import java.util.List;
 
 import org.openntf.domino.utils.DominoUtils;
 
 import com.ibm.designer.domino.napi.NotesAPIException;
 import com.ibm.designer.domino.napi.NotesNote;
+import com.ibm.designer.domino.napi.NotesNoteItem;
+import com.ibm.domino.napi.NException;
+import com.ibm.domino.napi.c.NsfNote;
 
 /**
  * @author praml
  * 
  */
 public class NapiDocument implements org.openntf.domino.napi.NapiDocument {
-	NotesNote delegate;
+	NotesNote delegate = null;
+	long handle;
+
+	private static Method NGetItemMethod;
+	private static Constructor notesNoteItemConstructor;
 
 	/**
-	 * @param napiNote
+	 * @param handle
 	 */
-	public NapiDocument(final NotesNote napiNote) {
-		delegate = napiNote;
+	public NapiDocument(final long handle) {
+		this.handle = handle;
+	}
+
+	static {
+		try {
+			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				@Override
+				public Object run() throws Exception {
+					notesNoteItemConstructor = NotesNoteItem.class.getDeclaredConstructor(NotesNote.class, long.class);
+					notesNoteItemConstructor.setAccessible(true);
+					NGetItemMethod = NotesNote.class.getDeclaredMethod("NGetItem", int.class, String.class);
+					NGetItemMethod.setAccessible(true);
+					return null;
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+			DominoUtils.handleException(e);
+		}
+
 	}
 
 	/**
@@ -151,9 +182,17 @@ public class NapiDocument implements org.openntf.domino.napi.NapiDocument {
 	// * @see com.ibm.designer.domino.napi.NotesNote#getItem(java.lang.String)
 	// */
 	// @Override
-	// public NotesNoteItem getItem(final String arg0) {
-	// return delegate.getItem(arg0);
-	// }
+	public NotesNoteItem getItem(final String arg0) {
+		try {
+			long l = (Long) NGetItemMethod.invoke(null, (int) handle, arg0);
+			if (l != 0L) {
+				return (NotesNoteItem) notesNoteItemConstructor.newInstance(null, l);
+			}
+		} catch (Exception e) {
+			//DominoUtils.handleException(e);
+		}
+		return null;
+	}
 
 	/**
 	 * @param arg0
@@ -163,12 +202,27 @@ public class NapiDocument implements org.openntf.domino.napi.NapiDocument {
 	 */
 	@Override
 	public List<String> getItemAsTextList(final String arg0) {
+		NotesNoteItem localNotesNoteItem = getItem(arg0);
+		if (localNotesNoteItem == null) {
+			return Arrays.asList("");
+		}
 		try {
-			return delegate.getItemAsTextList(arg0);
+			try {
+				if (localNotesNoteItem != null) {
+					String str = localNotesNoteItem.getValueAsString('|'); // ARGH TODO RPr
+					if (str != null) {
+						String[] arrayOfString = str.split("\\|");
+						List localList1 = Arrays.asList(arrayOfString);
+						return localList1;
+					}
+				}
+			} finally {
+				localNotesNoteItem.recycle();
+			}
 		} catch (NotesAPIException e) {
 			DominoUtils.handleException(e);
-			return null;
 		}
+		return null;
 	}
 
 	/**
@@ -195,8 +249,8 @@ public class NapiDocument implements org.openntf.domino.napi.NapiDocument {
 	@Override
 	public String getItemValueAsString(final String arg0) {
 		try {
-			return delegate.getItemValueAsString(arg0);
-		} catch (NotesAPIException e) {
+			return NsfNote.NSFItemGetText(handle, arg0);
+		} catch (NException e) {
 			DominoUtils.handleException(e);
 			return null;
 		}
@@ -286,8 +340,8 @@ public class NapiDocument implements org.openntf.domino.napi.NapiDocument {
 	@Override
 	public String getNoteUnid() {
 		try {
-			return delegate.getNoteUnid();
-		} catch (NotesAPIException e) {
+			return NsfNote.NSFNoteGetInfoUNID(handle);
+		} catch (NException e) {
 			DominoUtils.handleException(e);
 			return null;
 

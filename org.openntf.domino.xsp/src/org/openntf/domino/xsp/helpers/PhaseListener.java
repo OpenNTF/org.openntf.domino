@@ -22,7 +22,6 @@ public class PhaseListener extends AbstractListener implements javax.faces.event
 
 	@Override
 	public void beforeContextReleased(final FacesContext ctx) {
-		Factory.terminate();
 		if (_debug)
 			System.out.println("Completed request " + String.valueOf(System.identityHashCode(ctx)));
 	}

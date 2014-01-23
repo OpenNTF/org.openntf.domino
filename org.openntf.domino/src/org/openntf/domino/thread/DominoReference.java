@@ -69,19 +69,31 @@ public class DominoReference extends WeakReference<Object> {
 		if (delegate_ != null) {
 			try {
 				if (org.openntf.domino.impl.Base.isDead(delegate_)) {
-					// already recycled, do not count twice!
-					return;
-				}
-				delegate_.recycle();
-				int total = Factory.countAutoRecycle();
-
-				if (log_.isLoggable(Level.FINE)) {
-					if (total % 5000 == 0) {
-						log_.log(Level.FINE, "Auto-recycled " + total + " references");
+					// the object is dead, so let's see who recycled this
+					if (org.openntf.domino.impl.Base.isInvalid(delegate_)) {
+						// if it is also invalid, someone called recycle on the delegate object.
+						// this is already counted as manual recycle, so do not count twice
+					} else {
+						// otherwise, it's parent is recycled.
+						// TODO this should get counted on a own counter
+						Factory.countManualRecycle(delegate_.getClass());
 					}
+
+				} else {
+					// recycle the delegate, because no hard ref points to us.
+
+					delegate_.recycle();
+					int total = Factory.countAutoRecycle(delegate_.getClass());
+
+					if (log_.isLoggable(Level.FINE)) {
+						if (total % 5000 == 0) {
+							log_.log(Level.FINE, "Auto-recycled " + total + " references");
+						}
+					}
+
 				}
 			} catch (NotesException e) {
-				Factory.countRecycleError();
+				Factory.countRecycleError(delegate_.getClass());
 				DominoUtils.handleException(e);
 			}
 		}

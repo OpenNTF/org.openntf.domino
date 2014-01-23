@@ -63,15 +63,17 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		// call gc once before processing the queues
 		System.gc();
 		try {
-			//give the gc some ms
-			Thread.sleep(100);
+			//give the gc some ms (not too much, we do not want to delay HTTP-Requests!
+			Thread.sleep(1);
 		} catch (InterruptedException e) {
 			// and ignore this
 			//DominoUtils.handleException(e);
 		}
 		// TODO: Recycle all?
+		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
 		autoRecycle.processQueue();
 		noAutoRecycle.processQueue();
+		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
 	}
 
 	/** The Constant log_. */
@@ -203,7 +205,6 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		if (result == null) {
 			result = wrapLotusObject(lotus, parent, cpp_key);
 			cache.put(cpp_key, result, lotus);
-			Factory.countLotus();
 		}
 		return result;
 	}

@@ -13,6 +13,9 @@
   <!-- Phase Listener -->
   <lifecycle>
     <phase-listener>org.openntf.domino.xsp.XspOpenLogPhaseListener</phase-listener>
-    <phase-listener>org.openntf.domino.xsp.helpers.PhaseListener</phase-listener>
+
+  	<!-- RPr: Phase listener disabled, as it sets only the classloader in Factory  
+    	<phase-listener>org.openntf.domino.xsp.helpers.PhaseListener</phase-listener>
+     -->
   </lifecycle>
 </faces-config>

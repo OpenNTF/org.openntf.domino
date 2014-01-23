@@ -51,7 +51,11 @@ public class DominoReferenceCache {
 	public static int GARBAGE_INTERVAL = 1024;
 
 	/**
+	 * Creates a new DominoReferencCache
+	 * 
 	 * @param autorecycle
+	 *            true if the cache should recycle objects if they are weakly reachable
+	 * 
 	 */
 	public DominoReferenceCache(final boolean autorecycle) {
 		super();
@@ -82,13 +86,15 @@ public class DominoReferenceCache {
 	 * returns a object of Type T
 	 * 
 	 * @param key
+	 *            the cpp-id
 	 * @param t
-	 * @return
+	 *            the class to return
+	 * @return the object
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T get(final long key, final Class<T> t) {
 		Object o = get(key);
-		if (o != null && t.isAssignableFrom(o.getClass())) {
+		if (o != null) {
 			return (T) o;
 		}
 		return null;
@@ -102,8 +108,6 @@ public class DominoReferenceCache {
 	 *            key with which the specified value is to be associated.
 	 * @param value
 	 *            value to be associated with the specified key.
-	 * @return previous value associated with specified key, or null if there was no mapping for key or the value has been garbage collected
-	 *         by the garbage collector.
 	 */
 	public void put(final long key, final Object value, final lotus.domino.Base delegate) {
 		// If the map already contains an equivalent key, the new key
@@ -122,41 +126,35 @@ public class DominoReferenceCache {
 		// create and enqueue a reference that tracks lifetime of value
 		DominoReference ref = new DominoReference(key, value, delegate, queue);
 		if (key == 0) {
-			return;
+			throw new IllegalArgumentException("key cannot be 0");
 		}
 		map.put(key, ref);
+		if (autorecycle_) {
+			Factory.countLotus(delegate.getClass());
+		}
 	}
 
 	/**
-	 * Removes all garbage collected values with their keys from the map. Since we don't know how much the ReferenceQueue.poll() operation
-	 * costs, we should not call it every map operation.
+	 * Removes all garbage collected values with their keys from the map.
 	 * 
-	 * @param b
 	 */
 	public void processQueue() {
 
 		int counter = cache_counter.incrementAndGet();
 		if (counter % GARBAGE_INTERVAL == 0) {
-			// TODO: This may be dangerous when switching off counters. So check for 0
-			int currObjects = Factory.getActiveObjectCount();
-			if (currObjects == 0 || currObjects > 64) {
-				// If you recycle yourself, you do not have to recycle
-				System.gc();
-			}
+			// We have to run GC from time to time, otherwise objects will die very late :(
+			System.gc();
 		}
 
 		DominoReference ref = null;
 
 		while ((ref = (DominoReference) queue.poll()) != null) {
 			long key = ref.getKey();
-			if (key != 0) {
-				map.remove(key);
-			}
+			map.remove(key);
 			if (autorecycle_) {
 				ref.recycle();
 			}
 		}
-
 	}
 
 	/**

@@ -57,59 +57,6 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
-	class DocumentCollectionIterator implements Iterator<org.openntf.domino.Document> {
-
-		// hold docs unwrapperd
-		private lotus.domino.Document currLotusDoc = null;
-		private lotus.domino.Document nextLotusDoc;
-		private org.openntf.domino.Document currWrapper = null;
-		private org.openntf.domino.Document nextWrapper;
-
-		DocumentCollectionIterator() {
-			try {
-				nextLotusDoc = getDelegate().getFirstDocument(); // needs no recycle
-				// because it is wrapped here (we must do this here otherwise it won't get recycled;
-				nextWrapper = fromLotus(nextLotusDoc, Document.SCHEMA, getParent());
-			} catch (NotesException e) {
-				DominoUtils.handleException(e);
-			}
-		}
-
-		public boolean hasNext() {
-			return nextLotusDoc != null; // something in Queue?
-		}
-
-		/* (non-Javadoc)
-		 * @see java.util.Iterator#next()
-		 */
-		public org.openntf.domino.Document next() {
-			try {
-				currLotusDoc = nextLotusDoc;
-				currWrapper = nextWrapper;
-
-				nextLotusDoc = getDelegate().getNextDocument(currLotusDoc); // this is very tricky, iterate from the 1st to the 2nd
-				nextWrapper = fromLotus(nextLotusDoc, Document.SCHEMA, getParent()); // and update the wrapper here
-				return currWrapper;											// return the wrapper that wrapped the 1st
-			} catch (NotesException e) {
-				DominoUtils.handleException(e);
-				return null;
-			}
-		}
-
-		/* (non-Javadoc)
-		 * @see java.util.Iterator#remove()
-		 */
-		public void remove() {
-			// TODO Auto-generated method stub
-			try {
-				getDelegate().deleteDocument(currLotusDoc); // delete from coll! not from disk
-			} catch (NotesException e) {
-				DominoUtils.handleException(e);
-			}
-		}
-
-	};
-
 	/**
 	 * Instantiates a new document collection.
 	 * 
@@ -361,7 +308,7 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	@Override
 	public void addDocument(final lotus.domino.Document doc) {
 		try {
-			getDelegate().addDocument((lotus.domino.Document) toLotus(doc));
+			getDelegate().addDocument(toLotus(doc));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -376,7 +323,7 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	@Override
 	public void addDocument(final lotus.domino.Document doc, final boolean checkDups) {
 		try {
-			getDelegate().addDocument((lotus.domino.Document) toLotus(doc), checkDups);
+			getDelegate().addDocument(toLotus(doc), checkDups);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -819,7 +766,7 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	@Override
 	public Iterator<org.openntf.domino.Document> iterator() {
 		//return new DocumentIterator(this);
-		return new DocumentCollectionIterator();
+		return new DocumentCollectionIterator(this);
 	}
 
 	public org.openntf.domino.Database getParentDatabase() {
