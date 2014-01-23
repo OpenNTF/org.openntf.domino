@@ -31,6 +31,7 @@ import org.openntf.domino.utils.DominoUtils;
  * 
  */
 public class DatabaseClassLoader extends ClassLoader {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DatabaseClassLoader.class.getName());
 
 	private final Map<String, byte[]> unloadedClasses_ = new HashMap<String, byte[]>();
