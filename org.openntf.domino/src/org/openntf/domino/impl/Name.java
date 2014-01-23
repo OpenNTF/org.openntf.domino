@@ -364,10 +364,10 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	}
 
 	/**
-	 * Gets the String for the key.
+	 * Gets the Name Part for the specified key.
 	 * 
 	 * @param key
-	 *            Key for the mapped String
+	 *            Key identifying the specific mapped Name Part string to return.
 	 * 
 	 * @return Mapped String for the key. Empty string "" if no mapping exists.
 	 * 

@@ -249,10 +249,10 @@ public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, org.op
 	public String getLanguage();
 
 	/**
-	 * Gets the String for the key.
+	 * Gets the Name Part for the specified key.
 	 * 
 	 * @param key
-	 *            Key for the mapped String
+	 *            Key identifying the specific mapped Name Part string to return.
 	 * 
 	 * @return Mapped String for the key. Empty string "" if no mapping exists.
 	 * 
