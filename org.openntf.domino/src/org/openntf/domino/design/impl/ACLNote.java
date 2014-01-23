@@ -25,6 +25,7 @@ import org.openntf.domino.Document;
  * 
  */
 public class ACLNote extends AbstractDesignBase implements org.openntf.domino.design.ACLNote {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ACLNote.class.getName());
 
 	/**
