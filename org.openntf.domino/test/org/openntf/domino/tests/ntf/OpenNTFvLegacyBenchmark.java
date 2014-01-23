@@ -20,14 +20,15 @@ public enum OpenNTFvLegacyBenchmark {
 	private static final String server = "";
 	private static final String dbPath = "events4.nsf";
 
-	private static final String[] FIELDS_LIST = { "AddInName", "class", "Facility", "Filename", "Name", "OriginalText", "PossibleSolution",
-			"ProbableCause", "TaskSubTypes", "Value", "UserText", "ui.Severity" };
+	private static final String[] FIELDS_LIST = { "AddInName", "class", "Facility", "Form", "Filename", "Name", "OriginalText",
+			"PossibleSolution", "ProbableCause", "TaskSubTypes", "Value", "UserText", "ui.Severity" };
 
 	public static class LegacyDoer implements Runnable {
 		private static final long serialVersionUID = 1L;
 		int nameCount = 0;
 		int docCount = 0;
 		int dateCount = 0;
+		int fieldCount = 0;
 
 		private void iterateForms(final lotus.domino.Database db) throws lotus.domino.NotesException {
 			System.out.println("Thread " + Thread.currentThread().getName() + " BEGINNING ITERATION of Forms");
@@ -76,6 +77,7 @@ public enum OpenNTFvLegacyBenchmark {
 				Map<String, String> dataContents = new HashMap<String, String>();
 				for (String fieldName : FIELDS_LIST) {
 					dataContents.put(fieldName, doc.getItemValueString(fieldName));
+					fieldCount++;
 				}
 
 				lotus.domino.DateTime toxic = doc.getLastModified();
@@ -104,6 +106,11 @@ public enum OpenNTFvLegacyBenchmark {
 						n.recycle();
 						nameCount++;
 					}
+				}
+				Map<String, String> dataContents = new HashMap<String, String>();
+				for (String fieldName : FIELDS_LIST) {
+					dataContents.put(fieldName, doc.getItemValueString(fieldName));
+					fieldCount++;
 				}
 				lotus.domino.DateTime toxic = doc.getLastModified();
 				String busyWork = toxic.getGMTTime();
@@ -226,6 +233,7 @@ public enum OpenNTFvLegacyBenchmark {
 			sb.append(" *** ALL OPERATIONS COMPLETE elapsed time: ");
 			sb.append(elapsed / 1000000 + "ms: processed ");
 			sb.append(nameCount + " names, ");
+			sb.append(fieldCount + " fields, ");
 			sb.append(docCount + " docs, and ");
 			sb.append(dateCount + " datetimes with legacy API.");
 			System.out.println(sb.toString());
@@ -238,6 +246,7 @@ public enum OpenNTFvLegacyBenchmark {
 		int nameCount = 0;
 		int docCount = 0;
 		int dateCount = 0;
+		int fieldCount = 0;
 
 		private void iterateForms(final org.openntf.domino.Database db) {
 			System.out.println("Thread " + Thread.currentThread().getName() + " BEGINNING ITERATION of Forms");
@@ -272,6 +281,7 @@ public enum OpenNTFvLegacyBenchmark {
 				Map<String, String> dataContents = new HashMap<String, String>();
 				for (String fieldName : FIELDS_LIST) {
 					dataContents.put(fieldName, doc.getItemValueString(fieldName));
+					fieldCount++;
 				}
 
 				org.openntf.domino.DateTime toxic = doc.getLastModified();
@@ -291,7 +301,11 @@ public enum OpenNTFvLegacyBenchmark {
 						nameCount++;
 					}
 				}
-
+				Map<String, String> dataContents = new HashMap<String, String>();
+				for (String fieldName : FIELDS_LIST) {
+					dataContents.put(fieldName, doc.getItemValueString(fieldName));
+					fieldCount++;
+				}
 				org.openntf.domino.DateTime toxic = doc.getLastModified();
 				String busyWork = toxic.getGMTTime();
 				org.openntf.domino.DateTime toxic2 = doc.getLastModified();
@@ -336,6 +350,7 @@ public enum OpenNTFvLegacyBenchmark {
 			sb.append(" *** ALL OPERATIONS COMPLETE elapsed time: ");
 			sb.append(elapsed / 1000000 + "ms: processed ");
 			sb.append(nameCount + " names, ");
+			sb.append(fieldCount + " fields, ");
 			sb.append(docCount + " docs, and ");
 			sb.append(dateCount + " datetimes without recycling.");
 			System.out.println(sb.toString());
