@@ -82,7 +82,7 @@ public enum OpenNTFvLegacyBenchmark {
 
 				lotus.domino.DateTime toxic = doc.getLastModified();
 				String busyWork = toxic.getGMTTime();
-				lotus.domino.DateTime toxic2 = doc.getLastModified();
+				lotus.domino.DateTime toxic2 = doc.getCreated();
 				String busyWork2 = toxic2.getDateOnly();
 				dateCount++;
 				doc.recycle(v);
@@ -114,7 +114,7 @@ public enum OpenNTFvLegacyBenchmark {
 				}
 				lotus.domino.DateTime toxic = doc.getLastModified();
 				String busyWork = toxic.getGMTTime();
-				lotus.domino.DateTime toxic2 = doc.getLastModified();
+				lotus.domino.DateTime toxic2 = doc.getCreated();
 				String busyWork2 = toxic2.getDateOnly();
 				dateCount++;
 				doc.recycle(v);
@@ -286,7 +286,7 @@ public enum OpenNTFvLegacyBenchmark {
 
 				org.openntf.domino.DateTime toxic = doc.getLastModified();
 				String busyWork = toxic.getGMTTime();
-				org.openntf.domino.DateTime toxic2 = doc.getLastModified();
+				org.openntf.domino.DateTime toxic2 = doc.getCreated();
 				String busyWork2 = toxic2.getDateOnly();
 				dateCount++;
 			}
@@ -308,7 +308,7 @@ public enum OpenNTFvLegacyBenchmark {
 				}
 				org.openntf.domino.DateTime toxic = doc.getLastModified();
 				String busyWork = toxic.getGMTTime();
-				org.openntf.domino.DateTime toxic2 = doc.getLastModified();
+				org.openntf.domino.DateTime toxic2 = doc.getCreated();
 				String busyWork2 = toxic2.getDateOnly();
 				dateCount++;
 			}
