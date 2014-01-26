@@ -222,17 +222,23 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 			// FacesException, so error is on event - doesn't get hit in examples. Can this still get hit??
 			FacesExceptionEx fe = (FacesExceptionEx) error;
 			String msg = "";
-			if ("lotus.domino.NotesException".equals(fe.getCause().getClass().getName())) {
-				// sometimes the cause is a NotesException
-				NotesException ne = (NotesException) fe.getCause();
+			try {
+				if ("lotus.domino.NotesException".equals(fe.getCause().getClass().getName())) {
+					// sometimes the cause is a NotesException
+					NotesException ne = (NotesException) fe.getCause();
 
-				msg = msg + "NotesException - " + Integer.toString(ne.id) + " " + ne.text;
-			} else {
-				EvaluationExceptionEx ee = (EvaluationExceptionEx) fe.getCause();
-				InterpretException ie = (InterpretException) ee.getCause();
+					msg = msg + "NotesException - " + Integer.toString(ne.id) + " " + ne.text;
+				} else {
+					EvaluationExceptionEx ee = (EvaluationExceptionEx) fe.getCause();
+					InterpretException ie = (InterpretException) ee.getCause();
 
-				msg = "Error on " + ee.getErrorComponentId() + " " + ee.getErrorPropertyId() + " property/event:\n\n"
-						+ Integer.toString(ie.getErrorLine()) + ":\n\n" + ie.getLocalizedMessage() + "\n\n" + ie.getExpressionText();
+					msg = "Error on " + ee.getErrorComponentId() + " " + ee.getErrorPropertyId() + " property/event:\n\n"
+							+ Integer.toString(ie.getErrorLine()) + ":\n\n" + ie.getLocalizedMessage() + "\n\n" + ie.getExpressionText();
+				}
+			} catch (Throwable t) {
+				msg = "Unexpected error class: " + fe.getCause().getClass().getName() + "\n Message recorded is: "
+						+ fe.getCause().getLocalizedMessage();
+				;
 			}
 			XspOpenLogUtil.getXspOpenLogItem().logErrorEx(fe.getCause(), msg, null, null);
 		} else if ("javax.faces.el.PropertyNotFoundException".equals(error.getClass().getName())) {
