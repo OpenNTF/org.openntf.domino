@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.regex.Matcher;
 
 import org.openntf.arpa.ISO;
 import org.openntf.domino.Document;
@@ -318,7 +319,11 @@ public enum Strings {
 	 * @return Flag indicating if string is comprised only of Hexadecimal characters.
 	 */
 	public static boolean isHexadecimalString(final String string) {
-		return (null != string) && (string.matches("^[A-Fa-f0-9]+$"));
+		if (!Strings.isBlankString(string)) {
+			Matcher matcher = ISO.PatternHexadecimal.matcher(string);
+			return matcher.matches();
+		}
+		return false;
 	}
 
 	/**
@@ -727,8 +732,8 @@ public enum Strings {
 		try {
 			if (!Strings.isBlankString(source)) {
 				final String stripped = source.replaceAll("<br></div><div>", "<br>").replaceAll("</p></div><div>", "</p>");
-				final String regex = "</div><div>|<br>|</p>";
-				final String[] chunks = stripped.split(regex);
+				final String searchfor = "</div><div>|<br>|</p>";
+				final String[] chunks = stripped.split(searchfor);
 				if ((null == chunks) || (chunks.length < 1)) {
 					return CollectionUtils.getListStrings(Strings.stripHTMLtags(source));
 				} else {
