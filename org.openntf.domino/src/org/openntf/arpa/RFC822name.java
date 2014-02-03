@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 
 import org.openntf.domino.utils.Strings;
 
@@ -530,34 +531,9 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 	 *            String from which to parse the content values.
 	 */
 	private void parse(final String string) {
-		if ((null != string) && (string.length() > 0)) {
-			final String pattern = "^.*<.*>.*$";
-			/*
-			 * Match Pattern: anytext<anytext>anytext
-			 * 
-			 * pattern definition:
-			 * 
-			 * ^ match the beginning of the string
-			 * 
-			 * . match any single character
-			 * 
-			 * * match the preceding match character zero or more times.
-			 * 
-			 * < match a less than character
-			 * 
-			 * . match any single character
-			 * 
-			 * * match the preceding match character zero or more times.
-			 * 
-			 * > match a greater than character
-			 * 
-			 * . match any single character
-			 * 
-			 * * match the preceding match character zero or more times.
-			 * 
-			 * $ match the preceding match instructions against the end of the string.
-			 */
-			if (string.matches(pattern)) {
+		if (!ISO.isBlankString(string)) {
+			Matcher matcher = ISO.PatternRFC822.matcher(string);
+			if (matcher.matches()) {
 				// test matches anytext<anytext>anytext
 				// get the three primary chunks as phrase<internetaddress>comments from the source
 
