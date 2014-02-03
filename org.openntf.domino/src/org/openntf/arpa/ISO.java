@@ -111,12 +111,6 @@ public enum ISO {
 			return this._country;
 		}
 
-		public boolean matchesCode(final String code) {
-			if (null != code) {
-UNFINISEHD
-			}
-		}
-
 		/**
 		 * Sets the Country String
 		 * 
@@ -173,14 +167,40 @@ UNFINISEHD
 	 * ******************************************************************
 	 * ******************************************************************
 	 * 
-	 * public utility methods
+	 * public utility properties & methods
 	 * 
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
 
-	public static Pattern Alpha2 = Pattern.compile("^[A-Z]+[A-Z]$");
-	public static Pattern Alpha3 = Pattern.compile("^[A-Z]+[A-Z]+[A-Z]$");
+	public static final Pattern PatternAlpha2 = Pattern.compile("^[A-Z]+[A-Z]$");
+	public static final Pattern PatternAlpha3 = Pattern.compile("^[A-Z]+[A-Z]+[A-Z]$");
+	public static final Pattern PatternHexadecimal = Pattern.compile("^[A-Fa-f0-9]+$");
+
+	/*
+	 * Pattern PatternRFC822: anytext<anytext>anytext
+	 * 
+	 * ^ match the beginning of the string
+	 * 
+	 * . match any single character
+	 * 
+	 * * match the preceding match character zero or more times.
+	 * 
+	 * < match a less than character
+	 * 
+	 * . match any single character
+	 * 
+	 * * match the preceding match character zero or more times.
+	 * 
+	 * > match a greater than character
+	 * 
+	 * . match any single character
+	 * 
+	 * * match the preceding match character zero or more times.
+	 * 
+	 * $ match the preceding match instructions against the end of the string.
+	 */
+	public static Pattern PatternRFC822 = Pattern.compile("^.*<.*>.*$");
 
 	/**
 	 * Gets the ISO3166 enum for the specified code
@@ -191,28 +211,11 @@ UNFINISEHD
 	 * @return ISO2166 enum for the specified code, if found. Null otherwise
 	 */
 	public static ISO3166 getISO3166(final String code) {
-		//		if (!isBlankString(code)) {
-		//			if ((2 == code.length()) && code.matches("^[A-Z]+[A-Z]$")) {
-		//				for (ISO3166 result : ISO3166.values()) {
-		//					if (code.equals(result.getCode2())) {
-		//						return result;
-		//					}
-		//				}
-		//			} else if ((3 == code.length()) && code.matches("^[A-Z]+[A-Z]+[A-Z]$")) {
-		//				for (ISO3166 result : ISO3166.values()) {
-		//					if (code.equals(result.getCode3())) {
-		//						return result;
-		//					}
-		//				}
-		//			}
-		//		}
-
 		if (null != code) {
-			Matcher matcher = null;
 			int length = code.length();
 			switch (length) {
 			case 2: {
-				matcher = ISO.Alpha2.matcher(code);
+				Matcher matcher = ISO.PatternAlpha2.matcher(code);
 				for (ISO3166 result : ISO3166.values()) {
 					if (code.equals(result.getCode2())) {
 						return result;
@@ -221,7 +224,7 @@ UNFINISEHD
 				break;
 			}
 			case 3: {
-				matcher = ISO.Alpha3.matcher(code);
+				Matcher matcher = ISO.PatternAlpha3.matcher(code);
 				for (ISO3166 result : ISO3166.values()) {
 					if (code.equals(result.getCode3())) {
 						return result;
