@@ -99,6 +99,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 	private transient String logDbName_;
 	private transient Boolean displayError_;
 	private transient String displayErrorGeneric_;
+	private transient Boolean suppressEventStack_;
 	// this variable sets the "debug level" of all the methods
 	public String olDebugLevel = getDefaultDebugLevel();
 
@@ -190,20 +191,35 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 		}
 	}
 
+	public Boolean getSuppressEventStack() {
+		try {
+			String dummyVar = Activator.getXspPropertyAsString("xsp.openlog.suppressEventStack");
+			if (StringUtil.isEmpty(dummyVar)) {
+				// setSuppressEventStack(true);
+			} else if ("FALSE".equals(dummyVar.toUpperCase())) {
+				// setSuppressEventStack(false);
+			} else {
+				// setSuppressEventStack(true);
+			}
+			return suppressEventStack_;
+		} catch (Throwable t) {
+			DominoUtils.handleException(t);
+			return false;
+		}
+	}
+
 	/**
 	 * @return whether errors should be displayed or not
 	 */
 	public Boolean getDisplayError() {
 		try {
-			if (null == displayError_) {
-				String dummyVar = Activator.getXspPropertyAsString("xsp.openlog.displayError");
-				if (StringUtil.isEmpty(dummyVar)) {
-					setDisplayError(true);
-				} else if ("FALSE".equals(dummyVar.toUpperCase())) {
-					setDisplayError(false);
-				} else {
-					setDisplayError(true);
-				}
+			String dummyVar = Activator.getXspPropertyAsString("xsp.openlog.displayError");
+			if (StringUtil.isEmpty(dummyVar)) {
+				setDisplayError(true);
+			} else if ("FALSE".equals(dummyVar.toUpperCase())) {
+				setDisplayError(false);
+			} else {
+				setDisplayError(true);
 			}
 			return displayError_;
 		} catch (Throwable t) {
@@ -347,7 +363,11 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			}
 
 			logDoc.replaceItemValue("LogErrorMessage", errMsg);
-			logDoc.replaceItemValue("LogStackTrace", getStackTrace(ee));
+			if (LogType.TYPE_EVENT.getValue().equals(getEventType())) {
+				if (!getSuppressEventStack()) {
+					logDoc.replaceItemValue("LogStackTrace", getStackTrace(ee));
+				}
+			}
 			logDoc.replaceItemValue("LogErrorLine", ste.getLineNumber());
 			logDoc.replaceItemValue("LogSeverity", getSeverity().getName());
 			logDoc.replaceItemValue("LogEventTime", getEventTime());

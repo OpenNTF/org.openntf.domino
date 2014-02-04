@@ -127,6 +127,19 @@ public interface IOpenLogItem {
 	public String getLogDbName();
 
 	/**
+	 * Retrieves whether or not to suppress event strack trace
+	 * 
+	 * @return Boolean of whether or not to suppress stack trace
+	 */
+	public Boolean getSuppressEventStack();
+
+	/**
+	 * @param error
+	 *            whether or not to display the errors
+	 */
+	public void setSuppressEventStack(final Boolean suppressEventStack);
+
+	/**
 	 * Retrieves the Form name for the log document.
 	 * 
 	 * @return the Form name of the log document

@@ -118,7 +118,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 	private final String[][] implicitObjectList = {
 			{ (isGodMode() ? "session" : "opensession"), org.openntf.domino.Session.class.getName() },
 			{ (isGodMode() ? "database" : "opendatabase"), org.openntf.domino.Database.class.getName() },
-			{ "openLogBean", org.openntf.domino.xsp.XspOpenLogErrorHolder.class.getName() } };
+			{ "openNTFDominoLogBean", org.openntf.domino.xsp.XspOpenLogErrorHolder.class.getName() } };
 
 	public OpenntfDominoImplicitObjectFactory() {
 	}
@@ -167,7 +167,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 	public void createLogHolder(final FacesContextEx ctx) {
 		Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
 		XspOpenLogErrorHolder ol_ = new XspOpenLogErrorHolder();
-		localMap.put("openLogBean", ol_);
+		localMap.put("openNTFDominoLogBean", ol_);
 	}
 
 	@Override

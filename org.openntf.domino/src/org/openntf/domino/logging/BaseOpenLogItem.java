@@ -147,6 +147,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	protected transient Date _startTime;
 	protected transient Date _eventTime;
 	protected transient Document _errDoc;
+	protected transient Boolean _suppressEventStack;
 	private String _currentDbPath;
 	public transient String olDebugLevel = loadFromProps("org.openntf.domino.logging.OpenLogHandler.OpenLogErrorsLevel");
 	public static PrintStream debugOut = System.err;
@@ -411,6 +412,27 @@ public class BaseOpenLogItem implements IOpenLogItem {
 			}
 		}
 		return _logDbName;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.IOpenLogItem#isSuppressEventStack()
+	 */
+	public Boolean getSuppressEventStack() {
+		String suppressEventStackTmp = loadFromProps("org.openntf.domino.logging.OpenLogHandler.suppressEventStack");
+		if ("".equals(suppressEventStackTmp)) {
+			setSuppressEventStack(Boolean.parseBoolean(DominoUtils.getDominoIniVar("SuppressEventStack", "false")));
+		} else {
+			setSuppressEventStack(Boolean.parseBoolean(suppressEventStackTmp));
+		}
+		return _suppressEventStack;
+	}
+
+	/**
+	 * @param error
+	 *            whether or not to display the errors
+	 */
+	public void setSuppressEventStack(final Boolean suppressEventStack) {
+		_suppressEventStack = suppressEventStack;
 	}
 
 	/* (non-Javadoc)
@@ -704,7 +726,11 @@ public class BaseOpenLogItem implements IOpenLogItem {
 				logDoc.replaceItemValue("LogFromMethod", ste.getClassName() + "." + ste.getMethodName());
 			}
 
-			logDoc.replaceItemValue("LogStackTrace", getStackTrace(ee));
+			if (LogType.TYPE_EVENT.getValue().equals(getEventType())) {
+				if (!getSuppressEventStack()) {
+					logDoc.replaceItemValue("LogStackTrace", getStackTrace(ee));
+				}
+			}
 			logDoc.replaceItemValue("LogSeverity", getSeverity().getName());
 			logDoc.replaceItemValue("LogEventTime", getEventTime());
 			logDoc.replaceItemValue("LogEventType", getEventType());
