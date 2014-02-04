@@ -166,7 +166,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	private final String[][] implicitObjectList = {
 			{ (isGodMode() ? "session" : "opensession"), org.openntf.domino.Session.class.getName() },
 			{ (isGodMode() ? "database" : "opendatabase"), org.openntf.domino.Database.class.getName() },
-			{ "openNTFDominoLogBean", org.openntf.domino.xsp.XspOpenLogErrorHolder.class.getName() } };
+			{ (Activator.isAPIEnabled() ? "openLogBean" : "openNtfLogBean"), org.openntf.domino.xsp.XspOpenLogErrorHolder.class.getName() } };
 
 	public OpenntfDominoImplicitObjectFactory2() {
 		// System.out.println("Created implicit object factory 2");
@@ -252,9 +252,17 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	}
 
 	public void createLogHolder(final FacesContextEx ctx) {
-		Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
-		XspOpenLogErrorHolder ol_ = new XspOpenLogErrorHolder();
-		localMap.put("openNTFDominoLogBean", ol_);
+		if (isAppDebug(ctx)) {
+			System.out.println("Beginning creation of log holder...");
+		}
+		if (Activator.isAPIEnabled()) {
+			Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
+			XspOpenLogErrorHolder ol_ = new XspOpenLogErrorHolder();
+			localMap.put("openLogBean", ol_);
+			if (isAppDebug(ctx)) {
+				System.out.println("Created log holder...");
+			}
+		}
 	}
 
 	@Override

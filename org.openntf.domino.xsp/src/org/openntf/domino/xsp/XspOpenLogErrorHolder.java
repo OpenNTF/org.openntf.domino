@@ -119,7 +119,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * try {
 	 * 	*YOUR CODE*
 	 * } catch(e) {
-	 * 	openNTFDominoLogBean.addError(e, this, 1, doc.getUniversalId());
+	 * 	openLogBean.addError(e, this, 1, doc.getUniversalId());
 	 * }
 	 * </pre>
 	 * 
@@ -151,7 +151,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * try {
 	 * 	*YOUR CODE*
 	 * } catch(e) {
-	 * 	openNTFDominoLogBean.addError(e, this, 1);
+	 * 	openLogBean.addError(e, this, 1);
 	 * }
 	 * </pre>
 	 * 
@@ -181,11 +181,11 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * try {
 	 * 	*YOUR CODE*
 	 * } catch(e) {
-	 * 	openNTFDominoLogBean.addError(e, this);
+	 * 	openLogBean.addError(e, this);
 	 * }
 	 * </pre>
 	 * 
-	 *            To pass no control, call openNTFDominoLogBean.addError(e, null)
+	 *            To pass no control, call openLogBean.addError(e, null)
 	 */
 	public void addError(final Object je, final UIComponent control) {
 		try {
@@ -219,7 +219,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * try {
 	 * 	*YOUR CODE*
 	 * } catch(e) {
-	 * 	openNTFDominoLogBean.addError(e, &quot;This is an extra error message&quot;, this, 1, doc.getUniversalId());
+	 * 	openLogBean.addError(e, &quot;This is an extra error message&quot;, this, 1, doc.getUniversalId());
 	 * }
 	 * </pre>
 	 * 
@@ -253,7 +253,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * try {
 	 * 	*YOUR CODE*
 	 * } catch(e) {
-	 * 	openNTFDominoLogBean.addError(e, &quot;This is an extra error message&quot;, this, 1);
+	 * 	openLogBean.addError(e, &quot;This is an extra error message&quot;, this, 1);
 	 * }
 	 * </pre>
 	 * 
@@ -285,11 +285,11 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * try {
 	 * 	*YOUR CODE*
 	 * } catch(e) {
-	 * 	openNTFDominoLogBean.addError(e, &quot;This is an extra error message&quot;, this);
+	 * 	openLogBean.addError(e, &quot;This is an extra error message&quot;, this);
 	 * }
 	 * </pre>
 	 * 
-	 *            To pass no control, call openNTFDominoLogBean.addError(e, null)
+	 *            To pass no control, call openLogBean.addError(e, null)
 	 */
 	public void addError(final Object je, final String msg, final UIComponent control) {
 		try {
@@ -334,7 +334,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * try {
 	 * 	*YOUR CODE*
 	 * } catch(e) {
-	 * 	openNTFDominoLogBean.addEvent(&quot;This is an extra message&quot;, this, 1, doc.getUniversalId());
+	 * 	openLogBean.addEvent(&quot;This is an extra message&quot;, this, 1, doc.getUniversalId());
 	 * }
 	 * </pre>
 	 * 
@@ -364,7 +364,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * try {
 	 * 	*YOUR CODE*
 	 * } catch(e) {
-	 * 	openNTFDominoLogBean.addEvent(&quot;This is an extra message&quot;, this, 1);
+	 * 	openLogBean.addEvent(&quot;This is an extra message&quot;, this, 1);
 	 * }
 	 * </pre>
 	 * 
@@ -392,7 +392,7 @@ public class XspOpenLogErrorHolder implements Serializable {
 	 * try {
 	 * 	*YOUR CODE*
 	 * } catch(e) {
-	 * 	openNTFDominoLogBean.addEvent(&quot;This is an extra message&quot;, this);
+	 * 	openLogBean.addEvent(&quot;This is an extra message&quot;, this);
 	 * }
 	 * </pre>
 	 */

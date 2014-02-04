@@ -58,12 +58,12 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 				if (null == r.get("error")) {
 					XspOpenLogUtil.getXspOpenLogItem().setThisAgent(true);
 				}
-				if (null != r.get("openNTFDominoLogBean")) {
+				if (null != r.get("openLogBean")) {
 					if (!Activator.isAPIEnabled()) {
 						return;
 					}
-					// requestScope.openNTFDominoLogBean is not null, the developer has called openNTFDominoLogBean.addError(e,this)
-					XspOpenLogErrorHolder errList = (XspOpenLogErrorHolder) r.get("openNTFDominoLogBean");
+					// requestScope.openLogBean is not null, the developer has called openLogBean.addError(e,this)
+					XspOpenLogErrorHolder errList = (XspOpenLogErrorHolder) r.get("openLogBean");
 					errList.setLoggedErrors(new LinkedHashSet<EventError>());
 					// loop through the ArrayList of EventError objects and add any errors already captured as a facesMessage
 					if (null != errList.getErrors()) {
@@ -91,12 +91,12 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 				if (null != r.get("error")) {
 					processUncaughtException(r);
 
-				} else if (null != r.get("openNTFDominoLogBean")) {
+				} else if (null != r.get("openLogBean")) {
 					if (!Activator.isAPIEnabled()) {
 						return;
 					}
-					// requestScope.openNTFDominoLogBean is not null, the developer has called openNTFDominoLogBean.addError(e,this)
-					XspOpenLogErrorHolder errList = (XspOpenLogErrorHolder) r.get("openNTFDominoLogBean");
+					// requestScope.openLogBean is not null, the developer has called openLogBean.addError(e,this)
+					XspOpenLogErrorHolder errList = (XspOpenLogErrorHolder) r.get("openLogBean");
 					// loop through the ArrayList of EventError objects
 					if (null != errList.getErrors()) {
 						for (EventError error : errList.getErrors()) {

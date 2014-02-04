@@ -191,15 +191,16 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 		}
 	}
 
+	@Override
 	public Boolean getSuppressEventStack() {
 		try {
 			String dummyVar = Activator.getXspPropertyAsString("xsp.openlog.suppressEventStack");
 			if (StringUtil.isEmpty(dummyVar)) {
-				// setSuppressEventStack(true);
+				setSuppressEventStack(true);
 			} else if ("FALSE".equals(dummyVar.toUpperCase())) {
-				// setSuppressEventStack(false);
+				setSuppressEventStack(false);
 			} else {
-				// setSuppressEventStack(true);
+				setSuppressEventStack(true);
 			}
 			return suppressEventStack_;
 		} catch (Throwable t) {
@@ -346,30 +347,33 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			logDoc.appendItemValue("Form", super.getLogFormName());
 
 			Throwable ee = getBase();
-			StackTraceElement ste = ee.getStackTrace()[0];
 			String errMsg = "";
-			if (ee instanceof NotesException) {
-				logDoc.replaceItemValue("LogErrorNumber", ((NotesException) ee).id);
-				errMsg = ((NotesException) ee).text;
-			} else if ("Interpret exception".equals(ee.getMessage()) && ee instanceof com.ibm.jscript.JavaScriptException) {
-				com.ibm.jscript.InterpretException ie = (com.ibm.jscript.InterpretException) ee;
-				errMsg = "Expression Language Interpret Exception " + ie.getExpressionText();
-			} else {
-				errMsg = ee.getMessage();
+			if (null != ee) {
+				StackTraceElement ste = ee.getStackTrace()[0];
+				if (ee instanceof NotesException) {
+					logDoc.replaceItemValue("LogErrorNumber", ((NotesException) ee).id);
+					errMsg = ((NotesException) ee).text;
+				} else if ("Interpret exception".equals(ee.getMessage()) && ee instanceof com.ibm.jscript.JavaScriptException) {
+					com.ibm.jscript.InterpretException ie = (com.ibm.jscript.InterpretException) ee;
+					errMsg = "Expression Language Interpret Exception " + ie.getExpressionText();
+				} else {
+					errMsg = ee.getMessage();
+				}
+
+				if (LogType.TYPE_EVENT.getValue().equals(getEventType())) {
+					if (!getSuppressEventStack()) {
+						logDoc.replaceItemValue("LogStackTrace", getStackTrace(ee));
+					}
+				}
+				logDoc.replaceItemValue("LogErrorLine", ste.getLineNumber());
+				logDoc.replaceItemValue("LogFromMethod", ste.getClass() + "." + ste.getMethodName());
 			}
 
-			if (null == errMsg) {
+			if ("".equals(errMsg)) {
 				errMsg = getMessage();
 			}
 
 			logDoc.replaceItemValue("LogErrorMessage", errMsg);
-			if (LogType.TYPE_EVENT.getValue().equals(getEventType())) {
-				if (!getSuppressEventStack()) {
-					logDoc.replaceItemValue("LogStackTrace", getStackTrace(ee));
-				}
-			}
-			logDoc.replaceItemValue("LogErrorLine", ste.getLineNumber());
-			logDoc.replaceItemValue("LogSeverity", getSeverity().getName());
 			logDoc.replaceItemValue("LogEventTime", getEventTime());
 			logDoc.replaceItemValue("LogEventType", getEventType());
 			// If greater than 32k, put in logDocInfo
@@ -379,10 +383,10 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			} else {
 				logDoc.replaceItemValue("LogMessage", getMessage());
 			}
+			logDoc.replaceItemValue("LogSeverity", getSeverity().getName());
 			logDoc.replaceItemValue("LogFromDatabase", getCurrentDatabase().getFilePath());
 			logDoc.replaceItemValue("LogFromServer", getThisServer());
 			logDoc.replaceItemValue("LogFromAgent", getThisAgent());
-			logDoc.replaceItemValue("LogFromMethod", ste.getClass() + "." + ste.getMethodName());
 			logDoc.replaceItemValue("LogAgentLanguage", "Java");
 			logDoc.replaceItemValue("LogUserName", Factory.getSession().getUserName());
 			logDoc.replaceItemValue("LogEffectiveName", Factory.getSession().getEffectiveUserName());
