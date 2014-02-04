@@ -30,6 +30,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -232,8 +233,12 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		try {
 			return fromLotus(getDelegate().createDatabase(dbFile, open), Database.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
+			if (e.id == 4005 && getAncestorSession().isFixEnabled(Fixes.CREATE_DB)) {
+				return getAncestorSession().getDatabase(getName(), dbFile);
+			} else {
+				DominoUtils.handleException(e);
+				return null;
+			}
 		}
 	}
 
