@@ -71,8 +71,8 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		}
 		// TODO: Recycle all?
 		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
-		autoRecycle.processQueue();
-		noAutoRecycle.processQueue();
+		autoRecycle.processQueue(0l);
+		noAutoRecycle.processQueue(0l);
 		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
 	}
 

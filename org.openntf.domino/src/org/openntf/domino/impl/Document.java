@@ -3084,6 +3084,36 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		if ("parentDocument".equals(key)) {
 			return this.getParentDocument();
 		}
+		if (key instanceof String) {
+			String skey = (String) key;
+			if ("@accessed".equalsIgnoreCase(skey) || "@accessed()".equalsIgnoreCase(skey)) {
+				return this.getLastAccessed();
+			}
+			if ("@modified".equalsIgnoreCase(skey) || "@modified()".equalsIgnoreCase(skey)) {
+				return this.getLastModified();
+			}
+			if ("@created".equalsIgnoreCase(skey) || "@created()".equalsIgnoreCase(skey)) {
+				return this.getCreated();
+			}
+			if ("@documentuniqueid".equalsIgnoreCase(skey) || "@documentuniqueid()".equalsIgnoreCase(skey)) {
+				return this.getUniversalID();
+			}
+			if ("@noteid".equalsIgnoreCase(skey) || "@noteid()".equalsIgnoreCase(skey)) {
+				return this.getNoteID();
+			}
+			if ("@doclength".equalsIgnoreCase(skey) || "@doclength()".equalsIgnoreCase(skey)) {
+				return this.getSize();
+			}
+			if ("@isresponsedoc".equalsIgnoreCase(skey) || "@isresponsedoc()".equalsIgnoreCase(skey)) {
+				return this.isResponse();
+			}
+			if ("@replicaid".equalsIgnoreCase(skey) || "@replicaid()".equalsIgnoreCase(skey)) {
+				return this.getAncestorDatabase().getReplicaID();
+			}
+			if ("@responses".equalsIgnoreCase(skey) || "@responses()".equalsIgnoreCase(skey)) {
+				return this.getResponses().getCount();
+			}
+		}
 
 		if (this.containsKey(key)) {
 			Vector<Object> value = this.getItemValue(key.toString());

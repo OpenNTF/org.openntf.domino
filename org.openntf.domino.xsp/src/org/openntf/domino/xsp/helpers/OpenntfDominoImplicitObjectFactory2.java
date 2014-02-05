@@ -23,7 +23,8 @@ import com.ibm.xsp.util.TypedUtil;
 @SuppressWarnings("unchecked")
 public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactory {
 
-	// TODO this is really just a sample on how to get to an entry point in the API
+	// NTF The reason the Factory2 version exists is because we were testing moving the "global" settings like
+	// godmode and marcel to the xsp.properties and making them per-Application rather than server-wide.
 	private static Boolean GODMODE;
 
 	private static Map<String, Object> getAppMap(final FacesContext ctx) {

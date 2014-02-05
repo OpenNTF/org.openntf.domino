@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
@@ -179,7 +180,13 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		boolean isExtended = type_ == Type.REPLICA_CANDIDATE || isDateSorted_;
 		try {
 			delegate.setHonorShowInOpenDatabaseDialog(isHonorOpenDialog_);
-			lotus.domino.Database rawdb = delegate.getFirstDatabase(type_.getValue());
+			lotus.domino.Database rawdb = null;
+			try {
+				rawdb = delegate.getFirstDatabase(type_.getValue());
+				log_.log(Level.WARNING, "For some reason getting the first database reported an exception. Attempting to move along...");
+			} catch (NotesException ne) {
+				rawdb = delegate.getNextDatabase();
+			}
 			lotus.domino.Database nextdb;
 			Database db;
 			while (rawdb != null) {
