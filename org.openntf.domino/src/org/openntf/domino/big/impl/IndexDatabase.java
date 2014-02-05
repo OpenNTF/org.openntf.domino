@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import org.openntf.domino.Database;
 import org.openntf.domino.DbDirectory;
 import org.openntf.domino.Document;
+import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Item;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
@@ -26,6 +27,7 @@ import org.openntf.domino.ViewColumn;
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewNavigator;
 import org.openntf.domino.helpers.DocumentScanner;
+import org.openntf.domino.helpers.DocumentSorter;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.utils.Factory;
 
@@ -283,15 +285,24 @@ public class IndexDatabase implements IScannerStateManager {
 
 	private int totalErrCount_ = 0;
 
+	private static final List<String> MOD_SORT_LIST = new ArrayList<String>();
+	static {
+		MOD_SORT_LIST.add("@modified");
+	}
+
 	public DocumentScanner scanDatabase(final Database db, final DocumentScanner scanner) {
 		Date last = scanner.getLastScanDate();
 		if (last == null)
 			last = new Date(0);
-		System.out.println("Scanning database " + db.getApiPath() + " with last date of " + last.getTime());
 		int count = db.getModifiedNoteCount(last);
+		System.out.println("Scanning database " + db.getApiPath() + " with last date of " + last.getTime() + " and found " + count
+				+ " updates to scan");
 		if (count > 0) {
 			int prog = 0;
-			for (Document doc : db.getModifiedDocuments(last)) {
+			DocumentCollection rawColl = db.getModifiedDocuments(last);
+			DocumentSorter sorter = new DocumentSorter(rawColl, MOD_SORT_LIST);
+			DocumentCollection sortedColl = sorter.sort();
+			for (Document doc : sortedColl) {
 				scanner.processDocument(doc);
 				totalErrCount_ += scanner.getErrCount();
 				if (totalErrCount_ > 5000) {

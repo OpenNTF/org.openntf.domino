@@ -465,15 +465,7 @@ public class DocumentScanner {
 								}
 							}
 						}
-						if (this.isTrackTokenLocation() && getStateManager() != null) {
-							Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> localTokenMap = getTokenLocationMap();
-							if (localTokenMap.size() > 1024) {
-								synchronized (localTokenMap) {
-									getStateManager().saveTokenLocationMap(getStateManagerKey(), localTokenMap, doc.getCreatedDate());
-									localTokenMap.clear();
-								}
-							}
-						}
+
 						if (isTrackFieldTypes()) {
 							if (!typeMap.containsKey(name)) {
 								typeMap.put(name, item.getType());
@@ -507,6 +499,15 @@ public class DocumentScanner {
 			}
 			if (tokenCount < 1) {
 				errCount_++;
+			}
+			if (this.isTrackTokenLocation() && getStateManager() != null) {
+				Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> localTokenMap = getTokenLocationMap();
+				if (localTokenMap.size() > 4096) {
+					synchronized (localTokenMap) {
+						getStateManager().saveTokenLocationMap(getStateManagerKey(), localTokenMap, doc.getLastModifiedDate());
+						localTokenMap.clear();
+					}
+				}
 			}
 		}
 	}
