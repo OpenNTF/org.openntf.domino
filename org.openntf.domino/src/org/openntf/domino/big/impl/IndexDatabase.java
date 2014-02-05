@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,6 +19,7 @@ import java.util.logging.Logger;
 import org.openntf.domino.Database;
 import org.openntf.domino.DbDirectory;
 import org.openntf.domino.Document;
+import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Item;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
@@ -25,6 +27,7 @@ import org.openntf.domino.ViewColumn;
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewNavigator;
 import org.openntf.domino.helpers.DocumentScanner;
+import org.openntf.domino.helpers.DocumentSorter;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.utils.Factory;
 
@@ -33,7 +36,7 @@ import org.openntf.domino.utils.Factory;
  * 
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class IndexDatabase {
+public class IndexDatabase implements IScannerStateManager {
 	private static final Logger log_ = Logger.getLogger(IndexDatabase.class.getName());
 
 	public static final String TERM_VIEW_NAME = "$TermIndex";
@@ -54,6 +57,7 @@ public class IndexDatabase {
 	private transient View termView_;
 	private transient View dbView_;
 	private Set<String> stopList_;
+	private boolean continue_ = true;
 
 	public static Set<String> toStringSet(final Object value) {
 		Set<String> result = new HashSet<String>();
@@ -117,14 +121,14 @@ public class IndexDatabase {
 		indexDb_ = indexDb;
 	}
 
-	private Database getIndexDb() {
+	protected Database getIndexDb() {
 		if (indexDb_ == null) {
 			indexDb_ = Factory.getSession().getCurrentDatabase();
 		}
 		return indexDb_;
 	}
 
-	private void initIndexDb() {
+	protected void initIndexDb() {
 
 		View indexView = getIndexDb().getView(TERM_VIEW_NAME);
 		if (indexView == null) {
@@ -231,7 +235,7 @@ public class IndexDatabase {
 		dir.setDirectoryType(DbDirectory.Type.DATABASE);
 		for (Database db : dir) {
 			if (!db.getReplicaID().equals(getIndexDb().getReplicaID())) {
-				System.out.println("Scanning database " + db.getApiPath());
+				//				System.out.println("Scanning database " + db.getApiPath());
 				if (!db.getFilePath().equalsIgnoreCase("redpill\\graph.nsf")) {
 					try {
 						scanDatabase(db);
@@ -240,32 +244,50 @@ public class IndexDatabase {
 					}
 				}
 			}
+			if (!continue_) {
+				System.out.println("Escaping process early due to continue_ == false");
+				return;
+			}
 		}
+		System.out.println("Completed scan of server " + serverName);
 	}
 
 	public DocumentScanner scanDatabase(final Database db) {
 		Document dbDoc = getDbDocument(db.getReplicaID());
 		DocumentScanner scanner = new DocumentScanner();
-		if (dbDoc.isNewNote()) {
-			scanner.setStopTokenList(getStopList());
-			scanner.setIgnoreDollar(true);
-		} else {
+		scanner.setTrackFieldTokens(false);
+		scanner.setTrackFieldTypes(false);
+		scanner.setTrackFieldValues(false);
+		scanner.setTrackTokenFreq(false);
+		scanner.setTrackTokenLocation(true);
+		scanner.setStopTokenList(getStopList());
+		scanner.setIgnoreDollar(true);
+		scanner.setStateManager(this, db.getReplicaID());
+		if (dbDoc.hasItem(DB_LAST_INDEX_NAME)) {
 			scanner.setLastScanDate((Date) dbDoc.getItemValue(DB_LAST_INDEX_NAME, Date.class));
-			scanner.setStopTokenList(getStopList());
-			scanner.setIgnoreDollar(true);
-			Object tokenLocationObject = dbDoc.getItemValue(DB_TOKEN_LOCATION_NAME, Map.class);
-			scanner.setTokenLocationMap(tokenLocationObject);
-			Object fieldTokenObject = dbDoc.getItemValue(DB_FIELD_TOKEN_NAME, Map.class);
-			scanner.setFieldTokenMap(fieldTokenObject);
+			//			scanner.setStopTokenList(getStopList());
+			//			scanner.setIgnoreDollar(true);
+			//			Object tokenLocationObject = dbDoc.getItemValue(DB_TOKEN_LOCATION_NAME, Map.class);
+			//			if (tokenLocationObject != null && !((Map) tokenLocationObject).isEmpty()) {
+			//				scanner.setTokenLocationMap(tokenLocationObject);
+			//			}
 		}
 		Date scanDate = new Date();
 		scanDatabase(db, scanner);
 		String dbid = db.getReplicaID();
 		writeResults(dbid, scanner);
 		dbDoc.replaceItemValue(DB_LAST_INDEX_NAME, scanDate);
-		dbDoc.replaceItemValue(DB_FIELD_TOKEN_NAME, scanner.getFieldTokenMap());
+		//		dbDoc.replaceItemValue(DB_FIELD_TOKEN_NAME, scanner.getFieldTokenMap());
+		//		dbDoc.replaceItemValue(DB_TOKEN_LOCATION_NAME, scanner.getTokenLocationMap());
 		dbDoc.save();
 		return scanner;
+	}
+
+	private int totalErrCount_ = 0;
+
+	private static final List<String> MOD_SORT_LIST = new ArrayList<String>();
+	static {
+		MOD_SORT_LIST.add("@modified");
 	}
 
 	public DocumentScanner scanDatabase(final Database db, final DocumentScanner scanner) {
@@ -273,26 +295,40 @@ public class IndexDatabase {
 		if (last == null)
 			last = new Date(0);
 		int count = db.getModifiedNoteCount(last);
+		System.out.println("Scanning database " + db.getApiPath() + " with last date of " + last.getTime() + " and found " + count
+				+ " updates to scan");
 		if (count > 0) {
-			for (Document doc : db.getModifiedDocuments(last)) {
+			int prog = 0;
+			DocumentCollection rawColl = db.getModifiedDocuments(last);
+			DocumentSorter sorter = new DocumentSorter(rawColl, MOD_SORT_LIST);
+			DocumentCollection sortedColl = sorter.sort();
+			for (Document doc : sortedColl) {
 				scanner.processDocument(doc);
+				totalErrCount_ += scanner.getErrCount();
+				if (totalErrCount_ > 5000) {
+					continue_ = false;
+				}
+				if (++prog % 10000 == 0) {
+					System.out.println("Processed " + prog + " documents so far.");
+				}
+				//				if (prog > 100000) {
+				//					System.out.println("Breaking at 100K documents.");
+				//					break;
+				//				}
+				if (scanner.getZeroDocCount() > 5000) {
+					System.out.println("Stopping after 5000 zero docs");
+					break;
+				}
+				if (!continue_)
+					return scanner;
 			}
 		}
 		return scanner;
 	}
 
 	public void writeResults(final String dbid, final DocumentScanner scanner) {
-		//		DatabaseTransaction txn = indexDb_.startTransaction();
 		Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> tlMap = scanner.getTokenLocationMap();
-		for (CaseInsensitiveString cis : tlMap.keySet()) {
-			Map<CaseInsensitiveString, Set<String>> tlValue = tlMap.get(cis);
-			String term = cis.getFolded();
-			Document termDoc = getTermDocument(term);
-			termDoc.replaceItemValue(TERM_MAP_PREFIX + dbid, tlValue);
-			termDoc.appendItemValue(DBID_NAME, dbid, true);
-			termDoc.save();
-		}
-		//		txn.commit();
+		saveTokenLocationMap(dbid, tlMap, scanner.getLastScanDate());
 	}
 
 	public List<String> getTermDbids(final String term) {
@@ -658,5 +694,59 @@ public class IndexDatabase {
 			}
 		}
 		return result;
+	}
+
+	public CaseInsensitiveString lastToken_ = null;
+
+	public Map<CaseInsensitiveString, Set<String>> restoreTokenLocationMap(final CaseInsensitiveString token, final Object mapKey) {
+		//		if (token.equals(lastToken_)) {
+		//			System.out.println("Restoring same token that we last processed: " + token.getString());
+		//		} else {
+		//			lastToken_ = token;
+		//		}
+		Map result = null;
+		Document doc = getTermDocument(token.getFolded());
+		String itemName = TERM_MAP_PREFIX + String.valueOf(mapKey);
+		if (doc.hasItem(itemName)) {
+			result = doc.getItemValue(itemName, Map.class);
+		} else {
+			result = new ConcurrentHashMap<CaseInsensitiveString, Set<String>>();
+		}
+		return result;
+	}
+
+	public void saveTokenLocationMap(final CaseInsensitiveString token, final Object mapKey,
+			final Map<CaseInsensitiveString, Set<String>> map) {
+		//		if (token.equals(lastToken_)) {
+		//			System.out.println("Restoring same token that we last processed: " + token.getString());
+		//		} else {
+		//			lastToken_ = token;
+		//		}
+		String term = token.getFolded();
+		Document termDoc = getTermDocument(term);
+		termDoc.replaceItemValue(TERM_MAP_PREFIX + String.valueOf(mapKey), map);
+		termDoc.save();
+	}
+
+	public void saveTokenLocationMap(final Object mapKey,
+			final Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> fullMap, final Date lastTimestamp) {
+		Document dbDoc = getDbDocument((String) mapKey);
+		dbDoc.replaceItemValue(DB_LAST_INDEX_NAME, lastTimestamp);
+		dbDoc.save();
+		Set<CaseInsensitiveString> keySet = fullMap.keySet();
+		//		System.out.println("Writing results for " + keySet.size() + " terms");
+		for (CaseInsensitiveString cis : keySet) {
+			//			if (cis.equals(lastToken_)) {
+			//				System.out.println("Restoring same token that we last processed: " + cis.getString());
+			//			} else {
+			//				lastToken_ = cis;
+			//			}
+			Map<CaseInsensitiveString, Set<String>> tlValue = fullMap.get(cis);
+			String term = cis.getFolded();
+			Document termDoc = getTermDocument(term);
+			termDoc.replaceItemValue(TERM_MAP_PREFIX + String.valueOf(mapKey), tlValue);
+			termDoc.save();
+		}
+		//		System.out.println("Done writing results.");
 	}
 }

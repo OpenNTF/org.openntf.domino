@@ -6,6 +6,7 @@ package org.openntf.domino.big.impl;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -63,6 +64,10 @@ public class IndexQuery {
 		terms_ = IndexDatabase.toStringSet(terms);
 	}
 
+	public void setStringTerms(final Set<String> terms) {
+		terms_ = terms;
+	}
+
 	public void setMergedTerms(final String terms) {
 		Set<String> set = new HashSet<String>();
 		if (terms.indexOf(' ') > 0) {
@@ -74,6 +79,16 @@ public class IndexQuery {
 			set.add(terms);
 		}
 		setTerms(set);
+	}
+
+	public void setMergedTerms(final String terms, final String split) {
+		Set<String> set = new HashSet<String>();
+		String[] strings = terms.split(split);
+		System.out.println("Setting up " + strings.length + " terms");
+		for (String str : strings) {
+			set.add(str);
+		}
+		setStringTerms(set);
 	}
 
 	public void setTerms(final String term) {
@@ -93,6 +108,10 @@ public class IndexQuery {
 	 */
 	public void setDbids(final Collection<Object> dbids) {
 		dbids_ = IndexDatabase.toStringSet(dbids);
+		if (dbids != null) {
+			System.out.println("Setting dbids filter to " + dbids.getClass().getSimpleName() + " of size " + dbids.size() + ": "
+					+ debugStringSet(dbids_));
+		}
 	}
 
 	/**
@@ -131,22 +150,77 @@ public class IndexQuery {
 		return new IndexResults(hits);
 	}
 
+	//	private static final List<IndexHit> emptyHits = new ArrayList<IndexHit>();
+
+	private static String debugStringSet(final Set<String> set) {
+		StringBuilder debug = new StringBuilder();
+		debug.append('[');
+		if (set == null || set.size() == 0) {
+
+		} else if (set.size() == 1) {
+			debug.append(set.iterator().next());
+		} else {
+			boolean isFirst = true;
+			for (String term : set) {
+				if (!isFirst) {
+					debug.append(" : ");
+				}
+				isFirst = false;
+				debug.append(term);
+			}
+		}
+		debug.append(']');
+		return debug.toString();
+	}
+
+	private String debugGetTerms() {
+		StringBuilder debug = new StringBuilder();
+		Set<String> terms = terms_;
+		debug.append('[');
+		if (terms == null || terms.size() == 0) {
+
+		} else if (terms.size() == 1) {
+			debug.append(terms.iterator().next());
+		} else {
+			boolean isFirst = true;
+			for (String term : terms) {
+				if (!isFirst) {
+					if (isAnd()) {
+						debug.append(" AND ");
+					} else {
+						debug.append(" OR ");
+					}
+				}
+				isFirst = false;
+				debug.append(term);
+			}
+		}
+		debug.append(']');
+		return debug.toString();
+	}
+
 	public IndexResults execute(final IndexDatabase db) {
 		long startNanos = 0;
 		if (profile_)
 			startNanos = System.nanoTime();
 		IndexResults result = null;
-		for (String term : getTerms()) {
-			List<IndexHit> hits = db.getTermResults(term, getLimit(), getDbids(), IndexDatabase.toCISSet(getItems()), getForms());
-			if (result == null) {
-				result = createResultsFromHitList(hits);
-			} else {
-				IndexResults temp = createResultsFromHitList(hits);
-				if (isAnd()) {
-					result.intersect(temp);
+		//		System.out.println("Executing with: " + debugGetTerms());
+		if (isAnd() && getTerms().size() > 1) {
+			for (String term : getTerms()) {
+				List<IndexHit> hits = db.getTermResults(term, getLimit(), getDbids(), IndexDatabase.toCISSet(getItems()), getForms());
+				if (result == null) {
+					result = createResultsFromHitList(hits);
 				} else {
-					result.merge(temp);
+					IndexResults temp = createResultsFromHitList(hits);
+					result.intersect(temp);
 				}
+			}
+		} else {
+			result = createResultsFromHitList(new ArrayList<IndexHit>());
+			for (String term : getTerms()) {
+				List<IndexHit> hits = db.getTermResults(term, getLimit(), getDbids(), IndexDatabase.toCISSet(getItems()), getForms());
+				IndexResults temp = createResultsFromHitList(hits);
+				result.merge(temp);
 			}
 		}
 		if (profile_) {

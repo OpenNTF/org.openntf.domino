@@ -308,7 +308,7 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	@Override
 	public void addDocument(final lotus.domino.Document doc) {
 		try {
-			getDelegate().addDocument((lotus.domino.Document) toLotus(doc));
+			getDelegate().addDocument(toLotus(doc));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 
@@ -323,7 +323,7 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	@Override
 	public void addDocument(final lotus.domino.Document doc, final boolean checkDups) {
 		try {
-			getDelegate().addDocument((lotus.domino.Document) toLotus(doc), checkDups);
+			getDelegate().addDocument(toLotus(doc), checkDups);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 

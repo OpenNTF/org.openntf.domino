@@ -23,6 +23,7 @@ import org.openntf.domino.Item;
 import org.openntf.domino.Name;
 import org.openntf.domino.RichTextItem;
 import org.openntf.domino.Session;
+import org.openntf.domino.big.impl.IScannerStateManager;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -178,26 +179,67 @@ public class DocumentScanner {
 		return result;
 	}
 
+	private boolean trackFieldTokens_ = true;
 	private Map<CaseInsensitiveString, NavigableSet<CaseInsensitiveString>> fieldTokenMap_;
 	//Map<FIELDNAME, Set<TOKEN>>
 
+	private boolean trackTokenLocation_ = true;
 	private Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> tokenLocationMap_;
 	//Map<TERM, Map<FIELDNAME, List<UNIDS>>>
 
+	private boolean trackFieldValues_ = true;
 	private Map<CaseInsensitiveString, NavigableSet<Comparable>> fieldValueMap_;
 	//Map<FIELDNAME, Set<VALUE>>
 
+	private boolean trackFieldTypes_ = true;
 	private Map<CaseInsensitiveString, Integer> fieldTypeMap_;
 	//Map<FIELDNAME, ITEMTYPE>
 
 	private Set<CaseInsensitiveString> stopTokenList_;
 
+	private boolean trackTokenFreq_ = true;
 	private NavigableMap<CaseInsensitiveString, Integer> tokenFreqMap_;
 	//Map<TOKEN, INSTANCECOUNT>
 
 	private boolean ignoreDollar_ = true;
 
+	/**
+	 * @return the stateManager
+	 */
+	public IScannerStateManager getStateManager() {
+		return stateManager_;
+	}
+
+	/**
+	 * @return the stateManagerKey
+	 */
+	public Object getStateManagerKey() {
+		return stateManagerKey_;
+	}
+
+	/**
+	 * @param stateManager
+	 *            the stateManager to set
+	 */
+	public void setStateManager(final IScannerStateManager stateManager, final Object stateManagerKey) {
+		stateManager_ = stateManager;
+		stateManagerKey_ = stateManagerKey;
+	}
+
 	private Date lastScanDate_ = new Date(0);
+	private IScannerStateManager stateManager_;
+	private Object stateManagerKey_;
+
+	private int zeroDocCount_ = 0;
+	private int errCount_ = 0;
+
+	public int getZeroDocCount() {
+		return zeroDocCount_;
+	}
+
+	public int getErrCount() {
+		return errCount_;
+	}
 
 	public DocumentScanner() {
 	}
@@ -217,19 +259,6 @@ public class DocumentScanner {
 			stopTokenList_ = new HashSet<CaseInsensitiveString>();
 		}
 		return stopTokenList_;
-	}
-
-	public void setStopTokenList(final Set<?> value) {
-		stopTokenList_ = new HashSet<CaseInsensitiveString>();
-		for (Object o : value) {
-			if (o instanceof CaseInsensitiveString) {
-				stopTokenList_.add((CaseInsensitiveString) o);
-			} else if (o instanceof String) {
-				stopTokenList_.add(new CaseInsensitiveString((String) o));
-			} else {
-				stopTokenList_.add(new CaseInsensitiveString(String.valueOf(o)));
-			}
-		}
 	}
 
 	public void setIgnoreDollar(final boolean ignore) {
@@ -265,6 +294,7 @@ public class DocumentScanner {
 
 	public Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> getTokenLocationMap() {
 		if (tokenLocationMap_ == null) {
+			System.out.println("Setting up new tokenLocationMap for scanner");
 			tokenLocationMap_ = new ConcurrentSkipListMap<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>>();
 		}
 		return tokenLocationMap_;
@@ -272,13 +302,21 @@ public class DocumentScanner {
 
 	public Map<CaseInsensitiveString, Set<String>> getTokenLocationMap(final CaseInsensitiveString token) {
 		Map<CaseInsensitiveString, Set<String>> result = null;
-		result = getTokenLocationMap().get(token);
+		Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> localMap = getTokenLocationMap();
+		result = localMap.get(token);
 		if (result == null) {
-			result = new ConcurrentHashMap<CaseInsensitiveString, Set<String>>();
-			synchronized (result) {
-				getTokenLocationMap().put(token, result);
+			if (getStateManager() == null) {
+				result = new ConcurrentHashMap<CaseInsensitiveString, Set<String>>();
+			} else {
+				result = getStateManager().restoreTokenLocationMap(token, getStateManagerKey());
+				if (result == null) {
+					errCount_++;
+					result = new ConcurrentHashMap<CaseInsensitiveString, Set<String>>();
+				}
 			}
-
+			synchronized (localMap) {
+				localMap.put(token, result);
+			}
 		}
 		return result;
 	}
@@ -331,8 +369,26 @@ public class DocumentScanner {
 		return getStopTokenList().contains(token);
 	}
 
+	Set<Integer> nonText = new HashSet<Integer>();
+
+	public Set<Integer> getNonText() {
+		return nonText;
+	}
+
+	public String getNonTextSummary() {
+		StringBuilder nt = new StringBuilder();
+		nt.append("[");
+		for (Integer i : getNonText()) {
+			nt.append(i + ":");
+		}
+		nt.append("]");
+		return nt.toString();
+	}
+
 	@SuppressWarnings("rawtypes")
 	public void processDocument(final Document doc) {
+		int tokenCount = 0;
+		int itemCount = 0;
 		if (doc != null) {
 			//		Map<String, NavigableSet<String>> tmap = getFieldTokenMap();
 			Map<CaseInsensitiveString, NavigableSet<Comparable>> vmap = getFieldValueMap();
@@ -340,51 +396,35 @@ public class DocumentScanner {
 			Map<CaseInsensitiveString, Integer> typeMap = getFieldTypeMap();
 			//		Map<String, Integer> tfmap = getTokenFreqMap();
 			Vector<Item> items = doc.getItems();
+			int allItems = items.size();
+			int textItems = 0;
 			//			String unid = doc.getUniversalID();
 			boolean hasReaders = doc.hasReaders();
 			String address = doc.getUniversalID() + (hasReaders ? "1" : "0") + doc.getFormName();
 			//		Set<String> stopList = getStopTokenList();
 			for (Item item : items) {
-				if (item.getLastModifiedDate().after(getLastScanDate())) {
-					CaseInsensitiveString name = new CaseInsensitiveString(item.getName());
+				//				nonText.add(item.getType());
+				CaseInsensitiveString name = new CaseInsensitiveString(item.getName());
+				Date lastMod = item.getLastModifiedDate();
+				if (lastMod.after(getLastScanDate()) && !(name.startsWith("$") && getIgnoreDollar())) {
 					try {
-						if (name.startsWith("$") && getIgnoreDollar())
-							break;
-						if (!typeMap.containsKey(name)) {
-							typeMap.put(name, item.getType());
-						}
-						if (typeMap.get(name).equals(item.getType())) {
-							Vector<Object> vals = null;
-							vals = item.getValues();
-							if (vals != null && !vals.isEmpty()) {
-								NavigableSet<Comparable> valueSet = null;
-								if (!vmap.containsKey(name)) {
-									valueSet = new ConcurrentSkipListSet<Comparable>();
-									vmap.put(name, valueSet);
-								} else {
-									valueSet = vmap.get(name);
-								}
-								java.util.Collection<Comparable> c = DominoUtils.toComparable(vals);
-								if (!c.isEmpty()) {
-									valueSet.addAll(c);
-								}
-							}
-						}
 						String value = null;
 						Vector<Object> values = null;
+
 						switch (item.getType()) {
 						case Item.AUTHORS:
 						case Item.READERS:
 						case Item.NAMES:
 						case Item.TEXT:
 							value = item.getValueString();
+							if (value != null)
+								textItems++;
 							values = item.getValues();
 							break;
 						case Item.RICHTEXT:
 							value = ((RichTextItem) item).getUnformattedText();
 							break;
 						default:
-
 						}
 						if (value != null && value.length() > 0 && !DominoUtils.isNumber(value)) {
 							if (item.isNames()) {
@@ -396,6 +436,7 @@ public class DocumentScanner {
 									}
 								}
 							} else {
+								itemCount++;
 								if (values != null && !values.isEmpty()) {
 									for (Object o : values) {
 										if (o instanceof String) {
@@ -405,6 +446,7 @@ public class DocumentScanner {
 											while (s.hasNext()) {
 												CaseInsensitiveString token = scrubToken(s.next());
 												if (token != null && (token.length() > 2) && !isStopped(token)) {
+													tokenCount++;
 													processToken(token, name, address, doc);
 												}
 											}
@@ -416,8 +458,34 @@ public class DocumentScanner {
 									while (s.hasNext()) {
 										CaseInsensitiveString token = scrubToken(s.next());
 										if (token != null && (token.length() > 2) && !isStopped(token)) {
+											tokenCount++;
 											processToken(token, name, address, doc);
 										}
+									}
+								}
+							}
+						}
+
+						if (isTrackFieldTypes()) {
+							if (!typeMap.containsKey(name)) {
+								typeMap.put(name, item.getType());
+							}
+						}
+						if (isTrackFieldValues()) {
+							if (typeMap.get(name).equals(item.getType())) {
+								Vector<Object> vals = null;
+								vals = item.getValues();
+								if (vals != null && !vals.isEmpty()) {
+									NavigableSet<Comparable> valueSet = null;
+									if (!vmap.containsKey(name)) {
+										valueSet = new ConcurrentSkipListSet<Comparable>();
+										vmap.put(name, valueSet);
+									} else {
+										valueSet = vmap.get(name);
+									}
+									java.util.Collection<Comparable> c = DominoUtils.toComparable(vals);
+									if (!c.isEmpty()) {
+										valueSet.addAll(c);
 									}
 								}
 							}
@@ -426,6 +494,18 @@ public class DocumentScanner {
 						Database db = doc.getAncestorDatabase();
 						log_.log(Level.WARNING,
 								"Unable to scan item: " + name + " in Document " + doc.getNoteID() + " in database " + db.getFilePath(), e);
+					}
+				}
+			}
+			if (tokenCount < 1) {
+				errCount_++;
+			}
+			if (this.isTrackTokenLocation() && getStateManager() != null) {
+				Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> localTokenMap = getTokenLocationMap();
+				if (localTokenMap.size() > 4096) {
+					synchronized (localTokenMap) {
+						getStateManager().saveTokenLocationMap(getStateManagerKey(), localTokenMap, doc.getLastModifiedDate());
+						localTokenMap.clear();
 					}
 				}
 			}
@@ -463,26 +543,28 @@ public class DocumentScanner {
 
 	private void processToken(final CaseInsensitiveString token, final CaseInsensitiveString itemName, final String address,
 			final Document doc) {
-		Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> tlmap = getTokenLocationMap();
-		Map<CaseInsensitiveString, Integer> tfmap = getTokenFreqMap();
-		Map<CaseInsensitiveString, NavigableSet<CaseInsensitiveString>> tmap = getFieldTokenMap();
 
-		if (!tmap.containsKey(itemName)) {
-			NavigableSet<CaseInsensitiveString> tokenSet = new ConcurrentSkipListSet<CaseInsensitiveString>();
-			tokenSet.add(token);
-			tmap.put(itemName, tokenSet);
-		} else {
-			NavigableSet<CaseInsensitiveString> tokenSet = tmap.get(itemName);
-			tokenSet.add(token);
+		if (isTrackFieldTokens()) {
+			Map<CaseInsensitiveString, NavigableSet<CaseInsensitiveString>> tmap = getFieldTokenMap();
+			if (!tmap.containsKey(itemName)) {
+				NavigableSet<CaseInsensitiveString> tokenSet = new ConcurrentSkipListSet<CaseInsensitiveString>();
+				tokenSet.add(token);
+				tmap.put(itemName, tokenSet);
+			} else {
+				NavigableSet<CaseInsensitiveString> tokenSet = tmap.get(itemName);
+				tokenSet.add(token);
+			}
 		}
-		if (tfmap.containsKey(token)) {
-			tfmap.put(token, tfmap.get(token) + 1);
-		} else {
-			tfmap.put(token, 1);
+		if (isTrackTokenFreq()) {
+			Map<CaseInsensitiveString, Integer> tfmap = getTokenFreqMap();
+			if (tfmap.containsKey(token)) {
+				tfmap.put(token, tfmap.get(token) + 1);
+			} else {
+				tfmap.put(token, 1);
+			}
 		}
-
-		if (tlmap.containsKey(token)) {
-			Map<CaseInsensitiveString, Set<String>> tlval = tlmap.get(token);
+		if (isTrackTokenLocation()) {
+			Map<CaseInsensitiveString, Set<String>> tlval = getTokenLocationMap(token);
 			if (tlval.containsKey(itemName)) {
 				Set<String> tllist = tlval.get(itemName);
 				tllist.add(address);
@@ -490,16 +572,10 @@ public class DocumentScanner {
 				//					tllist.add(unid);
 				//				}
 			} else {
-				Set<String> tllist = new HashSet<String>();
+				Set<String> tllist = new ConcurrentSkipListSet<String>();
 				tllist.add(address);
 				tlval.put(itemName, tllist);
 			}
-		} else {
-			Map<CaseInsensitiveString, Set<String>> tlval = new HashMap<CaseInsensitiveString, Set<String>>();
-			Set<String> tllist = new HashSet<String>();
-			tllist.add(address);
-			tlval.put(itemName, tllist);
-			tlmap.put(token, tlval);
 		}
 	}
 
@@ -514,12 +590,17 @@ public class DocumentScanner {
 	}
 
 	public void setTokenLocationMap(final Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> value) {
+		//		System.out.println("Setting tokenLocationMap to a " + value.getClass().getName());
 		tokenLocationMap_ = value;
 	}
 
 	public void setTokenLocationMap(final Object value) {
+		//		System.out.println("Setting tokenLocationMap to a " + value.getClass().getName());
+
 		if (validateTokenLocationMap(value)) {
-			tokenLocationMap_ = (Map) value;
+			setTokenLocationMap((Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>>) value);
+		} else {
+			System.out.println("Proposed TokenLocationMap didn't validate");
 		}
 	}
 
@@ -550,6 +631,98 @@ public class DocumentScanner {
 	public void setTokenFreqMap(final Object value) {
 		if (DocumentScanner.validateTokenFreqMap(value)) {
 			tokenFreqMap_ = (NavigableMap) value;
+		}
+	}
+
+	/**
+	 * @return the trackFieldTokens
+	 */
+	public boolean isTrackFieldTokens() {
+		return trackFieldTokens_;
+	}
+
+	/**
+	 * @param trackFieldTokens
+	 *            the trackFieldTokens to set
+	 */
+	public void setTrackFieldTokens(final boolean trackFieldTokens) {
+		trackFieldTokens_ = trackFieldTokens;
+	}
+
+	/**
+	 * @return the trackTokenLocation
+	 */
+	public boolean isTrackTokenLocation() {
+		return trackTokenLocation_;
+	}
+
+	/**
+	 * @param trackTokenLocation
+	 *            the trackTokenLocation to set
+	 */
+	public void setTrackTokenLocation(final boolean trackTokenLocation) {
+		trackTokenLocation_ = trackTokenLocation;
+	}
+
+	/**
+	 * @return the trackFieldValues
+	 */
+	public boolean isTrackFieldValues() {
+		return trackFieldValues_;
+	}
+
+	/**
+	 * @param trackFieldValues
+	 *            the trackFieldValues to set
+	 */
+	public void setTrackFieldValues(final boolean trackFieldValues) {
+		trackFieldValues_ = trackFieldValues;
+	}
+
+	/**
+	 * @return the trackFieldTypes
+	 */
+	public boolean isTrackFieldTypes() {
+		return trackFieldTypes_ || trackFieldValues_;
+	}
+
+	/**
+	 * @param trackFieldTypes
+	 *            the trackFieldTypes to set
+	 */
+	public void setTrackFieldTypes(final boolean trackFieldTypes) {
+		trackFieldTypes_ = trackFieldTypes;
+	}
+
+	/**
+	 * @return the trackTokenFreq
+	 */
+	public boolean isTrackTokenFreq() {
+		return trackTokenFreq_;
+	}
+
+	/**
+	 * @param trackTokenFreq
+	 *            the trackTokenFreq to set
+	 */
+	public void setTrackTokenFreq(final boolean trackTokenFreq) {
+		trackTokenFreq_ = trackTokenFreq;
+	}
+
+	/**
+	 * @param stopTokenList
+	 *            the stopTokenList to set
+	 */
+	public void setStopTokenList(final Set<?> value) {
+		stopTokenList_ = new HashSet<CaseInsensitiveString>();
+		for (Object o : value) {
+			if (o instanceof CaseInsensitiveString) {
+				stopTokenList_.add((CaseInsensitiveString) o);
+			} else if (o instanceof String) {
+				stopTokenList_.add(new CaseInsensitiveString((String) o));
+			} else {
+				stopTokenList_.add(new CaseInsensitiveString(String.valueOf(o)));
+			}
 		}
 	}
 }
