@@ -364,6 +364,8 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 					if (!getSuppressEventStack()) {
 						logDoc.replaceItemValue("LogStackTrace", getStackTrace(ee));
 					}
+				} else {
+					logDoc.replaceItemValue("LogStackTrace", getStackTrace(ee));
 				}
 				logDoc.replaceItemValue("LogErrorLine", ste.getLineNumber());
 				logDoc.replaceItemValue("LogFromMethod", ste.getClass() + "." + ste.getMethodName());

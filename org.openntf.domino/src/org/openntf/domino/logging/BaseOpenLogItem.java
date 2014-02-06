@@ -427,9 +427,8 @@ public class BaseOpenLogItem implements IOpenLogItem {
 		return _suppressEventStack;
 	}
 
-	/**
-	 * @param error
-	 *            whether or not to display the errors
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.IOpenLogItem#setSuppressEventStack(java.lang.Boolean)
 	 */
 	public void setSuppressEventStack(final Boolean suppressEventStack) {
 		_suppressEventStack = suppressEventStack;
@@ -730,6 +729,8 @@ public class BaseOpenLogItem implements IOpenLogItem {
 				if (!getSuppressEventStack()) {
 					logDoc.replaceItemValue("LogStackTrace", getStackTrace(ee));
 				}
+			} else {
+				logDoc.replaceItemValue("LogStackTrace", getStackTrace(ee));
 			}
 			logDoc.replaceItemValue("LogSeverity", getSeverity().getName());
 			logDoc.replaceItemValue("LogEventTime", getEventTime());
