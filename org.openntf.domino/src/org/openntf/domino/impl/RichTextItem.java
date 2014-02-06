@@ -15,6 +15,8 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
@@ -611,6 +613,19 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 			DominoUtils.handleException(e);
 			return null;
 		}
+	}
+
+	public List<String> getAttachmentNames() {
+		List<String> result = new ArrayList<String>();
+		Vector<org.openntf.domino.EmbeddedObject> objects = getEmbeddedObjects();
+		if (objects != null && !objects.isEmpty()) {
+			for (org.openntf.domino.EmbeddedObject eo : objects) {
+				if (eo.getType() == lotus.domino.EmbeddedObject.EMBED_ATTACHMENT) {
+					result.add(eo.getName());
+				}
+			}
+		}
+		return result;
 	}
 
 	/*

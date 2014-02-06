@@ -45,6 +45,8 @@ public interface Database extends Base {
 
 	public IDominoEvent generateEvent(EnumEvent event, org.openntf.domino.Base source, Object payload);
 
+	public DocumentCollection createSortedDocumentCollection();
+
 	public String getApiPath();
 
 	public int compactWithOptions(final Set<CompactOption> options);

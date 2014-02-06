@@ -75,14 +75,188 @@ import com.ibm.icu.util.ULocale;
 public enum DominoUtils {
 	;
 
+	public static class MIMEBufferedInputStream extends InputStream {
+		private static final int DEFAULT_BUFFER_SIZE = 16384;
+
+		private static final boolean FORCE_READ = false;
+		private static int instanceCount = 0;
+
+		private Stream is;
+		private byte[] buffer;
+		private int length;
+		private int buffered;
+		private int bufferPos;
+
+		public static InputStream get(final Stream source) {
+			return source != null ? new MIMEBufferedInputStream(source) : null;
+		}
+
+		public MIMEBufferedInputStream(final Stream is, final int size) {
+			this.is = is;
+			this.buffer = new byte[size];
+			this.length = is.getBytes();
+			//			instanceCount++;
+			//			if (++instanceCount % 1000 == 0) {
+			//				System.out.println("Created " + instanceCount + " MIMEInputStream objects...");
+			//			}
+		}
+
+		public MIMEBufferedInputStream(final Stream is) {
+			this(is, DEFAULT_BUFFER_SIZE);
+		}
+
+		public boolean isEOF() throws IOException {
+			return getNextByteCount() == 0;
+		}
+
+		@Override
+		public int read() throws IOException {
+			if (bufferPos == buffered) {
+				//we've read to the end of the buffer byte-by-byte.
+				//time to refill...
+				buffered = getNextByteCount();
+				buffer = is.read(buffered);
+				bufferPos = 0;
+				if (buffered <= 0) {
+					buffered = 0;
+					return -1;
+				}
+			}
+			return buffer[bufferPos++] & 0xFF;
+		}
+
+		@Override
+		public int read(final byte[] array) throws IOException {
+			return read(array, 0, array.length);
+		}
+
+		@Override
+		public int read(final byte[] array, int off, int length) throws IOException {
+			if (FORCE_READ) {
+				int read = 0;
+				while (read < length) {
+					int r = _read(array, off, length);
+					if (r < 0) {
+						return read > 0 ? read : r;
+					}
+					off += r;
+					length -= r;
+					read += r;
+				}
+				return read;
+			} else {
+				return _read(array, off, length);
+			}
+		}
+
+		private int getNextByteCount() {
+			int remaining = length - is.getPosition();
+			if (remaining < buffer.length) {
+				return remaining;
+			} else {
+				return buffer.length;
+			}
+		}
+
+		private int _read(final byte[] array, final int off, final int length) throws IOException {
+			int avail = buffered - bufferPos;
+			if (avail == 0) {
+				buffered = getNextByteCount();
+				buffer = is.read(buffered);
+				avail = buffered;
+				bufferPos = 0;
+				if (buffered <= 0) {
+					buffered = 0;
+					return -1;
+				}
+			}
+			int toRead = length < avail ? length : avail;
+			System.arraycopy(buffer, bufferPos, array, off, toRead);
+			bufferPos += toRead;
+			return toRead;
+		}
+
+		@Override
+		public long skip(long n) throws IOException {
+			if (FORCE_READ) {
+				long skip = 0;
+				while (skip < n) {
+					long r = _skip(n);
+					if (r < 0) {
+						return skip > 0 ? skip : r;
+					}
+					n -= r;
+					skip += r;
+				}
+				return skip;
+			} else {
+				return _skip(n);
+			}
+		}
+
+		private long _skip(final long n) throws IOException {
+			int avail = buffered - bufferPos;
+			if (avail > 0) {
+				if (n < (long) avail) {
+					bufferPos += n;
+					return n;
+				}
+				bufferPos = buffered;
+				return avail;
+			}
+			long newPos = is.getPosition() + n;
+			if (newPos > length) {
+				return 0;
+			} else {
+				int intPos = Integer.parseInt(Long.toString(newPos));
+				is.setPosition(intPos);
+				return n;
+			}
+		}
+
+		@Override
+		public int available() throws IOException {
+			return length - is.getPosition();
+		}
+
+		@Override
+		public void close() throws IOException {
+			is.close();
+		}
+
+		@Override
+		public void mark(final int int0) {
+		}
+
+		@Override
+		public void reset() throws IOException {
+		}
+
+		@Override
+		public boolean markSupported() {
+			return false;
+		}
+	}
+
 	public static Class<?> getClass(final String className) {
 		Class<?> result = null;
 		try {
 			result = AccessController.doPrivileged(new PrivilegedExceptionAction<Class<?>>() {
 				@Override
 				public Class<?> run() throws Exception {
-					Class<?> cls = Thread.currentThread().getContextClassLoader().loadClass(className);
-					return cls;
+					Class<?> result = null;
+					ClassLoader cl = Thread.currentThread().getContextClassLoader();
+					try {
+						result = cl.loadClass(className);
+					} catch (NullPointerException ne) {
+						if (cl != null && "com.ibm.domino.xsp.module.nsf.ModuleClassLoader".equals(cl.getClass().getName())) {
+							//							log_.log(Level.WARNING,
+							//									"ModuleClassLoader lost DynamicClassLoader pointer. Resorting to System ClassLoader for " + className
+							//											+ " instead...");
+							result = Class.forName(className);
+						}
+					}
+					return result;
 				}
 			});
 		} catch (AccessControlException e) {
@@ -115,30 +289,29 @@ public enum DominoUtils {
 	}
 
 	public static class LoaderObjectInputStream extends ObjectInputStream {
-		private final ClassLoader loader_;
+		//		private final ClassLoader loader_;
 
 		public LoaderObjectInputStream(final InputStream in) throws IOException {
 			super(in);
-			loader_ = null;
+			//			loader_ = null;
 		}
 
-		public LoaderObjectInputStream(final ClassLoader classLoader, final InputStream in) throws IOException {
-			super(in);
-			loader_ = classLoader;
-		}
+		//		public LoaderObjectInputStream(final ClassLoader classLoader, final InputStream in) throws IOException {
+		//			super(in);
+		//			loader_ = classLoader;
+		//		}
 
 		@Override
 		protected Class<?> resolveClass(final ObjectStreamClass desc) throws IOException, ClassNotFoundException {
 			String name = desc.getName();
-			if (loader_ == null) {
-				return DominoUtils.getClass(name);
-			}
-			try {
-
-				return Class.forName(name, false, loader_);
-			} catch (ClassNotFoundException e) {
-				return super.resolveClass(desc);
-			}
+			//			if (loader_ == null) {
+			return DominoUtils.getClass(name);
+			//			}
+			//			try {
+			//				return Class.forName(name, false, loader_);
+			//			} catch (ClassNotFoundException e) {
+			//				return super.resolveClass(desc);
+			//			}
 		}
 	}
 
@@ -728,6 +901,107 @@ public enum DominoUtils {
 
 	// MIMEBean methods
 
+	@SuppressWarnings("unchecked")
+	public static Object restoreState(final org.openntf.domino.Document doc, final String itemName, final MIMEEntity entity)
+			throws Exception {
+		Session session = doc.getAncestorSession();
+		Object result = null;
+		Stream mimeStream = session.createStream();
+		Class<?> chkClass = null;
+		String allHeaders = entity.getHeaders();
+		MIMEHeader header = entity.getNthHeader("X-Java-Class");
+		if (header != null) {
+			String className = header.getHeaderVal();
+			chkClass = getClass(className);
+			if (chkClass == null) {
+				log_.log(Level.SEVERE, "Unable to load class " + className + " from currentThread classLoader"
+						+ " so object deserialization is likely to fail...");
+			}
+		}
+
+		entity.getContentAsBytes(mimeStream);
+
+		mimeStream.setPosition(0);
+		//		ByteArrayOutputStream streamOut = new ByteArrayOutputStream();
+		//		mimeStream.getContents(streamOut);
+		// mimeStream.recycle();
+
+		//		byte[] stateBytes = streamOut.toByteArray();
+		//		ByteArrayInputStream byteStream = new ByteArrayInputStream(stateBytes);
+		InputStream is = new MIMEBufferedInputStream(mimeStream);
+		ObjectInputStream objectStream;
+
+		if (allHeaders == null) {
+			System.out.println("No headers available. Testing gzip by experimentation...");
+			try {
+				GZIPInputStream zipStream = new GZIPInputStream(is);
+				objectStream = new LoaderObjectInputStream(zipStream);
+			} catch (Exception ioe) {
+				objectStream = new LoaderObjectInputStream(is);
+			}
+		} else if (allHeaders.toLowerCase().contains("content-encoding: gzip")) {
+			//			GZIPInputStream zipStream = new GZIPInputStream(byteStream);
+			GZIPInputStream zipStream = new GZIPInputStream(is);
+			objectStream = new LoaderObjectInputStream(zipStream);
+		} else {
+			objectStream = new LoaderObjectInputStream(is);
+		}
+
+		// There are three potential storage forms: Externalizable, Serializable, and StateHolder, distinguished by type or header
+		if ("x-java-externalized-object".equals(entity.getContentSubType())) {
+			Class<Externalizable> externalizableClass = (Class<Externalizable>) getClass(entity.getNthHeader("X-Java-Class").getHeaderVal());
+			Externalizable restored = externalizableClass.newInstance();
+			restored.readExternal(objectStream);
+			result = restored;
+		} else {
+			Object restored = (Serializable) objectStream.readObject();
+
+			// But wait! It might be a StateHolder object or Collection!
+			MIMEHeader storageScheme = entity.getNthHeader("X-Storage-Scheme");
+			MIMEHeader originalJavaClass = entity.getNthHeader("X-Original-Java-Class");
+			if (storageScheme != null && "StateHolder".equals(storageScheme.getHeaderVal())) {
+				Class<?> facesContextClass = getClass("javax.faces.context.FacesContext");
+				Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
+
+				Class<?> stateHoldingClass = getClass(originalJavaClass.getHeaderVal());
+				Method restoreStateMethod = stateHoldingClass.getMethod("restoreState", facesContextClass, Object.class);
+				result = stateHoldingClass.newInstance();
+				restoreStateMethod.invoke(result, getCurrentInstance.invoke(null), restored);
+			} else if (originalJavaClass != null && "org.openntf.domino.DocumentCollection".equals(originalJavaClass.getHeaderVal())) {
+				// Maybe this can be sped up by not actually getting the documents
+				try {
+					String[] unids = (String[]) restored;
+					Database db = doc.getParentDatabase();
+					DocumentCollection docCollection = db.createDocumentCollection();
+					for (String unid : unids) {
+						docCollection.addDocument(db.getDocumentByUNID(unid));
+					}
+					result = docCollection;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			} else if (originalJavaClass != null && "org.openntf.domino.NoteCollection".equals(originalJavaClass.getHeaderVal())) {
+				String[] unids = (String[]) restored;
+				Database db = doc.getParentDatabase();
+				NoteCollection noteCollection = db.createNoteCollection(false);
+				for (String unid : unids) {
+					noteCollection.add(db.getDocumentByUNID(unid));
+				}
+				result = noteCollection;
+			} else {
+				result = restored;
+			}
+		}
+
+		// entity.recycle();
+		if (!doc.closeMIMEEntities(false, itemName)) {
+			log_.log(Level.WARNING, "closeMIMEEntities returned false for item " + itemName + " on doc " + doc.getNoteID() + " in db "
+					+ doc.getAncestorDatabase().getApiPath());
+		}
+
+		return result;
+	}
+
 	/**
 	 * Restore state.
 	 * 
@@ -746,91 +1020,11 @@ public enum DominoUtils {
 		session.setConvertMime(false);
 
 		Object result = null;
-		Stream mimeStream = session.createStream();
 		MIMEEntity entity = doc.getMIMEEntity(itemName);
 		if (entity == null) {
 			return null;
 		}
-		Class<?> chkClass = null;
-		String className = entity.getNthHeader("X-Java-Class").getHeaderVal();
-		chkClass = getClass(className);
-		//		ClassLoader cl = Factory.getClassLoader();
-		//		try {
-		//			chkClass = (Class<?>) Class.forName(className, true, cl);
-		//		} catch (Throwable t) {
-		//			log_.log(Level.SEVERE, "Unable to load class " + className + " from a ClassLoader of " + cl.getClass().getName()
-		//					+ " so object deserialization is likely to fail...");
-		//		}
-		if (chkClass == null) {
-			log_.log(Level.SEVERE, "Unable to load class " + className + " from currentThread classLoader"
-					+ " so object deserialization is likely to fail...");
-		}
-
-		entity.getContentAsBytes(mimeStream);
-
-		ByteArrayOutputStream streamOut = new ByteArrayOutputStream();
-		mimeStream.getContents(streamOut);
-		// mimeStream.recycle();
-
-		byte[] stateBytes = streamOut.toByteArray();
-		ByteArrayInputStream byteStream = new ByteArrayInputStream(stateBytes);
-		ObjectInputStream objectStream;
-		if (entity.getHeaders().toLowerCase().contains("content-encoding: gzip")) {
-			GZIPInputStream zipStream = new GZIPInputStream(byteStream);
-			objectStream = new LoaderObjectInputStream(zipStream);
-		} else {
-			objectStream = new LoaderObjectInputStream(byteStream);
-		}
-
-		// There are three potential storage forms: Externalizable, Serializable, and StateHolder, distinguished by type or header
-		if (entity.getContentSubType().equals("x-java-externalized-object")) {
-			Class<Externalizable> externalizableClass = (Class<Externalizable>) getClass(entity.getNthHeader("X-Java-Class").getHeaderVal());
-			Externalizable restored = externalizableClass.newInstance();
-			restored.readExternal(objectStream);
-			result = restored;
-		} else {
-
-			Object restored = (Serializable) objectStream.readObject();
-
-			// But wait! It might be a StateHolder object or Collection!
-			MIMEHeader storageScheme = entity.getNthHeader("X-Storage-Scheme");
-			MIMEHeader originalJavaClass = entity.getNthHeader("X-Original-Java-Class");
-			if (storageScheme != null && storageScheme.getHeaderVal().equals("StateHolder")) {
-				Class<?> facesContextClass = getClass("javax.faces.context.FacesContext");
-				Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
-
-				Class<?> stateHoldingClass = getClass(originalJavaClass.getHeaderVal());
-				Method restoreStateMethod = stateHoldingClass.getMethod("restoreState", facesContextClass, Object.class);
-				result = stateHoldingClass.newInstance();
-				restoreStateMethod.invoke(result, getCurrentInstance.invoke(null), restored);
-			} else if (originalJavaClass != null && originalJavaClass.getHeaderVal().equals("org.openntf.domino.DocumentCollection")) {
-				// Maybe this can be sped up by not actually getting the documents
-				try {
-					String[] unids = (String[]) restored;
-					Database db = doc.getParentDatabase();
-					DocumentCollection docCollection = db.createDocumentCollection();
-					for (String unid : unids) {
-						docCollection.addDocument(db.getDocumentByUNID(unid));
-					}
-					result = docCollection;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			} else if (originalJavaClass != null && originalJavaClass.getHeaderVal().equals("org.openntf.domino.NoteCollection")) {
-				String[] unids = (String[]) restored;
-				Database db = doc.getParentDatabase();
-				NoteCollection noteCollection = db.createNoteCollection(false);
-				for (String unid : unids) {
-					noteCollection.add(db.getDocumentByUNID(unid));
-				}
-				result = noteCollection;
-			} else {
-				result = restored;
-			}
-		}
-
-		// entity.recycle();
-		doc.closeMIMEEntities();
+		result = restoreState(doc, itemName, entity);
 		session.setConvertMime(convertMime);
 
 		return result;
@@ -873,10 +1067,10 @@ public enum DominoUtils {
 	public static void saveState(final Serializable object, final Document doc, final String itemName, final boolean compress,
 			final Map<String, String> headers) throws Exception {
 		if (object == null) {
-			System.out.println("Ignoring attempt to save MIMEBean value of null");
+			log_.log(Level.INFO, "Ignoring attempt to save MIMEBean value of null");
 			return;
 		}
-		Session session = Factory.getSession((Base<?>) doc);
+		Session session = doc.getAncestorSession();
 		boolean convertMime = session.isConvertMime();
 		session.setConvertMime(false);
 
@@ -915,12 +1109,8 @@ public enum DominoUtils {
 		} else {
 			entity = previousState;
 		}
-		byte[] bytes = byteStream.toByteArray();
-		ByteArrayInputStream byteIn = new ByteArrayInputStream(bytes);
-
-		mimeStream.setContents(byteIn);
-		entity.setContentFromBytes(mimeStream, contentType, MIMEEntity.ENC_NONE);
 		MIMEHeader javaClass = entity.getNthHeader("X-Java-Class");
+		MIMEHeader contentEncoding = entity.getNthHeader("Content-Encoding");
 		if (javaClass == null) {
 			javaClass = entity.createHeader("X-Java-Class");
 		} else {
@@ -936,7 +1126,7 @@ public enum DominoUtils {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
-		MIMEHeader contentEncoding = entity.getNthHeader("Content-Encoding");
+
 		if (compress) {
 			if (contentEncoding == null) {
 				contentEncoding = entity.createHeader("Content-Encoding");
@@ -964,12 +1154,20 @@ public enum DominoUtils {
 				// paramHeader.recycle();
 			}
 		}
+		byte[] bytes = byteStream.toByteArray();
+		ByteArrayInputStream byteIn = new ByteArrayInputStream(bytes);
+
+		mimeStream.setContents(byteIn);
+		entity.setContentFromBytes(mimeStream, contentType, MIMEEntity.ENC_NONE);
 
 		// entity.recycle();
 		// mimeStream.recycle();
-		entity = null;
-		previousState = null;
-		doc.closeMIMEEntities(true, itemName);
+		//		entity = null;	//NTF - why set to null? We're properly closing the entities now.
+		//		previousState = null;	// why set to null?
+		if (!doc.closeMIMEEntities(true, itemName)) {
+			log_.log(Level.WARNING, "closeMIMEEntities returned false for item " + itemName + " on doc " + doc.getNoteID() + " in db "
+					+ doc.getAncestorDatabase().getApiPath());
+		}
 		session.setConvertMime(convertMime);
 	}
 

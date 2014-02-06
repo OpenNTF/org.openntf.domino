@@ -45,6 +45,7 @@ import org.openntf.domino.Replication;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
+import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.design.impl.DatabaseDesign;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
@@ -469,8 +470,15 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
-
 		}
+	}
+
+	@Incomplete
+	public DocumentCollection createSortedDocumentCollection() {
+		DocumentCollection base = createDocumentCollection();
+		//TODO can't actually do an FTSearch on an empty collection
+		base.FTSearch("xXXIIOIOI" + String.valueOf(System.nanoTime()) + "OOIOIXXx", 1);
+		return base;
 	}
 
 	/*

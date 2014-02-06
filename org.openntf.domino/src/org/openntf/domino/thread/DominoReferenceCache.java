@@ -71,6 +71,7 @@ public class DominoReferenceCache {
 	 * @return the value to which this map maps the specified key.
 	 */
 	public Object get(final long key) {
+		processQueue(key);
 		// We don't need to remove garbage collected values here;
 		// if they are garbage collected, the get() method returns null;
 		// the next put() call with the same key removes the old value
@@ -119,7 +120,7 @@ public class DominoReferenceCache {
 		// collected values with their keys from the map before the
 		// new entry is made. We only clean up here to distribute
 		// clean up calls on different operations.
-		processQueue();
+		processQueue(key);
 		if (value == null) {
 			return;
 		}
@@ -138,7 +139,7 @@ public class DominoReferenceCache {
 	 * Removes all garbage collected values with their keys from the map.
 	 * 
 	 */
-	public void processQueue() {
+	public void processQueue(final long curKey) {
 
 		int counter = cache_counter.incrementAndGet();
 		if (counter % GARBAGE_INTERVAL == 0) {
@@ -152,7 +153,9 @@ public class DominoReferenceCache {
 			long key = ref.getKey();
 			map.remove(key);
 			if (autorecycle_) {
-				ref.recycle();
+				if (curKey != key) {
+					ref.recycle();
+				}
 			}
 		}
 	}

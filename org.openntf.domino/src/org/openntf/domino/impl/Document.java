@@ -932,7 +932,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		// System.out.println("Requesting a value of type " + T.getName() + " in name " + name);
 		// }
 
-		boolean hasMime = hasMIMEEntity(name);
+		MIMEEntity testEntity = testMIMEEntity(name);
+		boolean hasMime = testEntity != null;
+
 		if (!hasMime) {
 			Item item = getFirstItem(name);
 			if (item != null && item.getType() == Item.MIME_PART) {
@@ -956,6 +958,23 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		}
 	}
 
+	private Object getItemValueMIME(final String name, final MIMEEntity entity) {
+		Object resultObj = null;
+		try {
+			MIMEHeader contentType = entity.getNthHeader("Content-Type");
+			if (contentType != null
+					&& (contentType.getHeaderVal().equals("application/x-java-serialized-object") || contentType.getHeaderVal().equals(
+							"application/x-java-externalized-object"))) {
+				// Then it's a MIMEBean
+				resultObj = DominoUtils.restoreState(this, name, entity);
+			}
+		} catch (Throwable t) {
+			DominoUtils.handleException(new MIMEConversionException("Unable to getItemValueMIME for item name " + name + " on document "
+					+ getNoteID(), t));
+		}
+		return resultObj;
+	}
+
 	private Object getItemValueMIME(final String name) {
 		Object resultObj = null;
 		try {
@@ -964,13 +983,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			session.setConvertMIME(false);
 
 			MIMEEntity entity = this.getMIMEEntity(name);
-			MIMEHeader contentType = entity.getNthHeader("Content-Type");
-			if (contentType != null
-					&& (contentType.getHeaderVal().equals("application/x-java-serialized-object") || contentType.getHeaderVal().equals(
-							"application/x-java-externalized-object"))) {
-				// Then it's a MIMEBean
-				resultObj = DominoUtils.restoreState(this, name);
-			}
+			resultObj = getItemValueMIME(name, entity);
 			session.setConvertMIME(convertMime);
 		} catch (Throwable t) {
 			DominoUtils.handleException(new MIMEConversionException("Unable to getItemValueMIME for item name " + name + " on document "
@@ -1508,17 +1521,14 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return false;
 	}
 
-	public boolean hasMIMEEntity(final String name) {
-		boolean result = false;
+	public MIMEEntity testMIMEEntity(final String name) {
 		Session session = this.getAncestorSession();
 		boolean convertMime = session.isConvertMIME();
 		session.setConvertMIME(false);
 
 		MIMEEntity entity = this.getMIMEEntity(name);
-		if (entity != null)
-			result = true;
 		session.setConvertMIME(convertMime);
-		return result;
+		return entity;
 	}
 
 	/*
@@ -3073,6 +3083,36 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		// Check for "special" cases
 		if ("parentDocument".equals(key)) {
 			return this.getParentDocument();
+		}
+		if (key instanceof String) {
+			String skey = (String) key;
+			if ("@accessed".equalsIgnoreCase(skey) || "@accessed()".equalsIgnoreCase(skey)) {
+				return this.getLastAccessed();
+			}
+			if ("@modified".equalsIgnoreCase(skey) || "@modified()".equalsIgnoreCase(skey)) {
+				return this.getLastModified();
+			}
+			if ("@created".equalsIgnoreCase(skey) || "@created()".equalsIgnoreCase(skey)) {
+				return this.getCreated();
+			}
+			if ("@documentuniqueid".equalsIgnoreCase(skey) || "@documentuniqueid()".equalsIgnoreCase(skey)) {
+				return this.getUniversalID();
+			}
+			if ("@noteid".equalsIgnoreCase(skey) || "@noteid()".equalsIgnoreCase(skey)) {
+				return this.getNoteID();
+			}
+			if ("@doclength".equalsIgnoreCase(skey) || "@doclength()".equalsIgnoreCase(skey)) {
+				return this.getSize();
+			}
+			if ("@isresponsedoc".equalsIgnoreCase(skey) || "@isresponsedoc()".equalsIgnoreCase(skey)) {
+				return this.isResponse();
+			}
+			if ("@replicaid".equalsIgnoreCase(skey) || "@replicaid()".equalsIgnoreCase(skey)) {
+				return this.getAncestorDatabase().getReplicaID();
+			}
+			if ("@responses".equalsIgnoreCase(skey) || "@responses()".equalsIgnoreCase(skey)) {
+				return this.getResponses().getCount();
+			}
 		}
 
 		if (this.containsKey(key)) {
