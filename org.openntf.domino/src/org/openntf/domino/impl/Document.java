@@ -963,8 +963,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		try {
 			MIMEHeader contentType = entity.getNthHeader("Content-Type");
 			if (contentType != null
-					&& (contentType.getHeaderVal().equals("application/x-java-serialized-object") || contentType.getHeaderVal().equals(
-							"application/x-java-externalized-object"))) {
+					&& ("application/x-java-serialized-object".equals(contentType.getHeaderVal()) || "application/x-java-externalized-object"
+							.equals(contentType.getHeaderVal()))) {
 				// Then it's a MIMEBean
 				resultObj = DominoUtils.restoreState(this, name, entity);
 			}
@@ -1586,12 +1586,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public boolean isNewNote() {
-		try {
-			return getDelegate().isNewNote();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return false;
+		return Integer.valueOf(noteid_, 16) == 0;
 	}
 
 	/*
@@ -2493,7 +2488,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			log_.log(Level.INFO, "Save called on a document marked for a transactional delete. So there's no point...");
 			return true;
 		}
-		if (isDirty()) {
+		if (isNewNote() || isDirty()) {
 			boolean go = true;
 			go = getAncestorDatabase().fireListener(generateEvent(Events.BEFORE_UPDATE_DOCUMENT, null));
 			if (go) {
@@ -2939,7 +2934,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				lotus.domino.Database db = toLotus(getParentDatabase());
 				if (db != null) {
 					if (Integer.valueOf(noteid_, 16) == 0) {
-						if (isNew_) {
+						if (isNewNote()) {	//NTF this is redundant... not sure what the best move here is...
 							d = db.createDocument();
 							d.setUniversalID(unid_);
 							if (log_.isLoggable(Level.FINE)) {
@@ -3053,7 +3048,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	public boolean containsValue(final Object value, final Collection<String> itemnames) {
-		return containsValue(value, itemnames.toArray(new String[0]));
+		return containsValue(value, itemnames.toArray(new String[itemnames.size()]));
 	}
 
 	public boolean containsValues(final Map<String, Object> filterMap) {
@@ -3094,6 +3089,16 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			}
 			if ("@created".equalsIgnoreCase(skey) || "@created()".equalsIgnoreCase(skey)) {
 				return this.getCreated();
+			}
+
+			if ("@accesseddate".equalsIgnoreCase(skey) || "@accesseddate()".equalsIgnoreCase(skey)) {
+				return this.getLastAccessedDate();
+			}
+			if ("@modifieddate".equalsIgnoreCase(skey) || "@modifieddate()".equalsIgnoreCase(skey)) {
+				return this.getLastModifiedDate();
+			}
+			if ("@createddate".equalsIgnoreCase(skey) || "@createddate()".equalsIgnoreCase(skey)) {
+				return this.getCreatedDate();
 			}
 			if ("@documentuniqueid".equalsIgnoreCase(skey) || "@documentuniqueid()".equalsIgnoreCase(skey)) {
 				return this.getUniversalID();

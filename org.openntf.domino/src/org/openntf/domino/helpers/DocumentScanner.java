@@ -202,6 +202,9 @@ public class DocumentScanner {
 	//Map<TOKEN, INSTANCECOUNT>
 
 	private boolean ignoreDollar_ = true;
+	private long docCount_ = 0l;
+	private long itemCount_ = 0l;
+	private long tokenCount_ = 0l;
 
 	/**
 	 * @return the stateManager
@@ -294,7 +297,7 @@ public class DocumentScanner {
 
 	public Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> getTokenLocationMap() {
 		if (tokenLocationMap_ == null) {
-			System.out.println("Setting up new tokenLocationMap for scanner");
+			//			System.out.println("Setting up new tokenLocationMap for scanner");
 			tokenLocationMap_ = new ConcurrentSkipListMap<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>>();
 		}
 		return tokenLocationMap_;
@@ -387,17 +390,15 @@ public class DocumentScanner {
 
 	@SuppressWarnings("rawtypes")
 	public void processDocument(final Document doc) {
-		int tokenCount = 0;
-		int itemCount = 0;
+
 		if (doc != null) {
+			docCount_++;
 			//		Map<String, NavigableSet<String>> tmap = getFieldTokenMap();
 			Map<CaseInsensitiveString, NavigableSet<Comparable>> vmap = getFieldValueMap();
 			//		Map<String, Map<String, List<String>>> tlmap = getTokenLocationMap();
 			Map<CaseInsensitiveString, Integer> typeMap = getFieldTypeMap();
 			//		Map<String, Integer> tfmap = getTokenFreqMap();
 			Vector<Item> items = doc.getItems();
-			int allItems = items.size();
-			int textItems = 0;
 			//			String unid = doc.getUniversalID();
 			boolean hasReaders = doc.hasReaders();
 			String address = doc.getUniversalID() + (hasReaders ? "1" : "0") + doc.getFormName();
@@ -405,8 +406,12 @@ public class DocumentScanner {
 			for (Item item : items) {
 				//				nonText.add(item.getType());
 				CaseInsensitiveString name = new CaseInsensitiveString(item.getName());
-				Date lastMod = item.getLastModifiedDate();
-				if (lastMod.after(getLastScanDate()) && !(name.startsWith("$") && getIgnoreDollar())) {
+				//				Date lastMod = item.getLastModifiedDate();
+				//				if (!lastMod.after(getLastScanDate())) {
+				//					System.out.println("Skipping item " + name.toString() + " in document " + address
+				//							+ " because it hasn't changed since the last scan date.");
+				//				}
+				if (/*lastMod.after(getLastScanDate()) && */!(name.startsWith("$") && getIgnoreDollar())) {
 					try {
 						String value = null;
 						Vector<Object> values = null;
@@ -417,8 +422,6 @@ public class DocumentScanner {
 						case Item.NAMES:
 						case Item.TEXT:
 							value = item.getValueString();
-							if (value != null)
-								textItems++;
 							values = item.getValues();
 							break;
 						case Item.RICHTEXT:
@@ -436,7 +439,7 @@ public class DocumentScanner {
 									}
 								}
 							} else {
-								itemCount++;
+								itemCount_++;
 								if (values != null && !values.isEmpty()) {
 									for (Object o : values) {
 										if (o instanceof String) {
@@ -446,7 +449,7 @@ public class DocumentScanner {
 											while (s.hasNext()) {
 												CaseInsensitiveString token = scrubToken(s.next());
 												if (token != null && (token.length() > 2) && !isStopped(token)) {
-													tokenCount++;
+													tokenCount_++;
 													processToken(token, name, address, doc);
 												}
 											}
@@ -458,7 +461,7 @@ public class DocumentScanner {
 									while (s.hasNext()) {
 										CaseInsensitiveString token = scrubToken(s.next());
 										if (token != null && (token.length() > 2) && !isStopped(token)) {
-											tokenCount++;
+											tokenCount_++;
 											processToken(token, name, address, doc);
 										}
 									}
@@ -497,19 +500,33 @@ public class DocumentScanner {
 					}
 				}
 			}
-			if (tokenCount < 1) {
-				errCount_++;
-			}
 			if (this.isTrackTokenLocation() && getStateManager() != null) {
 				Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> localTokenMap = getTokenLocationMap();
-				if (localTokenMap.size() > 4096) {
+				int curSize = localTokenMap.size();
+				if (curSize > 1024) {
+					//					System.out.println("Token map too large. Serializing so we can shrink it.");
+					Date last = doc.getLastModifiedDate();
+					setLastScanDate(last);
 					synchronized (localTokenMap) {
-						getStateManager().saveTokenLocationMap(getStateManagerKey(), localTokenMap, doc.getLastModifiedDate());
+						getStateManager().saveTokenLocationMap(getStateManagerKey(), localTokenMap, last);
 						localTokenMap.clear();
 					}
+					//					System.out.println("Saved partial index of " + curSize + " terms and set last scan date to " + last.getTime());
 				}
 			}
 		}
+	}
+
+	public long getDocCount() {
+		return docCount_;
+	}
+
+	public long getItemCount() {
+		return itemCount_;
+	}
+
+	public long getTokenCount() {
+		return tokenCount_;
 	}
 
 	private void processName(final CaseInsensitiveString name, final CaseInsensitiveString itemName, final Session session) {

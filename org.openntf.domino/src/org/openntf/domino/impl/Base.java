@@ -191,13 +191,13 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	}
 
 	/** The delegate_. */
-	protected D delegate_;
+	protected transient D delegate_;
 
 	/** The CPP-Object ID */
-	private long cpp_object;
+	private transient long cpp_object;
 
 	/** The CPP-Object ID of the session */
-	private long cpp_session;
+	private transient long cpp_session;
 
 	/**
 	 * returns the cpp_id. DO NOT REMOVE. Otherwise native funtions won't work

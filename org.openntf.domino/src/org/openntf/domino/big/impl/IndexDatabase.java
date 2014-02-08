@@ -53,11 +53,11 @@ public class IndexDatabase implements IScannerStateManager {
 	public static final String[] DEFAULT_STOP_WORDS_EN = "a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,only,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your"
 			.split(",");
 
-	private transient Database indexDb_;
-	private transient View termView_;
-	private transient View dbView_;
-	private Set<String> stopList_;
-	private boolean continue_ = true;
+	protected transient Database indexDb_;
+	protected transient View termView_;
+	protected transient View dbView_;
+	protected Set<String> stopList_;
+	protected boolean continue_ = true;
 
 	public static Set<String> toStringSet(final Object value) {
 		Set<String> result = new HashSet<String>();
@@ -211,9 +211,10 @@ public class IndexDatabase implements IScannerStateManager {
 	public Document getDbDocument(final String dbid) {
 		String key = dbid.toUpperCase();
 		Document result = getIndexDb().getDocumentByKey(key, true);
-		if (result.getFormName().length() < 1) {
+		if (result.isNewNote()) {
 			result.replaceItemValue("Form", DB_FORM_NAME);
 			result.replaceItemValue(DB_KEY_NAME, dbid);
+			result.save();
 		}
 		return result;
 	}
@@ -222,9 +223,10 @@ public class IndexDatabase implements IScannerStateManager {
 		String key = token.toLowerCase();
 
 		Document result = getIndexDb().getDocumentByKey(key, true);
-		if (result.getFormName().length() < 1) {
+		if (result.isNewNote()) {
 			result.replaceItemValue("Form", TERM_FORM_NAME);
 			result.replaceItemValue(TERM_KEY_NAME, token);
+			result.save();
 		}
 		return result;
 	}
@@ -290,26 +292,35 @@ public class IndexDatabase implements IScannerStateManager {
 		MOD_SORT_LIST.add("@modified");
 	}
 
+	private int curDocCount_ = 0;
+	private int sortedDocCount_ = 0;
+
 	public DocumentScanner scanDatabase(final Database db, final DocumentScanner scanner) {
+		System.out.println("Scanning database " + db.getApiPath());
+		curDocCount_ = 0;
 		Date last = scanner.getLastScanDate();
 		if (last == null)
 			last = new Date(0);
 		int count = db.getModifiedNoteCount(last);
-		System.out.println("Scanning database " + db.getApiPath() + " with last date of " + last.getTime() + " and found " + count
-				+ " updates to scan");
+
 		if (count > 0) {
 			int prog = 0;
 			DocumentCollection rawColl = db.getModifiedDocuments(last);
 			DocumentSorter sorter = new DocumentSorter(rawColl, MOD_SORT_LIST);
 			DocumentCollection sortedColl = sorter.sort();
+			sortedDocCount_ = sortedColl.getCount();
+			System.out.println("Scanning database " + db.getApiPath() + " with last date of " + last.getTime() + " and found "
+					+ sortedDocCount_ + " updates to scan");
 			for (Document doc : sortedColl) {
+				curDocCount_++;
 				scanner.processDocument(doc);
 				totalErrCount_ += scanner.getErrCount();
-				if (totalErrCount_ > 5000) {
+				if (totalErrCount_ > 10000) {
 					continue_ = false;
 				}
 				if (++prog % 10000 == 0) {
-					System.out.println("Processed " + prog + " documents so far.");
+					System.out.println("Processed " + prog + " documents so far, " + scanner.getItemCount() + " items and "
+							+ scanner.getTokenCount());
 				}
 				//				if (prog > 100000) {
 				//					System.out.println("Breaking at 100K documents.");
@@ -328,6 +339,15 @@ public class IndexDatabase implements IScannerStateManager {
 
 	public void writeResults(final String dbid, final DocumentScanner scanner) {
 		Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> tlMap = scanner.getTokenLocationMap();
+		CaseInsensitiveString dom = new CaseInsensitiveString("domino");
+		if (tlMap.containsKey(dom)) {
+			Map<CaseInsensitiveString, Set<String>> tlValue = tlMap.get(dom);
+			int hitCount = 0;
+			for (CaseInsensitiveString item : tlValue.keySet()) {
+				hitCount = hitCount + tlValue.get(item).size();
+			}
+			System.out.println("Writing termmap for DOMINO of size " + tlValue.size() + " with " + hitCount + " hits.");
+		}
 		saveTokenLocationMap(dbid, tlMap, scanner.getLastScanDate());
 	}
 
@@ -709,6 +729,7 @@ public class IndexDatabase implements IScannerStateManager {
 		String itemName = TERM_MAP_PREFIX + String.valueOf(mapKey);
 		if (doc.hasItem(itemName)) {
 			result = doc.getItemValue(itemName, Map.class);
+			//			System.out.println("Found existing term match for: " + token.toString() + " with " + result.size() + " items");
 		} else {
 			result = new ConcurrentHashMap<CaseInsensitiveString, Set<String>>();
 		}
@@ -730,6 +751,8 @@ public class IndexDatabase implements IScannerStateManager {
 
 	public void saveTokenLocationMap(final Object mapKey,
 			final Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> fullMap, final Date lastTimestamp) {
+		//		System.out.println("Saving TokenLocationMap of size " + fullMap.size() + " with key of " + mapKey + " and updating time to "
+		//				+ lastTimestamp.getTime() + " after processing " + curDocCount_ + " docs out of " + sortedDocCount_);
 		Document dbDoc = getDbDocument((String) mapKey);
 		dbDoc.replaceItemValue(DB_LAST_INDEX_NAME, lastTimestamp);
 		dbDoc.save();

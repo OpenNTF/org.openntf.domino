@@ -17,7 +17,7 @@ import org.openntf.domino.utils.DominoUtils;
  */
 @Incomplete
 public class DominoThreadFactory implements ThreadFactory {
-	private static final long THREAD_DELAY = 250l;
+	private static final long THREAD_DELAY = 400l;
 
 	public static class DominoUncaughtExceptionHandler implements UncaughtExceptionHandler {
 		@Override

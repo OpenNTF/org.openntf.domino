@@ -70,8 +70,8 @@ public class DominoReferenceCache {
 	 *            key whose associated value, if any, is to be returned
 	 * @return the value to which this map maps the specified key.
 	 */
-	public Object get(final long key) {
-		processQueue(key);
+	public Object get(final long key, final long parent_key) {
+		//		processQueue(key, parent_key);
 		// We don't need to remove garbage collected values here;
 		// if they are garbage collected, the get() method returns null;
 		// the next put() call with the same key removes the old value
@@ -93,8 +93,8 @@ public class DominoReferenceCache {
 	 * @return the object
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T get(final long key, final Class<T> t) {
-		Object o = get(key);
+	public <T> T get(final long key, final Class<T> t, final long parent_key) {
+		Object o = get(key, parent_key);
 		if (o != null) {
 			return (T) o;
 		}
@@ -110,7 +110,7 @@ public class DominoReferenceCache {
 	 * @param value
 	 *            value to be associated with the specified key.
 	 */
-	public void put(final long key, final Object value, final lotus.domino.Base delegate) {
+	public void put(final long key, final Object value, final lotus.domino.Base delegate, final long parent_key) {
 		// If the map already contains an equivalent key, the new key
 		// of a (key, value) pair is NOT stored in the map but the new
 		// value only. But as the key is strongly referenced by the
@@ -120,7 +120,7 @@ public class DominoReferenceCache {
 		// collected values with their keys from the map before the
 		// new entry is made. We only clean up here to distribute
 		// clean up calls on different operations.
-		processQueue(key);
+		processQueue(key, parent_key);
 		if (value == null) {
 			return;
 		}
@@ -139,7 +139,7 @@ public class DominoReferenceCache {
 	 * Removes all garbage collected values with their keys from the map.
 	 * 
 	 */
-	public void processQueue(final long curKey) {
+	public void processQueue(final long curKey, final long parent_key) {
 
 		int counter = cache_counter.incrementAndGet();
 		if (counter % GARBAGE_INTERVAL == 0) {
@@ -153,7 +153,7 @@ public class DominoReferenceCache {
 			long key = ref.getKey();
 			map.remove(key);
 			if (autorecycle_) {
-				if (curKey != key) {
+				if (curKey != key && parent_key != key) {
 					ref.recycle();
 				}
 			}

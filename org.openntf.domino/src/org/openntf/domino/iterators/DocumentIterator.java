@@ -18,11 +18,14 @@ package org.openntf.domino.iterators;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import lotus.domino.NotesException;
+
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.impl.Base;
+import org.openntf.domino.impl.DocumentList;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -38,6 +41,8 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 
 	/** The id array_. */
 	private final int[] idArray_;
+
+	private String currentNoteid_;
 
 	// /** The current_. */
 	// private transient Document current_;
@@ -63,22 +68,26 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 	protected int[] getCollectionIds(final DocumentCollection collection) {
 		int[] result = null;
 		if (collection != null) {
-			NoteCollection nc = null;
-			try {
-				Database db = collection.getParent();
-				setDatabase(db);
-				nc = org.openntf.domino.impl.DocumentCollection.toLotusNoteCollection(collection);
-				if (nc.getCount() > 0) {
-					result = nc.getNoteIDs();
-				} else {
-					if (log_.isLoggable(Level.FINER)) {
-						log_.log(Level.FINER, "Attempted to get id array of empty DocumentCollection");
+			if (collection instanceof DocumentList) {
+				result = ((DocumentList) collection).getNids();
+			} else {
+				NoteCollection nc = null;
+				try {
+					Database db = collection.getParent();
+					setDatabase(db);
+					nc = org.openntf.domino.impl.DocumentCollection.toLotusNoteCollection(collection);
+					if (nc.getCount() > 0) {
+						result = nc.getNoteIDs();
+					} else {
+						if (log_.isLoggable(Level.FINER)) {
+							log_.log(Level.FINER, "Attempted to get id array of empty DocumentCollection");
+						}
 					}
+				} catch (Throwable t) {
+					DominoUtils.handleException(t);
+				} finally {
+					Base.s_recycle(nc);
 				}
-			} catch (Throwable t) {
-				DominoUtils.handleException(t);
-			} finally {
-				Base.s_recycle(nc);
 			}
 		} else {
 			if (log_.isLoggable(Level.WARNING)) {
@@ -127,12 +136,12 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 	public Document next() {
 		Document result = null;
 		if (hasNext()) {
-			String noteId = Integer.toHexString(getIdArray()[getIndex()]);
+			currentNoteid_ = Integer.toHexString(getIdArray()[getIndex()]);
 			setIndex(getIndex() + 1);
 			// Base.recycle(current_);
 			try {
 				Database db = getDatabase();
-				lotus.domino.Document doc = db.getDocumentByID(noteId);
+				lotus.domino.Document doc = db.getDocumentByID(currentNoteid_);
 				if (doc instanceof org.openntf.domino.Document) {
 					result = (org.openntf.domino.Document) doc;
 				} else {
@@ -152,7 +161,11 @@ public class DocumentIterator extends AbstractDominoIterator<org.openntf.domino.
 	 * @see java.util.Iterator#remove()
 	 */
 	public void remove() {
-		// NOOP
+		try {
+			((lotus.domino.DocumentCollection) getCollection()).subtract(currentNoteid_);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 	// /**
