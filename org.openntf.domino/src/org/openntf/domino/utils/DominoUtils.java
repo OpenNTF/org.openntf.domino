@@ -63,6 +63,7 @@ import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.Stream;
 import org.openntf.domino.exceptions.InvalidNotesUrlException;
+import org.openntf.domino.exceptions.MIMEConversionException;
 import org.openntf.domino.logging.LogUtils;
 
 import com.ibm.icu.util.Calendar;
@@ -984,6 +985,51 @@ public enum DominoUtils {
 	}
 
 	/**
+	 * Gets the MIME Item value
+	 * 
+	 * @param document
+	 *            Document from which to get the MIME Value
+	 * @param itemname
+	 *            Name of the item containing the MIME entity
+	 * 
+	 * @return Value of the MIME item, if it exists. Null otherwise.
+	 */
+	public static Object getItemValueMIME(final Document document, final String itemname) {
+		String noteID = null;
+		try {
+			if (null == document) {
+				throw new IllegalArgumentException("Document is null");
+			}
+			if (Strings.isBlankString(itemname)) {
+				throw new IllegalArgumentException("Itemname is blank or null");
+			}
+
+			noteID = document.getNoteID();
+			Session session = document.getAncestorSession();
+			boolean convertMime = session.isConvertMIME();
+			session.setConvertMIME(false);
+			Object result = null;
+
+			MIMEEntity entity = document.getMIMEEntity(itemname);
+			MIMEHeader contentType = entity.getNthHeader("Content-Type");
+			String headerval = (null == contentType) ? "" : contentType.getHeaderVal();
+			if ("application/x-java-serialized-object".equals(headerval) || "application/x-java-externalized-object".equals(headerval)) {
+				// entity is a MIMEBean
+				result = DominoUtils.restoreState(document, itemname);
+			}
+
+			session.setConvertMIME(convertMime);
+			return result;
+
+		} catch (Throwable t) {
+			DominoUtils.handleException(new MIMEConversionException("Unable to getItemValueMIME for item name " + itemname
+					+ " on document " + noteID, t));
+		}
+
+		return null;
+	}
+
+	/**
 	 * Gets the domino ini var.
 	 * 
 	 * @param propertyName
@@ -1174,4 +1220,5 @@ public enum DominoUtils {
 	public static String filePathToJavaBinaryName(final String filePath, final String separator) {
 		return filePath.substring(0, filePath.length() - 6).replace(separator, ".");
 	}
+
 }
