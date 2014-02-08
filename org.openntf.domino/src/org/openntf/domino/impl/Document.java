@@ -47,7 +47,6 @@ import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
-import org.openntf.domino.exceptions.MIMEConversionException;
 import org.openntf.domino.ext.Database.Events;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.helpers.Formula;
@@ -895,26 +894,28 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	private Object getItemValueMIME(final String name) {
-		Object resultObj = null;
-		try {
-			Session session = this.getAncestorSession();
-			boolean convertMime = session.isConvertMIME();
-			session.setConvertMIME(false);
+		//		Object resultObj = null;
+		//		try {
+		//			Session session = this.getAncestorSession();
+		//			boolean convertMime = session.isConvertMIME();
+		//			session.setConvertMIME(false);
+		//
+		//			MIMEEntity entity = this.getMIMEEntity(name);
+		//			MIMEHeader contentType = entity.getNthHeader("Content-Type");
+		//			if (contentType != null
+		//					&& (contentType.getHeaderVal().equals("application/x-java-serialized-object") || contentType.getHeaderVal().equals(
+		//							"application/x-java-externalized-object"))) {
+		//				// Then it's a MIMEBean
+		//				resultObj = DominoUtils.restoreState(this, name);
+		//			}
+		//			session.setConvertMIME(convertMime);
+		//		} catch (Throwable t) {
+		//			DominoUtils.handleException(new MIMEConversionException("Unable to getItemValueMIME for item name " + name + " on document "
+		//					+ getNoteID(), t));
+		//		}
+		//		return resultObj;
 
-			MIMEEntity entity = this.getMIMEEntity(name);
-			MIMEHeader contentType = entity.getNthHeader("Content-Type");
-			if (contentType != null
-					&& (contentType.getHeaderVal().equals("application/x-java-serialized-object") || contentType.getHeaderVal().equals(
-							"application/x-java-externalized-object"))) {
-				// Then it's a MIMEBean
-				resultObj = DominoUtils.restoreState(this, name);
-			}
-			session.setConvertMIME(convertMime);
-		} catch (Throwable t) {
-			DominoUtils.handleException(new MIMEConversionException("Unable to getItemValueMIME for item name " + name + " on document "
-					+ getNoteID(), t));
-		}
-		return resultObj;
+		return DominoUtils.getItemValueMIME(this, name);
 	}
 
 	/*
