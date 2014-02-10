@@ -144,6 +144,17 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		initialize(delegate);
 	}
 
+	@Override
+	protected void setDelegate(final lotus.domino.Document delegate, final long cppId) {
+		if (getNapiFactory() != null) {
+			napiDocument = getNapiFactory().getNapiDocument(delegate);
+			//System.out.println("USING NAPI DOCUMENT!");
+		} else {
+			napiDocument = null;
+		}
+		super.setDelegate(delegate, cppId);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
 	 */
@@ -152,7 +163,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return fromLotus(delegate.getParentDatabase(), Database.SCHEMA, null);
 	}
 
-	private NapiDocument napiDocument_ = null;
+	protected NapiDocument napiDocument;
 
 	/**
 	 * Initialize.
@@ -163,10 +174,16 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	private void initialize(final lotus.domino.Document delegate) {
 		try {
 			// delegate.setPreferJavaDates(true);
-			noteid_ = delegate.getNoteID();
-			unid_ = delegate.getUniversalID();
+			if (napiDocument == null) {
+				noteid_ = delegate.getNoteID();
+				unid_ = delegate.getUniversalID();
+				isNew_ = delegate.isNewNote();
+			} else {
+				noteid_ = napiDocument.getNoteId();
+				unid_ = napiDocument.getNoteUnid();
+				isNew_ = "0".equals(noteid_);
+			}
 			// System.out.println("initializing new document from " + unid_);
-			isNew_ = delegate.isNewNote();
 			if (getAncestorSession().isFixEnabled(Fixes.FORCE_JAVA_DATES)) {
 				delegate.setPreferJavaDates(true);
 			}
@@ -192,6 +209,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Deprecated
 	@Legacy(Legacy.DATETIME_WARNING)
 	public DateTime getCreated() {
+		// TODO - RPR NAPI
 		try {
 			// if (created_ == null) {
 			// created_ = DominoUtils.toJavaDateSafe(getDelegate().getCreated());
@@ -211,6 +229,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * @see org.openntf.domino.Document#getCreatedDate()
 	 */
 	public Date getCreatedDate() {
+		// TODO - RPR NAPI		
 		if (created_ == null) {
 			try {
 				created_ = DominoUtils.toJavaDateSafe(getDelegate().getCreated());
@@ -987,6 +1006,15 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<Object> getItemValue(final String name) {
+		// TODO RPr: check if we can convertn a Document to a NAPI-Document
+		Vector<?> vals = null;
+		if (napiDocument != null) {
+			vals = napiDocument.getItemAsTextVector(name);
+			if (vals != null) {
+				return (Vector<Object>) vals;
+			}
+		}
+
 		try {
 
 			// Check the item type to see if it's MIME - if so, then see if it's a MIMEBean
@@ -1014,15 +1042,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				// TODO NTF: What if we have a "real" mime item like a body field (Handle RT/MIME correctly)
 			}
 
-			// TODO RPr: check if we can convertn a Document to a NAPI-Document
-			if (getNapiDocument() != null) {
-				//System.out.println("using NAPI");
-				List<String> lvals = getNapiDocument().getItemAsTextList(name);
-				//System.out.println("Got from NAPI" + lvals);
-				return new Vector(lvals);
-			}
-
-			Vector<?> vals = null;
 			try {
 				vals = getDelegate().getItemValue(name);
 			} catch (NotesException ne) {
@@ -1135,8 +1154,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public String getItemValueString(final String name) {
-		if (getNapiDocument() != null) {
-			String s = getNapiDocument().getItemValueAsString(name);
+		if (napiDocument != null) {
+			String s = napiDocument.getItemValueAsString(name);
 			if (s == null)
 				return "";
 			return s;
@@ -1257,6 +1276,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public String getNoteID() {
+		if (napiDocument != null) {
+			return napiDocument.getNoteId();
+		}
 		try {
 			return getDelegate().getNoteID();
 		} catch (NotesException e) {
@@ -1437,6 +1459,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public String getUniversalID() {
+		if (napiDocument != null) {
+			return napiDocument.getNoteUnid();
+		}
 		try {
 			return getDelegate().getUniversalID();
 		} catch (NotesException e) {
@@ -2901,16 +2926,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		}
 		System.out.println("Delegate remove call returned " + String.valueOf(result));
 		return result;
-	}
-
-	protected NapiDocument getNapiDocument() {
-		if (napiDocument_ == null) {
-			if (getNapiFactory() != null) {
-				napiDocument_ = getNapiFactory().getNapiDocument(this);
-				//System.out.println("USING NAPI DOCUMENT!");
-			}
-		}
-		return napiDocument_;
 	}
 
 	@Override
