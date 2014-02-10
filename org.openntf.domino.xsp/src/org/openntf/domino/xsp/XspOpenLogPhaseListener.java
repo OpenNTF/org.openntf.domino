@@ -18,6 +18,7 @@ package org.openntf.domino.xsp;
 
  */
 
+import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.logging.Level;
@@ -171,12 +172,12 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 		// Set the agent (page we're on) to the *previous* page
 		XspOpenLogUtil.getXspOpenLogItem().setThisAgent(false);
 
+		String msg = "";
 		if ("com.ibm.xsp.exception.EvaluationExceptionEx".equals(error.getClass().getName())) {
 			// EvaluationExceptionEx, so SSJS error is on a component property.
 			// Hit by ErrorOnLoad.xsp
 			EvaluationExceptionEx ee = (EvaluationExceptionEx) error;
 			InterpretException ie = (InterpretException) ee.getCause();
-			String msg = "";
 			msg = "Error on " + ee.getErrorComponentId() + " " + ee.getErrorPropertyId() + " property/event, line "
 					+ Integer.toString(ie.getErrorLine()) + ":\n\n" + ie.getLocalizedMessage() + "\n\n" + ie.getExpressionText();
 			XspOpenLogUtil.getXspOpenLogItem().logErrorEx(ee, msg, null, null);
@@ -186,7 +187,7 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 			FacesException fe = (FacesException) error;
 			InterpretException ie = null;
 			EvaluationExceptionEx ee = null;
-			String msg = "Error on ";
+			msg = "Error on ";
 			try {
 				// javax.faces.el.MethodNotFoundException hit by ErrorOnMethod.xsp
 				if (!"javax.faces.el.MethodNotFoundException".equals(fe.getCause().getClass().getName())) {
@@ -195,7 +196,6 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 						ee = (EvaluationExceptionEx) fe.getCause();
 					} else if ("javax.faces.el.PropertyNotFoundException".equals(fe.getCause().getClass().getName())) {
 						// Property not found exception, so error is on a component property
-						PropertyNotFoundException pe = (PropertyNotFoundException) fe.getCause();
 						msg = "PropertyNotFoundException Error, cannot locate component:\n\n";
 					} else if ("com.ibm.xsp.exception.EvaluationExceptionEx".equals(fe.getCause().getCause().getClass().getName())) {
 						// Hit by using e.g. currentDocument.isNewDoc()
@@ -221,13 +221,17 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 		} else if ("com.ibm.xsp.FacesExceptionEx".equals(error.getClass().getName())) {
 			// FacesException, so error is on event - doesn't get hit in examples. Can this still get hit??
 			FacesExceptionEx fe = (FacesExceptionEx) error;
-			String msg = "";
 			try {
 				if ("lotus.domino.NotesException".equals(fe.getCause().getClass().getName())) {
 					// sometimes the cause is a NotesException
 					NotesException ne = (NotesException) fe.getCause();
 
 					msg = msg + "NotesException - " + Integer.toString(ne.id) + " " + ne.text;
+				} else if ("java.io.IOException".equals(error.getClass().getName())) {
+					IOException e = (IOException) error;
+
+					msg = "Java IO:" + error.toString();
+					XspOpenLogUtil.getXspOpenLogItem().logErrorEx(e.getCause(), msg, null, null);
 				} else {
 					EvaluationExceptionEx ee = (EvaluationExceptionEx) fe.getCause();
 					InterpretException ie = (InterpretException) ee.getCause();
@@ -241,17 +245,16 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 				;
 			}
 			XspOpenLogUtil.getXspOpenLogItem().logErrorEx(fe.getCause(), msg, null, null);
+
 		} else if ("javax.faces.el.PropertyNotFoundException".equals(error.getClass().getName())) {
 			// Hit by ErrorOnProperty.xsp
 			// Property not found exception, so error is on a component property
 			PropertyNotFoundException pe = (PropertyNotFoundException) error;
-			String msg = "";
 			msg = "PropertyNotFoundException Error, cannot locate component:\n\n" + pe.getLocalizedMessage();
 			XspOpenLogUtil.getXspOpenLogItem().logErrorEx(pe, msg, null, null);
 		} else {
 			try {
 				System.out.println("Error type not found:" + error.getClass().getName());
-				String msg = "";
 				msg = error.toString();
 				XspOpenLogUtil.getXspOpenLogItem().logErrorEx((Throwable) error, msg, null, null);
 			} catch (Throwable t) {
