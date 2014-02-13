@@ -509,8 +509,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @see org.openntf.domino.WrapperFactory#fromLotus(lotus.domino.Base, FactorySchema, org.openntf.domino.Base)
 	 */
 	@SuppressWarnings({ "rawtypes" })
-	<T1 extends org.openntf.domino.Base, D1 extends lotus.domino.Base, P1 extends org.openntf.domino.Base> T1 fromLotus(final D1 lotus,
-			final FactorySchema<T1, D1, P1> schema, final P1 parent) {
+	public <T1 extends org.openntf.domino.Base, D1 extends lotus.domino.Base, P1 extends org.openntf.domino.Base> T1 fromLotus(
+			final D1 lotus, final FactorySchema<T1, D1, P1> schema, final P1 parent) {
 		return factory_.fromLotus(lotus, schema, parent);
 	}
 
@@ -714,6 +714,101 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	@Deprecated
 	protected static Object toDominoFriendly(final Object value, final org.openntf.domino.Base<?> context) throws IllegalArgumentException {
 		return toDominoFriendly(value, context, null);
+	}
+
+	protected static Object toItemFriendly(final Object value, final org.openntf.domino.Base context,
+			final Collection<lotus.domino.Base> recycleThis) throws IllegalArgumentException {
+		if (value == null) {
+			log_.log(Level.INFO, "Trying to convert a null argument to Domino friendly. Returning null...");
+			return null;
+		}
+		//Extended in order to deal with Arrays
+		if (value.getClass().isArray()) {
+			int i = Array.getLength(value);
+
+			java.util.Vector<Object> result = new java.util.Vector<Object>(i);
+			for (int k = 0; k < i; ++k) {
+				Object o = Array.get(value, k);
+				result.add(toItemFriendly(o, context, recycleThis));
+			}
+			return result;
+		}
+
+		if (value instanceof Collection) {
+			java.util.Vector<Object> result = new java.util.Vector<Object>();
+			Collection<?> coll = (Collection) value;
+			for (Object o : coll) {
+				result.add(toItemFriendly(o, context, recycleThis));
+			}
+			return result;
+		}
+
+		// First, go over the normal data types
+		if (value instanceof org.openntf.domino.DateTime || value instanceof org.openntf.domino.DateRange
+				|| value instanceof org.openntf.domino.Name) {
+			// this is a wrapper
+			return toLotus((org.openntf.domino.Base) value, recycleThis);
+		} else if (value instanceof lotus.domino.DateTime || value instanceof lotus.domino.DateRange || value instanceof lotus.domino.Name) {
+			return value;
+		}
+
+		if (value instanceof Integer || value instanceof Double) {
+			return value;
+		} else if (value instanceof String) {
+			return value;
+		} else if (value instanceof Boolean) {
+			if ((Boolean) value) {
+				return "1";
+			} else {
+				return "0";
+			}
+		}
+
+		// Now for the illegal-but-convertible types
+		if (value instanceof Number) {
+			// TODO Check if this is greater than what Domino can handle and serialize if so
+			return ((Number) value).doubleValue();
+		} else if (value instanceof java.util.Date) {
+			lotus.domino.Session lsess = toLotus(Factory.getSession(context));
+			try {
+				lotus.domino.DateTime dt = lsess.createDateTime((java.util.Date) value);
+				if (recycleThis != null) {
+					recycleThis.add(dt);
+				}
+				return dt;
+			} catch (Throwable t) {
+				DominoUtils.handleException(t);
+				return null;
+			}
+			// return toLotus(Factory.getSession(context).createDateTime((java.util.Date) value));
+		} else if (value instanceof java.util.Calendar) {
+			lotus.domino.Session lsess = toLotus(Factory.getSession(context));
+			try {
+				lotus.domino.DateTime dt = lsess.createDateTime((java.util.Calendar) value);
+				if (recycleThis != null) {
+					recycleThis.add(dt);
+				}
+				return dt;
+			} catch (Throwable t) {
+				DominoUtils.handleException(t);
+				return null;
+			}
+			// return toLotus(Factory.getSession(context).createDateTime((java.util.Calendar) value));
+		} else if (value instanceof CharSequence) {
+			return value.toString();
+		} else if (value instanceof CaseInsensitiveString) {
+			return value.toString();
+		} else if (value instanceof Pattern) {
+			return ((Pattern) value).pattern();
+		} else if (value instanceof Class<?>) {
+			return ((Class<?>) value).getName();
+		} else if (value instanceof Enum<?>) {
+			return ((Enum<?>) value).getDeclaringClass().getName() + " " + ((Enum<?>) value).name();
+		} else if (value instanceof Formula) {
+			return ((Formula) value).getExpression();
+		}
+
+		throw new IllegalArgumentException("Cannot convert to Domino friendly from type " + value.getClass().getName());
 	}
 
 	/**

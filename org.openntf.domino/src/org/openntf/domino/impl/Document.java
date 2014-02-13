@@ -2207,7 +2207,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					for (Object valNode : listValue) {
 						if (valNode instanceof BigString)
 							isNonSummary = true;
-						Object domNode = toDominoFriendly(valNode, this, recycleThis);
+						Object domNode = toItemFriendly(valNode, this, recycleThis);
 						if (domNode != null) {
 							if (objectClass == null) {
 								objectClass = domNode.getClass();
@@ -2256,13 +2256,14 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						}
 					} catch (NotesException ne) {
 						String msg = ne.text;
-						if (msg.equalsIgnoreCase("Cannot convert item to requested datatype")) {
+						if (msg.equalsIgnoreCase("Cannot convert item to requested datatype")
+								|| msg.equalsIgnoreCase("Unknown or unsupported object type in Vector")) {
 							String types = "";
 
 							StringBuilder elemType = new StringBuilder();
 							for (Object o : resultList) {
 								if (o != null) {
-									elemType.append(o.getClass().getSimpleName() + ", ");
+									elemType.append(o.getClass().getName() + ", ");
 								} else {
 									elemType.append("null, ");
 								}

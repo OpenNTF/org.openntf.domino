@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -50,6 +51,9 @@ public class IndexDatabase implements IScannerStateManager {
 	public static final String DB_TOKEN_LOCATION_NAME = "TokenLocationMap";
 	public static final String DB_FIELD_TOKEN_NAME = "FieldTokenMap";
 	public static final String DB_LAST_INDEX_NAME = "LastIndexTime";
+	public static final String DB_DOC_LIST_NAME = "DocumentList";
+	public static final String DB_TITLE_NAME = "Title";
+	public static final String DB_DOC_SORTER_NAME = "DocumentSorter";
 	public static final String[] DEFAULT_STOP_WORDS_EN = "a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,only,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your"
 			.split(",");
 
@@ -149,6 +153,10 @@ public class IndexDatabase implements IScannerStateManager {
 				column.setSorted(true);
 				column.setSortDescending(false);
 			}
+			ViewColumn titleColumn = dbView.createColumn();
+			titleColumn.setFormula(DB_TITLE_NAME);
+			titleColumn.setTitle("TITLE");
+
 		}
 	}
 
@@ -265,6 +273,7 @@ public class IndexDatabase implements IScannerStateManager {
 		scanner.setStopTokenList(getStopList());
 		scanner.setIgnoreDollar(true);
 		scanner.setStateManager(this, db.getReplicaID());
+		dbDoc.replaceItemValue(IndexDatabase.DB_TITLE_NAME, db.getTitle());
 		if (dbDoc.hasItem(DB_LAST_INDEX_NAME)) {
 			scanner.setLastScanDate((Date) dbDoc.getItemValue(DB_LAST_INDEX_NAME, Date.class));
 			//			scanner.setStopTokenList(getStopList());
@@ -273,6 +282,10 @@ public class IndexDatabase implements IScannerStateManager {
 			//			if (tokenLocationObject != null && !((Map) tokenLocationObject).isEmpty()) {
 			//				scanner.setTokenLocationMap(tokenLocationObject);
 			//			}
+		}
+		if (dbDoc.hasItem(IndexDatabase.DB_DOC_LIST_NAME)) {
+			scanner.setCollection((org.openntf.domino.DocumentCollection) dbDoc.getItemValue(IndexDatabase.DB_DOC_LIST_NAME,
+					org.openntf.domino.DocumentCollection.class));
 		}
 		Date scanDate = new Date();
 		scanDatabase(db, scanner);
@@ -304,51 +317,49 @@ public class IndexDatabase implements IScannerStateManager {
 		int count = db.getModifiedNoteCount(last);
 
 		if (count > 0) {
-			int prog = 0;
 			DocumentCollection rawColl = db.getModifiedDocuments(last);
 			DocumentSorter sorter = new DocumentSorter(rawColl, MOD_SORT_LIST);
-			DocumentCollection sortedColl = sorter.sort();
-			sortedDocCount_ = sortedColl.getCount();
 			System.out.println("Scanning database " + db.getApiPath() + " with last date of " + last.getTime() + " and found "
-					+ sortedDocCount_ + " updates to scan");
-			for (Document doc : sortedColl) {
-				curDocCount_++;
-				scanner.processDocument(doc);
-				totalErrCount_ += scanner.getErrCount();
-				if (totalErrCount_ > 10000) {
-					continue_ = false;
-				}
-				if (++prog % 10000 == 0) {
-					System.out.println("Processed " + prog + " documents so far, " + scanner.getItemCount() + " items and "
-							+ scanner.getTokenCount());
-				}
-				//				if (prog > 100000) {
-				//					System.out.println("Breaking at 100K documents.");
-				//					break;
-				//				}
-				if (scanner.getZeroDocCount() > 5000) {
-					System.out.println("Stopping after 5000 zero docs");
-					break;
-				}
-				if (!continue_)
-					return scanner;
-			}
+					+ rawColl.getCount() + " updates to scan");
+			scanner.processSorter(sorter);
+			//			DocumentCollection sortedColl = sorter.sort();
+			//			sortedDocCount_ = sortedColl.getCount();
+
+			//			scanner.processCollection(sortedColl);
+			//			for (Document doc : sortedColl) {
+			//				curDocCount_++;
+			//				scanner.processDocument(doc);
+			//				totalErrCount_ += scanner.getErrCount();
+			//				if (totalErrCount_ > 10000) {
+			//					continue_ = false;
+			//				}
+			//				if (++prog % 10000 == 0) {
+			//					System.out.println("Processed " + prog + " documents so far, " + scanner.getItemCount() + " items and "
+			//							+ scanner.getTokenCount());
+			//				}
+			//				if (scanner.getZeroDocCount() > 5000) {
+			//					System.out.println("Stopping after 5000 zero docs");
+			//					break;
+			//				}
+			//				if (!continue_)
+			//					return scanner;
+			//			}
 		}
 		return scanner;
 	}
 
 	public void writeResults(final String dbid, final DocumentScanner scanner) {
 		Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> tlMap = scanner.getTokenLocationMap();
-		CaseInsensitiveString dom = new CaseInsensitiveString("domino");
-		if (tlMap.containsKey(dom)) {
-			Map<CaseInsensitiveString, Set<String>> tlValue = tlMap.get(dom);
-			int hitCount = 0;
-			for (CaseInsensitiveString item : tlValue.keySet()) {
-				hitCount = hitCount + tlValue.get(item).size();
-			}
-			System.out.println("Writing termmap for DOMINO of size " + tlValue.size() + " with " + hitCount + " hits.");
-		}
-		saveTokenLocationMap(dbid, tlMap, scanner.getLastScanDate());
+		//		CaseInsensitiveString dom = new CaseInsensitiveString("domino");
+		//		if (tlMap.containsKey(dom)) {
+		//			Map<CaseInsensitiveString, Set<String>> tlValue = tlMap.get(dom);
+		//			int hitCount = 0;
+		//			for (CaseInsensitiveString item : tlValue.keySet()) {
+		//				hitCount = hitCount + tlValue.get(item).size();
+		//			}
+		//			System.out.println("Writing termmap for DOMINO of size " + tlValue.size() + " with " + hitCount + " hits.");
+		//		}
+		saveTokenLocationMap(dbid, tlMap, scanner);
 	}
 
 	public List<String> getTermDbids(final String term) {
@@ -743,18 +754,29 @@ public class IndexDatabase implements IScannerStateManager {
 		//		} else {
 		//			lastToken_ = token;
 		//		}
-		String term = token.getFolded();
+		String term = token.toString();
 		Document termDoc = getTermDocument(term);
 		termDoc.replaceItemValue(TERM_MAP_PREFIX + String.valueOf(mapKey), map);
 		termDoc.save();
 	}
 
 	public void saveTokenLocationMap(final Object mapKey,
-			final Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> fullMap, final Date lastTimestamp) {
+			final Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> fullMap, final DocumentScanner scanner) {
 		//		System.out.println("Saving TokenLocationMap of size " + fullMap.size() + " with key of " + mapKey + " and updating time to "
 		//				+ lastTimestamp.getTime() + " after processing " + curDocCount_ + " docs out of " + sortedDocCount_);
 		Document dbDoc = getDbDocument((String) mapKey);
-		dbDoc.replaceItemValue(DB_LAST_INDEX_NAME, lastTimestamp);
+		dbDoc.replaceItemValue(DB_LAST_INDEX_NAME, scanner.getLastDocModDate());
+		if (scanner.getCollection() != null) {
+			dbDoc.replaceItemValue(IndexDatabase.DB_DOC_LIST_NAME, scanner.getCollection());
+		} else {
+			System.out.println("ALERT! Scanner.getCollection() returned null!");
+		}
+
+		if (scanner.getSorter() != null) {
+			dbDoc.replaceItemValue(IndexDatabase.DB_DOC_SORTER_NAME, scanner.getSorter());
+		} else {
+			System.out.println("ALERT! Scanner.getSorter() returned null!");
+		}
 		dbDoc.save();
 		Set<CaseInsensitiveString> keySet = fullMap.keySet();
 		//		System.out.println("Writing results for " + keySet.size() + " terms");
@@ -771,5 +793,51 @@ public class IndexDatabase implements IScannerStateManager {
 			termDoc.save();
 		}
 		//		System.out.println("Done writing results.");
+	}
+
+	public void update(final Observable o, final Object arg) {
+		IScannerStateManager.ScanStatus status = null;
+		if (arg instanceof IScannerStateManager.ScanStatus) {
+			status = (IScannerStateManager.ScanStatus) arg;
+		}
+		DocumentScanner scanner = null;
+		if (o instanceof DocumentScanner) {
+			scanner = (DocumentScanner) o;
+		}
+		if (status != null) {
+			switch (status) {
+			case NEW:
+				break;
+			case RUNNING:
+				if (scanner != null && scanner.isTrackTokenLocation()) {
+					System.out.println("Processed " + scanner.getDocCount() + " documents so far, " + scanner.getItemCount()
+							+ " items and " + scanner.getTokenCount());
+					Map tokenLocationMap = scanner.getTokenLocationMap();
+					int tlsize = tokenLocationMap.size();
+					if (tlsize >= 1024) {
+						Date lastDocMod = scanner.getLastDocModDate();
+						synchronized (tokenLocationMap) {
+							saveTokenLocationMap(scanner.getStateManagerKey(), tokenLocationMap, scanner);
+							tokenLocationMap.clear();
+						}
+					}
+				}
+				break;
+			case COMPLETE:
+				if (scanner != null && scanner.isTrackTokenLocation()) {
+					Map tokenLocationMap = scanner.getTokenLocationMap();
+					Date lastDocMod = scanner.getLastDocModDate();
+					synchronized (tokenLocationMap) {
+						saveTokenLocationMap(scanner.getStateManagerKey(), tokenLocationMap, scanner);
+						tokenLocationMap.clear();
+					}
+				}
+				break;
+			case ERROR:
+				break;
+			case INTERRUPTED:
+				break;
+			}
+		}
 	}
 }

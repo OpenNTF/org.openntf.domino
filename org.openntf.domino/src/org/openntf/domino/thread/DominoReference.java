@@ -36,7 +36,7 @@ public class DominoReference extends WeakReference<Object> {
 	private static final Logger log_ = Logger.getLogger(DominoReference.class.getName());
 
 	/** The delegate_. This is the wrapped Object */
-	private final lotus.domino.Base delegate_;
+	private lotus.domino.Base delegate_;
 
 	/** This is the CPP-ID or an other unique hash value **/
 	private long key_;
@@ -60,6 +60,10 @@ public class DominoReference extends WeakReference<Object> {
 		// though the wrapper is null
 		this.delegate_ = delegate;
 		this.key_ = key;
+	}
+
+	void clearLotusReference() {
+		delegate_ = null;
 	}
 
 	/**

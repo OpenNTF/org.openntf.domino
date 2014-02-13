@@ -13,18 +13,25 @@ import java.util.Map;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.DocumentCollection;
+import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.exceptions.UnimplementedException;
-import org.openntf.domino.ext.View;
+import org.openntf.domino.iterators.DocumentCollectionIterator;
 import org.openntf.domino.iterators.DocumentIterator;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.TypeUtils;
 
 public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.domino.DocumentCollection, org.openntf.domino.Database>
 		implements org.openntf.domino.DocumentList {
+	protected int realNidLength_;
+	/*TODO 
+	 * NTF for maximum performance, we really should track the length
+	 * of the intended noteid array, rather than use nids_.length. This would allow us
+	 * to grow and shrink the array in blocks, rather than each time we need to make a change
+	 */
+
 	protected int[] nids_;
-	protected int realNidLength_;	//TODO?
 	protected boolean usingList_;
 	protected List<Integer> nidList_;
 	protected int walkPos = -1;
@@ -735,13 +742,25 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 	}
 
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
 		return getCount() == 0;
 	}
 
 	public Iterator<org.openntf.domino.Document> iterator() {
-		//FIXME if the DocumentList is not sorted, this should use a DocumentCollectionIterator for 4x performance improvement
-		return new DocumentIterator(this);
+		//NTF if the DocumentList was sorted, then we need to use a regular DocumentIterator that will
+		//walk the noteid array, because the order matters.
+		//If it's not sorted (ie: the original DocumentCollection was not sorted) then we merge the noteids into 
+		//a new DocumentCollection from the parent and use the DocumentCollectionIterator because it's 4 times faster
+		if (isSorted()) {
+			return new DocumentIterator(this);
+		} else {
+			org.openntf.domino.Database db = getParentDatabase();
+			org.openntf.domino.impl.DocumentCollection mergeColl = (org.openntf.domino.impl.DocumentCollection) db
+					.createMergableDocumentCollection();
+			for (int nid : getNids()) {
+				mergeColl.merge(nid);
+			}
+			return new DocumentCollectionIterator(mergeColl);
+		}
 	}
 
 	public boolean remove(final Object arg0) {

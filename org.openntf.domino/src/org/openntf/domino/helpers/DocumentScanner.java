@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.NavigableSet;
+import java.util.Observable;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.Vector;
@@ -24,10 +25,11 @@ import org.openntf.domino.Name;
 import org.openntf.domino.RichTextItem;
 import org.openntf.domino.Session;
 import org.openntf.domino.big.impl.IScannerStateManager;
+import org.openntf.domino.big.impl.IScannerStateManager.ScanStatus;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.utils.DominoUtils;
 
-public class DocumentScanner {
+public class DocumentScanner extends Observable {
 	private static final Logger log_ = Logger.getLogger(DocumentScanner.class.getName());
 
 	public static boolean validateFieldTokenMap(final Object obj) {
@@ -203,6 +205,23 @@ public class DocumentScanner {
 
 	private boolean ignoreDollar_ = true;
 	private long docCount_ = 0l;
+	private int docLimit_ = Integer.MAX_VALUE;
+
+	/**
+	 * @return the docLimit
+	 */
+	public int getDocLimit() {
+		return docLimit_;
+	}
+
+	/**
+	 * @param docLimit
+	 *            the docLimit to set
+	 */
+	public void setDocLimit(final int docLimit) {
+		docLimit_ = docLimit;
+	}
+
 	private long itemCount_ = 0l;
 	private long tokenCount_ = 0l;
 
@@ -229,7 +248,8 @@ public class DocumentScanner {
 		stateManagerKey_ = stateManagerKey;
 	}
 
-	private Date lastScanDate_ = new Date(0);
+	private Date lastScanDate_;
+	private Date lastDocModDate_;
 	private IScannerStateManager stateManager_;
 	private Object stateManagerKey_;
 
@@ -281,6 +301,17 @@ public class DocumentScanner {
 			lastScanDate_ = new Date(0);
 		}
 		return lastScanDate_;
+	}
+
+	public Date getLastDocModDate() {
+		if (lastDocModDate_ == null) {
+			lastDocModDate_ = new Date(0);
+		}
+		return lastDocModDate_;
+	}
+
+	public void setLastDocModDate(final Date value) {
+		lastDocModDate_ = value;
 	}
 
 	/**
@@ -356,12 +387,13 @@ public class DocumentScanner {
 	public static final Pattern REGEX_NONALPHANUMERIC = Pattern.compile("[^a-zA-Z0-9-']");
 
 	public static CaseInsensitiveString scrubToken(final String token) {
-		Matcher puncMatch = REGEX_PREFIX_TRIM.matcher(token);
-		String result = puncMatch.replaceAll("");
-		Matcher pMatch = REGEX_PREFIX_TRIM.matcher(result);
-		result = pMatch.replaceAll("");
-		Matcher sMatch = REGEX_PREFIX_TRIM.matcher(result);
+		//		Matcher puncMatch = REGEX_PUNCTUATION.matcher(token);
+		//		String result = puncMatch.replaceAll("");
+		Matcher pMatch = REGEX_PREFIX_TRIM.matcher(token);
+		String result = pMatch.replaceAll("");
+		Matcher sMatch = REGEX_SUFFIX_TRIM.matcher(result);
 		result = sMatch.replaceAll("");
+
 		result = result.trim();
 		if (DominoUtils.isHex(result))
 			return null;
@@ -386,6 +418,53 @@ public class DocumentScanner {
 		}
 		nt.append("]");
 		return nt.toString();
+	}
+
+	private org.openntf.domino.DocumentCollection collection_;
+
+	public void processCollection() {
+		for (Document doc : collection_) {
+			if (docCount_ < docLimit_) {
+				processDocument(doc);
+			}
+		}
+		notifyObservers(ScanStatus.COMPLETE);
+	}
+
+	public void processCollection(final org.openntf.domino.DocumentCollection collection) {
+		setCollection(collection);
+		processCollection();
+	}
+
+	public org.openntf.domino.DocumentCollection getCollection() {
+		return collection_;
+	}
+
+	public void setCollection(final org.openntf.domino.DocumentCollection collection) {
+		collection_ = collection;
+	}
+
+	private org.openntf.domino.helpers.DocumentSorter sorter_;
+
+	public void processSorter(final org.openntf.domino.helpers.DocumentSorter sorter) {
+		setSorter(sorter);
+		processCollection(sorter.sort());
+	}
+
+	public org.openntf.domino.helpers.DocumentSorter getSorter() {
+		return sorter_;
+	}
+
+	public void setSorter(final org.openntf.domino.helpers.DocumentSorter sorter) {
+		sorter_ = sorter;
+	}
+
+	public org.openntf.domino.Database getCurrentDatabase() {
+		if (getCollection() != null) {
+			return getCollection().getAncestorDatabase();
+		} else {
+			return null;
+		}
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -500,20 +579,20 @@ public class DocumentScanner {
 					}
 				}
 			}
-			if (this.isTrackTokenLocation() && getStateManager() != null) {
-				Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> localTokenMap = getTokenLocationMap();
-				int curSize = localTokenMap.size();
-				if (curSize > 1024) {
-					//					System.out.println("Token map too large. Serializing so we can shrink it.");
-					Date last = doc.getLastModifiedDate();
-					setLastScanDate(last);
-					synchronized (localTokenMap) {
-						getStateManager().saveTokenLocationMap(getStateManagerKey(), localTokenMap, last);
-						localTokenMap.clear();
-					}
-					//					System.out.println("Saved partial index of " + curSize + " terms and set last scan date to " + last.getTime());
-				}
-			}
+			//			if (this.isTrackTokenLocation() && getStateManager() != null) {
+			//				Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> localTokenMap = getTokenLocationMap();
+			//				int curSize = localTokenMap.size();
+			//				if (curSize > 1024) {
+			//					Date last = doc.getLastModifiedDate();
+			//					setLastScanDate(last);
+			//					synchronized (localTokenMap) {
+			//						getStateManager().saveTokenLocationMap(getStateManagerKey(), localTokenMap, last);
+			//						localTokenMap.clear();
+			//					}
+			//				}
+			//			}
+			setLastDocModDate(doc.getLastModifiedDate());
+			notifyObservers(ScanStatus.RUNNING);
 		}
 	}
 

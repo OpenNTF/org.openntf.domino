@@ -38,7 +38,7 @@ public class LargishSortedCollectionTest implements Runnable {
 		long testStartTime = System.nanoTime();
 		Session session = this.getSession();
 		//		Database db = session.getDatabase("", "events4.nsf");
-		Database db = session.getDatabase("", "imdb/movies.nsf");
+		Database db = session.getDatabase("", "events4.nsf");
 		//		System.out.println("Starting build of byMod view");
 		//		long vStartTime = System.nanoTime();
 		//		View newView = db.createView("ModTest", "SELECT @All");
