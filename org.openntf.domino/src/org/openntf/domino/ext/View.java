@@ -40,6 +40,6 @@ public interface View {
 	 *            Object to be checked against the sorted View
 	 * @return whether the document is unique or not
 	 */
-	public boolean isUnique(final org.openntf.domino.Document srcDoc, final Object key);
+	public boolean checkUnique(final Object key, final org.openntf.domino.Document srcDoc);
 
 }

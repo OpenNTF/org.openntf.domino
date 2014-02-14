@@ -2421,7 +2421,10 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		}
 	}
 
-	public boolean isUnique(final Document srcDoc, final Object key) {
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.View#checkUnique(java.lang.Object, org.openntf.domino.Document)
+	 */
+	public boolean checkUnique(final Object key, final Document srcDoc) {
 		boolean retVal_ = false;
 		try {
 			DocumentCollection dc = this.getAllDocumentsByKey(key, true);
