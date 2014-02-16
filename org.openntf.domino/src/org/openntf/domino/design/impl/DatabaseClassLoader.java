@@ -35,14 +35,21 @@ public class DatabaseClassLoader extends ClassLoader {
 	private static final Logger log_ = Logger.getLogger(DatabaseClassLoader.class.getName());
 
 	private final Map<String, byte[]> unloadedClasses_ = new HashMap<String, byte[]>();
+
 	private final boolean includeJars_;
 	private boolean loadedJars_ = false;
+
+	private final boolean includeLibraries_;
+	private boolean loadedLibraries_ = false;
+
 	private final DatabaseDesign design_;
 
-	public DatabaseClassLoader(final DatabaseDesign design, final ClassLoader parent, final boolean includeJars) {
+	public DatabaseClassLoader(final DatabaseDesign design, final ClassLoader parent, final boolean includeJars,
+			final boolean includeLibraries) {
 		super(parent);
 		design_ = design;
 		includeJars_ = includeJars;
+		includeLibraries_ = includeLibraries;
 	}
 
 	@Override
@@ -82,12 +89,29 @@ public class DatabaseClassLoader extends ClassLoader {
 			return defineClass(name, classData, 0, classData.length);
 		}
 
+		// TODO consider changing the below routines to only loop through resources until found,
+		// keeping track of which libraries have been loaded
+
 		// If we're here, see if we should look through the Jars - load them all now
 		if (includeJars_ && !loadedJars_) {
 			for (org.openntf.domino.design.JarResource jar : design_.getJarResources()) {
 				unloadedClasses_.putAll(jar.getClassData());
 			}
 			loadedJars_ = true;
+
+			if (unloadedClasses_.containsKey(name)) {
+				byte[] classData = unloadedClasses_.remove(name);
+				return defineClass(name, classData, 0, classData.length);
+			}
+		}
+
+		// Now do the same for Java script libraries
+		if (includeLibraries_ && !loadedLibraries_) {
+			for (org.openntf.domino.design.JavaScriptLibrary lib : design_.getJavaScriptLibraries()) {
+				Map<String, byte[]> classData = lib.getClassData();
+				unloadedClasses_.putAll(classData);
+			}
+			loadedLibraries_ = true;
 
 			if (unloadedClasses_.containsKey(name)) {
 				byte[] classData = unloadedClasses_.remove(name);
