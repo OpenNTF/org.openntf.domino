@@ -426,10 +426,12 @@ public class IndexDatabase implements IScannerStateManager {
 			final Set<CaseInsensitiveString> itemNames, final Set<String> forms) {
 		List<IndexHit> results = new ArrayList<IndexHit>();
 		Document doc = getTermDocument(term);
+		int dbCount = 0;
 		if (dbids == null || dbids.isEmpty()) {
 			for (Item item : doc.getItems()) {
 				String itemName = item.getName();
 				if (itemName.startsWith(TERM_MAP_PREFIX)) {
+					dbCount++;
 					String dbid = itemName.substring(TERM_MAP_PREFIX.length());
 					Map termMap = doc.getItemValue(itemName, Map.class);
 					results.addAll(getTermResultsForItemsForms(termMap, itemNames, forms, term, dbid));
@@ -442,6 +444,7 @@ public class IndexDatabase implements IScannerStateManager {
 			for (String dbid : dbids) {
 				String itemName = TERM_MAP_PREFIX + dbid;
 				if (doc.hasItem(itemName)) {
+					dbCount++;
 					Map termMap = doc.getItemValue(itemName, Map.class);
 					results.addAll(getTermResultsForItemsForms(termMap, itemNames, forms, term, dbid));
 					if (limit != 0 && results.size() >= limit) {
@@ -449,6 +452,10 @@ public class IndexDatabase implements IScannerStateManager {
 					}
 				}
 			}
+		}
+		if (dbCount < 1) {
+			System.out.println("No databases found that contain term " + term + " in document " + doc.getNoteID() + ": "
+					+ doc.getAncestorDatabase().getApiPath());
 		}
 		return results;
 	}
