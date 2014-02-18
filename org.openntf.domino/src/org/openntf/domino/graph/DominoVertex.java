@@ -652,7 +652,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	public String validateEdges() {
 		StringBuilder sb = new StringBuilder();
 		Set<String> inIds = getInEdges();
-		for (String id : inIds.toArray(new String[0])) {
+		for (String id : inIds.toArray(new String[inIds.size()])) {
 			Document chk = getParent().getRawDatabase().getDocumentByUNID(id);
 			if (chk == null) {
 				inIds.remove(id);
@@ -664,7 +664,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		}
 
 		Set<String> outIds = getOutEdges();
-		for (String id : outIds.toArray(new String[0])) {
+		for (String id : outIds.toArray(new String[outIds.size()])) {
 			Document chk = getParent().getRawDatabase().getDocumentByUNID(id);
 			if (chk == null) {
 				outIds.remove(id);

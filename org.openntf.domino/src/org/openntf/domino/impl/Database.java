@@ -474,11 +474,24 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	@Incomplete
-	public DocumentCollection createSortedDocumentCollection() {
-		DocumentCollection base = createDocumentCollection();
-		//TODO can't actually do an FTSearch on an empty collection
-		base.FTSearch("xXXIIOIOI" + String.valueOf(System.nanoTime()) + "OOIOIXXx", 1);
-		return base;
+	public DocumentCollection createMergableDocumentCollection() {
+		final boolean debug = false;
+		try {
+			lotus.domino.Database db = getDelegate();
+			lotus.domino.DocumentCollection rawColl = getDelegate().search("@False", db.getLastModified(), 1);
+			if (rawColl.getCount() > 0) {
+				int[] nids = org.openntf.domino.impl.DocumentCollection.toNoteIdArray(rawColl);
+				for (int nid : nids) {
+					rawColl.subtract(nid);
+				}
+			}
+			org.openntf.domino.DocumentCollection result = fromLotus(rawColl, DocumentCollection.SCHEMA, this);
+			return result;
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+
 	}
 
 	/*

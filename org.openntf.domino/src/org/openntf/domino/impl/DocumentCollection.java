@@ -27,6 +27,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
+import org.openntf.domino.iterators.DocumentCollectionIterator;
 import org.openntf.domino.utils.DominoUtils;
 
 // TODO: Auto-generated Javadoc
@@ -113,6 +114,48 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 			org.openntf.domino.Database db = ((org.openntf.domino.DocumentCollection) collection).getParent();
 			result = db.createNoteCollection(false);
 			result.add(collection);
+		}
+		return result;
+	}
+
+	public static int[] toNoteIdArray(final lotus.domino.DocumentCollection collection) {
+		int[] result = null;
+		if (collection instanceof DocumentList) {
+			result = ((DocumentList) collection).getNids();
+		} else if (collection instanceof org.openntf.domino.DocumentCollection) {
+			org.openntf.domino.DocumentCollection ocoll = (org.openntf.domino.DocumentCollection) collection;
+			if (ocoll.isSorted()) {
+				int size = ocoll.getCount();
+				result = new int[size];
+				int i = 0;
+				for (org.openntf.domino.Document doc : ocoll) {
+					result[i++] = Integer.valueOf(doc.getNoteID(), 16);
+				}
+			} else {
+				org.openntf.domino.NoteCollection nc = org.openntf.domino.impl.DocumentCollection.toLotusNoteCollection(collection);
+				result = nc.getNoteIDs();
+			}
+		} else {
+			try {
+				if (collection.isSorted()) {
+					int size = collection.getCount();
+					result = new int[size];
+					lotus.domino.Document doc = collection.getFirstDocument();
+					lotus.domino.Document next = null;
+					int i = 0;
+					while (doc != null) {
+						next = collection.getNextDocument(doc);
+						result[i++] = Integer.valueOf(doc.getNoteID(), 16);
+						doc.recycle();
+						doc = next;
+					}
+				} else {
+					org.openntf.domino.NoteCollection nc = org.openntf.domino.impl.DocumentCollection.toLotusNoteCollection(collection);
+					result = nc.getNoteIDs();
+				}
+			} catch (NotesException ne) {
+
+			}
 		}
 		return result;
 	}
@@ -375,6 +418,8 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	private Boolean sorted_ = null;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -383,12 +428,31 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	@Override
 	public boolean isSorted() {
 		try {
-			return getDelegate().isSorted();
+			if (sorted_ == null) {
+				sorted_ = getDelegate().isSorted();
+			}
+			return sorted_;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
 
 		}
+	}
+
+	void setSorted(final boolean sorted) {
+		sorted_ = sorted;
+	}
+
+	@Override
+	void setDelegate(final lotus.domino.DocumentCollection delegate) {
+		sorted_ = null;
+		super.setDelegate(delegate);
+	}
+
+	@Override
+	void setDelegate(final lotus.domino.DocumentCollection delegate, final long cppId) {
+		sorted_ = null;
+		super.setDelegate(delegate, cppId);
 	}
 
 	/*

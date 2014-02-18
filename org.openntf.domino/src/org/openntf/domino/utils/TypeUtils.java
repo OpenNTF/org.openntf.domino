@@ -775,4 +775,41 @@ public enum TypeUtils {
 		return strings;
 	}
 
+	public static int[] toIntArray(final Collection<Integer> coll) {
+		int[] ret = new int[coll.size()];
+		Iterator<Integer> iterator = coll.iterator();
+		for (int i = 0; i < ret.length; i++) {
+			ret[i] = iterator.next().intValue();
+		}
+		return ret;
+	}
+
+	public static short[] toShortArray(final Collection<Short> coll) {
+		short[] ret = new short[coll.size()];
+		Iterator<Short> iterator = coll.iterator();
+		for (int i = 0; i < ret.length; i++) {
+			Short s = iterator.next();
+			ret[i] = s.shortValue();
+		}
+		return ret;
+	}
+
+	public static long[] toLongArray(final Collection<Long> coll) {
+		long[] ret = new long[coll.size()];
+		Iterator<Long> iterator = coll.iterator();
+		for (int i = 0; i < ret.length; i++) {
+			ret[i] = iterator.next().longValue();
+		}
+		return ret;
+	}
+
+	public static byte[] toByteArray(final Collection<Byte> coll) {
+		byte[] ret = new byte[coll.size()];
+		Iterator<Byte> iterator = coll.iterator();
+		for (int i = 0; i < ret.length; i++) {
+			ret[i] = iterator.next().byteValue();
+		}
+		return ret;
+	}
+
 }

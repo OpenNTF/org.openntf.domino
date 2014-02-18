@@ -39,8 +39,22 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	//private static final Logger log_ = Logger.getLogger(DateTime.class.getName());
 	private static final long serialVersionUID = 1L;
 
+	private static void terminate() {
+		calendar.set(null);
+	}
+
 	/** The cal_. */
-	private final Calendar cal_ = GregorianCalendar.getInstance();
+	private static ThreadLocal<Calendar> calendar = new ThreadLocal<Calendar>() {
+		@Override
+		public Calendar get() {
+			if (super.get() == null) {
+				set(GregorianCalendar.getInstance());
+			}
+			return super.get();
+		};
+	};
+
+	private Date date_;
 
 	/** The dst_. */
 	private boolean dst_;
@@ -145,7 +159,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	protected lotus.domino.DateTime getDelegate() {
 		try {
 			lotus.domino.Session rawsession = toLotus(Factory.getSession(getParent()));
-			lotus.domino.DateTime delegate = rawsession.createDateTime(cal_.getTime());
+			lotus.domino.DateTime delegate = rawsession.createDateTime(date_);
 			if (isAnyTime()) {
 				delegate.setAnyTime();
 			}
@@ -166,7 +180,8 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 *            the date
 	 */
 	private void initialize(final java.util.Date date) {
-		cal_.setTime(date);
+		date_ = new Date(date.getTime());	//NTF copy to keep immutable
+		//		cal_.setTime(date);
 		dst_ = false;
 		notesZone_ = 0;
 	}
@@ -188,8 +203,12 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 			if (timeonly == null || timeonly.length() == 0)
 				isDateOnly_ = true;
 			try {
-				Date date = delegate.toJavaDate();
-				cal_.setTime(date);
+				if (isTimeOnly_ && isDateOnly_) {
+					date_ = null;
+				} else {
+					date_ = delegate.toJavaDate();
+				}
+				//				cal_.setTime(date);
 			} catch (NotesException e1) {
 				// System.out.println("Error attempting to initialize a DateTime: " + delegate.getGMTTime());
 				throw new RuntimeException(e1);
@@ -206,7 +225,10 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#adjustDay(int, boolean)
 	 */
 	public void adjustDay(final int n, final boolean preserveLocalTime) {
-		cal_.add(Calendar.DAY_OF_MONTH, n); // TODO NTF - figure out what preserveLocalTime *REALLY* does
+		Calendar cal = calendar.get();
+		cal.setTime(date_);
+		cal.add(Calendar.DAY_OF_MONTH, n); // TODO NTF - figure out what preserveLocalTime *REALLY* does
+		date_ = cal.getTime();
 		// getDelegate().adjustDay(n, preserveLocalTime);
 	}
 
@@ -225,7 +247,10 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#adjustHour(int, boolean)
 	 */
 	public void adjustHour(final int n, final boolean preserveLocalTime) {
-		cal_.add(Calendar.HOUR_OF_DAY, n); // TODO flag
+		Calendar cal = calendar.get();
+		cal.setTime(date_);
+		cal.add(Calendar.HOUR_OF_DAY, n); // TODO flag
+		date_ = cal.getTime();
 	}
 
 	/*
@@ -243,7 +268,10 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#adjustMinute(int, boolean)
 	 */
 	public void adjustMinute(final int n, final boolean preserveLocalTime) {
-		cal_.add(Calendar.MINUTE, n); // TODO flag
+		Calendar cal = calendar.get();
+		cal.setTime(date_);
+		cal.add(Calendar.MINUTE, n); // TODO flag
+		date_ = cal.getTime();
 	}
 
 	/*
@@ -261,7 +289,10 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#adjustMonth(int, boolean)
 	 */
 	public void adjustMonth(final int n, final boolean preserveLocalTime) {
-		cal_.add(Calendar.MONTH, n); // TODO flag
+		Calendar cal = calendar.get();
+		cal.setTime(date_);
+		cal.add(Calendar.MONTH, n); // TODO flag
+		date_.getTime();
 	}
 
 	/*
@@ -279,7 +310,10 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#adjustSecond(int, boolean)
 	 */
 	public void adjustSecond(final int n, final boolean preserveLocalTime) {
-		cal_.add(Calendar.SECOND, n); // TODO flag
+		Calendar cal = calendar.get();
+		cal.setTime(date_);
+		cal.add(Calendar.SECOND, n); // TODO flag
+		date_.getTime();
 	}
 
 	/*
@@ -297,7 +331,10 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#adjustYear(int, boolean)
 	 */
 	public void adjustYear(final int n, final boolean preserveLocalTime) {
-		cal_.add(Calendar.YEAR, n); // TODO flag
+		Calendar cal = calendar.get();
+		cal.setTime(date_);
+		cal.add(Calendar.YEAR, n); // TODO flag
+		date_.getTime();
 	}
 
 	/*
@@ -325,8 +362,8 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#isEqual(org.openntf.domino.DateTime)
 	 */
 	@Override
-	public boolean equals(final org.openntf.domino.DateTime comparDate) {
-		return cal_.equals(comparDate.toJavaCal());
+	public boolean equals(final org.openntf.domino.DateTime compareDate) {
+		return date_.equals(compareDate.toJavaDate());
 	}
 
 	/*
@@ -335,18 +372,19 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#equalsIgnoreDate(org.openntf.domino.DateTime)
 	 */
 	@Override
-	public boolean equalsIgnoreDate(final org.openntf.domino.DateTime comparDate) {
-		Calendar c1 = GregorianCalendar.getInstance();
-		Calendar c2 = GregorianCalendar.getInstance();
-		c1.setTime(toJavaDate());
-		c1.set(Calendar.DAY_OF_MONTH, 1);
-		c1.set(Calendar.MONTH, 0);
-		c1.set(Calendar.YEAR, 2000);
-		c2.setTime(comparDate.toJavaDate());
-		c2.set(Calendar.DAY_OF_MONTH, 1);
-		c2.set(Calendar.MONTH, 0);
-		c2.set(Calendar.YEAR, 2000);
-		return c1.equals(c2);
+	public boolean equalsIgnoreDate(final org.openntf.domino.DateTime compareDate) {
+		Calendar cal = calendar.get();
+		cal.setTime(date_);
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		cal.set(Calendar.MONTH, 0);
+		cal.set(Calendar.YEAR, 2000);
+		Date d1 = cal.getTime();
+		cal.setTime(compareDate.toJavaDate());
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		cal.set(Calendar.MONTH, 0);
+		cal.set(Calendar.YEAR, 2000);
+		Date d2 = cal.getTime();
+		return d1.equals(d2);
 	}
 
 	/*
@@ -355,20 +393,21 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#equalsIgnoreTime(org.openntf.domino.DateTime)
 	 */
 	@Override
-	public boolean equalsIgnoreTime(final org.openntf.domino.DateTime comparDate) {
-		Calendar c1 = GregorianCalendar.getInstance();
-		Calendar c2 = GregorianCalendar.getInstance();
-		c1.setTime(toJavaDate());
-		c1.set(Calendar.HOUR_OF_DAY, 0);
-		c1.set(Calendar.MINUTE, 0);
-		c1.set(Calendar.SECOND, 0);
-		c1.set(Calendar.MILLISECOND, 0);
-		c2.setTime(comparDate.toJavaDate());
-		c2.set(Calendar.HOUR_OF_DAY, 0);
-		c2.set(Calendar.MINUTE, 0);
-		c2.set(Calendar.SECOND, 0);
-		c2.set(Calendar.MILLISECOND, 0);
-		return c1.equals(c2);
+	public boolean equalsIgnoreTime(final org.openntf.domino.DateTime compareDate) {
+		Calendar cal = calendar.get();
+		cal.setTime(date_);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		Date d1 = cal.getTime();
+		cal.setTime(compareDate.toJavaDate());
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		Date d2 = cal.getTime();
+		return d1.equals(d2);
 	}
 
 	/*
@@ -377,7 +416,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#getDateOnly()
 	 */
 	public String getDateOnly() {
-		return getAncestor().getFormatter().getDateOnly(cal_.getTime());
+		return getAncestor().getFormatter().getDateOnly(date_);
 	}
 
 	/*
@@ -386,7 +425,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#getGMTTime()
 	 */
 	public String getGMTTime() {
-		return getAncestor().getFormatter().getDateTime(cal_.getTime());
+		return getAncestor().getFormatter().getDateTime(date_);
 	}
 
 	/*
@@ -396,7 +435,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 */
 	public String getLocalTime() {
 		// TODO rationalize timezone stuff
-		return getAncestor().getFormatter().getDateTime(cal_.getTime());
+		return getAncestor().getFormatter().getDateTime(date_);
 	}
 
 	/*
@@ -415,7 +454,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#getTimeOnly()
 	 */
 	public String getTimeOnly() {
-		return getAncestor().getFormatter().getTimeOnly(cal_.getTime());
+		return getAncestor().getFormatter().getTimeOnly(date_);
 	}
 
 	/*
@@ -442,8 +481,8 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * 
 	 * @see org.openntf.domino.DateTime#isAfter(org.openntf.domino.DateTime)
 	 */
-	public boolean isAfter(final org.openntf.domino.DateTime comparDate) {
-		return cal_.after(comparDate.toJavaCal());
+	public boolean isAfter(final org.openntf.domino.DateTime compareDate) {
+		return date_.after(compareDate.toJavaDate());
 	}
 
 	/*
@@ -452,8 +491,8 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#isBefore(org.openntf.domino.DateTime)
 	 */
 	@Override
-	public boolean isBefore(final org.openntf.domino.DateTime comparDate) {
-		return cal_.before(comparDate.toJavaCal());
+	public boolean isBefore(final org.openntf.domino.DateTime compareDate) {
+		return date_.before(compareDate.toJavaDate());
 	}
 
 	/*
@@ -490,10 +529,12 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 */
 	public void setLocalDate(final int year, final int month, final int day, final boolean preserveLocalTime) {
 		// TODO NTF - deal with timezone and dst nonsense :-/
-		cal_.set(Calendar.YEAR, year);
-		cal_.set(Calendar.MONTH, month);
-		cal_.set(Calendar.DAY_OF_MONTH, day);
-
+		Calendar cal = calendar.get();
+		cal.setTime(date_);
+		cal.set(Calendar.YEAR, year);
+		cal.set(Calendar.MONTH, month);
+		cal.set(Calendar.DAY_OF_MONTH, day);
+		date_ = cal.getTime();
 	}
 
 	/*
@@ -502,9 +543,11 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#setLocalDate(int, int, int)
 	 */
 	public void setLocalDate(final int year, final int month, final int day) {
-		cal_.set(Calendar.YEAR, year);
-		cal_.set(Calendar.MONTH, month);
-		cal_.set(Calendar.DAY_OF_MONTH, day);
+		Calendar cal = calendar.get();
+		cal.set(Calendar.YEAR, year);
+		cal.set(Calendar.MONTH, month);
+		cal.set(Calendar.DAY_OF_MONTH, day);
+		date_ = cal.getTime();
 	}
 
 	/*
@@ -513,7 +556,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#setLocalTime(java.util.Calendar)
 	 */
 	public void setLocalTime(final java.util.Calendar calendar) {
-		cal_.setTime(calendar.getTime());
+		date_ = calendar.getTime();
 	}
 
 	/*
@@ -523,7 +566,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 */
 	@Override
 	public void setLocalTime(final Calendar calendar) {
-		cal_.setTime(calendar.getTime());
+		date_ = calendar.getTime();
 	}
 
 	/*
@@ -532,7 +575,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#setLocalTime(java.util.Date)
 	 */
 	public void setLocalTime(final Date date) {
-		cal_.setTime(date);
+		date_ = new Date(date.getTime());
 	}
 
 	/*
@@ -542,11 +585,12 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 */
 	public void setLocalTime(final int hour, final int minute, final int second, final int hundredth) {
 		// TODO NTF - figure out exactly what this means vis a vis timezones
-		cal_.set(Calendar.HOUR_OF_DAY, hour);
-		cal_.set(Calendar.MINUTE, minute);
-		cal_.set(Calendar.SECOND, second);
-		cal_.set(Calendar.MILLISECOND, hundredth * 10);
-
+		Calendar cal = calendar.get();
+		cal.set(Calendar.HOUR_OF_DAY, hour);
+		cal.set(Calendar.MINUTE, minute);
+		cal.set(Calendar.SECOND, second);
+		cal.set(Calendar.MILLISECOND, hundredth * 10);
+		date_ = cal.getTime();
 	}
 
 	/*
@@ -555,8 +599,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#setLocalTime(java.lang.String)
 	 */
 	public void setLocalTime(final String time) {
-		Date date = getAncestor().getFormatter().parseDateFromString(time);
-		cal_.setTime(date);
+		date_ = getAncestor().getFormatter().parseDateFromString(time);
 	}
 
 	/*
@@ -565,7 +608,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#setNow()
 	 */
 	public void setNow() {
-		cal_.setTime(new Date());
+		date_ = new Date();
 	}
 
 	/*
@@ -577,11 +620,11 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		int result = 0;
 		if (dt instanceof org.openntf.domino.impl.DateTime) {
 			DateTime otherDT = (org.openntf.domino.impl.DateTime) dt; // so we can access private members directly.
-			long left = cal_.getTimeInMillis() / 1000; // math is in seconds
+			long left = date_.getTime() / 1000; // math is in seconds
 			long right = otherDT.toJavaDate().getTime() / 1000; // math is also in seconds
 			result = Long.valueOf(left - right).intValue();
 		} else {
-			long left = cal_.getTimeInMillis() / 1000; // math is in seconds
+			long left = date_.getTime() / 1000; // math is in seconds
 			long right = 0;
 			try {
 				right = dt.toJavaDate().getTime() / 1000; // math is also in seconds
@@ -610,7 +653,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 * @see org.openntf.domino.DateTime#toJavaDate()
 	 */
 	public Date toJavaDate() {
-		return cal_.getTime();
+		return new Date(date_.getTime());
 	}
 
 	/*
@@ -668,17 +711,13 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 */
 	@Override
 	public Calendar toJavaCal() {
-		return cal_;
+		Calendar result = GregorianCalendar.getInstance();
+		result.setTime(date_);
+		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	@Override
-	public int compareTo(final org.openntf.domino.ext.DateTime arg0) {
-		return cal_.compareTo(arg0.toJavaCal());
+	public int compareTo(final org.openntf.domino.DateTime arg0) {
+		return date_.compareTo(arg0.toJavaDate());
 	}
 
 	/* (non-Javadoc)
@@ -689,7 +728,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		isDateOnly_ = in.readBoolean();
 		isTimeOnly_ = in.readBoolean();
 		notesZone_ = in.readInt();
-		cal_.setTimeInMillis(in.readLong());
+		date_ = new Date(in.readLong());
 	}
 
 	/* (non-Javadoc)
@@ -700,7 +739,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		out.writeBoolean(isDateOnly_);
 		out.writeBoolean(isTimeOnly_);
 		out.writeInt(notesZone_);
-		out.writeLong(cal_.getTimeInMillis());
+		out.writeLong(date_.getTime());
 	}
 
 }
