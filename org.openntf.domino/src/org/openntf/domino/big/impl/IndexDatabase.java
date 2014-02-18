@@ -737,11 +737,6 @@ public class IndexDatabase implements IScannerStateManager {
 	public CaseInsensitiveString lastToken_ = null;
 
 	public Map<CaseInsensitiveString, Set<String>> restoreTokenLocationMap(final CaseInsensitiveString token, final Object mapKey) {
-		//		if (token.equals(lastToken_)) {
-		//			System.out.println("Restoring same token that we last processed: " + token.getString());
-		//		} else {
-		//			lastToken_ = token;
-		//		}
 		Map result = null;
 		Document doc = getTermDocument(token.getFolded());
 		String itemName = TERM_MAP_PREFIX + String.valueOf(mapKey);
@@ -756,23 +751,31 @@ public class IndexDatabase implements IScannerStateManager {
 
 	public void saveTokenLocationMap(final CaseInsensitiveString token, final Object mapKey,
 			final Map<CaseInsensitiveString, Set<String>> map) {
-		//		if (token.equals(lastToken_)) {
-		//			System.out.println("Restoring same token that we last processed: " + token.getString());
-		//		} else {
-		//			lastToken_ = token;
-		//		}
+
 		String term = token.toString();
 		Document termDoc = getTermDocument(term);
 		termDoc.replaceItemValue(TERM_MAP_PREFIX + String.valueOf(mapKey), map);
 		termDoc.save();
 	}
 
+	public void setLastIndexDate(final Object mapKey, final Date date) {
+		Document dbDoc = getDbDocument((String) mapKey);
+		dbDoc.replaceItemValue(DB_LAST_INDEX_NAME, date);
+		dbDoc.save();
+	}
+
+	public Date getLastIndexDate(final Object mapKey) {
+		Document dbDoc = getDbDocument((String) mapKey);
+		return dbDoc.getItemValue(DB_LAST_INDEX_NAME, java.util.Date.class);
+	}
+
 	public void saveTokenLocationMap(final Object mapKey,
 			final Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> fullMap, final DocumentScanner scanner) {
 		//		System.out.println("Saving TokenLocationMap of size " + fullMap.size() + " with key of " + mapKey + " and updating time to "
 		//				+ lastTimestamp.getTime() + " after processing " + curDocCount_ + " docs out of " + sortedDocCount_);
+		setLastIndexDate(mapKey, scanner.getLastDocModDate());
+
 		Document dbDoc = getDbDocument((String) mapKey);
-		dbDoc.replaceItemValue(DB_LAST_INDEX_NAME, scanner.getLastDocModDate());
 		if (scanner.getCollection() != null) {
 			dbDoc.replaceItemValue(IndexDatabase.DB_DOC_LIST_NAME, scanner.getCollection());
 		} else {

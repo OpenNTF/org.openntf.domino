@@ -1,5 +1,6 @@
 package org.openntf.domino.big.impl;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.Observer;
 import java.util.Set;
@@ -18,5 +19,9 @@ public interface IScannerStateManager extends Observer {
 
 	public void saveTokenLocationMap(Object mapKey, Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> fullMap,
 			DocumentScanner scanner);
+
+	public Date getLastIndexDate(Object mapKey);
+
+	public void setLastIndexDate(Object mapKey, Date date);
 
 }
