@@ -200,20 +200,25 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		}
 		long cpp_key = org.openntf.domino.impl.Base.getLotusId(lotus);
 		long parent_key = org.openntf.domino.impl.Base.getLotusId(parent);
+
+		// RPr: Query the cache. The current lotus object might be enqued, so that it gets recycled in the next step
+		// The cache.get resurrect the element
 		Base<?> result = cache.get(cpp_key, Base.class, parent_key);
-		if (lotus instanceof lotus.domino.MIMEEntity) {
-			//			if (result != null) {
-			//				Throwable t = new Throwable();
-			//				log_.log(Level.WARNING, "Cache hit on MIMEEntity with key " + cpp_key, t);
-			//			}
-		}
+
+		//if (lotus instanceof lotus.domino.MIMEEntity) {
+		//			if (result != null) {
+		//				Throwable t = new Throwable();
+		//				log_.log(Level.WARNING, "Cache hit on MIMEEntity with key " + cpp_key, t);
+		//			}
+		//}
+
 		if (result == null) {
 			result = wrapLotusObject(lotus, parent, cpp_key);
 			cache.put(cpp_key, result, lotus, parent_key);
-			if (lotus instanceof lotus.domino.MIMEEntity) {
-				//				Throwable t = new Throwable();
-				//				log_.log(Level.WARNING, "Cache hit on MIMEEntity with key " + cpp_key, t);
-			}
+			//if (lotus instanceof lotus.domino.MIMEEntity) {
+			//				Throwable t = new Throwable();
+			//				log_.log(Level.WARNING, "Cache hit on MIMEEntity with key " + cpp_key, t);
+			//}
 		}
 		return result;
 	}

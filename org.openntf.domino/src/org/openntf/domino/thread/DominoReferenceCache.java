@@ -151,12 +151,29 @@ public class DominoReferenceCache {
 
 		while ((ref = (DominoReference) queue.poll()) != null) {
 			long key = ref.getKey();
-			map.remove(key);
-			if (autorecycle_) {
-				if (curKey != key && parent_key != key) {
-					ref.recycle();
-				}
+
+			if (map.remove(key) == null) {
+				System.out.println("Removed dead element");
 			}
+			if (autorecycle_) {
+				if (curKey == key || parent_key == key) {
+					// System.out.println("Current object dropped out of the queue");
+
+					// RPr: This happens definitely, if you access the same document in series
+					// Was reproduceable by iterating over several NoteIds and doing this in the loop (odd number required)
+					//		doc1 = d.getDocumentByID(id);
+					//		doc1 = null;
+					//		doc2 = d.getDocumentByID(id);
+					//		doc2 = null;
+					//		doc3 = d.getDocumentByID(id);
+					//		doc3 = null;
+
+					// ref is not used any more, but the delegate must be protected from recycling
+					ref.setNoRecycle(true);
+				}
+				ref.recycle();
+			}
+
 		}
 	}
 
@@ -168,24 +185,49 @@ public class DominoReferenceCache {
 		if (ref == null) {
 			return null;
 		}
-		if (ref.isEnqueued()) {
-			// if it's enqueued, we definitely can't use the existing reference, because it's going to be recycled for sure
-			ref.clearLotusReference();// if we were trying to get the reference object, then we must be making a new wrapper
-			// by clearing the DominoReference's lotus reference, we'll prevent auto-recycle
-			return null;
-			//by returning null, we ensure that we re-wrap and create a new DominoReference
-		}
 
 		Object result = ref.get();
-		if (result == null) {
-			return null;
-		}
-		if (ref.isDead()) {
-			// check if it is not yet recycled or queued for recycle
+		//if (result == null) {
+		//	// this is the wrapper. If there is no wrapper inside (don't know how this should work) we do not return it
+		//	System.out.println("Wrapper lost! " + ref.isEnqueued());
+		//	return null;
+		//}
+
+		// check if the delegate is still alive. (not recycled or null)
+		if (result == null || ref.isDead() || ref.isEnqueued()) {
+
+			// For debug
+			//			if (result == null) {
+			//				System.out.println("NULL");
+			//			}
+			//			if (ref.isDead()) {
+			//				System.out.println("DEAD");
+			//			}
+			//			if (ref.isEnqueued()) {
+			//				// result is also NULL if the reference is enqueued (makes sense, because result (=wrapper) is no longer reachable 
+			//				System.out.println("ENQUEUED");
+			//			}
+
+			// 	we get dead elements if we do this in a loop
+			//		d = s.getDatabase("", "names.nsf");
+			//		doc1 = d.getDocumentByID(id);
+			//		d = null;
+			//		doc1 = null;
+
+			if (ref.isEnqueued()) {
+				// TODO: I'm not sure, when we must setNoRecycle to true
+				// ref.setNoRecycle(true);
+			}
 			map.remove(ref.getKey());
 			return null;
 		} else {
-			return result;
+			//			if (ref.isEnqueued()) {
+			//				// if it's enqueued, we definitely can't use the existing reference, because it's going to be recycled for sure
+			//				ref = ref.resurrect(queue); // so we resurrect this one. processQueue MUST NOT remove the key from the map
+			//				map.put(ref.getKey(), ref); // and replace the new one in the map
+			//				System.out.println("Ressurect for dominoReference occured");
+			//			}
+			return result; // the wrapper.
 		}
 	}
 }
