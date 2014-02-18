@@ -69,7 +69,7 @@ public enum Dates {
 
 	@Override
 	public String toString() {
-		return Dates.class.getName() + " " + this.name() + "{\"" + this.getTimestampFormat() + "\", " + this.getPattern() + "}";
+		return Dates.class.getName() + " " + this.name() + "{\"" + this.getInstanceTimestampFormat() + "\", " + this.getPattern() + "}";
 	}
 
 	/**
@@ -77,7 +77,7 @@ public enum Dates {
 	 * 
 	 * @return the format
 	 */
-	public String getTimestampFormat() {
+	public String getInstanceTimestampFormat() {
 		return this._timestampFormat;
 	}
 
@@ -109,7 +109,7 @@ public enum Dates {
 	 */
 	public SimpleDateFormat getSimpleDateFormat() {
 		if (null == this._sdf) {
-			this._sdf = Dates.getSimpleDateFormat(this.getTimestampFormat());
+			this._sdf = Dates.getSimpleDateFormat(this.getInstanceTimestampFormat());
 			this._sdf.setLenient(true);
 		}
 
@@ -121,8 +121,8 @@ public enum Dates {
 	 * 
 	 * @return Timestamp for the current moment.
 	 */
-	public String getTimestamp() {
-		return this.getTimestamp(null);
+	public String getInstanceTimestamp() {
+		return this.getInstanceTimestamp(null);
 	}
 
 	/**
@@ -133,7 +133,7 @@ public enum Dates {
 	 * 
 	 * @return Timestamp for the specified date.
 	 */
-	public String getTimestamp(final Date date) {
+	public String getInstanceTimestamp(final Date date) {
 		return this.getSimpleDateFormat().format((null == date) ? Dates.getDate() : date);
 	}
 
@@ -145,8 +145,8 @@ public enum Dates {
 	 * 
 	 * @return Timestamp for the specified date.
 	 */
-	public String getTimestamp(final Object object) {
-		return this.getTimestamp(Dates.getDate(object));
+	public String getInstanceTimestamp(final Object object) {
+		return this.getInstanceTimestamp(Dates.getDate(object));
 	}
 
 	/**
@@ -223,12 +223,12 @@ public enum Dates {
 	public static String getTimestamp(final Object object, final String format) {
 		try {
 			if (Strings.isBlankString(format)) {
-				return Dates.DEFAULT.getTimestamp(object);
+				return Dates.DEFAULT.getInstanceTimestamp(object);
 			}
 
 			Dates tf = Dates.get(format);
 			if (null != tf) {
-				return tf.getTimestamp(object);
+				return tf.getInstanceTimestamp(object);
 			}
 
 			final Date date = (Dates.getDate(object));
@@ -249,8 +249,8 @@ public enum Dates {
 	 *            the date
 	 * @return the timestamp
 	 */
-	public static String getDefaultTimestamp(final Date date) {
-		return Dates.DEFAULT.getTimestamp(date);
+	public static String getTimestamp(final Date date) {
+		return Dates.DEFAULT.getInstanceTimestamp(date);
 	}
 
 	/**
@@ -258,8 +258,8 @@ public enum Dates {
 	 * 
 	 * @return the timestamp
 	 */
-	public static String getDefaultTimestamp() {
-		return Dates.DEFAULT.getTimestamp();
+	public static String getTimestamp() {
+		return Dates.DEFAULT.getInstanceTimestamp();
 	}
 
 	/**
@@ -745,7 +745,7 @@ public enum Dates {
 	public static Dates get(final String key) {
 		if (!Strings.isBlankString(key)) {
 			for (final Dates result : Dates.values()) {
-				if (result.name().equalsIgnoreCase(key) || result.getTimestampFormat().equalsIgnoreCase(key)) {
+				if (result.name().equalsIgnoreCase(key) || result.getInstanceTimestampFormat().equalsIgnoreCase(key)) {
 					return result;
 				}
 			}
