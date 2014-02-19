@@ -42,10 +42,21 @@ import org.openntf.domino.utils.DominoUtils;
  */
 public class LogUtils {
 
-	/** The IS o8601_ utc. */
-	private static SimpleDateFormat ISO8601_UTC = null;
-	/** The IS o8601. */
-	private static SimpleDateFormat ISO8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+	private static ThreadLocal<SimpleDateFormat> ISO_LOCAL = new ThreadLocal<SimpleDateFormat>() {
+		@Override
+		protected SimpleDateFormat initialValue() {
+			return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		}
+	};
+	private static ThreadLocal<SimpleDateFormat> ISO_UTC_LOCAL = new ThreadLocal<SimpleDateFormat>() {
+		@Override
+		protected SimpleDateFormat initialValue() {
+			SimpleDateFormat ISO8601_UTC = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); //$NON-NLS-1$;
+			TimeZone tz = TimeZone.getTimeZone("UTC");
+			ISO8601_UTC.setTimeZone(tz);
+			return ISO8601_UTC;
+		}
+	};
 
 	/**
 	 * Instantiates a new log utils.
@@ -143,16 +154,9 @@ public class LogUtils {
 		String result = null;
 
 		if (utc) {
-			if (ISO8601_UTC == null) {
-				// Initialize the UTC formatter once
-				TimeZone tz = TimeZone.getTimeZone("UTC");
-				ISO8601_UTC = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"); //$NON-NLS-1$
-				ISO8601_UTC.setTimeZone(tz);
-			}
-
-			result = ISO8601_UTC.format(value);
+			result = ISO_UTC_LOCAL.get().format(value);
 		} else {
-			result = ISO8601.format(value);
+			result = ISO_LOCAL.get().format(value);
 		}
 
 		return result;

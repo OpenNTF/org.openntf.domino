@@ -15,13 +15,17 @@
  */
 package org.openntf.domino.impl;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.TreeSet;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
 import org.openntf.arpa.NamePartsMap;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Names;
@@ -30,9 +34,9 @@ import org.openntf.domino.utils.Strings;
 /**
  * The Class Name.
  */
-public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> implements org.openntf.domino.Name, Comparable<Name> {
-
-	private static final Logger log_ = Logger.getLogger(Name.class.getName());
+@SuppressWarnings("deprecation")
+public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Session> implements org.openntf.domino.Name, Comparable<Name> {
+	//	private static final Logger log_ = Logger.getLogger(Name.class.getName());
 	private static final long serialVersionUID = 1L;
 	private NamePartsMap _namePartsMap;
 	private boolean Hierarchical;
@@ -53,7 +57,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 *            the parent
 	 */
 	public Name(final lotus.domino.Name delegate, final org.openntf.domino.Base<?> parent) {
-		super(null, parent);
+		super(null, (Session) parent);
 		this.initialize(delegate);
 		Base.s_recycle(delegate);
 	}
@@ -79,7 +83,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 *            String used to construct the Name object
 	 */
 	public Name(final Session session, final String name) {
-		super(null, (org.openntf.domino.Base<?>) Factory.fromLotus(session, Session.class, null));
+		super(null, (Session) Factory.fromLotus(session, Session.class, null));
 		this.initialize(name);
 	}
 
@@ -90,7 +94,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 *            String used to construct the Name object
 	 */
 	public Name(final String name) {
-		super(null, (org.openntf.domino.Base<?>) Factory.getSession());
+		super(null, Factory.getSession());
 		this.initialize(name);
 	}
 
@@ -206,19 +210,22 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 * ******************************************************************
 	 * ******************************************************************
 	 */
-	/* (non-Javadoc)
+	/*
+	 * The returned object MUST get recycled
+	 * (non-Javadoc)
 	 * @see org.openntf.domino.impl.Base#getDelegate()
 	 */
 	@Override
 	protected lotus.domino.Name getDelegate() {
 		try {
-			//					return this.getParent().getDelegate().createName(this.getCanonical());
-			org.openntf.domino.impl.Session s = (org.openntf.domino.impl.Session) this.getParent();
-			return s.getDelegate().createName(this.getCanonical());
+			lotus.domino.Session rawsession = toLotus(Factory.getSession(getParent()));
+			return rawsession.createName(this.getCanonical());
+
 		} catch (NotesException ne) {
 			DominoUtils.handleException(ne);
-			return null;
 		}
+
+		return null;
 	}
 
 	/*
@@ -258,6 +265,8 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	/**
 	 * Parses the source string and sets the appropriate RFC822 values.
 	 * 
+	 * <<<<<<< HEAD
+	 * 
 	 * @param string
 	 *            RFC822 source string from which to set the appropriate RFC822 values.
 	 */
@@ -275,6 +284,61 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	}
 
 	/**
+	 * Instantiates a new name.
+	 * 
+	 * @deprecated Use {@link #Name(lotus.domino.Name, Session, WrapperFactory, long)} instead
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 */
+	@Deprecated
+	public Name(final lotus.domino.Name delegate, final Session parent) {
+		super(null, Factory.getSession(parent));
+		initialize(delegate);
+		Base.s_recycle(delegate);
+	}
+
+	/**
+	 * Instantiates a new name.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public Name(final lotus.domino.Name delegate, final Session parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_NAME);
+		initialize(delegate);
+		// TODO: Wrapping recycles the caller's object. This may cause issues.
+		Base.s_recycle(delegate);
+	}
+
+	/**
+	 * The cpp-id is not used here, so we do not read it
+	 * 
+	 * @param delegate
+	 * @param cppId
+	 */
+	@Override
+	void setDelegate(final lotus.domino.Name delegate, final long cppId) {
+		delegate_ = delegate;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Session findParent(final lotus.domino.Name delegate) throws NotesException {
+		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
+	}
+
+	/**
 	 * Sets the Name for the object.
 	 * 
 	 * @param name
@@ -282,6 +346,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 */
 	public void setName(final lotus.domino.Name name) {
 		try {
+
 			if (null == name) {
 				throw new IllegalArgumentException("Source Name is null");
 			}
@@ -340,6 +405,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
+
 		}
 	}
 
@@ -768,7 +834,7 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 */
 	@Override
 	public Session getParent() {
-		return (Session) super.getParent();
+		return this.getAncestor();
 	}
 
 	/*
@@ -868,6 +934,22 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 		}
 
 		return (arg0.equals(arg1)) ? DominoUtils.EQUAL : arg0.getAbbreviated().compareTo(arg1.getAbbreviated());
+	}
+
+	/* (non-Javadoc)
+	 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
+	 */
+	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+		this.setHierarchical(in.readBoolean());
+		this.initialize(in.readUTF());
+	}
+
+	/* (non-Javadoc)
+	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
+	 */
+	public void writeExternal(final ObjectOutput out) throws IOException {
+		out.writeBoolean(this.isHierarchical());
+		out.writeUTF((Strings.isBlankString(this.getCanonical())) ? this.getAddr822Full() : this.getCanonical());
 	}
 
 }

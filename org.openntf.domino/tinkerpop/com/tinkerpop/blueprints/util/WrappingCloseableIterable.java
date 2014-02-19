@@ -39,8 +39,7 @@ public class WrappingCloseableIterable<T> implements CloseableIterable<T> {
         }
     }
 
-    @Override
-	public String toString() {
+    public String toString() {
         return this.iterable.toString();
     }
 }

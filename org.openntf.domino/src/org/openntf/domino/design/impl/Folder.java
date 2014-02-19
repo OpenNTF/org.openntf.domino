@@ -16,21 +16,35 @@
 
 package org.openntf.domino.design.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Logger;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.utils.DominoUtils;
 
 /**
  * @author jgallagher
  * 
  */
 public class Folder extends AbstractFolder implements org.openntf.domino.design.Folder {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(Folder.class.getName());
 
-	/**
-	 * @param document
-	 */
 	public Folder(final Document document) {
 		super(document);
+	}
+
+	protected Folder(final Database database) {
+		super(database);
+
+		try {
+			InputStream is = DesignView.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_folder.xml");
+			loadDxl(is);
+			is.close();
+		} catch (IOException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 }

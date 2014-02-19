@@ -48,6 +48,7 @@ import org.openntf.domino.DateTime;
 import org.openntf.domino.Item;
 import org.openntf.domino.Name;
 import org.openntf.domino.exceptions.InvalidNotesUrlException;
+import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.logging.LogUtils;
 
 import com.ibm.icu.util.Calendar;
@@ -78,8 +79,19 @@ public enum DominoUtils {
 			result = AccessController.doPrivileged(new PrivilegedExceptionAction<Class<?>>() {
 				@Override
 				public Class<?> run() throws Exception {
-					Class<?> cls = Thread.currentThread().getContextClassLoader().loadClass(className);
-					return cls;
+					Class<?> result = null;
+					ClassLoader cl = Thread.currentThread().getContextClassLoader();
+					try {
+						result = cl.loadClass(className);
+					} catch (NullPointerException ne) {
+						if (cl != null && "com.ibm.domino.xsp.module.nsf.ModuleClassLoader".equals(cl.getClass().getName())) {
+							//							log_.log(Level.WARNING,
+							//									"ModuleClassLoader lost DynamicClassLoader pointer. Resorting to System ClassLoader for " + className
+							//											+ " instead...");
+							result = Class.forName(className);
+						}
+					}
+					return result;
 				}
 			});
 		} catch (AccessControlException e) {
@@ -112,30 +124,29 @@ public enum DominoUtils {
 	}
 
 	public static class LoaderObjectInputStream extends ObjectInputStream {
-		private final ClassLoader loader_;
+		//		private final ClassLoader loader_;
 
 		public LoaderObjectInputStream(final InputStream in) throws IOException {
 			super(in);
-			loader_ = null;
+			//			loader_ = null;
 		}
 
-		public LoaderObjectInputStream(final ClassLoader classLoader, final InputStream in) throws IOException {
-			super(in);
-			loader_ = classLoader;
-		}
+		//		public LoaderObjectInputStream(final ClassLoader classLoader, final InputStream in) throws IOException {
+		//			super(in);
+		//			loader_ = classLoader;
+		//		}
 
 		@Override
 		protected Class<?> resolveClass(final ObjectStreamClass desc) throws IOException, ClassNotFoundException {
 			String name = desc.getName();
-			if (loader_ == null) {
-				return DominoUtils.getClass(name);
-			}
-			try {
-
-				return Class.forName(name, false, loader_);
-			} catch (ClassNotFoundException e) {
-				return super.resolveClass(desc);
-			}
+			//			if (loader_ == null) {
+			return DominoUtils.getClass(name);
+			//			}
+			//			try {
+			//				return Class.forName(name, false, loader_);
+			//			} catch (ClassNotFoundException e) {
+			//				return super.resolveClass(desc);
+			//			}
 		}
 	}
 
@@ -249,6 +260,10 @@ public enum DominoUtils {
 	 * @return the throwable
 	 */
 	public static Throwable handleException(final Throwable t) {
+		return (handleException(t, null));
+	}
+
+	public static Throwable handleException(final Throwable t, final String details) {
 		try {
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 				@Override
@@ -273,15 +288,14 @@ public enum DominoUtils {
 					return null;
 				}
 			});
-			if (getBubbleExceptions()) {
-				throw new RuntimeException(t);
-			}
-			return t;
 		} catch (Throwable e) {
 			e.printStackTrace();
-			return t;
 		}
 
+		if (getBubbleExceptions()) {
+			throw new OpenNTFNotesException(t);
+		}
+		return t;
 	}
 
 	/**
@@ -326,6 +340,7 @@ public enum DominoUtils {
 	 * @param args
 	 *            the args
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void incinerate(final Object... args) {
 		for (Object o : args) {
 			if (o != null) {
@@ -363,7 +378,7 @@ public enum DominoUtils {
 	}
 
 	public static boolean isHierarchicalName(final String name) {
-		return Names.IS_HIERARCHICAL_MATCH.matcher(name).find();
+		return (Strings.isBlankString(name)) ? false : Names.IS_HIERARCHICAL_MATCH.matcher(name).find();
 	}
 
 	public static String toAbbreviatedName(final String name) {
@@ -812,7 +827,7 @@ public enum DominoUtils {
 
 	public static String escapeForFormulaString(final String value) {
 		// I wonder if this is sufficient escaping
-		return value.replace("\\", "\\\\").replace("\"", "\\\"");
+		return value.replace("{", "\\{").replace("}", "\\}");
 	}
 
 	public static boolean isSerializable(final Collection<?> values) {

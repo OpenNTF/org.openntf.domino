@@ -23,6 +23,7 @@ import java.util.Vector;
 import lotus.domino.XSLTResultTarget;
 
 import org.openntf.domino.types.DocumentDescendant;
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.Resurrectable;
 import org.xml.sax.InputSource;
 
@@ -30,6 +31,25 @@ import org.xml.sax.InputSource;
  * The Interface Item.
  */
 public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.openntf.domino.ext.Item, Resurrectable, DocumentDescendant {
+
+	public static class Schema extends FactorySchema<Item, lotus.domino.Item, Document> {
+		@Override
+		public Class<Item> typeClass() {
+			return Item.class;
+		}
+
+		@Override
+		public Class<lotus.domino.Item> delegateClass() {
+			return lotus.domino.Item.class;
+		}
+
+		@Override
+		public Class<Document> parentClass() {
+			return Document.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)
@@ -52,7 +72,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * 
 	 * @see lotus.domino.Item#appendToTextList(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void appendToTextList(final Vector values);
 
@@ -437,7 +457,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * 
 	 * @see lotus.domino.Item#setValues(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void setValues(final Vector values);
 

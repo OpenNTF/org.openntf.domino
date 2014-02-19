@@ -15,10 +15,12 @@
  */
 package org.openntf.domino;
 
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Vector;
 
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.Resurrectable;
 import org.openntf.domino.types.SessionDescendant;
 
@@ -27,6 +29,80 @@ import org.openntf.domino.types.SessionDescendant;
  */
 public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database>, org.openntf.domino.ext.Database,
 		Resurrectable, SessionDescendant {
+
+	public static class Schema extends FactorySchema<Database, lotus.domino.Database, Session> {
+		@Override
+		public Class<Database> typeClass() {
+			return Database.class;
+		}
+
+		@Override
+		public Class<lotus.domino.Database> delegateClass() {
+			return lotus.domino.Database.class;
+		}
+
+		@Override
+		public Class<Session> parentClass() {
+			return Session.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
+
+	public enum Utils {
+		;
+		public static boolean isTemplate(final Database db) {
+			boolean result = false;
+			if (db.getFilePath().toLowerCase().endsWith("ntf"))
+				result = true;
+			return result;
+		}
+
+		public static boolean isDatabase(final Database db) {
+			boolean result = false;
+			String path = db.getFilePath().toLowerCase();
+			if (path.endsWith("nsf") || path.endsWith("nsh") || path.endsWith("nsg"))
+				result = true;
+			return result;
+		}
+
+		public static boolean isReplicaCandidate(final Database db) {
+			boolean result = true;
+			result = db.isReplicationDisabled();
+			return result;
+		}
+
+		public static boolean isTemplateCandidate(final Database db) {
+			boolean result = true;
+			//TODO do we actually want to add any future checks for this?
+			return result;
+		}
+	}
+
+	public final static Comparator<Database> FILEPATH_COMPARATOR = new Comparator<Database>() {
+		@Override
+		public int compare(final Database o1, final Database o2) {
+			return o1.getFilePath().compareToIgnoreCase(o2.getFilePath());
+		}
+	};
+	public final static Comparator<Database> LASTMOD_COMPARATOR = new Comparator<Database>() {
+		@Override
+		public int compare(final Database o1, final Database o2) {
+			return o1.getLastModifiedDate().compareTo(o2.getLastModifiedDate());
+		}
+	};
+	public final static Comparator<Database> TITLE_COMPARATOR = new Comparator<Database>() {
+		@Override
+		public int compare(final Database o1, final Database o2) {
+			return o1.getTitle().compareToIgnoreCase(o2.getTitle());
+		}
+	};
+	public final static Comparator<Database> APIPATH_COMPARATOR = new Comparator<Database>() {
+		@Override
+		public int compare(final Database o1, final Database o2) {
+			return o1.getApiPath().compareToIgnoreCase(o2.getApiPath());
+		}
+	};
 
 	/**
 	 * The Enum DBOption.
@@ -455,6 +531,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 *            the item values
 	 * @return the document
 	 */
+	@Override
 	public Document createDocument(final Map<String, Object> itemValues);
 
 	/**
@@ -464,6 +541,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 *            the key value pairs
 	 * @return the document
 	 */
+	@Override
 	public Document createDocument(final Object... keyValuePairs);
 
 	/*
@@ -1206,6 +1284,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @param level
 	 *            the level
 	 */
+	@Override
 	public void grantAccess(final String name, final ACL.Level level);
 
 	/*
@@ -1422,6 +1501,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * 
 	 * @see lotus.domino.Database#queryAccessRoles(java.lang.String)
 	 */
+	@Override
 	public Vector<String> queryAccessRoles(final String name);
 
 	/*
@@ -1594,6 +1674,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @param flag
 	 *            the flag
 	 */
+	@Override
 	public void setOption(final DBOption optionName, final boolean flag);
 
 	/*
@@ -1650,6 +1731,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @param documentType
 	 *            the document type
 	 */
+	@Override
 	public void sign(final SignDocType documentType);
 
 	/*
@@ -1669,6 +1751,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @param existingSigsOnly
 	 *            the existing sigs only
 	 */
+	@Override
 	public void sign(final SignDocType documentType, final boolean existingSigsOnly);
 
 	/*
@@ -1690,6 +1773,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @param name
 	 *            the name
 	 */
+	@Override
 	public void sign(final SignDocType documentType, final boolean existingSigsOnly, final String name);
 
 	/*
@@ -1713,6 +1797,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @param nameIsNoteid
 	 *            the name is noteid
 	 */
+	@Override
 	public void sign(final SignDocType documentType, final boolean existingSigsOnly, final String name, final boolean nameIsNoteid);
 
 	/*

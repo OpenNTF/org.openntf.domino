@@ -212,8 +212,8 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		}
 	}
 
-	public void removeHelper(final IEdgeHelper helper) {
-		edgeHelpers_.remove(helper);
+	public void removeHelper(final String key) {
+		edgeHelpers_.remove(key);
 	}
 
 	public void setRawDatabase(final org.openntf.domino.Database database) {
@@ -618,19 +618,21 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	};
 
 	private DatabaseTransaction getTxn() {
-		return txnHolder_.get();
+		return getRawDatabase().getTransaction();
+		//		return txnHolder_.get();
 	}
 
-	public void setTxn(final DatabaseTransaction txn) {
-		txnHolder_.set(txn);
-	}
+	//	public void setTxn(final DatabaseTransaction txn) {
+	//		txnHolder_.set(txn);
+	//	}
 
 	// private DatabaseTransaction txn_;
 
 	public void startTransaction(final Element elem) {
 		putCache(elem);
 		if (getTxn() == null) {
-			setTxn(getRawDatabase().startTransaction());
+			getRawDatabase().startTransaction();
+			//			setTxn(getRawDatabase().startTransaction());
 		}
 	}
 
@@ -663,7 +665,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 				// System.out.println("Element cache is empty (so what are we committing?)");
 			}
 			txn.commit();
-			setTxn(null);
+			//			setTxn(null);
 		}
 		if (clearCache)
 			clearCache();
@@ -690,7 +692,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 		DatabaseTransaction txn = getTxn();
 		if (txn != null) {
 			txn.rollback();
-			setTxn(null);
+			//			setTxn(null);
 		}
 		clearCache();
 		// System.out.println("Transaction rollbacked");

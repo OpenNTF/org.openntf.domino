@@ -33,6 +33,7 @@ import org.openntf.domino.utils.DominoUtils;
  * 
  */
 public class JarResource extends FileResource implements org.openntf.domino.design.JarResource {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(JarResource.class.getName());
 
 	protected JarResource(final Document document) {

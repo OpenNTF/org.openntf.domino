@@ -26,6 +26,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class AclIterator.
  */
+@Deprecated
 public class DatabaseIterator implements Iterator<Database> {
 
 	/** The Constant log_. */

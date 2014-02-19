@@ -28,7 +28,8 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.designer.wk.ide.resources;bundle-version="9.0.0",
  com.ibm.domino.napi;bundle-version="9.0.0",
  org.eclipse.core.filesystem;bundle-version="1.2.0",
- com.ibm.commons;bundle-version="9.0.0"
+ com.ibm.commons;bundle-version="9.0.0",
+ com.ibm.designer.domino.api.doc;bundle-version="9.0.1"
 Bundle-RequiredExecutionEnvironment: OSGi/Minimum-1.0
 Eclipse-LazyStart: true
 Import-Package: com.ibm.workplace.notes.ipc.xml.util

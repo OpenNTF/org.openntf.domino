@@ -19,7 +19,11 @@ import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Database;
+import org.openntf.domino.DateTime;
+import org.openntf.domino.ReplicationEntry;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -27,7 +31,8 @@ import org.openntf.domino.utils.Factory;
 /**
  * The Class Replication.
  */
-public class Replication extends Base<org.openntf.domino.Replication, lotus.domino.Replication> implements org.openntf.domino.Replication {
+public class Replication extends Base<org.openntf.domino.Replication, lotus.domino.Replication, Database> implements
+		org.openntf.domino.Replication {
 
 	/**
 	 * Instantiates a new replication.
@@ -37,8 +42,25 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public Replication(final lotus.domino.Replication delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, Factory.getParentDatabase(parent));
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public Replication(final lotus.domino.Replication delegate, final Database parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_REPLICATION);
 	}
 
 	/*
@@ -64,7 +86,7 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 	@Override
 	public DateTime getCutoffDate() {
 		try {
-			return Factory.fromLotus(getDelegate().getCutoffDate(), DateTime.class, this);
+			return fromLotus(getDelegate().getCutoffDate(), DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -109,7 +131,7 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 	@Override
 	public Vector<org.openntf.domino.ReplicationEntry> getEntries() {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getEntries(), org.openntf.domino.ReplicationEntry.class, this);
+			return fromLotusAsVector(getDelegate().getEntries(), org.openntf.domino.ReplicationEntry.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -124,7 +146,7 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 	@Override
 	public ReplicationEntry getEntry(final String source, final String destination) {
 		try {
-			return Factory.fromLotus(getDelegate().getEntry(source, destination), ReplicationEntry.class, this);
+			return fromLotus(getDelegate().getEntry(source, destination), ReplicationEntry.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -139,7 +161,7 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 	@Override
 	public ReplicationEntry getEntry(final String source, final String destination, final boolean createFlag) {
 		try {
-			return Factory.fromLotus(getDelegate().getEntry(source, destination, createFlag), ReplicationEntry.class, this);
+			return fromLotus(getDelegate().getEntry(source, destination, createFlag), ReplicationEntry.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -151,7 +173,7 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 	 */
 	@Override
 	public Database getParent() {
-		return (Database) super.getParent();
+		return getAncestor();
 	}
 
 	/*
@@ -328,6 +350,7 @@ public class Replication extends Base<org.openntf.domino.Replication, lotus.domi
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+		((org.openntf.domino.impl.Database) getAncestorDatabase()).setReplication(flag);
 	}
 
 	/*

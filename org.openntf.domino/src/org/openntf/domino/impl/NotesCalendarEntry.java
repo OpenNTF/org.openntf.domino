@@ -15,20 +15,24 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Document;
+import org.openntf.domino.NotesCalendar;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class NotesCalendarEntry.
  */
-public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEntry, lotus.domino.NotesCalendarEntry> implements
-		org.openntf.domino.NotesCalendarEntry {
+public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEntry, lotus.domino.NotesCalendarEntry, NotesCalendar>
+		implements org.openntf.domino.NotesCalendarEntry {
 
 	/**
 	 * Instantiates a new notes calendar entry.
@@ -38,8 +42,26 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public NotesCalendarEntry(final lotus.domino.NotesCalendarEntry delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, (NotesCalendar) parent);
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public NotesCalendarEntry(final lotus.domino.NotesCalendarEntry delegate, final NotesCalendar parent, final WrapperFactory wf,
+			final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_CALENDARENTRY);
 	}
 
 	/* (non-Javadoc)
@@ -95,14 +117,16 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 */
 	@Override
 	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end) {
+		@SuppressWarnings("rawtypes")
+		List recycleThis = new ArrayList();
 		try {
-			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
-			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
+			lotus.domino.DateTime dt1 = toLotus(start, recycleThis);
+			lotus.domino.DateTime dt2 = toLotus(end, recycleThis);
 			getDelegate().counter(comments, dt1, dt2);
-			enc_recycle(dt1);
-			enc_recycle(dt2);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
@@ -112,14 +136,16 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	@Override
 	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end,
 			final boolean keepPlaceholder) {
+		@SuppressWarnings("rawtypes")
+		List recycleThis = new ArrayList();
 		try {
-			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
-			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
+			lotus.domino.DateTime dt1 = toLotus(start, recycleThis);
+			lotus.domino.DateTime dt2 = toLotus(end, recycleThis);
 			getDelegate().counter(comments, dt1, dt2, keepPlaceholder);
-			enc_recycle(dt1);
-			enc_recycle(dt2);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
@@ -129,14 +155,16 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	@Override
 	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end,
 			final boolean keepPlaceholder, final int scope, final String recurrenceId) {
+		@SuppressWarnings("rawtypes")
+		List recycleThis = new ArrayList();
 		try {
-			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
-			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
+			lotus.domino.DateTime dt1 = toLotus(start, recycleThis);
+			lotus.domino.DateTime dt2 = toLotus(end, recycleThis);
 			getDelegate().counter(comments, dt1, dt2, keepPlaceholder, scope, recurrenceId);
-			enc_recycle(dt1);
-			enc_recycle(dt2);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
@@ -146,14 +174,16 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	@Override
 	public void counter(final String comments, final lotus.domino.DateTime start, final lotus.domino.DateTime end, final int scope,
 			final String recurrenceId) {
+		@SuppressWarnings("rawtypes")
+		List recycleThis = new ArrayList();
 		try {
-			lotus.domino.DateTime dt1 = (lotus.domino.DateTime) toLotus(start);
-			lotus.domino.DateTime dt2 = (lotus.domino.DateTime) toLotus(end);
+			lotus.domino.DateTime dt1 = toLotus(start, recycleThis);
+			lotus.domino.DateTime dt2 = toLotus(end, recycleThis);
 			getDelegate().counter(comments, dt1, dt2, scope, recurrenceId);
-			enc_recycle(dt1);
-			enc_recycle(dt2);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
@@ -249,7 +279,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	public Document getAsDocument() {
 		try {
 			// TODO This should really come from the doc's DB
-			return Factory.fromLotus(getDelegate().getAsDocument(), Document.class, this.getParent());
+			return fromLotus(getDelegate().getAsDocument(), Document.SCHEMA, null);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -263,7 +293,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	public Document getAsDocument(final int flags) {
 		try {
 			// TODO This should really come from the doc's DB
-			return Factory.fromLotus(getDelegate().getAsDocument(flags), Document.class, this.getParent());
+			return fromLotus(getDelegate().getAsDocument(flags), Document.SCHEMA, null);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -276,7 +306,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	@Override
 	public Document getAsDocument(final int flags, final String recurrenceId) {
 		try {
-			return Factory.fromLotus(getDelegate().getAsDocument(flags, recurrenceId), Document.class, this.getParent());
+			return fromLotus(getDelegate().getAsDocument(flags, recurrenceId), Document.SCHEMA, null);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -289,7 +319,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	@Override
 	public Vector<org.openntf.domino.NotesCalendarNotice> getNotices() {
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getNotices(), org.openntf.domino.NotesCalendarNotice.class, this.getParent());
+			return fromLotusAsVector(getDelegate().getNotices(), org.openntf.domino.NotesCalendarNotice.SCHEMA, getAncestor());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -301,7 +331,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	 */
 	@Override
 	public NotesCalendar getParent() {
-		return (NotesCalendar) super.getParent();
+		return getAncestor();
 	}
 
 	/* (non-Javadoc)
@@ -464,6 +494,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#addInvitees(java.util.Vector, java.util.Vector, java.util.Vector)
 	 */
+	@SuppressWarnings("rawtypes")
 	public void addInvitees(final Vector arg0, final Vector arg1, final Vector arg2) {
 		try {
 			getDelegate().addInvitees(arg0, arg1, arg2);
@@ -475,6 +506,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#addInvitees(java.util.Vector, java.util.Vector, java.util.Vector, java.lang.String)
 	 */
+	@SuppressWarnings("rawtypes")
 	public void addInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final String arg3) {
 		try {
 			getDelegate().addInvitees(arg0, arg1, arg2, arg3);
@@ -486,6 +518,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#addInvitees(java.util.Vector, java.util.Vector, java.util.Vector, java.lang.String, int)
 	 */
+	@SuppressWarnings("rawtypes")
 	public void addInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final String arg3, final int arg4) {
 		try {
 			getDelegate().addInvitees(arg0, arg1, arg2, arg3, arg4);
@@ -497,6 +530,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#addInvitees(java.util.Vector, java.util.Vector, java.util.Vector, java.lang.String, int, int, java.lang.String)
 	 */
+	@SuppressWarnings("rawtypes")
 	public void addInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final String arg3, final int arg4, final int arg5,
 			final String arg6) {
 		try {
@@ -509,6 +543,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#modifyInvitees(java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector)
 	 */
+	@SuppressWarnings("rawtypes")
 	public void modifyInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final Vector arg3) {
 		try {
 			getDelegate().modifyInvitees(arg0, arg1, arg2, arg3);
@@ -520,6 +555,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#modifyInvitees(java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.lang.String)
 	 */
+	@SuppressWarnings("rawtypes")
 	public void modifyInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final Vector arg3, final String arg4) {
 		try {
 			getDelegate().modifyInvitees(arg0, arg1, arg2, arg3, arg4);
@@ -531,6 +567,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#modifyInvitees(java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.lang.String, int)
 	 */
+	@SuppressWarnings("rawtypes")
 	public void modifyInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final Vector arg3, final String arg4, final int arg5) {
 		try {
 			getDelegate().modifyInvitees(arg0, arg1, arg2, arg3, arg4, arg5);
@@ -542,6 +579,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#modifyInvitees(java.util.Vector, java.util.Vector, java.util.Vector, java.util.Vector, java.lang.String, int, int, java.lang.String)
 	 */
+	@SuppressWarnings("rawtypes")
 	public void modifyInvitees(final Vector arg0, final Vector arg1, final Vector arg2, final Vector arg3, final String arg4,
 			final int arg5, final int arg6, final String arg7) {
 		try {
@@ -555,6 +593,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#removeInvitees(java.util.Vector)
 	 */
+	@SuppressWarnings("rawtypes")
 	public void removeInvitees(final Vector arg0) {
 		try {
 			getDelegate().removeInvitees(arg0);
@@ -566,6 +605,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#removeInvitees(java.util.Vector, java.lang.String)
 	 */
+	@SuppressWarnings("rawtypes")
 	public void removeInvitees(final Vector arg0, final String arg1) {
 		try {
 			getDelegate().removeInvitees(arg0, arg1);
@@ -577,6 +617,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#removeInvitees(java.util.Vector, java.lang.String, int)
 	 */
+	@SuppressWarnings("rawtypes")
 	public void removeInvitees(final Vector arg0, final String arg1, final int arg2) {
 		try {
 			getDelegate().removeInvitees(arg0, arg1, arg2);
@@ -588,6 +629,7 @@ public class NotesCalendarEntry extends Base<org.openntf.domino.NotesCalendarEnt
 	/* (non-Javadoc)
 	 * @see lotus.domino.NotesCalendarEntry#removeInvitees(java.util.Vector, java.lang.String, int, int, java.lang.String)
 	 */
+	@SuppressWarnings("rawtypes")
 	public void removeInvitees(final Vector arg0, final String arg1, final int arg2, final int arg3, final String arg4) {
 		try {
 			getDelegate().removeInvitees(arg0, arg1, arg2, arg3, arg4);

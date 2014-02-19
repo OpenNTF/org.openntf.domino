@@ -17,6 +17,7 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
@@ -24,6 +25,25 @@ import org.openntf.domino.types.SessionDescendant;
  */
 public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domino.DxlExporter, org.openntf.domino.ext.DxlExporter,
 		SessionDescendant {
+
+	public static class Schema extends FactorySchema<DxlExporter, lotus.domino.DxlExporter, Session> {
+		@Override
+		public Class<DxlExporter> typeClass() {
+			return DxlExporter.class;
+		}
+
+		@Override
+		public Class<lotus.domino.DxlExporter> delegateClass() {
+			return lotus.domino.DxlExporter.class;
+		}
+
+		@Override
+		public Class<Session> parentClass() {
+			return Session.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/**
 	 * The Enum RichTextOption.

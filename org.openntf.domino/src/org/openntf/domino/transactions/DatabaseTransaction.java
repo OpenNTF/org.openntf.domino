@@ -136,8 +136,8 @@ public class DatabaseTransaction {
 		//		synchronized (rq) {
 		/*DatabaseDescendant*/next = rq.poll();
 		while (next != null) {
-			if (next instanceof org.openntf.domino.impl.Document) {
-				org.openntf.domino.impl.Document doc = (org.openntf.domino.impl.Document) next;
+			if (next instanceof org.openntf.domino.Document) {
+				org.openntf.domino.Document doc = (org.openntf.domino.Document) next;
 				if (isDocLock(doc))
 					doc.unlock();
 				doc.forceDelegateRemove();
@@ -158,8 +158,8 @@ public class DatabaseTransaction {
 		//		synchronized (uq) {
 		DatabaseDescendant next = uq.poll();
 		while (next != null) {
-			if (next instanceof org.openntf.domino.impl.Document) {
-				org.openntf.domino.impl.Document doc = (org.openntf.domino.impl.Document) next;
+			if (next instanceof org.openntf.domino.Document) {
+				org.openntf.domino.Document doc = (org.openntf.domino.Document) next;
 				doc.rollback();
 				if (isDocLock(doc)) {
 					doc.unlock();
@@ -173,8 +173,8 @@ public class DatabaseTransaction {
 		//		synchronized (rq) {
 		/*DatabaseDescendant*/next = rq.poll();
 		while (next != null) {
-			if (next instanceof org.openntf.domino.impl.Document) {
-				org.openntf.domino.impl.Document doc = (org.openntf.domino.impl.Document) next;
+			if (next instanceof org.openntf.domino.Document) {
+				org.openntf.domino.Document doc = (org.openntf.domino.Document) next;
 				doc.rollback();
 				if (isDocLock(doc))
 					doc.unlock();
@@ -186,6 +186,24 @@ public class DatabaseTransaction {
 		for (Database db : databases_) {
 			db.closeTransaction();
 		}
+	}
+
+	private String getDbList() {
+		StringBuilder sb = new StringBuilder();
+		for (Database db : databases_) {
+			sb.append(db.getApiPath());
+			sb.append(',');
+		}
+		return sb.toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "DatabaseTransaction [databases=" + getDbList() + ", updateQueue_=" + (updateQueue_ == null ? "0" : updateQueue_.size())
+				+ ", removeQueue_=" + (removeQueue_ == null ? "0" : removeQueue_.size()) + "]";
 	}
 
 }

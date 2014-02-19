@@ -32,4 +32,9 @@
      <extension point="com.ibm.commons.Extension">
          <service type="com.ibm.designer.runtime.extensions.JavaScriptProvider" class="org.openntf.domino.xsp.script.OpenDomJavaScriptExtension" />
    </extension>
+   
+      <!-- needed to start automatically and to put a wrapper around "doService" to terminate the factory in each thread-->
+   <extension point="com.ibm.commons.Extension">
+         <service type="com.ibm.xsp.adapter.serviceFactory" class="org.openntf.domino.xsp.adapter.OpenntfServiceFactory" />
+   </extension>
 </plugin>

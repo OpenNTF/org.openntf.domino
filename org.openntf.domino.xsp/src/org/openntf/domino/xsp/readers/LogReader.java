@@ -43,7 +43,7 @@ public class LogReader {
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
 	private String version = "1.3";
-	private static Transformer XFORMER;
+	private static volatile Transformer XFORMER;
 
 	public static class FileComparator implements Comparator<File> {
 		@Override

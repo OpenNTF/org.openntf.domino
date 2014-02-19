@@ -18,12 +18,32 @@ package org.openntf.domino;
 import java.util.Vector;
 
 import org.openntf.domino.types.DatabaseDescendant;
+import org.openntf.domino.types.FactorySchema;
 
 /**
  * The Interface Replication.
  */
 public interface Replication extends Base<lotus.domino.Replication>, lotus.domino.Replication, org.openntf.domino.ext.Replication,
 		DatabaseDescendant {
+
+	public static class Schema extends FactorySchema<Replication, lotus.domino.Replication, Database> {
+		@Override
+		public Class<Replication> typeClass() {
+			return Replication.class;
+		}
+
+		@Override
+		public Class<lotus.domino.Replication> delegateClass() {
+			return lotus.domino.Replication.class;
+		}
+
+		@Override
+		public Class<Database> parentClass() {
+			return Database.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)

@@ -250,6 +250,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 
 	@Override
 	public String logError(final Throwable ee) {
+		FacesMessage m = null;
 		if (ee != null) {
 			for (StackTraceElement elem : ee.getStackTrace()) {
 				if (elem.getClassName().equals(XspOpenLogItem.class.getName())) {
@@ -260,19 +261,23 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 					return "";
 				}
 			}
-		}
-		try {
 			StackTraceElement[] s = ee.getStackTrace();
-			FacesMessage m = new FacesMessage("Error in " + s[0].getClassName() + ", line " + s[0].getLineNumber() + ": " + ee.toString());
-			ExtLibUtil.getXspContext().getFacesContext().addMessage(null, m);
-			setBase(ee);
-
-			// if (ee.getMessage().length() > 0) {
+			m = new FacesMessage("Error in " + s[0].getClassName() + ", line " + s[0].getLineNumber() + ": " + ee.toString());
 			if (ee.getMessage() != null) {
 				setMessage(ee.getMessage());
 			} else {
 				setMessage(ee.getClass().getCanonicalName());
 			}
+		} else {
+			m = new FacesMessage("No trace information available");
+
+		}
+		try {
+			ExtLibUtil.getXspContext().getFacesContext().addMessage(null, m);
+			setBase(ee);
+
+			// if (ee.getMessage().length() > 0) {
+
 			setSeverity(Level.WARNING);
 			setEventType(LogType.TYPE_ERROR);
 			setLogSuccess(writeToLog());

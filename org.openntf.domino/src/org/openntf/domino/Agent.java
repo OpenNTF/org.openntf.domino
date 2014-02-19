@@ -19,11 +19,31 @@ import java.util.Vector;
 
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.Design;
+import org.openntf.domino.types.FactorySchema;
 
 /**
  * The Interface Agent.
  */
 public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent, org.openntf.domino.ext.Agent, Design, DatabaseDescendant {
+
+	public static class Schema extends FactorySchema<Agent, lotus.domino.Agent, Database> {
+		@Override
+		public Class<Agent> typeClass() {
+			return Agent.class;
+		}
+
+		@Override
+		public Class<lotus.domino.Agent> delegateClass() {
+			return lotus.domino.Agent.class;
+		}
+
+		@Override
+		public Class<Database> parentClass() {
+			return Database.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)
@@ -238,7 +258,7 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent, org
 	 * 
 	 * @see lotus.domino.Agent#lock(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean lock(final Vector names);
 
@@ -247,7 +267,7 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent, org
 	 * 
 	 * @see lotus.domino.Agent#lock(java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean lock(final Vector names, final boolean provisionalOk);
 
@@ -272,7 +292,7 @@ public interface Agent extends Base<lotus.domino.Agent>, lotus.domino.Agent, org
 	 * 
 	 * @see lotus.domino.Agent#lockProvisional(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean lockProvisional(final Vector names);
 

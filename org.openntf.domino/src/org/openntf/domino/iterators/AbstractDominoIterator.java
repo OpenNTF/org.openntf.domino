@@ -33,7 +33,7 @@ import org.openntf.domino.utils.Factory;
  * @param <T>
  *            the generic type
  */
-@SuppressWarnings( { "rawtypes" })
+@SuppressWarnings({ "rawtypes" })
 public abstract class AbstractDominoIterator<T> implements Iterator<T> {
 
 	/** The server name_. */
@@ -171,8 +171,8 @@ public abstract class AbstractDominoIterator<T> implements Iterator<T> {
 		if (collection != null) {
 			if (collection instanceof DocumentCollection) {
 				org.openntf.domino.Database parent = ((org.openntf.domino.DocumentCollection) collection).getParent();
-				database_ = Factory.fromLotus(parent, Database.class, parent);
-				session_ = Factory.fromLotus(database_.getParent(), Session.class, parent.getParent()); // FIXME NTF - this is suboptimal,
+				session_ = Factory.fromLotus(parent.getParent(), Session.SCHEMA, null); // FIXME NTF - this is suboptimal,
+				database_ = Factory.fromLotus(parent, Database.SCHEMA, session_);
 				// but we still need to
 				// sort out the parent/child pattern
 			} else if (collection instanceof ViewEntryCollection) {

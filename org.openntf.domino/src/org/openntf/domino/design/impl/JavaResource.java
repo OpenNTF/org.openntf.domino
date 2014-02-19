@@ -17,6 +17,7 @@
 package org.openntf.domino.design.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.openntf.domino.utils.xml.XMLNode;
  * 
  */
 public class JavaResource extends FileResource implements org.openntf.domino.design.JavaResource {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(JavaResource.class.getName());
 
 	private static final String CLASS_INDEX_ITEM = "$ClassIndexItem";
@@ -47,6 +49,19 @@ public class JavaResource extends FileResource implements org.openntf.domino.des
 		super(database);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.JavaResource#getClassNames()
+	 */
+	public Collection<String> getClassNames() {
+		List<String> names = new ArrayList<String>();
+		for (XMLNode node : getDxl().selectNodes("//item[@name='" + CLASS_INDEX_ITEM + "']//text")) {
+			// Classes begin with "WEB-INF/classes/"
+			String path = node.getText();
+			names.add(DominoUtils.filePathToJavaBinaryName(path.substring(16), "/"));
+		}
+		return names;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -54,12 +69,7 @@ public class JavaResource extends FileResource implements org.openntf.domino.des
 	 */
 	@Override
 	public Map<String, byte[]> getClassData() {
-		List<String> names = new ArrayList<String>();
-		for (XMLNode node : getDxl().selectNodes("//item[@name='" + CLASS_INDEX_ITEM + "']//text")) {
-			// Classes begin with "WEB-INF/classes/"
-			String path = node.getText();
-			names.add(DominoUtils.filePathToJavaBinaryName(path.substring(16), "/"));
-		}
+		List<String> names = new ArrayList<String>(getClassNames());
 
 		Map<String, byte[]> result = new HashMap<String, byte[]>();
 		for (int i = 0; i < names.size(); i++) {

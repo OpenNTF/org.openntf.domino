@@ -15,23 +15,25 @@
  */
 package org.openntf.domino.impl;
 
-import java.util.logging.Logger;
-
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.Document;
+import org.openntf.domino.RichTextItem;
+import org.openntf.domino.RichTextStyle;
 import org.openntf.domino.Session;
+import org.openntf.domino.View;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.types.DocumentDescendant;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class RichTextDoclink.
  */
-public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lotus.domino.RichTextDoclink> implements
+public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lotus.domino.RichTextDoclink, RichTextItem> implements
 		org.openntf.domino.RichTextDoclink {
-	private static final Logger log_ = Logger.getLogger(RichTextDoclink.class.getName());
+	//private static final Logger log_ = Logger.getLogger(RichTextDoclink.class.getName());
 
 	/**
 	 * Instantiates a new rich text doclink.
@@ -41,8 +43,25 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public RichTextDoclink(final lotus.domino.RichTextDoclink delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, (RichTextItem) parent);
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public RichTextDoclink(final lotus.domino.RichTextDoclink delegate, final RichTextItem parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_RTDOCLNK);
 	}
 
 	/*
@@ -113,7 +132,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	@Override
 	public RichTextStyle getHotSpotTextStyle() {
 		try {
-			return Factory.fromLotus(getDelegate().getHotSpotTextStyle(), RichTextStyle.class, this);
+			return fromLotus(getDelegate().getHotSpotTextStyle(), RichTextStyle.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -234,7 +253,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	public void setHotSpotTextStyle(final lotus.domino.RichTextStyle rtstyle) {
 		markDirty();
 		try {
-			getDelegate().setHotSpotTextStyle((lotus.domino.RichTextStyle) toLotus(rtstyle));
+			getDelegate().setHotSpotTextStyle(toLotus(rtstyle));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -281,7 +300,7 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	 */
 	@Override
 	public Document getAncestorDocument() {
-		return (Document) ((DocumentDescendant) this.getParent()).getAncestorDocument();
+		return ((DocumentDescendant) this.getAncestor()).getAncestorDocument();
 	}
 
 	/*
@@ -302,5 +321,44 @@ public class RichTextDoclink extends Base<org.openntf.domino.RichTextDoclink, lo
 	@Override
 	public Session getAncestorSession() {
 		return this.getAncestorDocument().getAncestorSession();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.RichTextDoclink#getDatabase()
+	 */
+	public Database getDatabase() {
+		Session session = getAncestorSession();
+		Database database = session.getDatabase("", "");
+		database.openByReplicaID(getServerHint(), getDBReplicaID());
+		return database;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.RichTextDoclink#getDocument()
+	 */
+	public org.openntf.domino.Document getDocument() {
+		String documentId = getDocUnID();
+		if (documentId != null && !documentId.isEmpty()) {
+			Database database = getDatabase();
+			return database.getDocumentByUNID(documentId);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.RichTextDoclink#getView()
+	 */
+	public View getView() {
+		String viewId = getViewUnID();
+		if (viewId != null && !viewId.isEmpty()) {
+			// Use session.resolve to not run afoul of same-named views
+			Database database = getDatabase();
+			Session session = getAncestorSession();
+			String databaseUrl = database.getURL();
+			String url = databaseUrl.substring(0, databaseUrl.length() - "?OpenDatabase".length()) + "/" + viewId + "?OpenView";
+			return (View) session.resolve(url);
+
+		}
+		return null;
 	}
 }

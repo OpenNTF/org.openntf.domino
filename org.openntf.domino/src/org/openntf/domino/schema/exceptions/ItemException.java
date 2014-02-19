@@ -5,7 +5,7 @@ package org.openntf.domino.schema.exceptions;
 
 import java.util.logging.Logger;
 
-import org.openntf.domino.schema.ItemDefinition;
+import org.openntf.domino.schema.impl.ItemDefinition;
 
 /**
  * @author nfreeman

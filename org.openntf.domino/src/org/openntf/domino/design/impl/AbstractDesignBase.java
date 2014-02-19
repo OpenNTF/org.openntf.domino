@@ -38,6 +38,7 @@ import org.xml.sax.SAXException;
  * 
  */
 public abstract class AbstractDesignBase implements DesignBase {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignBase.class.getName());
 
 	private String noteId_;
@@ -55,6 +56,18 @@ public abstract class AbstractDesignBase implements DesignBase {
 
 	protected AbstractDesignBase(final Database database) {
 		database_ = database;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DesignBase#getDxlString()
+	 */
+	public String getDxlString() {
+		try {
+			return getDxl().getXml();
+		} catch (IOException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
 	}
 
 	/*

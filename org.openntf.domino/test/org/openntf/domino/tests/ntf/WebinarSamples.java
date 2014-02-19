@@ -35,7 +35,8 @@ public class WebinarSamples {
 			ne.printStackTrace();
 		} finally {
 			try {
-				collection.recycle();
+				if (collection != null)
+					collection.recycle();
 			} catch (lotus.domino.NotesException ne) {
 
 			}

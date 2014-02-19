@@ -15,6 +15,7 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
@@ -22,6 +23,25 @@ import org.openntf.domino.types.SessionDescendant;
  */
 public interface ColorObject extends Base<lotus.domino.ColorObject>, lotus.domino.ColorObject, org.openntf.domino.ext.ColorObject,
 		SessionDescendant {
+
+	public static class Schema extends FactorySchema<ColorObject, lotus.domino.ColorObject, Session> {
+		@Override
+		public Class<ColorObject> typeClass() {
+			return ColorObject.class;
+		}
+
+		@Override
+		public Class<lotus.domino.ColorObject> delegateClass() {
+			return lotus.domino.ColorObject.class;
+		}
+
+		@Override
+		public Class<Session> parentClass() {
+			return Session.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)
@@ -36,6 +56,7 @@ public interface ColorObject extends Base<lotus.domino.ColorObject>, lotus.domin
 	 * 
 	 * @see lotus.domino.ColorObject#getGreen()
 	 */
+	@Override
 	public int getGreen();
 
 	/*

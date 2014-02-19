@@ -15,23 +15,24 @@
  */
 package org.openntf.domino.impl;
 
-import java.util.logging.Logger;
-
 import lotus.domino.NotesException;
 
+import org.openntf.domino.ColorObject;
 import org.openntf.domino.Database;
+import org.openntf.domino.Document;
+import org.openntf.domino.RichTextNavigator;
+import org.openntf.domino.RichTextStyle;
 import org.openntf.domino.Session;
 import org.openntf.domino.types.DocumentDescendant;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class RichTextSection.
  */
-public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lotus.domino.RichTextSection> implements
+public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lotus.domino.RichTextSection, RichTextNavigator> implements
 		org.openntf.domino.RichTextSection {
-	private static final Logger log_ = Logger.getLogger(RichTextSection.class.getName());
+	//private static final Logger log_ = Logger.getLogger(RichTextSection.class.getName());
 
 	/**
 	 * Instantiates a new rich text section.
@@ -41,8 +42,26 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public RichTextSection(final lotus.domino.RichTextSection delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, (RichTextNavigator) parent);
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public RichTextSection(final lotus.domino.RichTextSection delegate, final RichTextNavigator parent, final WrapperFactory wf,
+			final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_COLOR);
 	}
 
 	/*
@@ -53,7 +72,7 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	@Override
 	public ColorObject getBarColor() {
 		try {
-			return Factory.fromLotus(getDelegate().getBarColor(), ColorObject.class, this);
+			return fromLotus(getDelegate().getBarColor(), ColorObject.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -64,8 +83,8 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	 * @see org.openntf.domino.impl.Base#getParent()
 	 */
 	@Override
-	public RichTextItem getParent() {
-		return (RichTextItem) getParent();
+	public RichTextNavigator getParent() {
+		return getAncestor();
 	}
 
 	/*
@@ -91,7 +110,7 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	@Override
 	public RichTextStyle getTitleStyle() {
 		try {
-			return Factory.fromLotus(getDelegate().getTitleStyle(), RichTextStyle.class, this);
+			return fromLotus(getDelegate().getTitleStyle(), RichTextStyle.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -137,7 +156,7 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	public void setBarColor(final lotus.domino.ColorObject color) {
 		markDirty();
 		try {
-			getDelegate().setBarColor((lotus.domino.ColorObject) toLotus(color));
+			getDelegate().setBarColor(toLotus(color));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -182,7 +201,7 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	public void setTitleStyle(final lotus.domino.RichTextStyle style) {
 		markDirty();
 		try {
-			getDelegate().setTitleStyle((lotus.domino.RichTextStyle) toLotus(style));
+			getDelegate().setTitleStyle(toLotus(style));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -199,7 +218,7 @@ public class RichTextSection extends Base<org.openntf.domino.RichTextSection, lo
 	 */
 	@Override
 	public Document getAncestorDocument() {
-		return (Document) ((DocumentDescendant) this.getParent()).getAncestorDocument();
+		return ((DocumentDescendant) this.getParent()).getAncestorDocument();
 	}
 
 	/*

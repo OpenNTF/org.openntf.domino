@@ -6,7 +6,6 @@ import java.net.URL;
 import javax.faces.context.FacesContext;
 
 import org.eclipse.core.runtime.Plugin;
-import org.openntf.domino.utils.Factory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -113,6 +112,29 @@ public class Activator extends Plugin {
 		return result;
 	}
 
+	public static boolean isAPIEnabled() {
+		boolean retVal_ = Boolean.FALSE;
+		try {
+			String[] envs = Activator.getXspProperty("xsp.library.depends");
+			if (envs != null) {
+				// if (envs.length == 0) {
+				// System.out.println("Got an empty string array!");
+				// }
+				for (String s : envs) {
+					// System.out.println("Xsp check: " + s);
+					if (s.equalsIgnoreCase("org.openntf.domino.xsp.XspLibrary")) {
+						retVal_ = Boolean.TRUE;
+					}
+				}
+			} else {
+				// System.out.println("XSP ENV IS NULL!!");
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+		return retVal_;
+	}
+
 	public static String[] getEnvironmentStrings() {
 		String[] result = null;
 		try {
@@ -160,7 +182,6 @@ public class Activator extends Plugin {
 	public void start(final BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 		bundle_ = bundleContext.getBundle();
-		Factory.setClassLoader(Thread.currentThread().getContextClassLoader());
 	}
 
 	/*

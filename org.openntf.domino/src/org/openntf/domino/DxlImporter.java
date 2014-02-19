@@ -15,6 +15,7 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
@@ -22,6 +23,25 @@ import org.openntf.domino.types.SessionDescendant;
  */
 public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domino.DxlImporter, org.openntf.domino.ext.DxlImporter,
 		SessionDescendant {
+
+	public static class Schema extends FactorySchema<DxlImporter, lotus.domino.DxlImporter, Session> {
+		@Override
+		public Class<DxlImporter> typeClass() {
+			return DxlImporter.class;
+		}
+
+		@Override
+		public Class<lotus.domino.DxlImporter> delegateClass() {
+			return lotus.domino.DxlImporter.class;
+		}
+
+		@Override
+		public Class<Session> parentClass() {
+			return Session.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	public static enum DocumentImportOption {
 		IGNORE(DxlImporter.DXLIMPORTOPTION_IGNORE), CREATE(DxlImporter.DXLIMPORTOPTION_CREATE), REPLACE_ELSE_CREATE(

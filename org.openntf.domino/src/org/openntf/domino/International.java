@@ -15,6 +15,7 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
@@ -22,6 +23,25 @@ import org.openntf.domino.types.SessionDescendant;
  */
 public interface International extends Base<lotus.domino.International>, lotus.domino.International, org.openntf.domino.ext.International,
 		SessionDescendant {
+
+	public static class Schema extends FactorySchema<International, lotus.domino.International, Session> {
+		@Override
+		public Class<International> typeClass() {
+			return International.class;
+		}
+
+		@Override
+		public Class<lotus.domino.International> delegateClass() {
+			return lotus.domino.International.class;
+		}
+
+		@Override
+		public Class<Session> parentClass() {
+			return Session.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)

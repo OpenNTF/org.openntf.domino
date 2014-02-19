@@ -3,6 +3,7 @@
  */
 package org.openntf.domino.helpers;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
@@ -15,14 +16,11 @@ import org.openntf.domino.Document;
  *         Copyright Michael Zischeck and licensed under Apache License 2.0 from http://in-mood.blogspot.com/
  * 
  */
-public class DocumentComparator implements Comparator<Document> {
+public class DocumentComparator implements Comparator<Document>, Serializable {
 	private static final Logger log_ = Logger.getLogger(DocumentComparator.class.getName());
 	private static final long serialVersionUID = 1L;
 
 	public static class ValuesNotComparableException extends RuntimeException {
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = 4918210702121980155L;
 
 		public ValuesNotComparableException(final Object o1, final Object o2) {
@@ -38,8 +36,8 @@ public class DocumentComparator implements Comparator<Document> {
 	}
 
 	private int compareObj(final Object o1, final Object o2) {
-		if (o1 instanceof Comparable && o1 instanceof Comparable) {
-			return ((Comparable) o1).compareTo(o1);
+		if (o1 instanceof Comparable && o2 instanceof Comparable) {
+			return ((Comparable) o1).compareTo(o2);
 		} else {
 			throw new ValuesNotComparableException(o1, o2);
 		}

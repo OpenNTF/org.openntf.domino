@@ -15,13 +15,34 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.Encapsulated;
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
  * The Interface DateRange.
  */
-public interface DateRange extends Base<lotus.domino.DateRange>, lotus.domino.DateRange, org.openntf.domino.ext.DateRange,
+public interface DateRange extends Base<lotus.domino.DateRange>, lotus.domino.DateRange, org.openntf.domino.ext.DateRange, Encapsulated,
 		SessionDescendant {
+
+	public static class Schema extends FactorySchema<DateRange, lotus.domino.DateRange, Session> {
+		@Override
+		public Class<DateRange> typeClass() {
+			return DateRange.class;
+		}
+
+		@Override
+		public Class<lotus.domino.DateRange> delegateClass() {
+			return lotus.domino.DateRange.class;
+		}
+
+		@Override
+		public Class<Session> parentClass() {
+			return Session.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)

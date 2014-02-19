@@ -1,15 +1,20 @@
 package org.openntf.domino.xsp.helpers;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.faces.application.Application;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xsp.Activator;
 import org.openntf.domino.xsp.XspOpenLogErrorHolder;
 
+import com.ibm.xsp.application.ApplicationEx;
 import com.ibm.xsp.context.FacesContextEx;
 import com.ibm.xsp.el.ImplicitObjectFactory;
 import com.ibm.xsp.util.TypedUtil;
@@ -18,11 +23,17 @@ import com.ibm.xsp.util.TypedUtil;
 @SuppressWarnings("unchecked")
 public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactory {
 
-	// TODO this is really just a sample on how to get to an entry point in the API
+	// NTF The reason the Factory2 version exists is because we were testing moving the "global" settings like
+	// godmode and marcel to the xsp.properties and making them per-Application rather than server-wide.
 	private static Boolean GODMODE;
 
 	private static Map<String, Object> getAppMap(final FacesContext ctx) {
-		Map<String, Object> result = ctx.getExternalContext().getApplicationMap();
+		if (ctx == null)
+			return new HashMap<String, Object>();
+		ExternalContext ec = ctx.getExternalContext();
+		if (ec == null)
+			return new HashMap<String, Object>();
+		Map<String, Object> result = ec.getApplicationMap();
 		return result;
 	}
 
@@ -45,7 +56,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		return GODMODE.booleanValue();
 	}
 
-	private static boolean isAppGodMode(final FacesContext ctx) {
+	public static boolean isAppGodMode(final FacesContext ctx) {
 		// Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
 		Object current = getAppMap(ctx).get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_GODMODE");
 		if (current == null) {
@@ -66,6 +77,33 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 				// System.out.println("XSP ENV IS NULL!!");
 			}
 			getAppMap(ctx).put(OpenntfDominoImplicitObjectFactory2.class.getName() + "_GODMODE", current);
+		} else {
+			// System.out.println("Current found: " + String.valueOf(current));
+		}
+		return (Boolean) current;
+	}
+
+	public static boolean isAppUnderSurveillance(final FacesContext ctx) {
+		// Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
+		Object current = getAppMap(ctx).get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_NSA");
+		if (current == null) {
+			current = Boolean.FALSE;
+			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
+			if (envs != null) {
+				for (String s : envs) {
+					if (s.equalsIgnoreCase("nsa")) {
+						current = Boolean.TRUE;
+						Application app = ctx.getApplication();
+						if (app instanceof ApplicationEx) {
+							NSA.INSTANCE.registerApplication((ApplicationEx) app);
+							NSA.INSTANCE.registerSession((ApplicationEx) app, (HttpSession) ctx.getExternalContext().getSession(true));
+						}
+					}
+				}
+			} else {
+				// System.out.println("XSP ENV IS NULL!!");
+			}
+			getAppMap(ctx).put(OpenntfDominoImplicitObjectFactory2.class.getName() + "_NSA", current);
 		} else {
 			// System.out.println("Current found: " + String.valueOf(current));
 		}
@@ -137,6 +175,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 
 	private org.openntf.domino.Session createSession(final FacesContextEx ctx) {
 		org.openntf.domino.Session session = null;
+		isAppUnderSurveillance(ctx);
 		String sessionKey = isAppGodMode(ctx) ? "session" : "opensession";
 		Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
 		lotus.domino.Session rawSession = (lotus.domino.Session) localMap.get("session");
@@ -144,14 +183,14 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 			rawSession = (lotus.domino.Session) ctx.getApplication().getVariableResolver().resolveVariable(ctx, "session");
 		}
 		if (rawSession != null) {
-			session = Factory.fromLotus(rawSession, org.openntf.domino.Session.class, null);
+			session = Factory.fromLotus(rawSession, org.openntf.domino.Session.SCHEMA, null);
+			if (isAppMimeFriendly(ctx))
+				session.setConvertMIME(false);
 			if (isAppAllFix(ctx)) {
 				for (Fixes fix : Fixes.values()) {
 					session.setFixEnable(fix, true);
 				}
 			}
-			if (isAppMimeFriendly(ctx))
-				session.setConvertMIME(false);
 			localMap.put(sessionKey, session);
 		} else {
 			System.out.println("Unable to locate 'session' through request map or variable resolver. Unable to auto-wrap.");
@@ -168,7 +207,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 			rawDatabase = (lotus.domino.Database) ctx.getApplication().getVariableResolver().resolveVariable(ctx, "database");
 		}
 		if (rawDatabase != null) {
-			database = Factory.fromLotus(rawDatabase, org.openntf.domino.Database.class, session);
+			database = Factory.fromLotus(rawDatabase, org.openntf.domino.Database.SCHEMA, session);
 			localMap.put(dbKey, database);
 		} else {
 			System.out.println("Unable to locate 'database' through request map or variable resolver. Unable to auto-wrap.");

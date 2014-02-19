@@ -4,6 +4,7 @@
 package org.openntf.domino.ext;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.openntf.domino.ColorObject;
 import org.openntf.domino.Database;
@@ -21,7 +22,7 @@ import com.ibm.icu.util.Calendar;
  */
 public interface Session {
 	public static enum Fixes {
-		MIME_CONVERT, REPLACE_ITEM_NULL, REMOVE_ITEM, APPEND_ITEM_VALUE, VIEW_UPDATE_OFF
+		MIME_CONVERT, REPLACE_ITEM_NULL, CREATE_DB, REMOVE_ITEM, APPEND_ITEM_VALUE, VIEW_UPDATE_OFF, FORCE_JAVA_DATES
 	}
 
 	public IDominoEventFactory getEventFactory();
@@ -134,4 +135,19 @@ public interface Session {
 
 	public void boogie();
 
+	public String getUnique();
+
+	public org.openntf.domino.Database getDatabaseByReplicaID(String server, String replicaid);
+
+	public org.openntf.domino.Database getDatabaseWithFailover(String server, String dbfile);
+
+	public org.openntf.domino.Database getDatabaseIfModified(String server, String dbfile, lotus.domino.DateTime modifiedsince);
+
+	public org.openntf.domino.Database getDatabaseIfModified(String server, String dbfile, Date modifiedsince);
+
+	public org.openntf.domino.Database getMailDatabase();
+
+	public org.openntf.domino.Document getDocumentByMetaversalID(String metaversalID);
+
+	public org.openntf.domino.Document getDocumentByMetaversalID(String metaversalID, String serverName);
 }

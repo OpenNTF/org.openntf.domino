@@ -15,7 +15,12 @@
  */
 package org.openntf.domino.impl;
 
-import java.util.HashMap;
+import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -24,20 +29,43 @@ import java.util.logging.Logger;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
+import org.openntf.domino.WrapperFactory;
+import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.TypeUtils;
 
 // TODO: Auto-generated Javadoc
+
 /**
  * The Class ViewEntry.
  */
-public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.ViewEntry> implements org.openntf.domino.ViewEntry {
+public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.ViewEntry, View> implements org.openntf.domino.ViewEntry {
 	private static final Logger log_ = Logger.getLogger(ViewEntry.class.getName());
 
 	private Map<String, Object> columnValuesMap_;
+	private static Method getParentViewMethod;
+
+	static {
+		try {
+			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				@Override
+				public Object run() throws Exception {
+					getParentViewMethod = lotus.domino.local.ViewEntry.class.getDeclaredMethod("getParentView", (Class<?>[]) null);
+					getParentViewMethod.setAccessible(true);
+					return null;
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+			DominoUtils.handleException(e);
+		}
+
+	}
 
 	/**
 	 * Instantiates a new view entry.
@@ -47,8 +75,65 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public ViewEntry(final lotus.domino.ViewEntry delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, (View) parent);
+		try {
+			if (getAncestorSession().isFixEnabled(Fixes.FORCE_JAVA_DATES)) {
+				delegate.setPreferJavaDates(true);
+			}
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public ViewEntry(final lotus.domino.ViewEntry delegate, final View parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_VIEWENTRY);
+		try {
+			if (getAncestorSession().isFixEnabled(Fixes.FORCE_JAVA_DATES)) {
+				delegate.setPreferJavaDates(true);
+			}
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected View findParent(final lotus.domino.ViewEntry delegate) {
+		return fromLotus(getParentView(delegate), View.SCHEMA, null);
+	}
+
+	/**
+	 * Returns the session for a certain base object
+	 * 
+	 * @param base
+	 * @return
+	 */
+	protected static lotus.domino.View getParentView(final lotus.domino.ViewEntry base) {
+		if (base == null)
+			return null;
+		try {
+			return ((lotus.domino.View) getParentViewMethod.invoke(base, (Object[]) null));
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
 	}
 
 	/*
@@ -87,7 +172,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 * @see org.openntf.domino.ViewEntry#getColumnValues()
 	 */
 	@Override
-	public Vector<Object> getColumnValues() {
+	public java.util.Vector<Object> getColumnValues() {
 		try {
 			return Factory.wrapColumnValues(getDelegate().getColumnValues(), this.getAncestorSession());
 		} catch (NotesException e) {
@@ -122,7 +207,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	@Override
 	public Document getDocument() {
 		try {
-			return Factory.fromLotus(getDelegate().getDocument(), Document.class, this);
+			return fromLotus(getDelegate().getDocument(), Document.SCHEMA, getParentView().getParent());
 		} catch (NotesException e) {
 			if (e.id == 4432) {
 				return null;
@@ -199,7 +284,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 */
 	@Override
 	public org.openntf.domino.Base<?> getParent() {
-		return super.getParent();
+		return getAncestor();
 	}
 
 	/*
@@ -209,14 +294,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 */
 	@Override
 	public View getParentView() {
-		org.openntf.domino.Base<?> parent = getParent();
-		if (parent instanceof org.openntf.domino.ViewEntryCollection) {
-			return ((org.openntf.domino.ViewEntryCollection) parent).getParent();
-		} else if (parent instanceof org.openntf.domino.ViewNavigator) {
-			return ((org.openntf.domino.ViewNavigator) parent).getParentView();
-		} else {
-			return (org.openntf.domino.View) parent;
-		}
+		return getAncestor();
 	}
 
 	/*
@@ -425,15 +503,43 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 */
 	@Override
 	public Object getColumnValue(final String columnName) {
+		return getColumnValuesMap().get(columnName);
+	}
+
+	public <T> T getColumnValue(final String columnName, final Class<?> T) {
+		Object rawResult = getColumnValue(columnName);
+		if (rawResult instanceof Vector) {
+			return TypeUtils.vectorToClass((Vector) rawResult, T, this.getAncestorSession());
+		} else {
+			Vector v = new Vector();
+			v.add(rawResult);
+			return TypeUtils.vectorToClass(v, T, this.getAncestorSession());
+		}
+	}
+
+	public Map<String, Object> getColumnValuesMap() {
 		if (columnValuesMap_ == null) {
 			List<Object> columnValues = getColumnValues();
-			columnValuesMap_ = new HashMap<String, Object>();
+			columnValuesMap_ = new LinkedHashMap<String, Object>();
+			// TODO RPr: Review this
 			for (org.openntf.domino.impl.View.DominoColumnInfo info : ((org.openntf.domino.impl.View) getParentView()).getColumnInfo()) {
 				if (info.getColumnValuesIndex() < 65535) {
-					columnValuesMap_.put(info.getItemName(), columnValues.get(info.getColumnValuesIndex()));
+					int vindex = info.getColumnValuesIndex();
+					if (columnValues.size() > vindex) {
+						columnValuesMap_.put(info.getItemName(), columnValues.get(vindex));
+					} else {
+						columnValuesMap_.put(info.getItemName(), null);
+					}
+				} else {
+					columnValuesMap_.put(info.getItemName(), null);
 				}
 			}
 		}
-		return columnValuesMap_.get(columnName);
+		return columnValuesMap_;
+	}
+
+	public Collection<Object> getColumnValuesEx() {
+		//TODO - NTF not particularly happy with this. Should it be a List instead? Or should we rely on the caller to decide?
+		return Collections.unmodifiableCollection(getColumnValuesMap().values());
 	}
 }

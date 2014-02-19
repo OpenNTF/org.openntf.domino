@@ -14,6 +14,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Form;
 import org.openntf.domino.Name;
+import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.View;
@@ -29,9 +30,8 @@ public enum DominoAPIScratchTest {
 	}
 
 	private static final int THREAD_COUNT = 6;
-	private static final boolean INCLUDE_FORMS = false;
-	private static final int delay = 200;
-	// private static final String server = "CN=DevilDog/O=REDPILL";
+	private static final boolean INCLUDE_FORMS = true;
+	private static final int delay = 500;
 	private static final String server = "";
 	private static final String dbPath = "events4.nsf";
 
@@ -171,11 +171,18 @@ public enum DominoAPIScratchTest {
 			DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
 			//			System.out.println(df.format(new Date()) + " Name: " + sname.getCanonical());
 			Database db = s.getDatabase(server, dbPath);
-			/*
-			 * if (INCLUDE_FORMS) { iterateForms(db); } Set<Document> secondReference = new HashSet<Document>(); iterateAllDocuments(db,
-			 * secondReference); System.gc(); NoteCollection nc = db.createNoteCollection(false); nc.buildCollection();
-			 * iterateSecondReferences(secondReference); iterateThirdReferences();
-			 */
+
+			if (INCLUDE_FORMS) {
+				iterateForms(db);
+			}
+			Set<Document> secondReference = new HashSet<Document>();
+			iterateAllDocuments(db, secondReference);
+			//			System.gc();
+			NoteCollection nc = db.createNoteCollection(false);
+			nc.buildCollection();
+			iterateSecondReferences(secondReference);
+			iterateThirdReferences();
+
 			View view = db.getView("NameMessageEventMessages");
 			List<String> keys = new ArrayList<String>();
 			keys.add("Mail");
@@ -200,7 +207,7 @@ public enum DominoAPIScratchTest {
 			sb.append(nameCount + " names, ");
 			sb.append(docCount + " docs, and ");
 			sb.append(dateCount + " datetimes without recycling.");
-			//			System.out.println(sb.toString());
+			System.out.println(sb.toString());
 		}
 
 		/* (non-Javadoc)
@@ -226,21 +233,6 @@ public enum DominoAPIScratchTest {
 
 		de.shutdown();
 		de2.shutdown();
-
-		//		DominoThread[] threads = new DominoThread[THREAD_COUNT];
-		//		for (int i = 0; i < THREAD_COUNT; i++) {
-		//			threads[i] = new DominoThread(new Doer(), "Scratch Test" + i);
-		//		}
-		//
-		//		for (DominoThread thread : threads) {
-		//			thread.start();
-		//			try {
-		//				Thread.sleep(delay);
-		//			} catch (InterruptedException e1) {
-		//				DominoUtils.handleException(e1);
-		//
-		//			}
-		//		}
-
+		System.out.println("Main complete");
 	}
 }

@@ -18,6 +18,7 @@ package org.openntf.domino.utils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Externalizable;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -44,10 +45,6 @@ import org.openntf.domino.utils.DominoUtils.LoaderObjectInputStream;
 /**
  * Utility enum as a carrier for Document-centric static properties and methods.
  * 
- * @author Devin S. Olson (dolson@czarnowski.com)
- * 
- * @updated 02/2014
- * 
  */
 public enum Documents {
 	;
@@ -67,7 +64,7 @@ public enum Documents {
 	private final static Logger log_ = Logger.getLogger("org.openntf.domino");
 
 	/** The Constant logBackup_. */
-	private final static Logger logBackup_ = Logger.getLogger("com.ibm.xsp.domino");
+	//	private final static Logger logBackup_ = Logger.getLogger("com.ibm.xsp.domino");
 
 	/*
 	 * **************************************************************************
@@ -85,68 +82,72 @@ public enum Documents {
 	 *            the doc
 	 * @param itemName
 	 *            the item name
+	 * @param entity
+	 *            the MIMEentity to use
+	 * 
 	 * @return the serializable
 	 * @throws Throwable
 	 *             the throwable
 	 */
 	@SuppressWarnings("unchecked")
-	public static Object restoreState(final org.openntf.domino.Document doc, final String itemName) throws Throwable {
-		Session session = Factory.getSession((Base<?>) doc);
-		boolean convertMime = session.isConvertMime();
-		session.setConvertMime(false);
-
+	public static Object restoreState(final Document doc, final String itemName, final MIMEEntity entity) throws Exception {
+		Session session = doc.getAncestorSession();
 		Object result = null;
 		Stream mimeStream = session.createStream();
-		MIMEEntity entity = doc.getMIMEEntity(itemName);
-		if (entity == null) {
-			return null;
-		}
 		Class<?> chkClass = null;
-		String className = entity.getNthHeader("X-Java-Class").getHeaderVal();
-		chkClass = DominoUtils.getClass(className);
-		//		ClassLoader cl = Factory.getClassLoader();
-		//		try {
-		//			chkClass = (Class<?>) Class.forName(className, true, cl);
-		//		} catch (Throwable t) {
-		//			log_.log(Level.SEVERE, "Unable to load class " + className + " from a ClassLoader of " + cl.getClass().getName()
-		//					+ " so object deserialization is likely to fail...");
-		//		}
-		if (chkClass == null) {
-			log_.log(Level.SEVERE, "Unable to load class " + className + " from currentThread classLoader"
-					+ " so object deserialization is likely to fail...");
+		String allHeaders = entity.getHeaders();
+		MIMEHeader header = entity.getNthHeader("X-Java-Class");
+		if (header != null) {
+			String className = header.getHeaderVal();
+			chkClass = DominoUtils.getClass(className);
+			if (chkClass == null) {
+				log_.log(Level.SEVERE, "Unable to load class " + className + " from currentThread classLoader"
+						+ " so object deserialization is likely to fail...");
+			}
 		}
 
 		entity.getContentAsBytes(mimeStream);
 
-		ByteArrayOutputStream streamOut = new ByteArrayOutputStream();
-		mimeStream.getContents(streamOut);
+		mimeStream.setPosition(0);
+		//		ByteArrayOutputStream streamOut = new ByteArrayOutputStream();
+		//		mimeStream.getContents(streamOut);
 		// mimeStream.recycle();
 
-		byte[] stateBytes = streamOut.toByteArray();
-		ByteArrayInputStream byteStream = new ByteArrayInputStream(stateBytes);
+		//		byte[] stateBytes = streamOut.toByteArray();
+		//		ByteArrayInputStream byteStream = new ByteArrayInputStream(stateBytes);
+		InputStream is = new Streams.MIMEBufferedInputStream(mimeStream);
 		ObjectInputStream objectStream;
-		if (entity.getHeaders().toLowerCase().contains("content-encoding: gzip")) {
-			GZIPInputStream zipStream = new GZIPInputStream(byteStream);
+
+		if (allHeaders == null) {
+			System.out.println("No headers available. Testing gzip by experimentation...");
+			try {
+				GZIPInputStream zipStream = new GZIPInputStream(is);
+				objectStream = new LoaderObjectInputStream(zipStream);
+			} catch (Exception ioe) {
+				objectStream = new LoaderObjectInputStream(is);
+			}
+		} else if (allHeaders.toLowerCase().contains("content-encoding: gzip")) {
+			//			GZIPInputStream zipStream = new GZIPInputStream(byteStream);
+			GZIPInputStream zipStream = new GZIPInputStream(is);
 			objectStream = new LoaderObjectInputStream(zipStream);
 		} else {
-			objectStream = new LoaderObjectInputStream(byteStream);
+			objectStream = new LoaderObjectInputStream(is);
 		}
 
 		// There are three potential storage forms: Externalizable, Serializable, and StateHolder, distinguished by type or header
-		if (entity.getContentSubType().equals("x-java-externalized-object")) {
+		if ("x-java-externalized-object".equals(entity.getContentSubType())) {
 			Class<Externalizable> externalizableClass = (Class<Externalizable>) DominoUtils.getClass(entity.getNthHeader("X-Java-Class")
 					.getHeaderVal());
 			Externalizable restored = externalizableClass.newInstance();
 			restored.readExternal(objectStream);
 			result = restored;
 		} else {
-
-			Object restored = (Serializable) objectStream.readObject();
+			Object restored = objectStream.readObject();
 
 			// But wait! It might be a StateHolder object or Collection!
 			MIMEHeader storageScheme = entity.getNthHeader("X-Storage-Scheme");
 			MIMEHeader originalJavaClass = entity.getNthHeader("X-Original-Java-Class");
-			if (storageScheme != null && storageScheme.getHeaderVal().equals("StateHolder")) {
+			if (storageScheme != null && "StateHolder".equals(storageScheme.getHeaderVal())) {
 				Class<?> facesContextClass = DominoUtils.getClass("javax.faces.context.FacesContext");
 				Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
 
@@ -154,7 +155,7 @@ public enum Documents {
 				Method restoreStateMethod = stateHoldingClass.getMethod("restoreState", facesContextClass, Object.class);
 				result = stateHoldingClass.newInstance();
 				restoreStateMethod.invoke(result, getCurrentInstance.invoke(null), restored);
-			} else if (originalJavaClass != null && originalJavaClass.getHeaderVal().equals("org.openntf.domino.DocumentCollection")) {
+			} else if (originalJavaClass != null && "org.openntf.domino.DocumentCollection".equals(originalJavaClass.getHeaderVal())) {
 				// Maybe this can be sped up by not actually getting the documents
 				try {
 					String[] unids = (String[]) restored;
@@ -167,7 +168,7 @@ public enum Documents {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			} else if (originalJavaClass != null && originalJavaClass.getHeaderVal().equals("org.openntf.domino.NoteCollection")) {
+			} else if (originalJavaClass != null && "org.openntf.domino.NoteCollection".equals(originalJavaClass.getHeaderVal())) {
 				String[] unids = (String[]) restored;
 				Database db = doc.getParentDatabase();
 				NoteCollection noteCollection = db.createNoteCollection(false);
@@ -181,7 +182,37 @@ public enum Documents {
 		}
 
 		// entity.recycle();
+		if (!doc.closeMIMEEntities(false, itemName)) {
+			log_.log(Level.WARNING, "closeMIMEEntities returned false for item " + itemName + " on doc " + doc.getNoteID() + " in db "
+					+ doc.getAncestorDatabase().getApiPath());
+		}
 
+		return result;
+	}
+
+	/**
+	 * Restore state.
+	 * 
+	 * @param doc
+	 *            the doc
+	 * @param itemName
+	 *            the item name
+	 * @return the serializable
+	 * @throws Throwable
+	 *             the throwable
+	 */
+	@SuppressWarnings({ "cast" })
+	public static Object restoreState(final Document doc, final String itemName) throws Exception {
+		Session session = Factory.getSession((Base<?>) doc);
+		boolean convertMime = session.isConvertMime();
+		session.setConvertMime(false);
+
+		Object result = null;
+		MIMEEntity entity = doc.getMIMEEntity(itemName);
+		if (entity == null) {
+			return null;
+		}
+		result = restoreState(doc, itemName, entity);
 		session.setConvertMime(convertMime);
 
 		return result;
@@ -199,8 +230,8 @@ public enum Documents {
 	 * @throws Throwable
 	 *             the throwable
 	 */
-	public static void saveState(final Serializable object, final Document doc, final String itemName) throws Throwable {
-		saveState(object, doc, itemName, true, null);
+	public static void saveState(final Serializable object, final Document doc, final String itemName) throws Exception {
+		Documents.saveState(object, doc, itemName, true, null);
 	}
 
 	// private static Map<String, Integer> diagCount = new HashMap<String, Integer>();
@@ -222,12 +253,12 @@ public enum Documents {
 	 *             the throwable
 	 */
 	public static void saveState(final Serializable object, final Document doc, final String itemName, final boolean compress,
-			final Map<String, String> headers) throws Throwable {
+			final Map<String, String> headers) throws Exception {
 		if (object == null) {
-			System.out.println("Ignoring attempt to save MIMEBean value of null");
+			log_.log(Level.INFO, "Ignoring attempt to save MIMEBean value of null");
 			return;
 		}
-		Session session = Factory.getSession((Base<?>) doc);
+		Session session = doc.getAncestorSession();
 		boolean convertMime = session.isConvertMime();
 		session.setConvertMime(false);
 
@@ -266,12 +297,8 @@ public enum Documents {
 		} else {
 			entity = previousState;
 		}
-		byte[] bytes = byteStream.toByteArray();
-		ByteArrayInputStream byteIn = new ByteArrayInputStream(bytes);
-
-		mimeStream.setContents(byteIn);
-		entity.setContentFromBytes(mimeStream, contentType, MIMEEntity.ENC_NONE);
 		MIMEHeader javaClass = entity.getNthHeader("X-Java-Class");
+		MIMEHeader contentEncoding = entity.getNthHeader("Content-Encoding");
 		if (javaClass == null) {
 			javaClass = entity.createHeader("X-Java-Class");
 		} else {
@@ -287,7 +314,7 @@ public enum Documents {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
-		MIMEHeader contentEncoding = entity.getNthHeader("Content-Encoding");
+
 		if (compress) {
 			if (contentEncoding == null) {
 				contentEncoding = entity.createHeader("Content-Encoding");
@@ -315,11 +342,20 @@ public enum Documents {
 				// paramHeader.recycle();
 			}
 		}
+		byte[] bytes = byteStream.toByteArray();
+		ByteArrayInputStream byteIn = new ByteArrayInputStream(bytes);
+
+		mimeStream.setContents(byteIn);
+		entity.setContentFromBytes(mimeStream, contentType, MIMEEntity.ENC_NONE);
 
 		// entity.recycle();
 		// mimeStream.recycle();
-		entity = null;
-		previousState = null;
+		//		entity = null;	//NTF - why set to null? We're properly closing the entities now.
+		//		previousState = null;	// why set to null?
+		if (!doc.closeMIMEEntities(true, itemName)) {
+			log_.log(Level.WARNING, "closeMIMEEntities returned false for item " + itemName + " on doc " + doc.getNoteID() + " in db "
+					+ doc.getAncestorDatabase().getApiPath());
+		}
 		session.setConvertMime(convertMime);
 	}
 
@@ -347,9 +383,52 @@ public enum Documents {
 			Session session = document.getAncestorSession();
 			boolean convertMime = session.isConvertMIME();
 			session.setConvertMIME(false);
-			Object result = null;
 
 			MIMEEntity entity = document.getMIMEEntity(itemname);
+			Object result = (null == entity) ? null : Documents.getItemValueMIME(document, itemname, entity);
+
+			session.setConvertMIME(convertMime);
+			return result;
+
+		} catch (Throwable t) {
+			DominoUtils.handleException(new MIMEConversionException("Unable to getItemValueMIME for item name " + itemname
+					+ " on document " + noteID, t));
+		}
+
+		return null;
+	}
+
+	/**
+	 * Gets the MIME Item value
+	 * 
+	 * @param document
+	 *            Document from which to get the MIME Value
+	 * @param itemname
+	 *            Name of the item containing the MIME entity
+	 * @param entity
+	 *            MIMEEntity from which to retrive the MIME value.
+	 * 
+	 * @return Value of the MIME item, if it exists. Null otherwise.
+	 */
+	public static Object getItemValueMIME(final Document document, final String itemname, final MIMEEntity entity) {
+		String noteID = null;
+		try {
+			if (null == document) {
+				throw new IllegalArgumentException("Document is null");
+			}
+			if (Strings.isBlankString(itemname)) {
+				throw new IllegalArgumentException("Itemname is blank or null");
+			}
+			if (null == entity) {
+				return Documents.getItemValueMIME(document, itemname);
+			}
+
+			noteID = document.getNoteID();
+			Session session = document.getAncestorSession();
+			boolean convertMime = session.isConvertMIME();
+			session.setConvertMIME(false);
+			Object result = null;
+
 			MIMEHeader contentType = entity.getNthHeader("Content-Type");
 			String headerval = (null == contentType) ? "" : contentType.getHeaderVal();
 			if ("application/x-java-serialized-object".equals(headerval) || "application/x-java-externalized-object".equals(headerval)) {

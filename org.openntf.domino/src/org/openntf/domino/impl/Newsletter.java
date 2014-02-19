@@ -17,6 +17,9 @@ package org.openntf.domino.impl;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Document;
+import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -24,7 +27,8 @@ import org.openntf.domino.utils.Factory;
 /**
  * The Class Newsletter.
  */
-public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino.Newsletter> implements org.openntf.domino.Newsletter {
+public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino.Newsletter, Session> implements
+		org.openntf.domino.Newsletter {
 
 	/**
 	 * Instantiates a new newsletter.
@@ -34,8 +38,33 @@ public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public Newsletter(final lotus.domino.Newsletter delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, Factory.getSession(parent));
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public Newsletter(final lotus.domino.Newsletter delegate, final Session parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_SESSION);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Session findParent(final lotus.domino.Newsletter delegate) throws NotesException {
+		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
 	}
 
 	/*
@@ -46,7 +75,7 @@ public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino
 	@Override
 	public Document formatDocument(final lotus.domino.Database db, final int index) {
 		try {
-			return Factory.fromLotus(getDelegate().formatDocument((lotus.domino.Database) toLotus(db), index), Document.class, this);
+			return fromLotus(getDelegate().formatDocument(toLotus(db), index), Document.SCHEMA, null);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -61,7 +90,7 @@ public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino
 	@Override
 	public Document formatMsgWithDoclinks(final lotus.domino.Database db) {
 		try {
-			return Factory.fromLotus(getDelegate().formatMsgWithDoclinks((lotus.domino.Database) toLotus(db)), Document.class, this);
+			return fromLotus(getDelegate().formatMsgWithDoclinks(toLotus(db)), Document.SCHEMA, null);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -75,7 +104,7 @@ public class Newsletter extends Base<org.openntf.domino.Newsletter, lotus.domino
 	 */
 	@Override
 	public Session getParent() {
-		return (Session) super.getParent();
+		return getAncestor();
 	}
 
 	/*

@@ -28,6 +28,7 @@ import org.openntf.domino.utils.xml.XMLNode;
  * 
  */
 public abstract class AbstractFolder extends AbstractDesignBaseNamed implements Folder {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractFolder.class.getName());
 
 	/**
@@ -77,5 +78,10 @@ public abstract class AbstractFolder extends AbstractDesignBaseNamed implements 
 		node.setAttribute("showaslinks", "false");
 
 		return new DesignColumn(node);
+	}
+
+	public org.openntf.domino.View getView() {
+		// TODO is this safe enough in the event of multiple folders/views with the same name?
+		return getAncestorDatabase().getView(getName());
 	}
 }

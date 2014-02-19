@@ -2,14 +2,17 @@
  * 
  */
 package org.openntf.domino.schema.types;
+
 import java.util.logging.Logger;
 
 import org.openntf.domino.Item;
+import org.openntf.domino.schema.exceptions.ItemException;
+
 /**
  * @author nfreeman
- *
+ * 
  */
-public class NameType extends AbstractDominoType {
+public class NameType extends StringType {
 	private static final Logger log_ = Logger.getLogger(NameType.class.getName());
 	private static final long serialVersionUID = 1L;
 
@@ -25,16 +28,26 @@ public class NameType extends AbstractDominoType {
 	 */
 	@Override
 	public String getUITypeName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Name";
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.schema.types.IDominoType#setItemToDefault(org.openntf.domino.Item)
 	 */
 	@Override
-	public void setItemToDefault(Item item) {
-		// TODO Auto-generated method stub
+	public void setItemToDefault(final Item item) {
+		item.setValueString("");
+	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.schema.types.AbstractDominoType#validateValue(java.lang.Object)
+	 */
+	@Override
+	public boolean validateValue(final Object value) throws ItemException {
+		if (super.validateValue(value)) {
+			//TODO further validation
+			return true;
+		}
+		return false;
 	}
 }

@@ -60,7 +60,6 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.RichTextItem;
 import org.openntf.domino.Session;
-import org.openntf.domino.impl.Base;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -142,12 +141,12 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	protected String _message;
 	protected Throwable _baseException;
 	protected String _errDocUnid;
-	protected Session _session;
-	protected Database _logDb;
-	protected Database _currentDatabase;
-	protected Date _startTime;
-	protected Date _eventTime;
-	protected Document _errDoc;
+	protected transient Session _session;
+	protected transient Database _logDb;
+	protected transient Database _currentDatabase;
+	protected transient Date _startTime;
+	protected transient Date _eventTime;
+	protected transient Document _errDoc;
 	private String _currentDbPath;
 	public transient String olDebugLevel = loadFromProps("org.openntf.domino.logging.OpenLogHandler.OpenLogErrorsLevel");
 	public static PrintStream debugOut = System.err;
@@ -252,11 +251,13 @@ public class BaseOpenLogItem implements IOpenLogItem {
 			} catch (Exception e) {
 				debugPrint(e);
 			}
-		} else {
-			if (Base.isLocked(_logDb)) {
-				_logDb = Factory.getSession().getDatabase(getThisServer(), getLogDbName(), false);
-			}
 		}
+		// RPr: Locking is no longer supported
+		//		} else {
+		//			if (Base.isLocked(_logDb)) {
+		//				_logDb = Factory.getSession().getDatabase(getThisServer(), getLogDbName(), false);
+		//			}
+		//		}
 		return _logDb;
 	}
 
@@ -327,7 +328,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	 */
 	public Vector<Object> getUserRoles() {
 		if (_userRoles == null) {
-			setUserRoles(Factory.wrappedEvaluate(Factory.getSession(), "@UserRoles"));
+			setUserRoles(Factory.getSession().evaluate("@UserRoles"));
 		}
 		return _userRoles;
 	}
@@ -457,7 +458,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	public String getMessage() {
 		if (_message.length() > 0)
 			return _message;
-		return getBase().getMessage();
+		return getBase() == null ? "" : getBase().getMessage();
 	}
 
 	/* (non-Javadoc)
@@ -527,15 +528,16 @@ public class BaseOpenLogItem implements IOpenLogItem {
 					return "";
 				}
 			}
-		}
-		try {
-			setBase(ee);
 
 			if (ee.getMessage() != null) {
 				setMessage(ee.getMessage());
 			} else {
 				setMessage(ee.getClass().getCanonicalName());
 			}
+		}
+		try {
+			setBase(ee);
+
 			setSeverity(Level.WARNING);
 			setEventType(LogType.TYPE_ERROR);
 
@@ -599,7 +601,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 			setEventType(LogType.TYPE_EVENT);
 			setErrDoc(doc);
 			if (ee == null) { // Added PW - LogEvent will not pass a throwable
-				setBase(new Throwable("")); // Added PW
+				setBase(null); // Added PW  Changed NTF
 			} else { // Added PW
 				setBase(ee); // Added PW
 			} // Added PW
@@ -689,17 +691,20 @@ public class BaseOpenLogItem implements IOpenLogItem {
 			logDoc.appendItemValue("Form", _logFormName);
 
 			Throwable ee = getBase();
-			StackTraceElement ste = ee.getStackTrace()[0];
-			if (ee instanceof NotesException) {
-				logDoc.replaceItemValue("LogErrorNumber", ((NotesException) ee).id);
-				logDoc.replaceItemValue("LogErrorMessage", ((NotesException) ee).text);
-			} else {
-				// Fixed next line
-				logDoc.replaceItemValue("LogErrorMessage", getMessage());
+			if (ee != null) {
+				StackTraceElement ste = ee.getStackTrace()[0];
+				if (ee instanceof NotesException) {
+					logDoc.replaceItemValue("LogErrorNumber", ((NotesException) ee).id);
+					logDoc.replaceItemValue("LogErrorMessage", ((NotesException) ee).text);
+				} else {
+					// Fixed next line
+					logDoc.replaceItemValue("LogErrorMessage", getMessage());
+				}
+				logDoc.replaceItemValue("LogErrorLine", ste.getLineNumber());
+				logDoc.replaceItemValue("LogFromMethod", ste.getClassName() + "." + ste.getMethodName());
 			}
 
 			logDoc.replaceItemValue("LogStackTrace", getStackTrace(ee));
-			logDoc.replaceItemValue("LogErrorLine", ste.getLineNumber());
 			logDoc.replaceItemValue("LogSeverity", getSeverity().getName());
 			logDoc.replaceItemValue("LogEventTime", getEventTime());
 			logDoc.replaceItemValue("LogEventType", getEventType());
@@ -708,7 +713,6 @@ public class BaseOpenLogItem implements IOpenLogItem {
 			logDoc.replaceItemValue("LogFromServer", getThisServer());
 			logDoc.replaceItemValue("LogFromAgent", getThisAgent());
 			// Fixed next line
-			logDoc.replaceItemValue("LogFromMethod", ste.getClassName() + "." + ste.getMethodName());
 			logDoc.replaceItemValue("LogAgentLanguage", "Java");
 			logDoc.replaceItemValue("LogUserName", Factory.getSession().getUserName());
 			logDoc.replaceItemValue("LogEffectiveName", Factory.getSession().getEffectiveUserName());

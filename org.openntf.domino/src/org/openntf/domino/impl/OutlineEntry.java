@@ -17,15 +17,19 @@ package org.openntf.domino.impl;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.Database;
+import org.openntf.domino.Document;
+import org.openntf.domino.Outline;
 import org.openntf.domino.Session;
+import org.openntf.domino.View;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class OutlineEntry.
  */
-public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.domino.OutlineEntry> implements
+public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.domino.OutlineEntry, Outline> implements
 		org.openntf.domino.OutlineEntry {
 
 	/**
@@ -36,8 +40,34 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public OutlineEntry(final lotus.domino.OutlineEntry delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, null);
+	}
+
+	/**
+	 * Instantiates a new outlineentry.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public OutlineEntry(final lotus.domino.OutlineEntry delegate, final Outline parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_OUTLINEENTRY);
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Outline findParent(final lotus.domino.OutlineEntry delegate) throws NotesException {
+		return fromLotus(delegate.getParent(), Outline.SCHEMA, null);
 	}
 
 	/*
@@ -63,7 +93,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	@Override
 	public Database getDatabase() {
 		try {
-			return Factory.fromLotus(getDelegate().getDatabase(), Database.class, this);
+			return fromLotus(getDelegate().getDatabase(), Database.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -78,7 +108,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	@Override
 	public Document getDocument() {
 		try {
-			return Factory.fromLotus(getDelegate().getDocument(), Document.class, this);
+			return fromLotus(getDelegate().getDocument(), Document.SCHEMA, getParent().getParentDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -235,7 +265,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	 */
 	@Override
 	public Outline getParent() {
-		return (Outline) super.getParent();
+		return getAncestor();
 	}
 
 	/*
@@ -299,7 +329,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	@Override
 	public View getView() {
 		try {
-			return Factory.fromLotus(getDelegate().getView(), View.class, this);
+			return fromLotus(getDelegate().getView(), View.SCHEMA, getAncestorDatabase());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -545,7 +575,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	@Override
 	public boolean setNamedElement(final lotus.domino.Database db, final String elementName, final int entryClass) {
 		try {
-			return getDelegate().setNamedElement((lotus.domino.Database) toLotus(db), elementName, entryClass);
+			return getDelegate().setNamedElement(toLotus(db), elementName, entryClass);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -560,7 +590,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	@Override
 	public boolean setNoteLink(final lotus.domino.Database db) {
 		try {
-			return getDelegate().setNoteLink((lotus.domino.Database) toLotus(db));
+			return getDelegate().setNoteLink(toLotus(db));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -575,7 +605,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	@Override
 	public boolean setNoteLink(final lotus.domino.Document doc) {
 		try {
-			return getDelegate().setNoteLink((lotus.domino.Document) toLotus(doc));
+			return getDelegate().setNoteLink(toLotus(doc));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
@@ -590,7 +620,7 @@ public class OutlineEntry extends Base<org.openntf.domino.OutlineEntry, lotus.do
 	@Override
 	public boolean setNoteLink(final lotus.domino.View view) {
 		try {
-			return getDelegate().setNoteLink((lotus.domino.View) toLotus(view));
+			return getDelegate().setNoteLink(toLotus(view));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
