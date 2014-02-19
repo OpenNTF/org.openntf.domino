@@ -66,6 +66,15 @@ public enum Documents {
 	/** The Constant logBackup_. */
 	//	private final static Logger logBackup_ = Logger.getLogger("com.ibm.xsp.domino");
 
+	public static enum Flags {
+		HasAttachments, HasEmbedded, IsDeleted, IsEncrypted, IsEncryptOnSend, IsNewNote, IsProfile, IsResponse, IsSaveMessageOnSend, IsSentByAgent, IsSignOnSend, IsValid;
+
+		@Override
+		public String toString() {
+			return this.getDeclaringClass() + "." + this.getClass() + ":" + this.name();
+		}
+	};
+
 	/*
 	 * **************************************************************************
 	 * **************************************************************************
