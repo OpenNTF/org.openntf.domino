@@ -426,10 +426,12 @@ public class IndexDatabase implements IScannerStateManager {
 			final Set<CaseInsensitiveString> itemNames, final Set<String> forms) {
 		List<IndexHit> results = new ArrayList<IndexHit>();
 		Document doc = getTermDocument(term);
+		int dbCount = 0;
 		if (dbids == null || dbids.isEmpty()) {
 			for (Item item : doc.getItems()) {
 				String itemName = item.getName();
 				if (itemName.startsWith(TERM_MAP_PREFIX)) {
+					dbCount++;
 					String dbid = itemName.substring(TERM_MAP_PREFIX.length());
 					Map termMap = doc.getItemValue(itemName, Map.class);
 					results.addAll(getTermResultsForItemsForms(termMap, itemNames, forms, term, dbid));
@@ -442,6 +444,7 @@ public class IndexDatabase implements IScannerStateManager {
 			for (String dbid : dbids) {
 				String itemName = TERM_MAP_PREFIX + dbid;
 				if (doc.hasItem(itemName)) {
+					dbCount++;
 					Map termMap = doc.getItemValue(itemName, Map.class);
 					results.addAll(getTermResultsForItemsForms(termMap, itemNames, forms, term, dbid));
 					if (limit != 0 && results.size() >= limit) {
@@ -449,6 +452,10 @@ public class IndexDatabase implements IScannerStateManager {
 					}
 				}
 			}
+		}
+		if (dbCount < 1) {
+			System.out.println("No databases found that contain term " + term + " in document " + doc.getNoteID() + ": "
+					+ doc.getAncestorDatabase().getApiPath());
 		}
 		return results;
 	}
@@ -730,11 +737,6 @@ public class IndexDatabase implements IScannerStateManager {
 	public CaseInsensitiveString lastToken_ = null;
 
 	public Map<CaseInsensitiveString, Set<String>> restoreTokenLocationMap(final CaseInsensitiveString token, final Object mapKey) {
-		//		if (token.equals(lastToken_)) {
-		//			System.out.println("Restoring same token that we last processed: " + token.getString());
-		//		} else {
-		//			lastToken_ = token;
-		//		}
 		Map result = null;
 		Document doc = getTermDocument(token.getFolded());
 		String itemName = TERM_MAP_PREFIX + String.valueOf(mapKey);
@@ -749,23 +751,31 @@ public class IndexDatabase implements IScannerStateManager {
 
 	public void saveTokenLocationMap(final CaseInsensitiveString token, final Object mapKey,
 			final Map<CaseInsensitiveString, Set<String>> map) {
-		//		if (token.equals(lastToken_)) {
-		//			System.out.println("Restoring same token that we last processed: " + token.getString());
-		//		} else {
-		//			lastToken_ = token;
-		//		}
+
 		String term = token.toString();
 		Document termDoc = getTermDocument(term);
 		termDoc.replaceItemValue(TERM_MAP_PREFIX + String.valueOf(mapKey), map);
 		termDoc.save();
 	}
 
+	public void setLastIndexDate(final Object mapKey, final Date date) {
+		Document dbDoc = getDbDocument((String) mapKey);
+		dbDoc.replaceItemValue(DB_LAST_INDEX_NAME, date);
+		dbDoc.save();
+	}
+
+	public Date getLastIndexDate(final Object mapKey) {
+		Document dbDoc = getDbDocument((String) mapKey);
+		return dbDoc.getItemValue(DB_LAST_INDEX_NAME, java.util.Date.class);
+	}
+
 	public void saveTokenLocationMap(final Object mapKey,
 			final Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> fullMap, final DocumentScanner scanner) {
 		//		System.out.println("Saving TokenLocationMap of size " + fullMap.size() + " with key of " + mapKey + " and updating time to "
 		//				+ lastTimestamp.getTime() + " after processing " + curDocCount_ + " docs out of " + sortedDocCount_);
+		setLastIndexDate(mapKey, scanner.getLastDocModDate());
+
 		Document dbDoc = getDbDocument((String) mapKey);
-		dbDoc.replaceItemValue(DB_LAST_INDEX_NAME, scanner.getLastDocModDate());
 		if (scanner.getCollection() != null) {
 			dbDoc.replaceItemValue(IndexDatabase.DB_DOC_LIST_NAME, scanner.getCollection());
 		} else {

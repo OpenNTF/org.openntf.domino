@@ -63,7 +63,14 @@ public class DominoReference extends WeakReference<Object> {
 	}
 
 	void clearLotusReference() {
+		int total = Factory.countAutoRecycle(delegate_.getClass());
 		delegate_ = null;
+
+		if (log_.isLoggable(Level.FINE)) {
+			if (total % 5000 == 0) {
+				log_.log(Level.FINE, "Auto-recycled " + total + " references");
+			}
+		}
 	}
 
 	/**
