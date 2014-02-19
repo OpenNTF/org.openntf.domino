@@ -53,6 +53,7 @@ import org.openntf.domino.helpers.Formula;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.types.BigString;
 import org.openntf.domino.types.Null;
+import org.openntf.domino.utils.Documents;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.TypeUtils;
@@ -915,7 +916,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		//		}
 		//		return resultObj;
 
-		return DominoUtils.getItemValueMIME(this, name);
+		return Documents.getItemValueMIME(this, name);
 	}
 
 	/*
@@ -2086,7 +2087,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				// }
 				// Then try serialization
 				if (value instanceof Serializable) {
-					DominoUtils.saveState((Serializable) value, this, itemName);
+					Documents.saveState((Serializable) value, this, itemName);
 
 					result = getDelegate().getFirstItem(itemName);
 					// result = null;
@@ -2100,7 +2101,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					}
 					Map<String, String> headers = new HashMap<String, String>(1);
 					headers.put("X-Original-Java-Class", "org.openntf.domino.DocumentCollection");
-					DominoUtils.saveState(unids, this, itemName, true, headers);
+					Documents.saveState(unids, this, itemName, true, headers);
+
 					// result = null;
 					result = getDelegate().getFirstItem(itemName);
 				} else if (value instanceof NoteCollection) {
@@ -2115,7 +2117,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					}
 					Map<String, String> headers = new HashMap<String, String>(1);
 					headers.put("X-Original-Java-Class", "org.openntf.domino.NoteCollection");
-					DominoUtils.saveState(unids, this, itemName, true, headers);
+					Documents.saveState(unids, this, itemName, true, headers);
+
 					// result = null;
 					result = getDelegate().getFirstItem(itemName);
 				} else {
@@ -2130,7 +2133,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 							Map<String, String> headers = new HashMap<String, String>();
 							headers.put("X-Storage-Scheme", "StateHolder");
 							headers.put("X-Original-Java-Class", value.getClass().getName());
-							DominoUtils.saveState(state, this, itemName, true, headers);
+							Documents.saveState(state, this, itemName, true, headers);
+
 							result = null;
 							// result = getDelegate().getFirstItem(itemName);
 						} else {
@@ -2175,7 +2179,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				boolean convertMime = this.getAncestorSession().isConvertMime();
 				this.getAncestorSession().setConvertMime(false);
 				try {
-					DominoUtils.saveState((Serializable) getItemInfo(), this, "$$ItemInfo", false, null);
+					Documents.saveState((Serializable) getItemInfo(), this, "$$ItemInfo", false, null);
 				} catch (Throwable e) {
 					DominoUtils.handleException(e);
 				}
@@ -2193,7 +2197,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				if (this.getFirstItem("$$ItemInfo").getType() == Item.MIME_PART) {
 					// Then use the existing value
 					try {
-						itemInfo_ = (Map<String, Map<String, Serializable>>) DominoUtils.restoreState(this, "$$ItemInfo");
+						itemInfo_ = (Map<String, Map<String, Serializable>>) Documents.restoreState(this, "$$ItemInfo");
 					} catch (Throwable t) {
 						DominoUtils.handleException(t);
 					}
