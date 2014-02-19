@@ -136,8 +136,8 @@ public class DatabaseTransaction {
 		//		synchronized (rq) {
 		/*DatabaseDescendant*/next = rq.poll();
 		while (next != null) {
-			if (next instanceof org.openntf.domino.impl.Document) {
-				org.openntf.domino.impl.Document doc = (org.openntf.domino.impl.Document) next;
+			if (next instanceof org.openntf.domino.Document) {
+				org.openntf.domino.Document doc = (org.openntf.domino.Document) next;
 				if (isDocLock(doc))
 					doc.unlock();
 				doc.forceDelegateRemove();
@@ -158,8 +158,8 @@ public class DatabaseTransaction {
 		//		synchronized (uq) {
 		DatabaseDescendant next = uq.poll();
 		while (next != null) {
-			if (next instanceof org.openntf.domino.impl.Document) {
-				org.openntf.domino.impl.Document doc = (org.openntf.domino.impl.Document) next;
+			if (next instanceof org.openntf.domino.Document) {
+				org.openntf.domino.Document doc = (org.openntf.domino.Document) next;
 				doc.rollback();
 				if (isDocLock(doc)) {
 					doc.unlock();
@@ -173,8 +173,8 @@ public class DatabaseTransaction {
 		//		synchronized (rq) {
 		/*DatabaseDescendant*/next = rq.poll();
 		while (next != null) {
-			if (next instanceof org.openntf.domino.impl.Document) {
-				org.openntf.domino.impl.Document doc = (org.openntf.domino.impl.Document) next;
+			if (next instanceof org.openntf.domino.Document) {
+				org.openntf.domino.Document doc = (org.openntf.domino.Document) next;
 				doc.rollback();
 				if (isDocLock(doc))
 					doc.unlock();
