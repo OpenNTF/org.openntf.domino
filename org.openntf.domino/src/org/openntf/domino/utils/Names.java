@@ -47,6 +47,16 @@ import org.openntf.domino.ViewEntry;
 public enum Names {
 	;
 
+	public static Pattern IS_HIERARCHICAL_MATCH = Pattern.compile("^((CN=)|(O=)|(OU=)|(C=))[^/]+", Pattern.CASE_INSENSITIVE);
+
+	public static Pattern CN_MATCH = Pattern.compile("^(CN=)[^/]+", Pattern.CASE_INSENSITIVE);
+
+	public static Pattern OU_MATCH = Pattern.compile("(OU=)[^/]+", Pattern.CASE_INSENSITIVE);
+
+	public static Pattern O_MATCH = Pattern.compile("(O=)[^/]+", Pattern.CASE_INSENSITIVE);
+
+	public static Pattern C_MATCH = Pattern.compile("(C=)[^/]+", Pattern.CASE_INSENSITIVE);
+
 	public static enum LookupType {
 		Person("P"), Group("G"), Unknown("U");
 
@@ -1001,7 +1011,7 @@ public enum Names {
 								Document document = vent.getDocument();
 
 								final TreeSet<String> ts = CollectionUtils.getTreeSetStrings(document
-										.getItemValue(DominoUtils.ITEMNAME_MEMBERS));
+										.getItemValue(Documents.ITEMNAME_MEMBERS));
 								if (null != ts) {
 									final HashMap<String, Names.LookupType> found = Names.expandNamesList(session, view, ts, result);
 									if ((null != found) && (found.size() > 0)) {
