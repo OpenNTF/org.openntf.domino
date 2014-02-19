@@ -44,7 +44,6 @@ import org.openntf.domino.EmbeddedObject;
 import org.openntf.domino.Form;
 import org.openntf.domino.Item;
 import org.openntf.domino.MIMEEntity;
-import org.openntf.domino.MIMEHeader;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.RichTextItem;
 import org.openntf.domino.Session;
@@ -55,7 +54,6 @@ import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
-import org.openntf.domino.exceptions.MIMEConversionException;
 import org.openntf.domino.ext.Database.Events;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.helpers.Formula;
@@ -63,6 +61,7 @@ import org.openntf.domino.napi.NapiDocument;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.types.BigString;
 import org.openntf.domino.types.Null;
+import org.openntf.domino.utils.Documents;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.TypeUtils;
@@ -958,38 +957,12 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 		}
 	}
 
-	private Object getItemValueMIME(final String name, final MIMEEntity entity) {
-		Object resultObj = null;
-		try {
-			MIMEHeader contentType = entity.getNthHeader("Content-Type");
-			if (contentType != null
-					&& ("application/x-java-serialized-object".equals(contentType.getHeaderVal()) || "application/x-java-externalized-object"
-							.equals(contentType.getHeaderVal()))) {
-				// Then it's a MIMEBean
-				resultObj = DominoUtils.restoreState(this, name, entity);
-			}
-		} catch (Throwable t) {
-			DominoUtils.handleException(new MIMEConversionException("Unable to getItemValueMIME for item name " + name + " on document "
-					+ getNoteID(), t));
-		}
-		return resultObj;
-	}
+	//	private Object getItemValueMIME(final String itemname, final MIMEEntity entity) {
+	//		return Documents.getItemValueMIME(this, itemname, entity);
+	//	}
 
-	private Object getItemValueMIME(final String name) {
-		Object resultObj = null;
-		try {
-			Session session = this.getAncestorSession();
-			boolean convertMime = session.isConvertMIME();
-			session.setConvertMIME(false);
-
-			MIMEEntity entity = this.getMIMEEntity(name);
-			resultObj = getItemValueMIME(name, entity);
-			session.setConvertMIME(convertMime);
-		} catch (Throwable t) {
-			DominoUtils.handleException(new MIMEConversionException("Unable to getItemValueMIME for item name " + name + " on document "
-					+ getNoteID(), t));
-		}
-		return resultObj;
+	private Object getItemValueMIME(final String itemname) {
+		return Documents.getItemValueMIME(this, itemname);
 	}
 
 	/*
@@ -1032,7 +1005,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 				//System.out.println("using NAPI");
 				List<String> lvals = getNapiDocument().getItemAsTextList(name);
 				//System.out.println("Got from NAPI" + lvals);
-				return new Vector(lvals);
+				return new Vector<Object>(lvals);
 			}
 
 			Vector<?> vals = null;
@@ -2084,7 +2057,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 		getAncestorSession().setConvertMime(false);
 		// Then try serialization
 		if (value instanceof Serializable) {
-			DominoUtils.saveState((Serializable) value, this, itemName);
+			Documents.saveState((Serializable) value, this, itemName);
 
 			result = getDelegate().getFirstItem(itemName);
 			// result = null;
@@ -2098,7 +2071,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 			}
 			Map<String, String> headers = new HashMap<String, String>(1);
 			headers.put("X-Original-Java-Class", "org.openntf.domino.DocumentCollection");
-			DominoUtils.saveState(unids, this, itemName, true, headers);
+			Documents.saveState(unids, this, itemName, true, headers);
 			// result = null;
 			result = getDelegate().getFirstItem(itemName);
 		} else if (value instanceof NoteCollection) {
@@ -2113,7 +2086,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 			}
 			Map<String, String> headers = new HashMap<String, String>(1);
 			headers.put("X-Original-Java-Class", "org.openntf.domino.NoteCollection");
-			DominoUtils.saveState(unids, this, itemName, true, headers);
+			Documents.saveState(unids, this, itemName, true, headers);
 			// result = null;
 			result = getDelegate().getFirstItem(itemName);
 		} else {
@@ -2128,7 +2101,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 					Map<String, String> headers = new HashMap<String, String>();
 					headers.put("X-Storage-Scheme", "StateHolder");
 					headers.put("X-Original-Java-Class", value.getClass().getName());
-					DominoUtils.saveState(state, this, itemName, true, headers);
+					Documents.saveState(state, this, itemName, true, headers);
 					//					result = null;
 					result = getDelegate().getFirstItem(itemName);
 				} else {
@@ -2327,7 +2300,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 			}
 			if (result != null) {
 				markDirty();
-				if (isSummary != null && result.isSummary() != isSummary.booleanValue()) {
+				if ((isSummary != null) && (result.isSummary() != isSummary.booleanValue())) {
 					result.setSummary(isSummary.booleanValue());
 				}
 				if (returnItem) {
@@ -2351,7 +2324,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 				boolean convertMime = this.getAncestorSession().isConvertMime();
 				this.getAncestorSession().setConvertMime(false);
 				try {
-					DominoUtils.saveState((Serializable) getItemInfo(), this, "$$ItemInfo", false, null);
+					Documents.saveState((Serializable) getItemInfo(), this, "$$ItemInfo", false, null);
 				} catch (Throwable e) {
 					DominoUtils.handleException(e);
 				}
@@ -2370,7 +2343,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 				if (this.getFirstItem("$$ItemInfo").getType() == Item.MIME_PART) {
 					// Then use the existing value
 					try {
-						itemInfo_ = (Map<String, Map<String, Serializable>>) DominoUtils.restoreState(this, "$$ItemInfo");
+						itemInfo_ = (Map<String, Map<String, Serializable>>) Documents.restoreState(this, "$$ItemInfo");
 					} catch (Throwable t) {
 						DominoUtils.handleException(t);
 					}
@@ -2853,9 +2826,9 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 		if (removeType_ != null)
 			removeType_ = null;
 		if (isDirty()) {
-			String nid = getNoteID();
+			//			String nid = getNoteID();
 			try {
-				lotus.domino.Database delDb = getDelegate().getParentDatabase();
+				//				lotus.domino.Database delDb = getDelegate().getParentDatabase();
 				getDelegate().recycle();
 				shouldResurrect_ = true;
 				invalidateCaches();
