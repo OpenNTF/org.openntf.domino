@@ -766,7 +766,10 @@ public class IndexDatabase implements IScannerStateManager {
 
 	public Date getLastIndexDate(final Object mapKey) {
 		Document dbDoc = getDbDocument((String) mapKey);
-		return dbDoc.getItemValue(DB_LAST_INDEX_NAME, java.util.Date.class);
+		Date result = (Date) dbDoc.getItemValue(DB_LAST_INDEX_NAME, java.util.Date.class);
+		if (result == null)
+			result = new Date(0);
+		return result;
 	}
 
 	public void saveTokenLocationMap(final Object mapKey,

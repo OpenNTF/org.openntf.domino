@@ -1404,9 +1404,12 @@ class Database extends Base<org.openntf.domino.Database, lotus.domino.Database, 
 		return getModifiedDocuments(since, ModifiedDocClass.DATA);
 	}
 
-	public DocumentCollection getModifiedDocuments(final java.util.Date since, final ModifiedDocClass noteClass) {
+	public DocumentCollection getModifiedDocuments(java.util.Date since, final ModifiedDocClass noteClass) {
 		try {
 			DocumentCollection result;
+			if (since == null) {
+				since = new Date(0);
+			}
 			lotus.domino.DateTime tempDT = getAncestorSession().createDateTime(since);
 			lotus.domino.DateTime dt = toLotus(tempDT);
 			result = fromLotus(getDelegate().getModifiedDocuments(dt, noteClass.getValue()), DocumentCollection.SCHEMA, this);
