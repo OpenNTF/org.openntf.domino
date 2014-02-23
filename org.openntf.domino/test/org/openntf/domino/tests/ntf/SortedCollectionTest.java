@@ -1,5 +1,6 @@
 package org.openntf.domino.tests.ntf;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class SortedCollectionTest implements Runnable {
 
 		List<String> criteria = new ArrayList<String>();
 		criteria.add("MainSortValue");
-		criteria.add("@modified");
+		criteria.add("@modifieddate");
 		try {
 			DocumentSorter sorter = new DocumentSorter(coll, criteria);
 			//			System.out.println("SORTING...");
@@ -46,7 +47,17 @@ public class SortedCollectionTest implements Runnable {
 			System.out.println("Completed resort in " + ((endTime - startTime) / 1000000) + "ms");
 			//			System.out.println("SORTED");
 			for (Document doc : sortedColl) {
-				System.out.println(doc.getItemValueString("MainSortValue") + " " + doc.getLastModifiedDate().getTime());
+				System.out.println(doc.getItemValueString("MainSortValue") + " " + doc.getLastModifiedDate().getTime() + " "
+						+ Integer.valueOf(doc.getNoteID(), 16));
+			}
+			DocumentSorter.DocumentData[] dataset = sorter._debugGetDataset();
+			for (DocumentSorter.DocumentData data : dataset) {
+				StringBuilder sb = new StringBuilder();
+				for (Serializable s : data._debugGetValues()) {
+					sb.append(s);
+					sb.append(',');
+				}
+				System.out.println(sb.toString());
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();

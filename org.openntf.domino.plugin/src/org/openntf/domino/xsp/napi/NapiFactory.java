@@ -49,9 +49,9 @@ public class NapiFactory implements org.openntf.domino.napi.NapiFactory {
 			// if context is not present, do not use napi
 			return 0;
 		}
-		if (base instanceof org.openntf.domino.impl.Document) {
+		if (base instanceof org.openntf.domino.Document) {
 			return BackendBridge.getDocumentHandleRW((Document) base);
-		} else if (base instanceof org.openntf.domino.impl.Database) {
+		} else if (base instanceof org.openntf.domino.Database) {
 			return BackendBridge.getDatabaseHandleRO((Database) base);
 
 			// org.openntf.domino.impl.Base baseImpl = (org.openntf.domino.impl.Base) base;

@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.NavigableSet;
+import java.util.Observable;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.Vector;
@@ -24,10 +25,11 @@ import org.openntf.domino.Name;
 import org.openntf.domino.RichTextItem;
 import org.openntf.domino.Session;
 import org.openntf.domino.big.impl.IScannerStateManager;
+import org.openntf.domino.big.impl.IScannerStateManager.ScanStatus;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.utils.DominoUtils;
 
-public class DocumentScanner {
+public class DocumentScanner extends Observable {
 	private static final Logger log_ = Logger.getLogger(DocumentScanner.class.getName());
 
 	public static boolean validateFieldTokenMap(final Object obj) {
@@ -202,6 +204,26 @@ public class DocumentScanner {
 	//Map<TOKEN, INSTANCECOUNT>
 
 	private boolean ignoreDollar_ = true;
+	private long docCount_ = 0l;
+	private int docLimit_ = Integer.MAX_VALUE;
+
+	/**
+	 * @return the docLimit
+	 */
+	public int getDocLimit() {
+		return docLimit_;
+	}
+
+	/**
+	 * @param docLimit
+	 *            the docLimit to set
+	 */
+	public void setDocLimit(final int docLimit) {
+		docLimit_ = docLimit;
+	}
+
+	private long itemCount_ = 0l;
+	private long tokenCount_ = 0l;
 
 	/**
 	 * @return the stateManager
@@ -226,7 +248,8 @@ public class DocumentScanner {
 		stateManagerKey_ = stateManagerKey;
 	}
 
-	private Date lastScanDate_ = new Date(0);
+	private Date lastScanDate_;
+	private Date lastDocModDate_;
 	private IScannerStateManager stateManager_;
 	private Object stateManagerKey_;
 
@@ -280,6 +303,17 @@ public class DocumentScanner {
 		return lastScanDate_;
 	}
 
+	public Date getLastDocModDate() {
+		if (lastDocModDate_ == null) {
+			lastDocModDate_ = new Date(0);
+		}
+		return lastDocModDate_;
+	}
+
+	public void setLastDocModDate(final Date value) {
+		lastDocModDate_ = value;
+	}
+
 	/**
 	 * Gets the field token map.
 	 * 
@@ -294,7 +328,7 @@ public class DocumentScanner {
 
 	public Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> getTokenLocationMap() {
 		if (tokenLocationMap_ == null) {
-			System.out.println("Setting up new tokenLocationMap for scanner");
+			//			System.out.println("Setting up new tokenLocationMap for scanner");
 			tokenLocationMap_ = new ConcurrentSkipListMap<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>>();
 		}
 		return tokenLocationMap_;
@@ -353,12 +387,13 @@ public class DocumentScanner {
 	public static final Pattern REGEX_NONALPHANUMERIC = Pattern.compile("[^a-zA-Z0-9-']");
 
 	public static CaseInsensitiveString scrubToken(final String token) {
-		Matcher puncMatch = REGEX_PREFIX_TRIM.matcher(token);
-		String result = puncMatch.replaceAll("");
-		Matcher pMatch = REGEX_PREFIX_TRIM.matcher(result);
-		result = pMatch.replaceAll("");
-		Matcher sMatch = REGEX_PREFIX_TRIM.matcher(result);
+		//		Matcher puncMatch = REGEX_PUNCTUATION.matcher(token);
+		//		String result = puncMatch.replaceAll("");
+		Matcher pMatch = REGEX_PREFIX_TRIM.matcher(token);
+		String result = pMatch.replaceAll("");
+		Matcher sMatch = REGEX_SUFFIX_TRIM.matcher(result);
 		result = sMatch.replaceAll("");
+
 		result = result.trim();
 		if (DominoUtils.isHex(result))
 			return null;
@@ -385,19 +420,64 @@ public class DocumentScanner {
 		return nt.toString();
 	}
 
+	private org.openntf.domino.DocumentCollection collection_;
+
+	public void processCollection() {
+		for (Document doc : collection_) {
+			if (docCount_ < docLimit_) {
+				processDocument(doc);
+			}
+		}
+		notifyObservers(ScanStatus.COMPLETE);
+	}
+
+	public void processCollection(final org.openntf.domino.DocumentCollection collection) {
+		setCollection(collection);
+		processCollection();
+	}
+
+	public org.openntf.domino.DocumentCollection getCollection() {
+		return collection_;
+	}
+
+	public void setCollection(final org.openntf.domino.DocumentCollection collection) {
+		collection_ = collection;
+	}
+
+	private org.openntf.domino.helpers.DocumentSorter sorter_;
+
+	public void processSorter(final org.openntf.domino.helpers.DocumentSorter sorter) {
+		setSorter(sorter);
+		processCollection(sorter.sort());
+	}
+
+	public org.openntf.domino.helpers.DocumentSorter getSorter() {
+		return sorter_;
+	}
+
+	public void setSorter(final org.openntf.domino.helpers.DocumentSorter sorter) {
+		sorter_ = sorter;
+	}
+
+	public org.openntf.domino.Database getCurrentDatabase() {
+		if (getCollection() != null) {
+			return getCollection().getAncestorDatabase();
+		} else {
+			return null;
+		}
+	}
+
 	@SuppressWarnings("rawtypes")
 	public void processDocument(final Document doc) {
-		int tokenCount = 0;
-		int itemCount = 0;
+
 		if (doc != null) {
+			docCount_++;
 			//		Map<String, NavigableSet<String>> tmap = getFieldTokenMap();
 			Map<CaseInsensitiveString, NavigableSet<Comparable>> vmap = getFieldValueMap();
 			//		Map<String, Map<String, List<String>>> tlmap = getTokenLocationMap();
 			Map<CaseInsensitiveString, Integer> typeMap = getFieldTypeMap();
 			//		Map<String, Integer> tfmap = getTokenFreqMap();
 			Vector<Item> items = doc.getItems();
-			int allItems = items.size();
-			int textItems = 0;
 			//			String unid = doc.getUniversalID();
 			boolean hasReaders = doc.hasReaders();
 			String address = doc.getUniversalID() + (hasReaders ? "1" : "0") + doc.getFormName();
@@ -405,8 +485,12 @@ public class DocumentScanner {
 			for (Item item : items) {
 				//				nonText.add(item.getType());
 				CaseInsensitiveString name = new CaseInsensitiveString(item.getName());
-				Date lastMod = item.getLastModifiedDate();
-				if (lastMod.after(getLastScanDate()) && !(name.startsWith("$") && getIgnoreDollar())) {
+				//				Date lastMod = item.getLastModifiedDate();
+				//				if (!lastMod.after(getLastScanDate())) {
+				//					System.out.println("Skipping item " + name.toString() + " in document " + address
+				//							+ " because it hasn't changed since the last scan date.");
+				//				}
+				if (/*lastMod.after(getLastScanDate()) && */!(name.startsWith("$") && getIgnoreDollar())) {
 					try {
 						String value = null;
 						Vector<Object> values = null;
@@ -417,8 +501,6 @@ public class DocumentScanner {
 						case Item.NAMES:
 						case Item.TEXT:
 							value = item.getValueString();
-							if (value != null)
-								textItems++;
 							values = item.getValues();
 							break;
 						case Item.RICHTEXT:
@@ -436,7 +518,7 @@ public class DocumentScanner {
 									}
 								}
 							} else {
-								itemCount++;
+								itemCount_++;
 								if (values != null && !values.isEmpty()) {
 									for (Object o : values) {
 										if (o instanceof String) {
@@ -446,7 +528,7 @@ public class DocumentScanner {
 											while (s.hasNext()) {
 												CaseInsensitiveString token = scrubToken(s.next());
 												if (token != null && (token.length() > 2) && !isStopped(token)) {
-													tokenCount++;
+													tokenCount_++;
 													processToken(token, name, address, doc);
 												}
 											}
@@ -458,7 +540,7 @@ public class DocumentScanner {
 									while (s.hasNext()) {
 										CaseInsensitiveString token = scrubToken(s.next());
 										if (token != null && (token.length() > 2) && !isStopped(token)) {
-											tokenCount++;
+											tokenCount_++;
 											processToken(token, name, address, doc);
 										}
 									}
@@ -497,19 +579,33 @@ public class DocumentScanner {
 					}
 				}
 			}
-			if (tokenCount < 1) {
-				errCount_++;
-			}
-			if (this.isTrackTokenLocation() && getStateManager() != null) {
-				Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> localTokenMap = getTokenLocationMap();
-				if (localTokenMap.size() > 4096) {
-					synchronized (localTokenMap) {
-						getStateManager().saveTokenLocationMap(getStateManagerKey(), localTokenMap, doc.getLastModifiedDate());
-						localTokenMap.clear();
-					}
-				}
-			}
+			//			if (this.isTrackTokenLocation() && getStateManager() != null) {
+			//				Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> localTokenMap = getTokenLocationMap();
+			//				int curSize = localTokenMap.size();
+			//				if (curSize > 1024) {
+			//					Date last = doc.getLastModifiedDate();
+			//					setLastScanDate(last);
+			//					synchronized (localTokenMap) {
+			//						getStateManager().saveTokenLocationMap(getStateManagerKey(), localTokenMap, last);
+			//						localTokenMap.clear();
+			//					}
+			//				}
+			//			}
+			setLastDocModDate(doc.getLastModifiedDate());
+			notifyObservers(ScanStatus.RUNNING);
 		}
+	}
+
+	public long getDocCount() {
+		return docCount_;
+	}
+
+	public long getItemCount() {
+		return itemCount_;
+	}
+
+	public long getTokenCount() {
+		return tokenCount_;
 	}
 
 	private void processName(final CaseInsensitiveString name, final CaseInsensitiveString itemName, final Session session) {

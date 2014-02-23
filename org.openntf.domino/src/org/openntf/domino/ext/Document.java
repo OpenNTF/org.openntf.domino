@@ -83,4 +83,8 @@ public interface Document {
 
 	// public <T> T getItemValue(String name, Class<?> T, ClassLoader loader) throws ItemNotFoundException, DataNotCompatibleException;
 
+	public boolean forceDelegateRemove();
+
+	public void rollback();
+
 }

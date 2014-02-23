@@ -84,7 +84,7 @@ public class IndexQuery {
 	public void setMergedTerms(final String terms, final String split) {
 		Set<String> set = new HashSet<String>();
 		String[] strings = terms.split(split);
-		System.out.println("Setting up " + strings.length + " terms");
+		//		System.out.println("Setting up " + strings.length + " terms");
 		for (String str : strings) {
 			set.add(str);
 		}
@@ -108,9 +108,9 @@ public class IndexQuery {
 	 */
 	public void setDbids(final Collection<Object> dbids) {
 		dbids_ = IndexDatabase.toStringSet(dbids);
-		if (dbids != null) {
-			System.out.println("Setting dbids filter to " + dbids.getClass().getSimpleName() + " of size " + dbids.size() + ": "
-					+ debugStringSet(dbids_));
+		if (dbids != null && !dbids.isEmpty()) {
+			//			System.out.println("Setting dbids filter to " + dbids.getClass().getSimpleName() + " of size " + dbids.size() + ": "
+			//					+ debugStringSet(dbids_));
 		}
 	}
 

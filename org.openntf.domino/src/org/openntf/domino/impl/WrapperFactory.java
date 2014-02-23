@@ -71,8 +71,8 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		}
 		// TODO: Recycle all?
 		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
-		autoRecycle.processQueue(0l);
-		noAutoRecycle.processQueue(0l);
+		autoRecycle.processQueue(0l, 0l);
+		noAutoRecycle.processQueue(0l, 0l);
 		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
 	}
 
@@ -199,7 +199,8 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 			return null;
 		}
 		long cpp_key = org.openntf.domino.impl.Base.getLotusId(lotus);
-		Base<?> result = cache.get(cpp_key, Base.class);
+		long parent_key = org.openntf.domino.impl.Base.getLotusId(parent);
+		Base<?> result = cache.get(cpp_key, Base.class, parent_key);
 		if (lotus instanceof lotus.domino.MIMEEntity) {
 			//			if (result != null) {
 			//				Throwable t = new Throwable();
@@ -208,7 +209,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		}
 		if (result == null) {
 			result = wrapLotusObject(lotus, parent, cpp_key);
-			cache.put(cpp_key, result, lotus);
+			cache.put(cpp_key, result, lotus, parent_key);
 			if (lotus instanceof lotus.domino.MIMEEntity) {
 				//				Throwable t = new Throwable();
 				//				log_.log(Level.WARNING, "Cache hit on MIMEEntity with key " + cpp_key, t);

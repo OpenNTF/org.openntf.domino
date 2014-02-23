@@ -238,10 +238,15 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	@Override
 	public Database createDatabase(final String dbFile, final boolean open) {
 		try {
-			return fromLotus(getDelegate().createDatabase(dbFile, open), Database.SCHEMA, getAncestorSession());
+			lotus.domino.Database delDb = getDelegate().createDatabase(dbFile, open);
+			org.openntf.domino.Database result = fromLotus(delDb, Database.SCHEMA, getAncestorSession());
+			//			System.out.println("Database " + dbFile + " is open: " + String.valueOf(result.isOpen()));
+			return result;
 		} catch (NotesException e) {
 			if (e.id == 4005 && getAncestorSession().isFixEnabled(Fixes.CREATE_DB)) {
-				return getAncestorSession().getDatabase(getName(), dbFile);
+				org.openntf.domino.Database result = getAncestorSession().getDatabase(getName(), dbFile);
+				//				System.out.println("Database " + dbFile + " already exists: " + String.valueOf(result.isOpen()));
+				return result;
 			} else {
 				DominoUtils.handleException(e);
 				return null;

@@ -9,15 +9,24 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Session;
+import org.openntf.domino.big.impl.IndexDatabase;
 import org.openntf.domino.helpers.DocumentSorter;
-import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 public class LargishSortedCollectionTest implements Runnable {
+	private static int THREAD_COUNT = 1;
+
 	public static void main(final String[] args) {
-		DominoThread thread = new DominoThread(new LargishSortedCollectionTest(), "My thread");
-		thread.start();
+		org.openntf.domino.thread.DominoExecutor de = new org.openntf.domino.thread.DominoExecutor(10);
+		for (int i = 0; i < THREAD_COUNT; i++) {
+			de.execute(new LargishSortedCollectionTest());
+		}
+		de.shutdown();
+		//		for (int i = 0; i < 4; i++) {
+		//			DominoThread thread = new DominoThread(new LargishSortedCollectionTest(), "My thread " + i);
+		//			thread.start();
+		//		}
 	}
 
 	public LargishSortedCollectionTest() {
@@ -26,25 +35,56 @@ public class LargishSortedCollectionTest implements Runnable {
 
 	@Override
 	public void run() {
+		long testStartTime = System.nanoTime();
 		Session session = this.getSession();
+		//		Database db = session.getDatabase("", "events4.nsf");
 		Database db = session.getDatabase("", "events4.nsf");
-		DocumentCollection coll = db.getAllDocuments();
+		//		System.out.println("Starting build of byMod view");
+		//		long vStartTime = System.nanoTime();
+		//		View newView = db.createView("ModTest", "SELECT @All");
+		//		ViewColumn modCol = newView.createColumn(1, "Modified", "@Modified");
+		//		modCol.setSorted(true);
+		//		newView.refresh();
+		//		long vEndTime = System.nanoTime();
+		//		System.out.println("Completed building byModView in " + ((vEndTime - vStartTime) / 1000000) + "ms");
+		IndexDatabase index = new IndexDatabase(session.getDatabase("", "redpill/index.nsf"));
+		Document indexDoc = index.getDbDocument(db.getReplicaID());
+
 		//		System.out.println("UNSORTED");
-		for (Document doc : coll) {
-			//			System.out.println(doc.getItemValueString("MainSortValue") + " " + doc.getLastModifiedDate().getTime());
-		}
 
 		List<String> criteria = new ArrayList<String>();
 		//		criteria.add("@doclength");
-		criteria.add("@modified");
+		criteria.add("@modifieddate");
 		try {
-			DocumentSorter sorter = new DocumentSorter(coll, criteria);
+			DocumentSorter sorter = null;
+
+			if (indexDoc.hasItem("DocumentSorter")) {
+				sorter = indexDoc.getItemValue("DocumentSorter", DocumentSorter.class);
+				sorter.setDatabase(db);
+				System.out.println("Starting resort of " + sorter.getCount() + " documents");
+			} else {
+				DocumentCollection coll = db.getAllDocuments();
+				sorter = new DocumentSorter(coll, criteria);
+				System.out.println("Starting resort of " + coll.getCount() + " documents");
+			}
 			//			System.out.println("SORTING...");
-			System.out.println("Starting resort of " + coll.getCount() + " documents");
+
 			long startTime = System.nanoTime();
 			DocumentCollection sortedColl = sorter.sort();
 			long endTime = System.nanoTime();
 			System.out.println("Completed resort in " + ((endTime - startTime) / 1000000) + "ms");
+			int count = 0;
+			for (Document doc : sortedColl) {
+				//				System.out.println(doc.getLastModifiedDate().getTime() + " " + doc.getNoteID());
+				if (++count > 500) {
+					break;
+				}
+			}
+
+			indexDoc.replaceItemValue("DocumentList", sortedColl);
+			indexDoc.replaceItemValue("DocumentSorter", sorter);
+			indexDoc.save();
+			System.out.println("Saved sorter and result list to document of length " + (indexDoc.getSize() / 1024) + "KB");
 			//			System.out.println("SORTED");
 			//			for (Document doc : sortedColl) {
 			//				System.out.println(doc.getItemValueString("MainSortValue") + " " + doc.getLastModifiedDate().getTime());
@@ -52,6 +92,8 @@ public class LargishSortedCollectionTest implements Runnable {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
+		long testEndTime = System.nanoTime();
+		System.out.println("Completed " + getClass().getSimpleName() + " run in " + ((testEndTime - testStartTime) / 1000000000) + "s");
 		//		View modView = db.getView("AllByLengthMod");
 		//		long startTime = System.nanoTime();
 		//		if (modView != null) {
