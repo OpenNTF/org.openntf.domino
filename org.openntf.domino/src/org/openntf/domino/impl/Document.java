@@ -43,6 +43,8 @@ import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.EmbeddedObject;
 import org.openntf.domino.Form;
 import org.openntf.domino.Item;
+import org.openntf.domino.Item.Flags;
+import org.openntf.domino.Item.Type;
 import org.openntf.domino.MIMEEntity;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.RichTextItem;
@@ -1144,14 +1146,9 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	@Override
 	public Vector<Item> getItems() {
 		// TODO RPr: Review the ItemVector
+		// TODO At some point we should cache this result in a private List and then always return an immutable Vector
 		ItemVector iv = new ItemVector(this);
 		return iv;
-		// try {
-		// return fromLotusAsVector(getDelegate().getItems(), Item.SCHEMA, this);
-		// } catch (NotesException e) {
-		// DominoUtils.handleException(e);
-		// }
-		// return null;
 	}
 
 	/*
@@ -3269,5 +3266,25 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	 */
 	public String getMetaversalID(final String serverName) {
 		return serverName + "!!" + getMetaversalID();
+	}
+
+	public List<Item> getItems(final Type type) {
+		List<Item> result = new ArrayList<Item>();
+		for (Item item : getItems()) {
+			if (item.getType() == type.getValue()) {
+				result.add(item);
+			}
+		}
+		return result;
+	}
+
+	public List<Item> getItems(final Flags flags) {
+		List<Item> result = new ArrayList<Item>();
+		for (Item item : getItems()) {
+			if (item.hasFlag(flags)) {
+				result.add(item);
+			}
+		}
+		return result;
 	}
 }

@@ -125,7 +125,7 @@ public class IndexDatabase implements IScannerStateManager {
 		indexDb_ = indexDb;
 	}
 
-	protected Database getIndexDb() {
+	public Database getIndexDb() {
 		if (indexDb_ == null) {
 			indexDb_ = Factory.getSession().getCurrentDatabase();
 		}
