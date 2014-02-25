@@ -2,12 +2,10 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=false,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package org.openntf.domino.tests.rpr.formula;
 
-public class SimpleNode implements Node {
+public abstract class SimpleNode implements Node {
 
 	protected Node parent;
-	protected Node[] children;
 	protected int id;
-	protected Object value;
 	protected AtFormulaParser parser;
 
 	public SimpleNode(final int i) {
@@ -22,6 +20,7 @@ public class SimpleNode implements Node {
 	public void jjtOpen() {
 	}
 
+	// needed to check child count
 	public void jjtClose() {
 	}
 
@@ -34,30 +33,15 @@ public class SimpleNode implements Node {
 	}
 
 	public void jjtAddChild(final Node n, final int i) {
-		if (children == null) {
-			children = new Node[i + 1];
-		} else if (i >= children.length) {
-			Node c[] = new Node[i + 1];
-			System.arraycopy(children, 0, c, 0, children.length);
-			children = c;
-		}
-		children[i] = n;
+		throw new UnsupportedOperationException("This Node cannot have children");
 	}
 
 	public Node jjtGetChild(final int i) {
-		return children[i];
+		throw new UnsupportedOperationException();
 	}
 
 	public int jjtGetNumChildren() {
-		return (children == null) ? 0 : children.length;
-	}
-
-	public void jjtSetValue(final Object value) {
-		this.value = value;
-	}
-
-	public Object jjtGetValue() {
-		return value;
+		return 0;
 	}
 
 	/* You can override these two methods in subclasses of SimpleNode to
@@ -68,7 +52,7 @@ public class SimpleNode implements Node {
 
 	@Override
 	public String toString() {
-		return AtFormulaParserTreeConstants.jjtNodeName[id] + ": " + jjtGetValue();
+		return AtFormulaParserTreeConstants.jjtNodeName[id];
 	}
 
 	public String toString(final String prefix) {
@@ -80,15 +64,16 @@ public class SimpleNode implements Node {
 
 	public void dump(final String prefix) {
 		System.out.println(toString(prefix));
-		if (children != null) {
-			for (int i = 0; i < children.length; ++i) {
-				SimpleNode n = (SimpleNode) children[i];
-				if (n != null) {
-					n.dump(prefix + " ");
-				}
+		for (int i = 0; i < jjtGetNumChildren(); ++i) {
+			SimpleNode n = (SimpleNode) jjtGetChild(i);
+			if (n != null) {
+				n.dump(prefix + " ");
 			}
 		}
 	}
+
+	public abstract Value evaluate(FormulaContext ctx);
+
 }
 
 /* JavaCC - OriginalChecksum=3dbb27fb2c89a6b3bb4f903355a329f0 (do not edit this line) */
