@@ -905,101 +905,113 @@ public enum DominoUtils {
 	public static Object restoreState(final org.openntf.domino.Document doc, final String itemName, final MIMEEntity entity)
 			throws Exception {
 		Session session = doc.getAncestorSession();
-		Object result = null;
-		Stream mimeStream = session.createStream();
-		Class<?> chkClass = null;
-		String allHeaders = entity.getHeaders();
-		MIMEHeader header = entity.getNthHeader("X-Java-Class");
-		if (header != null) {
-			String className = header.getHeaderVal();
-			chkClass = getClass(className);
-			if (chkClass == null) {
-				log_.log(Level.SEVERE, "Unable to load class " + className + " from currentThread classLoader"
-						+ " so object deserialization is likely to fail...");
-			}
+		boolean oldConvertMime = session.isConvertMime();
+		if (oldConvertMime) {
+			session.setConvertMime(false);
 		}
+		try {
+			Object result = null;
+			Stream mimeStream = session.createStream();
+			Class<?> chkClass = null;
+			String allHeaders = entity.getHeaders();
+			MIMEHeader header = entity.getNthHeader("X-Java-Class");
+			if (header != null) {
+				String className = header.getHeaderVal();
+				chkClass = getClass(className);
+				if (chkClass == null) {
+					log_.log(Level.SEVERE, "Unable to load class " + className + " from currentThread classLoader"
+							+ " so object deserialization is likely to fail...");
+				}
+			}
 
-		entity.getContentAsBytes(mimeStream);
+			entity.getContentAsBytes(mimeStream);
 
-		mimeStream.setPosition(0);
-		//		ByteArrayOutputStream streamOut = new ByteArrayOutputStream();
-		//		mimeStream.getContents(streamOut);
-		// mimeStream.recycle();
+			mimeStream.setPosition(0);
+			//		ByteArrayOutputStream streamOut = new ByteArrayOutputStream();
+			//		mimeStream.getContents(streamOut);
+			// mimeStream.recycle();
 
-		//		byte[] stateBytes = streamOut.toByteArray();
-		//		ByteArrayInputStream byteStream = new ByteArrayInputStream(stateBytes);
-		InputStream is = new MIMEBufferedInputStream(mimeStream);
-		ObjectInputStream objectStream;
+			//		byte[] stateBytes = streamOut.toByteArray();
+			//		ByteArrayInputStream byteStream = new ByteArrayInputStream(stateBytes);
+			InputStream is = new MIMEBufferedInputStream(mimeStream);
+			ObjectInputStream objectStream;
 
-		if (allHeaders == null) {
-			System.out.println("No headers available. Testing gzip by experimentation...");
-			try {
+			if (allHeaders == null) {
+				System.out.println("No headers available. Testing gzip by experimentation...");
+				try {
+					GZIPInputStream zipStream = new GZIPInputStream(is);
+					objectStream = new LoaderObjectInputStream(zipStream);
+				} catch (Exception ioe) {
+					objectStream = new LoaderObjectInputStream(is);
+				}
+			} else if (allHeaders.toLowerCase().contains("content-encoding: gzip")) {
+				//			GZIPInputStream zipStream = new GZIPInputStream(byteStream);
 				GZIPInputStream zipStream = new GZIPInputStream(is);
 				objectStream = new LoaderObjectInputStream(zipStream);
-			} catch (Exception ioe) {
+			} else {
 				objectStream = new LoaderObjectInputStream(is);
 			}
-		} else if (allHeaders.toLowerCase().contains("content-encoding: gzip")) {
-			//			GZIPInputStream zipStream = new GZIPInputStream(byteStream);
-			GZIPInputStream zipStream = new GZIPInputStream(is);
-			objectStream = new LoaderObjectInputStream(zipStream);
-		} else {
-			objectStream = new LoaderObjectInputStream(is);
-		}
 
-		// There are three potential storage forms: Externalizable, Serializable, and StateHolder, distinguished by type or header
-		if ("x-java-externalized-object".equals(entity.getContentSubType())) {
-			Class<Externalizable> externalizableClass = (Class<Externalizable>) getClass(entity.getNthHeader("X-Java-Class").getHeaderVal());
-			Externalizable restored = externalizableClass.newInstance();
-			restored.readExternal(objectStream);
-			result = restored;
-		} else {
-			Object restored = (Serializable) objectStream.readObject();
+			// There are three potential storage forms: Externalizable, Serializable, and StateHolder, distinguished by type or header
+			if ("x-java-externalized-object".equals(entity.getContentSubType())) {
+				Class<Externalizable> externalizableClass = (Class<Externalizable>) getClass(entity.getNthHeader("X-Java-Class")
+						.getHeaderVal());
+				Externalizable restored = externalizableClass.newInstance();
+				restored.readExternal(objectStream);
+				result = restored;
+			} else {
+				Object restored = (Serializable) objectStream.readObject();
 
-			// But wait! It might be a StateHolder object or Collection!
-			MIMEHeader storageScheme = entity.getNthHeader("X-Storage-Scheme");
-			MIMEHeader originalJavaClass = entity.getNthHeader("X-Original-Java-Class");
-			if (storageScheme != null && "StateHolder".equals(storageScheme.getHeaderVal())) {
-				Class<?> facesContextClass = getClass("javax.faces.context.FacesContext");
-				Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
+				// But wait! It might be a StateHolder object or Collection!
+				MIMEHeader storageScheme = entity.getNthHeader("X-Storage-Scheme");
+				MIMEHeader originalJavaClass = entity.getNthHeader("X-Original-Java-Class");
+				if (storageScheme != null && "StateHolder".equals(storageScheme.getHeaderVal())) {
+					Class<?> facesContextClass = getClass("javax.faces.context.FacesContext");
+					Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
 
-				Class<?> stateHoldingClass = getClass(originalJavaClass.getHeaderVal());
-				Method restoreStateMethod = stateHoldingClass.getMethod("restoreState", facesContextClass, Object.class);
-				result = stateHoldingClass.newInstance();
-				restoreStateMethod.invoke(result, getCurrentInstance.invoke(null), restored);
-			} else if (originalJavaClass != null && "org.openntf.domino.DocumentCollection".equals(originalJavaClass.getHeaderVal())) {
-				// Maybe this can be sped up by not actually getting the documents
-				try {
+					Class<?> stateHoldingClass = getClass(originalJavaClass.getHeaderVal());
+					Method restoreStateMethod = stateHoldingClass.getMethod("restoreState", facesContextClass, Object.class);
+					result = stateHoldingClass.newInstance();
+					restoreStateMethod.invoke(result, getCurrentInstance.invoke(null), restored);
+				} else if (originalJavaClass != null && "org.openntf.domino.DocumentCollection".equals(originalJavaClass.getHeaderVal())) {
+					// Maybe this can be sped up by not actually getting the documents
+					try {
+						String[] unids = (String[]) restored;
+						Database db = doc.getParentDatabase();
+						DocumentCollection docCollection = db.createDocumentCollection();
+						for (String unid : unids) {
+							docCollection.addDocument(db.getDocumentByUNID(unid));
+						}
+						result = docCollection;
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else if (originalJavaClass != null && "org.openntf.domino.NoteCollection".equals(originalJavaClass.getHeaderVal())) {
 					String[] unids = (String[]) restored;
 					Database db = doc.getParentDatabase();
-					DocumentCollection docCollection = db.createDocumentCollection();
+					NoteCollection noteCollection = db.createNoteCollection(false);
 					for (String unid : unids) {
-						docCollection.addDocument(db.getDocumentByUNID(unid));
+						noteCollection.add(db.getDocumentByUNID(unid));
 					}
-					result = docCollection;
-				} catch (Exception e) {
-					e.printStackTrace();
+					result = noteCollection;
+				} else {
+					result = restored;
 				}
-			} else if (originalJavaClass != null && "org.openntf.domino.NoteCollection".equals(originalJavaClass.getHeaderVal())) {
-				String[] unids = (String[]) restored;
-				Database db = doc.getParentDatabase();
-				NoteCollection noteCollection = db.createNoteCollection(false);
-				for (String unid : unids) {
-					noteCollection.add(db.getDocumentByUNID(unid));
-				}
-				result = noteCollection;
-			} else {
-				result = restored;
+			}
+
+			// entity.recycle();
+			if (!doc.closeMIMEEntities(false, itemName)) {
+				log_.log(Level.WARNING, "closeMIMEEntities returned false for item " + itemName + " on doc " + doc.getNoteID() + " in db "
+						+ doc.getAncestorDatabase().getApiPath());
+			}
+
+			return result;
+
+		} finally {
+			if (oldConvertMime) {
+				session.setConvertMime(true);
 			}
 		}
-
-		// entity.recycle();
-		if (!doc.closeMIMEEntities(false, itemName)) {
-			log_.log(Level.WARNING, "closeMIMEEntities returned false for item " + itemName + " on doc " + doc.getNoteID() + " in db "
-					+ doc.getAncestorDatabase().getApiPath());
-		}
-
-		return result;
 	}
 
 	/**
@@ -1072,7 +1084,9 @@ public enum DominoUtils {
 		}
 		Session session = doc.getAncestorSession();
 		boolean convertMime = session.isConvertMime();
-		session.setConvertMime(false);
+		if (convertMime) {
+			session.setConvertMime(false);
+		}
 
 		// String diagKey = doc.getUniversalID() + itemName;
 		// if (diagCount.containsKey(diagKey)) {
@@ -1098,6 +1112,7 @@ public enum DominoUtils {
 		objectStream.close();
 
 		Stream mimeStream = session.createStream();
+
 		MIMEEntity previousState = doc.getMIMEEntity(itemName);
 		MIMEEntity entity = null;
 		if (previousState == null) {
@@ -1168,7 +1183,9 @@ public enum DominoUtils {
 			log_.log(Level.WARNING, "closeMIMEEntities returned false for item " + itemName + " on doc " + doc.getNoteID() + " in db "
 					+ doc.getAncestorDatabase().getApiPath());
 		}
-		session.setConvertMime(convertMime);
+		if (!convertMime) {
+			session.setConvertMime(true);
+		}
 	}
 
 	/**
