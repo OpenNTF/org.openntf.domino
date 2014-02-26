@@ -30,4 +30,5 @@ public interface IDominoVertex extends Vertex, IDominoElement {
 	public Set<String> getOutEdgeLabels();
 
 	public Set<Edge> getEdges(final String... labels);
+
 }
