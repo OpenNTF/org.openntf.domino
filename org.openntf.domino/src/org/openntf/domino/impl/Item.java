@@ -726,8 +726,10 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 		markDirty();
 		try {
 			// Make sure it's a text field!!
-			if (getType() != TEXT) {
-				throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Authors field");
+			if (flag) {
+				if (getType() != TEXT) {
+					throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Authors field");
+				}
 			}
 			getDelegate().setAuthors(flag);
 		} catch (NotesException e) {
@@ -779,8 +781,10 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 		markDirty();
 		try {
 			// Make sure it's a text field!!
-			if (getType() != TEXT) {
-				throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Names field");
+			if (flag) {
+				if (getType() != TEXT) {
+					throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Names field");
+				}
 			}
 			getDelegate().setNames(flag);
 		} catch (NotesException e) {
@@ -813,8 +817,10 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 		markDirty();
 		try {
 			// Make sure it's a text field!!
-			if (getType() != TEXT) {
-				throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Readers field");
+			if (flag) {
+				if (getType() != TEXT) {
+					throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Readers field");
+				}
 			}
 			getDelegate().setReaders(flag);
 		} catch (NotesException e) {
