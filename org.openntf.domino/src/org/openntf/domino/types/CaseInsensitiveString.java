@@ -41,8 +41,8 @@ public class CaseInsensitiveString implements CharSequence, Comparable, External
 	 * @param s
 	 *            The string to construct this object from
 	 */
-	public CaseInsensitiveString(final String s) {
-		string = s;
+	public CaseInsensitiveString(final CharSequence s) {
+		string = s.toString();
 	}
 
 	public CaseInsensitiveString() {	//used for Externalization

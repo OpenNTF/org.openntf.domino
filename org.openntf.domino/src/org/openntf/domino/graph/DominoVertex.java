@@ -228,6 +228,13 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		return Collections.unmodifiableSet(result);
 	}
 
+	public Set<Edge> getEdges(final String... labels) {
+		LinkedHashSet<Edge> result = new LinkedHashSet<Edge>();
+		result.addAll(getInEdgeObjects(labels));
+		result.addAll(getOutEdgeObjects(labels));
+		return Collections.unmodifiableSet(result);
+	}
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Iterable<Edge> getEdges(final Direction direction, final String... labels) {
