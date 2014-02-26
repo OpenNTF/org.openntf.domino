@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.openntf.domino.tests.rpr.formula.eval.Formatter;
+
 public class DominoFormatter implements Formatter {
 
 	public Date parseDate(final String image) {
