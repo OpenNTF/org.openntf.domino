@@ -716,99 +716,41 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		return toDominoFriendly(value, context, null);
 	}
 
+	/**
+	 * toItemFriendly: special case for "toDominoFriendly" that handles "DateTime" / "DateRange" correctly
+	 * 
+	 * @param value
+	 * @param context
+	 * @param recycleThis
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
+	@SuppressWarnings("rawtypes")
 	protected static Object toItemFriendly(final Object value, final org.openntf.domino.Base context,
 			final Collection<lotus.domino.Base> recycleThis) throws IllegalArgumentException {
 		if (value == null) {
 			log_.log(Level.INFO, "Trying to convert a null argument to Domino friendly. Returning null...");
 			return null;
 		}
-		//Extended in order to deal with Arrays
-		if (value.getClass().isArray()) {
-			int i = Array.getLength(value);
 
-			java.util.Vector<Object> result = new java.util.Vector<Object>(i);
-			for (int k = 0; k < i; ++k) {
-				Object o = Array.get(value, k);
-				result.add(toItemFriendly(o, context, recycleThis));
-			}
-			return result;
-		}
-
-		if (value instanceof Collection) {
-			java.util.Vector<Object> result = new java.util.Vector<Object>();
-			Collection<?> coll = (Collection) value;
-			for (Object o : coll) {
-				result.add(toItemFriendly(o, context, recycleThis));
-			}
-			return result;
-		}
-
-		// First, go over the normal data types
-		if (value instanceof org.openntf.domino.DateTime || value instanceof org.openntf.domino.DateRange
-				|| value instanceof org.openntf.domino.Name) {
-			// this is a wrapper
-			return toLotus((org.openntf.domino.Base) value, recycleThis);
-		} else if (value instanceof lotus.domino.DateTime || value instanceof lotus.domino.DateRange || value instanceof lotus.domino.Name) {
-			return value;
-		}
-
-		if (value instanceof Integer || value instanceof Double) {
-			return value;
-		} else if (value instanceof String) {
-			return value;
-		} else if (value instanceof Boolean) {
-			if ((Boolean) value) {
-				return "1";
-			} else {
-				return "0";
-			}
-		}
-
-		// Now for the illegal-but-convertible types
-		if (value instanceof Number) {
-			// TODO Check if this is greater than what Domino can handle and serialize if so
-			return ((Number) value).doubleValue();
-		} else if (value instanceof java.util.Date) {
-			lotus.domino.Session lsess = toLotus(Factory.getSession(context));
-			try {
-				lotus.domino.DateTime dt = lsess.createDateTime((java.util.Date) value);
-				if (recycleThis != null) {
-					recycleThis.add(dt);
+		if (value instanceof lotus.domino.Base) {
+			if (value instanceof lotus.domino.Name) {
+				// Names are written as canonical
+				try {
+					return ((lotus.domino.Name) value).getCanonical();
+				} catch (NotesException e) {
+					DominoUtils.handleException(e);
 				}
-				return dt;
-			} catch (Throwable t) {
-				DominoUtils.handleException(t);
-				return null;
+			} else if (value instanceof org.openntf.domino.DateTime || value instanceof org.openntf.domino.DateRange) {
+				// according to documentation, these datatypes should be compatible to write to a field ... but DateRanges make problems
+				return toLotus((org.openntf.domino.Base) value, recycleThis);
+			} else if (value instanceof lotus.domino.DateTime || value instanceof lotus.domino.DateRange) {
+				return value;
 			}
-			// return toLotus(Factory.getSession(context).createDateTime((java.util.Date) value));
-		} else if (value instanceof java.util.Calendar) {
-			lotus.domino.Session lsess = toLotus(Factory.getSession(context));
-			try {
-				lotus.domino.DateTime dt = lsess.createDateTime((java.util.Calendar) value);
-				if (recycleThis != null) {
-					recycleThis.add(dt);
-				}
-				return dt;
-			} catch (Throwable t) {
-				DominoUtils.handleException(t);
-				return null;
-			}
-			// return toLotus(Factory.getSession(context).createDateTime((java.util.Calendar) value));
-		} else if (value instanceof CharSequence) {
-			return value.toString();
-		} else if (value instanceof CaseInsensitiveString) {
-			return value.toString();
-		} else if (value instanceof Pattern) {
-			return ((Pattern) value).pattern();
-		} else if (value instanceof Class<?>) {
-			return ((Class<?>) value).getName();
-		} else if (value instanceof Enum<?>) {
-			return ((Enum<?>) value).getDeclaringClass().getName() + " " + ((Enum<?>) value).name();
-		} else if (value instanceof Formula) {
-			return ((Formula) value).getExpression();
+			throw new IllegalArgumentException("Cannot convert to Domino friendly from type " + value.getClass().getName());
+		} else {
+			return javaToDominoFriendly(value, context, recycleThis);
 		}
-
-		throw new IllegalArgumentException("Cannot convert to Domino friendly from type " + value.getClass().getName());
 	}
 
 	/**
@@ -854,13 +796,29 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			return result;
 		}
 
-		// First, go over the normal data types
 		if (value instanceof org.openntf.domino.Base) {
 			// this is a wrapper
 			return toLotus((org.openntf.domino.Base) value, recycleThis);
 		} else if (value instanceof lotus.domino.Base) {
+			// this is already domino friendly
 			return value;
+		} else {
+			return javaToDominoFriendly(value, context, recycleThis);
 		}
+
+	}
+
+	/**
+	 * converts a lot of java types to domino-friendly types
+	 * 
+	 * @param value
+	 * @param context
+	 * @param recycleThis
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	private static Object javaToDominoFriendly(final Object value, final org.openntf.domino.Base context,
+			final Collection<lotus.domino.Base> recycleThis) {
 
 		if (value instanceof Integer || value instanceof Double) {
 			return value;
@@ -873,10 +831,10 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 				return "0";
 			}
 		}
-
 		// Now for the illegal-but-convertible types
 		if (value instanceof Number) {
 			// TODO Check if this is greater than what Domino can handle and serialize if so
+			// CHECKME: Is "doubleValue" really needed. (according to help.nsf only Integer and Double is supported, so keep it)
 			return ((Number) value).doubleValue();
 		} else if (value instanceof java.util.Date) {
 			lotus.domino.Session lsess = toLotus(Factory.getSession(context));
