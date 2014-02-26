@@ -33,6 +33,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.MIMEEntity;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
+import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.TypeUtils;
 import org.xml.sax.InputSource;
@@ -46,6 +47,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 
 	// TODO NTF - all setters should check to see if the new value is different from the old and only markDirty if there's a change
 	private String name_;
+	private Integer dataType_;
 
 	/**
 	 * Instantiates a new item.
@@ -723,6 +725,10 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	public void setAuthors(final boolean flag) {
 		markDirty();
 		try {
+			// Make sure it's a text field!!
+			if (getType() != TEXT) {
+				throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Authors field");
+			}
 			getDelegate().setAuthors(flag);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -772,6 +778,10 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	public void setNames(final boolean flag) {
 		markDirty();
 		try {
+			// Make sure it's a text field!!
+			if (getType() != TEXT) {
+				throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Names field");
+			}
 			getDelegate().setNames(flag);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -802,6 +812,10 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	public void setReaders(final boolean flag) {
 		markDirty();
 		try {
+			// Make sure it's a text field!!
+			if (getType() != TEXT) {
+				throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Readers field");
+			}
 			getDelegate().setReaders(flag);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
