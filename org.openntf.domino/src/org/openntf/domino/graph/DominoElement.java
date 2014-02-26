@@ -3,6 +3,7 @@ package org.openntf.domino.graph;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -514,6 +515,21 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		if (current == null || !current.equals(value)) {
 			setProperty(prop.getName(), value);
 		}
+	}
+
+	public Map<String, Object> toMap(final IDominoProperties[] props) {
+		Map<String, Object> result = new LinkedHashMap<String, Object>();
+		for (IDominoProperties prop : props) {
+			Object value = getProperty(prop, true);
+			if (value != null) {
+				result.put(prop.getName(), value);
+			}
+		}
+		return result;
+	}
+
+	public Map<String, Object> toMap(final Set<IDominoProperties> props) {
+		return toMap(props.toArray(new IDominoProperties[props.size()]));
 	}
 
 }

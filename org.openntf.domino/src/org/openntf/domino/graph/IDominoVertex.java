@@ -3,6 +3,8 @@
  */
 package org.openntf.domino.graph;
 
+import java.util.Set;
+
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 
@@ -20,4 +22,12 @@ public interface IDominoVertex extends Vertex, IDominoElement {
 	public int getInEdgeCount(String label);
 
 	public int getOutEdgeCount(String label);
+
+	public Set<IEdgeHelper> getEdgeHelpers();
+
+	public Set<String> getInEdgeLabels();
+
+	public Set<String> getOutEdgeLabels();
+
+	public Set<Edge> getEdges(final String... labels);
 }
