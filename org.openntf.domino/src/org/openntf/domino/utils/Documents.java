@@ -38,6 +38,7 @@ import org.openntf.domino.MIMEHeader;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.Stream;
+import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.MIMEConversionException;
 import org.openntf.domino.utils.DominoUtils.LoaderObjectInputStream;
 
@@ -279,8 +280,13 @@ public enum Documents {
 		MIMEEntity entity = null;
 		if (previousState == null) {
 			Item itemChk = doc.getFirstItem(itemName);
-			if (itemChk != null) {
+			while (itemChk != null) {
+				if (itemChk.isNames() || itemChk.isReaders() || itemChk.isAuthors()) {
+					throw new DataNotCompatibleException("Cannot overwrite item '" + itemName + "' with serialized data in NoteID "
+							+ doc.getNoteID() + ", because it is a Name/Reader/Author item.");
+				}
 				itemChk.remove();
+				itemChk = doc.getFirstItem(itemName);
 			}
 			entity = doc.createMIMEEntity(itemName);
 		} else {
