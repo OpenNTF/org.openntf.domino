@@ -43,8 +43,9 @@ import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.EmbeddedObject;
 import org.openntf.domino.Form;
 import org.openntf.domino.Item;
+import org.openntf.domino.Item.Flags;
+import org.openntf.domino.Item.Type;
 import org.openntf.domino.MIMEEntity;
-import org.openntf.domino.MIMEHeader;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.RichTextItem;
 import org.openntf.domino.Session;
@@ -56,13 +57,13 @@ import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.Domino32KLimitException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
-import org.openntf.domino.exceptions.MIMEConversionException;
 import org.openntf.domino.ext.Database.Events;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.helpers.Formula;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.types.BigString;
 import org.openntf.domino.types.Null;
+import org.openntf.domino.utils.Documents;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -73,7 +74,7 @@ import com.ibm.commons.util.io.json.util.JsonWriter;
 /**
  * The Class Document.
  */
-public class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, Database> implements org.openntf.domino.Document {
+class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, Database> implements org.openntf.domino.Document {
 	private static final Logger log_ = Logger.getLogger(Document.class.getName());
 
 	public static enum RemoveType {
@@ -906,7 +907,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		Object itemValue = null;
 		MIMEEntity entity = this.getMIMEEntity(name);
 		if (entity != null) {
-			itemValue = getItemValueMIME(name, entity);
+			itemValue = Documents.getItemValueMIME(this, name, entity);
 		} else {
 			// read it as vector
 			Vector<?> vals;
@@ -940,32 +941,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	}
 
-	/**
-	 * Reads an object that was previously written with replaceItemObject
-	 * 
-	 * @param name
-	 * @param entity
-	 * @return
-	 */
-	private Object getItemValueMIME(final String name, final MIMEEntity entity) {
-		try {
-			if (entity == null) {
-				return null;
-			}
-			MIMEHeader contentType = entity.getNthHeader("Content-Type");
-			if (contentType != null // check for null 
-					&& ("application/x-java-serialized-object".equals(contentType.getHeaderVal()) // Check for Serializable 
-					|| "application/x-java-externalized-object".equals(contentType.getHeaderVal()))) {
-				// Then it's a MIMEBean
-				return DominoUtils.restoreState(this, name, entity);
-			}
-		} catch (Throwable t) {
-			DominoUtils.handleException(new MIMEConversionException("Unable to getItemValueMIME for item name " + name + " on document "
-					+ getNoteID(), t));
-		}
-		return null;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -981,7 +956,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			// This is a bit more expensive than I'd like
 			MIMEEntity entity = this.getMIMEEntity(name);
 			if (entity != null) {
-				Object mimeValue = getItemValueMIME(name, entity);
+				Object mimeValue = Documents.getItemValueMIME(this, name, entity);
 				if (mimeValue != null) {
 					if (mimeValue instanceof Vector) {
 						return (Vector<Object>) mimeValue;
@@ -1041,7 +1016,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		if (dataTypeName == null || "mime-bean".equals(dataTypeName)) {
 			MIMEEntity entity = this.getMIMEEntity(itemName);
 			if (entity != null) {
-				return getItemValueMIME(itemName, entity);
+				return Documents.getItemValueMIME(this, itemName, entity);
 			}
 		}
 		try {
@@ -1136,8 +1111,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public Vector<Item> getItems() {
-		// TODO RPr: Review the ItemVector
-		return new ItemVector(this);
+		// TODO At some point we should cache this result in a private List and then always return an immutable Vector
+		ItemVector iv = new ItemVector(this);
+		return iv;
 	}
 
 	/*
@@ -2069,13 +2045,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			fieldNames_.add(itemName);
 		}
 		lotus.domino.Item result = null;
+
 		try {
 			if (!"mime-bean".equalsIgnoreCase(dataTypeName)) {
 				// if data-type is != "mime-bean" the object is written in native mode.
 				result = getDelegate().replaceItemValueCustomData(itemName, dataTypeName, value);
-
 			} else if (value instanceof Serializable) {
-				DominoUtils.saveState((Serializable) value, this, itemName);
+				Documents.saveState((Serializable) value, this, itemName);
 
 				// TODO RPr: Discuss if the other strategies make sense here.
 				// In my opinion NoteCollection does work UNTIL the next compact task runs.
@@ -2090,7 +2066,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				}
 				Map<String, String> headers = new HashMap<String, String>(1);
 				headers.put("X-Original-Java-Class", "org.openntf.domino.DocumentCollection");
-				DominoUtils.saveState(unids, this, itemName, true, headers);
+				Documents.saveState(unids, this, itemName, true, headers);
 
 			} else if (value instanceof NoteCollection) {
 				// Maybe it'd be faster to use .getNoteIDs - I'm not sure how the performance compares
@@ -2104,7 +2080,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				}
 				Map<String, String> headers = new HashMap<String, String>(1);
 				headers.put("X-Original-Java-Class", "org.openntf.domino.NoteCollection");
-				DominoUtils.saveState(unids, this, itemName, true, headers);
+				Documents.saveState(unids, this, itemName, true, headers);
 
 			} else {
 				// Check to see if it's a StateHolder
@@ -2119,7 +2095,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						Map<String, String> headers = new HashMap<String, String>();
 						headers.put("X-Storage-Scheme", "StateHolder");
 						headers.put("X-Original-Java-Class", value.getClass().getName());
-						DominoUtils.saveState(state, this, itemName, true, headers);
+						Documents.saveState(state, this, itemName, true, headers);
 
 					} else {
 						throw new IllegalArgumentException(value.getClass()
@@ -2130,6 +2106,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 							+ " is not of type Serializable, DocumentCollection or NoteCollection");
 				}
 			}
+
 			if (returnItem) {
 				result = getDelegate().getFirstItem(itemName);
 				return fromLotus(result, Item.SCHEMA, this);
@@ -2462,7 +2439,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				boolean convertMime = this.getAncestorSession().isConvertMime();
 				this.getAncestorSession().setConvertMime(false);
 				try {
-					DominoUtils.saveState((Serializable) getItemInfo(), this, "$$ItemInfo", false, null);
+					Documents.saveState((Serializable) getItemInfo(), this, "$$ItemInfo", false, null);
 				} catch (Throwable e) {
 					DominoUtils.handleException(e);
 				}
@@ -2481,7 +2458,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				if (this.getFirstItem("$$ItemInfo").getType() == Item.MIME_PART) {
 					// Then use the existing value
 					try {
-						itemInfo_ = (Map<String, Map<String, Serializable>>) DominoUtils.restoreState(this, "$$ItemInfo");
+						itemInfo_ = (Map<String, Map<String, Serializable>>) Documents.restoreState(this, "$$ItemInfo");
 					} catch (Throwable t) {
 						DominoUtils.handleException(t);
 					}
@@ -2910,9 +2887,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		if (removeType_ != null)
 			removeType_ = null;
 		if (isDirty()) {
-			String nid = getNoteID();
+			//			String nid = getNoteID();
 			try {
-				lotus.domino.Database delDb = getDelegate().getParentDatabase();
+				//				lotus.domino.Database delDb = getDelegate().getParentDatabase();
 				getDelegate().recycle();
 				shouldResurrect_ = true;
 				invalidateCaches();
@@ -3343,5 +3320,25 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	public String getMetaversalID(final String serverName) {
 		return serverName + "!!" + getMetaversalID();
+	}
+
+	public List<Item> getItems(final Type type) {
+		List<Item> result = new ArrayList<Item>();
+		for (Item item : getItems()) {
+			if (item.getType() == type.getValue()) {
+				result.add(item);
+			}
+		}
+		return result;
+	}
+
+	public List<Item> getItems(final Flags flags) {
+		List<Item> result = new ArrayList<Item>();
+		for (Item item : getItems()) {
+			if (item.hasFlag(flags)) {
+				result.add(item);
+			}
+		}
+		return result;
 	}
 }

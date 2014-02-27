@@ -32,6 +32,7 @@ import org.openntf.domino.utils.DominoUtils;
 public class DocumentScanner extends Observable {
 	private static final Logger log_ = Logger.getLogger(DocumentScanner.class.getName());
 
+	@SuppressWarnings("rawtypes")
 	public static boolean validateFieldTokenMap(final Object obj) {
 		boolean result = false;
 		if (obj == null)
@@ -58,6 +59,7 @@ public class DocumentScanner extends Observable {
 		return result;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public static boolean validateFieldValueMap(final Object obj) {
 		boolean result = false;
 		if (obj == null)
@@ -84,6 +86,7 @@ public class DocumentScanner extends Observable {
 		return result;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public static boolean validateFieldTypeMap(final Object obj) {
 		boolean result = false;
 		if (obj == null)
@@ -105,6 +108,7 @@ public class DocumentScanner extends Observable {
 		return result;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public static boolean validateTokenFreqMap(final Object obj) {
 		boolean result = false;
 		if (obj == null)
@@ -126,6 +130,7 @@ public class DocumentScanner extends Observable {
 		return result;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public static boolean validateTokenLocationMap(final Object obj) {
 		boolean result = false;
 		if (obj == null)
@@ -182,30 +187,49 @@ public class DocumentScanner extends Observable {
 	}
 
 	private boolean trackFieldTokens_ = true;
-	private Map<CaseInsensitiveString, NavigableSet<CaseInsensitiveString>> fieldTokenMap_;
+	private Map<CharSequence, NavigableSet<CharSequence>> fieldTokenMap_;
 	//Map<FIELDNAME, Set<TOKEN>>
 
 	private boolean trackTokenLocation_ = true;
-	private Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> tokenLocationMap_;
+	private Map<CharSequence, Map<CharSequence, Set<CharSequence>>> tokenLocationMap_;
 	//Map<TERM, Map<FIELDNAME, List<UNIDS>>>
 
 	private boolean trackFieldValues_ = true;
-	private Map<CaseInsensitiveString, NavigableSet<Comparable>> fieldValueMap_;
+	private Map<CharSequence, NavigableSet<Comparable>> fieldValueMap_;
 	//Map<FIELDNAME, Set<VALUE>>
 
 	private boolean trackFieldTypes_ = true;
-	private Map<CaseInsensitiveString, Integer> fieldTypeMap_;
+	private Map<CharSequence, Integer> fieldTypeMap_;
 	//Map<FIELDNAME, ITEMTYPE>
 
-	private Set<CaseInsensitiveString> stopTokenList_;
+	private Set<CharSequence> stopTokenList_;
 
 	private boolean trackTokenFreq_ = true;
-	private NavigableMap<CaseInsensitiveString, Integer> tokenFreqMap_;
+	private NavigableMap<CharSequence, Integer> tokenFreqMap_;
 	//Map<TOKEN, INSTANCECOUNT>
 
 	private boolean ignoreDollar_ = true;
+	private boolean caseSensitive_ = false;
+	//	private boolean caseSensitiveValues_ = false;
 	private long docCount_ = 0l;
 	private int docLimit_ = Integer.MAX_VALUE;
+	private Date lastScanDate_;
+	private Date lastDocModDate_;
+	private IScannerStateManager stateManager_;
+	private Object stateManagerKey_;
+
+	private int zeroDocCount_ = 0;
+	private int errCount_ = 0;
+	private long itemCount_ = 0l;
+	private long tokenCount_ = 0l;
+
+	public void setCaseSensitive(final boolean value) {
+		caseSensitive_ = value;
+	}
+
+	public boolean getCaseSensitive() {
+		return caseSensitive_;
+	}
 
 	/**
 	 * @return the docLimit
@@ -221,9 +245,6 @@ public class DocumentScanner extends Observable {
 	public void setDocLimit(final int docLimit) {
 		docLimit_ = docLimit;
 	}
-
-	private long itemCount_ = 0l;
-	private long tokenCount_ = 0l;
 
 	/**
 	 * @return the stateManager
@@ -248,14 +269,6 @@ public class DocumentScanner extends Observable {
 		stateManagerKey_ = stateManagerKey;
 	}
 
-	private Date lastScanDate_;
-	private Date lastDocModDate_;
-	private IScannerStateManager stateManager_;
-	private Object stateManagerKey_;
-
-	private int zeroDocCount_ = 0;
-	private int errCount_ = 0;
-
 	public int getZeroDocCount() {
 		return zeroDocCount_;
 	}
@@ -273,13 +286,13 @@ public class DocumentScanner extends Observable {
 	 * @param stopTokenList
 	 *            the stop token list
 	 */
-	public DocumentScanner(final Set<CaseInsensitiveString> stopTokenList) {
+	public DocumentScanner(final Set<CharSequence> stopTokenList) {
 		stopTokenList_ = stopTokenList;
 	}
 
-	public Set<CaseInsensitiveString> getStopTokenList() {
+	public Set<CharSequence> getStopTokenList() {
 		if (stopTokenList_ == null) {
-			stopTokenList_ = new HashSet<CaseInsensitiveString>();
+			stopTokenList_ = new HashSet<CharSequence>();
 		}
 		return stopTokenList_;
 	}
@@ -319,33 +332,33 @@ public class DocumentScanner extends Observable {
 	 * 
 	 * @return the field token map
 	 */
-	public Map<CaseInsensitiveString, NavigableSet<CaseInsensitiveString>> getFieldTokenMap() {
+	public Map<CharSequence, NavigableSet<CharSequence>> getFieldTokenMap() {
 		if (fieldTokenMap_ == null) {
-			fieldTokenMap_ = new HashMap<CaseInsensitiveString, NavigableSet<CaseInsensitiveString>>();
+			fieldTokenMap_ = new HashMap<CharSequence, NavigableSet<CharSequence>>();
 		}
 		return fieldTokenMap_;
 	}
 
-	public Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> getTokenLocationMap() {
+	public Map<CharSequence, Map<CharSequence, Set<CharSequence>>> getTokenLocationMap() {
 		if (tokenLocationMap_ == null) {
 			//			System.out.println("Setting up new tokenLocationMap for scanner");
-			tokenLocationMap_ = new ConcurrentSkipListMap<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>>();
+			tokenLocationMap_ = new ConcurrentSkipListMap<CharSequence, Map<CharSequence, Set<CharSequence>>>();
 		}
 		return tokenLocationMap_;
 	}
 
-	public Map<CaseInsensitiveString, Set<String>> getTokenLocationMap(final CaseInsensitiveString token) {
-		Map<CaseInsensitiveString, Set<String>> result = null;
-		Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> localMap = getTokenLocationMap();
+	public Map<CharSequence, Set<CharSequence>> getTokenLocationMap(final CharSequence token) {
+		Map<CharSequence, Set<CharSequence>> result = null;
+		Map<CharSequence, Map<CharSequence, Set<CharSequence>>> localMap = getTokenLocationMap();
 		result = localMap.get(token);
 		if (result == null) {
 			if (getStateManager() == null) {
-				result = new ConcurrentHashMap<CaseInsensitiveString, Set<String>>();
+				result = new ConcurrentHashMap<CharSequence, Set<CharSequence>>();
 			} else {
 				result = getStateManager().restoreTokenLocationMap(token, getStateManagerKey());
 				if (result == null) {
 					errCount_++;
-					result = new ConcurrentHashMap<CaseInsensitiveString, Set<String>>();
+					result = new ConcurrentHashMap<CharSequence, Set<CharSequence>>();
 				}
 			}
 			synchronized (localMap) {
@@ -355,16 +368,16 @@ public class DocumentScanner extends Observable {
 		return result;
 	}
 
-	public Map<CaseInsensitiveString, NavigableSet<Comparable>> getFieldValueMap() {
+	public Map<CharSequence, NavigableSet<Comparable>> getFieldValueMap() {
 		if (fieldValueMap_ == null) {
-			fieldValueMap_ = new HashMap<CaseInsensitiveString, NavigableSet<Comparable>>();
+			fieldValueMap_ = new HashMap<CharSequence, NavigableSet<Comparable>>();
 		}
 		return fieldValueMap_;
 	}
 
-	public Map<CaseInsensitiveString, Integer> getFieldTypeMap() {
+	public Map<CharSequence, Integer> getFieldTypeMap() {
 		if (fieldTypeMap_ == null) {
-			fieldTypeMap_ = new HashMap<CaseInsensitiveString, Integer>();
+			fieldTypeMap_ = new HashMap<CharSequence, Integer>();
 		}
 		return fieldTypeMap_;
 	}
@@ -374,9 +387,9 @@ public class DocumentScanner extends Observable {
 	 * 
 	 * @return the token freq map
 	 */
-	public NavigableMap<CaseInsensitiveString, Integer> getTokenFreqMap() {
+	public NavigableMap<CharSequence, Integer> getTokenFreqMap() {
 		if (tokenFreqMap_ == null) {
-			tokenFreqMap_ = new ConcurrentSkipListMap<CaseInsensitiveString, Integer>();
+			tokenFreqMap_ = new ConcurrentSkipListMap<CharSequence, Integer>();
 		}
 		return tokenFreqMap_;
 	}
@@ -386,7 +399,7 @@ public class DocumentScanner extends Observable {
 	public static final Pattern REGEX_PUNCTUATION = Pattern.compile("\\p{P}");
 	public static final Pattern REGEX_NONALPHANUMERIC = Pattern.compile("[^a-zA-Z0-9-']");
 
-	public static CaseInsensitiveString scrubToken(final String token) {
+	public static CharSequence scrubToken(final String token, final boolean caseSensitive) {
 		//		Matcher puncMatch = REGEX_PUNCTUATION.matcher(token);
 		//		String result = puncMatch.replaceAll("");
 		Matcher pMatch = REGEX_PREFIX_TRIM.matcher(token);
@@ -397,10 +410,11 @@ public class DocumentScanner extends Observable {
 		result = result.trim();
 		if (DominoUtils.isHex(result))
 			return null;
-		return new CaseInsensitiveString(result);
+
+		return caseSensitive ? result : new CaseInsensitiveString(result);
 	}
 
-	public boolean isStopped(final CaseInsensitiveString token) {
+	public boolean isStopped(final CharSequence token) {
 		return getStopTokenList().contains(token);
 	}
 
@@ -473,9 +487,9 @@ public class DocumentScanner extends Observable {
 		if (doc != null) {
 			docCount_++;
 			//		Map<String, NavigableSet<String>> tmap = getFieldTokenMap();
-			Map<CaseInsensitiveString, NavigableSet<Comparable>> vmap = getFieldValueMap();
+			Map<CharSequence, NavigableSet<Comparable>> vmap = getFieldValueMap();
 			//		Map<String, Map<String, List<String>>> tlmap = getTokenLocationMap();
-			Map<CaseInsensitiveString, Integer> typeMap = getFieldTypeMap();
+			Map<CharSequence, Integer> typeMap = getFieldTypeMap();
 			//		Map<String, Integer> tfmap = getTokenFreqMap();
 			Vector<Item> items = doc.getItems();
 			//			String unid = doc.getUniversalID();
@@ -513,7 +527,8 @@ public class DocumentScanner extends Observable {
 								if (values != null && !values.isEmpty()) {
 									for (Object o : values) {
 										if (o instanceof String) {
-											processName(new CaseInsensitiveString((String) o), name, doc.getAncestorSession());
+											CharSequence parmName = caseSensitive_ ? (String) o : new CaseInsensitiveString((String) o);
+											processName(parmName, name, doc.getAncestorSession());
 										}
 									}
 								}
@@ -526,7 +541,7 @@ public class DocumentScanner extends Observable {
 											Scanner s = new Scanner(val);
 											s.useDelimiter(REGEX_NONALPHANUMERIC);
 											while (s.hasNext()) {
-												CaseInsensitiveString token = scrubToken(s.next());
+												CharSequence token = scrubToken(s.next(), caseSensitive_);
 												if (token != null && (token.length() > 2) && !isStopped(token)) {
 													tokenCount_++;
 													processToken(token, name, address, doc);
@@ -538,7 +553,7 @@ public class DocumentScanner extends Observable {
 									Scanner s = new Scanner(value);
 									s.useDelimiter(REGEX_NONALPHANUMERIC);
 									while (s.hasNext()) {
-										CaseInsensitiveString token = scrubToken(s.next());
+										CharSequence token = scrubToken(s.next(), caseSensitive_);
 										if (token != null && (token.length() > 2) && !isStopped(token)) {
 											tokenCount_++;
 											processToken(token, name, address, doc);
@@ -608,12 +623,12 @@ public class DocumentScanner extends Observable {
 		return tokenCount_;
 	}
 
-	private void processName(final CaseInsensitiveString name, final CaseInsensitiveString itemName, final Session session) {
-		Map<CaseInsensitiveString, Integer> tfmap = getTokenFreqMap();
-		Map<CaseInsensitiveString, NavigableSet<CaseInsensitiveString>> tmap = getFieldTokenMap();
-		NavigableSet<CaseInsensitiveString> tokenSet = null;
+	private void processName(final CharSequence name, final CharSequence itemName, final Session session) {
+		Map<CharSequence, Integer> tfmap = getTokenFreqMap();
+		Map<CharSequence, NavigableSet<CharSequence>> tmap = getFieldTokenMap();
+		NavigableSet<CharSequence> tokenSet = null;
 		if (!tmap.containsKey(itemName)) {
-			tokenSet = new ConcurrentSkipListSet<CaseInsensitiveString>();
+			tokenSet = new ConcurrentSkipListSet<CharSequence>();
 			tmap.put(itemName, tokenSet);
 		} else {
 			tokenSet = tmap.get(itemName);
@@ -621,7 +636,7 @@ public class DocumentScanner extends Observable {
 		Name Nname = session.createName(name.toString());
 		tokenSet.add(name);
 		if (Nname.isHierarchical()) {
-			CaseInsensitiveString cn = new CaseInsensitiveString(Nname.getCommon());
+			CharSequence cn = caseSensitive_ ? Nname.getCommon() : new CaseInsensitiveString(Nname.getCommon());
 			tokenSet.add(cn);
 			if (tfmap.containsKey(cn)) {
 				tfmap.put(cn, tfmap.get(cn) + 1);
@@ -629,30 +644,30 @@ public class DocumentScanner extends Observable {
 				tfmap.put(cn, 1);
 			}
 		} else {
-			if (tfmap.containsKey(name)) {
-				tfmap.put(name, tfmap.get(name) + 1);
+			CharSequence lname = caseSensitive_ ? name : new CaseInsensitiveString(name);
+			if (tfmap.containsKey(lname)) {
+				tfmap.put(lname, tfmap.get(lname) + 1);
 			} else {
-				tfmap.put(name, 1);
+				tfmap.put(lname, 1);
 			}
 		}
 	}
 
-	private void processToken(final CaseInsensitiveString token, final CaseInsensitiveString itemName, final String address,
-			final Document doc) {
+	private void processToken(final CharSequence token, final CharSequence itemName, final String address, final Document doc) {
 
 		if (isTrackFieldTokens()) {
-			Map<CaseInsensitiveString, NavigableSet<CaseInsensitiveString>> tmap = getFieldTokenMap();
+			Map<CharSequence, NavigableSet<CharSequence>> tmap = getFieldTokenMap();
 			if (!tmap.containsKey(itemName)) {
-				NavigableSet<CaseInsensitiveString> tokenSet = new ConcurrentSkipListSet<CaseInsensitiveString>();
+				NavigableSet<CharSequence> tokenSet = new ConcurrentSkipListSet<CharSequence>();
 				tokenSet.add(token);
 				tmap.put(itemName, tokenSet);
 			} else {
-				NavigableSet<CaseInsensitiveString> tokenSet = tmap.get(itemName);
+				NavigableSet<CharSequence> tokenSet = tmap.get(itemName);
 				tokenSet.add(token);
 			}
 		}
 		if (isTrackTokenFreq()) {
-			Map<CaseInsensitiveString, Integer> tfmap = getTokenFreqMap();
+			Map<CharSequence, Integer> tfmap = getTokenFreqMap();
 			if (tfmap.containsKey(token)) {
 				tfmap.put(token, tfmap.get(token) + 1);
 			} else {
@@ -660,22 +675,22 @@ public class DocumentScanner extends Observable {
 			}
 		}
 		if (isTrackTokenLocation()) {
-			Map<CaseInsensitiveString, Set<String>> tlval = getTokenLocationMap(token);
+			Map<CharSequence, Set<CharSequence>> tlval = getTokenLocationMap(token);
 			if (tlval.containsKey(itemName)) {
-				Set<String> tllist = tlval.get(itemName);
+				Set<CharSequence> tllist = tlval.get(itemName);
 				tllist.add(address);
 				//				if (!tllist.contains(unid)) {
 				//					tllist.add(unid);
 				//				}
 			} else {
-				Set<String> tllist = new ConcurrentSkipListSet<String>();
+				Set<CharSequence> tllist = new ConcurrentSkipListSet<CharSequence>();
 				tllist.add(address);
 				tlval.put(itemName, tllist);
 			}
 		}
 	}
 
-	public void setFieldTokenMap(final Map<CaseInsensitiveString, NavigableSet<CaseInsensitiveString>> fieldTokenMap) {
+	public void setFieldTokenMap(final Map<CharSequence, NavigableSet<CharSequence>> fieldTokenMap) {
 		fieldTokenMap_ = fieldTokenMap;
 	}
 
@@ -685,7 +700,7 @@ public class DocumentScanner extends Observable {
 		}
 	}
 
-	public void setTokenLocationMap(final Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> value) {
+	public void setTokenLocationMap(final Map<CharSequence, Map<CharSequence, Set<CharSequence>>> value) {
 		//		System.out.println("Setting tokenLocationMap to a " + value.getClass().getName());
 		tokenLocationMap_ = value;
 	}
@@ -694,13 +709,13 @@ public class DocumentScanner extends Observable {
 		//		System.out.println("Setting tokenLocationMap to a " + value.getClass().getName());
 
 		if (validateTokenLocationMap(value)) {
-			setTokenLocationMap((Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>>) value);
+			setTokenLocationMap((Map<CharSequence, Map<CharSequence, Set<CharSequence>>>) value);
 		} else {
 			System.out.println("Proposed TokenLocationMap didn't validate");
 		}
 	}
 
-	public void setFieldValueMap(final Map<CaseInsensitiveString, NavigableSet<Comparable>> fieldValueMap) {
+	public void setFieldValueMap(final Map<CharSequence, NavigableSet<Comparable>> fieldValueMap) {
 		fieldValueMap_ = fieldValueMap;
 	}
 
@@ -710,7 +725,7 @@ public class DocumentScanner extends Observable {
 		}
 	}
 
-	public void setFieldTypeMap(final Map<CaseInsensitiveString, Integer> fieldTypeMap) {
+	public void setFieldTypeMap(final Map<CharSequence, Integer> fieldTypeMap) {
 		fieldTypeMap_ = fieldTypeMap;
 	}
 
@@ -720,7 +735,7 @@ public class DocumentScanner extends Observable {
 		}
 	}
 
-	public void setTokenFreqMap(final NavigableMap<CaseInsensitiveString, Integer> tokenFreqMap) {
+	public void setTokenFreqMap(final NavigableMap<CharSequence, Integer> tokenFreqMap) {
 		tokenFreqMap_ = tokenFreqMap;
 	}
 
@@ -810,7 +825,7 @@ public class DocumentScanner extends Observable {
 	 *            the stopTokenList to set
 	 */
 	public void setStopTokenList(final Set<?> value) {
-		stopTokenList_ = new HashSet<CaseInsensitiveString>();
+		stopTokenList_ = new HashSet<CharSequence>();
 		for (Object o : value) {
 			if (o instanceof CaseInsensitiveString) {
 				stopTokenList_.add((CaseInsensitiveString) o);

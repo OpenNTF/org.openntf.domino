@@ -60,11 +60,12 @@ public class IndexDatabase implements IScannerStateManager {
 	protected transient Database indexDb_;
 	protected transient View termView_;
 	protected transient View dbView_;
-	protected Set<String> stopList_;
+	protected Set<CharSequence> stopList_;
+	protected boolean caseSensitive_ = false;
 	protected boolean continue_ = true;
 
-	public static Set<String> toStringSet(final Object value) {
-		Set<String> result = new HashSet<String>();
+	public static Set<CharSequence> toStringSet(final Object value) {
+		Set<CharSequence> result = new HashSet<CharSequence>();
 		if (value == null)
 			return result;
 		if (value instanceof Iterable) {
@@ -88,8 +89,8 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
-	public static Set<CaseInsensitiveString> toCISSet(final Object value) {
-		Set<CaseInsensitiveString> result = new HashSet<CaseInsensitiveString>();
+	public static Set<CharSequence> toCISSet(final Object value) {
+		Set<CharSequence> result = new HashSet<CharSequence>();
 		if (value == null)
 			return result;
 		if (value instanceof Iterable) {
@@ -125,7 +126,7 @@ public class IndexDatabase implements IScannerStateManager {
 		indexDb_ = indexDb;
 	}
 
-	protected Database getIndexDb() {
+	public Database getIndexDb() {
 		if (indexDb_ == null) {
 			indexDb_ = Factory.getSession().getCurrentDatabase();
 		}
@@ -160,9 +161,9 @@ public class IndexDatabase implements IScannerStateManager {
 		}
 	}
 
-	public Set<String> getStopList() {
+	public Set<CharSequence> getStopList() {
 		if (stopList_ == null) {
-			stopList_ = new HashSet<String>();
+			stopList_ = new HashSet<CharSequence>();
 			for (String s : DEFAULT_STOP_WORDS_EN) {
 				stopList_.add(s);
 			}
@@ -170,7 +171,7 @@ public class IndexDatabase implements IScannerStateManager {
 		return stopList_;
 	}
 
-	public void setStopList(final Set<String> list) {
+	public void setStopList(final Set<CharSequence> list) {
 		stopList_ = list;
 	}
 
@@ -216,8 +217,8 @@ public class IndexDatabase implements IScannerStateManager {
 		return termView_;
 	}
 
-	public Document getDbDocument(final String dbid) {
-		String key = dbid.toUpperCase();
+	public Document getDbDocument(final CharSequence dbid) {
+		String key = dbid.toString().toUpperCase();
 		Document result = getIndexDb().getDocumentByKey(key, true);
 		if (result.isNewNote()) {
 			result.replaceItemValue("Form", DB_FORM_NAME);
@@ -227,8 +228,8 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
-	public Document getTermDocument(final String token) {
-		String key = token.toLowerCase();
+	public Document getTermDocument(final CharSequence token) {
+		String key = caseSensitive_ ? token.toString() : token.toString().toLowerCase();
 
 		Document result = getIndexDb().getDocumentByKey(key, true);
 		if (result.isNewNote()) {
@@ -348,8 +349,8 @@ public class IndexDatabase implements IScannerStateManager {
 		return scanner;
 	}
 
-	public void writeResults(final String dbid, final DocumentScanner scanner) {
-		Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> tlMap = scanner.getTokenLocationMap();
+	public void writeResults(final CharSequence dbid, final DocumentScanner scanner) {
+		Map<CharSequence, Map<CharSequence, Set<CharSequence>>> tlMap = scanner.getTokenLocationMap();
 		//		CaseInsensitiveString dom = new CaseInsensitiveString("domino");
 		//		if (tlMap.containsKey(dom)) {
 		//			Map<CaseInsensitiveString, Set<String>> tlValue = tlMap.get(dom);
@@ -362,7 +363,7 @@ public class IndexDatabase implements IScannerStateManager {
 		saveTokenLocationMap(dbid, tlMap, scanner);
 	}
 
-	public List<String> getTermDbids(final String term) {
+	public List<String> getTermDbids(final CharSequence term) {
 		List<String> result = new ArrayList<String>();
 		Document doc = getTermDocument(term);
 		for (Item item : doc.getItems()) {
@@ -394,7 +395,7 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
-	protected int getTermDbidHitCount(final Document doc, final String dbid) {
+	protected int getTermDbidHitCount(final Document doc, final CharSequence dbid) {
 		int result = 0;
 		String itemName = TERM_MAP_PREFIX + dbid;
 		if (doc.hasItem(itemName)) {
@@ -422,8 +423,8 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
-	public List<IndexHit> getTermResults(final String term, final int limit, final Set<String> dbids,
-			final Set<CaseInsensitiveString> itemNames, final Set<String> forms) {
+	public List<IndexHit> getTermResults(final CharSequence term, final int limit, final Set<CharSequence> dbids,
+			final Set<CharSequence> itemNames, final Set<CharSequence> forms) {
 		List<IndexHit> results = new ArrayList<IndexHit>();
 		Document doc = getTermDocument(term);
 		int dbCount = 0;
@@ -441,7 +442,7 @@ public class IndexDatabase implements IScannerStateManager {
 				}
 			}
 		} else {
-			for (String dbid : dbids) {
+			for (CharSequence dbid : dbids) {
 				String itemName = TERM_MAP_PREFIX + dbid;
 				if (doc.hasItem(itemName)) {
 					dbCount++;
@@ -460,8 +461,8 @@ public class IndexDatabase implements IScannerStateManager {
 		return results;
 	}
 
-	protected List<IndexHit> getTermResultsForItemsForms(final Map map, final Set<CaseInsensitiveString> itemNames,
-			final Set<String> forms, final String term, final String dbid) {
+	protected List<IndexHit> getTermResultsForItemsForms(final Map map, final Set<CharSequence> itemNames, final Set<CharSequence> forms,
+			final CharSequence term, final CharSequence dbid) {
 		List<IndexHit> results = new ArrayList<IndexHit>();
 		if (itemNames == null || itemNames.isEmpty()) {
 			if (map.keySet() != null) {
@@ -479,7 +480,7 @@ public class IndexDatabase implements IScannerStateManager {
 				}
 			}
 		} else {
-			for (CaseInsensitiveString key : itemNames) {
+			for (CharSequence key : itemNames) {
 				//				System.out.println("Adding hit results for item " + key);
 
 				Object val = map.get(key);
@@ -497,12 +498,12 @@ public class IndexDatabase implements IScannerStateManager {
 		return results;
 	}
 
-	protected List<IndexHit> getTermResultsForForms(final Set<String> unids, final Set<String> forms, final String term, final String dbid,
-			final String item) {
+	protected List<IndexHit> getTermResultsForForms(final Set<CharSequence> unids, final Set<CharSequence> forms, final CharSequence term,
+			final CharSequence dbid, final CharSequence item) {
 		List<IndexHit> results = new ArrayList<IndexHit>();
 		if (forms == null || forms.isEmpty()) {
 			if (unids != null && !unids.isEmpty()) {
-				for (String unid : unids) {
+				for (CharSequence unid : unids) {
 					try {
 						results.add(createHit(term, dbid, item, unid));
 					} catch (Exception e) {
@@ -512,10 +513,10 @@ public class IndexDatabase implements IScannerStateManager {
 				}
 			}
 		} else {
-			for (String unid : unids) {
-				String formName = unid.substring(33);
-				for (String form : forms) {
-					if (formName.equalsIgnoreCase(form)) {
+			for (CharSequence unid : unids) {
+				String formName = unid.toString().substring(33);
+				for (CharSequence form : forms) {
+					if (formName.equalsIgnoreCase(form.toString())) {
 						results.add(createHit(term, dbid, item, unid));
 						break;
 					}
@@ -525,12 +526,12 @@ public class IndexDatabase implements IScannerStateManager {
 		return results;
 	}
 
-	protected IndexHit createHit(final String term, final String dbid, final String item, final String unid) {
+	protected IndexHit createHit(final CharSequence term, final CharSequence dbid, final CharSequence item, final CharSequence unid) {
 		return new IndexHit(term, dbid, item, unid);
 	}
 
-	public Set<String> getTermUnidInDbsItems(final String term, final Collection<String> dbids, final Collection<?> itemNames) {
-		Set<String> unids = new HashSet<String>();
+	public Set<CharSequence> getTermUnidInDbsItems(final String term, final Collection<String> dbids, final Collection<?> itemNames) {
+		Set<CharSequence> unids = new HashSet<CharSequence>();
 		Document doc = getTermDocument(term);
 		for (String dbid : dbids) {
 			String itemName = TERM_MAP_PREFIX + dbid;
@@ -563,10 +564,10 @@ public class IndexDatabase implements IScannerStateManager {
 	}
 
 	public Set<String> getTermLinksInDbsItems(final Session session, final String serverName, final String term,
-			final Collection<String> dbids, final Collection<?> itemNames) {
+			final Collection<CharSequence> dbids, final Collection<?> itemNames) {
 		Set<String> unids = new HashSet<String>();
 		Document doc = getTermDocument(term);
-		for (String dbid : dbids) {
+		for (CharSequence dbid : dbids) {
 			String itemName = TERM_MAP_PREFIX + dbid;
 			if (doc.hasItem(itemName)) {
 				Map termMap = doc.getItemValue(itemName, Map.class);
@@ -604,8 +605,8 @@ public class IndexDatabase implements IScannerStateManager {
 		return unids;
 	}
 
-	public Set<String> getTermUnidInItems(final String term, final Collection<String> itemNames) {
-		Set<String> unids = new HashSet<String>();
+	public Set<CharSequence> getTermUnidInItems(final CharSequence term, final Collection<String> itemNames) {
+		Set<CharSequence> unids = new HashSet<CharSequence>();
 		Document doc = getTermDocument(term);
 		for (Item item : doc.getItems()) {
 			String itemName = item.getName();
@@ -630,7 +631,7 @@ public class IndexDatabase implements IScannerStateManager {
 		return unids;
 	}
 
-	public Set<String> getTermUnidInDbids(final String term, final Collection<String> dbids) {
+	public Set<String> getTermUnidInDbids(final CharSequence term, final Collection<String> dbids) {
 		Set<String> unids = new HashSet<String>();
 		Document doc = getTermDocument(term);
 		for (String dbid : dbids) {
@@ -707,14 +708,14 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
-	public Map<String, Set<String>> getTermUnidMap(final String term) {
-		Map<String, Set<String>> result = new LinkedHashMap<String, Set<String>>();
+	public Map<CharSequence, Set<CharSequence>> getTermUnidMap(final CharSequence term) {
+		Map<CharSequence, Set<CharSequence>> result = new LinkedHashMap<CharSequence, Set<CharSequence>>();
 		Document doc = getTermDocument(term);
 		for (Item item : doc.getItems()) {
 			String itemName = item.getName();
 			if (itemName.startsWith(TERM_MAP_PREFIX)) {
 				String dbid = itemName.substring(TERM_MAP_PREFIX.length());
-				Set<String> unids = new HashSet<String>();
+				Set<CharSequence> unids = new HashSet<CharSequence>();
 				Map termMap = doc.getItemValue(itemName, Map.class);
 				for (Object key : termMap.keySet()) {
 					Object termObj = termMap.get(key);
@@ -734,16 +735,11 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
-	public CaseInsensitiveString lastToken_ = null;
+	public CharSequence lastToken_ = null;
 
-	public Map<CaseInsensitiveString, Set<String>> restoreTokenLocationMap(final CaseInsensitiveString token, final Object mapKey) {
-		//		if (token.equals(lastToken_)) {
-		//			System.out.println("Restoring same token that we last processed: " + token.getString());
-		//		} else {
-		//			lastToken_ = token;
-		//		}
+	public Map<CharSequence, Set<CharSequence>> restoreTokenLocationMap(final CharSequence token, final Object mapKey) {
 		Map result = null;
-		Document doc = getTermDocument(token.getFolded());
+		Document doc = getTermDocument(token.toString());
 		String itemName = TERM_MAP_PREFIX + String.valueOf(mapKey);
 		if (doc.hasItem(itemName)) {
 			result = doc.getItemValue(itemName, Map.class);
@@ -754,25 +750,35 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
-	public void saveTokenLocationMap(final CaseInsensitiveString token, final Object mapKey,
-			final Map<CaseInsensitiveString, Set<String>> map) {
-		//		if (token.equals(lastToken_)) {
-		//			System.out.println("Restoring same token that we last processed: " + token.getString());
-		//		} else {
-		//			lastToken_ = token;
-		//		}
+	public void saveTokenLocationMap(final CharSequence token, final Object mapKey, final Map<CharSequence, Set<CharSequence>> map) {
+
 		String term = token.toString();
 		Document termDoc = getTermDocument(term);
 		termDoc.replaceItemValue(TERM_MAP_PREFIX + String.valueOf(mapKey), map);
 		termDoc.save();
 	}
 
-	public void saveTokenLocationMap(final Object mapKey,
-			final Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> fullMap, final DocumentScanner scanner) {
+	public void setLastIndexDate(final Object mapKey, final Date date) {
+		Document dbDoc = getDbDocument((String) mapKey);
+		dbDoc.replaceItemValue(DB_LAST_INDEX_NAME, date);
+		dbDoc.save();
+	}
+
+	public Date getLastIndexDate(final Object mapKey) {
+		Document dbDoc = getDbDocument((String) mapKey);
+		Date result = (Date) dbDoc.getItemValue(DB_LAST_INDEX_NAME, java.util.Date.class);
+		if (result == null)
+			result = new Date(0);
+		return result;
+	}
+
+	public void saveTokenLocationMap(final Object mapKey, final Map<CharSequence, Map<CharSequence, Set<CharSequence>>> fullMap,
+			final DocumentScanner scanner) {
 		//		System.out.println("Saving TokenLocationMap of size " + fullMap.size() + " with key of " + mapKey + " and updating time to "
 		//				+ lastTimestamp.getTime() + " after processing " + curDocCount_ + " docs out of " + sortedDocCount_);
+		setLastIndexDate(mapKey, scanner.getLastDocModDate());
+
 		Document dbDoc = getDbDocument((String) mapKey);
-		dbDoc.replaceItemValue(DB_LAST_INDEX_NAME, scanner.getLastDocModDate());
 		if (scanner.getCollection() != null) {
 			dbDoc.replaceItemValue(IndexDatabase.DB_DOC_LIST_NAME, scanner.getCollection());
 		} else {
@@ -785,16 +791,16 @@ public class IndexDatabase implements IScannerStateManager {
 			System.out.println("ALERT! Scanner.getSorter() returned null!");
 		}
 		dbDoc.save();
-		Set<CaseInsensitiveString> keySet = fullMap.keySet();
+		Set<CharSequence> keySet = fullMap.keySet();
 		//		System.out.println("Writing results for " + keySet.size() + " terms");
-		for (CaseInsensitiveString cis : keySet) {
+		for (CharSequence cis : keySet) {
 			//			if (cis.equals(lastToken_)) {
 			//				System.out.println("Restoring same token that we last processed: " + cis.getString());
 			//			} else {
 			//				lastToken_ = cis;
 			//			}
-			Map<CaseInsensitiveString, Set<String>> tlValue = fullMap.get(cis);
-			String term = cis.getFolded();
+			Map<CharSequence, Set<CharSequence>> tlValue = fullMap.get(cis);
+			String term = cis.toString();
 			Document termDoc = getTermDocument(term);
 			termDoc.replaceItemValue(TERM_MAP_PREFIX + String.valueOf(mapKey), tlValue);
 			termDoc.save();

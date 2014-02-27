@@ -16,9 +16,7 @@
 package org.openntf.domino.utils;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.Externalizable;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +24,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.security.AccessControlException;
 import java.security.AccessController;
@@ -36,6 +33,7 @@ import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Formatter;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -46,22 +44,10 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
-import org.openntf.domino.Base;
-import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
-import org.openntf.domino.Document;
-import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.Item;
-import org.openntf.domino.MIMEEntity;
-import org.openntf.domino.MIMEHeader;
 import org.openntf.domino.Name;
-import org.openntf.domino.NoteCollection;
-import org.openntf.domino.Session;
-import org.openntf.domino.Stream;
 import org.openntf.domino.exceptions.InvalidNotesUrlException;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.logging.LogUtils;
@@ -75,168 +61,18 @@ import com.ibm.icu.util.ULocale;
 public enum DominoUtils {
 	;
 
-	public static class MIMEBufferedInputStream extends InputStream {
-		private static final int DEFAULT_BUFFER_SIZE = 16384;
+	public static final String VIEWNAME_VIM_PEOPLE_AND_GROUPS = "($VIMPeopleAndGroups)";
+	public static final String VIEWNAME_VIM_GROUPS = "($VIMGroups)";
 
-		private static final boolean FORCE_READ = false;
-		private static int instanceCount = 0;
+	public static final int LESS_THAN = -1;
+	public static final int EQUAL = 0;
+	public static final int GREATER_THAN = 1;
 
-		private Stream is;
-		private byte[] buffer;
-		private int length;
-		private int buffered;
-		private int bufferPos;
+	/** The Constant log_. */
+	private final static Logger log_ = Logger.getLogger("org.openntf.domino");
 
-		public static InputStream get(final Stream source) {
-			return source != null ? new MIMEBufferedInputStream(source) : null;
-		}
-
-		public MIMEBufferedInputStream(final Stream is, final int size) {
-			this.is = is;
-			this.buffer = new byte[size];
-			this.length = is.getBytes();
-			//			instanceCount++;
-			//			if (++instanceCount % 1000 == 0) {
-			//				System.out.println("Created " + instanceCount + " MIMEInputStream objects...");
-			//			}
-		}
-
-		public MIMEBufferedInputStream(final Stream is) {
-			this(is, DEFAULT_BUFFER_SIZE);
-		}
-
-		public boolean isEOF() throws IOException {
-			return getNextByteCount() == 0;
-		}
-
-		@Override
-		public int read() throws IOException {
-			if (bufferPos == buffered) {
-				//we've read to the end of the buffer byte-by-byte.
-				//time to refill...
-				buffered = getNextByteCount();
-				buffer = is.read(buffered);
-				bufferPos = 0;
-				if (buffered <= 0) {
-					buffered = 0;
-					return -1;
-				}
-			}
-			return buffer[bufferPos++] & 0xFF;
-		}
-
-		@Override
-		public int read(final byte[] array) throws IOException {
-			return read(array, 0, array.length);
-		}
-
-		@Override
-		public int read(final byte[] array, int off, int length) throws IOException {
-			if (FORCE_READ) {
-				int read = 0;
-				while (read < length) {
-					int r = _read(array, off, length);
-					if (r < 0) {
-						return read > 0 ? read : r;
-					}
-					off += r;
-					length -= r;
-					read += r;
-				}
-				return read;
-			} else {
-				return _read(array, off, length);
-			}
-		}
-
-		private int getNextByteCount() {
-			int remaining = length - is.getPosition();
-			if (remaining < buffer.length) {
-				return remaining;
-			} else {
-				return buffer.length;
-			}
-		}
-
-		private int _read(final byte[] array, final int off, final int length) throws IOException {
-			int avail = buffered - bufferPos;
-			if (avail == 0) {
-				buffered = getNextByteCount();
-				buffer = is.read(buffered);
-				avail = buffered;
-				bufferPos = 0;
-				if (buffered <= 0) {
-					buffered = 0;
-					return -1;
-				}
-			}
-			int toRead = length < avail ? length : avail;
-			System.arraycopy(buffer, bufferPos, array, off, toRead);
-			bufferPos += toRead;
-			return toRead;
-		}
-
-		@Override
-		public long skip(long n) throws IOException {
-			if (FORCE_READ) {
-				long skip = 0;
-				while (skip < n) {
-					long r = _skip(n);
-					if (r < 0) {
-						return skip > 0 ? skip : r;
-					}
-					n -= r;
-					skip += r;
-				}
-				return skip;
-			} else {
-				return _skip(n);
-			}
-		}
-
-		private long _skip(final long n) throws IOException {
-			int avail = buffered - bufferPos;
-			if (avail > 0) {
-				if (n < (long) avail) {
-					bufferPos += n;
-					return n;
-				}
-				bufferPos = buffered;
-				return avail;
-			}
-			long newPos = is.getPosition() + n;
-			if (newPos > length) {
-				return 0;
-			} else {
-				int intPos = Integer.parseInt(Long.toString(newPos));
-				is.setPosition(intPos);
-				return n;
-			}
-		}
-
-		@Override
-		public int available() throws IOException {
-			return length - is.getPosition();
-		}
-
-		@Override
-		public void close() throws IOException {
-			is.close();
-		}
-
-		@Override
-		public void mark(final int int0) {
-		}
-
-		@Override
-		public void reset() throws IOException {
-		}
-
-		@Override
-		public boolean markSupported() {
-			return false;
-		}
-	}
+	/** The Constant logBackup_. */
+	private final static Logger logBackup_ = Logger.getLogger("com.ibm.xsp.domino");
 
 	public static Class<?> getClass(final String className) {
 		Class<?> result = null;
@@ -314,12 +150,6 @@ public enum DominoUtils {
 			//			}
 		}
 	}
-
-	/** The Constant log_. */
-	private final static Logger log_ = Logger.getLogger("org.openntf.domino");
-
-	/** The Constant logBackup_. */
-	private final static Logger logBackup_ = Logger.getLogger("com.ibm.xsp.domino");
 
 	/**
 	 * Checksum.
@@ -511,6 +341,7 @@ public enum DominoUtils {
 	 * @param args
 	 *            the args
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void incinerate(final Object... args) {
 		for (Object o : args) {
 			if (o != null) {
@@ -547,20 +378,8 @@ public enum DominoUtils {
 		}
 	}
 
-	public static Pattern IS_HIERARCHICAL_MATCH = Pattern.compile("^((CN=)|(O=)|(OU=)|(C=))[^/]+", Pattern.CASE_INSENSITIVE);
-
-	public static Pattern CN_MATCH = Pattern.compile("^(CN=)[^/]+", Pattern.CASE_INSENSITIVE);
-
-	public static Pattern OU_MATCH = Pattern.compile("(OU=)[^/]+", Pattern.CASE_INSENSITIVE);
-
-	public static Pattern O_MATCH = Pattern.compile("(O=)[^/]+", Pattern.CASE_INSENSITIVE);
-
-	public static Pattern C_MATCH = Pattern.compile("(C=)[^/]+", Pattern.CASE_INSENSITIVE);
-
 	public static boolean isHierarchicalName(final String name) {
-		if (name == null)
-			return false;
-		return IS_HIERARCHICAL_MATCH.matcher(name).find();
+		return (Strings.isBlankString(name)) ? false : Names.IS_HIERARCHICAL_MATCH.matcher(name).find();
 	}
 
 	public static String toAbbreviatedName(final String name) {
@@ -613,7 +432,7 @@ public enum DominoUtils {
 
 	public static String toCommonName(final String name) {
 		if (isHierarchicalName(name)) {
-			Matcher m = CN_MATCH.matcher(name);
+			Matcher m = Names.CN_MATCH.matcher(name);
 			if (m.find()) {
 				int start = m.start() + 3;
 				int end = m.end();
@@ -632,7 +451,7 @@ public enum DominoUtils {
 
 	public static String toOrgName(final String name) {
 		if (isHierarchicalName(name)) {
-			Matcher m = O_MATCH.matcher(name);
+			Matcher m = Names.O_MATCH.matcher(name);
 			if (m.find()) {
 				int start = m.start() + 2;
 				int end = m.end();
@@ -651,7 +470,7 @@ public enum DominoUtils {
 
 	public static String toOUString(final String name) {
 		if (isHierarchicalName(name)) {
-			Matcher m = OU_MATCH.matcher(name);
+			Matcher m = Names.OU_MATCH.matcher(name);
 			StringBuilder builder = new StringBuilder();
 			int i = 0;
 			while (m.find()) {
@@ -677,7 +496,7 @@ public enum DominoUtils {
 
 	public static String[] toOU(final String name) {
 		if (isHierarchicalName(name)) {
-			Matcher m = OU_MATCH.matcher(name);
+			Matcher m = Names.OU_MATCH.matcher(name);
 			String[] ous = new String[4];	//maximum number of OUs according to spec
 			int i = 0;
 			while (m.find()) {
@@ -701,7 +520,7 @@ public enum DominoUtils {
 
 	public static String toCountry(final String name) {
 		if (isHierarchicalName(name)) {
-			Matcher m = C_MATCH.matcher(name);
+			Matcher m = Names.C_MATCH.matcher(name);
 			if (m.find()) {
 				int start = m.start() + 2;
 				int end = m.end();
@@ -832,6 +651,31 @@ public enum DominoUtils {
 		return hash.toUpperCase();
 	}
 
+	public static byte[] toByteArray(final String hexString) {
+		if (hexString.length() % 2 != 0)
+			throw new IllegalArgumentException("Only hex strings with an even number of digits can be converted");
+		int arrLength = hexString.length() >> 1;
+		byte buf[] = new byte[arrLength];
+
+		for (int ii = 0; ii < arrLength; ii++) {
+			int index = ii << 1;
+
+			String l_digit = hexString.substring(index, index + 2);
+			buf[ii] = (byte) Integer.parseInt(l_digit, 16);
+		}
+		return buf;
+	}
+
+	public static String toHex(final byte[] bytes) {
+		Formatter formatter = new Formatter();
+		for (byte b : bytes) {
+			formatter.format("%02x", b);
+		}
+		String result = formatter.toString();
+		formatter.close();
+		return result;
+	}
+
 	/**
 	 * To java calendar safe.
 	 * 
@@ -897,295 +741,6 @@ public enum DominoUtils {
 			}
 		}
 		return date;
-	}
-
-	// MIMEBean methods
-
-	@SuppressWarnings("unchecked")
-	public static Object restoreState(final org.openntf.domino.Document doc, final String itemName, final MIMEEntity entity)
-			throws Exception {
-		Session session = doc.getAncestorSession();
-		boolean oldConvertMime = session.isConvertMime();
-		if (oldConvertMime) {
-			session.setConvertMime(false);
-		}
-		try {
-			Object result = null;
-			Stream mimeStream = session.createStream();
-			Class<?> chkClass = null;
-			String allHeaders = entity.getHeaders();
-			MIMEHeader header = entity.getNthHeader("X-Java-Class");
-			if (header != null) {
-				String className = header.getHeaderVal();
-				chkClass = getClass(className);
-				if (chkClass == null) {
-					log_.log(Level.SEVERE, "Unable to load class " + className + " from currentThread classLoader"
-							+ " so object deserialization is likely to fail...");
-				}
-			}
-
-			entity.getContentAsBytes(mimeStream);
-
-			mimeStream.setPosition(0);
-			//		ByteArrayOutputStream streamOut = new ByteArrayOutputStream();
-			//		mimeStream.getContents(streamOut);
-			// mimeStream.recycle();
-
-			//		byte[] stateBytes = streamOut.toByteArray();
-			//		ByteArrayInputStream byteStream = new ByteArrayInputStream(stateBytes);
-			InputStream is = new MIMEBufferedInputStream(mimeStream);
-			ObjectInputStream objectStream;
-
-			if (allHeaders == null) {
-				System.out.println("No headers available. Testing gzip by experimentation...");
-				try {
-					GZIPInputStream zipStream = new GZIPInputStream(is);
-					objectStream = new LoaderObjectInputStream(zipStream);
-				} catch (Exception ioe) {
-					objectStream = new LoaderObjectInputStream(is);
-				}
-			} else if (allHeaders.toLowerCase().contains("content-encoding: gzip")) {
-				//			GZIPInputStream zipStream = new GZIPInputStream(byteStream);
-				GZIPInputStream zipStream = new GZIPInputStream(is);
-				objectStream = new LoaderObjectInputStream(zipStream);
-			} else {
-				objectStream = new LoaderObjectInputStream(is);
-			}
-
-			// There are three potential storage forms: Externalizable, Serializable, and StateHolder, distinguished by type or header
-			if ("x-java-externalized-object".equals(entity.getContentSubType())) {
-				Class<Externalizable> externalizableClass = (Class<Externalizable>) getClass(entity.getNthHeader("X-Java-Class")
-						.getHeaderVal());
-				Externalizable restored = externalizableClass.newInstance();
-				restored.readExternal(objectStream);
-				result = restored;
-			} else {
-				Object restored = (Serializable) objectStream.readObject();
-
-				// But wait! It might be a StateHolder object or Collection!
-				MIMEHeader storageScheme = entity.getNthHeader("X-Storage-Scheme");
-				MIMEHeader originalJavaClass = entity.getNthHeader("X-Original-Java-Class");
-				if (storageScheme != null && "StateHolder".equals(storageScheme.getHeaderVal())) {
-					Class<?> facesContextClass = getClass("javax.faces.context.FacesContext");
-					Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
-
-					Class<?> stateHoldingClass = getClass(originalJavaClass.getHeaderVal());
-					Method restoreStateMethod = stateHoldingClass.getMethod("restoreState", facesContextClass, Object.class);
-					result = stateHoldingClass.newInstance();
-					restoreStateMethod.invoke(result, getCurrentInstance.invoke(null), restored);
-				} else if (originalJavaClass != null && "org.openntf.domino.DocumentCollection".equals(originalJavaClass.getHeaderVal())) {
-					// Maybe this can be sped up by not actually getting the documents
-					try {
-						String[] unids = (String[]) restored;
-						Database db = doc.getParentDatabase();
-						DocumentCollection docCollection = db.createDocumentCollection();
-						for (String unid : unids) {
-							docCollection.addDocument(db.getDocumentByUNID(unid));
-						}
-						result = docCollection;
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				} else if (originalJavaClass != null && "org.openntf.domino.NoteCollection".equals(originalJavaClass.getHeaderVal())) {
-					String[] unids = (String[]) restored;
-					Database db = doc.getParentDatabase();
-					NoteCollection noteCollection = db.createNoteCollection(false);
-					for (String unid : unids) {
-						noteCollection.add(db.getDocumentByUNID(unid));
-					}
-					result = noteCollection;
-				} else {
-					result = restored;
-				}
-			}
-
-			// entity.recycle();
-			if (!doc.closeMIMEEntities(false, itemName)) {
-				log_.log(Level.WARNING, "closeMIMEEntities returned false for item " + itemName + " on doc " + doc.getNoteID() + " in db "
-						+ doc.getAncestorDatabase().getApiPath());
-			}
-
-			return result;
-
-		} finally {
-			if (oldConvertMime) {
-				session.setConvertMime(true);
-			}
-		}
-	}
-
-	/**
-	 * Restore state.
-	 * 
-	 * @param doc
-	 *            the doc
-	 * @param itemName
-	 *            the item name
-	 * @return the serializable
-	 * @throws Throwable
-	 *             the throwable
-	 */
-	@SuppressWarnings("unchecked")
-	public static Object restoreState(final org.openntf.domino.Document doc, final String itemName) throws Exception {
-		Session session = Factory.getSession((Base<?>) doc);
-		boolean convertMime = session.isConvertMime();
-		session.setConvertMime(false);
-
-		Object result = null;
-		MIMEEntity entity = doc.getMIMEEntity(itemName);
-		if (entity == null) {
-			return null;
-		}
-		result = restoreState(doc, itemName, entity);
-		session.setConvertMime(convertMime);
-
-		return result;
-	}
-
-	/**
-	 * Save state.
-	 * 
-	 * @param object
-	 *            the object
-	 * @param doc
-	 *            the doc
-	 * @param itemName
-	 *            the item name
-	 * @throws Throwable
-	 *             the throwable
-	 */
-	public static void saveState(final Serializable object, final Document doc, final String itemName) throws Exception {
-		saveState(object, doc, itemName, true, null);
-	}
-
-	// private static Map<String, Integer> diagCount = new HashMap<String, Integer>();
-
-	/**
-	 * Save state.
-	 * 
-	 * @param object
-	 *            the object
-	 * @param doc
-	 *            the doc
-	 * @param itemName
-	 *            the item name
-	 * @param compress
-	 *            the compress
-	 * @param headers
-	 *            the headers
-	 * @throws Throwable
-	 *             the throwable
-	 */
-	public static void saveState(final Serializable object, final Document doc, final String itemName, final boolean compress,
-			final Map<String, String> headers) throws Exception {
-		if (object == null) {
-			log_.log(Level.INFO, "Ignoring attempt to save MIMEBean value of null");
-			return;
-		}
-		Session session = doc.getAncestorSession();
-		boolean convertMime = session.isConvertMime();
-		if (convertMime) {
-			session.setConvertMime(false);
-		}
-
-		// String diagKey = doc.getUniversalID() + itemName;
-		// if (diagCount.containsKey(diagKey)) {
-		// diagCount.put(diagKey, diagCount.get(diagKey) + 1);
-		// } else {
-		// diagCount.put(diagKey, 1);
-		// }
-
-		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-		ObjectOutputStream objectStream = compress ? new ObjectOutputStream(new GZIPOutputStream(byteStream)) : new ObjectOutputStream(
-				byteStream);
-		String contentType = null;
-		// Prefer externalization if available
-		if (object instanceof Externalizable) {
-			((Externalizable) object).writeExternal(objectStream);
-			contentType = "application/x-java-externalized-object";
-		} else {
-			objectStream.writeObject(object);
-			contentType = "application/x-java-serialized-object";
-		}
-
-		objectStream.flush();
-		objectStream.close();
-
-		Stream mimeStream = session.createStream();
-
-		MIMEEntity previousState = doc.getMIMEEntity(itemName);
-		MIMEEntity entity = null;
-		if (previousState == null) {
-			Item itemChk = doc.getFirstItem(itemName);
-			if (itemChk != null) {
-				itemChk.remove();
-			}
-			entity = doc.createMIMEEntity(itemName);
-		} else {
-			entity = previousState;
-		}
-		MIMEHeader javaClass = entity.getNthHeader("X-Java-Class");
-		MIMEHeader contentEncoding = entity.getNthHeader("Content-Encoding");
-		if (javaClass == null) {
-			javaClass = entity.createHeader("X-Java-Class");
-		} else {
-			// long jcid = org.openntf.domino.impl.Base.getDelegateId((org.openntf.domino.impl.Base) javaClass);
-			// if (jcid < 1) {
-			// System.out.println("EXISTING javaClassid: " + jcid);
-			// System.out.println("Item: " + itemName + " in document " + doc.getUniversalID() + " (" + doc.getNoteID()
-			// + ") update count: " + diagCount.get(diagKey));
-			// }
-		}
-		try {
-			javaClass.setHeaderVal(object.getClass().getName());
-		} catch (Throwable t) {
-			t.printStackTrace();
-		}
-
-		if (compress) {
-			if (contentEncoding == null) {
-				contentEncoding = entity.createHeader("Content-Encoding");
-			}
-			contentEncoding.setHeaderVal("gzip");
-
-			// contentEncoding.recycle();
-		} else {
-			if (contentEncoding != null) {
-
-				contentEncoding.remove();
-				// contentEncoding.recycle();
-			}
-		}
-
-		// javaClass.recycle();
-
-		if (headers != null) {
-			for (Map.Entry<String, String> entry : headers.entrySet()) {
-				MIMEHeader paramHeader = entity.getNthHeader(entry.getKey());
-				if (paramHeader == null) {
-					paramHeader = entity.createHeader(entry.getKey());
-				}
-				paramHeader.setHeaderVal(entry.getValue());
-				// paramHeader.recycle();
-			}
-		}
-		byte[] bytes = byteStream.toByteArray();
-		ByteArrayInputStream byteIn = new ByteArrayInputStream(bytes);
-
-		mimeStream.setContents(byteIn);
-		entity.setContentFromBytes(mimeStream, contentType, MIMEEntity.ENC_NONE);
-
-		// entity.recycle();
-		// mimeStream.recycle();
-		//		entity = null;	//NTF - why set to null? We're properly closing the entities now.
-		//		previousState = null;	// why set to null?
-		if (!doc.closeMIMEEntities(true, itemName)) {
-			log_.log(Level.WARNING, "closeMIMEEntities returned false for item " + itemName + " on doc " + doc.getNoteID() + " in db "
-					+ doc.getAncestorDatabase().getApiPath());
-		}
-		if (!convertMime) {
-			session.setConvertMime(true);
-		}
 	}
 
 	/**
@@ -1379,4 +934,5 @@ public enum DominoUtils {
 	public static String filePathToJavaBinaryName(final String filePath, final String separator) {
 		return filePath.substring(0, filePath.length() - 6).replace(separator, ".");
 	}
+
 }
