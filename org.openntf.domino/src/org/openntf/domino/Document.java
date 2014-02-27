@@ -1046,7 +1046,17 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	@Override
 	public void unlock();
 
-	Item replaceItemValue(String itemName, Object value, Boolean isSummary, boolean returnItem);
+	/**
+	 * Replaces the itemvalue in a document.
+	 * 
+	 * @param itemName
+	 * @param value
+	 * @param isSummary
+	 * @param autoBox
+	 * @param returnItem
+	 * @return
+	 */
+	Item replaceItemValue(String itemName, Object value, Boolean isSummary, final boolean boxCompatibleOnly, boolean returnItem);
 
 	public void markDirty();
 }

@@ -2148,7 +2148,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	 */
 	@Override
 	public Item replaceItemValue(final String itemName, final Object value) {
-		return replaceItemValue(itemName, value, null, true);
+		return replaceItemValue(itemName, value, null, true, true);
 	}
 
 	/*
@@ -2158,7 +2158,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	 */
 	@Override
 	public Item replaceItemValue(final String itemName, final Object value, final boolean isSummary) {
-		return replaceItemValue(itemName, value, isSummary, true);
+		return replaceItemValue(itemName, value, isSummary, true, true);
 	}
 
 	/**
@@ -2170,7 +2170,8 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	 * 
 	 * @see org.openntf.domino.Document#replaceItemValue(java.lang.String, java.lang.Object)
 	 */
-	public Item replaceItemValue(final String itemName, final Object value, final Boolean isSummary, final boolean returnItem) {
+	public Item replaceItemValue(final String itemName, final Object value, final Boolean isSummary, final boolean boxCompatibleOnly,
+			final boolean returnItem) {
 		Item result = null;
 		try {
 
@@ -2187,10 +2188,12 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 				result = replaceItemValueCustomData(itemName, "mime-bean", value, returnItem);
 				//				}
 			} catch (Exception ex2) {
-				if (AUTOBOX_ALWAYS) {	// Compatibility mode
+				if (!boxCompatibleOnly) {
+					result = replaceItemValueCustomData(itemName, "mime-bean", value, returnItem);
+				} else if (AUTOBOX_ALWAYS) {
+					// Compatibility mode
 					log_.log(Level.WARNING, "Writing " + value.getClass() + " causes a " + ex2
 							+ " as AUTOBOX_ALWAYS is true, the value will be wrapped in a MIME bean");
-
 					result = replaceItemValueCustomData(itemName, "mime-bean", value, returnItem);
 				} else {
 					throw ex2;
@@ -2231,7 +2234,6 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	 * @param c
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	private int getLotusPayload(final Object o, final Class<?> c) {
 		if (c.isAssignableFrom(o.getClass())) {
 			if (o instanceof String) {
@@ -3101,70 +3103,75 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 			return null;
 		}
 		// Check for "special" cases
-		if ("parentDocument".equals(key)) {
-			return this.getParentDocument();
-		}
-		if (key instanceof String) {
-			String skey = (String) key;
-			if ("@accessed".equalsIgnoreCase(skey) || "@accessed()".equalsIgnoreCase(skey)) {
-				return this.getLastAccessed();
-			}
-			if ("@modified".equalsIgnoreCase(skey) || "@modified()".equalsIgnoreCase(skey)) {
-				return this.getLastModified();
-			}
-			if ("@created".equalsIgnoreCase(skey) || "@created()".equalsIgnoreCase(skey)) {
-				return this.getCreated();
-			}
 
-			if ("@accesseddate".equalsIgnoreCase(skey) || "@accesseddate()".equalsIgnoreCase(skey)) {
-				return this.getLastAccessedDate();
+		if (key instanceof CharSequence) {
+			String skey = key.toString().toLowerCase();
+			if ("parentdocument".equals(skey)) {
+				return this.getParentDocument();
 			}
-			if ("@modifieddate".equalsIgnoreCase(skey) || "@modifieddate()".equalsIgnoreCase(skey)) {
-				return this.getLastModifiedDate();
-			}
-			if ("@createddate".equalsIgnoreCase(skey) || "@createddate()".equalsIgnoreCase(skey)) {
-				return this.getCreatedDate();
-			}
-			if ("@documentuniqueid".equalsIgnoreCase(skey) || "@documentuniqueid()".equalsIgnoreCase(skey)) {
-				return this.getUniversalID();
-			}
-			if ("@noteid".equalsIgnoreCase(skey) || "@noteid()".equalsIgnoreCase(skey)) {
-				return this.getNoteID();
-			}
-			if ("@doclength".equalsIgnoreCase(skey) || "@doclength()".equalsIgnoreCase(skey)) {
-				return this.getSize();
-			}
-			if ("@isresponsedoc".equalsIgnoreCase(skey) || "@isresponsedoc()".equalsIgnoreCase(skey)) {
-				return this.isResponse();
-			}
-			if ("@replicaid".equalsIgnoreCase(skey) || "@replicaid()".equalsIgnoreCase(skey)) {
-				return this.getAncestorDatabase().getReplicaID();
-			}
-			if ("@responses".equalsIgnoreCase(skey) || "@responses()".equalsIgnoreCase(skey)) {
-				return this.getResponses().getCount();
+			if (skey.indexOf("@") != -1) { // TODO RPr: Should we REALLY detect all formulas, like "3+5" or "field[2]" ?
+				int pos = skey.indexOf('(');
+				if (pos != -1) {
+					skey = skey.substring(0, pos);
+				}
+
+				if ("@accessed".equals(skey)) {
+					return this.getLastAccessed();
+				}
+				if ("@modified".equals(skey)) {
+					return this.getLastModified();
+				}
+				if ("@created".equals(skey)) {
+					return this.getCreated();
+				}
+				if ("@accesseddate".equals(skey)) {
+					return this.getLastAccessedDate();
+				}
+				if ("@modifieddate".equals(skey)) {
+					return this.getLastModifiedDate();
+				}
+				if ("@createddate".equals(skey)) {
+					return this.getCreatedDate();
+				}
+				if ("@documentuniqueid".equals(skey)) {
+					return this.getUniversalID();
+				}
+				if ("@noteid".equals(skey)) {
+					return this.getNoteID();
+				}
+				if ("@doclength".equals(skey)) {
+					return this.getSize();
+				}
+				if ("@isresponsedoc".equals(skey)) {
+					return this.isResponse();
+				}
+				if ("@replicaid".equals(skey)) {
+					return this.getAncestorDatabase().getReplicaID();
+				}
+				if ("@responses".equals(skey)) {
+					return this.getResponses().getCount();
+				}
+				Formula formula = new Formula();
+				formula.setExpression(key.toString());
+				List<?> value = formula.getValue(this);
+				if (value.size() == 1) {
+					return value.get(0);
+				}
+				return value;
 			}
 		}
 
-		if (this.containsKey(key)) {
-			Vector<Object> value = this.getItemValue(key.toString());
-			if (value == null) {
-				//TODO Throw an exception if the item data can't be read? Null implies the key doesn't exist
-				return null;
-			} else if (value.size() == 1) {
-				return value.get(0);
-			}
-			return value;
-		} else if (key instanceof CharSequence) {
-			// Execute the key as a formula in the context of the document
-			Formula formula = new Formula();
-			formula.setExpression(key.toString());
-			List<?> value = formula.getValue(this);
-			if (value.size() == 1) {
-				return value.get(0);
-			}
-			return value;
+		//if (this.containsKey(key)) {
+		Vector<Object> value = this.getItemValue(key.toString());
+		if (value == null) {
+			//TODO Throw an exception if the item data can't be read? Null implies the key doesn't exist
+			return null;
+		} else if (value.size() == 1) {
+			return value.get(0);
 		}
-		return null;
+		return value;
+		//}
+		//return null;
 	}
 
 	@Override
@@ -3191,9 +3198,9 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	public Object put(final String key, final Object value) {
 		if (key != null) {
 			Object previousState = this.get(key);
-			this.removeItem(key);
-			this.replaceItemValue(key, value);
-			this.get(key);
+			//this.removeItem(key); RPr: is there a reason why this is needed?
+			this.replaceItemValue(key, value, null, false, false);
+			// this.get(key);
 			// this.save();
 			return previousState;
 		}
