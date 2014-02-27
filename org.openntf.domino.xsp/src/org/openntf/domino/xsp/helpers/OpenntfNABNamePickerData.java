@@ -18,6 +18,8 @@ import lotus.domino.ViewEntry;
 import lotus.domino.ViewEntryCollection;
 import lotus.domino.ViewNavigator;
 
+import org.openntf.domino.utils.Factory;
+
 import com.ibm.commons.Platform;
 import com.ibm.commons.util.StringUtil;
 import com.ibm.xsp.FacesExceptionEx;
@@ -621,11 +623,9 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 					try {
 						ViewEntry ve = null;
 						if (key != null) {
-							// TODO: Get this working with ViewNavigator
-							// int searchOptions = DominoUtils.FIND_GREATER_THAN | DominoUtils.FIND_EQUAL | DominoUtils.FIND_PARTIAL
-							// | DominoUtils.FIND_CASE_INSENSITIVE;
-							// ve = DominoUtils.getViewEntryByKeyWithOptions(view, key, searchOptions);
-							ve = view.getEntryByKey(key, false);
+							int searchOptions = DominoUtils.FIND_GREATER_THAN | DominoUtils.FIND_EQUAL | DominoUtils.FIND_PARTIAL
+									| DominoUtils.FIND_CASE_INSENSITIVE;
+							ve = DominoUtils.getViewEntryByKeyWithOptions(Factory.toLotus(view), key, searchOptions);
 						} else {
 							ve = nav.getCurrent();
 						}
