@@ -1061,4 +1061,26 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 		}
 	}
 
+	public boolean hasFlag(final org.openntf.domino.Item.Flags flag) {
+		switch (flag) {
+		case PROTECTED:
+			return isProtected();
+		case AUTHORS:
+			return isAuthors();
+		case ENCRYPTED:
+			return isEncrypted();
+		case NAMES:
+			return isNames();
+		case READERS:
+			return isReaders();
+		case SIGNED:
+			return isSigned();
+		case SUMMARY:
+			return isSummary();
+		default:
+			break;
+		}
+		return false;
+	}
+
 }

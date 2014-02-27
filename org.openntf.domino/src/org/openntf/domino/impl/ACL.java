@@ -31,7 +31,7 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class ACL.
  */
-public class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL, Database> implements org.openntf.domino.ACL {
+class ACL extends Base<org.openntf.domino.ACL, lotus.domino.ACL, Database> implements org.openntf.domino.ACL {
 
 	/**
 	 * Instantiates a new acl.
