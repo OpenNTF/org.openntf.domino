@@ -31,4 +31,15 @@ public interface View {
 
 	public boolean isIndexed();
 
+	/**
+	 * Checks whether the source document is unique within the view
+	 * 
+	 * @param srcDoc
+	 *            Document the developer wants to check is unique
+	 * @param key
+	 *            Object to be checked against the sorted View
+	 * @return whether the document is unique or not
+	 */
+	public boolean checkUnique(final Object key, final org.openntf.domino.Document srcDoc);
+
 }

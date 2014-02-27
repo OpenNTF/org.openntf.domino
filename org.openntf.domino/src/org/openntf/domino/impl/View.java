@@ -2420,4 +2420,25 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 			DominoUtils.handleException(e);
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.View#checkUnique(java.lang.Object, org.openntf.domino.Document)
+	 */
+	public boolean checkUnique(final Object key, final Document srcDoc) {
+		boolean retVal_ = false;
+		try {
+			DocumentCollection dc = this.getAllDocumentsByKey(key, true);
+			for (Document checkDoc : dc) {
+				if (null != srcDoc) {
+					if (!checkDoc.getUniversalID().equals(srcDoc.getUniversalID())) {
+						return retVal_;
+					}
+				}
+			}
+			retVal_ = true;
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+		}
+		return retVal_;
+	}
 }
