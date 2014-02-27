@@ -11,111 +11,109 @@ public interface AtFormulaParserConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int Date = 1;
+  int Date_or_KW = 1;
   /** RegularExpression Id. */
-  int Function_Keyword = 2;
+  int OSubscript = 2;
   /** RegularExpression Id. */
-  int OSubscript = 3;
+  int CSubscript = 3;
   /** RegularExpression Id. */
-  int CSubscript = 4;
+  int EOS = 4;
   /** RegularExpression Id. */
-  int EOS = 5;
+  int OParen = 5;
   /** RegularExpression Id. */
-  int OParen = 6;
+  int CParen = 6;
   /** RegularExpression Id. */
-  int CParen = 7;
+  int Assign = 7;
   /** RegularExpression Id. */
-  int Assign = 8;
+  int BoolNot = 8;
   /** RegularExpression Id. */
-  int BoolNot = 9;
+  int KW_DEFAULT = 9;
   /** RegularExpression Id. */
-  int KW_DEFAULT = 10;
+  int KW_ENVIRONMENT = 10;
   /** RegularExpression Id. */
-  int KW_ENVIRONMENT = 11;
+  int KW_FIELD = 11;
   /** RegularExpression Id. */
-  int KW_FIELD = 12;
+  int KW_REM = 12;
   /** RegularExpression Id. */
-  int KW_REM = 13;
+  int KW_SELECT = 13;
   /** RegularExpression Id. */
-  int KW_SELECT = 14;
+  int At_do = 14;
   /** RegularExpression Id. */
-  int At_do = 15;
+  int At_doWhile = 15;
   /** RegularExpression Id. */
-  int At_doWhile = 16;
+  int At_for = 16;
   /** RegularExpression Id. */
-  int At_for = 17;
+  int At_if = 17;
   /** RegularExpression Id. */
-  int At_if = 18;
+  int At_iferror = 18;
   /** RegularExpression Id. */
-  int At_iferror = 19;
+  int At_transform = 19;
   /** RegularExpression Id. */
-  int At_transform = 20;
+  int At_other = 20;
   /** RegularExpression Id. */
-  int At_other = 21;
+  int ListConcat = 21;
   /** RegularExpression Id. */
-  int ListConcat = 22;
+  int OpMul = 22;
   /** RegularExpression Id. */
-  int OpMul = 23;
+  int OpMulP = 23;
   /** RegularExpression Id. */
-  int OpMulP = 24;
+  int OpDiv = 24;
   /** RegularExpression Id. */
-  int OpDiv = 25;
+  int OpDivP = 25;
   /** RegularExpression Id. */
-  int OpDivP = 26;
+  int OpPlus = 26;
   /** RegularExpression Id. */
-  int OpPlus = 27;
+  int OpPlusP = 27;
   /** RegularExpression Id. */
-  int OpPlusP = 28;
+  int OpMinus = 28;
   /** RegularExpression Id. */
-  int OpMinus = 29;
+  int OpMinusP = 29;
   /** RegularExpression Id. */
-  int OpMinusP = 30;
+  int CmpEqual = 30;
   /** RegularExpression Id. */
-  int CmpEqual = 31;
+  int CmpEqualP = 31;
   /** RegularExpression Id. */
-  int CmpEqualP = 32;
+  int CmpNE = 32;
   /** RegularExpression Id. */
-  int CmpNE = 33;
+  int CmpNEP = 33;
   /** RegularExpression Id. */
-  int CmpNEP = 34;
+  int CmpLT = 34;
   /** RegularExpression Id. */
-  int CmpLT = 35;
+  int CmpLTP = 35;
   /** RegularExpression Id. */
-  int CmpLTP = 36;
+  int CmpGT = 36;
   /** RegularExpression Id. */
-  int CmpGT = 37;
+  int CmpGTP = 37;
   /** RegularExpression Id. */
-  int CmpGTP = 38;
+  int CmpLTE = 38;
   /** RegularExpression Id. */
-  int CmpLTE = 39;
+  int CmpLTEP = 39;
   /** RegularExpression Id. */
-  int CmpLTEP = 40;
+  int CmpGTE = 40;
   /** RegularExpression Id. */
-  int CmpGTE = 41;
+  int CmpGTEP = 41;
   /** RegularExpression Id. */
-  int CmpGTEP = 42;
+  int BoolAnd = 42;
   /** RegularExpression Id. */
-  int BoolAnd = 43;
+  int BoolOr = 43;
   /** RegularExpression Id. */
-  int BoolOr = 44;
+  int NumDoubleUS = 44;
   /** RegularExpression Id. */
-  int NumDoubleUS = 45;
+  int NumDoubleDE = 45;
   /** RegularExpression Id. */
-  int NumDoubleDE = 46;
+  int NumInteger = 46;
   /** RegularExpression Id. */
-  int NumInteger = 47;
+  int Exponent = 47;
   /** RegularExpression Id. */
-  int Exponent = 48;
+  int String1 = 48;
   /** RegularExpression Id. */
-  int String1 = 49;
+  int String2 = 49;
   /** RegularExpression Id. */
-  int String2 = 50;
+  int Identifier = 50;
   /** RegularExpression Id. */
-  int Identifier = 51;
+  int Letter = 51;
   /** RegularExpression Id. */
-  int Letter = 52;
-  /** RegularExpression Id. */
-  int Digit = 53;
+  int Digit = 52;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -125,8 +123,7 @@ public interface AtFormulaParserConstants {
   /** Literal token values. */
   String[] tokenImage = {
     "<EOF>",
-    "<Date>",
-    "<Function_Keyword>",
+    "<Date_or_KW>",
     "\"[\"",
     "\"]\"",
     "\";\"",

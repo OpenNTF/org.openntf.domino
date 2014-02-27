@@ -1,6 +1,7 @@
 package org.openntf.domino.tests.rpr.formula.eval;
 
 import java.util.Collection;
+import java.util.Date;
 
 public class Value {
 	private Object values[];
@@ -50,6 +51,14 @@ public class Value {
 		Object o = get(i);
 		if (o instanceof String) {
 			return (String) o;
+		}
+		throw new ClassCastException("Text expected. Got '" + o + "'");
+	}
+
+	public Date getDate(final int i) {
+		Object o = get(i);
+		if (o instanceof Date) {
+			return (Date) o;
 		}
 		throw new ClassCastException("Text expected. Got '" + o + "'");
 	}

@@ -2193,7 +2193,8 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 				} else if (AUTOBOX_ALWAYS) {
 					// Compatibility mode
 					log_.log(Level.WARNING, "Writing " + value.getClass() + " causes a " + ex2
-							+ " as AUTOBOX_ALWAYS is true, the value will be wrapped in a MIME bean");
+							+ " as AUTOBOX_ALWAYS is true, the value will be wrapped in a MIME bean."
+							+ " Consider using 'put' or something similar in your code.");
 					result = replaceItemValueCustomData(itemName, "mime-bean", value, returnItem);
 				} else {
 					throw ex2;
@@ -3161,15 +3162,23 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 			}
 		}
 
-		//if (this.containsKey(key)) {
-		Vector<Object> value = this.getItemValue(key.toString());
-		if (value == null) {
-			//TODO Throw an exception if the item data can't be read? Null implies the key doesn't exist
-			return null;
-		} else if (value.size() == 1) {
-			return value.get(0);
+		Object value = this.getItemValue(key.toString(), Object.class);
+		if (value instanceof Vector) {
+			Vector<?> v = (Vector<?>) value;
+			if (v.size() == 1) {
+				return v.get(0);
+			}
 		}
 		return value;
+		//if (this.containsKey(key)) {
+		//		Vector<Object> value = this.getItemValue(key.toString());
+		//		if (value == null) {
+		//			//TODO Throw an exception if the item data can't be read? Null implies the key doesn't exist
+		//			return null;
+		//		} else if (value.size() == 1) {
+		//			return value.get(0);
+		//		}
+		//		return value;
 		//}
 		//return null;
 	}

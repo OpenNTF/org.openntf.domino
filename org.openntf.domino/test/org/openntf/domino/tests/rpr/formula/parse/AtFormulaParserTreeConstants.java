@@ -15,12 +15,11 @@ public interface AtFormulaParserTreeConstants
   public int JJTATIF = 9;
   public int JJTATIFERROR = 10;
   public int JJTATTRANFORM = 11;
-  public int JJTKEYWORD = 12;
-  public int JJTVALUEDATE = 13;
-  public int JJTVALUESTRING = 14;
-  public int JJTVALUEDOUBLE = 15;
-  public int JJTVALUELONG = 16;
-  public int JJTGETVARIABLE = 17;
+  public int JJTVALUEDATEORKW = 12;
+  public int JJTVALUESTRING = 13;
+  public int JJTVALUEDOUBLE = 14;
+  public int JJTVALUELONG = 15;
+  public int JJTGETVARIABLE = 16;
 
 
   public String[] jjtNodeName = {
@@ -36,12 +35,11 @@ public interface AtFormulaParserTreeConstants
     "AtIf",
     "AtIfError",
     "AtTranform",
-    "Keyword",
-    "ValueDate",
+    "ValueDateOrKW",
     "ValueString",
     "ValueDouble",
     "ValueLong",
     "GetVariable",
   };
 }
-/* JavaCC - OriginalChecksum=e3afdce2c770891b46b1593350d6f073 (do not edit this line) */
+/* JavaCC - OriginalChecksum=00cb99c43de63604c89191033d22a416 (do not edit this line) */

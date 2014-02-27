@@ -1,5 +1,7 @@
 package org.openntf.domino.tests.rpr.formula.eval;
 
+import java.util.Date;
+
 public class DefaultOperators implements AtFunctionFactory, AtFunction {
 	public static enum Op {
 		ADD("_add"), ADD_P("_addP"), SUB("_sub"), SUB_P("_subP");
@@ -37,6 +39,15 @@ public class DefaultOperators implements AtFunctionFactory, AtFunction {
 		operation = op;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "DefaultOperators [operation=" + operation + "]";
+	}
+
+	@SuppressWarnings("null")
 	public Value evaluate(final FormulaContext ctx, final Value[] params) {
 		Value ret = new Value();
 
@@ -95,6 +106,20 @@ public class DefaultOperators implements AtFunctionFactory, AtFunction {
 			}
 			break;
 		case SUB:
+			o = lv.get(0);
+			ret.incSize(ub);
+			if (o instanceof Date) {
+				for (int i = 0; i < ub; i++) {
+					// TODO: [31.3.2014 00:00]-[30.03.2014 00:00] vs. [31.3.2014]-[30.03.2014]
+					ret.append((lv.getDate(i).getTime() - rv.getDate(i).getTime()) / 1000);
+				}
+			} else if (o instanceof Number) {
+				for (int i = 0; i < ub; i++) {
+					ret.append(lv.getDouble(i) + rv.getDouble(i));
+				}
+			} else {
+				throw new IllegalArgumentException();
+			}
 			break;
 		case SUB_P:
 			break;
@@ -104,4 +129,5 @@ public class DefaultOperators implements AtFunctionFactory, AtFunction {
 		}
 		return ret;
 	}
+
 }

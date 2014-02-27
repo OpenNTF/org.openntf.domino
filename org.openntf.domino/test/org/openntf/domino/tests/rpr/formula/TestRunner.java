@@ -6,23 +6,41 @@ import org.openntf.domino.tests.rpr.formula.eval.Value;
 import org.openntf.domino.tests.rpr.formula.parse.AtFormulaParser;
 import org.openntf.domino.tests.rpr.formula.parse.ParseException;
 import org.openntf.domino.tests.rpr.formula.parse.SimpleNode;
-import org.openntf.domino.tests.rpr.formula.parse.TokenMgrError;
+import org.openntf.domino.thread.DominoThread;
+import org.openntf.domino.utils.Factory;
 
-public class TestRunner {
+public class TestRunner implements Runnable {
+	public static void main(final String[] args) {
+		DominoThread thread = new DominoThread(new TestRunner(), "My thread");
+		thread.start();
+	}
 
-	public static void main(final String[] args) throws ParseException, TokenMgrError {
-		AtFormulaParser parser = new AtFormulaParser(System.in);
-		parser.init(new DominoFormatter(), new DefaultOperators());
-		System.out.println("Please type a Lotus domino @formula. Quit with CTRL+Z:");
-		SimpleNode n = parser.Parse();
-		n.dump("");
-		System.out.println("Evaluating");
-		Value v = n.evaluate(null);
-		for (int i = 0; i < v.size(); i++) {
-			System.out.println("[" + i + "]: " + v.get(i));
+	public TestRunner() {
+		// whatever you might want to do in your constructor, but stay away from Domino objects
+	}
+
+	@Override
+	public void run() {
+		try {
+			AtFormulaParser parser = new AtFormulaParser(System.in);
+			parser.init(new DominoFormatter(), new DefaultOperators());
+			System.out.println("Please type a Lotus domino @formula. Quit with CTRL+Z:");
+			SimpleNode n;
+			n = parser.Parse();
+
+			n.dump("");
+			System.out.println("Evaluating");
+			Value v = n.evaluate(null);
+			for (int i = 0; i < v.size(); i++) {
+				System.out.println("[" + i + "]: " + v.get(i));
+			}
+			System.out.println("Thank you.");
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		System.out.println("Thank you.");
-
+		Factory.terminate();
+		System.out.println(Factory.dumpCounters(true));
 	}
 
 }
