@@ -52,6 +52,8 @@ enum DesignFactory {
 			return (T) (new JarResource(doc));
 		} else if (T == XPage.class) {
 			return (T) (new XPage(doc));
+		} else if (T == JavaScriptLibrary.class) {
+			return (T) (new JavaScriptLibrary(doc));
 		}
 		return null;
 	}

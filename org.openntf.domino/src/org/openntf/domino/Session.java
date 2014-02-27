@@ -117,7 +117,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public lotus.domino.DateRange createDateRange();
+	public DateRange createDateRange();
 
 	/**
 	 * Creates a new DateRange object.
@@ -131,7 +131,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public lotus.domino.DateRange createDateRange(final Date startTime, final Date endTime);
+	public DateRange createDateRange(final Date startTime, final Date endTime);
 
 	/**
 	 * Creates a new DateRange object.
@@ -145,7 +145,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public lotus.domino.DateRange createDateRange(final lotus.domino.DateTime startTime, final lotus.domino.DateTime endTime);
+	public DateRange createDateRange(final lotus.domino.DateTime startTime, final lotus.domino.DateTime endTime);
 
 	/**
 	 * Creates a DateTime object that represents a specified date and time.
