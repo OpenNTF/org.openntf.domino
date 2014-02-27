@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  * 
  */
 @SuppressWarnings("rawtypes")
-public class EnumValuePickerData extends MapPickerData {
+public class EnumValuePickerData extends MapValuePickerData {
 	private static final Logger log_ = Logger.getLogger(EnumValuePickerData.class.getName());
 	private static final long serialVersionUID = 1L;
 	private Class<Enum> source_;
@@ -36,7 +36,7 @@ public class EnumValuePickerData extends MapPickerData {
 				opts.put(e.name(), source.getName() + " " + e.name());
 			}
 		}
-		options_ = opts;
+		setOptions(opts);
 	}
 
 }
