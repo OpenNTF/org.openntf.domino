@@ -122,6 +122,14 @@ public class IndexDatabase implements IScannerStateManager {
 		indexDb_ = indexDb;
 	}
 
+	public void setCaseSensitive(final boolean value) {
+		caseSensitive_ = value;
+	}
+
+	public boolean getCaseSensitive() {
+		return caseSensitive_;
+	}
+
 	public void setDatabase(final Database indexDb) {
 		indexDb_ = indexDb;
 	}
@@ -274,6 +282,7 @@ public class IndexDatabase implements IScannerStateManager {
 		scanner.setStopTokenList(getStopList());
 		scanner.setIgnoreDollar(true);
 		scanner.setStateManager(this, db.getReplicaID());
+		scanner.setCaseSensitive(getCaseSensitive());
 		dbDoc.replaceItemValue(IndexDatabase.DB_TITLE_NAME, db.getTitle());
 		if (dbDoc.hasItem(DB_LAST_INDEX_NAME)) {
 			scanner.setLastScanDate((Date) dbDoc.getItemValue(DB_LAST_INDEX_NAME, Date.class));
@@ -310,8 +319,9 @@ public class IndexDatabase implements IScannerStateManager {
 	private int sortedDocCount_ = 0;
 
 	public DocumentScanner scanDatabase(final Database db, final DocumentScanner scanner) {
-		System.out.println("Scanning database " + db.getApiPath());
+		//		System.out.println("Scanning database " + db.getApiPath());
 		curDocCount_ = 0;
+		scanner.setCaseSensitive(getCaseSensitive());
 		Date last = scanner.getLastScanDate();
 		if (last == null)
 			last = new Date(0);
