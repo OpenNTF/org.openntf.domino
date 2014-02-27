@@ -9,4 +9,6 @@ package org.openntf.domino.ext;
  */
 public interface Name {
 
+	public java.util.Collection<String> getGroups(String serverName);
+
 }

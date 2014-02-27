@@ -22,7 +22,7 @@ import org.openntf.domino.types.Null;
 
 public class DocumentSorter implements Externalizable {
 	private static final long serialVersionUID = 1L;
-	private static boolean debug = true;
+	private static boolean debug = false;
 	private DocumentData[] dataset_;
 	private SortedSet<DocumentData> treeSet_ = new TreeSet<DocumentData>();
 	private SortedSet<DocumentData> skipListSet_ = new ConcurrentSkipListSet<DocumentData>();
@@ -297,7 +297,7 @@ public class DocumentSorter implements Externalizable {
 		long startMemory = Runtime.getRuntime().freeMemory();
 		_sort();
 		int[] nids = new int[dataset_.length];
-		System.out.println("Beginning merge of " + dataset_.length + " DocumentDatas");
+		//		System.out.println("Beginning merge of " + dataset_.length + " DocumentDatas");
 		for (int i = 0; i < nids.length; i++) {
 			nids[i] = dataset_[i].nid_;
 		}
@@ -305,7 +305,7 @@ public class DocumentSorter implements Externalizable {
 		//		for (DocumentData data : dataset_) {
 		//			result.merge(data.nid_);
 		//		}
-		System.out.println("Completed merge for a result size of " + result.getCount());
+		//		System.out.println("Completed merge for a result size of " + result.getCount());
 		long endMemory = Runtime.getRuntime().freeMemory();
 		if (debug) {
 			System.out.println("Total memory consumed: " + (endMemory - startMemory) / 1024 + "KB");
@@ -339,7 +339,7 @@ public class DocumentSorter implements Externalizable {
 		for (int i = 0; i < dataset_.length; i++) {
 			dataset_[i] = (DocumentData) arg0.readObject();
 		}
-		System.out.println("Completed deserialization of a DocumentSorter with " + dLen + " in the dataset");
+		//		System.out.println("Completed deserialization of a DocumentSorter with " + dLen + " in the dataset");
 	}
 
 	public void writeExternal(final ObjectOutput arg0) throws IOException {

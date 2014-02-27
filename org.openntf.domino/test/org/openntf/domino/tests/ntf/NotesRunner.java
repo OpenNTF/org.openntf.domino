@@ -7,6 +7,7 @@ import java.security.PrivilegedExceptionAction;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 import lotus.domino.Database;
@@ -170,7 +171,7 @@ public class NotesRunner implements Runnable {
 			//				System.out.println(String.valueOf(key) + " : " + String.valueOf(value));
 			//			}
 			NotesThread.sinitThread();
-			for (int i = 0; i < 8; i++) {
+			for (int i = 0; i < 1; i++) {
 				NotesRunner run = new NotesRunner();
 				NotesThread nt = new NotesThread(run, "Thread " + i);
 				nt.start();
@@ -186,63 +187,92 @@ public class NotesRunner implements Runnable {
 		// TODO Auto-generated constructor stub
 	}
 
+	public void run1(final Session session) throws NotesException {
+		Long sessId = getLotusId(session);
+		sessionid.set(sessId);
+		Database db = session.getDatabase("", "names.nsf");
+		System.out.println("Db id:" + getLotusId(db));
+		Name name = null;
+		int i = 0;
+		try {
+			for (i = 0; i <= 100000; i++) {
+				name = session.createName(UUID.randomUUID().toString());
+				getLotusId(name);
+				DateTime dt = session.createDateTime(new Date());
+				getLotusId(dt);
+				DateTime end = session.createDateTime(new Date());
+				getLotusId(end);
+				DateRange dr = session.createDateRange(dt, end);
+				getLotusId(dr);
+				Document doc = db.createDocument();
+				getLotusId(doc);
+				Item i1 = doc.replaceItemValue("Foo", dr);
+				getLotusId(i1);
+				Item i2 = doc.replaceItemValue("Bar", dr.getText());
+				getLotusId(i2);
+				Item i3 = doc.replaceItemValue("Blah", dr.getStartDateTime().getLocalTime());
+				getLotusId(i3);
+				lotus.domino.ColorObject color = session.createColorObject();
+				getLotusId(color);
+				color.setRGB(128, 128, 128);
+				Item i4 = doc.replaceItemValue("color", color.getNotesColor());
+				getLotusId(i4);
+				i1.recycle();
+				i2.recycle();
+				i3.recycle();
+				i4.recycle();
+				DateTime create = doc.getCreated();
+				getLotusId(create);
+				String lc = create.getLocalTime();
+				//					if (i % 10000 == 0) {
+				//						System.out.println(Thread.currentThread().getName() + " Name " + i + " is " + name.getCommon() + " "
+				//								+ "Local time is " + lc + "  " + dr.getText());
+				//					}
+				dr.recycle();
+				doc.recycle();
+				dt.recycle();
+				end.recycle();
+				create.recycle();
+				color.recycle();
+				name.recycle();
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
+			System.out.println("Exception at loop point " + i);
+		}
+	}
+
+	public void run2(final Session session) throws NotesException {
+		Database db = session.getDatabase("", "log.nsf");
+		Document doc = db.createDocument();
+		Item names = doc.replaceItemValue("Names", "CN=Nathan T Freeman/O=REDPILL");
+		names.setAuthors(true);
+		doc.replaceItemValue("form", "test");
+		doc.save(true);
+		String nid = doc.getNoteID();
+		doc.recycle();
+		doc = db.getDocumentByID(nid);
+		Vector<Double> numbers = new Vector<Double>();
+		numbers.add(new Double(1));
+		numbers.add(new Double(2));
+
+		doc.replaceItemValue("Names", numbers);
+		doc.save(true);
+		doc.recycle();
+		doc = db.getDocumentByID(nid);
+		names = doc.getFirstItem("Names");
+		System.out.println("Names is " + names.getType() + " with " + names.isNames() + " and " + names.isAuthors() + " and value "
+				+ names.getText());
+		doc.recycle();
+		db.recycle();
+	}
+
 	@Override
 	public void run() {
 		try {
 			System.out.println("Starting NotesRunner");
 			Session session = NotesFactory.createSession();
-			Long sessId = getLotusId(session);
-			sessionid.set(sessId);
-			Database db = session.getDatabase("", "names.nsf");
-			System.out.println("Db id:" + getLotusId(db));
-			Name name = null;
-			int i = 0;
-			try {
-				for (i = 0; i <= 100000; i++) {
-					name = session.createName(UUID.randomUUID().toString());
-					getLotusId(name);
-					DateTime dt = session.createDateTime(new Date());
-					getLotusId(dt);
-					DateTime end = session.createDateTime(new Date());
-					getLotusId(end);
-					DateRange dr = session.createDateRange(dt, end);
-					getLotusId(dr);
-					Document doc = db.createDocument();
-					getLotusId(doc);
-					Item i1 = doc.replaceItemValue("Foo", dr);
-					getLotusId(i1);
-					Item i2 = doc.replaceItemValue("Bar", dr.getText());
-					getLotusId(i2);
-					Item i3 = doc.replaceItemValue("Blah", dr.getStartDateTime().getLocalTime());
-					getLotusId(i3);
-					lotus.domino.ColorObject color = session.createColorObject();
-					getLotusId(color);
-					color.setRGB(128, 128, 128);
-					Item i4 = doc.replaceItemValue("color", color.getNotesColor());
-					getLotusId(i4);
-					i1.recycle();
-					i2.recycle();
-					i3.recycle();
-					i4.recycle();
-					DateTime create = doc.getCreated();
-					getLotusId(create);
-					String lc = create.getLocalTime();
-					//					if (i % 10000 == 0) {
-					//						System.out.println(Thread.currentThread().getName() + " Name " + i + " is " + name.getCommon() + " "
-					//								+ "Local time is " + lc + "  " + dr.getText());
-					//					}
-					dr.recycle();
-					doc.recycle();
-					dt.recycle();
-					end.recycle();
-					create.recycle();
-					color.recycle();
-					name.recycle();
-				}
-			} catch (Throwable t) {
-				t.printStackTrace();
-				System.out.println("Exception at loop point " + i);
-			}
+			run2(session);
 			session.recycle();
 		} catch (Throwable t) {
 			t.printStackTrace();
