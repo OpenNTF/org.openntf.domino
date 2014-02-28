@@ -189,12 +189,12 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 					retVal.put(mapKey, getOptions().get(mapKey));
 					found = true;
 				} else {
-					if (SearchType.SEARCH_MATCH.equals(searchType)) {
+					if (SearchType.SEARCH_MATCH.getValue().equals(searchType)) {
 						if (StringUtil.equals(tmpMapKey, tmpSearchKey)) {
 							retVal.put(mapKey, getOptions().get(mapKey));
 							found = true;
 						}
-					} else if (SearchType.SEARCH_FTSEARCH.equals(searchType)) {
+					} else if (SearchType.SEARCH_FTSEARCH.getValue().equals(searchType)) {
 						if (tmpMapKey.contains(tmpSearchKey)) {
 							retVal.put(mapKey, getOptions().get(mapKey));
 							found = true;
