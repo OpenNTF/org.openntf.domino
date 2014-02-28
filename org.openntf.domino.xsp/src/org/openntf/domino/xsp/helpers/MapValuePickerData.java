@@ -31,8 +31,8 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 	private static final Logger log_ = Logger.getLogger(MapValuePickerData.class.getName());
 	private static final long serialVersionUID = 1L;
 	public String searchType;
-	private Boolean caseInsensitive;
-	protected Map<String, String> options;
+	public Boolean caseInsensitive;
+	public Map<String, String> options;
 
 	private static enum SearchType {
 		SEARCH_STARTFROM("startFrom"), SEARCH_MATCH("match"), SEARCH_FTSEARCH("ftSearch");

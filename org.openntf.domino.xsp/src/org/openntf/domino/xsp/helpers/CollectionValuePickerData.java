@@ -3,9 +3,9 @@
  */
 package org.openntf.domino.xsp.helpers;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.activation.UnsupportedDataTypeException;
@@ -17,37 +17,28 @@ import javax.faces.el.ValueBinding;
  * 
  */
 @SuppressWarnings("rawtypes")
-public class SetValuePickerData extends MapValuePickerData {
-	private static final Logger log_ = Logger.getLogger(SetValuePickerData.class.getName());
+public class CollectionValuePickerData extends MapValuePickerData {
+	private static final Logger log_ = Logger.getLogger(CollectionValuePickerData.class.getName());
 	private static final long serialVersionUID = 1L;
-	public Set set;
+	public Collection<String> collection;
 
-	public SetValuePickerData() {
+	public CollectionValuePickerData() {
 
-	}
-
-	public SetValuePickerData(final Set<String> source) {
-		Map<String, String> opts;
-		opts = new LinkedHashMap<String, String>();
-		for (String e : source) {
-			opts.put(e, e);
-		}
-		setOptions(opts);
 	}
 
 	@SuppressWarnings("unchecked")
-	public Set<String> getSet() {
-		if (set != null) {
-			return set;
+	public Collection<String> getCollection() {
+		if (collection != null) {
+			return collection;
 		}
-		ValueBinding vb = getValueBinding("set"); //$NON-NLS-1$
+		ValueBinding vb = getValueBinding("collection"); //$NON-NLS-1$
 		if (vb != null) {
 			Object vbVal = vb.getValue(getFacesContext());
-			if (vbVal instanceof Set) {
-				return (Set<String>) vbVal;
+			if (vbVal instanceof Collection) {
+				return (Collection<String>) vbVal;
 			} else {
 				try {
-					throw new UnsupportedDataTypeException("Value is not a Set");
+					throw new UnsupportedDataTypeException("Value is not a Collection");
 				} catch (UnsupportedDataTypeException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -58,8 +49,8 @@ public class SetValuePickerData extends MapValuePickerData {
 		return null;
 	}
 
-	public void setList(final Set<String> set) {
-		this.set = set;
+	public void setCollection(final Collection<String> collection) {
+		this.collection = collection;
 	}
 
 	@Override
@@ -74,7 +65,7 @@ public class SetValuePickerData extends MapValuePickerData {
 	public void setOptions() {
 		Map<String, String> opts;
 		opts = new LinkedHashMap<String, String>();
-		for (String e : getSet()) {
+		for (String e : getCollection()) {
 			opts.put(e, e);
 		}
 		super.setOptions(opts);
@@ -87,7 +78,7 @@ public class SetValuePickerData extends MapValuePickerData {
 		options = (Map<String, String>) _values[1];
 		searchType = (String) _values[2];
 		caseInsensitive = (Boolean) _values[3];
-		set = (Set) _values[4];
+		collection = (Collection) _values[4];
 	}
 
 	@Override
@@ -97,7 +88,7 @@ public class SetValuePickerData extends MapValuePickerData {
 		_values[1] = options;
 		_values[2] = searchType;
 		_values[3] = caseInsensitive;
-		_values[4] = set;
+		_values[4] = collection;
 		return _values;
 	}
 

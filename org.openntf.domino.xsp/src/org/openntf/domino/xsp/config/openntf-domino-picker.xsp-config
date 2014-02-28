@@ -129,7 +129,6 @@
       <property-name>searchType</property-name>
       <property-class>java.lang.String</property-class>
       <property-extension>
-        <since>8.5.32003</since>
         <designer-extension>
           <tags>
                         not-localizable
@@ -159,15 +158,15 @@
   
   
    <complex-type>
-    <description>%complex-type.listPicker.descr%</description>
-    <display-name>%complex-type.listPicker.name%</display-name>
-    <complex-id>org.openntf.domino.xsp.helpers.ListValuePickerData</complex-id>
-    <complex-class>org.openntf.domino.xsp.helpers.ListValuePickerData</complex-class>
+    <description>%complex-type.collectionPicker.descr%</description>
+    <display-name>%complex-type.collectionPicker.name%</display-name>
+    <complex-id>org.openntf.domino.xsp.helpers.CollectionValuePickerData</complex-id>
+    <complex-class>org.openntf.domino.xsp.helpers.CollectionValuePickerData</complex-class>
     <property>
-      <description>%property.list.complex-type.listPicker.descr%</description>
-      <display-name>%property.list.complex-type.listPicker.name%</display-name>
-      <property-name>list</property-name>
-      <property-class>java.util.List</property-class>
+      <description>%property.collection.complex-type.collectionPicker.descr%</description>
+      <display-name>%property.collection.complex-type.collectionPicker.name%</display-name>
+      <property-name>collection</property-name>
+      <property-class>java.util.Collection</property-class>
       <property-extension>
         <designer-extension>
           <editor>com.ibm.workplace.designer.ide.xfaces.internal.editors.MethodBindingEditor</editor>
@@ -180,7 +179,6 @@
       <property-name>searchType</property-name>
       <property-class>java.lang.String</property-class>
       <property-extension>
-        <since>8.5.32003</since>
         <designer-extension>
           <tags>
                         not-localizable
@@ -203,58 +201,7 @@
     </property>
     <complex-extension>
       <base-complex-id>com.ibm.xsp.extlib.component.picker.data.IValuePickerData</base-complex-id>
-      <tag-name>listValuePicker</tag-name>
-    </complex-extension>
-  </complex-type>
-  
-  
-  
-   <complex-type>
-    <description>%complex-type.setPicker.descr%</description>
-    <display-name>%complex-type.setPicker.name%</display-name>
-    <complex-id>org.openntf.domino.xsp.helpers.SetValuePickerData</complex-id>
-    <complex-class>org.openntf.domino.xsp.helpers.SetValuePickerData</complex-class>
-    <property>
-      <description>%property.set.complex-type.setPicker.descr%</description>
-      <display-name>%property.set.complex-type.setPicker.name%</display-name>
-      <property-name>set</property-name>
-      <property-class>java.util.Set</property-class>
-      <property-extension>
-        <designer-extension>
-          <editor>com.ibm.workplace.designer.ide.xfaces.internal.editors.MethodBindingEditor</editor>
-        </designer-extension>
-      </property-extension>
-    </property>
-        <property>
-      <description>%property.searchType.descr%</description>
-      <display-name>%property.searchType.name%</display-name>
-      <property-name>searchType</property-name>
-      <property-class>java.lang.String</property-class>
-      <property-extension>
-        <since>8.5.32003</since>
-        <designer-extension>
-          <tags>
-                        not-localizable
-                    </tags>
-          <editor>com.ibm.workplace.designer.property.editors.comboParameterEditor</editor>
-          <editor-parameter>
-						startFrom
-						match
-						ftSearch
-                    </editor-parameter>
-        </designer-extension>
-      </property-extension>
-    </property>
-    <property>
-      <description>%property.caseInsensitive.descr%</description>
-      <display-name>%property.caseInsensitive.name%</display-name>
-      <property-name>caseInsensitive</property-name>
-      <property-class>boolean</property-class>
-      <property-extension/>
-    </property>
-    <complex-extension>
-      <base-complex-id>com.ibm.xsp.extlib.component.picker.data.IValuePickerData</base-complex-id>
-      <tag-name>setValuePicker</tag-name>
+      <tag-name>collectionValuePicker</tag-name>
     </complex-extension>
   </complex-type>
   
@@ -266,13 +213,9 @@
     <property>
       <description>%property.enum.complex-type.enumPicker.descr%</description>
       <display-name>%property.enum.complex-type.enumPicker.name%</display-name>
-      <property-name>enum</property-name>
-      <property-class>Enum</property-class>
-      <property-extension>
-        <designer-extension>
-          <editor>com.ibm.workplace.designer.ide.xfaces.internal.editors.MethodBindingEditor</editor>
-        </designer-extension>
-      </property-extension>
+      <property-name>enumName</property-name>
+      <property-class>java.lang.String</property-class>
+      <property-extension/>
     </property>
         <property>
       <description>%property.searchType.descr%</description>
@@ -280,7 +223,6 @@
       <property-name>searchType</property-name>
       <property-class>java.lang.String</property-class>
       <property-extension>
-        <since>8.5.32003</since>
         <designer-extension>
           <tags>
                         not-localizable
@@ -298,6 +240,13 @@
       <description>%property.caseInsensitive.descr%</description>
       <display-name>%property.caseInsensitive.name%</display-name>
       <property-name>caseInsensitive</property-name>
+      <property-class>boolean</property-class>
+      <property-extension/>
+    </property>
+    <property>
+      <description>%property.sorted.descr%</description>
+      <display-name>%property.sorted.name%</display-name>
+      <property-name>sorted</property-name>
       <property-class>boolean</property-class>
       <property-extension/>
     </property>
