@@ -531,18 +531,22 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 					// use canonical logic
 					for (int i = words.length - 1; i >= 0; i--) {
 						String[] nibbles = words[i].trim().split("=");
-						String key = nibbles[0];
-						String value = nibbles[1];
+						if (nibbles.length > 1) {
+							String key = nibbles[0];
+							String value = nibbles[1];
 
-						if (CanonicalKey.C.name().equals(key)) {
-							country = value;
-						} else if (CanonicalKey.O.name().equals(key)) {
-							organization = value;
-						} else if (CanonicalKey.OU.name().equals(key)) {
-							ous[idx] = value;
-							idx++;
-						} else if (CanonicalKey.CN.name().equals(key)) {
-							common = value;
+							if (CanonicalKey.C.name().equals(key)) {
+								country = value;
+							} else if (CanonicalKey.O.name().equals(key)) {
+								organization = value;
+							} else if (CanonicalKey.OU.name().equals(key)) {
+								ous[idx] = value;
+								idx++;
+							} else if (CanonicalKey.CN.name().equals(key)) {
+								common = value;
+							}
+						} else {
+							throw new RuntimeException("Cannot Parse string: \"" + string + "\"");
 						}
 					}
 
