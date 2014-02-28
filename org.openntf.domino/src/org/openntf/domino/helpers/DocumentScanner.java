@@ -267,6 +267,7 @@ public class DocumentScanner extends Observable {
 	public void setStateManager(final IScannerStateManager stateManager, final Object stateManagerKey) {
 		stateManager_ = stateManager;
 		stateManagerKey_ = stateManagerKey;
+		addObserver(stateManager);
 	}
 
 	public int getZeroDocCount() {
@@ -442,6 +443,7 @@ public class DocumentScanner extends Observable {
 				processDocument(doc);
 			}
 		}
+		//		System.out.println("Scanner completed. Notifying observers...");
 		notifyObservers(ScanStatus.COMPLETE);
 	}
 
