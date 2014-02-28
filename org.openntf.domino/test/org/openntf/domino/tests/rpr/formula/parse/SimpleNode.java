@@ -3,7 +3,7 @@
 package org.openntf.domino.tests.rpr.formula.parse;
 
 import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.eval.Value;
+import org.openntf.domino.tests.rpr.formula.eval.ValueHolder;
 
 public abstract class SimpleNode implements Node {
 
@@ -84,8 +84,23 @@ public abstract class SimpleNode implements Node {
 		}
 	}
 
-	public abstract Value evaluate(FormulaContext ctx);
+	public abstract ValueHolder evaluate(FormulaContext ctx);
 
+	protected void appendParams(final StringBuilder sb) {
+		// TODO Auto-generated method stub
+
+		if (children != null) {
+			sb.append('(');
+			for (int i = 0; i < children.length; ++i) {
+				if (i > 0) {
+					sb.append(';');
+				}
+				SimpleNode n = (SimpleNode) children[i];
+				n.toFormula(sb);
+			}
+			sb.append(')');
+		}
+	}
 }
 
 /* JavaCC - OriginalChecksum=71a47937b2d85c71b1e18aa5cd3417bc (do not edit this line) */

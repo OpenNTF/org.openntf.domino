@@ -3,7 +3,7 @@
 package org.openntf.domino.tests.rpr.formula.parse;
 
 import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.eval.Value;
+import org.openntf.domino.tests.rpr.formula.eval.ValueHolder;
 
 public class ASTSelect extends SimpleNode {
 	public ASTSelect(final int id) {
@@ -15,8 +15,14 @@ public class ASTSelect extends SimpleNode {
 	}
 
 	@Override
-	public Value evaluate(final FormulaContext ctx) {
+	public ValueHolder evaluate(final FormulaContext ctx) {
 		throw new UnsupportedOperationException("SELECT keyword not yet supported. (What should it do?)");
+	}
+
+	@Override
+	public void toFormula(final StringBuilder sb) {
+		sb.append("SELECT");
+		children[0].toFormula(sb);
 	}
 }
 /* JavaCC - OriginalChecksum=057c2d20fb3de924f1a585cd1da530a3 (do not edit this line) */

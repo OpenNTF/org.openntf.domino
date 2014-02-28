@@ -4,10 +4,10 @@ package org.openntf.domino.tests.rpr.formula.parse;
 
 import org.openntf.domino.tests.rpr.formula.eval.AtFunction;
 import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.eval.Value;
+import org.openntf.domino.tests.rpr.formula.eval.ValueHolder;
 
 public class ASTFunction extends SimpleNode {
-	private AtFunction function;
+	protected AtFunction function;
 
 	public ASTFunction(final int id) {
 		super(id);
@@ -33,17 +33,22 @@ public class ASTFunction extends SimpleNode {
 	}
 
 	@Override
-	public Value evaluate(final FormulaContext ctx) {
+	public ValueHolder evaluate(final FormulaContext ctx) {
 		// TODO Auto-generated method stub
 		if (jjtGetNumChildren() == 0) {
 			return function.evaluate(ctx, null);
 		}
-		Value params[] = new Value[jjtGetNumChildren()];
+		ValueHolder params[] = new ValueHolder[jjtGetNumChildren()];
 		for (int i = 0; i < jjtGetNumChildren(); i++) {
 			params[i] = jjtGetChild(i).evaluate(ctx);
 		}
 		return function.evaluate(ctx, params);
 	}
 
+	@Override
+	public void toFormula(final StringBuilder sb) {
+		sb.append(function.getImage());
+		appendParams(sb);
+	}
 }
 /* JavaCC - OriginalChecksum=ee60ee3554e18a77803b11d6b865e78e (do not edit this line) */

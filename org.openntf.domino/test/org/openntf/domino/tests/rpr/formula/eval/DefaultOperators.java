@@ -1,16 +1,27 @@
 package org.openntf.domino.tests.rpr.formula.eval;
 
-import java.util.Date;
+import java.util.Collection;
 
 public class DefaultOperators implements AtFunctionFactory, AtFunction {
 	public static enum Op {
-		ADD("_add"), ADD_P("_addP"), SUB("_sub"), SUB_P("_subP");
+		// Additions
+		ADD("_add", false, "+"), ADD_P("_addP", true, "*+"), SUB("_sub", false, "-"), SUB_P("_subP", true, "*-"),
+
+		// Multiplications
+		MUL("_mul", false, "*"), MUL_P("_mulP", true, "**"), DIV("_div", false, "/"), DIV_P("_divP", true, "*/"),
+
+		// Unary ops
+		NEGATIVE("_negative", false, " -"), NOT("_not", false, " !");
 
 		String value;
-		DefaultOperators instance;
+		String image;
+		boolean isPermutative;
+		DefaultOperators instance; // cache
 
-		Op(final String v) {
+		Op(final String v, final boolean isPerm, final String img) {
 			value = v;
+			isPermutative = isPerm;
+			image = img;
 		}
 	}
 
@@ -48,86 +59,101 @@ public class DefaultOperators implements AtFunctionFactory, AtFunction {
 	}
 
 	@SuppressWarnings("null")
-	public Value evaluate(final FormulaContext ctx, final Value[] params) {
-		Value ret = new Value();
+	public ValueHolder evaluate(final FormulaContext ctx, final ValueHolder[] params) {
 
-		// left value & right value
-		Value lv = null;
-		Value rv = null;
-		int l = 0;
-		int r = 0;
-		if (params.length == 2) {
-			lv = params[0];
-			rv = params[1];
-			l = lv.size();
-			r = rv.size();
-		} else if (params.length == 1) {
-			lv = params[0];
-			l = lv.size();
-		}
-
-		int ub = Math.max(l, r);
 		Object o;
+		o = params[0].get(0); // Fetch first element to determine operation
+
+		if (o instanceof String) {
+			return evaluateString(ctx, params);
+		} else if (o instanceof Number) {
+			return evaluateNumber(ctx, params);
+		} else {
+			return evaluateDateTime(ctx, params);
+		}
+	}
+
+	private ValueHolder evaluateDateTime(final FormulaContext ctx, final ValueHolder[] params) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException(operation + " not supported for DateTimes");
+	}
+
+	private ValueHolder evaluateNumber(final FormulaContext ctx, final ValueHolder[] params) {
+		ValueHolder ret = new ValueHolder();
+
+		Collection<double[]> values = new ParameterCollectionDouble(params, operation.isPermutative);
+		ret.grow(values.size());
 
 		switch (operation) {
 		case ADD:
-			o = lv.get(0);
-			ret.incSize(ub);
-			if (o instanceof String) {
-				for (int i = 0; i < ub; i++) {
-					ret.append(lv.getText(i).concat(rv.getText(i)));
-				}
-			} else if (o instanceof Number) {
-				for (int i = 0; i < ub; i++) {
-					ret.append(lv.getDouble(i) + rv.getDouble(i));
-				}
-			} else {
-				throw new IllegalArgumentException();
-			}
-			break;
-
 		case ADD_P:
-			o = lv.get(0);
-			ret.incSize(l * r);
-			if (o instanceof String) {
-				for (int i = 0; i < l; i++) {
-					for (int j = 0; j < r; j++) {
-						ret.append(lv.getText(i).concat(rv.getText(j)));
-					}
-				}
-			} else if (o instanceof Number) {
-				for (int i = 0; i < l; i++) {
-					for (int j = 0; j < r; j++) {
-						ret.append(lv.getDouble(i) + rv.getDouble(j));
-					}
-				}
-			} else {
-				throw new IllegalArgumentException();
+			for (double[] value : values) {
+				ret.add(value[0] + value[1]);
 			}
-			break;
+			return ret;
+		case DIV:
+		case DIV_P:
+			for (double[] value : values) {
+				ret.add(value[0] / value[1]);
+			}
+			return ret;
+		case MUL:
+		case MUL_P:
+			for (double[] value : values) {
+				ret.add(value[0] * value[1]);
+			}
+			return ret;
 		case SUB:
-			o = lv.get(0);
-			ret.incSize(ub);
-			if (o instanceof Date) {
-				for (int i = 0; i < ub; i++) {
-					// TODO: [31.3.2014 00:00]-[30.03.2014 00:00] vs. [31.3.2014]-[30.03.2014]
-					ret.append((lv.getDate(i).getTime() - rv.getDate(i).getTime()) / 1000);
-				}
-			} else if (o instanceof Number) {
-				for (int i = 0; i < ub; i++) {
-					ret.append(lv.getDouble(i) + rv.getDouble(i));
-				}
-			} else {
-				throw new IllegalArgumentException();
-			}
-			break;
 		case SUB_P:
-			break;
-		default:
-			break;
+
+			for (double[] value : values) {
+				ret.add(value[0] - value[1]);
+			}
+			return ret;
+
+		case NEGATIVE:
+
+			for (double[] value : values) {
+				ret.add(-value[0]);
+			}
+			return ret;
+		case NOT:
+
+			for (double[] value : values) {
+				ret.add(((int) value[0]) == 0);
+			}
+			return ret;
 
 		}
-		return ret;
+
+		throw new UnsupportedOperationException(operation + " not supported for Numbers");
 	}
 
+	private ValueHolder evaluateString(final FormulaContext ctx, final ValueHolder[] params) {
+		ValueHolder ret = new ValueHolder();
+
+		switch (operation) {
+		case ADD:
+		case ADD_P:
+			Collection<String[]> values = new ParameterCollectionObject<String>(params, String.class, operation.isPermutative);
+			ret.grow(values.size());
+			for (String[] value : values) {
+				ret.add(value[0].concat(value[1]));
+			}
+			return ret;
+		case DIV:
+		case DIV_P:
+		case MUL:
+		case MUL_P:
+		case SUB:
+		case SUB_P:
+			break;
+		}
+
+		throw new UnsupportedOperationException(operation + " not supported for Strings");
+	}
+
+	public String getImage() {
+		return operation.image;
+	}
 }

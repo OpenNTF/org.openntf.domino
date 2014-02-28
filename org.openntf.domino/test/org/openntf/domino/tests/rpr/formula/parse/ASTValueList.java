@@ -3,7 +3,7 @@
 package org.openntf.domino.tests.rpr.formula.parse;
 
 import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.eval.Value;
+import org.openntf.domino.tests.rpr.formula.eval.ValueHolder;
 
 public class ASTValueList extends SimpleNode {
 	public ASTValueList(final int id) {
@@ -15,15 +15,29 @@ public class ASTValueList extends SimpleNode {
 	}
 
 	@Override
-	public Value evaluate(final FormulaContext ctx) {
+	public ValueHolder evaluate(final FormulaContext ctx) {
 		// TODO Auto-generated method stub
-		Value li = new Value();
+		ValueHolder li = new ValueHolder();
 
 		for (int i = 0; i < jjtGetNumChildren(); ++i) {
-			li.append(jjtGetChild(i).evaluate(ctx));
+			li.addAll(jjtGetChild(i).evaluate(ctx));
 		}
 
 		return li;
+	}
+
+	public void toFormula(final StringBuilder sb) {
+		sb.append('(');
+		if (children != null) {
+			for (int i = 0; i < children.length; ++i) {
+				if (i > 0) {
+					sb.append(':');
+				}
+				SimpleNode n = (SimpleNode) children[i];
+				n.toFormula(sb);
+			}
+		}
+		sb.append(')');
 	}
 
 }

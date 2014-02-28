@@ -3,7 +3,7 @@
 package org.openntf.domino.tests.rpr.formula.parse;
 
 import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.eval.Value;
+import org.openntf.domino.tests.rpr.formula.eval.ValueHolder;
 
 public class ASTAtTranform extends SimpleNode {
 	public ASTAtTranform(final int id) {
@@ -15,17 +15,27 @@ public class ASTAtTranform extends SimpleNode {
 	}
 
 	@Override
-	public Value evaluate(final FormulaContext ctx) {
-		Value list = jjtGetChild(0).evaluate(ctx);
+	public ValueHolder evaluate(final FormulaContext ctx) {
+		ValueHolder list = jjtGetChild(0).evaluate(ctx);
 		String temp = (String) jjtGetChild(1).evaluate(ctx).get(0);
 
-		Value ret = new Value();
+		ValueHolder ret = new ValueHolder();
 		for (int i = 0; i < list.size(); i++) {
-			ctx.setVar(temp, list.get(i));
-			ret.append(jjtGetChild(1).evaluate(ctx));
+			ValueHolder iter = new ValueHolder(list.get(i));
+			ValueHolder old = ctx.setVar(temp, iter);
+			try {
+				// Cumulate all return values
+				ret.addAll(jjtGetChild(2).evaluate(ctx));
+			} finally {
+				ctx.setVar(temp, old);
+			}
 		}
 		return ret;
 	}
 
+	public void toFormula(final StringBuilder sb) {
+		sb.append("@Transform");
+		appendParams(sb);
+	}
 }
 /* JavaCC - OriginalChecksum=d53b6f35432fc6d18d5b766342ccdb34 (do not edit this line) */

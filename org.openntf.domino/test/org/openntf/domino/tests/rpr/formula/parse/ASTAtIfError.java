@@ -3,7 +3,7 @@
 package org.openntf.domino.tests.rpr.formula.parse;
 
 import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.eval.Value;
+import org.openntf.domino.tests.rpr.formula.eval.ValueHolder;
 
 public class ASTAtIfError extends SimpleNode {
 	public ASTAtIfError(final int id) {
@@ -15,7 +15,7 @@ public class ASTAtIfError extends SimpleNode {
 	}
 
 	@Override
-	public Value evaluate(final FormulaContext ctx) {
+	public ValueHolder evaluate(final FormulaContext ctx) {
 		try {
 			jjtGetChild(0).evaluate(ctx);
 		} catch (RuntimeException ex) {
@@ -23,7 +23,12 @@ public class ASTAtIfError extends SimpleNode {
 				return jjtGetChild(0).evaluate(ctx);
 			}
 		}
-		return new Value("");
+		return new ValueHolder("");
+	}
+
+	public void toFormula(final StringBuilder sb) {
+		sb.append("@IfError");
+		appendParams(sb);
 	}
 }
 /* JavaCC - OriginalChecksum=2989baa74781f053fff71f4e53ea4135 (do not edit this line) */

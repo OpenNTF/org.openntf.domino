@@ -3,7 +3,7 @@
 package org.openntf.domino.tests.rpr.formula.parse;
 
 import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.eval.Value;
+import org.openntf.domino.tests.rpr.formula.eval.ValueHolder;
 
 public class ASTAtDoWhile extends SimpleNode {
 	public ASTAtDoWhile(final int id) {
@@ -14,16 +14,24 @@ public class ASTAtDoWhile extends SimpleNode {
 		super(p, id);
 	}
 
+	/**
+	 * AtDoWhile returns always TRUE, as in the formula online help described
+	 */
 	@Override
-	public Value evaluate(final FormulaContext ctx) {
-		Value ret = null;
+	public ValueHolder evaluate(final FormulaContext ctx) {
+		ValueHolder ret = null;
 		do {
 			for (int i = 0; i < jjtGetNumChildren(); ++i) {
 				ret = jjtGetChild(i).evaluate(ctx);
 			}
 		} while (ret != null && ret.isTrue());
 
-		return new Value(1); // returns always TRUE
+		return new ValueHolder(1); // returns always TRUE
+	}
+
+	public void toFormula(final StringBuilder sb) {
+		sb.append("@DoWhile");
+		appendParams(sb);
 	}
 }
 /* JavaCC - OriginalChecksum=8e076d4573c126d678818b398f5e2cc2 (do not edit this line) */

@@ -363,7 +363,7 @@ public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConst
         jj_la1[6] = jj_gen;
         break label_3;
       }
-      ASTFunction jjtn001 = new ASTFunction(this, JJTFUNCTION);
+      ASTOperator jjtn001 = new ASTOperator(this, JJTOPERATOR);
       boolean jjtc001 = true;
       jjtree.openNodeScope(jjtn001);
       try {
@@ -432,7 +432,7 @@ public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConst
         jj_la1[8] = jj_gen;
         break label_4;
       }
-      ASTFunction jjtn001 = new ASTFunction(this, JJTFUNCTION);
+      ASTOperator jjtn001 = new ASTOperator(this, JJTOPERATOR);
       boolean jjtc001 = true;
       jjtree.openNodeScope(jjtn001);
       try {
@@ -557,7 +557,7 @@ public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConst
       } else {
         break label_5;
       }
-                            ASTFunction jjtn001 = new ASTFunction(this, JJTFUNCTION);
+                            ASTOperator jjtn001 = new ASTOperator(this, JJTOPERATOR);
                             boolean jjtc001 = true;
                             jjtree.openNodeScope(jjtn001);
       try {
@@ -632,7 +632,7 @@ public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConst
         jj_la1[11] = jj_gen;
         break label_6;
       }
-      ASTFunction jjtn001 = new ASTFunction(this, JJTFUNCTION);
+      ASTOperator jjtn001 = new ASTOperator(this, JJTOPERATOR);
       boolean jjtc001 = true;
       jjtree.openNodeScope(jjtn001);
       try {
@@ -782,32 +782,32 @@ public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConst
     case OpMinus:
       jj_consume_token(OpMinus);
       unary();
-                              ASTFunction jjtn001 = new ASTFunction(this, JJTFUNCTION);
+                              ASTOperator jjtn001 = new ASTOperator(this, JJTOPERATOR);
                               boolean jjtc001 = true;
                               jjtree.openNodeScope(jjtn001);
       try {
-                              jjtree.closeNodeScope(jjtn001, true);
+                              jjtree.closeNodeScope(jjtn001,  1);
                               jjtc001 = false;
                              jjtn001.setFunction("_negative")   ;
       } finally {
                               if (jjtc001) {
-                                jjtree.closeNodeScope(jjtn001, true);
+                                jjtree.closeNodeScope(jjtn001,  1);
                               }
       }
       break;
     case BoolNot:
       jj_consume_token(BoolNot);
       unary();
-                              ASTFunction jjtn002 = new ASTFunction(this, JJTFUNCTION);
+                              ASTOperator jjtn002 = new ASTOperator(this, JJTOPERATOR);
                               boolean jjtc002 = true;
                               jjtree.openNodeScope(jjtn002);
       try {
-                              jjtree.closeNodeScope(jjtn002, true);
+                              jjtree.closeNodeScope(jjtn002,  1);
                               jjtc002 = false;
                              jjtn002.setFunction("_not")                ;
       } finally {
                               if (jjtc002) {
-                                jjtree.closeNodeScope(jjtn002, true);
+                                jjtree.closeNodeScope(jjtn002,  1);
                               }
       }
       break;

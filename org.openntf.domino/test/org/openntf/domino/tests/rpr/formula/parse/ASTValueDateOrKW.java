@@ -3,7 +3,7 @@
 package org.openntf.domino.tests.rpr.formula.parse;
 
 import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.eval.Value;
+import org.openntf.domino.tests.rpr.formula.eval.ValueHolder;
 
 public class ASTValueDateOrKW extends SimpleNode {
 	Object value = null;
@@ -17,8 +17,8 @@ public class ASTValueDateOrKW extends SimpleNode {
 	}
 
 	@Override
-	public Value evaluate(final FormulaContext ctx) {
-		return new Value(value);
+	public ValueHolder evaluate(final FormulaContext ctx) {
+		return new ValueHolder(value);
 	}
 
 	public void init(final String image) throws ParseException {
@@ -34,6 +34,11 @@ public class ASTValueDateOrKW extends SimpleNode {
 				value = image; // tried to parse. but this seems to be a Keyword
 			}
 		}
+	}
+
+	@Override
+	public void toFormula(final StringBuilder sb) {
+		sb.append(value);
 	}
 
 }

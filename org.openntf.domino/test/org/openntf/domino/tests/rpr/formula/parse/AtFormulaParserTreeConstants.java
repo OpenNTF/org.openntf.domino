@@ -7,7 +7,7 @@ public interface AtFormulaParserTreeConstants
   public int JJTVOID = 1;
   public int JJTASSIGNMENT = 2;
   public int JJTSELECT = 3;
-  public int JJTFUNCTION = 4;
+  public int JJTOPERATOR = 4;
   public int JJTVALUELIST = 5;
   public int JJTSUBSCRIPT = 6;
   public int JJTATDOWHILE = 7;
@@ -15,11 +15,12 @@ public interface AtFormulaParserTreeConstants
   public int JJTATIF = 9;
   public int JJTATIFERROR = 10;
   public int JJTATTRANFORM = 11;
-  public int JJTVALUEDATEORKW = 12;
-  public int JJTVALUESTRING = 13;
-  public int JJTVALUEDOUBLE = 14;
-  public int JJTVALUELONG = 15;
-  public int JJTGETVARIABLE = 16;
+  public int JJTFUNCTION = 12;
+  public int JJTVALUEDATEORKW = 13;
+  public int JJTVALUESTRING = 14;
+  public int JJTVALUEDOUBLE = 15;
+  public int JJTVALUELONG = 16;
+  public int JJTGETVARIABLE = 17;
 
 
   public String[] jjtNodeName = {
@@ -27,7 +28,7 @@ public interface AtFormulaParserTreeConstants
     "void",
     "Assignment",
     "Select",
-    "Function",
+    "Operator",
     "ValueList",
     "Subscript",
     "AtDoWhile",
@@ -35,6 +36,7 @@ public interface AtFormulaParserTreeConstants
     "AtIf",
     "AtIfError",
     "AtTranform",
+    "Function",
     "ValueDateOrKW",
     "ValueString",
     "ValueDouble",
@@ -42,4 +44,4 @@ public interface AtFormulaParserTreeConstants
     "GetVariable",
   };
 }
-/* JavaCC - OriginalChecksum=00cb99c43de63604c89191033d22a416 (do not edit this line) */
+/* JavaCC - OriginalChecksum=638ec30b1766ac8255955f18129db933 (do not edit this line) */

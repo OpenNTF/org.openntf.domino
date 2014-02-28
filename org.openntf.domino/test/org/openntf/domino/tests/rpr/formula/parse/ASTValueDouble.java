@@ -3,7 +3,7 @@
 package org.openntf.domino.tests.rpr.formula.parse;
 
 import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.eval.Value;
+import org.openntf.domino.tests.rpr.formula.eval.ValueHolder;
 
 public class ASTValueDouble extends SimpleNode {
 	private Double value;
@@ -26,8 +26,13 @@ public class ASTValueDouble extends SimpleNode {
 	}
 
 	@Override
-	public Value evaluate(final FormulaContext ctx) {
-		return new Value(value);
+	public ValueHolder evaluate(final FormulaContext ctx) {
+		return new ValueHolder(value);
+	}
+
+	@Override
+	public void toFormula(final StringBuilder sb) {
+		sb.append(value);
 	}
 }
 /* JavaCC - OriginalChecksum=caf90bb805413c9a270cb62ab4d79699 (do not edit this line) */

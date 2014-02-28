@@ -3,7 +3,7 @@
 package org.openntf.domino.tests.rpr.formula.parse;
 
 import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.eval.Value;
+import org.openntf.domino.tests.rpr.formula.eval.ValueHolder;
 
 public class ASTValueLong extends SimpleNode {
 	private Long value;
@@ -26,8 +26,13 @@ public class ASTValueLong extends SimpleNode {
 	}
 
 	@Override
-	public Value evaluate(final FormulaContext ctx) {
-		return new Value(value);
+	public void toFormula(final StringBuilder sb) {
+		sb.append(value);
+	}
+
+	@Override
+	public ValueHolder evaluate(final FormulaContext ctx) {
+		return new ValueHolder(value);
 	}
 
 }
