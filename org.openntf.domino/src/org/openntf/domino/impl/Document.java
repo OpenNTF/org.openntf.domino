@@ -1055,14 +1055,14 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	 * @see org.openntf.domino.Document#getItemValueDateTimeArray(java.lang.String)
 	 */
 	@Override
-	public Vector<?> getItemValueDateTimeArray(final String name) {		// cf. DateRange.java
+	public Vector<org.openntf.domino.Base<?>> getItemValueDateTimeArray(final String name) {		// cf. DateRange.java
 		boolean mayBeMime = true;
-		Vector<?> vGIV = null;	// see below
+		Vector<org.openntf.domino.Base<?>> vGIV = null;	// see below
 		try {
 			Vector<?> v = getDelegate().getItemValueDateTimeArray(name);
 			mayBeMime = false;
 			if (v == null || v.size() == 0)
-				return v;
+				return (Vector<org.openntf.domino.Base<?>>) v;
 			FactorySchema schema = DateTime.SCHEMA;
 			if (v.elementAt(0) instanceof lotus.domino.DateRange)	// at moment: never
 				schema = DateRange.SCHEMA;
@@ -1123,7 +1123,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 				}
 				if (i < sz)
 					break;
-				return v;
+				return (Vector<org.openntf.domino.Base<?>>) v;
 			}
 			DominoUtils.handleException(e);
 			return null;

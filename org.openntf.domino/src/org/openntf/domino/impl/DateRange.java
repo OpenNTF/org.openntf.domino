@@ -61,7 +61,7 @@ import com.ibm.icu.util.Calendar;
  * 3) A mix of 1 and 2: Native Notes Java API is used, whenever it's a single DateRange (comprising the case of
  *    a Vector containing exactly one DateRange), whereas multiple DateRange-s are always wrapped.
  *    
- * At the moment, the second variant is implemented.
+ * At the moment, the second variant is implemented (without deactivation of wrapping).
  */
 
 public class DateRange extends Base<org.openntf.domino.DateRange, lotus.domino.DateRange, Session> implements org.openntf.domino.DateRange,
