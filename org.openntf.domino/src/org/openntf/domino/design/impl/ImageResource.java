@@ -33,11 +33,9 @@ import org.openntf.domino.utils.DominoUtils;
  * 
  */
 public class ImageResource extends AbstractDesignBaseNamed implements org.openntf.domino.design.ImageResource {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ImageResource.class.getName());
 
-	/**
-	 * @param document
-	 */
 	public ImageResource(final Document document) {
 		super(document);
 	}

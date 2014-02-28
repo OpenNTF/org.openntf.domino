@@ -2,3 +2,6 @@
 
 org.openntf.domino.plugin/lib/domino.jar
 org.openntf.domino.plugin/lib/tinkerpop.jar
+org.openntf.domino.plugin/.externalToolBuilders/LibBuilder.launch
+org.openntf.domino.plugin/.externalToolBuilders/ManifestBuilder.launch
+org.openntf.domino.plugin/libbuild.xml

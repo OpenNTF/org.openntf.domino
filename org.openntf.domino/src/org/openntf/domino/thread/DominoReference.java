@@ -36,12 +36,14 @@ public class DominoReference extends WeakReference<Object> {
 	private static final Logger log_ = Logger.getLogger(DominoReference.class.getName());
 
 	/** The delegate_. This is the wrapped Object */
-	private final lotus.domino.Base delegate_;
+	private lotus.domino.Base delegate_;
 
 	/** This is the CPP-ID or an other unique hash value **/
 	private long key_;
 
 	private transient int hashcode_;
+
+	private boolean noRecycle = false;
 
 	/**
 	 * Instantiates a new domino reference.
@@ -62,6 +64,10 @@ public class DominoReference extends WeakReference<Object> {
 		this.key_ = key;
 	}
 
+	//void clearLotusReference() {
+	//	delegate_ = null;
+	//}
+
 	/**
 	 * Recycle.
 	 */
@@ -81,8 +87,9 @@ public class DominoReference extends WeakReference<Object> {
 
 				} else {
 					// recycle the delegate, because no hard ref points to us.
-
-					delegate_.recycle();
+					if (!noRecycle) {
+						delegate_.recycle();
+					}
 					int total = Factory.countAutoRecycle(delegate_.getClass());
 
 					if (log_.isLoggable(Level.FINE)) {
@@ -97,6 +104,16 @@ public class DominoReference extends WeakReference<Object> {
 				DominoUtils.handleException(e);
 			}
 		}
+	}
+
+	/**
+	 * Prevents that the delegate object will be really recycled. Autorecycle counting is done. - So you must ensure that you recycle the
+	 * document yourself or wrap it again
+	 * 
+	 * @param what
+	 */
+	public void setNoRecycle(final boolean what) {
+		noRecycle = what;
 	}
 
 	/**
@@ -142,4 +159,5 @@ public class DominoReference extends WeakReference<Object> {
 	boolean isDead() {
 		return org.openntf.domino.impl.Base.isDead(delegate_);
 	}
+
 }

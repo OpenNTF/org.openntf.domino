@@ -71,8 +71,8 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		}
 		// TODO: Recycle all?
 		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
-		autoRecycle.processQueue();
-		noAutoRecycle.processQueue();
+		autoRecycle.processQueue(0l, 0l);
+		noAutoRecycle.processQueue(0l, 0l);
 		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
 	}
 
@@ -112,11 +112,12 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 			throw new UndefinedDelegateTypeException("Cannot wrap " + lotus.getClass().getName());
 		}
 
-		long cpp_key = org.openntf.domino.impl.Base.getLotusId(lotus);
 		// 1) These objects are not cached and returned immediately. Recycle is done inside
 		if (lotus instanceof lotus.domino.Name 					// These objects are encapsulated
 				|| lotus instanceof lotus.domino.DateRange 		// 
 				|| lotus instanceof lotus.domino.DateTime) { 	//
+
+			long cpp_key = org.openntf.domino.impl.Base.getLotusId(lotus);
 			return (T) wrapLotusObject(lotus, parent, cpp_key);
 		}
 
@@ -198,12 +199,21 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		if (lotus == null) {
 			return null;
 		}
-		long cpp_key = org.openntf.domino.impl.Base.getLotusId(lotus);
 
+		long cpp_key = org.openntf.domino.impl.Base.getLotusId(lotus);
+		long parent_key = org.openntf.domino.impl.Base.getLotusId(parent);
+
+		// RPr: Query the cache. The current lotus object might be enqued, so that it gets recycled in the next step
 		Base<?> result = cache.get(cpp_key, Base.class);
 
 		if (result == null) {
+			// RPr: If the result is null, we can be sure, that there is no element in our cache map.
+			// this happens if no one holds a strong reference to the wrapper. As "get" does some cleanup
+			// action, we must ensure, that we do not recycle the CURRENT (and parent) element in the next step
+
 			result = wrapLotusObject(lotus, parent, cpp_key);
+			cache.processQueue(cpp_key, parent_key); // recycle all elements but not the current ones
+
 			cache.put(cpp_key, result, lotus);
 		}
 		return result;

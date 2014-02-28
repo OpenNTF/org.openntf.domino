@@ -18,11 +18,11 @@ public class IndexResults {
 	private static final Logger log_ = Logger.getLogger(IndexResults.class.getName());
 	private static final long serialVersionUID = 1L;
 
-	private Map<String, AtomicInteger> terms_;
-	private Map<String, AtomicInteger> dbids_;
-	private Map<String, AtomicInteger> items_;
-	private Map<String, AtomicInteger> forms_;
-	private final List<IndexHit> hits_;
+	protected Map<CharSequence, AtomicInteger> terms_;
+	protected Map<CharSequence, AtomicInteger> dbids_;
+	protected Map<CharSequence, AtomicInteger> items_;
+	protected Map<CharSequence, AtomicInteger> forms_;
+	protected final List<IndexHit> hits_;
 
 	public IndexResults(final List<IndexHit> hits) {
 		hits_ = hits;
@@ -52,9 +52,9 @@ public class IndexResults {
 		}
 	}
 
-	public Map<String, AtomicInteger> getTerms() {
+	public Map<CharSequence, AtomicInteger> getTerms() {
 		if (terms_ == null) {
-			terms_ = new HashMap<String, AtomicInteger>();
+			terms_ = new HashMap<CharSequence, AtomicInteger>();
 			for (IndexHit hit : hits_) {
 				String term = hit.getTerm();
 				if (terms_.containsKey(term)) {
@@ -67,9 +67,9 @@ public class IndexResults {
 		return terms_;
 	}
 
-	public Map<String, AtomicInteger> getDbids() {
+	public Map<CharSequence, AtomicInteger> getDbids() {
 		if (dbids_ == null) {
-			dbids_ = new HashMap<String, AtomicInteger>();
+			dbids_ = new HashMap<CharSequence, AtomicInteger>();
 			for (IndexHit hit : hits_) {
 				String term = hit.getDbid();
 				if (dbids_.containsKey(term)) {
@@ -82,9 +82,9 @@ public class IndexResults {
 		return dbids_;
 	}
 
-	public Map<String, AtomicInteger> getForms() {
+	public Map<CharSequence, AtomicInteger> getForms() {
 		if (forms_ == null) {
-			forms_ = new HashMap<String, AtomicInteger>();
+			forms_ = new HashMap<CharSequence, AtomicInteger>();
 			for (IndexHit hit : hits_) {
 				String term = hit.getDbid() + hit.getForm();
 				if (forms_.containsKey(term)) {
@@ -97,9 +97,9 @@ public class IndexResults {
 		return forms_;
 	}
 
-	public Map<String, AtomicInteger> getItems() {
+	public Map<CharSequence, AtomicInteger> getItems() {
 		if (items_ == null) {
-			items_ = new HashMap<String, AtomicInteger>();
+			items_ = new HashMap<CharSequence, AtomicInteger>();
 			for (IndexHit hit : hits_) {
 				String term = hit.getDbid() + hit.getItem();
 				if (items_.containsKey(term)) {

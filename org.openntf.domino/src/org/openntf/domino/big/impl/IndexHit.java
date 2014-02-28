@@ -20,26 +20,26 @@ import org.openntf.domino.Session;
 public class IndexHit implements Externalizable {
 	private static final Logger log_ = Logger.getLogger(IndexHit.class.getName());
 	private static final long serialVersionUID = 1L;
-	private String term_;
-	private String dbid_;
-	private String item_;
-	private String unid_;
-	private String form_;
+	private CharSequence term_;
+	private CharSequence dbid_;
+	private CharSequence item_;
+	private CharSequence unid_;
+	private CharSequence form_;
 	private boolean hasReaders_ = false;
 
 	public IndexHit() {
 
 	}
 
-	public IndexHit(final String term, final String dbid, final String item, final String listing) {
+	public IndexHit(final CharSequence term, final CharSequence dbid, final CharSequence item, final CharSequence listing) {
 		term_ = term;
 		dbid_ = dbid;
 		item_ = item;
 		try {
-			unid_ = listing.substring(0, 32);
-			String readerFlag = listing.substring(32, 33);
+			unid_ = listing.toString().substring(0, 32);
+			String readerFlag = listing.toString().substring(32, 33);
 			hasReaders_ = readerFlag.equals("1");
-			form_ = listing.substring(33);
+			form_ = listing.toString().substring(33);
 		} catch (NullPointerException npe) {
 			System.out.println("NullPointer for listing?");
 			throw new RuntimeException(npe);
@@ -87,10 +87,21 @@ public class IndexHit implements Externalizable {
 	}
 
 	public String getMetaversalID() {
-		return dbid_ + unid_;
+		return dbid_.toString() + unid_.toString();
 	}
 
+	//	private transient Document document_;
+
 	public Document getDocument(final Session session, final String serverName) {
+		//		if (document_ == null) {
+		//			document_ = session.getDocumentByMetaversalID(getMetaversalID(), serverName);
+		//		} else {
+		//			String fname = document_.getFormName();
+		//			if (fname == null || fname.length() < 1) {
+		//				document_ = session.getDocumentByMetaversalID(getMetaversalID(), serverName);
+		//			}
+		//		}
+		//		return document_;
 		return session.getDocumentByMetaversalID(getMetaversalID(), serverName);
 	}
 
@@ -127,28 +138,28 @@ public class IndexHit implements Externalizable {
 	 * @return the term
 	 */
 	public String getTerm() {
-		return term_;
+		return term_.toString();
 	}
 
 	/**
 	 * @return the dbid
 	 */
 	public String getDbid() {
-		return dbid_;
+		return dbid_.toString();
 	}
 
 	/**
 	 * @return the item
 	 */
 	public String getItem() {
-		return item_;
+		return item_.toString();
 	}
 
 	/**
 	 * @return the unid
 	 */
 	public String getUnid() {
-		return unid_;
+		return unid_.toString();
 	}
 
 	public boolean hasReaders() {
@@ -159,7 +170,7 @@ public class IndexHit implements Externalizable {
 	 * @return the form
 	 */
 	public String getForm() {
-		return form_;
+		return form_.toString();
 	}
 
 	/* (non-Javadoc)
@@ -178,11 +189,11 @@ public class IndexHit implements Externalizable {
 	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
 	 */
 	public void writeExternal(final ObjectOutput arg0) throws IOException {
-		arg0.writeUTF(term_);
-		arg0.writeUTF(dbid_);
-		arg0.writeUTF(item_);
-		arg0.writeUTF(form_);
-		arg0.writeUTF(unid_);
+		arg0.writeUTF(term_.toString());
+		arg0.writeUTF(dbid_.toString());
+		arg0.writeUTF(item_.toString());
+		arg0.writeUTF(form_.toString());
+		arg0.writeUTF(unid_.toString());
 		arg0.writeBoolean(hasReaders_);
 	}
 }

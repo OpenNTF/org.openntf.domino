@@ -34,6 +34,7 @@ import org.openntf.domino.utils.DominoUtils;
  * 
  */
 public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign, org.openntf.domino.types.DatabaseDescendant {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DatabaseDesign.class.getName());
 
 	/*
@@ -43,6 +44,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	private static final String DEFAULT_FORM = "FFFF0004";
 	private static final String DEFAULT_VIEW = "FFFF0008";
 	private static final String ICON_NOTE = "FFFF0010";
+	@SuppressWarnings("unused")
 	private static final String DESIGN_COLLECTION = "FFFF0020";
 	private static final String ACL_NOTE = "FFFF0040";
 	private static final String USING_NOTE = "FFFF0100";

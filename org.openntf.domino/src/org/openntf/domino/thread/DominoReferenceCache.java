@@ -45,7 +45,7 @@ public class DominoReferenceCache {
 	private boolean autorecycle_;
 
 	/**
-	 * needed to call GC periodically. The optimum is somwhere ~1500. 1024 seems to be a good value
+	 * needed to call GC periodically. The optimum is somewhere ~1500. 1024 seems to be a good value
 	 */
 	private static AtomicInteger cache_counter = new AtomicInteger();
 	public static int GARBAGE_INTERVAL = 1024;
@@ -71,6 +71,7 @@ public class DominoReferenceCache {
 	 * @return the value to which this map maps the specified key.
 	 */
 	public Object get(final long key) {
+		//		processQueue(key, parent_key);
 		// We don't need to remove garbage collected values here;
 		// if they are garbage collected, the get() method returns null;
 		// the next put() call with the same key removes the old value
@@ -119,7 +120,7 @@ public class DominoReferenceCache {
 		// collected values with their keys from the map before the
 		// new entry is made. We only clean up here to distribute
 		// clean up calls on different operations.
-		processQueue();
+
 		if (value == null) {
 			return;
 		}
@@ -138,10 +139,10 @@ public class DominoReferenceCache {
 	 * Removes all garbage collected values with their keys from the map.
 	 * 
 	 */
-	public void processQueue() {
+	public void processQueue(final long curKey, final long parent_key) {
 
 		int counter = cache_counter.incrementAndGet();
-		if (counter % GARBAGE_INTERVAL == 0) {
+		if (counter % 1024 == 0) {
 			// We have to run GC from time to time, otherwise objects will die very late :(
 			System.gc();
 		}
@@ -150,10 +151,35 @@ public class DominoReferenceCache {
 
 		while ((ref = (DominoReference) queue.poll()) != null) {
 			long key = ref.getKey();
-			map.remove(key);
+
+			if (map.remove(key) == null) {
+				//System.out.println("Removed dead element");
+			}
+
 			if (autorecycle_) {
+				if (curKey == key || parent_key == key) {
+					if (curKey == key) {
+						//System.out.println("Current object dropped out of the queue");
+					} else {
+						// TODO: This case does not handle the counters correctly
+						System.out.println("Parent object dropped out of the queue ---");
+					}
+
+					// RPr: This happens definitely, if you access the same document in series
+					// Was reproduceable by iterating over several NoteIds and doing this in the loop (odd number required)
+					//		doc1 = d.getDocumentByID(id);
+					//		doc1 = null;
+					//		doc2 = d.getDocumentByID(id);
+					//		doc2 = null;
+					//		doc3 = d.getDocumentByID(id);
+					//		doc3 = null;
+
+					// ref is not used any more, but the delegate must be protected from recycling
+					ref.setNoRecycle(true);
+				}
 				ref.recycle();
 			}
+
 		}
 	}
 
@@ -167,15 +193,38 @@ public class DominoReferenceCache {
 		}
 
 		Object result = ref.get();
-		if (result == null) {
-			return null;
-		}
-		if (ref.isDead()) {
-			// check if it is not yet recycled
+		//if (result == null) {
+		//	// this is the wrapper. If there is no wrapper inside (don't know how this should work) we do not return it
+		//	System.out.println("Wrapper lost! " + ref.isEnqueued());
+		//	return null;
+		//}
+
+		// check if the delegate is still alive. (not recycled or null)
+		if (result == null || ref.isDead() || ref.isEnqueued()) {
+
+			// For debug
+			//			if (result == null) {
+			//				System.out.println("NULL"); // happens, if there is no strong ref to this wrapper.
+			//			}
+			//			if (ref.isDead()) {
+			//				System.out.println("DEAD"); // happens, if you call recycle on the parent()
+			//			}
+			//			if (ref.isEnqueued()) {
+			//				// result is also NULL if the reference is enqueued (makes sense, because result (=wrapper) is no longer reachable 
+			//				System.out.println("ENQUEUED");
+			//			}
+
+			// 	we get dead elements if we do this in a loop
+			//		d = s.getDatabase("", "names.nsf");
+			//		doc1 = d.getDocumentByID(id);
+			//		d = null;
+			//		doc1 = null;
+
+			// So, these objects can be removed from the cache
 			map.remove(ref.getKey());
 			return null;
 		} else {
-			return result;
+			return result; // the wrapper.
 		}
 	}
 }

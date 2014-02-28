@@ -23,7 +23,8 @@ import com.ibm.xsp.util.TypedUtil;
 @SuppressWarnings("unchecked")
 public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactory {
 
-	// TODO this is really just a sample on how to get to an entry point in the API
+	// NTF The reason the Factory2 version exists is because we were testing moving the "global" settings like
+	// godmode and marcel to the xsp.properties and making them per-Application rather than server-wide.
 	private static Boolean GODMODE;
 
 	private static Map<String, Object> getAppMap(final FacesContext ctx) {
@@ -166,7 +167,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	private final String[][] implicitObjectList = {
 			{ (isGodMode() ? "session" : "opensession"), org.openntf.domino.Session.class.getName() },
 			{ (isGodMode() ? "database" : "opendatabase"), org.openntf.domino.Database.class.getName() },
-			{ "openLogBean", org.openntf.domino.xsp.XspOpenLogErrorHolder.class.getName() } };
+			{ (Activator.isAPIEnabled() ? "openLogBean" : "openNtfLogBean"), org.openntf.domino.xsp.XspOpenLogErrorHolder.class.getName() } };
 
 	public OpenntfDominoImplicitObjectFactory2() {
 		// System.out.println("Created implicit object factory 2");
@@ -252,9 +253,17 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	}
 
 	public void createLogHolder(final FacesContextEx ctx) {
-		Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
-		XspOpenLogErrorHolder ol_ = new XspOpenLogErrorHolder();
-		localMap.put("openLogBean", ol_);
+		if (isAppDebug(ctx)) {
+			System.out.println("Beginning creation of log holder...");
+		}
+		if (Activator.isAPIEnabled()) {
+			Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
+			XspOpenLogErrorHolder ol_ = new XspOpenLogErrorHolder();
+			localMap.put("openLogBean", ol_);
+			if (isAppDebug(ctx)) {
+				System.out.println("Created log holder...");
+			}
+		}
 	}
 
 	@Override

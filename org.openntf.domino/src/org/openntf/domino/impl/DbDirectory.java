@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
@@ -30,6 +31,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -178,7 +180,13 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		boolean isExtended = type_ == Type.REPLICA_CANDIDATE || isDateSorted_;
 		try {
 			delegate.setHonorShowInOpenDatabaseDialog(isHonorOpenDialog_);
-			lotus.domino.Database rawdb = delegate.getFirstDatabase(type_.getValue());
+			lotus.domino.Database rawdb = null;
+			try {
+				rawdb = delegate.getFirstDatabase(type_.getValue());
+				log_.log(Level.WARNING, "For some reason getting the first database reported an exception. Attempting to move along...");
+			} catch (NotesException ne) {
+				rawdb = delegate.getNextDatabase();
+			}
 			lotus.domino.Database nextdb;
 			Database db;
 			while (rawdb != null) {
@@ -230,10 +238,19 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	@Override
 	public Database createDatabase(final String dbFile, final boolean open) {
 		try {
-			return fromLotus(getDelegate().createDatabase(dbFile, open), Database.SCHEMA, getAncestorSession());
+			lotus.domino.Database delDb = getDelegate().createDatabase(dbFile, open);
+			org.openntf.domino.Database result = fromLotus(delDb, Database.SCHEMA, getAncestorSession());
+			//			System.out.println("Database " + dbFile + " is open: " + String.valueOf(result.isOpen()));
+			return result;
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
+			if (e.id == 4005 && getAncestorSession().isFixEnabled(Fixes.CREATE_DB)) {
+				org.openntf.domino.Database result = getAncestorSession().getDatabase(getName(), dbFile);
+				//				System.out.println("Database " + dbFile + " already exists: " + String.valueOf(result.isOpen()));
+				return result;
+			} else {
+				DominoUtils.handleException(e);
+				return null;
+			}
 		}
 	}
 

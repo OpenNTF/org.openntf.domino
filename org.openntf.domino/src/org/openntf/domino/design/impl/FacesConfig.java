@@ -32,13 +32,14 @@ import org.xml.sax.SAXException;
 // TODO Make the "remove" methods mark the object as unusable in some way
 // TODO Verify that null-value is actually legal in XPages
 public class FacesConfig extends FileResource implements org.openntf.domino.design.FacesConfig {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(FacesConfig.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	private final XMLDocument xml_ = new XMLDocument();
 
 	/**
 	 * @param document
+	 *            The design note used to represent an existing faces-config.xml file
 	 */
 	public FacesConfig(final Document document) {
 		super(document);
@@ -56,7 +57,9 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 
 	/**
 	 * @param database
+	 *            The database in which to create a new faces-config file
 	 */
+
 	public FacesConfig(final Database database) {
 		super(database);
 
@@ -690,6 +693,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	}
 
 	private static class ModifiableObjectNodeList<E> extends AbstractList<E> {
+		@SuppressWarnings("unused")
 		private static final Logger log_ = Logger.getLogger(ModifiableObjectNodeList.class.getName());
 
 		private final Object context_;

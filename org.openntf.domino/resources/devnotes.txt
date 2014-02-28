@@ -1,10 +1,67 @@
-DesignElements.SelectionFormula = "$TITLE = \"$TemplateBuild\""
-  Call DesignElements.BuildCollection()
-  If (DesignElements.Count < 1) Then Exit Sub
-  NoteID$ = DesignElements.GetFirstNoteId()
-  Set BuildDetails = DB.GetDocumentByID(NoteID$)
-  Call BuildDetails.ReplaceItemvalue("$TemplateBuildName",Me.Release$)
-  Call BuildDetails.ReplaceItemvalue("$TemplateBuildDate",Me.ReleaseDate)
+ARCHIVE PROFILE
+$Name	$profile_015archive profile_
+ARCHIVEDBCREATED
+ArchiveExpired
+ArchiveLocation
+ArchiveLog
+ArchiveLogDBPath
+ArchiveModified
+ArchiveOnClientOrServer
+ArchivePath
+ArchivePrivatePolicyList
+ArchiveServer
+ArchiveVersion60
+ArchivingServer
+ArchProfilesToCopy
+ArchSrcServer
+ArcLocChcs
+ArcSrcChcs
+Categories
+Enabled
+EnblArcLog
+ExcludeFromView
+ExpiredLife
+Form
+From
+IgnoreChildren
+IncLnks
+JustDelete
+ModifiedLife
+NoDelPar
+PROTECTFROMARCHIVE
+SaveOptions
+ServerEnabled
+ServerName
+SignatureTime
+SourceDBReplicaID
+Subject
+------ After first run ---------
+ArchLastRunDestDBs
+ArchLastRunDestServer
+ArchLastRunDocsArchived
+ArchLastRunDocsDeleted
+ArchLastRunDocsReduced
+ArchLastRunFailure
+ArchLastRunSourceDB
+ArchLastRunSourceServer
+ArchLastRunTime
+
+$Name	$profile_025default for last modified_
+ArcAgeNum
+ArcAgeUnits
+ArcBy
+ArcEnbl
+ArcFldr
+ArchivePath
+ArcSel
+ArcSlctAge
+FullName
+HowToArc
+HowToClean
+PlaceholderByFormula
+PROTECTFROMARCHIVE
+PruneNoteOpts
+
 
 Things to do...
 

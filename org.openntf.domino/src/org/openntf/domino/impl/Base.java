@@ -190,13 +190,13 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	}
 
 	/** The delegate_. */
-	protected D delegate_ = null;
+	protected transient D delegate_ = null;
 
 	/** The CPP-Object ID */
-	private long cpp_object;
+	private transient long cpp_object;
 
 	/** The CPP-Object ID of the session */
-	private long cpp_session;
+	private transient long cpp_session;
 
 	/**
 	 * returns the cpp_id. DO NOT REMOVE. Otherwise native funtions won't work
@@ -508,8 +508,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @see org.openntf.domino.WrapperFactory#fromLotus(lotus.domino.Base, FactorySchema, org.openntf.domino.Base)
 	 */
 	@SuppressWarnings({ "rawtypes" })
-	<T1 extends org.openntf.domino.Base, D1 extends lotus.domino.Base, P1 extends org.openntf.domino.Base> T1 fromLotus(final D1 lotus,
-			final FactorySchema<T1, D1, P1> schema, final P1 parent) {
+	public <T1 extends org.openntf.domino.Base, D1 extends lotus.domino.Base, P1 extends org.openntf.domino.Base> T1 fromLotus(
+			final D1 lotus, final FactorySchema<T1, D1, P1> schema, final P1 parent) {
 		return factory_.fromLotus(lotus, schema, parent);
 	}
 
@@ -716,6 +716,43 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	}
 
 	/**
+	 * toItemFriendly: special case for "toDominoFriendly" that handles "DateTime" / "DateRange" correctly
+	 * 
+	 * @param value
+	 * @param context
+	 * @param recycleThis
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
+	@SuppressWarnings("rawtypes")
+	protected static Object toItemFriendly(final Object value, final org.openntf.domino.Base context,
+			final Collection<lotus.domino.Base> recycleThis) throws IllegalArgumentException {
+		if (value == null) {
+			log_.log(Level.INFO, "Trying to convert a null argument to Domino friendly. Returning null...");
+			return null;
+		}
+
+		if (value instanceof lotus.domino.Base) {
+			if (value instanceof lotus.domino.Name) {
+				// Names are written as canonical
+				try {
+					return ((lotus.domino.Name) value).getCanonical();
+				} catch (NotesException e) {
+					DominoUtils.handleException(e);
+				}
+			} else if (value instanceof org.openntf.domino.DateTime || value instanceof org.openntf.domino.DateRange) {
+				// according to documentation, these datatypes should be compatible to write to a field ... but DateRanges make problems
+				return toLotus((org.openntf.domino.Base) value, recycleThis);
+			} else if (value instanceof lotus.domino.DateTime || value instanceof lotus.domino.DateRange) {
+				return value;
+			}
+			throw new IllegalArgumentException("Cannot convert to Domino friendly from type " + value.getClass().getName());
+		} else {
+			return javaToDominoFriendly(value, context, recycleThis);
+		}
+	}
+
+	/**
 	 * 
 	 * <p>
 	 * Attempts to convert a provided scalar value to a "Domino-friendly" data type like DateTime, String, etc. Currently, the data types
@@ -758,13 +795,29 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			return result;
 		}
 
-		// First, go over the normal data types
 		if (value instanceof org.openntf.domino.Base) {
 			// this is a wrapper
 			return toLotus((org.openntf.domino.Base) value, recycleThis);
 		} else if (value instanceof lotus.domino.Base) {
+			// this is already domino friendly
 			return value;
+		} else {
+			return javaToDominoFriendly(value, context, recycleThis);
 		}
+
+	}
+
+	/**
+	 * converts a lot of java types to domino-friendly types
+	 * 
+	 * @param value
+	 * @param context
+	 * @param recycleThis
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	private static Object javaToDominoFriendly(final Object value, final org.openntf.domino.Base context,
+			final Collection<lotus.domino.Base> recycleThis) {
 
 		if (value instanceof Integer || value instanceof Double) {
 			return value;
@@ -777,10 +830,10 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 				return "0";
 			}
 		}
-
 		// Now for the illegal-but-convertible types
 		if (value instanceof Number) {
 			// TODO Check if this is greater than what Domino can handle and serialize if so
+			// CHECKME: Is "doubleValue" really needed. (according to help.nsf only Integer and Double is supported, so keep it)
 			return ((Number) value).doubleValue();
 		} else if (value instanceof java.util.Date) {
 			lotus.domino.Session lsess = toLotus(Factory.getSession(context));

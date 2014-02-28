@@ -5,6 +5,7 @@ package org.openntf.domino.ext;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.openntf.domino.Item;
@@ -65,7 +66,7 @@ public interface Document {
 	 */
 	public boolean isDirty();
 
-	public boolean hasMIMEEntity(final String name);
+	public MIMEEntity testMIMEEntity(final String name);
 
 	public <T> T getItemValue(final String name, final Class<?> T) throws ItemNotFoundException, DataNotCompatibleException;
 
@@ -82,5 +83,13 @@ public interface Document {
 	public String getMetaversalID(String serverName);
 
 	// public <T> T getItemValue(String name, Class<?> T, ClassLoader loader) throws ItemNotFoundException, DataNotCompatibleException;
+
+	public boolean forceDelegateRemove();
+
+	public void rollback();
+
+	public List<Item> getItems(org.openntf.domino.Item.Type type);
+
+	public List<Item> getItems(org.openntf.domino.Item.Flags flags);
 
 }

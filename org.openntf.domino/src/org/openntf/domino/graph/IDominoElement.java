@@ -3,6 +3,7 @@
  */
 package org.openntf.domino.graph;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.openntf.domino.Document;
@@ -37,4 +38,8 @@ public interface IDominoElement extends Element {
 	public <T> T getProperty(IDominoProperties prop, boolean allowNull);
 
 	public void setProperty(IDominoProperties prop, java.lang.Object value);
+
+	public Map<String, Object> toMap(IDominoProperties[] props);
+
+	public Map<String, Object> toMap(Set<IDominoProperties> props);
 }

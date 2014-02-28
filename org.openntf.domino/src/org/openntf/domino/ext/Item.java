@@ -14,4 +14,6 @@ public interface Item {
 	public <T> T getValues(final Class<?> T);
 
 	public Date getLastModifiedDate();
+
+	public boolean hasFlag(org.openntf.domino.Item.Flags flag);
 }
