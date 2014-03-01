@@ -7,7 +7,6 @@ import lotus.domino.NotesException;
 import lotus.domino.Session;
 
 import org.openntf.domino.impl.Base;
-import org.openntf.domino.tests.rpr.formula.eval.DefaultOperators;
 import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
 import org.openntf.domino.tests.rpr.formula.parse.AtFormulaParser;
 import org.openntf.domino.tests.rpr.formula.parse.ParseException;
@@ -15,7 +14,7 @@ import org.openntf.domino.tests.rpr.formula.parse.SimpleNode;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;
 
-public class TestRunner implements Runnable {
+public class TestRunner extends TestRunnerStdIn {
 	public static void main(final String[] args) {
 		DominoThread thread = new DominoThread(new TestRunner(), "My thread");
 		thread.start();
@@ -37,23 +36,20 @@ public class TestRunner implements Runnable {
 
 			//String str = "x:=1:2*+32:64:1;x**x**x**x";
 			//String str = "@Transform((1:2:3)*+(0:3:6:9);{x};x*x)";
-			String str = "\"ab\\n\\x\\\"xyzz\"";
+			//String str = "\"ab\\n\\x\\\"xyzz\"";
+			//String str = "t:={start}; @for(i:=1;i != 10; i:= i + 1; t:=t:@Text(i)); @Transform(t;{x};x+{ test }+t)";
+			String str = "t:={start}; @for(i:=1;i != 10; i:= i + 1; t:=t:@if(i = 1; {one} ; i <= 3; {two or three}; {four or more})); t";
 			System.out.println(str);
-			AtFormulaParser parser = null;
+			AtFormulaParser parser = getParser();
 			for (int i = 1; i < 10000; i++) {
 				java.io.StringReader sr = new java.io.StringReader(str);
 				//java.io.Reader r = new java.io.BufferedReader(sr);
-				if (parser == null) {
-					parser = new AtFormulaParser(sr);
-					parser.init(new DominoFormatter(), new DefaultOperators());
-				} else {
-					parser.ReInit(sr);
-				}
+				parser.ReInit(sr);
 				n = parser.Parse();
 			}
 			time = System.currentTimeMillis() - time;
 			System.out.println("... took " + time + "ms.");
-			//	n.dump("");
+			n.dump("");
 
 			System.out.println("Evaluating");
 

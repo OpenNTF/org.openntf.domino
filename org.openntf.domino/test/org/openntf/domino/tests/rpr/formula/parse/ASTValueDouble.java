@@ -32,7 +32,7 @@ public class ASTValueDouble extends SimpleNode {
 
 	@Override
 	public void toFormula(final StringBuilder sb) {
-		sb.append(value);
+		sb.append(value.toString().replace('.', ','));
 	}
 }
 /* JavaCC - OriginalChecksum=caf90bb805413c9a270cb62ab4d79699 (do not edit this line) */
