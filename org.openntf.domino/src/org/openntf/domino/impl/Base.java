@@ -33,7 +33,6 @@ import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoListener;
-import org.openntf.domino.exceptions.BlockedCrashException;
 import org.openntf.domino.ext.Formula;
 import org.openntf.domino.napi.NapiFactory;
 import org.openntf.domino.types.CaseInsensitiveString;
@@ -191,7 +190,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	}
 
 	/** The delegate_. */
-	protected transient D delegate_;
+	protected transient D delegate_ = null;
 
 	/** The CPP-Object ID */
 	private transient long cpp_object;
@@ -956,17 +955,18 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			return false; // wrappers and null objects are not recycled!
 		}
 		boolean result = false;
+		lotus.domino.DateTime sdtAux = null;
+		lotus.domino.DateTime edtAux = null;
 		//if (!isLocked(base)) {
 		try {
 			if (base instanceof lotus.domino.local.DateRange) {	//NTF - check to see if we have valid start/end dates to prevent crashes in 9.0.1
 				lotus.domino.local.DateRange dr = (lotus.domino.local.DateRange) base;
-				lotus.domino.local.DateTime sdt = (lotus.domino.local.DateTime) dr.getStartDateTime();
-				lotus.domino.local.DateTime edt = (lotus.domino.local.DateTime) dr.getEndDateTime();
-				if (sdt == null || edt == null) {
-					//don't recycle. Better to leak some memory than crash the server entirely!
-					String message = "Attempted to recycle a DateRange with a null startDateTime or endDateTime. This would have caused a GPF in the Notes API, so we didn't do it.";
-					log_.log(Level.WARNING, message);
-					throw new BlockedCrashException(message);
+				if (dr.getStartDateTime() == null || dr.getEndDateTime() == null) {
+					lotus.domino.Session rawsession = toLotus(Base.getSession(base));
+					sdtAux = rawsession.createDateTime("2001/01/01");
+					edtAux = rawsession.createDateTime("2001/02/02");
+					dr.setStartDateTime(sdtAux);
+					dr.setEndDateTime(edtAux);
 				}
 			}
 			base.recycle();
@@ -975,6 +975,14 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			Factory.countRecycleError(base.getClass());
 			DominoUtils.handleException(t);
 			// shikata ga nai
+		} finally {
+			try {
+				if (sdtAux != null)
+					sdtAux.recycle();
+				if (edtAux != null)
+					edtAux.recycle();
+			} catch (NotesException ne) {	// Now it's enough
+			}
 		}
 		//} else {
 		//	System.out.println("Not recycling a " + base.getClass().getName() + " because it's locked.");
