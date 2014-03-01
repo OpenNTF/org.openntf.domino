@@ -122,6 +122,14 @@ public class IndexDatabase implements IScannerStateManager {
 		indexDb_ = indexDb;
 	}
 
+	public void setCaseSensitive(final boolean value) {
+		caseSensitive_ = value;
+	}
+
+	public boolean getCaseSensitive() {
+		return caseSensitive_;
+	}
+
 	public void setDatabase(final Database indexDb) {
 		indexDb_ = indexDb;
 	}
@@ -274,6 +282,7 @@ public class IndexDatabase implements IScannerStateManager {
 		scanner.setStopTokenList(getStopList());
 		scanner.setIgnoreDollar(true);
 		scanner.setStateManager(this, db.getReplicaID());
+		scanner.setCaseSensitive(getCaseSensitive());
 		dbDoc.replaceItemValue(IndexDatabase.DB_TITLE_NAME, db.getTitle());
 		if (dbDoc.hasItem(DB_LAST_INDEX_NAME)) {
 			scanner.setLastScanDate((Date) dbDoc.getItemValue(DB_LAST_INDEX_NAME, Date.class));
@@ -310,8 +319,9 @@ public class IndexDatabase implements IScannerStateManager {
 	private int sortedDocCount_ = 0;
 
 	public DocumentScanner scanDatabase(final Database db, final DocumentScanner scanner) {
-		System.out.println("Scanning database " + db.getApiPath());
+		//		System.out.println("Scanning database " + db.getApiPath());
 		curDocCount_ = 0;
+		scanner.setCaseSensitive(getCaseSensitive());
 		Date last = scanner.getLastScanDate();
 		if (last == null)
 			last = new Date(0);
@@ -351,15 +361,6 @@ public class IndexDatabase implements IScannerStateManager {
 
 	public void writeResults(final CharSequence dbid, final DocumentScanner scanner) {
 		Map<CharSequence, Map<CharSequence, Set<CharSequence>>> tlMap = scanner.getTokenLocationMap();
-		//		CaseInsensitiveString dom = new CaseInsensitiveString("domino");
-		//		if (tlMap.containsKey(dom)) {
-		//			Map<CaseInsensitiveString, Set<String>> tlValue = tlMap.get(dom);
-		//			int hitCount = 0;
-		//			for (CaseInsensitiveString item : tlValue.keySet()) {
-		//				hitCount = hitCount + tlValue.get(item).size();
-		//			}
-		//			System.out.println("Writing termmap for DOMINO of size " + tlValue.size() + " with " + hitCount + " hits.");
-		//		}
 		saveTokenLocationMap(dbid, tlMap, scanner);
 	}
 
@@ -781,15 +782,15 @@ public class IndexDatabase implements IScannerStateManager {
 		Document dbDoc = getDbDocument((String) mapKey);
 		if (scanner.getCollection() != null) {
 			dbDoc.replaceItemValue(IndexDatabase.DB_DOC_LIST_NAME, scanner.getCollection());
-		} else {
+		} /*else {
 			System.out.println("ALERT! Scanner.getCollection() returned null!");
-		}
+			}*/
 
 		if (scanner.getSorter() != null) {
 			dbDoc.replaceItemValue(IndexDatabase.DB_DOC_SORTER_NAME, scanner.getSorter());
-		} else {
+		} /*else {
 			System.out.println("ALERT! Scanner.getSorter() returned null!");
-		}
+			}*/
 		dbDoc.save();
 		Set<CharSequence> keySet = fullMap.keySet();
 		//		System.out.println("Writing results for " + keySet.size() + " terms");
@@ -802,8 +803,12 @@ public class IndexDatabase implements IScannerStateManager {
 			Map<CharSequence, Set<CharSequence>> tlValue = fullMap.get(cis);
 			String term = cis.toString();
 			Document termDoc = getTermDocument(term);
-			termDoc.replaceItemValue(TERM_MAP_PREFIX + String.valueOf(mapKey), tlValue);
-			termDoc.save();
+			String itemName = TERM_MAP_PREFIX + String.valueOf(mapKey);
+			//			System.out.println("Writing results to item name " + itemName);
+			termDoc.replaceItemValue(itemName, tlValue);
+			if (termDoc.save()) {
+				//				System.out.println("Saved term doc for " + term);
+			}
 		}
 		//		System.out.println("Done writing results.");
 	}
@@ -837,12 +842,20 @@ public class IndexDatabase implements IScannerStateManager {
 				}
 				break;
 			case COMPLETE:
+				//				System.out.println("IndexDatabase was notified that the scanner was complete!");
 				if (scanner != null && scanner.isTrackTokenLocation()) {
 					Map tokenLocationMap = scanner.getTokenLocationMap();
 					Date lastDocMod = scanner.getLastDocModDate();
 					synchronized (tokenLocationMap) {
 						saveTokenLocationMap(scanner.getStateManagerKey(), tokenLocationMap, scanner);
 						tokenLocationMap.clear();
+					}
+				} else {
+					if (scanner == null) {
+						System.out.println("ALERT! Scanner was null??");
+					} else {
+						System.out.println("IndexDatabase was notified of a scanner run but isTrackTokenLocation is "
+								+ String.valueOf(scanner.isTrackTokenLocation()));
 					}
 				}
 				break;
