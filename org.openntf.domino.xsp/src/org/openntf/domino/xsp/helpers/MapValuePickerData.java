@@ -31,6 +31,7 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 	private static final Logger log_ = Logger.getLogger(MapValuePickerData.class.getName());
 	private static final long serialVersionUID = 1L;
 	public String searchType;
+	public String searchStyle;
 	public Boolean caseInsensitive;
 	public Map<String, String> options;
 
@@ -40,6 +41,20 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 		private final String value_;
 
 		private SearchType(final String value) {
+			value_ = value;
+		}
+
+		public String getValue() {
+			return value_;
+		}
+	}
+
+	private static enum SearchStyle {
+		SEARCH_JUMPTO("jumpTo"), SEARCH_RESTRICTTOSEARCH("restrictToSearch");
+
+		private final String value_;
+
+		private SearchStyle(final String value) {
 			value_ = value;
 		}
 
@@ -93,6 +108,23 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 
 	public void setSearchType(final String searchType) {
 		this.searchType = searchType;
+	}
+
+	public String getSearchStyle() {
+		if (searchStyle != null) {
+			return searchStyle;
+		}
+		ValueBinding vb = getValueBinding("searchStyle"); //$NON-NLS-1$
+		if (vb != null) {
+			return (String) vb.getValue(getFacesContext());
+		} else {
+			return SearchStyle.SEARCH_JUMPTO.getValue();
+		}
+
+	}
+
+	public void setSearchStyle(final String searchStyle) {
+		this.searchStyle = searchStyle;
 	}
 
 	public boolean isCaseInsensitive() {
@@ -192,17 +224,23 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 					if (SearchType.SEARCH_MATCH.getValue().equals(searchType)) {
 						if (StringUtil.equals(tmpMapKey, tmpSearchKey)) {
 							retVal.put(mapKey, getOptions().get(mapKey));
-							found = true;
+							if (SearchStyle.SEARCH_JUMPTO.getValue().equals(getSearchStyle())) {
+								found = true;
+							}
 						}
 					} else if (SearchType.SEARCH_FTSEARCH.getValue().equals(searchType)) {
 						if (tmpMapKey.contains(tmpSearchKey)) {
 							retVal.put(mapKey, getOptions().get(mapKey));
-							found = true;
+							if (SearchStyle.SEARCH_JUMPTO.getValue().equals(getSearchStyle())) {
+								found = true;
+							}
 						}
 					} else {
 						if (tmpMapKey.startsWith(tmpSearchKey)) {
 							retVal.put(mapKey, getOptions().get(mapKey));
-							found = true;
+							if (SearchStyle.SEARCH_JUMPTO.getValue().equals(getSearchStyle())) {
+								found = true;
+							}
 						}
 					}
 				}
@@ -248,6 +286,7 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 		options = (Map<String, String>) _values[1];
 		searchType = (String) _values[2];
 		caseInsensitive = (Boolean) _values[3];
+		searchStyle = (String) _values[4];
 	}
 
 	@Override
@@ -257,6 +296,7 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 		_values[1] = options;
 		_values[2] = searchType;
 		_values[3] = caseInsensitive;
+		_values[4] = searchStyle;
 		return _values;
 	}
 

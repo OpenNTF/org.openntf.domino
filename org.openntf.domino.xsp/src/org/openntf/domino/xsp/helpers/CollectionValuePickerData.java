@@ -78,17 +78,19 @@ public class CollectionValuePickerData extends MapValuePickerData {
 		options = (Map<String, String>) _values[1];
 		searchType = (String) _values[2];
 		caseInsensitive = (Boolean) _values[3];
-		collection = (Collection) _values[4];
+		searchStyle = (String) _values[4];
+		collection = (Collection) _values[5];
 	}
 
 	@Override
 	public Object saveState(final FacesContext _context) {
-		Object _values[] = new Object[5];
+		Object _values[] = new Object[6];
 		_values[0] = super.saveState(_context);
 		_values[1] = options;
 		_values[2] = searchType;
 		_values[3] = caseInsensitive;
-		_values[4] = collection;
+		_values[4] = searchStyle;
+		_values[5] = collection;
 		return _values;
 	}
 

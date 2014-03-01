@@ -142,6 +142,24 @@
         </designer-extension>
       </property-extension>
     </property>
+        <property>
+      <description>%property.searchStyle.descr%</description>
+      <display-name>%property.searchStyle.name%</display-name>
+      <property-name>searchStyle</property-name>
+      <property-class>java.lang.String</property-class>
+      <property-extension>
+        <designer-extension>
+          <tags>
+                        not-localizable
+                    </tags>
+          <editor>com.ibm.workplace.designer.property.editors.comboParameterEditor</editor>
+          <editor-parameter>
+						jumpTo
+						restrictToSearch
+                    </editor-parameter>
+        </designer-extension>
+      </property-extension>
+    </property>
     <property>
       <description>%property.caseInsensitive.descr%</description>
       <display-name>%property.caseInsensitive.name%</display-name>
@@ -192,6 +210,24 @@
         </designer-extension>
       </property-extension>
     </property>
+        <property>
+      <description>%property.searchStyle.descr%</description>
+      <display-name>%property.searchStyle.name%</display-name>
+      <property-name>searchStyle</property-name>
+      <property-class>java.lang.String</property-class>
+      <property-extension>
+        <designer-extension>
+          <tags>
+                        not-localizable
+                    </tags>
+          <editor>com.ibm.workplace.designer.property.editors.comboParameterEditor</editor>
+          <editor-parameter>
+						jumpTo
+						restrictToSearch
+                    </editor-parameter>
+        </designer-extension>
+      </property-extension>
+    </property>
     <property>
       <description>%property.caseInsensitive.descr%</description>
       <display-name>%property.caseInsensitive.name%</display-name>
@@ -232,6 +268,24 @@
 						startFrom
 						match
 						ftSearch
+                    </editor-parameter>
+        </designer-extension>
+      </property-extension>
+    </property>
+        <property>
+      <description>%property.searchStyle.descr%</description>
+      <display-name>%property.searchStyle.name%</display-name>
+      <property-name>searchStyle</property-name>
+      <property-class>java.lang.String</property-class>
+      <property-extension>
+        <designer-extension>
+          <tags>
+                        not-localizable
+                    </tags>
+          <editor>com.ibm.workplace.designer.property.editors.comboParameterEditor</editor>
+          <editor-parameter>
+						jumpTo
+						restrictToSearch
                     </editor-parameter>
         </designer-extension>
       </property-extension>
