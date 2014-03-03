@@ -62,6 +62,7 @@ import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.helpers.Formula;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.types.BigString;
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.utils.Documents;
 import org.openntf.domino.utils.DominoUtils;
@@ -546,6 +547,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	public void copyAllItems(final lotus.domino.Document doc, final boolean replace) {
 		try {
 			getDelegate().copyAllItems(toLotus(doc), replace);
+			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -558,9 +560,11 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	 */
 	@Override
 	public Item copyItem(final lotus.domino.Item item) {
-		// TODO - NTF markDirty()?
+		// TODO - NTF markDirty()? Yes. It's necessary.
 		try {
-			return fromLotus(getDelegate().copyItem(toLotus(item)), Item.SCHEMA, this);
+			Item ret = fromLotus(getDelegate().copyItem(toLotus(item)), Item.SCHEMA, this);
+			markDirty();
+			return ret;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -576,7 +580,9 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	public Item copyItem(final lotus.domino.Item item, final String newName) {
 		// TODO - NTF markDirty()?
 		try {
-			return fromLotus(getDelegate().copyItem(toLotus(item), newName), Item.SCHEMA, this);
+			Item ret = fromLotus(getDelegate().copyItem(toLotus(item), newName), Item.SCHEMA, this);
+			markDirty();
+			return ret;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1049,13 +1055,82 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	 * @see org.openntf.domino.Document#getItemValueDateTimeArray(java.lang.String)
 	 */
 	@Override
-	public Vector<DateTime> getItemValueDateTimeArray(final String name) {
+	public Vector<org.openntf.domino.Base<?>> getItemValueDateTimeArray(final String name) {		// cf. DateRange.java
+		boolean mayBeMime = true;
+		Vector<org.openntf.domino.Base<?>> vGIV = null;	// see below
 		try {
-			return fromLotusAsVector(getDelegate().getItemValueDateTimeArray(name), DateTime.SCHEMA, getAncestorSession());
+			Vector<?> v = getDelegate().getItemValueDateTimeArray(name);
+			mayBeMime = false;
+			if (v == null || v.size() == 0)
+				return (Vector<org.openntf.domino.Base<?>>) v;
+			FactorySchema schema = DateTime.SCHEMA;
+			if (v.elementAt(0) instanceof lotus.domino.DateRange)	// at moment: never
+				schema = DateRange.SCHEMA;
+			else {	// Workaround for Vector of DateRange-s
+				while (true) {
+					int sz = v.size(), i;
+					for (i = 0; i < sz; i++)
+						if (v.elementAt(i) != null)
+							break;
+					if (i < sz)
+						break;
+					vGIV = getDelegate().getItemValue(name);
+					if (vGIV.size() != sz * 2)
+						break;
+					for (i = 0; i < sz * 2; i++)
+						if (!(vGIV.elementAt(i) instanceof lotus.domino.DateTime))
+							break;
+					if (i < sz * 2)
+						break;
+					Vector<lotus.domino.DateRange> aux = new Vector<lotus.domino.DateRange>(sz);
+					lotus.domino.Session rawsession = toLotus(Factory.getSession());
+					for (i = 0; i < sz; i++) {
+						lotus.domino.DateTime dts = (lotus.domino.DateTime) vGIV.elementAt(2 * i);
+						lotus.domino.DateTime dte = (lotus.domino.DateTime) vGIV.elementAt(2 * i + 1);
+						lotus.domino.DateRange dr = rawsession.createDateRange(dts, dte);
+						aux.add(dr);
+					}
+					v = aux;
+					schema = DateRange.SCHEMA;
+					break;
+				}
+			}
+			return fromLotusAsVector(v, schema, getAncestorSession());
 		} catch (NotesException e) {
+			while (mayBeMime) {
+				MIMEEntity entity = this.getMIMEEntity(name);
+				if (entity == null)
+					break;
+				Object mim = Documents.getItemValueMIME(this, name, entity);
+				if (mim == null)
+					break;
+				Vector<?> v;
+				if (mim instanceof Vector)
+					v = (Vector<Object>) mim;
+				else if (mim instanceof Collection)
+					v = new Vector<Object>((Collection<Object>) mim);
+				else if (mim.getClass().isArray())
+					v = (Vector<Object>) Arrays.asList((Object[]) mim);
+				else
+					break;
+				int sz = v.size(), i;
+				for (i = 0; i < sz; i++) {
+					Object o = v.elementAt(i);
+					if (o == null)
+						break;
+					if ((!(o instanceof DateTime)) && (!(o instanceof DateRange)))
+						break;
+				}
+				if (i < sz)
+					break;
+				return (Vector<org.openntf.domino.Base<?>>) v;
+			}
 			DominoUtils.handleException(e);
+			return null;
+		} finally {
+			if (vGIV != null)
+				Base.s_recycle(vGIV);
 		}
-		return null;
 	}
 
 	/*
@@ -1096,8 +1171,16 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	@Override
 	public String getItemValueString(final String name) {
 		try {
-			// TODO RPr: This is not yet MIME compatible
-			return getDelegate().getItemValueString(name);
+			String ret = getDelegate().getItemValueString(name);
+			if (ret != null && ret.length() != 0)
+				return ret;
+			if (getMIMEEntity(name) == null)
+				return "";
+			Vector<?> v = getItemValue(name);
+			ret = "";
+			if (v.size() > 0)
+				ret = v.elementAt(0).toString();
+			return ret;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
