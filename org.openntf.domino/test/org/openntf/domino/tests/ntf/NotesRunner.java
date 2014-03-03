@@ -1,5 +1,6 @@
 package org.openntf.domino.tests.ntf;
 
+import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.security.AccessController;
@@ -14,8 +15,10 @@ import lotus.domino.Database;
 import lotus.domino.DateRange;
 import lotus.domino.DateTime;
 import lotus.domino.Document;
+import lotus.domino.DxlExporter;
 import lotus.domino.Item;
 import lotus.domino.Name;
+import lotus.domino.NoteCollection;
 import lotus.domino.NotesException;
 import lotus.domino.NotesFactory;
 import lotus.domino.NotesThread;
@@ -267,12 +270,35 @@ public class NotesRunner implements Runnable {
 		db.recycle();
 	}
 
+	public void run3(final Session session) throws NotesException {
+		Database db = session.getDatabase("", "index.ntf");
+		NoteCollection nc = db.createNoteCollection(false);
+		nc.setSelectIcon(true);
+		nc.setSelectAcl(true);
+		nc.selectAllDesignElements(true);
+		nc.buildCollection();
+		DxlExporter export = session.createDxlExporter();
+		export.setForceNoteFormat(true);
+		export.setRichTextOption(DxlExporter.DXLRICHTEXTOPTION_RAW);
+		String dxl = export.exportDxl(nc);
+		nc.recycle();
+		export.recycle();
+		db.recycle();
+		try {
+			PrintWriter out = new PrintWriter("c:\\data\\index.dxl");
+			out.println(dxl);
+			out.close();
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+	}
+
 	@Override
 	public void run() {
 		try {
 			System.out.println("Starting NotesRunner");
 			Session session = NotesFactory.createSession();
-			run2(session);
+			run3(session);
 			session.recycle();
 		} catch (Throwable t) {
 			t.printStackTrace();
