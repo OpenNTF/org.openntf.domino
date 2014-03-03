@@ -183,8 +183,9 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 			lotus.domino.Database rawdb = null;
 			try {
 				rawdb = delegate.getFirstDatabase(type_.getValue());
-				log_.log(Level.WARNING, "For some reason getting the first database reported an exception. Attempting to move along...");
 			} catch (NotesException ne) {
+				log_.log(Level.WARNING, "For some reason getting the first database reported an exception: " + ne.text
+						+ "  Attempting to move along...");
 				rawdb = delegate.getNextDatabase();
 			}
 			lotus.domino.Database nextdb;

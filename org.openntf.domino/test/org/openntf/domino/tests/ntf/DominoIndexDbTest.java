@@ -3,6 +3,7 @@ package org.openntf.domino.tests.ntf;
 import lotus.domino.NotesFactory;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.DbDirectory;
 import org.openntf.domino.Session;
 import org.openntf.domino.big.impl.IndexDatabase;
 import org.openntf.domino.ext.Session.Fixes;
@@ -26,9 +27,13 @@ public class DominoIndexDbTest implements Runnable {
 		session.setConvertMIME(false);
 		session.setFixEnable(Fixes.APPEND_ITEM_VALUE, true);
 		session.setFixEnable(Fixes.FORCE_JAVA_DATES, true);
-		Database indexDb = session.getDatabase("CN=Logos/O=REDPILL", "index.nsf", true);
-		indexDb.open();
+		session.setFixEnable(Fixes.CREATE_DB, true);
+		DbDirectory dir = session.getDbDirectory("");
+		Database indexDb = dir.createDatabase("index.nsf", true);
+		//		Database indexDb = session.getDatabase("", "index.nsf", true);
+		//		indexDb.open();
 		IndexDatabase index = new IndexDatabase(indexDb);
+		index.setCaseSensitive(true);
 
 		index.scanServer(session, "");
 		System.out.println("Complete");

@@ -205,8 +205,12 @@ public class IndexQuery {
 			startNanos = System.nanoTime();
 		IndexResults result = null;
 		//		System.out.println("Executing with: " + debugGetTerms());
-		if (isAnd() && getTerms().size() > 1) {
-			for (CharSequence term : getTerms()) {
+		Set<CharSequence> localTerms = getTerms();
+		if (!db.getCaseSensitive()) {
+			localTerms = IndexDatabase.toCISSet(localTerms);
+		}
+		if (isAnd() && localTerms.size() > 1) {
+			for (CharSequence term : localTerms) {
 				List<IndexHit> hits = db.getTermResults(term, getLimit(), getDbids(), IndexDatabase.toCISSet(getItems()), getForms());
 				if (result == null) {
 					result = createResultsFromHitList(hits);
@@ -217,7 +221,7 @@ public class IndexQuery {
 			}
 		} else {
 			result = createResultsFromHitList(new ArrayList<IndexHit>());
-			for (CharSequence term : getTerms()) {
+			for (CharSequence term : localTerms) {
 				List<IndexHit> hits = db.getTermResults(term, getLimit(), getDbids(), IndexDatabase.toCISSet(getItems()), getForms());
 				IndexResults temp = createResultsFromHitList(hits);
 				result.merge(temp);
