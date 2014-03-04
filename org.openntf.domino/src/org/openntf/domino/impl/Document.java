@@ -75,7 +75,7 @@ import com.ibm.commons.util.io.json.util.JsonWriter;
 /**
  * The Class Document.
  */
-class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, Database> implements org.openntf.domino.Document {
+public class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, Database> implements org.openntf.domino.Document {
 	private static final Logger log_ = Logger.getLogger(Document.class.getName());
 
 	public static enum RemoveType {
