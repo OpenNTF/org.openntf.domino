@@ -101,6 +101,22 @@
         </designer-extension>
       </property-extension>
     </property>
+    <property>
+      <description>%property.returnNameFormat.descr%</description>
+      <display-name>%property.returnNameFormat.name%</display-name>
+      <property-name>returnNameFormat</property-name>
+      <property-class>java.lang.String</property-class>
+      <property-extension>
+        <designer-extension>
+          <editor>com.ibm.workplace.designer.property.editors.comboParameterEditor</editor>
+          <editor-parameter>
+						Abbreviated
+						Common
+						Canonical
+					</editor-parameter>
+        </designer-extension>
+      </property-extension>
+    </property>
     <complex-extension>
       <base-complex-id>com.ibm.xsp.extlib.component.picker.data.INamePickerData</base-complex-id>
       <tag-name>openntfNABNamePicker</tag-name>
