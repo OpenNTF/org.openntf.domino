@@ -18,6 +18,7 @@ package org.openntf.domino.impl;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.SortedSet;
@@ -167,7 +168,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	public void setDirectoryType(final Type type) {
 		if (type_ != type) {
 			type_ = type;
-			isInitialized_ = false;
+			clear();
 		}
 	}
 
@@ -365,6 +366,13 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		return isHonorOpenDialog_;
 	}
 
+	private SortedSet<org.openntf.domino.Database> getDbSet() {
+		if (!isInitialized_) {
+			initialize(getDelegate());
+		}
+		return dbSet_;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -372,10 +380,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	 */
 	@Override
 	public Iterator<org.openntf.domino.Database> iterator() {
-		if (!isInitialized_) {
-			initialize(getDelegate());
-		}
-		return dbSet_.iterator();
+		return getDbSet().iterator();
 	}
 
 	/*
@@ -465,7 +470,8 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	protected lotus.domino.DbDirectory getDelegate() {
 		lotus.domino.DbDirectory dir = super.getDelegate();
 		try {
-			dir.isHonorShowInOpenDatabaseDialog();
+			dir.getClusterName();
+			//			dir.isHonorShowInOpenDatabaseDialog();
 		} catch (NotesException e) {
 			resurrect();
 		}
@@ -508,6 +514,55 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		arg0.writeUTF(name_);
 		arg0.writeUTF(clusterName_);
 		arg0.writeObject(dbSet_);
+	}
+
+	public boolean add(final Database arg0) {
+		return getDbSet().add(arg0);
+	}
+
+	public boolean addAll(final Collection<? extends Database> arg0) {
+		return getDbSet().addAll(arg0);
+	}
+
+	public void clear() {
+		getDbSet().clear();
+		this.isInitialized_ = false;
+	}
+
+	public boolean contains(final Object arg0) {
+		return getDbSet().contains(arg0);
+	}
+
+	public boolean containsAll(final Collection<?> arg0) {
+		return getDbSet().containsAll(arg0);
+	}
+
+	public boolean isEmpty() {
+		return getDbSet().isEmpty();
+	}
+
+	public boolean remove(final Object arg0) {
+		return getDbSet().remove(arg0);
+	}
+
+	public boolean removeAll(final Collection<?> arg0) {
+		return getDbSet().removeAll(arg0);
+	}
+
+	public boolean retainAll(final Collection<?> arg0) {
+		return getDbSet().retainAll(arg0);
+	}
+
+	public int size() {
+		return getDbSet().size();
+	}
+
+	public Object[] toArray() {
+		return getDbSet().toArray();
+	}
+
+	public <T> T[] toArray(final T[] arg0) {
+		return getDbSet().toArray(arg0);
 	}
 
 }

@@ -893,7 +893,7 @@ public enum DominoUtils {
 				if (ser instanceof Comparable) {
 					result.add((Comparable) ser);
 				} else {
-					log_.warning("Unable to convert to Comparable from " + ser.getClass().getName());
+					log_.info("Unable to convert to Comparable from " + ser.getClass().getName());
 				}
 			}
 		}

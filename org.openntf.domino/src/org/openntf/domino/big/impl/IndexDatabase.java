@@ -49,6 +49,7 @@ public class IndexDatabase implements IScannerStateManager {
 	public static final String DB_FORM_NAME = "$DbDoc";
 	public static final String DB_KEY_NAME = "DbKey";
 	public static final String DB_TOKEN_LOCATION_NAME = "TokenLocationMap";
+	public static final String DB_NAME_LOCATION_NAME = "NameLocationMap";
 	public static final String DB_FIELD_TOKEN_NAME = "FieldTokenMap";
 	public static final String DB_LAST_INDEX_NAME = "LastIndexTime";
 	public static final String DB_DOC_LIST_NAME = "DocumentList";
@@ -248,6 +249,19 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
+	public Document getNameDocument(final CharSequence name) {
+		String key = caseSensitive_ ? name.toString() : name.toString().toLowerCase();
+
+		Document result = getIndexDb().getDocumentByKey(key, true);
+		if (result.isNewNote()) {
+			result.replaceItemValue("Form", TERM_FORM_NAME);
+			result.replaceItemValue("isName", "1");
+			result.replaceItemValue(TERM_KEY_NAME, name);
+			result.save();
+		}
+		return result;
+	}
+
 	public void scanServer(final Session session, final String serverName) {
 		initIndexDb();
 		DbDirectory dir = session.getDbDirectory(serverName);
@@ -279,6 +293,7 @@ public class IndexDatabase implements IScannerStateManager {
 		scanner.setTrackFieldValues(false);
 		scanner.setTrackTokenFreq(false);
 		scanner.setTrackTokenLocation(true);
+		scanner.setTrackNameLocation(true);
 		scanner.setStopTokenList(getStopList());
 		scanner.setIgnoreDollar(true);
 		scanner.setStateManager(this, db.getReplicaID());
@@ -300,7 +315,7 @@ public class IndexDatabase implements IScannerStateManager {
 		Date scanDate = new Date();
 		scanDatabase(db, scanner);
 		String dbid = db.getReplicaID();
-		writeResults(dbid, scanner);
+		//		writeResults(dbid, scanner);
 		dbDoc.replaceItemValue(DB_LAST_INDEX_NAME, scanDate);
 		//		dbDoc.replaceItemValue(DB_FIELD_TOKEN_NAME, scanner.getFieldTokenMap());
 		//		dbDoc.replaceItemValue(DB_TOKEN_LOCATION_NAME, scanner.getTokenLocationMap());
@@ -333,36 +348,15 @@ public class IndexDatabase implements IScannerStateManager {
 			System.out.println("Scanning database " + db.getApiPath() + " with last date of " + last.getTime() + " and found "
 					+ rawColl.getCount() + " updates to scan");
 			scanner.processSorter(sorter);
-			//			DocumentCollection sortedColl = sorter.sort();
-			//			sortedDocCount_ = sortedColl.getCount();
 
-			//			scanner.processCollection(sortedColl);
-			//			for (Document doc : sortedColl) {
-			//				curDocCount_++;
-			//				scanner.processDocument(doc);
-			//				totalErrCount_ += scanner.getErrCount();
-			//				if (totalErrCount_ > 10000) {
-			//					continue_ = false;
-			//				}
-			//				if (++prog % 10000 == 0) {
-			//					System.out.println("Processed " + prog + " documents so far, " + scanner.getItemCount() + " items and "
-			//							+ scanner.getTokenCount());
-			//				}
-			//				if (scanner.getZeroDocCount() > 5000) {
-			//					System.out.println("Stopping after 5000 zero docs");
-			//					break;
-			//				}
-			//				if (!continue_)
-			//					return scanner;
-			//			}
 		}
 		return scanner;
 	}
 
-	public void writeResults(final CharSequence dbid, final DocumentScanner scanner) {
-		Map<CharSequence, Map<CharSequence, Set<CharSequence>>> tlMap = scanner.getTokenLocationMap();
-		saveTokenLocationMap(dbid, tlMap, scanner);
-	}
+	//	public void writeResults(final CharSequence dbid, final DocumentScanner scanner) {
+	//		Map<CharSequence, Map<CharSequence, Set<CharSequence>>> tlMap = scanner.getTokenLocationMap();
+	//		saveTokenLocationMap(dbid, tlMap, scanner);
+	//	}
 
 	public List<String> getTermDbids(final CharSequence term) {
 		List<String> result = new ArrayList<String>();
@@ -775,42 +769,28 @@ public class IndexDatabase implements IScannerStateManager {
 
 	public void saveTokenLocationMap(final Object mapKey, final Map<CharSequence, Map<CharSequence, Set<CharSequence>>> fullMap,
 			final DocumentScanner scanner) {
-		//		System.out.println("Saving TokenLocationMap of size " + fullMap.size() + " with key of " + mapKey + " and updating time to "
-		//				+ lastTimestamp.getTime() + " after processing " + curDocCount_ + " docs out of " + sortedDocCount_);
 		setLastIndexDate(mapKey, scanner.getLastDocModDate());
 
-		Document dbDoc = getDbDocument((String) mapKey);
-		if (scanner.getCollection() != null) {
-			dbDoc.replaceItemValue(IndexDatabase.DB_DOC_LIST_NAME, scanner.getCollection());
-		} /*else {
-			System.out.println("ALERT! Scanner.getCollection() returned null!");
-			}*/
-
-		if (scanner.getSorter() != null) {
-			dbDoc.replaceItemValue(IndexDatabase.DB_DOC_SORTER_NAME, scanner.getSorter());
-		} /*else {
-			System.out.println("ALERT! Scanner.getSorter() returned null!");
-			}*/
-		dbDoc.save();
+		//		Document dbDoc = getDbDocument((String) mapKey);
+		//		if (scanner.getCollection() != null) {
+		//			dbDoc.replaceItemValue(IndexDatabase.DB_DOC_LIST_NAME, scanner.getCollection());
+		//		}
+		//
+		//		if (scanner.getSorter() != null) {
+		//			dbDoc.replaceItemValue(IndexDatabase.DB_DOC_SORTER_NAME, scanner.getSorter());
+		//		}
+		//		dbDoc.save();
 		Set<CharSequence> keySet = fullMap.keySet();
-		//		System.out.println("Writing results for " + keySet.size() + " terms");
 		for (CharSequence cis : keySet) {
-			//			if (cis.equals(lastToken_)) {
-			//				System.out.println("Restoring same token that we last processed: " + cis.getString());
-			//			} else {
-			//				lastToken_ = cis;
-			//			}
 			Map<CharSequence, Set<CharSequence>> tlValue = fullMap.get(cis);
 			String term = cis.toString();
 			Document termDoc = getTermDocument(term);
 			String itemName = TERM_MAP_PREFIX + String.valueOf(mapKey);
-			//			System.out.println("Writing results to item name " + itemName);
 			termDoc.replaceItemValue(itemName, tlValue);
 			if (termDoc.save()) {
 				//				System.out.println("Saved term doc for " + term);
 			}
 		}
-		//		System.out.println("Done writing results.");
 	}
 
 	public void update(final Observable o, final Object arg) {
@@ -821,41 +801,66 @@ public class IndexDatabase implements IScannerStateManager {
 		DocumentScanner scanner = null;
 		if (o instanceof DocumentScanner) {
 			scanner = (DocumentScanner) o;
+		} else {
+			System.out.println("Observable object was not a DocumentScanner. It was a " + (o == null ? "null" : o.getClass().getName()));
 		}
 		if (status != null) {
 			switch (status) {
 			case NEW:
 				break;
 			case RUNNING:
-				if (scanner != null && scanner.isTrackTokenLocation()) {
-					System.out.println("Processed " + scanner.getDocCount() + " documents so far, " + scanner.getItemCount()
-							+ " items and " + scanner.getTokenCount());
-					Map tokenLocationMap = scanner.getTokenLocationMap();
-					int tlsize = tokenLocationMap.size();
-					if (tlsize >= 1024) {
-						Date lastDocMod = scanner.getLastDocModDate();
+				if (scanner != null) {
+					if (scanner.isTrackTokenLocation()) {
+						Map tokenLocationMap = scanner.getTokenLocationMap();
+						int tlsize = tokenLocationMap.size();
+						if (tlsize >= 1024) {
+							//							System.out.println("Processed " + scanner.getDocCount() + " documents so far, " + scanner.getItemCount()
+							//									+ " items and " + scanner.getTokenCount());
+							synchronized (tokenLocationMap) {
+								saveTokenLocationMap(scanner.getStateManagerKey(), tokenLocationMap, scanner);
+								tokenLocationMap.clear();
+							}
+						}
+					} else {
+						System.out.println("TokenLocation not being tracked by scanner");
+					}
+					if (scanner.isTrackNameLocation()) {
+						Map nameLocationMap = scanner.getNameLocationMap();
+						int nlsize = nameLocationMap.size();
+						if (nlsize >= 128) {
+							synchronized (nameLocationMap) {
+								saveTokenLocationMap(scanner.getStateManagerKey(), nameLocationMap, scanner);
+								nameLocationMap.clear();
+							}
+						}
+					}
+				} else {
+					System.out.println("Scanner is null from notifications");
+				}
+				break;
+			case COMPLETE:
+				if (scanner != null) {
+					//					System.out.println("Processed " + scanner.getDocCount() + " documents at completion, " + scanner.getItemCount()
+					//							+ " items and " + scanner.getTokenCount());
+					if (scanner.isTrackTokenLocation()) {
+						Map tokenLocationMap = scanner.getTokenLocationMap();
 						synchronized (tokenLocationMap) {
 							saveTokenLocationMap(scanner.getStateManagerKey(), tokenLocationMap, scanner);
 							tokenLocationMap.clear();
 						}
+					} else {
+						System.out.println("TokenLocation not being tracked by scanner");
 					}
-				}
-				break;
-			case COMPLETE:
-				//				System.out.println("IndexDatabase was notified that the scanner was complete!");
-				if (scanner != null && scanner.isTrackTokenLocation()) {
-					Map tokenLocationMap = scanner.getTokenLocationMap();
-					Date lastDocMod = scanner.getLastDocModDate();
-					synchronized (tokenLocationMap) {
-						saveTokenLocationMap(scanner.getStateManagerKey(), tokenLocationMap, scanner);
-						tokenLocationMap.clear();
+					if (scanner.isTrackNameLocation()) {
+						Map nameLocationMap = scanner.getNameLocationMap();
+						synchronized (nameLocationMap) {
+							saveNameLocationMap(scanner.getStateManagerKey(), nameLocationMap, scanner);
+							nameLocationMap.clear();
+						}
 					}
 				} else {
 					if (scanner == null) {
 						System.out.println("ALERT! Scanner was null??");
-					} else {
-						System.out.println("IndexDatabase was notified of a scanner run but isTrackTokenLocation is "
-								+ String.valueOf(scanner.isTrackTokenLocation()));
 					}
 				}
 				break;
@@ -863,6 +868,51 @@ public class IndexDatabase implements IScannerStateManager {
 				break;
 			case INTERRUPTED:
 				break;
+			}
+		} else {
+			System.out.println("Scan status was null?");
+		}
+	}
+
+	public Map<CharSequence, Set<CharSequence>> restoreNameLocationMap(final CharSequence name, final Object mapKey) {
+		Map result = null;
+		Document doc = getNameDocument(name.toString());
+		String itemName = TERM_MAP_PREFIX + String.valueOf(mapKey);
+		if (doc.hasItem(itemName)) {
+			result = doc.getItemValue(itemName, Map.class);
+		} else {
+			result = new ConcurrentHashMap<CaseInsensitiveString, Set<String>>();
+		}
+		return result;
+	}
+
+	public void saveNameLocationMap(final CharSequence name, final Object mapKey, final Map<CharSequence, Set<CharSequence>> map) {
+		String lname = name.toString();
+		Document nameDoc = getNameDocument(lname);
+		nameDoc.replaceItemValue(TERM_MAP_PREFIX + String.valueOf(mapKey), map);
+		nameDoc.save();
+	}
+
+	public void saveNameLocationMap(final Object mapKey, final Map<CharSequence, Map<CharSequence, Set<CharSequence>>> fullMap,
+			final DocumentScanner scanner) {
+		//		Document dbDoc = getDbDocument((String) mapKey);
+		//		if (scanner.getCollection() != null) {
+		//			dbDoc.replaceItemValue(IndexDatabase.DB_DOC_LIST_NAME, scanner.getCollection());
+		//		}
+		//
+		//		if (scanner.getSorter() != null) {
+		//			dbDoc.replaceItemValue(IndexDatabase.DB_DOC_SORTER_NAME, scanner.getSorter());
+		//		}
+		//		dbDoc.save();
+		Set<CharSequence> keySet = fullMap.keySet();
+		for (CharSequence cis : keySet) {
+			Map<CharSequence, Set<CharSequence>> tlValue = fullMap.get(cis);
+			String name = cis.toString();
+			Document nameDoc = getNameDocument(name);
+			String itemName = TERM_MAP_PREFIX + String.valueOf(mapKey);
+			nameDoc.replaceItemValue(itemName, tlValue);
+			if (nameDoc.save()) {
+				//				System.out.println("Saved term doc for " + term);
 			}
 		}
 	}
