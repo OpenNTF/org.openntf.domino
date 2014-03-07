@@ -59,6 +59,13 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 
 	public String getReturnNameFormat() {
 		if (null != this.returnNameFormat) {
+			if (null == this.returnNameFormatAsKey) {
+				for (NamePartsMap.Key nameFormat : NamePartsMap.Key.values()) {
+					if (this.returnNameFormat.equals(nameFormat.name())) {
+						setReturnNameFormatAsKey(nameFormat);
+					}
+				}
+			}
 			return this.returnNameFormat;
 		}
 		ValueBinding _vb = getValueBinding("returnNameFormat"); //$NON-NLS-1$
@@ -541,12 +548,8 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 
 		@Override
 		public Object readValue(final ViewEntry ve, final Vector<Object> columnValues) throws NotesException {
-			NamePartsMap.Key key = getMetaData().getKey();
-			if (null == key) {
-				return columnValues.get(0);
-			} else {
-				return Names.getNamePart(Factory.getSession(), (String) columnValues.get(0), key);
-			}
+			// Groups are never canonical, only have a basic part to them
+			return columnValues.get(0);
 		}
 
 		@Override
@@ -581,10 +584,15 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		@Override
 		public Object readValue(final ViewEntry ve, final Vector<Object> columnValues) throws NotesException {
 			NamePartsMap.Key key = getMetaData().getKey();
-			if (null == key) {
+			if ("G".equals((String) columnValues.get(0))) {
+				// Groups are never canonical, only have a basic value
 				return columnValues.get(1);
 			} else {
-				return Names.getNamePart(Factory.getSession(), (String) columnValues.get(1), key);
+				if (null == key) {
+					return columnValues.get(1);
+				} else {
+					return Names.getNamePart(Factory.getSession(), (String) columnValues.get(1), key);
+				}
 			}
 		}
 
@@ -644,6 +652,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 	@Override
 	public IPickerResult readEntries(final IPickerOptions options) {
 		try {
+			getReturnNameFormat();
 			EntryMetaData meta = createOpenntfEntryMetaData(options);
 			meta.setKey(getReturnNameFormatAsKey());
 			View view = meta.getView();
