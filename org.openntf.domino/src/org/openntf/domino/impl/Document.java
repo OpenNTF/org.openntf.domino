@@ -55,18 +55,18 @@ import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
+import org.openntf.domino.exceptions.Domino32KLimitException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.ext.Database.Events;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.helpers.Formula;
-import org.openntf.domino.napi.NapiDocument;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.types.BigString;
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.utils.Documents;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
-import org.openntf.domino.utils.TypeUtils;
 
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.util.JsonWriter;
@@ -75,7 +75,7 @@ import com.ibm.commons.util.io.json.util.JsonWriter;
 /**
  * The Class Document.
  */
-class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, Database> implements org.openntf.domino.Document {
+public class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, Database> implements org.openntf.domino.Document {
 	private static final Logger log_ = Logger.getLogger(Document.class.getName());
 
 	public static enum RemoveType {
@@ -153,8 +153,6 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 		return fromLotus(delegate.getParentDatabase(), Database.SCHEMA, null);
 	}
 
-	private NapiDocument napiDocument_ = null;
-
 	/**
 	 * Initialize.
 	 * 
@@ -163,18 +161,14 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	 */
 	private void initialize(final lotus.domino.Document delegate) {
 		try {
-			// delegate.setPreferJavaDates(true);
 			noteid_ = delegate.getNoteID();
 			unid_ = delegate.getUniversalID();
-			// System.out.println("initializing new document from " + unid_);
 			isNew_ = delegate.isNewNote();
+
 			if (getAncestorSession().isFixEnabled(Fixes.FORCE_JAVA_DATES)) {
 				delegate.setPreferJavaDates(true);
 			}
-			//if (isNew_) {
-			//				System.out.println("Wrapping a new document rather than an existing one...");
-			//				Thread.sleep(100);
-			//}
+			// RPr: Do not read too much infos in initialize, as it affects performance!
 			// created_ = DominoUtils.toJavaDateSafe(delegate.getCreated());
 			// initiallyModified_ = DominoUtils.toJavaDateSafe(delegate.getInitiallyModified());
 			// lastModified_ = DominoUtils.toJavaDateSafe(delegate.getLastModified());
@@ -194,11 +188,6 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	@Legacy(Legacy.DATETIME_WARNING)
 	public DateTime getCreated() {
 		try {
-			// if (created_ == null) {
-			// created_ = DominoUtils.toJavaDateSafe(getDelegate().getCreated());
-			// }
-			if (getDelegate().getCreated() == null)
-				return null;
 			return fromLotus(getDelegate().getCreated(), DateTime.SCHEMA, getAncestorSession()); // TODO NTF - maybe ditch the parent?
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -232,11 +221,6 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	@Legacy(Legacy.DATETIME_WARNING)
 	public DateTime getInitiallyModified() {
 		try {
-			// if (initiallyModified_ == null) {
-			// initiallyModified_ = DominoUtils.toJavaDateSafe(getDelegate().getInitiallyModified());
-			// }
-			if (getDelegate().getInitiallyModified() == null)
-				return null;
 			return fromLotus(getDelegate().getInitiallyModified(), DateTime.SCHEMA, getAncestorSession()); // TODO NTF - maybe ditch the parent?
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -271,9 +255,6 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	@Legacy(Legacy.DATETIME_WARNING)
 	public DateTime getLastAccessed() {
 		try {
-			// if (lastAccessed_ == null) {
-			// lastAccessed_ = DominoUtils.toJavaDateSafe(getDelegate().getLastAccessed());
-			// }
 			if (getDelegate().getLastAccessed() == null)
 				return null;
 			return fromLotus(getDelegate().getLastAccessed(), DateTime.SCHEMA, getAncestorSession()); // TODO NTF - maybe ditch the parent?
@@ -294,7 +275,6 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 				lastAccessed_ = DominoUtils.toJavaDateSafe(getDelegate().getLastAccessed());
 			} catch (NotesException e) {
 				DominoUtils.handleException(e);
-
 			}
 		}
 		return lastAccessed_;
@@ -310,9 +290,6 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	@Legacy(Legacy.DATETIME_WARNING)
 	public DateTime getLastModified() {
 		try {
-			// if (lastModified_ == null) {
-			// lastModified_ = DominoUtils.toJavaDateSafe(getDelegate().getLastModified());
-			// }
 			if (getDelegate().getLastModified() == null)
 				return null;
 			return fromLotus(getDelegate().getLastModified(), DateTime.SCHEMA, getAncestorSession()); // TODO NTF - maybe ditch the parent?
@@ -334,7 +311,6 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 				lastModified_ = DominoUtils.toJavaDateSafe(getDelegate().getLastModified());
 			} catch (NotesException e) {
 				DominoUtils.handleException(e);
-
 			}
 		}
 		return lastModified_;
@@ -347,13 +323,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	 */
 	@Override
 	public Item appendItemValue(final String name) {
-		markDirty();
-		try {
-			return fromLotus(getDelegate().appendItemValue(name), Item.SCHEMA, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+		return appendItemValue(name, (Object) null);
 	}
 
 	/*
@@ -376,9 +346,13 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 		return appendItemValue(name, Integer.valueOf(value));
 	}
 
+	/**
+	 * appends a value to an item (if it is not yet there)
+	 */
 	public Item appendItemValue(final String name, final Object value, final boolean unique) {
 		Item result = null;
 		if (unique && hasItem(name)) {
+			// TODO RPr This function is not yet 100% mime compatible
 			result = getFirstItem(name);
 			if (result.containsValue(value)) {
 				return result;
@@ -406,19 +380,16 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 				try {
 					Object domNode = toDominoFriendly(value, this, recycleThis);
 					if (getAncestorSession().isFixEnabled(Fixes.APPEND_ITEM_VALUE)) {
-						Object current = getItemValue(name);
+						Vector current = getItemValue(name);
 						if (current == null) {
 							result = replaceItemValue(name, value);
-						} else if (current instanceof Vector) {
-							Object newVal = ((Vector) current).add(domNode);
+						} else if (domNode instanceof Collection) {
+							Object newVal = current.addAll((Collection) domNode);
 							result = replaceItemValue(name, newVal);
 						} else {
-							log_.log(Level.WARNING, "Unable to append a value of type " + value.getClass().getName()
-									+ " to an existing item returning a " + current.getClass().getName()
-									+ ". Reverting to legacy behavior...");
-							result = fromLotus(getDelegate().appendItemValue(name, domNode), Item.SCHEMA, this);
+							Object newVal = current.add(domNode);
+							result = replaceItemValue(name, newVal);
 						}
-
 					} else {
 						result = fromLotus(getDelegate().appendItemValue(name, domNode), Item.SCHEMA, this);
 					}
@@ -576,6 +547,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	public void copyAllItems(final lotus.domino.Document doc, final boolean replace) {
 		try {
 			getDelegate().copyAllItems(toLotus(doc), replace);
+			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -588,9 +560,11 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	 */
 	@Override
 	public Item copyItem(final lotus.domino.Item item) {
-		// TODO - NTF markDirty()?
+		// TODO - NTF markDirty()? Yes. It's necessary.
 		try {
-			return fromLotus(getDelegate().copyItem(toLotus(item)), Item.SCHEMA, this);
+			Item ret = fromLotus(getDelegate().copyItem(toLotus(item)), Item.SCHEMA, this);
+			markDirty();
+			return ret;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -606,7 +580,9 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	public Item copyItem(final lotus.domino.Item item, final String newName) {
 		// TODO - NTF markDirty()?
 		try {
-			return fromLotus(getDelegate().copyItem(toLotus(item), newName), Item.SCHEMA, this);
+			Item ret = fromLotus(getDelegate().copyItem(toLotus(item), newName), Item.SCHEMA, this);
+			markDirty();
+			return ret;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -933,38 +909,42 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 		// System.out.println("Requesting a value of type " + T.getName() + " in name " + name);
 		// }
 
-		MIMEEntity testEntity = testMIMEEntity(name);
-		boolean hasMime = testEntity != null;
-
-		if (!hasMime) {
-			Item item = getFirstItem(name);
-			if (item != null && item.getType() == Item.MIME_PART) {
-				return (T) getItemValueMIME(name);
-			}
-			// if (T.equals(java.util.Collection.class) && getItemValueString("form").equalsIgnoreCase("container")) {
-			// System.out.println("No MIMEEntity found for " + name + ". Using regular item API...");
-			// }
-			Object result = TypeUtils.itemValueToClass(this, name, T);
-			// if (T.equals(java.util.Collection.class) && getItemValueString("form").equalsIgnoreCase("container")) {
-			// System.out.println("Returning a value of " + (result == null ? "null" : result.getClass().getSimpleName())
-			// + " for value in " + name + " of type " + T.getSimpleName());
-			// }
-
-			return (T) result;
+		//try {
+		Object itemValue = null;
+		MIMEEntity entity = this.getMIMEEntity(name);
+		if (entity != null) {
+			itemValue = Documents.getItemValueMIME(this, name, entity);
 		} else {
-			// if (T.equals(java.util.Collection.class) && getItemValueString("form").equalsIgnoreCase("container")) {
-			// System.out.println("MIMEEntity found for " + name + ". Using MIMEBean strategy...");
-			// }
-			return (T) getItemValueMIME(name);
+			// read it as vector
+			Vector<?> vals;
+			try {
+				vals = getDelegate().getItemValue(name);
+				itemValue = Factory.wrapColumnValues(vals, this.getAncestorSession());
+			} catch (NotesException ne) {
+				log_.log(Level.WARNING, "Unable to get value for item " + name + " in Document " + getAncestorDatabase().getFilePath()
+						+ " " + noteid_ + ": " + ne.text);
+				DominoUtils.handleException(ne);
+				return null;
+			}
 		}
-	}
+		if (itemValue == null) {
+			return null;
+		}
+		if (T.isAssignableFrom(itemValue.getClass())) {
+			return (T) itemValue;
+		}
+		// if this is a collection, return the first value
+		if (itemValue instanceof Collection) {
+			Collection<?> c = ((Collection<?>) itemValue);
+			if (c.size() == 1) {
+				itemValue = c.iterator().next();
+				if (T.isAssignableFrom(itemValue.getClass())) {
+					return (T) itemValue;
+				}
+			}
+		}
+		throw new DataNotCompatibleException("Cannot return " + itemValue.getClass() + ", because " + T + " was requested.");
 
-	//	private Object getItemValueMIME(final String itemname, final MIMEEntity entity) {
-	//		return Documents.getItemValueMIME(this, itemname, entity);
-	//	}
-
-	private Object getItemValueMIME(final String itemname) {
-		return Documents.getItemValueMIME(this, itemname);
 	}
 
 	/*
@@ -975,13 +955,14 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<Object> getItemValue(final String name) {
-		try {
+		Vector<?> vals = null;
 
+		try {
 			// Check the item type to see if it's MIME - if so, then see if it's a MIMEBean
 			// This is a bit more expensive than I'd like
 			MIMEEntity entity = this.getMIMEEntity(name);
 			if (entity != null) {
-				Object mimeValue = getItemValueMIME(name);
+				Object mimeValue = Documents.getItemValueMIME(this, name, entity);
 				if (mimeValue != null) {
 					if (mimeValue instanceof Vector) {
 						return (Vector<Object>) mimeValue;
@@ -998,29 +979,24 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 				} else {
 					log_.log(Level.WARNING, "We found a MIMEEntity for item name " + name
 							+ " but the value from the MIMEEntity is null so we likely need to look at the regular field.");
+
+					// TODO NTF: What if we have a "real" mime item like a body field (Handle RT/MIME correctly)
+					Vector<Object> result = new Vector<Object>(1);
+					result.add(entity.getContentAsText()); // TODO: not sure if that is correct
+					return result;
 				}
-				// TODO NTF: What if we have a "real" mime item like a body field (Handle RT/MIME correctly)
 			}
 
-			// TODO RPr: check if we can convertn a Document to a NAPI-Document
-			if (getNapiDocument() != null) {
-				//System.out.println("using NAPI");
-				List<String> lvals = getNapiDocument().getItemAsTextList(name);
-				//System.out.println("Got from NAPI" + lvals);
-				return new Vector<Object>(lvals);
-			}
-
-			Vector<?> vals = null;
 			try {
 				vals = getDelegate().getItemValue(name);
 			} catch (NotesException ne) {
 				log_.log(Level.WARNING, "Unable to get value for item " + name + " in Document " + getAncestorDatabase().getFilePath()
 						+ " " + noteid_ + ": " + ne.text);
+				DominoUtils.handleException(ne);
 				return null;
 			}
 			return Factory.wrapColumnValues(vals, this.getAncestorSession());
 		} catch (Throwable t) {
-			// From DominoUtils.restoreState(...)
 			DominoUtils.handleException(t);
 		}
 		return null;
@@ -1033,12 +1009,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	 */
 	@Override
 	public Object getItemValueCustomData(final String itemName) throws IOException, ClassNotFoundException {
-		try {
-			return getDelegate().getItemValueCustomData(itemName);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+		return getItemValueCustomData(itemName, null);
 	}
 
 	/*
@@ -1048,6 +1019,12 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	 */
 	@Override
 	public Object getItemValueCustomData(final String itemName, final String dataTypeName) throws IOException, ClassNotFoundException {
+		if (dataTypeName == null || "mime-bean".equals(dataTypeName)) {
+			MIMEEntity entity = this.getMIMEEntity(itemName);
+			if (entity != null) {
+				return Documents.getItemValueMIME(this, itemName, entity);
+			}
+		}
 		try {
 			return getDelegate().getItemValueCustomData(itemName, dataTypeName);
 		} catch (NotesException e) {
@@ -1064,6 +1041,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	@Override
 	public byte[] getItemValueCustomDataBytes(final String itemName, final String dataTypeName) throws IOException {
 		try {
+			// TODO RPr: This is not yet MIME compatible
 			return getDelegate().getItemValueCustomDataBytes(itemName, dataTypeName);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -1077,13 +1055,82 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	 * @see org.openntf.domino.Document#getItemValueDateTimeArray(java.lang.String)
 	 */
 	@Override
-	public Vector<DateTime> getItemValueDateTimeArray(final String name) {
+	public Vector<org.openntf.domino.Base<?>> getItemValueDateTimeArray(final String name) {		// cf. DateRange.java
+		boolean mayBeMime = true;
+		Vector<org.openntf.domino.Base<?>> vGIV = null;	// see below
 		try {
-			return fromLotusAsVector(getDelegate().getItemValueDateTimeArray(name), DateTime.SCHEMA, getAncestorSession());
+			Vector<?> v = getDelegate().getItemValueDateTimeArray(name);
+			mayBeMime = false;
+			if (v == null || v.size() == 0)
+				return (Vector<org.openntf.domino.Base<?>>) v;
+			FactorySchema schema = DateTime.SCHEMA;
+			if (v.elementAt(0) instanceof lotus.domino.DateRange)	// at moment: never
+				schema = DateRange.SCHEMA;
+			else {	// Workaround for Vector of DateRange-s
+				while (true) {
+					int sz = v.size(), i;
+					for (i = 0; i < sz; i++)
+						if (v.elementAt(i) != null)
+							break;
+					if (i < sz)
+						break;
+					vGIV = getDelegate().getItemValue(name);
+					if (vGIV.size() != sz * 2)
+						break;
+					for (i = 0; i < sz * 2; i++)
+						if (!(vGIV.elementAt(i) instanceof lotus.domino.DateTime))
+							break;
+					if (i < sz * 2)
+						break;
+					Vector<lotus.domino.DateRange> aux = new Vector<lotus.domino.DateRange>(sz);
+					lotus.domino.Session rawsession = toLotus(Factory.getSession());
+					for (i = 0; i < sz; i++) {
+						lotus.domino.DateTime dts = (lotus.domino.DateTime) vGIV.elementAt(2 * i);
+						lotus.domino.DateTime dte = (lotus.domino.DateTime) vGIV.elementAt(2 * i + 1);
+						lotus.domino.DateRange dr = rawsession.createDateRange(dts, dte);
+						aux.add(dr);
+					}
+					v = aux;
+					schema = DateRange.SCHEMA;
+					break;
+				}
+			}
+			return fromLotusAsVector(v, schema, getAncestorSession());
 		} catch (NotesException e) {
+			while (mayBeMime) {
+				MIMEEntity entity = this.getMIMEEntity(name);
+				if (entity == null)
+					break;
+				Object mim = Documents.getItemValueMIME(this, name, entity);
+				if (mim == null)
+					break;
+				Vector<?> v;
+				if (mim instanceof Vector)
+					v = (Vector<Object>) mim;
+				else if (mim instanceof Collection)
+					v = new Vector<Object>((Collection<Object>) mim);
+				else if (mim.getClass().isArray())
+					v = (Vector<Object>) Arrays.asList((Object[]) mim);
+				else
+					break;
+				int sz = v.size(), i;
+				for (i = 0; i < sz; i++) {
+					Object o = v.elementAt(i);
+					if (o == null)
+						break;
+					if ((!(o instanceof DateTime)) && (!(o instanceof DateRange)))
+						break;
+				}
+				if (i < sz)
+					break;
+				return (Vector<org.openntf.domino.Base<?>>) v;
+			}
 			DominoUtils.handleException(e);
+			return null;
+		} finally {
+			if (vGIV != null)
+				Base.s_recycle(vGIV);
 		}
-		return null;
 	}
 
 	/*
@@ -1123,15 +1170,17 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	 */
 	@Override
 	public String getItemValueString(final String name) {
-		if (getNapiDocument() != null) {
-			String s = getNapiDocument().getItemValueAsString(name);
-			if (s == null)
-				return "";
-			return s;
-		}
 		try {
-
-			return getDelegate().getItemValueString(name);
+			String ret = getDelegate().getItemValueString(name);
+			if (ret != null && ret.length() != 0)
+				return ret;
+			if (getMIMEEntity(name) == null)
+				return "";
+			Vector<?> v = getItemValue(name);
+			ret = "";
+			if (v.size() > 0)
+				ret = v.elementAt(0).toString();
+			return ret;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1145,7 +1194,6 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	 */
 	@Override
 	public Vector<Item> getItems() {
-		// TODO RPr: Review the ItemVector
 		// TODO At some point we should cache this result in a private List and then always return an immutable Vector
 		ItemVector iv = new ItemVector(this);
 		return iv;
@@ -1204,14 +1252,8 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	 */
 	@Override
 	public MIMEEntity getMIMEEntity(final String itemName) {
-		// if (entityCache_.containsKey(itemName)) {
-		// log_.warning("Returning MIMEEntity " + itemName + " from local document cache...");
-		// return entityCache_.get(itemName);
-		// }
 		try {
-			MIMEEntity wrapped = fromLotus(getDelegate().getMIMEEntity(itemName), MIMEEntity.SCHEMA, this);
-			// entityCache_.put(itemName, wrapped);
-			return wrapped;
+			return fromLotus(getDelegate().getMIMEEntity(itemName), MIMEEntity.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1462,7 +1504,6 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 
 	public boolean hasReaders() {
 		//TODO won't that be handy?
-
 		for (Item item : getItems()) {
 			if (item.isReaders()) {
 				return true;
@@ -1491,7 +1532,9 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 		return false;
 	}
 
+	@Deprecated
 	public MIMEEntity testMIMEEntity(final String name) {
+		// RPr: I am not sure if setting convertMime to false is neccessary, so this method is obsoletete
 		Session session = this.getAncestorSession();
 		boolean convertMime = session.isConvertMIME();
 		session.setConvertMIME(false);
@@ -1980,6 +2023,13 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 		keySet();
 		fieldNames_.remove(name);
 		try {
+			// RPr: it is important to check if this is a MIME entity and remove that this way.
+			// Otherwise dangling $FILE items are hanging around in the document
+			MIMEEntity mimeChk = getMIMEEntity(name);
+			if (mimeChk != null) {
+				mimeChk.remove();
+				getDelegate().closeMIMEEntities(true, name);
+			}
 			if (getAncestorSession().isFixEnabled(Fixes.REMOVE_ITEM)) {
 				while (getDelegate().hasItem(name)) {
 					getDelegate().removeItem(name);
@@ -2033,84 +2083,145 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 		return false;
 	}
 
+	public static int MAX_NATIVE_FIELD_SIZE = 32000;
+	public static int MAX_SUMMARY_FIELD_SIZE = 14000;
+
+	//public static String MIME_BEAN_SUFFIX = "_O"; // CHECKME: is this a good idea?
+	//public static String MIME_BEAN_HINT = "$ObjectData";
+
+	public static boolean AUTOBOX_ALWAYS = false;
+
+	//to keep compatibility, set this
+	//public static boolean AUTOBOX_ALWAYS	= true;		
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.openntf.domino.ext.Document#replaceItemValue(java.lang.String, java.lang.Object, java.lang.Boolean)
+	 * @see org.openntf.domino.Document#replaceItemValueCustomData(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public Item replaceItemValue(final String itemName, final Object value, final boolean isSummary) {
-		return replaceItemValue(itemName, value, isSummary, true);
+	public Item replaceItemValueCustomData(final String itemName, final Object userObj) throws IOException {
+		return replaceItemValueCustomData(itemName, null, userObj);
 	}
 
-	public static int MAX_NATIVE_VECTOR_SIZE = 255;
-	public static int MAX_NATIVE_STRING_SIZE = 32000;
-	public static int MAX_SUMMARY_STRING_SIZE = 14000;
-
-	private lotus.domino.Item replaceItemValueExt(final String itemName, final Object value, final IllegalArgumentException iae)
-			throws Exception {
-		lotus.domino.Item result = null;
-		boolean oldConvert = getAncestorSession().isConvertMime();
-		getAncestorSession().setConvertMime(false);
-		// Then try serialization
-		if (value instanceof Serializable) {
-			Documents.saveState((Serializable) value, this, itemName);
-
-			result = getDelegate().getFirstItem(itemName);
-			// result = null;
-		} else if (value instanceof DocumentCollection) {
-			// NoteIDs would be faster for this and, particularly, NoteCollection, but it should be replica-friendly
-			DocumentCollection docs = (DocumentCollection) value;
-			String[] unids = new String[docs.getCount()];
-			int index = 0;
-			for (org.openntf.domino.Document doc : docs) {
-				unids[index++] = doc.getUniversalID();
-			}
-			Map<String, String> headers = new HashMap<String, String>(1);
-			headers.put("X-Original-Java-Class", "org.openntf.domino.DocumentCollection");
-			Documents.saveState(unids, this, itemName, true, headers);
-			// result = null;
-			result = getDelegate().getFirstItem(itemName);
-		} else if (value instanceof NoteCollection) {
-			// Maybe it'd be faster to use .getNoteIDs - I'm not sure how the performance compares
-			NoteCollection notes = (NoteCollection) value;
-			String[] unids = new String[notes.getCount()];
-			String noteid = notes.getFirstNoteID();
-			int index = 0;
-			while (noteid != null && !noteid.isEmpty()) {
-				unids[index++] = notes.getUNID(noteid);
-				noteid = notes.getNextNoteID(noteid);
-			}
-			Map<String, String> headers = new HashMap<String, String>(1);
-			headers.put("X-Original-Java-Class", "org.openntf.domino.NoteCollection");
-			Documents.saveState(unids, this, itemName, true, headers);
-			// result = null;
-			result = getDelegate().getFirstItem(itemName);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.Document#replaceItemValueCustomData(java.lang.String, java.lang.String, java.lang.Object)
+	 */
+	@Override
+	public Item replaceItemValueCustomData(final String itemName, final String dataTypeName, final Object userObj) throws IOException {
+		if (dataTypeName == null && useMimeBeans()) {
+			return replaceItemValueCustomData(itemName, "mime-bean", userObj, true);
 		} else {
-			// Check to see if it's a StateHolder
-			try {
-				Class<?> stateHolderClass = Class.forName("javax.faces.component.StateHolder", true, Factory.getClassLoader());
-				if (stateHolderClass.isInstance(value)) {
-					Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext", true, Factory.getClassLoader());
-					Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
-					Method saveState = stateHolderClass.getMethod("saveState", facesContextClass);
-					Serializable state = (Serializable) saveState.invoke(value, getCurrentInstance.invoke(null));
-					Map<String, String> headers = new HashMap<String, String>();
-					headers.put("X-Storage-Scheme", "StateHolder");
-					headers.put("X-Original-Java-Class", value.getClass().getName());
-					Documents.saveState(state, this, itemName, true, headers);
-					//					result = null;
-					result = getDelegate().getFirstItem(itemName);
-				} else {
-					// Well, we tried.
-					throw iae;
-				}
-			} catch (ClassNotFoundException cnfe) {
-				throw iae;
-			}
+			return replaceItemValueCustomData(itemName, dataTypeName, userObj, true);
 		}
-		getAncestorSession().setConvertMime(oldConvert);
-		return result;
+	}
+
+	/**
+	 * serialize the Object value and stores it in the item. if <code>dataTypeName</code>="mime-bean" the item will be a MIME-bean,
+	 * otherwise, data is serialized by lotus.domino.Docmuemt.replaceItemValueCustomData
+	 */
+	public Item replaceItemValueCustomData(final String itemName, final String dataTypeName, final Object value, final boolean returnItem) {
+		markDirty();
+		if (!keySet().contains(itemName)) {
+			fieldNames_.add(itemName);
+		}
+		lotus.domino.Item result = null;
+
+		try {
+			if (!"mime-bean".equalsIgnoreCase(dataTypeName)) {
+				// if data-type is != "mime-bean" the object is written in native mode.
+				result = getDelegate().replaceItemValueCustomData(itemName, dataTypeName, value);
+			} else if (value instanceof Serializable) {
+				Documents.saveState((Serializable) value, this, itemName);
+
+				// TODO RPr: Discuss if the other strategies make sense here.
+				// In my opinion NoteCollection does work UNTIL the next compact task runs.
+				// So it makes NO sense to serialize NoteIDs!
+			} else if (value instanceof DocumentCollection) {
+				// NoteIDs would be faster for this and, particularly, NoteCollection, but it should be replica-friendly
+				DocumentCollection docs = (DocumentCollection) value;
+				String[] unids = new String[docs.getCount()];
+				int index = 0;
+				for (org.openntf.domino.Document doc : docs) {
+					unids[index++] = doc.getUniversalID();
+				}
+				Map<String, String> headers = new HashMap<String, String>(1);
+				headers.put("X-Original-Java-Class", "org.openntf.domino.DocumentCollection");
+				Documents.saveState(unids, this, itemName, true, headers);
+
+			} else if (value instanceof NoteCollection) {
+				// Maybe it'd be faster to use .getNoteIDs - I'm not sure how the performance compares
+				NoteCollection notes = (NoteCollection) value;
+				String[] unids = new String[notes.getCount()];
+				String noteid = notes.getFirstNoteID();
+				int index = 0;
+				while (noteid != null && !noteid.isEmpty()) {
+					unids[index++] = notes.getUNID(noteid);
+					noteid = notes.getNextNoteID(noteid);
+				}
+				Map<String, String> headers = new HashMap<String, String>(1);
+				headers.put("X-Original-Java-Class", "org.openntf.domino.NoteCollection");
+				Documents.saveState(unids, this, itemName, true, headers);
+
+			} else {
+				// Check to see if it's a StateHolder
+				// TODO RPr: Is this really needed or only a theoretical approach? See above...
+				try {
+					Class<?> stateHolderClass = Class.forName("javax.faces.component.StateHolder", true, Factory.getClassLoader());
+					if (stateHolderClass.isInstance(value)) {
+						Class<?> facesContextClass = Class.forName("javax.faces.context.FacesContext", true, Factory.getClassLoader());
+						Method getCurrentInstance = facesContextClass.getMethod("getCurrentInstance");
+						Method saveState = stateHolderClass.getMethod("saveState", facesContextClass);
+						Serializable state = (Serializable) saveState.invoke(value, getCurrentInstance.invoke(null));
+						Map<String, String> headers = new HashMap<String, String>();
+						headers.put("X-Storage-Scheme", "StateHolder");
+						headers.put("X-Original-Java-Class", value.getClass().getName());
+						Documents.saveState(state, this, itemName, true, headers);
+
+					} else {
+						throw new IllegalArgumentException(value.getClass()
+								+ " is not of type Serializable, DocumentCollection, NoteCollection or StateHolder");
+					}
+				} catch (ClassNotFoundException cnfe) {
+					throw new IllegalArgumentException(value.getClass()
+							+ " is not of type Serializable, DocumentCollection or NoteCollection");
+				}
+			}
+
+			if (returnItem) {
+				result = getDelegate().getFirstItem(itemName);
+				return fromLotus(result, Item.SCHEMA, this);
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.Document#replaceItemValueCustomDataBytes(java.lang.String, java.lang.String, byte[])
+	 */
+	@Override
+	public Item replaceItemValueCustomDataBytes(final String itemName, final String dataTypeName, final byte[] byteArray)
+			throws IOException {
+		markDirty();
+		try {
+			if (byteArray.length > 65535 && useMimeBeans()) {
+				// Then fall back to the normal method, which will MIMEBean it
+				return this.replaceItemValue(itemName, byteArray);
+			} else {
+				return fromLotus(getDelegate().replaceItemValueCustomDataBytes(itemName, dataTypeName, byteArray), Item.SCHEMA, this);
+			}
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		return null;
 	}
 
 	/*
@@ -2120,24 +2231,123 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	 */
 	@Override
 	public Item replaceItemValue(final String itemName, final Object value) {
-		return replaceItemValue(itemName, value, null, true);
+		return replaceItemValue(itemName, value, null, true, true);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.openntf.domino.ext.Document#replaceItemValue(java.lang.String, java.lang.Object, java.lang.Boolean)
+	 */
+	@Override
+	public Item replaceItemValue(final String itemName, final Object value, final boolean isSummary) {
+		return replaceItemValue(itemName, value, isSummary, true, true);
+	}
+
+	/**
+	 * replaceItemValue writes itemFriendly values or a Collection of itemFriendly values.
+	 * 
+	 * if "autoSerialisation" is enabled. Data exceeding 32k is serialized with replaceItemValueCustomData. If MIME_BEAN_SUFFIX is set, the
+	 * original item contains the String $ObjectData (=MIME_BEAN_SUFFIX). This is important, if you display data in a view, so that you see
+	 * immediately, that only serialized content is available
+	 * 
 	 * @see org.openntf.domino.Document#replaceItemValue(java.lang.String, java.lang.Object)
 	 */
-	@SuppressWarnings("unchecked")
-	public Item replaceItemValue(final String itemName, Object value, final Boolean isSummary, final boolean returnItem) {
-		// if (getItemValueString("form").equalsIgnoreCase("container") && itemName.equals(DominoVertex.IN_NAME)) {
-		// System.out.println("Replacing a value in " + itemName + " with a type of "
-		// + (value == null ? "null" : value.getClass().getSimpleName()));
-		// }
+	public Item replaceItemValue(final String itemName, final Object value, final Boolean isSummary, final boolean boxCompatibleOnly,
+			final boolean returnItem) {
+		Item result = null;
+		try {
+
+			try {
+				result = replaceItemValueLotus(itemName, value, isSummary, returnItem);
+			} catch (Domino32KLimitException ex) {
+				if (!this.useMimeBeans()) {
+					throw ex;
+				}
+				//				if (MIME_BEAN_SUFFIX != null) {
+				//					replaceItemValueLotus(itemName, MIME_BEAN_HINT, isSummary, false);
+				//					result = replaceItemValueCustomData(itemName + MIME_BEAN_SUFFIX, "mime-bean", value, returnItem);
+				//				} else {
+				result = replaceItemValueCustomData(itemName, "mime-bean", value, returnItem);
+				//				}
+			} catch (Exception ex2) {
+				if (!boxCompatibleOnly) {
+					result = replaceItemValueCustomData(itemName, "mime-bean", value, returnItem);
+				} else if (AUTOBOX_ALWAYS) {
+					// Compatibility mode
+					log_.log(Level.WARNING, "Writing " + value.getClass() + " causes a " + ex2
+							+ " as AUTOBOX_ALWAYS is true, the value will be wrapped in a MIME bean."
+							+ " Consider using 'put' or something similar in your code.");
+					result = replaceItemValueCustomData(itemName, "mime-bean", value, returnItem);
+				} else {
+					throw ex2;
+				}
+			}
+
+			// TODO RPr: What is this?
+			if (this.shouldWriteItemMeta_) {
+				// If we've gotten this far, it must be legal - update or create the item info map
+				Class<?> valueClass;
+				if (value == null) {
+					valueClass = Null.class;
+				} else {
+					valueClass = value.getClass();
+				}
+				Map<String, Map<String, Serializable>> itemInfo = getItemInfo();
+				Map<String, Serializable> infoNode = null;
+				if (itemInfo.containsKey(itemName)) {
+					infoNode = itemInfo.get(itemName);
+				} else {
+					infoNode = new HashMap<String, Serializable>();
+				}
+				infoNode.put("valueClass", valueClass.getName());
+				infoNode.put("updated", new Date()); // For sanity checking if the value was changed outside of Java
+				itemInfo.put(itemName, infoNode);
+			}
+
+		} catch (Throwable t) {
+			DominoUtils.handleException(t);
+		}
+		return result;
+	}
+
+	/**
+	 * returns the payload that the Object o needs when it is written into an item
+	 * 
+	 * @param o
+	 * @param c
+	 * @return
+	 */
+	private int getLotusPayload(final Object o, final Class<?> c) {
+		if (c.isAssignableFrom(o.getClass())) {
+			if (o instanceof String) {
+				return ((String) o).length(); // TODO: LMBCS conversion must be done here/later
+			}
+			if (o instanceof DateRange) {
+				return 16;
+			} else {
+				return 8; // Number + DateTime has 8 bytes payload
+			}
+		}
+		throw new DataNotCompatibleException("Got a " + o.getClass() + " but " + c + " expected");
+	}
+
+	/**
+	 * replaceItemValueLotus writes itemFriendly values or a Collection of itemFriendly values. it throws a Domino32KLimitException if the
+	 * data does not fit into the fied. The caller can decide what to do, if this exception is thrown.
+	 * 
+	 * It throws a DataNotCompatibleException, if the data is not domino compatible
+	 * 
+	 * @throws Domino32KLimitException
+	 *             if the item does not fit in a field
+	 */
+	public Item replaceItemValueLotus(final String itemName, Object value, final Boolean isSummary, final boolean returnItem)
+			throws Domino32KLimitException {
 		markDirty();
 		if (!keySet().contains(itemName)) {
 			fieldNames_.add(itemName);
 		}
+		// writing a value of "Null" leads to a remove of the item if configured in SESSION
 		if (value == null || value instanceof Null) {
 			if (hasItem(itemName)) {
 				if (getAncestorSession().isFixEnabled(Fixes.REPLACE_ITEM_NULL)) {
@@ -2150,168 +2360,162 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 				return null;
 			}
 		}
-		@SuppressWarnings("rawtypes")
-		List recycleThis = new ArrayList();
+
+		Vector<Object> dominoFriendly;
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
+		boolean isNonSummary = false;
+		lotus.domino.Item result;
 		try {
-			lotus.domino.Item result = null;
-			Class<?> valueClass = value.getClass();
-			boolean isNonSummary = false;	// why isNon instead of is? Because we want to default to the existing behavior and only mark
-											// non-summary by exception
-			try {
-				if (value instanceof Collection || value instanceof Object[]) { // TODO: does this work for int[]
-					if (value instanceof Collection) {
-						if (((Collection<?>) value).size() > MAX_NATIVE_VECTOR_SIZE) {
-							throw new IllegalArgumentException();
-						}
-					} else if (value instanceof Object[]) {
-						if (((Object[]) value).length > MAX_NATIVE_VECTOR_SIZE) {
-							throw new IllegalArgumentException();
-						}
-					}
-					Vector<Object> resultList = new Vector<Object>();
-					Class<?> objectClass = null;
-					long totalStringSize = 0;
-
-					Collection<?> listValue = value instanceof Collection ? (Collection<?>) value : Arrays.asList((Object[]) value);
-
-					for (Object valNode : listValue) {
-						if (valNode instanceof BigString)
-							isNonSummary = true;
-						Object domNode = toItemFriendly(valNode, this, recycleThis);
-						if (domNode != null) {
-							if (objectClass == null) {
-								objectClass = domNode.getClass();
-							} else {
-								if (!objectClass.equals(domNode.getClass())) {
-									// Domino only allows uniform lists
-									if (log_.isLoggable(Level.WARNING)) {
-										log_.log(Level.WARNING, "Attempt to write a non-uniform list to item " + itemName + " in document "
-												+ getAncestorDatabase().getFilePath() + ": " + getUniversalID()
-												+ ". The list contains items of both " + objectClass.getName() + " and "
-												+ domNode.getClass().getName() + ". A MIME entity will be used instead.");
-									}
-									throw new IllegalArgumentException();
-								}
-							}
-							if (domNode instanceof String) {
-								totalStringSize += ((String) domNode).length();
-								if (totalStringSize > MAX_SUMMARY_STRING_SIZE)
-									isNonSummary = true;
-
-								// Escape to serializing if there's too much text data
-								// Leave fudge room for multibyte? This is clearly not the best way to do it
-								if (totalStringSize > MAX_NATIVE_STRING_SIZE) {
-									throw new IllegalArgumentException();
-								}
-							}
-							resultList.add(domNode);
-						} else {
-							log_.log(Level.INFO, "toDominoFriendly returned a null value for an original list member value of "
-									+ (valNode == null ? "null" : valNode.getClass().getName()));
-						}
-					}
-					// If it ended up being something we could store, make note of the original class instead of the list class
-					if (!(listValue).isEmpty()) {
-						//						valueClass = (listValue).get(0).getClass();
-						MIMEEntity mimeChk = getMIMEEntity(itemName);
-						if (mimeChk != null) {
-							mimeChk.remove();
-						}
-						// TODO RPr: Check close of MIMEEntity
-					}
-					try {
-						result = getDelegate().replaceItemValue(itemName, resultList);
-						if (isNonSummary) {
-							result.setSummary(false);
-						}
-					} catch (NotesException ne) {
-						String msg = ne.text;
-						if (msg.equalsIgnoreCase("Cannot convert item to requested datatype")
-								|| msg.equalsIgnoreCase("Unknown or unsupported object type in Vector")) {
-							String types = "";
-
-							StringBuilder elemType = new StringBuilder();
-							for (Object o : resultList) {
-								if (o != null) {
-									elemType.append(o.getClass().getName() + ", ");
-								} else {
-									elemType.append("null, ");
-								}
-							}
-							types = " DETAILS: " + elemType.toString();
-
-							throw new DataNotCompatibleException("Unable to write a " + resultList.getClass().getName()
-									+ (resultList.isEmpty() ? " empty" : types) + " object (originally " + value.getClass().getName()
-									+ ") to item " + itemName + " in document " + unid_ + " in " + getAncestorDatabase().getFilePath());
-						} else {
-							DominoUtils.handleException(ne);
-						}
-					}
-				} else {
-					if (value instanceof BigString)
-						isNonSummary = true;
-					Object domNode = toDominoFriendly(value, this, recycleThis);
-					try {
-						if (domNode instanceof String) {
-							String s = (String) domNode;
-							if (s.equals("\n") || s.equals("\r") || s.equals("\r\n")) {
-								// Domino can't store linefeed only in item
-								throw new IllegalArgumentException();
-							}
-							if (s.length() > MAX_SUMMARY_STRING_SIZE)
-								isNonSummary = true;
-							if (s.length() > MAX_NATIVE_STRING_SIZE) {
-								throw new IllegalArgumentException();
-							}
-						}
-						MIMEEntity mimeChk = getMIMEEntity(itemName);
-						if (mimeChk != null) {
-							mimeChk.remove();
-						}
-						result = getDelegate().replaceItemValue(itemName, domNode);
-						if (isNonSummary)
-							result.setSummary(false);
-					} catch (NotesException nativeError) {
-						log_.warning("Native error occured when replacing " + itemName + " item on doc " + this.noteid_
-								+ " with a value of type " + (domNode == null ? "null" : domNode.getClass().getName()) + " of value "
-								+ String.valueOf(domNode));
-					}
+			// Special case. If the argument is an Item, just copy it.
+			if (value instanceof Item) {
+				// remove the mime item first, so that it will not collide with MIME etc.
+				MIMEEntity mimeChk = getMIMEEntity(itemName);
+				if (mimeChk != null) {
+					mimeChk.remove();
+					getDelegate().closeMIMEEntities(true, itemName);
 				}
-			} catch (IllegalArgumentException iae) {
-				result = this.replaceItemValueExt(itemName, value, iae);
-			}
-
-			if (this.shouldWriteItemMeta_) {
-				// If we've gotten this far, it must be legal - update or create the item info map
-
-				Map<String, Map<String, Serializable>> itemInfo = getItemInfo();
-				Map<String, Serializable> infoNode = null;
-				if (itemInfo.containsKey(itemName)) {
-					infoNode = itemInfo.get(itemName);
-				} else {
-					infoNode = new HashMap<String, Serializable>();
-				}
-				infoNode.put("valueClass", valueClass.getName());
-				infoNode.put("updated", new Date()); // For sanity checking if the value was changed outside of Java
-				itemInfo.put(itemName, infoNode);
-			}
-			if (result != null) {
-				markDirty();
-				if ((isSummary != null) && (result.isSummary() != isSummary.booleanValue())) {
-					result.setSummary(isSummary.booleanValue());
-				}
+				result = getDelegate().replaceItemValue(itemName, toDominoFriendly(value, this, recycleThis));
 				if (returnItem) {
 					return fromLotus(result, Item.SCHEMA, this);
 				} else {
 					s_recycle(result);
+					return null;
 				}
 			}
-		} catch (Throwable t) {
-			DominoUtils.handleException(t);
+
+			// first step: Make it domino friendly and put all converted objects into "dominoFriendly" 
+			if (value instanceof Collection) {
+				Collection<?> coll = (Collection<?>) value;
+				dominoFriendly = new Vector<Object>(coll.size());
+				for (Object valNode : coll) {
+					if (valNode != null) { // CHECKME: Should NULL values discarded?
+						if (valNode instanceof BigString)
+							isNonSummary = true;
+						dominoFriendly.add(toItemFriendly(valNode, this, recycleThis));
+					}
+				}
+
+			} else if (value.getClass().isArray()) {
+				Object arr[] = (Object[]) value;
+				dominoFriendly = new Vector<Object>(arr.length);
+				for (Object valNode : arr) {
+					if (valNode != null) { // CHECKME: Should NULL values discarded?
+						if (valNode instanceof BigString)
+							isNonSummary = true;
+						dominoFriendly.add(toItemFriendly(valNode, this, recycleThis));
+					}
+				}
+
+			} else {
+				// Scalar
+				dominoFriendly = new Vector<Object>(1);
+				if (value instanceof BigString)
+					isNonSummary = true;
+				dominoFriendly.add(toItemFriendly(value, this, recycleThis));
+			}
+
+			// empty vectors are treated as "null"
+			if (dominoFriendly.size() == 0) {
+				return replaceItemValueLotus(itemName, null, isSummary, returnItem);
+			}
+
+			Object firstElement = dominoFriendly.get(0);
+
+			int payload = 0;
+
+			if (dominoFriendly.size() > 1) {
+				// value lists have an global overhead of 2 bytes (maybe the count of values) + 2 bytes for the length of value
+				payload = 2 + 2 * dominoFriendly.size(); //compute overhead first
+			}
+
+			// Next step: Type checking + length computation
+			if (firstElement instanceof String) {
+				//	if (s.equals("\n") || s.equals("\r") || s.equals("\r\n")) {
+				//		// Domino can't read items, that contains only ONE @NewLine
+				//		// But I think it does not make sense to serialize here or throwing an exception.
+				//		throw new IllegalArgumentException();
+				//	}
+
+				for (Object o : dominoFriendly) {
+					payload += getLotusPayload(o, String.class);
+				}
+				if (payload > MAX_NATIVE_FIELD_SIZE / 2) {
+					// TODO: Compute REAL LMBCS payload by writing the string to a stream
+				}
+
+			} else if (firstElement instanceof Number) {
+				for (Object o : dominoFriendly) {
+					payload += getLotusPayload(o, Number.class);
+				}
+
+			} else if (firstElement instanceof DateTime) {
+				for (Object o : dominoFriendly) {
+					payload += getLotusPayload(o, DateTime.class);
+				}
+
+			} else if (firstElement instanceof DateRange) {
+				for (Object o : dominoFriendly) {
+					payload += getLotusPayload(o, DateRange.class);
+				}
+				// Maybe this will be fixed in future
+				// throw new UnsupportedOperationException("The implementation of DateRange does not work properly. Avoid to use it");
+			} else {
+				throw new DataNotCompatibleException(firstElement.getClass() + " is not a supported data type");
+			}
+
+			if (payload > MAX_NATIVE_FIELD_SIZE) {
+				// the datatype is OK, but there's no way to store the data in the Document
+				throw new Domino32KLimitException();
+			}
+			if (payload > MAX_SUMMARY_FIELD_SIZE) {
+				isNonSummary = true;
+			}
+
+			MIMEEntity mimeChk = getMIMEEntity(itemName);
+			if (mimeChk != null) {
+				mimeChk.remove();
+				getDelegate().closeMIMEEntities(true, itemName);
+			}
+
+			if (dominoFriendly.size() == 1) {
+				result = getDelegate().replaceItemValue(itemName, firstElement);
+			} else {
+				result = getDelegate().replaceItemValue(itemName, dominoFriendly);
+			}
+			if (isSummary == null) {
+				// Auto detect
+				if (isNonSummary)
+					result.setSummary(false);
+			} else {
+				result.setSummary(isSummary.booleanValue());
+			}
+
+			if (returnItem) {
+				return fromLotus(result, Item.SCHEMA, this);
+			} else {
+				s_recycle(result);
+			}
+
+		} catch (NotesException ex) {
+			DominoUtils.handleException(ex);
 		} finally {
 			s_recycle(recycleThis);
 		}
+
 		return null;
+	}
+
+	private Boolean useMimeBeans_ = null;
+
+	public boolean useMimeBeans() {
+		if (useMimeBeans_ == null) {
+			useMimeBeans_ = true; // TODO: We should query the session/db if autoSerialisation should be performed 
+		}
+		return useMimeBeans_.booleanValue();
+	}
+
+	public void enableMimeBeans(final boolean value) {
+		useMimeBeans_ = value;
 	}
 
 	private void writeItemInfo() {
@@ -2354,60 +2558,6 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 			}
 		}
 		return itemInfo_;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Document#replaceItemValueCustomData(java.lang.String, java.lang.Object)
-	 */
-	@Override
-	public Item replaceItemValueCustomData(final String itemName, final Object userObj) throws IOException {
-		markDirty();
-		try {
-			return fromLotus(getDelegate().replaceItemValueCustomData(itemName, userObj), Item.SCHEMA, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Document#replaceItemValueCustomData(java.lang.String, java.lang.String, java.lang.Object)
-	 */
-	@Override
-	public Item replaceItemValueCustomData(final String itemName, final String dataTypeName, final Object userObj) throws IOException {
-		markDirty();
-		try {
-			return fromLotus(getDelegate().replaceItemValueCustomData(itemName, dataTypeName, userObj), Item.SCHEMA, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Document#replaceItemValueCustomDataBytes(java.lang.String, java.lang.String, byte[])
-	 */
-	@Override
-	public Item replaceItemValueCustomDataBytes(final String itemName, final String dataTypeName, final byte[] byteArray)
-			throws IOException {
-		markDirty();
-		try {
-			if (byteArray.length > 65535) {
-				// Then fall back to the normal method, which will MIMEBean it
-				return this.replaceItemValue(itemName, byteArray);
-			} else {
-				return fromLotus(getDelegate().replaceItemValueCustomDataBytes(itemName, dataTypeName, byteArray), Item.SCHEMA, this);
-			}
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
 	}
 
 	/*
@@ -2879,16 +3029,6 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 		return result;
 	}
 
-	protected NapiDocument getNapiDocument() {
-		if (napiDocument_ == null) {
-			if (getNapiFactory() != null) {
-				napiDocument_ = getNapiFactory().getNapiDocument(this);
-				//System.out.println("USING NAPI DOCUMENT!");
-			}
-		}
-		return napiDocument_;
-	}
-
 	@Override
 	protected lotus.domino.Document getDelegate() {
 		lotus.domino.Document d = super.getDelegate();
@@ -3047,70 +3187,83 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 			return null;
 		}
 		// Check for "special" cases
-		if ("parentDocument".equals(key)) {
-			return this.getParentDocument();
-		}
-		if (key instanceof String) {
-			String skey = (String) key;
-			if ("@accessed".equalsIgnoreCase(skey) || "@accessed()".equalsIgnoreCase(skey)) {
-				return this.getLastAccessed();
-			}
-			if ("@modified".equalsIgnoreCase(skey) || "@modified()".equalsIgnoreCase(skey)) {
-				return this.getLastModified();
-			}
-			if ("@created".equalsIgnoreCase(skey) || "@created()".equalsIgnoreCase(skey)) {
-				return this.getCreated();
-			}
 
-			if ("@accesseddate".equalsIgnoreCase(skey) || "@accesseddate()".equalsIgnoreCase(skey)) {
-				return this.getLastAccessedDate();
+		if (key instanceof CharSequence) {
+			String skey = key.toString().toLowerCase();
+			if ("parentdocument".equals(skey)) {
+				return this.getParentDocument();
 			}
-			if ("@modifieddate".equalsIgnoreCase(skey) || "@modifieddate()".equalsIgnoreCase(skey)) {
-				return this.getLastModifiedDate();
-			}
-			if ("@createddate".equalsIgnoreCase(skey) || "@createddate()".equalsIgnoreCase(skey)) {
-				return this.getCreatedDate();
-			}
-			if ("@documentuniqueid".equalsIgnoreCase(skey) || "@documentuniqueid()".equalsIgnoreCase(skey)) {
-				return this.getUniversalID();
-			}
-			if ("@noteid".equalsIgnoreCase(skey) || "@noteid()".equalsIgnoreCase(skey)) {
-				return this.getNoteID();
-			}
-			if ("@doclength".equalsIgnoreCase(skey) || "@doclength()".equalsIgnoreCase(skey)) {
-				return this.getSize();
-			}
-			if ("@isresponsedoc".equalsIgnoreCase(skey) || "@isresponsedoc()".equalsIgnoreCase(skey)) {
-				return this.isResponse();
-			}
-			if ("@replicaid".equalsIgnoreCase(skey) || "@replicaid()".equalsIgnoreCase(skey)) {
-				return this.getAncestorDatabase().getReplicaID();
-			}
-			if ("@responses".equalsIgnoreCase(skey) || "@responses()".equalsIgnoreCase(skey)) {
-				return this.getResponses().getCount();
+			if (skey.indexOf("@") != -1) { // TODO RPr: Should we REALLY detect all formulas, like "3+5" or "field[2]" ?
+				int pos = skey.indexOf('(');
+				if (pos != -1) {
+					skey = skey.substring(0, pos);
+				}
+
+				if ("@accessed".equals(skey)) {
+					return this.getLastAccessed();
+				}
+				if ("@modified".equals(skey)) {
+					return this.getLastModified();
+				}
+				if ("@created".equals(skey)) {
+					return this.getCreated();
+				}
+				if ("@accesseddate".equals(skey)) {
+					return this.getLastAccessedDate();
+				}
+				if ("@modifieddate".equals(skey)) {
+					return this.getLastModifiedDate();
+				}
+				if ("@createddate".equals(skey)) {
+					return this.getCreatedDate();
+				}
+				if ("@documentuniqueid".equals(skey)) {
+					return this.getUniversalID();
+				}
+				if ("@noteid".equals(skey)) {
+					return this.getNoteID();
+				}
+				if ("@doclength".equals(skey)) {
+					return this.getSize();
+				}
+				if ("@isresponsedoc".equals(skey)) {
+					return this.isResponse();
+				}
+				if ("@replicaid".equals(skey)) {
+					return this.getAncestorDatabase().getReplicaID();
+				}
+				if ("@responses".equals(skey)) {
+					return this.getResponses().getCount();
+				}
+				Formula formula = new Formula();
+				formula.setExpression(key.toString());
+				List<?> value = formula.getValue(this);
+				if (value.size() == 1) {
+					return value.get(0);
+				}
+				return value;
 			}
 		}
 
-		if (this.containsKey(key)) {
-			Vector<Object> value = this.getItemValue(key.toString());
-			if (value == null) {
-				//TODO Throw an exception if the item data can't be read? Null implies the key doesn't exist
-				return null;
-			} else if (value.size() == 1) {
-				return value.get(0);
+		Object value = this.getItemValue(key.toString(), Object.class);
+		if (value instanceof Vector) {
+			Vector<?> v = (Vector<?>) value;
+			if (v.size() == 1) {
+				return v.get(0);
 			}
-			return value;
-		} else if (key instanceof CharSequence) {
-			// Execute the key as a formula in the context of the document
-			Formula formula = new Formula();
-			formula.setExpression(key.toString());
-			List<?> value = formula.getValue(this);
-			if (value.size() == 1) {
-				return value.get(0);
-			}
-			return value;
 		}
-		return null;
+		return value;
+		//if (this.containsKey(key)) {
+		//		Vector<Object> value = this.getItemValue(key.toString());
+		//		if (value == null) {
+		//			//TODO Throw an exception if the item data can't be read? Null implies the key doesn't exist
+		//			return null;
+		//		} else if (value.size() == 1) {
+		//			return value.get(0);
+		//		}
+		//		return value;
+		//}
+		//return null;
 	}
 
 	@Override
@@ -3137,9 +3290,9 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	public Object put(final String key, final Object value) {
 		if (key != null) {
 			Object previousState = this.get(key);
-			this.removeItem(key);
-			this.replaceItemValue(key, value);
-			this.get(key);
+			//this.removeItem(key); RPr: is there a reason why this is needed?
+			this.replaceItemValue(key, value, null, false, false);
+			// this.get(key);
 			// this.save();
 			return previousState;
 		}

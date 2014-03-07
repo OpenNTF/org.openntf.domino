@@ -70,7 +70,7 @@ public class DominoReferenceCache {
 	 *            key whose associated value, if any, is to be returned
 	 * @return the value to which this map maps the specified key.
 	 */
-	public Object get(final long key, final long parent_key) {
+	public Object get(final long key) {
 		//		processQueue(key, parent_key);
 		// We don't need to remove garbage collected values here;
 		// if they are garbage collected, the get() method returns null;
@@ -93,8 +93,8 @@ public class DominoReferenceCache {
 	 * @return the object
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T get(final long key, final Class<T> t, final long parent_key) {
-		Object o = get(key, parent_key);
+	public <T> T get(final long key, final Class<T> t) {
+		Object o = get(key);
 		if (o != null) {
 			return (T) o;
 		}
@@ -110,7 +110,7 @@ public class DominoReferenceCache {
 	 * @param value
 	 *            value to be associated with the specified key.
 	 */
-	public void put(final long key, final Object value, final lotus.domino.Base delegate, final long parent_key) {
+	public void put(final long key, final Object value, final lotus.domino.Base delegate) {
 		// If the map already contains an equivalent key, the new key
 		// of a (key, value) pair is NOT stored in the map but the new
 		// value only. But as the key is strongly referenced by the
@@ -120,7 +120,7 @@ public class DominoReferenceCache {
 		// collected values with their keys from the map before the
 		// new entry is made. We only clean up here to distribute
 		// clean up calls on different operations.
-		processQueue(key, parent_key);
+
 		if (value == null) {
 			return;
 		}
@@ -151,12 +151,35 @@ public class DominoReferenceCache {
 
 		while ((ref = (DominoReference) queue.poll()) != null) {
 			long key = ref.getKey();
-			map.remove(key);
-			if (autorecycle_) {
-				if (curKey != key && parent_key != key) {
-					ref.recycle();
-				}
+
+			if (map.remove(key) == null) {
+				//System.out.println("Removed dead element");
 			}
+
+			if (autorecycle_) {
+				if (curKey == key || parent_key == key) {
+					if (curKey == key) {
+						//System.out.println("Current object dropped out of the queue");
+					} else {
+						// TODO: This case does not handle the counters correctly
+						System.out.println("Parent object dropped out of the queue ---");
+					}
+
+					// RPr: This happens definitely, if you access the same document in series
+					// Was reproduceable by iterating over several NoteIds and doing this in the loop (odd number required)
+					//		doc1 = d.getDocumentByID(id);
+					//		doc1 = null;
+					//		doc2 = d.getDocumentByID(id);
+					//		doc2 = null;
+					//		doc3 = d.getDocumentByID(id);
+					//		doc3 = null;
+
+					// ref is not used any more, but the delegate must be protected from recycling
+					ref.setNoRecycle(true);
+				}
+				ref.recycle();
+			}
+
 		}
 	}
 
@@ -168,24 +191,40 @@ public class DominoReferenceCache {
 		if (ref == null) {
 			return null;
 		}
-		if (ref.isEnqueued()) {
-			// if it's enqueued, we definitely can't use the existing reference, because it's going to be recycled for sure
-			ref.clearLotusReference();// if we were trying to get the reference object, then we must be making a new wrapper
-			// by clearing the DominoReference's lotus reference, we'll prevent auto-recycle
-			return null;
-			//by returning null, we ensure that we re-wrap and create a new DominoReference
-		}
 
 		Object result = ref.get();
-		if (result == null) {
-			return null;
-		}
-		if (ref.isDead()) {
-			// check if it is not yet recycled or queued for recycle
+		//if (result == null) {
+		//	// this is the wrapper. If there is no wrapper inside (don't know how this should work) we do not return it
+		//	System.out.println("Wrapper lost! " + ref.isEnqueued());
+		//	return null;
+		//}
+
+		// check if the delegate is still alive. (not recycled or null)
+		if (result == null || ref.isDead() || ref.isEnqueued()) {
+
+			// For debug
+			//			if (result == null) {
+			//				System.out.println("NULL"); // happens, if there is no strong ref to this wrapper.
+			//			}
+			//			if (ref.isDead()) {
+			//				System.out.println("DEAD"); // happens, if you call recycle on the parent()
+			//			}
+			//			if (ref.isEnqueued()) {
+			//				// result is also NULL if the reference is enqueued (makes sense, because result (=wrapper) is no longer reachable 
+			//				System.out.println("ENQUEUED");
+			//			}
+
+			// 	we get dead elements if we do this in a loop
+			//		d = s.getDatabase("", "names.nsf");
+			//		doc1 = d.getDocumentByID(id);
+			//		d = null;
+			//		doc1 = null;
+
+			// So, these objects can be removed from the cache
 			map.remove(ref.getKey());
 			return null;
 		} else {
-			return result;
+			return result; // the wrapper.
 		}
 	}
 }

@@ -715,7 +715,7 @@ public enum Factory {
 	 * @param details
 	 * @return
 	 */
-	public String dumpCounters(final boolean details) {
+	public static String dumpCounters(final boolean details) {
 		if (!TRACE_COUNTERS)
 			return "Counters are disabled";
 		StringBuilder sb = new StringBuilder();
