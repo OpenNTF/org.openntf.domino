@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!-- <!DOCTYPE scriptlibrary SYSTEM 'C:\Program Files (x86)\IBM\Notes\xmlschemas/domino_9_0_1.dtd'> -->
+<scriptlibrary name='' hide='v3 v4strict' designerversion='8.5.3'>
+	<code event='library'>
+		<javaproject class='JavaAgent.class' codepath=''/>
+	</code>
+	<item name='$JavaCompilerSource'>
+		<text>1.6</text>
+	</item>
+	<item name='$JavaCompilerTarget'>
+		<text>CurrentJa</text>
+	</item>
+</scriptlibrary>
