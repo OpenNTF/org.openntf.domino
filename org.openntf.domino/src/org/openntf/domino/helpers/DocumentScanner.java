@@ -607,9 +607,13 @@ public class DocumentScanner extends Observable {
 									} else {
 										valueSet = vmap.get(name);
 									}
-									java.util.Collection<Comparable> c = DominoUtils.toComparable(vals);
-									if (!c.isEmpty()) {
-										valueSet.addAll(c);
+									try {
+										java.util.Collection<Comparable> c = DominoUtils.toComparable(vals);
+										if (!c.isEmpty()) {
+											valueSet.addAll(c);
+										}
+									} catch (Throwable t) {
+										log_.warning("Unable to convert to Comparable from " + vals.getClass().getName());
 									}
 								}
 							}
