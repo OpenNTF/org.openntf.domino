@@ -38,8 +38,8 @@ public class DocumentComparator implements Comparator<Document> {
 	}
 
 	private int compareObj(final Object o1, final Object o2) {
-		if (o1 instanceof Comparable && o1 instanceof Comparable) {
-			return ((Comparable) o1).compareTo(o1);
+		if (o1 instanceof Comparable && o2 instanceof Comparable) {
+			return ((Comparable) o1).compareTo(o2);
 		} else {
 			throw new ValuesNotComparableException(o1, o2);
 		}

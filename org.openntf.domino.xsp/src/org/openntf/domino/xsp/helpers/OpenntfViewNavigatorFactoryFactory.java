@@ -5,6 +5,8 @@ package org.openntf.domino.xsp.helpers;
 
 import java.util.logging.Logger;
 
+import javax.faces.context.FacesContext;
+
 import com.ibm.xsp.model.domino.ViewNavigatorEx;
 import com.ibm.xsp.model.domino.ViewNavigatorFactory;
 import com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx;
@@ -62,8 +64,29 @@ public class OpenntfViewNavigatorFactoryFactory implements ViewNavigatorFactory.
 		public ViewNavigatorEx createNavigator() {
 			ViewNavigatorEx result = super.createNavigator();
 			if (result instanceof NOIViewNavigatorEx9 || result instanceof NOIViewNavigatorEx) {
-				// System.out.println("Creating new OpenntfViewNavigatorEx");
-				result = new OpenntfViewNavigatorEx(this);
+				if (OpenntfDominoImplicitObjectFactory2.isAppGodMode(FacesContext.getCurrentInstance())) {
+					// FacesContext ctx = FacesContext.getCurrentInstance();
+					// if (ctx instanceof DominoFacesContext) {
+					// DominoFacesContext impl = (DominoFacesContext) ctx;
+					// ApplicationEx ae = impl.getApplicationEx();
+					// String persistMode = ae.getApplicationProperty("xsp.persistence.mode", null);
+					// // System.out.println("Current persistence mode: " + persistMode);
+					// StateManager sm = impl.getApplicationEx().getStateManager();
+					// if (persistMode.equals("file")) {
+					// System.out
+					// .println("ALERT! This application is set to use file state management mode but also use the OpenNTF API in takeover mode, which can cause problems!");
+					// System.out.println("Switch to 'keep current page in memory' to eliminate this message.");
+					// // return result;
+					// } else if (persistMode.equals("persistance")) { // persistence
+					// System.out.println("This application is set to use persistence state management mode");
+					// } else if (persistMode.equals("session")) { // session
+					// System.out.println("This application is set to use session state management mode");
+					// } else { // default
+					// System.out.println("This application is set to use basic state management mode");
+					// }
+					// }
+					result = new OpenntfViewNavigatorEx(this);
+				}
 			} else {
 				// System.out.println("returning a " + result.getClass().getName());
 			}

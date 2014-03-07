@@ -3,12 +3,13 @@ package org.openntf.domino.xsp.helpers;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
+import javax.servlet.http.HttpServletResponse;
 
 import org.openntf.domino.utils.Factory;
 
 public class PhaseListener extends AbstractListener implements javax.faces.event.PhaseListener, com.ibm.xsp.event.FacesContextListener {
 	public static final long serialVersionUID = -6528380677556637393L;
-	private final static boolean _debug = true;
+	private final static boolean _debug = false;
 	static {
 		if (_debug)
 			System.out.println(PhaseListener.class.getName() + " loaded");
@@ -20,19 +21,28 @@ public class PhaseListener extends AbstractListener implements javax.faces.event
 	}
 
 	@Override
-	public void beforeContextReleased(final FacesContext paramFacesContext) {
+	public void beforeContextReleased(final FacesContext ctx) {
 		Factory.terminate();
+		if (_debug)
+			System.out.println("Completed request " + String.valueOf(System.identityHashCode(ctx)));
 	}
 
 	@Override
-	public void beforeRenderingPhase(final FacesContext paramFacesContext) {
-		// TODO NOOP
-
+	public void beforeRenderingPhase(final FacesContext ctx) {
+		Object o = ctx.getExternalContext().getResponse();
+		if (o instanceof HttpServletResponse) {
+			HttpServletResponse resp = (HttpServletResponse) o;
+			resp.addHeader("RequestId", String.valueOf(System.identityHashCode(ctx)));
+		} else if (o == null) {
+			// System.out.println("Response object not yet available");
+		} else {
+			// System.out.println("Response object is a " + o.getClass().getName());
+		}
 	}
 
 	private void doBeforeEveryPhase(final PhaseEvent arg0) {
 		FacesContext ctx = arg0.getFacesContext();
-		Factory.setClassLoader(ctx.getContextClassLoader());
+		Factory.setClassLoader(Thread.currentThread().getContextClassLoader());
 		if (ctx instanceof com.ibm.xsp.context.FacesContextEx) {
 			((com.ibm.xsp.context.FacesContextEx) ctx).addRequestListener(this);
 		}

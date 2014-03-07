@@ -25,7 +25,6 @@ import org.openntf.domino.utils.Factory;
 /**
  * The Class Outline.
  */
-@SuppressWarnings("deprecation")
 public class Outline extends Base<org.openntf.domino.Outline, lotus.domino.Outline> implements org.openntf.domino.Outline {
 
 	/**

@@ -421,7 +421,8 @@ public class WrapperOpenDomino {
 				Object cur = methodMap.get(name);
 				if (cur == null) {
 					// Method does not exist in map
-					methodMap.put(crystal.getName(), new OpenFunction(context, crystal));
+					cur = new OpenFunction(context, crystal);
+					methodMap.put(crystal.getName(), cur);
 				}
 				if (cur instanceof OpenFunction) {
 					((OpenFunction) cur).addMethod(crystal);

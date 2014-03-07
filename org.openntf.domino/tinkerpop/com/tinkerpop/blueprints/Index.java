@@ -31,7 +31,7 @@ public interface Index<T extends Element> {
      * @param value   the value to index the element by
      * @param element the element to index
      */
-    public void put(final String key, final Object value, final T element);
+    public void put(String key, Object value, T element);
 
     /**
      * Get all elements that are indexed by the provided key/value.
@@ -40,7 +40,7 @@ public interface Index<T extends Element> {
      * @param value the value of the indexed elements
      * @return an iterable of elements that have a particular key/value in the index
      */
-    public CloseableIterable<T> get(final String key, final Object value);
+    public CloseableIterable<T> get(String key, Object value);
 
     /**
      * Get all the elements that are indexed by the provided key and specified query object.
@@ -51,7 +51,7 @@ public interface Index<T extends Element> {
      * @param query the query object for the indexed elements' keys
      * @return an iterable of elements that have a particular key/value in the index that match the query object
      */
-    public CloseableIterable<T> query(final String key, final Object query);
+    public CloseableIterable<T> query(String key, Object query);
 
     /**
      * Get a count of elements with a particular key/value pair.
@@ -61,7 +61,7 @@ public interface Index<T extends Element> {
      * @param value the value to search for
      * @return the collection of elements that meet that criteria
      */
-    public long count(final String key, final Object value);
+    public long count(String key, Object value);
 
     /**
      * Remove an element indexed by a particular key/value.
@@ -70,6 +70,6 @@ public interface Index<T extends Element> {
      * @param value   the value of the indexed element
      * @param element the element to remove given the key/value pair
      */
-    public void remove(final String key, final Object value, final T element);
+    public void remove(String key, Object value, T element);
 
 }

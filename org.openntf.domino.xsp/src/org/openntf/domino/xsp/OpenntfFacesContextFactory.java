@@ -70,7 +70,7 @@ public class OpenntfFacesContextFactory extends FacesContextFactory implements c
 			System.out.println("OpenntfFacesContextFactory unable to resolve ViewNavigatorEx either!");
 		}
 		try {
-			Factory.setClassLoader(ctx.getContextClassLoader());
+			Factory.setClassLoader(Thread.currentThread().getContextClassLoader());
 			if (ctx instanceof com.ibm.xsp.context.FacesContextEx) {
 				((com.ibm.xsp.context.FacesContextEx) ctx).addRequestListener(this);
 			}

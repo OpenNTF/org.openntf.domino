@@ -118,7 +118,7 @@ public class DefaultGraphQuery extends DefaultQuery implements GraphQuery {
             };
         }
 
-        private Iterable<?> getElementIterable(final Class<? extends Element> elementClass) {
+        private Iterable<?> getElementIterable(Class<? extends Element> elementClass) {
             if (graph instanceof KeyIndexableGraph) {
                 final Set<String> keys = ((KeyIndexableGraph) graph).getIndexedKeys(elementClass);
                 for (HasContainer hasContainer : hasContainers) {

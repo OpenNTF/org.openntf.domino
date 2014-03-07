@@ -4,7 +4,6 @@
 package org.openntf.domino.ext;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +27,7 @@ import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoEventFactory;
+import org.openntf.domino.schema.IDatabaseSchema;
 import org.openntf.domino.transactions.DatabaseTransaction;
 
 /**
@@ -44,6 +44,8 @@ public interface Database extends Base {
 	public void setEventFactory(IDominoEventFactory factory);
 
 	public IDominoEvent generateEvent(EnumEvent event, org.openntf.domino.Base source, Object payload);
+
+	public String getApiPath();
 
 	public int compactWithOptions(final Set<CompactOption> options);
 
@@ -231,32 +233,19 @@ public interface Database extends Base {
 
 	public void refreshDesign();
 
-	public boolean isEmpty();
+	public void openMail();
 
-	public int size();
-
-	/**
-	 * Contains key.
-	 * 
-	 * @param key
-	 *            the key
-	 * @return true, if successful
-	 */
-
-	public boolean containsKey(final Serializable key);
+	public org.openntf.domino.Database getMail();
 
 	/**
-	 * Gets the.
-	 * 
-	 * @param key
-	 *            the key
-	 * @return the document
+	 * @return a Map view of the documents in the database, keyed according to getDocumentByKey
 	 */
-	public org.openntf.domino.Document get(final Serializable key);
+	public Map<Serializable, org.openntf.domino.Document> getDocumentMap();
 
-	public org.openntf.domino.Document put(final Serializable key, final org.openntf.domino.Document value);
+	public IDatabaseSchema getSchema();
 
-	public org.openntf.domino.Document remove(final Serializable key);
+	public void setSchema(IDatabaseSchema schema);
 
-	public Collection<org.openntf.domino.Document> values();
+	public boolean isReplicationDisabled();
+
 }

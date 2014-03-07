@@ -15,8 +15,10 @@
  */
 package org.openntf.domino.impl;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Date;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
@@ -92,10 +94,8 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		initialize(date);
 	}
 
-	DateTime() {	// for deserialization?
+	public DateTime() {	// for deserialization?
 		super(null, null);
-		log_.log(Level.INFO,
-				"Domino objects aren't serializable. You've got a DateTime implementation without a parent session. Could be risky...");
 	}
 
 	/*
@@ -367,7 +367,10 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 */
 	@Override
 	public Session getParent() {
-		return Factory.getSession(super.getParent());
+		org.openntf.domino.Base<?> result = super.getParent();
+		if (result == null)
+			return Factory.getSession();
+		return Factory.getSession(result);
 	}
 
 	/*
@@ -635,6 +638,28 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	@Override
 	public int compareTo(final org.openntf.domino.ext.DateTime arg0) {
 		return cal_.compareTo(arg0.toJavaCal());
+	}
+
+	/* (non-Javadoc)
+	 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
+	 */
+	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+		dst_ = in.readBoolean();
+		isDateOnly_ = in.readBoolean();
+		isTimeOnly_ = in.readBoolean();
+		notesZone_ = in.readInt();
+		cal_.setTimeInMillis(in.readLong());
+	}
+
+	/* (non-Javadoc)
+	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
+	 */
+	public void writeExternal(final ObjectOutput out) throws IOException {
+		out.writeBoolean(dst_);
+		out.writeBoolean(isDateOnly_);
+		out.writeBoolean(isTimeOnly_);
+		out.writeInt(notesZone_);
+		out.writeLong(cal_.getTimeInMillis());
 	}
 
 }

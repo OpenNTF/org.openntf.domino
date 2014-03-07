@@ -15,11 +15,11 @@
  */
 package org.openntf.domino.types;
 
-import java.io.Serializable;
+import java.io.Externalizable;
 
 /**
  * The Interface Encapsulated.
  */
-public interface Encapsulated extends Serializable {
+public interface Encapsulated extends Externalizable {
 
 }

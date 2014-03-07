@@ -22,6 +22,8 @@ public interface IEdgeHelper {
 
 	public Class<? extends Vertex> getOutType();
 
+	public int getEdgeCount(final Vertex vertex);
+
 	public Edge makeEdge(final Vertex defaultOut, final Vertex defaultIn);
 
 	public boolean isUnique();

@@ -15,12 +15,13 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
  * The Interface DateRange.
  */
-public interface DateRange extends Base<lotus.domino.DateRange>, lotus.domino.DateRange, org.openntf.domino.ext.DateRange,
+public interface DateRange extends Base<lotus.domino.DateRange>, lotus.domino.DateRange, org.openntf.domino.ext.DateRange, Encapsulated,
 		SessionDescendant {
 
 	/*

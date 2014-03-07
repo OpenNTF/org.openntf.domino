@@ -17,7 +17,7 @@ public interface Edge extends Element {
      * @return the tail/out or head/in vertex
      * @throws IllegalArgumentException is thrown if a direction of both is provided
      */
-    public Vertex getVertex(final Direction direction) throws IllegalArgumentException;
+    public Vertex getVertex(Direction direction) throws IllegalArgumentException;
 
     /**
      * Return the label associated with the edge.

@@ -11,7 +11,7 @@ public class Activator implements BundleActivator {
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(final BundleContext context) throws Exception {
-		System.out.println("Loading OpenNTF Domino API");
+		System.out.println("Starting OpenNTF Domino API");
 		Factory.setClassLoader(Thread.currentThread().getContextClassLoader());
 	}
 

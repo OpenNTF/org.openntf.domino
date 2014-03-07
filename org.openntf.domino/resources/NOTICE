@@ -10,7 +10,7 @@ Includes content from OpenLog under Apache License 2.0
   Copyright Julian Robichaux  
 
 Also includes the Blueprints API from Tinkerpop.
-  https://github.com/tinkerpop/blueprints/blob/master/LICENSE.txt
+  https://github.com/tinkerpop/blueprints/blob/master/LICENSE.txt 
 
 Copyright (c) 2009-2013, TinkerPop [http://tinkerpop.com]
   All rights reserved.
@@ -46,4 +46,9 @@ Also includes IBM Commons API from the IBM Social Business Toolkit SDK
 Social Business Toolkit SDK
 (c) Copyright IBM Corp. 2010, 2013
 Full details can be found here: https://github.com/OpenNTF/SocialSDK/blob/master/license/LICENSE
+
+Also includes code from Java Specification Request (JSR) 305
+Copyright (c) Bill Pugh and David Hovemeyer 2007, 2010 
+ Published under the BSD 3-Clause license: http://opensource.org/licenses/BSD-3-Clause
+ Full details can be found here: https://code.google.com/p/jsr-305/
 

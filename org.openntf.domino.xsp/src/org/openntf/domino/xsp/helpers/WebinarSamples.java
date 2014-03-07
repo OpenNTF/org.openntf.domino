@@ -268,6 +268,7 @@ public class WebinarSamples {
 
 	public void setProcessedDateMapNew(final org.openntf.domino.Document doc, final java.util.Map<String, java.util.Date> dateMap) {
 		doc.replaceItemValue("processDate", dateMap);	// serializes dateMap, compresses the byte stream and stores it as MIME
+		doc.getItemValue("processedDate", Map.class);
 	}
 
 	// ******* END AUTO-BOXING SAMPLES
@@ -296,7 +297,6 @@ public class WebinarSamples {
 	}
 
 	public void syncDatabases(final org.openntf.domino.Database sourceDb, final org.openntf.domino.Database targetDb) {
-		// Note: I've already improved this substantially after writing this demo. Will be even easier in M3
 		java.util.Map<Object, String> syncMap = new java.util.HashMap<Object, String>();
 		syncMap.put("Name", "CompanyName");
 		syncMap.put("Address", "CompanyAddress");
@@ -308,15 +308,15 @@ public class WebinarSamples {
 		helper.setTargetServer(targetDb.getServer());
 		helper.setTargetFilepath(targetDb.getFilePath());
 		helper.setTargetLookupView("byCompanyID");
-		// helper.setTargetDatabase(targetDb, "byCompanyID"); // AVAILABLE IN M3
+		helper.setTargetDatabase(targetDb, "byCompanyID");
 
 		helper.setSourceKeyFormula("CompID");
 		java.util.Date sinceDate = new java.util.Date(0);
 		org.openntf.domino.DateTime dt = sourceDb.getAncestorSession().createDateTime(sinceDate);
 		org.openntf.domino.DocumentCollection sourceCollection = sourceDb.getModifiedDocuments(dt);
 		helper.process(sourceCollection);
-		// helper.setTransactionRule(DocumentSyncHelper.TransactionRule.COMMIT_EVERY_SOURCE); // AVAILABLE IN M3
-		// helper.processSince(sourceDb, sinceDate); // AVAILABLE IN M3
+		helper.setTransactionRule(DocumentSyncHelper.TransactionRule.COMMIT_EVERY_SOURCE);
+		helper.processSince(sourceDb, sinceDate);
 	}
 
 	// ******* END HELPER SAMPLES

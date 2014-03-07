@@ -50,7 +50,6 @@ import com.ibm.icu.util.Calendar;
  * 
  * @author nfreeman
  */
-@SuppressWarnings("deprecation")
 public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Session, lotus.domino.Session> implements
 		org.openntf.domino.Session {
 	/** The Constant log_. */
@@ -1612,5 +1611,96 @@ public class Session extends org.openntf.domino.impl.Base<org.openntf.domino.Ses
 			DominoUtils.handleException(e);
 			return null;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Session#getUnique()
+	 */
+	public String getUnique() {
+		String result = "";
+		try {
+			Vector v = getDelegate().evaluate("@Unique");
+			result = String.valueOf(v.get(0));
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		return result;
+	}
+
+	public org.openntf.domino.Database getDatabaseByReplicaID(final String server, final String replicaid) {
+		try {
+			lotus.domino.Database nullDb = getDelegate().getDatabase(null, null);
+			boolean opened = nullDb.openByReplicaID(server, replicaid);
+			if (opened) {
+				return Factory.fromLotus(nullDb, Database.class, this);
+			} else {
+				Base.s_recycle(nullDb);
+			}
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
+		return null;
+	}
+
+	public org.openntf.domino.Database getDatabaseWithFailover(final String server, final String dbfile) {
+		try {
+			lotus.domino.Database nullDb = getDelegate().getDatabase(null, null);
+			boolean opened = nullDb.openWithFailover(server, dbfile);
+			if (opened) {
+				return Factory.fromLotus(nullDb, Database.class, this);
+			} else {
+				Base.s_recycle(nullDb);
+			}
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
+		return null;
+	}
+
+	public org.openntf.domino.Database getDatabaseIfModified(final String server, final String dbfile,
+			final lotus.domino.DateTime modifiedsince) {
+		try {
+			lotus.domino.Database nullDb = getDelegate().getDatabase(null, null);
+			boolean opened = nullDb.openIfModified(server, dbfile, modifiedsince);
+			if (opened) {
+				return Factory.fromLotus(nullDb, Database.class, this);
+			} else {
+				Base.s_recycle(nullDb);
+			}
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
+		return null;
+	}
+
+	public org.openntf.domino.Database getDatabaseIfModified(final String server, final String dbfile, final Date modifiedsince) {
+		try {
+			lotus.domino.Database nullDb = getDelegate().getDatabase(null, null);
+			lotus.domino.DateTime dt = createDateTime(modifiedsince);
+			boolean opened = nullDb.openIfModified(server, dbfile, dt);
+			Base.s_recycle(dt);
+			if (opened) {
+				return Factory.fromLotus(nullDb, Database.class, this);
+			} else {
+				Base.s_recycle(nullDb);
+			}
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
+		return null;
+	}
+
+	public org.openntf.domino.Database getMailDatabase() {
+		try {
+			lotus.domino.DbDirectory rawDir = getDelegate().getDbDirectory(null);
+			lotus.domino.Database rawdb = rawDir.openMailDatabase();
+			Base.s_recycle(rawDir);
+			if (rawdb != null) {
+				return Factory.fromLotus(rawdb, Database.class, this);
+			}
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
+		return null;
 	}
 }
