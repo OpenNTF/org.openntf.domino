@@ -1094,10 +1094,18 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#getColumns()
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Vector<org.openntf.domino.ViewColumn> getColumns() {
 		try {
-			return fromLotusAsVector(getDelegate().getColumns(), org.openntf.domino.ViewColumn.SCHEMA, this);
+			Vector columns = null;
+			try {
+				columns = getDelegate().getColumns();
+			} catch (NullPointerException e) {
+				throw new RuntimeException("Unable to get columns for a view called " + getName() + " in database "
+						+ getAncestorDatabase().getApiPath(), e);
+			}
+			return fromLotusAsVector(columns, org.openntf.domino.ViewColumn.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}

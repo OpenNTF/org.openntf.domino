@@ -814,8 +814,8 @@ public class IndexDatabase implements IScannerStateManager {
 						Map tokenLocationMap = scanner.getTokenLocationMap();
 						int tlsize = tokenLocationMap.size();
 						if (tlsize >= 1024) {
-							//							System.out.println("Processed " + scanner.getDocCount() + " documents so far, " + scanner.getItemCount()
-							//									+ " items and " + scanner.getTokenCount());
+							System.out.println("Processed " + scanner.getDocCount() + " documents so far, " + scanner.getItemCount()
+									+ " items and " + scanner.getTokenCount());
 							synchronized (tokenLocationMap) {
 								saveTokenLocationMap(scanner.getStateManagerKey(), tokenLocationMap, scanner);
 								tokenLocationMap.clear();
@@ -840,8 +840,8 @@ public class IndexDatabase implements IScannerStateManager {
 				break;
 			case COMPLETE:
 				if (scanner != null) {
-					//					System.out.println("Processed " + scanner.getDocCount() + " documents at completion, " + scanner.getItemCount()
-					//							+ " items and " + scanner.getTokenCount());
+					System.out.println("Processed " + scanner.getDocCount() + " documents at completion, " + scanner.getItemCount()
+							+ " items and " + scanner.getTokenCount());
 					if (scanner.isTrackTokenLocation()) {
 						Map tokenLocationMap = scanner.getTokenLocationMap();
 						synchronized (tokenLocationMap) {

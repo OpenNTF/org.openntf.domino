@@ -150,4 +150,8 @@ public interface Session {
 	public org.openntf.domino.Document getDocumentByMetaversalID(String metaversalID);
 
 	public org.openntf.domino.Document getDocumentByMetaversalID(String metaversalID, String serverName);
+
+	public boolean isAutoMime();
+
+	public void setAutoMime(boolean autoMime);
 }
