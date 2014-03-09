@@ -337,6 +337,7 @@ public class IndexDatabase implements IScannerStateManager {
 		//		System.out.println("Scanning database " + db.getApiPath());
 		curDocCount_ = 0;
 		scanner.setCaseSensitive(getCaseSensitive());
+		scanner.setStateManager(this, db.getReplicaID());
 		Date last = scanner.getLastScanDate();
 		if (last == null)
 			last = new Date(0);
@@ -814,8 +815,8 @@ public class IndexDatabase implements IScannerStateManager {
 						Map tokenLocationMap = scanner.getTokenLocationMap();
 						int tlsize = tokenLocationMap.size();
 						if (tlsize >= 1024) {
-							System.out.println("Processed " + scanner.getDocCount() + " documents so far, " + scanner.getItemCount()
-									+ " items and " + scanner.getTokenCount());
+							//							System.out.println("Processed " + scanner.getDocCount() + " documents so far, " + scanner.getItemCount()
+							//									+ " items and " + scanner.getTokenCount());
 							synchronized (tokenLocationMap) {
 								saveTokenLocationMap(scanner.getStateManagerKey(), tokenLocationMap, scanner);
 								tokenLocationMap.clear();
@@ -840,7 +841,7 @@ public class IndexDatabase implements IScannerStateManager {
 				break;
 			case COMPLETE:
 				if (scanner != null) {
-					System.out.println("Processed " + scanner.getDocCount() + " documents at completion, " + scanner.getItemCount()
+					System.out.println("Completed " + scanner.getDocCount() + " documents at completion, " + scanner.getItemCount()
 							+ " items and " + scanner.getTokenCount());
 					if (scanner.isTrackTokenLocation()) {
 						Map tokenLocationMap = scanner.getTokenLocationMap();
