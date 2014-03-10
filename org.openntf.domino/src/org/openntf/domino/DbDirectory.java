@@ -15,6 +15,8 @@
  */
 package org.openntf.domino;
 
+import java.util.Collection;
+
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
@@ -23,7 +25,7 @@ import org.openntf.domino.types.SessionDescendant;
  * The Interface DbDirectory.
  */
 public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domino.DbDirectory, org.openntf.domino.ext.DbDirectory,
-		Iterable<org.openntf.domino.Database>, SessionDescendant {
+		Collection<org.openntf.domino.Database>, SessionDescendant {
 
 	public static class Schema extends FactorySchema<DbDirectory, lotus.domino.DbDirectory, Session> {
 		@Override

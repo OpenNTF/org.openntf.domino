@@ -197,16 +197,23 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			String dummyVar = Activator.getXspPropertyAsString("xsp.openlog.suppressEventStack");
 			if (StringUtil.isEmpty(dummyVar)) {
 				setSuppressEventStack(true);
+				return true;
 			} else if ("FALSE".equals(dummyVar.toUpperCase())) {
 				setSuppressEventStack(false);
+				return false;
 			} else {
 				setSuppressEventStack(true);
+				return true;
 			}
-			return suppressEventStack_;
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 			return false;
 		}
+	}
+
+	@Override
+	public void setSuppressEventStack(final Boolean suppressEventStack) {
+		_suppressEventStack = suppressEventStack;
 	}
 
 	/**

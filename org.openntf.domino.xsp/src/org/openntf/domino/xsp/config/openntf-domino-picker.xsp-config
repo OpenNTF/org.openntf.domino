@@ -101,6 +101,22 @@
         </designer-extension>
       </property-extension>
     </property>
+    <property>
+      <description>%property.returnNameFormat.descr%</description>
+      <display-name>%property.returnNameFormat.name%</display-name>
+      <property-name>returnNameFormat</property-name>
+      <property-class>java.lang.String</property-class>
+      <property-extension>
+        <designer-extension>
+          <editor>com.ibm.workplace.designer.property.editors.comboParameterEditor</editor>
+          <editor-parameter>
+						Abbreviated
+						Common
+						Canonical
+					</editor-parameter>
+        </designer-extension>
+      </property-extension>
+    </property>
     <complex-extension>
       <base-complex-id>com.ibm.xsp.extlib.component.picker.data.INamePickerData</base-complex-id>
       <tag-name>openntfNABNamePicker</tag-name>
@@ -138,6 +154,24 @@
 						startFrom
 						match
 						ftSearch
+                    </editor-parameter>
+        </designer-extension>
+      </property-extension>
+    </property>
+        <property>
+      <description>%property.searchStyle.descr%</description>
+      <display-name>%property.searchStyle.name%</display-name>
+      <property-name>searchStyle</property-name>
+      <property-class>java.lang.String</property-class>
+      <property-extension>
+        <designer-extension>
+          <tags>
+                        not-localizable
+                    </tags>
+          <editor>com.ibm.workplace.designer.property.editors.comboParameterEditor</editor>
+          <editor-parameter>
+						jumpTo
+						restrictToSearch
                     </editor-parameter>
         </designer-extension>
       </property-extension>
@@ -192,6 +226,24 @@
         </designer-extension>
       </property-extension>
     </property>
+        <property>
+      <description>%property.searchStyle.descr%</description>
+      <display-name>%property.searchStyle.name%</display-name>
+      <property-name>searchStyle</property-name>
+      <property-class>java.lang.String</property-class>
+      <property-extension>
+        <designer-extension>
+          <tags>
+                        not-localizable
+                    </tags>
+          <editor>com.ibm.workplace.designer.property.editors.comboParameterEditor</editor>
+          <editor-parameter>
+						jumpTo
+						restrictToSearch
+                    </editor-parameter>
+        </designer-extension>
+      </property-extension>
+    </property>
     <property>
       <description>%property.caseInsensitive.descr%</description>
       <display-name>%property.caseInsensitive.name%</display-name>
@@ -207,7 +259,7 @@
   
    <complex-type>
     <description>%complex-type.enumPicker.descr%</description>
-    <display-name>%complex-type>enumPicker.name%</display-name>
+    <display-name>%complex-type.enumPicker.name%</display-name>
     <complex-id>org.openntf.domino.xsp.helpers.EnumValuePickerData</complex-id>
     <complex-class>org.openntf.domino.xsp.helpers.EnumValuePickerData</complex-class>
     <property>
@@ -236,6 +288,24 @@
         </designer-extension>
       </property-extension>
     </property>
+        <property>
+      <description>%property.searchStyle.descr%</description>
+      <display-name>%property.searchStyle.name%</display-name>
+      <property-name>searchStyle</property-name>
+      <property-class>java.lang.String</property-class>
+      <property-extension>
+        <designer-extension>
+          <tags>
+                        not-localizable
+                    </tags>
+          <editor>com.ibm.workplace.designer.property.editors.comboParameterEditor</editor>
+          <editor-parameter>
+						jumpTo
+						restrictToSearch
+                    </editor-parameter>
+        </designer-extension>
+      </property-extension>
+    </property>
     <property>
       <description>%property.caseInsensitive.descr%</description>
       <display-name>%property.caseInsensitive.name%</display-name>
@@ -253,6 +323,51 @@
     <complex-extension>
       <base-complex-id>com.ibm.xsp.extlib.component.picker.data.IValuePickerData</base-complex-id>
       <tag-name>enumValuePicker</tag-name>
+    </complex-extension>
+  </complex-type>
+  <complex-type>
+    <description>%complex-type.openntfViewValuePicker.descr%</description>
+    <display-name>%complex-type.openntfViewValuePicker.name%</display-name>
+    <complex-id>org.openntf.domino.xsp.helpers.OpenntfViewValuePickerData</complex-id>
+    <complex-class>org.openntf.domino.xsp.helpers.OpenntfViewValuePickerData</complex-class>
+    <group-type-ref>com.ibm.xsp.extlib.group.databaseNameProp</group-type-ref>
+    <group-type-ref>com.ibm.xsp.extlib.group.viewFolderNameProp</group-type-ref>
+    <property>
+      <description>%property.labelColumn.complex-type.openntfViewValuePicker.descr%</description>
+      <display-name>%property.labelColumn.complex-type.openntfViewValuePicker.name%</display-name>
+      <property-name>labelColumn</property-name>
+      <property-class>java.lang.String</property-class>
+      <property-extension>
+        <designer-extension>
+          <tags>
+                        not-localizable
+                    </tags>
+        </designer-extension>
+      </property-extension>
+    </property>
+    <property>
+      <description>%property.searchType.descr%</description>
+      <display-name>%property.searchType.name%</display-name>
+      <property-name>searchType</property-name>
+      <property-class>java.lang.String</property-class>
+      <property-extension>
+        <since>8.5.32003</since>
+        <designer-extension>
+          <tags>
+                        not-localizable
+                    </tags>
+          <editor>com.ibm.workplace.designer.property.editors.comboParameterEditor</editor>
+          <editor-parameter>
+						startFrom
+						match
+						ftSearch
+                    </editor-parameter>
+        </designer-extension>
+      </property-extension>
+    </property>
+    <complex-extension>
+      <base-complex-id>com.ibm.xsp.extlib.component.picker.data.IValuePickerData</base-complex-id>
+      <tag-name>openntfViewValuePicker</tag-name>
     </complex-extension>
   </complex-type>
 </faces-config>

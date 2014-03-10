@@ -18,6 +18,12 @@ public interface IScannerStateManager extends Observer {
 
 	public void saveTokenLocationMap(Object mapKey, Map<CharSequence, Map<CharSequence, Set<CharSequence>>> fullMap, DocumentScanner scanner);
 
+	public Map<CharSequence, Set<CharSequence>> restoreNameLocationMap(CharSequence name, Object mapKey);
+
+	public void saveNameLocationMap(CharSequence name, Object mapKey, Map<CharSequence, Set<CharSequence>> map);
+
+	public void saveNameLocationMap(Object mapKey, Map<CharSequence, Map<CharSequence, Set<CharSequence>>> fullMap, DocumentScanner scanner);
+
 	public Date getLastIndexDate(Object mapKey);
 
 	public void setLastIndexDate(Object mapKey, Date date);

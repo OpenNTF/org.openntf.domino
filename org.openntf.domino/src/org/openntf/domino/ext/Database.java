@@ -256,4 +256,8 @@ public interface Database extends Base {
 
 	public String getHttpURL(final boolean usePath);
 
+	public boolean isAutoMime();
+
+	public void setAutoMime(boolean autoMime);
+
 }

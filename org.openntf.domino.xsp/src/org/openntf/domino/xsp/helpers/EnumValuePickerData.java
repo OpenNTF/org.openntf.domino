@@ -104,19 +104,21 @@ public class EnumValuePickerData extends MapValuePickerData {
 		options = (Map<String, String>) _values[1];
 		searchType = (String) _values[2];
 		caseInsensitive = (Boolean) _values[3];
-		enumName = (String) _values[4];
-		sorted = (Boolean) _values[5];
+		searchStyle = (String) _values[4];
+		enumName = (String) _values[5];
+		sorted = (Boolean) _values[6];
 	}
 
 	@Override
 	public Object saveState(final FacesContext _context) {
-		Object _values[] = new Object[5];
+		Object _values[] = new Object[6];
 		_values[0] = super.saveState(_context);
 		_values[1] = options;
 		_values[2] = searchType;
-		_values[3] = caseInsensitive;
-		_values[4] = enumName;
-		_values[5] = sorted;
+		_values[3] = searchStyle;
+		_values[4] = caseInsensitive;
+		_values[5] = enumName;
+		_values[6] = sorted;
 		return _values;
 	}
 

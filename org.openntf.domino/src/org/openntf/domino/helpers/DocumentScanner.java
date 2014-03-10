@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
-import org.openntf.domino.Name;
 import org.openntf.domino.RichTextItem;
 import org.openntf.domino.Session;
 import org.openntf.domino.big.impl.IScannerStateManager;
@@ -194,6 +193,9 @@ public class DocumentScanner extends Observable {
 	private Map<CharSequence, Map<CharSequence, Set<CharSequence>>> tokenLocationMap_;
 	//Map<TERM, Map<FIELDNAME, List<UNIDS>>>
 
+	private boolean trackNameLocation_ = true;
+	private Map<CharSequence, Map<CharSequence, Set<CharSequence>>> nameLocationMap_;
+
 	private boolean trackFieldValues_ = true;
 	private Map<CharSequence, NavigableSet<Comparable>> fieldValueMap_;
 	//Map<FIELDNAME, Set<VALUE>>
@@ -268,6 +270,11 @@ public class DocumentScanner extends Observable {
 		stateManager_ = stateManager;
 		stateManagerKey_ = stateManagerKey;
 		addObserver(stateManager);
+	}
+
+	@Override
+	public void notifyObservers(final Object arg) {
+		super.notifyObservers(arg);
 	}
 
 	public int getZeroDocCount() {
@@ -348,6 +355,13 @@ public class DocumentScanner extends Observable {
 		return tokenLocationMap_;
 	}
 
+	public Map<CharSequence, Map<CharSequence, Set<CharSequence>>> getNameLocationMap() {
+		if (nameLocationMap_ == null) {
+			nameLocationMap_ = new ConcurrentSkipListMap<CharSequence, Map<CharSequence, Set<CharSequence>>>();
+		}
+		return nameLocationMap_;
+	}
+
 	public Map<CharSequence, Set<CharSequence>> getTokenLocationMap(final CharSequence token) {
 		Map<CharSequence, Set<CharSequence>> result = null;
 		Map<CharSequence, Map<CharSequence, Set<CharSequence>>> localMap = getTokenLocationMap();
@@ -364,6 +378,27 @@ public class DocumentScanner extends Observable {
 			}
 			synchronized (localMap) {
 				localMap.put(token, result);
+			}
+		}
+		return result;
+	}
+
+	public Map<CharSequence, Set<CharSequence>> getNameLocationMap(final CharSequence name) {
+		Map<CharSequence, Set<CharSequence>> result = null;
+		Map<CharSequence, Map<CharSequence, Set<CharSequence>>> localMap = getNameLocationMap();
+		result = localMap.get(name);
+		if (result == null) {
+			if (getStateManager() == null) {
+				result = new ConcurrentHashMap<CharSequence, Set<CharSequence>>();
+			} else {
+				result = getStateManager().restoreTokenLocationMap(name, getStateManagerKey());
+				if (result == null) {
+					errCount_++;
+					result = new ConcurrentHashMap<CharSequence, Set<CharSequence>>();
+				}
+			}
+			synchronized (localMap) {
+				localMap.put(name, result);
 			}
 		}
 		return result;
@@ -435,6 +470,10 @@ public class DocumentScanner extends Observable {
 		return nt.toString();
 	}
 
+	public void complete() {
+		notifyObservers(ScanStatus.COMPLETE);
+	}
+
 	private org.openntf.domino.DocumentCollection collection_;
 
 	public void processCollection() {
@@ -443,8 +482,7 @@ public class DocumentScanner extends Observable {
 				processDocument(doc);
 			}
 		}
-		//		System.out.println("Scanner completed. Notifying observers...");
-		notifyObservers(ScanStatus.COMPLETE);
+		complete();
 	}
 
 	public void processCollection(final org.openntf.domino.DocumentCollection collection) {
@@ -460,12 +498,12 @@ public class DocumentScanner extends Observable {
 		collection_ = collection;
 	}
 
-	private org.openntf.domino.helpers.DocumentSorter sorter_;
-
 	public void processSorter(final org.openntf.domino.helpers.DocumentSorter sorter) {
 		setSorter(sorter);
 		processCollection(sorter.sort());
 	}
+
+	private org.openntf.domino.helpers.DocumentSorter sorter_;
 
 	public org.openntf.domino.helpers.DocumentSorter getSorter() {
 		return sorter_;
@@ -485,27 +523,15 @@ public class DocumentScanner extends Observable {
 
 	@SuppressWarnings("rawtypes")
 	public void processDocument(final Document doc) {
-
 		if (doc != null) {
 			docCount_++;
-			//		Map<String, NavigableSet<String>> tmap = getFieldTokenMap();
 			Map<CharSequence, NavigableSet<Comparable>> vmap = getFieldValueMap();
-			//		Map<String, Map<String, List<String>>> tlmap = getTokenLocationMap();
 			Map<CharSequence, Integer> typeMap = getFieldTypeMap();
-			//		Map<String, Integer> tfmap = getTokenFreqMap();
 			Vector<Item> items = doc.getItems();
-			//			String unid = doc.getUniversalID();
 			boolean hasReaders = doc.hasReaders();
 			String address = doc.getUniversalID() + (hasReaders ? "1" : "0") + doc.getFormName();
-			//		Set<String> stopList = getStopTokenList();
 			for (Item item : items) {
-				//				nonText.add(item.getType());
 				CaseInsensitiveString name = new CaseInsensitiveString(item.getName());
-				//				Date lastMod = item.getLastModifiedDate();
-				//				if (!lastMod.after(getLastScanDate())) {
-				//					System.out.println("Skipping item " + name.toString() + " in document " + address
-				//							+ " because it hasn't changed since the last scan date.");
-				//				}
 				if (/*lastMod.after(getLastScanDate()) && */!(name.startsWith("$") && getIgnoreDollar())) {
 					try {
 						String value = null;
@@ -530,7 +556,7 @@ public class DocumentScanner extends Observable {
 									for (Object o : values) {
 										if (o instanceof String) {
 											CharSequence parmName = caseSensitive_ ? (String) o : new CaseInsensitiveString((String) o);
-											processName(parmName, name, doc.getAncestorSession());
+											processName(parmName, name, doc.getAncestorSession(), address);
 										}
 									}
 								}
@@ -575,9 +601,8 @@ public class DocumentScanner extends Observable {
 								Vector<Object> vals = null;
 								vals = item.getValues();
 								if (vals != null && !vals.isEmpty()) {
-									NavigableSet<Comparable> valueSet = null;
+									NavigableSet<Comparable> valueSet = new ConcurrentSkipListSet<Comparable>();
 									if (!vmap.containsKey(name)) {
-										valueSet = new ConcurrentSkipListSet<Comparable>();
 										vmap.put(name, valueSet);
 									} else {
 										valueSet = vmap.get(name);
@@ -600,19 +625,9 @@ public class DocumentScanner extends Observable {
 					}
 				}
 			}
-			//			if (this.isTrackTokenLocation() && getStateManager() != null) {
-			//				Map<CaseInsensitiveString, Map<CaseInsensitiveString, Set<String>>> localTokenMap = getTokenLocationMap();
-			//				int curSize = localTokenMap.size();
-			//				if (curSize > 1024) {
-			//					Date last = doc.getLastModifiedDate();
-			//					setLastScanDate(last);
-			//					synchronized (localTokenMap) {
-			//						getStateManager().saveTokenLocationMap(getStateManagerKey(), localTokenMap, last);
-			//						localTokenMap.clear();
-			//					}
-			//				}
-			//			}
+
 			setLastDocModDate(doc.getLastModifiedDate());
+			setChanged();
 			notifyObservers(ScanStatus.RUNNING);
 		}
 	}
@@ -629,7 +644,7 @@ public class DocumentScanner extends Observable {
 		return tokenCount_;
 	}
 
-	private void processName(final CharSequence name, final CharSequence itemName, final Session session) {
+	private void processName(final CharSequence name, final CharSequence itemName, final Session session, final String address) {
 		Map<CharSequence, Integer> tfmap = getTokenFreqMap();
 		Map<CharSequence, NavigableSet<CharSequence>> tmap = getFieldTokenMap();
 		NavigableSet<CharSequence> tokenSet = null;
@@ -639,16 +654,28 @@ public class DocumentScanner extends Observable {
 		} else {
 			tokenSet = tmap.get(itemName);
 		}
-		Name Nname = session.createName(name.toString());
 		tokenSet.add(name);
-		if (Nname.isHierarchical()) {
-			CharSequence cn = caseSensitive_ ? Nname.getCommon() : new CaseInsensitiveString(Nname.getCommon());
+		if (DominoUtils.isHierarchicalName(name.toString())) {
+			CharSequence cn = caseSensitive_ ? DominoUtils.toCommonName(name.toString()) : new CaseInsensitiveString(
+					DominoUtils.toCommonName(name.toString()));
 			tokenSet.add(cn);
 			if (tfmap.containsKey(cn)) {
 				tfmap.put(cn, tfmap.get(cn) + 1);
 			} else {
 				tfmap.put(cn, 1);
 			}
+			if (isTrackNameLocation()) {
+				Map<CharSequence, Set<CharSequence>> tlval = getNameLocationMap(name.toString());
+				if (tlval.containsKey(itemName)) {
+					Set<CharSequence> tllist = tlval.get(itemName);
+					tllist.add(address);
+				} else {
+					Set<CharSequence> tllist = new ConcurrentSkipListSet<CharSequence>();
+					tllist.add(address);
+					tlval.put(itemName, tllist);
+				}
+			}
+
 		} else {
 			CharSequence lname = caseSensitive_ ? name : new CaseInsensitiveString(name);
 			if (tfmap.containsKey(lname)) {
@@ -685,9 +712,6 @@ public class DocumentScanner extends Observable {
 			if (tlval.containsKey(itemName)) {
 				Set<CharSequence> tllist = tlval.get(itemName);
 				tllist.add(address);
-				//				if (!tllist.contains(unid)) {
-				//					tllist.add(unid);
-				//				}
 			} else {
 				Set<CharSequence> tllist = new ConcurrentSkipListSet<CharSequence>();
 				tllist.add(address);
@@ -774,11 +798,26 @@ public class DocumentScanner extends Observable {
 	}
 
 	/**
+	 * @return the trackNameLocation
+	 */
+	public boolean isTrackNameLocation() {
+		return trackNameLocation_;
+	}
+
+	/**
 	 * @param trackTokenLocation
 	 *            the trackTokenLocation to set
 	 */
 	public void setTrackTokenLocation(final boolean trackTokenLocation) {
 		trackTokenLocation_ = trackTokenLocation;
+	}
+
+	/**
+	 * @param trackNameLocation
+	 *            the trackNameLocation to set
+	 */
+	public void setTrackNameLocation(final boolean trackNameLocation) {
+		trackNameLocation_ = trackNameLocation;
 	}
 
 	/**

@@ -1593,6 +1593,8 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 
 	private IDominoEventFactory eventFactory_;
 
+	private Boolean isAutoMime_;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1789,5 +1791,19 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		org.openntf.domino.Database db = this.getDatabaseByReplicaID(serverName, replid);
 		org.openntf.domino.Document doc = db.getDocumentByUNID(unid);
 		return doc;
+	}
+
+	public boolean isAutoMime() {
+		if (isAutoMime_ == null) {
+			//NTF default behavior is for it to be on, so you have to globally turn it off
+			return true;
+		} else {
+			//NTF unless you've set it on this Session
+			return isAutoMime_.booleanValue();
+		}
+	}
+
+	public void setAutoMime(final boolean autoMime) {
+		isAutoMime_ = autoMime;
 	}
 }

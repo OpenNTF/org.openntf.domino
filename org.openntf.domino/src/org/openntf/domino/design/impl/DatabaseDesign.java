@@ -256,7 +256,9 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 		for (String noteId : notes) {
 			Document doc = getAncestorDatabase().getDocumentByID(noteId);
 			for (Object pathName : doc.getItemValue("$ClassIndexItem")) {
-				result.add(DominoUtils.filePathToJavaBinaryName(((String) pathName).substring(16), "/"));
+				if (pathName != null && String.valueOf(pathName).startsWith("WEB-INF/classes/")) {
+					result.add(DominoUtils.filePathToJavaBinaryName(((String) pathName).substring(16), "/"));
+				}
 			}
 		}
 		return result;

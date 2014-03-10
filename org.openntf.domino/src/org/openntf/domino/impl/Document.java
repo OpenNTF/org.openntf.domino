@@ -67,6 +67,7 @@ import org.openntf.domino.types.Null;
 import org.openntf.domino.utils.Documents;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.TypeUtils;
 
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.util.JsonWriter;
@@ -75,7 +76,7 @@ import com.ibm.commons.util.io.json.util.JsonWriter;
 /**
  * The Class Document.
  */
-class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, Database> implements org.openntf.domino.Document {
+public class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, Database> implements org.openntf.domino.Document {
 	private static final Logger log_ = Logger.getLogger(Document.class.getName());
 
 	public static enum RemoveType {
@@ -894,6 +895,27 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 		return null;
 	}
 
+	public <T> T getItemValue(final String name, final Class<?> T) throws ItemNotFoundException, DataNotCompatibleException {
+		// TODO NTF - Add type conversion extensibility of some kind, maybe attached to the Database or the Session
+
+		MIMEEntity testEntity = null;
+		if (this.useMimeBeans()) {
+			testEntity = testMIMEEntity(name);
+		}
+		boolean hasMime = testEntity != null;
+
+		if (!hasMime) {
+			Item item = getFirstItem(name);
+			if (item != null && item.getType() == Item.MIME_PART) {
+				return (T) Documents.getItemValueMIME(this, name);
+			}
+			Object result = TypeUtils.itemValueToClass(this, name, T);
+			return (T) result;
+		} else {
+			return (T) Documents.getItemValueMIME(this, name);
+		}
+	}
+
 	/*
 	 * Behavior: If the document does not have the item, then we look at the requested class. If it's a primitive or an array of primitives,
 	 * we cannot return a null value that can be assigned to that type, so therefore we throw an Exception. If what was request is an
@@ -902,7 +924,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 	 * If the item does exist, then we get it's value and attempt a conversion. If the data cannot be converted, we throw an Exception
 	 */
 
-	@SuppressWarnings("unchecked")
+	/*@SuppressWarnings("unchecked")
 	public <T> T getItemValue(final String name, final Class<?> T) throws ItemNotFoundException, DataNotCompatibleException {
 		// TODO NTF - Add type conversion extensibility of some kind, maybe attached to the Database or the Session
 		// if (T.equals(java.util.Collection.class) && getItemValueString("form").equalsIgnoreCase("container")) {
@@ -945,7 +967,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 		}
 		throw new DataNotCompatibleException("Cannot return " + itemValue.getClass() + ", because " + T + " was requested.");
 
-	}
+	}*/
 
 	/*
 	 * (non-Javadoc)
@@ -2134,6 +2156,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 				// if data-type is != "mime-bean" the object is written in native mode.
 				result = getDelegate().replaceItemValueCustomData(itemName, dataTypeName, value);
 			} else if (value instanceof Serializable) {
+
 				Documents.saveState((Serializable) value, this, itemName);
 
 				// TODO RPr: Discuss if the other strategies make sense here.
@@ -2153,6 +2176,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 
 			} else if (value instanceof NoteCollection) {
 				// Maybe it'd be faster to use .getNoteIDs - I'm not sure how the performance compares
+				// NTF .getNoteIDs() *IS* faster. By about an order of magnitude.
 				NoteCollection notes = (NoteCollection) value;
 				String[] unids = new String[notes.getCount()];
 				String noteid = notes.getFirstNoteID();
@@ -2190,8 +2214,12 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 				}
 			}
 
-			if (returnItem) {
-				result = getDelegate().getFirstItem(itemName);
+			if (returnItem && result != null) {
+				//				result = getDelegate().getFirstItem(itemName);	
+				//NTF if we do a .getFirstItem here and return an item that we MIMEBeaned, it will invalidate the MIME and
+				//convert back to a RichTextItem before the document is saved.
+				//returnItem *MUST* be treated as false if we've written a MIME attachment.
+				//If we didn't write a MIME attachment, then result is already assigned, and therefore we don't need to get it again.
 				return fromLotus(result, Item.SCHEMA, this);
 			} else {
 				return null;
@@ -2260,6 +2288,11 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 
 			try {
 				result = replaceItemValueLotus(itemName, value, isSummary, returnItem);
+			} catch (IllegalArgumentException ex) {
+				if (!this.useMimeBeans()) {
+					throw ex;
+				}
+				result = replaceItemValueCustomData(itemName, "mime-bean", value, false);
 			} catch (Domino32KLimitException ex) {
 				if (!this.useMimeBeans()) {
 					throw ex;
@@ -2323,7 +2356,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 			if (o instanceof String) {
 				return ((String) o).length(); // TODO: LMBCS conversion must be done here/later
 			}
-			if (o instanceof DateRange) {
+			if (o instanceof lotus.domino.DateRange) {
 				return 16;
 			} else {
 				return 8; // Number + DateTime has 8 bytes payload
@@ -2441,6 +2474,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 				}
 				if (payload > MAX_NATIVE_FIELD_SIZE / 2) {
 					// TODO: Compute REAL LMBCS payload by writing the string to a stream
+					//NTF when doing this, only bother if the standard length exceeds a certain threshold.
 				}
 
 			} else if (firstElement instanceof Number) {
@@ -2448,14 +2482,14 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 					payload += getLotusPayload(o, Number.class);
 				}
 
-			} else if (firstElement instanceof DateTime) {
+			} else if (firstElement instanceof lotus.domino.DateTime) {
 				for (Object o : dominoFriendly) {
-					payload += getLotusPayload(o, DateTime.class);
+					payload += getLotusPayload(o, lotus.domino.DateTime.class);
 				}
 
-			} else if (firstElement instanceof DateRange) {
+			} else if (firstElement instanceof lotus.domino.DateRange) {
 				for (Object o : dominoFriendly) {
-					payload += getLotusPayload(o, DateRange.class);
+					payload += getLotusPayload(o, lotus.domino.DateRange.class);
 				}
 				// Maybe this will be fixed in future
 				// throw new UnsupportedOperationException("The implementation of DateRange does not work properly. Avoid to use it");
@@ -2509,7 +2543,7 @@ class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, 
 
 	public boolean useMimeBeans() {
 		if (useMimeBeans_ == null) {
-			useMimeBeans_ = true; // TODO: We should query the session/db if autoSerialisation should be performed 
+			useMimeBeans_ = getAncestorDatabase().isAutoMime();
 		}
 		return useMimeBeans_.booleanValue();
 	}

@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.faces.context.FacesContext;
+import javax.faces.el.ValueBinding;
+
 import lotus.domino.Database;
 import lotus.domino.NotesException;
 import lotus.domino.Session;
@@ -18,7 +21,9 @@ import lotus.domino.ViewEntry;
 import lotus.domino.ViewEntryCollection;
 import lotus.domino.ViewNavigator;
 
+import org.openntf.arpa.NamePartsMap;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Names;
 
 import com.ibm.commons.Platform;
 import com.ibm.commons.util.StringUtil;
@@ -45,9 +50,46 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 	private String nameList;
 	private Boolean people;
 	private Boolean groups;
+	private String returnNameFormat;
+	private NamePartsMap.Key returnNameFormatAsKey;
 
 	public OpenntfNABNamePickerData() {
 		// TODO Auto-generated constructor stub
+	}
+
+	public String getReturnNameFormat() {
+		if (null != this.returnNameFormat) {
+			if (null == this.returnNameFormatAsKey) {
+				for (NamePartsMap.Key nameFormat : NamePartsMap.Key.values()) {
+					if (this.returnNameFormat.equals(nameFormat.name())) {
+						setReturnNameFormatAsKey(nameFormat);
+					}
+				}
+			}
+			return this.returnNameFormat;
+		}
+		ValueBinding _vb = getValueBinding("returnNameFormat"); //$NON-NLS-1$
+		if (_vb != null) {
+			String passedVal = (String) _vb.getValue(getFacesContext());
+			for (NamePartsMap.Key nameFormat : NamePartsMap.Key.values()) {
+				if (passedVal.equals(nameFormat.name())) {
+					setReturnNameFormatAsKey(nameFormat);
+				}
+			}
+		}
+		return null;
+	}
+
+	public void setReturnNameFormat(final String returnNameFormat) {
+		this.returnNameFormat = returnNameFormat;
+	}
+
+	public NamePartsMap.Key getReturnNameFormatAsKey() {
+		return returnNameFormatAsKey;
+	}
+
+	public void setReturnNameFormatAsKey(final NamePartsMap.Key returnNameFormatAsKey) {
+		this.returnNameFormatAsKey = returnNameFormatAsKey;
 	}
 
 	private static class NABDb implements Serializable { // Serializable because it goes to a scope
@@ -302,6 +344,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 	public abstract static class EntryMetaData {
 		private View view;
 		private IPickerOptions options;
+		private NamePartsMap.Key key;
 
 		public EntryMetaData(final IPickerOptions options) throws NotesException {
 			this.options = options;
@@ -314,6 +357,14 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 
 		public IPickerOptions getOptions() {
 			return options;
+		}
+
+		public NamePartsMap.Key getKey() {
+			return key;
+		}
+
+		public void setKey(final NamePartsMap.Key key) {
+			this.key = key;
 		}
 
 		public int findSortColumnIndex(final Vector<ViewColumn> vc) throws NotesException {
@@ -353,6 +404,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		public abstract View openView() throws NotesException;
 
 		public abstract Entry createEntry(ViewEntry ve) throws NotesException;
+
 	}
 
 	// ////////////////////////////////////////////////////////////////////
@@ -380,7 +432,12 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 
 		@Override
 		public Object readValue(final ViewEntry ve, final Vector<Object> columnValues) throws NotesException {
-			return columnValues.get(0);
+			NamePartsMap.Key key = getMetaData().getKey();
+			if (null == key) {
+				return columnValues.get(0);
+			} else {
+				return Names.getNamePart(Factory.getSession(), (String) columnValues.get(0), key);
+			}
 		}
 
 		@Override
@@ -432,7 +489,12 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 
 		@Override
 		public Object readValue(final ViewEntry ve, final Vector<Object> columnValues) throws NotesException {
-			return columnValues.get(1);
+			NamePartsMap.Key key = getMetaData().getKey();
+			if (null == key) {
+				return columnValues.get(1);
+			} else {
+				return Names.getNamePart(Factory.getSession(), (String) columnValues.get(1), key);
+			}
 		}
 
 		@Override
@@ -486,6 +548,7 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 
 		@Override
 		public Object readValue(final ViewEntry ve, final Vector<Object> columnValues) throws NotesException {
+			// Groups are never canonical, only have a basic part to them
 			return columnValues.get(0);
 		}
 
@@ -520,7 +583,17 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 
 		@Override
 		public Object readValue(final ViewEntry ve, final Vector<Object> columnValues) throws NotesException {
-			return columnValues.get(1);
+			NamePartsMap.Key key = getMetaData().getKey();
+			if ("G".equals((String) columnValues.get(0))) {
+				// Groups are never canonical, only have a basic value
+				return columnValues.get(1);
+			} else {
+				if (null == key) {
+					return columnValues.get(1);
+				} else {
+					return Names.getNamePart(Factory.getSession(), (String) columnValues.get(1), key);
+				}
+			}
 		}
 
 		@Override
@@ -579,7 +652,9 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 	@Override
 	public IPickerResult readEntries(final IPickerOptions options) {
 		try {
+			getReturnNameFormat();
 			EntryMetaData meta = createOpenntfEntryMetaData(options);
+			meta.setKey(getReturnNameFormatAsKey());
 			View view = meta.getView();
 			view.setAutoUpdate(false);
 			try {
@@ -656,5 +731,30 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 			// Swallow the exception for the end user and return an empty picker
 			return new EmptyPickerResult();
 		}
+	}
+
+	@Override
+	public Object saveState(final FacesContext context) {
+		Object[] state = new Object[7];
+		state[0] = super.saveState(context);
+		state[1] = addressBookSel;
+		state[2] = addressBookDb;
+		state[3] = nameList;
+		state[4] = people;
+		state[5] = groups;
+		state[6] = returnNameFormat;
+		return state;
+	}
+
+	@Override
+	public void restoreState(final FacesContext context, final Object value) {
+		Object[] state = (Object[]) value;
+		super.restoreState(context, state[0]);
+		this.addressBookSel = (String) state[1];
+		this.addressBookDb = (String) state[2];
+		this.nameList = (String) state[3];
+		this.people = (Boolean) state[4];
+		this.groups = (Boolean) state[5];
+		this.returnNameFormat = (String) state[6];
 	}
 }
