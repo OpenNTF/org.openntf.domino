@@ -337,6 +337,17 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.openntf.domino.Session#createDateTime(int, int, int, int, int, int)
+	 */
+	public DateTime createDateTime(final int y, final int m, final int d, final int h, final int i, final int s) {
+		Calendar cal = Calendar.getInstance();
+		cal.set(y, m - 1, d, h, i, s);
+		return getFactory().createDateTime(cal.getTime(), this);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Session#createDateTime(java.lang.String)
 	 */
 	@Override
@@ -1806,4 +1817,5 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	public void setAutoMime(final boolean autoMime) {
 		isAutoMime_ = autoMime;
 	}
+
 }

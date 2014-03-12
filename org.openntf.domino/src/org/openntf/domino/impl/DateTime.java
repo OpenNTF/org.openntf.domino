@@ -91,7 +91,8 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 			lotusWorker.set(generateWorker());
 			ret = lotusWorker.get();
 		}
-		initWorker(ret);
+		if (date_ != null)
+			initWorker(ret);
 		return ret;
 	}
 
@@ -171,6 +172,30 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	public DateTime(final Date date, final Session parent, final WrapperFactory wf, final long cppId) {
 		super(null, parent, wf, cppId, NOTES_TIME);
 		initialize(date);
+	}
+
+	/**
+	 * Needed for clone
+	 * 
+	 * @param dateTime
+	 */
+	protected DateTime(final DateTime orig) {
+		super(null, orig.getAncestorSession(), orig.getFactory(), 0, NOTES_TIME);
+		dst_ = orig.dst_;
+		isDateOnly_ = orig.isDateOnly_;
+		isTimeOnly_ = orig.isTimeOnly_;
+		notesZone_ = orig.notesZone_;
+		if (orig.date_ != null) {
+			date_ = new Date(orig.date_.getTime());
+		}
+	}
+
+	/**
+	 * Clones the DateTime object.
+	 */
+	@Override
+	public DateTime clone() {
+		return new DateTime(this);
 	}
 
 	//	/**

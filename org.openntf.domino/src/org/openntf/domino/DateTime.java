@@ -25,7 +25,7 @@ import org.openntf.domino.types.SessionDescendant;
  * The Interface DateTime.
  */
 public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.DateTime, org.openntf.domino.ext.DateTime, Encapsulated,
-		SessionDescendant {
+		SessionDescendant, Cloneable {
 
 	public static class Schema extends FactorySchema<DateTime, lotus.domino.DateTime, Session> {
 		@Override
@@ -339,6 +339,11 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 */
 	@Override
 	public Date toJavaDate();
+
+	/*
+	 * Clones the dateTime object
+	 */
+	public DateTime clone();
 
 	// /**
 	// * To java cal.
