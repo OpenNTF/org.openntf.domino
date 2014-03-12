@@ -30,16 +30,7 @@
 		<!-- domino_shared_target-->
 	</target>
 
-	<!--
-	<target name="compileTP" description="Compiles Tinkerpop">
-		<mkdir dir="lib" />
-		<mkdir dir="${tinkerpopclass.dir}" />
-		<javac srcdir="${tinkerpop.dir}" destdir="${tinkerpopclass.dir}" includeantruntime="false" deprecation="true" debug="true" nowarn="true">
-			<compilerarg value="-Xlint:none" />
-		</javac>
-	</target>
-	-->
-<!--depends="compileTP"-->
+	
 	<target name="compileDom" description="Compiles Domino" >
 		<mkdir dir="${dominoclass.dir}" />
 		<javac srcdir="${domino.dir}" destdir="${dominoclass.dir}" includeantruntime="false" deprecation="true" debug="true" nowarn="true">
@@ -49,8 +40,6 @@
 	</target>
 
 	<target name="jar" description="JARs the Task" depends="compileDom">
-		<!--<jar destfile="lib/tinkerpop.jar" basedir="${tinkerpopclass.dir}">
-		</jar>-->
 		<jar destfile="lib/domino.jar" basedir="${dominoclass.dir}">
 			<manifest>
 				<attribute name="Ant-Version" value="${ant.version}" />

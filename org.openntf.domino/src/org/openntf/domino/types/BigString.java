@@ -24,7 +24,7 @@ public class BigString implements CharSequence, Serializable, Comparable<BigStri
 	 * 
 	 */
 	public BigString() {
-		// TODO Auto-generated constructor stub
+
 	}
 
 	public BigString(final String value) {

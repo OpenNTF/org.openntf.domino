@@ -160,7 +160,12 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 	public SortedSet<? extends Edge> getSortedEdges(final Vertex vertex, final String... sortproperties) {
 		try {
 			Set<? extends Edge> rawSet = getEdges(vertex);
-			return Collections.unmodifiableSortedSet(DominoGraph.sortEdges(rawSet, sortproperties));
+			//			System.out.println("Requested sorting of " + rawSet.size() + " raw edges");
+
+			SortedSet<? extends Edge> sortedSet = DominoGraph.sortEdges(rawSet, sortproperties);
+			//			System.out.println("Returning sorted edge set of " + sortedSet.size());
+			SortedSet<? extends Edge> result = sortedSet;
+			return result;
 		} catch (Throwable t) {
 			throw new RuntimeException(t);
 		}
