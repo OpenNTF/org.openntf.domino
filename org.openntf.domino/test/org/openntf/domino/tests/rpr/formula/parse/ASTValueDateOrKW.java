@@ -23,14 +23,13 @@ public class ASTValueDateOrKW extends SimpleNode {
 
 	public void init(final String image) throws ParseException {
 		String inner = image.substring(1, image.length() - 1); // remove first [ and last ]
-		if (inner.contains(".") || inner.contains("/") || inner.contains("-")) {
-			// this MUST be a date
-			value = parser.getFormatter().parseDate(parser, inner);
-		} else {
-			// This is a Date OR a Keyword.... we don't know.
-			try {
-				value = parser.getFormatter().parseDate(parser, inner);
-			} catch (ParseException e) {
+		try {
+			value = parser.getFormatter().parseDate(inner);
+		} catch (java.text.ParseException e) {
+			if (inner.contains(".") || inner.contains("/") || inner.contains("-")) {
+				// this MUST be a date
+				throw new ParseException(parser, e.getMessage());
+			} else {
 				value = image; // tried to parse. but this seems to be a Keyword
 			}
 		}
@@ -38,7 +37,9 @@ public class ASTValueDateOrKW extends SimpleNode {
 
 	@Override
 	public void toFormula(final StringBuilder sb) {
+		sb.append('[');
 		sb.append(value);
+		sb.append(']');
 	}
 
 }

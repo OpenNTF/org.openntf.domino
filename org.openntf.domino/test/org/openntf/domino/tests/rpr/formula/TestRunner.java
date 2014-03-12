@@ -9,7 +9,6 @@ import lotus.domino.Session;
 import org.openntf.domino.impl.Base;
 import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
 import org.openntf.domino.tests.rpr.formula.parse.AtFormulaParser;
-import org.openntf.domino.tests.rpr.formula.parse.ParseException;
 import org.openntf.domino.tests.rpr.formula.parse.SimpleNode;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;
@@ -30,40 +29,38 @@ public class TestRunner extends TestRunnerStdIn {
 			System.out.println("Please type a Lotus domino @formula. Quit with CTRL+Z:");
 			SimpleNode n = null;
 			List<Object> v = null;
+			//String str = "t:={start}; @for(i:=1;i != 10; i:= i + 1; t:=t:@if(i = 1; {one} ; i <= 3; {two or three}; {four or more})); t";
+			String str = "x:=1:2*+32:64:1;x**x**x**x";
+			//String str = "@Transform((1:2:3)*+(0:3:6:9);{x};x*x)";
+			System.out.println("Formula to test: " + str);
 
-			System.out.println("Parsing....");
 			long time = System.currentTimeMillis();
 
-			//String str = "x:=1:2*+32:64:1;x**x**x**x";
-			//String str = "@Transform((1:2:3)*+(0:3:6:9);{x};x*x)";
 			//String str = "\"ab\\n\\x\\\"xyzz\"";
 			//String str = "t:={start}; @for(i:=1;i != 10; i:= i + 1; t:=t:@Text(i)); @Transform(t;{x};x+{ test }+t)";
-			String str = "t:={start}; @for(i:=1;i != 10; i:= i + 1; t:=t:@if(i = 1; {one} ; i <= 3; {two or three}; {four or more})); t";
-			System.out.println(str);
+			//System.out.println(str);
 			AtFormulaParser parser = getParser();
 			for (int i = 1; i < 10000; i++) {
+				parser = getParser();
 				java.io.StringReader sr = new java.io.StringReader(str);
 				//java.io.Reader r = new java.io.BufferedReader(sr);
 				parser.ReInit(sr);
 				n = parser.Parse();
 			}
 			time = System.currentTimeMillis() - time;
-			System.out.println("... took " + time + "ms.");
-			n.dump("");
-
-			System.out.println("Evaluating");
+			System.err.println("[FormulaEngine] 10000x building AST tree\ttook " + time + "ms.");
+			//n.dump("");
 
 			time = System.currentTimeMillis();
 			for (int i = 1; i < 10000; i++) {
-				FormulaContext ctx = new FormulaContext();
+				FormulaContext ctx = new FormulaContext(null, parser.getFormatter());
 				v = n.evaluate(ctx);
 			}
 			time = System.currentTimeMillis() - time;
-			System.out.println("... took " + time + "ms.");
+			System.err.println("[FormulaEngine] 10000x evaluating AST tree\ttook " + time + "ms.");
 
-			System.out.println("NTF:\t" + v);
+			System.out.println("Result:\t" + v);
 
-			System.out.println("Notes...");
 			Session sess = Base.toLotus(Factory.getSession());
 			long startEvaluate = System.currentTimeMillis();
 			try {
@@ -72,20 +69,19 @@ public class TestRunner extends TestRunnerStdIn {
 					v = sess.evaluate(str);
 				}
 				time = System.currentTimeMillis() - time;
-				System.out.println("... took " + time + "ms.");
-				System.out.println("Domino:\t" + v);
+				System.err.println("[NotesNative] 10000x calling session.evaluate\ttook " + time + "ms.");
+				System.out.println("Result:\t" + v);
 
 			} catch (NotesException e) {
 				e.printStackTrace();
 			}
 
 			System.out.println("Thank you.");
-		} catch (ParseException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		Factory.terminate();
 		System.out.println(Factory.dumpCounters(true));
 	}
-
 }

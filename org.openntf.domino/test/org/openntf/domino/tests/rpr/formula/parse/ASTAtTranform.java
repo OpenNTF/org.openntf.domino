@@ -15,7 +15,7 @@ public class ASTAtTranform extends SimpleNode {
 	}
 
 	@Override
-	public ValueHolder evaluate(final FormulaContext ctx) {
+	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
 		ValueHolder list = jjtGetChild(0).evaluate(ctx);
 		String temp = (String) jjtGetChild(1).evaluate(ctx).get(0);
 

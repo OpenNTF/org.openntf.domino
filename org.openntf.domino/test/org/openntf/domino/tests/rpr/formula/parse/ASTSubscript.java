@@ -15,7 +15,7 @@ public class ASTSubscript extends SimpleNode {
 	}
 
 	@Override
-	public ValueHolder evaluate(final FormulaContext ctx) {
+	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
 
 		ValueHolder base = jjtGetChild(0).evaluate(ctx);
 

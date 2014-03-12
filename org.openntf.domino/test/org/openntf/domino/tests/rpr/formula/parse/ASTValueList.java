@@ -15,7 +15,7 @@ public class ASTValueList extends SimpleNode {
 	}
 
 	@Override
-	public ValueHolder evaluate(final FormulaContext ctx) {
+	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
 		// TODO Auto-generated method stub
 		ValueHolder li = new ValueHolder();
 

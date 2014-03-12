@@ -43,7 +43,7 @@ public interface Node {
 
 	public void dump(final String prefix);
 
-	public ValueHolder evaluate(FormulaContext ctx);
+	public ValueHolder evaluate(FormulaContext ctx) throws EvaluateException;
 
 	public void toFormula(StringBuilder sb);
 }

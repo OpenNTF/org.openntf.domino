@@ -16,9 +16,11 @@ public class ASTAtDoWhile extends SimpleNode {
 
 	/**
 	 * AtDoWhile returns always TRUE, as in the formula online help described
+	 * 
+	 * @throws EvaluateException
 	 */
 	@Override
-	public ValueHolder evaluate(final FormulaContext ctx) {
+	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
 		ValueHolder ret = null;
 		do {
 			for (int i = 0; i < jjtGetNumChildren(); ++i) {

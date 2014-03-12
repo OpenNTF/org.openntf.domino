@@ -24,6 +24,14 @@ public class ASTFunction extends SimpleNode {
 		}
 	}
 
+	@Override
+	public void jjtClose() {
+		super.jjtClose();
+		if (function != null) {
+
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.tests.rpr.formula.SimpleNode#toString()
 	 */
@@ -33,16 +41,25 @@ public class ASTFunction extends SimpleNode {
 	}
 
 	@Override
-	public ValueHolder evaluate(final FormulaContext ctx) {
-		// TODO Auto-generated method stub
-		if (jjtGetNumChildren() == 0) {
-			return function.evaluate(ctx, null);
+	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
+		try {
+			if (jjtGetNumChildren() == 0) {
+				return function.evaluate(ctx, null);
+			}
+			ValueHolder params[] = new ValueHolder[jjtGetNumChildren()];
+			for (int i = 0; i < jjtGetNumChildren(); i++) {
+				params[i] = jjtGetChild(i).evaluate(ctx);
+			}
+			return function.evaluate(ctx, params);
+		} catch (Exception e) {
+			// catch any exception that occurs while evaluating
+			if (e instanceof EvaluateException) {
+				throw (EvaluateException) e;
+			} else {
+				// if this was no EvaluateException, then wrap it and throw it
+				throw this.createEvaluateException(e);
+			}
 		}
-		ValueHolder params[] = new ValueHolder[jjtGetNumChildren()];
-		for (int i = 0; i < jjtGetNumChildren(); i++) {
-			params[i] = jjtGetChild(i).evaluate(ctx);
-		}
-		return function.evaluate(ctx, params);
 	}
 
 	@Override

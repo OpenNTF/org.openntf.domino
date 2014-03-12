@@ -15,7 +15,7 @@ public class ASTAtIfError extends SimpleNode {
 	}
 
 	@Override
-	public ValueHolder evaluate(final FormulaContext ctx) {
+	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
 		try {
 			jjtGetChild(0).evaluate(ctx);
 		} catch (RuntimeException ex) {

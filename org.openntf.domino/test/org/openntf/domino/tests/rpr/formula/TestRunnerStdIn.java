@@ -8,12 +8,11 @@ import lotus.domino.Session;
 
 import org.openntf.domino.impl.Base;
 import org.openntf.domino.tests.rpr.formula.eval.AtFunctionFactorySystem;
+import org.openntf.domino.tests.rpr.formula.eval.AtFunctionT;
 import org.openntf.domino.tests.rpr.formula.eval.DefaultOperators;
 import org.openntf.domino.tests.rpr.formula.eval.Formatter;
 import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.eval.StringOperators;
 import org.openntf.domino.tests.rpr.formula.parse.AtFormulaParser;
-import org.openntf.domino.tests.rpr.formula.parse.ParseException;
 import org.openntf.domino.tests.rpr.formula.parse.SimpleNode;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;
@@ -32,7 +31,7 @@ public class TestRunnerStdIn implements Runnable {
 		Formatter formatter = new DominoFormatter();
 		AtFunctionFactorySystem functionFactory = new AtFunctionFactorySystem();
 		functionFactory.add(new DefaultOperators());
-		functionFactory.add(new StringOperators());
+		functionFactory.add(new AtFunctionT());
 		return new AtFormulaParser(formatter, functionFactory);
 	}
 
@@ -47,7 +46,7 @@ public class TestRunnerStdIn implements Runnable {
 			parser.ReInit(System.in);
 			n = parser.Parse();
 			n.dump("");
-			FormulaContext ctx = new FormulaContext();
+			FormulaContext ctx = new FormulaContext(null, parser.getFormatter());
 			v = n.evaluate(ctx);
 
 			System.out.println("NTF:\t" + v);
@@ -64,7 +63,7 @@ public class TestRunnerStdIn implements Runnable {
 			}
 
 			System.out.println("Thank you.");
-		} catch (ParseException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

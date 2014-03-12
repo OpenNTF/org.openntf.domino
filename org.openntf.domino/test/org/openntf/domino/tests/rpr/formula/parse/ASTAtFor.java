@@ -15,7 +15,7 @@ public class ASTAtFor extends SimpleNode {
 	}
 
 	@Override
-	public ValueHolder evaluate(final FormulaContext ctx) {
+	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
 		Node init = jjtGetChild(0);
 		Node condition = jjtGetChild(1);
 		Node increment = jjtGetChild(2);

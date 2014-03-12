@@ -19,7 +19,7 @@ public class DefaultOperators implements AtFunctionFactory, AtFunction {
 		// Comparators
 		CMP_LT("_cmpLt", false, "<"), CMP_LT_P("_cmpLtP", true, "*<"), CMP_GT("_cmpGt", false, ">"), CMP_GT_P("_cmpGtP", true, "*>"),
 
-		//
+		// and more comparators
 		CMP_LTE("_cmpLte", false, "<="), CMP_LTE_P("_cmpLteP", true, "*<="), CMP_GTE("_cmpGte", false, ">="), CMP_GTE_P("_cmpGteP", true,
 				"*>=");
 
@@ -201,4 +201,5 @@ public class DefaultOperators implements AtFunctionFactory, AtFunction {
 	public String getImage() {
 		return operation.image;
 	}
+
 }

@@ -6,6 +6,17 @@ import java.util.Map;
 public class FormulaContext {
 	private Map<String, Object> document;
 	private Map<String, ValueHolder> vars = new HashMap<String, ValueHolder>();
+	private Formatter formatter;
+
+	/**
+	 * @param document
+	 * @param formatter
+	 */
+	public FormulaContext(final Map<String, Object> document, final Formatter formatter) {
+		super();
+		this.document = document;
+		this.formatter = formatter;
+	}
 
 	/**
 	 * Reading a value looks first in the internal vars and then in the document. Every value read from document is cached INTERNALLY. So
@@ -81,5 +92,9 @@ public class FormulaContext {
 				return;
 		}
 		setVar(key, elem);
+	}
+
+	public Formatter getFormatter() {
+		return formatter;
 	}
 }

@@ -11,6 +11,8 @@ public abstract class SimpleNode implements Node {
 	protected Node[] children;
 	protected int id;
 	protected AtFormulaParser parser;
+	protected int codeLine;
+	protected int codeColumn;
 
 	public SimpleNode(final int i) {
 		id = i;
@@ -19,6 +21,13 @@ public abstract class SimpleNode implements Node {
 	public SimpleNode(final AtFormulaParser p, final int i) {
 		this(i);
 		parser = p;
+		Token t = p.token;
+		codeLine = t.beginLine;
+		codeColumn = t.beginColumn;
+	}
+
+	public EvaluateException createEvaluateException(final Throwable cause) {
+		return new EvaluateException(codeLine, codeColumn, cause);
 	}
 
 	public void jjtOpen() {
@@ -84,7 +93,7 @@ public abstract class SimpleNode implements Node {
 		}
 	}
 
-	public abstract ValueHolder evaluate(FormulaContext ctx);
+	public abstract ValueHolder evaluate(FormulaContext ctx) throws EvaluateException;
 
 	protected void appendParams(final StringBuilder sb) {
 		// TODO Auto-generated method stub
