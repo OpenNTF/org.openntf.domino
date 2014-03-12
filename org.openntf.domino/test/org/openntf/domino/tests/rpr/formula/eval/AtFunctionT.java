@@ -1,6 +1,11 @@
 package org.openntf.domino.tests.rpr.formula.eval;
 
 import java.text.ParseException;
+import java.util.Collection;
+
+import org.openntf.domino.DateTime;
+import org.openntf.domino.Session;
+import org.openntf.domino.utils.Factory;
 
 import com.ibm.commons.util.NotImplementedException;
 
@@ -9,7 +14,11 @@ public class AtFunctionT implements AtFunctionFactory, AtFunction {
 		TEMPLATE_VERSION("@TemplateVersion", 0, 0),	// TODO: Not yet implemented
 		TEXT("@Text", 1, 2),						// TODO: Formatter not implemented
 		TEXT_TO_NUMBER("@TextToNumber", 1, 1),		// OK
-		TEXT_TO_TIME("@TextToNumber", 1, 1);
+		TEXT_TO_TIME("@TextToTime", 1, 1),			// OK
+		THIS_NAME("@ThisName", 0, 0),				// TODO: Not yet implemented
+		THIS_VALUE("@ThisValue", 0, 0),				// TODO: Not yet implemented
+		TIME("@Time", 1, 6)							// OK
+		;
 
 		String value;
 		int minParam;
@@ -86,11 +95,46 @@ public class AtFunctionT implements AtFunctionFactory, AtFunction {
 				ret.add(fmt.parseNumber((String) el));
 			}
 			return ret;
+
 		case TEXT_TO_TIME:
 			ret.grow(params[0].size());
 			fmt = ctx.getFormatter();
 			for (Object el : params[0]) {
 				ret.add(fmt.parseDate((String) el));
+			}
+			return ret;
+
+		case THIS_NAME:
+			throw new NotImplementedException();
+
+		case THIS_VALUE:
+			throw new NotImplementedException();
+
+		case TIME:
+			ret.grow(params[0].size());
+			if (params.length == 1) {
+				for (Object el : params[0]) {
+					DateTime dtc = ((DateTime) el).clone();
+					dtc.setAnyDate();
+					ret.add(dtc);
+				}
+			} else if (params.length == 6) {
+				Collection<double[]> values = new ParameterCollectionDouble(params, false);
+				ret.grow(values.size());
+				Session s = Factory.getSession();
+				for (double[] v : values) {
+					DateTime dtc = s.createDateTime((int) v[0], (int) v[1], (int) v[2], (int) v[3], (int) v[4], (int) v[5]);
+					ret.add(dtc);
+				}
+			} else if (params.length >= 3) {
+				Collection<double[]> values = new ParameterCollectionDouble(params, false);
+				ret.grow(values.size());
+				Session s = Factory.getSession();
+				for (double[] v : values) {
+					DateTime dtc = s.createDateTime(2000, 6, 1, (int) v[0], (int) v[1], (int) v[2]);
+					dtc.setAnyDate();
+					ret.add(dtc);
+				}
 			}
 			return ret;
 

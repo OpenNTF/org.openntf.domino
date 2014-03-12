@@ -30,7 +30,8 @@ public class TestRunner extends TestRunnerStdIn {
 			SimpleNode n = null;
 			List<Object> v = null;
 			//String str = "t:={start}; @for(i:=1;i != 10; i:= i + 1; t:=t:@if(i = 1; {one} ; i <= 3; {two or three}; {four or more})); t";
-			String str = "x:=1:2*+32:64:1;x**x**x**x";
+			//String str = "x:=1:2*+32:64:1;x**x**x**x";
+			String str = "@time(1800;2;3;4;15;18)";
 			//String str = "@Transform((1:2:3)*+(0:3:6:9);{x};x*x)";
 			System.out.println("Formula to test: " + str);
 
@@ -41,7 +42,6 @@ public class TestRunner extends TestRunnerStdIn {
 			//System.out.println(str);
 			AtFormulaParser parser = getParser();
 			for (int i = 1; i < 10000; i++) {
-				parser = getParser();
 				java.io.StringReader sr = new java.io.StringReader(str);
 				//java.io.Reader r = new java.io.BufferedReader(sr);
 				parser.ReInit(sr);
