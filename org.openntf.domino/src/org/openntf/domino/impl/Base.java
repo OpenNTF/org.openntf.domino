@@ -35,7 +35,6 @@ import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.events.IDominoListener;
 import org.openntf.domino.ext.Formula;
 import org.openntf.domino.napi.NapiFactory;
-import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.utils.DominoUtils;
@@ -829,16 +828,19 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			} else {
 				return "0";
 			}
+		} else if (value instanceof Character) {
+			return value.toString();
 		}
 		// Now for the illegal-but-convertible types
 		if (value instanceof Number) {
 			// TODO Check if this is greater than what Domino can handle and serialize if so
 			// CHECKME: Is "doubleValue" really needed. (according to help.nsf only Integer and Double is supported, so keep it)
 			return ((Number) value).doubleValue();
-		} else if (value instanceof java.util.Date) {
+		} else if (value instanceof java.util.Date || value instanceof java.util.Calendar) {
 			lotus.domino.Session lsess = toLotus(Factory.getSession(context));
 			try {
-				lotus.domino.DateTime dt = lsess.createDateTime((java.util.Date) value);
+				lotus.domino.DateTime dt = value instanceof java.util.Date ? lsess.createDateTime((java.util.Date) value) : lsess
+						.createDateTime((java.util.Calendar) value);
 				if (recycleThis != null) {
 					recycleThis.add(dt);
 				}
@@ -848,23 +850,10 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 				return null;
 			}
 			// return toLotus(Factory.getSession(context).createDateTime((java.util.Date) value));
-		} else if (value instanceof java.util.Calendar) {
-			lotus.domino.Session lsess = toLotus(Factory.getSession(context));
-			try {
-				lotus.domino.DateTime dt = lsess.createDateTime((java.util.Calendar) value);
-				if (recycleThis != null) {
-					recycleThis.add(dt);
-				}
-				return dt;
-			} catch (Throwable t) {
-				DominoUtils.handleException(t);
-				return null;
-			}
-			// return toLotus(Factory.getSession(context).createDateTime((java.util.Calendar) value));
 		} else if (value instanceof CharSequence) {
 			return value.toString();
-		} else if (value instanceof CaseInsensitiveString) {
-			return value.toString();
+			//		} else if (value instanceof CaseInsensitiveString) {	// CaseInsensitiveString is a CharSequence
+			//			return value.toString();
 		} else if (value instanceof Pattern) {
 			return ((Pattern) value).pattern();
 		} else if (value instanceof Class<?>) {

@@ -1058,5 +1058,9 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 */
 	Item replaceItemValue(String itemName, Object value, Boolean isSummary, final boolean boxCompatibleOnly, boolean returnItem);
 
+	public boolean useMimeBeans();
+
+	public void enableMimeBeans(final boolean value);
+
 	public void markDirty();
 }
