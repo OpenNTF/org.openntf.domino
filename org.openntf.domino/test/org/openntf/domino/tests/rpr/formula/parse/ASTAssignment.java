@@ -3,7 +3,7 @@
 package org.openntf.domino.tests.rpr.formula.parse;
 
 import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.eval.Value;
+import org.openntf.domino.tests.rpr.formula.eval.ValueHolder;
 
 public class ASTAssignment extends SimpleNode {
 	public static final int FIELD = 1;
@@ -50,10 +50,48 @@ public class ASTAssignment extends SimpleNode {
 	}
 
 	@Override
-	public Value evaluate(final FormulaContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
+	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
+		ValueHolder value = jjtGetChild(0).evaluate(ctx);
+		switch (type) {
+		case FIELD:
+			ctx.setField(varName, value);
+			break;
+
+		case VAR:
+			ctx.setVar(varName, value);
+			break;
+
+		case ENV:
+			break;
+
+		case DEFAULT:
+			ctx.setDefault(varName, value);
+			break;
+		}
+		return value;
 	}
 
+	@Override
+	public void toFormula(final StringBuilder sb) {
+		switch (type) {
+		case FIELD:
+			sb.append("FIELD ");
+			break;
+		case VAR:
+			break;
+
+		case ENV:
+			sb.append("ENV ");
+			break;
+
+		case DEFAULT:
+			sb.append("DEFAULT ");
+			break;
+		}
+
+		sb.append(varName);
+		sb.append(" := ");
+		children[0].toFormula(sb);
+	}
 }
 /* JavaCC - OriginalChecksum=92f8bdea4c7fe5432030cefe823b5deb (do not edit this line) */

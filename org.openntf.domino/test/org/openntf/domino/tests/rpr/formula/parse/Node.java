@@ -3,7 +3,7 @@
 package org.openntf.domino.tests.rpr.formula.parse;
 
 import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.eval.Value;
+import org.openntf.domino.tests.rpr.formula.eval.ValueHolder;
 
 /* All AST nodes must implement this interface.  It provides basic
    machinery for constructing the parent and child relationships
@@ -43,6 +43,8 @@ public interface Node {
 
 	public void dump(final String prefix);
 
-	public Value evaluate(FormulaContext ctx);
+	public ValueHolder evaluate(FormulaContext ctx) throws EvaluateException;
+
+	public void toFormula(StringBuilder sb);
 }
 /* JavaCC - OriginalChecksum=ae0ae5f7b7bd5cdbae93091305487967 (do not edit this line) */

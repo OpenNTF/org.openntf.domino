@@ -110,6 +110,24 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		return (Boolean) current;
 	}
 
+	private static boolean isAppAutoBoxed(final FacesContext ctx) {
+		// Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
+		Object current = getAppMap(ctx).get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_AUTOBOXED");
+		if (current == null) {
+			current = Boolean.FALSE;
+			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
+			if (envs != null) {
+				for (String s : envs) {
+					if (s.equalsIgnoreCase("optimus")) {
+						current = Boolean.TRUE;
+					}
+				}
+			}
+			getAppMap(ctx).put(OpenntfDominoImplicitObjectFactory2.class.getName() + "_MARCEL", current);
+		}
+		return (Boolean) current;
+	}
+
 	private static boolean isAppMimeFriendly(final FacesContext ctx) {
 		// Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
 		Object current = getAppMap(ctx).get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_MARCEL");
@@ -184,6 +202,8 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		}
 		if (rawSession != null) {
 			session = Factory.fromLotus(rawSession, org.openntf.domino.Session.SCHEMA, null);
+			if (isAppAutoBoxed(ctx))
+				session.setAutoMime(true);
 			if (isAppMimeFriendly(ctx))
 				session.setConvertMIME(false);
 			if (isAppAllFix(ctx)) {

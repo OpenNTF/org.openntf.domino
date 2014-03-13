@@ -15,6 +15,9 @@ import com.tinkerpop.blueprints.Element;
  * 
  */
 public interface IDominoElement extends Element {
+
+	public boolean hasProperty(String key);
+
 	public <T> T getProperty(String key, Class<?> T);
 
 	public <T> T getProperty(String key, Class<?> T, boolean allowNull);

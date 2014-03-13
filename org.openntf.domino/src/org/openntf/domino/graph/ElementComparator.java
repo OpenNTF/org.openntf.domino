@@ -53,7 +53,7 @@ public class ElementComparator implements Comparator<Element>, Serializable {
 		if (dProps_ != null && dProps_.length > 0) {
 			result = compareProps((IDominoElement) arg0, (IDominoElement) arg1);
 		} else {
-			result = compareStrs(arg0, arg1);
+			result = compareStrs((IDominoElement) arg0, (IDominoElement) arg1);
 		}
 		return result;
 	}
@@ -62,8 +62,8 @@ public class ElementComparator implements Comparator<Element>, Serializable {
 		int result = 0;
 
 		for (IDominoProperties key : dProps_) {
-			java.lang.Object v0 = arg0.getProperty(key);
-			java.lang.Object v1 = arg1.getProperty(key);
+			java.lang.Object v0 = DominoElement.getReflectiveProperty(arg0, key);
+			java.lang.Object v1 = DominoElement.getReflectiveProperty(arg1, key);
 			if (v0 == null && v1 == null) {
 				return 0;
 			} else if (v0 == null) {
@@ -108,12 +108,12 @@ public class ElementComparator implements Comparator<Element>, Serializable {
 		return result;
 	}
 
-	private int compareStrs(final Element arg0, final Element arg1) {
+	private int compareStrs(final IDominoElement arg0, final IDominoElement arg1) {
 		int result = 0;
 
 		for (String key : props_) {
-			java.lang.Object v0 = arg0.getProperty(key);
-			java.lang.Object v1 = arg1.getProperty(key);
+			java.lang.Object v0 = DominoElement.getReflectiveProperty(arg0, key);
+			java.lang.Object v1 = DominoElement.getReflectiveProperty(arg1, key);
 			if (v0 == null && v1 == null) {
 				return 0;
 			} else if (v0 == null) {

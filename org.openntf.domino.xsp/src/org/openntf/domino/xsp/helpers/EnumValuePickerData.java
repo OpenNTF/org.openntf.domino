@@ -8,35 +8,118 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
+import javax.activation.UnsupportedDataTypeException;
+import javax.faces.context.FacesContext;
+import javax.faces.el.ValueBinding;
+
+import org.openntf.domino.utils.DominoUtils;
+
 /**
  * @author Nathan T. Freeman
  * 
  */
 @SuppressWarnings("rawtypes")
-public class EnumValuePickerData extends MapPickerData {
+public class EnumValuePickerData extends MapValuePickerData {
 	private static final Logger log_ = Logger.getLogger(EnumValuePickerData.class.getName());
 	private static final long serialVersionUID = 1L;
-	private Class<Enum> source_;
+	private String enumName;
+	private Boolean sorted;
 
 	public EnumValuePickerData() {
 
 	}
 
-	public EnumValuePickerData(final Class<Enum> source, final boolean sorted) {
-		source_ = source;
+	@SuppressWarnings("unchecked")
+	public String getEnumName() {
+		if (enumName != null) {
+			return enumName;
+		}
+		ValueBinding vb = getValueBinding("enumName"); //$NON-NLS-1$
+		if (vb != null) {
+			String vbVal = (String) vb.getValue(getFacesContext());
+			return vbVal;
+		}
+
+		return null;
+	}
+
+	public void setEnumName(final String enumName) {
+		this.enumName = enumName;
+	}
+
+	@Override
+	public Map<String, String> getOptions() {
+		if (options != null) {
+			return options;
+		}
+		setOptions();
+		return options;
+	}
+
+	public boolean isSorted() {
+		if (sorted != null) {
+			return sorted;
+		}
+		ValueBinding vb = getValueBinding("sorted"); // $NON-NLS-1$
+		if (vb != null) {
+			Boolean b = (Boolean) vb.getValue(getFacesContext());
+			if (b != null) {
+				return b;
+			}
+		}
+		return false;
+	}
+
+	public void setSorted(final boolean sorted) {
+		this.sorted = sorted;
+	}
+
+	public void setOptions() {
 		Map<String, String> opts;
 		if (sorted) {
 			opts = new TreeMap<String, String>();
 		} else {
 			opts = new LinkedHashMap<String, String>();
 		}
-		if (source.isEnum()) {
-			Enum[] enums = source.getEnumConstants();
-			for (Enum e : enums) {
-				opts.put(e.name(), source.getName() + " " + e.name());
+		try {
+			Class<Enum> enumClass = (Class<Enum>) Class.forName(getEnumName());
+			if (enumClass.isEnum()) {
+				Enum[] enums = enumClass.getEnumConstants();
+				for (Enum e : enums) {
+					opts.put(e.name(), enumClass.getName() + " " + e.name());
+				}
+			} else {
+				throw new UnsupportedDataTypeException("Value is not an Enum");
 			}
+		} catch (Throwable t) {
+			DominoUtils.handleException(t);
 		}
-		options_ = opts;
+		super.setOptions(opts);
+	}
+
+	@Override
+	public void restoreState(final FacesContext _context, final Object _state) {
+		Object _values[] = (Object[]) _state;
+		super.restoreState(_context, _values[0]);
+		options = (Map<String, String>) _values[1];
+		searchType = (String) _values[2];
+		caseInsensitive = (Boolean) _values[3];
+		searchStyle = (String) _values[4];
+		enumName = (String) _values[5];
+		sorted = (Boolean) _values[6];
+	}
+
+	@Override
+	public Object saveState(final FacesContext _context) {
+		Object _values[] = new Object[6];
+		_values[0] = super.saveState(_context);
+		_values[1] = options;
+		_values[2] = searchType;
+		_values[3] = searchStyle;
+		_values[4] = caseInsensitive;
+		_values[5] = enumName;
+		_values[6] = sorted;
+		return _values;
 	}
 
 }

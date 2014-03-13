@@ -68,6 +68,7 @@ import org.openntf.domino.types.Null;
 import org.openntf.domino.utils.Documents;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.TypeUtils;
 import org.openntf.domino.utils.LMBCSUtils;
 
 import com.ibm.commons.util.io.json.JsonException;
@@ -907,6 +908,27 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		return null;
 	}
 
+	public <T> T getItemValue(final String name, final Class<?> T) throws ItemNotFoundException, DataNotCompatibleException {
+		// TODO NTF - Add type conversion extensibility of some kind, maybe attached to the Database or the Session
+
+		MIMEEntity testEntity = null;
+		if (this.useMimeBeans()) {
+			testEntity = testMIMEEntity(name);
+		}
+		boolean hasMime = testEntity != null;
+
+		if (!hasMime) {
+			Item item = getFirstItem(name);
+			if (item != null && item.getType() == Item.MIME_PART) {
+				return (T) Documents.getItemValueMIME(this, name);
+			}
+			Object result = TypeUtils.itemValueToClass(this, name, T);
+			return (T) result;
+		} else {
+			return (T) Documents.getItemValueMIME(this, name);
+		}
+	}
+
 	/*
 	 * Behavior: If the document does not have the item, then we look at the requested class. If it's a primitive or an array of primitives,
 	 * we cannot return a null value that can be assigned to that type, so therefore we throw an Exception. If what was request is an
@@ -915,7 +937,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * If the item does exist, then we get it's value and attempt a conversion. If the data cannot be converted, we throw an Exception
 	 */
 
-	@SuppressWarnings("unchecked")
+	/*@SuppressWarnings("unchecked")
 	public <T> T getItemValue(final String name, final Class<?> T) throws ItemNotFoundException, DataNotCompatibleException {
 		// TODO NTF - Add type conversion extensibility of some kind, maybe attached to the Database or the Session
 		// if (T.equals(java.util.Collection.class) && getItemValueString("form").equalsIgnoreCase("container")) {
@@ -958,7 +980,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		}
 		throw new DataNotCompatibleException("Cannot return " + itemValue.getClass() + ", because " + T + " was requested.");
 
-	}
+	}*/
 
 	/*
 	 * (non-Javadoc)
@@ -2164,6 +2186,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				// if data-type is != "mime-bean" the object is written in native mode.
 				result = getDelegate().replaceItemValueCustomData(itemName, dataTypeName, value);
 			} else if (value instanceof Serializable) {
+
 				Documents.saveState((Serializable) value, this, itemName);
 
 				// TODO RPr: Discuss if the other strategies make sense here.
@@ -2183,6 +2206,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 			} else if (value instanceof NoteCollection) {
 				// Maybe it'd be faster to use .getNoteIDs - I'm not sure how the performance compares
+				// NTF .getNoteIDs() *IS* faster. By about an order of magnitude.
 				NoteCollection notes = (NoteCollection) value;
 				String[] unids = new String[notes.getCount()];
 				String noteid = notes.getFirstNoteID();
@@ -2293,6 +2317,11 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 			try {
 				result = replaceItemValueLotus(itemName, value, isSummary, returnItem);
+			} catch (IllegalArgumentException ex) {
+				if (!this.useMimeBeans()) {
+					throw ex;
+				}
+				result = replaceItemValueCustomData(itemName, "mime-bean", value, false);
 			} catch (Domino32KLimitException ex) {
 				if (!this.useMimeBeans()) {
 					throw ex;
@@ -2309,7 +2338,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				} else if (AUTOBOX_ALWAYS) {
 					// Compatibility mode
 					log_.log(Level.WARNING, "Writing " + value.getClass() + " causes a " + ex2
-							+ " as AUTOBOX_ALWAYS is true, the value will be wrapped in a MIME bean");
+							+ " as AUTOBOX_ALWAYS is true, the value will be wrapped in a MIME bean."
+							+ " Consider using 'put' or something similar in your code.");
 					result = replaceItemValueCustomData(itemName, "mime-bean", value, returnItem);
 				} else {
 					throw ex2;
@@ -2609,7 +2639,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	public boolean useMimeBeans() {
 		if (useMimeBeans_ == null) {
-			useMimeBeans_ = true; // TODO: We should query the session/db if autoSerialisation should be performed 
+			useMimeBeans_ = getAncestorDatabase().isAutoMime();
 		}
 		return useMimeBeans_.booleanValue();
 	}
@@ -3345,15 +3375,23 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			}
 		}
 
-		//if (this.containsKey(key)) {
-		Vector<Object> value = this.getItemValue(key.toString());
-		if (value == null) {
-			//TODO Throw an exception if the item data can't be read? Null implies the key doesn't exist
-			return null;
-		} else if (value.size() == 1) {
-			return value.get(0);
+		Object value = this.getItemValue(key.toString(), Object.class);
+		if (value instanceof Vector) {
+			Vector<?> v = (Vector<?>) value;
+			if (v.size() == 1) {
+				return v.get(0);
+			}
 		}
 		return value;
+		//if (this.containsKey(key)) {
+		//		Vector<Object> value = this.getItemValue(key.toString());
+		//		if (value == null) {
+		//			//TODO Throw an exception if the item data can't be read? Null implies the key doesn't exist
+		//			return null;
+		//		} else if (value.size() == 1) {
+		//			return value.get(0);
+		//		}
+		//		return value;
 		//}
 		//return null;
 	}

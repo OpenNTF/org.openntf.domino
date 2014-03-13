@@ -117,7 +117,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public lotus.domino.DateRange createDateRange();
+	public DateRange createDateRange();
 
 	/**
 	 * Creates a new DateRange object.
@@ -131,7 +131,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public lotus.domino.DateRange createDateRange(final Date startTime, final Date endTime);
+	public DateRange createDateRange(final Date startTime, final Date endTime);
 
 	/**
 	 * Creates a new DateRange object.
@@ -145,7 +145,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public lotus.domino.DateRange createDateRange(final lotus.domino.DateTime startTime, final lotus.domino.DateTime endTime);
+	public DateRange createDateRange(final lotus.domino.DateTime startTime, final lotus.domino.DateTime endTime);
 
 	/**
 	 * Creates a DateTime object that represents a specified date and time.
@@ -184,6 +184,27 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 */
 	@Override
 	public DateTime createDateTime(final String date);
+
+	/**
+	 * Creates a DateTime object that represents a specified date and time.
+	 * 
+	 * @param y
+	 *            the year
+	 * @param m
+	 *            the month
+	 * @param d
+	 *            the day
+	 * @param h
+	 *            the hour
+	 * @param i
+	 *            the mInutes
+	 * @param s
+	 *            the seconds
+	 * 
+	 * @return The newly created {@link DateTime} object.
+	 * @since org.openntf.domino 2014-03-11
+	 */
+	public DateTime createDateTime(int y, int m, int d, int h, int i, int s);
 
 	/**
 	 * Creates a DxlExporter object.

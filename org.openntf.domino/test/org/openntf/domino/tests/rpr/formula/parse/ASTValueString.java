@@ -3,7 +3,7 @@
 package org.openntf.domino.tests.rpr.formula.parse;
 
 import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.eval.Value;
+import org.openntf.domino.tests.rpr.formula.eval.ValueHolder;
 
 public class ASTValueString extends SimpleNode {
 	String value;
@@ -17,7 +17,27 @@ public class ASTValueString extends SimpleNode {
 	}
 
 	public void parseString(final String image, final char c) {
-		value = image;
+		if (c == '{') {
+			value = image.substring(1, image.length() - 1);
+		} else if (c == '"') {
+			value = image.substring(1, image.length() - 1);
+			int pos = 0;
+			int start = 0;
+			// YES: This looks complicated. But we want to be as much compatible as possible
+			if ((pos = value.indexOf('\\')) != -1) {
+				StringBuffer sb = new StringBuffer(value.substring(start, pos));
+				while (true) {
+					start = pos + 1;
+					pos = value.indexOf('\\', start);
+					if (pos == -1) {
+						sb.append(value.substring(start));
+						break;
+					}
+					sb.append(value.substring(start, pos));
+				}
+				value = sb.toString();
+			}
+		}
 	}
 
 	@Override
@@ -26,8 +46,16 @@ public class ASTValueString extends SimpleNode {
 	}
 
 	@Override
-	public Value evaluate(final FormulaContext ctx) {
-		return new Value(value);
+	public void toFormula(final StringBuilder sb) {
+		// TODO Quote Stings properly!
+		String s = value.replace("\\", "\\\\");
+		s = s.replace("\"", "\\\"");
+		sb.append("\"" + s + "\"");
+	}
+
+	@Override
+	public ValueHolder evaluate(final FormulaContext ctx) {
+		return new ValueHolder(value);
 	}
 
 }

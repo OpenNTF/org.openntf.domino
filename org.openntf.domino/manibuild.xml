@@ -4,7 +4,7 @@
 		<format property="current.time" pattern="yyyyMMddhhmmss" />
 	</tstamp>
 	<target name="Manifest">
-		<manifest file="MANIFEST.MF" mode="replace">
+		<manifest file="META-INF/MANIFEST.MF" mode="update">
 			<attribute name="Ant-Version" value="${ant.version}" />
 			<attribute name="Created-By" value="JDK ${java.version} (${java.vendor})" />
 			<attribute name='Implementation-Title' value="OpenNTF Domino API" />

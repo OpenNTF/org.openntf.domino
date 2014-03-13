@@ -3,7 +3,7 @@
 package org.openntf.domino.tests.rpr.formula.parse;
 
 import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.eval.Value;
+import org.openntf.domino.tests.rpr.formula.eval.ValueHolder;
 
 public class ASTSubscript extends SimpleNode {
 	public ASTSubscript(final int id) {
@@ -15,18 +15,25 @@ public class ASTSubscript extends SimpleNode {
 	}
 
 	@Override
-	public Value evaluate(final FormulaContext ctx) {
+	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
 
-		Value base = jjtGetChild(0).evaluate(ctx);
+		ValueHolder base = jjtGetChild(0).evaluate(ctx);
 
-		Value subscript = jjtGetChild(1).evaluate(ctx);
+		ValueHolder subscript = jjtGetChild(1).evaluate(ctx);
 
 		int idx = subscript.getInt(0);
 		if (idx < 1 || idx > base.size()) {
 			throw new IndexOutOfBoundsException("Index " + idx + " not in 1.." + base.size());
 		}
-		return new Value(base.get(idx - 1)); // Formula is 1 based
+		return new ValueHolder(base.get(idx - 1)); // Formula is 1 based
 	}
 
+	@Override
+	public void toFormula(final StringBuilder sb) {
+		children[0].toFormula(sb);
+		sb.append('[');
+		children[1].toFormula(sb);
+		sb.append(']');
+	}
 }
 /* JavaCC - OriginalChecksum=e9a1a8f4d76f4b0010da11d0363437fb (do not edit this line) */

@@ -1,14 +1,37 @@
 package org.openntf.domino.tests.rpr.formula.eval;
 
+import java.util.Collection;
+
 public class DefaultOperators implements AtFunctionFactory, AtFunction {
 	public static enum Op {
-		ADD("_add"), ADD_P("_addP"), SUB("_sub"), SUB_P("_subP");
+		// Additions
+		ADD("_add", false, "+"), ADD_P("_addP", true, "*+"), SUB("_sub", false, "-"), SUB_P("_subP", true, "*-"),
+
+		// Multiplications
+		MUL("_mul", false, "*"), MUL_P("_mulP", true, "**"), DIV("_div", false, "/"), DIV_P("_divP", true, "*/"),
+
+		// Unary ops
+		NEGATIVE("_negative", false, " -"), NOT("_not", false, " !"),
+
+		// Equal/Not equal
+		CMP_EQ("_cmpEq", false, "="), CMP_EQ_P("_cmpEqP", true, "*="), CMP_NE("_cmpNe", false, "!="), CMP_NE_P("_cmpNeP", true, "*<>"),
+
+		// Comparators
+		CMP_LT("_cmpLt", false, "<"), CMP_LT_P("_cmpLtP", true, "*<"), CMP_GT("_cmpGt", false, ">"), CMP_GT_P("_cmpGtP", true, "*>"),
+
+		// and more comparators
+		CMP_LTE("_cmpLte", false, "<="), CMP_LTE_P("_cmpLteP", true, "*<="), CMP_GTE("_cmpGte", false, ">="), CMP_GTE_P("_cmpGteP", true,
+				"*>=");
 
 		String value;
-		DefaultOperators instance;
+		String image;
+		boolean isPermutative;
+		DefaultOperators instance; // cache
 
-		Op(final String v) {
+		Op(final String v, final boolean isPerm, final String img) {
 			value = v;
+			isPermutative = isPerm;
+			image = img;
 		}
 	}
 
@@ -37,71 +60,146 @@ public class DefaultOperators implements AtFunctionFactory, AtFunction {
 		operation = op;
 	}
 
-	public Value evaluate(final FormulaContext ctx, final Value[] params) {
-		Value ret = new Value();
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "DefaultOperators [operation=" + operation + "]";
+	}
 
-		// left value & right value
-		Value lv = null;
-		Value rv = null;
-		int l = 0;
-		int r = 0;
-		if (params.length == 2) {
-			lv = params[0];
-			rv = params[1];
-			l = lv.size();
-			r = rv.size();
-		} else if (params.length == 1) {
-			lv = params[0];
-			l = lv.size();
-		}
+	@SuppressWarnings("null")
+	public ValueHolder evaluate(final FormulaContext ctx, final ValueHolder[] params) {
 
-		int ub = Math.max(l, r);
 		Object o;
+		o = params[0].get(0); // Fetch first element to determine operation
+
+		if (o instanceof String) {
+			return evaluateString(ctx, params);
+		} else if (o instanceof Number) {
+			return evaluateNumber(ctx, params);
+		} else {
+			return evaluateDateTime(ctx, params);
+		}
+	}
+
+	private ValueHolder evaluateDateTime(final FormulaContext ctx, final ValueHolder[] params) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException(operation + " not supported for DateTimes");
+	}
+
+	private ValueHolder evaluateNumber(final FormulaContext ctx, final ValueHolder[] params) {
+		ValueHolder ret = new ValueHolder();
+
+		Collection<double[]> values = new ParameterCollectionDouble(params, operation.isPermutative);
 
 		switch (operation) {
 		case ADD:
-			o = lv.get(0);
-			ret.incSize(ub);
-			if (o instanceof String) {
-				for (int i = 0; i < ub; i++) {
-					ret.append(lv.getText(i).concat(rv.getText(i)));
-				}
-			} else if (o instanceof Number) {
-				for (int i = 0; i < ub; i++) {
-					ret.append(lv.getDouble(i) + rv.getDouble(i));
-				}
-			} else {
-				throw new IllegalArgumentException();
-			}
-			break;
-
 		case ADD_P:
-			o = lv.get(0);
-			ret.incSize(l * r);
-			if (o instanceof String) {
-				for (int i = 0; i < l; i++) {
-					for (int j = 0; j < r; j++) {
-						ret.append(lv.getText(i).concat(rv.getText(j)));
-					}
-				}
-			} else if (o instanceof Number) {
-				for (int i = 0; i < l; i++) {
-					for (int j = 0; j < r; j++) {
-						ret.append(lv.getDouble(i) + rv.getDouble(j));
-					}
-				}
-			} else {
-				throw new IllegalArgumentException();
+			ret.grow(values.size());
+			for (double[] value : values) {
+				ret.add(value[0] + value[1]);
 			}
-			break;
+			return ret;
+		case DIV:
+		case DIV_P:
+			ret.grow(values.size());
+			for (double[] value : values) {
+				ret.add(value[0] / value[1]);
+			}
+			return ret;
+		case MUL:
+		case MUL_P:
+			ret.grow(values.size());
+			for (double[] value : values) {
+				ret.add(value[0] * value[1]);
+			}
+			return ret;
 		case SUB:
-			break;
 		case SUB_P:
-			break;
-		default:
-			break;
+			ret.grow(values.size());
+			for (double[] value : values) {
+				ret.add(value[0] - value[1]);
+			}
+			return ret;
+
+		case NEGATIVE:
+			ret.grow(values.size());
+			for (double[] value : values) {
+				ret.add(-value[0]);
+			}
+			return ret;
+		case NOT:
+			ret.grow(values.size());
+			for (double[] value : values) {
+				ret.add(((int) value[0]) == 0);
+			}
+			return ret;
+		case CMP_EQ:
+		case CMP_EQ_P:
+			return new ValueHolder(compare(values, 0));
+
+		case CMP_GT:
+		case CMP_GT_P:
+			return new ValueHolder(compare(values, 1));
+
+		case CMP_GTE:
+		case CMP_GTE_P:
+			return new ValueHolder(compare(values, 1) == 1 ? 1 : compare(values, 0));
+
+		case CMP_LT:
+		case CMP_LT_P:
+			return new ValueHolder(compare(values, -1));
+
+		case CMP_LTE:
+		case CMP_LTE_P:
+			return new ValueHolder(compare(values, -1) == 1 ? 1 : compare(values, 0));
+
+		case CMP_NE:
+		case CMP_NE_P:
+			return new ValueHolder(compare(values, -1) == 1 ? 1 : compare(values, 1));
 
 		}
-		return ret;
+
+		throw new UnsupportedOperationException(operation + " not supported for Numbers");
 	}
+
+	private int compare(final Collection<double[]> values, final int ref) {
+		// TODO: Check this for numeric stability!
+		for (double[] value : values) {
+			if (Double.compare(value[0], value[1]) == ref) {
+				return 1;
+			}
+		}
+		return 0;
+	}
+
+	private ValueHolder evaluateString(final FormulaContext ctx, final ValueHolder[] params) {
+		ValueHolder ret = new ValueHolder();
+
+		switch (operation) {
+		case ADD:
+		case ADD_P:
+			Collection<String[]> values = new ParameterCollectionObject<String>(params, String.class, operation.isPermutative);
+			ret.grow(values.size());
+			for (String[] value : values) {
+				ret.add(value[0].concat(value[1]));
+			}
+			return ret;
+		case DIV:
+		case DIV_P:
+		case MUL:
+		case MUL_P:
+		case SUB:
+		case SUB_P:
+			break;
+		}
+
+		throw new UnsupportedOperationException(operation + " not supported for Strings");
+	}
+
+	public String getImage() {
+		return operation.image;
+	}
+
 }

@@ -3,7 +3,7 @@
 package org.openntf.domino.tests.rpr.formula.parse;
 
 import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.eval.Value;
+import org.openntf.domino.tests.rpr.formula.eval.ValueHolder;
 
 class ASTAtDo extends SimpleNode {
 	public ASTAtDo(final int id) {
@@ -14,13 +14,24 @@ class ASTAtDo extends SimpleNode {
 		super(p, id);
 	}
 
+	/**
+	 * AtDo returns the last child's value
+	 * 
+	 * @throws EvaluateException
+	 */
 	@Override
-	public Value evaluate(final FormulaContext ctx) {
-		Value ret = null;
+	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
+		ValueHolder ret = null;
 		for (int i = 0; i < jjtGetNumChildren(); ++i) {
 			ret = jjtGetChild(i).evaluate(ctx);
 		}
 		return ret;
 	}
+
+	public void toFormula(final StringBuilder sb) {
+		sb.append("@Do");
+		appendParams(sb);
+	}
+
 }
 /* JavaCC - OriginalChecksum=3715ddf69e3be17452e7e4c207eb9b56 (do not edit this line) */

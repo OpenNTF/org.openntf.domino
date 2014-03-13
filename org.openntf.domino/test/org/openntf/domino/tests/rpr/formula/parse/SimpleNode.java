@@ -3,7 +3,7 @@
 package org.openntf.domino.tests.rpr.formula.parse;
 
 import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.eval.Value;
+import org.openntf.domino.tests.rpr.formula.eval.ValueHolder;
 
 public abstract class SimpleNode implements Node {
 
@@ -11,6 +11,8 @@ public abstract class SimpleNode implements Node {
 	protected Node[] children;
 	protected int id;
 	protected AtFormulaParser parser;
+	protected int codeLine;
+	protected int codeColumn;
 
 	public SimpleNode(final int i) {
 		id = i;
@@ -19,6 +21,13 @@ public abstract class SimpleNode implements Node {
 	public SimpleNode(final AtFormulaParser p, final int i) {
 		this(i);
 		parser = p;
+		Token t = p.token;
+		codeLine = t.beginLine;
+		codeColumn = t.beginColumn;
+	}
+
+	public EvaluateException createEvaluateException(final Throwable cause) {
+		return new EvaluateException(codeLine, codeColumn, cause);
 	}
 
 	public void jjtOpen() {
@@ -84,8 +93,23 @@ public abstract class SimpleNode implements Node {
 		}
 	}
 
-	public abstract Value evaluate(FormulaContext ctx);
+	public abstract ValueHolder evaluate(FormulaContext ctx) throws EvaluateException;
 
+	protected void appendParams(final StringBuilder sb) {
+		// TODO Auto-generated method stub
+
+		if (children != null) {
+			sb.append('(');
+			for (int i = 0; i < children.length; ++i) {
+				if (i > 0) {
+					sb.append(';');
+				}
+				SimpleNode n = (SimpleNode) children[i];
+				n.toFormula(sb);
+			}
+			sb.append(')');
+		}
+	}
 }
 
 /* JavaCC - OriginalChecksum=71a47937b2d85c71b1e18aa5cd3417bc (do not edit this line) */

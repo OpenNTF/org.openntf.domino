@@ -3,7 +3,7 @@
 package org.openntf.domino.tests.rpr.formula.parse;
 
 import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.eval.Value;
+import org.openntf.domino.tests.rpr.formula.eval.ValueHolder;
 
 public class ASTGetVariable extends SimpleNode {
 	private String variableName = "";
@@ -26,8 +26,12 @@ public class ASTGetVariable extends SimpleNode {
 	}
 
 	@Override
-	public Value evaluate(final FormulaContext ctx) {
+	public ValueHolder evaluate(final FormulaContext ctx) {
 		return ctx.getVar(variableName);
+	}
+
+	public void toFormula(final StringBuilder sb) {
+		sb.append(variableName);
 	}
 }
 /* JavaCC - OriginalChecksum=6fc7ffc46fcd95aa653ad69d15d081cc (do not edit this line) */

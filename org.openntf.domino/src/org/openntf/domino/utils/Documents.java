@@ -248,9 +248,9 @@ public enum Documents {
 		}
 		Session session = doc.getAncestorSession();
 		boolean convertMime = session.isConvertMime();
-		if (convertMime) {
-			session.setConvertMime(false);
-		}
+		//		if (convertMime) {
+		session.setConvertMime(false);
+		//		}
 
 		// String diagKey = doc.getUniversalID() + itemName;
 		// if (diagCount.containsKey(diagKey)) {

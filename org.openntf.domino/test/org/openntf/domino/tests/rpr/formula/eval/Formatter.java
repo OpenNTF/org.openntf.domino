@@ -1,9 +1,11 @@
 package org.openntf.domino.tests.rpr.formula.eval;
 
-import java.util.Date;
+import org.openntf.domino.DateTime;
 
 public interface Formatter {
 
-	Date parseDate(String image);
+	DateTime parseDate(String image) throws java.text.ParseException;
+
+	Number parseNumber(String el) throws java.text.ParseException;;
 
 }
