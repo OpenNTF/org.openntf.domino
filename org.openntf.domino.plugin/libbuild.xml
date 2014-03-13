@@ -30,29 +30,29 @@
   <!-- domino_shared_target-->
  </target>
 
- 
- <target name="compileDom" description="Compiles Domino" >
-  <mkdir dir="${dominoclass.dir}" />
-  <javac srcdir="${domino.dir}" destdir="${dominoclass.dir}" includeantruntime="false" deprecation="true" debug="true" nowarn="true">
-   <compilerarg value="-Xlint:none" />
-   <classpath refid="domino.class.path" />
-  </javac>
- </target>
+	
+	<target name="compileDom" description="Compiles Domino" >
+		<mkdir dir="${dominoclass.dir}" />
+		<javac srcdir="${domino.dir}" destdir="${dominoclass.dir}" includeantruntime="false" deprecation="true" debug="true" nowarn="true">
+			<compilerarg value="-Xlint:none" />
+			<classpath refid="domino.class.path" />
+		</javac>
+	</target>
 
- <target name="jar" description="JARs the Task" depends="compileDom">
-  <jar destfile="lib/domino.jar" basedir="${dominoclass.dir}">
-   <manifest>
-    <attribute name="Ant-Version" value="${ant.version}" />
-    <attribute name="Created-By" value="JDK ${java.version} (${java.vendor})" />
-    <attribute name='Implementation-Title' value="OpenNTF Domino API" />
-    <attribute name='Implementation-Version' value="1.0.0_${current.time}" />
-    <attribute name='Implementation-Vendor' value="OpenNTF" />
-    <attribute name='Implementation-Vendor-URL' value="http://www.openntf.org" />
-    <attribute name="Built-By" value="${user.name}" />
-    <attribute name='Build-Date' value="${current.time}" />
-   </manifest>
-  </jar>
- </target>
+	<target name="jar" description="JARs the Task" depends="compileDom">
+		<jar destfile="lib/domino.jar" basedir="${dominoclass.dir}">
+			<manifest>
+				<attribute name="Ant-Version" value="${ant.version}" />
+				<attribute name="Created-By" value="JDK ${java.version} (${java.vendor})" />
+				<attribute name='Implementation-Title' value="OpenNTF Domino API" />
+				<attribute name='Implementation-Version' value="1.0.0_${current.time}" />
+				<attribute name='Implementation-Vendor' value="OpenNTF" />
+				<attribute name='Implementation-Vendor-URL' value="http://www.openntf.org" />
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name='Build-Date' value="${current.time}" />
+			</manifest>
+		</jar>
+	</target>
 
  <target name="postclean" description="Delete all class files">
   <!--<delete dir="${tinkerpopclass.dir}" failonerror="false" />-->

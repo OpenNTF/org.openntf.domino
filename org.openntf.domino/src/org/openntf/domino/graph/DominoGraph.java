@@ -75,6 +75,11 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 	public static final boolean COMPRESS_IDS = false;
 
 	public static SortedSet<? extends Element> sortElements(final Iterable<? extends Element> elements, final String[] sortproperties) {
+		//		StringBuilder sb = new StringBuilder();
+		//		for (String prop : sortproperties) {
+		//			sb.append(prop + ", ");
+		//		}
+		//		System.out.println("Sorting elements from String properties: " + sb.toString());
 		Comparator<Element> comp = new ElementComparator(sortproperties);
 		SortedSet<Element> result = new TreeSet<Element>(comp);
 		for (Object e : elements) {
