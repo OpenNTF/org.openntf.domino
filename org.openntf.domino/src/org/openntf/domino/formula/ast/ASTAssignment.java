@@ -15,10 +15,12 @@
  * implied. See the License for the specific language governing 
  * permissions and limitations under the License.
  */
-package org.openntf.domino.formula.parse;
+package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.eval.ValueHolder;
+import org.openntf.domino.formula.AtFormulaParser;
+import org.openntf.domino.formula.EvaluateException;
+import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.ValueHolder;
 
 public class ASTAssignment extends SimpleNode {
 	public static final int FIELD = 1;
@@ -109,4 +111,4 @@ public class ASTAssignment extends SimpleNode {
 		children[0].toFormula(sb);
 	}
 }
-/* JavaCC - OriginalChecksum=92f8bdea4c7fe5432030cefe823b5deb (do not edit this line) */
+/* JavaCC - OriginalChecksum=5985303b30076529d3e2aa0d267e0702 (do not edit this line) */

@@ -16,10 +16,11 @@
  * permissions and limitations under the License.
  */
 
-package org.openntf.domino.formula.parse;
+package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.eval.ValueHolder;
+import org.openntf.domino.formula.EvaluateException;
+import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.ValueHolder;
 
 /* All AST nodes must implement this interface.  It provides basic
    machinery for constructing the parent and child relationships
@@ -63,4 +64,4 @@ public interface Node {
 
 	public void toFormula(StringBuilder sb);
 }
-/* JavaCC - OriginalChecksum=ae0ae5f7b7bd5cdbae93091305487967 (do not edit this line) */
+/* JavaCC - OriginalChecksum=54dec3b6b2c592c5fbe2fc5be72328d2 (do not edit this line) */

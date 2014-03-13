@@ -15,10 +15,13 @@
  * implied. See the License for the specific language governing 
  * permissions and limitations under the License.
  */
-package org.openntf.domino.formula.parse;
+package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.eval.ValueHolder;
+import org.openntf.domino.formula.AtFormulaParser;
+import org.openntf.domino.formula.EvaluateException;
+import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.Token;
+import org.openntf.domino.formula.ValueHolder;
 
 public abstract class SimpleNode implements Node {
 
@@ -127,4 +130,4 @@ public abstract class SimpleNode implements Node {
 	}
 }
 
-/* JavaCC - OriginalChecksum=71a47937b2d85c71b1e18aa5cd3417bc (do not edit this line) */
+/* JavaCC - OriginalChecksum=f757f6165359770f80bc5b67ed15fa71 (do not edit this line) */

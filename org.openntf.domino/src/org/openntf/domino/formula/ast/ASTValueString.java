@@ -15,10 +15,11 @@
  * implied. See the License for the specific language governing 
  * permissions and limitations under the License.
  */
-package org.openntf.domino.formula.parse;
+package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.eval.ValueHolder;
+import org.openntf.domino.formula.AtFormulaParser;
+import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.ValueHolder;
 
 public class ASTValueString extends SimpleNode {
 	String value;
@@ -74,4 +75,4 @@ public class ASTValueString extends SimpleNode {
 	}
 
 }
-/* JavaCC - OriginalChecksum=b093634abe91991ac4fe1c236b97b93b (do not edit this line) */
+/* JavaCC - OriginalChecksum=bbf33130d016e7ec065687da9b85c8fd (do not edit this line) */
