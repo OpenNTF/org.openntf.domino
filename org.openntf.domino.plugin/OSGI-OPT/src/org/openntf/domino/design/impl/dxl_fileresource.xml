@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!-- <!DOCTYPE note SYSTEM "xmlschemas/domino_9_0.dtd"> -->
+<note xmlns="http://www.lotus.com/dxl" class="form">
+	<item name="$Flags">
+		<text>345CgQ</text>
+	</item>
+	<item name="$FlagsExt">
+		<text>D</text>
+	</item>
+	<item name="$FileSize" sign="true">
+		<number>0</number>
+	</item>
+	<item name="$FileModDT" sign="true">
+		<datetime dst="true">20101019T162625,00-04</datetime>
+	</item>
+	<item name="$FileNames" sign="true">
+		<text/>
+	</item>
+	<item name="$MimeType">
+		<text/>
+	</item>
+	<item name="$TITLE" sign="true">
+		<textlist>
+			<text/>
+		</textlist>
+	</item>
+</note>
