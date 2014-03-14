@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,6 +69,7 @@ import org.openntf.domino.utils.Documents;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.TypeUtils;
+import org.openntf.domino.utils.LMBCSUtils;
 
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.util.JsonWriter;
@@ -644,11 +646,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				// entityCache_.put(itemName, wrapped);
 				return wrapped;
 			} catch (NotesException alreadyThere) {
-				Item item = getFirstItem(itemName);
-				if (item != null) {
-					log_.warning("Already have a non-MIME item for " + itemName + ". Removing...");
-					item.remove();
-				}
+				removeItem(itemName);
 				lotus.domino.MIMEEntity me = getDelegate().createMIMEEntity(itemName);
 				markDirty();
 				MIMEEntity wrapped = fromLotus(me, MIMEEntity.SCHEMA, this);
@@ -856,10 +854,25 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public Item getFirstItem(final String name) {
+		return getFirstItem(name, false);
+	}
+
+	public Item getFirstItem(final String name, final boolean returnMime) {
+		boolean convertMime = false;
 		try {
+			if (returnMime) {
+				convertMime = getAncestorSession().isConvertMime();
+				if (convertMime) {
+					getAncestorSession().setConvertMime(false);
+				}
+			}
 			return fromLotus(getDelegate().getFirstItem(name), Item.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			if (convertMime) {
+				getAncestorSession().setConvertMime(true);
+			}
 		}
 		return null;
 	}
@@ -993,7 +1006,16 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						return new Vector<Object>((Collection<Object>) mimeValue);
 					}
 					if (mimeValue.getClass().isArray()) {
-						return (Vector<Object>) Arrays.asList((Object[]) mimeValue);
+						Vector<Object> ret;
+						if (mimeValue.getClass().getName().length() != 2) // In case of on array of primitives the cast to Object[] obviously doesn't work
+							ret = (Vector<Object>) Arrays.asList((Object[]) mimeValue);
+						else {
+							int lh = Array.getLength(mimeValue);
+							ret = new Vector<Object>(lh);
+							for (int i = 0; i < lh; i++)
+								ret.add(Array.get(mimeValue, i));
+						}
+						return ret;
 					}
 					Vector<Object> result = new Vector<Object>(1);
 					result.add(mimeValue);
@@ -1063,8 +1085,16 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public byte[] getItemValueCustomDataBytes(final String itemName, final String dataTypeName) throws IOException {
 		try {
-			// TODO RPr: This is not yet MIME compatible
-			return getDelegate().getItemValueCustomDataBytes(itemName, dataTypeName);
+			byte[] ret = getDelegate().getItemValueCustomDataBytes(itemName, dataTypeName);
+			if (ret != null && ret.length != 0)
+				return ret;
+			MIMEEntity entity;
+			if ((entity = getMIMEEntity(itemName)) == null)
+				return ret;
+			Object o = Documents.getItemValueMIME(this, itemName, entity);
+			if (o != null && o.getClass().getName().equals("[B"))
+				ret = (byte[]) o;
+			return ret;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1200,8 +1230,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				return "";
 			Vector<?> v = getItemValue(name);
 			ret = "";
-			if (v.size() > 0)
-				ret = v.elementAt(0).toString();
+			if (v.size() > 0 && v.elementAt(0) instanceof String)
+				ret = (String) v.elementAt(0);
 			return ret;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -2214,13 +2244,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				}
 			}
 
-			if (returnItem && result != null) {
-				//				result = getDelegate().getFirstItem(itemName);	
-				//NTF if we do a .getFirstItem here and return an item that we MIMEBeaned, it will invalidate the MIME and
-				//convert back to a RichTextItem before the document is saved.
-				//returnItem *MUST* be treated as false if we've written a MIME attachment.
-				//If we didn't write a MIME attachment, then result is already assigned, and therefore we don't need to get it again.
-				return fromLotus(result, Item.SCHEMA, this);
+			if (returnItem) {
+				return getFirstItem(itemName, true);
 			} else {
 				return null;
 			}
@@ -2236,13 +2261,17 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * @see org.openntf.domino.Document#replaceItemValueCustomDataBytes(java.lang.String, java.lang.String, byte[])
 	 */
 	@Override
-	public Item replaceItemValueCustomDataBytes(final String itemName, final String dataTypeName, final byte[] byteArray)
-			throws IOException {
+	public Item replaceItemValueCustomDataBytes(final String itemName, String dataTypeName, final byte[] byteArray) throws IOException {
+		if (dataTypeName == null)
+			dataTypeName = "";	// Passing null as par 2 to Lotus method crashes the Domino server
 		markDirty();
+		// Again, the Notes API documentation is not very exact: It is stated there that "custom data cannot exceed 64k".
+		// That's correct. But it doesn't mean that 64k custom data are really accepted. More precisely:
+		int maxCDSBytes = 64000 - 1 - dataTypeName.length();	// custom data are stored as <lh(dataType)><dataType><byteArray>
 		try {
-			if (byteArray.length > 65535 && useMimeBeans()) {
+			if (byteArray.length > maxCDSBytes && useMimeBeans()) {
 				// Then fall back to the normal method, which will MIMEBean it
-				return this.replaceItemValue(itemName, byteArray);
+				return this.replaceItemValue(itemName, byteArray);	// TODO: What about dataTypeName?
 			} else {
 				return fromLotus(getDelegate().replaceItemValueCustomDataBytes(itemName, dataTypeName, byteArray), Item.SCHEMA, this);
 			}
@@ -2354,7 +2383,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	private int getLotusPayload(final Object o, final Class<?> c) {
 		if (c.isAssignableFrom(o.getClass())) {
 			if (o instanceof String) {
-				return ((String) o).length(); // TODO: LMBCS conversion must be done here/later
+				return ((String) o).length(); // LMBCS investigation will be done later (in general not necessary)
 			}
 			if (o instanceof lotus.domino.DateRange) {
 				return 16;
@@ -2364,6 +2393,69 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		}
 		throw new DataNotCompatibleException("Got a " + o.getClass() + " but " + c + " expected");
 	}
+
+	/**
+	 * returns the real LMBCS payload for a Vector of Strings
+	 * 
+	 * @param strVect
+	 * @return LMBCS payload
+	 */
+
+	//private int getLMBCSPayload(final Vector<Object> strVect) {
+	public int getLMBCSPayload(final Vector<Object> strVect) {
+		return LMBCSUtils.getPayload(strVect); // Third variant.
+		/*
+		 * First attempt: Using Notes Streams. Slow.
+		 */
+		//		int payload = 0;
+		//		File fAux = null;
+		//		Stream str = null;
+		//		try {
+		//			fAux = File.createTempFile("ntfdom", "aux.tmp");
+		//			str = getAncestorSession().createStream();
+		//			str.open(fAux.getPath(), "LMBCS");
+		//			for (Object o : strVect)
+		//				str.writeText((String) o);
+		//			payload = str.getBytes();
+		//		} catch (Exception e) {
+		//			log_.severe("Got Exception " + e.getClass().getName() + " during getLMBCSPayload: " + e.getMessage());
+		//			for (Object o : strVect)
+		//				payload += ((String) o).length();
+		//		} finally {
+		//			if (str != null)
+		//				str.close();
+		//			if (fAux != null)
+		//				fAux.delete();
+		//		}
+		/*
+		 * 	Second trial: Using com.ibm.icu.charset. Even slower!
+		 */
+		//		String toEncode;
+		//		if (strVect.size() == 1)
+		//			toEncode = (String) strVect.elementAt(0);
+		//		else {
+		//			StringBuffer sb = new StringBuffer(32768);
+		//			for (Object o : strVect)
+		//				sb.append((String) o);
+		//			toEncode = sb.toString();
+		//		}
+		//		CharsetEncoder cse = lGetEncoder();
+		//		try {
+		//			java.nio.ByteBuffer bbf = cse.encode(CharBuffer.wrap(toEncode));
+		//			payload = bbf.limit();
+		//		} catch (CharacterCodingException e) {
+		//			e.printStackTrace();
+		//		}
+		//		return payload;
+	}
+
+	//	private static Charset lLMBCSCharset = null;
+	//
+	//	private static synchronized CharsetEncoder lGetEncoder() {
+	//		if (lLMBCSCharset == null)
+	//			lLMBCSCharset = new CharsetProviderICU().charsetForName("LMBCS");
+	//		return lLMBCSCharset.newEncoder();
+	//	}
 
 	/**
 	 * replaceItemValueLotus writes itemFriendly values or a Collection of itemFriendly values. it throws a Domino32KLimitException if the
@@ -2429,16 +2521,21 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				}
 
 			} else if (value.getClass().isArray()) {
-				Object arr[] = (Object[]) value;
-				dominoFriendly = new Vector<Object>(arr.length);
-				for (Object valNode : arr) {
-					if (valNode != null) { // CHECKME: Should NULL values discarded?
-						if (valNode instanceof BigString)
+				int lh = Array.getLength(value);
+				if (lh > MAX_NATIVE_FIELD_SIZE) {				// Then skip making dominoFriendly if it's a primitive
+					String cn = value.getClass().getName();
+					if (cn.length() == 2)						// It is primitive
+						throw new Domino32KLimitException();
+				}
+				dominoFriendly = new Vector<Object>(lh);
+				for (int i = 0; i < lh; i++) {
+					Object o = Array.get(value, i);
+					if (o != null) { // CHECKME: Should NULL values be discarded?
+						if (o instanceof BigString)
 							isNonSummary = true;
-						dominoFriendly.add(toItemFriendly(valNode, this, recycleThis));
+						dominoFriendly.add(toItemFriendly(o, this, recycleThis));
 					}
 				}
-
 			} else {
 				// Scalar
 				dominoFriendly = new Vector<Object>(1);
@@ -2454,52 +2551,51 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 			Object firstElement = dominoFriendly.get(0);
 
-			int payload = 0;
+			int payloadOverhead = 0;
 
-			if (dominoFriendly.size() > 1) {
-				// value lists have an global overhead of 2 bytes (maybe the count of values) + 2 bytes for the length of value
-				payload = 2 + 2 * dominoFriendly.size(); //compute overhead first
+			if (dominoFriendly.size() > 1) {	// compute overhead first
+				// String lists have an global overhead of 2 bytes (maybe the count of values) + 2 bytes for the length of value
+				if (firstElement instanceof String)
+					payloadOverhead = 2 + 2 * dominoFriendly.size();
+				else
+					payloadOverhead = 4;
 			}
 
 			// Next step: Type checking + length computation
-			if (firstElement instanceof String) {
-				//	if (s.equals("\n") || s.equals("\r") || s.equals("\r\n")) {
-				//		// Domino can't read items, that contains only ONE @NewLine
-				//		// But I think it does not make sense to serialize here or throwing an exception.
-				//		throw new IllegalArgumentException();
-				//	}
+			//
+			// Remark: The special case of a String consisting of only ONE @NewLine (i.e.
+			// 		if (s.equals("\n") || s.equals("\r") || s.equals("\r\n"))
+			// where Domino is a bit ailing) won't be extra considered any longer.
+			// Neither serialization nor throwing an exception would be reasonable here.
 
-				for (Object o : dominoFriendly) {
-					payload += getLotusPayload(o, String.class);
-				}
-				if (payload > MAX_NATIVE_FIELD_SIZE / 2) {
-					// TODO: Compute REAL LMBCS payload by writing the string to a stream
-					//NTF when doing this, only bother if the standard length exceeds a certain threshold.
-				}
-
-			} else if (firstElement instanceof Number) {
-				for (Object o : dominoFriendly) {
-					payload += getLotusPayload(o, Number.class);
-				}
-
-			} else if (firstElement instanceof lotus.domino.DateTime) {
-				for (Object o : dominoFriendly) {
-					payload += getLotusPayload(o, lotus.domino.DateTime.class);
-				}
-
-			} else if (firstElement instanceof lotus.domino.DateRange) {
-				for (Object o : dominoFriendly) {
-					payload += getLotusPayload(o, lotus.domino.DateRange.class);
-				}
-				// Maybe this will be fixed in future
-				// throw new UnsupportedOperationException("The implementation of DateRange does not work properly. Avoid to use it");
-			} else {
+			int payload = payloadOverhead;
+			Class<?> firstElementClass;
+			if (firstElement instanceof String)
+				firstElementClass = String.class;
+			else if (firstElement instanceof Number)
+				firstElementClass = Number.class;
+			else if (firstElement instanceof lotus.domino.DateTime)
+				firstElementClass = lotus.domino.DateTime.class;
+			else if (firstElement instanceof lotus.domino.DateRange)
+				firstElementClass = lotus.domino.DateRange.class;
+			// Remark: Domino Java API doesn't accept any Vector of DateRanges (cf. DateRange.java), so the implementation
+			// here will work only with Vectors of size 1 (or Vectors of size >= 2000, when Mime Beaning is enabled). 
+			else
 				throw new DataNotCompatibleException(firstElement.getClass() + " is not a supported data type");
-			}
-
+			for (Object o : dominoFriendly)
+				payload += getLotusPayload(o, firstElementClass);
 			if (payload > MAX_NATIVE_FIELD_SIZE) {
 				// the datatype is OK, but there's no way to store the data in the Document
 				throw new Domino32KLimitException();
+			}
+			if (firstElementClass == String.class) { 	// Strings have to be further inspected, because
+														// each sign may demand up to 3 bytes in LMBCS
+				int calc = ((payload - payloadOverhead) * 3) + payloadOverhead;
+				if (calc >= MAX_NATIVE_FIELD_SIZE) {
+					payload = payloadOverhead + getLMBCSPayload(dominoFriendly);
+					if (payload > MAX_NATIVE_FIELD_SIZE)
+						throw new Domino32KLimitException();
+				}
 			}
 			if (payload > MAX_SUMMARY_FIELD_SIZE) {
 				isNonSummary = true;
@@ -2575,7 +2671,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		// TODO NTF make this optional
 		if (itemInfo_ == null) {
 			if (this.hasItem("$$ItemInfo")) {
-				if (this.getFirstItem("$$ItemInfo").getType() == Item.MIME_PART) {
+				if (this.getFirstItem("$$ItemInfo", true).getType() == Item.MIME_PART) {
 					// Then use the existing value
 					try {
 						itemInfo_ = (Map<String, Map<String, Serializable>>) Documents.restoreState(this, "$$ItemInfo");
@@ -3154,7 +3250,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		// NTF - Actually I have some good use cases for it! WHEEEEEE!!
 		for (String key : this.keySet()) {
 			if (hasItem(key) && value instanceof CharSequence) {
-				Item item = getFirstItem(key);
+				Item item = getFirstItem(key, true);
 				if (item instanceof RichTextItem) {
 					String text = ((RichTextItem) item).getText();
 					return text.contains((CharSequence) value);
@@ -3175,7 +3271,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public boolean containsValue(final Object value, final String[] itemnames) {
 		for (String key : itemnames) {
 			if (hasItem(key) && value instanceof CharSequence) {
-				Item item = getFirstItem(key);
+				Item item = getFirstItem(key, true);
 				if (item instanceof RichTextItem) {
 					String text = ((RichTextItem) item).getText();
 					return text.contains((CharSequence) value);

@@ -240,7 +240,7 @@ public enum Documents {
 	 * @throws Throwable
 	 *             the throwable
 	 */
-	public static void saveState(final Serializable object, final Document doc, final String itemName, final boolean compress,
+	public static void saveState(final Serializable object, final Document doc, final String itemName, boolean compress,
 			final Map<String, String> headers) throws Exception {
 		if (object == null) {
 			log_.log(Level.INFO, "Ignoring attempt to save MIMEBean value of null");
@@ -258,7 +258,14 @@ public enum Documents {
 		// } else {
 		// diagCount.put(diagKey, 1);
 		// }
-
+		if (compress) {	// Check whether it is already a zipped byte[]; if so, don't zip it once more
+			if (object.getClass().getName().equals("[B")) {	// Then it's a byte[]
+				byte[] b = (byte[]) object;
+				if (b.length < 50 ||	// ZIP header + footer take 28 bytes, so in this case zipping doesn't pay
+						(b[0] == (byte) GZIPInputStream.GZIP_MAGIC && b[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)))
+					compress = false;
+			}
+		}
 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 		ObjectOutputStream objectStream = compress ? new ObjectOutputStream(new GZIPOutputStream(byteStream)) : new ObjectOutputStream(
 				byteStream);
@@ -351,7 +358,7 @@ public enum Documents {
 			log_.log(Level.WARNING, "closeMIMEEntities returned false for item " + itemName + " on doc " + doc.getNoteID() + " in db "
 					+ doc.getAncestorDatabase().getApiPath());
 		}
-		if (!convertMime) {
+		if (convertMime) {
 			session.setConvertMime(true);
 		}
 	}
@@ -442,7 +449,7 @@ public enum Documents {
 
 		} catch (Throwable t) {
 			DominoUtils.handleException(new MIMEConversionException("Unable to getItemValueMIME for item name " + itemname
-					+ " on document " + noteID, t));
+					+ " on document " + noteID + " [Caught " + t.getClass().getName() + ": " + t.getMessage() + "]", t));
 		} finally {
 			if (convertMime) {
 				Session session = document.getAncestorSession();

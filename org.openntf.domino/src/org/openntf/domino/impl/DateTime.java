@@ -97,6 +97,8 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	}
 
 	private void initWorker(final lotus.domino.DateTime worker) throws NotesException {
+		if (date_ == null)
+			return;
 		worker.setLocalTime(date_);
 		if (!isTimeOnly_ && !isDateOnly_)
 			worker.convertToZone(notesZone_, dst_);
@@ -248,9 +250,16 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	 *            the date
 	 */
 	private void initialize(final java.util.Date date) {
-		date_ = new Date(date.getTime());	//NTF copy to keep immutable
-		dst_ = false;
-		notesZone_ = 0;
+		try {
+			lotus.domino.DateTime worker = getWorker();
+			worker.setLocalTime(date);
+			workDone(worker, true);
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
+		//	date_ = new Date(date.getTime());	//NTF copy to keep immutable
+		//		dst_ = false;
+		//		notesZone_ = 0;
 	}
 
 	/**

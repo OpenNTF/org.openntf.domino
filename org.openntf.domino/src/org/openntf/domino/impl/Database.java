@@ -1037,7 +1037,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().getDocumentByUNID(unid), Document.SCHEMA, this);
 		} catch (NotesException e) {
-			// DominoUtils.handleException(e);
+			DominoUtils.handleException(e);
 			return null;
 
 		}

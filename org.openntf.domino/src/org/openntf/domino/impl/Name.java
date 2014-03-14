@@ -46,9 +46,9 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	/**
 	 * * Zero-Argument Constructor
 	 */
-	public Name() {
-		super(null, null);
-	}
+	//	public Name() {	// this one doesn't work (runs into NullPointerExc.); see after writeExternal
+	//		super(null, null);
+	//	}
 
 	/**
 	 * Default Constructor.
@@ -952,6 +952,14 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	public void writeExternal(final ObjectOutput out) throws IOException {
 		out.writeBoolean(this.isHierarchical());
 		out.writeUTF((Strings.isBlankString(this.getCanonical())) ? this.getAddr822Full() : this.getCanonical());
+	}
+
+	/*
+	 * Deprecated, but needed for Externalization
+	 */
+	@Deprecated
+	public Name() {
+		super(null, Factory.getSession(), null, 0, NOTES_NAME);
 	}
 
 	@SuppressWarnings("unchecked")
