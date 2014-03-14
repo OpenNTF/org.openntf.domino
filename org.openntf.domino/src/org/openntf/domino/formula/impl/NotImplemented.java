@@ -349,4 +349,8 @@ public class NotImplemented extends AtFunction {
 		return super.toString() + " //" + comment;
 	}
 
+	public boolean checkParamCount(final int i) {
+		return true;
+	}
+
 }

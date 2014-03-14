@@ -21,6 +21,7 @@ import org.openntf.domino.formula.AtFormulaParser;
 import org.openntf.domino.formula.AtFunction;
 import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.ParseException;
 import org.openntf.domino.formula.ValueHolder;
 
 public class ASTFunction extends SimpleNode {
@@ -42,10 +43,12 @@ public class ASTFunction extends SimpleNode {
 	}
 
 	@Override
-	public void jjtClose() {
+	public void jjtClose() throws ParseException {
 		super.jjtClose();
 		if (function != null) {
-
+			if (!function.checkParamCount(jjtGetNumChildren())) {
+				throw new ParseException(parser, "parameter count mismatch");
+			}
 		}
 	}
 

@@ -181,7 +181,11 @@ public class Operator extends AtFunction {
 		case NOT:
 			ret.grow(values.size());
 			for (double[] value : values) {
-				ret.add(((int) value[0]) == 0);
+				if (Double.compare(value[0], 0) == 0) {
+					ret.add(1);
+				} else {
+					ret.add(0);
+				}
 			}
 			return ret;
 		case CMP_EQ:
@@ -217,42 +221,61 @@ public class Operator extends AtFunction {
 		return 0;
 	}
 
+	private int compareString(final Collection<String[]> values, final int ref) {
+		// TODO: Check this for numeric stability!
+		for (String[] value : values) {
+			if (value[0].compareTo(value[1]) == ref) {
+				return 1;
+			}
+		}
+		return 0;
+	}
+
 	private ValueHolder evaluateString(final FormulaContext ctx, final ValueHolder[] params) {
 		ValueHolder ret = new ValueHolder();
+		Collection<String[]> values = new ParameterCollectionObject<String>(params, String.class, isPermutative);
 
 		switch (operation) {
 		case ADD:
-			Collection<String[]> values = new ParameterCollectionObject<String>(params, String.class, isPermutative);
 			ret.grow(values.size());
 			for (String[] value : values) {
 				ret.add(value[0].concat(value[1]));
 			}
 			return ret;
+
+		case CMP_EQ:
+			return new ValueHolder(compareString(values, 0));
+
+		case CMP_GT:
+			return new ValueHolder(compareString(values, 1));
+
+		case CMP_GTE:
+			return new ValueHolder(compareString(values, 1) == 1 ? 1 : compareString(values, 0));
+
+		case CMP_LT:
+			return new ValueHolder(compareString(values, -1));
+
+		case CMP_LTE:
+			return new ValueHolder(compareString(values, -1) == 1 ? 1 : compareString(values, 0));
+
+		case CMP_NE:
+			return new ValueHolder(compareString(values, -1) == 1 ? 1 : compareString(values, 1));
+
+			// these are not supported on string
 		case DIV:
 		case MUL:
 		case SUB:
-			break;
-		case CMP_EQ:
-			break;
-		case CMP_GT:
-			break;
-		case CMP_GTE:
-			break;
-		case CMP_LT:
-			break;
-		case CMP_LTE:
-			break;
-		case CMP_NE:
-			break;
 		case NEGATIVE:
-			break;
 		case NOT:
-			break;
-		default:
 			break;
 		}
 
 		throw new UnsupportedOperationException(operation + " not supported for Strings");
+	}
+
+	public boolean checkParamCount(final int i) {
+		// ensured by parser
+		return true;
 	}
 
 }

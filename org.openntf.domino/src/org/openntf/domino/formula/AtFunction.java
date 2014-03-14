@@ -6,4 +6,5 @@ public interface AtFunction {
 
 	public String getImage();
 
+	public boolean checkParamCount(int i);
 }

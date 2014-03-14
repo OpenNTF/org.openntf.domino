@@ -20,6 +20,7 @@ package org.openntf.domino.formula.ast;
 import org.openntf.domino.formula.AtFormulaParser;
 import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.ParseException;
 import org.openntf.domino.formula.Token;
 import org.openntf.domino.formula.ValueHolder;
 
@@ -51,7 +52,7 @@ public abstract class SimpleNode implements Node {
 	public void jjtOpen() {
 	}
 
-	public void jjtClose() {
+	public void jjtClose() throws ParseException {
 	}
 
 	public void jjtSetParent(final Node n) {

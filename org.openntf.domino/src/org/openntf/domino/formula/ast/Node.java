@@ -20,6 +20,7 @@ package org.openntf.domino.formula.ast;
 
 import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.ParseException;
 import org.openntf.domino.formula.ValueHolder;
 
 /* All AST nodes must implement this interface.  It provides basic
@@ -35,8 +36,10 @@ public interface Node {
 
 	/**
 	 * This method is called after all the child nodes have been added.
+	 * 
+	 * @throws ParseException
 	 */
-	public void jjtClose();
+	public void jjtClose() throws ParseException;
 
 	/**
 	 * This pair of methods are used to inform the node of its parent.

@@ -27,7 +27,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -63,13 +62,14 @@ import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.helpers.Formula;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.types.BigString;
+import org.openntf.domino.types.CaseInsensitiveHashSet;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.utils.Documents;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
-import org.openntf.domino.utils.TypeUtils;
 import org.openntf.domino.utils.LMBCSUtils;
+import org.openntf.domino.utils.TypeUtils;
 
 import com.ibm.commons.util.io.json.JsonException;
 import com.ibm.commons.util.io.json.util.JsonWriter;
@@ -373,7 +373,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Item appendItemValue(final String name, final Object value) {
-		markDirty();
 		Item result = null;
 		try {
 			if (!hasItem(name)) {
@@ -395,6 +394,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						}
 					} else {
 						result = fromLotus(getDelegate().appendItemValue(name, domNode), Item.SCHEMA, this);
+						markDirty(name, true);
 					}
 				} finally {
 					s_recycle(recycleThis);
@@ -402,6 +402,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			} else {
 				result = appendItemValue(name);
 			}
+
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -415,12 +416,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public void attachVCard(final lotus.domino.Base document) {
-		markDirty();
-		try {
-			getDelegate().attachVCard(toLotus(document));
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
+		attachVCard(document, null);
 	}
 
 	/*
@@ -430,6 +426,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public void attachVCard(final lotus.domino.Base document, final String charset) {
+		fieldNames_ = null;
 		markDirty();
 		try {
 			getDelegate().attachVCard(toLotus(document), charset);
@@ -461,6 +458,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public boolean closeMIMEEntities(final boolean saveChanges) {
 		try {
+			// TODO: $Mime-xxx Fields to fieldNames_ List
+			markDirty("$NoteHasNativeMIME", true);
+			markDirty("MIME_Version", true);
+			markDirty("$MIMETrack", true); // TODO: Clear this field ?
 			return getDelegate().closeMIMEEntities(saveChanges);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -490,6 +491,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public boolean computeWithForm(final boolean doDataTypes, final boolean raiseError) {
+		fieldNames_ = null;
 		markDirty();
 		try {
 			return getDelegate().computeWithForm(doDataTypes, raiseError);
@@ -550,6 +552,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public void copyAllItems(final lotus.domino.Document doc, final boolean replace) {
 		try {
 			getDelegate().copyAllItems(toLotus(doc), replace);
+			fieldNames_ = null;
 			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -563,15 +566,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public Item copyItem(final lotus.domino.Item item) {
-		// TODO - NTF markDirty()? Yes. It's necessary.
-		try {
-			Item ret = fromLotus(getDelegate().copyItem(toLotus(item)), Item.SCHEMA, this);
-			markDirty();
-			return ret;
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+		return copyItem(item, null);
 	}
 
 	/*
@@ -581,10 +576,11 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public Item copyItem(final lotus.domino.Item item, final String newName) {
-		// TODO - NTF markDirty()?
+		// TODO - NTF markDirty()? Yes. It's necessary.
+		// TODO RPr: ConvertMime?
 		try {
 			Item ret = fromLotus(getDelegate().copyItem(toLotus(item), newName), Item.SCHEMA, this);
-			markDirty();
+			markDirty(ret.getName(), true);
 			return ret;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -599,7 +595,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public org.openntf.domino.Document copyToDatabase(final lotus.domino.Database db) {
-		// TODO - NTF markDirty()?
+		// DONE - NTF markDirty() - RPr: no does not make the document dirty?
 		try {
 			return fromLotus(getDelegate().copyToDatabase(toLotus(db)), Document.SCHEMA, getParentDatabase());
 		} catch (NotesException e) {
@@ -615,13 +611,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public MIMEEntity createMIMEEntity() {
-		markDirty();
-		try {
-			return fromLotus(getDelegate().createMIMEEntity(), MIMEEntity.SCHEMA, this);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return null;
+		return createMIMEEntity("Body");
 	}
 
 	//RPr: currently not used. So I commented this out
@@ -641,14 +631,14 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		try {
 			try {
 				lotus.domino.MIMEEntity me = getDelegate().createMIMEEntity(itemName);
-				markDirty();
+				markDirty(itemName, true);
 				MIMEEntity wrapped = fromLotus(me, MIMEEntity.SCHEMA, this);
 				// entityCache_.put(itemName, wrapped);
 				return wrapped;
 			} catch (NotesException alreadyThere) {
 				removeItem(itemName);
 				lotus.domino.MIMEEntity me = getDelegate().createMIMEEntity(itemName);
-				markDirty();
+				markDirty(itemName, true);
 				MIMEEntity wrapped = fromLotus(me, MIMEEntity.SCHEMA, this);
 				// entityCache_.put(itemName, wrapped);
 				return wrapped;
@@ -683,13 +673,14 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public RichTextItem createRichTextItem(final String name) {
-		markDirty();
+		RichTextItem ret = null;
 		try {
-			return fromLotus(getDelegate().createRichTextItem(name), RichTextItem.SCHEMA, this);
+			ret = fromLotus(getDelegate().createRichTextItem(name), RichTextItem.SCHEMA, this);
+			markDirty(name, true);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
-		return null;
+		return ret;
 	}
 
 	/*
@@ -699,9 +690,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public void encrypt() {
-		markDirty();
 		try {
 			getDelegate().encrypt();
+			fieldNames_ = null;
+			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1919,9 +1911,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public void makeResponse(final lotus.domino.Document doc) {
-		markDirty();
 		try {
 			getDelegate().makeResponse(toLotus(doc));
+			markDirty("$ref", true);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2071,7 +2063,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public void removeItem(final String name) {
-		markDirty();
+		markDirty(name, false);
 		keySet();
 		fieldNames_.remove(name);
 		try {
@@ -2175,16 +2167,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * otherwise, data is serialized by lotus.domino.Docmuemt.replaceItemValueCustomData
 	 */
 	public Item replaceItemValueCustomData(final String itemName, final String dataTypeName, final Object value, final boolean returnItem) {
-		markDirty();
-		if (!keySet().contains(itemName)) {
-			fieldNames_.add(itemName);
-		}
 		lotus.domino.Item result = null;
 
 		try {
 			if (!"mime-bean".equalsIgnoreCase(dataTypeName)) {
 				// if data-type is != "mime-bean" the object is written in native mode.
 				result = getDelegate().replaceItemValueCustomData(itemName, dataTypeName, value);
+				markDirty(itemName, true);
 			} else if (value instanceof Serializable) {
 
 				Documents.saveState((Serializable) value, this, itemName);
@@ -2264,16 +2253,18 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public Item replaceItemValueCustomDataBytes(final String itemName, String dataTypeName, final byte[] byteArray) throws IOException {
 		if (dataTypeName == null)
 			dataTypeName = "";	// Passing null as par 2 to Lotus method crashes the Domino server
-		markDirty();
+
 		// Again, the Notes API documentation is not very exact: It is stated there that "custom data cannot exceed 64k".
 		// That's correct. But it doesn't mean that 64k custom data are really accepted. More precisely:
 		int maxCDSBytes = 64000 - 1 - dataTypeName.length();	// custom data are stored as <lh(dataType)><dataType><byteArray>
 		try {
 			if (byteArray.length > maxCDSBytes && useMimeBeans()) {
 				// Then fall back to the normal method, which will MIMEBean it
-				return this.replaceItemValue(itemName, byteArray);	// TODO: What about dataTypeName?
+				return this.replaceItemValueCustomData(itemName, "mime-bean", itemName, true); // TODO: What about dataTypeName?
 			} else {
-				return fromLotus(getDelegate().replaceItemValueCustomDataBytes(itemName, dataTypeName, byteArray), Item.SCHEMA, this);
+				Item result = fromLotus(getDelegate().replaceItemValueCustomDataBytes(itemName, dataTypeName, byteArray), Item.SCHEMA, this);
+				markDirty(itemName, true);
+				return result;
 			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -2468,10 +2459,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	public Item replaceItemValueLotus(final String itemName, Object value, final Boolean isSummary, final boolean returnItem)
 			throws Domino32KLimitException {
-		markDirty();
-		if (!keySet().contains(itemName)) {
-			fieldNames_.add(itemName);
-		}
+
 		// writing a value of "Null" leads to a remove of the item if configured in SESSION
 		if (value == null || value instanceof Null) {
 			if (hasItem(itemName)) {
@@ -2500,6 +2488,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					getDelegate().closeMIMEEntities(true, itemName);
 				}
 				result = getDelegate().replaceItemValue(itemName, toDominoFriendly(value, this, recycleThis));
+				markDirty(itemName, true);
 				if (returnItem) {
 					return fromLotus(result, Item.SCHEMA, this);
 				} else {
@@ -2612,6 +2601,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			} else {
 				result = getDelegate().replaceItemValue(itemName, dominoFriendly);
 			}
+			markDirty(itemName, true);
 			if (isSummary == null) {
 				// Auto detect
 				if (isNonSummary)
@@ -2938,7 +2928,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
-		markDirty();
+		markDirty("SecretEncryptionKeys", true);
 	}
 
 	/*
@@ -3050,6 +3040,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
+		fieldNames_ = null;
+		// TODO RPr: is it enough if we add $Signatue?
 		markDirty();
 	}
 
@@ -3076,6 +3068,16 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				isQueued_ = true;
 			}
 		}
+	}
+
+	public void markDirty(final String fieldName, final boolean itemWritten) {
+		markDirty();
+		if (itemWritten) {
+			keySetInt().add(fieldName);
+		} else {
+			keySetInt().remove(fieldName);
+		}
+
 	}
 
 	private boolean queueRemove() {
@@ -3240,6 +3242,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	@Override
 	public boolean containsKey(final Object key) {
+		// TODO: use keySet()?
 		return this.hasItem(key == null ? null : String.valueOf(key));
 	}
 
@@ -3403,17 +3406,21 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	private Set<String> fieldNames_;
 
-	@Override
-	public Set<String> keySet() {
+	protected Set<String> keySetInt() {
 		if (fieldNames_ == null) {
-			fieldNames_ = new LinkedHashSet<String>();
+			fieldNames_ = new CaseInsensitiveHashSet();
 			ItemVector items = (ItemVector) this.getItems();
 			String[] names = items.getNames();
 			for (int i = 0; i < names.length; i++) {
 				fieldNames_.add(names[i]);
 			}
 		}
-		return Collections.unmodifiableSet(fieldNames_);
+		return fieldNames_;
+	}
+
+	@Override
+	public Set<String> keySet() {
+		return Collections.unmodifiableSet(keySetInt());
 	}
 
 	@Override

@@ -19,6 +19,8 @@ public class AtFunctionGeneric extends AtFunction {
 	protected int paramCount;
 	protected boolean useContext;
 	protected Class<?> varArgClass;
+	protected int minArgs = -1;
+	protected int maxArgs = -1;
 
 	public AtFunctionGeneric(final String image, final Method method) {
 		super(image);
@@ -33,6 +35,12 @@ public class AtFunctionGeneric extends AtFunction {
 				useContext = true;
 				paramCount--;
 			}
+		}
+
+		ParamCount pc = method.getAnnotation(ParamCount.class);
+		if (pc != null) {
+			minArgs = pc.value()[0];
+			maxArgs = pc.value()[pc.value().length - 1];
 		}
 	}
 
@@ -61,6 +69,14 @@ public class AtFunctionGeneric extends AtFunction {
 	@Override
 	protected String getPrefix() {
 		return method.getDeclaringClass().getSimpleName();
+	}
+
+	public boolean checkParamCount(final int i) {
+		if (minArgs != -1 && i < minArgs)
+			return false;
+		if (maxArgs != -1 && i > maxArgs)
+			return false;
+		return true;
 	}
 
 }
