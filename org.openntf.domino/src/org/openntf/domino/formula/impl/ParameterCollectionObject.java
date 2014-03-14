@@ -35,12 +35,15 @@ public class ParameterCollectionObject<T> extends ParameterCollectionAbstract<T[
 		return new ParameterIterator();
 	}
 
+	@SuppressWarnings("unchecked")
 	protected class ParameterIterator extends ParameterIteratorAbstract {
-		@SuppressWarnings("unchecked")
-		T[] ret = (T[]) Array.newInstance(clazz, params.length);
 
 		@Override
 		protected T[] getNext() {
+			if (params == null) {
+				return null;
+			}
+			T[] ret = (T[]) Array.newInstance(clazz, params.length);
 			if (clazz.equals(String.class)) {
 				for (int i = 0; i < ret.length; i++) {
 					ret[i] = (T) params[i].getText(getIndex(i));

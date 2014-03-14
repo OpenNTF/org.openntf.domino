@@ -30,6 +30,10 @@ public abstract class ParameterCollectionAbstract<T> extends AbstractCollection<
 	public ParameterCollectionAbstract(final ValueHolder[] params, final boolean permutative) {
 		this.params = params;
 		this.permutative = permutative;
+		if (params == null) {
+			this.size = 1; // we have at least ONE element
+			return;
+		}
 		this.size = params[0].size();
 		if (permutative) {
 			for (int i = 1; i < params.length; i++) {

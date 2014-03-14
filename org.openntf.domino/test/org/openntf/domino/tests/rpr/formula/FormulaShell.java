@@ -2,26 +2,25 @@
 package org.openntf.domino.tests.rpr.formula;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import jline.ArgumentCompletor;
 import jline.Completor;
 import jline.ConsoleReader;
 import jline.SimpleCompletor;
 
-import lotus.domino.Session;
-
+import org.openntf.domino.Database;
+import org.openntf.domino.Document;
 import org.openntf.domino.formula.AtFormulaParser;
 import org.openntf.domino.formula.AtFunction;
 import org.openntf.domino.formula.AtFunctionFactory;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ast.SimpleNode;
 import org.openntf.domino.formula.impl.NotImplemented;
-import org.openntf.domino.impl.Base;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;
 
@@ -45,7 +44,7 @@ public class FormulaShell implements Runnable {
 
 			ConsoleReader reader = new ConsoleReader();
 			reader.setBellEnabled(false);
-			reader.setDebug(new PrintWriter(new FileWriter("writer.debug", true)));
+			//reader.setDebug(new PrintWriter(new FileWriter("writer.debug", true)));
 
 			List<Completor> completors = new LinkedList<Completor>();
 
@@ -71,7 +70,8 @@ public class FormulaShell implements Runnable {
 			reader.getHistory().setHistoryFile(historyFile);
 
 			// now start the main loop
-			System.out.println("This is the formula shell. Quit with 'q' ");
+			System.out.println("This is the formula shell. Quit with 'q' !!! If you get a NullpointerException, terminate your server!");
+			System.out.println("Session.convertMime is " + Factory.getSession().isConvertMime());
 			while ((line = reader.readLine("$> ")) != null) {
 				execute(line);
 				if (line.equalsIgnoreCase("q")) {
@@ -87,6 +87,22 @@ public class FormulaShell implements Runnable {
 		System.out.println(Factory.dumpCounters(true));
 	}
 
+	private Document getDemoDoc() {
+		Database db = Factory.getSession().getDatabase("", "log.nsf");
+		Document doc = db.createDocument();
+		doc.replaceItemValue("text1", "This is a test string");
+		doc.replaceItemValue("text2", new String[] { "1", "2", "3" });
+
+		doc.replaceItemValue("int1", new int[] { 1 });
+		doc.replaceItemValue("int2", new int[] { 1, 2, 3 });
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("K1", "v1");
+		map.put("K2", "v2");
+		doc.replaceItemValue("mime1", map);
+		return doc;
+
+	}
+
 	private void execute(final String line) {
 		// TODO Auto-generated method stub
 
@@ -94,10 +110,14 @@ public class FormulaShell implements Runnable {
 		long time = System.currentTimeMillis();
 		AtFormulaParser parser = AtFormulaParser.getInstance();
 
+		Document ntfDoc = getDemoDoc();
+		Document lotusDoc = getDemoDoc();
 		try {
 			SimpleNode n = parser.Parse(line);
-			FormulaContext ctx = new FormulaContext(null, parser.getFormatter());
+			FormulaContext ctx = new FormulaContext(ntfDoc, parser.getFormatter());
+			System.out.println(" Vorher " + ntfDoc.hasItem("mime1"));
 			ntf = n.evaluate(ctx);
+			System.out.println(" Nachher " + ntfDoc.get("mime1"));
 
 			System.out.println("NTF:\t" + ntf);
 		} catch (Exception e) {
@@ -108,8 +128,7 @@ public class FormulaShell implements Runnable {
 		List<Object> lotus = null;
 		try {
 			// We have to work on the lotus session!
-			Session sess = Base.toLotus(Factory.getSession());
-			lotus = sess.evaluate(line);
+			lotus = Factory.getSession().evaluate(line, lotusDoc);
 			System.out.println("LOTUS:\t" + lotus);
 
 			boolean differs = false;
@@ -141,6 +160,9 @@ public class FormulaShell implements Runnable {
 			} else {
 				System.out.println("Both are equal");
 			}
+
+			System.out.println(ntfDoc.entrySet());
+			System.out.println(lotusDoc.entrySet());
 		} catch (Exception e) {
 			System.out.println("DOMINO failed!");
 			e.printStackTrace();

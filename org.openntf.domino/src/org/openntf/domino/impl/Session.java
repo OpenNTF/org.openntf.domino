@@ -545,13 +545,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	@Override
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(final String formula) {
-		try {
-			return wrapColumnValues(getDelegate().evaluate(formula), this);
-		} catch (Exception e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return evaluate(formula, null);
 	}
 
 	/*
