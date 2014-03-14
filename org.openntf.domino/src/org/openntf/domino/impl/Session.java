@@ -187,6 +187,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	 *            the session
 	 */
 	private void initialize(final lotus.domino.Session session) {
+		setFixEnable(Fixes.DOC_UNID_NULLS, true);
 		try {
 			formatter_ = new DominoFormatter(session.getInternational());
 		} catch (NotesException e) {
