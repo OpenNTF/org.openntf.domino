@@ -4,6 +4,7 @@ import java.util.AbstractSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Vector;
 
 import org.openntf.domino.Document;
 
@@ -88,6 +89,49 @@ public class DocumentEntrySet extends AbstractSet<Entry<String, Object>> {
 	@Override
 	public int size() {
 		return doc.size();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((doc == null) ? 0 : doc.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@SuppressWarnings("rawtypes")
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof DocumentEntrySet)) {
+			return false;
+		}
+		DocumentEntrySet other = (DocumentEntrySet) obj;
+		Set<String> myKeySet = doc.keySet();
+		Object otherKeySet = other.doc.keySet();
+		if (!myKeySet.equals(otherKeySet))
+			return false;
+		for (String key : myKeySet) {
+			Vector myVal = doc.getItemValue(key);
+			Vector otherVal = other.doc.getItemValue(key);
+			if (myVal == null && otherVal == null) {
+				// nop
+			} else if (myVal == null || otherVal == null) {
+				return false;
+			} else if (!myVal.equals(otherVal)) {
+				return false;
+			}
+		}
+		return true;
+
 	}
 
 }

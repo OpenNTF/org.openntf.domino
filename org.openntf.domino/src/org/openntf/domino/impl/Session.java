@@ -529,7 +529,12 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(final String formula, final lotus.domino.Document doc) {
 		try {
-			// TODO: IF we are planning to cache variables in "doc" we must invalidate the cache!
+			if (doc instanceof Document) {
+				String lf = formula.toLowerCase();
+				if (lf.contains("field ") || lf.contains("@setfield")) {
+					((Document) doc).markDirty(); // the document MAY get dirty by evaluate... 
+				}
+			}
 			return wrapColumnValues(getDelegate().evaluate(formula, toLotus(doc)), this);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);

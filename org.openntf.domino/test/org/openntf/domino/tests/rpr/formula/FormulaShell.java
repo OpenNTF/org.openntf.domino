@@ -4,9 +4,13 @@ package org.openntf.domino.tests.rpr.formula;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.Vector;
 
 import jline.ArgumentCompletor;
 import jline.Completor;
@@ -115,9 +119,7 @@ public class FormulaShell implements Runnable {
 		try {
 			SimpleNode n = parser.Parse(line);
 			FormulaContext ctx = new FormulaContext(ntfDoc, parser.getFormatter());
-			System.out.println(" Vorher " + ntfDoc.hasItem("mime1"));
 			ntf = n.evaluate(ctx);
-			System.out.println(" Nachher " + ntfDoc.get("mime1"));
 
 			System.out.println("NTF:\t" + ntf);
 		} catch (Exception e) {
@@ -156,13 +158,32 @@ public class FormulaShell implements Runnable {
 				differs = true;
 			}
 			if (differs) {
-				System.out.println("!!! Different");
+				System.out.println("Formula Results are different!");
 			} else {
-				System.out.println("Both are equal");
+				System.out.println("Formula Results are equal :) :)");
 			}
+			if (ntfDoc.entrySet().equals(lotusDoc.entrySet())) {
+				System.out.println("Documents are equal :) :)");
+				for (Entry<String, Object> entry : ntfDoc.entrySet()) {
+					System.out.println("\t" + entry);
+				}
+			} else {
+				System.out.println("Documents are different! NTF Document vs LotusDocument:");
+				Set<String> keys = new HashSet<String>();
+				keys.addAll(ntfDoc.keySet());
+				keys.addAll(lotusDoc.keySet());
+				for (String key : keys) {
+					Vector ntfVal = ntfDoc.getItemValue(key);
+					Vector lotusVal = lotusDoc.getItemValue(key);
+					if (ntfVal == null && lotusVal == null) {
+						// equal
+					} else if (ntfVal == null || lotusVal == null || !ntfVal.equals(lotusVal)) {
+						System.out.println(key + "\t" + ntfVal + "\t <> " + lotusVal);
+					}
 
-			System.out.println(ntfDoc.entrySet());
-			System.out.println(lotusDoc.entrySet());
+				}
+
+			}
 		} catch (Exception e) {
 			System.out.println("DOMINO failed!");
 			e.printStackTrace();

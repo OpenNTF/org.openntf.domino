@@ -427,7 +427,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public void attachVCard(final lotus.domino.Base document, final String charset) {
-		fieldNames_ = null;
 		markDirty();
 		try {
 			getDelegate().attachVCard(toLotus(document), charset);
@@ -443,12 +442,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public boolean closeMIMEEntities() {
-		try {
-			return getDelegate().closeMIMEEntities();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return false;
+		return closeMIMEEntities(false);
 	}
 
 	/*
@@ -458,16 +452,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public boolean closeMIMEEntities(final boolean saveChanges) {
-		try {
-			// TODO: $Mime-xxx Fields to fieldNames_ List
-			markDirty("$NoteHasNativeMIME", true);
-			markDirty("MIME_Version", true);
-			markDirty("$MIMETrack", true); // TODO: Clear this field ?
-			return getDelegate().closeMIMEEntities(saveChanges);
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return false;
+
+		return closeMIMEEntities(saveChanges, null);
 	}
 
 	/*
@@ -478,7 +464,33 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public boolean closeMIMEEntities(final boolean saveChanges, final String entityItemName) {
 		try {
-			return getDelegate().closeMIMEEntities(saveChanges, entityItemName);
+			// TODO: $Mime-xxx Fields to fieldNames_ List
+			if (saveChanges) {
+				if (entityItemName == null) {
+					markDirty();
+				} else {
+					markDirty("$NoteHasNativeMIME", true);
+					markDirty("MIME_Version", true);
+					markDirty("$MIMETrack", true); // TODO: Clear this field ?
+					markDirty(entityItemName, true);
+				}
+			}
+			boolean ret = getDelegate().closeMIMEEntities(saveChanges, entityItemName);
+			if (saveChanges) {
+
+				// This item is for debugging only, so keep 5-10 items in that list
+				// http://www-01.ibm.com/support/docview.wss?uid=swg27002572
+
+				Vector mt = getItemValue("$MIMETrack");
+				if (mt.size() > 10) {
+					replaceItemValue("$MIMETrack", mt.subList(mt.size() - 10, mt.size()));
+				}
+				// Other ideas: 1) Delete it completely, 2) write dummy entry
+				// removeItem("$MIMETrack");
+				// replaceItemValue("$MIMETrack", "Itemize by OpenNTF-Domino API on " + getAncestorSession().getServerName() + " at "
+				//		+ new Date());
+			}
+			return ret;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -492,7 +504,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public boolean computeWithForm(final boolean doDataTypes, final boolean raiseError) {
-		fieldNames_ = null;
 		markDirty();
 		try {
 			return getDelegate().computeWithForm(doDataTypes, raiseError);
@@ -553,7 +564,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public void copyAllItems(final lotus.domino.Document doc, final boolean replace) {
 		try {
 			getDelegate().copyAllItems(toLotus(doc), replace);
-			fieldNames_ = null;
 			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -693,7 +703,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public void encrypt() {
 		try {
 			getDelegate().encrypt();
-			fieldNames_ = null;
 			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -3049,7 +3058,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
-		fieldNames_ = null;
 		// TODO RPr: is it enough if we add $Signatue?
 		markDirty();
 	}
@@ -3069,6 +3077,12 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	public void markDirty() {
+		// When calling this, we have modified a field, but we do not know which one!
+		fieldNames_ = null;
+		markDirtyInt();
+	}
+
+	protected void markDirtyInt() {
 		isDirty_ = true;
 		if (!isQueued_) {
 			DatabaseTransaction txn = getParentDatabase().getTransaction();
@@ -3080,7 +3094,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	public void markDirty(final String fieldName, final boolean itemWritten) {
-		markDirty();
+		markDirtyInt();
 		if (itemWritten) {
 			keySetInt().add(fieldName);
 		} else {
