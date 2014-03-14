@@ -15,7 +15,7 @@
  * implied. See the License for the specific language governing 
  * permissions and limitations under the License.
  */
-package org.openntf.domino.formula.parse;
+package org.openntf.domino.formula;
 
 /**
  * This exception is thrown when parse errors are encountered. You can explicitly create objects of this exception type by calling the
@@ -202,4 +202,4 @@ public class ParseException extends Exception {
 	}
 
 }
-/* JavaCC - OriginalChecksum=265394e7fcefbbbc0f63d53c176638b5 (do not edit this line) */
+/* JavaCC - OriginalChecksum=4ee63959447c8721a901900519b21945 (do not edit this line) */

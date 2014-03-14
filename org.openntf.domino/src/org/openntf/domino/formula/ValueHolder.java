@@ -1,4 +1,4 @@
-package org.openntf.domino.tests.rpr.formula.eval;
+package org.openntf.domino.formula;
 
 import java.lang.reflect.Array;
 import java.util.AbstractList;

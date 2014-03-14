@@ -1,4 +1,4 @@
-package org.openntf.domino.tests.rpr.formula.eval;
+package org.openntf.domino.formula;
 
 import org.openntf.domino.DateTime;
 
