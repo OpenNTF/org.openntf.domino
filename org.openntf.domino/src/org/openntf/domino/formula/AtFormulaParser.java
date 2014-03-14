@@ -51,6 +51,12 @@ public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConst
         customFunc.put(funcName.toLowerCase(), func);
   }
 
+  final public SimpleNode Parse(final String formula) throws ParseException {
+        java.io.StringReader sr = new java.io.StringReader(formula);
+        ReInit(sr);
+        return Parse();
+  }
+
   final public SimpleNode Parse() throws ParseException {
  /*@bgen(jjtree) AtDo */
   ASTAtDo jjtn000 = new ASTAtDo(this, JJTATDO);

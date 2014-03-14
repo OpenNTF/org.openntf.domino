@@ -10,6 +10,17 @@ import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.LMBCSUtils;
 
+/**
+ * This test checks if the LMBSUtils works correctly. It computes LMBCS payload by <br>
+ * a) writing to a temp file and checking it's length (horrible slow)<br>
+ * b) using LMBSUtils.getPayload()
+ * 
+ * The result is compared. At the end of the test you should see "All payloads are equal". Then you know that the LMBCUtils are working
+ * correctly
+ * 
+ * @author Manfred Steinsiek, Foconis AG
+ * 
+ */
 public class LMBCSPayload implements Runnable {
 	public static void main(final String[] args) {
 		DominoThread thread = new DominoThread(new LMBCSPayload(), "My thread");

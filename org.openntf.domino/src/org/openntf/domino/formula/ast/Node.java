@@ -38,6 +38,9 @@ public interface Node {
 	 * This method is called after all the child nodes have been added.
 	 * 
 	 * @throws ParseException
+	 *             throws parseException e.g. on parameter mismatch <br>
+	 *             <b>NOTE:</b> After a javacc recompile you must add the <code>throws</code> declaration manually in
+	 *             "JJTAtFormulaParserState"
 	 */
 	public void jjtClose() throws ParseException;
 

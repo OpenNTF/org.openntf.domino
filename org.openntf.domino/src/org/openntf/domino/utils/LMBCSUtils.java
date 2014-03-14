@@ -1,10 +1,33 @@
+/*
+ * © Copyright FOCONIS AG, 2014
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ * 
+ */
 package org.openntf.domino.utils;
 
 /**
+ * Utility enum to compute LMBCS length (does no LMBCS conversion!)
+ * 
  * @author steinsiek
  * 
  */
-public class LMBCSUtils {
+public enum LMBCSUtils {
+	;
+
+	/** the payload array. See static initializer */
+	private static byte[] lPayloadArray = null;
+
 	/* ======================================================================= */
 	/**
 	 * @param c
@@ -12,7 +35,7 @@ public class LMBCSUtils {
 	 * @return The length of the character in LMBCS (i.e. 1, 2, or 3)
 	 */
 	public static int getPayload(final char c) {
-		return ((getPayloadArray()[c >>> 2] >>> ((c & 3) << 1)) & 3);
+		return ((lPayloadArray[c >>> 2] >>> ((c & 3) << 1)) & 3);
 	}
 
 	/*-----------------------------------------------------------------------*/
@@ -24,10 +47,9 @@ public class LMBCSUtils {
 	public static int getPayload(final CharSequence cs) {
 		int lh = cs.length();
 		int ret = 0;
-		byte[] bb = getPayloadArray();
 		for (int i = 0; i < lh; i++) {
 			char c = cs.charAt(i);
-			ret += ((bb[c >>> 2] >>> ((c & 3) << 1)) & 3);
+			ret += ((lPayloadArray[c >>> 2] >>> ((c & 3) << 1)) & 3);
 			// That's perceptibly faster than ret += getPayload(cs.charAt(i))
 		}
 		return ret;
@@ -49,17 +71,20 @@ public class LMBCSUtils {
 	}
 
 	/* ======================================================================= */
-	public static final byte[] getPayloadArray() {
-		if (lPayloadArray == null)
-			lPayloadArray = initPayloadArray();
-		return lPayloadArray;
-	}
 
-	/* ======================================================================= */
-	private static byte[] lPayloadArray = null;
-
-	private static synchronized byte[] initPayloadArray() {
-		byte[] bb = new byte[16384];
+	/**
+	 * this initializes the payload array. The array contains 16384 bytes = 65536 * 2 bits. As the LMBCS length is between 1..3 bytes we use
+	 * only 2 bits for storage here.
+	 * 
+	 * In total we have stored all length iformation of every Basic Multilingual Unicode characters (\u00000 to \u0FFFF).
+	 * 
+	 * Supplementary Unicode Extended unicode characters ( >= \u10000) are internally represented by a surrogate pair. (\u0d800..\u0dFFF)
+	 * These pairs needs 6 bytes in total. The same value that does the normal LMBCS-conversion uses. So we can walk through the string with
+	 * charAt() and we do not need to use codePointAt() or similar
+	 * 
+	 */
+	static {
+		byte[] bb = lPayloadArray = new byte[16384];
 		/*
 		 * Generated Code
 		 */
@@ -320,7 +345,7 @@ public class LMBCSUtils {
 			bb[i] = (byte) 0xFF;
 		bb[2500] = (byte) 0xBF;
 		for (int i = 2501; i <= 15919; i++)
-			bb[i] = (byte) 0xFF;
+			bb[i] = (byte) 0xFF;	// here are also the supplementary characters
 		bb[15920] = (byte) 0xAB;
 		bb[15921] = (byte) 0xAA;
 		bb[15922] = (byte) 0xFE;
@@ -332,7 +357,6 @@ public class LMBCSUtils {
 		/*
 		 * End of Generated Code
 		 */
-		return bb;
 	}
 	/*-----------------------------------------------------------------------*/
 }

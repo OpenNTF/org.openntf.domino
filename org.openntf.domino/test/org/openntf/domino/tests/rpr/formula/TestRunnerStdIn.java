@@ -26,6 +26,7 @@ public class TestRunnerStdIn implements Runnable {
 	@Override
 	public void run() {
 		try {
+
 			System.out.println("Please type a Lotus domino @formula. Quit with CTRL+Z:");
 			SimpleNode n = null;
 			List<Object> v = null;
