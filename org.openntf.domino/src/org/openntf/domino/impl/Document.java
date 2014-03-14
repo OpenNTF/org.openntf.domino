@@ -59,6 +59,7 @@ import org.openntf.domino.exceptions.Domino32KLimitException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.ext.Database.Events;
 import org.openntf.domino.ext.Session.Fixes;
+import org.openntf.domino.helpers.DocumentEntrySet;
 import org.openntf.domino.helpers.Formula;
 import org.openntf.domino.transactions.DatabaseTransaction;
 import org.openntf.domino.types.BigString;
@@ -1296,10 +1297,18 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public MIMEEntity getMIMEEntity(final String itemName) {
+		// 14-03-14 RPr: disabling convertMime is required here! (Not always... but in some cases)
+		boolean convertMime = getAncestorSession().isConvertMime();
 		try {
+			if (convertMime)
+				getAncestorSession().setConvertMime(false);
 			return fromLotus(getDelegate().getMIMEEntity(itemName), MIMEEntity.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			if (convertMime)
+				getAncestorSession().setConvertMime(true);
+
 		}
 		return null;
 	}
@@ -3311,7 +3320,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public Set<java.util.Map.Entry<String, Object>> entrySet() {
 		// TODO Implement a "viewing" Set and Map.Entry for this or throw an UnsupportedOperationException
-		return null;
+		return new DocumentEntrySet(this);
 	}
 
 	@Override
@@ -3378,7 +3387,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			}
 		}
 
-		Object value = this.getItemValue(key.toString(), Object.class);
+		// TODO: What is the best way to use here without breaking everything?
+		//Object value = this.getItemValue(key.toString(), Object.class);
+		//Object value = this.getItemValue(key.toString(), Object[].class);
+		Object value = this.getItemValue(key.toString());
 		if (value instanceof Vector) {
 			Vector<?> v = (Vector<?>) value;
 			if (v.size() == 1) {
