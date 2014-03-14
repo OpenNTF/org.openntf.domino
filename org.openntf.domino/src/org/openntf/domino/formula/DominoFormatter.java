@@ -1,11 +1,11 @@
-package org.openntf.domino.tests.rpr.formula;
+package org.openntf.domino.formula;
 
 import java.text.SimpleDateFormat;
 
 import org.openntf.domino.DateTime;
-import org.openntf.domino.tests.rpr.formula.eval.Formatter;
 
 public class DominoFormatter implements Formatter {
+	private static DominoFormatter instance;
 
 	public DateTime parseDate(final String image) throws java.text.ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
@@ -23,5 +23,12 @@ public class DominoFormatter implements Formatter {
 		//NumberFormat nf = NumberFormat.getInstance();
 		// TODO Auto-generated method stub
 		return Double.valueOf(el.replace(',', '.'));
+	}
+
+	public static synchronized Formatter getInstance() {
+		if (instance == null) {
+			instance = new DominoFormatter();
+		}
+		return instance;
 	}
 }

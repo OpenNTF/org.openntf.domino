@@ -1,6 +1,8 @@
-package org.openntf.domino.tests.rpr.formula.eval;
+package org.openntf.domino.formula.impl;
 
 import java.util.Iterator;
+
+import org.openntf.domino.formula.ValueHolder;
 
 public class ParameterCollectionInt extends ParameterCollectionAbstract<int[]> {
 

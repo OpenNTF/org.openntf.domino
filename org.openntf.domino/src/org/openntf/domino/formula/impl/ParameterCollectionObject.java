@@ -1,9 +1,10 @@
-package org.openntf.domino.tests.rpr.formula.eval;
+package org.openntf.domino.formula.impl;
 
 import java.lang.reflect.Array;
 import java.util.Iterator;
 
 import org.openntf.domino.DateTime;
+import org.openntf.domino.formula.ValueHolder;
 
 public class ParameterCollectionObject<T> extends ParameterCollectionAbstract<T[]> {
 	protected Class<T> clazz;

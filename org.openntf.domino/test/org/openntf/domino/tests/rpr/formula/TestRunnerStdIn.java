@@ -6,14 +6,10 @@ import java.util.List;
 import lotus.domino.NotesException;
 import lotus.domino.Session;
 
+import org.openntf.domino.formula.AtFormulaParser;
+import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.ast.SimpleNode;
 import org.openntf.domino.impl.Base;
-import org.openntf.domino.tests.rpr.formula.eval.AtFunctionFactorySystem;
-import org.openntf.domino.tests.rpr.formula.eval.AtFunctionT;
-import org.openntf.domino.tests.rpr.formula.eval.DefaultOperators;
-import org.openntf.domino.tests.rpr.formula.eval.Formatter;
-import org.openntf.domino.tests.rpr.formula.eval.FormulaContext;
-import org.openntf.domino.tests.rpr.formula.parse.AtFormulaParser;
-import org.openntf.domino.tests.rpr.formula.parse.SimpleNode;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;
 
@@ -27,14 +23,6 @@ public class TestRunnerStdIn implements Runnable {
 		// whatever you might want to do in your constructor, but stay away from Domino objects
 	}
 
-	protected AtFormulaParser getParser() {
-		Formatter formatter = new DominoFormatter();
-		AtFunctionFactorySystem functionFactory = new AtFunctionFactorySystem();
-		functionFactory.add(new DefaultOperators());
-		functionFactory.add(new AtFunctionT());
-		return new AtFormulaParser(formatter, functionFactory);
-	}
-
 	@Override
 	public void run() {
 		try {
@@ -42,7 +30,7 @@ public class TestRunnerStdIn implements Runnable {
 			SimpleNode n = null;
 			List<Object> v = null;
 
-			AtFormulaParser parser = getParser();
+			AtFormulaParser parser = AtFormulaParser.getInstance();
 			parser.ReInit(System.in);
 			n = parser.Parse();
 			n.dump("");

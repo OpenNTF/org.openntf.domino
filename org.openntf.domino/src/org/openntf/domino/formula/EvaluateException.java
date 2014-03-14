@@ -13,7 +13,7 @@
  * implied. See the License for the specific language governing 
  * permissions and limitations under the License.
  */
-package org.openntf.domino.formula.parse;
+package org.openntf.domino.formula;
 
 public class EvaluateException extends Exception {
 	private static final long serialVersionUID = 1L;

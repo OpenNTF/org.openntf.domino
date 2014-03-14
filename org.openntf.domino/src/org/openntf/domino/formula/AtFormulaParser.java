@@ -15,6 +15,12 @@ public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConst
   protected JJTAtFormulaParserState jjtree = new JJTAtFormulaParserState();protected Formatter formatter;
   protected AtFunctionFactory functionFactory;
   protected Map<String, AtFunction> customFunc = new HashMap<String, AtFunction>();
+  private static ThreadLocal<AtFormulaParser> instance_ = new ThreadLocal<AtFormulaParser>() {
+                @Override
+                protected AtFormulaParser initialValue() {
+                        return new AtFormulaParser(DominoFormatter.getInstance(), AtFunctionFactory.getInstance());
+                }
+  };
 
   public AtFormulaParser(Formatter fmt, AtFunctionFactory fact) {
     this(new java.io.StringReader("")); // needed for proper init :(    formatter = fmt;
@@ -22,6 +28,11 @@ public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConst
   }
   public Formatter getFormatter() {
         return formatter;
+  }
+
+  /**   * This function returns a preconfigured default instance   */
+  public static AtFormulaParser getInstance() {
+        return instance_.get();
   }
 
   public AtFunction getFunction(String string) {
@@ -402,14 +413,14 @@ public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConst
           opCmp();
                                       jjtree.closeNodeScope(jjtn001,  2);
                                       jjtc001 = false;
-                                     jjtn001.setFunction("_and");
+                                     jjtn001.setFunction("&");
           break;
         case BoolOr:
           jj_consume_token(BoolOr);
           opCmp();
                                       jjtree.closeNodeScope(jjtn001,  2);
                                       jjtc001 = false;
-                                     jjtn001.setFunction("_or");
+                                     jjtn001.setFunction("|");
           break;
         default:
           jj_la1[9] = jj_gen;
@@ -471,84 +482,84 @@ public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConst
           opAdd();
                                           jjtree.closeNodeScope(jjtn001,  2);
                                           jjtc001 = false;
-                                         jjtn001.setFunction("_cmpEq")          ;
+                                         jjtn001.setFunction("=")               ;
           break;
         case CmpEqualP:
           jj_consume_token(CmpEqualP);
           opAdd();
                                           jjtree.closeNodeScope(jjtn001,  2);
                                           jjtc001 = false;
-                                         jjtn001.setFunction("_cmpEqP")         ;
+                                         jjtn001.setFunction("*=")              ;
           break;
         case CmpNE:
           jj_consume_token(CmpNE);
           opAdd();
                                                   jjtree.closeNodeScope(jjtn001,  2);
                                                   jjtc001 = false;
-                                                 jjtn001.setFunction("_cmpNe")          ;
+                                                 jjtn001.setFunction("<>")              ;
           break;
         case CmpNEP:
           jj_consume_token(CmpNEP);
           opAdd();
                                                   jjtree.closeNodeScope(jjtn001,  2);
                                                   jjtc001 = false;
-                                                 jjtn001.setFunction("_cmpNeP")         ;
+                                                 jjtn001.setFunction("*<>")             ;
           break;
         case CmpLT:
           jj_consume_token(CmpLT);
           opAdd();
                                                   jjtree.closeNodeScope(jjtn001,  2);
                                                   jjtc001 = false;
-                                                 jjtn001.setFunction("_cmpLt")          ;
+                                                 jjtn001.setFunction("<")               ;
           break;
         case CmpLTP:
           jj_consume_token(CmpLTP);
           opAdd();
                                                   jjtree.closeNodeScope(jjtn001,  2);
                                                   jjtc001 = false;
-                                                 jjtn001.setFunction("_cmpLtP")         ;
+                                                 jjtn001.setFunction("*<")              ;
           break;
         case CmpGT:
           jj_consume_token(CmpGT);
           opAdd();
                                                   jjtree.closeNodeScope(jjtn001,  2);
                                                   jjtc001 = false;
-                                                 jjtn001.setFunction("_cmpGt")          ;
+                                                 jjtn001.setFunction(">")               ;
           break;
         case CmpGTP:
           jj_consume_token(CmpGTP);
           opAdd();
                                                   jjtree.closeNodeScope(jjtn001,  2);
                                                   jjtc001 = false;
-                                                 jjtn001.setFunction("_cmpGtP")         ;
+                                                 jjtn001.setFunction("*>")              ;
           break;
         case CmpLTE:
           jj_consume_token(CmpLTE);
           opAdd();
                                                   jjtree.closeNodeScope(jjtn001,  2);
                                                   jjtc001 = false;
-                                                 jjtn001.setFunction("_cmpLte")         ;
+                                                 jjtn001.setFunction("<=")              ;
           break;
         case CmpLTEP:
           jj_consume_token(CmpLTEP);
           opAdd();
                                           jjtree.closeNodeScope(jjtn001,  2);
                                           jjtc001 = false;
-                                         jjtn001.setFunction("_cmpLteP")        ;
+                                         jjtn001.setFunction("*<=")             ;
           break;
         case CmpGTE:
           jj_consume_token(CmpGTE);
           opAdd();
                                                   jjtree.closeNodeScope(jjtn001,  2);
                                                   jjtc001 = false;
-                                                 jjtn001.setFunction("_cmpGte")         ;
+                                                 jjtn001.setFunction(">=")              ;
           break;
         case CmpGTEP:
           jj_consume_token(CmpGTEP);
           opAdd();
                                           jjtree.closeNodeScope(jjtn001,  2);
                                           jjtc001 = false;
-                                         jjtn001.setFunction("_cmpGteP")        ;
+                                         jjtn001.setFunction("*>=")             ;
           break;
         default:
           jj_la1[11] = jj_gen;
@@ -596,28 +607,28 @@ public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConst
           opMult();
                                                            jjtree.closeNodeScope(jjtn001,  2);
                                                            jjtc001 = false;
-                                                          jjtn001.setFunction("_add")   ;
+                                                          jjtn001.setFunction("+")      ;
           break;
         case OpPlusP:
           jj_consume_token(OpPlusP);
           opMult();
                                                            jjtree.closeNodeScope(jjtn001,  2);
                                                            jjtc001 = false;
-                                                          jjtn001.setFunction("_addP")  ;
+                                                          jjtn001.setFunction("*+")     ;
           break;
         case OpMinus:
           jj_consume_token(OpMinus);
           opMult();
                                                    jjtree.closeNodeScope(jjtn001,  2);
                                                    jjtc001 = false;
-                                                  jjtn001.setFunction("_sub")   ;
+                                                  jjtn001.setFunction("-")      ;
           break;
         case OpMinusP:
           jj_consume_token(OpMinusP);
           opMult();
                                                    jjtree.closeNodeScope(jjtn001,  2);
                                                    jjtc001 = false;
-                                                  jjtn001.setFunction("_subP")  ;
+                                                  jjtn001.setFunction("*-")     ;
           break;
         default:
           jj_la1[12] = jj_gen;
@@ -671,28 +682,28 @@ public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConst
           valueList();
                                                jjtree.closeNodeScope(jjtn001,  2);
                                                jjtc001 = false;
-                                              jjtn001.setFunction("_mul")       ;
+                                              jjtn001.setFunction("*")  ;
           break;
         case OpMulP:
           jj_consume_token(OpMulP);
           valueList();
                                                jjtree.closeNodeScope(jjtn001,  2);
                                                jjtc001 = false;
-                                              jjtn001.setFunction("_mulP")      ;
+                                              jjtn001.setFunction("**") ;
           break;
         case OpDiv:
           jj_consume_token(OpDiv);
           valueList();
                                                jjtree.closeNodeScope(jjtn001,  2);
                                                jjtc001 = false;
-                                              jjtn001.setFunction("_div")       ;
+                                              jjtn001.setFunction("/")  ;
           break;
         case OpDivP:
           jj_consume_token(OpDivP);
           valueList();
                                                jjtree.closeNodeScope(jjtn001,  2);
                                                jjtc001 = false;
-                                              jjtn001.setFunction("_divP")      ;
+                                              jjtn001.setFunction("*/") ;
           break;
         default:
           jj_la1[14] = jj_gen;
@@ -817,7 +828,7 @@ public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConst
       try {
                               jjtree.closeNodeScope(jjtn001,  1);
                               jjtc001 = false;
-                             jjtn001.setFunction("_negative")   ;
+                             jjtn001.setFunction(" -")  ;
       } finally {
                               if (jjtc001) {
                                 jjtree.closeNodeScope(jjtn001,  1);
@@ -833,7 +844,7 @@ public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConst
       try {
                               jjtree.closeNodeScope(jjtn002,  1);
                               jjtc002 = false;
-                             jjtn002.setFunction("_not")                ;
+                             jjtn002.setFunction(" !")          ;
       } finally {
                               if (jjtc002) {
                                 jjtree.closeNodeScope(jjtn002,  1);
@@ -1325,30 +1336,6 @@ public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConst
     finally { jj_save(2, xla); }
   }
 
-  private boolean jj_3R_18() {
-    if (jj_scan_token(OpMinusP)) return true;
-    if (jj_3R_20()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_17() {
-    if (jj_scan_token(OpMinus)) return true;
-    if (jj_3R_20()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_16() {
-    if (jj_scan_token(OpPlusP)) return true;
-    if (jj_3R_20()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_15() {
-    if (jj_scan_token(OpPlus)) return true;
-    if (jj_3R_20()) return true;
-    return false;
-  }
-
   private boolean jj_3R_20() {
     if (jj_3R_26()) return true;
     return false;
@@ -1628,6 +1615,30 @@ public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConst
 
   private boolean jj_3R_26() {
     if (jj_3R_28()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_18() {
+    if (jj_scan_token(OpMinusP)) return true;
+    if (jj_3R_20()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_17() {
+    if (jj_scan_token(OpMinus)) return true;
+    if (jj_3R_20()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_16() {
+    if (jj_scan_token(OpPlusP)) return true;
+    if (jj_3R_20()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_15() {
+    if (jj_scan_token(OpPlus)) return true;
+    if (jj_3R_20()) return true;
     return false;
   }
 

@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Session;
+import org.openntf.domino.formula.impl.ParameterCollectionDouble;
 import org.openntf.domino.utils.Factory;
 
 import com.ibm.commons.util.NotImplementedException;
@@ -36,7 +37,6 @@ public class AtFunctionT implements AtFunctionFactory, AtFunction {
 	}
 
 	public AtFunction getFunction(final String funcName) {
-
 		if (funcName.charAt(0) == '@') {
 			if (funcName.charAt(1) == 't' || funcName.charAt(1) == 'T') {
 				for (Op op : Op.values()) {
@@ -59,6 +59,10 @@ public class AtFunctionT implements AtFunctionFactory, AtFunction {
 		operation = op;
 	}
 
+	public String getImage() {
+		return operation.value;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -76,33 +80,13 @@ public class AtFunctionT implements AtFunctionFactory, AtFunction {
 			throw new NotImplementedException();
 
 		case TEXT:
-			ret.grow(params[0].size());
-			if (params.length == 1) {
-				for (Object el : params[0]) {
-					ret.add(el.toString());
-				}
-			} else {
-				for (Object el : params[0]) {
-					ret.add(toText(el, params[1]));
-				}
-			}
-			return ret;
+			return atText(ctx, params);
 
 		case TEXT_TO_NUMBER:
-			ret.grow(params[0].size());
-			fmt = ctx.getFormatter();
-			for (Object el : params[0]) {
-				ret.add(fmt.parseNumber((String) el));
-			}
-			return ret;
+			return atTextToNumber(ctx, params);
 
 		case TEXT_TO_TIME:
-			ret.grow(params[0].size());
-			fmt = ctx.getFormatter();
-			for (Object el : params[0]) {
-				ret.add(fmt.parseDate((String) el));
-			}
-			return ret;
+			return atTextToTime(ctx, params);
 
 		case THIS_NAME:
 			throw new NotImplementedException();
@@ -111,36 +95,91 @@ public class AtFunctionT implements AtFunctionFactory, AtFunction {
 			throw new NotImplementedException();
 
 		case TIME:
-			ret.grow(params[0].size());
 			if (params.length == 1) {
-				for (Object el : params[0]) {
-					DateTime dtc = ((DateTime) el).clone();
-					dtc.setAnyDate();
-					ret.add(dtc);
-				}
+				return atTime1(ctx, params);
 			} else if (params.length == 6) {
-				Collection<double[]> values = new ParameterCollectionDouble(params, false);
-				ret.grow(values.size());
-				Session s = Factory.getSession();
-				for (double[] v : values) {
-					DateTime dtc = s.createDateTime((int) v[0], (int) v[1], (int) v[2], (int) v[3], (int) v[4], (int) v[5]);
-					ret.add(dtc);
-				}
+				return atTime6(ctx, params);
 			} else if (params.length >= 3) {
-				Collection<double[]> values = new ParameterCollectionDouble(params, false);
-				ret.grow(values.size());
-				Session s = Factory.getSession();
-				for (double[] v : values) {
-					DateTime dtc = s.createDateTime(2000, 6, 1, (int) v[0], (int) v[1], (int) v[2]);
-					dtc.setAnyDate();
-					ret.add(dtc);
-				}
+				return atTime3(ctx, params);
 			}
-			return ret;
 
 		}
 
 		throw new UnsupportedOperationException(operation + " not supported");
+	}
+
+	private ValueHolder atTime1(final FormulaContext ctx, final ValueHolder[] params) {
+		ValueHolder ret = new ValueHolder();
+		ret.grow(params[0].size());
+
+		for (Object el : params[0]) {
+			DateTime dtc = ((DateTime) el).clone();
+			dtc.setAnyDate();
+			ret.add(dtc);
+		}
+		return ret;
+	}
+
+	private ValueHolder atTime3(final FormulaContext ctx, final ValueHolder[] params) {
+		ValueHolder ret = new ValueHolder();
+		Collection<double[]> values = new ParameterCollectionDouble(params, false);
+		ret.grow(values.size());
+		Session s = Factory.getSession();
+		for (double[] v : values) {
+			DateTime dtc = s.createDateTime(2000, 6, 1, (int) v[0], (int) v[1], (int) v[2]);
+			System.out.println("Vorher: " + dtc);
+			dtc.setAnyDate();
+			System.out.println("Nachher: " + dtc);
+			ret.add(dtc);
+		}
+		return ret;
+	}
+
+	private ValueHolder atTime6(final FormulaContext ctx, final ValueHolder[] params) {
+		ValueHolder ret = new ValueHolder();
+		Collection<double[]> values = new ParameterCollectionDouble(params, false);
+		ret.grow(values.size());
+		Session s = Factory.getSession();
+		for (double[] v : values) {
+			DateTime dtc = s.createDateTime((int) v[0], (int) v[1], (int) v[2], (int) v[3], (int) v[4], (int) v[5]);
+			ret.add(dtc);
+		}
+		return ret;
+	}
+
+	private ValueHolder atTextToTime(final FormulaContext ctx, final ValueHolder[] params) throws ParseException {
+		ValueHolder ret = new ValueHolder();
+		ret.grow(params[0].size());
+		Formatter fmt = ctx.getFormatter();
+		for (Object el : params[0]) {
+			ret.add(fmt.parseDate((String) el));
+		}
+		return ret;
+	}
+
+	private ValueHolder atTextToNumber(final FormulaContext ctx, final ValueHolder[] params) throws ParseException {
+		ValueHolder ret = new ValueHolder();
+		ret.grow(params[0].size());
+		Formatter fmt = ctx.getFormatter();
+		for (Object el : params[0]) {
+			ret.add(fmt.parseNumber((String) el));
+		}
+		return ret;
+	}
+
+	private ValueHolder atText(final FormulaContext ctx, final ValueHolder[] params) {
+		ValueHolder ret = new ValueHolder();
+		ret.grow(params[0].size());
+		if (params.length == 1) {
+			for (Object el : params[0]) {
+				ret.add(el.toString());
+			}
+		} else {
+			for (Object el : params[0]) {
+				ret.add(toText(el, params[1]));
+			}
+		}
+		return ret;
 	}
 
 	/**
@@ -187,7 +226,4 @@ public class AtFunctionT implements AtFunctionFactory, AtFunction {
 		//return null;
 	}
 
-	public String getImage() {
-		return operation.value;
-	}
 }

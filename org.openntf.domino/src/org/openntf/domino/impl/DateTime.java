@@ -98,7 +98,8 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 
 	private void initWorker(final lotus.domino.DateTime worker) throws NotesException {
 		worker.setLocalTime(date_);
-		worker.convertToZone(notesZone_, dst_);
+		if (!isTimeOnly_ && !isDateOnly_)
+			worker.convertToZone(notesZone_, dst_);
 		if (isTimeOnly_)
 			worker.setAnyDate();
 		if (isDateOnly_)
