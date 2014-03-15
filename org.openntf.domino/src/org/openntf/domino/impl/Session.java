@@ -338,6 +338,17 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.openntf.domino.Session#createDateTime(int, int, int, int, int, int)
+	 */
+	public DateTime createDateTime(final int y, final int m, final int d, final int h, final int i, final int s) {
+		Calendar cal = Calendar.getInstance();
+		cal.set(y, m - 1, d, h, i, s);
+		return getFactory().createDateTime(cal.getTime(), this);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.Session#createDateTime(java.lang.String)
 	 */
 	@Override
@@ -519,7 +530,12 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(final String formula, final lotus.domino.Document doc) {
 		try {
-			// TODO: IF we are planning to cache variables in "doc" we must invalidate the cache!
+			if (doc instanceof Document) {
+				String lf = formula.toLowerCase();
+				if (lf.contains("field ") || lf.contains("@setfield")) {
+					((Document) doc).markDirty(); // the document MAY get dirty by evaluate... 
+				}
+			}
 			return wrapColumnValues(getDelegate().evaluate(formula, toLotus(doc)), this);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
@@ -535,13 +551,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	@Override
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(final String formula) {
-		try {
-			return wrapColumnValues(getDelegate().evaluate(formula), this);
-		} catch (Exception e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return evaluate(formula, null);
 	}
 
 	/*
@@ -1807,4 +1817,5 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	public void setAutoMime(final boolean autoMime) {
 		isAutoMime_ = autoMime;
 	}
+
 }
