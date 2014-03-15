@@ -16,6 +16,7 @@
  */
 package org.openntf.domino.formula;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.AbstractList;
 import java.util.Arrays;
@@ -23,7 +24,9 @@ import java.util.Collection;
 
 import org.openntf.domino.DateTime;
 
-public class ValueHolder extends AbstractList<Object> {
+public class ValueHolder extends AbstractList<Object> implements Serializable {
+	private static final long serialVersionUID = 8290517470597891417L;
+
 	private Object values[];
 	private int size;
 
@@ -45,14 +48,7 @@ public class ValueHolder extends AbstractList<Object> {
 	}
 
 	/*
-	 * for permutative operation
-	 */
-	public void growP(final int inc1, final int inc2) {
-		grow(inc1 * inc2);
-	}
-
-	/*
-	 * for normal operation
+	 * reserve space for operation
 	 */
 	public void grow(final int inc1, final int inc2) {
 		grow(Math.max(inc1, inc2));
