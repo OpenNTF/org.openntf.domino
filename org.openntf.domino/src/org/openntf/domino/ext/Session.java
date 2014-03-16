@@ -6,6 +6,7 @@ package org.openntf.domino.ext;
 import java.util.Collection;
 import java.util.Date;
 
+import org.openntf.domino.AutoMime;
 import org.openntf.domino.ColorObject;
 import org.openntf.domino.Database;
 import org.openntf.domino.DateRange;
@@ -151,7 +152,7 @@ public interface Session {
 
 	public org.openntf.domino.Document getDocumentByMetaversalID(String metaversalID, String serverName);
 
-	public boolean isAutoMime();
+	public AutoMime getAutoMime();
 
-	public void setAutoMime(boolean autoMime);
+	public void setAutoMime(AutoMime autoMime);
 }
