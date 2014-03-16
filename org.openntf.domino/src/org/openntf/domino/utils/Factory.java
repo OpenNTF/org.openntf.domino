@@ -462,6 +462,10 @@ public enum Factory {
 		return (org.openntf.domino.Document) getWrapperFactory().fromLotus(lotus, Document.SCHEMA, (Database) parent);
 	}
 
+	public static void setNoRecycle(final Base<?> base, final boolean value) {
+		getWrapperFactory().setNoRecycle(base, value);
+	}
+
 	/*
 	 * (non-JavaDoc)
 	 * 
@@ -612,6 +616,7 @@ public enum Factory {
 		if (result == null) {
 			try {
 				result = Factory.fromLotus(lotus.domino.NotesFactory.createSession(), Session.SCHEMA, null);
+				Factory.setNoRecycle(result, false);  // We have created the session, so we recycle it
 			} catch (lotus.domino.NotesException ne) {
 				try {
 					result = XSPUtil.getCurrentSession();
@@ -758,6 +763,7 @@ public enum Factory {
 				}
 			});
 			if (result instanceof org.openntf.domino.Session) {
+				Factory.setNoRecycle((org.openntf.domino.Session) result, false); // We have created the session, so we recycle it
 				return (org.openntf.domino.Session) result;
 			}
 		} catch (PrivilegedActionException e) {
@@ -781,6 +787,7 @@ public enum Factory {
 				}
 			});
 			if (result instanceof org.openntf.domino.Session) {
+				Factory.setNoRecycle((org.openntf.domino.Session) result, false); // We have created the session, so we recycle it
 				return (org.openntf.domino.Session) result;
 			}
 		} catch (PrivilegedActionException e) {

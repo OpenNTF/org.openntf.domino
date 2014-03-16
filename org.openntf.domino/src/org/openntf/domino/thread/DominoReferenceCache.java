@@ -57,9 +57,9 @@ public class DominoReferenceCache {
 	 *            true if the cache should recycle objects if they are weakly reachable
 	 * 
 	 */
-	public DominoReferenceCache(final boolean autorecycle) {
+	public DominoReferenceCache() {
 		super();
-		autorecycle_ = autorecycle;
+		//autorecycle_ = autorecycle;
 	}
 
 	/**
@@ -81,6 +81,10 @@ public class DominoReferenceCache {
 		} else {
 			return getReferenceObject(map.get(key));
 		}
+	}
+
+	public void setNoRecycle(final long key, final boolean value) {
+		map.get(key).setNoRecycle(value);
 	}
 
 	/**
