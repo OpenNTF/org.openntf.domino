@@ -14,6 +14,4 @@ public enum AutoMime {
 				// put will only write dominofriendly objects.
 				// the only way to write a MIME bean is to use replaceItemValueCustomData when 
 				// specifying "mime-bean" as dataType
-	;
-	public static final String MAGIC_MIME_BEAN = "mime-bean";
 }

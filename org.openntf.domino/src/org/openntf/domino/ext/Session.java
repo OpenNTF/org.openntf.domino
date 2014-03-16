@@ -22,8 +22,32 @@ import com.ibm.icu.util.Calendar;
  * 
  */
 public interface Session {
+	/**
+	 * 
+	 * @author Roland Praml, Foconis AG
+	 * 
+	 */
 	public static enum Fixes {
-		MIME_CONVERT, REPLACE_ITEM_NULL, CREATE_DB, REMOVE_ITEM, APPEND_ITEM_VALUE, VIEW_UPDATE_OFF, FORCE_JAVA_DATES
+		/** This Fix is not used */
+		MIME_CONVERT,
+
+		/** Writing <code>null</code> will remove the item */
+		REPLACE_ITEM_NULL,
+
+		/** DbDirectory.createDatabase will not fail when DB exists */
+		CREATE_DB, REMOVE_ITEM,
+
+		/** use replaceItemValue instead of appendItemValue. This works also for MIME items */
+		APPEND_ITEM_VALUE,
+
+		/** set view.autoUpdate to off by default. */
+		VIEW_UPDATE_OFF,
+
+		/** use java-dates in ViewEntries by default */
+		FORCE_JAVA_DATES,
+
+		/** block the MIME interface in the document while accessing MIME items */
+		MIME_BLOCK_ITEM_INTERFACE
 	}
 
 	public IDominoEventFactory getEventFactory();

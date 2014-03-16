@@ -133,13 +133,11 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	protected Map<String, MIMEEntity> openMIMEEntities = new HashMap<String, MIMEEntity>();
 
-	public static boolean MIME_BLOCK_ITEM_INTERFACE = true;
-
 	// to find all functions where checkMimeOpen() should be called, I use this command:
 	// cat Document.java | grep "public |getDelegate|checkMimeOpen|^\t}" -P | tr "\n" " " | tr "}" "\n" | grep getDelegate | grep -v "checkMimeOpen"
 	//http://www-10.lotus.com/ldd/nd8forum.nsf/5f27803bba85d8e285256bf10054620d/cd146d4165336a5e852576b600114830?OpenDocument
 	protected void checkMimeOpen() {
-		if (MIME_BLOCK_ITEM_INTERFACE && !openMIMEEntities.isEmpty()) {
+		if (!openMIMEEntities.isEmpty() && getAncestorSession().isFixEnabled(Fixes.MIME_BLOCK_ITEM_INTERFACE)) {
 			throw new BlockedCrashException("There are open MIME items: " + openMIMEEntities.keySet());
 
 		}
@@ -405,7 +403,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		if (unique && hasItem(name)) {
 			// TODO RPr This function is not yet 100% mime compatible
 			result = getFirstItem(name);
-			if (result.containsValue(value)) {
+			if (result.containsValue(value)) { // this does not work when it is not dominoFriendly
 				return result;
 			}
 		}
