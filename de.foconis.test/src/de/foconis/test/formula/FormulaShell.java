@@ -90,15 +90,6 @@ public class FormulaShell implements Runnable {
 		System.out.println(Factory.dumpCounters(true));
 		Factory.terminate();
 		System.out.println(Factory.dumpCounters(true));
-		try {
-			System.gc();
-			Thread.sleep(1000);
-			System.gc();
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			
-		}
-		System.out.println(Factory.dumpCounters(true));
 	}
 
 	private Document getDemoDoc() {

@@ -62,6 +62,8 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	}
 
 	protected org.openntf.domino.MIMEEntity track(final org.openntf.domino.MIMEEntity what) {
+		if (what == null)
+			return null;
 		if (!trackedChildEntites_.contains(what)) {
 			trackedChildEntites_.add((MIMEEntity) what);
 		}
@@ -69,6 +71,8 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	}
 
 	protected MIMEHeader track(final MIMEHeader what) {
+		if (what == null)
+			return null;
 		if (!trackedHeaders_.contains(what)) {
 			trackedHeaders_.add(what);
 		}
@@ -76,6 +80,8 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	}
 
 	protected Vector<MIMEHeader> track(final Vector<MIMEHeader> what) {
+		if (what == null)
+			return null;
 		for (MIMEHeader el : what) {
 			track(el);
 		}

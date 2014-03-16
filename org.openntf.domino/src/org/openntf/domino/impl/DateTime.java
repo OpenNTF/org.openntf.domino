@@ -26,6 +26,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Terminatable;
 
 import com.ibm.icu.util.Calendar;
 import com.ibm.icu.util.GregorianCalendar;
@@ -38,8 +39,13 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	//private static final Logger log_ = Logger.getLogger(DateTime.class.getName());
 	private static final long serialVersionUID = 1L;
 
-	private static void terminate() {
-		calendar.set(null);
+	static {
+		Factory.onTerminate(new Terminatable() {
+			public void terminate() {
+				lotusWorker.set(null);
+				calendar.set(null);
+			}
+		});
 	}
 
 	/** The calendar */

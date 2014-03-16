@@ -21,9 +21,11 @@ import java.security.AccessControlException;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ServiceLoader;
@@ -72,6 +74,8 @@ public enum Factory {
 	private static ThreadLocal<ClassLoader> currentClassLoader_ = new ThreadLocal<ClassLoader>();
 
 	private static ThreadLocal<Session> currentSessionHolder_ = new ThreadLocal<Session>();
+
+	private static List<Terminatable> onTerminate_ = new ArrayList<Terminatable>();
 
 	/**
 	 * setup the environment and loggers
@@ -704,9 +708,12 @@ public enum Factory {
 		if (currentSessionHolder_.get() != null) {
 			result = wf.toLotus(currentSessionHolder_.get());
 		}
+		for (Terminatable callback : onTerminate_) {
+			callback.terminate();
+		}
+		clearSession();
 		wf.terminate();
 
-		clearSession();
 		clearBubbleExceptions();
 		clearDominoGraph();
 		clearWrapperFactory();
@@ -1099,6 +1106,16 @@ public enum Factory {
 			throw new DataNotCompatibleException("Cannot convert a non-OpenNTF DocumentCollection to a NoteCollection");
 		}
 		return result;
+	}
+
+	/**
+	 * This will call the terminate-function of the callback on every "terminate" call. (Across threads!) The callback must handle this with
+	 * threadlocals itself. See DateTime for an example
+	 * 
+	 * @param callback
+	 */
+	public static void onTerminate(final Terminatable callback) {
+		onTerminate_.add(callback);
 	}
 
 }
