@@ -7,8 +7,8 @@
 	<property name="jsrpath" value="ext/jsr305.jar"/>
 	<property name="blueprintpath" value="ext/blueprints-core-2.4.0.jar"/>
 	<property name="pipespath" value="ext/pipes-2.4.0.jar"/>
-		<property name="gremlinpath" value="ext/gremlin-java-2.4.0.jar"/>
-		
+	<property name="gremlinpath" value="ext/gremlin-java-2.4.0.jar"/>
+
 	<tstamp>
 		<format property="current.time" pattern="yyyyMMddhhmmss" />
 	</tstamp>
@@ -21,8 +21,8 @@
 		<pathelement path="${domino.shared.target}/plugins/com.ibm.commons_9.0.1.20131004-1200/lwpd.commons.jar"/>
 		<!--<pathelement path="${tinkerpopclass.dir}" />-->
 		<pathelement path="${blueprintpath}" />
-			<pathelement path="${pipespath}" />
-			<pathelement path="${gremlinpath}" />
+		<pathelement path="${pipespath}" />
+		<pathelement path="${gremlinpath}" />
 	</path>
 
 	<target name="clean" description="Delete all generated files">
@@ -30,7 +30,7 @@
 		<!-- domino_shared_target-->
 	</target>
 
-	
+
 	<target name="compileDom" description="Compiles Domino" >
 		<mkdir dir="${dominoclass.dir}" />
 		<javac srcdir="${domino.dir}" destdir="${dominoclass.dir}" includeantruntime="false" deprecation="true" debug="true" nowarn="true">
@@ -40,18 +40,26 @@
 	</target>
 
 	<target name="jar" description="JARs the Task" depends="compileDom">
+		<mkdir dir="${dominoclass.dir}/OSGI-OPT/src" />
+		<copy todir="${dominoclass.dir}/OSGI-OPT/src">
+			<fileset dir="${domino.dir}" />
+		</copy>
 		<jar destfile="lib/domino.jar" basedir="${dominoclass.dir}">
-			<manifest>
-				<attribute name="Ant-Version" value="${ant.version}" />
-				<attribute name="Created-By" value="JDK ${java.version} (${java.vendor})" />
-				<attribute name='Implementation-Title' value="OpenNTF Domino API" />
-				<attribute name='Implementation-Version' value="1.0.0_${current.time}" />
-				<attribute name='Implementation-Vendor' value="OpenNTF" />
-				<attribute name='Implementation-Vendor-URL' value="http://www.openntf.org" />
-				<attribute name="Built-By" value="${user.name}" />
-				<attribute name='Build-Date' value="${current.time}" />
-			</manifest>
 		</jar>
+	</target>
+	
+	<target name="Manifest">
+		<manifest file="META-INF/MANIFEST.MF" mode="update">
+			<attribute name="Ant-Version" value="${ant.version}" />
+			<attribute name="Created-By" value="JDK ${java.version} (${java.vendor})" />
+			<attribute name='Implementation-Title' value="OpenNTF Domino API" />
+			<attribute name='Implementation-Version' value="1.0.0_${current.time}" />
+			<attribute name='Bundle-Version' value="1.0.0.${current.time}" />
+			<attribute name='Implementation-Vendor' value="OpenNTF" />
+			<attribute name='Implementation-Vendor-URL' value="http://www.openntf.org" />
+			<attribute name="Built-By" value="${user.name}" />
+			<attribute name='Build-Date' value="${current.time}" />
+		</manifest>
 	</target>
 
 	<target name="postclean" description="Delete all class files">
