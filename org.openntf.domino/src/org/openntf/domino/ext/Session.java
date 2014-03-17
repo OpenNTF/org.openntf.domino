@@ -22,11 +22,7 @@ import com.ibm.icu.util.Calendar;
  * 
  */
 public interface Session {
-	/**
-	 * 
-	 * @author Roland Praml, Foconis AG
-	 * 
-	 */
+
 	public static enum Fixes {
 		/** This Fix is not used */
 		MIME_CONVERT,
@@ -47,7 +43,9 @@ public interface Session {
 		FORCE_JAVA_DATES,
 
 		/** block the MIME interface in the document while accessing MIME items */
-		MIME_BLOCK_ITEM_INTERFACE
+		MIME_BLOCK_ITEM_INTERFACE,
+		/** Document.getDocumentByUNID() returns null instead of an exception */
+		DOC_UNID_NULLS
 	}
 
 	public IDominoEventFactory getEventFactory();

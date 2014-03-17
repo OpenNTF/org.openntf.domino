@@ -2319,8 +2319,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				}
 			}
 
-			if (returnItem) {
-				return getFirstItem(itemName, true);
+			if (returnItem && result != null) {
+				//				result = getDelegate().getFirstItem(itemName);	
+				//NTF if we do a .getFirstItem here and return an item that we MIMEBeaned, it will invalidate the MIME and
+				//convert back to a RichTextItem before the document is saved.
+				//returnItem *MUST* be treated as false if we've written a MIME attachment.
+				//If we didn't write a MIME attachment, then result is already assigned, and therefore we don't need to get it again.
+				return fromLotus(result, Item.SCHEMA, this);
 			} else {
 				return null;
 			}

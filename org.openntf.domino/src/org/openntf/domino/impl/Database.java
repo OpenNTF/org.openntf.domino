@@ -1007,6 +1007,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			if (key != null) {
 				String checksum = DominoUtils.toUnid(key);
+
 				Document doc = this.getDocumentByUNID(checksum);
 				if (doc == null && createOnFail) {
 					doc = this.createDocument();
@@ -1015,6 +1016,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 					doc.replaceItemValue("$$Key", key);
 				}
 				return doc;
+
 			} else if (createOnFail) {
 				log_.log(java.util.logging.Level.WARNING,
 						"Document by key requested with null key. This is probably not what you meant to do...");
@@ -1038,9 +1040,11 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().getDocumentByUNID(unid), Document.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			if (getAncestorSession().isFixEnabled(Fixes.DOC_UNID_NULLS) && "Invalid universal id".equals(e.text)) {
+			} else {
+				DominoUtils.handleException(e);
+			}
 			return null;
-
 		}
 	}
 
