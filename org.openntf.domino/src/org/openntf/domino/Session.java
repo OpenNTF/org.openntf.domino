@@ -186,6 +186,27 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	public DateTime createDateTime(final String date);
 
 	/**
+	 * Creates a DateTime object that represents a specified date and time.
+	 * 
+	 * @param y
+	 *            the year
+	 * @param m
+	 *            the month
+	 * @param d
+	 *            the day
+	 * @param h
+	 *            the hour
+	 * @param i
+	 *            the mInutes
+	 * @param s
+	 *            the seconds
+	 * 
+	 * @return The newly created {@link DateTime} object.
+	 * @since org.openntf.domino 2014-03-11
+	 */
+	public DateTime createDateTime(int y, int m, int d, int h, int i, int s);
+
+	/**
 	 * Creates a DxlExporter object.
 	 * 
 	 * @return The newly created {@link DxlExporter} object.
