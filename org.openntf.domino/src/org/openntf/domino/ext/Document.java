@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.openntf.domino.AutoMime;
 import org.openntf.domino.Item;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
@@ -91,5 +92,23 @@ public interface Document {
 	public List<Item> getItems(org.openntf.domino.Item.Type type);
 
 	public List<Item> getItems(org.openntf.domino.Item.Flags flags);
+
+	/**
+	 * Replaces the itemvalue in a document.
+	 * 
+	 * @param itemName
+	 * @param value
+	 * @param isSummary
+	 * @param autoBox
+	 * @param returnItem
+	 * @return
+	 */
+	Item replaceItemValue(String itemName, Object value, Boolean isSummary, final boolean boxCompatibleOnly, boolean returnItem);
+
+	public AutoMime getAutoMime();
+
+	public void setAutoMime(final AutoMime value);
+
+	public void markDirty();
 
 }

@@ -41,9 +41,6 @@ public class DominoReferenceCache {
 	/** This is the queue with unreachable refs **/
 	private ReferenceQueue<Object> queue = new ReferenceQueue<Object>();
 
-	/** Needed for objects that should not get recycled, like sessions **/
-	private boolean autorecycle_;
-
 	/**
 	 * needed to call GC periodically. The optimum is somewhere ~1500. 1024 seems to be a good value
 	 */
@@ -57,9 +54,9 @@ public class DominoReferenceCache {
 	 *            true if the cache should recycle objects if they are weakly reachable
 	 * 
 	 */
-	public DominoReferenceCache(final boolean autorecycle) {
+	public DominoReferenceCache() {
 		super();
-		autorecycle_ = autorecycle;
+		//autorecycle_ = autorecycle;
 	}
 
 	/**
@@ -81,6 +78,10 @@ public class DominoReferenceCache {
 		} else {
 			return getReferenceObject(map.get(key));
 		}
+	}
+
+	public void setNoRecycle(final long key, final boolean value) {
+		map.get(key).setNoRecycle(value);
 	}
 
 	/**
@@ -130,9 +131,8 @@ public class DominoReferenceCache {
 			throw new IllegalArgumentException("key cannot be 0");
 		}
 		map.put(key, ref);
-		if (autorecycle_) {
-			Factory.countLotus(delegate.getClass());
-		}
+
+		Factory.countLotus(delegate.getClass());
 	}
 
 	/**
@@ -156,29 +156,27 @@ public class DominoReferenceCache {
 				//System.out.println("Removed dead element");
 			}
 
-			if (autorecycle_) {
-				if (curKey == key || parent_key == key) {
-					if (curKey == key) {
-						//System.out.println("Current object dropped out of the queue");
-					} else {
-						// TODO: This case does not handle the counters correctly
-						System.out.println("Parent object dropped out of the queue ---");
-					}
-
-					// RPr: This happens definitely, if you access the same document in series
-					// Was reproduceable by iterating over several NoteIds and doing this in the loop (odd number required)
-					//		doc1 = d.getDocumentByID(id);
-					//		doc1 = null;
-					//		doc2 = d.getDocumentByID(id);
-					//		doc2 = null;
-					//		doc3 = d.getDocumentByID(id);
-					//		doc3 = null;
-
-					// ref is not used any more, but the delegate must be protected from recycling
-					ref.setNoRecycle(true);
+			if (curKey == key || parent_key == key) {
+				if (curKey == key) {
+					//System.out.println("Current object dropped out of the queue");
+				} else {
+					// TODO: This case does not handle the counters correctly
+					System.out.println("Parent object dropped out of the queue ---");
 				}
-				ref.recycle();
+
+				// RPr: This happens definitely, if you access the same document in series
+				// Was reproduceable by iterating over several NoteIds and doing this in the loop (odd number required)
+				//		doc1 = d.getDocumentByID(id);
+				//		doc1 = null;
+				//		doc2 = d.getDocumentByID(id);
+				//		doc2 = null;
+				//		doc3 = d.getDocumentByID(id);
+				//		doc3 = null;
+
+				// ref is not used any more, but the delegate must be protected from recycling
+				ref.setNoRecycle(true);
 			}
+			ref.recycle();
 
 		}
 	}

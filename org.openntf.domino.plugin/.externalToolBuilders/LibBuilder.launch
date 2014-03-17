@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<launchConfiguration type="org.eclipse.ant.AntBuilderLaunchConfigurationType">
+<?xml version="1.0" encoding="UTF-8"?><launchConfiguration type="org.eclipse.ant.AntBuilderLaunchConfigurationType">
 <stringAttribute key="org.eclipse.ant.ui.ATTR_ANT_AFTER_CLEAN_TARGETS" value="clean,compileDom,jar,postclean,"/>
 <stringAttribute key="org.eclipse.ant.ui.ATTR_ANT_MANUAL_TARGETS" value="clean,compileDom,jar,postclean,"/>
 <booleanAttribute key="org.eclipse.ant.ui.ATTR_TARGETS_UPDATED" value="true"/>
@@ -13,7 +12,7 @@
 <booleanAttribute key="org.eclipse.ui.externaltools.ATTR_BUILDER_ENABLED" value="true"/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="${workspace_loc:/org.openntf.domino.plugin/libbuild.xml}"/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_RUN_BUILD_KINDS" value="full,incremental,"/>
-<stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value="-Ddomino.rcp.target=&quot;${domino_rcp_target}&quot; -Ddomino.shared.target=&quot;${domino_shared_target}&quot; -Declipse.home=&quot;${eclipse_home}&quot;"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value="-Ddomino.rcp.target=&quot;${domino_rcp_target}&quot; -Ddomino.shared.target=&quot;${domino_shared_target}&quot; -Declipse.home=&quot;${eclipse_path}&quot;"/>
 <booleanAttribute key="org.eclipse.ui.externaltools.ATTR_TRIGGERS_CONFIGURED" value="true"/>
 <stringAttribute key="process_factory_id" value="org.eclipse.ant.ui.remoteAntProcessFactory"/>
 </launchConfiguration>
