@@ -5,7 +5,6 @@ javacore*
 /IBM_TECHNICAL_SUPPORT
 features/
 plugins/
-eclipse/
 artifacts.jar
 content.jar
 *.zip
