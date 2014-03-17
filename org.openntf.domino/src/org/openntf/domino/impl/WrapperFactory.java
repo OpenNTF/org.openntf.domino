@@ -53,11 +53,8 @@ import org.openntf.domino.utils.Factory;
  */
 public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 
-	/** this is the holder for sessions + agentContext, they are not auto recycled **/
-	private DominoReferenceCache noAutoRecycle = new DominoReferenceCache(false);
-
 	/** this is the holder for all other object that needs to be recycled **/
-	private DominoReferenceCache autoRecycle = new DominoReferenceCache(true);
+	private DominoReferenceCache referenceCache = new DominoReferenceCache();
 
 	private void clearCaches() {
 		// call gc once before processing the queues
@@ -71,8 +68,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		}
 		// TODO: Recycle all?
 		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
-		autoRecycle.processQueue(0l, 0l);
-		noAutoRecycle.processQueue(0l, 0l);
+		referenceCache.processQueue(0l, 0l);
 		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
 	}
 
@@ -121,12 +117,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 			return (T) wrapLotusObject(lotus, parent, cpp_key);
 		}
 
-		if (lotus instanceof lotus.domino.Session				//
-				|| lotus instanceof lotus.domino.AgentContext) {
-			return (T) fromLotusObject(lotus, parent, noAutoRecycle);
-		}
-
-		return (T) fromLotusObject(lotus, parent, autoRecycle);
+		return (T) fromLotusObject(lotus, parent, referenceCache);
 
 	}
 
@@ -212,11 +203,21 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 			// action, we must ensure, that we do not recycle the CURRENT (and parent) element in the next step
 
 			result = wrapLotusObject(lotus, parent, cpp_key);
+
 			cache.processQueue(cpp_key, parent_key); // recycle all elements but not the current ones
 
 			cache.put(cpp_key, result, lotus);
+			if (lotus instanceof lotus.domino.Session				//
+					|| lotus instanceof lotus.domino.AgentContext) {
+				cache.setNoRecycle(cpp_key, true); // these are never recycled by default
+			}
 		}
 		return result;
+	}
+
+	@Override
+	public void setNoRecycle(final Base<?> base, final boolean value) {
+		referenceCache.setNoRecycle(((org.openntf.domino.impl.Base) base).GetCppObj(), value);
 	}
 
 	/**

@@ -34,6 +34,7 @@ import lotus.domino.NotesException;
 import org.openntf.domino.ACL;
 import org.openntf.domino.ACL.Level;
 import org.openntf.domino.Agent;
+import org.openntf.domino.AutoMime;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
@@ -82,7 +83,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	private Date lastModDate_;
 	private String title_;
 	private Boolean isReplicationDisabled_;
-	private Boolean isAutoMime_;
+	private AutoMime autoMime_;
 
 	private String ident_;
 
@@ -3229,17 +3230,15 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
 	}
 
-	public boolean isAutoMime() {
-		if (isAutoMime_ == null) {
-			//NTF default behavior is for it to be on, so you have to globally turn it off
-			return getAncestorSession().isAutoMime();
+	public AutoMime getAutoMime() {
+		if (autoMime_ == null) {
+			return getAncestorSession().getAutoMime();
 		} else {
-			//NTF unless you've locally set it on just this Database
-			return isAutoMime_.booleanValue();
+			return autoMime_;
 		}
 	}
 
-	public void setAutoMime(final boolean autoMime) {
-		isAutoMime_ = autoMime;
+	public void setAutoMime(final AutoMime autoMime) {
+		autoMime_ = autoMime;
 	}
 }

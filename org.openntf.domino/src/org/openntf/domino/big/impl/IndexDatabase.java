@@ -841,16 +841,16 @@ public class IndexDatabase implements IScannerStateManager {
 				break;
 			case COMPLETE:
 				if (scanner != null) {
-					System.out.println("Completed " + scanner.getDocCount() + " documents at completion, " + scanner.getItemCount()
-							+ " items and " + scanner.getTokenCount());
 					if (scanner.isTrackTokenLocation()) {
 						Map tokenLocationMap = scanner.getTokenLocationMap();
 						synchronized (tokenLocationMap) {
 							saveTokenLocationMap(scanner.getStateManagerKey(), tokenLocationMap, scanner);
 							tokenLocationMap.clear();
 						}
+						System.out.println("Completed " + scanner.getDocCount() + " documents at completion, " + scanner.getItemCount()
+								+ " items and " + scanner.getTokenCount());
 					} else {
-						System.out.println("TokenLocation not being tracked by scanner");
+						//						System.out.println("TokenLocation not being tracked by scanner");
 					}
 					if (scanner.isTrackNameLocation()) {
 						Map nameLocationMap = scanner.getNameLocationMap();
