@@ -5,12 +5,17 @@ import java.util.Collection;
 
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Session;
+import org.openntf.domino.formula.AtFunction;
+import org.openntf.domino.formula.Formatter;
+import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.impl.ParameterCollectionDouble;
 import org.openntf.domino.utils.Factory;
 
 import com.ibm.commons.util.NotImplementedException;
 
-public class AtFunctionT implements AtFunctionFactory, AtFunction {
+@Deprecated
+public class AtFunctionT {
 	public static enum Op {
 		TEMPLATE_VERSION("@TemplateVersion", 0, 0),	// TODO: Not yet implemented
 		TEXT("@Text", 1, 2),						// TODO: Formatter not implemented
@@ -44,7 +49,7 @@ public class AtFunctionT implements AtFunctionFactory, AtFunction {
 						if (op.instance == null) {
 							op.instance = new AtFunctionT(op);
 						}
-						return op.instance;
+						//return op.instance;
 					}
 				}
 			}

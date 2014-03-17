@@ -1,5 +1,22 @@
+/*
+ * © Copyright FOCONIS AG, 2014
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ * 
+ */
 package org.openntf.domino.formula;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.AbstractList;
 import java.util.Arrays;
@@ -7,7 +24,9 @@ import java.util.Collection;
 
 import org.openntf.domino.DateTime;
 
-public class ValueHolder extends AbstractList<Object> {
+public class ValueHolder extends AbstractList<Object> implements Serializable {
+	private static final long serialVersionUID = 8290517470597891417L;
+
 	private Object values[];
 	private int size;
 
@@ -29,14 +48,7 @@ public class ValueHolder extends AbstractList<Object> {
 	}
 
 	/*
-	 * for permutative operation
-	 */
-	public void growP(final int inc1, final int inc2) {
-		grow(inc1 * inc2);
-	}
-
-	/*
-	 * for normal operation
+	 * reserve space for operation
 	 */
 	public void grow(final int inc1, final int inc2) {
 		grow(Math.max(inc1, inc2));

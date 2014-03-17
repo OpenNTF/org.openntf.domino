@@ -224,7 +224,7 @@ public class Operator extends AtFunction {
 	private int compareString(final Collection<String[]> values, final int ref) {
 		// TODO: Check this for numeric stability!
 		for (String[] value : values) {
-			if (value[0].compareTo(value[1]) == ref) {
+			if (Math.signum(value[0].compareTo(value[1])) == ref) {
 				return 1;
 			}
 		}

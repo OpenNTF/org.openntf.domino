@@ -126,4 +126,11 @@ public interface WrapperFactory {
 	 */
 	DateRange createDateRange(Date start, Date end, Session parent);
 
+	/**
+	 * Disables autorecycle for that element. By default, AutoRecycle for Session and AgentContext is always disabled
+	 * 
+	 * @param result
+	 */
+	void setNoRecycle(final Base<?> base, boolean value);
+
 }

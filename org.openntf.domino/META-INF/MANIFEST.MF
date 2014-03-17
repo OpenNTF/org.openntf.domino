@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Ant-Version: Apache Ant(TM) version 1.8.4 compiled on May 22 2012
-Created-By: JDK 1.7.0_51 (Oracle Corporation)
+Created-By: JDK 1.6.0 (IBM Corporation)
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenNTF Domino API
 Bundle-SymbolicName: org.openntf.domino
@@ -23,9 +23,9 @@ Export-Package: com.ibm.icu.impl,com.ibm.icu.impl.data,com.ibm.icu.imp
  ntf.domino.thread,org.openntf.domino.transactions,org.openntf.domino.
  types,org.openntf.domino.utils,org.openntf.domino.utils.xml
 Implementation-Title: OpenNTF Domino API
-Implementation-Version: 1.0.0_20140313115913
+Implementation-Version: 1.0.0_20140313013131
 Implementation-Vendor: OpenNTF
 Implementation-Vendor-URL: http://www.openntf.org
-Built-By: praml
-Build-Date: 20140313115913
+Built-By: Nathan T. Freeman
+Build-Date: 20140313013131
 

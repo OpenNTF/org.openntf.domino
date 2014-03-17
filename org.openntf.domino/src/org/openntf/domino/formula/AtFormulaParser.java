@@ -10,6 +10,8 @@ import java.util.Map;
 import org.openntf.domino.formula.AtFunction;
 import org.openntf.domino.formula.Formatter;
 import org.openntf.domino.formula.AtFunctionFactory;
+import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Terminatable;
 
 public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConstants, AtFormulaParserConstants {/*@bgen(jjtree)*/
   protected JJTAtFormulaParserState jjtree = new JJTAtFormulaParserState();protected Formatter formatter;
@@ -21,6 +23,14 @@ public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConst
                         return new AtFormulaParser(DominoFormatter.getInstance(), AtFunctionFactory.getInstance());
                 }
   };
+
+  static {
+                Factory.onTerminate(new Terminatable() {
+                        public void terminate() {
+                                instance_.set(null);
+                        }
+                });
+  }
 
   public AtFormulaParser(Formatter fmt, AtFunctionFactory fact) {
     this(new java.io.StringReader("")); // needed for proper init :(    formatter = fmt;
@@ -49,6 +59,12 @@ public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConst
                 throw new IllegalArgumentException("Function '" + funcName + "' cannot be redeclared");
     }
         customFunc.put(funcName.toLowerCase(), func);
+  }
+
+  final public SimpleNode Parse(final String formula) throws ParseException {
+        java.io.StringReader sr = new java.io.StringReader(formula);
+        ReInit(sr);
+        return Parse();
   }
 
   final public SimpleNode Parse() throws ParseException {
@@ -1336,27 +1352,6 @@ public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConst
     finally { jj_save(2, xla); }
   }
 
-  private boolean jj_3R_20() {
-    if (jj_3R_26()) return true;
-    return false;
-  }
-
-  private boolean jj_3_2() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_15()) {
-    jj_scanpos = xsp;
-    if (jj_3R_16()) {
-    jj_scanpos = xsp;
-    if (jj_3R_17()) {
-    jj_scanpos = xsp;
-    if (jj_3R_18()) return true;
-    }
-    }
-    }
-    return false;
-  }
-
   private boolean jj_3R_31() {
     if (jj_3R_20()) return true;
     return false;
@@ -1565,13 +1560,13 @@ public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConst
     return false;
   }
 
-  private boolean jj_3R_22() {
-    if (jj_scan_token(KW_ENVIRONMENT)) return true;
+  private boolean jj_3R_35() {
+    if (jj_scan_token(At_do)) return true;
     return false;
   }
 
-  private boolean jj_3R_35() {
-    if (jj_scan_token(At_do)) return true;
+  private boolean jj_3R_22() {
+    if (jj_scan_token(KW_ENVIRONMENT)) return true;
     return false;
   }
 
@@ -1639,6 +1634,27 @@ public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConst
   private boolean jj_3R_15() {
     if (jj_scan_token(OpPlus)) return true;
     if (jj_3R_20()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_20() {
+    if (jj_3R_26()) return true;
+    return false;
+  }
+
+  private boolean jj_3_2() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_15()) {
+    jj_scanpos = xsp;
+    if (jj_3R_16()) {
+    jj_scanpos = xsp;
+    if (jj_3R_17()) {
+    jj_scanpos = xsp;
+    if (jj_3R_18()) return true;
+    }
+    }
+    }
     return false;
   }
 
