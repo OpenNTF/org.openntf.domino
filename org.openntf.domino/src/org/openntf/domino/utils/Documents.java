@@ -299,67 +299,69 @@ public enum Documents {
 		} else {
 			entity = previousState;
 		}
-		MIMEHeader javaClass = entity.getNthHeader("X-Java-Class");
-		MIMEHeader contentEncoding = entity.getNthHeader("Content-Encoding");
-		if (javaClass == null) {
-			javaClass = entity.createHeader("X-Java-Class");
-		} else {
-			// long jcid = org.openntf.domino.impl.Base.getDelegateId((org.openntf.domino.impl.Base) javaClass);
-			// if (jcid < 1) {
-			// System.out.println("EXISTING javaClassid: " + jcid);
-			// System.out.println("Item: " + itemName + " in document " + doc.getUniversalID() + " (" + doc.getNoteID()
-			// + ") update count: " + diagCount.get(diagKey));
-			// }
-		}
 		try {
-			javaClass.setHeaderVal(object.getClass().getName());
-		} catch (Throwable t) {
-			t.printStackTrace();
-		}
-
-		if (compress) {
-			if (contentEncoding == null) {
-				contentEncoding = entity.createHeader("Content-Encoding");
+			MIMEHeader javaClass = entity.getNthHeader("X-Java-Class");
+			MIMEHeader contentEncoding = entity.getNthHeader("Content-Encoding");
+			if (javaClass == null) {
+				javaClass = entity.createHeader("X-Java-Class");
+			} else {
+				// long jcid = org.openntf.domino.impl.Base.getDelegateId((org.openntf.domino.impl.Base) javaClass);
+				// if (jcid < 1) {
+				// System.out.println("EXISTING javaClassid: " + jcid);
+				// System.out.println("Item: " + itemName + " in document " + doc.getUniversalID() + " (" + doc.getNoteID()
+				// + ") update count: " + diagCount.get(diagKey));
+				// }
 			}
-			contentEncoding.setHeaderVal("gzip");
-
-			// contentEncoding.recycle();
-		} else {
-			if (contentEncoding != null) {
-
-				contentEncoding.remove();
-				// contentEncoding.recycle();
+			try {
+				javaClass.setHeaderVal(object.getClass().getName());
+			} catch (Throwable t) {
+				t.printStackTrace();
 			}
-		}
 
-		// javaClass.recycle();
-
-		if (headers != null) {
-			for (Map.Entry<String, String> entry : headers.entrySet()) {
-				MIMEHeader paramHeader = entity.getNthHeader(entry.getKey());
-				if (paramHeader == null) {
-					paramHeader = entity.createHeader(entry.getKey());
+			if (compress) {
+				if (contentEncoding == null) {
+					contentEncoding = entity.createHeader("Content-Encoding");
 				}
-				paramHeader.setHeaderVal(entry.getValue());
-				// paramHeader.recycle();
+				contentEncoding.setHeaderVal("gzip");
+
+				// contentEncoding.recycle();
+			} else {
+				if (contentEncoding != null) {
+
+					contentEncoding.remove();
+					// contentEncoding.recycle();
+				}
 			}
-		}
-		byte[] bytes = byteStream.toByteArray();
-		ByteArrayInputStream byteIn = new ByteArrayInputStream(bytes);
 
-		mimeStream.setContents(byteIn);
-		entity.setContentFromBytes(mimeStream, contentType, MIMEEntity.ENC_NONE);
+			// javaClass.recycle();
 
-		// entity.recycle();
-		// mimeStream.recycle();
-		//		entity = null;	//NTF - why set to null? We're properly closing the entities now.
-		//		previousState = null;	// why set to null?
-		if (!doc.closeMIMEEntities(true, itemName)) {
-			log_.log(Level.WARNING, "closeMIMEEntities returned false for item " + itemName + " on doc " + doc.getNoteID() + " in db "
-					+ doc.getAncestorDatabase().getApiPath());
-		}
-		if (convertMime) {
-			session.setConvertMime(true);
+			if (headers != null) {
+				for (Map.Entry<String, String> entry : headers.entrySet()) {
+					MIMEHeader paramHeader = entity.getNthHeader(entry.getKey());
+					if (paramHeader == null) {
+						paramHeader = entity.createHeader(entry.getKey());
+					}
+					paramHeader.setHeaderVal(entry.getValue());
+					// paramHeader.recycle();
+				}
+			}
+			byte[] bytes = byteStream.toByteArray();
+			ByteArrayInputStream byteIn = new ByteArrayInputStream(bytes);
+
+			mimeStream.setContents(byteIn);
+			entity.setContentFromBytes(mimeStream, contentType, MIMEEntity.ENC_NONE);
+		} finally {
+			// entity.recycle();
+			// mimeStream.recycle();
+			//		entity = null;	//NTF - why set to null? We're properly closing the entities now.
+			//		previousState = null;	// why set to null?
+			if (!doc.closeMIMEEntities(true, itemName)) {
+				log_.log(Level.WARNING, "closeMIMEEntities returned false for item " + itemName + " on doc " + doc.getNoteID() + " in db "
+						+ doc.getAncestorDatabase().getApiPath());
+			}
+			if (convertMime) {
+				session.setConvertMime(true);
+			}
 		}
 	}
 
@@ -389,8 +391,14 @@ public enum Documents {
 			session.setConvertMIME(false);
 
 			MIMEEntity entity = document.getMIMEEntity(itemname);
-			Object result = (null == entity) ? null : Documents.getItemValueMIME(document, itemname, entity);
-
+			Object result = null;
+			if (entity != null) {
+				try {
+					result = Documents.getItemValueMIME(document, itemname, entity);
+				} finally {
+					document.closeMIMEEntities(false, itemname);
+				}
+			}
 			session.setConvertMIME(convertMime);
 			return result;
 
@@ -417,6 +425,7 @@ public enum Documents {
 	public static Object getItemValueMIME(final Document document, final String itemname, MIMEEntity entity) {
 		String noteID = null;
 		boolean convertMime = false;
+		boolean mustClose = false;
 		try {
 			if (null == document) {
 				throw new IllegalArgumentException("Document is null");
@@ -436,6 +445,7 @@ public enum Documents {
 			Object result = null;
 			if (entity == null) {
 				entity = document.getMIMEEntity(itemname);
+				mustClose = true;
 			}
 			if (entity == null) {
 				return null;
@@ -451,6 +461,9 @@ public enum Documents {
 			DominoUtils.handleException(new MIMEConversionException("Unable to getItemValueMIME for item name " + itemname
 					+ " on document " + noteID + " [Caught " + t.getClass().getName() + ": " + t.getMessage() + "]", t));
 		} finally {
+			if (entity != null && mustClose) {
+				document.closeMIMEEntities(false, itemname);
+			}
 			if (convertMime) {
 				Session session = document.getAncestorSession();
 				session.setConvertMIME(true);
