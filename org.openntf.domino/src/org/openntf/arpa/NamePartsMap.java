@@ -513,80 +513,101 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 	 * @param string
 	 *            String from which to parse the name values.
 	 */
-	private void parse(final String string) {
-		String common = "";
-		String[] ous = new String[] { "", "", "", "" };
-		String organization = "";
-		String country = "";
+	private boolean parse(final String string) {
+		try {
+			String common = "";
+			final String[] ous = new String[] { "", "", "", "" };
+			String organization = "";
+			String country = "";
 
-		if ((!ISO.isBlankString(string)) && (string.indexOf('/') > 0)) {
-			// break the source into it's component words and parse them
+			if ((!ISO.isBlankString(string)) && (string.indexOf('/') > 0)) {
 
-			String[] words = string.split("/");
-			int length = words.length;
-			if (length > 0) {
-				int idx = 0;
+				// break the source into it's component words and parse them
+				final String[] words = string.split("/");
+				final int length = words.length;
+				if (length > 0) {
+					int idx = 0;
 
-				if (string.indexOf('=') > 0) {
-					// use canonical logic
-					for (int i = words.length - 1; i >= 0; i--) {
-						String[] nibbles = words[i].trim().split("=");
-						if (nibbles.length > 1) {
-							String key = nibbles[0];
-							String value = nibbles[1];
+					if (string.indexOf('=') > 0) {
+						// use canonical logic
+						for (int i = words.length - 1; i >= 0; i--) {
+							final String word = words[i].trim();
+							try {
+								if (word.indexOf('=') > 0) {
+									final String[] nibbles = word.split("=");
+									if (nibbles.length > 1) {
+										final String key = nibbles[0];
+										final String value = nibbles[1];
 
-							if (CanonicalKey.C.name().equals(key)) {
-								country = value;
-							} else if (CanonicalKey.O.name().equals(key)) {
-								organization = value;
-							} else if (CanonicalKey.OU.name().equals(key)) {
-								ous[idx] = value;
+										if (CanonicalKey.C.name().equalsIgnoreCase(key)) {
+											country = value;
+										} else if (CanonicalKey.O.name().equalsIgnoreCase(key)) {
+											organization = value;
+										} else if (CanonicalKey.OU.name().equalsIgnoreCase(key)) {
+											ous[idx] = value;
+											idx++;
+										} else if (CanonicalKey.CN.name().equalsIgnoreCase(key)) {
+											common = value;
+										}
+									} else {
+										throw new RuntimeException("Exception Parsing Word: \"" + word + "\"");
+									}
+								} else {
+									throw new RuntimeException("Exception Parsing Word: \"" + word + "\"");
+								}
+							} catch (final Exception e) {
+								ISO.handleException(e, "Source String: \"" + string + "\",  Parsing Word: \"" + word + "\"");
+								e.printStackTrace();
+							}
+						}
+
+					} else {
+						// use abbreviated logic
+						common = words[0].trim();
+						if (length > 1) {
+							int orgpos = length;
+							organization = words[orgpos];
+							if (ISO.isCountryCode2(organization)) {
+								// organization could be a country code,
+								if (orgpos > 1) {
+									// Treat organization as a country code and
+									// re-aquire the organization
+									country = organization;
+									orgpos--;
+									organization = words[orgpos];
+								}
+							}
+
+							int oupos = orgpos - 1;
+							while (oupos > 0) {
+								ous[idx] = words[oupos];
+
+								oupos--;
 								idx++;
-							} else if (CanonicalKey.CN.name().equals(key)) {
-								common = value;
-							}
-						} else {
-							throw new RuntimeException("Cannot Parse string: \"" + string + "\"");
-						}
-					}
-
-				} else {
-					// use abbreviated logic
-					common = words[0].trim();
-					if (length > 1) {
-						int orgpos = length;
-						organization = words[orgpos];
-						if (ISO.isCountryCode2(organization)) {
-							// organization could be a country code, 
-							if (orgpos > 1) {
-								// Treat organization as a country code and re-aquire the organization
-								country = organization;
-								orgpos--;
-								organization = words[orgpos];
-							}
-						}
-
-						int oupos = orgpos - 1;
-						while (oupos > 0) {
-							ous[idx] = words[oupos];
-
-							oupos--;
-							idx++;
-							if (idx > 3) {
-								break;
+								if (idx > 3) {
+									break;
+								}
 							}
 						}
 					}
 				}
 			}
+
+			this.put(Key.Common, common);
+			this.put(Key.OrgUnit1, ous[0]);
+			this.put(Key.OrgUnit2, ous[1]);
+			this.put(Key.OrgUnit3, ous[2]);
+			this.put(Key.OrgUnit4, ous[3]);
+			this.put(Key.Organization, organization);
+			this.put(Key.Country, country);
+
+			return true;
+
+		} catch (final Exception e) {
+			ISO.handleException(e, string);
+			e.printStackTrace();
 		}
 
-		this.put(Key.Common, common);
-		this.put(Key.OrgUnit1, ous[0]);
-		this.put(Key.OrgUnit2, ous[1]);
-		this.put(Key.OrgUnit3, ous[2]);
-		this.put(Key.OrgUnit4, ous[3]);
-		this.put(Key.Organization, organization);
-		this.put(Key.Country, country);
+		return false;
 	}
 }
