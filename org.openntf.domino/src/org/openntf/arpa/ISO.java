@@ -18,8 +18,14 @@
  */
 package org.openntf.arpa;
 
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.openntf.domino.logging.LogUtils;
 
 /**
  * @author dolson
@@ -173,10 +179,6 @@ public enum ISO {
 	 * ******************************************************************
 	 */
 
-	public static final Pattern PatternAlpha2 = Pattern.compile("^[A-Z]+[A-Z]$");
-	public static final Pattern PatternAlpha3 = Pattern.compile("^[A-Z]+[A-Z]+[A-Z]$");
-	public static final Pattern PatternHexadecimal = Pattern.compile("^[A-Fa-f0-9]+$");
-
 	/*
 	 * Pattern PatternRFC822: anytext<anytext>anytext
 	 * 
@@ -201,6 +203,15 @@ public enum ISO {
 	 * $ match the preceding match instructions against the end of the string.
 	 */
 	public static Pattern PatternRFC822 = Pattern.compile("^.*<.*>.*$");
+	public static final Pattern PatternAlpha2 = Pattern.compile("^[A-Z]+[A-Z]$");
+	public static final Pattern PatternAlpha3 = Pattern.compile("^[A-Z]+[A-Z]+[A-Z]$");
+	public static final Pattern PatternHexadecimal = Pattern.compile("^[A-Fa-f0-9]+$");
+
+	/** The Constant log_. */
+	private static final Logger log_ = Logger.getLogger("org.openntf.arpa");
+
+	/** The Constant logBackup_. */
+	private final static Logger logBackup_ = Logger.getLogger("com.ibm.xsp.domino");
 
 	/**
 	 * Gets the ISO3166 enum for the specified code
@@ -321,6 +332,84 @@ public enum ISO {
 	 */
 	public static boolean startsWithIgnoreCase(final String source, final String prefix) {
 		return ((null == source) || (null == prefix)) ? false : source.toLowerCase().startsWith(prefix.toLowerCase());
+	}
+
+	/*
+	 * ******************************************************************
+	 * ******************************************************************
+	 * 
+	 * EXCEPTION HANDLING based on code in org.openntf.domino.utils.DominoUtils
+	 * 
+	 * ******************************************************************
+	 * ******************************************************************
+	 */
+	/**
+	 * Handle exception.
+	 * 
+	 * @param t
+	 *            the t
+	 * @return the throwable
+	 */
+	public static Throwable handleException(final Throwable t) {
+		return (ISO.handleException(t, null));
+	}
+
+	public static Throwable handleException(final Throwable t, final String details) {
+		try {
+			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				public Object run() throws Exception {
+					if (ISO.log_.getLevel() == null) {
+						LogUtils.loadLoggerConfig(false, "");
+					}
+					if (ISO.log_.getLevel() == null) {
+						ISO.log_.setLevel(Level.WARNING);
+					}
+					return null;
+				}
+			});
+			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				public Object run() throws Exception {
+					if (LogUtils.hasAccessException(ISO.log_)) {
+						ISO.logBackup_.log(Level.SEVERE, t.getLocalizedMessage(), t);
+						if (!ISO.isBlankString(details)) {
+							ISO.logBackup_.log(Level.SEVERE, "DETAILS: " + details);
+						}
+					} else {
+						ISO.log_.log(Level.WARNING, t.getLocalizedMessage(), t);
+						if (!ISO.isBlankString(details)) {
+							ISO.log_.log(Level.WARNING, "DETAILS: " + details);
+						}
+					}
+					return null;
+				}
+			});
+
+		} catch (final Throwable e) {
+			e.printStackTrace();
+		}
+
+		if (ISO.getBubbleExceptions()) {
+			throw new RuntimeException(t);
+		}
+		return t;
+	}
+
+	private static ThreadLocal<Boolean> bubbleExceptions_ = new ThreadLocal<Boolean>() {
+		@Override
+		protected Boolean initialValue() {
+			return Boolean.FALSE;
+		}
+	};
+
+	public static Boolean getBubbleExceptions() {
+		if (ISO.bubbleExceptions_.get() == null) {
+			ISO.setBubbleExceptions(Boolean.FALSE);
+		}
+		return ISO.bubbleExceptions_.get();
+	}
+
+	public static void setBubbleExceptions(final Boolean value) {
+		ISO.bubbleExceptions_.set(value);
 	}
 
 }
