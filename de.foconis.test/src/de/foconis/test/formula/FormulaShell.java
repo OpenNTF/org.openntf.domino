@@ -12,23 +12,37 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
+import jline.ANSIBuffer;
 import jline.ArgumentCompletor;
 import jline.Completor;
 import jline.ConsoleReader;
 import jline.SimpleCompletor;
+import jline.Terminal;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.formula.AtFormulaParser;
 import org.openntf.domino.formula.AtFunction;
 import org.openntf.domino.formula.AtFunctionFactory;
+import org.openntf.domino.formula.DominoFormatter;
+import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.ParseException;
+import org.openntf.domino.formula.ast.Node;
 import org.openntf.domino.formula.ast.SimpleNode;
 import org.openntf.domino.formula.impl.NotImplemented;
 import org.openntf.domino.thread.DominoThread;
+import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 public class FormulaShell implements Runnable {
+	private static  boolean cacheAST = false;
+	private static  int count = 10000;
+	Map<String, Node> astCache = new HashMap<String, Node>();
+	private Database db;
+	
+	
 	public static void main(final String[] args) {
 		DominoThread thread = new DominoThread(new FormulaShell(), "My thread");
 		thread.start();
@@ -42,6 +56,10 @@ public class FormulaShell implements Runnable {
 	public void run() {
 		try {
 
+			for (Fixes fix : Fixes.values())
+			Factory.getSession().setFixEnable(fix, true);
+			DominoUtils.setBubbleExceptions(true);
+			
 			// RPr: I use  "http://jline.sourceforge.net/" to emulate a shell to test my formula engine
 			// I put jline-1.0.jar in jvm/lib/ext
 			// In detail: I do not know exactly what I'm doing here... I just need a shell :) 
@@ -55,7 +73,7 @@ public class FormulaShell implements Runnable {
 			// This code is responsible for autocompletion
 			AtFunctionFactory funcFact = AtFunctionFactory.getInstance();
 			Collection<AtFunction> funcs = funcFact.getFunctions().values();
-			String[] autoComplete = new String[funcs.size()];
+			String[] autoComplete = new String[funcs.size()+3];
 			int i = 0;
 			for (AtFunction func : funcs) {
 				if (func instanceof NotImplemented) {
@@ -64,7 +82,9 @@ public class FormulaShell implements Runnable {
 					autoComplete[i++] = func.getImage() + "(";
 				}
 			}
-
+			autoComplete[i++] = "cache=";
+			autoComplete[i++] = "astoff";
+			autoComplete[i++] = "aston";
 			completors.add(new SimpleCompletor(autoComplete));
 			reader.addCompletor(new ArgumentCompletor(completors));
 
@@ -77,10 +97,32 @@ public class FormulaShell implements Runnable {
 			System.out.println("This is the formula shell. Quit with 'q' !!! If you get a NullpointerException, terminate your server!");
 			System.out.println("Session.convertMime is " + Factory.getSession().isConvertMime());
 			while ((line = reader.readLine("$> ")) != null) {
+				if (line.startsWith("count")) {
+					int p = line.indexOf('=');
+					count = Integer.parseInt(line.substring(p+1));
+					System.out.println("Iteration count is set to: " + count);
+					continue;
+				}
+				if (line.equalsIgnoreCase("astoff")) {
+					cacheAST = false;
+					System.out.println("AST Cache is set to off");
+					continue;
+				}
+				
+				if (line.equalsIgnoreCase("aston")) {
+					cacheAST = true;
+					astCache = new HashMap<String, Node>();
+					System.out.println("AST Cache is set to on");
+					continue;
+				}
 				if (line.equalsIgnoreCase("q")) {
 					break;
 				}
-				execute(line);
+				try {
+					execute(line);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 			System.out.println("Bye.");
 
@@ -92,102 +134,192 @@ public class FormulaShell implements Runnable {
 		System.out.println(Factory.dumpCounters(true));
 	}
 
-	private Document getDemoDoc() {
-		Database db = Factory.getSession().getDatabase("", "log.nsf");
+	private Document createDocument() {
+		if (db == null) db = Factory.getSession().getDatabase("", "log.nsf");
 		Document doc = db.createDocument();
-		doc.replaceItemValue("text1", "This is a test string");
-		doc.replaceItemValue("text2", new String[] { "1", "2", "3" });
-
-		doc.replaceItemValue("int1", new int[] { 1 });
-		doc.replaceItemValue("int2", new int[] { 1, 2, 3 });
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("K1", "v1");
-		map.put("K2", "v2");
-		doc.replaceItemValue("mime1", map);
 		return doc;
+	}
+	private void fillDemoDoc(Map<String, Object> doc, double rndVal) {
+
+		doc.put("rnd", new double[] { rndVal });
+
+//		doc.put("text1", "This is a test string");
+//		doc.put("text2", new String[] { "1", "2", "3" });
+//
+//		doc.put("int1", new int[] { 1 });
+//		doc.put("int2", new int[] { 1, 2, 3 });
+//		Map<String, String> map = new HashMap<String, String>();
+//		map.put("K1", "v1");
+//		map.put("K2", "v2");
+//		doc.put("mime1", map);
 
 	}
+	
+	
+	
+	private Node parse(String line) throws ParseException {
+		Node ast = null;
+		if (cacheAST) ast = astCache.get(line);
 
-	private void execute(final String line) {
+		AtFormulaParser parser = AtFormulaParser.getInstance();
+		if (ast == null) {
+			ast = parser.Parse(line);
+			if (cacheAST)astCache.put(line, ast);
+		}
+		return ast;
+	}
+	
+
+
+	public String cyan(Object o) {
+		ANSIBuffer ab = new ANSIBuffer();
+		return ab.cyan(o.toString()).toString();
+	}
+	public String red(Object o) {
+		ANSIBuffer ab = new ANSIBuffer();
+		return ab.red(o.toString()).toString();
+	}	
+	
+	String formatTime(long time) {
+		 return String.format("%.3f ms",(double)time/1000000);
+	}
+	
+	private void execute(final String line) throws ParseException, EvaluateException {
 		// TODO Auto-generated method stub
 
-		List<Object> ntf = null;
-		long time = System.currentTimeMillis();
-		AtFormulaParser parser = AtFormulaParser.getInstance();
+		List<Object> ntfDocResult = null;
+		List<Object> ntfMapResult = null;
+		List<Object> lotusResult = null;
+		
+		long time = 0; 
+		
+		long setupTime = 0;
+		long lotusTime = 0;
+		long parseTime = 0;
+		long docEvaluateTime = 0;
+		long mapEvaluateTime = 0;
+		
+		for (int i = 0; i < count; i++) {
+			
+			// Setup procedure, prepare the demo docs & maps
+			time = System.nanoTime();
+			double rnd = Math.random();
+			Document ntfDoc = createDocument();
+			Document lotusDoc = createDocument();
+			Map<String, Object> ntfMap = new HashMap<String, Object>();
+			
+			fillDemoDoc(ntfDoc, rnd);
+			fillDemoDoc(lotusDoc, rnd);
+			fillDemoDoc(ntfMap, rnd);
+			// Setup completed
+			setupTime += System.nanoTime() - time;
 
-		Document ntfDoc = getDemoDoc();
-		Document lotusDoc = getDemoDoc();
-		try {
-			SimpleNode n = parser.Parse(line);
-			FormulaContext ctx = new FormulaContext(ntfDoc, parser.getFormatter());
-			ntf = n.evaluate(ctx);
-
-			System.out.println("NTF:\t" + ntf);
-		} catch (Exception e) {
-			System.out.println("NTF failed!");
-			e.printStackTrace();
+			
+			
+			
+			// benchmark the lotus - evaluate
+			time = System.nanoTime();
+			lotusResult = Factory.getSession().evaluate(line, lotusDoc);
+			lotusTime += System.nanoTime() - time;
+			
+			
+			
+			// benchmark the AtFormulaParser
+			time = System.nanoTime();
+			Node ast = parse(line);
+			parseTime += System.nanoTime() - time;
+			
+			// benchmark the evaluate with a document as context
+			time = System.nanoTime();
+			FormulaContext ctx1 = new FormulaContext(ntfDoc, DominoFormatter.getInstance());
+			ntfDocResult = ast.evaluate(ctx1);
+			docEvaluateTime += System.nanoTime() - time;
+			
+			
+			// benchmark the evaluate with a map as context
+			time = System.nanoTime();
+			FormulaContext ctx2 = new FormulaContext(ntfMap, DominoFormatter.getInstance());
+			ntfMapResult = ast.evaluate(ctx2);
+			mapEvaluateTime += System.nanoTime() - time;
 		}
 
-		List<Object> lotus = null;
-		try {
-			// We have to work on the lotus session!
-			lotus = Factory.getSession().evaluate(line, lotusDoc);
-			System.out.println("LOTUS:\t" + lotus);
 
-			boolean differs = false;
-
-			if (ntf.size() == lotus.size()) {
-				for (int i = 0; i < ntf.size(); i++) {
-					Object a = ntf.get(i);
-					Object b = lotus.get(i);
-					if (a == null && b == null) {
-
-					} else if (a == null || b == null) {
-						differs = true;
-						break;
-					} else if (a instanceof Number && b instanceof Number) {
-						if (Double.compare(((Number) a).doubleValue(), ((Number) b).doubleValue()) != 0) {
-							differs = true;
-							break;
-						}
-					} else if (!a.equals(b)) {
-						differs = true;
-						break;
-					}
-				}
-			} else {
-				differs = true;
-			}
-			if (differs) {
-				System.out.println("Formula Results are different!");
-			} else {
-				System.out.println("Formula Results are equal :) :)");
-			}
-			if (ntfDoc.entrySet().equals(lotusDoc.entrySet())) {
-				System.out.println("Documents are equal :) :)");
-				for (Entry<String, Object> entry : ntfDoc.entrySet()) {
-					System.out.println("\t" + entry);
-				}
-			} else {
-				System.out.println("Documents are different! NTF Document vs LotusDocument:");
-				Set<String> keys = new HashSet<String>();
-				keys.addAll(ntfDoc.keySet());
-				keys.addAll(lotusDoc.keySet());
-				for (String key : keys) {
-					Vector ntfVal = ntfDoc.getItemValue(key);
-					Vector lotusVal = lotusDoc.getItemValue(key);
-					if (ntfVal == null && lotusVal == null) {
-						// equal
-					} else if (ntfVal == null || lotusVal == null || !ntfVal.equals(lotusVal)) {
-						System.out.println(key + "\t" + ntfVal + "\t <> " + lotusVal);
-					}
-
-				}
-
-			}
-		} catch (Exception e) {
-			System.out.println("DOMINO failed!");
-			e.printStackTrace();
+		if (compareList(ntfDocResult, lotusResult)) {
+			System.out.println("DocResults are equal");
+		} else {
+			System.out.println("DocResults differs");
+			System.out.println("NTFDOC\t" + dump(ntfDocResult));
+			System.out.println("LOTUS\t" + dump(lotusResult));
 		}
+		if (compareList(ntfMapResult, lotusResult)) {
+			System.out.println("MapResults are equal");
+		} else {
+			System.out.println("MapResults differs");
+			System.out.println("NTFMAP\t" + dump(ntfMapResult));
+			System.out.println("LOTUS\t" + dump(lotusResult));
+		}
+		
+		System.out.println("Setup Time:\t"+ formatTime(setupTime));
+		System.out.println("Lotus Time:\t"+  formatTime(lotusTime));
+		
+		System.out.println("Parse Time:\t"+  formatTime(parseTime));
+		System.out.println("Evaluate Doc:\t"+ formatTime(docEvaluateTime));
+		System.out.println("Evaluate Map:\t"+ formatTime(mapEvaluateTime));
+		
+		System.out.println("Parse+Doc:\t"+  formatTime(parseTime+docEvaluateTime) + "\t" + vs(parseTime+docEvaluateTime, lotusTime));
+		System.out.println("Parse+Map:\t"+  formatTime(parseTime+mapEvaluateTime) + "\t" + vs(parseTime+mapEvaluateTime, lotusTime));
+		
+	}
+	
+	private String dump(List<Object> lotus) {
+		// TODO Auto-generated method stub
+		int width = Terminal.getTerminal().getTerminalWidth()-20;
+		String s = lotus.toString();
+		if (s.length()>width) {
+			s = s.substring(0, width)+"... (l=" + width + ")";
+		}
+		
+		return s;
+		
+	}
+
+	private String vs(long ntfTime, long lotusTime) {
+		if (ntfTime < 2) {
+			return "Unbelievable faster than lotus";
+		}
+		return String.format("%.2f times faster than lotus", (double)lotusTime / (double)ntfTime);
+		
+	}
+
+	private boolean compareMaps(Map<String, Object> map1, Map<String, Object> map2) {
+		return false;
+	}
+	
+	private boolean compareList(List<Object> list1, List<Object> list2) {
+		boolean equals = true;
+
+		if (list1.size() == list2.size()) {
+			for (int i = 0; i < list1.size(); i++) {
+				Object a = list1.get(i);
+				Object b = list2.get(i);
+				if (a == null && b == null) {
+
+				} else if (a == null || b == null) {
+					equals = false;
+					break;
+				} else if (a instanceof Number && b instanceof Number) {
+					if (Double.compare(((Number) a).doubleValue(), ((Number) b).doubleValue()) != 0) {
+						equals = false;
+						break;
+					}
+				} else if (!a.equals(b)) {
+					equals = false;
+					break;
+				}
+			}
+		} else {
+			equals = false;
+		}
+		return equals;
 	}
 }

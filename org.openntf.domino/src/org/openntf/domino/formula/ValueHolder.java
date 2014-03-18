@@ -39,7 +39,13 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 	 * @param init
 	 */
 	public ValueHolder(final Object init) {
-		if (init instanceof Collection) {
+		if (init != null && init.getClass().isArray()) {
+			int lh = Array.getLength(init);
+			grow(lh);
+			for (int i = 0; i < lh; i++) {
+				add(Array.get(init, i));
+			}
+		} else if (init instanceof Collection) {
 			addAll((Collection<?>) init);
 		} else {
 			grow(1);
