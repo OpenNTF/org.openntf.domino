@@ -40,11 +40,10 @@ public class AtFunctionSimple extends AtFunctionGeneric {
 		ValueHolder ret = new ValueHolder();
 
 		if (varArgClass != null) {
-			System.out.println(varArgClass);
 			Collection<Object[]> values = new ParameterCollectionObject<Object>(params, (Class<Object>) varArgClass, false);
 			ret.grow(values.size());
 
-			// this means, the LAST parameter is an array[]
+			// Our last parameter is a "varArg" this means, the LAST parameter is an array[]
 			Object[] tmpParams = new Object[paramCount];
 			for (Object[] value : values) {
 				int i = 0;
@@ -65,9 +64,14 @@ public class AtFunctionSimple extends AtFunctionGeneric {
 			ret.grow(values.size());
 			for (Object[] value : values) {
 				if (useContext) {
-					Object[] tmpParams = new Object[value.length + 1];
+					Object[] tmpParams;
+					if (value == null) {
+						tmpParams = new Object[1];
+					} else {
+						tmpParams = new Object[value.length + 1];
+						System.arraycopy(value, 0, tmpParams, 1, value.length);
+					}
 					tmpParams[0] = ctx;
-					System.arraycopy(value, 0, tmpParams, 1, value.length);
 					ret.add(method.invoke(null, tmpParams));
 				} else {
 					ret.add(method.invoke(null, value));

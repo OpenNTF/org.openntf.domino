@@ -68,7 +68,12 @@ public class ASTAssignment extends SimpleNode {
 
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
-		ValueHolder value = jjtGetChild(0).evaluate(ctx);
+		ValueHolder value;
+		try {
+			value = jjtGetChild(0).evaluate(ctx);
+		} catch (RuntimeException e) {
+			value = new ValueHolder(e);
+		}
 		switch (type) {
 		case FIELD:
 			ctx.setField(varName, value);

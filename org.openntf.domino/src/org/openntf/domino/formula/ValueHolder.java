@@ -82,13 +82,17 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 	 */
 	@Override
 	public Object get(final int i) {
+		Object o;
 		if (size == 0) {
 			return null; // TODO: What to do?
 		} else if (i < size) {
-			return values[i];
+			o = values[i];
 		} else {
-			return values[size - 1];
+			o = values[size - 1];
 		}
+		if (o instanceof RuntimeException)
+			throw (RuntimeException) o;
+		return o;
 	}
 
 	public String getText(final int i) {
@@ -105,6 +109,15 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 			return (DateTime) o;
 		}
 		throw new ClassCastException("DateTime expected. Got '" + o + "'");
+	}
+
+	public RuntimeException getError() {
+		for (Object v : values) {
+			if (v instanceof RuntimeException) {
+				return (RuntimeException) v;
+			}
+		}
+		return null;
 	}
 
 	public int getInt(final int i) {
@@ -172,6 +185,11 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 		if (values == null || size >= values.length) {
 			grow(4);
 		}
+		// make it Domino friendly:
+		/*if (other instanceof Boolean) {
+			other = ((Boolean) other).booleanValue() ? 1 : 0;
+		}*/
+
 		values[size++] = other;
 		return true;
 	}
