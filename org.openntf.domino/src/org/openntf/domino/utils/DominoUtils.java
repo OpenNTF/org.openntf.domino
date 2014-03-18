@@ -265,6 +265,8 @@ public enum DominoUtils {
 	}
 
 	public static Throwable handleException(final Throwable t, final String details) {
+		if (t instanceof OpenNTFNotesException)
+			throw (OpenNTFNotesException) t;
 		try {
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 				@Override
