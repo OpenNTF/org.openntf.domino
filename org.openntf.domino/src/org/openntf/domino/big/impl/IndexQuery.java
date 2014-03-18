@@ -21,10 +21,10 @@ public class IndexQuery {
 	private static final Logger log_ = Logger.getLogger(IndexQuery.class.getName());
 	private static final long serialVersionUID = 1L;
 
-	private Set<String> terms_;
-	private Set<String> dbids_;
-	private Set<String> items_;
-	private Set<String> forms_;
+	private Set<CharSequence> terms_;
+	private Set<CharSequence> dbids_;
+	private Set<CharSequence> items_;
+	private Set<CharSequence> forms_;
 	private boolean isAnd_ = false;
 	private int limit_ = 0;
 	private transient IndexResults results_;
@@ -52,7 +52,7 @@ public class IndexQuery {
 	/**
 	 * @return the terms
 	 */
-	public Set<String> getTerms() {
+	public Set<CharSequence> getTerms() {
 		return terms_;
 	}
 
@@ -64,7 +64,7 @@ public class IndexQuery {
 		terms_ = IndexDatabase.toStringSet(terms);
 	}
 
-	public void setStringTerms(final Set<String> terms) {
+	public void setStringTerms(final Set<CharSequence> terms) {
 		terms_ = terms;
 	}
 
@@ -81,9 +81,9 @@ public class IndexQuery {
 		setTerms(set);
 	}
 
-	public void setMergedTerms(final String terms, final String split) {
-		Set<String> set = new HashSet<String>();
-		String[] strings = terms.split(split);
+	public void setMergedTerms(final CharSequence terms, final String split) {
+		Set<CharSequence> set = new HashSet<CharSequence>();
+		String[] strings = terms.toString().split(split);
 		//		System.out.println("Setting up " + strings.length + " terms");
 		for (String str : strings) {
 			set.add(str);
@@ -91,14 +91,14 @@ public class IndexQuery {
 		setStringTerms(set);
 	}
 
-	public void setTerms(final String term) {
+	public void setTerms(final CharSequence term) {
 		terms_ = IndexDatabase.toStringSet(term);
 	}
 
 	/**
 	 * @return the dbids
 	 */
-	public Set<String> getDbids() {
+	public Set<CharSequence> getDbids() {
 		return dbids_;
 	}
 
@@ -117,7 +117,7 @@ public class IndexQuery {
 	/**
 	 * @return the items
 	 */
-	public Set<String> getItems() {
+	public Set<CharSequence> getItems() {
 		return items_;
 	}
 
@@ -132,7 +132,7 @@ public class IndexQuery {
 	/**
 	 * @return the forms
 	 */
-	public Set<String> getForms() {
+	public Set<CharSequence> getForms() {
 		return forms_;
 	}
 
@@ -175,7 +175,7 @@ public class IndexQuery {
 
 	private String debugGetTerms() {
 		StringBuilder debug = new StringBuilder();
-		Set<String> terms = terms_;
+		Set<CharSequence> terms = terms_;
 		debug.append('[');
 		if (terms == null || terms.size() == 0) {
 
@@ -183,7 +183,7 @@ public class IndexQuery {
 			debug.append(terms.iterator().next());
 		} else {
 			boolean isFirst = true;
-			for (String term : terms) {
+			for (CharSequence term : terms) {
 				if (!isFirst) {
 					if (isAnd()) {
 						debug.append(" AND ");
@@ -205,8 +205,12 @@ public class IndexQuery {
 			startNanos = System.nanoTime();
 		IndexResults result = null;
 		//		System.out.println("Executing with: " + debugGetTerms());
-		if (isAnd() && getTerms().size() > 1) {
-			for (String term : getTerms()) {
+		Set<CharSequence> localTerms = getTerms();
+		if (!db.getCaseSensitive()) {
+			localTerms = IndexDatabase.toCISSet(localTerms);
+		}
+		if (isAnd() && localTerms.size() > 1) {
+			for (CharSequence term : localTerms) {
 				List<IndexHit> hits = db.getTermResults(term, getLimit(), getDbids(), IndexDatabase.toCISSet(getItems()), getForms());
 				if (result == null) {
 					result = createResultsFromHitList(hits);
@@ -217,7 +221,7 @@ public class IndexQuery {
 			}
 		} else {
 			result = createResultsFromHitList(new ArrayList<IndexHit>());
-			for (String term : getTerms()) {
+			for (CharSequence term : localTerms) {
 				List<IndexHit> hits = db.getTermResults(term, getLimit(), getDbids(), IndexDatabase.toCISSet(getItems()), getForms());
 				IndexResults temp = createResultsFromHitList(hits);
 				result.merge(temp);
@@ -280,8 +284,8 @@ public class IndexQuery {
 		if (terms_ != null) {
 			out.writeBoolean(true);
 			out.writeInt(terms_.size());
-			for (String term : terms_) {
-				out.writeUTF(term);
+			for (CharSequence term : terms_) {
+				out.writeUTF(term.toString());
 			}
 		} else {
 			out.writeBoolean(false);
@@ -289,8 +293,8 @@ public class IndexQuery {
 		if (dbids_ != null) {
 			out.writeBoolean(true);
 			out.writeInt(dbids_.size());
-			for (String dbid : dbids_) {
-				out.writeUTF(dbid);
+			for (CharSequence dbid : dbids_) {
+				out.writeUTF(dbid.toString());
 			}
 		} else {
 			out.writeBoolean(false);
@@ -298,8 +302,8 @@ public class IndexQuery {
 		if (forms_ != null) {
 			out.writeBoolean(true);
 			out.writeInt(forms_.size());
-			for (String form : forms_) {
-				out.writeUTF(form);
+			for (CharSequence form : forms_) {
+				out.writeUTF(form.toString());
 			}
 		} else {
 			out.writeBoolean(false);
@@ -307,8 +311,8 @@ public class IndexQuery {
 		if (items_ != null) {
 			out.writeBoolean(true);
 			out.writeInt(items_.size());
-			for (String item : items_) {
-				out.writeUTF(item);
+			for (CharSequence item : items_) {
+				out.writeUTF(item.toString());
 			}
 		} else {
 			out.writeBoolean(false);

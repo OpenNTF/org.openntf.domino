@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openntf.domino.ACL;
+import org.openntf.domino.AutoMime;
 import org.openntf.domino.Database.CompactOption;
 import org.openntf.domino.Database.DBOption;
 import org.openntf.domino.Database.FTDomainSearchOption;
@@ -255,5 +256,9 @@ public interface Database extends Base {
 	public boolean isReplicationDisabled();
 
 	public String getHttpURL(final boolean usePath);
+
+	public AutoMime getAutoMime();
+
+	public void setAutoMime(AutoMime autoMime);
 
 }

@@ -9,6 +9,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
+import org.openntf.domino.AutoMime;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xsp.Activator;
@@ -110,6 +111,28 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		return (Boolean) current;
 	}
 
+	private static AutoMime getAppAutoMime(final FacesContext ctx) {
+		// Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
+		Object current = getAppMap(ctx).get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_AUTOMIME");
+		if (current == null) {
+			current = AutoMime.WRAP_ALL;
+			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
+			if (envs != null) {
+				for (String s : envs) {
+					if (s.equalsIgnoreCase("automime32k")) {
+						current = AutoMime.WRAP_32K;
+					}
+					if (s.equalsIgnoreCase("automimenone")) {
+						current = AutoMime.WRAP_NONE;
+					}
+
+				}
+			}
+			getAppMap(ctx).put(OpenntfDominoImplicitObjectFactory2.class.getName() + "_AUTOMIME", current);
+		}
+		return (AutoMime) current;
+	}
+
 	private static boolean isAppMimeFriendly(final FacesContext ctx) {
 		// Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
 		Object current = getAppMap(ctx).get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_MARCEL");
@@ -167,7 +190,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	private final String[][] implicitObjectList = {
 			{ (isGodMode() ? "session" : "opensession"), org.openntf.domino.Session.class.getName() },
 			{ (isGodMode() ? "database" : "opendatabase"), org.openntf.domino.Database.class.getName() },
-			{ "openLogBean", org.openntf.domino.xsp.XspOpenLogErrorHolder.class.getName() } };
+			{ (Activator.isAPIEnabled() ? "openLogBean" : "openNtfLogBean"), org.openntf.domino.xsp.XspOpenLogErrorHolder.class.getName() } };
 
 	public OpenntfDominoImplicitObjectFactory2() {
 		// System.out.println("Created implicit object factory 2");
@@ -184,6 +207,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		}
 		if (rawSession != null) {
 			session = Factory.fromLotus(rawSession, org.openntf.domino.Session.SCHEMA, null);
+			session.setAutoMime(getAppAutoMime(ctx));
 			if (isAppMimeFriendly(ctx))
 				session.setConvertMIME(false);
 			if (isAppAllFix(ctx)) {
@@ -253,9 +277,17 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	}
 
 	public void createLogHolder(final FacesContextEx ctx) {
-		Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
-		XspOpenLogErrorHolder ol_ = new XspOpenLogErrorHolder();
-		localMap.put("openLogBean", ol_);
+		if (isAppDebug(ctx)) {
+			System.out.println("Beginning creation of log holder...");
+		}
+		if (Activator.isAPIEnabled()) {
+			Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
+			XspOpenLogErrorHolder ol_ = new XspOpenLogErrorHolder();
+			localMap.put("openLogBean", ol_);
+			if (isAppDebug(ctx)) {
+				System.out.println("Created log holder...");
+			}
+		}
 	}
 
 	@Override

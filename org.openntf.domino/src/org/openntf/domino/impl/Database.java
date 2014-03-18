@@ -34,6 +34,7 @@ import lotus.domino.NotesException;
 import org.openntf.domino.ACL;
 import org.openntf.domino.ACL.Level;
 import org.openntf.domino.Agent;
+import org.openntf.domino.AutoMime;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
@@ -65,7 +66,7 @@ import com.ibm.icu.util.GregorianCalendar;
 /**
  * The Class Database.
  */
-class Database extends Base<org.openntf.domino.Database, lotus.domino.Database, Session> implements org.openntf.domino.Database {
+public class Database extends Base<org.openntf.domino.Database, lotus.domino.Database, Session> implements org.openntf.domino.Database {
 	private static final Logger log_ = Logger.getLogger(Database.class.getName());
 
 	/** The server_. */
@@ -82,6 +83,7 @@ class Database extends Base<org.openntf.domino.Database, lotus.domino.Database, 
 	private Date lastModDate_;
 	private String title_;
 	private Boolean isReplicationDisabled_;
+	private AutoMime autoMime_;
 
 	private String ident_;
 
@@ -1005,6 +1007,7 @@ class Database extends Base<org.openntf.domino.Database, lotus.domino.Database, 
 		try {
 			if (key != null) {
 				String checksum = DominoUtils.toUnid(key);
+
 				Document doc = this.getDocumentByUNID(checksum);
 				if (doc == null && createOnFail) {
 					doc = this.createDocument();
@@ -1013,6 +1016,7 @@ class Database extends Base<org.openntf.domino.Database, lotus.domino.Database, 
 					doc.replaceItemValue("$$Key", key);
 				}
 				return doc;
+
 			} else if (createOnFail) {
 				log_.log(java.util.logging.Level.WARNING,
 						"Document by key requested with null key. This is probably not what you meant to do...");
@@ -1036,9 +1040,11 @@ class Database extends Base<org.openntf.domino.Database, lotus.domino.Database, 
 		try {
 			return fromLotus(getDelegate().getDocumentByUNID(unid), Document.SCHEMA, this);
 		} catch (NotesException e) {
-			// DominoUtils.handleException(e);
+			if (getAncestorSession().isFixEnabled(Fixes.DOC_UNID_NULLS) && "Invalid universal id".equals(e.text)) {
+			} else {
+				DominoUtils.handleException(e);
+			}
 			return null;
-
 		}
 	}
 
@@ -1404,9 +1410,12 @@ class Database extends Base<org.openntf.domino.Database, lotus.domino.Database, 
 		return getModifiedDocuments(since, ModifiedDocClass.DATA);
 	}
 
-	public DocumentCollection getModifiedDocuments(final java.util.Date since, final ModifiedDocClass noteClass) {
+	public DocumentCollection getModifiedDocuments(java.util.Date since, final ModifiedDocClass noteClass) {
 		try {
 			DocumentCollection result;
+			if (since == null) {
+				since = new Date(0);
+			}
 			lotus.domino.DateTime tempDT = getAncestorSession().createDateTime(since);
 			lotus.domino.DateTime dt = toLotus(tempDT);
 			result = fromLotus(getDelegate().getModifiedDocuments(dt, noteClass.getValue()), DocumentCollection.SCHEMA, this);
@@ -3219,5 +3228,17 @@ class Database extends Base<org.openntf.domino.Database, lotus.domino.Database, 
 	@Override
 	protected Session findParent(final lotus.domino.Database delegate) throws NotesException {
 		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
+	}
+
+	public AutoMime getAutoMime() {
+		if (autoMime_ == null) {
+			return getAncestorSession().getAutoMime();
+		} else {
+			return autoMime_;
+		}
+	}
+
+	public void setAutoMime(final AutoMime autoMime) {
+		autoMime_ = autoMime;
 	}
 }

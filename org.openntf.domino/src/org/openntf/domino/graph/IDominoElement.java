@@ -3,6 +3,7 @@
  */
 package org.openntf.domino.graph;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.openntf.domino.Document;
@@ -14,6 +15,9 @@ import com.tinkerpop.blueprints.Element;
  * 
  */
 public interface IDominoElement extends Element {
+
+	public boolean hasProperty(String key);
+
 	public <T> T getProperty(String key, Class<?> T);
 
 	public <T> T getProperty(String key, Class<?> T, boolean allowNull);
@@ -37,4 +41,8 @@ public interface IDominoElement extends Element {
 	public <T> T getProperty(IDominoProperties prop, boolean allowNull);
 
 	public void setProperty(IDominoProperties prop, java.lang.Object value);
+
+	public Map<String, Object> toMap(IDominoProperties[] props);
+
+	public Map<String, Object> toMap(Set<IDominoProperties> props);
 }

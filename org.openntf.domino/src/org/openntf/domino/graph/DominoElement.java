@@ -2,7 +2,10 @@ package org.openntf.domino.graph;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,8 +16,59 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
 import org.openntf.domino.types.Null;
+import org.openntf.domino.utils.Strings;
 
 public abstract class DominoElement implements IDominoElement, Serializable {
+	private static Map<Class<?>, Map<String, Method>> PROP_REFLECT_MAP = new ConcurrentHashMap<Class<?>, Map<String, Method>>();
+
+	public static Object getReflectiveProperty(final IDominoElement element, final String prop) {
+		if (prop == null || prop.isEmpty())
+			return null;
+		if (element.hasProperty(prop)) {
+			return element.getProperty(prop);
+		} else {
+			Class<?> cls = element.getClass();
+			Map<String, Method> clsMap = PROP_REFLECT_MAP.get(cls);
+			if (clsMap == null) {
+				clsMap = new ConcurrentHashMap<String, Method>();
+				synchronized (DominoElement.class) {
+					PROP_REFLECT_MAP.put(cls, clsMap);
+				}
+			}
+			Method crystal = clsMap.get(prop);
+			if (crystal == null) {
+				String getKey = "get" + Strings.toProperCase(prop);
+				try {
+					crystal = cls.getMethod(getKey, null);
+				} catch (Exception e) {
+					try {
+						String isKey = "is" + Strings.toProperCase(prop);
+						crystal = cls.getMethod(isKey, null);
+					} catch (Exception e1) {
+						//this is actually okay. It just happens we don't have a method for this thing.
+					}
+				}
+				if (crystal != null) {
+					synchronized (clsMap) {
+						clsMap.put(prop, crystal);
+					}
+				}
+			}
+			if (crystal != null) {
+				try {
+					return crystal.invoke(element, null);
+				} catch (Throwable t) {
+					//TODO NTF should really replace the map with some kind of method reference that returns null in the future...
+				}
+			}
+		}
+		return null;
+	}
+
+	public static Object getReflectiveProperty(final IDominoElement element, final IDominoProperties prop) {
+		return prop.getType().cast(getReflectiveProperty(element, prop.getName()));
+	}
+
 	private static final Logger log_ = Logger.getLogger(DominoElement.class.getName());
 	private static final long serialVersionUID = 1L;
 	public static final String TYPE_FIELD = "_OPEN_GRAPHTYPE";
@@ -316,20 +370,26 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return getPropertyKeys(true);
 	}
 
+	private final Set<String> propKeys_ = new HashSet<String>();	//TODO MAKE THREAD SAFE!!;
+
 	public Set<String> getPropertyKeys(final boolean includeEdgeFields) {
-		// TODO - NTF cache?
-		Set<String> result = new HashSet<String>();
-		for (Item i : getRawDocument().getItems()) {
-			String name = i.getName();
-			if (includeEdgeFields) {
-				result.add(name);
-			} else {
-				if (!(name.startsWith(DominoVertex.IN_PREFIX) || name.startsWith(DominoVertex.OUT_PREFIX))) {
-					result.add(name);
+		if (propKeys_.isEmpty()) {
+			for (Item i : getRawDocument().getItems()) {
+				String name = i.getName();
+				if (includeEdgeFields) {
+					synchronized (propKeys_) {
+						propKeys_.add(name);
+					}
+				} else {
+					if (!(name.startsWith(DominoVertex.IN_PREFIX) || name.startsWith(DominoVertex.OUT_PREFIX))) {
+						synchronized (propKeys_) {
+							propKeys_.add(name);
+						}
+					}
 				}
 			}
 		}
-		return result;
+		return Collections.unmodifiableSet(propKeys_);
 	}
 
 	@Override
@@ -362,6 +422,9 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		synchronized (removedProperties_) {
 			removedProperties_.add(key);
 		}
+		synchronized (propKeys_) {
+			propKeys_.remove(key);
+		}
 		return result;
 	}
 
@@ -375,9 +438,9 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	private final Set<String> changedProperties_ = new HashSet<String>();
 
-	void setProperty(final String propertyName, final java.lang.Object value, final boolean force) {
-
-	}
+	//	void setProperty(final String propertyName, final java.lang.Object value, final boolean force) {
+	//
+	//	}
 
 	@Override
 	public void setProperty(final String propertyName, final java.lang.Object value) {
@@ -387,6 +450,9 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		Object old = null;
 		if (props != null) {
 			if (propertyName != null) {
+				synchronized (propKeys_) {
+					propKeys_.add(propertyName);
+				}
 				Object current = getProperty(propertyName);
 				if (propertyName.startsWith(DominoVertex.IN_PREFIX) && value instanceof java.util.Collection) {
 					isEdgeCollection = true;
@@ -514,6 +580,21 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		if (current == null || !current.equals(value)) {
 			setProperty(prop.getName(), value);
 		}
+	}
+
+	public Map<String, Object> toMap(final IDominoProperties[] props) {
+		Map<String, Object> result = new LinkedHashMap<String, Object>();
+		for (IDominoProperties prop : props) {
+			Object value = getProperty(prop, true);
+			if (value != null) {
+				result.put(prop.getName(), value);
+			}
+		}
+		return result;
+	}
+
+	public Map<String, Object> toMap(final Set<IDominoProperties> props) {
+		return toMap(props.toArray(new IDominoProperties[props.size()]));
 	}
 
 }

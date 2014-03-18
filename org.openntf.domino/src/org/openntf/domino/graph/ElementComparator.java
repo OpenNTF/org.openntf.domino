@@ -53,7 +53,7 @@ public class ElementComparator implements Comparator<Element>, Serializable {
 		if (dProps_ != null && dProps_.length > 0) {
 			result = compareProps((IDominoElement) arg0, (IDominoElement) arg1);
 		} else {
-			result = compareStrs(arg0, arg1);
+			result = compareStrs((IDominoElement) arg0, (IDominoElement) arg1);
 		}
 		return result;
 	}
@@ -62,10 +62,10 @@ public class ElementComparator implements Comparator<Element>, Serializable {
 		int result = 0;
 
 		for (IDominoProperties key : dProps_) {
-			java.lang.Object v0 = arg0.getProperty(key);
-			java.lang.Object v1 = arg1.getProperty(key);
+			java.lang.Object v0 = DominoElement.getReflectiveProperty(arg0, key);
+			java.lang.Object v1 = DominoElement.getReflectiveProperty(arg1, key);
 			if (v0 == null && v1 == null) {
-				return 0;
+				result = 0;
 			} else if (v0 == null) {
 				return -1;
 			} else if (v1 == null) {
@@ -95,7 +95,7 @@ public class ElementComparator implements Comparator<Element>, Serializable {
 				DateTime d0 = (DateTime) v0;
 				DateTime d1 = (DateTime) v1;
 				result = d0.compareTo(d1);
-			} else {
+			} else if (v0 != null && v1 != null) {
 				if (v1.getClass() == v0.getClass() && Comparable.class.isAssignableFrom(v0.getClass())) {
 					result = ((Comparable) v0).compareTo((Comparable) v1);
 				}
@@ -104,18 +104,24 @@ public class ElementComparator implements Comparator<Element>, Serializable {
 				break;
 			}
 		}
-
+		if (result == 0) {
+			result = ((Comparable) arg0.getId()).compareTo(arg1.getId());
+			//			if (result == 0) {
+			//				System.out.println("Element comparator still ended up with match!??!");
+			//				result = -1;
+			//			}
+		}
 		return result;
 	}
 
-	private int compareStrs(final Element arg0, final Element arg1) {
+	private int compareStrs(final IDominoElement arg0, final IDominoElement arg1) {
 		int result = 0;
 
 		for (String key : props_) {
-			java.lang.Object v0 = arg0.getProperty(key);
-			java.lang.Object v1 = arg1.getProperty(key);
+			java.lang.Object v0 = DominoElement.getReflectiveProperty(arg0, key);
+			java.lang.Object v1 = DominoElement.getReflectiveProperty(arg1, key);
 			if (v0 == null && v1 == null) {
-				return 0;
+				result = 0;
 			} else if (v0 == null) {
 				return -1;
 			} else if (v1 == null) {
@@ -145,8 +151,10 @@ public class ElementComparator implements Comparator<Element>, Serializable {
 				DateTime d0 = (DateTime) v0;
 				DateTime d1 = (DateTime) v1;
 				result = d0.compareTo(d1);
-			} else {
-				if (v1.getClass() == v0.getClass() && Comparable.class.isAssignableFrom(v0.getClass())) {
+			} else if (v0 != null && v1 != null) {
+				Class<?> cl0 = v0.getClass();
+				Class<?> cl1 = v1.getClass();
+				if (v0 instanceof Comparable && v1 instanceof Comparable) {
 					result = ((Comparable) v0).compareTo((Comparable) v1);
 				}
 			}
@@ -154,7 +162,13 @@ public class ElementComparator implements Comparator<Element>, Serializable {
 				break;
 			}
 		}
-
+		if (result == 0) {
+			result = ((Comparable) arg0.getId()).compareTo(arg1.getId());
+			//			if (result == 0) {
+			//				System.out.println("Element comparator still ended up with match!??!");
+			//				result = -1;
+			//			}
+		}
 		return result;
 	}
 }

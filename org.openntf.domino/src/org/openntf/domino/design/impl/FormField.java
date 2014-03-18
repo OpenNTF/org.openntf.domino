@@ -26,6 +26,7 @@ import org.openntf.domino.utils.xml.XMLNode;
  * 
  */
 public class FormField implements org.openntf.domino.design.FormField {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(FormField.class.getName());
 
 	private final XMLNode node_;

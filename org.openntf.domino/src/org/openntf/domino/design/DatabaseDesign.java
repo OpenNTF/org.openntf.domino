@@ -69,7 +69,7 @@ public interface DatabaseDesign {
 	 *            name of a file resource
 	 * @return a file resource
 	 */
-	public FileResource getFileResource(final String name);
+	public FileResource getFileResource(String name);
 
 	/**
 	 * @return collection of all file resources
@@ -81,7 +81,7 @@ public interface DatabaseDesign {
 	 *            name of a hidden file resource
 	 * @return a hidden file resource
 	 */
-	public FileResource getHiddenFileResource(final String name);
+	public FileResource getHiddenFileResource(String name);
 
 	/**
 	 * @return a collection of all "hidden" file resources (e.g. Eclipse/JSF artifacts and Java class files)
@@ -93,7 +93,7 @@ public interface DatabaseDesign {
 	 *            name of any type of file resource (file, Java, etc.)
 	 * @return the named file resource
 	 */
-	public FileResource getAnyFileResource(final String name);
+	public FileResource getAnyFileResource(String name);
 
 	/**
 	 * @param name
@@ -178,11 +178,21 @@ public interface DatabaseDesign {
 	public ClassLoader getDatabaseClassLoader(ClassLoader parent, boolean includeJars);
 
 	/**
+	 * @param parent
+	 *            a ClassLoader used to delegate lookups for classes not found in the database
+	 * @param includeJars
+	 *            whether or not to include JAR files in the lookup
+	 * @return a ClassLoader that looks up classes in all Java resources, XPages, and, if requested, JAR resources in the database and Java
+	 *         script libraries
+	 */
+	public ClassLoader getDatabaseClassLoader(ClassLoader parent, boolean includeJars, boolean includeLibraries);
+
+	/**
 	 * @param name
 	 *            name or alias of a form in the database
 	 * @return the named form, as a DesignForm object
 	 */
-	public DesignForm getForm(final String name);
+	public DesignForm getForm(String name);
 
 	/**
 	 * @return a collection of all forms in the database, as DesignForm objects
@@ -206,13 +216,26 @@ public interface DatabaseDesign {
 
 	/**
 	 * @param name
-	 *            name of alias of a view in the database
+	 *            name or alias of a view in the database
 	 * @return the named view, as a DesignView object
 	 */
-	public DesignView getView(final String name);
+	public DesignView getView(String name);
 
 	/**
 	 * @return a collection of all views in the database, as DesignView objects
 	 */
 	public DesignCollection<DesignView> getViews();
+
+	/**
+	 * @return a collection of all Java script libraries in the database
+	 */
+	public DesignCollection<JavaScriptLibrary> getJavaScriptLibraries();
+
+	/**
+	 * @param name
+	 *            name of a Java script library in the database
+	 * @return the named Java script library
+	 */
+	public JavaScriptLibrary getJavaScriptLibrary(String name);
+
 }

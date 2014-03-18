@@ -29,7 +29,6 @@ import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import org.openntf.domino.Base;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
@@ -39,6 +38,7 @@ import org.openntf.domino.MIMEHeader;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.Stream;
+import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.MIMEConversionException;
 import org.openntf.domino.utils.DominoUtils.LoaderObjectInputStream;
 
@@ -92,7 +92,7 @@ public enum Documents {
 	 * @param itemName
 	 *            the item name
 	 * @param entity
-	 *            the MIMEentity to use
+	 *            the MIMEentity to use, may be null. If specified, it must match itemName
 	 * 
 	 * @return the serializable
 	 * @throws Throwable
@@ -212,19 +212,7 @@ public enum Documents {
 	 */
 	@SuppressWarnings({ "cast" })
 	public static Object restoreState(final Document doc, final String itemName) throws Exception {
-		Session session = Factory.getSession((Base<?>) doc);
-		boolean convertMime = session.isConvertMime();
-		session.setConvertMime(false);
-
-		Object result = null;
-		MIMEEntity entity = doc.getMIMEEntity(itemName);
-		if (entity == null) {
-			return null;
-		}
-		result = restoreState(doc, itemName, entity);
-		session.setConvertMime(convertMime);
-
-		return result;
+		return restoreState(doc, itemName, null);
 	}
 
 	/**
@@ -261,7 +249,7 @@ public enum Documents {
 	 * @throws Throwable
 	 *             the throwable
 	 */
-	public static void saveState(final Serializable object, final Document doc, final String itemName, final boolean compress,
+	public static void saveState(final Serializable object, final Document doc, final String itemName, boolean compress,
 			final Map<String, String> headers) throws Exception {
 		if (object == null) {
 			log_.log(Level.INFO, "Ignoring attempt to save MIMEBean value of null");
@@ -269,7 +257,9 @@ public enum Documents {
 		}
 		Session session = doc.getAncestorSession();
 		boolean convertMime = session.isConvertMime();
+		//		if (convertMime) {
 		session.setConvertMime(false);
+		//		}
 
 		// String diagKey = doc.getUniversalID() + itemName;
 		// if (diagCount.containsKey(diagKey)) {
@@ -277,7 +267,14 @@ public enum Documents {
 		// } else {
 		// diagCount.put(diagKey, 1);
 		// }
-
+		if (compress) {	// Check whether it is already a zipped byte[]; if so, don't zip it once more
+			if (object.getClass().getName().equals("[B")) {	// Then it's a byte[]
+				byte[] b = (byte[]) object;
+				if (b.length < 50 ||	// ZIP header + footer take 28 bytes, so in this case zipping doesn't pay
+						(b[0] == (byte) GZIPInputStream.GZIP_MAGIC && b[1] == (byte) (GZIPInputStream.GZIP_MAGIC >> 8)))
+					compress = false;
+			}
+		}
 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 		ObjectOutputStream objectStream = compress ? new ObjectOutputStream(new GZIPOutputStream(byteStream)) : new ObjectOutputStream(
 				byteStream);
@@ -299,8 +296,13 @@ public enum Documents {
 		MIMEEntity entity = null;
 		if (previousState == null) {
 			Item itemChk = doc.getFirstItem(itemName);
-			if (itemChk != null) {
+			while (itemChk != null) {
+				if (itemChk.isNames() || itemChk.isReaders() || itemChk.isAuthors()) {
+					throw new DataNotCompatibleException("Cannot overwrite item '" + itemName + "' with serialized data in NoteID "
+							+ doc.getNoteID() + ", because it is a Name/Reader/Author item.");
+				}
 				itemChk.remove();
+				itemChk = doc.getFirstItem(itemName);
 			}
 			entity = doc.createMIMEEntity(itemName);
 		} else {
@@ -365,7 +367,9 @@ public enum Documents {
 			log_.log(Level.WARNING, "closeMIMEEntities returned false for item " + itemName + " on doc " + doc.getNoteID() + " in db "
 					+ doc.getAncestorDatabase().getApiPath());
 		}
-		session.setConvertMime(convertMime);
+		if (convertMime) {
+			session.setConvertMime(true);
+		}
 	}
 
 	/**
@@ -419,8 +423,9 @@ public enum Documents {
 	 * 
 	 * @return Value of the MIME item, if it exists. Null otherwise.
 	 */
-	public static Object getItemValueMIME(final Document document, final String itemname, final MIMEEntity entity) {
+	public static Object getItemValueMIME(final Document document, final String itemname, MIMEEntity entity) {
 		String noteID = null;
+		boolean convertMime = false;
 		try {
 			if (null == document) {
 				throw new IllegalArgumentException("Document is null");
@@ -428,29 +433,37 @@ public enum Documents {
 			if (Strings.isBlankString(itemname)) {
 				throw new IllegalArgumentException("Itemname is blank or null");
 			}
-			if (null == entity) {
-				return Documents.getItemValueMIME(document, itemname);
-			}
 
 			noteID = document.getNoteID();
 			Session session = document.getAncestorSession();
-			boolean convertMime = session.isConvertMIME();
-			session.setConvertMIME(false);
-			Object result = null;
 
+			convertMime = session.isConvertMIME();
+			if (convertMime) {
+				session.setConvertMIME(false);
+			}
+
+			Object result = null;
+			if (entity == null) {
+				entity = document.getMIMEEntity(itemname);
+			}
+			if (entity == null) {
+				return null;
+			}
 			MIMEHeader contentType = entity.getNthHeader("Content-Type");
 			String headerval = (null == contentType) ? "" : contentType.getHeaderVal();
 			if ("application/x-java-serialized-object".equals(headerval) || "application/x-java-externalized-object".equals(headerval)) {
 				// entity is a MIMEBean
-				result = Documents.restoreState(document, itemname);
+				return Documents.restoreState(document, itemname, entity);
 			}
-
-			session.setConvertMIME(convertMime);
-			return result;
 
 		} catch (Throwable t) {
 			DominoUtils.handleException(new MIMEConversionException("Unable to getItemValueMIME for item name " + itemname
-					+ " on document " + noteID, t));
+					+ " on document " + noteID + " [Caught " + t.getClass().getName() + ": " + t.getMessage() + "]", t));
+		} finally {
+			if (convertMime) {
+				Session session = document.getAncestorSession();
+				session.setConvertMIME(true);
+			}
 		}
 
 		return null;

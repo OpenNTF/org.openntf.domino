@@ -53,11 +53,8 @@ import org.openntf.domino.utils.Factory;
  */
 public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 
-	/** this is the holder for sessions + agentContext, they are not auto recycled **/
-	private DominoReferenceCache noAutoRecycle = new DominoReferenceCache(false);
-
 	/** this is the holder for all other object that needs to be recycled **/
-	private DominoReferenceCache autoRecycle = new DominoReferenceCache(true);
+	private DominoReferenceCache referenceCache = new DominoReferenceCache();
 
 	private void clearCaches() {
 		// call gc once before processing the queues
@@ -71,8 +68,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		}
 		// TODO: Recycle all?
 		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
-		autoRecycle.processQueue(0l, 0l);
-		noAutoRecycle.processQueue(0l, 0l);
+		referenceCache.processQueue(0l, 0l);
 		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
 	}
 
@@ -112,20 +108,16 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 			throw new UndefinedDelegateTypeException("Cannot wrap " + lotus.getClass().getName());
 		}
 
-		long cpp_key = org.openntf.domino.impl.Base.getLotusId(lotus);
 		// 1) These objects are not cached and returned immediately. Recycle is done inside
 		if (lotus instanceof lotus.domino.Name 					// These objects are encapsulated
 				|| lotus instanceof lotus.domino.DateRange 		// 
 				|| lotus instanceof lotus.domino.DateTime) { 	//
+
+			long cpp_key = org.openntf.domino.impl.Base.getLotusId(lotus);
 			return (T) wrapLotusObject(lotus, parent, cpp_key);
 		}
 
-		if (lotus instanceof lotus.domino.Session				//
-				|| lotus instanceof lotus.domino.AgentContext) {
-			return (T) fromLotusObject(lotus, parent, noAutoRecycle);
-		}
-
-		return (T) fromLotusObject(lotus, parent, autoRecycle);
+		return (T) fromLotusObject(lotus, parent, referenceCache);
 
 	}
 
@@ -198,24 +190,34 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		if (lotus == null) {
 			return null;
 		}
+
 		long cpp_key = org.openntf.domino.impl.Base.getLotusId(lotus);
 		long parent_key = org.openntf.domino.impl.Base.getLotusId(parent);
-		Base<?> result = cache.get(cpp_key, Base.class, parent_key);
-		if (lotus instanceof lotus.domino.MIMEEntity) {
-			//			if (result != null) {
-			//				Throwable t = new Throwable();
-			//				log_.log(Level.WARNING, "Cache hit on MIMEEntity with key " + cpp_key, t);
-			//			}
-		}
+
+		// RPr: Query the cache. The current lotus object might be enqued, so that it gets recycled in the next step
+		Base<?> result = cache.get(cpp_key, Base.class);
+
 		if (result == null) {
+			// RPr: If the result is null, we can be sure, that there is no element in our cache map.
+			// this happens if no one holds a strong reference to the wrapper. As "get" does some cleanup
+			// action, we must ensure, that we do not recycle the CURRENT (and parent) element in the next step
+
 			result = wrapLotusObject(lotus, parent, cpp_key);
-			cache.put(cpp_key, result, lotus, parent_key);
-			if (lotus instanceof lotus.domino.MIMEEntity) {
-				//				Throwable t = new Throwable();
-				//				log_.log(Level.WARNING, "Cache hit on MIMEEntity with key " + cpp_key, t);
+
+			cache.processQueue(cpp_key, parent_key); // recycle all elements but not the current ones
+
+			cache.put(cpp_key, result, lotus);
+			if (lotus instanceof lotus.domino.Session				//
+					|| lotus instanceof lotus.domino.AgentContext) {
+				cache.setNoRecycle(cpp_key, true); // these are never recycled by default
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public void setNoRecycle(final Base<?> base, final boolean value) {
+		referenceCache.setNoRecycle(((org.openntf.domino.impl.Base) base).GetCppObj(), value);
 	}
 
 	/**

@@ -31,6 +31,7 @@ import lotus.domino.NotesException;
 
 import org.openntf.domino.AdministrationProcess;
 import org.openntf.domino.AgentContext;
+import org.openntf.domino.AutoMime;
 import org.openntf.domino.ColorObject;
 import org.openntf.domino.Database;
 import org.openntf.domino.DateRange;
@@ -187,6 +188,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	 *            the session
 	 */
 	private void initialize(final lotus.domino.Session session) {
+		setFixEnable(Fixes.DOC_UNID_NULLS, true);
 		try {
 			formatter_ = new DominoFormatter(session.getInternational());
 		} catch (NotesException e) {
@@ -332,6 +334,17 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	@Override
 	public DateTime createDateTime(final Date date) {
 		return getFactory().createDateTime(date, this);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.Session#createDateTime(int, int, int, int, int, int)
+	 */
+	public DateTime createDateTime(final int y, final int m, final int d, final int h, final int i, final int s) {
+		Calendar cal = Calendar.getInstance();
+		cal.set(y, m - 1, d, h, i, s);
+		return getFactory().createDateTime(cal.getTime(), this);
 	}
 
 	/*
@@ -518,7 +531,12 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(final String formula, final lotus.domino.Document doc) {
 		try {
-			// TODO: IF we are planning to cache variables in "doc" we must invalidate the cache!
+			if (doc instanceof Document) {
+				String lf = formula.toLowerCase();
+				if (lf.contains("field ") || lf.contains("@setfield")) {
+					((Document) doc).markDirty(); // the document MAY get dirty by evaluate... 
+				}
+			}
 			return wrapColumnValues(getDelegate().evaluate(formula, toLotus(doc)), this);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
@@ -534,13 +552,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	@Override
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(final String formula) {
-		try {
-			return wrapColumnValues(getDelegate().evaluate(formula), this);
-		} catch (Exception e) {
-			DominoUtils.handleException(e);
-			return null;
-
-		}
+		return evaluate(formula, null);
 	}
 
 	/*
@@ -1593,6 +1605,8 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 
 	private IDominoEventFactory eventFactory_;
 
+	private AutoMime isAutoMime_;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1790,4 +1804,19 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		org.openntf.domino.Document doc = db.getDocumentByUNID(unid);
 		return doc;
 	}
+
+	public AutoMime getAutoMime() {
+		if (isAutoMime_ == null) {
+			//NTF default behavior is for it to be on, so you have to globally turn it off
+			return AutoMime.WRAP_ALL;
+		} else {
+			//NTF unless you've set it on this Session
+			return isAutoMime_;
+		}
+	}
+
+	public void setAutoMime(final AutoMime autoMime) {
+		isAutoMime_ = autoMime;
+	}
+
 }

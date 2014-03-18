@@ -33,6 +33,7 @@ import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Formatter;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -650,6 +651,31 @@ public enum DominoUtils {
 		return hash.toUpperCase();
 	}
 
+	public static byte[] toByteArray(final String hexString) {
+		if (hexString.length() % 2 != 0)
+			throw new IllegalArgumentException("Only hex strings with an even number of digits can be converted");
+		int arrLength = hexString.length() >> 1;
+		byte buf[] = new byte[arrLength];
+
+		for (int ii = 0; ii < arrLength; ii++) {
+			int index = ii << 1;
+
+			String l_digit = hexString.substring(index, index + 2);
+			buf[ii] = (byte) Integer.parseInt(l_digit, 16);
+		}
+		return buf;
+	}
+
+	public static String toHex(final byte[] bytes) {
+		Formatter formatter = new Formatter();
+		for (byte b : bytes) {
+			formatter.format("%02x", b);
+		}
+		String result = formatter.toString();
+		formatter.close();
+		return result;
+	}
+
 	/**
 	 * To java calendar safe.
 	 * 
@@ -867,7 +893,7 @@ public enum DominoUtils {
 				if (ser instanceof Comparable) {
 					result.add((Comparable) ser);
 				} else {
-					log_.warning("Unable to convert to Comparable from " + ser.getClass().getName());
+					log_.info("Unable to convert to Comparable from " + ser.getClass().getName());
 				}
 			}
 		}

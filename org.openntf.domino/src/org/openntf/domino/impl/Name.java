@@ -18,10 +18,12 @@ package org.openntf.domino.impl;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.Collection;
 import java.util.TreeSet;
 //import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
+import lotus.notes.addins.DominoServer;
 
 import org.openntf.arpa.NamePartsMap;
 import org.openntf.domino.Session;
@@ -44,9 +46,9 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	/**
 	 * * Zero-Argument Constructor
 	 */
-	public Name() {
-		super(null, null);
-	}
+	//	public Name() {	// this one doesn't work (runs into NullPointerExc.); see after writeExternal
+	//		super(null, null);
+	//	}
 
 	/**
 	 * Default Constructor.
@@ -950,6 +952,26 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Sessi
 	public void writeExternal(final ObjectOutput out) throws IOException {
 		out.writeBoolean(this.isHierarchical());
 		out.writeUTF((Strings.isBlankString(this.getCanonical())) ? this.getAddr822Full() : this.getCanonical());
+	}
+
+	/*
+	 * Deprecated, but needed for Externalization
+	 */
+	@Deprecated
+	public Name() {
+		super(null, Factory.getSession(), null, 0, NOTES_NAME);
+	}
+
+	@SuppressWarnings("unchecked")
+	public Collection<String> getGroups(final String serverName) {
+		Collection<String> result = null;
+		try {
+			DominoServer server = new DominoServer(serverName);
+			result = server.getNamesList(getCanonical());
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		return result;
 	}
 
 }

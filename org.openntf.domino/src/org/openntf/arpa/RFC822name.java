@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Carrier and parsing object for various RFC822 name parts.
@@ -522,6 +523,9 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 		this.put(key, comment);
 	}
 
+	public static Pattern PARENS_MATCH = Pattern.compile("\\(.+?\\)");
+	public static Pattern INPARENS_MATCH = Pattern.compile("/\\(([^()]+)\\)");
+
 	/**
 	 * Retrieves and sets the various content values by parsing an input source string.
 	 * 
@@ -561,22 +565,14 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 				// parse the comments part
 				String comments = (idxGT < string.length()) ? string.substring(idxGT).trim() : "";
 				if (comments.length() > 0) {
-					int idxParenOpen = comments.indexOf('(');
-					int idxParenClose = comments.indexOf(')');
-					if ((idxParenOpen < 0) || (idxParenClose < 0) || (idxParenClose < idxParenOpen)) {
-						// treat the entire comments string as a single comment.
-						this.setAddr822Comment(1, comments.replaceAll("(", "").replaceAll(")", "").trim());
+					if (!comments.startsWith("(")) {
+						this.setAddr822Comment(1, comments.replaceAll("\\(", " ").replaceAll("\\)", " ").trim());
 					} else {
-						for (int commentnumber = 1; commentnumber < 4; commentnumber++) {
-							String comment = comments.substring(idxParenOpen, idxParenClose).trim();
-							this.setAddr822Comment(commentnumber, comment);
-
-							idxParenOpen = comments.indexOf('(', idxParenClose);
-							if (idxParenOpen < idxParenClose) {
-								break;
-							}
-							idxParenClose = comments.indexOf(')', idxParenOpen);
-							if (idxParenClose < idxParenOpen) {
+						String[] commentSet = INPARENS_MATCH.split(comments);
+						for (int i = 0; i < commentSet.length; i++) {
+							if (i < 4) {
+								this.setAddr822Comment(i, commentSet[i]);
+							} else {
 								break;
 							}
 						}

@@ -39,7 +39,7 @@ public enum ISO {
 	 * 
 	 * @author Devin S. Olsonm (dolson@czarnowski.com)
 	 * 
-	 * @see "ISO 3166-1-alpha-2 code" http://www.iso.org/iso/country_names_and_code_elements
+	 @see "Country Codes - ISO 3166" http://www.iso.org/iso/home/standards/country_codes.htm
 	 * 
 	 */
 	public static enum ISO3166 {
