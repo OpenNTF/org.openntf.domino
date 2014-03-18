@@ -391,8 +391,14 @@ public enum Documents {
 			session.setConvertMIME(false);
 
 			MIMEEntity entity = document.getMIMEEntity(itemname);
-			Object result = (null == entity) ? null : Documents.getItemValueMIME(document, itemname, entity);
-
+			Object result = null;
+			if (entity != null) {
+				try {
+					result = Documents.getItemValueMIME(document, itemname, entity);
+				} finally {
+					document.closeMIMEEntities(false, itemname);
+				}
+			}
 			session.setConvertMIME(convertMime);
 			return result;
 

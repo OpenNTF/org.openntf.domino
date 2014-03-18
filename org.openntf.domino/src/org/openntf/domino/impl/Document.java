@@ -2345,7 +2345,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 			if (returnItem) {
 				if (result == null) {
-					return getFirstItem(itemName, true);
+					return getFirstItem(itemName, true);	// MSt: This is safe now. (Was tested.)
 				}
 				//NTF if we do a .getFirstItem here and return an item that we MIMEBeaned, it will invalidate the MIME and
 				//convert back to a RichTextItem before the document is saved.
@@ -2592,8 +2592,11 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				// remove the mime item first, so that it will not collide with MIME etc.
 				MIMEEntity mimeChk = getMIMEEntity(itemName);
 				if (mimeChk != null) {
-					mimeChk.remove();
-					getDelegate().closeMIMEEntities(true, itemName);
+					try {
+						mimeChk.remove();
+					} finally {
+						closeMIMEEntities(true, itemName);
+					}
 				}
 				result = getDelegate().replaceItemValue(itemName, toDominoFriendly(value, this, recycleThis));
 				markDirty(itemName, true);
@@ -2700,8 +2703,11 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 			MIMEEntity mimeChk = getMIMEEntity(itemName);
 			if (mimeChk != null) {
-				mimeChk.remove();
-				getDelegate().closeMIMEEntities(true, itemName);
+				try {
+					mimeChk.remove();
+				} finally {
+					closeMIMEEntities(true, itemName);
+				}
 			}
 
 			if (dominoFriendly.size() == 1) {
