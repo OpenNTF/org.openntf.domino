@@ -4,16 +4,11 @@ package de.foconis.test.formula;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.Vector;
 
 import jline.ANSIBuffer;
-import jline.ANSIBuffer.ANSICodes;
 import jline.ArgumentCompletor;
 import jline.Completor;
 import jline.ConsoleReader;
@@ -31,18 +26,16 @@ import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ParseException;
 import org.openntf.domino.formula.ast.Node;
-import org.openntf.domino.formula.ast.SimpleNode;
 import org.openntf.domino.formula.impl.NotImplemented;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
 public class FormulaShell implements Runnable {
-	private static  boolean cacheAST = false;
-	private static  int count = 10;
+	private static boolean cacheAST = false;
+	private static int count = 10;
 	Map<String, Node> astCache = new HashMap<String, Node>();
 	private Database db;
-
 
 	public static void main(final String[] args) {
 		DominoThread thread = new DominoThread(new FormulaShell(), "My thread");
@@ -54,21 +47,23 @@ public class FormulaShell implements Runnable {
 	}
 
 	// Some Formatters
-	public String NTF(Object o) {
+	public String NTF(final Object o) {
 		ANSIBuffer ab = new ANSIBuffer();
 		return ab.cyan(o.toString()).toString();
 	}
-	public String LOTUS(Object o) {
+
+	public String LOTUS(final Object o) {
 		ANSIBuffer ab = new ANSIBuffer();
 		return ab.magenta(o.toString()).toString();
-	}	
-	public String ERROR(Object o) {
+	}
+
+	public String ERROR(final Object o) {
 		ANSIBuffer ab = new ANSIBuffer();
 		return ab.red(o.toString()).toString();
 	}
 
-	String formatTime(long time) {
-		return String.format("%.3f ms",(double)time/1000000);
+	String formatTime(final long time) {
+		return String.format("%.3f ms", (double) time / 1000000);
 	}
 
 	@Override
@@ -92,7 +87,7 @@ public class FormulaShell implements Runnable {
 			// This code is responsible for autocompletion
 			AtFunctionFactory funcFact = AtFunctionFactory.getInstance();
 			Collection<AtFunction> funcs = funcFact.getFunctions().values();
-			String[] autoComplete = new String[funcs.size()+3];
+			String[] autoComplete = new String[funcs.size() + 3];
 			int i = 0;
 			for (AtFunction func : funcs) {
 				if (func instanceof NotImplemented) {
@@ -101,7 +96,7 @@ public class FormulaShell implements Runnable {
 					autoComplete[i++] = func.getImage() + "(";
 				}
 			}
-			autoComplete[i++] = "cache=";
+			autoComplete[i++] = "count=";
 			autoComplete[i++] = "astoff";
 			autoComplete[i++] = "aston";
 			completors.add(new SimpleCompletor(autoComplete));
@@ -113,15 +108,16 @@ public class FormulaShell implements Runnable {
 			reader.getHistory().setHistoryFile(historyFile);
 
 			// now start the main loop
-			System.out.println(NTF("This is the formula shell. Quit with 'q' !!! If you get a NullpointerException, terminate your server!"));
-			System.out.println("Session.convertMime is " + LOTUS(Factory.getSession().isConvertMime()?"enabled":"disabled"));
-			System.out.println("AST-Cache is " + LOTUS(cacheAST?"on":"off"));
-			System.out.println("Iteration count is " + LOTUS(cacheAST?"on":"off"));
+			System.out
+					.println(NTF("This is the formula shell. Quit with 'q' !!! If you get a NullpointerException, terminate your server!"));
+			System.out.println("Session.convertMime is " + LOTUS(Factory.getSession().isConvertMime() ? "enabled" : "disabled"));
+			System.out.println("AST-Cache is " + LOTUS(cacheAST ? "on" : "off"));
+			System.out.println("Iteration count is " + LOTUS(cacheAST ? "on" : "off"));
 
 			while ((line = reader.readLine("$> ")) != null) {
 				if (line.startsWith("count")) {
 					int p = line.indexOf('=');
-					count = Integer.parseInt(line.substring(p+1));
+					count = Integer.parseInt(line.substring(p + 1));
 					System.out.println("Iteration count is set to: " + LOTUS(count));
 					continue;
 				}
@@ -157,42 +153,41 @@ public class FormulaShell implements Runnable {
 	}
 
 	private Document createDocument() {
-		if (db == null) db = Factory.getSession().getDatabase("", "log.nsf");
+		if (db == null)
+			db = Factory.getSession().getDatabase("", "log.nsf");
 		Document doc = db.createDocument();
 		return doc;
 	}
-	private void fillDemoDoc(Map<String, Object> doc, double rndVal) {
+
+	private void fillDemoDoc(final Map<String, Object> doc, final double rndVal) {
 
 		doc.put("rnd", new double[] { rndVal });
 
-		//		doc.put("text1", "This is a test string");
-		//		doc.put("text2", new String[] { "1", "2", "3" });
-		//
-		//		doc.put("int1", new int[] { 1 });
-		//		doc.put("int2", new int[] { 1, 2, 3 });
-		//		Map<String, String> map = new HashMap<String, String>();
-		//		map.put("K1", "v1");
-		//		map.put("K2", "v2");
-		//		doc.put("mime1", map);
+		doc.put("text1", "This is a test string");
+		doc.put("text2", new String[] { "1", "2", "3" });
+
+		doc.put("int1", new int[] { 1 });
+		doc.put("int2", new int[] { 1, 2, 3 });
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("K1", "v1");
+		map.put("K2", "v2");
+		doc.put("mime1", map);
 
 	}
 
-
-
-	private Node parse(String line) throws ParseException {
+	private Node parse(final String line) throws ParseException {
 		Node ast = null;
-		if (cacheAST) ast = astCache.get(line);
+		if (cacheAST)
+			ast = astCache.get(line);
 
 		AtFormulaParser parser = AtFormulaParser.getInstance();
 		if (ast == null) {
 			ast = parser.Parse(line);
-			if (cacheAST)astCache.put(line, ast);
+			if (cacheAST)
+				astCache.put(line, ast);
 		}
 		return ast;
 	}
-
-
-
 
 	private void execute(final String line) {
 		// TODO Auto-generated method stub
@@ -201,7 +196,7 @@ public class FormulaShell implements Runnable {
 		List<Object> ntfMapResult = null;
 		List<Object> lotusResult = null;
 
-		long time = 0; 
+		long time = 0;
 
 		long setupTime = 0;
 		long lotusTime = 0;
@@ -224,27 +219,24 @@ public class FormulaShell implements Runnable {
 			// Setup completed
 			setupTime += System.nanoTime() - time;
 
-
-
-			try { 
+			try {
 				// benchmark the lotus - evaluate
 				time = System.nanoTime();
 				lotusResult = Factory.getSession().evaluate(line, lotusDoc);
 				lotusTime += System.nanoTime() - time;
-			} catch(Exception e) {
+			} catch (Exception e) {
 				System.out.println(LOTUS("Lotus failed: ") + ERROR(e));
 				i = count;
 			}
 
-
 			// benchmark the AtFormulaParser
 			Node ast = null;
-			try { 
+			try {
 				time = System.nanoTime();
 				ast = parse(line);
 				parseTime += System.nanoTime() - time;
-			} catch(ParseException e) {
-				System.out.println(NTF("Parser failed: ") +  ERROR(e));
+			} catch (ParseException e) {
+				System.out.println(NTF("Parser failed: ") + ERROR(e));
 				e.printStackTrace();
 				break;
 			}
@@ -255,8 +247,8 @@ public class FormulaShell implements Runnable {
 				FormulaContext ctx1 = new FormulaContext(ntfDoc, DominoFormatter.getInstance());
 				ntfDocResult = ast.evaluate(ctx1);
 				docEvaluateTime += System.nanoTime() - time;
-			} catch(EvaluateException e) {
-				System.out.println(NTF("Doc-Evaluate failed: ") +  ERROR(e));
+			} catch (EvaluateException e) {
+				System.out.println(NTF("Doc-Evaluate failed: ") + ERROR(e));
 				e.printStackTrace();
 				i = count;
 			}
@@ -266,13 +258,12 @@ public class FormulaShell implements Runnable {
 				FormulaContext ctx2 = new FormulaContext(ntfMap, DominoFormatter.getInstance());
 				ntfMapResult = ast.evaluate(ctx2);
 				mapEvaluateTime += System.nanoTime() - time;
-			} catch(Throwable e) {
+			} catch (Throwable e) {
 				System.out.println(NTF("Map-Evaluate failed: ") + ERROR(e));
 				e.printStackTrace();
 				i = count;
 			}
 		}
-
 
 		if (compareList(ntfDocResult, lotusResult)) {
 			System.out.println("DocResults are equal");
@@ -280,7 +271,7 @@ public class FormulaShell implements Runnable {
 		} else {
 			System.out.println("DocResults differs");
 			System.out.println(NTF("NTFDOC\t") + dump(ntfDocResult));
-			System.out.println(LOTUS("LOTUS\t")  + dump(lotusResult));
+			System.out.println(LOTUS("LOTUS\t") + dump(lotusResult));
 		}
 		if (compareList(ntfMapResult, lotusResult)) {
 			System.out.println("MapResults are equal");
@@ -290,44 +281,48 @@ public class FormulaShell implements Runnable {
 			System.out.println(LOTUS("LOTUS\t") + dump(lotusResult));
 		}
 
-		System.out.println("Setup Time:\t"+ formatTime(setupTime));
-		System.out.println(LOTUS("Lotus Time:\t"+  formatTime(lotusTime)));
+		System.out.println("Setup Time:\t" + formatTime(setupTime));
+		System.out.println(LOTUS("Lotus Time:\t" + formatTime(lotusTime)));
 
-		System.out.println(NTF("Parse Time:\t"+  formatTime(parseTime)));
-		System.out.println(NTF("Evaluate Doc:\t"+ formatTime(docEvaluateTime)));
-		System.out.println(NTF("Evaluate Map:\t"+ formatTime(mapEvaluateTime)));
+		System.out.println(NTF("Parse Time:\t" + formatTime(parseTime)));
+		System.out.println(NTF("Evaluate Doc:\t" + formatTime(docEvaluateTime)));
+		System.out.println(NTF("Evaluate Map:\t" + formatTime(mapEvaluateTime)));
 
-		System.out.println("Parse+Doc:\t"+  formatTime(parseTime+docEvaluateTime) + "\t" + vs(parseTime+docEvaluateTime, lotusTime));
-		System.out.println("Parse+Map:\t"+  formatTime(parseTime+mapEvaluateTime) + "\t" + vs(parseTime+mapEvaluateTime, lotusTime));
+		System.out.println("Parse+Doc:\t" + formatTime(parseTime + docEvaluateTime) + "\t" + vs(parseTime + docEvaluateTime, lotusTime));
+		System.out.println("Parse+Map:\t" + formatTime(parseTime + mapEvaluateTime) + "\t" + vs(parseTime + mapEvaluateTime, lotusTime));
 
 	}
 
-	private String dump(List<Object> lotus) {
+	private String dump(final List<Object> lotus) {
 		// TODO Auto-generated method stub
-		int width = Terminal.getTerminal().getTerminalWidth()-20;
-		String s = lotus.toString();
-		if (s.length()>width) {
-			s = s.substring(0, width)+"... (l=" + width + ")";
+		int width = Terminal.getTerminal().getTerminalWidth() - 20;
+		String s = lotus + "";
+		if (s.length() > width) {
+			s = s.substring(0, width) + "... (l=" + width + ")";
 		}
 
 		return s;
 
 	}
 
-	private String vs(long ntfTime, long lotusTime) {
+	private String vs(final long ntfTime, final long lotusTime) {
 		if (ntfTime < 2) {
 			return "Unbelievable faster than lotus";
 		}
-		return String.format("%.2f times faster than lotus", (double)lotusTime / (double)ntfTime);
+		return String.format("%.2f times faster than lotus", (double) lotusTime / (double) ntfTime);
 
 	}
 
-	private boolean compareMaps(Map<String, Object> map1, Map<String, Object> map2) {
+	private boolean compareMaps(final Map<String, Object> map1, final Map<String, Object> map2) {
 		return false;
 	}
 
-	private boolean compareList(List<Object> list1, List<Object> list2) {
+	private boolean compareList(final List<Object> list1, final List<Object> list2) {
 		boolean equals = true;
+		if (list1 == null && list2 == null)
+			return true;
+		if (list1 == null || list2 == null)
+			return false;
 
 		if (list1.size() == list2.size()) {
 			for (int i = 0; i < list1.size(); i++) {

@@ -3482,8 +3482,22 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					return this.getAncestorDatabase().getReplicaID();
 				}
 				if ("@responses".equals(skey)) {
-					return this.getResponses().getCount();
+					DocumentCollection resp = this.getResponses();
+					if (resp == null)
+						return 0;
+					return resp.getCount();
 				}
+				if ("@isnewdoc".equals(skey)) {
+					return this.isNewNote();
+				}
+				if ("@inheriteddocumentuniqueid".equals(skey)) {
+					org.openntf.domino.Document parent = this.getParentDocument();
+					if (parent == null)
+						return "";
+					return parent.getUniversalID();
+				}
+
+				// TODO RPr: This should be replaced
 				Formula formula = new Formula();
 				formula.setExpression(key.toString());
 				List<?> value = formula.getValue(this);

@@ -24,6 +24,9 @@ public class FormulaContext {
 	private Map<String, ValueHolder> vars = new HashMap<String, ValueHolder>();
 	private Formatter formatter;
 
+	public Object TRUE = Boolean.TRUE;
+	public Object FALSE = Boolean.FALSE;
+
 	/**
 	 * @param document
 	 * @param formatter
@@ -32,6 +35,21 @@ public class FormulaContext {
 		super();
 		this.document = document;
 		this.formatter = formatter;
+		useBooleans(true);
+	}
+
+	public void useBooleans(final boolean useit) {
+		if (useit) {
+			TRUE = Boolean.TRUE;
+			FALSE = Boolean.FALSE;
+		} else {
+			TRUE = Integer.valueOf(1);
+			FALSE = Integer.valueOf(0);
+		}
+	}
+
+	public Map<String, Object> getDocument() {
+		return document;
 	}
 
 	/**

@@ -25,8 +25,10 @@ import java.util.Map;
 import org.openntf.domino.formula.impl.Arithmetic;
 import org.openntf.domino.formula.impl.AtFunctionGeneric;
 import org.openntf.domino.formula.impl.AtFunctionSimple;
+import org.openntf.domino.formula.impl.Constant;
 import org.openntf.domino.formula.impl.DocProperties;
 import org.openntf.domino.formula.impl.NotImplemented;
+import org.openntf.domino.formula.impl.NotSupported;
 import org.openntf.domino.formula.impl.Operator;
 
 public class AtFunctionFactory {
@@ -114,6 +116,8 @@ public class AtFunctionFactory {
 			instance.addFactory(new NotImplemented.Factory());
 			instance.addFactory(new AtFunctionFactory(Arithmetic.class));
 			instance.addFactory(new AtFunctionFactory(DocProperties.class));
+			instance.addFactory(new AtFunctionFactory(Constant.class));
+			instance.addFactory(new AtFunctionFactory(NotSupported.class));
 		}
 		return instance;
 	}
