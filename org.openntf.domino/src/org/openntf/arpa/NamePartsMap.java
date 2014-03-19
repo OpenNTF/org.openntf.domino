@@ -522,10 +522,9 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 
 			if ((!ISO.isBlankString(string)) && (string.indexOf('/') > 0)) {
 
-				// break the source into it's component words and parse them
+				// break the source into component words and parse them
 				final String[] words = string.split("/");
-				final int length = words.length;
-				if (length > 0) {
+				if (words.length > 0) {
 					int idx = 0;
 
 					if (string.indexOf('=') > 0) {
@@ -533,35 +532,30 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 						try {
 							for (int i = (words.length - 1); i >= 0; i--) {
 								final String word = words[i].trim();
-								try {
-									// TODO Need to handle case where word = "*"   DSO 20140319
+								// TODO Need to handle case where word = "*"   DSO 20140319
 
-									if (word.indexOf('=') > 0) {
-										final String[] nibbles = word.split("=");
-										if (nibbles.length > 1) {
-											final String key = nibbles[0];
-											final String value = nibbles[1];
+								if (word.indexOf('=') > 0) {
+									final String[] nibbles = word.split("=");
+									if (nibbles.length > 1) {
+										final String key = nibbles[0];
+										final String value = nibbles[1];
 
-											if (CanonicalKey.C.name().equalsIgnoreCase(key)) {
-												country = value;
-											} else if (CanonicalKey.O.name().equalsIgnoreCase(key)) {
-												organization = value;
-											} else if (CanonicalKey.OU.name().equalsIgnoreCase(key)) {
-												ous[idx] = value;
-												idx++;
-											} else if (CanonicalKey.CN.name().equalsIgnoreCase(key)) {
-												common = value;
-											}
-										} else {
-											throw new RuntimeException("Cannot Parse Word: \"" + word + "\", Source String: \"" + string
-													+ "\"");
+										if (CanonicalKey.C.name().equalsIgnoreCase(key)) {
+											country = value;
+										} else if (CanonicalKey.O.name().equalsIgnoreCase(key)) {
+											organization = value;
+										} else if (CanonicalKey.OU.name().equalsIgnoreCase(key)) {
+											ous[idx] = value;
+											idx++;
+										} else if (CanonicalKey.CN.name().equalsIgnoreCase(key)) {
+											common = value;
 										}
+									} else {
+										throw new RuntimeException("Cannot Parse Word: \"" + word + "\", Source String: \"" + string + "\"");
 									}
-
-								} catch (final Exception e) {
-									ISO.handleException(e, "Source String: \"" + string + "\"");
 								}
 							}
+
 						} catch (final Exception e) {
 							ISO.handleException(e, "Source String: \"" + string + "\"");
 						}
@@ -569,8 +563,8 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 					} else {
 						// use abbreviated logic
 						common = words[0].trim();
-						if (length > 1) {
-							int orgpos = length;
+						if (words.length > 1) {
+							int orgpos = (words.length - 1);
 							organization = words[orgpos];
 							if (ISO.isCountryCode2(organization)) {
 								// organization could be a country code,
