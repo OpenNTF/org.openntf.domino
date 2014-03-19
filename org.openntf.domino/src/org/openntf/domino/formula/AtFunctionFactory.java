@@ -28,6 +28,7 @@ import org.openntf.domino.formula.impl.AtFunctionSimple;
 import org.openntf.domino.formula.impl.DocProperties;
 import org.openntf.domino.formula.impl.NotImplemented;
 import org.openntf.domino.formula.impl.Operator;
+import org.openntf.domino.formula.impl.TextFunctions;
 
 public class AtFunctionFactory {
 
@@ -114,6 +115,7 @@ public class AtFunctionFactory {
 			instance.addFactory(new NotImplemented.Factory());
 			instance.addFactory(new AtFunctionFactory(Arithmetic.class));
 			instance.addFactory(new AtFunctionFactory(DocProperties.class));
+			instance.addFactory(new AtFunctionFactory(TextFunctions.class));
 		}
 		return instance;
 	}

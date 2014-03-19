@@ -39,7 +39,7 @@ public enum Arithmetic {
 	}
 
 	@ParamCount(1)
-	public static Number arg(final Number arg) {
+	public static Number atATan(final Number arg) {
 		return Math.atan(arg.doubleValue());
 	}
 
