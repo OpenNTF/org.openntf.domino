@@ -26,10 +26,14 @@ public class FormulaContext {
 
 	public Object TRUE = Boolean.TRUE;
 	public Object FALSE = Boolean.FALSE;
+	public boolean useBooleans = true;
 
 	/**
 	 * @param document
+	 *            the context document
 	 * @param formatter
+	 *            the formatter to format date/times
+	 * 
 	 */
 	public FormulaContext(final Map<String, Object> document, final Formatter formatter) {
 		super();
@@ -39,6 +43,7 @@ public class FormulaContext {
 	}
 
 	public void useBooleans(final boolean useit) {
+		useBooleans = useit;
 		if (useit) {
 			TRUE = Boolean.TRUE;
 			FALSE = Boolean.FALSE;
@@ -57,10 +62,12 @@ public class FormulaContext {
 	 * pay attention if you program functions that modify the document otherwise!
 	 * 
 	 * @param varName
-	 * @return
+	 *            the var name to read. must be lowercase
+	 * @return ValueHolder
 	 */
-	public ValueHolder getVar(final String varName) {
-		String key = varName.toLowerCase();
+	@SuppressWarnings("deprecation")
+	public ValueHolder getVarLC(final String varName) {
+		String key = varName;
 
 		ValueHolder var = vars.get(key);
 		if (var != null) {
@@ -69,7 +76,7 @@ public class FormulaContext {
 		if (document != null) {
 			Object o = document.get(key);
 			if (o != null) {
-				var = new ValueHolder(o);
+				var = new ValueHolder(o); // RPr here it is allowed to access the deprecate method
 			} else {
 				var = new ValueHolder("");
 			}
@@ -86,10 +93,12 @@ public class FormulaContext {
 	 * Set a value in the internal var cache. Nothing is written to a Document
 	 * 
 	 * @param key
+	 *            the key. Must be lowercase
 	 * @param elem
+	 *            the ValueHolder to set
 	 * @return the OLD value
 	 */
-	public ValueHolder setVar(final String key, final ValueHolder elem) {
+	public ValueHolder setVarLC(final String key, final ValueHolder elem) {
 		if (elem == null) {
 			ValueHolder old = vars.get(key);
 			vars.remove(key);
@@ -103,10 +112,12 @@ public class FormulaContext {
 	 * Set a field (and a value!)
 	 * 
 	 * @param key
+	 *            the field to set
 	 * @param elem
+	 *            the element to set
 	 */
 	public void setField(final String key, final ValueHolder elem) {
-		setVar(key, elem);
+		setVarLC(key.toLowerCase(), elem);
 		if (document != null) {
 			document.put(key, elem);
 		}
@@ -116,7 +127,9 @@ public class FormulaContext {
 	 * Set a default value
 	 * 
 	 * @param key
+	 *            the field to set
 	 * @param elem
+	 *            the element to set
 	 */
 	public void setDefault(final String key, final ValueHolder elem) {
 		if (vars.containsKey(key))
@@ -125,7 +138,7 @@ public class FormulaContext {
 			if (document.containsKey(key))
 				return;
 		}
-		setVar(key, elem);
+		setVarLC(key.toLowerCase(), elem);
 	}
 
 	public Formatter getFormatter() {

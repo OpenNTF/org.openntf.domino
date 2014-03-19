@@ -22,7 +22,7 @@ import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
 
 public class ASTValueDouble extends SimpleNode {
-	private Double value;
+	private double value;
 
 	public ASTValueDouble(final int id) {
 		super(id);
@@ -48,7 +48,7 @@ public class ASTValueDouble extends SimpleNode {
 
 	@Override
 	public void toFormula(final StringBuilder sb) {
-		sb.append(value.toString().replace('.', ','));
+		sb.append(String.format("%f", value));
 	}
 }
 /* JavaCC - OriginalChecksum=9b835a55bffc1c99424d097a944b0fac (do not edit this line) */

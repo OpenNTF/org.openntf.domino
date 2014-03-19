@@ -17,13 +17,15 @@
  */
 package org.openntf.domino.formula.ast;
 
+import org.openntf.domino.DateTime;
 import org.openntf.domino.formula.AtFormulaParser;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ParseException;
 import org.openntf.domino.formula.ValueHolder;
 
 public class ASTValueDateOrKW extends SimpleNode {
-	Object value = null;
+	DateTime dateValue = null;
+	String image = null;
 
 	public ASTValueDateOrKW(final int id) {
 		super(id);
@@ -35,28 +37,27 @@ public class ASTValueDateOrKW extends SimpleNode {
 
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) {
-		return new ValueHolder(value);
+		if (dateValue != null)
+			return new ValueHolder(dateValue);
+		return new ValueHolder(image);
 	}
 
 	public void init(final String image) throws ParseException {
 		String inner = image.substring(1, image.length() - 1); // remove first [ and last ]
 		try {
-			value = parser.getFormatter().parseDate(inner);
+			dateValue = parser.getFormatter().parseDate(inner);
 		} catch (java.text.ParseException e) {
 			if (inner.contains(".") || inner.contains("/") || inner.contains("-")) {
 				// this MUST be a date
 				throw new ParseException(parser, e.getMessage());
-			} else {
-				value = image; // tried to parse. but this seems to be a Keyword
 			}
 		}
+		this.image = image; // tried to parse. but this seems to be a Keyword
 	}
 
 	@Override
 	public void toFormula(final StringBuilder sb) {
-		sb.append('[');
-		sb.append(value);
-		sb.append(']');
+		sb.append(image);
 	}
 
 }

@@ -23,6 +23,7 @@ import org.openntf.domino.formula.ValueHolder;
 
 public class ASTGetVariable extends SimpleNode {
 	private String variableName = "";
+	private String variableNameLC = "";
 
 	public ASTGetVariable(final int id) {
 		super(id);
@@ -34,6 +35,7 @@ public class ASTGetVariable extends SimpleNode {
 
 	public void init(final String image) {
 		variableName = image;
+		variableNameLC = image.toLowerCase();
 	}
 
 	@Override
@@ -43,7 +45,7 @@ public class ASTGetVariable extends SimpleNode {
 
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) {
-		return ctx.getVar(variableName);
+		return ctx.getVarLC(variableNameLC);
 	}
 
 	public void toFormula(final StringBuilder sb) {

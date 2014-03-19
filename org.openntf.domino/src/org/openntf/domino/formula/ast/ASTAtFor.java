@@ -33,15 +33,15 @@ public class ASTAtFor extends SimpleNode {
 
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
-		Node init = jjtGetChild(0);
-		Node condition = jjtGetChild(1);
-		Node increment = jjtGetChild(2);
+		Node init = children[0];
+		Node condition = children[1];
+		Node increment = children[2];
 
 		init.evaluate(ctx);
-		while (condition.evaluate(ctx).isTrue()) {
+		while (condition.evaluate(ctx).isTrue(ctx)) {
 			// execute statements
-			for (int i = 3; i < jjtGetNumChildren(); ++i) {
-				jjtGetChild(i).evaluate(ctx);
+			for (int i = 3; i < children.length; ++i) {
+				children[i].evaluate(ctx);
 			}
 			increment.evaluate(ctx);
 		}

@@ -16,8 +16,6 @@
  */
 package org.openntf.domino.formula.impl;
 
-import java.util.Collection;
-
 import org.openntf.domino.formula.ValueHolder;
 
 public enum Arithmetic {
@@ -83,20 +81,27 @@ public enum Arithmetic {
 	// Max returns either the largest number in a single list, or the larger of two numbers or number lists.
 	@ParamCount({ 1, 2 })
 	public static ValueHolder atMax(final ValueHolder[] params) {
-		Collection<double[]> values = new ParameterCollectionDouble(params, false);
 
 		if (params.length == 1) {
 			double ret = Double.MIN_VALUE;
-			for (double[] value : values) {
-				ret = Math.max(ret, value[0]);
+			ValueHolder vh = params[0];
+			for (int i = 0; i < vh.size; i++) {
+				ret = Math.max(ret, vh.getDouble(i));
 			}
 			return new ValueHolder(ret);
-		} else {
+		} else if (ValueHolder.hasMultiValues(params)) {
+
+			ParameterCollectionDouble values = new ParameterCollectionDouble(params, false);
 			ValueHolder ret = new ValueHolder();
 			ret.grow(values.size());
 			for (double[] value : values) {
 				ret.add(Math.max(value[0], value[1]));
 			}
+			return ret;
+		} else {
+			ValueHolder ret = new ValueHolder();
+			ret.grow(1);
+			ret.add(Math.max(params[0].getDouble(0), params[1].getDouble(0)));
 			return ret;
 		}
 	}
@@ -104,20 +109,26 @@ public enum Arithmetic {
 	//... the same for Min
 	@ParamCount({ 1, 2 })
 	public static ValueHolder atMin(final ValueHolder[] params) {
-		Collection<double[]> values = new ParameterCollectionDouble(params, false);
 
 		if (params.length == 1) {
 			double ret = Double.MAX_VALUE;
-			for (double[] value : values) {
-				ret = Math.min(ret, value[0]);
+			ValueHolder vh = params[0];
+			for (int i = 0; i < vh.size; i++) {
+				ret = Math.min(ret, vh.getDouble(i));
 			}
 			return new ValueHolder(ret);
-		} else {
+		} else if (ValueHolder.hasMultiValues(params)) {
+			ParameterCollectionDouble values = new ParameterCollectionDouble(params, false);
 			ValueHolder ret = new ValueHolder();
 			ret.grow(values.size());
 			for (double[] value : values) {
 				ret.add(Math.min(value[0], value[1]));
 			}
+			return ret;
+		} else {
+			ValueHolder ret = new ValueHolder();
+			ret.grow(1);
+			ret.add(Math.min(params[0].getDouble(0), params[1].getDouble(0)));
 			return ret;
 		}
 	}

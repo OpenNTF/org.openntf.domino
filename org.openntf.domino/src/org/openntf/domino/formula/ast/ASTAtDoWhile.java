@@ -35,16 +35,18 @@ public class ASTAtDoWhile extends SimpleNode {
 	 * AtDoWhile returns always TRUE, as in the formula online help described
 	 * 
 	 * @throws EvaluateException
+	 *             TODO
 	 */
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
 		ValueHolder ret = null;
-		do {
-			for (int i = 0; i < jjtGetNumChildren(); ++i) {
-				ret = jjtGetChild(i).evaluate(ctx);
-			}
-		} while (ret != null && ret.isTrue());
-
+		if (children != null) {
+			do {
+				for (int i = 0; i < children.length; ++i) {
+					ret = children[i].evaluate(ctx);
+				}
+			} while (ret != null && ret.isTrue(ctx));
+		}
 		return new ValueHolder(1); // returns always TRUE
 	}
 

@@ -35,15 +35,15 @@ public class ASTAtIf extends SimpleNode {
 	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
 		ValueHolder nIf;
 		int i = 0;
-		nIf = jjtGetChild(i++).evaluate(ctx);
+		nIf = children[i++].evaluate(ctx);
 
-		while (i < jjtGetNumChildren()) {
-			if (nIf.isTrue()) {
-				return jjtGetChild(i++).evaluate(ctx);
+		while (i < children.length) {
+			if (nIf.isTrue(ctx)) {
+				return children[i++].evaluate(ctx);
 			} else {
 				i++;
 			}
-			nIf = jjtGetChild(i++).evaluate(ctx);
+			nIf = children[i++].evaluate(ctx);
 		}
 
 		return nIf; // returns always TRUE

@@ -33,18 +33,20 @@ public class ASTAtTranform extends SimpleNode {
 
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
-		ValueHolder list = jjtGetChild(0).evaluate(ctx);
-		String temp = (String) jjtGetChild(1).evaluate(ctx).get(0);
+		ValueHolder list = children[0].evaluate(ctx);
+		String temp = (String) children[1].evaluate(ctx).get(0);
+		temp = temp.toLowerCase();
 
 		ValueHolder ret = new ValueHolder();
-		for (int i = 0; i < list.size(); i++) {
-			ValueHolder iter = new ValueHolder(list.get(i));
-			ValueHolder old = ctx.setVar(temp, iter);
+		for (int i = 0; i < list.size; i++) {
+			@SuppressWarnings("deprecation")
+			ValueHolder iter = new ValueHolder(list.get(i)); // as multi values are alle boxed. it should not affect performance here
+			ValueHolder old = ctx.setVarLC(temp, iter);
 			try {
 				// Cumulate all return values
-				ret.addAll(jjtGetChild(2).evaluate(ctx));
+				ret.addAll(children[2].evaluate(ctx));
 			} finally {
-				ctx.setVar(temp, old);
+				ctx.setVarLC(temp, old);
 			}
 		}
 		return ret;

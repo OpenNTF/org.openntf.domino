@@ -36,8 +36,8 @@ public class ASTValueList extends SimpleNode {
 		// TODO Auto-generated method stub
 		ValueHolder li = new ValueHolder();
 
-		for (int i = 0; i < jjtGetNumChildren(); ++i) {
-			li.addAll(jjtGetChild(i).evaluate(ctx));
+		for (int i = 0; i < children.length; ++i) {
+			li.addAll(children[i].evaluate(ctx));
 		}
 
 		return li;

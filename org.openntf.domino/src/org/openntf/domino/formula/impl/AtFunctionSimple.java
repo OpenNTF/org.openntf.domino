@@ -35,11 +35,13 @@ public class AtFunctionSimple extends AtFunctionGeneric {
 		// TODO Auto-generated constructor stub
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx, final ValueHolder[] params) throws Exception {
 		ValueHolder ret = new ValueHolder();
 
 		if (varArgClass != null) {
+
 			Collection<Object[]> values = new ParameterCollectionObject<Object>(params, (Class<Object>) varArgClass, false);
 			ret.grow(values.size());
 

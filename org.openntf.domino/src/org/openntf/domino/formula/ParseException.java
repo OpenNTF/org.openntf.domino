@@ -138,8 +138,6 @@ public class ParseException extends Exception {
 	 */
 	private static String initialise(final AtFormulaParser parser, final String message) {
 		String eol = System.getProperty("line.separator", "\n");
-		StringBuffer expected = new StringBuffer();
-		int maxSize = 0;
 
 		String retval = "Encountered \"";
 		Token tok = parser.token;

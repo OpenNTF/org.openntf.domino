@@ -34,10 +34,10 @@ public class ASTAtIfError extends SimpleNode {
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
 		try {
-			jjtGetChild(0).evaluate(ctx);
+			children[0].evaluate(ctx);
 		} catch (RuntimeException ex) {
-			if (jjtGetNumChildren() == 2) {
-				return jjtGetChild(0).evaluate(ctx);
+			if (children.length == 2) {
+				return children[0].evaluate(ctx);
 			}
 		}
 		return new ValueHolder("");
