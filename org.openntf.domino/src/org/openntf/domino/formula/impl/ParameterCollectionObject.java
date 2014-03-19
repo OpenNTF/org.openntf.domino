@@ -24,10 +24,12 @@ import org.openntf.domino.formula.ValueHolder;
 
 public class ParameterCollectionObject<T> extends ParameterCollectionAbstract<T[]> {
 	protected Class<T> clazz;
+	private T[] ret = null;
 
 	public ParameterCollectionObject(final ValueHolder[] params, final Class<T> clazz, final boolean permutative) {
 		super(params, permutative);
 		this.clazz = clazz;
+		ret = (T[]) Array.newInstance(clazz, params.length);
 	}
 
 	@Override
@@ -43,7 +45,6 @@ public class ParameterCollectionObject<T> extends ParameterCollectionAbstract<T[
 			if (params == null) {
 				return null;
 			}
-			T[] ret = (T[]) Array.newInstance(clazz, params.length);
 			if (clazz.equals(String.class)) {
 				for (int i = 0; i < ret.length; i++) {
 					ret[i] = (T) params[i].getText(getIndex(i));

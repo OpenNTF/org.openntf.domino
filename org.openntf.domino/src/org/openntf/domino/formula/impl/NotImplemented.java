@@ -38,21 +38,22 @@ public class NotImplemented extends AtFunction {
 
 		public Factory() {
 			super();
-			init(new NotImplemented("@Abs", "Prio: HIGH"), //
+			//					Package
+			init(new NotImplemented("@Abs", "Prio: HIGH"), 	//					Arithmetic		
 					new NotImplemented("@Abstract", "Prio: LO"), //
 					new NotImplemented("@AbstractSimple", "Prio: LO"), //
-					new NotImplemented("@Accessed", "Prio: HIGH"), //
-					new NotImplemented("@ACos", "Prio: HIGH"), //
-					new NotImplemented("@AddToFolder", "Prio: LO"), //
+					new NotImplemented("@Accessed", "Prio: HIGH"), //			DocProperties 
+					new NotImplemented("@ACos", "Prio: HIGH"), //			 	Arithmetic
+					new NotImplemented("@AddToFolder", "Prio: LO"), //			DocProperties
 					new NotImplemented("@Adjust", "Prio: HIGH"), //
-					new NotImplemented("@AdminECLIsLocked", "Prio: LO"), //
-					new NotImplemented("@All", "Prio: LO"), //
+					new NotImplemented("@AdminECLIsLocked", "Prio: LO"), // 
+					new NotImplemented("@All", "Prio: LO"), //					Constants
 					new NotImplemented("@AllChildren", "Prio: LO"), //
 					new NotImplemented("@AllDescendants", "Prio: LO"), //
 					new NotImplemented("@Ascii", "Prio: HIGH"), //
-					new NotImplemented("@ASin", "Prio: HIGH"), //
-					new NotImplemented("@ATan", "Prio: HIGH"), //
-					new NotImplemented("@ATan2", "Prio: HIGH"), //
+					new NotImplemented("@ASin", "Prio: HIGH"), //  				Arithmetic
+					new NotImplemented("@ATan", "Prio: HIGH"), //				Arithmetic
+					new NotImplemented("@ATan2", "Prio: HIGH"), //				Arithmetic
 					new NotImplemented("@AttachmentLengths", "Prio: MID"), //
 					new NotImplemented("@AttachmentModifiedTimes", "Prio: MID"), //
 					new NotImplemented("@AttachmentNames", "Prio: MID"), //
@@ -66,13 +67,13 @@ public class NotImplemented extends AtFunction {
 					new NotImplemented("@CheckAlarms", "Prio: LO"), //
 					new NotImplemented("@CheckFormulaSyntax", "Prio: MID"), //
 					new NotImplemented("@ClientType", "Prio: LO"), //
-					new NotImplemented("@Command", "Prio: LO"), //
+					new NotImplemented("@Command", "Prio: LO"), //				NotSupported
 					new NotImplemented("@Compare", "Prio: HIGH"), //
 					new NotImplemented("@ConfigFile", "Prio: LO"), //
 					new NotImplemented("@Contains", "Prio: HIGH"), //
-					new NotImplemented("@Cos", "Prio: HIGH"), //
+					new NotImplemented("@Cos", "Prio: HIGH"), // 				Arithmetic 
 					new NotImplemented("@Count", "Prio: HIGH"), //
-					new NotImplemented("@Created", "Prio: MID"), //
+					new NotImplemented("@Created", "Prio: MID"), // 			DocProperties 
 					new NotImplemented("@Date", "Prio: HIGH"), //
 					new NotImplemented("@Day", "Prio: HIGH"), //
 					new NotImplemented("@DB2Schema", "Prio: LO"), //
@@ -82,50 +83,50 @@ public class NotImplemented extends AtFunction {
 					new NotImplemented("@DbExists", "Prio: MID"), //
 					new NotImplemented("@DbLookup (Domino)", "Prio: HIGH"), //
 					new NotImplemented("@DbLookup (ODBC)", "Prio: LO"), //
-					new NotImplemented("@DbManager", "Prio: LO"), //
+					new NotImplemented("@DbManager", "Prio: LO"), // ACL-related
 					new NotImplemented("@DbName", "Prio: MID"), //
 					new NotImplemented("@DbTitle", "Prio: MID"), //
-					new NotImplemented("@DDEExecute", "Prio: LO"), //
-					new NotImplemented("@DDEInitiate", "Prio: LO"), //
-					new NotImplemented("@DDEPoke", "Prio: LO"), //
-					new NotImplemented("@DDETerminate", "Prio: LO"), //
-					new NotImplemented("DEFAULT", "Prio: LO"), //
+					new NotImplemented("@DDEExecute", "Prio: LO"), //			NotSupported
+					new NotImplemented("@DDEInitiate", "Prio: LO"), //			NotSupported
+					new NotImplemented("@DDEPoke", "Prio: LO"), //				NotSupported
+					new NotImplemented("@DDETerminate", "Prio: LO"), //			NotSupported
+					//new NotImplemented("DEFAULT", "Prio: LO"), // parser
 					new NotImplemented("@DeleteDocument", "Prio: LO"), //
-					new NotImplemented("@DeleteField", "Prio: MID"), //
-					new NotImplemented("@DialogBox", "Prio: LO"), //
-					new NotImplemented("@Do", "Prio: LO"), //
-					new NotImplemented("@DocChildren", "Prio: LO"), //
-					new NotImplemented("@DocDescendants", "Prio: LO"), //
-					new NotImplemented("@DocFields", "Prio: HIGH"), //
-					new NotImplemented("@DocLength", "Prio: MID"), //
-					new NotImplemented("@DocLevel", "Prio: LO"), //
-					new NotImplemented("@DocLock", "Prio: LO"), //
-					new NotImplemented("@DocMark", "Prio: LO"), //
-					new NotImplemented("@DocNumber", "Prio: LO"), //
-					new NotImplemented("@DocOmittedLength", "Prio: LO"), //
-					new NotImplemented("@DocParentNumber", "Prio: LO"), //
-					new NotImplemented("@DocSiblings", "Prio: LO"), //
-					new NotImplemented("@DocumentUniqueID", "Prio: HIGH"), //
+					new NotImplemented("@DeleteField", "Prio: MID"), //			Constants
+					new NotImplemented("@DialogBox", "Prio: LO"), //			NotSupported
+					//new NotImplemented("@Do", "Prio: LO"), // parser
+					new NotImplemented("@DocChildren", "Prio: LO"), // This Formula does work only in views
+					new NotImplemented("@DocDescendants", "Prio: LO"), // This Formula does work only in views
+					new NotImplemented("@DocFields", "Prio: HIGH"), // 				DocProperties 
+					new NotImplemented("@DocLength", "Prio: MID"), // 				DocProperties
+					new NotImplemented("@DocLevel", "Prio: LO"), // This Formula does work only in views
+					new NotImplemented("@DocLock", "Prio: LO"), // TODO: Who needs this?
+					new NotImplemented("@DocMark", "Prio: LO"), // TODO: Map this to "save???"
+					new NotImplemented("@DocNumber", "Prio: LO"), // This Formula does work only in views
+					new NotImplemented("@DocOmittedLength", "Prio: LO"), // TODO: Who needs this?
+					new NotImplemented("@DocParentNumber", "Prio: LO"), // TODO: Who needs this?
+					new NotImplemented("@DocSiblings", "Prio: LO"), // TODO: Who needs this?
+					new NotImplemented("@DocumentUniqueID", "Prio: HIGH"), // 		DocProperties: 
 					new NotImplemented("@Domain", "Prio: MID"), //
-					new NotImplemented("@DoWhile", "Prio: LO"), //
-					new NotImplemented("@EditECL", "Prio: LO"), //
-					new NotImplemented("@EditUserECL", "Prio: LO"), //
+					//new NotImplemented("@DoWhile", "Prio: LO"), // parser
+					new NotImplemented("@EditECL", "Prio: LO"), // 					NotSupported
+					new NotImplemented("@EditUserECL", "Prio: LO"), // 				NotSupported
 					new NotImplemented("@Elements", "Prio: HIGH"), //
-					new NotImplemented("@EnableAlarms", "Prio: LO"), //
+					new NotImplemented("@EnableAlarms", "Prio: LO"), //				NotSupported
 					new NotImplemented("@Ends", "Prio: HIGH"), //
-					new NotImplemented("ENVIRONMENT", "Prio: LO"), //
+					//new NotImplemented("ENVIRONMENT", "Prio: LO"), //	parser
 					new NotImplemented("@Environment", "Prio: MID"), //
 					new NotImplemented("@Error", "Prio: HIGH"), //
 					new NotImplemented("@Eval", "Prio: MID"), //
-					new NotImplemented("@Exp", "Prio: HIGH"), //
+					new NotImplemented("@Exp", "Prio: HIGH"), //					Arithmetic 
 					new NotImplemented("@Explode", "Prio: HIGH"), //
 					new NotImplemented("@Failure", "Prio: LO"), //
-					new NotImplemented("@False", "Prio: HIGH"), //
-					new NotImplemented("FIELD", "Prio: LO"), //
+					new NotImplemented("@False", "Prio: HIGH"), //					Constant
+					// new NotImplemented("FIELD", "Prio: LO"), // parser
 					new NotImplemented("@FileDir", "Prio: LO"), //
-					new NotImplemented("@FloatEq", "Prio: HIGH"), //
-					new NotImplemented("@FontList", "Prio: LO"), //
-					new NotImplemented("@For", "Prio: LO"), //
+					new NotImplemented("@FloatEq", "Prio: HIGH"), //				Arithmetic
+					new NotImplemented("@FontList", "Prio: LO"), //					NotSupported
+					// new NotImplemented("@For", "Prio: LO"), // parser
 					new NotImplemented("@FormLanguage", "Prio: LO"), //
 					new NotImplemented("@GetAddressBooks", "Prio: MID"), //
 					new NotImplemented("@GetCurrentTimeZone", "Prio: MID"), //
@@ -133,20 +134,20 @@ public class NotImplemented extends AtFunction {
 					new NotImplemented("@GetField", "Prio: HIGH"), //
 					new NotImplemented("@GetFocusTable", "Prio: LO"), //
 					new NotImplemented("@GetHTTPHeader", "Prio: LO"), //
-					new NotImplemented("@GetIMContactListGroupNames", "Prio: LO"), //
-					new NotImplemented("@GetPortsList", "Prio: LO"), //
+					new NotImplemented("@GetIMContactListGroupNames", "Prio: LO"), //NotSupported
+					new NotImplemented("@GetPortsList", "Prio: LO"), //				NotSupporte
 					new NotImplemented("@GetProfileField", "Prio: MID"), //
 					new NotImplemented("@GetViewInfo", "Prio: LO"), //
 					new NotImplemented("@HardDeleteDocument", "Prio: LO"), //
 					new NotImplemented("@HashPassword", "Prio: HIGH"), //
 					new NotImplemented("@Hour", "Prio: HIGH"), //
-					new NotImplemented("@If", "Prio: LO"), //
-					new NotImplemented("@IfError (veraltet)", "Prio: LO"), //
+					// new NotImplemented("@If", "Prio: LO"), // parser
+					// new NotImplemented("@IfError (veraltet)", "Prio: LO"), // parser
 					new NotImplemented("@Implode", "Prio: HIGH"), //
-					new NotImplemented("@InheritedDocumentUniqueID", "Prio: HIGH"), //
-					new NotImplemented("@Integer", "Prio: HIGH"), //
+					new NotImplemented("@InheritedDocumentUniqueID", "Prio: HIGH"), // DocProperties: 
+					new NotImplemented("@Integer", "Prio: HIGH"), //				Arithmetic
 					new NotImplemented("@IsAgentEnabled", "Prio: MID"), //
-					new NotImplemented("@IsAppInstalled", "Prio: LO"), //
+					new NotImplemented("@IsAppInstalled", "Prio: LO"), // Do we implement this. Do we return "server?"
 					new NotImplemented("@IsAvailable", "Prio: HIGH"), //
 					new NotImplemented("@IsCategory", "Prio: LO"), //
 					new NotImplemented("@IsDB2", "Prio: LO"), //
@@ -161,15 +162,15 @@ public class NotImplemented extends AtFunction {
 					new NotImplemented("@IsExpandable", "Prio: LO"), //
 					new NotImplemented("@IsMember", "Prio: HIGH"), //
 					new NotImplemented("@IsModalHelp", "Prio: LO"), //
-					new NotImplemented("@IsNewDoc", "Prio: HIGH"), //
+					new NotImplemented("@IsNewDoc", "Prio: HIGH"), //				DocProperties
 					new NotImplemented("@IsNotMember", "Prio: HIGH"), //
 					new NotImplemented("@IsNull", "Prio: HIGH"), //
 					new NotImplemented("@IsNumber", "Prio: HIGH"), //
-					new NotImplemented("@IsResponseDoc", "Prio: LO"), //
+					new NotImplemented("@IsResponseDoc", "Prio: LO"), //			DocProperties
 					new NotImplemented("@IsText", "Prio: HIGH"), //
 					new NotImplemented("@IsTime", "Prio: HIGH"), //
 					new NotImplemented("@IsUnavailable", "Prio: HIGH"), //
-					new NotImplemented("@IsUsingJavaElement", "Prio: LO"), //
+					new NotImplemented("@IsUsingJavaElement", "Prio: LO"), // what do we here? return True?
 					new NotImplemented("@IsValid", "Prio: LO"), //
 					new NotImplemented("@IsVirtualizedDirectory", "Prio: LO"), //
 					new NotImplemented("@Keywords", "Prio: HIGH"), //
@@ -180,9 +181,9 @@ public class NotImplemented extends AtFunction {
 					new NotImplemented("@LeftBack", "Prio: HIGH"), //
 					new NotImplemented("@Length", "Prio: HIGH"), //
 					new NotImplemented("@Like", "Prio: HIGH"), //
-					new NotImplemented("@Ln", "Prio: HIGH"), //
+					new NotImplemented("@Ln", "Prio: HIGH"), //						Arithmetic
 					new NotImplemented("@Locale", "Prio: MID"), //
-					new NotImplemented("@Log", "Prio: HIGH"), //
+					new NotImplemented("@Log", "Prio: HIGH"), //					Arithmetic
 					new NotImplemented("@LowerCase", "Prio: HIGH"), //
 					new NotImplemented("@MailDbName", "Prio: MID"), //
 					new NotImplemented("@MailEncryptSavedPreference", "Prio: LO"), //
@@ -191,51 +192,52 @@ public class NotImplemented extends AtFunction {
 					new NotImplemented("@MailSend", "Prio: LO"), //
 					new NotImplemented("@MailSignPreference", "Prio: LO"), //
 					new NotImplemented("@Matches", "Prio: HIGH"), //
-					new NotImplemented("@Max", "Prio: HIGH"), //
+					new NotImplemented("@Max", "Prio: HIGH"), //					Arithmetic
 					new NotImplemented("@Member", "Prio: HIGH"), //
 					new NotImplemented("@Middle", "Prio: HIGH"), //
 					new NotImplemented("@MiddleBack", "Prio: HIGH"), //
-					new NotImplemented("@Min", "Prio: HIGH"), //
+					new NotImplemented("@Min", "Prio: HIGH"), //					Arithmetic
 					new NotImplemented("@Minute", "Prio: HIGH"), //
-					new NotImplemented("@Modified", "Prio: HIGH"), //
-					new NotImplemented("@Modulo", "Prio: HIGH"), //
+					new NotImplemented("@Modified", "Prio: HIGH"), //				DocProperties
+					new NotImplemented("@Modulo", "Prio: HIGH"), //					Arithmetic
 					new NotImplemented("@Month", "Prio: HIGH"), //
 					new NotImplemented("@Name", "Prio: HIGH"), //
 					new NotImplemented("@NameLookup", "Prio: LO"), //
 					new NotImplemented("@Narrow", "Prio: HIGH"), //
 					new NotImplemented("@NewLine", "Prio: HIGH"), //
-					new NotImplemented("@No", "Prio: HIGH"), //
-					new NotImplemented("@NoteID", "Prio: HIGH"), //
-					new NotImplemented("@Nothing", "Prio: HIGH"), //
+					new NotImplemented("@No", "Prio: HIGH"), //						Constant
+					new NotImplemented("@NoteID", "Prio: HIGH"), //					DocProperties 
+					new NotImplemented("@Nothing", "Prio: HIGH"), //				Constant
 					new NotImplemented("@Now", "Prio: HIGH"), //
-					new NotImplemented("@OpenInNewWindow", "Prio: LO"), //
+					//new NotImplemented("@OpenInNewWindow", "Prio: LO"), // THIS IS NOT AN @FUNCTION 
+					//(listed in designerhelp: Where does this @function work? (Part 1 L -- R)  )
 					new NotImplemented("@OptimizeMailAddress", "Prio: HIGH"), //
 					new NotImplemented("@OrgDir", "Prio: LO"), //
 					new NotImplemented("@Password", "Prio: HIGH"), //
 					new NotImplemented("@PasswordQuality", "Prio: HIGH"), //
-					new NotImplemented("@Pi", "Prio: HIGH"), //
+					new NotImplemented("@Pi", "Prio: HIGH"), //						Arithmetic
 					new NotImplemented("@PickList", "Prio: LO"), //
 					new NotImplemented("@Platform", "Prio: LO"), //
 					new NotImplemented("@PolicyIsFieldLocked", "Prio: LO"), //
 					new NotImplemented("@PostedCommand", "Prio: LO"), //
-					new NotImplemented("@Power", "Prio: HIGH"), //
-					new NotImplemented("@Prompt", "Prio: LO"), //
+					new NotImplemented("@Power", "Prio: HIGH"), //					Arithmetic
+					new NotImplemented("@Prompt", "Prio: LO"), //					NotSupported
 					new NotImplemented("@ProperCase", "Prio: HIGH"), //
-					new NotImplemented("@Random", "Prio: HIGH"), //
+					new NotImplemented("@Random", "Prio: HIGH"), //					Arithmetic
 					new NotImplemented("@RefreshECL", "Prio: LO"), //
 					new NotImplemented("@RegQueryValue", "Prio: MID"), //
-					new NotImplemented("REM", "Prio: LO"), //
-					new NotImplemented("@Repeat", "Prio: HIGH"), //
+					//new NotImplemented("REM", "Prio: LO"), // parser
+					//new NotImplemented("@Repeat", "Prio: HIGH"), // parser
 					new NotImplemented("@Replace", "Prio: HIGH"), //
 					new NotImplemented("@ReplaceSubstring", "Prio: HIGH"), //
-					new NotImplemented("@ReplicaID", "Prio: HIGH"), //
-					new NotImplemented("@Responses", "Prio: HIGH"), //
+					new NotImplemented("@ReplicaID", "Prio: HIGH"), //				DocProperties
+					new NotImplemented("@Responses", "Prio: HIGH"), //				DocProperties
 					new NotImplemented("@Return", "Prio: HIGH"), //
 					new NotImplemented("@Right", "Prio: HIGH"), //
 					new NotImplemented("@RightBack", "Prio: HIGH"), //
 					new NotImplemented("@Round", "Prio: HIGH"), //
 					new NotImplemented("@Second", "Prio: HIGH"), //
-					new NotImplemented("SELECT", "Prio: LO"), //
+					//new NotImplemented("SELECT", "Prio: LO"), // parser
 					new NotImplemented("@Select", "Prio: HIGH"), //
 					new NotImplemented("@ServerAccess", "Prio: MID"), //
 					new NotImplemented("@ServerName", "Prio: MID"), //
@@ -249,15 +251,15 @@ public class NotImplemented extends AtFunction {
 					new NotImplemented("@SetViewInfo", "Prio: LO"), //
 					new NotImplemented("@ShowParentPreview", "Prio: LO"), //
 					new NotImplemented("@Sign", "Prio: HIGH"), //
-					new NotImplemented("@Sin", "Prio: HIGH"), //
+					new NotImplemented("@Sin", "Prio: HIGH"), //					Arithmetic
 					new NotImplemented("@Sort", "Prio: HIGH"), //
 					new NotImplemented("@Soundex", "Prio: HIGH"), //
-					new NotImplemented("@Sqrt", "Prio: HIGH"), //
+					new NotImplemented("@Sqrt", "Prio: HIGH"), //					Arithmetic
 					new NotImplemented("@StatusBar", "Prio: LO"), //
 					new NotImplemented("@Subset", "Prio: HIGH"), //
 					new NotImplemented("@Success", "Prio: HIGH"), //
-					new NotImplemented("@Sum", "Prio: HIGH"), //
-					new NotImplemented("@Tan", "Prio: HIGH"), //
+					new NotImplemented("@Sum", "Prio: HIGH"), //					Arithmetic
+					new NotImplemented("@Tan", "Prio: HIGH"), //					Arithmetic
 					new NotImplemented("@TemplateVersion", "Prio: MID"), //
 					new NotImplemented("@Text", "Prio: HIGH"), //
 					new NotImplemented("@TextToNumber", "Prio: HIGH"), //
@@ -272,7 +274,7 @@ public class NotImplemented extends AtFunction {
 					new NotImplemented("@Tomorrow", "Prio: HIGH"), //
 					new NotImplemented("@ToNumber", "Prio: HIGH"), //
 					new NotImplemented("@ToTime", "Prio: HIGH"), //
-					new NotImplemented("@Transform", "Prio: LO"), //
+					// new NotImplemented("@Transform", "Prio: LO"), // parser
 					new NotImplemented("@Trim", "Prio: HIGH"), //
 					new NotImplemented("@True", "Prio: HIGH"), //
 					new NotImplemented("@Unavailable", "Prio: HIGH"), //
@@ -292,7 +294,7 @@ public class NotImplemented extends AtFunction {
 					new NotImplemented("@UserNamesList", "Prio: HIGH"), //
 					new NotImplemented("@UserPrivileges", "Prio: HIGH"), //
 					new NotImplemented("@UserRoles", "Prio: HIGH"), //
-					new NotImplemented("@V2If", "Prio: HIGH"), //
+					// new NotImplemented("@V2If", "Prio: HIGH"), // parser
 					new NotImplemented("@V3UserName", "Prio: MID"), //
 					new NotImplemented("@V4UserAccess", "Prio: MID"), //
 					new NotImplemented("@ValidateInternetAddress", "Prio: MID"), //
@@ -302,7 +304,7 @@ public class NotImplemented extends AtFunction {
 					new NotImplemented("@ViewTitle", "Prio: LO"), //
 					new NotImplemented("@WebDBName", "Prio: MID"), //
 					new NotImplemented("@Weekday", "Prio: HIGH"), //
-					new NotImplemented("@While", "Prio: LO"), //
+					// new NotImplemented("@While", "Prio: LO"), // parser
 					new NotImplemented("@Wide", "Prio: HIGH"), //
 					new NotImplemented("@Word", "Prio: HIGH"), //
 					new NotImplemented("@Year", "Prio: HIGH"), //

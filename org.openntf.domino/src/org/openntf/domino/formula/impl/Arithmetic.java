@@ -188,16 +188,19 @@ public enum Arithmetic {
 	 * @see java.lang.Math.cbrt
 	 */
 	@ParamCount(1)
+	@OpenNTF
 	public static Number atCbrt(final Number arg) {
 		return Math.cbrt(arg.doubleValue());
 	}
 
 	@ParamCount(1)
+	@OpenNTF
 	public static Number atCeil(final Number arg) {
 		return Math.ceil(arg.doubleValue());
 	}
 
 	@ParamCount(1)
+	@OpenNTF
 	public static Number atFloor(final Number arg) {
 		return Math.floor(arg.doubleValue());
 	}
