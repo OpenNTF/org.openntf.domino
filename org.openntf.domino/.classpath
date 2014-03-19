@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="test"/>
+	<classpathentry excluding="org/openntf/domino/tests/rpr/|org/openntf/domino/tests/rpr/formula/|org/openntf/domino/tests/rpr/formula/eval/" kind="src" path="test"/>
 	<classpathentry kind="src" path="tinkerpop"/>
 	<classpathentry kind="src" path="resources"/>
 	<classpathentry excluding="com/ibm/commons/util/TDiag.java" kind="src" path="commons"/>

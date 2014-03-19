@@ -361,6 +361,22 @@ public enum Strings {
 		return "";
 	}
 
+	public static String join(final String[] source, final String delimiter) {
+		if ((null != source) && (source.length > 0)) {
+			final StringBuilder stringbuilder = new StringBuilder();
+
+			for (int i = 0; i < source.length; i++) {
+				stringbuilder.append(source[i]);
+				if (i < source.length) {
+					stringbuilder.append(delimiter);
+				}
+			}
+
+			return stringbuilder.toString();
+		}
+		return "";
+	}
+
 	/**
 	 * Joins elements into a String using a specified delimiter.
 	 * 

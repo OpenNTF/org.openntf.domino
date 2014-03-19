@@ -9,6 +9,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
+import org.openntf.domino.AutoMime;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xsp.Activator;
@@ -110,22 +111,26 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		return (Boolean) current;
 	}
 
-	private static boolean isAppAutoBoxed(final FacesContext ctx) {
+	private static AutoMime getAppAutoMime(final FacesContext ctx) {
 		// Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
-		Object current = getAppMap(ctx).get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_AUTOBOXED");
+		Object current = getAppMap(ctx).get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_AUTOMIME");
 		if (current == null) {
-			current = Boolean.FALSE;
+			current = AutoMime.WRAP_ALL;
 			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
 			if (envs != null) {
 				for (String s : envs) {
-					if (s.equalsIgnoreCase("optimus")) {
-						current = Boolean.TRUE;
+					if (s.equalsIgnoreCase("automime32k")) {
+						current = AutoMime.WRAP_32K;
 					}
+					if (s.equalsIgnoreCase("automimenone")) {
+						current = AutoMime.WRAP_NONE;
+					}
+
 				}
 			}
-			getAppMap(ctx).put(OpenntfDominoImplicitObjectFactory2.class.getName() + "_MARCEL", current);
+			getAppMap(ctx).put(OpenntfDominoImplicitObjectFactory2.class.getName() + "_AUTOMIME", current);
 		}
-		return (Boolean) current;
+		return (AutoMime) current;
 	}
 
 	private static boolean isAppMimeFriendly(final FacesContext ctx) {
@@ -202,8 +207,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		}
 		if (rawSession != null) {
 			session = Factory.fromLotus(rawSession, org.openntf.domino.Session.SCHEMA, null);
-			if (isAppAutoBoxed(ctx))
-				session.setAutoMime(true);
+			session.setAutoMime(getAppAutoMime(ctx));
 			if (isAppMimeFriendly(ctx))
 				session.setConvertMIME(false);
 			if (isAppAllFix(ctx)) {

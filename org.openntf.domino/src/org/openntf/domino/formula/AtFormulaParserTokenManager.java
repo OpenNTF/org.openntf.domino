@@ -7,6 +7,8 @@ import java.util.Map;
 import org.openntf.domino.formula.AtFunction;
 import org.openntf.domino.formula.Formatter;
 import org.openntf.domino.formula.AtFunctionFactory;
+import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Terminatable;
 
 /** Token Manager. */
 public class AtFormulaParserTokenManager implements AtFormulaParserConstants
