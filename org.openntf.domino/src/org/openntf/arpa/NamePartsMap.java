@@ -530,35 +530,40 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 
 					if (string.indexOf('=') > 0) {
 						// use canonical logic
-						for (int i = words.length - 1; i >= 0; i--) {
-							final String word = words[i].trim();
-							try {
-								if (word.indexOf('=') > 0) {
-									final String[] nibbles = word.split("=");
-									if (nibbles.length > 1) {
-										final String key = nibbles[0];
-										final String value = nibbles[1];
+						try {
+							for (int i = (words.length - 1); i >= 0; i--) {
+								final String word = words[i].trim();
+								try {
+									// TODO Need to handle case where word = "*"   DSO 20140319
 
-										if (CanonicalKey.C.name().equalsIgnoreCase(key)) {
-											country = value;
-										} else if (CanonicalKey.O.name().equalsIgnoreCase(key)) {
-											organization = value;
-										} else if (CanonicalKey.OU.name().equalsIgnoreCase(key)) {
-											ous[idx] = value;
-											idx++;
-										} else if (CanonicalKey.CN.name().equalsIgnoreCase(key)) {
-											common = value;
+									if (word.indexOf('=') > 0) {
+										final String[] nibbles = word.split("=");
+										if (nibbles.length > 1) {
+											final String key = nibbles[0];
+											final String value = nibbles[1];
+
+											if (CanonicalKey.C.name().equalsIgnoreCase(key)) {
+												country = value;
+											} else if (CanonicalKey.O.name().equalsIgnoreCase(key)) {
+												organization = value;
+											} else if (CanonicalKey.OU.name().equalsIgnoreCase(key)) {
+												ous[idx] = value;
+												idx++;
+											} else if (CanonicalKey.CN.name().equalsIgnoreCase(key)) {
+												common = value;
+											}
+										} else {
+											throw new RuntimeException("Cannot Parse Word: \"" + word + "\", Source String: \"" + string
+													+ "\"");
 										}
-									} else {
-										throw new RuntimeException("Exception Parsing Word: \"" + word + "\"");
 									}
-								} else {
-									throw new RuntimeException("Exception Parsing Word: \"" + word + "\"");
+
+								} catch (final Exception e) {
+									ISO.handleException(e, "Source String: \"" + string + "\"");
 								}
-							} catch (final Exception e) {
-								ISO.handleException(e, "Source String: \"" + string + "\",  Parsing Word: \"" + word + "\"");
-								e.printStackTrace();
 							}
+						} catch (final Exception e) {
+							ISO.handleException(e, "Source String: \"" + string + "\"");
 						}
 
 					} else {
@@ -604,8 +609,7 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 			return true;
 
 		} catch (final Exception e) {
-			ISO.handleException(e, string);
-			e.printStackTrace();
+			ISO.handleException(e, "Source String: \"" + string + "\"");
 		}
 
 		return false;
