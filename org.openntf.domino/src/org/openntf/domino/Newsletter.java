@@ -15,6 +15,7 @@
  */
 package org.openntf.domino;
 
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
@@ -22,6 +23,25 @@ import org.openntf.domino.types.SessionDescendant;
  */
 public interface Newsletter extends Base<lotus.domino.Newsletter>, lotus.domino.Newsletter, org.openntf.domino.ext.Newsletter,
 		SessionDescendant {
+
+	public static class Schema extends FactorySchema<Newsletter, lotus.domino.Newsletter, Session> {
+		@Override
+		public Class<Newsletter> typeClass() {
+			return Newsletter.class;
+		}
+
+		@Override
+		public Class<lotus.domino.Newsletter> delegateClass() {
+			return lotus.domino.Newsletter.class;
+		}
+
+		@Override
+		public Class<Session> parentClass() {
+			return Session.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)

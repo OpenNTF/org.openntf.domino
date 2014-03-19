@@ -21,12 +21,32 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.openntf.domino.types.DatabaseDescendant;
+import org.openntf.domino.types.FactorySchema;
 
 /**
  * The Interface Document.
  */
 public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document, org.openntf.domino.ext.Document, DatabaseDescendant,
 		Map<String, Object> {
+
+	public static class Schema extends FactorySchema<Document, lotus.domino.Document, Database> {
+		@Override
+		public Class<Document> typeClass() {
+			return Document.class;
+		}
+
+		@Override
+		public Class<lotus.domino.Document> delegateClass() {
+			return lotus.domino.Document.class;
+		}
+
+		@Override
+		public Class<Database> parentClass() {
+			return Database.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)
@@ -265,7 +285,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * 
 	 * @see lotus.domino.Document#getEmbeddedObjects()
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Vector getEmbeddedObjects();
 
@@ -274,7 +294,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * 
 	 * @see lotus.domino.Document#getEncryptionKeys()
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Vector getEncryptionKeys();
 
@@ -291,8 +311,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * 
 	 * @see lotus.domino.Document#getFolderReferences()
 	 */
-	@SuppressWarnings("unchecked")
-	@Override
+	@SuppressWarnings("rawtypes")
 	public Vector getFolderReferences();
 
 	/*
@@ -333,7 +352,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * 
 	 * @see lotus.domino.Document#getItemValue(java.lang.String)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Vector getItemValue(final String name);
 
@@ -366,7 +385,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * 
 	 * @see lotus.domino.Document#getItemValueDateTimeArray(java.lang.String)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Vector getItemValueDateTimeArray(final String name);
 
@@ -423,7 +442,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * 
 	 * @see lotus.domino.Document#getLockHolders()
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Vector getLockHolders();
 
@@ -512,7 +531,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * 
 	 * @see lotus.domino.Document#getReceivedItemText()
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Vector getReceivedItemText();
 
@@ -713,7 +732,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * 
 	 * @see lotus.domino.Document#lock(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean lock(final Vector names);
 
@@ -722,7 +741,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * 
 	 * @see lotus.domino.Document#lock(java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean lock(final Vector names, final boolean provisionalok);
 
@@ -747,7 +766,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * 
 	 * @see lotus.domino.Document#lockProvisional(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean lockProvisional(final Vector names);
 
@@ -877,7 +896,8 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#replaceItemValueCustomDataBytes(java.lang.String, java.lang.String, byte[])
 	 */
 	@Override
-	public Item replaceItemValueCustomDataBytes(final String itemName, final String dataTypeName, final byte[] byteArray) throws IOException;
+	public Item replaceItemValueCustomDataBytes(final String itemName, final String dataTypeName, final byte[] byteArray)
+			throws IOException;
 
 	/*
 	 * (non-Javadoc)
@@ -940,7 +960,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * 
 	 * @see lotus.domino.Document#send(boolean, java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void send(final boolean attachform, final Vector recipients);
 
@@ -957,7 +977,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * 
 	 * @see lotus.domino.Document#send(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void send(final Vector recipients);
 
@@ -966,7 +986,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * 
 	 * @see lotus.domino.Document#setEncryptionKeys(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void setEncryptionKeys(final Vector keys);
 
@@ -1025,4 +1045,5 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 */
 	@Override
 	public void unlock();
+
 }

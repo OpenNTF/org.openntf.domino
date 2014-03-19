@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -106,8 +107,9 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 				} else if (o instanceof java.util.Collection) {
 					edgeIds = Collections.synchronizedSet(new LinkedHashSet<String>((Collection<String>) o));
 				} else {
-					log_.log(Level.WARNING, "ALERT! InEdges for label " + label + " returned something other than a Collection "
-							+ o.getClass().getName() + " in vertex type " + this.getForm() + " id: " + getId());
+					log_.log(Level.SEVERE, "ALERT! InEdges returned something other than a Collection " + o.getClass().getName()
+							+ ". We are clearing the values and rebuilding the edges.");
+					edgeIds = Collections.synchronizedSet(new LinkedHashSet<String>());
 				}
 			} else {
 				edgeIds = Collections.synchronizedSet(new LinkedHashSet<String>());
@@ -139,7 +141,9 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 				} else if (o instanceof java.util.Collection) {
 					edgeIds = Collections.synchronizedSet(new LinkedHashSet<String>((Collection<String>) o));
 				} else {
-					log_.log(Level.WARNING, "ALERT! OutEdges returned something other than a Collection " + o.getClass().getName());
+					log_.log(Level.SEVERE, "ALERT! OutEdges returned something other than a Collection " + o.getClass().getName()
+							+ ". We are clearing the values and rebuilding the edges.");
+					edgeIds = Collections.synchronizedSet(new LinkedHashSet<String>());
 				}
 			} else {
 				edgeIds = Collections.synchronizedSet(new LinkedHashSet<String>());
@@ -221,6 +225,13 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		Set<String> result = new LinkedHashSet<String>();
 		result.addAll(getInEdges());
 		result.addAll(getOutEdges());
+		return Collections.unmodifiableSet(result);
+	}
+
+	public Set<Edge> getEdges(final String... labels) {
+		LinkedHashSet<Edge> result = new LinkedHashSet<Edge>();
+		result.addAll(getInEdgeObjects(labels));
+		result.addAll(getOutEdgeObjects(labels));
 		return Collections.unmodifiableSet(result);
 	}
 
@@ -438,7 +449,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	// return inEdges_;
 	// }
 
-	Set<String> getInEdgeLabels() {
+	public Set<String> getInEdgeLabels() {
 		Set<String> result = new LinkedHashSet<String>();
 		Set<String> rawKeys = getRawDocument().keySet();
 		for (String key : rawKeys) {
@@ -457,7 +468,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		return result;
 	}
 
-	Set<String> getOutEdgeLabels() {
+	public Set<String> getOutEdgeLabels() {
 		Set<String> result = new LinkedHashSet<String>();
 		Set<String> rawKeys = getRawDocument().keySet();
 		for (String key : rawKeys) {
@@ -649,7 +660,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	public String validateEdges() {
 		StringBuilder sb = new StringBuilder();
 		Set<String> inIds = getInEdges();
-		for (String id : inIds.toArray(new String[0])) {
+		for (String id : inIds.toArray(new String[inIds.size()])) {
 			Document chk = getParent().getRawDatabase().getDocumentByUNID(id);
 			if (chk == null) {
 				inIds.remove(id);
@@ -661,7 +672,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		}
 
 		Set<String> outIds = getOutEdges();
-		for (String id : outIds.toArray(new String[0])) {
+		for (String id : outIds.toArray(new String[outIds.size()])) {
 			Document chk = getParent().getRawDatabase().getDocumentByUNID(id);
 			if (chk == null) {
 				outIds.remove(id);
@@ -715,9 +726,21 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		}
 
 	}
-	//
-	//	public Edge find(Vertex other) {
-	//		return getRuleHelper().findEdge(this, other);
-	//	}
 
+	public Set<IEdgeHelper> getEdgeHelpers() {
+		Set<IEdgeHelper> result = new HashSet<IEdgeHelper>();
+		for (String in : getInEdgeLabels()) {
+			IEdgeHelper helper = getParent().getHelper(in);
+			if (helper != null) {
+				result.add(helper);
+			}
+		}
+		for (String out : getOutEdgeLabels()) {
+			IEdgeHelper helper = getParent().getHelper(out);
+			if (helper != null) {
+				result.add(helper);
+			}
+		}
+		return result;
+	}
 }

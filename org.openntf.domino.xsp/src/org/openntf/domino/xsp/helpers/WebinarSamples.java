@@ -4,7 +4,6 @@
 package org.openntf.domino.xsp.helpers;
 
 import java.util.Map;
-import java.util.NavigableSet;
 
 import org.openntf.domino.helpers.DocumentScanner;
 import org.openntf.domino.helpers.DocumentSyncHelper;
@@ -285,7 +284,7 @@ public class WebinarSamples {
 		Object eval = doc.get("@Adjust(@Modified; 1; 0; 0; 0; 0; 0)");	// AVAILABLE IN M3
 	}
 
-	public Map<String, NavigableSet<String>> scanDatabase(final org.openntf.domino.Database db) {
+	public Map scanDatabase(final org.openntf.domino.Database db) {
 		// DocumentScanner looks at values of all string-based items in a document
 		DocumentScanner scanner = new DocumentScanner();
 		for (org.openntf.domino.Document doc : db.getAllDocuments()) {

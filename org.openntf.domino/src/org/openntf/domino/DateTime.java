@@ -18,13 +18,33 @@ package org.openntf.domino;
 import java.util.Date;
 
 import org.openntf.domino.types.Encapsulated;
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
  * The Interface DateTime.
  */
 public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.DateTime, org.openntf.domino.ext.DateTime, Encapsulated,
-		SessionDescendant {
+		SessionDescendant, Cloneable {
+
+	public static class Schema extends FactorySchema<DateTime, lotus.domino.DateTime, Session> {
+		@Override
+		public Class<DateTime> typeClass() {
+			return DateTime.class;
+		}
+
+		@Override
+		public Class<lotus.domino.DateTime> delegateClass() {
+			return lotus.domino.DateTime.class;
+		}
+
+		@Override
+		public Class<Session> parentClass() {
+			return Session.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)
@@ -137,6 +157,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 *            DateTime to compare to current date
 	 * @return boolean, whether or not the two dates are the same
 	 */
+	@Override
 	public boolean equals(final DateTime comparDate);
 
 	/**
@@ -146,6 +167,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 *            DateTime to compare to the current DateTime
 	 * @return boolean is time is the same, including millisecond
 	 */
+	@Override
 	public boolean equalsIgnoreDate(final DateTime comparDate);
 
 	/**
@@ -155,6 +177,7 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 *            DateTime to compare to the current DateTime
 	 * @return boolean is date is the same
 	 */
+	@Override
 	public boolean equalsIgnoreTime(final DateTime comparDate);
 
 	/*
@@ -316,6 +339,11 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	 */
 	@Override
 	public Date toJavaDate();
+
+	/*
+	 * Clones the dateTime object
+	 */
+	public DateTime clone();
 
 	// /**
 	// * To java cal.

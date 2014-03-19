@@ -20,14 +20,16 @@ import java.util.Collection;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.Replication;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class ReplicationEntry.
  */
-public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, lotus.domino.ReplicationEntry> implements
+public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, lotus.domino.ReplicationEntry, Replication> implements
 		org.openntf.domino.ReplicationEntry {
 
 	/**
@@ -38,8 +40,26 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public ReplicationEntry(final lotus.domino.ReplicationEntry delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, (Replication) parent);
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public ReplicationEntry(final lotus.domino.ReplicationEntry delegate, final Replication parent, final WrapperFactory wf,
+			final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_REPLENT);
 	}
 
 	/*
@@ -77,7 +97,7 @@ public class ReplicationEntry extends Base<org.openntf.domino.ReplicationEntry, 
 	 */
 	@Override
 	public Replication getParent() {
-		return (Replication) super.getParent();
+		return getAncestor();
 	}
 
 	/*

@@ -2,7 +2,10 @@ package org.openntf.domino.graph;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,8 +16,59 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
 import org.openntf.domino.types.Null;
+import org.openntf.domino.utils.Strings;
 
 public abstract class DominoElement implements IDominoElement, Serializable {
+	private static Map<Class<?>, Map<String, Method>> PROP_REFLECT_MAP = new ConcurrentHashMap<Class<?>, Map<String, Method>>();
+
+	public static Object getReflectiveProperty(final IDominoElement element, final String prop) {
+		if (prop == null || prop.isEmpty())
+			return null;
+		if (element.hasProperty(prop)) {
+			return element.getProperty(prop);
+		} else {
+			Class<?> cls = element.getClass();
+			Map<String, Method> clsMap = PROP_REFLECT_MAP.get(cls);
+			if (clsMap == null) {
+				clsMap = new ConcurrentHashMap<String, Method>();
+				synchronized (DominoElement.class) {
+					PROP_REFLECT_MAP.put(cls, clsMap);
+				}
+			}
+			Method crystal = clsMap.get(prop);
+			if (crystal == null) {
+				String getKey = "get" + Strings.toProperCase(prop);
+				try {
+					crystal = cls.getMethod(getKey, null);
+				} catch (Exception e) {
+					try {
+						String isKey = "is" + Strings.toProperCase(prop);
+						crystal = cls.getMethod(isKey, null);
+					} catch (Exception e1) {
+						//this is actually okay. It just happens we don't have a method for this thing.
+					}
+				}
+				if (crystal != null) {
+					synchronized (clsMap) {
+						clsMap.put(prop, crystal);
+					}
+				}
+			}
+			if (crystal != null) {
+				try {
+					return crystal.invoke(element, null);
+				} catch (Throwable t) {
+					//TODO NTF should really replace the map with some kind of method reference that returns null in the future...
+				}
+			}
+		}
+		return null;
+	}
+
+	public static Object getReflectiveProperty(final IDominoElement element, final IDominoProperties prop) {
+		return prop.getType().cast(getReflectiveProperty(element, prop.getName()));
+	}
+
 	private static final Logger log_ = Logger.getLogger(DominoElement.class.getName());
 	private static final long serialVersionUID = 1L;
 	public static final String TYPE_FIELD = "_OPEN_GRAPHTYPE";
@@ -290,6 +344,10 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 					return (T) Boolean.FALSE;
 				if (Integer.class.equals(T) || Integer.TYPE.equals(T))
 					return (T) Integer.valueOf(0);
+				if (Long.class.equals(T) || Long.TYPE.equals(T))
+					return (T) Long.valueOf(0l);
+				if (Short.class.equals(T) || Short.TYPE.equals(T))
+					return (T) Short.valueOf("0");
 				if (Double.class.equals(T) || Double.TYPE.equals(T))
 					return (T) Double.valueOf(0d);
 				if (Float.class.equals(T) || Float.TYPE.equals(T))
@@ -312,20 +370,26 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return getPropertyKeys(true);
 	}
 
+	private final Set<String> propKeys_ = new HashSet<String>();	//TODO MAKE THREAD SAFE!!;
+
 	public Set<String> getPropertyKeys(final boolean includeEdgeFields) {
-		// TODO - NTF cache?
-		Set<String> result = new HashSet<String>();
-		for (Item i : getRawDocument().getItems()) {
-			String name = i.getName();
-			if (includeEdgeFields) {
-				result.add(name);
-			} else {
-				if (!(name.startsWith(DominoVertex.IN_PREFIX) || name.startsWith(DominoVertex.OUT_PREFIX))) {
-					result.add(name);
+		if (propKeys_.isEmpty()) {
+			for (Item i : getRawDocument().getItems()) {
+				String name = i.getName();
+				if (includeEdgeFields) {
+					synchronized (propKeys_) {
+						propKeys_.add(name);
+					}
+				} else {
+					if (!(name.startsWith(DominoVertex.IN_PREFIX) || name.startsWith(DominoVertex.OUT_PREFIX))) {
+						synchronized (propKeys_) {
+							propKeys_.add(name);
+						}
+					}
 				}
 			}
 		}
-		return result;
+		return Collections.unmodifiableSet(propKeys_);
 	}
 
 	@Override
@@ -358,6 +422,9 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		synchronized (removedProperties_) {
 			removedProperties_.add(key);
 		}
+		synchronized (propKeys_) {
+			propKeys_.remove(key);
+		}
 		return result;
 	}
 
@@ -371,9 +438,9 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	private final Set<String> changedProperties_ = new HashSet<String>();
 
-	void setProperty(final String propertyName, final java.lang.Object value, final boolean force) {
-
-	}
+	//	void setProperty(final String propertyName, final java.lang.Object value, final boolean force) {
+	//
+	//	}
 
 	@Override
 	public void setProperty(final String propertyName, final java.lang.Object value) {
@@ -383,20 +450,18 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		Object old = null;
 		if (props != null) {
 			if (propertyName != null) {
+				synchronized (propKeys_) {
+					propKeys_.add(propertyName);
+				}
 				Object current = getProperty(propertyName);
 				if (propertyName.startsWith(DominoVertex.IN_PREFIX) && value instanceof java.util.Collection) {
 					isEdgeCollection = true;
-					//					System.out.println("Setting property of " + propertyName + " with collection of "
-					//							+ ((java.util.Collection) value).size());
 				}
 				if (current == null && value == null) {
-					//					if (isEdgeCollection) {
-					//						System.out.println("Both current and new are NULL. Therefore returning.");
-					//					}
 					return;
 				}
 				if (value != null && current != null) {
-					if (!(value instanceof java.util.Collection) && !value.getClass().isArray()) {
+					if (!(value instanceof java.util.Collection) && !(value instanceof java.util.Map) && !value.getClass().isArray()) {
 						isEqual = value.equals(current);
 					}
 				}
@@ -407,19 +472,12 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 				synchronized (props) {
 					if (value instanceof Serializable) {
 						if (current == null || Null.INSTANCE.equals(current)) {
-							//							if (isEdgeCollection) {
-							//								System.out.println("Current is null, therefore we're putting the new value in the map.");
-							//							}
 							getParent().startTransaction(this);
 							old = props.put(propertyName, (Serializable) value);
 							synchronized (changedProperties_) {
 								changedProperties_.add(propertyName);
 							}
 						} else if (!isEqual) {
-							//							if (isEdgeCollection) {
-							//								System.out.println("Setting new value to property " + propertyName + " of " + String.valueOf(value)
-							//										+ " from value " + String.valueOf(current));
-							//							}
 							getParent().startTransaction(this);
 							old = props.put(propertyName, (Serializable) value);
 							synchronized (changedProperties_) {
@@ -446,13 +504,6 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		} else {
 			log_.log(Level.WARNING, "Properties are null for element!");
 		}
-		// if ((old == null || value == null) || !value.equals(old)) {
-
-		// }
-		// Document doc = getRawDocument();
-		// synchronized (doc) {
-		// doc.replaceItemValue(propertyName, value);
-		// }
 	}
 
 	protected void reapplyChanges() {
@@ -497,6 +548,10 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	}
 
 	public <T> T getProperty(final IDominoProperties prop) {
+		if (prop == null) {
+			log_.log(Level.WARNING, "getProperty was called with a null argument, therefore it's impossible to return a property.");
+			return null;
+		}
 		Class<?> type = prop.getType();
 		Object result = getProperty(prop.getName(), type);
 		if (result != null && type.isAssignableFrom(result.getClass())) {
@@ -525,6 +580,21 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		if (current == null || !current.equals(value)) {
 			setProperty(prop.getName(), value);
 		}
+	}
+
+	public Map<String, Object> toMap(final IDominoProperties[] props) {
+		Map<String, Object> result = new LinkedHashMap<String, Object>();
+		for (IDominoProperties prop : props) {
+			Object value = getProperty(prop, true);
+			if (value != null) {
+				result.put(prop.getName(), value);
+			}
+		}
+		return result;
+	}
+
+	public Map<String, Object> toMap(final Set<IDominoProperties> props) {
+		return toMap(props.toArray(new IDominoProperties[props.size()]));
 	}
 
 }

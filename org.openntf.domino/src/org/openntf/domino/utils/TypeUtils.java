@@ -17,6 +17,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+import lotus.domino.DateTime;
+import lotus.domino.Name;
+
 import org.openntf.domino.Document;
 import org.openntf.domino.Item;
 import org.openntf.domino.Session;
@@ -24,8 +27,6 @@ import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.ext.Formula;
-import org.openntf.domino.impl.DateTime;
-import org.openntf.domino.impl.Name;
 import org.openntf.domino.types.BigString;
 
 import com.ibm.icu.math.BigDecimal;
@@ -73,6 +74,9 @@ public enum TypeUtils {
 	public static <T> T itemValueToClass(final Item item, final Class<?> T) {
 		// Object o = item.getAncestorDocument().getItemValue(item.getName());
 		Vector v = item.getValues();
+		if (v == null) {
+			log_.log(Level.WARNING, "Got a null for the value of item " + item.getName());
+		}
 		Session session = Factory.getSession(item);
 		T result = null;
 		try {
@@ -95,6 +99,9 @@ public enum TypeUtils {
 		//		} else if (T == java.util.Collection.class) {
 		//			log_.log(Level.WARNING, "Collection type requested from type coersion!");
 		//		}
+		if (v == null) {
+			return null;
+		}
 		Object result = null;
 		Class<?> CType = null;
 		if (T.equals(String[].class)) {
@@ -131,9 +138,9 @@ public enum TypeUtils {
 						result = toFormulas(v);
 					} else if (CType == Date.class) {
 						result = toDates(v);
-					} else if (CType == DateTime.class) {
+					} else if (DateTime.class.isAssignableFrom(CType)) {
 						result = toDateTimes(v, session);
-					} else if (CType == Name.class) {
+					} else if (Name.class.isAssignableFrom(CType)) {
 						result = toNames(v, session);
 					} else if (CType == Boolean.class) {
 						result = toBooleans(v);
@@ -600,8 +607,8 @@ public enum TypeUtils {
 		int i = 0;
 		// strings = vector.toArray(new String[0]);
 		for (Object o : vector) {
-			if (o instanceof DateTime) {
-				strings[i++] = ((DateTime) o).getGMTTime();
+			if (o instanceof org.openntf.domino.DateTime) {
+				strings[i++] = ((org.openntf.domino.DateTime) o).getGMTTime();
 			} else {
 				strings[i++] = String.valueOf(o);
 			}
@@ -759,13 +766,50 @@ public enum TypeUtils {
 		BigString[] strings = new BigString[vector.size()];
 		int i = 0;
 		for (Object o : vector) {
-			if (o instanceof DateTime) {
-				strings[i++] = new BigString(((DateTime) o).getGMTTime());
+			if (o instanceof org.openntf.domino.DateTime) {
+				strings[i++] = new BigString(((org.openntf.domino.DateTime) o).getGMTTime());
 			} else {
 				strings[i++] = new BigString(String.valueOf(o));
 			}
 		}
 		return strings;
+	}
+
+	public static int[] toIntArray(final Collection<Integer> coll) {
+		int[] ret = new int[coll.size()];
+		Iterator<Integer> iterator = coll.iterator();
+		for (int i = 0; i < ret.length; i++) {
+			ret[i] = iterator.next().intValue();
+		}
+		return ret;
+	}
+
+	public static short[] toShortArray(final Collection<Short> coll) {
+		short[] ret = new short[coll.size()];
+		Iterator<Short> iterator = coll.iterator();
+		for (int i = 0; i < ret.length; i++) {
+			Short s = iterator.next();
+			ret[i] = s.shortValue();
+		}
+		return ret;
+	}
+
+	public static long[] toLongArray(final Collection<Long> coll) {
+		long[] ret = new long[coll.size()];
+		Iterator<Long> iterator = coll.iterator();
+		for (int i = 0; i < ret.length; i++) {
+			ret[i] = iterator.next().longValue();
+		}
+		return ret;
+	}
+
+	public static byte[] toByteArray(final Collection<Byte> coll) {
+		byte[] ret = new byte[coll.size()];
+		Iterator<Byte> iterator = coll.iterator();
+		for (int i = 0; i < ret.length; i++) {
+			ret[i] = iterator.next().byteValue();
+		}
+		return ret;
 	}
 
 }

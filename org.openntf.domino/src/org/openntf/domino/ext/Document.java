@@ -5,8 +5,11 @@ package org.openntf.domino.ext;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
+import org.openntf.domino.AutoMime;
+import org.openntf.domino.Item;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 
@@ -15,6 +18,8 @@ import org.openntf.domino.exceptions.ItemNotFoundException;
  * 
  */
 public interface Document {
+
+	public Item appendItemValue(String name, Object value, boolean unique);
 
 	public String toJson(boolean compact);
 
@@ -26,6 +31,8 @@ public interface Document {
 	public Date getCreatedDate();
 
 	public String getFormName();
+
+	public boolean hasReaders();
 
 	public org.openntf.domino.Form getForm();
 
@@ -60,7 +67,7 @@ public interface Document {
 	 */
 	public boolean isDirty();
 
-	public boolean hasMIMEEntity(final String name);
+	public MIMEEntity testMIMEEntity(final String name);
 
 	public <T> T getItemValue(final String name, final Class<?> T) throws ItemNotFoundException, DataNotCompatibleException;
 
@@ -72,6 +79,36 @@ public interface Document {
 
 	public boolean containsValues(final Map<String, Object> filterMap);
 
+	public String getMetaversalID();
+
+	public String getMetaversalID(String serverName);
+
 	// public <T> T getItemValue(String name, Class<?> T, ClassLoader loader) throws ItemNotFoundException, DataNotCompatibleException;
+
+	public boolean forceDelegateRemove();
+
+	public void rollback();
+
+	public List<Item> getItems(org.openntf.domino.Item.Type type);
+
+	public List<Item> getItems(org.openntf.domino.Item.Flags flags);
+
+	/**
+	 * Replaces the itemvalue in a document.
+	 * 
+	 * @param itemName
+	 * @param value
+	 * @param isSummary
+	 * @param autoBox
+	 * @param returnItem
+	 * @return
+	 */
+	Item replaceItemValue(String itemName, Object value, Boolean isSummary, final boolean boxCompatibleOnly, boolean returnItem);
+
+	public AutoMime getAutoMime();
+
+	public void setAutoMime(final AutoMime value);
+
+	public void markDirty();
 
 }

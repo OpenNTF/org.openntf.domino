@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="ext/jsr305.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tinkerpop.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/domino.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/XPages Domino JRE"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry exported="true" kind="lib" path="ext/jsr305.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/blueprints-core-2.4.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/gremlin-java-2.4.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/pipes-2.4.0.jar"/>
+	<classpathentry kind="src" path="domsrc"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="output" path="bin"/>

@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openntf.domino.ACL;
+import org.openntf.domino.AutoMime;
 import org.openntf.domino.Database.CompactOption;
 import org.openntf.domino.Database.DBOption;
 import org.openntf.domino.Database.FTDomainSearchOption;
@@ -44,6 +45,8 @@ public interface Database extends Base {
 	public void setEventFactory(IDominoEventFactory factory);
 
 	public IDominoEvent generateEvent(EnumEvent event, org.openntf.domino.Base source, Object payload);
+
+	public DocumentCollection createMergableDocumentCollection();
 
 	public String getApiPath();
 
@@ -155,6 +158,10 @@ public interface Database extends Base {
 
 	public DocumentCollection getModifiedDocuments(final lotus.domino.DateTime since, final ModifiedDocClass noteClass);
 
+	public DocumentCollection getModifiedDocuments(final java.util.Date since, final ModifiedDocClass noteClass);
+
+	public DocumentCollection getModifiedDocuments(final java.util.Date since);
+
 	public int getModifiedNoteCount(final java.util.Date since, final Set<SelectOption> noteClass);
 
 	public int getModifiedNoteCount(final java.util.Date since);
@@ -247,5 +254,11 @@ public interface Database extends Base {
 	public void setSchema(IDatabaseSchema schema);
 
 	public boolean isReplicationDisabled();
+
+	public String getHttpURL(final boolean usePath);
+
+	public AutoMime getAutoMime();
+
+	public void setAutoMime(AutoMime autoMime);
 
 }

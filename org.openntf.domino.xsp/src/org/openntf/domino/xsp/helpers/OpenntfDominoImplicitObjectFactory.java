@@ -16,19 +16,6 @@ import com.ibm.xsp.util.TypedUtil;
 //import org.openntf.domino.Session;
 @SuppressWarnings("unchecked")
 public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory {
-	public static class ContextListener implements com.ibm.xsp.event.FacesContextListener {
-		@Override
-		public void beforeContextReleased(final FacesContext paramFacesContext) {
-			Factory.terminate();
-		}
-
-		@Override
-		public void beforeRenderingPhase(final FacesContext paramFacesContext) {
-			// TODO NOOP
-
-		}
-	}
-
 	// TODO this is really just a sample on how to get to an entry point in the API
 	private static Boolean GODMODE;
 
@@ -131,7 +118,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 	private final String[][] implicitObjectList = {
 			{ (isGodMode() ? "session" : "opensession"), org.openntf.domino.Session.class.getName() },
 			{ (isGodMode() ? "database" : "opendatabase"), org.openntf.domino.Database.class.getName() },
-			{ "openLogBean", org.openntf.domino.xsp.XspOpenLogErrorHolder.class.getName() } };
+			{ (Activator.isAPIEnabled() ? "openLogBean" : "openNtfLogBean"), org.openntf.domino.xsp.XspOpenLogErrorHolder.class.getName() } };
 
 	public OpenntfDominoImplicitObjectFactory() {
 	}
@@ -178,9 +165,17 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 	}
 
 	public void createLogHolder(final FacesContextEx ctx) {
-		Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
-		XspOpenLogErrorHolder ol_ = new XspOpenLogErrorHolder();
-		localMap.put("openLogBean", ol_);
+		if (isAppDebug(ctx)) {
+			System.out.println("Beginning creation of log holder...");
+		}
+		if (Activator.isAPIEnabled()) {
+			Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
+			XspOpenLogErrorHolder ol_ = new XspOpenLogErrorHolder();
+			localMap.put("openLogBean", ol_);
+			if (isAppDebug(ctx)) {
+				System.out.println("Created log holder...");
+			}
+		}
 	}
 
 	@Override
@@ -189,6 +184,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 			System.out.println("Beginning creation of implicit objects...");
 		}
 		Factory.setClassLoader(ctx.getContextClassLoader());
+
 		ctx.addRequestListener(new ContextListener());
 		org.openntf.domino.Session session = createSession(ctx);
 		@SuppressWarnings("unused")

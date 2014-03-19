@@ -18,94 +18,289 @@ package org.openntf.domino.impl;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.Collection;
+import java.util.TreeSet;
+//import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
+import lotus.notes.addins.DominoServer;
 
+import org.openntf.arpa.NamePartsMap;
+import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Names;
+import org.openntf.domino.utils.Strings;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Name.
  */
-public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> implements org.openntf.domino.Name {
-
-	/** The Constant serialVersionUID. */
+@SuppressWarnings("deprecation")
+public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name, Session> implements org.openntf.domino.Name, Comparable<Name> {
+	//	private static final Logger log_ = Logger.getLogger(Name.class.getName());
 	private static final long serialVersionUID = 1L;
+	private NamePartsMap _namePartsMap;
+	private boolean Hierarchical;
 
-	/** The Constant DEFAULT_STR. */
-	private static final String DEFAULT_STR = "";
+	/**
+	 * * Zero-Argument Constructor
+	 */
+	//	public Name() {	// this one doesn't work (runs into NullPointerExc.); see after writeExternal
+	//		super(null, null);
+	//	}
 
-	/** The abbreviated. */
-	private String abbreviated = DEFAULT_STR;
+	/**
+	 * Default Constructor.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 */
+	public Name(final lotus.domino.Name delegate, final org.openntf.domino.Base<?> parent) {
+		super(null, (Session) parent);
+		this.initialize(delegate);
+		Base.s_recycle(delegate);
+	}
 
-	/** The addr821. */
-	private String addr821 = DEFAULT_STR;
+	/**
+	 * Optional Constructor
+	 * 
+	 * @param session
+	 *            Session used for Name processing
+	 */
+	public Name(final Session session) {
+		super(null, session);
+		this.initialize(session.getEffectiveUserName());
+	}
 
-	/** The addr822comment1. */
-	private String addr822comment1 = DEFAULT_STR;
+	/**
+	 * Optional Constructor
+	 * 
+	 * @param session
+	 *            Session used for Name processing
+	 * 
+	 * @param name
+	 *            String used to construct the Name object
+	 */
+	public Name(final Session session, final String name) {
+		super(null, (Session) Factory.fromLotus(session, Session.class, null));
+		this.initialize(name);
+	}
 
-	/** The addr822comment2. */
-	private String addr822comment2 = DEFAULT_STR;
+	/**
+	 * Optional Constructor
+	 * 
+	 * @param name
+	 *            String used to construct the Name object
+	 */
+	public Name(final String name) {
+		super(null, Factory.getSession());
+		this.initialize(name);
+	}
 
-	/** The addr822comment3. */
-	private String addr822comment3 = DEFAULT_STR;
+	/**
+	 * Clears the object.
+	 */
+	public void clear() {
+		this.Hierarchical = false;
+		if (null != this._namePartsMap) {
+			this._namePartsMap.clear();
+		}
+	}
 
-	/** The addr822localpart. */
-	private String addr822localpart = DEFAULT_STR;
+	/**
+	 * Reloads the object
+	 */
+	public void reload(final Name name) {
+		this.initialize(name);
+	}
 
-	/** The addr822phrase. */
-	private String addr822phrase = DEFAULT_STR;
+	/*
+	 * ******************************************************************
+	 * ******************************************************************
+	 * 
+	 * private methods
+	 * 
+	 * ******************************************************************
+	 * ******************************************************************
+	 */
+	/**
+	 * Flag indicating if the object is Hierarchical
+	 * 
+	 * @param arg0
+	 *            Hierarchical indicator flag
+	 */
+	private void setHierarchical(final boolean arg0) {
+		this.Hierarchical = arg0;
+	}
 
-	/** The admd. */
-	private String admd = DEFAULT_STR;
+	/**
+	 * Gets the NamePartsMap for the object.
+	 * 
+	 * @return NamePartsMap for the object.
+	 */
+	private NamePartsMap getNamePartsMap() {
+		if (null == this._namePartsMap) {
+			this._namePartsMap = new NamePartsMap();
+		}
+		return this._namePartsMap;
+	}
 
-	/** The canonical. */
-	private String canonical = DEFAULT_STR;
+	/**
+	 * Sets the NamePartsMap for the object.
+	 * 
+	 * @param namePartsMap
+	 *            NamePartsMap for the object.
+	 */
+	private void setNamePartsMap(final NamePartsMap namePartsMap) {
+		this._namePartsMap = namePartsMap;
+	}
 
-	/** The common. */
-	private String common = DEFAULT_STR;
+	private void initialize(final lotus.domino.Name delegate) {
+		try {
+			if (null == delegate) {
+				throw new IllegalArgumentException("Source Name is null");
+			}
 
-	/** The country. */
-	private String country = DEFAULT_STR;
+			this.clear();
+			this.setHierarchical(delegate.isHierarchical());
+			this.setName(delegate);
 
-	/** The generation. */
-	private String generation = DEFAULT_STR;
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+			throw new RuntimeException("EXCEPTION thrown in in Name.initialize()");
+		}
+	}
 
-	/** The given. */
-	private String given = DEFAULT_STR;
+	private void initialize(final Name name) {
+		this.initialize(name.getDelegate());
+	}
 
-	/** The initials. */
-	private String initials = DEFAULT_STR;
+	private void initialize(final String name) {
+		try {
+			if (Strings.isBlankString(name)) {
+				throw new IllegalArgumentException("Source name is null or blank");
+			}
 
-	/** The keyword. */
-	private String keyword = DEFAULT_STR;
+			this.parseRFC82xContent(name);
+			String phrase = this.getAddr822Phrase();
 
-	/** The language. */
-	private String language = DEFAULT_STR;
+			Name n = (Name) Factory.getSession().createName((Strings.isBlankString(phrase)) ? name : phrase);
+			if (null == n) {
+				throw new RuntimeException("Unable to create Name object");
+			}
 
-	/** The organization. */
-	private String organization = DEFAULT_STR;
+			this.initialize(n);
 
-	/** The orgunit1. */
-	private String orgunit1 = DEFAULT_STR;
+			// parse again because initialize(n) may have cleared the RFC82x content
+			this.parseRFC82xContent(name);
 
-	/** The orgunit2. */
-	private String orgunit2 = DEFAULT_STR;
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+			throw new RuntimeException("EXCEPTION thrown in in Name.initialize()");
+		}
+	}
 
-	/** The orgunit3. */
-	private String orgunit3 = DEFAULT_STR;
+	/*
+	 * ******************************************************************
+	 * ******************************************************************
+	 * 
+	 * protected methods
+	 * 
+	 * ******************************************************************
+	 * ******************************************************************
+	 */
+	/*
+	 * The returned object MUST get recycled
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#getDelegate()
+	 */
+	@Override
+	protected lotus.domino.Name getDelegate() {
+		try {
+			lotus.domino.Session rawsession = toLotus(Factory.getSession(getParent()));
+			return rawsession.createName(this.getCanonical());
 
-	/** The orgunit4. */
-	private String orgunit4 = DEFAULT_STR;
+		} catch (NotesException ne) {
+			DominoUtils.handleException(ne);
+		}
 
-	/** The prmd. */
-	private String prmd = DEFAULT_STR;
+		return null;
+	}
 
-	/** The surname. */
-	private String surname = DEFAULT_STR;
+	/*
+	 * ******************************************************************
+	 * ******************************************************************
+	 * 
+	 * Other public methods
+	 * 
+	 * ******************************************************************
+	 * ******************************************************************
+	 */
+	/**
+	 * Flag indicating if the object is Hierarchical
+	 * 
+	 * @return Hierarchical indicator flag
+	 */
+	public boolean isHierarchical() {
+		return this.Hierarchical;
+	}
 
-	/** The hierarchical. */
-	private boolean hierarchical = false;
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder(Name.class.getName());
+		sb.append(" [");
+		for (NamePartsMap.Key key : NamePartsMap.Key.values()) {
+			String s = this.getNamePartsMap().get(key);
+			if (!Strings.isBlankString(s)) {
+				sb.append(key.name() + "=" + s);
+			}
+		}
+
+		sb.append("]");
+
+		return sb.toString();
+	}
+
+	/**
+	 * Parses the source string and sets the appropriate RFC822 values.
+	 * 
+	 * <<<<<<< HEAD
+	 * 
+	 * @param string
+	 *            RFC822 source string from which to set the appropriate RFC822 values.
+	 */
+	public void parseRFC82xContent(final String source) {
+		this.getNamePartsMap().parseRFC82xContent(source);
+	}
+
+	/**
+	 * Indicates whether the object has RFC82xContent
+	 * 
+	 * @return Flag indicating if the object has RFC82xContent
+	 */
+	public boolean isHasRFC82xContent() {
+		return (null == this._namePartsMap) ? false : this.getNamePartsMap().isHasRFC82xContent();
+	}
+
+	/**
+	 * Instantiates a new name.
+	 * 
+	 * @deprecated Use {@link #Name(lotus.domino.Name, Session, WrapperFactory, long)} instead
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 */
+	@Deprecated
+	public Name(final lotus.domino.Name delegate, final Session parent) {
+		super(null, Factory.getSession(parent));
+		initialize(delegate);
+		Base.s_recycle(delegate);
+	}
 
 	/**
 	 * Instantiates a new name.
@@ -114,472 +309,514 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 	 *            the delegate
 	 * @param parent
 	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
 	 */
-	public Name(final lotus.domino.Name delegate, final org.openntf.domino.Base<?> parent) {
-		super(null, parent);
+	public Name(final lotus.domino.Name delegate, final Session parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_NAME);
 		initialize(delegate);
+		// TODO: Wrapping recycles the caller's object. This may cause issues.
 		Base.s_recycle(delegate);
 	}
 
 	/**
-	 * Initialize.
+	 * The cpp-id is not used here, so we do not read it
 	 * 
 	 * @param delegate
-	 *            the delegate
+	 * @param cppId
 	 */
-	private void initialize(final lotus.domino.Name delegate) {
-		try {
-			abbreviated = delegate.getAbbreviated();
-			addr821 = delegate.getAddr821();
-			addr822comment1 = delegate.getAddr822Comment1();
-			addr822comment2 = delegate.getAddr822Comment2();
-			addr822comment3 = delegate.getAddr822Comment3();
-			addr822localpart = delegate.getAddr822LocalPart();
-			addr822phrase = delegate.getAddr822Phrase();
-			admd = delegate.getADMD();
-			canonical = delegate.getCanonical();
-			common = delegate.getCommon();
-			country = delegate.getCountry();
-			generation = delegate.getGeneration();
-			given = delegate.getGiven();
-			initials = delegate.getInitials();
-			keyword = delegate.getKeyword();
-			language = delegate.getLanguage();
-			organization = delegate.getOrganization();
-			orgunit1 = delegate.getOrgUnit1();
-			orgunit2 = delegate.getOrgUnit2();
-			orgunit3 = delegate.getOrgUnit3();
-			orgunit4 = delegate.getOrgUnit4();
-			prmd = delegate.getPRMD();
-			surname = delegate.getSurname();
-			hierarchical = delegate.isHierarchical();
-		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getADMD()
-	 */
-	public String getADMD() {
-		return admd;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getAbbreviated()
-	 */
-	public String getAbbreviated() {
-		return abbreviated;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getAddr821()
-	 */
-	public String getAddr821() {
-		return this.addr821;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getAddr822Comment1()
-	 */
-	public String getAddr822Comment1() {
-		return this.addr822comment1;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getAddr822Comment2()
-	 */
-	public String getAddr822Comment2() {
-		return this.addr822comment2;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getAddr822Comment3()
-	 */
-	public String getAddr822Comment3() {
-		return this.addr822comment3;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getAddr822LocalPart()
-	 */
-	public String getAddr822LocalPart() {
-		return this.addr822localpart;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getAddr822Phrase()
-	 */
-	public String getAddr822Phrase() {
-		return this.addr822phrase;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getCanonical()
-	 */
-	public String getCanonical() {
-		return canonical;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getCommon()
-	 */
-	public String getCommon() {
-		return common;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getCountry()
-	 */
-	public String getCountry() {
-		return country;
+	@Override
+	void setDelegate(final lotus.domino.Name delegate, final long cppId) {
+		delegate_ = delegate;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.openntf.domino.impl.Base#getDelegate()
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
 	 */
 	@Override
-	protected lotus.domino.Name getDelegate() {
+	protected Session findParent(final lotus.domino.Name delegate) throws NotesException {
+		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
+	}
+
+	/**
+	 * Sets the Name for the object.
+	 * 
+	 * @param name
+	 *            Name for the object.
+	 */
+	public void setName(final lotus.domino.Name name) {
 		try {
-			return this.getParent().getDelegate().createName(this.getCanonical());
-		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
-			return null;
+
+			if (null == name) {
+				throw new IllegalArgumentException("Source Name is null");
+			}
+
+			if (!Strings.isBlankString(name.getCanonical())) {
+				this.setNamePartsMap(new NamePartsMap(name.getCanonical(), Names.buildAddr822Full(name)));
+			} else if (!Strings.isBlankString(name.getAbbreviated())) {
+				this.setNamePartsMap(new NamePartsMap(name.getAbbreviated(), Names.buildAddr822Full(name)));
+			}
+
+			if (!Strings.isBlankString(name.getADMD())) {
+				this.getNamePartsMap().put(NamePartsMap.Key.ADMD, name.getADMD());
+			}
+			if (!Strings.isBlankString(name.getCommon())) {
+				this.getNamePartsMap().put(NamePartsMap.Key.Common, name.getCommon());
+			}
+			if (!Strings.isBlankString(name.getCountry())) {
+				this.getNamePartsMap().put(NamePartsMap.Key.Country, name.getCountry());
+			}
+			if (!Strings.isBlankString(name.getGeneration())) {
+				this.getNamePartsMap().put(NamePartsMap.Key.Generation, name.getGeneration());
+			}
+			if (!Strings.isBlankString(name.getGiven())) {
+				this.getNamePartsMap().put(NamePartsMap.Key.Given, name.getGiven());
+			}
+			if (!Strings.isBlankString(name.getInitials())) {
+				this.getNamePartsMap().put(NamePartsMap.Key.Initials, name.getInitials());
+			}
+			if (!Strings.isBlankString(name.getKeyword())) {
+				this.getNamePartsMap().put(NamePartsMap.Key.Keyword, name.getKeyword());
+			}
+			if (!Strings.isBlankString(name.getLanguage())) {
+				this.getNamePartsMap().put(NamePartsMap.Key.Language, name.getLanguage());
+			}
+			if (!Strings.isBlankString(name.getOrganization())) {
+				this.getNamePartsMap().put(NamePartsMap.Key.Organization, name.getOrganization());
+			}
+			if (!Strings.isBlankString(name.getOrgUnit1())) {
+				this.getNamePartsMap().put(NamePartsMap.Key.OrgUnit1, name.getOrgUnit1());
+			}
+			if (!Strings.isBlankString(name.getOrgUnit2())) {
+				this.getNamePartsMap().put(NamePartsMap.Key.OrgUnit2, name.getOrgUnit2());
+			}
+			if (!Strings.isBlankString(name.getOrgUnit3())) {
+				this.getNamePartsMap().put(NamePartsMap.Key.OrgUnit3, name.getOrgUnit3());
+			}
+			if (!Strings.isBlankString(name.getOrgUnit4())) {
+				this.getNamePartsMap().put(NamePartsMap.Key.OrgUnit4, name.getOrgUnit4());
+			}
+			if (!Strings.isBlankString(name.getPRMD())) {
+				this.getNamePartsMap().put(NamePartsMap.Key.PRMD, name.getPRMD());
+			}
+			if (!Strings.isBlankString(name.getSurname())) {
+				this.getNamePartsMap().put(NamePartsMap.Key.Surname, name.getSurname());
+			}
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Sets the Name for the object.
 	 * 
-	 * @see org.openntf.domino.Name#getGeneration()
+	 * @param name
+	 *            Name for the object.
+	 */
+	public void setName(final Name name) {
+		try {
+			if (null == name) {
+				throw new IllegalArgumentException("Source Name is null");
+			}
+
+			this.setName(name.getDelegate());
+			this.parseRFC82xContent(Names.buildAddr822Full(name));
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
+	/**
+	 * Gets the Name Part for the specified key.
+	 * 
+	 * @param key
+	 *            Key identifying the specific mapped Name Part string to return.
+	 * 
+	 * @return Mapped String for the key. Empty string "" if no mapping exists.
+	 * 
+	 * @see org.openntf.arpa.NamePartsMap#get(org.openntf.arpa.NamePartsMap.Key)
+	 * @see java.util.HashMap#get(Object)
+	 */
+	public String getNamePart(final NamePartsMap.Key key) {
+		try {
+			if (null == key) {
+				throw new IllegalArgumentException("NamePart is null");
+			}
+
+			String result = this.getNamePartsMap().get(key);
+			return (null == result) ? "" : result;
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return "";
+	}
+
+	/**
+	 * Gets the Source String used to construct this object.
+	 * 
+	 * @return the sourceString used to construct this object
+	 */
+	public String getSourceString() {
+		return this.getNamePart(NamePartsMap.Key.SourceString);
+	}
+
+	/**
+	 * Gets the Abbreviated form of the name.
+	 * 
+	 * @see lotus.domino.Name#getAbbreviated()
+	 */
+	public String getAbbreviated() {
+		return this.getNamePart(NamePartsMap.Key.Abbreviated);
+	}
+
+	/**
+	 * Gets the Addr821 portion of the name.
+	 * 
+	 * @see org.openntf.arpa.RFC822name#getAddr821()
+	 */
+	public String getAddr821() {
+		return this.getNamePart(NamePartsMap.Key.Addr821);
+	}
+
+	/**
+	 * Gets the Addr822Comment1 portion of the name.
+	 * 
+	 * @see org.openntf.arpa.RFC822name#getAddr822Comment1()
+	 */
+	public String getAddr822Comment1() {
+		return this.getNamePart(NamePartsMap.Key.Addr822Comment1);
+	}
+
+	/**
+	 * Gets the Addr822Comment2 portion of the name.
+	 * 
+	 * @see org.openntf.arpa.RFC822name#getAddr822Comment2()
+	 */
+	public String getAddr822Comment2() {
+		return this.getNamePart(NamePartsMap.Key.Addr822Comment2);
+	}
+
+	/**
+	 * Gets the Addr822Comment3 portion of the name.
+	 * 
+	 * @see org.openntf.arpa.RFC822name#getAddr822Comment3()
+	 */
+	public String getAddr822Comment3() {
+		return this.getNamePart(NamePartsMap.Key.Addr822Comment3);
+	}
+
+	/**
+	 * Gets the Addr822LocalPart portion of the name.
+	 * 
+	 * @see org.openntf.arpa.RFC822name#getAddr822LocalPart()
+	 */
+	public String getAddr822LocalPart() {
+		return this.getNamePart(NamePartsMap.Key.Addr822LocalPart);
+	}
+
+	/**
+	 * Gets the Addr822Phrase portion of the name.
+	 * 
+	 * @see org.openntf.arpa.RFC822name#getAddr822Phrase()
+	 */
+	public String getAddr822Phrase() {
+		return this.getNamePart(NamePartsMap.Key.Addr822Phrase);
+	}
+
+	/**
+	 * Gets the Addr822Full portion of the name.
+	 * 
+	 * @see org.openntf.arpa.RFC822name#getAddr822Full()
+	 */
+	public String getAddr822Full() {
+		return this.getNamePartsMap().getRFC822name().getAddr822Full();
+	}
+
+	/**
+	 * Gets the Addr822FullFirstLast portion of the name.
+	 * 
+	 * @see org.openntf.arpa.RFC822name#getAddr822FullFirstLast()
+	 */
+	public String getAddr822FullFirstLast() {
+		return this.getNamePartsMap().getRFC822name().getAddr822FullFirstLast();
+	}
+
+	/**
+	 * Gets the Administration Management Domain Name portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getADMD()
+	 */
+	public String getADMD() {
+		return this.getNamePart(NamePartsMap.Key.ADMD);
+	}
+
+	/**
+	 * Gets the Canonical form of the name.
+	 * 
+	 * @see lotus.domino.Name#getCanonical()
+	 */
+	public String getCanonical() {
+		return this.getNamePart(NamePartsMap.Key.Canonical);
+	}
+
+	/**
+	 * Gets the Common portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getCommon()
+	 */
+	public String getCommon() {
+		return this.getNamePart(NamePartsMap.Key.Common);
+	}
+
+	/**
+	 * Gets the Country portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getCountry()
+	 */
+	public String getCountry() {
+		return this.getNamePart(NamePartsMap.Key.Country);
+	}
+
+	/**
+	 * Gets the Generation portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getGeneration()
 	 */
 	public String getGeneration() {
-		return generation;
+		return this.getNamePart(NamePartsMap.Key.Generation);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Gets the Given portion of the name.
 	 * 
-	 * @see org.openntf.domino.Name#getGiven()
+	 * @see lotus.domino.Name#getGiven()
 	 */
 	public String getGiven() {
-		return given;
+		return this.getNamePart(NamePartsMap.Key.Given);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Gets the Initials portion of the name.
 	 * 
-	 * @see org.openntf.domino.Name#getInitials()
+	 * @see lotus.domino.Name#getInitials()
 	 */
 	public String getInitials() {
-		return initials;
+		return this.getNamePart(NamePartsMap.Key.Initials);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Gets the Keyword portion of the name.
 	 * 
-	 * @see org.openntf.domino.Name#getKeyword()
+	 * @see lotus.domino.Name#getKeyword()
 	 */
 	public String getKeyword() {
-		return keyword;
+		return this.getNamePart(NamePartsMap.Key.Keyword);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Gets the Language portion of the name.
 	 * 
-	 * @see org.openntf.domino.Name#getLanguage()
+	 * @see lotus.domino.Name#getLanguage()
 	 */
 	public String getLanguage() {
-		return language;
+		return this.getNamePart(NamePartsMap.Key.Language);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Gets the Organization portion of the name.
 	 * 
-	 * @see org.openntf.domino.Name#getOrgUnit1()
-	 */
-	public String getOrgUnit1() {
-		return orgunit1;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getOrgUnit2()
-	 */
-	public String getOrgUnit2() {
-		return orgunit2;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getOrgUnit3()
-	 */
-	public String getOrgUnit3() {
-		return orgunit3;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getOrgUnit4()
-	 */
-	public String getOrgUnit4() {
-		return orgunit4;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.Name#getOrganization()
+	 * @see lotus.domino.Name#getOrganization()
 	 */
 	public String getOrganization() {
-		return organization;
+		return this.getNamePart(NamePartsMap.Key.Organization);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Gets the OrgUnit1 portion of the name.
 	 * 
-	 * @see org.openntf.domino.Name#getPRMD()
+	 * @see lotus.domino.Name#getOrgUnit1()
+	 */
+	public String getOrgUnit1() {
+		return this.getNamePart(NamePartsMap.Key.OrgUnit1);
+	}
+
+	/**
+	 * Gets the OrgUnit2 portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getOrgUnit2()
+	 */
+	public String getOrgUnit2() {
+		return this.getNamePart(NamePartsMap.Key.OrgUnit2);
+	}
+
+	/**
+	 * Gets the OrgUnit3 portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getOrgUnit3()
+	 */
+	public String getOrgUnit3() {
+		return this.getNamePart(NamePartsMap.Key.OrgUnit3);
+	}
+
+	/**
+	 * Gets the OrgUnit4 portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getOrgUnit4()
+	 */
+	public String getOrgUnit4() {
+		return this.getNamePart(NamePartsMap.Key.OrgUnit4);
+	}
+
+	/**
+	 * Gets the Private Management Domain Name portion of the name.
+	 * 
+	 * @see lotus.domino.Name#getPRMD()
 	 */
 	public String getPRMD() {
-		return prmd;
+		return this.getNamePart(NamePartsMap.Key.PRMD);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Gets the RFC821 or RFC822 internet address
 	 * 
-	 * @see org.openntf.domino.impl.Base#getParent()
+	 * * A name that conforms to RFC 821 or RFC 822 is interpreted as an Internet address. Examples of Internet addresses are as follows:
+	 * <ul>
+	 * <li>jbg@us.acme.com
+	 * <li>"John B Goode" <jbg@us.acme.com>
+	 * <li>"John B Goode" <jbg@us.acme.com> (Sales) (East)
+	 * </ul>
+	 * 
+	 * @return the Internet address, comprised of the at least the minimum RFC821 Address. If no RFC821 Address exists a blank string is
+	 *         returned.
+	 * 
+	 * @see Name#getAddr821()
+	 * @see org.openntf.arpa.RFC822name#getAddr822Full()
 	 */
-	@Override
-	public Session getParent() {
-		return (Session) super.getParent();
+	public String getRFC82xInternetAddress() {
+		return this.getAddr822FullFirstLast();
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Gets the Surname portion of the name.
 	 * 
-	 * @see org.openntf.domino.Name#getSurname()
+	 * @see lotus.domino.Name#getSurname()
 	 */
 	public String getSurname() {
-		return surname;
+		return this.getNamePart(NamePartsMap.Key.Surname);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Gets the IDprefix portion of the name.
 	 * 
-	 * @see org.openntf.domino.Name#isHierarchical()
+	 * @see org.openntf.arpa.NamePartsMap#getIDprefix()
 	 */
-	public boolean isHierarchical() {
-		return hierarchical;
+	public String getIDprefix() {
+		return this.getNamePartsMap().getIDprefix();
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Determines if any portion or form of the name object's internal NamePartsMap values are equal to the passed in string. Performs a
+	 * case-insensitive check.
 	 * 
-	 * @see java.lang.Object#hashCode()
+	 * @param string
+	 *            String tom compare values against
+	 * 
+	 * @return Flag indicating if any of the values are equal to the string.
 	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((abbreviated == null) ? 0 : abbreviated.hashCode());
-		result = prime * result + ((addr821 == null) ? 0 : addr821.hashCode());
-		result = prime * result + ((addr822comment1 == null) ? 0 : addr822comment1.hashCode());
-		result = prime * result + ((addr822comment2 == null) ? 0 : addr822comment2.hashCode());
-		result = prime * result + ((addr822comment3 == null) ? 0 : addr822comment3.hashCode());
-		result = prime * result + ((addr822localpart == null) ? 0 : addr822localpart.hashCode());
-		result = prime * result + ((addr822phrase == null) ? 0 : addr822phrase.hashCode());
-		result = prime * result + ((admd == null) ? 0 : admd.hashCode());
-		result = prime * result + ((canonical == null) ? 0 : canonical.hashCode());
-		result = prime * result + ((common == null) ? 0 : common.hashCode());
-		result = prime * result + ((country == null) ? 0 : country.hashCode());
-		result = prime * result + ((generation == null) ? 0 : generation.hashCode());
-		result = prime * result + ((given == null) ? 0 : given.hashCode());
-		result = prime * result + (hierarchical ? 1231 : 1237);
-		result = prime * result + ((initials == null) ? 0 : initials.hashCode());
-		result = prime * result + ((keyword == null) ? 0 : keyword.hashCode());
-		result = prime * result + ((language == null) ? 0 : language.hashCode());
-		result = prime * result + ((organization == null) ? 0 : organization.hashCode());
-		result = prime * result + ((orgunit1 == null) ? 0 : orgunit1.hashCode());
-		result = prime * result + ((orgunit2 == null) ? 0 : orgunit2.hashCode());
-		result = prime * result + ((orgunit3 == null) ? 0 : orgunit3.hashCode());
-		result = prime * result + ((orgunit4 == null) ? 0 : orgunit4.hashCode());
-		result = prime * result + ((prmd == null) ? 0 : prmd.hashCode());
-		result = prime * result + ((surname == null) ? 0 : surname.hashCode());
-		return result;
+	public boolean equalsIgnoreCase(final String string) {
+		return (Strings.isBlankString(string)) ? false : (string.equalsIgnoreCase(this.getCanonical())
+				|| string.equalsIgnoreCase(this.getAbbreviated()) || string.equalsIgnoreCase(this.getCommon()) || this.getNamePartsMap()
+				.equalsIgnoreCase(string));
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Determines if one of the Name's properties begins with the prefix.
 	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
+	 * Checks the following properties, in order:
+	 * <ul>
+	 * <li>Abbreviated</li>
+	 * <li>Canonical</li>
+	 * </ul>
+	 * 
+	 * @param prefix
+	 *            Value to compare to the properties of the Name
+	 * 
+	 * @param casesensitive
+	 *            Flag indicating if Case-Sensitive comparisons should be enforced.
+	 * 
+	 * @return Flag indicating if any of the mapped values begin with the prefix.
 	 */
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Name other = (Name) obj;
-		if (abbreviated == null) {
-			if (other.abbreviated != null)
-				return false;
-		} else if (!abbreviated.equals(other.abbreviated))
-			return false;
-		if (addr821 == null) {
-			if (other.addr821 != null)
-				return false;
-		} else if (!addr821.equals(other.addr821))
-			return false;
-		if (addr822comment1 == null) {
-			if (other.addr822comment1 != null)
-				return false;
-		} else if (!addr822comment1.equals(other.addr822comment1))
-			return false;
-		if (addr822comment2 == null) {
-			if (other.addr822comment2 != null)
-				return false;
-		} else if (!addr822comment2.equals(other.addr822comment2))
-			return false;
-		if (addr822comment3 == null) {
-			if (other.addr822comment3 != null)
-				return false;
-		} else if (!addr822comment3.equals(other.addr822comment3))
-			return false;
-		if (addr822localpart == null) {
-			if (other.addr822localpart != null)
-				return false;
-		} else if (!addr822localpart.equals(other.addr822localpart))
-			return false;
-		if (addr822phrase == null) {
-			if (other.addr822phrase != null)
-				return false;
-		} else if (!addr822phrase.equals(other.addr822phrase))
-			return false;
-		if (admd == null) {
-			if (other.admd != null)
-				return false;
-		} else if (!admd.equals(other.admd))
-			return false;
-		if (canonical == null) {
-			if (other.canonical != null)
-				return false;
-		} else if (!canonical.equals(other.canonical))
-			return false;
-		if (common == null) {
-			if (other.common != null)
-				return false;
-		} else if (!common.equals(other.common))
-			return false;
-		if (country == null) {
-			if (other.country != null)
-				return false;
-		} else if (!country.equals(other.country))
-			return false;
-		if (generation == null) {
-			if (other.generation != null)
-				return false;
-		} else if (!generation.equals(other.generation))
-			return false;
-		if (given == null) {
-			if (other.given != null)
-				return false;
-		} else if (!given.equals(other.given))
-			return false;
-		if (hierarchical != other.hierarchical)
-			return false;
-		if (initials == null) {
-			if (other.initials != null)
-				return false;
-		} else if (!initials.equals(other.initials))
-			return false;
-		if (keyword == null) {
-			if (other.keyword != null)
-				return false;
-		} else if (!keyword.equals(other.keyword))
-			return false;
-		if (language == null) {
-			if (other.language != null)
-				return false;
-		} else if (!language.equals(other.language))
-			return false;
-		if (organization == null) {
-			if (other.organization != null)
-				return false;
-		} else if (!organization.equals(other.organization))
-			return false;
-		if (orgunit1 == null) {
-			if (other.orgunit1 != null)
-				return false;
-		} else if (!orgunit1.equals(other.orgunit1))
-			return false;
-		if (orgunit2 == null) {
-			if (other.orgunit2 != null)
-				return false;
-		} else if (!orgunit2.equals(other.orgunit2))
-			return false;
-		if (orgunit3 == null) {
-			if (other.orgunit3 != null)
-				return false;
-		} else if (!orgunit3.equals(other.orgunit3))
-			return false;
-		if (orgunit4 == null) {
-			if (other.orgunit4 != null)
-				return false;
-		} else if (!orgunit4.equals(other.orgunit4))
-			return false;
-		if (prmd == null) {
-			if (other.prmd != null)
-				return false;
-		} else if (!prmd.equals(other.prmd))
-			return false;
-		if (surname == null) {
-			if (other.surname != null)
-				return false;
-		} else if (!surname.equals(other.surname))
-			return false;
-		return true;
+	public boolean startsWith(final String prefix, final boolean casesensitive) {
+		if (!Strings.isBlankString(prefix)) {
+			if (this.getNamePartsMap().startsWith(prefix, casesensitive)) {
+				return true;
+			}
+
+			if (casesensitive) {
+				return ((this.getAbbreviated().startsWith(prefix)) || (this.getCanonical().startsWith(prefix)));
+			} else {
+				return ((Strings.startsWithIgnoreCase(this.getAbbreviated(), prefix)) || (Strings.startsWithIgnoreCase(this.getCanonical(),
+						prefix)));
+			}
+		}
+
+		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Determines if the name is a member of the passed in set of name strings.
 	 * 
-	 * @see java.lang.Object#toString()
+	 * Conditionally expands the names list prior to checking.
+	 * 
+	 * @param session
+	 *            Session used for generating Name objects
+	 * @param names
+	 *            String name values to check against
+	 * @param expandNames
+	 *            Flag indicating if the set of name strings should be expanded.
+	 * 
+	 * @return Flag indicating if the Name is a member of the set of strings.
 	 */
-	@Override
-	public String toString() {
-		return "Name [abbreviated=" + abbreviated + ", addr821=" + addr821 + ", addr822comment1=" + addr822comment1 + ", addr822comment2="
-				+ addr822comment2 + ", addr822comment3=" + addr822comment3 + ", addr822localpart=" + addr822localpart + ", addr822phrase="
-				+ addr822phrase + ", admd=" + admd + ", canonical=" + canonical + ", common=" + common + ", country=" + country
-				+ ", generation=" + generation + ", given=" + given + ", initials=" + initials + ", keyword=" + keyword + ", language="
-				+ language + ", organization=" + organization + ", orgunit1=" + orgunit1 + ", orgunit2=" + orgunit2 + ", orgunit3="
-				+ orgunit3 + ", orgunit4=" + orgunit4 + ", prmd=" + prmd + ", surname=" + surname + ", hierarchical=" + hierarchical + "]";
+	public boolean isMemberOfNames(final Session session, final TreeSet<String> names, final boolean expandNames) {
+		try {
+			if (null == session) {
+				throw new IllegalArgumentException("Session is null");
+			}
+			if (null == names) {
+				throw new IllegalArgumentException("Names is null");
+			}
+
+			for (final String string : names) {
+				if (this.getCanonical().equalsIgnoreCase(string) || this.getAbbreviated().equalsIgnoreCase(string)
+						|| this.getCommon().equalsIgnoreCase(string)) {
+					return true;
+				}
+			}
+
+			if (expandNames) {
+				final TreeSet<String> expanded = Names.expandNamesList(session, names);
+				if (null != expanded) {
+					for (final String string : expanded) {
+						if (this.getCanonical().equalsIgnoreCase(string) || this.getAbbreviated().equalsIgnoreCase(string)
+								|| this.getCommon().equalsIgnoreCase(string)) {
+							return true;
+						}
+					}
+				}
+			}
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return false;
 	}
 
 	/*
@@ -592,64 +829,149 @@ public class Name extends Base<org.openntf.domino.Name, lotus.domino.Name> imple
 		return this.getParent();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.impl.Base#getParent()
+	 */
+	@Override
+	public Session getParent() {
+		return this.getAncestor();
+	}
+
+	/*
+	 * ******************************************************************
+	 * ******************************************************************
+	 * 
+	 * hashcode, equals, and comparison methods
+	 * 
+	 * ******************************************************************
+	 * ******************************************************************
+	 */
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (Hierarchical ? 1231 : 1237);
+		result = prime * result + ((_namePartsMap == null) ? 0 : _namePartsMap.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Name)) {
+			return false;
+		}
+		Name other = (Name) obj;
+		if (Hierarchical != other.Hierarchical) {
+			return false;
+		}
+		if (_namePartsMap == null) {
+			if (other._namePartsMap != null) {
+				return false;
+			}
+		} else if (!_namePartsMap.equals(other._namePartsMap)) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Compares this object with another Name
+	 * 
+	 * @param arg0
+	 *            Name object to be compared.
+	 * 
+	 * @return a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.
+	 * 
+	 * 
+	 * @see java.lang.Comparable#compareTo(Object)
+	 * @see DominoUtils#LESS_THAN
+	 * @see DominoUtils#EQUAL
+	 * @see DominoUtils#GREATER_THAN
+	 */
+	public int compareTo(final Name arg0) {
+		return Name.compare(this, arg0);
+	}
+
+	/**
+	 * Default Comparable implementation. (Natural Comparison Method)
+	 * 
+	 * <ol>
+	 * <li>Equality using .equals() method</li>
+	 * <li>Abbreviated Name</li>
+	 * </ol>
+	 * 
+	 * @param arg0
+	 *            First Name object for comparison.
+	 * @param arg1
+	 *            Second Name object for comparison.
+	 * 
+	 * @return a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.
+	 * 
+	 * 
+	 * @see java.lang.Comparable#compareTo(Object)
+	 * @see DominoUtils#LESS_THAN
+	 * @see DominoUtils#EQUAL
+	 * @see DominoUtils#GREATER_THAN
+	 */
+	public static int compare(final Name arg0, final Name arg1) {
+		if (null == arg0) {
+			return (null == arg1) ? DominoUtils.EQUAL : DominoUtils.LESS_THAN;
+		} else if (null == arg1) {
+			return DominoUtils.GREATER_THAN;
+		}
+
+		return (arg0.equals(arg1)) ? DominoUtils.EQUAL : arg0.getAbbreviated().compareTo(arg1.getAbbreviated());
+	}
+
 	/* (non-Javadoc)
 	 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
 	 */
 	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
-		hierarchical = in.readBoolean();
-		abbreviated = in.readUTF();
-		addr821 = in.readUTF();
-		addr822comment1 = in.readUTF();
-		addr822comment2 = in.readUTF();
-		addr822comment3 = in.readUTF();
-		addr822localpart = in.readUTF();
-		addr822phrase = in.readUTF();
-		admd = in.readUTF();
-		canonical = in.readUTF();
-		common = in.readUTF();
-		country = in.readUTF();
-		generation = in.readUTF();
-		given = in.readUTF();
-		initials = in.readUTF();
-		keyword = in.readUTF();
-		language = in.readUTF();
-		organization = in.readUTF();
-		orgunit1 = in.readUTF();
-		orgunit2 = in.readUTF();
-		orgunit3 = in.readUTF();
-		orgunit4 = in.readUTF();
-		prmd = in.readUTF();
-		surname = in.readUTF();
+		this.setHierarchical(in.readBoolean());
+		this.initialize(in.readUTF());
 	}
 
 	/* (non-Javadoc)
 	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
 	 */
 	public void writeExternal(final ObjectOutput out) throws IOException {
-		out.writeBoolean(hierarchical);
-		out.writeUTF(abbreviated);
-		out.writeUTF(addr821);
-		out.writeUTF(addr822comment1);
-		out.writeUTF(addr822comment2);
-		out.writeUTF(addr822comment3);
-		out.writeUTF(addr822localpart);
-		out.writeUTF(addr822phrase);
-		out.writeUTF(admd);
-		out.writeUTF(canonical);
-		out.writeUTF(common);
-		out.writeUTF(country);
-		out.writeUTF(generation);
-		out.writeUTF(given);
-		out.writeUTF(initials);
-		out.writeUTF(keyword);
-		out.writeUTF(language);
-		out.writeUTF(organization);
-		out.writeUTF(orgunit1);
-		out.writeUTF(orgunit2);
-		out.writeUTF(orgunit3);
-		out.writeUTF(orgunit4);
-		out.writeUTF(prmd);
-		out.writeUTF(surname);
+		out.writeBoolean(this.isHierarchical());
+		out.writeUTF((Strings.isBlankString(this.getCanonical())) ? this.getAddr822Full() : this.getCanonical());
+	}
+
+	/*
+	 * Deprecated, but needed for Externalization
+	 */
+	@Deprecated
+	public Name() {
+		super(null, Factory.getSession(), null, 0, NOTES_NAME);
+	}
+
+	@SuppressWarnings("unchecked")
+	public Collection<String> getGroups(final String serverName) {
+		Collection<String> result = null;
+		try {
+			DominoServer server = new DominoServer(serverName);
+			result = server.getNamesList(getCanonical());
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
+		return result;
 	}
 
 }

@@ -15,7 +15,9 @@
  */
 package org.openntf.domino;
 
+import org.openntf.arpa.NamePartsMap;
 import org.openntf.domino.types.Encapsulated;
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
@@ -60,6 +62,26 @@ import org.openntf.domino.types.SessionDescendant;
  * </ul>
  */
 public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, org.openntf.domino.ext.Name, Encapsulated, SessionDescendant {
+
+	public static class Schema extends FactorySchema<Name, lotus.domino.Name, Session> {
+		@Override
+		public Class<Name> typeClass() {
+			return Name.class;
+		}
+
+		@Override
+		public Class<lotus.domino.Name> delegateClass() {
+			return lotus.domino.Name.class;
+		}
+
+		@Override
+		public Class<Session> parentClass() {
+			return Session.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
+
 	/**
 	 * The Enum NameType.
 	 */
@@ -248,6 +270,19 @@ public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, org.op
 	public String getLanguage();
 
 	/**
+	 * Gets the Name Part for the specified key.
+	 * 
+	 * @param key
+	 *            Key identifying the specific mapped Name Part string to return.
+	 * 
+	 * @return Mapped String for the key. Empty string "" if no mapping exists.
+	 * 
+	 * @see org.openntf.arpa.NamePartsMap#get(org.openntf.arpa.NamePartsMap.Key)
+	 * @see java.util.HashMap#get(Object)
+	 */
+	public String getNamePart(final NamePartsMap.Key key);
+
+	/**
 	 * Gets the organization component of a hierarchical name (O=).
 	 * <p>
 	 * This property returns an empty string for a hierarchical name with no organization component.
@@ -344,6 +379,24 @@ public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, org.op
 	public String getPRMD();
 
 	/**
+	 * Gets the RFC821 or RFC822 internet address
+	 * 
+	 * * A name that conforms to RFC 821 or RFC 822 is interpreted as an Internet address. Examples of Internet addresses are as follows:
+	 * <ul>
+	 * <li>jbg@us.acme.com
+	 * <li>"John B Goode" <jbg@us.acme.com>
+	 * <li>"John B Goode" <jbg@us.acme.com> (Sales) (East)
+	 * </ul>
+	 * 
+	 * @return the Internet address, comprised of the at least the minimum RFC821 Address. If no RFC821 Address exists a blank string is
+	 *         returned.
+	 * 
+	 * @see Name#getAddr821()
+	 * @see org.openntf.arpa.RFC822name#getAddr822Full()
+	 */
+	public String getRFC82xInternetAddress();
+
+	/**
 	 * Gets the surname component of a hierarchical name (S=).
 	 * <p>
 	 * This property returns an empty string for a hierarchical name with no surname component.
@@ -398,6 +451,7 @@ public interface Name extends Base<lotus.domino.Name>, lotus.domino.Name, org.op
 	 * 
 	 * @see lotus.domino.Base#recycle()
 	 */
+	@Override
 	@Deprecated
 	public void recycle();
 }

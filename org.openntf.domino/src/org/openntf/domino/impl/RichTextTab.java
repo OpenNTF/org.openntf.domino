@@ -15,12 +15,13 @@
  */
 package org.openntf.domino.impl;
 
-import java.util.logging.Logger;
-
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.Document;
+import org.openntf.domino.RichTextParagraphStyle;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.types.DocumentDescendant;
 import org.openntf.domino.utils.DominoUtils;
 
@@ -28,8 +29,9 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * The Class RichTextTab.
  */
-public class RichTextTab extends Base<org.openntf.domino.RichTextTab, lotus.domino.RichTextTab> implements org.openntf.domino.RichTextTab {
-	private static final Logger log_ = Logger.getLogger(RichTextTab.class.getName());
+public class RichTextTab extends Base<org.openntf.domino.RichTextTab, lotus.domino.RichTextTab, RichTextParagraphStyle> implements
+		org.openntf.domino.RichTextTab {
+	//private static final Logger log_ = Logger.getLogger(RichTextTab.class.getName());
 
 	/**
 	 * Instantiates a new rich text tab.
@@ -39,8 +41,26 @@ public class RichTextTab extends Base<org.openntf.domino.RichTextTab, lotus.domi
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public RichTextTab(final lotus.domino.RichTextTab delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, (RichTextParagraphStyle) parent);
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public RichTextTab(final lotus.domino.RichTextTab delegate, final RichTextParagraphStyle parent, final WrapperFactory wf,
+			final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_RTTAB);
 	}
 
 	/*
@@ -99,7 +119,7 @@ public class RichTextTab extends Base<org.openntf.domino.RichTextTab, lotus.domi
 	 */
 	@Override
 	public Document getAncestorDocument() {
-		return (Document) ((DocumentDescendant) this.getParent()).getAncestorDocument();
+		return ((DocumentDescendant) getAncestor()).getAncestorDocument();
 	}
 
 	/*

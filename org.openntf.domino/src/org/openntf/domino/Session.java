@@ -20,6 +20,8 @@ import java.util.Date;
 import java.util.Vector;
 
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.types.FactorySchema;
+import org.openntf.domino.utils.DominoFormatter;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -27,6 +29,24 @@ import org.openntf.domino.annotations.Legacy;
  * represents the Domino environment of the current program.
  */
 public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Session, Base<lotus.domino.Session> {
+	public static class Schema extends FactorySchema<Session, lotus.domino.Session, SessionHasNoParent> {
+		@Override
+		public Class<Session> typeClass() {
+			return Session.class;
+		}
+
+		@Override
+		public Class<lotus.domino.Session> delegateClass() {
+			return lotus.domino.Session.class;
+		}
+
+		@Override
+		public Class<SessionHasNoParent> parentClass() {
+			return SessionHasNoParent.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/**
 	 * The Enum RunContext.
@@ -62,7 +82,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * 
 	 * @param server
 	 *            The name of the server containing the Administration Requests database (ADMIN4.NSF). An empty string means the local
-	 *            computer. The server must contain a replica of the Certification Log. You must have access privileges to the Domino�
+	 *            computer. The server must contain a replica of the Certification Log. You must have access privileges to the Domino���
 	 *            Directory on the server for Administration Process requests that use it.
 	 * 
 	 * @return The newly created {@link AdministrationProcess} object.
@@ -87,6 +107,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 *            the color
 	 * @return the color object
 	 */
+	@Override
 	public ColorObject createColorObject(final java.awt.Color color);
 
 	/**
@@ -96,7 +117,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public lotus.domino.DateRange createDateRange();
+	public DateRange createDateRange();
 
 	/**
 	 * Creates a new DateRange object.
@@ -110,7 +131,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public lotus.domino.DateRange createDateRange(final Date startTime, final Date endTime);
+	public DateRange createDateRange(final Date startTime, final Date endTime);
 
 	/**
 	 * Creates a new DateRange object.
@@ -124,7 +145,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @since lotus.domino 4.5.0
 	 */
 	@Override
-	public lotus.domino.DateRange createDateRange(final lotus.domino.DateTime startTime, final lotus.domino.DateTime endTime);
+	public DateRange createDateRange(final lotus.domino.DateTime startTime, final lotus.domino.DateTime endTime);
 
 	/**
 	 * Creates a DateTime object that represents a specified date and time.
@@ -163,6 +184,27 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 */
 	@Override
 	public DateTime createDateTime(final String date);
+
+	/**
+	 * Creates a DateTime object that represents a specified date and time.
+	 * 
+	 * @param y
+	 *            the year
+	 * @param m
+	 *            the month
+	 * @param d
+	 *            the day
+	 * @param h
+	 *            the hour
+	 * @param i
+	 *            the mInutes
+	 * @param s
+	 *            the seconds
+	 * 
+	 * @return The newly created {@link DateTime} object.
+	 * @since org.openntf.domino 2014-03-11
+	 */
+	public DateTime createDateTime(int y, int m, int d, int h, int i, int s);
 
 	/**
 	 * Creates a DxlExporter object.
@@ -654,7 +696,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * <li>AIX/64
 	 * <li>Linux/64
 	 * <li>Macintosh
-	 * <li>OS/400�
+	 * <li>OS/400���
 	 * <li>UNIX
 	 * <li>Windows/32
 	 * <li>Windows/64
@@ -716,7 +758,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	public String getSessionToken(final String serverName);
 
 	/**
-	 * Gets the Domino� URL for the session.
+	 * Gets the Domino��� URL for the session.
 	 * <p>
 	 * Effectively this method returns an empty string. Use {@link Database#getURL} to get the URL for a database. See {@link #resolve} for
 	 * URL hints.
@@ -745,7 +787,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * </p>
 	 * 
 	 * <p>
-	 * The groups include those to which the user name belongs in the Domino� Directory or Personal Address Book where the program is
+	 * The groups include those to which the user name belongs in the Domino��� Directory or Personal Address Book where the program is
 	 * running.
 	 * </p>
 	 * 
@@ -902,7 +944,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	public boolean isRestricted();
 
 	/**
-	 * Indicates whether milliseconds are used in Java� dates.
+	 * Indicates whether milliseconds are used in Java��� dates.
 	 * <p>
 	 * By default milliseconds are not tracked. You must set this property to true if you want milliseconds to appear in Java dates
 	 * 
@@ -956,7 +998,7 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 * @see lotus.domino.Session#resolve(java.lang.String)
 	 */
 	@Override
-	public lotus.domino.Base resolve(final String url);
+	public Base<?> resolve(final String url);
 
 	/*
 	 * (non-Javadoc)
@@ -1027,4 +1069,11 @@ public interface Session extends lotus.domino.Session, org.openntf.domino.ext.Se
 	 */
 	@Override
 	public boolean verifyPassword(final String password, final String hashedPassword);
+
+	/**
+	 * Returns a Domino Formatter
+	 * 
+	 * @return the formatter
+	 */
+	DominoFormatter getFormatter();
 }

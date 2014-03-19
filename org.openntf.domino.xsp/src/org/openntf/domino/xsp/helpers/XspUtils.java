@@ -5,11 +5,12 @@ package org.openntf.domino.xsp.helpers;
 
 import java.util.logging.Logger;
 
-import org.openntf.domino.Document;
-import org.openntf.domino.View;
-import org.openntf.domino.utils.DominoUtils;
+import javax.faces.context.FacesContext;
 
-import com.ibm.xsp.model.domino.DominoViewData;
+import org.openntf.domino.Document;
+import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.XSPUtil;
+
 import com.ibm.xsp.model.domino.wrapped.DominoDocument;
 
 /**
@@ -33,29 +34,19 @@ public class XspUtils {
 	 * @return Document back-end document with front-end values applied, using doc.getDocument(true)
 	 */
 	public static Document getBEDoc(final DominoDocument doc) {
+		Document beDoc;
 		try {
-			return (Document) doc.getDocument(true);
+			if (OpenntfDominoImplicitObjectFactory2.isAppGodMode(FacesContext.getCurrentInstance())) {
+				beDoc = (Document) doc.getDocument(true);
+			} else {
+				beDoc = XSPUtil.wrap(doc.getDocument(true));
+			}
+			System.out.println(beDoc.getUniversalID());
 		} catch (Throwable e) {
 			DominoUtils.handleException(e);
 			return null;
 		}
-	}
-
-	/**
-	 * Gets the back-end View using a DominoViewData datasource and converts to the org.openntf.domino version.<br/>
-	 * Avoids the need to catch a NotesException
-	 * 
-	 * @param view
-	 *            DominoViewData view datasource variable, e.g. #{view1}
-	 * @return View back-end view
-	 */
-	public static View getBEView(final DominoViewData view) {
-		try {
-			return (View) view.getView();
-		} catch (Exception e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
+		return beDoc;
 	}
 
 }

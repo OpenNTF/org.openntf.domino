@@ -60,7 +60,6 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.RichTextItem;
 import org.openntf.domino.Session;
-import org.openntf.domino.impl.Base;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -148,6 +147,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	protected transient Date _startTime;
 	protected transient Date _eventTime;
 	protected transient Document _errDoc;
+	protected transient Boolean _suppressEventStack;
 	private String _currentDbPath;
 	public transient String olDebugLevel = loadFromProps("org.openntf.domino.logging.OpenLogHandler.OpenLogErrorsLevel");
 	public static PrintStream debugOut = System.err;
@@ -252,11 +252,13 @@ public class BaseOpenLogItem implements IOpenLogItem {
 			} catch (Exception e) {
 				debugPrint(e);
 			}
-		} else {
-			if (Base.isLocked(_logDb)) {
-				_logDb = Factory.getSession().getDatabase(getThisServer(), getLogDbName(), false);
-			}
 		}
+		// RPr: Locking is no longer supported
+		//		} else {
+		//			if (Base.isLocked(_logDb)) {
+		//				_logDb = Factory.getSession().getDatabase(getThisServer(), getLogDbName(), false);
+		//			}
+		//		}
 		return _logDb;
 	}
 
@@ -327,7 +329,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	 */
 	public Vector<Object> getUserRoles() {
 		if (_userRoles == null) {
-			setUserRoles(Factory.wrappedEvaluate(Factory.getSession(), "@UserRoles"));
+			setUserRoles(Factory.getSession().evaluate("@UserRoles"));
 		}
 		return _userRoles;
 	}
@@ -410,6 +412,26 @@ public class BaseOpenLogItem implements IOpenLogItem {
 			}
 		}
 		return _logDbName;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.IOpenLogItem#isSuppressEventStack()
+	 */
+	public Boolean getSuppressEventStack() {
+		String suppressEventStackTmp = loadFromProps("org.openntf.domino.logging.OpenLogHandler.suppressEventStack");
+		if ("".equals(suppressEventStackTmp)) {
+			setSuppressEventStack(Boolean.parseBoolean(DominoUtils.getDominoIniVar("SuppressEventStack", "false")));
+		} else {
+			setSuppressEventStack(Boolean.parseBoolean(suppressEventStackTmp));
+		}
+		return _suppressEventStack;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.IOpenLogItem#setSuppressEventStack(java.lang.Boolean)
+	 */
+	public void setSuppressEventStack(final Boolean suppressEventStack) {
+		_suppressEventStack = suppressEventStack;
 	}
 
 	/* (non-Javadoc)
@@ -703,7 +725,13 @@ public class BaseOpenLogItem implements IOpenLogItem {
 				logDoc.replaceItemValue("LogFromMethod", ste.getClassName() + "." + ste.getMethodName());
 			}
 
-			logDoc.replaceItemValue("LogStackTrace", getStackTrace(ee));
+			if (LogType.TYPE_EVENT.getValue().equals(getEventType())) {
+				if (!getSuppressEventStack()) {
+					logDoc.replaceItemValue("LogStackTrace", getStackTrace(ee));
+				}
+			} else {
+				logDoc.replaceItemValue("LogStackTrace", getStackTrace(ee));
+			}
 			logDoc.replaceItemValue("LogSeverity", getSeverity().getName());
 			logDoc.replaceItemValue("LogEventTime", getEventTime());
 			logDoc.replaceItemValue("LogEventType", getEventType());

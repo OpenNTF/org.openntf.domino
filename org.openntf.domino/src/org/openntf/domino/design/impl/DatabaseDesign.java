@@ -34,6 +34,7 @@ import org.openntf.domino.utils.DominoUtils;
  * 
  */
 public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign, org.openntf.domino.types.DatabaseDescendant {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DatabaseDesign.class.getName());
 
 	/*
@@ -43,6 +44,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	private static final String DEFAULT_FORM = "FFFF0004";
 	private static final String DEFAULT_VIEW = "FFFF0008";
 	private static final String ICON_NOTE = "FFFF0010";
+	@SuppressWarnings("unused")
 	private static final String DESIGN_COLLECTION = "FFFF0020";
 	private static final String ACL_NOTE = "FFFF0040";
 	private static final String USING_NOTE = "FFFF0100";
@@ -254,7 +256,9 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 		for (String noteId : notes) {
 			Document doc = getAncestorDatabase().getDocumentByID(noteId);
 			for (Object pathName : doc.getItemValue("$ClassIndexItem")) {
-				result.add(DominoUtils.filePathToJavaBinaryName(((String) pathName).substring(16), "/"));
+				if (pathName != null && String.valueOf(pathName).startsWith("WEB-INF/classes/")) {
+					result.add(DominoUtils.filePathToJavaBinaryName(((String) pathName).substring(16), "/"));
+				}
 			}
 		}
 		return result;
@@ -366,7 +370,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	}
 
 	@Override
-	public org.openntf.domino.design.DesignView getView(final String name) {
+	public DesignView getView(final String name) {
 		// TODO Check if this returns folders
 		NoteCollection notes = getNoteCollection(String.format(" @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
 				EnumSet.of(SelectOption.VIEWS));
@@ -385,6 +389,24 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 		return new DesignCollection<org.openntf.domino.design.DesignView>(notes, DesignView.class);
 	}
 
+	public DesignCollection<org.openntf.domino.design.JavaScriptLibrary> getJavaScriptLibraries() {
+		NoteCollection notes = getNoteCollection(" @Contains($Flags; 'j') ", EnumSet.of(SelectOption.SCRIPT_LIBRARIES));
+		return new DesignCollection<org.openntf.domino.design.JavaScriptLibrary>(notes, JavaScriptLibrary.class);
+	}
+
+	public JavaScriptLibrary getJavaScriptLibrary(final String name) {
+		NoteCollection notes = getNoteCollection(
+				String.format(" @Contains($Flags; 'j') & @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
+				EnumSet.of(SelectOption.SCRIPT_LIBRARIES));
+
+		String noteId = notes.getFirstNoteID();
+		if (!noteId.isEmpty()) {
+			Document doc = database_.getDocumentByID(noteId);
+			return new JavaScriptLibrary(doc);
+		}
+		return null;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -392,7 +414,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	 */
 	@Override
 	public ClassLoader getDatabaseClassLoader(final ClassLoader parent) {
-		return new DatabaseClassLoader(this, parent, true);
+		return new DatabaseClassLoader(this, parent, true, false);
 	}
 
 	/*
@@ -402,7 +424,11 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	 */
 	@Override
 	public ClassLoader getDatabaseClassLoader(final ClassLoader parent, final boolean includeJars) {
-		return new DatabaseClassLoader(this, parent, includeJars);
+		return new DatabaseClassLoader(this, parent, includeJars, false);
+	}
+
+	public ClassLoader getDatabaseClassLoader(final ClassLoader parent, final boolean includeJars, final boolean includeLibraries) {
+		return new DatabaseClassLoader(this, parent, includeJars, includeLibraries);
 	}
 
 	protected NoteCollection getNoteCollection(final String selectionFormula, final Set<SelectOption> options) {

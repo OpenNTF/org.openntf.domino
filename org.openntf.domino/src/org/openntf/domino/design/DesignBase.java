@@ -23,6 +23,11 @@ package org.openntf.domino.design;
 public interface DesignBase extends org.openntf.domino.types.Design, org.openntf.domino.types.DatabaseDescendant {
 
 	/**
+	 * @return the DXL of the design element, as a String
+	 */
+	public String getDxlString();
+
+	/**
 	 * @return whether hidden from web
 	 */
 	public boolean isHideFromWeb();

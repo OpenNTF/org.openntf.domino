@@ -26,6 +26,7 @@ import org.openntf.domino.utils.xml.XMLNodeList;
  * 
  */
 public abstract class AbstractDesignComponentList<E> extends AbstractList<E> {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignComponentList.class.getName());
 
 	private final AbstractDesignBase parent_;

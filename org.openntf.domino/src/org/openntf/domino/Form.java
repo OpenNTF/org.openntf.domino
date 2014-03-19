@@ -19,11 +19,31 @@ import java.util.Vector;
 
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.Design;
+import org.openntf.domino.types.FactorySchema;
 
 /**
  * The Interface Form.
  */
 public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, org.openntf.domino.ext.Form, Design, DatabaseDescendant {
+
+	public static class Schema extends FactorySchema<Form, lotus.domino.Form, Database> {
+		@Override
+		public Class<Form> typeClass() {
+			return Form.class;
+		}
+
+		@Override
+		public Class<lotus.domino.Form> delegateClass() {
+			return lotus.domino.Form.class;
+		}
+
+		@Override
+		public Class<Database> parentClass() {
+			return Database.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)
@@ -174,7 +194,7 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, org.op
 	 * 
 	 * @see lotus.domino.Form#lock(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean lock(final Vector names);
 
@@ -183,7 +203,7 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, org.op
 	 * 
 	 * @see lotus.domino.Form#lock(java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean lock(final Vector names, final boolean provisionalOk);
 
@@ -208,7 +228,7 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, org.op
 	 * 
 	 * @see lotus.domino.Form#lockProvisional(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean lockProvisional(final Vector names);
 
@@ -225,7 +245,7 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, org.op
 	 * 
 	 * @see lotus.domino.Form#setFormUsers(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void setFormUsers(final Vector names);
 
@@ -250,7 +270,7 @@ public interface Form extends Base<lotus.domino.Form>, lotus.domino.Form, org.op
 	 * 
 	 * @see lotus.domino.Form#setReaders(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void setReaders(final Vector names);
 

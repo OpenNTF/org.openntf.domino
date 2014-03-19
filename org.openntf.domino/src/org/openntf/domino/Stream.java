@@ -20,12 +20,32 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
  * The Interface Stream.
  */
 public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream, org.openntf.domino.ext.Stream, SessionDescendant {
+
+	public static class Schema extends FactorySchema<Stream, lotus.domino.Stream, Session> {
+		@Override
+		public Class<Stream> typeClass() {
+			return Stream.class;
+		}
+
+		@Override
+		public Class<lotus.domino.Stream> delegateClass() {
+			return lotus.domino.Stream.class;
+		}
+
+		@Override
+		public Class<Session> parentClass() {
+			return Session.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)
@@ -72,6 +92,7 @@ public interface Stream extends Base<lotus.domino.Stream>, lotus.domino.Stream, 
 	 * 
 	 * @return the parent
 	 */
+	@Override
 	public Session getParent();
 
 	/*

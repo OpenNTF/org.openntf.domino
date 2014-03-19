@@ -18,4 +18,6 @@ public interface ViewEntry {
 	public Map<String, Object> getColumnValuesMap();
 
 	public Collection<Object> getColumnValuesEx();
+
+	public <T> T getColumnValue(String columnName, Class<?> T);
 }

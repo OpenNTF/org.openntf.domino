@@ -6,6 +6,7 @@ package org.openntf.domino.ext;
 import java.util.Collection;
 import java.util.Date;
 
+import org.openntf.domino.AutoMime;
 import org.openntf.domino.ColorObject;
 import org.openntf.domino.Database;
 import org.openntf.domino.DateRange;
@@ -21,8 +22,30 @@ import com.ibm.icu.util.Calendar;
  * 
  */
 public interface Session {
+
 	public static enum Fixes {
-		MIME_CONVERT, REPLACE_ITEM_NULL, REMOVE_ITEM, APPEND_ITEM_VALUE, VIEW_UPDATE_OFF, FORCE_JAVA_DATES
+		/** This Fix is not used */
+		MIME_CONVERT,
+
+		/** Writing <code>null</code> will remove the item */
+		REPLACE_ITEM_NULL,
+
+		/** DbDirectory.createDatabase will not fail when DB exists */
+		CREATE_DB, REMOVE_ITEM,
+
+		/** use replaceItemValue instead of appendItemValue. This works also for MIME items */
+		APPEND_ITEM_VALUE,
+
+		/** set view.autoUpdate to off by default. */
+		VIEW_UPDATE_OFF,
+
+		/** use java-dates in ViewEntries by default */
+		FORCE_JAVA_DATES,
+
+		/** block the MIME interface in the document while accessing MIME items */
+		MIME_BLOCK_ITEM_INTERFACE,
+		/** Document.getDocumentByUNID() returns null instead of an exception */
+		DOC_UNID_NULLS
 	}
 
 	public IDominoEventFactory getEventFactory();
@@ -147,4 +170,11 @@ public interface Session {
 
 	public org.openntf.domino.Database getMailDatabase();
 
+	public org.openntf.domino.Document getDocumentByMetaversalID(String metaversalID);
+
+	public org.openntf.domino.Document getDocumentByMetaversalID(String metaversalID, String serverName);
+
+	public AutoMime getAutoMime();
+
+	public void setAutoMime(AutoMime autoMime);
 }

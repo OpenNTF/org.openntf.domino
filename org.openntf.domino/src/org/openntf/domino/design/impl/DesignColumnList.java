@@ -24,6 +24,7 @@ import java.util.logging.Logger;
  */
 public class DesignColumnList extends AbstractDesignComponentList<org.openntf.domino.design.DesignColumn> implements
 		org.openntf.domino.design.DesignColumnList {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DesignColumnList.class.getName());
 
 	protected DesignColumnList(final AbstractDesignBase parent, final String pattern) {

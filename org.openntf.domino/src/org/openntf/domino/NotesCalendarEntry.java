@@ -17,6 +17,7 @@ package org.openntf.domino;
 
 import java.util.Vector;
 
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
@@ -24,6 +25,25 @@ import org.openntf.domino.types.SessionDescendant;
  */
 public interface NotesCalendarEntry extends Base<lotus.domino.NotesCalendarEntry>, lotus.domino.NotesCalendarEntry,
 		org.openntf.domino.ext.NotesCalendarEntry, SessionDescendant {
+
+	public static class Schema extends FactorySchema<NotesCalendarEntry, lotus.domino.NotesCalendarEntry, NotesCalendar> {
+		@Override
+		public Class<NotesCalendarEntry> typeClass() {
+			return NotesCalendarEntry.class;
+		}
+
+		@Override
+		public Class<lotus.domino.NotesCalendarEntry> delegateClass() {
+			return lotus.domino.NotesCalendarEntry.class;
+		}
+
+		@Override
+		public Class<NotesCalendar> parentClass() {
+			return NotesCalendar.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)

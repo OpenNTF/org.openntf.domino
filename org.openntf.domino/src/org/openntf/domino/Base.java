@@ -43,7 +43,10 @@ public interface Base<D extends lotus.domino.Base> extends lotus.domino.Base, or
 	 * 
 	 * @see lotus.domino.Base#recycle(java.util.Vector)
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
 	public void recycle(final Vector arg0) throws NotesException;
+
+	boolean isDead();
 }

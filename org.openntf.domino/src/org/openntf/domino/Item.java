@@ -23,6 +23,7 @@ import java.util.Vector;
 import lotus.domino.XSLTResultTarget;
 
 import org.openntf.domino.types.DocumentDescendant;
+import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.Resurrectable;
 import org.xml.sax.InputSource;
 
@@ -30,6 +31,101 @@ import org.xml.sax.InputSource;
  * The Interface Item.
  */
 public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.openntf.domino.ext.Item, Resurrectable, DocumentDescendant {
+	public static enum Flags {
+		PROTECTED(16), SUMMARY(1), AUTHORS(4), READERS(8), NAMES(2), SIGNED(32), ENCRYPTED(64);
+
+		public static Flags getFlags(final int value) {
+			for (Flags level : Flags.values()) {
+				if (level.getValue() == value) {
+					return level;
+				}
+			}
+			return null;
+		}
+
+		public static int getFlags(final Item item) {
+			int result = 0;
+			if (item.isSummary())
+				result = result | SUMMARY.getValue();
+			if (item.isNames())
+				result = result | NAMES.getValue();
+			if (item.isAuthors())
+				result = result | AUTHORS.getValue();
+			if (item.isReaders())
+				result = result | READERS.getValue();
+			if (item.isProtected())
+				result = result | PROTECTED.getValue();
+			if (item.isSigned())
+				result = result | SIGNED.getValue();
+			if (item.isEncrypted())
+				result = result | ENCRYPTED.getValue();
+
+			return result;
+		}
+
+		private final int value_;
+
+		private Flags(final int value) {
+			value_ = (int) value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+
+	}
+
+	public static enum Type {
+
+		ACTIONCD(lotus.domino.Item.ACTIONCD), ASSISTANTINFO(lotus.domino.Item.ASSISTANTINFO), ATTACHMENT(lotus.domino.Item.ATTACHMENT), AUTHORS(
+				lotus.domino.Item.AUTHORS), COLLATION(lotus.domino.Item.COLLATION), DATETIMES(lotus.domino.Item.DATETIMES), EMBEDDEDOBJECT(
+				lotus.domino.Item.EMBEDDEDOBJECT), ERRORITEM(lotus.domino.Item.ERRORITEM), FORMULA(lotus.domino.Item.FORMULA), HTML(
+				lotus.domino.Item.HTML), ICON(lotus.domino.Item.ICON), LSOBJECT(lotus.domino.Item.LSOBJECT), MIME_PART(
+				lotus.domino.Item.MIME_PART), NAMES(lotus.domino.Item.NAMES), NOTELINKS(lotus.domino.Item.NOTELINKS), NOTEREFS(
+				lotus.domino.Item.NOTEREFS), NUMBERS(lotus.domino.Item.NUMBERS), OTHEROBJECT(lotus.domino.Item.OTHEROBJECT), QUERYCD(
+				lotus.domino.Item.QUERYCD), READERS(lotus.domino.Item.READERS), RFC822TEXT(lotus.domino.Item.RFC822TEXT), RICHTEXT(
+				lotus.domino.Item.RICHTEXT), SIGNATURE(lotus.domino.Item.SIGNATURE), TEXT(lotus.domino.Item.TEXT), UNAVAILABLE(
+				lotus.domino.Item.UNAVAILABLE), UNKNOWN(lotus.domino.Item.UNKNOWN), USERDATA(lotus.domino.Item.USERDATA), USERID(
+				lotus.domino.Item.USERID), VIEWMAPDATA(lotus.domino.Item.VIEWMAPDATA), VIEWMAPLAYOUT(lotus.domino.Item.VIEWMAPLAYOUT);
+
+		public static Type getType(final int value) {
+			for (Type level : Type.values()) {
+				if (level.getValue() == value) {
+					return level;
+				}
+			}
+			return null;
+		}
+
+		private final int value_;
+
+		private Type(final int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+	}
+
+	public static class Schema extends FactorySchema<Item, lotus.domino.Item, Document> {
+		@Override
+		public Class<Item> typeClass() {
+			return Item.class;
+		}
+
+		@Override
+		public Class<lotus.domino.Item> delegateClass() {
+			return lotus.domino.Item.class;
+		}
+
+		@Override
+		public Class<Document> parentClass() {
+			return Document.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)
@@ -52,7 +148,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * 
 	 * @see lotus.domino.Item#appendToTextList(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void appendToTextList(final Vector values);
 
@@ -437,7 +533,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 	 * 
 	 * @see lotus.domino.Item#setValues(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void setValues(final Vector values);
 

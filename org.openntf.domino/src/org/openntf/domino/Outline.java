@@ -17,12 +17,32 @@ package org.openntf.domino;
 
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.Design;
+import org.openntf.domino.types.FactorySchema;
 
 /**
  * The Interface Outline.
  */
 public interface Outline extends Base<lotus.domino.Outline>, lotus.domino.Outline, org.openntf.domino.ext.Outline, Design,
 		DatabaseDescendant {
+
+	public static class Schema extends FactorySchema<Outline, lotus.domino.Outline, Database> {
+		@Override
+		public Class<Outline> typeClass() {
+			return Outline.class;
+		}
+
+		@Override
+		public Class<lotus.domino.Outline> delegateClass() {
+			return lotus.domino.Outline.class;
+		}
+
+		@Override
+		public Class<Database> parentClass() {
+			return Database.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)
@@ -49,7 +69,8 @@ public interface Outline extends Base<lotus.domino.Outline>, lotus.domino.Outlin
 	 */
 	@Override
 	@Deprecated
-	public void addEntry(final lotus.domino.OutlineEntry entry, final lotus.domino.OutlineEntry referenceEntry, final boolean after, final boolean asChild);
+	public void addEntry(final lotus.domino.OutlineEntry entry, final lotus.domino.OutlineEntry referenceEntry, final boolean after,
+			final boolean asChild);
 
 	/*
 	 * (non-Javadoc)
@@ -73,7 +94,8 @@ public interface Outline extends Base<lotus.domino.Outline>, lotus.domino.Outlin
 	 * @see lotus.domino.Outline#createEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry, boolean)
 	 */
 	@Override
-	public OutlineEntry createEntry(final lotus.domino.OutlineEntry fromEntry, final lotus.domino.OutlineEntry referenceEntry, final boolean after);
+	public OutlineEntry createEntry(final lotus.domino.OutlineEntry fromEntry, final lotus.domino.OutlineEntry referenceEntry,
+			final boolean after);
 
 	/*
 	 * (non-Javadoc)
@@ -81,8 +103,8 @@ public interface Outline extends Base<lotus.domino.Outline>, lotus.domino.Outlin
 	 * @see lotus.domino.Outline#createEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry, boolean, boolean)
 	 */
 	@Override
-	public OutlineEntry createEntry(final lotus.domino.OutlineEntry fromEntry, final lotus.domino.OutlineEntry referenceEntry, final boolean after,
-			final boolean asChild);
+	public OutlineEntry createEntry(final lotus.domino.OutlineEntry fromEntry, final lotus.domino.OutlineEntry referenceEntry,
+			final boolean after, final boolean asChild);
 
 	/*
 	 * (non-Javadoc)
@@ -114,7 +136,8 @@ public interface Outline extends Base<lotus.domino.Outline>, lotus.domino.Outlin
 	 * @see lotus.domino.Outline#createEntry(java.lang.String, lotus.domino.OutlineEntry, boolean, boolean)
 	 */
 	@Override
-	public OutlineEntry createEntry(final String entryName, final lotus.domino.OutlineEntry referenceEntry, final boolean after, final boolean asChild);
+	public OutlineEntry createEntry(final String entryName, final lotus.domino.OutlineEntry referenceEntry, final boolean after,
+			final boolean asChild);
 
 	/*
 	 * (non-Javadoc)
@@ -234,7 +257,8 @@ public interface Outline extends Base<lotus.domino.Outline>, lotus.domino.Outlin
 	 * @see lotus.domino.Outline#moveEntry(lotus.domino.OutlineEntry, lotus.domino.OutlineEntry, boolean, boolean)
 	 */
 	@Override
-	public void moveEntry(final lotus.domino.OutlineEntry entry, final lotus.domino.OutlineEntry referenceEntry, final boolean after, final boolean asChild);
+	public void moveEntry(final lotus.domino.OutlineEntry entry, final lotus.domino.OutlineEntry referenceEntry, final boolean after,
+			final boolean asChild);
 
 	/*
 	 * (non-Javadoc)

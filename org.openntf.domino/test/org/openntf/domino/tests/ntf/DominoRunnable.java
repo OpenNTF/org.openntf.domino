@@ -32,50 +32,51 @@ public class DominoRunnable implements Runnable {
 				+ "tmpVar + tmpVar2 + docField3 + @Name([CN]; @UserName) + 8;\r\n" + "@Command([AddBookmark]; \"foo\"; docField);\r\n" + "";
 		formula.setExpression(source);
 		org.openntf.domino.helpers.Formula.Parser parser = formula.getParser();
-		parser.parse();
-		Set<String> literals = parser.getLiterals();
-		System.out.println("BEGIN LITERALS");
-		for (String literal : literals) {
-			System.out.print(literal + ", ");
+		if (parser != null) {
+			parser.parse();
+			Set<String> literals = parser.getLiterals();
+			System.out.println("BEGIN LITERALS");
+			for (String literal : literals) {
+				System.out.print(literal + ", ");
+			}
+			System.out.println("END LITERALS");
+			Set<String> functions = parser.getFunctions();
+			System.out.println("BEGIN FUNCTIONS");
+			for (String function : functions) {
+				System.out.print(function + ", ");
+			}
+			System.out.println("END FUNCTIONS");
+			Set<String> localVars = parser.getLocalVars();
+			System.out.println("BEGIN LOCAL VARIABLES");
+			for (String var : localVars) {
+				System.out.print(var + ", ");
+			}
+			System.out.println("END LOCAL VARIABLES");
+			Set<String> fieldVars = parser.getFieldVars();
+			System.out.println("BEGIN FIELDS");
+			for (String var : fieldVars) {
+				System.out.print(var + ", ");
+			}
+			System.out.println("END FIELDS");
+			Set<String> envVars = parser.getEnvVars();
+			System.out.println("BEGIN ENVIRONMENTS");
+			for (String var : envVars) {
+				System.out.print(var + ", ");
+			}
+			System.out.println("END ENVIRONMENTS");
+			Set<String> keywords = parser.getKeywords();
+			System.out.println("BEGIN KEYWORDS");
+			for (String var : keywords) {
+				System.out.print(var + ", ");
+			}
+			System.out.println("END KEYWORDS");
+			Set<String> numbers = parser.getNumberLiterals();
+			System.out.println("BEGIN NUMBERS");
+			for (String var : numbers) {
+				System.out.print(var + ", ");
+			}
+			System.out.println("END NUMBERS");
 		}
-		System.out.println("END LITERALS");
-		Set<String> functions = parser.getFunctions();
-		System.out.println("BEGIN FUNCTIONS");
-		for (String function : functions) {
-			System.out.print(function + ", ");
-		}
-		System.out.println("END FUNCTIONS");
-		Set<String> localVars = parser.getLocalVars();
-		System.out.println("BEGIN LOCAL VARIABLES");
-		for (String var : localVars) {
-			System.out.print(var + ", ");
-		}
-		System.out.println("END LOCAL VARIABLES");
-		Set<String> fieldVars = parser.getFieldVars();
-		System.out.println("BEGIN FIELDS");
-		for (String var : fieldVars) {
-			System.out.print(var + ", ");
-		}
-		System.out.println("END FIELDS");
-		Set<String> envVars = parser.getEnvVars();
-		System.out.println("BEGIN ENVIRONMENTS");
-		for (String var : envVars) {
-			System.out.print(var + ", ");
-		}
-		System.out.println("END ENVIRONMENTS");
-		Set<String> keywords = parser.getKeywords();
-		System.out.println("BEGIN KEYWORDS");
-		for (String var : keywords) {
-			System.out.print(var + ", ");
-		}
-		System.out.println("END KEYWORDS");
-		Set<String> numbers = parser.getNumberLiterals();
-		System.out.println("BEGIN NUMBERS");
-		for (String var : numbers) {
-			System.out.print(var + ", ");
-		}
-		System.out.println("END NUMBERS");
-
 	}
 
 	protected Session getSession() {

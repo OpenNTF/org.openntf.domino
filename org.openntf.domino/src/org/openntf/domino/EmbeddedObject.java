@@ -23,6 +23,7 @@ import java.util.Vector;
 import lotus.domino.XSLTResultTarget;
 
 import org.openntf.domino.types.DocumentDescendant;
+import org.openntf.domino.types.FactorySchema;
 import org.xml.sax.InputSource;
 
 /**
@@ -30,6 +31,25 @@ import org.xml.sax.InputSource;
  */
 public interface EmbeddedObject extends Base<lotus.domino.EmbeddedObject>, lotus.domino.EmbeddedObject,
 		org.openntf.domino.ext.EmbeddedObject, DocumentDescendant {
+
+	public static class Schema extends FactorySchema<EmbeddedObject, lotus.domino.EmbeddedObject, Document> {
+		@Override
+		public Class<EmbeddedObject> typeClass() {
+			return EmbeddedObject.class;
+		}
+
+		@Override
+		public Class<lotus.domino.EmbeddedObject> delegateClass() {
+			return lotus.domino.EmbeddedObject.class;
+		}
+
+		@Override
+		public Class<Document> parentClass() {
+			return Document.class;
+		}
+	};
+
+	public static final Schema SCHEMA = new Schema();
 
 	/*
 	 * (non-Javadoc)

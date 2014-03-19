@@ -40,6 +40,7 @@ import org.xml.sax.SAXException;
  * 
  */
 public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignNoteBase.class.getName());
 
 	private String noteId_;
@@ -64,6 +65,18 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 
 	protected AbstractDesignNoteBase(final Database database) {
 		database_ = database;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.design.DesignBase#getDxlString()
+	 */
+	public String getDxlString() {
+		try {
+			return getDxl().getXml();
+		} catch (IOException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
 	}
 
 	/*
@@ -430,7 +443,7 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 	}
 
 	protected XMLNode getFlagsExtNode() {
-		XMLNode flagsNode = getDxl().selectSingleNode("//item[@name='$FlagExts']/text");
+		XMLNode flagsNode = getDxl().selectSingleNode("//item[@name='$FlagExt']/text");
 		if (flagsNode != null) {
 			return flagsNode;
 		} else {

@@ -15,29 +15,53 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.ACL;
+import org.openntf.domino.Database;
+import org.openntf.domino.Name;
+import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class ACLEntry.
  */
-public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACLEntry> implements org.openntf.domino.ACLEntry {
+public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACLEntry, org.openntf.domino.ACL> implements
+		org.openntf.domino.ACLEntry {
 
 	/**
-	 * Instantiates a new aCL entry.
+	 * @deprecated: use {@link #ACLEntry(lotus.domino.ACLEntry, ACL, WrapperFactory, long)} instead
+	 */
+	@Deprecated
+	public ACLEntry(final lotus.domino.ACLEntry delegate, final org.openntf.domino.ACL parent) {
+		super(delegate, null);
+	}
+
+	/**
+	 * Instantiates a new ACL entry.
 	 * 
 	 * @param delegate
 	 *            the delegate
 	 * @param parent
 	 *            the parent
+	 * @param wf
+	 *            the wrapperFactory
+	 * @param cpp_id
+	 *            the cpp-id
 	 */
-	public ACLEntry(final lotus.domino.ACLEntry delegate, final org.openntf.domino.ACL parent) {
-		super(delegate, parent);
+	public ACLEntry(final lotus.domino.ACLEntry delegate, final org.openntf.domino.ACL parent, final WrapperFactory wf, final long cpp_id) {
+		super(delegate, parent, wf, cpp_id, NOTES_ACLENTRY);
+	}
+
+	@Override
+	protected ACL findParent(final lotus.domino.ACLEntry delegate) throws NotesException {
+		return fromLotus(delegate.getParent(), ACL.SCHEMA, null);
 	}
 
 	/*
@@ -106,7 +130,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	@Override
 	public Name getNameObject() {
 		try {
-			return Factory.fromLotus(getDelegate().getNameObject(), Name.class, this);
+			return fromLotus(getDelegate().getNameObject(), Name.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -120,7 +144,7 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 */
 	@Override
 	public ACL getParent() {
-		return (ACL) super.getParent();
+		return getAncestor();
 	}
 
 	/*
@@ -576,10 +600,14 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	 */
 	@Override
 	public void setName(final lotus.domino.Name n) {
+		@SuppressWarnings("rawtypes")
+		List recycleThis = new ArrayList();
 		try {
-			getDelegate().setName((lotus.domino.Name) toLotus(n));
+			getDelegate().setName(toLotus(n, recycleThis));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
@@ -662,4 +690,5 @@ public class ACLEntry extends Base<org.openntf.domino.ACLEntry, lotus.domino.ACL
 	public Session getAncestorSession() {
 		return getAncestorDatabase().getParent();
 	}
+
 }

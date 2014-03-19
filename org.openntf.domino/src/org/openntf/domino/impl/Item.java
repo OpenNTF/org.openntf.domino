@@ -18,16 +18,23 @@ package org.openntf.domino.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.DateTime;
+import org.openntf.domino.Document;
+import org.openntf.domino.MIMEEntity;
 import org.openntf.domino.Session;
+import org.openntf.domino.WrapperFactory;
+import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.utils.DominoUtils;
-import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.TypeUtils;
 import org.xml.sax.InputSource;
 
@@ -35,11 +42,12 @@ import org.xml.sax.InputSource;
 /**
  * The Class Item.
  */
-public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> implements org.openntf.domino.Item {
+public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Document> implements org.openntf.domino.Item {
 	private static final Logger log_ = Logger.getLogger(Item.class.getName());
 
 	// TODO NTF - all setters should check to see if the new value is different from the old and only markDirty if there's a change
 	private String name_;
+	private Integer dataType_;
 
 	/**
 	 * Instantiates a new item.
@@ -49,16 +57,60 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @param parent
 	 *            the parent
 	 */
+	@Deprecated
 	public Item(final lotus.domino.Item delegate, final org.openntf.domino.Base<?> parent) {
-		super(delegate, parent);
+		super(delegate, (Document) parent);
+		initialize(delegate);
+	}
+
+	/**
+	 * Instantiates a new outline.
+	 * 
+	 * @param delegate
+	 *            the delegate
+	 * @param parent
+	 *            the parent
+	 * @param wf
+	 *            the wrapperfactory
+	 * @param cppId
+	 *            the cpp-id
+	 */
+	public Item(final lotus.domino.Item delegate, final Document parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_ITEM);
+		initialize(delegate);
+	}
+
+	/**
+	 * Instatiates a new RichtextItem
+	 * 
+	 * @param delegate
+	 * @param parent
+	 * @param wf
+	 * @param cppId
+	 */
+	protected Item(final lotus.domino.RichTextItem delegate, final Document parent, final WrapperFactory wf, final long cppId) {
+		super(delegate, parent, wf, cppId, NOTES_RTITEM);
+		initialize(delegate);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
+	 */
+	@Override
+	protected Document findParent(final lotus.domino.Item delegate) throws NotesException {
+		return fromLotus(delegate.getParent(), Document.SCHEMA, null);
+	}
+
+	protected void initialize(final lotus.domino.Item delegate) {
+		// TODO Auto-generated method stub
 		String name;
 		try {
 			name = delegate.getName();
 		} catch (NotesException ne) {
 			name = "";
 			if (log_.isLoggable(Level.WARNING)) {
-				log_.log(Level.WARNING, "Exception trying to get item from Document "
-						+ ((Document) parent).getAncestorDatabase().getFilePath() + " " + ((Document) parent).getNoteID());
+				log_.log(Level.WARNING, "Exception trying to get item from Document " + getAncestorDatabase().getFilePath() + " "
+						+ getAncestorDocument().getNoteID());
 			}
 			throw new RuntimeException(ne);
 		}
@@ -104,16 +156,19 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * 
 	 * @see org.openntf.domino.Item#appendToTextList(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void appendToTextList(final java.util.Vector values) {
+	public void appendToTextList(final Vector values) {
 		markDirty();
+		List<lotus.domino.Base> recycleThis = new ArrayList();
 		try {
-			java.util.Vector v = toDominoFriendly(values, this);
+			Vector v = toDominoFriendly(values, this, recycleThis);
 			getDelegate().appendToTextList(v);
-			s_recycle(v);
+
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
@@ -124,15 +179,18 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 */
 	@Override
 	public boolean containsValue(final Object value) {
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
 			boolean result;
-			Object domObj = toDominoFriendly(value, this);
-			result = getDelegate().containsValue(toDominoFriendly(value, this));
+			Object domObj = toDominoFriendly(value, this, recycleThis);
+			result = getDelegate().containsValue(domObj);
 			Base.s_recycle(domObj);
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return false;
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
@@ -142,11 +200,15 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#copyItemToDocument(lotus.domino.Document)
 	 */
 	@Override
-	public Item copyItemToDocument(final lotus.domino.Document doc) {
+	public org.openntf.domino.Item copyItemToDocument(final lotus.domino.Document lotusDoc) {
 		// TODO - mark dirty?
 		try {
-			return Factory.fromLotus(getDelegate().copyItemToDocument((lotus.domino.Document) toLotus(doc)), Item.class,
-					(org.openntf.domino.Document) doc);
+			if (lotusDoc == null) {
+				throw new IllegalArgumentException();
+			}
+
+			Document doc = fromLotus(lotusDoc, Document.SCHEMA, null);
+			return fromLotus(getDelegate().copyItemToDocument(toLotus(doc)), Item.SCHEMA, doc);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -159,11 +221,15 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 * @see org.openntf.domino.Item#copyItemToDocument(lotus.domino.Document, java.lang.String)
 	 */
 	@Override
-	public Item copyItemToDocument(final lotus.domino.Document doc, final String newName) {
+	public org.openntf.domino.Item copyItemToDocument(final lotus.domino.Document lotusDoc, final String newName) {
 		// TODO - mark dirty?
 		try {
-			return Factory.fromLotus(getDelegate().copyItemToDocument((lotus.domino.Document) toLotus(doc), newName), Item.class,
-					(org.openntf.domino.Document) doc);
+			if (lotusDoc == null) {
+				throw new IllegalArgumentException();
+			}
+
+			Document doc = fromLotus(lotusDoc, Document.SCHEMA, null); // TODO: this is not yet optimal. wrap document with it's session & db
+			return fromLotus(getDelegate().copyItemToDocument(toLotus(doc), newName), Item.SCHEMA, doc);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -183,7 +249,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 			if (delegate == null) {
 				//				System.out.println("Delegate DateTime is null for item " + getName() + " in doc " + getAncestorDocument().getUniversalID());
 			}
-			return Factory.fromLotus(delegate, DateTime.class, this);
+			return fromLotus(delegate, DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -228,7 +294,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	@Override
 	public DateTime getLastModified() {
 		try {
-			return Factory.fromLotus(getDelegate().getLastModified(), DateTime.class, this);
+			return fromLotus(getDelegate().getLastModified(), DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -263,7 +329,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	@Override
 	public MIMEEntity getMIMEEntity() {
 		try {
-			return Factory.fromLotus(getDelegate().getMIMEEntity(), MIMEEntity.class, this.getParent());
+			return fromLotus(getDelegate().getMIMEEntity(), MIMEEntity.SCHEMA, this.getParent());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -292,7 +358,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	 */
 	@Override
 	public Document getParent() {
-		return (Document) super.getParent();
+		return getAncestor();
 	}
 
 	/*
@@ -409,7 +475,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	public Vector<org.openntf.domino.DateTime> getValueDateTimeArray() {
 		//		System.out.println("Getting DateTimeArray value from item " + getName());
 		try {
-			return Factory.fromLotusAsVector(getDelegate().getValueDateTimeArray(), org.openntf.domino.DateTime.class, this);
+			return fromLotusAsVector(getDelegate().getValueDateTimeArray(), org.openntf.domino.DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -485,9 +551,13 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	public Vector<Object> getValues() {
 		// Just use the parent Doc for this, since it understands MIMEBean
 		// Check for null in case there was a problem with the parent's method
-		java.util.Vector<Object> values = this.getParent().getItemValue(this.getName());
+		@SuppressWarnings("unchecked")
+		Vector<Object> values = this.getParent().getItemValue(this.getName());
 		if (values != null) {
 			return new Vector<Object>(values);
+		} else {
+			log_.log(Level.WARNING, "Item " + getName() + " in document " + getAncestorDatabase().getApiPath() + ": "
+					+ getParent().getNoteID() + " is a NULL");
 		}
 		return null;
 	}
@@ -655,6 +725,12 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	public void setAuthors(final boolean flag) {
 		markDirty();
 		try {
+			// Make sure it's a text field!!
+			if (flag) {
+				if (getType() != TEXT) {
+					throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Authors field");
+				}
+			}
 			getDelegate().setAuthors(flag);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -669,12 +745,14 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	@Override
 	public void setDateTimeValue(final lotus.domino.DateTime dateTime) {
 		markDirty();
+		@SuppressWarnings("rawtypes")
+		List recycleThis = new ArrayList();
 		try {
-			lotus.domino.DateTime dt = (lotus.domino.DateTime) toLotus(dateTime);
-			getDelegate().setDateTimeValue(dt);
-			enc_recycle(dt);
+			getDelegate().setDateTimeValue(toLotus(dateTime, recycleThis));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
+		} finally {
+			s_recycle(recycleThis);
 		}
 	}
 
@@ -702,6 +780,12 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	public void setNames(final boolean flag) {
 		markDirty();
 		try {
+			// Make sure it's a text field!!
+			if (flag) {
+				if (getType() != TEXT) {
+					throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Names field");
+				}
+			}
 			getDelegate().setNames(flag);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -732,6 +816,12 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	public void setReaders(final boolean flag) {
 		markDirty();
 		try {
+			// Make sure it's a text field!!
+			if (flag) {
+				if (getType() != TEXT) {
+					throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Readers field");
+				}
+			}
 			getDelegate().setReaders(flag);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -882,8 +972,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	@Override
 	public void setValues(final java.util.Vector values) {
 		markDirty();
+		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
 		try {
-			java.util.Vector v = toDominoFriendly(values, this);
+			java.util.Vector v = toDominoFriendly(values, this, recycleThis);
 			getDelegate().setValues(v);
 			s_recycle(v);
 		} catch (NotesException e) {
@@ -957,9 +1048,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 	private void resurrect() {
 		if (name_ != null) {
 			try {
-				lotus.domino.Document d = (getAncestorDocument()).getDelegate();
+				lotus.domino.Document d = toLotus(getAncestorDocument());
 				lotus.domino.Item item = d.getFirstItem(name_);
-				setDelegate(item);
+				setDelegate(item, 0);
 				if (log_.isLoggable(Level.INFO)) {
 					log_.log(Level.INFO, "Item " + name_ + " in document path " + getAncestorDocument().getNoteID()
 							+ " had been recycled and was auto-restored. Changes may have been lost.");
@@ -988,6 +1079,28 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item> imple
 						+ " doesn't have name value. Something went terribly wrong. Nothing good can come of this...");
 			}
 		}
+	}
+
+	public boolean hasFlag(final org.openntf.domino.Item.Flags flag) {
+		switch (flag) {
+		case PROTECTED:
+			return isProtected();
+		case AUTHORS:
+			return isAuthors();
+		case ENCRYPTED:
+			return isEncrypted();
+		case NAMES:
+			return isNames();
+		case READERS:
+			return isReaders();
+		case SIGNED:
+			return isSigned();
+		case SUMMARY:
+			return isSummary();
+		default:
+			break;
+		}
+		return false;
 	}
 
 }
