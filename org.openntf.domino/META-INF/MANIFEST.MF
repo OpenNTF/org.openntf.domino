@@ -7,8 +7,7 @@ Bundle-SymbolicName: org.openntf.domino
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: OpenNTF.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: lotus.domino,lotus.domino.local,org.openntf.domino,org
- .openntf.domino.utils
+Import-Package: lotus.domino,lotus.domino.local
 Export-Package: com.ibm.icu.impl,com.ibm.icu.impl.data,com.ibm.icu.imp
  l.duration,com.ibm.icu.impl.duration.impl,com.ibm.icu.impl.locale,com
  .ibm.icu.lang,com.ibm.icu.math,com.ibm.icu.text,com.ibm.icu.util,com.
@@ -23,9 +22,9 @@ Export-Package: com.ibm.icu.impl,com.ibm.icu.impl.data,com.ibm.icu.imp
  ntf.domino.thread,org.openntf.domino.transactions,org.openntf.domino.
  types,org.openntf.domino.utils,org.openntf.domino.utils.xml
 Implementation-Title: OpenNTF Domino API
-Implementation-Version: 1.0.0_20140313013131
+Implementation-Version: 1.0.0_20140319013540
 Implementation-Vendor: OpenNTF
 Implementation-Vendor-URL: http://www.openntf.org
 Built-By: Nathan T. Freeman
-Build-Date: 20140313013131
+Build-Date: 20140319013540
 
