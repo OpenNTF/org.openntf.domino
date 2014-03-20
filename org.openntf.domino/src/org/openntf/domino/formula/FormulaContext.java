@@ -28,8 +28,6 @@ public class FormulaContext {
 	public ValueHolder FALSE;
 	public boolean useBooleans = true;
 
-	private ValueHolder cache;
-
 	/**
 	 * @param document
 	 *            the context document
@@ -69,10 +67,6 @@ public class FormulaContext {
 	 */
 	@SuppressWarnings("deprecation")
 	public ValueHolder getVarLC(final String key) {
-		if (cache != null) {
-			return cache;
-		}
-
 		ValueHolder var = vars.get(key);
 		if (var != null) {
 			return var;
@@ -108,9 +102,7 @@ public class FormulaContext {
 			vars.remove(key);
 			return old;
 		} else {
-			cache = elem;
-			return cache;
-			//return vars.put(key, elem);
+			return vars.put(key, elem);
 		}
 	}
 

@@ -38,30 +38,37 @@ public abstract class Negators extends AtFunction {
 
 		public Factory() {
 			super();
-			init(new Negators(" -") {
+			init(new Negators(" -") { // the space is to distinguish to Op.SUB
 
 				@Override
-				protected Object compute(final FormulaContext ctx, final int i) {
-					// TODO Auto-generated method stub
+				protected int compute(final FormulaContext ctx, final int i) {
 					return -i;
 				}
 
 				@Override
-				protected Object compute(final FormulaContext ctx, final double d) {
-					// TODO Auto-generated method stub
+				protected double compute(final FormulaContext ctx, final double d) {
 					return -d;
-				} // the space is to distinguish to Op.SUB
-			}, new Negators(" !") {
-
-				@Override
-				protected Object compute(final FormulaContext ctx, final int i) {
-					// TODO Auto-generated method stub
-					return i == 0 ? ctx.TRUE : ctx.FALSE;
 				}
 
 				@Override
-				protected Object compute(final FormulaContext ctx, final double d) {
-					return (int) d == 0 ? ctx.TRUE : ctx.FALSE;
+				protected boolean compute(final FormulaContext ctx, final boolean b) {
+					return !b;
+				}
+			}, new Negators(" !") {
+
+				@Override
+				protected int compute(final FormulaContext ctx, final int i) {
+					return i == 0 ? 1 : 0;
+				}
+
+				@Override
+				protected double compute(final FormulaContext ctx, final double d) {
+					return (int) d == 0 ? 1.0D : 0.0D;
+				}
+
+				@Override
+				protected boolean compute(final FormulaContext ctx, final boolean b) {
+					return !b;
 				}
 			});
 		}
@@ -80,23 +87,27 @@ public abstract class Negators extends AtFunction {
 	 */
 	public ValueHolder evaluate(final FormulaContext ctx, final ValueHolder[] params) {
 		ValueHolder v1 = params[0]; // Fetch first element to determine operation
-		ValueHolder ret = new ValueHolder();
 
 		if (v1.dataType == DataType.ERROR) {
 			return v1;
 		}
 
+		ValueHolder ret = v1.newInstance(v1.size);
 		switch (v1.dataType) {
 
 		case INTEGER:
-			ret.grow(v1.size);
 			for (int i = 0; i < v1.size; i++) {
 				ret.add(compute(ctx, v1.getInt(i)));
 			}
 			return ret;
+		case BOOLEAN:
+			for (int i = 0; i < v1.size; i++) {
+				ret.add(compute(ctx, v1.getBoolean(i)));
+			}
+			return ret;
+
 		case DOUBLE:
 		case NUMBER:
-			ret.grow(v1.size);
 			for (int i = 0; i < v1.size; i++) {
 				ret.add(compute(ctx, v1.getDouble(i)));
 			}
@@ -110,9 +121,11 @@ public abstract class Negators extends AtFunction {
 
 	}
 
-	protected abstract Object compute(FormulaContext ctx, int i);
+	protected abstract boolean compute(FormulaContext ctx, boolean b);
 
-	protected abstract Object compute(FormulaContext ctx, double d);
+	protected abstract int compute(FormulaContext ctx, int i);
+
+	protected abstract double compute(FormulaContext ctx, double d);
 
 	/* -------------------------------------------------- */
 	public boolean checkParamCount(final int i) {

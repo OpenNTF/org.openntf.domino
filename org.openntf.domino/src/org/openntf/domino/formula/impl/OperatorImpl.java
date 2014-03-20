@@ -8,7 +8,7 @@ public abstract class OperatorImpl {
 
 	public abstract double compute(double v1, double v2);
 
-	public abstract int compute(int v1, int v2);
+	public abstract int compute(int v1, int v2) throws IntegerOverflowException;
 
 	public String compute(final String v1, final String v2) {
 		throw new UnsupportedOperationException();

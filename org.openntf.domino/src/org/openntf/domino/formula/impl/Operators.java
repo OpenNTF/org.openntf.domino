@@ -45,8 +45,12 @@ public class Operators extends OperatorsAbstract {
 			OperatorImpl add = new OperatorImpl() {
 
 				@Override
-				public int compute(final int v1, final int v2) {
-					return v1 + v2;
+				public int compute(final int v1, final int v2) throws IntegerOverflowException {
+					long res = ((long) v1 + (long) v2);
+					if (res < Integer.MIN_VALUE || Integer.MAX_VALUE > res) {
+						throw new IntegerOverflowException();
+					}
+					return (int) res;
 				}
 
 				@Override
@@ -63,8 +67,12 @@ public class Operators extends OperatorsAbstract {
 			OperatorImpl sub = new OperatorImpl() {
 
 				@Override
-				public int compute(final int v1, final int v2) {
-					return v1 - v2;
+				public int compute(final int v1, final int v2) throws IntegerOverflowException {
+					long res = ((long) v1 - (long) v2);
+					if (res < Integer.MIN_VALUE || Integer.MAX_VALUE > res) {
+						throw new IntegerOverflowException();
+					}
+					return (int) res;
 				}
 
 				@Override
@@ -77,8 +85,12 @@ public class Operators extends OperatorsAbstract {
 			OperatorImpl mul = new OperatorImpl() {
 
 				@Override
-				public int compute(final int v1, final int v2) {
-					return v1 * v2;
+				public int compute(final int v1, final int v2) throws IntegerOverflowException {
+					long res = ((long) v1 * (long) v2);
+					if (res < Integer.MIN_VALUE || Integer.MAX_VALUE > res) {
+						throw new IntegerOverflowException();
+					}
+					return (int) res;
 				}
 
 				@Override
@@ -91,8 +103,10 @@ public class Operators extends OperatorsAbstract {
 			OperatorImpl div = new OperatorImpl() {
 
 				@Override
-				public int compute(final int v1, final int v2) {
-					return v1 / v2; // TODO, throw Exception
+				public int compute(final int v1, final int v2) throws IntegerOverflowException {
+					if (v1 % v2 != 0)
+						throw new IntegerOverflowException();
+					return v1 / v2;
 				}
 
 				@Override
@@ -130,10 +144,8 @@ public class Operators extends OperatorsAbstract {
 	// ----------- Strings
 	@Override
 	protected ValueHolder evaluateString(final FormulaContext ctx, final ValueHolder[] params) {
-		ValueHolder ret = new ValueHolder();
 		Collection<String[]> values = new ParameterCollectionObject<String>(params, String.class, isPermutative);
-
-		ret.grow(values.size());
+		ValueHolder ret = ValueHolder.createValueHolder(String.class, values.size());
 		for (String[] value : values) {
 			ret.add(computer.compute(value[0], value[1]));
 		}
@@ -149,13 +161,14 @@ public class Operators extends OperatorsAbstract {
 	// ----------- Numbers
 	@Override
 	protected ValueHolder evaluateNumber(final FormulaContext ctx, final ValueHolder[] params) {
-		ValueHolder ret = new ValueHolder();
-		Collection<double[]> values = new ParameterCollectionDouble(params, isPermutative);
 
-		ret.grow(values.size());
+		Collection<double[]> values = new ParameterCollectionDouble(params, isPermutative);
+		ValueHolder ret = ValueHolder.createValueHolder(double.class, values.size());
+
 		for (double[] value : values) {
 			ret.add(computer.compute(value[0], value[1]));
 		}
+
 		return ret;
 	}
 
@@ -167,29 +180,36 @@ public class Operators extends OperatorsAbstract {
 	// ----------- Integers
 	@Override
 	protected ValueHolder evaluateInt(final FormulaContext ctx, final ValueHolder[] params) {
-		ValueHolder ret = new ValueHolder();
-		Collection<int[]> values = new ParameterCollectionInt(params, isPermutative);
 
-		ret.grow(values.size());
+		Collection<int[]> values = new ParameterCollectionInt(params, isPermutative);
+		ValueHolder ret = ValueHolder.createValueHolder(int.class, values.size());
+
 		for (int[] value : values) {
-			ret.add(computer.compute(value[0], value[1]));
+			try {
+				ret.add(computer.compute(value[0], value[1]));
+			} catch (IntegerOverflowException e) {
+				ret.add(computer.compute((double) value[0], (double) value[1]));
+			}
 		}
 		return ret;
 	}
 
 	@Override
 	protected ValueHolder evaluateInt(final FormulaContext ctx, final int i1, final int i2) {
-		return ValueHolder.valueOf(computer.compute(i1, i2));
+		try {
+			return ValueHolder.valueOf(computer.compute(i1, i2));
+		} catch (IntegerOverflowException e) {
+			return ValueHolder.valueOf(computer.compute((double) i1, (double) i2));
+		}
 	}
 
 	// ----------- DateTimes
 	@Override
 	protected ValueHolder evaluateDateTime(final FormulaContext ctx, final ValueHolder[] params) {
-		ValueHolder ret = new ValueHolder();
-		Collection<int[]> values = new ParameterCollectionInt(params, isPermutative);
+		Collection<DateTime[]> values = new ParameterCollectionObject<DateTime>(params, DateTime.class, isPermutative);
+		ValueHolder ret = ValueHolder.createValueHolder(DateTime.class, values.size());
 
-		ret.grow(values.size());
-		for (int[] value : values) {
+		for (DateTime[] value : values) {
 			ret.add(computer.compute(value[0], value[1]));
 		}
 		return ret;

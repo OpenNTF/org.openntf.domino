@@ -136,10 +136,8 @@ public class Comparators extends OperatorsAbstract {
 	// ----------- Numbers
 	@Override
 	protected ValueHolder evaluateNumber(final FormulaContext ctx, final ValueHolder[] params) {
-		ValueHolder ret = new ValueHolder();
 		Collection<double[]> values = new ParameterCollectionDouble(params, isPermutative);
 
-		ret.grow(values.size());
 		for (double[] value : values) {
 			int delta = Double.compare(value[0], value[1]);
 			if (computer.match(delta)) {
@@ -161,10 +159,8 @@ public class Comparators extends OperatorsAbstract {
 	// ----------- Integers
 	@Override
 	protected ValueHolder evaluateInt(final FormulaContext ctx, final ValueHolder[] params) {
-		ValueHolder ret = new ValueHolder();
 		Collection<int[]> values = new ParameterCollectionInt(params, isPermutative);
 
-		ret.grow(values.size());
 		for (int[] value : values) {
 			int delta = value[0] - value[1];
 			if (computer.match(delta)) {
@@ -186,8 +182,8 @@ public class Comparators extends OperatorsAbstract {
 	// ----------- DateTimes
 	@Override
 	protected ValueHolder evaluateDateTime(final FormulaContext ctx, final ValueHolder[] params) {
-		ValueHolder ret = new ValueHolder();
 		Collection<DateTime[]> values = new ParameterCollectionObject<DateTime>(params, DateTime.class, isPermutative);
+
 		for (DateTime[] value : values) {
 			int delta = value[0].compareTo(value[1]);
 			if (computer.match(delta)) {

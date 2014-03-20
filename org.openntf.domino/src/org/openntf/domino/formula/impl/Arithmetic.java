@@ -92,17 +92,17 @@ public enum Arithmetic {
 		} else if (ValueHolder.hasMultiValues(params)) {
 
 			ParameterCollectionDouble values = new ParameterCollectionDouble(params, false);
-			ValueHolder ret = new ValueHolder();
-			ret.grow(values.size());
+			ValueHolder ret = ValueHolder.createValueHolder(double.class, values.size());
 			for (double[] value : values) {
 				ret.add(Math.max(value[0], value[1]));
 			}
 			return ret;
+
 		} else {
-			ValueHolder ret = new ValueHolder();
-			ret.grow(1);
+			ValueHolder ret = ValueHolder.createValueHolder(double.class, 1);
 			ret.add(Math.max(params[0].getDouble(0), params[1].getDouble(0)));
 			return ret;
+
 		}
 	}
 
@@ -119,15 +119,16 @@ public enum Arithmetic {
 			return ValueHolder.valueOf(ret);
 		} else if (ValueHolder.hasMultiValues(params)) {
 			ParameterCollectionDouble values = new ParameterCollectionDouble(params, false);
-			ValueHolder ret = new ValueHolder();
-			ret.grow(values.size());
+
+			ValueHolder ret = ValueHolder.createValueHolder(double.class, values.size());
 			for (double[] value : values) {
 				ret.add(Math.min(value[0], value[1]));
 			}
 			return ret;
+
 		} else {
-			ValueHolder ret = new ValueHolder();
-			ret.grow(1);
+
+			ValueHolder ret = ValueHolder.createValueHolder(double.class, 1);
 			ret.add(Math.min(params[0].getDouble(0), params[1].getDouble(0)));
 			return ret;
 		}

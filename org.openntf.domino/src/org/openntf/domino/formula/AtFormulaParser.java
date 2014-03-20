@@ -1296,13 +1296,13 @@ public class AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserTreeConst
       break;
     case NumInteger:
       t = jj_consume_token(NumInteger);
-          ASTValueLong jjtn006 = new ASTValueLong(this, JJTVALUELONG);
+          ASTValueInt jjtn006 = new ASTValueInt(this, JJTVALUEINT);
           boolean jjtc006 = true;
           jjtree.openNodeScope(jjtn006);
       try {
           jjtree.closeNodeScope(jjtn006, true);
           jjtc006 = false;
-          jjtn006.parseLong(t.image);
+          jjtn006.parseInt(t.image);
       } finally {
           if (jjtc006) {
             jjtree.closeNodeScope(jjtn006, true);

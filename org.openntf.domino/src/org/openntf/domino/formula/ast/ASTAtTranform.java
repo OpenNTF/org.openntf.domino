@@ -37,19 +37,33 @@ public class ASTAtTranform extends SimpleNode {
 		String temp = (String) children[1].evaluate(ctx).get(0);
 		temp = temp.toLowerCase();
 
-		ValueHolder ret = new ValueHolder();
+		ValueHolder[] tmpHolders = new ValueHolder[list.size];
+		int valueSize = 0;
+		int holders = 0;
+
 		for (int i = 0; i < list.size; i++) {
 			@SuppressWarnings("deprecation")
 			ValueHolder iter = ValueHolder.valueOf(list.get(i)); // as multi values are alle boxed. it should not affect performance here
 			ValueHolder old = ctx.setVarLC(temp, iter);
 			try {
 				// Cumulate all return values
-				ret.addAll(children[2].evaluate(ctx));
+				ValueHolder vh = children[2].evaluate(ctx);
+				if (vh != null) {
+					valueSize += vh.size;
+					tmpHolders[holders++] = vh;
+				}
 			} finally {
 				ctx.setVarLC(temp, old);
 			}
 		}
-		return ret;
+		if (holders == 0)
+			return null;
+
+		ValueHolder vhRet = tmpHolders[0].newInstance(valueSize);
+		for (int i = 0; i < holders; i++) {
+			vhRet.addAll(tmpHolders[i]);
+		}
+		return vhRet;
 	}
 
 	public void toFormula(final StringBuilder sb) {

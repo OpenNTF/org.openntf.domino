@@ -18,7 +18,6 @@ package org.openntf.domino.formula;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -28,21 +27,20 @@ import org.openntf.domino.DateTime;
  * Valueholder to hold single or multiple values.
  * 
  * When evaluating a formula, every String/int/double value is wrapped in a "ValueHolder". The holder has several get-methods to return the
- * different types.
+ * different types. You always must check the datatype before calling one of the getters, because a ValueHolder that contains Strings cannot
+ * return
  * 
  * The code itself might look strange, but this was done to be as fast as possible
  * 
  * @author Roland Praml, Foconis AG
  * 
  */
-public class ValueHolder implements Serializable {
+public abstract class ValueHolder implements Serializable {
 	private static final long serialVersionUID = 8290517470597891417L;
 
 	/**
-	 * These are the possible
-	 * 
-	 * @author Roland Praml, Foconis AG
-	 * 
+	 * These are the possible datatypes. <br>
+	 * DOUBLE means 'only doubles', INTEGER means 'only integers'. If you mix Integers and Doubles, the type changes to "NUMBER"
 	 */
 	public enum DataType {
 		ERROR, STRING, INTEGER(true), NUMBER(true), DOUBLE(true), DATETIME, BOOLEAN, _UNSET, OBJECT;
@@ -56,44 +54,44 @@ public class ValueHolder implements Serializable {
 		}
 	}
 
-	private Object values[];
-	private int valueInt;
-	private double valueDbl;
-	private boolean immutable;
+	protected boolean immutable;
 
 	// For performance reasons we allow direct access to these members
 	public int size;
 	public DataType dataType = DataType._UNSET;
 
-	// Caches
-	private static final ValueHolder TRUE;
-	private static final ValueHolder FALSE;
+	protected RuntimeException currentError;
 
-	private static final ValueHolder integerCache[];
-	private static final ValueHolder stringCache[];
+	// Caches
+	protected static final ValueHolder TRUE;
+	protected static final ValueHolder FALSE;
+
+	protected static final ValueHolder integerCache[];
+	protected static final ValueHolder stringCache[];
+
 	static {
-		TRUE = new ValueHolder();
+		TRUE = new ValueHolderBoolean(1);
 		TRUE.add(Boolean.TRUE);
 		TRUE.immutable = true;
 
-		FALSE = new ValueHolder();
+		FALSE = new ValueHolderBoolean(1);
 		FALSE.add(Boolean.FALSE);
 		FALSE.immutable = true;
 
 		integerCache = new ValueHolder[256];
 		stringCache = new ValueHolder[256];
 		for (int i = 0; i < 256; i++) {
-			ValueHolder vh = integerCache[i] = new ValueHolder();
-			vh.add(i - 128);
-			vh.immutable = true;
+			ValueHolder vhn = integerCache[i] = new ValueHolderNumber(1);
+			vhn.add(i - 128);
+			vhn.immutable = true;
 
-			vh = stringCache[i] = new ValueHolder();
+			ValueHolder vho = stringCache[i] = new ValueHolderObject<Object>(1);
 			if (i == 0) {
-				vh.add("");
+				vho.add("");
 			} else {
-				vh.add(String.valueOf((char) i));
+				vho.add(String.valueOf((char) i));
 			}
-			vh.immutable = true;
+			vho.immutable = true;
 		}
 
 	}
@@ -101,12 +99,47 @@ public class ValueHolder implements Serializable {
 	public ValueHolder() {
 	}
 
+	public static ValueHolder createValueHolder(final Class<?> clazz, final int size) {
+
+		if (boolean.class.equals(clazz))
+			return new ValueHolderBoolean(size);
+
+		if (double.class.equals(clazz))
+			return new ValueHolderNumber(size);
+
+		if (int.class.equals(clazz))
+			return new ValueHolderNumber(size);
+
+		// the rest of the numeric values in JAVA -> handled as double
+		if (byte.class.equals(clazz))
+			return new ValueHolderNumber(size);
+		if (char.class.equals(clazz))
+			return new ValueHolderNumber(size);
+		if (short.class.equals(clazz))
+			return new ValueHolderNumber(size);
+		if (long.class.equals(clazz))
+			return new ValueHolderNumber(size);
+		if (float.class.equals(clazz))
+			return new ValueHolderNumber(size);
+
+		if (clazz.isPrimitive()) {
+			throw new UnsupportedOperationException("Cannot return objectholder for " + clazz);
+		}
+
+		return new ValueHolderObject<Object>(size);
+
+	}
+
 	/**
-	 * Init a ValueHolder based on a single value or a collection
+	 * Init a ValueHolder based on a single value or a collection<br>
+	 * If possible use one of the special "valueOf" constructors as these are faster
 	 * 
 	 */
 	@Deprecated
 	public static ValueHolder valueOf(final Object init) {
+		ValueHolder vh = null;
+		if (init == null)
+			return valueDefault();
 
 		if (init instanceof String)
 			return valueOf((String) init);
@@ -120,20 +153,24 @@ public class ValueHolder implements Serializable {
 		if (init instanceof Boolean)
 			return valueOf(((Boolean) init).booleanValue());
 
-		if (init != null && init.getClass().isArray()) {
+		// Array handling and other objects
+		if (init.getClass().isArray()) {
 			int lh = Array.getLength(init);
 			if (lh == 0)
 				return valueDefault();
 			if (lh == 1)
 				return valueOf(Array.get(init, 0));
 
-			ValueHolder vh = new ValueHolder();
-			vh.grow(lh);
 			for (int i = 0; i < lh; i++) {
-				vh.add(Array.get(init, i));
+				Object o = Array.get(init, i);
+				if (o != null) {
+					if (vh == null) {
+						vh = createValueHolder(o.getClass(), lh);
+					}
+					vh.add(o);
+				}
 			}
-			vh.immutable = true;
-			return vh;
+
 		} else if (init instanceof Collection) {
 			Collection<?> c = (Collection<?>) init;
 			int lh = c.size();
@@ -141,47 +178,79 @@ public class ValueHolder implements Serializable {
 				return valueDefault();
 			if (lh == 1)
 				return valueOf(c.iterator().next());
-			ValueHolder vh = new ValueHolder();
-			vh.grow(lh);
-			for (Object v : c) {
-				vh.add(v);
+
+			for (Object o : c) {
+				if (o != null) {
+					if (vh == null) {
+						vh = createValueHolder(o.getClass(), lh);
+					}
+					vh.add(o);
+				}
 			}
-			vh.immutable = true;
-			return vh;
 
 		} else {
-
-			ValueHolder vh = new ValueHolder();
+			vh = createValueHolder(init.getClass(), 1);
 			vh.add(init);
-			vh.immutable = true;
-			return vh;
 		}
+		if (vh == null)
+			return valueDefault();
+		vh.immutable = true;
+		return vh;
 	}
 
+	/**
+	 * Initializes a new ValueHolder that holds a RuntimeException
+	 * 
+	 * @param init
+	 *            the RuntimeException
+	 * @return the Valuholder
+	 */
 	public static ValueHolder valueOf(final RuntimeException init) {
-		ValueHolder vh = new ValueHolder();
+		ValueHolder vh = new ValueHolderObject<Object>(1);
 		vh.setError(init);
 		vh.immutable = true;
 		return vh;
 	}
 
+	/**
+	 * Initializes a new ValueHolder that holds a integer value. Values -128..128 are cached.
+	 * 
+	 * @param init
+	 *            the int value
+	 * @return the Valuholder
+	 */
+
 	public static ValueHolder valueOf(final int init) {
 		if (-128 <= init && init < 128) {
 			return integerCache[init + 128];
 		}
-		ValueHolder vh = new ValueHolder();
+		ValueHolder vh = new ValueHolderNumber(1);
 		vh.add(init);
 		vh.immutable = true;
 		return vh;
 	}
 
+	/**
+	 * Initializes a new ValueHolder that holds a double value
+	 * 
+	 * @param init
+	 *            the double
+	 * @return the ValueHolder
+	 */
 	public static ValueHolder valueOf(final double init) {
-		ValueHolder vh = new ValueHolder();
+		ValueHolder vh = new ValueHolderNumber(1);
 		vh.add(init);
 		vh.immutable = true;
 		return vh;
 	}
 
+	/**
+	 * Initializes a new ValueHolder that holds a String value
+	 * 
+	 * @param init
+	 *            the String
+	 * @return the ValueHolder
+	 */
 	public static ValueHolder valueOf(final String init) {
 		if (init.length() == 0)
 			return stringCache[0];
@@ -191,56 +260,47 @@ public class ValueHolder implements Serializable {
 				return stringCache[0];
 		}
 
-		ValueHolder vh = new ValueHolder();
+		ValueHolder vh = new ValueHolderObject<String>(1);
 		vh.add(init);
 		vh.immutable = true;
 		return vh;
 	}
 
+	/**
+	 * Initializes a new ValueHolder that contains a DateTime
+	 * 
+	 * @param init
+	 *            the DateTime
+	 * @return the ValueHolder
+	 */
 	public static ValueHolder valueOf(final DateTime init) {
-		ValueHolder vh = new ValueHolder();
+		ValueHolder vh = new ValueHolderObject<DateTime>(1);
 		vh.add(init);
 		vh.immutable = true;
 		return vh;
 	}
 
+	/**
+	 * Returns one of the two cached Boolean holders that represent TRUE or FALSE
+	 * 
+	 * @param init
+	 *            the boolean.
+	 * @return the ValueHolder
+	 */
 	public static ValueHolder valueOf(final boolean init) {
 		if (init)
 			return TRUE;
 		return FALSE;
 	}
 
+	/**
+	 * Returns the ValueHolder for the default value .
+	 * 
+	 * @return the ValueHolder
+	 */
+
 	public static ValueHolder valueDefault() {
 		return stringCache[0];
-	}
-
-	/**
-	 * grows the valueHolder, so that you can efficiently add values with the "add" method
-	 * 
-	 * @param inc
-	 *            the value to increment
-	 */
-	public void grow(final int inc) {
-		if (size == 0 && inc == 1)
-			return;
-
-		Object arr[] = new Object[size + inc];
-		if (values != null) {
-			System.arraycopy(values, 0, arr, 0, size);
-		}
-		values = arr;
-	}
-
-	private void grow() {
-		if (values == null) {
-			values = new Object[1];
-
-		} else if (values.length > size) {
-			return;
-		}
-		Object arr[] = new Object[size + 1];
-		System.arraycopy(values, 0, arr, 0, size);
-		values = arr;
 	}
 
 	/**
@@ -249,9 +309,7 @@ public class ValueHolder implements Serializable {
 	 * @return the error or null
 	 */
 	public RuntimeException getError() {
-		if (dataType == DataType.ERROR)
-			return (RuntimeException) values[0];
-		return null;
+		return currentError;
 	}
 
 	/**
@@ -266,32 +324,18 @@ public class ValueHolder implements Serializable {
 	public Object get(final int i) {
 		switch (dataType) {
 		case ERROR:
-			throw (RuntimeException) values[0];
+			throw currentError;
 		case DOUBLE:
 		case NUMBER:
-			if (size == 1)
-				return valueDbl;
-			break;
+			return getDouble(i);
 		case INTEGER:
-			if (size == 1)
-				return valueInt;
-			break;
+			return getInt(i);
 		default:
-			break;
-		}
-		return getObject(i);
-
-	}
-
-	public Object getObject(final int i) {
-		if (size == 0) {
-			return null; // TODO: What to do?
-		} else if (i < size) {
-			return values[i];
-		} else {
-			return values[size - 1];
+			return getObject(i);
 		}
 	}
+
+	public abstract Object getObject(final int i);
 
 	/**
 	 * Returns the value at position i as String
@@ -301,9 +345,6 @@ public class ValueHolder implements Serializable {
 	 * @return the value as String
 	 */
 	public String getString(final int i) {
-		if (dataType == DataType.STRING) {
-			return (String) getObject(i);
-		}
 		throw new ClassCastException("STRING expected. Got '" + dataType + "'");
 	}
 
@@ -312,9 +353,6 @@ public class ValueHolder implements Serializable {
 	 * 
 	 */
 	public DateTime getDateTime(final int i) {
-		if (dataType == DataType.DATETIME) {
-			return (DateTime) getObject(i);
-		}
 		throw new ClassCastException("DATETIME expected. Got '" + dataType + "'");
 	}
 
@@ -323,44 +361,27 @@ public class ValueHolder implements Serializable {
 	 * 
 	 */
 	public int getInt(final int i) {
-		if (dataType == DataType.INTEGER) {
-			if (i == 0 || size == 1)
-				return valueInt;
-			return (Integer) getObject(i);
-		}
-		if (dataType.numeric) {
-			if (i == 0 || size == 1)
-				return (int) valueDbl;
-			return ((Number) getObject(i)).intValue();
-		}
-		throw new ClassCastException("INTEGER/NUMBER expected. Got '" + dataType + "'");
+		throw new ClassCastException("DATETIME expected. Got '" + dataType + "'");
 	}
 
 	public double getDouble(final int i) {
-		if (dataType == DataType.DOUBLE) {
-			if (i == 0 || size == 1)
-				return valueDbl;
-		}
-		if (dataType.numeric) {
-			if (i == 0 || size == 1) {
-				return (dataType == DataType.INTEGER) ? valueInt : valueDbl;
-			}
-			return ((Number) get(i)).doubleValue();
-		}
-		throw new ClassCastException("DOUBLE/NUMBER expected. Got '" + dataType + "'");
+		throw new ClassCastException("DOUBLE expected. Got '" + dataType + "'");
 	}
 
+	public boolean getBoolean(final int i) {
+		throw new ClassCastException("BOOLEAN expected. Got '" + dataType + "'");
+	}
+
+	/**
+	 * Returns TRUE if one of the values is true
+	 */
 	public boolean isTrue(final FormulaContext ctx) {
 		if (dataType == DataType.ERROR)
 			throw getError();
 
 		if (ctx.useBooleans) {
-
-			if (dataType != DataType.BOOLEAN)
-				throw new IllegalArgumentException("BOOLEAN expected. Got '" + dataType + "'");
-
 			for (int i = 0; i < size; i++) {
-				if (((Boolean) values[i]).booleanValue()) {
+				if (getBoolean(i)) {
 					return true;
 				}
 			}
@@ -379,108 +400,15 @@ public class ValueHolder implements Serializable {
 	 * 
 	 */
 	public boolean addAll(final ValueHolder other) {
+		throw new IllegalArgumentException("Cannot add " + other.dataType + " to " + dataType);
+	};
 
-		switch (other.dataType) {
-		case _UNSET:
-			return false; // we do not add unset
-
-		case ERROR:
-			setError(other.getError());
-			return true;
-
-		case DOUBLE:
-		case NUMBER:
-			if (other.size == 1) {
-				return add(other.valueDbl);
-			}
-
-			// Check MY datatype if it is compatible with DOUBLE
-			switch (dataType) {
-			case DOUBLE:
-			case NUMBER:
-				break; // Type OK
-			case INTEGER:
-			case _UNSET:
-				dataType = DataType.NUMBER;
-				break;
-			default:
-				throw new ClassCastException(dataType + " expected. Got '" + other.dataType + "'");
-			}
-			grow(other.size);
-			break;
-
-		case INTEGER:
-			if (other.size == 1) {
-				return add(other.valueInt);
-			}
-
-			// Check MY datatype if it is compatible with INTEGER
-			switch (dataType) {
-			case DOUBLE:
-			case _UNSET:
-				dataType = DataType.NUMBER;
-				break;
-			case NUMBER:
-			case INTEGER:
-				break; // Type OK
-			default:
-				throw new ClassCastException(dataType + " expected. Got '" + other.dataType + "'");
-			}
-			grow(other.size);
-			break;
-
-		default:
-			if (values == null) {
-				values = new Object[other.size];
-			} else {
-				grow(other.size);
-			}
-			if (other.size == 1) {
-				grow();
-				values[size++] = other.values[0];
-				return true;
-			}
-		}
-		System.arraycopy(other.values, 0, values, size, other.size);
-		size += other.size;
-		return true;
-
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-
-		return Arrays.toString(values);
-	}
-
-	// -- Add methods
 	/**
 	 * Adds the value as String. You have to ensure that you have called grow() before!
 	 * 
 	 */
 	public boolean add(final String obj) {
-		if (immutable)
-			throw new UnsupportedOperationException("immutable");
-
-		switch (dataType) {
-		case ERROR:
-			return false;
-		case _UNSET:
-			dataType = DataType.STRING;
-			break;
-		case STRING:
-			break;
-		default:
-			throw new IllegalArgumentException("Cannot mix datatypes " + dataType + " and STRING");
-		}
-		if (size == 0)
-			values = new Object[1];
-		grow();
-		values[size++] = obj;
-		return true;
+		throw new IllegalArgumentException("Cannot mix datatypes " + dataType + " and STRING");
 	}
 
 	/**
@@ -488,126 +416,40 @@ public class ValueHolder implements Serializable {
 	 * 
 	 */
 	public boolean add(final int value) {
-		if (immutable)
-			throw new UnsupportedOperationException("immutable");
-
-		switch (dataType) {
-		case ERROR:
-			return false;
-		case _UNSET: // size is zero here
-			dataType = DataType.INTEGER;
-			valueInt = value;
-			size++;
-			return true;
-
-		case DOUBLE:
-			dataType = DataType.NUMBER;
-			if (size == 1) {
-				values = new Object[1];
-				values[0] = valueDbl;
-			}
-			break;
-		case INTEGER:
-			if (size == 1) {
-				values = new Object[1];
-				values[0] = valueInt;
-			}
-			break;
-		case NUMBER:
-			break;
-		default:
-			throw new IllegalArgumentException("Cannot mix datatypes " + dataType + " and INTEGER");
-		}
-		grow();
-		values[size++] = Integer.valueOf(value);
-		return true;
+		throw new IllegalArgumentException("Cannot mix datatypes " + dataType + " and INTEGER");
 	}
 
 	/**
 	 * Adds a double as value
 	 */
 	public boolean add(final double value) {
-		if (immutable)
-			throw new UnsupportedOperationException("immutable");
-
-		switch (dataType) {
-		case ERROR:
-			return false;
-		case _UNSET: // size is zero here
-			dataType = DataType.DOUBLE;
-			valueDbl = value;
-			size++;
-			return true;
-
-		case DOUBLE:
-			if (size == 1) {
-				values = new Object[1];
-				values[0] = valueDbl;
-			}
-			break;
-		case INTEGER:
-			dataType = DataType.NUMBER;
-			valueDbl = (double) valueInt;
-			if (size == 1) {
-				values = new Object[1];
-				values[0] = valueInt;
-			}
-			break;
-		case NUMBER:
-			break;
-		default:
-			throw new IllegalArgumentException("Cannot mix datatypes " + dataType + " and DOUBLE");
-		}
-		grow();
-		values[size++] = Double.valueOf(value);
-		return true;
+		throw new IllegalArgumentException("Cannot mix datatypes " + dataType + " and DOUBLE");
 	}
 
-	public boolean add(final Boolean bool) {
-		if (immutable)
-			throw new UnsupportedOperationException("immutable");
-		switch (dataType) {
-		case _UNSET:
-			dataType = DataType.BOOLEAN;
-			break;
-		case BOOLEAN:
-			break;
-		default:
-			throw new IllegalArgumentException("Cannot mix datatypes " + dataType + " and BOOLEAN");
-		}
-		if (size == 0)
-			values = new Object[1];
-		grow();
-
-		values[size++] = bool;
-		return true;
+	public boolean add(final boolean bool) {
+		throw new IllegalArgumentException("Cannot mix datatypes " + dataType + " and BOOLEAN");
 	}
 
 	public boolean add(final DateTime bool) {
-		if (immutable)
-			throw new UnsupportedOperationException("immutable");
-
-		// maybe we need calendar support here
-		switch (dataType) {
-		case _UNSET:
-			dataType = DataType.DATETIME;
-			break;
-		case DATETIME:
-			break;
-		default:
-			throw new IllegalArgumentException("Cannot mix datatypes " + dataType + " and DATETIME");
-		}
-		if (size == 0)
-			values = new Object[1];
-		values[size++] = bool;
-		return true;
+		throw new IllegalArgumentException("Cannot mix datatypes " + dataType + " and DATETIME");
 	}
 
 	public void setError(final RuntimeException e) {
 		dataType = DataType.ERROR;
-		values = new Object[1];
-		values[0] = e;
+		currentError = e;
 		size = 1;
+	}
+
+	protected void checkAdd() {
+		if (immutable)
+			throw new UnsupportedOperationException("immutable");
+	}
+
+	@Deprecated
+	protected void checkGet() {
+		if (currentError == null)
+			return;
+		throw currentError;
 	}
 
 	/**
@@ -624,26 +466,25 @@ public class ValueHolder implements Serializable {
 
 		if (obj instanceof String) {
 			return add((String) obj);
+
 		} else if (obj instanceof Integer) {
 			return add(((Integer) obj).intValue());
+
 		} else if (obj instanceof Number) {
 			return add(((Number) obj).doubleValue());
+
 		} else if (obj instanceof Boolean) {
-			return add((Boolean) obj);
+			return add(((Boolean) obj).booleanValue());
+
 		} else if (obj instanceof DateTime) {
 			return add((DateTime) obj);
+
 		} else if (obj instanceof RuntimeException) {
 			setError((RuntimeException) obj);
 		} else {
 			dataType = DataType.OBJECT;
-			//throw new IllegalArgumentException("TODO: Datatype " + obj.getClass() + " is not yet supported");
+			throw new IllegalArgumentException("TODO: Datatype " + obj.getClass() + " is not yet supported");
 		}
-
-		if (values == null || size >= values.length) {
-			throw new UnsupportedOperationException("Call grow first");
-			//grow(4);
-		}
-		values[size++] = obj;
 		return true;
 	}
 
@@ -657,10 +498,7 @@ public class ValueHolder implements Serializable {
 		return false;
 	}
 
-	public List<Object> toList() {
-		if (size > 1) {
-			return Arrays.asList(values);
-		}
-		return Arrays.asList(get(0));
-	}
+	public abstract List<Object> toList();
+
+	public abstract ValueHolder newInstance(int size2);
 }

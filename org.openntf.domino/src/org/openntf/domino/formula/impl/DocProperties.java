@@ -86,7 +86,7 @@ public enum DocProperties {
 		Map<String, Object> doc = ctx.getDocument();
 
 		if (doc == null) {
-			return new ValueHolder();
+			return ValueHolder.valueDefault();
 		} else {
 			return ValueHolder.valueOf(doc.keySet());
 		}
