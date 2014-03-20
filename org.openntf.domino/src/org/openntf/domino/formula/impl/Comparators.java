@@ -117,10 +117,10 @@ public class Comparators extends OperatorsAbstract {
 		for (String[] value : values) {
 			int delta = value[0].compareToIgnoreCase(value[1]);
 			if (computer.match(delta)) {
-				return new ValueHolder(ctx.TRUE);
+				return ctx.TRUE;
 			}
 		}
-		return new ValueHolder(ctx.FALSE);
+		return ctx.FALSE;
 
 	}
 
@@ -128,9 +128,9 @@ public class Comparators extends OperatorsAbstract {
 	protected ValueHolder evaluateString(final FormulaContext ctx, final String s1, final String s2) {
 		int delta = s1.compareToIgnoreCase(s2);
 		if (computer.match(delta)) {
-			return new ValueHolder(ctx.TRUE);
+			return ctx.TRUE;
 		}
-		return new ValueHolder(ctx.FALSE);
+		return ctx.FALSE;
 	}
 
 	// ----------- Numbers
@@ -143,19 +143,19 @@ public class Comparators extends OperatorsAbstract {
 		for (double[] value : values) {
 			int delta = Double.compare(value[0], value[1]);
 			if (computer.match(delta)) {
-				return new ValueHolder(ctx.TRUE);
+				return ctx.TRUE;
 			}
 		}
-		return new ValueHolder(ctx.FALSE);
+		return ctx.FALSE;
 	}
 
 	@Override
 	protected ValueHolder evaluateNumber(final FormulaContext ctx, final double d1, final double d2) {
 		int delta = Double.compare(d1, d2);
 		if (computer.match(delta)) {
-			return new ValueHolder(ctx.TRUE);
+			return ctx.TRUE;
 		}
-		return new ValueHolder(ctx.FALSE);
+		return ctx.FALSE;
 	}
 
 	// ----------- Integers
@@ -168,19 +168,19 @@ public class Comparators extends OperatorsAbstract {
 		for (int[] value : values) {
 			int delta = value[0] - value[1];
 			if (computer.match(delta)) {
-				return new ValueHolder(ctx.TRUE);
+				return ctx.TRUE;
 			}
 		}
-		return new ValueHolder(ctx.FALSE);
+		return ctx.FALSE;
 	}
 
 	@Override
 	protected ValueHolder evaluateInt(final FormulaContext ctx, final int i1, final int i2) {
 		int delta = i1 - i2;
 		if (computer.match(delta)) {
-			return new ValueHolder(ctx.TRUE);
+			return ctx.TRUE;
 		}
-		return new ValueHolder(ctx.FALSE);
+		return ctx.FALSE;
 	}
 
 	// ----------- DateTimes
@@ -191,19 +191,19 @@ public class Comparators extends OperatorsAbstract {
 		for (DateTime[] value : values) {
 			int delta = value[0].compareTo(value[1]);
 			if (computer.match(delta)) {
-				return new ValueHolder(ctx.TRUE);
+				return ctx.TRUE;
 			}
 		}
-		return new ValueHolder(ctx.FALSE);
+		return ctx.FALSE;
 	}
 
 	@Override
 	protected ValueHolder evaluateDateTime(final FormulaContext ctx, final DateTime dt1, final DateTime dt2) {
 		int delta = dt1.compareTo(dt2);
 		if (computer.match(delta)) {
-			return new ValueHolder(ctx.TRUE);
+			return ctx.TRUE;
 		}
-		return new ValueHolder(ctx.FALSE);
+		return ctx.FALSE;
 	}
 
 }

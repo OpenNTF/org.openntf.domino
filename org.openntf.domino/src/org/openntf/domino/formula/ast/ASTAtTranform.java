@@ -40,7 +40,7 @@ public class ASTAtTranform extends SimpleNode {
 		ValueHolder ret = new ValueHolder();
 		for (int i = 0; i < list.size; i++) {
 			@SuppressWarnings("deprecation")
-			ValueHolder iter = new ValueHolder(list.get(i)); // as multi values are alle boxed. it should not affect performance here
+			ValueHolder iter = ValueHolder.valueOf(list.get(i)); // as multi values are alle boxed. it should not affect performance here
 			ValueHolder old = ctx.setVarLC(temp, iter);
 			try {
 				// Cumulate all return values

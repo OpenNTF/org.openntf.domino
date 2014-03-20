@@ -73,7 +73,7 @@ public class TestRunner extends TestRunnerStdIn {
 			time = System.currentTimeMillis();
 			for (int i = 1; i < 10000; i++) {
 				FormulaContext ctx = new FormulaContext(null, parser.getFormatter());
-				v = n.evaluate(ctx);
+				v = n.evaluate(ctx).toList();
 			}
 			time = System.currentTimeMillis() - time;
 			System.err.println("[FormulaEngine] 10000x evaluating AST tree\ttook " + time + "ms.");

@@ -40,7 +40,7 @@ public class ASTAtIfError extends SimpleNode {
 				return children[0].evaluate(ctx);
 			}
 		}
-		return new ValueHolder("");
+		return ValueHolder.valueDefault();
 	}
 
 	public void toFormula(final StringBuilder sb) {

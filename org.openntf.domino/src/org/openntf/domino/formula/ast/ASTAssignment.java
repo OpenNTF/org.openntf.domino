@@ -74,7 +74,7 @@ public class ASTAssignment extends SimpleNode {
 		try {
 			value = children[0].evaluate(ctx);
 		} catch (RuntimeException e) {
-			value = new ValueHolder(e);
+			value = ValueHolder.valueOf(e);
 		}
 		switch (type) {
 		case FIELD:

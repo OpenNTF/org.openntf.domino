@@ -41,26 +41,26 @@ public class ASTSubscript extends SimpleNode {
 
 		int idx = subscript.getInt(0); // we need it as INT here
 		if (idx < 1 || idx > base.size) {
-			throw new IndexOutOfBoundsException("Index " + idx + " not in 1.." + base.size());
+			throw new IndexOutOfBoundsException("Index " + idx + " not in 1.." + base.size);
 		}
 
 		idx--; // Formula is 1 based
 		switch (base.dataType) {
 		case ERROR:
-			return new ValueHolder(base.getError());
+			return ValueHolder.valueOf(base.getError());
 
 		case NUMBER:
 		case DOUBLE:
-			return new ValueHolder(base.getDouble(idx));
+			return ValueHolder.valueOf(base.getDouble(idx));
 
 		case INTEGER:
-			return new ValueHolder(base.getInt(idx));
+			return ValueHolder.valueOf(base.getInt(idx));
 
 		case STRING:
-			return new ValueHolder(base.getString(idx - 1));
+			return ValueHolder.valueOf(base.getString(idx - 1));
 
 		default:
-			return new ValueHolder(base.get(idx - 1));
+			return ValueHolder.valueOf(base.get(idx - 1));
 		}
 	}
 

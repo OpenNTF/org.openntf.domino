@@ -38,8 +38,8 @@ public class ASTValueDateOrKW extends SimpleNode {
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) {
 		if (dateValue != null)
-			return new ValueHolder(dateValue);
-		return new ValueHolder(image);
+			return ValueHolder.valueOf(dateValue);
+		return ValueHolder.valueOf(image);
 	}
 
 	public void init(final String image) throws ParseException {

@@ -136,6 +136,10 @@ public class FormulaShell implements Runnable {
 				if (line.equalsIgnoreCase("q")) {
 					break;
 				}
+				if (line.equalsIgnoreCase("test")) {
+					test();
+					continue;
+				}
 				try {
 					execute(line);
 				} catch (Exception e) {
@@ -187,6 +191,20 @@ public class FormulaShell implements Runnable {
 				astCache.put(line, ast);
 		}
 		return ast;
+	}
+
+	private void test() {
+		long time = System.nanoTime();
+		int i;
+		for (i = 1; i < 10000000;) {
+			i = test2(i);
+		}
+		time = System.nanoTime() - time;
+		System.out.println(formatTime(time));
+	}
+
+	private int test2(final int i) {
+		return i + 1;
 	}
 
 	private void execute(final String line) {
@@ -245,7 +263,7 @@ public class FormulaShell implements Runnable {
 			try {
 				time = System.nanoTime();
 				FormulaContext ctx1 = new FormulaContext(ntfDoc, DominoFormatter.getInstance());
-				ntfDocResult = ast.evaluate(ctx1);
+				ntfDocResult = ast.evaluate(ctx1).toList();
 				docEvaluateTime += System.nanoTime() - time;
 			} catch (EvaluateException e) {
 				System.out.println(NTF("Doc-Evaluate failed: ") + ERROR(e));
@@ -256,7 +274,7 @@ public class FormulaShell implements Runnable {
 				// benchmark the evaluate with a map as context
 				time = System.nanoTime();
 				FormulaContext ctx2 = new FormulaContext(ntfMap, DominoFormatter.getInstance());
-				ntfMapResult = ast.evaluate(ctx2);
+				ntfMapResult = ast.evaluate(ctx2).toList();
 				mapEvaluateTime += System.nanoTime() - time;
 			} catch (Throwable e) {
 				System.out.println(NTF("Map-Evaluate failed: ") + ERROR(e));

@@ -24,9 +24,11 @@ public class FormulaContext {
 	private Map<String, ValueHolder> vars = new HashMap<String, ValueHolder>();
 	private Formatter formatter;
 
-	public Object TRUE = Boolean.TRUE;
-	public Object FALSE = Boolean.FALSE;
+	public ValueHolder TRUE;
+	public ValueHolder FALSE;
 	public boolean useBooleans = true;
+
+	private ValueHolder cache;
 
 	/**
 	 * @param document
@@ -45,11 +47,11 @@ public class FormulaContext {
 	public void useBooleans(final boolean useit) {
 		useBooleans = useit;
 		if (useit) {
-			TRUE = Boolean.TRUE;
-			FALSE = Boolean.FALSE;
+			TRUE = ValueHolder.valueOf(true);
+			FALSE = ValueHolder.valueOf(false);
 		} else {
-			TRUE = Integer.valueOf(1);
-			FALSE = Integer.valueOf(0);
+			TRUE = ValueHolder.valueOf(1);
+			FALSE = ValueHolder.valueOf(0);
 		}
 	}
 
@@ -66,8 +68,10 @@ public class FormulaContext {
 	 * @return ValueHolder
 	 */
 	@SuppressWarnings("deprecation")
-	public ValueHolder getVarLC(final String varName) {
-		String key = varName;
+	public ValueHolder getVarLC(final String key) {
+		if (cache != null) {
+			return cache;
+		}
 
 		ValueHolder var = vars.get(key);
 		if (var != null) {
@@ -76,12 +80,12 @@ public class FormulaContext {
 		if (document != null) {
 			Object o = document.get(key);
 			if (o != null) {
-				var = new ValueHolder(o); // RPr here it is allowed to access the deprecate method
+				var = ValueHolder.valueOf(o); // RPr here it is allowed to access the deprecate method
 			} else {
-				var = new ValueHolder("");
+				var = ValueHolder.valueDefault();
 			}
 		} else {
-			var = new ValueHolder("");
+			var = ValueHolder.valueDefault();
 		}
 
 		vars.put(key, var);
@@ -104,7 +108,9 @@ public class FormulaContext {
 			vars.remove(key);
 			return old;
 		} else {
-			return vars.put(key, elem);
+			cache = elem;
+			return cache;
+			//return vars.put(key, elem);
 		}
 	}
 

@@ -46,7 +46,7 @@ public class ASTAtFor extends SimpleNode {
 			increment.evaluate(ctx);
 		}
 
-		return new ValueHolder(1); // returns always TRUE
+		return ctx.TRUE; // returns always TRUE
 	}
 
 	public void toFormula(final StringBuilder sb) {

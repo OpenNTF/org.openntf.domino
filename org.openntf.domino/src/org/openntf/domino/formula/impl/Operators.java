@@ -143,7 +143,7 @@ public class Operators extends OperatorsAbstract {
 
 	@Override
 	protected ValueHolder evaluateString(final FormulaContext ctx, final String s1, final String s2) {
-		return new ValueHolder(computer.compute(s1, s2));
+		return ValueHolder.valueOf(computer.compute(s1, s2));
 	}
 
 	// ----------- Numbers
@@ -161,7 +161,7 @@ public class Operators extends OperatorsAbstract {
 
 	@Override
 	protected ValueHolder evaluateNumber(final FormulaContext ctx, final double d1, final double d2) {
-		return new ValueHolder(computer.compute(d1, d2));
+		return ValueHolder.valueOf(computer.compute(d1, d2));
 	}
 
 	// ----------- Integers
@@ -179,7 +179,7 @@ public class Operators extends OperatorsAbstract {
 
 	@Override
 	protected ValueHolder evaluateInt(final FormulaContext ctx, final int i1, final int i2) {
-		return new ValueHolder(computer.compute(i1, i2));
+		return ValueHolder.valueOf(computer.compute(i1, i2));
 	}
 
 	// ----------- DateTimes
@@ -197,7 +197,7 @@ public class Operators extends OperatorsAbstract {
 
 	@Override
 	protected ValueHolder evaluateDateTime(final FormulaContext ctx, final DateTime dt1, final DateTime dt2) {
-		return new ValueHolder(computer.compute(dt1, dt2));
+		return ValueHolder.valueOf(computer.compute(dt1, dt2));
 	}
 
 }

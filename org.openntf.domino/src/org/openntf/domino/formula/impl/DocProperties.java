@@ -88,7 +88,7 @@ public enum DocProperties {
 		if (doc == null) {
 			return new ValueHolder();
 		} else {
-			return new ValueHolder(doc.keySet());
+			return ValueHolder.valueOf(doc.keySet());
 		}
 	}
 

@@ -83,12 +83,12 @@ public enum Arithmetic {
 	public static ValueHolder atMax(final ValueHolder[] params) {
 
 		if (params.length == 1) {
-			double ret = Double.MIN_VALUE;
 			ValueHolder vh = params[0];
+			double ret = Double.MIN_VALUE;
 			for (int i = 0; i < vh.size; i++) {
 				ret = Math.max(ret, vh.getDouble(i));
 			}
-			return new ValueHolder(ret);
+			return ValueHolder.valueOf(ret);
 		} else if (ValueHolder.hasMultiValues(params)) {
 
 			ParameterCollectionDouble values = new ParameterCollectionDouble(params, false);
@@ -116,7 +116,7 @@ public enum Arithmetic {
 			for (int i = 0; i < vh.size; i++) {
 				ret = Math.min(ret, vh.getDouble(i));
 			}
-			return new ValueHolder(ret);
+			return ValueHolder.valueOf(ret);
 		} else if (ValueHolder.hasMultiValues(params)) {
 			ParameterCollectionDouble values = new ParameterCollectionDouble(params, false);
 			ValueHolder ret = new ValueHolder();
@@ -146,9 +146,11 @@ public enum Arithmetic {
 		return (long) (arg1.doubleValue() - (long) divres * arg2.doubleValue());
 	}
 
+	private static ValueHolder PI = ValueHolder.valueOf(Math.PI);
+
 	@ParamCount(0)
 	public static ValueHolder atPi() {
-		return new ValueHolder(Math.PI);
+		return PI;
 	}
 
 	@ParamCount(2)
@@ -158,7 +160,7 @@ public enum Arithmetic {
 
 	@ParamCount(0)
 	public static ValueHolder atRandom() {
-		return new ValueHolder(Math.random());
+		return ValueHolder.valueOf(Math.random());
 	}
 
 	@ParamCount(1)
@@ -179,12 +181,13 @@ public enum Arithmetic {
 	@ParamCount({ 1, Integer.MAX_VALUE })
 	public static ValueHolder atSum(final ValueHolder[] params) {
 		double ret = 0;
+
 		for (ValueHolder valueHolder : params) {
-			for (Object value : valueHolder) {
-				ret += ((Number) value).doubleValue();
+			for (int i = 0; i < valueHolder.size; i++) {
+				ret += valueHolder.getDouble(i);
 			}
 		}
-		return new ValueHolder(ret);
+		return ValueHolder.valueOf(ret);
 	}
 
 	@ParamCount(1)

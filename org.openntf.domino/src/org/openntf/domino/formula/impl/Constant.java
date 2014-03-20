@@ -10,7 +10,7 @@ public enum Constant {
 	@ParamCount(0)
 	@Incomplete
 	// Do not know if that will work
-	public static Object atAll(final FormulaContext ctx) {
+	public static ValueHolder atAll(final FormulaContext ctx) {
 		return ctx.TRUE;
 	}
 
@@ -29,22 +29,22 @@ public enum Constant {
 	}
 
 	@ParamCount(0)
-	public static Object atFalse(final FormulaContext ctx) {
+	public static ValueHolder atFalse(final FormulaContext ctx) {
 		return ctx.FALSE;
 	}
 
 	@ParamCount(0)
-	public static Object atNo(final FormulaContext ctx) {
+	public static ValueHolder atNo(final FormulaContext ctx) {
 		return ctx.FALSE;
 	}
 
 	@ParamCount(0)
-	public static Object atTrue(final FormulaContext ctx) {
+	public static ValueHolder atTrue(final FormulaContext ctx) {
 		return ctx.TRUE;
 	}
 
 	@ParamCount(0)
-	public static Object atYes(final FormulaContext ctx) {
+	public static ValueHolder atYes(final FormulaContext ctx) {
 		return ctx.TRUE;
 	}
 

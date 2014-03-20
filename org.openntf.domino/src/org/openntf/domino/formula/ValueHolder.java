@@ -18,21 +18,32 @@ package org.openntf.domino.formula;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
-import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.openntf.domino.DateTime;
 
 /**
- * Valueholder to hold single or multiple values
+ * Valueholder to hold single or multiple values.
+ * 
+ * When evaluating a formula, every String/int/double value is wrapped in a "ValueHolder". The holder has several get-methods to return the
+ * different types.
+ * 
+ * The code itself might look strange, but this was done to be as fast as possible
  * 
  * @author Roland Praml, Foconis AG
  * 
  */
-public class ValueHolder extends AbstractList<Object> implements Serializable {
+public class ValueHolder implements Serializable {
 	private static final long serialVersionUID = 8290517470597891417L;
 
+	/**
+	 * These are the possible
+	 * 
+	 * @author Roland Praml, Foconis AG
+	 * 
+	 */
 	public enum DataType {
 		ERROR, STRING, INTEGER(true), NUMBER(true), DOUBLE(true), DATETIME, BOOLEAN, _UNSET, OBJECT;
 		public boolean numeric = false;
@@ -45,14 +56,47 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 		}
 	}
 
-	// For performance reasons we allow direct access to these members
 	private Object values[];
 	private int valueInt;
 	private double valueDbl;
+	private boolean immutable;
 
+	// For performance reasons we allow direct access to these members
 	public int size;
-	public boolean dirty;
 	public DataType dataType = DataType._UNSET;
+
+	// Caches
+	private static final ValueHolder TRUE;
+	private static final ValueHolder FALSE;
+
+	private static final ValueHolder integerCache[];
+	private static final ValueHolder stringCache[];
+	static {
+		TRUE = new ValueHolder();
+		TRUE.add(Boolean.TRUE);
+		TRUE.immutable = true;
+
+		FALSE = new ValueHolder();
+		FALSE.add(Boolean.FALSE);
+		FALSE.immutable = true;
+
+		integerCache = new ValueHolder[256];
+		stringCache = new ValueHolder[256];
+		for (int i = 0; i < 256; i++) {
+			ValueHolder vh = integerCache[i] = new ValueHolder();
+			vh.add(i - 128);
+			vh.immutable = true;
+
+			vh = stringCache[i] = new ValueHolder();
+			if (i == 0) {
+				vh.add("");
+			} else {
+				vh.add(String.valueOf((char) i));
+			}
+			vh.immutable = true;
+		}
+
+	}
 
 	public ValueHolder() {
 	}
@@ -62,42 +106,112 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 	 * 
 	 */
 	@Deprecated
-	public ValueHolder(final Object init) {
+	public static ValueHolder valueOf(final Object init) {
+
+		if (init instanceof String)
+			return valueOf((String) init);
+
+		if (init instanceof Integer)
+			return valueOf(((Integer) init).intValue());
+
+		if (init instanceof Number)
+			return valueOf(((Number) init).doubleValue());
+
+		if (init instanceof Boolean)
+			return valueOf(((Boolean) init).booleanValue());
+
 		if (init != null && init.getClass().isArray()) {
 			int lh = Array.getLength(init);
-			grow(lh);
+			if (lh == 0)
+				return valueDefault();
+			if (lh == 1)
+				return valueOf(Array.get(init, 0));
+
+			ValueHolder vh = new ValueHolder();
+			vh.grow(lh);
 			for (int i = 0; i < lh; i++) {
-				add(Array.get(init, i));
+				vh.add(Array.get(init, i));
 			}
+			vh.immutable = true;
+			return vh;
 		} else if (init instanceof Collection) {
-			addAll((Collection<?>) init);
+			Collection<?> c = (Collection<?>) init;
+			int lh = c.size();
+			if (lh == 0)
+				return valueDefault();
+			if (lh == 1)
+				return valueOf(c.iterator().next());
+			ValueHolder vh = new ValueHolder();
+			vh.grow(lh);
+			for (Object v : c) {
+				vh.add(v);
+			}
+			vh.immutable = true;
+			return vh;
+
 		} else {
-			add(init);
+
+			ValueHolder vh = new ValueHolder();
+			vh.add(init);
+			vh.immutable = true;
+			return vh;
 		}
 	}
 
-	public ValueHolder(final RuntimeException init) {
-		setError(init);
+	public static ValueHolder valueOf(final RuntimeException init) {
+		ValueHolder vh = new ValueHolder();
+		vh.setError(init);
+		vh.immutable = true;
+		return vh;
 	}
 
-	public ValueHolder(final int init) {
-		add(init);
+	public static ValueHolder valueOf(final int init) {
+		if (-128 <= init && init < 128) {
+			return integerCache[init + 128];
+		}
+		ValueHolder vh = new ValueHolder();
+		vh.add(init);
+		vh.immutable = true;
+		return vh;
 	}
 
-	public ValueHolder(final double init) {
-		add(init);
+	public static ValueHolder valueOf(final double init) {
+		ValueHolder vh = new ValueHolder();
+		vh.add(init);
+		vh.immutable = true;
+		return vh;
 	}
 
-	public ValueHolder(final String init) {
-		add(init);
+	public static ValueHolder valueOf(final String init) {
+		if (init.length() == 0)
+			return stringCache[0];
+		if (init.length() == 1) {
+			char ch = init.charAt(0);
+			if (ch < 256)
+				return stringCache[0];
+		}
+
+		ValueHolder vh = new ValueHolder();
+		vh.add(init);
+		vh.immutable = true;
+		return vh;
 	}
 
-	public ValueHolder(final DateTime init) {
-		add(init);
+	public static ValueHolder valueOf(final DateTime init) {
+		ValueHolder vh = new ValueHolder();
+		vh.add(init);
+		vh.immutable = true;
+		return vh;
 	}
 
-	public ValueHolder(final Boolean init) {
-		add(init);
+	public static ValueHolder valueOf(final boolean init) {
+		if (init)
+			return TRUE;
+		return FALSE;
+	}
+
+	public static ValueHolder valueDefault() {
+		return stringCache[0];
 	}
 
 	/**
@@ -119,7 +233,7 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 
 	private void grow() {
 		if (values == null) {
-			values = new Object[0];
+			values = new Object[1];
 
 		} else if (values.length > size) {
 			return;
@@ -146,8 +260,8 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 	 * @param i
 	 *            the position
 	 * @return the entry as Object
+	 * @Deprecated if you know the datatype, use the apropriate get-Method!
 	 */
-	@Override
 	@Deprecated
 	public Object get(final int i) {
 		switch (dataType) {
@@ -161,9 +275,15 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 		case INTEGER:
 			if (size == 1)
 				return valueInt;
+			break;
 		default:
 			break;
 		}
+		return getObject(i);
+
+	}
+
+	public Object getObject(final int i) {
 		if (size == 0) {
 			return null; // TODO: What to do?
 		} else if (i < size) {
@@ -182,7 +302,7 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 	 */
 	public String getString(final int i) {
 		if (dataType == DataType.STRING) {
-			return (String) get(i);
+			return (String) getObject(i);
 		}
 		throw new ClassCastException("STRING expected. Got '" + dataType + "'");
 	}
@@ -193,7 +313,7 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 	 */
 	public DateTime getDateTime(final int i) {
 		if (dataType == DataType.DATETIME) {
-			return (DateTime) get(i);
+			return (DateTime) getObject(i);
 		}
 		throw new ClassCastException("DATETIME expected. Got '" + dataType + "'");
 	}
@@ -204,38 +324,43 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 	 */
 	public int getInt(final int i) {
 		if (dataType == DataType.INTEGER) {
-			if (i == 0)
+			if (i == 0 || size == 1)
 				return valueInt;
-			return (Integer) get(i);
+			return (Integer) getObject(i);
 		}
 		if (dataType.numeric) {
-			if (i == 0)
+			if (i == 0 || size == 1)
 				return (int) valueDbl;
-			return ((Number) get(i)).intValue();
+			return ((Number) getObject(i)).intValue();
 		}
 		throw new ClassCastException("INTEGER/NUMBER expected. Got '" + dataType + "'");
 	}
 
 	public double getDouble(final int i) {
 		if (dataType == DataType.DOUBLE) {
-			if (i == 0)
+			if (i == 0 || size == 1)
 				return valueDbl;
 		}
 		if (dataType.numeric) {
-			if (i == 0)
-				return valueInt;
+			if (i == 0 || size == 1) {
+				return (dataType == DataType.INTEGER) ? valueInt : valueDbl;
+			}
 			return ((Number) get(i)).doubleValue();
 		}
 		throw new ClassCastException("DOUBLE/NUMBER expected. Got '" + dataType + "'");
 	}
 
 	public boolean isTrue(final FormulaContext ctx) {
+		if (dataType == DataType.ERROR)
+			throw getError();
+
 		if (ctx.useBooleans) {
+
 			if (dataType != DataType.BOOLEAN)
 				throw new IllegalArgumentException("BOOLEAN expected. Got '" + dataType + "'");
 
 			for (int i = 0; i < size; i++) {
-				if ((Boolean) values[i]) {
+				if (((Boolean) values[i]).booleanValue()) {
 					return true;
 				}
 			}
@@ -323,17 +448,6 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 	}
 
 	/* (non-Javadoc)
-	 * @see java.util.AbstractCollection#addAll(java.util.Collection)
-	 */
-	@Override
-	@Deprecated
-	public boolean addAll(final Collection<? extends Object> other) {
-		// gives performance
-		grow(other.size());
-		return super.addAll(other);
-	}
-
-	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -342,18 +456,15 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 		return Arrays.toString(values);
 	}
 
-	@Override
-	@Deprecated
-	public int size() {
-		return size;
-	}
-
 	// -- Add methods
 	/**
 	 * Adds the value as String. You have to ensure that you have called grow() before!
 	 * 
 	 */
 	public boolean add(final String obj) {
+		if (immutable)
+			throw new UnsupportedOperationException("immutable");
+
 		switch (dataType) {
 		case ERROR:
 			return false;
@@ -366,10 +477,9 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 			throw new IllegalArgumentException("Cannot mix datatypes " + dataType + " and STRING");
 		}
 		if (size == 0)
-			values = new Object[0];
+			values = new Object[1];
 		grow();
 		values[size++] = obj;
-		dirty = true;
 		return true;
 	}
 
@@ -378,6 +488,9 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 	 * 
 	 */
 	public boolean add(final int value) {
+		if (immutable)
+			throw new UnsupportedOperationException("immutable");
+
 		switch (dataType) {
 		case ERROR:
 			return false;
@@ -385,7 +498,6 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 			dataType = DataType.INTEGER;
 			valueInt = value;
 			size++;
-			dirty = true;
 			return true;
 
 		case DOUBLE:
@@ -406,9 +518,8 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 		default:
 			throw new IllegalArgumentException("Cannot mix datatypes " + dataType + " and INTEGER");
 		}
-
+		grow();
 		values[size++] = Integer.valueOf(value);
-		dirty = true;
 		return true;
 	}
 
@@ -416,6 +527,9 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 	 * Adds a double as value
 	 */
 	public boolean add(final double value) {
+		if (immutable)
+			throw new UnsupportedOperationException("immutable");
+
 		switch (dataType) {
 		case ERROR:
 			return false;
@@ -423,17 +537,17 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 			dataType = DataType.DOUBLE;
 			valueDbl = value;
 			size++;
-			dirty = true;
 			return true;
 
 		case DOUBLE:
-			dataType = DataType.NUMBER;
 			if (size == 1) {
 				values = new Object[1];
 				values[0] = valueDbl;
 			}
 			break;
 		case INTEGER:
+			dataType = DataType.NUMBER;
+			valueDbl = (double) valueInt;
 			if (size == 1) {
 				values = new Object[1];
 				values[0] = valueInt;
@@ -444,12 +558,14 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 		default:
 			throw new IllegalArgumentException("Cannot mix datatypes " + dataType + " and DOUBLE");
 		}
-
+		grow();
 		values[size++] = Double.valueOf(value);
 		return true;
 	}
 
 	public boolean add(final Boolean bool) {
+		if (immutable)
+			throw new UnsupportedOperationException("immutable");
 		switch (dataType) {
 		case _UNSET:
 			dataType = DataType.BOOLEAN;
@@ -460,7 +576,7 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 			throw new IllegalArgumentException("Cannot mix datatypes " + dataType + " and BOOLEAN");
 		}
 		if (size == 0)
-			values = new Object[0];
+			values = new Object[1];
 		grow();
 
 		values[size++] = bool;
@@ -468,6 +584,9 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 	}
 
 	public boolean add(final DateTime bool) {
+		if (immutable)
+			throw new UnsupportedOperationException("immutable");
+
 		// maybe we need calendar support here
 		switch (dataType) {
 		case _UNSET:
@@ -479,14 +598,14 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 			throw new IllegalArgumentException("Cannot mix datatypes " + dataType + " and DATETIME");
 		}
 		if (size == 0)
-			values = new Object[0];
+			values = new Object[1];
 		values[size++] = bool;
 		return true;
 	}
 
 	public void setError(final RuntimeException e) {
 		dataType = DataType.ERROR;
-		values = new Object[0];
+		values = new Object[1];
 		values[0] = e;
 		size = 1;
 	}
@@ -494,9 +613,11 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 	/**
 	 * Add anything as value. Better use the apropriate "add" method. it is faster
 	 */
-	@Override
 	@Deprecated
 	public boolean add(final Object obj) {
+		if (immutable)
+			throw new UnsupportedOperationException("immutable");
+
 		if (dataType == DataType.ERROR) {
 			return false;
 		}
@@ -526,36 +647,6 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 		return true;
 	}
 
-	@Override
-	@Deprecated
-	public void clear() {
-		size = 0;
-		dirty = true;
-		dataType = DataType._UNSET;
-	}
-
-	@Override
-	public Object[] toArray() {
-		Object[] ret = new Object[size];
-
-		System.arraycopy(values, 0, ret, 0, size);
-		return ret;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T[] toArray(T[] arg0) {
-		if (size > arg0.length) {
-			Class<?> localClass = arg0.getClass().getComponentType();
-			arg0 = (T[]) Array.newInstance(localClass, size);
-		}
-		System.arraycopy(values, 0, arg0, 0, size);
-		if (size < arg0.length) {
-			arg0[size] = null;
-		}
-		return arg0;
-	}
-
 	public static boolean hasMultiValues(final ValueHolder[] params) {
 		if (params != null) {
 			for (int i = 0; i < params.length; i++) {
@@ -564,5 +655,12 @@ public class ValueHolder extends AbstractList<Object> implements Serializable {
 			}
 		}
 		return false;
+	}
+
+	public List<Object> toList() {
+		if (size > 1) {
+			return Arrays.asList(values);
+		}
+		return Arrays.asList(get(0));
 	}
 }

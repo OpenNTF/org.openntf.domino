@@ -47,7 +47,7 @@ public class ASTAtDoWhile extends SimpleNode {
 				}
 			} while (ret != null && ret.isTrue(ctx));
 		}
-		return new ValueHolder(1); // returns always TRUE
+		return ValueHolder.valueOf(1); // returns always TRUE
 	}
 
 	public void toFormula(final StringBuilder sb) {

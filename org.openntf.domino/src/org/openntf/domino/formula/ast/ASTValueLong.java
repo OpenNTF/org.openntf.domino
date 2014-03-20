@@ -22,7 +22,7 @@ import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
 
 public class ASTValueLong extends SimpleNode {
-	private int value; // TODO Rename this in Parser
+	private ValueHolder value;
 
 	public ASTValueLong(final int id) {
 		super(id);
@@ -33,7 +33,8 @@ public class ASTValueLong extends SimpleNode {
 	}
 
 	public void parseLong(final String image) {
-		value = Integer.valueOf(image);
+		int i = Integer.valueOf(image);
+		value = ValueHolder.valueOf(i);
 	}
 
 	@Override
@@ -48,7 +49,7 @@ public class ASTValueLong extends SimpleNode {
 
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) {
-		return new ValueHolder(value);
+		return value;
 	}
 }
 /* JavaCC - OriginalChecksum=625b6068dd3ec23af8e3b2ef7e02a45a (do not edit this line) */
