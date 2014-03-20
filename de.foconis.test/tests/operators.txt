@@ -1,0 +1,47 @@
+REM "Testing negators"; ""
+1
+2
+-1
+-2
+!1
+!2
+int1
+int2
+-int1
+-int2
+!int1
+!int2
+"Hello"
+"H"
+-"a"
+!"a"
+[Today]
+-[Today]
+![Today]
+
+REM "Testing operators"; ""
+1+1
+2+2
+int1 + int1
+int1 + int2
+1*+2
+1*+2:3
+1:2*+3
+1:2*+3:4
+1:2*+3:4,0
+1:2,0*+3:4
+"a"+2
+2+"a"
+"a"+"b"
+"a":2
+2:"a"
+[Today]+1
+1+[Today]
+
+2-1
+3-2
+
+
+1*2
+1**2
+

@@ -153,7 +153,7 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 	public boolean add(final Object obj) {
 		if (obj instanceof String)
 			return add((String) obj);
-		if (obj instanceof String)
+		if (obj instanceof DateTime)
 			return add((DateTime) obj);
 
 		switch (dataType) {
@@ -173,6 +173,7 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 		if (dataType == DataType.ERROR)
 			return false;
 
+		//System.out.println("Adding " + other.dataType + " to " + dataType);
 		switch (other.dataType) {
 		case _UNSET:
 			return false; // we do not add unset
@@ -187,6 +188,8 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 			return super.addAll(other);
 
 		default:
+			if (dataType == DataType._UNSET)
+				dataType = other.dataType;
 			if (dataType == DataType.OBJECT || dataType == other.dataType) {
 				@SuppressWarnings("unchecked")
 				ValueHolderObject<T> toAdd = (ValueHolderObject<T>) other;

@@ -160,10 +160,20 @@ public class ValueHolderNumber extends ValueHolder implements Serializable {
 			return false;
 
 		case _UNSET:
-			dataType = DataType.DOUBLE;
+			if (Integer.MIN_VALUE < d && d < Integer.MAX_VALUE && d == (double) ((int) d)) {
+				valuesI[size] = ((int) d);
+				dataType = DataType.INTEGER;
+			} else {
+				dataType = DataType.DOUBLE;
+			}
 
 		case INTEGER:
-			dataType = DataType.NUMBER;
+			if (Integer.MIN_VALUE < d && d < Integer.MAX_VALUE && d == (double) ((int) d)) {
+				valuesI[size] = ((int) d);
+			} else {
+				dataType = DataType.NUMBER;
+			}
+
 			break;
 		case DOUBLE:
 		case NUMBER:

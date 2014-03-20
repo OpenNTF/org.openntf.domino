@@ -152,6 +152,7 @@ public class FormulaShell implements Runnable {
 			e.printStackTrace();
 		}
 		//System.out.println(Factory.dumpCounters(true));
+		db = null;
 		Factory.terminate();
 		System.out.println(Factory.dumpCounters(true));
 	}

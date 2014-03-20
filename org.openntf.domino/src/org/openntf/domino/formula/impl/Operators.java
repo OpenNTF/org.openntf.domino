@@ -47,7 +47,7 @@ public class Operators extends OperatorsAbstract {
 				@Override
 				public int compute(final int v1, final int v2) throws IntegerOverflowException {
 					long res = ((long) v1 + (long) v2);
-					if (res < Integer.MIN_VALUE || Integer.MAX_VALUE > res) {
+					if (res < Integer.MIN_VALUE || Integer.MAX_VALUE < res) {
 						throw new IntegerOverflowException();
 					}
 					return (int) res;
@@ -69,7 +69,7 @@ public class Operators extends OperatorsAbstract {
 				@Override
 				public int compute(final int v1, final int v2) throws IntegerOverflowException {
 					long res = ((long) v1 - (long) v2);
-					if (res < Integer.MIN_VALUE || Integer.MAX_VALUE > res) {
+					if (res < Integer.MIN_VALUE || Integer.MAX_VALUE < res) {
 						throw new IntegerOverflowException();
 					}
 					return (int) res;
@@ -87,7 +87,7 @@ public class Operators extends OperatorsAbstract {
 				@Override
 				public int compute(final int v1, final int v2) throws IntegerOverflowException {
 					long res = ((long) v1 * (long) v2);
-					if (res < Integer.MIN_VALUE || Integer.MAX_VALUE > res) {
+					if (res < Integer.MIN_VALUE || Integer.MAX_VALUE < res) {
 						throw new IntegerOverflowException();
 					}
 					return (int) res;

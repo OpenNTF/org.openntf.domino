@@ -126,6 +126,9 @@ public abstract class ValueHolder implements Serializable {
 			throw new UnsupportedOperationException("Cannot return objectholder for " + clazz);
 		}
 
+		if (Number.class.isAssignableFrom(clazz))
+			return new ValueHolderNumber(size);
+
 		return new ValueHolderObject<Object>(size);
 
 	}
@@ -137,7 +140,6 @@ public abstract class ValueHolder implements Serializable {
 	 */
 	@Deprecated
 	public static ValueHolder valueOf(final Object init) {
-		ValueHolder vh = null;
 		if (init == null)
 			return valueDefault();
 
@@ -153,6 +155,7 @@ public abstract class ValueHolder implements Serializable {
 		if (init instanceof Boolean)
 			return valueOf(((Boolean) init).booleanValue());
 
+		ValueHolder vh = null;
 		// Array handling and other objects
 		if (init.getClass().isArray()) {
 			int lh = Array.getLength(init);
@@ -256,8 +259,8 @@ public abstract class ValueHolder implements Serializable {
 			return stringCache[0];
 		if (init.length() == 1) {
 			char ch = init.charAt(0);
-			if (ch < 256)
-				return stringCache[0];
+			if (0 < ch && ch < 256)
+				return stringCache[ch];
 		}
 
 		ValueHolder vh = new ValueHolderObject<String>(1);
