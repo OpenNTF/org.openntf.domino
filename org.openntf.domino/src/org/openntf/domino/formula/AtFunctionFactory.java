@@ -32,6 +32,7 @@ import org.openntf.domino.formula.impl.Negators;
 import org.openntf.domino.formula.impl.NotImplemented;
 import org.openntf.domino.formula.impl.NotSupported;
 import org.openntf.domino.formula.impl.Operators;
+import org.openntf.domino.formula.impl.OperatorsBool;
 
 public class AtFunctionFactory {
 
@@ -114,6 +115,7 @@ public class AtFunctionFactory {
 		if (instance == null) {
 			instance = new AtFunctionFactory();
 			instance.addFactory(new Operators.Factory());
+			instance.addFactory(new OperatorsBool.Factory());
 			instance.addFactory(new Comparators.Factory());
 			instance.addFactory(new Negators.Factory());
 			instance.addFactory(new NotImplemented.Factory());

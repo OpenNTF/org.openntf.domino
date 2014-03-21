@@ -31,7 +31,7 @@ import org.openntf.domino.formula.ValueHolder;
  * @author Roland Praml, Foconis AG
  * 
  */
-public class Operators extends OperatorsAbstract {
+public class OperatorsBool extends OperatorsAbstract {
 
 	/**
 	 * The Factory that returns a set of operators
@@ -42,91 +42,49 @@ public class Operators extends OperatorsAbstract {
 			super();
 
 			// Define the computers
-			OperatorImpl add = new OperatorImpl("+") {
+			OperatorBoolImpl or = new OperatorBoolImpl("|") {
 
 				@Override
-				public int compute(final int v1, final int v2) throws IntegerOverflowException {
-					long res = ((long) v1 + (long) v2);
-					if (res < Integer.MIN_VALUE || Integer.MAX_VALUE < res) {
-						throw new IntegerOverflowException();
-					}
-					return (int) res;
+				public boolean compute(final int v1, final int v2) throws IntegerOverflowException {
+					return (v1 != 0) | (v2 != 0);
 				}
 
 				@Override
-				public double compute(final double v1, final double v2) {
-					return v1 + v2;
+				public boolean compute(final double v1, final double v2) {
+					return ((int) v1 != 0) | ((int) v2 != 0);
 				}
 
 				@Override
-				public String compute(final String v1, final String v2) {
-					return v1.concat(v2);
+				public boolean compute(final boolean b1, final boolean b2) {
+					return b1 | b2;
 				}
 			};
 
-			OperatorImpl sub = new OperatorImpl("-") {
+			// Define the computers
+			OperatorBoolImpl and = new OperatorBoolImpl("&") {
 
 				@Override
-				public int compute(final int v1, final int v2) throws IntegerOverflowException {
-					long res = ((long) v1 - (long) v2);
-					if (res < Integer.MIN_VALUE || Integer.MAX_VALUE < res) {
-						throw new IntegerOverflowException();
-					}
-					return (int) res;
+				public boolean compute(final int v1, final int v2) throws IntegerOverflowException {
+					return (v1 != 0) & (v2 != 0);
 				}
 
 				@Override
-				public double compute(final double v1, final double v2) {
-					return v1 - v2;
+				public boolean compute(final double v1, final double v2) {
+					return ((int) v1 != 0) & ((int) v2 != 0);
+				}
+
+				@Override
+				public boolean compute(final boolean b1, final boolean b2) {
+					return b1 & b2;
 				}
 			};
 
-			OperatorImpl mul = new OperatorImpl("*") {
-
-				@Override
-				public int compute(final int v1, final int v2) throws IntegerOverflowException {
-					long res = ((long) v1 * (long) v2);
-					if (res < Integer.MIN_VALUE || Integer.MAX_VALUE < res) {
-						throw new IntegerOverflowException();
-					}
-					return (int) res;
-				}
-
-				@Override
-				public double compute(final double v1, final double v2) {
-					return v1 * v2;
-				}
-
-			};
-
-			OperatorImpl div = new OperatorImpl("/") {
-
-				@Override
-				public int compute(final int v1, final int v2) throws IntegerOverflowException {
-					if (v1 % v2 != 0)
-						throw new IntegerOverflowException();
-					return v1 / v2;
-				}
-
-				@Override
-				public double compute(final double v1, final double v2) {
-					return v1 / v2;
-				}
-
-			};
-
-			init(new Operators(add, "+"), 		// 
-					new Operators(add, "*+"), 	//
-					new Operators(sub, "-"), 	//
-					new Operators(sub, "*-"), 	//
-					new Operators(mul, "*"), 	//
-					new Operators(mul, "**"), 	//
-					new Operators(div, "/"), 	//
-					new Operators(div, "*/"));
+			init(new OperatorsBool(and, "&"), 		// 
+					new OperatorsBool(or, "|"));
 		}
 	}
 
-	private OperatorImpl computer;
+	private OperatorBoolImpl computer;
 
 	/**
 	 * The constructor. Operators shoud be constructed via Operator.Factory
@@ -134,7 +92,7 @@ public class Operators extends OperatorsAbstract {
 	 * @param operation
 	 * @param image
 	 */
-	private Operators(final OperatorImpl computer, final String image) {
+	private OperatorsBool(final OperatorBoolImpl computer, final String image) {
 		super(image);
 		this.computer = computer;
 		// Autodetect if the operation is permutative
@@ -144,18 +102,13 @@ public class Operators extends OperatorsAbstract {
 	// ----------- Strings
 	@Override
 	protected ValueHolder evaluateString(final FormulaContext ctx, final ValueHolder[] params) {
-		Collection<String[]> values = new ParameterCollectionObject<String>(params, String.class, isPermutative);
-		ValueHolder ret = ValueHolder.createValueHolder(String.class, values.size());
-		for (String[] value : values) {
-			ret.add(computer.compute(value[0], value[1]));
-		}
-		return ret;
+		throw new UnsupportedOperationException("'" + getImage() + "' is not supported for STRING");
 
 	}
 
 	@Override
 	protected ValueHolder evaluateString(final FormulaContext ctx, final String s1, final String s2) {
-		return ValueHolder.valueOf(computer.compute(s1, s2));
+		throw new UnsupportedOperationException("'" + getImage() + "' is not supported for STRING");
 	}
 
 	// ----------- Numbers
@@ -206,18 +159,12 @@ public class Operators extends OperatorsAbstract {
 	// ----------- DateTimes
 	@Override
 	protected ValueHolder evaluateDateTime(final FormulaContext ctx, final ValueHolder[] params) {
-		Collection<DateTime[]> values = new ParameterCollectionObject<DateTime>(params, DateTime.class, isPermutative);
-		ValueHolder ret = ValueHolder.createValueHolder(DateTime.class, values.size());
-
-		for (DateTime[] value : values) {
-			ret.add(computer.compute(value[0], value[1]));
-		}
-		return ret;
+		throw new UnsupportedOperationException("'" + getImage() + "' is not supported for DATETIME");
 	}
 
 	@Override
 	protected ValueHolder evaluateDateTime(final FormulaContext ctx, final DateTime dt1, final DateTime dt2) {
-		return ValueHolder.valueOf(computer.compute(dt1, dt2));
+		throw new UnsupportedOperationException("'" + getImage() + "' is not supported for STRING");
 	}
 
 	// ----------- Numbers
