@@ -33,6 +33,7 @@ import org.openntf.domino.formula.impl.NotImplemented;
 import org.openntf.domino.formula.impl.NotSupported;
 import org.openntf.domino.formula.impl.Operators;
 import org.openntf.domino.formula.impl.OperatorsBool;
+import org.openntf.domino.formula.impl.TextFunctions;
 
 public class AtFunctionFactory {
 
@@ -121,6 +122,7 @@ public class AtFunctionFactory {
 			instance.addFactory(new NotImplemented.Factory());
 			instance.addFactory(new AtFunctionFactory(Arithmetic.class));
 			instance.addFactory(new AtFunctionFactory(DocProperties.class));
+			instance.addFactory(new AtFunctionFactory(TextFunctions.class));
 			instance.addFactory(new AtFunctionFactory(Constant.class));
 			instance.addFactory(new AtFunctionFactory(NotSupported.class));
 		}
