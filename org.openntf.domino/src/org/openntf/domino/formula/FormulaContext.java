@@ -26,6 +26,7 @@ public class FormulaContext {
 
 	public ValueHolder TRUE;
 	public ValueHolder FALSE;
+	public ValueHolder NEWLINE = ValueHolder.valueOf(System.getProperty("line.separator", "\n"));
 	public boolean useBooleans = true;
 
 	/**

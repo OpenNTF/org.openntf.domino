@@ -229,4 +229,4 @@ REM "Comparator Test";""
 @All = @False
 
 @False | @True
-@NewLine
+"a" +@NewLine + "b"

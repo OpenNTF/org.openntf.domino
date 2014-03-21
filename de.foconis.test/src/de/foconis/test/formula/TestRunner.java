@@ -177,7 +177,7 @@ public class TestRunner implements Runnable {
 		List<Object> ntfDocResult = null;
 		List<Object> ntfMapResult = null;
 		List<Object> lotusResult = null;
-
+		Throwable ntfError = null;
 		boolean lotusFailed = false;
 		boolean parserFailed = false;
 		// Setup procedure, prepare the demo docs & maps
@@ -223,8 +223,7 @@ public class TestRunner implements Runnable {
 					ntfDocResult = ast.evaluate(ctx1).toList();
 				} catch (EvaluateException e) {
 					errors.append(NTF("\tDoc-Evaluate failed: ") + ERROR(e) + "\n");
-					if (VIRTUAL_CONSOLE)
-						e.printStackTrace(System.err);
+					ntfError = e;
 					parserFailed = true;
 				} catch (Throwable t) {
 					System.err.println(ERROR("FATAL") + NTF("\tDoc-Evaluate failed: ") + ERROR(t));
@@ -237,8 +236,7 @@ public class TestRunner implements Runnable {
 					ntfMapResult = ast.evaluate(ctx2).toList();
 				} catch (EvaluateException e) {
 					errors.append(NTF("\tMap-Evaluate failed: ") + ERROR(e) + "\n");
-					if (VIRTUAL_CONSOLE)
-						e.printStackTrace(System.err);
+					ntfError = e;
 					parserFailed = true;
 				} catch (Throwable t) {
 					System.err.println(ERROR("FATAL") + NTF("\tMap-Evaluate failed: ") + ERROR(t));
@@ -261,7 +259,9 @@ public class TestRunner implements Runnable {
 				System.err.println("\tExpected: " + dump(lotusResult));
 				if (parserFailed || lotusFailed) {
 					System.err.println(errors.toString());
-
+					if (ntfError != null) {
+						ntfError.printStackTrace(System.err);
+					}
 				}
 				BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
 				try {
