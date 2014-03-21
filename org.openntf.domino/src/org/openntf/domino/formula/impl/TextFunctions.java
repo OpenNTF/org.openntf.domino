@@ -6,24 +6,14 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
-import lotus.domino.DateTime;
-
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.ValueHolder.DataType;
 
 import com.ibm.commons.util.NotImplementedException;
 
 public enum TextFunctions {
 	;
-	/*----------------------------------------------------------------------------*/
-	/*
-	 * Generals
-	 */
-	/*----------------------------------------------------------------------------*/
-	private static ValueHolder boolValueHolder(final FormulaContext ctx, final boolean b) {
-		return new ValueHolder(b ? ctx.TRUE : ctx.FALSE);
-	}
-
 	/*----------------------------------------------------------------------------*/
 	/*
 	 * @Text
@@ -212,22 +202,21 @@ public enum TextFunctions {
 	 */
 	/*----------------------------------------------------------------------------*/
 	private static ValueHolder begEndCont(final FormulaContext ctx, final ValueHolder[] params, final char fkt) {
-		boolean res = false;
-		for (Object w : params[0]) {
-			String what = (String) w;
-			for (Object h : params[1]) {
-				String how = (String) h;
+
+		ValueHolder vh1 = params[0];
+		ValueHolder vh2 = params[1];
+		for (int i1 = 0; i1 < vh1.size; i1++) {
+			String what = vh1.getString(i1);
+			for (int i2 = 0; i2 < vh2.size; i2++) {
+				String how = vh2.getString(i2);
 				if ((fkt == 'b' && what.startsWith(how))		// @Begins
 						|| (fkt == 'e' && what.endsWith(how))	// @Ends
 						|| (fkt == 'c' && what.contains(how))) { // @Contains
-					res = true;
-					break;
+					return ctx.TRUE;
 				}
 			}
-			if (res)
-				break;
 		}
-		return boolValueHolder(ctx, res);
+		return ctx.FALSE;
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -311,19 +300,16 @@ public enum TextFunctions {
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(1)
 	public static ValueHolder atCount(final ValueHolder[] params) {
-		return new ValueHolder(params[0].size());
+		return ValueHolder.valueOf(params[0].size);
 	}
 
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(1)
 	public static ValueHolder atElements(final ValueHolder[] params) {
-		int res = params[0].size();
-		if (res == 1) {
-			Object o = params[0].get(0);
-			if (o == null || (o instanceof String && ((String) o).isEmpty()))
-				res = 0;
-		}
-		return new ValueHolder(res);
+		int res = params[0].size;
+		if (res == 1 && params[0].dataType == DataType.STRING && params[0].getString(0).isEmpty())
+			res = 0;
+		return ValueHolder.valueOf(res);
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -339,20 +325,21 @@ public enum TextFunctions {
 	/*----------------------------------------------------------------------------*/
 	@ParamCount({ 1, 2 })
 	public static ValueHolder atImplode(final ValueHolder[] params) {
-		String sep = (params.length == 1) ? " " : params[1].getText(0);
-		int bedarf = (params[0].size() - 1) * sep.length();
-		for (Object o : params[0])
-			bedarf += ((String) o).length();
+		String sep = (params.length == 1) ? " " : params[1].getString(0);
+		ValueHolder vh = params[0];
+		int bedarf = (vh.size - 1) * sep.length();
+		for (int i = 0; i < vh.size; i++)
+			bedarf += vh.getString(i).length();
 		StringBuffer sb = new StringBuffer(bedarf);
 		boolean first = true;
-		for (Object o : params[0]) {
+		for (int i = 0; i < vh.size; i++) {
 			if (first)
 				first = false;
 			else
 				sb.append(sep);
-			sb.append((String) o);
+			sb.append(vh.getString(i));
 		}
-		return new ValueHolder(sb.toString());
+		return ValueHolder.valueOf(sb.toString());
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -362,34 +349,26 @@ public enum TextFunctions {
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(1)
 	public static ValueHolder atIsNull(final FormulaContext ctx, final ValueHolder[] params) {
-		Integer i = (Integer) atElements(params).get(0);
-		return boolValueHolder(ctx, i == 0);
-	}
-
-	/*----------------------------------------------------------------------------*/
-	public static boolean isXXX(final ValueHolder param0, final Class<?> cls) {
-		for (Object o : param0)
-			if (!cls.isInstance(o))
-				return false;
-		return true;
+		Integer i = atElements(params).getInt(0);
+		return (i == 0) ? ctx.TRUE : ctx.FALSE;
 	}
 
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(1)
 	public static ValueHolder atIsNumber(final FormulaContext ctx, final ValueHolder[] params) {
-		return boolValueHolder(ctx, isXXX(params[0], Number.class));
+		return params[0].dataType.numeric ? ctx.TRUE : ctx.FALSE;
 	}
 
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(1)
 	public static ValueHolder atIsText(final FormulaContext ctx, final ValueHolder[] params) {
-		return boolValueHolder(ctx, isXXX(params[0], String.class));
+		return (params[0].dataType == DataType.STRING) ? ctx.TRUE : ctx.FALSE;
 	}
 
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(1)
 	public static ValueHolder atIsTime(final FormulaContext ctx, final ValueHolder[] params) {
-		return boolValueHolder(ctx, isXXX(params[0], DateTime.class));
+		return (params[0].dataType == DataType.DATETIME) ? ctx.TRUE : ctx.FALSE;
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -399,24 +378,25 @@ public enum TextFunctions {
 	/*----------------------------------------------------------------------------*/
 	@ParamCount({ 2, 3 })
 	public static ValueHolder atKeywords(final ValueHolder[] params) {
-		String seps = (params.length == 2) ? "?. ,!;:[](){}\"<>" : params[2].getText(0);
+		String seps = (params.length == 2) ? "?. ,!;:[](){}\"<>" : params[2].getString(0);
 		boolean sepsEmpty = seps.isEmpty();
+		ValueHolder vh = params[0];
 		String testStr;
-		if (params[0].size() == 1)
-			testStr = (String) params[0].get(0);
+		if (vh.size == 1)
+			testStr = vh.getString(0);
 		else {
-			int bedarf = params[0].size() - 1;
-			for (Object o : params[0])
-				bedarf += ((String) o).length();
+			int bedarf = vh.size - 1;
+			for (int i = 0; i < vh.size; i++)
+				bedarf += vh.getString(i).length();
 			StringBuffer sb = new StringBuffer(bedarf + 10);
 			boolean first = true;
 			char c = sepsEmpty ? (char) 1 : seps.charAt(0);
-			for (Object o : params[0]) {
+			for (int i = 0; i < vh.size; i++) {
 				if (first)
 					first = false;
 				else
 					sb.append(c);
-				sb.append((String) o);
+				sb.append(vh.getString(i));
 			}
 			testStr = sb.toString();
 		}
@@ -425,16 +405,19 @@ public enum TextFunctions {
 			keywordsNoSeps(ts, testStr, params[1]);
 		else
 			keywordsWithSeps(ts, seps, testStr, params[1]);
-		ValueHolder ret = new ValueHolder();
-		ret.addAll(ts);
+		ValueHolder ret = ValueHolder.createValueHolder(String.class, ts.size());
+		for (String s : ts)
+			ret.add(s);
 		return ret;
 	}
 
 	/*----------------------------------------------------------------------------*/
 	private static void keywordsNoSeps(final TreeSet<String> ts, final String testStr, final ValueHolder keywords) {
-		for (Object o : keywords)
-			if (testStr.indexOf((String) o) >= 0)
-				ts.add((String) o);
+		for (int i = 0; i < keywords.size; i++) {
+			String s = keywords.getString(i);
+			if (testStr.indexOf(s) >= 0)
+				ts.add(s);
+		}
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -457,9 +440,11 @@ public enum TextFunctions {
 		HashSet<String> hs = new HashSet<String>();
 		for (int i = 0; i < sArr.length; i++)
 			hs.add(sArr[i]);
-		for (Object o : keywords)
-			if (hs.contains(o))
-				ts.add((String) o);
+		for (int i = 0; i < keywords.size; i++) {
+			String s = keywords.getString(i);
+			if (hs.contains(s))
+				ts.add(s);
+		}
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -469,19 +454,15 @@ public enum TextFunctions {
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(2)
 	public static ValueHolder atRegExpMatches(final FormulaContext ctx, final ValueHolder[] params) {
-		boolean res = false;
-		for (Object r : params[1]) {
-			Pattern regPatt = Pattern.compile((String) r);
-			for (Object t : params[0]) {
-				if (regPatt.matcher((String) t).matches()) {
-					res = true;
-					break;
-				}
-			}
-			if (res)
-				break;
+		ValueHolder vhTester = params[0];
+		ValueHolder vhPatterns = params[1];
+		for (int ip = 0; ip < vhPatterns.size; ip++) {
+			Pattern regPatt = Pattern.compile(vhPatterns.getString(ip));
+			for (int it = 0; it < vhTester.size; it++)
+				if (regPatt.matcher(vhTester.getString(it)).matches())
+					return ctx.TRUE;
 		}
-		return boolValueHolder(ctx, res);
+		return ctx.FALSE;
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -496,9 +477,10 @@ public enum TextFunctions {
 	@ParamCount(3)
 	public static ValueHolder atReplace(final ValueHolder[] params) {
 		Map<String, String> replacer = getReplaceMap(params[1], params[2]);
-		ValueHolder ret = new ValueHolder();
-		for (Object o : params[0]) {
-			String s = (String) o;
+		ValueHolder vh = params[0];
+		ValueHolder ret = ValueHolder.createValueHolder(String.class, vh.size);
+		for (int i = 0; i < vh.size; i++) {
+			String s = vh.getString(i);
 			String t = replacer.get(s);
 			ret.add(t == null ? s : t);
 		}
@@ -508,11 +490,9 @@ public enum TextFunctions {
 	/*----------------------------------------------------------------------------*/
 	private static Map<String, String> getReplaceMap(final ValueHolder froms, final ValueHolder tos) {
 		Map<String, String> ret = new HashMap<String, String>();
-		int fSz = froms.size();
-		int tSz = tos.size();
-		for (int i = 0; i < fSz; i++) {
-			String from = froms.getText(i);
-			String to = (i >= tSz) ? "" : tos.getText(i);
+		for (int i = 0; i < froms.size; i++) {
+			String from = froms.getString(i);
+			String to = (i >= tos.size) ? "" : tos.getString(i);
 			if (!ret.containsKey(from))
 				ret.put(from, to);
 		}

@@ -33,14 +33,29 @@ public class ASTValueList extends SimpleNode {
 
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
-		// TODO Auto-generated method stub
-		ValueHolder li = new ValueHolder();
 
-		for (int i = 0; i < jjtGetNumChildren(); ++i) {
-			li.addAll(jjtGetChild(i).evaluate(ctx));
+		ValueHolder[] tmpHolders = new ValueHolder[children.length];
+		int valueSize = 0;
+		int holders = 0;
+
+		for (int i = 0; i < children.length; ++i) {
+			// Cumulate all return values
+			ValueHolder vh = children[i].evaluate(ctx);
+			if (vh != null) {
+				valueSize += vh.size;
+				tmpHolders[holders++] = vh;
+			}
 		}
 
-		return li;
+		if (holders == 0)
+			return null;
+
+		ValueHolder vhRet = tmpHolders[0].newInstance(valueSize);
+		for (int i = 0; i < holders; i++) {
+			vhRet.addAll(tmpHolders[i]);
+		}
+		return vhRet;
+
 	}
 
 	public void toFormula(final StringBuilder sb) {

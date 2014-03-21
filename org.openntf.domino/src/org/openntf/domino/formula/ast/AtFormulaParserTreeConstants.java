@@ -21,7 +21,7 @@ public interface AtFormulaParserTreeConstants
   public int JJTVALUEDATEORKW = 13;
   public int JJTVALUESTRING = 14;
   public int JJTVALUEDOUBLE = 15;
-  public int JJTVALUELONG = 16;
+  public int JJTVALUEINT = 16;
   public int JJTGETVARIABLE = 17;
 
 
@@ -42,8 +42,8 @@ public interface AtFormulaParserTreeConstants
     "ValueDateOrKW",
     "ValueString",
     "ValueDouble",
-    "ValueLong",
+    "ValueInt",
     "GetVariable",
   };
 }
-/* JavaCC - OriginalChecksum=637942eea622ef22d33a1c955776778a (do not edit this line) */
+/* JavaCC - OriginalChecksum=c67c398552fb205313caa29d25a08941 (do not edit this line) */

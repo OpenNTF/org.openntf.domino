@@ -17,4 +17,4 @@
  * @author Roland Praml, Foconis AG
  *
  */
-package org.openntf.domino.tests.rpr.formula.eval;
+package de.foconis.test.junit;

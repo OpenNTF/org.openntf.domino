@@ -16,8 +16,6 @@
  */
 package org.openntf.domino.formula.impl;
 
-import java.util.Collection;
-
 import org.openntf.domino.formula.ValueHolder;
 
 public enum Arithmetic {
@@ -83,41 +81,55 @@ public enum Arithmetic {
 	// Max returns either the largest number in a single list, or the larger of two numbers or number lists.
 	@ParamCount({ 1, 2 })
 	public static ValueHolder atMax(final ValueHolder[] params) {
-		Collection<double[]> values = new ParameterCollectionDouble(params, false);
 
 		if (params.length == 1) {
+			ValueHolder vh = params[0];
 			double ret = Double.MIN_VALUE;
-			for (double[] value : values) {
-				ret = Math.max(ret, value[0]);
+			for (int i = 0; i < vh.size; i++) {
+				ret = Math.max(ret, vh.getDouble(i));
 			}
-			return new ValueHolder(ret);
-		} else {
-			ValueHolder ret = new ValueHolder();
-			ret.grow(values.size());
+			return ValueHolder.valueOf(ret);
+		} else if (ValueHolder.hasMultiValues(params)) {
+
+			ParameterCollectionDouble values = new ParameterCollectionDouble(params, false);
+			ValueHolder ret = ValueHolder.createValueHolder(double.class, values.size());
 			for (double[] value : values) {
 				ret.add(Math.max(value[0], value[1]));
 			}
 			return ret;
+
+		} else {
+			ValueHolder ret = ValueHolder.createValueHolder(double.class, 1);
+			ret.add(Math.max(params[0].getDouble(0), params[1].getDouble(0)));
+			return ret;
+
 		}
 	}
 
 	//... the same for Min
 	@ParamCount({ 1, 2 })
 	public static ValueHolder atMin(final ValueHolder[] params) {
-		Collection<double[]> values = new ParameterCollectionDouble(params, false);
 
 		if (params.length == 1) {
 			double ret = Double.MAX_VALUE;
-			for (double[] value : values) {
-				ret = Math.min(ret, value[0]);
+			ValueHolder vh = params[0];
+			for (int i = 0; i < vh.size; i++) {
+				ret = Math.min(ret, vh.getDouble(i));
 			}
-			return new ValueHolder(ret);
-		} else {
-			ValueHolder ret = new ValueHolder();
-			ret.grow(values.size());
+			return ValueHolder.valueOf(ret);
+		} else if (ValueHolder.hasMultiValues(params)) {
+			ParameterCollectionDouble values = new ParameterCollectionDouble(params, false);
+
+			ValueHolder ret = ValueHolder.createValueHolder(double.class, values.size());
 			for (double[] value : values) {
 				ret.add(Math.min(value[0], value[1]));
 			}
+			return ret;
+
+		} else {
+
+			ValueHolder ret = ValueHolder.createValueHolder(double.class, 1);
+			ret.add(Math.min(params[0].getDouble(0), params[1].getDouble(0)));
 			return ret;
 		}
 	}
@@ -135,9 +147,11 @@ public enum Arithmetic {
 		return (long) (arg1.doubleValue() - (long) divres * arg2.doubleValue());
 	}
 
+	private static ValueHolder PI = ValueHolder.valueOf(Math.PI);
+
 	@ParamCount(0)
 	public static ValueHolder atPi() {
-		return new ValueHolder(Math.PI);
+		return PI;
 	}
 
 	@ParamCount(2)
@@ -147,7 +161,7 @@ public enum Arithmetic {
 
 	@ParamCount(0)
 	public static ValueHolder atRandom() {
-		return new ValueHolder(Math.random());
+		return ValueHolder.valueOf(Math.random());
 	}
 
 	@ParamCount(1)
@@ -168,12 +182,13 @@ public enum Arithmetic {
 	@ParamCount({ 1, Integer.MAX_VALUE })
 	public static ValueHolder atSum(final ValueHolder[] params) {
 		double ret = 0;
+
 		for (ValueHolder valueHolder : params) {
-			for (Object value : valueHolder) {
-				ret += ((Number) value).doubleValue();
+			for (int i = 0; i < valueHolder.size; i++) {
+				ret += valueHolder.getDouble(i);
 			}
 		}
-		return new ValueHolder(ret);
+		return ValueHolder.valueOf(ret);
 	}
 
 	@ParamCount(1)

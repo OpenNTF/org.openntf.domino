@@ -30,6 +30,7 @@ public class ASTAssignment extends SimpleNode {
 
 	private int type;
 	private String varName;
+	private String varNameLC;
 
 	public ASTAssignment(final int id) {
 		super(id);
@@ -41,6 +42,7 @@ public class ASTAssignment extends SimpleNode {
 
 	public void init(final String _varName, final int _type) {
 		varName = _varName;
+		varNameLC = varName.toLowerCase();
 		type = _type;
 
 	}
@@ -70,9 +72,9 @@ public class ASTAssignment extends SimpleNode {
 	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
 		ValueHolder value;
 		try {
-			value = jjtGetChild(0).evaluate(ctx);
+			value = children[0].evaluate(ctx);
 		} catch (RuntimeException e) {
-			value = new ValueHolder(e);
+			value = ValueHolder.valueOf(e);
 		}
 		switch (type) {
 		case FIELD:
@@ -80,7 +82,7 @@ public class ASTAssignment extends SimpleNode {
 			break;
 
 		case VAR:
-			ctx.setVar(varName, value);
+			ctx.setVarLC(varNameLC, value);
 			break;
 
 		case ENV:

@@ -36,7 +36,7 @@ public class TestRunnerStdIn implements Runnable {
 			n = parser.Parse();
 			n.dump("");
 			FormulaContext ctx = new FormulaContext(null, parser.getFormatter());
-			v = n.evaluate(ctx);
+			v = n.evaluate(ctx).toList();
 
 			System.out.println("NTF:\t" + v);
 

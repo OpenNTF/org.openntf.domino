@@ -35,13 +35,14 @@ public class AtFunctionSimple extends AtFunctionGeneric {
 		// TODO Auto-generated constructor stub
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx, final ValueHolder[] params) throws Exception {
-		ValueHolder ret = new ValueHolder();
-
+		ValueHolder ret = null;
+		Object result = null;
 		if (varArgClass != null) {
+
 			Collection<Object[]> values = new ParameterCollectionObject<Object>(params, (Class<Object>) varArgClass, false);
-			ret.grow(values.size());
 
 			// Our last parameter is a "varArg" this means, the LAST parameter is an array[]
 			Object[] tmpParams = new Object[paramCount];
@@ -56,13 +57,19 @@ public class AtFunctionSimple extends AtFunctionGeneric {
 					// exactly one parameter left. this is our vararg
 					tmpParams[i++] = value;
 				}
-				ret.add(method.invoke(null, tmpParams));
+				result = method.invoke(null, tmpParams);
+				if (result != null) {
+					if (ret == null) {
+						ret = ValueHolder.createValueHolder(result.getClass(), values.size());
+					}
+					ret.add(result);
+				}
 			}
 		} else {
 			Collection<Object[]> values = new ParameterCollectionObject<Object>(params, Object.class, false);
 
-			ret.grow(values.size());
 			for (Object[] value : values) {
+
 				if (useContext) {
 					Object[] tmpParams;
 					if (value == null) {
@@ -72,9 +79,15 @@ public class AtFunctionSimple extends AtFunctionGeneric {
 						System.arraycopy(value, 0, tmpParams, 1, value.length);
 					}
 					tmpParams[0] = ctx;
-					ret.add(method.invoke(null, tmpParams));
+					result = method.invoke(null, tmpParams);
 				} else {
-					ret.add(method.invoke(null, value));
+					result = method.invoke(null, value);
+				}
+				if (result != null) {
+					if (ret == null) {
+						ret = ValueHolder.createValueHolder(result.getClass(), values.size());
+					}
+					ret.add(result);
 				}
 			}
 		}

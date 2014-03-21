@@ -22,7 +22,7 @@ import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
 
 public class ASTValueDouble extends SimpleNode {
-	private Double value;
+	private ValueHolder value;
 
 	public ASTValueDouble(final int id) {
 		super(id);
@@ -33,7 +33,8 @@ public class ASTValueDouble extends SimpleNode {
 	}
 
 	public void parseDouble(final String image, final char decSep) {
-		value = Double.valueOf(image.replace(decSep, '.'));
+		double d = Double.valueOf(image.replace(decSep, '.'));
+		value = ValueHolder.valueOf(d);
 	}
 
 	@Override
@@ -43,12 +44,12 @@ public class ASTValueDouble extends SimpleNode {
 
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) {
-		return new ValueHolder(value);
+		return value;
 	}
 
 	@Override
 	public void toFormula(final StringBuilder sb) {
-		sb.append(value.toString().replace('.', ','));
+		sb.append(String.format("%f", value.getDouble(0)));
 	}
 }
 /* JavaCC - OriginalChecksum=9b835a55bffc1c99424d097a944b0fac (do not edit this line) */

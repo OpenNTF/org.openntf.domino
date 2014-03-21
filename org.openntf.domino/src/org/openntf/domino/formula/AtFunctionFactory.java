@@ -25,11 +25,13 @@ import java.util.Map;
 import org.openntf.domino.formula.impl.Arithmetic;
 import org.openntf.domino.formula.impl.AtFunctionGeneric;
 import org.openntf.domino.formula.impl.AtFunctionSimple;
+import org.openntf.domino.formula.impl.Comparators;
 import org.openntf.domino.formula.impl.Constant;
 import org.openntf.domino.formula.impl.DocProperties;
+import org.openntf.domino.formula.impl.Negators;
 import org.openntf.domino.formula.impl.NotImplemented;
 import org.openntf.domino.formula.impl.NotSupported;
-import org.openntf.domino.formula.impl.Operator;
+import org.openntf.domino.formula.impl.Operators;
 import org.openntf.domino.formula.impl.TextFunctions;
 
 public class AtFunctionFactory {
@@ -40,8 +42,6 @@ public class AtFunctionFactory {
 	/**
 	 * Returns the atFunction object that can evaluate 'funcName'
 	 * 
-	 * @param funcName
-	 * @return
 	 */
 	public AtFunction getFunction(final String funcName) {
 		return functions.get(funcName.toLowerCase());
@@ -50,7 +50,6 @@ public class AtFunctionFactory {
 	/**
 	 * Returns all avaliable at-Functions
 	 * 
-	 * @return
 	 */
 	public Map<String, AtFunction> getFunctions() {
 		return Collections.unmodifiableMap(functions);
@@ -89,6 +88,9 @@ public class AtFunctionFactory {
 
 					methodName = "@".concat(methodName.substring(2));
 
+					// here the magic happens. If the return type of the implemented function is
+					// a ValueHolder then we create an AtFunctionGeneric. You have to do multi value handling
+					// otherwise an AtFunctionSimple is created that does multi value handling for you.
 					if (ValueHolder.class.isAssignableFrom(method.getReturnType())) {
 						init(new AtFunctionGeneric(methodName, method));
 					} else {
@@ -108,12 +110,13 @@ public class AtFunctionFactory {
 	/**
 	 * This is the global "default"-instance.
 	 * 
-	 * @return
 	 */
 	public static synchronized AtFunctionFactory getInstance() {
 		if (instance == null) {
 			instance = new AtFunctionFactory();
-			instance.addFactory(new Operator.Factory());
+			instance.addFactory(new Operators.Factory());
+			instance.addFactory(new Comparators.Factory());
+			instance.addFactory(new Negators.Factory());
 			instance.addFactory(new NotImplemented.Factory());
 			instance.addFactory(new AtFunctionFactory(Arithmetic.class));
 			instance.addFactory(new AtFunctionFactory(DocProperties.class));

@@ -11,74 +11,74 @@ public enum DocProperties {
 	;
 	@ParamCount(0)
 	public static ValueHolder atAccessed(final FormulaContext ctx) {
-		return ctx.getVar("@accessed");
+		return ctx.getVarLC("@accessed");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atModified(final FormulaContext ctx) {
-		return ctx.getVar("@modified");
+		return ctx.getVarLC("@modified");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atCreated(final FormulaContext ctx) {
-		return ctx.getVar("@created");
+		return ctx.getVarLC("@created");
 	}
 
 	@ParamCount(0)
 	@OpenNTF
 	public static ValueHolder atAccessedDate(final FormulaContext ctx) {
-		return ctx.getVar("@accesseddate");
+		return ctx.getVarLC("@accesseddate");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atModifiedDate(final FormulaContext ctx) {
-		return ctx.getVar("@modifieddate");
+		return ctx.getVarLC("@modifieddate");
 	}
 
 	@ParamCount(0)
 	@OpenNTF
 	public static ValueHolder atCreatedDate(final FormulaContext ctx) {
-		return ctx.getVar("@createddate");
+		return ctx.getVarLC("@createddate");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atDocumentUniqueid(final FormulaContext ctx) {
-		return ctx.getVar("@documentuniqueid");
+		return ctx.getVarLC("@documentuniqueid");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atNoteId(final FormulaContext ctx) {
-		return ctx.getVar("@noteid");
+		return ctx.getVarLC("@noteid");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atDocLength(final FormulaContext ctx) {
-		return ctx.getVar("@noteid");
+		return ctx.getVarLC("@noteid");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atIsResponseDoc(final FormulaContext ctx) {
-		return ctx.getVar("@isresponsedoc");
+		return ctx.getVarLC("@isresponsedoc");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atReplicaId(final FormulaContext ctx) {
-		return ctx.getVar("@replicaid");
+		return ctx.getVarLC("@replicaid");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atResponses(final FormulaContext ctx) {
-		return ctx.getVar("@responses");
+		return ctx.getVarLC("@responses");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atIsNewDoc(final FormulaContext ctx) {
-		return ctx.getVar("@isnewdoc");
+		return ctx.getVarLC("@isnewdoc");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atInheritedDocumentUniqueID(final FormulaContext ctx) {
-		return ctx.getVar("@inheriteddocumentuniqueid");
+		return ctx.getVarLC("@inheriteddocumentuniqueid");
 	}
 
 	@ParamCount(0)
@@ -86,9 +86,9 @@ public enum DocProperties {
 		Map<String, Object> doc = ctx.getDocument();
 
 		if (doc == null) {
-			return new ValueHolder();
+			return ValueHolder.valueDefault();
 		} else {
-			return new ValueHolder(doc.keySet());
+			return ValueHolder.valueOf(doc.keySet());
 		}
 	}
 

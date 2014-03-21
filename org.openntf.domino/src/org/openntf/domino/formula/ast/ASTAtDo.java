@@ -35,12 +35,15 @@ public class ASTAtDo extends SimpleNode {
 	 * AtDo returns the last child's value
 	 * 
 	 * @throws EvaluateException
+	 *             TODO
 	 */
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
 		ValueHolder ret = null;
-		for (int i = 0; i < jjtGetNumChildren(); ++i) {
-			ret = jjtGetChild(i).evaluate(ctx);
+		if (children == null)
+			return null;
+		for (int i = 0; i < children.length; ++i) {
+			ret = children[i].evaluate(ctx);
 		}
 		return ret;
 	}
