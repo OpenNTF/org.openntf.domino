@@ -202,4 +202,26 @@ public class Comparators extends OperatorsAbstract {
 		return ctx.FALSE;
 	}
 
+	// ----------- Integers
+	@Override
+	protected ValueHolder evaluateBoolean(final FormulaContext ctx, final ValueHolder[] params) {
+		Collection<boolean[]> values = new ParameterCollectionBoolean(params, isPermutative);
+
+		for (boolean[] value : values) {
+			int delta = (value[0] ? 1 : 0) - (value[1] ? 1 : 0);
+			if (computer.match(delta)) {
+				return ctx.TRUE;
+			}
+		}
+		return ctx.FALSE;
+	}
+
+	@Override
+	protected ValueHolder evaluateBoolean(final FormulaContext ctx, final boolean b1, final boolean b2) {
+		int delta = (b1 ? 1 : 0) - (b2 ? 1 : 0);
+		if (computer.match(delta)) {
+			return ctx.TRUE;
+		}
+		return ctx.FALSE;
+	}
 }

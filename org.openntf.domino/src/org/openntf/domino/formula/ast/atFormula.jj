@@ -341,33 +341,33 @@ import org.openntf.domino.formula.ast.*;
                               jjtree.closeNodeScope(jjtn001,  2);
                             }
                           }
-/*@egen*/               )*}/** * highest precedence of operations is multiplication. This is done with a unary list */private void opMult()  :{ }{  valueList()  (/*@bgen(jjtree) #Operator( 2) */
+/*@egen*/               )*}/** * highest precedence of operations is multiplication. This is done with a unary list */private void opMult()  :{ }{  opSign()  (/*@bgen(jjtree) #Operator( 2) */
     {
       ASTOperator jjtn001 = new ASTOperator(this, JJTOPERATOR);
       boolean jjtc001 = true;
       jjtree.openNodeScope(jjtn001);
     }
     try {
-/*@egen*/    (      		< OpMul > 	valueList()/*@bgen(jjtree)*/
-                                             {
-                                               jjtree.closeNodeScope(jjtn001,  2);
-                                               jjtc001 = false;
-                                             }
-/*@egen*/  {jjtn001.setFunction("*")	;}     	|	< OpMulP > 	valueList()/*@bgen(jjtree)*/
-                                             {
-                                               jjtree.closeNodeScope(jjtn001,  2);
-                                               jjtc001 = false;
-                                             }
-/*@egen*/  {jjtn001.setFunction("**")	;}      	| 	< OpDiv > 	valueList()/*@bgen(jjtree)*/
-                                             {
-                                               jjtree.closeNodeScope(jjtn001,  2);
-                                               jjtc001 = false;
-                                             }
-/*@egen*/  {jjtn001.setFunction("/")	;}      	| 	< OpDivP > 	valueList()/*@bgen(jjtree)*/
-                                             {
-                                               jjtree.closeNodeScope(jjtn001,  2);
-                                               jjtc001 = false;
-                                             }
+/*@egen*/    (      		< OpMul > 	opSign()/*@bgen(jjtree)*/
+                                          {
+                                            jjtree.closeNodeScope(jjtn001,  2);
+                                            jjtc001 = false;
+                                          }
+/*@egen*/  {jjtn001.setFunction("*")	;}     	|	< OpMulP > 	opSign()/*@bgen(jjtree)*/
+                                          {
+                                            jjtree.closeNodeScope(jjtn001,  2);
+                                            jjtc001 = false;
+                                          }
+/*@egen*/  {jjtn001.setFunction("**")	;}      	| 	< OpDiv > 	opSign()/*@bgen(jjtree)*/
+                                          {
+                                            jjtree.closeNodeScope(jjtn001,  2);
+                                            jjtc001 = false;
+                                          }
+/*@egen*/  {jjtn001.setFunction("/")	;}      	| 	< OpDivP > 	opSign()/*@bgen(jjtree)*/
+                                          {
+                                            jjtree.closeNodeScope(jjtn001,  2);
+                                            jjtc001 = false;
+                                          }
 /*@egen*/  {jjtn001.setFunction("*/")	;}	)/*@bgen(jjtree)*/
     } catch (Throwable jjte001) {
       if (jjtc001) {
@@ -388,14 +388,32 @@ import org.openntf.domino.formula.ast.*;
         jjtree.closeNodeScope(jjtn001,  2);
       }
     }
-/*@egen*/              ) *}/** * one ore more values * for saving mem, unaries are wrapped only in a valueList, if there are more than once */private void valueList() :{}{/*@bgen(jjtree) #ValueList(> 1) */
+/*@egen*/              ) *}private void opSign() :{ }{	opHasSign()|	valueList()}private void opHasSign() :{}{// In N9, the + sign is completely ignored. If you want to be < N6 compatible, feel free to implement that  //	< OpPlus > valueList() {jjtThis.setFunction(" +")	;} #Operator(1)	< OpPlus > valueList()| 	< OpMinus > valueList()/*@bgen(jjtree) #Operator( 1) */
+                                {
+                                  ASTOperator jjtn001 = new ASTOperator(this, JJTOPERATOR);
+                                  boolean jjtc001 = true;
+                                  jjtree.openNodeScope(jjtn001);
+                                }
+                                try {
+/*@egen*//*@bgen(jjtree)*/
+                                {
+                                  jjtree.closeNodeScope(jjtn001,  1);
+                                  jjtc001 = false;
+                                }
+/*@egen*/ {jjtn001.setFunction(" -")	;}/*@bgen(jjtree)*/
+                                } finally {
+                                  if (jjtc001) {
+                                    jjtree.closeNodeScope(jjtn001,  1);
+                                  }
+                                }
+/*@egen*/             }/** * one ore more values * for saving mem, unaries are wrapped only in a valueList, if there are more than once */private void valueList() :{}{/*@bgen(jjtree) #ValueList(> 1) */
         {
           ASTValueList jjtn001 = new ASTValueList(this, JJTVALUELIST);
           boolean jjtc001 = true;
           jjtree.openNodeScope(jjtn001);
         }
         try {
-/*@egen*/	(subscript() (< ListConcat > subscript())* )/*@bgen(jjtree)*/
+/*@egen*/	(subscript() (	  		LOOKAHEAD(2)	  		< ListConcat > (opHasSign()| subscript() )	)* )/*@bgen(jjtree)*/
         } catch (Throwable jjte001) {
           if (jjtc001) {
             jjtree.clearNodeScope(jjtn001);
@@ -442,50 +460,59 @@ import org.openntf.domino.formula.ast.*;
             jjtree.closeNodeScope(jjtn001, jjtree.nodeArity() > 1);
           }
         }
-/*@egen*/               }private void unary() :{}{ 	< OpPlus > unary() | 	< OpMinus > unary()/*@bgen(jjtree) #Operator( 1) */
-                            {
-                              ASTOperator jjtn001 = new ASTOperator(this, JJTOPERATOR);
-                              boolean jjtc001 = true;
-                              jjtree.openNodeScope(jjtn001);
-                            }
-                            try {
+/*@egen*/               }private void unary() :{}{// Attention List operator has a higher precedence. So this is removed here // 		< OpPlus > unary() //| 	< OpMinus > unary() {jjtThis.setFunction(" -")	;} #Operator(1)//|< BoolNot > unary()/*@bgen(jjtree) #Operator( 1) */
+                    {
+                      ASTOperator jjtn001 = new ASTOperator(this, JJTOPERATOR);
+                      boolean jjtc001 = true;
+                      jjtree.openNodeScope(jjtn001);
+                    }
+                    try {
 /*@egen*//*@bgen(jjtree)*/
-                            {
-                              jjtree.closeNodeScope(jjtn001,  1);
-                              jjtc001 = false;
-                            }
-/*@egen*/ {jjtn001.setFunction(" -")	;}/*@bgen(jjtree)*/
-                            } finally {
-                              if (jjtc001) {
-                                jjtree.closeNodeScope(jjtn001,  1);
-                              }
-                            }
-/*@egen*/             | 	< BoolNot > unary()/*@bgen(jjtree) #Operator( 1) */
-                            {
-                              ASTOperator jjtn002 = new ASTOperator(this, JJTOPERATOR);
-                              boolean jjtc002 = true;
-                              jjtree.openNodeScope(jjtn002);
-                            }
-                            try {
-/*@egen*//*@bgen(jjtree)*/
-                            {
-                              jjtree.closeNodeScope(jjtn002,  1);
-                              jjtc002 = false;
-                            }
-/*@egen*/ {jjtn002.setFunction(" !")		;}/*@bgen(jjtree)*/
-                            } finally {
-                              if (jjtc002) {
-                                jjtree.closeNodeScope(jjtn002,  1);
-                              }
-                            }
+                    {
+                      jjtree.closeNodeScope(jjtn001,  1);
+                      jjtc001 = false;
+                    }
+/*@egen*/ {jjtn001.setFunction(" !")		;}/*@bgen(jjtree)*/
+                    } finally {
+                      if (jjtc001) {
+                        jjtree.closeNodeScope(jjtn001,  1);
+                      }
+                    }
 /*@egen*/             // All control flow functions| < At_do >/*@bgen(jjtree) AtDo */
                         {
-                          ASTAtDo jjtn003 = new ASTAtDo(this, JJTATDO);
+                          ASTAtDo jjtn002 = new ASTAtDo(this, JJTATDO);
+                          boolean jjtc002 = true;
+                          jjtree.openNodeScope(jjtn002);
+                        }
+                        try {
+/*@egen*/ 		(< OParen >  statement() ( < EOS > statement() )*  < CParen >)/*@bgen(jjtree)*/
+                        } catch (Throwable jjte002) {
+                          if (jjtc002) {
+                            jjtree.clearNodeScope(jjtn002);
+                            jjtc002 = false;
+                          } else {
+                            jjtree.popNode();
+                          }
+                          if (jjte002 instanceof RuntimeException) {
+                            throw (RuntimeException)jjte002;
+                          }
+                          if (jjte002 instanceof ParseException) {
+                            throw (ParseException)jjte002;
+                          }
+                          throw (Error)jjte002;
+                        } finally {
+                          if (jjtc002) {
+                            jjtree.closeNodeScope(jjtn002, true);
+                          }
+                        }
+/*@egen*/      | < At_doWhile >/*@bgen(jjtree) AtDoWhile */
+                        {
+                          ASTAtDoWhile jjtn003 = new ASTAtDoWhile(this, JJTATDOWHILE);
                           boolean jjtc003 = true;
                           jjtree.openNodeScope(jjtn003);
                         }
                         try {
-/*@egen*/ 		(< OParen >  statement() ( < EOS > statement() )*  < CParen >)/*@bgen(jjtree)*/
+/*@egen*/ 	(< OParen >  statement() ( < EOS > statement() )*  < CParen >)/*@bgen(jjtree)*/
                         } catch (Throwable jjte003) {
                           if (jjtc003) {
                             jjtree.clearNodeScope(jjtn003);
@@ -505,14 +532,14 @@ import org.openntf.domino.formula.ast.*;
                             jjtree.closeNodeScope(jjtn003, true);
                           }
                         }
-/*@egen*/      | < At_doWhile >/*@bgen(jjtree) AtDoWhile */
+/*@egen*/           | < At_for >/*@bgen(jjtree) AtFor */
                         {
-                          ASTAtDoWhile jjtn004 = new ASTAtDoWhile(this, JJTATDOWHILE);
+                          ASTAtFor jjtn004 = new ASTAtFor(this, JJTATFOR);
                           boolean jjtc004 = true;
                           jjtree.openNodeScope(jjtn004);
                         }
                         try {
-/*@egen*/ 	(< OParen >  statement() ( < EOS > statement() )*  < CParen >)/*@bgen(jjtree)*/
+/*@egen*/		(< OParen >  	statement()	// initialize						< EOS >		statement()	// condition						< EOS >		statement() 	// increment						( < EOS > 	statement() )*	// statements					 < CParen >)/*@bgen(jjtree)*/
                         } catch (Throwable jjte004) {
                           if (jjtc004) {
                             jjtree.clearNodeScope(jjtn004);
@@ -532,68 +559,68 @@ import org.openntf.domino.formula.ast.*;
                             jjtree.closeNodeScope(jjtn004, true);
                           }
                         }
-/*@egen*/           | < At_for >/*@bgen(jjtree) AtFor */
-                        {
-                          ASTAtFor jjtn005 = new ASTAtFor(this, JJTATFOR);
-                          boolean jjtc005 = true;
-                          jjtree.openNodeScope(jjtn005);
-                        }
-                        try {
-/*@egen*/		(< OParen >  	statement()	// initialize						< EOS >		statement()	// condition						< EOS >		statement() 	// increment						( < EOS > 	statement() )*	// statements					 < CParen >)/*@bgen(jjtree)*/
-                        } catch (Throwable jjte005) {
-                          if (jjtc005) {
-                            jjtree.clearNodeScope(jjtn005);
-                            jjtc005 = false;
-                          } else {
-                            jjtree.popNode();
-                          }
-                          if (jjte005 instanceof RuntimeException) {
-                            throw (RuntimeException)jjte005;
-                          }
-                          if (jjte005 instanceof ParseException) {
-                            throw (ParseException)jjte005;
-                          }
-                          throw (Error)jjte005;
-                        } finally {
-                          if (jjtc005) {
-                            jjtree.closeNodeScope(jjtn005, true);
-                          }
-                        }
 /*@egen*/       | (< At_if > | < At_v2if > )/*@bgen(jjtree) AtIf */
                                         {
-                                          ASTAtIf jjtn006 = new ASTAtIf(this, JJTATIF);
-                                          boolean jjtc006 = true;
-                                          jjtree.openNodeScope(jjtn006);
+                                          ASTAtIf jjtn005 = new ASTAtIf(this, JJTATIF);
+                                          boolean jjtc005 = true;
+                                          jjtree.openNodeScope(jjtn005);
                                         }
                                         try {
 /*@egen*/					(< OParen >  	statement()	// if						( < EOS > 	statement() < EOS > statement())+	// the elese(if)					 < CParen >)/*@bgen(jjtree)*/
-                                        } catch (Throwable jjte006) {
-                                          if (jjtc006) {
-                                            jjtree.clearNodeScope(jjtn006);
-                                            jjtc006 = false;
+                                        } catch (Throwable jjte005) {
+                                          if (jjtc005) {
+                                            jjtree.clearNodeScope(jjtn005);
+                                            jjtc005 = false;
                                           } else {
                                             jjtree.popNode();
                                           }
-                                          if (jjte006 instanceof RuntimeException) {
-                                            throw (RuntimeException)jjte006;
+                                          if (jjte005 instanceof RuntimeException) {
+                                            throw (RuntimeException)jjte005;
                                           }
-                                          if (jjte006 instanceof ParseException) {
-                                            throw (ParseException)jjte006;
+                                          if (jjte005 instanceof ParseException) {
+                                            throw (ParseException)jjte005;
                                           }
-                                          throw (Error)jjte006;
+                                          throw (Error)jjte005;
                                         } finally {
-                                          if (jjtc006) {
-                                            jjtree.closeNodeScope(jjtn006, true);
+                                          if (jjtc005) {
+                                            jjtree.closeNodeScope(jjtn005, true);
                                           }
                                         }
 /*@egen*/      					 | < At_iferror >/*@bgen(jjtree) AtIfError */
                         {
-                          ASTAtIfError jjtn007 = new ASTAtIfError(this, JJTATIFERROR);
+                          ASTAtIfError jjtn006 = new ASTAtIfError(this, JJTATIFERROR);
+                          boolean jjtc006 = true;
+                          jjtree.openNodeScope(jjtn006);
+                        }
+                        try {
+/*@egen*/	(< OParen >  	statement() (< EOS > statement())? < CParen >)/*@bgen(jjtree)*/
+                        } catch (Throwable jjte006) {
+                          if (jjtc006) {
+                            jjtree.clearNodeScope(jjtn006);
+                            jjtc006 = false;
+                          } else {
+                            jjtree.popNode();
+                          }
+                          if (jjte006 instanceof RuntimeException) {
+                            throw (RuntimeException)jjte006;
+                          }
+                          if (jjte006 instanceof ParseException) {
+                            throw (ParseException)jjte006;
+                          }
+                          throw (Error)jjte006;
+                        } finally {
+                          if (jjtc006) {
+                            jjtree.closeNodeScope(jjtn006, true);
+                          }
+                        }
+/*@egen*/           | < At_transform >/*@bgen(jjtree) AtTranform */
+                        {
+                          ASTAtTranform jjtn007 = new ASTAtTranform(this, JJTATTRANFORM);
                           boolean jjtc007 = true;
                           jjtree.openNodeScope(jjtn007);
                         }
                         try {
-/*@egen*/	(< OParen >  	statement() (< EOS > statement())? < CParen >)/*@bgen(jjtree)*/
+/*@egen*/	(< OParen >  	statement()	// list						< EOS >		statement()	// varName						< EOS >		statement() 	// formula					 < CParen >)/*@bgen(jjtree)*/
                         } catch (Throwable jjte007) {
                           if (jjtc007) {
                             jjtree.clearNodeScope(jjtn007);
@@ -611,33 +638,6 @@ import org.openntf.domino.formula.ast.*;
                         } finally {
                           if (jjtc007) {
                             jjtree.closeNodeScope(jjtn007, true);
-                          }
-                        }
-/*@egen*/           | < At_transform >/*@bgen(jjtree) AtTranform */
-                        {
-                          ASTAtTranform jjtn008 = new ASTAtTranform(this, JJTATTRANFORM);
-                          boolean jjtc008 = true;
-                          jjtree.openNodeScope(jjtn008);
-                        }
-                        try {
-/*@egen*/	(< OParen >  	statement()	// list						< EOS >		statement()	// varName						< EOS >		statement() 	// formula					 < CParen >)/*@bgen(jjtree)*/
-                        } catch (Throwable jjte008) {
-                          if (jjtc008) {
-                            jjtree.clearNodeScope(jjtn008);
-                            jjtc008 = false;
-                          } else {
-                            jjtree.popNode();
-                          }
-                          if (jjte008 instanceof RuntimeException) {
-                            throw (RuntimeException)jjte008;
-                          }
-                          if (jjte008 instanceof ParseException) {
-                            throw (ParseException)jjte008;
-                          }
-                          throw (Error)jjte008;
-                        } finally {
-                          if (jjtc008) {
-                            jjtree.closeNodeScope(jjtn008, true);
                           }
                         }
 /*@egen*/            	 | < At_other > formula() | atom()}private void formula()           :{/*@bgen(jjtree) Function */

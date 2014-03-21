@@ -62,6 +62,11 @@ public class Operators extends OperatorsAbstract {
 				public String compute(final String v1, final String v2) {
 					return v1.concat(v2);
 				}
+
+				@Override
+				public boolean compute(final boolean b1, final boolean b2) {
+					throw new UnsupportedOperationException("ADD is not supported for BOOLEAN");
+				}
 			};
 
 			OperatorImpl sub = new OperatorImpl() {
@@ -78,6 +83,11 @@ public class Operators extends OperatorsAbstract {
 				@Override
 				public double compute(final double v1, final double v2) {
 					return v1 - v2;
+				}
+
+				@Override
+				public boolean compute(final boolean b1, final boolean b2) {
+					throw new UnsupportedOperationException("SUB is not supported for BOOLEAN");
 				}
 
 			};
@@ -98,6 +108,11 @@ public class Operators extends OperatorsAbstract {
 					return v1 * v2;
 				}
 
+				@Override
+				public boolean compute(final boolean b1, final boolean b2) {
+					throw new UnsupportedOperationException("MUL is not supported for BOOLEAN");
+				}
+
 			};
 
 			OperatorImpl div = new OperatorImpl() {
@@ -112,6 +127,11 @@ public class Operators extends OperatorsAbstract {
 				@Override
 				public double compute(final double v1, final double v2) {
 					return v1 / v2;
+				}
+
+				@Override
+				public boolean compute(final boolean b1, final boolean b2) {
+					throw new UnsupportedOperationException("DIV is not supported for BOOLEAN");
 				}
 
 			};
@@ -218,6 +238,25 @@ public class Operators extends OperatorsAbstract {
 	@Override
 	protected ValueHolder evaluateDateTime(final FormulaContext ctx, final DateTime dt1, final DateTime dt2) {
 		return ValueHolder.valueOf(computer.compute(dt1, dt2));
+	}
+
+	// ----------- Numbers
+	@Override
+	protected ValueHolder evaluateBoolean(final FormulaContext ctx, final ValueHolder[] params) {
+
+		Collection<boolean[]> values = new ParameterCollectionBoolean(params, isPermutative);
+		ValueHolder ret = ValueHolder.createValueHolder(boolean.class, values.size());
+
+		for (boolean[] value : values) {
+			ret.add(computer.compute(value[0], value[1]));
+		}
+
+		return ret;
+	}
+
+	@Override
+	protected ValueHolder evaluateBoolean(final FormulaContext ctx, final boolean b1, final boolean b2) {
+		return ValueHolder.valueOf(computer.compute(b1, b2));
 	}
 
 }

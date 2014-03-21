@@ -50,12 +50,13 @@ public class ValueHolderNumber extends ValueHolder implements Serializable {
 		switch (dataType) {
 		case ERROR:
 			throw currentError;
+
 		case INTEGER:
 			return getInt(i);
 
 		case DOUBLE:
-		case NUMBER:
 			return getDouble(i);
+
 		default:
 			throw new IHaveNoIdeaHowThisHappenedException();
 
@@ -79,7 +80,6 @@ public class ValueHolderNumber extends ValueHolder implements Serializable {
 			}
 
 		case DOUBLE:
-		case NUMBER:
 			if (i < size) {
 				return (int) valuesD[i];
 			} else {
@@ -108,7 +108,6 @@ public class ValueHolderNumber extends ValueHolder implements Serializable {
 			}
 
 		case DOUBLE:
-		case NUMBER:
 			if (i < size) {
 				return valuesD[i];
 			} else {
@@ -133,13 +132,11 @@ public class ValueHolderNumber extends ValueHolder implements Serializable {
 
 		case _UNSET:
 			dataType = DataType.INTEGER;
-
+			// fall through
 		case INTEGER:
 			valuesI[size] = i;
 			break;
 		case DOUBLE:
-			dataType = DataType.NUMBER;
-		case NUMBER:
 			break;
 		default:
 			return super.add(i);
@@ -160,24 +157,18 @@ public class ValueHolderNumber extends ValueHolder implements Serializable {
 			return false;
 
 		case _UNSET:
+		case INTEGER:
 			if (Integer.MIN_VALUE < d && d < Integer.MAX_VALUE && d == (double) ((int) d)) {
 				valuesI[size] = ((int) d);
 				dataType = DataType.INTEGER;
 			} else {
-				dataType = DataType.DOUBLE;
-			}
-
-		case INTEGER:
-			if (Integer.MIN_VALUE < d && d < Integer.MAX_VALUE && d == (double) ((int) d)) {
-				valuesI[size] = ((int) d);
-			} else {
-				dataType = DataType.NUMBER;
+				dataType = DataType.DOUBLE; // upconvert to double
 			}
 
 			break;
 		case DOUBLE:
-		case NUMBER:
 			break;
+
 		default:
 			return super.add(d);
 		}
@@ -199,18 +190,12 @@ public class ValueHolderNumber extends ValueHolder implements Serializable {
 			setError(other.getError());
 			return true;
 
-		case NUMBER:
 		case DOUBLE:
-			if (dataType == DataType.INTEGER) {
-				dataType = DataType.NUMBER;
-			} else {
-				dataType = DataType.DOUBLE;
-			}
+			dataType = DataType.DOUBLE;
 			break;
 		case INTEGER:
-			if (dataType == DataType.DOUBLE) {
-				dataType = DataType.NUMBER;
-			} else {
+			if (dataType != DataType.DOUBLE) {
+				// do not downconvert
 				dataType = DataType.INTEGER;
 			}
 			break;

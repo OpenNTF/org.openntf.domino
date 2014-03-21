@@ -107,7 +107,6 @@ public abstract class Negators extends AtFunction {
 			return ret;
 
 		case DOUBLE:
-		case NUMBER:
 			for (int i = 0; i < v1.size; i++) {
 				ret.add(compute(ctx, v1.getDouble(i)));
 			}

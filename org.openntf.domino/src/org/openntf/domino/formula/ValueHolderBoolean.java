@@ -85,11 +85,12 @@ public class ValueHolderBoolean extends ValueHolder implements Serializable {
 
 		case _UNSET:
 			dataType = DataType.BOOLEAN;
+
 		case BOOLEAN:
 			break;
 
 		default:
-			return super.add(bool);
+			return super.add(bool); // this throws an exception
 		}
 		values[size++] = bool;
 		return true;
@@ -104,6 +105,7 @@ public class ValueHolderBoolean extends ValueHolder implements Serializable {
 		case ERROR:
 			setError(other.getError());
 			return true;
+
 		case BOOLEAN:
 			ValueHolderBoolean toAdd = (ValueHolderBoolean) other;
 			System.arraycopy(toAdd.values, 0, values, size, toAdd.size);
@@ -111,7 +113,7 @@ public class ValueHolderBoolean extends ValueHolder implements Serializable {
 			return true;
 
 		default:
-			return super.addAll(other);
+			return super.addAll(other); // This throws an error
 		}
 	}
 

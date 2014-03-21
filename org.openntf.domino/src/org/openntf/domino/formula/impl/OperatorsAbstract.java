@@ -77,9 +77,8 @@ public abstract class OperatorsAbstract extends AtFunction {
 					return evaluateInt(ctx, params);
 				return evaluateInt(ctx, v1.getInt(0), v2.getInt(0));
 			}
-			//do not break - fall through!
+			//do not break - fall through. It may be integer & double
 		case DOUBLE:
-		case NUMBER:
 			if (v2.dataType.numeric) {
 				if (multi)
 					return evaluateNumber(ctx, params);
@@ -92,6 +91,14 @@ public abstract class OperatorsAbstract extends AtFunction {
 				if (multi)
 					return evaluateString(ctx, params);
 				return evaluateString(ctx, v1.getString(0), v2.getString(0));
+			}
+			break;
+
+		case BOOLEAN:
+			if (v2.dataType == DataType.BOOLEAN) {
+				if (multi)
+					return evaluateBoolean(ctx, params);
+				return evaluateBoolean(ctx, v1.getBoolean(0), v2.getBoolean(0));
 			}
 			break;
 
@@ -123,6 +130,10 @@ public abstract class OperatorsAbstract extends AtFunction {
 	protected abstract ValueHolder evaluateDateTime(final FormulaContext ctx, final ValueHolder[] params);
 
 	protected abstract ValueHolder evaluateDateTime(final FormulaContext ctx, final DateTime dt1, final DateTime dt2);
+
+	protected abstract ValueHolder evaluateBoolean(final FormulaContext ctx, final ValueHolder[] params);
+
+	protected abstract ValueHolder evaluateBoolean(final FormulaContext ctx, final boolean b1, final boolean b2);
 
 	/* -------------------------------------------------- */
 	public boolean checkParamCount(final int i) {

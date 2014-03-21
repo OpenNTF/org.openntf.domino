@@ -5,6 +5,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -238,6 +240,14 @@ public class TestRunner implements Runnable {
 					System.out.println(errors.toString());
 
 				}
+				BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
+				try {
+					console.readLine();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
 			}
 		}
 
@@ -259,6 +269,18 @@ public class TestRunner implements Runnable {
 				} else if (a == null || b == null) {
 					equals = false;
 					break;
+				} else if (a instanceof Boolean && b instanceof Number) {
+					if ((Boolean) a) {
+						if (Double.compare(1.0, ((Number) b).doubleValue()) != 0) {
+							equals = false;
+							break;
+						}
+					} else {
+						if (Double.compare(0.0, ((Number) b).doubleValue()) != 0) {
+							equals = false;
+							break;
+						}
+					}
 				} else if (a instanceof Number && b instanceof Number) {
 					if (Double.compare(((Number) a).doubleValue(), ((Number) b).doubleValue()) != 0) {
 						equals = false;

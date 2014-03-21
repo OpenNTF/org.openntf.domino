@@ -43,7 +43,7 @@ public abstract class ValueHolder implements Serializable {
 	 * DOUBLE means 'only doubles', INTEGER means 'only integers'. If you mix Integers and Doubles, the type changes to "NUMBER"
 	 */
 	public enum DataType {
-		ERROR, STRING, INTEGER(true), NUMBER(true), DOUBLE(true), DATETIME, BOOLEAN, _UNSET, OBJECT;
+		ERROR, STRING, INTEGER(true), DOUBLE(true), DATETIME, BOOLEAN, _UNSET, OBJECT;
 		public boolean numeric = false;
 
 		DataType() {
@@ -127,6 +127,12 @@ public abstract class ValueHolder implements Serializable {
 		}
 
 		if (Number.class.isAssignableFrom(clazz))
+			return new ValueHolderNumber(size);
+
+		if (Boolean.class.isAssignableFrom(clazz))
+			return new ValueHolderBoolean(size);
+
+		if (Character.class.isAssignableFrom(clazz))
 			return new ValueHolderNumber(size);
 
 		return new ValueHolderObject<Object>(size);
@@ -329,7 +335,6 @@ public abstract class ValueHolder implements Serializable {
 		case ERROR:
 			throw currentError;
 		case DOUBLE:
-		case NUMBER:
 			return getDouble(i);
 		case INTEGER:
 			return getInt(i);
@@ -446,13 +451,6 @@ public abstract class ValueHolder implements Serializable {
 	protected void checkAdd() {
 		if (immutable)
 			throw new UnsupportedOperationException("immutable");
-	}
-
-	@Deprecated
-	protected void checkGet() {
-		if (currentError == null)
-			return;
-		throw currentError;
 	}
 
 	/**

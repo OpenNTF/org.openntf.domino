@@ -60,7 +60,6 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 		case BOOLEAN:
 		case DOUBLE:
 		case INTEGER:
-		case NUMBER:
 			throw new IHaveNoIdeaHowThisHappenedException();
 
 		default:
@@ -182,7 +181,6 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 			setError(other.getError());
 			return true;
 
-		case NUMBER:
 		case DOUBLE:
 		case INTEGER:
 			return super.addAll(other);

@@ -49,7 +49,6 @@ public class ASTSubscript extends SimpleNode {
 		case ERROR:
 			return ValueHolder.valueOf(base.getError());
 
-		case NUMBER:
 		case DOUBLE:
 			return ValueHolder.valueOf(base.getDouble(idx));
 
