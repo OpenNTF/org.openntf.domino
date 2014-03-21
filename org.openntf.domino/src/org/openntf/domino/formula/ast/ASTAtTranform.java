@@ -34,7 +34,7 @@ public class ASTAtTranform extends SimpleNode {
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
 		ValueHolder list = children[0].evaluate(ctx);
-		String temp = (String) children[1].evaluate(ctx).get(0);
+		String temp = children[1].evaluate(ctx).getString(0);
 		temp = temp.toLowerCase();
 
 		ValueHolder[] tmpHolders = new ValueHolder[list.size];
@@ -42,8 +42,22 @@ public class ASTAtTranform extends SimpleNode {
 		int holders = 0;
 
 		for (int i = 0; i < list.size; i++) {
+			ValueHolder iter = list.newInstance(1);
+			switch (list.dataType) {
+			case INTEGER:
+				iter.add(list.getInt(i));
+				break;
+			case DOUBLE:
+				iter.add(list.getDouble(i));
+				break;
+			case BOOLEAN:
+				iter.add(list.getBoolean(i));
+				break;
+			default:
+				iter.add(list.getObject(i));
+			}
+
 			@SuppressWarnings("deprecation")
-			ValueHolder iter = ValueHolder.valueOf(list.get(i)); // as multi values are alle boxed. it should not affect performance here
 			ValueHolder old = ctx.setVarLC(temp, iter);
 			try {
 				// Cumulate all return values
