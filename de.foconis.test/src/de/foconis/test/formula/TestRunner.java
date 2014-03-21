@@ -102,8 +102,14 @@ public class TestRunner implements Runnable {
 				BufferedReader br = new BufferedReader(new FileReader(files[i]));
 				String line;
 				while ((line = br.readLine()) != null) {
-					if (!Strings.isBlankString(line))
+					line = line.trim();
+					if (Strings.isBlankString(line)) {
+
+					} else if (line.startsWith("#")) {
+						NTF(line);
+					} else {
 						execute(line, true, true, true);
+					}
 				}
 				br.close();
 			}
