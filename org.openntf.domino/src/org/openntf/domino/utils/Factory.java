@@ -21,9 +21,11 @@ import java.security.AccessControlException;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ServiceLoader;
@@ -72,6 +74,8 @@ public enum Factory {
 	private static ThreadLocal<ClassLoader> currentClassLoader_ = new ThreadLocal<ClassLoader>();
 
 	private static ThreadLocal<Session> currentSessionHolder_ = new ThreadLocal<Session>();
+
+	private static List<Terminatable> onTerminate_ = new ArrayList<Terminatable>();
 
 	/**
 	 * setup the environment and loggers
@@ -407,11 +411,17 @@ public enum Factory {
 
 			result = RunContext.AGENT;
 		}
-		com.ibm.domino.http.bootstrap.logger.RCPLoggerConfig rcplc;
-		ClassLoader cl = com.ibm.domino.http.bootstrap.BootstrapClassLoader.getSharedClassLoader();
-		if (cl instanceof com.ibm.domino.http.bootstrap.BootstrapOSGIClassLoader) {
-			com.ibm.domino.http.bootstrap.BootstrapOSGIClassLoader bocl = (com.ibm.domino.http.bootstrap.BootstrapOSGIClassLoader) cl;
-			result = RunContext.XPAGES_OSGI;
+		//		com.ibm.domino.http.bootstrap.logger.RCPLoggerConfig rcplc;
+		try {
+			Class<?> BCLClass = Class.forName("com.ibm.domino.http.bootstrap.BootstrapClassLoader");
+			if (BCLClass != null) {
+				ClassLoader cl = (ClassLoader) BCLClass.getMethod("getSharedClassLoader", null).invoke(null, null);
+				if ("com.ibm.domino.http.bootstrap.BootstrapOSGIClassLoader".equals(cl.getClass().getName())) {
+					result = RunContext.XPAGES_OSGI;
+				}
+			}
+		} catch (Exception e) {
+
 		}
 
 		return result;
@@ -460,6 +470,10 @@ public enum Factory {
 	@Deprecated
 	public static org.openntf.domino.Document fromLotusDocument(final lotus.domino.Document lotus, final Base parent) {
 		return (org.openntf.domino.Document) getWrapperFactory().fromLotus(lotus, Document.SCHEMA, (Database) parent);
+	}
+
+	public static void setNoRecycle(final Base<?> base, final boolean value) {
+		getWrapperFactory().setNoRecycle(base, value);
 	}
 
 	/*
@@ -612,6 +626,7 @@ public enum Factory {
 		if (result == null) {
 			try {
 				result = Factory.fromLotus(lotus.domino.NotesFactory.createSession(), Session.SCHEMA, null);
+				Factory.setNoRecycle(result, false);  // We have created the session, so we recycle it
 			} catch (lotus.domino.NotesException ne) {
 				try {
 					result = XSPUtil.getCurrentSession();
@@ -699,9 +714,12 @@ public enum Factory {
 		if (currentSessionHolder_.get() != null) {
 			result = wf.toLotus(currentSessionHolder_.get());
 		}
+		for (Terminatable callback : onTerminate_) {
+			callback.terminate();
+		}
+		clearSession();
 		wf.terminate();
 
-		clearSession();
 		clearBubbleExceptions();
 		clearDominoGraph();
 		clearWrapperFactory();
@@ -758,6 +776,7 @@ public enum Factory {
 				}
 			});
 			if (result instanceof org.openntf.domino.Session) {
+				Factory.setNoRecycle((org.openntf.domino.Session) result, false); // We have created the session, so we recycle it
 				return (org.openntf.domino.Session) result;
 			}
 		} catch (PrivilegedActionException e) {
@@ -781,6 +800,7 @@ public enum Factory {
 				}
 			});
 			if (result instanceof org.openntf.domino.Session) {
+				Factory.setNoRecycle((org.openntf.domino.Session) result, false); // We have created the session, so we recycle it
 				return (org.openntf.domino.Session) result;
 			}
 		} catch (PrivilegedActionException e) {
@@ -1092,6 +1112,16 @@ public enum Factory {
 			throw new DataNotCompatibleException("Cannot convert a non-OpenNTF DocumentCollection to a NoteCollection");
 		}
 		return result;
+	}
+
+	/**
+	 * This will call the terminate-function of the callback on every "terminate" call. (Across threads!) The callback must handle this with
+	 * threadlocals itself. See DateTime for an example
+	 * 
+	 * @param callback
+	 */
+	public static void onTerminate(final Terminatable callback) {
+		onTerminate_.add(callback);
 	}
 
 }
