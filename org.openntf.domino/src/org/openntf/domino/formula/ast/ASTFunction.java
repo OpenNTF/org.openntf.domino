@@ -63,12 +63,12 @@ public class ASTFunction extends SimpleNode {
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
 		try {
-			if (jjtGetNumChildren() == 0) {
+			if (children == null) {
 				return function.evaluate(ctx, null);
 			}
-			ValueHolder params[] = new ValueHolder[jjtGetNumChildren()];
-			for (int i = 0; i < jjtGetNumChildren(); i++) {
-				params[i] = jjtGetChild(i).evaluate(ctx);
+			ValueHolder params[] = new ValueHolder[children.length];
+			for (int i = 0; i < children.length; i++) {
+				params[i] = children[i].evaluate(ctx);
 			}
 			return function.evaluate(ctx, params);
 		} catch (Exception e) {

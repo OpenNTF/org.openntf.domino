@@ -24,14 +24,38 @@ public class FormulaContext {
 	private Map<String, ValueHolder> vars = new HashMap<String, ValueHolder>();
 	private Formatter formatter;
 
+	public ValueHolder TRUE;
+	public ValueHolder FALSE;
+	public ValueHolder NEWLINE = ValueHolder.valueOf(System.getProperty("line.separator", "\n"));
+	public boolean useBooleans = true;
+
 	/**
 	 * @param document
+	 *            the context document
 	 * @param formatter
+	 *            the formatter to format date/times
+	 * 
 	 */
 	public FormulaContext(final Map<String, Object> document, final Formatter formatter) {
 		super();
 		this.document = document;
 		this.formatter = formatter;
+		useBooleans(true);
+	}
+
+	public void useBooleans(final boolean useit) {
+		useBooleans = useit;
+		if (useit) {
+			TRUE = ValueHolder.valueOf(true);
+			FALSE = ValueHolder.valueOf(false);
+		} else {
+			TRUE = ValueHolder.valueOf(1);
+			FALSE = ValueHolder.valueOf(0);
+		}
+	}
+
+	public Map<String, Object> getDocument() {
+		return document;
 	}
 
 	/**
@@ -39,11 +63,11 @@ public class FormulaContext {
 	 * pay attention if you program functions that modify the document otherwise!
 	 * 
 	 * @param varName
-	 * @return
+	 *            the var name to read. must be lowercase
+	 * @return ValueHolder
 	 */
-	public ValueHolder getVar(final String varName) {
-		String key = varName.toLowerCase();
-
+	@SuppressWarnings("deprecation")
+	public ValueHolder getVarLC(final String key) {
 		ValueHolder var = vars.get(key);
 		if (var != null) {
 			return var;
@@ -51,12 +75,12 @@ public class FormulaContext {
 		if (document != null) {
 			Object o = document.get(key);
 			if (o != null) {
-				var = new ValueHolder(o);
+				var = ValueHolder.valueOf(o); // RPr here it is allowed to access the deprecate method
 			} else {
-				var = new ValueHolder("");
+				var = ValueHolder.valueDefault();
 			}
 		} else {
-			var = new ValueHolder("");
+			var = ValueHolder.valueDefault();
 		}
 
 		vars.put(key, var);
@@ -68,10 +92,12 @@ public class FormulaContext {
 	 * Set a value in the internal var cache. Nothing is written to a Document
 	 * 
 	 * @param key
+	 *            the key. Must be lowercase
 	 * @param elem
+	 *            the ValueHolder to set
 	 * @return the OLD value
 	 */
-	public ValueHolder setVar(final String key, final ValueHolder elem) {
+	public ValueHolder setVarLC(final String key, final ValueHolder elem) {
 		if (elem == null) {
 			ValueHolder old = vars.get(key);
 			vars.remove(key);
@@ -85,10 +111,12 @@ public class FormulaContext {
 	 * Set a field (and a value!)
 	 * 
 	 * @param key
+	 *            the field to set
 	 * @param elem
+	 *            the element to set
 	 */
 	public void setField(final String key, final ValueHolder elem) {
-		setVar(key, elem);
+		setVarLC(key.toLowerCase(), elem);
 		if (document != null) {
 			document.put(key, elem);
 		}
@@ -98,7 +126,9 @@ public class FormulaContext {
 	 * Set a default value
 	 * 
 	 * @param key
+	 *            the field to set
 	 * @param elem
+	 *            the element to set
 	 */
 	public void setDefault(final String key, final ValueHolder elem) {
 		if (vars.containsKey(key))
@@ -107,7 +137,7 @@ public class FormulaContext {
 			if (document.containsKey(key))
 				return;
 		}
-		setVar(key, elem);
+		setVarLC(key.toLowerCase(), elem);
 	}
 
 	public Formatter getFormatter() {

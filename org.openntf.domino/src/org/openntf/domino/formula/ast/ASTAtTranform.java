@@ -33,21 +33,51 @@ public class ASTAtTranform extends SimpleNode {
 
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
-		ValueHolder list = jjtGetChild(0).evaluate(ctx);
-		String temp = (String) jjtGetChild(1).evaluate(ctx).get(0);
+		ValueHolder list = children[0].evaluate(ctx);
+		String temp = children[1].evaluate(ctx).getString(0);
+		temp = temp.toLowerCase();
 
-		ValueHolder ret = new ValueHolder();
-		for (int i = 0; i < list.size(); i++) {
-			ValueHolder iter = new ValueHolder(list.get(i));
-			ValueHolder old = ctx.setVar(temp, iter);
+		ValueHolder[] tmpHolders = new ValueHolder[list.size];
+		int valueSize = 0;
+		int holders = 0;
+
+		for (int i = 0; i < list.size; i++) {
+			ValueHolder iter = list.newInstance(1);
+			switch (list.dataType) {
+			case INTEGER:
+				iter.add(list.getInt(i));
+				break;
+			case DOUBLE:
+				iter.add(list.getDouble(i));
+				break;
+			case BOOLEAN:
+				iter.add(list.getBoolean(i));
+				break;
+			default:
+				iter.add(list.getObject(i));
+			}
+
+			@SuppressWarnings("deprecation")
+			ValueHolder old = ctx.setVarLC(temp, iter);
 			try {
 				// Cumulate all return values
-				ret.addAll(jjtGetChild(2).evaluate(ctx));
+				ValueHolder vh = children[2].evaluate(ctx);
+				if (vh != null) {
+					valueSize += vh.size;
+					tmpHolders[holders++] = vh;
+				}
 			} finally {
-				ctx.setVar(temp, old);
+				ctx.setVarLC(temp, old);
 			}
 		}
-		return ret;
+		if (holders == 0)
+			return null;
+
+		ValueHolder vhRet = tmpHolders[0].newInstance(valueSize);
+		for (int i = 0; i < holders; i++) {
+			vhRet.addAll(tmpHolders[i]);
+		}
+		return vhRet;
 	}
 
 	public void toFormula(final StringBuilder sb) {

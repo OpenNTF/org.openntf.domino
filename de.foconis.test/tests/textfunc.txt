@@ -1,0 +1,11 @@
+@Replace("a":"b"; "a":"b"; "A")
+	# --> "A, "
+@ReplaceSubstring("a":"b"; "a":"b"; "A") 
+	# --> "A, A"
+@ReplaceSubstring("Manfred"; "anf":"Mund":"red";"und":"Zunge")
+	# --> "ZungeZunge"
+
+@Keywords(@ProperCase("EPA Head speaks at Harvard and yale":"The UCLA Chancellor Retires":"Ohio State wins big game":"Reed and University of Oregon share research facilities");"Harvard":"Brown":"Stanford":"Yale":"Vassar":"UCLA")
+@Keywords("Mary Halen, Director of Sales":"Sally Hall, VP of Marketing": "Joe Halzy, Order entry"; "Sally"; " ,")
+@Keywords(" " + "Mary Halen, Director of Sales":"Sally Hall, VP of Marketing": "Joe Halzy, Order entry"; "Sally"; " ,")
+	# Examples from Notes-Help

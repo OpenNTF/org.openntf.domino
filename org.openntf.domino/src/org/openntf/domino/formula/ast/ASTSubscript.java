@@ -31,18 +31,36 @@ public class ASTSubscript extends SimpleNode {
 		super(p, id);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
 
-		ValueHolder base = jjtGetChild(0).evaluate(ctx);
+		ValueHolder base = children[0].evaluate(ctx);
 
-		ValueHolder subscript = jjtGetChild(1).evaluate(ctx);
+		ValueHolder subscript = children[1].evaluate(ctx);
 
-		int idx = subscript.getInt(0);
-		if (idx < 1 || idx > base.size()) {
-			throw new IndexOutOfBoundsException("Index " + idx + " not in 1.." + base.size());
+		int idx = subscript.getInt(0); // we need it as INT here
+		if (idx < 1 || idx > base.size) {
+			throw new IndexOutOfBoundsException("Index " + idx + " not in 1.." + base.size);
 		}
-		return new ValueHolder(base.get(idx - 1)); // Formula is 1 based
+
+		idx--; // Formula is 1 based
+		switch (base.dataType) {
+		case ERROR:
+			return ValueHolder.valueOf(base.getError());
+
+		case DOUBLE:
+			return ValueHolder.valueOf(base.getDouble(idx));
+
+		case INTEGER:
+			return ValueHolder.valueOf(base.getInt(idx));
+
+		case STRING:
+			return ValueHolder.valueOf(base.getString(idx - 1));
+
+		default:
+			return ValueHolder.valueOf(base.get(idx - 1));
+		}
 	}
 
 	@Override
