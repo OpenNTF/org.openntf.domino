@@ -267,6 +267,8 @@ public class DocumentScanner extends Observable {
 	 *            the stateManager to set
 	 */
 	public void setStateManager(final IScannerStateManager stateManager, final Object stateManagerKey) {
+		//		System.out.println("State manager being added to scanner: " + stateManager.getClass().getName() + " key: "
+		//				+ String.valueOf(stateManagerKey));
 		stateManager_ = stateManager;
 		stateManagerKey_ = stateManagerKey;
 		addObserver(stateManager);
