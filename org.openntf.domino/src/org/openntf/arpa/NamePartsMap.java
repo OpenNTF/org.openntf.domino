@@ -522,17 +522,18 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 
 			if ((!ISO.isBlankString(string)) && (string.indexOf('/') > 0)) {
 
-				// break the source into it's component words and parse them
+				// break the source into component words and parse them
 				final String[] words = string.split("/");
-				final int length = words.length;
-				if (length > 0) {
+				if (words.length > 0) {
 					int idx = 0;
 
 					if (string.indexOf('=') > 0) {
 						// use canonical logic
-						for (int i = words.length - 1; i >= 0; i--) {
-							final String word = words[i].trim();
-							try {
+						try {
+							for (int i = (words.length - 1); i >= 0; i--) {
+								final String word = words[i].trim();
+								// TODO Need to handle case where word = "*"   DSO 20140319
+
 								if (word.indexOf('=') > 0) {
 									final String[] nibbles = word.split("=");
 									if (nibbles.length > 1) {
@@ -550,22 +551,20 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 											common = value;
 										}
 									} else {
-										throw new RuntimeException("Exception Parsing Word: \"" + word + "\"");
+										throw new RuntimeException("Cannot Parse Word: \"" + word + "\", Source String: \"" + string + "\"");
 									}
-								} else {
-									throw new RuntimeException("Exception Parsing Word: \"" + word + "\"");
 								}
-							} catch (final Exception e) {
-								ISO.handleException(e, "Source String: \"" + string + "\",  Parsing Word: \"" + word + "\"");
-								e.printStackTrace();
 							}
+
+						} catch (final Exception e) {
+							ISO.handleException(e, "Source String: \"" + string + "\"");
 						}
 
 					} else {
 						// use abbreviated logic
 						common = words[0].trim();
-						if (length > 1) {
-							int orgpos = length;
+						if (words.length > 1) {
+							int orgpos = (words.length - 1);
 							organization = words[orgpos];
 							if (ISO.isCountryCode2(organization)) {
 								// organization could be a country code,
@@ -604,8 +603,7 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 			return true;
 
 		} catch (final Exception e) {
-			ISO.handleException(e, string);
-			e.printStackTrace();
+			ISO.handleException(e, "Source String: \"" + string + "\"");
 		}
 
 		return false;
