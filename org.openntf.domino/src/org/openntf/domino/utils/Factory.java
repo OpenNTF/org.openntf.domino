@@ -411,11 +411,17 @@ public enum Factory {
 
 			result = RunContext.AGENT;
 		}
-		com.ibm.domino.http.bootstrap.logger.RCPLoggerConfig rcplc;
-		ClassLoader cl = com.ibm.domino.http.bootstrap.BootstrapClassLoader.getSharedClassLoader();
-		if (cl instanceof com.ibm.domino.http.bootstrap.BootstrapOSGIClassLoader) {
-			com.ibm.domino.http.bootstrap.BootstrapOSGIClassLoader bocl = (com.ibm.domino.http.bootstrap.BootstrapOSGIClassLoader) cl;
-			result = RunContext.XPAGES_OSGI;
+		//		com.ibm.domino.http.bootstrap.logger.RCPLoggerConfig rcplc;
+		try {
+			Class<?> BCLClass = Class.forName("com.ibm.domino.http.bootstrap.BootstrapClassLoader");
+			if (BCLClass != null) {
+				ClassLoader cl = (ClassLoader) BCLClass.getMethod("getSharedClassLoader", null).invoke(null, null);
+				if ("com.ibm.domino.http.bootstrap.BootstrapOSGIClassLoader".equals(cl.getClass().getName())) {
+					result = RunContext.XPAGES_OSGI;
+				}
+			}
+		} catch (Exception e) {
+
 		}
 
 		return result;
