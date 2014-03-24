@@ -1,9 +1,8 @@
 package org.openntf.domino.formula.impl;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.TreeSet;
+import java.util.Vector;
 import java.util.regex.Pattern;
 
 import org.openntf.domino.formula.FormulaContext;
@@ -295,7 +294,7 @@ public enum TextFunctions {
 
 	/*----------------------------------------------------------------------------*/
 	/*
-	 * @Count, @Elements, @Length
+	 * @Count, @Elements, @Length, @Trim
 	 */
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(1)
@@ -316,6 +315,15 @@ public enum TextFunctions {
 	@ParamCount(1)
 	public static int atLength(final String whose) {
 		return whose.length();
+	}
+
+	/*----------------------------------------------------------------------------*/
+	/*
+	 * Difference: Lotus doesn't trim tabs.
+	 */
+	@ParamCount(1)
+	public static String atTrim(final String whom) {
+		return whom.trim();
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -372,78 +380,80 @@ public enum TextFunctions {
 	}
 
 	/*----------------------------------------------------------------------------*/
+	@ParamCount(1)
+	public static ValueHolder atIsError(final FormulaContext ctx, final ValueHolder[] params) {
+		return (params[0].dataType == DataType.ERROR) ? ctx.TRUE : ctx.FALSE;
+	}
+
+	/*----------------------------------------------------------------------------*/
 	/*
 	 * @Keywords
 	 */
 	/*----------------------------------------------------------------------------*/
 	@ParamCount({ 2, 3 })
 	public static ValueHolder atKeywords(final ValueHolder[] params) {
-		String seps = (params.length == 2) ? "?. ,!;:[](){}\"<>" : params[2].getString(0);
-		boolean sepsEmpty = seps.isEmpty();
-		ValueHolder vh = params[0];
-		String testStr;
-		if (vh.size == 1)
-			testStr = vh.getString(0);
-		else {
-			int bedarf = vh.size - 1;
-			for (int i = 0; i < vh.size; i++)
-				bedarf += vh.getString(i).length();
-			StringBuffer sb = new StringBuffer(bedarf + 10);
-			boolean first = true;
-			char c = sepsEmpty ? (char) 1 : seps.charAt(0);
-			for (int i = 0; i < vh.size; i++) {
-				if (first)
-					first = false;
-				else
-					sb.append(c);
-				sb.append(vh.getString(i));
-			}
-			testStr = sb.toString();
-		}
-		TreeSet<String> ts = new TreeSet<String>();
-		if (sepsEmpty)
-			keywordsNoSeps(ts, testStr, params[1]);
+		boolean explicitSeps = (params.length == 3);
+		String seps = explicitSeps ? params[2].getString(0) : "?. \t\r\n,!;:[](){}\"<>";
+		Vector<String> res = new Vector<String>(params[1].size + 1);
+		if (seps.isEmpty())
+			keywordsNoSeps(res, params[0], params[1]);
 		else
-			keywordsWithSeps(ts, seps, testStr, params[1]);
-		ValueHolder ret = ValueHolder.createValueHolder(String.class, ts.size());
-		for (String s : ts)
-			ret.add(s);
+			keywordsWithSeps(res, seps, explicitSeps, params[0], params[1]);
+		int sz = res.size();
+		ValueHolder ret = ValueHolder.createValueHolder(String.class, sz);
+		for (int i = 0; i < sz; i++)
+			ret.add(res.get(i));
 		return ret;
 	}
 
 	/*----------------------------------------------------------------------------*/
-	private static void keywordsNoSeps(final TreeSet<String> ts, final String testStr, final ValueHolder keywords) {
+	private static void keywordsNoSeps(final Vector<String> res, final ValueHolder testStrs, final ValueHolder keywords) {
 		for (int i = 0; i < keywords.size; i++) {
-			String s = keywords.getString(i);
-			if (testStr.indexOf(s) >= 0)
-				ts.add(s);
+			String keyword = keywords.getString(i);
+			for (int j = 0; j < testStrs.size; j++) {
+				if (testStrs.getString(j).indexOf(keyword) >= 0) {
+					res.add(keyword);
+					break;
+				}
+			}
 		}
 	}
 
 	/*----------------------------------------------------------------------------*/
-	private static void keywordsWithSeps(final TreeSet<String> ts, final String seps, final String testStr, final ValueHolder keywords) {
-		int lh = seps.length();
-		StringBuffer sb = new StringBuffer(lh + 10);
-		sb.append('[');
-		for (int i = 0; i < lh; i++) {
-			char c = seps.charAt(i);
-			if (c == '[' || c == ']')
-				sb.append('\\');
-			sb.append(c);
+	private static void keywordsWithSeps(final Vector<String> res, final String seps, final boolean explicitSeps,
+			final ValueHolder testStrs, final ValueHolder keywords) {
+		int bedarf = testStrs.size + 1;
+		for (int i = 0; i < testStrs.size; i++)
+			bedarf += testStrs.getString(i).length();
+		char[] buffer = new char[bedarf + 10];
+		int count = 0;
+		for (int i = 0; i < testStrs.size; i++) {
+			String ts = testStrs.getString(i);
+			int lh = ts.length();
+			boolean putIt = !explicitSeps;
+			boolean lastWasSep = true;
+			for (int j = 0; j < lh; j++) {
+				char c = ts.charAt(j);
+				if (seps.indexOf(c) >= 0) {
+					if (!lastWasSep)
+						buffer[count++] = (char) 0;
+					lastWasSep = true;
+					putIt = true;
+					continue;
+				}
+				if (putIt) {
+					buffer[count++] = c;
+					lastWasSep = false;
+				}
+			}
+			if (!lastWasSep)
+				buffer[count++] = (char) 0;
 		}
-		sb.append(']');
-		sb.append('+');
-		String[] sArr = testStr.split(sb.toString());
-		//		for (int i = 0; i < sArr.length; i++)
-		//			System.out.println(sArr[i] + " ");
-		//		System.out.println("");
-		HashSet<String> hs = new HashSet<String>();
-		for (int i = 0; i < sArr.length; i++)
-			hs.add(sArr[i]);
+		String testStr = new String(buffer, 0, count);
 		for (int i = 0; i < keywords.size; i++) {
-			String s = keywords.getString(i);
-			if (hs.contains(s))
-				ts.add(s);
+			String keyword = keywords.getString(i);
+			if (testStr.indexOf(keyword) >= 0)
+				res.add(keyword);
 		}
 	}
 
@@ -452,6 +462,7 @@ public enum TextFunctions {
 	 * @Like (?), @Matches (?), @RegExpMatches
 	 */
 	/*----------------------------------------------------------------------------*/
+	@OpenNTF
 	@ParamCount(2)
 	public static ValueHolder atRegExpMatches(final FormulaContext ctx, final ValueHolder[] params) {
 		ValueHolder vhTester = params[0];
@@ -499,5 +510,124 @@ public enum TextFunctions {
 		return ret;
 	}
 
+	/*----------------------------------------------------------------------------*/
+	@ParamCount(3)
+	public static ValueHolder atReplaceSubstring(final ValueHolder[] params) {
+		ValueHolder tests = params[0];
+		ValueHolder ret = ValueHolder.createValueHolder(String.class, tests.size);
+		for (int i = 0; i < tests.size; i++)
+			ret.add(replaceString(tests.getString(i), params[1], params[2]));
+		return ret;
+	}
+
+	/*----------------------------------------------------------------------------*/
+	private static String replaceString(String what, final ValueHolder froms, final ValueHolder tos) {
+		String to = tos.getString(0);
+		for (int i = 0; i < froms.size; i++) {
+			if (i != 0 && i < tos.size)
+				to = tos.getString(i);
+			what = what.replace(froms.getString(i), to);
+		}
+		return what;
+	}
+
+	/*----------------------------------------------------------------------------*/
+	/*
+	 * @Select, @Subset
+	 * 
+	 * Concerning @Select, again, Lotus behaves a bit funny:
+	 * @Select(4) ---> 4  @Select(0) ---> ERROR  @Select(-1) ---> ERROR
+	 * @Select(n;1;2;4) ---> 1 for every n<=1 e.g. @Select(-11;1;2;4) ---> 1
+	 */
+	/*----------------------------------------------------------------------------*/
+	@ParamCount({ 2, 99 })
+	public static ValueHolder atSelect(final ValueHolder[] params) {
+		int which = params[0].getInt(0);
+		if (which <= 1)
+			which = 1;
+		else if (which >= params.length)
+			which = params.length - 1;
+		return params[which];
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@SuppressWarnings("deprecation")
+	@ParamCount(2)
+	public static ValueHolder atSubset(final ValueHolder[] params) {
+		int count = params[1].getInt(0);
+		if (count == 0)
+			throw new IllegalArgumentException("Second argument to @Subset is 0");
+		int first;
+		int last;
+		ValueHolder vh = params[0];
+		if (count > 0) {
+			first = 0;
+			last = (count > vh.size) ? vh.size : count;
+		} else {
+			count = -count;
+			last = vh.size;
+			first = (count > last) ? 0 : last - count;
+		}
+		ValueHolder ret = vh.newInstance(last - first);
+		/*
+		 * To avoid boxing/unboxing of primitives:
+		 */
+		switch (vh.dataType) {
+		case BOOLEAN:
+			for (int i = first; i < last; i++)
+				ret.add(vh.getBoolean(i));
+			break;
+		case DOUBLE:
+			for (int i = first; i < last; i++)
+				ret.add(vh.getDouble(i));
+			break;
+
+		case INTEGER:
+			for (int i = first; i < last; i++)
+				ret.add(vh.getInt(i));
+			break;
+		default:
+			for (int i = first; i < last; i++)
+				ret.add(vh.getObject(i));
+		}
+		return ret;
+	}
+
+	/*----------------------------------------------------------------------------*/
+	/*
+	 * @Unique
+	 */
+	/*----------------------------------------------------------------------------*/
+	@ParamCount(1)
+	public static ValueHolder atUnique(final ValueHolder[] params) {
+		ValueHolder vh = params[0];
+		ValueHolder ret = ValueHolder.createValueHolder(String.class, vh.size);
+		for (int i = 0; i < vh.size; i++) {
+			String s = vh.getString(i);
+			int j;
+			for (j = 0; j < ret.size; j++)
+				if (ret.getString(j).equals(s))
+					break;
+			if (j == ret.size)
+				ret.add(s);
+		}
+		return ret;
+	}
+
+	/*----------------------------------------------------------------------------*/
+	/*
+	 * @Compare
+	 */
+	/*----------------------------------------------------------------------------*/
+	@ParamCount({ 2, 3 })
+	public static ValueHolder atCompare(final ValueHolder[] params) {
+
+		if (params.length == 3) {
+			for (int i = 0; i < params[2].size; i++)
+				System.out.println("Option " + i + ": " + params[2].getString(i));
+		}
+
+		return (ValueHolder.valueOf(0));
+	}
 	/*----------------------------------------------------------------------------*/
 }
