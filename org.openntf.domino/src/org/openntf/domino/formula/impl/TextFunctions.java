@@ -288,8 +288,8 @@ public enum TextFunctions {
 	}
 
 	@ParamCount(0)
-	public static String atNewLine() {
-		return atChar(10);
+	public static ValueHolder atNewLine(final FormulaContext ctx) {
+		return ctx.NEWLINE;
 	}
 
 	/*----------------------------------------------------------------------------*/

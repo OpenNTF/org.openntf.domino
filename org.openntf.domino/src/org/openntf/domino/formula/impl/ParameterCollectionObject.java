@@ -30,7 +30,7 @@ public class ParameterCollectionObject<T> extends ParameterCollectionAbstract<T[
 	public ParameterCollectionObject(final ValueHolder[] params, final Class<T> clazz, final boolean permutative) {
 		super(params, permutative);
 		this.clazz = clazz;
-		ret = (T[]) Array.newInstance(clazz, params.length);
+		ret = (T[]) Array.newInstance(clazz, params == null ? 0 : params.length);
 	}
 
 	@Override

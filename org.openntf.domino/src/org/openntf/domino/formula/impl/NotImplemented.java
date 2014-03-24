@@ -337,7 +337,7 @@ public class NotImplemented extends AtFunction {
 	 * Evaluates the operator
 	 */
 	public ValueHolder evaluate(final FormulaContext ctx, final ValueHolder[] params) {
-		throw new NotImplementedException(getImage() + "is not implemented");
+		throw new NotImplementedException("Function '" + getImage() + "' is not implemented");
 	}
 
 	/* (non-Javadoc)

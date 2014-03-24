@@ -33,6 +33,8 @@ import org.openntf.domino.utils.Strings;
 public class TestRunner implements Runnable {
 	private Database db;
 
+	private boolean VIRTUAL_CONSOLE = false;
+
 	public static void main(final String[] args) {
 		DominoThread thread = new DominoThread(new TestRunner(), "My thread");
 		thread.start();
@@ -40,25 +42,34 @@ public class TestRunner implements Runnable {
 
 	public TestRunner() {
 		// whatever you might want to do in your constructor, but stay away from Domino objects
+		VIRTUAL_CONSOLE = Terminal.getTerminal().getTerminalWidth() < 10;
 	}
 
 	// Some Formatters
 	public String NTF(final Object o) {
+		if (VIRTUAL_CONSOLE)
+			return o.toString();
 		ANSIBuffer ab = new ANSIBuffer();
 		return ab.cyan(o.toString()).toString();
 	}
 
 	public String LOTUS(final Object o) {
+		if (VIRTUAL_CONSOLE)
+			return o.toString();
 		ANSIBuffer ab = new ANSIBuffer();
 		return ab.magenta(o.toString()).toString();
 	}
 
 	public String ERROR(final Object o) {
+		if (VIRTUAL_CONSOLE)
+			return o.toString();
 		ANSIBuffer ab = new ANSIBuffer();
 		return ab.red(o.toString()).toString();
 	}
 
 	public String SUCCESS() {
+		if (VIRTUAL_CONSOLE)
+			return "[OK]\t";
 		ANSIBuffer ab = new ANSIBuffer();
 		ab.append("[");
 		ab.green("OK");
@@ -68,6 +79,8 @@ public class TestRunner implements Runnable {
 	}
 
 	public String FAIL() {
+		if (VIRTUAL_CONSOLE)
+			return "[FAIL]\t";
 		ANSIBuffer ab = new ANSIBuffer();
 		ab.append("[");
 		ab.red("FAIL");
@@ -102,8 +115,14 @@ public class TestRunner implements Runnable {
 				BufferedReader br = new BufferedReader(new FileReader(files[i]));
 				String line;
 				while ((line = br.readLine()) != null) {
-					if (!Strings.isBlankString(line))
+					line = line.trim();
+					if (Strings.isBlankString(line)) {
+
+					} else if (line.startsWith("#")) {
+						NTF(line);
+					} else {
 						execute(line, true, true, true);
+					}
 				}
 				br.close();
 			}
@@ -144,7 +163,7 @@ public class TestRunner implements Runnable {
 		// TODO Auto-generated method stub
 		int width = Terminal.getTerminal().getTerminalWidth() - 20;
 		String s = lotus + "";
-		if (s.length() > width) {
+		if (s.length() > width && width > 0) {
 			s = s.substring(0, width) + "... (l=" + width + ")";
 		}
 
@@ -158,7 +177,7 @@ public class TestRunner implements Runnable {
 		List<Object> ntfDocResult = null;
 		List<Object> ntfMapResult = null;
 		List<Object> lotusResult = null;
-
+		Throwable ntfError = null;
 		boolean lotusFailed = false;
 		boolean parserFailed = false;
 		// Setup procedure, prepare the demo docs & maps
@@ -182,7 +201,7 @@ public class TestRunner implements Runnable {
 				errors.append(LOTUS("\tLotus failed: ") + ERROR(e) + "\n");
 				lotusFailed = true;
 			} catch (Throwable t) {
-				System.out.println(ERROR("FATAL") + LOTUS("\tLotus failed: ") + ERROR(t));
+				System.err.println(ERROR("FATAL") + LOTUS("\tLotus failed: ") + ERROR(t));
 			}
 		}
 
@@ -194,7 +213,7 @@ public class TestRunner implements Runnable {
 			errors.append(NTF("\tParser failed: ") + ERROR(e) + "\n");
 			parserFailed = true;
 		} catch (Throwable t) {
-			System.out.println(ERROR("FATAL") + NTF("\tParser failed: ") + ERROR(t));
+			System.err.println(ERROR("FATAL") + NTF("\tParser failed: ") + ERROR(t));
 		}
 
 		if (!parserFailed) {
@@ -204,9 +223,10 @@ public class TestRunner implements Runnable {
 					ntfDocResult = ast.evaluate(ctx1).toList();
 				} catch (EvaluateException e) {
 					errors.append(NTF("\tDoc-Evaluate failed: ") + ERROR(e) + "\n");
+					ntfError = e;
 					parserFailed = true;
 				} catch (Throwable t) {
-					System.out.println(ERROR("FATAL") + NTF("\tDoc-Evaluate failed: ") + ERROR(t));
+					System.err.println(ERROR("FATAL") + NTF("\tDoc-Evaluate failed: ") + ERROR(t));
 				}
 			}
 			if (testMap) {
@@ -216,9 +236,10 @@ public class TestRunner implements Runnable {
 					ntfMapResult = ast.evaluate(ctx2).toList();
 				} catch (EvaluateException e) {
 					errors.append(NTF("\tMap-Evaluate failed: ") + ERROR(e) + "\n");
+					ntfError = e;
 					parserFailed = true;
 				} catch (Throwable t) {
-					System.out.println(ERROR("FATAL") + NTF("\tMap-Evaluate failed: ") + ERROR(t));
+					System.err.println(ERROR("FATAL") + NTF("\tMap-Evaluate failed: ") + ERROR(t));
 				}
 			}
 		}
@@ -233,12 +254,14 @@ public class TestRunner implements Runnable {
 			if (compareList(ntfDocResult, lotusResult)) {
 				System.out.println(SUCCESS() + line + " = " + dump(ntfDocResult));
 			} else {
-				System.out.println(FAIL() + NTF("DOC:") + line);
-				System.out.println("\tResult:   " + dump(ntfDocResult));
-				System.out.println("\tExpected: " + dump(lotusResult));
+				System.err.println(FAIL() + NTF("DOC:") + line);
+				System.err.println("\tResult:   " + dump(ntfDocResult));
+				System.err.println("\tExpected: " + dump(lotusResult));
 				if (parserFailed || lotusFailed) {
-					System.out.println(errors.toString());
-
+					System.err.println(errors.toString());
+					if (ntfError != null) {
+						ntfError.printStackTrace(System.err);
+					}
 				}
 				BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
 				try {

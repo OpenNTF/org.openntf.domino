@@ -1,26 +1,32 @@
 package org.openntf.domino.formula.impl;
 
-import java.util.Calendar;
-
 import org.openntf.domino.DateTime;
 
 public abstract class OperatorImpl {
+	private String image;
 
-	public abstract double compute(double v1, double v2);
+	public OperatorImpl(final String im) {
+		image = im;
+	}
 
-	public abstract boolean compute(boolean b1, boolean b2);
+	public double compute(final double v1, final double v2) {
+		throw new UnsupportedOperationException("'" + image + "' is not supported for DOUBLE");
+	}
 
-	public abstract int compute(int v1, int v2) throws IntegerOverflowException;
+	public boolean compute(final boolean b1, final boolean b2) {
+		throw new UnsupportedOperationException("'" + image + "' is not supported for BOOLEAN");
+	}
+
+	public int compute(final int v1, final int v2) throws IntegerOverflowException {
+		throw new UnsupportedOperationException("'" + image + "' is not supported for INTEGER");
+	}
 
 	public String compute(final String v1, final String v2) {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("'" + image + "' is not supported for STRING");
 	}
 
 	public DateTime compute(final DateTime d1, final DateTime d2) {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("'" + image + "' is not supported for DATETIME");
 	}
 
-	public Calendar compute(final Calendar d1, final Calendar d2) {
-		throw new UnsupportedOperationException();
-	}
 }

@@ -450,7 +450,7 @@ public abstract class ValueHolder implements Serializable {
 
 	protected void checkAdd() {
 		if (immutable)
-			throw new UnsupportedOperationException("immutable");
+			throw new UnsupportedOperationException("ValueHolder is immutable.");
 	}
 
 	/**
@@ -458,8 +458,7 @@ public abstract class ValueHolder implements Serializable {
 	 */
 	@Deprecated
 	public boolean add(final Object obj) {
-		if (immutable)
-			throw new UnsupportedOperationException("immutable");
+		checkAdd();
 
 		if (dataType == DataType.ERROR) {
 			return false;
