@@ -15,6 +15,10 @@
  */
 package org.openntf.domino.impl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -42,6 +46,26 @@ import org.openntf.domino.utils.Factory;
 public class View extends Base<org.openntf.domino.View, lotus.domino.View, Database> implements org.openntf.domino.View {
 
 	private List<DominoColumnInfo> columnInfo_;
+	private static Method iGetEntryByKeyMethod;
+	static {
+		try {
+			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				@SuppressWarnings("unused")
+				@Override
+				public Object run() throws Exception {
+					iGetEntryByKeyMethod = lotus.domino.local.View.class.getDeclaredMethod("iGetEntryByKey", Vector.class, boolean.class,
+							int.class);
+					iGetEntryByKeyMethod.setAccessible(true);
+
+					return null;
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+			DominoUtils.handleException(e);
+		}
+
+	}
 
 	/**
 	 * Instantiates a new view.
@@ -613,6 +637,45 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 			DominoUtils.handleException(e);
 		}
 		return null;
+	}
+
+	/**
+	 * This method is neccessary to get some Backend-functions working.<br>
+	 * <font color=red>Attention: The <b>name</b> of the function seems not to be important, but the <b>position</b>!</font> It seems that
+	 * the backendbridge calls the n-th. method in this class. (didn't figure out, how n was computed. Method is at
+	 * lotus.domino.local.View.class.getDeclaredMethods()[68], but 68 has no correlation to thisClass.getDeclaredMethods )<br/>
+	 * 
+	 * To find the correct positon, trace a call of<br>
+	 * <code>DominoUtils.getViewEntryByKeyWithOptions(view, "key", 2243)</code><br>
+	 * and hit "step into" until you are in one of the mehtods of this file. Move <b>this</b> mehtod to the position you found with the
+	 * debugger.
+	 * 
+	 * 
+	 * @param paramVector
+	 * @param paramBoolean
+	 * @param paramInt
+	 * @return
+	 * @throws NotesException
+	 */
+	org.openntf.domino.ViewEntry iGetEntryByKey(final Vector paramVector, final boolean paramBoolean, final int paramInt)
+			throws NotesException {
+
+		try {
+			lotus.domino.ViewEntry lotus = (lotus.domino.ViewEntry) iGetEntryByKeyMethod.invoke(getDelegate(), paramVector, paramBoolean,
+					paramInt);
+			return fromLotus(lotus, ViewEntry.SCHEMA, this);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+
 	}
 
 	/*
