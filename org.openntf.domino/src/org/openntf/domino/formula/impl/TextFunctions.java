@@ -5,6 +5,9 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
+import org.openntf.domino.DateTime;
+import org.openntf.domino.exceptions.OpenNTFNotesException;
+import org.openntf.domino.formula.Formatter;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
@@ -277,6 +280,13 @@ public enum TextFunctions {
 	 * @Ascii (?), @Char, @NewLine
 	 */
 	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate({ "@Ascii isn't implemented. (Possible at all?)", "Parameter [ALLINRANGE] doesn't yet work." })
+	@ParamCount(1)
+	public static ValueHolder atAscii(final FormulaContext ctx, final ValueHolder params[]) {
+		return ctx.evaluateNative("@Ascii(p1)", params[0].toList());
+	}
+
+	/*----------------------------------------------------------------------------*/
 	@ParamCount(1)
 	public static String atChar(final Number n) {
 		int what = n.intValue();
@@ -318,9 +328,7 @@ public enum TextFunctions {
 	}
 
 	/*----------------------------------------------------------------------------*/
-	/*
-	 * Difference: Lotus doesn't trim tabs.
-	 */
+	@DiffersFromLotus("Lotus doesn't trim tabs")
 	@ParamCount(1)
 	public static String atTrim(final String whom) {
 		return whom.trim();
@@ -330,6 +338,57 @@ public enum TextFunctions {
 	/*
 	 * @Explode, @Implode
 	 */
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("DateRange aren't yet supported")
+	@ParamCount({ 1, 4 })
+	public static ValueHolder atExplode(final FormulaContext ctx, final ValueHolder[] params) {
+		ValueHolder vh = params[0];
+		if (vh.dataType != DataType.STRING) {
+			return ctx.evaluateNative("@Explode(p1)", vh.toList());
+		}
+		String seps = " ,;";
+		boolean includeEmpties = false;
+		boolean newLineIsSep = true;
+		if (params.length >= 2)
+			seps = params[1].getString(0);
+		if (params.length >= 3)
+			includeEmpties = params[2].getBoolean(0);
+		if (params.length >= 4)
+			newLineIsSep = params[3].getBoolean(0);
+		if (newLineIsSep)
+			seps += "\n";
+		if (seps.isEmpty())
+			return vh;
+		Vector<String> res = new Vector<String>(100, 100);
+		for (int i = 0; i < vh.size; i++)
+			explodeOne(res, vh.getString(i), seps, includeEmpties);
+		int sz = res.size();
+		ValueHolder ret = ValueHolder.createValueHolder(String.class, sz);
+		for (int i = 0; i < sz; i++)
+			ret.add(res.get(i));
+		return ret;
+	}
+
+	/*----------------------------------------------------------------------------*/
+	private static void explodeOne(final Vector<String> res, final String what, final String seps, final boolean includeEmpties) {
+		int begin = 0;
+		int end;
+		int lh = what.length();
+		for (end = 0; end < lh; end++) {
+			char c = what.charAt(end);
+			if (seps.indexOf(c) < 0)
+				continue;
+			int korrEnd = end;
+			if (c == '\n' && end > 0 && what.charAt(end - 1) == '\r' && end > begin)
+				korrEnd--;
+			if (begin < korrEnd || includeEmpties)
+				res.add(what.substring(begin, korrEnd));
+			begin = end + 1;
+		}
+		if (begin < end || includeEmpties)
+			res.add(what.substring(begin, end));
+	}
+
 	/*----------------------------------------------------------------------------*/
 	@ParamCount({ 1, 2 })
 	public static ValueHolder atImplode(final ValueHolder[] params) {
@@ -384,6 +443,85 @@ public enum TextFunctions {
 	public static ValueHolder atIsError(final FormulaContext ctx, final ValueHolder[] params) {
 		return (params[0].dataType == DataType.ERROR) ? ctx.TRUE : ctx.FALSE;
 	}
+
+	/*----------------------------------------------------------------------------*/
+	/*
+	 * @ToNumber, @TextToNumber
+	 */
+	/*----------------------------------------------------------------------------*/
+	@ParamCount(1)
+	public static ValueHolder atToNumber(final FormulaContext ctx, final ValueHolder[] params) {
+		ValueHolder vh = params[0];
+		if (vh.dataType.numeric)
+			return vh;
+		if (vh.dataType != DataType.STRING)
+			throw new IllegalArgumentException("String or Number expected");
+		return (strToNumber(ctx, vh, true));
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@DiffersFromLotus("Lotus gives e.g. @TextToNumber(\"1\":\"a\":\"2\")=1:@ERROR:2")
+	@ParamCount(1)
+	public static ValueHolder atTextToNumber(final FormulaContext ctx, final ValueHolder[] params) {
+		return strToNumber(ctx, params[0], false);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@SuppressWarnings("deprecation")
+	private static ValueHolder strToNumber(final FormulaContext ctx, final ValueHolder vh, final boolean emptySpecial) {
+		ValueHolder ret = ValueHolder.createValueHolder(Double.class, vh.size);
+		Formatter formatter = ctx.getFormatter();
+		String val = null;
+		try {
+			for (int i = 0; i < vh.size; i++) {
+				val = vh.getString(i);
+				if (val.isEmpty() && emptySpecial)
+					val = "0";
+				ret.add(formatter.parseNumber(val));
+			}
+			return ret;
+		} catch (java.text.ParseException e) {
+			throw new IllegalArgumentException("Can't convert to Number: \"" + val + "\"", e);
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException("Can't convert to Number: \"" + val + "\"", e);
+		}
+	}
+
+	/*----------------------------------------------------------------------------*/
+	/*
+	 * @ToTime, @TextToTime
+	 */
+	/*----------------------------------------------------------------------------*/
+	@ParamCount(1)
+	public static ValueHolder atToTime(final FormulaContext ctx, final ValueHolder[] params) {
+		ValueHolder vh = params[0];
+		if (vh.dataType == DataType.DATETIME)
+			return vh;
+		if (vh.dataType != DataType.STRING)
+			throw new IllegalArgumentException("String or DateTime expected");
+		return strToDateTime(ctx, vh);
+	}
+
+	private static ValueHolder strToDateTime(final FormulaContext ctx, final ValueHolder vh) {
+		ValueHolder ret = ValueHolder.createValueHolder(DateTime.class, vh.size);
+		Formatter formatter = ctx.getFormatter();
+		String val = null;
+		try {
+			for (int i = 0; i < vh.size; i++) {
+				val = vh.getString(i);
+				ret.add(formatter.parseDate(val));
+			}
+			return ret;
+		} catch (java.text.ParseException e) {
+			throw new IllegalArgumentException("Can't convert to DateTime: \"" + val + "\"", e);
+		} catch (OpenNTFNotesException e) {
+			throw new IllegalArgumentException("Can't convert to DateTime: \"" + val + "\"", e);
+		}
+	}
+
+	/*----------------------------------------------------------------------------*/
+	//	@ParamCount(1)
+	//	public static ValueHolder atTextToTime(final FormulaContext ctx, final ValueHolder[] params) {
 
 	/*----------------------------------------------------------------------------*/
 	/*
@@ -459,12 +597,27 @@ public enum TextFunctions {
 
 	/*----------------------------------------------------------------------------*/
 	/*
-	 * @Like (?), @Matches (?), @RegExpMatches
+	 * @Like, @Matches, @MatchesRegExp
 	 */
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@Like isn't yet implemented; use @MatchesRegExp instead")
+	@ParamCount({ 2, 3 })
+	public static ValueHolder atLike(final FormulaContext ctx, final ValueHolder[] params) {
+		return (params.length == 2) ? ctx.evaluateNative("@Like(p1;p2)", params[0].toList(), params[1].toList()) : ctx.evaluateNative(
+				"@Like(p1;p2;p3)", params[0].toList(), params[1].toList(), params[2].toList());
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@Matches isn't yet implemented; use @MatchesRegExp instead")
+	@ParamCount(2)
+	public static ValueHolder atMatches(final FormulaContext ctx, final ValueHolder[] params) {
+		return ctx.evaluateNative("@Matches(p1;p2)", params[0].toList(), params[1].toList());
+	}
+
 	/*----------------------------------------------------------------------------*/
 	@OpenNTF
 	@ParamCount(2)
-	public static ValueHolder atRegExpMatches(final FormulaContext ctx, final ValueHolder[] params) {
+	public static ValueHolder atMatchesRegExp(final FormulaContext ctx, final ValueHolder[] params) {
 		ValueHolder vhTester = params[0];
 		ValueHolder vhPatterns = params[1];
 		for (int ip = 0; ip < vhPatterns.size; ip++) {
@@ -540,6 +693,7 @@ public enum TextFunctions {
 	 * @Select(n;1;2;4) ---> 1 for every n<=1 e.g. @Select(-11;1;2;4) ---> 1
 	 */
 	/*----------------------------------------------------------------------------*/
+	@DiffersFromLotus("@Select with only one parameter isn't supported")
 	@ParamCount({ 2, 99 })
 	public static ValueHolder atSelect(final ValueHolder[] params) {
 		int which = params[0].getInt(0);
@@ -598,8 +752,11 @@ public enum TextFunctions {
 	 * @Unique
 	 */
 	/*----------------------------------------------------------------------------*/
-	@ParamCount(1)
-	public static ValueHolder atUnique(final ValueHolder[] params) {
+	@NeedsNativeEvaluate("@Unique (without parameters) isn't yet implemented")
+	@ParamCount({ 0, 1 })
+	public static ValueHolder atUnique(final FormulaContext ctx, final ValueHolder[] params) {
+		if (params == null || params.length == 0)
+			return ctx.evaluateNative("@Unique");
 		ValueHolder vh = params[0];
 		ValueHolder ret = ValueHolder.createValueHolder(String.class, vh.size);
 		for (int i = 0; i < vh.size; i++) {
@@ -619,15 +776,79 @@ public enum TextFunctions {
 	 * @Compare
 	 */
 	/*----------------------------------------------------------------------------*/
+	@DiffersFromLotus({ "Options [ACCENT(IN)SENSITIVE] and [PITCH(IN)SENSITIVE] aren't yet supported",
+			"String compare is done via String.compareTo" })
 	@ParamCount({ 2, 3 })
 	public static ValueHolder atCompare(final ValueHolder[] params) {
-
+		boolean caseSensitive = true;
 		if (params.length == 3) {
-			for (int i = 0; i < params[2].size; i++)
-				System.out.println("Option " + i + ": " + params[2].getString(i));
+			ValueHolder options = params[2];
+			for (int i = 0; i < options.size; i++) {
+				String opt = options.getString(i);
+				if ("[CASESENSITIVE]".equalsIgnoreCase(opt))
+					caseSensitive = true;
+				else if ("[CASEINSENSITIVE]".equalsIgnoreCase(opt))
+					caseSensitive = false;
+				else if (!"[ACCENTSENSITIVE]".equalsIgnoreCase(opt) && !"[ACCENTINSENSITIVE]".equalsIgnoreCase(opt)
+						&& !"[PITCHSENSITIVE]".equalsIgnoreCase(opt) && !"[PITCHINSENSITIVE]".equalsIgnoreCase(opt))
+					throw new IllegalArgumentException("Illegal Option: " + opt);
+			}
 		}
+		ValueHolder vh1 = params[0];
+		ValueHolder vh2 = params[1];
+		int max = (vh1.size >= vh2.size) ? vh1.size : vh2.size;
+		ValueHolder ret = ValueHolder.createValueHolder(Integer.class, max);
+		String s1 = null;
+		String s2 = null;
+		for (int i = 0; i < max; i++) {
+			if (i < vh1.size)
+				s1 = vh1.getString(i);
+			if (i < vh2.size)
+				s2 = vh2.getString(i);
+			int cmp;
+			if (s1 == null)
+				cmp = (s2 == null) ? 0 : -1;
+			else
+				cmp = caseSensitive ? s1.compareTo(s2) : s1.compareToIgnoreCase(s2);
+			if (cmp < 0)
+				cmp = -1;
+			else if (cmp > 0)
+				cmp = 1;
+			ret.add(cmp);
+		}
+		return (ret);
+	}
 
-		return (ValueHolder.valueOf(0));
+	/*----------------------------------------------------------------------------*/
+	/*
+	 * @Password, @HashPassword, @VerifyPassword, @PasswordQuality
+	 */
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@Password isn't yet implemented")
+	@ParamCount(1)
+	public static ValueHolder atPassword(final FormulaContext ctx, final ValueHolder params[]) {
+		return ctx.evaluateNative("@Password(p1)", params[0].toList());
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@HashPassword isn't yet implemented")
+	@ParamCount(1)
+	public static ValueHolder atHashPassword(final FormulaContext ctx, final ValueHolder params[]) {
+		return ctx.evaluateNative("@HashPassword(p1)", params[0].toList());
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@VerifyPassword isn't yet implemented")
+	@ParamCount(2)
+	public static ValueHolder atVerifyPassword(final FormulaContext ctx, final ValueHolder params[]) {
+		return ctx.evaluateNative("@VerifyPassword(p1;p2)", params[0].toList(), params[1].toList());
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@PasswordQuality isn't yet implemented")
+	@ParamCount(1)
+	public static ValueHolder atPasswordQuality(final FormulaContext ctx, final ValueHolder params[]) {
+		return ctx.evaluateNative("@PasswordQuality(p1)", params[0].toList());
 	}
 	/*----------------------------------------------------------------------------*/
 }

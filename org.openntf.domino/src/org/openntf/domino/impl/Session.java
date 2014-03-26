@@ -676,6 +676,8 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			if (currentDatabase_ == null) {
 				result = fromLotus(getDelegate().getCurrentDatabase(), Database.SCHEMA, this);
+				if (result == null)
+					return null;
 				String key = result.getFilePath();
 				if (result.getServer().length() > 1) {
 					key = result.getServer() + "!!" + result.getFilePath();

@@ -912,4 +912,15 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		super(null, Factory.getSession(), null, 0, NOTES_TIME);
 	}
 
+	public DateTime(final String time) throws java.text.ParseException {
+		this();
+		try {
+			lotus.domino.DateTime worker = getWorker();
+			worker.setLocalTime(time);
+			workDone(worker, true);
+		} catch (NotesException ne) {
+			throw new java.text.ParseException(ne.text, 0);
+		}
+	}
+
 }

@@ -229,4 +229,14 @@ public class ValueHolderNumber extends ValueHolder implements Serializable {
 		return new ValueHolderNumber(size);
 	}
 
+	@Override
+	public void swap(final int i, final int j) {
+		int tmpI = valuesI[i];
+		valuesI[i] = valuesI[j];
+		valuesI[j] = tmpI;
+
+		double tmpD = valuesD[i];
+		valuesD[i] = valuesD[j];
+		valuesD[j] = tmpD;
+	}
 }

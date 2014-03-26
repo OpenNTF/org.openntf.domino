@@ -212,4 +212,11 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 	public ValueHolder newInstance(final int size) {
 		return new ValueHolderObject<Object>(size);
 	}
+
+	@Override
+	public void swap(final int i, final int j) {
+		Object tmp = values[i];
+		values[i] = values[j];
+		values[j] = tmp;
+	}
 }

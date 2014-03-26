@@ -131,4 +131,11 @@ public class ValueHolderBoolean extends ValueHolder implements Serializable {
 		return new ValueHolderBoolean(size);
 	}
 
+	@Override
+	public void swap(final int i, final int j) {
+		boolean tmp = values[i];
+		values[i] = values[j];
+		values[j] = tmp;
+	}
+
 }

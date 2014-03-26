@@ -255,8 +255,8 @@ public class TestRunner implements Runnable {
 				System.out.println(SUCCESS() + line + " = " + dump(ntfDocResult));
 			} else {
 				System.err.println(FAIL() + NTF("DOC:") + line);
-				System.err.println("\tResult:   " + dump(ntfDocResult));
-				System.err.println("\tExpected: " + dump(lotusResult));
+				System.err.println("\tResult:   " + dump(ntfDocResult) + " Size: " + ntfDocResult.size());
+				System.err.println("\tExpected: " + dump(lotusResult) + " Size: " + lotusResult.size());
 				if (parserFailed || lotusFailed) {
 					System.err.println(errors.toString());
 					if (ntfError != null) {
@@ -282,6 +282,15 @@ public class TestRunner implements Runnable {
 			return true;
 		if (list1 == null || list2 == null)
 			return false;
+
+		if (list1.size() == 0 && list2.size() == 1) {
+			if ("".equals(list2.get(0)))
+				return true;
+		}
+		if (list2.size() == 0 && list1.size() == 1) {
+			if ("".equals(list1.get(0)))
+				return true;
+		}
 
 		if (list1.size() == list2.size()) {
 			for (int i = 0; i < list1.size(); i++) {
