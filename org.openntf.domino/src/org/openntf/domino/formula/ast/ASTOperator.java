@@ -17,14 +17,14 @@
  */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaParser;
+import org.openntf.domino.formula.AtFormulaParserImpl;
 
 public class ASTOperator extends ASTFunction {
 	public ASTOperator(final int id) {
 		super(id);
 	}
 
-	public ASTOperator(final AtFormulaParser p, final int id) {
+	public ASTOperator(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 

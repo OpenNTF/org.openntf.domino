@@ -3,9 +3,9 @@
 package org.openntf.domino.formula.ast;
 
 import org.openntf.domino.DateTime;
-import org.openntf.domino.formula.AtFormulaParser;
-import org.openntf.domino.formula.EvaluateException;
+import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
 import org.openntf.domino.formula.impl.DiffersFromLotus;
@@ -15,14 +15,14 @@ public class ASTAtSort extends SimpleNode {
 		super(id);
 	}
 
-	public ASTAtSort(final AtFormulaParser p, final int id) {
+	public ASTAtSort(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
 	@Override
 	@DiffersFromLotus({ "Options [ACCENT(IN)SENSITIVE] and [PITCH(IN)SENSITIVE] aren't yet supported",
 			"Standard string compare is done via String.compareTo" })
-	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
+	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
 		boolean sortAscending = true;
 		boolean sortCaseSensitive = true;
 		boolean sortCustom = false;
@@ -59,7 +59,7 @@ public class ASTAtSort extends SimpleNode {
 	}
 
 	private void doSort(final FormulaContext ctx, final ValueHolder what, final boolean sortAscending, final boolean sortCaseSensitive,
-			final Node customSort) throws EvaluateException {
+			final Node customSort) throws FormulaReturnException {
 		for (int i = 0; i < what.size; i++) {
 			for (int j = i; j < what.size; j++) {
 				int cmp;
@@ -80,7 +80,7 @@ public class ASTAtSort extends SimpleNode {
 	}
 
 	private int doSortString(final FormulaContext ctx, final String s1, final String s2, final boolean sortCaseSensitive,
-			final Node customSort) throws EvaluateException {
+			final Node customSort) throws FormulaReturnException {
 		if (customSort == null)
 			return (sortCaseSensitive ? s1.compareTo(s2) : s1.compareToIgnoreCase(s2));
 		ValueHolder oldA = ctx.setVarLC("$a", ValueHolder.valueOf(s1));
@@ -95,7 +95,8 @@ public class ASTAtSort extends SimpleNode {
 
 	}
 
-	private int doSortNumber(final FormulaContext ctx, final double n1, final double n2, final Node customSort) throws EvaluateException {
+	private int doSortNumber(final FormulaContext ctx, final double n1, final double n2, final Node customSort)
+			throws FormulaReturnException {
 		if (customSort == null)
 			return (n1 - n2 > 0 ? 1 : -1);
 		ValueHolder oldA = ctx.setVarLC("$a", ValueHolder.valueOf(n1));
@@ -110,7 +111,7 @@ public class ASTAtSort extends SimpleNode {
 	}
 
 	private int doSortDateTime(final FormulaContext ctx, final DateTime d1, final DateTime d2, final Node customSort)
-			throws EvaluateException {
+			throws FormulaReturnException {
 		if (customSort == null)
 			return (d1.compareTo(d2) > 0 ? 1 : -1);
 		ValueHolder oldA = ctx.setVarLC("$a", ValueHolder.valueOf(d1));

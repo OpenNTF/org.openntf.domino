@@ -1,14 +1,17 @@
 package org.openntf.domino.formula;
 
+import java.io.InputStream;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.openntf.domino.formula.ast.SimpleNode;
+import org.openntf.domino.formula.impl.ExtendedFunction;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Terminatable;
 
-public abstract class AtFormulaParserAbstract {
+public abstract class AtFormulaParser {
 	protected Formatter formatter;
 	protected AtFunctionFactory functionFactory;
 
@@ -45,7 +48,7 @@ public abstract class AtFormulaParserAbstract {
 	/**
 	 * This function returns a preconfigured default instance
 	 */
-	public static AtFormulaParserAbstract getInstance() {
+	public static AtFormulaParser getInstance() {
 		return instance_.get();
 	}
 
@@ -57,22 +60,40 @@ public abstract class AtFormulaParserAbstract {
 		return customFunc.get(string.toLowerCase());
 	}
 
-	public void declareFunction(final String funcName, final AtFunction func) {
+	public void declareFunction(final ExtendedFunction func) {
+		String funcName = func.getName();
 		if (getFunction(funcName) != null) {
 			throw new IllegalArgumentException("Function '" + funcName + "' cannot be redeclared");
 		}
 		customFunc.put(funcName.toLowerCase(), func);
 	}
 
-	final public SimpleNode Parse(final String formula) throws ParseException {
-		java.io.StringReader sr = new java.io.StringReader(formula);
+	final public SimpleNode parse(final Reader sr) throws ParseException {
 		ReInit(sr);
 		// clear the customFunc-Map
 		customFunc = new HashMap<String, AtFunction>();
 		return Parse();
 	}
 
-	public abstract void ReInit(Reader sr);
+	final public SimpleNode parse(final InputStream sr, final String encoding) throws ParseException {
+		ReInit(sr, encoding);
+		// clear the customFunc-Map
+		customFunc = new HashMap<String, AtFunction>();
+		return Parse();
+	}
+
+	final public SimpleNode parse(final InputStream sr) throws ParseException {
+		return parse(sr, null);
+	}
+
+	final public SimpleNode parse(final String formula) throws ParseException {
+		StringReader sr = new java.io.StringReader(formula);
+		return parse(sr);
+	}
+
+	protected abstract void ReInit(Reader sr);
+
+	protected abstract void ReInit(java.io.InputStream stream, String encoding);
 
 	abstract public SimpleNode Parse() throws ParseException;
 }

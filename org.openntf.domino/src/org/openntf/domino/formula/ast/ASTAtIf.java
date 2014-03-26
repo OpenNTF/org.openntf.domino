@@ -17,9 +17,9 @@
  */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaParser;
-import org.openntf.domino.formula.EvaluateException;
+import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
 
 public class ASTAtIf extends SimpleNode {
@@ -27,12 +27,12 @@ public class ASTAtIf extends SimpleNode {
 		super(id);
 	}
 
-	public ASTAtIf(final AtFormulaParser p, final int id) {
+	public ASTAtIf(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
 	@Override
-	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
+	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
 		ValueHolder nIf;
 		int i = 0;
 		nIf = children[i++].evaluate(ctx);

@@ -63,8 +63,7 @@ public class TestRunner extends TestRunnerStdIn {
 			for (int i = 1; i < 10000; i++) {
 				java.io.StringReader sr = new java.io.StringReader(str);
 				//java.io.Reader r = new java.io.BufferedReader(sr);
-				parser.ReInit(sr);
-				n = parser.Parse();
+				n = parser.parse(sr);
 			}
 			time = System.currentTimeMillis() - time;
 			System.err.println("[FormulaEngine] 10000x building AST tree\ttook " + time + "ms.");

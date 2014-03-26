@@ -88,7 +88,7 @@ public abstract class SimpleNode implements Node {
 
 	@Override
 	public String toString() {
-		return AtFormulaParserTreeConstants.jjtNodeName[id];
+		return AtFormulaParserImplTreeConstants.jjtNodeName[id];
 	}
 
 	public String toString(final String prefix) {

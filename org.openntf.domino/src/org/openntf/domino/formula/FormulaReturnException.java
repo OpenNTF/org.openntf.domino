@@ -15,30 +15,16 @@
  */
 package org.openntf.domino.formula;
 
-public class EvaluateException extends Exception {
+public class FormulaReturnException extends Exception {
 	private static final long serialVersionUID = 1L;
+	private ValueHolder ret;
 
-	public EvaluateException(final int codeLine, final int codeColumn, final Throwable cause) {
-		super(initialise(codeLine, codeColumn, cause), cause);
+	public FormulaReturnException(final ValueHolder vh) {
+		ret = vh;
 	}
 
-	/**
-	 * 
-	 * @param cause
-	 */
-	private static String initialise(final int codeLine, final int codeColumn, final Throwable cause) {
-		String eol = System.getProperty("line.separator", "\n");
-
-		String retval = "Encountered \"";
-		if (cause != null) {
-			if (cause.getMessage() == null) {
-				retval += cause.getClass().getName();
-			} else {
-				retval += cause.getMessage();
-			}
-		}
-		retval += "\" at line " + codeLine + ", column " + codeColumn;
-		retval += "." + eol;
-		return retval;
+	public ValueHolder getValue() {
+		return ret;
 	}
+
 }

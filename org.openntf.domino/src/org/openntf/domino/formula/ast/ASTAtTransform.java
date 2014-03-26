@@ -2,9 +2,9 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=true,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaParser;
-import org.openntf.domino.formula.EvaluateException;
+import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
 
 public class ASTAtTransform extends SimpleNode {
@@ -12,12 +12,12 @@ public class ASTAtTransform extends SimpleNode {
 		super(id);
 	}
 
-	public ASTAtTransform(final AtFormulaParser p, final int id) {
+	public ASTAtTransform(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
 	@Override
-	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
+	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
 		ValueHolder list = children[0].evaluate(ctx);
 		String temp = children[1].evaluate(ctx).getString(0);
 		temp = temp.toLowerCase();

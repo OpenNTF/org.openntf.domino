@@ -32,8 +32,7 @@ public class TestRunnerStdIn implements Runnable {
 			List<Object> v = null;
 
 			AtFormulaParser parser = AtFormulaParser.getInstance();
-			parser.ReInit(System.in);
-			n = parser.Parse();
+			n = parser.parse(System.in);
 			n.dump("");
 			FormulaContext ctx = new FormulaContext(null, parser.getFormatter());
 			v = n.evaluate(ctx).toList();

@@ -21,7 +21,6 @@ import org.openntf.domino.Document;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.formula.AtFormulaParser;
 import org.openntf.domino.formula.DominoFormatter;
-import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ParseException;
 import org.openntf.domino.formula.ast.Node;
@@ -31,7 +30,7 @@ import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Strings;
 
 public class TestRunner implements Runnable {
-	private Database db;
+	protected Database db;
 
 	private boolean VIRTUAL_CONSOLE = false;
 
@@ -139,8 +138,13 @@ public class TestRunner implements Runnable {
 	private Document createDocument() {
 		if (db == null)
 			db = Factory.getSession().getDatabase("", "log.nsf");
-		Document doc = db.createDocument();
-		return doc;
+		try {
+			Document doc = db.createDocument();
+			return doc;
+		} catch (NullPointerException npe) {
+			System.err.println("Cannot create demo doc. Is your server running?");
+			return null;
+		}
 	}
 
 	private void fillDemoDoc(final Map<String, Object> doc, final double rndVal) {
@@ -171,7 +175,7 @@ public class TestRunner implements Runnable {
 
 	}
 
-	private void execute(final String line, final boolean testLotus, final boolean testDoc, final boolean testMap) {
+	protected void execute(final String line, final boolean testLotus, final boolean testDoc, final boolean testMap) {
 		// TODO Auto-generated method stub
 
 		List<Object> ntfDocResult = null;
@@ -208,20 +212,22 @@ public class TestRunner implements Runnable {
 		// benchmark the AtFormulaParser
 		Node ast = null;
 		try {
-			ast = AtFormulaParser.getInstance().Parse(line);
+			ast = AtFormulaParser.getInstance().parse(line);
 		} catch (ParseException e) {
 			errors.append(NTF("\tParser failed: ") + ERROR(e) + "\n");
+			e.printStackTrace();
 			parserFailed = true;
 		} catch (Throwable t) {
 			System.err.println(ERROR("FATAL") + NTF("\tParser failed: ") + ERROR(t));
+			t.printStackTrace();
 		}
 
 		if (!parserFailed) {
 			if (testDoc) {
 				try {
 					FormulaContext ctx1 = new FormulaContext(ntfDoc, DominoFormatter.getInstance());
-					ntfDocResult = ast.evaluate(ctx1).toList();
-				} catch (EvaluateException e) {
+					ntfDocResult = ast.solve(ctx1);
+				} catch (RuntimeException e) {
 					errors.append(NTF("\tDoc-Evaluate failed: ") + ERROR(e) + "\n");
 					ntfError = e;
 					parserFailed = true;
@@ -233,8 +239,8 @@ public class TestRunner implements Runnable {
 				try {
 					// benchmark the evaluate with a map as context
 					FormulaContext ctx2 = new FormulaContext(ntfMap, DominoFormatter.getInstance());
-					ntfMapResult = ast.evaluate(ctx2).toList();
-				} catch (EvaluateException e) {
+					ntfMapResult = ast.solve(ctx2);
+				} catch (RuntimeException e) {
 					errors.append(NTF("\tMap-Evaluate failed: ") + ERROR(e) + "\n");
 					ntfError = e;
 					parserFailed = true;
@@ -255,8 +261,8 @@ public class TestRunner implements Runnable {
 				System.out.println(SUCCESS() + line + " = " + dump(ntfDocResult));
 			} else {
 				System.err.println(FAIL() + NTF("DOC:") + line);
-				System.err.println("\tResult:   " + dump(ntfDocResult) + " Size: " + ntfDocResult.size());
-				System.err.println("\tExpected: " + dump(lotusResult) + " Size: " + lotusResult.size());
+				System.err.println("\tResult:   " + dump(ntfDocResult) + " Size: " + ((ntfDocResult == null) ? 0 : ntfDocResult.size()));
+				System.err.println("\tExpected: " + dump(lotusResult) + " Size: " + ((lotusResult == null) ? 0 : lotusResult.size()));
 				if (parserFailed || lotusFailed) {
 					System.err.println(errors.toString());
 					if (ntfError != null) {
@@ -272,6 +278,9 @@ public class TestRunner implements Runnable {
 				}
 
 			}
+		} else {
+			System.err.println("\tDocResult:   " + dump(ntfDocResult) + " Size: " + ((ntfDocResult == null) ? 0 : ntfDocResult.size()));
+			System.err.println("\tMapResult:   " + dump(ntfMapResult) + " Size: " + ((ntfMapResult == null) ? 0 : ntfMapResult.size()));
 		}
 
 	}

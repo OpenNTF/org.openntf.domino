@@ -17,7 +17,7 @@
  */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaParser;
+import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
 
@@ -28,7 +28,7 @@ public class ASTValueInt extends SimpleNode {
 		super(id);
 	}
 
-	public ASTValueInt(final AtFormulaParser p, final int id) {
+	public ASTValueInt(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 

@@ -8,6 +8,8 @@ import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
 
 public class ASTExtendedParameter extends SimpleNode {
+	String paramName;
+
 	public ASTExtendedParameter(final int id) {
 		super(id);
 	}
@@ -17,20 +19,24 @@ public class ASTExtendedParameter extends SimpleNode {
 	}
 
 	public void toFormula(final StringBuilder sb) {
-		// TODO Auto-generated method stub
-
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
-		// TODO Auto-generated method stub
-		return null;
+		return children[0].evaluate(ctx);
 	}
 
 	public void init(final String image) {
-		// TODO Auto-generated method stub
-
+		paramName = image;
 	}
 
+	public boolean isOptional() {
+		return jjtGetNumChildren() == 1;
+	}
+
+	public String getName() {
+		return paramName;
+	}
 }
 /* JavaCC - OriginalChecksum=27ceadaec21dfc469d85e8548c548253 (do not edit this line) */

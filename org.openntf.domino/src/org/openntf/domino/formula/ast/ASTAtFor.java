@@ -17,9 +17,9 @@
  */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaParser;
-import org.openntf.domino.formula.EvaluateException;
+import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
 
 public class ASTAtFor extends SimpleNode {
@@ -27,12 +27,12 @@ public class ASTAtFor extends SimpleNode {
 		super(id);
 	}
 
-	public ASTAtFor(final AtFormulaParser p, final int id) {
+	public ASTAtFor(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
 	@Override
-	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
+	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
 		Node init = children[0];
 		Node condition = children[1];
 		Node increment = children[2];

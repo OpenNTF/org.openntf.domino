@@ -17,10 +17,10 @@
  */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaParser;
+import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.AtFunction;
-import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ParseException;
 import org.openntf.domino.formula.ValueHolder;
 
@@ -31,7 +31,7 @@ public class ASTFunction extends SimpleNode {
 		super(id);
 	}
 
-	public ASTFunction(final AtFormulaParser p, final int id) {
+	public ASTFunction(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
@@ -61,25 +61,15 @@ public class ASTFunction extends SimpleNode {
 	}
 
 	@Override
-	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
-		try {
-			if (children == null) {
-				return function.evaluate(ctx, null);
-			}
-			ValueHolder params[] = new ValueHolder[children.length];
-			for (int i = 0; i < children.length; i++) {
-				params[i] = children[i].evaluate(ctx);
-			}
-			return function.evaluate(ctx, params);
-		} catch (Exception e) {
-			// catch any exception that occurs while evaluating
-			if (e instanceof EvaluateException) {
-				throw (EvaluateException) e;
-			} else {
-				// if this was no EvaluateException, then wrap it and throw it
-				throw this.createEvaluateException(e);
-			}
+	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
+		if (children == null) {
+			return function.evaluate(ctx, null);
 		}
+		ValueHolder params[] = new ValueHolder[children.length];
+		for (int i = 0; i < children.length; i++) {
+			params[i] = children[i].evaluate(ctx);
+		}
+		return function.evaluate(ctx, params);
 	}
 
 	@Override

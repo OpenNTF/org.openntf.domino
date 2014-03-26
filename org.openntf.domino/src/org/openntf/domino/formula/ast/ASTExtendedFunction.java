@@ -5,9 +5,17 @@ package org.openntf.domino.formula.ast;
 import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
+import org.openntf.domino.formula.ParseException;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.impl.ExtendedFunction;
 
+/**
+ * @author Roland Praml, Foconis AG
+ * 
+ */
 public class ASTExtendedFunction extends SimpleNode {
+	String functionName;
+
 	public ASTExtendedFunction(final int id) {
 		super(id);
 	}
@@ -17,19 +25,32 @@ public class ASTExtendedFunction extends SimpleNode {
 	}
 
 	public void init(final String image) {
-		// TODO Auto-generated method stub
-
+		functionName = image;
 	}
 
 	public void toFormula(final StringBuilder sb) {
-		// TODO Auto-generated method stub
+		// does not generate any output
+	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.SimpleNode#jjtClose()
+	 */
+	@Override
+	public void jjtClose() throws ParseException {
+		System.out.println("Function name: " + functionName);
+		ASTExtendedParameter[] parameter = new ASTExtendedParameter[children.length - 1];
+		for (int i = 0; i < children.length - 1; i++) {
+			parameter[i] = (ASTExtendedParameter) children[i];
+		}
+		Node function = children[children.length - 1];
+
+		parser.declareFunction(new ExtendedFunction(functionName, parameter, function, parser));
+		super.jjtClose();
 	}
 
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
-		// TODO Auto-generated method stub
-		return null;
+		return ValueHolder.valueOf("");
 	}
 
 }

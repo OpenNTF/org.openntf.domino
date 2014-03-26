@@ -18,7 +18,7 @@
 package org.openntf.domino.formula.ast;
 
 import org.openntf.domino.DateTime;
-import org.openntf.domino.formula.AtFormulaParser;
+import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ParseException;
 import org.openntf.domino.formula.ValueHolder;
@@ -31,7 +31,7 @@ public class ASTValueDateOrKW extends SimpleNode {
 		super(id);
 	}
 
-	public ASTValueDateOrKW(final AtFormulaParser p, final int id) {
+	public ASTValueDateOrKW(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 

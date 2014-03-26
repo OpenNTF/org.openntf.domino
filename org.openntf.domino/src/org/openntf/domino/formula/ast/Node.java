@@ -18,8 +18,10 @@
 
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.EvaluateException;
+import java.util.List;
+
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ParseException;
 import org.openntf.domino.formula.ValueHolder;
 
@@ -66,8 +68,10 @@ public interface Node {
 
 	public void dump(final String prefix);
 
-	public ValueHolder evaluate(FormulaContext ctx) throws EvaluateException;
+	public ValueHolder evaluate(FormulaContext ctx) throws FormulaReturnException;
 
 	public void toFormula(StringBuilder sb);
+
+	public List<Object> solve(FormulaContext ctx);
 }
 /* JavaCC - OriginalChecksum=54dec3b6b2c592c5fbe2fc5be72328d2 (do not edit this line) */

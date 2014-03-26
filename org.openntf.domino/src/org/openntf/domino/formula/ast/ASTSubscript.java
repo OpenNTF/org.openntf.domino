@@ -17,9 +17,9 @@
  */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaParser;
-import org.openntf.domino.formula.EvaluateException;
+import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
 
 public class ASTSubscript extends SimpleNode {
@@ -27,13 +27,13 @@ public class ASTSubscript extends SimpleNode {
 		super(id);
 	}
 
-	public ASTSubscript(final AtFormulaParser p, final int id) {
+	public ASTSubscript(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
+	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
 
 		ValueHolder base = children[0].evaluate(ctx);
 
