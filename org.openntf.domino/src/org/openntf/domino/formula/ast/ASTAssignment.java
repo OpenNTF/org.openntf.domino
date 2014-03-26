@@ -17,6 +17,8 @@
  */
 package org.openntf.domino.formula.ast;
 
+import java.util.Set;
+
 import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
@@ -71,11 +73,8 @@ public class ASTAssignment extends SimpleNode {
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
 		ValueHolder value;
-		try {
-			value = children[0].evaluate(ctx);
-		} catch (RuntimeException e) {
-			value = ValueHolder.valueOf(e);
-		}
+		value = children[0].evaluate(ctx);
+
 		switch (type) {
 		case FIELD:
 			ctx.setField(varName, value);
@@ -116,6 +115,24 @@ public class ASTAssignment extends SimpleNode {
 		sb.append(varName);
 		sb.append(" := ");
 		children[0].toFormula(sb);
+	}
+
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		switch (type) {
+		case FIELD:
+			modifiedFields.add(varName.toLowerCase());
+			break;
+		case VAR:
+		case DEFAULT:
+			variables.add(varName.toLowerCase());
+			break;
+
+		case ENV:
+			break;
+		}
+
 	}
 }
 /* JavaCC - OriginalChecksum=5985303b30076529d3e2aa0d267e0702 (do not edit this line) */

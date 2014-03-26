@@ -60,7 +60,7 @@ public abstract class ValueHolder implements Serializable {
 	public int size;
 	public DataType dataType = DataType._UNSET;
 
-	protected RuntimeException currentError;
+	private EvaluateException currentError;
 
 	// Caches
 	protected static final ValueHolder TRUE;
@@ -139,6 +139,12 @@ public abstract class ValueHolder implements Serializable {
 
 	}
 
+	protected ValueHolder testError() throws EvaluateException {
+		if (currentError != null)
+			throw currentError;
+		return this;
+	}
+
 	/**
 	 * Init a ValueHolder based on a single value or a collection<br>
 	 * If possible use one of the special "valueOf" constructors as these are faster
@@ -214,9 +220,11 @@ public abstract class ValueHolder implements Serializable {
 	 *            the RuntimeException
 	 * @return the Valuholder
 	 */
-	public static ValueHolder valueOf(final RuntimeException init) {
+	public static ValueHolder valueOf(final EvaluateException init) {
 		ValueHolder vh = new ValueHolderObject<Object>(1);
-		vh.setError(init);
+		vh.dataType = DataType.ERROR;
+		vh.currentError = init;
+		vh.size = 1;
 		vh.immutable = true;
 		return vh;
 	}
@@ -317,7 +325,7 @@ public abstract class ValueHolder implements Serializable {
 	 * 
 	 * @return the error or null
 	 */
-	public RuntimeException getError() {
+	public EvaluateException getError() {
 		return currentError;
 	}
 
@@ -327,13 +335,14 @@ public abstract class ValueHolder implements Serializable {
 	 * @param i
 	 *            the position
 	 * @return the entry as Object
+	 * 
 	 * @Deprecated if you know the datatype, use the apropriate get-Method!
 	 */
 	@Deprecated
 	public Object get(final int i) {
 		switch (dataType) {
 		case ERROR:
-			throw currentError;
+			return currentError;
 		case DOUBLE:
 			return getDouble(i);
 		case INTEGER:
@@ -358,7 +367,6 @@ public abstract class ValueHolder implements Serializable {
 
 	/**
 	 * Returns the value at position i as DateTime
-	 * 
 	 */
 	public DateTime getDateTime(final int i) {
 		throw new ClassCastException("DATETIME expected. Got '" + dataType + "'");
@@ -366,7 +374,6 @@ public abstract class ValueHolder implements Serializable {
 
 	/**
 	 * Returns the value at position i as Integer
-	 * 
 	 */
 	public int getInt(final int i) {
 		throw new ClassCastException("DATETIME expected. Got '" + dataType + "'");
@@ -384,9 +391,6 @@ public abstract class ValueHolder implements Serializable {
 	 * Returns TRUE if one of the values is true
 	 */
 	public boolean isTrue(final FormulaContext ctx) {
-		if (dataType == DataType.ERROR)
-			throw getError();
-
 		if (ctx.useBooleans) {
 			for (int i = 0; i < size; i++) {
 				if (getBoolean(i)) {
@@ -408,8 +412,17 @@ public abstract class ValueHolder implements Serializable {
 	 * 
 	 */
 	public boolean addAll(final ValueHolder other) {
-		throw new IllegalArgumentException("Cannot add " + other.dataType + " to " + dataType);
-	};
+		if (dataType == DataType.ERROR) {
+			return false;
+		} else if (other.dataType == DataType.ERROR) {
+			dataType = DataType.ERROR;
+			currentError = other.currentError;
+			size = 1;
+			return true;
+		} else {
+			throw new IllegalArgumentException("Cannot add " + other.dataType + " to " + dataType);
+		}
+	}
 
 	/**
 	 * Adds the value as String. You have to ensure that you have called grow() before!
@@ -442,11 +455,11 @@ public abstract class ValueHolder implements Serializable {
 		throw new IllegalArgumentException("Cannot mix datatypes " + dataType + " and DATETIME");
 	}
 
-	public void setError(final RuntimeException e) {
-		dataType = DataType.ERROR;
-		currentError = e;
-		size = 1;
-	}
+	//	public void setError(final RuntimeException e) {
+	//		dataType = DataType.ERROR;
+	//		currentError = e;
+	//		size = 1;
+	//	}
 
 	protected void checkAdd() {
 		if (immutable)
@@ -479,13 +492,13 @@ public abstract class ValueHolder implements Serializable {
 		} else if (obj instanceof DateTime) {
 			return add((DateTime) obj);
 
-		} else if (obj instanceof RuntimeException) {
-			setError((RuntimeException) obj);
+			//} else if (obj instanceof RuntimeException) {
+			//	setError((RuntimeException) obj);
 		} else {
 			dataType = DataType.OBJECT;
 			throw new IllegalArgumentException("TODO: Datatype " + obj.getClass() + " is not yet supported");
 		}
-		return true;
+		//return true;
 	}
 
 	public static boolean hasMultiValues(final ValueHolder[] params) {
@@ -498,7 +511,7 @@ public abstract class ValueHolder implements Serializable {
 		return false;
 	}
 
-	public abstract List<Object> toList();
+	public abstract List<Object> toList() throws EvaluateException;
 
 	public abstract ValueHolder newInstance(int size2);
 

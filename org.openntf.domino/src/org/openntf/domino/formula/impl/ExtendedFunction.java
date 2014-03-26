@@ -1,3 +1,19 @@
+/*
+ * © Copyright FOCONIS AG, 2014
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ * 
+ */
 package org.openntf.domino.formula.impl;
 
 import org.openntf.domino.formula.AtFormulaParserImpl;
@@ -8,15 +24,34 @@ import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ast.ASTExtendedParameter;
 import org.openntf.domino.formula.ast.Node;
 
+/**
+ * ExtendedFunctions are custom defined functions like FUNCTION @MyFunction(a;b:="default") := @Do(...)
+ * 
+ * @author Roland Praml, Foconis AG
+ * 
+ */
 public class ExtendedFunction extends AtFunction {
-
+	private String functionName;
 	private Node function;
 	private ASTExtendedParameter[] parameter;
-	private String functionName;
 
 	private int paramUB;
 	private int paramLB;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param functionName
+	 *            the function-name (with @-sign)
+	 * @param parameter
+	 *            the parameters for this function
+	 * @param function
+	 *            the function-node to execute (if @functionName is invoked in formula)
+	 * @param parser
+	 *            needed to throw propert ParseException
+	 * @throws ParseException
+	 *             if you do not put optional parameter to the end
+	 */
 	public ExtendedFunction(final String functionName, final ASTExtendedParameter[] parameter, final Node function,
 			final AtFormulaParserImpl parser) throws ParseException {
 		super(functionName);
@@ -34,9 +69,13 @@ public class ExtendedFunction extends AtFunction {
 			if (!parameter[i].isOptional())
 				throw new ParseException(parser, "non-optional parameter after optional parameter");
 		}
-		System.out.println("Params: " + paramLB + " - " + paramUB);
 	}
 
+	/**
+	 * Return the name of the function
+	 * 
+	 * @return the name of the function
+	 */
 	public String getName() {
 		return functionName;
 	}

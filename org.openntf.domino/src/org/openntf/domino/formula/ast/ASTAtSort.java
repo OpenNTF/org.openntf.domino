@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=true,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package org.openntf.domino.formula.ast;
 
+import java.util.Set;
+
 import org.openntf.domino.DateTime;
 import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.FormulaContext;
@@ -128,6 +130,12 @@ public class ASTAtSort extends SimpleNode {
 	public void toFormula(final StringBuilder sb) {
 		sb.append("@Sort");
 		appendParams(sb);
+	}
+
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		functions.add("@sort");
 	}
 }
 /* JavaCC - OriginalChecksum=3e128312ed1a8ea1e9f98a467e9c3222 (do not edit this line) */

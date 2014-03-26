@@ -17,10 +17,14 @@
  */
 package org.openntf.domino.formula.ast;
 
+import java.util.Set;
+
 import org.openntf.domino.formula.AtFormulaParserImpl;
+import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.ValueHolder.DataType;
 
 public class ASTAtDoWhile extends SimpleNode {
 	public ASTAtDoWhile(final int id) {
@@ -39,20 +43,34 @@ public class ASTAtDoWhile extends SimpleNode {
 	 */
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
+
 		ValueHolder ret = null;
 		if (children != null) {
 			do {
 				for (int i = 0; i < children.length; ++i) {
 					ret = children[i].evaluate(ctx);
 				}
-			} while (ret != null && ret.isTrue(ctx));
+				if (ret != null)
+					break;
+
+				if (ret.dataType == DataType.ERROR)
+					return ret;
+
+			} while (ret.isTrue(ctx));
 		}
 		return ValueHolder.valueOf(1); // returns always TRUE
+
 	}
 
 	public void toFormula(final StringBuilder sb) {
 		sb.append("@DoWhile");
 		appendParams(sb);
+	}
+
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		functions.add("@dowhile");
 	}
 }
 /* JavaCC - OriginalChecksum=3d9a997fad4a26e001d6dec704a9797f (do not edit this line) */

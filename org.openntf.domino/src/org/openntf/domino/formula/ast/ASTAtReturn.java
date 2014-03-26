@@ -2,6 +2,8 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=true,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package org.openntf.domino.formula.ast;
 
+import java.util.Set;
+
 import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
@@ -27,5 +29,10 @@ public class ASTAtReturn extends SimpleNode {
 		throw new FormulaReturnException(children[0].evaluate(ctx));
 	}
 
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		functions.add("@return");
+	}
 }
 /* JavaCC - OriginalChecksum=5168aab1704c82b602ede3bcf029d247 (do not edit this line) */

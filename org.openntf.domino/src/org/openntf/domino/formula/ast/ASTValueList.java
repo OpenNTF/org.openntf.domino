@@ -17,10 +17,13 @@
  */
 package org.openntf.domino.formula.ast;
 
+import java.util.Set;
+
 import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.ValueHolder.DataType;
 
 public class ASTValueList extends SimpleNode {
 	public ASTValueList(final int id) {
@@ -42,6 +45,8 @@ public class ASTValueList extends SimpleNode {
 			// Cumulate all return values
 			ValueHolder vh = children[i].evaluate(ctx);
 			if (vh != null) {
+				if (vh.dataType == DataType.ERROR)
+					return vh;
 				valueSize += vh.size;
 				tmpHolders[holders++] = vh;
 			}
@@ -55,7 +60,6 @@ public class ASTValueList extends SimpleNode {
 			vhRet.addAll(tmpHolders[i]);
 		}
 		return vhRet;
-
 	}
 
 	public void toFormula(final StringBuilder sb) {
@@ -70,6 +74,13 @@ public class ASTValueList extends SimpleNode {
 			}
 		}
 		sb.append(')');
+	}
+
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

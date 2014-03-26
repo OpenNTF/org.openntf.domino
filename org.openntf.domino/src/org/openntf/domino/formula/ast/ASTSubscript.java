@@ -17,7 +17,10 @@
  */
 package org.openntf.domino.formula.ast;
 
+import java.util.Set;
+
 import org.openntf.domino.formula.AtFormulaParserImpl;
+import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
@@ -34,32 +37,35 @@ public class ASTSubscript extends SimpleNode {
 	@SuppressWarnings("deprecation")
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
+		try {
+			ValueHolder base = children[0].evaluate(ctx);
 
-		ValueHolder base = children[0].evaluate(ctx);
+			ValueHolder subscript = children[1].evaluate(ctx);
 
-		ValueHolder subscript = children[1].evaluate(ctx);
+			int idx = subscript.getInt(0); // we need it as INT here
+			if (idx < 1 || idx > base.size) {
+				throw new IndexOutOfBoundsException("Index " + idx + " not in 1.." + base.size);
+			}
 
-		int idx = subscript.getInt(0); // we need it as INT here
-		if (idx < 1 || idx > base.size) {
-			throw new IndexOutOfBoundsException("Index " + idx + " not in 1.." + base.size);
-		}
+			idx--; // Formula is 1 based
+			switch (base.dataType) {
+			case ERROR:
+				return base;
 
-		idx--; // Formula is 1 based
-		switch (base.dataType) {
-		case ERROR:
-			return ValueHolder.valueOf(base.getError());
+			case DOUBLE:
+				return ValueHolder.valueOf(base.getDouble(idx));
 
-		case DOUBLE:
-			return ValueHolder.valueOf(base.getDouble(idx));
+			case INTEGER:
+				return ValueHolder.valueOf(base.getInt(idx));
 
-		case INTEGER:
-			return ValueHolder.valueOf(base.getInt(idx));
+			case STRING:
+				return ValueHolder.valueOf(base.getString(idx - 1));
 
-		case STRING:
-			return ValueHolder.valueOf(base.getString(idx - 1));
-
-		default:
-			return ValueHolder.valueOf(base.get(idx - 1));
+			default:
+				return ValueHolder.valueOf(base.get(idx - 1));
+			}
+		} catch (RuntimeException cause) {
+			return ValueHolder.valueOf(new EvaluateException(codeLine, codeColumn, cause));
 		}
 	}
 
@@ -69,6 +75,13 @@ public class ASTSubscript extends SimpleNode {
 		sb.append('[');
 		children[1].toFormula(sb);
 		sb.append(']');
+	}
+
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		// TODO Auto-generated method stub
+
 	}
 }
 /* JavaCC - OriginalChecksum=bf57711d1722e5377ed78d4185bb34a5 (do not edit this line) */

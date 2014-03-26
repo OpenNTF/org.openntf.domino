@@ -155,7 +155,7 @@ public class FormulaContext {
 	}
 
 	@SuppressWarnings("deprecation")
-	public ValueHolder evaluateNative(final String formula, final Object... params) {
+	public ValueHolder evaluateNative(final String formula, final ValueHolder... params) {
 		// TODO Auto-generated method stub
 		Session session = Factory.getSession();
 		Document tmpDoc = null;
@@ -175,7 +175,13 @@ public class FormulaContext {
 				tmpDoc = db.createDocument();
 				rawDocument = Factory.toLotus(tmpDoc);
 			}
-			tmpDoc.replaceItemValue("p" + (i + 1), params[i]);
+
+			try {
+				tmpDoc.replaceItemValue("p" + (i + 1), params[i].toList());
+			} catch (EvaluateException e) {
+				return params[i];
+			}
+
 			//			System.out.println("p" + (i + 1) + "=" + params[i]);
 		}
 

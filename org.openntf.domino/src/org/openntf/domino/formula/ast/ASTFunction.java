@@ -17,8 +17,11 @@
  */
 package org.openntf.domino.formula.ast;
 
+import java.util.Set;
+
 import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.AtFunction;
+import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ParseException;
@@ -69,13 +72,23 @@ public class ASTFunction extends SimpleNode {
 		for (int i = 0; i < children.length; i++) {
 			params[i] = children[i].evaluate(ctx);
 		}
-		return function.evaluate(ctx, params);
+		try {
+			return function.evaluate(ctx, params);
+		} catch (RuntimeException cause) {
+			return ValueHolder.valueOf(new EvaluateException(codeLine, codeColumn, cause));
+		}
 	}
 
 	@Override
 	public void toFormula(final StringBuilder sb) {
 		sb.append(function.getImage());
 		appendParams(sb);
+	}
+
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		functions.add(function.getImage().toLowerCase());
 	}
 }
 /* JavaCC - OriginalChecksum=ccaad8d7c28a4b42a02e6b2cb416c0b9 (do not edit this line) */

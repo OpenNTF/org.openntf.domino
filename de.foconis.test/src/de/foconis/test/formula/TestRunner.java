@@ -279,9 +279,16 @@ public class TestRunner implements Runnable {
 
 			}
 		} else {
+			if (parserFailed) {
+				ntfError.printStackTrace();
+			}
 			System.err.println("\tDocResult:   " + dump(ntfDocResult) + " Size: " + ((ntfDocResult == null) ? 0 : ntfDocResult.size()));
 			System.err.println("\tMapResult:   " + dump(ntfMapResult) + " Size: " + ((ntfMapResult == null) ? 0 : ntfMapResult.size()));
 		}
+		System.out.println(NTF("Read fields\t") + ast.getReadFields());
+		System.out.println(NTF("Modified fields\t") + ast.getModifiedFields());
+		System.out.println(NTF("Variables\t") + ast.getVariables());
+		System.out.println(NTF("Functions\t") + ast.getFunctions());
 
 	}
 

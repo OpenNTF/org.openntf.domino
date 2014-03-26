@@ -30,7 +30,7 @@ import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
-public class CopyOfFormulaShell implements Runnable {
+public class FormulaShellAlt implements Runnable {
 	private static boolean cacheAST = false;
 	private static int count = 10;
 	Map<String, Node> astCache = new HashMap<String, Node>();
@@ -41,7 +41,7 @@ public class CopyOfFormulaShell implements Runnable {
 		thread.start();
 	}
 
-	public CopyOfFormulaShell() {
+	public FormulaShellAlt() {
 		// whatever you might want to do in your constructor, but stay away from Domino objects
 	}
 
@@ -265,7 +265,7 @@ public class CopyOfFormulaShell implements Runnable {
 				FormulaContext ctx1 = new FormulaContext(ntfDoc, DominoFormatter.getInstance());
 				ntfDocResult = ast.solve(ctx1);
 				docEvaluateTime += System.nanoTime() - time;
-			} catch (RuntimeException e) {
+			} catch (Exception e) {
 				System.out.println(NTF("Doc-Evaluate failed: ") + ERROR(e));
 				e.printStackTrace();
 				i = count;
@@ -276,7 +276,7 @@ public class CopyOfFormulaShell implements Runnable {
 				FormulaContext ctx2 = new FormulaContext(ntfMap, DominoFormatter.getInstance());
 				ntfMapResult = ast.solve(ctx2);
 				mapEvaluateTime += System.nanoTime() - time;
-			} catch (RuntimeException e) {
+			} catch (Exception e) {
 				System.out.println(NTF("Map-Evaluate failed: ") + ERROR(e));
 				e.printStackTrace();
 				i = count;

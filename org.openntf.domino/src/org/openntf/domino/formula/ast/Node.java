@@ -19,7 +19,9 @@
 package org.openntf.domino.formula.ast;
 
 import java.util.List;
+import java.util.Set;
 
+import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ParseException;
@@ -72,6 +74,34 @@ public interface Node {
 
 	public void toFormula(StringBuilder sb);
 
-	public List<Object> solve(FormulaContext ctx);
+	public List<Object> solve(FormulaContext ctx) throws EvaluateException;
+
+	/**
+	 * return a set of used functions (all function names are lowercase)
+	 * 
+	 * @return set of functions
+	 */
+	public Set<String> getFunctions();
+
+	/**
+	 * returns a set of used variables (all names are lowercase)
+	 * 
+	 * @return set of variables
+	 */
+	public Set<String> getVariables();
+
+	/**
+	 * returns a set of read fields in this document. (all names are lowercase)
+	 * 
+	 * @return set of fields
+	 */
+	public Set<String> getReadFields();
+
+	/**
+	 * returns a set of modified fields in this document. (all names are lowercase)
+	 * 
+	 * @return set of fields
+	 */
+	public Set<String> getModifiedFields();
 }
 /* JavaCC - OriginalChecksum=54dec3b6b2c592c5fbe2fc5be72328d2 (do not edit this line) */

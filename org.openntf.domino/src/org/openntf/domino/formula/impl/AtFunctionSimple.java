@@ -23,6 +23,7 @@ import java.util.Collection;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.ValueHolder.DataType;
 
 /**
  * This class does multi value handling for you
@@ -42,6 +43,14 @@ public class AtFunctionSimple extends AtFunctionGeneric {
 	public ValueHolder evaluate(final FormulaContext ctx, final ValueHolder[] params) throws FormulaReturnException {
 		ValueHolder ret = null;
 		Object result = null;
+		// Errors cannt be used in a simple function. You must implement them as generic functions
+		if (params != null) {
+			for (int i = 0; i < params.length; i++) {
+				if (params[i].dataType == DataType.ERROR)
+					return params[i];
+			}
+		}
+
 		try {
 			if (varArgClass != null) {
 

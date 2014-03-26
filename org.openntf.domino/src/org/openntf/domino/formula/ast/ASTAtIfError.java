@@ -17,10 +17,13 @@
  */
 package org.openntf.domino.formula.ast;
 
+import java.util.Set;
+
 import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.ValueHolder.DataType;
 
 public class ASTAtIfError extends SimpleNode {
 	public ASTAtIfError(final int id) {
@@ -33,19 +36,25 @@ public class ASTAtIfError extends SimpleNode {
 
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
-		try {
-			children[0].evaluate(ctx);
-		} catch (RuntimeException ex) {
-			if (children.length == 2) {
-				return children[0].evaluate(ctx);
-			}
+
+		ValueHolder vh = children[0].evaluate(ctx);
+
+		if (vh.dataType == DataType.ERROR && children.length == 2) {
+			return children[0].evaluate(ctx);
 		}
+
 		return ValueHolder.valueDefault();
 	}
 
 	public void toFormula(final StringBuilder sb) {
 		sb.append("@IfError");
 		appendParams(sb);
+	}
+
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		functions.add("@iferror");
 	}
 }
 /* JavaCC - OriginalChecksum=776aeb60d75aec0e2d82f5d09d2401a6 (do not edit this line) */

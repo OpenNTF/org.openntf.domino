@@ -17,10 +17,13 @@
  */
 package org.openntf.domino.formula.ast;
 
+import java.util.Set;
+
 import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.ValueHolder.DataType;
 
 public class ASTAtFor extends SimpleNode {
 	public ASTAtFor(final int id) {
@@ -37,13 +40,26 @@ public class ASTAtFor extends SimpleNode {
 		Node condition = children[1];
 		Node increment = children[2];
 
-		init.evaluate(ctx);
-		while (condition.evaluate(ctx).isTrue(ctx)) {
+		ValueHolder vh = init.evaluate(ctx);
+		if (vh.dataType == DataType.ERROR)
+			return vh;
+
+		while (true) {
+
+			vh = condition.evaluate(ctx);
+			if (vh.dataType == DataType.ERROR)
+				return vh;
+			if (!vh.isTrue(ctx))
+				break;
+
 			// execute statements
 			for (int i = 3; i < children.length; ++i) {
 				children[i].evaluate(ctx);
 			}
-			increment.evaluate(ctx);
+
+			vh = increment.evaluate(ctx);
+			if (vh.dataType == DataType.ERROR)
+				return vh;
 		}
 
 		return ctx.TRUE; // returns always TRUE
@@ -52,6 +68,12 @@ public class ASTAtFor extends SimpleNode {
 	public void toFormula(final StringBuilder sb) {
 		sb.append("@For");
 		appendParams(sb);
+	}
+
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		functions.add("@for");
 	}
 }
 /* JavaCC - OriginalChecksum=f70d2e6a39964b2d6bee287bd8bf7aca (do not edit this line) */

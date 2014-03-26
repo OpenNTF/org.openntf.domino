@@ -17,14 +17,18 @@
  */
 package org.openntf.domino.formula.ast;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.openntf.domino.formula.AtFormulaParserImpl;
+import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ParseException;
 import org.openntf.domino.formula.Token;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.ValueHolder.DataType;
 
 public abstract class SimpleNode implements Node {
 
@@ -34,6 +38,10 @@ public abstract class SimpleNode implements Node {
 	protected AtFormulaParserImpl parser;
 	protected int codeLine;
 	protected int codeColumn;
+	private Set<String> functions;
+	private Set<String> variables;
+	private Set<String> readFields;
+	private Set<String> modifiedFields;
 
 	public SimpleNode(final int i) {
 		id = i;
@@ -131,13 +139,66 @@ public abstract class SimpleNode implements Node {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.formula.ast.Node#solve(org.openntf.domino.formula.FormulaContext)
 	 */
-	public final List<Object> solve(final FormulaContext ctx) {
-
+	public final List<Object> solve(final FormulaContext ctx) throws EvaluateException {
+		ValueHolder vh;
 		try {
-			return evaluate(ctx).toList();
+			vh = evaluate(ctx);
 		} catch (FormulaReturnException e) {
-			return e.getValue().toList();
+			vh = e.getValue();
 		}
+		if (vh.dataType == DataType.ERROR)
+			throw vh.getError();
+		return vh.toList();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.Node#analyze(java.util.Set, java.util.Set, java.util.Set, java.util.Set)
+	 */
+	protected void analyze(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+
+		analyzeThis(readFields, modifiedFields, variables, functions);
+		if (children == null)
+			return;
+		for (int i = 0; i < children.length; i++) {
+			((SimpleNode) children[i]).analyze(readFields, modifiedFields, variables, functions);
+		}
+	}
+
+	protected abstract void analyzeThis(Set<String> readFields, Set<String> modifiedFields, Set<String> variables, Set<String> functions);
+
+	private void initAnalyze() {
+		if (readFields != null)
+			return;
+		readFields = new HashSet<String>();
+		functions = new HashSet<String>();
+		variables = new HashSet<String>();
+		modifiedFields = new HashSet<String>();
+		analyze(readFields, modifiedFields, variables, functions);
+	}
+
+	public Set<String> getFunctions() {
+		initAnalyze();
+		return functions;
+
+	}
+
+	public Set<String> getVariables() {
+		initAnalyze();
+		return variables;
+
+	}
+
+	public Set<String> getReadFields() {
+		initAnalyze();
+		return readFields;
+
+	}
+
+	public Set<String> getModifiedFields() {
+		initAnalyze();
+		return modifiedFields;
+
 	}
 
 }

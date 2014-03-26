@@ -17,6 +17,8 @@
  */
 package org.openntf.domino.formula.ast;
 
+import java.util.Set;
+
 import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
@@ -34,8 +36,6 @@ public class ASTAtDo extends SimpleNode {
 	/**
 	 * AtDo returns the last child's value
 	 * 
-	 * @throws EvaluateException
-	 *             TODO
 	 */
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
@@ -53,5 +53,10 @@ public class ASTAtDo extends SimpleNode {
 		appendParams(sb);
 	}
 
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		functions.add("@do");
+	}
 }
 /* JavaCC - OriginalChecksum=28653335c32026ae20324c429d56df0a (do not edit this line) */

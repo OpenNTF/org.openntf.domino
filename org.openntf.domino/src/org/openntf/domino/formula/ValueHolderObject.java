@@ -52,11 +52,10 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 	@Override
 	public T getObject(final int i) {
 		switch (dataType) {
-		case ERROR:
-			throw currentError;
 		case _UNSET:
 			return null;
 
+		case ERROR:
 		case BOOLEAN:
 		case DOUBLE:
 		case INTEGER:
@@ -76,8 +75,6 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 	@Override
 	public String getString(final int i) {
 		switch (dataType) {
-		case ERROR:
-			throw currentError;
 		case STRING:
 			if (i < size)
 				return (String) values[i];
@@ -95,8 +92,7 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 	@Override
 	public DateTime getDateTime(final int i) {
 		switch (dataType) {
-		case ERROR:
-			throw currentError;
+
 		case DATETIME:
 			if (i < size)
 				return (DateTime) values[i];
@@ -169,20 +165,15 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 	@Override
 	public boolean addAll(final ValueHolder other) {
 		checkAdd();
-		if (dataType == DataType.ERROR)
-			return false;
 
 		//System.out.println("Adding " + other.dataType + " to " + dataType);
 		switch (other.dataType) {
 		case _UNSET:
 			return false; // we do not add unset
 
-		case ERROR:
-			setError(other.getError());
-			return true;
-
 		case DOUBLE:
 		case INTEGER:
+		case BOOLEAN:
 			return super.addAll(other);
 
 		default:
@@ -200,7 +191,8 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 	}
 
 	@Override
-	public List<Object> toList() {
+	public List<Object> toList() throws EvaluateException {
+		testError();
 		List<Object> ret = new ArrayList<Object>(size);
 		for (int i = 0; i < size; i++) {
 			ret.add(values[i]);
