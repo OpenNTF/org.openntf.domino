@@ -29,10 +29,6 @@ public class ASTValueDateOrKW extends SimpleNode {
 	DateTime dateValue = null;
 	String image = null;
 
-	public ASTValueDateOrKW(final int id) {
-		super(id);
-	}
-
 	public ASTValueDateOrKW(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}

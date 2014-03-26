@@ -10,9 +10,6 @@ import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
 
 public class ASTAtReturn extends SimpleNode {
-	public ASTAtReturn(final int id) {
-		super(id);
-	}
 
 	public ASTAtReturn(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
@@ -24,6 +21,9 @@ public class ASTAtReturn extends SimpleNode {
 
 	}
 
+	/**
+	 * This throws a FormulaReturnException. Should be catched somewhere outside
+	 */
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
 		throw new FormulaReturnException(children[0].evaluate(ctx));

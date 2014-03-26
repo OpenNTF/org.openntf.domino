@@ -49,10 +49,14 @@ public interface Node {
 	public void jjtClose() throws ParseException;
 
 	/**
-	 * This pair of methods are used to inform the node of its parent.
+	 * set a new parent to the current node
+	 * 
 	 */
 	public void jjtSetParent(Node n);
 
+	/**
+	 * Return the parent of the current node
+	 */
 	public Node jjtGetParent();
 
 	/**
@@ -68,13 +72,30 @@ public interface Node {
 	/** Return the number of children the node has. */
 	public int jjtGetNumChildren();
 
+	/**
+	 * Create a dump of the AST-Tree. Useful for debugging
+	 * 
+	 * @param prefix
+	 */
 	public void dump(final String prefix);
 
+	/**
+	 * Evaluates the AST Tree using the given Context. This mehtod shoud be used internally only
+	 * 
+	 * @param ctx
+	 *            the context
+	 * @return a ValueHolder. The ValueHolder may contain a EvaluateException
+	 * @throws FormulaReturnException
+	 *             if a "@Return" Statement was executed.
+	 */
 	public ValueHolder evaluate(FormulaContext ctx) throws FormulaReturnException;
 
-	public void toFormula(StringBuilder sb);
-
+	/**
+	 * Use this method to solve a formula
+	 */
 	public List<Object> solve(FormulaContext ctx) throws EvaluateException;
+
+	public void toFormula(StringBuilder sb);
 
 	/**
 	 * return a set of used functions (all function names are lowercase)

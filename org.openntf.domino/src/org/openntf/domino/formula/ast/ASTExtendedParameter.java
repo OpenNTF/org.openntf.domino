@@ -12,10 +12,6 @@ import org.openntf.domino.formula.ValueHolder;
 public class ASTExtendedParameter extends SimpleNode {
 	String paramName;
 
-	public ASTExtendedParameter(final int id) {
-		super(id);
-	}
-
 	public ASTExtendedParameter(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}

@@ -10,9 +10,6 @@ import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
 
 public class ASTExtendedInclude extends SimpleNode {
-	public ASTExtendedInclude(final int id) {
-		super(id);
-	}
 
 	public ASTExtendedInclude(final AtFormulaParserImpl p, final int id) {
 		super(p, id);

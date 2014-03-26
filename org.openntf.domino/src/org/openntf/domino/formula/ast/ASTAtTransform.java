@@ -12,14 +12,12 @@ import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
 
 public class ASTAtTransform extends SimpleNode {
-	public ASTAtTransform(final int id) {
-		super(id);
-	}
 
 	public ASTAtTransform(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
 		try {
@@ -53,7 +51,6 @@ public class ASTAtTransform extends SimpleNode {
 					iter.add(list.getObject(i));
 				}
 
-				@SuppressWarnings("deprecation")
 				ValueHolder old = ctx.setVarLC(varName, iter);
 				try {
 					// Cumulate all return values

@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.openntf.domino.DateTime;
 import org.openntf.domino.formula.AtFormulaParserImpl;
+import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
@@ -13,51 +14,62 @@ import org.openntf.domino.formula.ValueHolder.DataType;
 import org.openntf.domino.formula.impl.DiffersFromLotus;
 
 public class ASTAtSort extends SimpleNode {
-	public ASTAtSort(final int id) {
-		super(id);
-	}
 
 	public ASTAtSort(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
+	/**
+	 * regarding to errorhandling, sort is a bit complex as it has more parameters and a lot of code. That's why a try/catch is surrounded
+	 * that wraps every exception in a ValueHolder
+	 */
 	@Override
 	@DiffersFromLotus({ "Options [ACCENT(IN)SENSITIVE] and [PITCH(IN)SENSITIVE] aren't yet supported",
 			"Standard string compare is done via String.compareTo" })
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
-		boolean sortAscending = true;
-		boolean sortCaseSensitive = true;
-		boolean sortCustom = false;
-		if (children.length >= 2) {
-			ValueHolder options = children[1].evaluate(ctx);
-			for (int i = 0; i < options.size; i++) {
-				String opt = options.getString(i);
-				if ("[ASCENDING]".equalsIgnoreCase(opt))
-					sortAscending = true;
-				else if ("[DESCENDING]".equalsIgnoreCase(opt))
-					sortAscending = false;
-				else if ("[CASESENSITIVE]".equalsIgnoreCase(opt))
-					sortCaseSensitive = true;
-				else if ("[CASEINSENSITIVE]".equalsIgnoreCase(opt))
-					sortCaseSensitive = false;
-				else if ("[CUSTOMSORT]".equalsIgnoreCase(opt))
-					sortCustom = true;
-				else if (!"[ACCENTSENSITIVE]".equalsIgnoreCase(opt) && !"[ACCENTINSENSITIVE]".equalsIgnoreCase(opt)
-						&& !"[PITCHSENSITIVE]".equalsIgnoreCase(opt) && !"[PITCHINSENSITIVE]".equalsIgnoreCase(opt))
-					throw new IllegalArgumentException("Illegal Option: " + opt);
+		try {
+			boolean sortAscending = true;
+			boolean sortCaseSensitive = true;
+			boolean sortCustom = false;
+			if (children.length >= 2) {
+				ValueHolder options = children[1].evaluate(ctx);
+				if (options.dataType == DataType.ERROR)
+					return options;
+
+				for (int i = 0; i < options.size; i++) {
+					String opt = options.getString(i);
+					if ("[ASCENDING]".equalsIgnoreCase(opt))
+						sortAscending = true;
+					else if ("[DESCENDING]".equalsIgnoreCase(opt))
+						sortAscending = false;
+					else if ("[CASESENSITIVE]".equalsIgnoreCase(opt))
+						sortCaseSensitive = true;
+					else if ("[CASEINSENSITIVE]".equalsIgnoreCase(opt))
+						sortCaseSensitive = false;
+					else if ("[CUSTOMSORT]".equalsIgnoreCase(opt))
+						sortCustom = true;
+					else if (!"[ACCENTSENSITIVE]".equalsIgnoreCase(opt) && !"[ACCENTINSENSITIVE]".equalsIgnoreCase(opt)
+							&& !"[PITCHSENSITIVE]".equalsIgnoreCase(opt) && !"[PITCHINSENSITIVE]".equalsIgnoreCase(opt))
+						throw new IllegalArgumentException("Illegal Option: " + opt);
+				}
 			}
+			Node customSort = null;
+			if (sortCustom) {
+				if (children.length < 3)
+					throw new IllegalArgumentException("Third argument required since option [CUSTOMSORT] present");
+				customSort = children[2];
+			}
+			ValueHolder toSort = children[0].evaluate(ctx);
+			if (toSort.dataType == DataType.ERROR)
+				return toSort;
+
+			ValueHolder ret = toSort.newInstance(toSort.size);
+			ret.addAll(toSort);
+			doSort(ctx, ret, sortAscending, sortCaseSensitive, customSort);
+			return ret;
+		} catch (RuntimeException ex) {
+			return ValueHolder.valueOf(new EvaluateException(codeLine, codeColumn, ex));
 		}
-		Node customSort = null;
-		if (sortCustom) {
-			if (children.length < 3)
-				throw new IllegalArgumentException("Third argument required since option [CUSTOMSORT] present");
-			customSort = children[2];
-		}
-		ValueHolder toSort = children[0].evaluate(ctx);
-		ValueHolder ret = toSort.newInstance(toSort.size);
-		ret.addAll(toSort);
-		doSort(ctx, ret, sortAscending, sortCaseSensitive, customSort);
-		return ret;
 	}
 
 	private void doSort(final FormulaContext ctx, final ValueHolder what, final boolean sortAscending, final boolean sortCaseSensitive,

@@ -26,9 +26,6 @@ import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
 
 public class ASTSubscript extends SimpleNode {
-	public ASTSubscript(final int id) {
-		super(id);
-	}
 
 	public ASTSubscript(final AtFormulaParserImpl p, final int id) {
 		super(p, id);

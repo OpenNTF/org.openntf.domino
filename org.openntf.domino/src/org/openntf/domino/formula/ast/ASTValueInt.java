@@ -26,10 +26,6 @@ import org.openntf.domino.formula.ValueHolder;
 public class ASTValueInt extends SimpleNode {
 	private ValueHolder value;
 
-	public ASTValueInt(final int id) {
-		super(id);
-	}
-
 	public ASTValueInt(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}

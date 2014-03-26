@@ -24,6 +24,12 @@ import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
 
+/**
+ * ASTAssignment stores the value in a FIELD, VAR or ENV-VAR
+ * 
+ * @author Roland Praml, Foconis AG
+ * 
+ */
 public class ASTAssignment extends SimpleNode {
 	public static final int FIELD = 1;
 	public static final int VAR = 2;
@@ -32,16 +38,16 @@ public class ASTAssignment extends SimpleNode {
 
 	private int type;
 	private String varName;
+	/** for performance reasons, value is stored also in lowerCase */
 	private String varNameLC;
-
-	public ASTAssignment(final int id) {
-		super(id);
-	}
 
 	public ASTAssignment(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
+	/**
+	 * Called from the parser. Init varName and type
+	 */
 	public void init(final String _varName, final int _type) {
 		varName = _varName;
 		varNameLC = varName.toLowerCase();
@@ -49,8 +55,9 @@ public class ASTAssignment extends SimpleNode {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.tests.rpr.formula.SimpleNode#toString(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.SimpleNode#toString()
 	 */
 	@Override
 	public String toString() {
@@ -70,6 +77,9 @@ public class ASTAssignment extends SimpleNode {
 		return super.toString() + ": ? " + varName;
 	}
 
+	/**
+	 * ASTAssignment stores the value in a FIELD, VAR or ENV-VAR. There is no special error handling needed here.
+	 */
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
 		ValueHolder value;
@@ -85,6 +95,7 @@ public class ASTAssignment extends SimpleNode {
 			break;
 
 		case ENV:
+			ctx.setEnvLC(varNameLC, value);
 			break;
 
 		case DEFAULT:
@@ -117,6 +128,10 @@ public class ASTAssignment extends SimpleNode {
 		children[0].toFormula(sb);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.SimpleNode#analyzeThis(java.util.Set, java.util.Set, java.util.Set, java.util.Set)
+	 */
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {

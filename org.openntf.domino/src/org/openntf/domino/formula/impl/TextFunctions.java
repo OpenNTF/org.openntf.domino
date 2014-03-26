@@ -23,6 +23,7 @@ public enum TextFunctions {
 	/*----------------------------------------------------------------------------*/
 	@ParamCount({ 1, 2 })
 	public static String atText(final Object... args) {
+		xxxxxxxxxxxxxx FIX TOMORROW - own AST node needed
 		if (args.length != 1)
 			throw new NotImplementedException();
 		return args[0].toString();

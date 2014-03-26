@@ -25,16 +25,13 @@ import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
 
 public class ASTAtDo extends SimpleNode {
-	public ASTAtDo(final int id) {
-		super(id);
-	}
 
 	public ASTAtDo(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
 	/**
-	 * AtDo returns the last child's value
+	 * AtDo returns the last child's value. This might be a ValueHolder of DataType.ERROR. No additional errorhandling needed
 	 * 
 	 */
 	@Override

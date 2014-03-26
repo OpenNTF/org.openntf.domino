@@ -27,10 +27,6 @@ public class ASTGetVariable extends SimpleNode {
 	private String variableName = "";
 	private String variableNameLC = "";
 
-	public ASTGetVariable(final int id) {
-		super(id);
-	}
-
 	public ASTGetVariable(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}

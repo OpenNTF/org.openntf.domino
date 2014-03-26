@@ -26,14 +26,14 @@ import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
 
 public class ASTAtIf extends SimpleNode {
-	public ASTAtIf(final int id) {
-		super(id);
-	}
 
 	public ASTAtIf(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
+	/**
+	 * If returns an error, if the condition statement fails
+	 */
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
 		ValueHolder nIf;

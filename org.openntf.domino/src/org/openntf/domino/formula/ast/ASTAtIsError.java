@@ -11,9 +11,6 @@ import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
 
 public class ASTAtIsError extends SimpleNode {
-	public ASTAtIsError(final int id) {
-		super(id);
-	}
 
 	public ASTAtIsError(final AtFormulaParserImpl p, final int id) {
 		super(p, id);

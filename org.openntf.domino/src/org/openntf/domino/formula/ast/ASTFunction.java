@@ -26,13 +26,10 @@ import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ParseException;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.ValueHolder.DataType;
 
 public class ASTFunction extends SimpleNode {
 	protected AtFunction function;
-
-	public ASTFunction(final int id) {
-		super(id);
-	}
 
 	public ASTFunction(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
@@ -63,14 +60,17 @@ public class ASTFunction extends SimpleNode {
 		return super.toString() + ": " + function;
 	}
 
+	/**
+	 * function.evaluate(ctx,params) may throw any runtime exception. Error-Valueholders are not passed to the function. Thats why we need
+	 * an AST-AtText
+	 */
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
-		if (children == null) {
-			return function.evaluate(ctx, null);
-		}
-		ValueHolder params[] = new ValueHolder[children.length];
-		for (int i = 0; i < children.length; i++) {
+		ValueHolder params[] = new ValueHolder[children == null ? 0 : children.length];
+		for (int i = 0; i < params.length; i++) {
 			params[i] = children[i].evaluate(ctx);
+			if (params[i].dataType == DataType.ERROR)
+				return params[i];
 		}
 		try {
 			return function.evaluate(ctx, params);

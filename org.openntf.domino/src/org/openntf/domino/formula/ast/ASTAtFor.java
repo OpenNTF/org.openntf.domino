@@ -26,14 +26,14 @@ import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
 
 public class ASTAtFor extends SimpleNode {
-	public ASTAtFor(final int id) {
-		super(id);
-	}
 
 	public ASTAtFor(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
+	/**
+	 * Error handling is a little bit complexer, as we must return the Error-ValueHolders of init/condition/increment if one of them fail
+	 */
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
 		Node init = children[0];

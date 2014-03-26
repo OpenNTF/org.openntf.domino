@@ -27,16 +27,13 @@ import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
 
 public class ASTAtDoWhile extends SimpleNode {
-	public ASTAtDoWhile(final int id) {
-		super(id);
-	}
 
 	public ASTAtDoWhile(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
 	/**
-	 * AtDoWhile returns always TRUE, as in the formula online help described
+	 * AtDoWhile returns always TRUE, or an Error-ValueHolder, if an error occurs in the last parameter.
 	 * 
 	 * @throws EvaluateException
 	 *             TODO
@@ -50,8 +47,8 @@ public class ASTAtDoWhile extends SimpleNode {
 				for (int i = 0; i < children.length; ++i) {
 					ret = children[i].evaluate(ctx);
 				}
-				if (ret != null)
-					break;
+				if (ret == null)
+					break; // should not happen
 
 				if (ret.dataType == DataType.ERROR)
 					return ret;

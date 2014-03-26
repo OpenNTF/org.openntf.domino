@@ -26,9 +26,6 @@ import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
 
 public class ASTValueList extends SimpleNode {
-	public ASTValueList(final int id) {
-		super(id);
-	}
 
 	public ASTValueList(final AtFormulaParserImpl p, final int id) {
 		super(p, id);

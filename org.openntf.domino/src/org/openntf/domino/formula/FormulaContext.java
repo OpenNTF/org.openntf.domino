@@ -197,4 +197,9 @@ public class FormulaContext {
 		}
 
 	}
+
+	public void setEnvLC(final String varNameLC, final ValueHolder value) {
+		// TODO Auto-generated method stub
+
+	}
 }

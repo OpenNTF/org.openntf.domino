@@ -27,10 +27,6 @@ public class ASTValueString extends SimpleNode {
 
 	private ValueHolder value;
 
-	public ASTValueString(final int id) {
-		super(id);
-	}
-
 	public ASTValueString(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}

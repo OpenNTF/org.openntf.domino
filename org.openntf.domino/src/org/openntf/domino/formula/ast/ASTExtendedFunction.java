@@ -18,10 +18,6 @@ import org.openntf.domino.formula.impl.ExtendedFunction;
 public class ASTExtendedFunction extends SimpleNode {
 	String functionName;
 
-	public ASTExtendedFunction(final int id) {
-		super(id);
-	}
-
 	public ASTExtendedFunction(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
@@ -58,7 +54,7 @@ public class ASTExtendedFunction extends SimpleNode {
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-
+		// TODO
 	}
 
 }
