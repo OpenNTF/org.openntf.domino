@@ -168,15 +168,15 @@ public class FormulaShell implements Runnable {
 
 		doc.put("rnd", new double[] { rndVal });
 
-		doc.put("text1", "This is a test string");
-		doc.put("text2", new String[] { "1", "2", "3" });
-
-		doc.put("int1", new int[] { 1 });
-		doc.put("int2", new int[] { 1, 2, 3 });
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("K1", "v1");
-		map.put("K2", "v2");
-		doc.put("mime1", map);
+		//		doc.put("text1", "This is a test string");
+		//		doc.put("text2", new String[] { "1", "2", "3" });
+		//
+		//		doc.put("int1", new int[] { 1 });
+		//		doc.put("int2", new int[] { 1, 2, 3 });
+		//		Map<String, String> map = new HashMap<String, String>();
+		//		map.put("K1", "v1");
+		//		map.put("K2", "v2");
+		//		doc.put("mime1", map);
 
 	}
 

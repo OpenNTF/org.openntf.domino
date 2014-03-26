@@ -23,12 +23,18 @@ public class DominoFormatter implements Formatter {
 
 	public DateTime parseDate(final String image) throws java.text.ParseException {
 		//SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-
-		//Date d = formatter.parse(image);
-		DateTime dt = new org.openntf.domino.impl.DateTime();
-		dt.setLocalTime(image);
-		//dt.setAnyTime();
-		return dt;
+		return new org.openntf.domino.impl.DateTime(image);
+		//		try {
+		//			//Date d = formatter.parse(image);
+		//			DateTime dt = new org.openntf.domino.impl.DateTime(image);
+		//			//dt.set
+		//			//dt.setLocalTime(image);
+		//
+		//			//dt.setAnyTime();
+		//			return dt;
+		//		} catch (Exception e) {
+		//			throw new java.text.ParseException(e.getMessage(), 0);
+		//		}
 
 	}
 

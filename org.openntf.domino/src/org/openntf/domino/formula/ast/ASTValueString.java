@@ -45,7 +45,7 @@ public class ASTValueString extends SimpleNode {
 				StringBuffer sb = new StringBuffer(image.substring(start, pos));
 				while (true) {
 					start = pos + 1;
-					pos = image.indexOf('\\', start);
+					pos = image.indexOf('\\', start + 1);
 					if (pos == -1) {
 						sb.append(image.substring(start));
 						break;

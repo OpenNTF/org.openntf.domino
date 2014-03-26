@@ -9,3 +9,10 @@
 @Keywords("Mary Halen, Director of Sales":"Sally Hall, VP of Marketing": "Joe Halzy, Order entry"; "Sally"; " ,")
 @Keywords(" " + "Mary Halen, Director of Sales":"Sally Hall, VP of Marketing": "Joe Halzy, Order entry"; "Sally"; " ,")
 	# Examples from Notes-Help
+	
+@Explode("Alpha##Beta"+@newline+"Gamma")
+@Explode("Alpha##Beta"+@newline+"Gamma"; "###")
+@Explode("Alpha##Beta"+@newline+"Gamma"; "##m#")
+@Explode("Alpha##Beta"+@newline+"Gamma"; "##m#"; @True)
+@Explode("Alpha##Beta"+@newline+"Gamma"; "")
+@Explode("Alpha##Beta"+@newline+"Gamma"; ""; @True; @False)

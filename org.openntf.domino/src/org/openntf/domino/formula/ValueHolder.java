@@ -501,4 +501,6 @@ public abstract class ValueHolder implements Serializable {
 	public abstract List<Object> toList();
 
 	public abstract ValueHolder newInstance(int size2);
+
+	public abstract void swap(int i, int j);
 }

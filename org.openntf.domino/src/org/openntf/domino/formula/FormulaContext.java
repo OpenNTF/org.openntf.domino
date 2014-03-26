@@ -18,8 +18,18 @@ package org.openntf.domino.formula;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
+import java.util.logging.Logger;
+
+import lotus.domino.NotesException;
+
+import org.openntf.domino.Database;
+import org.openntf.domino.Document;
+import org.openntf.domino.Session;
+import org.openntf.domino.utils.Factory;
 
 public class FormulaContext {
+	private static final Logger log_ = Logger.getLogger(FormulaContext.class.getName());
 	private Map<String, Object> document;
 	private Map<String, ValueHolder> vars = new HashMap<String, ValueHolder>();
 	private Formatter formatter;
@@ -142,5 +152,43 @@ public class FormulaContext {
 
 	public Formatter getFormatter() {
 		return formatter;
+	}
+
+	@SuppressWarnings("deprecation")
+	public ValueHolder evaluateNative(final String formula, final Object... params) {
+		// TODO Auto-generated method stub
+		Session session = Factory.getSession();
+		Document tmpDoc = null;
+		Database db = null;
+		if (document instanceof Document) {
+			db = ((Document) document).getAncestorDatabase();
+		} else {
+			db = session.getCurrentDatabase();
+		}
+		if (db == null)
+			throw new UnsupportedOperationException("No database set: Can't evaluate Lotus native formula");
+		lotus.domino.Document rawDocument = null;
+		lotus.domino.Session rawSession = Factory.toLotus(session);
+
+		for (int i = 0; i < params.length; i++) {
+			if (tmpDoc == null) {
+				tmpDoc = db.createDocument();
+				rawDocument = Factory.toLotus(tmpDoc);
+			}
+			tmpDoc.replaceItemValue("p" + (i + 1), params[i]);
+			//			System.out.println("p" + (i + 1) + "=" + params[i]);
+		}
+
+		try {
+			log_.warning("Evaluating native formula: '" + formula + "' This may affect performance");
+			Vector<?> v = rawSession.evaluate(formula, rawDocument);
+			Vector<Object> wrapped = Factory.wrapColumnValues(v, session);
+			rawSession.recycle(v);
+			return ValueHolder.valueOf(wrapped);
+		} catch (NotesException e) {
+			log_.warning("NotesException: " + e.text);
+			return ValueHolder.valueOf(new RuntimeException(e));
+		}
+
 	}
 }
