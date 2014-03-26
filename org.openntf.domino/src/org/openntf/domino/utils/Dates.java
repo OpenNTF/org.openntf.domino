@@ -526,7 +526,7 @@ public enum Dates {
 				throw new IllegalArgumentException("object1 is null");
 			}
 
-			return Dates.getHours(object0) - Dates.getHours(object1);
+			return Dates.getHours(object1) - Dates.getHours(object0);
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
@@ -567,7 +567,7 @@ public enum Dates {
 				throw new IllegalArgumentException("object1 is null");
 			}
 
-			return Dates.getMinutes(object0) - Dates.getMinutes(object1);
+			return Dates.getMinutes(object1) - Dates.getMinutes(object0);
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
@@ -608,7 +608,7 @@ public enum Dates {
 				throw new IllegalArgumentException("object1 is null");
 			}
 
-			return Dates.getSeconds(object0) - Dates.getSeconds(object1);
+			return Dates.getSeconds(object1) - Dates.getSeconds(object0);
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
@@ -646,7 +646,7 @@ public enum Dates {
 				throw new IllegalArgumentException("object1 is null");
 			}
 
-			return Dates.getTime(object0) - Dates.getTime(object1);
+			return Dates.getTime(object1) - Dates.getTime(object0);
 
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
@@ -1055,6 +1055,7 @@ public enum Dates {
 	 * @see DominoUtils#EQUAL
 	 * @see DominoUtils#GREATER_THAN
 	 */
+	@SuppressWarnings("javadoc")
 	public static int compareDaysBetween(final Object object0, final Object object1, final boolean descending) {
 		try {
 			if (null == object0) {
@@ -1111,6 +1112,7 @@ public enum Dates {
 	 * @see DominoUtils#EQUAL
 	 * @see DominoUtils#GREATER_THAN
 	 */
+	@SuppressWarnings("javadoc")
 	public static int compareDaysBetween(final Object object0, final Object object1) {
 		return (Dates.compareDaysBetween(object0, object1, false));
 	}
@@ -1138,6 +1140,7 @@ public enum Dates {
 	 * @see DominoUtils#EQUAL
 	 * @see DominoUtils#GREATER_THAN
 	 */
+	@SuppressWarnings("javadoc")
 	public static int compareElapsedDays(final Object object0, final Object object1, final boolean descending) {
 		try {
 			if (null == object0) {
@@ -1196,6 +1199,7 @@ public enum Dates {
 	 * @see DominoUtils#EQUAL
 	 * @see DominoUtils#GREATER_THAN
 	 */
+	@SuppressWarnings("javadoc")
 	public static int compareElapsedDays(final Object object0, final Object object1) {
 		return (Dates.compareElapsedDays(object0, object1, false));
 	}
@@ -1223,6 +1227,7 @@ public enum Dates {
 	 * @see DominoUtils#EQUAL
 	 * @see DominoUtils#GREATER_THAN
 	 */
+	@SuppressWarnings("javadoc")
 	public static int compareDates(final Object object0, final Object object1, final boolean descending) {
 		try {
 			if (null == object0) {
