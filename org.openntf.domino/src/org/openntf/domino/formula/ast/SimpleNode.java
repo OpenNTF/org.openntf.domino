@@ -17,9 +17,11 @@
  */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaParser;
-import org.openntf.domino.formula.EvaluateException;
+import java.util.List;
+
+import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ParseException;
 import org.openntf.domino.formula.Token;
 import org.openntf.domino.formula.ValueHolder;
@@ -29,7 +31,7 @@ public abstract class SimpleNode implements Node {
 	protected Node parent;
 	protected Node[] children;
 	protected int id;
-	protected AtFormulaParser parser;
+	protected AtFormulaParserImpl parser;
 	protected int codeLine;
 	protected int codeColumn;
 
@@ -37,16 +39,12 @@ public abstract class SimpleNode implements Node {
 		id = i;
 	}
 
-	public SimpleNode(final AtFormulaParser p, final int i) {
+	public SimpleNode(final AtFormulaParserImpl p, final int i) {
 		this(i);
 		parser = p;
 		Token t = p.token;
 		codeLine = t.beginLine;
 		codeColumn = t.beginColumn;
-	}
-
-	public EvaluateException createEvaluateException(final Throwable cause) {
-		return new EvaluateException(codeLine, codeColumn, cause);
 	}
 
 	public void jjtOpen() {
@@ -112,7 +110,7 @@ public abstract class SimpleNode implements Node {
 		}
 	}
 
-	public abstract ValueHolder evaluate(FormulaContext ctx) throws EvaluateException;
+	public abstract ValueHolder evaluate(FormulaContext ctx) throws FormulaReturnException;
 
 	protected void appendParams(final StringBuilder sb) {
 		// TODO Auto-generated method stub
@@ -129,6 +127,19 @@ public abstract class SimpleNode implements Node {
 			sb.append(')');
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.Node#solve(org.openntf.domino.formula.FormulaContext)
+	 */
+	public final List<Object> solve(final FormulaContext ctx) {
+
+		try {
+			return evaluate(ctx).toList();
+		} catch (FormulaReturnException e) {
+			return e.getValue().toList();
+		}
+	}
+
 }
 
 /* JavaCC - OriginalChecksum=f757f6165359770f80bc5b67ed15fa71 (do not edit this line) */
