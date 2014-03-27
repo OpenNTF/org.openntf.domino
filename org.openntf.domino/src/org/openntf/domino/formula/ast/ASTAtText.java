@@ -5,9 +5,12 @@ package org.openntf.domino.formula.ast;
 import java.util.Set;
 
 import org.openntf.domino.formula.AtFormulaParserImpl;
+import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.ValueHolder.DataType;
+import org.openntf.domino.formula.impl.TextFunctions;
 
 public class ASTAtText extends SimpleNode {
 
@@ -16,21 +19,36 @@ public class ASTAtText extends SimpleNode {
 	}
 
 	public void toFormula(final StringBuilder sb) {
-		// TODO Auto-generated method stub
-
+		sb.append("@Text");
+		appendParams(sb);
 	}
 
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
-		// TODO Auto-generated method stub
-		return null;
+		ValueHolder params[] = new ValueHolder[children.length];
+		ValueHolder ret = null;
+		for (int i = 0; i < children.length; i++) {
+			params[i] = children[i].evaluate(ctx);
+			if (params[i].dataType == DataType.ERROR) {
+				ret = params[i];
+				break;
+			}
+		}
+		try {
+			if (ret == null)
+				ret = TextFunctions.doAtText(ctx, params);
+		} catch (RuntimeException e) {
+			return ValueHolder.valueOf(new EvaluateException(codeLine, codeColumn, e));
+		}
+		if (ret.dataType == DataType.ERROR)
+			ret = ValueHolder.valueOf(ret.getError().getMessage());
+		return ret;
 	}
 
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		// TODO Auto-generated method stub
-
+		functions.add("@text");
 	}
 
 }

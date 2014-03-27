@@ -265,7 +265,7 @@ public class CopyOfFormulaShell implements Runnable {
 				FormulaContext ctx1 = new FormulaContext(ntfDoc, DominoFormatter.getInstance());
 				ntfDocResult = ast.solve(ctx1);
 				docEvaluateTime += System.nanoTime() - time;
-			} catch (RuntimeException e) {
+			} catch (Exception e) {
 				System.out.println(NTF("Doc-Evaluate failed: ") + ERROR(e));
 				e.printStackTrace();
 				i = count;
@@ -276,7 +276,7 @@ public class CopyOfFormulaShell implements Runnable {
 				FormulaContext ctx2 = new FormulaContext(ntfMap, DominoFormatter.getInstance());
 				ntfMapResult = ast.solve(ctx2);
 				mapEvaluateTime += System.nanoTime() - time;
-			} catch (RuntimeException e) {
+			} catch (Exception e) {
 				System.out.println(NTF("Map-Evaluate failed: ") + ERROR(e));
 				e.printStackTrace();
 				i = count;
