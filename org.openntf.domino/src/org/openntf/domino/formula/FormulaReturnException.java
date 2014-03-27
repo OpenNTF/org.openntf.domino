@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.formula;
 
+
 public class FormulaReturnException extends Exception {
 	private static final long serialVersionUID = 1L;
 	private ValueHolder ret;

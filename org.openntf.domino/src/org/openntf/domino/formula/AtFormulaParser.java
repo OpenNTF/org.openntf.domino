@@ -22,8 +22,7 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openntf.domino.formula.ast.Node;
-import org.openntf.domino.formula.impl.ExtendedFunction;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Terminatable;
 
@@ -118,8 +117,8 @@ public abstract class AtFormulaParser {
 	 * @param func
 	 *            the function to declare
 	 */
-	public void declareFunction(final ExtendedFunction func) {
-		String funcName = func.getName();
+	public void declareFunction(final AtFunction func) {
+		String funcName = func.getImage();
 		//		AtFunction currentFunc = getFunction(funcName);
 		//		if (currentFunc != null) {
 		//				throw new IllegalArgumentException("Function '" + funcName + "' cannot be redeclared");
@@ -138,7 +137,7 @@ public abstract class AtFormulaParser {
 	 * @throws ParseException
 	 *             if the formula contains errors
 	 */
-	final public Node parse(final Reader reader, final boolean useFocFormula) throws ParseException {
+	final public AtFormulaNode parse(final Reader reader, final boolean useFocFormula) throws AtFormulaParseException {
 		ReInit(reader);
 		resetFunctions();
 		if (useFocFormula) {
@@ -162,7 +161,8 @@ public abstract class AtFormulaParser {
 	 * @throws ParseException
 	 *             see: {@link #parse(Reader, boolean)}
 	 */
-	final public Node parse(final InputStream sr, final String encoding, final boolean useFocFormula) throws ParseException {
+	final public AtFormulaNode parse(final InputStream sr, final String encoding, final boolean useFocFormula)
+			throws AtFormulaParseException {
 		ReInit(sr, encoding);
 		resetFunctions();
 		if (useFocFormula) {
@@ -183,7 +183,7 @@ public abstract class AtFormulaParser {
 	 * @throws ParseException
 	 *             see: {@link #parse(Reader, boolean)}
 	 */
-	final public Node parse(final InputStream sr, final boolean useFocFormula) throws ParseException {
+	final public AtFormulaNode parse(final InputStream sr, final boolean useFocFormula) throws AtFormulaParseException {
 		return parse(sr, null, useFocFormula);
 	}
 
@@ -198,7 +198,7 @@ public abstract class AtFormulaParser {
 	 * @throws ParseException
 	 *             see: {@link #parse(Reader, boolean)}
 	 */
-	final public Node parse(final String formula, final boolean useFocFormula) throws ParseException {
+	final public AtFormulaNode parse(final String formula, final boolean useFocFormula) throws AtFormulaParseException {
 		StringReader sr = new java.io.StringReader(formula);
 		return parse(sr, useFocFormula);
 	}
@@ -228,7 +228,7 @@ public abstract class AtFormulaParser {
 	 * @throws ParseException
 	 *             if formula contains errors
 	 */
-	abstract public Node parseFormula() throws ParseException;
+	abstract public AtFormulaNode parseFormula() throws AtFormulaParseException;
 
 	/**
 	 * Parses the formula in Foconis-mode (inline formulas are supported)
@@ -237,5 +237,5 @@ public abstract class AtFormulaParser {
 	 * @throws ParseException
 	 *             if formula contains errors
 	 */
-	abstract public Node parseFocFormula() throws ParseException;
+	abstract public AtFormulaNode parseFocFormula() throws AtFormulaParseException;
 }

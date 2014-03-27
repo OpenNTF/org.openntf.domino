@@ -17,7 +17,7 @@
  */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaParserImpl;
+import org.openntf.domino.formula.parse.*;
 
 public class ASTOperator extends ASTFunction {
 

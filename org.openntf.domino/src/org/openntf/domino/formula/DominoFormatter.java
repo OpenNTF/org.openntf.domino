@@ -16,6 +16,7 @@
  */
 package org.openntf.domino.formula;
 
+// TODO RPr remove domino.DateTime completely!
 import org.openntf.domino.DateTime;
 
 public class DominoFormatter implements Formatter {

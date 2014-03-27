@@ -16,53 +16,16 @@
  * permissions and limitations under the License.
  */
 
-package org.openntf.domino.formula.ast;
+package org.openntf.domino.formula;
 
 import java.util.List;
 import java.util.Set;
-
-import org.openntf.domino.formula.AtFormulaNode;
-import org.openntf.domino.formula.EvaluateException;
-import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.FormulaReturnException;
-import org.openntf.domino.formula.ValueHolder;
 
 /* All AST nodes must implement this interface.  It provides basic
    machinery for constructing the parent and child relationships
    between nodes. */
 
-public interface Node extends AtFormulaNode {
-
-	/**
-	 * This method is called after the node has been made the current node. It indicates that child nodes can now be added to it.
-	 */
-	public void jjtOpen();
-
-	public void jjtClose();
-
-	/**
-	 * set a new parent to the current node
-	 * 
-	 */
-	public void jjtSetParent(Node n);
-
-	/**
-	 * Return the parent of the current node
-	 */
-	public Node jjtGetParent();
-
-	/**
-	 * This method tells the node to add its argument to the node's list of children.
-	 */
-	public void jjtAddChild(Node n, int i);
-
-	/**
-	 * This method returns a child node. The children are numbered from zero, left to right.
-	 */
-	public Node jjtGetChild(int i);
-
-	/** Return the number of children the node has. */
-	public int jjtGetNumChildren();
+public interface AtFormulaNode {
 
 	/**
 	 * Create a dump of the AST-Tree. Useful for debugging
@@ -72,21 +35,15 @@ public interface Node extends AtFormulaNode {
 	public void dump(final String prefix);
 
 	/**
-	 * Evaluates the AST Tree using the given Context. This mehtod shoud be used internally only
-	 * 
-	 * @param ctx
-	 *            the context
-	 * @return a ValueHolder. The ValueHolder may contain a EvaluateException
-	 * @throws FormulaReturnException
-	 *             if a "@Return" Statement was executed.
-	 */
-	public ValueHolder evaluate(FormulaContext ctx) throws FormulaReturnException;
-
-	/**
 	 * Use this method to solve a formula
 	 */
 	public List<Object> solve(FormulaContext ctx) throws EvaluateException;
 
+	/**
+	 * you can convert an AST tree back to a Lotus-formula
+	 * 
+	 * @param sb
+	 */
 	public void toFormula(StringBuilder sb);
 
 	/**
