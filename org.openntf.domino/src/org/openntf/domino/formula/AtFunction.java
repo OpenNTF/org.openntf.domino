@@ -16,10 +16,37 @@
  */
 package org.openntf.domino.formula;
 
+import javax.annotation.Nonnull;
+
+/**
+ * This repesents a "real" formulaexpression. A real formulaexpression is a formula, that does NOT control the program flow (like
+ * {@literal @}if, {@literal @}for or {@literal @}transform". Formulas that controls program flow must be implemented as own AST-node).
+ * 
+ * @author Roland Praml, Foconis AG
+ * 
+ */
 public interface AtFunction {
 
+	/**
+	 * Evaluates the formula.
+	 * 
+	 * @param ctx
+	 *            the context that contains "database" and so on
+	 * @param params
+	 *            the parameters as ValueHolder
+	 * @return a ValueHolder
+	 * @throws FormulaReturnException
+	 *             if a {@literal @}return Statement was executed
+	 */
+	@Nonnull
 	public ValueHolder evaluate(final FormulaContext ctx, final ValueHolder[] params) throws FormulaReturnException;
 
+	/**
+	 * returns the Image of the AtFunction (with at-sign)
+	 * 
+	 * @return a String
+	 */
+	@Nonnull
 	public String getImage();
 
 	public boolean checkParamCount(int i);

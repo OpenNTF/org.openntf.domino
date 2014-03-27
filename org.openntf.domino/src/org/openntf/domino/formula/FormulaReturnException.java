@@ -15,15 +15,31 @@
  */
 package org.openntf.domino.formula;
 
-
+/**
+ * This Exception is internally used to implement the {@literal @}return Function
+ * 
+ * @author Roland Praml, Foconis AG
+ * 
+ */
 public class FormulaReturnException extends Exception {
 	private static final long serialVersionUID = 1L;
 	private ValueHolder ret;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param vh
+	 *            the ValueHolder to return
+	 */
 	public FormulaReturnException(final ValueHolder vh) {
 		ret = vh;
 	}
 
+	/**
+	 * returns the ValueHolder specified in constructor
+	 * 
+	 * @return valueholder
+	 */
 	public ValueHolder getValue() {
 		return ret;
 	}

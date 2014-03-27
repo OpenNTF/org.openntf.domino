@@ -124,7 +124,7 @@ public class ValueHolderNumber extends ValueHolder implements Serializable {
 	 */
 	@Override
 	public boolean add(final int i) {
-		checkAdd();
+		checkImmutable();
 
 		switch (dataType) {
 		case ERROR:
@@ -150,7 +150,7 @@ public class ValueHolderNumber extends ValueHolder implements Serializable {
 	 */
 	@Override
 	public boolean add(final double d) {
-		checkAdd();
+		checkImmutable();
 
 		switch (dataType) {
 		case ERROR:
@@ -158,8 +158,7 @@ public class ValueHolderNumber extends ValueHolder implements Serializable {
 
 		case _UNSET:
 		case INTEGER:
-			if (Integer.MIN_VALUE < d && d < Integer.MAX_VALUE && d == (double) ((int) d)) {
-				valuesI[size] = ((int) d);
+			if (Integer.MIN_VALUE < d && d < Integer.MAX_VALUE && d == (valuesI[size] = (int) d)) {
 				dataType = DataType.INTEGER;
 			} else {
 				dataType = DataType.DOUBLE; // upconvert to double
@@ -178,7 +177,7 @@ public class ValueHolderNumber extends ValueHolder implements Serializable {
 
 	@Override
 	public boolean addAll(final ValueHolder other) {
-		checkAdd();
+		checkImmutable();
 		if (dataType == DataType.ERROR)
 			return false;
 
@@ -208,7 +207,7 @@ public class ValueHolderNumber extends ValueHolder implements Serializable {
 
 	@Override
 	public List<Object> toList() throws EvaluateException {
-		testError();
+		throwError();
 		List<Object> ret = new ArrayList<Object>(size);
 		if (dataType == DataType.INTEGER) {
 			for (int i = 0; i < size; i++) {

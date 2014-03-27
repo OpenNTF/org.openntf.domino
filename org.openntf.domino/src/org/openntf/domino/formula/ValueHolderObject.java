@@ -164,7 +164,7 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 
 	@Override
 	public boolean addAll(final ValueHolder other) {
-		checkAdd();
+		checkImmutable();
 
 		//System.out.println("Adding " + other.dataType + " to " + dataType);
 		switch (other.dataType) {
@@ -192,7 +192,7 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 
 	@Override
 	public List<Object> toList() throws EvaluateException {
-		testError();
+		throwError();
 		List<Object> ret = new ArrayList<Object>(size);
 		for (int i = 0; i < size; i++) {
 			ret.add(values[i]);

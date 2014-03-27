@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openntf.domino.formula.parse.AtFormulaParserImpl;
-import org.openntf.domino.utils.Factory;
-import org.openntf.domino.utils.Terminatable;
 
 /**
  * This class adds additonal functionality to the AtFormulaParserImpl (which is auto generated).
@@ -40,29 +38,6 @@ public abstract class AtFormulaParser {
 	protected Map<String, AtFunction> customFunc;
 
 	/**
-	 * keep a local preconfigured instance in memory
-	 */
-	private static ThreadLocal<AtFormulaParserImpl> instance_ = new ThreadLocal<AtFormulaParserImpl>() {
-		@Override
-		protected AtFormulaParserImpl initialValue() {
-			AtFormulaParserImpl parser = new AtFormulaParserImpl(new java.io.StringReader(""));
-
-			return parser;
-		}
-	};
-
-	/**
-	 * Register a callback to release instance when Factory terminates
-	 */
-	static {
-		Factory.onTerminate(new Terminatable() {
-			public void terminate() {
-				instance_.set(null);
-			}
-		});
-	}
-
-	/**
 	 * Returns a the Formatter for this parser
 	 * 
 	 * @return the formatter
@@ -74,23 +49,26 @@ public abstract class AtFormulaParser {
 	/**
 	 * This function returns a preconfigured default instance
 	 */
-	public static AtFormulaParser getInstance() {
-		AtFormulaParser parser = instance_.get();
-		parser.reset();
+	public static AtFormulaParser getDefaultInstance() {
+		AtFormulaParserImpl parser = new AtFormulaParserImpl(new java.io.StringReader(""));
+		parser.init();
 		return parser;
 	}
 
 	/**
 	 * Resets the parser to a predefined state;
 	 */
-	public void reset() {
-		resetFunctions();
+	public void init() {
+		reset();
 		// TODO RPr we need a formatter that can parse date times and so on without Domino-objects 
-		formatter = DominoFormatter.getInstance();
-		functionFactory = AtFunctionFactory.getInstance();
+		formatter = DominoFormatter.getDefaultInstance();
+		functionFactory = AtFunctionFactory.getDefaultInstance();
 	}
 
-	public void resetFunctions() {
+	/**
+	 * If you parse multiple formulas, you should call "reset" to clear predefined formulas!
+	 */
+	public void reset() {
 		customFunc = new HashMap<String, AtFunction>();
 	}
 
@@ -139,13 +117,11 @@ public abstract class AtFormulaParser {
 	 */
 	final public AtFormulaNode parse(final Reader reader, final boolean useFocFormula) throws AtFormulaParseException {
 		ReInit(reader);
-		resetFunctions();
 		if (useFocFormula) {
 			return parseFocFormula();
 		} else {
 			return parseFormula();
 		}
-
 	}
 
 	/**
@@ -164,7 +140,6 @@ public abstract class AtFormulaParser {
 	final public AtFormulaNode parse(final InputStream sr, final String encoding, final boolean useFocFormula)
 			throws AtFormulaParseException {
 		ReInit(sr, encoding);
-		resetFunctions();
 		if (useFocFormula) {
 			return parseFocFormula();
 		} else {

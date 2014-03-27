@@ -45,7 +45,7 @@ public class DominoFormatter implements Formatter {
 		return Double.valueOf(el.replace(',', '.'));
 	}
 
-	public static synchronized Formatter getInstance() {
+	public static synchronized Formatter getDefaultInstance() {
 		if (instance == null) {
 			instance = new DominoFormatter();
 		}

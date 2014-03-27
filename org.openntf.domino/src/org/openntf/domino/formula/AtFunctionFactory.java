@@ -35,44 +35,26 @@ import org.openntf.domino.formula.impl.Operators;
 import org.openntf.domino.formula.impl.OperatorsBool;
 import org.openntf.domino.formula.impl.TextFunctions;
 
+/**
+ * 
+ * @author Roland Praml, Foconis AG
+ * 
+ */
 public class AtFunctionFactory {
 
 	private Map<String, AtFunction> functions = new HashMap<String, AtFunction>();
+	private boolean immutable;
 	private static AtFunctionFactory instance;
 
 	/**
-	 * Returns the atFunction object that can evaluate 'funcName'
-	 * 
+	 * Default constructor
 	 */
-	public AtFunction getFunction(final String funcName) {
-		return functions.get(funcName.toLowerCase());
-	}
-
-	/**
-	 * Returns all avaliable at-Functions
-	 * 
-	 */
-	public Map<String, AtFunction> getFunctions() {
-		return Collections.unmodifiableMap(functions);
-	}
-
-	/**
-	 * If you inherit from this mehtod, you can initialize different at-Functions in the constructor
-	 */
-	protected void init(final AtFunction... fs) {
-		for (AtFunction f : fs) {
-			if (functions.put(f.getImage().toLowerCase(), f) != null) {
-				throw new IllegalArgumentException("Function " + f + " already defined.");
-			}
-		}
-	}
-
 	public AtFunctionFactory() {
 		super();
 	}
 
 	/**
-	 * This scans the class for apropriate atFunctions.
+	 * This Constructor scans the class for apropriate atFunctions.
 	 * 
 	 * @param cls
 	 */
@@ -104,15 +86,55 @@ public class AtFunctionFactory {
 		}
 	}
 
+	/**
+	 * Returns the atFunction object that can evaluate 'funcName'
+	 */
+	public AtFunction getFunction(final String funcName) {
+		return functions.get(funcName.toLowerCase());
+	}
+
+	/**
+	 * Returns all avaliable at-Functions
+	 */
+	public Map<String, AtFunction> getFunctions() {
+		return Collections.unmodifiableMap(functions);
+	}
+
+	/**
+	 * If you inherit from this mehtod, you can initialize different at-Functions in the constructor
+	 */
+	protected void init(final AtFunction... fs) {
+		for (AtFunction f : fs) {
+			if (functions.put(f.getImage().toLowerCase(), f) != null) {
+				throw new IllegalArgumentException("Function " + f + " already defined.");
+			}
+		}
+		setImmutable();
+	}
+
+	/**
+	 * Sets the factory to immutable, so that it is safe to cache them.
+	 */
+	public void setImmutable() {
+		immutable = true;
+
+	}
+
+	/**
+	 * Adds an other Factory to this Factory
+	 * 
+	 * @param fact
+	 */
 	protected void addFactory(final org.openntf.domino.formula.AtFunctionFactory fact) {
+		if (immutable)
+			throw new UnsupportedOperationException("Cannot add Factory, because this Factory is immutable");
 		functions.putAll(fact.getFunctions());
 	}
 
 	/**
 	 * This is the global "default"-instance.
-	 * 
 	 */
-	public static synchronized AtFunctionFactory getInstance() {
+	public static synchronized AtFunctionFactory getDefaultInstance() {
 		if (instance == null) {
 			instance = new AtFunctionFactory();
 			instance.addFactory(new Operators.Factory());
@@ -125,6 +147,7 @@ public class AtFunctionFactory {
 			instance.addFactory(new AtFunctionFactory(TextFunctions.class));
 			instance.addFactory(new AtFunctionFactory(Constant.class));
 			instance.addFactory(new AtFunctionFactory(NotSupported.class));
+			instance.setImmutable();
 		}
 		return instance;
 	}

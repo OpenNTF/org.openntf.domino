@@ -18,6 +18,7 @@ package org.openntf.domino.formula;
 
 import org.openntf.domino.DateTime;
 
+// TODO RPr This is not yet finished
 public interface Formatter {
 
 	DateTime parseDate(String image) throws java.text.ParseException;

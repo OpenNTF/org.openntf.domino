@@ -24,7 +24,7 @@ import java.util.List;
 import org.openntf.domino.DateTime;
 
 /**
- * Valueholder to hold single or multiple values.
+ * This Valueholder is to hold single or multiple values.
  * 
  * When evaluating a formula, every String/int/double value is wrapped in a "ValueHolder". The holder has several get-methods to return the
  * different types. You always must check the datatype before calling one of the getters, because a ValueHolder that contains Strings cannot
@@ -69,6 +69,9 @@ public abstract class ValueHolder implements Serializable {
 	protected static final ValueHolder integerCache[];
 	protected static final ValueHolder stringCache[];
 
+	/**
+	 * Initializer to initialize some default ValueHolders
+	 */
 	static {
 		TRUE = new ValueHolderBoolean(1);
 		TRUE.add(Boolean.TRUE);
@@ -96,9 +99,21 @@ public abstract class ValueHolder implements Serializable {
 
 	}
 
+	/**
+	 * Need for serialization
+	 */
 	public ValueHolder() {
 	}
 
+	/**
+	 * Create a new ValueHolder
+	 * 
+	 * @param clazz
+	 *            the class to create the ValueHolder
+	 * @param size
+	 *            the size of the ValueHolder. You must specify the size at construction time
+	 * @return
+	 */
 	public static ValueHolder createValueHolder(final Class<?> clazz, final int size) {
 
 		if (boolean.class.equals(clazz))
@@ -139,10 +154,14 @@ public abstract class ValueHolder implements Serializable {
 
 	}
 
-	protected ValueHolder testError() throws EvaluateException {
+	/**
+	 * thows the current error, if there is one stored in the exception
+	 * 
+	 * @throws EvaluateException
+	 */
+	protected void throwError() throws EvaluateException {
 		if (currentError != null)
 			throw currentError;
-		return this;
 	}
 
 	/**
@@ -352,6 +371,13 @@ public abstract class ValueHolder implements Serializable {
 		}
 	}
 
+	/**
+	 * Returns the stored value as Object.
+	 * 
+	 * @param i
+	 *            the position
+	 * @return the value as object
+	 */
 	public abstract Object getObject(final int i);
 
 	/**
@@ -373,16 +399,22 @@ public abstract class ValueHolder implements Serializable {
 	}
 
 	/**
-	 * Returns the value at position i as Integer
+	 * Returns the value at position i as int
 	 */
 	public int getInt(final int i) {
-		throw new ClassCastException("DATETIME expected. Got '" + dataType + "'");
+		throw new ClassCastException("INTEGER expected. Got '" + dataType + "'");
 	}
 
+	/**
+	 * Returns the value at position i as double
+	 */
 	public double getDouble(final int i) {
 		throw new ClassCastException("DOUBLE expected. Got '" + dataType + "'");
 	}
 
+	/**
+	 * Returns the value at position i as boolen
+	 */
 	public boolean getBoolean(final int i) {
 		throw new ClassCastException("BOOLEAN expected. Got '" + dataType + "'");
 	}
@@ -407,8 +439,8 @@ public abstract class ValueHolder implements Serializable {
 		return false;
 	}
 
-	/*
-	 * This is all optimized for performance
+	/**
+	 * Adds all values of an other ValueHolder
 	 * 
 	 */
 	public boolean addAll(final ValueHolder other) {
@@ -455,13 +487,10 @@ public abstract class ValueHolder implements Serializable {
 		throw new IllegalArgumentException("Cannot mix datatypes " + dataType + " and DATETIME");
 	}
 
-	//	public void setError(final RuntimeException e) {
-	//		dataType = DataType.ERROR;
-	//		currentError = e;
-	//		size = 1;
-	//	}
-
-	protected void checkAdd() {
+	/**
+	 * throws an Exception if the ValueHolder is immutable
+	 */
+	protected void checkImmutable() {
 		if (immutable)
 			throw new UnsupportedOperationException("ValueHolder is immutable.");
 	}
@@ -471,7 +500,7 @@ public abstract class ValueHolder implements Serializable {
 	 */
 	@Deprecated
 	public boolean add(final Object obj) {
-		checkAdd();
+		checkImmutable();
 
 		if (dataType == DataType.ERROR) {
 			return false;

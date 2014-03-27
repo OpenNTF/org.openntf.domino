@@ -71,7 +71,7 @@ public class ValueHolderBoolean extends ValueHolder implements Serializable {
 	 */
 	@Override
 	public boolean add(final boolean bool) {
-		checkAdd();
+		checkImmutable();
 
 		switch (dataType) {
 		case ERROR:
@@ -109,7 +109,7 @@ public class ValueHolderBoolean extends ValueHolder implements Serializable {
 
 	@Override
 	public List<Object> toList() throws EvaluateException {
-		testError();
+		throwError();
 		List<Object> ret = new ArrayList<Object>(size);
 		for (int i = 0; i < size; i++) {
 			ret.add(values[i]);

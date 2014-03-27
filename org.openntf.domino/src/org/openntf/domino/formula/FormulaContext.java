@@ -28,6 +28,12 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.Factory;
 
+/**
+ * This is the FormulaContext that is used for evaluation
+ * 
+ * @author Roland Praml, Foconis AG
+ * 
+ */
 public class FormulaContext {
 	private static final Logger log_ = Logger.getLogger(FormulaContext.class.getName());
 	private Map<String, Object> document;
@@ -154,12 +160,21 @@ public class FormulaContext {
 		return formatter;
 	}
 
+	/**
+	 * does a native evaluate. This is needed for all functions that are too complex to implement in java or the algorithm is unknown
+	 * 
+	 * @param formula
+	 *            the formula to evaluate
+	 * @param params
+	 *            the parameters are mapped to the field p1, p2 and so on
+	 * @return the value
+	 */
 	@SuppressWarnings("deprecation")
 	public ValueHolder evaluateNative(final String formula, final ValueHolder... params) {
-		// TODO Auto-generated method stub
 		Session session = Factory.getSession();
 		Document tmpDoc = null;
 		Database db = null;
+
 		if (document instanceof Document) {
 			db = ((Document) document).getAncestorDatabase();
 		} else {
@@ -167,29 +182,31 @@ public class FormulaContext {
 		}
 		if (db == null)
 			throw new UnsupportedOperationException("No database set: Can't evaluate Lotus native formula");
+
 		lotus.domino.Document rawDocument = null;
 		lotus.domino.Session rawSession = Factory.toLotus(session);
 
-		for (int i = 0; i < params.length; i++) {
-			if (tmpDoc == null) {
-				tmpDoc = db.createDocument();
-				rawDocument = Factory.toLotus(tmpDoc);
-			}
+		if (params.length > 0) {
+			tmpDoc = db.createDocument();
+			rawDocument = Factory.toLotus(tmpDoc);
+		}
 
+		// fill the document
+		for (int i = 0; i < params.length; i++) {
 			try {
 				tmpDoc.replaceItemValue("p" + (i + 1), params[i].toList());
 			} catch (EvaluateException e) {
 				return params[i];
 			}
-
-			//			System.out.println("p" + (i + 1) + "=" + params[i]);
 		}
 
 		try {
 			log_.warning("Evaluating native formula: '" + formula + "' This may affect performance");
+
 			Vector<?> v = rawSession.evaluate(formula, rawDocument);
 			Vector<Object> wrapped = Factory.wrapColumnValues(v, session);
 			rawSession.recycle(v);
+
 			return ValueHolder.valueOf(wrapped);
 		} catch (NotesException e) {
 			log_.warning("NotesException: " + e.text);
