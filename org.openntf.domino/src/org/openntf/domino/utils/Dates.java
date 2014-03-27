@@ -375,6 +375,63 @@ public enum Dates {
 	}
 
 	/**
+	 * Gets a Date object representing the epoch
+	 * 
+	 * @return Date representing the epoch
+	 */
+	public static final Date getEpoch() {
+		return new Date(0);
+	}
+
+	/**
+	 * Generates a Date object from the specified source, with all TIME values set to that of the epoch
+	 * 
+	 * @param source
+	 *            Object from which a Date object can be constructed.
+	 * 
+	 * @return Date constructed from the source with all TIME values set to that of the epoch.
+	 */
+	public static Date getEpochedDate(final Object source) {
+		Date date = Dates.getDate(source);
+		if (null == date) {
+			return null;
+		} else {
+			Calendar epoch = Calendar.getInstance();
+			epoch.setTime(Dates.getEpoch());
+			Calendar result = Calendar.getInstance();
+			result.setTime(date);
+			result.set(Calendar.HOUR_OF_DAY, epoch.get(Calendar.HOUR_OF_DAY));
+			result.set(Calendar.MINUTE, epoch.get(Calendar.MINUTE));
+			result.set(Calendar.SECOND, epoch.get(Calendar.SECOND));
+			result.set(Calendar.MILLISECOND, epoch.get(Calendar.MILLISECOND));
+			return result.getTime();
+		}
+	}
+
+	/**
+	 * Generates a Date object from the specified source, with all DATE values set to that of the epoch
+	 * 
+	 * @param source
+	 *            Object from which a Date object can be constructed.
+	 * 
+	 * @return Date constructed from the source with all DATE values set to that of the epoch
+	 */
+	public static Date getEpochedTime(final Object source) {
+		Date date = Dates.getDate(source);
+		if (null == date) {
+			return null;
+		} else {
+			Calendar epoch = Calendar.getInstance();
+			epoch.setTime(Dates.getEpoch());
+			Calendar result = Calendar.getInstance();
+			result.setTime(date);
+			result.set(Calendar.YEAR, epoch.get(Calendar.YEAR));
+			result.set(Calendar.DAY_OF_YEAR, epoch.get(Calendar.DAY_OF_YEAR));
+			return result.getTime();
+		}
+	}
+
+	/**
 	 * Gets the days between two Dates.
 	 * 
 	 * Spawns Calendar objects from the arguments, and returns the number of days between them. Returns a negative value if the first
@@ -812,13 +869,8 @@ public enum Dates {
 				return result;
 			}
 
-			if (object instanceof Item) {
-				return Dates.getCalendar(Dates.getDate((Item) object));
-			}
-
-			if (object instanceof lotus.domino.Item) {
-				item = (lotus.domino.Item) object;
-				return Dates.getCalendar(Dates.getDate(item));
+			if ((object instanceof Item) || (object instanceof lotus.domino.Item)) {
+				return Dates.getCalendar(Dates.getDate(object));
 			}
 
 			throw new IllegalArgumentException("Unsupported Class:" + classname);
