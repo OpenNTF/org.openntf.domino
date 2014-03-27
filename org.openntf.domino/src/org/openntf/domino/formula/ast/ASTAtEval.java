@@ -4,10 +4,14 @@ package org.openntf.domino.formula.ast;
 
 import java.util.Set;
 
+import org.openntf.domino.formula.AtFormulaParser;
 import org.openntf.domino.formula.AtFormulaParserImpl;
+import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
+import org.openntf.domino.formula.ParseException;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.ValueHolder.DataType;
 
 public class ASTAtEval extends SimpleNode {
 
@@ -22,15 +26,28 @@ public class ASTAtEval extends SimpleNode {
 
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
-		// TODO Auto-generated method stub
-		return null;
+		ValueHolder vhEval = children[0].evaluate(ctx);
+		if (vhEval.dataType == DataType.ERROR)
+			return vhEval;
+		ValueHolder ret = null;
+		try {
+			for (int i = 0; i < vhEval.size; i++) {
+				String toEval = vhEval.getString(i);
+				Node n = AtFormulaParser.getInstance().parse(toEval);
+				ret = n.evaluate(ctx);
+				if (ret.dataType == DataType.ERROR)
+					break;
+			}
+			return ret;
+		} catch (ParseException e) {
+			return ValueHolder.valueOf(new EvaluateException(codeLine, codeColumn, e));
+		}
 	}
 
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
 		functions.add("@eval");
-
 	}
 
 }

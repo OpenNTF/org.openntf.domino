@@ -398,6 +398,40 @@ public enum TextFunctions {
 
 	/*----------------------------------------------------------------------------*/
 	/*
+	 * @Word
+	 */
+	/*----------------------------------------------------------------------------*/
+	@ParamCount(3)
+	public static ValueHolder atWord(final ValueHolder[] params) {
+		ValueHolder vhSep = ValueHolder.valueOf(params[1].getString(0));
+		int which = params[2].getInt(0);
+		ValueHolder vh = params[0];
+		ValueHolder ret = ValueHolder.createValueHolder(String.class, vh.size);
+		Vector<String> aux = new Vector<String>(100, 100);
+		for (int i = 0; i < vh.size; i++)
+			word4One(ret, aux, vh.getString(i), vhSep, which);
+		return ret;
+	}
+
+	/*----------------------------------------------------------------------------*/
+	private static void word4One(final ValueHolder ret, final Vector<String> aux, final String whose, final ValueHolder vhSep, int which) {
+		aux.clear();
+		simpleSplitOne(aux, whose, vhSep, true);
+		int sz = aux.size();
+		String w;
+		if (which >= 0) {
+			if (which > 0)
+				which--;
+			w = (which >= sz) ? "" : aux.elementAt(which);
+		} else {
+			which = sz + which;
+			w = (which >= 0) ? aux.elementAt(which) : "";
+		}
+		ret.add(w);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	/*
 	 * @SplitSimple, @SplitRegExp
 	 */
 	/*----------------------------------------------------------------------------*/
@@ -434,15 +468,15 @@ public enum TextFunctions {
 	}
 
 	/*----------------------------------------------------------------------------*/
-	private static void simpleSplitOne(final Vector<String> res, final String which, final ValueHolder sepStrings,
+	private static void simpleSplitOne(final Vector<String> res, final String whom, final ValueHolder sepStrings,
 			final boolean includeEmpties) {
 		int pos = 0;
-		int lh = which.length();
+		int lh = whom.length();
 		while (pos <= lh) {
 			int found = -1;
 			int minIndex = lh + 1;
 			for (int i = 0; i < sepStrings.size; i++) {
-				int ind = which.indexOf(sepStrings.getString(i), pos);
+				int ind = whom.indexOf(sepStrings.getString(i), pos);
 				if (ind >= 0 && ind < minIndex) {
 					found = i;
 					minIndex = ind;
@@ -450,12 +484,12 @@ public enum TextFunctions {
 			}
 			if (found == -1) {
 				if (pos < lh)
-					res.add(which.substring(pos));
+					res.add(whom.substring(pos));
 				else if (includeEmpties)
 					res.add("");
 				break;
 			}
-			res.add(which.substring(pos, minIndex));
+			res.add(whom.substring(pos, minIndex));
 			pos = minIndex + sepStrings.getString(found).length();
 		}
 	}
@@ -987,6 +1021,23 @@ public enum TextFunctions {
 	@ParamCount(2)
 	public static ValueHolder atName(final FormulaContext ctx, final ValueHolder params[]) {
 		return ctx.evaluateNative("@Name(p1;p2)", params[0], params[1]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	/*
+	 * @Text
+	 */
+	/*----------------------------------------------------------------------------*/
+	@SuppressWarnings("deprecation")
+	@ParamCount({ 1, 2 })
+	public static ValueHolder doAtText(final FormulaContext ctx, final ValueHolder params[]) {
+		if (params.length != 1)
+			throw new IllegalArgumentException("Second parameter in @Text not yet supported");
+		ValueHolder vh = params[0];
+		ValueHolder ret = ValueHolder.createValueHolder(String.class, vh.size);
+		for (int i = 0; i < vh.size; i++)
+			ret.add(vh.get(i).toString());
+		return ret;
 	}
 
 	/*----------------------------------------------------------------------------*/
