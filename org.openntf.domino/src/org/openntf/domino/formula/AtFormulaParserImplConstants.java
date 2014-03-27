@@ -58,75 +58,81 @@ public interface AtFormulaParserImplConstants {
   /** RegularExpression Id. */
   int At_sort = 23;
   /** RegularExpression Id. */
-  int At_return = 24;
+  int At_text = 24;
   /** RegularExpression Id. */
-  int At_iserror = 25;
+  int At_eval = 25;
   /** RegularExpression Id. */
-  int At_other = 26;
+  int At_foceval = 26;
   /** RegularExpression Id. */
-  int ListConcat = 27;
+  int At_return = 27;
   /** RegularExpression Id. */
-  int OpMul = 28;
+  int At_iserror = 28;
   /** RegularExpression Id. */
-  int OpMulP = 29;
+  int At_other = 29;
   /** RegularExpression Id. */
-  int OpDiv = 30;
+  int ListConcat = 30;
   /** RegularExpression Id. */
-  int OpDivP = 31;
+  int OpMul = 31;
   /** RegularExpression Id. */
-  int OpPlus = 32;
+  int OpMulP = 32;
   /** RegularExpression Id. */
-  int OpPlusP = 33;
+  int OpDiv = 33;
   /** RegularExpression Id. */
-  int OpMinus = 34;
+  int OpDivP = 34;
   /** RegularExpression Id. */
-  int OpMinusP = 35;
+  int OpPlus = 35;
   /** RegularExpression Id. */
-  int CmpEqual = 36;
+  int OpPlusP = 36;
   /** RegularExpression Id. */
-  int CmpEqualP = 37;
+  int OpMinus = 37;
   /** RegularExpression Id. */
-  int CmpNE = 38;
+  int OpMinusP = 38;
   /** RegularExpression Id. */
-  int CmpNEP = 39;
+  int CmpEqual = 39;
   /** RegularExpression Id. */
-  int CmpLT = 40;
+  int CmpEqualP = 40;
   /** RegularExpression Id. */
-  int CmpLTP = 41;
+  int CmpNE = 41;
   /** RegularExpression Id. */
-  int CmpGT = 42;
+  int CmpNEP = 42;
   /** RegularExpression Id. */
-  int CmpGTP = 43;
+  int CmpLT = 43;
   /** RegularExpression Id. */
-  int CmpLTE = 44;
+  int CmpLTP = 44;
   /** RegularExpression Id. */
-  int CmpLTEP = 45;
+  int CmpGT = 45;
   /** RegularExpression Id. */
-  int CmpGTE = 46;
+  int CmpGTP = 46;
   /** RegularExpression Id. */
-  int CmpGTEP = 47;
+  int CmpLTE = 47;
   /** RegularExpression Id. */
-  int BoolAnd = 48;
+  int CmpLTEP = 48;
   /** RegularExpression Id. */
-  int BoolOr = 49;
+  int CmpGTE = 49;
   /** RegularExpression Id. */
-  int NumDoubleUS = 50;
+  int CmpGTEP = 50;
   /** RegularExpression Id. */
-  int NumDoubleDE = 51;
+  int BoolAnd = 51;
   /** RegularExpression Id. */
-  int NumInteger = 52;
+  int BoolOr = 52;
   /** RegularExpression Id. */
-  int Exponent = 53;
+  int NumDoubleUS = 53;
   /** RegularExpression Id. */
-  int String1 = 54;
+  int NumDoubleDE = 54;
   /** RegularExpression Id. */
-  int String2 = 55;
+  int NumInteger = 55;
   /** RegularExpression Id. */
-  int Identifier = 56;
+  int Exponent = 56;
   /** RegularExpression Id. */
-  int Letter = 57;
+  int String1 = 57;
   /** RegularExpression Id. */
-  int Digit = 58;
+  int String2 = 58;
+  /** RegularExpression Id. */
+  int Identifier = 59;
+  /** RegularExpression Id. */
+  int Letter = 60;
+  /** RegularExpression Id. */
+  int Digit = 61;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -159,6 +165,9 @@ public interface AtFormulaParserImplConstants {
     "\"@iferror\"",
     "\"@transform\"",
     "\"@sort\"",
+    "\"@text\"",
+    "\"@eval\"",
+    "\"@foceval\"",
     "\"@return\"",
     "\"@iserror\"",
     "<At_other>",

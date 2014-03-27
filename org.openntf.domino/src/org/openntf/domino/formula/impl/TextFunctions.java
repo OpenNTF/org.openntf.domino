@@ -12,23 +12,8 @@ import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
 
-import com.ibm.commons.util.NotImplementedException;
-
 public enum TextFunctions {
 	;
-	/*----------------------------------------------------------------------------*/
-	/*
-	 * @Text
-	 */
-	/*----------------------------------------------------------------------------*/
-	@ParamCount({ 1, 2 })
-	public static String atText(final Object... args) {
-		xxxxxxxxxxxxxx FIX TOMORROW - own AST node needed
-		if (args.length != 1)
-			throw new NotImplementedException();
-		return args[0].toString();
-	}
-
 	/*----------------------------------------------------------------------------*/
 	/*
 	 * @Left, @LeftBack, @Right, @RightBack
@@ -284,8 +269,8 @@ public enum TextFunctions {
 	@NeedsNativeEvaluate({ "@Ascii isn't implemented. (Possible at all?)", "Parameter [ALLINRANGE] doesn't yet work." })
 	@ParamCount({ 1, 2 })
 	public static ValueHolder atAscii(final FormulaContext ctx, final ValueHolder params[]) {
-		return (params.length == 2) ? ctx.evaluateNative("@Ascii(p1;p2)", params[0].toList(), params[1].toList()) : ctx.evaluateNative(
-				"@Ascii(p1)", params[0].toList());
+		return (params.length == 2) ? ctx.evaluateNative("@Ascii(p1;p2)", params[0], params[1]) : ctx.evaluateNative("@Ascii(p1)",
+				params[0]);
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -983,14 +968,14 @@ public enum TextFunctions {
 	@NeedsNativeEvaluate("@Wide isn't yet implemented here")
 	@ParamCount(1)
 	public static ValueHolder atWide(final FormulaContext ctx, final ValueHolder params[]) {
-		return ctx.evaluateNative("@Wide(p1)", params[0].toList());
+		return ctx.evaluateNative("@Wide(p1)", params[0]);
 	}
 
 	/*----------------------------------------------------------------------------*/
 	@NeedsNativeEvaluate("@Narrow isn't yet implemented here")
 	@ParamCount(1)
 	public static ValueHolder atNarrow(final FormulaContext ctx, final ValueHolder params[]) {
-		return ctx.evaluateNative("@Narrow(p1)", params[0].toList());
+		return ctx.evaluateNative("@Narrow(p1)", params[0]);
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -1001,7 +986,7 @@ public enum TextFunctions {
 	@NeedsNativeEvaluate("@Name isn't implemented here - openNTF-Name doesn't yet look stable")
 	@ParamCount(2)
 	public static ValueHolder atName(final FormulaContext ctx, final ValueHolder params[]) {
-		return ctx.evaluateNative("@Name(p1;p2)", params[0].toList(), params[1].toList());
+		return ctx.evaluateNative("@Name(p1;p2)", params[0], params[1]);
 	}
 
 	/*----------------------------------------------------------------------------*/
