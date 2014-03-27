@@ -18,11 +18,7 @@
 
 package org.openntf.domino.formula.ast;
 
-import java.util.List;
-import java.util.Set;
-
 import org.openntf.domino.formula.AtFormulaNode;
-import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
@@ -64,57 +60,6 @@ public interface Node extends AtFormulaNode {
 	/** Return the number of children the node has. */
 	public int jjtGetNumChildren();
 
-	/**
-	 * Create a dump of the AST-Tree. Useful for debugging
-	 * 
-	 * @param prefix
-	 */
-	public void dump(final String prefix);
-
-	/**
-	 * Evaluates the AST Tree using the given Context. This mehtod shoud be used internally only
-	 * 
-	 * @param ctx
-	 *            the context
-	 * @return a ValueHolder. The ValueHolder may contain a EvaluateException
-	 * @throws FormulaReturnException
-	 *             if a "@Return" Statement was executed.
-	 */
-	public ValueHolder evaluate(FormulaContext ctx) throws FormulaReturnException;
-
-	/**
-	 * Use this method to solve a formula
-	 */
-	public List<Object> solve(FormulaContext ctx) throws EvaluateException;
-
-	public void toFormula(StringBuilder sb);
-
-	/**
-	 * return a set of used functions (all function names are lowercase)
-	 * 
-	 * @return set of functions
-	 */
-	public Set<String> getFunctions();
-
-	/**
-	 * returns a set of used variables (all names are lowercase)
-	 * 
-	 * @return set of variables
-	 */
-	public Set<String> getVariables();
-
-	/**
-	 * returns a set of read fields in this document. (all names are lowercase)
-	 * 
-	 * @return set of fields
-	 */
-	public Set<String> getReadFields();
-
-	/**
-	 * returns a set of modified fields in this document. (all names are lowercase)
-	 * 
-	 * @return set of fields
-	 */
-	public Set<String> getModifiedFields();
+	public abstract ValueHolder evaluate(FormulaContext ctx) throws FormulaReturnException;
 }
 /* JavaCC - OriginalChecksum=54dec3b6b2c592c5fbe2fc5be72328d2 (do not edit this line) */

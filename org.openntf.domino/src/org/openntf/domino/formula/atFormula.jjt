@@ -45,13 +45,22 @@ public class AtFormulaParserImpl extends AtFormulaParser
 
 PARSER_END(AtFormulaParserImpl)
 
-/*
-	public String toString() {
-		return AdderTreeConstants.jjtNodeName[id] + ": " + jjtGetValue();
-	}
-*/
+/**
+ * Lexer rules. There are 4 states
+ *
+ * DEFAULT:
+ *			The default state (formula parse mode)
+ * SUBSCRIPT:
+ *			Nedded to distinguish between '[Today]' (which is a date) and 'field[today]' which is a subscript
+ * FOCONIS:
+ *			Needed to parse Foconis' inline formulas like: 'DocumentTitle: <! subject ! >'
+ * FOC_PARAM:
+ *			Needed to parse Foconis' inline parameters like 'DocumentTitle: <#1#>'
+ */
 
-// Comments are allowed (but only in default mode)
+/**
+ * Handle unneccessary characters and comments in DEFAULT and SUBSCRIPT state
+ */
 < DEFAULT, SUBSCRIPT >
 SKIP :	{  " "| "\t"| "\n"| "\r" | "\r\n"}
 
@@ -60,47 +69,62 @@ SPECIAL_TOKEN : {
 	<SINGLE_LINE_COMMENT: "//" (~["\n","\r"])* ("\n" | "\r" | "\r\n")?>
 | 	<FORMAL_COMMENT: "/**" (~["*"])* "*" ("*" | ~["*","/"] (~["*"])* "*")* "/">
 | 	<MULTI_LINE_COMMENT: "/*" (~["*"])* "*" ("*" | ~["*","/"] (~["*"])* "*")* "/">
-//|   <END_FORMULA : "!>" > : INLINE
 }
-/**
- * Lexer rules
- */
 
-< INLINE > TOKEN :
+/**
+ * Switches from FOCONIS mode to DEFAULT or FOC_PARAM mode
+ */
+< FOCONIS > TOKEN :
 {
-  	< NORMAL_TEXT :   (~["<"] | "<" ~["!", "#"] | "<!--" )+  >
-|  	< BEGIN_FORMULA : "<!" > : DEFAULT
-|   < BEGIN_PSEUDONYM : "<#" >	: PSEUDONYM
+  	< NORMAL_TEXT 	:   (~["<"] | "<" ~["!", "#"] | "<!--" )+  > // the "<!--" is needed to handle XML commets
+|  	< BEGIN_FORMULA : "<!" > 	: DEFAULT
+|   < BEGIN_PARAM 	: "<#" >	: FOC_PARAM
 } 
 
-< PSEUDONYM > TOKEN :
+/**
+ * if we are in FOC_PARAM mode we read everything between '<#' and '#>'
+ */
+< FOC_PARAM > TOKEN :
 {
-  	< PSEUDONYM_VALUE :   (~["#"] | "#" ~[">"])+  >
-|  	< END_PSEUDONYM : "#>" > : INLINE
+  	< PARAM_VALUE 	:  (~["#"] | "#" ~[">"])+  >
+|  	< END_PARAM 	: "#>" > : FOCONIS
 }
-// in default mode, a "[" means that the string to the "]" is a Date or Keyword
+
+
+
+// ======================== Handling the ugly '[date]' and 'subscript[]' thing ======================= 
+/**
+ * in DEFAULT mode, a "[" means that the string to the "]" is a Date or Keyword
+ */
 < DEFAULT > TOKEN :
 {
 	< Date_or_KW : "[" (~["]"])* "]" > : SUBSCRIPT	// after a Date, we are in "subscript" mode (e.g. [Today][1])
 }
 
-
-// in subscript mode, a "[" means that the following expression is a subscript
-// a subscript can occur after a numeric value, a string, a ")", a date, an identifier or an other subscript
-
+/**
+ * in subscript mode, a "[" means that the following expression is a subscript
+ * a subscript can occur after a numeric value, a string, a ")", a date, an identifier or an other subscript
+ */
 < SUBSCRIPT > TOKEN :
 {
   	 < OSubscript : "[" > 	:  DEFAULT		// switch back immediately. Thus x[[today]] makes no sense, it is formal correct
 }
 
+/**
+ * the closing bracket
+ */
 < DEFAULT, SUBSCRIPT > TOKEN :
 {
   	// "]" must be recognized in both states
   	// consider these examples "x[(1)]": the ) switches to "SUBSCRIPT"
  	< CSubscript : "]" > :  SUBSCRIPT	 
 }
+// =======================================================================================================
 
 
+/**
+ * These are all the available tokens in formula engine
+ */
 < DEFAULT, SUBSCRIPT >
 TOKEN :
 {
@@ -120,7 +144,7 @@ TOKEN :
 | 	< KW_SELECT		: "SELECT" >
 
 
-// special extension by FOCONIS to define / include custom functions
+// special extension by FOCONIS to define / include custom functions. Should not affect other formulas
 | 	< At_Include	: "@Include" >
 | 	< At_Function	: "@Function" >
 
@@ -179,7 +203,7 @@ TOKEN :
 	// Precedence 7
 | 	< BoolAnd : "&" > : DEFAULT
 | 	< BoolOr : "|" > : DEFAULT
-| 	< END_FORMULA : "!>" > : INLINE
+| 	< END_FORMULA : "!>" > : FOCONIS
 	// Numbers: TODO: Why are they locale dependent???
 	// Thousands separator must be avoided!
 |	< NumDoubleUS 	:	(< Digit >)* "." (< Digit >)+ (< Exponent >)? > : SUBSCRIPT 
@@ -239,71 +263,41 @@ TOKEN :
 //       "\u1040"-"\u1049"
       ]
   >
-
-
 }
   
+/*****************************************************************************************************
+ * Here the parser begins. There are two different entry points
+ * - parseFormula
+ * - parseFocFormula
+ *****************************************************************************************************/
 
 
 /**
- * Parser rules javacc options
- */
-
-
-/**
- * parses expressions. Expressions must not end with ";" (=< EOS >)
+ * parses a normal expressions. Expressions must not end with ";" (=< EOS >)
  */
 public SimpleNode parseFormula() #AtDo :
 {} 
 {
-	mainStatement() ((< EOS >) mainStatement()	)*
-	< EOF >
-  {  return jjtThis; }
+	mainStatement() ((< EOS >) mainStatement()	)*	< EOF >
+  	{  return jjtThis; }
 }
 
+/**
+ * A main statement is available on the top level only (cannot be used in @do for example)
+ * Only main statements can contain REM comments
+ */
 public void mainStatement() :
 {}
 {
-(< EOS >)*
-  	< KW_REM > comment()  // AFAIK REMS are only allowed at top level
-|	statement()
+	(< EOS >)*
+	(	 	< KW_REM > comment()  // AFAIK REMS are only allowed at top level
+	|	statement()
+	)
 }
 
-public SimpleNode parseFocFormula() #AtConCat :
-{} 
-{
- 	{ token_source.SwitchTo(INLINE); }
-  	(
-		normalText()
-| 		focFormula()
-| 		focPseudonym()		
-	)*
-	< EOF >
-  {  return jjtThis; }
-}
-
-private void focFormula() :
-{}
-{
-  	(< BEGIN_FORMULA >
-		( mainStatement() ((< EOS >) mainStatement()	)*) #AtDo
-	< END_FORMULA > )
-}
-
-private void focPseudonym() #FocPseudonym :
-{ Token t;}
-{
-  	(< BEGIN_PSEUDONYM >  t = <PSEUDONYM_VALUE >	< END_PSEUDONYM > )
-  	{jjtThis.init(t.image); }
-}
-
-private void normalText() #NormalText :
-{ Token t; }
-{
-  	t = < NORMAL_TEXT >
-  	{jjtThis.init(t.image); }
-}
-
+/**
+ * needed for REM
+ */
 private void comment() :
 {}
 {
@@ -313,19 +307,67 @@ private void comment() :
 }
 
 /**
+ * this is the entry point to parse a FOCONIS Formula
+ */
+public SimpleNode parseFocFormula() #AtConCat :
+{} 
+{
+ 	{ token_source.SwitchTo(FOCONIS); } // TODO RPr can this be done in the init block?
+  	(
+		normalText()
+	|	focFormula()
+	|	focParam()		
+	)*
+	< EOF >
+  	{  return jjtThis; }
+}
+
+/**
+ * a focFormula starts with '<!' and ends with '!>' Everything between is treated as normal formula
+ */
+private void focFormula() :
+{}
+{
+  	< BEGIN_FORMULA >
+		( mainStatement() ((< EOS >) mainStatement()	)*) #AtDo
+	< END_FORMULA >
+}
+
+/**
+ * a focParam starts with '<#' and ends with '#>' Everything between is passed to the parameter resolver
+ */
+
+private void focParam() #FocParam :
+{ Token t;}
+{
+  	(< BEGIN_PARAM >  t = <PARAM_VALUE >	< END_PARAM > )
+  	{jjtThis.init(t.image); }
+}
+
+/**
+ * NormalText exists only in FOCONIS state and is outside of focFormula and focParam
+ */
+private void normalText() #NormalText :
+{ Token t; }
+{
+  	t = < NORMAL_TEXT >
+  	{jjtThis.init(t.image); }
+}
+
+
+
+/**
  * an expression is one of the 3 "set" keywords (DEFAULT/FIELD/ENVIRONMENT) to set Fields/Env
  * or an identifier to set a variable. Special case for SELECT 
  */ 
 private void statement() :
 { Token t; }
 {
- //LOOKAHEAD(3)
  	// Include is a custom extension by foconis
  	< At_Include >		opBool()	#ExtendedInclude
-	// define is a custom extension by foconis 	
 
-	// @function(@myfunc(a:="x";b:="y");"";
-| 	< At_Function >		(< OParen >
+	// At_Function is a custom extension by foconis 	
+| 	< At_Function >		(< OParen >		// @function(@myfunc(a:="x";b:="y");"";
 							exFuncDef()	(< EOS > exVar())* // followed by optional semicolon and local var defs
 						< CParen >
 
@@ -475,12 +517,18 @@ private void valueList() :
 	)* ) #ValueList(>1)  
 }
 
+/**
+ * Subscript to access a element in a list
+ */
 private void subscript() :
 {}
 {
   	(unary()  (< OSubscript > statement() < CSubscript >)*) #Subscript(>1)
 }
 
+/**
+ * a unary operation
+ */
 private void unary() :
 {}
 {
@@ -533,20 +581,21 @@ private void unary() :
 }
 
 
-
+/**
+ * this is a generic formula
+ */
 private void formula() #Function :
 { Token t; }
 {
-
-  { t = getToken(0); }
-  // Optional parameters.
+	{ t = getToken(0); }
+  	// Optional parameters.
  
-  ( LOOKAHEAD(2)
-  	< OParen >
-    	  statement() ( < EOS > statement() )*
-    < CParen >
-  )? 
-   { jjtThis.init(t.image); }
+  	( LOOKAHEAD(2)
+  		< OParen >
+    	  	statement() ( < EOS > statement() )*
+    	< CParen >
+  	)? 
+   	{ jjtThis.init(t.image); }
 }
 
 private void atom() :
@@ -555,45 +604,7 @@ private void atom() :
    value()
 | < OParen > statement() <CParen >
 }
-/*
-private void setDefault() #SetDefault :
-{
-    Token t;
-}
-{
-	t = <Identifier >
-	< Assign > opBool()
-	{ jjtThis.value = t.image; }
-}
 
-private void setEnvironment() #SetEnvironment :
-{
-    Token t;
-}
-{
-	t = <Identifier >
-	< Assign > opBool()
-	{ jjtThis.value = t.image; }
-}
-
-private void setField() #SetField :
-{
-    Token t;
-}
-{
-	t = <Identifier >
-	< Assign > opBool()
-	{ jjtThis.value = t.image; }
-}
-
-
-private void setVariable() #SetVariable :
-{}
-{
-	opBool()
-	{ jjtThis.value =  getToken(0).image; }
-}
-*/
 private void value()  :
 {
   Token t;

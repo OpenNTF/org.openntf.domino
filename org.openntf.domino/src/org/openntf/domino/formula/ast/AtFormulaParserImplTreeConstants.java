@@ -8,7 +8,7 @@ public interface AtFormulaParserImplTreeConstants
   public int JJTATDO = 0;
   public int JJTVOID = 1;
   public int JJTATCONCAT = 2;
-  public int JJTFOCPSEUDONYM = 3;
+  public int JJTFOCPARAM = 3;
   public int JJTNORMALTEXT = 4;
   public int JJTEXTENDEDINCLUDE = 5;
   public int JJTEXTENDEDFUNCTION = 6;
@@ -43,7 +43,7 @@ public interface AtFormulaParserImplTreeConstants
     "AtDo",
     "void",
     "AtConCat",
-    "FocPseudonym",
+    "FocParam",
     "NormalText",
     "ExtendedInclude",
     "ExtendedFunction",
@@ -74,4 +74,4 @@ public interface AtFormulaParserImplTreeConstants
     "GetVariable",
   };
 }
-/* JavaCC - OriginalChecksum=7528dc8647058450ddc78fe070caf205 (do not edit this line) */
+/* JavaCC - OriginalChecksum=86b1deed6f4de3f2c165ae9968046ca1 (do not edit this line) */

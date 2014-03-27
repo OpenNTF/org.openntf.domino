@@ -19,15 +19,15 @@ package org.openntf.domino.formula.ast;
 
 import java.util.Set;
 
-import org.openntf.domino.formula.parse.*;
 import org.openntf.domino.formula.AtFunction;
 import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
-import org.openntf.domino.formula.ParseException;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
 import org.openntf.domino.formula.impl.ExtendedFunction;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
+import org.openntf.domino.formula.parse.ParseException;
 
 public class ASTFunction extends SimpleNode {
 	protected AtFunction function;
@@ -37,7 +37,7 @@ public class ASTFunction extends SimpleNode {
 	}
 
 	public void init(final String string) throws ParseException {
-		function = parser.getFunction(string);
+		function = parser.getFunctionLC(string.toLowerCase());
 		if (function == null) {
 			throw new IllegalArgumentException("'" + string + "' is not a function");
 		}
