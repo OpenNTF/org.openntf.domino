@@ -281,9 +281,10 @@ public enum TextFunctions {
 	 */
 	/*----------------------------------------------------------------------------*/
 	@NeedsNativeEvaluate({ "@Ascii isn't implemented. (Possible at all?)", "Parameter [ALLINRANGE] doesn't yet work." })
-	@ParamCount(1)
+	@ParamCount({ 1, 2 })
 	public static ValueHolder atAscii(final FormulaContext ctx, final ValueHolder params[]) {
-		return ctx.evaluateNative("@Ascii(p1)", params[0].toList());
+		return (params.length == 2) ? ctx.evaluateNative("@Ascii(p1;p2)", params[0].toList(), params[1].toList()) : ctx.evaluateNative(
+				"@Ascii(p1)", params[0].toList());
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -411,7 +412,118 @@ public enum TextFunctions {
 
 	/*----------------------------------------------------------------------------*/
 	/*
-	 * @IsNull, @IsNumber, @IsText, @IsTime
+	 * @SplitSimple, @SplitRegExp
+	 */
+	/*----------------------------------------------------------------------------*/
+	/**
+	 * Similar to @Explode, but respects the whole splitting strings. That is, every string in params[0] will be split along every string in
+	 * params[1]. The optional parameter params[2] may contain the option [NOEMPTIES] (case-insensitive) to tell the method not to include
+	 * empty splits in the result set.
+	 * 
+	 * @return same as @Explode
+	 */
+	@OpenNTF
+	@ParamCount({ 2, 3 })
+	public static ValueHolder atSplitSimple(final ValueHolder[] params) {
+		boolean noEmpties = false;
+		if (params.length == 3) {
+			ValueHolder options = params[2];
+			for (int i = 0; i < options.size; i++) {
+				String opt = options.getString(i);
+				if ("[NOEMPTIES]".equalsIgnoreCase(opt))
+					noEmpties = true;
+				else
+					throw new IllegalArgumentException("Illegal Option: " + opt);
+			}
+		}
+		ValueHolder vh = params[0];
+		Vector<String> res = new Vector<String>(100, 100);
+		for (int i = 0; i < vh.size; i++)
+			simpleSplitOne(res, vh.getString(i), params[1], !noEmpties);
+		int sz = res.size();
+		ValueHolder ret = ValueHolder.createValueHolder(String.class, sz);
+		for (int i = 0; i < sz; i++)
+			ret.add(res.get(i));
+		return ret;
+	}
+
+	/*----------------------------------------------------------------------------*/
+	private static void simpleSplitOne(final Vector<String> res, final String which, final ValueHolder sepStrings,
+			final boolean includeEmpties) {
+		int pos = 0;
+		int lh = which.length();
+		while (pos <= lh) {
+			int found = -1;
+			int minIndex = lh + 1;
+			for (int i = 0; i < sepStrings.size; i++) {
+				int ind = which.indexOf(sepStrings.getString(i), pos);
+				if (ind >= 0 && ind < minIndex) {
+					found = i;
+					minIndex = ind;
+				}
+			}
+			if (found == -1) {
+				if (pos < lh)
+					res.add(which.substring(pos));
+				else if (includeEmpties)
+					res.add("");
+				break;
+			}
+			res.add(which.substring(pos, minIndex));
+			pos = minIndex + sepStrings.getString(found).length();
+		}
+	}
+
+	/*----------------------------------------------------------------------------*/
+	/**
+	 * Similar to @SplitSimple, but acts like String.split. That is, every string in params[0] will be split along the corresponding regular
+	 * expression in params[1]. The optional parameter params[2] may contain the option [NOEMPTIES] (case-insensitive) to tell the method
+	 * not to include empty splits in the result set.
+	 * 
+	 * @return same as @Explode
+	 */
+	@OpenNTF
+	@ParamCount({ 2, 3 })
+	public static ValueHolder atSplitRegExp(final ValueHolder[] params) {
+		boolean noEmpties = false;
+		if (params.length == 3) {
+			ValueHolder options = params[2];
+			for (int i = 0; i < options.size; i++) {
+				String opt = options.getString(i);
+				if ("[NOEMPTIES]".equalsIgnoreCase(opt))
+					noEmpties = true;
+				else
+					throw new IllegalArgumentException("Illegal Option: " + opt);
+			}
+		}
+		ValueHolder vh = params[0];
+		ValueHolder regs = params[1];
+		String reg = null;
+		Vector<String> res = new Vector<String>(100, 100);
+		for (int i = 0; i < vh.size; i++) {
+			if (i < regs.size)
+				reg = regs.getString(i);
+			regExpSplitOne(res, vh.getString(i), reg, !noEmpties);
+		}
+		int sz = res.size();
+		ValueHolder ret = ValueHolder.createValueHolder(String.class, sz);
+		for (int i = 0; i < sz; i++)
+			ret.add(res.get(i));
+		return ret;
+
+	}
+
+	/*----------------------------------------------------------------------------*/
+	private static void regExpSplitOne(final Vector<String> res, final String which, final String reg, final boolean includeEmpties) {
+		String[] splits = which.split(reg);
+		for (int j = 0; j < splits.length; j++)
+			if (!splits[j].isEmpty() || includeEmpties)
+				res.add(splits[j]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	/*
+	 * @IsNull, @IsNumber, @IsText, @IsTime, @IsError
 	 */
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(1)
@@ -502,6 +614,14 @@ public enum TextFunctions {
 		return strToDateTime(ctx, vh);
 	}
 
+	/*----------------------------------------------------------------------------*/
+	@DiffersFromLotus("Lotus gives e.g. @IsError(@TextToTime(\"Nonsense\"))=0")
+	@ParamCount(1)
+	public static ValueHolder atTextToTime(final FormulaContext ctx, final ValueHolder[] params) {
+		return strToDateTime(ctx, params[0]);
+	}
+
+	/*----------------------------------------------------------------------------*/
 	private static ValueHolder strToDateTime(final FormulaContext ctx, final ValueHolder vh) {
 		ValueHolder ret = ValueHolder.createValueHolder(DateTime.class, vh.size);
 		Formatter formatter = ctx.getFormatter();
@@ -600,7 +720,7 @@ public enum TextFunctions {
 	 * @Like, @Matches, @MatchesRegExp
 	 */
 	/*----------------------------------------------------------------------------*/
-	@NeedsNativeEvaluate("@Like isn't yet implemented; use @MatchesRegExp instead")
+	@NeedsNativeEvaluate("@Like isn't yet implemented here; use @MatchesRegExp instead")
 	@ParamCount({ 2, 3 })
 	public static ValueHolder atLike(final FormulaContext ctx, final ValueHolder[] params) {
 		return (params.length == 2) ? ctx.evaluateNative("@Like(p1;p2)", params[0].toList(), params[1].toList()) : ctx.evaluateNative(
@@ -608,7 +728,7 @@ public enum TextFunctions {
 	}
 
 	/*----------------------------------------------------------------------------*/
-	@NeedsNativeEvaluate("@Matches isn't yet implemented; use @MatchesRegExp instead")
+	@NeedsNativeEvaluate("@Matches isn't yet implemented here; use @MatchesRegExp instead")
 	@ParamCount(2)
 	public static ValueHolder atMatches(final FormulaContext ctx, final ValueHolder[] params) {
 		return ctx.evaluateNative("@Matches(p1;p2)", params[0].toList(), params[1].toList());
@@ -752,7 +872,7 @@ public enum TextFunctions {
 	 * @Unique
 	 */
 	/*----------------------------------------------------------------------------*/
-	@NeedsNativeEvaluate("@Unique (without parameters) isn't yet implemented")
+	@NeedsNativeEvaluate("@Unique (without parameters) isn't yet implemented here")
 	@ParamCount({ 0, 1 })
 	public static ValueHolder atUnique(final FormulaContext ctx, final ValueHolder[] params) {
 		if (params == null || params.length == 0)
@@ -824,31 +944,61 @@ public enum TextFunctions {
 	 * @Password, @HashPassword, @VerifyPassword, @PasswordQuality
 	 */
 	/*----------------------------------------------------------------------------*/
-	@NeedsNativeEvaluate("@Password isn't yet implemented")
+	@NeedsNativeEvaluate("@Password isn't yet implemented here")
 	@ParamCount(1)
 	public static ValueHolder atPassword(final FormulaContext ctx, final ValueHolder params[]) {
 		return ctx.evaluateNative("@Password(p1)", params[0].toList());
 	}
 
 	/*----------------------------------------------------------------------------*/
-	@NeedsNativeEvaluate("@HashPassword isn't yet implemented")
+	@NeedsNativeEvaluate("@HashPassword isn't yet implemented here")
 	@ParamCount(1)
 	public static ValueHolder atHashPassword(final FormulaContext ctx, final ValueHolder params[]) {
 		return ctx.evaluateNative("@HashPassword(p1)", params[0].toList());
 	}
 
 	/*----------------------------------------------------------------------------*/
-	@NeedsNativeEvaluate("@VerifyPassword isn't yet implemented")
+	@NeedsNativeEvaluate("@VerifyPassword isn't yet implemented here")
 	@ParamCount(2)
 	public static ValueHolder atVerifyPassword(final FormulaContext ctx, final ValueHolder params[]) {
 		return ctx.evaluateNative("@VerifyPassword(p1;p2)", params[0].toList(), params[1].toList());
 	}
 
 	/*----------------------------------------------------------------------------*/
-	@NeedsNativeEvaluate("@PasswordQuality isn't yet implemented")
+	@NeedsNativeEvaluate("@PasswordQuality isn't yet implemented here")
 	@ParamCount(1)
 	public static ValueHolder atPasswordQuality(final FormulaContext ctx, final ValueHolder params[]) {
 		return ctx.evaluateNative("@PasswordQuality(p1)", params[0].toList());
 	}
+
+	/*----------------------------------------------------------------------------*/
+	/*
+	 * @Wide, @Narrow
+	 */
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@Wide isn't yet implemented here")
+	@ParamCount(1)
+	public static ValueHolder atWide(final FormulaContext ctx, final ValueHolder params[]) {
+		return ctx.evaluateNative("@Wide(p1)", params[0].toList());
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@Narrow isn't yet implemented here")
+	@ParamCount(1)
+	public static ValueHolder atNarrow(final FormulaContext ctx, final ValueHolder params[]) {
+		return ctx.evaluateNative("@Narrow(p1)", params[0].toList());
+	}
+
+	/*----------------------------------------------------------------------------*/
+	/*
+	 * @Name
+	 */
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@Name isn't implemented here - openNTF-Name doesn't yet look stable")
+	@ParamCount(2)
+	public static ValueHolder atName(final FormulaContext ctx, final ValueHolder params[]) {
+		return ctx.evaluateNative("@Name(p1;p2)", params[0].toList(), params[1].toList());
+	}
+
 	/*----------------------------------------------------------------------------*/
 }
