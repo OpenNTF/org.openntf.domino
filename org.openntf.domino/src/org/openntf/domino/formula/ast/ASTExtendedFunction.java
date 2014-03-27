@@ -16,14 +16,10 @@ import org.openntf.domino.formula.impl.ExtendedFunction;
  * 
  */
 public class ASTExtendedFunction extends SimpleNode {
-	String functionName;
+	private boolean prototype;
 
 	public ASTExtendedFunction(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
-	}
-
-	public void init(final String image) {
-		functionName = image;
 	}
 
 	public void toFormula(final StringBuilder sb) {
@@ -33,16 +29,37 @@ public class ASTExtendedFunction extends SimpleNode {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.formula.ast.SimpleNode#jjtClose()
 	 */
-	@Override
-	public void jjtClose() throws ParseException {
-		System.out.println("Function name: " + functionName);
-		ASTExtendedParameter[] parameter = new ASTExtendedParameter[children.length - 1];
-		for (int i = 0; i < children.length - 1; i++) {
+	//@Override
+	public void xjjtClose() throws ParseException {
+		int functionParameters = 0;
+		int functionVariables = 0;
+		if (children != null) {
+			int i = 0;
+
+			for (; i < children.length; i++) {
+				if (!(children[i] instanceof ASTExtendedParameter))
+					break;
+				functionParameters++;
+			}
+
+			// no function definition present
+			prototype = i == children.length;
+
+		}
+
+		ASTExtendedParameter[] parameter = new ASTExtendedParameter[functionParameters];
+		ASTExtendedVariable[] variable = new ASTExtendedVariable[functionVariables];
+		Node functionImpl = prototype ? null : children[children.length - 1];
+
+		for (int i = 0; i < functionParameters; i++) {
 			parameter[i] = (ASTExtendedParameter) children[i];
 		}
-		Node function = children[children.length - 1];
 
-		parser.declareFunction(new ExtendedFunction(functionName, parameter, function, parser));
+		for (int i = 0; i < functionVariables; i++) {
+			variable[i] = (ASTExtendedVariable) children[functionParameters + i];
+		}
+
+		//function.init(parameter, variable, functionImpl, parser);
 		super.jjtClose();
 	}
 
@@ -57,5 +74,35 @@ public class ASTExtendedFunction extends SimpleNode {
 		// TODO
 	}
 
+	/**
+	 * A extended function needs not to inspect it's children. If the function is never invoked, nothing is needed
+	 */
+	@Override
+	public void inspect(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+	}
+
+	public void init() {
+		int functionVariables = 0;
+		ASTExtendedFunctionDef def = (ASTExtendedFunctionDef) children[0];
+
+		ExtendedFunction function = def.getFunction();
+
+		for (int i = 1; i < children.length; i++) {
+			if (children[i] instanceof ASTExtendedVariable) {
+				functionVariables++;
+			} else {
+				function.setFunction(children[i]);
+			}
+		}
+
+		ASTExtendedVariable[] var = new ASTExtendedVariable[functionVariables];
+		for (int i = 0; i < functionVariables; i++) {
+			var[i] = (ASTExtendedVariable) children[i + 1];
+		}
+
+		function.setVariables(var);
+
+	}
 }
 /* JavaCC - OriginalChecksum=0bef6e155cd93f4bed8a7902e8dc69c4 (do not edit this line) */

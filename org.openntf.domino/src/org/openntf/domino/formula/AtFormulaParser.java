@@ -52,19 +52,21 @@ public abstract class AtFormulaParser {
 		return instance_.get();
 	}
 
-	public AtFunction getFunction(final String string) {
-		AtFunction func = functionFactory.getFunction(string);
+	public AtFunction getFunction(String funcName) {
+		funcName = funcName.toLowerCase();
+		AtFunction func = customFunc.get(funcName);
 		if (func != null) {
 			return func;
 		}
-		return customFunc.get(string.toLowerCase());
+		return functionFactory.getFunction(funcName);
 	}
 
 	public void declareFunction(final ExtendedFunction func) {
 		String funcName = func.getName();
-		if (getFunction(funcName) != null) {
-			throw new IllegalArgumentException("Function '" + funcName + "' cannot be redeclared");
-		}
+		//		AtFunction currentFunc = getFunction(funcName);
+		//		if (currentFunc != null) {
+		//				throw new IllegalArgumentException("Function '" + funcName + "' cannot be redeclared");
+		//		}
 		customFunc.put(funcName.toLowerCase(), func);
 	}
 
@@ -72,14 +74,16 @@ public abstract class AtFormulaParser {
 		ReInit(sr);
 		// clear the customFunc-Map
 		customFunc = new HashMap<String, AtFunction>();
-		return Parse();
+
+		return parseFocFormula();
 	}
 
 	final public SimpleNode parse(final InputStream sr, final String encoding) throws ParseException {
 		ReInit(sr, encoding);
 		// clear the customFunc-Map
 		customFunc = new HashMap<String, AtFunction>();
-		return Parse();
+
+		return parseFocFormula();
 	}
 
 	final public SimpleNode parse(final InputStream sr) throws ParseException {
@@ -95,5 +99,7 @@ public abstract class AtFormulaParser {
 
 	protected abstract void ReInit(java.io.InputStream stream, String encoding);
 
-	abstract public SimpleNode Parse() throws ParseException;
+	abstract public SimpleNode parseFormula() throws ParseException;
+
+	abstract public SimpleNode parseFocFormula() throws ParseException;
 }

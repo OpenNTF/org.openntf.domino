@@ -16,13 +16,18 @@
  */
 package org.openntf.domino.formula.impl;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ParseException;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ast.ASTExtendedParameter;
+import org.openntf.domino.formula.ast.ASTExtendedVariable;
 import org.openntf.domino.formula.ast.Node;
+import org.openntf.domino.formula.ast.SimpleNode;
 
 /**
  * ExtendedFunctions are custom defined functions like FUNCTION @MyFunction(a;b:="default") := @Do(...)
@@ -32,11 +37,12 @@ import org.openntf.domino.formula.ast.Node;
  */
 public class ExtendedFunction extends AtFunction {
 	private String functionName;
-	private Node function;
+	private SimpleNode function;
 	private ASTExtendedParameter[] parameter;
 
 	private int paramUB;
 	private int paramLB;
+	private ASTExtendedVariable[] variable;
 
 	/**
 	 * Constructor
@@ -45,6 +51,7 @@ public class ExtendedFunction extends AtFunction {
 	 *            the function-name (with @-sign)
 	 * @param parameter
 	 *            the parameters for this function
+	 * @param variable
 	 * @param function
 	 *            the function-node to execute (if @functionName is invoked in formula)
 	 * @param parser
@@ -52,12 +59,11 @@ public class ExtendedFunction extends AtFunction {
 	 * @throws ParseException
 	 *             if you do not put optional parameter to the end
 	 */
-	public ExtendedFunction(final String functionName, final ASTExtendedParameter[] parameter, final Node function,
-			final AtFormulaParserImpl parser) throws ParseException {
+	public ExtendedFunction(final String functionName, final ASTExtendedParameter[] parameter, final AtFormulaParserImpl parser)
+			throws ParseException {
 		super(functionName);
 		this.functionName = functionName;
 		this.parameter = parameter;
-		this.function = function;
 
 		paramUB = parameter.length;
 
@@ -71,6 +77,14 @@ public class ExtendedFunction extends AtFunction {
 		}
 	}
 
+	public void setVariables(final ASTExtendedVariable[] v) {
+		variable = v;
+	}
+
+	public void setFunction(final Node f) {
+		function = (SimpleNode) f;
+	}
+
 	/**
 	 * Return the name of the function
 	 * 
@@ -82,26 +96,42 @@ public class ExtendedFunction extends AtFunction {
 
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx, final ValueHolder[] params) throws FormulaReturnException {
+		if (function == null)
+			throw new UnsupportedOperationException("'" + functionName + "' is not properly declared");
 
 		ValueHolder paramVals[] = new ValueHolder[parameter.length];
+		ValueHolder varVals[] = new ValueHolder[variable.length];
 
-		int inParams = params == null ? 0 : params.length;
-
-		for (int pi = 0; pi < parameter.length; pi++) {
-			if (pi < inParams) {
-				paramVals[pi] = params[pi];
+		for (int i = 0; i < parameter.length; i++) {
+			if (params == null || i >= params.length) {
+				paramVals[i] = parameter[i].evaluate(ctx); //Optional params
 			} else {
-				paramVals[pi] = parameter[pi].evaluate(ctx); //Optional params
+				paramVals[i] = params[i];
 			}
 		}
+
+		for (int i = 0; i < variable.length; i++) {
+			varVals[i] = variable[i].evaluate(ctx);
+		}
+
 		try {
-			for (int pi = 0; pi < parameter.length; pi++) {
-				paramVals[pi] = ctx.setVarLC(parameter[pi].getName().toLowerCase(), paramVals[pi]);
+			// Initialize params & values & save old state
+			for (int i = 0; i < parameter.length; i++) {
+				paramVals[i] = ctx.setVarLC(parameter[i].getNameLC(), paramVals[i]);
 			}
+			for (int i = 0; i < variable.length; i++) {
+				varVals[i] = ctx.setVarLC(variable[i].getNameLC(), varVals[i]);
+			}
+
 			return function.evaluate(ctx);
+
 		} finally {
-			for (int pi = 0; pi < parameter.length; pi++) {
-				ctx.setVarLC(parameter[pi].getName().toLowerCase(), paramVals[pi]);
+			// restore old state
+			for (int i = 0; i < parameter.length; i++) {
+				ctx.setVarLC(parameter[i].getNameLC(), paramVals[i]);
+			}
+			for (int i = 0; i < variable.length; i++) {
+				ctx.setVarLC(variable[i].getNameLC(), varVals[i]);
 			}
 		}
 
@@ -112,4 +142,36 @@ public class ExtendedFunction extends AtFunction {
 		return paramLB <= i && i <= paramUB;
 	}
 
+	public void inspect(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		// TODO Auto-generated method stub
+		if (functions.contains(functionName.toUpperCase()))
+			return;
+
+		try {
+			functions.add(functionName.toUpperCase());
+			Set<String> tmpVariables = new HashSet<String>();
+			tmpVariables.addAll(variables);
+
+			for (ASTExtendedParameter param : parameter) {
+				tmpVariables.add(param.getNameLC());
+				param.inspect(readFields, modifiedFields, variables, functions);
+			}
+			for (ASTExtendedVariable var : variable) {
+				tmpVariables.add(var.getNameLC());
+				var.inspect(readFields, modifiedFields, variables, functions);
+			}
+			function.inspect(readFields, modifiedFields, tmpVariables, functions);
+
+			for (ASTExtendedParameter param : parameter) {
+				tmpVariables.remove(param.getNameLC());
+			}
+			for (ASTExtendedVariable var : variable) {
+				tmpVariables.remove(var.getNameLC());
+			}
+			variables.addAll(tmpVariables);
+		} finally {
+			functions.remove(functionName.toUpperCase());
+		}
+	}
 }

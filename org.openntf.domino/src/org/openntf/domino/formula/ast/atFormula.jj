@@ -4,13 +4,13 @@ import org.openntf.domino.formula.ast.*;
 public class AtFormulaParserImpl extends AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserImplTreeConstants/*@egen*/{/*@bgen(jjtree)*/
   protected JJTAtFormulaParserImplState jjtree = new JJTAtFormulaParserImplState();
 
-/*@egen*/  }PARSER_END(AtFormulaParserImpl)/*	public String toString() {		return AdderTreeConstants.jjtNodeName[id] + ": " + jjtGetValue();	}*//** * Lexer rules */// in default mode, a "[" means that the string to the "]" is a Date or Keyword< DEFAULT > TOKEN :{	< Date_or_KW : "[" (~["]"])* "]" > : SUBSCRIPT	// after a Date, we are in "subscript" mode (e.g. [Today][1])}// in subscript mode, a "[" means that the following expression is a subscript// a subscript can occur after a numeric value, a string, a ")", a date, an identifier or an other subscript< SUBSCRIPT > TOKEN :{  	 < OSubscript : "[" > 	:  DEFAULT		// switch back immediately. Thus x[[today]] makes no sense, it is formal correct}< DEFAULT, SUBSCRIPT > TOKEN :{  	// "]" must be recognized in both states  	// consider these examples "x[(1)]": the ) switches to "SUBSCRIPT" 	< CSubscript : "]" > :  SUBSCRIPT	 }< DEFAULT, SUBSCRIPT >TOKEN :{  	// misc tokens	< EOS : ";" >								:	DEFAULT // End of Statement| 	< OParen : "(" >							: 	DEFAULT| 	< CParen : ")" >							: 	SUBSCRIPT // the next open [ means, that this is a subscript| 	< Assign : ":=" >							:	DEFAULT| 	< BoolNot : "!" >							: 	DEFAULT	// Keywords| 	< KW_INCLUDE	: "INCLUDE" >| 	< KW_FUNCTION	: "FUNCTION" >| 	< KW_DEFAULT	: "DEFAULT" >| 	< KW_ENVIRONMENT: "ENVIRONMENT" >| 	< KW_FIELD 		: "FIELD" >| 	< KW_REM 		: "REM" >| 	< KW_SELECT		: "SELECT" >	// @Functions| 	< At_do			: "@do" > | 	< At_doWhile	: "@doWhile" > | 	< At_for		: "@for" > | 	< At_if			: "@if" >| 	< At_v2if		: "@V2if" >| 	< At_iferror	: "@iferror" > | 	< At_transform	: "@transform" > | 	< At_sort		: "@sort" >| 	< At_text		: "@text" >| 	< At_eval		: "@eval" >| 	< At_foceval	: "@foceval" >| 	< At_return		: "@return" >| 	< At_iserror	: "@iserror" > 	// All other at functions that does not control program flow| 	< At_other 	: "@" ( < Letter >  )  (  < Letter >  | < Digit > )*  > : SUBSCRIPT // switch to subscript, to handle @dbname[2]	// Precedence 2| 	< ListConcat : ":" > : DEFAULT	// Precedence 3 (= signs, not listed here)	// < OpPlus : "+" >	// < OpMinus : "-" >			// Precedence 4| 	< OpMul : "*" >		: DEFAULT | 	< OpMulP : "**" >	: DEFAULT | 	< OpDiv : "/" >		: DEFAULT | 	< OpDivP : "*/" >	: DEFAULT 	// Precedence 5| 	< OpPlus : "+" > 	: DEFAULT| 	< OpPlusP : "*+" > 	: DEFAULT| 	< OpMinus : "-" > 	: DEFAULT| 	< OpMinusP : "*-" > : DEFAULT	// Precedence 6 - all compare operations|   < CmpEqual : "=" >						: DEFAULT| 	< CmpEqualP : "*=" >					: DEFAULT| 	< CmpNE : "<>" | "!=" | "=!" | "><" >	: DEFAULT| 	< CmpNEP : "*<>" >						: DEFAULT| 	< CmpLT : "<" >							: DEFAULT| 	< CmpLTP : "*<" >						: DEFAULT| 	< CmpGT : ">" >							: DEFAULT| 	< CmpGTP : "*>" >						: DEFAULT| 	< CmpLTE : "<=" >						: DEFAULT| 	< CmpLTEP : "*<=" >						: DEFAULT| 	< CmpGTE : ">=" >						: DEFAULT| 	< CmpGTEP : "*>=" >						: DEFAULT		// Precedence 7| 	< BoolAnd : "&" > : DEFAULT| 	< BoolOr : "|" > : DEFAULT	// Numbers: TODO: Why are they locale dependent???	// Thousands separator must be avoided!|	< NumDoubleUS 	:	(< Digit >)* "." (< Digit >)+ (< Exponent >)? > : SUBSCRIPT | 	< NumDoubleDE 	:	(< Digit >)* "," (< Digit >)+ (< Exponent >)? > : SUBSCRIPT | 	< NumInteger 	: 	(< Digit >)+ ("."|",")? (< Exponent >)? > : SUBSCRIPT | 	< #Exponent: ["e","E"] (["+","-"])? (< Digit >)+ >	// Strings| 	< String1 : "\""		 	// Start at "        	(~["\""] 			// until " or \         	| "\\\""				// but not \ (escaped)        	 )*  "\"" > : SUBSCRIPT			// end at "        	 | 	< String2 : "{"		 		// Start at {          	(~["}"])*			// until  }          	"}" >  : SUBSCRIPT	// end at "| 	< Identifier :  ( < Letter >  )  (  < Letter >  | < Digit > )* > : SUBSCRIPT// Common groups| < #Letter:      [       "$",			// $       "A"-"Z",	// A-Z       "_",			// _       "a"-"z",	// a-z       "~",			// ~       "\u00c0"-"\u00d6",	// \u00c3\u20ac - \u00c3\u2013       "\u00d8"-"\u00f6",	// \u00c3\u02dc - \u00c3\u00b6       "\u00f8"-"\u00ff",	// \u00c3\u00b8 - \u00c3\u00bf       "\u0100"-"\u1fff",	// Latin Extended - A       "\u3040"-"\u318f",	// HIRAGANA/KATAKANA LETTER       "\u3300"-"\u337f",	// CJK Compatibility       "\u3400"-"\u3d2d",	// CJK Unified ideograps Extension A       "\u4e00"-"\u9fff",	// CJK Unified ideograps Extension A       "\uf900"-"\ufaff"	// CJK ... other      ]  >|  < #Digit:      [       "0"-"9"// 	RPr/JSt: only arabic digits are supported       //       "\u0660"-"\u0669",//       "\u06f0"-"\u06f9",//       "\u0966"-"\u096f",//       "\u09e6"-"\u09ef",//       "\u0a66"-"\u0a6f",//       "\u0ae6"-"\u0aef",//       "\u0b66"-"\u0b6f",//       "\u0be7"-"\u0bef",//       "\u0c66"-"\u0c6f",//       "\u0ce6"-"\u0cef",//       "\u0d66"-"\u0d6f",//       "\u0e50"-"\u0e59",//       "\u0ed0"-"\u0ed9",//       "\u1040"-"\u1049"      ]  >}  < * >SKIP :	{  " "| "\t"| "\n"| "\r"| "\r\n"}/** * Parser rules javacc options *//** * parses expressions. Expressions must not end with ";" (=< EOS >) */public SimpleNode Parse()       :{/*@bgen(jjtree) AtDo */
+/*@egen*///  	protected AtFormulaParserImplTokenManager getTokenSource()//  	{//  	  	return token_source;// 	}}PARSER_END(AtFormulaParserImpl)/*	public String toString() {		return AdderTreeConstants.jjtNodeName[id] + ": " + jjtGetValue();	}*/// Comments are allowed (but only in default mode)< DEFAULT, SUBSCRIPT >SKIP :	{  " "| "\t"| "\n"| "\r" | "\r\n"}< DEFAULT, SUBSCRIPT  >SPECIAL_TOKEN : {	<SINGLE_LINE_COMMENT: "//" (~["\n","\r"])* ("\n" | "\r" | "\r\n")?>| 	<FORMAL_COMMENT: "/**" (~["*"])* "*" ("*" | ~["*","/"] (~["*"])* "*")* "/">| 	<MULTI_LINE_COMMENT: "/*" (~["*"])* "*" ("*" | ~["*","/"] (~["*"])* "*")* "/">//|   <END_FORMULA : "!>" > : INLINE}/** * Lexer rules */< INLINE > TOKEN :{  	< NORMAL_TEXT :   (~["<"] | "<" ~["!", "#"] | "<!--" )+  >|  	< BEGIN_FORMULA : "<!" > : DEFAULT|   < BEGIN_PSEUDONYM : "<#" >} // in default mode, a "[" means that the string to the "]" is a Date or Keyword< DEFAULT > TOKEN :{	< Date_or_KW : "[" (~["]"])* "]" > : SUBSCRIPT	// after a Date, we are in "subscript" mode (e.g. [Today][1])}// in subscript mode, a "[" means that the following expression is a subscript// a subscript can occur after a numeric value, a string, a ")", a date, an identifier or an other subscript< SUBSCRIPT > TOKEN :{  	 < OSubscript : "[" > 	:  DEFAULT		// switch back immediately. Thus x[[today]] makes no sense, it is formal correct}< DEFAULT, SUBSCRIPT > TOKEN :{  	// "]" must be recognized in both states  	// consider these examples "x[(1)]": the ) switches to "SUBSCRIPT" 	< CSubscript : "]" > :  SUBSCRIPT	 }< DEFAULT, SUBSCRIPT >TOKEN :{  	// misc tokens	< EOS : ";" >								:	DEFAULT // End of Statement| 	< OParen : "(" >							: 	DEFAULT| 	< CParen : ")" >							: 	SUBSCRIPT // the next open [ means, that this is a subscript| 	< Assign : ":=" >							:	DEFAULT| 	< BoolNot : "!" >							: 	DEFAULT	// Keywords| 	< KW_DEFAULT	: "DEFAULT" >| 	< KW_ENVIRONMENT: "ENVIRONMENT" >| 	< KW_FIELD 		: "FIELD" >| 	< KW_REM 		: "REM" >| 	< KW_SELECT		: "SELECT" >// special extension by FOCONIS to define / include custom functions| 	< At_Include	: "@Include" >| 	< At_Function	: "@Function" >	// @Functions| 	< At_do			: "@do" > | 	< At_doWhile	: "@doWhile" > | 	< At_for		: "@for" > | 	< At_if			: "@if" >| 	< At_v2if		: "@V2if" >| 	< At_iferror	: "@iferror" > | 	< At_transform	: "@transform" > | 	< At_sort		: "@sort" >| 	< At_text		: "@text" >| 	< At_eval		: "@eval" >| 	< At_foceval	: "@foceval" >| 	< At_return		: "@return" >| 	< At_iserror	: "@iserror" > 	// All other at functions that does not control program flow| 	< At_other 	: "@" ( < Letter >  )  (  < Letter >  | < Digit > )*  > : SUBSCRIPT // switch to subscript, to handle @dbname[2]	// Precedence 2| 	< ListConcat : ":" > : DEFAULT	// Precedence 3 (= signs, not listed here)	// < OpPlus : "+" >	// < OpMinus : "-" >			// Precedence 4| 	< OpMul : "*" >		: DEFAULT | 	< OpMulP : "**" >	: DEFAULT | 	< OpDiv : "/" >		: DEFAULT | 	< OpDivP : "*/" >	: DEFAULT 	// Precedence 5| 	< OpPlus : "+" > 	: DEFAULT| 	< OpPlusP : "*+" > 	: DEFAULT| 	< OpMinus : "-" > 	: DEFAULT| 	< OpMinusP : "*-" > : DEFAULT	// Precedence 6 - all compare operations|   < CmpEqual : "=" >						: DEFAULT| 	< CmpEqualP : "*=" >					: DEFAULT| 	< CmpNE : "<>" | "!=" | "=!" | "><" >	: DEFAULT| 	< CmpNEP : "*<>" >						: DEFAULT| 	< CmpLT : "<" >							: DEFAULT| 	< CmpLTP : "*<" >						: DEFAULT| 	< CmpGT : ">" >							: DEFAULT| 	< CmpGTP : "*>" >						: DEFAULT| 	< CmpLTE : "<=" >						: DEFAULT| 	< CmpLTEP : "*<=" >						: DEFAULT| 	< CmpGTE : ">=" >						: DEFAULT| 	< CmpGTEP : "*>=" >						: DEFAULT		// Precedence 7| 	< BoolAnd : "&" > : DEFAULT| 	< BoolOr : "|" > : DEFAULT| 	< END_FORMULA : "!>" > : INLINE	// Numbers: TODO: Why are they locale dependent???	// Thousands separator must be avoided!|	< NumDoubleUS 	:	(< Digit >)* "." (< Digit >)+ (< Exponent >)? > : SUBSCRIPT | 	< NumDoubleDE 	:	(< Digit >)* "," (< Digit >)+ (< Exponent >)? > : SUBSCRIPT | 	< NumInteger 	: 	(< Digit >)+ ("."|",")? (< Exponent >)? > : SUBSCRIPT | 	< #Exponent: ["e","E"] (["+","-"])? (< Digit >)+ >	// Strings| 	< String1 : "\""		 	// Start at "        	(~["\""] 			// until " or \         	| "\\\""				// but not \ (escaped)        	 )*  "\"" > : SUBSCRIPT			// end at "        	 | 	< String2 : "{"		 		// Start at {          	(~["}"])*			// until  }          	"}" >  : SUBSCRIPT	// end at "| 	< Identifier :  ( < Letter >  )  (  < Letter >  | < Digit > )* > : SUBSCRIPT// Common groups| < #Letter:      [       "$",			// $       "A"-"Z",	// A-Z       "_",			// _       "a"-"z",	// a-z       "~",			// ~       "\u00c0"-"\u00d6",	// \u00c3\u20ac - \u00c3\u2013       "\u00d8"-"\u00f6",	// \u00c3\u02dc - \u00c3\u00b6       "\u00f8"-"\u00ff",	// \u00c3\u00b8 - \u00c3\u00bf       "\u0100"-"\u1fff",	// Latin Extended - A       "\u3040"-"\u318f",	// HIRAGANA/KATAKANA LETTER       "\u3300"-"\u337f",	// CJK Compatibility       "\u3400"-"\u3d2d",	// CJK Unified ideograps Extension A       "\u4e00"-"\u9fff",	// CJK Unified ideograps Extension A       "\uf900"-"\ufaff"	// CJK ... other      ]  >|  < #Digit:      [       "0"-"9"// 	RPr/JSt: only arabic digits are supported       //       "\u0660"-"\u0669",//       "\u06f0"-"\u06f9",//       "\u0966"-"\u096f",//       "\u09e6"-"\u09ef",//       "\u0a66"-"\u0a6f",//       "\u0ae6"-"\u0aef",//       "\u0b66"-"\u0b6f",//       "\u0be7"-"\u0bef",//       "\u0c66"-"\u0c6f",//       "\u0ce6"-"\u0cef",//       "\u0d66"-"\u0d6f",//       "\u0e50"-"\u0e59",//       "\u0ed0"-"\u0ed9",//       "\u1040"-"\u1049"      ]  >}  /** * Parser rules javacc options *//** * parses expressions. Expressions must not end with ";" (=< EOS >) */public SimpleNode parseFormula()       :{/*@bgen(jjtree) AtDo */
   ASTAtDo jjtn000 = new ASTAtDo(this, JJTATDO);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/} {/*@bgen(jjtree) AtDo */
         try {
-/*@egen*/	(< EOS >)*	(	  	< KW_REM > 	comment()  // AFAIK REMS are only allowed at top level 		|			statement()	)	(	  	(< EOS >)+	 	(	 	  	< KW_REM > comment()  // AFAIK REMS are only allowed at top level 	  	|	statement()	  	)	)* < EOF >/*@bgen(jjtree)*/
+/*@egen*/	mainStatement() ((< EOS >) mainStatement()	)*	< EOF >/*@bgen(jjtree)*/
   {
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
@@ -35,7 +35,55 @@ import org.openntf.domino.formula.ast.*;
             jjtree.closeNodeScope(jjtn000, true);
           }
         }
-/*@egen*/}private void comment() :{}{		< String1 >	| 	< String2 >	|  	< OParen > comment() < CParen >}/** * an expression is one of the 3 "set" keywords (DEFAULT/FIELD/ENVIRONMENT) to set Fields/Env * or an identifier to set a variable. Special case for SELECT  */ private void statement() :{ Token t; }{ //LOOKAHEAD(3) 	// Include is a custom extension by foconis 	< KW_INCLUDE >/*@bgen(jjtree) ExtendedInclude */
+/*@egen*/}public void mainStatement() :{}{(< EOS >)*  	< KW_REM > comment()  // AFAIK REMS are only allowed at top level|	statement()}public SimpleNode parseFocFormula()           :{/*@bgen(jjtree) AtConCat */
+  ASTAtConCat jjtn000 = new ASTAtConCat(this, JJTATCONCAT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/} {/*@bgen(jjtree) AtConCat */
+        try {
+/*@egen*/ 	{ token_source.SwitchTo(INLINE); } 	( normalText() )?   	(		(< BEGIN_FORMULA >			mainStatement() ((< EOS >) mainStatement()	)*		< END_FORMULA > )		( normalText() )?	)*	< EOF >/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/  {  return jjtn000; }/*@bgen(jjtree)*/
+        } catch (Throwable jjte000) {
+          if (jjtc000) {
+            jjtree.clearNodeScope(jjtn000);
+            jjtc000 = false;
+          } else {
+            jjtree.popNode();
+          }
+          if (jjte000 instanceof RuntimeException) {
+            throw (RuntimeException)jjte000;
+          }
+          if (jjte000 instanceof ParseException) {
+            throw (ParseException)jjte000;
+          }
+          throw (Error)jjte000;
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/}private void normalText()             :{/*@bgen(jjtree) NormalText */
+  ASTNormalText jjtn000 = new ASTNormalText(this, JJTNORMALTEXT);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/ Token t; }{/*@bgen(jjtree) NormalText */
+        try {
+/*@egen*/  	t = < NORMAL_TEXT >/*@bgen(jjtree)*/
+        {
+          jjtree.closeNodeScope(jjtn000, true);
+          jjtc000 = false;
+        }
+/*@egen*/  	{jjtn000.init(t.image); }/*@bgen(jjtree)*/
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/}private void comment() :{}{		< String1 >	| 	< String2 >	|  	< OParen > comment() < CParen >}/** * an expression is one of the 3 "set" keywords (DEFAULT/FIELD/ENVIRONMENT) to set Fields/Env * or an identifier to set a variable. Special case for SELECT  */ private void statement() :{ Token t; }{ //LOOKAHEAD(3) 	// Include is a custom extension by foconis 	< At_Include >/*@bgen(jjtree) ExtendedInclude */
                                 {
                                   ASTExtendedInclude jjtn001 = new ASTExtendedInclude(this, JJTEXTENDEDINCLUDE);
                                   boolean jjtc001 = true;
@@ -62,14 +110,19 @@ import org.openntf.domino.formula.ast.*;
                                     jjtree.closeNodeScope(jjtn001, true);
                                   }
                                 }
-/*@egen*/	                	// define is a custom extension by foconis 	| 	< KW_FUNCTION >/*@bgen(jjtree) ExtendedFunction */
+/*@egen*/	                	// define is a custom extension by foconis 		// @function(@myfunc(a:="x";b:="y");"";| 	< At_Function >/*@bgen(jjtree) ExtendedFunction */
                                 {
                                   ASTExtendedFunction jjtn002 = new ASTExtendedFunction(this, JJTEXTENDEDFUNCTION);
                                   boolean jjtc002 = true;
                                   jjtree.openNodeScope(jjtn002);
                                 }
                                 try {
-/*@egen*/		(t = < At_other > (< OParen >	param() (< EOS > param()) < CParen >)							< Assign > {jjtn002.init(t.image);		} opBool()						)/*@bgen(jjtree)*/
+/*@egen*/		(< OParen >							exFuncDef()	(< EOS > exVar())* // followed by optional semicolon and local var defs						< CParen >							( < Assign >  opBool() )?/*@bgen(jjtree)*/
+                                                {
+                                                  jjtree.closeNodeScope(jjtn002, true);
+                                                  jjtc002 = false;
+                                                }
+/*@egen*/	 // Assignment is optional						{jjtn002.init();}						)/*@bgen(jjtree)*/
                                 } catch (Throwable jjte002) {
                                   if (jjtc002) {
                                     jjtree.clearNodeScope(jjtn002);
@@ -224,7 +277,38 @@ import org.openntf.domino.formula.ast.*;
                           jjtree.closeNodeScope(jjtn007, true);
                         }
                       }
-/*@egen*/ 									       | 	opBool()}  /** * Parameter for extended functions */private void param()                    :{/*@bgen(jjtree) ExtendedParameter */
+/*@egen*/ 									       | 	opBool()}  /** * Parameter for extended functions */private void exFuncDef()                      :{/*@bgen(jjtree) ExtendedFunctionDef */
+  ASTExtendedFunctionDef jjtn000 = new ASTExtendedFunctionDef(this, JJTEXTENDEDFUNCTIONDEF);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/ Token t; }{/*@bgen(jjtree) ExtendedFunctionDef */
+   try {
+/*@egen*/   // matches to @myfunc(a:="x";b:="y")   t = < At_other > (< OParen >	exParam() (< EOS > exParam())* < CParen >)?/*@bgen(jjtree)*/
+   {
+     jjtree.closeNodeScope(jjtn000, true);
+     jjtc000 = false;
+   }
+/*@egen*/   {jjtn000.init(t.image);}/*@bgen(jjtree)*/
+   } catch (Throwable jjte000) {
+     if (jjtc000) {
+       jjtree.clearNodeScope(jjtn000);
+       jjtc000 = false;
+     } else {
+       jjtree.popNode();
+     }
+     if (jjte000 instanceof RuntimeException) {
+       throw (RuntimeException)jjte000;
+     }
+     if (jjte000 instanceof ParseException) {
+       throw (ParseException)jjte000;
+     }
+     throw (Error)jjte000;
+   } finally {
+     if (jjtc000) {
+       jjtree.closeNodeScope(jjtn000, true);
+     }
+   }
+/*@egen*/}/** * Parameter for extended functions */private void exParam()                    :{/*@bgen(jjtree) ExtendedParameter */
   ASTExtendedParameter jjtn000 = new ASTExtendedParameter(this, JJTEXTENDEDPARAMETER);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -255,7 +339,38 @@ import org.openntf.domino.formula.ast.*;
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/}    /** * boolean ops has the lowest precedence, * ATTENTION: Formula language is the only language I know, where AND and OR has the same precedence! */private void opBool() :{ }{  opCmp() (/*@bgen(jjtree) #Operator( 2) */
+/*@egen*/}  /** * Parameter for extended functions */private void exVar()                   :{/*@bgen(jjtree) ExtendedVariable */
+  ASTExtendedVariable jjtn000 = new ASTExtendedVariable(this, JJTEXTENDEDVARIABLE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/ Token t; }{/*@bgen(jjtree) ExtendedVariable */
+  try {
+/*@egen*/  ( 	LOOKAHEAD(2)  t = < Identifier > 	< Assign > opBool()    | 	t = < Identifier > 	)/*@bgen(jjtree)*/
+  {
+    jjtree.closeNodeScope(jjtn000, true);
+    jjtc000 = false;
+  }
+/*@egen*/ {jjtn000.init(t.image);}/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/}    /** * boolean ops has the lowest precedence, * ATTENTION: Formula language is the only language I know, where AND and OR has the same precedence! */private void opBool() :{ }{  opCmp() (/*@bgen(jjtree) #Operator( 2) */
     {
       ASTOperator jjtn001 = new ASTOperator(this, JJTOPERATOR);
       boolean jjtc001 = true;
@@ -267,12 +382,12 @@ import org.openntf.domino.formula.ast.*;
                                       jjtree.closeNodeScope(jjtn001,  2);
                                       jjtc001 = false;
                                     }
-/*@egen*/ {jjtn001.setFunction("&");	}    	| 	< BoolOr >  opCmp()/*@bgen(jjtree)*/
+/*@egen*/ {jjtn001.init("&");	}    	| 	< BoolOr >  opCmp()/*@bgen(jjtree)*/
                                     {
                                       jjtree.closeNodeScope(jjtn001,  2);
                                       jjtc001 = false;
                                     }
-/*@egen*/ {jjtn001.setFunction("|");	}  	  	)/*@bgen(jjtree)*/
+/*@egen*/ {jjtn001.init("|");	}  	  	)/*@bgen(jjtree)*/
     } catch (Throwable jjte001) {
       if (jjtc001) {
         jjtree.clearNodeScope(jjtn001);
@@ -304,62 +419,62 @@ import org.openntf.domino.formula.ast.*;
                                           jjtree.closeNodeScope(jjtn001,  2);
                                           jjtc001 = false;
                                         }
-/*@egen*/ {jjtn001.setFunction("=")		;}    	| 	< CmpEqualP > 	opAdd()/*@bgen(jjtree)*/
+/*@egen*/ {jjtn001.init("=")		;}    	| 	< CmpEqualP > 	opAdd()/*@bgen(jjtree)*/
                                         {
                                           jjtree.closeNodeScope(jjtn001,  2);
                                           jjtc001 = false;
                                         }
-/*@egen*/ {jjtn001.setFunction("*=")		;}     	| 	< CmpNE > 		opAdd()/*@bgen(jjtree)*/
+/*@egen*/ {jjtn001.init("*=")		;}     	| 	< CmpNE > 		opAdd()/*@bgen(jjtree)*/
                                                 {
                                                   jjtree.closeNodeScope(jjtn001,  2);
                                                   jjtc001 = false;
                                                 }
-/*@egen*/ {jjtn001.setFunction("<>")		;}     	| 	< CmpNEP > 		opAdd()/*@bgen(jjtree)*/
+/*@egen*/ {jjtn001.init("<>")		;}     	| 	< CmpNEP > 		opAdd()/*@bgen(jjtree)*/
                                                 {
                                                   jjtree.closeNodeScope(jjtn001,  2);
                                                   jjtc001 = false;
                                                 }
-/*@egen*/ {jjtn001.setFunction("*<>")		;}     	| 	< CmpLT > 		opAdd()/*@bgen(jjtree)*/
+/*@egen*/ {jjtn001.init("*<>")	;}     	| 	< CmpLT > 		opAdd()/*@bgen(jjtree)*/
                                                 {
                                                   jjtree.closeNodeScope(jjtn001,  2);
                                                   jjtc001 = false;
                                                 }
-/*@egen*/ {jjtn001.setFunction("<")		;}     	| 	< CmpLTP > 		opAdd()/*@bgen(jjtree)*/
+/*@egen*/ {jjtn001.init("<")		;}     	| 	< CmpLTP > 		opAdd()/*@bgen(jjtree)*/
                                                 {
                                                   jjtree.closeNodeScope(jjtn001,  2);
                                                   jjtc001 = false;
                                                 }
-/*@egen*/ {jjtn001.setFunction("*<")		;}    	| 	< CmpGT > 		opAdd()/*@bgen(jjtree)*/
+/*@egen*/ {jjtn001.init("*<")		;}    	| 	< CmpGT > 		opAdd()/*@bgen(jjtree)*/
                                                 {
                                                   jjtree.closeNodeScope(jjtn001,  2);
                                                   jjtc001 = false;
                                                 }
-/*@egen*/ {jjtn001.setFunction(">")		;}     	| 	< CmpGTP > 		opAdd()/*@bgen(jjtree)*/
+/*@egen*/ {jjtn001.init(">")		;}     	| 	< CmpGTP > 		opAdd()/*@bgen(jjtree)*/
                                                 {
                                                   jjtree.closeNodeScope(jjtn001,  2);
                                                   jjtc001 = false;
                                                 }
-/*@egen*/ {jjtn001.setFunction("*>")		;}     	| 	< CmpLTE > 		opAdd()/*@bgen(jjtree)*/
+/*@egen*/ {jjtn001.init("*>")		;}     	| 	< CmpLTE > 		opAdd()/*@bgen(jjtree)*/
                                                 {
                                                   jjtree.closeNodeScope(jjtn001,  2);
                                                   jjtc001 = false;
                                                 }
-/*@egen*/ {jjtn001.setFunction("<=")		;}     	| 	< CmpLTEP > 	opAdd()/*@bgen(jjtree)*/
+/*@egen*/ {jjtn001.init("<=")		;}     	| 	< CmpLTEP > 	opAdd()/*@bgen(jjtree)*/
                                         {
                                           jjtree.closeNodeScope(jjtn001,  2);
                                           jjtc001 = false;
                                         }
-/*@egen*/ {jjtn001.setFunction("*<=")		;}     	| 	< CmpGTE > 		opAdd()/*@bgen(jjtree)*/
+/*@egen*/ {jjtn001.init("*<=")	;}     	| 	< CmpGTE > 		opAdd()/*@bgen(jjtree)*/
                                                 {
                                                   jjtree.closeNodeScope(jjtn001,  2);
                                                   jjtc001 = false;
                                                 }
-/*@egen*/ {jjtn001.setFunction(">=")		;}     	| 	< CmpGTEP > 	opAdd()/*@bgen(jjtree)*/
+/*@egen*/ {jjtn001.init(">=")		;}     	| 	< CmpGTEP > 	opAdd()/*@bgen(jjtree)*/
                                         {
                                           jjtree.closeNodeScope(jjtn001,  2);
                                           jjtc001 = false;
                                         }
-/*@egen*/ {jjtn001.setFunction("*>=")		;}    )/*@bgen(jjtree)*/
+/*@egen*/ {jjtn001.init("*>=")	;}    )/*@bgen(jjtree)*/
     } catch (Throwable jjte001) {
       if (jjtc001) {
         jjtree.clearNodeScope(jjtn001);
@@ -391,22 +506,22 @@ import org.openntf.domino.formula.ast.*;
                                                            jjtree.closeNodeScope(jjtn001,  2);
                                                            jjtc001 = false;
                                                          }
-/*@egen*/ {jjtn001.setFunction("+")	;} 		| 	< OpPlusP >		opMult()/*@bgen(jjtree)*/
+/*@egen*/ {jjtn001.init("+")		;} 		| 	< OpPlusP >		opMult()/*@bgen(jjtree)*/
                                                          {
                                                            jjtree.closeNodeScope(jjtn001,  2);
                                                            jjtc001 = false;
                                                          }
-/*@egen*/ {jjtn001.setFunction("*+")	;} 		| 	< OpMinus > 	opMult()/*@bgen(jjtree)*/
+/*@egen*/ {jjtn001.init("*+")	;} 		| 	< OpMinus > 	opMult()/*@bgen(jjtree)*/
                                                  {
                                                    jjtree.closeNodeScope(jjtn001,  2);
                                                    jjtc001 = false;
                                                  }
-/*@egen*/ {jjtn001.setFunction("-")	;} 		| 	< OpMinusP > 	opMult()/*@bgen(jjtree)*/
+/*@egen*/ {jjtn001.init("-")		;} 		| 	< OpMinusP > 	opMult()/*@bgen(jjtree)*/
                                                  {
                                                    jjtree.closeNodeScope(jjtn001,  2);
                                                    jjtc001 = false;
                                                  }
-/*@egen*/ {jjtn001.setFunction("*-")	;} 	)/*@bgen(jjtree)*/
+/*@egen*/ {jjtn001.init("*-")	;} 	)/*@bgen(jjtree)*/
                           } catch (Throwable jjte001) {
                             if (jjtc001) {
                               jjtree.clearNodeScope(jjtn001);
@@ -438,22 +553,22 @@ import org.openntf.domino.formula.ast.*;
                                             jjtree.closeNodeScope(jjtn001,  2);
                                             jjtc001 = false;
                                           }
-/*@egen*/  {jjtn001.setFunction("*")	;}     	|	< OpMulP > 	opSign()/*@bgen(jjtree)*/
+/*@egen*/  {jjtn001.init("*")	;}     	|	< OpMulP > 	opSign()/*@bgen(jjtree)*/
                                           {
                                             jjtree.closeNodeScope(jjtn001,  2);
                                             jjtc001 = false;
                                           }
-/*@egen*/  {jjtn001.setFunction("**")	;}      	| 	< OpDiv > 	opSign()/*@bgen(jjtree)*/
+/*@egen*/  {jjtn001.init("**")	;}      	| 	< OpDiv > 	opSign()/*@bgen(jjtree)*/
                                           {
                                             jjtree.closeNodeScope(jjtn001,  2);
                                             jjtc001 = false;
                                           }
-/*@egen*/  {jjtn001.setFunction("/")	;}      	| 	< OpDivP > 	opSign()/*@bgen(jjtree)*/
+/*@egen*/  {jjtn001.init("/")	;}      	| 	< OpDivP > 	opSign()/*@bgen(jjtree)*/
                                           {
                                             jjtree.closeNodeScope(jjtn001,  2);
                                             jjtc001 = false;
                                           }
-/*@egen*/  {jjtn001.setFunction("*/")	;}	)/*@bgen(jjtree)*/
+/*@egen*/  {jjtn001.init("*/")	;}	)/*@bgen(jjtree)*/
     } catch (Throwable jjte001) {
       if (jjtc001) {
         jjtree.clearNodeScope(jjtn001);
@@ -473,7 +588,7 @@ import org.openntf.domino.formula.ast.*;
         jjtree.closeNodeScope(jjtn001,  2);
       }
     }
-/*@egen*/              ) *}private void opSign() :{ }{	opHasSign()|	valueList()}private void opHasSign() :{}{// In N9, the + sign is completely ignored. If you want to be < N6 compatible, feel free to implement that  //	< OpPlus > valueList() {jjtThis.setFunction(" +")	;} #Operator(1)	< OpPlus > valueList()| 	< OpMinus > valueList()/*@bgen(jjtree) #Operator( 1) */
+/*@egen*/              ) *}private void opSign() :{ }{	opHasSign()|	valueList()}private void opHasSign() :{}{// In N9, the + sign is completely ignored. If you want to be < N6 compatible, feel free to implement that  //	< OpPlus > valueList() {jjtThis.init(" +")	;} #Operator(1)	< OpPlus > valueList()| 	< OpMinus > valueList()/*@bgen(jjtree) #Operator( 1) */
                                 {
                                   ASTOperator jjtn001 = new ASTOperator(this, JJTOPERATOR);
                                   boolean jjtc001 = true;
@@ -485,7 +600,7 @@ import org.openntf.domino.formula.ast.*;
                                   jjtree.closeNodeScope(jjtn001,  1);
                                   jjtc001 = false;
                                 }
-/*@egen*/ {jjtn001.setFunction(" -")	;}/*@bgen(jjtree)*/
+/*@egen*/ {jjtn001.init(" -")	;}/*@bgen(jjtree)*/
                                 } finally {
                                   if (jjtc001) {
                                     jjtree.closeNodeScope(jjtn001,  1);
@@ -545,7 +660,7 @@ import org.openntf.domino.formula.ast.*;
             jjtree.closeNodeScope(jjtn001, jjtree.nodeArity() > 1);
           }
         }
-/*@egen*/               }private void unary() :{}{// Attention List operator has a higher precedence. So this is removed here // 		< OpPlus > unary() //| 	< OpMinus > unary() {jjtThis.setFunction(" -")	;} #Operator(1)//|< BoolNot > unary()/*@bgen(jjtree) #Operator( 1) */
+/*@egen*/               }private void unary() :{}{// Attention List operator has a higher precedence. So this is removed here // 		< OpPlus > unary() //| 	< OpMinus > unary() {jjtThis.init(" -")	;} #Operator(1)//|< BoolNot > unary()/*@bgen(jjtree) #Operator( 1) */
                     {
                       ASTOperator jjtn001 = new ASTOperator(this, JJTOPERATOR);
                       boolean jjtc001 = true;
@@ -557,7 +672,7 @@ import org.openntf.domino.formula.ast.*;
                       jjtree.closeNodeScope(jjtn001,  1);
                       jjtc001 = false;
                     }
-/*@egen*/ {jjtn001.setFunction(" !")		;}/*@bgen(jjtree)*/
+/*@egen*/ {jjtn001.init(" !")		;}/*@bgen(jjtree)*/
                     } finally {
                       if (jjtc001) {
                         jjtree.closeNodeScope(jjtn001,  1);
@@ -891,9 +1006,14 @@ import org.openntf.domino.formula.ast.*;
   ASTFunction jjtn000 = new ASTFunction(this, JJTFUNCTION);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/}{/*@bgen(jjtree) Function */
+/*@egen*/ Token t; }{/*@bgen(jjtree) Function */
   try {
-/*@egen*/  { jjtn000.setFunction(getToken(0).image); }  // Optional parameters.   ( LOOKAHEAD(2)  	< OParen >    	  statement() ( < EOS > statement() )*    < CParen >  )?/*@bgen(jjtree)*/
+/*@egen*/  { t = getToken(0); }  // Optional parameters.   ( LOOKAHEAD(2)  	< OParen >    	  statement() ( < EOS > statement() )*    < CParen >  )?/*@bgen(jjtree)*/
+   {
+     jjtree.closeNodeScope(jjtn000, true);
+     jjtc000 = false;
+   }
+/*@egen*/    { jjtn000.init(t.image); }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -913,7 +1033,7 @@ import org.openntf.domino.formula.ast.*;
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/   }private void atom() :{}{   value()| < OParen > statement() <CParen >}/*private void setDefault() #SetDefault :{    Token t;}{	t = <Identifier >	< Assign > opBool()	{ jjtThis.value = t.image; }}private void setEnvironment() #SetEnvironment :{    Token t;}{	t = <Identifier >	< Assign > opBool()	{ jjtThis.value = t.image; }}private void setField() #SetField :{    Token t;}{	t = <Identifier >	< Assign > opBool()	{ jjtThis.value = t.image; }}private void setVariable() #SetVariable :{}{	opBool()	{ jjtThis.value =  getToken(0).image; }}*/private void value()  :{  Token t;}{  	t = < Date_or_KW >/*@bgen(jjtree) ValueDateOrKW */
+/*@egen*/}private void atom() :{}{   value()| < OParen > statement() <CParen >}/*private void setDefault() #SetDefault :{    Token t;}{	t = <Identifier >	< Assign > opBool()	{ jjtThis.value = t.image; }}private void setEnvironment() #SetEnvironment :{    Token t;}{	t = <Identifier >	< Assign > opBool()	{ jjtThis.value = t.image; }}private void setField() #SetField :{    Token t;}{	t = <Identifier >	< Assign > opBool()	{ jjtThis.value = t.image; }}private void setVariable() #SetVariable :{}{	opBool()	{ jjtThis.value =  getToken(0).image; }}*/private void value()  :{  Token t;}{  	t = < Date_or_KW >/*@bgen(jjtree) ValueDateOrKW */
         {
           ASTValueDateOrKW jjtn001 = new ASTValueDateOrKW(this, JJTVALUEDATEORKW);
           boolean jjtc001 = true;

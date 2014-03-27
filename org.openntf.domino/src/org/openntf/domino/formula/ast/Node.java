@@ -24,7 +24,6 @@ import java.util.Set;
 import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
-import org.openntf.domino.formula.ParseException;
 import org.openntf.domino.formula.ValueHolder;
 
 /* All AST nodes must implement this interface.  It provides basic
@@ -38,15 +37,7 @@ public interface Node {
 	 */
 	public void jjtOpen();
 
-	/**
-	 * This method is called after all the child nodes have been added.
-	 * 
-	 * @throws ParseException
-	 *             throws parseException e.g. on parameter mismatch <br>
-	 *             <b>NOTE:</b> After a javacc recompile you must add the <code>throws</code> declaration manually in
-	 *             "JJTAtFormulaParserState"
-	 */
-	public void jjtClose() throws ParseException;
+	public void jjtClose();
 
 	/**
 	 * set a new parent to the current node

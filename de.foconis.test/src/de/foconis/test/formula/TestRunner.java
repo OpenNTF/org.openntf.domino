@@ -21,6 +21,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.formula.AtFormulaParser;
 import org.openntf.domino.formula.DominoFormatter;
+import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ParseException;
 import org.openntf.domino.formula.ast.Node;
@@ -227,12 +228,13 @@ public class TestRunner implements Runnable {
 				try {
 					FormulaContext ctx1 = new FormulaContext(ntfDoc, DominoFormatter.getInstance());
 					ntfDocResult = ast.solve(ctx1);
-				} catch (RuntimeException e) {
+				} catch (EvaluateException e) {
 					errors.append(NTF("\tDoc-Evaluate failed: ") + ERROR(e) + "\n");
 					ntfError = e;
 					parserFailed = true;
 				} catch (Throwable t) {
 					System.err.println(ERROR("FATAL") + NTF("\tDoc-Evaluate failed: ") + ERROR(t));
+					t.printStackTrace();
 				}
 			}
 			if (testMap) {
@@ -240,12 +242,13 @@ public class TestRunner implements Runnable {
 					// benchmark the evaluate with a map as context
 					FormulaContext ctx2 = new FormulaContext(ntfMap, DominoFormatter.getInstance());
 					ntfMapResult = ast.solve(ctx2);
-				} catch (RuntimeException e) {
+				} catch (EvaluateException e) {
 					errors.append(NTF("\tMap-Evaluate failed: ") + ERROR(e) + "\n");
 					ntfError = e;
 					parserFailed = true;
 				} catch (Throwable t) {
 					System.err.println(ERROR("FATAL") + NTF("\tMap-Evaluate failed: ") + ERROR(t));
+					t.printStackTrace();
 				}
 			}
 		}

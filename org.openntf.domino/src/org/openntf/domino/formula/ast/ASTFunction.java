@@ -27,6 +27,7 @@ import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ParseException;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
+import org.openntf.domino.formula.impl.ExtendedFunction;
 
 public class ASTFunction extends SimpleNode {
 	protected AtFunction function;
@@ -35,20 +36,13 @@ public class ASTFunction extends SimpleNode {
 		super(p, id);
 	}
 
-	public void setFunction(final String string) {
+	public void init(final String string) throws ParseException {
 		function = parser.getFunction(string);
 		if (function == null) {
 			throw new IllegalArgumentException("'" + string + "' is not a function");
 		}
-	}
-
-	@Override
-	public void jjtClose() throws ParseException {
-		super.jjtClose();
-		if (function != null) {
-			if (!function.checkParamCount(jjtGetNumChildren())) {
-				throw new ParseException(parser, "parameter count mismatch");
-			}
+		if (!function.checkParamCount(jjtGetNumChildren())) {
+			throw new ParseException(parser, "parameter count mismatch");
 		}
 	}
 
@@ -89,6 +83,9 @@ public class ASTFunction extends SimpleNode {
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
 		functions.add(function.getImage().toLowerCase());
+		if (function instanceof ExtendedFunction) {
+			((ExtendedFunction) function).inspect(readFields, modifiedFields, variables, functions);
+		}
 	}
 }
 /* JavaCC - OriginalChecksum=ccaad8d7c28a4b42a02e6b2cb416c0b9 (do not edit this line) */

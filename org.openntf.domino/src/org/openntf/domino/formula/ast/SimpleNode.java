@@ -25,7 +25,6 @@ import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
-import org.openntf.domino.formula.ParseException;
 import org.openntf.domino.formula.Token;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
@@ -65,7 +64,7 @@ public abstract class SimpleNode implements Node {
 	* (non-Javadoc)
 	* @see org.openntf.domino.formula.ast.Node#jjtClose()
 	*/
-	public void jjtClose() throws ParseException {
+	public void jjtClose() {
 	}
 
 	/*
@@ -194,7 +193,7 @@ public abstract class SimpleNode implements Node {
 	/**
 	 * inspects formulas recursively to detect the elements that are used
 	 */
-	protected void inspect(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+	public void inspect(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
 
 		analyzeThis(readFields, modifiedFields, variables, functions);
