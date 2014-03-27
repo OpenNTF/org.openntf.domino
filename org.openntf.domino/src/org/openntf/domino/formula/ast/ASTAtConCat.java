@@ -26,6 +26,8 @@ public class ASTAtConCat extends SimpleNode {
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
 		if (children == null)
 			return ValueHolder.valueDefault();
+		if (children.length == 1)
+			return children[0].evaluate(ctx);
 
 		ValueHolder vh;
 		ValueHolder[] res = new ValueHolder[children.length];

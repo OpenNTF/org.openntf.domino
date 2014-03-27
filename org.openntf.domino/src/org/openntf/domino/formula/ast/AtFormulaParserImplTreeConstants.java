@@ -8,40 +8,42 @@ public interface AtFormulaParserImplTreeConstants
   public int JJTATDO = 0;
   public int JJTVOID = 1;
   public int JJTATCONCAT = 2;
-  public int JJTNORMALTEXT = 3;
-  public int JJTEXTENDEDINCLUDE = 4;
-  public int JJTEXTENDEDFUNCTION = 5;
-  public int JJTASSIGNMENT = 6;
-  public int JJTSELECT = 7;
-  public int JJTEXTENDEDFUNCTIONDEF = 8;
-  public int JJTEXTENDEDPARAMETER = 9;
-  public int JJTEXTENDEDVARIABLE = 10;
-  public int JJTOPERATOR = 11;
-  public int JJTVALUELIST = 12;
-  public int JJTSUBSCRIPT = 13;
-  public int JJTATDOWHILE = 14;
-  public int JJTATFOR = 15;
-  public int JJTATIF = 16;
-  public int JJTATIFERROR = 17;
-  public int JJTATTRANSFORM = 18;
-  public int JJTATSORT = 19;
-  public int JJTATEVAL = 20;
-  public int JJTATFOCEVAL = 21;
-  public int JJTATTEXT = 22;
-  public int JJTATRETURN = 23;
-  public int JJTATISERROR = 24;
-  public int JJTFUNCTION = 25;
-  public int JJTVALUEDATEORKW = 26;
-  public int JJTVALUESTRING = 27;
-  public int JJTVALUEDOUBLE = 28;
-  public int JJTVALUEINT = 29;
-  public int JJTGETVARIABLE = 30;
+  public int JJTFOCPSEUDONYM = 3;
+  public int JJTNORMALTEXT = 4;
+  public int JJTEXTENDEDINCLUDE = 5;
+  public int JJTEXTENDEDFUNCTION = 6;
+  public int JJTASSIGNMENT = 7;
+  public int JJTSELECT = 8;
+  public int JJTEXTENDEDFUNCTIONDEF = 9;
+  public int JJTEXTENDEDPARAMETER = 10;
+  public int JJTEXTENDEDVARIABLE = 11;
+  public int JJTOPERATOR = 12;
+  public int JJTVALUELIST = 13;
+  public int JJTSUBSCRIPT = 14;
+  public int JJTATDOWHILE = 15;
+  public int JJTATFOR = 16;
+  public int JJTATIF = 17;
+  public int JJTATIFERROR = 18;
+  public int JJTATTRANSFORM = 19;
+  public int JJTATSORT = 20;
+  public int JJTATEVAL = 21;
+  public int JJTATFOCEVAL = 22;
+  public int JJTATTEXT = 23;
+  public int JJTATRETURN = 24;
+  public int JJTATISERROR = 25;
+  public int JJTFUNCTION = 26;
+  public int JJTVALUEDATEORKW = 27;
+  public int JJTVALUESTRING = 28;
+  public int JJTVALUEDOUBLE = 29;
+  public int JJTVALUEINT = 30;
+  public int JJTGETVARIABLE = 31;
 
 
   public String[] jjtNodeName = {
     "AtDo",
     "void",
     "AtConCat",
+    "FocPseudonym",
     "NormalText",
     "ExtendedInclude",
     "ExtendedFunction",
@@ -72,4 +74,4 @@ public interface AtFormulaParserImplTreeConstants
     "GetVariable",
   };
 }
-/* JavaCC - OriginalChecksum=a7d01a8b947d3fe52ea0ef597de47e9f (do not edit this line) */
+/* JavaCC - OriginalChecksum=cd03747bd338c2d48e9db27241e03f0c (do not edit this line) */
