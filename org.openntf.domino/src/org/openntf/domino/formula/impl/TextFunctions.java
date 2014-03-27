@@ -23,6 +23,7 @@ public enum TextFunctions {
 	/*----------------------------------------------------------------------------*/
 	@ParamCount({ 1, 2 })
 	public static String atText(final Object... args) {
+		xxxxxxxxxxxxxx FIX TOMORROW - own AST node needed
 		if (args.length != 1)
 			throw new NotImplementedException();
 		return args[0].toString();
@@ -345,7 +346,7 @@ public enum TextFunctions {
 	public static ValueHolder atExplode(final FormulaContext ctx, final ValueHolder[] params) {
 		ValueHolder vh = params[0];
 		if (vh.dataType != DataType.STRING) {
-			return ctx.evaluateNative("@Explode(p1)", vh.toList());
+			return ctx.evaluateNative("@Explode(p1)", vh);
 		}
 		String seps = " ,;";
 		boolean includeEmpties = false;
@@ -723,15 +724,18 @@ public enum TextFunctions {
 	@NeedsNativeEvaluate("@Like isn't yet implemented here; use @MatchesRegExp instead")
 	@ParamCount({ 2, 3 })
 	public static ValueHolder atLike(final FormulaContext ctx, final ValueHolder[] params) {
-		return (params.length == 2) ? ctx.evaluateNative("@Like(p1;p2)", params[0].toList(), params[1].toList()) : ctx.evaluateNative(
-				"@Like(p1;p2;p3)", params[0].toList(), params[1].toList(), params[2].toList());
+		if (params.length == 2) {
+			return ctx.evaluateNative("@Like(p1;p2)", params[0], params[1]);
+		} else {
+			return ctx.evaluateNative("@Like(p1;p2;p3)", params[0], params[1], params[2]);
+		}
 	}
 
 	/*----------------------------------------------------------------------------*/
 	@NeedsNativeEvaluate("@Matches isn't yet implemented here; use @MatchesRegExp instead")
 	@ParamCount(2)
 	public static ValueHolder atMatches(final FormulaContext ctx, final ValueHolder[] params) {
-		return ctx.evaluateNative("@Matches(p1;p2)", params[0].toList(), params[1].toList());
+		return ctx.evaluateNative("@Matches(p1;p2)", params[0], params[1]);
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -947,28 +951,28 @@ public enum TextFunctions {
 	@NeedsNativeEvaluate("@Password isn't yet implemented here")
 	@ParamCount(1)
 	public static ValueHolder atPassword(final FormulaContext ctx, final ValueHolder params[]) {
-		return ctx.evaluateNative("@Password(p1)", params[0].toList());
+		return ctx.evaluateNative("@Password(p1)", params[0]);
 	}
 
 	/*----------------------------------------------------------------------------*/
 	@NeedsNativeEvaluate("@HashPassword isn't yet implemented here")
 	@ParamCount(1)
 	public static ValueHolder atHashPassword(final FormulaContext ctx, final ValueHolder params[]) {
-		return ctx.evaluateNative("@HashPassword(p1)", params[0].toList());
+		return ctx.evaluateNative("@HashPassword(p1)", params[0]);
 	}
 
 	/*----------------------------------------------------------------------------*/
 	@NeedsNativeEvaluate("@VerifyPassword isn't yet implemented here")
 	@ParamCount(2)
 	public static ValueHolder atVerifyPassword(final FormulaContext ctx, final ValueHolder params[]) {
-		return ctx.evaluateNative("@VerifyPassword(p1;p2)", params[0].toList(), params[1].toList());
+		return ctx.evaluateNative("@VerifyPassword(p1;p2)", params[0], params[1]);
 	}
 
 	/*----------------------------------------------------------------------------*/
 	@NeedsNativeEvaluate("@PasswordQuality isn't yet implemented here")
 	@ParamCount(1)
 	public static ValueHolder atPasswordQuality(final FormulaContext ctx, final ValueHolder params[]) {
-		return ctx.evaluateNative("@PasswordQuality(p1)", params[0].toList());
+		return ctx.evaluateNative("@PasswordQuality(p1)", params[0]);
 	}
 
 	/*----------------------------------------------------------------------------*/

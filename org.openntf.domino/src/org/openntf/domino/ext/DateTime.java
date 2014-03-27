@@ -23,14 +23,14 @@ public interface DateTime extends Comparable<org.openntf.domino.DateTime> {
 	/**
 	 * @param comparDate
 	 *            DateTime to compare to the current DateTime
-	 * @return boolean is time is the same, including millisecond
+	 * @return boolean true if time is the same, including millisecond
 	 */
 	public boolean equalsIgnoreDate(final org.openntf.domino.DateTime compareDate);
 
 	/**
 	 * @param comparDate
 	 *            DateTime to compare to the current DateTime
-	 * @return boolean is date is the same
+	 * @return boolean true if date is the same
 	 */
 	public boolean equalsIgnoreTime(final org.openntf.domino.DateTime compareDate);
 

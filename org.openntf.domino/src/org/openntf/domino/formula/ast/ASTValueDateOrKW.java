@@ -17,8 +17,10 @@
  */
 package org.openntf.domino.formula.ast;
 
+import java.util.Set;
+
 import org.openntf.domino.DateTime;
-import org.openntf.domino.formula.AtFormulaParser;
+import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ParseException;
 import org.openntf.domino.formula.ValueHolder;
@@ -27,11 +29,7 @@ public class ASTValueDateOrKW extends SimpleNode {
 	DateTime dateValue = null;
 	String image = null;
 
-	public ASTValueDateOrKW(final int id) {
-		super(id);
-	}
-
-	public ASTValueDateOrKW(final AtFormulaParser p, final int id) {
+	public ASTValueDateOrKW(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
@@ -58,6 +56,13 @@ public class ASTValueDateOrKW extends SimpleNode {
 	@Override
 	public void toFormula(final StringBuilder sb) {
 		sb.append(image);
+	}
+
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

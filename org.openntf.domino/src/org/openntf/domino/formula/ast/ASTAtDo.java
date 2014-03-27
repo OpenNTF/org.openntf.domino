@@ -17,28 +17,25 @@
  */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaParser;
-import org.openntf.domino.formula.EvaluateException;
+import java.util.Set;
+
+import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
 
 public class ASTAtDo extends SimpleNode {
-	public ASTAtDo(final int id) {
-		super(id);
-	}
 
-	public ASTAtDo(final AtFormulaParser p, final int id) {
+	public ASTAtDo(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
 	/**
-	 * AtDo returns the last child's value
+	 * AtDo returns the last child's value. This might be a ValueHolder of DataType.ERROR. No additional errorhandling needed
 	 * 
-	 * @throws EvaluateException
-	 *             TODO
 	 */
 	@Override
-	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
+	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
 		ValueHolder ret = null;
 		if (children == null)
 			return null;
@@ -53,5 +50,10 @@ public class ASTAtDo extends SimpleNode {
 		appendParams(sb);
 	}
 
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		functions.add("@do");
+	}
 }
 /* JavaCC - OriginalChecksum=28653335c32026ae20324c429d56df0a (do not edit this line) */

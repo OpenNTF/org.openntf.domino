@@ -48,8 +48,8 @@ public class ValueHolderNumber extends ValueHolder implements Serializable {
 	@Override
 	public Number getObject(final int i) {
 		switch (dataType) {
-		case ERROR:
-			throw currentError;
+		//case ERROR:
+		//	throw currentError;
 
 		case INTEGER:
 			return getInt(i);
@@ -70,8 +70,8 @@ public class ValueHolderNumber extends ValueHolder implements Serializable {
 	@Override
 	public int getInt(final int i) {
 		switch (dataType) {
-		case ERROR:
-			throw currentError;
+		//case ERROR:
+		//	throw currentError;
 		case INTEGER:
 			if (i < size) {
 				return valuesI[i];
@@ -97,8 +97,8 @@ public class ValueHolderNumber extends ValueHolder implements Serializable {
 	@Override
 	public double getDouble(final int i) {
 		switch (dataType) {
-		case ERROR:
-			throw currentError;
+		//case ERROR:
+		//	throw currentError;
 
 		case INTEGER:
 			if (i < size) {
@@ -186,13 +186,10 @@ public class ValueHolderNumber extends ValueHolder implements Serializable {
 		case _UNSET:
 			return false; // we do not add unset
 
-		case ERROR:
-			setError(other.getError());
-			return true;
-
 		case DOUBLE:
 			dataType = DataType.DOUBLE;
 			break;
+
 		case INTEGER:
 			if (dataType != DataType.DOUBLE) {
 				// do not downconvert
@@ -210,7 +207,8 @@ public class ValueHolderNumber extends ValueHolder implements Serializable {
 	}
 
 	@Override
-	public List<Object> toList() {
+	public List<Object> toList() throws EvaluateException {
+		testError();
 		List<Object> ret = new ArrayList<Object>(size);
 		if (dataType == DataType.INTEGER) {
 			for (int i = 0; i < size; i++) {

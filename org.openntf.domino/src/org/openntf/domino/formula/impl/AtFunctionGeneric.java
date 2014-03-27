@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
 
 public class AtFunctionGeneric extends AtFunction {
@@ -61,7 +62,7 @@ public class AtFunctionGeneric extends AtFunction {
 		}
 	}
 
-	public ValueHolder evaluate(final FormulaContext ctx, final ValueHolder[] params) throws Exception {
+	public ValueHolder evaluate(final FormulaContext ctx, final ValueHolder[] params) throws FormulaReturnException {
 		try {
 			switch (paramCount) {
 			case 0:
@@ -79,10 +80,14 @@ public class AtFunctionGeneric extends AtFunction {
 			default:
 				throw new IllegalArgumentException("Illegal parameter count: " + paramCount);
 			}
+		} catch (IllegalAccessException iax) {
+			throw new RuntimeException("Unexpected error while invoking method " + method.getName(), iax);
 		} catch (InvocationTargetException e) {
 			if (e.getCause() instanceof RuntimeException)
 				throw (RuntimeException) e.getCause();
-			throw e;
+			if (e.getCause() instanceof FormulaReturnException)
+				throw (FormulaReturnException) e.getCause();
+			throw new RuntimeException("Unexpected error occured in method " + method.getName(), e);
 		}
 	}
 

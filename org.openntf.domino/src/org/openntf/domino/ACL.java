@@ -53,7 +53,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	public static final Schema SCHEMA = new Schema();
 
 	/**
-	 * The Enum Level.
+	 * The Enum Level, corresponding to the ACL Level
 	 */
 	public static enum Level {
 
@@ -135,8 +135,10 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 * 
 	 * @return The newly-created {@link org.openntf.domino.ACLEntry}.
 	 * @since lotus.domino 4.5.0
+	 * @deprecated in favour of {@link org.openntf.domino.ext.ACL#createACLEntry(String, Level)}
 	 * 
 	 */
+	@Deprecated
 	@Override
 	public ACLEntry createACLEntry(final String name, final int level);
 

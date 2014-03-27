@@ -45,7 +45,7 @@ public class ParseException extends Exception {
 	 * This constructor is used by the method "generateParseException" in the generated parser. Calling this constructor generates a new
 	 * object of this type with the fields "currentToken", "expectedTokenSequences", and "tokenImage" set.
 	 */
-	public ParseException(final AtFormulaParser parser, final String message) {
+	public ParseException(final AtFormulaParserImpl parser, final String message) {
 		super(initialise(parser, message));
 		currentToken = parser.token;
 		expectedTokenSequences = new int[0][0];
@@ -136,7 +136,7 @@ public class ParseException extends Exception {
 	 * It uses "currentToken" and "expectedTokenSequences" to generate a parse error message and returns it. If this object has been created
 	 * due to a parse error, and you do not catch it (it gets thrown from the parser) the correct error message gets displayed.
 	 */
-	private static String initialise(final AtFormulaParser parser, final String message) {
+	private static String initialise(final AtFormulaParserImpl parser, final String message) {
 		String eol = System.getProperty("line.separator", "\n");
 
 		String retval = "Encountered \"";

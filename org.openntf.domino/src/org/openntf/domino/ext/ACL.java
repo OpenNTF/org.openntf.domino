@@ -9,11 +9,15 @@ import org.openntf.domino.ACLEntry;
 /**
  * @author withersp
  * 
+ *         OpenNTF Domino extensions to ACL class
+ * 
  */
 public interface ACL {
 
 	/**
-	 * Creates an entry in the ACL with the name and level that you specify.
+	 * Creates an entry in the ACL with the name and level that you specify.<br/>
+	 * This is the preferred way of adding an ACLEntry over {@link org.openntf.domino.ACL#createACLEntry(String, int)}. By using an enum
+	 * rather than an int, it prevents accidentally using integers that are unsupported.
 	 * 
 	 * @param name
 	 *            The name of the person, group, or server for whom you want to create an entry in the ACL. You must supply the complete

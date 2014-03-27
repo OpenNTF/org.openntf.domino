@@ -43,9 +43,6 @@ public class ValueHolderBoolean extends ValueHolder implements Serializable {
 
 	@Override
 	public Boolean getObject(final int i) {
-		if (currentError != null)
-			throw currentError;
-
 		if (size == 0) {
 			return null; // TODO: What to do?
 		} else if (i < size) {
@@ -60,9 +57,6 @@ public class ValueHolderBoolean extends ValueHolder implements Serializable {
 	 */
 	@Override
 	public boolean getBoolean(final int i) {
-		if (currentError != null)
-			throw currentError;
-
 		if (size == 0) {
 			return false; // TODO: What to do?
 		} else if (i < size) {
@@ -102,10 +96,6 @@ public class ValueHolderBoolean extends ValueHolder implements Serializable {
 		case _UNSET:
 			return false; // we do not add unset
 
-		case ERROR:
-			setError(other.getError());
-			return true;
-
 		case BOOLEAN:
 			ValueHolderBoolean toAdd = (ValueHolderBoolean) other;
 			System.arraycopy(toAdd.values, 0, values, size, toAdd.size);
@@ -118,7 +108,8 @@ public class ValueHolderBoolean extends ValueHolder implements Serializable {
 	}
 
 	@Override
-	public List<Object> toList() {
+	public List<Object> toList() throws EvaluateException {
+		testError();
 		List<Object> ret = new ArrayList<Object>(size);
 		for (int i = 0; i < size; i++) {
 			ret.add(values[i]);

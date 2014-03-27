@@ -17,7 +17,9 @@
  */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaParser;
+import java.util.Set;
+
+import org.openntf.domino.formula.AtFormulaParserImpl;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
 
@@ -25,11 +27,7 @@ public class ASTValueString extends SimpleNode {
 
 	private ValueHolder value;
 
-	public ASTValueString(final int id) {
-		super(id);
-	}
-
-	public ASTValueString(final AtFormulaParser p, final int id) {
+	public ASTValueString(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
@@ -74,6 +72,13 @@ public class ASTValueString extends SimpleNode {
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) {
 		return value;
+	}
+
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
