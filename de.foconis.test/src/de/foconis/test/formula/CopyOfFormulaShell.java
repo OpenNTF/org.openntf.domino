@@ -18,13 +18,13 @@ import jline.Terminal;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.ext.Session.Fixes;
+import org.openntf.domino.formula.AtFormulaNode;
+import org.openntf.domino.formula.AtFormulaParseException;
 import org.openntf.domino.formula.AtFormulaParser;
 import org.openntf.domino.formula.AtFunction;
 import org.openntf.domino.formula.AtFunctionFactory;
 import org.openntf.domino.formula.DominoFormatter;
 import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.ParseException;
-import org.openntf.domino.formula.ast.Node;
 import org.openntf.domino.formula.impl.NotImplemented;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
@@ -33,7 +33,7 @@ import org.openntf.domino.utils.Factory;
 public class CopyOfFormulaShell implements Runnable {
 	private static boolean cacheAST = false;
 	private static int count = 10;
-	Map<String, Node> astCache = new HashMap<String, Node>();
+	Map<String, AtFormulaNode> astCache = new HashMap<String, AtFormulaNode>();
 	private Database db;
 
 	public static void main(final String[] args) {
@@ -84,7 +84,7 @@ public class CopyOfFormulaShell implements Runnable {
 			List<Completor> completors = new LinkedList<Completor>();
 
 			// This code is responsible for autocompletion
-			AtFunctionFactory funcFact = AtFunctionFactory.getInstance();
+			AtFunctionFactory funcFact = AtFunctionFactory.getDefaultInstance();
 			Collection<AtFunction> funcs = funcFact.getFunctions().values();
 			String[] autoComplete = new String[funcs.size() + 3];
 			int i = 0;
@@ -128,7 +128,7 @@ public class CopyOfFormulaShell implements Runnable {
 
 				if (line.equalsIgnoreCase("aston")) {
 					cacheAST = true;
-					astCache = new HashMap<String, Node>();
+					astCache = new HashMap<String, AtFormulaNode>();
 					System.out.println("AST Cache is set to on");
 					continue;
 				}
@@ -179,12 +179,12 @@ public class CopyOfFormulaShell implements Runnable {
 
 	}
 
-	private Node parse(final String line) throws ParseException {
-		Node ast = null;
+	private AtFormulaNode parse(final String line) throws AtFormulaParseException {
+		AtFormulaNode ast = null;
 		if (cacheAST)
 			ast = astCache.get(line);
 
-		AtFormulaParser parser = AtFormulaParser.getInstance();
+		AtFormulaParser parser = AtFormulaParser.getDefaultInstance();
 		if (ast == null) {
 			ast = parser.parse(line);
 			if (cacheAST)
@@ -248,12 +248,12 @@ public class CopyOfFormulaShell implements Runnable {
 			}
 
 			// benchmark the AtFormulaParser
-			Node ast = null;
+			AtFormulaNode ast = null;
 			try {
 				time = System.nanoTime();
 				ast = parse(line);
 				parseTime += System.nanoTime() - time;
-			} catch (ParseException e) {
+			} catch (AtFormulaParseException e) {
 				System.out.println(NTF("Parser failed: ") + ERROR(e));
 				e.printStackTrace();
 				break;
@@ -262,7 +262,7 @@ public class CopyOfFormulaShell implements Runnable {
 
 			try {
 				time = System.nanoTime();
-				FormulaContext ctx1 = new FormulaContext(ntfDoc, DominoFormatter.getInstance());
+				FormulaContext ctx1 = new FormulaContext(ntfDoc, DominoFormatter.getDefaultInstance());
 				ntfDocResult = ast.solve(ctx1);
 				docEvaluateTime += System.nanoTime() - time;
 			} catch (Exception e) {
@@ -273,7 +273,7 @@ public class CopyOfFormulaShell implements Runnable {
 			try {
 				// benchmark the evaluate with a map as context
 				time = System.nanoTime();
-				FormulaContext ctx2 = new FormulaContext(ntfMap, DominoFormatter.getInstance());
+				FormulaContext ctx2 = new FormulaContext(ntfMap, DominoFormatter.getDefaultInstance());
 				ntfMapResult = ast.solve(ctx2);
 				mapEvaluateTime += System.nanoTime() - time;
 			} catch (Exception e) {

@@ -22,8 +22,8 @@ import java.util.Set;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
-import org.openntf.domino.formula.ast.ASTExtendedParameter;
-import org.openntf.domino.formula.ast.ASTExtendedVariable;
+import org.openntf.domino.formula.ast.ASTUserDefinedFunctionParameter;
+import org.openntf.domino.formula.ast.ASTUserDefinedFunctionVariable;
 import org.openntf.domino.formula.ast.Node;
 import org.openntf.domino.formula.ast.SimpleNode;
 import org.openntf.domino.formula.parse.AtFormulaParserImpl;
@@ -35,14 +35,14 @@ import org.openntf.domino.formula.parse.ParseException;
  * @author Roland Praml, Foconis AG
  * 
  */
-public class ExtendedFunction extends AtFunction {
+public class UserDefinedFunction extends AtFunction {
 	private String functionName;
 	private SimpleNode function;
-	private ASTExtendedParameter[] parameter;
+	private ASTUserDefinedFunctionParameter[] parameter;
 
 	private int paramUB;
 	private int paramLB;
-	private ASTExtendedVariable[] variable;
+	private ASTUserDefinedFunctionVariable[] variable;
 
 	/**
 	 * Constructor
@@ -59,7 +59,7 @@ public class ExtendedFunction extends AtFunction {
 	 * @throws ParseException
 	 *             if you do not put optional parameter to the end
 	 */
-	public ExtendedFunction(final String functionName, final ASTExtendedParameter[] parameter, final AtFormulaParserImpl parser)
+	public UserDefinedFunction(final String functionName, final ASTUserDefinedFunctionParameter[] parameter, final AtFormulaParserImpl parser)
 			throws ParseException {
 		super(functionName);
 		this.functionName = functionName;
@@ -77,7 +77,7 @@ public class ExtendedFunction extends AtFunction {
 		}
 	}
 
-	public void setVariables(final ASTExtendedVariable[] v) {
+	public void setVariables(final ASTUserDefinedFunctionVariable[] v) {
 		variable = v;
 	}
 
@@ -153,20 +153,20 @@ public class ExtendedFunction extends AtFunction {
 			Set<String> tmpVariables = new HashSet<String>();
 			tmpVariables.addAll(variables);
 
-			for (ASTExtendedParameter param : parameter) {
+			for (ASTUserDefinedFunctionParameter param : parameter) {
 				tmpVariables.add(param.getNameLC());
 				param.inspect(readFields, modifiedFields, variables, functions);
 			}
-			for (ASTExtendedVariable var : variable) {
+			for (ASTUserDefinedFunctionVariable var : variable) {
 				tmpVariables.add(var.getNameLC());
 				var.inspect(readFields, modifiedFields, variables, functions);
 			}
 			function.inspect(readFields, modifiedFields, tmpVariables, functions);
 
-			for (ASTExtendedParameter param : parameter) {
+			for (ASTUserDefinedFunctionParameter param : parameter) {
 				tmpVariables.remove(param.getNameLC());
 			}
-			for (ASTExtendedVariable var : variable) {
+			for (ASTUserDefinedFunctionVariable var : variable) {
 				tmpVariables.remove(var.getNameLC());
 			}
 			variables.addAll(tmpVariables);

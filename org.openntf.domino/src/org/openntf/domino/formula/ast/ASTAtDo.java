@@ -26,6 +26,8 @@ import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
 public class ASTAtDo extends SimpleNode {
 
+	private boolean virtual;
+
 	public ASTAtDo(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
@@ -53,7 +55,14 @@ public class ASTAtDo extends SimpleNode {
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		functions.add("@do");
+		if (!virtual)
+			functions.add("@do");
+	}
+
+	public void setVirtual(final boolean b) {
+		// TODO Auto-generated method stub
+		virtual = b;
+
 	}
 }
 /* JavaCC - OriginalChecksum=28653335c32026ae20324c429d56df0a (do not edit this line) */

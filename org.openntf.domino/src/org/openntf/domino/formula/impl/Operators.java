@@ -19,7 +19,7 @@ package org.openntf.domino.formula.impl;
 import java.util.Collection;
 
 import org.openntf.domino.DateTime;
-import org.openntf.domino.formula.AtFunctionFactory;
+import org.openntf.domino.formula.FunctionFactory;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
 
@@ -36,7 +36,7 @@ public class Operators extends OperatorsAbstract {
 	/**
 	 * The Factory that returns a set of operators
 	 */
-	public static class Factory extends AtFunctionFactory {
+	public static class Factory extends FunctionFactory {
 
 		public Factory() {
 			super();

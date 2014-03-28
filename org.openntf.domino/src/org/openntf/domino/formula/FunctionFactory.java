@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openntf.domino.formula.impl.Arithmetic;
+import org.openntf.domino.formula.impl.AtFunction;
 import org.openntf.domino.formula.impl.AtFunctionGeneric;
 import org.openntf.domino.formula.impl.AtFunctionSimple;
 import org.openntf.domino.formula.impl.Comparators;
@@ -40,16 +41,16 @@ import org.openntf.domino.formula.impl.TextFunctions;
  * @author Roland Praml, Foconis AG
  * 
  */
-public class AtFunctionFactory {
+public class FunctionFactory {
 
 	private Map<String, AtFunction> functions = new HashMap<String, AtFunction>();
 	private boolean immutable;
-	private static AtFunctionFactory instance;
+	private static FunctionFactory instance;
 
 	/**
 	 * Default constructor
 	 */
-	public AtFunctionFactory() {
+	public FunctionFactory() {
 		super();
 	}
 
@@ -58,7 +59,7 @@ public class AtFunctionFactory {
 	 * 
 	 * @param cls
 	 */
-	protected AtFunctionFactory(final Class<?> cls) {
+	protected FunctionFactory(final Class<?> cls) {
 		super();
 		Method[] methods = cls.getDeclaredMethods();
 		for (Method method : methods) {
@@ -125,7 +126,7 @@ public class AtFunctionFactory {
 	 * 
 	 * @param fact
 	 */
-	protected void addFactory(final org.openntf.domino.formula.AtFunctionFactory fact) {
+	protected void addFactory(final org.openntf.domino.formula.FunctionFactory fact) {
 		if (immutable)
 			throw new UnsupportedOperationException("Cannot add Factory, because this Factory is immutable");
 		functions.putAll(fact.getFunctions());
@@ -134,19 +135,19 @@ public class AtFunctionFactory {
 	/**
 	 * This is the global "default"-instance.
 	 */
-	public static synchronized AtFunctionFactory getDefaultInstance() {
+	public static synchronized FunctionFactory getDefaultInstance() {
 		if (instance == null) {
-			instance = new AtFunctionFactory();
+			instance = new FunctionFactory();
 			instance.addFactory(new Operators.Factory());
 			instance.addFactory(new OperatorsBool.Factory());
 			instance.addFactory(new Comparators.Factory());
 			instance.addFactory(new Negators.Factory());
 			instance.addFactory(new NotImplemented.Factory());
-			instance.addFactory(new AtFunctionFactory(Arithmetic.class));
-			instance.addFactory(new AtFunctionFactory(DocProperties.class));
-			instance.addFactory(new AtFunctionFactory(TextFunctions.class));
-			instance.addFactory(new AtFunctionFactory(Constant.class));
-			instance.addFactory(new AtFunctionFactory(NotSupported.class));
+			instance.addFactory(new FunctionFactory(Arithmetic.class));
+			instance.addFactory(new FunctionFactory(DocProperties.class));
+			instance.addFactory(new FunctionFactory(TextFunctions.class));
+			instance.addFactory(new FunctionFactory(Constant.class));
+			instance.addFactory(new FunctionFactory(NotSupported.class));
 			instance.setImmutable();
 		}
 		return instance;

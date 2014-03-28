@@ -9,14 +9,14 @@ public interface AtFormulaParserImplTreeConstants
   public int JJTVOID = 1;
   public int JJTATCONCAT = 2;
   public int JJTFOCPARAM = 3;
-  public int JJTNORMALTEXT = 4;
-  public int JJTEXTENDEDINCLUDE = 5;
-  public int JJTEXTENDEDFUNCTION = 6;
+  public int JJTFOCNORMALTEXT = 4;
+  public int JJTUSERDEFINEDINCLUDE = 5;
+  public int JJTUSERDEFINEDFUNCTION = 6;
   public int JJTASSIGNMENT = 7;
   public int JJTSELECT = 8;
-  public int JJTEXTENDEDFUNCTIONDEF = 9;
-  public int JJTEXTENDEDPARAMETER = 10;
-  public int JJTEXTENDEDVARIABLE = 11;
+  public int JJTUSERDEFINEDFUNCTIONDEF = 9;
+  public int JJTUSERDEFINEDFUNCTIONPARAMETER = 10;
+  public int JJTUSERDEFINEDFUNCTIONVARIABLE = 11;
   public int JJTOPERATOR = 12;
   public int JJTVALUELIST = 13;
   public int JJTSUBSCRIPT = 14;
@@ -44,14 +44,14 @@ public interface AtFormulaParserImplTreeConstants
     "void",
     "AtConCat",
     "FocParam",
-    "NormalText",
-    "ExtendedInclude",
-    "ExtendedFunction",
+    "FocNormalText",
+    "UserDefinedInclude",
+    "UserDefinedFunction",
     "Assignment",
     "Select",
-    "ExtendedFunctionDef",
-    "ExtendedParameter",
-    "ExtendedVariable",
+    "UserDefinedFunctionDef",
+    "UserDefinedFunctionParameter",
+    "UserDefinedFunctionVariable",
     "Operator",
     "ValueList",
     "Subscript",
@@ -74,4 +74,4 @@ public interface AtFormulaParserImplTreeConstants
     "GetVariable",
   };
 }
-/* JavaCC - OriginalChecksum=86b1deed6f4de3f2c165ae9968046ca1 (do not edit this line) */
+/* JavaCC - OriginalChecksum=a05c7d2066f7c4df44fee89a4667fe6c (do not edit this line) */

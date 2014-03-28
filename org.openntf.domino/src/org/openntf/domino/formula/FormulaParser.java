@@ -30,12 +30,12 @@ import org.openntf.domino.formula.parse.AtFormulaParserImpl;
  * @author Roland Praml, Foconis AG
  * 
  */
-public abstract class AtFormulaParser {
+public abstract class FormulaParser {
 
 	protected Formatter formatter;
-	protected AtFunctionFactory functionFactory;
+	protected FunctionFactory functionFactory;
 
-	protected Map<String, AtFunction> customFunc;
+	protected Map<String, Function> customFunc;
 
 	/**
 	 * Returns a the Formatter for this parser
@@ -49,7 +49,7 @@ public abstract class AtFormulaParser {
 	/**
 	 * This function returns a preconfigured default instance
 	 */
-	public static AtFormulaParser getDefaultInstance() {
+	public static FormulaParser getDefaultInstance() {
 		AtFormulaParserImpl parser = new AtFormulaParserImpl(new java.io.StringReader(""));
 		parser.init();
 		return parser;
@@ -62,14 +62,14 @@ public abstract class AtFormulaParser {
 		reset();
 		// TODO RPr we need a formatter that can parse date times and so on without Domino-objects 
 		formatter = DominoFormatter.getDefaultInstance();
-		functionFactory = AtFunctionFactory.getDefaultInstance();
+		functionFactory = FunctionFactory.getDefaultInstance();
 	}
 
 	/**
 	 * If you parse multiple formulas, you should call "reset" to clear predefined formulas!
 	 */
 	public void reset() {
-		customFunc = new HashMap<String, AtFunction>();
+		customFunc = new HashMap<String, Function>();
 	}
 
 	/**
@@ -80,9 +80,9 @@ public abstract class AtFormulaParser {
 	 *            the functionName (lowercase)
 	 * @return the function or null
 	 */
-	public AtFunction getFunctionLC(final String funcName) {
+	public Function getFunctionLC(final String funcName) {
 
-		AtFunction func = customFunc.get(funcName);
+		Function func = customFunc.get(funcName);
 		if (func != null) {
 			return func;
 		}
@@ -95,7 +95,7 @@ public abstract class AtFormulaParser {
 	 * @param func
 	 *            the function to declare
 	 */
-	public void declareFunction(final AtFunction func) {
+	public void declareFunction(final Function func) {
 		String funcName = func.getImage();
 		//		AtFunction currentFunc = getFunction(funcName);
 		//		if (currentFunc != null) {
@@ -115,7 +115,7 @@ public abstract class AtFormulaParser {
 	 * @throws ParseException
 	 *             if the formula contains errors
 	 */
-	final public AtFormulaNode parse(final Reader reader, final boolean useFocFormula) throws AtFormulaParseException {
+	final public ASTNode parse(final Reader reader, final boolean useFocFormula) throws FormulaParseException {
 		ReInit(reader);
 		if (useFocFormula) {
 			return parseFocFormula();
@@ -137,8 +137,8 @@ public abstract class AtFormulaParser {
 	 * @throws ParseException
 	 *             see: {@link #parse(Reader, boolean)}
 	 */
-	final public AtFormulaNode parse(final InputStream sr, final String encoding, final boolean useFocFormula)
-			throws AtFormulaParseException {
+	final public ASTNode parse(final InputStream sr, final String encoding, final boolean useFocFormula)
+			throws FormulaParseException {
 		ReInit(sr, encoding);
 		if (useFocFormula) {
 			return parseFocFormula();
@@ -158,7 +158,7 @@ public abstract class AtFormulaParser {
 	 * @throws ParseException
 	 *             see: {@link #parse(Reader, boolean)}
 	 */
-	final public AtFormulaNode parse(final InputStream sr, final boolean useFocFormula) throws AtFormulaParseException {
+	final public ASTNode parse(final InputStream sr, final boolean useFocFormula) throws FormulaParseException {
 		return parse(sr, null, useFocFormula);
 	}
 
@@ -173,9 +173,23 @@ public abstract class AtFormulaParser {
 	 * @throws ParseException
 	 *             see: {@link #parse(Reader, boolean)}
 	 */
-	final public AtFormulaNode parse(final String formula, final boolean useFocFormula) throws AtFormulaParseException {
+	final public ASTNode parse(final String formula, final boolean useFocFormula) throws FormulaParseException {
 		StringReader sr = new java.io.StringReader(formula);
 		return parse(sr, useFocFormula);
+	}
+
+	/**
+	 * Parses the given formlula from an inputStream
+	 * 
+	 * @param formula
+	 *            String with formul
+	 * @return see: {@link #parse(Reader, boolean)}
+	 * @throws ParseException
+	 *             see: {@link #parse(Reader, boolean)}
+	 */
+	final public ASTNode parse(final String formula) throws FormulaParseException {
+		StringReader sr = new java.io.StringReader(formula);
+		return parse(sr, false);
 	}
 
 	/**
@@ -203,7 +217,7 @@ public abstract class AtFormulaParser {
 	 * @throws ParseException
 	 *             if formula contains errors
 	 */
-	abstract public AtFormulaNode parseFormula() throws AtFormulaParseException;
+	abstract public ASTNode parseFormula() throws FormulaParseException;
 
 	/**
 	 * Parses the formula in Foconis-mode (inline formulas are supported)
@@ -212,5 +226,5 @@ public abstract class AtFormulaParser {
 	 * @throws ParseException
 	 *             if formula contains errors
 	 */
-	abstract public AtFormulaNode parseFocFormula() throws AtFormulaParseException;
+	abstract public ASTNode parseFocFormula() throws FormulaParseException;
 }

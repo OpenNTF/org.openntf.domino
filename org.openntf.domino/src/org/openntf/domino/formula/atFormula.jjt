@@ -10,7 +10,6 @@ options
   NODE_DEFAULT_VOID = true;
   NODE_USES_PARSER = true; // needed to query for formula extensions
   NODE_PACKAGE = "org.openntf.domino.formula.ast";
-  NODE_EXTENDS = "org.openntf.domino.formula.Node";
   JJTREE_OUTPUT_DIRECTORY = "ast";
   OUTPUT_DIRECTORY = "../parse";
 }
@@ -279,7 +278,9 @@ public SimpleNode parseFormula() #AtDo :
 {} 
 {
 	mainStatement() ((< EOS >) mainStatement()	)*	< EOF >
-  	{  return jjtThis; }
+  	{	jjtThis.setVirtual(true);
+  	  	return jjtThis;
+  	}
 }
 
 /**
@@ -314,12 +315,12 @@ public SimpleNode parseFocFormula() #AtConCat :
 {
  	{ token_source.SwitchTo(FOCONIS); } // TODO RPr can this be done in the init block?
   	(
-		normalText()
+		focNormalText()
 	|	focFormula()
 	|	focParam()		
 	)*
 	< EOF >
-  	{  return jjtThis; }
+  	{ return jjtThis; }
 }
 
 /**
@@ -329,7 +330,7 @@ private void focFormula() :
 {}
 {
   	< BEGIN_FORMULA >
-		( mainStatement() ((< EOS >) mainStatement()	)*) #AtDo
+		( mainStatement() ((< EOS >) mainStatement()	)* {jjtThis.setVirtual(true);} ) #AtDo
 	< END_FORMULA >
 }
 
@@ -347,7 +348,7 @@ private void focParam() #FocParam :
 /**
  * NormalText exists only in FOCONIS state and is outside of focFormula and focParam
  */
-private void normalText() #NormalText :
+private void focNormalText() #FocNormalText :
 { Token t; }
 {
   	t = < NORMAL_TEXT >
@@ -364,7 +365,7 @@ private void statement() :
 { Token t; }
 {
  	// Include is a custom extension by foconis
- 	< At_Include >		opBool()	#ExtendedInclude
+ 	< At_Include >		opBool()	#UserDefinedInclude
 
 	// At_Function is a custom extension by foconis 	
 | 	< At_Function >		(< OParen >		// @function(@myfunc(a:="x";b:="y");"";
@@ -373,7 +374,7 @@ private void statement() :
 
 							( < Assign >  opBool() )?	 // Assignment is optional
 						{jjtThis.init();}
-						) #ExtendedFunction
+						) #UserDefinedFunction
 |  	< KW_FIELD > 		(t = < Identifier > < Assign > {jjtThis.init(t.image, ASTAssignment.FIELD);		} opBool()) 	#Assignment
 |  	LOOKAHEAD(2) 		(t = < Identifier > < Assign > {jjtThis.init(t.image, ASTAssignment.VAR);		} opBool()) 	#Assignment
 | 	< KW_ENVIRONMENT > 	(t = < Identifier > < Assign > {jjtThis.init(t.image, ASTAssignment.ENV);		} opBool()) 	#Assignment
@@ -385,7 +386,7 @@ private void statement() :
 /**
  * Parameter for extended functions
  */
-private void exFuncDef() #ExtendedFunctionDef :
+private void exFuncDef() #UserDefinedFunctionDef :
 { Token t; }
 {
    // matches to @myfunc(a:="x";b:="y")
@@ -396,7 +397,7 @@ private void exFuncDef() #ExtendedFunctionDef :
 /**
  * Parameter for extended functions
  */
-private void exParam() #ExtendedParameter :
+private void exParam() #UserDefinedFunctionParameter :
 { Token t; }
 {
   (
@@ -409,7 +410,7 @@ private void exParam() #ExtendedParameter :
 /**
  * Parameter for extended functions
  */
-private void exVar() #ExtendedVariable :
+private void exVar() #UserDefinedFunctionVariable :
 { Token t; }
 {
   (

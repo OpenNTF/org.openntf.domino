@@ -4,7 +4,7 @@ package org.openntf.domino.formula.ast;
 
 import java.util.Set;
 
-import org.openntf.domino.formula.AtFormulaParseException;
+import org.openntf.domino.formula.FormulaParseException;
 import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
@@ -38,7 +38,7 @@ public class ASTAtEval extends SimpleNode {
 					break;
 			}
 			return ret;
-		} catch (AtFormulaParseException e) {
+		} catch (FormulaParseException e) {
 			return ValueHolder.valueOf(new EvaluateException(codeLine, codeColumn, e));
 		}
 	}

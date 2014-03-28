@@ -18,7 +18,7 @@
 
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaNode;
+import org.openntf.domino.formula.ASTNode;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
@@ -27,7 +27,7 @@ import org.openntf.domino.formula.ValueHolder;
    machinery for constructing the parent and child relationships
    between nodes. */
 
-public interface Node extends AtFormulaNode {
+public interface Node extends ASTNode {
 
 	/**
 	 * This method is called after the node has been made the current node. It indicates that child nodes can now be added to it.

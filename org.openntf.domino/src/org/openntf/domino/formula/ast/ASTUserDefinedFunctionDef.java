@@ -7,12 +7,12 @@ import java.util.Set;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
-import org.openntf.domino.formula.impl.ExtendedFunction;
+import org.openntf.domino.formula.impl.UserDefinedFunction;
 import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 import org.openntf.domino.formula.parse.ParseException;
 
 public class ASTUserDefinedFunctionDef extends SimpleNode {
-	private ExtendedFunction function;
+	private UserDefinedFunction function;
 	private String functionName;
 
 	public ASTUserDefinedFunctionDef(final AtFormulaParserImpl p, final int id) {
@@ -45,18 +45,18 @@ public class ASTUserDefinedFunctionDef extends SimpleNode {
 			functionParameters = children.length;
 		}
 
-		ASTExtendedParameter[] parameter = new ASTExtendedParameter[functionParameters];
+		ASTUserDefinedFunctionParameter[] parameter = new ASTUserDefinedFunctionParameter[functionParameters];
 
 		for (int i = 0; i < functionParameters; i++) {
-			parameter[i] = (ASTExtendedParameter) children[i];
+			parameter[i] = (ASTUserDefinedFunctionParameter) children[i];
 		}
 
-		function = new ExtendedFunction(functionName, parameter, parser);
+		function = new UserDefinedFunction(functionName, parameter, parser);
 		System.out.println("FunctionName is " + functionName);
 		parser.declareFunction(function);
 	}
 
-	public ExtendedFunction getFunction() {
+	public UserDefinedFunction getFunction() {
 		return function;
 	}
 

@@ -19,18 +19,18 @@ package org.openntf.domino.formula.ast;
 
 import java.util.Set;
 
-import org.openntf.domino.formula.AtFunction;
+import org.openntf.domino.formula.Function;
 import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
-import org.openntf.domino.formula.impl.ExtendedFunction;
+import org.openntf.domino.formula.impl.UserDefinedFunction;
 import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 import org.openntf.domino.formula.parse.ParseException;
 
 public class ASTFunction extends SimpleNode {
-	protected AtFunction function;
+	protected Function function;
 
 	public ASTFunction(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
@@ -83,8 +83,8 @@ public class ASTFunction extends SimpleNode {
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
 		functions.add(function.getImage().toLowerCase());
-		if (function instanceof ExtendedFunction) {
-			((ExtendedFunction) function).inspect(readFields, modifiedFields, variables, functions);
+		if (function instanceof UserDefinedFunction) {
+			((UserDefinedFunction) function).inspect(readFields, modifiedFields, variables, functions);
 		}
 	}
 }

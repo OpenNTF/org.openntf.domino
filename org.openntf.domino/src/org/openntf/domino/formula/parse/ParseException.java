@@ -17,7 +17,7 @@
  */
 package org.openntf.domino.formula.parse;
 
-import org.openntf.domino.formula.AtFormulaParseException;
+import org.openntf.domino.formula.FormulaParseException;
 
 /**
  * This exception is thrown when parse errors are encountered. You can explicitly create objects of this exception type by calling the
@@ -25,7 +25,7 @@ import org.openntf.domino.formula.AtFormulaParseException;
  * 
  * You can modify this class to customize your error reporting mechanisms so long as you retain the public fields.
  */
-public class ParseException extends AtFormulaParseException {
+public class ParseException extends FormulaParseException {
 
 	/**
 	 * The version identifier for this Serializable class. Increment only if the <i>serialized</i> form of the class changes.

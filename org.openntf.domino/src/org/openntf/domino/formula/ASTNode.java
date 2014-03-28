@@ -25,7 +25,7 @@ import java.util.Set;
  * @author Roland Praml, Foconis AG
  * 
  */
-public interface AtFormulaNode {
+public interface ASTNode {
 
 	/**
 	 * Create a dump of the AST-Tree to System.out. Useful for debugging

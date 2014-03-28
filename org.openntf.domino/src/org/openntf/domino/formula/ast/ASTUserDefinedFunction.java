@@ -7,7 +7,7 @@ import java.util.Set;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
-import org.openntf.domino.formula.impl.ExtendedFunction;
+import org.openntf.domino.formula.impl.UserDefinedFunction;
 import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
 /**
@@ -45,21 +45,21 @@ public class ASTUserDefinedFunction extends SimpleNode {
 
 	public void init() {
 		int functionVariables = 0;
-		ASTExtendedFunctionDef def = (ASTExtendedFunctionDef) children[0];
+		ASTUserDefinedFunctionDef def = (ASTUserDefinedFunctionDef) children[0];
 
-		ExtendedFunction function = def.getFunction();
+		UserDefinedFunction function = def.getFunction();
 
 		for (int i = 1; i < children.length; i++) {
-			if (children[i] instanceof ASTExtendedVariable) {
+			if (children[i] instanceof ASTUserDefinedFunctionVariable) {
 				functionVariables++;
 			} else {
 				function.setFunction(children[i]);
 			}
 		}
 
-		ASTExtendedVariable[] var = new ASTExtendedVariable[functionVariables];
+		ASTUserDefinedFunctionVariable[] var = new ASTUserDefinedFunctionVariable[functionVariables];
 		for (int i = 0; i < functionVariables; i++) {
-			var[i] = (ASTExtendedVariable) children[i + 1];
+			var[i] = (ASTUserDefinedFunctionVariable) children[i + 1];
 		}
 
 		function.setVariables(var);

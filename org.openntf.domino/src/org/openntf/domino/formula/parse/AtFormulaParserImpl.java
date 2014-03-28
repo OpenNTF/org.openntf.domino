@@ -20,7 +20,7 @@ import org.openntf.domino.formula.ast.*;
 import org.openntf.domino.formula.ast.*;
 import org.openntf.domino.formula.*;
 
-public class AtFormulaParserImpl extends AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserImplTreeConstants, AtFormulaParserImplConstants {/*@bgen(jjtree)*/
+public class AtFormulaParserImpl extends FormulaParser/*@bgen(jjtree)*/implements AtFormulaParserImplTreeConstants, AtFormulaParserImplConstants {/*@bgen(jjtree)*/
   protected JJTAtFormulaParserImplState jjtree = new JJTAtFormulaParserImplState();
 
   final public SimpleNode parseFormula() throws ParseException {
@@ -46,7 +46,8 @@ public class AtFormulaParserImpl extends AtFormulaParser/*@bgen(jjtree)*/impleme
       jj_consume_token(0);
           jjtree.closeNodeScope(jjtn000, true);
           jjtc000 = false;
-           {if (true) return jjtn000;}
+                jjtn000.setVirtual(true);
+                {if (true) return jjtn000;}
     } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -168,7 +169,7 @@ public class AtFormulaParserImpl extends AtFormulaParser/*@bgen(jjtree)*/impleme
         }
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case NORMAL_TEXT:
-          normalText();
+          focNormalText();
           break;
         case BEGIN_FORMULA:
           focFormula();
@@ -185,7 +186,7 @@ public class AtFormulaParserImpl extends AtFormulaParser/*@bgen(jjtree)*/impleme
       jj_consume_token(0);
           jjtree.closeNodeScope(jjtn000, true);
           jjtc000 = false;
-           {if (true) return jjtn000;}
+          {if (true) return jjtn000;}
     } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -228,6 +229,9 @@ public class AtFormulaParserImpl extends AtFormulaParser/*@bgen(jjtree)*/impleme
         jj_consume_token(EOS);
         mainStatement();
       }
+                                                                     jjtree.closeNodeScope(jjtn001, true);
+                                                                     jjtc001 = false;
+                                                                    jjtn001.setVirtual(true);
     } catch (Throwable jjte001) {
                   if (jjtc001) {
                     jjtree.clearNodeScope(jjtn001);
@@ -269,9 +273,9 @@ public class AtFormulaParserImpl extends AtFormulaParser/*@bgen(jjtree)*/impleme
     }
   }
 
-  final private void normalText() throws ParseException {
- /*@bgen(jjtree) NormalText */
-  ASTNormalText jjtn000 = new ASTNormalText(this, JJTNORMALTEXT);
+  final private void focNormalText() throws ParseException {
+ /*@bgen(jjtree) FocNormalText */
+  ASTFocNormalText jjtn000 = new ASTFocNormalText(this, JJTFOCNORMALTEXT);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);Token t;
     try {
@@ -291,7 +295,7 @@ public class AtFormulaParserImpl extends AtFormulaParser/*@bgen(jjtree)*/impleme
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case At_Include:
       jj_consume_token(At_Include);
-                                  ASTExtendedInclude jjtn001 = new ASTExtendedInclude(this, JJTEXTENDEDINCLUDE);
+                                  ASTUserDefinedInclude jjtn001 = new ASTUserDefinedInclude(this, JJTUSERDEFINEDINCLUDE);
                                   boolean jjtc001 = true;
                                   jjtree.openNodeScope(jjtn001);
       try {
@@ -318,7 +322,7 @@ public class AtFormulaParserImpl extends AtFormulaParser/*@bgen(jjtree)*/impleme
       break;
     case At_Function:
       jj_consume_token(At_Function);
-                                  ASTExtendedFunction jjtn002 = new ASTExtendedFunction(this, JJTEXTENDEDFUNCTION);
+                                  ASTUserDefinedFunction jjtn002 = new ASTUserDefinedFunction(this, JJTUSERDEFINEDFUNCTION);
                                   boolean jjtc002 = true;
                                   jjtree.openNodeScope(jjtn002);
       try {
@@ -556,8 +560,8 @@ public class AtFormulaParserImpl extends AtFormulaParser/*@bgen(jjtree)*/impleme
   }
 
   final private void exFuncDef() throws ParseException {
- /*@bgen(jjtree) ExtendedFunctionDef */
-  ASTExtendedFunctionDef jjtn000 = new ASTExtendedFunctionDef(this, JJTEXTENDEDFUNCTIONDEF);
+ /*@bgen(jjtree) UserDefinedFunctionDef */
+  ASTUserDefinedFunctionDef jjtn000 = new ASTUserDefinedFunctionDef(this, JJTUSERDEFINEDFUNCTIONDEF);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);Token t;
     try {
@@ -611,8 +615,8 @@ public class AtFormulaParserImpl extends AtFormulaParser/*@bgen(jjtree)*/impleme
   }
 
   final private void exParam() throws ParseException {
- /*@bgen(jjtree) ExtendedParameter */
-  ASTExtendedParameter jjtn000 = new ASTExtendedParameter(this, JJTEXTENDEDPARAMETER);
+ /*@bgen(jjtree) UserDefinedFunctionParameter */
+  ASTUserDefinedFunctionParameter jjtn000 = new ASTUserDefinedFunctionParameter(this, JJTUSERDEFINEDFUNCTIONPARAMETER);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);Token t;
     try {
@@ -656,8 +660,8 @@ public class AtFormulaParserImpl extends AtFormulaParser/*@bgen(jjtree)*/impleme
   }
 
   final private void exVar() throws ParseException {
- /*@bgen(jjtree) ExtendedVariable */
-  ASTExtendedVariable jjtn000 = new ASTExtendedVariable(this, JJTEXTENDEDVARIABLE);
+ /*@bgen(jjtree) UserDefinedFunctionVariable */
+  ASTUserDefinedFunctionVariable jjtn000 = new ASTUserDefinedFunctionVariable(this, JJTUSERDEFINEDFUNCTIONVARIABLE);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);Token t;
     try {
@@ -1949,44 +1953,6 @@ public class AtFormulaParserImpl extends AtFormulaParser/*@bgen(jjtree)*/impleme
     finally { jj_save(5, xla); }
   }
 
-  private boolean jj_3R_60() {
-    if (jj_3R_25()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_28() {
-    if (jj_scan_token(At_Include)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_24() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_28()) {
-    jj_scanpos = xsp;
-    if (jj_3R_29()) {
-    jj_scanpos = xsp;
-    if (jj_3R_30()) {
-    jj_scanpos = xsp;
-    if (jj_3_1()) {
-    jj_scanpos = xsp;
-    if (jj_3R_31()) {
-    jj_scanpos = xsp;
-    if (jj_3R_32()) {
-    jj_scanpos = xsp;
-    if (jj_3R_33()) {
-    jj_scanpos = xsp;
-    if (jj_3R_34()) return true;
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    return false;
-  }
-
   private boolean jj_3R_48() {
     if (jj_scan_token(At_transform)) return true;
     return false;
@@ -2373,6 +2339,44 @@ public class AtFormulaParserImpl extends AtFormulaParser/*@bgen(jjtree)*/impleme
 
   private boolean jj_3R_49() {
     if (jj_scan_token(At_sort)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_60() {
+    if (jj_3R_25()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_28() {
+    if (jj_scan_token(At_Include)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_24() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_28()) {
+    jj_scanpos = xsp;
+    if (jj_3R_29()) {
+    jj_scanpos = xsp;
+    if (jj_3R_30()) {
+    jj_scanpos = xsp;
+    if (jj_3_1()) {
+    jj_scanpos = xsp;
+    if (jj_3R_31()) {
+    jj_scanpos = xsp;
+    if (jj_3R_32()) {
+    jj_scanpos = xsp;
+    if (jj_3R_33()) {
+    jj_scanpos = xsp;
+    if (jj_3R_34()) return true;
+    }
+    }
+    }
+    }
+    }
+    }
+    }
     return false;
   }
 

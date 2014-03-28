@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
  * @author Roland Praml, Foconis AG
  * 
  */
-public interface AtFunction {
+public interface Function {
 
 	/**
 	 * Evaluates the formula.

@@ -11,7 +11,6 @@ options
                            
                                                                     
                                                   
-                                                   
                                   
   OUTPUT_DIRECTORY = "../parse";
 }
@@ -296,7 +295,9 @@ public SimpleNode parseFormula()       :
           jjtc000 = false;
         }
 /*@egen*/
-  	{  return jjtn000; }/*@bgen(jjtree)*/
+  	{	jjtn000.setVirtual(true);
+  	  	return jjtn000;
+  	}/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -357,7 +358,7 @@ public SimpleNode parseFocFormula()           :
 /*@egen*/
  	{ token_source.SwitchTo(FOCONIS); } // TODO RPr can this be done in the init block?
   	(
-		normalText()
+		focNormalText()
 	|	focFormula()
 	|	focParam()		
 	)*
@@ -367,7 +368,7 @@ public SimpleNode parseFocFormula()           :
           jjtc000 = false;
         }
 /*@egen*/
-  	{  return jjtn000; }/*@bgen(jjtree)*/
+  	{ return jjtn000; }/*@bgen(jjtree)*/
         } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -404,7 +405,12 @@ private void focFormula() :
                 }
                 try {
 /*@egen*/
-		( mainStatement() ((< EOS >) mainStatement()	)*)/*@bgen(jjtree)*/
+		( mainStatement() ((< EOS >) mainStatement()	)*/*@bgen(jjtree)*/
+                                                                   {
+                                                                     jjtree.closeNodeScope(jjtn001, true);
+                                                                     jjtc001 = false;
+                                                                   }
+/*@egen*/ {jjtn001.setVirtual(true);} )/*@bgen(jjtree)*/
                 } catch (Throwable jjte001) {
                   if (jjtc001) {
                     jjtree.clearNodeScope(jjtn001);
@@ -459,13 +465,13 @@ private void focParam()           :
 /**
  * NormalText exists only in FOCONIS state and is outside of focFormula and focParam
  */
-private void normalText()             :
-{/*@bgen(jjtree) NormalText */
-  ASTNormalText jjtn000 = new ASTNormalText(this, JJTNORMALTEXT);
+private void focNormalText()                :
+{/*@bgen(jjtree) FocNormalText */
+  ASTFocNormalText jjtn000 = new ASTFocNormalText(this, JJTFOCNORMALTEXT);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/ Token t; }
-{/*@bgen(jjtree) NormalText */
+{/*@bgen(jjtree) FocNormalText */
         try {
 /*@egen*/
   	t = < NORMAL_TEXT >/*@bgen(jjtree)*/
@@ -493,9 +499,9 @@ private void statement() :
 { Token t; }
 {
  	// Include is a custom extension by foconis
- 	< At_Include >/*@bgen(jjtree) ExtendedInclude */
+ 	< At_Include >/*@bgen(jjtree) UserDefinedInclude */
                                 {
-                                  ASTExtendedInclude jjtn001 = new ASTExtendedInclude(this, JJTEXTENDEDINCLUDE);
+                                  ASTUserDefinedInclude jjtn001 = new ASTUserDefinedInclude(this, JJTUSERDEFINEDINCLUDE);
                                   boolean jjtc001 = true;
                                   jjtree.openNodeScope(jjtn001);
                                 }
@@ -520,12 +526,12 @@ private void statement() :
                                     jjtree.closeNodeScope(jjtn001, true);
                                   }
                                 }
-/*@egen*/	                
+/*@egen*/	                   
 
 	// At_Function is a custom extension by foconis 	
-| 	< At_Function >/*@bgen(jjtree) ExtendedFunction */
+| 	< At_Function >/*@bgen(jjtree) UserDefinedFunction */
                                 {
-                                  ASTExtendedFunction jjtn002 = new ASTExtendedFunction(this, JJTEXTENDEDFUNCTION);
+                                  ASTUserDefinedFunction jjtn002 = new ASTUserDefinedFunction(this, JJTUSERDEFINEDFUNCTION);
                                   boolean jjtc002 = true;
                                   jjtree.openNodeScope(jjtn002);
                                 }
@@ -561,7 +567,7 @@ private void statement() :
                                     jjtree.closeNodeScope(jjtn002, true);
                                   }
                                 }
-/*@egen*/                  
+/*@egen*/                     
 |  	< KW_FIELD >/*@bgen(jjtree) Assignment */
                                 {
                                   ASTAssignment jjtn003 = new ASTAssignment(this, JJTASSIGNMENT);
@@ -708,13 +714,13 @@ private void statement() :
 /**
  * Parameter for extended functions
  */
-private void exFuncDef()                      :
-{/*@bgen(jjtree) ExtendedFunctionDef */
-  ASTExtendedFunctionDef jjtn000 = new ASTExtendedFunctionDef(this, JJTEXTENDEDFUNCTIONDEF);
+private void exFuncDef()                         :
+{/*@bgen(jjtree) UserDefinedFunctionDef */
+  ASTUserDefinedFunctionDef jjtn000 = new ASTUserDefinedFunctionDef(this, JJTUSERDEFINEDFUNCTIONDEF);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/ Token t; }
-{/*@bgen(jjtree) ExtendedFunctionDef */
+{/*@bgen(jjtree) UserDefinedFunctionDef */
    try {
 /*@egen*/
    // matches to @myfunc(a:="x";b:="y")
@@ -750,13 +756,13 @@ private void exFuncDef()                      :
 /**
  * Parameter for extended functions
  */
-private void exParam()                    :
-{/*@bgen(jjtree) ExtendedParameter */
-  ASTExtendedParameter jjtn000 = new ASTExtendedParameter(this, JJTEXTENDEDPARAMETER);
+private void exParam()                               :
+{/*@bgen(jjtree) UserDefinedFunctionParameter */
+  ASTUserDefinedFunctionParameter jjtn000 = new ASTUserDefinedFunctionParameter(this, JJTUSERDEFINEDFUNCTIONPARAMETER);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/ Token t; }
-{/*@bgen(jjtree) ExtendedParameter */
+{/*@bgen(jjtree) UserDefinedFunctionParameter */
   try {
 /*@egen*/
   (
@@ -794,13 +800,13 @@ private void exParam()                    :
 /**
  * Parameter for extended functions
  */
-private void exVar()                   :
-{/*@bgen(jjtree) ExtendedVariable */
-  ASTExtendedVariable jjtn000 = new ASTExtendedVariable(this, JJTEXTENDEDVARIABLE);
+private void exVar()                              :
+{/*@bgen(jjtree) UserDefinedFunctionVariable */
+  ASTUserDefinedFunctionVariable jjtn000 = new ASTUserDefinedFunctionVariable(this, JJTUSERDEFINEDFUNCTIONVARIABLE);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/ Token t; }
-{/*@bgen(jjtree) ExtendedVariable */
+{/*@bgen(jjtree) UserDefinedFunctionVariable */
   try {
 /*@egen*/
   (

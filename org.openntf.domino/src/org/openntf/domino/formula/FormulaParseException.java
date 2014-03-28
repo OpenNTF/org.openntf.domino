@@ -18,18 +18,18 @@ package org.openntf.domino.formula;
 /**
  * This is an abstract class, to separate parser/ast/impl package. This Exception (or a subclass) is thrown, if you parse a wrong formula
  */
-public abstract class AtFormulaParseException extends Exception {
+public abstract class FormulaParseException extends Exception {
 
 	/**
 	 * The version identifier for this Serializable class. Increment only if the <i>serialized</i> form of the class changes.
 	 */
 	private static final long serialVersionUID = 1L;
 
-	protected AtFormulaParseException(final String arg0) {
+	protected FormulaParseException(final String arg0) {
 		super(arg0);
 	}
 
-	protected AtFormulaParseException() {
+	protected FormulaParseException() {
 		super();
 	}
 }

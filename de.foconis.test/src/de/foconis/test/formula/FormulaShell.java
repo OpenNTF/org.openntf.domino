@@ -49,7 +49,7 @@ public class FormulaShell extends TestRunner {
 			List<Completor> completors = new LinkedList<Completor>();
 
 			// This code is responsible for autocompletion
-			AtFunctionFactory funcFact = AtFunctionFactory.getInstance();
+			AtFunctionFactory funcFact = AtFunctionFactory.getDefaultInstance();
 			Collection<AtFunction> funcs = funcFact.getFunctions().values();
 			String[] autoComplete = new String[funcs.size() + 3];
 			int i = 0;

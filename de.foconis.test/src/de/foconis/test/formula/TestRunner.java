@@ -19,12 +19,12 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.ext.Session.Fixes;
+import org.openntf.domino.formula.AtFormulaNode;
+import org.openntf.domino.formula.AtFormulaParseException;
 import org.openntf.domino.formula.AtFormulaParser;
 import org.openntf.domino.formula.DominoFormatter;
 import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.ParseException;
-import org.openntf.domino.formula.ast.Node;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -211,10 +211,10 @@ public class TestRunner implements Runnable {
 		}
 
 		// benchmark the AtFormulaParser
-		Node ast = null;
+		AtFormulaNode ast = null;
 		try {
-			ast = AtFormulaParser.getInstance().parse(line);
-		} catch (ParseException e) {
+			ast = AtFormulaParser.getDefaultInstance().parse(line);
+		} catch (AtFormulaParseException e) {
 			errors.append(NTF("\tParser failed: ") + ERROR(e) + "\n");
 			e.printStackTrace();
 			parserFailed = true;
@@ -226,7 +226,7 @@ public class TestRunner implements Runnable {
 		if (!parserFailed) {
 			if (testDoc) {
 				try {
-					FormulaContext ctx1 = new FormulaContext(ntfDoc, DominoFormatter.getInstance());
+					FormulaContext ctx1 = new FormulaContext(ntfDoc, DominoFormatter.getDefaultInstance());
 					ntfDocResult = ast.solve(ctx1);
 				} catch (EvaluateException e) {
 					errors.append(NTF("\tDoc-Evaluate failed: ") + ERROR(e) + "\n");
@@ -240,7 +240,7 @@ public class TestRunner implements Runnable {
 			if (testMap) {
 				try {
 					// benchmark the evaluate with a map as context
-					FormulaContext ctx2 = new FormulaContext(ntfMap, DominoFormatter.getInstance());
+					FormulaContext ctx2 = new FormulaContext(ntfMap, DominoFormatter.getDefaultInstance());
 					ntfMapResult = ast.solve(ctx2);
 				} catch (EvaluateException e) {
 					errors.append(NTF("\tMap-Evaluate failed: ") + ERROR(e) + "\n");
