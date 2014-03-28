@@ -16,7 +16,8 @@
  */
 package org.openntf.domino.formula;
 
-import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import org.openntf.domino.DateTime;
 
@@ -46,8 +47,8 @@ public class DominoFormatter implements Formatter {
 		return Double.valueOf(el.replace(',', '.'));
 	}
 
-	public DecimalFormat getNumberFormatter() {
-		return new DecimalFormat();
+	public NumberFormat getNumberFormatter() {
+		return NumberFormat.getInstance(Locale.getDefault());
 	}
 
 	public static synchronized Formatter getDefaultInstance() {
