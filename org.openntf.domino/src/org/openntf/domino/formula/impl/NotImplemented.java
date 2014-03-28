@@ -16,8 +16,8 @@
  */
 package org.openntf.domino.formula.impl;
 
-import org.openntf.domino.formula.FunctionFactory;
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FunctionFactory;
 import org.openntf.domino.formula.ValueHolder;
 
 import com.ibm.commons.util.NotImplementedException;
@@ -117,7 +117,7 @@ public class NotImplemented extends AtFunction {
 					//new NotImplemented("ENVIRONMENT", "Prio: LO"), //	parser
 					new NotImplemented("@Environment", "Prio: MID"), //
 					new NotImplemented("@Error", "Prio: HIGH"), //
-					new NotImplemented("@Eval", "Prio: MID"), //
+					// new NotImplemented("@Eval", "Prio: MID"), // parser
 					new NotImplemented("@Exp", "Prio: HIGH"), //					Arithmetic 
 					new NotImplemented("@Explode", "Prio: HIGH"), //
 					new NotImplemented("@Failure", "Prio: LO"), //
@@ -232,7 +232,7 @@ public class NotImplemented extends AtFunction {
 					new NotImplemented("@ReplaceSubstring", "Prio: HIGH"), //
 					new NotImplemented("@ReplicaID", "Prio: HIGH"), //				DocProperties
 					new NotImplemented("@Responses", "Prio: HIGH"), //				DocProperties
-					new NotImplemented("@Return", "Prio: HIGH"), //
+					//new NotImplemented("@Return", "Prio: HIGH"), // parser
 					new NotImplemented("@Right", "Prio: HIGH"), //
 					new NotImplemented("@RightBack", "Prio: HIGH"), //
 					new NotImplemented("@Round", "Prio: HIGH"), //
@@ -252,7 +252,7 @@ public class NotImplemented extends AtFunction {
 					new NotImplemented("@ShowParentPreview", "Prio: LO"), //
 					new NotImplemented("@Sign", "Prio: HIGH"), //
 					new NotImplemented("@Sin", "Prio: HIGH"), //					Arithmetic
-					new NotImplemented("@Sort", "Prio: HIGH"), //
+					//new NotImplemented("@Sort", "Prio: HIGH"), // parser
 					new NotImplemented("@Soundex", "Prio: HIGH"), //
 					new NotImplemented("@Sqrt", "Prio: HIGH"), //					Arithmetic
 					new NotImplemented("@StatusBar", "Prio: LO"), //

@@ -1,3 +1,19 @@
+/*
+ * © Copyright FOCONIS AG, 2014
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ * 
+ */
 package org.openntf.domino.formula.impl;
 
 import java.text.NumberFormat;
@@ -1031,7 +1047,6 @@ public enum TextFunctions {
 	/*----------------------------------------------------------------------------*/
 	@DiffersFromLotus("Not all Lotus formats are yet supported")
 	@SuppressWarnings("deprecation")
-	@ParamCount({ 1, 2 })
 	public static ValueHolder doAtText(final FormulaContext ctx, final ValueHolder params[]) {
 		ValueHolder vh = params[0];
 		String format = null;
@@ -1042,8 +1057,8 @@ public enum TextFunctions {
 		}
 		if (vh.dataType.numeric)
 			return doAtTextNumber(ctx, vh, format);
-		if (format != null)
-			throw new IllegalArgumentException("Second parameter in @Text not yet supported for DateTime");
+		if (vh.dataType == DataType.DATETIME)
+			return doAtTextDateTime(ctx, vh, format);
 		ValueHolder ret = ValueHolder.createValueHolder(String.class, vh.size);
 		for (int i = 0; i < vh.size; i++)
 			ret.add(vh.get(i).toString());
@@ -1129,6 +1144,16 @@ public enum TextFunctions {
 				dStr = '(' + dStr.substring(1) + ')';
 			ret.add(dStr);
 		}
+		return ret;
+	}
+
+	/*----------------------------------------------------------------------------*/
+	private static ValueHolder doAtTextDateTime(final FormulaContext ctx, final ValueHolder vh, final String format) {
+		if (format != null)
+			throw new IllegalArgumentException("Second parameter in @Text not yet supported for DateTime");
+		ValueHolder ret = ValueHolder.createValueHolder(String.class, vh.size);
+		for (int i = 0; i < vh.size; i++)
+			ret.add(vh.get(i).toString());
 		return ret;
 	}
 
