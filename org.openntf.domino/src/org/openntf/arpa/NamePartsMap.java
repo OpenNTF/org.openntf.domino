@@ -20,6 +20,9 @@ package org.openntf.arpa;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 
 /**
@@ -194,10 +197,10 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder(NamePartsMap.class.getName());
+		final StringBuilder sb = new StringBuilder(NamePartsMap.class.getName());
 		sb.append(" [");
-		for (Key key : Key.values()) {
-			String s = this.get(key);
+		for (final Key key : Key.values()) {
+			final String s = this.get(key);
 			if (!ISO.isBlankString(s)) {
 				sb.append(key.name() + "=" + s);
 			}
@@ -222,20 +225,20 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		if (null != key) {
 			switch (key) {
 			case Abbreviated: {
-				String common = this.get(NamePartsMap.Key.Common);
-				String ou1 = this.get(NamePartsMap.Key.OrgUnit1);
-				String ou2 = this.get(NamePartsMap.Key.OrgUnit2);
-				String ou3 = this.get(NamePartsMap.Key.OrgUnit3);
-				String ou4 = this.get(NamePartsMap.Key.OrgUnit4);
-				String organization = this.get(NamePartsMap.Key.Organization);
-				String country = this.get(NamePartsMap.Key.Country);
+				final String common = this.get(NamePartsMap.Key.Common);
+				final String ou1 = this.get(NamePartsMap.Key.OrgUnit1);
+				final String ou2 = this.get(NamePartsMap.Key.OrgUnit2);
+				final String ou3 = this.get(NamePartsMap.Key.OrgUnit3);
+				final String ou4 = this.get(NamePartsMap.Key.OrgUnit4);
+				final String organization = this.get(NamePartsMap.Key.Organization);
+				final String country = this.get(NamePartsMap.Key.Country);
 
-				StringBuffer sb = new StringBuffer("");
+				final StringBuffer sb = new StringBuffer("");
 				if (!ISO.isBlankString(common)) {
 					sb.append(common);
 				}
 				if (!ISO.isBlankString(ou4)) {
-					sb.append("/OU=" + ou4);
+					sb.append("/" + ou4);
 				}
 				if (!ISO.isBlankString(ou3)) {
 					sb.append("/" + ou3);
@@ -275,17 +278,17 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 				return this.getRFC822name().getAddr822Phrase();
 
 			case Canonical: {
-				String common = this.get(NamePartsMap.Key.Common);
-				String ou1 = this.get(NamePartsMap.Key.OrgUnit1);
-				String ou2 = this.get(NamePartsMap.Key.OrgUnit2);
-				String ou3 = this.get(NamePartsMap.Key.OrgUnit3);
-				String ou4 = this.get(NamePartsMap.Key.OrgUnit4);
-				String organization = this.get(NamePartsMap.Key.Organization);
-				String country = this.get(NamePartsMap.Key.Country);
+				final String common = this.get(NamePartsMap.Key.Common);
+				final String ou1 = this.get(NamePartsMap.Key.OrgUnit1);
+				final String ou2 = this.get(NamePartsMap.Key.OrgUnit2);
+				final String ou3 = this.get(NamePartsMap.Key.OrgUnit3);
+				final String ou4 = this.get(NamePartsMap.Key.OrgUnit4);
+				final String organization = this.get(NamePartsMap.Key.Organization);
+				final String country = this.get(NamePartsMap.Key.Country);
 
-				StringBuffer sb = new StringBuffer("");
+				final StringBuffer sb = new StringBuffer("");
 				if (!ISO.isBlankString(common)) {
-					sb.append("CN=" + common);
+					sb.append("*".equals(common) ? "*" : "CN=" + common);
 				}
 				if (!ISO.isBlankString(ou4)) {
 					sb.append("/OU=" + ou4);
@@ -394,7 +397,7 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		String result = super.get(Key.IDprefix);
 		if (ISO.isBlankString(result)) {
 
-			String common = this.get(Key.Common);
+			final String common = this.get(Key.Common);
 			if (null != common) {
 
 				final String alphanumericandspacacesonly = common.trim().toUpperCase().replaceAll("[^A-Za-z0-9 ]", "");
@@ -514,83 +517,197 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 	 *            String from which to parse the name values.
 	 */
 	private boolean parse(final String string) {
+		return this.parse(string, true);
+	}
+
+	/**
+	 * Retrieves and sets the various name values by parsing an input source string.
+	 * 
+	 * @param string
+	 *            String from which to parse the name values.
+	 * 
+	 * @param allowRecursion
+	 *            Flag indicating if this method is allowed to recursively call itself.
+	 */
+	private boolean parse(final String string, final boolean allowRecursion) {
 		try {
+			System.out.println("*");
+			System.out.println("*");
+			System.out.println("*");
+			System.out.println("*");
+			System.out.println("*");
+			System.out.println("*");
+			System.out.println("*");
+			System.out.println("*");
+			System.out.println("NamePartsMap.parse(): Parsing String: \"" + string + "\"");
 			String common = "";
 			final String[] ous = new String[] { "", "", "", "" };
 			String organization = "";
 			String country = "";
 
-			if ((!ISO.isBlankString(string)) && (string.indexOf('/') > 0)) {
+			if (!ISO.isBlankString(string)) {
+				if (ISO.PatternRFC822.matcher(string).matches()) {
+					this.parseRFC82xContent(string);
+					if (allowRecursion) {
+						final String phrase = this.getRFC822name().getAddr822Phrase();
+						return this.parse((phrase.indexOf('/') < 0) ? this.getRFC822name().getAddr822PhraseFirstLast() : phrase, false);
+					}
 
-				// break the source into component words and parse them
-				final String[] words = string.split("/");
-				if (words.length > 0) {
-					int idx = 0;
+					return false;
+				}
 
-					if (string.indexOf('=') > 0) {
-						// use canonical logic
-						try {
-							for (int i = (words.length - 1); i >= 0; i--) {
-								final String word = words[i].trim();
-								// TODO Need to handle case where word = "*"   DSO 20140319
+				if (string.indexOf('/') < 0) {
+					common = string;
 
-								if (word.indexOf('=') > 0) {
-									final String[] nibbles = word.split("=");
-									if (nibbles.length > 1) {
-										final String key = nibbles[0];
-										final String value = nibbles[1];
+				} else {
+					// break the source into component words and parse them
+					final String[] words = string.split("/");
+					if (words.length > 0) {
+						int idx = 0;
 
-										if (CanonicalKey.C.name().equalsIgnoreCase(key)) {
-											country = value;
-										} else if (CanonicalKey.O.name().equalsIgnoreCase(key)) {
-											organization = value;
-										} else if (CanonicalKey.OU.name().equalsIgnoreCase(key)) {
-											ous[idx] = value;
-											idx++;
-										} else if (CanonicalKey.CN.name().equalsIgnoreCase(key)) {
-											common = value;
+						if (string.indexOf('=') > 0) {
+							// use canonical logic
+							try {
+								TreeMap<Integer, String> undefinedValues = null;
+								int Oidx = -1;
+								int Cidx = -1;
+								for (int i = (words.length - 1); i >= 0; i--) {
+									final String word = words[i].trim();
+									System.out.println("NamePartsMap.parse(): Parsing word \"" + word + "\"");
+									// TODO Need to handle case where word = "*"
+									// DSO
+									// 20140319
+
+									if (word.indexOf('=') > 0) {
+										final String[] nibbles = word.split("=");
+										if (nibbles.length > 1) {
+											final String key = nibbles[0];
+											final String value = nibbles[1];
+
+											if (CanonicalKey.C.name().equalsIgnoreCase(key)) {
+												country = value;
+												Cidx = i;
+
+											} else if (CanonicalKey.O.name().equalsIgnoreCase(key)) {
+												organization = value;
+												Oidx = i;
+
+											} else if (CanonicalKey.OU.name().equalsIgnoreCase(key)) {
+												ous[idx] = value;
+												switch (idx) {
+												case 0: {
+													break;
+												}
+												case 1: {
+													break;
+												}
+												case 2: {
+													break;
+												}
+												case 3: {
+													break;
+												}
+												}
+
+												idx++;
+
+											} else if (CanonicalKey.CN.name().equalsIgnoreCase(key)) {
+												common = value;
+											}
+										} else {
+											throw new RuntimeException("Cannot Parse Word: \"" + word + "\", Source String: \"" + string
+													+ "\"");
 										}
 									} else {
-										throw new RuntimeException("Cannot Parse Word: \"" + word + "\", Source String: \"" + string + "\"");
+										// no = in word
+										if (null == undefinedValues) {
+											undefinedValues = new TreeMap<Integer, String>();
+										}
+										undefinedValues.put(new Integer(i), word);
 									}
 								}
-							}
 
-						} catch (final Exception e) {
-							ISO.handleException(e, "Source String: \"" + string + "\"");
-						}
+								if (null != undefinedValues) {
+									// at least one undefined value (such as a
+									// wildcard) exists.
+									final Iterator<Map.Entry<Integer, String>> it = undefinedValues.entrySet().iterator();
+									while (it.hasNext()) {
+										final Map.Entry<Integer, String> entry = it.next();
+										final int idxEntry = entry.getKey().intValue();
+										if (0 == idxEntry) {
+											if (ISO.isBlankString(common)) {
+												System.out.println("Setting Common to " + entry.getValue());
+												common = entry.getValue();
+											}
 
-					} else {
-						// use abbreviated logic
-						common = words[0].trim();
-						if (words.length > 1) {
-							int orgpos = (words.length - 1);
-							organization = words[orgpos];
-							if (ISO.isCountryCode2(organization)) {
-								// organization could be a country code,
-								if (orgpos > 1) {
-									// Treat organization as a country code and
-									// re-aquire the organization
-									country = organization;
-									orgpos--;
-									organization = words[orgpos];
+										} else if ((Cidx < 0) && (idxEntry == (words.length - 1))) {
+											System.out.println("Setting Country to " + entry.getValue());
+											country = entry.getValue();
+
+										} else if (idxEntry == Cidx) {
+											System.out.println("Setting Organization to " + entry.getValue());
+											organization = entry.getValue();
+
+										} else if (idxEntry == Oidx) {
+											for (String orgunit : ous) {
+												if (ISO.isBlankString(orgunit)) {
+													System.out.println("Setting Org UNIT to " + entry.getValue());
+													orgunit = entry.getValue();
+													break;
+												}
+											}
+										}
+									}
 								}
+
+							} catch (final Exception e) {
+								ISO.handleException(e, "Source String: \"" + string + "\"");
 							}
 
-							int oupos = orgpos - 1;
-							while (oupos > 0) {
-								ous[idx] = words[oupos];
+						} else {
+							// use abbreviated logic
+							common = words[0].trim();
+							if (words.length > 1) {
+								int orgpos = (words.length - 1);
+								organization = words[orgpos];
+								if (ISO.isCountryCode2(organization)) {
+									// organization could be a country code,
+									if (orgpos > 1) {
+										// Treat organization as a country code
+										// and
+										// re-aquire the organization
+										country = organization;
+										orgpos--;
+										organization = words[orgpos];
+									}
+								}
 
-								oupos--;
-								idx++;
-								if (idx > 3) {
-									break;
+								int oupos = orgpos - 1;
+								while (oupos > 0) {
+									ous[idx] = words[oupos];
+
+									oupos--;
+									idx++;
+									if (idx > 3) {
+										break;
+									}
 								}
 							}
 						}
 					}
+
 				}
 			}
+
+			System.out.println("NamePartsMap.parse(): Common: \"" + common + "\"");
+			System.out.println("NamePartsMap.parse(): OrgUnit1: \"" + ous[0] + "\"");
+			System.out.println("NamePartsMap.parse(): OrgUnit2: \"" + ous[1] + "\"");
+			System.out.println("NamePartsMap.parse(): OrgUnit3: \"" + ous[2] + "\"");
+			System.out.println("NamePartsMap.parse(): OrgUnit4: \"" + ous[3] + "\"");
+			System.out.println("NamePartsMap.parse(): Organization: \"" + organization + "\"");
+			System.out.println("NamePartsMap.parse(): Country: \"" + country + "\"");
+			System.out.println("NamePartsMap.parse(): this.get(NamePartsMap.Key.Abbreviated): \"" + this.get(NamePartsMap.Key.Abbreviated)
+					+ "\"");
 
 			this.put(Key.Common, common);
 			this.put(Key.OrgUnit1, ous[0]);

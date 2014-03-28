@@ -86,9 +86,9 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 	 * @return the Addr821 component
 	 */
 	public String getAddr821() {
-		String local = this.getAddr822LocalPart();
+		final String local = this.getAddr822LocalPart();
 		if (local.length() > 0) {
-			String domain = this.getAddr822Domain();
+			final String domain = this.getAddr822Domain();
 			return (domain.length() > 0) ? local + "@" + domain : "";
 		}
 
@@ -120,7 +120,7 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 			return "";
 		}
 
-		String comment = this.get(key);
+		final String comment = this.get(key);
 		return (comment.length() < 1) ? "" : "(" + comment + ")";
 
 	}
@@ -176,7 +176,7 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 	 * @return the Addr822Full component
 	 */
 	public String getAddr822Full() {
-		StringBuilder sb = new StringBuilder(this.getAddr822Simple());
+		final StringBuilder sb = new StringBuilder(this.getAddr822Simple());
 		if (sb.length() > 0) {
 			if (this.getAddr822Comment1().length() > 0) {
 				sb.append(" " + this.getAddr822Comment1());
@@ -198,7 +198,7 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 	 * @return the Addr822Full component
 	 */
 	public String getAddr822FullFirstLast() {
-		StringBuilder sb = new StringBuilder(this.getAddr822SimpleFirstLast());
+		final StringBuilder sb = new StringBuilder(this.getAddr822SimpleFirstLast());
 		if (sb.length() > 0) {
 			if (this.getAddr822Comment1().length() > 0) {
 				sb.append(" " + this.getAddr822Comment1());
@@ -220,10 +220,10 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 	 * @return the Addr822Simple component
 	 */
 	public String getAddr822Simple() {
-		String addr821 = this.getAddr821();
+		final String addr821 = this.getAddr821();
 		if (addr821.length() > 0) {
-			StringBuilder sb = new StringBuilder("");
-			String phrase = this.getAddr822Phrase();
+			final StringBuilder sb = new StringBuilder("");
+			final String phrase = this.getAddr822Phrase();
 			if (phrase.length() > 0) {
 				sb.append("\"");
 				sb.append(phrase);
@@ -246,10 +246,10 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 	 * @return the Addr822Simple component
 	 */
 	public String getAddr822SimpleFirstLast() {
-		String addr821 = this.getAddr821();
+		final String addr821 = this.getAddr821();
 		if (addr821.length() > 0) {
-			StringBuilder sb = new StringBuilder("");
-			String phrase = this.getAddr822PhraseFirstLast();
+			final StringBuilder sb = new StringBuilder("");
+			final String phrase = this.getAddr822PhraseFirstLast();
 			if (phrase.length() > 0) {
 				sb.append("\"");
 				sb.append(phrase);
@@ -272,6 +272,7 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 	 * @return the Addr822Phrase component
 	 */
 	public String getAddr822Phrase() {
+		System.out.println("RFC822name.getAddr822Phrase(): " + this.get(Key.Phrase));
 		return this.get(Key.Phrase);
 	}
 
@@ -281,33 +282,32 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 	 * @return the Addr822Phrase component
 	 */
 	public String getAddr822PhraseFirstLast() {
-		String phrase = this.getAddr822Phrase();
+		final StringBuilder sb = new StringBuilder("");
+		final String phrase = this.getAddr822Phrase();
 		if (phrase.indexOf(',') > 0) {
 			// assume name format of Lastname, Firstname and reverse
 			// to format of Firstname Lastname
 			final String[] chunks = phrase.split(",");
-			final StringBuilder sb = new StringBuilder();
 			for (int i = chunks.length - 1; i > -1; i--) {
 				sb.append(ISO.toProperCase(chunks[i].trim()));
 				sb.append(" ");
 			}
 
-			return sb.toString();
-
 		} else if (phrase.indexOf('.') > 0) {
 			// assume name format of Firstname.Lastname and strip
 			// out the period
 			final String[] chunks = phrase.split("\\.");
-			final StringBuilder sb = new StringBuilder();
 			for (final String s : chunks) {
 				sb.append(ISO.toProperCase(s.trim()));
 				sb.append(" ");
 			}
 
-			return sb.toString();
+		} else {
+			sb.append(phrase);
 		}
 
-		return phrase;
+		System.out.println("RFC822name.getAddr822PhraseFirstLast(): " + sb.toString());
+		return sb.toString();
 	}
 
 	/**
@@ -318,7 +318,7 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 
 	public boolean isHasRFC82xContent() {
 		if (this.size() > 0) {
-			for (String s : this.values()) {
+			for (final String s : this.values()) {
 				if ((null != s) && (s.trim().length() > 0)) {
 					return true;
 				}
@@ -398,29 +398,31 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 	}
 
 	public String get(final RFC822name.Key key) {
-		String result = (null == key) ? "" : super.get(key);
+		final String result = (null == key) ? "" : super.get(key);
 		return (null == result) ? "" : result;
 	}
 
-	@Override
-	public String put(final RFC822name.Key key, final String value) {
-		return "";
-	}
+	// @Override
+	// public String put(final RFC822name.Key key, final String value) {
+	// return "";
+	// }
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("RFC822name");
+		final StringBuilder sb = new StringBuilder("RFC822name");
 		if (this.size() < 1) {
 			return sb.toString();
 		}
 
 		sb.append(" [");
-		Iterator<Map.Entry<RFC822name.Key, String>> it = this.entrySet().iterator();
+		final Iterator<Map.Entry<RFC822name.Key, String>> it = this.entrySet().iterator();
 		while (it.hasNext()) {
-			Map.Entry<RFC822name.Key, String> entry = it.next();
+			final Map.Entry<RFC822name.Key, String> entry = it.next();
 			sb.append(entry.getKey() + "=" + entry.getValue());
 			if (it.hasNext()) {
 				sb.append(", ");
@@ -466,14 +468,14 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 	public static String buildAddr822Full(final String phrase, final String addr821, final String... comments) {
 
 		if ((null != addr821) && (addr821.trim().length() > 0)) {
-			StringBuilder sb = new StringBuilder((null == phrase) ? "" : phrase.trim());
+			final StringBuilder sb = new StringBuilder((null == phrase) ? "" : phrase.trim());
 			sb.append("<");
 			sb.append(addr821);
 			sb.append(">");
 
 			if (null != comments) {
 				int idx = 0;
-				for (String comment : comments) {
+				for (final String comment : comments) {
 					if (!ISO.isBlankString(comment)) {
 						sb.append("(");
 						sb.append(comment);
@@ -533,25 +535,34 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 	 *            String from which to parse the content values.
 	 */
 	private void parse(final String string) {
+		System.out.println("*");
+		System.out.println("*");
+		System.out.println("RFC822name.parse()  Parsing: \"" + string + "\"");
+
 		if (!ISO.isBlankString(string)) {
-			Matcher matcher = ISO.PatternRFC822.matcher(string);
+			final Matcher matcher = ISO.PatternRFC822.matcher(string);
 			if (matcher.matches()) {
 				// test matches anytext<anytext>anytext
-				// get the three primary chunks as phrase<internetaddress>comments from the source
+				// get the three primary chunks as
+				// phrase<internetaddress>comments from the source
 
-				int idxLT = string.indexOf('<');
-				int idxGT = string.indexOf('>', idxLT);
+				System.out.println("Matches Pattern: " + ISO.PatternRFC822.pattern());
+
+				final int idxLT = string.indexOf('<');
+				final int idxGT = string.indexOf('>', idxLT);
 
 				// parse the phrase part
-				String phrase = (idxLT > 0) ? string.substring(0, idxLT).trim() : "";
+				final String phrase = (idxLT > 0) ? string.substring(0, idxLT).trim() : "";
+				System.out.println("phrase " + phrase);
 				if (phrase.length() > 0) {
 					this.put(Key.Phrase, phrase.replaceAll("\"", "").trim());
 				}
 
 				// parse the internetaddress part
-				String internetaddress = (idxGT > (idxLT + 1)) ? string.substring(idxLT + 1, idxGT).trim() : "";
+				final String internetaddress = (idxGT > (idxLT + 1)) ? string.substring(idxLT + 1, idxGT).trim() : "";
+				System.out.println("internetaddress " + internetaddress);
 				if ((internetaddress.length() > 0) && (internetaddress.indexOf('@') >= 0)) {
-					String[] chunks = internetaddress.split("@");
+					final String[] chunks = internetaddress.split("@");
 					if (null != chunks) {
 						if (null != chunks[0]) {
 							this.put(Key.Local, chunks[0].trim());
@@ -563,12 +574,13 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 				}
 
 				// parse the comments part
-				String comments = (idxGT < string.length()) ? string.substring(idxGT).trim() : "";
+				final String comments = (idxGT < string.length()) ? string.substring(idxGT).trim() : "";
+				System.out.println("comments " + comments);
 				if (comments.length() > 0) {
 					if (!comments.startsWith("(")) {
 						this.setAddr822Comment(1, comments.replaceAll("\\(", " ").replaceAll("\\)", " ").trim());
 					} else {
-						String[] commentSet = INPARENS_MATCH.split(comments);
+						final String[] commentSet = RFC822name.INPARENS_MATCH.split(comments);
 						for (int i = 0; i < commentSet.length; i++) {
 							if (i < 4) {
 								this.setAddr822Comment(i, commentSet[i]);
@@ -581,4 +593,4 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 			}
 		}
 	}
-} // RFC822name
+}
