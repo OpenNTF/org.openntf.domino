@@ -105,6 +105,10 @@ public class ASTAssignment extends SimpleNode {
 		return value;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ASTNode#toFormula(java.lang.StringBuilder)
+	 */
 	@Override
 	public void toFormula(final StringBuilder sb) {
 		switch (type) {
@@ -139,6 +143,7 @@ public class ASTAssignment extends SimpleNode {
 		case FIELD:
 			modifiedFields.add(varName.toLowerCase());
 			break;
+
 		case VAR:
 		case DEFAULT:
 			variables.add(varName.toLowerCase());

@@ -4,11 +4,17 @@ package org.openntf.domino.formula.ast;
 
 import java.util.Set;
 
-import org.openntf.domino.formula.parse.*;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
+/**
+ * Implements the {@literal @}Return function. This is implemented by throwing a FormulaReturnException that is catched by the caller
+ * 
+ * @author Roland Praml, Foconis AG
+ * 
+ */
 public class ASTAtReturn extends SimpleNode {
 
 	public ASTAtReturn(final AtFormulaParserImpl p, final int id) {
@@ -29,6 +35,10 @@ public class ASTAtReturn extends SimpleNode {
 		throw new FormulaReturnException(children[0].evaluate(ctx));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.SimpleNode#analyzeThis(java.util.Set, java.util.Set, java.util.Set, java.util.Set)
+	 */
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {

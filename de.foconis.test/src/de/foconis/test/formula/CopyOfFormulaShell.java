@@ -18,13 +18,13 @@ import jline.Terminal;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.ext.Session.Fixes;
-import org.openntf.domino.formula.AtFormulaNode;
-import org.openntf.domino.formula.AtFormulaParseException;
-import org.openntf.domino.formula.AtFormulaParser;
-import org.openntf.domino.formula.AtFunction;
-import org.openntf.domino.formula.AtFunctionFactory;
+import org.openntf.domino.formula.ASTNode;
 import org.openntf.domino.formula.DominoFormatter;
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FormulaParseException;
+import org.openntf.domino.formula.FormulaParser;
+import org.openntf.domino.formula.Function;
+import org.openntf.domino.formula.FunctionFactory;
 import org.openntf.domino.formula.impl.NotImplemented;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
@@ -33,7 +33,7 @@ import org.openntf.domino.utils.Factory;
 public class CopyOfFormulaShell implements Runnable {
 	private static boolean cacheAST = false;
 	private static int count = 10;
-	Map<String, AtFormulaNode> astCache = new HashMap<String, AtFormulaNode>();
+	Map<String, ASTNode> astCache = new HashMap<String, ASTNode>();
 	private Database db;
 
 	public static void main(final String[] args) {
@@ -84,11 +84,11 @@ public class CopyOfFormulaShell implements Runnable {
 			List<Completor> completors = new LinkedList<Completor>();
 
 			// This code is responsible for autocompletion
-			AtFunctionFactory funcFact = AtFunctionFactory.getDefaultInstance();
-			Collection<AtFunction> funcs = funcFact.getFunctions().values();
+			FunctionFactory funcFact = FunctionFactory.getDefaultInstance();
+			Collection<Function> funcs = funcFact.getFunctions().values();
 			String[] autoComplete = new String[funcs.size() + 3];
 			int i = 0;
-			for (AtFunction func : funcs) {
+			for (Function func : funcs) {
 				if (func instanceof NotImplemented) {
 					autoComplete[i++] = "NotImpl:" + func.getImage();
 				} else {
@@ -128,7 +128,7 @@ public class CopyOfFormulaShell implements Runnable {
 
 				if (line.equalsIgnoreCase("aston")) {
 					cacheAST = true;
-					astCache = new HashMap<String, AtFormulaNode>();
+					astCache = new HashMap<String, ASTNode>();
 					System.out.println("AST Cache is set to on");
 					continue;
 				}
@@ -179,12 +179,12 @@ public class CopyOfFormulaShell implements Runnable {
 
 	}
 
-	private AtFormulaNode parse(final String line) throws AtFormulaParseException {
-		AtFormulaNode ast = null;
+	private ASTNode parse(final String line) throws FormulaParseException {
+		ASTNode ast = null;
 		if (cacheAST)
 			ast = astCache.get(line);
 
-		AtFormulaParser parser = AtFormulaParser.getDefaultInstance();
+		FormulaParser parser = FormulaParser.getDefaultInstance();
 		if (ast == null) {
 			ast = parser.parse(line);
 			if (cacheAST)
@@ -248,12 +248,12 @@ public class CopyOfFormulaShell implements Runnable {
 			}
 
 			// benchmark the AtFormulaParser
-			AtFormulaNode ast = null;
+			ASTNode ast = null;
 			try {
 				time = System.nanoTime();
 				ast = parse(line);
 				parseTime += System.nanoTime() - time;
-			} catch (AtFormulaParseException e) {
+			} catch (FormulaParseException e) {
 				System.out.println(NTF("Parser failed: ") + ERROR(e));
 				e.printStackTrace();
 				break;

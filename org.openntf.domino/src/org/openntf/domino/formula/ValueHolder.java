@@ -112,7 +112,7 @@ public abstract class ValueHolder implements Serializable {
 	 *            the class to create the ValueHolder
 	 * @param size
 	 *            the size of the ValueHolder. You must specify the size at construction time
-	 * @return
+	 * @return a valueHOlder
 	 */
 	public static ValueHolder createValueHolder(final Class<?> clazz, final int size) {
 

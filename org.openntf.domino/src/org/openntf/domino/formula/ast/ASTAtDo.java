@@ -34,7 +34,6 @@ public class ASTAtDo extends SimpleNode {
 
 	/**
 	 * AtDo returns the last child's value. This might be a ValueHolder of DataType.ERROR. No additional errorhandling needed
-	 * 
 	 */
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
@@ -47,22 +46,33 @@ public class ASTAtDo extends SimpleNode {
 		return ret;
 	}
 
+	/**
+	 * returns a equivalent lotus formula.
+	 */
 	public void toFormula(final StringBuilder sb) {
 		sb.append("@Do");
 		appendParams(sb);
 	}
 
+	/**
+	 * add {@literal @}Do to the functions list (if it is not virtual)
+	 */
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		if (!virtual)
+		if (!virtual) {
 			functions.add("@do");
+		}
 	}
 
-	public void setVirtual(final boolean b) {
-		// TODO Auto-generated method stub
-		virtual = b;
-
+	/**
+	 * Sets the mode to virtual (= function does not appear in function list)
+	 * 
+	 * @param bool
+	 *            virtual
+	 */
+	public void setVirtual(final boolean bool) {
+		virtual = bool;
 	}
 }
 /* JavaCC - OriginalChecksum=28653335c32026ae20324c429d56df0a (do not edit this line) */

@@ -19,12 +19,12 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.ext.Session.Fixes;
-import org.openntf.domino.formula.AtFormulaNode;
-import org.openntf.domino.formula.AtFormulaParseException;
-import org.openntf.domino.formula.AtFormulaParser;
+import org.openntf.domino.formula.ASTNode;
 import org.openntf.domino.formula.DominoFormatter;
 import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FormulaParseException;
+import org.openntf.domino.formula.FormulaParser;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -211,10 +211,10 @@ public class TestRunner implements Runnable {
 		}
 
 		// benchmark the AtFormulaParser
-		AtFormulaNode ast = null;
+		ASTNode ast = null;
 		try {
-			ast = AtFormulaParser.getDefaultInstance().parse(line);
-		} catch (AtFormulaParseException e) {
+			ast = FormulaParser.getDefaultInstance().parse(line);
+		} catch (FormulaParseException e) {
 			errors.append(NTF("\tParser failed: ") + ERROR(e) + "\n");
 			e.printStackTrace();
 			parserFailed = true;

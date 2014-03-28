@@ -4,18 +4,27 @@ package org.openntf.domino.formula.ast;
 
 import java.util.Set;
 
-import org.openntf.domino.formula.parse.*;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
+/**
+ * Implements the {@literal @}IsError function
+ * 
+ * @author Roland Praml, Foconis AG
+ * 
+ */
 public class ASTAtIsError extends SimpleNode {
 
 	public ASTAtIsError(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
+	/**
+	 * Returns {@link FormulaContext#TRUE ctx.TRUE} if the Value's Datatype = DataType.ERROR
+	 */
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
 
@@ -26,12 +35,20 @@ public class ASTAtIsError extends SimpleNode {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ASTNode#toFormula(java.lang.StringBuilder)
+	 */
 	public void toFormula(final StringBuilder sb) {
 		sb.append("@IsError");
 		appendParams(sb);
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.SimpleNode#analyzeThis(java.util.Set, java.util.Set, java.util.Set, java.util.Set)
+	 */
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {

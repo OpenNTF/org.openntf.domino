@@ -189,17 +189,15 @@ public class FormulaContext {
 		if (params.length > 0) {
 			tmpDoc = db.createDocument();
 			rawDocument = Factory.toLotus(tmpDoc);
-		}
-
-		// fill the document
-		for (int i = 0; i < params.length; i++) {
-			try {
-				tmpDoc.replaceItemValue("p" + (i + 1), params[i].toList());
-			} catch (EvaluateException e) {
-				return params[i];
+			// fill the document
+			for (int i = 0; i < params.length; i++) {
+				try {
+					tmpDoc.replaceItemValue("p" + (i + 1), params[i].toList());
+				} catch (EvaluateException e) {
+					return params[i];
+				}
 			}
 		}
-
 		try {
 			log_.warning("Evaluating native formula: '" + formula + "' This may affect performance");
 

@@ -43,7 +43,7 @@ import org.openntf.domino.formula.impl.TextFunctions;
  */
 public class FunctionFactory {
 
-	private Map<String, AtFunction> functions = new HashMap<String, AtFunction>();
+	private Map<String, Function> functions = new HashMap<String, Function>();
 	private boolean immutable;
 	private static FunctionFactory instance;
 
@@ -91,13 +91,13 @@ public class FunctionFactory {
 	 * Returns the atFunction object that can evaluate 'funcName'
 	 */
 	public AtFunction getFunction(final String funcName) {
-		return functions.get(funcName.toLowerCase());
+		return (AtFunction) functions.get(funcName.toLowerCase());
 	}
 
 	/**
 	 * Returns all avaliable at-Functions
 	 */
-	public Map<String, AtFunction> getFunctions() {
+	public Map<String, Function> getFunctions() {
 		return Collections.unmodifiableMap(functions);
 	}
 

@@ -19,12 +19,11 @@ package org.openntf.domino.formula.ast;
 
 import java.util.Set;
 
-import org.openntf.domino.formula.parse.*;
-import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
 public class ASTAtDoWhile extends SimpleNode {
 
@@ -34,9 +33,6 @@ public class ASTAtDoWhile extends SimpleNode {
 
 	/**
 	 * AtDoWhile returns always TRUE, or an Error-ValueHolder, if an error occurs in the last parameter.
-	 * 
-	 * @throws EvaluateException
-	 *             TODO
 	 */
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
@@ -59,11 +55,18 @@ public class ASTAtDoWhile extends SimpleNode {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ASTNode#toFormula(java.lang.StringBuilder)
+	 */
 	public void toFormula(final StringBuilder sb) {
 		sb.append("@DoWhile");
 		appendParams(sb);
 	}
 
+	/**
+	 * adds doWhile to the formula list
+	 */
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {

@@ -19,12 +19,18 @@ package org.openntf.domino.formula.ast;
 
 import java.util.Set;
 
-import org.openntf.domino.formula.parse.*;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
+/**
+ * Implements the {@literal @}IfError function (this is rarely used)
+ * 
+ * @author Roland Praml, Foconis AG
+ * 
+ */
 public class ASTAtIfError extends SimpleNode {
 
 	public ASTAtIfError(final AtFormulaParserImpl p, final int id) {
@@ -32,7 +38,7 @@ public class ASTAtIfError extends SimpleNode {
 	}
 
 	/**
-	 * IfError detects the error of the first valueHolder and returns the second one
+	 * {@literal @}IfError detects the error of the first valueHolder and returns the second one
 	 */
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
@@ -46,6 +52,9 @@ public class ASTAtIfError extends SimpleNode {
 		return ValueHolder.valueDefault();
 	}
 
+	/**
+	 * 
+	 */
 	public void toFormula(final StringBuilder sb) {
 		sb.append("@IfError");
 		appendParams(sb);

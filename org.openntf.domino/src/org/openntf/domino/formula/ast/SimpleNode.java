@@ -34,13 +34,14 @@ public abstract class SimpleNode implements Node {
 	protected Node parent;
 	protected Node[] children;
 	protected int id;
-	protected AtFormulaParserImpl parser;
 	protected int codeLine;
 	protected int codeColumn;
-	private Set<String> functions;
-	private Set<String> variables;
-	private Set<String> readFields;
-	private Set<String> modifiedFields;
+	// these need not to be serialized!
+	protected transient AtFormulaParserImpl parser;
+	private transient Set<String> functions;
+	private transient Set<String> variables;
+	private transient Set<String> readFields;
+	private transient Set<String> modifiedFields;
 
 	/**
 	 * create a new node with ID and parser as reference

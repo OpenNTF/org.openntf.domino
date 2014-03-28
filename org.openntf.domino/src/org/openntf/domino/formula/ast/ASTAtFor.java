@@ -19,12 +19,16 @@ package org.openntf.domino.formula.ast;
 
 import java.util.Set;
 
-import org.openntf.domino.formula.parse.*;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
+/**
+ * Implements the {@literal @}For function
+ * 
+ */
 public class ASTAtFor extends SimpleNode {
 
 	public ASTAtFor(final AtFormulaParserImpl p, final int id) {
@@ -65,11 +69,19 @@ public class ASTAtFor extends SimpleNode {
 		return ctx.TRUE; // returns always TRUE
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ASTNode#toFormula(java.lang.StringBuilder)
+	 */
 	public void toFormula(final StringBuilder sb) {
 		sb.append("@For");
 		appendParams(sb);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.SimpleNode#analyzeThis(java.util.Set, java.util.Set, java.util.Set, java.util.Set)
+	 */
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
