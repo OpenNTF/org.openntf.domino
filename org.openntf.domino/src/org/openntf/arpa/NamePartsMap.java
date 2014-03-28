@@ -156,6 +156,7 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		if (null == this._rfc822name) {
 			this._rfc822name = new RFC822name();
 		}
+
 		return this._rfc822name;
 	}
 
@@ -237,21 +238,27 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 				if (!ISO.isBlankString(common)) {
 					sb.append(common);
 				}
+
 				if (!ISO.isBlankString(ou4)) {
 					sb.append("/" + ou4);
 				}
+
 				if (!ISO.isBlankString(ou3)) {
 					sb.append("/" + ou3);
 				}
+
 				if (!ISO.isBlankString(ou2)) {
 					sb.append("/" + ou2);
 				}
+
 				if (!ISO.isBlankString(ou1)) {
 					sb.append("/" + ou1);
 				}
+
 				if (!ISO.isBlankString(organization)) {
 					sb.append("/" + organization);
 				}
+
 				if (!ISO.isBlankString(country)) {
 					sb.append("/" + country);
 				}
@@ -290,21 +297,27 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 				if (!ISO.isBlankString(common)) {
 					sb.append("*".equals(common) ? "*" : "CN=" + common);
 				}
+
 				if (!ISO.isBlankString(ou4)) {
 					sb.append("/OU=" + ou4);
 				}
+
 				if (!ISO.isBlankString(ou3)) {
 					sb.append("/OU=" + ou3);
 				}
+
 				if (!ISO.isBlankString(ou2)) {
 					sb.append("/OU=" + ou2);
 				}
+
 				if (!ISO.isBlankString(ou1)) {
 					sb.append("/OU=" + ou1);
 				}
+
 				if (!ISO.isBlankString(organization)) {
 					sb.append("/O=" + organization);
 				}
+
 				if (!ISO.isBlankString(country)) {
 					sb.append("/C=" + country);
 				}
@@ -579,22 +592,9 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 												Oidx = i;
 
 											} else if (CanonicalKey.OU.name().equalsIgnoreCase(key)) {
-												ous[idx] = value;
-												switch (idx) {
-												case 0: {
-													break;
+												if (idx < 4) {
+													ous[idx] = value;
 												}
-												case 1: {
-													break;
-												}
-												case 2: {
-													break;
-												}
-												case 3: {
-													break;
-												}
-												}
-
 												idx++;
 
 											} else if (CanonicalKey.CN.name().equalsIgnoreCase(key)) {
@@ -604,8 +604,9 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 											throw new RuntimeException("Cannot Parse Word: \"" + word + "\", Source String: \"" + string
 													+ "\"");
 										}
+
 									} else {
-										// no = in word
+										// no '=' in word
 										if (null == undefinedValues) {
 											undefinedValues = new TreeMap<Integer, String>();
 										}

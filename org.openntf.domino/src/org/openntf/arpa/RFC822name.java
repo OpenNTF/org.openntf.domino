@@ -400,11 +400,6 @@ public class RFC822name extends HashMap<RFC822name.Key, String> implements Seria
 		return (null == result) ? "" : result;
 	}
 
-	// @Override
-	// public String put(final RFC822name.Key key, final String value) {
-	// return "";
-	// }
-
 	/*
 	 * (non-Javadoc)
 	 * 
