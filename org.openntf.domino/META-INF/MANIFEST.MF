@@ -22,9 +22,9 @@ Export-Package: com.ibm.icu.impl,com.ibm.icu.impl.data,com.ibm.icu.imp
  ntf.domino.thread,org.openntf.domino.transactions,org.openntf.domino.
  types,org.openntf.domino.utils,org.openntf.domino.utils.xml
 Implementation-Title: OpenNTF Domino API
-Implementation-Version: 1.0.0_20140324054213
+Implementation-Version: 1.0.0_20140328044906
 Implementation-Vendor: OpenNTF
 Implementation-Vendor-URL: http://www.openntf.org
 Built-By: dolson
-Build-Date: 20140324054213
+Build-Date: 20140328044906
 
