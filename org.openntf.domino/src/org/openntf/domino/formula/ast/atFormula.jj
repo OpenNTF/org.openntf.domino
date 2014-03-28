@@ -4,7 +4,7 @@ import org.openntf.domino.formula.ast.*;
 public class AtFormulaParserImpl extends AtFormulaParser/*@bgen(jjtree)*/implements AtFormulaParserImplTreeConstants/*@egen*/{/*@bgen(jjtree)*/
   protected JJTAtFormulaParserImplState jjtree = new JJTAtFormulaParserImplState();
 
-/*@egen*/  }PARSER_END(AtFormulaParserImpl)/*	public String toString() {		return AdderTreeConstants.jjtNodeName[id] + ": " + jjtGetValue();	}*//** * Lexer rules */// in default mode, a "[" means that the string to the "]" is a Date or Keyword< DEFAULT > TOKEN :{	< Date_or_KW : "[" (~["]"])* "]" > : SUBSCRIPT	// after a Date, we are in "subscript" mode (e.g. [Today][1])}// in subscript mode, a "[" means that the following expression is a subscript// a subscript can occur after a numeric value, a string, a ")", a date, an identifier or an other subscript< SUBSCRIPT > TOKEN :{  	 < OSubscript : "[" > 	:  DEFAULT		// switch back immediately. Thus x[[today]] makes no sense, it is formal correct}< DEFAULT, SUBSCRIPT > TOKEN :{  	// "]" must be recognized in both states  	// consider these examples "x[(1)]": the ) switches to "SUBSCRIPT" 	< CSubscript : "]" > :  SUBSCRIPT	 }< DEFAULT, SUBSCRIPT >TOKEN :{  	// misc tokens	< EOS : ";" >								:	DEFAULT // End of Statement| 	< OParen : "(" >							: 	DEFAULT| 	< CParen : ")" >							: 	SUBSCRIPT // the next open [ means, that this is a subscript| 	< Assign : ":=" >							:	DEFAULT| 	< BoolNot : "!" >							: 	DEFAULT	// Keywords| 	< KW_INCLUDE	: "INCLUDE" >| 	< KW_FUNCTION	: "FUNCTION" >| 	< KW_DEFAULT	: "DEFAULT" >| 	< KW_ENVIRONMENT: "ENVIRONMENT" >| 	< KW_FIELD 		: "FIELD" >| 	< KW_REM 		: "REM" >| 	< KW_SELECT		: "SELECT" >	// @Functions| 	< At_do			: "@do" > | 	< At_doWhile	: "@doWhile" > | 	< At_for		: "@for" > | 	< At_if			: "@if" >| 	< At_v2if		: "@V2if" >| 	< At_iferror	: "@iferror" > | 	< At_transform	: "@transform" > | 	< At_sort		: "@sort" >| 	< At_text		: "@text" >| 	< At_eval		: "@eval" >| 	< At_foceval	: "@foceval" >| 	< At_return		: "@return" >| 	< At_iserror	: "@iserror" > 	// All other at functions that does not control program flow| 	< At_other 	: "@" ( < Letter >  )  (  < Letter >  | < Digit > )*  > : SUBSCRIPT // switch to subscript, to handle @dbname[2]	// Precedence 2| 	< ListConcat : ":" > : DEFAULT	// Precedence 3 (= signs, not listed here)	// < OpPlus : "+" >	// < OpMinus : "-" >			// Precedence 4| 	< OpMul : "*" >		: DEFAULT | 	< OpMulP : "**" >	: DEFAULT | 	< OpDiv : "/" >		: DEFAULT | 	< OpDivP : "*/" >	: DEFAULT 	// Precedence 5| 	< OpPlus : "+" > 	: DEFAULT| 	< OpPlusP : "*+" > 	: DEFAULT| 	< OpMinus : "-" > 	: DEFAULT| 	< OpMinusP : "*-" > : DEFAULT	// Precedence 6 - all compare operations|   < CmpEqual : "=" >						: DEFAULT| 	< CmpEqualP : "*=" >					: DEFAULT| 	< CmpNE : "<>" | "!=" | "=!" | "><" >	: DEFAULT| 	< CmpNEP : "*<>" >						: DEFAULT| 	< CmpLT : "<" >							: DEFAULT| 	< CmpLTP : "*<" >						: DEFAULT| 	< CmpGT : ">" >							: DEFAULT| 	< CmpGTP : "*>" >						: DEFAULT| 	< CmpLTE : "<=" >						: DEFAULT| 	< CmpLTEP : "*<=" >						: DEFAULT| 	< CmpGTE : ">=" >						: DEFAULT| 	< CmpGTEP : "*>=" >						: DEFAULT		// Precedence 7| 	< BoolAnd : "&" > : DEFAULT| 	< BoolOr : "|" > : DEFAULT	// Numbers: TODO: Why are they locale dependent???	// Thousands separator must be avoided!|	< NumDoubleUS 	:	(< Digit >)* "." (< Digit >)+ (< Exponent >)? > : SUBSCRIPT | 	< NumDoubleDE 	:	(< Digit >)* "," (< Digit >)+ (< Exponent >)? > : SUBSCRIPT | 	< NumInteger 	: 	(< Digit >)+ ("."|",")? (< Exponent >)? > : SUBSCRIPT | 	< #Exponent: ["e","E"] (["+","-"])? (< Digit >)+ >	// Strings| 	< String1 : "\""		 	// Start at "        	(~["\""] 			// until " or \         	| "\\\""				// but not \ (escaped)        	 )*  "\"" > : SUBSCRIPT			// end at "        	 | 	< String2 : "{"		 		// Start at {          	(~["}"])*			// until  }          	"}" >  : SUBSCRIPT	// end at "| 	< Identifier :  ( < Letter >  )  (  < Letter >  | < Digit > )* > : SUBSCRIPT// Common groups| < #Letter:      [       "$",			// $       "A"-"Z",	// A-Z       "_",			// _       "a"-"z",	// a-z       "~",			// ~       "\u00c0"-"\u00d6",	// \u00c3\u20ac - \u00c3\u2013       "\u00d8"-"\u00f6",	// \u00c3\u02dc - \u00c3\u00b6       "\u00f8"-"\u00ff",	// \u00c3\u00b8 - \u00c3\u00bf       "\u0100"-"\u1fff",	// Latin Extended - A       "\u3040"-"\u318f",	// HIRAGANA/KATAKANA LETTER       "\u3300"-"\u337f",	// CJK Compatibility       "\u3400"-"\u3d2d",	// CJK Unified ideograps Extension A       "\u4e00"-"\u9fff",	// CJK Unified ideograps Extension A       "\uf900"-"\ufaff"	// CJK ... other      ]  >|  < #Digit:      [       "0"-"9"// 	RPr/JSt: only arabic digits are supported       //       "\u0660"-"\u0669",//       "\u06f0"-"\u06f9",//       "\u0966"-"\u096f",//       "\u09e6"-"\u09ef",//       "\u0a66"-"\u0a6f",//       "\u0ae6"-"\u0aef",//       "\u0b66"-"\u0b6f",//       "\u0be7"-"\u0bef",//       "\u0c66"-"\u0c6f",//       "\u0ce6"-"\u0cef",//       "\u0d66"-"\u0d6f",//       "\u0e50"-"\u0e59",//       "\u0ed0"-"\u0ed9",//       "\u1040"-"\u1049"      ]  >}  < * >SKIP :	{  " "| "\t"| "\n"| "\r"| "\r\n"}/** * Parser rules javacc options *//** * parses expressions. Expressions must not end with ";" (=< EOS >) */public SimpleNode Parse()       :{/*@bgen(jjtree) AtDo */
+/*@egen*/  }PARSER_END(AtFormulaParserImpl)/*	public String toString() {		return AdderTreeConstants.jjtNodeName[id] + ": " + jjtGetValue();	}*//** * Lexer rules */// in default mode, a "[" means that the string to the "]" is a Date or Keyword< DEFAULT > TOKEN :{	< Date_or_KW : "[" (~["]"])* "]" > : SUBSCRIPT	// after a Date, we are in "subscript" mode (e.g. [Today][1])}// in subscript mode, a "[" means that the following expression is a subscript// a subscript can occur after a numeric value, a string, a ")", a date, an identifier or an other subscript< SUBSCRIPT > TOKEN :{  	 < OSubscript : "[" > 	:  DEFAULT		// switch back immediately. Thus x[[today]] makes no sense, it is formal correct}< DEFAULT, SUBSCRIPT > TOKEN :{  	// "]" must be recognized in both states  	// consider these examples "x[(1)]": the ) switches to "SUBSCRIPT" 	< CSubscript : "]" > :  SUBSCRIPT	 }< DEFAULT, SUBSCRIPT >TOKEN :{  	// misc tokens	< EOS : ";" >								:	DEFAULT // End of Statement| 	< OParen : "(" >							: 	DEFAULT| 	< CParen : ")" >							: 	SUBSCRIPT // the next open [ means, that this is a subscript| 	< Assign : ":=" >							:	DEFAULT| 	< BoolNot : "!" >							: 	DEFAULT	// Keywords| 	< KW_INCLUDE	: "INCLUDE" >| 	< KW_FUNCTION	: "FUNCTION" >| 	< KW_DEFAULT	: "DEFAULT" >| 	< KW_ENVIRONMENT: "ENVIRONMENT" >| 	< KW_FIELD 		: "FIELD" >| 	< KW_REM 		: "REM" >| 	< KW_SELECT		: "SELECT" >	// @Functions| 	< At_do			: "@do" > | 	< At_doWhile	: "@doWhile" > | 	< At_for		: "@for" > | 	< At_if			: "@if" >| 	< At_v2if		: "@V2if" >| 	< At_iferror	: "@iferror" > | 	< At_transform	: "@transform" > | 	< At_sort		: "@sort" >| 	< At_text		: "@text" >| 	< At_eval		: "@eval" >| 	< At_evalex		: "@evalex" >| 	< At_foceval	: "@foceval" >| 	< At_return		: "@return" >| 	< At_iserror	: "@iserror" > 	// All other at functions that does not control program flow| 	< At_other 	: "@" ( < Letter >  )  (  < Letter >  | < Digit > )*  > : SUBSCRIPT // switch to subscript, to handle @dbname[2]	// Precedence 2| 	< ListConcat : ":" > : DEFAULT	// Precedence 3 (= signs, not listed here)	// < OpPlus : "+" >	// < OpMinus : "-" >			// Precedence 4| 	< OpMul : "*" >		: DEFAULT | 	< OpMulP : "**" >	: DEFAULT | 	< OpDiv : "/" >		: DEFAULT | 	< OpDivP : "*/" >	: DEFAULT 	// Precedence 5| 	< OpPlus : "+" > 	: DEFAULT| 	< OpPlusP : "*+" > 	: DEFAULT| 	< OpMinus : "-" > 	: DEFAULT| 	< OpMinusP : "*-" > : DEFAULT	// Precedence 6 - all compare operations|   < CmpEqual : "=" >						: DEFAULT| 	< CmpEqualP : "*=" >					: DEFAULT| 	< CmpNE : "<>" | "!=" | "=!" | "><" >	: DEFAULT| 	< CmpNEP : "*<>" >						: DEFAULT| 	< CmpLT : "<" >							: DEFAULT| 	< CmpLTP : "*<" >						: DEFAULT| 	< CmpGT : ">" >							: DEFAULT| 	< CmpGTP : "*>" >						: DEFAULT| 	< CmpLTE : "<=" >						: DEFAULT| 	< CmpLTEP : "*<=" >						: DEFAULT| 	< CmpGTE : ">=" >						: DEFAULT| 	< CmpGTEP : "*>=" >						: DEFAULT		// Precedence 7| 	< BoolAnd : "&" > : DEFAULT| 	< BoolOr : "|" > : DEFAULT	// Numbers: TODO: Why are they locale dependent???	// Thousands separator must be avoided!|	< NumDoubleUS 	:	(< Digit >)* "." (< Digit >)+ (< Exponent >)? > : SUBSCRIPT | 	< NumDoubleDE 	:	(< Digit >)* "," (< Digit >)+ (< Exponent >)? > : SUBSCRIPT | 	< NumInteger 	: 	(< Digit >)+ ("."|",")? (< Exponent >)? > : SUBSCRIPT | 	< #Exponent: ["e","E"] (["+","-"])? (< Digit >)+ >	// Strings| 	< String1 : "\""		 	// Start at "        	(~["\""] 			// until " or \         	| "\\\""				// but not \ (escaped)        	 )*  "\"" > : SUBSCRIPT			// end at "        	 | 	< String2 : "{"		 		// Start at {          	(~["}"])*			// until  }          	"}" >  : SUBSCRIPT	// end at "| 	< Identifier :  ( < Letter >  )  (  < Letter >  | < Digit > )* > : SUBSCRIPT// Common groups| < #Letter:      [       "$",			// $       "A"-"Z",	// A-Z       "_",			// _       "a"-"z",	// a-z       "~",			// ~       "\u00c0"-"\u00d6",	// \u00c3\u20ac - \u00c3\u2013       "\u00d8"-"\u00f6",	// \u00c3\u02dc - \u00c3\u00b6       "\u00f8"-"\u00ff",	// \u00c3\u00b8 - \u00c3\u00bf       "\u0100"-"\u1fff",	// Latin Extended - A       "\u3040"-"\u318f",	// HIRAGANA/KATAKANA LETTER       "\u3300"-"\u337f",	// CJK Compatibility       "\u3400"-"\u3d2d",	// CJK Unified ideograps Extension A       "\u4e00"-"\u9fff",	// CJK Unified ideograps Extension A       "\uf900"-"\ufaff"	// CJK ... other      ]  >|  < #Digit:      [       "0"-"9"// 	RPr/JSt: only arabic digits are supported       //       "\u0660"-"\u0669",//       "\u06f0"-"\u06f9",//       "\u0966"-"\u096f",//       "\u09e6"-"\u09ef",//       "\u0a66"-"\u0a6f",//       "\u0ae6"-"\u0aef",//       "\u0b66"-"\u0b6f",//       "\u0be7"-"\u0bef",//       "\u0c66"-"\u0c6f",//       "\u0ce6"-"\u0cef",//       "\u0d66"-"\u0d6f",//       "\u0e50"-"\u0e59",//       "\u0ed0"-"\u0ed9",//       "\u1040"-"\u1049"      ]  >}  < * >SKIP :	{  " "| "\t"| "\n"| "\r"| "\r\n"}/** * Parser rules javacc options *//** * parses expressions. Expressions must not end with ";" (=< EOS >) */public SimpleNode Parse()       :{/*@bgen(jjtree) AtDo */
   ASTAtDo jjtn000 = new ASTAtDo(this, JJTATDO);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
@@ -779,14 +779,14 @@ import org.openntf.domino.formula.ast.*;
                             jjtree.closeNodeScope(jjtn009, true);
                           }
                         }
-/*@egen*/        | < At_foceval >/*@bgen(jjtree) AtFocEval */
+/*@egen*/        | < At_evalex >/*@bgen(jjtree) AtEvalEx */
                         {
-                          ASTAtFocEval jjtn010 = new ASTAtFocEval(this, JJTATFOCEVAL);
+                          ASTAtEvalEx jjtn010 = new ASTAtEvalEx(this, JJTATEVALEX);
                           boolean jjtc010 = true;
                           jjtree.openNodeScope(jjtn010);
                         }
                         try {
-/*@egen*/	(< OParen >  	statement()							 < CParen >)/*@bgen(jjtree)*/
+/*@egen*/		(< OParen >  	statement()								( < EOS > 	statement() )*	// parameter					 < CParen >)/*@bgen(jjtree)*/
                         } catch (Throwable jjte010) {
                           if (jjtc010) {
                             jjtree.clearNodeScope(jjtn010);
@@ -806,14 +806,14 @@ import org.openntf.domino.formula.ast.*;
                             jjtree.closeNodeScope(jjtn010, true);
                           }
                         }
-/*@egen*/           | < At_text >/*@bgen(jjtree) AtText */
+/*@egen*/          | < At_foceval >/*@bgen(jjtree) AtFocEval */
                         {
-                          ASTAtText jjtn011 = new ASTAtText(this, JJTATTEXT);
+                          ASTAtFocEval jjtn011 = new ASTAtFocEval(this, JJTATFOCEVAL);
                           boolean jjtc011 = true;
                           jjtree.openNodeScope(jjtn011);
                         }
                         try {
-/*@egen*/		(< OParen >  	statement()		// list						(< EOS >	statement())?	// Options					 < CParen >)/*@bgen(jjtree)*/
+/*@egen*/	(< OParen >  	statement()							 < CParen >)/*@bgen(jjtree)*/
                         } catch (Throwable jjte011) {
                           if (jjtc011) {
                             jjtree.clearNodeScope(jjtn011);
@@ -833,58 +833,85 @@ import org.openntf.domino.formula.ast.*;
                             jjtree.closeNodeScope(jjtn011, true);
                           }
                         }
+/*@egen*/           | < At_text >/*@bgen(jjtree) AtText */
+                        {
+                          ASTAtText jjtn012 = new ASTAtText(this, JJTATTEXT);
+                          boolean jjtc012 = true;
+                          jjtree.openNodeScope(jjtn012);
+                        }
+                        try {
+/*@egen*/		(< OParen >  	statement()		// list						(< EOS >	statement())?	// Options					 < CParen >)/*@bgen(jjtree)*/
+                        } catch (Throwable jjte012) {
+                          if (jjtc012) {
+                            jjtree.clearNodeScope(jjtn012);
+                            jjtc012 = false;
+                          } else {
+                            jjtree.popNode();
+                          }
+                          if (jjte012 instanceof RuntimeException) {
+                            throw (RuntimeException)jjte012;
+                          }
+                          if (jjte012 instanceof ParseException) {
+                            throw (ParseException)jjte012;
+                          }
+                          throw (Error)jjte012;
+                        } finally {
+                          if (jjtc012) {
+                            jjtree.closeNodeScope(jjtn012, true);
+                          }
+                        }
 /*@egen*/        | < At_return >/*@bgen(jjtree) AtReturn */
                 {
-                  ASTAtReturn jjtn012 = new ASTAtReturn(this, JJTATRETURN);
-                  boolean jjtc012 = true;
-                  jjtree.openNodeScope(jjtn012);
+                  ASTAtReturn jjtn013 = new ASTAtReturn(this, JJTATRETURN);
+                  boolean jjtc013 = true;
+                  jjtree.openNodeScope(jjtn013);
                 }
                 try {
 /*@egen*/ (< OParen >  statement() < CParen >)/*@bgen(jjtree)*/
-                } catch (Throwable jjte012) {
-                  if (jjtc012) {
-                    jjtree.clearNodeScope(jjtn012);
-                    jjtc012 = false;
+                } catch (Throwable jjte013) {
+                  if (jjtc013) {
+                    jjtree.clearNodeScope(jjtn013);
+                    jjtc013 = false;
                   } else {
                     jjtree.popNode();
                   }
-                  if (jjte012 instanceof RuntimeException) {
-                    throw (RuntimeException)jjte012;
+                  if (jjte013 instanceof RuntimeException) {
+                    throw (RuntimeException)jjte013;
                   }
-                  if (jjte012 instanceof ParseException) {
-                    throw (ParseException)jjte012;
+                  if (jjte013 instanceof ParseException) {
+                    throw (ParseException)jjte013;
                   }
-                  throw (Error)jjte012;
+                  throw (Error)jjte013;
                 } finally {
-                  if (jjtc012) {
-                    jjtree.closeNodeScope(jjtn012, true);
+                  if (jjtc013) {
+                    jjtree.closeNodeScope(jjtn013, true);
                   }
                 }
 /*@egen*/          | < At_iserror >/*@bgen(jjtree) AtIsError */
                  {
-                   ASTAtIsError jjtn013 = new ASTAtIsError(this, JJTATISERROR);
-                   boolean jjtc013 = true;
-                   jjtree.openNodeScope(jjtn013);
+                   ASTAtIsError jjtn014 = new ASTAtIsError(this, JJTATISERROR);
+                   boolean jjtc014 = true;
+                   jjtree.openNodeScope(jjtn014);
                  }
                  try {
 /*@egen*/ (< OParen >  statement() < CParen >)/*@bgen(jjtree)*/
-                 } catch (Throwable jjte013) {
-                   if (jjtc013) {
-                     jjtree.clearNodeScope(jjtn013);
-                     jjtc013 = false;
+                 } catch (Throwable jjte014) {
+                   if (jjtc014) {
+                     jjtree.clearNodeScope(jjtn014);
+                     jjtc014 = false;
                    } else {
                      jjtree.popNode();
                    }
-                   if (jjte013 instanceof RuntimeException) {
-                     throw (RuntimeException)jjte013;
+                   if (jjte014 instanceof RuntimeException) {
+                     throw (RuntimeException)jjte014;
                    }
-                   if (jjte013 instanceof ParseException) {
-                     throw (ParseException)jjte013;
+                   if (jjte014 instanceof ParseException) {
+                     throw (ParseException)jjte014;
                    }
-                   throw (Error)jjte013;
+                   throw (Error)jjte014;
                  } finally {
-                   if (jjtc013) {
-                     jjtree.closeNodeScope(jjtn013, true);
+                   if (jjtc014) {
+                     jjtree.closeNodeScope(jjtn014, true);
                    }
                  }
 /*@egen*/            | < At_other > formula() | atom()}private void formula()           :{/*@bgen(jjtree) Function */

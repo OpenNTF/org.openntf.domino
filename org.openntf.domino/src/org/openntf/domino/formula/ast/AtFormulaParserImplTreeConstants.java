@@ -22,16 +22,17 @@ public interface AtFormulaParserImplTreeConstants
   public int JJTATTRANSFORM = 14;
   public int JJTATSORT = 15;
   public int JJTATEVAL = 16;
-  public int JJTATFOCEVAL = 17;
-  public int JJTATTEXT = 18;
-  public int JJTATRETURN = 19;
-  public int JJTATISERROR = 20;
-  public int JJTFUNCTION = 21;
-  public int JJTVALUEDATEORKW = 22;
-  public int JJTVALUESTRING = 23;
-  public int JJTVALUEDOUBLE = 24;
-  public int JJTVALUEINT = 25;
-  public int JJTGETVARIABLE = 26;
+  public int JJTATEVALEX = 17;
+  public int JJTATFOCEVAL = 18;
+  public int JJTATTEXT = 19;
+  public int JJTATRETURN = 20;
+  public int JJTATISERROR = 21;
+  public int JJTFUNCTION = 22;
+  public int JJTVALUEDATEORKW = 23;
+  public int JJTVALUESTRING = 24;
+  public int JJTVALUEDOUBLE = 25;
+  public int JJTVALUEINT = 26;
+  public int JJTGETVARIABLE = 27;
 
 
   public String[] jjtNodeName = {
@@ -52,6 +53,7 @@ public interface AtFormulaParserImplTreeConstants
     "AtTransform",
     "AtSort",
     "AtEval",
+    "AtEvalEx",
     "AtFocEval",
     "AtText",
     "AtReturn",
@@ -64,4 +66,4 @@ public interface AtFormulaParserImplTreeConstants
     "GetVariable",
   };
 }
-/* JavaCC - OriginalChecksum=9c0cf5a9fc1eeab5d1627ffc62fc4d1e (do not edit this line) */
+/* JavaCC - OriginalChecksum=7829d37f04c785d559b0539d6a9eaabc (do not edit this line) */

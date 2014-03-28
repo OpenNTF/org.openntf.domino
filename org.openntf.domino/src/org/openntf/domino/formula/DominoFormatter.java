@@ -16,6 +16,8 @@
  */
 package org.openntf.domino.formula;
 
+import java.text.DecimalFormat;
+
 import org.openntf.domino.DateTime;
 
 public class DominoFormatter implements Formatter {
@@ -42,6 +44,10 @@ public class DominoFormatter implements Formatter {
 		//NumberFormat nf = NumberFormat.getInstance();
 		// TODO Auto-generated method stub
 		return Double.valueOf(el.replace(',', '.'));
+	}
+
+	public DecimalFormat getNumberFormatter() {
+		return new DecimalFormat();
 	}
 
 	public static synchronized Formatter getInstance() {
