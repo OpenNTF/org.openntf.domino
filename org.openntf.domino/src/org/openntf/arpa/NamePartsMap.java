@@ -531,15 +531,6 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 	 */
 	private boolean parse(final String string, final boolean allowRecursion) {
 		try {
-			System.out.println("*");
-			System.out.println("*");
-			System.out.println("*");
-			System.out.println("*");
-			System.out.println("*");
-			System.out.println("*");
-			System.out.println("*");
-			System.out.println("*");
-			System.out.println("NamePartsMap.parse(): Parsing String: \"" + string + "\"");
 			String common = "";
 			final String[] ous = new String[] { "", "", "", "" };
 			String organization = "";
@@ -573,11 +564,6 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 								int Cidx = -1;
 								for (int i = (words.length - 1); i >= 0; i--) {
 									final String word = words[i].trim();
-									System.out.println("NamePartsMap.parse(): Parsing word \"" + word + "\"");
-									// TODO Need to handle case where word = "*"
-									// DSO
-									// 20140319
-
 									if (word.indexOf('=') > 0) {
 										final String[] nibbles = word.split("=");
 										if (nibbles.length > 1) {
@@ -636,22 +622,29 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 										final int idxEntry = entry.getKey().intValue();
 										if (0 == idxEntry) {
 											if (ISO.isBlankString(common)) {
-												System.out.println("Setting Common to " + entry.getValue());
 												common = entry.getValue();
+											} else {
+												for (String s : ous) {
+													if (ISO.isBlankString(s)) {
+														s = entry.getValue();
+														break;
+													}
+												}
 											}
 
 										} else if ((Cidx < 0) && (idxEntry == (words.length - 1))) {
-											System.out.println("Setting Country to " + entry.getValue());
-											country = entry.getValue();
+											if (ISO.isBlankString(organization)) {
+												organization = entry.getValue();
+											} else {
+												country = entry.getValue();
+											}
 
 										} else if (idxEntry == Cidx) {
-											System.out.println("Setting Organization to " + entry.getValue());
 											organization = entry.getValue();
 
 										} else if (idxEntry == Oidx) {
 											for (String orgunit : ous) {
 												if (ISO.isBlankString(orgunit)) {
-													System.out.println("Setting Org UNIT to " + entry.getValue());
 													orgunit = entry.getValue();
 													break;
 												}
@@ -698,16 +691,6 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 
 				}
 			}
-
-			System.out.println("NamePartsMap.parse(): Common: \"" + common + "\"");
-			System.out.println("NamePartsMap.parse(): OrgUnit1: \"" + ous[0] + "\"");
-			System.out.println("NamePartsMap.parse(): OrgUnit2: \"" + ous[1] + "\"");
-			System.out.println("NamePartsMap.parse(): OrgUnit3: \"" + ous[2] + "\"");
-			System.out.println("NamePartsMap.parse(): OrgUnit4: \"" + ous[3] + "\"");
-			System.out.println("NamePartsMap.parse(): Organization: \"" + organization + "\"");
-			System.out.println("NamePartsMap.parse(): Country: \"" + country + "\"");
-			System.out.println("NamePartsMap.parse(): this.get(NamePartsMap.Key.Abbreviated): \"" + this.get(NamePartsMap.Key.Abbreviated)
-					+ "\"");
 
 			this.put(Key.Common, common);
 			this.put(Key.OrgUnit1, ous[0]);
