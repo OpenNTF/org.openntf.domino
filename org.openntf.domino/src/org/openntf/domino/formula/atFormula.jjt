@@ -34,7 +34,7 @@ package org.openntf.domino.formula.parse;
 import org.openntf.domino.formula.ast.*;
 import org.openntf.domino.formula.*;
 
-public class AtFormulaParserImpl extends AtFormulaParser
+public class AtFormulaParserImpl extends FormulaParser
 {
 //  	protected AtFormulaParserImplTokenManager getTokenSource()
 //  	{
@@ -158,6 +158,7 @@ TOKEN :
 | 	< At_sort		: "@sort" >
 | 	< At_text		: "@text" >
 | 	< At_eval		: "@eval" >
+| 	< At_evalex		: "@evalex" >
 | 	< At_foceval	: "@foceval" >
 | 	< At_return		: "@return" >
 | 	< At_iserror	: "@iserror" > 
@@ -570,6 +571,9 @@ private void unary() :
 					 < CParen >) #AtSort
 | < At_eval >		(< OParen >  	statement()		
 					 < CParen >) #AtEval
+| < At_evalex >		(< OParen >  	statement()		
+						( < EOS > 	statement() )*	// parameter
+					 < CParen >) #AtEvalEx
 | < At_foceval >	(< OParen >  	statement()		
 					 < CParen >) #AtFocEval
 | < At_text >		(< OParen >  	statement()		// list

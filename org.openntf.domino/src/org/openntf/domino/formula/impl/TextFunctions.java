@@ -1,5 +1,6 @@
 package org.openntf.domino.formula.impl;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -1028,15 +1029,106 @@ public enum TextFunctions {
 	 * @Text
 	 */
 	/*----------------------------------------------------------------------------*/
+	@DiffersFromLotus("Not all Lotus formats are yet supported")
 	@SuppressWarnings("deprecation")
 	@ParamCount({ 1, 2 })
 	public static ValueHolder doAtText(final FormulaContext ctx, final ValueHolder params[]) {
-		if (params.length != 1)
-			throw new IllegalArgumentException("Second parameter in @Text not yet supported");
 		ValueHolder vh = params[0];
-		ValueHolder ret = ValueHolder.createValueHolder(String.class, vh.size);
+		ValueHolder ret = null;
+		while (params.length == 2) {
+			String format = params[1].getString(0).toUpperCase();
+			if (format.isEmpty())
+				break;
+			if (!vh.dataType.numeric && vh.dataType != DataType.DATETIME)
+				break;
+			if (vh.dataType.numeric) {
+				if ((ret = doAtTextNumber(ctx, vh, format)) != null)
+					return ret;
+				break;
+			}
+			throw new IllegalArgumentException("Second parameter in @Text not yet supported for DateTime");
+		}
+		ret = ValueHolder.createValueHolder(String.class, vh.size);
 		for (int i = 0; i < vh.size; i++)
 			ret.add(vh.get(i).toString());
+		return ret;
+	}
+
+	/*----------------------------------------------------------------------------*/
+	private static ValueHolder doAtTextNumber(final FormulaContext ctx, final ValueHolder vh, final String format) {
+		boolean useGrouping = false;
+		int fractDigits = -1;
+		boolean negWithParenths = false;
+		char genFormat = 0;
+		boolean invalidFormat = false;
+		int lh = format.length();
+		for (int i = 0; i < lh; i++) {
+			char c = format.charAt(i);
+			if (c == ',') {
+				useGrouping = true;
+				continue;
+			}
+			if (c == '(' || c == ')') {
+				negWithParenths = true;
+				continue;
+			}
+			if (c == 'G' || c == 'F' || c == 'C' || c == '%' || c == 'S') {
+				if (genFormat != 0) {
+					invalidFormat = true;
+					break;
+				}
+				genFormat = c;
+				continue;
+			}
+			if (!Character.isDigit(c)) {
+				invalidFormat = true;
+				break;
+			}
+			if (fractDigits != -1) {
+				invalidFormat = true;
+				break;
+			}
+			StringBuilder sb = new StringBuilder(64);
+			sb.append(c);
+			for (i++; i < lh; i++) {
+				c = format.charAt(i);
+				if (!Character.isDigit(c)) {
+					i--;
+					break;
+				}
+				sb.append(c);
+			}
+			try {
+				fractDigits = Integer.parseInt(sb.toString());
+			} catch (NumberFormatException e) {
+				invalidFormat = true;
+				break;
+			}
+		}
+		if (invalidFormat)
+			throw new IllegalArgumentException("Invalid Number format: \"" + format + "\"");
+		if (genFormat == 'C' || genFormat == '%' || genFormat == 'S')
+			throw new IllegalArgumentException("Unsupported Number format: \"" + format + "\"");
+		if (genFormat == 'G') {
+			fractDigits = -1;
+			if (!useGrouping && !negWithParenths)
+				return null;
+		}
+		DecimalFormat df = ctx.getFormatter().getNumberFormatter();
+		if (useGrouping)
+			df.setGroupingUsed(true);
+		if (fractDigits != -1) {
+			df.setMinimumFractionDigits(fractDigits);
+			df.setMaximumFractionDigits(fractDigits);
+		} else
+			df.setMaximumFractionDigits(10000);
+		if (negWithParenths) {
+			df.setNegativePrefix("(");
+			df.setNegativeSuffix(")");
+		}
+		ValueHolder ret = ValueHolder.createValueHolder(String.class, vh.size);
+		for (int i = 0; i < vh.size; i++)
+			ret.add(df.format(vh.getDouble(i)));
 		return ret;
 	}
 

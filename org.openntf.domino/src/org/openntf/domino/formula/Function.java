@@ -49,5 +49,12 @@ public interface Function {
 	@Nonnull
 	public String getImage();
 
+	/**
+	 * Checks if the function accpets the amount of parameters
+	 * 
+	 * @param i
+	 *            amount of params specified in formula string
+	 * @return <code>true</code> if parameter-count matches to this function.
+	 */
 	public boolean checkParamCount(int i);
 }

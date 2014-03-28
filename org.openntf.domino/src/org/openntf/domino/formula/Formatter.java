@@ -16,6 +16,8 @@
  */
 package org.openntf.domino.formula;
 
+import java.text.DecimalFormat;
+
 import org.openntf.domino.DateTime;
 
 // TODO RPr This is not yet finished
@@ -23,6 +25,8 @@ public interface Formatter {
 
 	DateTime parseDate(String image) throws java.text.ParseException;
 
-	Number parseNumber(String el) throws java.text.ParseException;;
+	Number parseNumber(String el) throws java.text.ParseException;
+
+	DecimalFormat getNumberFormatter();
 
 }
