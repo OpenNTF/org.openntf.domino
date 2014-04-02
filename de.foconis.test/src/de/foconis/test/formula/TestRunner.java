@@ -103,7 +103,7 @@ public class TestRunner implements Runnable {
 			File file = new File("tests/");
 			FilenameFilter filefilter = new FilenameFilter() {
 				public boolean accept(final File dir, final String name) {
-					return name.endsWith(".txt");
+					return name.endsWith(".txt") || dir.isDirectory();
 				}
 			};
 
