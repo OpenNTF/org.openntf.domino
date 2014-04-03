@@ -18,6 +18,7 @@ import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.ISimpleDateTime;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.formula.ASTNode;
 import org.openntf.domino.formula.DominoFormatter;
@@ -337,17 +338,29 @@ public class TestRunner implements Runnable {
 						equals = false;
 						break;
 					}
-				} else if (a instanceof lotus.domino.DateTime && b instanceof lotus.domino.DateTime) {
-					lotus.domino.DateTime dt1 = (lotus.domino.DateTime) a;
-					lotus.domino.DateTime dt2 = (lotus.domino.DateTime) b;
+				} else if ((a instanceof ISimpleDateTime || a instanceof lotus.domino.DateTime) && // LF
+						(b instanceof ISimpleDateTime || b instanceof lotus.domino.DateTime)) {
 					try {
-						if (dt1.timeDifference(dt2) != 0)
-							equals = false;
+						ISimpleDateTime sdt1, sdt2;
+						if (a instanceof ISimpleDateTime)
+							sdt1 = (ISimpleDateTime) a;
+						else {
+							lotus.domino.DateTime ldt = (lotus.domino.DateTime) a;
+							sdt1 = DominoFormatter.getDefaultInstance().getNewInitializedSDTInstance(ldt.toJavaDate(),
+									ldt.getDateOnly().isEmpty(), ldt.getTimeOnly().isEmpty());
+						}
+						if (b instanceof ISimpleDateTime)
+							sdt2 = (ISimpleDateTime) b;
+						else {
+							lotus.domino.DateTime ldt = (lotus.domino.DateTime) b;
+							sdt2 = DominoFormatter.getDefaultInstance().getNewInitializedSDTInstance(ldt.toJavaDate(),
+									ldt.getDateOnly().isEmpty(), ldt.getTimeOnly().isEmpty());
+						}
+						equals = (sdt1.compare(sdt1, sdt2) == 0);
 					} catch (NotesException e) {
 						e.printStackTrace();
 						equals = false;
 					}
-
 				} else if (!a.equals(b)) {
 					equals = false;
 					break;

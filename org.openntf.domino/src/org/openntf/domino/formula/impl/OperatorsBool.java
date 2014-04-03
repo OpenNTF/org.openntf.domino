@@ -18,9 +18,9 @@ package org.openntf.domino.formula.impl;
 
 import java.util.Collection;
 
-import org.openntf.domino.DateTime;
-import org.openntf.domino.formula.FunctionFactory;
+import org.openntf.domino.ISimpleDateTime;
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FunctionFactory;
 import org.openntf.domino.formula.ValueHolder;
 
 /**
@@ -163,7 +163,7 @@ public class OperatorsBool extends OperatorsAbstract {
 	}
 
 	@Override
-	protected ValueHolder evaluateDateTime(final FormulaContext ctx, final DateTime dt1, final DateTime dt2) {
+	protected ValueHolder evaluateDateTime(final FormulaContext ctx, final ISimpleDateTime dt1, final ISimpleDateTime dt2) {
 		throw new UnsupportedOperationException("'" + getImage() + "' is not supported for STRING");
 	}
 

@@ -16,7 +16,7 @@
  */
 package org.openntf.domino.formula.impl;
 
-import org.openntf.domino.DateTime;
+import org.openntf.domino.ISimpleDateTime;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
@@ -129,7 +129,7 @@ public abstract class OperatorsAbstract extends AtFunction {
 
 	protected abstract ValueHolder evaluateDateTime(final FormulaContext ctx, final ValueHolder[] params);
 
-	protected abstract ValueHolder evaluateDateTime(final FormulaContext ctx, final DateTime dt1, final DateTime dt2);
+	protected abstract ValueHolder evaluateDateTime(final FormulaContext ctx, final ISimpleDateTime dt1, final ISimpleDateTime dt2);
 
 	protected abstract ValueHolder evaluateBoolean(final FormulaContext ctx, final ValueHolder[] params);
 

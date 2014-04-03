@@ -1,12 +1,29 @@
+/*
+ * © Copyright FOCONIS AG, 2014
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ * 
+ */
 package org.openntf.domino.formula.impl;
 
-import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
-import org.openntf.domino.DateTime;
+import org.openntf.domino.ISimpleDateTime;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.formula.Formatter;
 import org.openntf.domino.formula.FormulaContext;
@@ -613,8 +630,6 @@ public enum TextFunctions {
 				ret.add(formatter.parseNumber(val));
 			}
 			return ret;
-		} catch (java.text.ParseException e) {
-			throw new IllegalArgumentException("Can't convert to Number: \"" + val + "\"", e);
 		} catch (NumberFormatException e) {
 			throw new IllegalArgumentException("Can't convert to Number: \"" + val + "\"", e);
 		}
@@ -644,7 +659,7 @@ public enum TextFunctions {
 
 	/*----------------------------------------------------------------------------*/
 	private static ValueHolder strToDateTime(final FormulaContext ctx, final ValueHolder vh) {
-		ValueHolder ret = ValueHolder.createValueHolder(DateTime.class, vh.size);
+		ValueHolder ret = ValueHolder.createValueHolder(ISimpleDateTime.class, vh.size);
 		Formatter formatter = ctx.getFormatter();
 		String val = null;
 		try {
@@ -653,8 +668,6 @@ public enum TextFunctions {
 				ret.add(formatter.parseDate(val));
 			}
 			return ret;
-		} catch (java.text.ParseException e) {
-			throw new IllegalArgumentException("Can't convert to DateTime: \"" + val + "\"", e);
 		} catch (OpenNTFNotesException e) {
 			throw new IllegalArgumentException("Can't convert to DateTime: \"" + val + "\"", e);
 		}
@@ -1031,24 +1044,19 @@ public enum TextFunctions {
 	/*----------------------------------------------------------------------------*/
 	@DiffersFromLotus("Not all Lotus formats are yet supported")
 	@SuppressWarnings("deprecation")
-	@ParamCount({ 1, 2 })
 	public static ValueHolder doAtText(final FormulaContext ctx, final ValueHolder params[]) {
 		ValueHolder vh = params[0];
-		ValueHolder ret = null;
-		while (params.length == 2) {
-			String format = params[1].getString(0).toUpperCase();
-			if (format.isEmpty())
-				break;
-			if (!vh.dataType.numeric && vh.dataType != DataType.DATETIME)
-				break;
-			if (vh.dataType.numeric) {
-				if ((ret = doAtTextNumber(ctx, vh, format)) != null)
-					return ret;
-				break;
-			}
-			throw new IllegalArgumentException("Second parameter in @Text not yet supported for DateTime");
+		String format = null;
+		if (params.length == 2) {
+			format = params[1].getString(0).toUpperCase();
+			if (format.isEmpty() || (!vh.dataType.numeric && vh.dataType != DataType.DATETIME))
+				format = null;
 		}
-		ret = ValueHolder.createValueHolder(String.class, vh.size);
+		if (vh.dataType.numeric)
+			return doAtTextNumber(ctx, vh, format);
+		if (vh.dataType == DataType.DATETIME)
+			return doAtTextDateTime(ctx, vh, format);
+		ValueHolder ret = ValueHolder.createValueHolder(String.class, vh.size);
 		for (int i = 0; i < vh.size; i++)
 			ret.add(vh.get(i).toString());
 		return ret;
@@ -1060,75 +1068,89 @@ public enum TextFunctions {
 		int fractDigits = -1;
 		boolean negWithParenths = false;
 		char genFormat = 0;
-		boolean invalidFormat = false;
-		int lh = format.length();
-		for (int i = 0; i < lh; i++) {
-			char c = format.charAt(i);
-			if (c == ',') {
-				useGrouping = true;
-				continue;
-			}
-			if (c == '(' || c == ')') {
-				negWithParenths = true;
-				continue;
-			}
-			if (c == 'G' || c == 'F' || c == 'C' || c == '%' || c == 'S') {
-				if (genFormat != 0) {
+		if (format == null)
+			genFormat = 'G';
+		else {
+			boolean invalidFormat = false;
+			int lh = format.length();
+			for (int i = 0; i < lh; i++) {
+				char c = format.charAt(i);
+				if (c == ',') {
+					useGrouping = true;
+					continue;
+				}
+				if (c == '(' || c == ')') {
+					negWithParenths = true;
+					continue;
+				}
+				if (c == 'G' || c == 'F' || c == 'C' || c == '%' || c == 'S') {
+					if (genFormat != 0) {
+						invalidFormat = true;
+						break;
+					}
+					genFormat = c;
+					continue;
+				}
+				if (!Character.isDigit(c)) {
 					invalidFormat = true;
 					break;
 				}
-				genFormat = c;
-				continue;
-			}
-			if (!Character.isDigit(c)) {
-				invalidFormat = true;
-				break;
-			}
-			if (fractDigits != -1) {
-				invalidFormat = true;
-				break;
-			}
-			StringBuilder sb = new StringBuilder(64);
-			sb.append(c);
-			for (i++; i < lh; i++) {
-				c = format.charAt(i);
-				if (!Character.isDigit(c)) {
-					i--;
+				if (fractDigits != -1) {
+					invalidFormat = true;
 					break;
 				}
+				StringBuilder sb = new StringBuilder(64);
 				sb.append(c);
+				for (i++; i < lh; i++) {
+					c = format.charAt(i);
+					if (!Character.isDigit(c)) {
+						i--;
+						break;
+					}
+					sb.append(c);
+				}
+				try {
+					fractDigits = Integer.parseInt(sb.toString());
+				} catch (NumberFormatException e) {
+					invalidFormat = true;
+					break;
+				}
 			}
-			try {
-				fractDigits = Integer.parseInt(sb.toString());
-			} catch (NumberFormatException e) {
-				invalidFormat = true;
-				break;
-			}
+			if (invalidFormat)
+				throw new IllegalArgumentException("Invalid Number format: \"" + format + "\"");
+			if (genFormat == 'C' || genFormat == '%' || genFormat == 'S')
+				throw new IllegalArgumentException("Unsupported Number format: \"" + format + "\"");
 		}
-		if (invalidFormat)
-			throw new IllegalArgumentException("Invalid Number format: \"" + format + "\"");
-		if (genFormat == 'C' || genFormat == '%' || genFormat == 'S')
-			throw new IllegalArgumentException("Unsupported Number format: \"" + format + "\"");
-		if (genFormat == 'G') {
+		if (genFormat == 'G')
 			fractDigits = -1;
-			if (!useGrouping && !negWithParenths)
-				return null;
-		}
-		DecimalFormat df = ctx.getFormatter().getNumberFormatter();
-		if (useGrouping)
-			df.setGroupingUsed(true);
+		else if (genFormat == 'F' && fractDigits == -1)
+			fractDigits = 2;
+		NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
+		nf.setGroupingUsed(useGrouping);
+		nf.setMaximumIntegerDigits(10000);
 		if (fractDigits != -1) {
-			df.setMinimumFractionDigits(fractDigits);
-			df.setMaximumFractionDigits(fractDigits);
+			nf.setMinimumFractionDigits(fractDigits);
+			nf.setMaximumFractionDigits(fractDigits);
 		} else
-			df.setMaximumFractionDigits(10000);
-		if (negWithParenths) {
-			df.setNegativePrefix("(");
-			df.setNegativeSuffix(")");
+			nf.setMaximumFractionDigits(10000);
+		ValueHolder ret = ValueHolder.createValueHolder(String.class, vh.size);
+		for (int i = 0; i < vh.size; i++) {
+			double d = vh.getDouble(i);
+			String dStr = nf.format(d);
+			if (negWithParenths && dStr.charAt(0) == '-')
+				dStr = '(' + dStr.substring(1) + ')';
+			ret.add(dStr);
 		}
+		return ret;
+	}
+
+	/*----------------------------------------------------------------------------*/
+	private static ValueHolder doAtTextDateTime(final FormulaContext ctx, final ValueHolder vh, final String format) {
+		if (format != null)
+			throw new IllegalArgumentException("Second parameter in @Text not yet supported for DateTime");
 		ValueHolder ret = ValueHolder.createValueHolder(String.class, vh.size);
 		for (int i = 0; i < vh.size; i++)
-			ret.add(df.format(vh.getDouble(i)));
+			ret.add(vh.get(i).toString());
 		return ret;
 	}
 

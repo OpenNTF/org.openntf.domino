@@ -1,6 +1,6 @@
 package org.openntf.domino.formula.impl;
 
-import org.openntf.domino.DateTime;
+import org.openntf.domino.ISimpleDateTime;
 
 public abstract class OperatorImpl {
 	private String image;
@@ -25,7 +25,7 @@ public abstract class OperatorImpl {
 		throw new UnsupportedOperationException("'" + image + "' is not supported for STRING");
 	}
 
-	public DateTime compute(final DateTime d1, final DateTime d2) {
+	public ISimpleDateTime compute(final ISimpleDateTime d1, final ISimpleDateTime d2) {
 		throw new UnsupportedOperationException("'" + image + "' is not supported for DATETIME");
 	}
 

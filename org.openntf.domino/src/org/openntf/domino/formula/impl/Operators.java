@@ -18,9 +18,9 @@ package org.openntf.domino.formula.impl;
 
 import java.util.Collection;
 
-import org.openntf.domino.DateTime;
-import org.openntf.domino.formula.FunctionFactory;
+import org.openntf.domino.ISimpleDateTime;
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FunctionFactory;
 import org.openntf.domino.formula.ValueHolder;
 
 /**
@@ -206,17 +206,17 @@ public class Operators extends OperatorsAbstract {
 	// ----------- DateTimes
 	@Override
 	protected ValueHolder evaluateDateTime(final FormulaContext ctx, final ValueHolder[] params) {
-		Collection<DateTime[]> values = new ParameterCollectionObject<DateTime>(params, DateTime.class, isPermutative);
-		ValueHolder ret = ValueHolder.createValueHolder(DateTime.class, values.size());
+		Collection<ISimpleDateTime[]> values = new ParameterCollectionObject<ISimpleDateTime>(params, ISimpleDateTime.class, isPermutative);
+		ValueHolder ret = ValueHolder.createValueHolder(ISimpleDateTime.class, values.size());
 
-		for (DateTime[] value : values) {
+		for (ISimpleDateTime[] value : values) {
 			ret.add(computer.compute(value[0], value[1]));
 		}
 		return ret;
 	}
 
 	@Override
-	protected ValueHolder evaluateDateTime(final FormulaContext ctx, final DateTime dt1, final DateTime dt2) {
+	protected ValueHolder evaluateDateTime(final FormulaContext ctx, final ISimpleDateTime dt1, final ISimpleDateTime dt2) {
 		return ValueHolder.valueOf(computer.compute(dt1, dt2));
 	}
 

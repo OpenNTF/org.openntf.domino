@@ -19,9 +19,9 @@ package org.openntf.domino.formula.ast;
 
 import java.util.Set;
 
-import org.openntf.domino.formula.parse.*;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
 public class ASTValueInt extends SimpleNode {
 	private ValueHolder value;
@@ -35,7 +35,7 @@ public class ASTValueInt extends SimpleNode {
 			int i = Integer.valueOf(image);
 			value = ValueHolder.valueOf(i);
 		} catch (NumberFormatException e) {
-			double d = Integer.valueOf(image);
+			double d = Double.valueOf(image);
 			value = ValueHolder.valueOf(d);
 		}
 	}

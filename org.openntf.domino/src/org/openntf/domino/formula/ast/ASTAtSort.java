@@ -20,7 +20,7 @@ package org.openntf.domino.formula.ast;
 
 import java.util.Set;
 
-import org.openntf.domino.DateTime;
+import org.openntf.domino.ISimpleDateTime;
 import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
@@ -163,10 +163,10 @@ public class ASTAtSort extends SimpleNode {
 	/**
 	 * Compares two given DateTimes
 	 */
-	private int doSortDateTime(final FormulaContext ctx, final DateTime d1, final DateTime d2, final Node customSort)
+	private int doSortDateTime(final FormulaContext ctx, final ISimpleDateTime d1, final ISimpleDateTime d2, final Node customSort)
 			throws FormulaReturnException {
 		if (customSort == null)
-			return (d1.compareTo(d2) > 0 ? 1 : -1);
+			return d1.compare(d1, d2);
 		ValueHolder oldA = ctx.setVarLC("$a", ValueHolder.valueOf(d1));
 		ValueHolder oldB = ctx.setVarLC("$b", ValueHolder.valueOf(d2));
 		try {

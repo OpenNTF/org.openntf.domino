@@ -19,14 +19,14 @@ package org.openntf.domino.formula.ast;
 
 import java.util.Set;
 
-import org.openntf.domino.DateTime;
+import org.openntf.domino.ISimpleDateTime;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 import org.openntf.domino.formula.parse.ParseException;
 
 public class ASTValueDateOrKW extends SimpleNode {
-	DateTime dateValue = null;
+	ISimpleDateTime dateValue = null;
 	String image = null;
 
 	public ASTValueDateOrKW(final AtFormulaParserImpl p, final int id) {
@@ -44,8 +44,8 @@ public class ASTValueDateOrKW extends SimpleNode {
 		String inner = image.substring(1, image.length() - 1); // remove first [ and last ]
 		try {
 			dateValue = parser.getFormatter().parseDate(inner);
-		} catch (java.text.ParseException e) {
-			if (inner.contains(".") || inner.contains("/") || inner.contains("-")) {
+		} catch (IllegalArgumentException e) {
+			if (inner.contains(".") || inner.contains("/") || inner.contains("-") || inner.trim().isEmpty()) {
 				// this MUST be a date
 				throw new ParseException(parser, e.getMessage());
 			}

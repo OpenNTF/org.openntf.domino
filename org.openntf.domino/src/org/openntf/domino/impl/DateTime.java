@@ -22,6 +22,7 @@ import java.util.Date;
 
 import lotus.domino.NotesException;
 
+import org.openntf.domino.ISimpleDateTime;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
@@ -35,7 +36,8 @@ import com.ibm.icu.util.GregorianCalendar;
 /**
  * The Class DateTime.
  */
-public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.DateTime, Session> implements org.openntf.domino.DateTime {
+public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.DateTime, Session> implements org.openntf.domino.DateTime,
+		ISimpleDateTime {
 	//private static final Logger log_ = Logger.getLogger(DateTime.class.getName());
 	private static final long serialVersionUID = 1L;
 
@@ -921,6 +923,29 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		} catch (NotesException ne) {
 			throw new java.text.ParseException(ne.text, 0);
 		}
+	}
+
+	/*
+	 * A few tiny methods needed for the SimpleDateTime interface
+	 */
+	public int timeDifference(final ISimpleDateTime dt) {
+		if (dt instanceof lotus.domino.DateTime)
+			return timeDifference((lotus.domino.DateTime) dt);
+		return (int) timeDifferenceDouble(dt);
+	}
+
+	public double timeDifferenceDouble(final ISimpleDateTime dt) {
+		if (dt instanceof lotus.domino.DateTime)
+			return timeDifferenceDouble((lotus.domino.DateTime) dt);
+		Calendar thisCal = this.toJavaCal();
+		Calendar thatCal = dt.toJavaCal();
+		return (thisCal.getTimeInMillis() - thatCal.getTimeInMillis()) * 1000;
+	}
+
+	public int compare(final ISimpleDateTime sdt1, final ISimpleDateTime sdt2) {
+		if (sdt1 instanceof DateTime && sdt2 instanceof DateTime)
+			return ((DateTime) sdt1).compareTo((DateTime) sdt2);
+		return sdt1.toJavaDate().compareTo(sdt2.toJavaDate());
 	}
 
 }

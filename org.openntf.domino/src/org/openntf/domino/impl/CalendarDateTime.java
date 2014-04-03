@@ -10,6 +10,7 @@ import java.util.Vector;
 import lotus.domino.NotesException;
 
 import org.openntf.domino.DateTime;
+import org.openntf.domino.ISimpleDateTime;
 import org.openntf.domino.Session;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
@@ -292,6 +293,21 @@ public class CalendarDateTime implements DateTime, Cloneable {
 	public Session getAncestorSession() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public int timeDifference(final ISimpleDateTime dt) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public double timeDifferenceDouble(final ISimpleDateTime dt) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public int compare(final ISimpleDateTime o1, final ISimpleDateTime o2) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }
