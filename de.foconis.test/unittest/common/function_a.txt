@@ -1,0 +1,39 @@
+@Abs(3)
+#allPass
+#mapPass [3]
+
+@Abs(-3)
+#allPass
+#mapPass [3]
+
+@Abs(@Pi)
+#allPass
+#mapPass [3.141592653589793]
+
+@Abs(-@Pi)
+#allPass
+#mapPass [3.141592653589793]
+
+@Abstract( [DROPVOWELS]:[ABBREV]; 200; ""; "text1" )
+#lotusDocPass [Ths is a tst strng]
+
+
+
+@AbstractSimple 
+@Accessed 
+@ACos 
+@AddToFolder
+@Adjust 
+@AdminECLIsLocked
+@All 
+@AllChildren 
+@AllDescendants 
+@Ascii 
+@ASin 
+@ATan 
+@ATan2 
+@AttachmentLengths 
+@AttachmentModifiedTimes
+@AttachmentNames 
+@Attachments 
+@Author 

@@ -1,4 +1,4 @@
-package de.foconis.test.junit;
+package de.foconis.test.runner;
 
 import static org.junit.Assert.assertEquals;
 
@@ -37,13 +37,20 @@ public class FormulaTestCase {
 	@Test
 	public void testMap() throws FormulaParseException, EvaluateException {
 		String s = "" + map();
+		System.out.println("MAP\t" + s);
 		if (Strings.isBlankString(param.expect))
 			return;
 		assertEquals(param.expect, s);
 	}
 
+	//	@FormulaFile
+	//	public static String getFormulaFile() {
+	//		return "W:\\Daten\\Entwicklung\\UnitTest\\FormulaEngine\\";
+	//	}
+
 	protected List<Object> map() throws FormulaParseException, EvaluateException {
 		Map<String, Object> ntfMap = new HashMap<String, Object>();
+		fillDemoDoc(ntfMap);
 		ASTNode ast = null;
 		ast = FormulaParser.getDefaultInstance().parse(formula);
 		FormulaContext ctx1 = new FormulaContext(ntfMap, DominoFormatter.getDefaultInstance());
@@ -57,6 +64,22 @@ public class FormulaTestCase {
 		ast = FormulaParser.getDefaultInstance().parse(formula);
 		FormulaContext ctx1 = new FormulaContext(ntfMap, DominoFormatter.getDefaultInstance());
 		ast.solve(ctx1);
+	}
+
+	protected void fillDemoDoc(final Map<String, Object> doc) {
+
+		doc.put("rnd", new double[] { param.rndVal });
+
+		doc.put("text1", "This is a test string");
+		doc.put("text2", new String[] { "1", "2", "3" });
+
+		doc.put("int1", new int[] { 1 });
+		doc.put("int2", new int[] { 1, 2, 3 });
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("K1", "v1");
+		map.put("K2", "v2");
+		doc.put("mime1", map);
+
 	}
 
 }

@@ -1,7 +1,6 @@
-package de.foconis.test.junit;
+package de.foconis.test.runner;
 
-
-class TestParameter {
+public class TestParameter {
 
 	public TestMode lotus = TestMode.NONE;
 	public TestMode doc = TestMode.NONE;
@@ -9,6 +8,7 @@ class TestParameter {
 	public String formula;
 	public String ifo;
 	public String expect;
+	public double rndVal = Math.random();
 
 	public TestParameter(final String ifo, final String currentFormula) {
 		// TODO Auto-generated constructor stub

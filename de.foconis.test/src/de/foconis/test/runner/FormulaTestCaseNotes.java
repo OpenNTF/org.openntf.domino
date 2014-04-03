@@ -1,4 +1,4 @@
-package de.foconis.test.junit;
+package de.foconis.test.runner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -71,6 +71,7 @@ public class FormulaTestCaseNotes extends FormulaTestCase {
 	@Test
 	public void testLotus() throws NotesException {
 		String s = "" + lotus();
+		System.out.println("LOTUS\t" + s);
 		if (Strings.isBlankString(param.expect))
 			return;
 		assertEquals(param.expect, s);
@@ -79,6 +80,7 @@ public class FormulaTestCaseNotes extends FormulaTestCase {
 
 	protected List<Object> lotus() throws NotesException {
 		Document lotusDoc = db.createDocument();
+		fillDemoDoc(lotusDoc);
 		lotus.domino.Session rawSession = Factory.toLotus(Factory.getSession());
 		lotus.domino.Document rawDocument = Factory.toLotus(lotusDoc);
 		return rawSession.evaluate(formula, rawDocument);
@@ -88,6 +90,7 @@ public class FormulaTestCaseNotes extends FormulaTestCase {
 	@Test
 	public void testDoc() throws NotesException, FormulaParseException, EvaluateException {
 		String s = "" + doc();
+		System.out.println("DOC\t" + s);
 		if (Strings.isBlankString(param.expect))
 			return;
 		assertEquals(param.expect, s);
@@ -95,12 +98,12 @@ public class FormulaTestCaseNotes extends FormulaTestCase {
 
 	protected List<Object> doc() throws NotesException, FormulaParseException, EvaluateException {
 		Document ntfDoc = db.createDocument();
+		fillDemoDoc(ntfDoc);
 		ASTNode ast = null;
 
 		ast = FormulaParser.getDefaultInstance().parse(formula);
 		FormulaContext ctx1 = new FormulaContext(ntfDoc, DominoFormatter.getDefaultInstance());
 		return ast.solve(ctx1);
-
 	}
 
 	@SuppressWarnings("unchecked")

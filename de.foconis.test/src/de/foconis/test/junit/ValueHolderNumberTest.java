@@ -37,7 +37,7 @@ public class ValueHolderNumberTest {
 		vhErr = ValueHolder.createValueHolder(Long.class, 5);
 		vhErr.add(3);
 		vhErr.add(5);
-		//		vhErr.setError(new RuntimeException("This is a error"));
+		vhErr.addAll(ValueHolder.valueOf(new EvaluateException(1, 2, new RuntimeException("This is a error"))));
 	}
 
 	@Test
