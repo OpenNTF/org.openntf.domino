@@ -727,6 +727,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 		try {
 			// Make sure it's a text field!!
 			if (flag) {
+				if (getType() == AUTHORS) {
+					return;
+				}
 				if (getType() != TEXT) {
 					throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Authors field");
 				}
@@ -782,6 +785,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 		try {
 			// Make sure it's a text field!!
 			if (flag) {
+				if (getType() == NAMES) {
+					return;
+				}
 				if (getType() != TEXT) {
 					throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Names field");
 				}
@@ -818,6 +824,9 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 		try {
 			// Make sure it's a text field!!
 			if (flag) {
+				if (getType() == READERS) {
+					return;
+				}
 				if (getType() != TEXT) {
 					throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Readers field");
 				}
