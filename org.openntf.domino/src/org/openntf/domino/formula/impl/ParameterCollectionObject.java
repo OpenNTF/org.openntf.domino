@@ -19,7 +19,7 @@ package org.openntf.domino.formula.impl;
 import java.lang.reflect.Array;
 import java.util.Iterator;
 
-import org.openntf.domino.DateTime;
+import org.openntf.domino.ISimpleDateTime;
 import org.openntf.domino.formula.ValueHolder;
 
 public class ParameterCollectionObject<T> extends ParameterCollectionAbstract<T[]> {
@@ -51,7 +51,7 @@ public class ParameterCollectionObject<T> extends ParameterCollectionAbstract<T[
 				for (int i = 0; i < ret.length; i++) {
 					ret[i] = (T) params[i].getString(getIndex(i));
 				}
-			} else if (clazz.equals(DateTime.class)) {
+			} else if (clazz.equals(ISimpleDateTime.class)) {
 				for (int i = 0; i < ret.length; i++) {
 					ret[i] = (T) params[i].getDateTime(getIndex(i));
 				}

@@ -1,12 +1,10 @@
 package org.openntf.domino.formula;
 
-import java.text.ParsePosition;
 import java.util.Date;
 import java.util.Locale;
 
 import org.openntf.domino.ISimpleDateTime;
 
-import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.util.Calendar;
 
 public class SimpleDateTime implements ISimpleDateTime {
@@ -15,11 +13,7 @@ public class SimpleDateTime implements ISimpleDateTime {
 	private boolean iNoDate = false;
 	private boolean iNoTime = false;
 
-	public SimpleDateTime() {
-		this(Locale.getDefault());
-	}
-
-	public SimpleDateTime(final Locale loc) {
+	SimpleDateTime(final Locale loc) {
 		iLocale = loc;
 		iCal = Calendar.getInstance(loc);
 	}
@@ -62,9 +56,7 @@ public class SimpleDateTime implements ISimpleDateTime {
 	public String getDateOnly() {
 		if (iNoDate)
 			return "";
-		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, iLocale);
-		df.setCalendar(iCal);
-		return df.format(iCal.getTime());
+		return DominoFormatter.getInstance(iLocale).formatCalDateOnly(iCal);
 	}
 
 	public String getLocalTime() {
@@ -72,17 +64,13 @@ public class SimpleDateTime implements ISimpleDateTime {
 			return getTimeOnly();
 		if (iNoTime)
 			return getDateOnly();
-		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.LONG, iLocale);
-		df.setCalendar(iCal);
-		return df.format(iCal.getTime());
+		return DominoFormatter.getInstance(iLocale).formatCalDateTime(iCal);
 	}
 
 	public String getTimeOnly() {
 		if (iNoTime)
 			return "";
-		DateFormat df = DateFormat.getTimeInstance(DateFormat.MEDIUM, iLocale);
-		df.setCalendar(iCal);
-		return df.format(iCal.getTime());
+		return DominoFormatter.getInstance(iLocale).formatCalTimeOnly(iCal);
 	}
 
 	public int getTimeZone() {
@@ -95,6 +83,14 @@ public class SimpleDateTime implements ISimpleDateTime {
 		int unused;
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public boolean isAnyDate() {
+		return iNoDate;
+	}
+
+	public boolean isAnyTime() {
+		return iNoTime;
 	}
 
 	public boolean isDST() {
@@ -136,98 +132,11 @@ public class SimpleDateTime implements ISimpleDateTime {
 		iNoTime = false;
 	}
 
-	public void setLocalTime(String time) {
-		time = time.trim();
-		// Should an empty string lead to a DateTime with noDate=noTime=true?
-		// (Lotus doesn't accept empty strings here.)
-		char spec = 0;
-		if (time.equalsIgnoreCase("TODAY"))
-			spec = 'H';
-		else if (time.equalsIgnoreCase("TOMORROW"))
-			spec = 'M';
-		else if (time.equalsIgnoreCase("YESTERDAY"))
-			spec = 'G';
-		if (spec != 0) {
-			setNow();
-			if (spec == 'M')
-				adjustDay(1);
-			else if (spec == 'G')
-				adjustDay(-1);
-			iNoDate = false;
-			iNoTime = true;
-			return;
-		}
-		Calendar c2 = Calendar.getInstance(iLocale);
-		c2.setLenient(false);
-		for (;;) {
-			c2.clear();
-			/*
-			 * First attempt: Take a full date-time format MEDIUM
-			 */
-			DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, iLocale);
-			ParsePosition p = new ParsePosition(0);
-			df.parse(time, c2, p);
-			if (p.getErrorIndex() < 0)
-				break;
-			if (!c2.isSet(Calendar.DAY_OF_MONTH) || !c2.isSet(Calendar.MONTH)) {
-				//Try with SHORT format			
-				c2.clear();
-				df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM, iLocale);
-				p.setIndex(0);
-				p.setErrorIndex(-1);
-				df.parse(time, c2, p);
-				if (!c2.isSet(Calendar.DAY_OF_MONTH) || !c2.isSet(Calendar.MONTH)) {	// Give up with date
-					c2.clear();
-					p.setErrorIndex(0);
-				}
-			}
-			if (c2.isSet(Calendar.MINUTE))
-				break;
-			/*
-			 * If no time found yet (i.e. at least hour+minute like Lotus), try to fish it
-			 */
-			p.setIndex(p.getErrorIndex());
-			p.setErrorIndex(-1);
-			df = DateFormat.getTimeInstance(DateFormat.MEDIUM, iLocale);
-			df.parse(time, c2, p);
-			if (c2.isSet(Calendar.MINUTE))
-				break;
-			if (c2.isSet(Calendar.DAY_OF_MONTH)) { // Set back possible hour (in accordance with Lotus)
-				c2.clear(Calendar.HOUR);
-				c2.clear(Calendar.HOUR_OF_DAY);
-				break;
-			}
-			/*
-			 * Left: No date found, no time found; so:
-			 */
-			throw new IllegalArgumentException("Illegal date string '" + time + "'");
-		}
-		boolean contDate = c2.isSet(Calendar.DAY_OF_MONTH);
-		boolean contTime = c2.isSet(Calendar.MINUTE);
-		if (c2.isSet(Calendar.YEAR)) {
-			if (!contTime)
-				c2.set(Calendar.HOUR_OF_DAY, 0);
-		} else {
-			Calendar now = Calendar.getInstance(iLocale);
-			now.setTime(new Date());
-			c2.set(Calendar.YEAR, now.get(Calendar.YEAR));
-			if (!contDate) {
-				c2.set(Calendar.DAY_OF_MONTH, now.get(Calendar.DAY_OF_MONTH));
-				c2.set(Calendar.MONTH, now.get(Calendar.MONTH));
-			}
-		}
-		if (!c2.isSet(Calendar.MINUTE))
-			c2.set(Calendar.MINUTE, 0);
-		if (!c2.isSet(Calendar.SECOND))
-			c2.set(Calendar.SECOND, 0);
-		try {
-			c2.getTime();
-		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException("Illegal date string '" + time + "': " + e.getMessage());
-		}
-		iCal = c2;
-		iNoDate = !contDate;
-		iNoTime = !contTime;
+	public void setLocalTime(final String time) {
+		boolean[] noDT = new boolean[2];
+		iCal = DominoFormatter.getInstance(iLocale).parseDateToCal(time, noDT);
+		iNoDate = noDT[0];
+		iNoTime = noDT[1];
 	}
 
 	public void setNow() {
@@ -253,5 +162,61 @@ public class SimpleDateTime implements ISimpleDateTime {
 	@Override
 	public String toString() {
 		return getLocalTime();
+	}
+
+	public int compare(final ISimpleDateTime sdt1, final ISimpleDateTime sdt2) {
+		boolean noDate1 = sdt1.isAnyDate();
+		boolean noDate2 = sdt2.isAnyDate();
+		if (noDate1 != noDate2)
+			return (noDate2 ? 1 : -1);
+		boolean noTime1 = sdt1.isAnyTime();
+		boolean noTime2 = sdt2.isAnyTime();
+		if (noDate1) {
+			if (noTime1 && noTime2)
+				return (0);
+			if (noTime1 != noTime2)
+				return (noTime2 ? 1 : -1);
+		}
+		Calendar cal1 = sdt1.toJavaCal();
+		Calendar cal2 = sdt2.toJavaCal();
+		int i1, i2;
+		if (!noDate1) {
+			i1 = cal1.get(Calendar.YEAR);
+			i2 = cal2.get(Calendar.YEAR);
+			if (i1 != i2)
+				return (i1 > i2 ? 1 : -1);
+			i1 = cal1.get(Calendar.MONTH);
+			i2 = cal2.get(Calendar.MONTH);
+			if (i1 != i2)
+				return (i1 > i2 ? 1 : -1);
+			i1 = cal1.get(Calendar.DAY_OF_MONTH);
+			i2 = cal2.get(Calendar.DAY_OF_MONTH);
+			if (i1 != i2)
+				return (i1 > i2 ? 1 : -1);
+			if (noTime1 && noTime2)
+				return 0;
+			if (noTime1 != noTime2)
+				return (noTime2 ? 1 : -1);
+		}
+		i1 = cal1.get(Calendar.HOUR_OF_DAY);
+		i2 = cal2.get(Calendar.HOUR_OF_DAY);
+		if (i1 != i2)
+			return (i1 > i2 ? 1 : -1);
+		i1 = cal1.get(Calendar.MINUTE);
+		i2 = cal2.get(Calendar.MINUTE);
+		if (i1 != i2)
+			return (i1 > i2 ? 1 : -1);
+		i1 = cal1.get(Calendar.SECOND);
+		i2 = cal2.get(Calendar.SECOND);
+		if (i1 != i2)
+			return (i1 > i2 ? 1 : -1);
+		return 0;
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (o instanceof ISimpleDateTime)
+			return (compare(this, (ISimpleDateTime) o) == 0);
+		return super.equals(o);
 	}
 }

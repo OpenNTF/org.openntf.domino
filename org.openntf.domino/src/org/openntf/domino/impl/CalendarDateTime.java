@@ -305,4 +305,9 @@ public class CalendarDateTime implements DateTime, Cloneable {
 		return 0;
 	}
 
+	public int compare(final ISimpleDateTime o1, final ISimpleDateTime o2) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

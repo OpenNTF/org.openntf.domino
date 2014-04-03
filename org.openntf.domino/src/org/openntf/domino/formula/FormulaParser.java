@@ -137,8 +137,7 @@ public abstract class FormulaParser {
 	 * @throws ParseException
 	 *             see: {@link #parse(Reader, boolean)}
 	 */
-	final public ASTNode parse(final InputStream sr, final String encoding, final boolean useFocFormula)
-			throws FormulaParseException {
+	final public ASTNode parse(final InputStream sr, final String encoding, final boolean useFocFormula) throws FormulaParseException {
 		ReInit(sr, encoding);
 		if (useFocFormula) {
 			return parseFocFormula();

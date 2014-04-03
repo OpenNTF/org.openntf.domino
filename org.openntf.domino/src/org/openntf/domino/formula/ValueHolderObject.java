@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openntf.domino.DateTime;
+import org.openntf.domino.ISimpleDateTime;
 import org.openntf.domino.exceptions.IHaveNoIdeaHowThisHappenedException;
 
 /**
@@ -90,13 +90,13 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 	 * @see org.openntf.domino.formula.ValueHolder#getDateTime(int)
 	 */
 	@Override
-	public DateTime getDateTime(final int i) {
+	public ISimpleDateTime getDateTime(final int i) {
 		switch (dataType) {
 
 		case DATETIME:
 			if (i < size)
-				return (DateTime) values[i];
-			return (DateTime) values[size - 1];
+				return (ISimpleDateTime) values[i];
+			return (ISimpleDateTime) values[size - 1];
 
 		default:
 			throw new ClassCastException("DATETIME expected. Got '" + dataType + "'");
@@ -122,10 +122,10 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.openntf.domino.formula.ValueHolder#add(org.openntf.domino.DateTime)
+	 * @see org.openntf.domino.formula.ValueHolder#add(org.openntf.domino.ISimpleDateTime)
 	 */
 	@Override
-	public boolean add(final DateTime dateTime) {
+	public boolean add(final ISimpleDateTime dateTime) {
 		switch (dataType) {
 		case _UNSET:
 			dataType = DataType.DATETIME;
@@ -148,8 +148,8 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 	public boolean add(final Object obj) {
 		if (obj instanceof String)
 			return add((String) obj);
-		if (obj instanceof DateTime)
-			return add((DateTime) obj);
+		if (obj instanceof ISimpleDateTime)
+			return add((ISimpleDateTime) obj);
 
 		switch (dataType) {
 		case _UNSET:

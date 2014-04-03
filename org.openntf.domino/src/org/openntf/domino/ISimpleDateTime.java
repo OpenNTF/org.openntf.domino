@@ -15,6 +15,7 @@
  */
 package org.openntf.domino;
 
+import java.util.Comparator;
 import java.util.Date;
 
 import com.ibm.icu.util.Calendar;
@@ -22,7 +23,7 @@ import com.ibm.icu.util.Calendar;
 /**
  * The Interface SimpleDateTime.
  */
-public interface ISimpleDateTime {
+public interface ISimpleDateTime extends Comparator<ISimpleDateTime> {
 
 	public abstract void adjustDay(final int n);
 
@@ -47,6 +48,10 @@ public interface ISimpleDateTime {
 	public abstract int getTimeZone();
 
 	public abstract String getZoneTime();
+
+	public abstract boolean isAnyDate();
+
+	public abstract boolean isAnyTime();
 
 	public abstract boolean isDST();
 

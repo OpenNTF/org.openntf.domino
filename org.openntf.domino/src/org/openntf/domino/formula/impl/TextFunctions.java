@@ -18,11 +18,12 @@ package org.openntf.domino.formula.impl;
 
 import java.text.NumberFormat;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
-import org.openntf.domino.DateTime;
+import org.openntf.domino.ISimpleDateTime;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.formula.Formatter;
 import org.openntf.domino.formula.FormulaContext;
@@ -629,8 +630,6 @@ public enum TextFunctions {
 				ret.add(formatter.parseNumber(val));
 			}
 			return ret;
-		} catch (java.text.ParseException e) {
-			throw new IllegalArgumentException("Can't convert to Number: \"" + val + "\"", e);
 		} catch (NumberFormatException e) {
 			throw new IllegalArgumentException("Can't convert to Number: \"" + val + "\"", e);
 		}
@@ -660,7 +659,7 @@ public enum TextFunctions {
 
 	/*----------------------------------------------------------------------------*/
 	private static ValueHolder strToDateTime(final FormulaContext ctx, final ValueHolder vh) {
-		ValueHolder ret = ValueHolder.createValueHolder(DateTime.class, vh.size);
+		ValueHolder ret = ValueHolder.createValueHolder(ISimpleDateTime.class, vh.size);
 		Formatter formatter = ctx.getFormatter();
 		String val = null;
 		try {
@@ -669,8 +668,6 @@ public enum TextFunctions {
 				ret.add(formatter.parseDate(val));
 			}
 			return ret;
-		} catch (java.text.ParseException e) {
-			throw new IllegalArgumentException("Can't convert to DateTime: \"" + val + "\"", e);
 		} catch (OpenNTFNotesException e) {
 			throw new IllegalArgumentException("Can't convert to DateTime: \"" + val + "\"", e);
 		}
@@ -1128,7 +1125,7 @@ public enum TextFunctions {
 			fractDigits = -1;
 		else if (genFormat == 'F' && fractDigits == -1)
 			fractDigits = 2;
-		NumberFormat nf = ctx.getFormatter().getNumberFormatter();
+		NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
 		nf.setGroupingUsed(useGrouping);
 		nf.setMaximumIntegerDigits(10000);
 		if (fractDigits != -1) {

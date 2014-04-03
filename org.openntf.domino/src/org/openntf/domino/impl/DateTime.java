@@ -942,4 +942,10 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		return (thisCal.getTimeInMillis() - thatCal.getTimeInMillis()) * 1000;
 	}
 
+	public int compare(final ISimpleDateTime sdt1, final ISimpleDateTime sdt2) {
+		if (sdt1 instanceof DateTime && sdt2 instanceof DateTime)
+			return ((DateTime) sdt1).compareTo((DateTime) sdt2);
+		return sdt1.toJavaDate().compareTo(sdt2.toJavaDate());
+	}
+
 }

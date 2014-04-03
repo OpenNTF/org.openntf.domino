@@ -21,7 +21,7 @@ import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.List;
 
-import org.openntf.domino.DateTime;
+import org.openntf.domino.ISimpleDateTime;
 
 /**
  * This Valueholder is to hold single or multiple values.
@@ -309,8 +309,8 @@ public abstract class ValueHolder implements Serializable {
 	 *            the DateTime
 	 * @return the ValueHolder
 	 */
-	public static ValueHolder valueOf(final DateTime init) {
-		ValueHolder vh = new ValueHolderObject<DateTime>(1);
+	public static ValueHolder valueOf(final ISimpleDateTime init) {
+		ValueHolder vh = new ValueHolderObject<ISimpleDateTime>(1);
 		vh.add(init);
 		vh.immutable = true;
 		return vh;
@@ -394,7 +394,7 @@ public abstract class ValueHolder implements Serializable {
 	/**
 	 * Returns the value at position i as DateTime
 	 */
-	public DateTime getDateTime(final int i) {
+	public ISimpleDateTime getDateTime(final int i) {
 		throw new ClassCastException("DATETIME expected. Got '" + dataType + "'");
 	}
 
@@ -483,7 +483,7 @@ public abstract class ValueHolder implements Serializable {
 		throw new IllegalArgumentException("Cannot mix datatypes " + dataType + " and BOOLEAN");
 	}
 
-	public boolean add(final DateTime bool) {
+	public boolean add(final ISimpleDateTime bool) {
 		throw new IllegalArgumentException("Cannot mix datatypes " + dataType + " and DATETIME");
 	}
 
@@ -518,8 +518,8 @@ public abstract class ValueHolder implements Serializable {
 		} else if (obj instanceof Boolean) {
 			return add(((Boolean) obj).booleanValue());
 
-		} else if (obj instanceof DateTime) {
-			return add((DateTime) obj);
+		} else if (obj instanceof ISimpleDateTime) {
+			return add((ISimpleDateTime) obj);
 
 			//} else if (obj instanceof RuntimeException) {
 			//	setError((RuntimeException) obj);
