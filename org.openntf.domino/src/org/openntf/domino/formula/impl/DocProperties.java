@@ -9,6 +9,42 @@ import org.openntf.domino.utils.Strings;
 
 public enum DocProperties {
 	;
+
+	@ParamCount(0)
+	public static ValueHolder atAuthor(final FormulaContext ctx) {
+		return ctx.getVarLC("@author");
+	}
+
+	@ParamCount(0)
+	public static ValueHolder atAllChildren(final FormulaContext ctx) {
+		return ctx.getVarLC("@allchildren");
+	}
+
+	@ParamCount(0)
+	public static ValueHolder atAllDescendants(final FormulaContext ctx) {
+		return ctx.getVarLC("@alldescendants");
+	}
+
+	@ParamCount(0)
+	public static ValueHolder atAttachmentLengths(final FormulaContext ctx) {
+		return ctx.getVarLC("@attachmentlengths");
+	}
+
+	@ParamCount(0)
+	public static ValueHolder atAttachmentNames(final FormulaContext ctx) {
+		return ctx.getVarLC("@attachmentnames");
+	}
+
+	@ParamCount(0)
+	public static ValueHolder atAttachmentModifiedTimes(final FormulaContext ctx) {
+		return ctx.getVarLC("@attachmentmodifiedtimes");
+	}
+
+	@ParamCount(0)
+	public static ValueHolder atAttachments(final FormulaContext ctx) {
+		return ctx.getVarLC("@attachments");
+	}
+
 	@ParamCount(0)
 	public static ValueHolder atAccessed(final FormulaContext ctx) {
 		return ctx.getVarLC("@accessed");

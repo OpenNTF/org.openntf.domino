@@ -2,6 +2,7 @@ package de.foconis.test.runner;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +76,8 @@ public class FormulaTestCase {
 
 		doc.put("int1", new int[] { 1 });
 		doc.put("int2", new int[] { 1, 2, 3 });
+		Date d = new Date(79, 07, 17, 12, 0, 0);
+		doc.put("birthday", d);
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("K1", "v1");
 		map.put("K2", "v2");

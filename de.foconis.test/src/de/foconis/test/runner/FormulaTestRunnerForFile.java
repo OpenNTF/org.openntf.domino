@@ -44,9 +44,11 @@ public class FormulaTestRunnerForFile extends ParentRunner<Runner> {
 
 	}
 
+	static int idx = 0; // must generate unique test number!
+
 	private List<Runner> createRunners(final File file) throws Exception {
 		try {
-			int idx = 0;
+
 			List<Runner> children = new ArrayList<Runner>();
 
 			BufferedReader br = new BufferedReader(new FileReader(file));
@@ -98,6 +100,10 @@ public class FormulaTestRunnerForFile extends ParentRunner<Runner> {
 						param.lotus = TestMode.PASS;
 						param.doc = TestMode.PASS;
 
+					} else if (lcline.startsWith("#docmappass")) {
+						param.map = TestMode.PASS;
+						param.doc = TestMode.PASS;
+
 					} else if (lcline.startsWith("#mappass")) {
 						param.map = TestMode.PASS;
 
@@ -109,6 +115,13 @@ public class FormulaTestRunnerForFile extends ParentRunner<Runner> {
 
 					} else if (lcline.startsWith("#mapfail")) {
 						param.map = TestMode.FAIL;
+					} else if (lcline.startsWith("#rem")) {
+						continue;
+					} else if (lcline.startsWith("#todo")) {
+						System.err.println("#TOOD");
+						System.err.println(currentFormula);
+						System.err.println(line);
+						continue;
 					} else {
 						throw new IllegalStateException("cannot interpret '" + line + "'");
 					}

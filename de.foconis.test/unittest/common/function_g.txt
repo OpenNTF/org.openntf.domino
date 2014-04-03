@@ -1,0 +1,32 @@
+@GetAddressBooks
+	#allPass
+
+@GetCurrentTimeZone 
+	#allPass 
+
+@Text(@GetDocField("852559B400670541852559B4006656ED";"$Flags"))
+	#allPass [R]
+
+@GetField("text1")
+	#allPass
+
+@GetFocusTable 
+	#allPass
+                 
+
+@GetHTTPHeader 
+	#allPass
+             
+@GetIMContactListGroupNames 
+	#allPass
+
+@GetPortsList 
+	#allPass
+ 
+@GetProfileField
+	#allPass
+
+@GetViewInfo
+	#allPass
+
+ 

@@ -44,7 +44,7 @@ public enum NotSupported {
 		return notSupported();
 	}
 
-	@ParamCount(3)
+	@ParamCount({ 2, 3 })
 	public static ValueHolder atDialogBox() {
 		return notSupported();
 	}

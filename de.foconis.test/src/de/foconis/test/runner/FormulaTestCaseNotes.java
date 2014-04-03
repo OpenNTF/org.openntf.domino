@@ -4,8 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Map;
 
+import lotus.domino.EmbeddedObject;
 import lotus.domino.NotesException;
+import lotus.domino.RichTextItem;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -214,5 +217,22 @@ public class FormulaTestCaseNotes extends FormulaTestCase {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	protected void fillDemoDoc(final Map<String, Object> doc) {
+		super.fillDemoDoc(doc);
+		try {
+			if (doc instanceof lotus.domino.Document) {
+				lotus.domino.Document lotusDoc = (lotus.domino.Document) doc;
+				RichTextItem rti = lotusDoc.createRichTextItem("body");
+				rti.appendText("This is autoexec.bat:");
+				rti.embedObject(EmbeddedObject.EMBED_ATTACHMENT, "", "c:\\autoexec.bat", null).recycle();
+				rti.compact();
+				rti.recycle();
+			}
+		} catch (NotesException ex) {
+
+		}
 	}
 }
