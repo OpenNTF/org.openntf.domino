@@ -53,7 +53,7 @@ public class FormulaTestCase {
 		fillDemoDoc(ntfMap);
 		ASTNode ast = null;
 		ast = FormulaParser.getDefaultInstance().parse(formula);
-		FormulaContext ctx1 = new FormulaContext(ntfMap, DominoFormatter.getDefaultInstance());
+		FormulaContext ctx1 = FormulaContext.createContext(ntfMap, DominoFormatter.getDefaultInstance());
 		return ast.solve(ctx1);
 	}
 
@@ -62,7 +62,7 @@ public class FormulaTestCase {
 		Map<String, Object> ntfMap = new HashMap<String, Object>();
 		ASTNode ast = null;
 		ast = FormulaParser.getDefaultInstance().parse(formula);
-		FormulaContext ctx1 = new FormulaContext(ntfMap, DominoFormatter.getDefaultInstance());
+		FormulaContext ctx1 = FormulaContext.createContext(ntfMap, DominoFormatter.getDefaultInstance());
 		ast.solve(ctx1);
 	}
 

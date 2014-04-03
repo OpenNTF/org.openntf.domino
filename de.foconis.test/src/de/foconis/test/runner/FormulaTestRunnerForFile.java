@@ -69,8 +69,10 @@ public class FormulaTestRunnerForFile extends ParentRunner<Runner> {
 
 					String cmd = TextFunctions.atLeft(line + " ", " ");
 					String expect = TextFunctions.atRight(line, " ");
-					String ifo = "line " + lineNr + ": " + cmd + " " //
-							+ currentFormula.replace('(', '[').replace(')', ']') + (Strings.isBlankString(expect) ? "" : " = " + expect);
+					String ifo = "line " + lineNr + ": " + cmd
+							+ " "   //
+							+ currentFormula.replace('(', '[').replace(')', ']').replace('\r', ' ').replace('\n', ' ')
+							+ (Strings.isBlankString(expect) ? "" : " = " + expect);
 
 					TestParameter param = new TestParameter(ifo, currentFormula);
 

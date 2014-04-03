@@ -102,7 +102,7 @@ public class FormulaTestCaseNotes extends FormulaTestCase {
 		ASTNode ast = null;
 
 		ast = FormulaParser.getDefaultInstance().parse(formula);
-		FormulaContext ctx1 = new FormulaContext(ntfDoc, DominoFormatter.getDefaultInstance());
+		FormulaContext ctx1 = FormulaContext.createContext(ntfDoc, DominoFormatter.getDefaultInstance());
 		return ast.solve(ctx1);
 	}
 
@@ -123,7 +123,7 @@ public class FormulaTestCaseNotes extends FormulaTestCase {
 		ASTNode ast = null;
 
 		ast = FormulaParser.getDefaultInstance().parse(formula);
-		FormulaContext ctx1 = new FormulaContext(ntfDoc, DominoFormatter.getDefaultInstance());
+		FormulaContext ctx1 = FormulaContext.createContext(ntfDoc, DominoFormatter.getDefaultInstance());
 		ast.solve(ctx1);
 
 	}
@@ -197,12 +197,9 @@ public class FormulaTestCaseNotes extends FormulaTestCase {
 					lotus.domino.DateTime dt1 = (lotus.domino.DateTime) a;
 					lotus.domino.DateTime dt2 = (lotus.domino.DateTime) b;
 					try {
-						if (dt1.timeDifference(dt2) != 0) {
-							// TODO: Do we need a delta here?
-							assertEquals(dt1.toJavaDate(), dt2.toJavaDate());
-							return false;
-						}
+						assertEquals(dt1.toJavaDate(), dt2.toJavaDate());
 					} catch (NotesException e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
 						return false;
 					}

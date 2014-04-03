@@ -94,7 +94,7 @@ class FormulaTestRunnerForParameters extends BlockJUnit4ClassRunner {
 			if (fParameter.lotus == TestMode.PASS && fParameter.doc == TestMode.PASS && method.getName().equals("compareLotusDoc")) {
 				ret.add(method);
 			}
-			if (fParameter.lotus == TestMode.PASS && fParameter.doc == TestMode.PASS && method.getName().equals("compareLotusMap")) {
+			if (fParameter.lotus == TestMode.PASS && fParameter.map == TestMode.PASS && method.getName().equals("compareLotusMap")) {
 				ret.add(method);
 			}
 			if (fParameter.doc == TestMode.PASS && fParameter.map == TestMode.PASS && method.getName().equals("compareDocMap")) {
@@ -111,8 +111,12 @@ class FormulaTestRunnerForParameters extends BlockJUnit4ClassRunner {
 	 */
 	@Override
 	public void run(final RunNotifier notifier) {
-		System.out.println("======" + getName());
-		super.run(notifier);
+		if (getChildren().size() == 0) {
+			notifier.fireTestIgnored(getDescription());
+		} else {
+			System.out.println("======" + getName());
+			super.run(notifier);
+		}
 
 	}
 

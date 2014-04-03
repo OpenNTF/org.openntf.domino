@@ -317,7 +317,7 @@ public class ValueHolderNumberTest {
 
 	@Test
 	public final void testIsTrue() {
-		FormulaContext ctx = new FormulaContext(null, null);
+		FormulaContext ctx = FormulaContext.createContext(null, null);
 		ctx.useBooleans(false);
 		assertTrue(!vhi.isTrue(ctx));
 		vhi.add(0);
@@ -328,7 +328,7 @@ public class ValueHolderNumberTest {
 
 	@Test(expected = ClassCastException.class)
 	public final void testIsTrue2() {
-		FormulaContext ctx = new FormulaContext(null, null);
+		FormulaContext ctx = FormulaContext.createContext(null, null);
 		ctx.useBooleans(true);
 		vhi.add(0);
 		assertTrue(!vhi.isTrue(ctx));

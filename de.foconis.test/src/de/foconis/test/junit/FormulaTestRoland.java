@@ -1,10 +1,10 @@
 package de.foconis.test.junit;
 
 import de.foconis.test.runner.FormulaFile;
-import de.foconis.test.runner.FormulaTestCaseNotes;
+import de.foconis.test.runner.FormulaTestCase;
 import de.foconis.test.runner.TestParameter;
 
-public class FormulaTestRoland extends FormulaTestCaseNotes {
+public class FormulaTestRoland extends FormulaTestCase {
 	public FormulaTestRoland(final TestParameter p) {
 		super(p);
 		// TODO Auto-generated constructor stub

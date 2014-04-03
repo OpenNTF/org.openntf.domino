@@ -17,10 +17,13 @@
 @Abstract( [DROPVOWELS]:[ABBREV]; 200; ""; "text1" )
 #lotusDocPass [Ths is a tst strng]
 
+@AbstractSimple( "text1" )
+#lotusDocPass [This is a test string]
 
 
-@AbstractSimple 
 @Accessed 
+#lotusDocPass
+
 @ACos 
 @AddToFolder
 @Adjust 
