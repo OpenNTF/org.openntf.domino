@@ -1,0 +1,54 @@
+@Tan(3) 
+	#allPass 
+
+@TemplateVersion 
+	#allFail
+
+@Text(123) 
+	#allPass 
+ 
+@TextToNumber("123") 
+	#allPass 
+ 
+@TextToTime("12:34") 
+	#allPass 
+ 
+@ThisName 
+	#allPass 
+
+@ThisValue 
+	#allPass 
+
+@Time(12;34;56)
+	#allPass 
+
+@TimeMerge(@Today; [5:14] : [7:45]) 
+	#allPass 
+
+@TimeToTextInZone(@now;"Z=9$DO=1$DL=4 1 1 10-1 1$ZX=3$ZN=Alaskan";"D2T1S3")
+	#allPass 
+ 
+@TimeZoneToText("Z=9$DO=1$DL=4 1 1 10-1 1$ZX=3$ZN=Alaskan";"SA")
+	#allPass 
+
+@Today 
+	#allPass 
+
+@Tomorrow 
+	#allPass 
+
+@ToNumber("123") 
+	#allPass 
+
+@ToTime("12:34") 
+	#allPass 
+
+@Transform("a":"b":"c";"x";@if(x = "b"; @Nothing; x)) 
+	#allPass [a, c]
+
+@Trim(" Hallo  Welt ") 
+	#allPass [Hallo Welt]
+
+@True 
+	#allPass [1.0]
+ 

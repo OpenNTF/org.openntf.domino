@@ -1,0 +1,127 @@
+@If(@false;"1";@false;"2";"3")
+	#allPass [3]
+
+@IfError (ok; "error")
+	#allPass [] 
+@IfError (ok+1; "error")
+	#allPass [error]	
+
+@Implode("a":"b":"c");
+	#allPass [a, b, c]
+@Implode("a":"b":"c";"|");
+	#allPass [a|b|c]
+
+@InheritedDocumentUniqueID 
+	#allPass
+
+@Integer(@Pi)
+	#allPass
+
+@IsAgentEnabled("test")
+	#allPass
+
+@IsAppInstalled("Designer")
+	#allPass
+
+@IsAvailable("text1")
+	#allPass
+@IsAvailable("body")
+	#allPass
+
+@IsCategory
+	#allPass
+@IsCategory("C")
+	#allPass
+@IsCategory("Y";"N")
+	#allPass
+
+@IsDB2("":"names.nsf")
+	#docFail
+	#mapFail
+	#rem crashes in native evaluate!!
+
+@IsDocBeingEdited
+	#allPass
+
+@IsDocBeingLoaded
+	#allPass
+
+@IsDocBeingMailed
+	#allPass
+
+@IsDocBeingRecalculated
+	#allPass
+ 
+@IsDocBeingSaved
+	#allPass
+
+@IsDocTruncated
+	#allPass
+ 
+@IsEmbeddedInsideWCT
+	#allPass
+
+@IsError(ok)
+	#allPass
+
+@IsError(ok+1)
+	#allPass
+
+@IsExpandable
+	#allPass
+     
+@IsMember("computer";"printer":"computer":"monitor")
+	#allPass
+
+@IsModalHelp 
+	#allPass
+
+@IsNewDoc 
+	#allPass
+ 
+@IsNotMember("computer";"printer":"computer":"monitor")
+	#allPass
+
+@IsNull("") 
+	#allPass
+@IsNull(nonExistentField)
+	#allPass
+@IsNull("1") 
+	#allPass
+
+@IsNumber(123)
+	#allPass
+@IsNumber("123")
+	#allPass
+@IsNumber(@Created)
+	#allPass
+
+@IsResponseDoc 
+	#allPass 
+
+@IsText("Blanchard & Daughters")
+	#allPass 
+@IsText(123)
+	#allPass
+
+@IsTime(123) 
+	#allPass
+@IsTime("123") 
+	#allPass
+@IsTime([9:30]) 
+	#allPass
+
+@IsUnavailable(nonExistentField)
+	#allPass
+@IsUnavailable(int1)
+	#allPass
+
+@IsUsingJavaElement 
+	#allPass
+
+@IsValid 
+	#allPass
+ 
+@IsVirtualizedDirectory
+	#allPass
+ 

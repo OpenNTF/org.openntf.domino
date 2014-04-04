@@ -1,0 +1,31 @@
+@Password 
+	#allPass 
+
+@PasswordQuality
+	#allPass 
+
+@Pi 
+	#allPass 
+
+@PickList
+	#allPass 
+
+@Platform 
+	#allPass 
+
+@PolicyIsFieldLocked 
+	#allPass 
+ 
+@PostedCommand 
+	#allPass 
+
+@Power 
+	#allPass 
+
+@Prompt
+	#allPass 
+
+@ProperCase 
+	#allPass 
+
+ 

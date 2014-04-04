@@ -70,7 +70,7 @@ public class FormulaTestRunnerForFile extends ParentRunner<Runner> {
 					}
 
 					String cmd = TextFunctions.atLeft(line + " ", " ");
-					String expect = TextFunctions.atRight(line, " ");
+					String expect = TextFunctions.atRight(line, " ").trim();
 					String ifo = "line " + lineNr + ": " + cmd
 							+ " "   //
 							+ currentFormula.replace('(', '[').replace(')', ']').replace('\r', ' ').replace('\n', ' ')
@@ -78,7 +78,18 @@ public class FormulaTestRunnerForFile extends ParentRunner<Runner> {
 
 					TestParameter param = new TestParameter(ifo, currentFormula);
 
-					param.expect = expect;
+					if (expect.startsWith("[")) {
+						param.expect = expect;
+					} else if (!Strings.isBlankString(expect)) {
+						String minLen = TextFunctions.atLeft(expect, "-").trim();
+						String maxLen = TextFunctions.atRight(expect, "-").trim();
+						if ("".equals(minLen)) {
+							minLen = expect.trim();
+							maxLen = expect.trim();
+						}
+						param.expectMin = Integer.valueOf(minLen);
+						param.expectMax = Integer.valueOf(maxLen);
+					}
 
 					if (lcline.startsWith("#allfail")) {
 						param.lotus = TestMode.FAIL;

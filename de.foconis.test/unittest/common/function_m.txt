@@ -1,0 +1,48 @@
+@MailDbName
+	#allPass
+
+@MailEncryptSavedPreference 
+	#allPass
+
+@MailEncryptSentPreference 
+	#allPass
+
+@MailSavePreference 
+	#allPass
+
+@MailSend 
+	#allPass
+
+@MailSignPreference 
+	#allPass
+
+@Matches 
+	#allPass
+ 
+@Max 
+	#allPass
+
+@Member 
+	#allPass
+
+@Middle 
+	#allPass
+ 
+@MiddleBack 
+	#allPass
+ 
+@Min 
+	#allPass
+
+@Minute 
+	#allPass
+
+@Modified 
+	#allPass
+ 
+@Modulo 
+	#allPass
+
+@Month 
+	#allPass
+ 

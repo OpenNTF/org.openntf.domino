@@ -1,0 +1,46 @@
+@LanguagePreference([REGION])
+	#allPass
+@LaunchApp("Designer") 
+	#allPass
+@LDAPServer
+	#allPass
+ 
+@Left("Lennard Wallace";3)
+	#allPass
+	
+@Left("Lennard Wallace";"la")
+	#allPass
+
+
+@LeftBack("Lennard Wallace";3)
+	#allPass
+	
+@LeftBack("Lennard Wallace";"la")
+	#allPass
+ 
+@Length("The boy crossed the wide, but gentle, stream.")
+	#allPass 
+@Length("äöü€")
+	#allPass 
+
+@Like( "A big test" ; "A_test" )
+	#allPass 
+@Like( "A big test" ; "A_____test" )
+	#allPass 
+@Like( "A big test" ; "%test" ) 
+	#allPass 
+	
+	
+@Ln(2)
+	#allPass 
+@Locale([NotesLocale] )
+	#allPass 
+
+@Locale
+	#allPass 
+
+@Log(4) 
+	#allPass 
+
+@LowerCase("ÄnnaMirl")
+	#allPass
