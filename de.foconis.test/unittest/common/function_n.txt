@@ -1,0 +1,12 @@
+@No 
+	#allPass
+
+@NoteID
+	#allPass
+
+@Nothing 
+	#allPass 
+
+@Now
+	#allPass
+ 

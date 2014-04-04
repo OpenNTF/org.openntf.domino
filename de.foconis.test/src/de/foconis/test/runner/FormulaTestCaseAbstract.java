@@ -2,7 +2,13 @@ package de.foconis.test.runner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.openntf.domino.formula.impl.TextFunctions.atLeft;
+import static org.openntf.domino.formula.impl.TextFunctions.atRight;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,12 +16,7 @@ import lotus.domino.EmbeddedObject;
 import lotus.domino.NotesException;
 import lotus.domino.RichTextItem;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.openntf.domino.Database;
@@ -31,56 +32,81 @@ import org.openntf.domino.utils.Strings;
 
 @RunWith(FormulaTestSuite.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class FormulaTestCaseNotes extends FormulaTestCase {
+public class FormulaTestCaseAbstract {
 
-	private Database db;
+	protected String formula;
+	protected TestParameter param;
+
+	protected Database db;
 
 	/**
 	 * Constructor
 	 * 
 	 */
-	public FormulaTestCaseNotes(final TestParameter p) {
-		super(p);
+	public FormulaTestCaseAbstract(final TestParameter p) {
+		param = p;
+		formula = p.formula;
 	}
 
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-		lotus.domino.NotesThread.sinitThread();
-	}
+	protected void fillDemoDoc(final Map<String, Object> doc) {
 
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-		lotus.domino.NotesThread.stermThread();
-	}
+		doc.put("rnd", new double[] { param.rndVal });
 
-	@Before
-	public void setUp() throws Exception {
-		Factory.setClassLoader(Thread.currentThread().getContextClassLoader());
+		doc.put("text1", "This is a test string");
+		doc.put("text2", new String[] { "1", "2", "3" });
 
-		if (param.lotus.enabled || param.doc.enabled) {
-			db = Factory.getSession().getDatabase("", "log.nsf");
-			if (db == null) {
-				throw new IllegalStateException("Cannot open log.nsf. Check if server is running");
+		doc.put("int1", new int[] { 1 });
+		doc.put("int2", new int[] { 1, 2, 3 });
+		Date d = new Date(79, 07, 17, 12, 0, 0);
+		doc.put("birthday", d);
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("K1", "v1");
+		map.put("K2", "v2");
+		doc.put("mime1", map);
+		try {
+			if (doc instanceof lotus.domino.Document) {
+				lotus.domino.Document lotusDoc = (lotus.domino.Document) doc;
+				RichTextItem rti = lotusDoc.createRichTextItem("body");
+				rti.appendText("This is autoexec.bat:");
+				rti.embedObject(EmbeddedObject.EMBED_ATTACHMENT, "", "c:\\autoexec.bat", null).recycle();
+				rti.compact();
+				rti.recycle();
 			}
+		} catch (NotesException ex) {
+
 		}
+
 	}
 
-	@After
-	public void tearDown() throws Exception {
-		Factory.terminate();
+	// ========================== Lotus Tests
+
+	//@Test
+	public void testLotus() throws NotesException {
+		String s = toString(lotus());
+		System.out.println("LOTUS\t" + s);
+		assertResult(s);
+
+	}
+
+	private String toString(final List<Object> inp) {
+		if (inp == null)
+			return "null";
+		List<Object> ret = new ArrayList<Object>();
+		for (Object o : inp) {
+			if (o instanceof Number) {
+				ret.add(((Number) o).doubleValue());
+			} else if (o instanceof Boolean) {
+				ret.add(((Boolean) o).booleanValue() ? 1.0 : 0.0);
+			} else {
+				ret.add(o);
+			}
+
+		}
+		// TODO Auto-generated method stub
+		return ret.toString();
 	}
 
 	@SuppressWarnings("unchecked")
-	@Test
-	public void testLotus() throws NotesException {
-		String s = "" + lotus();
-		System.out.println("LOTUS\t" + s);
-		if (Strings.isBlankString(param.expect))
-			return;
-		assertEquals(param.expect, s);
-
-	}
-
 	protected List<Object> lotus() throws NotesException {
 		Document lotusDoc = db.createDocument();
 		fillDemoDoc(lotusDoc);
@@ -90,13 +116,43 @@ public class FormulaTestCaseNotes extends FormulaTestCase {
 
 	}
 
-	@Test
+	@SuppressWarnings("unchecked")
+	//@Test(expected = NotesException.class)
+	public void testLotusFail() throws NotesException {
+
+		Document lotusDoc = db.createDocument();
+		lotus.domino.Session rawSession = Factory.toLotus(Factory.getSession());
+		lotus.domino.Document rawDocument = Factory.toLotus(lotusDoc);
+		try {
+			rawSession.evaluate(formula, rawDocument);
+			fail("Expected " + NotesException.class);
+		} catch (NotesException e) {
+			System.out.println("LOTUS\t" + e.toString());
+			assertEquals("Could not evaluate formula", atLeft(atRight(e.toString(), ":"), ":").trim());
+			throw e;
+		}
+
+	}
+
+	protected void assertResult(final String s) {
+		int l = s.length();
+		if (param.expectMin <= l && l <= param.expectMax) {
+			if (Strings.isBlankString(param.expect))
+				return;
+			assertEquals(param.expect, s);
+		} else {
+			fail("Got " + s + " (length:" + l + ") but expected length was " + param.expectMin
+					+ (param.expectMax > param.expectMin ? (" to " + param.expectMax) : ""));
+		}
+	}
+
+	// ========================== openntf-Doc Tests
+	//@Test
 	public void testDoc() throws NotesException, FormulaParseException, EvaluateException {
-		String s = "" + doc();
+		String s = toString(doc());
 		System.out.println("DOC\t" + s);
-		if (Strings.isBlankString(param.expect))
-			return;
-		assertEquals(param.expect, s);
+
+		assertResult(s);
 	}
 
 	protected List<Object> doc() throws NotesException, FormulaParseException, EvaluateException {
@@ -109,18 +165,7 @@ public class FormulaTestCaseNotes extends FormulaTestCase {
 		return ast.solve(ctx1);
 	}
 
-	@SuppressWarnings("unchecked")
-	@Test(expected = NotesException.class)
-	public void testLotusFail() throws NotesException {
-
-		Document lotusDoc = db.createDocument();
-		lotus.domino.Session rawSession = Factory.toLotus(Factory.getSession());
-		lotus.domino.Document rawDocument = Factory.toLotus(lotusDoc);
-		rawSession.evaluate(formula, rawDocument);
-
-	}
-
-	@Test(expected = org.openntf.domino.formula.EvaluateException.class)
+	//@Test(expected = org.openntf.domino.formula.EvaluateException.class)
 	public void testDocFail() throws NotesException, FormulaParseException, EvaluateException {
 		Document ntfDoc = db.createDocument();
 		ASTNode ast = null;
@@ -131,21 +176,49 @@ public class FormulaTestCaseNotes extends FormulaTestCase {
 
 	}
 
-	@Test
+	// ========================== openntf-map Tests
+	//@Test
+	public void testMap() throws FormulaParseException, EvaluateException {
+		String s = toString(map());
+		System.out.println("MAP\t" + s);
+		assertResult(s);
+
+	}
+
+	protected List<Object> map() throws FormulaParseException, EvaluateException {
+		Map<String, Object> ntfMap = new HashMap<String, Object>();
+		fillDemoDoc(ntfMap);
+		ASTNode ast = null;
+		ast = FormulaParser.getDefaultInstance().parse(formula);
+		FormulaContext ctx1 = FormulaContext.createContext(ntfMap, DominoFormatter.getDefaultInstance());
+		return ast.solve(ctx1);
+	}
+
+	//@Test(expected = org.openntf.domino.formula.EvaluateException.class)
+	public void testMapFail() throws FormulaParseException, EvaluateException {
+		Map<String, Object> ntfMap = new HashMap<String, Object>();
+		ASTNode ast = null;
+		ast = FormulaParser.getDefaultInstance().parse(formula);
+		FormulaContext ctx1 = FormulaContext.createContext(ntfMap, DominoFormatter.getDefaultInstance());
+		ast.solve(ctx1);
+	}
+
+	// ============ compare-tests
+	//@Test
 	public void compareLotusDoc() throws NotesException, FormulaParseException, EvaluateException {
 		List<Object> a = lotus();
 		List<Object> b = doc();
 		assertTrue(compareList(a, b));
 	}
 
-	@Test
+	//@Test
 	public void compareLotusMap() throws NotesException, FormulaParseException, EvaluateException {
 		List<Object> a = lotus();
 		List<Object> b = map();
 		assertTrue(compareList(a, b));
 	}
 
-	@Test
+	//@Test
 	public void compareDocMap() throws NotesException, FormulaParseException, EvaluateException {
 		List<Object> a = doc();
 		List<Object> b = map();
@@ -219,20 +292,4 @@ public class FormulaTestCaseNotes extends FormulaTestCase {
 		return true;
 	}
 
-	@Override
-	protected void fillDemoDoc(final Map<String, Object> doc) {
-		super.fillDemoDoc(doc);
-		try {
-			if (doc instanceof lotus.domino.Document) {
-				lotus.domino.Document lotusDoc = (lotus.domino.Document) doc;
-				RichTextItem rti = lotusDoc.createRichTextItem("body");
-				rti.appendText("This is autoexec.bat:");
-				rti.embedObject(EmbeddedObject.EMBED_ATTACHMENT, "", "c:\\autoexec.bat", null).recycle();
-				rti.compact();
-				rti.recycle();
-			}
-		} catch (NotesException ex) {
-
-		}
-	}
 }
