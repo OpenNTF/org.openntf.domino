@@ -19,9 +19,9 @@ package org.openntf.domino.formula.ast;
 
 import java.util.Set;
 
-import org.openntf.domino.formula.parse.*;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
 public class ASTValueDouble extends SimpleNode {
 	private ValueHolder value;
@@ -31,7 +31,7 @@ public class ASTValueDouble extends SimpleNode {
 	}
 
 	public void parseDouble(final String image, final char decSep) {
-		double d = Double.valueOf(image.replace(decSep, '.'));
+		double d = parser.getFormatter().parseNumber(image).doubleValue();
 		value = ValueHolder.valueOf(d);
 	}
 

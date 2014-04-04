@@ -31,13 +31,11 @@ public class ASTValueInt extends SimpleNode {
 	}
 
 	public void parseInt(final String image) {
-		try {
-			int i = Integer.valueOf(image);
-			value = ValueHolder.valueOf(i);
-		} catch (NumberFormatException e) {
-			double d = Double.valueOf(image);
-			value = ValueHolder.valueOf(d);
-		}
+		Number n = parser.getFormatter().parseNumber(image);
+		if (n instanceof Integer)
+			value = ValueHolder.valueOf(n.intValue());
+		else
+			value = ValueHolder.valueOf(n.doubleValue());
 	}
 
 	@Override

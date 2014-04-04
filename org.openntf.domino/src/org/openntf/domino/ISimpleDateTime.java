@@ -69,6 +69,8 @@ public interface ISimpleDateTime extends Comparator<ISimpleDateTime> {
 
 	public abstract void setLocalTime(final String time);
 
+	public abstract void setLocalTime(String time, boolean parseLenient);
+
 	public abstract void setNow();
 
 	public abstract int timeDifference(final ISimpleDateTime dt);

@@ -310,4 +310,9 @@ public class CalendarDateTime implements DateTime, Cloneable {
 		return 0;
 	}
 
+	public void setLocalTime(final String time, final boolean parseLenient) {
+		// TODO Auto-generated method stub
+
+	}
+
 }
