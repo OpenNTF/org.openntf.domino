@@ -25,10 +25,11 @@ import java.util.Map;
 import org.openntf.domino.ISimpleDateTime;
 
 import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.NumberFormat;
 import com.ibm.icu.util.Calendar;
 
 public class DominoFormatter implements Formatter {
-
+	/*----------------------------------------------------------------------------*/
 	private static Map<Locale, Formatter> instances = new HashMap<Locale, Formatter>();
 	/*----------------------------------------------------------------------------*/
 	private Locale iLocale;
@@ -73,13 +74,18 @@ public class DominoFormatter implements Formatter {
 		return getNewInitializedSDTInstance(sdt.toJavaDate(), sdt.isAnyDate(), sdt.isAnyTime());
 	}
 
+	/*----------------------------------------------------------------------------*/
 	public ISimpleDateTime parseDate(final String image) {
+		return parseDate(image, false);
+	}
+
+	public ISimpleDateTime parseDate(final String image, final boolean parseLenient) {
 		ISimpleDateTime sdt = getNewSDTInstance();
-		sdt.setLocalTime(image);
+		sdt.setLocalTime(image, parseLenient);
 		return sdt;
 	}
 
-	public Calendar parseDateToCal(String image, final boolean[] noDT) {
+	public Calendar parseDateToCal(String image, final boolean[] noDT, final boolean parseLenient) {
 		image = image.trim();
 		Calendar ret = Calendar.getInstance(iLocale);
 		// Should an empty string lead to a DateTime with noDate=noTime=true?
@@ -102,13 +108,14 @@ public class DominoFormatter implements Formatter {
 			return ret;
 		}
 		ret.setLenient(false);
+		ParsePosition p = new ParsePosition(0);
+		boolean illegalDateString = false;
 		for (;;) {
 			ret.clear();
 			/*
 			 * First attempt: Take a full date-time format MEDIUM
 			 */
 			DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, iLocale);
-			ParsePosition p = new ParsePosition(0);
 			df.parse(image, ret, p);
 			if (p.getErrorIndex() < 0)
 				break;
@@ -141,10 +148,19 @@ public class DominoFormatter implements Formatter {
 				break;
 			}
 			/*
-			 * Left: No date found, no time found; so:
+			 * Left: No date found, no time found
 			 */
-			throw new IllegalArgumentException("Illegal date string '" + image + "'");
+			illegalDateString = true;
+			break;
 		}
+		//		System.out.println("Lh=" + image.length() + " Index=" + p.getIndex() + " ErrIndex=" + p.getErrorIndex());
+		if (!illegalDateString && !parseLenient) {
+			int lh = image.length();
+			int errInd = p.getErrorIndex();
+			illegalDateString = (errInd < 0 && p.getIndex() < lh) || (errInd >= 0 && errInd < lh);
+		}
+		if (illegalDateString)
+			throw new IllegalArgumentException("Illegal date string '" + image + "'");
 		boolean contDate = ret.isSet(Calendar.DAY_OF_MONTH);
 		boolean contTime = ret.isSet(Calendar.MINUTE);
 		if (ret.isSet(Calendar.YEAR)) {
@@ -174,10 +190,25 @@ public class DominoFormatter implements Formatter {
 	}
 
 	/*----------------------------------------------------------------------------*/
-	public Number parseNumber(final String el) {
-		//NumberFormat nf = NumberFormat.getInstance();
-		// TODO Auto-generated method stub
-		return Double.valueOf(el.replace(',', '.'));
+	public Number parseNumber(final String image) {
+		return parseNumber(image, false);
+	}
+
+	public Number parseNumber(String image, final boolean lenient) {
+		image = image.trim();
+		if (!image.isEmpty()) {
+			NumberFormat nf = NumberFormat.getNumberInstance(iLocale);
+			ParsePosition p = new ParsePosition(0);
+			Number ret = nf.parse(image, p);
+			int errIndex = p.getErrorIndex();
+			//System.out.println("Ind=" + index + " ErrInd=" + errIndex);
+			if (errIndex == -1) {
+				if (p.getIndex() >= image.length() || lenient)
+					return ret;
+			} else if (errIndex != 0 && lenient)
+				return ret;
+		}
+		throw new IllegalArgumentException("Illegal number string '" + image + "'");
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -185,13 +216,36 @@ public class DominoFormatter implements Formatter {
 		return sdt.getLocalTime();
 	}
 
-	public String formatDateTime(final ISimpleDateTime sdt, final String lotusOpts) {
-		// TODO Auto-generated method stub
-		return null;
+	public String formatDateTime(final ISimpleDateTime sdt, final LotusDateTimeOptions ldto) {
+		if (ldto.nothingSet())
+			return formatDateTime(sdt);
+		String notSupported = "";
+		if (ldto.dOption != -1 && ldto.dOption != LotusDateTimeOptions.D_YMD)
+			notSupported += "," + ldto.dOptToStr();
+		if (ldto.zOption != -1)
+			notSupported += "," + ldto.zOptToStr();
+		if (ldto.sOption == LotusDateTimeOptions.S_DT_TY)
+			notSupported += "," + ldto.sOptToStr();
+		if (!notSupported.isEmpty())
+			throw new UnsupportedOperationException("Not yet supported formatting option(s): " + notSupported.substring(1));
+		if (ldto.sOption == LotusDateTimeOptions.S_D_ONLY || sdt.isAnyTime())
+			return sdt.getDateOnly();
+		Calendar cal = sdt.toJavaCal();
+		if (ldto.sOption == LotusDateTimeOptions.S_T_ONLY || sdt.isAnyDate()) {
+			if (ldto.tOption != LotusDateTimeOptions.T_HM)
+				return sdt.getTimeOnly();
+			return sdt.isAnyTime() ? "" : formatCalTimeOnly(cal, TIMEFORMAT_SHORT);
+		}
+		int timeFormat = (ldto.tOption == LotusDateTimeOptions.T_HM) ? TIMEFORMAT_SHORT : TIMEFORMAT_MEDIUM;
+		return formatCalDateTime(cal, timeFormat);
 	}
 
 	public String formatCalDateTime(final Calendar cal) {
-		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.LONG, iLocale);
+		return formatCalDateTime(cal, TIMEFORMAT_LONG);
+	}
+
+	public String formatCalDateTime(final Calendar cal, final int timeFormat) {
+		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, transTimeFormat(timeFormat), iLocale);
 		df.setCalendar(cal);
 		return df.format(cal.getTime());
 	}
@@ -203,19 +257,83 @@ public class DominoFormatter implements Formatter {
 	}
 
 	public String formatCalTimeOnly(final Calendar cal) {
-		DateFormat df = DateFormat.getTimeInstance(DateFormat.MEDIUM, iLocale);
+		return formatCalTimeOnly(cal, TIMEFORMAT_MEDIUM);
+	}
+
+	public String formatCalTimeOnly(final Calendar cal, final int timeFormat) {
+		DateFormat df = DateFormat.getTimeInstance(transTimeFormat(timeFormat), iLocale);
 		df.setCalendar(cal);
 		return df.format(cal.getTime());
 	}
 
-	/*----------------------------------------------------------------------------*/
-	public String formatNumber(final Number n) {
-		// TODO Auto-generated method stub
-		return null;
+	private int transTimeFormat(final int timeFormat) {
+		if (timeFormat == TIMEFORMAT_MEDIUM)
+			return DateFormat.MEDIUM;
+		if (timeFormat == TIMEFORMAT_SHORT)
+			return DateFormat.SHORT;
+		return DateFormat.LONG;
 	}
 
-	public String formatNumber(final Number n, final String lotusOpts) {
-		// TODO Auto-generated method stub
-		return null;
+	/*----------------------------------------------------------------------------*/
+	public String formatNumber(final Number n) {
+		LotusNumberOptions lno = new LotusNumberOptions();
+		lno.setDefault();
+		return formatNumber(n, lno);
 	}
+
+	public String formatNumber(final Number n, final LotusNumberOptions lno) {
+		NumberFormat nf;
+		/*
+		 * It would have been more convenient to use NumberFormat.getInstance(locale, style),
+		 * but this method is private in com.ibm.icu_3.8.1.v20120530.jar.
+		 */
+		if (lno.format == 'C')
+			nf = NumberFormat.getCurrencyInstance(iLocale);
+		else if (lno.format == 'S')
+			nf = NumberFormat.getScientificInstance(iLocale);
+		else if (lno.format == '%')
+			nf = NumberFormat.getPercentInstance(iLocale);
+		else
+			nf = NumberFormat.getNumberInstance(iLocale);
+		nf.setGroupingUsed(lno.useGrouping);
+		nf.setMaximumIntegerDigits(1000);
+		if (lno.fractionDigits != -1) {
+			nf.setMinimumFractionDigits(lno.fractionDigits);
+			nf.setMaximumFractionDigits(lno.fractionDigits);
+		} else
+			nf.setMaximumFractionDigits(1000);
+		String ret = nf.format(n);
+		do {
+			if (lno.format != 'G' || ret.length() <= 15)
+				break;
+			/*
+			 * In this case, Lotus implicitly switches to scientific style.
+			 * When useGrouping is in effect, the limit decreases from 15 to 12 in Lotus
+			 * (i.e. the grouping bytes are likewise counted), but we are not going to
+			 *  imitate this strange behaviour.
+			 */
+			String tester = ret;
+			if (lno.useGrouping) {
+				nf.setGroupingUsed(false);
+				tester = nf.format(n);
+			}
+			int minus = (tester.charAt(0) == '-') ? 1 : 0;
+			int lh = tester.length();
+			if (lh - minus <= 15)
+				break;
+			int komma = minus;
+			for (; komma < lh; komma++)
+				if (!Character.isDigit(tester.charAt(komma)))
+					break;
+			if (komma - minus <= 15)
+				break;
+			nf = NumberFormat.getScientificInstance(iLocale);
+			nf.setGroupingUsed(lno.useGrouping);
+			ret = nf.format(n);
+		} while (false);
+		if (lno.negativeAsParentheses && ret.charAt(0) == '-')
+			ret = '(' + ret.substring(1) + ')';
+		return ret;
+	}
+	/*----------------------------------------------------------------------------*/
 }

@@ -133,8 +133,12 @@ public class SimpleDateTime implements ISimpleDateTime {
 	}
 
 	public void setLocalTime(final String time) {
+		setLocalTime(time, true);
+	}
+
+	public void setLocalTime(final String time, final boolean parseLenient) {
 		boolean[] noDT = new boolean[2];
-		iCal = DominoFormatter.getInstance(iLocale).parseDateToCal(time, noDT);
+		iCal = DominoFormatter.getInstance(iLocale).parseDateToCal(time, noDT, parseLenient);
 		iNoDate = noDT[0];
 		iNoTime = noDT[1];
 	}
@@ -143,12 +147,13 @@ public class SimpleDateTime implements ISimpleDateTime {
 		setLocalTime(new Date());
 	}
 
-	public int timeDifference(final org.openntf.domino.ISimpleDateTime dt) {
+	public int timeDifference(final ISimpleDateTime dt) {
 		return (int) timeDifferenceDouble(dt);
 	}
 
-	public double timeDifferenceDouble(final org.openntf.domino.ISimpleDateTime dt) {
-		return (iCal.getTimeInMillis() - dt.toJavaCal().getTimeInMillis()) * 1000;
+	public double timeDifferenceDouble(final ISimpleDateTime dt) {
+		// What if isAnyDate or isAnyTime for one of these?
+		return (iCal.getTimeInMillis() - dt.toJavaCal().getTimeInMillis()) / 1000;
 	}
 
 	public Date toJavaDate() {

@@ -948,4 +948,8 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		return sdt1.toJavaDate().compareTo(sdt2.toJavaDate());
 	}
 
+	public void setLocalTime(final String time, final boolean parseLenient) {
+		setLocalTime(time);
+	}
+
 }

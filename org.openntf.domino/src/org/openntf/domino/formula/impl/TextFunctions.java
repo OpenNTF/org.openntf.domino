@@ -16,16 +16,14 @@
  */
 package org.openntf.domino.formula.impl;
 
-import java.text.NumberFormat;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
 import org.openntf.domino.ISimpleDateTime;
-import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.formula.Formatter;
+import org.openntf.domino.formula.Formatter.LotusDateTimeOptions;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
@@ -620,19 +618,14 @@ public enum TextFunctions {
 	@SuppressWarnings("deprecation")
 	private static ValueHolder strToNumber(final FormulaContext ctx, final ValueHolder vh, final boolean emptySpecial) {
 		ValueHolder ret = ValueHolder.createValueHolder(Double.class, vh.size);
-		Formatter formatter = ctx.getFormatter();
 		String val = null;
-		try {
-			for (int i = 0; i < vh.size; i++) {
-				val = vh.getString(i);
-				if (val.isEmpty() && emptySpecial)
-					val = "0";
-				ret.add(formatter.parseNumber(val));
-			}
-			return ret;
-		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException("Can't convert to Number: \"" + val + "\"", e);
+		for (int i = 0; i < vh.size; i++) {
+			val = vh.getString(i);
+			if (val.isEmpty() && emptySpecial)
+				val = "0";
+			ret.add(ctx.getFormatter().parseNumber(val, true));	// lenient=true
 		}
+		return ret;
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -662,15 +655,11 @@ public enum TextFunctions {
 		ValueHolder ret = ValueHolder.createValueHolder(ISimpleDateTime.class, vh.size);
 		Formatter formatter = ctx.getFormatter();
 		String val = null;
-		try {
-			for (int i = 0; i < vh.size; i++) {
-				val = vh.getString(i);
-				ret.add(formatter.parseDate(val));
-			}
-			return ret;
-		} catch (OpenNTFNotesException e) {
-			throw new IllegalArgumentException("Can't convert to DateTime: \"" + val + "\"", e);
+		for (int i = 0; i < vh.size; i++) {
+			val = vh.getString(i);
+			ret.add(formatter.parseDate(val, true));
 		}
+		return ret;
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -1064,38 +1053,35 @@ public enum TextFunctions {
 
 	/*----------------------------------------------------------------------------*/
 	private static ValueHolder doAtTextNumber(final FormulaContext ctx, final ValueHolder vh, final String format) {
-		boolean useGrouping = false;
-		int fractDigits = -1;
-		boolean negWithParenths = false;
-		char genFormat = 0;
+		Formatter.LotusNumberOptions lno = new Formatter.LotusNumberOptions();
 		if (format == null)
-			genFormat = 'G';
+			lno.format = 'G';
 		else {
 			boolean invalidFormat = false;
 			int lh = format.length();
 			for (int i = 0; i < lh; i++) {
 				char c = format.charAt(i);
 				if (c == ',') {
-					useGrouping = true;
+					lno.useGrouping = true;
 					continue;
 				}
 				if (c == '(' || c == ')') {
-					negWithParenths = true;
+					lno.negativeAsParentheses = true;
 					continue;
 				}
 				if (c == 'G' || c == 'F' || c == 'C' || c == '%' || c == 'S') {
-					if (genFormat != 0) {
+					if (lno.format != 0) {
 						invalidFormat = true;
 						break;
 					}
-					genFormat = c;
+					lno.format = c;
 					continue;
 				}
 				if (!Character.isDigit(c)) {
 					invalidFormat = true;
 					break;
 				}
-				if (fractDigits != -1) {
+				if (lno.fractionDigits != -1) {
 					invalidFormat = true;
 					break;
 				}
@@ -1110,49 +1096,96 @@ public enum TextFunctions {
 					sb.append(c);
 				}
 				try {
-					fractDigits = Integer.parseInt(sb.toString());
+					lno.fractionDigits = Integer.parseInt(sb.toString());
 				} catch (NumberFormatException e) {
 					invalidFormat = true;
 					break;
 				}
 			}
 			if (invalidFormat)
-				throw new IllegalArgumentException("Invalid Number format: \"" + format + "\"");
-			if (genFormat == 'C' || genFormat == '%' || genFormat == 'S')
-				throw new IllegalArgumentException("Unsupported Number format: \"" + format + "\"");
+				throw new IllegalArgumentException("Invalid Number format: '" + format + "'");
 		}
-		if (genFormat == 'G')
-			fractDigits = -1;
-		else if (genFormat == 'F' && fractDigits == -1)
-			fractDigits = 2;
-		NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
-		nf.setGroupingUsed(useGrouping);
-		nf.setMaximumIntegerDigits(10000);
-		if (fractDigits != -1) {
-			nf.setMinimumFractionDigits(fractDigits);
-			nf.setMaximumFractionDigits(fractDigits);
-		} else
-			nf.setMaximumFractionDigits(10000);
+		if (lno.format == 0)
+			lno.format = 'G';
+		if (lno.format == 'G' || lno.format == '%')
+			lno.fractionDigits = -1;
+		else if (lno.format == 'F' && lno.fractionDigits == -1)
+			lno.fractionDigits = 2;
 		ValueHolder ret = ValueHolder.createValueHolder(String.class, vh.size);
-		for (int i = 0; i < vh.size; i++) {
-			double d = vh.getDouble(i);
-			String dStr = nf.format(d);
-			if (negWithParenths && dStr.charAt(0) == '-')
-				dStr = '(' + dStr.substring(1) + ')';
-			ret.add(dStr);
-		}
+		for (int i = 0; i < vh.size; i++)
+			ret.add(ctx.getFormatter().formatNumber(vh.getDouble(i), lno));
+		//ret.add(DominoFormatter.getInstance(DateTimeFunctions.iLocale).formatNumber(vh.getDouble(i), lno));
 		return ret;
 	}
 
 	/*----------------------------------------------------------------------------*/
 	private static ValueHolder doAtTextDateTime(final FormulaContext ctx, final ValueHolder vh, final String format) {
-		if (format != null)
-			throw new IllegalArgumentException("Second parameter in @Text not yet supported for DateTime");
+		Formatter.LotusDateTimeOptions ldto = new Formatter.LotusDateTimeOptions();
+		boolean invalidFormat = false;
+		while (format != null) {
+			int lh = format.length();
+			if (lh == 0)
+				break;
+			invalidFormat = true;
+			if ((lh & 1) != 0)
+				break;
+			int i;
+			for (i = 0; i < lh; i += 2) {
+				char opt = format.charAt(i);
+				char optNum = format.charAt(i + 1);
+				if (!Character.isDigit(optNum))
+					break;
+				if (opt == 'D') {
+					if (optNum == '0')
+						ldto.dOption = LotusDateTimeOptions.D_YMD;
+					else if (optNum == '1')
+						ldto.dOption = LotusDateTimeOptions.D_YMD_YOPT;
+					else if (optNum == '2')
+						ldto.dOption = LotusDateTimeOptions.D_MD;
+					else if (optNum == '3')
+						ldto.dOption = LotusDateTimeOptions.D_YM;
+					else
+						break;
+				} else if (opt == 'T') {
+					if (optNum == '0')
+						ldto.tOption = LotusDateTimeOptions.T_HMS;
+					else if (optNum == '1')
+						ldto.tOption = LotusDateTimeOptions.T_HM;
+					else
+						break;
+				} else if (opt == 'Z') {
+					if (optNum == '0')
+						ldto.zOption = LotusDateTimeOptions.Z_CONV;
+					else if (optNum == '1')
+						ldto.zOption = LotusDateTimeOptions.Z_DISP_OPT;
+					else if (optNum == '2')
+						ldto.zOption = LotusDateTimeOptions.Z_DISP_ALW;
+					else
+						break;
+				} else if (opt == 'S') {
+					if (optNum == '0')
+						ldto.sOption = LotusDateTimeOptions.S_D_ONLY;
+					else if (optNum == '1')
+						ldto.sOption = LotusDateTimeOptions.S_T_ONLY;
+					else if (optNum == '2')
+						ldto.sOption = LotusDateTimeOptions.S_DT;
+					else if (optNum == '3')
+						ldto.sOption = LotusDateTimeOptions.S_DT_TY;
+					else
+						break;
+				} else
+					break;
+			}
+			if (i == lh)
+				invalidFormat = false;
+			break;
+		}
+		if (invalidFormat)
+			throw new IllegalArgumentException("Invalid DateTime format: '" + format + "'");
 		ValueHolder ret = ValueHolder.createValueHolder(String.class, vh.size);
 		for (int i = 0; i < vh.size; i++)
-			ret.add(vh.get(i).toString());
+			ret.add(ctx.getFormatter().formatDateTime(vh.getDateTime(i), ldto));
 		return ret;
 	}
-
 	/*----------------------------------------------------------------------------*/
 }
