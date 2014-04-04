@@ -26,6 +26,7 @@ import org.openntf.domino.ISimpleDateTime;
 
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.NumberFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 import com.ibm.icu.util.Calendar;
 
 public class DominoFormatter implements Formatter {
@@ -80,11 +81,19 @@ public class DominoFormatter implements Formatter {
 	}
 
 	public ISimpleDateTime parseDate(final String image, final boolean parseLenient) {
-		ISimpleDateTime sdt = getNewSDTInstance();
-		sdt.setLocalTime(image, parseLenient);
-		return sdt;
+		ISimpleDateTime ret = getNewSDTInstance();
+		ret.setLocalTime(image, parseLenient);
+		return ret;
 	}
 
+	public ISimpleDateTime parseDateWithFormat(final String image, final String format, final boolean parseLenient) {
+		boolean[] noDT = new boolean[2];
+		Calendar cal = parseDateToCalWithFormat(image, format, noDT, parseLenient);
+		ISimpleDateTime ret = getNewInitializedSDTInstance(cal.getTime(), noDT[0], noDT[1]);
+		return ret;
+	}
+
+	/*----------------------------------------------------------------------------*/
 	public Calendar parseDateToCal(String image, final boolean[] noDT, final boolean parseLenient) {
 		image = image.trim();
 		Calendar ret = Calendar.getInstance(iLocale);
@@ -190,6 +199,50 @@ public class DominoFormatter implements Formatter {
 	}
 
 	/*----------------------------------------------------------------------------*/
+	public Calendar parseDateToCalWithFormat(final String image, final String format, final boolean[] noDT, final boolean parseLenient) {
+		Calendar ret = Calendar.getInstance(iLocale);
+		ret.setLenient(false);
+		ParsePosition p = new ParsePosition(0);
+		ret.clear();
+		SimpleDateFormat sdf = new SimpleDateFormat(format, iLocale);
+		sdf.parse(image, ret, p);
+		boolean contDate = ret.isSet(Calendar.YEAR) || ret.isSet(Calendar.MONTH) || ret.isSet(Calendar.DAY_OF_MONTH);
+		boolean contTime = ret.isSet(Calendar.HOUR_OF_DAY) || ret.isSet(Calendar.HOUR) || ret.isSet(Calendar.MINUTE)
+				|| ret.isSet(Calendar.SECOND);
+		boolean illegalDateString = !contDate && !contTime;
+		if (!illegalDateString && !parseLenient) {
+			int lh = image.length();
+			int errInd = p.getErrorIndex();
+			illegalDateString = (errInd < 0 && p.getIndex() < lh) || (errInd >= 0 && errInd < lh);
+		}
+		if (illegalDateString)
+			throw new IllegalArgumentException("Illegal date string '" + image + "' for format '" + format + "'");
+		//		System.out.println("Y=" + ret.isSet(Calendar.YEAR) + " M=" + ret.isSet(Calendar.MONTH) + " D=" + ret.isSet(Calendar.DAY_OF_MONTH)
+		//				+ " H=" + ret.isSet(Calendar.HOUR_OF_DAY) + "m=" + ret.isSet(Calendar.MINUTE) + " S=" + ret.isSet(Calendar.SECOND));
+		if (!ret.isSet(Calendar.YEAR))
+			ret.set(Calendar.YEAR, 1970);
+		if (!ret.isSet(Calendar.MONTH))
+			ret.set(Calendar.MONTH, 0);
+		if (!ret.isSet(Calendar.DAY_OF_MONTH))
+			ret.set(Calendar.DAY_OF_MONTH, 1);
+		if (!ret.isSet(Calendar.HOUR_OF_DAY) && !ret.isSet(Calendar.HOUR))
+			ret.set(Calendar.HOUR_OF_DAY, 0);
+		if (!ret.isSet(Calendar.MINUTE))
+			ret.set(Calendar.MINUTE, 0);
+		if (!ret.isSet(Calendar.SECOND))
+			ret.set(Calendar.SECOND, 1);
+		try {
+			ret.getTime();
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException("Parsing '" + image + "' against '" + format + "' gives Calendar exception: "
+					+ e.getMessage());
+		}
+		noDT[0] = !contDate;
+		noDT[1] = !contTime;
+		return ret;
+	}
+
+	/*----------------------------------------------------------------------------*/
 	public Number parseNumber(final String image) {
 		return parseNumber(image, false);
 	}
@@ -274,6 +327,31 @@ public class DominoFormatter implements Formatter {
 		return DateFormat.LONG;
 	}
 
+	public String formatDateTimeWithFormat(final ISimpleDateTime sdt, final String format) {
+		Calendar cal = sdt.toJavaCal();
+		if (sdt.isAnyDate() || sdt.isAnyTime()) {
+			Calendar calCopy = (Calendar) cal.clone();
+			if (sdt.isAnyDate()) {
+				calCopy.set(Calendar.YEAR, 1970);
+				calCopy.set(Calendar.MONTH, 0);
+				calCopy.set(Calendar.DAY_OF_MONTH, 1);
+			}
+			if (sdt.isAnyTime()) {
+				calCopy.set(Calendar.HOUR_OF_DAY, 0);
+				calCopy.set(Calendar.MINUTE, 0);
+				calCopy.set(Calendar.SECOND, 0);
+			}
+			cal = calCopy;
+		}
+		return formatCalWithFormat(cal, format);
+	}
+
+	public String formatCalWithFormat(final Calendar cal, final String format) {
+		SimpleDateFormat sdf = new SimpleDateFormat(format, iLocale);
+		sdf.setCalendar(cal);
+		return sdf.format(cal.getTime());
+	}
+
 	/*----------------------------------------------------------------------------*/
 	public String formatNumber(final Number n) {
 		LotusNumberOptions lno = new LotusNumberOptions();
@@ -286,6 +364,7 @@ public class DominoFormatter implements Formatter {
 		/*
 		 * It would have been more convenient to use NumberFormat.getInstance(locale, style),
 		 * but this method is private in com.ibm.icu_3.8.1.v20120530.jar.
+		 * (Seems to be public as of ICU 4.2.)
 		 */
 		if (lno.format == 'C')
 			nf = NumberFormat.getCurrencyInstance(iLocale);

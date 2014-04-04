@@ -42,6 +42,10 @@ public interface Formatter {
 
 	Calendar parseDateToCal(String image, boolean[] noDT, boolean parseLenient);
 
+	ISimpleDateTime parseDateWithFormat(String image, String format, boolean parseLenient);
+
+	Calendar parseDateToCalWithFormat(String image, String format, boolean[] noDT, boolean parseLenient);
+
 	/*----------------------------------------------------------------------------*/
 	Number parseNumber(String image);
 
@@ -106,6 +110,10 @@ public interface Formatter {
 	String formatCalTimeOnly(Calendar cal);
 
 	String formatCalTimeOnly(Calendar cal, int timeFormat);
+
+	String formatDateTimeWithFormat(ISimpleDateTime sdt, String format);
+
+	String formatCalWithFormat(Calendar cal, String format);
 
 	/*----------------------------------------------------------------------------*/
 	public class LotusNumberOptions {

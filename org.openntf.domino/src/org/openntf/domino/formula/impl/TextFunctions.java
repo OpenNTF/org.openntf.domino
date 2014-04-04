@@ -895,6 +895,55 @@ public enum TextFunctions {
 
 	/*----------------------------------------------------------------------------*/
 	/*
+	 * @IsMember, @IsNotMember, @Member
+	 */
+	/*----------------------------------------------------------------------------*/
+	@ParamCount(2)
+	public static ValueHolder atIsMember(final FormulaContext ctx, final ValueHolder[] params) {
+		ValueHolder whos = params[0];
+		ValueHolder where = params[1];
+		for (int i = 0; i < whos.size; i++) {
+			String who = whos.getString(i);
+			int j;
+			for (j = 0; j < where.size; j++)
+				if (where.getString(j).equals(who))
+					break;
+			if (j == where.size)
+				return ctx.FALSE;
+		}
+		return ctx.TRUE;
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@ParamCount(2)
+	public static ValueHolder atIsNotMember(final FormulaContext ctx, final ValueHolder[] params) {
+		ValueHolder whos = params[0];
+		ValueHolder where = params[1];
+		for (int i = 0; i < whos.size; i++) {
+			String who = whos.getString(i);
+			for (int j = 0; j < where.size; j++)
+				if (where.getString(j).equals(who))
+					return ctx.FALSE;
+		}
+		return ctx.TRUE;
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@ParamCount(2)
+	public static ValueHolder atMember(final FormulaContext ctx, final ValueHolder[] params) {
+		String who = params[0].getString(0);	// Notes accepts a list of Strings here, but ignores all but the first entry
+		ValueHolder where = params[1];
+		int j;
+		for (j = 0; j < where.size; j++)
+			if (where.getString(j).equals(who))
+				break;
+		if (j == where.size)
+			j = -1;
+		return ValueHolder.valueOf(j + 1);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	/*
 	 * @Unique
 	 */
 	/*----------------------------------------------------------------------------*/
@@ -963,6 +1012,24 @@ public enum TextFunctions {
 			ret.add(cmp);
 		}
 		return (ret);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	/*
+	 * @FileDir
+	 */
+	/*----------------------------------------------------------------------------*/
+	@ParamCount(1)
+	public static String atFileDir(final String fileName) {
+		int indSlash = fileName.lastIndexOf('/');
+		int indBackSlash = -1;
+		if ("\\".equals(System.getProperty("file.separator")))
+			indBackSlash = fileName.lastIndexOf('\\');
+		if (indSlash < 0 && indBackSlash < 0)
+			return "";
+		if (indSlash < indBackSlash)
+			indSlash = indBackSlash;
+		return fileName.substring(0, indSlash + 1);
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -1186,6 +1253,34 @@ public enum TextFunctions {
 		for (int i = 0; i < vh.size; i++)
 			ret.add(ctx.getFormatter().formatDateTime(vh.getDateTime(i), ldto));
 		return ret;
+	}
+
+	/*----------------------------------------------------------------------------*/
+	/*
+	 * @TextToDateTimeF, @TextFromDateTimeF
+	 */
+	/*----------------------------------------------------------------------------*/
+	@ParamCount({ 2, 3 })
+	public static ValueHolder atTextToDateTimeF(final FormulaContext ctx, final ValueHolder params[]) {
+		boolean parseLenient = false;
+		if (params.length == 3) {
+			String opt = params[2].getString(0);
+			if (!"[LENIENT]".equalsIgnoreCase(opt))
+				throw new IllegalArgumentException("Invalid option: '" + opt + "'");
+			parseLenient = true;
+		}
+		String format = params[1].getString(0);
+		ValueHolder vh = params[0];
+		ValueHolder ret = ValueHolder.createValueHolder(ISimpleDateTime.class, vh.size);
+		for (int i = 0; i < vh.size; i++)
+			ret.add(ctx.getFormatter().parseDateWithFormat(vh.getString(i), format, parseLenient));
+		return ret;
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@ParamCount(2)
+	public static String atTextFromDateTimeF(final FormulaContext ctx, final ISimpleDateTime sdt, final String format) {
+		return ctx.getFormatter().formatDateTimeWithFormat(sdt, format);
 	}
 	/*----------------------------------------------------------------------------*/
 }
