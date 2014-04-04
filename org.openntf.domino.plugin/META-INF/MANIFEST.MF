@@ -35,7 +35,7 @@ Export-Package: com.tinkerpop.blueprints,com.tinkerpop.blueprints.util
  domino.schema.exceptions,org.openntf.domino.schema.impl,org.openntf.d
  omino.schema.types,org.openntf.domino.thread,org.openntf.domino.trans
  actions,org.openntf.domino.types,org.openntf.domino.utils,org.openntf
- .domino.utils.xml,org.openntf.domino.xsp.napi
+ .domino.utils.xml
 Require-Bundle: com.ibm.commons,com.ibm.icu;bundle-version="3.8.1",com
  .ibm.domino.napi,com.ibm.xsp.domino
 Bundle-ClassPath: .,lib/domino.jar,ext/jsr305.jar,ext/blueprints-core-
