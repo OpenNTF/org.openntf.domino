@@ -227,7 +227,7 @@ public class TestRunner implements Runnable {
 		if (!parserFailed) {
 			if (testDoc) {
 				try {
-					FormulaContext ctx1 = new FormulaContext(ntfDoc, DominoFormatter.getDefaultInstance());
+					FormulaContext ctx1 = FormulaContext.createContext(ntfDoc, DominoFormatter.getDefaultInstance());
 					ntfDocResult = ast.solve(ctx1);
 				} catch (EvaluateException e) {
 					errors.append(NTF("\tDoc-Evaluate failed: ") + ERROR(e) + "\n");
@@ -241,7 +241,7 @@ public class TestRunner implements Runnable {
 			if (testMap) {
 				try {
 					// benchmark the evaluate with a map as context
-					FormulaContext ctx2 = new FormulaContext(ntfMap, DominoFormatter.getDefaultInstance());
+					FormulaContext ctx2 = FormulaContext.createContext(ntfMap, DominoFormatter.getDefaultInstance());
 					ntfMapResult = ast.solve(ctx2);
 				} catch (EvaluateException e) {
 					errors.append(NTF("\tMap-Evaluate failed: ") + ERROR(e) + "\n");

@@ -1,7 +1,8 @@
-package de.foconis.test.junit;
+package de.foconis.test.runner;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,16 +38,23 @@ public class FormulaTestCase {
 	@Test
 	public void testMap() throws FormulaParseException, EvaluateException {
 		String s = "" + map();
+		System.out.println("MAP\t" + s);
 		if (Strings.isBlankString(param.expect))
 			return;
 		assertEquals(param.expect, s);
 	}
 
+	//	@FormulaFile
+	//	public static String getFormulaFile() {
+	//		return "W:\\Daten\\Entwicklung\\UnitTest\\FormulaEngine\\";
+	//	}
+
 	protected List<Object> map() throws FormulaParseException, EvaluateException {
 		Map<String, Object> ntfMap = new HashMap<String, Object>();
+		fillDemoDoc(ntfMap);
 		ASTNode ast = null;
 		ast = FormulaParser.getDefaultInstance().parse(formula);
-		FormulaContext ctx1 = new FormulaContext(ntfMap, DominoFormatter.getDefaultInstance());
+		FormulaContext ctx1 = FormulaContext.createContext(ntfMap, DominoFormatter.getDefaultInstance());
 		return ast.solve(ctx1);
 	}
 
@@ -55,8 +63,26 @@ public class FormulaTestCase {
 		Map<String, Object> ntfMap = new HashMap<String, Object>();
 		ASTNode ast = null;
 		ast = FormulaParser.getDefaultInstance().parse(formula);
-		FormulaContext ctx1 = new FormulaContext(ntfMap, DominoFormatter.getDefaultInstance());
+		FormulaContext ctx1 = FormulaContext.createContext(ntfMap, DominoFormatter.getDefaultInstance());
 		ast.solve(ctx1);
+	}
+
+	protected void fillDemoDoc(final Map<String, Object> doc) {
+
+		doc.put("rnd", new double[] { param.rndVal });
+
+		doc.put("text1", "This is a test string");
+		doc.put("text2", new String[] { "1", "2", "3" });
+
+		doc.put("int1", new int[] { 1 });
+		doc.put("int2", new int[] { 1, 2, 3 });
+		Date d = new Date(79, 07, 17, 12, 0, 0);
+		doc.put("birthday", d);
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("K1", "v1");
+		map.put("K2", "v2");
+		doc.put("mime1", map);
+
 	}
 
 }

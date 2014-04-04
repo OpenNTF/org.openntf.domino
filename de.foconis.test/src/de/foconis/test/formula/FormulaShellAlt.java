@@ -262,7 +262,7 @@ public class FormulaShellAlt implements Runnable {
 
 			try {
 				time = System.nanoTime();
-				FormulaContext ctx1 = new FormulaContext(ntfDoc, DominoFormatter.getDefaultInstance());
+				FormulaContext ctx1 = FormulaContext.createContext(ntfDoc, DominoFormatter.getDefaultInstance());
 				ntfDocResult = ast.solve(ctx1);
 				docEvaluateTime += System.nanoTime() - time;
 			} catch (Exception e) {
@@ -273,7 +273,7 @@ public class FormulaShellAlt implements Runnable {
 			try {
 				// benchmark the evaluate with a map as context
 				time = System.nanoTime();
-				FormulaContext ctx2 = new FormulaContext(ntfMap, DominoFormatter.getDefaultInstance());
+				FormulaContext ctx2 = FormulaContext.createContext(ntfMap, DominoFormatter.getDefaultInstance());
 				ntfMapResult = ast.solve(ctx2);
 				mapEvaluateTime += System.nanoTime() - time;
 			} catch (Exception e) {

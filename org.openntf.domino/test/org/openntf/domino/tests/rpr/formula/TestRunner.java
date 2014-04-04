@@ -10,10 +10,10 @@ import lotus.domino.NotesException;
 import lotus.domino.Session;
 
 import org.openntf.domino.formula.ASTNode;
+import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaParser;
 import org.openntf.domino.formula.Function;
 import org.openntf.domino.formula.FunctionFactory;
-import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.impl.Base;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;
@@ -71,7 +71,7 @@ public class TestRunner extends TestRunnerStdIn {
 
 			time = System.currentTimeMillis();
 			for (int i = 1; i < 10000; i++) {
-				FormulaContext ctx = new FormulaContext(null, parser.getFormatter());
+				FormulaContext ctx = FormulaContext.createContext(null, parser.getFormatter());
 				v = n.solve(ctx);
 			}
 			time = System.currentTimeMillis() - time;

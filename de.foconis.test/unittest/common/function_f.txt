@@ -1,0 +1,25 @@
+@Failure("fail")
+	#allPass
+
+@False
+	#lotusPass [0.0]
+	#docMapPass [false]
+
+FIELD test := "123"; test
+	#allPass [123]
+
+@FileDir("c:\\") 
+	#allPass 
+
+@FloatEq(@Pi; 3+ 10/71; 1/10000)
+	#allPass
+
+@FontList 
+	#allPass 
+
+@For( i := 1; i < 1o; i:= i+1; j := j+ "x"); j
+	#allPass 
+
+@FormLanguage 
+	#allPass 
+ 

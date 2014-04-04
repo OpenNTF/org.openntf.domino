@@ -1,0 +1,87 @@
+@Abs(3)
+	#allPass
+	#mapPass [3]
+
+@Abs(-3)
+	#allPass
+	#mapPass [3]
+
+@Abs(@Pi)
+	#allPass
+	#mapPass [3.141592653589793]
+
+@Abs(-@Pi)
+	#allPass
+	#mapPass [3.141592653589793]
+
+@Abstract( [DROPVOWELS]:[ABBREV]; 200; ""; "text1" )
+	#lotusDocPass [Ths is a tst strng]
+	#REM makes only sense for documents!
+
+@AbstractSimple( "text1" )
+	#lotusDocPass [This is a test string]
+ 	#REM makes only sense for documents!
+
+@Accessed 
+	#lotusDocPass
+	#REM makes only sense for documents!
+	
+@ACos(1/2)
+	#allPass
+	#mapPass [1.0471975511965979]
+
+@AddToFolder("Test";"")
+	#lotusDocPass [???]
+	#TODO does this really work
+
+@Adjust(birthday;10;2;1;2;3;4) 
+	#allPass
+
+@AdminECLIsLocked
+	#allPass
+
+t := @All; @if(t;1;0)
+	#allPass
+
+@AllChildren 
+	#lotusDocPass
+	#REM makes only sense for documents!
+
+@AllDescendants 
+	#lotusDocPass
+	#REM makes only sense for documents!
+	
+@Ascii("äöü")
+	#lotusDocPass [aou]
+	#TODO this is native
+
+@ASin(1/2)
+	#allPass
+	#mapPass [0.5235987755982989]
+
+@ATan(1/2) 
+	#allPass
+	#mapPass [0.4636476090008061]
+
+@ATan2(1/2; 2)
+	#allPass
+	#mapPass [1.3258176636680326]
+
+@AttachmentLengths 
+	#lotusDocPass
+	#REM makes only sense for documents!
+
+@AttachmentModifiedTimes
+	#lotusDocPass
+	#REM makes only sense for documents!
+
+@AttachmentNames 
+	#lotusDocPass [autoexec.bat]
+	#REM makes only sense for documents!
+	
+@Attachments 
+	#lotusDocPass
+	#REM makes only sense for documents!
+
+@Author 
+	#allPass

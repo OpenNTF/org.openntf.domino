@@ -1,0 +1,56 @@
+@EditECL("Marketing" : "names.nsf"; "Developers")
+	#allPass
+
+@EditUserECL 
+	#allPass
+
+@Elements("")
+	#allPass
+
+@Elements("a")
+	#allPass
+
+@Elements("a":"b")
+	#allPass
+
+@Elements(1:2)
+	#allPass
+
+@Elements("":"")
+	#allPass
+
+@EnableAlarms 
+	#allFail
+
+@Ends("Hi There";"re")
+	#lotusPass [1.0]
+	#docMapPass [true]
+	
+@Ends("Hi There";"The")
+	#lotusPass [0.0]
+	#docMapPass [false]
+ 
+ENVIRONMENT  "myNotesIni" :=  "testcase1"; @Environment("myNotesIni")
+	#allPass [testcase1]
+
+@Environment("myNotesIni"; "testcase2"); @Environment("myNotesIni")
+	#allPass [testcase2]
+
+@Error("This test fails")
+	#allFail
+ 
+@Eval("@Text(3*4)")
+	#allPass [12]
+ 
+@Exp(3)
+	#allPass 
+
+@Explode("this~~is~~a~~test~~string";"~~")
+	#allPass 
+
+@Explode("this~~is~~a~~test~~string";"~")
+	#allPass 
+	
+@Explode("this~~is~~a~~test~~string";"~e")
+	#allPass 
+

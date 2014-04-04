@@ -1,8 +1,8 @@
-package de.foconis.test.junit;
+package de.foconis.test.runner;
 
-enum TestMode {
+public enum TestMode {
 	PASS(true), FAIL(true), NONE(false);
-	boolean enabled;
+	public boolean enabled;
 
 	TestMode(final boolean b) {
 		enabled = b;

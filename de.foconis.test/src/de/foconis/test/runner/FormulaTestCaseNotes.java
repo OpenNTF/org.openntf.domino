@@ -1,11 +1,14 @@
-package de.foconis.test.junit;
+package de.foconis.test.runner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Map;
 
+import lotus.domino.EmbeddedObject;
 import lotus.domino.NotesException;
+import lotus.domino.RichTextItem;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -71,6 +74,7 @@ public class FormulaTestCaseNotes extends FormulaTestCase {
 	@Test
 	public void testLotus() throws NotesException {
 		String s = "" + lotus();
+		System.out.println("LOTUS\t" + s);
 		if (Strings.isBlankString(param.expect))
 			return;
 		assertEquals(param.expect, s);
@@ -79,6 +83,7 @@ public class FormulaTestCaseNotes extends FormulaTestCase {
 
 	protected List<Object> lotus() throws NotesException {
 		Document lotusDoc = db.createDocument();
+		fillDemoDoc(lotusDoc);
 		lotus.domino.Session rawSession = Factory.toLotus(Factory.getSession());
 		lotus.domino.Document rawDocument = Factory.toLotus(lotusDoc);
 		return rawSession.evaluate(formula, rawDocument);
@@ -88,6 +93,7 @@ public class FormulaTestCaseNotes extends FormulaTestCase {
 	@Test
 	public void testDoc() throws NotesException, FormulaParseException, EvaluateException {
 		String s = "" + doc();
+		System.out.println("DOC\t" + s);
 		if (Strings.isBlankString(param.expect))
 			return;
 		assertEquals(param.expect, s);
@@ -95,12 +101,12 @@ public class FormulaTestCaseNotes extends FormulaTestCase {
 
 	protected List<Object> doc() throws NotesException, FormulaParseException, EvaluateException {
 		Document ntfDoc = db.createDocument();
+		fillDemoDoc(ntfDoc);
 		ASTNode ast = null;
 
 		ast = FormulaParser.getDefaultInstance().parse(formula);
-		FormulaContext ctx1 = new FormulaContext(ntfDoc, DominoFormatter.getDefaultInstance());
+		FormulaContext ctx1 = FormulaContext.createContext(ntfDoc, DominoFormatter.getDefaultInstance());
 		return ast.solve(ctx1);
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -120,7 +126,7 @@ public class FormulaTestCaseNotes extends FormulaTestCase {
 		ASTNode ast = null;
 
 		ast = FormulaParser.getDefaultInstance().parse(formula);
-		FormulaContext ctx1 = new FormulaContext(ntfDoc, DominoFormatter.getDefaultInstance());
+		FormulaContext ctx1 = FormulaContext.createContext(ntfDoc, DominoFormatter.getDefaultInstance());
 		ast.solve(ctx1);
 
 	}
@@ -194,12 +200,9 @@ public class FormulaTestCaseNotes extends FormulaTestCase {
 					lotus.domino.DateTime dt1 = (lotus.domino.DateTime) a;
 					lotus.domino.DateTime dt2 = (lotus.domino.DateTime) b;
 					try {
-						if (dt1.timeDifference(dt2) != 0) {
-							// TODO: Do we need a delta here?
-							assertEquals(dt1.toJavaDate(), dt2.toJavaDate());
-							return false;
-						}
+						assertEquals(dt1.toJavaDate(), dt2.toJavaDate());
 					} catch (NotesException e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
 						return false;
 					}
@@ -214,5 +217,22 @@ public class FormulaTestCaseNotes extends FormulaTestCase {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	protected void fillDemoDoc(final Map<String, Object> doc) {
+		super.fillDemoDoc(doc);
+		try {
+			if (doc instanceof lotus.domino.Document) {
+				lotus.domino.Document lotusDoc = (lotus.domino.Document) doc;
+				RichTextItem rti = lotusDoc.createRichTextItem("body");
+				rti.appendText("This is autoexec.bat:");
+				rti.embedObject(EmbeddedObject.EMBED_ATTACHMENT, "", "c:\\autoexec.bat", null).recycle();
+				rti.compact();
+				rti.recycle();
+			}
+		} catch (NotesException ex) {
+
+		}
 	}
 }
