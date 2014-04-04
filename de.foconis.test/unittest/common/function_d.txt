@@ -14,12 +14,12 @@
  	#allPass
 
 @DbCommand("ODBC";"PUBLISHERS";"dbo":"";"vanilla":""; "SELECT au_lname FROM dbo.authors WHERE contract=1 AND state='CA' ")
- 	#allPass
+ 	#allFail
 
 @DbExists("":"names.nsf")
-	#allPass
+	#allFail
 @DbExists("":"doesnotexist.nsf")
-	#allPass
+	#allFail
 
 @DbLookup("":"noCache"; "":"names.nsf"; "($VIMGroups)";  "LocalDomainAdmins" ; "Members") 
 	#allPass
@@ -60,7 +60,7 @@ DEFAULT  x := 1;  x := 2; x
 @DeleteDocument 
 	#allPass
 
-FIELD text1 := @DeleteField 
+FIELD text1 := @DeleteField ; text1
 	#allPass []
  
 @DialogBox("Profile Options"; [AUTOHORZFIT] : [AUTOVERTFIT] )
@@ -87,10 +87,10 @@ FIELD text1 := @DeleteField
 @DocLevel 
 	#allPass     
 
-@DocLock 
-	#allPass 
+@DocLock([STATUS]) 
+	#allFail 
 
-@DocMark 
+@DocMark([NOUPDATE]) 
 	#allPass       
 
 @DocNumber 

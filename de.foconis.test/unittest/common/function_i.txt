@@ -7,7 +7,7 @@
 	#allPass [error]	
 
 @Implode("a":"b":"c");
-	#allPass [a, b, c]
+	#allPass [a b c]
 @Implode("a":"b":"c";"|");
 	#allPass [a|b|c]
 
@@ -18,7 +18,7 @@
 	#allPass
 
 @IsAgentEnabled("test")
-	#allPass
+	#allFail
 
 @IsAppInstalled("Designer")
 	#allPass
@@ -120,7 +120,7 @@
 	#allPass
 
 @IsValid 
-	#allPass
+	#allFail
  
 @IsVirtualizedDirectory
 	#allPass

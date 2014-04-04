@@ -545,4 +545,9 @@ public abstract class ValueHolder implements Serializable {
 	public abstract ValueHolder newInstance(int size2);
 
 	public abstract void swap(int i, int j);
+
+	public String getKwList() {
+		throw new IllegalArgumentException("Got " + dataType + ", STRING expected");
+	}
+
 }

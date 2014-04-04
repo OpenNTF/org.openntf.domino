@@ -211,4 +211,17 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 		values[i] = values[j];
 		values[j] = tmp;
 	}
+
+	@Override
+	public String getKwList() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(getString(0));
+		for (int i = 1; i < values.length; i++) {
+			sb.append(':');
+			sb.append(getString(i));
+		}
+
+		return sb.toString();
+	}
 }

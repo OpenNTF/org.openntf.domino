@@ -1,4 +1,4 @@
-@GetAddressBooks
+@GetAddressBooks([TITLES])
 	#allPass
 
 @GetCurrentTimeZone 
@@ -10,23 +10,23 @@
 @GetField("text1")
 	#allPass
 
-@GetFocusTable 
+@GetFocusTable([CELLROW] ) 
 	#allPass
                  
 
-@GetHTTPHeader 
+@GetHTTPHeader("User-Agent")
 	#allPass
              
 @GetIMContactListGroupNames 
-	#allPass
+	#allFail
 
-@GetPortsList 
+@GetPortsList([ENABLED]) 
 	#allPass
  
-@GetProfileField
+@GetProfileField("Interest Profile"; "ProfileCategories") 
 	#allPass
 
-@GetViewInfo
-	#allPass
+@GetViewInfo([ColumnValue];2)
+	#allFail
 
  

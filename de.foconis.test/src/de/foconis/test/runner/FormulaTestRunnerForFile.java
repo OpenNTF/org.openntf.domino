@@ -78,19 +78,6 @@ public class FormulaTestRunnerForFile extends ParentRunner<Runner> {
 
 					TestParameter param = new TestParameter(ifo, currentFormula);
 
-					if (expect.startsWith("[")) {
-						param.expect = expect;
-					} else if (!Strings.isBlankString(expect)) {
-						String minLen = TextFunctions.atLeft(expect, "-").trim();
-						String maxLen = TextFunctions.atRight(expect, "-").trim();
-						if ("".equals(minLen)) {
-							minLen = expect.trim();
-							maxLen = expect.trim();
-						}
-						param.expectMin = Integer.valueOf(minLen);
-						param.expectMax = Integer.valueOf(maxLen);
-					}
-
 					if (lcline.startsWith("#allfail")) {
 						param.lotus = TestMode.FAIL;
 						param.doc = TestMode.FAIL;
@@ -135,6 +122,21 @@ public class FormulaTestRunnerForFile extends ParentRunner<Runner> {
 						continue;
 					} else {
 						throw new IllegalStateException("cannot interpret '" + line + "'");
+					}
+
+					if (expect.startsWith("[")) {
+						param.expect = expect;
+					} else if (!Strings.isBlankString(expect)) {
+
+						String minLen = TextFunctions.atLeft(expect, "-").trim();
+						String maxLen = TextFunctions.atRight(expect, "-").trim();
+						if ("".equals(minLen)) {
+							minLen = expect.trim();
+							maxLen = expect.trim();
+						}
+						param.expectMin = Integer.valueOf(minLen);
+						param.expectMax = Integer.valueOf(maxLen);
+
 					}
 
 					children.add(createRunner(ifo, param, idx++));

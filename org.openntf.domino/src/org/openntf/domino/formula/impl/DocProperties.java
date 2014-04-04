@@ -10,6 +10,12 @@ import org.openntf.domino.utils.Strings;
 public enum DocProperties {
 	;
 
+	@ParamCount(4)
+	public static ValueHolder atAbstract(final FormulaContext ctx, final ValueHolder[] params) {
+		// TODO: can this method operate native?
+		return ctx.evaluateNative("@Abstract(" + params[0].getKwList() + ";p2;p3;p4)", params);
+	}
+
 	@ParamCount(0)
 	public static ValueHolder atAuthor(final FormulaContext ctx) {
 		return ctx.getVarLC("@author");
@@ -128,8 +134,8 @@ public enum DocProperties {
 		}
 	}
 
-	@ParamCount(0)
-	public static Object AddToFolder(final FormulaContext ctx, final String to, final String from) {
+	@ParamCount(2)
+	public static Object atAddToFolder(final FormulaContext ctx, final String to, final String from) {
 		Map<String, Object> map = ctx.getDocument();
 		if (map instanceof Document) {
 			Document doc = (Document) map;
