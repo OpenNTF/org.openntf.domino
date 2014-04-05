@@ -91,6 +91,12 @@ public interface EmbeddedObject extends Base<lotus.domino.EmbeddedObject>, lotus
 	@Override
 	public int getFileSize();
 
+	@Override
+	public DateTime getFileCreated();
+
+	@Override
+	public DateTime getFileModified();
+
 	/*
 	 * (non-Javadoc)
 	 * 
