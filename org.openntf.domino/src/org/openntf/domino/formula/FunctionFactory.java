@@ -30,6 +30,7 @@ import org.openntf.domino.formula.impl.Comparators;
 import org.openntf.domino.formula.impl.Constant;
 import org.openntf.domino.formula.impl.DateTimeFunctions;
 import org.openntf.domino.formula.impl.DocProperties;
+import org.openntf.domino.formula.impl.NativeEvaluateFunctions;
 import org.openntf.domino.formula.impl.Negators;
 import org.openntf.domino.formula.impl.NotImplemented;
 import org.openntf.domino.formula.impl.NotSupported;
@@ -148,6 +149,7 @@ public class FunctionFactory {
 			instance.addFactory(new FunctionFactory(DocProperties.class));
 			instance.addFactory(new FunctionFactory(TextFunctions.class));
 			instance.addFactory(new FunctionFactory(DateTimeFunctions.class));
+			instance.addFactory(new FunctionFactory(NativeEvaluateFunctions.class));
 			instance.addFactory(new FunctionFactory(Constant.class));
 			instance.addFactory(new FunctionFactory(NotSupported.class));
 			instance.setImmutable();
