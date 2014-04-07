@@ -48,4 +48,13 @@ public enum Constant {
 		return ctx.TRUE;
 	}
 
+	@ParamCount(0)
+	public static ValueHolder atSuccess(final FormulaContext ctx) {
+		return ctx.TRUE;
+	}
+
+	@ParamCount(0)
+	public static ValueHolder atError(final FormulaContext ctx) {
+		throw new IllegalArgumentException("@Error");
+	}
 }
