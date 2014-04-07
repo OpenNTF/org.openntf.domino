@@ -1,7 +1,7 @@
-@OpenInNewWindow 
-	#allPass
+#rem Unknown @ function: @OpenInNewWindow 
+	
 
-@OptimizeMailAddress
+@OptimizeMailAddress ("username @firstdomain @secondomain @firstdomain @thirdomain")
 	#allPass
 
 @OrgDir

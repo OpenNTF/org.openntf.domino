@@ -15,9 +15,9 @@ FIELD test := "123"; test
 	#allPass
 
 @FontList 
-	#allPass 
+	#allFail
 
-@For( i := 1; i < 1o; i:= i+1; j := j+ "x"); j
+@For( i := 1; i < 10; i:= i+1; j := j+ "x"); j
 	#allPass 
 
 @FormLanguage 

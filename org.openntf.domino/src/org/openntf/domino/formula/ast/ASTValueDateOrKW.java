@@ -22,6 +22,7 @@ import java.util.Set;
 import org.openntf.domino.ISimpleDateTime;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.ValueHolder.DataType;
 import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 import org.openntf.domino.formula.parse.ParseException;
 
@@ -37,7 +38,9 @@ public class ASTValueDateOrKW extends SimpleNode {
 	public ValueHolder evaluate(final FormulaContext ctx) {
 		if (dateValue != null)
 			return ValueHolder.valueOf(dateValue);
-		return ValueHolder.valueOf(image);
+		ValueHolder vh = ValueHolder.valueOf(image);
+		vh.dataType = DataType.KEYWORD_STRING;
+		return vh;
 	}
 
 	public void init(final String image) throws ParseException {

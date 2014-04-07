@@ -10,15 +10,15 @@ import de.foconis.test.runner.FormulaFile;
 import de.foconis.test.runner.FormulaTestCaseLotus;
 import de.foconis.test.runner.TestParameter;
 
-public class FormulaTestRoland extends FormulaTestCaseLotus {
-	public FormulaTestRoland(final TestParameter p) {
+public class TestAllLotusDoc extends FormulaTestCaseLotus {
+	public TestAllLotusDoc(final TestParameter p) {
 		super(p);
 		// TODO Auto-generated constructor stub
 	}
 
 	@FormulaFile
 	public static String getFormulaFile() {
-		return "unittest\\common\\function_a.txt";
+		return "unittest\\common\\";
 	}
 
 	@Override

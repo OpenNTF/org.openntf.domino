@@ -1,22 +1,22 @@
 @Random 
 	#allPass
 
-@RefreshECL
+@RefreshECL("" : "names.nsf"; "Developers")
 	#allPass
 
-@RegQueryValue 
+@RegQueryValue("HKEY_LOCAL_MACHINE"; "Software\\Lotus\\Notes\\9.0"; "Path")
 	#allPass
 
 REM "test";""
 	#allPass
 
-@Repeat 
+@Repeat("Bye";2;5)
 	#allPass
 
-@Replace 
+@Replace("Red":"Orange":"Yellow":"Green";"Orange":"Blue";"Black":"Brown")
 	#allPass
 
-@ReplaceSubstring 
+@ReplaceSubstring("first";"first":"second";"second":"third") 
 	#allPass
  
 @ReplicaID 
@@ -25,15 +25,26 @@ REM "test";""
 @Responses 
 	#allPass                 
 
-@Return 
-	#allPass 
+@Return("Hello") 
+	#allPass [Hello]
 
-@Right 
+@Right("Lennard Wallace";3)
+	#allPass
+	
+@Right("Lennard Wallace";" ")
+	#allPass
+	
+@RightBack("Lennard Wallace";3) 
 	#allPass
 
-@RightBack 
+@RightBack("Lennard Wallace";" ")
 	#allPass
 
-@Round 
-	#allPass
+@Round(5/2 - 1/1000000)
+	#allPass [2.0]
  
+@Round(-5/2 - 1/1000000)
+	#allPass [-3.0]
+
+@Round(-5/2 + 1/1000000)
+	#allPass [-2.0]

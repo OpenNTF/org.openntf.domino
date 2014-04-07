@@ -31,7 +31,7 @@
 	#mapPass [1.0471975511965979]
 
 @AddToFolder("Test";"")
-	#lotusDocPass [???]
+	#lotusDocPass [1.0]
 	#TODO does this really work
 
 @Adjust(birthday;10;2;1;2;3;4) 

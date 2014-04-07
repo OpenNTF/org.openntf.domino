@@ -1,5 +1,6 @@
-@LanguagePreference([REGION])
+﻿@LanguagePreference
 	#allPass
+	
 @LaunchApp("Designer") 
 	#allPass
 @LDAPServer
@@ -33,11 +34,10 @@
 	
 @Ln(2)
 	#allPass 
-@Locale([NotesLocale] )
+
+@Locale([LocaleName]; "fr-CA")
 	#allPass 
 
-@Locale
-	#allPass 
 
 @Log(4) 
 	#allPass 

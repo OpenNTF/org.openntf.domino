@@ -1,70 +1,74 @@
-@Second 
-	#allPass 
+@Second([12:34:56]) 
+	#allPass [56.0]
 
 SELECT @All
-	#allPass 
+	#allPass [1.0]
 
-@Select 
-	#allPass 
+@Select(2;"Jan":"Feb":"Mar";"Apr":"May":"Jun";"Jul":"August":"Sep";"Oct":"Nov":"Dec")
+	#allPass [Apr, May, Jun]
 
-@ServerAccess 
+@ServerAccess([ACCESS];"srv-01-ndev/FOCONIS")
 	#allPass 
 
 @ServerName 
 	#allPass 
 
-@Set 
-	#allPass 
+@Set("FullName"; "test"); FullName
+	#allPass [test]
 
-@SetDocField 
+@SetDocField(@DocumentUniqueID; "name"; "Joseph Riley")
 	#allPass 
  
-@SetEnvironment 
+@SetEnvironment("myTestIniVar";"test")
 	#allPass 
  
-@SetField 
-	#allPass 
+@SetField("text1"; "bar"); text1
+	#allPass [bar]
  
-@SetHTTPHeader 
+@SetHTTPHeader("Set-Cookie"; "SHOP_CART_ID=4646")
 	#allPass 
    
-@SetProfileField 
+@SetProfileField("Interest Profile";"ProfileCategories"; @Platform)
 	#allPass 
  
-@SetTargetFrame 
-	#allPass 
+@SetTargetFrame("Frame A")
+	#allFail 
  
-@SetViewInfo 
-	#allPass 
+@SetViewInfo([SETVIEWFILTER];"Acme Corp.";"companyName";1)
+	#allFail 
  
 @ShowParentPreview 
 	#allPass 
 
-@Sign 
+@Sign(-3) 
+	#allPass [-1.0]
+
+@Sin(1/2) 
 	#allPass 
 
-@Sin 
+@Sort("casablanca":"The Great Escape":"ET" ;[CASESENSITIVE])
 	#allPass 
-
-@Sort 
+	
+@Sort("casablanca":"The Great Escape":"ET" ;[CASESENSITIVE]:[CUSTOMSORT];@If(@Length($A) < @Length($B);@False;@Length($A) > @Length($B);@True;@False))
 	#allPass 
  
-@Soundex 
+@Soundex("phield")
 	#allPass 
 
-@Sqrt 
+@Sqrt(1 : 4 : 9 : 16 : 25)
 	#allPass 
  
-@StatusBar 
+@StatusBar("Hello") 
 	#allPass 
 
-@Subset 
+@Subset("New Orleans":"London":"Frankfurt":"Tokyo";-3)
 	#allPass 
 
 @Success 
 	#allPass 
  
-
-@Sum 
+@Sum( (-1) : 2 ; (-10) : 20 )
 	#allPass 
  
+@Sum( 1 : 2 )
+	#allPass

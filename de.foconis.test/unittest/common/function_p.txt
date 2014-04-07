@@ -1,31 +1,35 @@
-@Password 
+@Password("Roland") 
 	#allPass 
 
-@PasswordQuality
+@PasswordQuality("Roland")
 	#allPass 
 
 @Pi 
 	#allPass 
 
-@PickList
-	#allPass 
+@PickList([CUSTOM]; "":"log.nsf"; "By Category"; "Testing replica ID"; "Test prompt"; 3)
+	#allFail 
 
 @Platform 
 	#allPass 
 
-@PolicyIsFieldLocked 
+@PolicyIsFieldLocked("text1") 
 	#allPass 
  
-@PostedCommand 
+@PostedCommand([RunAgent];"test") 
+	#allFail
+
+@Power(5;2) 
 	#allPass 
 
-@Power 
+@Prompt([Ok];"Reminder";"Don't forget to run backup tonight.")
+	#allFail 
+
+@ProperCase("every CHILD LOves toys")
 	#allPass 
 
-@Prompt
-	#allPass 
+@ProperCase("3-digit code")
+ 	#allPass 
 
-@ProperCase 
-	#allPass 
-
- 
+@ProperCase("OBERMÜLLER")
+ 	#allPass 

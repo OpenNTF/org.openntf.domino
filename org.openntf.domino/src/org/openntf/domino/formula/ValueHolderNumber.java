@@ -236,4 +236,23 @@ public class ValueHolderNumber extends ValueHolder implements Serializable {
 		valuesD[i] = valuesD[j];
 		valuesD[j] = tmpD;
 	}
+
+	@Override
+	public String quoteValue() throws EvaluateException {
+		throwError();
+		StringBuilder sb = new StringBuilder();
+
+		if (dataType == DataType.DOUBLE) {
+			// TODO: this does not work yet for DE
+			throw new UnsupportedOperationException("This is not yet locale compatible. So it is not implemented.");
+		}
+		sb.append(getInt(0));
+		for (int i = 1; i < valuesD.length; i++) {
+			sb.append(':');
+			sb.append(getInt(i));
+		}
+
+		return sb.toString();
+	}
+
 }
