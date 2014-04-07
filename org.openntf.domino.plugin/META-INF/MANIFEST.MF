@@ -4,7 +4,7 @@ Created-By: JDK 1.6.0 (IBM Corporation)
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenNTF Domino API OSGi version
 Bundle-SymbolicName: org.openntf.domino.plugin;singleton:=true
-Bundle-Version: 1.0.0.20140320054355
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openntf.domino.plugin.Activator
 Bundle-Vendor: Red Pill Development
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
