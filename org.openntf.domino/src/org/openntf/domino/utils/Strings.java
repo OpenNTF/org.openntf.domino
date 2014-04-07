@@ -33,8 +33,8 @@ import java.util.regex.Matcher;
 
 import org.openntf.arpa.ISO;
 import org.openntf.domino.Document;
+import org.openntf.domino.Name;
 import org.openntf.domino.Session;
-import org.openntf.domino.impl.Name;
 
 /**
  * String Utilities
@@ -226,7 +226,7 @@ public enum Strings {
 	 * 
 	 * @return new RecordID
 	 * 
-	 * @see # #getSpawnedRecordID(Name)
+	 * @see #generateRecordID(Name)
 	 */
 	public static String generateRecordID(final Name name) {
 		return Strings.getSpawnedRecordID(name);
@@ -241,7 +241,7 @@ public enum Strings {
 	 * 
 	 * @return new RecordID
 	 * 
-	 * @see # #getSpawnedRecordID(Session)
+	 * @see #generateRecordID()
 	 */
 	public static String generateRecordID() {
 		return Strings.getSpawnedRecordID(Factory.getSession());
@@ -339,6 +339,7 @@ public enum Strings {
 	 * 
 	 * @return String values of all elements in source concatenated by delimiter
 	 */
+	@SuppressWarnings({ "rawtypes", "cast" })
 	public static String join(final Collection source, final String delimiter) {
 		if ((null != source) && (source.size() > 0)) {
 			final StringBuilder stringbuilder = new StringBuilder();
@@ -421,10 +422,11 @@ public enum Strings {
 	 * 
 	 * @return String values of all elements in source concatenated by delimiter
 	 */
+	@SuppressWarnings("rawtypes")
 	public static String join(final Object source, final String delimiter) {
 		if (null != source) {
 			if (source instanceof Collection) {
-				return Strings.join(source, delimiter);
+				return Strings.join((Collection) source, delimiter);
 			}
 
 			final String classname = source.getClass().getName();
@@ -665,7 +667,7 @@ public enum Strings {
 			}
 
 			if (name instanceof org.openntf.domino.impl.Name) {
-				String result = name.getIDprefix() + "-" + Dates.getTimeCode();
+				String result = ((org.openntf.domino.impl.Name) name).getIDprefix() + "-" + Dates.getTimeCode();
 				try {
 					// avoid potential duplicate consecutive results by sleeping for 1/4 second 
 					Thread.sleep(250); // 250 milliseconds = 1/4 second
@@ -701,7 +703,8 @@ public enum Strings {
 	 * 
 	 */
 	public static String getSpawnedRecordID(final lotus.domino.Name name) {
-		return Strings.getSpawnedRecordID(Names.createName(name));
+		org.openntf.domino.Name newname = Names.createName(name);
+		return Strings.getSpawnedRecordID(newname);
 	}
 
 	/**
@@ -778,6 +781,7 @@ public enum Strings {
 	 * 
 	 * @return List of Strings retrieved or generated from the input. Returns null on error.
 	 */
+	@SuppressWarnings({ "rawtypes", "cast" })
 	public static List<String> wrapStringElements(final AbstractCollection collection, final String prefix, final String suffix) {
 		try {
 			final String prepend = Strings.isBlankString(prefix) ? "" : prefix;
@@ -973,7 +977,7 @@ public enum Strings {
 		return "";
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public static Vector safeEvaluate(final Session session, final String formula) {
 		try {
 			if (null == session) {
@@ -989,7 +993,7 @@ public enum Strings {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public static Vector safeEvaluate(final Session session, final String formula, final Document context) {
 		String evalformula = "";
 		try {
@@ -1013,7 +1017,7 @@ public enum Strings {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static boolean checkFormulaSyntax(final Session session, final String formula) {
 		String syntaxformula = "";
 		try {
