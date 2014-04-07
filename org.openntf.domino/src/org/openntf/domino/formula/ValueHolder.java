@@ -43,7 +43,7 @@ public abstract class ValueHolder implements Serializable {
 	 * DOUBLE means 'only doubles', INTEGER means 'only integers'. If you mix Integers and Doubles, the type changes to "NUMBER"
 	 */
 	public enum DataType {
-		ERROR, STRING, INTEGER(true), DOUBLE(true), DATETIME, BOOLEAN, _UNSET, OBJECT;
+		ERROR, STRING, KEYWORD_STRING, INTEGER(true), DOUBLE(true), DATETIME, BOOLEAN, _UNSET, OBJECT;
 		public boolean numeric = false;
 
 		DataType() {
@@ -546,8 +546,6 @@ public abstract class ValueHolder implements Serializable {
 
 	public abstract void swap(int i, int j);
 
-	public String getKwList() {
-		throw new IllegalArgumentException("Got " + dataType + ", STRING expected");
-	}
+	public abstract String quoteValue() throws EvaluateException;
 
 }

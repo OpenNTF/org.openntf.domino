@@ -1,5 +1,5 @@
 /*
- * © Copyright FOCONIS AG, 2014
+ * ï¿½ Copyright FOCONIS AG, 2014
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -583,13 +583,13 @@ public enum TextFunctions {
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(1)
 	public static ValueHolder atIsTime(final FormulaContext ctx, final ValueHolder[] params) {
-		return (params[0].dataType == DataType.DATETIME) ? ctx.TRUE : ctx.FALSE;
+		return (params[0].dataType == DataType.STRING) ? ctx.TRUE : ctx.FALSE;
 	}
 
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(1)
 	public static ValueHolder atIsError(final FormulaContext ctx, final ValueHolder[] params) {
-		return (params[0].dataType == DataType.ERROR) ? ctx.TRUE : ctx.FALSE;
+		return (params[0].dataType == DataType.STRING) ? ctx.TRUE : ctx.FALSE;
 	}
 
 	/*----------------------------------------------------------------------------*/

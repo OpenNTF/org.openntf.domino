@@ -3,6 +3,7 @@ package org.openntf.domino.formula.impl;
 import java.util.Map;
 
 import org.openntf.domino.Document;
+import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.utils.Strings;
@@ -11,9 +12,10 @@ public enum DocProperties {
 	;
 
 	@ParamCount(4)
-	public static ValueHolder atAbstract(final FormulaContext ctx, final ValueHolder[] params) {
+	public static ValueHolder atAbstract(final FormulaContext ctx, final ValueHolder[] params) throws EvaluateException {
 		// TODO: can this method operate native?
-		return ctx.evaluateNative("@Abstract(" + params[0].getKwList() + ";p2;p3;p4)", params);
+		return ctx.evaluateNative("@Abstract(" + params[0].quoteValue() + ";" + params[1].quoteValue() + ";" + params[2].quoteValue() + ";"
+				+ params[3].quoteValue() + ")");
 	}
 
 	@ParamCount(0)

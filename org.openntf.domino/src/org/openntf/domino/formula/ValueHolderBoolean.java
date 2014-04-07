@@ -129,4 +129,18 @@ public class ValueHolderBoolean extends ValueHolder implements Serializable {
 		values[j] = tmp;
 	}
 
+	@Override
+	public String quoteValue() throws EvaluateException {
+		throwError();
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(values[0] ? "1" : "0");
+		for (int i = 1; i < values.length; i++) {
+			sb.append(':');
+			sb.append(values[i] ? "1" : "0");
+		}
+
+		return sb.toString();
+	}
+
 }

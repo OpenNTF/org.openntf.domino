@@ -28,21 +28,23 @@ public class FormulaContextNotes extends FormulaContext {
 	 *            the parameters are mapped to the field p1, p2 and so on
 	 * @return the value
 	 */
+	@Override
 	@SuppressWarnings("deprecation")
 	public ValueHolder evaluateNative(final String formula, final ValueHolder... params) {
 		Session session = Factory.getSession();
 		Document tmpDoc = null;
 		Database db = null;
 
+		lotus.domino.Document rawDocument = null;
 		if (document instanceof Document) {
 			db = ((Document) document).getAncestorDatabase();
+			rawDocument = Factory.toLotus((Document) document);
 		} else {
 			db = session.getCurrentDatabase();
 		}
 		if (db == null)
 			throw new UnsupportedOperationException("No database set: Can't evaluate Lotus native formula");
 
-		lotus.domino.Document rawDocument = null;
 		lotus.domino.Session rawSession = Factory.toLotus(session);
 
 		if (params.length > 0) {

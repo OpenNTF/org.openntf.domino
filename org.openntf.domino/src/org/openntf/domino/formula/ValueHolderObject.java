@@ -23,6 +23,8 @@ import java.util.List;
 import org.openntf.domino.ISimpleDateTime;
 import org.openntf.domino.exceptions.IHaveNoIdeaHowThisHappenedException;
 
+import com.ibm.commons.util.StringUtil;
+
 /**
  * Valueholder to hold single or multiple values.
  * 
@@ -75,6 +77,7 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 	@Override
 	public String getString(final int i) {
 		switch (dataType) {
+		case KEYWORD_STRING:
 		case STRING:
 			if (i < size)
 				return (String) values[i];
@@ -112,6 +115,7 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 		case _UNSET:
 			dataType = DataType.STRING;
 
+		case KEYWORD_STRING:
 		case STRING:
 		case OBJECT:
 			values[size++] = obj;
@@ -213,15 +217,29 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 	}
 
 	@Override
-	public String getKwList() {
+	public String quoteValue() {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append(getString(0));
-		for (int i = 1; i < values.length; i++) {
-			sb.append(':');
-			sb.append(getString(i));
+		if (dataType == DataType.KEYWORD_STRING) {
+			sb.append(getString(0));
+			for (int i = 1; i < values.length; i++) {
+				sb.append(':');
+				sb.append(getString(i));
+			}
+		} else {
+			sb.append(quote(getString(0)));
+			for (int i = 1; i < values.length; i++) {
+				sb.append(':');
+				sb.append(quote(getString(i)));
+			}
 		}
 
 		return sb.toString();
+	}
+
+	// TODO: is this really correct
+	private String quote(String s) {
+		s = StringUtil.replace(s, "\\", "\\\\");
+		return "\"" + StringUtil.replace(s, "\"", "\\\"") + "\"";
 	}
 }
