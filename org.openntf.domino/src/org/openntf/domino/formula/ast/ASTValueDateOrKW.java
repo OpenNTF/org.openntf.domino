@@ -48,8 +48,8 @@ public class ASTValueDateOrKW extends SimpleNode {
 		try {
 			dateValue = parser.getFormatter().parseDate(inner);
 		} catch (IllegalArgumentException e) {
-			if (inner.contains(".") || inner.contains("/") || inner.contains("-") || inner.trim().isEmpty()) {
-				// this MUST be a date
+			if (inner.contains(".") || inner.contains("/") || inner.contains("-") || // this MUST be a date
+					inner.contains("\\") || inner.contains("\"") || inner.trim().isEmpty()) {
 				throw new ParseException(parser, e.getMessage());
 			}
 		}

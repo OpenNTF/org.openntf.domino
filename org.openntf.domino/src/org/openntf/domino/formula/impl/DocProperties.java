@@ -3,20 +3,12 @@ package org.openntf.domino.formula.impl;
 import java.util.Map;
 
 import org.openntf.domino.Document;
-import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.utils.Strings;
 
 public enum DocProperties {
 	;
-
-	@ParamCount(4)
-	public static ValueHolder atAbstract(final FormulaContext ctx, final ValueHolder[] params) throws EvaluateException {
-		// TODO: can this method operate native?
-		return ctx.evaluateNative("@Abstract(" + params[0].quoteValue() + ";" + params[1].quoteValue() + ";" + params[2].quoteValue() + ";"
-				+ params[3].quoteValue() + ")");
-	}
 
 	@ParamCount(0)
 	public static ValueHolder atAuthor(final FormulaContext ctx) {
@@ -137,7 +129,7 @@ public enum DocProperties {
 	}
 
 	@ParamCount(2)
-	public static Object atAddToFolder(final FormulaContext ctx, final String to, final String from) {
+	public static boolean atAddToFolder(final FormulaContext ctx, final String to, final String from) {
 		Map<String, Object> map = ctx.getDocument();
 		if (map instanceof Document) {
 			Document doc = (Document) map;
@@ -147,9 +139,9 @@ public enum DocProperties {
 			if (!Strings.isBlankString(from)) {
 				doc.removeFromFolder(from);
 			}
-			return ctx.TRUE;
+			return true;
 		}
-		return ctx.FALSE;
+		return false;
 	}
 
 }

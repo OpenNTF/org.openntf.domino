@@ -1,13 +1,17 @@
 package org.openntf.domino.formula.impl;
 
+import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.ValueHolder.DataType;
+
+import com.ibm.commons.util.FastStringBuffer;
 
 public enum NativeEvaluateFunctions {
 	;
 	/*============================================================================*/
 	/*
-	 * Part I: Text functions
+	 * Text functions
 	 */
 	/*============================================================================*/
 	/*----------------------------------------------------------------------------*/
@@ -17,9 +21,9 @@ public enum NativeEvaluateFunctions {
 	/*----------------------------------------------------------------------------*/
 	@NeedsNativeEvaluate({ "@Ascii", "Possible at all?" })
 	@ParamCount({ 1, 2 })
-	public static ValueHolder atAscii(final FormulaContext ctx, final ValueHolder params[]) {
-		return (params.length == 2) ? ctx.evaluateNative("@Ascii(p1;p2)", params[0], params[1]) : ctx.evaluateNative("@Ascii(p1)",
-				params[0]);
+	public static ValueHolder atAscii(final FormulaContext ctx, final ValueHolder params[]) throws EvaluateException {
+		return (params.length == 2) ? ctx.evaluateNative("@Ascii(p1;" + params[1].quoteValue() + ")", params[0]) : // Force NL
+				ctx.evaluateNative("@Ascii(p1)", params[0]);
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -116,7 +120,7 @@ public enum NativeEvaluateFunctions {
 
 	/*============================================================================*/
 	/*
-	 * Part II: Mail, Name, Certificate
+	 * Mail, Name, Certificate
 	 */
 	/*============================================================================*/
 	/*----------------------------------------------------------------------------*/
@@ -126,13 +130,13 @@ public enum NativeEvaluateFunctions {
 	/*----------------------------------------------------------------------------*/
 	@NeedsNativeEvaluate("@Certificate")
 	@ParamCount(2)
-	public static ValueHolder atCertificate(final FormulaContext ctx, final ValueHolder params[]) {
-		return ctx.evaluateNative("@Certificate(p1;p2)", params[0], params[1]);
+	public static ValueHolder atCertificate(final FormulaContext ctx, final ValueHolder params[]) throws EvaluateException {
+		return ctx.evaluateNative("@Certificate(" + params[0].quoteValue() + ";p1)", params[1]);
 	}
 
 	/*----------------------------------------------------------------------------*/
 	/*
-	 * @LDAPServer, @Name, @NameLookup
+	 * @LDAPServer, @Name, @NameLookup, @UserName
 	 */
 	/*----------------------------------------------------------------------------*/
 	@NeedsNativeEvaluate("@LDAPServer")
@@ -144,15 +148,22 @@ public enum NativeEvaluateFunctions {
 	/*----------------------------------------------------------------------------*/
 	@NeedsNativeEvaluate({ "@Name", "openNTF-Name doesn't yet look stable" })
 	@ParamCount(2)
-	public static ValueHolder atName(final FormulaContext ctx, final ValueHolder params[]) {
-		return ctx.evaluateNative("@Name(p1;p2)", params[0], params[1]);
+	public static ValueHolder atName(final FormulaContext ctx, final ValueHolder params[]) throws EvaluateException {
+		return ctx.evaluateNative("@Name(" + params[0].quoteValue() + ";p1)", params[1]);
 	}
 
 	/*----------------------------------------------------------------------------*/
 	@NeedsNativeEvaluate("@NameLookup")
 	@ParamCount(3)
-	public static ValueHolder atNameLookup(final FormulaContext ctx, final ValueHolder params[]) {
-		return ctx.evaluateNative("@NameLookup(p1;p2;p3)", params[0], params[1], params[2]);
+	public static ValueHolder atNameLookup(final FormulaContext ctx, final ValueHolder params[]) throws EvaluateException {
+		return ctx.evaluateNative("@NameLookup(" + params[0].quoteValue() + ";p1;p2)", params[1], params[2]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@UserName")
+	@ParamCount({ 0, 1 })
+	public static ValueHolder atUserName(final FormulaContext ctx, final ValueHolder params[]) {
+		return (params.length == 0) ? ctx.evaluateNative("@UserName") : ctx.evaluateNative("@UserName(p1)", params[0]);
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -204,7 +215,7 @@ public enum NativeEvaluateFunctions {
 
 	/*============================================================================*/
 	/*
-	 * Part III: Others
+	 * Miscellanea
 	 */
 	/*============================================================================*/
 	@NeedsNativeEvaluate("@ConfigFile")
@@ -224,28 +235,26 @@ public enum NativeEvaluateFunctions {
 	@NeedsNativeEvaluate("@Environment")
 	@ParamCount({ 1, 2 })
 	public static ValueHolder atEnvironment(final FormulaContext ctx, final ValueHolder[] params) {
-		if (params.length == 1) {
+		if (params.length == 1)
 			return ctx.evaluateNative("@Environment(p1)", params[0]);
-		} else {
-			return ctx.evaluateNative("@Environment(p1;p2)", params[0], params[1]);
-		}
+		return ctx.evaluateNative("@Environment(p1;p2)", params[0], params[1]);
 	}
 
 	/*----------------------------------------------------------------------------*/
 	@NeedsNativeEvaluate("@LanguagePreference")
 	@ParamCount(1)
-	public static ValueHolder atLanguagePreference(final FormulaContext ctx, final ValueHolder params[]) {
-		return ctx.evaluateNative("@LanguagePreference(p1)", params[0]);
+	public static ValueHolder atLanguagePreference(final FormulaContext ctx, final ValueHolder params[]) throws EvaluateException {
+		return ctx.evaluateNative("@LanguagePreference(" + params[0].quoteValue() + ")");
 	}
 
 	/*----------------------------------------------------------------------------*/
 	@NeedsNativeEvaluate("@Locale")
 	@ParamCount({ 1, 2 })
-	public static ValueHolder atLocale(final FormulaContext ctx, final ValueHolder[] params) {
+	public static ValueHolder atLocale(final FormulaContext ctx, final ValueHolder[] params) throws EvaluateException {
 		if (params.length == 1) {
-			return ctx.evaluateNative("@Locale(p1)", params[0]);
+			return ctx.evaluateNative("@Locale(" + params[0].quoteValue() + ")");
 		} else {
-			return ctx.evaluateNative("@Locale(p1;p2)", params[0], params[1]);
+			return ctx.evaluateNative("@Locale(" + params[0].quoteValue() + ";p1)", params[1]);
 		}
 	}
 
@@ -273,12 +282,239 @@ public enum NativeEvaluateFunctions {
 	/*----------------------------------------------------------------------------*/
 	@NeedsNativeEvaluate("@ServerAccess")
 	@ParamCount({ 2, 3 })
-	public static ValueHolder atServerAccess(final FormulaContext ctx, final ValueHolder[] params) {
+	public static ValueHolder atServerAccess(final FormulaContext ctx, final ValueHolder[] params) throws EvaluateException {
 		if (params.length == 2) {
-			return ctx.evaluateNative("@ServerAccess(p1;p2)", params[0], params[1]);
+			return ctx.evaluateNative("@ServerAccess(" + params[0].quoteValue() + ";p1)", params[1]);
 		} else {
-			return ctx.evaluateNative("@ServerAccess(p1;p2;p3)", params[0], params[1], params[2]);
+			return ctx.evaluateNative("@ServerAccess(" + params[0].quoteValue() + ";p1;p2)", params[1], params[2]);
 		}
 	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@AdminECLIsLocked")
+	@ParamCount(0)
+	public static ValueHolder atAdminECLIsLocked(final FormulaContext ctx) {
+		return ctx.evaluateNative("@AdminECLIsLocked");
+	}
+
+	/*============================================================================*/
+	/*
+	 * Further
+	 */
+	/*============================================================================*/
+	@NeedsNativeEvaluate("@Abstract")
+	@ParamCount(4)
+	public static ValueHolder atAbstract(final FormulaContext ctx, final ValueHolder[] params) throws EvaluateException {
+		return ctx.evaluateNative("@Abstract(" + params[0].quoteValue() + ";" + params[1].quoteValue() + ";" + params[2].quoteValue() + ";"
+				+ params[3].quoteValue() + ")");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@AbstractSimple")
+	@ParamCount(1)
+	public static ValueHolder atAbstractSimple(final FormulaContext ctx, final ValueHolder[] params) throws EvaluateException {
+		return ctx.evaluateNative("@AbstractSimple(" + params[0].quoteValue() + ")");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@BrowserInfo")
+	@ParamCount(1)
+	public static ValueHolder atBrowserInfo(final FormulaContext ctx, final ValueHolder params[]) {
+		return ctx.evaluateNative("@BrowserInfo(p1)", params[0]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@CheckFormulaSyntax")
+	@ParamCount(1)
+	public static ValueHolder atCheckFormulaSyntax(final FormulaContext ctx, final ValueHolder params[]) {
+		return ctx.evaluateNative("@CheckFormulaSyntax(p1)", params[0]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@ClientType")
+	@ParamCount(0)
+	public static ValueHolder atClientType(final FormulaContext ctx) {
+		return ctx.evaluateNative("@ClientType");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@DB2Schema")
+	@ParamCount(2)
+	public static ValueHolder atDB2Schema(final FormulaContext ctx, final ValueHolder params[]) {
+		return ctx.evaluateNative("@DB2Schema(p1;p2)", params[0], params[1]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@DbColumn")
+	@ParamCount(4)
+	public static ValueHolder atDbColumn(final FormulaContext ctx, final ValueHolder params[]) {
+		return ctx.evaluateNative("@DbColumn(p1;p2;p3;p4)", params[0], params[1], params[2], params[3]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@DbCommand")
+	@ParamCount({ 2, 5 })
+	public static ValueHolder atDbCommand(final FormulaContext ctx, final ValueHolder params[]) {
+		if (params.length == 2)
+			return ctx.evaluateNative("@DbCommand(p1;p2)", params[0], params[1]);
+		if (params.length == 3)
+			return ctx.evaluateNative("@DbCommand(p1;p2;p3)", params[0], params[1], params[2]);
+		if (params.length == 4)
+			return ctx.evaluateNative("@DbCommand(p1;p2;p3;p4)", params[0], params[1], params[2], params[3]);
+		return ctx.evaluateNative("@DbCommand(p1;p2;p3;p4;p5)", params[0], params[1], params[2], params[3], params[4]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@DbExists")
+	@ParamCount({ 1, 2 })
+	public static ValueHolder atDbExists(final FormulaContext ctx, final ValueHolder[] params) {
+		if (params.length == 1)
+			return ctx.evaluateNative("@DbExists(p1)", params[0]);
+		return ctx.evaluateNative("@DbExists(p1;p2)", params[0], params[1]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@DbLookup")
+	@ParamCount({ 5, 9 })
+	public static ValueHolder atDbLookup(final FormulaContext ctx, final ValueHolder params[]) throws EvaluateException {
+		if (params.length == 5)
+			return ctx.evaluateNative("@DbLookup(p1;p2;p3;p4;p5)", params[0], params[1], params[2], params[3], params[4]);
+		if (params.length == 6) {
+			if (params[5].dataType == DataType.KEYWORD_STRING)
+				return ctx.evaluateNative("@DbLookup(p1;p2;p3;p4;p5;" + params[5].quoteValue() + ")", params[0], params[1], params[2],
+						params[3], params[4]);
+			else
+				return ctx.evaluateNative("@DbLookup(p1;p2;p3;p4;p5;p6)", params[0], params[1], params[2], params[3], params[4], params[5]);
+		}
+		if (params.length == 7)
+			return ctx.evaluateNative("@DbLookup(p1;p2;p3;p4;p5;p6;" + params[6].quoteValue() + ")", params[0], params[1], params[2],
+					params[3], params[4], params[5]);
+		if (params.length == 8)
+			return ctx.evaluateNative("@DbLookup(p1;p2;p3;p4;p5;p6;p7;p8)", params[0], params[1], params[2], params[3], params[4],
+					params[5], params[6], params[7]);
+		return ctx.evaluateNative("@DbLookup(p1;p2;p3;p4;p5;p6;p7;p8;p9)", params[0], params[1], params[2], params[3], params[4],
+				params[5], params[6], params[7], params[8]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@DbManager")
+	@ParamCount(0)
+	public static ValueHolder atDbManager(final FormulaContext ctx) {
+		return ctx.evaluateNative("@DbManager");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@DbName")
+	@ParamCount(0)
+	public static ValueHolder atDbName(final FormulaContext ctx) {
+		return ctx.evaluateNative("@DbName");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@DbTitle")
+	@ParamCount(0)
+	public static ValueHolder atDbTitle(final FormulaContext ctx) {
+		return ctx.evaluateNative("@DbTitle");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@DeleteDocument")
+	@ParamCount(0)
+	public static ValueHolder atDeleteDocument(final FormulaContext ctx) {
+		return ctx.evaluateNative("@DeleteDocument");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@DocChildren")
+	@ParamCount({ 0, 3 })
+	public static ValueHolder atDocChildren(final FormulaContext ctx, final ValueHolder[] params) throws EvaluateException {
+		FastStringBuffer fsb = new FastStringBuffer(256);
+		fsb.append("@DocChildren");
+		if (params.length > 0) {
+			fsb.append('(');
+			fsb.append(params[0].quoteValue());
+		}
+		if (params.length > 1) {
+			fsb.append(';');
+			fsb.append(params[1].quoteValue());
+		}
+		if (params.length > 2) {
+			fsb.append(';');
+			fsb.append(params[2].quoteValue());
+		}
+		if (params.length > 0)
+			fsb.append(')');
+		return ctx.evaluateNative(fsb.toString());
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@DocDescendants")
+	@ParamCount({ 0, 3 })
+	public static ValueHolder atDocDescendants(final FormulaContext ctx, final ValueHolder[] params) throws EvaluateException {
+		FastStringBuffer fsb = new FastStringBuffer(256);
+		fsb.append("@DocDescendants");
+		if (params.length > 0) {
+			fsb.append('(');
+			fsb.append(params[0].quoteValue());
+		}
+		if (params.length > 1) {
+			fsb.append(';');
+			fsb.append(params[1].quoteValue());
+		}
+		if (params.length > 2) {
+			fsb.append(';');
+			fsb.append(params[2].quoteValue());
+		}
+		if (params.length > 0)
+			fsb.append(')');
+		return ctx.evaluateNative(fsb.toString());
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@DocLevel")
+	@ParamCount(0)
+	public static ValueHolder atDocLevel(final FormulaContext ctx) {
+		return ctx.evaluateNative("@DocLevel");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@DocMark")
+	@ParamCount(1)
+	public static ValueHolder atDocMark(final FormulaContext ctx, final ValueHolder[] params) throws EvaluateException {
+		return ctx.evaluateNative("@DocMark(" + params[0].quoteValue() + ")");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@DocNumber")
+	@ParamCount({ 0, 1 })
+	public static ValueHolder atDocNumber(final FormulaContext ctx, final ValueHolder[] params) throws EvaluateException {
+		if (params.length == 0)
+			return ctx.evaluateNative("@DocNumber");
+		return ctx.evaluateNative("@DocNumber(" + params[0].quoteValue() + ")");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@DocOmittedLength")
+	@ParamCount(0)
+	public static ValueHolder atDocOmittedLength(final FormulaContext ctx) {
+		return ctx.evaluateNative("@DocOmittedLength");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@DocParentNumber")
+	@ParamCount({ 0, 1 })
+	public static ValueHolder atDocParentNumber(final FormulaContext ctx, final ValueHolder[] params) throws EvaluateException {
+		if (params.length == 0)
+			return ctx.evaluateNative("@DocParentNumber");
+		return ctx.evaluateNative("@DocParentNumber(" + params[0].quoteValue() + ")");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@DocSiblings")
+	@ParamCount(0)
+	public static ValueHolder atDocSiblings(final FormulaContext ctx) {
+		return ctx.evaluateNative("@DocSiblings");
+	}
+
 	/*----------------------------------------------------------------------------*/
 }
