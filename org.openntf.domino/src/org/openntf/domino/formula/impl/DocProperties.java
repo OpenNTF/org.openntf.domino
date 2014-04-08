@@ -84,12 +84,15 @@ public enum DocProperties {
 
 	@ParamCount(0)
 	public static ValueHolder atNoteId(final FormulaContext ctx) {
-		return ctx.getVarLC("@noteid");
+		ValueHolder vh = ctx.getVarLC("@noteid");
+		if ("0".equals(vh.getString(0)))
+			vh = ValueHolder.valueOf("NT00000000");
+		return vh;
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atDocLength(final FormulaContext ctx) {
-		return ctx.getVarLC("@noteid");
+		return ctx.getVarLC("@doclength");
 	}
 
 	@ParamCount(0)
@@ -117,6 +120,7 @@ public enum DocProperties {
 		return ctx.getVarLC("@inheriteddocumentuniqueid");
 	}
 
+	@SuppressWarnings("deprecation")
 	@ParamCount(0)
 	public static ValueHolder atDocFields(final FormulaContext ctx) {
 		Map<String, Object> doc = ctx.getDocument();
@@ -126,6 +130,26 @@ public enum DocProperties {
 		} else {
 			return ValueHolder.valueOf(doc.keySet());
 		}
+	}
+
+	@ParamCount(1)
+	public static ValueHolder atGetField(final FormulaContext ctx, final ValueHolder[] params) {
+		return ctx.getVarLC(params[0].getString(0), true);
+	}
+
+	@ParamCount(1)
+	public static ValueHolder atIsAvailable(final FormulaContext ctx, final ValueHolder[] params) {
+		return params[0].getObject(0).toString().isEmpty() ? ctx.FALSE : ctx.TRUE;
+	}
+
+	@ParamCount(1)
+	public static ValueHolder atIsUnavailable(final FormulaContext ctx, final ValueHolder[] params) {
+		return (atIsAvailable(ctx, params) == ctx.FALSE) ? ctx.TRUE : ctx.FALSE;
+	}
+
+	@ParamCount(2)
+	public static ValueHolder atGetDocField(final FormulaContext ctx, final ValueHolder[] params) {
+		return ctx.getDocField(params[0].getString(0), params[1].getString(0));
 	}
 
 	@ParamCount(2)

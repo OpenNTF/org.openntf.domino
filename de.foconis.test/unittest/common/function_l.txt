@@ -1,6 +1,6 @@
-﻿@LanguagePreference
+@LanguagePreference([Region])
 	#allPass
-	
+
 @LaunchApp("Designer") 
 	#allPass
 @LDAPServer
@@ -43,4 +43,7 @@
 	#allPass 
 
 @LowerCase("ÄnnaMirl")
-	#allPass
+	#allPass [ännamirl]
+@LowerCase("AOÛT, C'EST en ÉTÉ")
+	#allPass [août, c'est en été]
+

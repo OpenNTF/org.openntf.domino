@@ -28,6 +28,8 @@ import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
 
+import com.ibm.commons.util.FastStringBuffer;
+
 public enum TextFunctions {
 	;
 	/*----------------------------------------------------------------------------*/
@@ -921,7 +923,7 @@ public enum TextFunctions {
 
 	/*----------------------------------------------------------------------------*/
 	/*
-	 * @Unique
+	 * @Unique, @Repeat
 	 */
 	/*----------------------------------------------------------------------------*/
 	@NeedsNativeEvaluate("@Unique(<no parameters>)")
@@ -939,6 +941,44 @@ public enum TextFunctions {
 					break;
 			if (j == ret.size)
 				ret.add(s);
+		}
+		return ret;
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@ParamCount({ 2, 3 })
+	public static ValueHolder atRepeat(final FormulaContext ctx, final ValueHolder[] params) {
+		ValueHolder vh = params[0];
+		int repeator = params[1].getInt(0);
+		if (repeator < 0)
+			repeator = -repeator;	// Notes behaviour!
+		int cutter = 65000;	// The Notes limit is unclear: The documentation says 1024, but seems to be greater.
+		if (params.length == 3) {
+			int i = params[2].getInt(0);
+			if (i < 0)
+				i = -i;	// Notes behaviour!
+			if (i < 65000)
+				cutter = i;
+		}
+		int bedarf = 0;
+		for (int i = 0; i < vh.size; i++) {
+			int lh = vh.getString(i).length();
+			if (lh > bedarf)
+				bedarf = lh;
+		}
+		ValueHolder ret = ValueHolder.createValueHolder(String.class, vh.size);
+		if (repeator == 0 || cutter == 0 || bedarf == 0) {
+			for (int i = 0; i < vh.size; i++)
+				ret.add("");
+			return ret;
+		}
+		FastStringBuffer fsb = new FastStringBuffer(bedarf * repeator);
+		for (int i = 0; i < vh.size; i++) {
+			fsb.clear();
+			String s = vh.getString(i);
+			for (int j = 0; j < repeator; j++)
+				fsb.append(s);
+			ret.add((fsb.length() > cutter) ? fsb.substring(0, cutter) : fsb.toString());
 		}
 		return ret;
 	}

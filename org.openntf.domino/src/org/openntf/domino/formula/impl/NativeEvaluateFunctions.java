@@ -251,11 +251,9 @@ public enum NativeEvaluateFunctions {
 	@NeedsNativeEvaluate("@Locale")
 	@ParamCount({ 1, 2 })
 	public static ValueHolder atLocale(final FormulaContext ctx, final ValueHolder[] params) throws EvaluateException {
-		if (params.length == 1) {
+		if (params.length == 1)
 			return ctx.evaluateNative("@Locale(" + params[0].quoteValue() + ")");
-		} else {
-			return ctx.evaluateNative("@Locale(" + params[0].quoteValue() + ";p1)", params[1]);
-		}
+		return ctx.evaluateNative("@Locale(" + params[0].quoteValue() + ";p1)", params[1]);
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -516,5 +514,205 @@ public enum NativeEvaluateFunctions {
 		return ctx.evaluateNative("@DocSiblings");
 	}
 
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@EditECL")
+	@ParamCount(2)
+	public static ValueHolder atEditECL(final FormulaContext ctx, final ValueHolder[] params) {
+		return ctx.evaluateNative("@EditECL(p1;p2)", params[0], params[1]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@EditUserECL")
+	@ParamCount(0)
+	public static ValueHolder atEditUserECL(final FormulaContext ctx) {
+		return ctx.evaluateNative("@EditUserECL");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@FormLanguage")
+	@ParamCount(0)
+	public static ValueHolder atFormLanguage(final FormulaContext ctx) {
+		return ctx.evaluateNative("@FormLanguage");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@GetAddressBooks")
+	@ParamCount(1)
+	public static ValueHolder atGetAddressBooks(final FormulaContext ctx, final ValueHolder[] params) throws EvaluateException {
+		return ctx.evaluateNative("@GetAddressBooks(" + params[0].quoteValue() + ")");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@GetCurrentTimeZone")
+	@ParamCount(0)
+	public static ValueHolder atGetCurrentTimeZone(final FormulaContext ctx) {
+		return ctx.evaluateNative("@GetCurrentTimeZone");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@GetFocusTable")
+	@ParamCount(1)
+	public static ValueHolder atGetFocusTable(final FormulaContext ctx, final ValueHolder[] params) throws EvaluateException {
+		return ctx.evaluateNative("@GetFocusTable(" + params[0].quoteValue() + ")");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@GetHTTPHeader")
+	@ParamCount(1)
+	public static ValueHolder atGetHTTPHeader(final FormulaContext ctx, final ValueHolder[] params) {
+		return ctx.evaluateNative("@GetHTTPHeader(p1)", params[0]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@GetPortsList")
+	@ParamCount(1)
+	public static ValueHolder atGetPortsList(final FormulaContext ctx, final ValueHolder[] params) throws EvaluateException {
+		return ctx.evaluateNative("@GetPortsList(" + params[0].quoteValue() + ")");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@GetProfileField")
+	@ParamCount({ 2, 3 })
+	public static ValueHolder atGetProfileField(final FormulaContext ctx, final ValueHolder params[]) {
+		if (params.length == 2)
+			return ctx.evaluateNative("@GetProfileField(p1;p2)", params[0], params[1]);
+		return ctx.evaluateNative("@GetProfileField(p1;p2;p3)", params[0], params[1], params[2]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@HardDeleteDocument")
+	@ParamCount(0)
+	public static ValueHolder atHardDeleteDocument(final FormulaContext ctx) {
+		return ctx.evaluateNative("@HardDeleteDocument");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@IsAgentEnabled")
+	@ParamCount(1)
+	public static ValueHolder atIsAgentEnabled(final FormulaContext ctx, final ValueHolder[] params) {
+		return ctx.evaluateNative("@IsAgentEnabled(p1)", params[0]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@IsAppInstalled")
+	@ParamCount(1)
+	public static ValueHolder atIsAppInstalled(final FormulaContext ctx, final ValueHolder[] params) {
+		return ctx.evaluateNative("@IsAppInstalled(p1)", params[0]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@IsCategory")
+	@ParamCount({ 0, 2 })
+	public static ValueHolder atIsCategory(final FormulaContext ctx, final ValueHolder[] params) {
+		if (params.length == 0)
+			return ctx.evaluateNative("@IsCategory");
+		if (params.length == 1)
+			return ctx.evaluateNative("@IsCategory(p1)", params[0]);
+		return ctx.evaluateNative("@IsCategory(p1;p2)", params[0], params[1]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@IsDocBeingEdited")
+	@ParamCount(0)
+	public static ValueHolder atIsDocBeingEdited(final FormulaContext ctx) {
+		return ctx.evaluateNative("@IsDocBeingEdited");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@IsDocBeingLoaded")
+	@ParamCount(0)
+	public static ValueHolder atIsDocBeingLoaded(final FormulaContext ctx) {
+		return ctx.evaluateNative("@IsDocBeingLoaded");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@IsDocBeingMailed")
+	@ParamCount(0)
+	public static ValueHolder atIsDocBeingMailed(final FormulaContext ctx) {
+		return ctx.evaluateNative("@IsDocBeingMailed");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@IsDocBeingRecalculated")
+	@ParamCount(0)
+	public static ValueHolder atIsDocBeingRecalculated(final FormulaContext ctx) {
+		return ctx.evaluateNative("@IsDocBeingRecalculated");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@IsDocBeingSaved")
+	@ParamCount(0)
+	public static ValueHolder atIsDocBeingSaved(final FormulaContext ctx) {
+		return ctx.evaluateNative("@IsDocBeingSaved");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@IsDocTruncated")
+	@ParamCount(0)
+	public static ValueHolder atIsDocTruncated(final FormulaContext ctx) {
+		return ctx.evaluateNative("@IsDocTruncated");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@IsEmbeddedInsideWCT")
+	@ParamCount(0)
+	public static ValueHolder atIsEmbeddedInsideWCT(final FormulaContext ctx) {
+		return ctx.evaluateNative("@IsEmbeddedInsideWCT");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@IsExpandable")
+	@ParamCount({ 0, 2 })
+	public static ValueHolder atIsExpandable(final FormulaContext ctx, final ValueHolder[] params) {
+		if (params.length == 0)
+			return ctx.evaluateNative("@IsExpandable");
+		if (params.length == 1)
+			return ctx.evaluateNative("@IsExpandable(p1)", params[0]);
+		return ctx.evaluateNative("@IsExpandable(p1;p2)", params[0], params[1]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@IsModalHelp")
+	@ParamCount(0)
+	public static ValueHolder atIsModalHelp(final FormulaContext ctx) {
+		return ctx.evaluateNative("@IsModalHelp");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@IsUsingJavaElement")
+	@ParamCount(0)
+	public static ValueHolder atIsUsingJavaElement(final FormulaContext ctx) {
+		return ctx.evaluateNative("@IsUsingJavaElement");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@IsVirtualizedDirectory")
+	@ParamCount(0)
+	public static ValueHolder atIsVirtualizedDirectory(final FormulaContext ctx) {
+		return ctx.evaluateNative("@IsVirtualizedDirectory");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@LaunchApp")
+	@ParamCount(1)
+	public static ValueHolder atLaunchApp(final FormulaContext ctx, final ValueHolder params[]) {
+		return ctx.evaluateNative("@LaunchApp(p1)", params[0]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@Platform")
+	@ParamCount({ 0, 1 })
+	public static ValueHolder atPlatform(final FormulaContext ctx, final ValueHolder[] params) throws EvaluateException {
+		if (params.length == 0)
+			return ctx.evaluateNative("@Platform");
+		return ctx.evaluateNative("@IsExpandable(" + params[0].quoteValue() + ")");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@RefreshECL")
+	@ParamCount(2)
+	public static ValueHolder atRefreshECL(final FormulaContext ctx, final ValueHolder[] params) {
+		return ctx.evaluateNative("@RefreshECL(p1;p2)", params[0], params[1]);
+	}
 	/*----------------------------------------------------------------------------*/
 }
