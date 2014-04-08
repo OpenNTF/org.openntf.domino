@@ -19,11 +19,6 @@ public enum NotSupported {
 		return notSupported();
 	}
 
-	@ParamCount(3)
-	public static ValueHolder atEditECL() {
-		return notSupported();
-	}
-
 	@ParamCount(2)
 	public static ValueHolder atDDEExecute() {
 		return notSupported();
@@ -61,11 +56,6 @@ public enum NotSupported {
 
 	@ParamCount(0)
 	public static ValueHolder atGetIMContactListGroupNames() {
-		return notSupported();
-	}
-
-	@ParamCount({ 0, 1 })
-	public static ValueHolder atGetPortsList() {
 		return notSupported();
 	}
 

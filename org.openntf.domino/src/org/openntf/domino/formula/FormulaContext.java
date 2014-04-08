@@ -85,9 +85,13 @@ public class FormulaContext {
 	 *            the var name to read. must be lowercase
 	 * @return ValueHolder
 	 */
-	@SuppressWarnings("deprecation")
 	public ValueHolder getVarLC(final String key) {
-		ValueHolder var = vars.get(key);
+		return getVarLC(key, false);
+	}
+
+	@SuppressWarnings("deprecation")
+	public ValueHolder getVarLC(final String key, final boolean docOnly) {
+		ValueHolder var = docOnly ? null : vars.get(key);
 		if (var != null) {
 			return var;
 		}
@@ -164,11 +168,14 @@ public class FormulaContext {
 	}
 
 	public void setEnvLC(final String varNameLC, final ValueHolder value) {
-		// TODO Auto-generated method stub
-
+		throw new UnsupportedOperationException("ENVIRONMENT is not supported in this context.");
 	}
 
 	public ValueHolder evaluateNative(final String formula, final ValueHolder... params) {
 		throw new UnsupportedOperationException("EvaluateNative of '" + formula + "' is not supported in this context.");
+	}
+
+	public ValueHolder getDocField(final String docUnid, final String field) {
+		throw new UnsupportedOperationException("@GetDocField is not supported in this context.");
 	}
 }

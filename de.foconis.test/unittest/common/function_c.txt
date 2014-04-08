@@ -32,12 +32,10 @@
 	#allPass
  
 @Contains("Hi There";"Th")
-	#lotusPass [1.0]
-	#docMapPass [true]
+	#allPass
 	
 @Contains("Tom":"Dick":"Harry";"Harry":"Tom")
-	#lotusPass [1.0]
-	#docMapPass [true]
+	#allPass
 
 @Cos(1/2)
 	#allPass

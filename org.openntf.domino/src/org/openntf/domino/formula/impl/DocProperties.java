@@ -3,20 +3,12 @@ package org.openntf.domino.formula.impl;
 import java.util.Map;
 
 import org.openntf.domino.Document;
-import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.utils.Strings;
 
 public enum DocProperties {
 	;
-
-	@ParamCount(4)
-	public static ValueHolder atAbstract(final FormulaContext ctx, final ValueHolder[] params) throws EvaluateException {
-		// TODO: can this method operate native?
-		return ctx.evaluateNative("@Abstract(" + params[0].quoteValue() + ";" + params[1].quoteValue() + ";" + params[2].quoteValue() + ";"
-				+ params[3].quoteValue() + ")");
-	}
 
 	@ParamCount(0)
 	public static ValueHolder atAuthor(final FormulaContext ctx) {
@@ -92,12 +84,15 @@ public enum DocProperties {
 
 	@ParamCount(0)
 	public static ValueHolder atNoteId(final FormulaContext ctx) {
-		return ctx.getVarLC("@noteid");
+		ValueHolder vh = ctx.getVarLC("@noteid");
+		if ("0".equals(vh.getString(0)))
+			vh = ValueHolder.valueOf("NT00000000");
+		return vh;
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atDocLength(final FormulaContext ctx) {
-		return ctx.getVarLC("@noteid");
+		return ctx.getVarLC("@doclength");
 	}
 
 	@ParamCount(0)
@@ -125,6 +120,7 @@ public enum DocProperties {
 		return ctx.getVarLC("@inheriteddocumentuniqueid");
 	}
 
+	@SuppressWarnings("deprecation")
 	@ParamCount(0)
 	public static ValueHolder atDocFields(final FormulaContext ctx) {
 		Map<String, Object> doc = ctx.getDocument();
@@ -136,8 +132,28 @@ public enum DocProperties {
 		}
 	}
 
+	@ParamCount(1)
+	public static ValueHolder atGetField(final FormulaContext ctx, final ValueHolder[] params) {
+		return ctx.getVarLC(params[0].getString(0), true);
+	}
+
+	@ParamCount(1)
+	public static ValueHolder atIsAvailable(final FormulaContext ctx, final ValueHolder[] params) {
+		return params[0].getObject(0).toString().isEmpty() ? ctx.FALSE : ctx.TRUE;
+	}
+
+	@ParamCount(1)
+	public static ValueHolder atIsUnavailable(final FormulaContext ctx, final ValueHolder[] params) {
+		return (atIsAvailable(ctx, params) == ctx.FALSE) ? ctx.TRUE : ctx.FALSE;
+	}
+
 	@ParamCount(2)
-	public static Object atAddToFolder(final FormulaContext ctx, final String to, final String from) {
+	public static ValueHolder atGetDocField(final FormulaContext ctx, final ValueHolder[] params) {
+		return ctx.getDocField(params[0].getString(0), params[1].getString(0));
+	}
+
+	@ParamCount(2)
+	public static boolean atAddToFolder(final FormulaContext ctx, final String to, final String from) {
 		Map<String, Object> map = ctx.getDocument();
 		if (map instanceof Document) {
 			Document doc = (Document) map;
@@ -147,9 +163,9 @@ public enum DocProperties {
 			if (!Strings.isBlankString(from)) {
 				doc.removeFromFolder(from);
 			}
-			return ctx.TRUE;
+			return true;
 		}
-		return ctx.FALSE;
+		return false;
 	}
 
 }

@@ -23,12 +23,10 @@
 	#allFail
 
 @Ends("Hi There";"re")
-	#lotusPass [1.0]
-	#docMapPass [true]
+	#allPass [1.0]
 	
 @Ends("Hi There";"The")
-	#lotusPass [0.0]
-	#docMapPass [false]
+	#allPass [0.0]
  
 ENVIRONMENT myNotesIni :=  "testcase1"; @Environment("myNotesIni")
 	#allPass [testcase1]

@@ -2,13 +2,15 @@
 	#allPass [3]
 
 @IfError (ok; "error")
-	#allPass [] 
+	#allPass []
+    
 @IfError (ok+1; "error")
 	#allPass [error]	
 
-@Implode("a":"b":"c");
+@Implode("a":"b":"c")
 	#allPass [a b c]
-@Implode("a":"b":"c";"|");
+    
+@Implode("a":"b":"c";"|")
 	#allPass [a|b|c]
 
 @InheritedDocumentUniqueID 
@@ -23,10 +25,14 @@
 @IsAppInstalled("Designer")
 	#allPass
 
-@IsAvailable("text1")
-	#allPass
-@IsAvailable("body")
-	#allPass
+@IsAvailable(text1)
+	#allPass [1.0]
+@IsAvailable(body)
+	#allPass [1.0]
+@IsAvailable(NotAvailable)
+	#allPass [0.0]
+NotAvailable := [1.1]; @IsAvailable(NotAvailable)
+    #allPass [1.0]
 
 @IsCategory
 	#allPass
@@ -62,10 +68,10 @@
 	#allPass
 
 @IsError(ok)
-	#allPass
+	#allPass [0.0]
 
 @IsError(ok+1)
-	#allPass
+	#allPass [1.0]
 
 @IsExpandable
 	#allPass
@@ -112,9 +118,11 @@
 	#allPass
 
 @IsUnavailable(nonExistentField)
-	#allPass
+	#allPass [1.0]
 @IsUnavailable(int1)
-	#allPass
+	#allPass [0.0]
+nonExistentField := [today]; @IsUnavailable(nonExistentField)
+    #allPass [0.0]
 
 @IsUsingJavaElement 
 	#allPass

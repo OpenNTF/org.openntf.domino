@@ -46,7 +46,7 @@ public class ASTAtIfError extends SimpleNode {
 		ValueHolder vh = children[0].evaluate(ctx);
 
 		if (vh.dataType == DataType.ERROR && children.length == 2) {
-			return children[0].evaluate(ctx);
+			return children[1].evaluate(ctx);
 		}
 
 		return ValueHolder.valueDefault();

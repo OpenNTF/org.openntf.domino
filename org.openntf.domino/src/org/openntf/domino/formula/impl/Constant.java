@@ -15,10 +15,8 @@ public enum Constant {
 	}
 
 	@ParamCount(0)
-	@Incomplete
-	// Do not know if that will work
 	public static ValueHolder atNothing() {
-		return null;
+		return ValueHolder.valueDefault();
 	}
 
 	@ParamCount(0)

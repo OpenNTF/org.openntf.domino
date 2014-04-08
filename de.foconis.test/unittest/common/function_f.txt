@@ -2,8 +2,7 @@
 	#allPass
 
 @False
-	#lotusPass [0.0]
-	#docMapPass [false]
+	#allPass [0.0]
 
 FIELD test := "123"; test
 	#allPass [123]

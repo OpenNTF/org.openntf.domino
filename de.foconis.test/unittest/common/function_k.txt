@@ -1,6 +1,6 @@
 @Keywords(" " + " ,Mary Halen, Director of Sales":" ,Sally Hall, VP of Marketing": " ,Joe Halzy, Order entry"; "Sally"; " ,")
-	#allPass
+	#allPass [Sally]
 @Keywords("EPA Head speaks at Harvard,Yale":"UCLA Chancellor Retires":"Ohio State wins big game":"Reed and University of Oregon share research facilities";"harvard":"brown":"stanford":"vassar":"ucla")
-	#allPass
+	#allPass []
 @Keywords("EPA Head speaks at Harvard, Yale hosts her next month":"UCLA Chancellor Retires":"Ohio State wins big game":"Reed and University of Oregon share research facilities";"Harvard":"Brown":"Stanford":"Yale":"UCLA";", ")
-	#allPass
+	#allPass [Harvard, Yale]

@@ -69,8 +69,28 @@ public class FormulaContextNotes extends FormulaContext {
 			return ValueHolder.valueOf(wrapped);
 		} catch (NotesException e) {
 			log_.warning("NotesException: " + e.text);
+			if (e.text.contains("Could not evaluate formula:"))
+				return ValueHolder.valueOf(new EvaluateException(-1, -1, e));
 			return ValueHolder.valueOf(new RuntimeException(e));
 		}
 
+	}
+
+	@Override
+	public void setEnvLC(final String varNameLC, final ValueHolder value) {
+		Factory.getSession().setEnvironmentVar(varNameLC, value.getString(0));
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	public ValueHolder getDocField(final String docUnid, final String field) {
+		Database db = document instanceof Document ? ((Document) document).getAncestorDatabase() : Factory.getSession()
+				.getCurrentDatabase();
+		if (db == null)
+			throw new UnsupportedOperationException("No database set: Can't execute @GetDocField");
+		Document doc = db.getDocumentByUNID(docUnid);
+		if (doc == null)
+			return ValueHolder.valueDefault();
+		return ValueHolder.valueOf(doc.getItemValue(field));
 	}
 }

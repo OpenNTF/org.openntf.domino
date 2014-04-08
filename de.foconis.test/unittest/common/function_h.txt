@@ -5,8 +5,7 @@
 	#allPass
 
 @Hour([9:30])
-	#lotusPass [9.0]
-	#docMapPass [9]
+	#allPass [9.0]
  
 
  
