@@ -72,10 +72,11 @@ Implementation-Version: 1.0.0_20140320054355
 Implementation-Vendor: OpenNTF
 Implementation-Vendor-URL: http://www.openntf.org
 Require-Bundle: com.ibm.commons,
- com.ibm.icu;bundle-version="3.8.1",com.ibm.xsp.domino
+ com.ibm.icu;bundle-version="3.8.1",
+ com.ibm.xsp.domino,
+ com.ibm.domino.napi
 Bundle-ClassPath: .,
  ext/jsr305.jar,
- lib/domino.jar,
  ext/blueprints-core-2.4.0.jar,
  ext/gremlin-java-2.4.0.jar,
  ext/pipes-2.4.0.jar
