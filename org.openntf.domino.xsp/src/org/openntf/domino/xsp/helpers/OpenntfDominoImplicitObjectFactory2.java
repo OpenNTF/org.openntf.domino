@@ -281,7 +281,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 			System.out.println("Beginning creation of log holder...");
 		}
 		if (Activator.isAPIEnabled()) {
-			Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
+			Map<String, Object> localMap = TypedUtil.getSessionMap(ctx.getExternalContext());
 			XspOpenLogErrorHolder ol_ = new XspOpenLogErrorHolder();
 			localMap.put("openLogBean", ol_);
 			if (isAppDebug(ctx)) {

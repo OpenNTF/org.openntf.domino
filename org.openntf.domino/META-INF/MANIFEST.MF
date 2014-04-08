@@ -7,7 +7,8 @@ Bundle-SymbolicName: org.openntf.domino
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: OpenNTF.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: lotus.domino,lotus.domino.local
+Import-Package: lotus.domino,lotus.domino.local,org.openntf.domino,org
+ .openntf.domino.utils
 Export-Package: com.ibm.icu.impl,com.ibm.icu.impl.data,com.ibm.icu.imp
  l.duration,com.ibm.icu.impl.duration.impl,com.ibm.icu.impl.locale,com
  .ibm.icu.lang,com.ibm.icu.math,com.ibm.icu.text,com.ibm.icu.util,com.

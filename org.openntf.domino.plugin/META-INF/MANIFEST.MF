@@ -1,6 +1,4 @@
 Manifest-Version: 1.0
-Ant-Version: Apache Ant(TM) version 1.8.4 compiled on May 22 2012
-Created-By: JDK 1.6.0 (IBM Corporation)
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenNTF Domino API OSGi version
 Bundle-SymbolicName: org.openntf.domino.plugin;singleton:=true
@@ -69,14 +67,15 @@ Export-Package: com.tinkerpop.blueprints,
  org.openntf.domino.types,
  org.openntf.domino.utils,
  org.openntf.domino.utils.xml
-Require-Bundle: com.ibm.commons,com.ibm.icu;bundle-version="3.8.1",com
- .ibm.domino.napi,com.ibm.xsp.domino
-Bundle-ClassPath: .,lib/domino.jar,ext/jsr305.jar,ext/blueprints-core-
- 2.4.0.jar,ext/gremlin-java-2.4.0.jar,ext/pipes-2.4.0.jar
 Implementation-Title: OpenNTF Domino API
 Implementation-Version: 1.0.0_20140320054355
 Implementation-Vendor: OpenNTF
 Implementation-Vendor-URL: http://www.openntf.org
-Built-By: withersp
-Build-Date: 20140320054355
-
+Require-Bundle: com.ibm.commons,
+ com.ibm.icu;bundle-version="3.8.1",com.ibm.xsp.domino
+Bundle-ClassPath: .,
+ ext/jsr305.jar,
+ lib/domino.jar,
+ ext/blueprints-core-2.4.0.jar,
+ ext/gremlin-java-2.4.0.jar,
+ ext/pipes-2.4.0.jar
