@@ -729,8 +729,13 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 		try {
 			// Make sure it's a text field!!
 			if (flag) {
-				if (getType() != TEXT) {
-					throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Authors field");
+				if (getType() == AUTHORS) {
+					return;
+				}
+				if (!isReadersNamesAuthors()) {
+					if (getType() != TEXT) {
+						throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Authors field");
+					}
 				}
 			}
 			getDelegate().setAuthors(flag);
@@ -784,8 +789,13 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 		try {
 			// Make sure it's a text field!!
 			if (flag) {
-				if (getType() != TEXT) {
-					throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Names field");
+				if (hasFlag(Flags.NAMES)) {
+					return;
+				}
+				if (!isReadersNamesAuthors()) {
+					if (getType() != TEXT) {
+						throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Names field");
+					}
 				}
 			}
 			getDelegate().setNames(flag);
@@ -820,8 +830,13 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 		try {
 			// Make sure it's a text field!!
 			if (flag) {
-				if (getType() != TEXT) {
-					throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Readers field");
+				if (getType() == READERS) {
+					return;
+				}
+				if (!isReadersNamesAuthors()) {
+					if (getType() != TEXT) {
+						throw new DataNotCompatibleException("Field " + getName() + " is not Text so cannot be set as an Readers field");
+					}
 				}
 			}
 			getDelegate().setReaders(flag);
@@ -1103,6 +1118,10 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 			break;
 		}
 		return false;
+	}
+
+	public boolean isReadersNamesAuthors() {
+		return (hasFlag(Flags.NAMES) || hasFlag(Flags.READERS) || hasFlag(Flags.AUTHORS));
 	}
 
 }

@@ -24,6 +24,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
@@ -36,6 +37,7 @@ import org.openntf.domino.Item;
 import org.openntf.domino.MIMEEntity;
 import org.openntf.domino.MIMEHeader;
 import org.openntf.domino.NoteCollection;
+import org.openntf.domino.RichTextItem;
 import org.openntf.domino.Session;
 import org.openntf.domino.Stream;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
@@ -495,5 +497,56 @@ public enum Documents {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Returns whether the given field in the given document contains a value.
+	 * 
+	 * @param document
+	 *            The document.
+	 * @param fieldName
+	 *            The fieldname of the field to test.
+	 * @return <code>true</code> if a field in a document contains a value, else <code>false</code>.
+	 */
+	public static boolean isSet(final Document document, final String fieldName) {
+		if (!document.hasItem(fieldName))
+			return false;
+		Vector value = document.getItemValue(fieldName);
+		if (value == null)
+			return false;
+		if (value.size() == 0)
+			return false;
+		if (value.size() > 1)
+			return true;
+		// size = 1
+		return !Strings.isBlankString(value.get(0).toString());
+	}
+
+	/**
+	 * Returns the {@link RichTextItem} stored in the given {@link Document}.
+	 * 
+	 * @param document
+	 *            The document.
+	 * @param fieldName
+	 *            The name of the RichTextItem which should be returned.
+	 * @param createItem
+	 *            <code>True</code> to create the RichTextItem if it does not already exist or is not type RichTextItem.
+	 * @return The Item as RichTextItem or <code>null</code>, if it does not exist or is not a RichTextItem.
+	 */
+	public static RichTextItem getRichTextItem(final Document document, final String fieldName, final boolean createItem) {
+		Item tmpItem = document.getFirstItem(fieldName);
+
+		if (tmpItem instanceof RichTextItem) {
+			return (RichTextItem) tmpItem;
+		}
+
+		if (!createItem) {
+			return null;
+		} else {
+			if (tmpItem != null) {
+				document.removeItem(fieldName);
+			}
+			return document.createRichTextItem(fieldName);
+		}
 	}
 }
