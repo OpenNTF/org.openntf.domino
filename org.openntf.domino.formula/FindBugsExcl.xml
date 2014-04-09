@@ -1,0 +1,5 @@
+<FindBugsFilter>
+      <Match>
+       <Package name="~org\.openntf\.domino\.tests\..*" />
+     </Match>
+</FindBugsFilter>
