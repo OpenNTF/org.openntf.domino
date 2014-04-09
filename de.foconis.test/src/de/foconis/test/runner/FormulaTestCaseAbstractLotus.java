@@ -1,8 +1,6 @@
 package de.foconis.test.runner;
 
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.runner.RunWith;
@@ -21,27 +19,29 @@ public class FormulaTestCaseAbstractLotus extends FormulaTestCaseAbstract {
 	@BeforeClass
 	public static void setUpClass() throws Exception {
 		lotus.domino.NotesThread.sinitThread();
+		setUp();
 	}
 
 	@AfterClass
 	public static void tearDownClass() throws Exception {
+		tearDown();
 		lotus.domino.NotesThread.stermThread();
 	}
 
-	@Before
-	public void setUp() throws Exception {
+	//@Before
+	public static void setUp() throws Exception {
 		Factory.setClassLoader(Thread.currentThread().getContextClassLoader());
 
-		if (param.lotus.enabled || param.doc.enabled) {
-			db = Factory.getSession().getDatabase("", "log.nsf");
-			if (db == null) {
-				throw new IllegalStateException("Cannot open log.nsf. Check if server is running");
-			}
+		//if (param.lotus.enabled || param.doc.enabled) {
+		db = Factory.getSession().getDatabase("", "log.nsf");
+		if (db == null) {
+			throw new IllegalStateException("Cannot open log.nsf. Check if server is running");
 		}
+		//}
 	}
 
-	@After
-	public void tearDown() throws Exception {
+	//@After
+	public static void tearDown() throws Exception {
 		Factory.terminate();
 	}
 

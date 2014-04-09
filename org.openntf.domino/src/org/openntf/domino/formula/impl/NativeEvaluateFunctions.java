@@ -235,9 +235,14 @@ public enum NativeEvaluateFunctions {
 	@NeedsNativeEvaluate("@Environment")
 	@ParamCount({ 1, 2 })
 	public static ValueHolder atEnvironment(final FormulaContext ctx, final ValueHolder[] params) {
+		String lc = params[0].getString(0).toLowerCase();
 		if (params.length == 1)
-			return ctx.evaluateNative("@Environment(p1)", params[0]);
-		return ctx.evaluateNative("@Environment(p1;p2)", params[0], params[1]);
+			return ctx.getEnvLC(lc);
+		//return ctx.evaluateNative("@Environment(p1)", params[0]);
+		ValueHolder ret = ctx.getEnvLC(lc);
+		ctx.setEnvLC(lc, params[1]);
+		return ret;
+		//return ctx.evaluateNative("@Environment(p1;p2)", params[0], params[1]);
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -714,5 +719,13 @@ public enum NativeEvaluateFunctions {
 	public static ValueHolder atRefreshECL(final FormulaContext ctx, final ValueHolder[] params) {
 		return ctx.evaluateNative("@RefreshECL(p1;p2)", params[0], params[1]);
 	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@ServerName")
+	@ParamCount(0)
+	public static ValueHolder atServerName(final FormulaContext ctx) {
+		return ctx.evaluateNative("@ServerName");
+	}
+
 	/*----------------------------------------------------------------------------*/
 }

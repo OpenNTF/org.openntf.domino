@@ -19,13 +19,13 @@ package org.openntf.domino.formula.ast;
 
 import java.util.Set;
 
-import org.openntf.domino.formula.parse.*;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
 public class ASTGetVariable extends SimpleNode {
-	private String variableName = "";
-	private String variableNameLC = "";
+	String variableName = "";
+	String variableNameLC = "";
 
 	public ASTGetVariable(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
@@ -43,7 +43,7 @@ public class ASTGetVariable extends SimpleNode {
 
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) {
-		return ctx.getVarLC(variableNameLC);
+		return ctx.getVarLC(variableNameLC, variableName);
 	}
 
 	public void toFormula(final StringBuilder sb) {

@@ -22,6 +22,8 @@ import java.util.logging.Logger;
 
 import lotus.domino.NotesThread;
 
+import org.openntf.domino.formula.ValueHolder.DataType;
+
 /**
  * This is the FormulaContext that is used for evaluation
  * 
@@ -77,6 +79,10 @@ public class FormulaContext {
 		return document;
 	}
 
+	public ValueHolder getVar(final String key) {
+		return getVarLC(key.toLowerCase(), key);
+	}
+
 	/**
 	 * Reading a value looks first in the internal vars and then in the document. Every value read from document is cached INTERNALLY. So
 	 * pay attention if you program functions that modify the document otherwise!
@@ -85,30 +91,31 @@ public class FormulaContext {
 	 *            the var name to read. must be lowercase
 	 * @return ValueHolder
 	 */
-	public ValueHolder getVarLC(final String key) {
-		return getVarLC(key, false);
-	}
-
-	@SuppressWarnings("deprecation")
-	public ValueHolder getVarLC(final String key, final boolean docOnly) {
-		ValueHolder var = docOnly ? null : vars.get(key);
+	public ValueHolder getVarLC(final String key, final String properKey) {
+		ValueHolder var = vars.get(key);
 		if (var != null) {
 			return var;
 		}
-		if (document != null) {
-			Object o = document.get(key);
-			if (o != null) {
-				var = ValueHolder.valueOf(o); // RPr here it is allowed to access the deprecate method
-			} else {
-				var = ValueHolder.valueDefault();
-			}
-		} else {
-			var = ValueHolder.valueDefault();
-		}
+		var = getField(properKey);
 
-		vars.put(key, var);
+		// read valid value from doc. So cache it
+		if (var != ValueHolder.valueDefault())
+			vars.put(key, var);
 		return var;
 
+	}
+
+	public boolean isAvailableVarLC(final String key) {
+		ValueHolder var = vars.get(key);
+		if (var != null) {
+			if (var.dataType == DataType.UNAVAILABLE)
+				return false;
+			return true;
+		}
+		if (document != null) {
+			return document.containsKey(key);
+		}
+		return false;
 	}
 
 	/**
@@ -130,6 +137,19 @@ public class FormulaContext {
 		}
 	}
 
+	public ValueHolder getField(final String key) {
+		if (document != null) {
+			Object o = document.get(key);
+			if (o != null) {
+				return ValueHolder.valueOf(o); // RPr here it is allowed to access the deprecate method
+			} else {
+				return ValueHolder.valueDefault();
+			}
+		} else {
+			return ValueHolder.valueDefault();
+		}
+	}
+
 	/**
 	 * Set a field (and a value!)
 	 * 
@@ -141,7 +161,11 @@ public class FormulaContext {
 	public void setField(final String key, final ValueHolder elem) {
 		setVarLC(key.toLowerCase(), elem);
 		if (document != null) {
-			document.put(key, elem);
+			if (elem.dataType == DataType.UNAVAILABLE) {
+				document.remove(key);
+			} else {
+				document.put(key, elem);
+			}
 		}
 	}
 
@@ -165,6 +189,10 @@ public class FormulaContext {
 
 	public Formatter getFormatter() {
 		return formatter;
+	}
+
+	public ValueHolder getEnvLC(final String varNameLC) {
+		throw new UnsupportedOperationException("ENVIRONMENT is not supported in this context.");
 	}
 
 	public void setEnvLC(final String varNameLC, final ValueHolder value) {

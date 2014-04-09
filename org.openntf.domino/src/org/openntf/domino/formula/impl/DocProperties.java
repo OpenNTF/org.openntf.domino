@@ -12,79 +12,79 @@ public enum DocProperties {
 
 	@ParamCount(0)
 	public static ValueHolder atAuthor(final FormulaContext ctx) {
-		return ctx.getVarLC("@author");
+		return ctx.getVar("@author");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atAllChildren(final FormulaContext ctx) {
-		return ctx.getVarLC("@allchildren");
+		return ctx.getVar("@allchildren");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atAllDescendants(final FormulaContext ctx) {
-		return ctx.getVarLC("@alldescendants");
+		return ctx.getVar("@alldescendants");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atAttachmentLengths(final FormulaContext ctx) {
-		return ctx.getVarLC("@attachmentlengths");
+		return ctx.getVar("@attachmentlengths");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atAttachmentNames(final FormulaContext ctx) {
-		return ctx.getVarLC("@attachmentnames");
+		return ctx.getVar("@attachmentnames");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atAttachmentModifiedTimes(final FormulaContext ctx) {
-		return ctx.getVarLC("@attachmentmodifiedtimes");
+		return ctx.getVar("@attachmentmodifiedtimes");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atAttachments(final FormulaContext ctx) {
-		return ctx.getVarLC("@attachments");
+		return ctx.getVar("@attachments");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atAccessed(final FormulaContext ctx) {
-		return ctx.getVarLC("@accessed");
+		return ctx.getVar("@accessed");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atModified(final FormulaContext ctx) {
-		return ctx.getVarLC("@modified");
+		return ctx.getVar("@modified");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atCreated(final FormulaContext ctx) {
-		return ctx.getVarLC("@created");
+		return ctx.getVar("@created");
 	}
 
 	@ParamCount(0)
 	@OpenNTF
 	public static ValueHolder atAccessedDate(final FormulaContext ctx) {
-		return ctx.getVarLC("@accesseddate");
+		return ctx.getVar("@accesseddate");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atModifiedDate(final FormulaContext ctx) {
-		return ctx.getVarLC("@modifieddate");
+		return ctx.getVar("@modifieddate");
 	}
 
 	@ParamCount(0)
 	@OpenNTF
 	public static ValueHolder atCreatedDate(final FormulaContext ctx) {
-		return ctx.getVarLC("@createddate");
+		return ctx.getVar("@createddate");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atDocumentUniqueid(final FormulaContext ctx) {
-		return ctx.getVarLC("@documentuniqueid");
+		return ctx.getVar("@documentuniqueid");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atNoteId(final FormulaContext ctx) {
-		ValueHolder vh = ctx.getVarLC("@noteid");
+		ValueHolder vh = ctx.getVar("@noteid");
 		if ("0".equals(vh.getString(0)))
 			vh = ValueHolder.valueOf("NT00000000");
 		return vh;
@@ -92,32 +92,32 @@ public enum DocProperties {
 
 	@ParamCount(0)
 	public static ValueHolder atDocLength(final FormulaContext ctx) {
-		return ctx.getVarLC("@doclength");
+		return ctx.getVar("@doclength");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atIsResponseDoc(final FormulaContext ctx) {
-		return ctx.getVarLC("@isresponsedoc");
+		return ctx.getVar("@isresponsedoc");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atReplicaId(final FormulaContext ctx) {
-		return ctx.getVarLC("@replicaid");
+		return ctx.getVar("@replicaid");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atResponses(final FormulaContext ctx) {
-		return ctx.getVarLC("@responses");
+		return ctx.getVar("@responses");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atIsNewDoc(final FormulaContext ctx) {
-		return ctx.getVarLC("@isnewdoc");
+		return ctx.getVar("@isnewdoc");
 	}
 
 	@ParamCount(0)
 	public static ValueHolder atInheritedDocumentUniqueID(final FormulaContext ctx) {
-		return ctx.getVarLC("@inheriteddocumentuniqueid");
+		return ctx.getVar("@inheriteddocumentuniqueid");
 	}
 
 	@SuppressWarnings("deprecation")
@@ -134,17 +134,7 @@ public enum DocProperties {
 
 	@ParamCount(1)
 	public static ValueHolder atGetField(final FormulaContext ctx, final ValueHolder[] params) {
-		return ctx.getVarLC(params[0].getString(0), true);
-	}
-
-	@ParamCount(1)
-	public static ValueHolder atIsAvailable(final FormulaContext ctx, final ValueHolder[] params) {
-		return params[0].getObject(0).toString().isEmpty() ? ctx.FALSE : ctx.TRUE;
-	}
-
-	@ParamCount(1)
-	public static ValueHolder atIsUnavailable(final FormulaContext ctx, final ValueHolder[] params) {
-		return (atIsAvailable(ctx, params) == ctx.FALSE) ? ctx.TRUE : ctx.FALSE;
+		return ctx.getField(params[0].getString(0));
 	}
 
 	@ParamCount(2)

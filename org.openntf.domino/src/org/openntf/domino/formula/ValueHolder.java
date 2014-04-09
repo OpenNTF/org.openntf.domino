@@ -43,7 +43,7 @@ public abstract class ValueHolder implements Serializable {
 	 * DOUBLE means 'only doubles', INTEGER means 'only integers'. If you mix Integers and Doubles, the type changes to "NUMBER"
 	 */
 	public enum DataType {
-		ERROR, STRING, KEYWORD_STRING, INTEGER(true), DOUBLE(true), DATETIME, BOOLEAN, _UNSET, OBJECT;
+		ERROR, STRING, KEYWORD_STRING, INTEGER(true), DOUBLE(true), DATETIME, BOOLEAN, _UNSET, OBJECT, UNAVAILABLE;
 		public boolean numeric = false;
 
 		DataType() {
@@ -53,6 +53,10 @@ public abstract class ValueHolder implements Serializable {
 			numeric = n;
 		}
 	}
+
+	private static ValueHolder nothing;
+
+	private static ValueHolder unavailable;
 
 	protected boolean immutable;
 
@@ -83,6 +87,16 @@ public abstract class ValueHolder implements Serializable {
 
 		integerCache = new ValueHolder[256];
 		stringCache = new ValueHolder[256];
+
+		nothing = new ValueHolderObject<Object>(1);
+		nothing.add("");
+		nothing.immutable = true;
+
+		unavailable = new ValueHolderObject<String>(1);
+		unavailable.add("");
+		unavailable.dataType = DataType.UNAVAILABLE;
+		unavailable.immutable = true;
+
 		for (int i = 0; i < 256; i++) {
 			ValueHolder vhn = integerCache[i] = new ValueHolderNumber(1);
 			vhn.add(i - 128);
@@ -158,6 +172,7 @@ public abstract class ValueHolder implements Serializable {
 	 * thows the current error, if there is one stored in the exception
 	 * 
 	 * @throws EvaluateException
+	 * @throws UnavailableException
 	 */
 	protected void throwError() throws EvaluateException {
 		if (currentError != null)
@@ -337,6 +352,21 @@ public abstract class ValueHolder implements Serializable {
 
 	public static ValueHolder valueDefault() {
 		return stringCache[0];
+	}
+
+	public static ValueHolder valueNothing() {
+		return nothing;
+	}
+
+	/**
+	 * Initializes a new ValueHolder that holds a RuntimeException
+	 * 
+	 * @param init
+	 *            the RuntimeException
+	 * @return the Valuholder
+	 */
+	public static ValueHolder valueUnavailable() {
+		return unavailable;
 	}
 
 	/**
