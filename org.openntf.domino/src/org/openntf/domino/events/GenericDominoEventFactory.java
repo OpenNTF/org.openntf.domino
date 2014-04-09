@@ -15,13 +15,28 @@ public class GenericDominoEventFactory implements IDominoEventFactory {
 	private static final Logger log_ = Logger.getLogger(GenericDominoEventFactory.class.getName());
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * @author withersp
+	 * 
+	 *         Extension of AbstractDominoObject being used by the GenericDominoEventFactory. No additional code currently
+	 * 
+	 * @since openntf.domino 3.0.0
+	 */
 	public static class GenericDominoEvent extends AbstractDominoEvent {
 
 		/**
+		 * Constructor passing all variables used by the GenericDominoEvent
+		 * 
 		 * @param event
+		 *            EnumEvent this GenericDominoEvent triggers
 		 * @param source
+		 *            Base Domino object that is the source of the event
 		 * @param target
+		 *            Base Domino object that is the target of the event
 		 * @param payload
+		 *            Object being passed as the payload for the event
+		 * 
+		 * @since openntf.domino 3.0.0
 		 */
 		public GenericDominoEvent(final EnumEvent event, final Base source, final Base target, final Object payload) {
 			super(event, source, target, payload);
@@ -30,7 +45,7 @@ public class GenericDominoEventFactory implements IDominoEventFactory {
 	}
 
 	/**
-	 * 
+	 * Constructor
 	 */
 	public GenericDominoEventFactory() {
 		// TODO Auto-generated constructor stub
