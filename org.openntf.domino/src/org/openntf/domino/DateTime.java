@@ -150,36 +150,6 @@ public interface DateTime extends Base<lotus.domino.DateTime>, lotus.domino.Date
 	@Override
 	public void convertToZone(final int zone, final boolean isDST);
 
-	/**
-	 * Compares current date with another and returns boolean of whether they are the same.
-	 * 
-	 * @param comparDate
-	 *            DateTime to compare to current date
-	 * @return boolean, whether or not the two dates are the same
-	 */
-	@Override
-	public boolean equals(final DateTime comparDate);
-
-	/**
-	 * Equals ignore date.
-	 * 
-	 * @param comparDate
-	 *            DateTime to compare to the current DateTime
-	 * @return boolean is time is the same, including millisecond
-	 */
-	@Override
-	public boolean equalsIgnoreDate(final DateTime comparDate);
-
-	/**
-	 * Equals ignore time.
-	 * 
-	 * @param comparDate
-	 *            DateTime to compare to the current DateTime
-	 * @return boolean is date is the same
-	 */
-	@Override
-	public boolean equalsIgnoreTime(final DateTime comparDate);
-
 	/*
 	 * (non-Javadoc)
 	 * 
