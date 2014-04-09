@@ -5,14 +5,14 @@
 	</tstamp>
 	<target name="Manifest">
 		<manifest file="META-INF/MANIFEST.MF" mode="update">
-			<attribute name="Ant-Version" value="${ant.version}" />
-			<attribute name="Created-By" value="JDK ${java.version} (${java.vendor})" />
+			<!--<attribute name="Ant-Version" value="${ant.version}" />-->
 			<attribute name='Implementation-Title' value="OpenNTF Domino API" />
 			<attribute name='Implementation-Version' value="1.0.0_${current.time}" />
 			<attribute name='Implementation-Vendor' value="OpenNTF" />
 			<attribute name='Implementation-Vendor-URL' value="http://www.openntf.org" />
 			<attribute name="Built-By" value="${user.name}" />
 			<attribute name='Build-Date' value="${current.time}" />
+			<attribute name="Created-By" value="JDK ${java.version} (${java.vendor})" />
 		</manifest>
 	</target>
 </project>
