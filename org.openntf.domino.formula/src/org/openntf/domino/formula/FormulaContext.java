@@ -32,7 +32,10 @@ public class FormulaContext {
 	private static final Logger log_ = Logger.getLogger(FormulaContext.class.getName());
 	protected Map<String, Object> document;
 	private Map<String, ValueHolder> vars = new HashMap<String, ValueHolder>();
+	/** the formatter is needed to parse/convert number and dateTime values */
 	private Formatter formatter;
+	/** the parser is needed for evaluate */
+	private FormulaParser parser;
 
 	public ValueHolder TRUE;
 	public ValueHolder FALSE;
@@ -46,20 +49,12 @@ public class FormulaContext {
 	 *            the formatter to format date/times
 	 * 
 	 */
-	protected FormulaContext(final Map<String, Object> document, final Formatter formatter) {
+	protected FormulaContext(final Map<String, Object> document, final Formatter formatter, final FormulaParser parser) {
 		super();
 		this.document = document;
 		this.formatter = formatter;
+		this.parser = parser;
 		useBooleans(true);
-	}
-
-	public static FormulaContext createContext(final Map<String, Object> document, final Formatter formatter) {
-		//		if (NotesThread.isLoaded) {
-		// TODO RPr find a better solution
-		//			return new FormulaContextNotes(document, formatter);
-		//		} else {
-		return new FormulaContext(document, formatter);
-		//		}
 	}
 
 	public void useBooleans(final boolean useit) {
@@ -187,6 +182,10 @@ public class FormulaContext {
 
 	public Formatter getFormatter() {
 		return formatter;
+	}
+
+	public FormulaParser getParser() {
+		return parser;
 	}
 
 	public ValueHolder getEnvLC(final String varNameLC) {

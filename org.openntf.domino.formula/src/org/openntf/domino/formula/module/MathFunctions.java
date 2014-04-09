@@ -14,14 +14,22 @@
  * permissions and limitations under the License.
  * 
  */
-package org.openntf.domino.formula.impl;
+package org.openntf.domino.formula.module;
 
+import org.openntf.domino.formula.FunctionFactory;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.annotation.OpenNTF;
 import org.openntf.domino.formula.annotation.ParamCount;
+import org.openntf.domino.formula.impl.ParameterCollectionDouble;
 
-public enum Arithmetic {
+public enum MathFunctions {
 	;
+
+	public static class Factory extends FunctionFactory {
+		public Factory() {
+			super(MathFunctions.class);
+		}
+	}
 
 	@ParamCount(1)
 	public static Number atAbs(final Number arg) {

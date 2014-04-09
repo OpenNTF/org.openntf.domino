@@ -14,14 +14,18 @@
  * permissions and limitations under the License.
  * 
  */
-package org.openntf.domino.formula.impl;
+package org.openntf.domino.formula.module;
 
 import java.util.Collection;
 
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FunctionFactory;
-import org.openntf.domino.formula.ISimpleDateTime;
+import org.openntf.domino.formula.DateTime;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.impl.ParameterCollectionBoolean;
+import org.openntf.domino.formula.impl.ParameterCollectionDouble;
+import org.openntf.domino.formula.impl.ParameterCollectionInt;
+import org.openntf.domino.formula.impl.ParameterCollectionObject;
 
 /**
  * This class implements the default arithmetic, boolean and compare operators.
@@ -33,6 +37,10 @@ import org.openntf.domino.formula.ValueHolder;
  */
 public class Comparators extends OperatorsAbstract {
 
+	public static abstract class Matcher {
+		public abstract boolean match(int delta);
+	}
+
 	/**
 	 * The Factory that returns a set of operators
 	 */
@@ -41,39 +49,39 @@ public class Comparators extends OperatorsAbstract {
 		public Factory() {
 			super();
 
-			ComparatorImpl cmpEq = new ComparatorImpl() {
+			Matcher cmpEq = new Matcher() {
 				@Override
 				public boolean match(final int delta) {
 					return delta == 0;
 				}
 			};
 
-			ComparatorImpl cmpNe = new ComparatorImpl() {
+			Matcher cmpNe = new Matcher() {
 				@Override
 				public boolean match(final int delta) {
 					return delta != 0;
 				}
 			};
 
-			ComparatorImpl cmpLt = new ComparatorImpl() {
+			Matcher cmpLt = new Matcher() {
 				@Override
 				public boolean match(final int delta) {
 					return delta < 0;
 				}
 			};
-			ComparatorImpl cmpGt = new ComparatorImpl() {
+			Matcher cmpGt = new Matcher() {
 				@Override
 				public boolean match(final int delta) {
 					return delta > 0;
 				}
 			};
-			ComparatorImpl cmpLte = new ComparatorImpl() {
+			Matcher cmpLte = new Matcher() {
 				@Override
 				public boolean match(final int delta) {
 					return delta <= 0;
 				}
 			};
-			ComparatorImpl cmpGte = new ComparatorImpl() {
+			Matcher cmpGte = new Matcher() {
 				@Override
 				public boolean match(final int delta) {
 					return delta >= 0;
@@ -95,7 +103,7 @@ public class Comparators extends OperatorsAbstract {
 		}
 	}
 
-	private ComparatorImpl computer;
+	private Matcher matcher;
 
 	/**
 	 * The constructor. Operators shoud be constructed via Operator.Factory
@@ -103,9 +111,9 @@ public class Comparators extends OperatorsAbstract {
 	 * @param operation
 	 * @param image
 	 */
-	private Comparators(final ComparatorImpl computer, final String image) {
+	private Comparators(final Matcher matcher, final String image) {
 		super(image);
-		this.computer = computer;
+		this.matcher = matcher;
 		// Autodetect if the operation is permutative
 		this.isPermutative = (image.charAt(0) == '*' && image.length() > 1);
 	}
@@ -116,7 +124,7 @@ public class Comparators extends OperatorsAbstract {
 		Collection<String[]> values = new ParameterCollectionObject<String>(params, String.class, isPermutative);
 		for (String[] value : values) {
 			int delta = value[0].compareToIgnoreCase(value[1]);
-			if (computer.match(delta)) {
+			if (matcher.match(delta)) {
 				return ctx.TRUE;
 			}
 		}
@@ -127,7 +135,7 @@ public class Comparators extends OperatorsAbstract {
 	@Override
 	protected ValueHolder evaluateString(final FormulaContext ctx, final String s1, final String s2) {
 		int delta = s1.compareToIgnoreCase(s2);
-		if (computer.match(delta)) {
+		if (matcher.match(delta)) {
 			return ctx.TRUE;
 		}
 		return ctx.FALSE;
@@ -140,7 +148,7 @@ public class Comparators extends OperatorsAbstract {
 
 		for (double[] value : values) {
 			int delta = Double.compare(value[0], value[1]);
-			if (computer.match(delta)) {
+			if (matcher.match(delta)) {
 				return ctx.TRUE;
 			}
 		}
@@ -150,7 +158,7 @@ public class Comparators extends OperatorsAbstract {
 	@Override
 	protected ValueHolder evaluateNumber(final FormulaContext ctx, final double d1, final double d2) {
 		int delta = Double.compare(d1, d2);
-		if (computer.match(delta)) {
+		if (matcher.match(delta)) {
 			return ctx.TRUE;
 		}
 		return ctx.FALSE;
@@ -163,7 +171,7 @@ public class Comparators extends OperatorsAbstract {
 
 		for (int[] value : values) {
 			int delta = value[0] - value[1];
-			if (computer.match(delta)) {
+			if (matcher.match(delta)) {
 				return ctx.TRUE;
 			}
 		}
@@ -173,7 +181,7 @@ public class Comparators extends OperatorsAbstract {
 	@Override
 	protected ValueHolder evaluateInt(final FormulaContext ctx, final int i1, final int i2) {
 		int delta = i1 - i2;
-		if (computer.match(delta)) {
+		if (matcher.match(delta)) {
 			return ctx.TRUE;
 		}
 		return ctx.FALSE;
@@ -182,11 +190,11 @@ public class Comparators extends OperatorsAbstract {
 	// ----------- DateTimes
 	@Override
 	protected ValueHolder evaluateDateTime(final FormulaContext ctx, final ValueHolder[] params) {
-		Collection<ISimpleDateTime[]> values = new ParameterCollectionObject<ISimpleDateTime>(params, ISimpleDateTime.class, isPermutative);
+		Collection<DateTime[]> values = new ParameterCollectionObject<DateTime>(params, DateTime.class, isPermutative);
 
-		for (ISimpleDateTime[] value : values) {
+		for (DateTime[] value : values) {
 			int delta = value[0].compare(value[0], value[1]);
-			if (computer.match(delta)) {
+			if (matcher.match(delta)) {
 				return ctx.TRUE;
 			}
 		}
@@ -194,9 +202,9 @@ public class Comparators extends OperatorsAbstract {
 	}
 
 	@Override
-	protected ValueHolder evaluateDateTime(final FormulaContext ctx, final ISimpleDateTime dt1, final ISimpleDateTime dt2) {
+	protected ValueHolder evaluateDateTime(final FormulaContext ctx, final DateTime dt1, final DateTime dt2) {
 		int delta = dt1.compare(dt1, dt2);
-		if (computer.match(delta)) {
+		if (matcher.match(delta)) {
 			return ctx.TRUE;
 		}
 		return ctx.FALSE;
@@ -209,7 +217,7 @@ public class Comparators extends OperatorsAbstract {
 
 		for (boolean[] value : values) {
 			int delta = (value[0] ? 1 : 0) - (value[1] ? 1 : 0);
-			if (computer.match(delta)) {
+			if (matcher.match(delta)) {
 				return ctx.TRUE;
 			}
 		}
@@ -219,7 +227,7 @@ public class Comparators extends OperatorsAbstract {
 	@Override
 	protected ValueHolder evaluateBoolean(final FormulaContext ctx, final boolean b1, final boolean b2) {
 		int delta = (b1 ? 1 : 0) - (b2 ? 1 : 0);
-		if (computer.match(delta)) {
+		if (matcher.match(delta)) {
 			return ctx.TRUE;
 		}
 		return ctx.FALSE;

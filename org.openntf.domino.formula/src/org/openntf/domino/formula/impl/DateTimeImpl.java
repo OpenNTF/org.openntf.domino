@@ -1,17 +1,20 @@
-package org.openntf.domino.formula;
+package org.openntf.domino.formula.impl;
 
 import java.util.Date;
 import java.util.Locale;
 
+import org.openntf.domino.formula.DateTime;
+import org.openntf.domino.formula.Factory;
+
 import com.ibm.icu.util.Calendar;
 
-public class SimpleDateTime implements ISimpleDateTime {
+public class DateTimeImpl implements DateTime {
 	private Locale iLocale;
 	private Calendar iCal;
 	private boolean iNoDate = false;
 	private boolean iNoTime = false;
 
-	SimpleDateTime(final Locale loc) {
+	DateTimeImpl(final Locale loc) {
 		iLocale = loc;
 		iCal = Calendar.getInstance(loc);
 	}
@@ -54,7 +57,7 @@ public class SimpleDateTime implements ISimpleDateTime {
 	public String getDateOnly() {
 		if (iNoDate)
 			return "";
-		return DominoFormatter.getInstance(iLocale).formatCalDateOnly(iCal);
+		return Factory.getFormatter(iLocale).formatCalDateOnly(iCal);
 	}
 
 	public String getLocalTime() {
@@ -62,13 +65,13 @@ public class SimpleDateTime implements ISimpleDateTime {
 			return getTimeOnly();
 		if (iNoTime)
 			return getDateOnly();
-		return DominoFormatter.getInstance(iLocale).formatCalDateTime(iCal);
+		return Factory.getFormatter(iLocale).formatCalDateTime(iCal);
 	}
 
 	public String getTimeOnly() {
 		if (iNoTime)
 			return "";
-		return DominoFormatter.getInstance(iLocale).formatCalTimeOnly(iCal);
+		return Factory.getFormatter(iLocale).formatCalTimeOnly(iCal);
 	}
 
 	public int getTimeZone() {
@@ -136,7 +139,7 @@ public class SimpleDateTime implements ISimpleDateTime {
 
 	public void setLocalTime(final String time, final boolean parseLenient) {
 		boolean[] noDT = new boolean[2];
-		iCal = DominoFormatter.getInstance(iLocale).parseDateToCal(time, noDT, parseLenient);
+		iCal = Factory.getFormatter(iLocale).parseDateToCal(time, noDT, parseLenient);
 		iNoDate = noDT[0];
 		iNoTime = noDT[1];
 	}
@@ -145,11 +148,11 @@ public class SimpleDateTime implements ISimpleDateTime {
 		setLocalTime(new Date());
 	}
 
-	public int timeDifference(final ISimpleDateTime dt) {
+	public int timeDifference(final DateTime dt) {
 		return (int) timeDifferenceDouble(dt);
 	}
 
-	public double timeDifferenceDouble(final ISimpleDateTime dt) {
+	public double timeDifferenceDouble(final DateTime dt) {
 		// What if isAnyDate or isAnyTime for one of these?
 		return (iCal.getTimeInMillis() - dt.toJavaCal().getTimeInMillis()) / 1000;
 	}
@@ -167,7 +170,7 @@ public class SimpleDateTime implements ISimpleDateTime {
 		return getLocalTime();
 	}
 
-	public int compare(final ISimpleDateTime sdt1, final ISimpleDateTime sdt2) {
+	public int compare(final DateTime sdt1, final DateTime sdt2) {
 		boolean noDate1 = sdt1.isAnyDate();
 		boolean noDate2 = sdt2.isAnyDate();
 		if (noDate1 != noDate2)
@@ -218,8 +221,8 @@ public class SimpleDateTime implements ISimpleDateTime {
 
 	@Override
 	public boolean equals(final Object o) {
-		if (o instanceof ISimpleDateTime)
-			return (compare(this, (ISimpleDateTime) o) == 0);
+		if (o instanceof DateTime)
+			return (compare(this, (DateTime) o) == 0);
 		return super.equals(o);
 	}
 }

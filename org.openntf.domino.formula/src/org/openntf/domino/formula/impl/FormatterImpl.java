@@ -14,40 +14,25 @@
  * permissions and limitations under the License.
  * 
  */
-package org.openntf.domino.formula;
+package org.openntf.domino.formula.impl;
 
 import java.text.ParsePosition;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
+
+import org.openntf.domino.formula.DateTime;
+import org.openntf.domino.formula.Formatter;
 
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.NumberFormat;
 import com.ibm.icu.text.SimpleDateFormat;
 import com.ibm.icu.util.Calendar;
 
-public class DominoFormatter implements Formatter {
-	/*----------------------------------------------------------------------------*/
-	private static Map<Locale, Formatter> instances = new HashMap<Locale, Formatter>();
-	/*----------------------------------------------------------------------------*/
+public class FormatterImpl implements Formatter {
 	private Locale iLocale;
 
-	private DominoFormatter(final Locale loc) {
+	public FormatterImpl(final Locale loc) {
 		iLocale = loc;
-	}
-
-	public static synchronized Formatter getInstance(Locale loc) {
-		if (loc == null)
-			loc = Locale.getDefault();
-		Formatter ret = instances.get(loc);
-		if (ret == null)
-			instances.put(loc, ret = new DominoFormatter(loc));
-		return ret;
-	}
-
-	public static Formatter getDefaultInstance() {
-		return getInstance(null);
 	}
 
 	public Locale getLocale() {
@@ -55,12 +40,12 @@ public class DominoFormatter implements Formatter {
 	}
 
 	/*----------------------------------------------------------------------------*/
-	public ISimpleDateTime getNewSDTInstance() {
-		return new SimpleDateTime(iLocale);
+	public DateTime getNewSDTInstance() {
+		return new DateTimeImpl(iLocale);
 	}
 
-	public ISimpleDateTime getNewInitializedSDTInstance(final Date date, final boolean noDate, final boolean noTime) {
-		ISimpleDateTime sdt = getNewSDTInstance();
+	public DateTime getNewInitializedSDTInstance(final Date date, final boolean noDate, final boolean noTime) {
+		DateTime sdt = getNewSDTInstance();
 		sdt.setLocalTime(date);
 		if (noDate)
 			sdt.setAnyDate();
@@ -69,25 +54,25 @@ public class DominoFormatter implements Formatter {
 		return sdt;
 	}
 
-	public ISimpleDateTime getCopyOfSDTInstance(final ISimpleDateTime sdt) {
+	public DateTime getCopyOfSDTInstance(final DateTime sdt) {
 		return getNewInitializedSDTInstance(sdt.toJavaDate(), sdt.isAnyDate(), sdt.isAnyTime());
 	}
 
 	/*----------------------------------------------------------------------------*/
-	public ISimpleDateTime parseDate(final String image) {
+	public DateTime parseDate(final String image) {
 		return parseDate(image, false);
 	}
 
-	public ISimpleDateTime parseDate(final String image, final boolean parseLenient) {
-		ISimpleDateTime ret = getNewSDTInstance();
+	public DateTime parseDate(final String image, final boolean parseLenient) {
+		DateTime ret = getNewSDTInstance();
 		ret.setLocalTime(image, parseLenient);
 		return ret;
 	}
 
-	public ISimpleDateTime parseDateWithFormat(final String image, final String format, final boolean parseLenient) {
+	public DateTime parseDateWithFormat(final String image, final String format, final boolean parseLenient) {
 		boolean[] noDT = new boolean[2];
 		Calendar cal = parseDateToCalWithFormat(image, format, noDT, parseLenient);
-		ISimpleDateTime ret = getNewInitializedSDTInstance(cal.getTime(), noDT[0], noDT[1]);
+		DateTime ret = getNewInitializedSDTInstance(cal.getTime(), noDT[0], noDT[1]);
 		return ret;
 	}
 
@@ -263,11 +248,11 @@ public class DominoFormatter implements Formatter {
 	}
 
 	/*----------------------------------------------------------------------------*/
-	public String formatDateTime(final ISimpleDateTime sdt) {
+	public String formatDateTime(final DateTime sdt) {
 		return sdt.getLocalTime();
 	}
 
-	public String formatDateTime(final ISimpleDateTime sdt, final LotusDateTimeOptions ldto) {
+	public String formatDateTime(final DateTime sdt, final LotusDateTimeOptions ldto) {
 		if (ldto.nothingSet())
 			return formatDateTime(sdt);
 		String notSupported = "";
@@ -325,7 +310,7 @@ public class DominoFormatter implements Formatter {
 		return DateFormat.LONG;
 	}
 
-	public String formatDateTimeWithFormat(final ISimpleDateTime sdt, final String format) {
+	public String formatDateTimeWithFormat(final DateTime sdt, final String format) {
 		Calendar cal = sdt.toJavaCal();
 		if (sdt.isAnyDate() || sdt.isAnyTime()) {
 			Calendar calCopy = (Calendar) cal.clone();

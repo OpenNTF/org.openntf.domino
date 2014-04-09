@@ -7,15 +7,19 @@ import java.util.Set;
 import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
+import org.openntf.domino.formula.Function;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
-import org.openntf.domino.formula.impl.TextFunctions;
+import org.openntf.domino.formula.module.TextFunctions;
 import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
 public class ASTAtText extends SimpleNode {
 
+	private Function function;
+
 	public ASTAtText(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
+		function = p.getFunctionLC("@text");
 	}
 
 	public void toFormula(final StringBuilder sb) {
@@ -35,6 +39,8 @@ public class ASTAtText extends SimpleNode {
 			}
 		}
 		try {
+			// TODO RPr: check if this is better:
+			//function.evaluate(ctx, params);
 			if (ret == null) {
 				ret = TextFunctions.doAtText(ctx, params);
 			}

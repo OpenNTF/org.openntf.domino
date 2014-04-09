@@ -14,12 +14,13 @@
  * permissions and limitations under the License.
  * 
  */
-package org.openntf.domino.formula.impl;
+package org.openntf.domino.formula.module;
 
 import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.ISimpleDateTime;
+import org.openntf.domino.formula.DateTime;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
+import org.openntf.domino.formula.impl.AtFunction;
 
 /**
  * This class implements the default arithmetic, boolean and compare operators.
@@ -129,7 +130,7 @@ public abstract class OperatorsAbstract extends AtFunction {
 
 	protected abstract ValueHolder evaluateDateTime(final FormulaContext ctx, final ValueHolder[] params);
 
-	protected abstract ValueHolder evaluateDateTime(final FormulaContext ctx, final ISimpleDateTime dt1, final ISimpleDateTime dt2);
+	protected abstract ValueHolder evaluateDateTime(final FormulaContext ctx, final DateTime dt1, final DateTime dt2);
 
 	protected abstract ValueHolder evaluateBoolean(final FormulaContext ctx, final ValueHolder[] params);
 

@@ -22,22 +22,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openntf.domino.formula.impl.Arithmetic;
 import org.openntf.domino.formula.impl.AtFunction;
 import org.openntf.domino.formula.impl.AtFunctionGeneric;
 import org.openntf.domino.formula.impl.AtFunctionSimple;
-import org.openntf.domino.formula.impl.Comparators;
-import org.openntf.domino.formula.impl.Constant;
-import org.openntf.domino.formula.impl.DateTimeFunctions;
+//import org.openntf.domino.formula.impl.NotImplemented;
+//import org.openntf.domino.formula.impl.NotSupported;
 //import org.openntf.domino.formula.impl.DateTimeFunctions;
 //import org.openntf.domino.formula.impl.DocProperties;
 //import org.openntf.domino.formula.impl.NativeEvaluateFunctions;
-import org.openntf.domino.formula.impl.Negators;
-//import org.openntf.domino.formula.impl.NotImplemented;
-//import org.openntf.domino.formula.impl.NotSupported;
-import org.openntf.domino.formula.impl.Operators;
-import org.openntf.domino.formula.impl.OperatorsBool;
-import org.openntf.domino.formula.impl.TextFunctions;
 
 /**
  * 
@@ -48,7 +40,6 @@ public class FunctionFactory {
 
 	private Map<String, Function> functions = new HashMap<String, Function>();
 	private boolean immutable;
-	private static FunctionFactory instance;
 
 	/**
 	 * Default constructor
@@ -133,29 +124,6 @@ public class FunctionFactory {
 		if (immutable)
 			throw new UnsupportedOperationException("Cannot add Factory, because this Factory is immutable");
 		functions.putAll(fact.getFunctions());
-	}
-
-	/**
-	 * This is the global "default"-instance.
-	 */
-	public static synchronized FunctionFactory getDefaultInstance() {
-		if (instance == null) {
-			instance = new FunctionFactory();
-			instance.addFactory(new Operators.Factory());
-			instance.addFactory(new OperatorsBool.Factory());
-			instance.addFactory(new Comparators.Factory());
-			instance.addFactory(new Negators.Factory());
-			//instance.addFactory(new NotImplemented.Factory());
-			instance.addFactory(new FunctionFactory(Arithmetic.class));
-			//instance.addFactory(new FunctionFactory(DocProperties.class));
-			instance.addFactory(new FunctionFactory(TextFunctions.class));
-			instance.addFactory(new FunctionFactory(DateTimeFunctions.class));
-			//instance.addFactory(new FunctionFactory(NativeEvaluateFunctions.class));
-			instance.addFactory(new FunctionFactory(Constant.class));
-			//instance.addFactory(new FunctionFactory(NotSupported.class));
-			instance.setImmutable();
-		}
-		return instance;
 	}
 
 }

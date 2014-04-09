@@ -1,11 +1,18 @@
-package org.openntf.domino.formula.impl;
+package org.openntf.domino.formula.module;
 
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FunctionFactory;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.annotation.ParamCount;
 
-public enum Constant {
+public enum Constants {
 	;
+
+	public static class Factory extends FunctionFactory {
+		public Factory() {
+			super(Constants.class);
+		}
+	}
 
 	@ParamCount(0)
 	// Do not know if that will work

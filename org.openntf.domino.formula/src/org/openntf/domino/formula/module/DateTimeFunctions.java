@@ -14,14 +14,15 @@
  * permissions and limitations under the License.
  * 
  */
-package org.openntf.domino.formula.impl;
+package org.openntf.domino.formula.module;
 
 import java.util.Locale;
 import java.util.TreeSet;
 
-import org.openntf.domino.formula.DominoFormatter;
+import org.openntf.domino.formula.DateTime;
+import org.openntf.domino.formula.Formatter;
 import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.ISimpleDateTime;
+import org.openntf.domino.formula.FunctionFactory;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.annotation.ParamCount;
 
@@ -29,6 +30,13 @@ import com.ibm.icu.util.Calendar;
 
 public enum DateTimeFunctions {
 	;
+
+	public static class Factory extends FunctionFactory {
+		public Factory() {
+			super(DateTimeFunctions.class);
+		}
+	}
+
 	/*----------------------------------------------------------------------------*/
 	/*
 	 * @Today, @Tomorrow, @Yesterday, @Now
@@ -60,7 +68,7 @@ public enum DateTimeFunctions {
 	@ParamCount({ 0, 2 })
 	public static ValueHolder atNow(final FormulaContext ctx, final ValueHolder params[]) {
 		if (params == null || params.length == 0) {
-			ISimpleDateTime sdt = getSDTDefaultLocale(ctx);
+			DateTime sdt = getSDTDefaultLocale(ctx);
 			sdt.setNow();
 			return ValueHolder.valueOf(sdt);
 		}
@@ -68,12 +76,12 @@ public enum DateTimeFunctions {
 	}
 
 	/*----------------------------------------------------------------------------*/
-	private static ISimpleDateTime getSDTDefaultLocale(final FormulaContext ctx) {
+	private static DateTime getSDTDefaultLocale(final FormulaContext ctx) {
 		return ctx.getFormatter().getNewSDTInstance();
 	}
 
 	/*----------------------------------------------------------------------------*/
-	private static ISimpleDateTime getSDTCopy(final FormulaContext ctx, final ISimpleDateTime sdt) {
+	private static DateTime getSDTCopy(final FormulaContext ctx, final DateTime sdt) {
 		return ctx.getFormatter().getCopyOfSDTInstance(sdt);
 	}
 
@@ -83,43 +91,43 @@ public enum DateTimeFunctions {
 	 */
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(1)
-	public static int atYear(final ISimpleDateTime dt) {
+	public static int atYear(final DateTime dt) {
 		return dt.toJavaCal().get(Calendar.YEAR);
 	}
 
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(1)
-	public static int atMonth(final ISimpleDateTime dt) {
+	public static int atMonth(final DateTime dt) {
 		return dt.toJavaCal().get(Calendar.MONTH) + 1;
 	}
 
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(1)
-	public static int atDay(final ISimpleDateTime dt) {
+	public static int atDay(final DateTime dt) {
 		return dt.toJavaCal().get(Calendar.DAY_OF_MONTH);
 	}
 
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(1)
-	public static int atHour(final ISimpleDateTime dt) {
+	public static int atHour(final DateTime dt) {
 		return dt.toJavaCal().get(Calendar.HOUR_OF_DAY);
 	}
 
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(1)
-	public static int atMinute(final ISimpleDateTime dt) {
+	public static int atMinute(final DateTime dt) {
 		return dt.toJavaCal().get(Calendar.MINUTE);
 	}
 
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(1)
-	public static int atSecond(final ISimpleDateTime dt) {
+	public static int atSecond(final DateTime dt) {
 		return dt.toJavaCal().get(Calendar.SECOND);
 	}
 
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(1)
-	public static int atWeekday(final ISimpleDateTime dt) {
+	public static int atWeekday(final DateTime dt) {
 		return dt.toJavaCal().get(Calendar.DAY_OF_WEEK);
 	}
 
@@ -133,7 +141,7 @@ public enum DateTimeFunctions {
 		if (params.length == 2)
 			throw new IllegalArgumentException("Expected: 1, 3, or 6 parameters");
 		if (params.length >= 3) {
-			ISimpleDateTime sdt = getSDTDefaultLocale(ctx);
+			DateTime sdt = getSDTDefaultLocale(ctx);
 			sdt.setLocalDate(params[0].getInt(0), params[1].getInt(0), params[2].getInt(0));
 			// 4 or 5 parameters are accepted by Lotus, but parameters 4 and 5 are ignored
 			if (params.length == 6)
@@ -143,7 +151,7 @@ public enum DateTimeFunctions {
 			return ValueHolder.valueOf(sdt);	// Multiple values are accepted, but ignored by Lotus
 		}
 		ValueHolder vh = params[0];	//Remains: length=1, which works completely different
-		ValueHolder ret = ValueHolder.createValueHolder(ISimpleDateTime.class, vh.size);
+		ValueHolder ret = ValueHolder.createValueHolder(DateTime.class, vh.size);
 		for (int i = 0; i < vh.size; i++)
 			ret.add(getSDTCopy(ctx, vh.getDateTime(i)));
 		return ret;
@@ -156,7 +164,7 @@ public enum DateTimeFunctions {
 			throw new IllegalArgumentException("Expected: 1, 3, or 6 parameters");
 		// 4 or 5 parameters are accepted by Lotus, but they are ignored
 		if (params.length >= 3 && params.length <= 5) {		// I was surprised.
-			ISimpleDateTime sdt = getSDTDefaultLocale(ctx);
+			DateTime sdt = getSDTDefaultLocale(ctx);
 			sdt.setAnyDate();
 			sdt.setAnyTime();
 			return ValueHolder.valueOf(sdt);
@@ -164,9 +172,9 @@ public enum DateTimeFunctions {
 		if (params.length == 6)		// I was surprised once more!
 			return atDate(ctx, params);
 		ValueHolder vh = params[0];	//Remains: length=1, which works completely different
-		ValueHolder ret = ValueHolder.createValueHolder(ISimpleDateTime.class, vh.size);
+		ValueHolder ret = ValueHolder.createValueHolder(DateTime.class, vh.size);
 		for (int i = 0; i < vh.size; i++) {
-			ISimpleDateTime sdt = getSDTCopy(ctx, vh.getDateTime(i));
+			DateTime sdt = getSDTCopy(ctx, vh.getDateTime(i));
 			sdt.setAnyDate();
 			ret.add(sdt);
 		}
@@ -180,13 +188,13 @@ public enum DateTimeFunctions {
 			throw new UnsupportedOperationException("@TimeMerge with 3 parameters not yet implemented");
 		ValueHolder dates = params[0];
 		ValueHolder times = params[1];
-		ValueHolder ret = ValueHolder.createValueHolder(ISimpleDateTime.class, dates.size);
+		ValueHolder ret = ValueHolder.createValueHolder(DateTime.class, dates.size);
 		for (int i = 0; i < dates.size; i++) {	// If there are more times than dates, they are ignored by Lotus
-			ISimpleDateTime date = dates.getDateTime(i);
-			ISimpleDateTime time = times.getDateTime(i);
+			DateTime date = dates.getDateTime(i);
+			DateTime time = times.getDateTime(i);
 			Calendar calDate = date.toJavaCal();
 			Calendar calTime = time.toJavaCal();
-			ISimpleDateTime sdt = getSDTDefaultLocale(ctx);
+			DateTime sdt = getSDTDefaultLocale(ctx);
 			if (date.isAnyDate())
 				sdt.setAnyDate();
 			else
@@ -243,11 +251,11 @@ public enum DateTimeFunctions {
 					excludeDays[ex] = true;
 			}
 		}
-		TreeSet<ISimpleDateTime> excludeDates = new TreeSet<ISimpleDateTime>(fromDays.getDateTime(0));
+		TreeSet<DateTime> excludeDates = new TreeSet<DateTime>(fromDays.getDateTime(0));
 		if (params.length == 4) {
 			ValueHolder exclVH = params[3];
 			for (int i = 0; i < exclVH.size; i++) {
-				ISimpleDateTime sdt = exclVH.getDateTime(i);
+				DateTime sdt = exclVH.getDateTime(i);
 				if (sdt.isAnyDate())
 					continue;
 				if (!sdt.isAnyTime()) {
@@ -260,8 +268,8 @@ public enum DateTimeFunctions {
 		int max = (fromDays.size >= toDays.size) ? fromDays.size : toDays.size;
 		ValueHolder ret = ValueHolder.createValueHolder(int.class, max);
 		for (int i = 0; i < max; i++) {
-			ISimpleDateTime sdtFrom = fromDays.getDateTime(i);
-			ISimpleDateTime sdtTo = toDays.getDateTime(i);
+			DateTime sdtFrom = fromDays.getDateTime(i);
+			DateTime sdtTo = toDays.getDateTime(i);
 			int busDays;
 			if (sdtFrom.isAnyDate() || sdtTo.isAnyDate())
 				busDays = -1;
@@ -273,8 +281,8 @@ public enum DateTimeFunctions {
 	}
 
 	/*----------------------------------------------------------------------------*/
-	private static int calcBusDays(final FormulaContext ctx, ISimpleDateTime sdtFrom, ISimpleDateTime sdtTo, final boolean[] excludeDays,
-			final TreeSet<ISimpleDateTime> excludeDates) {
+	private static int calcBusDays(final FormulaContext ctx, DateTime sdtFrom, DateTime sdtTo, final boolean[] excludeDays,
+			final TreeSet<DateTime> excludeDates) {
 		sdtFrom = getSDTCopy(ctx, sdtFrom);
 		sdtFrom.setAnyTime();
 		if (!sdtTo.isAnyTime()) {
@@ -308,9 +316,9 @@ public enum DateTimeFunctions {
 		int adjustHours = params[4].getInt(0);
 		int adjustMinutes = params[5].getInt(0);
 		int adjustSeconds = params[6].getInt(0);
-		ValueHolder ret = ValueHolder.createValueHolder(ISimpleDateTime.class, toAdjust.size);
+		ValueHolder ret = ValueHolder.createValueHolder(DateTime.class, toAdjust.size);
 		for (int i = 0; i < toAdjust.size; i++) {
-			ISimpleDateTime sdt = getSDTCopy(ctx, toAdjust.getDateTime(i));
+			DateTime sdt = getSDTCopy(ctx, toAdjust.getDateTime(i));
 			if (!sdt.isAnyDate()) {
 				if (adjustYears != 0)
 					sdt.adjustYear(adjustYears);
@@ -337,8 +345,8 @@ public enum DateTimeFunctions {
 	 * @ListLocales, @SetLocale, @PTest (for testing with a different Locale)
 	 */
 	/*----------------------------------------------------------------------------*/
-	private static ISimpleDateTime getSDTLocalSetLocale() {
-		return DominoFormatter.getInstance(iLocale).getNewSDTInstance();
+	private static DateTime getSDTLocalSetLocale() {
+		return org.openntf.domino.formula.Factory.getFormatter(iLocale).getNewSDTInstance();
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -379,7 +387,7 @@ public enum DateTimeFunctions {
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(1)
 	public static String atDTTest(final String s) {
-		ISimpleDateTime sdt = getSDTLocalSetLocale();
+		DateTime sdt = getSDTLocalSetLocale();
 		sdt.setLocalTime(s);
 		return sdt.getLocalTime();
 	}
@@ -387,8 +395,9 @@ public enum DateTimeFunctions {
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(1)
 	public static String atNTest(final String s) {
-		Number n = DominoFormatter.getInstance(iLocale).parseNumber(s, true);
-		return DominoFormatter.getInstance(iLocale).formatNumber(n);
+		Formatter formatter = org.openntf.domino.formula.Factory.getFormatter(iLocale);
+		Number n = formatter.parseNumber(s, true);
+		return formatter.formatNumber(n);
 	}
 	/*----------------------------------------------------------------------------*/
 }

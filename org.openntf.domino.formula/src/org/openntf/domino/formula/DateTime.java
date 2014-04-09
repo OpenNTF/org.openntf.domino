@@ -23,7 +23,7 @@ import com.ibm.icu.util.Calendar;
 /**
  * The Interface SimpleDateTime.
  */
-public interface ISimpleDateTime extends Comparator<ISimpleDateTime> {
+public interface DateTime extends Comparator<DateTime> {
 
 	public abstract void adjustDay(final int n);
 
@@ -73,9 +73,9 @@ public interface ISimpleDateTime extends Comparator<ISimpleDateTime> {
 
 	public abstract void setNow();
 
-	public abstract int timeDifference(final ISimpleDateTime dt);
+	public abstract int timeDifference(final DateTime dt);
 
-	public abstract double timeDifferenceDouble(final ISimpleDateTime dt);
+	public abstract double timeDifferenceDouble(final DateTime dt);
 
 	public abstract Date toJavaDate();
 

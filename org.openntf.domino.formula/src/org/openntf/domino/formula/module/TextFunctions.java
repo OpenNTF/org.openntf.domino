@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  * 
  */
-package org.openntf.domino.formula.impl;
+package org.openntf.domino.formula.module;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +24,8 @@ import java.util.regex.Pattern;
 import org.openntf.domino.formula.Formatter;
 import org.openntf.domino.formula.Formatter.LotusDateTimeOptions;
 import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.ISimpleDateTime;
+import org.openntf.domino.formula.FunctionFactory;
+import org.openntf.domino.formula.DateTime;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
 import org.openntf.domino.formula.annotation.DiffersFromLotus;
@@ -33,6 +34,13 @@ import org.openntf.domino.formula.annotation.ParamCount;
 
 public enum TextFunctions {
 	;
+
+	public static class Factory extends FunctionFactory {
+		public Factory() {
+			super(TextFunctions.class);
+		}
+	}
+
 	/*----------------------------------------------------------------------------*/
 	/*
 	 * @Left, @LeftBack, @Right, @RightBack
@@ -650,7 +658,7 @@ public enum TextFunctions {
 
 	/*----------------------------------------------------------------------------*/
 	private static ValueHolder strToDateTime(final FormulaContext ctx, final ValueHolder vh) {
-		ValueHolder ret = ValueHolder.createValueHolder(ISimpleDateTime.class, vh.size);
+		ValueHolder ret = ValueHolder.createValueHolder(DateTime.class, vh.size);
 		Formatter formatter = ctx.getFormatter();
 		String val = null;
 		for (int i = 0; i < vh.size; i++) {
@@ -1229,7 +1237,7 @@ public enum TextFunctions {
 		}
 		String format = params[1].getString(0);
 		ValueHolder vh = params[0];
-		ValueHolder ret = ValueHolder.createValueHolder(ISimpleDateTime.class, vh.size);
+		ValueHolder ret = ValueHolder.createValueHolder(DateTime.class, vh.size);
 		for (int i = 0; i < vh.size; i++)
 			ret.add(ctx.getFormatter().parseDateWithFormat(vh.getString(i), format, parseLenient));
 		return ret;
@@ -1237,7 +1245,7 @@ public enum TextFunctions {
 
 	/*----------------------------------------------------------------------------*/
 	@ParamCount(2)
-	public static String atTextFromDateTimeF(final FormulaContext ctx, final ISimpleDateTime sdt, final String format) {
+	public static String atTextFromDateTimeF(final FormulaContext ctx, final DateTime sdt, final String format) {
 		return ctx.getFormatter().formatDateTimeWithFormat(sdt, format);
 	}
 	/*----------------------------------------------------------------------------*/

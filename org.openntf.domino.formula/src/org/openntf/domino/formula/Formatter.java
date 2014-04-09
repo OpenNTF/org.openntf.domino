@@ -27,20 +27,20 @@ public interface Formatter {
 	Locale getLocale();
 
 	/*----------------------------------------------------------------------------*/
-	ISimpleDateTime getNewSDTInstance();
+	DateTime getNewSDTInstance();
 
-	ISimpleDateTime getNewInitializedSDTInstance(Date date, boolean noDate, boolean noTime);
+	DateTime getNewInitializedSDTInstance(Date date, boolean noDate, boolean noTime);
 
-	ISimpleDateTime getCopyOfSDTInstance(ISimpleDateTime sdt);
+	DateTime getCopyOfSDTInstance(DateTime sdt);
 
 	/*----------------------------------------------------------------------------*/
-	ISimpleDateTime parseDate(String image);
+	DateTime parseDate(String image);
 
-	ISimpleDateTime parseDate(String image, boolean parseLenient);
+	DateTime parseDate(String image, boolean parseLenient);
 
 	Calendar parseDateToCal(String image, boolean[] noDT, boolean parseLenient);
 
-	ISimpleDateTime parseDateWithFormat(String image, String format, boolean parseLenient);
+	DateTime parseDateWithFormat(String image, String format, boolean parseLenient);
 
 	Calendar parseDateToCalWithFormat(String image, String format, boolean[] noDT, boolean parseLenient);
 
@@ -95,9 +95,9 @@ public interface Formatter {
 	public static final int TIMEFORMAT_SHORT = 2;
 	public static final int TIMEFORMAT_LONG = 3;
 
-	String formatDateTime(ISimpleDateTime sdt);
+	String formatDateTime(DateTime sdt);
 
-	String formatDateTime(ISimpleDateTime sdt, LotusDateTimeOptions ldto);
+	String formatDateTime(DateTime sdt, LotusDateTimeOptions ldto);
 
 	String formatCalDateTime(Calendar cal);
 
@@ -109,7 +109,7 @@ public interface Formatter {
 
 	String formatCalTimeOnly(Calendar cal, int timeFormat);
 
-	String formatDateTimeWithFormat(ISimpleDateTime sdt, String format);
+	String formatDateTimeWithFormat(DateTime sdt, String format);
 
 	String formatCalWithFormat(Calendar cal, String format);
 

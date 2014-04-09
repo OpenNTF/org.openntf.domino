@@ -22,8 +22,6 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openntf.domino.formula.parse.AtFormulaParserImpl;
-
 /**
  * This class adds additonal functionality to the AtFormulaParserImpl (which is auto generated).
  * 
@@ -44,25 +42,6 @@ public abstract class FormulaParser {
 	 */
 	public Formatter getFormatter() {
 		return formatter;
-	}
-
-	/**
-	 * This function returns a preconfigured default instance
-	 */
-	public static FormulaParser getDefaultInstance() {
-		AtFormulaParserImpl parser = new AtFormulaParserImpl(new java.io.StringReader(""));
-		parser.init();
-		return parser;
-	}
-
-	/**
-	 * Resets the parser to a predefined state;
-	 */
-	public void init() {
-		reset();
-		// TODO RPr we need a formatter that can parse date times and so on without Domino-objects 
-		formatter = DominoFormatter.getDefaultInstance();
-		functionFactory = FunctionFactory.getDefaultInstance();
 	}
 
 	/**

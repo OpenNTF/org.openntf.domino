@@ -14,14 +14,18 @@
  * permissions and limitations under the License.
  * 
  */
-package org.openntf.domino.formula.impl;
+package org.openntf.domino.formula.module;
 
 import java.util.Collection;
 
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FunctionFactory;
-import org.openntf.domino.formula.ISimpleDateTime;
+import org.openntf.domino.formula.DateTime;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.impl.IntegerOverflowException;
+import org.openntf.domino.formula.impl.ParameterCollectionBoolean;
+import org.openntf.domino.formula.impl.ParameterCollectionDouble;
+import org.openntf.domino.formula.impl.ParameterCollectionInt;
 
 /**
  * This class implements the default arithmetic, boolean and compare operators.
@@ -33,6 +37,19 @@ import org.openntf.domino.formula.ValueHolder;
  */
 public class OperatorsBool extends OperatorsAbstract {
 
+	public static abstract class Computer {
+
+		public Computer(final String im) {
+		}
+
+		public abstract boolean compute(double v1, double v2);
+
+		public abstract boolean compute(boolean b1, boolean b2);
+
+		public abstract boolean compute(int v1, int v2) throws IntegerOverflowException;
+
+	}
+
 	/**
 	 * The Factory that returns a set of operators
 	 */
@@ -42,7 +59,7 @@ public class OperatorsBool extends OperatorsAbstract {
 			super();
 
 			// Define the computers
-			OperatorBoolImpl or = new OperatorBoolImpl("|") {
+			Computer or = new Computer("|") {
 
 				@Override
 				public boolean compute(final int v1, final int v2) throws IntegerOverflowException {
@@ -61,7 +78,7 @@ public class OperatorsBool extends OperatorsAbstract {
 			};
 
 			// Define the computers
-			OperatorBoolImpl and = new OperatorBoolImpl("&") {
+			Computer and = new Computer("&") {
 
 				@Override
 				public boolean compute(final int v1, final int v2) throws IntegerOverflowException {
@@ -84,7 +101,7 @@ public class OperatorsBool extends OperatorsAbstract {
 		}
 	}
 
-	private OperatorBoolImpl computer;
+	private Computer computer;
 
 	/**
 	 * The constructor. Operators shoud be constructed via Operator.Factory
@@ -92,7 +109,7 @@ public class OperatorsBool extends OperatorsAbstract {
 	 * @param operation
 	 * @param image
 	 */
-	private OperatorsBool(final OperatorBoolImpl computer, final String image) {
+	private OperatorsBool(final Computer computer, final String image) {
 		super(image);
 		this.computer = computer;
 		// Autodetect if the operation is permutative
@@ -163,7 +180,7 @@ public class OperatorsBool extends OperatorsAbstract {
 	}
 
 	@Override
-	protected ValueHolder evaluateDateTime(final FormulaContext ctx, final ISimpleDateTime dt1, final ISimpleDateTime dt2) {
+	protected ValueHolder evaluateDateTime(final FormulaContext ctx, final DateTime dt1, final DateTime dt2) {
 		throw new UnsupportedOperationException("'" + getImage() + "' is not supported for STRING");
 	}
 

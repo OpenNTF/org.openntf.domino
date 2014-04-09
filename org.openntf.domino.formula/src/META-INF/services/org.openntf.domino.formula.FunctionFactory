@@ -1,0 +1,13 @@
+# These are the basic modules to provied boolean and arithmetc operations
+org.openntf.domino.formula.module.Operators$Factory
+org.openntf.domino.formula.module.OperatorsBool$Factory
+org.openntf.domino.formula.module.Negators$Factory
+org.openntf.domino.formula.module.Comparators$Factory
+
+# Here, all constants are declared
+org.openntf.domino.formula.module.Constants$Factory
+
+#
+org.openntf.domino.formula.module.MathFunctions$Factory
+org.openntf.domino.formula.module.DateTimeFunctions$Factory
+org.openntf.domino.formula.module.TextFunctions$Factory

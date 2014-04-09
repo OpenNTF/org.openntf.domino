@@ -88,13 +88,13 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 	 * @see org.openntf.domino.formula.ValueHolder#getDateTime(int)
 	 */
 	@Override
-	public ISimpleDateTime getDateTime(final int i) {
+	public DateTime getDateTime(final int i) {
 		switch (dataType) {
 
 		case DATETIME:
 			if (i < size)
-				return (ISimpleDateTime) values[i];
-			return (ISimpleDateTime) values[size - 1];
+				return (DateTime) values[i];
+			return (DateTime) values[size - 1];
 
 		default:
 			throw new ClassCastException("DATETIME expected. Got '" + dataType + "'");
@@ -124,7 +124,7 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 	 * @see org.openntf.domino.formula.ValueHolder#add(org.openntf.domino.ISimpleDateTime)
 	 */
 	@Override
-	public boolean add(final ISimpleDateTime dateTime) {
+	public boolean add(final DateTime dateTime) {
 		switch (dataType) {
 		case _UNSET:
 			dataType = DataType.DATETIME;
@@ -147,8 +147,8 @@ public class ValueHolderObject<T> extends ValueHolder implements Serializable {
 	public boolean add(final Object obj) {
 		if (obj instanceof String)
 			return add((String) obj);
-		if (obj instanceof ISimpleDateTime)
-			return add((ISimpleDateTime) obj);
+		if (obj instanceof DateTime)
+			return add((DateTime) obj);
 
 		switch (dataType) {
 		case _UNSET:

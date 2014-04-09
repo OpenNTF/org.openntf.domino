@@ -3,8 +3,8 @@ package de.foconis.test.runner;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.openntf.domino.formula.impl.TextFunctions.atLeft;
-import static org.openntf.domino.formula.impl.TextFunctions.atRight;
+import static org.openntf.domino.formula.impl.TextFunctionsEx.atLeft;
+import static org.openntf.domino.formula.impl.TextFunctionsEx.atRight;
 
 import java.util.ArrayList;
 import java.util.Date;

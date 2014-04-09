@@ -20,14 +20,14 @@ package org.openntf.domino.formula.ast;
 import java.util.Set;
 
 import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.ISimpleDateTime;
+import org.openntf.domino.formula.DateTime;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
 import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 import org.openntf.domino.formula.parse.ParseException;
 
 public class ASTValueDateOrKW extends SimpleNode {
-	ISimpleDateTime dateValue = null;
+	DateTime dateValue = null;
 	String image = null;
 
 	public ASTValueDateOrKW(final AtFormulaParserImpl p, final int id) {

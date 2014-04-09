@@ -14,14 +14,19 @@
  * permissions and limitations under the License.
  * 
  */
-package org.openntf.domino.formula.impl;
+package org.openntf.domino.formula.module;
 
 import java.util.Collection;
 
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FunctionFactory;
-import org.openntf.domino.formula.ISimpleDateTime;
+import org.openntf.domino.formula.DateTime;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.impl.IntegerOverflowException;
+import org.openntf.domino.formula.impl.ParameterCollectionBoolean;
+import org.openntf.domino.formula.impl.ParameterCollectionDouble;
+import org.openntf.domino.formula.impl.ParameterCollectionInt;
+import org.openntf.domino.formula.impl.ParameterCollectionObject;
 
 /**
  * This class implements the default arithmetic, boolean and compare operators.
@@ -33,6 +38,35 @@ import org.openntf.domino.formula.ValueHolder;
  */
 public class Operators extends OperatorsAbstract {
 
+	public static abstract class Computer {
+		private String image;
+
+		public Computer(final String im) {
+			image = im;
+		}
+
+		public double compute(final double v1, final double v2) {
+			throw new UnsupportedOperationException("'" + image + "' is not supported for DOUBLE");
+		}
+
+		public boolean compute(final boolean b1, final boolean b2) {
+			throw new UnsupportedOperationException("'" + image + "' is not supported for BOOLEAN");
+		}
+
+		public int compute(final int v1, final int v2) throws IntegerOverflowException {
+			throw new UnsupportedOperationException("'" + image + "' is not supported for INTEGER");
+		}
+
+		public String compute(final String v1, final String v2) {
+			throw new UnsupportedOperationException("'" + image + "' is not supported for STRING");
+		}
+
+		public DateTime compute(final DateTime d1, final DateTime d2) {
+			throw new UnsupportedOperationException("'" + image + "' is not supported for DATETIME");
+		}
+
+	}
+
 	/**
 	 * The Factory that returns a set of operators
 	 */
@@ -42,7 +76,7 @@ public class Operators extends OperatorsAbstract {
 			super();
 
 			// Define the computers
-			OperatorImpl add = new OperatorImpl("+") {
+			Computer add = new Computer("+") {
 
 				@Override
 				public int compute(final int v1, final int v2) throws IntegerOverflowException {
@@ -64,7 +98,7 @@ public class Operators extends OperatorsAbstract {
 				}
 			};
 
-			OperatorImpl sub = new OperatorImpl("-") {
+			Computer sub = new Computer("-") {
 
 				@Override
 				public int compute(final int v1, final int v2) throws IntegerOverflowException {
@@ -81,7 +115,7 @@ public class Operators extends OperatorsAbstract {
 				}
 			};
 
-			OperatorImpl mul = new OperatorImpl("*") {
+			Computer mul = new Computer("*") {
 
 				@Override
 				public int compute(final int v1, final int v2) throws IntegerOverflowException {
@@ -99,7 +133,7 @@ public class Operators extends OperatorsAbstract {
 
 			};
 
-			OperatorImpl div = new OperatorImpl("/") {
+			Computer div = new Computer("/") {
 
 				@Override
 				public int compute(final int v1, final int v2) throws IntegerOverflowException {
@@ -126,7 +160,7 @@ public class Operators extends OperatorsAbstract {
 		}
 	}
 
-	private OperatorImpl computer;
+	private Computer computer;
 
 	/**
 	 * The constructor. Operators shoud be constructed via Operator.Factory
@@ -134,7 +168,7 @@ public class Operators extends OperatorsAbstract {
 	 * @param operation
 	 * @param image
 	 */
-	private Operators(final OperatorImpl computer, final String image) {
+	private Operators(final Computer computer, final String image) {
 		super(image);
 		this.computer = computer;
 		// Autodetect if the operation is permutative
@@ -206,17 +240,17 @@ public class Operators extends OperatorsAbstract {
 	// ----------- DateTimes
 	@Override
 	protected ValueHolder evaluateDateTime(final FormulaContext ctx, final ValueHolder[] params) {
-		Collection<ISimpleDateTime[]> values = new ParameterCollectionObject<ISimpleDateTime>(params, ISimpleDateTime.class, isPermutative);
-		ValueHolder ret = ValueHolder.createValueHolder(ISimpleDateTime.class, values.size());
+		Collection<DateTime[]> values = new ParameterCollectionObject<DateTime>(params, DateTime.class, isPermutative);
+		ValueHolder ret = ValueHolder.createValueHolder(DateTime.class, values.size());
 
-		for (ISimpleDateTime[] value : values) {
+		for (DateTime[] value : values) {
 			ret.add(computer.compute(value[0], value[1]));
 		}
 		return ret;
 	}
 
 	@Override
-	protected ValueHolder evaluateDateTime(final FormulaContext ctx, final ISimpleDateTime dt1, final ISimpleDateTime dt2) {
+	protected ValueHolder evaluateDateTime(final FormulaContext ctx, final DateTime dt1, final DateTime dt2) {
 		return ValueHolder.valueOf(computer.compute(dt1, dt2));
 	}
 
