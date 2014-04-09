@@ -17,41 +17,75 @@
  */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaParser;
-import org.openntf.domino.formula.EvaluateException;
+import java.util.Set;
+
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.ValueHolder.DataType;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
+/**
+ * Implements the {@literal @}For function
+ * 
+ */
 public class ASTAtFor extends SimpleNode {
-	public ASTAtFor(final int id) {
-		super(id);
-	}
 
-	public ASTAtFor(final AtFormulaParser p, final int id) {
+	public ASTAtFor(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
+	/**
+	 * Error handling is a little bit complexer, as we must return the Error-ValueHolders of init/condition/increment if one of them fail
+	 */
 	@Override
-	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
-		Node init = jjtGetChild(0);
-		Node condition = jjtGetChild(1);
-		Node increment = jjtGetChild(2);
+	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
+		Node init = children[0];
+		Node condition = children[1];
+		Node increment = children[2];
 
-		init.evaluate(ctx);
-		while (condition.evaluate(ctx).isTrue()) {
+		ValueHolder vh = init.evaluate(ctx);
+		if (vh.dataType == DataType.ERROR)
+			return vh;
+
+		while (true) {
+
+			vh = condition.evaluate(ctx);
+			if (vh.dataType == DataType.ERROR)
+				return vh;
+			if (!vh.isTrue(ctx))
+				break;
+
 			// execute statements
-			for (int i = 3; i < jjtGetNumChildren(); ++i) {
-				jjtGetChild(i).evaluate(ctx);
+			for (int i = 3; i < children.length; ++i) {
+				children[i].evaluate(ctx);
 			}
-			increment.evaluate(ctx);
+
+			vh = increment.evaluate(ctx);
+			if (vh.dataType == DataType.ERROR)
+				return vh;
 		}
 
-		return new ValueHolder(1); // returns always TRUE
+		return ctx.TRUE; // returns always TRUE
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ASTNode#toFormula(java.lang.StringBuilder)
+	 */
 	public void toFormula(final StringBuilder sb) {
 		sb.append("@For");
 		appendParams(sb);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.SimpleNode#analyzeThis(java.util.Set, java.util.Set, java.util.Set, java.util.Set)
+	 */
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		functions.add("@for");
 	}
 }
 /* JavaCC - OriginalChecksum=f70d2e6a39964b2d6bee287bd8bf7aca (do not edit this line) */

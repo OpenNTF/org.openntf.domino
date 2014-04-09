@@ -17,11 +17,19 @@
  */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaParser;
-import org.openntf.domino.formula.EvaluateException;
-import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.ValueHolder;
+import java.util.Set;
 
+import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FormulaReturnException;
+import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
+
+/**
+ * ASTAssignment stores the value in a FIELD, VAR or ENV-VAR
+ * 
+ * @author Roland Praml, Foconis AG
+ * 
+ */
 public class ASTAssignment extends SimpleNode {
 	public static final int FIELD = 1;
 	public static final int VAR = 2;
@@ -30,23 +38,26 @@ public class ASTAssignment extends SimpleNode {
 
 	private int type;
 	private String varName;
+	/** for performance reasons, value is stored also in lowerCase */
+	private String varNameLC;
 
-	public ASTAssignment(final int id) {
-		super(id);
-	}
-
-	public ASTAssignment(final AtFormulaParser p, final int id) {
+	public ASTAssignment(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
+	/**
+	 * Called from the parser. Init varName and type
+	 */
 	public void init(final String _varName, final int _type) {
 		varName = _varName;
+		varNameLC = varName.toLowerCase();
 		type = _type;
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.openntf.domino.tests.rpr.formula.SimpleNode#toString(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.SimpleNode#toString()
 	 */
 	@Override
 	public String toString() {
@@ -66,19 +77,25 @@ public class ASTAssignment extends SimpleNode {
 		return super.toString() + ": ? " + varName;
 	}
 
+	/**
+	 * ASTAssignment stores the value in a FIELD, VAR or ENV-VAR. There is no special error handling needed here.
+	 */
 	@Override
-	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
-		ValueHolder value = jjtGetChild(0).evaluate(ctx);
+	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
+		ValueHolder value;
+		value = children[0].evaluate(ctx);
+
 		switch (type) {
 		case FIELD:
 			ctx.setField(varName, value);
 			break;
 
 		case VAR:
-			ctx.setVar(varName, value);
+			ctx.setVarLC(varNameLC, value);
 			break;
 
 		case ENV:
+			ctx.setEnvLC(varNameLC, value);
 			break;
 
 		case DEFAULT:
@@ -88,6 +105,10 @@ public class ASTAssignment extends SimpleNode {
 		return value;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ASTNode#toFormula(java.lang.StringBuilder)
+	 */
 	@Override
 	public void toFormula(final StringBuilder sb) {
 		switch (type) {
@@ -109,6 +130,29 @@ public class ASTAssignment extends SimpleNode {
 		sb.append(varName);
 		sb.append(" := ");
 		children[0].toFormula(sb);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.SimpleNode#analyzeThis(java.util.Set, java.util.Set, java.util.Set, java.util.Set)
+	 */
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		switch (type) {
+		case FIELD:
+			modifiedFields.add(varName.toLowerCase());
+			break;
+
+		case VAR:
+		case DEFAULT:
+			variables.add(varName.toLowerCase());
+			break;
+
+		case ENV:
+			break;
+		}
+
 	}
 }
 /* JavaCC - OriginalChecksum=5985303b30076529d3e2aa0d267e0702 (do not edit this line) */

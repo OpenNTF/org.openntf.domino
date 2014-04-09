@@ -1,0 +1,11 @@
+@HardDeleteDocument
+	#lotusDocPass
+
+@HashPassword("Roland")
+	#allPass
+
+@Hour([9:30])
+	#allPass [9.0]
+ 
+
+ 

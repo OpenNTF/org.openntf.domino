@@ -17,28 +17,39 @@
  */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaParser;
+import java.util.Set;
+
+import org.openntf.domino.formula.parse.*;
+import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
 
 public class ASTSelect extends SimpleNode {
-	public ASTSelect(final int id) {
-		super(id);
-	}
 
-	public ASTSelect(final AtFormulaParser p, final int id) {
+	public ASTSelect(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) {
-		throw new UnsupportedOperationException("SELECT keyword not yet supported. (What should it do?)");
+		try {
+			throw new UnsupportedOperationException("SELECT keyword not yet supported. (What should it do?)");
+		} catch (RuntimeException cause) {
+			return ValueHolder.valueOf(new EvaluateException(codeLine, codeColumn, cause));
+		}
 	}
 
 	@Override
 	public void toFormula(final StringBuilder sb) {
 		sb.append("SELECT");
 		children[0].toFormula(sb);
+	}
+
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		// TODO Auto-generated method stub
+
 	}
 }
 /* JavaCC - OriginalChecksum=3cb38fd681e06c11e6004b6246dce786 (do not edit this line) */

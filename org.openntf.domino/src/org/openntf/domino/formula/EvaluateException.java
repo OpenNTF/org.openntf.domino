@@ -15,6 +15,13 @@
  */
 package org.openntf.domino.formula;
 
+/**
+ * This exception is wrapped into a ValueHolder and passed to the caller. The caller must extract the Exception from the ValueHolder. This
+ * is neccessary to store Exceptions in a variable
+ * 
+ * @author Roland Praml, Foconis AG
+ * 
+ */
 public class EvaluateException extends Exception {
 	private static final long serialVersionUID = 1L;
 

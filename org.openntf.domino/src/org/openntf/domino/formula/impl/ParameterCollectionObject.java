@@ -19,15 +19,18 @@ package org.openntf.domino.formula.impl;
 import java.lang.reflect.Array;
 import java.util.Iterator;
 
-import org.openntf.domino.DateTime;
+import org.openntf.domino.ISimpleDateTime;
 import org.openntf.domino.formula.ValueHolder;
 
 public class ParameterCollectionObject<T> extends ParameterCollectionAbstract<T[]> {
 	protected Class<T> clazz;
+	private T[] ret = null;
 
+	@SuppressWarnings("unchecked")
 	public ParameterCollectionObject(final ValueHolder[] params, final Class<T> clazz, final boolean permutative) {
 		super(params, permutative);
 		this.clazz = clazz;
+		ret = (T[]) Array.newInstance(clazz, params == null ? 0 : params.length);
 	}
 
 	@Override
@@ -38,17 +41,17 @@ public class ParameterCollectionObject<T> extends ParameterCollectionAbstract<T[
 	@SuppressWarnings("unchecked")
 	protected class ParameterIterator extends ParameterIteratorAbstract {
 
+		@SuppressWarnings("deprecation")
 		@Override
 		protected T[] getNext() {
 			if (params == null) {
 				return null;
 			}
-			T[] ret = (T[]) Array.newInstance(clazz, params.length);
 			if (clazz.equals(String.class)) {
 				for (int i = 0; i < ret.length; i++) {
-					ret[i] = (T) params[i].getText(getIndex(i));
+					ret[i] = (T) params[i].getString(getIndex(i));
 				}
-			} else if (clazz.equals(DateTime.class)) {
+			} else if (clazz.equals(ISimpleDateTime.class)) {
 				for (int i = 0; i < ret.length; i++) {
 					ret[i] = (T) params[i].getDateTime(getIndex(i));
 				}

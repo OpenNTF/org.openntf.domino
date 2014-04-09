@@ -34,14 +34,14 @@ public abstract class ParameterCollectionAbstract<T> extends AbstractCollection<
 			this.size = 1; // we have at least ONE element
 			return;
 		}
-		this.size = params[0].size();
+		this.size = params[0].size;
 		if (permutative) {
 			for (int i = 1; i < params.length; i++) {
-				this.size *= params[i].size();
+				this.size *= params[i].size;
 			}
 		} else {
 			for (int i = 1; i < params.length; i++) {
-				this.size = Math.max(this.size, params[i].size());
+				this.size = Math.max(this.size, params[i].size);
 			}
 		}
 	}
@@ -77,9 +77,9 @@ public abstract class ParameterCollectionAbstract<T> extends AbstractCollection<
 		protected int getIndex(final int pos) {
 			if (permutative) {
 				int currIdx = idx;
-				int mod = params[pos].size();
+				int mod = params[pos].size;
 				for (int i = pos + 1; i < params.length; i++) {
-					currIdx /= params[i].size();
+					currIdx /= params[i].size;
 				}
 				return currIdx % mod;
 			} else {

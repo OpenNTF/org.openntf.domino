@@ -48,6 +48,9 @@ Export-Package: com.tinkerpop.blueprints,
  org.openntf.domino.events,
  org.openntf.domino.exceptions,
  org.openntf.domino.ext,
+ org.openntf.domino.formula,
+ org.openntf.domino.formula.ast,
+ org.openntf.domino.formula.impl,
  org.openntf.domino.graph,
  org.openntf.domino.helpers,
  org.openntf.domino.impl,
@@ -64,8 +67,14 @@ Export-Package: com.tinkerpop.blueprints,
  org.openntf.domino.types,
  org.openntf.domino.utils,
  org.openntf.domino.utils.xml
+Implementation-Title: OpenNTF Domino API
+Implementation-Version: 1.0.0_20140320054355
+Implementation-Vendor: OpenNTF
+Implementation-Vendor-URL: http://www.openntf.org
 Require-Bundle: com.ibm.commons,
- com.ibm.icu;bundle-version="3.8.1"
+ com.ibm.icu;bundle-version="3.8.1",
+ com.ibm.xsp.domino,
+ com.ibm.domino.napi
 Bundle-ClassPath: .,
  ext/jsr305.jar,
  ext/blueprints-core-2.4.0.jar,
