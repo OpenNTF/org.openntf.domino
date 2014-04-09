@@ -32,12 +32,14 @@ public interface AtFormulaParserImplTreeConstants
   public int JJTATTEXT = 24;
   public int JJTATRETURN = 25;
   public int JJTATISERROR = 26;
-  public int JJTFUNCTION = 27;
-  public int JJTVALUEDATEORKW = 28;
-  public int JJTVALUESTRING = 29;
-  public int JJTVALUEDOUBLE = 30;
-  public int JJTVALUEINT = 31;
-  public int JJTGETVARIABLE = 32;
+  public int JJTATISAVAILABLE = 27;
+  public int JJTATISUNAVAILABLE = 28;
+  public int JJTFUNCTION = 29;
+  public int JJTVALUEDATEORKW = 30;
+  public int JJTVALUESTRING = 31;
+  public int JJTVALUEDOUBLE = 32;
+  public int JJTVALUEINT = 33;
+  public int JJTGETVARIABLE = 34;
 
 
   public String[] jjtNodeName = {
@@ -68,6 +70,8 @@ public interface AtFormulaParserImplTreeConstants
     "AtText",
     "AtReturn",
     "AtIsError",
+    "AtIsAvailable",
+    "AtIsUnavailable",
     "Function",
     "ValueDateOrKW",
     "ValueString",
@@ -76,4 +80,4 @@ public interface AtFormulaParserImplTreeConstants
     "GetVariable",
   };
 }
-/* JavaCC - OriginalChecksum=18356b1473b0a35029148e0507786ac7 (do not edit this line) */
+/* JavaCC - OriginalChecksum=5181b64b93be988875693171cb18bbdb (do not edit this line) */

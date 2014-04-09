@@ -161,7 +161,9 @@ TOKEN :
 | 	< At_evalex		: "@evalex" >
 | 	< At_foceval	: "@foceval" >
 | 	< At_return		: "@return" >
-| 	< At_iserror	: "@iserror" > 
+| 	< At_iserror	: "@iserror" >
+| 	< At_isavailable: "@isavailable" >  
+| 	< At_isunavailable: "@isunavailable" >
 
 	// All other at functions that does not control program flow
 | 	< At_other 	: "@" ( < Letter >  )  (  < Letter >  | < Digit > )*  > : SUBSCRIPT // switch to subscript, to handle @dbname[2]
@@ -581,6 +583,8 @@ private void unary() :
 					 < CParen >) #AtText
 | < At_return > (< OParen >  statement() < CParen >) #AtReturn
 | < At_iserror > (< OParen >  statement() < CParen >) #AtIsError 
+| < At_isavailable > (< OParen >  statement() < CParen >) #AtIsAvailable 
+| < At_isunavailable > (< OParen >  statement() < CParen >) #AtIsUnavailable
 | < At_other > formula() 
 | atom()
 }

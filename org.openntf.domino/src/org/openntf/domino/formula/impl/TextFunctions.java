@@ -1068,6 +1068,8 @@ public enum TextFunctions {
 			return doAtTextNumber(ctx, vh, format);
 		if (vh.dataType == DataType.DATETIME)
 			return doAtTextDateTime(ctx, vh, format);
+		if (vh.dataType == DataType.STRING)
+			return vh;
 		ValueHolder ret = ValueHolder.createValueHolder(String.class, vh.size);
 		for (int i = 0; i < vh.size; i++)
 			ret.add(vh.get(i).toString());

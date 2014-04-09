@@ -37,7 +37,7 @@ public class FormulaTestCaseAbstract {
 	protected String formula;
 	protected TestParameter param;
 
-	protected Database db;
+	protected static Database db;
 
 	/**
 	 * Constructor

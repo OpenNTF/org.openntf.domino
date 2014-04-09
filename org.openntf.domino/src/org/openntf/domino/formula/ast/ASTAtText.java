@@ -4,13 +4,13 @@ package org.openntf.domino.formula.ast;
 
 import java.util.Set;
 
-import org.openntf.domino.formula.parse.*;
 import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
 import org.openntf.domino.formula.impl.TextFunctions;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
 public class ASTAtText extends SimpleNode {
 
@@ -35,8 +35,9 @@ public class ASTAtText extends SimpleNode {
 			}
 		}
 		try {
-			if (ret == null)
+			if (ret == null) {
 				ret = TextFunctions.doAtText(ctx, params);
+			}
 		} catch (RuntimeException e) {
 			return ValueHolder.valueOf(new EvaluateException(codeLine, codeColumn, e));
 		}

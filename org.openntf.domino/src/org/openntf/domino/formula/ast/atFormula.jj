@@ -167,7 +167,9 @@ TOKEN :
 | 	< At_evalex		: "@evalex" >
 | 	< At_foceval	: "@foceval" >
 | 	< At_return		: "@return" >
-| 	< At_iserror	: "@iserror" > 
+| 	< At_iserror	: "@iserror" >
+| 	< At_isavailable: "@isavailable" >  
+| 	< At_isunavailable: "@isunavailable" >
 
 	// All other at functions that does not control program flow
 | 	< At_other 	: "@" ( < Letter >  )  (  < Letter >  | < Digit > )*  > : SUBSCRIPT // switch to subscript, to handle @dbname[2]
@@ -1661,6 +1663,62 @@ private void unary() :
                    }
                  }
 /*@egen*/            
+| < At_isavailable >/*@bgen(jjtree) AtIsAvailable */
+                     {
+                       ASTAtIsAvailable jjtn015 = new ASTAtIsAvailable(this, JJTATISAVAILABLE);
+                       boolean jjtc015 = true;
+                       jjtree.openNodeScope(jjtn015);
+                     }
+                     try {
+/*@egen*/ (< OParen >  statement() < CParen >)/*@bgen(jjtree)*/
+                     } catch (Throwable jjte015) {
+                       if (jjtc015) {
+                         jjtree.clearNodeScope(jjtn015);
+                         jjtc015 = false;
+                       } else {
+                         jjtree.popNode();
+                       }
+                       if (jjte015 instanceof RuntimeException) {
+                         throw (RuntimeException)jjte015;
+                       }
+                       if (jjte015 instanceof ParseException) {
+                         throw (ParseException)jjte015;
+                       }
+                       throw (Error)jjte015;
+                     } finally {
+                       if (jjtc015) {
+                         jjtree.closeNodeScope(jjtn015, true);
+                       }
+                     }
+/*@egen*/                
+| < At_isunavailable >/*@bgen(jjtree) AtIsUnavailable */
+                       {
+                         ASTAtIsUnavailable jjtn016 = new ASTAtIsUnavailable(this, JJTATISUNAVAILABLE);
+                         boolean jjtc016 = true;
+                         jjtree.openNodeScope(jjtn016);
+                       }
+                       try {
+/*@egen*/ (< OParen >  statement() < CParen >)/*@bgen(jjtree)*/
+                       } catch (Throwable jjte016) {
+                         if (jjtc016) {
+                           jjtree.clearNodeScope(jjtn016);
+                           jjtc016 = false;
+                         } else {
+                           jjtree.popNode();
+                         }
+                         if (jjte016 instanceof RuntimeException) {
+                           throw (RuntimeException)jjte016;
+                         }
+                         if (jjte016 instanceof ParseException) {
+                           throw (ParseException)jjte016;
+                         }
+                         throw (Error)jjte016;
+                       } finally {
+                         if (jjtc016) {
+                           jjtree.closeNodeScope(jjtn016, true);
+                         }
+                       }
+/*@egen*/                 
 | < At_other > formula() 
 | atom()
 }

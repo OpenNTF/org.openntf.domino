@@ -16,14 +16,21 @@ public enum Constant {
 
 	@ParamCount(0)
 	public static ValueHolder atNothing() {
-		return ValueHolder.valueDefault();
+		return ValueHolder.valueNothing();
 	}
 
 	@ParamCount(0)
 	@Incomplete
 	// Do not know if that will work
 	public static ValueHolder atDeleteField() {
-		return null;
+		return ValueHolder.valueUnavailable();
+	}
+
+	@ParamCount(0)
+	@Incomplete
+	// Do not know if that will work
+	public static ValueHolder atUnavailable() {
+		return ValueHolder.valueUnavailable();
 	}
 
 	@ParamCount(0)
