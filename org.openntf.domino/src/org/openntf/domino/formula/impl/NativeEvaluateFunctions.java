@@ -5,8 +5,6 @@ import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
 
-import com.ibm.commons.util.FastStringBuffer;
-
 public enum NativeEvaluateFunctions {
 	;
 	/*============================================================================*/
@@ -232,20 +230,6 @@ public enum NativeEvaluateFunctions {
 	}
 
 	/*----------------------------------------------------------------------------*/
-	@NeedsNativeEvaluate("@Environment")
-	@ParamCount({ 1, 2 })
-	public static ValueHolder atEnvironment(final FormulaContext ctx, final ValueHolder[] params) {
-		String lc = params[0].getString(0).toLowerCase();
-		if (params.length == 1)
-			return ctx.getEnvLC(lc);
-		//return ctx.evaluateNative("@Environment(p1)", params[0]);
-		ValueHolder ret = ctx.getEnvLC(lc);
-		ctx.setEnvLC(lc, params[1]);
-		return ret;
-		//return ctx.evaluateNative("@Environment(p1;p2)", params[0], params[1]);
-	}
-
-	/*----------------------------------------------------------------------------*/
 	@NeedsNativeEvaluate("@LanguagePreference")
 	@ParamCount(1)
 	public static ValueHolder atLanguagePreference(final FormulaContext ctx, final ValueHolder params[]) throws EvaluateException {
@@ -431,46 +415,46 @@ public enum NativeEvaluateFunctions {
 	@NeedsNativeEvaluate("@DocChildren")
 	@ParamCount({ 0, 3 })
 	public static ValueHolder atDocChildren(final FormulaContext ctx, final ValueHolder[] params) throws EvaluateException {
-		FastStringBuffer fsb = new FastStringBuffer(256);
-		fsb.append("@DocChildren");
+		StringBuilder sb = new StringBuilder(256);
+		sb.append("@DocChildren");
 		if (params.length > 0) {
-			fsb.append('(');
-			fsb.append(params[0].quoteValue());
+			sb.append('(');
+			sb.append(params[0].quoteValue());
 		}
 		if (params.length > 1) {
-			fsb.append(';');
-			fsb.append(params[1].quoteValue());
+			sb.append(';');
+			sb.append(params[1].quoteValue());
 		}
 		if (params.length > 2) {
-			fsb.append(';');
-			fsb.append(params[2].quoteValue());
+			sb.append(';');
+			sb.append(params[2].quoteValue());
 		}
 		if (params.length > 0)
-			fsb.append(')');
-		return ctx.evaluateNative(fsb.toString());
+			sb.append(')');
+		return ctx.evaluateNative(sb.toString());
 	}
 
 	/*----------------------------------------------------------------------------*/
 	@NeedsNativeEvaluate("@DocDescendants")
 	@ParamCount({ 0, 3 })
 	public static ValueHolder atDocDescendants(final FormulaContext ctx, final ValueHolder[] params) throws EvaluateException {
-		FastStringBuffer fsb = new FastStringBuffer(256);
-		fsb.append("@DocDescendants");
+		StringBuilder sb = new StringBuilder(256);
+		sb.append("@DocDescendants");
 		if (params.length > 0) {
-			fsb.append('(');
-			fsb.append(params[0].quoteValue());
+			sb.append('(');
+			sb.append(params[0].quoteValue());
 		}
 		if (params.length > 1) {
-			fsb.append(';');
-			fsb.append(params[1].quoteValue());
+			sb.append(';');
+			sb.append(params[1].quoteValue());
 		}
 		if (params.length > 2) {
-			fsb.append(';');
-			fsb.append(params[2].quoteValue());
+			sb.append(';');
+			sb.append(params[2].quoteValue());
 		}
 		if (params.length > 0)
-			fsb.append(')');
-		return ctx.evaluateNative(fsb.toString());
+			sb.append(')');
+		return ctx.evaluateNative(sb.toString());
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -728,4 +712,80 @@ public enum NativeEvaluateFunctions {
 	}
 
 	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@SetHTTPHeader")
+	@ParamCount(2)
+	public static ValueHolder atSetHTTPHeader(final FormulaContext ctx, final ValueHolder[] params) {
+		return ctx.evaluateNative("@SetHTTPHeader(p1;p2)", params[0], params[1]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@SetProfileField")
+	@ParamCount({ 2, 3 })
+	public static ValueHolder atSetProfileField(final FormulaContext ctx, final ValueHolder[] params) {
+		if (params.length == 2)
+			return ctx.evaluateNative("@SetProfileField(p1;p2)", params[0], params[1]);
+		return ctx.evaluateNative("@SetProfileField(p1;p2;p3)", params[0], params[1], params[2]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@ShowParentPreview")
+	@ParamCount(0)
+	public static ValueHolder atShowParentPreview(final FormulaContext ctx) {
+		return ctx.evaluateNative("@ShowParentPreview");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@SoundEx")
+	@ParamCount(1)
+	public static ValueHolder atSoundEx(final FormulaContext ctx, final ValueHolder params[]) {
+		return ctx.evaluateNative("@SoundEx(p1)", params[0]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@StatusBar")
+	@ParamCount(1)
+	public static ValueHolder atStatusBar(final FormulaContext ctx, final ValueHolder params[]) {
+		return ctx.evaluateNative("@StatusBar(p1)", params[0]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@ThisName")
+	@ParamCount(0)
+	public static ValueHolder atThisName(final FormulaContext ctx) {
+		return ctx.evaluateNative("@ThisName");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@ThisValue")
+	@ParamCount(0)
+	public static ValueHolder atThisValue(final FormulaContext ctx) {
+		return ctx.evaluateNative("@ThisValue");
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@TimeToTextInZone")
+	@ParamCount({ 2, 3 })
+	public static ValueHolder atTimeToTextInZone(final FormulaContext ctx, final ValueHolder params[]) {
+		if (params.length == 2)
+			return ctx.evaluateNative("@TimeToTextInZone(p1;p2)", params[0], params[1]);
+		return ctx.evaluateNative("@TimeToTextInZone(p1;p2;p3)", params[0], params[1], params[2]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@TimeZoneToText")
+	@ParamCount({ 1, 2 })
+	public static ValueHolder atTimeZoneToText(final FormulaContext ctx, final ValueHolder params[]) {
+		if (params.length == 1)
+			return ctx.evaluateNative("@TimeZoneToText(p1)", params[0]);
+		return ctx.evaluateNative("@TimeZoneToText(p1;p2)", params[0], params[1]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@Zone")
+	@ParamCount({ 0, 1 })
+	public static ValueHolder atZone(final FormulaContext ctx, final ValueHolder params[]) {
+		throw new UnsupportedOperationException("Method not yet implemented");
+	}
+
 }

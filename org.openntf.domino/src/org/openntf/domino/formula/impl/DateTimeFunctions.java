@@ -1,5 +1,5 @@
 /*
- * © Copyright FOCONIS AG, 2014
+ * ï¿½ Copyright FOCONIS AG, 2014
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -205,22 +205,22 @@ public enum DateTimeFunctions {
 	 * @Zone, @TimeZoneToText, @TimeToTextInZone 
 	 */
 	/*----------------------------------------------------------------------------*/
-	@ParamCount({ 0, 1 })
-	public static ValueHolder atZone(final FormulaContext ctx, final ValueHolder params[]) {
-		throw new UnsupportedOperationException("Method not yet implemented");
-	}
-
-	/*----------------------------------------------------------------------------*/
-	@ParamCount({ 1, 2 })
-	public static ValueHolder atTimeZoneToText(final FormulaContext ctx, final ValueHolder params[]) {
-		throw new UnsupportedOperationException("Method not yet implemented");
-	}
-
-	/*----------------------------------------------------------------------------*/
-	@ParamCount({ 2, 3 })
-	public static ValueHolder atTimeToTextInZone(final FormulaContext ctx, final ValueHolder params[]) {
-		throw new UnsupportedOperationException("Method not yet implemented");
-	}
+	//	@ParamCount({ 0, 1 })
+	//	public static ValueHolder atZone(final FormulaContext ctx, final ValueHolder params[]) {
+	//		throw new UnsupportedOperationException("Method not yet implemented");
+	//	}
+	//
+	//	/*----------------------------------------------------------------------------*/
+	//	@ParamCount({ 1, 2 })
+	//	public static ValueHolder atTimeZoneToText(final FormulaContext ctx, final ValueHolder params[]) {
+	//		throw new UnsupportedOperationException("Method not yet implemented");
+	//	}
+	//
+	//	/*----------------------------------------------------------------------------*/
+	//	@ParamCount({ 2, 3 })
+	//	public static ValueHolder atTimeToTextInZone(final FormulaContext ctx, final ValueHolder params[]) {
+	//		throw new UnsupportedOperationException("Method not yet implemented");
+	//	}
 
 	/*----------------------------------------------------------------------------*/
 	/*

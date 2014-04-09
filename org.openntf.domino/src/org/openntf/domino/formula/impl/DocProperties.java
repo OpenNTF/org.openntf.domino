@@ -138,8 +138,9 @@ public enum DocProperties {
 	}
 
 	@ParamCount(2)
-	public static ValueHolder atGetDocField(final FormulaContext ctx, final ValueHolder[] params) {
-		return ctx.getDocField(params[0].getString(0), params[1].getString(0));
+	public static ValueHolder atSetField(final FormulaContext ctx, final ValueHolder[] params) {
+		ctx.setField(params[0].getString(0), params[1]);
+		return params[1];
 	}
 
 	@ParamCount(2)
@@ -156,6 +157,12 @@ public enum DocProperties {
 			return true;
 		}
 		return false;
+	}
+
+	@ParamCount(2)
+	public static ValueHolder atSet(final FormulaContext ctx, final ValueHolder[] params) {
+		ctx.setVarLC(params[0].getString(0).toLowerCase(), params[1]);
+		return params[1];
 	}
 
 }

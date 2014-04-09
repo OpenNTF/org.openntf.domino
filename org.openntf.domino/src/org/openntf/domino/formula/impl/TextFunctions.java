@@ -28,8 +28,6 @@ import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
 
-import com.ibm.commons.util.FastStringBuffer;
-
 public enum TextFunctions {
 	;
 	/*----------------------------------------------------------------------------*/
@@ -972,13 +970,13 @@ public enum TextFunctions {
 				ret.add("");
 			return ret;
 		}
-		FastStringBuffer fsb = new FastStringBuffer(bedarf * repeator);
+		StringBuilder sb = new StringBuilder(bedarf * repeator);
 		for (int i = 0; i < vh.size; i++) {
-			fsb.clear();
+			sb.setLength(0);
 			String s = vh.getString(i);
 			for (int j = 0; j < repeator; j++)
-				fsb.append(s);
-			ret.add((fsb.length() > cutter) ? fsb.substring(0, cutter) : fsb.toString());
+				sb.append(s);
+			ret.add((sb.length() > cutter) ? sb.substring(0, cutter) : sb.toString());
 		}
 		return ret;
 	}
@@ -1218,6 +1216,7 @@ public enum TextFunctions {
 	 * @TextToDateTimeF, @TextFromDateTimeF
 	 */
 	/*----------------------------------------------------------------------------*/
+	@OpenNTF
 	@ParamCount({ 2, 3 })
 	public static ValueHolder atTextToDateTimeF(final FormulaContext ctx, final ValueHolder params[]) {
 		boolean parseLenient = false;
@@ -1236,6 +1235,7 @@ public enum TextFunctions {
 	}
 
 	/*----------------------------------------------------------------------------*/
+	@OpenNTF
 	@ParamCount(2)
 	public static String atTextFromDateTimeF(final FormulaContext ctx, final ISimpleDateTime sdt, final String format) {
 		return ctx.getFormatter().formatDateTimeWithFormat(sdt, format);
