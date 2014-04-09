@@ -459,20 +459,16 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		//throw new UnimplementedException("convertToZone is not yet implemented.");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.DateTime#isEqual(org.openntf.domino.DateTime)
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.DateTime#equals(org.openntf.domino.DateTime)
 	 */
 	@Override
 	public boolean equals(final org.openntf.domino.DateTime compareDate) {
 		return date_.equals(compareDate.toJavaDate());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.DateTime#equalsIgnoreDate(org.openntf.domino.DateTime)
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.DateTime#equalsIgnoreDate(org.openntf.domino.DateTime)
 	 */
 	@Override
 	public boolean equalsIgnoreDate(final org.openntf.domino.DateTime compareDate) {
@@ -490,10 +486,8 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		return d1.equals(d2);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.DateTime#equalsIgnoreTime(org.openntf.domino.DateTime)
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.DateTime#equalsIgnoreTime(org.openntf.domino.DateTime)
 	 */
 	@Override
 	public boolean equalsIgnoreTime(final org.openntf.domino.DateTime compareDate) {
