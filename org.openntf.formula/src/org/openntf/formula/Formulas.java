@@ -1,6 +1,8 @@
 package org.openntf.formula;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -15,10 +17,15 @@ public enum Formulas {
 		FunctionFactory instance = new FunctionFactory();
 		ServiceLoader<FunctionFactory> loader = ServiceLoader.load(FunctionFactory.class);
 
+		List<FunctionFactory> loaderList = new ArrayList<FunctionFactory>();
 		for (FunctionFactory fact : loader) {
+			loaderList.add(fact);
+		}
+
+		for (int i = loaderList.size() - 1; i >= 0; i--) {
 			//TODO RPR Add logger here?
 			//System.out.println("ADD Factory " + fact.getClass().getName());
-			instance.addFactory(fact);
+			instance.addFactory(loaderList.get(i));
 		}
 
 		instance.setImmutable();

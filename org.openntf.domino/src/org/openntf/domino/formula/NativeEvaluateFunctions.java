@@ -5,6 +5,7 @@ import org.openntf.formula.FunctionFactory;
 import org.openntf.formula.ValueHolder;
 import org.openntf.formula.ValueHolder.DataType;
 import org.openntf.formula.annotation.ParamCount;
+import org.openntf.formula.function.TextFunctions;
 
 public enum NativeEvaluateFunctions {
 	;
@@ -32,14 +33,13 @@ public enum NativeEvaluateFunctions {
 				ctx.evaluateNative("@Ascii(p1)", params[0]);
 	}
 
-	/*----------------------------------------------------------------------------*/
-	/*
-	 * @Explode for DateRange
-	 */
-	/*----------------------------------------------------------------------------*/
-	@NeedsNativeEvaluate("@Explode(DateRange)")
-	static ValueHolder explodeDateRanges(final FormulaContextNotes ctx, final ValueHolder what) {
-		return ctx.evaluateNative("@Explode(p1)", what);
+	// TODO RPR: move to openntf	@NeedsNativeEvaluate("@Explode(DateRange)")
+	@ParamCount({ 1, 4 })
+	public static ValueHolder atExplode(final FormulaContextNotes ctx, final ValueHolder[] params) {
+		ValueHolder vh = params[0];
+		if (vh.dataType != DataType.STRING)
+			return ctx.evaluateNative("@Explode(p1)", vh);
+		return TextFunctions.atExplode(ctx, params);
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -62,16 +62,6 @@ public enum NativeEvaluateFunctions {
 	@ParamCount(2)
 	public static ValueHolder atMatches(final FormulaContextNotes ctx, final ValueHolder[] params) {
 		return ctx.evaluateNative("@Matches(p1;p2)", params[0], params[1]);
-	}
-
-	/*----------------------------------------------------------------------------*/
-	/*
-	 * @Unique
-	 */
-	/*----------------------------------------------------------------------------*/
-	@NeedsNativeEvaluate("@Unique(<no parameters>)")
-	static ValueHolder unique(final FormulaContextNotes ctx) {
-		return ctx.evaluateNative("@Unique");
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -802,6 +792,13 @@ public enum NativeEvaluateFunctions {
 	@ParamCount(0)
 	public static ValueHolder atUpdateFormulaContext(final FormulaContextNotes ctx) {
 		return ctx.evaluateNative("@UpdateFormulaContext");
+	}
+
+	@ParamCount({ 0, 1 })
+	public static ValueHolder atUnique(final FormulaContextNotes ctx, final ValueHolder[] params) {
+		if (params == null || params.length == 0)
+			return ctx.evaluateNative("@Unique");
+		return TextFunctions.atUnique(ctx, params);
 	}
 
 	/*----------------------------------------------------------------------------*/

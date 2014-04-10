@@ -39,7 +39,7 @@ public class ASTFunction extends SimpleNode {
 	public void init(final String string) throws ParseException {
 		function = parser.getFunctionLC(string.toLowerCase());
 		if (function == null) {
-			throw new IllegalArgumentException("'" + string + "' is not a function");
+			throw new ParseException(parser, "'" + string + "' is not a function");
 		}
 		if (!function.checkParamCount(jjtGetNumChildren())) {
 			throw new ParseException(parser, "parameter count mismatch");

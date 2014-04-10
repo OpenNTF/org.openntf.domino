@@ -369,12 +369,10 @@ public enum TextFunctions {
 	 * @Explode, @Implode
 	 */
 	/*----------------------------------------------------------------------------*/
-	// TODO RPR: move to openntf	@NeedsNativeEvaluate("@Explode(DateRange)")
 	@ParamCount({ 1, 4 })
 	public static ValueHolder atExplode(final FormulaContext ctx, final ValueHolder[] params) {
 		ValueHolder vh = params[0];
-		//		if (vh.dataType != DataType.STRING)
-		//			return NativeEvaluateFunctions.explodeDateRanges(ctx, vh);
+
 		String seps = " ,;";
 		boolean includeEmpties = false;
 		boolean newLineIsSep = true;
@@ -959,11 +957,8 @@ public enum TextFunctions {
 	 * @Unique, @Repeat
 	 */
 	/*----------------------------------------------------------------------------*/
-	// TODO RPR:	@NeedsNativeEvaluate("@Unique(<no parameters>)")
-	@ParamCount({ 0, 1 })
+	@ParamCount({ 1, 1 })
 	public static ValueHolder atUnique(final FormulaContext ctx, final ValueHolder[] params) {
-		//		if (params == null || params.length == 0)
-		//			return NativeEvaluateFunctions.unique(ctx);
 		ValueHolder vh = params[0];
 		ValueHolder ret = ValueHolder.createValueHolder(String.class, vh.size);
 		for (int i = 0; i < vh.size; i++) {
