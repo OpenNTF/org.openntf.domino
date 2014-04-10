@@ -38,8 +38,12 @@ public abstract class Negators extends AtFunction {
 	public static class Factory extends FunctionFactory {
 
 		public Factory() {
-			super();
-			init(new Negators(" -") { // the space is to distinguish to Op.SUB
+			super(Negators.class);
+		}
+
+		@Override
+		protected void init(final Class<?> cls) {
+			add(new Negators(" -") { // the space is to distinguish to Op.SUB
 
 				@Override
 				protected int compute(final FormulaContext ctx, final int i) {
@@ -55,7 +59,9 @@ public abstract class Negators extends AtFunction {
 				protected boolean compute(final FormulaContext ctx, final boolean b) {
 					return !b;
 				}
-			}, new Negators(" !") {
+			});
+
+			add(new Negators(" !") {
 
 				@Override
 				protected int compute(final FormulaContext ctx, final int i) {

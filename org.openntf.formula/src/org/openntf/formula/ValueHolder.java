@@ -56,6 +56,8 @@ public abstract class ValueHolder implements Serializable {
 
 	private static ValueHolder unavailable;
 
+	private static ValueHolder defaultVar;
+
 	protected boolean immutable;
 
 	// For performance reasons we allow direct access to these members
@@ -89,6 +91,10 @@ public abstract class ValueHolder implements Serializable {
 		nothing = new ValueHolderObject<Object>(1);
 		nothing.add("");
 		nothing.immutable = true;
+
+		defaultVar = new ValueHolderObject<Object>(1);
+		defaultVar.add("");
+		defaultVar.immutable = true;
 
 		unavailable = new ValueHolderObject<String>(1);
 		unavailable.add("");
@@ -349,7 +355,7 @@ public abstract class ValueHolder implements Serializable {
 	 */
 
 	public static ValueHolder valueDefault() {
-		return stringCache[0];
+		return defaultVar;
 	}
 
 	public static ValueHolder valueNothing() {

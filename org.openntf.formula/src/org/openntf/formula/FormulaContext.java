@@ -31,34 +31,49 @@ import org.openntf.formula.ValueHolder.DataType;
 public class FormulaContext {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(FormulaContext.class.getName());
-	protected Map<String, Object> document;
+	protected Map<String, Object> dataMap;
 	private Map<String, ValueHolder> vars = new HashMap<String, ValueHolder>();
 
 	/** the formatter is needed to parse/convert number and dateTime values */
 	private Formatter formatter;
+
 	/** the parser is needed for evaluate */
 	private FormulaParser parser;
+	/** the parameterProvider for <code>{@literal @}FocParam</code> or <code>&lt;#...#&gt;</code> parameters */
+	private FormulaProvider<?> paramProvider;
+
+	public boolean useBooleans = true;
 
 	public ValueHolder TRUE;
 	public ValueHolder FALSE;
+
 	public ValueHolder NEWLINE = ValueHolder.valueOf(System.getProperty("line.separator", "\n"));
-	public boolean useBooleans = true;
-	private FormulaProvider<?> paramProvider;
 
 	/**
-	 * @param document
+	 * @param dataMap
 	 *            the context document
 	 * @param formatter
 	 *            the formatter to format date/times
+	 * @param parser
+	 *            the parser
 	 * 
 	 */
-	public void init(final Map<String, Object> document, final Formatter formatter, final FormulaParser parser) {
-		this.document = document;
+	public void init(final Map<String, Object> dataMap, final Formatter formatter, final FormulaParser parser) {
+		this.dataMap = dataMap;
 		this.formatter = formatter;
 		this.parser = parser;
 		useBooleans(true);
 	}
 
+	/**
+	 * the formula engine uses real booleans instead of 1 and 0. This is not 100% compatible to lotus, but it is more typesafe for
+	 * misspellings. If you do not want this, you can disable booleans here
+	 * 
+	 * @param useit
+	 *            Use booleans: <br>
+	 *            <code>TRUE</code> if you want to use booleans (default) <br>
+	 *            <code>FALSE</code> if you want to use 1 and 0 for boolean operatiosn.
+	 */
 	public void useBooleans(final boolean useit) {
 		useBooleans = useit;
 		if (useit) {
@@ -70,45 +85,48 @@ public class FormulaContext {
 		}
 	}
 
-	public Map<String, Object> getDocument() {
-		return document;
-	}
-
-	public ValueHolder getVar(final String key) {
-		return getVarLC(key.toLowerCase(), key);
-	}
-
 	/**
 	 * Reading a value looks first in the internal vars and then in the document. Every value read from document is cached INTERNALLY. So
 	 * pay attention if you program functions that modify the document otherwise!
 	 * 
-	 * @param varName
-	 *            the var name to read. must be lowercase
+	 * @param keyLowercase
+	 *            the key in lowercase. This is done for performance reasons
+	 * 
+	 * @param key
+	 *            the key in propercase
 	 * @return ValueHolder
 	 */
-	public ValueHolder getVarLC(final String key, final String properKey) {
-		ValueHolder var = vars.get(key);
+	public ValueHolder getVarLC(final String keyLowercase, final String key) {
+		ValueHolder var = vars.get(keyLowercase);
 		if (var != null) {
 			return var;
 		}
-		var = getField(properKey);
+		var = getField(key);
 
 		// read valid value from doc. So cache it
-		if (var != ValueHolder.valueDefault())
-			vars.put(key, var);
+		if (var != ValueHolder.valueDefault()) {
+			vars.put(keyLowercase, var);
+		}
 		return var;
 
 	}
 
-	public boolean isAvailableVarLC(final String key) {
-		ValueHolder var = vars.get(key);
+	/**
+	 * Checks if a variable or a doc field is available
+	 * 
+	 * @param keyLowercase
+	 * @param key
+	 * @return
+	 */
+	public boolean isAvailableVarLC(final String keyLowercase, final String key) {
+		ValueHolder var = vars.get(keyLowercase);
 		if (var != null) {
 			if (var.dataType == DataType.UNAVAILABLE)
 				return false;
 			return true;
 		}
-		if (document != null) {
-			return document.containsKey(key);
+		if (dataMap != null) {
+			return dataMap.containsKey(key);
 		}
 		return false;
 	}
@@ -116,26 +134,32 @@ public class FormulaContext {
 	/**
 	 * Set a value in the internal var cache. Nothing is written to a Document
 	 * 
-	 * @param key
+	 * @param keyLowercase
 	 *            the key. Must be lowercase
 	 * @param elem
 	 *            the ValueHolder to set
 	 * @return the OLD value
 	 */
-	public ValueHolder setVarLC(final String key, final ValueHolder elem) {
+	public ValueHolder setVarLC(final String keyLowercase, final ValueHolder elem) {
 		if (elem == null) {
-			ValueHolder old = vars.get(key);
-			vars.remove(key);
+			ValueHolder old = vars.get(keyLowercase);
+			vars.remove(keyLowercase);
 			return old;
 		} else {
-			return vars.put(key, elem);
+			return vars.put(keyLowercase, elem);
 		}
 	}
 
-	@SuppressWarnings("deprecation")
+	/**
+	 * reads out a field from the dataMap
+	 * 
+	 * @param key
+	 *            the key in properCase
+	 * @return
+	 */
 	public ValueHolder getField(final String key) {
-		if (document != null) {
-			Object o = document.get(key);
+		if (dataMap != null) {
+			Object o = dataMap.get(key);
 			if (o != null)
 				return ValueHolder.valueOf(o); // RPr here it is allowed to access the deprecate method
 		}
@@ -146,17 +170,17 @@ public class FormulaContext {
 	 * Set a field (and a value!)
 	 * 
 	 * @param key
-	 *            the field to set
+	 *            the fieldname to set
 	 * @param elem
-	 *            the element to set
+	 *            the element to set in the field
 	 */
 	public void setField(final String key, final ValueHolder elem) {
 		setVarLC(key.toLowerCase(), elem);
-		if (document != null) {
+		if (dataMap != null) {
 			if (elem.dataType == DataType.UNAVAILABLE) {
-				document.remove(key);
+				dataMap.remove(key);
 			} else {
-				document.put(key, elem);
+				dataMap.put(key, elem);
 			}
 		}
 	}
@@ -169,36 +193,76 @@ public class FormulaContext {
 	 * @param elem
 	 *            the element to set
 	 */
-	public void setDefault(final String key, final ValueHolder elem) {
-		if (vars.containsKey(key))
+	public void setDefaultLC(final String keyLowercase, final String key, final ValueHolder elem) {
+		if (vars.containsKey(keyLowercase))
 			return;
-		if (document != null) {
-			if (document.containsKey(key))
+		if (dataMap != null) {
+			if (dataMap.containsKey(key))
 				return;
 		}
-		setVarLC(key.toLowerCase(), elem);
+		setVarLC(keyLowercase, elem);
 	}
 
+	/**
+	 * returns the formatter for this context
+	 * 
+	 * @return
+	 */
 	public Formatter getFormatter() {
 		return formatter;
 	}
 
+	/**
+	 * returns the parser (needed for evaluate/checkFormulaSyntax)
+	 * 
+	 * @return
+	 */
 	public FormulaParser getParser() {
 		return parser;
 	}
 
-	public String getEnvLC(final String varNameLC) {
-		throw new UnsupportedOperationException("ENVIRONMENT is not supported in this context.");
+	/**
+	 * Reads a system property
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public String getEnv(final String key) {
+		return System.getProperty(key);
 	}
 
-	public void setEnvLC(final String varNameLC, final String value) {
-		throw new UnsupportedOperationException("ENVIRONMENT is not supported in this context.");
+	/**
+	 * writes a system property
+	 * 
+	 * @param key
+	 * @param value
+	 */
+	public void setEnv(final String key, final String value) {
+		System.setProperty(key, value);
 	}
 
+	//------------------------------------------------------
+	//
+	// Parameter support
+	//
+	// ------------------------------------------------------
+
+	/**
+	 * Setup for the parameter provider (needed by FOCONIS)
+	 * 
+	 * @param prov
+	 */
 	public void setParameterProvider(final FormulaProvider<?> prov) {
 		paramProvider = prov;
 	}
 
+	/**
+	 * Read a formula parameter
+	 * 
+	 * @param paramName
+	 * @return
+	 * @throws FormulaParseException
+	 */
 	public ValueHolder getParam(final String paramName) throws FormulaParseException {
 		if (paramProvider == null) {
 			return ValueHolder.valueDefault();
@@ -206,9 +270,5 @@ public class FormulaContext {
 			return ValueHolder.valueOf(paramProvider.get(paramName));
 		}
 	}
-
-	//	public ValueHolder evaluateNative(final String formula, final ValueHolder... params) {
-	//		throw new UnsupportedOperationException("EvaluateNative of '" + formula + "' is not supported in this context.");
-	//	}
 
 }

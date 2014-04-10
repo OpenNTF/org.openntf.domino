@@ -18,9 +18,12 @@ package org.openntf.formula;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 
 import org.openntf.formula.impl.AtFunction;
 import org.openntf.formula.impl.AtFunctionGeneric;
@@ -33,14 +36,35 @@ import org.openntf.formula.impl.AtFunctionSimple;
  */
 public class FunctionFactory {
 
-	private Map<String, Function> functions = new HashMap<String, Function>();
+	private static final Map<Class<?>, Map<String, Function>> functionCache = new HashMap<Class<?>, Map<String, Function>>();
+	private final Map<String, Function> functions;
 	private boolean immutable;
 
 	/**
 	 * Default constructor
 	 */
-	public FunctionFactory() {
+	private FunctionFactory() {
 		super();
+		functions = new HashMap<String, Function>();
+	}
+
+	public static FunctionFactory createInstance() {
+		FunctionFactory instance = new FunctionFactory();
+		ServiceLoader<FunctionFactory> loader = ServiceLoader.load(FunctionFactory.class);
+
+		List<FunctionFactory> loaderList = new ArrayList<FunctionFactory>();
+		for (FunctionFactory fact : loader) {
+			loaderList.add(fact);
+		}
+
+		for (int i = loaderList.size() - 1; i >= 0; i--) {
+			//TODO RPR Add logger here?
+			//System.out.println("ADD Factory " + fact.getClass().getName());
+			instance.addFactory(loaderList.get(i));
+		}
+		instance.setImmutable();
+
+		return instance;
 	}
 
 	/**
@@ -50,29 +74,16 @@ public class FunctionFactory {
 	 */
 	protected FunctionFactory(final Class<?> cls) {
 		super();
-		Method[] methods = cls.getDeclaredMethods();
-		for (Method method : methods) {
-
-			String methodName = method.getName();
-			if (methodName.startsWith("at")) {
-				if (Modifier.isPrivate(method.getModifiers())) {
-					// skip methods declared as private
-				} else if (Modifier.isStatic(method.getModifiers())) {
-
-					methodName = "@".concat(methodName.substring(2));
-
-					// here the magic happens. If the return type of the implemented function is
-					// a ValueHolder then we create an AtFunctionGeneric. You have to do multi value handling
-					// otherwise an AtFunctionSimple is created that does multi value handling for you.
-					if (ValueHolder.class.isAssignableFrom(method.getReturnType())) {
-						init(new AtFunctionGeneric(methodName, method));
-					} else {
-						init(new AtFunctionSimple(methodName, method));
-					}
-				} else {
-					throw new IllegalAccessError("Method " + methodName + " is either not static.");
-				}
+		synchronized (functionCache) {
+			Map<String, Function> tmp = functionCache.get(cls);
+			if (tmp == null) {
+				functions = new HashMap<String, Function>();
+			} else {
+				functions = tmp;
+				return;
 			}
+			init(cls);
+			functionCache.put(cls, functions);
 		}
 	}
 
@@ -93,13 +104,18 @@ public class FunctionFactory {
 	/**
 	 * If you inherit from this mehtod, you can initialize different at-Functions in the constructor
 	 */
-	protected void init(final AtFunction... fs) {
-		for (AtFunction f : fs) {
-			if (functions.put(f.getImage().toLowerCase(), f) != null) {
-				throw new IllegalArgumentException("Function " + f + " already defined.");
-			}
-		}
-		setImmutable();
+	//	private void init(final AtFunction... fs) {
+	//		System.out.println(fs[0]);
+	//		for (AtFunction f : fs) {
+	//			if (functions.put(f.getImage().toLowerCase(), f) != null) {
+	//				throw new IllegalArgumentException("Function " + f + " already defined.");
+	//			}
+	//		}
+	//		setImmutable();
+	//	}
+
+	protected void add(final AtFunction f) {
+		functions.put(f.getImage().toLowerCase(), f);
 	}
 
 	/**
@@ -118,7 +134,40 @@ public class FunctionFactory {
 	protected void addFactory(final org.openntf.formula.FunctionFactory fact) {
 		if (immutable)
 			throw new UnsupportedOperationException("Cannot add Factory, because this Factory is immutable");
-		functions.putAll(fact.getFunctions());
+		functions.putAll(fact.functions);
+	}
+
+	/**
+	 * Initializes a class
+	 * 
+	 * @param cls
+	 */
+	protected void init(final Class<?> cls) {
+		Method[] methods = cls.getDeclaredMethods();
+		for (Method method : methods) {
+
+			String methodName = method.getName();
+			if (methodName.startsWith("at")) {
+				if (Modifier.isPrivate(method.getModifiers())) {
+					// skip methods declared as private
+				} else if (Modifier.isStatic(method.getModifiers())) {
+
+					methodName = "@".concat(methodName.substring(2));
+
+					// here the magic happens. If the return type of the implemented function is
+					// a ValueHolder then we create an AtFunctionGeneric. You have to do multi value handling
+					// otherwise an AtFunctionSimple is created that does multi value handling for you.
+					if (ValueHolder.class.isAssignableFrom(method.getReturnType())) {
+						add(new AtFunctionGeneric(methodName, method));
+					} else {
+						add(new AtFunctionSimple(methodName, method));
+					}
+				} else {
+					throw new IllegalAccessError("Method " + methodName + " is either not static.");
+				}
+			}
+		}
+
 	}
 
 }

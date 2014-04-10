@@ -47,7 +47,11 @@ public class Comparators extends OperatorsAbstract {
 	public static class Factory extends FunctionFactory {
 
 		public Factory() {
-			super();
+			super(Comparators.class);
+		}
+
+		@Override
+		protected void init(final Class<?> cls) {
 
 			Matcher cmpEq = new Matcher() {
 				@Override
@@ -55,6 +59,8 @@ public class Comparators extends OperatorsAbstract {
 					return delta == 0;
 				}
 			};
+			add(new Comparators(cmpEq, "="));
+			add(new Comparators(cmpEq, "*="));
 
 			Matcher cmpNe = new Matcher() {
 				@Override
@@ -62,6 +68,8 @@ public class Comparators extends OperatorsAbstract {
 					return delta != 0;
 				}
 			};
+			add(new Comparators(cmpNe, "<>"));
+			add(new Comparators(cmpNe, "*<>"));
 
 			Matcher cmpLt = new Matcher() {
 				@Override
@@ -69,37 +77,35 @@ public class Comparators extends OperatorsAbstract {
 					return delta < 0;
 				}
 			};
+			add(new Comparators(cmpLt, "<"));
+			add(new Comparators(cmpLt, "*<"));
+
 			Matcher cmpGt = new Matcher() {
 				@Override
 				public boolean match(final int delta) {
 					return delta > 0;
 				}
 			};
+			add(new Comparators(cmpGt, ">"));
+			add(new Comparators(cmpGt, "*>"));
+
 			Matcher cmpLte = new Matcher() {
 				@Override
 				public boolean match(final int delta) {
 					return delta <= 0;
 				}
 			};
+			add(new Comparators(cmpLte, "<="));
+			add(new Comparators(cmpLte, "*<="));
+
 			Matcher cmpGte = new Matcher() {
 				@Override
 				public boolean match(final int delta) {
 					return delta >= 0;
 				}
 			};
-
-			init(new Comparators(cmpEq, "="), 	//
-					new Comparators(cmpEq, "*="), 	//
-					new Comparators(cmpNe, "<>"), 	//
-					new Comparators(cmpNe, "*<>"), 	//
-					new Comparators(cmpLt, "<"), 	//
-					new Comparators(cmpLt, "*<"), 	//
-					new Comparators(cmpGt, ">"), 	//
-					new Comparators(cmpGt, "*>"), 	//
-					new Comparators(cmpLte, "<="), 	//
-					new Comparators(cmpLte, "*<="),	//
-					new Comparators(cmpGte, ">="), 	//
-					new Comparators(cmpGte, "*>="));
+			add(new Comparators(cmpGte, ">="));
+			add(new Comparators(cmpGte, "*>="));
 		}
 	}
 

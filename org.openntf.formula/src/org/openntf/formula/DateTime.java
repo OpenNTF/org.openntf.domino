@@ -1,17 +1,18 @@
 /*
- * Copyright 2013
+ * © Copyright FOCONIS AG, 2014
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at:
  * 
- * http://www.apache.org/licenses/LICENSE-2.0 
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software 
  * distributed under the License is distributed on an "AS IS" BASIS, 
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
  * implied. See the License for the specific language governing 
  * permissions and limitations under the License.
+ * 
  */
 package org.openntf.formula;
 
@@ -21,7 +22,8 @@ import java.util.Date;
 import com.ibm.icu.util.Calendar;
 
 /**
- * The Interface SimpleDateTime.
+ * This is the DateTime interface that is used in formulas. It is very similar to the org.opennft.domino.DateTime interface but this has no
+ * dependency to the lotus API, so that the formula engine can be used in a non-notes environmment.
  */
 public interface DateTime extends Comparator<DateTime> {
 

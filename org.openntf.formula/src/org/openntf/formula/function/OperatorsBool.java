@@ -56,8 +56,11 @@ public class OperatorsBool extends OperatorsAbstract {
 	public static class Factory extends FunctionFactory {
 
 		public Factory() {
-			super();
+			super(OperatorsBool.class);
+		}
 
+		@Override
+		protected void init(final Class<?> cls) {
 			// Define the computers
 			Computer or = new Computer("|") {
 
@@ -96,8 +99,8 @@ public class OperatorsBool extends OperatorsAbstract {
 				}
 			};
 
-			init(new OperatorsBool(and, "&"), 		// 
-					new OperatorsBool(or, "|"));
+			add(new OperatorsBool(and, "&"));
+			add(new OperatorsBool(or, "|"));
 		}
 	}
 

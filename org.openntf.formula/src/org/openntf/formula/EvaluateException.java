@@ -25,14 +25,17 @@ package org.openntf.formula;
 public class EvaluateException extends Exception {
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Creates a new exception with reference to codeLine and codeColumn
+	 * 
+	 * @param codeLine
+	 * @param codeColumn
+	 * @param cause
+	 */
 	public EvaluateException(final int codeLine, final int codeColumn, final Throwable cause) {
 		super(initialise(codeLine, codeColumn, cause), cause);
 	}
 
-	/**
-	 * 
-	 * @param cause
-	 */
 	private static String initialise(final int codeLine, final int codeColumn, final Throwable cause) {
 		String eol = System.getProperty("line.separator", "\n");
 

@@ -9,5 +9,6 @@
 	<classpathentry kind="src" path="domsrc"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="resources"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.openntf.formula"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

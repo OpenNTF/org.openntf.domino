@@ -19,7 +19,7 @@ public class ASTAtIsAvailable extends SimpleNode {
 	protected boolean checkAvailable(final FormulaContext ctx) throws FormulaReturnException {
 		if (children[0] instanceof ASTGetVariable) {
 			ASTGetVariable child = (ASTGetVariable) children[0];
-			return ctx.isAvailableVarLC(child.variableNameLC);
+			return ctx.isAvailableVarLC(child.variableNameLC, child.variableName);
 		}
 		return children[0].evaluate(ctx).dataType != DataType.UNAVAILABLE;
 	}

@@ -71,9 +71,12 @@ public class Operators extends OperatorsAbstract {
 	 * The Factory that returns a set of operators
 	 */
 	public static class Factory extends FunctionFactory {
-
 		public Factory() {
-			super();
+			super(Operators.class);
+		}
+
+		@Override
+		protected void init(final Class<?> cls) {
 
 			// Define the computers
 			Computer add = new Computer("+") {
@@ -149,14 +152,14 @@ public class Operators extends OperatorsAbstract {
 
 			};
 
-			init(new Operators(add, "+"), 		// 
-					new Operators(add, "*+"), 	//
-					new Operators(sub, "-"), 	//
-					new Operators(sub, "*-"), 	//
-					new Operators(mul, "*"), 	//
-					new Operators(mul, "**"), 	//
-					new Operators(div, "/"), 	//
-					new Operators(div, "*/"));
+			add(new Operators(add, "+"));
+			add(new Operators(add, "*+"));
+			add(new Operators(sub, "-"));
+			add(new Operators(sub, "*-"));
+			add(new Operators(mul, "*"));
+			add(new Operators(mul, "**"));
+			add(new Operators(div, "/"));
+			add(new Operators(div, "*/"));
 		}
 	}
 

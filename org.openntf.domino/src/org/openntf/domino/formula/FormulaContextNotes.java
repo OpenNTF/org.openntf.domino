@@ -32,9 +32,9 @@ public class FormulaContextNotes extends FormulaContext {
 		Database db = null;
 
 		lotus.domino.Document rawDocument = null;
-		if (document instanceof Document) {
-			db = ((Document) document).getAncestorDatabase();
-			rawDocument = Factory.toLotus((Document) document);
+		if (dataMap instanceof Document) {
+			db = ((Document) dataMap).getAncestorDatabase();
+			rawDocument = Factory.toLotus((Document) dataMap);
 		} else {
 			db = session.getCurrentDatabase();
 		}
@@ -73,17 +73,21 @@ public class FormulaContextNotes extends FormulaContext {
 	}
 
 	@Override
-	public String getEnvLC(final String varNameLC) {
+	public String getEnv(final String varNameLC) {
 		return Factory.getSession().getEnvironmentString(varNameLC);
 	}
 
 	@Override
-	public void setEnvLC(final String varNameLC, final String value) {
-		Factory.getSession().setEnvironmentVar(varNameLC, value);
+	public void setEnv(final String varName, final String value) {
+		Factory.getSession().setEnvironmentVar(varName, value);
 	}
 
 	public Database getDatabase() {
-		return document instanceof Document ? ((Document) document).getAncestorDatabase() : Factory.getSession().getCurrentDatabase();
+		return dataMap instanceof Document ? ((Document) dataMap).getAncestorDatabase() : Factory.getSession().getCurrentDatabase();
+	}
+
+	public Document getDocument() {
+		return ((Document) dataMap);
 	}
 
 }

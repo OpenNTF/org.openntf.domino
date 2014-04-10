@@ -27,10 +27,11 @@ public enum DominoFunctions {
 		String value = (params.length == 1) ? null : params[1].getString(0);
 		ValueHolder ret = ValueHolder.createValueHolder(String.class, vh.size);
 		for (int i = 0; i < vh.size; i++) {
-			String keyLC = vh.getString(i).toLowerCase();
-			ret.add(ctx.getEnvLC(keyLC));
+			String key = vh.getString(i);
+			//String keyLC = key.toLowerCase();
+			ret.add(ctx.getEnv(key));
 			if (value != null)
-				ctx.setEnvLC(keyLC, value);
+				ctx.setEnv(key, value);
 		}
 		return ret;
 	}
@@ -50,10 +51,12 @@ public enum DominoFunctions {
 			throw new UnsupportedOperationException("No database set: Can't execute @GetDocField");
 		String unid = params[0].getString(0);
 		Map<String, Object> doc;
-		if (unid.equals(ctx.getVar("@documentuniqueid").getString(0)))
+
+		if (unid.equals(ctx.getDocument().getUniversalID())) {
 			doc = ctx.getDocument();
-		else if ((doc = db.getDocumentByUNID(unid)) == null)
+		} else if ((doc = db.getDocumentByUNID(unid)) == null) {
 			return ValueHolder.valueDefault();
+		}
 		return ValueHolder.valueOf(doc.get(params[1].getString(0)));
 	}
 
@@ -65,10 +68,12 @@ public enum DominoFunctions {
 			throw new UnsupportedOperationException("No database set: Can't execute @SetDocField");
 		String unid = params[0].getString(0);
 		Map<String, Object> doc;
-		if (unid.equals(ctx.getVar("@documentuniqueid").getString(0)))
+
+		if (unid.equals(ctx.getDocument().getUniversalID())) {
 			doc = ctx.getDocument();
-		else if ((doc = db.getDocumentByUNID(unid)) == null)
+		} else if ((doc = db.getDocumentByUNID(unid)) == null) {
 			throw new NoSuchElementException("Document with UNID '" + unid + "' not found");
+		}
 		doc.put(params[1].getString(0), params[2]);
 		if (doc != ctx.getDocument())
 			((Document) doc).save();

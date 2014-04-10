@@ -38,7 +38,6 @@ public class ASTUserDefinedFunctionDef extends SimpleNode {
 		}
 
 		function = new UserDefinedFunction(functionName, parameter, parser);
-		System.out.println("FunctionName is " + functionName);
 		parser.declareFunction(function);
 	}
 

@@ -32,8 +32,13 @@ import org.openntf.formula.parse.AtFormulaParserImpl;
  */
 public abstract class FormulaParser {
 
+	/** the formatter to format/parse date time values while parsing the formula */
 	protected Formatter formatter;
+
+	/** the functionFactory */
 	protected FunctionFactory functionFactory;
+
+	/** the includeProvider for {@literal @}include function */
 	protected FormulaProvider<ASTNode> includeProvider;
 
 	protected Map<String, Function> customFunc;
@@ -80,10 +85,6 @@ public abstract class FormulaParser {
 	 */
 	public void declareFunction(final Function func) {
 		String funcName = func.getImage();
-		//		AtFunction currentFunc = getFunction(funcName);
-		//		if (currentFunc != null) {
-		//				throw new IllegalArgumentException("Function '" + funcName + "' cannot be redeclared");
-		//		}
 		customFunc.put(funcName.toLowerCase(), func);
 	}
 
@@ -146,6 +147,12 @@ public abstract class FormulaParser {
 		}
 	}
 
+	/**
+	 * return a copy of the current parser. This is needed for include, because we cannot start a new parse task unless the old one is
+	 * terminated
+	 * 
+	 * @return
+	 */
 	private FormulaParser getCopy() {
 		AtFormulaParserImpl parser = new AtFormulaParserImpl(new java.io.StringReader(""));
 		parser.reset();
@@ -184,7 +191,9 @@ public abstract class FormulaParser {
 	 */
 	final public ASTNode parse(final String formula, final boolean useFocFormula) throws FormulaParseException {
 		StringReader sr = new java.io.StringReader(formula);
-		return parse(sr, useFocFormula);
+		ASTNode node = parse(sr, useFocFormula);
+		node.setFormula(formula);
+		return node;
 	}
 
 	/**
@@ -198,7 +207,9 @@ public abstract class FormulaParser {
 	 */
 	final public ASTNode parse(final String formula) throws FormulaParseException {
 		StringReader sr = new java.io.StringReader(formula);
-		return parse(sr, false);
+		ASTNode node = parse(sr, false);
+		node.setFormula(formula);
+		return node;
 	}
 
 	/**
@@ -241,6 +252,12 @@ public abstract class FormulaParser {
 		includeProvider = prov;
 	}
 
+	/**
+	 * get a node to include
+	 * 
+	 * @param key
+	 * @return
+	 */
 	public ASTNode getInclude(final String key) {
 		if (includeProvider != null) {
 			return includeProvider.get(key);

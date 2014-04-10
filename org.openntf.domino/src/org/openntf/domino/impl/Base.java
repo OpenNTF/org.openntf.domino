@@ -739,6 +739,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 				} catch (NotesException e) {
 					DominoUtils.handleException(e);
 				}
+			} else if (value instanceof org.openntf.formula.DateTime) {
+				return javaToDominoFriendly(value, context, recycleThis);
 			} else if (value instanceof org.openntf.domino.DateTime || value instanceof org.openntf.domino.DateRange) {
 				// according to documentation, these datatypes should be compatible to write to a field ... but DateRanges make problems
 				return toLotus((org.openntf.domino.Base) value, recycleThis);
@@ -836,11 +838,19 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			// TODO Check if this is greater than what Domino can handle and serialize if so
 			// CHECKME: Is "doubleValue" really needed. (according to help.nsf only Integer and Double is supported, so keep it)
 			return ((Number) value).doubleValue();
-		} else if (value instanceof java.util.Date || value instanceof java.util.Calendar) {
+
+		} else if (value instanceof java.util.Date || value instanceof java.util.Calendar || value instanceof org.openntf.formula.DateTime) {
 			lotus.domino.Session lsess = toLotus(Factory.getSession(context));
 			try {
-				lotus.domino.DateTime dt = value instanceof java.util.Date ? lsess.createDateTime((java.util.Date) value) : lsess
-						.createDateTime((java.util.Calendar) value);
+
+				lotus.domino.DateTime dt = null;
+				if (value instanceof java.util.Date) {
+					dt = lsess.createDateTime((java.util.Date) value);
+				} else if (value instanceof org.openntf.formula.DateTime) {
+					dt = lsess.createDateTime(((org.openntf.formula.DateTime) value).toJavaDate());
+				} else {
+					dt = lsess.createDateTime((java.util.Calendar) value);
+				}
 				if (recycleThis != null) {
 					recycleThis.add(dt);
 				}

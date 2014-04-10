@@ -13,7 +13,7 @@ import org.openntf.formula.Formulas;
 public class TestServiceLoader {
 
 	public static void main(final String[] args) throws FormulaParseException, EvaluateException {
-		// TODO Auto-generated method stub
+
 		final FormulaParser p = Formulas.getParser();
 
 		p.setIncludeProvider(new FormulaProvider<ASTNode>() {

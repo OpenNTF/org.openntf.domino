@@ -21,7 +21,7 @@ import java.util.Locale;
 
 import com.ibm.icu.util.Calendar;
 
-// TODO RPr This is not yet finished
+// TODO RPr Needs a lot of comments
 public interface Formatter {
 
 	Locale getLocale();

@@ -208,7 +208,6 @@ public enum MathFunctions {
 
 	@ParamCount(1)
 	public static Number atSign(final Number arg) {
-		//		System.out.println("Number=" + arg);
 		int i = (arg instanceof Integer) ? arg.intValue() : Double.compare(arg.doubleValue(), 0.0);
 		return (i == 0) ? 0 : (i < 0) ? -1 : 1;
 	}

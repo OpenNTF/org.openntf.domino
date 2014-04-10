@@ -95,11 +95,11 @@ public class ASTAssignment extends SimpleNode {
 			break;
 
 		case ENV:
-			ctx.setEnvLC(varNameLC, value.getString(0));
+			ctx.setEnv(varName, value.getString(0));
 			break;
 
 		case DEFAULT:
-			ctx.setDefault(varName, value);
+			ctx.setDefaultLC(varNameLC, varName, value);
 			break;
 		}
 		return value;

@@ -42,6 +42,7 @@ public abstract class SimpleNode implements Node {
 	private transient Set<String> variables;
 	private transient Set<String> readFields;
 	private transient Set<String> modifiedFields;
+	private String formula;
 
 	/**
 	 * create a new node with ID and parser as reference
@@ -52,6 +53,24 @@ public abstract class SimpleNode implements Node {
 		Token t = p.token;
 		codeLine = t.beginLine;
 		codeColumn = t.beginColumn;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.formula.ASTNode#setFormula(java.lang.String)
+	 */
+	public void setFormula(final String formula) {
+		this.formula = formula;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.formula.ASTNode#getFormula()
+	 */
+	public String getFormula() {
+		if (formula != null)
+			return formula;
+		if (parent != null)
+			return parent.getFormula();
+		return null;
 	}
 
 	/*

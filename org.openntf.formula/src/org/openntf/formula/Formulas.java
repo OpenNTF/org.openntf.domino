@@ -1,8 +1,6 @@
 package org.openntf.formula;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -10,28 +8,17 @@ import java.util.ServiceLoader;
 import org.openntf.formula.impl.FormatterImpl;
 import org.openntf.formula.parse.AtFormulaParserImpl;
 
+/**
+ * This is the general factory
+ * 
+ * @author Roland Praml, FOCONIS AG
+ * 
+ */
 public enum Formulas {
 	;
 
-	public static FunctionFactory getFunctionFactory() {
-		FunctionFactory instance = new FunctionFactory();
-		ServiceLoader<FunctionFactory> loader = ServiceLoader.load(FunctionFactory.class);
-
-		List<FunctionFactory> loaderList = new ArrayList<FunctionFactory>();
-		for (FunctionFactory fact : loader) {
-			loaderList.add(fact);
-		}
-
-		for (int i = loaderList.size() - 1; i >= 0; i--) {
-			//TODO RPR Add logger here?
-			//System.out.println("ADD Factory " + fact.getClass().getName());
-			instance.addFactory(loaderList.get(i));
-		}
-
-		instance.setImmutable();
-
-		return instance;
-	}
+	private static final ThreadLocal<FormulaParser> parserCache = new ThreadLocal<FormulaParser>();
+	private static final ThreadLocal<FunctionFactory> functionFactoryCache = new ThreadLocal<FunctionFactory>();
 
 	/*----------------------------------------------------------------------------*/
 	private static Map<Locale, Formatter> instances = new HashMap<Locale, Formatter>();
@@ -49,6 +36,11 @@ public enum Formulas {
 		return getFormatter(null);
 	} /*----------------------------------------------------------------------------*/
 
+	public void reset() {
+		parserCache.set(null);
+		functionFactoryCache.set(null);
+	}
+
 	/**
 	 * This function returns a preconfigured default instance
 	 */
@@ -62,7 +54,21 @@ public enum Formulas {
 	}
 
 	public static FormulaParser getParser() {
-		return getParser(getFormatter(), getFunctionFactory());
+		FormulaParser parser = parserCache.get();
+		if (parser == null) {
+			parser = getParser(getFormatter(), getFunctionFactory());
+			parserCache.set(parser);
+		}
+		return parser;
+	}
+
+	public static FunctionFactory getFunctionFactory() {
+		FunctionFactory functionFactory = functionFactoryCache.get();
+		if (functionFactory == null) {
+			functionFactory = FunctionFactory.createInstance();
+			functionFactoryCache.set(functionFactory);
+		}
+		return functionFactory;
 	}
 
 	public static FormulaContext createContext(final Map<String, Object> document, final FormulaParser parser) {

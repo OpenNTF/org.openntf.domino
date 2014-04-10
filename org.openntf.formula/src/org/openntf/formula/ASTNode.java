@@ -67,5 +67,19 @@ public interface ASTNode {
 	 * @return set of fields
 	 */
 	public Set<String> getModifiedFields();
+
+	/**
+	 * Hint for formula (if exception occurs)
+	 * 
+	 * @param formula
+	 */
+	public void setFormula(String formula);
+
+	/**
+	 * Returns the formula for the current AST-Tree
+	 * 
+	 * @return
+	 */
+	public String getFormula();
 }
 /* JavaCC - OriginalChecksum=54dec3b6b2c592c5fbe2fc5be72328d2 (do not edit this line) */
