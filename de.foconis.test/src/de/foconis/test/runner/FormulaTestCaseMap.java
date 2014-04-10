@@ -4,8 +4,8 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
-import org.openntf.domino.formula.EvaluateException;
-import org.openntf.domino.formula.FormulaParseException;
+import org.openntf.formula.EvaluateException;
+import org.openntf.formula.FormulaParseException;
 
 @RunWith(FormulaTestSuite.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -26,7 +26,7 @@ public class FormulaTestCaseMap extends FormulaTestCaseAbstract {
 	}
 
 	@Override
-	@Test(expected = org.openntf.domino.formula.EvaluateException.class)
+	@Test(expected = org.openntf.formula.EvaluateException.class)
 	public void testMapFail() throws FormulaParseException, EvaluateException {
 		super.testMapFail();
 	}

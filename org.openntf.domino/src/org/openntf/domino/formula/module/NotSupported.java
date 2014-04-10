@@ -1,8 +1,8 @@
 package org.openntf.domino.formula.module;
 
-import org.openntf.domino.formula.FunctionFactory;
-import org.openntf.domino.formula.ValueHolder;
-import org.openntf.domino.formula.annotation.ParamCount;
+import org.openntf.formula.FunctionFactory;
+import org.openntf.formula.ValueHolder;
+import org.openntf.formula.annotation.ParamCount;
 
 /**
  * at-Functions listed here are not supported. This implementation defines paramcount only

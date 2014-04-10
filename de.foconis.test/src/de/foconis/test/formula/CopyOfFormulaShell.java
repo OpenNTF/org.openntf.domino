@@ -18,17 +18,17 @@ import jline.Terminal;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.ext.Session.Fixes;
-import org.openntf.domino.formula.ASTNode;
-import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.FormulaParseException;
-import org.openntf.domino.formula.FormulaParser;
-import org.openntf.domino.formula.Formulas;
-import org.openntf.domino.formula.Function;
-import org.openntf.domino.formula.FunctionFactory;
 import org.openntf.domino.formula.module.NotImplemented;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.formula.ASTNode;
+import org.openntf.formula.FormulaContext;
+import org.openntf.formula.FormulaParseException;
+import org.openntf.formula.FormulaParser;
+import org.openntf.formula.Formulas;
+import org.openntf.formula.Function;
+import org.openntf.formula.FunctionFactory;
 
 public class CopyOfFormulaShell implements Runnable {
 	private static boolean cacheAST = false;

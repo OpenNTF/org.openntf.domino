@@ -12,13 +12,13 @@ import jline.ConsoleReader;
 import jline.SimpleCompletor;
 
 import org.openntf.domino.ext.Session.Fixes;
-import org.openntf.domino.formula.Formulas;
-import org.openntf.domino.formula.Function;
-import org.openntf.domino.formula.FunctionFactory;
 import org.openntf.domino.formula.module.NotImplemented;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.formula.Formulas;
+import org.openntf.formula.Function;
+import org.openntf.formula.FunctionFactory;
 
 public class FormulaShell extends TestRunner {
 

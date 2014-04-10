@@ -1,7 +1,7 @@
 package de.foconis.test.runner;
 
-import static org.openntf.domino.formula.module.TextFunctions.atLeft;
-import static org.openntf.domino.formula.module.TextFunctions.atRight;
+import static org.openntf.formula.function.TextFunctions.atLeft;
+import static org.openntf.formula.function.TextFunctions.atRight;
 
 import java.io.BufferedReader;
 import java.io.File;

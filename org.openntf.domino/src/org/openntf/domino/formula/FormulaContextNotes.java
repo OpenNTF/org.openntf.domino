@@ -9,6 +9,9 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.Factory;
+import org.openntf.formula.EvaluateException;
+import org.openntf.formula.FormulaContext;
+import org.openntf.formula.ValueHolder;
 
 public class FormulaContextNotes extends FormulaContext {
 	private static final Logger log_ = Logger.getLogger(FormulaContextNotes.class.getName());

@@ -5,11 +5,11 @@ import java.util.NoSuchElementException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
-import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaContextNotes;
-import org.openntf.domino.formula.FunctionFactory;
-import org.openntf.domino.formula.ValueHolder;
-import org.openntf.domino.formula.annotation.ParamCount;
+import org.openntf.formula.FormulaContext;
+import org.openntf.formula.FunctionFactory;
+import org.openntf.formula.ValueHolder;
+import org.openntf.formula.annotation.ParamCount;
 
 public enum DominoFunctions {
 

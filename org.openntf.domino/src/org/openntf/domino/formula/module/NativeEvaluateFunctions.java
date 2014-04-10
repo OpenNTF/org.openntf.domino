@@ -1,11 +1,11 @@
 package org.openntf.domino.formula.module;
 
-import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContextNotes;
-import org.openntf.domino.formula.FunctionFactory;
-import org.openntf.domino.formula.ValueHolder;
-import org.openntf.domino.formula.ValueHolder.DataType;
-import org.openntf.domino.formula.annotation.ParamCount;
+import org.openntf.formula.EvaluateException;
+import org.openntf.formula.FunctionFactory;
+import org.openntf.formula.ValueHolder;
+import org.openntf.formula.ValueHolder.DataType;
+import org.openntf.formula.annotation.ParamCount;
 
 public enum NativeEvaluateFunctions {
 	;

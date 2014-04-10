@@ -10,14 +10,14 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.openntf.domino.formula.EvaluateException;
-import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.Formulas;
-import org.openntf.domino.formula.ValueHolder;
-import org.openntf.domino.formula.ValueHolder.DataType;
-import org.openntf.domino.formula.ValueHolderBoolean;
-import org.openntf.domino.formula.ValueHolderNumber;
-import org.openntf.domino.formula.ValueHolderObject;
+import org.openntf.formula.EvaluateException;
+import org.openntf.formula.FormulaContext;
+import org.openntf.formula.Formulas;
+import org.openntf.formula.ValueHolder;
+import org.openntf.formula.ValueHolderBoolean;
+import org.openntf.formula.ValueHolderNumber;
+import org.openntf.formula.ValueHolderObject;
+import org.openntf.formula.ValueHolder.DataType;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ValueHolderNumberTest {
@@ -43,10 +43,10 @@ public class ValueHolderNumberTest {
 
 	@Test
 	public final void testDataTypeHandling() {
-		assertTrue("Instance of ValueHolderNumber", vhi instanceof org.openntf.domino.formula.ValueHolderNumber);
-		assertTrue("Instance of ValueHolderNumber", vhd instanceof org.openntf.domino.formula.ValueHolderNumber);
-		assertTrue("Instance of ValueHolderNumber", vhI instanceof org.openntf.domino.formula.ValueHolderNumber);
-		assertTrue("Instance of ValueHolderNumber", vhD instanceof org.openntf.domino.formula.ValueHolderNumber);
+		assertTrue("Instance of ValueHolderNumber", vhi instanceof org.openntf.formula.ValueHolderNumber);
+		assertTrue("Instance of ValueHolderNumber", vhd instanceof org.openntf.formula.ValueHolderNumber);
+		assertTrue("Instance of ValueHolderNumber", vhI instanceof org.openntf.formula.ValueHolderNumber);
+		assertTrue("Instance of ValueHolderNumber", vhD instanceof org.openntf.formula.ValueHolderNumber);
 
 		assertEquals(DataType._UNSET, vhi.dataType);
 		assertEquals(DataType._UNSET, vhd.dataType);

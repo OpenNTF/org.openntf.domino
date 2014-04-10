@@ -9,14 +9,14 @@ import java.util.List;
 import lotus.domino.NotesException;
 import lotus.domino.Session;
 
-import org.openntf.domino.formula.ASTNode;
-import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.FormulaParser;
-import org.openntf.domino.formula.Formulas;
-import org.openntf.domino.formula.Function;
 import org.openntf.domino.impl.Base;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;
+import org.openntf.formula.ASTNode;
+import org.openntf.formula.FormulaContext;
+import org.openntf.formula.FormulaParser;
+import org.openntf.formula.Formulas;
+import org.openntf.formula.Function;
 
 public class TestRunner extends TestRunnerStdIn {
 	public static void main(final String[] args) {

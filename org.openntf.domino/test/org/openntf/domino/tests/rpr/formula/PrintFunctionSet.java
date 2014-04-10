@@ -6,10 +6,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.openntf.domino.formula.Formulas;
-import org.openntf.domino.formula.Function;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;
+import org.openntf.formula.Formulas;
+import org.openntf.formula.Function;
 
 public class PrintFunctionSet extends TestRunnerStdIn {
 	public static void main(final String[] args) {

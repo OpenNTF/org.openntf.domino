@@ -3,8 +3,8 @@ package de.foconis.test.runner;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.openntf.domino.formula.module.TextFunctions.atLeft;
-import static org.openntf.domino.formula.module.TextFunctions.atRight;
+import static org.openntf.formula.function.TextFunctions.atLeft;
+import static org.openntf.formula.function.TextFunctions.atRight;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,13 +21,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
-import org.openntf.domino.formula.ASTNode;
-import org.openntf.domino.formula.EvaluateException;
-import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.FormulaParseException;
-import org.openntf.domino.formula.Formulas;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Strings;
+import org.openntf.formula.ASTNode;
+import org.openntf.formula.EvaluateException;
+import org.openntf.formula.FormulaContext;
+import org.openntf.formula.FormulaParseException;
+import org.openntf.formula.Formulas;
 
 @RunWith(FormulaTestSuite.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)

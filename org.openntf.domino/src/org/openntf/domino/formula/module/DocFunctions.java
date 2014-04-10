@@ -3,12 +3,12 @@ package org.openntf.domino.formula.module;
 import java.util.Map;
 
 import org.openntf.domino.Document;
-import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.FunctionFactory;
-import org.openntf.domino.formula.ValueHolder;
-import org.openntf.domino.formula.annotation.OpenNTF;
-import org.openntf.domino.formula.annotation.ParamCount;
 import org.openntf.domino.utils.Strings;
+import org.openntf.formula.FormulaContext;
+import org.openntf.formula.FunctionFactory;
+import org.openntf.formula.ValueHolder;
+import org.openntf.formula.annotation.OpenNTF;
+import org.openntf.formula.annotation.ParamCount;
 
 public enum DocFunctions {
 	;

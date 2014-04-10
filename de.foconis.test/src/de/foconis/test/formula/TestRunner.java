@@ -19,16 +19,16 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.ext.Session.Fixes;
-import org.openntf.domino.formula.ASTNode;
-import org.openntf.domino.formula.EvaluateException;
-import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.FormulaParseException;
-import org.openntf.domino.formula.FormulaParser;
-import org.openntf.domino.formula.Formulas;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Strings;
+import org.openntf.formula.ASTNode;
+import org.openntf.formula.EvaluateException;
+import org.openntf.formula.FormulaContext;
+import org.openntf.formula.FormulaParseException;
+import org.openntf.formula.FormulaParser;
+import org.openntf.formula.Formulas;
 
 public class TestRunner implements Runnable {
 	protected Database db;
@@ -338,19 +338,19 @@ public class TestRunner implements Runnable {
 						equals = false;
 						break;
 					}
-				} else if ((a instanceof org.openntf.domino.formula.DateTime || a instanceof lotus.domino.DateTime) && // LF
-						(b instanceof org.openntf.domino.formula.DateTime || b instanceof lotus.domino.DateTime)) {
+				} else if ((a instanceof org.openntf.formula.DateTime || a instanceof lotus.domino.DateTime) && // LF
+						(b instanceof org.openntf.formula.DateTime || b instanceof lotus.domino.DateTime)) {
 					try {
-						org.openntf.domino.formula.DateTime sdt1, sdt2;
-						if (a instanceof org.openntf.domino.formula.DateTime)
-							sdt1 = (org.openntf.domino.formula.DateTime) a;
+						org.openntf.formula.DateTime sdt1, sdt2;
+						if (a instanceof org.openntf.formula.DateTime)
+							sdt1 = (org.openntf.formula.DateTime) a;
 						else {
 							lotus.domino.DateTime ldt = (lotus.domino.DateTime) a;
 							sdt1 = Formulas.getFormatter().getNewInitializedSDTInstance(ldt.toJavaDate(), ldt.getDateOnly().isEmpty(),
 									ldt.getTimeOnly().isEmpty());
 						}
-						if (b instanceof org.openntf.domino.formula.DateTime)
-							sdt2 = (org.openntf.domino.formula.DateTime) b;
+						if (b instanceof org.openntf.formula.DateTime)
+							sdt2 = (org.openntf.formula.DateTime) b;
 						else {
 							lotus.domino.DateTime ldt = (lotus.domino.DateTime) b;
 							sdt2 = Formulas.getFormatter().getNewInitializedSDTInstance(ldt.toJavaDate(), ldt.getDateOnly().isEmpty(),

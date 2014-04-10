@@ -926,13 +926,13 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	/*
 	 * A few tiny methods needed for the org.openntf.domino.formula.DateTime interface
 	 */
-	public int timeDifference(final org.openntf.domino.formula.DateTime dt) {
+	public int timeDifference(final org.openntf.formula.DateTime dt) {
 		if (dt instanceof lotus.domino.DateTime)
 			return timeDifference((lotus.domino.DateTime) dt);
 		return (int) timeDifferenceDouble(dt);
 	}
 
-	public double timeDifferenceDouble(final org.openntf.domino.formula.DateTime dt) {
+	public double timeDifferenceDouble(final org.openntf.formula.DateTime dt) {
 		if (dt instanceof lotus.domino.DateTime)
 			return timeDifferenceDouble((lotus.domino.DateTime) dt);
 		Calendar thisCal = this.toJavaCal();
@@ -940,7 +940,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		return (thisCal.getTimeInMillis() - thatCal.getTimeInMillis()) * 1000;
 	}
 
-	public int compare(final org.openntf.domino.formula.DateTime sdt1, final org.openntf.domino.formula.DateTime sdt2) {
+	public int compare(final org.openntf.formula.DateTime sdt1, final org.openntf.formula.DateTime sdt2) {
 		if (sdt1 instanceof DateTime && sdt2 instanceof DateTime)
 			return ((DateTime) sdt1).compareTo((DateTime) sdt2);
 		return sdt1.toJavaDate().compareTo(sdt2.toJavaDate());
