@@ -16,6 +16,9 @@
  */
 package org.openntf.formula.function;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,6 +31,8 @@ import org.openntf.formula.DateTime;
 import org.openntf.formula.Formatter;
 import org.openntf.formula.Formatter.LotusDateTimeOptions;
 import org.openntf.formula.FormulaContext;
+import org.openntf.formula.FormulaParseException;
+import org.openntf.formula.FormulaParser;
 import org.openntf.formula.Formulas;
 import org.openntf.formula.FunctionFactory;
 import org.openntf.formula.ValueHolder;
@@ -341,7 +346,22 @@ public enum TextFunctions {
 	@DiffersFromLotus("Lotus doesn't trim tabs")
 	@ParamCount(1)
 	public static String atTrim(final String whom) {
-		return whom.trim();
+		int lh = whom.length();
+		char[] buff = new char[lh + 1];
+		boolean lastWasSpace = true;
+		int filled = 0;
+		for (int i = 0; i < lh; i++) {
+			char c = whom.charAt(i);
+			if (Character.isWhitespace(c))
+				lastWasSpace = true;
+			else {
+				if (lastWasSpace && filled != 0)
+					buff[filled++] = ' ';
+				buff[filled++] = c;
+				lastWasSpace = false;
+			}
+		}
+		return (filled == lh) ? whom : new String(buff, 0, filled);
 	}
 
 	/*----------------------------------------------------------------------------*/
@@ -406,7 +426,7 @@ public enum TextFunctions {
 		int bedarf = (vh.size - 1) * sep.length();
 		for (int i = 0; i < vh.size; i++)
 			bedarf += vh.getString(i).length();
-		StringBuffer sb = new StringBuffer(bedarf);
+		StringBuilder sb = new StringBuilder(bedarf);
 		boolean first = true;
 		for (int i = 0; i < vh.size; i++) {
 			if (first)
@@ -1270,4 +1290,54 @@ public enum TextFunctions {
 		}
 		return ret;
 	}
+
+	/*----------------------------------------------------------------------------*/
+	/*
+	 * @URLDecode, @URLEncode
+	 */
+	/*----------------------------------------------------------------------------*/
+	@ParamCount(2)
+	public static ValueHolder atURLDecode(final ValueHolder params[]) {
+		return urlDecEnc(params, false);
+	}
+
+	@ParamCount(2)
+	public static ValueHolder atURLEncode(final ValueHolder params[]) {
+		return urlDecEnc(params, true);
+	}
+
+	private static ValueHolder urlDecEnc(final ValueHolder[] params, final boolean encode) {
+		String opt = params[0].getString(0);
+		if (!"domino".equalsIgnoreCase(opt) && (!"utf-8".equalsIgnoreCase(opt)))
+			throw new IllegalArgumentException("Decode type '" + opt + "' not supported");
+		ValueHolder vh = params[1];
+		ValueHolder ret = ValueHolder.createValueHolder(String.class, vh.size);
+		try {
+			for (int i = 0; i < vh.size; i++) {
+				String what = vh.getString(i);
+				ret.add(encode ? URLEncoder.encode(what, "UTF-8").replace("+", "%20") : URLDecoder.decode(what, "UTF-8"));
+			}
+		} catch (UnsupportedEncodingException e) {
+			throw new IllegalArgumentException("Error in URLEn/Decoder: " + e.getMessage());
+		}
+		return ret;
+	}
+
+	/*----------------------------------------------------------------------------*/
+	/*
+	 * @CheckFormulaSyntax
+	 */
+	/*----------------------------------------------------------------------------*/
+	@ParamCount(1)
+	public static ValueHolder atCheckFormulaSyntax(final FormulaContext ctx, final ValueHolder params[]) {
+		FormulaParser parser = ctx.getParser();
+		try {
+			parser.parse(params[0].getString(0));
+			return ValueHolder.valueOf("1");
+		} catch (FormulaParseException e) {
+			return ValueHolder.valueOf(e.getMessage());
+		}
+	}
+
+	/*----------------------------------------------------------------------------*/
 }
