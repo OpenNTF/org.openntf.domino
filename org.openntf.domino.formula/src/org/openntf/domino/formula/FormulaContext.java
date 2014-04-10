@@ -29,6 +29,7 @@ import org.openntf.domino.formula.ValueHolder.DataType;
  * 
  */
 public class FormulaContext {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(FormulaContext.class.getName());
 	protected Map<String, Object> document;
 	private Map<String, ValueHolder> vars = new HashMap<String, ValueHolder>();
@@ -130,17 +131,14 @@ public class FormulaContext {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public ValueHolder getField(final String key) {
 		if (document != null) {
 			Object o = document.get(key);
-			if (o != null) {
+			if (o != null)
 				return ValueHolder.valueOf(o); // RPr here it is allowed to access the deprecate method
-			} else {
-				return ValueHolder.valueDefault();
-			}
-		} else {
-			return ValueHolder.valueDefault();
 		}
+		return ValueHolder.valueDefault();
 	}
 
 	/**
@@ -188,19 +186,16 @@ public class FormulaContext {
 		return parser;
 	}
 
-	public ValueHolder getEnvLC(final String varNameLC) {
+	public String getEnvLC(final String varNameLC) {
 		throw new UnsupportedOperationException("ENVIRONMENT is not supported in this context.");
 	}
 
-	public void setEnvLC(final String varNameLC, final ValueHolder value) {
+	public void setEnvLC(final String varNameLC, final String value) {
 		throw new UnsupportedOperationException("ENVIRONMENT is not supported in this context.");
 	}
 
-	public ValueHolder evaluateNative(final String formula, final ValueHolder... params) {
-		throw new UnsupportedOperationException("EvaluateNative of '" + formula + "' is not supported in this context.");
-	}
+	//	public ValueHolder evaluateNative(final String formula, final ValueHolder... params) {
+	//		throw new UnsupportedOperationException("EvaluateNative of '" + formula + "' is not supported in this context.");
+	//	}
 
-	public ValueHolder getDocField(final String docUnid, final String field) {
-		throw new UnsupportedOperationException("@GetDocField is not supported in this context.");
-	}
 }

@@ -214,22 +214,22 @@ public enum DateTimeFunctions {
 	 * @Zone, @TimeZoneToText, @TimeToTextInZone 
 	 */
 	/*----------------------------------------------------------------------------*/
-	@ParamCount({ 0, 1 })
-	public static ValueHolder atZone(final FormulaContext ctx, final ValueHolder params[]) {
-		throw new UnsupportedOperationException("Method not yet implemented");
-	}
-
-	/*----------------------------------------------------------------------------*/
-	@ParamCount({ 1, 2 })
-	public static ValueHolder atTimeZoneToText(final FormulaContext ctx, final ValueHolder params[]) {
-		throw new UnsupportedOperationException("Method not yet implemented");
-	}
-
-	/*----------------------------------------------------------------------------*/
-	@ParamCount({ 2, 3 })
-	public static ValueHolder atTimeToTextInZone(final FormulaContext ctx, final ValueHolder params[]) {
-		throw new UnsupportedOperationException("Method not yet implemented");
-	}
+	//	@ParamCount({ 0, 1 })
+	//	public static ValueHolder atZone(final FormulaContext ctx, final ValueHolder params[]) {
+	//		throw new UnsupportedOperationException("Method not yet implemented");
+	//	}
+	//
+	//	/*----------------------------------------------------------------------------*/
+	//	@ParamCount({ 1, 2 })
+	//	public static ValueHolder atTimeZoneToText(final FormulaContext ctx, final ValueHolder params[]) {
+	//		throw new UnsupportedOperationException("Method not yet implemented");
+	//	}
+	//
+	//	/*----------------------------------------------------------------------------*/
+	//	@ParamCount({ 2, 3 })
+	//	public static ValueHolder atTimeToTextInZone(final FormulaContext ctx, final ValueHolder params[]) {
+	//		throw new UnsupportedOperationException("Method not yet implemented");
+	//	}
 
 	/*----------------------------------------------------------------------------*/
 	/*

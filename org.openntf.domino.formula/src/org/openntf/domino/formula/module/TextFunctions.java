@@ -981,12 +981,13 @@ public enum TextFunctions {
 				ret.add("");
 			return ret;
 		}
+		StringBuilder sb = new StringBuilder(bedarf * repeator);
 		for (int i = 0; i < vh.size; i++) {
-			StringBuilder fsb = new StringBuilder(bedarf * repeator);
+			sb.setLength(0);
 			String s = vh.getString(i);
 			for (int j = 0; j < repeator; j++)
-				fsb.append(s);
-			ret.add((fsb.length() > cutter) ? fsb.substring(0, cutter) : fsb.toString());
+				sb.append(s);
+			ret.add((sb.length() > cutter) ? sb.substring(0, cutter) : sb.toString());
 		}
 		return ret;
 	}
@@ -1226,6 +1227,7 @@ public enum TextFunctions {
 	 * @TextToDateTimeF, @TextFromDateTimeF
 	 */
 	/*----------------------------------------------------------------------------*/
+	@OpenNTF
 	@ParamCount({ 2, 3 })
 	public static ValueHolder atTextToDateTimeF(final FormulaContext ctx, final ValueHolder params[]) {
 		boolean parseLenient = false;
@@ -1244,6 +1246,7 @@ public enum TextFunctions {
 	}
 
 	/*----------------------------------------------------------------------------*/
+	@OpenNTF
 	@ParamCount(2)
 	public static String atTextFromDateTimeF(final FormulaContext ctx, final DateTime sdt, final String format) {
 		return ctx.getFormatter().formatDateTimeWithFormat(sdt, format);

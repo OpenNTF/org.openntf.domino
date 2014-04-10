@@ -1,8 +1,9 @@
 @Second([12:34:56]) 
 	#allPass [56.0]
 
-SELECT @All
-	#allPass [1.0]
+#Rem    Can't work at the moment.
+#Rem SELECT @All
+#Rem	#allPass [1.0]
 
 @Select(2;"Jan":"Feb":"Mar";"Apr":"May":"Jun";"Jul":"August":"Sep";"Oct":"Nov":"Dec")
 	#allPass [Apr, May, Jun]
@@ -13,11 +14,15 @@ SELECT @All
 @ServerName 
 	#allPass 
 
+Test := "Foconis"; @Set("Test"; 1:2:3:4)
+    #allPass [1.0, 2.0, 3.0, 4.0]
 @Set("FullName"; "test"); FullName
 	#allPass [test]
 
 @SetDocField(@DocumentUniqueID; "name"; "Joseph Riley")
 	#allPass 
+@SetDocField("852559B400670541852559B40066FFED"; "name"; "Joseph Riley")
+	#allFail
  
 @SetEnvironment("myTestIniVar";"test")
 	#allPass 
