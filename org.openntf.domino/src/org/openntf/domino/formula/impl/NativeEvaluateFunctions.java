@@ -311,13 +311,6 @@ public enum NativeEvaluateFunctions {
 	}
 
 	/*----------------------------------------------------------------------------*/
-	@NeedsNativeEvaluate("@CheckFormulaSyntax")
-	@ParamCount(1)
-	public static ValueHolder atCheckFormulaSyntax(final FormulaContext ctx, final ValueHolder params[]) {
-		return ctx.evaluateNative("@CheckFormulaSyntax(p1)", params[0]);
-	}
-
-	/*----------------------------------------------------------------------------*/
 	@NeedsNativeEvaluate("@ClientType")
 	@ParamCount(0)
 	public static ValueHolder atClientType(final FormulaContext ctx) {
@@ -440,18 +433,11 @@ public enum NativeEvaluateFunctions {
 	public static ValueHolder atDocDescendants(final FormulaContext ctx, final ValueHolder[] params) throws EvaluateException {
 		StringBuilder sb = new StringBuilder(256);
 		sb.append("@DocDescendants");
-		if (params.length > 0) {
-			sb.append('(');
-			sb.append(params[0].quoteValue());
-		}
-		if (params.length > 1) {
-			sb.append(';');
-			sb.append(params[1].quoteValue());
-		}
-		if (params.length > 2) {
-			sb.append(';');
-			sb.append(params[2].quoteValue());
-		}
+		for (int i = 0; i < 3; i++)
+			if (params.length > i) {
+				sb.append((i == 0) ? '(' : ';');
+				sb.append(params[i].quoteValue());
+			}
 		if (params.length > 0)
 			sb.append(')');
 		return ctx.evaluateNative(sb.toString());
@@ -686,6 +672,22 @@ public enum NativeEvaluateFunctions {
 	@ParamCount(1)
 	public static ValueHolder atLaunchApp(final FormulaContext ctx, final ValueHolder params[]) {
 		return ctx.evaluateNative("@LaunchApp(p1)", params[0]);
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@NeedsNativeEvaluate("@MailSend")
+	@ParamCount({ 0, 7 })
+	public static ValueHolder atMailSend(final FormulaContext ctx, final ValueHolder[] params) throws EvaluateException {
+		StringBuilder sb = new StringBuilder(256);
+		sb.append("@MailSend");
+		for (int i = 0; i < 7; i++)
+			if (params.length > i) {
+				sb.append((i == 0) ? '(' : ';');
+				sb.append(params[i].quoteValue());
+			}
+		if (params.length > 0)
+			sb.append(')');
+		return ctx.evaluateNative(sb.toString());
 	}
 
 	/*----------------------------------------------------------------------------*/

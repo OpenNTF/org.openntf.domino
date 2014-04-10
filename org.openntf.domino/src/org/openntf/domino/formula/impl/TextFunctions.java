@@ -28,6 +28,8 @@ import org.openntf.domino.ISimpleDateTime;
 import org.openntf.domino.formula.Formatter;
 import org.openntf.domino.formula.Formatter.LotusDateTimeOptions;
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FormulaParseException;
+import org.openntf.domino.formula.FormulaParser;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
 
@@ -1290,5 +1292,22 @@ public enum TextFunctions {
 		}
 		return ret;
 	}
+
+	/*----------------------------------------------------------------------------*/
+	/*
+	 * @CheckFormulaSyntax
+	 */
+	/*----------------------------------------------------------------------------*/
+	@ParamCount(1)
+	public static ValueHolder atCheckFormulaSyntax(final FormulaContext ctx, final ValueHolder params[]) {
+		FormulaParser parser = FormulaParser.getDefaultInstance();
+		try {
+			parser.parse(params[0].getString(0));
+			return ValueHolder.valueOf("1");
+		} catch (FormulaParseException e) {
+			return ValueHolder.valueOf(e.getMessage());
+		}
+	}
+
 	/*----------------------------------------------------------------------------*/
 }
