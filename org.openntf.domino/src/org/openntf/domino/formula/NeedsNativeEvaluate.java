@@ -14,7 +14,7 @@
  * permissions and limitations under the License.
  * 
  */
-package org.openntf.domino.formula.module;
+package org.openntf.domino.formula;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

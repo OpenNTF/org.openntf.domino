@@ -1,4 +1,4 @@
-package org.openntf.domino.formula.module;
+package org.openntf.domino.formula;
 
 import org.openntf.formula.FunctionFactory;
 import org.openntf.formula.ValueHolder;

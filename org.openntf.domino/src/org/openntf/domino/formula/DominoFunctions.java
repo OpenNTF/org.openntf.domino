@@ -1,11 +1,10 @@
-package org.openntf.domino.formula.module;
+package org.openntf.domino.formula;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
-import org.openntf.domino.formula.FormulaContextNotes;
 import org.openntf.formula.FormulaContext;
 import org.openntf.formula.FunctionFactory;
 import org.openntf.formula.ValueHolder;

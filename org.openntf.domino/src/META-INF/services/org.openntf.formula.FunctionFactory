@@ -1,5 +1,5 @@
 #
-org.openntf.domino.formula.module.DocFunctions$Factory
-org.openntf.domino.formula.module.NativeEvaluateFunctions$Factory
-org.openntf.domino.formula.module.DominoFunctions$Factory
-org.openntf.domino.formula.module.NotSupported$Factory
+org.openntf.domino.formula.DocFunctions$Factory
+org.openntf.domino.formula.NativeEvaluateFunctions$Factory
+org.openntf.domino.formula.DominoFunctions$Factory
+org.openntf.domino.formula.NotSupported$Factory

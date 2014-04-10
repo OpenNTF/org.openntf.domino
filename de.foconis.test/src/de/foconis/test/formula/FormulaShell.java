@@ -12,7 +12,7 @@ import jline.ConsoleReader;
 import jline.SimpleCompletor;
 
 import org.openntf.domino.ext.Session.Fixes;
-import org.openntf.domino.formula.module.NotImplemented;
+import org.openntf.domino.formula.NotImplemented;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
