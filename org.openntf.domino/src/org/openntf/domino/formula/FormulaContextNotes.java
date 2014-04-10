@@ -1,5 +1,7 @@
 package org.openntf.domino.formula;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Logger;
@@ -9,6 +11,7 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
+import org.openntf.domino.formula.ValueHolder.DataType;
 import org.openntf.domino.utils.Factory;
 
 public class FormulaContextNotes extends FormulaContext {
@@ -16,7 +19,6 @@ public class FormulaContextNotes extends FormulaContext {
 
 	public FormulaContextNotes(final Map<String, Object> document, final Formatter formatter) {
 		super(document, formatter);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -53,7 +55,7 @@ public class FormulaContextNotes extends FormulaContext {
 			// fill the document
 			for (int i = 0; i < params.length; i++) {
 				try {
-					tmpDoc.replaceItemValue("p" + (i + 1), params[i].toList());
+					tmpDoc.replaceItemValue("p" + (i + 1), getNotesCompatibleList(session, params[i]));
 				} catch (EvaluateException e) {
 					return params[i];
 				}
@@ -74,6 +76,18 @@ public class FormulaContextNotes extends FormulaContext {
 			return ValueHolder.valueOf(new RuntimeException(e));
 		}
 
+	}
+
+	private List<Object> getNotesCompatibleList(final Session session, final ValueHolder vh) throws EvaluateException {
+		List<Object> ret;
+		if (vh.dataType != DataType.DATETIME)
+			ret = vh.toList();
+		else {
+			ret = new ArrayList<Object>(vh.size);
+			for (int i = 0; i < vh.size; i++)
+				ret.add(session.createDateTime(vh.getDateTime(i).toJavaCal()));
+		}
+		return ret;
 	}
 
 	@Override
