@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.Formulas;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
 import org.openntf.domino.formula.ValueHolderBoolean;
@@ -317,7 +318,7 @@ public class ValueHolderNumberTest {
 
 	@Test
 	public final void testIsTrue() {
-		FormulaContext ctx = FormulaContext.createContext(null, null);
+		FormulaContext ctx = Formulas.createContext(null, null);
 		ctx.useBooleans(false);
 		assertTrue(!vhi.isTrue(ctx));
 		vhi.add(0);
@@ -328,7 +329,7 @@ public class ValueHolderNumberTest {
 
 	@Test(expected = ClassCastException.class)
 	public final void testIsTrue2() {
-		FormulaContext ctx = FormulaContext.createContext(null, null);
+		FormulaContext ctx = Formulas.createContext(null, null);
 		ctx.useBooleans(true);
 		vhi.add(0);
 		assertTrue(!vhi.isTrue(ctx));
@@ -353,7 +354,8 @@ public class ValueHolderNumberTest {
 	@SuppressWarnings("deprecation")
 	@Test(expected = IllegalArgumentException.class)
 	public final void testAddDateTime() {
-		vhi.add(new org.openntf.domino.impl.CalendarDateTime());
+		// TODO
+		//vhi.add(new org.openntf.domino.formula.impl.DateTimeImpl(Locale.getDefault()));
 	}
 
 	//	@SuppressWarnings("cast")

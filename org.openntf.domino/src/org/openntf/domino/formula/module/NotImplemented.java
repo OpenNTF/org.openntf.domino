@@ -14,11 +14,12 @@
  * permissions and limitations under the License.
  * 
  */
-package org.openntf.domino.formula.impl;
+package org.openntf.domino.formula.module;
 
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FunctionFactory;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.impl.AtFunction;
 
 import com.ibm.commons.util.NotImplementedException;
 

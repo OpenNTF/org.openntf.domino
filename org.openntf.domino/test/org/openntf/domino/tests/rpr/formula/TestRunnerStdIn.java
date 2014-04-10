@@ -9,6 +9,7 @@ import lotus.domino.Session;
 import org.openntf.domino.formula.ASTNode;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaParser;
+import org.openntf.domino.formula.Formulas;
 import org.openntf.domino.impl.Base;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;
@@ -31,10 +32,10 @@ public class TestRunnerStdIn implements Runnable {
 			ASTNode n = null;
 			List<Object> v = null;
 
-			FormulaParser parser = FormulaParser.getDefaultInstance();
+			FormulaParser parser = Formulas.getParser();
 			n = parser.parse(System.in, false);
 			n.dump("");
-			FormulaContext ctx = FormulaContext.createContext(null, parser.getFormatter());
+			FormulaContext ctx = Formulas.createContext(null, parser);
 			v = n.solve(ctx);
 
 			System.out.println("NTF:\t" + v);

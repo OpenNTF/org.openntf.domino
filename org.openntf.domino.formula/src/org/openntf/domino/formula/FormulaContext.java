@@ -32,6 +32,7 @@ public class FormulaContext {
 	private static final Logger log_ = Logger.getLogger(FormulaContext.class.getName());
 	protected Map<String, Object> document;
 	private Map<String, ValueHolder> vars = new HashMap<String, ValueHolder>();
+
 	/** the formatter is needed to parse/convert number and dateTime values */
 	private Formatter formatter;
 	/** the parser is needed for evaluate */
@@ -49,8 +50,7 @@ public class FormulaContext {
 	 *            the formatter to format date/times
 	 * 
 	 */
-	protected FormulaContext(final Map<String, Object> document, final Formatter formatter, final FormulaParser parser) {
-		super();
+	public void init(final Map<String, Object> document, final Formatter formatter, final FormulaParser parser) {
 		this.document = document;
 		this.formatter = formatter;
 		this.parser = parser;

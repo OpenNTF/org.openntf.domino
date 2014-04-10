@@ -1,0 +1,4 @@
+# These are the basic modules to provied boolean and arithmetc operations
+org.openntf.domino.formula.module.DocFunctions$Factory
+org.openntf.domino.formula.module.NativeEvaluateFunctions$Factory
+org.openntf.domino.formula.module.NotSupported$Factory

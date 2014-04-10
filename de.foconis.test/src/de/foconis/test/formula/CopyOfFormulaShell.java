@@ -19,13 +19,13 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.formula.ASTNode;
-import org.openntf.domino.formula.DominoFormatter;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaParseException;
 import org.openntf.domino.formula.FormulaParser;
+import org.openntf.domino.formula.Formulas;
 import org.openntf.domino.formula.Function;
 import org.openntf.domino.formula.FunctionFactory;
-import org.openntf.domino.formula.impl.NotImplemented;
+import org.openntf.domino.formula.module.NotImplemented;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -84,7 +84,7 @@ public class CopyOfFormulaShell implements Runnable {
 			List<Completor> completors = new LinkedList<Completor>();
 
 			// This code is responsible for autocompletion
-			FunctionFactory funcFact = FunctionFactory.getDefaultInstance();
+			FunctionFactory funcFact = Formulas.getFunctionFactory();
 			Collection<Function> funcs = funcFact.getFunctions().values();
 			String[] autoComplete = new String[funcs.size() + 3];
 			int i = 0;
@@ -184,7 +184,7 @@ public class CopyOfFormulaShell implements Runnable {
 		if (cacheAST)
 			ast = astCache.get(line);
 
-		FormulaParser parser = FormulaParser.getDefaultInstance();
+		FormulaParser parser = Formulas.getParser();
 		if (ast == null) {
 			ast = parser.parse(line);
 			if (cacheAST)
@@ -262,7 +262,7 @@ public class CopyOfFormulaShell implements Runnable {
 
 			try {
 				time = System.nanoTime();
-				FormulaContext ctx1 = FormulaContext.createContext(ntfDoc, DominoFormatter.getDefaultInstance());
+				FormulaContext ctx1 = Formulas.createContext(ntfDoc, Formulas.getParser());
 				ntfDocResult = ast.solve(ctx1);
 				docEvaluateTime += System.nanoTime() - time;
 			} catch (Exception e) {
@@ -273,7 +273,7 @@ public class CopyOfFormulaShell implements Runnable {
 			try {
 				// benchmark the evaluate with a map as context
 				time = System.nanoTime();
-				FormulaContext ctx2 = FormulaContext.createContext(ntfMap, DominoFormatter.getDefaultInstance());
+				FormulaContext ctx2 = Formulas.createContext(ntfMap, Formulas.getParser());
 				ntfMapResult = ast.solve(ctx2);
 				mapEvaluateTime += System.nanoTime() - time;
 			} catch (Exception e) {

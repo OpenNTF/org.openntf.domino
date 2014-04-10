@@ -1,6 +1,5 @@
 package org.openntf.domino.formula;
 
-import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -13,11 +12,6 @@ import org.openntf.domino.utils.Factory;
 
 public class FormulaContextNotes extends FormulaContext {
 	private static final Logger log_ = Logger.getLogger(FormulaContextNotes.class.getName());
-
-	public FormulaContextNotes(final Map<String, Object> document, final Formatter formatter) {
-		super(document, formatter);
-		// TODO Auto-generated constructor stub
-	}
 
 	/**
 	 * does a native evaluate. This is needed for all functions that are too complex to implement in java or the algorithm is unknown

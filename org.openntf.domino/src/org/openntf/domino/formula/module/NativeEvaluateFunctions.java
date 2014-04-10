@@ -1,14 +1,23 @@
-package org.openntf.domino.formula.impl;
+package org.openntf.domino.formula.module;
 
 import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FunctionFactory;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
+import org.openntf.domino.formula.annotation.ParamCount;
 
 import com.ibm.commons.util.FastStringBuffer;
 
 public enum NativeEvaluateFunctions {
 	;
+
+	public static class Factory extends FunctionFactory {
+		public Factory() {
+			super(NativeEvaluateFunctions.class);
+		}
+	}
+
 	/*============================================================================*/
 	/*
 	 * Text functions

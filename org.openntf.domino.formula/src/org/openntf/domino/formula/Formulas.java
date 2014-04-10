@@ -8,17 +8,14 @@ import java.util.ServiceLoader;
 import org.openntf.domino.formula.impl.FormatterImpl;
 import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
-public enum Factory {
+public enum Formulas {
 	;
 
-	/**
-	 * This is the global "default"-instance.
-	 */
-	public static synchronized FunctionFactory getFunctionFactory(final ClassLoader cl) {
+	public static FunctionFactory getFunctionFactory() {
 
 		FunctionFactory instance = new FunctionFactory();
 
-		ServiceLoader<FunctionFactory> loader = ServiceLoader.load(FunctionFactory.class, cl);
+		ServiceLoader<FunctionFactory> loader = ServiceLoader.load(FunctionFactory.class);
 
 		for (FunctionFactory fact : loader) {
 			System.out.println("ADD Factory " + fact.getClass().getName());
@@ -57,8 +54,8 @@ public enum Factory {
 		return parser;
 	}
 
-	public static FormulaParser getParser(final ClassLoader cl) {
-		return getParser(getFormatter(), getFunctionFactory(cl));
+	public static FormulaParser getParser() {
+		return getParser(getFormatter(), getFunctionFactory());
 	}
 
 	public static FormulaContext createContext(final Map<String, Object> document, final FormulaParser parser) {
@@ -70,7 +67,11 @@ public enum Factory {
 		// TODO RPr find a better solution
 		//			return new FormulaContextNotes(document, formatter);
 		//		} else {
-		return new FormulaContext(document, formatter, parser);
+		ServiceLoader<FormulaContext> loader = ServiceLoader.load(FormulaContext.class);
+
+		FormulaContext instance = loader.iterator().next();
+		instance.init(document, formatter, parser);
+		return instance;
 		//		}
 	}
 }

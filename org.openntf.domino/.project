@@ -31,15 +31,15 @@
 			</arguments>
 		</buildCommand>
 	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.eclipse.pde.PluginNature</nature>
+	</natures>
 	<linkedResources>
 		<link>
 			<name>icu4j</name>
 			<type>2</type>
 			<locationURI>PARENT-1-PROJECT_LOC/externalsources/icu4j</locationURI>
 		</link>
-	</linkedResources>	
-	<natures>
-		<nature>org.eclipse.jdt.core.javanature</nature>
-		<nature>org.eclipse.pde.PluginNature</nature>
-	</natures>
+	</linkedResources>
 </projectDescription>

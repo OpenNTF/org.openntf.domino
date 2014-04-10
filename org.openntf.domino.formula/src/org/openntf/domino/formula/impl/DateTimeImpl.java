@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import org.openntf.domino.formula.DateTime;
-import org.openntf.domino.formula.Factory;
+import org.openntf.domino.formula.Formulas;
 
 import com.ibm.icu.util.Calendar;
 
@@ -57,7 +57,7 @@ public class DateTimeImpl implements DateTime {
 	public String getDateOnly() {
 		if (iNoDate)
 			return "";
-		return Factory.getFormatter(iLocale).formatCalDateOnly(iCal);
+		return Formulas.getFormatter(iLocale).formatCalDateOnly(iCal);
 	}
 
 	public String getLocalTime() {
@@ -65,13 +65,13 @@ public class DateTimeImpl implements DateTime {
 			return getTimeOnly();
 		if (iNoTime)
 			return getDateOnly();
-		return Factory.getFormatter(iLocale).formatCalDateTime(iCal);
+		return Formulas.getFormatter(iLocale).formatCalDateTime(iCal);
 	}
 
 	public String getTimeOnly() {
 		if (iNoTime)
 			return "";
-		return Factory.getFormatter(iLocale).formatCalTimeOnly(iCal);
+		return Formulas.getFormatter(iLocale).formatCalTimeOnly(iCal);
 	}
 
 	public int getTimeZone() {
@@ -139,7 +139,7 @@ public class DateTimeImpl implements DateTime {
 
 	public void setLocalTime(final String time, final boolean parseLenient) {
 		boolean[] noDT = new boolean[2];
-		iCal = Factory.getFormatter(iLocale).parseDateToCal(time, noDT, parseLenient);
+		iCal = Formulas.getFormatter(iLocale).parseDateToCal(time, noDT, parseLenient);
 		iNoDate = noDT[0];
 		iNoTime = noDT[1];
 	}

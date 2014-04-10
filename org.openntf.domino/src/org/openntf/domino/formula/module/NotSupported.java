@@ -1,6 +1,8 @@
-package org.openntf.domino.formula.impl;
+package org.openntf.domino.formula.module;
 
+import org.openntf.domino.formula.FunctionFactory;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.annotation.ParamCount;
 
 /**
  * at-Functions listed here are not supported. This implementation defines paramcount only
@@ -10,6 +12,13 @@ import org.openntf.domino.formula.ValueHolder;
  */
 public enum NotSupported {
 	;
+
+	public static class Factory extends FunctionFactory {
+		public Factory() {
+			super(NotSupported.class);
+		}
+	}
+
 	private static ValueHolder notSupported() {
 		throw new UnsupportedOperationException();
 	}
@@ -61,6 +70,24 @@ public enum NotSupported {
 
 	@ParamCount({ 1, 99 })
 	public static ValueHolder atPrompt() {
+		return notSupported();
+	}
+
+	@ParamCount({ 1, 99 })
+	// TODO
+	public static ValueHolder atCheckAlarms() {
+		return notSupported();
+	}
+
+	@ParamCount({ 1, 99 })
+	// TODO
+	public static ValueHolder atDocLock() {
+		return notSupported();
+	}
+
+	@ParamCount({ 1, 99 })
+	// TODO
+	public static ValueHolder atGetViewInfo() {
 		return notSupported();
 	}
 }

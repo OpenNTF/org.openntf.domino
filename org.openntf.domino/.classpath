@@ -8,5 +8,6 @@
 	<classpathentry kind="src" path="icu4j"/>
 	<classpathentry kind="src" path="jsr305"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/XPages Domino JRE"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.openntf.domino.formula"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -18,14 +18,13 @@ import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
-import org.openntf.domino.ISimpleDateTime;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.formula.ASTNode;
-import org.openntf.domino.formula.DominoFormatter;
 import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaParseException;
 import org.openntf.domino.formula.FormulaParser;
+import org.openntf.domino.formula.Formulas;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -213,8 +212,9 @@ public class TestRunner implements Runnable {
 
 		// benchmark the AtFormulaParser
 		ASTNode ast = null;
+		FormulaParser parser = Formulas.getParser();
 		try {
-			ast = FormulaParser.getDefaultInstance().parse(line);
+			ast = parser.parse(line);
 		} catch (FormulaParseException e) {
 			errors.append(NTF("\tParser failed: ") + ERROR(e) + "\n");
 			e.printStackTrace();
@@ -227,7 +227,7 @@ public class TestRunner implements Runnable {
 		if (!parserFailed) {
 			if (testDoc) {
 				try {
-					FormulaContext ctx1 = FormulaContext.createContext(ntfDoc, DominoFormatter.getDefaultInstance());
+					FormulaContext ctx1 = Formulas.createContext(ntfDoc, parser);
 					ntfDocResult = ast.solve(ctx1);
 				} catch (EvaluateException e) {
 					errors.append(NTF("\tDoc-Evaluate failed: ") + ERROR(e) + "\n");
@@ -241,7 +241,7 @@ public class TestRunner implements Runnable {
 			if (testMap) {
 				try {
 					// benchmark the evaluate with a map as context
-					FormulaContext ctx2 = FormulaContext.createContext(ntfMap, DominoFormatter.getDefaultInstance());
+					FormulaContext ctx2 = Formulas.createContext(ntfMap, parser);
 					ntfMapResult = ast.solve(ctx2);
 				} catch (EvaluateException e) {
 					errors.append(NTF("\tMap-Evaluate failed: ") + ERROR(e) + "\n");
@@ -338,23 +338,23 @@ public class TestRunner implements Runnable {
 						equals = false;
 						break;
 					}
-				} else if ((a instanceof ISimpleDateTime || a instanceof lotus.domino.DateTime) && // LF
-						(b instanceof ISimpleDateTime || b instanceof lotus.domino.DateTime)) {
+				} else if ((a instanceof org.openntf.domino.formula.DateTime || a instanceof lotus.domino.DateTime) && // LF
+						(b instanceof org.openntf.domino.formula.DateTime || b instanceof lotus.domino.DateTime)) {
 					try {
-						ISimpleDateTime sdt1, sdt2;
-						if (a instanceof ISimpleDateTime)
-							sdt1 = (ISimpleDateTime) a;
+						org.openntf.domino.formula.DateTime sdt1, sdt2;
+						if (a instanceof org.openntf.domino.formula.DateTime)
+							sdt1 = (org.openntf.domino.formula.DateTime) a;
 						else {
 							lotus.domino.DateTime ldt = (lotus.domino.DateTime) a;
-							sdt1 = DominoFormatter.getDefaultInstance().getNewInitializedSDTInstance(ldt.toJavaDate(),
-									ldt.getDateOnly().isEmpty(), ldt.getTimeOnly().isEmpty());
+							sdt1 = Formulas.getFormatter().getNewInitializedSDTInstance(ldt.toJavaDate(), ldt.getDateOnly().isEmpty(),
+									ldt.getTimeOnly().isEmpty());
 						}
-						if (b instanceof ISimpleDateTime)
-							sdt2 = (ISimpleDateTime) b;
+						if (b instanceof org.openntf.domino.formula.DateTime)
+							sdt2 = (org.openntf.domino.formula.DateTime) b;
 						else {
 							lotus.domino.DateTime ldt = (lotus.domino.DateTime) b;
-							sdt2 = DominoFormatter.getDefaultInstance().getNewInitializedSDTInstance(ldt.toJavaDate(),
-									ldt.getDateOnly().isEmpty(), ldt.getTimeOnly().isEmpty());
+							sdt2 = Formulas.getFormatter().getNewInitializedSDTInstance(ldt.toJavaDate(), ldt.getDateOnly().isEmpty(),
+									ldt.getTimeOnly().isEmpty());
 						}
 						equals = (sdt1.compare(sdt1, sdt2) == 0);
 					} catch (NotesException e) {

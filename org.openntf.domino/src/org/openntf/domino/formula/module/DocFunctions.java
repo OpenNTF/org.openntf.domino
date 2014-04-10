@@ -1,14 +1,23 @@
-package org.openntf.domino.formula.impl;
+package org.openntf.domino.formula.module;
 
 import java.util.Map;
 
 import org.openntf.domino.Document;
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FunctionFactory;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.annotation.OpenNTF;
+import org.openntf.domino.formula.annotation.ParamCount;
 import org.openntf.domino.utils.Strings;
 
-public enum DocProperties {
+public enum DocFunctions {
 	;
+
+	public static class Factory extends FunctionFactory {
+		public Factory() {
+			super(DocFunctions.class);
+		}
+	}
 
 	@ParamCount(0)
 	public static ValueHolder atAuthor(final FormulaContext ctx) {
