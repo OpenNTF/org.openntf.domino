@@ -24,11 +24,6 @@ public class ASTAtEvalEx extends SimpleNode {
 		super(p, id);
 	}
 
-	public void toFormula(final StringBuilder sb) {
-		sb.append("@EvalEx");
-		appendParams(sb);
-	}
-
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
 		ValueHolder[] oldVHs = null;
@@ -44,8 +39,8 @@ public class ASTAtEvalEx extends SimpleNode {
 		for (int i = 1; i < vhEval.size; i++)
 			oldVHs[i - 1] = ctx.setVarLC(vhEval.getString(i).toLowerCase(), children[i].evaluate(ctx));
 		try {
-			// TODO RPr remove parser
-			Node n = (Node) parser.parse(vhEval.getString(0));
+
+			Node n = (Node) ctx.getParser().parse(vhEval.getString(0));
 			return n.evaluate(ctx);
 		} catch (FormulaParseException e) {
 			return ValueHolder.valueOf(new EvaluateException(codeLine, codeColumn, e));

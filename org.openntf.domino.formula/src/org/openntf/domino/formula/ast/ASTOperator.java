@@ -17,7 +17,7 @@
  */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.parse.*;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
 public class ASTOperator extends ASTFunction {
 
@@ -25,18 +25,5 @@ public class ASTOperator extends ASTFunction {
 		super(p, id);
 	}
 
-	@Override
-	public void toFormula(final StringBuilder sb) {
-		if (children.length == 1) {
-			sb.append(function.getImage());
-			children[0].toFormula(sb);
-		} else {
-			sb.append('(');
-			children[0].toFormula(sb);
-			sb.append(function.getImage());
-			children[1].toFormula(sb);
-			sb.append(')');
-		}
-	}
 }
 /* JavaCC - OriginalChecksum=8690fa85587044e61f27816a1daf23fc (do not edit this line) */

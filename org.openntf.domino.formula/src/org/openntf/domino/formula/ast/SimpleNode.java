@@ -156,23 +156,6 @@ public abstract class SimpleNode implements Node {
 	 */
 	public abstract ValueHolder evaluate(FormulaContext ctx) throws FormulaReturnException;
 
-	/**
-	 * Helper function for "toFormula". It creates a parameter list
-	 */
-	protected void appendParams(final StringBuilder sb) {
-		if (children != null) {
-			sb.append('(');
-			for (int i = 0; i < children.length; ++i) {
-				if (i > 0) {
-					sb.append(';');
-				}
-				SimpleNode n = (SimpleNode) children[i];
-				n.toFormula(sb);
-			}
-			sb.append(')');
-		}
-	}
-
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.formula.ast.Node#solve(org.openntf.domino.formula.FormulaContext)
 	 */
@@ -217,7 +200,10 @@ public abstract class SimpleNode implements Node {
 	 * @param functions
 	 *            return value - which functions are used (lowercase)
 	 */
-	protected abstract void analyzeThis(Set<String> readFields, Set<String> modifiedFields, Set<String> variables, Set<String> functions);
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+
+	}
 
 	/**
 	 * Initializion of inspection is done once

@@ -78,11 +78,6 @@ public class ASTAtTransform extends SimpleNode {
 		}
 	}
 
-	public void toFormula(final StringBuilder sb) {
-		sb.append("@Transform");
-		appendParams(sb);
-	}
-
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {

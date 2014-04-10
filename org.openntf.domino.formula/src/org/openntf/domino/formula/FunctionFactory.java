@@ -25,11 +25,6 @@ import java.util.Map;
 import org.openntf.domino.formula.impl.AtFunction;
 import org.openntf.domino.formula.impl.AtFunctionGeneric;
 import org.openntf.domino.formula.impl.AtFunctionSimple;
-//import org.openntf.domino.formula.impl.NotImplemented;
-//import org.openntf.domino.formula.impl.NotSupported;
-//import org.openntf.domino.formula.impl.DateTimeFunctions;
-//import org.openntf.domino.formula.impl.DocProperties;
-//import org.openntf.domino.formula.impl.NativeEvaluateFunctions;
 
 /**
  * 

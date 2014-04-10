@@ -51,7 +51,7 @@ public class DateTimeImpl implements DateTime {
 
 	public void convertToZone(final int zone, final boolean isDST) {
 		int unused;
-		// TODO Really needed?
+		// TODO MSt: Timezone support (Really needed?)
 	}
 
 	public String getDateOnly() {
@@ -76,13 +76,13 @@ public class DateTimeImpl implements DateTime {
 
 	public int getTimeZone() {
 		int unused;
-		// TODO Auto-generated method stub
+		// TODO MSt: Timezone support
 		return 0;
 	}
 
 	public String getZoneTime() {
 		int unused;
-		// TODO Auto-generated method stub
+		// TODO MSt: Timezone support
 		return null;
 	}
 
@@ -96,7 +96,7 @@ public class DateTimeImpl implements DateTime {
 
 	public boolean isDST() {
 		int unused;
-		// TODO Auto-generated method stub
+		// TODO MSt: Timezone support
 		return false;
 	}
 

@@ -59,8 +59,8 @@ public class UserDefinedFunction extends AtFunction {
 	 * @throws ParseException
 	 *             if you do not put optional parameter to the end
 	 */
-	public UserDefinedFunction(final String functionName, final ASTUserDefinedFunctionParameter[] parameter, final AtFormulaParserImpl parser)
-			throws ParseException {
+	public UserDefinedFunction(final String functionName, final ASTUserDefinedFunctionParameter[] parameter,
+			final AtFormulaParserImpl parser) throws ParseException {
 		super(functionName);
 		this.functionName = functionName;
 		this.parameter = parameter;
@@ -144,12 +144,11 @@ public class UserDefinedFunction extends AtFunction {
 
 	public void inspect(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		// TODO Auto-generated method stub
-		if (functions.contains(functionName.toUpperCase()))
+		if (functions.contains(functionName.toUpperCase())) // dirty hack. As functions are normally written in lowercase...
 			return;
 
 		try {
-			functions.add(functionName.toUpperCase());
+			functions.add(functionName.toUpperCase());		// ... we write the function in uppercase here, to detect loops
 			Set<String> tmpVariables = new HashSet<String>();
 			tmpVariables.addAll(variables);
 

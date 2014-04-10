@@ -41,14 +41,6 @@ public interface ASTNode {
 	public List<Object> solve(FormulaContext ctx) throws EvaluateException;
 
 	/**
-	 * you can convert an AST tree back to a Lotus-formula
-	 * 
-	 * @param sb
-	 *            will be filled with the formula context
-	 */
-	public void toFormula(StringBuilder sb);
-
-	/**
 	 * return a set of used functions (all function names are lowercase)
 	 * 
 	 * @return set of functions

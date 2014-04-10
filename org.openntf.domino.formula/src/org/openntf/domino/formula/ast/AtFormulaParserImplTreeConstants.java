@@ -21,25 +21,26 @@ public interface AtFormulaParserImplTreeConstants
   public int JJTVALUELIST = 13;
   public int JJTSUBSCRIPT = 14;
   public int JJTATDOWHILE = 15;
-  public int JJTATFOR = 16;
-  public int JJTATIF = 17;
-  public int JJTATIFERROR = 18;
-  public int JJTATTRANSFORM = 19;
-  public int JJTATSORT = 20;
-  public int JJTATEVAL = 21;
-  public int JJTATEVALEX = 22;
-  public int JJTATFOCEVAL = 23;
-  public int JJTATTEXT = 24;
-  public int JJTATRETURN = 25;
-  public int JJTATISERROR = 26;
-  public int JJTATISAVAILABLE = 27;
-  public int JJTATISUNAVAILABLE = 28;
-  public int JJTFUNCTION = 29;
-  public int JJTVALUEDATEORKW = 30;
-  public int JJTVALUESTRING = 31;
-  public int JJTVALUEDOUBLE = 32;
-  public int JJTVALUEINT = 33;
-  public int JJTGETVARIABLE = 34;
+  public int JJTATWHILE = 16;
+  public int JJTATFOR = 17;
+  public int JJTATIF = 18;
+  public int JJTATIFERROR = 19;
+  public int JJTATTRANSFORM = 20;
+  public int JJTATSORT = 21;
+  public int JJTATEVAL = 22;
+  public int JJTATEVALEX = 23;
+  public int JJTATFOCEVAL = 24;
+  public int JJTATTEXT = 25;
+  public int JJTATRETURN = 26;
+  public int JJTATISERROR = 27;
+  public int JJTATISAVAILABLE = 28;
+  public int JJTATISUNAVAILABLE = 29;
+  public int JJTFUNCTION = 30;
+  public int JJTVALUEDATEORKW = 31;
+  public int JJTVALUESTRING = 32;
+  public int JJTVALUEDOUBLE = 33;
+  public int JJTVALUEINT = 34;
+  public int JJTGETVARIABLE = 35;
 
 
   public String[] jjtNodeName = {
@@ -59,6 +60,7 @@ public interface AtFormulaParserImplTreeConstants
     "ValueList",
     "Subscript",
     "AtDoWhile",
+    "AtWhile",
     "AtFor",
     "AtIf",
     "AtIfError",
@@ -80,4 +82,4 @@ public interface AtFormulaParserImplTreeConstants
     "GetVariable",
   };
 }
-/* JavaCC - OriginalChecksum=5181b64b93be988875693171cb18bbdb (do not edit this line) */
+/* JavaCC - OriginalChecksum=bf0693a37a0209b1601cb33fbd060efd (do not edit this line) */

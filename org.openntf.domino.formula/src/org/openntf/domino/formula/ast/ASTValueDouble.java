@@ -17,8 +17,6 @@
  */
 package org.openntf.domino.formula.ast;
 
-import java.util.Set;
-
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.parse.AtFormulaParserImpl;
@@ -45,16 +43,5 @@ public class ASTValueDouble extends SimpleNode {
 		return value;
 	}
 
-	@Override
-	public void toFormula(final StringBuilder sb) {
-		sb.append(String.format("%f", value.getDouble(0)));
-	}
-
-	@Override
-	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
-			final Set<String> functions) {
-		// TODO Auto-generated method stub
-
-	}
 }
 /* JavaCC - OriginalChecksum=9b835a55bffc1c99424d097a944b0fac (do not edit this line) */

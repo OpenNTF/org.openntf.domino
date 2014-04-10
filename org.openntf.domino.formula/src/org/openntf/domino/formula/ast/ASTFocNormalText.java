@@ -3,21 +3,18 @@
 package org.openntf.domino.formula.ast;
 
 import java.util.Set;
-import org.openntf.domino.formula.parse.AtFormulaParserImpl;
+
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
 public class ASTFocNormalText extends SimpleNode {
 
 	private ValueHolder value;
+
 	public ASTFocNormalText(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
-	}
-
-	public void toFormula(final StringBuilder sb) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -28,7 +25,6 @@ public class ASTFocNormalText extends SimpleNode {
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		// TODO Auto-generated method stub
 
 	}
 

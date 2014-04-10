@@ -20,10 +20,10 @@ package org.openntf.domino.formula.ast;
 
 import java.util.Set;
 
+import org.openntf.domino.formula.DateTime;
 import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
-import org.openntf.domino.formula.DateTime;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
 import org.openntf.domino.formula.annotation.DiffersFromLotus;
@@ -176,15 +176,6 @@ public class ASTAtSort extends SimpleNode {
 			ctx.setVarLC("$a", oldA);
 			ctx.setVarLC("$b", oldB);
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.openntf.domino.formula.ASTNode#toFormula(java.lang.StringBuilder)
-	 */
-	public void toFormula(final StringBuilder sb) {
-		sb.append("@Sort");
-		appendParams(sb);
 	}
 
 	/*

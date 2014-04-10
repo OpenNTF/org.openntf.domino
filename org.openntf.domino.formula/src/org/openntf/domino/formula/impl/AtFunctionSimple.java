@@ -35,7 +35,6 @@ public class AtFunctionSimple extends AtFunctionGeneric {
 
 	public AtFunctionSimple(final String image, final Method method) {
 		super(image, method);
-		// TODO Auto-generated constructor stub
 	}
 
 	@SuppressWarnings("unchecked")

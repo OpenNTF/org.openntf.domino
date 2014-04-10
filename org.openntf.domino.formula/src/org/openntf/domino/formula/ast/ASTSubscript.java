@@ -17,8 +17,6 @@
  */
 package org.openntf.domino.formula.ast;
 
-import java.util.Set;
-
 import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
@@ -66,19 +64,5 @@ public class ASTSubscript extends SimpleNode {
 		}
 	}
 
-	@Override
-	public void toFormula(final StringBuilder sb) {
-		children[0].toFormula(sb);
-		sb.append('[');
-		children[1].toFormula(sb);
-		sb.append(']');
-	}
-
-	@Override
-	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
-			final Set<String> functions) {
-		// TODO Auto-generated method stub
-
-	}
 }
 /* JavaCC - OriginalChecksum=bf57711d1722e5377ed78d4185bb34a5 (do not edit this line) */

@@ -47,14 +47,6 @@ public class ASTAtDo extends SimpleNode {
 	}
 
 	/**
-	 * returns a equivalent lotus formula.
-	 */
-	public void toFormula(final StringBuilder sb) {
-		sb.append("@Do");
-		appendParams(sb);
-	}
-
-	/**
 	 * add {@literal @}Do to the functions list (if it is not virtual)
 	 */
 	@Override

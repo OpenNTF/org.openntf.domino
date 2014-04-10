@@ -46,10 +46,6 @@ public class ASTGetVariable extends SimpleNode {
 		return ctx.getVarLC(variableNameLC, variableName);
 	}
 
-	public void toFormula(final StringBuilder sb) {
-		sb.append(variableName);
-	}
-
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {

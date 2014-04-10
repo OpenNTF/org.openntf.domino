@@ -73,21 +73,94 @@ public enum NotSupported {
 		return notSupported();
 	}
 
-	@ParamCount({ 1, 99 })
+	@ParamCount({ 0, 99 })
 	// TODO
 	public static ValueHolder atCheckAlarms() {
 		return notSupported();
 	}
 
-	@ParamCount({ 1, 99 })
+	@ParamCount({ 0, 99 })
 	// TODO
 	public static ValueHolder atDocLock() {
 		return notSupported();
 	}
 
-	@ParamCount({ 1, 99 })
+	@ParamCount({ 0, 99 })
 	// TODO
 	public static ValueHolder atGetViewInfo() {
 		return notSupported();
 	}
+
+	@ParamCount({ 0, 99 })
+	// TODO
+	public static ValueHolder atIsDB2() {
+		return notSupported();
+	}
+
+	@ParamCount({ 0, 99 })
+	// TODO
+	public static ValueHolder atIsValid() {
+		return notSupported();
+	}
+
+	@ParamCount({ 0, 99 })
+	// TODO
+	public static ValueHolder atMailSend() {
+		return notSupported();
+	}
+
+	@ParamCount({ 0, 99 })
+	// TODO
+	public static ValueHolder atPicklist() {
+		return notSupported();
+	}
+
+	@ParamCount({ 0, 99 })
+	// TODO
+	public static ValueHolder atPostedCommand() {
+		return notSupported();
+	}
+
+	@ParamCount({ 0, 99 })
+	// TODO
+	public static ValueHolder atSetTargetFrame() {
+		return notSupported();
+	}
+
+	@ParamCount({ 0, 99 })
+	// TODO
+	public static ValueHolder atSetViewInfo() {
+		return notSupported();
+	}
+
+	@ParamCount({ 0, 99 })
+	// TODO
+	public static ValueHolder atTemplateVersion() {
+		return notSupported();
+	}
+
+	@ParamCount({ 0, 99 })
+	// TODO
+	public static ValueHolder atURLGetHeader() {
+		return notSupported();
+	}
+
+	@ParamCount({ 0, 99 })
+	// TODO
+	public static ValueHolder atURLHistory() {
+		return notSupported();
+	}
+
+	@ParamCount({ 0, 99 })
+	// TODO
+	public static ValueHolder atURLOpen() {
+		return notSupported();
+	}
+
+	@ParamCount({ 0, 99 })
+	// TODO
+	public static ValueHolder atUserAccess() {
+		return notSupported();
+	}
+
 }

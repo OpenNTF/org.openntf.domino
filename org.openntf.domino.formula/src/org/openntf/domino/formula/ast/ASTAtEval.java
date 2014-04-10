@@ -34,15 +34,6 @@ public class ASTAtEval extends SimpleNode {
 		super(p, id);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.openntf.domino.formula.ASTNode#toFormula(java.lang.StringBuilder)
-	 */
-	public void toFormula(final StringBuilder sb) {
-		sb.append("@Eval");
-		appendParams(sb);
-	}
-
 	/**
 	 * Evaluates every entry and returns the last one
 	 */
@@ -56,8 +47,8 @@ public class ASTAtEval extends SimpleNode {
 		try {
 			for (int i = 0; i < vhEval.size; i++) {
 				String toEval = vhEval.getString(i);
-				// TODO RPr : We do not have the parser if the AST was serialized!
-				Node n = (Node) parser.parse(toEval, false);
+
+				Node n = (Node) ctx.getParser().parse(toEval, false);
 				ret = n.evaluate(ctx);
 				if (ret.dataType == DataType.ERROR)
 					break;

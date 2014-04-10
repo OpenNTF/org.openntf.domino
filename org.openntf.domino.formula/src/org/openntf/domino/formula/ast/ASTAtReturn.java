@@ -37,12 +37,6 @@ public class ASTAtReturn extends SimpleNode {
 		super(p, id);
 	}
 
-	public void toFormula(final StringBuilder sb) {
-		sb.append("@Return");
-		appendParams(sb);
-
-	}
-
 	/**
 	 * This throws a FormulaReturnException. Should be catched somewhere outside
 	 */

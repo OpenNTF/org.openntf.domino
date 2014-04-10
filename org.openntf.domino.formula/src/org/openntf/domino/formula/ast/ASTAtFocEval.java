@@ -34,15 +34,6 @@ public class ASTAtFocEval extends SimpleNode {
 		super(p, id);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.openntf.domino.formula.ASTNode#toFormula(java.lang.StringBuilder)
-	 */
-	public void toFormula(final StringBuilder sb) {
-		sb.append("@FocEval");
-		appendParams(sb);
-	}
-
 	/**
 	 * Evaluates every entry and returns the last one
 	 */
@@ -57,8 +48,8 @@ public class ASTAtFocEval extends SimpleNode {
 		try {
 			for (int i = 0; i < vhEval.size; i++) {
 				String toEval = vhEval.getString(i);
-				// TODO RPr remove the parser
-				Node n = (Node) parser.parse(toEval, true);
+
+				Node n = (Node) ctx.getParser().parse(toEval, true);
 				ValueHolder vh = ret[i] = n.evaluate(ctx);
 
 				if (vh.dataType == DataType.ERROR)

@@ -107,33 +107,6 @@ public class ASTAssignment extends SimpleNode {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.openntf.domino.formula.ASTNode#toFormula(java.lang.StringBuilder)
-	 */
-	@Override
-	public void toFormula(final StringBuilder sb) {
-		switch (type) {
-		case FIELD:
-			sb.append("FIELD ");
-			break;
-		case VAR:
-			break;
-
-		case ENV:
-			sb.append("ENV ");
-			break;
-
-		case DEFAULT:
-			sb.append("DEFAULT ");
-			break;
-		}
-
-		sb.append(varName);
-		sb.append(" := ");
-		children[0].toFormula(sb);
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see org.openntf.domino.formula.ast.SimpleNode#analyzeThis(java.util.Set, java.util.Set, java.util.Set, java.util.Set)
 	 */
 	@Override

@@ -4,10 +4,10 @@ package org.openntf.domino.formula.ast;
 
 import java.util.Set;
 
-import org.openntf.domino.formula.parse.*;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
 public class ASTFocParam extends SimpleNode {
 	String pseudonymValue;
@@ -17,26 +17,18 @@ public class ASTFocParam extends SimpleNode {
 	}
 
 	public void init(final String image) {
-		// TODO Auto-generated method stub
 		pseudonymValue = image;
-	}
-
-	public void toFormula(final StringBuilder sb) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
-		// TODO Auto-generated method stub
 		return ValueHolder.valueOf("PSeudonym: " + pseudonymValue);
 	}
 
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		// TODO Auto-generated method stub
-
+		functions.add("#" + pseudonymValue + "#");
 	}
 }
 /* JavaCC - OriginalChecksum=7e31041c5fbbe0cb629c28e308d8594c (do not edit this line) */

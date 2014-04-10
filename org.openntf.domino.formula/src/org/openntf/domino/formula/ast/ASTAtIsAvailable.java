@@ -16,11 +16,6 @@ public class ASTAtIsAvailable extends SimpleNode {
 		super(p, id);
 	}
 
-	public void toFormula(final StringBuilder sb) {
-		// TODO Auto-generated method stub
-
-	}
-
 	protected boolean checkAvailable(final FormulaContext ctx) throws FormulaReturnException {
 		if (children[0] instanceof ASTGetVariable) {
 			ASTGetVariable child = (ASTGetVariable) children[0];
@@ -37,6 +32,7 @@ public class ASTAtIsAvailable extends SimpleNode {
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
+		functions.add("@isavailable");
 	}
 
 }

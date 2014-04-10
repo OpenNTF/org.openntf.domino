@@ -10,7 +10,6 @@ import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.Function;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
-import org.openntf.domino.formula.module.TextFunctions;
 import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
 public class ASTAtText extends SimpleNode {
@@ -20,11 +19,6 @@ public class ASTAtText extends SimpleNode {
 	public ASTAtText(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 		function = p.getFunctionLC("@text");
-	}
-
-	public void toFormula(final StringBuilder sb) {
-		sb.append("@Text");
-		appendParams(sb);
 	}
 
 	@Override
@@ -39,10 +33,8 @@ public class ASTAtText extends SimpleNode {
 			}
 		}
 		try {
-			// TODO RPr: check if this is better:
-			//function.evaluate(ctx, params);
 			if (ret == null) {
-				ret = TextFunctions.doAtText(ctx, params);
+				ret = function.evaluate(ctx, params);
 			}
 		} catch (RuntimeException e) {
 			return ValueHolder.valueOf(new EvaluateException(codeLine, codeColumn, e));

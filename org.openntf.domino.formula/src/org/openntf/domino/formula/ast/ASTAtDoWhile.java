@@ -55,15 +55,6 @@ public class ASTAtDoWhile extends SimpleNode {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.openntf.domino.formula.ASTNode#toFormula(java.lang.StringBuilder)
-	 */
-	public void toFormula(final StringBuilder sb) {
-		sb.append("@DoWhile");
-		appendParams(sb);
-	}
-
 	/**
 	 * adds doWhile to the formula list
 	 */

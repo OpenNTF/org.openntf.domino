@@ -12,9 +12,7 @@ public enum Formulas {
 	;
 
 	public static FunctionFactory getFunctionFactory() {
-
 		FunctionFactory instance = new FunctionFactory();
-
 		ServiceLoader<FunctionFactory> loader = ServiceLoader.load(FunctionFactory.class);
 
 		for (FunctionFactory fact : loader) {
@@ -59,19 +57,14 @@ public enum Formulas {
 	}
 
 	public static FormulaContext createContext(final Map<String, Object> document, final FormulaParser parser) {
-		return createContext(document, parser.getFormatter(), parser);
+		return createContext(document, parser == null ? null : parser.getFormatter(), parser);
 	}
 
 	public static FormulaContext createContext(final Map<String, Object> document, final Formatter formatter, final FormulaParser parser) {
-		//		if (NotesThread.isLoaded) {
-		// TODO RPr find a better solution
-		//			return new FormulaContextNotes(document, formatter);
-		//		} else {
 		ServiceLoader<FormulaContext> loader = ServiceLoader.load(FormulaContext.class);
 
 		FormulaContext instance = loader.iterator().next();
 		instance.init(document, formatter, parser);
 		return instance;
-		//		}
 	}
 }

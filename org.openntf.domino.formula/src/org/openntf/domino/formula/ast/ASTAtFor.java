@@ -71,15 +71,6 @@ public class ASTAtFor extends SimpleNode {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.openntf.domino.formula.ASTNode#toFormula(java.lang.StringBuilder)
-	 */
-	public void toFormula(final StringBuilder sb) {
-		sb.append("@For");
-		appendParams(sb);
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see org.openntf.domino.formula.ast.SimpleNode#analyzeThis(java.util.Set, java.util.Set, java.util.Set, java.util.Set)
 	 */
 	@Override

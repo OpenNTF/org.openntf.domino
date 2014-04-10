@@ -52,14 +52,6 @@ public class ASTAtIfError extends SimpleNode {
 		return ValueHolder.valueDefault();
 	}
 
-	/**
-	 * 
-	 */
-	public void toFormula(final StringBuilder sb) {
-		sb.append("@IfError");
-		appendParams(sb);
-	}
-
 	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {

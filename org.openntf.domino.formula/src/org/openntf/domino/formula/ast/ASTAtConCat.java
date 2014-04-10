@@ -18,37 +18,17 @@
  */
 package org.openntf.domino.formula.ast;
 
-import java.util.Set;
-
 import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
-import org.openntf.domino.formula.annotation.OpenNTF;
 import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
 public class ASTAtConCat extends SimpleNode {
 
 	public ASTAtConCat(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
-	}
-
-	/**
-	 * Returns a äquivalent formula
-	 */
-	@OpenNTF
-	public void toFormula(final StringBuilder sb) {
-		if (children == null)
-			return;
-		sb.append("(");
-		children[0].toFormula(sb);
-		for (int i = 1; i < children.length; i++) {
-			sb.append(" + ");
-			children[i].toFormula(sb);
-		}
-		sb.append(")");
-
 	}
 
 	/**
@@ -112,15 +92,6 @@ public class ASTAtConCat extends SimpleNode {
 			return ValueHolder.valueOf(new EvaluateException(codeLine, codeColumn, cause));
 		}
 		return vh;
-	}
-
-	/**
-	 * This function uses no fields/functions
-	 */
-	@Override
-	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
-			final Set<String> functions) {
-
 	}
 
 }

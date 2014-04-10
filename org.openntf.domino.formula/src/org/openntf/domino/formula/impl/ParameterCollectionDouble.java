@@ -24,7 +24,6 @@ public class ParameterCollectionDouble extends ParameterCollectionAbstract<doubl
 
 	public ParameterCollectionDouble(final ValueHolder[] params, final boolean permutative) {
 		super(params, permutative);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

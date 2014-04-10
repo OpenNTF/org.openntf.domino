@@ -2,22 +2,16 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=true,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package org.openntf.domino.formula.ast;
 
-import java.util.Set;
-
-import org.openntf.domino.formula.parse.*;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
 public class ASTUserDefinedFunctionParameter extends SimpleNode {
 	String paramName;
 
 	public ASTUserDefinedFunctionParameter(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
-	}
-
-	public void toFormula(final StringBuilder sb) {
-		//throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -36,13 +30,6 @@ public class ASTUserDefinedFunctionParameter extends SimpleNode {
 
 	public String getNameLC() {
 		return paramName;
-	}
-
-	@Override
-	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
-			final Set<String> functions) {
-		// TODO Auto-generated method stub
-
 	}
 }
 /* JavaCC - OriginalChecksum=16378a4050db5050b35aed3e72d20156 (do not edit this line) */

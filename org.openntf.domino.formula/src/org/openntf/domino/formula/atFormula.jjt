@@ -149,7 +149,8 @@ TOKEN :
 
 	// @Functions
 | 	< At_do			: "@do" > 
-| 	< At_doWhile	: "@doWhile" > 
+| 	< At_doWhile	: "@doWhile" >
+| 	< At_while		: "@while" >
 | 	< At_for		: "@for" > 
 | 	< At_if			: "@if" >
 | 	< At_v2if		: "@V2if" >
@@ -547,6 +548,7 @@ private void unary() :
 // All control flow functions
 | < At_do > 		(< OParen >  statement() ( < EOS > statement() )*  < CParen >) #AtDo
 | < At_doWhile > 	(< OParen >  statement() ( < EOS > statement() )*  < CParen >) #AtDoWhile
+| < At_while > 		(< OParen >  statement() ( < EOS > statement() )*  < CParen >) #AtWhile
 
 | < At_for >		(< OParen >  	statement()	// initialize
 						< EOS >		statement()	// condition

@@ -53,16 +53,6 @@ public class ASTAtIsError extends SimpleNode {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.openntf.domino.formula.ASTNode#toFormula(java.lang.StringBuilder)
-	 */
-	public void toFormula(final StringBuilder sb) {
-		sb.append("@IsError");
-		appendParams(sb);
-
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see org.openntf.domino.formula.ast.SimpleNode#analyzeThis(java.util.Set, java.util.Set, java.util.Set, java.util.Set)
 	 */
 	@Override

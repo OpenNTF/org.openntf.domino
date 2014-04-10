@@ -2,12 +2,10 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=true,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package org.openntf.domino.formula.ast;
 
-import java.util.Set;
-
-import org.openntf.domino.formula.parse.*;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
 public class ASTUserDefinedFunctionVariable extends SimpleNode {
 	String varName;
@@ -32,16 +30,5 @@ public class ASTUserDefinedFunctionVariable extends SimpleNode {
 		return varName;
 	}
 
-	@Override
-	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
-			final Set<String> functions) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void toFormula(final StringBuilder sb) {
-		// TODO Auto-generated method stub
-
-	}
 }
 /* JavaCC - OriginalChecksum=f89904010287e446226d4de58c599848 (do not edit this line) */

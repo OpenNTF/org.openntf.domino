@@ -21,11 +21,11 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
+import org.openntf.domino.formula.DateTime;
 import org.openntf.domino.formula.Formatter;
 import org.openntf.domino.formula.Formatter.LotusDateTimeOptions;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FunctionFactory;
-import org.openntf.domino.formula.DateTime;
 import org.openntf.domino.formula.ValueHolder;
 import org.openntf.domino.formula.ValueHolder.DataType;
 import org.openntf.domino.formula.annotation.DiffersFromLotus;
@@ -1065,7 +1065,8 @@ public enum TextFunctions {
 	/*----------------------------------------------------------------------------*/
 	@DiffersFromLotus("Not all Lotus formats are yet supported")
 	@SuppressWarnings("deprecation")
-	public static ValueHolder doAtText(final FormulaContext ctx, final ValueHolder params[]) {
+	@ParamCount({ 1, 2 })
+	public static ValueHolder atText(final FormulaContext ctx, final ValueHolder params[]) {
 		ValueHolder vh = params[0];
 		String format = null;
 		if (params.length == 2) {

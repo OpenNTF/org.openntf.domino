@@ -2,8 +2,6 @@
 /* JavaCCOptions:MULTI=true,NODE_USES_PARSER=true,VISITOR=false,TRACK_TOKENS=false,NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package org.openntf.domino.formula.ast;
 
-import java.util.Set;
-
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
@@ -19,22 +17,10 @@ public class ASTUserDefinedFunctionDef extends SimpleNode {
 		super(p, id);
 	}
 
-	public void toFormula(final StringBuilder sb) {
-		// TODO Auto-generated method stub
-
-	}
-
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
-			final Set<String> functions) {
-		// TODO Auto-generated method stub
-
+		// This node is parent of ASTUserDefinedFunction and should never be evaluated
+		throw new UnsupportedOperationException();
 	}
 
 	public void init(final String image) throws ParseException {

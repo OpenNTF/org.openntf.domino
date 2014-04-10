@@ -19,10 +19,10 @@ package org.openntf.domino.formula.ast;
 
 import java.util.Set;
 
-import org.openntf.domino.formula.parse.*;
 import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
 public class ASTSelect extends SimpleNode {
 
@@ -40,16 +40,9 @@ public class ASTSelect extends SimpleNode {
 	}
 
 	@Override
-	public void toFormula(final StringBuilder sb) {
-		sb.append("SELECT");
-		children[0].toFormula(sb);
-	}
-
-	@Override
 	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
 			final Set<String> functions) {
-		// TODO Auto-generated method stub
-
+		functions.add("SELECT");
 	}
 }
 /* JavaCC - OriginalChecksum=3cb38fd681e06c11e6004b6246dce786 (do not edit this line) */
