@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.openntf.domino.formula</name>
+	<name>org.openntf.formula</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -42,4 +42,10 @@
 			<locationURI>PARENT-1-PROJECT_LOC/externalsources/icu4j</locationURI>
 		</link>
 	</linkedResources>
+	<variableList>
+		<variable>
+			<name>copy_PARENT</name>
+			<value>$%7BPARENT-2-PROJECT_LOC%7D/GitHub/org.openntf.domino</value>
+		</variable>
+	</variableList>
 </projectDescription>

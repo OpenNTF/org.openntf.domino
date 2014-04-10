@@ -5,6 +5,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="src" path="/org.openntf.domino"/>
 	<classpathentry kind="lib" path="jline/jline-1.0.jar"/>
-	<classpathentry kind="src" path="/org.openntf.domino.formula"/>
+	<classpathentry kind="src" path="/org.openntf.formula"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
