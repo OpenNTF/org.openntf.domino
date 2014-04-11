@@ -56,10 +56,10 @@ public class ASTSubscript extends SimpleNode {
 				return ValueHolder.valueOf(base.getInt(idx));
 
 			case STRING:
-				return ValueHolder.valueOf(base.getString(idx - 1));
+				return ValueHolder.valueOf(base.getString(idx));
 
 			default:
-				return ValueHolder.valueOf(base.get(idx - 1));
+				return ValueHolder.valueOf(base.get(idx));
 			}
 		} catch (RuntimeException cause) {
 			return ValueHolder.valueOf(new EvaluateException(codeLine, codeColumn, cause));
