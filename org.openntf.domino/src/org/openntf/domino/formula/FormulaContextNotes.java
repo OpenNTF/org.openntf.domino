@@ -1,8 +1,5 @@
 package org.openntf.domino.formula;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -11,15 +8,13 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
-import org.openntf.domino.formula.ValueHolder.DataType;
 import org.openntf.domino.utils.Factory;
+import org.openntf.formula.EvaluateException;
+import org.openntf.formula.FormulaContext;
+import org.openntf.formula.ValueHolder;
 
 public class FormulaContextNotes extends FormulaContext {
 	private static final Logger log_ = Logger.getLogger(FormulaContextNotes.class.getName());
-
-	public FormulaContextNotes(final Map<String, Object> document, final Formatter formatter) {
-		super(document, formatter);
-	}
 
 	/**
 	 * does a native evaluate. This is needed for all functions that are too complex to implement in java or the algorithm is unknown
@@ -30,7 +25,6 @@ public class FormulaContextNotes extends FormulaContext {
 	 *            the parameters are mapped to the field p1, p2 and so on
 	 * @return the value
 	 */
-	@Override
 	@SuppressWarnings("deprecation")
 	public ValueHolder evaluateNative(final String formula, final ValueHolder... params) {
 		Session session = Factory.getSession();
@@ -38,9 +32,9 @@ public class FormulaContextNotes extends FormulaContext {
 		Database db = null;
 
 		lotus.domino.Document rawDocument = null;
-		if (document instanceof Document) {
-			db = ((Document) document).getAncestorDatabase();
-			rawDocument = Factory.toLotus((Document) document);
+		if (dataMap instanceof Document) {
+			db = ((Document) dataMap).getAncestorDatabase();
+			rawDocument = Factory.toLotus((Document) dataMap);
 		} else {
 			db = session.getCurrentDatabase();
 		}
@@ -55,7 +49,7 @@ public class FormulaContextNotes extends FormulaContext {
 			// fill the document
 			for (int i = 0; i < params.length; i++) {
 				try {
-					tmpDoc.replaceItemValue("p" + (i + 1), getNotesCompatibleList(session, params[i]));
+					tmpDoc.replaceItemValue("p" + (i + 1), params[i].toList());
 				} catch (EvaluateException e) {
 					return params[i];
 				}
@@ -78,31 +72,22 @@ public class FormulaContextNotes extends FormulaContext {
 
 	}
 
-	private List<Object> getNotesCompatibleList(final Session session, final ValueHolder vh) throws EvaluateException {
-		List<Object> ret;
-		if (vh.dataType != DataType.DATETIME)
-			ret = vh.toList();
-		else {
-			ret = new ArrayList<Object>(vh.size);
-			for (int i = 0; i < vh.size; i++)
-				ret.add(session.createDateTime(vh.getDateTime(i).toJavaCal()));
-		}
-		return ret;
-	}
-
 	@Override
-	public String getEnvLC(final String varNameLC) {
+	public String getEnv(final String varNameLC) {
 		return Factory.getSession().getEnvironmentString(varNameLC);
 	}
 
 	@Override
-	public void setEnvLC(final String varNameLC, final String value) {
-		Factory.getSession().setEnvironmentVar(varNameLC, value);
+	public void setEnv(final String varName, final String value) {
+		Factory.getSession().setEnvironmentVar(varName, value);
 	}
 
-	@Override
 	public Database getDatabase() {
-		return document instanceof Document ? ((Document) document).getAncestorDatabase() : Factory.getSession().getCurrentDatabase();
+		return dataMap instanceof Document ? ((Document) dataMap).getAncestorDatabase() : Factory.getSession().getCurrentDatabase();
+	}
+
+	public Document getDocument() {
+		return ((Document) dataMap);
 	}
 
 }

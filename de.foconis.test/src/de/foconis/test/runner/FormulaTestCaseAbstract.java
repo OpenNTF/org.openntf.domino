@@ -3,8 +3,8 @@ package de.foconis.test.runner;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.openntf.domino.formula.impl.TextFunctions.atLeft;
-import static org.openntf.domino.formula.impl.TextFunctions.atRight;
+import static org.openntf.formula.function.TextFunctions.atLeft;
+import static org.openntf.formula.function.TextFunctions.atRight;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,14 +21,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
-import org.openntf.domino.formula.ASTNode;
-import org.openntf.domino.formula.DominoFormatter;
-import org.openntf.domino.formula.EvaluateException;
-import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.FormulaParseException;
-import org.openntf.domino.formula.FormulaParser;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.Strings;
+import org.openntf.formula.ASTNode;
+import org.openntf.formula.EvaluateException;
+import org.openntf.formula.FormulaContext;
+import org.openntf.formula.FormulaParseException;
+import org.openntf.formula.Formulas;
 
 @RunWith(FormulaTestSuite.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -160,8 +159,8 @@ public class FormulaTestCaseAbstract {
 		fillDemoDoc(ntfDoc);
 		ASTNode ast = null;
 
-		ast = FormulaParser.getDefaultInstance().parse(formula);
-		FormulaContext ctx1 = FormulaContext.createContext(ntfDoc, DominoFormatter.getDefaultInstance());
+		ast = Formulas.getParser().parse(formula);
+		FormulaContext ctx1 = Formulas.createContext(ntfDoc, Formulas.getParser());
 		return ast.solve(ctx1);
 	}
 
@@ -170,8 +169,8 @@ public class FormulaTestCaseAbstract {
 		Document ntfDoc = db.createDocument();
 		ASTNode ast = null;
 
-		ast = FormulaParser.getDefaultInstance().parse(formula);
-		FormulaContext ctx1 = FormulaContext.createContext(ntfDoc, DominoFormatter.getDefaultInstance());
+		ast = Formulas.getParser().parse(formula);
+		FormulaContext ctx1 = Formulas.createContext(ntfDoc, Formulas.getParser());
 		ast.solve(ctx1);
 
 	}
@@ -189,8 +188,8 @@ public class FormulaTestCaseAbstract {
 		Map<String, Object> ntfMap = new HashMap<String, Object>();
 		fillDemoDoc(ntfMap);
 		ASTNode ast = null;
-		ast = FormulaParser.getDefaultInstance().parse(formula);
-		FormulaContext ctx1 = FormulaContext.createContext(ntfMap, DominoFormatter.getDefaultInstance());
+		ast = Formulas.getParser().parse(formula);
+		FormulaContext ctx1 = Formulas.createContext(ntfMap, Formulas.getParser());
 		return ast.solve(ctx1);
 	}
 
@@ -198,8 +197,8 @@ public class FormulaTestCaseAbstract {
 	public void testMapFail() throws FormulaParseException, EvaluateException {
 		Map<String, Object> ntfMap = new HashMap<String, Object>();
 		ASTNode ast = null;
-		ast = FormulaParser.getDefaultInstance().parse(formula);
-		FormulaContext ctx1 = FormulaContext.createContext(ntfMap, DominoFormatter.getDefaultInstance());
+		ast = Formulas.getParser().parse(formula);
+		FormulaContext ctx1 = Formulas.createContext(ntfMap, Formulas.getParser());
 		ast.solve(ctx1);
 	}
 

@@ -12,12 +12,13 @@ import jline.ConsoleReader;
 import jline.SimpleCompletor;
 
 import org.openntf.domino.ext.Session.Fixes;
-import org.openntf.domino.formula.Function;
-import org.openntf.domino.formula.FunctionFactory;
-import org.openntf.domino.formula.impl.NotImplemented;
+import org.openntf.domino.formula.NotImplemented;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.formula.Formulas;
+import org.openntf.formula.Function;
+import org.openntf.formula.FunctionFactory;
 
 public class FormulaShell extends TestRunner {
 
@@ -49,7 +50,7 @@ public class FormulaShell extends TestRunner {
 			List<Completor> completors = new LinkedList<Completor>();
 
 			// This code is responsible for autocompletion
-			FunctionFactory funcFact = FunctionFactory.getDefaultInstance();
+			FunctionFactory funcFact = Formulas.getFunctionFactory();
 			Collection<Function> funcs = funcFact.getFunctions().values();
 			String[] autoComplete = new String[funcs.size() + 3];
 			int i = 0;
