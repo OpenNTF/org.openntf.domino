@@ -44,28 +44,6 @@ public enum NativeEvaluateFunctions {
 
 	/*----------------------------------------------------------------------------*/
 	/*
-	 * @Like, @Matches
-	 */
-	/*----------------------------------------------------------------------------*/
-	@NeedsNativeEvaluate({ "@Like", "Use @MatchesRegExp instead" })
-	@ParamCount({ 2, 3 })
-	public static ValueHolder atLike(final FormulaContextNotes ctx, final ValueHolder[] params) {
-		if (params.length == 2) {
-			return ctx.evaluateNative("@Like(p1;p2)", params[0], params[1]);
-		} else {
-			return ctx.evaluateNative("@Like(p1;p2;p3)", params[0], params[1], params[2]);
-		}
-	}
-
-	/*----------------------------------------------------------------------------*/
-	@NeedsNativeEvaluate({ "@Matches", "Use @MatchesRegExp instead" })
-	@ParamCount(2)
-	public static ValueHolder atMatches(final FormulaContextNotes ctx, final ValueHolder[] params) {
-		return ctx.evaluateNative("@Matches(p1;p2)", params[0], params[1]);
-	}
-
-	/*----------------------------------------------------------------------------*/
-	/*
 	 * @Password, @HashPassword, @VerifyPassword, @PasswordQuality
 	 */
 	/*----------------------------------------------------------------------------*/

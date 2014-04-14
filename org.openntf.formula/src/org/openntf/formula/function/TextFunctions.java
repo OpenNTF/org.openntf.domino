@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openntf.formula.DateTime;
@@ -691,10 +692,6 @@ public enum TextFunctions {
 	}
 
 	/*----------------------------------------------------------------------------*/
-	//	@ParamCount(1)
-	//	public static ValueHolder atTextToTime(final FormulaContext ctx, final ValueHolder[] params) {
-
-	/*----------------------------------------------------------------------------*/
 	/*
 	 * @Keywords
 	 */
@@ -768,8 +765,43 @@ public enum TextFunctions {
 
 	/*----------------------------------------------------------------------------*/
 	/*
-	 * @MatchesRegExp
+	 * @Matches, @Like, @MatchesRegExp
 	 */
+	/*----------------------------------------------------------------------------*/
+	@DiffersFromLotus("Logical operations on patterns using &,|,! aren't yet supported")
+	@ParamCount(2)
+	public static ValueHolder atMatches(final FormulaContext ctx, final ValueHolder[] params) {
+		ValueHolder vhTester = params[0];
+		ValueHolder vhPatterns = params[1];
+		for (int ip = 0; ip < vhPatterns.size; ip++) {
+			TextMatchLotus tml = new TextMatchLotus(vhPatterns.getString(ip));
+			for (int it = 0; it < vhTester.size; it++)
+				if (tml.matches(vhTester.getString(it)))
+					return ctx.TRUE;
+		}
+		return ctx.FALSE;
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@ParamCount({ 2, 3 })
+	public static ValueHolder atLike(final FormulaContext ctx, final ValueHolder[] params) {
+		char escape = 0;
+		if (params.length == 3) {
+			String e = params[2].getString(0);
+			if (e != null && e.length() != 0)
+				escape = e.charAt(0);
+		}
+		ValueHolder vhTester = params[0];
+		ValueHolder vhPatterns = params[1];
+		for (int ip = 0; ip < vhPatterns.size; ip++) {
+			TextMatchLotus tml = new TextMatchLotus(vhPatterns.getString(ip), escape);
+			for (int it = 0; it < vhTester.size; it++)
+				if (tml.matches(vhTester.getString(it)))
+					return ctx.TRUE;
+		}
+		return ctx.FALSE;
+	}
+
 	/*----------------------------------------------------------------------------*/
 	@OpenNTF
 	@ParamCount(2)
@@ -783,6 +815,26 @@ public enum TextFunctions {
 					return ctx.TRUE;
 		}
 		return ctx.FALSE;
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@OpenNTF
+	@ParamCount(3)
+	public static ValueHolder atMatchesGetCaptGroups(final ValueHolder[] params) {
+		String tester = params[0].getString(0);
+		String pattern = params[1].getString(0);
+		ValueHolder captGroups = params[2];
+		Pattern regPatt = Pattern.compile(pattern);
+		Matcher matsch = regPatt.matcher(tester);
+		if (!matsch.matches())
+			return ValueHolder.createValueHolder(String.class, 0);
+		int numGroups = matsch.groupCount();
+		ValueHolder ret = ValueHolder.createValueHolder(String.class, captGroups.size);
+		for (int i = 0; i < captGroups.size; i++) {
+			int which = captGroups.getInt(i);
+			ret.add((which < 0 || which > numGroups) ? "" : matsch.group(which));
+		}
+		return ret;
 	}
 
 	/*----------------------------------------------------------------------------*/
