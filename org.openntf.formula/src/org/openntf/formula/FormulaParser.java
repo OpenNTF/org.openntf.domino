@@ -89,11 +89,9 @@ public abstract class FormulaParser {
 
 		@SuppressWarnings("unchecked")
 		void put(final String key, final ASTNode node) {
-			System.out.println("Actual CacheSize=" + cacheMap.size());
 			if (cacheMap.size() > MAX_FORMULA_CACHESIZE) {
 				Object[] arr = cacheMap.entrySet().toArray();
-				FCMapEntryComparator comparator = new FCMapEntryComparator();
-				Arrays.sort(arr, comparator);
+				Arrays.sort(arr, new FCMapEntryComparator());
 				int numToThrow = cacheMap.size() - REDUCE_FORMULA_CACHESIZE_TO;
 				String[] toThrow = new String[numToThrow];
 				for (int i = 0; i < numToThrow; i++)
@@ -103,8 +101,6 @@ public abstract class FormulaParser {
 				Set<Map.Entry<String, FormulaCacheEntry>> cacheSet = cacheMap.entrySet();
 				for (Map.Entry<String, FormulaCacheEntry> ent : cacheSet)
 					ent.getValue().usageCount = 1;
-
-				System.out.println("New CacheSize=" + cacheMap.size());
 			}
 			cacheMap.put(key, new FormulaCacheEntry(node));
 		}
