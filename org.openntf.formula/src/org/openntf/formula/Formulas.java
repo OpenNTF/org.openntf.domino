@@ -1,6 +1,7 @@
 package org.openntf.formula;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -77,8 +78,13 @@ public enum Formulas {
 
 	public static FormulaContext createContext(final Map<String, Object> document, final Formatter formatter, final FormulaParser parser) {
 		ServiceLoader<FormulaContext> loader = ServiceLoader.load(FormulaContext.class);
-
-		FormulaContext instance = loader.iterator().next();
+		Iterator<FormulaContext> it = loader.iterator();
+		FormulaContext instance;
+		if (it.hasNext()) {
+			instance = it.next();
+		} else {
+			instance = new FormulaContext();
+		}
 		instance.init(document, formatter, parser);
 		return instance;
 	}

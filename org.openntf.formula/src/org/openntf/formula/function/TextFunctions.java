@@ -820,21 +820,20 @@ public enum TextFunctions {
 	/*----------------------------------------------------------------------------*/
 	@OpenNTF
 	@ParamCount(3)
-	public static ValueHolder atMatchesGetCaptGroups(final ValueHolder[] params) {
+	public static ValueHolder atMatchesGetCaptGroups(final FormulaContext ctx, final ValueHolder[] params) {
 		String tester = params[0].getString(0);
 		String pattern = params[1].getString(0);
-		ValueHolder captGroups = params[2];
+		String resName = params[2].getString(0);
 		Pattern regPatt = Pattern.compile(pattern);
 		Matcher matsch = regPatt.matcher(tester);
 		if (!matsch.matches())
-			return ValueHolder.createValueHolder(String.class, 0);
+			return ValueHolder.valueOf(0);
 		int numGroups = matsch.groupCount();
-		ValueHolder ret = ValueHolder.createValueHolder(String.class, captGroups.size);
-		for (int i = 0; i < captGroups.size; i++) {
-			int which = captGroups.getInt(i);
-			ret.add((which < 0 || which > numGroups) ? "" : matsch.group(which));
-		}
-		return ret;
+		ValueHolder resValue = ValueHolder.createValueHolder(String.class, numGroups + 1);
+		for (int i = 0; i <= numGroups; i++)
+			resValue.add(matsch.group(i));
+		ctx.setVarLC(resName.toLowerCase(), resValue);
+		return ValueHolder.valueOf(resValue.size);
 	}
 
 	/*----------------------------------------------------------------------------*/

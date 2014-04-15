@@ -162,9 +162,9 @@ public class TextMatchLotus {
 	}
 
 	/*----------------------------------------------------------------------------*/
-	String iTestStr;
-	int iTestStrLh;
-	int iNextNPPos;
+	private String iTestStr;
+	private int iTestStrLh;
+	private int iNextNPPos;
 
 	/*----------------------------------------------------------------------------*/
 	private boolean matches(int testStrPos, int npPos) {

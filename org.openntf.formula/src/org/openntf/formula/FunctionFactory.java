@@ -51,16 +51,28 @@ public class FunctionFactory {
 	public static FunctionFactory createInstance() {
 		FunctionFactory instance = new FunctionFactory();
 		ServiceLoader<FunctionFactory> loader = ServiceLoader.load(FunctionFactory.class);
+		if (loader.iterator().hasNext()) {
 
-		List<FunctionFactory> loaderList = new ArrayList<FunctionFactory>();
-		for (FunctionFactory fact : loader) {
-			loaderList.add(fact);
-		}
+			List<FunctionFactory> loaderList = new ArrayList<FunctionFactory>();
+			for (FunctionFactory fact : loader) {
+				loaderList.add(fact);
+			}
 
-		for (int i = loaderList.size() - 1; i >= 0; i--) {
-			//TODO RPR Add logger here?
-			//System.out.println("ADD Factory " + fact.getClass().getName());
-			instance.addFactory(loaderList.get(i));
+			for (int i = loaderList.size() - 1; i >= 0; i--) {
+				//TODO RPR Add logger here?
+				//System.out.println("ADD Factory " + fact.getClass().getName());
+				instance.addFactory(loaderList.get(i));
+			}
+		} else {
+			// case if serviceLoader does not work (notesAgent)
+			instance.addFactory(new org.openntf.formula.function.Operators.Factory());
+			instance.addFactory(new org.openntf.formula.function.OperatorsBool.Factory());
+			instance.addFactory(new org.openntf.formula.function.Negators.Factory());
+			instance.addFactory(new org.openntf.formula.function.Comparators.Factory());
+			instance.addFactory(new org.openntf.formula.function.Constants.Factory());
+			instance.addFactory(new org.openntf.formula.function.MathFunctions.Factory());
+			instance.addFactory(new org.openntf.formula.function.DateTimeFunctions.Factory());
+			instance.addFactory(new org.openntf.formula.function.TextFunctions.Factory());
 		}
 		instance.setImmutable();
 
