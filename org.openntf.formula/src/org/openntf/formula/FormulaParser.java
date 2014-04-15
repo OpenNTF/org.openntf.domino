@@ -19,8 +19,11 @@ package org.openntf.formula;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.openntf.formula.parse.AtFormulaParserImpl;
 
@@ -44,6 +47,72 @@ public abstract class FormulaParser {
 	protected Map<String, Function> customFunc;
 	protected boolean parsing = false;
 
+	public static final int MAX_FORMULA_CACHESIZE = 512;
+	public static final int REDUCE_FORMULA_CACHESIZE_TO = 256;
+
+	protected class FormulaCache {
+		class FormulaCacheEntry {
+			ASTNode node;
+			int usageCount;
+
+			FormulaCacheEntry(final ASTNode n) {
+				node = n;
+				usageCount = 1;
+			}
+		}
+
+		class FCMapEntryComparator implements Comparator<Object> {
+			public int compare(final Object ent1, final Object ent2) {
+				if (!(ent1 instanceof Map.Entry) || !(ent2 instanceof Map.Entry))
+					throw new IllegalArgumentException("FCMapEntryComparator");
+				@SuppressWarnings("unchecked")
+				int us1 = ((Map.Entry<String, FormulaCacheEntry>) ent1).getValue().usageCount;
+				@SuppressWarnings("unchecked")
+				int us2 = ((Map.Entry<String, FormulaCacheEntry>) ent2).getValue().usageCount;
+				return (us1 > us2) ? 1 : (us1 < us2) ? -1 : 0;
+			}
+		}
+
+		private Map<String, FormulaCacheEntry> cacheMap = new HashMap<String, FormulaCacheEntry>();
+
+		ASTNode get(final String key) {
+			FormulaCacheEntry fce = cacheMap.get(key);
+			if (fce == null)
+				return null;
+			fce.usageCount++;
+			return fce.node;
+		}
+
+		void reset() {
+			cacheMap.clear();
+		}
+
+		@SuppressWarnings("unchecked")
+		void put(final String key, final ASTNode node) {
+			System.out.println("Actual CacheSize=" + cacheMap.size());
+			if (cacheMap.size() > MAX_FORMULA_CACHESIZE) {
+				Object[] arr = cacheMap.entrySet().toArray();
+				FCMapEntryComparator comparator = new FCMapEntryComparator();
+				Arrays.sort(arr, comparator);
+				int numToThrow = cacheMap.size() - REDUCE_FORMULA_CACHESIZE_TO;
+				String[] toThrow = new String[numToThrow];
+				for (int i = 0; i < numToThrow; i++)
+					toThrow[i] = ((Map.Entry<String, FormulaCacheEntry>) arr[i]).getKey();
+				for (int i = 0; i < numToThrow; i++)
+					cacheMap.remove(toThrow[i]);
+				Set<Map.Entry<String, FormulaCacheEntry>> cacheSet = cacheMap.entrySet();
+				for (Map.Entry<String, FormulaCacheEntry> ent : cacheSet)
+					ent.getValue().usageCount = 1;
+
+				System.out.println("New CacheSize=" + cacheMap.size());
+			}
+			cacheMap.put(key, new FormulaCacheEntry(node));
+		}
+	}
+
+	protected FormulaCache ntfFormulaCache = new FormulaCache();
+	protected FormulaCache focFormulaCache = new FormulaCache();
+
 	/**
 	 * Returns a the Formatter for this parser
 	 * 
@@ -58,6 +127,8 @@ public abstract class FormulaParser {
 	 */
 	public void reset() {
 		customFunc = new HashMap<String, Function>();
+		ntfFormulaCache.reset();
+		focFormulaCache.reset();
 	}
 
 	/**
@@ -160,6 +231,8 @@ public abstract class FormulaParser {
 		parser.functionFactory = functionFactory;
 		parser.includeProvider = includeProvider;
 		parser.customFunc = customFunc;
+		parser.focFormulaCache = focFormulaCache;
+		parser.ntfFormulaCache = ntfFormulaCache;
 		return parser;
 	}
 
@@ -179,10 +252,10 @@ public abstract class FormulaParser {
 	}
 
 	/**
-	 * Parses the given formlula from an inputStream
+	 * Parses the given formula from an inputStream
 	 * 
 	 * @param formula
-	 *            String with formul
+	 *            String with formula
 	 * @param useFocFormula
 	 *            see: {@link #parse(Reader, boolean)}
 	 * @return see: {@link #parse(Reader, boolean)}
@@ -190,14 +263,19 @@ public abstract class FormulaParser {
 	 *             see: {@link #parse(Reader, boolean)}
 	 */
 	final public ASTNode parse(final String formula, final boolean useFocFormula) throws FormulaParseException {
-		StringReader sr = new java.io.StringReader(formula);
-		ASTNode node = parse(sr, useFocFormula);
-		node.setFormula(formula);
+		FormulaCache formulaCache = useFocFormula ? focFormulaCache : ntfFormulaCache;
+		ASTNode node = formulaCache.get(formula);
+		if (node == null) {
+			StringReader sr = new java.io.StringReader(formula);
+			node = parse(sr, useFocFormula);
+			node.setFormula(formula);
+			formulaCache.put(formula, node);
+		}
 		return node;
 	}
 
 	/**
-	 * Parses the given formlula from an inputStream
+	 * Parses the given formula from an inputStream
 	 * 
 	 * @param formula
 	 *            String with formul
@@ -206,8 +284,7 @@ public abstract class FormulaParser {
 	 *             see: {@link #parse(Reader, boolean)}
 	 */
 	final public ASTNode parse(final String formula) throws FormulaParseException {
-		StringReader sr = new java.io.StringReader(formula);
-		ASTNode node = parse(sr, false);
+		ASTNode node = parse(formula, false);
 		node.setFormula(formula);
 		return node;
 	}

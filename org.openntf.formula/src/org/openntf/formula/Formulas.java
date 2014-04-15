@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.ServiceLoader;
 
 import org.openntf.formula.impl.FormatterImpl;
@@ -19,6 +20,7 @@ public enum Formulas {
 	;
 
 	private static final ThreadLocal<FormulaParser> parserCache = new ThreadLocal<FormulaParser>();
+	private static final ThreadLocal<Class<FormulaContext>> contextClassCache = new ThreadLocal<Class<FormulaContext>>();
 	private static final ThreadLocal<FunctionFactory> functionFactoryCache = new ThreadLocal<FunctionFactory>();
 
 	/*----------------------------------------------------------------------------*/
@@ -76,14 +78,32 @@ public enum Formulas {
 		return createContext(document, parser == null ? null : parser.getFormatter(), parser);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static FormulaContext createContext(final Map<String, Object> document, final Formatter formatter, final FormulaParser parser) {
-		ServiceLoader<FormulaContext> loader = ServiceLoader.load(FormulaContext.class);
-		Iterator<FormulaContext> it = loader.iterator();
-		FormulaContext instance;
-		if (it.hasNext()) {
-			instance = it.next();
+		Class<FormulaContext> ctxClass = contextClassCache.get();
+		FormulaContext instance = null;
+
+		if (ctxClass == null) {
+			ServiceLoader<FormulaContext> loader = ServiceLoader.load(FormulaContext.class);
+			Iterator<FormulaContext> it = loader.iterator();
+			if (it.hasNext()) {
+				instance = it.next();
+			} else {
+				instance = new FormulaContext();
+			}
+			ctxClass = (Class<FormulaContext>) instance.getClass();
+			contextClassCache.set(ctxClass);
 		} else {
-			instance = new FormulaContext();
+			try {
+				instance = ctxClass.newInstance();
+			} catch (InstantiationException e) {
+				throw new MissingResourceException("Can't instantiate context: " + e.getMessage(), ctxClass.getName(),
+						"InstantiationException");
+			} catch (IllegalAccessException e) {
+				throw new MissingResourceException("Can't instantiate context: " + e.getMessage(), ctxClass.getName(),
+						"IllegalAccessException");
+
+			}
 		}
 		instance.init(document, formatter, parser);
 		return instance;
