@@ -22,6 +22,7 @@ public interface ColorObject {
 	 *         <li>FF0000 for red</li>
 	 *         <li>0000FF for blue</li>
 	 *         </ul>
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public String getHex();
 
@@ -37,6 +38,7 @@ public interface ColorObject {
 	 *            <li>FF0000 for red</li>
 	 *            <li>0000FF for blue</li>
 	 *            </ul>
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public void setHex(final String hex);
 }
