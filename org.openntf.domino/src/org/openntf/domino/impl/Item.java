@@ -328,12 +328,14 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	 */
 	@Override
 	public MIMEEntity getMIMEEntity() {
-		try {
-			return fromLotus(getDelegate().getMIMEEntity(), MIMEEntity.SCHEMA, this.getParent());
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
+		System.err.println("GetMIMEEntity in Item");
+		return getParent().getMIMEEntity(getName());
+		//		try {
+		//			return fromLotus(getDelegate().getMIMEEntity(), MIMEEntity.SCHEMA, this.getParent());
+		//		} catch (NotesException e) {
+		//			DominoUtils.handleException(e);
+		//			return null;
+		//		}
 	}
 
 	/*

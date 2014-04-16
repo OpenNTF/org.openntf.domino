@@ -230,7 +230,8 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		if (od == null) {
 			throw new EdgeHelperException(vertex.getClass().getName() + " is not a participating type in edge " + getLabel());
 		} else {
-			for (Edge edge : getSortedEdges(vertex, sortproperties)) {
+			SortedSet<? extends Edge> edges = getSortedEdges(vertex, sortproperties);
+			for (Edge edge : edges) {
 				result.add(edge.getVertex(od));
 			}
 			return Collections.unmodifiableSet(result);

@@ -800,7 +800,7 @@ public enum Factory {
 				}
 			});
 			if (result instanceof org.openntf.domino.Session) {
-				Factory.setNoRecycle((org.openntf.domino.Session) result, false); // We have created the session, so we recycle it
+				Factory.setNoRecycle((org.openntf.domino.Session) result, false); // We have created the session, so we are responsible to recycle it.
 				return (org.openntf.domino.Session) result;
 			}
 		} catch (PrivilegedActionException e) {

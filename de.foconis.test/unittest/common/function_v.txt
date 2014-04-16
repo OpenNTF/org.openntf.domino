@@ -1,0 +1,23 @@
+@V2If(@True;"a";"b") 
+	#allPass [a]
+
+@V3UserName 
+	#allPass  
+
+@V4UserAccess("":"log.nsf") 
+	#allPass  
+
+@ValidateInternetAddress([Address821]; "SStreitfeld@gazette.com")
+	#allPass  
+
+@VerifyPassword("tolstoy";@HashPassword("tolstoy"))
+	#allPass [1.0] 
+
+@Version 
+	#allPass 5 
+
+@ViewShowThisUnread("0")
+	#allFail  
+
+@ViewTitle 
+	#allPass  

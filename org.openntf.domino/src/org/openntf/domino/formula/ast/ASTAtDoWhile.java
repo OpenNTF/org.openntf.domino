@@ -17,40 +17,60 @@
  */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaParser;
-import org.openntf.domino.formula.EvaluateException;
+import java.util.Set;
+
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.ValueHolder.DataType;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
 public class ASTAtDoWhile extends SimpleNode {
-	public ASTAtDoWhile(final int id) {
-		super(id);
-	}
 
-	public ASTAtDoWhile(final AtFormulaParser p, final int id) {
+	public ASTAtDoWhile(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
 	/**
-	 * AtDoWhile returns always TRUE, as in the formula online help described
-	 * 
-	 * @throws EvaluateException
+	 * AtDoWhile returns always TRUE, or an Error-ValueHolder, if an error occurs in the last parameter.
 	 */
 	@Override
-	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
-		ValueHolder ret = null;
-		do {
-			for (int i = 0; i < jjtGetNumChildren(); ++i) {
-				ret = jjtGetChild(i).evaluate(ctx);
-			}
-		} while (ret != null && ret.isTrue());
+	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
 
-		return new ValueHolder(1); // returns always TRUE
+		ValueHolder ret = null;
+		if (children != null) {
+			do {
+				for (int i = 0; i < children.length; ++i) {
+					ret = children[i].evaluate(ctx);
+				}
+				if (ret == null)
+					break; // should not happen
+
+				if (ret.dataType == DataType.ERROR)
+					return ret;
+
+			} while (ret.isTrue(ctx));
+		}
+		return ValueHolder.valueOf(1); // returns always TRUE
+
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ASTNode#toFormula(java.lang.StringBuilder)
+	 */
 	public void toFormula(final StringBuilder sb) {
 		sb.append("@DoWhile");
 		appendParams(sb);
+	}
+
+	/**
+	 * adds doWhile to the formula list
+	 */
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		functions.add("@dowhile");
 	}
 }
 /* JavaCC - OriginalChecksum=3d9a997fad4a26e001d6dec704a9797f (do not edit this line) */

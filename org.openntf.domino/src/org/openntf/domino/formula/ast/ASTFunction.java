@@ -17,38 +17,32 @@
  */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaParser;
-import org.openntf.domino.formula.AtFunction;
+import java.util.Set;
+
+import org.openntf.domino.formula.Function;
 import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.ParseException;
+import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.ValueHolder.DataType;
+import org.openntf.domino.formula.impl.UserDefinedFunction;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
+import org.openntf.domino.formula.parse.ParseException;
 
 public class ASTFunction extends SimpleNode {
-	protected AtFunction function;
+	protected Function function;
 
-	public ASTFunction(final int id) {
-		super(id);
-	}
-
-	public ASTFunction(final AtFormulaParser p, final int id) {
+	public ASTFunction(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
-	public void setFunction(final String string) {
-		function = parser.getFunction(string);
+	public void init(final String string) throws ParseException {
+		function = parser.getFunctionLC(string.toLowerCase());
 		if (function == null) {
 			throw new IllegalArgumentException("'" + string + "' is not a function");
 		}
-	}
-
-	@Override
-	public void jjtClose() throws ParseException {
-		super.jjtClose();
-		if (function != null) {
-			if (!function.checkParamCount(jjtGetNumChildren())) {
-				throw new ParseException(parser, "parameter count mismatch");
-			}
+		if (!function.checkParamCount(jjtGetNumChildren())) {
+			throw new ParseException(parser, "parameter count mismatch");
 		}
 	}
 
@@ -60,25 +54,22 @@ public class ASTFunction extends SimpleNode {
 		return super.toString() + ": " + function;
 	}
 
+	/**
+	 * function.evaluate(ctx,params) may throw any runtime exception. Error-Valueholders are not passed to the function. Thats why we need
+	 * an AST-AtText
+	 */
 	@Override
-	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
+	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
+		ValueHolder params[] = new ValueHolder[children == null ? 0 : children.length];
+		for (int i = 0; i < params.length; i++) {
+			params[i] = children[i].evaluate(ctx);
+			if (params[i].dataType == DataType.ERROR)
+				return params[i];
+		}
 		try {
-			if (jjtGetNumChildren() == 0) {
-				return function.evaluate(ctx, null);
-			}
-			ValueHolder params[] = new ValueHolder[jjtGetNumChildren()];
-			for (int i = 0; i < jjtGetNumChildren(); i++) {
-				params[i] = jjtGetChild(i).evaluate(ctx);
-			}
 			return function.evaluate(ctx, params);
-		} catch (Exception e) {
-			// catch any exception that occurs while evaluating
-			if (e instanceof EvaluateException) {
-				throw (EvaluateException) e;
-			} else {
-				// if this was no EvaluateException, then wrap it and throw it
-				throw this.createEvaluateException(e);
-			}
+		} catch (RuntimeException cause) {
+			return ValueHolder.valueOf(new EvaluateException(codeLine, codeColumn, cause));
 		}
 	}
 
@@ -86,6 +77,15 @@ public class ASTFunction extends SimpleNode {
 	public void toFormula(final StringBuilder sb) {
 		sb.append(function.getImage());
 		appendParams(sb);
+	}
+
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		functions.add(function.getImage().toLowerCase());
+		if (function instanceof UserDefinedFunction) {
+			((UserDefinedFunction) function).inspect(readFields, modifiedFields, variables, functions);
+		}
 	}
 }
 /* JavaCC - OriginalChecksum=ccaad8d7c28a4b42a02e6b2cb416c0b9 (do not edit this line) */

@@ -17,30 +17,46 @@
  */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaParser;
-import org.openntf.domino.formula.EvaluateException;
+import java.util.Set;
+
+import org.openntf.domino.formula.parse.*;
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.ValueHolder.DataType;
 
 public class ASTValueList extends SimpleNode {
-	public ASTValueList(final int id) {
-		super(id);
-	}
 
-	public ASTValueList(final AtFormulaParser p, final int id) {
+	public ASTValueList(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
 	@Override
-	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
-		// TODO Auto-generated method stub
-		ValueHolder li = new ValueHolder();
+	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
 
-		for (int i = 0; i < jjtGetNumChildren(); ++i) {
-			li.addAll(jjtGetChild(i).evaluate(ctx));
+		ValueHolder[] tmpHolders = new ValueHolder[children.length];
+		int valueSize = 0;
+		int holders = 0;
+
+		for (int i = 0; i < children.length; ++i) {
+			// Cumulate all return values
+			ValueHolder vh = children[i].evaluate(ctx);
+			if (vh != null) {
+				if (vh.dataType == DataType.ERROR)
+					return vh;
+				valueSize += vh.size;
+				tmpHolders[holders++] = vh;
+			}
 		}
 
-		return li;
+		if (holders == 0)
+			return null;
+
+		ValueHolder vhRet = tmpHolders[0].newInstance(valueSize);
+		for (int i = 0; i < holders; i++) {
+			vhRet.addAll(tmpHolders[i]);
+		}
+		return vhRet;
 	}
 
 	public void toFormula(final StringBuilder sb) {
@@ -55,6 +71,13 @@ public class ASTValueList extends SimpleNode {
 			}
 		}
 		sb.append(')');
+	}
+
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

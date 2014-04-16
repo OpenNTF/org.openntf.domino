@@ -17,41 +17,68 @@
  */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaParser;
-import org.openntf.domino.formula.EvaluateException;
+import java.util.Set;
+
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.ValueHolder.DataType;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
+/**
+ * Implements the {@literal @}If formula
+ * 
+ * @author Roland Praml, Foconis AG
+ * 
+ */
 public class ASTAtIf extends SimpleNode {
-	public ASTAtIf(final int id) {
-		super(id);
-	}
 
-	public ASTAtIf(final AtFormulaParser p, final int id) {
+	public ASTAtIf(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
+	/**
+	 * {@literal @}If returns an error, if the condition statement fails
+	 */
 	@Override
-	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
+	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
 		ValueHolder nIf;
 		int i = 0;
-		nIf = jjtGetChild(i++).evaluate(ctx);
+		nIf = children[i++].evaluate(ctx);
 
-		while (i < jjtGetNumChildren()) {
-			if (nIf.isTrue()) {
-				return jjtGetChild(i++).evaluate(ctx);
+		while (i < children.length) {
+			if (nIf.dataType == DataType.ERROR)
+				return nIf;
+
+			if (nIf.isTrue(ctx)) {
+				return children[i++].evaluate(ctx);
 			} else {
 				i++;
 			}
-			nIf = jjtGetChild(i++).evaluate(ctx);
+			nIf = children[i++].evaluate(ctx);
 		}
 
 		return nIf; // returns always TRUE
+
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ASTNode#toFormula(java.lang.StringBuilder)
+	 */
 	public void toFormula(final StringBuilder sb) {
 		sb.append("@If");
 		appendParams(sb);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.SimpleNode#analyzeThis(java.util.Set, java.util.Set, java.util.Set, java.util.Set)
+	 */
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		functions.add("@if");
 	}
 }
 /* JavaCC - OriginalChecksum=bfde8d6612dc75ddc7c7b037fbeccfff (do not edit this line) */

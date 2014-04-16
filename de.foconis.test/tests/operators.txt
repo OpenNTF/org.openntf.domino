@@ -1,0 +1,232 @@
+REM "Testing negators"; ""
+1
+2
+-1
+-2
+!1
+!2
+int1
+int2
+-int1
+-int2
+!int1
+!int2
+"Hello"
+"H"
+-"a"
+!"a"
+[Today]
+-[Today]
+![Today]
+
+REM "Testing operators +"; ""
+1+1
+2+2
+int1 + int1
+int1 + int2
+1*+2
+1*+2:3
+1:2*+3
+1:2*+3:4
+1:2*+3:4,0
+1:2,0+3:4
+"a"+2
+"Hallo":"Welt"+1
+"Hallo":"Welt"+"a"
+"Hallo":"Welt"+"a":"b"
+"Hallo":"Welt"+"a":"b":"c"
+2+"a"
+"a"+"b"
+"a":2
+2:"a"
+[Today]+1
+1+[Today]
+
+REM "Testing operators *+"; ""
+1*+1
+2*+2
+int1 *+ int1
+int1 *+ int2
+1**+2
+1**+2:3
+1:2**+3
+1:2**+3:4
+1:2**+3:4,0
+1:2,0*+3:4
+"a"*+2
+"Hallo":"Welt"*+1
+"Hallo":"Welt"*+"a"
+"Hallo":"Welt"*+"a":"b"
+"Hallo":"Welt"*+"a":"b":"c"
+2*+"a"
+"a"*+"b"
+"a":2
+2:"a"
+[Today]*+1
+1*+[Today]
+
+REM "Testing operators -"; ""
+1-1
+2-2
+int1 - int1
+int1 - int2
+1*-2
+1*-2:3
+1:2*-3
+1:2*-3:4
+1:2*-3:4,0
+1:2,0-3:4
+"a"-2
+"Hallo":"Welt"-1
+"Hallo":"Welt"-"a"
+"Hallo":"Welt"-"a":"b"
+"Hallo":"Welt"-"a":"b":"c"
+2-"a"
+"a"-"b"
+"a":2
+2:"a"
+[Today]-1
+1-[Today]
+
+REM "Testing operators *-"; ""
+1*-1
+2*-2
+int1 *- int1
+int1 *- int2
+1**-2
+1**-2:3
+1:2**-3
+1:2**-3:4
+1:2**-3:4,0
+1:2,0*-3:4
+"a"*-2
+"Hallo":"Welt"*-1
+"Hallo":"Welt"*-"a"
+"Hallo":"Welt"*-"a":"b"
+"Hallo":"Welt"*-"a":"b":"c"
+2*-"a"
+"a"*-"b"
+"a":2
+2:"a"
+[Today]*-1
+1*-[Today]
+
+
+REM "Testing operators /"; ""
+1/1
+2/2
+int1 / int1
+int1 / int2
+1*/2
+1*/2:3
+1:2*/3
+1:2*/3:4
+1:2*/3:4,0
+1:2,0/3:4
+"a"/2
+"Hallo":"Welt"/1
+"Hallo":"Welt"/"a"
+"Hallo":"Welt"/"a":"b"
+"Hallo":"Welt"/"a":"b":"c"
+2/"a"
+"a"/"b"
+"a":2
+2:"a"
+[Today]/1
+1/[Today]
+
+REM "Testing operators */"; ""
+1*/1
+2*/2
+int1 */ int1
+int1 */ int2
+1**/2
+1**/2:3
+1:2**/3
+1:2**/3:4
+1:2**/3:4,0
+1:2,0*/3:4
+"a"*/2
+"Hallo":"Welt"*/1
+"Hallo":"Welt"*/"a"
+"Hallo":"Welt"*/"a":"b"
+"Hallo":"Welt"*/"a":"b":"c"
+2*/"a"
+"a"*/"b"
+"a":2
+2:"a"
+[Today]*/1
+1*/[Today]
+
+REM "Testing operators *"; ""
+1*1
+2*2
+int1 * int1
+int1 * int2
+1**2
+1**2:3
+1:2**3
+1:2**3:4
+1:2**3:4,0
+1:2,0*3:4
+"a"*2
+"Hallo":"Welt"*1
+"Hallo":"Welt"*"a"
+"Hallo":"Welt"*"a":"b"
+"Hallo":"Welt"*"a":"b":"c"
+2*"a"
+"a"*"b"
+"a":2
+2:"a"
+[Today]*1
+1*[Today]
+
+REM "Testing operators **"; ""
+1**1
+2**2
+int1 ** int1
+int1 ** int2
+1***2
+1***2:3
+1:2***3
+1:2***3:4
+1:2***3:4,0
+1:2,0**3:4
+"a"**2
+"Hallo":"Welt"**1
+"Hallo":"Welt"**"a"
+"Hallo":"Welt"**"a":"b"
+"Hallo":"Welt"**"a":"b":"c"
+2**"a"
+"a"**"b"
+"a":2
+2:"a"
+[Today]**1
+1**[Today]
+
+
+REM "Some tests discussed at the OpenNTF chat"; ""
+-1:1:1
+-(1:1:1)
+-1:-1:-1
+(-1):(-1):(-1)
+(-1):(+1):(-1)
++1:+2:-3
+
+(1:1:1)*-1
+(1:1:1)* -1
+-1:-1:-1
++1:+1:+1
+
+
+j := 2; @For(i := 0; i < 8; i := i + 1; j := j*2); j
+
+REM "Comparator Test";""
+3<5
+@All
+@True
+@All = @True
+@All = @False
+
+@False | @True
+"a" +@NewLine + "b"
