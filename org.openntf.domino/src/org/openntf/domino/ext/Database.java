@@ -112,7 +112,7 @@ public interface Database extends Base {
 	 * return that format.
 	 * 
 	 * @return String in format server!!filePath, useful for XPages components
-	 * @since org.openntf.domino 1.0.0
+	 * @since org.openntf.domino 4.5.0
 	 */
 	public String getApiPath();
 
@@ -175,13 +175,13 @@ public interface Database extends Base {
 	 *            Set<FTIndexOption> full text index options that can be applied
 	 * @param recreate
 	 *            boolean whether or not the full text index should be recreated
-	 * @since org.openntf.domino 1.0.0
+	 * @since org.openntf.domino 2.5.0
 	 */
 	public void createFTIndex(final Set<FTIndexOption> options, final boolean recreate);
 
 	/**
-	 * The core {@link lotus.domino.Database.fixup} method takes an int worked out by adding the integer value for all the relevant options
-	 * the developer wishes to apply.<br/>
+	 * The core {@link lotus.domino.Database#fixup(int)} method takes an int worked out by adding the integer value for all the relevant
+	 * options the developer wishes to apply.<br/>
 	 * <br/>
 	 * To make code clearer and easier to support, this overloaded method has been added taking a Set of
 	 * {@link org.openntf.domino.Database.FixupOption} objects.
@@ -225,7 +225,7 @@ public interface Database extends Base {
 	 *            String the name of the Domain Search entry form in the domain catalog. This will be a traditional Domino web form, not an
 	 *            XPage form.
 	 * @return Document with a rich text field called "Body" that contains a table of matching document titles
-	 * @since org.openntf.domino 1.0.0
+	 * @since org.openntf.domino 2.5.0
 	 */
 	public Document FTDomainSearch(final String query, final int maxDocs, final FTDomainSortOption sortOpt,
 			final Set<FTDomainSearchOption> otherOpt, final int start, final int count, final String entryForm);
@@ -254,7 +254,7 @@ public interface Database extends Base {
 	 *            Set<FTDomainSearchOption> a Set of possible {@link org.openntf.domino.Database.FTDomainSearchOption} options, e.g. fuzzy
 	 *            search
 	 * @return a DocumentCollection containing the documents matching the search criteria
-	 * @since org.openntf.domino 1.0.0
+	 * @since org.openntf.domino 2.5.0
 	 */
 	public DocumentCollection FTSearch(final String query, final int maxDocs, final FTSortOption sortOpt, final Set<FTSearchOption> otherOpt);
 
@@ -284,13 +284,14 @@ public interface Database extends Base {
 	 * @param start
 	 *            the start number of the document in the collection from which to show
 	 * @return a DocumentCollection of matching documents, starting at the number entered
-	 * @since org.openntf.domino 1.0.0
+	 * @since org.openntf.domino 2.5.0
 	 */
 	public DocumentCollection FTSearchRange(final String query, final int maxDocs, final FTSortOption sortOpt,
 			final Set<FTSearchOption> otherOpt, final int start);
 
 	/**
-	 * Gets a DatabaseDesign object representing the various design elements of this database.
+	 * Gets a {@link org.openntf.domino design.DatabaseDesign} object providing access to various design elements of this database. The
+	 * class also has helper methods to create some design resources, e.g. {@link org.openntf.domino.design.DatabaseDesign#createView()}
 	 * 
 	 * @return DatabaseDesign object
 	 * @since org.openntf.domino 1.0.0
@@ -327,6 +328,13 @@ public interface Database extends Base {
 	 */
 	public Document getDocumentByKey(final Serializable key, final boolean createOnFail);
 
+	/**
+	 * Gets any documents modified since a given date
+	 * 
+	 * @param since
+	 * @param noteClass
+	 * @return
+	 */
 	public DocumentCollection getModifiedDocuments(final lotus.domino.DateTime since, final ModifiedDocClass noteClass);
 
 	public DocumentCollection getModifiedDocuments(final java.util.Date since, final ModifiedDocClass noteClass);
@@ -343,6 +351,18 @@ public interface Database extends Base {
 
 	public Date getLastFTIndexedDate();
 
+	/**
+	 * The core {@link lotus.domino.Database#getOption(int)} method takes an int worked out by adding the integer value for all the relevant
+	 * options the developer wishes to apply.<br/>
+	 * <br/>
+	 * To make code clearer and easier to support, this overloaded method has been added taking a
+	 * {@link org.openntf.domino.Database.DbOption} object.
+	 * 
+	 * @see org.openntf.domino.Database.DBOption
+	 * @param optionName
+	 *            DbOption database option to be applied
+	 * @since org.openntf.domino 1.0.0
+	 */
 	public boolean getOption(final DBOption optionName);
 
 	/**
@@ -353,6 +373,18 @@ public interface Database extends Base {
 	 */
 	public void grantAccess(final String name, final ACL.Level level);
 
+	/**
+	 * The core {@link lotus.domino.Database#setFTIndexFrequency(int)} method takes an int worked out by adding the integer value for all
+	 * the relevant options the developer wishes to apply.<br/>
+	 * <br/>
+	 * To make code clearer and easier to support, this overloaded method has been added taking a
+	 * {@link org.openntf.domino.Database.FTIndexFrequency} object.
+	 * 
+	 * @see org.openntf.domino.Database.FTIndexFrequency
+	 * @param frequency
+	 *            FTIndexFrequency how frequently to perform the full text indexing
+	 * @since org.openntf.domino 2.5.0
+	 */
 	public void setFTIndexFrequency(final FTIndexFrequency frequency);
 
 	/**

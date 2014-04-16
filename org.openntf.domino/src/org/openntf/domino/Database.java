@@ -49,8 +49,19 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	public static final Schema SCHEMA = new Schema();
 
+	/**
+	 * Generic database utilities
+	 */
 	public enum Utils {
 		;
+		/**
+		 * Checks whether the database is a template with .ntf (Notes Template Facility) file type
+		 * 
+		 * @param db
+		 *            Database to check
+		 * @return boolean whether the database has a .ntf suffix or not
+		 * @since org.openntf.domino 4.5.0
+		 */
 		public static boolean isTemplate(final Database db) {
 			boolean result = false;
 			if (db.getFilePath().toLowerCase().endsWith("ntf"))
@@ -58,6 +69,14 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 			return result;
 		}
 
+		/**
+		 * Checks whether the database is a database with .nsf-style (Notes Storage Facility) file type
+		 * 
+		 * @param db
+		 *            Database to check
+		 * @return boolean whether the database has a .nsf, .nsh or .nsg suffix or not
+		 * @since org.openntf.domino 4.5.0
+		 */
 		public static boolean isDatabase(final Database db) {
 			boolean result = false;
 			String path = db.getFilePath().toLowerCase();
@@ -66,12 +85,28 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 			return result;
 		}
 
+		/**
+		 * Checks whether replication is disabled for the specified Database
+		 * 
+		 * @param db
+		 *            Database to check
+		 * @return boolean whether {@link org.openntf.domino.Database#isReplicationDisabled()} is true
+		 * @since org.openntf.domino 4.5.0
+		 */
 		public static boolean isReplicaCandidate(final Database db) {
 			boolean result = true;
 			result = db.isReplicationDisabled();
 			return result;
 		}
 
+		/**
+		 * Not currently implemented
+		 * 
+		 * @param db
+		 *            Database to check
+		 * @return boolean, currently always returns true
+		 * @since org.openntf.domino 4.5.0
+		 */
 		public static boolean isTemplateCandidate(final Database db) {
 			boolean result = true;
 			//TODO do we actually want to add any future checks for this?
@@ -79,24 +114,47 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		}
 	}
 
+	/**
+	 * Comparator to allow easy checking whether two databases have the same filepath (e.g. on different servers)
+	 * 
+	 * @since org.openntf.domino 4.5.0
+	 */
 	public final static Comparator<Database> FILEPATH_COMPARATOR = new Comparator<Database>() {
 		@Override
 		public int compare(final Database o1, final Database o2) {
 			return o1.getFilePath().compareToIgnoreCase(o2.getFilePath());
 		}
 	};
+
+	/**
+	 * Comparator to alow easy checking whether database A was modified before/after database B
+	 * 
+	 * @since org.openntf.domino 4.5.0
+	 */
 	public final static Comparator<Database> LASTMOD_COMPARATOR = new Comparator<Database>() {
 		@Override
 		public int compare(final Database o1, final Database o2) {
 			return o1.getLastModifiedDate().compareTo(o2.getLastModifiedDate());
 		}
 	};
+
+	/**
+	 * Comparator to allow easy checking whether two databases have the same title
+	 * 
+	 * @since org.openntf.domino 4.5.0
+	 */
 	public final static Comparator<Database> TITLE_COMPARATOR = new Comparator<Database>() {
 		@Override
 		public int compare(final Database o1, final Database o2) {
 			return o1.getTitle().compareToIgnoreCase(o2.getTitle());
 		}
 	};
+
+	/**
+	 * Comparator to allow easy checking whether two databases have the same API path (server!!filepath)
+	 * 
+	 * @since org.openntf.domino 4.5.0
+	 */
 	public final static Comparator<Database> APIPATH_COMPARATOR = new Comparator<Database>() {
 		@Override
 		public int compare(final Database o1, final Database o2) {
@@ -105,7 +163,9 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	};
 
 	/**
-	 * The Enum DBOption.
+	 * Enum to allow easy access to database options for use with {@link org.openntf.domino.Database#getOption(DBOption)} method
+	 * 
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public static enum DBOption {
 		LZ1(Database.DBOPT_LZ1), LZCOMPRESSION(Database.DBOPT_LZCOMPRESSION), MAINTAINLASTACCESSED(Database.DBOPT_MAINTAINLASTACCESSED), MOREFIELDS(
@@ -150,7 +210,9 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	}
 
 	/**
-	 * The Enum SignDocType.
+	 * Enum to allow easy access to database signing options for use with {@link org.openntf.domino.Database} sign methods
+	 * 
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public static enum SignDocType {
 
@@ -207,6 +269,11 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		}
 	}
 
+	/**
+	 * Enum to allow easy access to options for {@link org.openntf.domino.Database} compact methods
+	 * 
+	 * @since org.openntf.domino 1.0.0
+	 */
 	public static enum CompactOption {
 		ARCHIVE_DELETE_COMPACT(Database.CMPC_ARCHIVE_DELETE_COMPACT), ARCHIVE_DELETE_ONLY(Database.CMPC_ARCHIVE_DELETE_ONLY), CHK_OVERLAP(
 				Database.CMPC_CHK_OVERLAP), COPYSTYLE(Database.CMPC_COPYSTYLE), DISABLE_DOCTBLBIT_OPTMZN(
@@ -239,6 +306,11 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		}
 	}
 
+	/**
+	 * Enum to allow easy access to FTIndex options for {@link org.openntf.domino.Database#createFTIndex(java.util.Set, boolean)} method
+	 * 
+	 * @since org.openntf.domino 2.5.0
+	 */
 	public static enum FTIndexOption {
 		ALL_BREAKS(Database.FTINDEX_ALL_BREAKS), ATTACHED_BIN_FILES(Database.FTINDEX_ATTACHED_BIN_FILES), ATTACHED_FILES(
 				Database.FTINDEX_ATTACHED_FILES), CASE_SENSITIVE(Database.FTINDEX_CASE_SENSITIVE), ENCRYPTED_FIELDS(
@@ -264,6 +336,11 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		}
 	}
 
+	/**
+	 * Enum to allow easy access to fixup options for {@link org.openntf.domino.Database#fixup(java.util.Set)} method
+	 * 
+	 * @since org.openntf.domino 2.5.0
+	 */
 	public static enum FixupOption {
 		INCREMENTAL(Database.FIXUP_INCREMENTAL), NODELETE(Database.FIXUP_NODELETE), NOVIEWS(Database.FIXUP_NOVIEWS), QUICK(
 				Database.FIXUP_QUICK), REVERT(Database.FIXUP_REVERT), TXLOGGED(Database.FIXUP_TXLOGGED), VERIFY(Database.FIXUP_VERIFY);
@@ -288,6 +365,12 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		}
 	}
 
+	/**
+	 * Enum to allow easy access to FTIndex frequency options for {@link org.openntf.domino.Database#setFTIndexFrequency(FTIndexFrequency)}
+	 * method
+	 * 
+	 * @since org.openntf.domino 2.5.0
+	 */
 	public static enum FTIndexFrequency {
 		DAILY(Database.FTINDEX_DAILY), HOURLY(Database.FTINDEX_HOURLY), IMMEDIATE(Database.FTINDEX_IMMEDIATE), SCHEDULED(
 				Database.FTINDEX_SCHEDULED);
@@ -312,6 +395,11 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		}
 	}
 
+	/**
+	 * Enum to provide easy access to FTDomain sort options, used by {@link org.openntf.domino.Database} FTDomainSearch methods
+	 * 
+	 * @since org.openntf.domino 2.5.0
+	 */
 	public static enum FTDomainSortOption {
 		SCORES(Database.FT_SCORES), DATE_DES(Database.FT_DATE_DES), DATE_ASC(Database.FT_DATE_ASC);
 
@@ -335,6 +423,12 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		}
 	}
 
+	/**
+	 * Enum to allow easy access to FTDomain search option, used by
+	 * {@link org.openntf.domino.Database#FTDomainSearch(String, int, FTDomainSortOption, java.util.Set, int, int, String)}
+	 * 
+	 * @since org.openntf.domino 2.5.0
+	 */
 	public static enum FTDomainSearchOption {
 		DATABASE(Database.FT_DATABASE), FILESYSTEM(Database.FT_FILESYSTEM), FUZZY(Database.FT_FUZZY), STEMS(Database.FT_STEMS);
 
@@ -358,6 +452,11 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		}
 	}
 
+	/**
+	 * Enum to allow easy access to FTSearch sort options for use by {@link org.openntf.domino.Database} FTSearch methods
+	 * 
+	 * @since org.openntf.domino 2.5.0
+	 */
 	public static enum FTSortOption {
 		SCORES(Database.FT_SCORES), DATE_DES(Database.FT_DATE_DES), DATE_ASC(Database.FT_DATE_ASC), DATECREATED_DES(
 				Database.FT_DATECREATED_DES), DATECREATED_ASC(Database.FT_DATECREATED_ASC);
@@ -382,6 +481,11 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		}
 	}
 
+	/**
+	 * Enum to allow easy access to FTSearch options for use by {@link org.openntf.domino.Database} FTSearch methods
+	 * 
+	 * @since org.openntf.domino 2.5.0
+	 */
 	public static enum FTSearchOption {
 		FUZZY(Database.FT_FUZZY), STEMS(Database.FT_STEMS);
 
@@ -405,6 +509,12 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		}
 	}
 
+	/**
+	 * Enum to provide easy access to modified documents class, for use with {@link org.openntf.domino.Database} getModifiedDocuments
+	 * methods
+	 * 
+	 * @since org.openntf.domino 2.5.0
+	 */
 	public static enum ModifiedDocClass {
 		ACL(Database.DBMOD_DOC_ACL), AGENT(Database.DBMOD_DOC_AGENT), ALL(Database.DBMOD_DOC_ALL), DATA(Database.DBMOD_DOC_DATA), FORM(
 				Database.DBMOD_DOC_FORM), HELP(Database.DBMOD_DOC_HELP), ICON(Database.DBMOD_DOC_ICON), REPLFORMULA(
@@ -430,6 +540,11 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		}
 	}
 
+	/**
+	 * Enum to allow easy access to database types for use with {@link org.openntf.domino.Database#getType()} method
+	 * 
+	 * @since org.openntf.domino 2.5.0
+	 */
 	public static enum Type {
 		ADDR_BOOK(Database.DBTYPE_ADDR_BOOK), IMAP_SVR_PROXY(Database.DBTYPE_IMAP_SVR_PROXY), LIBRARY(Database.DBTYPE_LIBRARY), LIGHT_ADDR_BOOK(
 				Database.DBTYPE_LIGHT_ADDR_BOOK), MAILBOX(Database.DBTYPE_MAILBOX), MAILFILE(Database.DBTYPE_MAILFILE), MULTIDB_SRCH(
