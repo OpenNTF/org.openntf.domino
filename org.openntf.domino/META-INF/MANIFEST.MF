@@ -7,8 +7,6 @@ Bundle-SymbolicName: org.openntf.domino
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: OpenNTF.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: lotus.domino,
- lotus.domino.local
 Export-Package: com.tinkerpop.blueprints,com.tinkerpop.blueprints.util
  ,org.openntf.arpa,org.openntf.domino,org.openntf.domino.annotations,o
  rg.openntf.domino.big,org.openntf.domino.big.impl,org.openntf.domino.
@@ -27,5 +25,6 @@ Implementation-Vendor-URL: http://www.openntf.org
 Built-By: praml
 Build-Date: 20140416093417
 Require-Bundle: org.openntf.formula;bundle-version="1.0.0";visibility:=reexport,
- com.ibm.icu
+ com.ibm.icu;bundle-version="3.8.1",
+ com.ibm.commons;bundle-version="9.0.1"
 

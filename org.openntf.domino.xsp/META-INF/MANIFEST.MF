@@ -33,4 +33,5 @@ Require-Bundle: com.ibm.xsp.domino;bundle-version="9.0.0",
  com.ibm.xsp.extlib.domino,
  com.ibm.xsp.extlib;bundle-version="9.0.0",
  com.ibm.xsp.extlib.controls;bundle-version="9.0.0",
- com.ibm.xsp.extlib.core;bundle-version="9.0.0"
+ com.ibm.xsp.extlib.core;bundle-version="9.0.0",
+ org.openntf.domino;bundle-version="1.0.0";visibility:=reexport
