@@ -3,6 +3,7 @@
 	<name>de.foconis.test</name>
 	<comment></comment>
 	<projects>
+		<project>org.openntf.formula</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
