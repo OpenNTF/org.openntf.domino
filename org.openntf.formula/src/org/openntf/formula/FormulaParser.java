@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openntf.formula.parse.AtFormulaParserImpl;
+import org.openntf.formula.parse.ParseException;
+import org.openntf.formula.parse.TokenMgrError;
 
 /**
  * This class adds additonal functionality to the AtFormulaParserImpl (which is auto generated).
@@ -179,13 +181,15 @@ public abstract class FormulaParser {
 			} else {
 				return parseFormula();
 			}
+		} catch (TokenMgrError e) {
+			throw new ParseException(e.getMessage());
 		} finally {
 			parsing = false;
 		}
 	}
 
 	/**
-	 * Parses the given formlula from an inputStream
+	 * Parses the given formula from an inputStream
 	 * 
 	 * @param sr
 	 *            the input stream where the formula is read
@@ -209,6 +213,9 @@ public abstract class FormulaParser {
 			} else {
 				return parseFormula();
 			}
+		} catch (TokenMgrError e) {
+			throw new ParseException(e.getMessage());
+
 		} finally {
 			parsing = false;
 		}
@@ -233,7 +240,7 @@ public abstract class FormulaParser {
 	}
 
 	/**
-	 * Parses the given formlula from an inputStream with default encoding
+	 * Parses the given formula from an inputStream with default encoding
 	 * 
 	 * @param sr
 	 *            the input stream where the formula is read
