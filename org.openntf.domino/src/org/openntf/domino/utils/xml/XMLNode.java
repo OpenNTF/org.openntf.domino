@@ -3,7 +3,6 @@
  */
 package org.openntf.domino.utils.xml;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collection;
@@ -17,14 +16,14 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
 import org.openntf.domino.utils.DominoUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.ibm.commons.xml.DOMUtil;
+import com.ibm.commons.xml.Format;
 
 /**
  * @author jgallagher
@@ -204,14 +203,8 @@ public class XMLNode implements Map<String, Object>, Serializable {
 
 	public String getXml() throws IOException {
 		try {
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			OutputFormat format = new OutputFormat();
-			format.setLineWidth(200);
-			format.setIndenting(true);
-			format.setIndent(2);
-			XMLSerializer serializer = new XMLSerializer(bos, format);
-			serializer.serialize((Element) this.node);
-			return new String(bos.toByteArray(), "UTF-8");
+			Format format = new Format(4, true, "UTF-8");
+			return DOMUtil.getXMLString(this.node, format);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
