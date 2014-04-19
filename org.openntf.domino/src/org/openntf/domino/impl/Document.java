@@ -3552,7 +3552,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		if (fieldNames_ == null) {
 			fieldNames_ = new CaseInsensitiveHashSet();
 			//
-			// evaluate("@DocFields",...) is 3 times faster than getItems
+			// evaluate("@DocFields",...) is 3 times faster than lotus.domino.Document.getItems()
 			//
 			try {
 				lotus.domino.Session sess = Factory.toLotus(getAncestorSession());

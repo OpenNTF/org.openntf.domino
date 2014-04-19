@@ -851,9 +851,9 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#getUNID(java.lang.String)
 	 */
-	public String getUNID(final String unid) {
+	public String getUNID(final String noteid) {
 		try {
-			return getDelegate().getUNID(unid);
+			return getDelegate().getUNID(noteid);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

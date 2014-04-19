@@ -30,4 +30,13 @@ public interface ACL {
 	 * 
 	 */
 	public ACLEntry createACLEntry(final String name, final Level level);
+
+	/**
+	 * Sets the maximum Internet access level for this database.
+	 * 
+	 * @param level
+	 *            The new maximum Internet level you want to set in the ACL, of type ACL.Level.
+	 * @since org.openntf.domino 1.0.0
+	 */
+	public void setInternetLevel(final Level level);
 }
