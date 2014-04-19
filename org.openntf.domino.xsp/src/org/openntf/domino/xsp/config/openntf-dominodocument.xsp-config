@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config>
+
+	<faces-config-extension>
+		<!--
+		CHECKME RPr: should we overwite the standard xp:dominoDocument? 
+		<namespace-uri>http://www.openntf.org/domino/xsp</namespace-uri>
+		<default-prefix>on</default-prefix
+		-->
+		<namespace-uri>http://www.ibm.com/xsp/core</namespace-uri>
+		<default-prefix>xp</default-prefix>
+	</faces-config-extension>
+
+	<complex-type>
+		<description>OpenNTF replacement for "document"</description>
+		<display-name>OpenNTF-Document</display-name>
+		<complex-id>org.openntf.domino.xsp.model.openntfDominoDocument
+		</complex-id>
+		<complex-class>org.openntf.domino.xsp.model.OpenntfDominoDocumentData
+		</complex-class>
+
+<!-- 
+		<property>
+			// currently we do not hava any additional properties
+		</property>
+ -->
+		<complex-extension>
+			<tag-name>dominoDocument</tag-name>
+			<base-complex-id>com.ibm.xsp.model.domino.dominoDocument
+			</base-complex-id>
+			<designer-extension>
+				<priority>5</priority>
+			</designer-extension>
+		</complex-extension>
+	</complex-type>
+</faces-config>

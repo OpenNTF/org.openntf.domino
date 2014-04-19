@@ -1,15 +1,16 @@
 package org.openntf.formula.function;
 
+import org.openntf.formula.AbstractFunctionSet;
 import org.openntf.formula.FormulaContext;
-import org.openntf.formula.FunctionFactory;
 import org.openntf.formula.ValueHolder;
 import org.openntf.formula.annotation.ParamCount;
 
 public enum Constants {
 	;
 
-	public static class Factory extends FunctionFactory {
-		public Factory() {
+	public static class FunctionSet extends AbstractFunctionSet {
+
+		public FunctionSet() {
 			super(Constants.class);
 		}
 	}

@@ -1,5 +1,5 @@
 /*
- * © Copyright IBM Corp. 2010
+ * ï¿½ Copyright IBM Corp. 2010
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -33,7 +33,8 @@ public class DominoConfig extends ExtlibPluginConfig {
 	@Override
 	public String[] getXspConfigFiles(final String[] files) {
 		return concat(files, new String[] { "org/openntf/domino/xsp/config/openntf-domino-picker.xsp-config", // $NON-NLS-1$
-				});
+				"org/openntf/domino/xsp/config/openntf-dominodocument.xsp-config", // $NON-NLS-1$
+		});
 	}
 
 	@Override

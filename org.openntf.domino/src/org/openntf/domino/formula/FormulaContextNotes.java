@@ -28,21 +28,13 @@ public class FormulaContextNotes extends FormulaContext {
 	@SuppressWarnings("deprecation")
 	public ValueHolder evaluateNative(final String formula, final ValueHolder... params) {
 		Session session = Factory.getSession();
-		Document tmpDoc = null;
-		Database db = null;
 
-		lotus.domino.Document rawDocument = null;
-		if (dataMap instanceof Document) {
-			db = ((Document) dataMap).getAncestorDatabase();
-			rawDocument = Factory.toLotus((Document) dataMap);
-		} else {
-			db = session.getCurrentDatabase();
-		}
+		Database db = getDatabase();
 		if (db == null)
 			throw new UnsupportedOperationException("No database set: Can't evaluate Lotus native formula");
 
-		lotus.domino.Session rawSession = Factory.toLotus(session);
-
+		lotus.domino.Document rawDocument = Factory.toLotus(getDocument());
+		Document tmpDoc = null;
 		if (params.length > 0) {
 			tmpDoc = db.createDocument();
 			rawDocument = Factory.toLotus(tmpDoc);
@@ -54,9 +46,14 @@ public class FormulaContextNotes extends FormulaContext {
 					return params[i];
 				}
 			}
+		} else {
+			rawDocument = Factory.toLotus(getDocument());
 		}
+
 		try {
 			log_.warning("Evaluating native formula: '" + formula + "' This may affect performance");
+
+			lotus.domino.Session rawSession = Factory.toLotus(session);
 
 			Vector<?> v = rawSession.evaluate(formula, rawDocument);
 			Vector<Object> wrapped = Factory.wrapColumnValues(v, session);
@@ -87,7 +84,7 @@ public class FormulaContextNotes extends FormulaContext {
 	}
 
 	public Document getDocument() {
-		return ((Document) dataMap);
+		return dataMap instanceof Document ? ((Document) dataMap) : null;
 	}
 
 }
