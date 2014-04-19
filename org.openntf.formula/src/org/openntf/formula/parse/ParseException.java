@@ -83,6 +83,14 @@ public class ParseException extends FormulaParseException {
 	}
 
 	/**
+	 * Constructor with message and cause
+	 * 
+	 */
+	public ParseException(final String message, final Throwable cause) {
+		super(message, cause);
+	}
+
+	/**
 	 * This is the last token that has been consumed successfully. If this object has been created due to a parse error, the token followng
 	 * this token will (therefore) be the first error token.
 	 */

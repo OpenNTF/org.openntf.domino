@@ -182,7 +182,7 @@ public abstract class FormulaParser {
 				return parseFormula();
 			}
 		} catch (TokenMgrError e) {
-			throw new ParseException(e.getMessage());
+			throw new ParseException(e.getMessage(), e);
 		} finally {
 			parsing = false;
 		}

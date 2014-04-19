@@ -29,6 +29,10 @@ public abstract class FormulaParseException extends Exception {
 		super(arg0);
 	}
 
+	protected FormulaParseException(final String arg0, final Throwable arg1) {
+		super(arg0, arg1);
+	}
+
 	protected FormulaParseException() {
 		super();
 	}
