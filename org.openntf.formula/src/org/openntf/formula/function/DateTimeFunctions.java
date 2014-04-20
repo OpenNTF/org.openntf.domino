@@ -19,10 +19,10 @@ package org.openntf.formula.function;
 import java.util.Locale;
 import java.util.TreeSet;
 
-import org.openntf.formula.AbstractFunctionSet;
 import org.openntf.formula.DateTime;
 import org.openntf.formula.Formatter;
 import org.openntf.formula.FormulaContext;
+import org.openntf.formula.FunctionFactory;
 import org.openntf.formula.ValueHolder;
 import org.openntf.formula.annotation.ParamCount;
 
@@ -31,9 +31,9 @@ import com.ibm.icu.util.Calendar;
 public enum DateTimeFunctions {
 	;
 
-	public static class FunctionSet extends AbstractFunctionSet {
+	public static class Factory extends FunctionFactory {
 
-		public FunctionSet() {
+		public Factory() {
 			super(DateTimeFunctions.class);
 		}
 	}

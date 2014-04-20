@@ -18,9 +18,9 @@ package org.openntf.formula.function;
 
 import java.util.Collection;
 
-import org.openntf.formula.AbstractFunctionSet;
 import org.openntf.formula.DateTime;
 import org.openntf.formula.FormulaContext;
+import org.openntf.formula.FunctionFactory;
 import org.openntf.formula.ValueHolder;
 import org.openntf.formula.impl.IntegerOverflowException;
 import org.openntf.formula.impl.ParameterCollectionBoolean;
@@ -53,9 +53,9 @@ public class OperatorsBool extends OperatorsAbstract {
 	/**
 	 * The Factory that returns a set of operators
 	 */
-	public static class FunctionSet extends AbstractFunctionSet {
+	public static class Factory extends FunctionFactory {
 
-		public FunctionSet() {
+		public Factory() {
 			super(OperatorsBool.class);
 		}
 

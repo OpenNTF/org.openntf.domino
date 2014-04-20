@@ -16,8 +16,8 @@
  */
 package org.openntf.formula.function;
 
-import org.openntf.formula.AbstractFunctionSet;
 import org.openntf.formula.FormulaContext;
+import org.openntf.formula.FunctionFactory;
 import org.openntf.formula.ValueHolder;
 import org.openntf.formula.ValueHolder.DataType;
 import org.openntf.formula.impl.AtFunction;
@@ -35,9 +35,9 @@ public abstract class Negators extends AtFunction {
 	/**
 	 * The Factory that returns a set of operators
 	 */
-	public static class FunctionSet extends AbstractFunctionSet {
+	public static class Factory extends FunctionFactory {
 
-		public FunctionSet() {
+		public Factory() {
 			super(Negators.class);
 		}
 

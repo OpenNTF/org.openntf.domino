@@ -16,7 +16,7 @@
  */
 package org.openntf.formula.function;
 
-import org.openntf.formula.AbstractFunctionSet;
+import org.openntf.formula.FunctionFactory;
 import org.openntf.formula.ValueHolder;
 import org.openntf.formula.annotation.OpenNTF;
 import org.openntf.formula.annotation.ParamCount;
@@ -25,9 +25,9 @@ import org.openntf.formula.impl.ParameterCollectionDouble;
 public enum MathFunctions {
 	;
 
-	public static class FunctionSet extends AbstractFunctionSet {
+	public static class Factory extends FunctionFactory {
 
-		public FunctionSet() {
+		public Factory() {
 			super(MathFunctions.class);
 		}
 	}

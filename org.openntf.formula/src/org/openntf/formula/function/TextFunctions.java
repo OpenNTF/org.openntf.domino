@@ -28,7 +28,6 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openntf.formula.AbstractFunctionSet;
 import org.openntf.formula.DateTime;
 import org.openntf.formula.Formatter;
 import org.openntf.formula.Formatter.LotusDateTimeOptions;
@@ -46,9 +45,9 @@ import org.openntf.formula.annotation.ParamCount;
 public enum TextFunctions {
 	;
 
-	public static class FunctionSet extends AbstractFunctionSet {
+	public static class Factory extends FunctionFactory {
 
-		public FunctionSet() {
+		public Factory() {
 			super(TextFunctions.class);
 		}
 	}
