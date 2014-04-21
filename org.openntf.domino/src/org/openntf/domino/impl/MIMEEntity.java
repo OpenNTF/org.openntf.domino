@@ -89,7 +89,6 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	}
 
 	public void closeMIMEEntity() {
-
 		for (MIMEEntity child : trackedChildEntites_) {
 			child.closeMIMEEntity();
 		}
