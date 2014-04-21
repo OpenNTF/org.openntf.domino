@@ -39,7 +39,12 @@ public enum Formulas {
 		return getFormatter(null);
 	} /*----------------------------------------------------------------------------*/
 
-	public void reset() {
+	public static void initialize() {
+		parserCache.set(null);
+		functionFactoryCache.set(null);
+	}
+
+	public static void terminate() {
 		parserCache.set(null);
 		functionFactoryCache.set(null);
 	}

@@ -35,7 +35,9 @@ import org.openntf.formula.FormulaContext;
 import org.openntf.formula.FormulaParseException;
 import org.openntf.formula.FormulaParser;
 import org.openntf.formula.Formulas;
+import org.openntf.formula.Function;
 import org.openntf.formula.FunctionFactory;
+import org.openntf.formula.FunctionSet;
 import org.openntf.formula.ValueHolder;
 import org.openntf.formula.ValueHolder.DataType;
 import org.openntf.formula.annotation.DiffersFromLotus;
@@ -45,10 +47,12 @@ import org.openntf.formula.annotation.ParamCount;
 public enum TextFunctions {
 	;
 
-	public static class Factory extends FunctionFactory {
+	public static class Functions extends FunctionSet {
+		private static final Map<String, Function> functionSet = FunctionFactory.getFunctions(TextFunctions.class);
 
-		public Factory() {
-			super(TextFunctions.class);
+		@Override
+		public Map<String, Function> getFunctions() {
+			return functionSet;
 		}
 	}
 

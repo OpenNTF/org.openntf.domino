@@ -1,7 +1,11 @@
 package org.openntf.domino.formula;
 
+import java.util.Map;
+
 import org.openntf.formula.EvaluateException;
+import org.openntf.formula.Function;
 import org.openntf.formula.FunctionFactory;
+import org.openntf.formula.FunctionSet;
 import org.openntf.formula.ValueHolder;
 import org.openntf.formula.ValueHolder.DataType;
 import org.openntf.formula.annotation.ParamCount;
@@ -10,10 +14,14 @@ import org.openntf.formula.function.TextFunctions;
 public enum NativeEvaluateFunctions {
 	;
 
-	public static class Factory extends FunctionFactory {
-		public Factory() {
-			super(NativeEvaluateFunctions.class);
+	public static class Functions extends FunctionSet {
+		private static final Map<String, Function> functionSet = FunctionFactory.getFunctions(NativeEvaluateFunctions.class);
+
+		@Override
+		public Map<String, Function> getFunctions() {
+			return functionSet;
 		}
+
 	}
 
 	/*============================================================================*/

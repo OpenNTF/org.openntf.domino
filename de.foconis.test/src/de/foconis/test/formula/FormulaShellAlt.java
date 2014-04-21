@@ -18,7 +18,6 @@ import jline.Terminal;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.ext.Session.Fixes;
-import org.openntf.domino.formula.NotImplemented;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -89,11 +88,9 @@ public class FormulaShellAlt implements Runnable {
 			String[] autoComplete = new String[funcs.size() + 3];
 			int i = 0;
 			for (Function func : funcs) {
-				if (func instanceof NotImplemented) {
-					autoComplete[i++] = "NotImpl:" + func.getImage();
-				} else {
-					autoComplete[i++] = func.getImage() + "(";
-				}
+
+				autoComplete[i++] = func.getImage() + "(";
+
 			}
 			autoComplete[i++] = "count=";
 			autoComplete[i++] = "astoff";

@@ -9,12 +9,23 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Terminatable;
 import org.openntf.formula.EvaluateException;
 import org.openntf.formula.FormulaContext;
+import org.openntf.formula.Formulas;
 import org.openntf.formula.ValueHolder;
 
 public class FormulaContextNotes extends FormulaContext {
 	private static final Logger log_ = Logger.getLogger(FormulaContextNotes.class.getName());
+
+	static {
+		// this is not yet nice, but we assume that this context is always used in Domino/XPage environment
+		Factory.onTerminate(new Terminatable() {
+			public void terminate() {
+				Formulas.terminate();
+			}
+		});
+	}
 
 	/**
 	 * does a native evaluate. This is needed for all functions that are too complex to implement in java or the algorithm is unknown

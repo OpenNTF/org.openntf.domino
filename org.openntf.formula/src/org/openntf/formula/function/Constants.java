@@ -1,17 +1,23 @@
 package org.openntf.formula.function;
 
+import java.util.Map;
+
 import org.openntf.formula.FormulaContext;
+import org.openntf.formula.Function;
 import org.openntf.formula.FunctionFactory;
+import org.openntf.formula.FunctionSet;
 import org.openntf.formula.ValueHolder;
 import org.openntf.formula.annotation.ParamCount;
 
 public enum Constants {
 	;
 
-	public static class Factory extends FunctionFactory {
+	public static class Functions extends FunctionSet {
+		private static final Map<String, Function> functionSet = FunctionFactory.getFunctions(Constants.class);
 
-		public Factory() {
-			super(Constants.class);
+		@Override
+		public Map<String, Function> getFunctions() {
+			return functionSet;
 		}
 	}
 
