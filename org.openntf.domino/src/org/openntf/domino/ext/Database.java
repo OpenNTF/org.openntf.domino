@@ -24,6 +24,7 @@ import org.openntf.domino.Database.SignDocType;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.NoteCollection.SelectOption;
+import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.events.EnumEvent;
 import org.openntf.domino.events.IDominoEvent;
@@ -328,27 +329,87 @@ public interface Database extends Base {
 	 */
 	public Document getDocumentByKey(final Serializable key, final boolean createOnFail);
 
+	// TODO: Combine the 
 	/**
-	 * Gets any documents modified since a given date
+	 * Gets any documents of a specific note type modified since a given date, using {@link org.openntf.domino.Database.ModifiedDocClass}
+	 * enum
 	 * 
 	 * @param since
+	 *            DateTime after which documents should have been modified
 	 * @param noteClass
-	 * @return
+	 *            ModifiedDocClass of notes to include in collection
+	 * @return DocumentCollection of notes modified since the given date
+	 * @since org.openntf.domino 2.5.0
 	 */
 	public DocumentCollection getModifiedDocuments(final lotus.domino.DateTime since, final ModifiedDocClass noteClass);
 
+	/**
+	 * Gets any documents of a specific note type modified since a given date, using {@link org.openntf.domino.Database.ModifiedDocClass}
+	 * enum
+	 * 
+	 * @param since
+	 *            Date after which documents should have been modified
+	 * @param noteClass
+	 *            ModifiedDocClass of notes to include in collection
+	 * @return DocumentCollection of notes modified since the given date
+	 * @since org.openntf.domino 5.0.0
+	 */
 	public DocumentCollection getModifiedDocuments(final java.util.Date since, final ModifiedDocClass noteClass);
 
+	/**
+	 * Gets any notes (design or data) modified since a given date
+	 * 
+	 * @param since
+	 *            Date after which documents should have been modified
+	 * @return DocumentCollection of notes modified since the given date
+	 * @since org.openntf.domino 5.0.0
+	 */
 	public DocumentCollection getModifiedDocuments(final java.util.Date since);
 
+	/**
+	 * Gets the number of modified notes of relevant note types, using {@link org.openntf.domino.NoteCollection.SelectOption}
+	 * 
+	 * @param since
+	 *            Date since when to check for modified notes
+	 * @param noteClass
+	 *            Set<SelectOption> of note types to include
+	 * @return int number of modified notes
+	 * @since org.openntf.domino 4.5.0
+	 */
 	public int getModifiedNoteCount(final java.util.Date since, final Set<SelectOption> noteClass);
 
+	/**
+	 * Gets the number of modified notes of all note types, using {@link org.openntf.domino.NoteCollection.SelectOption}
+	 * 
+	 * @param since
+	 *            Date since when to check for modified notes
+	 * @return int number of modified notes
+	 * @since org.openntf.domino 4.5.0
+	 */
 	public int getModifiedNoteCount(final java.util.Date since);
 
+	/**
+	 * Gets the date a Database was last modified, as a Java Date
+	 * 
+	 * @return Date
+	 * @since org.openntf.domino 4.5.0
+	 */
 	public Date getLastModifiedDate();
 
+	/**
+	 * Gets the last date a Fixup was run on the database
+	 * 
+	 * @return Date
+	 * @since org.openntf.domino 1.0.0
+	 */
 	public Date getLastFixupDate();
 
+	/**
+	 * Gets the date the Full Text Index was last updated
+	 * 
+	 * @return Date
+	 * @since org.openntf.domino 1.0.0
+	 */
 	public Date getLastFTIndexedDate();
 
 	/**
@@ -370,6 +431,7 @@ public interface Database extends Base {
 	 *            name of a user to grant access to
 	 * @param level
 	 *            ACL.Level for access
+	 * @since org.openntf.domino 2.5.0
 	 */
 	public void grantAccess(final String name, final ACL.Level level);
 
@@ -388,80 +450,190 @@ public interface Database extends Base {
 	public void setFTIndexFrequency(final FTIndexFrequency frequency);
 
 	/**
+	 * Sets a database option to true or false, using {@link org.openntf.domino.Database.DBOption}
+	 * 
 	 * @param optionName
 	 *            DBOption option name
 	 * @param flag
 	 *            the flag
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public void setOption(final DBOption optionName, final boolean flag);
 
 	/**
+	 * Signs all notes corresponding to the {@link org.openntf.domino.Database.SignDocType}
+	 * 
 	 * @param documentType
-	 *            sign document type
+	 *            SignDocType note type to sign
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public void sign(final SignDocType documentType);
 
+	/**
+	 * Signs all notes corresponding to the {@link org.openntf.domino.Database.SignDocType}, choosing whether to only update existing valid
+	 * signatures
+	 * 
+	 * @param documentType
+	 *            SignDocType note type to sign
+	 * @param existingSigsOnly
+	 *            boolean whether to update only existing signatures
+	 * @since org.openntf.domino 1.0.0
+	 */
 	public void sign(final SignDocType documentType, final boolean existingSigsOnly);
 
 	/**
+	 * Signs all notes corresponding to the {@link org.openntf.domino.Database.SignDocType}, choosing whether to only update existing valid
+	 * signatures
+	 * 
 	 * @param documentType
-	 *            sign document type
+	 *            SignDocType note type to sign
 	 * @param existingSigsOnly
-	 *            whether to only update existing signatures
+	 *            boolean whether to update only existing signatures
 	 * @param name
-	 *            the name
+	 *            String the programmatic name or note id of a signle design element to update
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public void sign(final SignDocType documentType, final boolean existingSigsOnly, final String name);
 
 	/**
+	 * Signs all notes corresponding to the {@link org.openntf.domino.Database.SignDocType}, choosing whether to only update existing valid
+	 * signatures
+	 * 
 	 * @param documentType
-	 *            sign document type
+	 *            SignDocType note type to sign
 	 * @param existingSigsOnly
-	 *            whether to only update existing signatures
+	 *            boolean whether to update only existing signatures
 	 * @param name
-	 *            the name
+	 *            String the programmatic name or note id of a signle design element to update
 	 * @param nameIsNoteid
-	 *            whether or not the name is a note id
+	 *            boolean whether or not the name is a note id
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public void sign(final SignDocType documentType, final boolean existingSigsOnly, final String name, final boolean nameIsNoteid);
 
 	/**
-	 * @return Database transaction
+	 * Creates and initiates a transaction on a given database
+	 * 
+	 * @return DatabaseTransaction initiated on the relevant Database object
+	 * @since org.openntf.domino 2.5.0
 	 */
 	public DatabaseTransaction startTransaction();
 
+	/**
+	 * Closes the transaction on a given database
+	 * 
+	 * @since org.openntf.domino 2.5.0
+	 */
 	public void closeTransaction();
 
 	/**
-	 * @return Database transaction
+	 * Gets an already initiated transaction for a database
+	 * 
+	 * @return DatabaseTransaction or null
+	 * @since org.openntf.domino 2.5.0
 	 */
 	public DatabaseTransaction getTransaction();
 
+	/**
+	 * Passes a DatabaseTransaction to a Database object. This allows a single Transaction to be used to process activity across multiple
+	 * databases
+	 * 
+	 * @param txn
+	 *            DatabaseTransaction to be passed to a relevant database
+	 * @since org.openntf.domino 4.5.0
+	 * 
+	 */
 	public void setTransaction(DatabaseTransaction txn);
 
+	/**
+	 * Creates a new {@link lotus.notes.addins.DominoServer} object for the server the database is on
+	 * 
+	 * @return DominoServer running on the current Domino server`
+	 * @since org.openntf.domino 2.5.0
+	 */
 	public lotus.notes.addins.DominoServer getDominoServer();
 
+	/**
+	 * Refreshes the design of the relevant database
+	 * 
+	 * @since org.openntf.domino 2.5.0
+	 */
 	public void refreshDesign();
 
+	/**
+	 * Opens the mail database for the relevant user loading it into this Database object
+	 * 
+	 * @since org.openntf.domino 4.5.0
+	 */
 	public void openMail();
 
+	/**
+	 * Gets the Mail database for the relevant user
+	 * 
+	 * @return Database for the relevant user's mail database
+	 * @since org.openntf.domino 4.5.0
+	 */
 	public org.openntf.domino.Database getMail();
 
 	/**
-	 * @return a Map view of the documents in the database, keyed according to getDocumentByKey
+	 * Gets a Map view of the documents in the database, keyed according to getDocumentByKey
+	 * 
+	 * @return Map<Serializable, Document>
+	 * @since org.openntf.domino 5.0.0
 	 */
 	public Map<Serializable, org.openntf.domino.Document> getDocumentMap();
 
+	/**
+	 * Gets the schema for the database. Not yet complete
+	 * 
+	 * @return instance of IDatabaseSchema interface
+	 * @since org.openntf.domino 2.5.0
+	 */
+	@Incomplete
 	public IDatabaseSchema getSchema();
 
+	/**
+	 * Sets the schema for the database. Not yet complete
+	 * 
+	 * @param schema
+	 *            instance of IDatabaseSchema interface
+	 * @since org.openntf.domino 2.5.0
+	 */
 	public void setSchema(IDatabaseSchema schema);
 
+	/**
+	 * Checks whether replication is disabled for this database
+	 * 
+	 * @return boolean
+	 * @since org.openntf.domino 4.5.0
+	 */
 	public boolean isReplicationDisabled();
 
+	/**
+	 * Gets the web URL for the relevant database, specifying whether or not to include the path
+	 * 
+	 * @param usePath
+	 *            boolean
+	 * @return String url for the database
+	 * @since org.openntf.domino 5.0.0
+	 */
 	public String getHttpURL(final boolean usePath);
 
+	/**
+	 * Gets MIME behavior for the session, whether to wrap all mime, wrap if over 32k, or wrap none
+	 * 
+	 * @return AutoMime format for the session
+	 * @since org.openntf.domino 5.0.0
+	 */
 	public AutoMime getAutoMime();
 
+	/**
+	 * Sets the MIME behavior for the session, using {@link org.openntf.domino.AutoMime}
+	 * 
+	 * @param autoMime
+	 *            AutoMime format, WRAP_ALL, WRAP_32K, WRAP_NONE
+	 * @since org.openntf.domino 5.0.0
+	 */
 	public void setAutoMime(AutoMime autoMime);
 
 }
