@@ -1,0 +1,28 @@
+#
+org.openntf.domino.xsp.formula.XspFunctions$Functions
+
+# TODO RPr: Why do we need to specify all classes
+# ANSWER: 	The reason is that the ServiceLoader does not work properly in OSGi environment
+# 				 
+
+# These are the basic functions to provied boolean and arithmetc operations
+org.openntf.formula.function.Operators$Functions
+org.openntf.formula.function.OperatorsBool$Functions
+org.openntf.formula.function.Negators$Functions
+org.openntf.formula.function.Comparators$Functions
+
+# Here, all constants are declared
+org.openntf.formula.function.Constants$Functions
+
+#
+org.openntf.formula.function.MathFunctions$Functions
+org.openntf.formula.function.DateTimeFunctions$Functions
+org.openntf.formula.function.TextFunctions$Functions
+
+
+
+# domino functions
+org.openntf.domino.formula.DocFunctions$Functions
+org.openntf.domino.formula.NativeEvaluateFunctions$Functions
+org.openntf.domino.formula.DominoFunctions$Functions
+org.openntf.domino.formula.NotSupported$Functions

@@ -3555,8 +3555,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			// evaluate("@DocFields",...) is 3 times faster than lotus.domino.Document.getItems()
 			//
 			try {
-				lotus.domino.Session sess = Factory.toLotus(getAncestorSession());
-				Vector<?> v = sess.evaluate("@DocFields", getDelegate());
+				// This must be done on the raw session!
+				lotus.domino.Session rawSess = Factory.toLotus(getAncestorSession());
+				Vector<?> v = rawSess.evaluate("@DocFields", getDelegate());
 				for (Object o : v)
 					fieldNames_.add((String) o);
 			} catch (NotesException e) {

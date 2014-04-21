@@ -224,7 +224,7 @@ TOKEN :
           	(~["}"])*			// until  }
           	"}" >  : SUBSCRIPT	// end at "
 
-| 	< Identifier :  ( < Letter >  )  (  < Letter >  | < Digit > )* > : SUBSCRIPT
+| 	< Identifier :  ( < Letter >  )  (  < Letter >  | < Digit > | "." )* > : SUBSCRIPT
 
 // Common groups
 | < #Letter:

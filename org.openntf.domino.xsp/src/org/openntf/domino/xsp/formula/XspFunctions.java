@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIOutput;
+import javax.faces.context.FacesContext;
 
 import org.openntf.formula.Function;
 import org.openntf.formula.FunctionFactory;
@@ -21,6 +22,12 @@ public enum XspFunctions {
 		public Map<String, Function> getFunctions() {
 			return functionSet;
 		}
+
+		@Override
+		public int getPriority() {
+			return 30;
+		}
+
 	}
 
 	@ParamCount(0)
@@ -28,7 +35,8 @@ public enum XspFunctions {
 		UIComponent comp = ctx.getComponent();
 		while (comp != null) {
 			if (comp instanceof UIOutput) {
-				return ValueHolder.valueOf(((UIOutput) comp).getId());
+				return ValueHolder.valueOf(comp.getClientId(FacesContext.getCurrentInstance()));
+				// return ValueHolder.valueOf(((UIOutput) comp).getId());
 			}
 			comp = comp.getParent();
 		}

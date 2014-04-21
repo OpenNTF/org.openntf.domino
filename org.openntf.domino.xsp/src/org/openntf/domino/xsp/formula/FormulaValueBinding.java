@@ -54,14 +54,16 @@ public class FormulaValueBinding extends ValueBindingEx {
 		List<Object> ret = null;
 		try {
 			FormulaContextXsp fctx = (FormulaContextXsp) Formulas.createContext(dataMap, Formulas.getParser());
-			fctx.setComponent(this.getComponent());
+			fctx.init(this.getComponent(), ctx);
 			ret = getASTNode().solve(fctx);
 		} catch (EvaluateException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// e.printStackTrace();
+			throw new EvaluationException(e);
 		} catch (FormulaParseException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// e.printStackTrace();
+			throw new EvaluationException(e);
 		} finally {
 			if (rootWasNull) {
 				ctx.setViewRoot(null);

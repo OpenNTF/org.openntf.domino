@@ -4,11 +4,11 @@
 	<faces-config-extension>
 		<!--
 		CHECKME RPr: should we overwite the standard xp:dominoDocument? 
+		<default-prefix>xp</default-prefix>
+		<namespace-uri>http://www.ibm.com/xsp/core</namespace-uri>
+		-->
 		<namespace-uri>http://www.openntf.org/domino/xsp</namespace-uri>
 		<default-prefix>on</default-prefix
-		-->
-		<namespace-uri>http://www.ibm.com/xsp/core</namespace-uri>
-		<default-prefix>xp</default-prefix>
 	</faces-config-extension>
 
 	<complex-type>

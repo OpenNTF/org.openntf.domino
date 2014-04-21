@@ -307,7 +307,7 @@ public abstract class ValueHolder implements Serializable {
 	 * @return the ValueHolder
 	 */
 	public static ValueHolder valueOf(final String init) {
-		if (init.length() == 0)
+		if (init == null || init.length() == 0)
 			return stringCache[0];
 		if (init.length() == 1) {
 			char ch = init.charAt(0);
