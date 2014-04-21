@@ -154,7 +154,7 @@ public class OpenntfDominoDocumentData extends DominoDocumentData {
 	}
 
 	protected OpenntfDominoDocument wrap(final DominoDocument domino, final boolean isNew) {
-		return OpenntfDominoDocument.wrap(domino);
+		return new OpenntfDominoDocument(domino);
 	}
 
 }

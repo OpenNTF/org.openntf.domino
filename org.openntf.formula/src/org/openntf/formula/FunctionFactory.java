@@ -57,11 +57,14 @@ public class FunctionFactory {
 		List<FunctionSet> loaderList = new ArrayList<FunctionSet>();
 
 		if (loader.iterator().hasNext()) {
+			System.out.println("FunctionSet Service found.");
 			for (FunctionSet fact : loader) {
 				loaderList.add(fact);
+				System.out.println("Using " + fact.getClass().getName());
 			}
 		} else {
 			// case if serviceLoader does not work (notesAgent)
+			System.out.println("FunctionSet Service not found. Using defaults");
 			loaderList.add(new org.openntf.formula.function.Operators.Functions());
 			loaderList.add(new org.openntf.formula.function.OperatorsBool.Functions());
 			loaderList.add(new org.openntf.formula.function.Negators.Functions());
@@ -74,7 +77,7 @@ public class FunctionFactory {
 
 		Collections.sort(loaderList, new Comparator<FunctionSet>() {
 			public int compare(final FunctionSet paramT1, final FunctionSet paramT2) {
-				return paramT1.getPriority() - paramT2.getPriority();
+				return paramT2.getPriority() - paramT1.getPriority();
 			}
 		});
 

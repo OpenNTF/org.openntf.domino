@@ -79,6 +79,10 @@ public class OpenntfDominoDocument extends DominoDocument implements Map<String,
 
 	}
 
+	public OpenntfDominoDocument() {
+		// default constructor
+	}
+
 	/**
 	 * Wraps a DominoDocument in an OpenntfDominoDocument. It is important that "OpenntfDominoDocument instanceof DominoDocument". As IBM
 	 * "forgot" to use an interface here, we must inherit from DominoDocument and do some tricks not to break everything. (Otherwise we can
@@ -87,7 +91,7 @@ public class OpenntfDominoDocument extends DominoDocument implements Map<String,
 	 * @param delegate
 	 * @return
 	 */
-	public static OpenntfDominoDocument wrap(final DominoDocument delegate) {
+	public OpenntfDominoDocument(final DominoDocument delegate) {
 
 		try {
 			// trick: first create a "DominoDocument" with the accessible constructor
@@ -95,14 +99,12 @@ public class OpenntfDominoDocument extends DominoDocument implements Map<String,
 			// serialize/deserialize action.
 			// This is more stable than the former FocDominoDelegate approach
 
-			OpenntfDominoDocument res = new OpenntfDominoDocument();
 			for (Field field : parentFields) {
-				field.set(res, field.get(delegate));
+				field.set(this, field.get(delegate));
 			}
-			return res;
+
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
-			return null;
 		}
 	}
 

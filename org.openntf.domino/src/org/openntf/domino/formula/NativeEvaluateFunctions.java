@@ -22,6 +22,12 @@ public enum NativeEvaluateFunctions {
 			return functionSet;
 		}
 
+		@Override
+		public int getPriority() {
+			// TODO Auto-generated method stub
+			return 40; //  @Unique is overwritten!
+		}
+
 	}
 
 	/*============================================================================*/
