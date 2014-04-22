@@ -37,12 +37,11 @@ import com.ibm.xsp.model.domino.wrapped.DominoDocument;
  * @author Roland Praml, FOCONIS AG
  * 
  */
+@SuppressWarnings("unchecked")
 public class OpenntfDominoDocument extends DominoDocument implements Map<String, Object> {
 	// private static final Logger log_ = Logger.getLogger(FocDominoDocument.class.getName());
 	private static final long serialVersionUID = 1L;
 
-	// private static Constructor<DominoDocument> documentConstructorExisting;
-	// private static Constructor<DominoDocument> documentConstructorNew;
 	private static List<Field> parentFields = new ArrayList<Field>();
 
 	private Map<String, Object> mapAdapter = new DominoDocumentMapAdapter(this);
@@ -52,17 +51,6 @@ public class OpenntfDominoDocument extends DominoDocument implements Map<String,
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 				@Override
 				public Object run() throws Exception {
-					// System.out.println("Init Constructor");
-					// some tricks to "inherit" from DominoDocument
-
-					// documentConstructorExisting = DominoDocument.class.getDeclaredConstructor(String.class, lotus.domino.Document.class,
-					// int.class, int.class, boolean.class, String.class, String.class);
-					// documentConstructorExisting.setAccessible(true);
-					//
-					// documentConstructorNew = DominoDocument.class.getDeclaredConstructor(String.class, lotus.domino.Database.class,
-					// String.class, String.class, int.class, int.class, boolean.class, String.class, String.class);
-					// documentConstructorNew.setAccessible(true);
-
 					// get all fields that are not static and make them accessible
 					for (Field field : DominoDocument.class.getDeclaredFields()) {
 						if ((field.getModifiers() & Modifier.STATIC) == 0) {
@@ -79,8 +67,10 @@ public class OpenntfDominoDocument extends DominoDocument implements Map<String,
 
 	}
 
+	/**
+	 * Default constructor.
+	 */
 	public OpenntfDominoDocument() {
-		// default constructor
 	}
 
 	/**
@@ -94,10 +84,10 @@ public class OpenntfDominoDocument extends DominoDocument implements Map<String,
 	public OpenntfDominoDocument(final DominoDocument delegate) {
 
 		try {
-			// trick: first create a "DominoDocument" with the accessible constructor
-			// then create a blank "FocDominoDocument" and copy all fields in the blank document. This is similar to a
+			// trick: first create a "DominoDocument" with the wrap-method (done outside)
+			// then create a blank "FocDominoDocument" and copy all fields in the blank object. This is similar to a
 			// serialize/deserialize action.
-			// This is more stable than the former FocDominoDelegate approach
+			// This is more stable than the former DominoDelegate approach
 
 			for (Field field : parentFields) {
 				field.set(this, field.get(delegate));
@@ -108,60 +98,130 @@ public class OpenntfDominoDocument extends DominoDocument implements Map<String,
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#clear()
+	 */
 	public void clear() {
 		mapAdapter.clear();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#containsKey(java.lang.Object)
+	 */
 	public boolean containsKey(final Object arg0) {
 		return mapAdapter.containsKey(arg0);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#containsValue(java.lang.Object)
+	 */
 	public boolean containsValue(final Object arg0) {
 		return mapAdapter.containsValue(arg0);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#entrySet()
+	 */
 	public Set<java.util.Map.Entry<String, Object>> entrySet() {
 		return mapAdapter.entrySet();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(final Object arg0) {
 		return mapAdapter.equals(arg0);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#get(java.lang.Object)
+	 */
 	public Object get(final Object arg0) {
 		return mapAdapter.get(arg0);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		return mapAdapter.hashCode();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#isEmpty()
+	 */
 	public boolean isEmpty() {
 		return mapAdapter.isEmpty();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#keySet()
+	 */
 	public Set<String> keySet() {
 		return mapAdapter.keySet();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#put(java.lang.Object, java.lang.Object)
+	 */
 	public Object put(final String arg0, final Object arg1) {
 		return mapAdapter.put(arg0, arg1);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#putAll(java.util.Map)
+	 */
 	public void putAll(final Map<? extends String, ? extends Object> arg0) {
 		mapAdapter.putAll(arg0);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#remove(java.lang.Object)
+	 */
 	public Object remove(final Object arg0) {
 		return mapAdapter.remove(arg0);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#size()
+	 */
 	public int size() {
 		return mapAdapter.size();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.util.Map#values()
+	 */
 	public Collection<Object> values() {
 		return mapAdapter.values();
 	}

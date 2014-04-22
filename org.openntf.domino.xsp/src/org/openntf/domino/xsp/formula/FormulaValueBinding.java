@@ -1,3 +1,19 @@
+/*
+ * © Copyright FOCONIS AG, 2014
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ * 
+ */
 package org.openntf.domino.xsp.formula;
 
 import java.lang.ref.SoftReference;
@@ -21,21 +37,39 @@ import com.ibm.xsp.model.domino.wrapped.DominoDocument;
 import com.ibm.xsp.util.FacesUtil;
 import com.ibm.xsp.util.ValueBindingUtil;
 
+/**
+ * Creates a ValueBinding for a formula
+ * 
+ * @author Roland Praml, FOCONIS AG
+ * 
+ */
 public class FormulaValueBinding extends ValueBindingEx {
 
 	private String formulaStr;
 	private transient SoftReference<ASTNode> astNodeCache;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param str
+	 *            the formula (without #{...} delimiters)
+	 */
 	public FormulaValueBinding(final String str) {
-		// TODO Auto-generated constructor stub
 		this.formulaStr = (str != null ? str.intern() : null);
 	}
 
+	/**
+	 * returns the expected type
+	 */
 	@Override
 	public Class<?> getType(final FacesContext arg0) throws EvaluationException, PropertyNotFoundException {
 		return getExpectedType();
 	}
 
+	/**
+	 * returns the value after the formula was evaluated
+	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getValue(final FacesContext ctx) throws EvaluationException, PropertyNotFoundException {
 		boolean rootWasNull = false;
@@ -57,12 +91,8 @@ public class FormulaValueBinding extends ValueBindingEx {
 			fctx.init(this.getComponent(), ctx);
 			ret = getASTNode().solve(fctx);
 		} catch (EvaluateException e) {
-			// TODO Auto-generated catch block
-			// e.printStackTrace();
 			throw new EvaluationException(e);
 		} catch (FormulaParseException e) {
-			// TODO Auto-generated catch block
-			// e.printStackTrace();
 			throw new EvaluationException(e);
 		} finally {
 			if (rootWasNull) {
@@ -71,9 +101,10 @@ public class FormulaValueBinding extends ValueBindingEx {
 		}
 		Object firstValue = ret.size() >= 1 ? ret.get(0) : null;
 
-		Class localClass = getExpectedType();
-		if (localClass != null) {
-			if (localClass == String.class) {
+		// RPr: this is similar to the javascript binding
+		Class<?> expectedType = getExpectedType();
+		if (expectedType != null) {
+			if (expectedType == String.class) {
 				if (ret.isEmpty()) {
 					return null;
 				}
@@ -82,54 +113,66 @@ public class FormulaValueBinding extends ValueBindingEx {
 				}
 				return ret.toString();
 			}
-			if ((localClass == Boolean.class) || (localClass == Boolean.TYPE)) {
+			if ((expectedType == Boolean.class) || (expectedType == Boolean.TYPE)) {
 				return firstValue == null ? Boolean.FALSE : (Boolean) firstValue;
 			}
-			if ((localClass == Character.class) || (localClass == Character.TYPE)) {
+			if ((expectedType == Character.class) || (expectedType == Character.TYPE)) {
 				String str = firstValue == null ? "" : firstValue.toString();
 				if (str.length() > 0) {
 					return new Character(str.charAt(0));
 				}
 			}
-			if ((localClass.isPrimitive()) || (Number.class.isAssignableFrom(localClass))) {
-				if ((localClass == Double.class) || (localClass == Double.TYPE)) {
+			if ((expectedType.isPrimitive()) || (Number.class.isAssignableFrom(expectedType))) {
+				if ((expectedType == Double.class) || (expectedType == Double.TYPE)) {
 					return ((Number) firstValue).doubleValue();
 				}
-				if ((localClass == Integer.class) || (localClass == Integer.TYPE)) {
+				if ((expectedType == Integer.class) || (expectedType == Integer.TYPE)) {
 					return ((Number) firstValue).intValue();
 
 				}
-				if ((localClass == Long.class) || (localClass == Long.TYPE)) {
+				if ((expectedType == Long.class) || (expectedType == Long.TYPE)) {
 					return ((Number) firstValue).longValue();
 				}
-				if ((localClass == Byte.class) || (localClass == Byte.TYPE)) {
+				if ((expectedType == Byte.class) || (expectedType == Byte.TYPE)) {
 					return ((Number) firstValue).byteValue();
 				}
-				if ((localClass == Short.class) || (localClass == Short.TYPE)) {
+				if ((expectedType == Short.class) || (expectedType == Short.TYPE)) {
 					return ((Number) firstValue).shortValue();
 				}
-				if ((localClass == Float.class) || (localClass == Float.TYPE)) {
+				if ((expectedType == Float.class) || (expectedType == Float.TYPE)) {
 					return ((Number) firstValue).floatValue();
 				}
 			}
 		}
 
 		return convertToExpectedType(ctx, ret);
-
-		// TODO Auto-generated method stub
-
 	}
 
+	/**
+	 * Our valuebindings are read only
+	 * 
+	 * @return always <code>TRUE</code>
+	 */
 	@Override
 	public boolean isReadOnly(final FacesContext arg0) throws EvaluationException, PropertyNotFoundException {
 		return true;
 	}
 
+	/**
+	 * This is not supported here
+	 */
 	@Override
 	public void setValue(final FacesContext arg0, final Object arg1) throws EvaluationException, PropertyNotFoundException {
 		throw new EvaluationExceptionEx("FormulaValueBinding is read-only", this);
 	}
 
+	/**
+	 * Returns the corresponding {@link ASTNode} for the formula
+	 * 
+	 * @return {@link ASTNode}
+	 * @throws FormulaParseException
+	 *             if the formula was invalid
+	 */
 	protected ASTNode getASTNode() throws FormulaParseException {
 		if (astNodeCache != null) {
 			ASTNode node = astNodeCache.get();
@@ -150,17 +193,17 @@ public class FormulaValueBinding extends ValueBindingEx {
 	}
 
 	@Override
-	public Object saveState(final FacesContext paramFacesContext) {
+	public Object saveState(final FacesContext ctx) {
 		Object[] arr = new Object[2];
-		arr[0] = super.saveState(paramFacesContext);
+		arr[0] = super.saveState(ctx);
 		arr[1] = this.formulaStr;
 		return arr;
 	}
 
 	@Override
-	public void restoreState(final FacesContext paramFacesContext, final Object paramObject) {
-		Object[] arr = (Object[]) paramObject;
-		super.restoreState(paramFacesContext, arr[0]);
+	public void restoreState(final FacesContext context, final Object obj) {
+		Object[] arr = (Object[]) obj;
+		super.restoreState(context, arr[0]);
 		this.formulaStr = ((String) arr[1]);
 	}
 }

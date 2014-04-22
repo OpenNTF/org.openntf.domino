@@ -188,7 +188,6 @@ public abstract class ValueHolder implements Serializable {
 	 * If possible use one of the special "valueOf" constructors as these are faster
 	 * 
 	 */
-	@Deprecated
 	public static ValueHolder valueOf(final Object init) {
 		if (init == null)
 			return valueDefault();

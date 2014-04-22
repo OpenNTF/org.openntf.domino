@@ -1,3 +1,19 @@
+/*
+ * © Copyright FOCONIS AG, 2014
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ * 
+ */
 package org.openntf.domino.xsp.formula;
 
 import java.util.Map;
@@ -12,9 +28,19 @@ import org.openntf.formula.FunctionSet;
 import org.openntf.formula.ValueHolder;
 import org.openntf.formula.annotation.ParamCount;
 
+/**
+ * Here some "proof of concept" XSP-functions are implemented
+ * 
+ * @author Roland Praml, FOCONIS AG
+ * 
+ */
+
+@Deprecated
+// until we have some useful implementations
 public enum XspFunctions {
 	;
 
+	/** helper class that initializes all functions in XspFunction.class */
 	public static class Functions extends FunctionSet {
 		private static final Map<String, Function> functionSet = FunctionFactory.getFunctions(XspFunctions.class);
 
@@ -23,6 +49,11 @@ public enum XspFunctions {
 			return functionSet;
 		}
 
+		/**
+		 * We must have higer priority than "evaluateNative"
+		 * 
+		 * @return 30
+		 */
 		@Override
 		public int getPriority() {
 			return 30;
@@ -30,6 +61,13 @@ public enum XspFunctions {
 
 	}
 
+	/**
+	 * Returns the clientID of the current XPage-component
+	 * 
+	 * @param ctx
+	 *            the FormulaContext
+	 * @return the clientID
+	 */
 	@ParamCount(0)
 	public static ValueHolder atThisName(final FormulaContextXsp ctx) {
 		UIComponent comp = ctx.getComponent();
@@ -43,6 +81,12 @@ public enum XspFunctions {
 		return ValueHolder.valueDefault();
 	}
 
+	/**
+	 * Returns the value of the current UIComponent
+	 * 
+	 * @param ctx
+	 * @return
+	 */
 	@ParamCount(0)
 	public static ValueHolder atThisValue(final FormulaContextXsp ctx) {
 		UIComponent comp = ctx.getComponent();

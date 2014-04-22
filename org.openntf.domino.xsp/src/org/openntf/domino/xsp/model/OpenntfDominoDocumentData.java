@@ -1,6 +1,20 @@
-/**
+/*
+ * © Copyright FOCONIS AG, 2014
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
  * 
  */
+
 package org.openntf.domino.xsp.model;
 
 import java.lang.reflect.Method;
@@ -25,14 +39,9 @@ import com.ibm.xsp.model.domino.DominoUtils;
 import com.ibm.xsp.model.domino.wrapped.DominoDocument;
 
 /**
- * @author praml
- *
- */
-/**
- * Hier wird von der Original-XSP-Datatasource (DominoDocumentData) abgeleitet damit wir �ber alle Aktionen Kontrolle haben. doNewDocument
- * und doOpenDocument werden bei Verwendung der Datasource "Foconis Document" von der XPage automatisch aufgerufen und m�ssen einen
- * DominoDocumentDataContainer zur�ckliefern. Unser Trick besteht darin, dass wir in diesen DominoDocumentDataContainer anstatt eines
- * DominoDocument ein (davon abgeleitetes) FocDominoDocument packen, das sich f�r uns dann um die Ausleitung der Events k�mmert.
+ * Here we inherit form the original XSP-datasource class ({@link DominoDocumentData}) and extend the doNew/doOpenDocument method to have
+ * more control over some actions. Especially we want to replace the {@link DominoDocument} with our {@link OpenntfDominoDocument}
+ * 
  */
 public class OpenntfDominoDocumentData extends DominoDocumentData {
 	private static Method openDatabaseMethod;
@@ -55,6 +64,11 @@ public class OpenntfDominoDocumentData extends DominoDocumentData {
 
 	}
 
+	/**
+	 * this calls the "private" method in {@link DominoDocument}. Maybe IBM makes this protected, then we would not need this.
+	 * 
+	 * @return
+	 */
 	protected Database openDatabase() {
 		try {
 			return (Database) openDatabaseMethod.invoke(this, (Object[]) null);
@@ -65,12 +79,11 @@ public class OpenntfDominoDocumentData extends DominoDocumentData {
 	}
 
 	/**
-	 * Wird aufgerufen, wenn ein neues Dokument erzeugt werden soll. Um das Anlegen des Dokumentes k�mmert sich die Eltern-Methode. Das
-	 * Dokument wird hier lediglich umgepackt
+	 * Invoked if you call a xpage.xsp without a document ID
 	 */
 	@SuppressWarnings("nls")
 	@Override
-	public DocumentDataContainer doNewDocument(final FacesContext paramFacesContext) throws FacesExceptionEx {
+	public DocumentDataContainer doNewDocument(final FacesContext context) throws FacesExceptionEx {
 		try {
 			OpenntfDominoDocument ntfDoc = createDocument();
 			return new DominoDocumentDataContainer(getBeanId(), getUniqueId(), ntfDoc);
@@ -106,20 +119,18 @@ public class OpenntfDominoDocumentData extends DominoDocumentData {
 	}
 
 	/**
-	 * Wird aufgerufen, wenn ein vorhandenes Dokument ge�ffnet werden soll. Um das Holen des Dokumentes k�mmert sich die Eltern-Methode. Das
-	 * Dokument wird hier lediglich umgepackt
+	 * Invoked if you call a xpage.xsp with a document ID
 	 */
 	@Override
-	public DocumentDataContainer doOpenDocument(final FacesContext paramFacesContext) throws FacesExceptionEx {
+	public DocumentDataContainer doOpenDocument(final FacesContext context) throws FacesExceptionEx {
 
 		try {
-			System.out.println("doOpenDocument in plugin");
 			String noteId = getDocumentId();
 			if (DominoUtils.isCategoryId(noteId)) {
 				noteId = "";
 			}
 			if (StringUtil.isEmpty(noteId)) {
-				return doNewDocument(paramFacesContext);
+				return doNewDocument(context);
 			}
 			OpenntfDominoDocument ntfDoc = openDocument(noteId);
 			return new DominoDocumentDataContainer(getBeanId(), getUniqueId(), ntfDoc);
@@ -153,6 +164,13 @@ public class OpenntfDominoDocumentData extends DominoDocumentData {
 		return ntfDoc;
 	}
 
+	/**
+	 * Wraps a {@link DominoDocument} in an {@link OpenntfDominoDocument} (or something else)
+	 * 
+	 * @param domino
+	 * @param isNew
+	 * @return
+	 */
 	protected OpenntfDominoDocument wrap(final DominoDocument domino, final boolean isNew) {
 		return new OpenntfDominoDocument(domino);
 	}

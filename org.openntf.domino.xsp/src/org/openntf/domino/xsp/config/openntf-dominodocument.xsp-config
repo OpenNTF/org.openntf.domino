@@ -8,7 +8,7 @@
 		<namespace-uri>http://www.ibm.com/xsp/core</namespace-uri>
 		-->
 		<namespace-uri>http://www.openntf.org/domino/xsp</namespace-uri>
-		<default-prefix>on</default-prefix
+		<default-prefix>on</default-prefix>
 	</faces-config-extension>
 
 	<complex-type>

@@ -91,7 +91,12 @@ public class FormulaContextNotes extends FormulaContext {
 	}
 
 	public Database getDatabase() {
-		return dataMap instanceof Document ? ((Document) dataMap).getAncestorDatabase() : Factory.getSession().getCurrentDatabase();
+		Document doc = getDocument();
+		if (doc == null) {
+			return Factory.getSession().getCurrentDatabase();
+		} else {
+			return doc.getAncestorDatabase();
+		}
 	}
 
 	public Document getDocument() {
