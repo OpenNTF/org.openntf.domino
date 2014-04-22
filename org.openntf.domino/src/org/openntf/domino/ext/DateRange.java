@@ -19,17 +19,17 @@ public interface DateRange {
 	 * @param dt
 	 *            DateTime to check within the range
 	 * @return boolean whether the DateTime is within the range
-	 * @since org.openntf.domino 1.0.0
+	 * @since org.openntf.domino 2.5.0
 	 */
 	public boolean contains(final org.openntf.domino.DateTime dt);
 
 	/**
-	 * Checks whether a DateRange contains a specific date/time
+	 * Checks whether a DateRange contains a specific Java date/time
 	 * 
 	 * @param dt
 	 *            Date to check within the range
 	 * @return boolean whether the Java Date is within the range
-	 * @since org.openntf.domino 1.0.0
+	 * @since org.openntf.domino 2.5.0
 	 */
 	public boolean contains(final Date date);
 }

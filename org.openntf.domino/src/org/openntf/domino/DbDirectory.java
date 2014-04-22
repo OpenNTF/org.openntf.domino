@@ -47,7 +47,9 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 	public static final Schema SCHEMA = new Schema();
 
 	/**
-	 * The Enum Type.
+	 * Enum to allow easy access to database types, e.g. Database, Template Candidate
+	 * 
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public static enum Type {
 

@@ -38,7 +38,7 @@ Export-Package: com.tinkerpop.blueprints,com.tinkerpop.blueprints.util
  .openntf.domino.transactions,org.openntf.domino.types,org.openntf.dom
  ino.utils,org.openntf.domino.utils.xml
 Implementation-Title: OpenNTF Domino API
-Implementation-Version: 1.0.0_20140417150213
+Implementation-Version: 1.0.0_20140422101349
 Implementation-Vendor: OpenNTF
 Implementation-Vendor-URL: http://www.openntf.org
 Require-Bundle: com.ibm.commons,com.ibm.icu;bundle-version="3.8.1",com
@@ -46,5 +46,5 @@ Require-Bundle: com.ibm.commons,com.ibm.icu;bundle-version="3.8.1",com
 Bundle-ClassPath: .,ext/jsr305.jar,ext/blueprints-core-2.4.0.jar,ext/g
  remlin-java-2.4.0.jar,ext/pipes-2.4.0.jar
 Built-By: withersp
-Build-Date: 20140417150213
+Build-Date: 20140422101349
 
