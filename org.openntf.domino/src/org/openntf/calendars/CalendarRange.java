@@ -1,6 +1,5 @@
 package org.openntf.calendars;
 
-import java.io.Serializable;
 import java.util.Calendar;
 
 import org.openntf.domino.utils.Dates;
@@ -8,7 +7,7 @@ import org.openntf.domino.utils.Dates;
 /**
  * Carrier for a pair of two Calendar objects specifying a range of time.
  */
-public class CalendarRange implements Serializable {
+public class CalendarRange implements CalendarRangeInterface {
 
 	private static final long serialVersionUID = 1L;
 
@@ -21,6 +20,14 @@ public class CalendarRange implements Serializable {
 	public CalendarRange() {
 	}
 
+	/**
+	 * Default Constructor
+	 * 
+	 * @param first
+	 *            The first Calendar entry for the range.
+	 * @param last
+	 *            The last Calendar entry for the range.
+	 */
 	public CalendarRange(final Calendar first, final Calendar last) {
 		this.setFirst(first);
 		this.setLast(last);
@@ -30,18 +37,11 @@ public class CalendarRange implements Serializable {
 	 * ***************************************************
 	 * ***************************************************
 	 * 
-	 * PUBLIC Getters / Setters
+	 * PUBLIC Setters
 	 * 
 	 * ***************************************************
 	 * ***************************************************
 	 */
-
-	/**
-	 * @return the first date in the range
-	 */
-	public Calendar first() {
-		return this._alpha;
-	}
 
 	/**
 	 * @param first
@@ -49,6 +49,7 @@ public class CalendarRange implements Serializable {
 	 */
 	public void setFirst(final Calendar first) {
 		this._alpha = first;
+		this.validate();
 	}
 
 	/**
@@ -56,14 +57,7 @@ public class CalendarRange implements Serializable {
 	 *            the first date in the range
 	 */
 	public void setFirst(final Object first) {
-		this._alpha = Dates.getCalendar(first);
-	}
-
-	/**
-	 * @return the the last date in the range
-	 */
-	public Calendar last() {
-		return this._omega;
+		this.setFirst(Dates.getCalendar(first));
 	}
 
 	/**
@@ -72,6 +66,7 @@ public class CalendarRange implements Serializable {
 	 */
 	public void setLast(final Calendar last) {
 		this._omega = last;
+		this.validate();
 	}
 
 	/**
@@ -79,63 +74,52 @@ public class CalendarRange implements Serializable {
 	 *            the last date in the range
 	 */
 	public void setLast(final Object last) {
-		this._omega = Dates.getCalendar(last);
+		this.setLast(Dates.getCalendar(last));
 	}
 
 	/*
 	 * ***************************************************
 	 * ***************************************************
 	 * 
-	 * PUBLIC Methods
+	 * PRIVATE Methods
 	 * 
 	 * ***************************************************
 	 * ***************************************************
 	 */
+	private void validate() {
+		if ((null != this.first()) && (null != this.last()) && Dates.isAfter(this.first(), this.last())) {
+			final Calendar temp = Dates.getCalendar();
+			temp.setTime(this.first().getTime());
+			this.setFirst(this.last());
+			this.setLast(temp);
+		}
+	}
 
-	/**
-	 * Indicates if this CalendarRange object is valid.
+	/*
+	 * ***************************************************
+	 * ***************************************************
 	 * 
-	 * Rules for determing if a CalendarRange object is valid are as follows:
+	 * CalendarRangeInterface Methods
 	 * 
-	 * <ul>
-	 * <li>The First calendar object in the range must not be null</li>
-	 * <li>The Last calendar object in the range must not be null</li>
-	 * <li>The Last calendar object may not represent a date / time which is PRIOR to the First calendar object (they may be equal)</li>
-	 * </ul>
-	 * 
-	 * @return Flag indicating if the CalendarRange object is valid
-	 * 
+	 * ***************************************************
+	 * ***************************************************
 	 */
+	public Calendar first() {
+		return this._alpha;
+	}
+
+	public Calendar last() {
+		return this._omega;
+	}
+
 	public boolean isValid() {
 		return ((null != this.first()) && (null != this.last()) && !Dates.isBefore(this.last(), this.first()));
 	}
 
-	/**
-	 * Returns true if this set contains the specified element.
-	 * 
-	 * More formally, returns true if and only if this set contains Calendar entry e such that (calendar==null ? false :
-	 * calendar.equals(e)).
-	 * 
-	 * @param calendar
-	 *            element whose presence in this CalendarRange is to be tested
-	 * 
-	 * @return Flag indicating if this CalendarRange contains the specified element.
-	 */
 	public boolean contains(final Calendar calendar) {
 		return (null == calendar) ? false : (calendar.equals(this.first()) || calendar.equals(this.last()));
 	}
 
-	/**
-	 * Returns true if this object contains a Calendar object for the specified object.
-	 * 
-	 * More formally, returns true if and only if for a Calendar object o constructed from object; this CalendarRange contains contains a
-	 * Calendar entry e such that (o==null ? false : o.equals(e)).
-	 * 
-	 * @param object
-	 *            the object from which to construct a Calendar object to test against members of this object
-	 * 
-	 * @return Flag indicating if this object contains a Calender object for the specified object.
-	 */
 	public boolean contains(final Object object) {
 		if (null != object) {
 			final Calendar calendar = Dates.getCalendar(object);
@@ -145,60 +129,58 @@ public class CalendarRange implements Serializable {
 		return false;
 	}
 
-	/**
-	 * Tests an Object to determine if it falls within the range of Calendar entries within this object.
-	 * 
-	 * Returns false if the specifieds Object is null.
-	 * 
-	 * Performs an inclusive test, returns true if the specified Object is equal to either the first or last entry.
-	 * 
-	 * @param object
-	 *            Object to test
-	 * 
-	 * @return Flag indicating if the Object falls within this object's range.
-	 */
 	public boolean isInRange(final Object object) {
-		return Dates.isInRange(object, this.first(), this.last(), true);
+		return this.isInRange(object, true);
 	}
 
-	/**
-	 * Tests a CalendarRange object to determine if there is an intersection with this object's Range.
-	 * 
-	 * Note this tests the RANGE encompassed by this object, not just specific entry instances.
-	 * 
-	 * Performs an inclusive test, the first and last entries are valid (except for null values)
-	 * 
-	 * @param calendarrange
-	 *            Object to test for intersection
-	 * 
-	 * @return A new CalendarRange object encompassing the intersection between this and the the specified object.
-	 */
+	public boolean isInRange(final Object object, final boolean inclusive) {
+		return Dates.isInRange(object, this.first(), this.last(), inclusive);
+	}
+
 	public CalendarRange getIntersection(final CalendarRange cr) {
-		if ((null != cr) && (null != cr.first()) && (null != cr.last()) && (null != this.first()) && (null != this.last())) {
-			final Calendar first = (!Dates.isAfter(cr.first(), this.first())) ? this.first() : cr.first();
-			final Calendar last = (!Dates.isAfter(cr.last(), this.last())) ? this.last() : cr.last();
-			if (!Dates.isAfter(first, last)) {
-				return new CalendarRange(first, last);
-			}
+		if ((null != cr) && this.isValid() && cr.isValid()) {
+			final Calendar first = (this.first().equals(cr.first()) || Dates.isAfter(this.first(), cr.first())) ? this.first() : cr.first();
+			final Calendar last = (this.last().equals(cr.last()) || Dates.isBefore(this.last(), cr.last())) ? this.last() : cr.last();
+
+			return (!Dates.isAfter(first, last)) ? new CalendarRange(first, last) : null;
 		}
 
 		return null;
 	}
 
-	/**
-	 * Tests a CalendarRange object to determine if there is an intersection with this object's Range.
-	 * 
-	 * Note this tests the RANGE encompassed by this object, not just specific entry instances.
-	 * 
-	 * Performs an inclusive test, the first and last entries are valid (except for null values)
-	 * 
-	 * @param calendarrange
-	 *            Object to test for intersection
-	 * 
-	 * @return Flag indicating if an intersection exists between this and the specified object.
-	 */
 	public boolean isIntersectionExists(final CalendarRange cr) {
 		return (null != this.getIntersection(cr));
+	}
+
+	public String getHoursMinutes() {
+		return (this.isValid()) ? Dates.getHoursMinutesBetween(this.first(), this.last()) : "";
+	}
+
+	public long getMinutes() {
+		return (this.isValid()) ? Dates.getMinutesBetween(this.first(), this.last()) : 0;
+	}
+
+	public CalendarRange getUnion(final CalendarRange cr) {
+
+		if ((null != cr) && this.isValid() && cr.isValid()) {
+			final Calendar first = (Dates.isBefore(this.first(), cr.first())) ? this.first() : cr.first();
+			final Calendar last = (Dates.isAfter(this.last(), cr.last())) ? this.last() : cr.last();
+
+			return new CalendarRange(first, last);
+		}
+
+		return null;
+	}
+
+	public boolean isUnionExists(final CalendarRange cr) {
+		return (null != this.getUnion(cr));
+	}
+
+	public CalendarRange toCalendarRange() {
+		final CalendarRange result = new CalendarRange();
+		result.setFirst(this.first());
+		result.setLast(this.last());
+		return result;
 	}
 
 }
