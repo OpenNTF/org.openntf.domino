@@ -49,7 +49,6 @@ public class CalendarRange implements CalendarRangeInterface {
 	 */
 	public void setFirst(final Calendar first) {
 		this._alpha = first;
-		this.validate();
 	}
 
 	/**
@@ -66,7 +65,6 @@ public class CalendarRange implements CalendarRangeInterface {
 	 */
 	public void setLast(final Calendar last) {
 		this._omega = last;
-		this.validate();
 	}
 
 	/**
@@ -87,11 +85,13 @@ public class CalendarRange implements CalendarRangeInterface {
 	 * ***************************************************
 	 */
 	private void validate() {
-		if ((null != this.first()) && (null != this.last()) && Dates.isAfter(this.first(), this.last())) {
+		final Calendar alpha = this._alpha;
+		final Calendar omega = this._omega;
+		if ((null != alpha) && (null != omega) && Dates.isAfter(alpha, omega)) {
 			final Calendar temp = Dates.getCalendar();
-			temp.setTime(this.first().getTime());
-			this.setFirst(this.last());
-			this.setLast(temp);
+			temp.setTime(alpha.getTime());
+			this._alpha = omega;
+			this._omega = temp;
 		}
 	}
 
@@ -105,10 +105,12 @@ public class CalendarRange implements CalendarRangeInterface {
 	 * ***************************************************
 	 */
 	public Calendar first() {
+		this.validate();
 		return this._alpha;
 	}
 
 	public Calendar last() {
+		this.validate();
 		return this._omega;
 	}
 
@@ -161,7 +163,6 @@ public class CalendarRange implements CalendarRangeInterface {
 	}
 
 	public CalendarRange getUnion(final CalendarRange cr) {
-
 		if ((null != cr) && this.isValid() && cr.isValid()) {
 			final Calendar first = (Dates.isBefore(this.first(), cr.first())) ? this.first() : cr.first();
 			final Calendar last = (Dates.isAfter(this.last(), cr.last())) ? this.last() : cr.last();
