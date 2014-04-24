@@ -413,10 +413,14 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 */
 	public static long getLotusId(final lotus.domino.Base base) {
 		try {
-			return ((Long) getCppObjMethod.invoke(base, (Object[]) null)).longValue();
+			if (base instanceof lotus.domino.local.NotesBase) {
+				return ((Long) getCppObjMethod.invoke(base, (Object[]) null)).longValue();
+			} else if (base instanceof org.openntf.domino.impl.Base) {
+				return ((org.openntf.domino.impl.Base) base).GetCppObj();
+			}
 		} catch (Exception e) {
-			return 0L;
 		}
+		return 0L;
 	}
 
 	/**

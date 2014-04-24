@@ -252,7 +252,9 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 			cache.put(cpp_key, result, lotus);
 			if (lotus instanceof lotus.domino.Session				//
 					|| lotus instanceof lotus.domino.AgentContext) {
-				cache.setNoRecycle(cpp_key, true); // these are never recycled by default
+				// these are never recycled by default. If you create your own session, you have to recycle it after use
+				// or setNoRecycle to "false"
+				cache.setNoRecycle(cpp_key, true);
 			}
 		}
 		return result;
