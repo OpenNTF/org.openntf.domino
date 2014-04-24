@@ -31,7 +31,7 @@ import org.openntf.domino.utils.Factory;
  *         DominoReference tracks the lifetime of reference object and recycles delegate if reference object is GCed
  * 
  */
-public class DominoReference extends WeakReference<Object> {
+public class DominoReference extends WeakReference<Object> implements Comparable<DominoReference> {
 	/** The Constant log_. */
 	private static final Logger log_ = Logger.getLogger(DominoReference.class.getName());
 
@@ -158,6 +158,161 @@ public class DominoReference extends WeakReference<Object> {
 
 	boolean isDead() {
 		return org.openntf.domino.impl.Base.isDead(delegate_);
+	}
+
+	public static int getPrecedence(final lotus.domino.Base lotus) {
+
+		if (lotus instanceof lotus.domino.Session)  		// Contains: AgentContext, Database, DateRange, DateTime, DbDirectory, International, Log, Name, Newsletter, 
+			return 0;										//			 NotesProperty, PropertyBroker, Registration, RichTextParagraphStyle, RichTextStyle, Stream  
+		// Contained by: AgentBase, NotesFactory (no objects we have to recycle)
+
+		// --- Directory
+		if (lotus instanceof lotus.domino.Directory)
+			return -1;										// Contained by: Session 
+		if (lotus instanceof lotus.domino.DirectoryNavigator)
+			return -2;										// Contained by: Directory
+		// ---
+
+		if (lotus instanceof lotus.domino.Newsletter)		// Contains: Document 
+			return -1;										// Contained by: _Session_ 
+
+		if (lotus instanceof lotus.domino.DbDirectory)		// Contains: Database  
+			return -2;										// Contained by: _Session_
+
+		if (lotus instanceof lotus.domino.AgentContext) 	// Contains: Agent, Database, DateTime, Document, DocumentCollection 
+			return -2;										// Contained by: _Session_ 
+
+		if (lotus instanceof lotus.domino.DxlExporter)
+			return -2;										// Contained by Session 
+
+		if (lotus instanceof lotus.domino.DxlImporter)
+			return -2;										// Contained by Session
+
+		if (lotus instanceof lotus.domino.Database) 		// Can contain: ACL, Agent, DateTime, Document, DocumentCollection, Form, Outline, Replication, View 
+			return -3;										// Contained by: _AgentContext_, _DbDirectory_, and Session 
+
+		// --- VIEW
+		if (lotus instanceof lotus.domino.View)				// Contains: Document, DateTime, ViewColumn, ViewEntry, ViewEntryCollection, ViewNavigator 
+			return -4;										// Contained by: Database 
+		if (lotus instanceof lotus.domino.ViewColumn) 		// Contains nothing
+			return -5;										// Contained by: View 
+		if (lotus instanceof lotus.domino.ViewEntryCollection) // Contains: ViewEntry 
+			return -5;										 // Contained by: View 
+		if (lotus instanceof lotus.domino.ViewNavigator)	// Contains: ViewEntry 
+			return -5;										// Contained by: View 
+		if (lotus instanceof lotus.domino.ViewEntry) 		// Contains: Document 
+			return -6;										// Contained by: View, ViewEntryCollection, ViewNavigator
+		// ----
+
+		if (lotus instanceof lotus.domino.DocumentCollection)	// Contains: Document 	
+			return -5;										// Contained by: AgentContext, Database, _View_ 
+
+		// --- Document
+		if (lotus instanceof lotus.domino.Document) 		// Contains: DateTime, EmbeddedObject, Item, MimeEntity, RichTextItem 
+			return -7;										// Contained by: Database, _DocumentCollection_, Newsletter, View, ViewEntry!!!
+		if (lotus instanceof lotus.domino.Item)  			// Contains: DateTime, MIMEEntity 
+			return -8;										// Contained by: Document 
+		if (lotus instanceof lotus.domino.RichTextItem)		// Contains: EmbeddedObject 
+			return -8;										// Contained by: Document 
+		if (lotus instanceof lotus.domino.EmbeddedObject)	// Contains nothing
+			return -9;										// Contained by: Document and RichTextItem 
+		if (lotus instanceof lotus.domino.MIMEEntity)		// Contains: MIMEHeader 
+			return -9;										// Contained by: Item, Document 
+		if (lotus instanceof lotus.domino.MIMEHeader)		// Contains nothing
+			return -10;										// Contained by: MIMEEntity 
+		// ---
+
+		if (lotus instanceof lotus.domino.Agent)			// Contains: <strike>Database</strike> and DateTime 
+			return -4;										// Contained by: AgentContext and _Database_ 
+
+		if (lotus instanceof lotus.domino.Form)
+			return -4;										// Contained by: Database 
+
+		// ACL---
+		if (lotus instanceof lotus.domino.ACL)				// Contains: ACLEntry 
+			return -4;										// Contained by: Database 
+		if (lotus instanceof lotus.domino.ACLEntry)			// Contains: Name 
+			return -5;										// Contained by: ACL
+		// ---
+
+		if (lotus instanceof lotus.domino.AdministrationProcess)
+			return -2;										// Contained by: _Session_
+
+		// Richtext ----
+		if (lotus instanceof lotus.domino.RichTextNavigator) // Contains: RichTextDocLink, RichTextSection, RichTextTable
+			return -9;										// Contained by: RichTextItem
+		if (lotus instanceof lotus.domino.RichTextSection)	// Contains: ColorObject, RichTextStyle 
+			return -10;										// Contained by: RichTextNavigator 
+		if (lotus instanceof lotus.domino.RichTextDoclink)	// Contains: RichTextStyle 
+			return -11;										// Contained by: RichTextItem, RichTextNavigator 
+		if (lotus instanceof lotus.domino.RichTextTable)	// Contains: ColorObject 
+			return -12;										// Contained by: RichTextItem, RichTextNavigator 
+
+		if (lotus instanceof lotus.domino.RichTextParagraphStyle) // Contains: RichTextTab 
+			return -1;										// Contained by: Session 
+		if (lotus instanceof lotus.domino.RichTextTab)
+			return -2;										// Contained by: RichTextParagraphStyle 
+
+		if (lotus instanceof lotus.domino.RichTextRange)	// Contains: RichTextStyle 
+			return -9;										// Contained by: RichTextItem 
+		if (lotus instanceof lotus.domino.RichTextStyle)
+			return -10;										// Contained by: Session and RichTextItem 
+		// ----
+
+		if (lotus instanceof lotus.domino.ColorObject)		// Contained by: RichTextSection, RichTextTable, Session 
+			return -13;
+
+		//		if (lotus instanceof lotus.domino.DateRange)
+		//			return 5;
+		//		if (lotus instanceof lotus.domino.DateTime)
+		//			return 6;
+		//		if (lotus instanceof lotus.domino.Name)
+		//			return 12;
+
+		if (lotus instanceof lotus.domino.International)
+			return -1;												// Contained by: Session 
+
+		if (lotus instanceof lotus.domino.Log)
+			return -1;												// Contained by: Session 
+
+		if (lotus instanceof lotus.domino.NoteCollection)
+			return -4;												// Contained by: Database
+
+		if (lotus instanceof lotus.domino.NotesCalendar)
+			return -1;												// Contained by: Session 
+
+		if (lotus instanceof lotus.domino.NotesCalendarEntry)
+			return -2;	// dunno
+		if (lotus instanceof lotus.domino.NotesCalendarNotice)
+			return -3;
+
+		if (lotus instanceof lotus.domino.PropertyBroker)
+			return -1;												// Contained by: Session 
+		if (lotus instanceof lotus.domino.NotesProperty)
+			return -2;
+
+		if (lotus instanceof lotus.domino.Outline)
+			return -4;												// Contained by: Database 
+		if (lotus instanceof lotus.domino.OutlineEntry)
+			return -5;
+
+		if (lotus instanceof lotus.domino.Registration)
+			return -1;												// Contained by: Session 
+
+		if (lotus instanceof lotus.domino.Replication)
+			return -4;												// Contained by: Database
+		if (lotus instanceof lotus.domino.ReplicationEntry)
+			return -5;
+
+		if (lotus instanceof lotus.domino.Stream)
+			return -1;												// Contained by: Session 
+		return -99;
+	}
+
+	public int compareTo(final DominoReference o) {
+		int i = getPrecedence(delegate_);
+		int j = getPrecedence(o.delegate_);
+		return i == j ? 0 : i < j ? -1 : 1;
 	}
 
 }

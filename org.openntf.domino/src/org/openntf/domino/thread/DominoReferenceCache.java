@@ -16,7 +16,10 @@
 package org.openntf.domino.thread;
 
 import java.lang.ref.ReferenceQueue;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -148,7 +151,7 @@ public class DominoReferenceCache {
 		}
 
 		DominoReference ref = null;
-
+		List<DominoReference> candidates = null;
 		while ((ref = (DominoReference) queue.poll()) != null) {
 			long key = ref.getKey();
 
@@ -179,7 +182,17 @@ public class DominoReferenceCache {
 						break;
 					}
 				}
-				ref.recycle();
+				if (candidates == null) {
+					candidates = new ArrayList<DominoReference>();
+				}
+				candidates.add(ref);
+				//ref.recycle();
+			}
+		}
+		if (candidates != null) {
+			Collections.sort(candidates);
+			for (DominoReference cand : candidates) {
+				cand.recycle();
 			}
 		}
 	}
