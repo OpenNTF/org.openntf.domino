@@ -247,7 +247,7 @@ public enum CollectionUtils {
 	 */
 	public static String[] getSortedUnique(final Object object) {
 		final TreeSet<String> ts = CollectionUtils.getTreeSetStrings(object);
-		return ((null == ts) || (ts.size() < 1)) ? null : (String[]) ts.toArray();
+		return ((null == ts) || (ts.size() < 1)) ? null : ts.toArray(new String[ts.size()]);
 	}
 
 	/**
@@ -333,7 +333,8 @@ public enum CollectionUtils {
 		}
 
 		// Compare as string arrays
-		return CollectionUtils.compareStringArrays(CollectionUtils.getStringArray(treeset0), CollectionUtils.getStringArray(treeset1), descending);
+		return CollectionUtils.compareStringArrays(CollectionUtils.getStringArray(treeset0), CollectionUtils.getStringArray(treeset1),
+				descending);
 	}
 
 	/**

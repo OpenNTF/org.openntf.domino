@@ -15,6 +15,7 @@ import lotus.domino.Database;
 import lotus.domino.DateRange;
 import lotus.domino.DateTime;
 import lotus.domino.Document;
+import lotus.domino.DocumentCollection;
 import lotus.domino.DxlExporter;
 import lotus.domino.Item;
 import lotus.domino.Name;
@@ -270,6 +271,92 @@ public class NotesRunner implements Runnable {
 		db.recycle();
 	}
 
+	public void run4(final Session session) throws NotesException {
+		Database db = session.getDatabase("", "events4.nsf");
+		NoteCollection cacheNC = db.createNoteCollection(false);
+		cacheNC.setSelectDocuments(true);
+		cacheNC.buildCollection();
+		cacheNC.recycle();
+		DocumentCollection cacheDc = db.getAllDocuments();
+		Document cacheDoc = cacheDc.getFirstDocument();
+		cacheDoc.recycle();
+		cacheDc.recycle();
+		db.recycle();
+
+		db = session.getDatabase("", "events4.nsf");
+		DocumentCollection dc = db.getAllDocuments();
+		Document doc = dc.getFirstDocument();
+		Document nextDoc = null;
+		int dcCount = dc.getCount();
+		int j = 0;
+		String[] dcUnids = new String[dcCount];
+		long dcStart = System.nanoTime();
+		while (doc != null) {
+			nextDoc = dc.getNextDocument(doc);
+			dcUnids[j++] = doc.getUniversalID();
+			doc.recycle();
+			doc = nextDoc;
+		}
+		System.out.println("DocumentCollection strategy got UNIDs for " + dcCount + " docs in " + (System.nanoTime() - dcStart) / 1000
+				+ "us");
+		dc.recycle();
+		db.recycle();
+
+		db = session.getDatabase("", "events4.nsf");
+		NoteCollection nc3 = db.createNoteCollection(false);
+		nc3.setSelectDocuments(true);
+		nc3.buildCollection();
+		int nc3Count = nc3.getCount();
+		String[] nc3Unids = new String[nc3Count];
+		int[] nids = nc3.getNoteIDs();
+		int k = 0;
+		long nc3Start = System.nanoTime();
+		for (int id : nids) {
+			nc3Unids[k++] = nc3.getUNID(Integer.toHexString(id));
+		}
+		System.out.println("NoteCollection strategy ints got UNIDs for " + nc3Count + " notes in " + (System.nanoTime() - nc3Start) / 1000
+				+ "us");
+		nc3.recycle();
+		db.recycle();
+
+		db = session.getDatabase("", "events4.nsf");
+		NoteCollection nc = db.createNoteCollection(false);
+		nc.setSelectDocuments(true);
+		nc.buildCollection();
+		int ncCount = nc.getCount();
+		String[] ncUnids = new String[ncCount];
+		String nid = nc.getFirstNoteID();
+		long ncStart = System.nanoTime();
+		for (int i = 0; i < ncCount; i++) {
+			ncUnids[i] = nc.getUNID(nid);
+			nid = nc.getNextNoteID(nid);
+		}
+		System.out.println("NoteCollection strategy first/next got UNIDs for " + ncCount + " notes in " + (System.nanoTime() - ncStart)
+				/ 1000 + "us");
+		nc.recycle();
+		db.recycle();
+
+		db = session.getDatabase("", "events4.nsf");
+		NoteCollection nc2 = db.createNoteCollection(false);
+		nc2.setSelectDocuments(true);
+		nc2.buildCollection();
+		int nc2Count = nc2.getCount();
+		String[] nc2Unids = new String[nc2Count];
+		nid = nc2.getFirstNoteID();
+		long nc2Start = System.nanoTime();
+		for (int i = 0; i < nc2Count; i++) {
+			Document nc2doc = db.getDocumentByID(nid);
+			nc2Unids[i] = nc2doc.getUniversalID();
+			nc2doc.recycle();
+			nid = nc2.getNextNoteID(nid);
+		}
+		System.out.println("NoteCollection strategy doc got UNIDs for " + nc2Count + " notes in " + (System.nanoTime() - nc2Start) / 1000
+				+ "us");
+		nc2.recycle();
+		db.recycle();
+
+	}
+
 	public void run3(final Session session) throws NotesException {
 		Database db = session.getDatabase("", "index.ntf");
 		NoteCollection nc = db.createNoteCollection(false);
@@ -298,7 +385,7 @@ public class NotesRunner implements Runnable {
 		try {
 			System.out.println("Starting NotesRunner");
 			Session session = NotesFactory.createSession();
-			run3(session);
+			run4(session);
 			session.recycle();
 		} catch (Throwable t) {
 			t.printStackTrace();

@@ -1,0 +1,65 @@
+1) One design goal of foconis was that the core of the formula engine has no dependency to notes 
+(and also no dependency to org.openntf.domino) so that you can easily use it in your own java
+application 
+
+=> That's why we moved it to a own project "org.openntf.formula".
+This runs already in a pure java enviroment and can also be used in LS2J calls (which helps
+porting some application step by step to java/xpages)
+
+2) The formula engine does not (and cannot, due reason 1) work on a "lotus.domino.Document" as 
+contxtDocument.
+Instead a dataMap is used. Formulas like 'FIELD "myField" := "myValue"' or '@getField("otherValue")' are 
+translated to 'dataMap.put("myField","myValue")' or 'dataMap.get("otherValue")'.
+Also Functions like @DocFields (=dataMap.keySet) and @Unavailable (=dataMap.remove) will work properly.
+
+3) org.openntf.Domino implements also the Map interface. So you can use the formulas also on documents :)
+
+4) We had one problem with DateTimes. We cannot use the org.openntf.domino.impl.DateTime and the interface
+org.openntf.domino.DateTime is also not available.
+So we introduced the "org.openntf.formula.DateTime" interface that implements a subset of the method from the 
+org.openntf.domino.DateTime interface.
+
+====
+IMPORTANT CHANGE: the "org.openntf.domino.DateTime" has to implement the "org.openntf.formula.DateTime" interface.
+This makes it easy to use the domino-DateTimes in the formula. Otherwise I will have to wrap them.
+====
+
+5) To use Date functions outside domino (in pure java, see 1) we made a Implementation of "org.openntf.formula.DateTime" in
+org.openntf.formula.impl.DateTimeImpl. This uses mainly the com.ibm.icu.Calendar. 
+
+As I didn't want to make a further linked folder to the icu stuff in the formula project, I moved  the icu stuff to 
+a own project. I have to say I did not yet understand completely, why the icu code is in the org.openntf.domino project.
+(I think it is primary needed if we run outside Xpage/notes, but then I think it is better to build a special jar)
+
+
+----------------------------------------------
+6) Changes in the "org.openntf.domino" project:
+- icu4j moved to own plugin
+- org.openntf.domino is now also a plugin. It gets the (correct) icu code by "Require-Bundle: com.ibm.icu"
+  in the MANIFEST.MF file
+- source code is syncronized with OSGI-OPT folder. This gives javadoc and correct parameter names in DDE
+- formula-core moved to own plugin.
+- domino specific formula extensions are loaded with the Java-SPI (there are some issues as this does not 
+  yet work properly in OSGI environment: See http://blog.osgi.org/2013/02/javautilserviceloader-in-osgi.html)
+- org.openntf.formula.DateTime is dominoFriendly now
+- Session already uses the new formula engine (TODO: should be switchable)
+
+- I know there is (actually) no automatic build process that builds a JAR that can be used in a NotesAgent.
+- Still TODO: Check functions that uses resources in the classes (e.g. reading version infos from Manifest.MF)
+
+----------------------------------------------
+7) Changes in the "org.openntf.domino.plugin" project:
+- removed the linked source folder "domsrc" of the org.openntf.domino project, it is referenced now by 
+  a entry in MANIFEST.MF => "Require-Bundle: org.openntf.domino" 
+- the plugin now contains ONLY the Activator.class. Maybe it is no longer needed (I think this was a "wrapper" for
+  the POJO-org.openntf.domino stuff
+  
+----------------------------------------------
+7) Changes in the "org.openntf.domino.xsp" project:
+- Added an "OpenntfDominoDocument extends DominoDocument" that can hook into the <xp:dominoDocument> to overwrite
+  methods in DominoDocument (fixing bugs or whatever you want to do there) 
+- OpenntfDominoDocument implements the Map interface, so that it can be used as context-document for the formula engine
+- more xpage-specific formula extensions are loaded with the Java-SPI (Here I also had some issues that SPI does not
+  work correctly in OSGI-environment. Maybe we find a better way. OSGI service registry or something like this)
+
+ 

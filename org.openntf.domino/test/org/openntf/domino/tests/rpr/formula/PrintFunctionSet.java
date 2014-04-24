@@ -6,10 +6,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.openntf.domino.formula.AtFunction;
-import org.openntf.domino.formula.AtFunctionFactory;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;
+import org.openntf.formula.Formulas;
+import org.openntf.formula.Function;
 
 public class PrintFunctionSet extends TestRunnerStdIn {
 	public static void main(final String[] args) {
@@ -25,16 +25,16 @@ public class PrintFunctionSet extends TestRunnerStdIn {
 	public void run() {
 		try {
 			System.out.println("Currently supported functions");
-			List<AtFunction> funcs = new ArrayList<AtFunction>();
-			funcs.addAll(AtFunctionFactory.getInstance().getFunctions().values());
+			List<Function> funcs = new ArrayList<Function>();
+			funcs.addAll(Formulas.getFunctionFactory().getFunctions().values());
 
-			Collections.sort(funcs, new Comparator<AtFunction>() {
+			Collections.sort(funcs, new Comparator<Function>() {
 				@Override
-				public int compare(final AtFunction o1, final AtFunction o2) {
+				public int compare(final Function o1, final Function o2) {
 					return o1.toString().compareTo(o2.toString());
 				}
 			});
-			for (AtFunction func : funcs) {
+			for (Function func : funcs) {
 				System.out.println(func);
 			}
 		} catch (Exception e) {

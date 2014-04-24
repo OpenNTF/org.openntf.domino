@@ -10,12 +10,14 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.ValueHolder;
-import org.openntf.domino.formula.ValueHolder.DataType;
-import org.openntf.domino.formula.ValueHolderBoolean;
-import org.openntf.domino.formula.ValueHolderNumber;
-import org.openntf.domino.formula.ValueHolderObject;
+import org.openntf.formula.EvaluateException;
+import org.openntf.formula.FormulaContext;
+import org.openntf.formula.Formulas;
+import org.openntf.formula.ValueHolder;
+import org.openntf.formula.ValueHolderBoolean;
+import org.openntf.formula.ValueHolderNumber;
+import org.openntf.formula.ValueHolderObject;
+import org.openntf.formula.ValueHolder.DataType;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ValueHolderNumberTest {
@@ -36,15 +38,15 @@ public class ValueHolderNumberTest {
 		vhErr = ValueHolder.createValueHolder(Long.class, 5);
 		vhErr.add(3);
 		vhErr.add(5);
-		vhErr.setError(new RuntimeException("This is a error"));
+		vhErr.addAll(ValueHolder.valueOf(new EvaluateException(1, 2, new RuntimeException("This is a error"))));
 	}
 
 	@Test
 	public final void testDataTypeHandling() {
-		assertTrue("Instance of ValueHolderNumber", vhi instanceof org.openntf.domino.formula.ValueHolderNumber);
-		assertTrue("Instance of ValueHolderNumber", vhd instanceof org.openntf.domino.formula.ValueHolderNumber);
-		assertTrue("Instance of ValueHolderNumber", vhI instanceof org.openntf.domino.formula.ValueHolderNumber);
-		assertTrue("Instance of ValueHolderNumber", vhD instanceof org.openntf.domino.formula.ValueHolderNumber);
+		assertTrue("Instance of ValueHolderNumber", vhi instanceof org.openntf.formula.ValueHolderNumber);
+		assertTrue("Instance of ValueHolderNumber", vhd instanceof org.openntf.formula.ValueHolderNumber);
+		assertTrue("Instance of ValueHolderNumber", vhI instanceof org.openntf.formula.ValueHolderNumber);
+		assertTrue("Instance of ValueHolderNumber", vhD instanceof org.openntf.formula.ValueHolderNumber);
 
 		assertEquals(DataType._UNSET, vhi.dataType);
 		assertEquals(DataType._UNSET, vhd.dataType);
@@ -182,7 +184,7 @@ public class ValueHolderNumberTest {
 	}
 
 	@Test
-	public final void testToList() {
+	public final void testToList() throws EvaluateException {
 		testDataTypeHandling();
 		List<Object> l = vhi.toList();
 		assertEquals(l.get(0), 42);
@@ -269,7 +271,7 @@ public class ValueHolderNumberTest {
 
 	@Test
 	public final void testGetError() {
-		assertTrue(vhErr.getError() instanceof RuntimeException);
+		assertTrue(vhErr.getError() != null);
 		assertEquals(DataType.ERROR, vhErr.dataType);
 		assertEquals(1, vhErr.size);
 		assertTrue(!vhErr.add(3));
@@ -280,7 +282,7 @@ public class ValueHolderNumberTest {
 
 	@Test
 	public final void testGetError2() {
-		assertTrue(vhErr.getError() instanceof RuntimeException);
+		assertTrue(vhErr.getError() != null);
 		assertEquals(DataType.ERROR, vhErr.dataType);
 		assertEquals(1, vhErr.size);
 	}
@@ -316,7 +318,7 @@ public class ValueHolderNumberTest {
 
 	@Test
 	public final void testIsTrue() {
-		FormulaContext ctx = new FormulaContext(null, null);
+		FormulaContext ctx = Formulas.createContext(null, null);
 		ctx.useBooleans(false);
 		assertTrue(!vhi.isTrue(ctx));
 		vhi.add(0);
@@ -327,7 +329,7 @@ public class ValueHolderNumberTest {
 
 	@Test(expected = ClassCastException.class)
 	public final void testIsTrue2() {
-		FormulaContext ctx = new FormulaContext(null, null);
+		FormulaContext ctx = Formulas.createContext(null, null);
 		ctx.useBooleans(true);
 		vhi.add(0);
 		assertTrue(!vhi.isTrue(ctx));
@@ -352,15 +354,16 @@ public class ValueHolderNumberTest {
 	@SuppressWarnings("deprecation")
 	@Test(expected = IllegalArgumentException.class)
 	public final void testAddDateTime() {
-		vhi.add(new org.openntf.domino.impl.CalendarDateTime());
+		// TODO
+		//vhi.add(new org.openntf.domino.formula.impl.DateTimeImpl(Locale.getDefault()));
 	}
 
-	@SuppressWarnings("cast")
-	@Test
-	public final void testSetError() {
-		vhi.setError(new RuntimeException("ex"));
-		assertTrue(vhi.getError() instanceof RuntimeException);
-	}
+	//	@SuppressWarnings("cast")
+	//	@Test
+	//	public final void testSetError() {
+	//		vhi.setError(new RuntimeException("ex"));
+	//		assertTrue(vhi.getError() instanceof RuntimeException);
+	//	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public final void testAddObject() {

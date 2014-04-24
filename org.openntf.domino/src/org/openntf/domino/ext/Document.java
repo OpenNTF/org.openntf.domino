@@ -111,4 +111,5 @@ public interface Document {
 
 	public void markDirty();
 
+	public Item getFirstItem(final String name, final boolean returnMime);
 }

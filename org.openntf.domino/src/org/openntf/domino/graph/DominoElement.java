@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -14,7 +13,8 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
-import org.openntf.domino.Item;
+import org.openntf.domino.types.CaseInsensitiveHashSet;
+import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.utils.Strings;
 
@@ -25,6 +25,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		if (prop == null || prop.isEmpty())
 			return null;
 		if (element.hasProperty(prop)) {
+			//			System.out.println("Directory property found: " + prop);
 			return element.getProperty(prop);
 		} else {
 			Class<?> cls = element.getClass();
@@ -51,6 +52,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 				if (crystal != null) {
 					synchronized (clsMap) {
 						clsMap.put(prop, crystal);
+						//						System.out.print("Caching method for " + crystal.getName());
 					}
 				}
 			}
@@ -59,6 +61,8 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 					return crystal.invoke(element, null);
 				} catch (Throwable t) {
 					//TODO NTF should really replace the map with some kind of method reference that returns null in the future...
+					System.out.println("Unable to discover a property " + prop + " through invoking a method called " + crystal.getName()
+							+ " due to " + t.getMessage());
 				}
 			}
 		}
@@ -75,7 +79,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	private String key_;
 	protected transient DominoGraph parent_;
 	private String unid_;
-	private Map<String, Serializable> props_;
+	private Map<CharSequence, Serializable> props_;
 	public final String[] DEFAULT_STR_ARRAY = { "" };
 
 	public static Document toDocument(final DominoElement element) {
@@ -174,9 +178,9 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return isNew_;
 	}
 
-	private Map<String, Serializable> getProps() {
+	private Map<CharSequence, Serializable> getProps() {
 		if (props_ == null) {
-			props_ = new ConcurrentHashMap<String, Serializable>();
+			props_ = new ConcurrentHashMap<CharSequence, Serializable>();
 		}
 		return props_;
 	}
@@ -273,7 +277,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	public <T> T getProperty(final String propertyName, final Class<?> T) {
 		Object result = null;
-		Map<String, Serializable> props = getProps();
+		Map<CharSequence, Serializable> props = getProps();
 		// synchronized (props) {
 		result = props.get(propertyName);
 		if (result == null) {
@@ -370,26 +374,23 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return getPropertyKeys(true);
 	}
 
-	private final Set<String> propKeys_ = new HashSet<String>();	//TODO MAKE THREAD SAFE!!;
+	private final Set<String> propKeys_ = new CaseInsensitiveHashSet();	//TODO MAKE THREAD SAFE!!;
 
 	public Set<String> getPropertyKeys(final boolean includeEdgeFields) {
 		if (propKeys_.isEmpty()) {
-			for (Item i : getRawDocument().getItems()) {
-				String name = i.getName();
-				if (includeEdgeFields) {
-					synchronized (propKeys_) {
-						propKeys_.add(name);
-					}
-				} else {
-					if (!(name.startsWith(DominoVertex.IN_PREFIX) || name.startsWith(DominoVertex.OUT_PREFIX))) {
-						synchronized (propKeys_) {
-							propKeys_.add(name);
-						}
-					}
+			propKeys_.addAll(getRawDocument().keySet());
+		}
+		if (includeEdgeFields) {
+			return Collections.unmodifiableSet(propKeys_);
+		} else {
+			Set<String> result = new CaseInsensitiveHashSet();
+			for (String name : propKeys_) {
+				if (!(name.startsWith(DominoVertex.IN_PREFIX) || name.startsWith(DominoVertex.OUT_PREFIX))) {
+					result.add(name);
 				}
 			}
+			return Collections.unmodifiableSet(result);
 		}
-		return Collections.unmodifiableSet(propKeys_);
 	}
 
 	@Override
@@ -405,13 +406,13 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		getRawDocument().removePermanently(true);
 	}
 
-	private final Set<String> removedProperties_ = new HashSet<String>();
+	private final Set<String> removedProperties_ = new CaseInsensitiveHashSet();
 
 	@Override
 	public <T> T removeProperty(final String key) {
 		getParent().startTransaction(this);
 		T result = getProperty(key);
-		Map<String, Serializable> props = getProps();
+		Map<CharSequence, Serializable> props = getProps();
 		synchronized (props) {
 			props.remove(key);
 		}
@@ -436,7 +437,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		unid_ = doc.getUniversalID().toUpperCase();
 	}
 
-	private final Set<String> changedProperties_ = new HashSet<String>();
+	private final Set<String> changedProperties_ = new CaseInsensitiveHashSet();
 
 	//	void setProperty(final String propertyName, final java.lang.Object value, final boolean force) {
 	//
@@ -446,7 +447,8 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	public void setProperty(final String propertyName, final java.lang.Object value) {
 		boolean isEdgeCollection = false;
 		boolean isEqual = false;
-		Map<String, Serializable> props = getProps();
+		CharSequence key = new CaseInsensitiveString(propertyName);
+		Map<CharSequence, Serializable> props = getProps();
 		Object old = null;
 		if (props != null) {
 			if (propertyName != null) {
@@ -473,13 +475,13 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 					if (value instanceof Serializable) {
 						if (current == null || Null.INSTANCE.equals(current)) {
 							getParent().startTransaction(this);
-							old = props.put(propertyName, (Serializable) value);
+							old = props.put(key, (Serializable) value);
 							synchronized (changedProperties_) {
 								changedProperties_.add(propertyName);
 							}
 						} else if (!isEqual) {
 							getParent().startTransaction(this);
-							old = props.put(propertyName, (Serializable) value);
+							old = props.put(key, (Serializable) value);
 							synchronized (changedProperties_) {
 								changedProperties_.add(propertyName);
 							}
@@ -487,7 +489,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 					} else if (value == null) {
 						if (!current.equals(Null.INSTANCE)) {
 							getParent().startTransaction(this);
-							old = props.put(propertyName, Null.INSTANCE);
+							old = props.put(key, Null.INSTANCE);
 							synchronized (changedProperties_) {
 								changedProperties_.add(propertyName);
 							}
@@ -507,7 +509,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	}
 
 	protected void reapplyChanges() {
-		Map<String, Serializable> props = getProps();
+		Map<CharSequence, Serializable> props = getProps();
 		Document doc = getDocument();
 		synchronized (props) {
 			if (props.isEmpty()) {
@@ -515,16 +517,17 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 			} else {
 				synchronized (changedProperties_) {
 					// System.out.println("Re-applying cached properties: " + changedProperties_.size());
-					for (String key : changedProperties_) {
+					for (String s : changedProperties_) {
+						CharSequence key = new CaseInsensitiveString(s);
 						Object v = props.get(key);
 						if (v == null) {
 							// System.out.println("Writing a null value for property: " + key
 							// + " to an Element document. Probably not good...");
 						}
-						if (key.startsWith(DominoVertex.IN_PREFIX) || key.startsWith(DominoVertex.OUT_PREFIX)) {
-							doc.replaceItemValue(key, v, false);
+						if (s.startsWith(DominoVertex.IN_PREFIX) || s.startsWith(DominoVertex.OUT_PREFIX)) {
+							doc.replaceItemValue(s, v, false);
 						} else {
-							doc.replaceItemValue(key, v);
+							doc.replaceItemValue(s, v);
 						}
 					}
 					changedProperties_.clear();

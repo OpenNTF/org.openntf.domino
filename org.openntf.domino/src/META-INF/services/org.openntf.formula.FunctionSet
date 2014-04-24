@@ -1,0 +1,5 @@
+#
+org.openntf.domino.formula.DocFunctions$Functions
+org.openntf.domino.formula.NativeEvaluateFunctions$Functions
+org.openntf.domino.formula.DominoFunctions$Functions
+org.openntf.domino.formula.NotSupported$Functions

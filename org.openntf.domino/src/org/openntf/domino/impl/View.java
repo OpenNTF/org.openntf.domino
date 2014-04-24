@@ -36,6 +36,7 @@ import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewEntryCollection;
 import org.openntf.domino.ViewNavigator;
 import org.openntf.domino.WrapperFactory;
+import org.openntf.domino.exceptions.BackendBridgeSanityCheckException;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -53,6 +54,20 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 				@SuppressWarnings("unused")
 				@Override
 				public Object run() throws Exception {
+					// There is no relation between method position in the two classes:
+					//					Method m1[] = lotus.domino.local.View.class.getDeclaredMethods();
+					//					for (int i = 0; i < m1.length; i++) {
+					//						if (m1[i].getName().equals("iGetEntryByKey"))
+					//							System.out.println("lotus View " + i); // returns 68
+					//					}
+					//					Method m2[] = org.openntf.domino.impl.View.class.getDeclaredMethods();
+					//					for (int i = 0; i < m2.length; i++) {
+					//						if (m2[i].getName().equals("iGetEntryByKey"))
+					//							System.out.println("openntf View " + i); // returns 34
+					//					}
+					//					System.out.println(m1);
+					//					System.out.println(m2);
+
 					iGetEntryByKeyMethod = lotus.domino.local.View.class.getDeclaredMethod("iGetEntryByKey", Vector.class, boolean.class,
 							int.class);
 					iGetEntryByKeyMethod.setAccessible(true);
@@ -98,11 +113,21 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		initialize(delegate);
 	}
 
+	/**
+	 * needed for sanity check in the plugin-activator if "iGetEntryByKey" works
+	 */
+	@Deprecated
+	public View() {
+		super(null, null, null, 0L, NOTES_VIEW);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
 	 */
 	@Override
 	protected Database findParent(final lotus.domino.View delegate) throws NotesException {
+		if (delegate == null)
+			return null; // this is the case if we do the sanity check in plugin-activator
 		return fromLotus(delegate.getParent(), Database.SCHEMA, null);
 	}
 
@@ -650,16 +675,17 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * and hit "step into" until you are in one of the mehtods of this file. Move <b>this</b> mehtod to the position you found with the
 	 * debugger.
 	 * 
-	 * 
+	 * @see org.openntf.domino.plugin.Activator#verifyIGetEntryByKey
 	 * @param paramVector
 	 * @param paramBoolean
 	 * @param paramInt
 	 * @return
 	 * @throws NotesException
 	 */
-	org.openntf.domino.ViewEntry iGetEntryByKey(final Vector paramVector, final boolean paramBoolean, final int paramInt)
-			throws NotesException {
-
+	ViewEntry iGetEntryByKey(final Vector paramVector, final boolean paramBoolean, final int paramInt) {
+		if (paramVector == null && paramInt == 42) {
+			throw new BackendBridgeSanityCheckException("It seems that the backend bridge has called the correct method :)");
+		}
 		try {
 			lotus.domino.ViewEntry lotus = (lotus.domino.ViewEntry) iGetEntryByKeyMethod.invoke(getDelegate(), paramVector, paramBoolean,
 					paramInt);
