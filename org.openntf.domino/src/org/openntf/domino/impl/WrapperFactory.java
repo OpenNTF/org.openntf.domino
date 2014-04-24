@@ -327,9 +327,6 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		if (lotus instanceof lotus.domino.Database) {
 			return new org.openntf.domino.impl.Database((lotus.domino.Database) lotus, (Session) parent, this, cpp);
 		}
-		if (lotus instanceof lotus.domino.DateRange) {
-			return new org.openntf.domino.impl.DateRange((lotus.domino.DateRange) lotus, (Session) parent, this, cpp);
-		}
 		if (lotus instanceof lotus.domino.DbDirectory) {
 			return new org.openntf.domino.impl.DbDirectory((lotus.domino.DbDirectory) lotus, (Session) parent, this, cpp);
 		}
@@ -404,9 +401,6 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		}
 		if (lotus instanceof lotus.domino.RichTextDoclink) {
 			return new org.openntf.domino.impl.RichTextDoclink((lotus.domino.RichTextDoclink) lotus, (RichTextItem) parent, this, cpp);
-		}
-		if (lotus instanceof lotus.domino.RichTextItem) {
-			return new org.openntf.domino.impl.RichTextItem((lotus.domino.RichTextItem) lotus, (Document) parent, this, cpp);
 		}
 		if (lotus instanceof lotus.domino.RichTextNavigator) {
 			return new org.openntf.domino.impl.RichTextNavigator((lotus.domino.RichTextNavigator) lotus, (RichTextItem) parent, this, cpp);
