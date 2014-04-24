@@ -102,6 +102,14 @@ public class DominoReference extends WeakReference<Object> {
 				Factory.countRecycleError(delegate_.getClass());
 				DominoUtils.handleException(e);
 			}
+
+			if (delegate_ instanceof lotus.domino.local.EmbeddedObject) {
+				// if the wrapper is out of scope and the element was an EmbeddedObject, we call markInvalid 
+				// It does not matter if the object was already recycled/dead. MarkInvalid will internally just
+				// call "cleanupTempFile" (cannot throw an exception) 
+				((lotus.domino.local.EmbeddedObject) delegate_).markInvalid();
+			}
+
 		}
 	}
 
