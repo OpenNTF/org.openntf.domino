@@ -161,7 +161,7 @@ public class DominoReferenceCache {
 					if (curKey == key) {
 
 						// TODO: This case does not handle the counters correctly
-						System.out.println("Parent object dropped out of the queue ---");
+						// System.out.println("Parent object dropped out of the queue ---");
 
 						// RPr: This happens definitely, if you access the same document in series
 						// Was reproduceable by iterating over several NoteIds and doing this in the loop (odd number required)
@@ -175,12 +175,12 @@ public class DominoReferenceCache {
 						// ref is not used any more, but this object must be protected from recycling, because it will be reused in the next step
 						// Q RPr: Who sets this back to False?
 						// A RPr: That is not needed, because this "ref" is not used any more and the lotus object gets wrapped in a new DominoReference.
-						ref.setNoRecycle(false);
+						ref.setNoRecycle(true);
 						break;
 					}
 				}
-				ref.recycle();
 			}
+			ref.recycle();
 		}
 	}
 
