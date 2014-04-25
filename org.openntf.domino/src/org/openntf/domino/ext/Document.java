@@ -16,6 +16,8 @@ import org.openntf.domino.exceptions.ItemNotFoundException;
 /**
  * @author withersp
  * 
+ *         OpenNTF extensions to Document class
+ * 
  */
 public interface Document {
 

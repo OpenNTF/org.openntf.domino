@@ -8,7 +8,7 @@ import com.ibm.icu.util.Calendar;
 /**
  * @author nfreeman
  * 
- *         OpenNTF extensions to DateTime
+ *         OpenNTF extensions to DateTime class
  * 
  */
 public interface DateTime extends Comparable<org.openntf.domino.DateTime> {

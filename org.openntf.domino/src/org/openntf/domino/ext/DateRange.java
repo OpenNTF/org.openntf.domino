@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * @author jgallagher
  * 
- *         OpenNTF extensions to DateRange
+ *         OpenNTF extensions to DateRange class
  * 
  */
 public interface DateRange {

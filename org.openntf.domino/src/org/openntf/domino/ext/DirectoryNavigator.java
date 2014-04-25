@@ -8,6 +8,8 @@ import org.openntf.domino.Directory;
 /**
  * @author withersp
  * 
+ *         OpenNTF extensions to DirectoryNavigator class
+ * 
  */
 public interface DirectoryNavigator {
 

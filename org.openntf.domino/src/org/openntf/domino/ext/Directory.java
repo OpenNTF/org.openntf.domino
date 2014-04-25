@@ -8,6 +8,8 @@ import org.openntf.domino.Session;
 /**
  * @author withersp
  * 
+ *         OpenNTF extensions to Directory class
+ * 
  */
 public interface Directory {
 

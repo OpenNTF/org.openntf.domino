@@ -35,6 +35,8 @@ import org.openntf.domino.transactions.DatabaseTransaction;
 /**
  * @author withersp
  * 
+ *         OpenNTF Domino extensions to Database class
+ * 
  */
 public interface Database extends Base {
 	/**

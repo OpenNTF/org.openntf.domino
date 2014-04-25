@@ -10,6 +10,8 @@ import org.openntf.domino.annotations.Legacy;
 /**
  * @author withersp
  * 
+ *         OpenNTF extensions to DbDirectory class
+ * 
  */
 public interface DbDirectory {
 
