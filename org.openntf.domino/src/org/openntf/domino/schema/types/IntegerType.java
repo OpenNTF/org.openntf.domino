@@ -15,11 +15,7 @@ public class IntegerType extends AbstractDominoType {
 	private static final Logger log_ = Logger.getLogger(IntegerType.class.getName());
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
-	public IntegerType() {
-		// TODO Auto-generated constructor stub
+	IntegerType() {
 	}
 
 	/*
