@@ -16,11 +16,7 @@ public class NameType extends StringType {
 	private static final Logger log_ = Logger.getLogger(NameType.class.getName());
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
-	public NameType() {
-		// TODO Auto-generated constructor stub
+	NameType() {
 	}
 
 	/* (non-Javadoc)
