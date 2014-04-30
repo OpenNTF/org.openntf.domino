@@ -22,9 +22,12 @@ import org.openntf.domino.exceptions.ItemNotFoundException;
 public interface Document {
 
 	/**
-	 * Appends a value to an existing Item, with an option to only add it if the value does not already exist in the Item.<br/>
+	 * Appends a value to an existing Item, with an option to only add it if the value does not already exist in the Item.
+	 * 
+	 * <p>
 	 * The method is only useful if a single value is being appended, because it use containsValue(value) This allows the developer to avoid
-	 * duplicate values but also avoid unnecessary saves with transactional processing
+	 * duplicate values but also avoid unnecessary saves with transactional processing.
+	 * </p>
 	 * 
 	 * @param name
 	 *            String Item name
@@ -184,15 +187,19 @@ public interface Document {
 
 	/**
 	 * Receives a Map where the key is an Item name and the value is a value to look for in the relevant Item. If one key/value pair matches
-	 * (so one of the Items contains the value to look for), the method returns true.<br/>
-	 * <br/>
+	 * (so one of the Items contains the value to look for), the method returns true.
+	 * 
 	 * <code>
 	 * 	HashMap<String,Object> check = new Map<String,Object>();
 	 *  check.put("Form","Person");
 	 *  check.put("FirstName","Fred");
 	 *  return doc.containsValues(check);
-	 * </code> Returns true if the relevant Document's Form item contains "Person" or the Document's FirstName item contains "Fred".<br/>
+	 * </code>
+	 * 
+	 * <p>
+	 * Returns true if the relevant Document's Form item contains "Person" or the Document's FirstName item contains "Fred".<br/>
 	 * Returns false if the relevant Document's Form does not contain "Person" and the Document's FirstName item does not contain "Fred".
+	 * </p>
 	 * 
 	 * @param filterMap
 	 *            Map<String,Object> to check

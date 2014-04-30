@@ -44,6 +44,7 @@ public interface Database extends Base {
 	 * 
 	 *         Enum for Database-level events, triggered by listeners.
 	 * 
+	 *         <p>
 	 *         Options are:
 	 *         <ul>
 	 *         <li>BEFORE_CREATE_DOCUMENT / AFTER_CREATE_DOCUMENT: triggered at the start / end of the Database.createDocument method,
@@ -57,7 +58,8 @@ public interface Database extends Base {
 	 *         <li>BEFORE_RUN_AGENT / AFTER_RUN_AGENT: triggered at the start / end of the Agent.run method and its variants, source will be
 	 *         Agent, target will be Datatbase</li>
 	 *         </ul>
-	 * @since org.openntf.domino 1.0.0
+	 *         </p>
+	 * @since org.openntf.domino 3.0.0
 	 * 
 	 */
 	public static enum Events implements EnumEvent {
@@ -68,7 +70,7 @@ public interface Database extends Base {
 	 * Gets the factory that manages processing of the IDominoEvents
 	 * 
 	 * @return IDominoEventFactory containing the IDominoEvents
-	 * @since org.openntf.domino 1.0.0
+	 * @since org.openntf.domino 3.0.0
 	 */
 	public IDominoEventFactory getEventFactory();
 
@@ -77,7 +79,7 @@ public interface Database extends Base {
 	 * 
 	 * @param factory
 	 *            IDominoEventFactory containing the IDominoEvents
-	 * @since org.openntf.domino 1.0.0
+	 * @since org.openntf.domino 3.0.0
 	 */
 	public void setEventFactory(IDominoEventFactory factory);
 
@@ -98,7 +100,7 @@ public interface Database extends Base {
 	 * @param payload
 	 *            Object a payload that can be passed along with the Event
 	 * @return An IDominoEvent which will be passed to {@link org.openntf.domino.ext.Base.fireListener}
-	 * @since org.openntf.domino 1.0.0
+	 * @since org.openntf.domino 3.0.0
 	 */
 	public IDominoEvent generateEvent(EnumEvent event, org.openntf.domino.Base source, Object payload);
 
