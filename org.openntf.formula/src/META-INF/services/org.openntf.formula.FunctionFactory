@@ -11,3 +11,5 @@ org.openntf.formula.function.Constants$Factory
 org.openntf.formula.function.MathFunctions$Factory
 org.openntf.formula.function.DateTimeFunctions$Factory
 org.openntf.formula.function.TextFunctions$Factory
+#
+org.openntf.formula.function.FocFunctions$Factory

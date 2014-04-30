@@ -73,6 +73,7 @@ public class FunctionFactory {
 			instance.addFactory(new org.openntf.formula.function.MathFunctions.Factory());
 			instance.addFactory(new org.openntf.formula.function.DateTimeFunctions.Factory());
 			instance.addFactory(new org.openntf.formula.function.TextFunctions.Factory());
+			instance.addFactory(new org.openntf.formula.function.FocFunctions.Factory());
 		}
 		instance.setImmutable();
 

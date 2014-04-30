@@ -233,13 +233,16 @@ public class FormatterImpl implements Formatter {
 	public Number parseNumber(String image, final boolean lenient) {
 		image = image.trim();
 		if (!image.isEmpty()) {
+			String toParse = image;
+			if (toParse.length() > 1 && toParse.charAt(0) == '+')
+				toParse = toParse.substring(1);
 			NumberFormat nf = NumberFormat.getNumberInstance(iLocale);
 			ParsePosition p = new ParsePosition(0);
-			Number ret = nf.parse(image, p);
+			Number ret = nf.parse(toParse, p);
 			int errIndex = p.getErrorIndex();
 			//System.out.println("Ind=" + index + " ErrInd=" + errIndex);
 			if (errIndex == -1) {
-				if (p.getIndex() >= image.length() || lenient)
+				if (p.getIndex() >= toParse.length() || lenient)
 					return ret;
 			} else if (errIndex != 0 && lenient)
 				return ret;

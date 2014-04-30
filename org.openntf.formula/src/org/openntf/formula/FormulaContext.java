@@ -261,9 +261,8 @@ public class FormulaContext {
 	 * 
 	 * @param paramName
 	 * @return
-	 * @throws FormulaParseException
 	 */
-	public ValueHolder getParam(final String paramName) throws FormulaParseException {
+	public ValueHolder getParam(final String paramName) {
 		if (paramProvider == null) {
 			return ValueHolder.valueDefault();
 		} else {
