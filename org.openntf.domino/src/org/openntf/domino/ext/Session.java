@@ -241,7 +241,8 @@ public interface Session {
 	public void boogie();
 
 	/**
-	 * Whether the session is feature-restricted. TODO: What does this actually do?
+	 * Whether the session is feature-restricted. Not currently implemented, but designed to allow us, in the future, to set up sandbox
+	 * Sessions. Now go salivate!
 	 * 
 	 * @return boolean
 	 * @since org.openntf.domino 5.0.0

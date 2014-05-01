@@ -42,6 +42,7 @@ import com.ibm.xsp.model.domino.wrapped.DominoViewEntry;
 /**
  * @author withersp
  * 
+ *         OpenntfNABNamePickerData, for use with the NamePicker control
  */
 public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 
@@ -53,10 +54,19 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 	private String returnNameFormat;
 	private NamePartsMap.Key returnNameFormatAsKey;
 
+	/**
+	 * Constructor
+	 */
 	public OpenntfNABNamePickerData() {
 		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * Gets the format a name should be returned as, using returnNameFormat property
+	 * 
+	 * @return String name in specific format
+	 * @since org.openntf.domino.xsp 5.0.0
+	 */
 	public String getReturnNameFormat() {
 		if (null != this.returnNameFormat) {
 			if (null == this.returnNameFormatAsKey) {
@@ -80,18 +90,43 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		return null;
 	}
 
+	/**
+	 * Loads the return name format
+	 * 
+	 * @param returnNameFormat
+	 *            String
+	 * @since org.openntf.domino.xsp 5.0.0
+	 */
 	public void setReturnNameFormat(final String returnNameFormat) {
 		this.returnNameFormat = returnNameFormat;
 	}
 
+	/**
+	 * Gets the return name format as a {@link NamePartsMap.Key}
+	 * 
+	 * @return NamePartsMap.Key
+	 * @since org.openntf.domino.xsp 5.0.0
+	 */
 	public NamePartsMap.Key getReturnNameFormatAsKey() {
 		return returnNameFormatAsKey;
 	}
 
+	/**
+	 * Loads the return name format as a {@link NamePartsMap.Key}
+	 * 
+	 * @param returnNameFormatAsKey
+	 *            NamePartsMap.Key
+	 * @since org.openntf.domino.xsp 5.0.0
+	 */
 	public void setReturnNameFormatAsKey(final NamePartsMap.Key returnNameFormatAsKey) {
 		this.returnNameFormatAsKey = returnNameFormatAsKey;
 	}
 
+	/**
+	 * @author withersp
+	 * 
+	 *         NabDb class for access to a specific database
+	 */
 	private static class NABDb implements Serializable { // Serializable because it goes to a scope
 		private static final long serialVersionUID = 1L;
 		String name;
@@ -99,12 +134,31 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		boolean publicNab;
 		boolean privateNab;
 
+		/**
+		 * Constructor, passing a lotus.domino.Database object
+		 * 
+		 * @param db
+		 *            lotus.domino.Database to load
+		 * @throws NotesException
+		 *             error
+		 * @since org.openntf.domino 4.5.0
+		 */
 		NABDb(final Database db) throws NotesException {
 			this(db.getFilePath(), db.getTitle());
 			this.publicNab = db.isPublicAddressBook();
 			this.privateNab = db.isPrivateAddressBook();
 		}
 
+		/**
+		 * Constructor, passing a database filepath and title
+		 * 
+		 * @param name
+		 *            String address book filepath
+		 * @param title
+		 *            String database title
+		 * @throws NotesException
+		 * @since org.openntf.domino.xsp 4.5.0
+		 */
 		NABDb(final String name, final String title) throws NotesException {
 			this.name = name;
 			this.title = title;
@@ -114,13 +168,34 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		}
 	}
 
+	/**
+	 * @author withersp
+	 * 
+	 *         EntryMetaData, copied from DominoNABNamePickerData
+	 */
 	public abstract class _EntryMetaData extends EntryMetaData {
+		/**
+		 * Constructor, loading picker options
+		 * 
+		 * @param options
+		 * @throws NotesException
+		 */
 		public _EntryMetaData(final IPickerOptions options) throws NotesException {
 			super(options);
 		}
 
+		/**
+		 * Gets the view name to use
+		 * 
+		 * @return String view name
+		 */
 		public abstract String getViewName();
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.openntf.domino.xsp.helpers.OpenntfNABNamePickerData.EntryMetaData#openView()
+		 */
 		@Override
 		public View openView() throws NotesException {
 			// Find the database
@@ -138,6 +213,12 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 			return view;
 		}
 
+		/**
+		 * Finds an address book for the current session
+		 * 
+		 * @return lotus.domino.Database
+		 * @throws NotesException
+		 */
 		protected Database findNAB() throws NotesException {
 			String sel = getAddressBookSel();
 
@@ -194,31 +275,59 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 
 	}
 
+	/**
+	 * @author withersp
+	 * 
+	 *         Picker result class, copied from DominoNABNamePickerData
+	 */
 	public static class Result implements IPickerResult {
 		private List<IPickerEntry> entries;
 		private int count;
 
+		/**
+		 * Constructor
+		 * 
+		 * @param entries
+		 *            List<IPickerEntry>
+		 * @param count
+		 *            int total count
+		 */
 		protected Result(final List<IPickerEntry> entries, final int count) {
 			this.entries = entries;
 			this.count = count;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see com.ibm.xsp.extlib.component.picker.data.IPickerResult#getEntries()
+		 */
 		public List<IPickerEntry> getEntries() {
 			return entries;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see com.ibm.xsp.extlib.component.picker.data.IPickerResult#getTotalCount()
+		 */
 		public int getTotalCount() {
 			return count;
 		}
 	}
 
-	// Compose the list of all the address books, once for ever...
-	// Beyond the cache, this guarantees that the NAB are always retrieved
-	// in the same order.
-	// The list has to be cached at the session level, as different users can
-	// have different ACLs for the databases.
 	private static final String KEY_NABS = "extlib.pickers.domino.nabs"; //$NON-NLS-1$ 
 
+	/**
+	 * Compose the list of all the address books, once for ever...
+	 * 
+	 * Beyond the cache, this guarantees that the NAB are always retrieved in the same order.
+	 * 
+	 * The list has to be cached at the session level, as different users can have different ACLs for the databases.
+	 * 
+	 * @return NabDb[] Array of address books
+	 * @throws NotesException
+	 */
 	private NABDb[] getSessionAddressBooks() throws NotesException {
 		Map<String, Object> sc = ExtLibUtil.getSessionScope();
 		NABDb[] addressBooks = sc != null ? (NABDb[]) sc.get(KEY_NABS) : null;
@@ -239,6 +348,14 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		return addressBooks;
 	}
 
+	/**
+	 * Gets the address books for the current Session
+	 * 
+	 * @param session
+	 *            Session
+	 * @return NABDb[] Array of address books
+	 * @throws NotesException
+	 */
 	private static NABDb[] getSessionAddressBooks(final Session session) throws NotesException {
 		if (session != null) { // Unit tests
 			ArrayList<NABDb> nabs = new ArrayList<NABDb>();
@@ -266,8 +383,18 @@ public class OpenntfNABNamePickerData extends DominoNABNamePickerData {
 		return null;
 	}
 
+	/**
+	 * @author withersp
+	 * 
+	 *         Entry class, copied from DominoNABNamePickerData
+	 */
 	public static abstract class _Entry extends Entry {
 		// private Object[] attributes;
+		/**
+		 * @param metaData
+		 * @param ve
+		 * @throws NotesException
+		 */
 		public _Entry(final EntryMetaData metaData, final ViewEntry ve) throws NotesException {
 			super(metaData, ve);
 		}
