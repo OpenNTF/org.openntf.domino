@@ -23,6 +23,8 @@ public class DocumentDefinition implements IDocumentDefinition, Externalizable {
 	private transient Map<String, IItemDefinition> itemDefs_ = new ConcurrentHashMap<String, IItemDefinition>();
 	private final Map<String, String> overrideLabels_ = new HashMap<String, String>();
 	private boolean defaultSummary_ = true;
+	private boolean allowAutoBox_ = true;
+
 	private transient IDatabaseSchema parentSchema_;
 	private DocumentValidator validator_;
 
@@ -52,6 +54,14 @@ public class DocumentDefinition implements IDocumentDefinition, Externalizable {
 
 	public void setDefaultSummary(final boolean defaultSummary) {
 		defaultSummary_ = defaultSummary;
+	}
+
+	public boolean isAutoBoxing() {
+		return allowAutoBox_;
+	}
+
+	public void setAutoBoxing(final boolean allowAutoBox) {
+		allowAutoBox_ = allowAutoBox;
 	}
 
 	public Map<String, IItemDefinition> getItemDefinitions() {

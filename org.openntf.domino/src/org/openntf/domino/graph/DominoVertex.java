@@ -15,7 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Document;
-import org.openntf.domino.graph.DominoGraph.DominoGraphException;
+import org.openntf.domino.exceptions.DominoGraphException;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
@@ -588,7 +588,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	}
 
 	@Override
-	protected void reapplyChanges() {
+	public void reapplyChanges() {
 		// validateEdges();
 		writeEdges(false);
 		super.reapplyChanges();
@@ -742,5 +742,15 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 			}
 		}
 		return result;
+	}
+
+	public IDominoEdge relate(final Vertex vertex) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IDominoEdge find(final Vertex vertex) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
