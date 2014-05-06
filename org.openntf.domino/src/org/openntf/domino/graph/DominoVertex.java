@@ -745,8 +745,24 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	}
 
 	public IDominoEdge relate(final Vertex vertex) {
-		// TODO Auto-generated method stub
-		return null;
+		IDominoEdge result = null;
+		if (vertex == null)
+			return result;
+		Set<IEdgeHelper> helpers = getParent().findHelpers(this, vertex);
+		if (helpers.size() == 0) {
+			result = getParent().addEdge(null, this, vertex, IEdgeHelper.DEFAULT_LABEL);
+		} else if (helpers.size() == 1) {
+			IEdgeHelper helper = helpers.iterator().next();
+			result = helper.makeEdge(this, vertex);
+		} else {
+			StringBuilder sb = new StringBuilder();
+			for (IEdgeHelper helper : helpers) {
+				sb.append(helper.getLabel() + ", ");
+			}
+			throw new DominoGraphException("Unable to determine which edge helper to use to relate a " + vertex.getClass().getName()
+					+ " to a " + getClass().getName() + " because we found " + helpers.size() + " options defined: " + sb.toString());
+		}
+		return result;
 	}
 
 	public IDominoEdge find(final Vertex vertex) {

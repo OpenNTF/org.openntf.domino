@@ -194,16 +194,16 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		}
 	}
 
-	public Vertex getOtherVertex(final Edge edge, final Vertex vertex) {
-		if (edge instanceof IDominoEdge) {
-			return ((IDominoEdge) edge).getOtherVertex(vertex);
-		} else {
-			if (vertex.getId().equals(edge.getVertex(Direction.IN).getId())) {
-				return edge.getVertex(Direction.OUT);
-			} else {
-				return edge.getVertex(Direction.IN);
-			}
-		}
+	public IDominoVertex getOtherVertex(final Edge edge, final Vertex vertex) {
+		//		if (edge instanceof IDominoEdge) {
+		return ((IDominoEdge) edge).getOtherVertex(vertex);
+		//		} else {
+		//			if (vertex.getId().equals(edge.getVertex(Direction.IN).getId())) {
+		//				return edge.getVertex(Direction.OUT);
+		//			} else {
+		//				return edge.getVertex(Direction.IN);
+		//			}
+		//		}
 	}
 
 	public Set<? extends Vertex> getSortedOtherVertexes(final Vertex vertex, final String... sortproperties) {
@@ -238,11 +238,11 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		}
 	}
 
-	public Edge makeEdge(final Vertex defaultOut, final Vertex defaultIn) {
+	public IDominoEdge makeEdge(final Vertex defaultOut, final Vertex defaultIn) {
 		if (defaultOut == null || defaultIn == null) {
 			throw new RuntimeException("Cannot create an edge of type " + getLabel() + " where a vertex is null!");
 		}
-		Edge result = null;
+		IDominoEdge result = null;
 		Vertex inVert = null;
 		Vertex outVert = null;
 		boolean inExact = false;
@@ -340,8 +340,8 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		return result;
 	}
 
-	public Edge findEdge(final @Nonnull Vertex defaultOut, final @Nonnull Vertex defaultIn) {
-		Edge result = null;
+	public IDominoEdge findEdge(final @Nonnull Vertex defaultOut, final @Nonnull Vertex defaultIn) {
+		IDominoEdge result = null;
 		Vertex inVert = null;
 		Vertex outVert = null;
 		boolean inExact = false;
