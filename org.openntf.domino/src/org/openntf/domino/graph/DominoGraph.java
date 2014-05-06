@@ -138,6 +138,15 @@ public class DominoGraph implements IDominoGraph {
 		return Collections.unmodifiableSet(result);
 	}
 
+	public IEdgeHelper findHelper(final Vertex in, final Vertex out) {
+		IEdgeHelper result = null;
+		if (in == null || out == null) {
+			return result;
+		}
+		//TODO
+		return result;
+	}
+
 	public void addHelper(final String key, final Class<? extends Vertex> inType, final Class<? extends Vertex> outType) {
 		addHelper(key, inType, outType, true, key);
 	}
