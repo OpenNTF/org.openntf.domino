@@ -37,6 +37,7 @@ import com.ibm.icu.text.SimpleDateFormat;
 /**
  * @author Nathan T. Freeman
  * 
+ *         Class for reading text files from the server
  */
 public class LogReader {
 	private static final Logger log_ = Logger.getLogger(LogReader.class.getName());
@@ -45,6 +46,11 @@ public class LogReader {
 	private String version = "1.3";
 	private static volatile Transformer XFORMER;
 
+	/**
+	 * Comparator, comparing last modified time of two files
+	 * 
+	 * @since org.openntf.domino.xsp 4.5.0
+	 */
 	public static class FileComparator implements Comparator<File> {
 		@Override
 		public int compare(final File arg0, final File arg1) {
@@ -52,6 +58,11 @@ public class LogReader {
 		}
 	}
 
+	/**
+	 * Comparator, comparing filepaths of two files
+	 * 
+	 * @since org.openntf.domino.xsp 4.5.0
+	 */
 	public static class FilePathComparator implements Comparator<String> {
 		@Override
 		public int compare(final String arg0, final String arg1) {
@@ -60,12 +71,20 @@ public class LogReader {
 	}
 
 	/**
-	 * 
+	 * Constructor
 	 */
 	public LogReader() {
 		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * Whether or not the effective user of the Session has access to read logs
+	 * 
+	 * @param session
+	 *            Session (remember you can use sessionAsSigner / sessionAsSignerWithFullAccess)
+	 * @return boolean whether user has access
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	private boolean canReadLogs(final lotus.domino.Session session) {
 		boolean result = false;
 		try {
@@ -79,6 +98,12 @@ public class LogReader {
 		return result;
 	}
 
+	/**
+	 * Gets the Domino data folder
+	 * 
+	 * @return String data folder
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	public String getDataFolder() {
 		String filename = Factory.getDataPath();
 		filename = filename.replace("\\", "/");
@@ -87,6 +112,12 @@ public class LogReader {
 		return filename;
 	}
 
+	/**
+	 * Gets the Domino program folder (notes for XPiNC app running locally)
+	 * 
+	 * @return String domino folder
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	public String getProgramFolder() {
 		String filename = Factory.getProgramPath();
 		filename = filename.replace("\\", "/");
@@ -95,6 +126,23 @@ public class LogReader {
 		return filename;
 	}
 
+	/**
+	 * Gets a folder based on a key. Options are:
+	 * <ul>
+	 * <li>tech = IBM_TECHNICAL_SUPPORT</li>
+	 * <li>ini = domino folder</li>
+	 * <li>jvm = frameworks/rcp/deploy</li>
+	 * <li>javapolicy = jvm/lib/security</li>
+	 * <li>rcp = domino/workspace/.config</li>
+	 * <li>xml = domino/workspace/logs</li>
+	 * <li>otherwise param + "/"
+	 * </ul>
+	 * 
+	 * @param section
+	 *            String key from which to get folder
+	 * @return String folder
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	public String getFolder(final String section) {
 		String folder = "";
 		if (section.equals("tech")) {
@@ -120,12 +168,10 @@ public class LogReader {
 	 * 
 	 * @param text
 	 *            the text to be tested for matches.
-	 * 
 	 * @param pattern
 	 *            the pattern to be matched for. This can contain the wildcard character '*' (asterisk).
-	 * 
 	 * @return <tt>true</tt> if a match is found, <tt>false</tt> otherwise.
-	 * 
+	 * @since org.openntf.domino.xsp 2.5.0
 	 * @see http://www.adarshr.com/papers/wildcard
 	 */
 	public static boolean wildCardMatch(String text, final String pattern) {
@@ -152,6 +198,14 @@ public class LogReader {
 		return true;
 	}
 
+	/**
+	 * Converts the file size to a human readable format, e.g. "48 Kbytes"
+	 * 
+	 * @param size
+	 *            long file size
+	 * @return String file size in readable format
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	public static String readableFileSize(final long size) {
 		if (size <= 0)
 			return "0 bytes";
@@ -160,14 +214,28 @@ public class LogReader {
 		return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
 	}
 
+	/**
+	 * Converts the date to a human readable format
+	 * 
+	 * @param date
+	 *            long
+	 * @return String date in format yyyyMMdd'T'hhmmss
+	 */
 	public static String readableDate(final long date) {
 		String DATE_FORMAT = "yyyyMMdd'T'hhmmss";
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 		return sdf.format(date);
 	}
 
-	/*
-	 * Retrieves a list of files in the specified folder - matching the optional filter
+	/**
+	 * Retrieves a list of files in the specified folder
+	 * 
+	 * @param section
+	 *            String key for the folder, passed to {@link #getFolder(String)}
+	 * @param filter
+	 *            String wildcard search for files
+	 * @return List<File> of files in the relevant folder matching the search
+	 * @since org.openntf.domino.xsp 2.5.0
 	 */
 	private List<File> getFiles(final String section, final String filter) {
 		List<File> result = new ArrayList<File>();
@@ -198,10 +266,28 @@ public class LogReader {
 		return result;
 	}
 
+	/**
+	 * Gets all files in the specified folder
+	 * 
+	 * @param section
+	 *            String key for the folder, passed to {@link #getFolder(String)}
+	 * @return List<File> of files in the relevant folder matching the search
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	private List<File> getFiles(final String section) {
 		return getFiles(section, null);
 	}
 
+	/**
+	 * Gets a List of filenames in the specified folder
+	 * 
+	 * @param session
+	 *            Session with which to get the files
+	 * @param section
+	 *            String key for the folder, passed to {@link #getFolder(String)}
+	 * @return List<String> of filenames
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	public List<String> getFileNames(final lotus.domino.Session session, final String section) {
 		List<String> results = new LinkedList<String>();
 		if (canReadLogs(session)) {
@@ -213,6 +299,18 @@ public class LogReader {
 		return results;
 	}
 
+	/**
+	 * Gets a List of filenames in the specified folder matching the optional filter
+	 * 
+	 * @param session
+	 *            Session with which to get the files
+	 * @param section
+	 *            String key for the folder, passed to {@link #getFolder(String)}
+	 * @param filter
+	 *            String wildcard search for files
+	 * @return List<String> of filenames in the relevant folder matching the search
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	public List<String> getFileNames(final lotus.domino.Session session, final String section, final String filter) {
 		List<String> results = new LinkedList<String>();
 		if (canReadLogs(session)) {
@@ -224,6 +322,16 @@ public class LogReader {
 		return results;
 	}
 
+	/**
+	 * Reads a specific file, just getting any lines which include the filter string
+	 * 
+	 * @param filename
+	 *            String file path and file name
+	 * @param filter
+	 *            String to search for
+	 * @return String lines from the file matching the filter
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	public String readFileFast(final String filename, final String filter) {
 		if (filename == null || filename.length() < 1 || filename.equalsIgnoreCase("null")) {
 			return "";
@@ -271,10 +379,28 @@ public class LogReader {
 		return result.toString();
 	}
 
+	/**
+	 * Reads a file
+	 * 
+	 * @param filename
+	 *            String file path and file name
+	 * @return String output of the file
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	public String readFileFast(final String filename) {
 		return readFileFast(filename, null);
 	}
 
+	/**
+	 * Reads a stream, just getting any lines which include the filter string
+	 * 
+	 * @param stream
+	 *            SharedByteArrayOutputStream to read
+	 * @param filter
+	 *            String to search for
+	 * @return String lines from the file matching the filter
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	public String readStreamFast(final SharedByteArrayOutputStream stream, final String filter) {
 		String result = null;
 		try {
@@ -293,6 +419,16 @@ public class LogReader {
 		return result;
 	}
 
+	/**
+	 * Reads a file from IBM_TECHNICAL_SUPPORT folder, just getting any lines which include the filter string
+	 * 
+	 * @param filename
+	 *            file within IBM_TECHNICAL_SUPPORT folder
+	 * @param filter
+	 *            String to search for
+	 * @return String lines from the file matching the filter
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	public String readConsole(String filename, String filter) {
 		String html = "";
 		if (filename == null)
@@ -304,6 +440,14 @@ public class LogReader {
 		return html;
 	}
 
+	/**
+	 * Reads a file from IBM_TECHNICAL_SUPPORT folder
+	 * 
+	 * @param filename
+	 *            String file within IBM_TECHNICAL_SUPPORT folder
+	 * @return String output of the file
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	public String readXPages(String filename) {
 		String html = "";
 		if (filename == null)
@@ -313,6 +457,12 @@ public class LogReader {
 		return html;
 	}
 
+	/**
+	 * Reads the startup.log file
+	 * 
+	 * @return String output of the file
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	public String readStartup() {
 		String html = "";
 		String filename = getFolder("xml") + "startup.log";
@@ -320,6 +470,12 @@ public class LogReader {
 		return html;
 	}
 
+	/**
+	 * Reads the notes.ini
+	 * 
+	 * @return String output of the file
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	public String readNotesini() {
 		String html = "";
 		String filename = getFolder("ini") + "notes.ini";
@@ -327,6 +483,12 @@ public class LogReader {
 		return html;
 	}
 
+	/**
+	 * Reads the jvm.properties
+	 * 
+	 * @return String output of the file
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	public String readJVM() {
 		String html = "";
 		String filename = getFolder("jvm") + "jvm.properties";
@@ -334,6 +496,12 @@ public class LogReader {
 		return html;
 	}
 
+	/**
+	 * Reads the java.policy
+	 * 
+	 * @return String output of the file
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	public String readJavaPolicy() {
 		String html = "";
 		String filename = getFolder("javapolicy") + "java.policy";
@@ -341,6 +509,12 @@ public class LogReader {
 		return html;
 	}
 
+	/**
+	 * Reads the java.pol (if it has been set up)
+	 * 
+	 * @return String output of the file
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	public String readJavaPol() {
 		String html = "";
 		String filename = getFolder("javapolicy") + "java.pol";
@@ -348,6 +522,12 @@ public class LogReader {
 		return html;
 	}
 
+	/**
+	 * Reads the rcpinstall.properties
+	 * 
+	 * @return String output of the file
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	public String readRCP() {
 		String html = "";
 		String filename = getFolder("rcp") + "rcpinstall.properties";
@@ -355,6 +535,22 @@ public class LogReader {
 		return html;
 	}
 
+	/**
+	 * Reads a file in a specified folder
+	 * <ul>
+	 * <li>section="tech", filename</li>
+	 * <li>section="xml", filename or startup.log if filename is null</li>
+	 * <li>section="ini", filename in domino folder</li>
+	 * <li>section="log", just returns "log"</li>
+	 * </ul>
+	 * 
+	 * @param section
+	 *            String key for the folder, passed to {@link #getFolder(String)}
+	 * @param filename
+	 *            String file within the specified folder
+	 * @return String output of file
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	public String readHtml(final String section, String filename) {
 		String html = "";
 		if (section == null) { /* If the String is null... */
@@ -378,10 +574,22 @@ public class LogReader {
 		return html;
 	}
 
+	/**
+	 * Gets the version of the LogReader
+	 * 
+	 * @return String version label
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	public String getVersion() {
 		return version;
 	}
 
+	/**
+	 * Gets an XML transformer loading the log-transform.xsl resource
+	 * 
+	 * @return Transformer
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	protected static Transformer getTransformer() {
 		if (XFORMER == null) {
 			synchronized (LogReader.class) {
@@ -406,8 +614,12 @@ public class LogReader {
 	}
 
 	/**
+	 * Reads a error-log-*.xml or trace-log-*.xml file
+	 * 
 	 * @param type
 	 *            error or trace filename: must be one of the error-log-*.xml or trace-log-*.xml files
+	 * @return String output
+	 * @since org.openntf.domino.xsp 2.5.0
 	 */
 	public String readXML(final String type, String filename) {
 

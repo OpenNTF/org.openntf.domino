@@ -16,10 +16,14 @@ import com.ibm.xsp.model.domino.wrapped.DominoDocument;
 /**
  * @author Nathan T. Freeman
  * 
+ *         Class of XPages utilities
  */
 public class XspUtils {
 	private static final Logger log_ = Logger.getLogger(XspUtils.class.getName());
 
+	/**
+	 * Constructor
+	 */
 	private XspUtils() {
 
 	}
@@ -32,6 +36,7 @@ public class XspUtils {
 	 * @param doc
 	 *            DominoDocument datasource
 	 * @return Document back-end document with front-end values applied, using doc.getDocument(true)
+	 * @since org.openntf.domino.xsp 5.0.0
 	 */
 	public static Document getBEDoc(final DominoDocument doc) {
 		Document beDoc;

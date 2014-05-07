@@ -85,6 +85,11 @@ import com.ibm.commons.util.io.json.util.JsonWriter;
 public class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, Database> implements org.openntf.domino.Document {
 	private static final Logger log_ = Logger.getLogger(Document.class.getName());
 
+	/**
+	 * Enum to allow easy access to deletion types
+	 * 
+	 * @since org.openntf.domino 2.5
+	 */
 	public static enum RemoveType {
 		SOFT_FALSE, SOFT_TRUE, HARD_FALSE, HARD_TRUE;
 	}
@@ -403,6 +408,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		Item result = null;
 		if (unique && hasItem(name)) {
 			// TODO RPr This function is not yet 100% mime compatible
+			// Once mime compatible, remove the reference in org.openntf.domino.ext.Document Javadoc
 			result = getFirstItem(name);
 			if (result.containsValue(value)) { // this does not work when it is not dominoFriendly
 				return result;
