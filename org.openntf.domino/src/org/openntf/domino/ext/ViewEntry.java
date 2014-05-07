@@ -61,4 +61,12 @@ public interface ViewEntry {
 	 * @since org.openntf.domino 5.0.0
 	 */
 	public <T> T getColumnValue(String columnName, Class<?> T);
+
+	/**
+	 * Gets the position of the entry with each level of the hierarchy separated by a '.'
+	 * 
+	 * @return String position e.g. 3.4.2.7
+	 * @since org.openntf.domino 5.0.0
+	 */
+	public String getPosition();
 }
