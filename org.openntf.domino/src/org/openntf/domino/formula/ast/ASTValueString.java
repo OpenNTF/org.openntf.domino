@@ -17,61 +17,68 @@
  */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaParser;
+import java.util.Set;
+
+import org.openntf.domino.formula.parse.*;
 import org.openntf.domino.formula.FormulaContext;
 import org.openntf.domino.formula.ValueHolder;
 
 public class ASTValueString extends SimpleNode {
-	String value;
 
-	public ASTValueString(final int id) {
-		super(id);
-	}
+	private ValueHolder value;
 
-	public ASTValueString(final AtFormulaParser p, final int id) {
+	public ASTValueString(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
-	public void parseString(final String image, final char c) {
+	public void parseString(String image, final char c) {
+		image = image.substring(1, image.length() - 1);
 		if (c == '{') {
-			value = image.substring(1, image.length() - 1);
+			// fertig
 		} else if (c == '"') {
-			value = image.substring(1, image.length() - 1);
 			int pos = 0;
 			int start = 0;
 			// YES: This looks complicated. But we want to be as much compatible as possible
-			if ((pos = value.indexOf('\\')) != -1) {
-				StringBuffer sb = new StringBuffer(value.substring(start, pos));
+			if ((pos = image.indexOf('\\')) != -1) {
+				StringBuffer sb = new StringBuffer(image.substring(start, pos));
 				while (true) {
 					start = pos + 1;
-					pos = value.indexOf('\\', start);
+					pos = image.indexOf('\\', start + 1);
 					if (pos == -1) {
-						sb.append(value.substring(start));
+						sb.append(image.substring(start));
 						break;
 					}
-					sb.append(value.substring(start, pos));
+					sb.append(image.substring(start, pos));
 				}
-				value = sb.toString();
+				image = sb.toString();
 			}
 		}
+		value = ValueHolder.valueOf(image);
 	}
 
 	@Override
 	public String toString() {
-		return super.toString() + ": " + value;
+		return super.toString() + ": " + value.getString(0);
 	}
 
 	@Override
 	public void toFormula(final StringBuilder sb) {
 		// TODO Quote Stings properly!
-		String s = value.replace("\\", "\\\\");
+		String s = value.getString(0).replace("\\", "\\\\");
 		s = s.replace("\"", "\\\"");
 		sb.append("\"" + s + "\"");
 	}
 
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) {
-		return new ValueHolder(value);
+		return value;
+	}
+
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

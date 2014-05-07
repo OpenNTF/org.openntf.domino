@@ -1,0 +1,12 @@
+@No 
+	#allPass [0.0]
+
+@NoteID
+	#allPass [NT00000000]
+
+@Nothing 
+	#allPass []
+
+@Now
+	#allPass 20-40
+ 

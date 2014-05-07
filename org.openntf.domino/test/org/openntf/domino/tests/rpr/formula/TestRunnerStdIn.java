@@ -6,9 +6,9 @@ import java.util.List;
 import lotus.domino.NotesException;
 import lotus.domino.Session;
 
-import org.openntf.domino.formula.AtFormulaParser;
+import org.openntf.domino.formula.ASTNode;
 import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.ast.SimpleNode;
+import org.openntf.domino.formula.FormulaParser;
 import org.openntf.domino.impl.Base;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;
@@ -28,15 +28,14 @@ public class TestRunnerStdIn implements Runnable {
 		try {
 
 			System.out.println("Please type a Lotus domino @formula. Quit with CTRL+Z:");
-			SimpleNode n = null;
+			ASTNode n = null;
 			List<Object> v = null;
 
-			AtFormulaParser parser = AtFormulaParser.getInstance();
-			parser.ReInit(System.in);
-			n = parser.Parse();
+			FormulaParser parser = FormulaParser.getDefaultInstance();
+			n = parser.parse(System.in, false);
 			n.dump("");
-			FormulaContext ctx = new FormulaContext(null, parser.getFormatter());
-			v = n.evaluate(ctx);
+			FormulaContext ctx = FormulaContext.createContext(null, parser.getFormatter());
+			v = n.solve(ctx);
 
 			System.out.println("NTF:\t" + v);
 

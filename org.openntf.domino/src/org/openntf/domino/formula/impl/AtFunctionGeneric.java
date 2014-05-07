@@ -16,9 +16,11 @@
  */
 package org.openntf.domino.formula.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
 
 public class AtFunctionGeneric extends AtFunction {
@@ -60,22 +62,32 @@ public class AtFunctionGeneric extends AtFunction {
 		}
 	}
 
-	public ValueHolder evaluate(final FormulaContext ctx, final ValueHolder[] params) throws Exception {
-		switch (paramCount) {
-		case 0:
-			if (useContext) {
-				return (ValueHolder) method.invoke(null, new Object[] { ctx });
-			} else {
-				return (ValueHolder) method.invoke(null, (Object[]) null);
+	public ValueHolder evaluate(final FormulaContext ctx, final ValueHolder[] params) throws FormulaReturnException {
+		try {
+			switch (paramCount) {
+			case 0:
+				if (useContext) {
+					return (ValueHolder) method.invoke(null, new Object[] { ctx });
+				} else {
+					return (ValueHolder) method.invoke(null, (Object[]) null);
+				}
+			case 1:
+				if (useContext) {
+					return (ValueHolder) method.invoke(null, new Object[] { ctx, params });
+				} else {
+					return (ValueHolder) method.invoke(null, new Object[] { params });
+				}
+			default:
+				throw new IllegalArgumentException("Illegal parameter count: " + paramCount);
 			}
-		case 1:
-			if (useContext) {
-				return (ValueHolder) method.invoke(null, new Object[] { ctx, params });
-			} else {
-				return (ValueHolder) method.invoke(null, new Object[] { params });
-			}
-		default:
-			throw new IllegalArgumentException("Illegal parameter count: " + paramCount);
+		} catch (IllegalAccessException iax) {
+			throw new RuntimeException("Unexpected error while invoking method " + method.getName(), iax);
+		} catch (InvocationTargetException e) {
+			if (e.getCause() instanceof RuntimeException)
+				throw (RuntimeException) e.getCause();
+			if (e.getCause() instanceof FormulaReturnException)
+				throw (FormulaReturnException) e.getCause();
+			throw new RuntimeException("Unexpected error occured in method " + method.getName(), e);
 		}
 	}
 

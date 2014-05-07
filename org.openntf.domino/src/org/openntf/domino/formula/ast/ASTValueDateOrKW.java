@@ -17,46 +17,55 @@
  */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaParser;
+import java.util.Set;
+
+import org.openntf.domino.ISimpleDateTime;
 import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.ParseException;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.ValueHolder.DataType;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
+import org.openntf.domino.formula.parse.ParseException;
 
 public class ASTValueDateOrKW extends SimpleNode {
-	Object value = null;
+	ISimpleDateTime dateValue = null;
+	String image = null;
 
-	public ASTValueDateOrKW(final int id) {
-		super(id);
-	}
-
-	public ASTValueDateOrKW(final AtFormulaParser p, final int id) {
+	public ASTValueDateOrKW(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) {
-		return new ValueHolder(value);
+		if (dateValue != null)
+			return ValueHolder.valueOf(dateValue);
+		ValueHolder vh = ValueHolder.valueOf(image);
+		vh.dataType = DataType.KEYWORD_STRING;
+		return vh;
 	}
 
 	public void init(final String image) throws ParseException {
 		String inner = image.substring(1, image.length() - 1); // remove first [ and last ]
 		try {
-			value = parser.getFormatter().parseDate(inner);
-		} catch (java.text.ParseException e) {
-			if (inner.contains(".") || inner.contains("/") || inner.contains("-")) {
-				// this MUST be a date
+			dateValue = parser.getFormatter().parseDate(inner);
+		} catch (IllegalArgumentException e) {
+			if (inner.contains(".") || inner.contains("/") || inner.contains("-") || // this MUST be a date
+					inner.contains("\\") || inner.contains("\"") || inner.trim().isEmpty()) {
 				throw new ParseException(parser, e.getMessage());
-			} else {
-				value = image; // tried to parse. but this seems to be a Keyword
 			}
 		}
+		this.image = image; // tried to parse. but this seems to be a Keyword
 	}
 
 	@Override
 	public void toFormula(final StringBuilder sb) {
-		sb.append('[');
-		sb.append(value);
-		sb.append(']');
+		sb.append(image);
+	}
+
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

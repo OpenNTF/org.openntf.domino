@@ -158,6 +158,8 @@ public interface Session {
 
 	public void boogie();
 
+	public boolean isFeatureRestricted();
+
 	public String getUnique();
 
 	public org.openntf.domino.Database getDatabaseByReplicaID(String server, String replicaid);
@@ -169,6 +171,8 @@ public interface Session {
 	public org.openntf.domino.Database getDatabaseIfModified(String server, String dbfile, Date modifiedsince);
 
 	public org.openntf.domino.Database getMailDatabase();
+
+	public org.openntf.domino.Database getDatabase(String apiPath);
 
 	public org.openntf.domino.Document getDocumentByMetaversalID(String metaversalID);
 

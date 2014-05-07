@@ -17,38 +17,62 @@
  */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaParser;
-import org.openntf.domino.formula.EvaluateException;
+import java.util.Set;
+
 import org.openntf.domino.formula.FormulaContext;
+import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
 
 public class ASTAtDo extends SimpleNode {
-	public ASTAtDo(final int id) {
-		super(id);
-	}
 
-	public ASTAtDo(final AtFormulaParser p, final int id) {
+	private boolean virtual;
+
+	public ASTAtDo(final AtFormulaParserImpl p, final int id) {
 		super(p, id);
 	}
 
 	/**
-	 * AtDo returns the last child's value
-	 * 
-	 * @throws EvaluateException
+	 * AtDo returns the last child's value. This might be a ValueHolder of DataType.ERROR. No additional errorhandling needed
 	 */
 	@Override
-	public ValueHolder evaluate(final FormulaContext ctx) throws EvaluateException {
+	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
 		ValueHolder ret = null;
-		for (int i = 0; i < jjtGetNumChildren(); ++i) {
-			ret = jjtGetChild(i).evaluate(ctx);
+		if (children == null)
+			return null;
+		for (int i = 0; i < children.length; ++i) {
+			ret = children[i].evaluate(ctx);
 		}
 		return ret;
 	}
 
+	/**
+	 * returns a equivalent lotus formula.
+	 */
 	public void toFormula(final StringBuilder sb) {
 		sb.append("@Do");
 		appendParams(sb);
 	}
 
+	/**
+	 * add {@literal @}Do to the functions list (if it is not virtual)
+	 */
+	@Override
+	protected void analyzeThis(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+		if (!virtual) {
+			functions.add("@do");
+		}
+	}
+
+	/**
+	 * Sets the mode to virtual (= function does not appear in function list)
+	 * 
+	 * @param bool
+	 *            virtual
+	 */
+	public void setVirtual(final boolean bool) {
+		virtual = bool;
+	}
 }
 /* JavaCC - OriginalChecksum=28653335c32026ae20324c429d56df0a (do not edit this line) */

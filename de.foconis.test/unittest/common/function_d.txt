@@ -1,0 +1,115 @@
+@Date(1993; 01; 20; 8; 58; 12)
+	#allPass
+
+@Date([1.1.95 8:58:12])
+ 	#allPass
+	
+@Day(@Now)
+ 	#allPass
+
+@DB2Schema("";"names.nsf")
+	#allPass
+
+@DbColumn("":"noCache"; "":"names.nsf"; "($Servers)"; 1)
+ 	#allPass
+
+@DbCommand("ODBC";"PUBLISHERS";"dbo":"";"vanilla":""; "SELECT au_lname FROM dbo.authors WHERE contract=1 AND state='CA' ")
+ 	#allFail
+
+@DbExists("":"names.nsf")
+	#allFail
+@DbExists("":"doesnotexist.nsf")
+	#allFail
+
+@DbLookup("":"noCache"; "":"names.nsf"; "($VIMGroups)";  "LocalDomainAdmins" ; "Members") 
+	#allPass
+
+@DbLookup("":"noCache"; "":"names.nsf"; "($VIMGroups)";  "Doesntexist" ; "Members") 
+	#allFail
+
+@DbLookup("":"noCache"; "":"names.nsf"; "($VIMGroups)";  "Doesntexist" ; "Members"; [FailSilent]) 
+	#allPass
+	
+@DbManager 
+ 	#allPass
+
+@DbName 
+ 	#allPass
+ 
+@DbTitle 
+ 	#allPass
+
+@DDEExecute(Conv_ID;"[RUN(\"{Goto}A:B6~\")]")
+	#allFail 
+
+@DDEInitiate("123W";"Budget95.wk3")
+	#allFail 
+
+@DDEPoke(Conv_ID;"A:B6";@Text(Amount))
+	#allFail
+
+@DDETerminate(Conv_ID) 
+	#allFail
+
+DEFAULT  x := 1; x
+	#allPass
+
+DEFAULT  x := 1;  x := 2; x
+	#allPass
+
+@DeleteDocument 
+	#allPass
+
+FIELD text1 := @DeleteField ; text1
+	#allPass []
+ 
+@DialogBox("Profile Options"; [AUTOHORZFIT] : [AUTOVERTFIT] )
+ 	#allFail
+
+@Do ("a";"b";"c")
+	#allPass [c]
+
+@Do ("a";@Return("b");"c")
+	#allPass [b]
+
+@DocChildren 
+	#allPass     
+
+@DocDescendants 
+	#allPass     
+
+@DocFields 
+	#allPass 
+
+@DocLength 
+	#allPass 
+
+@DocLevel 
+	#allPass     
+
+@DocLock([STATUS]) 
+	#allFail 
+
+@DocMark([NOUPDATE]) 
+	#allPass       
+
+@DocNumber 
+	#allPass     
+
+@DocOmittedLength 
+	#allPass 
+
+@DocParentNumber 
+	#allPass     
+
+@DocSiblings 
+	#allPass     
+
+@length(@Text(@DocumentUniqueID))
+	#lotusDocPass
+
+@Domain 
+	#allPass 
+
+@DoWhile(i := i + "x"; i != "xxx") 
+	#allPass 

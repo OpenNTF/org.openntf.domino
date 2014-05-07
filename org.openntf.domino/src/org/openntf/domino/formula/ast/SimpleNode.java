@@ -17,52 +17,77 @@
  */
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.AtFormulaParser;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.openntf.domino.formula.EvaluateException;
 import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.ParseException;
-import org.openntf.domino.formula.Token;
+import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
+import org.openntf.domino.formula.ValueHolder.DataType;
+import org.openntf.domino.formula.parse.AtFormulaParserImpl;
+import org.openntf.domino.formula.parse.Token;
 
 public abstract class SimpleNode implements Node {
 
 	protected Node parent;
 	protected Node[] children;
 	protected int id;
-	protected AtFormulaParser parser;
 	protected int codeLine;
 	protected int codeColumn;
+	// these need not to be serialized!
+	protected transient AtFormulaParserImpl parser;
+	private transient Set<String> functions;
+	private transient Set<String> variables;
+	private transient Set<String> readFields;
+	private transient Set<String> modifiedFields;
 
-	public SimpleNode(final int i) {
+	/**
+	 * create a new node with ID and parser as reference
+	 */
+	public SimpleNode(final AtFormulaParserImpl p, final int i) {
 		id = i;
-	}
-
-	public SimpleNode(final AtFormulaParser p, final int i) {
-		this(i);
 		parser = p;
 		Token t = p.token;
 		codeLine = t.beginLine;
 		codeColumn = t.beginColumn;
 	}
 
-	public EvaluateException createEvaluateException(final Throwable cause) {
-		return new EvaluateException(codeLine, codeColumn, cause);
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.Node#jjtOpen()
+	 */
 	public void jjtOpen() {
 	}
 
-	public void jjtClose() throws ParseException {
+	/*
+	* (non-Javadoc)
+	* @see org.openntf.domino.formula.ast.Node#jjtClose()
+	*/
+	public void jjtClose() {
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.Node#jjtSetParent(org.openntf.domino.formula.ast.Node)
+	 */
 	public void jjtSetParent(final Node n) {
 		parent = n;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.Node#jjtGetParent()
+	 */
 	public Node jjtGetParent() {
 		return parent;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.Node#jjtAddChild(org.openntf.domino.formula.ast.Node, int)
+	 */
 	public void jjtAddChild(final Node n, final int i) {
 		if (children == null) {
 			children = new Node[i + 1];
@@ -74,32 +99,45 @@ public abstract class SimpleNode implements Node {
 		children[i] = n;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.Node#jjtGetChild(int)
+	 */
 	public Node jjtGetChild(final int i) {
 		return children[i];
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.Node#jjtGetNumChildren()
+	 */
 	public int jjtGetNumChildren() {
 		return (children == null) ? 0 : children.length;
 	}
 
-	/* You can override these two methods in subclasses of SimpleNode to
-	   customize the way the node appears when the tree is dumped.  If
-	   your output uses more than one line you should override
-	   toString(String), otherwise overriding toString() is probably all
-	   you need to do. */
-
+	/**
+	 * The default toString returns the node name
+	 */
 	@Override
 	public String toString() {
-		return AtFormulaParserTreeConstants.jjtNodeName[id];
+		return AtFormulaParserImplTreeConstants.jjtNodeName[id];
 	}
 
+	/**
+	 * Returns a prefix and the node name. Used for "dump"
+	 * 
+	 * @param prefix
+	 *            the prefix (Spaces, to indent the string
+	 * @return a String that describes the node
+	 */
 	public String toString(final String prefix) {
 		return prefix + toString();
 	}
 
-	/* Override this method if you want to customize how the node dumps
-	   out its children. */
-
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.Node#dump(java.lang.String)
+	 */
 	public void dump(final String prefix) {
 		System.out.println(toString(prefix));
 		if (children != null) {
@@ -112,11 +150,16 @@ public abstract class SimpleNode implements Node {
 		}
 	}
 
-	public abstract ValueHolder evaluate(FormulaContext ctx) throws EvaluateException;
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.Node#evaluate(org.openntf.domino.formula.FormulaContext)
+	 */
+	public abstract ValueHolder evaluate(FormulaContext ctx) throws FormulaReturnException;
 
+	/**
+	 * Helper function for "toFormula". It creates a parameter list
+	 */
 	protected void appendParams(final StringBuilder sb) {
-		// TODO Auto-generated method stub
-
 		if (children != null) {
 			sb.append('(');
 			for (int i = 0; i < children.length; ++i) {
@@ -129,6 +172,106 @@ public abstract class SimpleNode implements Node {
 			sb.append(')');
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.Node#solve(org.openntf.domino.formula.FormulaContext)
+	 */
+	@Override
+	public final List<Object> solve(final FormulaContext ctx) throws EvaluateException {
+		ValueHolder vh;
+		try {
+			vh = evaluate(ctx);
+		} catch (FormulaReturnException e) {
+			vh = e.getValue();
+		}
+		if (vh.dataType == DataType.ERROR)
+			throw vh.getError();
+		return vh.toList();
+	}
+
+	// =================== formula inspection ===============================
+
+	/**
+	 * inspects formulas recursively to detect the elements that are used
+	 */
+	public void inspect(final Set<String> readFields, final Set<String> modifiedFields, final Set<String> variables,
+			final Set<String> functions) {
+
+		analyzeThis(readFields, modifiedFields, variables, functions);
+		if (children == null)
+			return;
+		for (int i = 0; i < children.length; i++) {
+			((SimpleNode) children[i]).inspect(readFields, modifiedFields, variables, functions);
+		}
+	}
+
+	/**
+	 * This method must be implemented in every AST node.
+	 * 
+	 * @param readFields
+	 *            return value - which fields are used (lowercase)
+	 * @param modifiedFields
+	 *            return value - which fields are modified (lowercase)
+	 * @param variables
+	 *            return value - which variables are used (lowercase)
+	 * @param functions
+	 *            return value - which functions are used (lowercase)
+	 */
+	protected abstract void analyzeThis(Set<String> readFields, Set<String> modifiedFields, Set<String> variables, Set<String> functions);
+
+	/**
+	 * Initializion of inspection is done once
+	 */
+	private void initInspection() {
+		if (readFields != null)
+			return;
+		readFields = new HashSet<String>();
+		functions = new HashSet<String>();
+		variables = new HashSet<String>();
+		modifiedFields = new HashSet<String>();
+		inspect(readFields, modifiedFields, variables, functions);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.Node#getFunctions()
+	 */
+	public Set<String> getFunctions() {
+		initInspection();
+		return functions;
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.Node#getVariables()
+	 */
+	public Set<String> getVariables() {
+		initInspection();
+		return variables;
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.Node#getReadFields()
+	 */
+	public Set<String> getReadFields() {
+		initInspection();
+		return readFields;
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.openntf.domino.formula.ast.Node#getModifiedFields()
+	 */
+	public Set<String> getModifiedFields() {
+		initInspection();
+		return modifiedFields;
+
+	}
+
 }
 
 /* JavaCC - OriginalChecksum=f757f6165359770f80bc5b67ed15fa71 (do not edit this line) */

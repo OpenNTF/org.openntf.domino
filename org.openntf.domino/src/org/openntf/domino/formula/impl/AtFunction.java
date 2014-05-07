@@ -22,7 +22,7 @@ package org.openntf.domino.formula.impl;
  * @author Roland Praml, Foconis AG
  * 
  */
-public abstract class AtFunction implements org.openntf.domino.formula.AtFunction {
+public abstract class AtFunction implements org.openntf.domino.formula.Function {
 
 	private String image;
 

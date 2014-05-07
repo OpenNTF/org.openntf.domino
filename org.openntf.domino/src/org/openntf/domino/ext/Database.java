@@ -36,6 +36,26 @@ import org.openntf.domino.transactions.DatabaseTransaction;
  * 
  */
 public interface Database extends Base {
+	/**
+	 * @author ntf
+	 * 
+	 *         Enum for Database-level events, triggered by listeners.
+	 * 
+	 *         Options are:
+	 *         <ul>
+	 *         <li>BEFORE_CREATE_DOCUMENT / AFTER_CREATE_DOCUMENT: triggered at the start / end of the Database.createDocument method,
+	 *         source and target will be Database (newly-created Document has no properties or Items set, so no point passing that</li>
+	 *         <li>BEFORE_DELETE_DOCUMENT / AFTER_DELETE_DOCUMENT: triggered at the start / end of the Document.remove or
+	 *         Document.removePermanently methods, source will be Document and target will be Database</li>
+	 *         <li>BEFORE_UPDATE_DOCUMENT / AFTER_UPDATE_DOCUMENT: triggered at the start / end of the Document.save methods (and its
+	 *         variants), source will be Document and target will be Database</li>
+	 *         <li>BEFORE_REPLICATION / AFTER_REPLICATION: triggered at the start / end of the Database.replicate method, source will be
+	 *         Database and target will be the server the replication is to be performed with</li>
+	 *         <li>BEFORE_RUN_AGENT / AFTER_RUN_AGENT: triggered at the start / end of the Agent.run method and its variants, source will be
+	 *         Agent, target will be Datatbase</li>
+	 *         </ul>
+	 * 
+	 */
 	public static enum Events implements EnumEvent {
 		BEFORE_CREATE_DOCUMENT, AFTER_CREATE_DOCUMENT, BEFORE_DELETE_DOCUMENT, AFTER_DELETE_DOCUMENT, BEFORE_UPDATE_DOCUMENT, AFTER_UPDATE_DOCUMENT, BEFORE_REPLICATION, AFTER_REPLICATION, BEFORE_RUN_AGENT, AFTER_RUN_AGENT;
 	}

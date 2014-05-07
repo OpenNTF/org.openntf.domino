@@ -18,37 +18,33 @@
 
 package org.openntf.domino.formula.ast;
 
-import org.openntf.domino.formula.EvaluateException;
+import org.openntf.domino.formula.ASTNode;
 import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.ParseException;
+import org.openntf.domino.formula.FormulaReturnException;
 import org.openntf.domino.formula.ValueHolder;
 
 /* All AST nodes must implement this interface.  It provides basic
    machinery for constructing the parent and child relationships
    between nodes. */
 
-public interface Node {
+public interface Node extends ASTNode {
 
 	/**
 	 * This method is called after the node has been made the current node. It indicates that child nodes can now be added to it.
 	 */
 	public void jjtOpen();
 
-	/**
-	 * This method is called after all the child nodes have been added.
-	 * 
-	 * @throws ParseException
-	 *             throws parseException e.g. on parameter mismatch <br>
-	 *             <b>NOTE:</b> After a javacc recompile you must add the <code>throws</code> declaration manually in
-	 *             "JJTAtFormulaParserState"
-	 */
-	public void jjtClose() throws ParseException;
+	public void jjtClose();
 
 	/**
-	 * This pair of methods are used to inform the node of its parent.
+	 * set a new parent to the current node
+	 * 
 	 */
 	public void jjtSetParent(Node n);
 
+	/**
+	 * Return the parent of the current node
+	 */
 	public Node jjtGetParent();
 
 	/**
@@ -64,10 +60,6 @@ public interface Node {
 	/** Return the number of children the node has. */
 	public int jjtGetNumChildren();
 
-	public void dump(final String prefix);
-
-	public ValueHolder evaluate(FormulaContext ctx) throws EvaluateException;
-
-	public void toFormula(StringBuilder sb);
+	public abstract ValueHolder evaluate(FormulaContext ctx) throws FormulaReturnException;
 }
 /* JavaCC - OriginalChecksum=54dec3b6b2c592c5fbe2fc5be72328d2 (do not edit this line) */

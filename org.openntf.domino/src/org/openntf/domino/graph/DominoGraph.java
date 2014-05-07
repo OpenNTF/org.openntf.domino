@@ -393,8 +393,8 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 			if (result == null) {
 				result = getRawDatabase().getDocumentByKey(unid, createOnFail);
 				if (result != null) {
-					String localUnid = result.getUniversalID().toUpperCase();
-					if (!unid.equals(localUnid)) {
+					String localUnid = result.getUniversalID();
+					if (!unid.equalsIgnoreCase(localUnid)) {
 						log_.log(Level.SEVERE, "UNIDs do not match! Expected: " + unid + ", Result: " + localUnid);
 					}
 					synchronized (map) {

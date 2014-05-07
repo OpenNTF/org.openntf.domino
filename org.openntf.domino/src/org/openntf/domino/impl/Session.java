@@ -141,6 +141,8 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	//		return defaultSession.get();
 	//	}
 
+	private boolean featureRestricted_ = false;
+
 	// RPr: the only way to get a session is from the factory. so commented out
 	//	/**
 	//	 * Instantiates a new session.
@@ -169,7 +171,13 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	 *            the cpp-id
 	 */
 	public Session(final lotus.domino.Session lotus, final SessionHasNoParent parent, final WrapperFactory wf, final long cpp_id) {
+		this(lotus, parent, wf, cpp_id, false);
+	}
+
+	public Session(final lotus.domino.Session lotus, final SessionHasNoParent parent, final WrapperFactory wf, final long cpp_id,
+			final boolean isFeatureRestricted) {
 		super(lotus, null, wf, cpp_id, NOTES_SESSION);
+		featureRestricted_ = isFeatureRestricted;
 		initialize(lotus);
 	}
 
@@ -527,6 +535,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	 * 
 	 * @see org.openntf.domino.Session#evaluate(java.lang.String, lotus.domino.Document)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(final String formula, final lotus.domino.Document doc) {
@@ -537,7 +546,29 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 					((Document) doc).markDirty(); // the document MAY get dirty by evaluate... 
 				}
 			}
-			return wrapColumnValues(getDelegate().evaluate(formula, toLotus(doc)), this);
+			lotus.domino.Session lsession = getDelegate();
+			Vector<Object> result = null;
+
+			if (doc == null) {
+				try {
+					result = lsession.evaluate(formula);
+				} catch (NotesException ne1) {
+					result = new Vector<Object>();
+					result.add("ERROR: " + ne1.text);
+				}
+			} else {
+				lotus.domino.Document ldoc = toLotus(doc);
+				try {
+					result = lsession.evaluate(formula, ldoc);
+				} catch (NotesException ne1) {
+					result = new Vector<Object>();
+					result.add("ERROR: " + ne1.text);
+				}
+			}
+
+			if (result == null)
+				return null;	//this really shouldn't be possible.
+			return wrapColumnValues(result, this);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -676,6 +707,8 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			if (currentDatabase_ == null) {
 				result = fromLotus(getDelegate().getCurrentDatabase(), Database.SCHEMA, this);
+				if (result == null)
+					return null;
 				String key = result.getFilePath();
 				if (result.getServer().length() > 1) {
 					key = result.getServer() + "!!" + result.getFilePath();
@@ -759,6 +792,16 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	@Override
 	public org.openntf.domino.Database getDatabase(final String server, final String db) {
 		return getDatabase(server, db, false);
+	}
+
+	public org.openntf.domino.Database getDatabase(final String apiPath) {
+		String server = "";
+		String dbpath = apiPath;
+		if (apiPath.indexOf("!!") > -1) {
+			server = apiPath.substring(0, apiPath.indexOf("!!"));
+			dbpath = apiPath.substring(apiPath.indexOf("!!") + 2);
+		}
+		return getDatabase(server, dbpath);
 	}
 
 	/*
@@ -1817,6 +1860,10 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 
 	public void setAutoMime(final AutoMime autoMime) {
 		isAutoMime_ = autoMime;
+	}
+
+	public boolean isFeatureRestricted() {
+		return featureRestricted_;
 	}
 
 }
