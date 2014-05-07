@@ -508,7 +508,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		}
 	}
 
-	protected void reapplyChanges() {
+	public void reapplyChanges() {
 		Map<CharSequence, Serializable> props = getProps();
 		Document doc = getDocument();
 		synchronized (props) {

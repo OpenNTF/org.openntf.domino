@@ -139,11 +139,39 @@ public class DominoGraph implements IDominoGraph {
 	}
 
 	public IEdgeHelper findHelper(final Vertex in, final Vertex out) {
+		return findHelper(in, out, false);
+	}
+
+	private IEdgeHelper findHelper(final Vertex in, final Vertex out, final boolean isInverse) {
 		IEdgeHelper result = null;
 		if (in == null || out == null) {
 			return result;
 		}
-		//TODO
+		Class<?> inCls = in.getClass();
+		Class<?> outCls = out.getClass();
+		for (IEdgeHelper helper : edgeHelpers_.values()) {
+			boolean inChk = inCls.equals(helper.getInType());
+			boolean outChk = outCls.equals(helper.getOutType());
+			if (inChk && outChk) {
+				return helper;
+			}
+		}
+		Set<IEdgeHelper> helpers = findHelpers(in, out);
+		if (helpers.size() == 0 && !isInverse) {
+			IEdgeHelper inverse = findHelper(out, in, true);
+			if (inverse != null) {
+				log_.log(Level.WARNING,
+						"Unable to find an edge helper using in " + inCls.getSimpleName() + " and out " + outCls.getSimpleName()
+								+ ". However we did find a match with the inverse, so we're returing that.");
+				return inverse;
+			}
+		} else if (helpers.size() == 1) {
+			return helpers.iterator().next();
+		} else {
+			log_.log(Level.WARNING, "Multiple options found for findHelper without exact matching on classes " + inCls.getSimpleName()
+					+ " and " + outCls.getSimpleName() + ". Returning the first out of " + helpers.size());
+			return helpers.iterator().next();
+		}
 		return result;
 	}
 

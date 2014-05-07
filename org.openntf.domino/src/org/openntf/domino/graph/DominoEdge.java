@@ -35,7 +35,7 @@ public class DominoEdge extends DominoElement implements IDominoEdge, Serializab
 	}
 
 	@Override
-	public Vertex getVertex(final Direction direction) throws IllegalArgumentException {
+	public IDominoVertex getVertex(final Direction direction) throws IllegalArgumentException {
 		return parent_.getVertex(getVertexId(direction));
 	}
 
@@ -90,7 +90,7 @@ public class DominoEdge extends DominoElement implements IDominoEdge, Serializab
 	 * @see org.openntf.domino.graph.IDominoEdge#getOtherVertex(com.tinkerpop.blueprint.Vertex)
 	 */
 	@Override
-	public Vertex getOtherVertex(final Vertex vertex) {
+	public IDominoVertex getOtherVertex(final Vertex vertex) {
 		if (vertex.getId().equals(getVertexId(Direction.IN))) {
 			return getVertex(Direction.OUT);
 		} else {

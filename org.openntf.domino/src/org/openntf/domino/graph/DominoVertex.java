@@ -37,13 +37,13 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 
 	private static final long serialVersionUID = 1L;
 
-	private Boolean inDirty_ = false;
+	//	private Boolean inDirty_ = false;
 
-	private Set<String> inEdges_;
+	//	private Set<String> inEdges_;
 	// private transient Set<Edge> inEdgesObjects_;
-	private Boolean outDirty_ = false;
+	//	private Boolean outDirty_ = false;
 	// private transient Set<Edge> outEdgesObjects_;
-	private Set<String> outEdges_;
+	//	private Set<String> outEdges_;
 
 	private Map<String, Boolean> inDirtyMap_;
 	private Map<String, Boolean> outDirtyMap_;
@@ -664,7 +664,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 			Document chk = getParent().getRawDatabase().getDocumentByUNID(id);
 			if (chk == null) {
 				inIds.remove(id);
-				inDirty_ = true;
+				//				inDirty_ = true;
 				sb.append("IN: ");
 				sb.append(id);
 				sb.append(",");
@@ -676,7 +676,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 			Document chk = getParent().getRawDatabase().getDocumentByUNID(id);
 			if (chk == null) {
 				outIds.remove(id);
-				outDirty_ = true;
+				//				outDirty_ = true;
 				sb.append("OUT: ");
 				sb.append(id);
 				sb.append(",");
@@ -711,21 +711,21 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		}
 	}
 
-	public Edge relate(final DominoVertex other) throws MultipleDefinedEdgeHelpers {
-		Set<IEdgeHelper> helpers = findHelpers(other);
-		if (helpers.size() == 1) {
-			for (IEdgeHelper helper : helpers) {
-				return helper.makeEdge(other, this);
-			}
-			return null;
-		} else if (helpers.size() == 0) {
-			throw new UndefinedEdgeHelpers(this, other);
-
-		} else {
-			throw new MultipleDefinedEdgeHelpers(this, other);
-		}
-
-	}
+	//	public Edge relate(final DominoVertex other) throws MultipleDefinedEdgeHelpers {
+	//		Set<IEdgeHelper> helpers = findHelpers(other);
+	//		if (helpers.size() == 1) {
+	//			for (IEdgeHelper helper : helpers) {
+	//				return helper.makeEdge(other, this);
+	//			}
+	//			return null;
+	//		} else if (helpers.size() == 0) {
+	//			throw new UndefinedEdgeHelpers(this, other);
+	//
+	//		} else {
+	//			throw new MultipleDefinedEdgeHelpers(this, other);
+	//		}
+	//
+	//	}
 
 	public Set<IEdgeHelper> getEdgeHelpers() {
 		Set<IEdgeHelper> result = new HashSet<IEdgeHelper>();
@@ -748,25 +748,25 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		IDominoEdge result = null;
 		if (vertex == null)
 			return result;
-		Set<IEdgeHelper> helpers = getParent().findHelpers(this, vertex);
-		if (helpers.size() == 0) {
+		IEdgeHelper helper = getParent().findHelper(this, vertex);
+		if (helper == null) {
 			result = getParent().addEdge(null, this, vertex, IEdgeHelper.DEFAULT_LABEL);
-		} else if (helpers.size() == 1) {
-			IEdgeHelper helper = helpers.iterator().next();
-			result = helper.makeEdge(this, vertex);
 		} else {
-			StringBuilder sb = new StringBuilder();
-			for (IEdgeHelper helper : helpers) {
-				sb.append(helper.getLabel() + ", ");
-			}
-			throw new DominoGraphException("Unable to determine which edge helper to use to relate a " + vertex.getClass().getName()
-					+ " to a " + getClass().getName() + " because we found " + helpers.size() + " options defined: " + sb.toString());
+			result = helper.makeEdge(this, vertex);
 		}
 		return result;
 	}
 
 	public IDominoEdge find(final Vertex vertex) {
-		// TODO Auto-generated method stub
-		return null;
+		IDominoEdge result = null;
+		if (vertex == null)
+			return result;
+		IEdgeHelper helper = getParent().findHelper(this, vertex);
+		if (helper == null) {
+			result = getParent().getEdge(this, vertex, IEdgeHelper.DEFAULT_LABEL);
+		} else {
+			result = helper.findEdge(this, vertex);
+		}
+		return result;
 	}
 }
