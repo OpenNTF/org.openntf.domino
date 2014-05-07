@@ -695,6 +695,10 @@ public class DocumentList extends Base<org.openntf.domino.DocumentList, lotus.do
 		throw new UnimplementedException("Not yet implemented, sorry");
 	}
 
+	public void setParentView(final View view) {
+		throw new UnimplementedException("Not yet implemented, sorry");
+	}
+
 	public DocumentCollection filter(final Object value) {
 		// TODO Auto-generated method stub
 		throw new UnimplementedException("Not yet implemented, sorry");

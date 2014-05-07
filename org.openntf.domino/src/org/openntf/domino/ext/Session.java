@@ -20,9 +20,15 @@ import com.ibm.icu.util.Calendar;
 /**
  * @author withersp
  * 
+ *         OpenNTF extensions to Session class
  */
 public interface Session {
 
+	/**
+	 * Enum for Khan-mode "fixes" to make lotus.domino methods "better"
+	 * 
+	 * @since org.openntf.domino 1.0.0
+	 */
 	public static enum Fixes {
 		/** This Fix is not used */
 		MIME_CONVERT,
@@ -48,49 +54,90 @@ public interface Session {
 		DOC_UNID_NULLS
 	}
 
+	/**
+	 * Gets the factory that manages processing of the IDominoEvents
+	 * 
+	 * @return IDominoEventFactory containing the IDominoEvents
+	 * @since org.openntf.domino 3.0.0
+	 */
 	public IDominoEventFactory getEventFactory();
 
+	/**
+	 * Sets the factory for managing processing of the IDominoEvents
+	 * 
+	 * @param factory
+	 *            IDominoEventFactory containing the IDominoEvents
+	 * @since org.openntf.domino 3.0.0
+	 */
 	public void setEventFactory(IDominoEventFactory factory);
 
+	/**
+	 * Generates an IDominoEvent into the IDominoEventFactory. The IDominoEvent will be for a specific EnumEvent, e.g.
+	 * BEFORE_CREATE_DATABASE. This method basically triggers the EnumEvent, passing the relevant Objects that are currently being acted
+	 * upon.
+	 * 
+	 * <p>
+	 * No EnumEvent types and contents are currently implemented but should be loaded in org.openntf.domino.ext.Session.Events
+	 * </p>
+	 * 
+	 * <p>
+	 * The target should not be passed into this method, but the implementation should pass {@code this} to as the target to
+	 * {@link org.openntf.domino.events.IDominoEventFactory.generate}
+	 * </p>
+	 * 
+	 * @param event
+	 *            EnumEvent being triggered, e.g. BEFORE_CREATE_DOCUMENT.
+	 * @param source
+	 *            The source object for the event to be run on. The relevant
+	 * @param payload
+	 *            Object a payload that can be passed along with the Event
+	 * @return An IDominoEvent which will be passed to {@link org.openntf.domino.ext.Base.fireListener}
+	 * @since org.openntf.domino 3.0.0
+	 */
 	public IDominoEvent generateEvent(EnumEvent event, org.openntf.domino.Base source, org.openntf.domino.Base target, Object payload);
 
 	// public RunContext getRunContext();
 
 	/**
+	 * Creates a ColorObject using a Java Color
+	 * 
 	 * @param color
-	 *            Java color
-	 * @return Color Object
+	 *            Color to load into the ColorObject
+	 * @return ColorObject created
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public ColorObject createColorObject(final java.awt.Color color);
 
 	/**
-	 * Free time search.
+	 * Performs a free time search using a Collection of names to check for.
 	 * 
 	 * @param window
-	 *            the window
+	 *            DateRange window of start and end times to search through
 	 * @param duration
-	 *            the duration
+	 *            int duration of the meeting, in minutes
 	 * @param names
-	 *            the names
+	 *            Collection<String> names to search for
 	 * @param firstFit
-	 *            the first fit
-	 * @return the collection
+	 *            boolean if only the first fit should be returned
+	 * @return Collection<DateRange> of start/end instances for which all participants are free. Null if there are no matches
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public Collection<DateRange> freeTimeSearch(final org.openntf.domino.DateRange window, final int duration,
 			final Collection<String> names, final boolean firstFit);
 
 	/**
-	 * Free time search.
+	 * Performs a free time search using a Collection of names to check for.
 	 * 
 	 * @param window
-	 *            the window
+	 *            DateRange window of start and end times to search through
 	 * @param duration
-	 *            the duration
+	 *            int duration of the meeting, in minutes
 	 * @param names
-	 *            the names
+	 *            String a single name to search for
 	 * @param firstFit
-	 *            the first fit
-	 * @return the collection
+	 *            boolean if only the first fit should be returned
+	 * @return Collection<DateRange> of start/end instances for which the required person is free. Null if there are no matches
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public Collection<DateRange> freeTimeSearch(final org.openntf.domino.DateRange window, final int duration, final String names,
 			final boolean firstFit);
@@ -149,36 +196,173 @@ public interface Session {
 	 */
 	public DateTime createDateTime(Calendar date);
 
+	/**
+	 * Tells whether a specific Khan-mode fix is enabled, using {@link Fixes}
+	 * 
+	 * @param fix
+	 *            Fixes enum entry to test
+	 * @return boolean, whether the fix is enabled or not
+	 * @since org.openntf.domino 3.0.0
+	 */
 	public boolean isFixEnabled(Fixes fix);
 
+	/**
+	 * Enables / disables a specific Khan-mode fix for the current Session object.
+	 * 
+	 * <p>
+	 * NOTE: The fix will only be enabled / disabled until the Session object is recycled. In the case of XPages, this is at the end of the
+	 * current request lifecycle.
+	 * </p>
+	 * 
+	 * @param fix
+	 *            Fixes enum entry to enable / disable
+	 * @param value
+	 *            boolean to enable or diable
+	 */
 	public void setFixEnable(Fixes fix, boolean value);
 
+	/**
+	 * Converts a String name to common name format. Deprecated in favour of
+	 * {@link org.openntf.domino.utils.DominoUtils#toCommonName(String)}. That method is more performant and avoids creating a Name object.
+	 * 
+	 * @param name
+	 *            String hierarchical name to convert
+	 * @return String name converted to common name format
+	 * @since org.openntf.domino 4.5.0
+	 */
 	@Deprecated
 	public String toCommonName(String name);
 
+	/**
+	 * Easter egg method to print a boogie image onto the server console :-)
+	 * 
+	 * @since org.openntf.domino 4.5.0
+	 */
 	public void boogie();
 
+	/**
+	 * Whether the session is feature-restricted. Not currently implemented, but designed to allow us, in the future, to set up sandbox
+	 * Sessions. Now go salivate!
+	 * 
+	 * @return boolean
+	 * @since org.openntf.domino 5.0.0
+	 */
 	public boolean isFeatureRestricted();
 
+	/**
+	 * Evaluates @Unique and returns the result as a String
+	 * 
+	 * @return String unique reference
+	 * @since org.openntf.domino 4.5.0
+	 */
 	public String getUnique();
 
+	/**
+	 * Gets a Database object by its replica ID (e.g. 85255FA900747B84)
+	 * 
+	 * @param server
+	 *            String server name
+	 * @param replicaid
+	 *            String replica ID
+	 * @return Database or null
+	 * @since org.openntf.domino 4.5.0
+	 */
 	public org.openntf.domino.Database getDatabaseByReplicaID(String server, String replicaid);
 
+	/**
+	 * Gets a database with failover to another server, if it cannot be opened
+	 * 
+	 * @param server
+	 *            String server name to try first
+	 * @param dbfile
+	 *            String database file path
+	 * @return Database
+	 * @since org.openntf.domino 4.5.0
+	 */
 	public org.openntf.domino.Database getDatabaseWithFailover(String server, String dbfile);
 
+	/**
+	 * Gets a database, if it has been modified since a specific DateTime
+	 * 
+	 * @param server
+	 *            String server name
+	 * @param dbfile
+	 *            String database file path
+	 * @param modifiedsince
+	 *            DateTime to check against
+	 * @return Database or null
+	 * @since org.openntf.domino 4.5.0
+	 */
 	public org.openntf.domino.Database getDatabaseIfModified(String server, String dbfile, lotus.domino.DateTime modifiedsince);
 
+	/**
+	 * Gets a database, if it has been modified since a specific Java Date
+	 * 
+	 * @param server
+	 *            String server name
+	 * @param dbfile
+	 *            String database file path
+	 * @param modifiedsince
+	 *            DateTime to check against
+	 * @return Database or null
+	 * @since org.openntf.domino 4.5.0
+	 */
 	public org.openntf.domino.Database getDatabaseIfModified(String server, String dbfile, Date modifiedsince);
 
+	/**
+	 * Gets the current user's mail database, if the user uses Notes Mail
+	 * 
+	 * @return Database or null
+	 * @since org.openntf.domino 4.5.0
+	 */
 	public org.openntf.domino.Database getMailDatabase();
 
+	/**
+	 * Gets a database by its {@link org.openntf.domino.Database#getApiPath()} property (serverName!!filePath)
+	 * 
+	 * @param apiPath
+	 *            String Api Path
+	 * @return Database or null
+	 * @since org.openntf.domino 5.0.0
+	 */
 	public org.openntf.domino.Database getDatabase(String apiPath);
 
+	/**
+	 * Gets a document by its {@link org.openntf.domino.Document#getMetaversalID()} property
+	 * 
+	 * @param metaversalID
+	 *            String comprising replicaid + UNID
+	 * @return Document
+	 * @since org.openntf.domino 5.0.0
+	 */
 	public org.openntf.domino.Document getDocumentByMetaversalID(String metaversalID);
 
+	/**
+	 * Gets a document by its {@link org.openntf.domino.Document#getMetaversalID(String)} property
+	 * 
+	 * @param metaversalID
+	 *            String comprising replicaid + UNID
+	 * @param serverName
+	 *            String server name
+	 * @return Document
+	 * @since org.openntf.domino 5.0.0
+	 */
 	public org.openntf.domino.Document getDocumentByMetaversalID(String metaversalID, String serverName);
 
+	/**
+	 * Checks the Session's mechanism for converting mime, using {@link org.openntf.domino.AutoMime}
+	 * 
+	 * @return AutoMime option
+	 * @since org.openntf.domino 5.0.0
+	 */
 	public AutoMime getAutoMime();
 
+	/**
+	 * Sets the Session's mechanism for converting mime, using {@link org.openntf.domino.AutoMime}
+	 * 
+	 * @param autoMime
+	 *            AutoMime option
+	 * @since org.openntf.domino 5.0.0
+	 */
 	public void setAutoMime(AutoMime autoMime);
 }

@@ -400,13 +400,6 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	@Legacy(Legacy.INTERFACES_WARNING)
 	public Vector<String> getAliases();
 
-	/**
-	 * Gets the all documents.
-	 * 
-	 * @return the all documents
-	 */
-	public DocumentCollection getAllDocuments();
-
 	/*
 	 * (non-Javadoc)
 	 * 
