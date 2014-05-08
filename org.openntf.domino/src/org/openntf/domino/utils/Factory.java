@@ -50,7 +50,7 @@ import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
-import org.openntf.domino.graph.DominoGraph;
+import org.openntf.domino.graph.GenericDominoGraph;
 import org.openntf.domino.logging.ConsoleFormatter;
 import org.openntf.domino.logging.DefaultConsoleHandler;
 import org.openntf.domino.logging.DefaultFileHandler;
@@ -693,7 +693,7 @@ public enum Factory {
 	}
 
 	public static void clearDominoGraph() {
-		DominoGraph.clearDocumentCache();
+		GenericDominoGraph.clearDocumentCache();
 	}
 
 	public static void clearBubbleExceptions() {

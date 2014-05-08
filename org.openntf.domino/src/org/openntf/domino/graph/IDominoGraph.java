@@ -3,6 +3,9 @@ package org.openntf.domino.graph;
 import java.util.Map;
 import java.util.Set;
 
+import org.openntf.domino.Document;
+
+import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.MetaGraph;
 import com.tinkerpop.blueprints.TransactionalGraph;
@@ -63,5 +66,9 @@ public interface IDominoGraph extends Graph, MetaGraph, TransactionalGraph {
 	public void addHelper(final String key, final IEdgeHelper helper);
 
 	public void removeHelper(final String key);
+
+	public void startTransaction(final Element elem);
+
+	Document getDocument(final Object id, final boolean createOnFail);
 
 }

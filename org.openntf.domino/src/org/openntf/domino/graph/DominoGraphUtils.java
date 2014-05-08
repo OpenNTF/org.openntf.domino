@@ -17,7 +17,7 @@ public enum DominoGraphUtils {
 	}
 
 	public static SortedSet<? extends Element> sortElements(final Iterable<? extends Element> elements, final String[] sortproperties) {
-		Comparator<Element> comp = new ElementComparator(sortproperties);
+		Comparator<Element> comp = new GenericElementComparator(sortproperties);
 		SortedSet<Element> result = new TreeSet<Element>(comp);
 		for (Object e : elements) {
 			if (e instanceof Element) {
@@ -29,7 +29,7 @@ public enum DominoGraphUtils {
 
 	public static SortedSet<? extends Element> sortElements(final Iterable<? extends Element> elements,
 			final IDominoProperties[] sortproperties) {
-		Comparator<Element> comp = new ElementComparator(sortproperties);
+		Comparator<Element> comp = new GenericElementComparator(sortproperties);
 		SortedSet<Element> result = new TreeSet<Element>(comp);
 		for (Object e : elements) {
 			if (e instanceof Element) {

@@ -22,7 +22,7 @@ public class DominoEdge extends DominoElement implements IDominoEdge, Serializab
 	private String outKey_;
 	private String label_;
 
-	public DominoEdge(final DominoGraph parent, final org.openntf.domino.Document doc) {
+	public DominoEdge(final GenericDominoGraph parent, final org.openntf.domino.Document doc) {
 		super(parent, doc);
 	}
 

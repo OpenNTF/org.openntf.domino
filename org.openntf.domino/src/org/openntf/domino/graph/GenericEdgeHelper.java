@@ -20,8 +20,8 @@ import com.tinkerpop.blueprints.Vertex;
  * @author nfreeman
  * 
  */
-public class AbstractEdgeHelper implements IEdgeHelper {
-	private static final Logger log_ = Logger.getLogger(AbstractEdgeHelper.class.getName());
+public class GenericEdgeHelper implements IEdgeHelper {
+	private static final Logger log_ = Logger.getLogger(GenericEdgeHelper.class.getName());
 
 	public static class EdgeHelperException extends RuntimeException {
 		private static final long serialVersionUID = 1L;
@@ -36,9 +36,9 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 	private final Class<? extends Vertex> outType_;
 	private final boolean sameTypes_;
 	private final boolean unique_;
-	private final DominoGraph parent_;
+	private final GenericDominoGraph parent_;
 
-	public AbstractEdgeHelper(final DominoGraph parent, final String label, final Class<? extends Vertex> inType,
+	public GenericEdgeHelper(final GenericDominoGraph parent, final String label, final Class<? extends Vertex> inType,
 			final Class<? extends Vertex> outType, final boolean unique) {
 		label_ = label;
 		inType_ = inType;
@@ -162,7 +162,7 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 			Set<? extends Edge> rawSet = getEdges(vertex);
 			//			System.out.println("Requested sorting of " + rawSet.size() + " raw edges");
 
-			SortedSet<? extends Edge> sortedSet = DominoGraph.sortEdges(rawSet, sortproperties);
+			SortedSet<? extends Edge> sortedSet = GenericDominoGraph.sortEdges(rawSet, sortproperties);
 			//			System.out.println("Returning sorted edge set of " + sortedSet.size());
 			SortedSet<? extends Edge> result = sortedSet;
 			return result;
@@ -209,7 +209,7 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 	public Set<? extends Vertex> getSortedOtherVertexes(final Vertex vertex, final String... sortproperties) {
 		try {
 			Set<? extends Vertex> rawSet = getOtherVertexes(vertex);
-			return Collections.unmodifiableSortedSet(DominoGraph.sortVertexes(rawSet, sortproperties));
+			return Collections.unmodifiableSortedSet(GenericDominoGraph.sortVertexes(rawSet, sortproperties));
 		} catch (Throwable t) {
 			throw new RuntimeException(t);
 		}

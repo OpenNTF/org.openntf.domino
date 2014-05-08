@@ -2,7 +2,7 @@ package org.openntf.domino.tests.ntf;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Session;
-import org.openntf.domino.graph.DominoGraph;
+import org.openntf.domino.graph.GenericDominoGraph;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -28,7 +28,7 @@ public enum DominoGraphTest {
 			long start = System.nanoTime();
 			Session s = Factory.getSessionFullAccess();
 			Database db = s.getDatabase(server, dbPath);
-			DominoGraph graph = new DominoGraph(db);
+			GenericDominoGraph graph = new GenericDominoGraph(db);
 			for (int i = 1; i <= 10000; i++) {
 				Vertex v1 = graph.addVertex(null);
 				v1.setProperty("Test1", i);

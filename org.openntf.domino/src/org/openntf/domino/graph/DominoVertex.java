@@ -56,7 +56,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	private transient Map<String, Set<Edge>> inEdgeCache_;
 	private transient Map<String, Set<Edge>> outEdgeCache_;
 
-	public DominoVertex(final DominoGraph parent, final org.openntf.domino.Document doc) {
+	public DominoVertex(final GenericDominoGraph parent, final org.openntf.domino.Document doc) {
 		super(parent, doc);
 	}
 
