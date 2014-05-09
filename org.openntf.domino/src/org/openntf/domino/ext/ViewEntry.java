@@ -65,6 +65,11 @@ public interface ViewEntry {
 	/**
 	 * Gets the position of the entry with each level of the hierarchy separated by a '.'
 	 * 
+	 * <p>
+	 * The position is relative to all entries and does not respect Readers fields (so if a non-categorized view contains 140 entries and
+	 * you only have access to see 100, getPosition() on the last entry will return "140")
+	 * <p/>
+	 * 
 	 * @return String position e.g. 3.4.2.7
 	 * @since org.openntf.domino 5.0.0
 	 */
