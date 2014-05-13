@@ -1806,7 +1806,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public boolean isNewNote() {
-		return Integer.valueOf(noteid_, 16) == 0;
+		return Long.valueOf(noteid_, 16) == 0;
 	}
 
 	/*
