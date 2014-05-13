@@ -23,7 +23,7 @@ public class OpenntfFacesContextFactory extends FacesContextFactory implements c
 	private final FacesContextFactory _delegate;
 
 	/**
-	 * 
+	 * Constructor
 	 */
 	public OpenntfFacesContextFactory() {
 		// System.out.println("Creating new OpenntfFacesContextFactory");
@@ -44,6 +44,12 @@ public class OpenntfFacesContextFactory extends FacesContextFactory implements c
 		}
 	}
 
+	/**
+	 * Overloaded constructor
+	 * 
+	 * @param delegate
+	 *            FacesContextFactory, delegate of OpenntfFacesContextFactory
+	 */
 	public OpenntfFacesContextFactory(final FacesContextFactory delegate) {
 		// System.out.println("Creating new OpenntfFacesContextFactory from delegate");
 
@@ -81,6 +87,11 @@ public class OpenntfFacesContextFactory extends FacesContextFactory implements c
 		return ctx;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ibm.xsp.event.FacesContextListener#beforeContextReleased(javax.faces.context.FacesContext)
+	 */
 	@Override
 	public void beforeContextReleased(final FacesContext paramFacesContext) {
 		try {
@@ -91,6 +102,11 @@ public class OpenntfFacesContextFactory extends FacesContextFactory implements c
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ibm.xsp.event.FacesContextListener#beforeRenderingPhase(javax.faces.context.FacesContext)
+	 */
 	@Override
 	public void beforeRenderingPhase(final FacesContext paramFacesContext) {
 		// TODO NOOP

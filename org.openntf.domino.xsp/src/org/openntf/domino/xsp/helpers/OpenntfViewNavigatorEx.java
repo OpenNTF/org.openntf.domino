@@ -25,13 +25,18 @@ import com.ibm.xsp.model.domino.viewnavigator.PathPosition;
 /**
  * @author Nathan T. Freeman
  * 
+ *         OpenntfViewNavigatorEx class to cope with JNI method
  */
 public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 	private static final long serialVersionUID = -5568170248903953533L;
 	private static final Logger log_ = Logger.getLogger(OpenntfViewNavigatorEx.class.getName());
 
 	/**
+	 * Constructor
+	 * 
 	 * @param paramViewNavigatorFactory
+	 *            ViewNavigatorFactory instance
+	 * @since org.openntf.domino.xsp 4.5.0
 	 */
 	public OpenntfViewNavigatorEx(final ViewNavigatorFactory paramViewNavigatorFactory) {
 		super(paramViewNavigatorFactory);
@@ -138,18 +143,45 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 		return new Entry(paramViewEntry, paramString, paramPathPosition, this.offsetColumnIndent);
 	}
 
+	/**
+	 * Entry class
+	 */
 	public static class Entry extends NOIViewNavigatorEx9.Entry {
 		private static final long serialVersionUID = 1L;
 
+		/**
+		 * Constructor
+		 */
 		public Entry() {
 
 		}
 
+		/**
+		 * Extended constructor
+		 * 
+		 * @param paramViewEntry
+		 *            ViewEntry
+		 * @param paramString
+		 *            String
+		 * @param paramPathPosition
+		 *            PathPosition
+		 * @param paramInt
+		 *            int
+		 * @throws NotesException
+		 */
 		public Entry(final ViewEntry paramViewEntry, final String paramString, final PathPosition paramPathPosition, final int paramInt)
 				throws NotesException {
 			super(paramViewEntry, paramString, paramPathPosition, paramInt);
 		}
 
+		/**
+		 * Output column values as a JSON object
+		 * 
+		 * @param entry
+		 *            Entry to output values for
+		 * @return String
+		 * @since org.openntf.domino.xsp 4.5.0
+		 */
 		private static String getColumnValuesDump(final Entry entry) {
 			Vector v = entry._columnValuesEx;
 			StringBuilder sb = new StringBuilder();
@@ -169,6 +201,11 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 			return sb.toString();
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see com.ibm.xsp.model.domino.wrapped.DominoViewEntry#getColumnValuesEx()
+		 */
 		@Override
 		public Vector getColumnValuesEx() throws NotesException {
 			if (this._columnValuesEx != null) {

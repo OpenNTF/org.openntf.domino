@@ -19,7 +19,9 @@ import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.SessionDescendant;
 
 /**
- * The Interface International.
+ * The Interface International.<br/>
+ * Represents the international settings in the operating environment, for example, the Regional Settings in the Windows Control Panel. When
+ * settings change in the operating environment, Notes® recognizes the new settings immediately.
  */
 public interface International extends Base<lotus.domino.International>, lotus.domino.International, org.openntf.domino.ext.International,
 		SessionDescendant {

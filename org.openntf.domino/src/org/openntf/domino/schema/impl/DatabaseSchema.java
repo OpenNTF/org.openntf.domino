@@ -9,7 +9,7 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
@@ -34,8 +34,8 @@ public class DatabaseSchema implements IDatabaseSchema, Externalizable {
 		SUMMARY, READERS, AUTHORS, PROTECTED, SIGNED, ENCRYPTED
 	}
 
-	private final Map<String, DocumentDefinition> documentDefinitions_ = new HashMap<String, DocumentDefinition>();
-	private final Map<String, ItemDefinition> itemDefinitions_ = new HashMap<String, ItemDefinition>();
+	private final Map<String, DocumentDefinition> documentDefinitions_ = new ConcurrentHashMap<String, DocumentDefinition>();
+	private final Map<String, ItemDefinition> itemDefinitions_ = new ConcurrentHashMap<String, ItemDefinition>();
 	private transient Map<Class<? extends IDominoType>, IDominoType> typeDefinitions_;
 
 	/**
@@ -99,8 +99,9 @@ public class DatabaseSchema implements IDatabaseSchema, Externalizable {
 		Document result = db.createDocument();
 		result.replaceItemValue("$$SchemaType", doctype);
 		result.replaceItemValue("form", def.getName());
-		Set<IItemDefinition> itemDefs = def.getItemDefinitions();
-		for (IItemDefinition itemDef : itemDefs) {
+		Map<String, IItemDefinition> itemDefs = def.getItemDefinitions();
+		for (String key : itemDefs.keySet()) {
+			IItemDefinition itemDef = itemDefs.get(key);
 			Item item = itemDef.createDefaultItem(result, def);
 		}
 
@@ -114,8 +115,9 @@ public class DatabaseSchema implements IDatabaseSchema, Externalizable {
 			return true;
 
 		boolean result = true;
-		Set<IItemDefinition> itemDefs = def.getItemDefinitions();
-		for (IItemDefinition itemDef : itemDefs) {
+		Map<String, IItemDefinition> itemDefs = def.getItemDefinitions();
+		for (String key : itemDefs.keySet()) {
+			IItemDefinition itemDef = itemDefs.get(key);
 			// TODO NTF
 		}
 
@@ -162,6 +164,11 @@ public class DatabaseSchema implements IDatabaseSchema, Externalizable {
 			out.writeUTF(entry.getKey());
 			out.writeObject(entry.getValue());
 		}
+	}
+
+	public IItemDefinition createItemDefinition(final String itemKey, final Class<?> type) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

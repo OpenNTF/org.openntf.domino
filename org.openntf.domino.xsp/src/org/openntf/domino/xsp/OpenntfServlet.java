@@ -21,12 +21,20 @@ import org.openntf.domino.xsp.helpers.NSA;
 public class OpenntfServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Constructor
+	 */
 	public OpenntfServlet() {
 		super();
 		System.out.println("Creating new OpenntfServlet object!");
 		// IndexDatabase index = new IndexDatabase();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#service(javax.servlet.ServletRequest, javax.servlet.ServletResponse)
+	 */
 	@Override
 	public void service(final ServletRequest servletRequest, final ServletResponse servletResponse) throws ServletException, IOException {
 		super.service(servletRequest, servletResponse);

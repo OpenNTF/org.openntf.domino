@@ -23,7 +23,7 @@ public interface Base {
 	 * @param listener
 	 *            a class implementing IDominoListener and running code for an EnumEvent in the eventHappened method
 	 * 
-	 * @since openntf.domino 3.0.0
+	 * @since org.openntf.domino 3.0.0
 	 */
 	public void addListener(IDominoListener listener);
 
@@ -33,7 +33,7 @@ public interface Base {
 	 * @param listener
 	 *            a class implementing IDominoListener listening for an EnumEvent
 	 * 
-	 * @since openntf.domino 3.0.0
+	 * @since org.openntf.domino 3.0.0
 	 */
 	public void removeListener(IDominoListener listener);
 
@@ -42,7 +42,7 @@ public interface Base {
 	 * 
 	 * @return List<IDominoListener> a list of classes implementing IDominoListener
 	 * 
-	 * @since openntf.domino 3.0.0
+	 * @since org.openntf.domino 3.0.0
 	 */
 	public List<IDominoListener> getListeners();
 
@@ -54,7 +54,7 @@ public interface Base {
 	 *            EnumEvent to check for in each class implementing IDominoListener, calling their getEventTypes method
 	 * @return List<IDominoListener> a list of class implementing IDominoListener that listen for the specific EnumEvent
 	 * 
-	 * @since openntf.domino 3.0.0
+	 * @since org.openntf.domino 3.0.0
 	 */
 	public List<IDominoListener> getListeners(EnumEvent event);
 
@@ -65,7 +65,7 @@ public interface Base {
 	 *            IDominoEvent containing an EnumEvent, source, target and payload
 	 * @return boolean success or failure of running the associated event code
 	 * 
-	 * @since openntf.domino 3.0.0
+	 * @since org.openntf.domino 3.0.0
 	 */
 	public boolean fireListener(IDominoEvent event);
 

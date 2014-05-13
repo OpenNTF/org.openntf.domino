@@ -85,6 +85,11 @@ import com.ibm.commons.util.io.json.util.JsonWriter;
 public class Document extends Base<org.openntf.domino.Document, lotus.domino.Document, Database> implements org.openntf.domino.Document {
 	private static final Logger log_ = Logger.getLogger(Document.class.getName());
 
+	/**
+	 * Enum to allow easy access to deletion types
+	 * 
+	 * @since org.openntf.domino 2.5
+	 */
 	public static enum RemoveType {
 		SOFT_FALSE, SOFT_TRUE, HARD_FALSE, HARD_TRUE;
 	}
@@ -403,6 +408,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		Item result = null;
 		if (unique && hasItem(name)) {
 			// TODO RPr This function is not yet 100% mime compatible
+			// Once mime compatible, remove the reference in org.openntf.domino.ext.Document Javadoc
 			result = getFirstItem(name);
 			if (result.containsValue(value)) { // this does not work when it is not dominoFriendly
 				return result;
@@ -521,8 +527,14 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				if (currEntity != null)
 					((org.openntf.domino.impl.MIMEEntity) currEntity).closeMIMEEntity();
 			}
-
-			boolean ret = getDelegate().closeMIMEEntities(saveChanges, entityItemName);
+			boolean ret = false;
+			try {
+				ret = getDelegate().closeMIMEEntities(saveChanges, entityItemName);
+			} catch (Exception e) {
+				log_.log(Level.INFO, "Attempted to close a MIMEEntity called " + entityItemName
+						+ " even though we can't find an item by that name.");
+				//				DominoUtils.handleException(e);
+			}
 			if (saveChanges) {
 
 				// This item is for debugging only, so keep 5-10 items in that list
@@ -539,7 +551,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			}
 
 			return ret;
-		} catch (NotesException e) {
+		} catch (Exception e) {
 			DominoUtils.handleException(e);
 		}
 		return false;
@@ -552,6 +564,15 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public boolean computeWithForm(final boolean doDataTypes, final boolean raiseError) {
+		if (true) {
+			System.out.println("Bypassing computeWithForm on document");
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			return true;
+		}
 		checkMimeOpen();
 		markDirty();
 		try {
@@ -692,8 +713,16 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					openMIMEEntities.put(itemName.toLowerCase(), wrapped);
 				return wrapped;
 			} catch (NotesException alreadyThere) {
+				Item chk = getFirstItem(itemName);
+				if (chk != null) {
+					log_.log(Level.WARNING,
+							"Already found an item for " + itemName + " that is type: " + (chk == null ? "null" : chk.getType()));
+					removeItem(itemName);
+				} else {
+					MIMEEntity me = getMIMEEntity(itemName);
+					return me;
+				}
 				closeMIMEEntities(false, itemName);
-				removeItem(itemName);
 				markDirty(itemName, true);
 				MIMEEntity wrapped = fromLotus(getDelegate().createMIMEEntity(itemName), MIMEEntity.SCHEMA, this);
 				if (wrapped != null)
@@ -2174,6 +2203,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public void removeItem(final String name) {
+		if (name == null)
+			return;	//TODO NTF There's nothing to do here. Maybe we should throw an exception?
 		checkMimeOpen();
 		markDirty(name, false);
 		try {
@@ -2192,7 +2223,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					getDelegate().removeItem(name);
 				}
 			} else {
-				getDelegate().removeItem(name);
+				if (getDelegate().hasItem(name))
+					getDelegate().removeItem(name);
 			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -2837,6 +2869,11 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public boolean save(final boolean force, final boolean makeResponse, final boolean markRead) {
+
+		//			System.out.println("Starting save operation on " + this.getMetaversalID() + ". isNew: " + String.valueOf(isNewNote()));
+		//			Throwable t = new Throwable();
+		//			t.printStackTrace();
+
 		checkMimeOpen();
 		// System.out.println("Starting save operation...");
 		boolean result = false;

@@ -542,4 +542,10 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		//TODO - NTF not particularly happy with this. Should it be a List instead? Or should we rely on the caller to decide?
 		return Collections.unmodifiableCollection(getColumnValuesMap().values());
 	}
+
+	public String getPosition() {
+		char dot = '.';
+		String pos = this.getPosition(dot); // e.g. 2.1
+		return pos;
+	}
 }

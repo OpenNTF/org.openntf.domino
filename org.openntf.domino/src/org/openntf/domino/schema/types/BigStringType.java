@@ -15,11 +15,7 @@ public class BigStringType extends AbstractDominoType {
 	private static final Logger log_ = Logger.getLogger(BigStringType.class.getName());
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
-	public BigStringType() {
-		// TODO Auto-generated constructor stub
+	BigStringType() {
 	}
 
 	/*

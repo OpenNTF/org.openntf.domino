@@ -427,15 +427,6 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	public void setInternetLevel(final int level);
 
 	/**
-	 * Sets the maximum Internet access level for this database.
-	 * 
-	 * @param level
-	 *            The new maximum Internet level you want to set in the ACL, of type ACL.Level.
-	 * @since openntf.domino 1.0.0
-	 */
-	public void setInternetLevel(final Level level);
-
-	/**
 	 * Sets whether a consistent access control list is enforced across all replicas of a database.
 	 * 
 	 * <p>

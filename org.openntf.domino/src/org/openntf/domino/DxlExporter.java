@@ -46,7 +46,9 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	public static final Schema SCHEMA = new Schema();
 
 	/**
-	 * The Enum RichTextOption.
+	 * Enum to allow easy access to Rich Text options.
+	 * 
+	 * @since org.openntf.domino 4.5.0
 	 */
 	public static enum RichTextOption {
 		DXL(DxlExporter.DXLRICHTEXTOPTION_DXL), RAW(DxlExporter.DXLRICHTEXTOPTION_RAW);
@@ -84,7 +86,9 @@ public interface DxlExporter extends Base<lotus.domino.DxlExporter>, lotus.domin
 	}
 
 	/**
-	 * The Enum MIMEOption.
+	 * Enum to allow easy access to MIME options
+	 * 
+	 * @since org.openntf.domino 4.5.0
 	 */
 	public static enum MIMEOption {
 		DXL(DxlExporter.DXLMIMEOPTION_DXL), RAW(DxlExporter.DXLMIMEOPTION_RAW);
