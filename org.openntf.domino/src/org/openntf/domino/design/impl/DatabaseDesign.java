@@ -16,6 +16,8 @@
 
 package org.openntf.domino.design.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.SortedSet;
@@ -24,10 +26,13 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.DxlImporter;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.NoteCollection.SelectOption;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
+
+import com.ibm.commons.util.io.StreamUtil;
 
 /**
  * @author jgallagher
@@ -40,15 +45,15 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	/*
 	 * Some handy constant Note IDs for getting specific elements. h/t http://www.nsftools.com/tips/NotesTips.htm#defaultelements
 	 */
-	private static final String ABOUT_NOTE = "FFFF0002";
-	private static final String DEFAULT_FORM = "FFFF0004";
-	private static final String DEFAULT_VIEW = "FFFF0008";
-	private static final String ICON_NOTE = "FFFF0010";
+	protected static final String ABOUT_NOTE = "FFFF0002";
+	protected static final String DEFAULT_FORM = "FFFF0004";
+	protected static final String DEFAULT_VIEW = "FFFF0008";
+	protected static final String ICON_NOTE = "FFFF0010";
 	@SuppressWarnings("unused")
-	private static final String DESIGN_COLLECTION = "FFFF0020";
-	private static final String ACL_NOTE = "FFFF0040";
-	private static final String USING_NOTE = "FFFF0100";
-	private static final String REPLICATION_FORMULA = "FFFF0800";
+	protected static final String DESIGN_COLLECTION = "FFFF0020";
+	protected static final String ACL_NOTE = "FFFF0040";
+	protected static final String USING_NOTE = "FFFF0100";
+	protected static final String REPLICATION_FORMULA = "FFFF0800";
 
 	private final Database database_;
 
@@ -77,10 +82,24 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	}
 
 	@Override
-	public AboutDocument getAboutDocument() {
+	public AboutDocument getAboutDocument(final boolean create) {
 		Document doc = database_.getDocumentByID(ABOUT_NOTE);
 		if (doc != null) {
 			return new AboutDocument(doc);
+		} else if (create) {
+			try {
+				InputStream is = AboutDocument.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_helpaboutdocument.xml");
+				String dxl = StreamUtil.readString(is);
+				is.close();
+				DxlImporter importer = getAncestorSession().createDxlImporter();
+				importer.setDesignImportOption(DxlImporter.DesignImportOption.REPLACE_ELSE_CREATE);
+				importer.setReplicaRequiredForReplaceOrUpdate(false);
+				importer.importDxl(dxl, database_);
+				doc = database_.getDocumentByID(ABOUT_NOTE);
+				return new AboutDocument(doc);
+			} catch (IOException e) {
+				DominoUtils.handleException(e);
+			}
 		}
 		return null;
 	}
@@ -361,10 +380,24 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	}
 
 	@Override
-	public UsingDocument getUsingDocument() {
+	public UsingDocument getUsingDocument(final boolean create) {
 		Document doc = database_.getDocumentByID(USING_NOTE);
 		if (doc != null) {
 			return new UsingDocument(doc);
+		} else if (create) {
+			try {
+				InputStream is = AboutDocument.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_helpusingdocument.xml");
+				String dxl = StreamUtil.readString(is);
+				is.close();
+				DxlImporter importer = getAncestorSession().createDxlImporter();
+				importer.setDesignImportOption(DxlImporter.DesignImportOption.REPLACE_ELSE_CREATE);
+				importer.setReplicaRequiredForReplaceOrUpdate(false);
+				importer.importDxl(dxl, database_);
+				doc = database_.getDocumentByID(USING_NOTE);
+				return new UsingDocument(doc);
+			} catch (IOException e) {
+				DominoUtils.handleException(e);
+			}
 		}
 		return null;
 	}
