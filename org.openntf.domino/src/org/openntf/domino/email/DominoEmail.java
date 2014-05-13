@@ -19,6 +19,7 @@ import org.openntf.domino.MIMEEntity;
 import org.openntf.domino.MIMEHeader;
 import org.openntf.domino.Session;
 import org.openntf.domino.Stream;
+import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.email.IEmailAttachment.Type;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -311,6 +312,7 @@ public class DominoEmail implements IEmail {
 	 * @see org.openntf.domino.email.IEmail#addDocAttachment(java.lang.String, java.lang.String, java.lang.Boolean)
 	 */
 	@Override
+	@Incomplete
 	public String addDocAttachment(final String unid, final String fileName, final boolean isInlineImage) {
 		// TODO Auto-generated method stub
 		return null;
@@ -320,6 +322,7 @@ public class DominoEmail implements IEmail {
 	 * @see org.openntf.domino.email.IEmail#addDocAttachment(java.lang.String, java.lang.String, java.lang.Boolean, java.lang.String)
 	 */
 	@Override
+	@Incomplete
 	public String addDocAttachment(final String unid, final String fileName, final boolean isInlineImage, final String contentId) {
 		// TODO Auto-generated method stub
 		return null;
