@@ -291,6 +291,24 @@ public class DocumentSyncHelper {
 	}
 
 	/**
+	 * Extended method to process, allowing the developer to define to only process source documents modified since a given Java date
+	 * 
+	 * @param sourceDb
+	 *            Database source documents are in
+	 * @param sinceDate
+	 *            Date since when documents should have been modified
+	 * @param formName
+	 *            String form name to restrict DocumentCollection to
+	 * @since org.openntf.domino 1.0.0
+	 */
+	public void processSince(final Database sourceDb, final Date sinceDate, final String formName) {
+		DateTime dt = sourceDb.getAncestorSession().createDateTime(sinceDate);
+		DocumentCollection sourceCollection = sourceDb.getModifiedDocuments(dt, ModifiedDocClass.DATA);
+		sourceCollection.FTSearch("[Form] = \"" + formName + "\"");
+		process(sourceCollection);
+	}
+
+	/**
 	 * Process a specific DocumentCollection.
 	 * 
 	 * WARNING: Does not currently check that all properties of the SyncHelper have been set up
