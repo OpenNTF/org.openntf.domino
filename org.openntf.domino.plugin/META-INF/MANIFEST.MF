@@ -41,8 +41,11 @@ Implementation-Title: OpenNTF Domino API
 Implementation-Version: 1.0.0_20140513132655
 Implementation-Vendor: OpenNTF
 Implementation-Vendor-URL: http://www.openntf.org
-Require-Bundle: com.ibm.commons,com.ibm.icu;bundle-version="3.8.1",com
- .ibm.xsp.domino,com.ibm.domino.napi
+Require-Bundle: com.ibm.commons,
+ com.ibm.icu;bundle-version="3.8.1",
+ com.ibm.xsp.domino,
+ com.ibm.domino.napi,
+ com.ibm.commons.xml
 Bundle-ClassPath: .,ext/jsr305.jar,ext/blueprints-core-2.4.0.jar,ext/g
  remlin-java-2.4.0.jar,ext/pipes-2.4.0.jar
 Built-By: jgallagher
