@@ -45,15 +45,19 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	/*
 	 * Some handy constant Note IDs for getting specific elements. h/t http://www.nsftools.com/tips/NotesTips.htm#defaultelements
 	 */
-	protected static final String ABOUT_NOTE = "FFFF0002";
-	protected static final String DEFAULT_FORM = "FFFF0004";
-	protected static final String DEFAULT_VIEW = "FFFF0008";
-	protected static final String ICON_NOTE = "FFFF0010";
+	private static final String ABOUT_NOTE = "FFFF0002";
+	private static final String DEFAULT_FORM = "FFFF0004";
+	private static final String DEFAULT_VIEW = "FFFF0008";
+	private static final String ICON_NOTE = "FFFF0010";
+
+	// Design collections are pretty impossible to work with using the Java API: the exported DXL is
+	// blank and the raw $Collection data isn't readable as an Item
 	@SuppressWarnings("unused")
-	protected static final String DESIGN_COLLECTION = "FFFF0020";
-	protected static final String ACL_NOTE = "FFFF0040";
-	protected static final String USING_NOTE = "FFFF0100";
-	protected static final String REPLICATION_FORMULA = "FFFF0800";
+	private static final String DESIGN_COLLECTION = "FFFF0020";
+
+	private static final String ACL_NOTE = "FFFF0040";
+	private static final String USING_NOTE = "FFFF0100";
+	private static final String REPLICATION_FORMULA = "FFFF0800";
 
 	private final Database database_;
 
