@@ -25,6 +25,8 @@ import org.openntf.domino.Document;
  * 
  */
 public class AboutDocument extends AbstractDesignBase implements org.openntf.domino.design.AboutDocument {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * @param document
 	 */

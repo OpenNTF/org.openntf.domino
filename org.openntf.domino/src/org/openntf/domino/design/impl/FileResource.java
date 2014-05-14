@@ -35,6 +35,7 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.xml.XMLNode;
 
 public class FileResource extends AbstractDesignNoteBase implements org.openntf.domino.design.FileResource {
+	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(FileResource.class.getName());
 
