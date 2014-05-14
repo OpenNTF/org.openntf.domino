@@ -1,6 +1,10 @@
 package org.openntf.domino.formula;
 
+import java.util.Map;
+
+import org.openntf.formula.Function;
 import org.openntf.formula.FunctionFactory;
+import org.openntf.formula.FunctionSet;
 import org.openntf.formula.ValueHolder;
 import org.openntf.formula.annotation.ParamCount;
 
@@ -13,9 +17,12 @@ import org.openntf.formula.annotation.ParamCount;
 public enum NotSupported {
 	;
 
-	public static class Factory extends FunctionFactory {
-		public Factory() {
-			super(NotSupported.class);
+	public static class Functions extends FunctionSet {
+		private static final Map<String, Function> functionSet = FunctionFactory.getFunctions(NotSupported.class);
+
+		@Override
+		public Map<String, Function> getFunctions() {
+			return functionSet;
 		}
 	}
 

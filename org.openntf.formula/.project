@@ -3,18 +3,9 @@
 	<name>org.openntf.formula</name>
 	<comment></comment>
 	<projects>
+		<project>com.ibm.icu</project>
 	</projects>
 	<buildSpec>
-		<buildCommand>
-			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
-			<triggers>full,incremental,</triggers>
-			<arguments>
-				<dictionary>
-					<key>LaunchConfigHandle</key>
-					<value>&lt;project&gt;/.externalToolBuilders/Manifest.launch</value>
-				</dictionary>
-			</arguments>
-		</buildCommand>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
 			<arguments>
@@ -35,17 +26,4 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.pde.PluginNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>icu4j</name>
-			<type>2</type>
-			<locationURI>PARENT-1-PROJECT_LOC/externalsources/icu4j</locationURI>
-		</link>
-	</linkedResources>
-	<variableList>
-		<variable>
-			<name>copy_PARENT</name>
-			<value>$%7BPARENT-2-PROJECT_LOC%7D/GitHub/org.openntf.domino</value>
-		</variable>
-	</variableList>
 </projectDescription>

@@ -19,11 +19,31 @@ Declan Lynch, Paul Withers
       Apache License, Version 2.0
    </license>
 
+   <requires>
+      <import plugin="org.openntf.formula" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="com.ibm.notes.java.api"/>
+   </requires>
+
+   <plugin
+         id="org.openntf.domino"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openntf.formula"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
    <plugin
          id="org.openntf.domino.plugin"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="org.openntf.domino.xsp"

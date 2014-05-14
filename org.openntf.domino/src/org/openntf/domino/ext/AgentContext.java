@@ -21,7 +21,7 @@ public interface AgentContext {
 	 * 
 	 * @return Session the agent is a child of
 	 * 
-	 * @since openntf.domino 1.0.0
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public Session getParentSession();
 
@@ -30,7 +30,7 @@ public interface AgentContext {
 	 * 
 	 * @return Map<String, List<String>> query string parameters
 	 * 
-	 * @since openntf.domino 4.0.0
+	 * @since org.openntf.domino 4.0.0
 	 */
 	public Map<String, List<String>> getQueryStringParameters();
 

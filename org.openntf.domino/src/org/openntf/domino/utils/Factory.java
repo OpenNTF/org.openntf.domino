@@ -627,7 +627,7 @@ public enum Factory {
 			try {
 				result = Factory.fromLotus(lotus.domino.NotesFactory.createSession(), Session.SCHEMA, null);
 				Factory.setNoRecycle(result, false);  // We have created the session, so we recycle it
-			} catch (lotus.domino.NotesException ne) {
+			} catch (Exception ne) {
 				try {
 					result = XSPUtil.getCurrentSession();
 				} catch (Throwable t) {

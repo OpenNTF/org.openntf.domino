@@ -2,6 +2,7 @@ package org.openntf.formula;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -39,7 +40,12 @@ public enum Formulas {
 		return getFormatter(null);
 	} /*----------------------------------------------------------------------------*/
 
-	public void reset() {
+	public static void initialize() {
+		parserCache.set(null);
+		functionFactoryCache.set(null);
+	}
+
+	public static void terminate() {
 		parserCache.set(null);
 		functionFactoryCache.set(null);
 	}
@@ -107,5 +113,13 @@ public enum Formulas {
 		}
 		instance.init(document, formatter, parser);
 		return instance;
+	}
+
+	public static List<Object> evaluate(final String formula, final Map<String, Object> map) throws FormulaParseException,
+			EvaluateException {
+		FormulaParser parser = Formulas.getParser();
+		ASTNode node = parser.parse(formula);
+		FormulaContext ctx = Formulas.createContext(map, parser);
+		return node.solve(ctx);
 	}
 }

@@ -17,10 +17,13 @@
 package org.openntf.formula.function;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openntf.formula.DateTime;
 import org.openntf.formula.FormulaContext;
-import org.openntf.formula.FunctionFactory;
+import org.openntf.formula.Function;
+import org.openntf.formula.FunctionSet;
 import org.openntf.formula.ValueHolder;
 import org.openntf.formula.impl.ParameterCollectionBoolean;
 import org.openntf.formula.impl.ParameterCollectionDouble;
@@ -52,14 +55,19 @@ public class OperatorsBool extends OperatorsAbstract {
 	/**
 	 * The Factory that returns a set of operators
 	 */
-	public static class Factory extends FunctionFactory {
+	public static class Functions extends FunctionSet {
+		private static final Map<String, Function> functionSet = new HashMap<String, Function>(16);
 
-		public Factory() {
-			super(OperatorsBool.class);
+		private static void add(final Function f) {
+			functionSet.put(f.getImage().toLowerCase(), f);
 		}
 
 		@Override
-		protected void init(final Class<?> cls) {
+		public Map<String, Function> getFunctions() {
+			return functionSet;
+		}
+
+		static {
 			// Define the computers
 			Computer or = new Computer("|") {
 

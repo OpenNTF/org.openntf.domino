@@ -6,7 +6,9 @@ import java.util.NoSuchElementException;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.formula.FormulaContext;
+import org.openntf.formula.Function;
 import org.openntf.formula.FunctionFactory;
+import org.openntf.formula.FunctionSet;
 import org.openntf.formula.ValueHolder;
 import org.openntf.formula.annotation.ParamCount;
 
@@ -14,9 +16,12 @@ public enum DominoFunctions {
 
 	;
 
-	public static class Factory extends FunctionFactory {
-		public Factory() {
-			super(DominoFunctions.class);
+	public static class Functions extends FunctionSet {
+		private static final Map<String, Function> functionSet = FunctionFactory.getFunctions(DominoFunctions.class);
+
+		@Override
+		public Map<String, Function> getFunctions() {
+			return functionSet;
 		}
 	}
 

@@ -1,5 +1,6 @@
 package org.openntf.formula.impl;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Locale;
 
@@ -8,7 +9,8 @@ import org.openntf.formula.Formulas;
 
 import com.ibm.icu.util.Calendar;
 
-public class DateTimeImpl implements DateTime {
+public class DateTimeImpl implements DateTime, Serializable {
+	private static final long serialVersionUID = -4270572924947814291L;
 	private Locale iLocale;
 	private Calendar iCal;
 	private boolean iNoDate = false;

@@ -173,6 +173,7 @@ public class FormulaContext {
 	 *            the fieldname to set
 	 * @param elem
 	 *            the element to set in the field
+	 * @throws EvaluateException
 	 */
 	public void setField(final String key, final ValueHolder elem) {
 		setVarLC(key.toLowerCase(), elem);
@@ -180,7 +181,13 @@ public class FormulaContext {
 			if (elem.dataType == DataType.UNAVAILABLE) {
 				dataMap.remove(key);
 			} else {
-				dataMap.put(key, elem);
+				try {
+					dataMap.put(key, elem.toList());
+				} catch (EvaluateException e) {
+					// TODO Don't know what is the best here
+					// dataMap.remove(key);
+					dataMap.put(key, "@ERROR: " + e.getMessage());
+				}
 			}
 		}
 	}

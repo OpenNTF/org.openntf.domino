@@ -9,12 +9,23 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Terminatable;
 import org.openntf.formula.EvaluateException;
 import org.openntf.formula.FormulaContext;
+import org.openntf.formula.Formulas;
 import org.openntf.formula.ValueHolder;
 
 public class FormulaContextNotes extends FormulaContext {
 	private static final Logger log_ = Logger.getLogger(FormulaContextNotes.class.getName());
+
+	static {
+		// this is not yet nice, but we assume that this context is always used in Domino/XPage environment
+		Factory.onTerminate(new Terminatable() {
+			public void terminate() {
+				Formulas.terminate();
+			}
+		});
+	}
 
 	/**
 	 * does a native evaluate. This is needed for all functions that are too complex to implement in java or the algorithm is unknown
@@ -28,21 +39,13 @@ public class FormulaContextNotes extends FormulaContext {
 	@SuppressWarnings("deprecation")
 	public ValueHolder evaluateNative(final String formula, final ValueHolder... params) {
 		Session session = Factory.getSession();
-		Document tmpDoc = null;
-		Database db = null;
 
-		lotus.domino.Document rawDocument = null;
-		if (dataMap instanceof Document) {
-			db = ((Document) dataMap).getAncestorDatabase();
-			rawDocument = Factory.toLotus((Document) dataMap);
-		} else {
-			db = session.getCurrentDatabase();
-		}
+		Database db = getDatabase();
 		if (db == null)
 			throw new UnsupportedOperationException("No database set: Can't evaluate Lotus native formula");
 
-		lotus.domino.Session rawSession = Factory.toLotus(session);
-
+		lotus.domino.Document rawDocument = Factory.toLotus(getDocument());
+		Document tmpDoc = null;
 		if (params.length > 0) {
 			tmpDoc = db.createDocument();
 			rawDocument = Factory.toLotus(tmpDoc);
@@ -54,9 +57,14 @@ public class FormulaContextNotes extends FormulaContext {
 					return params[i];
 				}
 			}
+		} else {
+			rawDocument = Factory.toLotus(getDocument());
 		}
+
 		try {
 			log_.warning("Evaluating native formula: '" + formula + "' This may affect performance");
+
+			lotus.domino.Session rawSession = Factory.toLotus(session);
 
 			Vector<?> v = rawSession.evaluate(formula, rawDocument);
 			Vector<Object> wrapped = Factory.wrapColumnValues(v, session);
@@ -83,11 +91,16 @@ public class FormulaContextNotes extends FormulaContext {
 	}
 
 	public Database getDatabase() {
-		return dataMap instanceof Document ? ((Document) dataMap).getAncestorDatabase() : Factory.getSession().getCurrentDatabase();
+		Document doc = getDocument();
+		if (doc == null) {
+			return Factory.getSession().getCurrentDatabase();
+		} else {
+			return doc.getAncestorDatabase();
+		}
 	}
 
 	public Document getDocument() {
-		return ((Document) dataMap);
+		return dataMap instanceof Document ? ((Document) dataMap) : null;
 	}
 
 }

@@ -180,15 +180,19 @@ public abstract class SimpleNode implements Node {
 	 */
 	@Override
 	public final List<Object> solve(final FormulaContext ctx) throws EvaluateException {
-		ValueHolder vh;
 		try {
-			vh = evaluate(ctx);
-		} catch (FormulaReturnException e) {
-			vh = e.getValue();
+			ValueHolder vh;
+			try {
+				vh = evaluate(ctx);
+			} catch (FormulaReturnException e) {
+				vh = e.getValue();
+			}
+			if (vh.dataType == DataType.ERROR)
+				throw vh.getError();
+			return vh.toList();
+		} catch (EvaluateException ev) {
+			throw ev;
 		}
-		if (vh.dataType == DataType.ERROR)
-			throw vh.getError();
-		return vh.toList();
 	}
 
 	// =================== formula inspection ===============================

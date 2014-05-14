@@ -5,16 +5,21 @@ import java.util.Vector;
 
 import org.openntf.domino.Document;
 import org.openntf.domino.utils.Strings;
+import org.openntf.formula.Function;
 import org.openntf.formula.FunctionFactory;
+import org.openntf.formula.FunctionSet;
 import org.openntf.formula.ValueHolder;
 import org.openntf.formula.annotation.ParamCount;
 
 public enum DocFunctions {
 	;
 
-	public static class Factory extends FunctionFactory {
-		public Factory() {
-			super(DocFunctions.class);
+	public static class Functions extends FunctionSet {
+		private static final Map<String, Function> functionSet = FunctionFactory.getFunctions(DocFunctions.class);
+
+		@Override
+		public Map<String, Function> getFunctions() {
+			return functionSet;
 		}
 	}
 
