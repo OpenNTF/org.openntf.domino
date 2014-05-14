@@ -22,7 +22,6 @@ import org.openntf.formula.DateTime;
 import org.openntf.formula.FormulaContext;
 import org.openntf.formula.FunctionFactory;
 import org.openntf.formula.ValueHolder;
-import org.openntf.formula.impl.IntegerOverflowException;
 import org.openntf.formula.impl.ParameterCollectionBoolean;
 import org.openntf.formula.impl.ParameterCollectionDouble;
 import org.openntf.formula.impl.ParameterCollectionInt;
@@ -46,7 +45,7 @@ public class OperatorsBool extends OperatorsAbstract {
 
 		public abstract boolean compute(boolean b1, boolean b2);
 
-		public abstract boolean compute(int v1, int v2) throws IntegerOverflowException;
+		public abstract boolean compute(int v1, int v2);
 
 	}
 
@@ -65,7 +64,7 @@ public class OperatorsBool extends OperatorsAbstract {
 			Computer or = new Computer("|") {
 
 				@Override
-				public boolean compute(final int v1, final int v2) throws IntegerOverflowException {
+				public boolean compute(final int v1, final int v2) {
 					return (v1 != 0) | (v2 != 0);
 				}
 
@@ -84,7 +83,7 @@ public class OperatorsBool extends OperatorsAbstract {
 			Computer and = new Computer("&") {
 
 				@Override
-				public boolean compute(final int v1, final int v2) throws IntegerOverflowException {
+				public boolean compute(final int v1, final int v2) {
 					return (v1 != 0) & (v2 != 0);
 				}
 
@@ -115,8 +114,7 @@ public class OperatorsBool extends OperatorsAbstract {
 	private OperatorsBool(final Computer computer, final String image) {
 		super(image);
 		this.computer = computer;
-		// Autodetect if the operation is permutative
-		this.isPermutative = (image.charAt(0) == '*' && image.length() > 1);
+		this.isPermutative = false;
 	}
 
 	// ----------- Strings
@@ -134,46 +132,31 @@ public class OperatorsBool extends OperatorsAbstract {
 	// ----------- Numbers
 	@Override
 	protected ValueHolder evaluateNumber(final FormulaContext ctx, final ValueHolder[] params) {
-
 		Collection<double[]> values = new ParameterCollectionDouble(params, isPermutative);
-		ValueHolder ret = ValueHolder.createValueHolder(double.class, values.size());
-
-		for (double[] value : values) {
-			ret.add(computer.compute(value[0], value[1]));
-		}
-
-		return ret;
+		for (double[] value : values)
+			if (computer.compute(value[0], value[1]))
+				return ctx.TRUE;
+		return ctx.FALSE;
 	}
 
 	@Override
 	protected ValueHolder evaluateNumber(final FormulaContext ctx, final double d1, final double d2) {
-		return ValueHolder.valueOf(computer.compute(d1, d2));
+		return computer.compute(d1, d2) ? ctx.TRUE : ctx.FALSE;
 	}
 
 	// ----------- Integers
 	@Override
 	protected ValueHolder evaluateInt(final FormulaContext ctx, final ValueHolder[] params) {
-
 		Collection<int[]> values = new ParameterCollectionInt(params, isPermutative);
-		ValueHolder ret = ValueHolder.createValueHolder(int.class, values.size());
-
-		for (int[] value : values) {
-			try {
-				ret.add(computer.compute(value[0], value[1]));
-			} catch (IntegerOverflowException e) {
-				ret.add(computer.compute((double) value[0], (double) value[1]));
-			}
-		}
-		return ret;
+		for (int[] value : values)
+			if (computer.compute(value[0], value[1]))
+				return ctx.TRUE;
+		return ctx.FALSE;
 	}
 
 	@Override
 	protected ValueHolder evaluateInt(final FormulaContext ctx, final int i1, final int i2) {
-		try {
-			return ValueHolder.valueOf(computer.compute(i1, i2));
-		} catch (IntegerOverflowException e) {
-			return ValueHolder.valueOf(computer.compute((double) i1, (double) i2));
-		}
+		return computer.compute(i1, i2) ? ctx.TRUE : ctx.FALSE;
 	}
 
 	// ----------- DateTimes
@@ -190,20 +173,16 @@ public class OperatorsBool extends OperatorsAbstract {
 	// ----------- Numbers
 	@Override
 	protected ValueHolder evaluateBoolean(final FormulaContext ctx, final ValueHolder[] params) {
-
 		Collection<boolean[]> values = new ParameterCollectionBoolean(params, isPermutative);
-		ValueHolder ret = ValueHolder.createValueHolder(boolean.class, values.size());
-
-		for (boolean[] value : values) {
-			ret.add(computer.compute(value[0], value[1]));
-		}
-
-		return ret;
+		for (boolean[] value : values)
+			if (computer.compute(value[0], value[1]))
+				return ctx.TRUE;
+		return ctx.FALSE;
 	}
 
 	@Override
 	protected ValueHolder evaluateBoolean(final FormulaContext ctx, final boolean b1, final boolean b2) {
-		return ValueHolder.valueOf(computer.compute(b1, b2));
+		return computer.compute(b1, b2) ? ctx.TRUE : ctx.FALSE;
 	}
 
 }

@@ -132,7 +132,6 @@ TOKEN :
 | 	< OParen : "(" >							: 	DEFAULT
 | 	< CParen : ")" >							: 	SUBSCRIPT // the next open [ means, that this is a subscript
 | 	< Assign : ":=" >							:	DEFAULT
-| 	< BoolNot : "!" >							: 	DEFAULT
 
 
 	// Keywords
@@ -202,7 +201,10 @@ TOKEN :
 | 	< CmpLTEP : "*<=" >						: DEFAULT
 | 	< CmpGTE : ">=" >						: DEFAULT
 | 	< CmpGTEP : "*>=" >						: DEFAULT
-	
+
+	// Precedence 6a - Not
+| 	< BoolNot : "!" >						: DEFAULT
+
 	// Precedence 7
 | 	< BoolAnd : "&" > : DEFAULT
 | 	< BoolOr : "|" > : DEFAULT
@@ -425,18 +427,34 @@ private void exVar() #UserDefinedFunctionVariable :
 }  
   
 /**
- * boolean ops has the lowest precedence,
+ * boolean operators have the lowest precedence,
  * ATTENTION: Formula language is the only language I know, where AND and OR has the same precedence!
  */
 private void opBool() :
 { }
 {
-  opCmp() (
+  opNot() (
     (
-    		< BoolAnd > opCmp() {jjtThis.init("&");	}
-    	| 	< BoolOr >  opCmp() {jjtThis.init("|");	}  	
+    		< BoolAnd > opNot() {jjtThis.init("&");	}
+    	| 	< BoolOr >  opNot() {jjtThis.init("|");	}  	
   	) #Operator(2)
   )*
+}
+
+/**
+ * "Not" needs special care, because expressions like !!!!!1=1 are allowed
+ */
+private void opNot() :
+{ }
+{
+	opHasNot()
+|	opCmp()
+}
+
+private void opHasNot() :
+{}
+{
+  	< BoolNot > opNot() {jjtThis.init(" !")	;} #Operator(1)
 }
 
 /**
@@ -506,8 +524,8 @@ private void opHasSign() :
 {
 // In N9, the + sign is completely ignored. If you want to be < N6 compatible, feel free to implement that  
 //	< OpPlus > valueList() {jjtThis.init(" +")	;} #Operator(1)
-	< OpPlus > valueList()
-| 	< OpMinus > valueList() {jjtThis.init(" -")	;} #Operator(1)
+	< OpPlus > opSign()
+| 	< OpMinus > opSign() {jjtThis.init(" -")	;} #Operator(1)
 }
 /**
  * one ore more values
@@ -543,10 +561,8 @@ private void unary() :
 //| 	< OpMinus > unary() {jjtThis.init(" -")	;} #Operator(1)
 //|
 
-< BoolNot > unary() {jjtThis.init(" !")		;} #Operator(1)
-
 // All control flow functions
-| < At_do > 		(< OParen >  statement() ( < EOS > statement() )*  < CParen >) #AtDo
+  < At_do > 		(< OParen >  statement() ( < EOS > statement() )*  < CParen >) #AtDo
 | < At_doWhile > 	(< OParen >  statement() ( < EOS > statement() )*  < CParen >) #AtDoWhile
 | < At_while > 		(< OParen >  statement() ( < EOS > statement() )*  < CParen >) #AtWhile
 
