@@ -33,6 +33,7 @@ import org.openntf.domino.utils.xml.XMLNode;
  * 
  */
 public class JavaResource extends FileResource implements org.openntf.domino.design.JavaResource {
+	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(JavaResource.class.getName());
 
