@@ -64,17 +64,6 @@ public class FunctionFactory {
 			}
 		} else {
 			// case if serviceLoader does not work (notesAgent)
-<<<<<<< HEAD
-			instance.addFactory(new org.openntf.formula.function.Operators.Factory());
-			instance.addFactory(new org.openntf.formula.function.OperatorsBool.Factory());
-			instance.addFactory(new org.openntf.formula.function.Negators.Factory());
-			instance.addFactory(new org.openntf.formula.function.Comparators.Factory());
-			instance.addFactory(new org.openntf.formula.function.Constants.Factory());
-			instance.addFactory(new org.openntf.formula.function.MathFunctions.Factory());
-			instance.addFactory(new org.openntf.formula.function.DateTimeFunctions.Factory());
-			instance.addFactory(new org.openntf.formula.function.TextFunctions.Factory());
-			instance.addFactory(new org.openntf.formula.function.FocFunctions.Factory());
-=======
 			System.out.println("FunctionSet Service not found. Using defaults");
 			loaderList.add(new org.openntf.formula.function.Operators.Functions());
 			loaderList.add(new org.openntf.formula.function.OperatorsBool.Functions());
@@ -84,7 +73,6 @@ public class FunctionFactory {
 			loaderList.add(new org.openntf.formula.function.MathFunctions.Functions());
 			loaderList.add(new org.openntf.formula.function.DateTimeFunctions.Functions());
 			loaderList.add(new org.openntf.formula.function.TextFunctions.Functions());
->>>>>>> origin/development
 		}
 
 		Collections.sort(loaderList, new Comparator<FunctionSet>() {
