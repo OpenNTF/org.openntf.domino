@@ -69,11 +69,11 @@ public enum FocFunctions {
 		if (params.length == 4)
 			refDate = formatter.getCopyOfSDTInstance(params[3].getDateTime(0));
 		else {
-			ValueHolder vhd = ctx.getParam("FOC_DATE_MAP_KEY");
-			if (vhd == ValueHolder.valueDefault() || vhd == ValueHolder.valueNothing())
-				refDate = formatter.getNewInitializedSDTInstance(new Date(), false, true);
+			Object o = ctx.getParam("@FocDate:Bezug");
+			if (o instanceof DateTime)
+				refDate = formatter.getCopyOfSDTInstance((DateTime) o);
 			else
-				refDate = formatter.getCopyOfSDTInstance(vhd.getDateTime(0));
+				refDate = formatter.getNewInitializedSDTInstance(new Date(), false, true);
 		}
 		if (yearIsAbs || monthIsAbs || dayIsAbs) {
 			Calendar cal = refDate.toJavaCal();
@@ -106,7 +106,7 @@ public enum FocFunctions {
 		ValueHolder whatVH = params[0];
 		String how = params[1].getString(0);
 		if (whatVH.dataType != DataType.DATETIME)
-			throw new UnsupportedOperationException("@FocFormat doesn't yet support formatting objects of "
+			throw new UnsupportedOperationException("@FocFormat doesn't yet support formatting objects of class "
 					+ whatVH.getObject(0).getClass());
 		if (how.equalsIgnoreCase("General Date") || how.equalsIgnoreCase("Long Date") || how.equalsIgnoreCase("Medium Date")
 				|| how.equalsIgnoreCase("Short Date") || how.equalsIgnoreCase("Long Time") || how.equalsIgnoreCase("Medium Time")
@@ -118,6 +118,72 @@ public enum FocFunctions {
 		for (int i = 0; i < whatVH.size; i++)
 			ret.add(ctx.getFormatter().formatDateTimeWithFormat(whatVH.getDateTime(i), how));
 		return ret;
+	}
+
+	/*----------------------------------------------------------------------------*/
+	/*
+	 * @FocResolve
+	 */
+	/*----------------------------------------------------------------------------*/
+	@ParamCount(1)
+	public static ValueHolder atFocResolve(final FormulaContext ctx, final ValueHolder[] params) {
+		return ValueHolder.valueOf(ctx.getParam(params[0].getString(0)));
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@ParamCount(1)
+	public static ValueHolder atP(final FormulaContext ctx, final ValueHolder[] params) {
+		return ValueHolder.valueOf(ctx.getParam(Integer.toString(params[0].getInt(0))));
+	}
+
+	/*----------------------------------------------------------------------------*/
+	@ParamCount(0)
+	public static ValueHolder atP1(final FormulaContext ctx) {
+		return p1To9(ctx, 1);
+	}
+
+	@ParamCount(0)
+	public static ValueHolder atP2(final FormulaContext ctx) {
+		return p1To9(ctx, 2);
+	}
+
+	@ParamCount(0)
+	public static ValueHolder atP3(final FormulaContext ctx) {
+		return p1To9(ctx, 3);
+	}
+
+	@ParamCount(0)
+	public static ValueHolder atP4(final FormulaContext ctx) {
+		return p1To9(ctx, 4);
+	}
+
+	@ParamCount(0)
+	public static ValueHolder atP5(final FormulaContext ctx) {
+		return p1To9(ctx, 5);
+	}
+
+	@ParamCount(0)
+	public static ValueHolder atP6(final FormulaContext ctx) {
+		return p1To9(ctx, 6);
+	}
+
+	@ParamCount(0)
+	public static ValueHolder atP7(final FormulaContext ctx) {
+		return p1To9(ctx, 7);
+	}
+
+	@ParamCount(0)
+	public static ValueHolder atP8(final FormulaContext ctx) {
+		return p1To9(ctx, 8);
+	}
+
+	@ParamCount(0)
+	public static ValueHolder atP9(final FormulaContext ctx) {
+		return p1To9(ctx, 9);
+	}
+
+	private static ValueHolder p1To9(final FormulaContext ctx, final int i) {
+		return atP(ctx, new ValueHolder[] { ValueHolder.valueOf(i) });
 	}
 	/*----------------------------------------------------------------------------*/
 }

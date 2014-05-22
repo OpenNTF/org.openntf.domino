@@ -773,7 +773,8 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 			try {
 				database = getDelegate().getDatabase(server, db, createOnFail);
 				result = fromLotus(database, Database.SCHEMA, this);
-				databases_.put(key, result);
+				if (result != null)
+					databases_.put(key, result);
 			} catch (NotesException e) {
 				String message = e.text;
 				if (message.contains("cannot open database")) {
@@ -1874,4 +1875,13 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		return featureRestricted_;
 	}
 
+	/**
+	 * Needed for testing purposes; isn't part of the Interface
+	 * 
+	 * @param db
+	 */
+	@Deprecated
+	public void setCurrentDatabase(final Database db) {
+		currentDatabase_ = db;
+	}
 }

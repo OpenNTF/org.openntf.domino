@@ -73,6 +73,7 @@ public class OpenntfHttpService extends HttpService {
 		}
 
 		Factory.init();
+		Factory.setExtLocale(httpRequest.getLocale());
 		doServiceEntered.set(Boolean.TRUE);
 
 		try {

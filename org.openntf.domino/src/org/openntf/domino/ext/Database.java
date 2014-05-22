@@ -5,6 +5,7 @@ package org.openntf.domino.ext;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -463,5 +464,10 @@ public interface Database extends Base {
 	public AutoMime getAutoMime();
 
 	public void setAutoMime(AutoMime autoMime);
+
+	/**
+	 * @return the Locale stored in the Notes database
+	 */
+	public Locale getLocale();
 
 }

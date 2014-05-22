@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ServiceLoader;
@@ -645,14 +646,38 @@ public enum Factory {
 		return result;
 	}
 
+	/**
+	 * Returns the session's current database if available. Does never create a session.
+	 * 
+	 * @see #getSession_unchecked()
+	 * @return The session's current database
+	 */
+	public static Database getCurrentDatabase() {
+		Session sess = currentSessionHolder_.get();
+		return (sess == null) ? null : sess.getCurrentDatabase();
+	}
+
+	/**
+	 * Returns the current session, if available. Does never create a session
+	 * 
+	 * @return the session
+	 */
 	public static org.openntf.domino.Session getSession_unchecked() {
 		return currentSessionHolder_.get();
 	}
 
+	/**
+	 * Sets the current session
+	 * 
+	 * @param session
+	 */
 	public static void setSession(final lotus.domino.Session session) {
 		currentSessionHolder_.set(fromLotus(session, Session.SCHEMA, null));
 	}
 
+	/**
+	 * clears the current session
+	 */
 	public static void clearSession() {
 		currentSessionHolder_.set(null);
 	}
@@ -724,7 +749,63 @@ public enum Factory {
 		clearDominoGraph();
 		clearWrapperFactory();
 		clearClassLoader();
+		clearExtLocale();
 		return result;
+	}
+
+	/**
+	 * Support for different Locale
+	 */
+	private static ThreadLocal<Locale> extLocale_ = new ThreadLocal<Locale>();
+
+	public static void setExtLocale(final Locale loc) {
+		extLocale_.set(loc);
+	}
+
+	public static Locale getExtLocale() {
+		return extLocale_.get();
+	}
+
+	private static void clearExtLocale() {
+		extLocale_.set(null);
+	}
+
+	/**
+	 * Returns the internal locale. The Locale is retrieved by this way:
+	 * <ul>
+	 * <li>If a currentDatabase is set, the DB is queried for its locale</li>
+	 * <li>If there is no database.locale, the system default locale is returned</li>
+	 * </ul>
+	 * This locale should be used, if you write log entries in a server log for example.
+	 * 
+	 * @return the currentDatabase-locale or default-locale
+	 */
+	public static Locale getLocale() {
+		Locale ret = null;
+		Database db = getCurrentDatabase();
+		if (db != null)
+			ret = db.getLocale();
+		if (ret == null)
+			ret = Locale.getDefault();
+		return ret;
+	}
+
+	/**
+	 * Returns the external locale. The Locale is retrieved by this way:
+	 * <ul>
+	 * <li>Return the external locale (= the browser's locale in most cases) if available</li>
+	 * <li>If a currentDatabase is set, the DB is queried for its locale</li>
+	 * <li>If there is no database.locale, the system default locale is returned</li>
+	 * </ul>
+	 * This locale should be used, if you generate messages for the current (browser)user.
+	 * 
+	 * @return the external-locale, currentDatabase-locale or default-locale
+	 */
+	public static Locale getExternalLocale() {
+		Locale ret = getExtLocale();
+		if (ret == null)
+			ret = getLocale();
+		return ret;
 	}
 
 	/**

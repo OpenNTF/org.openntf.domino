@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -3242,5 +3243,23 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 	public void setAutoMime(final AutoMime autoMime) {
 		autoMime_ = autoMime;
+	}
+
+	private Locale dbLocale = null;
+	private boolean getLocaleCalled = false;
+
+	public Locale getLocale() {
+		if (dbLocale != null || getLocaleCalled)
+			return dbLocale;
+		getLocaleCalled = true;
+		Document doc = getDocumentByID("FFFF0010");
+		if (doc == null)
+			return null;
+		String lStr = doc.getItemValueString("$DefaultLanguage");
+		if (lStr == null || lStr.length() < 2)
+			return null;
+		String language = lStr.substring(0, 2).toLowerCase();
+		String country = (lStr.length() >= 5 && lStr.charAt(2) == '-') ? lStr.substring(3, 5).toUpperCase() : "";
+		return dbLocale = new Locale(language, country);
 	}
 }
