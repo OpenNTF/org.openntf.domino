@@ -749,25 +749,25 @@ public enum Factory {
 		clearDominoGraph();
 		clearWrapperFactory();
 		clearClassLoader();
-		clearExtLocale();
+		clearUserLocale();
 		return result;
 	}
 
 	/**
 	 * Support for different Locale
 	 */
-	private static ThreadLocal<Locale> extLocale_ = new ThreadLocal<Locale>();
+	private static ThreadLocal<Locale> userLocale_ = new ThreadLocal<Locale>();
 
-	public static void setExtLocale(final Locale loc) {
-		extLocale_.set(loc);
+	public static void setUserLocale(final Locale loc) {
+		userLocale_.set(loc);
 	}
 
-	public static Locale getExtLocale() {
-		return extLocale_.get();
+	public static Locale getUserLocale() {
+		return userLocale_.get();
 	}
 
-	private static void clearExtLocale() {
-		extLocale_.set(null);
+	private static void clearUserLocale() {
+		userLocale_.set(null);
 	}
 
 	/**
@@ -802,7 +802,7 @@ public enum Factory {
 	 * @return the external-locale, currentDatabase-locale or default-locale
 	 */
 	public static Locale getExternalLocale() {
-		Locale ret = getExtLocale();
+		Locale ret = getUserLocale();
 		if (ret == null)
 			ret = getLocale();
 		return ret;
