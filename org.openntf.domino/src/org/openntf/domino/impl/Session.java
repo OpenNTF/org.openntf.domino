@@ -763,6 +763,9 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		result = databases_.get(key);
 		if (result == null) {
 			try {
+				//				DbDirectory dir = this.getDbDirectory(server);
+				//				database = dir.openDatabase(db);
+
 				database = getDelegate().getDatabase(server, db, createOnFail);
 				result = fromLotus(database, Database.SCHEMA, this);
 				databases_.put(key, result);

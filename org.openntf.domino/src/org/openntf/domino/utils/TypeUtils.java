@@ -684,28 +684,30 @@ public enum TypeUtils {
 			try {
 				Class<?> cls = DominoUtils.getClass(cn);
 				//				System.out.println("Enum coercion with class " + cls.getName());
-				Object[] objs = cls.getEnumConstants();
-				if (objs.length > 0) {
-					//					System.out.println("Enum coercion into " + cn + " with value " + ename + " started...");
-					//					StringBuilder typenames = new StringBuilder();
-					for (Object obj : objs) {
-						if (obj instanceof Enum) {
-							if (((Enum) obj).name().equals(ename)) {
-								result = (Enum) obj;
-								//								System.out.println("Found a match between " + result.name() + " and " + ename + "!");
-								return result;
+				if (cls != null) {
+					Object[] objs = cls.getEnumConstants();
+					if (objs.length > 0) {
+						//					System.out.println("Enum coercion into " + cn + " with value " + ename + " started...");
+						//					StringBuilder typenames = new StringBuilder();
+						for (Object obj : objs) {
+							if (obj instanceof Enum) {
+								if (((Enum) obj).name().equals(ename)) {
+									result = (Enum) obj;
+									//								System.out.println("Found a match between " + result.name() + " and " + ename + "!");
+									return result;
+								} else {
+									//								typenames.append(", " + ((Enum) obj).name());
+								}
 							} else {
-								//								typenames.append(", " + ((Enum) obj).name());
+								//							System.out.println("Expected encounter an Enum constant, but didn't. Instead found a "
+								//									+ obj.getClass().getName());
 							}
-						} else {
-							//							System.out.println("Expected encounter an Enum constant, but didn't. Instead found a "
-							//									+ obj.getClass().getName());
 						}
-					}
-					//					System.out.println("Unable to match " + ename + " with any of: " + typenames.toString());
-				} else {
-					//					System.out.println("No enum constants found for class " + cls.getName());
+						//					System.out.println("Unable to match " + ename + " with any of: " + typenames.toString());
+					} else {
+						//					System.out.println("No enum constants found for class " + cls.getName());
 
+					}
 				}
 			} catch (Exception e) {
 				//				System.out.println("Failed to find class " + cn + " using a thread's current classloader");

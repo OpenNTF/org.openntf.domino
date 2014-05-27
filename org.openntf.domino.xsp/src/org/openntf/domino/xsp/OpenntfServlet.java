@@ -26,8 +26,20 @@ public class OpenntfServlet extends HttpServlet {
 	 */
 	public OpenntfServlet() {
 		super();
-		System.out.println("Creating new OpenntfServlet object!");
+		// System.out.println("Constructing OpenntfServlet");
 		// IndexDatabase index = new IndexDatabase();
+	}
+
+	@Override
+	public void init() throws ServletException {
+		// System.out.println("Initting OpenntfServlet");
+		super.init();
+	}
+
+	@Override
+	public void destroy() {
+		// System.out.println("Destroying OpenntfServlet");
+		super.destroy();
 	}
 
 	/*
