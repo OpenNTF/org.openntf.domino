@@ -157,6 +157,8 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	 */
 	/**
 	 * Instantiates a new open log item.
+	 * 
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public BaseOpenLogItem() {
 
@@ -167,6 +169,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	 * 
 	 * @param s
 	 *            the s
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public BaseOpenLogItem(final Session s) {
 		if (s != null) {
@@ -334,6 +337,9 @@ public class BaseOpenLogItem implements IOpenLogItem {
 		return _userRoles;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.IOpenLogItem#setUserRoles(java.util.Vector)
+	 */
 	public void setUserRoles(final Vector<Object> roles) {
 		try {
 			_userRoles = roles;
@@ -385,6 +391,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	 * @param propertyName
 	 *            property to be retrieved from the Properties file
 	 * @return the value of the property
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public String loadFromProps(final String propertyName) {
 		//TODO NTF - needs alternative based on stuff other than logging.properties, which is deprecated
@@ -531,6 +538,9 @@ public class BaseOpenLogItem implements IOpenLogItem {
 		return _logSuccess;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.logging.IOpenLogItem#setLogSuccess(boolean)
+	 */
 	public void setLogSuccess(final boolean logSuccess) {
 		_logSuccess = logSuccess;
 	}
