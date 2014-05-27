@@ -85,6 +85,10 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 		return new FileResource(database_);
 	}
 
+	public StyleSheet createStyleSheet() {
+		return new StyleSheet(database_);
+	}
+
 	@Override
 	public AboutDocument getAboutDocument(final boolean create) {
 		Document doc = database_.getDocumentByID(ABOUT_NOTE);

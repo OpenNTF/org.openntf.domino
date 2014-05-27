@@ -35,6 +35,11 @@ public interface DatabaseDesign {
 	public Folder createFolder();
 
 	/**
+	 * @return a new, empty style sheet
+	 */
+	public StyleSheet createStyleSheet();
+
+	/**
 	 * @return a new view with no columns or selection formula
 	 */
 	public DesignView createView();

@@ -215,7 +215,12 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 	public List<String> getAliases() {
 		// Aliases are all the $TITLE values after the first
 		List<String> titles = getTitles();
-		return new ArrayList<String>(titles.subList(1, titles.size()));
+		if (titles.size() > 1) {
+			return new ArrayList<String>(titles.subList(1, titles.size()));
+		} else {
+			return new ArrayList<String>();
+		}
+
 	}
 
 	/*
@@ -360,7 +365,10 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 
 			// Reset the DXL so that it can pick up new noteinfo
 			Document document = database.getDocumentByID(noteId_);
-			loadDxl(document.generateXML());
+			DxlExporter exporter = getAncestorSession().createDxlExporter();
+			exporter.setForceNoteFormat(true);
+			exporter.setOutputDOCTYPE(false);
+			loadDxl(exporter.exportDxl(document));
 		} catch (IOException e) {
 			DominoUtils.handleException(e);
 			if (importer != null) {
@@ -478,7 +486,7 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 	}
 
 	private List<String> getTitles() {
-		List<XMLNode> titleNodes = getTitleNode().selectNodes("//text");
+		List<XMLNode> titleNodes = getTitleNode().selectNodes(".//text");
 		List<String> result = new ArrayList<String>(titleNodes.size());
 		for (XMLNode title : titleNodes) {
 			String[] bits = title.getText().split("\\|");
