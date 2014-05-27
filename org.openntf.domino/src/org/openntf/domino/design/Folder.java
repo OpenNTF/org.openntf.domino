@@ -27,5 +27,7 @@ public interface Folder extends DesignBaseNamed {
 
 	public DesignColumnList getColumns();
 
+	public void swapColumns(int a, int b);
+
 	public org.openntf.domino.View getView();
 }

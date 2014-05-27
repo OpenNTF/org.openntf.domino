@@ -35,6 +35,8 @@ import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
 import org.xml.sax.SAXException;
 
+import com.ibm.commons.util.StringUtil;
+
 /**
  * @author jgallagher
  * 
@@ -219,6 +221,16 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.openntf.domino.design.DesignBaseNamed#getAlias()
+	 */
+	public String getAlias() {
+		String[] aliases = getAliases().toArray(new String[] {});
+		return StringUtil.concatStrings(aliases, '|', false);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.design.DesignBaseNamed#getName()
 	 */
 	@Override
@@ -334,9 +346,10 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 	}
 
 	@Override
-	public void save() {
+	public boolean save() {
+		DxlImporter importer = null;
 		try {
-			DxlImporter importer = getAncestorSession().createDxlImporter();
+			importer = getAncestorSession().createDxlImporter();
 			importer.setDesignImportOption(DxlImporter.DesignImportOption.REPLACE_ELSE_CREATE);
 			importer.setReplicaRequiredForReplaceOrUpdate(false);
 			Database database = getAncestorDatabase();
@@ -350,8 +363,12 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 			loadDxl(document.generateXML());
 		} catch (IOException e) {
 			DominoUtils.handleException(e);
-			return;
+			if (importer != null) {
+				System.out.println(importer.getLog());
+			}
+			return false;
 		}
+		return true;
 	}
 
 	protected XMLDocument getDxl() {

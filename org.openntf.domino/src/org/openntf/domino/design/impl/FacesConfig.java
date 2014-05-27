@@ -159,7 +159,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	 * @see org.openntf.domino.design.impl.AbstractDesignNoteBase#save()
 	 */
 	@Override
-	public void save() {
+	public boolean save() {
 		try {
 			setFileData(xml_.getXml().getBytes("UTF-8"));
 		} catch (UnsupportedEncodingException e) {
@@ -167,7 +167,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 		} catch (IOException e) {
 			DominoUtils.handleException(e);
 		}
-		super.save();
+		return super.save();
 	}
 
 	public class ManagedBean implements org.openntf.domino.design.FacesConfig.ManagedBean {

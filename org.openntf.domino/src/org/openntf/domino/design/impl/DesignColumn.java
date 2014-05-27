@@ -20,6 +20,8 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.utils.xml.XMLNode;
 
+import com.ibm.commons.util.StringUtil;
+
 /**
  * @author jgallagher
  * 
@@ -92,6 +94,9 @@ public class DesignColumn implements org.openntf.domino.design.DesignColumn {
 	@Override
 	public void setItemName(final String itemName) {
 		node_.setAttribute("itemname", itemName);
+		if (StringUtil.isEmpty(getFormulaActual())) {
+			setFormula(itemName);
+		}
 	}
 
 	@Override
@@ -106,6 +111,21 @@ public class DesignColumn implements org.openntf.domino.design.DesignColumn {
 	@Override
 	public void setSortOrder(final SortOrder sortOrder) {
 		node_.setAttribute("sort", sortOrder.toString().toLowerCase());
+	}
+
+	public String getSort() {
+		return node_.getAttribute("sort");
+	}
+
+	public void setSort(final String sort) {
+		if (sort == null) {
+			return;
+		}
+		try {
+			setSortOrder(SortOrder.valueOf(sort.toUpperCase()));
+		} catch (IllegalArgumentException iae) {
+			throw new IllegalArgumentException("Specified sort order '" + sort + "' is invalid.");
+		}
 	}
 
 	@Override
@@ -133,13 +153,18 @@ public class DesignColumn implements org.openntf.domino.design.DesignColumn {
 
 	@Override
 	public String getFormula() {
+		String formulaActual = getFormulaActual();
+
+		return StringUtil.isEmpty(formulaActual) ? this.getItemName() : formulaActual;
+	}
+
+	// This is used so that the DXL can remain accurate - empty column formulas are illegal
+	protected String getFormulaActual() {
 		XMLNode formulaNode = node_.selectSingleNode("code[@event='value']/formula");
 		if (formulaNode != null) {
 			return formulaNode.getTextContent();
 		}
-
-		// If there's no formula node then that means it's just an item directly
-		return this.getItemName();
+		return "";
 	}
 
 	@Override
