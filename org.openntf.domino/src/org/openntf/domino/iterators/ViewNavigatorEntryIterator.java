@@ -58,7 +58,7 @@ public class ViewNavigatorEntryIterator extends AbstractDominoIterator<ViewEntry
 	 */
 	public boolean hasNext() {
 		if (currentEntry_ != null) {
-			nextEntry_ = getNavigator().getNextSibling(currentEntry_);
+			nextEntry_ = getNavigator().getNext(currentEntry_);
 		} else {
 			nextEntry_ = getNavigator().getFirst();
 		}
