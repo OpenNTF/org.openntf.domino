@@ -221,7 +221,7 @@ public class FormatterImpl implements Formatter {
 		if (!ret.isSet(MINUTE))
 			ret.set(MINUTE, 0);
 		if (!ret.isSet(SECOND))
-			ret.set(SECOND, 1);
+			ret.set(SECOND, 0);
 		try {
 			ret.getTime();
 		} catch (IllegalArgumentException e) {

@@ -780,7 +780,7 @@ public enum Factory {
 	 * 
 	 * @return the currentDatabase-locale or default-locale
 	 */
-	public static Locale getLocale() {
+	public static Locale getInternalLocale() {
 		Locale ret = null;
 		Database db = getCurrentDatabase();
 		if (db != null)
@@ -804,7 +804,7 @@ public enum Factory {
 	public static Locale getExternalLocale() {
 		Locale ret = getUserLocale();
 		if (ret == null)
-			ret = getLocale();
+			ret = getInternalLocale();
 		return ret;
 	}
 
