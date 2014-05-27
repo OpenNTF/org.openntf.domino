@@ -99,6 +99,18 @@ public interface DatabaseDesign {
 
 	/**
 	 * @param name
+	 *            name or alias of a folder in the database
+	 * @return the named folder, as a Folder object
+	 */
+	public Folder getFolder(String name);
+
+	/**
+	 * @return a collection of all folders in the database, as Folder objects
+	 */
+	public DesignCollection<Folder> getFolders();
+
+	/**
+	 * @param name
 	 *            name of an image resource
 	 * @return the named image resource
 	 */

@@ -479,6 +479,32 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 		return new DesignCollection<org.openntf.domino.design.DesignView>(notes, DesignView.class);
 	}
 
+	@Override
+	public Folder getFolder(final String name) {
+		if (DominoUtils.isUnid(name)) {
+			Document doc = database_.getDocumentByUNID(name);
+			return new Folder(doc);
+		} else {
+			// TODO Check if this returns views
+			NoteCollection notes = getNoteCollection(
+					String.format(" @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
+					EnumSet.of(SelectOption.VIEWS));
+
+			String noteId = notes.getFirstNoteID();
+			if (!noteId.isEmpty()) {
+				Document doc = database_.getDocumentByID(noteId);
+				return new Folder(doc);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public DesignCollection<org.openntf.domino.design.Folder> getFolders() {
+		NoteCollection notes = getNoteCollection(" @All ", EnumSet.of(SelectOption.VIEWS));
+		return new DesignCollection<org.openntf.domino.design.Folder>(notes, Folder.class);
+	}
+
 	public DesignCollection<org.openntf.domino.design.JavaScriptLibrary> getJavaScriptLibraries() {
 		NoteCollection notes = getNoteCollection(" @Contains($Flags; 'j') ", EnumSet.of(SelectOption.SCRIPT_LIBRARIES));
 		return new DesignCollection<org.openntf.domino.design.JavaScriptLibrary>(notes, JavaScriptLibrary.class);
