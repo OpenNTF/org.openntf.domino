@@ -1,6 +1,5 @@
 package org.openntf.domino.formula;
 
-import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -10,13 +9,22 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.Terminatable;
+import org.openntf.formula.EvaluateException;
+import org.openntf.formula.FormulaContext;
+import org.openntf.formula.Formulas;
+import org.openntf.formula.ValueHolder;
 
 public class FormulaContextNotes extends FormulaContext {
 	private static final Logger log_ = Logger.getLogger(FormulaContextNotes.class.getName());
 
-	public FormulaContextNotes(final Map<String, Object> document, final Formatter formatter) {
-		super(document, formatter);
-		// TODO Auto-generated constructor stub
+	static {
+		// this is not yet nice, but we assume that this context is always used in Domino/XPage environment
+		Factory.onTerminate(new Terminatable() {
+			public void terminate() {
+				Formulas.terminate();
+			}
+		});
 	}
 
 	/**
@@ -28,25 +36,16 @@ public class FormulaContextNotes extends FormulaContext {
 	 *            the parameters are mapped to the field p1, p2 and so on
 	 * @return the value
 	 */
-	@Override
 	@SuppressWarnings("deprecation")
 	public ValueHolder evaluateNative(final String formula, final ValueHolder... params) {
 		Session session = Factory.getSession();
-		Document tmpDoc = null;
-		Database db = null;
 
-		lotus.domino.Document rawDocument = null;
-		if (document instanceof Document) {
-			db = ((Document) document).getAncestorDatabase();
-			rawDocument = Factory.toLotus((Document) document);
-		} else {
-			db = session.getCurrentDatabase();
-		}
+		Database db = getDatabase();
 		if (db == null)
 			throw new UnsupportedOperationException("No database set: Can't evaluate Lotus native formula");
 
-		lotus.domino.Session rawSession = Factory.toLotus(session);
-
+		lotus.domino.Document rawDocument = Factory.toLotus(getDocument());
+		Document tmpDoc = null;
 		if (params.length > 0) {
 			tmpDoc = db.createDocument();
 			rawDocument = Factory.toLotus(tmpDoc);
@@ -58,9 +57,14 @@ public class FormulaContextNotes extends FormulaContext {
 					return params[i];
 				}
 			}
+		} else {
+			rawDocument = Factory.toLotus(getDocument());
 		}
+
 		try {
 			log_.warning("Evaluating native formula: '" + formula + "' This may affect performance");
+
+			lotus.domino.Session rawSession = Factory.toLotus(session);
 
 			Vector<?> v = rawSession.evaluate(formula, rawDocument);
 			Vector<Object> wrapped = Factory.wrapColumnValues(v, session);
@@ -77,20 +81,26 @@ public class FormulaContextNotes extends FormulaContext {
 	}
 
 	@Override
-	public void setEnvLC(final String varNameLC, final ValueHolder value) {
-		Factory.getSession().setEnvironmentVar(varNameLC, value.getString(0));
+	public String getEnv(final String varNameLC) {
+		return Factory.getSession().getEnvironmentString(varNameLC);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	public ValueHolder getDocField(final String docUnid, final String field) {
-		Database db = document instanceof Document ? ((Document) document).getAncestorDatabase() : Factory.getSession()
-				.getCurrentDatabase();
-		if (db == null)
-			throw new UnsupportedOperationException("No database set: Can't execute @GetDocField");
-		Document doc = db.getDocumentByUNID(docUnid);
-		if (doc == null)
-			return ValueHolder.valueDefault();
-		return ValueHolder.valueOf(doc.getItemValue(field));
+	public void setEnv(final String varName, final String value) {
+		Factory.getSession().setEnvironmentVar(varName, value);
 	}
+
+	public Database getDatabase() {
+		Document doc = getDocument();
+		if (doc == null) {
+			return Factory.getSession().getCurrentDatabase();
+		} else {
+			return doc.getAncestorDatabase();
+		}
+	}
+
+	public Document getDocument() {
+		return dataMap instanceof Document ? ((Document) dataMap) : null;
+	}
+
 }

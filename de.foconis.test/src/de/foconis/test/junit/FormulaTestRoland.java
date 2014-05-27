@@ -3,8 +3,8 @@ package de.foconis.test.junit;
 import lotus.domino.NotesException;
 
 import org.junit.Test;
-import org.openntf.domino.formula.EvaluateException;
-import org.openntf.domino.formula.FormulaParseException;
+import org.openntf.formula.EvaluateException;
+import org.openntf.formula.FormulaParseException;
 
 import de.foconis.test.runner.FormulaFile;
 import de.foconis.test.runner.FormulaTestCaseLotus;
@@ -29,7 +29,7 @@ public class FormulaTestRoland extends FormulaTestCaseLotus {
 	}
 
 	@Override
-	@Test(expected = org.openntf.domino.formula.EvaluateException.class)
+	@Test(expected = org.openntf.formula.EvaluateException.class)
 	public void testDocFail() throws NotesException, FormulaParseException, EvaluateException {
 		super.testDocFail();
 	}

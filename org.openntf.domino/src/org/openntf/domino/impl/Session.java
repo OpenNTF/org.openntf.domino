@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -63,6 +64,7 @@ import org.openntf.domino.exceptions.UserAccessException;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoFormatter;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.formula.Formulas;
 
 import com.ibm.icu.util.Calendar;
 
@@ -540,6 +542,12 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(final String formula, final lotus.domino.Document doc) {
 		try {
+			// TODO RPr: Make an option to enable/disable formula engine
+			if (doc instanceof Map || doc == null) {
+				List<Object> ret = Formulas.evaluate(formula, (Map<String, Object>) doc);
+				return new Vector(ret);
+			}
+
 			if (doc instanceof Document) {
 				String lf = formula.toLowerCase();
 				if (lf.contains("field ") || lf.contains("@setfield")) {
