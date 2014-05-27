@@ -17,6 +17,8 @@ import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
 
 public class JavaScriptLibrary extends AbstractDesignBaseNamed implements org.openntf.domino.design.JavaScriptLibrary {
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * @param document
 	 */

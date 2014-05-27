@@ -28,6 +28,7 @@ import org.openntf.domino.design.DesignBaseNamed;
  * @author jgallagher
  * 
  */
+@SuppressWarnings("serial")
 public abstract class AbstractDesignBaseNamed extends AbstractDesignBase implements DesignBaseNamed {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignBaseNamed.class.getName());

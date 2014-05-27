@@ -26,6 +26,7 @@ import org.openntf.domino.Document;
  * 
  */
 public class StyleSheet extends FileResource implements org.openntf.domino.design.StyleSheet {
+	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(StyleSheet.class.getName());
 

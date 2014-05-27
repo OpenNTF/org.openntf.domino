@@ -37,12 +37,13 @@ import org.xml.sax.SAXException;
  * @author jgallagher
  * 
  */
+@SuppressWarnings("serial")
 public abstract class AbstractDesignBase implements DesignBase {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignBase.class.getName());
 
 	private String noteId_;
-	private final Database database_;
+	private transient Database database_;
 	private XMLDocument dxl_;
 
 	protected AbstractDesignBase(final Document document) {
@@ -118,6 +119,10 @@ public abstract class AbstractDesignBase implements DesignBase {
 	@Override
 	public boolean isPropagatePreventChanges() {
 		return getDocumentElement().getAttribute("propagatenoreplace").equals("true");
+	}
+
+	public void reattach(final Database database) {
+		database_ = database;
 	}
 
 	/*

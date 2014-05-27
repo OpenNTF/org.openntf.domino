@@ -1869,4 +1869,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		return featureRestricted_;
 	}
 
+	public boolean isAnonymous() {
+		return "Anonymous".equals(getEffectiveUserName());
+	}
 }

@@ -40,9 +40,11 @@ public interface DatabaseDesign {
 	public DesignView createView();
 
 	/**
-	 * @return the About Document note of the database
+	 * @param create
+	 *            whether a new using document should be created when one does not yet exist in the database
+	 * @return the About Document note of the database, or null if no document exists and create is false
 	 */
-	public AboutDocument getAboutDocument();
+	public AboutDocument getAboutDocument(boolean create);
 
 	/**
 	 * @return the ACL note of the database
@@ -210,9 +212,11 @@ public interface DatabaseDesign {
 	public ReplicationFormula getReplicationFormula();
 
 	/**
-	 * @return the Using Document note of the database
+	 * @param create
+	 *            whether a new using document should be created when one does not yet exist in the database
+	 * @return the Using Document note of the database, or null if no document exists and create is false
 	 */
-	public UsingDocument getUsingDocument();
+	public UsingDocument getUsingDocument(boolean create);
 
 	/**
 	 * @param name

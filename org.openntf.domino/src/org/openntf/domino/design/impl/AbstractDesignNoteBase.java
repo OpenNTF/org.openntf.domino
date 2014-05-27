@@ -39,12 +39,13 @@ import org.xml.sax.SAXException;
  * @author jgallagher
  * 
  */
+@SuppressWarnings("serial")
 public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignNoteBase.class.getName());
 
 	private String noteId_;
-	private final Database database_;
+	private transient Database database_;
 	private XMLDocument dxl_;
 
 	private static final String DESIGN_FLAG_PRESERVE = "P";
@@ -127,6 +128,10 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 	@Override
 	public boolean isPropagatePreventChanges() {
 		return getFlags().contains(DESIGN_FLAG_PROPAGATE_NOCHANGE);
+	}
+
+	public void reattach(final Database database) {
+		database_ = database;
 	}
 
 	/*
