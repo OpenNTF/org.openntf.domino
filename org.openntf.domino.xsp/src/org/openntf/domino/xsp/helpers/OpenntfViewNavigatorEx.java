@@ -172,7 +172,7 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 
 		}
 
-<<<<<<< HEAD
+		// <<<<<<< HEAD
 		/**
 		 * Extended constructor
 		 * 
@@ -186,12 +186,12 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 		 *            int
 		 * @throws NotesException
 		 */
-		public Entry(final ViewEntry paramViewEntry, final String paramString, final PathPosition paramPathPosition, final int paramInt)
-				throws NotesException {
-=======
+		// public Entry(final ViewEntry paramViewEntry, final String paramString, final PathPosition paramPathPosition, final int paramInt)
+		// throws NotesException {
+		// =======
 		public Entry(final ViewEntry paramViewEntry, final String paramString, final PathPosition paramPathPosition, final int paramInt,
 				final OpenntfViewNavigatorEx openntfViewNavigatorEx) throws NotesException {
->>>>>>> Roland's/fabi
+			// >>>>>>> Roland's/fabi
 			super(paramViewEntry, paramString, paramPathPosition, paramInt);
 			navigatorEx = openntfViewNavigatorEx;
 		}
