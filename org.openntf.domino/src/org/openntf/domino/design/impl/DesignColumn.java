@@ -113,21 +113,6 @@ public class DesignColumn implements org.openntf.domino.design.DesignColumn {
 		node_.setAttribute("sort", sortOrder.toString().toLowerCase());
 	}
 
-	public String getSort() {
-		return node_.getAttribute("sort");
-	}
-
-	public void setSort(final String sort) {
-		if (sort == null) {
-			return;
-		}
-		try {
-			setSortOrder(SortOrder.valueOf(sort.toUpperCase()));
-		} catch (IllegalArgumentException iae) {
-			throw new IllegalArgumentException("Specified sort order '" + sort + "' is invalid.");
-		}
-	}
-
 	@Override
 	public String getTitle() {
 		XMLNode columnHeader = node_.selectSingleNode("columnheader");

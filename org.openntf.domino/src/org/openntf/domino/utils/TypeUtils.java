@@ -458,11 +458,11 @@ public enum TypeUtils {
 		throw new DataNotCompatibleException("");
 	}
 
-	public static String join(final Collection<Object> values, final String separator) {
+	public static String join(final Collection<?> values, final String separator) {
 		if (values == null || values.isEmpty())
 			return "";
 		StringBuilder sb = new StringBuilder();
-		Iterator<Object> it = values.iterator();
+		Iterator<?> it = values.iterator();
 		while (it.hasNext()) {
 			sb.append(String.valueOf(it.next()));
 			if (it.hasNext())
