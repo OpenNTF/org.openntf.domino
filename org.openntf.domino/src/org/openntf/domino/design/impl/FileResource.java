@@ -61,6 +61,18 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 		}
 	}
 
+	protected FileResource(final Database database, final String dxlResource) {
+		super(database);
+
+		try {
+			InputStream is = DesignView.class.getResourceAsStream(dxlResource);
+			loadDxl(is);
+			is.close();
+		} catch (IOException e) {
+			DominoUtils.handleException(e);
+		}
+	}
+
 	@Override
 	public byte[] getFileData() {
 		return getFileData(DEFAULT_FILEDATA_FIELD);

@@ -244,7 +244,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 		return getAncestorDatabase().getAncestorSession();
 	}
 
-	public void save() {
+	public boolean save() {
 
 		DxlImporter importer = getAncestorSession().createDxlImporter();
 		importer.setDesignImportOption(DxlImporter.DesignImportOption.REPLACE_ELSE_CREATE);
@@ -254,13 +254,15 @@ public abstract class AbstractDesignBase implements DesignBase {
 			importer.importDxl(getDxl().getXml(), database);
 		} catch (IOException e) {
 			DominoUtils.handleException(e);
-			return;
+			return false;
 		}
 		noteId_ = importer.getFirstImportedNoteID();
 
 		// Reset the DXL so that it can pick up new noteinfo
 		Document document = database.getDocumentByID(noteId_);
 		loadDxl(document.generateXML());
+
+		return true;
 	}
 
 	protected XMLDocument getDxl() {

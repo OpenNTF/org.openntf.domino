@@ -57,6 +57,15 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.openntf.domino.design.DesignBase#getAlias()
+	 */
+	public String getAlias() {
+		return getDxl().getAttribute("alias");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.openntf.domino.design.DesignBase#getName()
 	 */
 	@Override

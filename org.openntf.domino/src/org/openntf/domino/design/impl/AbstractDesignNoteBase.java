@@ -35,6 +35,8 @@ import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
 import org.xml.sax.SAXException;
 
+import com.ibm.commons.util.StringUtil;
+
 /**
  * @author jgallagher
  * 
@@ -213,7 +215,22 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 	public List<String> getAliases() {
 		// Aliases are all the $TITLE values after the first
 		List<String> titles = getTitles();
-		return new ArrayList<String>(titles.subList(1, titles.size()));
+		if (titles.size() > 1) {
+			return new ArrayList<String>(titles.subList(1, titles.size()));
+		} else {
+			return new ArrayList<String>();
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DesignBaseNamed#getAlias()
+	 */
+	public String getAlias() {
+		String[] aliases = getAliases().toArray(new String[] {});
+		return StringUtil.concatStrings(aliases, '|', false);
 	}
 
 	/*
@@ -334,9 +351,10 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 	}
 
 	@Override
-	public void save() {
+	public boolean save() {
+		DxlImporter importer = null;
 		try {
-			DxlImporter importer = getAncestorSession().createDxlImporter();
+			importer = getAncestorSession().createDxlImporter();
 			importer.setDesignImportOption(DxlImporter.DesignImportOption.REPLACE_ELSE_CREATE);
 			importer.setReplicaRequiredForReplaceOrUpdate(false);
 			Database database = getAncestorDatabase();
@@ -347,11 +365,18 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 
 			// Reset the DXL so that it can pick up new noteinfo
 			Document document = database.getDocumentByID(noteId_);
-			loadDxl(document.generateXML());
+			DxlExporter exporter = getAncestorSession().createDxlExporter();
+			exporter.setForceNoteFormat(true);
+			exporter.setOutputDOCTYPE(false);
+			loadDxl(exporter.exportDxl(document));
 		} catch (IOException e) {
 			DominoUtils.handleException(e);
-			return;
+			if (importer != null) {
+				System.out.println(importer.getLog());
+			}
+			return false;
 		}
+		return true;
 	}
 
 	protected XMLDocument getDxl() {
@@ -461,7 +486,7 @@ public abstract class AbstractDesignNoteBase implements DesignBaseNamed {
 	}
 
 	private List<String> getTitles() {
-		List<XMLNode> titleNodes = getTitleNode().selectNodes("//text");
+		List<XMLNode> titleNodes = getTitleNode().selectNodes(".//text");
 		List<String> result = new ArrayList<String>(titleNodes.size());
 		for (XMLNode title : titleNodes) {
 			String[] bits = title.getText().split("\\|");

@@ -77,6 +77,6 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	/**
 	 * Save any changes to the design element (may change the Note ID)
 	 */
-	public void save();
+	public boolean save();
 
 }

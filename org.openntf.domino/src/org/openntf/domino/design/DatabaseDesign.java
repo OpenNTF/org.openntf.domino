@@ -35,6 +35,11 @@ public interface DatabaseDesign {
 	public Folder createFolder();
 
 	/**
+	 * @return a new, empty style sheet
+	 */
+	public StyleSheet createStyleSheet();
+
+	/**
 	 * @return a new view with no columns or selection formula
 	 */
 	public DesignView createView();
@@ -96,6 +101,18 @@ public interface DatabaseDesign {
 	 * @return the named file resource
 	 */
 	public FileResource getAnyFileResource(String name);
+
+	/**
+	 * @param name
+	 *            name or alias of a folder in the database
+	 * @return the named folder, as a Folder object
+	 */
+	public Folder getFolder(String name);
+
+	/**
+	 * @return a collection of all folders in the database, as Folder objects
+	 */
+	public DesignCollection<Folder> getFolders();
 
 	/**
 	 * @param name

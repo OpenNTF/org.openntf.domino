@@ -1,7 +1,6 @@
-<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.openntf.domino.xsp.feature_1.0.0.201405101742.jar" id="org.openntf.domino.xsp.feature" version="1.0.0.201405101742">
+   <feature url="features/org.openntf.domino.xsp.feature_1.0.0.201405271850.jar" id="org.openntf.domino.xsp.feature" version="1.0.0.201405271850">
       <category name="org.openntf.domino.xsp"/>
    </feature>
    <category-def name="org.openntf.domino.xsp" label="OpenNTF Domino XPages integration plugin">
@@ -10,16 +9,3 @@
       </description>
    </category-def>
 </site>
-=======
-<?xml version="1.0" encoding="UTF-8"?>
-<site>
-   <feature url="features/org.openntf.domino.xsp.feature_1.0.0.201404170031.jar" id="org.openntf.domino.xsp.feature" version="1.0.0.201404170031">
-      <category name="org.openntf.domino.xsp"/>
-   </feature>
-   <category-def name="org.openntf.domino.xsp" label="OpenNTF Domino XPages integration plugin">
-      <description>
-         This library provides support for the OpenNTF Domino API. If you&apos;ve installed the OpenNTF API in your client or server JVM folder, you can install this plugin to be able to use all the new features from your XPages applications, including full support for SSJS.
-      </description>
-   </category-def>
-</site>
->>>>>>> Roland's/fabi

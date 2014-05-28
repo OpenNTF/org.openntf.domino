@@ -16,10 +16,12 @@
 
 package org.openntf.domino.design.impl;
 
+import java.io.UnsupportedEncodingException;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.utils.DominoUtils;
 
 /**
  * @author jgallagher
@@ -35,6 +37,27 @@ public class StyleSheet extends FileResource implements org.openntf.domino.desig
 	}
 
 	public StyleSheet(final Database database) {
-		super(database);
+		super(database, "/org/openntf/domino/design/impl/dxl_stylesheet.xml");
+	}
+
+	public String getContent() {
+		try {
+			return new String(getFileData(), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			DominoUtils.handleException(e);
+			return null;
+		}
+	}
+
+	public void setContent(final String content) {
+		try {
+			if (content == null) {
+				setFileData("".getBytes("UTF-8"));
+			} else {
+				setFileData(content.getBytes("UTF-8"));
+			}
+		} catch (UnsupportedEncodingException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 }
