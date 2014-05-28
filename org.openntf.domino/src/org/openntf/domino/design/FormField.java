@@ -22,7 +22,7 @@ package org.openntf.domino.design;
  */
 public interface FormField {
 	public static enum Type {
-		DATETIME, NUMBER, DIALOGLIST, CHECKBOX, RADIOBUTTON, COMBOBOX, RICHTEXT, AUTHORS, NAMES, READERS, PASSWORD, FORMULA, TIMEZONE, RICHTEXTLITE, COLOR
+		TEXT, DATETIME, NUMBER, DIALOGLIST, CHECKBOX, RADIOBUTTON, COMBOBOX, RICHTEXT, AUTHORS, NAMES, READERS, PASSWORD, FORMULA, TIMEZONE, RICHTEXTLITE, COLOR
 	}
 
 	public static enum Kind {
@@ -31,41 +31,41 @@ public interface FormField {
 
 	public Kind getKind();
 
-	public void setKind(final Kind kind);
+	public void setKind(Kind kind);
 
 	public String getName();
 
-	public void setName(final String name);
+	public void setName(String name);
 
 	public boolean isAllowMultiValues();
 
-	public void setAllowMultiValues(final boolean allowMultiValues);
+	public void setAllowMultiValues(boolean allowMultiValues);
 
 	public boolean isProtected();
 
-	public void setProtected(final boolean _protected);
+	public void setProtected(boolean _protected);
 
 	public boolean isSign();
 
-	public void setSign(final boolean sign);
+	public void setSign(boolean sign);
 
 	public boolean isSeal();
 
-	public void setSeal(final boolean seal);
+	public void setSeal(boolean seal);
 
 	public boolean isLookUpAddressOnRefresh();
 
-	public void setLookUpAddressOnRefresh(final boolean lookUpAddressOnRefresh);
+	public void setLookUpAddressOnRefresh(boolean lookUpAddressOnRefresh);
 
 	public boolean isLookUpEachChar();
 
-	public void setLookUpEachChar(final boolean lookUpEachChar);
+	public void setLookUpEachChar(boolean lookUpEachChar);
 
 	public String getDefaultValueFormula();
 
-	public void setDefaultValueFormula(final String defaultValueFormula);
+	public void setDefaultValueFormula(String defaultValueFormula);
 
 	public Type getFieldType();
 
-	public void setFieldType(final Type fieldType);
+	public void setFieldType(Type fieldType);
 }

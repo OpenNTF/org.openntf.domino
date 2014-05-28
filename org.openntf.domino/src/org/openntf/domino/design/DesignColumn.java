@@ -53,10 +53,6 @@ public interface DesignColumn {
 
 	public void setSortOrder(SortOrder sortOrder);
 
-	public String getSort();
-
-	public void setSort(String sort);
-
 	public String getTitle();
 
 	public void setTitle(String title);
