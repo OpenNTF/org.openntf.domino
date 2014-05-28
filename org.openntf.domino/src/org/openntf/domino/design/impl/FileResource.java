@@ -32,6 +32,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.design.cd.CDResourceFile;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.xml.XMLDocument;
 import org.openntf.domino.utils.xml.XMLNode;
 
 public class FileResource extends AbstractDesignNoteBase implements org.openntf.domino.design.FileResource {
@@ -87,7 +88,7 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 	public byte[] getFileData(final String itemName) {
 		try {
 			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-			for (XMLNode rawitemdata : getDxl().selectNodes("//item[@name='" + escapeXPathValue(itemName) + "']/rawitemdata")) {
+			for (XMLNode rawitemdata : getDxl().selectNodes("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']/rawitemdata")) {
 				String rawData = rawitemdata.getText();
 				byte[] thisData = parseBase64Binary(rawData);
 				byteStream.write(thisData);
@@ -102,6 +103,7 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 		}
 	}
 
+	@Override
 	public void setFileData(final byte[] fileData) {
 		setFileData(DEFAULT_FILEDATA_FIELD, fileData);
 	}
@@ -110,7 +112,7 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 	public void setFileData(final String itemName, final byte[] fileData) {
 		try {
 			// To set the file content, first clear out existing content
-			List<XMLNode> fileDataNodes = getDxl().selectNodes("//item[@name='" + escapeXPathValue(itemName) + "']");
+			List<XMLNode> fileDataNodes = getDxl().selectNodes("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']");
 			for (int i = fileDataNodes.size() - 1; i >= 0; i--) {
 				fileDataNodes.get(i).getParentNode().removeChild(fileDataNodes.get(i));
 			}
@@ -219,6 +221,7 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 		}
 	}
 
+	@Override
 	public void setDeployable(final boolean deployable) {
 		if (deployable) {
 			addFlag(DESIGN_FLAGEXT_FILE_DEPLOYABLE);
@@ -227,6 +230,7 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 		}
 	}
 
+	@Override
 	public void setHideFromDesignList(final boolean hideFromDesignList) {
 		if (hideFromDesignList) {
 			addFlag(DESIGN_FLAG_HIDEFROMDESIGNLIST);
@@ -245,10 +249,6 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 			dataNode = dataNode.selectSingleNode("text");
 		}
 		return dataNode;
-	}
-
-	protected String escapeXPathValue(final String input) {
-		return input.replace("'", "\\'");
 	}
 
 	/*

@@ -60,4 +60,8 @@ public class XMLDocument extends XMLNode {
 		// fac.setNamespaceAware(true);
 		return fac.newDocumentBuilder();
 	}
+
+	public static String escapeXPathValue(final String input) {
+		return input.replace("'", "\\'");
+	}
 }

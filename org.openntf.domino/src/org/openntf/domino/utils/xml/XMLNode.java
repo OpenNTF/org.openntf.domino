@@ -83,7 +83,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		if (attr == null) {
 			attr = getDocument().createAttribute(attribute);
 		}
-		attr.setNodeValue(value);
+		attr.setNodeValue(value == null ? "" : value);
 		this.node.getAttributes().setNamedItem(attr);
 	}
 
@@ -159,6 +159,16 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		this.getNode().removeChild(childNode.getNode());
 	}
 
+	public List<XMLNode> getChildNodes() {
+		return new XMLNodeList(getNode().getChildNodes());
+	}
+
+	public void removeChildren() {
+		for (XMLNode child : this.getChildNodes()) {
+			removeChild(child);
+		}
+	}
+
 	public XMLNode getNextSibling() {
 		Node node = this.getNode().getNextSibling();
 		if (node != null) {
@@ -179,6 +189,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return this.node;
 	}
 
+	@Override
 	public Object get(final Object arg0) {
 		String path = String.valueOf(arg0);
 
@@ -225,29 +236,36 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return this.node.getOwnerDocument();
 	}
 
+	@Override
 	public void clear() {
 	}
 
+	@Override
 	public boolean containsKey(final Object arg0) {
 		return false;
 	}
 
+	@Override
 	public boolean containsValue(final Object arg0) {
 		return false;
 	}
 
+	@Override
 	public Set<java.util.Map.Entry<String, Object>> entrySet() {
 		return null;
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return false;
 	}
 
+	@Override
 	public Set<String> keySet() {
 		return null;
 	}
 
+	@Override
 	public Object put(final String arg0, final Object arg1) {
 		if (arg0.equals("nodeValue")) {
 			this.getNode().setNodeValue(String.valueOf(arg1));
@@ -259,17 +277,21 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return null;
 	}
 
+	@Override
 	public void putAll(final Map<? extends String, ? extends Object> arg0) {
 	}
 
+	@Override
 	public Object remove(final Object arg0) {
 		return null;
 	}
 
+	@Override
 	public int size() {
 		return 0;
 	}
 
+	@Override
 	public Collection<Object> values() {
 		return null;
 	}
