@@ -16,10 +16,15 @@
 
 package org.openntf.domino.design.impl;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.TypeUtils;
 import org.openntf.domino.utils.xml.XMLNode;
+
+import com.ibm.commons.util.StringUtil;
 
 /**
  * @author jgallagher
@@ -202,6 +207,44 @@ public class FormField implements org.openntf.domino.design.FormField {
 		}
 	}
 
+	public RTLType getFirstDisplay() {
+		String firstDisplay = node_.getAttribute("firstdisplay");
+		if (!StringUtil.isEmpty(firstDisplay)) {
+			return RTLType.valueOf(firstDisplay.toUpperCase());
+		}
+		return null;
+	}
+
+	public void setFirstDisplay(final RTLType firstDisplay) {
+		if (firstDisplay != null) {
+			node_.setAttribute("firstdisplay", firstDisplay.toString().toLowerCase());
+		} else {
+			node_.setAttribute("firstdisplay", "");
+		}
+	}
+
+	public Set<RTLType> getOnlyAllow() {
+		String values = node_.getAttribute("onlyallow");
+		Set<RTLType> result = new HashSet<RTLType>();
+		for (String val : values.split("\\s")) {
+			if (StringUtil.isNotEmpty(val)) {
+				result.add(RTLType.valueOf(val.toUpperCase()));
+			}
+		}
+		return result;
+	}
+
+	public void setOnlyAllow(final Set<RTLType> onlyAllow) {
+		if (onlyAllow != null) {
+			node_.setAttribute("onlyallow", TypeUtils.join(onlyAllow, " ").toLowerCase());
+		} else {
+			node_.setAttribute("onlyallow", "");
+		}
+	}
+
+	/* ******************************************************************************************
+	 * Internal utility methods
+	 ********************************************************************************************/
 	private XMLNode getKeywordsNode() {
 		XMLNode node = node_.selectSingleNode("keywords");
 

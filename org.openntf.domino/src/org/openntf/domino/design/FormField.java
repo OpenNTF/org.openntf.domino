@@ -16,6 +16,8 @@
 
 package org.openntf.domino.design;
 
+import java.util.Set;
+
 /**
  * @author jgallagher
  * 
@@ -27,6 +29,10 @@ public interface FormField {
 
 	public static enum Kind {
 		COMPUTED, COMPUTEDFORDISPLAY, COMPUTEDWHENCOMPOSED, EDITABLE
+	}
+
+	public static enum RTLType {
+		PICTURE, SHAREDIMAGE, ATTACHMENT, VIEW, DATEPICKER, SHAREDAPPLET, TEXT, OBJECT, CALENDAR, INBOX, HELP, CLEAR, GRAPHIC, LINK, THUMBNAIL
 	}
 
 	public Kind getKind();
@@ -68,4 +74,12 @@ public interface FormField {
 	public Type getFieldType();
 
 	public void setFieldType(Type fieldType);
+
+	public Set<RTLType> getOnlyAllow();
+
+	public void setOnlyAllow(Set<RTLType> onlyAllow);
+
+	public RTLType getFirstDisplay();
+
+	public void setFirstDisplay(RTLType firstDisplay);
 }

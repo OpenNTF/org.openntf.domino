@@ -26,4 +26,6 @@ public interface DesignForm extends DesignBaseNamed {
 	public FormField addField();
 
 	public FormFieldList getFields();
+
+	public void swapFields(final int a, final int b);
 }

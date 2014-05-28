@@ -70,4 +70,9 @@ public class DesignForm extends AbstractDesignBaseNamed implements org.openntf.d
 
 		return new FormField(field);
 	}
+
+	@Override
+	public void swapFields(final int a, final int b) {
+		getFields().swap(a, b);
+	}
 }
