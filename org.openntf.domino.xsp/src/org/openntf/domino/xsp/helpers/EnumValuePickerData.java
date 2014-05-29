@@ -162,7 +162,7 @@ public class EnumValuePickerData extends MapValuePickerData {
 	 */
 	@Override
 	public Object saveState(final FacesContext _context) {
-		Object _values[] = new Object[6];
+		Object _values[] = new Object[7];
 		_values[0] = super.saveState(_context);
 		_values[1] = options;
 		_values[2] = searchType;
