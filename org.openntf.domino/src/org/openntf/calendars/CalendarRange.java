@@ -234,7 +234,6 @@ public class CalendarRange implements CalendarRangeInterface {
 	 * @return the first Calendar entry in the object
 	 */
 	public Calendar first() {
-		// this.validate();
 		return this._alpha;
 	}
 
@@ -247,7 +246,6 @@ public class CalendarRange implements CalendarRangeInterface {
 	 * @return the last Calendar entry in the object
 	 */
 	public Calendar last() {
-		// this.validate();
 		return this._omega;
 	}
 
@@ -320,5 +318,4 @@ public class CalendarRange implements CalendarRangeInterface {
 		result.setLast(this.last());
 		return result;
 	}
-
 }
