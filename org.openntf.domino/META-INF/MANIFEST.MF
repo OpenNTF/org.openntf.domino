@@ -24,7 +24,17 @@ Implementation-Vendor: OpenNTF
 Implementation-Vendor-URL: http://www.openntf.org
 Built-By: praml
 Build-Date: 20140416093417
-Require-Bundle: org.openntf.formula;bundle-version="1.0.0";visibility:=reexport,
- com.ibm.icu,com.ibm.commons
+Require-Bundle: org.openntf.formula;bundle-version="1.0.0";visibility:=reexport
+Import-Package: com.ibm.commons.icu,
+ com.ibm.commons.util,
+ com.ibm.commons.xml,
+ com.ibm.commons.xml.drivers,
+ com.ibm.commons.xml.io,
+ com.ibm.commons.xml.util,
+ com.ibm.commons.xml.xpath,
+ com.ibm.icu.lang,
+ com.ibm.icu.math,
+ com.ibm.icu.text,
+ com.ibm.icu.util
 
 
