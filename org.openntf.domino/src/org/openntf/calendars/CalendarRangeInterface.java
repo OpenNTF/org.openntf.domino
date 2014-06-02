@@ -2,14 +2,19 @@ package org.openntf.calendars;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Set;
 
 public interface CalendarRangeInterface extends Serializable {
 	/**
+	 * Gets the first entry in the range
+	 * 
 	 * @return the first Calendar entry in the object
 	 */
 	public Calendar first();
 
 	/**
+	 * Gets the last entry in the range
+	 * 
 	 * @return the the last Calendar entry in the object.
 	 */
 	public Calendar last();
@@ -29,6 +34,37 @@ public interface CalendarRangeInterface extends Serializable {
 	 * 
 	 */
 	public boolean isValid();
+
+	/**
+	 * Adds the specified Calendar to this object.
+	 * 
+	 * @param calendar
+	 *            Calendar object to add. Null values will not be added.
+	 * 
+	 * @return Flag indicating if calendar was added to this object.
+	 */
+	public boolean add(final Calendar calendar);
+
+	/**
+	 * Adds the specified Calendar-convertable to this object.
+	 * 
+	 * @param object
+	 *            Calendar-convertable object to add. Null values and Objects which cannot be converted to a Calendar object will not be
+	 *            added.
+	 * 
+	 * @return Flag indicating if object was added to this object.
+	 */
+	public boolean addObject(final Object object);
+
+	/**
+	 * Adds all non-null values from set to this object.
+	 * 
+	 * @param set
+	 *            Set from which to construct this object. All non-null values from set will be added to this object.
+	 * 
+	 * @return Flag indicating if this set changed as a result of the call.
+	 */
+	public boolean addAll(final Set<Calendar> set);
 
 	/**
 	 * Returns true if this set contains the specified element.
