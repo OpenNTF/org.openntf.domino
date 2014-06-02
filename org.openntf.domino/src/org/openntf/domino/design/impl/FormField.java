@@ -40,18 +40,22 @@ public class FormField implements org.openntf.domino.design.FormField {
 		node_ = node;
 	}
 
+	@Override
 	public Kind getKind() {
 		return Kind.valueOf(node_.getAttribute("kind").toUpperCase());
 	}
 
+	@Override
 	public void setKind(final Kind kind) {
 		node_.setAttribute("kind", kind.toString().toLowerCase());
 	}
 
+	@Override
 	public String getName() {
 		return node_.getAttribute("name");
 	}
 
+	@Override
 	public void setName(final String name) {
 		node_.setAttribute("name", name);
 	}
@@ -207,6 +211,7 @@ public class FormField implements org.openntf.domino.design.FormField {
 		}
 	}
 
+	@Override
 	public RTLType getFirstDisplay() {
 		String firstDisplay = node_.getAttribute("firstdisplay");
 		if (!StringUtil.isEmpty(firstDisplay)) {
@@ -215,6 +220,7 @@ public class FormField implements org.openntf.domino.design.FormField {
 		return null;
 	}
 
+	@Override
 	public void setFirstDisplay(final RTLType firstDisplay) {
 		if (firstDisplay != null) {
 			node_.setAttribute("firstdisplay", firstDisplay.toString().toLowerCase());
@@ -223,6 +229,7 @@ public class FormField implements org.openntf.domino.design.FormField {
 		}
 	}
 
+	@Override
 	public Set<RTLType> getOnlyAllow() {
 		String values = node_.getAttribute("onlyallow");
 		Set<RTLType> result = new HashSet<RTLType>();
@@ -234,12 +241,23 @@ public class FormField implements org.openntf.domino.design.FormField {
 		return result;
 	}
 
+	@Override
 	public void setOnlyAllow(final Set<RTLType> onlyAllow) {
 		if (onlyAllow != null) {
 			node_.setAttribute("onlyallow", TypeUtils.join(onlyAllow, " ").toLowerCase());
 		} else {
 			node_.setAttribute("onlyallow", "");
 		}
+	}
+
+	@Override
+	public String getFieldHelp() {
+		return node_.getAttribute("fieldhelp");
+	}
+
+	@Override
+	public void setFieldHelp(final String fieldHelp) {
+		node_.setAttribute("fieldhelp", fieldHelp);
 	}
 
 	/* ******************************************************************************************

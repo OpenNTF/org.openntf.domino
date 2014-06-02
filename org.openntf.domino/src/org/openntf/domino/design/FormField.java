@@ -82,4 +82,8 @@ public interface FormField {
 	public RTLType getFirstDisplay();
 
 	public void setFirstDisplay(RTLType firstDisplay);
+
+	public String getFieldHelp();
+
+	public void setFieldHelp(String fieldHelp);
 }
