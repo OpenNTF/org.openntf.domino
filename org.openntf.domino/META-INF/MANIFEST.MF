@@ -35,6 +35,7 @@ Import-Package: com.ibm.commons.icu,
  com.ibm.icu.lang,
  com.ibm.icu.math,
  com.ibm.icu.text,
- com.ibm.icu.util
+ com.ibm.icu.util,
+ javax.annotation
 
 

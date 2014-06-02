@@ -7,6 +7,7 @@ Bundle-Activator: org.openntf.domino.plugin.Activator
 Bundle-Vendor: Red Pill Development
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: com.ibm.commons.xml,
+ javax.annotation,
  org.osgi.framework;version="1.3.0"
 Bundle-ActivationPolicy: lazy
 Export-Package: com.tinkerpop.blueprints,
