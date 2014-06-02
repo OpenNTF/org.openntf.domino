@@ -1,6 +1,7 @@
 package org.openntf.calendars;
 
 import java.util.Calendar;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.openntf.domino.utils.Dates;
@@ -33,6 +34,17 @@ public class CalendarSet extends TreeSet<Calendar> implements CalendarRangeInter
 		this.add(last);
 	}
 
+	/**
+	 * Optional Constructor
+	 * 
+	 * @param set
+	 *            Set from which to construct this object. All non-null values from set will be added to this object.
+	 */
+	public CalendarSet(final Set<Calendar> set) {
+		super();
+		this.addAll(set);
+	}
+
 	/*
 	 * ***************************************************
 	 * ***************************************************
@@ -55,6 +67,30 @@ public class CalendarSet extends TreeSet<Calendar> implements CalendarRangeInter
 		}
 
 		return false;
+	}
+
+	/**
+	 * Adds all non-null values from set to this object.
+	 * 
+	 * @param set
+	 *            Set from which to construct this object. All non-null values from set will be added to this object.
+	 * 
+	 * @return Flag indicating if this set changed as a result of the call.
+	 */
+	public boolean addAll(final Set<Calendar> set) {
+		if ((null == set) || set.isEmpty()) {
+			return false;
+		}
+		boolean result = false;
+
+		for (final Calendar calendar : set) {
+			final boolean temp = this.add(calendar);
+			if (temp && !result) {
+				result = true;
+			}
+		}
+
+		return result;
 	}
 
 	/*
