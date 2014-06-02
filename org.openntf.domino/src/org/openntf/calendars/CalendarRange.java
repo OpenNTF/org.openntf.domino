@@ -1,6 +1,7 @@
 package org.openntf.calendars;
 
 import java.util.Calendar;
+import java.util.Set;
 
 import org.openntf.domino.utils.Dates;
 
@@ -56,7 +57,11 @@ public class CalendarRange implements CalendarRangeInterface {
 	 *            the first date in the range
 	 */
 	public void setFirst(final Object first) {
-		this.setFirst(Dates.getCalendar(first));
+		if (null == first) {
+			this._alpha = null;
+		} else {
+			this.setFirst(Dates.getCalendar(first));
+		}
 	}
 
 	/**
@@ -72,27 +77,64 @@ public class CalendarRange implements CalendarRangeInterface {
 	 *            the last date in the range
 	 */
 	public void setLast(final Object last) {
-		this.setLast(Dates.getCalendar(last));
+		if (null == last) {
+			this._omega = null;
+		} else {
+			this.setLast(Dates.getCalendar(last));
+		}
 	}
 
 	/*
 	 * ***************************************************
 	 * ***************************************************
 	 * 
-	 * PRIVATE Methods
+	 * PUBLIC Methods
 	 * 
 	 * ***************************************************
 	 * ***************************************************
 	 */
-	private void validate() {
+
+	public void setFirstTime(final Object time) {
+		if (null != time) {
+			this.setFirst((null == this._alpha) ? time : Dates.getDate(this._alpha, time));
+		}
+	}
+
+	public void setLastTime(final Object time) {
+		if (null != time) {
+			this.setLast((null == this._omega) ? time : Dates.getDate(this._omega, time));
+		}
+	}
+
+	/**
+	 * Validates the order of entries within this object.
+	 * 
+	 * If a non-null entry exists for both the first and last entries, this method verifies that the first entry represents a moment in time
+	 * NOT AFTER to that of the last entry. If the first entry represents a moment AFTER that of the last entry, this method swaps them.
+	 * 
+	 * 
+	 * @return Flag indicating if the Calendar range is Valid.
+	 * 
+	 * @see CalendarRange#isValid()
+	 * 
+	 */
+	public boolean validate() {
+		if (this.isValid()) {
+			return true;
+		}
+
 		final Calendar alpha = this._alpha;
 		final Calendar omega = this._omega;
+
 		if ((null != alpha) && (null != omega) && Dates.isAfter(alpha, omega)) {
-			final Calendar temp = Dates.getCalendar();
-			temp.setTime(alpha.getTime());
+			final Calendar temp = alpha;
 			this._alpha = omega;
 			this._omega = temp;
+
+			return this.isValid();
 		}
+
+		return false;
 	}
 
 	/*
@@ -104,13 +146,108 @@ public class CalendarRange implements CalendarRangeInterface {
 	 * ***************************************************
 	 * ***************************************************
 	 */
-	public Calendar first() {
+	public boolean add(final Calendar calendar) {
+		if (null != calendar) {
+			if (null == this._alpha) {
+				if (null == this._omega) {
+					this._alpha = calendar;
+					return true;
+				} else {
+					if (Dates.isBefore(calendar, this._omega)) {
+						this._alpha = calendar;
+						return true;
+					}
+					if (Dates.isAfter(calendar, this._omega)) {
+						this._alpha = this._omega;
+						this._omega = calendar;
+					}
+
+					return false;
+				}
+			}
+
+			if (null == this._omega) {
+				if (Dates.isAfter(calendar, this._alpha)) {
+					this._omega = calendar;
+					return true;
+				} else if (Dates.isBefore(calendar, this._alpha)) {
+					this._omega = this._alpha;
+					this._alpha = calendar;
+					return true;
+				}
+			}
+
+			if (Dates.isBefore(calendar, this._alpha)) {
+				this._alpha = calendar;
+				return true;
+			}
+
+			if (Dates.isAfter(calendar, this._omega)) {
+				this._omega = calendar;
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public boolean addObject(final Object object) {
+		if (null != object) {
+			final Calendar c = Dates.getCalendar(object);
+			return (null == c) ? false : this.add(c);
+		}
+
+		return false;
+	}
+
+	/**
+	 * Adds all non-null values from set to this object.
+	 * 
+	 * @param set
+	 *            Set from which to construct this object. All non-null values from set will be added to this object.
+	 * 
+	 * @return Flag indicating if this set changed as a result of the call.
+	 */
+	public boolean addAll(final Set<Calendar> set) {
+		if ((null == set) || set.isEmpty()) {
+			return false;
+		}
+		boolean result = false;
+
 		this.validate();
+		for (final Calendar calendar : set) {
+			final boolean temp = this.add(calendar);
+			if (temp && !result) {
+				result = true;
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * Gets the first entry in the range
+	 * 
+	 * NOTE: No guarantee is made that the first entry is PRIOR to the last entry unless {@link CalendarRange#validate()} is called
+	 * immediately prior calling this method.
+	 * 
+	 * @return the first Calendar entry in the object
+	 */
+	public Calendar first() {
+		// this.validate();
 		return this._alpha;
 	}
 
+	/**
+	 * Gets the last entry in the range
+	 * 
+	 * NOTE: No guarantee is made that the last entry is AFTER the first entry unless {@link CalendarRange#validate()} is called immediately
+	 * prior calling this method.
+	 * 
+	 * @return the last Calendar entry in the object
+	 */
 	public Calendar last() {
-		this.validate();
+		// this.validate();
 		return this._omega;
 	}
 
