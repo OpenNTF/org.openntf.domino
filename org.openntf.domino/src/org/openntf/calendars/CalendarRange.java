@@ -146,6 +146,7 @@ public class CalendarRange implements CalendarRangeInterface {
 	 * ***************************************************
 	 * ***************************************************
 	 */
+	@Override
 	public boolean add(final Calendar calendar) {
 		if (null != calendar) {
 			if (null == this._alpha) {
@@ -191,6 +192,7 @@ public class CalendarRange implements CalendarRangeInterface {
 		return false;
 	}
 
+	@Override
 	public boolean addObject(final Object object) {
 		if (null != object) {
 			final Calendar c = Dates.getCalendar(object);
@@ -208,6 +210,7 @@ public class CalendarRange implements CalendarRangeInterface {
 	 * 
 	 * @return Flag indicating if this set changed as a result of the call.
 	 */
+	@Override
 	public boolean addAll(final Set<Calendar> set) {
 		if ((null == set) || set.isEmpty()) {
 			return false;
@@ -233,7 +236,9 @@ public class CalendarRange implements CalendarRangeInterface {
 	 * 
 	 * @return the first Calendar entry in the object
 	 */
+	@Override
 	public Calendar first() {
+		// this.validate();
 		return this._alpha;
 	}
 
@@ -245,18 +250,23 @@ public class CalendarRange implements CalendarRangeInterface {
 	 * 
 	 * @return the last Calendar entry in the object
 	 */
+	@Override
 	public Calendar last() {
+		// this.validate();
 		return this._omega;
 	}
 
+	@Override
 	public boolean isValid() {
 		return ((null != this.first()) && (null != this.last()) && !Dates.isBefore(this.last(), this.first()));
 	}
 
+	@Override
 	public boolean contains(final Calendar calendar) {
 		return (null == calendar) ? false : (calendar.equals(this.first()) || calendar.equals(this.last()));
 	}
 
+	@Override
 	public boolean contains(final Object object) {
 		if (null != object) {
 			final Calendar calendar = Dates.getCalendar(object);
@@ -266,14 +276,17 @@ public class CalendarRange implements CalendarRangeInterface {
 		return false;
 	}
 
+	@Override
 	public boolean isInRange(final Object object) {
 		return this.isInRange(object, true);
 	}
 
+	@Override
 	public boolean isInRange(final Object object, final boolean inclusive) {
 		return Dates.isInRange(object, this.first(), this.last(), inclusive);
 	}
 
+	@Override
 	public CalendarRange getIntersection(final CalendarRange cr) {
 		if ((null != cr) && this.isValid() && cr.isValid()) {
 			final Calendar first = (this.first().equals(cr.first()) || Dates.isAfter(this.first(), cr.first())) ? this.first() : cr.first();
@@ -285,18 +298,22 @@ public class CalendarRange implements CalendarRangeInterface {
 		return null;
 	}
 
+	@Override
 	public boolean isIntersectionExists(final CalendarRange cr) {
 		return (null != this.getIntersection(cr));
 	}
 
+	@Override
 	public String getHoursMinutes() {
 		return (this.isValid()) ? Dates.getHoursMinutesBetween(this.first(), this.last()) : "";
 	}
 
+	@Override
 	public long getMinutes() {
 		return (this.isValid()) ? Dates.getMinutesBetween(this.first(), this.last()) : 0;
 	}
 
+	@Override
 	public CalendarRange getUnion(final CalendarRange cr) {
 		if ((null != cr) && this.isValid() && cr.isValid()) {
 			final Calendar first = (Dates.isBefore(this.first(), cr.first())) ? this.first() : cr.first();
@@ -308,14 +325,17 @@ public class CalendarRange implements CalendarRangeInterface {
 		return null;
 	}
 
+	@Override
 	public boolean isUnionExists(final CalendarRange cr) {
 		return (null != this.getUnion(cr));
 	}
 
+	@Override
 	public CalendarRange toCalendarRange() {
 		final CalendarRange result = new CalendarRange();
 		result.setFirst(this.first());
 		result.setLast(this.last());
 		return result;
 	}
+
 }
