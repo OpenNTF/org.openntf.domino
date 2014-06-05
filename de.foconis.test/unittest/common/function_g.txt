@@ -1,0 +1,38 @@
+@GetAddressBooks([TITLES])
+	#allPass
+
+@GetCurrentTimeZone 
+	#allPass 
+
+@Text(@GetDocField("852559B400670541852559B4006656ED";"$Flags"))
+	#allPass [R]
+@Text(@GetDocField("852559B400670541852559B40066FFED";"$Flags"))
+    #lotusPass [Document could not be found.]
+	#docPass []
+
+@GetField("text1")
+	#allPass [This is a test string]
+
+text1 := "Neuer Text"; @GetField("text1")
+	#allPass [This is a test string]
+
+@GetFocusTable([CELLROW] ) 
+	#allPass
+                 
+
+@GetHTTPHeader("User-Agent")
+	#allPass
+             
+@GetIMContactListGroupNames 
+	#allFail
+
+@GetPortsList([ENABLED]) 
+	#allPass
+ 
+@GetProfileField("Interest Profile"; "ProfileCategories") 
+	#allPass
+
+@GetViewInfo([ColumnValue];2)
+	#allFail
+
+ 

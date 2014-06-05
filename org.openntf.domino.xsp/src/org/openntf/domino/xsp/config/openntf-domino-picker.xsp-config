@@ -318,7 +318,14 @@
       <display-name>%property.sorted.name%</display-name>
       <property-name>sorted</property-name>
       <property-class>boolean</property-class>
-      <property-extension/>
+      <property-extension>
+        <default-value>true</default-value>
+        <designer-extension>
+          <tags>
+						runtime-default-true
+					</tags>
+        </designer-extension>
+      </property-extension>
     </property>
     <complex-extension>
       <base-complex-id>com.ibm.xsp.extlib.component.picker.data.IValuePickerData</base-complex-id>
@@ -351,7 +358,7 @@
       <property-name>searchType</property-name>
       <property-class>java.lang.String</property-class>
       <property-extension>
-        <since>8.5.32003</since>
+        <since>M5</since>
         <designer-extension>
           <tags>
                         not-localizable

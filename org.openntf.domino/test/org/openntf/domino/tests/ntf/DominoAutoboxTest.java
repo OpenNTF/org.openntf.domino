@@ -2,11 +2,13 @@ package org.openntf.domino.tests.ntf;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 import lotus.domino.NotesFactory;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.Item;
 import org.openntf.domino.Session;
 import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.thread.DominoThread;
@@ -52,6 +54,32 @@ public class DominoAutoboxTest implements Runnable {
 		for (String key : remap.keySet()) {
 			System.out.println(key + ":" + remap.get(key));
 		}
+		session.setConvertMIME(true);
+		doc = null;
+		docJunk = db.createDocument();
+		doc = db.getDocumentByUNID(unid);
+		Vector<Item> items = doc.getItems();
+		for (Item item : items) {
+			if (item.getName().equalsIgnoreCase("map")) {
+				System.out.println("map: " + item.getType());
+				System.out.println("map value: " + item.getText());
+			}
+		}
+		doc.replaceItemValue("foo", "bar");
+		doc.save();
+		session.setConvertMIME(false);
+		o = null;
+		doc = null;
+		docJunk = db.createDocument();
+		doc = db.getDocumentByUNID(unid);
+		o = doc.getItemValue("map", Map.class);
+		System.out.println(o.getClass().getName());
+		remap = (Map<String, String>) o;
+
+		for (String key : remap.keySet()) {
+			System.out.println(key + ":" + remap.get(key));
+		}
+
 		System.out.println("Complete");
 	}
 

@@ -40,6 +40,11 @@ public interface DesignBaseNamed extends DesignBase {
 	public List<String> getAliases();
 
 	/**
+	 * @return the design element's aliases, |-delimited
+	 */
+	public String getAlias();
+
+	/**
 	 * 
 	 * @param alias
 	 *            The new alias(es) for the design element, |-delimited

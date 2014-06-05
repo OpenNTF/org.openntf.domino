@@ -3,4 +3,5 @@ Snap*
 core*
 javacore*
 /IBM_TECHNICAL_SUPPORT
-MANIFEST.MF
+/OSGI-OPT
+/src

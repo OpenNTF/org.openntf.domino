@@ -102,7 +102,11 @@ public class IndexHit implements Externalizable {
 		//			}
 		//		}
 		//		return document_;
-		return session.getDocumentByMetaversalID(getMetaversalID(), serverName);
+		try {
+			return session.getDocumentByMetaversalID(getMetaversalID(), serverName);
+		} catch (Throwable t) {
+			return null;
+		}
 	}
 
 	public String getHitContext(final Session session, final String serverName) {

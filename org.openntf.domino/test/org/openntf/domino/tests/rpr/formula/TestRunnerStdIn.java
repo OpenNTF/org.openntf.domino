@@ -3,15 +3,12 @@ package org.openntf.domino.tests.rpr.formula;
 
 import java.util.List;
 
-import lotus.domino.NotesException;
-import lotus.domino.Session;
-
-import org.openntf.domino.formula.AtFormulaParser;
-import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.ast.SimpleNode;
-import org.openntf.domino.impl.Base;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;
+import org.openntf.formula.ASTNode;
+import org.openntf.formula.FormulaContext;
+import org.openntf.formula.FormulaParser;
+import org.openntf.formula.Formulas;
 
 public class TestRunnerStdIn implements Runnable {
 	public static void main(final String[] args) {
@@ -28,28 +25,27 @@ public class TestRunnerStdIn implements Runnable {
 		try {
 
 			System.out.println("Please type a Lotus domino @formula. Quit with CTRL+Z:");
-			SimpleNode n = null;
+			ASTNode n = null;
 			List<Object> v = null;
 
-			AtFormulaParser parser = AtFormulaParser.getInstance();
-			parser.ReInit(System.in);
-			n = parser.Parse();
+			FormulaParser parser = Formulas.getParser();
+			n = parser.parse(System.in, false);
 			n.dump("");
-			FormulaContext ctx = new FormulaContext(null, parser.getFormatter());
-			v = n.evaluate(ctx);
+			FormulaContext ctx = Formulas.createContext(null, parser);
+			v = n.solve(ctx);
 
 			System.out.println("NTF:\t" + v);
 
-			StringBuilder sb = new StringBuilder();
-			n.toFormula(sb);
-			System.out.println("Notes...: " + sb.toString());
-			Session sess = Base.toLotus(Factory.getSession());
-			try {
-				v = sess.evaluate(sb.toString());
-				System.out.println("Domino:\t" + v);
-			} catch (NotesException e) {
-				e.printStackTrace();
-			}
+			//StringBuilder sb = new StringBuilder();
+			//n.toFormula(sb);
+			//System.out.println("Notes...: " + sb.toString());
+			//			Session sess = Base.toLotus(Factory.getSession());
+			//			try {
+			//				v = sess.evaluate(sb.toString());
+			//				System.out.println("Domino:\t" + v);
+			//			} catch (NotesException e) {
+			//				e.printStackTrace();
+			//			}
 
 			System.out.println("Thank you.");
 		} catch (Exception e) {

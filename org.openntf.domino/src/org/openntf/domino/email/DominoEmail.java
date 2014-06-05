@@ -19,7 +19,8 @@ import org.openntf.domino.MIMEEntity;
 import org.openntf.domino.MIMEHeader;
 import org.openntf.domino.Session;
 import org.openntf.domino.Stream;
-import org.openntf.domino.email.EmailAttachment.Type;
+import org.openntf.domino.annotations.Incomplete;
+import org.openntf.domino.email.IEmailAttachment.Type;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -78,6 +79,12 @@ public class DominoEmail implements IEmail {
 
 	}
 
+	/**
+	 * Gets the session related to the email
+	 * 
+	 * @return Session
+	 * @since org.openntf.domino 4.5.0
+	 */
 	public Session getSession() {
 		if (null == currSess_) {
 			currSess_ = Factory.getSession();
@@ -105,6 +112,7 @@ public class DominoEmail implements IEmail {
 	 * @param sender
 	 *            String email address to send from
 	 * @return Document successful memo
+	 * @since org.openntf.domino 4.5.0
 	 */
 	public Document createSimpleEmail(final Object toNames, final Object ccNames, final Object bccNames, final String subject,
 			final Object body, final String sender) {
@@ -171,6 +179,7 @@ public class DominoEmail implements IEmail {
 	 * @param separator
 	 *            String separator to use if obj is a multi-value string, e.g. comma-separated
 	 * @return List of Strings
+	 * @since org.openntf.domino 4.5.0
 	 */
 	public static List<String> convertObjectToList(final Object obj, final String separator) {
 		try {
@@ -203,6 +212,12 @@ public class DominoEmail implements IEmail {
 		}
 	}
 
+	/**
+	 * Generates a content id. This is used to generate a unique reference for each attachment to be added to the email
+	 * 
+	 * @return String result of @Unique
+	 * @since org.openntf.domino 4.5.0
+	 */
 	private String generateContentId() {
 		try {
 			Vector<Object> evalResult = getSession().evaluate("@Unique");
@@ -297,6 +312,7 @@ public class DominoEmail implements IEmail {
 	 * @see org.openntf.domino.email.IEmail#addDocAttachment(java.lang.String, java.lang.String, java.lang.Boolean)
 	 */
 	@Override
+	@Incomplete
 	public String addDocAttachment(final String unid, final String fileName, final boolean isInlineImage) {
 		// TODO Auto-generated method stub
 		return null;
@@ -306,6 +322,7 @@ public class DominoEmail implements IEmail {
 	 * @see org.openntf.domino.email.IEmail#addDocAttachment(java.lang.String, java.lang.String, java.lang.Boolean, java.lang.String)
 	 */
 	@Override
+	@Incomplete
 	public String addDocAttachment(final String unid, final String fileName, final boolean isInlineImage, final String contentId) {
 		// TODO Auto-generated method stub
 		return null;
@@ -342,7 +359,7 @@ public class DominoEmail implements IEmail {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.email.IEmail#removeAttachment(org.openntf.domino.email.EmailAttachment)
 	 */
-	public void removeAttachment(final EmailAttachment attachment) {
+	public void removeAttachment(final IEmailAttachment attachment) {
 		if (attachments_.contains(attachment)) {
 			attachments_.remove(attachment);
 		}
@@ -362,7 +379,7 @@ public class DominoEmail implements IEmail {
 	public void addAttachments(final MIMEEntity parent) {
 		try {
 			Stream streamFile = null;
-			for (EmailAttachment attach : getAttachments()) {
+			for (IEmailAttachment attach : getAttachments()) {
 				InputStream is = null;
 				EmbeddedObject eo = null;
 
@@ -679,6 +696,13 @@ public class DominoEmail implements IEmail {
 		}
 	}
 
+	/**
+	 * Sets the sender details into the email, using senderName and senderEmail
+	 * 
+	 * @param mimeRoot
+	 *            MIMEEntity root of the email, into which the sender details will be added as a child
+	 * @since org.openntf.domino 4.5.0
+	 */
 	private void setSender(final MIMEEntity mimeRoot) {
 
 		if (StringUtil.isEmpty(getSenderEmail())) {
@@ -712,13 +736,16 @@ public class DominoEmail implements IEmail {
 	};
 
 	/**
-	 * Take a Collection and join the values TODO: Move to DominoUtils
+	 * Take a Collection and join the values
+	 * 
+	 * TODO: Move to DominoUtils
 	 * 
 	 * @param vals
 	 *            Collection of values
 	 * @param separator
 	 *            separator or empty/null to use default of comma
 	 * @return String of joined values
+	 * @since org.openntf.domino 4.5.0
 	 */
 	public static String join(final Collection<String> vals, String separator) {
 		String retVal_ = "";

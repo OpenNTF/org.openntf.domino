@@ -35,14 +35,21 @@ public interface DatabaseDesign {
 	public Folder createFolder();
 
 	/**
+	 * @return a new, empty style sheet
+	 */
+	public StyleSheet createStyleSheet();
+
+	/**
 	 * @return a new view with no columns or selection formula
 	 */
 	public DesignView createView();
 
 	/**
-	 * @return the About Document note of the database
+	 * @param create
+	 *            whether a new using document should be created when one does not yet exist in the database
+	 * @return the About Document note of the database, or null if no document exists and create is false
 	 */
-	public AboutDocument getAboutDocument();
+	public AboutDocument getAboutDocument(boolean create);
 
 	/**
 	 * @return the ACL note of the database
@@ -94,6 +101,18 @@ public interface DatabaseDesign {
 	 * @return the named file resource
 	 */
 	public FileResource getAnyFileResource(String name);
+
+	/**
+	 * @param name
+	 *            name or alias of a folder in the database
+	 * @return the named folder, as a Folder object
+	 */
+	public Folder getFolder(String name);
+
+	/**
+	 * @return a collection of all folders in the database, as Folder objects
+	 */
+	public DesignCollection<Folder> getFolders();
 
 	/**
 	 * @param name
@@ -210,9 +229,11 @@ public interface DatabaseDesign {
 	public ReplicationFormula getReplicationFormula();
 
 	/**
-	 * @return the Using Document note of the database
+	 * @param create
+	 *            whether a new using document should be created when one does not yet exist in the database
+	 * @return the Using Document note of the database, or null if no document exists and create is false
 	 */
-	public UsingDocument getUsingDocument();
+	public UsingDocument getUsingDocument(boolean create);
 
 	/**
 	 * @param name

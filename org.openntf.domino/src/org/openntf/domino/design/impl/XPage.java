@@ -26,6 +26,7 @@ import org.openntf.domino.Document;
  * 
  */
 public class XPage extends JavaResource implements org.openntf.domino.design.XPage {
+	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(XPage.class.getName());
 

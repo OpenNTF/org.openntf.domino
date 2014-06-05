@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jardesc>
+    <jar path="org.openntf.formula/lib/formula.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/org.openntf.formula/export-formula.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="false" manifestLocation="/org.openntf.formula/META-INF/MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=org.openntf.formula/src"/>
+        <file path="/org.openntf.formula/build.properties"/>
+        <file path="/org.openntf.formula/.gitignore"/>
+        <file path="/org.openntf.formula/.classpath"/>
+        <file path="/org.openntf.formula/.project"/>
+        <file path="/org.openntf.formula/FindBugsExcl.xml"/>
+        <file path="/org.openntf.formula/FindBugsIncl.xml"/>
+    </selectedElements>
+</jardesc>

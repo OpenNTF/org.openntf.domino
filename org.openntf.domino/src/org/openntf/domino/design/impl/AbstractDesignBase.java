@@ -37,12 +37,13 @@ import org.xml.sax.SAXException;
  * @author jgallagher
  * 
  */
+@SuppressWarnings("serial")
 public abstract class AbstractDesignBase implements DesignBase {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignBase.class.getName());
 
 	private String noteId_;
-	private final Database database_;
+	private transient Database database_;
 	private XMLDocument dxl_;
 
 	protected AbstractDesignBase(final Document document) {
@@ -118,6 +119,10 @@ public abstract class AbstractDesignBase implements DesignBase {
 	@Override
 	public boolean isPropagatePreventChanges() {
 		return getDocumentElement().getAttribute("propagatenoreplace").equals("true");
+	}
+
+	public void reattach(final Database database) {
+		database_ = database;
 	}
 
 	/*
@@ -239,7 +244,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 		return getAncestorDatabase().getAncestorSession();
 	}
 
-	public void save() {
+	public boolean save() {
 
 		DxlImporter importer = getAncestorSession().createDxlImporter();
 		importer.setDesignImportOption(DxlImporter.DesignImportOption.REPLACE_ELSE_CREATE);
@@ -249,13 +254,15 @@ public abstract class AbstractDesignBase implements DesignBase {
 			importer.importDxl(getDxl().getXml(), database);
 		} catch (IOException e) {
 			DominoUtils.handleException(e);
-			return;
+			return false;
 		}
 		noteId_ = importer.getFirstImportedNoteID();
 
 		// Reset the DXL so that it can pick up new noteinfo
 		Document document = database.getDocumentByID(noteId_);
 		loadDxl(document.generateXML());
+
+		return true;
 	}
 
 	protected XMLDocument getDxl() {

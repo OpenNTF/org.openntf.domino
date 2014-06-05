@@ -8,6 +8,8 @@ import org.openntf.domino.ACL;
 /**
  * @author withersp
  * 
+ *         OpenNTF Domino extensions to ACLEntry class
+ * 
  */
 public interface ACLEntry {
 
@@ -25,6 +27,8 @@ public interface ACLEntry {
 	 * 
 	 * @param level
 	 *            ACL.Level to set to
+	 * 
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public void setLevel(final ACL.Level level);
 

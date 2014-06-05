@@ -3,7 +3,6 @@
  */
 package org.openntf.domino.utils.xml;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collection;
@@ -17,14 +16,14 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
 import org.openntf.domino.utils.DominoUtils;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.ibm.commons.xml.DOMUtil;
+import com.ibm.commons.xml.Format;
 
 /**
  * @author jgallagher
@@ -69,6 +68,9 @@ public class XMLNode implements Map<String, Object>, Serializable {
 			return "";
 		}
 		NamedNodeMap attributes = this.node.getAttributes();
+		if (attributes == null) {
+			return "";
+		}
 		Node attr = attributes.getNamedItem(attribute);
 		if (attr == null) {
 			return "";
@@ -81,7 +83,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		if (attr == null) {
 			attr = getDocument().createAttribute(attribute);
 		}
-		attr.setNodeValue(value);
+		attr.setNodeValue(value == null ? "" : value);
 		this.node.getAttributes().setNamedItem(attr);
 	}
 
@@ -157,6 +159,16 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		this.getNode().removeChild(childNode.getNode());
 	}
 
+	public List<XMLNode> getChildNodes() {
+		return new XMLNodeList(getNode().getChildNodes());
+	}
+
+	public void removeChildren() {
+		for (XMLNode child : this.getChildNodes()) {
+			removeChild(child);
+		}
+	}
+
 	public XMLNode getNextSibling() {
 		Node node = this.getNode().getNextSibling();
 		if (node != null) {
@@ -177,6 +189,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return this.node;
 	}
 
+	@Override
 	public Object get(final Object arg0) {
 		String path = String.valueOf(arg0);
 
@@ -204,14 +217,8 @@ public class XMLNode implements Map<String, Object>, Serializable {
 
 	public String getXml() throws IOException {
 		try {
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			OutputFormat format = new OutputFormat();
-			format.setLineWidth(200);
-			format.setIndenting(true);
-			format.setIndent(2);
-			XMLSerializer serializer = new XMLSerializer(bos, format);
-			serializer.serialize((Element) this.node);
-			return new String(bos.toByteArray(), "UTF-8");
+			Format format = new Format(4, true, "UTF-8");
+			return DOMUtil.getXMLString(this.node, format);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -229,29 +236,36 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return this.node.getOwnerDocument();
 	}
 
+	@Override
 	public void clear() {
 	}
 
+	@Override
 	public boolean containsKey(final Object arg0) {
 		return false;
 	}
 
+	@Override
 	public boolean containsValue(final Object arg0) {
 		return false;
 	}
 
+	@Override
 	public Set<java.util.Map.Entry<String, Object>> entrySet() {
 		return null;
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return false;
 	}
 
+	@Override
 	public Set<String> keySet() {
 		return null;
 	}
 
+	@Override
 	public Object put(final String arg0, final Object arg1) {
 		if (arg0.equals("nodeValue")) {
 			this.getNode().setNodeValue(String.valueOf(arg1));
@@ -263,17 +277,21 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return null;
 	}
 
+	@Override
 	public void putAll(final Map<? extends String, ? extends Object> arg0) {
 	}
 
+	@Override
 	public Object remove(final Object arg0) {
 		return null;
 	}
 
+	@Override
 	public int size() {
 		return 0;
 	}
 
+	@Override
 	public Collection<Object> values() {
 		return null;
 	}

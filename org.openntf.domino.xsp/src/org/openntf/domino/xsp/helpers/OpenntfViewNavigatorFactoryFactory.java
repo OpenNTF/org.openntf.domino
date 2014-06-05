@@ -15,6 +15,7 @@ import com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx9;
 /**
  * @author Nathan T. Freeman
  * 
+ *         OpenntfViewNavigatorFactoryFactory class
  */
 public class OpenntfViewNavigatorFactoryFactory implements ViewNavigatorFactory.Factory {
 	private static final Logger log_ = Logger.getLogger(OpenntfViewNavigatorFactoryFactory.class.getName());
@@ -24,6 +25,9 @@ public class OpenntfViewNavigatorFactoryFactory implements ViewNavigatorFactory.
 	// System.out.println("Loaded " + OpenntfViewNavigatorFactoryFactory.class.getName());
 	// }
 
+	/**
+	 * Constructor
+	 */
 	public OpenntfViewNavigatorFactoryFactory() {
 		// System.out.println(OpenntfViewNavigatorFactoryFactory.class.getName() + " constructed with no arguments.");
 	}
@@ -45,21 +49,43 @@ public class OpenntfViewNavigatorFactoryFactory implements ViewNavigatorFactory.
 		return new OpenntfViewNavigatorFactory(dbPath, viewName);
 	}
 
+	/**
+	 * OpenntfViewNavigatorFactory class
+	 */
 	public static class OpenntfViewNavigatorFactory extends ViewNavigatorFactory {
 		private final String dbPath_;
 		private final String viewName_;
 
+		/**
+		 * Constructor
+		 * 
+		 * @param dbPath
+		 *            String database path for which the load a navigator
+		 * @param viewName
+		 *            String view name
+		 * @since org.openntf.domino.xsp 4.5.0
+		 */
 		public OpenntfViewNavigatorFactory(final String dbPath, final String viewName) {
 			dbPath_ = dbPath;
 			viewName_ = viewName;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see com.ibm.xsp.model.domino.ViewNavigatorFactory#findNavigatorType()
+		 */
 		@Override
 		public int findNavigatorType() {
 			// System.out.println("findNavigatorType requested");
 			return 1337;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see com.ibm.xsp.model.domino.ViewNavigatorFactory#createNavigator()
+		 */
 		@Override
 		public ViewNavigatorEx createNavigator() {
 			ViewNavigatorEx result = super.createNavigator();

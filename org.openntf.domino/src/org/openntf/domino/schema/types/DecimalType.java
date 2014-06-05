@@ -15,11 +15,7 @@ public class DecimalType extends AbstractDominoType {
 	private static final Logger log_ = Logger.getLogger(DecimalType.class.getName());
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
-	public DecimalType() {
-		// TODO Auto-generated constructor stub
+	DecimalType() {
 	}
 
 	/*

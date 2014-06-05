@@ -14,6 +14,9 @@ import com.ibm.xsp.el.ImplicitObjectFactory;
 import com.ibm.xsp.util.TypedUtil;
 
 //import org.openntf.domino.Session;
+/**
+ * No longer used, superseded by OpenntfDominoImplicitObjectFactory2
+ */
 @SuppressWarnings("unchecked")
 public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory {
 	// TODO this is really just a sample on how to get to an entry point in the API
@@ -169,7 +172,7 @@ public class OpenntfDominoImplicitObjectFactory implements ImplicitObjectFactory
 			System.out.println("Beginning creation of log holder...");
 		}
 		if (Activator.isAPIEnabled()) {
-			Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
+			Map<String, Object> localMap = TypedUtil.getSessionMap(ctx.getExternalContext());
 			XspOpenLogErrorHolder ol_ = new XspOpenLogErrorHolder();
 			localMap.put("openLogBean", ol_);
 			if (isAppDebug(ctx)) {

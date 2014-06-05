@@ -15,11 +15,8 @@ public class TimeType extends AbstractDominoType {
 	private static final Logger log_ = Logger.getLogger(TimeType.class.getName());
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
-	public TimeType() {
-		// TODO Auto-generated constructor stub
+	TimeType() {
+
 	}
 
 	/*

@@ -88,13 +88,16 @@ import org.openntf.domino.RichTextItem;
 import org.openntf.domino.logging.BaseOpenLogItem;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
+import org.openntf.domino.utils.XSPUtil;
 
 import com.ibm.commons.util.StringUtil;
+import com.ibm.icu.util.Calendar;
 import com.ibm.xsp.extlib.util.ExtLibUtil;
 
 public class XspOpenLogItem extends BaseOpenLogItem {
 
 	private transient String logEmail_;
+	private transient static String _logExpireDate;
 	private transient String currXPage_;
 	private transient String logDbName_;
 	private transient Boolean displayError_;
@@ -126,13 +129,17 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 		try {
 			String fromPage = "";
 			String[] historyUrls = ExtLibUtil.getXspContext().getHistoryUrls();
-			if (currPage) {
-				fromPage = historyUrls[0];
+			if (StringUtil.isEmpty(historyUrls)) {
+				fromPage = ExtLibUtil.getXspContext().getUrl().toSiteRelativeString(ExtLibUtil.getXspContext());
 			} else {
-				if (historyUrls.length > 1) {
-					fromPage = historyUrls[1];
-				} else {
+				if (currPage) {
 					fromPage = historyUrls[0];
+				} else {
+					if (historyUrls.length > 1) {
+						fromPage = historyUrls[1];
+					} else {
+						fromPage = historyUrls[0];
+					}
 				}
 			}
 			if (fromPage.indexOf("?") > -1) {
@@ -151,6 +158,16 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 		displayError_ = null;
 		displayErrorGeneric_ = null;
 		olDebugLevel = getDefaultDebugLevel();
+	}
+
+	/**
+	 * @return the expire date
+	 */
+	public static String getLogExpireDate() {
+		if (StringUtil.isEmpty(_logExpireDate)) {
+			_logExpireDate = Activator.getXspPropertyAsString("xsp.openlog.email");
+		}
+		return _logExpireDate;
 	}
 
 	/**
@@ -341,7 +358,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 			if (StringUtil.isEmpty(getLogEmail())) {
 				db = getLogDb();
 			} else {
-				db = Factory.getSession().getDatabase(getThisServer(), "mail.box", false);
+				db = XSPUtil.getCurrentSessionAsSigner().getDatabase(getThisServer(), "mail.box", false);
 			}
 			if (db == null) {
 				System.out.println("Could not retrieve database at path " + getLogDbName());
@@ -425,6 +442,20 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 
 			if (StringUtil.isNotEmpty(getLogEmail())) {
 				logDoc.replaceItemValue("Recipients", getLogEmail());
+			}
+
+			// Set expiry date, if defined
+			if (!StringUtil.isEmpty(getLogExpireDate())) {
+				try {
+					Integer expiryPeriod = new Integer(getLogExpireDate());
+					Calendar expTime = Calendar.getInstance();
+					expTime.setTime(getStartTime());
+					expTime.add(Calendar.DAY_OF_YEAR, expiryPeriod);
+					logDoc.replaceItemValue("ExpireDate", expTime.getTime());
+				} catch (Throwable t) {
+					logDoc.replaceItemValue("ArchiveFlag",
+							"WARNING: Xsp Properties in the application has a non-numeric value for xsp.openlog.expireDate, so cannot be set to auto-expire");
+				}
 			}
 			logDoc.save(true);
 			retval = true;

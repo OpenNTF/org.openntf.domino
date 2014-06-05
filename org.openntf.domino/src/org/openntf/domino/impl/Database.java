@@ -1038,6 +1038,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public Document getDocumentByUNID(final String unid) {
 		try {
+			if (unid == null || unid.isEmpty())
+				return null;
 			return fromLotus(getDelegate().getDocumentByUNID(unid), Document.SCHEMA, this);
 		} catch (NotesException e) {
 			if (getAncestorSession().isFixEnabled(Fixes.DOC_UNID_NULLS) && "Invalid universal id".equals(e.text)) {

@@ -101,10 +101,12 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 
 	private Set<Fixes> fixes_ = EnumSet.noneOf(Fixes.class);
 
+	@Override
 	public boolean isFixEnabled(final Fixes fix) {
 		return fixes_.contains(fix);
 	}
 
+	@Override
 	public void setFixEnable(final Fixes fix, final boolean value) {
 		if (value) {
 			fixes_.add(fix);
@@ -141,6 +143,8 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	//		return defaultSession.get();
 	//	}
 
+	private boolean featureRestricted_ = false;
+
 	// RPr: the only way to get a session is from the factory. so commented out
 	//	/**
 	//	 * Instantiates a new session.
@@ -169,7 +173,13 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	 *            the cpp-id
 	 */
 	public Session(final lotus.domino.Session lotus, final SessionHasNoParent parent, final WrapperFactory wf, final long cpp_id) {
+		this(lotus, parent, wf, cpp_id, false);
+	}
+
+	public Session(final lotus.domino.Session lotus, final SessionHasNoParent parent, final WrapperFactory wf, final long cpp_id,
+			final boolean isFeatureRestricted) {
 		super(lotus, null, wf, cpp_id, NOTES_SESSION);
+		featureRestricted_ = isFeatureRestricted;
 		initialize(lotus);
 	}
 
@@ -284,6 +294,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	 * 
 	 * @see org.openntf.domino.Session#createDateRange(lotus.domino.DateTime, lotus.domino.DateTime)
 	 */
+	@Override
 	public DateRange createDateRange(final lotus.domino.DateTime startTime, final lotus.domino.DateTime endTime) {
 		@SuppressWarnings("rawtypes")
 		List recycleThis = new ArrayList();
@@ -341,6 +352,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	 * 
 	 * @see org.openntf.domino.Session#createDateTime(int, int, int, int, int, int)
 	 */
+	@Override
 	public DateTime createDateTime(final int y, final int m, final int d, final int h, final int i, final int s) {
 		Calendar cal = Calendar.getInstance();
 		cal.set(y, m - 1, d, h, i, s);
@@ -527,17 +539,46 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	 * 
 	 * @see org.openntf.domino.Session#evaluate(java.lang.String, lotus.domino.Document)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
 	public Vector<Object> evaluate(final String formula, final lotus.domino.Document doc) {
 		try {
+			//			// TODO RPr: Make an option to enable/disable formula engine
+			//			if (doc instanceof Map || doc == null) {
+			//				List<Object> ret = Formulas.evaluate(formula, (Map<String, Object>) doc);
+			//				return new Vector(ret);
+			//			}
+
 			if (doc instanceof Document) {
 				String lf = formula.toLowerCase();
 				if (lf.contains("field ") || lf.contains("@setfield")) {
 					((Document) doc).markDirty(); // the document MAY get dirty by evaluate... 
 				}
 			}
-			return wrapColumnValues(getDelegate().evaluate(formula, toLotus(doc)), this);
+			lotus.domino.Session lsession = getDelegate();
+			Vector<Object> result = null;
+
+			if (doc == null) {
+				try {
+					result = lsession.evaluate(formula);
+				} catch (NotesException ne1) {
+					result = new Vector<Object>();
+					result.add("ERROR: " + ne1.text);
+				}
+			} else {
+				lotus.domino.Document ldoc = toLotus(doc);
+				try {
+					result = lsession.evaluate(formula, ldoc);
+				} catch (NotesException ne1) {
+					result = new Vector<Object>();
+					result.add("ERROR: " + ne1.text);
+				}
+			}
+
+			if (result == null)
+				return null;	//this really shouldn't be possible.
+			return wrapColumnValues(result, this);
 		} catch (Exception e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -676,6 +717,8 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			if (currentDatabase_ == null) {
 				result = fromLotus(getDelegate().getCurrentDatabase(), Database.SCHEMA, this);
+				if (result == null)
+					return null;
 				String key = result.getFilePath();
 				if (result.getServer().length() > 1) {
 					key = result.getServer() + "!!" + result.getFilePath();
@@ -730,6 +773,9 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		result = databases_.get(key);
 		if (result == null) {
 			try {
+				//				DbDirectory dir = this.getDbDirectory(server);
+				//				database = dir.openDatabase(db);
+
 				database = getDelegate().getDatabase(server, db, createOnFail);
 				result = fromLotus(database, Database.SCHEMA, this);
 				databases_.put(key, result);
@@ -759,6 +805,17 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	@Override
 	public org.openntf.domino.Database getDatabase(final String server, final String db) {
 		return getDatabase(server, db, false);
+	}
+
+	@Override
+	public org.openntf.domino.Database getDatabase(final String apiPath) {
+		String server = "";
+		String dbpath = apiPath;
+		if (apiPath.indexOf("!!") > -1) {
+			server = apiPath.substring(0, apiPath.indexOf("!!"));
+			dbpath = apiPath.substring(apiPath.indexOf("!!") + 2);
+		}
+		return getDatabase(server, dbpath);
 	}
 
 	/*
@@ -1620,16 +1677,19 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		return eventFactory_;
 	}
 
+	@Override
 	public void setEventFactory(final IDominoEventFactory factory) {
 		eventFactory_ = factory;
 	}
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public IDominoEvent generateEvent(final EnumEvent event, final org.openntf.domino.Base source, final org.openntf.domino.Base target,
 			final Object payload) {
 		return getEventFactory().generate(event, source, target, payload);
 	}
 
+	@Override
 	@Deprecated
 	//use DominoUtils.toCommonName(String) instead
 	public String toCommonName(final String name) {
@@ -1641,6 +1701,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		}
 	}
 
+	@Override
 	public void boogie() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("(_|_)");
@@ -1659,6 +1720,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	/* (non-Javadoc)
 	 * @see lotus.domino.Session#freeResourceSearch(lotus.domino.DateTime, lotus.domino.DateTime, java.lang.String, int, int)
 	 */
+	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Vector freeResourceSearch(final lotus.domino.DateTime arg0, final lotus.domino.DateTime arg1, final String arg2, final int arg3,
 			final int arg4) {
@@ -1673,6 +1735,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	/* (non-Javadoc)
 	 * @see lotus.domino.Session#freeResourceSearch(lotus.domino.DateTime, lotus.domino.DateTime, java.lang.String, int, int, java.lang.String, int, java.lang.String, java.lang.String, int)
 	 */
+	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Vector freeResourceSearch(final lotus.domino.DateTime arg0, final lotus.domino.DateTime arg1, final String arg2, final int arg3,
 			final int arg4, final String arg5, final int arg6, final String arg7, final String arg8, final int arg9) {
@@ -1687,6 +1750,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.ext.Session#getUnique()
 	 */
+	@Override
 	public String getUnique() {
 		String result = "";
 		try {
@@ -1698,6 +1762,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		return result;
 	}
 
+	@Override
 	public org.openntf.domino.Database getDatabaseByReplicaID(final String server, final String replicaid) {
 		try {
 			lotus.domino.Database nullDb = getDelegate().getDatabase(null, null);
@@ -1713,6 +1778,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		return null;
 	}
 
+	@Override
 	public org.openntf.domino.Database getDatabaseWithFailover(final String server, final String dbfile) {
 		try {
 			lotus.domino.Database nullDb = getDelegate().getDatabase(null, null);
@@ -1728,6 +1794,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		return null;
 	}
 
+	@Override
 	public org.openntf.domino.Database getDatabaseIfModified(final String server, final String dbfile,
 			final lotus.domino.DateTime modifiedsince) {
 		try {
@@ -1744,6 +1811,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		return null;
 	}
 
+	@Override
 	public org.openntf.domino.Database getDatabaseIfModified(final String server, final String dbfile, final Date modifiedsince) {
 		try {
 			lotus.domino.Database nullDb = getDelegate().getDatabase(null, null);
@@ -1761,6 +1829,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		return null;
 	}
 
+	@Override
 	public org.openntf.domino.Database getMailDatabase() {
 		try {
 			lotus.domino.DbDirectory rawDir = getDelegate().getDbDirectory(null);
@@ -1778,6 +1847,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.ext.Session#getDocumentByMetaversalID(java.lang.String)
 	 */
+	@Override
 	public org.openntf.domino.Document getDocumentByMetaversalID(final String metaversalID) {
 		String serverName = "";
 		String id = "";
@@ -1794,6 +1864,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.ext.Session#getDocumentByMetaversalID(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public org.openntf.domino.Document getDocumentByMetaversalID(final String metaversalID, final String serverName) {
 		if (metaversalID.length() != 48) {
 			throw new IllegalArgumentException("MetaversalIDs must be 48 characters in length (16 for replicaID, 32 for unid)");
@@ -1805,6 +1876,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		return doc;
 	}
 
+	@Override
 	public AutoMime getAutoMime() {
 		if (isAutoMime_ == null) {
 			//NTF default behavior is for it to be on, so you have to globally turn it off
@@ -1815,8 +1887,18 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		}
 	}
 
+	@Override
 	public void setAutoMime(final AutoMime autoMime) {
 		isAutoMime_ = autoMime;
 	}
 
+	@Override
+	public boolean isFeatureRestricted() {
+		return featureRestricted_;
+	}
+
+	@Override
+	public boolean isAnonymous() {
+		return "Anonymous".equals(getEffectiveUserName());
+	}
 }

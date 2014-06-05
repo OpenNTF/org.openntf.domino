@@ -26,6 +26,7 @@ import com.ibm.xsp.extlib.component.picker.data.SimplePickerResult;
 /**
  * @author Nathan T. Freeman
  * 
+ *         MapValuePickerData, for use with the ValuePicker control
  */
 public class MapValuePickerData extends ValueBindingObjectImpl implements IValuePickerData, Serializable {
 	private static final Logger log_ = Logger.getLogger(MapValuePickerData.class.getName());
@@ -35,6 +36,11 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 	public Boolean caseInsensitive;
 	public Map<String, String> options;
 
+	/**
+	 * Enum for easy and consistent access to search type options
+	 * 
+	 * @since org.openntf.domino.xsp 5.0.0
+	 */
 	private static enum SearchType {
 		SEARCH_STARTFROM("startFrom"), SEARCH_MATCH("match"), SEARCH_FTSEARCH("ftSearch");
 
@@ -49,6 +55,11 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 		}
 	}
 
+	/**
+	 * Enum for easy access to the search styles - jumpTo and restrictToSearch
+	 * 
+	 * @since org.openntf.domino.xsp 5.0.0
+	 */
 	private static enum SearchStyle {
 		SEARCH_JUMPTO("jumpTo"), SEARCH_RESTRICTTOSEARCH("restrictToSearch");
 
@@ -67,6 +78,12 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 
 	}
 
+	/**
+	 * Gets the options for the Value Picker, from the "options" property
+	 * 
+	 * @return Map<String, String> of values
+	 * @since org.openntf.domino.xsp 4.5.0
+	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, String> getOptions() {
 		if (options != null) {
@@ -90,10 +107,23 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 		return null;
 	}
 
+	/**
+	 * Loads the options for the Value Picker
+	 * 
+	 * @param options
+	 *            Map<String, String>
+	 * @since org.openntf.domino.xsp 4.5.0
+	 */
 	public void setOptions(final Map<String, String> options) {
 		this.options = options;
 	}
 
+	/**
+	 * Gets the search type for the picker, from the "searchType" property
+	 * 
+	 * @return String search type
+	 * @since org.openntf.domino.xsp 5.0.0
+	 */
 	public String getSearchType() {
 		if (searchType != null) {
 			return searchType;
@@ -106,10 +136,23 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 		return null;
 	}
 
+	/**
+	 * Loads the search type
+	 * 
+	 * @param searchType
+	 *            String search type
+	 * @since org.openntf.domino.xsp 5.0.0
+	 */
 	public void setSearchType(final String searchType) {
 		this.searchType = searchType;
 	}
 
+	/**
+	 * Gets the search style, from the "searchStyle" property
+	 * 
+	 * @return String search style
+	 * @since org.openntf.domino.xsp 5.0.0
+	 */
 	public String getSearchStyle() {
 		if (searchStyle != null) {
 			return searchStyle;
@@ -123,10 +166,23 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 
 	}
 
+	/**
+	 * Loads the search style
+	 * 
+	 * @param searchStyle
+	 *            String search style
+	 * @since org.openntf.domino.xsp 5.0.0
+	 */
 	public void setSearchStyle(final String searchStyle) {
 		this.searchStyle = searchStyle;
 	}
 
+	/**
+	 * Whether the options should be searched case insensitive or not
+	 * 
+	 * @return boolean whether case insensitive
+	 * @since org.openntf.domino.xsp 5.0.0
+	 */
 	public boolean isCaseInsensitive() {
 		if (caseInsensitive != null) {
 			return caseInsensitive;
@@ -141,14 +197,31 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 		return false;
 	}
 
+	/**
+	 * Loads whether the search should be done case inszensitive
+	 * 
+	 * @param caseInsensitive
+	 *            boolean
+	 * @since org.openntf.domino.xsp 5.0.0
+	 */
 	public void setCaseInsensitive(final boolean caseInsensitive) {
 		this.caseInsensitive = caseInsensitive;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ibm.xsp.extlib.component.picker.data.IPickerData#getSourceLabels()
+	 */
 	public String[] getSourceLabels() {
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ibm.xsp.extlib.component.picker.data.IPickerData#hasCapability(int)
+	 */
 	public boolean hasCapability(final int capability) {
 		if (capability == IValuePickerData.CAPABILITY_LABEL || capability == IValuePickerData.CAPABILITY_SEARCHBYKEY
 				|| capability == IValuePickerData.CAPABILITY_SEARCHLIST)
@@ -179,6 +252,20 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 		return new SimplePickerResult(entries, count);
 	}
 
+	/**
+	 * Returns the filtered options, a subset of the options for the MapValuePickerData
+	 * 
+	 * @param key
+	 *            String typeahead key
+	 * @param startKey
+	 *            String search option
+	 * @param start
+	 *            int not used
+	 * @param searchIndex
+	 *            int not used
+	 * @return LinkedHashMap<String, String> of options filtered from the total options
+	 * @since org.openntf.domino.xsp 4.5.0
+	 */
 	private LinkedHashMap<String, String> filteredOptions(final String key, final String startKey, final int start, final int searchIndex) {
 		LinkedHashMap<String, String> retVal = new LinkedHashMap<String, String>();
 		String searchType = getSearchType();
@@ -279,6 +366,11 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 		return entries;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ibm.xsp.complex.ValueBindingObjectImpl#restoreState(javax.faces.context.FacesContext, java.lang.Object)
+	 */
 	@Override
 	public void restoreState(final FacesContext _context, final Object _state) {
 		Object _values[] = (Object[]) _state;
@@ -289,6 +381,11 @@ public class MapValuePickerData extends ValueBindingObjectImpl implements IValue
 		searchStyle = (String) _values[4];
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ibm.xsp.complex.ValueBindingObjectImpl#saveState(javax.faces.context.FacesContext)
+	 */
 	@Override
 	public Object saveState(final FacesContext _context) {
 		Object _values[] = new Object[5];

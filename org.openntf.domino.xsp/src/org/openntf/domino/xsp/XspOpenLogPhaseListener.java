@@ -50,21 +50,27 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 	private static final long serialVersionUID = 1L;
 	private static final int RENDER_RESPONSE = 6;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.faces.event.PhaseListener#beforePhase(javax.faces.event.PhaseEvent)
+	 */
 	@SuppressWarnings("unchecked")
 	public void beforePhase(final PhaseEvent event) {
 		try {
 			// Add FacesContext messages for anything captured so far
 			if (RENDER_RESPONSE == event.getPhaseId().getOrdinal()) {
 				Map<String, Object> r = FacesContext.getCurrentInstance().getExternalContext().getRequestMap();
+				Map<String, Object> sessScope = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
 				if (null == r.get("error")) {
 					XspOpenLogUtil.getXspOpenLogItem().setThisAgent(true);
 				}
-				if (null != r.get("openLogBean")) {
+				if (null != sessScope.get("openLogBean")) {
 					if (!Activator.isAPIEnabled()) {
 						return;
 					}
-					// requestScope.openLogBean is not null, the developer has called openLogBean.addError(e,this)
-					XspOpenLogErrorHolder errList = (XspOpenLogErrorHolder) r.get("openLogBean");
+					// sessionScope.openLogBean is not null, the developer has called openLogBean.addError(e,this)
+					XspOpenLogErrorHolder errList = (XspOpenLogErrorHolder) sessScope.get("openLogBean");
 					errList.setLoggedErrors(new LinkedHashSet<EventError>());
 					// loop through the ArrayList of EventError objects and add any errors already captured as a facesMessage
 					if (null != errList.getErrors()) {
@@ -89,21 +95,23 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 		try {
 			if (RENDER_RESPONSE == event.getPhaseId().getOrdinal()) {
 				Map<String, Object> r = FacesContext.getCurrentInstance().getExternalContext().getRequestMap();
+				Map<String, Object> sessScope = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
 				if (null != r.get("error")) {
 					processUncaughtException(r);
 
-				} else if (null != r.get("openLogBean")) {
+				} else if (null != sessScope.get("openLogBean")) {
 					if (!Activator.isAPIEnabled()) {
 						return;
 					}
-					// requestScope.openLogBean is not null, the developer has called openLogBean.addError(e,this)
-					XspOpenLogErrorHolder errList = (XspOpenLogErrorHolder) r.get("openLogBean");
+					// sessionScope.openLogBean is not null, the developer has called openLogBean.addError(e,this)
+					XspOpenLogErrorHolder errList = (XspOpenLogErrorHolder) sessScope.get("openLogBean");
 					// loop through the ArrayList of EventError objects
 					if (null != errList.getErrors()) {
 						for (EventError error : errList.getErrors()) {
 							String msg = "";
-							if (!"".equals(error.getMsg()))
+							if (!"".equals(error.getMsg())) {
 								msg = msg + error.getMsg();
+							}
 							msg = msg + "Error on ";
 							if (null != error.getControl()) {
 								msg = msg + error.getControl().getId();
@@ -146,6 +154,7 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 							XspOpenLogUtil.getXspOpenLogItem().logEvent(null, msg, severity, passedDoc);
 						}
 					}
+					sessScope.put("openLogBean", null);
 				}
 			}
 		} catch (Throwable e) {
@@ -263,6 +272,13 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 		}
 	}
 
+	/**
+	 * Converts an integer into a Java logging {@link Level}
+	 * 
+	 * @param severity
+	 *            int severity, 1 to 7
+	 * @return Level corresponding to the relevant integer, defaulting to Level.CONFIG (4)
+	 */
 	private Level convertSeverity(final int severity) {
 		Level internalLevel = null;
 		switch (severity) {
@@ -290,6 +306,11 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 		return internalLevel;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.faces.event.PhaseListener#getPhaseId()
+	 */
 	public PhaseId getPhaseId() {
 		return PhaseId.ANY_PHASE;
 	}

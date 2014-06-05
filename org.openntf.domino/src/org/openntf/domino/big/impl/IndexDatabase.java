@@ -143,7 +143,6 @@ public class IndexDatabase implements IScannerStateManager {
 	}
 
 	protected void initIndexDb() {
-
 		View indexView = getIndexDb().getView(TERM_VIEW_NAME);
 		if (indexView == null) {
 			indexView = getIndexDb().createView(TERM_VIEW_NAME, "Form=\"" + TERM_FORM_NAME + "\"");

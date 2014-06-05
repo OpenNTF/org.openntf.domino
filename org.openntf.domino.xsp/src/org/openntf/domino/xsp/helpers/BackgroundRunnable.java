@@ -14,6 +14,9 @@ import com.ibm.domino.napi.c.xsp.XSPNative;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 
+/**
+ * Class for creating background tasks
+ */
 public abstract class BackgroundRunnable implements Runnable {
 	public static class ThreadContext {
 		private final String dbpath;

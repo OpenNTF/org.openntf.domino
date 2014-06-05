@@ -1,0 +1,644 @@
+
+options
+{
+  STATIC = false;
+  JAVA_UNICODE_ESCAPE = false; // Should not pre parse the unicode escape
+  UNICODE_INPUT = true; // Should accept unicode character from the Reader
+  JDK_VERSION = "1.5";
+  IGNORE_CASE = true;
+  MULTI = true;
+  NODE_DEFAULT_VOID = true;
+  NODE_USES_PARSER = true; // needed to query for formula extensions
+  NODE_PACKAGE = "org.openntf.formula.ast";
+  JJTREE_OUTPUT_DIRECTORY = "ast";
+  OUTPUT_DIRECTORY = "../parse";
+}
+
+PARSER_BEGIN(AtFormulaParserImpl)
+/*
+ *  © Copyright FOCONIS AG, 2014
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at:
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS, 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 
+ * implied. See the License for the specific language governing 
+ * permissions and limitations under the License.
+ */
+package org.openntf.formula.parse;
+import org.openntf.formula.ast.*;
+import org.openntf.formula.*;
+
+public class AtFormulaParserImpl extends FormulaParser
+{
+//  	protected AtFormulaParserImplTokenManager getTokenSource()
+//  	{
+//  	  	return token_source;
+// 	}
+}
+
+PARSER_END(AtFormulaParserImpl)
+
+/**
+ * Lexer rules. There are 4 states
+ *
+ * DEFAULT:
+ *			The default state (formula parse mode)
+ * SUBSCRIPT:
+ *			Nedded to distinguish between '[Today]' (which is a date) and 'field[today]' which is a subscript
+ * FOCONIS:
+ *			Needed to parse Foconis' inline formulas like: 'DocumentTitle: <! subject ! >'
+ * FOC_PARAM:
+ *			Needed to parse Foconis' inline parameters like 'DocumentTitle: <#1#>'
+ */
+
+/**
+ * Handle unneccessary characters and comments in DEFAULT and SUBSCRIPT state
+ */
+< DEFAULT, SUBSCRIPT >
+SKIP :	{  " "| "\t"| "\n"| "\r" | "\r\n"}
+
+< DEFAULT, SUBSCRIPT  >
+SPECIAL_TOKEN : {
+	<SINGLE_LINE_COMMENT: "//" (~["\n","\r"])* ("\n" | "\r" | "\r\n")?>
+| 	<FORMAL_COMMENT: "/**" (~["*"])* "*" ("*" | ~["*","/"] (~["*"])* "*")* "/">
+| 	<MULTI_LINE_COMMENT: "/*" (~["*"])* "*" ("*" | ~["*","/"] (~["*"])* "*")* "/">
+}
+
+/**
+ * Switches from FOCONIS mode to DEFAULT or FOC_PARAM mode
+ */
+< FOCONIS > TOKEN :
+{
+  	< NORMAL_TEXT 	:   (~["<"] | "<" ~["!", "#"] | "<!--" )+  > // the "<!--" is needed to handle XML commets
+|  	< BEGIN_FORMULA : "<!" > 	: DEFAULT
+|   < BEGIN_PARAM 	: "<#" >	: FOC_PARAM
+} 
+
+/**
+ * if we are in FOC_PARAM mode we read everything between '<#' and '#>'
+ */
+< FOC_PARAM > TOKEN :
+{
+  	< PARAM_VALUE 	:  (~["#"] | "#" ~[">"])+  >
+|  	< END_PARAM 	: "#>" > : FOCONIS
+}
+
+
+
+// ======================== Handling the ugly '[date]' and 'subscript[]' thing ======================= 
+/**
+ * in DEFAULT mode, a "[" means that the string to the "]" is a Date or Keyword
+ */
+< DEFAULT > TOKEN :
+{
+	< Date_or_KW : "[" (~["]"])* "]" > : SUBSCRIPT	// after a Date, we are in "subscript" mode (e.g. [Today][1])
+}
+
+/**
+ * in subscript mode, a "[" means that the following expression is a subscript
+ * a subscript can occur after a numeric value, a string, a ")", a date, an identifier or an other subscript
+ */
+< SUBSCRIPT > TOKEN :
+{
+  	 < OSubscript : "[" > 	:  DEFAULT		// switch back immediately. Thus x[[today]] makes no sense, it is formal correct
+}
+
+/**
+ * the closing bracket
+ */
+< DEFAULT, SUBSCRIPT > TOKEN :
+{
+  	// "]" must be recognized in both states
+  	// consider these examples "x[(1)]": the ) switches to "SUBSCRIPT"
+ 	< CSubscript : "]" > :  SUBSCRIPT	 
+}
+// =======================================================================================================
+
+
+/**
+ * These are all the available tokens in formula engine
+ */
+< DEFAULT, SUBSCRIPT >
+TOKEN :
+{
+  	// misc tokens
+	< EOS : ";" >								:	DEFAULT // End of Statement
+| 	< OParen : "(" >							: 	DEFAULT
+| 	< CParen : ")" >							: 	SUBSCRIPT // the next open [ means, that this is a subscript
+| 	< Assign : ":=" >							:	DEFAULT
+| 	< BoolNot : "!" >							: 	DEFAULT
+
+
+	// Keywords
+| 	< KW_DEFAULT	: "DEFAULT" >
+| 	< KW_ENVIRONMENT: "ENVIRONMENT" >
+| 	< KW_FIELD 		: "FIELD" >
+| 	< KW_REM 		: "REM" >
+| 	< KW_SELECT		: "SELECT" >
+
+
+// special extension by FOCONIS to define / include custom functions. Should not affect other formulas
+| 	< At_Include	: "@Include" >
+| 	< At_Function	: "@Function" >
+
+	// @Functions
+| 	< At_do			: "@do" > 
+| 	< At_doWhile	: "@doWhile" >
+| 	< At_while		: "@while" >
+| 	< At_for		: "@for" > 
+| 	< At_if			: "@if" >
+| 	< At_v2if		: "@V2if" >
+| 	< At_iferror	: "@iferror" > 
+| 	< At_transform	: "@transform" > 
+| 	< At_sort		: "@sort" >
+| 	< At_text		: "@text" >
+| 	< At_eval		: "@eval" >
+| 	< At_evalex		: "@evalex" >
+| 	< At_foceval	: "@foceval" >
+| 	< At_return		: "@return" >
+| 	< At_iserror	: "@iserror" >
+| 	< At_isavailable: "@isavailable" >  
+| 	< At_isunavailable: "@isunavailable" >
+
+	// All other at functions that does not control program flow
+| 	< At_other 	: "@" ( < Letter >  )  (  < Letter >  | < Digit > )*  > : SUBSCRIPT // switch to subscript, to handle @dbname[2]
+
+
+	// Precedence 2
+| 	< ListConcat : ":" > : DEFAULT
+
+	// Precedence 3 (= signs, not listed here)
+	// < OpPlus : "+" >
+	// < OpMinus : "-" >		
+
+	// Precedence 4
+| 	< OpMul : "*" >		: DEFAULT 
+| 	< OpMulP : "**" >	: DEFAULT 
+| 	< OpDiv : "/" >		: DEFAULT 
+| 	< OpDivP : "*/" >	: DEFAULT 
+
+	// Precedence 5
+| 	< OpPlus : "+" > 	: DEFAULT
+| 	< OpPlusP : "*+" > 	: DEFAULT
+| 	< OpMinus : "-" > 	: DEFAULT
+| 	< OpMinusP : "*-" > : DEFAULT
+
+	// Precedence 6 - all compare operations
+|   < CmpEqual : "=" >						: DEFAULT
+| 	< CmpEqualP : "*=" >					: DEFAULT
+| 	< CmpNE : "<>" | "!=" | "=!" | "><" >	: DEFAULT
+| 	< CmpNEP : "*<>" >						: DEFAULT
+| 	< CmpLT : "<" >							: DEFAULT
+| 	< CmpLTP : "*<" >						: DEFAULT
+| 	< CmpGT : ">" >							: DEFAULT
+| 	< CmpGTP : "*>" >						: DEFAULT
+| 	< CmpLTE : "<=" >						: DEFAULT
+| 	< CmpLTEP : "*<=" >						: DEFAULT
+| 	< CmpGTE : ">=" >						: DEFAULT
+| 	< CmpGTEP : "*>=" >						: DEFAULT
+	
+	// Precedence 7
+| 	< BoolAnd : "&" > : DEFAULT
+| 	< BoolOr : "|" > : DEFAULT
+| 	< END_FORMULA : "!>" > : FOCONIS
+	// Numbers: TODO: Why are they locale dependent???
+	// Thousands separator must be avoided!
+|	< NumDoubleUS 	:	(< Digit >)* "." (< Digit >)+ (< Exponent >)? > : SUBSCRIPT 
+| 	< NumDoubleDE 	:	(< Digit >)* "," (< Digit >)+ (< Exponent >)? > : SUBSCRIPT 
+| 	< NumInteger 	: 	(< Digit >)+ ("."|",")? (< Exponent >)? > : SUBSCRIPT 
+| 	< #Exponent: ["e","E"] (["+","-"])? (< Digit >)+ >
+
+	// Strings
+| 	< String1 : "\""		 	// Start at "
+        	(~["\""] 			// until " or \ 
+        	| "\\\""				// but not \ (escaped)
+        	 )*  "\"" > : SUBSCRIPT			// end at "
+        	 
+| 	< String2 : "{"		 		// Start at {
+          	(~["}"])*			// until  }
+          	"}" >  : SUBSCRIPT	// end at "
+
+| 	< Identifier :  ( < Letter >  )  (  < Letter >  | < Digit > | "." )* > : SUBSCRIPT
+
+// Common groups
+| < #Letter:
+      [
+       "\u0024",			// $
+       "\u0041"-"\u005a",	// A-Z
+       "\u005f",			// _
+       "\u0061"-"\u007a",	// a-z
+       "\u007e",			// ~
+       "\u00c0"-"\u00d6",	// À - Ö
+       "\u00d8"-"\u00f6",	// Ø - ö
+       "\u00f8"-"\u00ff",	// ø - ÿ
+       "\u0100"-"\u1fff",	// Latin Extended - A
+       "\u3040"-"\u318f",	// HIRAGANA/KATAKANA LETTER
+       "\u3300"-"\u337f",	// CJK Compatibility
+       "\u3400"-"\u3d2d",	// CJK Unified ideograps Extension A
+       "\u4e00"-"\u9fff",	// CJK Unified ideograps Extension A
+       "\uf900"-"\ufaff"	// CJK ... other
+      ]
+  >
+|
+  < #Digit:
+      [
+       "\u0030"-"\u0039"
+// 	RPr/JSt: only arabic digits are supported       
+//       "\u0660"-"\u0669",
+//       "\u06f0"-"\u06f9",
+//       "\u0966"-"\u096f",
+//       "\u09e6"-"\u09ef",
+//       "\u0a66"-"\u0a6f",
+//       "\u0ae6"-"\u0aef",
+//       "\u0b66"-"\u0b6f",
+//       "\u0be7"-"\u0bef",
+//       "\u0c66"-"\u0c6f",
+//       "\u0ce6"-"\u0cef",
+//       "\u0d66"-"\u0d6f",
+//       "\u0e50"-"\u0e59",
+//       "\u0ed0"-"\u0ed9",
+//       "\u1040"-"\u1049"
+      ]
+  >
+}
+  
+/*****************************************************************************************************
+ * Here the parser begins. There are two different entry points
+ * - parseFormula
+ * - parseFocFormula
+ *****************************************************************************************************/
+
+
+/**
+ * parses a normal expressions. Expressions must not end with ";" (=< EOS >)
+ */
+public SimpleNode parseFormula() #AtDo :
+{} 
+{
+	mainStatement() ((< EOS >) mainStatement()	)*	< EOF >
+  	{	jjtThis.setVirtual(true);
+  	  	return jjtThis;
+  	}
+}
+
+/**
+ * A main statement is available on the top level only (cannot be used in @do for example)
+ * Only main statements can contain REM comments
+ */
+public void mainStatement() :
+{}
+{
+	(< EOS >)*
+	(	 	< KW_REM > comment()  // AFAIK REMS are only allowed at top level
+	|	statement()
+	)
+}
+
+/**
+ * needed for REM
+ */
+private void comment() :
+{}
+{
+		< String1 >
+	| 	< String2 >
+	|  	< OParen > comment() < CParen >
+}
+
+/**
+ * this is the entry point to parse a FOCONIS Formula
+ */
+public SimpleNode parseFocFormula() #AtConCat :
+{} 
+{
+ 	{ token_source.SwitchTo(FOCONIS); } // TODO RPr can this be done in the init block?
+  	(
+		focNormalText()
+	|	focFormula()
+	|	focParam()		
+	)*
+	< EOF >
+  	{ return jjtThis; }
+}
+
+/**
+ * a focFormula starts with '<!' and ends with '!>' Everything between is treated as normal formula
+ */
+private void focFormula() :
+{}
+{
+  	< BEGIN_FORMULA >
+		( mainStatement() ((< EOS >) mainStatement()	)* {jjtThis.setVirtual(true);} ) #AtDo
+	< END_FORMULA >
+}
+
+/**
+ * a focParam starts with '<#' and ends with '#>' Everything between is passed to the parameter resolver
+ */
+
+private void focParam() #FocParam :
+{ Token t;}
+{
+  	(< BEGIN_PARAM >  t = <PARAM_VALUE >	< END_PARAM > )
+  	{jjtThis.init(t.image); }
+}
+
+/**
+ * NormalText exists only in FOCONIS state and is outside of focFormula and focParam
+ */
+private void focNormalText() #FocNormalText :
+{ Token t; }
+{
+  	t = < NORMAL_TEXT >
+  	{jjtThis.init(t.image); }
+}
+
+
+
+/**
+ * an expression is one of the 3 "set" keywords (DEFAULT/FIELD/ENVIRONMENT) to set Fields/Env
+ * or an identifier to set a variable. Special case for SELECT 
+ */ 
+private void statement() :
+{ Token t; }
+{
+ 	// Include is a custom extension by foconis
+ 	< At_Include >		(opBool()	{jjtThis.init();} ) #UserDefinedInclude
+
+	// At_Function is a custom extension by foconis 	
+| 	< At_Function >		(< OParen >		// @function(@myfunc(a:="x";b:="y");"";
+							exFuncDef()	(< EOS > exVar())* // followed by optional semicolon and local var defs
+						< CParen >
+
+							( < Assign >  opBool() )?	 // Assignment is optional
+						{jjtThis.init();}
+						) #UserDefinedFunction
+|  	< KW_FIELD > 		(t = < Identifier > < Assign > {jjtThis.init(t.image, ASTAssignment.FIELD);		} opBool()) 	#Assignment
+|  	LOOKAHEAD(2) 		(t = < Identifier > < Assign > {jjtThis.init(t.image, ASTAssignment.VAR);		} opBool()) 	#Assignment
+| 	< KW_ENVIRONMENT > 	(t = < Identifier > < Assign > {jjtThis.init(t.image, ASTAssignment.ENV);		} opBool()) 	#Assignment
+| 	< KW_DEFAULT > 		(t = < Identifier > < Assign > {jjtThis.init(t.image, ASTAssignment.DEFAULT);	} opBool()) 	#Assignment
+| 	< KW_SELECT > opBool() 									#Select
+| 	opBool()
+}  
+
+/**
+ * Parameter for extended functions
+ */
+private void exFuncDef() #UserDefinedFunctionDef :
+{ Token t; }
+{
+   // matches to @myfunc(a:="x";b:="y")
+   t = < At_other > (< OParen >	exParam() (< EOS > exParam())* < CParen >)?
+   {jjtThis.init(t.image);}
+}
+
+/**
+ * Parameter for extended functions
+ */
+private void exParam() #UserDefinedFunctionParameter :
+{ Token t; }
+{
+  (
+ 	LOOKAHEAD(2)  t = < Identifier > 	< Assign > opBool()    
+| 	t = < Identifier > 	
+
+) {jjtThis.init(t.image);}
+}  
+
+/**
+ * Parameter for extended functions
+ */
+private void exVar() #UserDefinedFunctionVariable :
+{ Token t; }
+{
+  (
+ 	LOOKAHEAD(2)  t = < Identifier > 	< Assign > opBool()    
+| 	t = < Identifier > 	
+
+) {jjtThis.init(t.image);}
+}  
+  
+/**
+ * boolean ops has the lowest precedence,
+ * ATTENTION: Formula language is the only language I know, where AND and OR has the same precedence!
+ */
+private void opBool() :
+{ }
+{
+  opCmp() (
+    (
+    		< BoolAnd > opCmp() {jjtThis.init("&");	}
+    	| 	< BoolOr >  opCmp() {jjtThis.init("|");	}  	
+  	) #Operator(2)
+  )*
+}
+
+/**
+ * before boolean, all compares are evaluated
+ */
+private void opCmp()  :
+{ }
+{
+  opAdd()  (
+    (
+     		< CmpEqual > 	opAdd() {jjtThis.init("=")		;}
+    	| 	< CmpEqualP > 	opAdd() {jjtThis.init("*=")		;}
+     	| 	< CmpNE > 		opAdd() {jjtThis.init("<>")		;}
+     	| 	< CmpNEP > 		opAdd() {jjtThis.init("*<>")	;}
+     	| 	< CmpLT > 		opAdd() {jjtThis.init("<")		;}
+     	| 	< CmpLTP > 		opAdd() {jjtThis.init("*<")		;}
+    	| 	< CmpGT > 		opAdd() {jjtThis.init(">")		;}
+     	| 	< CmpGTP > 		opAdd() {jjtThis.init("*>")		;}
+     	| 	< CmpLTE > 		opAdd() {jjtThis.init("<=")		;}
+     	| 	< CmpLTEP > 	opAdd() {jjtThis.init("*<=")	;}
+     	| 	< CmpGTE > 		opAdd() {jjtThis.init(">=")		;}
+     	| 	< CmpGTEP > 	opAdd() {jjtThis.init("*>=")	;}
+    ) #Operator(2))*
+}
+
+
+/**
+ * next precedence are all add/subtract operations
+ */
+private void opAdd() :
+{ }
+{
+  
+  opMult()  (LOOKAHEAD(2) ( // lookahead 2 is required, to determine if it is a sign 
+			< OpPlus >	 	opMult() {jjtThis.init("+")		;} 
+		| 	< OpPlusP >		opMult() {jjtThis.init("*+")	;} 
+		| 	< OpMinus > 	opMult() {jjtThis.init("-")		;} 
+		| 	< OpMinusP > 	opMult() {jjtThis.init("*-")	;} 
+	) #Operator(2)  )*
+}
+
+/**
+ * highest precedence of operations is multiplication. This is done with a unary list
+ */
+private void opMult()  :
+{ }
+{
+  opSign()  (
+    (
+      		< OpMul > 	opSign()  {jjtThis.init("*")	;}
+     	|	< OpMulP > 	opSign()  {jjtThis.init("**")	;}
+      	| 	< OpDiv > 	opSign()  {jjtThis.init("/")	;}
+      	| 	< OpDivP > 	opSign()  {jjtThis.init("*/")	;}
+	) #Operator(2) ) *
+}
+
+private void opSign() :
+{ }
+{
+
+	opHasSign()
+|	valueList()
+}
+
+private void opHasSign() :
+{}
+{
+// In N9, the + sign is completely ignored. If you want to be < N6 compatible, feel free to implement that  
+//	< OpPlus > valueList() {jjtThis.init(" +")	;} #Operator(1)
+	< OpPlus > valueList()
+| 	< OpMinus > valueList() {jjtThis.init(" -")	;} #Operator(1)
+}
+/**
+ * one ore more values
+ * for saving mem, unaries are wrapped only in a valueList, if there are more than once
+ */
+private void valueList() :
+{}
+{
+	(subscript() (
+	  		LOOKAHEAD(2)
+	  		< ListConcat > (opHasSign()| subscript() )
+	)* ) #ValueList(>1)  
+}
+
+/**
+ * Subscript to access a element in a list
+ */
+private void subscript() :
+{}
+{
+  	(unary()  (< OSubscript > statement() < CSubscript >)*) #Subscript(>1)
+}
+
+/**
+ * a unary operation
+ */
+private void unary() :
+{}
+{
+
+// Attention List operator has a higher precedence. So this is removed here 
+// 		< OpPlus > unary() 
+//| 	< OpMinus > unary() {jjtThis.init(" -")	;} #Operator(1)
+//|
+
+< BoolNot > unary() {jjtThis.init(" !")		;} #Operator(1)
+
+// All control flow functions
+| < At_do > 		(< OParen >  statement() ( < EOS > statement() )*  < CParen >) #AtDo
+| < At_doWhile > 	(< OParen >  statement() ( < EOS > statement() )*  < CParen >) #AtDoWhile
+| < At_while > 		(< OParen >  statement() ( < EOS > statement() )*  < CParen >) #AtWhile
+
+| < At_for >		(< OParen >  	statement()	// initialize
+						< EOS >		statement()	// condition
+						< EOS >		statement() 	// increment
+						( < EOS > 	statement() )*	// statements
+					 < CParen >) #AtFor
+
+| (< At_if > | < At_v2if > )
+					(< OParen >  	statement()	// if
+						( < EOS > 	statement() < EOS > statement())+	// the elese(if)
+					 < CParen >) #AtIf
+					 
+| < At_iferror >	(< OParen >  	statement() (< EOS > statement())? < CParen >) #AtIfError
+
+| < At_transform >	(< OParen >  	statement()	// list
+						< EOS >		statement()	// varName
+						< EOS >		statement() 	// formula
+					 < CParen >) #AtTransform
+					 
+| < At_sort >		(< OParen >  	statement()		// list
+						(< EOS >	statement()		// Options
+							(< EOS >	statement())? 	// formula
+						)?
+					 < CParen >) #AtSort
+| < At_eval >		(< OParen >  	statement()		
+					 < CParen >) #AtEval
+| < At_evalex >		(< OParen >  	statement()		
+						( < EOS > 	statement() )*	// parameter
+					 < CParen >) #AtEvalEx
+| < At_foceval >	(< OParen >  	statement()		
+					 < CParen >) #AtFocEval
+| < At_text >		(< OParen >  	statement()		// list
+						(< EOS >	statement())?	// Options
+					 < CParen >) #AtText
+| < At_return > (< OParen >  statement() < CParen >) #AtReturn
+| < At_iserror > (< OParen >  statement() < CParen >) #AtIsError 
+| < At_isavailable > (< OParen >  statement() < CParen >) #AtIsAvailable 
+| < At_isunavailable > (< OParen >  statement() < CParen >) #AtIsUnavailable
+| < At_other > formula() 
+| atom()
+}
+
+
+/**
+ * this is a generic formula
+ */
+private void formula() #Function :
+{ Token t; }
+{
+	{ t = getToken(0); }
+  	// Optional parameters.
+ 
+  	( LOOKAHEAD(2)
+  		< OParen >
+    	  	statement() ( < EOS > statement() )*
+    	< CParen >
+  	)? 
+   	{ jjtThis.init(t.image); }
+}
+
+private void atom() :
+{}
+{
+   value()
+| < OParen > statement() <CParen >
+}
+
+private void value()  :
+{
+  Token t;
+}
+{
+  	t = < Date_or_KW >
+  	{ jjtThis.init(t.image); } #ValueDateOrKW
+|
+	t = < String1 >
+  	{ jjtThis.parseString(t.image, '"'); } #ValueString
+|
+	t = < String2 >
+  	{ jjtThis.parseString(t.image, '{' ); } #ValueString
+|
+	t = < NumDoubleUS >
+  	{ jjtThis.parseDouble(t.image,'.'); } #ValueDouble
+|
+	t = < NumDoubleDE >
+  	{ jjtThis.parseDouble(t.image,','); } #ValueDouble
+|
+	t = < NumInteger >
+  	{ jjtThis.parseInt(t.image); } #ValueInt
+|
+	t = < Identifier >
+  	{ jjtThis.init(t.image); } #GetVariable	
+}

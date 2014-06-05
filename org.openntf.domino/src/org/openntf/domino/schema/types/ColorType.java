@@ -15,9 +15,6 @@ public class ColorType extends AbstractDominoType {
 	private static final Logger log_ = Logger.getLogger(ColorType.class.getName());
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
 	public ColorType() {
 		// TODO Auto-generated constructor stub
 	}

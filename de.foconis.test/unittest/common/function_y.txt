@@ -1,0 +1,9 @@
+@Year(@Today) 
+	#allPass [2014.0]
+
+@Yes 
+	#allPass [1.0]
+
+@Yesterday 
+	#allPass 12
+ 
