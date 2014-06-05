@@ -898,6 +898,7 @@ public enum Dates {
 	 * 
 	 * @return Newly created or casted Calendar from the source. Null on exception.
 	 */
+	@SuppressWarnings("restriction")
 	public static Calendar getCalendar(final Object object) {
 
 		String classname = "";
@@ -978,6 +979,7 @@ public enum Dates {
 	 * @return Newly created or casted Date from the source. Null on exception
 	 * 
 	 */
+	@SuppressWarnings("restriction")
 	public static Date getDate(final Object object) {
 
 		String classname = "";
@@ -1174,6 +1176,7 @@ public enum Dates {
 	 *         second object.
 	 * 
 	 * @throws RuntimeException
+	 *             if a failure occurs comparing object0 and object1 as Date objects.
 	 * @see java.lang.Comparable#compareTo(Object)
 	 * @see DominoUtils#LESS_THAN
 	 * @see DominoUtils#EQUAL
@@ -1230,6 +1233,8 @@ public enum Dates {
 	 *         second object.
 	 * 
 	 * @throws RuntimeException
+	 *             if a failure occurs comparing object0 and object1 as Date objects.
+	 * 
 	 * @see java.lang.Comparable#compareTo(Object)
 	 * @see DominoUtils#LESS_THAN
 	 * @see DominoUtils#EQUAL
@@ -1257,6 +1262,8 @@ public enum Dates {
 	 *         equal to, or greater than the number of days elapsed since the second date.
 	 * 
 	 * @throws RuntimeException
+	 *             if a failure occurs comparing object0 and object1 as Date objects.
+	 * 
 	 * @see java.lang.Comparable#compareTo(Object)
 	 * @see DominoUtils#LESS_THAN
 	 * @see DominoUtils#EQUAL
@@ -1315,6 +1322,8 @@ public enum Dates {
 	 *         second object.
 	 * 
 	 * @throws RuntimeException
+	 *             if a failure occurs comparing object0 and object1 as Date objects.
+	 * 
 	 * @see java.lang.Comparable#compareTo(Object)
 	 * @see DominoUtils#LESS_THAN
 	 * @see DominoUtils#EQUAL
@@ -1342,6 +1351,8 @@ public enum Dates {
 	 *         second object.
 	 * 
 	 * @throws RuntimeException
+	 *             if a failure occurs comparing object0 and object1 as Date objects.
+	 * 
 	 * @see java.lang.Comparable#compareTo(Object)
 	 * @see DominoUtils#LESS_THAN
 	 * @see DominoUtils#EQUAL
