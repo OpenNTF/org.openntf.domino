@@ -413,10 +413,14 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 */
 	public static long getLotusId(final lotus.domino.Base base) {
 		try {
-			return ((Long) getCppObjMethod.invoke(base, (Object[]) null)).longValue();
+			if (base instanceof lotus.domino.local.NotesBase) {
+				return ((Long) getCppObjMethod.invoke(base, (Object[]) null)).longValue();
+			} else if (base instanceof org.openntf.domino.impl.Base) {
+				return ((org.openntf.domino.impl.Base) base).GetCppObj();
+			}
 		} catch (Exception e) {
-			return 0L;
 		}
+		return 0L;
 	}
 
 	/**
@@ -724,7 +728,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @throws IllegalArgumentException
 	 */
 	@SuppressWarnings("rawtypes")
-	protected static Object toItemFriendly(final Object value, final org.openntf.domino.Base context,
+	public static Object toItemFriendly(final Object value, final org.openntf.domino.Base context,
 			final Collection<lotus.domino.Base> recycleThis) throws IllegalArgumentException {
 		if (value == null) {
 			log_.log(Level.INFO, "Trying to convert a null argument to Domino friendly. Returning null...");
@@ -739,6 +743,8 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 				} catch (NotesException e) {
 					DominoUtils.handleException(e);
 				}
+			} else if (value instanceof org.openntf.formula.DateTime) {
+				return javaToDominoFriendly(value, context, recycleThis);
 			} else if (value instanceof org.openntf.domino.DateTime || value instanceof org.openntf.domino.DateRange) {
 				// according to documentation, these datatypes should be compatible to write to a field ... but DateRanges make problems
 				return toLotus((org.openntf.domino.Base) value, recycleThis);
@@ -836,11 +842,19 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			// TODO Check if this is greater than what Domino can handle and serialize if so
 			// CHECKME: Is "doubleValue" really needed. (according to help.nsf only Integer and Double is supported, so keep it)
 			return ((Number) value).doubleValue();
-		} else if (value instanceof java.util.Date || value instanceof java.util.Calendar) {
+
+		} else if (value instanceof java.util.Date || value instanceof java.util.Calendar || value instanceof org.openntf.formula.DateTime) {
 			lotus.domino.Session lsess = toLotus(Factory.getSession(context));
 			try {
-				lotus.domino.DateTime dt = value instanceof java.util.Date ? lsess.createDateTime((java.util.Date) value) : lsess
-						.createDateTime((java.util.Calendar) value);
+
+				lotus.domino.DateTime dt = null;
+				if (value instanceof java.util.Date) {
+					dt = lsess.createDateTime((java.util.Date) value);
+				} else if (value instanceof org.openntf.formula.DateTime) {
+					dt = lsess.createDateTime(((org.openntf.formula.DateTime) value).toJavaDate());
+				} else {
+					dt = lsess.createDateTime((java.util.Calendar) value);
+				}
 				if (recycleThis != null) {
 					recycleThis.add(dt);
 				}
@@ -1039,6 +1053,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * 
 	 * @see lotus.domino.Base#recycle(java.util.Vector)
 	 */
+	@Override
 	@Deprecated
 	@SuppressWarnings("rawtypes")
 	public void recycle(final Vector arg0) {
@@ -1053,6 +1068,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	private List<IDominoListener> listeners_;
 
+	@Override
 	public List<IDominoListener> getListeners() {
 		if (listeners_ == null) {
 			listeners_ = new ArrayList<IDominoListener>();
@@ -1060,14 +1076,17 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		return listeners_;
 	}
 
+	@Override
 	public void addListener(final IDominoListener listener) {
 		getListeners().add(listener);
 	}
 
+	@Override
 	public void removeListener(final IDominoListener listener) {
 		getListeners().remove(listener);
 	}
 
+	@Override
 	public List<IDominoListener> getListeners(final EnumEvent event) {
 		List<IDominoListener> result = new ArrayList<IDominoListener>();
 		for (IDominoListener listener : getListeners()) {
@@ -1081,6 +1100,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		return result;
 	}
 
+	@Override
 	public boolean fireListener(final IDominoEvent event) {
 		boolean result = true;
 		for (IDominoListener listener : getListeners(event.getEvent())) {

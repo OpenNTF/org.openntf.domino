@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.util.Observable;
 import java.util.logging.Logger;
 
-import org.openntf.domino.impl.Base;
 import org.openntf.domino.utils.Factory;
 
 /**
@@ -32,8 +31,8 @@ public abstract class AbstractDominoRunnable extends Observable implements Runna
 	}
 
 	public void setSession(final lotus.domino.Session session) {
+		session_ = Factory.fromLotus(session, org.openntf.domino.Session.class, null);
 		Factory.setSession(session);
-		Base.lock(Factory.getSession());
 	}
 
 	public org.openntf.domino.Session getSession() {

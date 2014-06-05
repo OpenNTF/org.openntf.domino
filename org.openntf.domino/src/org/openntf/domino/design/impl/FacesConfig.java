@@ -32,6 +32,8 @@ import org.xml.sax.SAXException;
 // TODO Make the "remove" methods mark the object as unusable in some way
 // TODO Verify that null-value is actually legal in XPages
 public class FacesConfig extends FileResource implements org.openntf.domino.design.FacesConfig {
+	private static final long serialVersionUID = 1L;
+
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(FacesConfig.class.getName());
 
@@ -157,7 +159,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 	 * @see org.openntf.domino.design.impl.AbstractDesignNoteBase#save()
 	 */
 	@Override
-	public void save() {
+	public boolean save() {
 		try {
 			setFileData(xml_.getXml().getBytes("UTF-8"));
 		} catch (UnsupportedEncodingException e) {
@@ -165,7 +167,7 @@ public class FacesConfig extends FileResource implements org.openntf.domino.desi
 		} catch (IOException e) {
 			DominoUtils.handleException(e);
 		}
-		super.save();
+		return super.save();
 	}
 
 	public class ManagedBean implements org.openntf.domino.design.FacesConfig.ManagedBean {

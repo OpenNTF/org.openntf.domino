@@ -139,7 +139,7 @@ public class DominoReferenceCache {
 	 * Removes all garbage collected values with their keys from the map.
 	 * 
 	 */
-	public void processQueue(final long curKey, final long parent_key) {
+	public void processQueue(final long[] prevent_recycling) {
 
 		int counter = cache_counter.incrementAndGet();
 		if (counter % 1024 == 0) {
@@ -156,28 +156,31 @@ public class DominoReferenceCache {
 				//System.out.println("Removed dead element");
 			}
 
-			if (curKey == key || parent_key == key) {
-				if (curKey == key) {
-					//System.out.println("Current object dropped out of the queue");
-				} else {
-					// TODO: This case does not handle the counters correctly
-					System.out.println("Parent object dropped out of the queue ---");
+			if (prevent_recycling != null) {
+				for (long curKey : prevent_recycling) {
+					if (curKey == key) {
+
+						// TODO: This case does not handle the counters correctly
+						// System.out.println("Parent object dropped out of the queue ---");
+
+						// RPr: This happens definitely, if you access the same document in series
+						// Was reproduceable by iterating over several NoteIds and doing this in the loop (odd number required)
+						//		doc1 = d.getDocumentByID(id);
+						//		doc1 = null;
+						//		doc2 = d.getDocumentByID(id);
+						//		doc2 = null;
+						//		doc3 = d.getDocumentByID(id);
+						//		doc3 = null;
+
+						// ref is not used any more, but this object must be protected from recycling, because it will be reused in the next step
+						// Q RPr: Who sets this back to False?
+						// A RPr: That is not needed, because this "ref" is not used any more and the lotus object gets wrapped in a new DominoReference.
+						ref.setNoRecycle(true);
+						break;
+					}
 				}
-
-				// RPr: This happens definitely, if you access the same document in series
-				// Was reproduceable by iterating over several NoteIds and doing this in the loop (odd number required)
-				//		doc1 = d.getDocumentByID(id);
-				//		doc1 = null;
-				//		doc2 = d.getDocumentByID(id);
-				//		doc2 = null;
-				//		doc3 = d.getDocumentByID(id);
-				//		doc3 = null;
-
-				// ref is not used any more, but the delegate must be protected from recycling
-				ref.setNoRecycle(true);
 			}
 			ref.recycle();
-
 		}
 	}
 

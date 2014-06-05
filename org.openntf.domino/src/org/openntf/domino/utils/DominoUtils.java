@@ -265,6 +265,8 @@ public enum DominoUtils {
 	}
 
 	public static Throwable handleException(final Throwable t, final String details) {
+		if (t instanceof OpenNTFNotesException)
+			throw (OpenNTFNotesException) t;
 		try {
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 				@Override
@@ -341,7 +343,7 @@ public enum DominoUtils {
 	 * @param args
 	 *            the args
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked", "rawtypes", "restriction" })
 	public static void incinerate(final Object... args) {
 		for (Object o : args) {
 			if (o != null) {

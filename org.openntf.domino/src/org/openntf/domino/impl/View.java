@@ -15,6 +15,10 @@
  */
 package org.openntf.domino.impl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -32,6 +36,7 @@ import org.openntf.domino.ViewEntry;
 import org.openntf.domino.ViewEntryCollection;
 import org.openntf.domino.ViewNavigator;
 import org.openntf.domino.WrapperFactory;
+import org.openntf.domino.exceptions.BackendBridgeSanityCheckException;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 
@@ -42,6 +47,40 @@ import org.openntf.domino.utils.Factory;
 public class View extends Base<org.openntf.domino.View, lotus.domino.View, Database> implements org.openntf.domino.View {
 
 	private List<DominoColumnInfo> columnInfo_;
+	private static Method iGetEntryByKeyMethod;
+	static {
+		try {
+			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				@SuppressWarnings("unused")
+				@Override
+				public Object run() throws Exception {
+					// There is no relation between method position in the two classes:
+					//					Method m1[] = lotus.domino.local.View.class.getDeclaredMethods();
+					//					for (int i = 0; i < m1.length; i++) {
+					//						if (m1[i].getName().equals("iGetEntryByKey"))
+					//							System.out.println("lotus View " + i); // returns 68
+					//					}
+					//					Method m2[] = org.openntf.domino.impl.View.class.getDeclaredMethods();
+					//					for (int i = 0; i < m2.length; i++) {
+					//						if (m2[i].getName().equals("iGetEntryByKey"))
+					//							System.out.println("openntf View " + i); // returns 34
+					//					}
+					//					System.out.println(m1);
+					//					System.out.println(m2);
+
+					iGetEntryByKeyMethod = lotus.domino.local.View.class.getDeclaredMethod("iGetEntryByKey", Vector.class, boolean.class,
+							int.class);
+					iGetEntryByKeyMethod.setAccessible(true);
+
+					return null;
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+			DominoUtils.handleException(e);
+		}
+
+	}
 
 	/**
 	 * Instantiates a new view.
@@ -74,11 +113,21 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		initialize(delegate);
 	}
 
+	/**
+	 * needed for sanity check in the plugin-activator if "iGetEntryByKey" works
+	 */
+	@Deprecated
+	public View() {
+		super(null, null, null, 0L, NOTES_VIEW);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
 	 */
 	@Override
 	protected Database findParent(final lotus.domino.View delegate) throws NotesException {
+		if (delegate == null)
+			return null; // this is the case if we do the sanity check in plugin-activator
 		return fromLotus(delegate.getParent(), Database.SCHEMA, null);
 	}
 
@@ -613,6 +662,46 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 			DominoUtils.handleException(e);
 		}
 		return null;
+	}
+
+	/**
+	 * This method is neccessary to get some Backend-functions working.<br>
+	 * <font color=red>Attention: The <b>name</b> of the function seems not to be important, but the <b>position</b>!</font> It seems that
+	 * the backendbridge calls the n-th. method in this class. (didn't figure out, how n was computed. Method is at
+	 * lotus.domino.local.View.class.getDeclaredMethods()[68], but 68 has no correlation to thisClass.getDeclaredMethods )<br/>
+	 * 
+	 * To find the correct positon, trace a call of<br>
+	 * <code>DominoUtils.getViewEntryByKeyWithOptions(view, "key", 2243)</code><br>
+	 * and hit "step into" until you are in one of the mehtods of this file. Move <b>this</b> mehtod to the position you found with the
+	 * debugger.
+	 * 
+	 * @see org.openntf.domino.plugin.Activator#verifyIGetEntryByKey
+	 * @param paramVector
+	 * @param paramBoolean
+	 * @param paramInt
+	 * @return
+	 * @throws NotesException
+	 */
+	ViewEntry iGetEntryByKey(final Vector paramVector, final boolean paramBoolean, final int paramInt) {
+		if (paramVector == null && paramInt == 42) {
+			throw new BackendBridgeSanityCheckException("It seems that the backend bridge has called the correct method :)");
+		}
+		try {
+			lotus.domino.ViewEntry lotus = (lotus.domino.ViewEntry) iGetEntryByKeyMethod.invoke(getDelegate(), paramVector, paramBoolean,
+					paramInt);
+			return fromLotus(lotus, ViewEntry.SCHEMA, this);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+
 	}
 
 	/*
@@ -2377,19 +2466,43 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		return columnInfo_;
 	}
 
+	/**
+	 * Metadata about a ViewColumn, comprising the programmatic column name and the column index
+	 * 
+	 * @since org.openntf.domino 3.0.0
+	 */
 	public static class DominoColumnInfo {
 		private final String itemName_;
 		private final int columnValuesIndex_;
 
+		/**
+		 * Constructor, passing the ViewColumn object
+		 * 
+		 * @param column
+		 *            ViewColumn from which to extract the metadata
+		 * @since org.openntf.domino 3.0.0
+		 */
 		public DominoColumnInfo(final org.openntf.domino.ViewColumn column) {
 			itemName_ = column.getItemName();
 			columnValuesIndex_ = column.getColumnValuesIndex();
 		}
 
+		/**
+		 * Gets the programmatic name of the column, from the Advanced tab (beanie image) of the Column
+		 * 
+		 * @return String programmatic column name
+		 * @since org.openntf.domino 3.0.0
+		 */
 		public String getItemName() {
 			return itemName_;
 		}
 
+		/**
+		 * Gets the index for the column in the view, beginning at 0
+		 * 
+		 * @return int index of the column
+		 * @since org.openntf.domino 3.0.0
+		 */
 		public int getColumnValuesIndex() {
 			return columnValuesIndex_;
 		}

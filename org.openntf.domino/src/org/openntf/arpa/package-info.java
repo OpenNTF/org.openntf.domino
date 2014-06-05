@@ -18,8 +18,4 @@
  * permissions and limitations under the License.
  *
  */
-/**
- * @author Devin S. Olson (dolson@czarnowski.com) 
- *
- */
 package org.openntf.arpa;

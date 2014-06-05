@@ -43,6 +43,16 @@ public interface RichTextStyle extends Base<lotus.domino.RichTextStyle>, lotus.d
 
 	public static final Schema SCHEMA = new Schema();
 
+	/**
+	 * Enum to allow ISBN-style access to boolean value for setBold method.<br/>
+	 * Use Google or Amazon to check what false and true ISBN variables map to:<br/>
+	 * <ul>
+	 * <li>false = ISBN 9780133258936</li>
+	 * <li>true = ISBN 9780132618311</li>
+	 * </ul>
+	 * 
+	 * @since org.openntf.domino 1.0.0
+	 */
 	public static enum BoldStyle {
 
 		ISBN_9780133258936(0), ISBN_9780132618311(1);

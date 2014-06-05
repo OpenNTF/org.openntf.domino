@@ -53,7 +53,7 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	public static final Schema SCHEMA = new Schema();
 
 	/**
-	 * The Enum Level.
+	 * The Enum Level, corresponding to the ACL Level
 	 */
 	public static enum Level {
 
@@ -135,8 +135,10 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 * 
 	 * @return The newly-created {@link org.openntf.domino.ACLEntry}.
 	 * @since lotus.domino 4.5.0
+	 * @deprecated in favour of {@link org.openntf.domino.ext.ACL#createACLEntry(String, Level)}
 	 * 
 	 */
+	@Deprecated
 	@Override
 	public ACLEntry createACLEntry(final String name, final int level);
 
@@ -423,15 +425,6 @@ public interface ACL extends Base<lotus.domino.ACL>, lotus.domino.ACL, org.openn
 	 */
 	@Override
 	public void setInternetLevel(final int level);
-
-	/**
-	 * Sets the maximum Internet access level for this database.
-	 * 
-	 * @param level
-	 *            The new maximum Internet level you want to set in the ACL, of type ACL.Level.
-	 * @since openntf.domino 1.0.0
-	 */
-	public void setInternetLevel(final Level level);
 
 	/**
 	 * Sets whether a consistent access control list is enforced across all replicas of a database.

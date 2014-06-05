@@ -20,16 +20,17 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.Vector;
 
-import lotus.domino.DateTime;
 import lotus.domino.NotesException;
 import lotus.domino.XSLTResultTarget;
 
 import org.openntf.domino.Database;
+import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
 import org.openntf.domino.RichTextItem;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 import org.xml.sax.InputSource;
 
 // TODO: Auto-generated Javadoc
@@ -387,7 +388,7 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 	 */
 	public DateTime getFileCreated() {
 		try {
-			return getDelegate().getFileCreated();
+			return Factory.fromLotus(getDelegate().getFileCreated(), DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;
@@ -399,7 +400,7 @@ public class EmbeddedObject extends Base<org.openntf.domino.EmbeddedObject, lotu
 	 */
 	public DateTime getFileModified() {
 		try {
-			return getDelegate().getFileModified();
+			return Factory.fromLotus(getDelegate().getFileModified(), DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 			return null;

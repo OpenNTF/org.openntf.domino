@@ -169,13 +169,13 @@ public enum Dates {
 	}
 
 	/*
-	 * **************************************************************************
-	 * **************************************************************************
+	 * ***************************************************
+	 * ***************************************************
 	 * 
 	 * PUBLIC STATIC methods
 	 * 
-	 * **************************************************************************
-	 * **************************************************************************
+	 * ***************************************************
+	 * ***************************************************
 	 */
 	/**
 	 * Generates a timecode.
@@ -226,7 +226,7 @@ public enum Dates {
 				return Dates.DEFAULT.getInstanceTimestamp(object);
 			}
 
-			Dates tf = Dates.get(format);
+			final Dates tf = Dates.get(format);
 			if (null != tf) {
 				return tf.getInstanceTimestamp(object);
 			}
@@ -392,13 +392,13 @@ public enum Dates {
 	 * @return Date constructed from the source with all TIME values set to that of the epoch.
 	 */
 	public static Date getEpochedDate(final Object source) {
-		Date date = Dates.getDate(source);
+		final Date date = Dates.getDate(source);
 		if (null == date) {
 			return null;
 		} else {
-			Calendar epoch = Calendar.getInstance();
+			final Calendar epoch = Calendar.getInstance();
 			epoch.setTime(Dates.getEpoch());
-			Calendar result = Calendar.getInstance();
+			final Calendar result = Calendar.getInstance();
 			result.setTime(date);
 			result.set(Calendar.HOUR_OF_DAY, epoch.get(Calendar.HOUR_OF_DAY));
 			result.set(Calendar.MINUTE, epoch.get(Calendar.MINUTE));
@@ -417,13 +417,13 @@ public enum Dates {
 	 * @return Date constructed from the source with all DATE values set to that of the epoch
 	 */
 	public static Date getEpochedTime(final Object source) {
-		Date date = Dates.getDate(source);
+		final Date date = Dates.getDate(source);
 		if (null == date) {
 			return null;
 		} else {
-			Calendar epoch = Calendar.getInstance();
+			final Calendar epoch = Calendar.getInstance();
 			epoch.setTime(Dates.getEpoch());
-			Calendar result = Calendar.getInstance();
+			final Calendar result = Calendar.getInstance();
 			result.setTime(date);
 			result.set(Calendar.YEAR, epoch.get(Calendar.YEAR));
 			result.set(Calendar.DAY_OF_YEAR, epoch.get(Calendar.DAY_OF_YEAR));
@@ -609,7 +609,8 @@ public enum Dates {
 	 * 
 	 */
 	public static long getMinutesBetween(final Object object0, final Object object1) {
-		// whole number of minutes between two values. Assumes object0 < object1,
+		// whole number of minutes between two values. Assumes object0 <
+		// object1,
 		// returns negative otherwise
 		// long maximum minutes converted from 9,223,372,036,854,775,807
 		// milliseconds,
@@ -650,7 +651,8 @@ public enum Dates {
 	 * 
 	 */
 	public static long getSecondsBetween(final Object object0, final Object object1) {
-		// whole number of seconds between two values. Assumes object0 < object1,
+		// whole number of seconds between two values. Assumes object0 <
+		// object1,
 		// returns negative otherwise
 		// long maximum seconds converted from 9,223,372,036,854,775,807
 		// milliseconds,
@@ -691,9 +693,11 @@ public enum Dates {
 	 * 
 	 */
 	public static long getMillisecondsBetween(final Object object0, final Object object1) {
-		// whole number of milliseconds between two values. Assumes object0 < object1,
+		// whole number of milliseconds between two values. Assumes object0 <
+		// object1,
 		// returns negative otherwise
-		// long maximum milliseconds is converted from 9,223,372,036,854,775,807, a range of just over 293 million years
+		// long maximum milliseconds is converted from
+		// 9,223,372,036,854,775,807, a range of just over 293 million years
 		try {
 			if (null == object0) {
 				throw new IllegalArgumentException("object0 is null");
@@ -770,6 +774,74 @@ public enum Dates {
 	}
 
 	/**
+	 * Gets an Hours and Minutes String for a specified number of minutes
+	 * 
+	 * @param minutes
+	 *            Number of minutes from which to generate an Hours and Minutes String
+	 * 
+	 * @param delimiter
+	 *            String used to delimit the Hours and Minutes in the result.
+	 * 
+	 * @return String representing the Hours and Minutes, delimited by delimiter.
+	 */
+	public static String getHoursMinutes(final long minutes, final String delimiter) {
+		final StringBuilder sb = new StringBuilder((minutes < 0) ? "-" : "");
+
+		try {
+
+			final long absval = Math.abs(minutes);
+			if (absval > 0) {
+
+				final long hours = (absval / 60);
+				final long remaining = (absval % 60);
+
+				sb.append((hours > 0) ? "" + hours : "0");
+				if (remaining > 0) {
+					sb.append((remaining > 9) ? delimiter + remaining : delimiter + "0" + remaining);
+				} else {
+					sb.append(delimiter + "00");
+				}
+			}
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
+		}
+
+		return sb.toString();
+	}
+
+	/**
+	 * Gets an Hours and Minutes String for a specified number of minutes
+	 * 
+	 * @param minutes
+	 *            Number of minutes from which to generate an Hours and Minutes String
+	 * 
+	 * @return String representing the Hours and Minutes, delimited ":"
+	 */
+	public static String getHoursMinutes(final long minutes) {
+		return Dates.getHoursMinutes(minutes, ":");
+	}
+
+	/**
+	 * Gets an Hours and Minutes String representing the time between two Dates.
+	 * 
+	 * Spawns Calendar objects from the arguments, and returns the number of days between them. Returns a negative value if the first
+	 * argument is after the second argument.
+	 * 
+	 * @param object0
+	 *            First object from which a Calendar object can be constructed.
+	 * 
+	 * @param object1
+	 *            Second object from which a Calendar object can be constructed.
+	 * 
+	 * @return String representing the Hours and Minutes between two Dates.
+	 * 
+	 */
+	public static String getHoursMinutesBetween(final Object object0, final Object object1) {
+		final long minutes = Dates.getMinutesBetween(object0, object1);
+		return Dates.getHoursMinutes(minutes);
+	}
+
+	/**
 	 * Gets the number of milliseconds between the Epoch January 1, 1970, 00:00:00 GMT and the Date value for the passed in object.
 	 * 
 	 * @param object
@@ -826,11 +898,12 @@ public enum Dates {
 	 * 
 	 * @return Newly created or casted Calendar from the source. Null on exception.
 	 */
+	@SuppressWarnings("restriction")
 	public static Calendar getCalendar(final Object object) {
 
 		String classname = "";
 		lotus.domino.DateTime datetime = null;
-		lotus.domino.Item item = null;
+		final lotus.domino.Item item = null;
 
 		try {
 			if (null == object) {
@@ -906,6 +979,7 @@ public enum Dates {
 	 * @return Newly created or casted Date from the source. Null on exception
 	 * 
 	 */
+	@SuppressWarnings("restriction")
 	public static Date getDate(final Object object) {
 
 		String classname = "";
@@ -1102,12 +1176,12 @@ public enum Dates {
 	 *         second object.
 	 * 
 	 * @throws RuntimeException
+	 *             if a failure occurs comparing object0 and object1 as Date objects.
 	 * @see java.lang.Comparable#compareTo(Object)
 	 * @see DominoUtils#LESS_THAN
 	 * @see DominoUtils#EQUAL
 	 * @see DominoUtils#GREATER_THAN
 	 */
-	@SuppressWarnings("javadoc")
 	public static int compareDaysBetween(final Object object0, final Object object1, final boolean descending) {
 		try {
 			if (null == object0) {
@@ -1159,12 +1233,13 @@ public enum Dates {
 	 *         second object.
 	 * 
 	 * @throws RuntimeException
+	 *             if a failure occurs comparing object0 and object1 as Date objects.
+	 * 
 	 * @see java.lang.Comparable#compareTo(Object)
 	 * @see DominoUtils#LESS_THAN
 	 * @see DominoUtils#EQUAL
 	 * @see DominoUtils#GREATER_THAN
 	 */
-	@SuppressWarnings("javadoc")
 	public static int compareDaysBetween(final Object object0, final Object object1) {
 		return (Dates.compareDaysBetween(object0, object1, false));
 	}
@@ -1187,12 +1262,13 @@ public enum Dates {
 	 *         equal to, or greater than the number of days elapsed since the second date.
 	 * 
 	 * @throws RuntimeException
+	 *             if a failure occurs comparing object0 and object1 as Date objects.
+	 * 
 	 * @see java.lang.Comparable#compareTo(Object)
 	 * @see DominoUtils#LESS_THAN
 	 * @see DominoUtils#EQUAL
 	 * @see DominoUtils#GREATER_THAN
 	 */
-	@SuppressWarnings("javadoc")
 	public static int compareElapsedDays(final Object object0, final Object object1, final boolean descending) {
 		try {
 			if (null == object0) {
@@ -1246,12 +1322,13 @@ public enum Dates {
 	 *         second object.
 	 * 
 	 * @throws RuntimeException
+	 *             if a failure occurs comparing object0 and object1 as Date objects.
+	 * 
 	 * @see java.lang.Comparable#compareTo(Object)
 	 * @see DominoUtils#LESS_THAN
 	 * @see DominoUtils#EQUAL
 	 * @see DominoUtils#GREATER_THAN
 	 */
-	@SuppressWarnings("javadoc")
 	public static int compareElapsedDays(final Object object0, final Object object1) {
 		return (Dates.compareElapsedDays(object0, object1, false));
 	}
@@ -1274,12 +1351,13 @@ public enum Dates {
 	 *         second object.
 	 * 
 	 * @throws RuntimeException
+	 *             if a failure occurs comparing object0 and object1 as Date objects.
+	 * 
 	 * @see java.lang.Comparable#compareTo(Object)
 	 * @see DominoUtils#LESS_THAN
 	 * @see DominoUtils#EQUAL
 	 * @see DominoUtils#GREATER_THAN
 	 */
-	@SuppressWarnings("javadoc")
 	public static int compareDates(final Object object0, final Object object1, final boolean descending) {
 		try {
 			if (null == object0) {

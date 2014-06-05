@@ -459,20 +459,16 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		//throw new UnimplementedException("convertToZone is not yet implemented.");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.DateTime#isEqual(org.openntf.domino.DateTime)
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.DateTime#equals(org.openntf.domino.DateTime)
 	 */
 	@Override
 	public boolean equals(final org.openntf.domino.DateTime compareDate) {
 		return date_.equals(compareDate.toJavaDate());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.DateTime#equalsIgnoreDate(org.openntf.domino.DateTime)
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.DateTime#equalsIgnoreDate(org.openntf.domino.DateTime)
 	 */
 	@Override
 	public boolean equalsIgnoreDate(final org.openntf.domino.DateTime compareDate) {
@@ -490,10 +486,8 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		return d1.equals(d2);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openntf.domino.DateTime#equalsIgnoreTime(org.openntf.domino.DateTime)
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.DateTime#equalsIgnoreTime(org.openntf.domino.DateTime)
 	 */
 	@Override
 	public boolean equalsIgnoreTime(final org.openntf.domino.DateTime compareDate) {
@@ -910,6 +904,44 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	@Deprecated
 	public DateTime() {
 		super(null, Factory.getSession(), null, 0, NOTES_TIME);
+	}
+
+	public DateTime(final String time) throws java.text.ParseException {
+		this();
+		try {
+			lotus.domino.DateTime worker = getWorker();
+			worker.setLocalTime(time);
+			workDone(worker, true);
+		} catch (NotesException ne) {
+			throw new java.text.ParseException(ne.text, 0);
+		}
+	}
+
+	/*
+	 * A few tiny methods needed for the org.openntf.domino.formula.DateTime interface
+	 */
+	public int timeDifference(final org.openntf.formula.DateTime dt) {
+		if (dt instanceof lotus.domino.DateTime)
+			return timeDifference((lotus.domino.DateTime) dt);
+		return (int) timeDifferenceDouble(dt);
+	}
+
+	public double timeDifferenceDouble(final org.openntf.formula.DateTime dt) {
+		if (dt instanceof lotus.domino.DateTime)
+			return timeDifferenceDouble((lotus.domino.DateTime) dt);
+		Calendar thisCal = this.toJavaCal();
+		Calendar thatCal = dt.toJavaCal();
+		return (thisCal.getTimeInMillis() - thatCal.getTimeInMillis()) * 1000;
+	}
+
+	public int compare(final org.openntf.formula.DateTime sdt1, final org.openntf.formula.DateTime sdt2) {
+		if (sdt1 instanceof DateTime && sdt2 instanceof DateTime)
+			return ((DateTime) sdt1).compareTo((DateTime) sdt2);
+		return sdt1.toJavaDate().compareTo(sdt2.toJavaDate());
+	}
+
+	public void setLocalTime(final String time, final boolean parseLenient) {
+		setLocalTime(time);
 	}
 
 }

@@ -16,6 +16,7 @@
 
 package org.openntf.domino.design.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
@@ -23,11 +24,14 @@ import java.util.logging.Logger;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.design.DesignBaseNamed;
+import org.openntf.domino.utils.xml.XMLDocument;
+import org.openntf.domino.utils.xml.XMLNode;
 
 /**
  * @author jgallagher
  * 
  */
+@SuppressWarnings("serial")
 public abstract class AbstractDesignBaseNamed extends AbstractDesignBase implements DesignBaseNamed {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDesignBaseNamed.class.getName());
@@ -51,6 +55,16 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	@Override
 	public List<String> getAliases() {
 		return Arrays.asList(getDxl().getAttribute("alias").split("\\|"));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.design.DesignBase#getAlias()
+	 */
+	@Override
+	public String getAlias() {
+		return getDxl().getAttribute("alias");
 	}
 
 	/*
@@ -99,5 +113,52 @@ public abstract class AbstractDesignBaseNamed extends AbstractDesignBase impleme
 	@Override
 	public void setName(final String name) {
 		getDocumentElement().setAttribute("name", name);
+	}
+
+	protected void setItemValue(final String itemName, final Object value) {
+		XMLNode node = getDxl().selectSingleNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']");
+		if (node == null) {
+			node = getDxl().selectSingleNode("/*").addChildElement("item");
+			node.setAttribute("name", itemName);
+		} else {
+			node.removeChildren();
+		}
+
+		if (value instanceof Iterable) {
+			Object first = ((Iterable<?>) value).iterator().next();
+			XMLNode list = node.addChildElement(first instanceof Number ? "numberlist" : "textlist");
+
+			for (Object val : (Iterable<?>) value) {
+				appendItemValueNode(list, val);
+			}
+		} else {
+			appendItemValueNode(node, value);
+		}
+	}
+
+	private void appendItemValueNode(final XMLNode node, final Object value) {
+		XMLNode child;
+		if (value instanceof Number) {
+			child = node.addChildElement("number");
+		} else {
+			child = node.addChildElement("text");
+		}
+		child.setText(String.valueOf(value));
+	}
+
+	protected List<Object> getItemValue(final String itemName) {
+		List<Object> result = new ArrayList<Object>();
+		XMLNode node = getDxl().selectSingleNode("//item[@name='" + XMLDocument.escapeXPathValue(itemName) + "']");
+		if (node != null) {
+			List<XMLNode> nodes = node.selectNodes(".//number | .//text");
+			for (XMLNode child : nodes) {
+				if (child.getNodeName().equals("number")) {
+					result.add(Double.parseDouble(child.getText()));
+				} else {
+					result.add(child.getText());
+				}
+			}
+		}
+		return result;
 	}
 }

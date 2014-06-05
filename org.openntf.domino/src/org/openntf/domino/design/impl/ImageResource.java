@@ -33,6 +33,7 @@ import org.openntf.domino.utils.DominoUtils;
  * 
  */
 public class ImageResource extends AbstractDesignBaseNamed implements org.openntf.domino.design.ImageResource {
+	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ImageResource.class.getName());
 

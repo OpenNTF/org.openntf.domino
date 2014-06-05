@@ -21,5 +21,14 @@ package org.openntf.domino.design;
  * 
  */
 public interface StyleSheet extends FileResource {
+	/**
+	 * @return the content of the style sheet
+	 */
+	public String getContent();
 
+	/**
+	 * @param content
+	 *            the new content of the style sheet
+	 */
+	public void setContent(String content);
 }

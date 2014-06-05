@@ -24,11 +24,11 @@ public interface IDocumentDefinition extends Externalizable {
 
 	public Set<String> getItemDefinitionKeys();
 
-	public void setItemDefinitionKeys(final Set<String> itemDefinitionKeys);
+	//	public void setItemDefinitionKeys(final Set<String> itemDefinitionKeys);
+	//
+	//	public void addItemDefinitionKey(final String key);
 
-	public void addItemDefinitionKey(final String key);
-
-	public Set<IItemDefinition> getItemDefinitions();
+	public Map<String, IItemDefinition> getItemDefinitions();
 
 	public void addItemDefinition(final IItemDefinition itemDef);
 

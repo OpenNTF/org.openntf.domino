@@ -27,37 +27,37 @@ public interface DesignColumn {
 
 	public boolean isResizable();
 
-	public void setResizable(final boolean resizable);
+	public void setResizable(boolean resizable);
 
 	public boolean isSeparateMultipleValues();
 
-	public void setSeparateMultipleValues(final boolean separateMultipleValues);
+	public void setSeparateMultipleValues(boolean separateMultipleValues);
 
 	public boolean isSortNoAccent();
 
-	public void setSortNoAccent(final boolean sortNoAccent);
+	public void setSortNoAccent(boolean sortNoAccent);
 
 	public boolean isSortNoCase();
 
-	public void setSortNoCase(final boolean sortNoCase);
+	public void setSortNoCase(boolean sortNoCase);
 
 	public boolean isShowAsLinks();
 
-	public void setShowAsLinks(final boolean showAsLinks);
+	public void setShowAsLinks(boolean showAsLinks);
 
 	public String getItemName();
 
-	public void setItemName(final String itemName);
+	public void setItemName(String itemName);
 
 	public SortOrder getSortOrder();
 
-	public void setSortOrder(final SortOrder sortOrder);
+	public void setSortOrder(SortOrder sortOrder);
 
 	public String getTitle();
 
-	public void setTitle(final String title);
+	public void setTitle(String title);
 
 	public String getFormula();
 
-	public void setFormula(final String formula);
+	public void setFormula(String formula);
 }

@@ -18,6 +18,7 @@ package org.openntf.domino.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,7 +69,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		}
 		// TODO: Recycle all?
 		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
-		referenceCache.processQueue(0l, 0l);
+		referenceCache.processQueue(null);
 		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
 	}
 
@@ -91,9 +92,15 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	//	}
 
 	// -- Factory methods
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings("rawtypes")
 	public <T extends Base, D extends lotus.domino.Base, P extends Base> T fromLotus(final D lotus, final FactorySchema<T, D, P> schema,
 			final P parent) {
+		return fromLotus(lotus, schema, parent, null);
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	protected <T extends Base, D extends lotus.domino.Base, P extends Base> T fromLotus(final D lotus, final FactorySchema<T, D, P> schema,
+			final P parent, final long[] prevent_recycling) {
 		if (lotus == null) {
 			return null;
 		}
@@ -117,18 +124,19 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 			return (T) wrapLotusObject(lotus, parent, cpp_key);
 		}
 
-		return (T) fromLotusObject(lotus, parent, referenceCache);
+		return (T) fromLotusObject(lotus, parent, referenceCache, prevent_recycling);
 
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public <T extends Base, D extends lotus.domino.Base, P extends Base> Collection<T> fromLotus(final Collection<?> lotusColl,
 			final FactorySchema<T, D, P> schema, final P parent) {
+		long[] prevent_recycling = getContainingCppIds(lotusColl);
 		Collection<T> result = new ArrayList<T>(lotusColl.size());
 		if (!lotusColl.isEmpty()) {
 			for (Object lotus : lotusColl) {
 				if (lotus instanceof lotus.domino.Base) {
-					result.add(fromLotus((D) lotus, schema, parent));
+					result.add(fromLotus((D) lotus, schema, parent, prevent_recycling));
 				}
 			}
 		}
@@ -138,16 +146,43 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public <T extends Base, D extends lotus.domino.Base, P extends Base> Vector<T> fromLotusAsVector(final Collection<?> lotusColl,
 			final FactorySchema<T, D, P> schema, final P parent) {
-		// TODO Auto-generated method stub
+		long[] prevent_recycling = getContainingCppIds(lotusColl);
 		Vector<T> result = new Vector<T>(lotusColl.size());
 		if (!lotusColl.isEmpty()) {
 			for (Object lotus : lotusColl) {
 				if (lotus instanceof lotus.domino.Base) {
-					result.add(fromLotus((D) lotus, schema, parent));
+					result.add(fromLotus((D) lotus, schema, parent, prevent_recycling));
 				}
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * determines all containing Cpp-Ids in the lotusColl
+	 * 
+	 * @param lotusColl
+	 * @return
+	 */
+	public long[] getContainingCppIds(final Object obj) {
+		List<lotus.domino.Base> lst = new ArrayList<lotus.domino.Base>();
+		getContainingNotesObjects(lst, obj);
+		long[] ret = new long[2 + lst.size()]; // the first two elements are reserved
+		for (int i = 0; i < lst.size(); i++) {
+			ret[i + 2] = org.openntf.domino.impl.Base.getLotusId(lst.get(i));
+		}
+		return ret;
+	}
+
+	private void getContainingNotesObjects(final List<lotus.domino.Base> objects, final Object obj) {
+		if (obj instanceof lotus.domino.Base) {
+			objects.add((lotus.domino.Base) obj);
+		} else if (obj instanceof Iterable) {
+			for (Object o : (Iterable<?>) obj) {
+				getContainingNotesObjects(objects, o);
+			}
+		}
+
 	}
 
 	// --- session handling 
@@ -183,16 +218,24 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	 * Wraps & caches all lotus object except Names, DateTimes, Sessions, Documents
 	 * 
 	 * @param lotus
+	 * @param prevent_recycling
+	 *            the cpp_ids that must not get recycled during this task. Attention. For performance reasons you should not use slot 0 and
+	 *            1 in the array
 	 * @param parent
 	 * @return
 	 */
-	protected Base<?> fromLotusObject(final lotus.domino.Base lotus, final Base<?> parent, final DominoReferenceCache cache) {
+	protected Base<?> fromLotusObject(final lotus.domino.Base lotus, final Base<?> parent, final DominoReferenceCache cache,
+			long[] prevent_recycling) {
 		if (lotus == null) {
 			return null;
 		}
 
-		long cpp_key = org.openntf.domino.impl.Base.getLotusId(lotus);
-		long parent_key = org.openntf.domino.impl.Base.getLotusId(parent);
+		if (prevent_recycling == null) {
+			prevent_recycling = new long[2];
+		}
+		// Slot 0 and one are reserved!
+		long cpp_key = prevent_recycling[0] = org.openntf.domino.impl.Base.getLotusId(lotus);
+		prevent_recycling[1] = org.openntf.domino.impl.Base.getLotusId(parent);
 
 		// RPr: Query the cache. The current lotus object might be enqued, so that it gets recycled in the next step
 		Base<?> result = cache.get(cpp_key, Base.class);
@@ -204,12 +247,14 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 
 			result = wrapLotusObject(lotus, parent, cpp_key);
 
-			cache.processQueue(cpp_key, parent_key); // recycle all elements but not the current ones
+			cache.processQueue(prevent_recycling); // recycle all elements but not the current ones
 
 			cache.put(cpp_key, result, lotus);
 			if (lotus instanceof lotus.domino.Session				//
 					|| lotus instanceof lotus.domino.AgentContext) {
-				cache.setNoRecycle(cpp_key, true); // these are never recycled by default
+				// these are never recycled by default. If you create your own session, you have to recycle it after use
+				// or setNoRecycle to "false"
+				cache.setNoRecycle(cpp_key, true);
 			}
 		}
 		return result;
@@ -283,9 +328,6 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		}
 		if (lotus instanceof lotus.domino.Database) {
 			return new org.openntf.domino.impl.Database((lotus.domino.Database) lotus, (Session) parent, this, cpp);
-		}
-		if (lotus instanceof lotus.domino.DateRange) {
-			return new org.openntf.domino.impl.DateRange((lotus.domino.DateRange) lotus, (Session) parent, this, cpp);
 		}
 		if (lotus instanceof lotus.domino.DbDirectory) {
 			return new org.openntf.domino.impl.DbDirectory((lotus.domino.DbDirectory) lotus, (Session) parent, this, cpp);
@@ -362,9 +404,6 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		if (lotus instanceof lotus.domino.RichTextDoclink) {
 			return new org.openntf.domino.impl.RichTextDoclink((lotus.domino.RichTextDoclink) lotus, (RichTextItem) parent, this, cpp);
 		}
-		if (lotus instanceof lotus.domino.RichTextItem) {
-			return new org.openntf.domino.impl.RichTextItem((lotus.domino.RichTextItem) lotus, (Document) parent, this, cpp);
-		}
 		if (lotus instanceof lotus.domino.RichTextNavigator) {
 			return new org.openntf.domino.impl.RichTextNavigator((lotus.domino.RichTextNavigator) lotus, (RichTextItem) parent, this, cpp);
 		}
@@ -422,18 +461,23 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	}
 
 	public Vector<Object> wrapColumnValues(final Collection<?> values, final Session session) {
+		return wrapColumnValues(values, session, null);
+	}
+
+	protected Vector<Object> wrapColumnValues(final Collection<?> values, final Session session, final long[] prevent_recycling) {
 		if (values == null) {
 			return null;
 		}
 		int i = 0;
 		java.util.Vector<Object> result = new java.util.Vector<Object>();
+
 		for (Object value : values) {
 			if (value == null) {
 				result.add(null);
 			} else if (value instanceof lotus.domino.DateTime) {
 				Object wrapped = null;
 				try {
-					wrapped = fromLotus((lotus.domino.DateTime) value, (FactorySchema) null, session);
+					wrapped = fromLotus((lotus.domino.DateTime) value, (FactorySchema) null, session, prevent_recycling);
 				} catch (Throwable t) {
 					if (t instanceof NotesException) {
 						String text = ((NotesException) t).text;
@@ -455,9 +499,9 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 					result.add(wrapped);
 				}
 			} else if (value instanceof lotus.domino.DateRange) {
-				result.add(fromLotus((lotus.domino.DateRange) value, (FactorySchema) null, session));
+				result.add(fromLotus((lotus.domino.DateRange) value, (FactorySchema) null, session, prevent_recycling));
 			} else if (value instanceof Collection) {
-				result.add(wrapColumnValues((Collection<?>) value, session));
+				result.add(wrapColumnValues((Collection<?>) value, session, prevent_recycling));
 			} else {
 				result.add(value);
 			}

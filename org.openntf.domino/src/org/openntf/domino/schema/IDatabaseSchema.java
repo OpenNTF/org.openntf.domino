@@ -20,6 +20,8 @@ public interface IDatabaseSchema {
 
 	public Map<String, ItemDefinition> getItemDefinitions();
 
+	public IItemDefinition createItemDefinition(String itemKey, Class<?> type);
+
 	public Map<Class<? extends IDominoType>, IDominoType> getTypeDefinitions();
 
 	public IDominoType getTypeDefinition(final Class<? extends IDominoType> type);

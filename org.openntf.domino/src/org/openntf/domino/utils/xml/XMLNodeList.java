@@ -5,6 +5,8 @@ package org.openntf.domino.utils.xml;
 
 import java.util.ArrayList;
 
+import org.w3c.dom.NodeList;
+
 /**
  * @author jgallagher
  * 
@@ -18,6 +20,14 @@ public class XMLNodeList extends ArrayList<XMLNode> {
 
 	public XMLNodeList(final int initialCapacity) {
 		super(initialCapacity);
+	}
+
+	public XMLNodeList(final NodeList nodeList) {
+		super(nodeList.getLength());
+
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			this.add(new XMLNode(nodeList.item(i)));
+		}
 	}
 
 	@Override

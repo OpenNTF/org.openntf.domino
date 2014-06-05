@@ -1,5 +1,5 @@
 /*
- * © Copyright IBM Corp. 2010
+ * ï¿½ Copyright IBM Corp. 2010
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -19,8 +19,9 @@ package org.openntf.domino.xsp.config;
 import com.ibm.xsp.extlib.config.ExtlibPluginConfig;
 
 /**
- * @author Andrejus Chaliapinas
+ * @author Paul Withers
  * 
+ *         Loads Domino Picker configurations
  */
 public class DominoConfig extends ExtlibPluginConfig {
 	public DominoConfig() {
@@ -30,12 +31,23 @@ public class DominoConfig extends ExtlibPluginConfig {
 	// Compose the lists of extra config files
 	// ===============================================================
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ibm.xsp.extlib.config.ExtlibPluginConfig#getXspConfigFiles(java.lang.String[])
+	 */
 	@Override
 	public String[] getXspConfigFiles(final String[] files) {
 		return concat(files, new String[] { "org/openntf/domino/xsp/config/openntf-domino-picker.xsp-config", // $NON-NLS-1$
-				});
+				"org/openntf/domino/xsp/config/openntf-dominodocument.xsp-config", // $NON-NLS-1$
+		});
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ibm.xsp.extlib.config.ExtlibPluginConfig#getFacesConfigFiles(java.lang.String[])
+	 */
 	@Override
 	public String[] getFacesConfigFiles(final String[] files) {
 		return concat(files, new String[] {});

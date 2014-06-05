@@ -18,11 +18,7 @@ public class EmailType extends StringType {
 	public static final Pattern EMAIL_REGEX = Pattern.compile("\\\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\\\.[A-Z]{2,4}\\\\b",
 			Pattern.CASE_INSENSITIVE);
 
-	/**
-	 * 
-	 */
-	public EmailType() {
-		// TODO Auto-generated constructor stub
+	EmailType() {
 	}
 
 	/*

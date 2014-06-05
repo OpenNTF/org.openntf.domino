@@ -24,6 +24,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
@@ -36,6 +37,7 @@ import org.openntf.domino.Item;
 import org.openntf.domino.MIMEEntity;
 import org.openntf.domino.MIMEHeader;
 import org.openntf.domino.NoteCollection;
+import org.openntf.domino.RichTextItem;
 import org.openntf.domino.Session;
 import org.openntf.domino.Stream;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
@@ -210,7 +212,6 @@ public enum Documents {
 	 * @throws Throwable
 	 *             the throwable
 	 */
-	@SuppressWarnings({ "cast" })
 	public static Object restoreState(final Document doc, final String itemName) throws Exception {
 		return restoreState(doc, itemName, null);
 	}
@@ -249,6 +250,7 @@ public enum Documents {
 	 * @throws Throwable
 	 *             the throwable
 	 */
+	@SuppressWarnings("restriction")
 	public static void saveState(final Serializable object, final Document doc, final String itemName, boolean compress,
 			final Map<String, String> headers) throws Exception {
 		if (object == null) {
@@ -308,67 +310,69 @@ public enum Documents {
 		} else {
 			entity = previousState;
 		}
-		MIMEHeader javaClass = entity.getNthHeader("X-Java-Class");
-		MIMEHeader contentEncoding = entity.getNthHeader("Content-Encoding");
-		if (javaClass == null) {
-			javaClass = entity.createHeader("X-Java-Class");
-		} else {
-			// long jcid = org.openntf.domino.impl.Base.getDelegateId((org.openntf.domino.impl.Base) javaClass);
-			// if (jcid < 1) {
-			// System.out.println("EXISTING javaClassid: " + jcid);
-			// System.out.println("Item: " + itemName + " in document " + doc.getUniversalID() + " (" + doc.getNoteID()
-			// + ") update count: " + diagCount.get(diagKey));
-			// }
-		}
 		try {
-			javaClass.setHeaderVal(object.getClass().getName());
-		} catch (Throwable t) {
-			t.printStackTrace();
-		}
-
-		if (compress) {
-			if (contentEncoding == null) {
-				contentEncoding = entity.createHeader("Content-Encoding");
+			MIMEHeader javaClass = entity.getNthHeader("X-Java-Class");
+			MIMEHeader contentEncoding = entity.getNthHeader("Content-Encoding");
+			if (javaClass == null) {
+				javaClass = entity.createHeader("X-Java-Class");
+			} else {
+				// long jcid = org.openntf.domino.impl.Base.getDelegateId((org.openntf.domino.impl.Base) javaClass);
+				// if (jcid < 1) {
+				// System.out.println("EXISTING javaClassid: " + jcid);
+				// System.out.println("Item: " + itemName + " in document " + doc.getUniversalID() + " (" + doc.getNoteID()
+				// + ") update count: " + diagCount.get(diagKey));
+				// }
 			}
-			contentEncoding.setHeaderVal("gzip");
-
-			// contentEncoding.recycle();
-		} else {
-			if (contentEncoding != null) {
-
-				contentEncoding.remove();
-				// contentEncoding.recycle();
+			try {
+				javaClass.setHeaderVal(object.getClass().getName());
+			} catch (Throwable t) {
+				t.printStackTrace();
 			}
-		}
 
-		// javaClass.recycle();
-
-		if (headers != null) {
-			for (Map.Entry<String, String> entry : headers.entrySet()) {
-				MIMEHeader paramHeader = entity.getNthHeader(entry.getKey());
-				if (paramHeader == null) {
-					paramHeader = entity.createHeader(entry.getKey());
+			if (compress) {
+				if (contentEncoding == null) {
+					contentEncoding = entity.createHeader("Content-Encoding");
 				}
-				paramHeader.setHeaderVal(entry.getValue());
-				// paramHeader.recycle();
+				contentEncoding.setHeaderVal("gzip");
+
+				// contentEncoding.recycle();
+			} else {
+				if (contentEncoding != null) {
+
+					contentEncoding.remove();
+					// contentEncoding.recycle();
+				}
 			}
-		}
-		byte[] bytes = byteStream.toByteArray();
-		ByteArrayInputStream byteIn = new ByteArrayInputStream(bytes);
 
-		mimeStream.setContents(byteIn);
-		entity.setContentFromBytes(mimeStream, contentType, MIMEEntity.ENC_NONE);
+			// javaClass.recycle();
 
-		// entity.recycle();
-		// mimeStream.recycle();
-		//		entity = null;	//NTF - why set to null? We're properly closing the entities now.
-		//		previousState = null;	// why set to null?
-		if (!doc.closeMIMEEntities(true, itemName)) {
-			log_.log(Level.WARNING, "closeMIMEEntities returned false for item " + itemName + " on doc " + doc.getNoteID() + " in db "
-					+ doc.getAncestorDatabase().getApiPath());
-		}
-		if (convertMime) {
-			session.setConvertMime(true);
+			if (headers != null) {
+				for (Map.Entry<String, String> entry : headers.entrySet()) {
+					MIMEHeader paramHeader = entity.getNthHeader(entry.getKey());
+					if (paramHeader == null) {
+						paramHeader = entity.createHeader(entry.getKey());
+					}
+					paramHeader.setHeaderVal(entry.getValue());
+					// paramHeader.recycle();
+				}
+			}
+			byte[] bytes = byteStream.toByteArray();
+			ByteArrayInputStream byteIn = new ByteArrayInputStream(bytes);
+
+			mimeStream.setContents(byteIn);
+			entity.setContentFromBytes(mimeStream, contentType, MIMEEntity.ENC_NONE);
+		} finally {
+			// entity.recycle();
+			// mimeStream.recycle();
+			//		entity = null;	//NTF - why set to null? We're properly closing the entities now.
+			//		previousState = null;	// why set to null?
+			if (!doc.closeMIMEEntities(true, itemName)) {
+				log_.log(Level.WARNING, "closeMIMEEntities returned false for item " + itemName + " on doc " + doc.getNoteID() + " in db "
+						+ doc.getAncestorDatabase().getApiPath());
+			}
+			if (convertMime) {
+				session.setConvertMime(true);
+			}
 		}
 	}
 
@@ -398,8 +402,14 @@ public enum Documents {
 			session.setConvertMIME(false);
 
 			MIMEEntity entity = document.getMIMEEntity(itemname);
-			Object result = (null == entity) ? null : Documents.getItemValueMIME(document, itemname, entity);
-
+			Object result = null;
+			if (entity != null) {
+				try {
+					result = Documents.getItemValueMIME(document, itemname, entity);
+				} finally {
+					document.closeMIMEEntities(false, itemname);
+				}
+			}
 			session.setConvertMIME(convertMime);
 			return result;
 
@@ -426,6 +436,7 @@ public enum Documents {
 	public static Object getItemValueMIME(final Document document, final String itemname, MIMEEntity entity) {
 		String noteID = null;
 		boolean convertMime = false;
+		boolean mustClose = false;
 		try {
 			if (null == document) {
 				throw new IllegalArgumentException("Document is null");
@@ -445,6 +456,7 @@ public enum Documents {
 			Object result = null;
 			if (entity == null) {
 				entity = document.getMIMEEntity(itemname);
+				mustClose = true;
 			}
 			if (entity == null) {
 				return null;
@@ -460,6 +472,9 @@ public enum Documents {
 			DominoUtils.handleException(new MIMEConversionException("Unable to getItemValueMIME for item name " + itemname
 					+ " on document " + noteID + " [Caught " + t.getClass().getName() + ": " + t.getMessage() + "]", t));
 		} finally {
+			if (entity != null && mustClose) {
+				document.closeMIMEEntities(false, itemname);
+			}
 			if (convertMime) {
 				Session session = document.getAncestorSession();
 				session.setConvertMIME(true);
@@ -482,5 +497,56 @@ public enum Documents {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Returns whether the given field in the given document contains a value.
+	 * 
+	 * @param document
+	 *            The document.
+	 * @param fieldName
+	 *            The fieldname of the field to test.
+	 * @return <code>true</code> if a field in a document contains a value, else <code>false</code>.
+	 */
+	public static boolean isSet(final Document document, final String fieldName) {
+		if (!document.hasItem(fieldName))
+			return false;
+		Vector value = document.getItemValue(fieldName);
+		if (value == null)
+			return false;
+		if (value.size() == 0)
+			return false;
+		if (value.size() > 1)
+			return true;
+		// size = 1
+		return !Strings.isBlankString(value.get(0).toString());
+	}
+
+	/**
+	 * Returns the {@link RichTextItem} stored in the given {@link Document}.
+	 * 
+	 * @param document
+	 *            The document.
+	 * @param fieldName
+	 *            The name of the RichTextItem which should be returned.
+	 * @param createItem
+	 *            <code>True</code> to create the RichTextItem if it does not already exist or is not type RichTextItem.
+	 * @return The Item as RichTextItem or <code>null</code>, if it does not exist or is not a RichTextItem.
+	 */
+	public static RichTextItem getRichTextItem(final Document document, final String fieldName, final boolean createItem) {
+		Item tmpItem = document.getFirstItem(fieldName);
+
+		if (tmpItem instanceof RichTextItem) {
+			return (RichTextItem) tmpItem;
+		}
+
+		if (!createItem) {
+			return null;
+		} else {
+			if (tmpItem != null) {
+				document.removeItem(fieldName);
+			}
+			return document.createRichTextItem(fieldName);
+		}
 	}
 }

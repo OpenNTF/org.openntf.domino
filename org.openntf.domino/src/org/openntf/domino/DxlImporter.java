@@ -43,6 +43,12 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 
 	public static final Schema SCHEMA = new Schema();
 
+	/**
+	 * Enum to allow easy access to Document import options
+	 * 
+	 * @since org.openntf.domino 2.5.0
+	 * 
+	 */
 	public static enum DocumentImportOption {
 		IGNORE(DxlImporter.DXLIMPORTOPTION_IGNORE), CREATE(DxlImporter.DXLIMPORTOPTION_CREATE), REPLACE_ELSE_CREATE(
 				DxlImporter.DXLIMPORTOPTION_REPLACE_ELSE_CREATE), REPLACE_ELSE_IGNORE(DxlImporter.DXLIMPORTOPTION_REPLACE_ELSE_IGNORE), UPDATE_ELSE_CREATE(
@@ -68,6 +74,12 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 		}
 	}
 
+	/**
+	 * Enum to allow easy access to design element import options
+	 * 
+	 * @since org.openntf.domino 2.5.0
+	 * 
+	 */
 	public static enum DesignImportOption {
 		IGNORE(DxlImporter.DXLIMPORTOPTION_IGNORE), CREATE(DxlImporter.DXLIMPORTOPTION_CREATE), REPLACE_ELSE_CREATE(
 				DxlImporter.DXLIMPORTOPTION_REPLACE_ELSE_CREATE), REPLACE_ELSE_IGNORE(DxlImporter.DXLIMPORTOPTION_REPLACE_ELSE_IGNORE);
@@ -92,6 +104,12 @@ public interface DxlImporter extends Base<lotus.domino.DxlImporter>, lotus.domin
 		}
 	}
 
+	/**
+	 * Enum to allow easy access to ACL import settings
+	 * 
+	 * @since org.openntf.domino 2.5.0
+	 * 
+	 */
 	public static enum AclImportOption {
 		IGNORE(DxlImporter.DXLIMPORTOPTION_IGNORE), REPLACE_ELSE_IGNORE(DxlImporter.DXLIMPORTOPTION_REPLACE_ELSE_IGNORE), UPDATE_ELSE_CREATE(
 				DxlImporter.DXLIMPORTOPTION_UPDATE_ELSE_CREATE), UPDATE_ELSE_IGNORE(DxlImporter.DXLIMPORTOPTION_UPDATE_ELSE_IGNORE);

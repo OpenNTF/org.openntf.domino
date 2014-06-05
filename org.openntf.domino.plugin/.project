@@ -28,9 +28,14 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>domsrc</name>
+			<name>OSGI-OPT/core</name>
 			<type>2</type>
 			<locationURI>PARENT-1-PROJECT_LOC/org.openntf.domino/src</locationURI>
+		</link>
+		<link>
+			<name>OSGI-OPT/formula</name>
+			<type>2</type>
+			<locationURI>PARENT-1-PROJECT_LOC/org.openntf.formula/src</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

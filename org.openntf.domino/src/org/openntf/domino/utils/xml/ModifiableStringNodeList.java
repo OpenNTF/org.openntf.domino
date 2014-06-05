@@ -14,13 +14,13 @@ import org.openntf.domino.utils.DominoUtils;
  * 
  */
 public class ModifiableStringNodeList extends AbstractList<String> {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ModifiableStringNodeList.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	private final XMLNode xml_;
 	private final String parentNodePath_;
 	private final String nodeName_;
-	private Callable postAdd_;
+	private Callable<?> postAdd_;
 
 	public ModifiableStringNodeList(final XMLNode xml, final String parentNodePath, final String nodeName) {
 		xml_ = xml;
@@ -99,7 +99,7 @@ public class ModifiableStringNodeList extends AbstractList<String> {
 		return current;
 	}
 
-	public void setPostAdd(final Callable proc) {
+	public void setPostAdd(final Callable<?> proc) {
 		postAdd_ = proc;
 	}
 }
