@@ -8,8 +8,11 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -27,6 +30,7 @@ import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.ItemNotFoundException;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.ext.Formula;
+import org.openntf.domino.impl.Base;
 import org.openntf.domino.types.BigString;
 
 import com.ibm.icu.math.BigDecimal;
@@ -39,6 +43,18 @@ import com.ibm.icu.text.SimpleDateFormat;
  */
 public enum TypeUtils {
 	;
+
+	public static Map<String, Object> toStampableMap(final Map<String, Object> rawMap, final org.openntf.domino.Base context)
+			throws IllegalArgumentException {
+		Map<String, Object> result = new LinkedHashMap<String, Object>();
+		synchronized (rawMap) {
+			for (Map.Entry<String, Object> entry : rawMap.entrySet()) {
+				Object lValue = Base.toItemFriendly(entry.getValue(), context, null);
+				result.put(entry.getKey(), lValue);
+			}
+		}
+		return Collections.unmodifiableMap(result);
+	}
 
 	public static <T> T itemValueToClass(final Document doc, final String itemName, final Class<?> T) {
 		String noteid = doc.getNoteID();
