@@ -162,10 +162,12 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 
 	private org.openntf.domino.View parentView_;
 
+	@Override
 	public void setParentView(final View view) {
 		parentView_ = view;
 	}
 
+	@Override
 	public org.openntf.domino.View getParentView() {
 		return parentView_;
 	}
@@ -529,9 +531,11 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		}
 	}
 
+	@Override
 	public void stampAll(final Map<String, Object> map) {
 		for (org.openntf.domino.Document doc : this) {
 			doc.putAll(map);
+			doc.save();
 		}
 	}
 
@@ -955,6 +959,7 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		return this.getAncestorDatabase().getParent();
 	}
 
+	@Override
 	public org.openntf.domino.DocumentCollection filter(final Object value) {
 		org.openntf.domino.DocumentCollection result = getAncestorDatabase().createDocumentCollection();
 		for (org.openntf.domino.Document doc : this) {
@@ -965,6 +970,7 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		return result;
 	}
 
+	@Override
 	public org.openntf.domino.DocumentCollection filter(final Object value, final String[] itemnames) {
 		org.openntf.domino.DocumentCollection result = getAncestorDatabase().createDocumentCollection();
 		for (org.openntf.domino.Document doc : this) {
@@ -975,6 +981,7 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		return result;
 	}
 
+	@Override
 	public org.openntf.domino.DocumentCollection filter(final Object value, final Collection<String> itemnames) {
 		org.openntf.domino.DocumentCollection result = getAncestorDatabase().createDocumentCollection();
 		for (org.openntf.domino.Document doc : this) {
@@ -985,6 +992,7 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		return result;
 	}
 
+	@Override
 	public org.openntf.domino.DocumentCollection filter(final Map<String, Object> filterMap) {
 		org.openntf.domino.DocumentCollection result = getAncestorDatabase().createDocumentCollection();
 		for (org.openntf.domino.Document doc : this) {
