@@ -1,14 +1,13 @@
 package org.openntf.domino.xsp.msg;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 
-import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xsp.model.DominoDocumentMapAdapter;
 
 import com.ibm.xsp.component.UIViewRootEx;
@@ -30,7 +29,9 @@ public class MsgProviderXsp {
 	/*----------------------------------------------------------------------------*/
 	private static final String lFullQualPref = "de.foconis.";
 	private static final String lXSPMsgPkg = "de.foconis.xsp.messages";
+	private static final String lMsgProvProvClass = lXSPMsgPkg + ".MsgProvProv";
 
+	/*----------------------------------------------------------------------------*/
 	private boolean bundleIsFullQual(final String bundleName) {
 		return bundleName.startsWith(lFullQualPref);
 	}
@@ -38,12 +39,9 @@ public class MsgProviderXsp {
 	/*----------------------------------------------------------------------------*/
 	private class ParseMsgPars {
 
-		String iPackage = null;
 		String iKey = null;
 		String iDocName = null;
 		String iBundleName = null;
-		String iMessagesClassName = null;
-		boolean iCaseGetStringXSP = false;
 
 	}
 
@@ -75,13 +73,8 @@ public class MsgProviderXsp {
 			ret.iBundleName = pageName;	// .toLowerCase();
 		} else
 			ret.iBundleName = parts[0];
-		ret.iCaseGetStringXSP = !bundleIsFullQual(ret.iBundleName);
-		if (ret.iCaseGetStringXSP) {
-			ret.iPackage = lXSPMsgPkg;
+		if (!bundleIsFullQual(ret.iBundleName))
 			ret.iBundleName = lXSPMsgPkg + "." + ret.iBundleName;
-		} else
-			ret.iPackage = ret.iBundleName;
-		ret.iMessagesClassName = ret.iPackage + ".Messages";
 		boolean case$ = (iUIComp.getParent() == null);	// ${msg:...}
 		if (case$ && ret.iDocName != null)
 			throw new RuntimeException("Including a document in ${msg:...} isn't allowed");
@@ -91,13 +84,14 @@ public class MsgProviderXsp {
 	}
 
 	/*----------------------------------------------------------------------------*/
+	private ThreadLocal<Method> lGetStringMeth = new ThreadLocal<Method>();
+
+	/*----------------------------------------------------------------------------*/
 	public Object getMsg() {
 		ParseMsgPars pmp = inspectMsgPars();
 		if (pmp == null)
 			throw new IllegalArgumentException("Illegal msg binding: '" + iMsgPar + "'");
-		Method mGetString = null;
-		if (getStringMethodCache == null || (mGetString = getStringMethodCache.get(pmp.iMessagesClassName)) == null)
-			mGetString = newGetStringMethod(pmp.iMessagesClassName);
+		prepGetStringMethod();
 		Object[] varArgs;
 		Map<String, Object> dataMap = null;
 		if (pmp.iDocName != null) {
@@ -116,42 +110,24 @@ public class MsgProviderXsp {
 			varArgs[0] = dataMap;
 		}
 		try {
-			if (pmp.iCaseGetStringXSP)
-				return mGetString.invoke(null, pmp.iBundleName, pmp.iKey, varArgs);
-			else
-				return mGetString.invoke(null, pmp.iKey, varArgs);
+			return lGetStringMeth.get().invoke(null, pmp.iBundleName, pmp.iKey, varArgs);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	/*----------------------------------------------------------------------------*/
-	private static Map<String, Method> getStringMethodCache = null;
-
-	private synchronized Method newGetStringMethod(final String clsName) {
-		if (getStringMethodCache == null)
-			getStringMethodCache = new HashMap<String, Method>();
-		Method ret = getStringMethodCache.get(clsName);
-		if (ret != null)
-			return ret;
+	private void prepGetStringMethod() {
+		if (lGetStringMeth.get() != null && Factory.isClassLoaded(lMsgProvProvClass))
+			return;
+		lGetStringMeth.set(null);
 		try {
-			Class<?> cls = DominoUtils.getClass(clsName);
+			Class<?> cls = Factory.getClass(lMsgProvProvClass);
 			if (cls == null)
 				throw new IllegalArgumentException("Not found");
-			Method[] mm = cls.getMethods();
-			for (int i = 0; i < mm.length; i++) {
-				String n = mm[i].getName();
-				if (n.equals("getString") || n.equals("getStringXSP")) {
-					ret = mm[i];
-					break;
-				}
-			}
-			if (ret == null)
-				throw new IllegalArgumentException("Method not found: " + clsName + ".getString");
+			lGetStringMeth.set(cls.getMethod("getString", String.class, String.class, Object[].class));
 		} catch (Exception e) {
-			throw new RuntimeException("Class '" + clsName + "' not found");
+			throw new RuntimeException("Class '" + lMsgProvProvClass + "' not found");
 		}
-		getStringMethodCache.put(clsName, ret);
-		return ret;
 	}
 }

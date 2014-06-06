@@ -74,6 +74,14 @@ public enum Factory {
 
 	private static ThreadLocal<ClassLoader> currentClassLoader_ = new ThreadLocal<ClassLoader>();
 
+	private static ThreadLocal<Map<String, Class<?>>> currentLoadedClasses_ = new ThreadLocal<Map<String, Class<?>>>() {
+
+		@Override
+		protected Map<String, Class<?>> initialValue() {
+			return new HashMap<String, Class<?>>();
+		}
+	};
+
 	private static ThreadLocal<Session> currentSessionHolder_ = new ThreadLocal<Session>();
 
 	private static List<Terminatable> onTerminate_ = new ArrayList<Terminatable>();
@@ -702,10 +710,29 @@ public enum Factory {
 		return currentClassLoader_.get();
 	}
 
+	public static boolean isClassLoaded(final String className) {
+		return (currentLoadedClasses_.get().get(className) != null);
+	}
+
+	public static Class<?> getClass(final String className) throws ClassNotFoundException {
+		Map<String, Class<?>> map = currentLoadedClasses_.get();
+		if (map.containsKey(className))
+			return map.get(className);
+		Class<?> clazz = null;
+		try {
+			clazz = getClassLoader().loadClass(className);
+		} finally {
+			map.put(className, clazz);
+		}
+
+		return clazz;
+	}
+
 	public static void setClassLoader(final ClassLoader loader) {
 		if (loader != null) {
 			//			System.out.println("Setting OpenNTF Factory ClassLoader to a " + loader.getClass().getName());
 		}
+		currentLoadedClasses_.get().clear();
 		currentClassLoader_.set(loader);
 	}
 
@@ -715,6 +742,7 @@ public enum Factory {
 
 	public static void clearClassLoader() {
 		currentClassLoader_.set(null);
+		currentLoadedClasses_.get().clear();
 	}
 
 	public static void clearDominoGraph() {
