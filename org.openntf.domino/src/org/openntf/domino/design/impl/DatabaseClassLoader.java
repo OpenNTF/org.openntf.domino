@@ -74,7 +74,11 @@ public class DatabaseClassLoader extends ClassLoader {
 			unloadedClasses_.putAll(res.getClassData());
 			// Now attempt to load the named class
 			byte[] classData = unloadedClasses_.remove(name);
-			return defineClass(name, classData, 0, classData.length);
+			if (classData != null) {
+				// It's possible that an old name of the Java class is still lingering in the NSF
+				// In that case, we'd reach this point, but not have an actual class available to load
+				return defineClass(name, classData, 0, classData.length);
+			}
 		}
 
 		// It's also possible that it's stored only as a .class file (e.g. secondary, non-inner classes in a .java)
