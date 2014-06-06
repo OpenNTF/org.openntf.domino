@@ -6,9 +6,9 @@ import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class JSONFormatter.
+ * JSONFormatter class for outputting logs as JSON objects. Not used currently and should probably be replaced with Java classes better
+ * designed to write JSON rather than building content up with a StringBuilder
  */
 public class JSONFormatter extends Formatter {
 

@@ -197,6 +197,13 @@ public interface Session {
 	public DateTime createDateTime(Calendar date);
 
 	/**
+	 * Tells whether the current session object represents an anonymous user.
+	 * 
+	 * @return boolean, whether the session is an anonymous user
+	 */
+	public boolean isAnonymous();
+
+	/**
 	 * Tells whether a specific Khan-mode fix is enabled, using {@link Fixes}
 	 * 
 	 * @param fix

@@ -33,6 +33,8 @@ ENVIRONMENT myNotesIni :=  "testcase1"; @Environment("myNotesIni")
 
 @Environment("myNotesIni"; "testcase2"); @Environment("myNotesIni")
 	#allPass [testcase2]
+@Environment("TestEntry1" : "TestEntry2"; "New Value" : "Value 2"); @Environment("TestEntry1" : "TestEntry2")
+    #allPass [New Value, New Value]
 
 t:= @Error; @isError(t)
 	#allPass

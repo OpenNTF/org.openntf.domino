@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="org.openntf.domino" default="syncsrc" basedir=".">
+  <target name ="syncsrc" description="Sync the sources in OSGI-OPT">
+    <sync todir="OSGI-OPT/src">
+    	<fileset dir="src" includes="**/*.java" />
+    	<fileset dir="tinkerpop" includes="**/*.java" />
+    	<fileset dir="commons" includes="**/*.java" />
+    </sync>
+  </target>
+</project>
+

@@ -26,4 +26,14 @@ public interface DesignForm extends DesignBaseNamed {
 	public FormField addField();
 
 	public FormFieldList getFields();
+
+	public String getXPageAlt();
+
+	public void setXPageAlt(String xpageAlt);
+
+	public String getXPageAltClient();
+
+	public void setXPageAltClient(String xpageAltClient);
+
+	public void swapFields(final int a, final int b);
 }

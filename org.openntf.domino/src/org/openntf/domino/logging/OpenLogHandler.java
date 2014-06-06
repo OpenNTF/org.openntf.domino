@@ -20,9 +20,10 @@ import java.util.logging.LogRecord;
 
 import org.openntf.domino.utils.Factory;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class OpenLogHandler.
+ * OpenLogHandler class
+ * 
+ * Handles outputting error log to OpenLog
  */
 public class OpenLogHandler extends Handler {
 
@@ -34,6 +35,8 @@ public class OpenLogHandler extends Handler {
 
 	/**
 	 * Instantiates a new open log handler.
+	 * 
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public OpenLogHandler() {
 		ol_ = new DominoOpenLogItem();
@@ -60,19 +63,11 @@ public class OpenLogHandler extends Handler {
 	}
 
 	/**
-	 * Retrieves OpenLog database path.
-	 * 
-	 * @return the log db path
-	 */
-	//	public String getLogDbPath() {
-	//		return logDbPath;
-	//	}
-
-	/**
 	 * Sets the OpenLog database path for the OpenLogItem.
 	 * 
 	 * @param logDbPath
 	 *            the new log db path
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public void setLogDbPath(final String logDbPath) {
 		ol_.setLogDbName(logDbPath);

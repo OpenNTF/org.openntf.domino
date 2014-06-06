@@ -12,8 +12,9 @@ import org.openntf.domino.utils.Factory;
 /**
  * @author withersp
  * 
+ *         EmailAttachment class
  */
-public class EmailAttachment {
+public class EmailAttachment implements IEmailAttachment {
 	private Type attachmentType;
 	private String path;
 	private String fileName;
@@ -24,34 +25,23 @@ public class EmailAttachment {
 	private byte[] bytes;
 	private boolean isInlineImage;
 
-	public static enum Type {
-		DOCUMENT(0), FILE(1), STREAM(2), BYTES(3);
-
-		private final int value_;
-
-		private Type(final int value) {
-			value_ = value;
-		}
-
-		public int getValue() {
-			return value_;
-		}
-	}
-
 	/**
-	 * 
+	 * Constructor
 	 */
 	public EmailAttachment() {
 
 	}
 
 	/**
+	 * Creates an EmailAttachment object from an attachment in a Document
+	 * 
 	 * @param doc
 	 *            from which to retrieve the attachment
 	 * @param fileName
 	 *            of the attachment
 	 * @param isInlineImage
 	 *            whether it should be inserted as an inline image
+	 * @since org.openntf.domino 4.5.0
 	 */
 	public EmailAttachment(final Document doc, final String fileName, final boolean isInlineImage) {
 		try {
@@ -67,6 +57,8 @@ public class EmailAttachment {
 	}
 
 	/**
+	 * Creates an EmailAttachment object from an attachment in a Document
+	 * 
 	 * @param doc
 	 *            from which to retrieve the attachment
 	 * @param fileName
@@ -75,6 +67,7 @@ public class EmailAttachment {
 	 *            whether it should be inserted as an inline image
 	 * @param contentId
 	 *            a unique reference for each attachment to be inserted into the email
+	 * @since org.openntf.domino 4.5.0
 	 */
 	public EmailAttachment(final Document doc, final String fileName, final boolean isInlineImage, final String contentId) {
 		try {
@@ -90,12 +83,15 @@ public class EmailAttachment {
 	}
 
 	/**
+	 * Creates an EmailAttachment object from a file
+	 * 
 	 * @param filePath
 	 *            of the on-disk attachment
 	 * @param fileName
 	 *            of the file
 	 * @param isInlineImage
 	 *            whether it should be inserted as an inline image
+	 * @since org.openntf.domino 4.5.0
 	 */
 	public EmailAttachment(final String filePath, final String fileName, final boolean isInlineImage) {
 		try {
@@ -110,12 +106,40 @@ public class EmailAttachment {
 	}
 
 	/**
+	 * Creates an attachment from a file
+	 * 
+	 * @param filePath
+	 *            of the on-disk attachment
+	 * @param fileName
+	 *            of the file
+	 * @param isInlineImage
+	 *            whether it should be inserted as an inline image
+	 * @param contentId
+	 *            a unique reference for each attachment to be inserted into the email
+	 * @since org.openntf.domino 4.5.0
+	 */
+	public EmailAttachment(final String filePath, final String fileName, final boolean isInlineImage, final String contentId) {
+		try {
+			setAttachmentType(Type.FILE);
+			setPath(filePath);
+			setFileName(fileName);
+			setInlineImage(isInlineImage);
+			setContentId(contentId);
+		} catch (Throwable t) {
+			DominoUtils.handleException(t);
+		}
+	}
+
+	/**
+	 * Creates an EmailAttachment object from an InputStream
+	 * 
 	 * @param inputStream
 	 *            of the attachment
 	 * @param fileName
 	 *            of the file
 	 * @param isInlineImage
 	 *            whether it should be inserted as an inline image
+	 * @since org.openntf.domino 4.5.0
 	 */
 	public EmailAttachment(final InputStream inputStream, final String fileName, final boolean isInlineImage) {
 		try {
@@ -130,12 +154,15 @@ public class EmailAttachment {
 	}
 
 	/**
+	 * Creates an EmailAttachment object from a byte array
+	 * 
 	 * @param bytes
 	 *            byte array of the attachment
 	 * @param fileName
 	 *            of the file
 	 * @param isInlineImage
 	 *            whether it should be inserted as an inline image
+	 * @since org.openntf.domino 4.5.0
 	 */
 	public EmailAttachment(final byte[] bytes, final String fileName, final boolean isInlineImage) {
 		try {
@@ -149,110 +176,92 @@ public class EmailAttachment {
 		}
 	}
 
-	/**
-	 * @param filePath
-	 *            of the on-disk attachment
-	 * @param fileName
-	 *            of the file
-	 * @param isInlineImage
-	 *            whether it should be inserted as an inline image
-	 * @param contentId
-	 *            a unique reference for each attachment to be inserted into the email
-	 */
-	public EmailAttachment(final String filePath, final String fileName, final boolean isInlineImage, final String contentId) {
-		try {
-			setAttachmentType(Type.FILE);
-			setPath(filePath);
-			setFileName(fileName);
-			setInlineImage(isInlineImage);
-			setContentId(contentId);
-		} catch (Throwable t) {
-			DominoUtils.handleException(t);
-		}
-	}
-
+	@Override
 	public Type getAttachmentType() {
 		return attachmentType;
 	}
 
+	@Override
 	public void setAttachmentType(final Type attachmentType) {
 		this.attachmentType = attachmentType;
 	}
 
+	@Override
 	public String getFileName() {
 		return fileName;
 	}
 
+	@Override
 	public void setFileName(final String fileName) {
 		this.fileName = fileName;
 	}
 
+	@Override
 	public String getUnid() {
 		return unid;
 	}
 
+	@Override
 	public void setUnid(final String unid) {
 		this.unid = unid;
 	}
 
+	@Override
 	public String getDbPath() {
 		return dbPath;
 	}
 
+	@Override
 	public void setDbPath(final String dbPath) {
 		this.dbPath = dbPath;
 	}
 
+	@Override
 	public String getContentId() {
 		return contentId;
 	}
 
+	@Override
 	public void setContentId(final String contentId) {
 		this.contentId = contentId;
 	}
 
+	@Override
 	public boolean isInlineImage() {
 		return isInlineImage;
 	}
 
+	@Override
 	public void setInlineImage(final boolean isInlineImage) {
 		this.isInlineImage = isInlineImage;
 	}
 
+	@Override
 	public String getPath() {
 		return path;
 	}
 
+	@Override
 	public void setPath(final String path) {
 		this.path = path;
 	}
 
-	/**
-	 * @return the inputStream
-	 */
+	@Override
 	public InputStream getInputStream() {
 		return inputStream;
 	}
 
-	/**
-	 * @param inputStream
-	 *            the inputStream to set
-	 */
+	@Override
 	public void setInputStream(final InputStream inputStream) {
 		this.inputStream = inputStream;
 	}
 
-	/**
-	 * @return the bytes
-	 */
+	@Override
 	public byte[] getBytes() {
 		return bytes;
 	}
 
-	/**
-	 * @param bytes
-	 *            the bytes to set
-	 */
+	@Override
 	public void setBytes(final byte[] bytes) {
 		this.bytes = bytes;
 	}
