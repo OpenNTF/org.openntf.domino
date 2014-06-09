@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.openntf.domino.Document;
 import org.openntf.domino.exceptions.DominoGraphException;
 
 import com.tinkerpop.blueprints.Direction;
@@ -88,6 +87,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		return outEdgesMap_;
 	}
 
+	@Override
 	public int getInEdgeCount(final String label) {
 		Set<String> edgeIds = getInEdgesMap().get(label);
 		if (edgeIds == null) {
@@ -122,6 +122,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		return edgeIds;
 	}
 
+	@Override
 	public int getOutEdgeCount(final String label) {
 		Set<String> edgeIds = getOutEdgesMap().get(label);
 		if (edgeIds == null) {
@@ -161,6 +162,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		return parent_.addEdge(null, this, vertex, label);
 	}
 
+	@Override
 	public void addInEdge(final Edge edge) {
 		boolean adding = false;
 		String label = edge.getLabel();
@@ -191,6 +193,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		}
 	}
 
+	@Override
 	public void addOutEdge(final Edge edge) {
 		boolean adding = false;
 		String label = edge.getLabel();
@@ -228,6 +231,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		return Collections.unmodifiableSet(result);
 	}
 
+	@Override
 	public Set<Edge> getEdges(final String... labels) {
 		LinkedHashSet<Edge> result = new LinkedHashSet<Edge>();
 		result.addAll(getInEdgeObjects(labels));
@@ -449,6 +453,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	// return inEdges_;
 	// }
 
+	@Override
 	public Set<String> getInEdgeLabels() {
 		Set<String> result = new LinkedHashSet<String>();
 		Set<String> rawKeys = getRawDocument().keySet();
@@ -468,6 +473,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		return result;
 	}
 
+	@Override
 	public Set<String> getOutEdgeLabels() {
 		Set<String> result = new LinkedHashSet<String>();
 		Set<String> rawKeys = getRawDocument().keySet();
@@ -657,12 +663,12 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		return result;
 	}
 
+	@Override
 	public String validateEdges() {
 		StringBuilder sb = new StringBuilder();
 		Set<String> inIds = getInEdges();
 		for (String id : inIds.toArray(new String[inIds.size()])) {
-			Document chk = getParent().getRawDatabase().getDocumentByUNID(id);
-			if (chk == null) {
+			if (!getParent().isValidId(id)) {
 				inIds.remove(id);
 				//				inDirty_ = true;
 				sb.append("IN: ");
@@ -673,8 +679,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 
 		Set<String> outIds = getOutEdges();
 		for (String id : outIds.toArray(new String[outIds.size()])) {
-			Document chk = getParent().getRawDatabase().getDocumentByUNID(id);
-			if (chk == null) {
+			if (!getParent().isValidId(id)) {
 				outIds.remove(id);
 				//				outDirty_ = true;
 				sb.append("OUT: ");
@@ -727,6 +732,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	//
 	//	}
 
+	@Override
 	public Set<IEdgeHelper> getEdgeHelpers() {
 		Set<IEdgeHelper> result = new HashSet<IEdgeHelper>();
 		for (String in : getInEdgeLabels()) {
@@ -744,6 +750,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		return result;
 	}
 
+	@Override
 	public IDominoEdge relate(final Vertex vertex) {
 		IDominoEdge result = null;
 		if (vertex == null)
@@ -757,6 +764,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		return result;
 	}
 
+	@Override
 	public IDominoEdge find(final Vertex vertex) {
 		IDominoEdge result = null;
 		if (vertex == null)

@@ -7,12 +7,10 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
@@ -59,9 +57,9 @@ public class GenericDominoGraph implements IDominoGraph {
 	private static final Logger log_ = Logger.getLogger(GenericDominoGraph.class.getName());
 
 	// private boolean inTransaction_ = false;
-	private static ThreadLocal<DatabaseTransaction> txnHolder_ = new ThreadLocal<DatabaseTransaction>() {
-
-	};
+	//	private static ThreadLocal<DatabaseTransaction> txnHolder_ = new ThreadLocal<DatabaseTransaction>() {
+	//
+	//	};
 
 	public static final String VERTEX_VIEW_NAME = "(_OPEN_Vertices)";
 
@@ -103,32 +101,6 @@ public class GenericDominoGraph implements IDominoGraph {
 
 	public static void clearDocumentCache() {
 		documentCache.set(null);
-	}
-
-	public static SortedSet<? extends Edge> sortEdges(final Iterable<? extends Edge> elements, final IDominoProperties[] sortproperties) {
-		return DominoGraphUtils.sortEdges(elements, sortproperties);
-	}
-
-	public static SortedSet<? extends Edge> sortEdges(final Iterable<? extends Edge> elements, final String[] sortproperties) {
-		return DominoGraphUtils.sortEdges(elements, sortproperties);
-	}
-
-	public static SortedSet<? extends Element> sortElements(final Iterable<? extends Element> elements,
-			final IDominoProperties[] sortproperties) {
-		return DominoGraphUtils.sortElements(elements, sortproperties);
-	}
-
-	public static SortedSet<? extends Element> sortElements(final Iterable<? extends Element> elements, final String[] sortproperties) {
-		return DominoGraphUtils.sortElements(elements, sortproperties);
-	}
-
-	public static SortedSet<? extends Vertex> sortVertexes(final Iterable<? extends Vertex> elements,
-			final IDominoProperties[] sortproperties) {
-		return DominoGraphUtils.sortVertexes(elements, sortproperties);
-	}
-
-	public static SortedSet<? extends Vertex> sortVertexes(final Iterable<? extends Vertex> elements, final String[] sortproperties) {
-		return DominoGraphUtils.sortVertexes(elements, sortproperties);
 	}
 
 	private java.util.Map<Object, IDominoElement> cache_;
@@ -180,6 +152,7 @@ public class GenericDominoGraph implements IDominoGraph {
 		}
 	}
 
+	@Override
 	public void addHelper(final String key, final IEdgeHelper helper) {
 		if (getHelper(key) == null) {
 			edgeHelpers_.put(key, helper);
@@ -195,6 +168,7 @@ public class GenericDominoGraph implements IDominoGraph {
 		return shardMap_;
 	}
 
+	@Override
 	public void addSharding(final Class<?> cls, final String replicaId) {
 		IDominoShard chk = getShardMap().get(cls);
 		if (chk == null) {
@@ -204,6 +178,7 @@ public class GenericDominoGraph implements IDominoGraph {
 		}
 	}
 
+	@Override
 	public IDominoVertex addVertex(final Class<?> cls, final Object id) {
 		if (getVertexStrategy() == VertexStrategy.SHARDED) {
 			return getShard(cls).addVertex(id);
@@ -272,6 +247,7 @@ public class GenericDominoGraph implements IDominoGraph {
 		// System.out.println("Transaction complete");
 	}
 
+	@Override
 	public IEdgeHelper findHelper(final Vertex in, final Vertex out) {
 		return findHelper(in, out, false);
 	}
@@ -309,6 +285,7 @@ public class GenericDominoGraph implements IDominoGraph {
 		return result;
 	}
 
+	@Override
 	public Set<IEdgeHelper> findHelpers(final Vertex in, final Vertex out) {
 		Set<IEdgeHelper> result = new HashSet<IEdgeHelper>();
 		if (in == null || out == null) {
@@ -355,6 +332,7 @@ public class GenericDominoGraph implements IDominoGraph {
 		return getRawSession().getDatabase(server_, filepath_);
 	}
 
+	@Override
 	public Document getDocument(final Object id, final boolean createOnFail) {
 		Document result = null;
 		String unid = "";
@@ -431,6 +409,7 @@ public class GenericDominoGraph implements IDominoGraph {
 		return result;
 	}
 
+	@Override
 	public IDominoEdge getEdge(final Vertex outVertex, final Vertex inVertex, final String label) {
 		String id = DominoUtils.toUnid(outVertex.getId() + label + inVertex.getId());
 		IDominoEdge result = getEdge(id);
@@ -454,6 +433,7 @@ public class GenericDominoGraph implements IDominoGraph {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public Set<Edge> getEdgesFromIds(final Set<String> set) {
 		Set<Edge> result = new LinkedHashSet<Edge>();
 		for (String id : set) {
@@ -481,11 +461,13 @@ public class GenericDominoGraph implements IDominoGraph {
 		return result;
 	}
 
+	@Override
 	public IDominoShard getEdgeShard() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public EdgeStrategy getEdgeStrategy() {
 		return edgeStrategy_;
 	}
@@ -508,10 +490,12 @@ public class GenericDominoGraph implements IDominoGraph {
 		return GenericDominoGraph.FEATURES;
 	}
 
+	@Override
 	public IEdgeHelper getHelper(final IDominoEdgeType edgeType) {
 		return getHelper(edgeType.getLabel());
 	}
 
+	@Override
 	public IEdgeHelper getHelper(final String key) {
 		IEdgeHelper helper = edgeHelpers_.get(key);
 		return helper;
@@ -550,7 +534,24 @@ public class GenericDominoGraph implements IDominoGraph {
 		return getDatabase();
 	}
 
-	public Database getRawDatabase(final Class<?> cls) {
+	@Override
+	public boolean isValidId(final String id) {
+		try {
+			Document chk = getRawDatabase().getDocumentByUNID(id);
+			if (chk != null)
+				return true;
+		} catch (Exception e) {
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isCompressed() {
+		return COMPRESS_IDS;
+	}
+
+	@Override
+	public org.openntf.domino.Database getRawDatabase(final Class<?> cls) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -564,16 +565,19 @@ public class GenericDominoGraph implements IDominoGraph {
 		return Factory.getSession();
 	}
 
+	@Override
 	public IDominoShard getShard(final Class<?> cls) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public IDominoShard getShard(final String replicaId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
 	public Map<Class<?>, String> getShardingMap() {
 		// TODO Auto-generated method stub
 		return null;
@@ -590,6 +594,7 @@ public class GenericDominoGraph implements IDominoGraph {
 
 	// private DatabaseTransaction txn_;
 
+	@Override
 	public IDominoVertex getVertex(final Class<?> cls, final Object id) {
 		// TODO Auto-generated method stub
 		return null;
@@ -613,6 +618,7 @@ public class GenericDominoGraph implements IDominoGraph {
 		return result;
 	}
 
+	@Override
 	public VertexStrategy getVertexStrategy() {
 		return vertexStrategy_;
 	}
@@ -682,6 +688,7 @@ public class GenericDominoGraph implements IDominoGraph {
 		((DominoEdge) edge)._remove();
 	}
 
+	@Override
 	public void removeHelper(final String key) {
 		edgeHelpers_.remove(key);
 	}
@@ -713,6 +720,7 @@ public class GenericDominoGraph implements IDominoGraph {
 		// System.out.println("Transaction rollbacked");
 	}
 
+	@Override
 	public void setEdgeStrategy(final EdgeStrategy strategy) {
 		edgeStrategy_ = strategy;
 	}
@@ -724,11 +732,13 @@ public class GenericDominoGraph implements IDominoGraph {
 		}
 	}
 
+	@Override
 	public void setShardingMap(final Map<Class<?>, String> shardingMap) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void setVertexStrategy(final VertexStrategy strategy) {
 		vertexStrategy_ = strategy;
 	}
@@ -738,6 +748,7 @@ public class GenericDominoGraph implements IDominoGraph {
 		commit();
 	}
 
+	@Override
 	public void startTransaction(final Element elem) {
 		putCache(elem);
 		if (getTxn() == null) {
@@ -757,6 +768,15 @@ public class GenericDominoGraph implements IDominoGraph {
 	public void stopTransaction(final Conclusion conclusion) {
 		// TODO Auto-generated method stub
 
+	}
+
+	protected byte[] compressId(final Serializable id) {
+
+		if (DominoUtils.isUnid(id)) {
+
+		} else {
+
+		}
 	}
 
 }

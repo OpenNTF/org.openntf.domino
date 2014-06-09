@@ -168,7 +168,7 @@ public class GenericEdgeHelper implements IEdgeHelper {
 			Set<? extends Edge> rawSet = getEdges(vertex);
 			//			System.out.println("Requested sorting of " + rawSet.size() + " raw edges");
 
-			SortedSet<? extends Edge> sortedSet = GenericDominoGraph.sortEdges(rawSet, sortproperties);
+			SortedSet<? extends Edge> sortedSet = DominoGraphUtils.sortEdges(rawSet, sortproperties);
 			//			System.out.println("Returning sorted edge set of " + sortedSet.size());
 			SortedSet<? extends Edge> result = sortedSet;
 			return result;
@@ -218,7 +218,7 @@ public class GenericEdgeHelper implements IEdgeHelper {
 	public Set<? extends Vertex> getSortedOtherVertexes(final Vertex vertex, final String... sortproperties) {
 		try {
 			Set<? extends Vertex> rawSet = getOtherVertexes(vertex);
-			return Collections.unmodifiableSortedSet(GenericDominoGraph.sortVertexes(rawSet, sortproperties));
+			return Collections.unmodifiableSortedSet(DominoGraphUtils.sortVertexes(rawSet, sortproperties));
 		} catch (Throwable t) {
 			throw new RuntimeException(t);
 		}
