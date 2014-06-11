@@ -10,6 +10,7 @@ import java.util.Map;
 
 import lotus.domino.DateTime;
 
+import com.ibm.commons.extension.ExtensionManager;
 import com.ibm.jscript.InterpretException;
 import com.ibm.jscript.JSContext;
 import com.ibm.jscript.JavaScriptException;
@@ -23,7 +24,7 @@ import com.ibm.jscript.types.GeneratedWrapperObject.MethodMap;
 import com.ibm.jscript.types.IWrapperFactory;
 import com.ibm.jscript.types.Registry;
 
-public class WrapperOpenDomino {
+public class WrapperOpenDomino implements WrapperRegistry {
 
 	/*
 	 * First block extends IBM's baseline GeneratedWrapper classes. Why? Because as you can see with the OpenFunction.call() method, we want
@@ -622,9 +623,13 @@ public class WrapperOpenDomino {
 			registry.registerPackage("OpenNTFDomino", 1337);
 			FBSDefaultObject defaultObject = registry.getRegistryObject();
 
-			for (Class<?> clazz : WRAPPED_CLASSES) {
-				registry.registerWrapper(clazz, new OpenWrapperFactory(clazz));
-				defaultObject.createProperty("Open" + clazz.getSimpleName(), 1338, new OpenConstructor(context, clazz));
+			List<Object> wregs = ExtensionManager.findServices(null, WrapperOpenDomino.class, WrapperRegistry.class.getName());
+			// for (Class<?> clazz : WRAPPED_CLASSES) {
+			for (Object wreg : wregs) {
+				for (Class<?> clazz : ((WrapperRegistry) wreg).getWrapperClasses()) {
+					registry.registerWrapper(clazz, new OpenWrapperFactory(clazz));
+					defaultObject.createProperty("Open" + clazz.getSimpleName(), 1338, new OpenConstructor(context, clazz));
+				}
 			}
 
 		} catch (Exception e) {
@@ -679,6 +684,11 @@ public class WrapperOpenDomino {
 		WRAPPED_CLASSES.add(org.openntf.domino.Registration.class);
 		WRAPPED_CLASSES.add(org.openntf.domino.DxlExporter.class);
 		WRAPPED_CLASSES.add(org.openntf.domino.DxlImporter.class);
+	}
+
+	@Override
+	public List<Class<?>> getWrapperClasses() {
+		return WRAPPED_CLASSES;
 	}
 
 }
