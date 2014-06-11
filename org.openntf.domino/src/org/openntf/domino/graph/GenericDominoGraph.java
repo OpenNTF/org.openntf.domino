@@ -777,6 +777,7 @@ public class GenericDominoGraph implements IDominoGraph {
 		} else {
 
 		}
+		return null;
 	}
 
 }
