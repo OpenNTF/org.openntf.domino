@@ -77,7 +77,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	private static final long serialVersionUID = 1L;
 	public static final String TYPE_FIELD = "_OPEN_GRAPHTYPE";
 	private String key_;
-	protected transient DominoGraph parent_;
+	protected transient IDominoGraph parent_;
 	private String unid_;
 	private Map<CharSequence, Serializable> props_;
 	public final String[] DEFAULT_STR_ARRAY = { "" };
@@ -106,7 +106,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		}
 	}
 
-	public DominoElement(final DominoGraph parent, final Document doc) {
+	public DominoElement(final GenericDominoGraph parent, final Document doc) {
 		parent_ = parent;
 
 		unid_ = doc.getUniversalID().toUpperCase();
@@ -190,7 +190,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	}
 
 	private Database getDatabase() {
-		return getParent().getRawDatabase();
+		return getParent().getRawGraph();
 	}
 
 	/*
@@ -239,19 +239,6 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	private Document getDocument() {
 		return getParent().getDocument(unid_, true);
-		// Map<String, Document> map = documentCache.get();
-		// Document doc = map.get(unid_);
-		// if (doc == null) {
-		// synchronized (map) {
-		// doc = getDatabase().getDocumentByKey(unid_, true);
-		// String localUnid = doc.getUniversalID().toUpperCase();
-		// if (!unid_.equals(localUnid)) {
-		// log_.log(Level.SEVERE, "UNIDs do not match! Expected: " + unid_ + ", Result: " + localUnid);
-		// }
-		// map.put(unid_, doc);
-		// }
-		// }
-		// return doc;
 	}
 
 	@Override
@@ -262,7 +249,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return key_;
 	}
 
-	public DominoGraph getParent() {
+	public IDominoGraph getParent() {
 		return parent_;
 	}
 
@@ -508,7 +495,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		}
 	}
 
-	protected void reapplyChanges() {
+	public void reapplyChanges() {
 		Map<CharSequence, Serializable> props = getProps();
 		Document doc = getDocument();
 		synchronized (props) {

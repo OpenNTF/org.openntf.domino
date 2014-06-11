@@ -16,20 +16,20 @@ import com.tinkerpop.blueprints.Element;
  * @author nfreeman
  * 
  */
-public class ElementComparator implements Comparator<Element>, Serializable {
-	private static final Logger log_ = Logger.getLogger(ElementComparator.class.getName());
+public class GenericElementComparator implements Comparator<Element>, Serializable {
+	private static final Logger log_ = Logger.getLogger(GenericElementComparator.class.getName());
 	private static final long serialVersionUID = 1L;
 
 	private String[] props_;
 	private IDominoProperties[] dProps_;
 	private final boolean caseSensitive_;
 
-	public ElementComparator(final IDominoProperties... props) {
+	public GenericElementComparator(final IDominoProperties... props) {
 		dProps_ = props;
 		caseSensitive_ = false;
 	}
 
-	public ElementComparator(final String... props) {
+	public GenericElementComparator(final String... props) {
 		if (props == null || props.length == 0) {
 			props_ = new String[0];
 		} else {
@@ -38,7 +38,7 @@ public class ElementComparator implements Comparator<Element>, Serializable {
 		caseSensitive_ = false;
 	}
 
-	public ElementComparator(final boolean caseSensitive, final String... props) {
+	public GenericElementComparator(final boolean caseSensitive, final String... props) {
 		if (props == null || props.length == 0) {
 			props_ = new String[0];
 		} else {
