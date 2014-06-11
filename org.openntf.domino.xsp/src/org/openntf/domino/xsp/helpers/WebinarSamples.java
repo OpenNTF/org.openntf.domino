@@ -9,8 +9,7 @@ import org.openntf.domino.helpers.DocumentScanner;
 import org.openntf.domino.helpers.DocumentSyncHelper;
 
 /**
- * @author nfreeman
- * 
+ * @author nfreeman Samples from OpenNTF Webinar 2013
  */
 public class WebinarSamples {
 

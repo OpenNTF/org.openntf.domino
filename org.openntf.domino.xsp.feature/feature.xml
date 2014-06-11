@@ -2,7 +2,7 @@
 <feature
       id="org.openntf.domino.xsp.feature"
       label="OpenNTF Domino XSP/OSGi version"
-      version="1.0.0.qualifier"
+      version="1.5.0.qualifier"
       provider-name="OpenNTF.org">
 
    <description>
@@ -20,16 +20,25 @@ Declan Lynch, Paul Withers
    </license>
 
    <requires>
-      <import plugin="org.openntf.formula" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="com.ibm.notes.java.api"/>
+      <import plugin="com.ibm.icu" version="3.8.1" match="greaterOrEqual"/>
+      <import plugin="com.ibm.commons"/>
+      <import plugin="com.ibm.xsp.domino"/>
+      <import plugin="com.ibm.domino.napi"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="com.ibm.xsp.domino" version="9.0.0" match="greaterOrEqual"/>
+      <import plugin="com.ibm.xsp.extsn" version="9.0.0" match="greaterOrEqual"/>
+      <import plugin="com.ibm.designer.runtime" version="9.0.0" match="greaterOrEqual"/>
+      <import plugin="com.ibm.xsp.designer"/>
+      <import plugin="com.ibm.xsp.extlib.domino"/>
+      <import plugin="com.ibm.xsp.extlib" version="9.0.0" match="greaterOrEqual"/>
+      <import plugin="com.ibm.xsp.extlib.controls" version="9.0.0" match="greaterOrEqual"/>
+      <import plugin="com.ibm.xsp.extlib.core" version="9.0.0" match="greaterOrEqual"/>
+      <import plugin="com.ibm.domino.xsp.adapter"/>
+      <import plugin="com.ibm.domino.xsp.bootstrap"/>
+      <import plugin="com.ibm.designer.lib.jsf"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.equinox.http.servlet"/>
    </requires>
-
-   <plugin
-         id="org.openntf.domino"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
    <plugin
          id="org.openntf.formula"

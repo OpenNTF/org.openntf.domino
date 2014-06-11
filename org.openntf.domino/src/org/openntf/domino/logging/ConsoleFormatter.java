@@ -4,29 +4,44 @@ import java.util.Date;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
+/**
+ * ConsoleFormatter class
+ * 
+ * Handles formatting of output to Domino console
+ * 
+ * @author withersp
+ * 
+ */
 public class ConsoleFormatter extends Formatter {
 
 	/** The UT c_ format. */
 	private boolean UTC_Format = false;
 
+	/**
+	 * Constructor
+	 * 
+	 * @since org.openntf.domino 1.0.0
+	 */
 	public ConsoleFormatter() {
 		// TODO Auto-generated constructor stub
 	}
 
 	/**
-	 * Checks if is uT c_ format.
+	 * Checks whether dates should be outputted in UTC format
 	 * 
-	 * @return true, if is uT c_ format
+	 * @return boolean, if is UTC format
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public boolean isUTC_Format() {
 		return UTC_Format;
 	}
 
 	/**
-	 * Sets the uT c_ format.
+	 * Sets whether dates should be outputted in UTC format
 	 * 
 	 * @param uTC_Format
-	 *            the new uT c_ format
+	 *            boolean, whether UTC format
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public void setUTC_Format(final boolean uTC_Format) {
 		UTC_Format = uTC_Format;

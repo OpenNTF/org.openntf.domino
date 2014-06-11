@@ -18,6 +18,12 @@ public class XspLibrary extends AbstractXspLibrary {
 	private static Boolean GLOBAL;
 	private List<ExtlibPluginConfig> plugins;
 
+	/**
+	 * Whether or not global mode is enabled (org.openntf.domino.xsp=global). This is used for the
+	 * {@link AbstractXspLibrary#isGlobalScope()} method
+	 * 
+	 * @return boolean, whether global or not
+	 */
 	private static boolean isGlobal() {
 		if (GLOBAL == null) {
 			GLOBAL = Boolean.FALSE;
@@ -34,18 +40,28 @@ public class XspLibrary extends AbstractXspLibrary {
 	}
 
 	/**
-	 * 
+	 * Constructor
 	 */
 	public XspLibrary() {
 		System.out.println("Loading org.openntf.domino.xsp library");
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ibm.xsp.library.AbstractXspLibrary#getDependencies()
+	 */
 	@Override
 	public String[] getDependencies() {
 		return new String[] { "com.ibm.xsp.core.library", "com.ibm.xsp.extsn.library", "com.ibm.xsp.domino.library",
 				"com.ibm.xsp.designer.library", "com.ibm.xsp.extlib.library", "org.openntf.domino", "org.openntf.formula" };
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ibm.xsp.library.AbstractXspLibrary#getFacesConfigFiles()
+	 */
 	@Override
 	public String[] getFacesConfigFiles() {
 		String[] files = new String[] { "domino-faces-config.xml" };
@@ -57,6 +73,12 @@ public class XspLibrary extends AbstractXspLibrary {
 		return files;
 	}
 
+	/**
+	 * Adds {@link DominoConfig} to the list of available plugins, loading the config for the OpenNTF Domino Pickers
+	 * 
+	 * @return List<ExtlibPluginConfig> of configs in use for the library
+	 * @since org.openntf.domino 4.5.0
+	 */
 	private List<ExtlibPluginConfig> getExtlibPluginConfigs() {
 		if (plugins == null) {
 			// List<ExtlibPluginConfig> _plugins = ExtensionManager.findServices(null,
@@ -74,6 +96,11 @@ public class XspLibrary extends AbstractXspLibrary {
 		return plugins;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ibm.xsp.library.AbstractXspLibrary#getXspConfigFiles()
+	 */
 	@Override
 	public String[] getXspConfigFiles() {
 		String[] files = new String[] {};
@@ -94,11 +121,21 @@ public class XspLibrary extends AbstractXspLibrary {
 		return LIBRARY_ID;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ibm.xsp.library.AbstractXspLibrary#getPluginId()
+	 */
 	@Override
 	public String getPluginId() {
 		return Activator.PLUGIN_ID;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ibm.xsp.library.AbstractXspLibrary#isGlobalScope()
+	 */
 	@Override
 	public boolean isGlobalScope() {
 		boolean result = isGlobal();

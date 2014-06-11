@@ -2466,19 +2466,43 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		return columnInfo_;
 	}
 
+	/**
+	 * Metadata about a ViewColumn, comprising the programmatic column name and the column index
+	 * 
+	 * @since org.openntf.domino 3.0.0
+	 */
 	public static class DominoColumnInfo {
 		private final String itemName_;
 		private final int columnValuesIndex_;
 
+		/**
+		 * Constructor, passing the ViewColumn object
+		 * 
+		 * @param column
+		 *            ViewColumn from which to extract the metadata
+		 * @since org.openntf.domino 3.0.0
+		 */
 		public DominoColumnInfo(final org.openntf.domino.ViewColumn column) {
 			itemName_ = column.getItemName();
 			columnValuesIndex_ = column.getColumnValuesIndex();
 		}
 
+		/**
+		 * Gets the programmatic name of the column, from the Advanced tab (beanie image) of the Column
+		 * 
+		 * @return String programmatic column name
+		 * @since org.openntf.domino 3.0.0
+		 */
 		public String getItemName() {
 			return itemName_;
 		}
 
+		/**
+		 * Gets the index for the column in the view, beginning at 0
+		 * 
+		 * @return int index of the column
+		 * @since org.openntf.domino 3.0.0
+		 */
 		public int getColumnValuesIndex() {
 			return columnValuesIndex_;
 		}

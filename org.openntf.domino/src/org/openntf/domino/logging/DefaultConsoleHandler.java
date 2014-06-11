@@ -20,9 +20,10 @@ import java.security.PrivilegedExceptionAction;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.LogRecord;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class DefaultConsoleHandler.
+ * DefaultConsoleHandler class
+ * 
+ * Handles outputting error log to Domino console
  * 
  * @author withersp
  */
@@ -34,6 +35,7 @@ public class DefaultConsoleHandler extends ConsoleHandler {
 	/**
 	 * Instantiates a new default file handler.
 	 * 
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public DefaultConsoleHandler() {
 
@@ -44,6 +46,7 @@ public class DefaultConsoleHandler extends ConsoleHandler {
 	 * 
 	 * @return String debug level.
 	 * @see #setOlDebugLevel(String) for options
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public static String getOlDebugLevel() {
 		return olDebugLevel;
@@ -59,6 +62,7 @@ public class DefaultConsoleHandler extends ConsoleHandler {
 	 *            <li>1 -- Exception messages from internal errors are printed</li>
 	 *            <li>2 -- stack traces from internal errors are also printed</li>
 	 *            </ul>
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public static void setOlDebugLevel(final String olDebugLevel) {
 		DefaultConsoleHandler.olDebugLevel = olDebugLevel;
@@ -74,6 +78,15 @@ public class DefaultConsoleHandler extends ConsoleHandler {
 		super.close();
 	}
 
+	/**
+	 * Calls the publish method of the parent ConsoleHandler class
+	 * 
+	 * Called from publish method via a PrivilegedAction to avoid access issues
+	 * 
+	 * @param record
+	 *            LogRecord to be outputted
+	 * @since org.openntf.domino 1.0.0
+	 */
 	private void superPub(final LogRecord record) {
 		super.publish(record);
 	}

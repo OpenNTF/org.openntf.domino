@@ -301,7 +301,8 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			getDelegate().importDxl(toLotus(rtitem), toLotus(db));
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			//			DominoUtils.handleException(e);
+			DominoUtils.handleException(new Exception(getLog(), e));
 		}
 	}
 
@@ -315,7 +316,8 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			getDelegate().importDxl(toLotus(stream), toLotus(db));
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			//			DominoUtils.handleException(e);
+			DominoUtils.handleException(new Exception(getLog(), e));
 		}
 	}
 
@@ -329,7 +331,8 @@ public class DxlImporter extends Base<org.openntf.domino.DxlImporter, lotus.domi
 		try {
 			getDelegate().importDxl(dxl, toLotus(db));
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			//			DominoUtils.handleException(e);
+			DominoUtils.handleException(new Exception(getLog(), e));
 		}
 	}
 

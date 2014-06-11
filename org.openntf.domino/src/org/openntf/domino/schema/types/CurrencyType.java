@@ -17,8 +17,7 @@ public class CurrencyType extends AbstractDominoType {
 	private static final Logger log_ = Logger.getLogger(CurrencyType.class.getName());
 	private static final long serialVersionUID = 1L;
 
-	public CurrencyType() {
-		// TODO Auto-generated constructor stub
+	CurrencyType() {
 	}
 
 	/*

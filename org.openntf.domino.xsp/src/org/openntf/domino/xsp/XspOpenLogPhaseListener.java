@@ -50,6 +50,11 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 	private static final long serialVersionUID = 1L;
 	private static final int RENDER_RESPONSE = 6;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.faces.event.PhaseListener#beforePhase(javax.faces.event.PhaseEvent)
+	 */
 	@SuppressWarnings("unchecked")
 	public void beforePhase(final PhaseEvent event) {
 		try {
@@ -267,6 +272,13 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 		}
 	}
 
+	/**
+	 * Converts an integer into a Java logging {@link Level}
+	 * 
+	 * @param severity
+	 *            int severity, 1 to 7
+	 * @return Level corresponding to the relevant integer, defaulting to Level.CONFIG (4)
+	 */
 	private Level convertSeverity(final int severity) {
 		Level internalLevel = null;
 		switch (severity) {
@@ -294,6 +306,11 @@ public class XspOpenLogPhaseListener implements PhaseListener {
 		return internalLevel;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.faces.event.PhaseListener#getPhaseId()
+	 */
 	public PhaseId getPhaseId() {
 		return PhaseId.ANY_PHASE;
 	}

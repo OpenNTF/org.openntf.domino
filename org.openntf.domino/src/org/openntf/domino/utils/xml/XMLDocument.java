@@ -4,7 +4,6 @@
 package org.openntf.domino.utils.xml;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -14,8 +13,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -57,27 +54,14 @@ public class XMLDocument extends XMLNode {
 		loadInputStream(new ByteArrayInputStream(s.getBytes("UTF-8")));
 	}
 
-	@Override
-	public String getXml() throws IOException {
-		try {
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			OutputFormat format = new OutputFormat();
-			format.setLineWidth(200);
-			format.setIndenting(true);
-			format.setIndent(2);
-			XMLSerializer serializer = new XMLSerializer(bos, format);
-			serializer.serialize(((Document) this.node).getDocumentElement());
-			return new String(bos.toByteArray(), "UTF-8");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 	private DocumentBuilder getBuilder() throws ParserConfigurationException {
 		DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
 		fac.setValidating(false);
 		// fac.setNamespaceAware(true);
 		return fac.newDocumentBuilder();
+	}
+
+	public static String escapeXPathValue(final String input) {
+		return input.replace("'", "\\'");
 	}
 }

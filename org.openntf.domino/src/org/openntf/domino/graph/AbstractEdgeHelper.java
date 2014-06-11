@@ -10,11 +10,10 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.logging.Logger;
 
-import javax.annotation.Nonnull;
-
-import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
+//import javax.annotation.Nonnull;
+import com.tinkerpop.blueprints.Direction;
 
 /**
  * @author nfreeman
@@ -340,7 +339,7 @@ public class AbstractEdgeHelper implements IEdgeHelper {
 		return result;
 	}
 
-	public Edge findEdge(final @Nonnull Vertex defaultOut, final @Nonnull Vertex defaultIn) {
+	public Edge findEdge(final/*@Nonnull*/Vertex defaultOut, final/*@Nonnull*/Vertex defaultIn) {
 		Edge result = null;
 		Vertex inVert = null;
 		Vertex outVert = null;

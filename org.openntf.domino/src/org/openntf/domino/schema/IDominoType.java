@@ -13,8 +13,11 @@ public interface IDominoType {
 
 	public String getUITypeName();
 
+	//this method validates the type ONLY. It doesn't not apply other validation rules
+	//TODO NTF - Possibly change this to a type-coercion instead?
 	public boolean validateItem(org.openntf.domino.Item item) throws ItemException;
 
+	//In theory this would validate both the data type and whatever validation rules were defined by the IItemDefinition
 	public boolean validateItem(org.openntf.domino.Item item, IItemDefinition definition) throws ItemException;
 
 	public void setItemToDefault(org.openntf.domino.Item item);

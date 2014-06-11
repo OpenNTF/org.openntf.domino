@@ -29,6 +29,7 @@ import org.openntf.domino.utils.DominoUtils;
  * 
  */
 public class Folder extends AbstractFolder implements org.openntf.domino.design.Folder {
+	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(Folder.class.getName());
 

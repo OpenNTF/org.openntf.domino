@@ -25,6 +25,7 @@ import org.openntf.domino.Document;
  * 
  */
 public class UsingDocument extends AbstractDesignBase implements org.openntf.domino.design.UsingDocument {
+	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(UsingDocument.class.getName());
 

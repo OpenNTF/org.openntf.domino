@@ -1,0 +1,6 @@
+Adding the Javadoc for visibility in DDE
+
+1. Add an OSGI-OPT folder to the root of org.openntf.domino.plugin, alongside META-INF
+2. Paste into it org.openntf.domino.src contents
+3. In build.properties, add OSGI-OPT to the binary build
+4. Build the update site as normal

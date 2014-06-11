@@ -16,6 +16,8 @@
 
 package org.openntf.domino.design.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.SortedSet;
@@ -24,10 +26,13 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.DxlImporter;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.NoteCollection.SelectOption;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.DominoUtils;
+
+import com.ibm.commons.util.io.StreamUtil;
 
 /**
  * @author jgallagher
@@ -44,8 +49,12 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	private static final String DEFAULT_FORM = "FFFF0004";
 	private static final String DEFAULT_VIEW = "FFFF0008";
 	private static final String ICON_NOTE = "FFFF0010";
+
+	// Design collections are pretty impossible to work with using the Java API: the exported DXL is
+	// blank and the raw $Collection data isn't readable as an Item
 	@SuppressWarnings("unused")
 	private static final String DESIGN_COLLECTION = "FFFF0020";
+
 	private static final String ACL_NOTE = "FFFF0040";
 	private static final String USING_NOTE = "FFFF0100";
 	private static final String REPLICATION_FORMULA = "FFFF0800";
@@ -76,11 +85,29 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 		return new FileResource(database_);
 	}
 
+	public StyleSheet createStyleSheet() {
+		return new StyleSheet(database_);
+	}
+
 	@Override
-	public AboutDocument getAboutDocument() {
+	public AboutDocument getAboutDocument(final boolean create) {
 		Document doc = database_.getDocumentByID(ABOUT_NOTE);
 		if (doc != null) {
 			return new AboutDocument(doc);
+		} else if (create) {
+			try {
+				InputStream is = AboutDocument.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_helpaboutdocument.xml");
+				String dxl = StreamUtil.readString(is);
+				is.close();
+				DxlImporter importer = getAncestorSession().createDxlImporter();
+				importer.setDesignImportOption(DxlImporter.DesignImportOption.REPLACE_ELSE_CREATE);
+				importer.setReplicaRequiredForReplaceOrUpdate(false);
+				importer.importDxl(dxl, database_);
+				doc = database_.getDocumentByID(ABOUT_NOTE);
+				return new AboutDocument(doc);
+			} catch (IOException e) {
+				DominoUtils.handleException(e);
+			}
 		}
 		return null;
 	}
@@ -125,14 +152,19 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 
 	@Override
 	public FileResource getFileResource(final String name) {
-		NoteCollection notes = getNoteCollection(
-				String.format(" !@Contains($Flags; '~') & @Contains($Flags; 'g') & @Explode($TITLE; '|')=\"%s\" ",
-						DominoUtils.escapeForFormulaString(name)), EnumSet.of(SelectOption.MISC_FORMAT));
-
-		String noteId = notes.getFirstNoteID();
-		if (!noteId.isEmpty()) {
-			Document doc = database_.getDocumentByID(noteId);
+		if (DominoUtils.isUnid(name)) {
+			Document doc = database_.getDocumentByUNID(name);
 			return new FileResource(doc);
+		} else {
+			NoteCollection notes = getNoteCollection(
+					String.format(" !@Contains($Flags; '~') & @Contains($Flags; 'g') & @Explode($TITLE; '|')=\"%s\" ",
+							DominoUtils.escapeForFormulaString(name)), EnumSet.of(SelectOption.MISC_FORMAT));
+
+			String noteId = notes.getFirstNoteID();
+			if (!noteId.isEmpty()) {
+				Document doc = database_.getDocumentByID(noteId);
+				return new FileResource(doc);
+			}
 		}
 		return null;
 	}
@@ -145,14 +177,20 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 
 	@Override
 	public FileResource getHiddenFileResource(final String name) {
-		NoteCollection notes = getNoteCollection(String.format(
-				" @Contains($Flags; '~') & @Contains($Flags; 'g') & !@Contains($Flags; 'K':';':'[':',') & @Explode($TITLE; '|')=\"%s\" ",
-				DominoUtils.escapeForFormulaString(name)), EnumSet.of(SelectOption.MISC_FORMAT));
-
-		String noteId = notes.getFirstNoteID();
-		if (!noteId.isEmpty()) {
-			Document doc = database_.getDocumentByID(noteId);
+		if (DominoUtils.isUnid(name)) {
+			Document doc = database_.getDocumentByUNID(name);
 			return new FileResource(doc);
+		} else {
+			NoteCollection notes = getNoteCollection(
+					String.format(
+							" @Contains($Flags; '~') & @Contains($Flags; 'g') & !@Contains($Flags; 'K':';':'[':',') & @Explode($TITLE; '|')=\"%s\" ",
+							DominoUtils.escapeForFormulaString(name)), EnumSet.of(SelectOption.MISC_FORMAT));
+
+			String noteId = notes.getFirstNoteID();
+			if (!noteId.isEmpty()) {
+				Document doc = database_.getDocumentByID(noteId);
+				return new FileResource(doc);
+			}
 		}
 		return null;
 	}
@@ -169,14 +207,19 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	 */
 	@Override
 	public ImageResource getImageResource(final String name) {
-		NoteCollection notes = getNoteCollection(
-				String.format(" @Contains($Flags; 'i') & @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
-				EnumSet.of(SelectOption.IMAGE_RESOURCES));
-
-		String noteId = notes.getFirstNoteID();
-		if (!noteId.isEmpty()) {
-			Document doc = database_.getDocumentByID(noteId);
+		if (DominoUtils.isUnid(name)) {
+			Document doc = database_.getDocumentByUNID(name);
 			return new ImageResource(doc);
+		} else {
+			NoteCollection notes = getNoteCollection(
+					String.format(" @Contains($Flags; 'i') & @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
+					EnumSet.of(SelectOption.IMAGE_RESOURCES));
+
+			String noteId = notes.getFirstNoteID();
+			if (!noteId.isEmpty()) {
+				Document doc = database_.getDocumentByID(noteId);
+				return new ImageResource(doc);
+			}
 		}
 		return null;
 	}
@@ -195,14 +238,19 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	 */
 	@Override
 	public StyleSheet getStyleSheet(final String name) {
-		NoteCollection notes = getNoteCollection(
-				String.format(" @Contains($Flags; '=') & @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
-				EnumSet.of(SelectOption.STYLESHEETS));
-
-		String noteId = notes.getFirstNoteID();
-		if (!noteId.isEmpty()) {
-			Document doc = database_.getDocumentByID(noteId);
+		if (DominoUtils.isUnid(name)) {
+			Document doc = database_.getDocumentByUNID(name);
 			return new StyleSheet(doc);
+		} else {
+			NoteCollection notes = getNoteCollection(
+					String.format(" @Contains($Flags; '=') & @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
+					EnumSet.of(SelectOption.STYLESHEETS));
+
+			String noteId = notes.getFirstNoteID();
+			if (!noteId.isEmpty()) {
+				Document doc = database_.getDocumentByID(noteId);
+				return new StyleSheet(doc);
+			}
 		}
 		return null;
 	}
@@ -223,14 +271,19 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	 */
 	@Override
 	public JavaResource getJavaResource(final String name) {
-		NoteCollection notes = getNoteCollection(
-				String.format(" @Contains($Flags; 'g') & @Contains($Flags; '[') & @Explode($TITLE; '|')=\"%s\" ",
-						DominoUtils.escapeForFormulaString(name)), EnumSet.of(SelectOption.MISC_FORMAT));
-
-		String noteId = notes.getFirstNoteID();
-		if (!noteId.isEmpty()) {
-			Document doc = database_.getDocumentByID(noteId);
+		if (DominoUtils.isUnid(name)) {
+			Document doc = database_.getDocumentByUNID(name);
 			return new JavaResource(doc);
+		} else {
+			NoteCollection notes = getNoteCollection(
+					String.format(" @Contains($Flags; 'g') & @Contains($Flags; '[') & @Explode($TITLE; '|')=\"%s\" ",
+							DominoUtils.escapeForFormulaString(name)), EnumSet.of(SelectOption.MISC_FORMAT));
+
+			String noteId = notes.getFirstNoteID();
+			if (!noteId.isEmpty()) {
+				Document doc = database_.getDocumentByID(noteId);
+				return new JavaResource(doc);
+			}
 		}
 		return null;
 	}
@@ -271,14 +324,19 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	 */
 	@Override
 	public XPage getXPage(final String name) {
-		NoteCollection notes = getNoteCollection(
-				String.format(" @Contains($Flags; 'g') & @Contains($Flags; 'K') & @Explode($TITLE; '|')=\"%s\" ",
-						DominoUtils.escapeForFormulaString(name)), EnumSet.of(SelectOption.MISC_FORMAT));
-
-		String noteId = notes.getFirstNoteID();
-		if (!noteId.isEmpty()) {
-			Document doc = database_.getDocumentByID(noteId);
+		if (DominoUtils.isUnid(name)) {
+			Document doc = database_.getDocumentByUNID(name);
 			return new XPage(doc);
+		} else {
+			NoteCollection notes = getNoteCollection(
+					String.format(" @Contains($Flags; 'g') & @Contains($Flags; 'K') & @Explode($TITLE; '|')=\"%s\" ",
+							DominoUtils.escapeForFormulaString(name)), EnumSet.of(SelectOption.MISC_FORMAT));
+
+			String noteId = notes.getFirstNoteID();
+			if (!noteId.isEmpty()) {
+				Document doc = database_.getDocumentByID(noteId);
+				return new XPage(doc);
+			}
 		}
 		return null;
 	}
@@ -295,14 +353,19 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	}
 
 	public JarResource getJarResource(final String name) {
-		NoteCollection notes = getNoteCollection(
-				String.format(" @Contains($Flags; 'g') & @Contains($Flags; ',') & @Explode($TITLE; '|')=\"%s\" ",
-						DominoUtils.escapeForFormulaString(name)), EnumSet.of(SelectOption.MISC_FORMAT));
-
-		String noteId = notes.getFirstNoteID();
-		if (!noteId.isEmpty()) {
-			Document doc = database_.getDocumentByID(noteId);
+		if (DominoUtils.isUnid(name)) {
+			Document doc = database_.getDocumentByUNID(name);
 			return new JarResource(doc);
+		} else {
+			NoteCollection notes = getNoteCollection(
+					String.format(" @Contains($Flags; 'g') & @Contains($Flags; ',') & @Explode($TITLE; '|')=\"%s\" ",
+							DominoUtils.escapeForFormulaString(name)), EnumSet.of(SelectOption.MISC_FORMAT));
+
+			String noteId = notes.getFirstNoteID();
+			if (!noteId.isEmpty()) {
+				Document doc = database_.getDocumentByID(noteId);
+				return new JarResource(doc);
+			}
 		}
 		return null;
 	}
@@ -314,28 +377,39 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 
 	@Override
 	public FileResource getAnyFileResource(final String name) {
-		NoteCollection notes = getNoteCollection(
-				String.format(" @Contains($Flags; 'g') & @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
-				EnumSet.of(SelectOption.MISC_FORMAT));
-
-		String noteId = notes.getFirstNoteID();
-		if (!noteId.isEmpty()) {
-			Document doc = database_.getDocumentByID(noteId);
+		if (DominoUtils.isUnid(name)) {
+			Document doc = database_.getDocumentByUNID(name);
 			return new FileResource(doc);
+		} else {
+			NoteCollection notes = getNoteCollection(
+					String.format(" @Contains($Flags; 'g') & @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
+					EnumSet.of(SelectOption.MISC_FORMAT));
+
+			String noteId = notes.getFirstNoteID();
+			if (!noteId.isEmpty()) {
+				Document doc = database_.getDocumentByID(noteId);
+				return new FileResource(doc);
+			}
 		}
 		return null;
 	}
 
 	@Override
 	public DesignForm getForm(final String name) {
-		// TODO Check if this returns subforms
-		NoteCollection notes = getNoteCollection(String.format(" @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
-				EnumSet.of(SelectOption.FORMS));
-
-		String noteId = notes.getFirstNoteID();
-		if (!noteId.isEmpty()) {
-			Document doc = database_.getDocumentByID(noteId);
+		if (DominoUtils.isUnid(name)) {
+			Document doc = database_.getDocumentByUNID(name);
 			return new DesignForm(doc);
+		} else {
+			// TODO Check if this returns subforms
+			NoteCollection notes = getNoteCollection(
+					String.format(" @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
+					EnumSet.of(SelectOption.FORMS));
+
+			String noteId = notes.getFirstNoteID();
+			if (!noteId.isEmpty()) {
+				Document doc = database_.getDocumentByID(noteId);
+				return new DesignForm(doc);
+			}
 		}
 		return null;
 	}
@@ -361,24 +435,44 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	}
 
 	@Override
-	public UsingDocument getUsingDocument() {
+	public UsingDocument getUsingDocument(final boolean create) {
 		Document doc = database_.getDocumentByID(USING_NOTE);
 		if (doc != null) {
 			return new UsingDocument(doc);
+		} else if (create) {
+			try {
+				InputStream is = AboutDocument.class.getResourceAsStream("/org/openntf/domino/design/impl/dxl_helpusingdocument.xml");
+				String dxl = StreamUtil.readString(is);
+				is.close();
+				DxlImporter importer = getAncestorSession().createDxlImporter();
+				importer.setDesignImportOption(DxlImporter.DesignImportOption.REPLACE_ELSE_CREATE);
+				importer.setReplicaRequiredForReplaceOrUpdate(false);
+				importer.importDxl(dxl, database_);
+				doc = database_.getDocumentByID(USING_NOTE);
+				return new UsingDocument(doc);
+			} catch (IOException e) {
+				DominoUtils.handleException(e);
+			}
 		}
 		return null;
 	}
 
 	@Override
 	public DesignView getView(final String name) {
-		// TODO Check if this returns folders
-		NoteCollection notes = getNoteCollection(String.format(" @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
-				EnumSet.of(SelectOption.VIEWS));
-
-		String noteId = notes.getFirstNoteID();
-		if (!noteId.isEmpty()) {
-			Document doc = database_.getDocumentByID(noteId);
+		if (DominoUtils.isUnid(name)) {
+			Document doc = database_.getDocumentByUNID(name);
 			return new DesignView(doc);
+		} else {
+			// TODO Check if this returns folders
+			NoteCollection notes = getNoteCollection(
+					String.format(" @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
+					EnumSet.of(SelectOption.VIEWS));
+
+			String noteId = notes.getFirstNoteID();
+			if (!noteId.isEmpty()) {
+				Document doc = database_.getDocumentByID(noteId);
+				return new DesignView(doc);
+			}
 		}
 		return null;
 	}
@@ -389,20 +483,51 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 		return new DesignCollection<org.openntf.domino.design.DesignView>(notes, DesignView.class);
 	}
 
+	@Override
+	public Folder getFolder(final String name) {
+		if (DominoUtils.isUnid(name)) {
+			Document doc = database_.getDocumentByUNID(name);
+			return new Folder(doc);
+		} else {
+			// TODO Check if this returns views
+			NoteCollection notes = getNoteCollection(
+					String.format(" @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
+					EnumSet.of(SelectOption.VIEWS));
+
+			String noteId = notes.getFirstNoteID();
+			if (!noteId.isEmpty()) {
+				Document doc = database_.getDocumentByID(noteId);
+				return new Folder(doc);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public DesignCollection<org.openntf.domino.design.Folder> getFolders() {
+		NoteCollection notes = getNoteCollection(" @All ", EnumSet.of(SelectOption.VIEWS));
+		return new DesignCollection<org.openntf.domino.design.Folder>(notes, Folder.class);
+	}
+
 	public DesignCollection<org.openntf.domino.design.JavaScriptLibrary> getJavaScriptLibraries() {
 		NoteCollection notes = getNoteCollection(" @Contains($Flags; 'j') ", EnumSet.of(SelectOption.SCRIPT_LIBRARIES));
 		return new DesignCollection<org.openntf.domino.design.JavaScriptLibrary>(notes, JavaScriptLibrary.class);
 	}
 
 	public JavaScriptLibrary getJavaScriptLibrary(final String name) {
-		NoteCollection notes = getNoteCollection(
-				String.format(" @Contains($Flags; 'j') & @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
-				EnumSet.of(SelectOption.SCRIPT_LIBRARIES));
-
-		String noteId = notes.getFirstNoteID();
-		if (!noteId.isEmpty()) {
-			Document doc = database_.getDocumentByID(noteId);
+		if (DominoUtils.isUnid(name)) {
+			Document doc = database_.getDocumentByUNID(name);
 			return new JavaScriptLibrary(doc);
+		} else {
+			NoteCollection notes = getNoteCollection(
+					String.format(" @Contains($Flags; 'j') & @Explode($TITLE; '|')=\"%s\" ", DominoUtils.escapeForFormulaString(name)),
+					EnumSet.of(SelectOption.SCRIPT_LIBRARIES));
+
+			String noteId = notes.getFirstNoteID();
+			if (!noteId.isEmpty()) {
+				Document doc = database_.getDocumentByID(noteId);
+				return new JavaScriptLibrary(doc);
+			}
 		}
 		return null;
 	}

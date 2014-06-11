@@ -16,6 +16,7 @@
 
 package org.openntf.domino.design.impl;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Document;
@@ -26,6 +27,7 @@ import org.openntf.domino.utils.xml.XMLNode;
  * 
  */
 public class DesignForm extends AbstractDesignBaseNamed implements org.openntf.domino.design.DesignForm {
+	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DesignForm.class.getName());
 
@@ -68,5 +70,32 @@ public class DesignForm extends AbstractDesignBaseNamed implements org.openntf.d
 		field.setAttribute("type", "text");
 
 		return new FormField(field);
+	}
+
+	@Override
+	public String getXPageAlt() {
+		List<Object> itemValue = getItemValue("$XPageAlt");
+		return itemValue.isEmpty() ? "" : String.valueOf(itemValue.get(0));
+	}
+
+	@Override
+	public void setXPageAlt(final String xpageAlt) {
+		setItemValue("$XPageAlt", xpageAlt);
+	}
+
+	@Override
+	public String getXPageAltClient() {
+		List<Object> itemValue = getItemValue("$XPageAltClient");
+		return itemValue.isEmpty() ? "" : String.valueOf(itemValue.get(0));
+	}
+
+	@Override
+	public void setXPageAltClient(final String xpageAltClient) {
+		setItemValue("$XPageAltClient", xpageAltClient);
+	}
+
+	@Override
+	public void swapFields(final int a, final int b) {
+		getFields().swap(a, b);
 	}
 }

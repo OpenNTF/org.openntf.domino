@@ -26,6 +26,7 @@ import org.openntf.domino.View;
 import org.openntf.domino.ViewEntry;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.iterators.ViewNavigatorEntryIterator;
+import org.openntf.domino.iterators.ViewNavigatorSiblingIterator;
 import org.openntf.domino.utils.DominoUtils;
 
 // TODO: Auto-generated Javadoc
@@ -1030,5 +1031,9 @@ public class ViewNavigator extends Base<org.openntf.domino.ViewNavigator, lotus.
 
 	public Iterator<org.openntf.domino.ViewEntry> iterator() {
 		return new ViewNavigatorEntryIterator(this);
+	}
+
+	public Iterator<org.openntf.domino.ViewEntry> siblingIterator() {
+		return new ViewNavigatorSiblingIterator(this);
 	}
 }

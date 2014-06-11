@@ -21,10 +21,11 @@ import java.util.logging.Logger;
 import org.openntf.domino.Document;
 
 /**
- * @author Administrator
+ * @author jgallagher
  * 
  */
 public class IconNote extends AbstractDesignBaseNamed implements org.openntf.domino.design.IconNote {
+	private static final long serialVersionUID = 1L;
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(IconNote.class.getName());
 
