@@ -185,7 +185,7 @@ public interface DatabaseDesign {
 	 *            a ClassLoader used to delegate lookups for classes not found in the database
 	 * @return a ClassLoader that looks up classes in all Java resources, XPages, and JAR resources in the database
 	 */
-	public ClassLoader getDatabaseClassLoader(ClassLoader parent);
+	public DatabaseClassLoader getDatabaseClassLoader(ClassLoader parent);
 
 	/**
 	 * @param parent
@@ -194,7 +194,7 @@ public interface DatabaseDesign {
 	 *            whether or not to include JAR files in the lookup
 	 * @return a ClassLoader that looks up classes in all Java resources, XPages, and, if requested, JAR resources in the database
 	 */
-	public ClassLoader getDatabaseClassLoader(ClassLoader parent, boolean includeJars);
+	public DatabaseClassLoader getDatabaseClassLoader(ClassLoader parent, boolean includeJars);
 
 	/**
 	 * @param parent
@@ -204,7 +204,7 @@ public interface DatabaseDesign {
 	 * @return a ClassLoader that looks up classes in all Java resources, XPages, and, if requested, JAR resources in the database and Java
 	 *         script libraries
 	 */
-	public ClassLoader getDatabaseClassLoader(ClassLoader parent, boolean includeJars, boolean includeLibraries);
+	public DatabaseClassLoader getDatabaseClassLoader(ClassLoader parent, boolean includeJars, boolean includeLibraries);
 
 	/**
 	 * @param name

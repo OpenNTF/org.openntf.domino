@@ -16,9 +16,12 @@
 
 package org.openntf.domino.design.impl;
 
+import java.lang.annotation.Annotation;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Document;
@@ -30,7 +33,7 @@ import org.openntf.domino.utils.DominoUtils;
  * @author jgallagher
  * 
  */
-public class DatabaseClassLoader extends ClassLoader {
+public class DatabaseClassLoader extends org.openntf.domino.design.DatabaseClassLoader {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DatabaseClassLoader.class.getName());
 
@@ -124,5 +127,21 @@ public class DatabaseClassLoader extends ClassLoader {
 		}
 
 		return super.findClass(name);
+	}
+
+	@Override
+	public Set<Class<?>> getClassesWithAnnotation(final Class<? extends Annotation> annotationClass) {
+		Set<Class<?>> result = new LinkedHashSet<Class<?>>();
+		for (String className : design_.getJavaResourceClassNames()) {
+			try {
+				Class<?> clazz = loadClass(className);
+				if (clazz.getAnnotation(annotationClass) != null) {
+					result.add(clazz);
+				}
+			} catch (ClassNotFoundException e) {
+				// Ignore - Java resources keep copies of their old names, tripping up the search
+			}
+		}
+		return result;
 	}
 }

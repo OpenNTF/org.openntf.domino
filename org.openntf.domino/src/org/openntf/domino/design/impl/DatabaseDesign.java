@@ -548,7 +548,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	 * @see org.openntf.domino.design.DatabaseDesign#getDatabaseClassLoader()
 	 */
 	@Override
-	public ClassLoader getDatabaseClassLoader(final ClassLoader parent) {
+	public DatabaseClassLoader getDatabaseClassLoader(final ClassLoader parent) {
 		return new DatabaseClassLoader(this, parent, true, false);
 	}
 
@@ -558,12 +558,12 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	 * @see org.openntf.domino.design.DatabaseDesign#getDatabaseClassLoader(java.lang.ClassLoader, boolean)
 	 */
 	@Override
-	public ClassLoader getDatabaseClassLoader(final ClassLoader parent, final boolean includeJars) {
+	public DatabaseClassLoader getDatabaseClassLoader(final ClassLoader parent, final boolean includeJars) {
 		return new DatabaseClassLoader(this, parent, includeJars, false);
 	}
 
 	@Override
-	public ClassLoader getDatabaseClassLoader(final ClassLoader parent, final boolean includeJars, final boolean includeLibraries) {
+	public DatabaseClassLoader getDatabaseClassLoader(final ClassLoader parent, final boolean includeJars, final boolean includeLibraries) {
 		return new DatabaseClassLoader(this, parent, includeJars, includeLibraries);
 	}
 
