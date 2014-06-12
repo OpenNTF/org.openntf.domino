@@ -2,6 +2,9 @@ package de.foconis.lsext;
 
 import java.util.Set;
 
+import org.openntf.formula.impl.StringMap;
+import org.openntf.formula.impl.StringSet;
+
 /*----------------------------------------------------------------------------*/
 public class LSFocStringMap extends StringMap<Object> {
 

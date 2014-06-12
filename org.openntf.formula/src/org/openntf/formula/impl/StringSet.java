@@ -1,18 +1,18 @@
-package de.foconis.lsext;
+package org.openntf.formula.impl;
 
 /*----------------------------------------------------------------------------*/
 import java.util.Comparator;
-import java.util.TreeMap;
+import java.util.TreeSet;
 
 /*----------------------------------------------------------------------------*/
-public class StringMap<V> extends TreeMap<String, V> {
+public class StringSet extends TreeSet<String> {
 
-	private static final long serialVersionUID = -5701938083812020294L;
+	private static final long serialVersionUID = -5701938083812020299L;
 
 	protected boolean iCaseInsensitive = false;
 
 	/*----------------------------------------------------------------------------*/
-	public StringMap(final boolean caseInsensitive) {
+	public StringSet(final boolean caseInsensitive) {
 		super(new Comparator<String>() {
 			public int compare(final String s1, final String s2) {
 				return caseInsensitive ? s1.compareToIgnoreCase(s2) : s1.compareTo(s2);
@@ -21,7 +21,7 @@ public class StringMap<V> extends TreeMap<String, V> {
 		iCaseInsensitive = caseInsensitive;
 	}
 
-	public StringMap() {
+	public StringSet() {
 		super();
 	}
 

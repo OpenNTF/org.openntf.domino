@@ -81,10 +81,12 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 		return new DesignView(database_);
 	}
 
+	@Override
 	public FileResource createFileResource() {
 		return new FileResource(database_);
 	}
 
+	@Override
 	public StyleSheet createStyleSheet() {
 		return new StyleSheet(database_);
 	}
@@ -352,6 +354,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 		return new DesignCollection<org.openntf.domino.design.XPage>(notes, XPage.class);
 	}
 
+	@Override
 	public JarResource getJarResource(final String name) {
 		if (DominoUtils.isUnid(name)) {
 			Document doc = database_.getDocumentByUNID(name);
@@ -370,6 +373,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 		return null;
 	}
 
+	@Override
 	public DesignCollection<org.openntf.domino.design.JarResource> getJarResources() {
 		NoteCollection notes = getNoteCollection(" @Contains($Flags; 'g') & @Contains($Flags; ',') ", EnumSet.of(SelectOption.MISC_FORMAT));
 		return new DesignCollection<org.openntf.domino.design.JarResource>(notes, JarResource.class);
@@ -422,7 +426,11 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 
 	@Override
 	public IconNote getIconNote() {
-		return new IconNote(database_.getDocumentByID(ICON_NOTE));
+		Document iconNote = database_.getDocumentByID(ICON_NOTE);
+		if (iconNote != null) {
+			return new IconNote(iconNote);
+		}
+		return null;
 	}
 
 	@Override
@@ -509,11 +517,13 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 		return new DesignCollection<org.openntf.domino.design.Folder>(notes, Folder.class);
 	}
 
+	@Override
 	public DesignCollection<org.openntf.domino.design.JavaScriptLibrary> getJavaScriptLibraries() {
 		NoteCollection notes = getNoteCollection(" @Contains($Flags; 'j') ", EnumSet.of(SelectOption.SCRIPT_LIBRARIES));
 		return new DesignCollection<org.openntf.domino.design.JavaScriptLibrary>(notes, JavaScriptLibrary.class);
 	}
 
+	@Override
 	public JavaScriptLibrary getJavaScriptLibrary(final String name) {
 		if (DominoUtils.isUnid(name)) {
 			Document doc = database_.getDocumentByUNID(name);
@@ -552,6 +562,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 		return new DatabaseClassLoader(this, parent, includeJars, false);
 	}
 
+	@Override
 	public ClassLoader getDatabaseClassLoader(final ClassLoader parent, final boolean includeJars, final boolean includeLibraries) {
 		return new DatabaseClassLoader(this, parent, includeJars, includeLibraries);
 	}

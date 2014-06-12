@@ -12,6 +12,7 @@ import java.util.Set;
 import org.openntf.formula.DateTime;
 import org.openntf.formula.Formatter;
 import org.openntf.formula.impl.FormatterImpl;
+import org.openntf.formula.impl.StringMap;
 
 public class Java2LSExt {
 

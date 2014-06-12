@@ -37,4 +37,11 @@
    <extension point="com.ibm.commons.Extension">
          <service type="com.ibm.xsp.adapter.serviceFactory" class="org.openntf.domino.xsp.adapter.OpenntfServiceFactory" />
    </extension>
+   <extension
+         point="com.ibm.commons.Extension">
+      <service
+            class="org.openntf.domino.xsp.script.WrapperOpenDomino"
+            type="org.openntf.domino.xsp.script.WrapperRegistry">
+      </service>
+   </extension>
 </plugin>

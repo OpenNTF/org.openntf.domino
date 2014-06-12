@@ -78,7 +78,7 @@ public class getfilch {
 			fileNums[1] = crc.getValue();
 			return null;
 		} catch (Exception e) {
-			return "getfilch: Exception " + e.getClass().getName() + ": " + e.getMessage();
+			return "Exception " + e.getClass().getName() + ": " + e.getMessage();
 		}
 	}
 
@@ -90,7 +90,7 @@ public class getfilch {
 			fis.read(buff);
 			fis.close();
 		} catch (Exception e) {
-			return "getfilch: Exception " + e.getClass().getName() + ": " + e.getMessage();
+			return "Exception " + e.getClass().getName() + ": " + e.getMessage();
 		}
 		buff = normalizeJava(buff, fileNums);
 		CRC32 crc = new CRC32();
@@ -107,6 +107,8 @@ public class getfilch {
 		for (int i = 0; i < lh; i++) {
 			byte b = buff[i];
 			if (b == '/' && i < lh - 1 && buff[i + 1] == '/') {
+				if (count != 0)
+					ret[count++] = ' ';
 				for (; i < lh; i++) {
 					ret[count++] = buff[i];
 					if (buff[i] == '\n')
@@ -115,6 +117,10 @@ public class getfilch {
 				continue;
 			}
 			if (b == '/' && i < lh - 1 && buff[i + 1] == '*') {
+				if (count != 0)
+					ret[count++] = ' ';
+				ret[count++] = buff[i++];
+				ret[count++] = buff[i++];
 				for (; i < lh - 1; i++) {
 					ret[count++] = buff[i];
 					if (buff[i] == '*' && buff[i + 1] == '/') {
@@ -131,7 +137,7 @@ public class getfilch {
 					ret[count++] = buff[i];
 					if (buff[i] == '"' && !lastWasBS)
 						break;
-					lastWasBS = (buff[i] == '\\');
+					lastWasBS = (!lastWasBS && buff[i] == '\\');
 				}
 				continue;
 			}
@@ -142,7 +148,7 @@ public class getfilch {
 					ret[count++] = buff[i];
 					if (buff[i] == '\'' && !lastWasBS)
 						break;
-					lastWasBS = (buff[i] == '\\');
+					lastWasBS = (!lastWasBS && buff[i] == '\\');
 				}
 				continue;
 			}
@@ -155,7 +161,7 @@ public class getfilch {
 					break;
 			if (i >= lh)
 				break;
-			if (Character.isJavaIdentifierStart(buff[i]) && count > 0
+			if ((Character.isLetterOrDigit(buff[i]) || buff[i] == '_') && count > 0
 					&& (Character.isLetterOrDigit(ret[count - 1]) || ret[count - 1] == '_'))
 				ret[count++] = ' ';
 			i--;
