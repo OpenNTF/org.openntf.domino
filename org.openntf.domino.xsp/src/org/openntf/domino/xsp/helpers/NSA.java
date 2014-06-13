@@ -40,6 +40,12 @@ public enum NSA implements ApplicationListener, SessionListener {
 
 	// private OpenntfServlet parent_;
 
+	/**
+	 * Gets a map of Applications currently loaded, where the key is the applicationId and the value is the Application itself
+	 * 
+	 * @return Map<String, Application>
+	 * @since org.openntf.domino.xsp 4.5.0
+	 */
 	public Map<String, Application> getApps() {
 		// System.out.println("Getting application map from " + System.identityHashCode(this));
 		if (apps_ == null) {
@@ -49,6 +55,13 @@ public enum NSA implements ApplicationListener, SessionListener {
 		return apps_;
 	}
 
+	/**
+	 * Gets a Map of NSFComponentModules currently loaded, where the key is the applicationId for the application containing the module and
+	 * the value is the NSFComponentModule
+	 * 
+	 * @return Map<String, NSFComponentModule>
+	 * @since org.openntf.domino.xsp 4.5.0
+	 */
 	public Map<String, NSFComponentModule> getModules() {
 		// System.out.println("Getting modules map from " + System.identityHashCode(this));
 		if (modules_ == null) {
@@ -58,6 +71,12 @@ public enum NSA implements ApplicationListener, SessionListener {
 		return modules_;
 	}
 
+	/**
+	 * Gets a Map of HttpSessions currently loaded
+	 * 
+	 * @return Map<String, HttpSession>
+	 * @since org.openntf.domino.xsp 4.5.0
+	 */
 	public Map<String, HttpSession> getSessions() {
 		// System.out.println("Getting session map from " + System.identityHashCode(this));
 		if (sessions_ == null) {
@@ -76,27 +95,56 @@ public enum NSA implements ApplicationListener, SessionListener {
 	// return parent_;
 	// }
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ibm.xsp.application.events.ApplicationListener#applicationCreated(com.ibm.xsp.application.ApplicationEx)
+	 */
 	@Override
 	public void applicationCreated(final ApplicationEx arg0) {
 		registerApplication(arg0);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ibm.xsp.application.events.ApplicationListener#applicationDestroyed(com.ibm.xsp.application.ApplicationEx)
+	 */
 	@Override
 	public void applicationDestroyed(final ApplicationEx arg0) {
 		unregisterApplication(arg0);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ibm.xsp.application.events.SessionListener#sessionCreated(com.ibm.xsp.application.ApplicationEx,
+	 * javax.servlet.http.HttpSessionEvent)
+	 */
 	@Override
 	public void sessionCreated(final ApplicationEx paramApplicationEx, final HttpSessionEvent paramHttpSessionEvent) {
 
 		registerSession(paramApplicationEx, paramHttpSessionEvent.getSession());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ibm.xsp.application.events.SessionListener#sessionDestroyed(com.ibm.xsp.application.ApplicationEx,
+	 * javax.servlet.http.HttpSessionEvent)
+	 */
 	@Override
 	public void sessionDestroyed(final ApplicationEx paramApplicationEx, final HttpSessionEvent paramHttpSessionEvent) {
 		unregisterSession(paramApplicationEx, paramHttpSessionEvent.getSession());
 	}
 
+	/**
+	 * Registers an application to the map
+	 * 
+	 * @param app
+	 *            ApplicationEx
+	 * @since org.openntf.domino.xsp 4.5.0
+	 */
 	public void registerApplication(final ApplicationEx app) {
 		Map<String, Application> apps = getApps();
 		String id = app.getApplicationId();
@@ -110,6 +158,13 @@ public enum NSA implements ApplicationListener, SessionListener {
 		app.addSessionListener(this);
 	}
 
+	/**
+	 * De-registers an application from the map
+	 * 
+	 * @param app
+	 *            ApplicationEx
+	 * @since org.openntf.domino.xsp 4.5.0
+	 */
 	public void unregisterApplication(final ApplicationEx app) {
 		Map<String, Application> apps = getApps();
 		String id = app.getApplicationId();
@@ -120,6 +175,15 @@ public enum NSA implements ApplicationListener, SessionListener {
 		}
 	}
 
+	/**
+	 * Registers a module to the map
+	 * 
+	 * @param appId
+	 *            String application id against which to register the module
+	 * @param app
+	 *            NSFComponentModule
+	 * @since org.openntf.domino.xsp 4.5.0
+	 */
 	public void registerModule(final String appId, final NSFComponentModule app) {
 		Map<String, NSFComponentModule> modules = getModules();
 		String id = appId;
@@ -131,6 +195,13 @@ public enum NSA implements ApplicationListener, SessionListener {
 		}
 	}
 
+	/**
+	 * De-registers a module from the map
+	 * 
+	 * @param appId
+	 *            String application id to remove from the map
+	 * @since org.openntf.domino.xsp 4.5.0
+	 */
 	public void unregisterModule(final String appId) {
 		Map<String, NSFComponentModule> modules = getModules();
 		// System.out.println("Unregistering Module " + appId);
@@ -139,6 +210,15 @@ public enum NSA implements ApplicationListener, SessionListener {
 		}
 	}
 
+	/**
+	 * Registers an HttpSession for an application
+	 * 
+	 * @param app
+	 *            ApplicationEx the session is for
+	 * @param session
+	 *            HttpSession to register
+	 * @since org.openntf.domino.xsp 4.5.0
+	 */
 	public void registerSession(final ApplicationEx app, final HttpSession session) {
 		Map<String, HttpSession> sessions = getSessions();
 		String id = app.getApplicationId();
@@ -151,6 +231,15 @@ public enum NSA implements ApplicationListener, SessionListener {
 		// NotesContext.getCurrent().getCurrentSession()
 	}
 
+	/**
+	 * De-registers an application from the map
+	 * 
+	 * @param app
+	 *            ApplicationEx the session is for
+	 * @param session
+	 *            HttpSession to de-register
+	 * @since org.openntf.domino.xsp 4.5.0
+	 */
 	private void unregisterSession(final ApplicationEx app, final HttpSession session) {
 		Map<String, HttpSession> sessions = getSessions();
 		String id = app.getApplicationId();
@@ -162,6 +251,12 @@ public enum NSA implements ApplicationListener, SessionListener {
 		}
 	}
 
+	/**
+	 * Writes out a report of the contents of the various maps
+	 * 
+	 * @return String output of the maps
+	 * @since org.openntf.domino.xsp 4.5.0
+	 */
 	public String getReport() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<ul>");

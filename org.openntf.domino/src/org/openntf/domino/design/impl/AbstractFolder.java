@@ -27,6 +27,7 @@ import org.openntf.domino.utils.xml.XMLNode;
  * @author jgallagher
  * 
  */
+@SuppressWarnings("serial")
 public abstract class AbstractFolder extends AbstractDesignBaseNamed implements Folder {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractFolder.class.getName());
@@ -80,6 +81,12 @@ public abstract class AbstractFolder extends AbstractDesignBaseNamed implements 
 		return new DesignColumn(node);
 	}
 
+	@Override
+	public void swapColumns(final int a, final int b) {
+		getColumns().swap(a, b);
+	}
+
+	@Override
 	public org.openntf.domino.View getView() {
 		// TODO is this safe enough in the event of multiple folders/views with the same name?
 		return getAncestorDatabase().getView(getName());

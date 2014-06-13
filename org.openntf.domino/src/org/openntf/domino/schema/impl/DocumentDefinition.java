@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.openntf.domino.schema.IDatabaseSchema;
 import org.openntf.domino.schema.IDocumentDefinition;
@@ -19,9 +20,11 @@ import org.openntf.domino.schema.IItemDefinition;
 public class DocumentDefinition implements IDocumentDefinition, Externalizable {
 	private String name_; // will be used as Form field value
 	private final Set<String> itemDefinitionKeys_ = new HashSet<String>();
-	private transient Set<IItemDefinition> itemDefs_;
+	private transient Map<String, IItemDefinition> itemDefs_ = new ConcurrentHashMap<String, IItemDefinition>();
 	private final Map<String, String> overrideLabels_ = new HashMap<String, String>();
 	private boolean defaultSummary_ = true;
+	private boolean allowAutoBox_ = true;
+
 	private transient IDatabaseSchema parentSchema_;
 	private DocumentValidator validator_;
 
@@ -53,13 +56,20 @@ public class DocumentDefinition implements IDocumentDefinition, Externalizable {
 		defaultSummary_ = defaultSummary;
 	}
 
-	public Set<IItemDefinition> getItemDefinitions() {
-		if (itemDefs_ == null) {
-			itemDefs_ = new HashSet<IItemDefinition>();
+	public boolean isAutoBoxing() {
+		return allowAutoBox_;
+	}
+
+	public void setAutoBoxing(final boolean allowAutoBox) {
+		allowAutoBox_ = allowAutoBox;
+	}
+
+	public Map<String, IItemDefinition> getItemDefinitions() {
+		if (itemDefs_.isEmpty()) {
 			for (String key : getItemDefinitionKeys()) {
 				ItemDefinition id = parentSchema_.getItemDefinitions().get(key);
 				if (id != null) {
-					itemDefs_.add(id);
+					itemDefs_.put(key, id);
 				}
 			}
 		}
@@ -78,7 +88,7 @@ public class DocumentDefinition implements IDocumentDefinition, Externalizable {
 
 	public void addItemDefinition(final IItemDefinition itemDef) {
 		if (itemDefs_ != null) {
-			itemDefs_.add(itemDef);
+			itemDefs_.put(itemDef.getName(), itemDef);
 		}
 		String key = itemDef.getName();
 		addItemDefinitionKey(key);

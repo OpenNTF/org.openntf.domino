@@ -9,14 +9,11 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 import java.util.Vector;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import lotus.domino.NotesException;
-
 import org.openntf.domino.Item;
-import org.openntf.domino.Session;
 import org.openntf.domino.exceptions.UnimplementedException;
 import org.openntf.domino.iterators.ItemVectorIterator;
 import org.openntf.domino.utils.DominoUtils;
@@ -50,31 +47,37 @@ public class ItemVector extends Vector<Item> {
 
 	private void initialize() {
 		try {
-			Session session = doc_.getAncestorSession();
-			boolean convertMime = session.isConvertMIME();
-			session.setConvertMIME(false);
-			java.util.Vector<?> lotusItems = doc_.getDelegate().getItems();
-			if (!lotusItems.isEmpty()) {
-				String lastName = null;
-				for (Object o : lotusItems) {
-					String name = null;
-					if (o instanceof lotus.domino.Item) {
-						try {
-							name = ((lotus.domino.Item) o).getName();
-							itemNames_.add(name);
-							lastName = name;
-						} catch (NotesException ne1) {
-							log_.log(Level.WARNING, "Problem iterating over item following " + String.valueOf(lastName) + ". Skipping...");
-						}
-					} else {
-						log_.log(Level.WARNING, "Object from Document.getItems() Vector is not an Item. It is a "
-								+ (o == null ? "null" : o.getClass().getName()));
-					}
+			Set<String> keys = doc_.keySet();
+			if (!keys.isEmpty()) {
+				for (String key : doc_.keySet()) {
+					itemNames_.add(key);
 				}
 				size_ = itemNames_.size();
 			}
-			session.setConvertMIME(convertMime);
-		} catch (NotesException ne) {
+			//			boolean convertMime = session.isConvertMIME();
+			//			session.setConvertMIME(false);
+			//			java.util.Vector<?> lotusItems = doc_.getDelegate().getItems();
+			//			if (!lotusItems.isEmpty()) {
+			//				String lastName = null;
+			//				for (Object o : lotusItems) {
+			//					String name = null;
+			//					if (o instanceof lotus.domino.Item) {
+			//						try {
+			//							name = ((lotus.domino.Item) o).getName();
+			//							itemNames_.add(name);
+			//							lastName = name;
+			//						} catch (NotesException ne1) {
+			//							log_.log(Level.WARNING, "Problem iterating over item following " + String.valueOf(lastName) + ". Skipping...");
+			//						}
+			//					} else {
+			//						log_.log(Level.WARNING, "Object from Document.getItems() Vector is not an Item. It is a "
+			//								+ (o == null ? "null" : o.getClass().getName()));
+			//					}
+			//				}
+			//				size_ = itemNames_.size();
+			//			}
+			//			session.setConvertMIME(convertMime);
+		} catch (Exception ne) {
 			DominoUtils.handleException(ne);
 		}
 	}

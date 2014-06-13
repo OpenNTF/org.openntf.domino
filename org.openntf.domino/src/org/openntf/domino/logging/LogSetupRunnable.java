@@ -24,7 +24,9 @@ public class LogSetupRunnable implements Runnable {
 	private static final long serialVersionUID = 1L;
 
 	/**
+	 * Constructor
 	 * 
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public LogSetupRunnable() {
 		// TODO Auto-generated constructor stub

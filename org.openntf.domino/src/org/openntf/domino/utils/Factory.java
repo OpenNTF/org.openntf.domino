@@ -51,7 +51,7 @@ import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
-import org.openntf.domino.graph.DominoGraph;
+import org.openntf.domino.graph.GenericDominoGraph;
 import org.openntf.domino.logging.ConsoleFormatter;
 import org.openntf.domino.logging.DefaultConsoleHandler;
 import org.openntf.domino.logging.DefaultFileHandler;
@@ -67,6 +67,10 @@ import org.openntf.domino.types.SessionDescendant;
 public enum Factory {
 	;
 
+	public interface AppServiceLocator {
+		public <T> List<T> findApplicationServices(final Class<T> serviceClazz);
+	}
+
 	/**
 	 * Holder for the wrapper-factory that converts lotus.domino objects to org.openntf.domino objects
 	 */
@@ -74,13 +78,7 @@ public enum Factory {
 
 	private static ThreadLocal<ClassLoader> currentClassLoader_ = new ThreadLocal<ClassLoader>();
 
-	private static ThreadLocal<Map<String, Class<?>>> currentLoadedClasses_ = new ThreadLocal<Map<String, Class<?>>>() {
-
-		@Override
-		protected Map<String, Class<?>> initialValue() {
-			return new HashMap<String, Class<?>>();
-		}
-	};
+	private static ThreadLocal<AppServiceLocator> currentServiceLocator_ = new ThreadLocal<AppServiceLocator>();
 
 	private static ThreadLocal<Session> currentSessionHolder_ = new ThreadLocal<Session>();
 
@@ -710,30 +708,48 @@ public enum Factory {
 		return currentClassLoader_.get();
 	}
 
-	public static boolean isClassLoaded(final String className) {
-		return (currentLoadedClasses_.get().get(className) != null);
-	}
+	private static Map<Class, List> appServices;
 
-	public static Class<?> getClass(final String className) throws ClassNotFoundException {
-		Map<String, Class<?>> map = currentLoadedClasses_.get();
-		if (map.containsKey(className))
-			return map.get(className);
-		Class<?> clazz = null;
-		try {
-			clazz = getClassLoader().loadClass(className);
-		} finally {
-			map.put(className, clazz);
+	public static <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
+
+		AppServiceLocator serviceLocator = currentServiceLocator_.get();
+		if (serviceLocator != null) {
+			return serviceLocator.findApplicationServices(serviceClazz);
 		}
 
-		return clazz;
+		// this is the non OSGI case:
+		if (appServices == null)
+			appServices = new HashMap<Class, List>();
+
+		@SuppressWarnings("unchecked")
+		List<T> ret = appServices.get(serviceClazz);
+		if (ret != null)
+			return ret;
+		ret = new ArrayList<T>();
+		appServices.put(serviceClazz, ret);
+
+		ClassLoader cl = getClassLoader();
+		if (cl != null) {
+			ServiceLoader<T> loader = ServiceLoader.load(serviceClazz, cl);
+			Iterator<T> it = loader.iterator();
+			while (it.hasNext()) {
+				ret.add(it.next());
+			}
+		}
+
+		return ret;
 	}
 
 	public static void setClassLoader(final ClassLoader loader) {
 		if (loader != null) {
 			//			System.out.println("Setting OpenNTF Factory ClassLoader to a " + loader.getClass().getName());
 		}
-		currentLoadedClasses_.get().clear();
+		//		currentLoadedClasses_.get().clear();
 		currentClassLoader_.set(loader);
+	}
+
+	public static void setServiceLocator(final AppServiceLocator locator) {
+		currentServiceLocator_.set(locator);
 	}
 
 	public static void clearWrapperFactory() {
@@ -742,11 +758,14 @@ public enum Factory {
 
 	public static void clearClassLoader() {
 		currentClassLoader_.set(null);
-		currentLoadedClasses_.get().clear();
+	}
+
+	public static void clearServiceLocator() {
+		currentServiceLocator_.set(null);
 	}
 
 	public static void clearDominoGraph() {
-		DominoGraph.clearDocumentCache();
+		GenericDominoGraph.clearDocumentCache();
 	}
 
 	public static void clearBubbleExceptions() {
@@ -778,6 +797,7 @@ public enum Factory {
 		clearWrapperFactory();
 		clearClassLoader();
 		clearUserLocale();
+		clearServiceLocator();
 		return result;
 	}
 
@@ -810,7 +830,9 @@ public enum Factory {
 	 */
 	public static Locale getInternalLocale() {
 		Locale ret = null;
-		Database db = getCurrentDatabase();
+		// are we in context of an NotesSession? Try to figure out the current database.
+		Session sess = getSession_unchecked();
+		Database db = (sess == null) ? null : sess.getCurrentDatabase();
 		if (db != null)
 			ret = db.getLocale();
 		if (ret == null)

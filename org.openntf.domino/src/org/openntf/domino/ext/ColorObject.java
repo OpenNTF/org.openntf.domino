@@ -6,7 +6,7 @@ package org.openntf.domino.ext;
 /**
  * @author withersp
  * 
- *         OpenNTF extensions to ColorObject
+ *         OpenNTF Domino extensions to ColorObject
  * 
  */
 public interface ColorObject {

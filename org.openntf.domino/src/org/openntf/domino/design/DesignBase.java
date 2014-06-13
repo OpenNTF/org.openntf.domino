@@ -16,11 +16,15 @@
 
 package org.openntf.domino.design;
 
+import java.io.Serializable;
+
+import org.openntf.domino.Database;
+
 /**
  * @author jgallagher
  * 
  */
-public interface DesignBase extends org.openntf.domino.types.Design, org.openntf.domino.types.DatabaseDescendant {
+public interface DesignBase extends org.openntf.domino.types.Design, org.openntf.domino.types.DatabaseDescendant, Serializable {
 
 	/**
 	 * @return the DXL of the design element, as a String
@@ -52,19 +56,27 @@ public interface DesignBase extends org.openntf.domino.types.Design, org.openntf
 	 */
 	public boolean isPropagatePreventChanges();
 
-	public void setHideFromWeb(final boolean hideFromWeb);
+	/**
+	 * Reattach the design element to a new Database, either due to deserialization or to copy to a new DB
+	 * 
+	 * @param database
+	 *            the Database object to attach the design element to
+	 */
+	public void reattach(Database database);
 
-	public void setHideFromNotes(final boolean hideFromNotes);
+	public void setHideFromWeb(boolean hideFromWeb);
 
-	public void setNeedsRefresh(final boolean needsRefresh);
+	public void setHideFromNotes(boolean hideFromNotes);
 
-	public void setPreventChanges(final boolean preventChanges);
+	public void setNeedsRefresh(boolean needsRefresh);
 
-	public void setPropagatePreventChanges(final boolean propagatePreventChanges);
+	public void setPreventChanges(boolean preventChanges);
+
+	public void setPropagatePreventChanges(boolean propagatePreventChanges);
 
 	/**
 	 * Save any changes to the design element (may change the Note ID)
 	 */
-	public void save();
+	public boolean save();
 
 }

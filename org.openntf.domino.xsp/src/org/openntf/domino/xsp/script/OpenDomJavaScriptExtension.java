@@ -8,9 +8,17 @@ import com.ibm.xsp.extlib.component.picker.data.DominoNABNamePickerData;
 
 public class OpenDomJavaScriptExtension implements JavaScriptProvider {
 
+	/**
+	 * Constructor
+	 */
 	public OpenDomJavaScriptExtension() {
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ibm.designer.runtime.extensions.JavaScriptProvider#registerWrappers(com.ibm.jscript.JSContext)
+	 */
 	@Override
 	public void registerWrappers(final JSContext context) {
 		WrapperOpenDomino.register(context);

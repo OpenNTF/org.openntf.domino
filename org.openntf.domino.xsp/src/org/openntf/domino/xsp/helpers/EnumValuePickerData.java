@@ -17,6 +17,8 @@ import org.openntf.domino.utils.DominoUtils;
 /**
  * @author Nathan T. Freeman
  * 
+ *         EnumValuePickerData for use with ValuePicker control<br/>
+ *         NOTE: This has not been fully tested
  */
 @SuppressWarnings("rawtypes")
 public class EnumValuePickerData extends MapValuePickerData {
@@ -25,10 +27,19 @@ public class EnumValuePickerData extends MapValuePickerData {
 	private String enumName;
 	private Boolean sorted;
 
+	/**
+	 * Constructor
+	 */
 	public EnumValuePickerData() {
 
 	}
 
+	/**
+	 * Gets the name of the enum to use from the "enumName" property
+	 * 
+	 * @return String enum name
+	 * @since org.openntf.domino.xsp 4.5.0
+	 */
 	@SuppressWarnings("unchecked")
 	public String getEnumName() {
 		if (enumName != null) {
@@ -43,10 +54,22 @@ public class EnumValuePickerData extends MapValuePickerData {
 		return null;
 	}
 
+	/**
+	 * Sets the enum name
+	 * 
+	 * @param enumName
+	 *            String
+	 * @since org.openntf.domino.xsp 4.5.0
+	 */
 	public void setEnumName(final String enumName) {
 		this.enumName = enumName;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.xsp.helpers.MapValuePickerData#getOptions()
+	 */
 	@Override
 	public Map<String, String> getOptions() {
 		if (options != null) {
@@ -56,6 +79,12 @@ public class EnumValuePickerData extends MapValuePickerData {
 		return options;
 	}
 
+	/**
+	 * Gets whether or not the options should be sorted alphabetically, from the "sorted" property
+	 * 
+	 * @return boolean, whether the options should be sorted
+	 * @since org.openntf.domino.xsp 5.0.0
+	 */
 	public boolean isSorted() {
 		if (sorted != null) {
 			return sorted;
@@ -70,10 +99,22 @@ public class EnumValuePickerData extends MapValuePickerData {
 		return false;
 	}
 
+	/**
+	 * Sets whether the options should be sorted
+	 * 
+	 * @param sorted
+	 *            boolean
+	 * @since org.openntf.domino.xsp 5.0.0
+	 */
 	public void setSorted(final boolean sorted) {
 		this.sorted = sorted;
 	}
 
+	/**
+	 * Loads the options, creating a LinkedHashMap where the key is the enum name and the value is the enum class + " " + the enum name
+	 * 
+	 * @since org.openntf.domino.xsp 4.5.0
+	 */
 	public void setOptions() {
 		Map<String, String> opts;
 		if (sorted) {
@@ -97,6 +138,11 @@ public class EnumValuePickerData extends MapValuePickerData {
 		super.setOptions(opts);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.xsp.helpers.MapValuePickerData#restoreState(javax.faces.context.FacesContext, java.lang.Object)
+	 */
 	@Override
 	public void restoreState(final FacesContext _context, final Object _state) {
 		Object _values[] = (Object[]) _state;
@@ -109,9 +155,14 @@ public class EnumValuePickerData extends MapValuePickerData {
 		sorted = (Boolean) _values[6];
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.openntf.domino.xsp.helpers.MapValuePickerData#saveState(javax.faces.context.FacesContext)
+	 */
 	@Override
 	public Object saveState(final FacesContext _context) {
-		Object _values[] = new Object[6];
+		Object _values[] = new Object[7];
 		_values[0] = super.saveState(_context);
 		_values[1] = options;
 		_values[2] = searchType;

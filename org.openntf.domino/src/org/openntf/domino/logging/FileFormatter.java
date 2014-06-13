@@ -10,18 +10,39 @@ public class FileFormatter extends Formatter {
 
 	private boolean UTC_Format = false;
 
+	/**
+	 * Constructor
+	 * 
+	 * @since org.openntf.domino 1.0.0
+	 */
 	public FileFormatter() {
 		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * Checks whether dates should be outputted in UTC format
+	 * 
+	 * @return boolean, if is UTC format
+	 * @since org.openntf.domino 1.0.0
+	 */
 	public boolean isUTC_Format() {
 		return UTC_Format;
 	}
 
+	/**
+	 * Sets whether dates should be outputted in UTC format
+	 * 
+	 * @param uTC_Format
+	 *            boolean, whether UTC format
+	 * @since org.openntf.domino 1.0.0
+	 */
 	public void setUTC_Format(final boolean uTC_Format) {
 		UTC_Format = uTC_Format;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.logging.Formatter#format(java.util.logging.LogRecord)
+	 */
 	@Override
 	public String format(final LogRecord logRecord) {
 		Date recordDate = new Date(logRecord.getMillis());

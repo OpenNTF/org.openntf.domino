@@ -8,7 +8,7 @@ import com.ibm.icu.util.Calendar;
 /**
  * @author nfreeman
  * 
- *         OpenNTF extensions to DateTime
+ *         OpenNTF extensions to DateTime class
  * 
  */
 public interface DateTime extends Comparable<org.openntf.domino.DateTime> {
@@ -24,14 +24,18 @@ public interface DateTime extends Comparable<org.openntf.domino.DateTime> {
 	public boolean equals(final org.openntf.domino.DateTime compareDate);
 
 	/**
+	 * Compares two DateTimes to see if they are the same time (including millisecond), ignoring date element
+	 * 
 	 * @param comparDate
 	 *            DateTime to compare to the current DateTime
-	 * @return boolean true if time is the same, including millisecond
+	 * @return boolean true if time is the same
 	 * @since org.openntf.domino 1.0.0
 	 */
 	public boolean equalsIgnoreDate(final org.openntf.domino.DateTime compareDate);
 
 	/**
+	 * Compares two DateTimes to see if they are the same date, ignoring the time element
+	 * 
 	 * @param comparDate
 	 *            DateTime to compare to the current DateTime
 	 * @return boolean true if date is the same

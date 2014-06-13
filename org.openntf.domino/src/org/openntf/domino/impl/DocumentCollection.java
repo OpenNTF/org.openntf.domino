@@ -29,6 +29,7 @@ import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.iterators.DocumentCollectionIterator;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.TypeUtils;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -162,10 +163,12 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 
 	private org.openntf.domino.View parentView_;
 
+	@Override
 	public void setParentView(final View view) {
 		parentView_ = view;
 	}
 
+	@Override
 	public org.openntf.domino.View getParentView() {
 		return parentView_;
 	}
@@ -523,15 +526,27 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	@Override
 	public void stampAll(final String itemName, final Object value) {
 		try {
-			getDelegate().stampAll(itemName, value);
+			getDelegate().stampAll(itemName, Base.toItemFriendly(value, this, null));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 	}
 
+	@Override
 	public void stampAll(final Map<String, Object> map) {
-		for (org.openntf.domino.Document doc : this) {
-			doc.putAll(map);
+		try {
+			Map<String, Object> localMap = TypeUtils.toStampableMap(map, this);
+			for (Map.Entry<String, Object> entry : localMap.entrySet()) {
+				//NTF - go directly to delegate because we already know the entries are Domino friendly.
+				getDelegate().stampAll(entry.getKey(), entry.getValue());
+			}
+		} catch (IllegalArgumentException iae) {
+			for (org.openntf.domino.Document doc : this) {
+				doc.putAll(map);
+				doc.save();
+			}
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 		}
 	}
 
@@ -955,6 +970,7 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		return this.getAncestorDatabase().getParent();
 	}
 
+	@Override
 	public org.openntf.domino.DocumentCollection filter(final Object value) {
 		org.openntf.domino.DocumentCollection result = getAncestorDatabase().createDocumentCollection();
 		for (org.openntf.domino.Document doc : this) {
@@ -965,6 +981,7 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		return result;
 	}
 
+	@Override
 	public org.openntf.domino.DocumentCollection filter(final Object value, final String[] itemnames) {
 		org.openntf.domino.DocumentCollection result = getAncestorDatabase().createDocumentCollection();
 		for (org.openntf.domino.Document doc : this) {
@@ -975,6 +992,7 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		return result;
 	}
 
+	@Override
 	public org.openntf.domino.DocumentCollection filter(final Object value, final Collection<String> itemnames) {
 		org.openntf.domino.DocumentCollection result = getAncestorDatabase().createDocumentCollection();
 		for (org.openntf.domino.Document doc : this) {
@@ -985,6 +1003,7 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 		return result;
 	}
 
+	@Override
 	public org.openntf.domino.DocumentCollection filter(final Map<String, Object> filterMap) {
 		org.openntf.domino.DocumentCollection result = getAncestorDatabase().createDocumentCollection();
 		for (org.openntf.domino.Document doc : this) {

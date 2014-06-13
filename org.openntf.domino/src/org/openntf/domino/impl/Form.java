@@ -285,7 +285,25 @@ public class Form extends Base<org.openntf.domino.Form, lotus.domino.Form, Datab
 	 */
 	@Override
 	public String getXPageAlt() {
-		return getDocument().getItemValueString("$XPageAlt");
+		if (getDocument().hasItem("$XPageAlt")) {
+			return getDocument().getItemValueString("$XPageAlt");
+		} else {
+			return "";
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.Form#getXPageAlt()
+	 */
+	@Override
+	public String getXPageAltClient() {
+		if (getDocument().hasItem("$XPageAltClient")) {
+			return getDocument().getItemValueString("$XPageAltClient");
+		} else if (getDocument().hasItem("$XPageAlt")) {
+			return getDocument().getItemValueString("$XPageAlt");
+		} else {
+			return "";
+		}
 	}
 
 	/*

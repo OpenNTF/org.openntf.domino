@@ -18,7 +18,7 @@ public abstract class AbstractDominoType implements IDominoType {
 	private static final Logger log_ = Logger.getLogger(AbstractDominoType.class.getName());
 	private static final long serialVersionUID = 1L;
 
-	public AbstractDominoType() {
+	protected AbstractDominoType() {
 
 	}
 
