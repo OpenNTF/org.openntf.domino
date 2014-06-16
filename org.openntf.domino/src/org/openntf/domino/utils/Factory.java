@@ -23,6 +23,7 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -708,8 +709,9 @@ public enum Factory {
 		return currentClassLoader_.get();
 	}
 
-	private static Map<Class, List> appServices;
+	private static Map<Class, List> nonOSGIServicesCache;
 
+	@SuppressWarnings("unchecked")
 	public static <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
 
 		AppServiceLocator serviceLocator = currentServiceLocator_.get();
@@ -718,25 +720,27 @@ public enum Factory {
 		}
 
 		// this is the non OSGI case:
-		if (appServices == null)
-			appServices = new HashMap<Class, List>();
+		if (nonOSGIServicesCache == null)
+			nonOSGIServicesCache = new HashMap<Class, List>();
 
 		@SuppressWarnings("unchecked")
-		List<T> ret = appServices.get(serviceClazz);
-		if (ret != null)
-			return ret;
-		ret = new ArrayList<T>();
-		appServices.put(serviceClazz, ret);
+		List<T> ret = nonOSGIServicesCache.get(serviceClazz);
+		if (ret == null) {
+			ret = new ArrayList<T>();
+			nonOSGIServicesCache.put(serviceClazz, ret);
 
-		ClassLoader cl = getClassLoader();
-		if (cl != null) {
-			ServiceLoader<T> loader = ServiceLoader.load(serviceClazz, cl);
-			Iterator<T> it = loader.iterator();
-			while (it.hasNext()) {
-				ret.add(it.next());
+			ClassLoader cl = getClassLoader();
+			if (cl != null) {
+				ServiceLoader<T> loader = ServiceLoader.load(serviceClazz, cl);
+				Iterator<T> it = loader.iterator();
+				while (it.hasNext()) {
+					ret.add(it.next());
+				}
+			}
+			if (Comparable.class.isAssignableFrom(serviceClazz)) {
+				Collections.sort((List<? extends Comparable>) ret);
 			}
 		}
-
 		return ret;
 	}
 
