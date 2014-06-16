@@ -29,6 +29,7 @@ import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.iterators.DocumentCollectionIterator;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.TypeUtils;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -525,7 +526,7 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	@Override
 	public void stampAll(final String itemName, final Object value) {
 		try {
-			getDelegate().stampAll(itemName, value);
+			getDelegate().stampAll(itemName, Base.toItemFriendly(value, this, null));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -533,9 +534,19 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 
 	@Override
 	public void stampAll(final Map<String, Object> map) {
-		for (org.openntf.domino.Document doc : this) {
-			doc.putAll(map);
-			doc.save();
+		try {
+			Map<String, Object> localMap = TypeUtils.toStampableMap(map, this);
+			for (Map.Entry<String, Object> entry : localMap.entrySet()) {
+				//NTF - go directly to delegate because we already know the entries are Domino friendly.
+				getDelegate().stampAll(entry.getKey(), entry.getValue());
+			}
+		} catch (IllegalArgumentException iae) {
+			for (org.openntf.domino.Document doc : this) {
+				doc.putAll(map);
+				doc.save();
+			}
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
 		}
 	}
 

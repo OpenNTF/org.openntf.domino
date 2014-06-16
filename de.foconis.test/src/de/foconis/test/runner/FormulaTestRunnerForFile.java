@@ -1,5 +1,8 @@
 package de.foconis.test.runner;
 
+import static org.openntf.formula.function.TextFunctions.atLeft;
+import static org.openntf.formula.function.TextFunctions.atRight;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -12,7 +15,6 @@ import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
-import org.openntf.domino.formula.impl.TextFunctions;
 import org.openntf.domino.utils.Strings;
 
 public class FormulaTestRunnerForFile extends ParentRunner<Runner> {
@@ -69,8 +71,8 @@ public class FormulaTestRunnerForFile extends ParentRunner<Runner> {
 						sb = null;
 					}
 
-					String cmd = TextFunctions.atLeft(line + " ", " ");
-					String expect = TextFunctions.atRight(line, " ").trim();
+					String cmd = atLeft(line + " ", " ");
+					String expect = atRight(line, " ").trim();
 					String ifo = "line " + lineNr + ": " + cmd
 							+ " "   //
 							+ currentFormula.replace('(', '[').replace(')', ']').replace('\r', ' ').replace('\n', ' ')
@@ -128,8 +130,8 @@ public class FormulaTestRunnerForFile extends ParentRunner<Runner> {
 						param.expect = expect;
 					} else if (!Strings.isBlankString(expect)) {
 
-						String minLen = TextFunctions.atLeft(expect, "-").trim();
-						String maxLen = TextFunctions.atRight(expect, "-").trim();
+						String minLen = atLeft(expect, "-").trim();
+						String maxLen = atRight(expect, "-").trim();
 						if ("".equals(minLen)) {
 							minLen = expect.trim();
 							maxLen = expect.trim();

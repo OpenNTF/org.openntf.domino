@@ -187,6 +187,7 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 	public lotus.domino.Session getTrustedSession() {
 		try {
 			Object result = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+				@SuppressWarnings("deprecation")
 				@Override
 				public Object run() throws Exception {
 					try {

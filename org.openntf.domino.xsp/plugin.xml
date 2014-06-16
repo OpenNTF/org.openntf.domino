@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
- <extension
+<!-- <extension
            id="org.openntf.domino.xsp.Servlet"
            point="org.eclipse.equinox.http.registry.servlets">
         <servlet
@@ -9,7 +9,7 @@
               class="org.openntf.domino.xsp.OpenntfServlet"
               load-on-startup="true">
         </servlet>
-     </extension>
+     </extension> -->
    <extension
          point="com.ibm.commons.Extension">
       <service

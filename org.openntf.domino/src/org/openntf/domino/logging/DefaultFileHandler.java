@@ -23,9 +23,11 @@ import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class DefaultFileHandler.
+ * DefaultFileHandler class
+ * 
+ * Handles outputting error log to IBM_TECHNICAL_SUPPORT\\org.openntf.log.X.Y.txt, where X and Y are integers incremented when the previous
+ * file is full
  */
 public class DefaultFileHandler extends FileHandler {
 
@@ -34,68 +36,74 @@ public class DefaultFileHandler extends FileHandler {
 	 * 
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public DefaultFileHandler() throws IOException {
 	}
 
 	/**
-	 * Instantiates a new default file handler.
+	 * Instantiates a new default file handler with pattern for file name
 	 * 
-	 * @param arg0
-	 *            the arg0
+	 * @param pattern
+	 *            String predefined pattern for file names for the log file
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
+	 * @since org.openntf.domino 1.0.0
 	 */
-	public DefaultFileHandler(final String arg0) throws IOException {
-		super(arg0);
+	public DefaultFileHandler(final String pattern) throws IOException {
+		super(pattern);
 	}
 
 	/**
-	 * Instantiates a new default file handler.
+	 * Instantiates a new default file handler with pattern for filename and whether or not to append to an existing file
 	 * 
-	 * @param arg0
-	 *            the arg0
-	 * @param arg1
-	 *            the arg1
+	 * @param pattern
+	 *            String predefined pattern for file names for the log file
+	 * @param append
+	 *            boolean whether to append to the existing file
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
+	 * @since org.openntf.domino 1.0.0
 	 */
-	public DefaultFileHandler(final String arg0, final boolean arg1) throws IOException {
-		super(arg0, arg1);
+	public DefaultFileHandler(final String pattern, final boolean append) throws IOException {
+		super(pattern, append);
 	}
 
 	/**
-	 * Instantiates a new default file handler.
+	 * Instantiates a new default file handler with pattern for filename, size limit and max file count
 	 * 
-	 * @param arg0
-	 *            the arg0
-	 * @param arg1
-	 *            the arg1
-	 * @param arg2
-	 *            the arg2
+	 * @param pattern
+	 *            String pattern for file names
+	 * @param limit
+	 *            int size limit in bytes
+	 * @param count
+	 *            int maximum number of files to use
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
+	 * @since org.openntf.domino 1.0.0
 	 */
-	public DefaultFileHandler(final String arg0, final int arg1, final int arg2) throws IOException {
-		super(arg0, arg1, arg2);
+	public DefaultFileHandler(final String pattern, final int limit, final int count) throws IOException {
+		super(pattern, limit, count);
 	}
 
 	/**
-	 * Instantiates a new default file handler.
+	 * Instantiates a new default file handler with pattern for filename, size limit, max file count and whether or not to append to an
+	 * existing file
 	 * 
-	 * @param arg0
-	 *            the arg0
-	 * @param arg1
-	 *            the arg1
-	 * @param arg2
-	 *            the arg2
-	 * @param arg3
-	 *            the arg3
+	 * @param pattern
+	 *            String pattern for file names
+	 * @param limit
+	 *            int size limit in bytes
+	 * @param count
+	 *            int maximum number of files to use
+	 * @param append
+	 *            boolean whether to append to the existing file
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
+	 * @since org.openntf.domino 1.0.0
 	 */
-	public DefaultFileHandler(final String arg0, final int arg1, final int arg2, final boolean arg3) throws IOException {
-		super(arg0, arg1, arg2, arg3);
+	public DefaultFileHandler(final String pattern, final int limit, final int count, final boolean append) throws IOException {
+		super(pattern, limit, count, append);
 	}
 
 	/*
@@ -108,6 +116,16 @@ public class DefaultFileHandler extends FileHandler {
 		super.close();
 	}
 
+	/**
+	 * 
+	 * Calls the publish method of the parent FileHandler class
+	 * 
+	 * Called from publish method via a PrivilegedAction to avoid access issues
+	 * 
+	 * @param record
+	 *            LogRecord to be outputted
+	 * @since org.openntf.domino 1.0.0
+	 */
 	private void superPub(final LogRecord record) {
 		super.publish(record);
 	}

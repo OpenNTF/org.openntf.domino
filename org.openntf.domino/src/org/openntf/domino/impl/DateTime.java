@@ -22,7 +22,6 @@ import java.util.Date;
 
 import lotus.domino.NotesException;
 
-import org.openntf.domino.ISimpleDateTime;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.utils.DominoUtils;
@@ -36,8 +35,7 @@ import com.ibm.icu.util.GregorianCalendar;
 /**
  * The Class DateTime.
  */
-public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.DateTime, Session> implements org.openntf.domino.DateTime,
-		ISimpleDateTime {
+public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.DateTime, Session> implements org.openntf.domino.DateTime {
 	//private static final Logger log_ = Logger.getLogger(DateTime.class.getName());
 	private static final long serialVersionUID = 1L;
 
@@ -920,15 +918,15 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 	}
 
 	/*
-	 * A few tiny methods needed for the SimpleDateTime interface
+	 * A few tiny methods needed for the org.openntf.domino.formula.DateTime interface
 	 */
-	public int timeDifference(final ISimpleDateTime dt) {
+	public int timeDifference(final org.openntf.formula.DateTime dt) {
 		if (dt instanceof lotus.domino.DateTime)
 			return timeDifference((lotus.domino.DateTime) dt);
 		return (int) timeDifferenceDouble(dt);
 	}
 
-	public double timeDifferenceDouble(final ISimpleDateTime dt) {
+	public double timeDifferenceDouble(final org.openntf.formula.DateTime dt) {
 		if (dt instanceof lotus.domino.DateTime)
 			return timeDifferenceDouble((lotus.domino.DateTime) dt);
 		Calendar thisCal = this.toJavaCal();
@@ -936,7 +934,7 @@ public class DateTime extends Base<org.openntf.domino.DateTime, lotus.domino.Dat
 		return (thisCal.getTimeInMillis() - thatCal.getTimeInMillis()) * 1000;
 	}
 
-	public int compare(final ISimpleDateTime sdt1, final ISimpleDateTime sdt2) {
+	public int compare(final org.openntf.formula.DateTime sdt1, final org.openntf.formula.DateTime sdt2) {
 		if (sdt1 instanceof DateTime && sdt2 instanceof DateTime)
 			return ((DateTime) sdt1).compareTo((DateTime) sdt2);
 		return sdt1.toJavaDate().compareTo(sdt2.toJavaDate());

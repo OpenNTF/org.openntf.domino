@@ -54,7 +54,7 @@ public class XspLibrary extends AbstractXspLibrary {
 	@Override
 	public String[] getDependencies() {
 		return new String[] { "com.ibm.xsp.core.library", "com.ibm.xsp.extsn.library", "com.ibm.xsp.domino.library",
-				"com.ibm.xsp.designer.library", "com.ibm.xsp.extlib.library" };
+				"com.ibm.xsp.designer.library", "com.ibm.xsp.extlib.library", "org.openntf.domino", "org.openntf.formula" };
 	}
 
 	/*
@@ -107,7 +107,6 @@ public class XspLibrary extends AbstractXspLibrary {
 		List<ExtlibPluginConfig> plugins = getExtlibPluginConfigs();
 		for (ExtlibPluginConfig plugin : plugins) {
 			files = plugin.getXspConfigFiles(files);
-			System.out.println(files.toString());
 		}
 		return files;
 	}

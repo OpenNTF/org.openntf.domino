@@ -9,14 +9,14 @@ import java.util.List;
 import lotus.domino.NotesException;
 import lotus.domino.Session;
 
-import org.openntf.domino.formula.ASTNode;
-import org.openntf.domino.formula.FormulaContext;
-import org.openntf.domino.formula.FormulaParser;
-import org.openntf.domino.formula.Function;
-import org.openntf.domino.formula.FunctionFactory;
 import org.openntf.domino.impl.Base;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.utils.Factory;
+import org.openntf.formula.ASTNode;
+import org.openntf.formula.FormulaContext;
+import org.openntf.formula.FormulaParser;
+import org.openntf.formula.Formulas;
+import org.openntf.formula.Function;
 
 public class TestRunner extends TestRunnerStdIn {
 	public static void main(final String[] args) {
@@ -46,7 +46,7 @@ public class TestRunner extends TestRunnerStdIn {
 			//String str = "t:={start}; @for(i:=1;i != 10; i:= i + 1; t:=t:@Text(i)); @Transform(t;{x};x+{ test }+t)";
 			//System.out.println(str);
 			List<Function> funcs = new ArrayList<Function>();
-			funcs.addAll(FunctionFactory.getDefaultInstance().getFunctions().values());
+			funcs.addAll(Formulas.getFunctionFactory().getFunctions().values());
 
 			Collections.sort(funcs, new Comparator<Function>() {
 				@Override
@@ -58,7 +58,7 @@ public class TestRunner extends TestRunnerStdIn {
 				System.out.println(func);
 			}
 
-			FormulaParser parser = FormulaParser.getDefaultInstance();
+			FormulaParser parser = Formulas.getParser();
 
 			for (int i = 1; i < 10000; i++) {
 				java.io.StringReader sr = new java.io.StringReader(str);
@@ -71,7 +71,7 @@ public class TestRunner extends TestRunnerStdIn {
 
 			time = System.currentTimeMillis();
 			for (int i = 1; i < 10000; i++) {
-				FormulaContext ctx = FormulaContext.createContext(null, parser.getFormatter());
+				FormulaContext ctx = Formulas.createContext(null, parser);
 				v = n.solve(ctx);
 			}
 			time = System.currentTimeMillis() - time;
