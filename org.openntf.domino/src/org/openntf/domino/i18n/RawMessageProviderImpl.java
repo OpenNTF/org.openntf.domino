@@ -6,7 +6,7 @@ import java.util.ResourceBundle;
 
 import org.openntf.domino.utils.Factory;
 
-public class RawMessageProviderImpl implements RawMessageProvider {
+public class RawMessageProviderImpl extends RawMessageProvider {
 
 	protected ClassLoader provClassLoader;
 
@@ -20,5 +20,13 @@ public class RawMessageProviderImpl implements RawMessageProvider {
 		} catch (MissingResourceException mre) {
 			return null;
 		}
+	}
+
+	/**
+	 * this is the last provider
+	 */
+	@Override
+	protected int getPriority() {
+		return 99;
 	}
 }

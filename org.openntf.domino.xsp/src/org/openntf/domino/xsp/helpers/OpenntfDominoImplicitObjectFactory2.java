@@ -1,6 +1,10 @@
 package org.openntf.domino.xsp.helpers;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -438,8 +442,32 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		if (isAppDebug(ctx)) {
 			System.out.println("Beginning creation of implicit objects...");
 		}
-		// Factory.setClassLoader(ctx.getContextClassLoader());
-		// ctx.addRequestListener(new ContextListener());
+		// TODO RPr: I enabled the "setClassLoader" here
+		Factory.setClassLoader(ctx.getContextClassLoader());
+
+		Factory.setServiceLocator(new Factory.AppServiceLocator() {
+
+			final ApplicationEx app = ctx.getApplicationEx();
+			Map<Class<?>, List<?>> cache = new HashMap<Class<?>, List<?>>();
+
+			public <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
+				List<T> ret = (List<T>) cache.get(serviceClazz);
+
+				if (ret == null) {
+					ret = (List<T>) AccessController.doPrivileged(new PrivilegedAction<List<T>>() {
+						public List<T> run() {
+							return app.findServices(serviceClazz.getName());
+						}
+					});
+					if (Comparable.class.isAssignableFrom(serviceClazz)) {
+						Collections.sort((List<? extends Comparable>) ret);
+					}
+					cache.put(serviceClazz, ret);
+				}
+				return ret;
+			}
+		});
+
 		org.openntf.domino.Session session = createSession(ctx);
 		@SuppressWarnings("unused")
 		org.openntf.domino.Database database = createDatabase(ctx, session);

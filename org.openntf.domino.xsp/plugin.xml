@@ -44,4 +44,5 @@
             type="org.openntf.domino.xsp.script.WrapperRegistry">
       </service>
    </extension>
+
 </plugin>

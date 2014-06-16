@@ -1,7 +1,5 @@
 package org.openntf.domino.xsp.helpers;
 
-import java.util.List;
-
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
@@ -9,7 +7,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openntf.domino.utils.Factory;
 
-import com.ibm.xsp.application.ApplicationEx;
 import com.ibm.xsp.context.FacesContextEx;
 
 /**
@@ -74,13 +71,6 @@ public class PhaseListener extends AbstractListener implements javax.faces.event
 		if (ctx instanceof FacesContextEx) {
 			FacesContextEx ctxex = (FacesContextEx) ctx;
 			ctxex.addRequestListener(this);
-			final ApplicationEx app = ctxex.getApplicationEx();
-
-			Factory.setServiceLocator(new Factory.AppServiceLocator() {
-				public <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
-					return app.findServices(serviceClazz.getName());
-				}
-			});
 
 		}
 	}
