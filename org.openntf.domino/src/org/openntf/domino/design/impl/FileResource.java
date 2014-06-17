@@ -95,8 +95,12 @@ public class FileResource extends AbstractDesignNoteBase implements org.openntf.
 			}
 			byte[] data = byteStream.toByteArray();
 
-			CDResourceFile resourceFile = new CDResourceFile(data);
-			return resourceFile.getData();
+			if (data.length > 0) {
+				CDResourceFile resourceFile = new CDResourceFile(data);
+				return resourceFile.getData();
+			} else {
+				return data;
+			}
 		} catch (IOException ioe) {
 			DominoUtils.handleException(ioe);
 			return null;

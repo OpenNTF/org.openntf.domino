@@ -53,12 +53,15 @@ public class JavaResource extends FileResource implements org.openntf.domino.des
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.JavaResource#getClassNames()
 	 */
+	@Override
 	public Collection<String> getClassNames() {
 		List<String> names = new ArrayList<String>();
 		for (XMLNode node : getDxl().selectNodes("//item[@name='" + CLASS_INDEX_ITEM + "']//text")) {
 			// Classes begin with "WEB-INF/classes/"
 			String path = node.getText();
-			names.add(DominoUtils.filePathToJavaBinaryName(path.substring(16), "/"));
+			if (path.startsWith("WEB-INF/classes/")) {
+				names.add(DominoUtils.filePathToJavaBinaryName(path.substring(16), "/"));
+			}
 		}
 		return names;
 	}
@@ -75,7 +78,9 @@ public class JavaResource extends FileResource implements org.openntf.domino.des
 		Map<String, byte[]> result = new HashMap<String, byte[]>();
 		for (int i = 0; i < names.size(); i++) {
 			byte[] classData = getFileData("$ClassData" + i);
-			result.put(names.get(i), classData);
+			if (classData.length > 0) {
+				result.put(names.get(i), classData);
+			}
 		}
 		return result;
 	}
@@ -90,7 +95,7 @@ public class JavaResource extends FileResource implements org.openntf.domino.des
 		// First step, clear out the existing data, index, and size fields
 		XMLNode indexNode = getDxl().selectSingleNode("//item[@name='" + CLASS_INDEX_ITEM + "']");
 		XMLNode itemParent = indexNode.getParentNode();
-		List<XMLNode> names = indexNode.selectNodes("text");
+		List<XMLNode> names = indexNode.selectNodes(".//text");
 		for (int i = 0; i < names.size(); i++) {
 			XMLNode dataNode = getDxl().selectSingleNode("//item[@name='$ClassData" + i + "']");
 			dataNode.getParentNode().removeChild(dataNode);

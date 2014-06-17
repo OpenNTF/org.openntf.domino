@@ -81,10 +81,12 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 		return new DesignView(database_);
 	}
 
+	@Override
 	public FileResource createFileResource() {
 		return new FileResource(database_);
 	}
 
+	@Override
 	public StyleSheet createStyleSheet() {
 		return new StyleSheet(database_);
 	}
@@ -304,6 +306,10 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	 */
 	@Override
 	public SortedSet<String> getJavaResourceClassNames() {
+		// TODO Decide if it's worth going through the result to remove class names that don't actually
+		// 	exist in their notes. This happens when a Java class is renamed - Domino retains the old name
+		//	in $ClassIndexItem for some reason
+
 		SortedSet<String> result = new TreeSet<String>();
 		NoteCollection notes = getNoteCollection(" @Contains($Flags; 'g') & @Contains($Flags; '[') ", EnumSet.of(SelectOption.MISC_FORMAT));
 		for (String noteId : notes) {
@@ -352,6 +358,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 		return new DesignCollection<org.openntf.domino.design.XPage>(notes, XPage.class);
 	}
 
+	@Override
 	public JarResource getJarResource(final String name) {
 		if (DominoUtils.isUnid(name)) {
 			Document doc = database_.getDocumentByUNID(name);
@@ -370,6 +377,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 		return null;
 	}
 
+	@Override
 	public DesignCollection<org.openntf.domino.design.JarResource> getJarResources() {
 		NoteCollection notes = getNoteCollection(" @Contains($Flags; 'g') & @Contains($Flags; ',') ", EnumSet.of(SelectOption.MISC_FORMAT));
 		return new DesignCollection<org.openntf.domino.design.JarResource>(notes, JarResource.class);
@@ -509,11 +517,13 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 		return new DesignCollection<org.openntf.domino.design.Folder>(notes, Folder.class);
 	}
 
+	@Override
 	public DesignCollection<org.openntf.domino.design.JavaScriptLibrary> getJavaScriptLibraries() {
 		NoteCollection notes = getNoteCollection(" @Contains($Flags; 'j') ", EnumSet.of(SelectOption.SCRIPT_LIBRARIES));
 		return new DesignCollection<org.openntf.domino.design.JavaScriptLibrary>(notes, JavaScriptLibrary.class);
 	}
 
+	@Override
 	public JavaScriptLibrary getJavaScriptLibrary(final String name) {
 		if (DominoUtils.isUnid(name)) {
 			Document doc = database_.getDocumentByUNID(name);
@@ -538,7 +548,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	 * @see org.openntf.domino.design.DatabaseDesign#getDatabaseClassLoader()
 	 */
 	@Override
-	public ClassLoader getDatabaseClassLoader(final ClassLoader parent) {
+	public DatabaseClassLoader getDatabaseClassLoader(final ClassLoader parent) {
 		return new DatabaseClassLoader(this, parent, true, false);
 	}
 
@@ -548,11 +558,12 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	 * @see org.openntf.domino.design.DatabaseDesign#getDatabaseClassLoader(java.lang.ClassLoader, boolean)
 	 */
 	@Override
-	public ClassLoader getDatabaseClassLoader(final ClassLoader parent, final boolean includeJars) {
+	public DatabaseClassLoader getDatabaseClassLoader(final ClassLoader parent, final boolean includeJars) {
 		return new DatabaseClassLoader(this, parent, includeJars, false);
 	}
 
-	public ClassLoader getDatabaseClassLoader(final ClassLoader parent, final boolean includeJars, final boolean includeLibraries) {
+	@Override
+	public DatabaseClassLoader getDatabaseClassLoader(final ClassLoader parent, final boolean includeJars, final boolean includeLibraries) {
 		return new DatabaseClassLoader(this, parent, includeJars, includeLibraries);
 	}
 
