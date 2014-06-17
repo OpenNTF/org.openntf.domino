@@ -265,9 +265,14 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	@Override
 	public void buildCollection() {
 		try {
-			getDelegate().buildCollection();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			lotus.domino.NoteCollection nc = getDelegate();
+			if (nc == null) {
+				System.out.println("Delegate is null???");
+			} else {
+				getDelegate().buildCollection();
+			}
+		} catch (Throwable t) {
+			DominoUtils.handleException(t);
 		}
 	}
 
@@ -780,6 +785,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectSharedFields()
 	 */
+	@Override
 	public boolean getSelectSharedFields() {
 		try {
 			return getDelegate().getSelectSharedFields();
@@ -794,6 +800,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectStylesheetResources()
 	 */
+	@Override
 	public boolean getSelectStylesheetResources() {
 		try {
 			return getDelegate().getSelectStylesheetResources();
@@ -808,6 +815,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectSubforms()
 	 */
+	@Override
 	public boolean getSelectSubforms() {
 		try {
 			return getDelegate().getSelectSubforms();
@@ -822,6 +830,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#getSelectViews()
 	 */
+	@Override
 	public boolean getSelectViews() {
 		try {
 			return getDelegate().getSelectViews();
@@ -836,6 +845,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#getSinceTime()
 	 */
+	@Override
 	public DateTime getSinceTime() {
 		try {
 			return fromLotus(getDelegate().getSinceTime(), DateTime.SCHEMA, getAncestorSession());
@@ -851,6 +861,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#getUNID(java.lang.String)
 	 */
+	@Override
 	public String getUNID(final String noteid) {
 		try {
 			return getDelegate().getUNID(noteid);
@@ -866,6 +877,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#getUntilTime()
 	 */
+	@Override
 	public DateTime getUntilTime() {
 		try {
 			return fromLotus(getDelegate().getUntilTime(), DateTime.SCHEMA, getAncestorSession());
@@ -881,6 +893,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#intersect(lotus.domino.Agent)
 	 */
+	@Override
 	public void intersect(final lotus.domino.Agent agent) {
 		try {
 			getDelegate().intersect(toLotus(agent));
@@ -895,6 +908,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#intersect(lotus.domino.Document)
 	 */
+	@Override
 	public void intersect(final lotus.domino.Document document) {
 		try {
 			getDelegate().intersect(toLotus(document));
@@ -909,6 +923,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#intersect(lotus.domino.DocumentCollection)
 	 */
+	@Override
 	public void intersect(final lotus.domino.DocumentCollection collection) {
 		try {
 			getDelegate().intersect(toLotus(collection));
@@ -923,6 +938,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#intersect(lotus.domino.Form)
 	 */
+	@Override
 	public void intersect(final lotus.domino.Form form) {
 		try {
 			getDelegate().intersect(toLotus(form));
@@ -937,6 +953,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#intersect(int)
 	 */
+	@Override
 	public void intersect(final int noteId) {
 		try {
 			getDelegate().intersect(noteId);
@@ -951,6 +968,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#intersect(lotus.domino.NoteCollection)
 	 */
+	@Override
 	public void intersect(final lotus.domino.NoteCollection collection) {
 		try {
 			getDelegate().intersect(toLotus(collection));
@@ -965,6 +983,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#intersect(java.lang.String)
 	 */
+	@Override
 	public void intersect(final String noteId) {
 		try {
 			getDelegate().intersect(noteId);
@@ -979,6 +998,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#intersect(lotus.domino.View)
 	 */
+	@Override
 	public void intersect(final lotus.domino.View view) {
 		try {
 			getDelegate().intersect(toLotus(view));
@@ -1034,6 +1054,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#remove(lotus.domino.Agent)
 	 */
+	@Override
 	public void remove(final lotus.domino.Agent agent) {
 		try {
 			getDelegate().remove(toLotus(agent));
@@ -1048,6 +1069,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#remove(lotus.domino.Document)
 	 */
+	@Override
 	public void remove(final lotus.domino.Document document) {
 		try {
 			getDelegate().remove(toLotus(document));
@@ -1062,6 +1084,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#remove(lotus.domino.DocumentCollection)
 	 */
+	@Override
 	public void remove(final lotus.domino.DocumentCollection collection) {
 		try {
 			getDelegate().remove(toLotus(collection));
@@ -1076,6 +1099,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#remove(lotus.domino.Form)
 	 */
+	@Override
 	public void remove(final lotus.domino.Form form) {
 		try {
 			getDelegate().remove(toLotus(form));
@@ -1090,6 +1114,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#remove(int)
 	 */
+	@Override
 	public void remove(final int noteId) {
 		try {
 			getDelegate().remove(noteId);
@@ -1104,6 +1129,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#remove(lotus.domino.NoteCollection)
 	 */
+	@Override
 	public void remove(final lotus.domino.NoteCollection collection) {
 		try {
 			getDelegate().remove(toLotus(collection));
@@ -1118,6 +1144,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#remove(java.lang.String)
 	 */
+	@Override
 	public void remove(final String noteId) {
 		try {
 			getDelegate().remove(noteId);
@@ -1132,6 +1159,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#remove(lotus.domino.View)
 	 */
+	@Override
 	public void remove(final lotus.domino.View view) {
 		try {
 			getDelegate().remove(toLotus(view));
@@ -1146,6 +1174,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#selectAllAdminNotes(boolean)
 	 */
+	@Override
 	public void selectAllAdminNotes(final boolean flag) {
 		try {
 			getDelegate().selectAllAdminNotes(flag);
@@ -1160,6 +1189,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#selectAllCodeElements(boolean)
 	 */
+	@Override
 	public void selectAllCodeElements(final boolean flag) {
 		try {
 			getDelegate().selectAllCodeElements(flag);
@@ -1174,6 +1204,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#selectAllDataNotes(boolean)
 	 */
+	@Override
 	public void selectAllDataNotes(final boolean flag) {
 		try {
 			getDelegate().selectAllDataNotes(flag);
@@ -1188,6 +1219,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#selectAllDesignElements(boolean)
 	 */
+	@Override
 	public void selectAllDesignElements(final boolean flag) {
 		try {
 			getDelegate().selectAllDesignElements(flag);
@@ -1202,6 +1234,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#selectAllFormatElements(boolean)
 	 */
+	@Override
 	public void selectAllFormatElements(final boolean flag) {
 		try {
 			getDelegate().selectAllFormatElements(flag);
@@ -1216,6 +1249,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#selectAllIndexElements(boolean)
 	 */
+	@Override
 	public void selectAllIndexElements(final boolean flag) {
 		try {
 			getDelegate().selectAllIndexElements(flag);
@@ -1230,6 +1264,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#selectAllNotes(boolean)
 	 */
+	@Override
 	public void selectAllNotes(final boolean flag) {
 		try {
 			getDelegate().selectAllNotes(flag);
@@ -1244,6 +1279,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectAcl(boolean)
 	 */
+	@Override
 	public void setSelectAcl(final boolean flag) {
 		try {
 			getDelegate().setSelectAcl(flag);
@@ -1258,6 +1294,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectActions(boolean)
 	 */
+	@Override
 	public void setSelectActions(final boolean flag) {
 		try {
 			getDelegate().setSelectActions(flag);
@@ -1272,6 +1309,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectAgents(boolean)
 	 */
+	@Override
 	public void setSelectAgents(final boolean flag) {
 		try {
 			getDelegate().setSelectAgents(flag);
@@ -1286,6 +1324,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectDatabaseScript(boolean)
 	 */
+	@Override
 	public void setSelectDatabaseScript(final boolean flag) {
 		try {
 			getDelegate().setSelectDatabaseScript(flag);
@@ -1300,6 +1339,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectDataConnections(boolean)
 	 */
+	@Override
 	public void setSelectDataConnections(final boolean flag) {
 		try {
 			getDelegate().setSelectDataConnections(flag);
@@ -1314,6 +1354,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectDocuments(boolean)
 	 */
+	@Override
 	public void setSelectDocuments(final boolean flag) {
 		try {
 			getDelegate().setSelectDocuments(flag);
@@ -1328,6 +1369,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectFolders(boolean)
 	 */
+	@Override
 	public void setSelectFolders(final boolean flag) {
 		try {
 			getDelegate().setSelectFolders(flag);
@@ -1342,6 +1384,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectForms(boolean)
 	 */
+	@Override
 	public void setSelectForms(final boolean flag) {
 		try {
 			getDelegate().setSelectForms(flag);
@@ -1356,6 +1399,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectFramesets(boolean)
 	 */
+	@Override
 	public void setSelectFramesets(final boolean flag) {
 		try {
 			getDelegate().setSelectFramesets(flag);
@@ -1370,6 +1414,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectHelpAbout(boolean)
 	 */
+	@Override
 	public void setSelectHelpAbout(final boolean flag) {
 		try {
 			getDelegate().setSelectHelpAbout(flag);
@@ -1384,6 +1429,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectHelpIndex(boolean)
 	 */
+	@Override
 	public void setSelectHelpIndex(final boolean flag) {
 		try {
 			getDelegate().setSelectHelpIndex(flag);
@@ -1398,6 +1444,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectHelpUsing(boolean)
 	 */
+	@Override
 	public void setSelectHelpUsing(final boolean flag) {
 		try {
 			getDelegate().setSelectHelpUsing(flag);
@@ -1412,6 +1459,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectIcon(boolean)
 	 */
+	@Override
 	public void setSelectIcon(final boolean flag) {
 		try {
 			getDelegate().setSelectIcon(flag);
@@ -1425,6 +1473,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectImageResources(boolean)
 	 */
+	@Override
 	public void setSelectImageResources(final boolean flag) {
 		try {
 			getDelegate().setSelectImageResources(flag);
@@ -1438,6 +1487,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectionFormula(java.lang.String)
 	 */
+	@Override
 	public void setSelectionFormula(final String formula) {
 		try {
 			getDelegate().setSelectionFormula(formula);
@@ -1451,6 +1501,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectJavaResources(boolean)
 	 */
+	@Override
 	public void setSelectJavaResources(final boolean flag) {
 		try {
 			getDelegate().setSelectJavaResources(flag);
@@ -1464,6 +1515,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectMiscCodeElements(boolean)
 	 */
+	@Override
 	public void setSelectMiscCodeElements(final boolean flag) {
 		try {
 			getDelegate().setSelectMiscCodeElements(flag);
@@ -1477,6 +1529,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectMiscFormatElements(boolean)
 	 */
+	@Override
 	public void setSelectMiscFormatElements(final boolean flag) {
 		try {
 			getDelegate().setSelectMiscFormatElements(flag);
@@ -1491,6 +1544,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectMiscIndexElements(boolean)
 	 */
+	@Override
 	public void setSelectMiscIndexElements(final boolean flag) {
 		try {
 			getDelegate().setSelectMiscIndexElements(flag);
@@ -1504,6 +1558,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectNavigators(boolean)
 	 */
+	@Override
 	public void setSelectNavigators(final boolean flag) {
 		try {
 			getDelegate().setSelectNavigators(flag);
@@ -1517,6 +1572,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectOutlines(boolean)
 	 */
+	@Override
 	public void setSelectOutlines(final boolean flag) {
 		try {
 			getDelegate().setSelectOutlines(flag);
@@ -1530,6 +1586,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectPages(boolean)
 	 */
+	@Override
 	public void setSelectPages(final boolean flag) {
 		try {
 			getDelegate().setSelectPages(flag);
@@ -1543,6 +1600,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectProfiles(boolean)
 	 */
+	@Override
 	public void setSelectProfiles(final boolean flag) {
 		try {
 			getDelegate().setSelectProfiles(flag);
@@ -1556,6 +1614,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectReplicationFormulas(boolean)
 	 */
+	@Override
 	public void setSelectReplicationFormulas(final boolean flag) {
 		try {
 			getDelegate().setSelectReplicationFormulas(flag);
@@ -1569,6 +1628,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectScriptLibraries(boolean)
 	 */
+	@Override
 	public void setSelectScriptLibraries(final boolean flag) {
 		try {
 			getDelegate().setSelectScriptLibraries(flag);
@@ -1582,6 +1642,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectSharedFields(boolean)
 	 */
+	@Override
 	public void setSelectSharedFields(final boolean flag) {
 		try {
 			getDelegate().setSelectSharedFields(flag);
@@ -1595,6 +1656,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectStylesheetResources(boolean)
 	 */
+	@Override
 	public void setSelectStylesheetResources(final boolean flag) {
 		try {
 			getDelegate().setSelectStylesheetResources(flag);
@@ -1608,6 +1670,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectSubforms(boolean)
 	 */
+	@Override
 	public void setSelectSubforms(final boolean flag) {
 		try {
 			getDelegate().setSelectSubforms(flag);
@@ -1621,6 +1684,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSelectViews(boolean)
 	 */
+	@Override
 	public void setSelectViews(final boolean flag) {
 		try {
 			getDelegate().setSelectViews(flag);
@@ -1634,6 +1698,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 	 * 
 	 * @see org.openntf.domino.NoteCollection#setSinceTime(lotus.domino.DateTime)
 	 */
+	@Override
 	public void setSinceTime(final lotus.domino.DateTime date) {
 		@SuppressWarnings("rawtypes")
 		List recycleThis = new ArrayList();
@@ -1647,6 +1712,7 @@ public class NoteCollection extends Base<org.openntf.domino.NoteCollection, lotu
 
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public void setSinceTime(final java.util.Date date) {
 		@SuppressWarnings("rawtypes")

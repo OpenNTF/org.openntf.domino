@@ -9,5 +9,5 @@ package org.openntf.domino.ext;
  *         OpenNTF extensions to ViewColumn class
  */
 public interface ViewColumn {
-
+	public int getIndex();
 }

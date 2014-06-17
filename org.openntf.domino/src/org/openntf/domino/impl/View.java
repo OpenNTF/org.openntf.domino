@@ -15,12 +15,15 @@
  */
 package org.openntf.domino.impl;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import lotus.domino.NotesException;
@@ -405,7 +408,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public ViewColumn copyColumn(final int sourceColumn) {
 		try {
-			return fromLotus(getDelegate().copyColumn(sourceColumn), ViewColumn.SCHEMA, this);
+			ViewColumn result = fromLotus(getDelegate().copyColumn(sourceColumn), ViewColumn.SCHEMA, this);
+			columnMap_ = null;
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -420,7 +425,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public ViewColumn copyColumn(final int sourceColumn, final int destinationIndex) {
 		try {
-			return fromLotus(getDelegate().copyColumn(sourceColumn, destinationIndex), ViewColumn.SCHEMA, this);
+			ViewColumn result = fromLotus(getDelegate().copyColumn(sourceColumn, destinationIndex), ViewColumn.SCHEMA, this);
+			columnMap_ = null;
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -435,7 +442,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public ViewColumn copyColumn(final String sourceColumn) {
 		try {
-			return fromLotus(getDelegate().copyColumn(sourceColumn), ViewColumn.SCHEMA, this);
+			ViewColumn result = fromLotus(getDelegate().copyColumn(sourceColumn), ViewColumn.SCHEMA, this);
+			columnMap_ = null;
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -450,7 +459,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public ViewColumn copyColumn(final String sourceColumn, final int destinationIndex) {
 		try {
-			return fromLotus(getDelegate().copyColumn(sourceColumn, destinationIndex), ViewColumn.SCHEMA, this);
+			ViewColumn result = fromLotus(getDelegate().copyColumn(sourceColumn, destinationIndex), ViewColumn.SCHEMA, this);
+			columnMap_ = null;
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -465,7 +476,10 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public ViewColumn copyColumn(final lotus.domino.ViewColumn sourceColumn) {
 		try {
-			return fromLotus(getDelegate().copyColumn((lotus.domino.ViewColumn) toLotus(sourceColumn)), ViewColumn.SCHEMA, this);
+			ViewColumn result = fromLotus(getDelegate().copyColumn((lotus.domino.ViewColumn) toLotus(sourceColumn)), ViewColumn.SCHEMA,
+					this);
+			columnMap_ = null;
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -480,8 +494,10 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public ViewColumn copyColumn(final lotus.domino.ViewColumn sourceColumn, final int destinationIndex) {
 		try {
-			return fromLotus(getDelegate().copyColumn((lotus.domino.ViewColumn) toLotus(sourceColumn), destinationIndex),
+			ViewColumn result = fromLotus(getDelegate().copyColumn((lotus.domino.ViewColumn) toLotus(sourceColumn), destinationIndex),
 					ViewColumn.SCHEMA, this);
+			columnMap_ = null;
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -496,7 +512,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public ViewColumn createColumn() {
 		try {
-			return fromLotus(getDelegate().createColumn(), ViewColumn.SCHEMA, this);
+			ViewColumn result = fromLotus(getDelegate().createColumn(), ViewColumn.SCHEMA, this);
+			columnMap_ = null;
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -511,7 +529,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public ViewColumn createColumn(final int position) {
 		try {
-			return fromLotus(getDelegate().createColumn(position), ViewColumn.SCHEMA, this);
+			ViewColumn result = fromLotus(getDelegate().createColumn(position), ViewColumn.SCHEMA, this);
+			columnMap_ = null;
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -526,7 +546,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public ViewColumn createColumn(final int position, final String columnTitle) {
 		try {
-			return fromLotus(getDelegate().createColumn(position, columnTitle), ViewColumn.SCHEMA, this);
+			ViewColumn result = fromLotus(getDelegate().createColumn(position, columnTitle), ViewColumn.SCHEMA, this);
+			columnMap_ = null;
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -541,7 +563,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public ViewColumn createColumn(final int position, final String columnTitle, final String formula) {
 		try {
-			return fromLotus(getDelegate().createColumn(position, columnTitle, formula), ViewColumn.SCHEMA, this);
+			ViewColumn result = fromLotus(getDelegate().createColumn(position, columnTitle, formula), ViewColumn.SCHEMA, this);
+			columnMap_ = null;
+			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -851,6 +875,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	/**
 	 * @deprecated RPr: This might be very slow, so I suggest not to use this
 	 */
+	@Override
 	@Deprecated
 	public NoteCollection getNoteCollection() {
 		NoteCollection nc = getAncestorDatabase().createNoteCollection(false);
@@ -865,6 +890,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#getAllDocuments()
 	 */
+	@Override
 	public DocumentCollection getAllDocuments() {
 		// According to Tommy Valand's research, the fastest method is to build a NoteCollection with a matching selection formula
 		// http://dontpanic82.blogspot.com/2013/06/benchmark-fetching-noteids-and.html
@@ -1199,6 +1225,22 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 			DominoUtils.handleException(e);
 		}
 		return null;
+	}
+
+	private Map<String, org.openntf.domino.ViewColumn> columnMap_;
+
+	@Override
+	public Map<String, org.openntf.domino.ViewColumn> getColumnMap() {
+		if (columnMap_ == null) {
+			columnMap_ = new LinkedHashMap<String, org.openntf.domino.ViewColumn>();
+			Vector<ViewColumn> columns = getColumns();
+			if (columns != null && !columns.isEmpty()) {
+				for (ViewColumn column : columns) {
+					columnMap_.put(column.getItemName(), column);
+				}
+			}
+		}
+		return columnMap_;
 	}
 
 	/*
@@ -2146,6 +2188,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public void removeColumn() {
 		try {
 			getDelegate().removeColumn();
+			columnMap_ = null;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2160,6 +2203,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public void removeColumn(final int column) {
 		try {
 			getDelegate().removeColumn(column);
+			columnMap_ = null;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2174,6 +2218,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public void removeColumn(final String column) {
 		try {
 			getDelegate().removeColumn(column);
+			columnMap_ = null;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2471,7 +2516,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @since org.openntf.domino 3.0.0
 	 */
-	public static class DominoColumnInfo {
+	public static class DominoColumnInfo implements Serializable {
 		private final String itemName_;
 		private final int columnValuesIndex_;
 
@@ -2508,6 +2553,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		}
 	}
 
+	@Override
 	public boolean isIndexed() {
 		return getDocument().hasItem("$Collation");
 	}
@@ -2545,6 +2591,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.ext.View#checkUnique(java.lang.Object, org.openntf.domino.Document)
 	 */
+	@Override
 	public boolean checkUnique(final Object key, final Document srcDoc) {
 		boolean retVal_ = false;
 		try {
