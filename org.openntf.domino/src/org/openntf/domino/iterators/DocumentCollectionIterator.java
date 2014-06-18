@@ -33,6 +33,7 @@ public class DocumentCollectionIterator implements Iterator<org.openntf.domino.D
 		}
 	}
 
+	@Override
 	public boolean hasNext() {
 		return nextWrapper != null; // something in Queue?
 	}
@@ -40,6 +41,7 @@ public class DocumentCollectionIterator implements Iterator<org.openntf.domino.D
 	/* (non-Javadoc)
 	 * @see java.util.Iterator#next()
 	 */
+	@Override
 	public org.openntf.domino.Document next() {
 		//		try {
 		//currLotusDoc = nextLotusDoc;
@@ -52,8 +54,25 @@ public class DocumentCollectionIterator implements Iterator<org.openntf.domino.D
 		//			}
 		lotus.domino.Document nextLotusDoc = null;
 		try {
-			nextLotusDoc = ((lotus.domino.DocumentCollection) org.openntf.domino.impl.Base.getDelegate(documentCollection_))
-					.getNextDocument(Base.toLotus(nextWrapper)); // this is very tricky, iterate from the 1st to the 2nd
+			// this is very tricky, iterate from the 1st to the 2nd
+			lotus.domino.DocumentCollection lColl = (lotus.domino.DocumentCollection) org.openntf.domino.impl.Base
+					.getDelegate(documentCollection_);
+			if (nextWrapper == null || nextWrapper.isDead()) {
+				if (nextWrapper == null) {
+					System.out.println("ALERT: Wrapped version of next document is NULL");
+				} else if (nextWrapper.isDead()) {
+					System.out.println("ALERT: Wrapped version of next document is dead");
+				} else {
+					System.out.println("ALERT: It should have been impossible to arrive here");
+					throw new RuntimeException();
+				}
+			} else {
+				lotus.domino.Document lNext = Base.toLotus(nextWrapper);
+				lotus.domino.Document lDoc = lColl.getNextDocument(lNext);
+				if (lDoc != null) {
+					nextLotusDoc = lNext;
+				}
+			}
 		} catch (NotesException ne) {
 			errCount_++;
 			if (ne.text.contains("not from this collection")) {
@@ -70,7 +89,11 @@ public class DocumentCollectionIterator implements Iterator<org.openntf.domino.D
 			return null;
 		}
 		currWrapper = nextWrapper;
-		nextWrapper = documentCollection_.fromLotus(nextLotusDoc, Document.SCHEMA, documentCollection_.getParent()); // and update the wrapper here
+		if (nextLotusDoc != null) {
+			nextWrapper = documentCollection_.fromLotus(nextLotusDoc, Document.SCHEMA, documentCollection_.getParent()); // and update the wrapper here
+		} else {
+			nextWrapper = null;
+		}
 		return currWrapper;											// return the wrapper that wrapped the 1st
 		//		} catch (NotesException e) {
 		//			DominoUtils.handleException(e);
@@ -81,6 +104,7 @@ public class DocumentCollectionIterator implements Iterator<org.openntf.domino.D
 	/* (non-Javadoc)
 	 * @see java.util.Iterator#remove()
 	 */
+	@Override
 	public void remove() {
 		// TODO Auto-generated method stub
 		try {

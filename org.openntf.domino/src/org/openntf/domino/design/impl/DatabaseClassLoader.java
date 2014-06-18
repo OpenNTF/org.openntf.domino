@@ -16,9 +16,12 @@
 
 package org.openntf.domino.design.impl;
 
+import java.lang.annotation.Annotation;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.openntf.domino.Document;
@@ -30,7 +33,7 @@ import org.openntf.domino.utils.DominoUtils;
  * @author jgallagher
  * 
  */
-public class DatabaseClassLoader extends ClassLoader {
+public class DatabaseClassLoader extends org.openntf.domino.design.DatabaseClassLoader {
 	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DatabaseClassLoader.class.getName());
 
@@ -74,7 +77,11 @@ public class DatabaseClassLoader extends ClassLoader {
 			unloadedClasses_.putAll(res.getClassData());
 			// Now attempt to load the named class
 			byte[] classData = unloadedClasses_.remove(name);
-			return defineClass(name, classData, 0, classData.length);
+			if (classData != null) {
+				// It's possible that an old name of the Java class is still lingering in the NSF
+				// In that case, we'd reach this point, but not have an actual class available to load
+				return defineClass(name, classData, 0, classData.length);
+			}
 		}
 
 		// It's also possible that it's stored only as a .class file (e.g. secondary, non-inner classes in a .java)
@@ -120,5 +127,21 @@ public class DatabaseClassLoader extends ClassLoader {
 		}
 
 		return super.findClass(name);
+	}
+
+	@Override
+	public Set<Class<?>> getClassesWithAnnotation(final Class<? extends Annotation> annotationClass) {
+		Set<Class<?>> result = new LinkedHashSet<Class<?>>();
+		for (String className : design_.getJavaResourceClassNames()) {
+			try {
+				Class<?> clazz = loadClass(className);
+				if (clazz.getAnnotation(annotationClass) != null) {
+					result.add(clazz);
+				}
+			} catch (ClassNotFoundException e) {
+				// Ignore - Java resources keep copies of their old names, tripping up the search
+			}
+		}
+		return result;
 	}
 }
