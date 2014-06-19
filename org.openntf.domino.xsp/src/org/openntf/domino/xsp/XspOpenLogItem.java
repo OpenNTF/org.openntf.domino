@@ -165,7 +165,7 @@ public class XspOpenLogItem extends BaseOpenLogItem {
 	 */
 	public static String getLogExpireDate() {
 		if (StringUtil.isEmpty(_logExpireDate)) {
-			_logExpireDate = Activator.getXspPropertyAsString("xsp.openlog.email");
+			_logExpireDate = Activator.getXspPropertyAsString("xsp.openlog.expireDate");
 		}
 		return _logExpireDate;
 	}
