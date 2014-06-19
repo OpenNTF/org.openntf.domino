@@ -70,7 +70,7 @@ public class DocumentCollectionIterator implements Iterator<org.openntf.domino.D
 				lotus.domino.Document lNext = Base.toLotus(nextWrapper);
 				lotus.domino.Document lDoc = lColl.getNextDocument(lNext);
 				if (lDoc != null) {
-					nextLotusDoc = lNext;
+					nextLotusDoc = lDoc;
 				}
 			}
 		} catch (NotesException ne) {
