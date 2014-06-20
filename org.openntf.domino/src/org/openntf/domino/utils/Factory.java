@@ -443,22 +443,8 @@ public enum Factory {
 	public static WrapperFactory getWrapperFactory() {
 		WrapperFactory wf = currentWrapperFactory.get();
 		if (wf == null) {
-			ClassLoader cl = getClassLoader();
-			// System.out.println("Got this Classloader: " + cl);
-
-			if (cl != null) {
-				ServiceLoader<WrapperFactory> loader = ServiceLoader.load(WrapperFactory.class, cl);
-				Iterator<WrapperFactory> it = loader.iterator();
-				if (it.hasNext()) {
-					wf = it.next();
-					// TODO RPr remove these debug prints
-					System.out.println("Using alternative WrapperFactory: " + wf);
-				}
-			}
-			if (wf == null) {
-				// System.out.println("Using default WrapperFactory");
-				wf = new org.openntf.domino.impl.WrapperFactory();
-			}
+			List<WrapperFactory> wfList = findApplicationServices(WrapperFactory.class);
+			wf = wfList.size() > 0 ? wfList.get(0) : new org.openntf.domino.impl.WrapperFactory();
 			currentWrapperFactory.set(wf);
 		}
 		return wf;
