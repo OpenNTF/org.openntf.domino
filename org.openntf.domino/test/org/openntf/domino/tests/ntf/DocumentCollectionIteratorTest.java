@@ -33,7 +33,7 @@ public class DocumentCollectionIteratorTest implements Runnable {
 		long testStartTime = System.nanoTime();
 		try {
 			Session session = this.getSession();
-			Database db = session.getDatabase("", "events4.nsf");
+			Database db = session.getDatabase("", "C:/Program Files/IBM/domino/data/events4.nsf");
 			DocumentCollection coll = db.getAllDocuments();
 			for (Document doc : coll) {
 				System.out.println("nid: " + doc.getNoteID());
