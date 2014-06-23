@@ -639,16 +639,16 @@ public enum Factory {
 		return result;
 	}
 
-	//	/**
-	//	 * Returns the session's current database if available. Does never create a session.
-	//	 * 
-	//	 * @see #getSession_unchecked()
-	//	 * @return The session's current database
-	//	 */
-	//	public static Database getCurrentDatabase() {
-	//		Session sess = currentSessionHolder_.get();
-	//		return (sess == null) ? null : sess.getCurrentDatabase();
-	//	}
+	/**
+	 * Returns the session's current database if available. Does never create a session.
+	 * 
+	 * @see #getSession_unchecked()
+	 * @return The session's current database
+	 */
+	public static Database getCurrentDatabase() {
+		Session sess = currentSessionHolder_.get();
+		return (sess == null) ? null : sess.getCurrentDatabase();
+	}
 
 	/**
 	 * Returns the current session, if available. Does never create a session

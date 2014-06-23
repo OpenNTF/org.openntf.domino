@@ -11,6 +11,7 @@ import java.util.Locale;
  */
 public class Messages implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private static final String BUNDLE_NAME = "de.foconis.lib.app.messages"; //$NON-NLS-1$
 
 	public static String getString(final String key, final Object... args) {

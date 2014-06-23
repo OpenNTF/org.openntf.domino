@@ -13,4 +13,7 @@ public abstract class RawMessageProvider implements Comparable<RawMessageProvide
 	public int compareTo(final RawMessageProvider paramT) {
 		return getPriority() - paramT.getPriority();
 	}
+
+	public void resetCache() {
+	}
 }

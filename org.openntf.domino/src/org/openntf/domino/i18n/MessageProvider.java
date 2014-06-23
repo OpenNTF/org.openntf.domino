@@ -36,7 +36,6 @@ public class MessageProvider {
 	 */
 	public String getRawText(final String bundleName, final String key, final Locale loc) {
 		List<RawMessageProvider> provs = Factory.findApplicationServices(RawMessageProvider.class);
-
 		for (RawMessageProvider prov : provs) {
 			String ret = prov.getRawText(bundleName, key, loc);
 			if (ret != null)
@@ -108,4 +107,18 @@ public class MessageProvider {
 			throw new IllegalStateException("No MessageProvider service found");
 		return msgProv.get(0); // we take the first one.
 	}
+
+	/**
+	 * Needed to reset a DB message cache
+	 */
+	public void resetCache() {
+		List<RawMessageProvider> provs = Factory.findApplicationServices(RawMessageProvider.class);
+		for (RawMessageProvider prov : provs)
+			prov.resetCache();
+	}
+
+	public static void sResetCache() {
+		getCurrentInstance().resetCache();
+	}
+
 }
