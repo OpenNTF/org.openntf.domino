@@ -2187,22 +2187,22 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		boolean go = true;
 		go = getAncestorDatabase().fireListener(generateEvent(Events.BEFORE_DELETE_DOCUMENT, null));
 		if (go) {
-			System.out.println("Listener for BEFORE_DELETE_DOCUMENT allowed the remove call");
+			//			System.out.println("Listener for BEFORE_DELETE_DOCUMENT allowed the remove call");
 			removeType_ = force ? RemoveType.SOFT_TRUE : RemoveType.SOFT_FALSE;
-			System.out.println("Remove type is " + removeType_.name());
+			//			System.out.println("Remove type is " + removeType_.name());
 			if (queueRemove()) {
-				System.out.println("We queued the remove as part of a transaction so tell the calling code that its done");
+				//				System.out.println("We queued the remove as part of a transaction so tell the calling code that its done");
 				result = true;
 			} else {
-				System.out.println("We're not currently in a transaction, so we should force the delegate removal immediately");
+				//				System.out.println("We're not currently in a transaction, so we should force the delegate removal immediately");
 				result = forceDelegateRemove();
 			}
 		} else {
-			System.out.println("Listener for BEFORE_DELETE_DOCUMENT blocked the remove call");
+			//			System.out.println("Listener for BEFORE_DELETE_DOCUMENT blocked the remove call");
 			result = false;
 		}
 		if (result) {
-			System.out.println("Remove executed, so firing AFTER_DELETE_DOCUMENT listener");
+			//			System.out.println("Remove executed, so firing AFTER_DELETE_DOCUMENT listener");
 			getAncestorDatabase().fireListener(generateEvent(Events.AFTER_DELETE_DOCUMENT, null));
 		}
 		return result;

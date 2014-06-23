@@ -306,6 +306,10 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	 */
 	@Override
 	public SortedSet<String> getJavaResourceClassNames() {
+		// TODO Decide if it's worth going through the result to remove class names that don't actually
+		// 	exist in their notes. This happens when a Java class is renamed - Domino retains the old name
+		//	in $ClassIndexItem for some reason
+
 		SortedSet<String> result = new TreeSet<String>();
 		NoteCollection notes = getNoteCollection(" @Contains($Flags; 'g') & @Contains($Flags; '[') ", EnumSet.of(SelectOption.MISC_FORMAT));
 		for (String noteId : notes) {
@@ -548,7 +552,7 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	 * @see org.openntf.domino.design.DatabaseDesign#getDatabaseClassLoader()
 	 */
 	@Override
-	public ClassLoader getDatabaseClassLoader(final ClassLoader parent) {
+	public DatabaseClassLoader getDatabaseClassLoader(final ClassLoader parent) {
 		return new DatabaseClassLoader(this, parent, true, false);
 	}
 
@@ -558,12 +562,12 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 	 * @see org.openntf.domino.design.DatabaseDesign#getDatabaseClassLoader(java.lang.ClassLoader, boolean)
 	 */
 	@Override
-	public ClassLoader getDatabaseClassLoader(final ClassLoader parent, final boolean includeJars) {
+	public DatabaseClassLoader getDatabaseClassLoader(final ClassLoader parent, final boolean includeJars) {
 		return new DatabaseClassLoader(this, parent, includeJars, false);
 	}
 
 	@Override
-	public ClassLoader getDatabaseClassLoader(final ClassLoader parent, final boolean includeJars, final boolean includeLibraries) {
+	public DatabaseClassLoader getDatabaseClassLoader(final ClassLoader parent, final boolean includeJars, final boolean includeLibraries) {
 		return new DatabaseClassLoader(this, parent, includeJars, includeLibraries);
 	}
 

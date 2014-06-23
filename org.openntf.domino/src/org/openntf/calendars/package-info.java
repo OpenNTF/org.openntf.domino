@@ -1,5 +1,5 @@
 /**
- * ARPA utilities
+ * Calendar utilities
  * 
  * Copyright 2013
  * 
@@ -18,4 +18,4 @@
  * permissions and limitations under the License.
  *
  */
-package org.openntf.arpa;
+package org.openntf.calendars;
