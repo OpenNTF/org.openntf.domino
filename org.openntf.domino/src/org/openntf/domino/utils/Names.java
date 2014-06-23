@@ -377,7 +377,6 @@ public enum Names {
 	 *            Name for which to get the roles.
 	 * @return All roles the specified user has for the Database. Null on exception or no roles found.
 	 */
-	@SuppressWarnings("unchecked")
 	public static TreeSet<String> getRoles(final Database database, final Name name) {
 		try {
 			if (null == database) {
@@ -411,7 +410,6 @@ public enum Names {
 	 *            Set of name strings which have already been searched.
 	 * @return Set of all expanded found names & group members. K = name string, V = Result type (Person, Group, Unknown)
 	 */
-	@SuppressWarnings("unchecked")
 	public static HashMap<String, Names.LookupType> expandNamesList(final Session session, final TreeSet<String> searchfor,
 			final HashMap<String, Names.LookupType> searched) {
 
@@ -609,6 +607,7 @@ public enum Names {
 	 * 
 	 * @return Name created from the specified Name. Null on error.
 	 */
+	@SuppressWarnings("deprecation")
 	public static Name createName(final Name name) {
 		try {
 			if (null == name) {
@@ -632,6 +631,7 @@ public enum Names {
 	 * 
 	 * @return Name created from the specified Name. Null on error.
 	 */
+	@SuppressWarnings("restriction")
 	public static Name createName(final lotus.domino.Name name) {
 		try {
 			if (null == name) {
@@ -680,6 +680,7 @@ public enum Names {
 	 * 
 	 * @return RFC822name created from the specified Name. Null on error.
 	 */
+	@SuppressWarnings("restriction")
 	public static RFC822name createRFC822name(final lotus.domino.Name name) {
 		try {
 
@@ -728,6 +729,7 @@ public enum Names {
 	 * @return properly formatted RFC822 Addr822Full string generated from the specified Name. Empty string on error or no value for
 	 *         name.getAddr821().
 	 */
+	@SuppressWarnings("restriction")
 	public static String buildAddr822Full(final lotus.domino.Name name) {
 		try {
 			return RFC822name.buildAddr822Full(name.getAddr822Phrase(), name.getAddr821(), name.getAddr822Comment1(),

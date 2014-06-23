@@ -70,7 +70,7 @@ public enum CollectionUtils {
 	 * 
 	 * @return List of Strings retrieved or generated from the input. Returns null on error.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static List<String> getListStrings(final Vector vector) {
 		return (null == vector) ? null : Collections.list(vector.elements());
 	}
@@ -83,6 +83,7 @@ public enum CollectionUtils {
 	 * 
 	 * @return List of Strings retrieved or generated from the input. Returns null on error.
 	 */
+	@SuppressWarnings({ "rawtypes", "cast" })
 	public static List<String> getListStrings(final AbstractCollection collection) {
 		if ((null != collection) && (collection.size() > 0)) {
 			final List<String> result = new ArrayList<String>();
@@ -116,6 +117,7 @@ public enum CollectionUtils {
 	 * 
 	 * @return List of Strings retrieved or generated from the input. Returns null on error.
 	 */
+	@SuppressWarnings("rawtypes")
 	public static List<String> getListStrings(final AbstractMap map) {
 		return ((null != map) && (map.size() > 0)) ? CollectionUtils.getListStrings(map.values()) : null;
 	}
@@ -167,6 +169,7 @@ public enum CollectionUtils {
 	 * @return List of Strings retrieved or generated from the input. Returns null on error.
 	 * 
 	 */
+	@SuppressWarnings("rawtypes")
 	public static List<String> getListStrings(final Object object) {
 		String classname = null;
 		try {

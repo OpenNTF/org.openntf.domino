@@ -661,7 +661,7 @@ public enum DACL {
 			if (null == daclType) {
 				final TreeSet<String> result = new TreeSet<String>();
 				for (DACL type : DACL.values()) {
-					members = DACL.values(document, daclType, checkAllItems);
+					members = DACL.values(document, type, checkAllItems);
 					if ((null != members) && (members.size() > 0)) {
 						result.addAll(members);
 					}

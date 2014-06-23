@@ -343,7 +343,7 @@ public enum DominoUtils {
 	 * @param args
 	 *            the args
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked", "rawtypes", "restriction" })
 	public static void incinerate(final Object... args) {
 		for (Object o : args) {
 			if (o != null) {

@@ -3,6 +3,8 @@
  */
 package org.openntf.domino.ext;
 
+import java.util.Map;
+
 import org.openntf.domino.DocumentCollection;
 
 /**
@@ -70,5 +72,7 @@ public interface View {
 	 * @since org.openntf.domino 5.0.0
 	 */
 	public boolean checkUnique(final Object key, final org.openntf.domino.Document srcDoc);
+
+	public Map<String, org.openntf.domino.ViewColumn> getColumnMap();
 
 }
