@@ -10,6 +10,7 @@ import java.util.Map;
 
 import lotus.domino.DateTime;
 
+import com.ibm.commons.extension.ExtensionManager;
 import com.ibm.jscript.InterpretException;
 import com.ibm.jscript.JSContext;
 import com.ibm.jscript.JavaScriptException;
@@ -23,7 +24,7 @@ import com.ibm.jscript.types.GeneratedWrapperObject.MethodMap;
 import com.ibm.jscript.types.IWrapperFactory;
 import com.ibm.jscript.types.Registry;
 
-public class WrapperOpenDomino {
+public class WrapperOpenDomino implements WrapperRegistry {
 
 	/*
 	 * First block extends IBM's baseline GeneratedWrapper classes. Why? Because as you can see with the OpenFunction.call() method, we want
@@ -31,12 +32,33 @@ public class WrapperOpenDomino {
 	 * overriding methods and putting logging around the super. calls.
 	 */
 
+	/**
+	 * The OpenFunction object extends the SSJS function object. It is a single class that encapsulates 1 to n methods on a Java class. For
+	 * each method in your Java class, you'll need to register a function object with a known signature and give it a corresponding index.
+	 * This index on the individual function object is then used as the switch in both the call() and getCallParameters() methods.
+	 * 
+	 * It implements 4 critical methods:
+	 * <ol>
+	 * <li>getCallParameters() which defines the expected parameters for the method</li>
+	 * <li>getMethodMap() which returns the method map that is supposed to provide this method</li>
+	 * <li>getWrappedClass() which identifies the Java interface that will be used in the call() method</li>
+	 * <li>call(FBSValueVector, FBSObject) which actually unwraps the SSJS objects and executes the explicit Java methods defined</li>
+	 * </ol>
+	 */
 	public static class OpenFunction extends GeneratedWrapperObject.Function {
 		private final Class<?> clazz_;
 		// private final Method crystal_;
 		private Map<String, Method> crystals_;
 		private Method defCrystal_;
 
+		/**
+		 * Gets the signature, the parameter types converted to SSJS)
+		 * 
+		 * @param crystal
+		 *            Meth(od)
+		 * @return String of parameter types, e.g. "(void:V);"
+		 * @since org.openntf.domino.xsp 2.5.0
+		 */
 		private static String getSignature(final Method crystal) {
 			StringBuilder sb = new StringBuilder();
 			Class<?>[] params = crystal.getParameterTypes();
@@ -169,6 +191,15 @@ public class WrapperOpenDomino {
 			return sb.toString();
 		}
 
+		/**
+		 * Gets the method from the FBSValueVector
+		 * 
+		 * @param vec
+		 *            FBSValueVector
+		 * @return Method
+		 * @throws JavaScriptException
+		 * @since org.openntf.domino.xsp 2.5.0
+		 */
 		private Method getMethodFromVector(final FBSValueVector vec) throws JavaScriptException {
 			if (vec == null || vec.size() == 0)
 				return defCrystal_;
@@ -259,6 +290,17 @@ public class WrapperOpenDomino {
 			return result;
 		}
 
+		/**
+		 * Converts the SSJS parameters to a Java Object containing the parameters
+		 * 
+		 * @param crystal
+		 *            Meth(od) being called
+		 * @param vec
+		 *            FBSValueVector
+		 * @return Object containing parameters
+		 * @throws InterpretException
+		 * @since org.openntf.domino.xsp 2.5.0
+		 */
 		private Object[] toJavaArguments(final Method crystal, final FBSValueVector vec) throws InterpretException {
 			Object[] result = new Object[vec.size()];
 			Class<?>[] params = crystal.getParameterTypes();
@@ -269,16 +311,14 @@ public class WrapperOpenDomino {
 			return result;
 		}
 
-		/*
-		 * The OpenFunction object extends the SSJS function object. It is a single class that encapsulates 1 to n methods on a Java class.
-		 * For each method in your Java class, you'll need to register a function object with a known signature and give it a corresponding
-		 * index. This index on the individual function object is then used as the switch in both the call() and getCallParameters()
-		 * methods.
+		/**
+		 * Constructor
 		 * 
-		 * It implements 4 critical methods: 1) getCallParameters() which defines the expected parameters for the method 2) getMethodMap()
-		 * which returns the method map that is supposed to provide this method 3) getWrappedClass() which identifies the Java interface
-		 * that will be used in the call() method 4) call(FBSValueVector, FBSObject) which actually unwraps the SSJS objects and executes
-		 * the explicit Java methods defined
+		 * @param context
+		 *            JSContext to which the methods are being registered
+		 * @param crystal
+		 *            Meth(od)
+		 * @since org.openntf.domino.xsp 2.5.0
 		 */
 		protected OpenFunction(final JSContext context, final Method crystal) {
 			super(context, crystal.getName(), 1);
@@ -286,6 +326,13 @@ public class WrapperOpenDomino {
 			clazz_ = crystal.getDeclaringClass();
 		}
 
+		/**
+		 * Adds the method to a Hash Map of methods
+		 * 
+		 * @param crystal
+		 *            Meth(od)
+		 * @since org.openntf.domino.xsp 2.5.0
+		 */
 		protected void addMethod(final Method crystal) {
 			if (crystals_ == null) {
 				crystals_ = new HashMap<String, Method>();
@@ -306,16 +353,31 @@ public class WrapperOpenDomino {
 		// throw new InterpretException(null, message, new Object[0]);
 		// }
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see com.ibm.jscript.types.GeneratedWrapperObject.Function#getMethodMap()
+		 */
 		@Override
 		protected MethodMap getMethodMap() {
 			return WrapperOpenDomino.getMethodMap(null, getWrappedClass());
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see com.ibm.jscript.types.GeneratedWrapperObject.Function#getWrappedClass()
+		 */
 		@Override
 		protected Class<?> getWrappedClass() {
 			return clazz_;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see com.ibm.jscript.types.FBSObject#getCallParameters()
+		 */
 		@Override
 		protected String[] getCallParameters() {
 			if (crystals_ == null || crystals_.isEmpty()) {
@@ -324,6 +386,11 @@ public class WrapperOpenDomino {
 			return crystals_.keySet().toArray(new String[0]);
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see com.ibm.jscript.types.BuiltinFunction#call(com.ibm.jscript.types.FBSValueVector, com.ibm.jscript.types.FBSObject)
+		 */
 		@Override
 		public FBSValue call(final FBSValueVector valueVector, final FBSObject object) throws JavaScriptException {
 			Object base = clazz_.cast(object.toJavaObject(clazz_));
@@ -349,16 +416,26 @@ public class WrapperOpenDomino {
 
 	}
 
+	/**
+	 * The OpenObject is base wrapper for the Java classes that defines their names, method maps and unlying Java classes. These objects are
+	 * registered with the WrapperFactory with integer indexes so that the SSJS interpretter can find the appropriate wrapper for Java
+	 * objects at runtime.
+	 */
 	public static class OpenObject extends GeneratedWrapperObject {
 		private final String uiName_;
 		private final Class<?> clazz_;
 
-		/*
-		 * The OpenObject is base wrapper for the Java classes that defines their names, method maps and unlying Java classes. These objects
-		 * are registered with the WrapperFactory with integer indexes so that the SSJS interpretter can find the appropriate wrapper for
-		 * Java objects at runtime.
+		/**
+		 * Constructor
+		 * 
+		 * @param paramJSContext
+		 *            JSContext to which the methods are being registered
+		 * @param paramObject
+		 *            Object method map
+		 * @param clazz
+		 *            Class the methods belong to
+		 * @since org.openntf.domino.xsp 2.5.0
 		 */
-
 		protected OpenObject(final JSContext paramJSContext, final Object paramObject, final Class<?> clazz) {
 			super(paramJSContext, paramObject, "Open" + clazz.getSimpleName());
 			uiName_ = "Open" + clazz.getSimpleName();
@@ -371,36 +448,64 @@ public class WrapperOpenDomino {
 		// clazz_ = null;
 		// }
 
+		/**
+		 * Extended Constructor, not used
+		 * 
+		 * @param JSContext
+		 *            to which the methods are being registered
+		 * @param paramObject
+		 *            Object method map
+		 * @param paramString
+		 *            String
+		 * @param clazz
+		 *            Class the methods belong to
+		 * @since org.openntf.domino.xsp 2.5.0
+		 */
 		protected OpenObject(final JSContext paramJSContext, final Object paramObject, final String paramString, final Class<?> clazz) {
 			super(paramJSContext, paramObject, paramString);
 			uiName_ = paramString;
 			clazz_ = clazz;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see com.ibm.jscript.types.FBSObject#getTypeAsString()
+		 */
 		@Override
 		public String getTypeAsString() {
 			return uiName_;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see com.ibm.jscript.types.GeneratedWrapperObject#getWrappedClass()
+		 */
 		@Override
 		public Class<?> getWrappedClass() {
 			return clazz_;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see com.ibm.jscript.types.GeneratedWrapperObject#getMethodMap()
+		 */
 		@Override
 		public OpenMethodMap getMethodMap() {
 			return WrapperOpenDomino.getMethodMap(getJSContext(), getWrappedClass());
 		}
 	}
 
-	public static class OpenMethodMap extends GeneratedWrapperObject.MethodMap {
-		/*
+	/**
 		 * The MethodMap is a simple static HashMap that binds a String, like "getItemValue" or "isBefore" to an OpenFunction object
 		 * 
 		 * This way when SSJS encounters an org.openntf.domino.DateTime, and it sees .isBefore(DateTime) called on it, it can resolve the
 		 * string to a particular fct_OpenDateTime object, with a specific index value. It then invokes the call() method on that particular
 		 * function object, passing in the DateTime argument from SSJS, as well as the DateTime object on which the .isBefore was invoked.
 		 */
+	public static class OpenMethodMap extends GeneratedWrapperObject.MethodMap {
 		public OpenMethodMap(final JSContext arg0, final Class<?> arg1, final Class<?>[] arg2) {
 			super(arg0, arg1, arg2);
 		}
@@ -409,10 +514,26 @@ public class WrapperOpenDomino {
 
 	private final static Map<Class<?>, OpenMethodMap> classMap_ = new HashMap<Class<?>, OpenMethodMap>();
 
+	/**
+	 * Gets a map where the key is the class and the value is its OpenMethodMap
+	 * 
+	 * @return Map<Class<?>, OpenMethodMap>
+	 * @since org.openntf.domino 2.5.0
+	 */
 	private static Map<Class<?>, OpenMethodMap> getClassMap() {
 		return Collections.unmodifiableMap(classMap_);
 	}
 
+	/**
+	 * Generates the map of all methods in the class where the key is the method name and the value is a new OpenFunction for the method<br/>
+	 * 
+	 * @param context
+	 *            JSContext in which to register the method
+	 * @param clazz
+	 *            Class from which to register methods
+	 * @return OpenMethodMap, a hash map of methods from the class
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	private static OpenMethodMap generateMethodMap(final JSContext context, final Class<?> clazz) {
 		OpenMethodMap methodMap = new OpenMethodMap(context, clazz, null);
 		for (Method crystal : clazz.getMethods()) {
@@ -446,6 +567,16 @@ public class WrapperOpenDomino {
 		return methodMap;
 	}
 
+	/**
+	 * Gets the map of all methods in a class
+	 * 
+	 * @param context
+	 *            JSContext to which to register the methods
+	 * @param clazz
+	 *            Class from which to retrieve the methods
+	 * @return OpenMethodMap, a hash map of methods from the class
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	private static OpenMethodMap getMethodMap(final JSContext context, final Class<?> clazz) {
 		OpenMethodMap result = getClassMap().get(clazz);
 		if (result == null) {
@@ -455,154 +586,87 @@ public class WrapperOpenDomino {
 		return result;
 	}
 
-	// private static OpenMethodMap methodMap_OpenDocument; // 0
-	//
-	// private static OpenMethodMap getMap_OpenDocument(JSContext context) {
-	// if (methodMap_OpenDocument == null) {
-	// synchronized (WrapperOpenDomino.class) {
-	// if (methodMap_OpenDocument == null) {
-	// OpenMethodMap methodMap = new OpenMethodMap(context, Document.class, null);
-	// // methodMap.put("getCreatedDate", new fct_OpenDocument(context, "getCreatedDate", 0));
-	// // methodMap.put("getLastModifiedDate", new fct_OpenDocument(context, "getLastModifiedDate", 1));
-	// // methodMap.put("getInitiallyModifiedDate", new fct_OpenDocument(context, "getInitiallyModifiedDate", 2));
-	// // methodMap.put("getLastAccessedDate", new fct_OpenDocument(context, "getLastAccessedDate", 3));
-	// methodMap_OpenDocument = methodMap;
-	// }
-	// }
-	// }
-	// return methodMap_OpenDocument;
-	// }
-	//
-	// public static final class _OpenDocument extends OpenObject {
-	// public _OpenDocument(JSContext context, Object object) {
-	// super(context, object, "OpenDocument");
-	// }
-	//
-	// @Override
-	// public OpenMethodMap getMethodMap() {
-	// return WrapperOpenDomino.getMap_OpenDocument(getJSContext());
-	// }
-	//
-	// @Override
-	// public Class<?> getWrappedClass() {
-	// if (super.getWrappedClass() == null) {
-	// return Document.class;
-	// } else {
-	// return super.getWrappedClass();
-	// }
-	// }
-	//
-	// }
-
+	/**
+	 * Classes allowing us to register all methods within the relevant OpenNTF extensions
+	 * 
+	 * @since org.openntf.domino 2.5.0
+	 */
 	private static final class OpenConstructor extends GeneratedWrapperObject.EmptyConstructor {
 		@SuppressWarnings("unused")
 		private final String uiName_;
 		private final Class<?> clazz_;
 
+		/**
+		 * Constructor
+		 * 
+		 * @param context
+		 *            JSContext in which to register the methods
+		 * @param clazz
+		 *            Class from which to register the methods
+		 * @since org.openntf.domino 2.5.0
+		 */
 		private OpenConstructor(final JSContext context, final Class<?> clazz) {
 			super(context, "Open" + clazz.getSimpleName());
 			uiName_ = "Open" + clazz.getSimpleName();
 			clazz_ = clazz;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see com.ibm.jscript.types.GeneratedWrapperObject.Constructor#getWrappedClass()
+		 */
 		@Override
 		public Class<?> getWrappedClass() {
 			return clazz_;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see com.ibm.jscript.types.GeneratedWrapperObject.Constructor#getMethodMap()
+		 */
 		@Override
 		public OpenMethodMap getMethodMap() {
 			return WrapperOpenDomino.getMethodMap(getJSContext(), getWrappedClass());
 		}
 	}
 
-	// private static final class ctor_OpenDocument extends GeneratedWrapperObject.EmptyConstructor {
-	// private ctor_OpenDocument(JSContext context) {
-	// super(context, "OpenDocument");
-	// }
-	//
-	// @Override
-	// protected OpenMethodMap getMethodMap() {
-	// return WrapperOpenDomino.getMap_OpenDocument(getJSContext());
-	// }
-	//
-	// @Override
-	// protected Class<?> getWrappedClass() {
-	// return Document.class;
-	// }
-	//
-	// }
-
-	// private static OpenMethodMap getMap_OpenDateTime(JSContext context) {
-	// if (methodMap_OpenDateTime == null) {
-	// synchronized (WrapperOpenDomino.class) {
-	// if (methodMap_OpenDateTime == null) {
-	// OpenMethodMap methodMap = new OpenMethodMap(context, DateTime.class, null);
-	// methodMap.put("isBefore", new fct_OpenDateTime(context, "isBefore", 0));
-	// methodMap.put("isAfter", new fct_OpenDateTime(context, "isAfter", 1));
-	// methodMap.put("toJavaCal", new fct_OpenDateTime(context, "toJavaCal", 2));
-	// methodMap.put("equals", new fct_OpenDateTime(context, "equals", 3));
-	// methodMap.put("equalsIgnoreDate", new fct_OpenDateTime(context, "equalsIgnoreDate", 4));
-	// methodMap.put("equalsIgnoreTime", new fct_OpenDateTime(context, "equalsIgnoreTime", 5));
-	// methodMap.put("isAnyDate", new fct_OpenDateTime(context, "isAnyDate", 6));
-	// methodMap.put("isAnyTime", new fct_OpenDateTime(context, "isAnyTime", 7));
-	// methodMap_OpenDateTime = methodMap;
-	// }
-	// }
-	// }
-	// return methodMap_OpenDateTime;
-	// }
-
-	// public static final class _OpenDateTime extends OpenObject {
-	// public _OpenDateTime(JSContext context, Object object) {
-	// super(context, object, "OpenDateTime");
-	// }
-	//
-	// @Override
-	// public OpenMethodMap getMethodMap() {
-	// return WrapperOpenDomino.getMap_OpenDateTime(getJSContext());
-	// }
-	//
-	// @Override
-	// public Class<?> getWrappedClass() {
-	// if (super.getWrappedClass() == null) {
-	// return DateTime.class;
-	// } else {
-	// return super.getWrappedClass();
-	// }
-	// }
-	//
-	// }
-
-	// private static final class ctor_OpenDateTime extends GeneratedWrapperObject.EmptyConstructor {
-	// private ctor_OpenDateTime(JSContext context) {
-	// super(context, "OpenDateTime");
-	// }
-	//
-	// @Override
-	// protected OpenMethodMap getMethodMap() {
-	// return WrapperOpenDomino.getMap_OpenDateTime(getJSContext());
-	// }
-	//
-	// @Override
-	// protected Class<?> getWrappedClass() {
-	// return DateTime.class;
-	// }
-	// }
-
+	/**
+	 * WrapperFactory used for registering classes
+	 * 
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	private static class OpenWrapperFactory implements IWrapperFactory {
 		private final Class<?> clazz_;
 
+		/**
+		 * Constructor
+		 * 
+		 * @param clazz
+		 *            Class being registered
+		 * @since org.openntf.domino.xsp 2.5.0
+		 */
 		private OpenWrapperFactory(final Class<?> clazz) {
 			clazz_ = clazz;
 			// System.out.println("Registering OpenNTF SSJS object " + clazz.getName());
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see com.ibm.jscript.types.IWrapperFactory#getMethodMap(com.ibm.jscript.JSContext)
+		 */
 		@Override
 		public OpenMethodMap getMethodMap(final JSContext context) {
 			return WrapperOpenDomino.getMethodMap(context, clazz_);
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see com.ibm.jscript.types.IWrapperFactory#wrap(com.ibm.jscript.JSContext, java.lang.Object)
+		 */
 		@Override
 		public OpenObject wrap(final JSContext context, final Object object) {
 			return new OpenObject(context, object, clazz_);
@@ -612,6 +676,13 @@ public class WrapperOpenDomino {
 
 	private static boolean registered = false;
 
+	/**
+	 * Registers the methods of all Java classes in {@link WrapperOpenDomino#WRAPPED_CLASSES}, prefixing them with "Open"
+	 * 
+	 * @param context
+	 *            JSContext in which methods will be registered
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	public static void register(final JSContext context) {
 		if (registered) {
 			return;
@@ -622,9 +693,13 @@ public class WrapperOpenDomino {
 			registry.registerPackage("OpenNTFDomino", 1337);
 			FBSDefaultObject defaultObject = registry.getRegistryObject();
 
-			for (Class<?> clazz : WRAPPED_CLASSES) {
-				registry.registerWrapper(clazz, new OpenWrapperFactory(clazz));
-				defaultObject.createProperty("Open" + clazz.getSimpleName(), 1338, new OpenConstructor(context, clazz));
+			List<Object> wregs = ExtensionManager.findServices(null, WrapperOpenDomino.class, WrapperRegistry.class.getName());
+			// for (Class<?> clazz : WRAPPED_CLASSES) {
+			for (Object wreg : wregs) {
+				for (Class<?> clazz : ((WrapperRegistry) wreg).getWrapperClasses()) {
+					registry.registerWrapper(clazz, new OpenWrapperFactory(clazz));
+					defaultObject.createProperty("Open" + clazz.getSimpleName(), 1338, new OpenConstructor(context, clazz));
+				}
 			}
 
 		} catch (Exception e) {
@@ -633,52 +708,73 @@ public class WrapperOpenDomino {
 		registered = true;
 	}
 
+	/**
+	 * Java classes for which to register SSJS methods
+	 * 
+	 * @since org.openntf.domino.xsp 2.5.0
+	 */
 	public static final List<Class<?>> WRAPPED_CLASSES = new ArrayList<Class<?>>();
 
 	static {
-		WRAPPED_CLASSES.add(org.openntf.domino.Document.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.Database.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.Session.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.DateTime.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.Item.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.View.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.DocumentCollection.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.ViewEntryCollection.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.ViewEntry.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.ViewColumn.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.RichTextItem.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.Name.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.DateRange.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.DbDirectory.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.Form.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.Outline.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.OutlineEntry.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.Agent.class);
 		WRAPPED_CLASSES.add(org.openntf.domino.ACL.class);
 		WRAPPED_CLASSES.add(org.openntf.domino.ACLEntry.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.AdministrationProcess.class); // Added 5.0.0
+		WRAPPED_CLASSES.add(org.openntf.domino.Agent.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.AgentBase.class); // Added 5.0.0
+		WRAPPED_CLASSES.add(org.openntf.domino.AgentContext.class); // Added 5.0.0
+		WRAPPED_CLASSES.add(org.openntf.domino.AutoMime.class); // Added 5.0.0
+		WRAPPED_CLASSES.add(org.openntf.domino.Base.class); // Added 5.0.0
+		WRAPPED_CLASSES.add(org.openntf.domino.ColorObject.class); // Added 5.0.0
+		WRAPPED_CLASSES.add(org.openntf.domino.Database.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.DateRange.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.DateTime.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.DbDirectory.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.Directory.class); // Added 5.0.0
+		WRAPPED_CLASSES.add(org.openntf.domino.DirectoryNavigator.class); // Added 5.0.0
+		WRAPPED_CLASSES.add(org.openntf.domino.Document.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.DocumentCollection.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.DxlExporter.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.DxlImporter.class);
 		WRAPPED_CLASSES.add(org.openntf.domino.EmbeddedObject.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.Form.class);
 		// WRAPPED_CLASSES.add(org.openntf.domino.Formula.class);
 		WRAPPED_CLASSES.add(org.openntf.domino.International.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.Item.class);
 		WRAPPED_CLASSES.add(org.openntf.domino.Log.class);
 		WRAPPED_CLASSES.add(org.openntf.domino.MIMEEntity.class);
 		WRAPPED_CLASSES.add(org.openntf.domino.MIMEHeader.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.Name.class);
 		WRAPPED_CLASSES.add(org.openntf.domino.Newsletter.class);
 		WRAPPED_CLASSES.add(org.openntf.domino.NoteCollection.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.ViewNavigator.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.Stream.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.RichTextTab.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.RichTextTable.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.RichTextStyle.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.RichTextSection.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.RichTextRange.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.RichTextNavigator.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.RichTextParagraphStyle.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.RichTextDoclink.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.NotesCalendar.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.NotesCalendarEntry.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.NotesCalendarNotice.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.NotesProperty.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.Outline.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.OutlineEntry.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.Registration.class);
 		WRAPPED_CLASSES.add(org.openntf.domino.Replication.class);
 		WRAPPED_CLASSES.add(org.openntf.domino.ReplicationEntry.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.Registration.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.DxlExporter.class);
-		WRAPPED_CLASSES.add(org.openntf.domino.DxlImporter.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.RichTextDoclink.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.RichTextItem.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.RichTextNavigator.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.RichTextParagraphStyle.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.RichTextRange.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.RichTextSection.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.RichTextStyle.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.RichTextTab.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.RichTextTable.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.Session.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.Stream.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.View.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ViewColumn.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ViewEntry.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ViewEntryCollection.class);
+		WRAPPED_CLASSES.add(org.openntf.domino.ViewNavigator.class);
+	}
+	@Override
+	public List<Class<?>> getWrapperClasses() {
+		return WRAPPED_CLASSES;
 	}
 
 }

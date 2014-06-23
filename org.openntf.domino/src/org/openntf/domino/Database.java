@@ -19,6 +19,7 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Vector;
 
+import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.types.FactorySchema;
 import org.openntf.domino.types.Resurrectable;
@@ -30,6 +31,11 @@ import org.openntf.domino.types.SessionDescendant;
 public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database>, org.openntf.domino.ext.Database,
 		Resurrectable, SessionDescendant {
 
+	/**
+	 * Enum to allow easy access to Schema
+	 * 
+	 * @since 5.0.0
+	 */
 	public static class Schema extends FactorySchema<Database, lotus.domino.Database, Session> {
 		@Override
 		public Class<Database> typeClass() {
@@ -100,13 +106,14 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		}
 
 		/**
-		 * Not currently implemented
+		 * Not currently implemented, just returns true
 		 * 
 		 * @param db
 		 *            Database to check
 		 * @return boolean, currently always returns true
 		 * @since org.openntf.domino 4.5.0
 		 */
+		@Incomplete
 		public static boolean isTemplateCandidate(final Database db) {
 			boolean result = true;
 			//TODO do we actually want to add any future checks for this?

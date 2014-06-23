@@ -46,7 +46,9 @@ public interface RichTextParagraphStyle extends Base<lotus.domino.RichTextParagr
 	public static final Schema SCHEMA = new Schema();
 
 	/**
-	 * The Enum Align.
+	 * Enum to allow easy access to RichTextParagraphStyle options
+	 * 
+	 * @since org.openntf.domino 1.0.0
 	 */
 	public static enum Align {
 

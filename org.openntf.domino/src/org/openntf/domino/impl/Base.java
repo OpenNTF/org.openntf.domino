@@ -728,7 +728,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * @throws IllegalArgumentException
 	 */
 	@SuppressWarnings("rawtypes")
-	protected static Object toItemFriendly(final Object value, final org.openntf.domino.Base context,
+	public static Object toItemFriendly(final Object value, final org.openntf.domino.Base context,
 			final Collection<lotus.domino.Base> recycleThis) throws IllegalArgumentException {
 		if (value == null) {
 			log_.log(Level.INFO, "Trying to convert a null argument to Domino friendly. Returning null...");
@@ -1053,6 +1053,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * 
 	 * @see lotus.domino.Base#recycle(java.util.Vector)
 	 */
+	@Override
 	@Deprecated
 	@SuppressWarnings("rawtypes")
 	public void recycle(final Vector arg0) {
@@ -1067,6 +1068,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 
 	private List<IDominoListener> listeners_;
 
+	@Override
 	public List<IDominoListener> getListeners() {
 		if (listeners_ == null) {
 			listeners_ = new ArrayList<IDominoListener>();
@@ -1074,14 +1076,17 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		return listeners_;
 	}
 
+	@Override
 	public void addListener(final IDominoListener listener) {
 		getListeners().add(listener);
 	}
 
+	@Override
 	public void removeListener(final IDominoListener listener) {
 		getListeners().remove(listener);
 	}
 
+	@Override
 	public List<IDominoListener> getListeners(final EnumEvent event) {
 		List<IDominoListener> result = new ArrayList<IDominoListener>();
 		for (IDominoListener listener : getListeners()) {
@@ -1095,6 +1100,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		return result;
 	}
 
+	@Override
 	public boolean fireListener(final IDominoEvent event) {
 		boolean result = true;
 		for (IDominoListener listener : getListeners(event.getEvent())) {

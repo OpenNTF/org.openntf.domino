@@ -81,7 +81,11 @@ public enum XSPUtil {
 	public static Database getCurrentDatabase() {
 		try {
 			lotus.domino.Database db = (lotus.domino.Database) resolveVariable("database");
-			return Factory.fromLotus(db, Database.SCHEMA, null);
+			if (db instanceof org.openntf.domino.Database) {
+				return (org.openntf.domino.Database) db;
+			} else {
+				return Factory.fromLotus(db, Database.SCHEMA, getCurrentSession());
+			}
 		} catch (Exception ne) {
 			DominoUtils.handleException(ne);
 			return null;

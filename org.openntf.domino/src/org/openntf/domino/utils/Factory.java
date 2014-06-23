@@ -23,6 +23,7 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -51,7 +52,7 @@ import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
-import org.openntf.domino.graph.DominoGraph;
+import org.openntf.domino.graph.GenericDominoGraph;
 import org.openntf.domino.logging.ConsoleFormatter;
 import org.openntf.domino.logging.DefaultConsoleHandler;
 import org.openntf.domino.logging.DefaultFileHandler;
@@ -67,6 +68,10 @@ import org.openntf.domino.types.SessionDescendant;
 public enum Factory {
 	;
 
+	public interface AppServiceLocator {
+		public <T> List<T> findApplicationServices(final Class<T> serviceClazz);
+	}
+
 	/**
 	 * Holder for the wrapper-factory that converts lotus.domino objects to org.openntf.domino objects
 	 */
@@ -74,13 +79,7 @@ public enum Factory {
 
 	private static ThreadLocal<ClassLoader> currentClassLoader_ = new ThreadLocal<ClassLoader>();
 
-	private static ThreadLocal<Map<String, Class<?>>> currentLoadedClasses_ = new ThreadLocal<Map<String, Class<?>>>() {
-
-		@Override
-		protected Map<String, Class<?>> initialValue() {
-			return new HashMap<String, Class<?>>();
-		}
-	};
+	private static ThreadLocal<AppServiceLocator> currentServiceLocator_ = new ThreadLocal<AppServiceLocator>();
 
 	private static ThreadLocal<Session> currentSessionHolder_ = new ThreadLocal<Session>();
 
@@ -444,22 +443,8 @@ public enum Factory {
 	public static WrapperFactory getWrapperFactory() {
 		WrapperFactory wf = currentWrapperFactory.get();
 		if (wf == null) {
-			ClassLoader cl = getClassLoader();
-			// System.out.println("Got this Classloader: " + cl);
-
-			if (cl != null) {
-				ServiceLoader<WrapperFactory> loader = ServiceLoader.load(WrapperFactory.class, cl);
-				Iterator<WrapperFactory> it = loader.iterator();
-				if (it.hasNext()) {
-					wf = it.next();
-					// TODO RPr remove these debug prints
-					System.out.println("Using alternative WrapperFactory: " + wf);
-				}
-			}
-			if (wf == null) {
-				// System.out.println("Using default WrapperFactory");
-				wf = new org.openntf.domino.impl.WrapperFactory();
-			}
+			List<WrapperFactory> wfList = findApplicationServices(WrapperFactory.class);
+			wf = wfList.size() > 0 ? wfList.get(0) : new org.openntf.domino.impl.WrapperFactory();
 			currentWrapperFactory.set(wf);
 		}
 		return wf;
@@ -710,30 +695,51 @@ public enum Factory {
 		return currentClassLoader_.get();
 	}
 
-	public static boolean isClassLoaded(final String className) {
-		return (currentLoadedClasses_.get().get(className) != null);
-	}
+	private static Map<Class, List> nonOSGIServicesCache;
 
-	public static Class<?> getClass(final String className) throws ClassNotFoundException {
-		Map<String, Class<?>> map = currentLoadedClasses_.get();
-		if (map.containsKey(className))
-			return map.get(className);
-		Class<?> clazz = null;
-		try {
-			clazz = getClassLoader().loadClass(className);
-		} finally {
-			map.put(className, clazz);
+	@SuppressWarnings("unchecked")
+	public static <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
+
+		AppServiceLocator serviceLocator = currentServiceLocator_.get();
+		if (serviceLocator != null) {
+			return serviceLocator.findApplicationServices(serviceClazz);
 		}
 
-		return clazz;
+		// this is the non OSGI case:
+		if (nonOSGIServicesCache == null)
+			nonOSGIServicesCache = new HashMap<Class, List>();
+
+		@SuppressWarnings("unchecked")
+		List<T> ret = nonOSGIServicesCache.get(serviceClazz);
+		if (ret == null) {
+			ret = new ArrayList<T>();
+			nonOSGIServicesCache.put(serviceClazz, ret);
+
+			ClassLoader cl = getClassLoader();
+			if (cl != null) {
+				ServiceLoader<T> loader = ServiceLoader.load(serviceClazz, cl);
+				Iterator<T> it = loader.iterator();
+				while (it.hasNext()) {
+					ret.add(it.next());
+				}
+			}
+			if (Comparable.class.isAssignableFrom(serviceClazz)) {
+				Collections.sort((List<? extends Comparable>) ret);
+			}
+		}
+		return ret;
 	}
 
 	public static void setClassLoader(final ClassLoader loader) {
 		if (loader != null) {
 			//			System.out.println("Setting OpenNTF Factory ClassLoader to a " + loader.getClass().getName());
 		}
-		currentLoadedClasses_.get().clear();
+		//		currentLoadedClasses_.get().clear();
 		currentClassLoader_.set(loader);
+	}
+
+	public static void setServiceLocator(final AppServiceLocator locator) {
+		currentServiceLocator_.set(locator);
 	}
 
 	public static void clearWrapperFactory() {
@@ -742,11 +748,14 @@ public enum Factory {
 
 	public static void clearClassLoader() {
 		currentClassLoader_.set(null);
-		currentLoadedClasses_.get().clear();
+	}
+
+	public static void clearServiceLocator() {
+		currentServiceLocator_.set(null);
 	}
 
 	public static void clearDominoGraph() {
-		DominoGraph.clearDocumentCache();
+		GenericDominoGraph.clearDocumentCache();
 	}
 
 	public static void clearBubbleExceptions() {
@@ -778,6 +787,7 @@ public enum Factory {
 		clearWrapperFactory();
 		clearClassLoader();
 		clearUserLocale();
+		clearServiceLocator();
 		return result;
 	}
 
@@ -810,7 +820,9 @@ public enum Factory {
 	 */
 	public static Locale getInternalLocale() {
 		Locale ret = null;
-		Database db = getCurrentDatabase();
+		// are we in context of an NotesSession? Try to figure out the current database.
+		Session sess = getSession_unchecked();
+		Database db = (sess == null) ? null : sess.getCurrentDatabase();
 		if (db != null)
 			ret = db.getLocale();
 		if (ret == null)

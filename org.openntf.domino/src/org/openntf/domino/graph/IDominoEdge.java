@@ -12,6 +12,6 @@ import com.tinkerpop.blueprints.Vertex;
  */
 public interface IDominoEdge extends IDominoElement, Edge {
 
-	public Vertex getOtherVertex(Vertex vertex);
+	public IDominoVertex getOtherVertex(Vertex vertex);
 
 }

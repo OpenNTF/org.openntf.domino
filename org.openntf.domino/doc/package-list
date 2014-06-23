@@ -1,3 +1,4 @@
+org.openntf.arpa
 org.openntf.domino
 org.openntf.domino.annotations
 org.openntf.domino.big
@@ -9,13 +10,19 @@ org.openntf.domino.email
 org.openntf.domino.events
 org.openntf.domino.exceptions
 org.openntf.domino.ext
+org.openntf.domino.formula
+org.openntf.domino.formula.ast
+org.openntf.domino.formula.impl
+org.openntf.domino.formula.parse
 org.openntf.domino.graph
 org.openntf.domino.helpers
 org.openntf.domino.impl
 org.openntf.domino.iterators
 org.openntf.domino.logging
+org.openntf.domino.napi
 org.openntf.domino.schema
 org.openntf.domino.schema.exceptions
+org.openntf.domino.schema.impl
 org.openntf.domino.schema.types
 org.openntf.domino.thread
 org.openntf.domino.thread.deprecated

@@ -7,8 +7,5 @@
 	<classpathentry exported="true" kind="lib" path="ext/gremlin-java-2.4.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="ext/pipes-2.4.0.jar"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="resources"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/org.openntf.formula"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/org.openntf.domino"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
