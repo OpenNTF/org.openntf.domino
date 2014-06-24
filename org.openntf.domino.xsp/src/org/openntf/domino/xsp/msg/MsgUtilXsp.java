@@ -33,7 +33,7 @@ public enum MsgUtilXsp {
 	;
 
 	/*----------------------------------------------------------------------------*/
-	private static final String lXSPMsgPkg = "org.openntf.domino.xsp.i18n";
+	public static final String lXSPMsgPkg = "org.openntf.domino.xsp.i18n";
 
 	/*----------------------------------------------------------------------------*/
 	/**

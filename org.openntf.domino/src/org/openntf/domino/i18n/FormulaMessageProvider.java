@@ -53,11 +53,16 @@ public class FormulaMessageProvider extends MessageProvider {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	protected String getCookedText(final String bundleName, final String key, final Locale loc, final Object... args) {
-		String msgString = super.getCookedText(bundleName, key, loc, args);
+	protected String getCookedText(final boolean retDefIfNotAvail, final String bundleName, final String key, final Locale loc,
+			final Object... args) {
+		String msgString = super.getCookedText(retDefIfNotAvail, bundleName, key, loc, args);
+		if (msgString == null) {
+			if (retDefIfNotAvail)
+				throw new IllegalStateException("getCookedText(true, ...) returned null");
+			return null;
+		}
 		if (!msgString.contains("<!") && !msgString.contains("<#"))
 			return msgString;
-
 		int numParams = args.length;
 		Map<String, Object> map = null;
 		if (numParams != 0) {

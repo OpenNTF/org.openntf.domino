@@ -35,18 +35,29 @@ public class MessageProvider {
 	 * @return the raw text
 	 */
 	public String getRawText(final String bundleName, final String key, final Locale loc) {
+		return getRawTextEx(true, bundleName, key, loc);
+	}
+
+	public String getRawTextNoDef(final String bundleName, final String key, final Locale loc) {
+		return getRawTextEx(false, bundleName, key, loc);
+	}
+
+	protected String getRawTextEx(final boolean retDefIfNotAvail, final String bundleName, final String key, final Locale loc) {
 		List<RawMessageProvider> provs = Factory.findApplicationServices(RawMessageProvider.class);
 		for (RawMessageProvider prov : provs) {
 			String ret = prov.getRawText(bundleName, key, loc);
 			if (ret != null)
 				return ret;
-
 		}
-		return getDefaultString(bundleName, key, loc);
+		return retDefIfNotAvail ? getDefaultString(bundleName, key, loc) : null;
 	}
 
 	public static String sGetRawText(final String bundleName, final String key, final Locale loc) {
 		return getCurrentInstance().getRawText(bundleName, key, loc);
+	}
+
+	public static String sGetRawTextNoDef(final String bundleName, final String key, final Locale loc) {
+		return getCurrentInstance().getRawTextNoDef(bundleName, key, loc);
 	}
 
 	/**
@@ -68,11 +79,19 @@ public class MessageProvider {
 	 * @return the text
 	 */
 	public String getString(final String bundleName, final String key, final Object... args) {
-		return getCookedText(bundleName, key, Factory.getExternalLocale(), args);
+		return getCookedText(true, bundleName, key, Factory.getExternalLocale(), args);
 	}
 
 	public static String sGetString(final String bundleName, final String key, final Object... args) {
 		return getCurrentInstance().getString(bundleName, key, args);
+	}
+
+	public String getStringNoDef(final String bundleName, final String key, final Object... args) {
+		return getCookedText(false, bundleName, key, Factory.getExternalLocale(), args);
+	}
+
+	public static String sGetStringNoDef(final String bundleName, final String key, final Object... args) {
+		return getCurrentInstance().getStringNoDef(bundleName, key, args);
 	}
 
 	/**
@@ -87,18 +106,29 @@ public class MessageProvider {
 	 * @return the text
 	 */
 	public String getInternalString(final String bundleName, final String key, final Object... args) {
-		return getCookedText(bundleName, key, Factory.getInternalLocale(), args);
+		return getCookedText(true, bundleName, key, Factory.getInternalLocale(), args);
 	}
 
 	public static String sGetInternalString(final String bundleName, final String key, final Object... args) {
 		return getCurrentInstance().getString(bundleName, key, args);
 	}
 
+	public String getInternalStringNoDef(final String bundleName, final String key, final Object... args) {
+		return getCookedText(false, bundleName, key, Factory.getInternalLocale(), args);
+	}
+
+	public static String sGetInternalStringNoDef(final String bundleName, final String key, final Object... args) {
+		return getCurrentInstance().getStringNoDef(bundleName, key, args);
+	}
+
 	/**
 	 * returns the same as getRawText. This method may be overwritten.
+	 * 
+	 * @param retDef
 	 */
-	protected String getCookedText(final String bundleName, final String key, final Locale loc, final Object... args) {
-		return getRawText(bundleName, key, loc);
+	protected String getCookedText(final boolean retDefIfNotAvail, final String bundleName, final String key, final Locale loc,
+			final Object... args) {
+		return getRawTextEx(retDefIfNotAvail, bundleName, key, loc);
 	}
 
 	public static MessageProvider getCurrentInstance() {
