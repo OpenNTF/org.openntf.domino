@@ -459,6 +459,7 @@ public enum Strings {
 	 * 
 	 * @param sb
 	 *            StringBuilder object from which to remove all blank spaces.
+	 * 
 	 * @return StringBuilder object with all blank spaces removed.
 	 */
 	public static StringBuilder removeBlankSpace(final StringBuilder sb) {
