@@ -210,15 +210,15 @@ public enum Dates {
 	}
 
 	/**
-	 * Gets the timestamp for a date.
+	 * Gets the timestamp for a specified date.
 	 * 
 	 * @param date
-	 *            the date from which to get the timestamp
+	 *            date from which to generate a timestamp
 	 * 
 	 * @param format
-	 *            the format for the timestamp.
+	 *            format for the timestamp.
 	 * 
-	 * @return the timestamp for the date.
+	 * @return the timestamp for the specified date.
 	 */
 	public static String getTimestamp(final Object object, final String format) {
 		try {
@@ -243,23 +243,36 @@ public enum Dates {
 	}
 
 	/**
-	 * Gets the timestamp.
+	 * Gets the timestamp for a specified date.
 	 * 
 	 * @param date
-	 *            the date
-	 * @return the timestamp
+	 *            date from which to generate a timestamp
+	 * 
+	 * @return timestamp for the specified date
 	 */
 	public static String getTimestamp(final Date date) {
 		return Dates.DEFAULT.getInstanceTimestamp(date);
 	}
 
 	/**
-	 * Gets the timestamp.
+	 * Gets the timestamp for the current date.
 	 * 
-	 * @return the timestamp
+	 * @return timestamp for the current date
 	 */
 	public static String getTimestamp() {
 		return Dates.DEFAULT.getInstanceTimestamp();
+	}
+
+	/**
+	 * Gets the timestamp for the current date.
+	 * 
+	 * @param format
+	 *            format for the timestamp.
+	 * 
+	 * @return the timestamp for the current date.
+	 */
+	public static String getTimestamp(final String format) {
+		return Dates.getTimestamp(Dates.getDate(), format);
 	}
 
 	/**
