@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -1388,6 +1389,22 @@ public enum TextFunctions {
 		} catch (FormulaParseException e) {
 			return ValueHolder.valueOf(e.getMessage());
 		}
+	}
+
+	/*----------------------------------------------------------------------------*/
+	/*
+	 * @GetLocaleDisplayName
+	 */
+	/*----------------------------------------------------------------------------*/
+	@OpenNTF
+	@ParamCount(1)
+	public static String atGetLocaleDisplayName(final FormulaContext ctx, final String localeShortName) {
+		int lh = localeShortName.length();
+		if (lh < 2)
+			return localeShortName;
+		String language = localeShortName.substring(0, 2);
+		String country = (lh >= 5) ? localeShortName.substring(3, 5) : "";
+		return new Locale(language, country).getDisplayName(ctx.getFormatter().getLocale());
 	}
 
 	/*----------------------------------------------------------------------------*/
