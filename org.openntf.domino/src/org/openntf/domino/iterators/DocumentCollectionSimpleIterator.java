@@ -20,7 +20,7 @@ public class DocumentCollectionSimpleIterator implements Iterator<org.openntf.do
 	}
 
 	@Override
-	public org.openntf.domino.Document next() {
+	public Document next() {
 		Document result = this._next;
 		if (null != result) {
 			this._next = this._dc.getNextDocument(result);
