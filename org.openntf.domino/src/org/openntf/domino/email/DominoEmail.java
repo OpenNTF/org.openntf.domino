@@ -637,15 +637,18 @@ public class DominoEmail implements IEmail {
 
 			mimeHeader = mimeRoot.createHeader("To");
 			mimeHeader.setHeaderVal(join(getTo(), ""));
+			memo.replaceItemValue("sendTo", getTo());
 
 			if (cc_.size() > 0) {
 				mimeHeader = mimeRoot.createHeader("CC");
 				mimeHeader.setHeaderVal(join(getCC(), ""));
+				memo.replaceItemValue("cc", getCC());
 			}
 
 			if (bcc_.size() > 0) {
 				mimeHeader = mimeRoot.createHeader("BCC");
 				mimeHeader.setHeaderVal(join(getBCC(), ""));
+				memo.replaceItemValue("bcc", getBCC());
 			}
 
 			//set subject
