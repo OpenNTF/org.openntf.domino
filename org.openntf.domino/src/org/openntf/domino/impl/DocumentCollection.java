@@ -27,7 +27,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
-import org.openntf.domino.iterators.DocumentCollectionIterator;
+import org.openntf.domino.iterators.DocumentCollectionSimpleIterator;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.TypeUtils;
 
@@ -845,7 +845,8 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	@Override
 	public Iterator<org.openntf.domino.Document> iterator() {
 		//return new DocumentIterator(this);
-		return new DocumentCollectionIterator(this);
+		//		return new DocumentCollectionIterator(this);
+		return new DocumentCollectionSimpleIterator(this);
 	}
 
 	public org.openntf.domino.Database getParentDatabase() {
