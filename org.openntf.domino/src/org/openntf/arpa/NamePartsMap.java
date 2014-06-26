@@ -432,6 +432,8 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 				}
 
 				result = sb.toString();
+
+				// use super.put() to avoid endless loop! 
 				super.put(Key.IDprefix, result);
 			}
 		}
