@@ -432,7 +432,7 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 				}
 
 				result = sb.toString();
-				this.put(Key.IDprefix, result);
+				super.put(Key.IDprefix, result);
 			}
 		}
 
