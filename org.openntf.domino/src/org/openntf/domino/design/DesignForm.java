@@ -16,8 +16,6 @@
 
 package org.openntf.domino.design;
 
-import org.openntf.domino.design.impl.FormField;
-
 /**
  * @author jgallagher
  * 
