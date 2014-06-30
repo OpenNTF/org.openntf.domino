@@ -108,6 +108,69 @@ public enum TypeUtils {
 		return result;
 	}
 
+	public static boolean isNumerical(final Object rawObject) {
+		boolean result = true;
+		if (rawObject == null || rawObject instanceof String)
+			return false;	//NTF: we know this is going to be true a LOT, so we'll have a fast out
+		if (rawObject instanceof Collection) {
+			for (Object obj : (Collection) rawObject) {
+				if (!isNumerical(obj)) {
+					result = false;
+					break;
+				}
+			}
+		} else {
+			if (rawObject instanceof Number || Integer.TYPE.isInstance(rawObject) || Double.TYPE.isInstance(rawObject)
+					|| Byte.TYPE.isInstance(rawObject) || Short.TYPE.isInstance(rawObject) || Long.TYPE.isInstance(rawObject)
+					|| Float.TYPE.isInstance(rawObject)) {
+			} else {
+				result = false;
+			}
+		}
+		return result;
+	}
+
+	public static boolean isCalendrical(final Object rawObject) {
+		boolean result = true;
+		if (rawObject == null || rawObject instanceof String)
+			return false;	//NTF: we know this is going to be true a LOT, so we'll have a fast out
+		if (rawObject instanceof Collection) {
+			for (Object obj : (Collection) rawObject) {
+				if (!isCalendrical(obj)) {
+					result = false;
+					break;
+				}
+			}
+		} else {
+			if (rawObject instanceof DateTime || rawObject instanceof Date) {
+			} else {
+				result = false;
+			}
+		}
+		return result;
+	}
+
+	public static boolean isNameish(final Object rawObject) {
+		boolean result = true;
+		if (rawObject == null)
+			return false;	//NTF: we know this is going to be true a LOT, so we'll have a fast out
+		if (rawObject instanceof Collection) {
+			for (Object obj : (Collection) rawObject) {
+				if (!isNameish(obj)) {
+					result = false;
+					break;
+				}
+			}
+		} else {
+			if (rawObject instanceof String) {
+				result = DominoUtils.isHierarchicalName((String) rawObject);
+			} else {
+				result = false;
+			}
+		}
+		return result;
+	}
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T> T vectorToClass(final Vector v, final Class<?> T, final Session session) {
 		//		if (T == java.lang.Class.class) {

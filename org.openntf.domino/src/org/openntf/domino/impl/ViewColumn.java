@@ -15,6 +15,8 @@
  */
 package org.openntf.domino.impl;
 
+import java.util.Vector;
+
 import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
@@ -65,6 +67,23 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	@Override
 	protected View findParent(final lotus.domino.ViewColumn delegate) throws NotesException {
 		return fromLotus(delegate.getParent(), View.SCHEMA, null);
+	}
+
+	private int index_ = -1;
+
+	@Override
+	public int getIndex() {
+		if (index_ == -1) {
+			View view = getParent();
+			Vector<org.openntf.domino.ViewColumn> columns = view.getColumns();
+			for (int i = 0; i < columns.size(); i++) {
+				if (this.equals(columns.get(i))) {
+					index_ = i;
+					break;
+				}
+			}
+		}
+		return index_;
 	}
 
 	/*

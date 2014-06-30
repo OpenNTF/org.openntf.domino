@@ -212,7 +212,6 @@ public enum Documents {
 	 * @throws Throwable
 	 *             the throwable
 	 */
-	@SuppressWarnings({ "cast" })
 	public static Object restoreState(final Document doc, final String itemName) throws Exception {
 		return restoreState(doc, itemName, null);
 	}
@@ -251,6 +250,7 @@ public enum Documents {
 	 * @throws Throwable
 	 *             the throwable
 	 */
+	@SuppressWarnings("restriction")
 	public static void saveState(final Serializable object, final Document doc, final String itemName, boolean compress,
 			final Map<String, String> headers) throws Exception {
 		if (object == null) {

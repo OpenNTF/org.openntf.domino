@@ -223,11 +223,11 @@ public enum ISO {
 	 */
 	public static ISO3166 getISO3166(final String code) {
 		if (null != code) {
-			int length = code.length();
+			final int length = code.length();
 			switch (length) {
 			case 2: {
-				Matcher matcher = ISO.PatternAlpha2.matcher(code);
-				for (ISO3166 result : ISO3166.values()) {
+				final Matcher matcher = ISO.PatternAlpha2.matcher(code);
+				for (final ISO3166 result : ISO3166.values()) {
 					if (code.equals(result.getCode2())) {
 						return result;
 					}
@@ -235,8 +235,8 @@ public enum ISO {
 				break;
 			}
 			case 3: {
-				Matcher matcher = ISO.PatternAlpha3.matcher(code);
-				for (ISO3166 result : ISO3166.values()) {
+				final Matcher matcher = ISO.PatternAlpha3.matcher(code);
+				for (final ISO3166 result : ISO3166.values()) {
 					if (code.equals(result.getCode3())) {
 						return result;
 					}
@@ -261,7 +261,7 @@ public enum ISO {
 	 * @return the Country for the code, if found. Empty string "" otherwise.
 	 */
 	public static String getCountry(final String code) {
-		ISO3166 temp = ISO.getISO3166(code);
+		final ISO3166 temp = ISO.getISO3166(code);
 		return (null == temp) ? "" : temp.getCountry();
 	}
 
@@ -274,7 +274,7 @@ public enum ISO {
 	 * @return Flag indicating if the code is valid
 	 */
 	public static boolean isCountryCode2(final String code) {
-		ISO3166 temp = ISO.getISO3166(code);
+		final ISO3166 temp = ISO.getISO3166(code);
 		return (null == temp) ? false : temp.getCode2().equals(code);
 	}
 
@@ -287,7 +287,7 @@ public enum ISO {
 	 * @return Flag indicating if the code is valid
 	 */
 	public static boolean isCountryCode3(final String code) {
-		ISO3166 temp = ISO.getISO3166(code);
+		final ISO3166 temp = ISO.getISO3166(code);
 		return (null == temp) ? false : temp.getCode3().equals(code);
 	}
 
