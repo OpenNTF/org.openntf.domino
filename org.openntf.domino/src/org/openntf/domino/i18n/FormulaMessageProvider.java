@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.openntf.domino.AsDocMap;
 import org.openntf.formula.ASTNode;
 import org.openntf.formula.Formatter;
 import org.openntf.formula.FormulaContext;
@@ -67,8 +68,9 @@ public class FormulaMessageProvider extends MessageProvider {
 		Map<String, Object> map = null;
 		if (numParams != 0) {
 			Object o = args[numParams - 1];
-			if (o instanceof Map) { // every org.openntf.domino.Document implements also Map
-				map = (Map<String, Object>) o;
+			if (o instanceof AsDocMap) { //i.e. org.openntf.domino.Document or
+											// org.openntf.domino.xsp.model.OpenntfDominoDocument
+				map = ((AsDocMap) o).asDocMap();
 				numParams--;
 			}
 		}

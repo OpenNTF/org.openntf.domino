@@ -1402,9 +1402,65 @@ public enum TextFunctions {
 		int lh = localeShortName.length();
 		if (lh < 2)
 			return localeShortName;
-		String language = localeShortName.substring(0, 2);
-		String country = (lh >= 5) ? localeShortName.substring(3, 5) : "";
-		return new Locale(language, country).getDisplayName(ctx.getFormatter().getLocale());
+		Locale l = getPredefLocale(localeShortName);
+		if (l == null) {
+			String language = localeShortName.substring(0, 2);
+			String country = (lh >= 5) ? localeShortName.substring(3, 5) : "";
+			l = new Locale(language, country);
+		}
+		return l.getDisplayName(ctx.getFormatter().getLocale());
+	}
+
+	public static Locale getPredefLocale(final String localeShortName) {
+		return lPredefLocs.get(localeShortName);
+	}
+
+	private static Map<String, Locale> lPredefLocs;
+	static {
+		lPredefLocs = new HashMap<String, Locale>();
+		Locale l;
+		l = Locale.CANADA;
+		lPredefLocs.put(l.toString(), l);
+		l = Locale.CANADA_FRENCH;
+		lPredefLocs.put(l.toString(), l);
+		l = Locale.CHINA;
+		lPredefLocs.put(l.toString(), l);
+		l = Locale.CHINESE;
+		lPredefLocs.put(l.toString(), l);
+		l = Locale.ENGLISH;
+		lPredefLocs.put(l.toString(), l);
+		l = Locale.FRANCE;
+		lPredefLocs.put(l.toString(), l);
+		l = Locale.FRENCH;
+		lPredefLocs.put(l.toString(), l);
+		l = Locale.GERMAN;
+		lPredefLocs.put(l.toString(), l);
+		l = Locale.GERMANY;
+		lPredefLocs.put(l.toString(), l);
+		l = Locale.ITALIAN;
+		lPredefLocs.put(l.toString(), l);
+		l = Locale.ITALY;
+		lPredefLocs.put(l.toString(), l);
+		l = Locale.JAPAN;
+		lPredefLocs.put(l.toString(), l);
+		l = Locale.JAPANESE;
+		lPredefLocs.put(l.toString(), l);
+		l = Locale.KOREA;
+		lPredefLocs.put(l.toString(), l);
+		l = Locale.KOREAN;
+		lPredefLocs.put(l.toString(), l);
+		l = Locale.PRC;
+		lPredefLocs.put(l.toString(), l);
+		l = Locale.SIMPLIFIED_CHINESE;
+		lPredefLocs.put(l.toString(), l);
+		l = Locale.TAIWAN;
+		lPredefLocs.put(l.toString(), l);
+		l = Locale.TRADITIONAL_CHINESE;
+		lPredefLocs.put(l.toString(), l);
+		l = Locale.UK;
+		lPredefLocs.put(l.toString(), l);
+		l = Locale.US;
+		lPredefLocs.put(l.toString(), l);
 	}
 
 	/*----------------------------------------------------------------------------*/

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.openntf.domino.AsDocMap;
 import org.openntf.domino.utils.DominoUtils;
 
 /*
@@ -37,7 +38,7 @@ import com.ibm.xsp.model.domino.wrapped.DominoDocument;
  * 
  */
 @SuppressWarnings("unchecked")
-public class OpenntfDominoDocument extends DominoDocument {
+public class OpenntfDominoDocument extends DominoDocument implements AsDocMap {
 	// private static final Logger log_ = Logger.getLogger(FocDominoDocument.class.getName());
 	private static final long serialVersionUID = 1L;
 
@@ -97,7 +98,8 @@ public class OpenntfDominoDocument extends DominoDocument {
 		}
 	}
 
-	public Map<String, Object> asMap() {
+	@Override
+	public Map<String, Object> asDocMap() {
 		if (mapAdapter == null) {
 			mapAdapter = new DominoDocumentMapAdapter(this);
 		}

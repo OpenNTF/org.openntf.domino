@@ -3810,4 +3810,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		}
 		return result;
 	}
+
+	@Override
+	public Map<String, Object> asDocMap() {
+		return this;
+	}
 }

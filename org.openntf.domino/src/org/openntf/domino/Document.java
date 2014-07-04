@@ -27,7 +27,7 @@ import org.openntf.domino.types.FactorySchema;
  * The Interface Document.
  */
 public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document, org.openntf.domino.ext.Document, DatabaseDescendant,
-		Map<String, Object> {
+		Map<String, Object>, AsDocMap {
 
 	public static class Schema extends FactorySchema<Document, lotus.domino.Document, Database> {
 		@Override
@@ -311,6 +311,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * 
 	 * @see lotus.domino.Document#getFolderReferences()
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Vector getFolderReferences();
 
