@@ -6,7 +6,6 @@ package org.openntf.domino.xsp.helpers;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import javax.activation.UnsupportedDataTypeException;
 import javax.faces.context.FacesContext;
@@ -19,7 +18,7 @@ import javax.faces.el.ValueBinding;
  */
 @SuppressWarnings("rawtypes")
 public class CollectionValuePickerData extends MapValuePickerData {
-	private static final Logger log_ = Logger.getLogger(CollectionValuePickerData.class.getName());
+	//private static final Logger log_ = Logger.getLogger(CollectionValuePickerData.class.getName());
 	private static final long serialVersionUID = 1L;
 	public Collection<String> collection;
 
@@ -103,6 +102,7 @@ public class CollectionValuePickerData extends MapValuePickerData {
 	 * 
 	 * @see org.openntf.domino.xsp.helpers.MapValuePickerData#restoreState(javax.faces.context.FacesContext, java.lang.Object)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void restoreState(final FacesContext _context, final Object _state) {
 		Object _values[] = (Object[]) _state;
