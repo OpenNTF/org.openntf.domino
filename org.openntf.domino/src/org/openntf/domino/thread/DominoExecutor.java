@@ -95,9 +95,20 @@ public class DominoExecutor extends ThreadPoolExecutor {
 	 */
 	@Override
 	protected void afterExecute(final Runnable r, final Throwable t) {
-		super.afterExecute(r, t);
+		//		System.out.println("After execute running on a " + r.getClass().getName());
 		if (r instanceof AbstractDominoRunnable) {
+			//			System.out.println("Cleaning a " + r.getClass().getName());
 			((AbstractDominoRunnable) r).clean();
+		} else if (r instanceof DominoFutureTask) {
+			//			System.out.println("Cleaning runnable in a " + r.getClass().getName());
+			((DominoFutureTask) r).done();
+		} else {
+			//			System.out.println("Not cleaning a " + r.getClass().getName());
+		}
+		try {
+			super.afterExecute(r, t);
+		} catch (Throwable t1) {
+			t1.printStackTrace();
 		}
 	}
 
@@ -139,7 +150,6 @@ public class DominoExecutor extends ThreadPoolExecutor {
 	 */
 	@Override
 	public boolean awaitTermination(final long timeout, final TimeUnit unit) throws InterruptedException {
-		// TODO Auto-generated method stub
 		return super.awaitTermination(timeout, unit);
 	}
 
