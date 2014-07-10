@@ -1,6 +1,7 @@
 package org.openntf.domino.xots;
 
 import org.openntf.domino.helpers.TrustedDispatcher;
+import org.openntf.domino.thread.DominoNativeRunner;
 
 /*
  * This class and package is intended to become the space for the XPages implementation
@@ -8,14 +9,26 @@ import org.openntf.domino.helpers.TrustedDispatcher;
  * written in Java 1.1
  */
 public class XotsDaemon extends TrustedDispatcher {
+	private static XotsDaemon INSTANCE;
 
-	public XotsDaemon() {
-		// TODO Auto-generated constructor stub
+	private XotsDaemon() {
+		super();
 	}
 
-	public XotsDaemon(final long delay) {
-		super(delay);
-		// TODO Auto-generated constructor stub
+	public synchronized static XotsDaemon getInstance() {
+		if (null == INSTANCE) {
+			INSTANCE = new XotsDaemon();
+		}
+		return INSTANCE;
+	}
+
+	public void queue(final Runnable runnable) {
+		queue(runnable, runnable.getClass().getClassLoader());
+	}
+
+	public void queue(final Runnable runnable, final ClassLoader loader) {
+		DominoNativeRunner runner = new DominoNativeRunner(runnable, loader);
+		super.process(runner);
 	}
 
 }

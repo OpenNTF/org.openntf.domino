@@ -732,6 +732,7 @@ public class IndexDatabase implements IScannerStateManager {
 
 	public CharSequence lastToken_ = null;
 
+	@Override
 	public Map<CharSequence, Set<CharSequence>> restoreTokenLocationMap(final CharSequence token, final Object mapKey) {
 		Map result = null;
 		Document doc = getTermDocument(token.toString());
@@ -745,6 +746,7 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
+	@Override
 	public void saveTokenLocationMap(final CharSequence token, final Object mapKey, final Map<CharSequence, Set<CharSequence>> map) {
 
 		String term = token.toString();
@@ -753,12 +755,14 @@ public class IndexDatabase implements IScannerStateManager {
 		termDoc.save();
 	}
 
+	@Override
 	public void setLastIndexDate(final Object mapKey, final Date date) {
 		Document dbDoc = getDbDocument((String) mapKey);
 		dbDoc.replaceItemValue(DB_LAST_INDEX_NAME, date);
 		dbDoc.save();
 	}
 
+	@Override
 	public Date getLastIndexDate(final Object mapKey) {
 		Document dbDoc = getDbDocument((String) mapKey);
 		Date result = (Date) dbDoc.getItemValue(DB_LAST_INDEX_NAME, java.util.Date.class);
@@ -767,6 +771,7 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
+	@Override
 	public void saveTokenLocationMap(final Object mapKey, final Map<CharSequence, Map<CharSequence, Set<CharSequence>>> fullMap,
 			final DocumentScanner scanner) {
 		setLastIndexDate(mapKey, scanner.getLastDocModDate());
@@ -781,99 +786,115 @@ public class IndexDatabase implements IScannerStateManager {
 		//		}
 		//		dbDoc.save();
 		Set<CharSequence> keySet = fullMap.keySet();
-		for (CharSequence cis : keySet) {
-			Map<CharSequence, Set<CharSequence>> tlValue = fullMap.get(cis);
-			String term = cis.toString();
-			Document termDoc = getTermDocument(term);
-			String itemName = TERM_MAP_PREFIX + String.valueOf(mapKey);
-			termDoc.replaceItemValue(itemName, tlValue);
-			if (termDoc.save()) {
-				//				System.out.println("Saved term doc for " + term);
+		if (keySet.size() > 0) {
+			for (CharSequence cis : keySet) {
+				Map<CharSequence, Set<CharSequence>> tlValue = fullMap.get(cis);
+				String term = cis.toString();
+				Document termDoc = getTermDocument(term);
+				String itemName = TERM_MAP_PREFIX + String.valueOf(mapKey);
+				termDoc.replaceItemValue(itemName, tlValue);
+				if (termDoc.save()) {
+					//					System.out.println("DEBUG: Saved term doc for " + term);
+				} else {
+					System.out.println("DEBUG: Did not save term doc for " + term);
+
+				}
 			}
+		} else {
+			//			System.out.println("DEBUG: keyset was empty for index tokens");
 		}
 	}
 
+	@Override
 	public void update(final Observable o, final Object arg) {
-		IScannerStateManager.ScanStatus status = null;
-		if (arg instanceof IScannerStateManager.ScanStatus) {
-			status = (IScannerStateManager.ScanStatus) arg;
-		}
-		DocumentScanner scanner = null;
-		if (o instanceof DocumentScanner) {
-			scanner = (DocumentScanner) o;
-		} else {
-			System.out.println("Observable object was not a DocumentScanner. It was a " + (o == null ? "null" : o.getClass().getName()));
-		}
-		if (status != null) {
-			switch (status) {
-			case NEW:
-				break;
-			case RUNNING:
-				if (scanner != null) {
-					if (scanner.isTrackTokenLocation()) {
-						Map tokenLocationMap = scanner.getTokenLocationMap();
-						int tlsize = tokenLocationMap.size();
-						if (tlsize >= 1024) {
-							//							System.out.println("Processed " + scanner.getDocCount() + " documents so far, " + scanner.getItemCount()
-							//									+ " items and " + scanner.getTokenCount());
+		try {
+			IScannerStateManager.ScanStatus status = null;
+			if (arg instanceof IScannerStateManager.ScanStatus) {
+				status = (IScannerStateManager.ScanStatus) arg;
+			}
+			DocumentScanner scanner = null;
+			if (o instanceof DocumentScanner) {
+				scanner = (DocumentScanner) o;
+			} else {
+				System.out
+						.println("Observable object was not a DocumentScanner. It was a " + (o == null ? "null" : o.getClass().getName()));
+			}
+			if (status != null) {
+				//				System.out.println("DEBUG: Received update with status " + status.name());
+				switch (status) {
+				case NEW:
+					break;
+				case RUNNING:
+					//				System.out.println("DEBUG: branched to running status...");
+					if (scanner != null) {
+						if (scanner.isTrackTokenLocation()) {
+							Map tokenLocationMap = scanner.getTokenLocationMap();
+							int tlsize = tokenLocationMap.size();
+							if (tlsize >= 1024) {
+								//								System.out.println("Processed " + scanner.getDocCount() + " documents so far, " + scanner.getItemCount()
+								//										+ " items and " + scanner.getTokenCount());
+								synchronized (tokenLocationMap) {
+									saveTokenLocationMap(scanner.getStateManagerKey(), tokenLocationMap, scanner);
+									tokenLocationMap.clear();
+								}
+							}
+						} else {
+							//							System.out.println("TokenLocation not being tracked by scanner");
+						}
+						if (scanner.isTrackNameLocation()) {
+							Map nameLocationMap = scanner.getNameLocationMap();
+							int nlsize = nameLocationMap.size();
+							if (nlsize >= 128) {
+								synchronized (nameLocationMap) {
+									saveTokenLocationMap(scanner.getStateManagerKey(), nameLocationMap, scanner);
+									nameLocationMap.clear();
+								}
+							}
+						}
+					} else {
+						System.out.println("Scanner is null from notifications");
+					}
+					break;
+				case COMPLETE:
+					//					System.out.println("DEBUG: branched to complete status...");
+
+					if (scanner != null) {
+						if (scanner.isTrackTokenLocation()) {
+							Map tokenLocationMap = scanner.getTokenLocationMap();
 							synchronized (tokenLocationMap) {
 								saveTokenLocationMap(scanner.getStateManagerKey(), tokenLocationMap, scanner);
 								tokenLocationMap.clear();
 							}
+							//							System.out.println("Completed " + scanner.getDocCount() + " documents at completion, " + scanner.getItemCount()
+							//									+ " items and " + scanner.getTokenCount());
+						} else {
+							//							System.out.println("TokenLocation not being tracked by scanner");
 						}
-					} else {
-						System.out.println("TokenLocation not being tracked by scanner");
-					}
-					if (scanner.isTrackNameLocation()) {
-						Map nameLocationMap = scanner.getNameLocationMap();
-						int nlsize = nameLocationMap.size();
-						if (nlsize >= 128) {
+						if (scanner.isTrackNameLocation()) {
+							Map nameLocationMap = scanner.getNameLocationMap();
 							synchronized (nameLocationMap) {
-								saveTokenLocationMap(scanner.getStateManagerKey(), nameLocationMap, scanner);
+								saveNameLocationMap(scanner.getStateManagerKey(), nameLocationMap, scanner);
 								nameLocationMap.clear();
 							}
 						}
-					}
-				} else {
-					System.out.println("Scanner is null from notifications");
-				}
-				break;
-			case COMPLETE:
-				if (scanner != null) {
-					if (scanner.isTrackTokenLocation()) {
-						Map tokenLocationMap = scanner.getTokenLocationMap();
-						synchronized (tokenLocationMap) {
-							saveTokenLocationMap(scanner.getStateManagerKey(), tokenLocationMap, scanner);
-							tokenLocationMap.clear();
-						}
-						System.out.println("Completed " + scanner.getDocCount() + " documents at completion, " + scanner.getItemCount()
-								+ " items and " + scanner.getTokenCount());
 					} else {
-						//						System.out.println("TokenLocation not being tracked by scanner");
-					}
-					if (scanner.isTrackNameLocation()) {
-						Map nameLocationMap = scanner.getNameLocationMap();
-						synchronized (nameLocationMap) {
-							saveNameLocationMap(scanner.getStateManagerKey(), nameLocationMap, scanner);
-							nameLocationMap.clear();
-						}
-					}
-				} else {
-					if (scanner == null) {
 						System.out.println("ALERT! Scanner was null??");
 					}
+					break;
+				case ERROR:
+					break;
+				case INTERRUPTED:
+					break;
 				}
-				break;
-			case ERROR:
-				break;
-			case INTERRUPTED:
-				break;
+			} else {
+				System.out.println("Scan status was null?");
 			}
-		} else {
-			System.out.println("Scan status was null?");
+		} catch (Throwable t) {
+			t.printStackTrace();
 		}
 	}
 
+	@Override
 	public Map<CharSequence, Set<CharSequence>> restoreNameLocationMap(final CharSequence name, final Object mapKey) {
 		Map result = null;
 		Document doc = getNameDocument(name.toString());
@@ -886,6 +907,7 @@ public class IndexDatabase implements IScannerStateManager {
 		return result;
 	}
 
+	@Override
 	public void saveNameLocationMap(final CharSequence name, final Object mapKey, final Map<CharSequence, Set<CharSequence>> map) {
 		String lname = name.toString();
 		Document nameDoc = getNameDocument(lname);
@@ -893,6 +915,7 @@ public class IndexDatabase implements IScannerStateManager {
 		nameDoc.save();
 	}
 
+	@Override
 	public void saveNameLocationMap(final Object mapKey, final Map<CharSequence, Map<CharSequence, Set<CharSequence>>> fullMap,
 			final DocumentScanner scanner) {
 		//		Document dbDoc = getDbDocument((String) mapKey);

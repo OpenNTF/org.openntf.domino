@@ -3,6 +3,8 @@
  */
 package org.openntf.domino.xsp.adapter;
 
+import org.openntf.domino.xots.XotsDaemon;
+
 import com.ibm.designer.runtime.domino.adapter.HttpService;
 import com.ibm.designer.runtime.domino.adapter.IServiceFactory;
 import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
@@ -16,6 +18,7 @@ import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
  * 
  */
 public class OpenntfServiceFactory implements IServiceFactory {
+	private static XotsDaemon DAEMON = XotsDaemon.getInstance();
 
 	public OpenntfServiceFactory() {
 

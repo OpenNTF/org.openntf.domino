@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 
 import lotus.domino.NotesException;
 
-import org.openntf.domino.Session;
 import org.openntf.domino.thread.AbstractDominoDaemon;
 import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.thread.DominoExecutor;
@@ -64,15 +63,25 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 		protected void afterExecute(final Runnable r, final Throwable t) {
 			//			System.out.println("afterExecute triggered on a " + r.getClass().getName());
 			super.afterExecute(r, t);
-			if (r instanceof AbstractDominoRunnable) {
-				if (((AbstractDominoRunnable) r).shouldRecycle()) {
-					//					System.out.println("Queuing a job for on-thread recycling...");
-					dispatcher_.queueJob((AbstractDominoRunnable) r);
-				}
-			} else if (r instanceof DominoFutureTask) {
-				//				System.out.println("Queuing a runnable from a future task for on-thread recycling...");
-				dispatcher_.queueJob(((DominoFutureTask) r).getRunnable());
-			}
+			//			if (null != r) {
+			//				Runnable target = r;
+			//				if (r instanceof DominoFutureTask) {
+			//					target = ((DominoFutureTask<?>) r).getRunnable();
+			//				}
+			//				if (target instanceof AbstractDominoRunnable) {
+			//					AbstractDominoRunnable adr = (AbstractDominoRunnable) target;
+			//					if (adr.shouldRecycle()) {
+			//						//					System.out.println("Queuing a job for on-thread recycling...");
+			//						dispatcher_.queueJob(adr);
+			//					} else {
+			//						System.out.println("ALERT: TrustedDispatcher has an afterExecute on a DominoRunnable that should not recycle. "
+			//								+ target.getClass().getName());
+			//					}
+			//				} else {
+			//					//					System.out.println("ALERT: TrustedDispatcher ran a process that isn't a DominoRunnable "
+			//					//							+ (null == target ? "null" : target.getClass().getName()));
+			//				}
+			//			}
 		}
 
 		/* (non-Javadoc)
@@ -93,11 +102,11 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 	}
 
 	protected static class TrustedFutureTask extends DominoFutureTask {
-		private final TrustedDispatcher dispatcher_;
+		//		private final TrustedDispatcher dispatcher_;
 
 		public TrustedFutureTask(final Callable callable, final TrustedDispatcher dispatcher) {
 			super(callable);
-			dispatcher_ = dispatcher;
+			//			dispatcher_ = dispatcher;
 		}
 
 		/**
@@ -106,7 +115,7 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 		 */
 		public TrustedFutureTask(final Runnable runnable, final Object result, final TrustedDispatcher dispatcher) {
 			super(runnable, result);
-			dispatcher_ = dispatcher;
+			//			dispatcher_ = dispatcher;
 		}
 
 		/* (non-Javadoc)
@@ -114,11 +123,7 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 		 */
 		@Override
 		public void run() {
-			Session session = Factory.fromLotus(dispatcher_.getTrustedSession(), org.openntf.domino.Session.SCHEMA, null);
-			//			Factory.setClassLoader(Thread.currentThread().getContextClassLoader());
-			//			if (session != null) {
-			//				System.out.println("session: " + session.getEffectiveUserName());
-			//			}
+			//			Session session = Factory.fromLotus(dispatcher_.getNewTrustedSession(), org.openntf.domino.Session.SCHEMA, null);
 			super.run();
 		}
 
@@ -138,10 +143,16 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 		super(delay);
 	}
 
-	public void queueJob(final AbstractDominoRunnable runnable) {
+	public void queueJob(final Runnable runnable) {
 		synchronized (runQueue_) {
 			runQueue_.add(runnable);
 		}
+	}
+
+	public Object process(final Runnable runnable) {
+		//		System.out.println("Executing a " + runnable.getClass().getName());
+		getExecutor().execute(runnable);
+		return runnable;
 	}
 
 	/* (non-Javadoc)
@@ -149,7 +160,6 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 	 */
 	@Override
 	public Object process() {
-
 		Runnable request = null;
 		synchronized (runQueue_) {
 			request = runQueue_.poll();
@@ -164,14 +174,16 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 					if (s != null)
 						try {
 							s.recycle();
-							//							System.out.println("TrustedDispatcher recycled a session from a completed job: " + getClass().getName());
-							log_.log(Level.INFO, "TrustedDispatcher recycled a session from a completed job: " + getClass().getName());
+							System.out.println(getClass().getName() + " recycled a session from a completed job: "
+									+ adr.getClass().getName());
+							log_.log(Level.INFO, getClass().getName() + " recycled a session from a completed job: "
+									+ adr.getClass().getName());
 						} catch (NotesException e) {
 							e.printStackTrace();
 						}
 				} else {
 					//					System.out.println("Executing a " + adr.getClass().getName() + " that's not ready to recycle...");
-					adr.setSession(getTrustedSession());
+					adr.setSession(getNewTrustedSession());
 					getExecutor().execute(request);
 				}
 			} else {
@@ -193,7 +205,7 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 		super.run();
 	}
 
-	public lotus.domino.Session getTrustedSession() {
+	public lotus.domino.Session getNewTrustedSession() {
 		try {
 			Object result = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 				@SuppressWarnings("deprecation")
@@ -222,7 +234,7 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 	 */
 	@Override
 	public synchronized void stop() {
-		log_.log(Level.INFO, "Stopping TrustedDispatcher...");
+		log_.log(Level.INFO, "Stopping " + getClass().getName() + "...");
 		try {
 			if (intimidator_ != null)
 				intimidator_.shutdown();
@@ -246,7 +258,7 @@ public class TrustedDispatcher extends AbstractDominoDaemon {
 		} catch (Throwable t) {
 			DominoUtils.handleException(t);
 		}
-		log_.log(Level.INFO, "TrustedDispatcher stopped.");
+		log_.log(Level.INFO, getClass().getName() + " stopped.");
 	}
 
 }
