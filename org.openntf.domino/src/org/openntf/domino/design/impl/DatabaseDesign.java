@@ -430,7 +430,11 @@ public class DatabaseDesign implements org.openntf.domino.design.DatabaseDesign,
 
 	@Override
 	public IconNote getIconNote() {
-		return new IconNote(database_.getDocumentByID(ICON_NOTE));
+		Document iconNote = database_.getDocumentByID(ICON_NOTE);
+		if (iconNote != null) {
+			return new IconNote(iconNote);
+		}
+		return null;
 	}
 
 	@Override

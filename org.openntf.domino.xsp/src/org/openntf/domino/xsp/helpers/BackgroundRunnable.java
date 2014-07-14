@@ -143,8 +143,7 @@ public abstract class BackgroundRunnable implements Runnable {
 			delegate = tc.getNrpcSessionAsHost();
 		}
 		if (useOpenntf_) {
-			BackgroundRunnable.localSession_
-					.set((lotus.domino.Session) Factory.fromLotus(delegate, org.openntf.domino.Session.class, null));
+			BackgroundRunnable.localSession_.set(Factory.fromLotus(delegate, org.openntf.domino.Session.SCHEMA, null));
 		} else {
 			BackgroundRunnable.localSession_.set(delegate);
 		}
