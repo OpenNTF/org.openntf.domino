@@ -22,7 +22,7 @@ import java.util.SortedSet;
  * @author jgallagher
  * 
  */
-public interface DatabaseDesign {
+public interface DatabaseDesign extends org.openntf.domino.types.DatabaseDescendant {
 
 	/**
 	 * @return a new, nameless, empty file-resource object

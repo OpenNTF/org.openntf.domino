@@ -144,4 +144,26 @@ public class DatabaseClassLoader extends org.openntf.domino.design.DatabaseClass
 		}
 		return result;
 	}
+
+	@Override
+	public Set<Class<?>> getClassesExtending(final Class<?> superClass) {
+		Set<Class<?>> result = new LinkedHashSet<Class<?>>();
+		for (String className : design_.getJavaResourceClassNames()) {
+			try {
+				Class<?> clazz = loadClass(className);
+				if (superClass.isAssignableFrom(clazz)) {
+					result.add(clazz);
+				}
+			} catch (ClassNotFoundException e) {
+				// Ignore - Java resources keep copies of their old names, tripping up the search
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public org.openntf.domino.design.DatabaseDesign getParentDesign() {
+		return design_;
+	}
+
 }
