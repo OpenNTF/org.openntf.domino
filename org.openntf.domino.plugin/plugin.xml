@@ -2,5 +2,4 @@
 <?eclipse version="3.4"?>
 <plugin  id="org.openntf.domino.plugin" name="OpenNTF Domino API Plugin" version="1.0">
 
-
 </plugin>

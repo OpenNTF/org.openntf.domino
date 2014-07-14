@@ -52,7 +52,7 @@ import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
-import org.openntf.domino.graph.GenericDominoGraph;
+import org.openntf.domino.graph.DominoGraph;
 import org.openntf.domino.logging.ConsoleFormatter;
 import org.openntf.domino.logging.DefaultConsoleHandler;
 import org.openntf.domino.logging.DefaultFileHandler;
@@ -463,7 +463,7 @@ public enum Factory {
 
 	@Deprecated
 	public static org.openntf.domino.Document fromLotusDocument(final lotus.domino.Document lotus, final Base parent) {
-		return (org.openntf.domino.Document) getWrapperFactory().fromLotus(lotus, Document.SCHEMA, (Database) parent);
+		return getWrapperFactory().fromLotus(lotus, Document.SCHEMA, (Database) parent);
 	}
 
 	public static void setNoRecycle(final Base<?> base, final boolean value) {
@@ -755,7 +755,7 @@ public enum Factory {
 	}
 
 	public static void clearDominoGraph() {
-		GenericDominoGraph.clearDocumentCache();
+		DominoGraph.clearDocumentCache();
 	}
 
 	public static void clearBubbleExceptions() {
@@ -1228,7 +1228,7 @@ public enum Factory {
 		if (collection instanceof DocumentCollection) {
 			org.openntf.domino.Database db = ((DocumentCollection) collection).getParent();
 			result = db.createNoteCollection(false);
-			result.add((DocumentCollection) collection);
+			result.add(collection);
 		} else {
 			throw new DataNotCompatibleException("Cannot convert a non-OpenNTF DocumentCollection to a NoteCollection");
 		}

@@ -31,8 +31,4 @@ public interface IDominoVertex extends Vertex, IDominoElement {
 
 	public Set<Edge> getEdges(final String... labels);
 
-	public IDominoEdge relate(Vertex vertex);
-
-	public IDominoEdge find(Vertex vertex);
-
 }
