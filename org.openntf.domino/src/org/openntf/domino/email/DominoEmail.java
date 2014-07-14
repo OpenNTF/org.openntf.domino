@@ -246,6 +246,7 @@ public class DominoEmail implements IEmail {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.email.IEmail#getHTML()
 	 */
+	@Override
 	public List<String> getHTML() {
 		return new ArrayList<String>(contentsHTML_);
 	}
@@ -264,6 +265,7 @@ public class DominoEmail implements IEmail {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.email.IEmail#getText()
 	 */
+	@Override
 	public List<String> getText() {
 		return new ArrayList<String>(contentsText_);
 	}
@@ -271,6 +273,7 @@ public class DominoEmail implements IEmail {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.email.IEmail#setJSON(java.lang.String)
 	 */
+	@Override
 	public void setJSON(final String url) {
 		urlJSON_ = url;
 	}
@@ -278,6 +281,7 @@ public class DominoEmail implements IEmail {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.email.IEmail#getJSON()
 	 */
+	@Override
 	public String getJSON() {
 		return urlJSON_;
 	}
@@ -359,6 +363,7 @@ public class DominoEmail implements IEmail {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.email.IEmail#removeAttachment(org.openntf.domino.email.EmailAttachment)
 	 */
+	@Override
 	public void removeAttachment(final IEmailAttachment attachment) {
 		if (attachments_.contains(attachment)) {
 			attachments_.remove(attachment);
@@ -368,6 +373,7 @@ public class DominoEmail implements IEmail {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.email.IEmail#getAttachments()
 	 */
+	@Override
 	public List<EmailAttachment> getAttachments() {
 		return new ArrayList<EmailAttachment>(attachments_);
 	}
@@ -456,7 +462,7 @@ public class DominoEmail implements IEmail {
 	 */
 	@Override
 	public List<String> getTo() {
-		return new ArrayList<String>(to_);
+		return to_;
 	}
 
 	/* (non-Javadoc)
@@ -464,7 +470,7 @@ public class DominoEmail implements IEmail {
 	 */
 	@Override
 	public List<String> getCC() {
-		return new ArrayList<String>(cc_);
+		return cc_;
 	}
 
 	/* (non-Javadoc)
@@ -472,7 +478,7 @@ public class DominoEmail implements IEmail {
 	 */
 	@Override
 	public List<String> getBCC() {
-		return new ArrayList<String>(bcc_);
+		return bcc_;
 	}
 
 	/* (non-Javadoc)
@@ -631,15 +637,18 @@ public class DominoEmail implements IEmail {
 
 			mimeHeader = mimeRoot.createHeader("To");
 			mimeHeader.setHeaderVal(join(getTo(), ""));
+			memo.replaceItemValue("sendTo", getTo());
 
 			if (cc_.size() > 0) {
 				mimeHeader = mimeRoot.createHeader("CC");
-				mimeHeader.setHeaderVal(join(cc_, ""));
+				mimeHeader.setHeaderVal(join(getCC(), ""));
+				memo.replaceItemValue("cc", getCC());
 			}
 
 			if (bcc_.size() > 0) {
 				mimeHeader = mimeRoot.createHeader("BCC");
-				mimeHeader.setHeaderVal(join(bcc_, ""));
+				mimeHeader.setHeaderVal(join(getBCC(), ""));
+				memo.replaceItemValue("bcc", getBCC());
 			}
 
 			//set subject
