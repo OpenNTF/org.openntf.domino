@@ -17,7 +17,8 @@ import lotus.domino.Session;
 import lotus.domino.View;
 import lotus.domino.ViewColumn;
 import lotus.domino.ViewEntry;
-import lotus.domino.ViewNavigator;
+
+import org.openntf.domino.utils.Factory;
 
 import com.ibm.xsp.model.domino.DominoViewDataContainer;
 import com.ibm.xsp.model.domino.ViewNavigatorFactory;
@@ -27,12 +28,12 @@ import com.ibm.xsp.model.domino.viewnavigator.PathPosition;
 /**
  * @author Nathan T. Freeman
  * 
- *         OpenntfViewNavigatorEx class to cope with JNI method
+ *         OpenntfViewNavigatorEx class to cope with JNI method RPr: JNI Methods are fixed, so this should not be neccessary any longer.
  */
 public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 	private static final long serialVersionUID = -5568170248903953533L;
 	private static final Logger log_ = Logger.getLogger(OpenntfViewNavigatorEx.class.getName());
-	private String[] constantValues;
+	private Object[] constantValues;
 
 	/**
 	 * Constructor
@@ -58,15 +59,25 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 		// + " in request id " + System.identityHashCode(FacesContext.getCurrentInstance()));
 		super.initNavigator(paramView);
 
-		Session sess = paramView.getParent().getParent();
 		Vector<ViewColumn> cols = paramView.getColumns();
-		constantValues = new String[cols.size()];
+		constantValues = new Object[cols.size()];
 
 		for (int i = 0; i < cols.size(); i++) {
 			ViewColumn col = cols.get(i);
+			org.openntf.domino.Session openNtfSession = null;
+
 			if (col.isConstant()) {
-				Vector v = sess.evaluate(col.getFormula());
-				constantValues[i] = v.get(0).toString();
+				if (openNtfSession == null) {
+					Session sess = paramView.getParent().getParent();
+					if (sess instanceof org.openntf.domino.Session) {
+						openNtfSession = (org.openntf.domino.Session) sess;
+					} else {
+						openNtfSession = Factory.fromLotus(sess, org.openntf.domino.Session.SCHEMA, null);
+					}
+				}
+				// resolve the constant values (with the openntf session, to get proper dateTime values!)
+				Vector v = openNtfSession.evaluate(col.getFormula());
+				constantValues[i] = v.get(0);
 			}
 		}
 	}
@@ -77,15 +88,15 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 	 * @see com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx9#calculateExactCount(lotus.domino.View)
 	 */
 	@Override
-	public int calculateExactCount(View paramView) throws NotesException {
-		if (paramView instanceof org.openntf.domino.View) {
-			paramView = (lotus.domino.View) org.openntf.domino.impl.Base.toLotus(paramView);
-			try {
-				paramView.setAutoUpdate(false);
-			} catch (NotesException ne) {
-				handleException(ne);
-			}
+	public int calculateExactCount(final View paramView) throws NotesException {
+		//if (paramView instanceof org.openntf.domino.impl.View) {
+		//paramView = org.openntf.domino.impl.Base.toLotus(paramView);
+		try {
+			paramView.setAutoUpdate(false);
+		} catch (NotesException ne) {
+			handleException(ne);
 		}
+		//}
 		return super.calculateExactCount(paramView);
 	}
 
@@ -95,15 +106,15 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 	 * @see com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx9#hasMoreRows(lotus.domino.View, int)
 	 */
 	@Override
-	public int hasMoreRows(View paramView, final int paramInt) {
-		if (paramView instanceof org.openntf.domino.View) {
-			paramView = (lotus.domino.View) org.openntf.domino.impl.Base.toLotus(paramView);
-			try {
-				paramView.setAutoUpdate(false);
-			} catch (NotesException ne) {
-				handleException(ne);
-			}
+	public int hasMoreRows(final View paramView, final int paramInt) {
+		//if (paramView instanceof org.openntf.domino.View) {
+		//	paramView = org.openntf.domino.impl.Base.toLotus(paramView);
+		try {
+			paramView.setAutoUpdate(false);
+		} catch (NotesException ne) {
+			handleException(ne);
 		}
+		//}
 		return super.hasMoreRows(paramView, paramInt);
 	}
 
@@ -113,20 +124,21 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 	 * @see com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx9#readEntries(lotus.domino.View, int, int)
 	 */
 	@Override
-	public List<ViewEntry> readEntries(View paramView, final int paramInt1, final int paramInt2) {
+	public List<ViewEntry> readEntries(final View paramView, final int paramInt1, final int paramInt2) {
 		// try {
 		// System.out.println("Reading entries from view " + paramView.getName() + " from " + paramInt1 + " to " + paramInt2);
 		// } catch (NotesException e) {
 		// handleException(e);
 		// }
-		if (paramView instanceof org.openntf.domino.View) {
-			paramView = (lotus.domino.View) org.openntf.domino.impl.Base.toLotus(paramView);
-			try {
-				paramView.setAutoUpdate(false);
-			} catch (NotesException ne) {
-				handleException(ne);
-			}
+		//if (paramView instanceof org.openntf.domino.View) {
+		//RPR: if we unwrap the view here, the reference to org.openntf.domino.View gets overwritten and the View might get recycled
+		//paramView = org.openntf.domino.impl.Base.toLotus(paramView);
+		try {
+			paramView.setAutoUpdate(false);
+		} catch (NotesException ne) {
+			handleException(ne);
 		}
+		//}
 		return super.readEntries(paramView, paramInt1, paramInt2);
 	}
 
@@ -137,24 +149,25 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 	 * com.ibm.xsp.model.domino.viewnavigator.PathPosition)
 	 */
 	@Override
-	public ViewEntry wrapViewEntry(ViewEntry paramViewEntry, final String paramString, final PathPosition paramPathPosition)
+	public ViewEntry wrapViewEntry(final ViewEntry paramViewEntry, final String paramString, final PathPosition paramPathPosition)
 			throws NotesException {
-		if (paramViewEntry instanceof org.openntf.domino.ViewEntry) {
-			paramViewEntry = (lotus.domino.ViewEntry) org.openntf.domino.impl.Base.toLotus(paramViewEntry);
-
-		}
+		//if (paramViewEntry instanceof org.openntf.domino.ViewEntry) {
+		//	paramViewEntry = org.openntf.domino.impl.Base.toLotus(paramViewEntry);
+		//
+		//	}
+		//super.wrapViewEntry(paramViewEntry, paramString, paramPathPosition)
 		// return super.wrapViewEntry(paramViewEntry, paramString, paramPathPosition);
 
-		Object parent = paramViewEntry.getParent();
-		if (parent instanceof View) {
-			// System.out.println("Wrapping a ViewEntry with param " + paramString + " from view "
-			// + ((View) paramViewEntry.getParent()).getName() + " in position " + paramPathPosition.getViewFullPosition()
-			// + " and indent " + this.offsetColumnIndent);
-		} else if (parent instanceof ViewNavigator) {
-			// System.out.println("Wrapping a ViewEntry with param " + paramString + " from view nav "
-			// + ((ViewNavigator) paramViewEntry.getParent()).getParentView().getName() + " in position "
-			// + paramPathPosition.getViewFullPosition() + " and indent " + this.offsetColumnIndent);
-		}
+		//Object parent = paramViewEntry.getParent();
+		//if (parent instanceof View) {
+		// System.out.println("Wrapping a ViewEntry with param " + paramString + " from view "
+		// + ((View) paramViewEntry.getParent()).getName() + " in position " + paramPathPosition.getViewFullPosition()
+		// + " and indent " + this.offsetColumnIndent);
+		//} else if (parent instanceof ViewNavigator) {
+		// System.out.println("Wrapping a ViewEntry with param " + paramString + " from view nav "
+		// + ((ViewNavigator) paramViewEntry.getParent()).getParentView().getName() + " in position "
+		// + paramPathPosition.getViewFullPosition() + " and indent " + this.offsetColumnIndent);
+		//}
 		return new Entry(paramViewEntry, paramString, paramPathPosition, this.offsetColumnIndent, this);
 	}
 
@@ -163,7 +176,7 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 	 */
 	public static class Entry extends NOIViewNavigatorEx9.Entry {
 		private static final long serialVersionUID = 1L;
-		private OpenntfViewNavigatorEx navigatorEx;
+		private Object[] constantValues;
 
 		/**
 		 * Constructor
@@ -172,7 +185,6 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 
 		}
 
-		// <<<<<<< HEAD
 		/**
 		 * Extended constructor
 		 * 
@@ -186,14 +198,10 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 		 *            int
 		 * @throws NotesException
 		 */
-		// public Entry(final ViewEntry paramViewEntry, final String paramString, final PathPosition paramPathPosition, final int paramInt)
-		// throws NotesException {
-		// =======
 		public Entry(final ViewEntry paramViewEntry, final String paramString, final PathPosition paramPathPosition, final int paramInt,
 				final OpenntfViewNavigatorEx openntfViewNavigatorEx) throws NotesException {
-			// >>>>>>> Roland's/fabi
 			super(paramViewEntry, paramString, paramPathPosition, paramInt);
-			navigatorEx = openntfViewNavigatorEx;
+			constantValues = openntfViewNavigatorEx.constantValues;
 		}
 
 		/**
@@ -223,8 +231,8 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 			return sb.toString();
 		}
 
-		/*
-		 * (non-Javadoc)
+		/**
+		 * Extended version, supports constant values and correct sizing.
 		 * 
 		 * @see com.ibm.xsp.model.domino.wrapped.DominoViewEntry#getColumnValuesEx()
 		 */
@@ -233,7 +241,6 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 			if (this._columnValuesEx != null) {
 				return this._columnValuesEx;
 			}
-
 			this._columnValuesEx = getJavaColumnValues();
 			DominoViewDataContainer container = this._viewDataModel.getDominoViewDataContainer();
 
@@ -244,7 +251,7 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 				for (int k = 0; k < i; ++k) {
 					int l = container.getColumnValuesIndex(k);
 					if (l == 65535) {
-						this._columnValuesEx.add(k, navigatorEx.constantValues[k]);
+						this._columnValuesEx.add(k, constantValues[k]);
 						--j;
 					}
 					if (j == 0)
@@ -264,6 +271,7 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 		public void readExternal(final ObjectInput paramObjectInput) throws IOException, ClassNotFoundException {
 			// System.out.println("Reading externalized OpenntfViewNavigatorEx.Entry");
 			super.readExternal(paramObjectInput);
+			constantValues = (Object[]) paramObjectInput.readObject();
 		}
 
 		/*
@@ -275,6 +283,7 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 		public void writeExternal(final ObjectOutput paramObjectOutput) throws IOException {
 			// System.out.println("Writing externalized OpenntfViewNavigatorEx.Entry");
 			super.writeExternal(paramObjectOutput);
+			paramObjectOutput.writeObject(constantValues);
 		}
 	}
 
