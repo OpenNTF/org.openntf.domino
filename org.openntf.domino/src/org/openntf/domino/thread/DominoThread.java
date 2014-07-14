@@ -15,15 +15,14 @@
  */
 package org.openntf.domino.thread;
 
-import org.openntf.domino.utils.Factory;
-
 // TODO: Auto-generated Javadoc
 /**
  * The Class DominoThread.
  */
 public class DominoThread extends Thread {
 	private long starttime_ = 0l;
-	private Runnable runnable_;
+	private long endtime_ = 0l;
+	private transient Runnable runnable_;
 
 	/**
 	 * Instantiates a new domino thread.
@@ -72,8 +71,16 @@ public class DominoThread extends Thread {
 		runnable_ = runnable;
 	}
 
-	public long getStartTime() {
+	protected long getStartTime() {
 		return starttime_;
+	}
+
+	protected long getEndTime() {
+		return endtime_;
+	}
+
+	public long getNanoRuntime() {
+		return getEndTime() - getStartTime();
 	}
 
 	public Runnable getRunnable() {
@@ -88,28 +95,15 @@ public class DominoThread extends Thread {
 	@Override
 	public void run() {
 		try {
+			starttime_ = System.nanoTime();
 			lotus.domino.NotesThread.sinitThread();
-			Factory.setClassLoader(this.getContextClassLoader());
 			super.run();
 		} catch (Throwable t) {
 			throw new RuntimeException(t);
 		} finally {
-			Factory.terminate();
 			lotus.domino.NotesThread.stermThread();
-			//						clean();
+			endtime_ = System.nanoTime();
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Thread#start()
-	 */
-	@Override
-	public synchronized void start() {
-		super.start();
-
-		starttime_ = System.currentTimeMillis();
 	}
 
 	public synchronized void start(final ClassLoader loader) {
@@ -117,8 +111,4 @@ public class DominoThread extends Thread {
 		start();
 	}
 
-	@Override
-	public void setContextClassLoader(final ClassLoader loader) {
-		super.setContextClassLoader(loader);
-	}
 }
