@@ -755,7 +755,7 @@ public enum Factory {
 	}
 
 	public static void clearDominoGraph() {
-		GenericDominoGraph.clearDocumentCache();
+		DominoGraph.clearDocumentCache();
 	}
 
 	public static void clearBubbleExceptions() {
