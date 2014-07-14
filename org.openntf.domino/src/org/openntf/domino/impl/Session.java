@@ -778,7 +778,8 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 
 				database = getDelegate().getDatabase(server, db, createOnFail);
 				result = fromLotus(database, Database.SCHEMA, this);
-				databases_.put(key, result);
+				if (result != null)
+					databases_.put(key, result);
 			} catch (NotesException e) {
 				String message = e.text;
 				if (message.contains("cannot open database")) {
@@ -1900,5 +1901,16 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	@Override
 	public boolean isAnonymous() {
 		return "Anonymous".equals(getEffectiveUserName());
+	}
+
+	/**
+	 * This method is needed for testing purposes; isn't (yet) part of the Interface
+	 * 
+	 * @deprecated you cannot change currentDatabase in delegate (AFAIK)
+	 * @param db
+	 */
+	@Deprecated
+	public void setCurrentDatabase(final Database db) {
+		currentDatabase_ = db;
 	}
 }
