@@ -4,6 +4,7 @@ import lotus.notes.NotesThread;
 
 import org.openntf.domino.thread.DominoNativeRunner;
 
+import com.ibm.domino.xsp.module.nsf.ModuleClassLoader;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 
@@ -43,7 +44,13 @@ public class XotsNativeRunner extends DominoNativeRunner {
 		if (ctx != null) {
 			module_ = ctx.getRunningModule();
 		} else {
-			throw new IllegalArgumentException("Can't queue a " + XotsNativeRunner.class.getName() + " without a current NotesContext.");
+			if (classLoader_ == null) {
+				classLoader_ = XotsNativeRunner.class.getClassLoader();
+			} else if (classLoader_ instanceof ModuleClassLoader) {
+				throw new IllegalArgumentException("Can't queue a " + XotsNativeRunner.class.getName() + " without a current NotesContext.");
+			} else {
+				classLoader_ = XotsNativeRunner.class.getClassLoader();
+			}
 		}
 	}
 

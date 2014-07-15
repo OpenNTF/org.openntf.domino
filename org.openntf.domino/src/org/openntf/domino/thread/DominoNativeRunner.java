@@ -10,7 +10,7 @@ import org.openntf.domino.utils.Factory;
 public class DominoNativeRunner /*extends AbstractDominoRunnable */implements Runnable {
 	private static final Logger log_ = Logger.getLogger(DominoNativeRunner.class.getName());
 	private final Runnable runnable_;
-	private ClassLoader classLoader_;
+	protected ClassLoader classLoader_;
 	private transient Session session_;
 
 	public DominoNativeRunner(final Runnable runnable) {
