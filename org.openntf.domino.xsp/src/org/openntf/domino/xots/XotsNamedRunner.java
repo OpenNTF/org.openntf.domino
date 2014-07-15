@@ -81,10 +81,8 @@ public class XotsNamedRunner implements Runnable {
 		} catch (Exception ne) {
 			throw new RuntimeException(ne);
 		}
-		if (s instanceof lotus.domino.Session) {
-			return Factory.fromLotus((lotus.domino.Session) s, org.openntf.domino.Session.SCHEMA, null);
-		}
-		return null;
+
+		return Factory.fromLotus(s, org.openntf.domino.Session.SCHEMA, null);
 	}
 
 	public ClassLoader getClassLoader() {

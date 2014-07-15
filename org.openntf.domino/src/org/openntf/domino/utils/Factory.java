@@ -439,12 +439,16 @@ public enum Factory {
 			// System.out.println("Got this Classloader: " + cl);
 
 			if (cl != null) {
-				ServiceLoader<WrapperFactory> loader = ServiceLoader.load(WrapperFactory.class, cl);
-				Iterator<WrapperFactory> it = loader.iterator();
-				if (it.hasNext()) {
-					wf = it.next();
-					// TODO RPr remove these debug prints
-					System.out.println("Using alternative WrapperFactory: " + wf);
+				try {
+					ServiceLoader<WrapperFactory> loader = ServiceLoader.load(WrapperFactory.class, cl);
+					Iterator<WrapperFactory> it = loader.iterator();
+					if (it.hasNext()) {
+						wf = it.next();
+						// TODO RPr remove these debug prints
+						System.out.println("DEBUG: Using alternative WrapperFactory: " + wf);
+					}
+				} catch (Throwable t) {
+					DominoUtils.handleException(t);
 				}
 			}
 			if (wf == null) {
