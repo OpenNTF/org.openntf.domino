@@ -5,11 +5,14 @@ import java.security.PrivilegedExceptionAction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import lotus.notes.NotesThread;
+
 import org.openntf.domino.Session;
 import org.openntf.domino.thread.model.IDominoRunnable;
 import org.openntf.domino.utils.Factory;
 
 import com.ibm.domino.napi.c.xsp.XSPNative;
+import com.ibm.domino.xsp.module.nsf.ModuleClassLoader;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 import com.ibm.domino.xsp.module.nsf.SessionCloner;
@@ -25,7 +28,7 @@ public class XotsNamedRunner implements Runnable {
 	public XotsNamedRunner(final Runnable runnable) {
 		runnable_ = runnable;
 		if (runnable instanceof XotsNamedRunner) {
-			throw new IllegalArgumentException("Can't wrap a " + XotsNamedRunner.class.getName() + " in another "
+			throw new IllegalArgumentException("Can't wrap a " + runnable.getClass().getName() + " in another "
 					+ XotsNamedRunner.class.getName());
 		}
 		initModule();
@@ -39,7 +42,7 @@ public class XotsNamedRunner implements Runnable {
 	public XotsNamedRunner(final Runnable runnable, final NSFComponentModule module) {
 		runnable_ = runnable;
 		if (runnable instanceof XotsNamedRunner) {
-			throw new IllegalArgumentException("Can't wrap a " + XotsNamedRunner.class.getName() + " in another "
+			throw new IllegalArgumentException("Can't wrap a " + runnable.getClass().getName() + " in another "
 					+ XotsNamedRunner.class.getName());
 		}
 		module_ = module;
@@ -51,11 +54,17 @@ public class XotsNamedRunner implements Runnable {
 	}
 
 	private void initModule() {
-		NotesContext ctx = NotesContext.getCurrent();
+		NotesContext ctx = NotesContext.getCurrentUnchecked();
 		if (ctx != null) {
 			module_ = ctx.getRunningModule();
 		} else {
-			throw new IllegalArgumentException("Can't queue a " + XotsNamedRunner.class.getName() + " without a current NotesContext.");
+			if (classLoader_ == null) {
+				classLoader_ = XotsNativeRunner.class.getClassLoader();
+			} else if (classLoader_ instanceof ModuleClassLoader) {
+				throw new IllegalArgumentException("Can't queue a " + XotsNativeRunner.class.getName() + " without a current NotesContext.");
+			} else {
+				classLoader_ = XotsNativeRunner.class.getClassLoader();
+			}
 		}
 	}
 
@@ -109,10 +118,12 @@ public class XotsNamedRunner implements Runnable {
 	}
 
 	protected void preRun() {
-		// lotus.domino.NotesThread.sinitThread();
-		NotesContext nctx = new NotesContext(module_);
-		NotesContext.initThread(nctx);
-
+		if (module_ != null) {
+			NotesContext nctx = new NotesContext(module_);
+			NotesContext.initThread(nctx);
+		} else {
+			NotesThread.sinitThread();
+		}
 		Session session = this.getNamedSession();
 		setSession(session);
 	}
@@ -126,7 +137,11 @@ public class XotsNamedRunner implements Runnable {
 				t.printStackTrace();
 			}
 		}
-		NotesContext.termThread();
+		if (module_ != null) {
+			NotesContext.termThread();
+		} else {
+			NotesThread.stermThread();
+		}
 	}
 
 	@Override

@@ -80,7 +80,8 @@ public class XotsNsfScanner extends XotsBaseTasklet {
 			@Override
 			public NSFComponentModule run() {
 				try {
-					return (NSFComponentModule) getNSFService().getComponentModule("/" + db.getFilePath()); // TODO RPr: Is it possible to open modules across servers?
+					return (NSFComponentModule) getNSFService().loadModule("/" + db.getFilePath());
+					// TODO RPr: Is it possible to open modules across servers?
 				} catch (ServletException e) {
 					e.printStackTrace();
 					return null;
@@ -97,6 +98,7 @@ public class XotsNsfScanner extends XotsBaseTasklet {
 					NotesContext.initThread(ctxContext);
 
 					ClassLoader mcl = module.getModuleClassLoader();
+
 					Map<String, NSFResource> res = module.getRuntimeFileSystem().getAllResources();
 					for (Entry<String, NSFResource> entry : res.entrySet()) {
 						if (entry.getValue() instanceof NSFXspClassResource) {
@@ -131,16 +133,13 @@ public class XotsNsfScanner extends XotsBaseTasklet {
 		t.start();
 		t.join();
 
-		//System.out.println(res);
+		// System.out.println(res);
 		/*
-				DatabaseDesign design = db.getDesign();
-
-				DatabaseClassLoader classLoader = design.getDatabaseClassLoader(XotsNsfScanner.class.getClassLoader());
-				Set<Class<?>> taskletClasses = classLoader.getClassesExtending(XotsBaseTasklet.class);
-				if (TRACE && taskletClasses.size() > 0) {
-					System.out.println("TRACE: Found " + taskletClasses.size() + " Tasklets!");
-				}
-				return taskletClasses;
-				*/return new HashSet<Class<?>>();
+		 * DatabaseDesign design = db.getDesign();
+		 * 
+		 * DatabaseClassLoader classLoader = design.getDatabaseClassLoader(XotsNsfScanner.class.getClassLoader()); Set<Class<?>>
+		 * taskletClasses = classLoader.getClassesExtending(XotsBaseTasklet.class); if (TRACE && taskletClasses.size() > 0) {
+		 * System.out.println("TRACE: Found " + taskletClasses.size() + " Tasklets!"); } return taskletClasses;
+		 */return new HashSet<Class<?>>();
 	}
 }
