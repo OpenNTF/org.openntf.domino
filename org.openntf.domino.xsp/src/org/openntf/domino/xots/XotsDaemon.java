@@ -1,5 +1,7 @@
 package org.openntf.domino.xots;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -38,7 +40,17 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 	}
 
 	public synchronized static void addToQueue(final Runnable runnable) {
-		getInstance().queue(runnable, runnable.getClass().getClassLoader());
+		try {
+			Object result = AccessController.doPrivileged(new PrivilegedAction<Object>() {
+				@Override
+				public Object run() {
+					getInstance().queue(runnable, runnable.getClass().getClassLoader());
+					return null;
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public synchronized static XotsDaemon getInstance() {
@@ -66,7 +78,7 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 				XotsNamedRunner runner = new XotsNamedRunner(runnable, localLoader);
 				super.process(runner);
 			} else if (type == DominoSessionType.NATIVE) {
-				DominoNativeRunner runner = new DominoNativeRunner(runnable, localLoader);
+				XotsNativeRunner runner = new XotsNativeRunner(runnable, localLoader);
 				super.process(runner);
 			} else if (type == DominoSessionType.MANUAL) {
 				DominoManualRunner runner = new DominoManualRunner(runnable, localLoader);

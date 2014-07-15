@@ -169,7 +169,10 @@ public class DominoExecutor extends ThreadPoolExecutor {
 		if (runnable instanceof Future) {
 			super.execute(runnable);
 		} else {
-			super.submit(runnable);
+			System.out.println("Would have submitted a " + runnable.getClass().getName());
+
+			//			super.submit(runnable);
+			super.execute(runnable);
 		}
 	}
 
