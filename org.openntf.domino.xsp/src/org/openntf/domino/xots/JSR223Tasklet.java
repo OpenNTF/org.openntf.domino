@@ -10,7 +10,6 @@ import javax.script.ScriptException;
 import org.openntf.domino.Database;
 import org.openntf.domino.design.DatabaseDesign;
 import org.openntf.domino.design.FileResource;
-import org.openntf.domino.thread.DominoSessionType;
 
 public class JSR223Tasklet extends XotsBaseTasklet {
 	private static final long serialVersionUID = 1L;
@@ -19,7 +18,7 @@ public class JSR223Tasklet extends XotsBaseTasklet {
 	private final String scriptExt_;
 	private final String databasePath_;
 
-	public JSR223Tasklet(final String scriptName, final DominoSessionType type, final Database database) {
+	public JSR223Tasklet(final String scriptName, final Database database) {
 		int extIndex = scriptName.lastIndexOf('.');
 		scriptExt_ = scriptName.substring(extIndex + 1);
 
@@ -27,15 +26,13 @@ public class JSR223Tasklet extends XotsBaseTasklet {
 		FileResource script = design.getAnyFileResource(scriptName);
 		script_ = new String(script.getFileData());
 		databasePath_ = database.getApiPath();
-
-		setSessionType(type);
 	}
 
 	@Override
 	public void run() {
 		Database database = getSession().getDatabase(databasePath_);
 
-		ScriptEngineManager manager = new ScriptEngineManager(ScriptEngineManager.class.getClassLoader());
+		ScriptEngineManager manager = new ScriptEngineManager();
 		ScriptEngine engine = manager.getEngineByExtension(scriptExt_);
 
 		engine.put("database", database);
