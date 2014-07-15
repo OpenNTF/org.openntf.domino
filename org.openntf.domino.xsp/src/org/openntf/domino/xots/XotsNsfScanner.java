@@ -35,7 +35,7 @@ public class XotsNsfScanner extends XotsBaseTasklet {
 		dir.setDirectoryType(DbDirectory.Type.DATABASE);
 		for (Database db : dir) {
 			try {
-				Set<Class<?>> taskletClasses = scanDatabase(db);
+				Set<Class<? extends XotsBaseTasklet>> taskletClasses = scanDatabase(db);
 				if (taskletClasses.size() > 0) {
 					result.addAll(taskletClasses);
 				}
@@ -49,13 +49,13 @@ public class XotsNsfScanner extends XotsBaseTasklet {
 		return result;
 	}
 
-	public Set<Class<?>> scanDatabase(final Database db) {
+	public Set<Class<? extends XotsBaseTasklet>> scanDatabase(final Database db) {
 		if (TRACE) {
 			System.out.println("TRACE: Scanning database " + db.getApiPath() + " for Xots Tasklets");
 		}
 		DatabaseDesign design = db.getDesign();
 		DatabaseClassLoader classLoader = design.getDatabaseClassLoader(XotsNsfScanner.class.getClassLoader());
-		Set<Class<?>> taskletClasses = classLoader.getClassesExtending(XotsBaseTasklet.class);
+		Set<Class<? extends XotsBaseTasklet>> taskletClasses = classLoader.getClassesExtending(XotsBaseTasklet.class);
 		if (TRACE && taskletClasses.size() > 0) {
 			System.out.println("TRACE: Found " + taskletClasses.size() + " Tasklets!");
 		}

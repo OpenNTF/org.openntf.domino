@@ -145,14 +145,15 @@ public class DatabaseClassLoader extends org.openntf.domino.design.DatabaseClass
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Set<Class<?>> getClassesExtending(final Class<?> superClass) {
-		Set<Class<?>> result = new LinkedHashSet<Class<?>>();
+	public <T> Set<Class<? extends T>> getClassesExtending(final Class<T> superClass) {
+		Set<Class<? extends T>> result = new LinkedHashSet<Class<? extends T>>();
 		for (String className : design_.getJavaResourceClassNames()) {
 			try {
 				Class<?> clazz = loadClass(className);
 				if (superClass.isAssignableFrom(clazz)) {
-					result.add(clazz);
+					result.add((Class<? extends T>) clazz);
 				}
 			} catch (ClassNotFoundException e) {
 				// Ignore - Java resources keep copies of their old names, tripping up the search
