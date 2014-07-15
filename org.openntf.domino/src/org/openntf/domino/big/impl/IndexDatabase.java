@@ -131,13 +131,20 @@ public class IndexDatabase implements IScannerStateManager {
 		return caseSensitive_;
 	}
 
+	private String indexApiPath_;
+
 	public void setDatabase(final Database indexDb) {
 		indexDb_ = indexDb;
+		indexApiPath_ = indexDb.getApiPath();
 	}
 
 	public Database getIndexDb() {
 		if (indexDb_ == null) {
-			indexDb_ = Factory.getSession().getCurrentDatabase();
+			if (indexApiPath_ != null) {
+				indexDb_ = Factory.getSession().getDatabase(indexApiPath_);
+			} else {
+				indexDb_ = Factory.getSession().getCurrentDatabase();
+			}
 		}
 		return indexDb_;
 	}
