@@ -18,12 +18,12 @@
  */
 package org.openntf.domino.utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openntf.domino.DateTime;
@@ -36,20 +36,25 @@ import org.openntf.domino.Item;
  * 
  */
 public enum Dates {
-	DATEONLY(Strings.TIMESTAMP_DATEONLY, Strings.REGEX_DATEONLY),
+	DATEONLY(Strings.TIMESTAMP_DATEONLY, Strings.REGEX_DATEONLY, false),
 
-	TIMEONLY(Strings.TIMESTAMP_TIMEONLY, Strings.REGEX_TIMEONLY),
+	TIMEONLY(Strings.TIMESTAMP_TIMEONLY, Strings.REGEX_TIMEONLY, true),
 
-	DAYMONTH_NAMES(Strings.TIMESTAMP_DAYMONTH_NAMES, Strings.REGEX_DAYMONTH_NAMES),
+	DAYMONTH_NAMES(Strings.TIMESTAMP_DAYMONTH_NAMES, Strings.REGEX_DAYMONTH_NAMES, true),
 
-	DEFAULT(Strings.TIMESTAMP_DEFAULT, Strings.REGEX_DEFAULT),
+	DEFAULT(Strings.TIMESTAMP_DEFAULT, Strings.REGEX_DEFAULT, true),
 
-	MILITARY(Strings.TIMESTAMP_MILITARY, Strings.REGEX_MILITARY),
+	MEDDATE(Strings.TIMESTAMP_MEDDATE, Strings.REGEX_MEDDATE, false),
 
-	SIMPLETIME(Strings.TIMESTAMP_SIMPLETIME, Strings.REGEX_SIMPLETIME);
+	MILITARY(Strings.TIMESTAMP_MILITARY, Strings.REGEX_MILITARY, true),
+
+	SHORTDATE(Strings.TIMESTAMP_SHORTDATE, Strings.REGEX_SHORTDATE, false),
+
+	SIMPLETIME(Strings.TIMESTAMP_SIMPLETIME, Strings.REGEX_SIMPLETIME, true);
 
 	private final String _timestampFormat;
 	private final String _regex;
+	private final boolean _hasTimeComponent;
 	private Pattern _pattern;
 	private SimpleDateFormat _sdf;
 
@@ -61,10 +66,11 @@ public enum Dates {
 	 * @param regex
 	 *            String used to generate the pattern
 	 */
-	private Dates(final String timestampFormat, final String regex) {
+	private Dates(final String timestampFormat, final String regex, final boolean hastimecomponent) {
 		this._timestampFormat = timestampFormat;
 		this._regex = Strings.REGEX_BEGIN_NOCASE + regex + Strings.REGEX_END;
 		this._pattern = Pattern.compile(Strings.REGEX_BEGIN_NOCASE + regex + Strings.REGEX_END);
+		this._hasTimeComponent = hastimecomponent;
 	}
 
 	@Override
@@ -150,6 +156,15 @@ public enum Dates {
 	}
 
 	/**
+	 * Indicates if the formatter has a Time Component
+	 * 
+	 * @return Flag indicating if the formatter has a time component.
+	 */
+	public boolean hasTimeComponent() {
+		return this._hasTimeComponent;
+	}
+
+	/**
 	 * Determines if a given source string matches the Pattern.
 	 * 
 	 * @param source
@@ -158,14 +173,47 @@ public enum Dates {
 	 * @return Flag indicating if the source string matches the Pattern.
 	 */
 	public boolean matches(final String source) {
+		return this.getPattern().matcher(source).matches();
+	}
+
+	/**
+	 * Attempts to spawn a new Date by parsing a string.
+	 * 
+	 * @param string
+	 *            Value from which to attempt to construct a new Date object.
+	 * 
+	 * @return new Date object constructed from the string. Null on error.
+	 */
+	public Date parseInstance(final String string) {
+
 		try {
-			final Matcher m = this.getPattern().matcher(source);
-			return m.matches();
+			if (Strings.isBlankString(string)) {
+				throw new IllegalArgumentException("String to parse is null or blank");
+			}
+
+			final SimpleDateFormat sdf = this.getSimpleDateFormat();
+			Date result = sdf.parse(string);
+
+			if (null == result) {
+				throw new ParseException("Unable to parse: " + string, 0);
+			}
+
+			if (this.hasTimeComponent() && (string.toUpperCase().indexOf("PM") > 0)) {
+				Calendar cal = Dates.getCalendar(result);
+				if (cal.get(Calendar.HOUR_OF_DAY) < 12) {
+					// AM vs PM Parsing problem has occurred.  Add 12 hours to the time.
+					cal.add(Calendar.HOUR_OF_DAY, 12);
+					result = cal.getTime();
+				}
+			}
+
+			return result;
+
 		} catch (final Exception e) {
 			DominoUtils.handleException(e);
 		}
 
-		return false;
+		return null;
 	}
 
 	/*
@@ -891,6 +939,7 @@ public enum Dates {
 					return result;
 				}
 			}
+
 			for (final Dates result : Dates.values()) {
 				if (result.matches(key)) {
 					return result;
@@ -1129,15 +1178,33 @@ public enum Dates {
 	 * @return new Date object constructed from the string. Null on error.
 	 */
 	public static Date parse(final String string) {
-		if (!Strings.isBlankString(string)) {
-			try {
-				final Dates tf = Dates.get(string);
-				final SimpleDateFormat sdf = (null == tf) ? new SimpleDateFormat() : tf.getSimpleDateFormat();
-				return sdf.parse(string);
 
-			} catch (final Exception e) {
-				DominoUtils.handleException(e);
+		try {
+			if (Strings.isBlankString(string)) {
+				throw new IllegalArgumentException("String to parse is null or blank");
 			}
+
+			Dates tf = Dates.get(string);
+
+			if ((null == tf) && (string.indexOf(" ") > 0)) {
+				return Dates.parse(string.trim().replaceAll("\\s", ""));
+			}
+
+			if (null != tf) {
+				return tf.parseInstance(string);
+			}
+
+			final SimpleDateFormat sdf = new SimpleDateFormat();
+			Date result = sdf.parse(string);
+
+			if (null == result) {
+				throw new ParseException("Unable to parse: " + string, 0);
+			}
+
+			return result;
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
 		}
 
 		return null;
