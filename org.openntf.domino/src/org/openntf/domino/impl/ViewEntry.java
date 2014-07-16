@@ -34,6 +34,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.ext.Session.Fixes;
+import org.openntf.domino.impl.View.DominoColumnInfo;
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -173,8 +174,42 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 */
 	@Override
 	public java.util.Vector<Object> getColumnValues() {
+		return getColumnValues(getAncestorSession().isFixEnabled(Fixes.VIEWENTRY_RETURN_CONSTANT_VALUES));
+	}
+
+	/**
+	 * Returns the columnValues of this entry.
+	 * 
+	 * @param returnConstants
+	 *            this parameter controls if constant values should also be returned
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public java.util.Vector<Object> getColumnValues(final boolean returnConstants) {
 		try {
-			return Factory.wrapColumnValues(getDelegate().getColumnValues(), this.getAncestorSession());
+			Vector<Object> values = Factory.wrapColumnValues(getDelegate().getColumnValues(), this.getAncestorSession());
+
+			if (returnConstants) {
+				List<DominoColumnInfo> colInfos = ((org.openntf.domino.impl.View) getParentView()).getColumnInfos();
+				if (colInfos.size() > values.size()) { // there were constant columns
+
+					Vector<Object> ret = new Vector<Object>(colInfos.size());
+					for (DominoColumnInfo colInfo : colInfos) {
+						int idx = colInfo.getColumnValuesIndex();
+						if (idx < 65535) {
+							if (idx < values.size()) {
+								ret.add(values.get(idx));
+							} else {
+								ret.add(null); // Categories!
+							}
+						} else {
+							ret.add(colInfo.getConstantValue());
+						}
+					}
+					return ret;
+				}
+			}
+			return values;
 		} catch (NotesException e) {
 			if (e.id == 4432) {
 				return new java.util.Vector();
@@ -483,7 +518,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 */
 	@Override
 	public Database getAncestorDatabase() {
-		return (Database) ((DatabaseDescendant) this.getParent()).getAncestorDatabase();
+		return ((DatabaseDescendant) this.getParent()).getAncestorDatabase();
 	}
 
 	/*
@@ -506,6 +541,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		return getColumnValuesMap().get(columnName);
 	}
 
+	@Override
 	public <T> T getColumnValue(final String columnName, final Class<?> T) {
 		Object rawResult = getColumnValue(columnName);
 		if (rawResult instanceof Vector) {
@@ -517,32 +553,27 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		}
 	}
 
+	@Override
 	public Map<String, Object> getColumnValuesMap() {
 		if (columnValuesMap_ == null) {
-			List<Object> columnValues = getColumnValues();
+			List<Object> columnValues = getColumnValues(true); // fetch the corrected column values
+			List<DominoColumnInfo> columnInfos = ((org.openntf.domino.impl.View) getParentView()).getColumnInfos();
 			columnValuesMap_ = new LinkedHashMap<String, Object>();
-			// TODO RPr: Review this
-			for (org.openntf.domino.impl.View.DominoColumnInfo info : ((org.openntf.domino.impl.View) getParentView()).getColumnInfo()) {
-				if (info.getColumnValuesIndex() < 65535) {
-					int vindex = info.getColumnValuesIndex();
-					if (columnValues.size() > vindex) {
-						columnValuesMap_.put(info.getItemName(), columnValues.get(vindex));
-					} else {
-						columnValuesMap_.put(info.getItemName(), null);
-					}
-				} else {
-					columnValuesMap_.put(info.getItemName(), null);
-				}
+
+			for (int i = 0; i < columnInfos.size(); i++) {
+				columnValuesMap_.put(columnInfos.get(i).getItemName(), columnValues.get(i));
 			}
 		}
 		return columnValuesMap_;
 	}
 
+	@Override
 	public Collection<Object> getColumnValuesEx() {
 		//TODO - NTF not particularly happy with this. Should it be a List instead? Or should we rely on the caller to decide?
 		return Collections.unmodifiableCollection(getColumnValuesMap().values());
 	}
 
+	@Override
 	public String getPosition() {
 		char dot = '.';
 		String pos = this.getPosition(dot); // e.g. 2.1
