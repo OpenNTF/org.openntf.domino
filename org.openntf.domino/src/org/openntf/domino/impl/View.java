@@ -479,8 +479,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public ViewColumn copyColumn(final lotus.domino.ViewColumn sourceColumn) {
 		try {
-			ViewColumn result = fromLotus(getDelegate().copyColumn((lotus.domino.ViewColumn) toLotus(sourceColumn)), ViewColumn.SCHEMA,
-					this);
+			ViewColumn result = fromLotus(getDelegate().copyColumn(toLotus(sourceColumn)), ViewColumn.SCHEMA, this);
 			columnMap_ = null;
 			return result;
 		} catch (NotesException e) {
@@ -497,8 +496,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public ViewColumn copyColumn(final lotus.domino.ViewColumn sourceColumn, final int destinationIndex) {
 		try {
-			ViewColumn result = fromLotus(getDelegate().copyColumn((lotus.domino.ViewColumn) toLotus(sourceColumn), destinationIndex),
-					ViewColumn.SCHEMA, this);
+			ViewColumn result = fromLotus(getDelegate().copyColumn(toLotus(sourceColumn), destinationIndex), ViewColumn.SCHEMA, this);
 			columnMap_ = null;
 			return result;
 		} catch (NotesException e) {
@@ -868,7 +866,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public Vector<String> getAliases() {
 		try {
-			return (Vector<String>) getDelegate().getAliases();
+			return getDelegate().getAliases();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1196,7 +1194,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public java.util.Vector<String> getColumnNames() {
 		try {
-			return (Vector<String>) getDelegate().getColumnNames();
+			return getDelegate().getColumnNames();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1483,7 +1481,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public Vector<String> getLockHolders() {
 		try {
-			return (Vector<String>) getDelegate().getLockHolders();
+			return getDelegate().getLockHolders();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1641,7 +1639,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public Vector<String> getReaders() {
 		try {
-			return (Vector<String>) getDelegate().getReaders();
+			return getDelegate().getReaders();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2509,7 +2507,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		return this.getAncestorDatabase().getAncestorSession();
 	}
 
-	protected List<DominoColumnInfo> getColumnInfo() {
+	protected List<DominoColumnInfo> getColumnInfos() {
 		if (columnInfo_ == null) {
 			List<org.openntf.domino.ViewColumn> columns = getColumns();
 			List<DominoColumnInfo> result = new ArrayList<DominoColumnInfo>(columns.size());
@@ -2529,6 +2527,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public static class DominoColumnInfo implements Serializable {
 		private final String itemName_;
 		private final int columnValuesIndex_;
+		private final Object constantValue_;
 
 		/**
 		 * Constructor, passing the ViewColumn object
@@ -2539,7 +2538,16 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		 */
 		public DominoColumnInfo(final org.openntf.domino.ViewColumn column) {
 			itemName_ = column.getItemName();
-			columnValuesIndex_ = column.getColumnValuesIndex();
+			columnValuesIndex_ = column.getColumnValuesIndex(false);
+
+			if (columnValuesIndex_ == 65535) {
+				// resolve the constant values (with the openntf session, to get proper dateTime values!)
+				Vector v = column.getAncestorSession().evaluate(column.getFormula());
+				constantValue_ = v.get(0);
+			} else {
+				constantValue_ = null;
+			}
+
 		}
 
 		/**
@@ -2560,6 +2568,15 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		 */
 		public int getColumnValuesIndex() {
 			return columnValuesIndex_;
+		}
+
+		/**
+		 * If this is a constant
+		 * 
+		 * @return the constant value of this column
+		 */
+		public Object getConstantValue() {
+			return constantValue_;
 		}
 	}
 
