@@ -33,8 +33,8 @@ public class DatesTest implements Runnable {
 			System.out.println("*");
 			System.out.println("*");
 			System.out.println("*");
-			System.out.println("datepart: " + datepart);
-			System.out.println("timepart: " + timepart);
+			System.out.println("datepart: \"" + datepart + "\"");
+			System.out.println("timepart: \"" + timepart + "\"");
 			System.out.println("date: " + date);
 
 		} catch (Throwable t) {
