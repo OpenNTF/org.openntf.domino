@@ -18,12 +18,12 @@
  */
 package org.openntf.domino.utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openntf.domino.DateTime;
@@ -44,7 +44,7 @@ public enum Dates {
 
 	DEFAULT(Strings.TIMESTAMP_DEFAULT, Strings.REGEX_DEFAULT),
 
-	MEDDATE(Strings.TIMESTAMP_MEDDATE, Strings.REGEX_SHORTDATE),
+	MEDDATE(Strings.TIMESTAMP_MEDDATE, Strings.REGEX_MEDDATE),
 
 	MILITARY(Strings.TIMESTAMP_MILITARY, Strings.REGEX_MILITARY),
 
@@ -162,17 +162,7 @@ public enum Dates {
 	 * @return Flag indicating if the source string matches the Pattern.
 	 */
 	public boolean matches(final String source) {
-		try {
-			final Matcher m = this.getPattern().matcher(source);
-			//			return m.matches();
-			boolean result = m.matches();
-			System.out.println(this.name() + ".matches(" + source + "): " + result);
-			return result;
-		} catch (final Exception e) {
-			DominoUtils.handleException(e);
-		}
-
-		return false;
+		return this.getPattern().matcher(source).matches();
 	}
 
 	/*
@@ -1098,13 +1088,6 @@ public enum Dates {
 			return cDate.getTime();
 
 		} catch (final Exception e) {
-			System.out.println("*");
-			System.out.println("*");
-			System.out.println("*");
-			System.out.println("EXCEPTION in Dates.getDate()");
-			System.out.println("date: " + date);
-			System.out.println("time: " + time);
-			e.printStackTrace();
 			DominoUtils.handleException(e);
 			throw new IllegalArgumentException("Neither DATE nor TIME argument could be processed as a Date object.");
 		}
@@ -1145,28 +1128,43 @@ public enum Dates {
 	 */
 	public static Date parse(final String string) {
 
-		System.out.println("*");
-		System.out.println("Dates.parse()");
-		System.out.println("string: " + string);
-
-		if (!Strings.isBlankString(string)) {
-			try {
-				final Dates tf = Dates.get(string);
-				System.out.println("tf: " + tf);
-				final SimpleDateFormat sdf = (null == tf) ? new SimpleDateFormat() : tf.getSimpleDateFormat();
-
-				System.out.println("sdf: " + sdf);
-				Date result = sdf.parse(string);
-
-				System.out.println("Dates.parse(" + string + "): " + result);
-				return result;
-
-			} catch (final Exception e) {
-				DominoUtils.handleException(e);
+		try {
+			if (Strings.isBlankString(string)) {
+				throw new IllegalArgumentException("String to parse is null or blank");
 			}
+
+			Dates tf = Dates.get(string);
+
+			if ((null == tf) && (string.indexOf(" ") > 0)) {
+				return Dates.parse(string.trim().replaceAll("\\s", ""));
+			}
+
+			final SimpleDateFormat sdf = (null == tf) ? new SimpleDateFormat() : tf.getSimpleDateFormat();
+			Date result = sdf.parse(string);
+
+			if (null == result) {
+				throw new ParseException("Unable to parse: " + string, 0);
+			}
+
+			if (Dates.SIMPLETIME.equals(tf)) {
+				if ("0".equals(string.substring(0, 1))) {
+					if ("P".equals(string.substring(4, 5))) {
+						Calendar cal = Dates.getCalendar(result);
+						if (cal.get(Calendar.HOUR_OF_DAY) < 12) {
+							// AM vs PM Parsing problem has occurred.  Add 12 hours to the time.
+							cal.add(Calendar.HOUR_OF_DAY, 12);
+							result = cal.getTime();
+						}
+					}
+				}
+			}
+
+			return result;
+
+		} catch (final Exception e) {
+			DominoUtils.handleException(e);
 		}
 
-		System.out.println("Dates.parse(" + string + "): null");
 		return null;
 	}
 
