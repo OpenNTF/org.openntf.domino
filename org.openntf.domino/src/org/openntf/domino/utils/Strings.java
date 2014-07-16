@@ -89,6 +89,7 @@ public enum Strings {
 
 	public static final String REGEX_MILITARY = Strings.join(" ", Strings.REGEX_9_8, Strings.REGEX_HHmmss + ",", Strings.REGEX_TIMEZONE);
 
+	public static final String REGEX_MEDDATE = "\\d+/\\d+/\\d{4}";
 	public static final String REGEX_SHORTDATE = "\\d+/\\d+/\\d+";
 	public static final String REGEX_SIMPLETIME = Strings.REGEX_9_4 + Strings.REGEX_ampm;
 
