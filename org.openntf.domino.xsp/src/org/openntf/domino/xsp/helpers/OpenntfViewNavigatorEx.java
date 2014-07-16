@@ -5,9 +5,6 @@ package org.openntf.domino.xsp.helpers;
 
 import static org.openntf.domino.utils.DominoUtils.handleException;
 
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
@@ -20,10 +17,8 @@ import lotus.domino.ViewEntry;
 
 import org.openntf.domino.utils.Factory;
 
-import com.ibm.xsp.model.domino.DominoViewDataContainer;
 import com.ibm.xsp.model.domino.ViewNavigatorFactory;
 import com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx9;
-import com.ibm.xsp.model.domino.viewnavigator.PathPosition;
 
 /**
  * @author Nathan T. Freeman
@@ -142,149 +137,13 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 		return super.readEntries(paramView, paramInt1, paramInt2);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx9#wrapViewEntry(lotus.domino.ViewEntry, java.lang.String,
-	 * com.ibm.xsp.model.domino.viewnavigator.PathPosition)
-	 */
-	@Override
-	public ViewEntry wrapViewEntry(final ViewEntry paramViewEntry, final String paramString, final PathPosition paramPathPosition)
-			throws NotesException {
-		//if (paramViewEntry instanceof org.openntf.domino.ViewEntry) {
-		//	paramViewEntry = org.openntf.domino.impl.Base.toLotus(paramViewEntry);
-		//
-		//	}
-		//super.wrapViewEntry(paramViewEntry, paramString, paramPathPosition)
-		// return super.wrapViewEntry(paramViewEntry, paramString, paramPathPosition);
+	// 2014-07-16 The entry is removed completely as it will never work. See DominoViewEntryArray writeExternal/readExternal
 
-		//Object parent = paramViewEntry.getParent();
-		//if (parent instanceof View) {
-		// System.out.println("Wrapping a ViewEntry with param " + paramString + " from view "
-		// + ((View) paramViewEntry.getParent()).getName() + " in position " + paramPathPosition.getViewFullPosition()
-		// + " and indent " + this.offsetColumnIndent);
-		//} else if (parent instanceof ViewNavigator) {
-		// System.out.println("Wrapping a ViewEntry with param " + paramString + " from view nav "
-		// + ((ViewNavigator) paramViewEntry.getParent()).getParentView().getName() + " in position "
-		// + paramPathPosition.getViewFullPosition() + " and indent " + this.offsetColumnIndent);
-		//}
-		return new Entry(paramViewEntry, paramString, paramPathPosition, this.offsetColumnIndent, this);
-	}
-
-	/**
-	 * Entry class
-	 */
-	public static class Entry extends NOIViewNavigatorEx9.Entry {
-		private static final long serialVersionUID = 1L;
-		private Object[] constantValues;
-
-		/**
-		 * Constructor
-		 */
-		public Entry() {
-
-		}
-
-		/**
-		 * Extended constructor
-		 * 
-		 * @param paramViewEntry
-		 *            ViewEntry
-		 * @param paramString
-		 *            String
-		 * @param paramPathPosition
-		 *            PathPosition
-		 * @param paramInt
-		 *            int
-		 * @throws NotesException
-		 */
-		public Entry(final ViewEntry paramViewEntry, final String paramString, final PathPosition paramPathPosition, final int paramInt,
-				final OpenntfViewNavigatorEx openntfViewNavigatorEx) throws NotesException {
-			super(paramViewEntry, paramString, paramPathPosition, paramInt);
-			constantValues = openntfViewNavigatorEx.constantValues;
-		}
-
-		/**
-		 * Output column values as a JSON object
-		 * 
-		 * @param entry
-		 *            Entry to output values for
-		 * @return String
-		 * @since org.openntf.domino.xsp 4.5.0
-		 */
-		private static String getColumnValuesDump(final Entry entry) {
-			Vector v = entry._columnValuesEx;
-			StringBuilder sb = new StringBuilder();
-			sb.append("size: " + v.size());
-			sb.append(", [");
-			for (int i = 0; i < v.size(); i++) {
-				Object value = v.get(i);
-				if (value == null) {
-					sb.append(i + ": " + "null");
-				} else {
-					sb.append(i + ": " + (value instanceof Vector ? String.valueOf(((Vector) value).get(0)) + "[]" : String.valueOf(value)));
-				}
-				sb.append(",");
-			}
-			sb.append("]");
-
-			return sb.toString();
-		}
-
-		/**
-		 * Extended version, supports constant values and correct sizing.
-		 * 
-		 * @see com.ibm.xsp.model.domino.wrapped.DominoViewEntry#getColumnValuesEx()
-		 */
-		@Override
-		public Vector getColumnValuesEx() throws NotesException {
-			if (this._columnValuesEx != null) {
-				return this._columnValuesEx;
-			}
-			this._columnValuesEx = getJavaColumnValues();
-			DominoViewDataContainer container = this._viewDataModel.getDominoViewDataContainer();
-
-			if (this._columnValuesEx.size() < container.getColumnCount()) {
-				int i = container.getColumnCount();
-				int j = i - this._columnValuesEx.size();
-				this._columnValuesEx.setSize(i);
-				for (int k = 0; k < i; ++k) {
-					int l = container.getColumnValuesIndex(k);
-					if (l == 65535) {
-						this._columnValuesEx.add(k, constantValues[k]);
-						--j;
-					}
-					if (j == 0)
-						break;
-				}
-				this._columnValuesEx.setSize(i); // trim to the correct size
-			}
-			return this._columnValuesEx;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see com.ibm.xsp.model.domino.wrapped.DominoViewEntry#readExternal(java.io.ObjectInput)
-		 */
-		@Override
-		public void readExternal(final ObjectInput paramObjectInput) throws IOException, ClassNotFoundException {
-			// System.out.println("Reading externalized OpenntfViewNavigatorEx.Entry");
-			super.readExternal(paramObjectInput);
-			constantValues = (Object[]) paramObjectInput.readObject();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see com.ibm.xsp.model.domino.wrapped.DominoViewEntry#writeExternal(java.io.ObjectOutput)
-		 */
-		@Override
-		public void writeExternal(final ObjectOutput paramObjectOutput) throws IOException {
-			// System.out.println("Writing externalized OpenntfViewNavigatorEx.Entry");
-			super.writeExternal(paramObjectOutput);
-			paramObjectOutput.writeObject(constantValues);
-		}
-	}
+	//	/**
+	//	 * Entry class
+	//	 */
+	//	public static class Entry extends NOIViewNavigatorEx9.Entry {
+	//		
+	//	}
 
 }
