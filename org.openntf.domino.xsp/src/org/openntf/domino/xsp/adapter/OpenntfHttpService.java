@@ -66,6 +66,7 @@ public class OpenntfHttpService extends HttpService {
 	public boolean doService(final String contextPath, final String path, final HttpSessionAdapter httpSession,
 			final HttpServletRequestAdapter httpRequest, final HttpServletResponseAdapter httpResponse) throws ServletException,
 			IOException {
+		// System.out.println("DEBUG ALERT!! OpenntfHttpService has been asked to service an HttpRequest!");
 
 		if (doServiceEntered.get().booleanValue()) {
 			// prevent recursion (if someone does the same trick)

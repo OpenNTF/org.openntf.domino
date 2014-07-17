@@ -46,7 +46,7 @@ public class DominoThreadFactory implements ThreadFactory {
 		//		System.out.println("New DominoThreadFactory constructed");
 		factoryClassLoader_ = Thread.currentThread().getContextClassLoader();
 		factoryAccessController_ = AccessController.getContext();
-		factoryAccessController_.checkPermission(new RuntimePermission("setContextClassLoader"));
+		//		factoryAccessController_.checkPermission(new RuntimePermission("setContextClassLoader"));
 		//		System.out.println("AccessControllerContext is " + factoryAccessController_.getClass().getName());
 
 	}
