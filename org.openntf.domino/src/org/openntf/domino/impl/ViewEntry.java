@@ -47,8 +47,8 @@ import org.openntf.domino.utils.TypeUtils;
  */
 public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.ViewEntry, View> implements org.openntf.domino.ViewEntry {
 	private static final Logger log_ = Logger.getLogger(ViewEntry.class.getName());
-
 	private Map<String, Object> columnValuesMap_;
+	private Vector columnValues_;
 	private static Method getParentViewMethod;
 
 	static {
@@ -187,18 +187,22 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	@SuppressWarnings("unchecked")
 	public java.util.Vector<Object> getColumnValues(final boolean returnConstants) {
 		try {
-			Vector<Object> values = Factory.wrapColumnValues(getDelegate().getColumnValues(), this.getAncestorSession());
+
+			if (columnValues_ == null) {
+				// cache the columnValues and rely that the caller will NOT modify the objects inside
+				columnValues_ = Factory.wrapColumnValues(getDelegate().getColumnValues(), this.getAncestorSession());
+			}
 
 			if (returnConstants) {
 				List<DominoColumnInfo> colInfos = ((org.openntf.domino.impl.View) getParentView()).getColumnInfos();
-				if (colInfos.size() > values.size()) { // there were constant columns
+				if (colInfos.size() > columnValues_.size()) { // there were constant columns
 
 					Vector<Object> ret = new Vector<Object>(colInfos.size());
 					for (DominoColumnInfo colInfo : colInfos) {
 						int idx = colInfo.getColumnValuesIndex();
 						if (idx < 65535) {
-							if (idx < values.size()) {
-								ret.add(values.get(idx));
+							if (idx < columnValues_.size()) {
+								ret.add(columnValues_.get(idx));
 							} else {
 								ret.add(null); // Categories!
 							}
@@ -209,7 +213,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 					return ret;
 				}
 			}
-			return values;
+			return columnValues_;
 		} catch (NotesException e) {
 			if (e.id == 4432) {
 				return new java.util.Vector();
@@ -505,6 +509,8 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	@Override
 	public void setPreferJavaDates(final boolean flag) {
 		try {
+			columnValues_ = null;
+			columnValuesMap_ = null;
 			getDelegate().setPreferJavaDates(flag);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -538,7 +544,20 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 */
 	@Override
 	public Object getColumnValue(final String columnName) {
-		return getColumnValuesMap().get(columnName);
+		Map<String, DominoColumnInfo> colInfoMap = ((org.openntf.domino.impl.View) getParentView()).getColumnInfoMap();
+
+		DominoColumnInfo colInfo = colInfoMap.get(columnName);
+		if (colInfo != null) {
+			int idx = colInfo.getColumnValuesIndex();
+			if (idx == 65535) {
+				return colInfo.getConstantValue();
+			} else {
+				Vector<Object> columnValues = getColumnValues(false);
+				if (idx < columnValues.size())
+					return (columnValues.get(idx));
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -570,7 +589,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	@Override
 	public Collection<Object> getColumnValuesEx() {
 		//TODO - NTF not particularly happy with this. Should it be a List instead? Or should we rely on the caller to decide?
-		return Collections.unmodifiableCollection(getColumnValuesMap().values());
+		return Collections.unmodifiableCollection(getColumnValues(true));
 	}
 
 	@Override

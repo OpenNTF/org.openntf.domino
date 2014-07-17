@@ -52,6 +52,8 @@ import org.openntf.domino.utils.Factory;
 public class View extends Base<org.openntf.domino.View, lotus.domino.View, Database> implements org.openntf.domino.View {
 
 	private List<DominoColumnInfo> columnInfo_;
+	private Map<String, org.openntf.domino.ViewColumn> columnMap_;
+	private Map<String, DominoColumnInfo> columnInfoMap_;
 	private static Method iGetEntryByKeyMethod;
 	static {
 		try {
@@ -85,6 +87,12 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 			DominoUtils.handleException(e);
 		}
 
+	}
+
+	protected void flushCaches() {
+		columnInfo_ = null;
+		columnInfoMap_ = null;
+		columnMap_ = null;
 	}
 
 	/**
@@ -412,7 +420,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn copyColumn(final int sourceColumn) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().copyColumn(sourceColumn), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -429,7 +437,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn copyColumn(final int sourceColumn, final int destinationIndex) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().copyColumn(sourceColumn, destinationIndex), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -446,7 +454,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn copyColumn(final String sourceColumn) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().copyColumn(sourceColumn), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -463,7 +471,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn copyColumn(final String sourceColumn, final int destinationIndex) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().copyColumn(sourceColumn, destinationIndex), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -480,7 +488,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn copyColumn(final lotus.domino.ViewColumn sourceColumn) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().copyColumn(toLotus(sourceColumn)), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -497,7 +505,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn copyColumn(final lotus.domino.ViewColumn sourceColumn, final int destinationIndex) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().copyColumn(toLotus(sourceColumn), destinationIndex), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -514,7 +522,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn createColumn() {
 		try {
 			ViewColumn result = fromLotus(getDelegate().createColumn(), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -531,7 +539,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn createColumn(final int position) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().createColumn(position), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -548,7 +556,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn createColumn(final int position, final String columnTitle) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().createColumn(position, columnTitle), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -565,7 +573,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn createColumn(final int position, final String columnTitle, final String formula) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().createColumn(position, columnTitle, formula), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -1225,34 +1233,16 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public Vector<org.openntf.domino.ViewColumn> getColumns() {
 		try {
-			Vector columns = null;
 			try {
-				columns = getDelegate().getColumns();
+				return fromLotusAsVector(getDelegate().getColumns(), org.openntf.domino.ViewColumn.SCHEMA, this);
 			} catch (NullPointerException e) {
 				throw new RuntimeException("Unable to get columns for a view called " + getName() + " in database "
 						+ getAncestorDatabase().getApiPath(), e);
 			}
-			return fromLotusAsVector(columns, org.openntf.domino.ViewColumn.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 		return null;
-	}
-
-	private Map<String, org.openntf.domino.ViewColumn> columnMap_;
-
-	@Override
-	public Map<String, org.openntf.domino.ViewColumn> getColumnMap() {
-		if (columnMap_ == null) {
-			columnMap_ = new LinkedHashMap<String, org.openntf.domino.ViewColumn>();
-			Vector<ViewColumn> columns = getColumns();
-			if (columns != null && !columns.isEmpty()) {
-				for (ViewColumn column : columns) {
-					columnMap_.put(column.getItemName(), column);
-				}
-			}
-		}
-		return columnMap_;
 	}
 
 	/*
@@ -2194,7 +2184,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public void removeColumn() {
 		try {
 			getDelegate().removeColumn();
-			columnMap_ = null;
+			flushCaches();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2209,7 +2199,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public void removeColumn(final int column) {
 		try {
 			getDelegate().removeColumn(column);
-			columnMap_ = null;
+			flushCaches();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2224,7 +2214,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public void removeColumn(final String column) {
 		try {
 			getDelegate().removeColumn(column);
-			columnMap_ = null;
+			flushCaches();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2507,6 +2497,25 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		return this.getAncestorDatabase().getAncestorSession();
 	}
 
+	@Override
+	public Map<String, org.openntf.domino.ViewColumn> getColumnMap() {
+		if (columnMap_ == null) {
+			columnMap_ = new LinkedHashMap<String, org.openntf.domino.ViewColumn>();
+			Vector<ViewColumn> columns = getColumns();
+			if (columns != null && !columns.isEmpty()) {
+				for (ViewColumn column : columns) {
+					columnMap_.put(column.getItemName(), column);
+				}
+			}
+		}
+		return columnMap_;
+	}
+
+	/**
+	 * Used by the viewEntry to determine the correct columnValue
+	 * 
+	 * @return
+	 */
 	protected List<DominoColumnInfo> getColumnInfos() {
 		if (columnInfo_ == null) {
 			List<org.openntf.domino.ViewColumn> columns = getColumns();
@@ -2517,6 +2526,22 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 			columnInfo_ = result;
 		}
 		return columnInfo_;
+	}
+
+	/**
+	 * Used by the viewEntry to determine the correct columnValue
+	 * 
+	 * @return
+	 */
+	protected Map<String, DominoColumnInfo> getColumnInfoMap() {
+		if (columnInfoMap_ == null) {
+			columnInfoMap_ = new LinkedHashMap<String, DominoColumnInfo>();
+			for (DominoColumnInfo columnInfo : getColumnInfos()) {
+				columnInfoMap_.put(columnInfo.getItemName(), columnInfo);
+			}
+
+		}
+		return columnInfoMap_;
 	}
 
 	/**
