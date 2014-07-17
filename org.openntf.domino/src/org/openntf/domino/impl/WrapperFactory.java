@@ -202,12 +202,12 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		} else if (currentSession != null) {
 			lotus.domino.Session rawSession = org.openntf.domino.impl.Base.toLotus(currentSession);
 			if (org.openntf.domino.impl.Base.isDead(rawSession)) {
-				Factory.loadEnvironment(newSession);
+				//				Factory.loadEnvironment(newSession);
 				// System.out.println("Resetting default local session because we got an exception");
 				Factory.setSession(newSession);
 			}
 		} else {
-			Factory.loadEnvironment(newSession);
+			//			Factory.loadEnvironment(newSession);
 			// System.out.println("Resetting default local session because it was null");
 			Factory.setSession(newSession);
 		}

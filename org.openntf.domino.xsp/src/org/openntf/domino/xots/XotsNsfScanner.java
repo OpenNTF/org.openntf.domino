@@ -17,7 +17,6 @@ import org.openntf.domino.Session;
 import com.ibm.designer.runtime.domino.adapter.HttpService;
 import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
-import com.ibm.domino.xsp.module.nsf.NSFService;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 import com.ibm.domino.xsp.module.nsf.RuntimeFileSystem.NSFResource;
 import com.ibm.domino.xsp.module.nsf.RuntimeFileSystem.NSFXspClassResource;
@@ -62,10 +61,10 @@ public class XotsNsfScanner extends XotsBaseTasklet {
 		return result;
 	}
 
-	private NSFService getNSFService() {
+	private XotsService getXotsService() {
 		for (HttpService service : LCDEnvironment.getInstance().getServices()) {
-			if (service instanceof NSFService) {
-				return (NSFService) service;
+			if (service instanceof XotsService) {
+				return (XotsService) service;
 			}
 		}
 		return null;
@@ -80,7 +79,7 @@ public class XotsNsfScanner extends XotsBaseTasklet {
 			@Override
 			public NSFComponentModule run() {
 				try {
-					return (NSFComponentModule) getNSFService().loadModule("/" + db.getFilePath());
+					return (NSFComponentModule) getXotsService().getComponentModule("/" + db.getFilePath());
 					// TODO RPr: Is it possible to open modules across servers?
 				} catch (ServletException e) {
 					e.printStackTrace();

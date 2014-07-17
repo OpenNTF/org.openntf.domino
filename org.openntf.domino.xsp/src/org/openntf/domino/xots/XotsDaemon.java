@@ -2,6 +2,7 @@ package org.openntf.domino.xots;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -12,6 +13,9 @@ import org.openntf.domino.thread.DominoNativeRunner;
 import org.openntf.domino.thread.DominoSessionType;
 import org.openntf.domino.thread.model.IDominoRunnable;
 
+import com.ibm.designer.runtime.domino.adapter.HttpService;
+import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
+
 /*
  * This class and package is intended to become the space for the XPages implementation
  * of IBM's DOTS. Except it will use modern thread management instead of acting like it was
@@ -19,6 +23,7 @@ import org.openntf.domino.thread.model.IDominoRunnable;
  */
 public class XotsDaemon extends TrustedDispatcher implements Observer {
 	private static XotsDaemon INSTANCE;
+	private XotsService xotsService_;
 	private Set<Class<?>> taskletClasses_;
 	private Set<XotsBaseTasklet> tasklets_;
 
@@ -37,6 +42,10 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 
 	private XotsDaemon() {
 		super();
+		LCDEnvironment env = LCDEnvironment.getInstance();
+		List<HttpService> services = env.getServices();
+		xotsService_ = new XotsService(env);
+		services.add(xotsService_);
 	}
 
 	public synchronized static void addToQueue(final Runnable runnable) {
