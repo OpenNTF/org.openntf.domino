@@ -89,12 +89,6 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 
 	}
 
-	protected void flushCaches() {
-		columnInfo_ = null;
-		columnInfoMap_ = null;
-		columnMap_ = null;
-	}
-
 	/**
 	 * Instantiates a new view.
 	 * 
@@ -2773,4 +2767,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		return result;
 	}
 
+	protected void flushCaches() {
+		columnInfo_ = null;
+		columnInfoMap_ = null;
+		columnMap_ = null;
+	}
 }
