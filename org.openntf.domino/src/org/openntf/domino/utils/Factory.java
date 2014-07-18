@@ -96,10 +96,13 @@ public enum Factory {
 				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 					@Override
 					public Object run() throws Exception {
-						String progpath = System.getProperty("notes.binary");
+						// Windows stores the notes.ini in the program directory; Linux stores it in the data directory
+						String os = String.valueOf(System.getProperty("os.name")).toLowerCase();
+						String progpath = System.getProperty(os.contains("windows") ? "notes.binary" : "user.dir");
 						File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+
 						Scanner scanner = new Scanner(iniFile);
-						scanner.useDelimiter(System.getProperty("line.separator"));
+						scanner.useDelimiter("\n|\r\n");
 						//						while (scanner.hasNextLine()) {
 						//							String nextLine = scanner.nextLine();
 						//							System.out.println("DEBUG " + nextLine);
