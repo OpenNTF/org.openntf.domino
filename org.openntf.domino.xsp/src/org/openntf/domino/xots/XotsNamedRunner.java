@@ -131,11 +131,15 @@ public class XotsNamedRunner implements Runnable {
 	protected void postRun() {
 		lotus.domino.Session session = Factory.terminate();
 		if (session != null) {
+			System.out.println("DEBUG: recycling a Session with object id: " + System.identityHashCode(session) + " after running a "
+					+ runnable_.getClass().getName());
 			try {
 				session.recycle();
 			} catch (Throwable t) {
 				t.printStackTrace();
 			}
+		} else {
+			System.out.println("ALERt: session was null for a " + runnable_.getClass().getName());
 		}
 		if (module_ != null) {
 			NotesContext.termThread();

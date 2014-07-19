@@ -9,7 +9,7 @@ import org.openntf.domino.utils.Factory;
 
 public class DominoNativeRunner /*extends AbstractDominoRunnable */implements Runnable {
 	private static final Logger log_ = Logger.getLogger(DominoNativeRunner.class.getName());
-	private final Runnable runnable_;
+	protected final Runnable runnable_;
 	protected ClassLoader classLoader_;
 	private transient Session session_;
 
@@ -54,6 +54,7 @@ public class DominoNativeRunner /*extends AbstractDominoRunnable */implements Ru
 		lotus.domino.Session s = null;
 		try {
 			s = lotus.domino.NotesFactory.createTrustedSession();
+			//			lotus.domino.local.Session.registerJavaThread();
 			//				return s;
 		} catch (Exception ne) {
 			System.out.println("Unable to create a trusted session. Falling back to a session with full access...");
@@ -86,6 +87,10 @@ public class DominoNativeRunner /*extends AbstractDominoRunnable */implements Ru
 		return classLoader_;
 	}
 
+	public Runnable getRunnable() {
+		return runnable_;
+	}
+
 	public void setSession(final lotus.domino.Session session) {
 		session_ = Factory.fromLotus(session, org.openntf.domino.Session.SCHEMA, null);
 		Factory.setSession(session);
@@ -100,7 +105,9 @@ public class DominoNativeRunner /*extends AbstractDominoRunnable */implements Ru
 	}
 
 	protected void preRun() {
-		lotus.domino.NotesThread.sinitThread();
+		//		lotus.domino.NotesThread.sinitThread();
+		//		lotus.domino.NotesThread.sEnablePerThreadTracking(Thread.currentThread());
+		//		System.out.println("PerThreadCount: " + lotus.domino.NotesThread.sGetPerThreadCount(Thread.currentThread()));
 		//		System.out.println("Thread init'ed");
 		Session session = this.getNewFullAccessSession();
 		//		System.out.println("Got a session object of " + (null == session ? "null" : session.getClass().getName()));
@@ -115,16 +122,16 @@ public class DominoNativeRunner /*extends AbstractDominoRunnable */implements Ru
 	}
 
 	protected void postRun() {
+		//		System.out.println("DEBUG: ending");
 		lotus.domino.Session session = Factory.terminate();
 		if (session != null) {
 			try {
 				session.recycle();
-				//				System.out.println("Recycled a native domino session in thread " + Thread.currentThread().getId());
-				lotus.domino.NotesThread.stermThread();
-				//				System.out.println("Thread term'ed");
 			} catch (Throwable t) {
 				t.printStackTrace();
 			}
+		} else {
+			System.out.println("ALERT: session was null for a " + runnable_.getClass().getName());
 		}
 	}
 
@@ -132,8 +139,6 @@ public class DominoNativeRunner /*extends AbstractDominoRunnable */implements Ru
 	public void run() {
 		if (runnable_ != null) {
 			try {
-				//				System.out.println("Starting DominoNativeRunner with a security context "
-				//						+ AccessController.getContext().getClass().getName());
 				preRun();
 				if (!(runnable_ instanceof DominoNativeRunner)) {
 					runnable_.run();
@@ -142,7 +147,7 @@ public class DominoNativeRunner /*extends AbstractDominoRunnable */implements Ru
 					log_.log(Level.SEVERE, "Cannot run a DominoNativeRunner inside a DominoNativeRunner!", t);
 				}
 			} catch (Throwable t) {
-				t.printStackTrace();
+				throw new RuntimeException(t);
 			} finally {
 				postRun();
 			}

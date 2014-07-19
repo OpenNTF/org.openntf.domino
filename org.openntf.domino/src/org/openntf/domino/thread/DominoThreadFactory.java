@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openntf.domino.annotations.Incomplete;
+import org.openntf.domino.thread.model.IDominoRunnable;
 
 /**
  * @author Nathan T. Freeman
@@ -24,12 +25,23 @@ public class DominoThreadFactory implements ThreadFactory {
 	public static class DominoUncaughtExceptionHandler implements UncaughtExceptionHandler {
 		@Override
 		public void uncaughtException(final Thread paramThread, final Throwable paramThrowable) {
+			System.out.println("ALERT: Uncaught exception in DominoThread " + paramThread.getClass().getName());
 			paramThrowable.printStackTrace();
 			if (paramThread instanceof DominoThread) {
 				Runnable runnable = ((DominoThread) paramThread).getRunnable();
-				if (runnable instanceof AbstractDominoRunnable) {
-					((AbstractDominoRunnable) runnable).clean();
+				if (runnable instanceof IDominoRunnable) {
+					lotus.domino.Session s = ((IDominoRunnable) runnable).getSession();
+					if (s != null) {
+						try {
+							s.recycle();
+						} catch (Throwable t) {
+							t.printStackTrace();
+						}
+					}
 				}
+			}
+			if (paramThread instanceof lotus.domino.NotesThread) {
+				((lotus.domino.NotesThread) paramThread).termThread();
 			}
 		}
 	}

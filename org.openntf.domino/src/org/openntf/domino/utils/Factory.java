@@ -277,9 +277,9 @@ public enum Factory {
 	private static final Logger log_ = Logger.getLogger(Factory.class.getName());
 
 	/** The Constant TRACE_COUNTERS. */
-	private static final boolean TRACE_COUNTERS = true;
+	private static final boolean TRACE_COUNTERS = false;
 	/** use a separate counter in each thread */
-	private static final boolean COUNT_PER_THREAD = true;
+	private static final boolean COUNT_PER_THREAD = false;
 
 	/** The lotus counter. */
 	private static Counter lotusCounter = new Counter(COUNT_PER_THREAD);
@@ -749,8 +749,8 @@ public enum Factory {
 			callback.terminate();
 		}
 		clearSession();
-		wf.terminate();
-
+		long termCount = wf.terminate();
+		//		System.out.println("DEBUG: cleared " + termCount + " references from the queue...");
 		clearBubbleExceptions();
 		clearDominoGraph();
 		clearWrapperFactory();

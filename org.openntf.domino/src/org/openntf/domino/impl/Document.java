@@ -198,6 +198,21 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		initialize(delegate);
 	}
 
+	public Document(final String id, final Database parent, final WrapperFactory wf) {
+		super(parent, wf, NOTES_NOTE);
+		if (DominoUtils.isUnid(id)) {
+			unid_ = id;
+		} else {
+			noteid_ = id;
+			unid_ = parent.getUNID(id);
+		}
+		isNew_ = false;
+	}
+
+	public Document(final int id, final Database parent, final WrapperFactory wf) {
+		this(Integer.toHexString(id), parent, wf);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
 	 */
@@ -3416,10 +3431,48 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			} catch (NotesException e) {
 				DominoUtils.handleException(e);
 			}
+		} else if (null != unid_) {
+			//NTF we have a unid but no noteid because this was a deferred document using a unid
+			try {
+				lotus.domino.Document d = null;
+				lotus.domino.Database db = toLotus(getParentDatabase());
+				if (db != null) {
+					try {
+						d = db.getDocumentByUNID(unid_);
+					} catch (NotesException ne) {
+						log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
+								+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
+								+ getParentDatabase().getFilePath() + " because of: " + ne.text);
+					}
+				}
+				setDelegate(d, 0);
+				shouldResurrect_ = false;
+				if (log_.isLoggable(Level.FINE)) {
+					log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
+							+ " had been recycled and was auto-restored. Changes may have been lost.");
+					if (log_.isLoggable(Level.FINER)) {
+						Throwable t = new Throwable();
+						StackTraceElement[] elements = t.getStackTrace();
+						log_.log(Level.FINER,
+								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
+										+ ")");
+						log_.log(Level.FINER,
+								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
+										+ ")");
+						log_.log(Level.FINER,
+								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
+										+ ")");
+					}
+					log_.log(Level.FINE,
+							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
+				}
+			} catch (Exception e) {
+				DominoUtils.handleException(e);
+			}
 		} else {
 			if (log_.isLoggable(Level.SEVERE)) {
 				log_.log(Level.SEVERE,
-						"Document doesn't have noteid value. Something went terribly wrong. Nothing good can come of this...");
+						"Document doesn't have noteid or unid value. Something went terribly wrong. Nothing good can come of this...");
 			}
 		}
 	}

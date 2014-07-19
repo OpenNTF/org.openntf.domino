@@ -105,7 +105,7 @@ public interface WrapperFactory {
 	/**
 	 * shuts down the factory
 	 */
-	void terminate();
+	long terminate();
 
 	/**
 	 * Wraps a Java-Date into a DateTime object
