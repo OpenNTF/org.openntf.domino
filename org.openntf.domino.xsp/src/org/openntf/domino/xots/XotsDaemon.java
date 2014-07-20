@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.openntf.domino.helpers.TrustedDispatcher;
 import org.openntf.domino.thread.DominoManualRunner;
-import org.openntf.domino.thread.DominoNativeRunner;
+import org.openntf.domino.thread.DominoNoneRunner;
 import org.openntf.domino.thread.DominoSessionType;
 import org.openntf.domino.thread.model.IDominoRunnable;
 
@@ -92,9 +92,12 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 			} else if (type == DominoSessionType.MANUAL) {
 				DominoManualRunner runner = new DominoManualRunner(runnable, localLoader);
 				super.process(runner);
+			} else if (type == DominoSessionType.NONE) {
+				DominoNoneRunner runner = new DominoNoneRunner(runnable, localLoader);
+				super.process(runner);
 			}
 		} else {
-			DominoNativeRunner runner = new DominoNativeRunner(runnable, loader);
+			DominoNoneRunner runner = new DominoNoneRunner(runnable, loader);
 			super.process(runner);
 		}
 	}

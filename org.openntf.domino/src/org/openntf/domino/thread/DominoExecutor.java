@@ -52,6 +52,8 @@ public class DominoExecutor extends ThreadPoolExecutor {
 		@Override
 		public void run() {
 			if (null != loader_) {
+				System.out.println("DEBUG: setting ClassLoader to a " + loader_.getClass().getName() + " for a "
+						+ runnable_.getClass().getName());
 				Thread.currentThread().setContextClassLoader(loader_);
 			}
 			runnable_.run();
@@ -128,6 +130,9 @@ public class DominoExecutor extends ThreadPoolExecutor {
 	@Override
 	protected void beforeExecute(final Thread t, final Runnable r) {
 		super.beforeExecute(t, r);
+		if (t instanceof lotus.domino.NotesThread) {
+			((lotus.domino.NotesThread) t).initThread();
+		}
 		if (r instanceof IDominoRunnable) {
 			ClassLoader loader = ((IDominoRunnable) r).getContextClassLoader();
 			if (loader != null) {
@@ -141,7 +146,21 @@ public class DominoExecutor extends ThreadPoolExecutor {
 	 */
 	@Override
 	protected void afterExecute(final Runnable r, final Throwable t) {
+		Thread thread = Thread.currentThread();
+		if (thread instanceof lotus.domino.NotesThread) {
+			//			System.out.println("DEBUG: afterExecute terminating a thread on a " + r.getClass().getName() + " in a "
+			//					+ thread.getClass().getName());
+			((lotus.domino.NotesThread) thread).termThread();
+			//			Throwable throwable = new Throwable();
+			//			throwable.printStackTrace();
+		}
 		super.afterExecute(r, t);
+	}
+
+	@Override
+	public boolean isTerminating() {
+		System.out.println("DEBUG: DominoExecutor is TERMINATING!!");
+		return super.isTerminating();
 	}
 
 	/* (non-Javadoc)
@@ -163,13 +182,13 @@ public class DominoExecutor extends ThreadPoolExecutor {
 				runnable = new OpenRunnable(nativeRunner);
 				((OpenRunnable) runnable).setClassLoader(loader);
 			} else {
-				System.out.println("IDominoRunnable has session type " + type.name());
+				System.out.println("DEBUG: IDominoRunnable has session type " + type.name());
 			}
 		}
 		if (runnable instanceof Future) {
 			super.execute(runnable);
 		} else {
-			System.out.println("Would have submitted a " + runnable.getClass().getName());
+			//			System.out.println("Would have submitted a " + runnable.getClass().getName());
 
 			//			super.submit(runnable);
 			super.execute(runnable);

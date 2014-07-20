@@ -1,7 +1,6 @@
 package org.openntf.domino.xots;
 
-import lotus.notes.NotesThread;
-
+import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.thread.DominoNativeRunner;
 
 import com.ibm.domino.xsp.module.nsf.ModuleClassLoader;
@@ -56,11 +55,18 @@ public class XotsNativeRunner extends DominoNativeRunner {
 
 	@Override
 	protected void preRun() {
+		ClassLoader cl = ((AbstractDominoRunnable) getRunnable()).getContextClassLoader();
+		if (cl == null) {
+			cl = classLoader_;
+		}
+		System.out.println("DEBUG: " + getClass().getName() + " is starting a run for a " + getRunnable().getClass().getName()
+				+ " from a loader of " + cl.getClass().getName());
 		if (module_ != null) {
 			NotesContext nctx = new NotesContext(module_);
 			NotesContext.initThread(nctx);
 		} else {
-			NotesThread.sinitThread();
+			System.out.println("DEBUG: skipping thread initialization.");
+			// NotesThread.sinitThread();
 		}
 		super.preRun();
 	}
@@ -69,10 +75,14 @@ public class XotsNativeRunner extends DominoNativeRunner {
 	protected void postRun() {
 		super.postRun();
 		if (module_ != null) {
-			NotesContext.termThread();
+			// System.out.println("DEBUG: Starting termination of NotesContext thread...");
+			// NotesContext.termThread();
+			// System.out.println("DEBUG: Completed termination of NotesContext thread");
 		} else {
-			NotesThread.stermThread();
+			// NotesThread.stermThread();
 		}
+		System.out.println("DEBUG: " + getClass().getName() + " completed a run for a " + getRunnable().getClass().getName());
+
 	}
 
 }
