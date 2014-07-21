@@ -6,6 +6,8 @@ package org.openntf.domino.thread;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.security.AccessControlContext;
 import java.security.AccessController;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
@@ -55,11 +57,8 @@ public class DominoThreadFactory implements ThreadFactory {
 	private UncaughtExceptionHandler factoryExceptionHandler_ = new DominoUncaughtExceptionHandler();
 
 	public DominoThreadFactory() {
-		//		System.out.println("New DominoThreadFactory constructed");
 		factoryClassLoader_ = Thread.currentThread().getContextClassLoader();
 		factoryAccessController_ = AccessController.getContext();
-		//		factoryAccessController_.checkPermission(new RuntimePermission("setContextClassLoader"));
-		//		System.out.println("AccessControllerContext is " + factoryAccessController_.getClass().getName());
 
 	}
 
@@ -76,13 +75,30 @@ public class DominoThreadFactory implements ThreadFactory {
 		}
 	}
 
+	protected DominoThread makeThread(final Runnable runnable) {
+		return new DominoThread(runnable);
+	}
+
+	private final Set<DominoThread> threads_ = new HashSet<DominoThread>();
+
 	@Override
 	public Thread newThread(final Runnable paramRunnable) {
 		DominoThread result = null;
-		result = new DominoThread(paramRunnable);
+		result = makeThread(paramRunnable);
+		threads_.add(result);
 		lastThread_ = System.currentTimeMillis();
 		count_.incrementAndGet();
 		result.setUncaughtExceptionHandler(factoryExceptionHandler_);
+		System.out.println("DEBUG: Constructing a " + result.getClass().getSimpleName() + ": " + result.getId() + " ("
+				+ System.identityHashCode(result) + ")");
 		return result;
 	}
+
+	public void terminate() {
+		System.out.println("DEBUG: Terminating a DominoThreadFactory");
+		for (DominoThread thread : threads_) {
+			thread.termThread();
+		}
+	}
+
 }

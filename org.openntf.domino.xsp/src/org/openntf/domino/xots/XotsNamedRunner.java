@@ -17,7 +17,7 @@ import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 import com.ibm.domino.xsp.module.nsf.SessionCloner;
 
-public class XotsNamedRunner implements Runnable {
+public class XotsNamedRunner implements IXotsRunner {
 	private static final Logger log_ = Logger.getLogger(XotsNamedRunner.class.getName());
 	protected final Runnable runnable_;
 	protected ClassLoader classLoader_;
@@ -68,6 +68,10 @@ public class XotsNamedRunner implements Runnable {
 		}
 	}
 
+	public NSFComponentModule getModule() {
+		return module_;
+	}
+
 	protected org.openntf.domino.Session getNamedSession() {
 		lotus.domino.Session s = null;
 		String name = null;
@@ -94,7 +98,7 @@ public class XotsNamedRunner implements Runnable {
 		return Factory.fromLotus(s, org.openntf.domino.Session.SCHEMA, null);
 	}
 
-	public ClassLoader getClassLoader() {
+	public ClassLoader getContextClassLoader() {
 		if (classLoader_ == null) {
 			if (runnable_ instanceof IDominoRunnable) {
 				ClassLoader loader = ((IDominoRunnable) runnable_).getContextClassLoader();
