@@ -22,10 +22,6 @@ public interface IDocumentDefinition extends Externalizable {
 
 	public void setDefaultSummary(final boolean defaultSummary);
 
-	public boolean isAutoBoxing();
-
-	public void setAutoBoxing(boolean allowAutoBox);
-
 	public Set<String> getItemDefinitionKeys();
 
 	//	public void setItemDefinitionKeys(final Set<String> itemDefinitionKeys);

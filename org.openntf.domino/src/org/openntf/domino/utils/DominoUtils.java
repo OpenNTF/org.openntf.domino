@@ -619,13 +619,10 @@ public enum DominoUtils {
 	 *            the value
 	 * @return true, if is unid
 	 */
-	public static boolean isUnid(final Serializable value) {
-		if (value instanceof CharSequence) {
-			if (((CharSequence) value).length() != 32)
-				return false;
-			return DominoUtils.isHex(value.toString());
-		}
-		return false;
+	public static boolean isUnid(final String value) {
+		if (value.length() != 32)
+			return false;
+		return DominoUtils.isHex(value);
 	}
 
 	/**
@@ -654,10 +651,6 @@ public enum DominoUtils {
 			hash = "0" + hash;
 		}
 		return hash.toUpperCase();
-	}
-
-	public static byte[] toByteArray(final Integer integer) {
-		return null;	//TODO
 	}
 
 	public static byte[] toByteArray(final String hexString) {

@@ -50,8 +50,12 @@ public interface Session {
 
 		/** block the MIME interface in the document while accessing MIME items */
 		MIME_BLOCK_ITEM_INTERFACE,
+
 		/** Document.getDocumentByUNID() returns null instead of an exception */
-		DOC_UNID_NULLS
+		DOC_UNID_NULLS,
+
+		/** ViewEntries should return correct column values. (Constant values are ommited) */
+		VIEWENTRY_RETURN_CONSTANT_VALUES
 	}
 
 	/**

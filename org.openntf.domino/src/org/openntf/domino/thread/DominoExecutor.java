@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.RunnableFuture;
@@ -17,6 +18,7 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.annotations.Incomplete;
 import org.openntf.domino.events.IDominoListener;
+import org.openntf.domino.thread.model.IDominoRunnable;
 
 /**
  * @author Nathan T. Freeman
@@ -24,6 +26,38 @@ import org.openntf.domino.events.IDominoListener;
  */
 @Incomplete
 public class DominoExecutor extends ThreadPoolExecutor {
+
+	public static class OpenSecurityManager extends SecurityManager {
+		public OpenSecurityManager() {
+		}
+	}
+
+	public static class OpenRunnable implements Runnable {
+		protected final Runnable runnable_;
+		protected ClassLoader loader_;
+
+		public OpenRunnable(final Runnable runnable) {
+			runnable_ = runnable;
+		}
+
+		public OpenRunnable(final Runnable runnable, final ClassLoader loader) {
+			runnable_ = runnable;
+			loader_ = loader;
+		}
+
+		public void setClassLoader(final ClassLoader loader) {
+			loader_ = loader;
+		}
+
+		@Override
+		public void run() {
+			if (null != loader_) {
+				Thread.currentThread().setContextClassLoader(loader_);
+			}
+			runnable_.run();
+		}
+	}
+
 	private static final Logger log_ = Logger.getLogger(DominoExecutor.class.getName());
 	private static final long serialVersionUID = 1L;
 	private Set<IDominoListener> listeners_;
@@ -32,41 +66,47 @@ public class DominoExecutor extends ThreadPoolExecutor {
 		return new LinkedBlockingQueue<Runnable>(size);
 	}
 
+	protected void init() {
+
+	}
+
 	public DominoExecutor() {
-		super(50, 50, 60l, TimeUnit.SECONDS, getBlockingQueue(50), new DominoThreadFactory());
+		this(50);
 	}
 
 	public DominoExecutor(final int corePoolSize) {
-		super(corePoolSize, corePoolSize, 60l, TimeUnit.SECONDS, getBlockingQueue(corePoolSize), new DominoThreadFactory());
+		this(corePoolSize, corePoolSize);
 	}
 
 	public DominoExecutor(final int corePoolSize, final int maximumPoolSize) {
-		super(corePoolSize, maximumPoolSize, 60l, TimeUnit.SECONDS, getBlockingQueue(maximumPoolSize), new DominoThreadFactory());
+		this(corePoolSize, maximumPoolSize, 60l);
 	}
 
 	public DominoExecutor(final int corePoolSize, final int maximumPoolSize, final long keepAliveTime) {
-		super(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, getBlockingQueue(maximumPoolSize), new DominoThreadFactory());
+		this(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, getBlockingQueue(maximumPoolSize));
 	}
 
 	public DominoExecutor(final int paramInt1, final int paramInt2, final long paramLong, final TimeUnit paramTimeUnit,
 			final BlockingQueue<Runnable> paramBlockingQueue) {
-		super(paramInt1, paramInt2, paramLong, paramTimeUnit, paramBlockingQueue, new DominoThreadFactory());
+		this(paramInt1, paramInt2, paramLong, paramTimeUnit, paramBlockingQueue, new DominoThreadFactory());
 	}
 
 	public DominoExecutor(final int paramInt1, final int paramInt2, final long paramLong, final TimeUnit paramTimeUnit,
 			final BlockingQueue<Runnable> paramBlockingQueue, final DominoThreadFactory paramThreadFactory) {
 		super(paramInt1, paramInt2, paramLong, paramTimeUnit, paramBlockingQueue, paramThreadFactory);
+		init();
 	}
 
 	public DominoExecutor(final int paramInt1, final int paramInt2, final long paramLong, final TimeUnit paramTimeUnit,
 			final BlockingQueue<Runnable> paramBlockingQueue, final RejectedExecutionHandler paramRejectedExecutionHandler) {
-		super(paramInt1, paramInt2, paramLong, paramTimeUnit, paramBlockingQueue, paramRejectedExecutionHandler);
+		this(paramInt1, paramInt2, paramLong, paramTimeUnit, paramBlockingQueue, new DominoThreadFactory(), paramRejectedExecutionHandler);
 	}
 
 	public DominoExecutor(final int paramInt1, final int paramInt2, final long paramLong, final TimeUnit paramTimeUnit,
 			final BlockingQueue<Runnable> paramBlockingQueue, final DominoThreadFactory paramThreadFactory,
 			final RejectedExecutionHandler paramRejectedExecutionHandler) {
 		super(paramInt1, paramInt2, paramLong, paramTimeUnit, paramBlockingQueue, paramThreadFactory, paramRejectedExecutionHandler);
+		init();
 	}
 
 	/* (non-Javadoc)
@@ -88,6 +128,12 @@ public class DominoExecutor extends ThreadPoolExecutor {
 	@Override
 	protected void beforeExecute(final Thread t, final Runnable r) {
 		super.beforeExecute(t, r);
+		if (r instanceof IDominoRunnable) {
+			ClassLoader loader = ((IDominoRunnable) r).getContextClassLoader();
+			if (loader != null) {
+				t.setContextClassLoader(loader);
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -96,26 +142,38 @@ public class DominoExecutor extends ThreadPoolExecutor {
 	@Override
 	protected void afterExecute(final Runnable r, final Throwable t) {
 		super.afterExecute(r, t);
-		if (r instanceof AbstractDominoRunnable) {
-			((AbstractDominoRunnable) r).clean();
-		}
 	}
 
 	/* (non-Javadoc)
 	 * @see java.util.concurrent.ThreadPoolExecutor#execute(java.lang.Runnable)
 	 */
 	@Override
-	public void execute(final Runnable runnable) {
-		//		System.out.println("DominoExecutor executing a " + runnable.getClass().getName());
-		RunnableFuture future = null;
-		if (runnable instanceof RunnableFuture) {
-			future = (RunnableFuture) runnable;
-			//		} else if (runnable instanceof Callable) {
-			//			future = newTaskFor((Callable) runnable);
-		} else {
-			future = newTaskFor(runnable, null);
+	public void execute(Runnable runnable) {
+		if (runnable instanceof OpenRunnable) {
+
+		} else if (runnable instanceof DominoNativeRunner) {
+			final ClassLoader loader = ((DominoNativeRunner) runnable).getClassLoader();
+			runnable = new OpenRunnable(runnable);
+			((OpenRunnable) runnable).setClassLoader(loader);
+		} else if (runnable instanceof IDominoRunnable) {
+			DominoSessionType type = ((IDominoRunnable) runnable).getSessionType();
+			final ClassLoader loader = ((IDominoRunnable) runnable).getContextClassLoader();
+			if (type == DominoSessionType.NATIVE) {
+				DominoNativeRunner nativeRunner = new DominoNativeRunner(runnable, loader);
+				runnable = new OpenRunnable(nativeRunner);
+				((OpenRunnable) runnable).setClassLoader(loader);
+			} else {
+				System.out.println("IDominoRunnable has session type " + type.name());
+			}
 		}
-		super.execute(future);
+		if (runnable instanceof Future) {
+			super.execute(runnable);
+		} else {
+			System.out.println("Would have submitted a " + runnable.getClass().getName());
+
+			//			super.submit(runnable);
+			super.execute(runnable);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -139,7 +197,6 @@ public class DominoExecutor extends ThreadPoolExecutor {
 	 */
 	@Override
 	public boolean awaitTermination(final long timeout, final TimeUnit unit) throws InterruptedException {
-		// TODO Auto-generated method stub
 		return super.awaitTermination(timeout, unit);
 	}
 

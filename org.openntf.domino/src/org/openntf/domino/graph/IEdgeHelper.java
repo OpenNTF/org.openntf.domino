@@ -15,7 +15,6 @@ import com.tinkerpop.blueprints.Vertex;
  * 
  */
 public interface IEdgeHelper {
-	public static final String DEFAULT_LABEL = "_DEFAULT";
 
 	public String getLabel();
 
@@ -25,11 +24,11 @@ public interface IEdgeHelper {
 
 	public int getEdgeCount(final Vertex vertex);
 
-	public IDominoEdge makeEdge(final Vertex defaultOut, final Vertex defaultIn);
+	public Edge makeEdge(final Vertex defaultOut, final Vertex defaultIn);
 
 	public boolean isUnique();
 
-	public IDominoEdge findEdge(final Vertex defaultOut, final Vertex defaultIn);
+	public Edge findEdge(final Vertex defaultOut, final Vertex defaultIn);
 
 	public Class<? extends Vertex> getOtherType(final Class<? extends Vertex> type);
 
@@ -45,7 +44,7 @@ public interface IEdgeHelper {
 
 	public Set<Vertex> getOtherVertexesByEdge(final Vertex vertex, final String... sortproperties);
 
-	public IDominoVertex getOtherVertex(final Edge edge, final Vertex vertex);
+	public Vertex getOtherVertex(final Edge edge, final Vertex vertex);
 
 	public Set<? extends Edge> getFilteredEdges(final Vertex vertex, final Map<String, Object> filterMap);
 

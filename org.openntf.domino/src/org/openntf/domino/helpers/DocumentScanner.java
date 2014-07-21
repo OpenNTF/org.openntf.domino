@@ -473,15 +473,20 @@ public class DocumentScanner extends Observable {
 	}
 
 	public void complete() {
+		//		System.out.println("COMPLETING.");
+		setChanged();
 		notifyObservers(ScanStatus.COMPLETE);
 	}
 
 	private org.openntf.domino.DocumentCollection collection_;
 
 	public void processCollection() {
+		//		System.out.println("DEBUG: Scanning a collection of " + collection_.getCount());
 		for (Document doc : collection_) {
 			if (docCount_ < docLimit_) {
 				processDocument(doc);
+			} else {
+				break;
 			}
 		}
 		complete();

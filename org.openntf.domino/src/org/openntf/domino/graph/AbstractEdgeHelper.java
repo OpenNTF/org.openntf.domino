@@ -10,17 +10,17 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.logging.Logger;
 
-//import javax.annotation.Nonnull;
-import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
+//import javax.annotation.Nonnull;
+import com.tinkerpop.blueprints.Direction;
 
 /**
  * @author nfreeman
  * 
  */
-public class GenericEdgeHelper implements IEdgeHelper {
-	private static final Logger log_ = Logger.getLogger(GenericEdgeHelper.class.getName());
+public class AbstractEdgeHelper implements IEdgeHelper {
+	private static final Logger log_ = Logger.getLogger(AbstractEdgeHelper.class.getName());
 
 	public static class EdgeHelperException extends RuntimeException {
 		private static final long serialVersionUID = 1L;
@@ -35,9 +35,9 @@ public class GenericEdgeHelper implements IEdgeHelper {
 	private final Class<? extends Vertex> outType_;
 	private final boolean sameTypes_;
 	private final boolean unique_;
-	private final GenericDominoGraph parent_;
+	private final DominoGraph parent_;
 
-	public GenericEdgeHelper(final GenericDominoGraph parent, final String label, final Class<? extends Vertex> inType,
+	public AbstractEdgeHelper(final DominoGraph parent, final String label, final Class<? extends Vertex> inType,
 			final Class<? extends Vertex> outType, final boolean unique) {
 		label_ = label;
 		inType_ = inType;
@@ -77,7 +77,6 @@ public class GenericEdgeHelper implements IEdgeHelper {
 		return outType_;
 	}
 
-	@Override
 	public boolean isUnique() {
 		return unique_;
 	}
@@ -86,7 +85,6 @@ public class GenericEdgeHelper implements IEdgeHelper {
 		return sameTypes_;
 	}
 
-	@Override
 	public Class<? extends Vertex> getOtherType(final Class<? extends Vertex> type) {
 		if (getInType().equals(type)) {
 			return getOutType();
@@ -101,12 +99,10 @@ public class GenericEdgeHelper implements IEdgeHelper {
 		throw new EdgeHelperException(type.getName() + " is not a participating type in edge " + getLabel());
 	}
 
-	@Override
 	public Class<? extends Vertex> getOtherType(final Vertex vertex) {
 		return getOtherType(vertex.getClass());
 	}
 
-	@Override
 	public int getEdgeCount(final Vertex vertex) {
 		if (vertex instanceof DominoVertex) {
 			if (getInType().equals(vertex.getClass())) {
@@ -127,7 +123,6 @@ public class GenericEdgeHelper implements IEdgeHelper {
 		}
 	}
 
-	@Override
 	public Set<? extends Edge> getEdges(final Vertex vertex) {
 		if (getInType().equals(vertex.getClass())) {
 			return Collections.unmodifiableSet((Set<Edge>) vertex.getEdges(Direction.IN, getLabel()));
@@ -145,7 +140,6 @@ public class GenericEdgeHelper implements IEdgeHelper {
 		throw new EdgeHelperException(vertex.getClass().getName() + " is not a participating type in edge " + getLabel());
 	}
 
-	@Override
 	public Set<? extends Edge> getFilteredEdges(final Vertex vertex, final Map<String, Object> filterMap) {
 		Set<Edge> result = new LinkedHashSet<Edge>();
 		Set<? extends Edge> rawset = getEdges(vertex);
@@ -162,13 +156,12 @@ public class GenericEdgeHelper implements IEdgeHelper {
 		return Collections.unmodifiableSet(result);
 	}
 
-	@Override
 	public SortedSet<? extends Edge> getSortedEdges(final Vertex vertex, final String... sortproperties) {
 		try {
 			Set<? extends Edge> rawSet = getEdges(vertex);
 			//			System.out.println("Requested sorting of " + rawSet.size() + " raw edges");
 
-			SortedSet<? extends Edge> sortedSet = DominoGraphUtils.sortEdges(rawSet, sortproperties);
+			SortedSet<? extends Edge> sortedSet = DominoGraph.sortEdges(rawSet, sortproperties);
 			//			System.out.println("Returning sorted edge set of " + sortedSet.size());
 			SortedSet<? extends Edge> result = sortedSet;
 			return result;
@@ -177,7 +170,6 @@ public class GenericEdgeHelper implements IEdgeHelper {
 		}
 	}
 
-	@Override
 	public Set<? extends Vertex> getOtherVertexes(final Vertex vertex) {
 		Set<Vertex> result = new LinkedHashSet<Vertex>();
 		Class<?> vclass = vertex.getClass();
@@ -201,30 +193,27 @@ public class GenericEdgeHelper implements IEdgeHelper {
 		}
 	}
 
-	@Override
-	public IDominoVertex getOtherVertex(final Edge edge, final Vertex vertex) {
-		//		if (edge instanceof IDominoEdge) {
-		return ((IDominoEdge) edge).getOtherVertex(vertex);
-		//		} else {
-		//			if (vertex.getId().equals(edge.getVertex(Direction.IN).getId())) {
-		//				return edge.getVertex(Direction.OUT);
-		//			} else {
-		//				return edge.getVertex(Direction.IN);
-		//			}
-		//		}
+	public Vertex getOtherVertex(final Edge edge, final Vertex vertex) {
+		if (edge instanceof IDominoEdge) {
+			return ((IDominoEdge) edge).getOtherVertex(vertex);
+		} else {
+			if (vertex.getId().equals(edge.getVertex(Direction.IN).getId())) {
+				return edge.getVertex(Direction.OUT);
+			} else {
+				return edge.getVertex(Direction.IN);
+			}
+		}
 	}
 
-	@Override
 	public Set<? extends Vertex> getSortedOtherVertexes(final Vertex vertex, final String... sortproperties) {
 		try {
 			Set<? extends Vertex> rawSet = getOtherVertexes(vertex);
-			return Collections.unmodifiableSortedSet(DominoGraphUtils.sortVertexes(rawSet, sortproperties));
+			return Collections.unmodifiableSortedSet(DominoGraph.sortVertexes(rawSet, sortproperties));
 		} catch (Throwable t) {
 			throw new RuntimeException(t);
 		}
 	}
 
-	@Override
 	public Set<Vertex> getOtherVertexesByEdge(final Vertex vertex, final String... sortproperties) {
 		Set<Vertex> result = new LinkedHashSet<Vertex>();
 		Class<?> vclass = vertex.getClass();
@@ -248,12 +237,11 @@ public class GenericEdgeHelper implements IEdgeHelper {
 		}
 	}
 
-	@Override
-	public IDominoEdge makeEdge(final Vertex defaultOut, final Vertex defaultIn) {
+	public Edge makeEdge(final Vertex defaultOut, final Vertex defaultIn) {
 		if (defaultOut == null || defaultIn == null) {
 			throw new RuntimeException("Cannot create an edge of type " + getLabel() + " where a vertex is null!");
 		}
-		IDominoEdge result = null;
+		Edge result = null;
 		Vertex inVert = null;
 		Vertex outVert = null;
 		boolean inExact = false;
@@ -351,14 +339,8 @@ public class GenericEdgeHelper implements IEdgeHelper {
 		return result;
 	}
 
-	//<<<<<<< HEAD:org.openntf.domino/src/org/openntf/domino/graph/GenericEdgeHelper.java
-	@Override
-	public IDominoEdge findEdge(final/*@Nonnull*/Vertex defaultOut, final/*@Nonnull*/Vertex defaultIn) {
-		IDominoEdge result = null;
-		//=======
-		//	public Edge findEdge(final/*@Nonnull*/Vertex defaultOut, final/*@Nonnull*/Vertex defaultIn) {
-		//		Edge result = null;
-		//>>>>>>> nathan:org.openntf.domino/src/org/openntf/domino/graph/AbstractEdgeHelper.java
+	public Edge findEdge(final/*@Nonnull*/Vertex defaultOut, final/*@Nonnull*/Vertex defaultIn) {
+		Edge result = null;
 		Vertex inVert = null;
 		Vertex outVert = null;
 		boolean inExact = false;

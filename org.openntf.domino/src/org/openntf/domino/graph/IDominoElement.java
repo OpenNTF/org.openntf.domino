@@ -45,6 +45,4 @@ public interface IDominoElement extends Element {
 	public Map<String, Object> toMap(IDominoProperties[] props);
 
 	public Map<String, Object> toMap(Set<IDominoProperties> props);
-
-	public void reapplyChanges();
 }

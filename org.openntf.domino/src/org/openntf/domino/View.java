@@ -49,6 +49,10 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 
 	public static final Schema SCHEMA = new Schema();
 
+	public enum IndexType {
+		SHARED, PRIVATE, SHAREDPRIVATEONSERVER, SHAREDPRIVATEONDESKTOP, SHAREDINCLUDESDELETES, SHAREDNOTINFOLDERS
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -3000,7 +3000,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public void send() {
-		send(false, new Vector(1));
+		send(false);
 	}
 
 	/*
@@ -3010,7 +3010,12 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public void send(final boolean attachForm) {
-		send(attachForm, new Vector(1));
+		checkMimeOpen();
+		try {
+			getDelegate().send(false);
+		} catch (NotesException e) {
+			DominoUtils.handleException(e);
+		}
 	}
 
 	/*

@@ -14,7 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.openntf.domino.exceptions.DominoGraphException;
+import org.openntf.domino.Document;
+import org.openntf.domino.graph.DominoGraph.DominoGraphException;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
@@ -36,13 +37,13 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 
 	private static final long serialVersionUID = 1L;
 
-	//	private Boolean inDirty_ = false;
+	private Boolean inDirty_ = false;
 
-	//	private Set<String> inEdges_;
+	private Set<String> inEdges_;
 	// private transient Set<Edge> inEdgesObjects_;
-	//	private Boolean outDirty_ = false;
+	private Boolean outDirty_ = false;
 	// private transient Set<Edge> outEdgesObjects_;
-	//	private Set<String> outEdges_;
+	private Set<String> outEdges_;
 
 	private Map<String, Boolean> inDirtyMap_;
 	private Map<String, Boolean> outDirtyMap_;
@@ -55,7 +56,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	private transient Map<String, Set<Edge>> inEdgeCache_;
 	private transient Map<String, Set<Edge>> outEdgeCache_;
 
-	public DominoVertex(final GenericDominoGraph parent, final org.openntf.domino.Document doc) {
+	public DominoVertex(final DominoGraph parent, final org.openntf.domino.Document doc) {
 		super(parent, doc);
 	}
 
@@ -87,7 +88,6 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		return outEdgesMap_;
 	}
 
-	@Override
 	public int getInEdgeCount(final String label) {
 		Set<String> edgeIds = getInEdgesMap().get(label);
 		if (edgeIds == null) {
@@ -122,7 +122,6 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		return edgeIds;
 	}
 
-	@Override
 	public int getOutEdgeCount(final String label) {
 		Set<String> edgeIds = getOutEdgesMap().get(label);
 		if (edgeIds == null) {
@@ -162,7 +161,6 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		return parent_.addEdge(null, this, vertex, label);
 	}
 
-	@Override
 	public void addInEdge(final Edge edge) {
 		boolean adding = false;
 		String label = edge.getLabel();
@@ -193,7 +191,6 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		}
 	}
 
-	@Override
 	public void addOutEdge(final Edge edge) {
 		boolean adding = false;
 		String label = edge.getLabel();
@@ -231,7 +228,6 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		return Collections.unmodifiableSet(result);
 	}
 
-	@Override
 	public Set<Edge> getEdges(final String... labels) {
 		LinkedHashSet<Edge> result = new LinkedHashSet<Edge>();
 		result.addAll(getInEdgeObjects(labels));
@@ -453,7 +449,6 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	// return inEdges_;
 	// }
 
-	@Override
 	public Set<String> getInEdgeLabels() {
 		Set<String> result = new LinkedHashSet<String>();
 		Set<String> rawKeys = getRawDocument().keySet();
@@ -473,7 +468,6 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		return result;
 	}
 
-	@Override
 	public Set<String> getOutEdgeLabels() {
 		Set<String> result = new LinkedHashSet<String>();
 		Set<String> rawKeys = getRawDocument().keySet();
@@ -594,7 +588,7 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 	}
 
 	@Override
-	public void reapplyChanges() {
+	protected void reapplyChanges() {
 		// validateEdges();
 		writeEdges(false);
 		super.reapplyChanges();
@@ -663,14 +657,14 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		return result;
 	}
 
-	@Override
 	public String validateEdges() {
 		StringBuilder sb = new StringBuilder();
 		Set<String> inIds = getInEdges();
 		for (String id : inIds.toArray(new String[inIds.size()])) {
-			if (!getParent().isValidId(id)) {
+			Document chk = getParent().getRawDatabase().getDocumentByUNID(id);
+			if (chk == null) {
 				inIds.remove(id);
-				//				inDirty_ = true;
+				inDirty_ = true;
 				sb.append("IN: ");
 				sb.append(id);
 				sb.append(",");
@@ -679,9 +673,10 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 
 		Set<String> outIds = getOutEdges();
 		for (String id : outIds.toArray(new String[outIds.size()])) {
-			if (!getParent().isValidId(id)) {
+			Document chk = getParent().getRawDatabase().getDocumentByUNID(id);
+			if (chk == null) {
 				outIds.remove(id);
-				//				outDirty_ = true;
+				outDirty_ = true;
 				sb.append("OUT: ");
 				sb.append(id);
 				sb.append(",");
@@ -716,23 +711,22 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 		}
 	}
 
-	//	public Edge relate(final DominoVertex other) throws MultipleDefinedEdgeHelpers {
-	//		Set<IEdgeHelper> helpers = findHelpers(other);
-	//		if (helpers.size() == 1) {
-	//			for (IEdgeHelper helper : helpers) {
-	//				return helper.makeEdge(other, this);
-	//			}
-	//			return null;
-	//		} else if (helpers.size() == 0) {
-	//			throw new UndefinedEdgeHelpers(this, other);
-	//
-	//		} else {
-	//			throw new MultipleDefinedEdgeHelpers(this, other);
-	//		}
-	//
-	//	}
+	public Edge relate(final DominoVertex other) throws MultipleDefinedEdgeHelpers {
+		Set<IEdgeHelper> helpers = findHelpers(other);
+		if (helpers.size() == 1) {
+			for (IEdgeHelper helper : helpers) {
+				return helper.makeEdge(other, this);
+			}
+			return null;
+		} else if (helpers.size() == 0) {
+			throw new UndefinedEdgeHelpers(this, other);
 
-	@Override
+		} else {
+			throw new MultipleDefinedEdgeHelpers(this, other);
+		}
+
+	}
+
 	public Set<IEdgeHelper> getEdgeHelpers() {
 		Set<IEdgeHelper> result = new HashSet<IEdgeHelper>();
 		for (String in : getInEdgeLabels()) {
@@ -746,34 +740,6 @@ public class DominoVertex extends DominoElement implements IDominoVertex, Serial
 			if (helper != null) {
 				result.add(helper);
 			}
-		}
-		return result;
-	}
-
-	@Override
-	public IDominoEdge relate(final Vertex vertex) {
-		IDominoEdge result = null;
-		if (vertex == null)
-			return result;
-		IEdgeHelper helper = getParent().findHelper(this, vertex);
-		if (helper == null) {
-			result = getParent().addEdge(null, this, vertex, IEdgeHelper.DEFAULT_LABEL);
-		} else {
-			result = helper.makeEdge(this, vertex);
-		}
-		return result;
-	}
-
-	@Override
-	public IDominoEdge find(final Vertex vertex) {
-		IDominoEdge result = null;
-		if (vertex == null)
-			return result;
-		IEdgeHelper helper = getParent().findHelper(this, vertex);
-		if (helper == null) {
-			result = getParent().getEdge(this, vertex, IEdgeHelper.DEFAULT_LABEL);
-		} else {
-			result = helper.findEdge(this, vertex);
 		}
 		return result;
 	}

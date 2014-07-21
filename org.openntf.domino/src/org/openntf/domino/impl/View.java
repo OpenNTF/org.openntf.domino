@@ -25,6 +25,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import lotus.domino.NotesException;
 
@@ -50,6 +52,8 @@ import org.openntf.domino.utils.Factory;
 public class View extends Base<org.openntf.domino.View, lotus.domino.View, Database> implements org.openntf.domino.View {
 
 	private List<DominoColumnInfo> columnInfo_;
+	private Map<String, org.openntf.domino.ViewColumn> columnMap_;
+	private Map<String, DominoColumnInfo> columnInfoMap_;
 	private static Method iGetEntryByKeyMethod;
 	static {
 		try {
@@ -136,6 +140,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 
 	private String notesUrl_;
 	private String name_;
+	private String flags_;
 
 	private void initialize(final lotus.domino.View delegate) {
 		try {
@@ -409,7 +414,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn copyColumn(final int sourceColumn) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().copyColumn(sourceColumn), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -426,7 +431,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn copyColumn(final int sourceColumn, final int destinationIndex) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().copyColumn(sourceColumn, destinationIndex), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -443,7 +448,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn copyColumn(final String sourceColumn) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().copyColumn(sourceColumn), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -460,7 +465,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn copyColumn(final String sourceColumn, final int destinationIndex) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().copyColumn(sourceColumn, destinationIndex), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -476,9 +481,8 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public ViewColumn copyColumn(final lotus.domino.ViewColumn sourceColumn) {
 		try {
-			ViewColumn result = fromLotus(getDelegate().copyColumn((lotus.domino.ViewColumn) toLotus(sourceColumn)), ViewColumn.SCHEMA,
-					this);
-			columnMap_ = null;
+			ViewColumn result = fromLotus(getDelegate().copyColumn(toLotus(sourceColumn)), ViewColumn.SCHEMA, this);
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -494,9 +498,8 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public ViewColumn copyColumn(final lotus.domino.ViewColumn sourceColumn, final int destinationIndex) {
 		try {
-			ViewColumn result = fromLotus(getDelegate().copyColumn((lotus.domino.ViewColumn) toLotus(sourceColumn), destinationIndex),
-					ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			ViewColumn result = fromLotus(getDelegate().copyColumn(toLotus(sourceColumn), destinationIndex), ViewColumn.SCHEMA, this);
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -513,7 +516,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn createColumn() {
 		try {
 			ViewColumn result = fromLotus(getDelegate().createColumn(), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -530,7 +533,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn createColumn(final int position) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().createColumn(position), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -547,7 +550,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn createColumn(final int position, final String columnTitle) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().createColumn(position, columnTitle), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -564,7 +567,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public ViewColumn createColumn(final int position, final String columnTitle, final String formula) {
 		try {
 			ViewColumn result = fromLotus(getDelegate().createColumn(position, columnTitle, formula), ViewColumn.SCHEMA, this);
-			columnMap_ = null;
+			flushCaches();
 			return result;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -865,7 +868,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public Vector<String> getAliases() {
 		try {
-			return (Vector<String>) getDelegate().getAliases();
+			return getDelegate().getAliases();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1193,7 +1196,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public java.util.Vector<String> getColumnNames() {
 		try {
-			return (Vector<String>) getDelegate().getColumnNames();
+			return getDelegate().getColumnNames();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1224,34 +1227,16 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public Vector<org.openntf.domino.ViewColumn> getColumns() {
 		try {
-			Vector columns = null;
 			try {
-				columns = getDelegate().getColumns();
+				return fromLotusAsVector(getDelegate().getColumns(), org.openntf.domino.ViewColumn.SCHEMA, this);
 			} catch (NullPointerException e) {
 				throw new RuntimeException("Unable to get columns for a view called " + getName() + " in database "
 						+ getAncestorDatabase().getApiPath(), e);
 			}
-			return fromLotusAsVector(columns, org.openntf.domino.ViewColumn.SCHEMA, this);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
 		return null;
-	}
-
-	private Map<String, org.openntf.domino.ViewColumn> columnMap_;
-
-	@Override
-	public Map<String, org.openntf.domino.ViewColumn> getColumnMap() {
-		if (columnMap_ == null) {
-			columnMap_ = new LinkedHashMap<String, org.openntf.domino.ViewColumn>();
-			Vector<ViewColumn> columns = getColumns();
-			if (columns != null && !columns.isEmpty()) {
-				for (ViewColumn column : columns) {
-					columnMap_.put(column.getItemName(), column);
-				}
-			}
-		}
-		return columnMap_;
 	}
 
 	/*
@@ -1480,7 +1465,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public Vector<String> getLockHolders() {
 		try {
-			return (Vector<String>) getDelegate().getLockHolders();
+			return getDelegate().getLockHolders();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1638,7 +1623,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public Vector<String> getReaders() {
 		try {
-			return (Vector<String>) getDelegate().getReaders();
+			return getDelegate().getReaders();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -1795,12 +1780,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 */
 	@Override
 	public boolean isCalendar() {
-		try {
-			return getDelegate().isCalendar();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return false;
+		return getFlags().contains("c");
 	}
 
 	/*
@@ -1825,6 +1805,8 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 */
 	@Override
 	public boolean isConflict() {
+		if (!isCalendar())
+			return false;	//NTF conflict checking only applies to calendar views
 		try {
 			return getDelegate().isConflict();
 		} catch (NotesException e) {
@@ -1870,12 +1852,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 */
 	@Override
 	public boolean isFolder() {
-		try {
-			return getDelegate().isFolder();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
-		return false;
+		return getFlags().contains("F");
 	}
 
 	/*
@@ -1915,11 +1892,13 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 */
 	@Override
 	public boolean isPrivate() {
-		try {
-			return getDelegate().isPrivate();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-		}
+		IndexType type = getIndexType();
+		if (type == IndexType.PRIVATE)
+			return true;
+		if (type == IndexType.SHAREDPRIVATEONDESKTOP)
+			return true;
+		if (type == IndexType.SHAREDPRIVATEONSERVER)
+			return true;
 		return false;
 	}
 
@@ -2199,7 +2178,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public void removeColumn() {
 		try {
 			getDelegate().removeColumn();
-			columnMap_ = null;
+			flushCaches();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2214,7 +2193,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public void removeColumn(final int column) {
 		try {
 			getDelegate().removeColumn(column);
-			columnMap_ = null;
+			flushCaches();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2229,7 +2208,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public void removeColumn(final String column) {
 		try {
 			getDelegate().removeColumn(column);
-			columnMap_ = null;
+			flushCaches();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
@@ -2342,6 +2321,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public void setDefaultView(final boolean flag) {
 		try {
+			flags_ = null;
 			getDelegate().setDefaultView(flag);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -2384,6 +2364,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	@Override
 	public void setProhibitDesignRefresh(final boolean flag) {
 		try {
+			flags_ = null;
 			getDelegate().setProhibitDesignRefresh(flag);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
@@ -2510,7 +2491,26 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		return this.getAncestorDatabase().getAncestorSession();
 	}
 
-	protected List<DominoColumnInfo> getColumnInfo() {
+	@Override
+	public Map<String, org.openntf.domino.ViewColumn> getColumnMap() {
+		if (columnMap_ == null) {
+			columnMap_ = new LinkedHashMap<String, org.openntf.domino.ViewColumn>();
+			Vector<ViewColumn> columns = getColumns();
+			if (columns != null && !columns.isEmpty()) {
+				for (ViewColumn column : columns) {
+					columnMap_.put(column.getItemName(), column);
+				}
+			}
+		}
+		return columnMap_;
+	}
+
+	/**
+	 * Used by the viewEntry to determine the correct columnValue
+	 * 
+	 * @return
+	 */
+	protected List<DominoColumnInfo> getColumnInfos() {
 		if (columnInfo_ == null) {
 			List<org.openntf.domino.ViewColumn> columns = getColumns();
 			List<DominoColumnInfo> result = new ArrayList<DominoColumnInfo>(columns.size());
@@ -2523,6 +2523,22 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	}
 
 	/**
+	 * Used by the viewEntry to determine the correct columnValue
+	 * 
+	 * @return
+	 */
+	protected Map<String, DominoColumnInfo> getColumnInfoMap() {
+		if (columnInfoMap_ == null) {
+			columnInfoMap_ = new LinkedHashMap<String, DominoColumnInfo>();
+			for (DominoColumnInfo columnInfo : getColumnInfos()) {
+				columnInfoMap_.put(columnInfo.getItemName(), columnInfo);
+			}
+
+		}
+		return columnInfoMap_;
+	}
+
+	/**
 	 * Metadata about a ViewColumn, comprising the programmatic column name and the column index
 	 * 
 	 * @since org.openntf.domino 3.0.0
@@ -2530,6 +2546,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	public static class DominoColumnInfo implements Serializable {
 		private final String itemName_;
 		private final int columnValuesIndex_;
+		private final Object constantValue_;
 
 		/**
 		 * Constructor, passing the ViewColumn object
@@ -2540,7 +2557,16 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		 */
 		public DominoColumnInfo(final org.openntf.domino.ViewColumn column) {
 			itemName_ = column.getItemName();
-			columnValuesIndex_ = column.getColumnValuesIndex();
+			columnValuesIndex_ = column.getColumnValuesIndex(false);
+
+			if (columnValuesIndex_ == 65535) {
+				// resolve the constant values (with the openntf session, to get proper dateTime values!)
+				Vector v = column.getAncestorSession().evaluate(column.getFormula());
+				constantValue_ = v.get(0);
+			} else {
+				constantValue_ = null;
+			}
+
 		}
 
 		/**
@@ -2561,6 +2587,15 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		 */
 		public int getColumnValuesIndex() {
 			return columnValuesIndex_;
+		}
+
+		/**
+		 * If this is a constant
+		 * 
+		 * @return the constant value of this column
+		 */
+		public Object getConstantValue() {
+			return constantValue_;
 		}
 	}
 
@@ -2619,5 +2654,122 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 			DominoUtils.handleException(e);
 		}
 		return retVal_;
+	}
+
+	@Override
+	public boolean isTimeSensitive() {
+		Document doc = getDocument();
+		return doc.hasItem("$FormulaTV");
+	}
+
+	@Override
+	public IndexType getIndexType() {
+		IndexType result = IndexType.SHARED;
+		String flags = getFlags();
+		if (flags.contains("P") && flags.contains("Y")) {
+			if (flags.contains("p")) {
+				result = IndexType.SHAREDPRIVATEONSERVER;
+				if (flags.contains("o")) {
+					result = IndexType.SHAREDPRIVATEONDESKTOP;
+				}
+			} else if (flags.contains("V")) {
+				result = IndexType.PRIVATE;
+			} else if (flags.contains("l")) {
+				result = IndexType.SHAREDINCLUDESDELETES;
+			} else if (flags.contains("a")) {
+				result = IndexType.SHAREDNOTINFOLDERS;
+			}
+		}
+		return result;
+	}
+
+	protected String getFlags() {
+		if (flags_ == null) {
+			flags_ = getDocument().getItemValueString("$Flags");
+		}
+		return flags_;
+	}
+
+	private String indexOptions_;
+
+	protected String getIndexOptions() {
+		if (indexOptions_ == null) {
+			indexOptions_ = getDocument().getItemValueString("$Index");
+		}
+		return indexOptions_;
+	}
+
+	/*
+	'/P=' + the number of hours until discarding of the view index. 
+	'/T' Discard view index after each use. 
+	'/M' Manual refresh. 
+	'/O' Automatic refresh. 
+	'/R=' + the number of seconds between automatically refresh of view.
+	'/C' Don't show empty categories
+	'/L' Disable auto-update
+	*/
+	public static Pattern R_MATCH = Pattern.compile("^.*\\bR=(\\d+).*$", Pattern.CASE_INSENSITIVE);
+	public static Pattern P_MATCH = Pattern.compile("^.*\\bP=(\\d+).*$", Pattern.CASE_INSENSITIVE);
+
+	@Override
+	public boolean isDisableAutoUpdate() {
+		String index = getIndexOptions();
+		return index.contains("/L");
+	}
+
+	@Override
+	public boolean isHideEmptyCategories() {
+		String index = getIndexOptions();
+		return index.contains("/C");
+	}
+
+	@Override
+	public boolean isDiscardIndex() {
+		String index = getIndexOptions();
+		return index.contains("/T");
+	}
+
+	@Override
+	public boolean isManualRefresh() {
+		String index = getIndexOptions();
+		return index.contains("/M");
+	}
+
+	@Override
+	public boolean isAutomaticRefresh() {
+		String index = getIndexOptions();
+		return index.contains("/O");
+	}
+
+	@Override
+	public int getAutoRefreshSeconds() {
+		int result = 0;
+		String index = getIndexOptions();
+		if (index.contains("/R")) {
+			Matcher matcher = R_MATCH.matcher(index);
+			if (matcher.matches()) {
+				result = Integer.parseInt(matcher.group(1));
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public int getDiscardHours() {
+		int result = 0;
+		String index = getIndexOptions();
+		if (index.contains("/P")) {
+			Matcher matcher = P_MATCH.matcher(index);
+			if (matcher.matches()) {
+				result = Integer.parseInt(matcher.group(1));
+			}
+		}
+		return result;
+	}
+
+	protected void flushCaches() {
+		columnInfo_ = null;
+		columnInfoMap_ = null;
+		columnMap_ = null;
 	}
 }

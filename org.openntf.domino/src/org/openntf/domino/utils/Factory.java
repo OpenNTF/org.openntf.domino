@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.AccessControlException;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Scanner;
 import java.util.ServiceLoader;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,10 +40,6 @@ import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
-
-import lotus.domino.NotesException;
-import lotus.domino.NotesFactory;
-import lotus.domino.NotesThread;
 
 import org.openntf.domino.Base;
 import org.openntf.domino.Database;
@@ -52,7 +50,7 @@ import org.openntf.domino.Session.RunContext;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.exceptions.UndefinedDelegateTypeException;
-import org.openntf.domino.graph.GenericDominoGraph;
+import org.openntf.domino.graph.DominoGraph;
 import org.openntf.domino.logging.ConsoleFormatter;
 import org.openntf.domino.logging.DefaultConsoleHandler;
 import org.openntf.domino.logging.DefaultFileHandler;
@@ -98,12 +96,26 @@ public enum Factory {
 				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 					@Override
 					public Object run() throws Exception {
-						lotus.domino.Session session = NotesFactory.createSession();
+						// Windows stores the notes.ini in the program directory; Linux stores it in the data directory
+						String os = String.valueOf(System.getProperty("os.name")).toLowerCase();
+						String progpath = System.getProperty(os.contains("windows") ? "notes.binary" : "user.dir");
+						File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+
+						Scanner scanner = new Scanner(iniFile);
+						scanner.useDelimiter("\n|\r\n");
+						//						while (scanner.hasNextLine()) {
+						//							String nextLine = scanner.nextLine();
+						//							System.out.println("DEBUG " + nextLine);
+						//						}
+
+						lotus.domino.Session session = null;
+						//								NotesFactory.createSession();
 						try {
-							loadEnvironment(session);
+							loadEnvironment(/*session, */scanner);
 						} finally {
-							session.recycle();
+							//							session.recycle();
 						}
+						scanner.close();
 						return null;
 					}
 				});
@@ -151,8 +163,10 @@ public enum Factory {
 	}
 
 	static {
-		NotesThread nt = new NotesThread(new SetupJob());
-		nt.start();
+		SetupJob job = new SetupJob();
+		//		NotesThread nt = new NotesThread(job);
+		//		nt.start();
+		job.run();
 	}
 
 	private static Map<String, String> ENVIRONMENT;
@@ -164,35 +178,51 @@ public enum Factory {
 	 * 
 	 * @param session
 	 */
-	public static void loadEnvironment(final lotus.domino.Session session) {
+	public static void loadEnvironment(/*final lotus.domino.Session session, */final Scanner scanner) {
 		if (ENVIRONMENT == null) {
 			ENVIRONMENT = new HashMap<String, String>();
 		}
-		if (session != null && !session_init) {
-			try {
-				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-					@Override
-					public Object run() throws Exception {
-						try {
-							ENVIRONMENT.put("directory", session.getEnvironmentString("Directory", true));
-							ENVIRONMENT.put("notesprogram", session.getEnvironmentString("NotesProgram", true));
-							ENVIRONMENT.put("kittype", session.getEnvironmentString("KitType", true));
-							ENVIRONMENT.put("servicename", session.getEnvironmentString("ServiceName", true));
-							ENVIRONMENT.put("httpjvmmaxheapsize", session.getEnvironmentString("HTTPJVMMaxHeapSize", true));
-							ENVIRONMENT.put("dominocontrollercurrentlog", session.getEnvironmentString("DominoControllerCurrentLog", true));
-						} catch (NotesException ne) {
-							ne.printStackTrace();
-						}
-						return null;
-					}
-				});
-			} catch (AccessControlException e) {
-				e.printStackTrace();
-			} catch (PrivilegedActionException e) {
-				e.printStackTrace();
+		int keyCount = 0;
+		if (scanner != null) {
+			while (scanner.hasNextLine()) {
+				String nextLine = scanner.nextLine();
+				int i = nextLine.indexOf('=');
+				if (i > 0) {
+					keyCount++;
+					String key = nextLine.substring(0, i).toLowerCase();
+					String value = nextLine.substring(i + 1);
+					//					System.out.println("DEBUG " + key + " : " + value);
+					ENVIRONMENT.put(key, value);
+				}
 			}
+			//			System.out.println("DEBUG: Added " + keyCount + " environment variables to avoid using a session");
 			session_init = true;
 		}
+		//		if (session != null && !session_init) {
+		//			try {
+		//				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+		//					@Override
+		//					public Object run() throws Exception {
+		//						try {
+		//							ENVIRONMENT.put("directory", session.getEnvironmentString("Directory", true));
+		//							ENVIRONMENT.put("notesprogram", session.getEnvironmentString("NotesProgram", true));
+		//							ENVIRONMENT.put("kittype", session.getEnvironmentString("KitType", true));
+		//							ENVIRONMENT.put("servicename", session.getEnvironmentString("ServiceName", true));
+		//							ENVIRONMENT.put("httpjvmmaxheapsize", session.getEnvironmentString("HTTPJVMMaxHeapSize", true));
+		//							ENVIRONMENT.put("dominocontrollercurrentlog", session.getEnvironmentString("DominoControllerCurrentLog", true));
+		//						} catch (NotesException ne) {
+		//							ne.printStackTrace();
+		//						}
+		//						return null;
+		//					}
+		//				});
+		//			} catch (AccessControlException e) {
+		//				e.printStackTrace();
+		//			} catch (PrivilegedActionException e) {
+		//				e.printStackTrace();
+		//			}
+		//			session_init = true;
+		//		}
 		if (!jar_init) {
 			try {
 				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
@@ -463,7 +493,7 @@ public enum Factory {
 
 	@Deprecated
 	public static org.openntf.domino.Document fromLotusDocument(final lotus.domino.Document lotus, final Base parent) {
-		return (org.openntf.domino.Document) getWrapperFactory().fromLotus(lotus, Document.SCHEMA, (Database) parent);
+		return getWrapperFactory().fromLotus(lotus, Document.SCHEMA, (Database) parent);
 	}
 
 	public static void setNoRecycle(final Base<?> base, final boolean value) {
@@ -755,7 +785,7 @@ public enum Factory {
 	}
 
 	public static void clearDominoGraph() {
-		GenericDominoGraph.clearDocumentCache();
+		DominoGraph.clearDocumentCache();
 	}
 
 	public static void clearBubbleExceptions() {
@@ -1228,7 +1258,7 @@ public enum Factory {
 		if (collection instanceof DocumentCollection) {
 			org.openntf.domino.Database db = ((DocumentCollection) collection).getParent();
 			result = db.createNoteCollection(false);
-			result.add((DocumentCollection) collection);
+			result.add(collection);
 		} else {
 			throw new DataNotCompatibleException("Cannot convert a non-OpenNTF DocumentCollection to a NoteCollection");
 		}

@@ -6,6 +6,7 @@ package org.openntf.domino.ext;
 import java.util.Map;
 
 import org.openntf.domino.DocumentCollection;
+import org.openntf.domino.View.IndexType;
 
 /**
  * @author withersp
@@ -74,5 +75,33 @@ public interface View {
 	public boolean checkUnique(final Object key, final org.openntf.domino.Document srcDoc);
 
 	public Map<String, org.openntf.domino.ViewColumn> getColumnMap();
+
+	public IndexType getIndexType();
+
+	public boolean isTimeSensitive();
+
+	/*
+	'/P=' + the number of hours until discarding of the view index. 
+	'/T' Discard view index after each use. 
+	'/M' Manual refresh. 
+	'/O' Automatic refresh. 
+	'/R=' + the number of seconds between automatically refresh of view.
+	'/C' Don't show empty categories
+	'/L' Disable auto-update
+	*/
+
+	public boolean isDisableAutoUpdate();
+
+	public boolean isHideEmptyCategories();
+
+	public boolean isDiscardIndex();
+
+	public boolean isManualRefresh();
+
+	public boolean isAutomaticRefresh();
+
+	public int getAutoRefreshSeconds();
+
+	public int getDiscardHours();
 
 }
