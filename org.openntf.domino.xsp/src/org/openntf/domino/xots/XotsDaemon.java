@@ -8,6 +8,7 @@ import java.util.Observer;
 import java.util.Set;
 
 import org.openntf.domino.helpers.TrustedDispatcher;
+import org.openntf.domino.thread.DominoExecutor.ThreadCleaner;
 import org.openntf.domino.thread.DominoManualRunner;
 import org.openntf.domino.thread.DominoNoneRunner;
 import org.openntf.domino.thread.DominoSessionType;
@@ -17,8 +18,6 @@ import org.openntf.domino.thread.model.IDominoRunnable;
 
 import com.ibm.designer.runtime.domino.adapter.HttpService;
 import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
-import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
-import com.ibm.domino.xsp.module.nsf.NotesContext;
 
 /*
  * This class and package is intended to become the space for the XPages implementation
@@ -46,22 +45,23 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 
 		@Override
 		protected void beforeExecute(final Thread t, final Runnable r) {
-			if (r instanceof IXotsRunner) {
-				ClassLoader loader = ((IXotsRunner) r).getContextClassLoader();
+			Runnable run = r;
+			if (r instanceof TrustedRunnable) {
+				run = ((TrustedRunnable) r).getRunnable();
+			}
+			if (run instanceof IXotsRunner) {
+				ClassLoader loader = ((IXotsRunner) run).getContextClassLoader();
 				if (loader != null) {
 					t.setContextClassLoader(loader);
 				}
-				NSFComponentModule module = ((IXotsRunner) r).getModule();
-				((XotsThread) t).initThread(module);
+			} else {
+				System.out.println("DEBUG: XotsDaemon is running a " + run.getClass().getName());
 			}
 		}
 
 		@Override
 		protected void afterExecute(final Runnable r, final Throwable t) {
-			Thread thread = Thread.currentThread();
-			if (thread instanceof lotus.domino.NotesThread) {
-				((lotus.domino.NotesThread) thread).termThread();
-			}
+
 		}
 	}
 
@@ -77,30 +77,8 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 	}
 
 	protected class XotsThread extends DominoThread {
-
 		public XotsThread(final Runnable runnable) {
 			super(runnable);
-		}
-
-		public void initThread(final NSFComponentModule module) {
-			if (module != null) {
-				System.out.println("DEBUG: Initializing a thread using a module: " + module.getModuleName());
-				NotesContext nc = new NotesContext(module);
-				NotesContext.initThread(nc);
-			} else {
-				super.initThread();
-			}
-		}
-
-		@Override
-		public void termThread() {
-			NotesContext nc = NotesContext.getCurrentUnchecked();
-			if (nc == null) {
-				super.termThread();
-			} else {
-				System.out.println("DEBUG: Terminating a thread using a module: " + nc.getModule().getModuleName());
-				NotesContext.termThread();
-			}
 		}
 	}
 
@@ -113,9 +91,7 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 	}
 
 	public synchronized static void stop() {
-		if (null != INSTANCE) {
-			INSTANCE.getExecutor().shutdownNow();
-		}
+		ThreadCleaner.INSTANCE.clean();
 	}
 
 	public synchronized static void addToQueue(final Runnable runnable) {

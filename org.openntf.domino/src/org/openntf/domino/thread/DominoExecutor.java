@@ -3,6 +3,10 @@
  */
 package org.openntf.domino.thread;
 
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +31,59 @@ import org.openntf.domino.thread.model.IDominoRunnable;
  */
 @Incomplete
 public class DominoExecutor extends ThreadPoolExecutor {
+
+	public static enum ThreadCleaner implements Runnable {
+		INSTANCE;
+		private Set<DominoExecutor> executors_ = Collections.synchronizedSet(new HashSet<DominoExecutor>());
+
+		private ThreadCleaner() {
+			try {
+				final Runnable r = this;
+				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+					@Override
+					public Object run() throws Exception {
+						Thread cleanerThread = new Thread(r);
+						//						System.out.println("DEBUG: CleanerThread created");
+						Runtime.getRuntime().addShutdownHook(cleanerThread);
+						//						System.out.println("DEBUG: Shutdown hook added");
+						return null;
+					}
+				});
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+		}
+
+		@Override
+		public void run() {
+			clean();
+		}
+
+		public void clean() {
+			System.out.println("DEBUG: Running ThreadCleaner...");
+			Object[] copy = executors_.toArray();
+			for (Object raw : copy) {
+				try {
+					if (raw instanceof DominoExecutor) {
+						DominoExecutor executor = (DominoExecutor) raw;
+						executor.shutdownNow();
+					}
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+		}
+
+		public synchronized void addExecutor(final DominoExecutor executor) {
+			executors_.add(executor);
+		}
+
+		public synchronized DominoExecutor removeExecutor(final DominoExecutor executor) {
+			executors_.remove(executor);
+			return executor;
+		}
+
+	}
 
 	public static class OpenSecurityManager extends SecurityManager {
 		public OpenSecurityManager() {
@@ -97,6 +154,7 @@ public class DominoExecutor extends ThreadPoolExecutor {
 	public DominoExecutor(final int corePoolSize, final int maximumPoolSize, final long keepAliveTime, final TimeUnit timeUnit,
 			final BlockingQueue<Runnable> runnableQueue, final DominoThreadFactory threadFactory) {
 		super(corePoolSize, maximumPoolSize, keepAliveTime, timeUnit, runnableQueue, threadFactory);
+		ThreadCleaner.INSTANCE.addExecutor(this);
 		init();
 	}
 
@@ -110,6 +168,7 @@ public class DominoExecutor extends ThreadPoolExecutor {
 			final BlockingQueue<Runnable> runnableQueue, final DominoThreadFactory threadFactory,
 			final RejectedExecutionHandler paramRejectedExecutionHandler) {
 		super(corePoolSize, maximumPoolSize, keepAliveTime, timeUnit, runnableQueue, threadFactory, paramRejectedExecutionHandler);
+		ThreadCleaner.INSTANCE.addExecutor(this);
 		init();
 	}
 
@@ -132,9 +191,6 @@ public class DominoExecutor extends ThreadPoolExecutor {
 	@Override
 	protected void beforeExecute(final Thread t, final Runnable r) {
 		super.beforeExecute(t, r);
-		if (t instanceof lotus.domino.NotesThread) {
-			((lotus.domino.NotesThread) t).initThread();
-		}
 		if (r instanceof IDominoRunnable) {
 			ClassLoader loader = ((IDominoRunnable) r).getContextClassLoader();
 			if (loader != null) {
@@ -148,20 +204,11 @@ public class DominoExecutor extends ThreadPoolExecutor {
 	 */
 	@Override
 	protected void afterExecute(final Runnable r, final Throwable t) {
-		Thread thread = Thread.currentThread();
-		if (thread instanceof lotus.domino.NotesThread) {
-			//			System.out.println("DEBUG: afterExecute terminating a thread on a " + r.getClass().getName() + " in a "
-			//					+ thread.getClass().getName());
-			((lotus.domino.NotesThread) thread).termThread();
-			//			Throwable throwable = new Throwable();
-			//			throwable.printStackTrace();
-		}
 		super.afterExecute(r, t);
 	}
 
 	@Override
 	public boolean isTerminating() {
-		System.out.println("DEBUG: DominoExecutor is TERMINATING!!");
 		return super.isTerminating();
 	}
 
@@ -240,13 +287,14 @@ public class DominoExecutor extends ThreadPoolExecutor {
 
 	@Override
 	public void shutdown() {
-		((DominoThreadFactory) getThreadFactory()).terminate();
+		ThreadCleaner.INSTANCE.removeExecutor(this);
 		super.shutdown();
 	}
 
 	@Override
 	public List<Runnable> shutdownNow() {
-		((DominoThreadFactory) getThreadFactory()).terminate();
+		ThreadCleaner.INSTANCE.removeExecutor(this);
 		return super.shutdownNow();
 	}
+
 }

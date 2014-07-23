@@ -33,7 +33,7 @@ public class ItemFlagTest extends AbstractDominoRunnable {
 		int collectionSize = 0;
 		int dbDocs = 0;
 		try {
-			Database db = session.getDatabase("", "imdb/movies.nsf");
+			Database db = session.getDatabase("", "imdb/movies.bak");
 			dbDocs = db.getAllDocuments().getCount();
 			long testStartTime = System.nanoTime();
 			NoteCollection nc = db.createNoteCollection(false);

@@ -97,13 +97,7 @@ public enum Factory {
 						//							System.out.println("DEBUG " + nextLine);
 						//						}
 
-						lotus.domino.Session session = null;
-						//								NotesFactory.createSession();
-						try {
-							loadEnvironment(/*session, */scanner);
-						} finally {
-							//							session.recycle();
-						}
+						loadEnvironment(/*session, */scanner);
 						scanner.close();
 						return null;
 					}
@@ -153,9 +147,11 @@ public enum Factory {
 
 	static {
 		SetupJob job = new SetupJob();
-		//		NotesThread nt = new NotesThread(job);
-		//		nt.start();
 		job.run();
+		//		TrustedDispatcher td = new TrustedDispatcher();
+		//		td.process(job);
+		//		System.out.println("DEBUG: SetupJob dispatched");
+		//		td.stop(false);
 	}
 
 	private static Map<String, String> ENVIRONMENT;
@@ -516,6 +512,10 @@ public enum Factory {
 	public static <T extends Base, D extends lotus.domino.Base, P extends Base> T fromLotus(final D lotus,
 			final FactorySchema<T, D, P> schema, final P parent) {
 		return getWrapperFactory().fromLotus(lotus, schema, parent);
+	}
+
+	public static boolean recacheLotus(final lotus.domino.Base lotus, final Base<?> wrapper, final Base<?> parent) {
+		return getWrapperFactory().recacheLotusObject(lotus, wrapper, parent);
 	}
 
 	/**

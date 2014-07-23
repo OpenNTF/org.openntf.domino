@@ -42,7 +42,7 @@ public class Activator implements BundleActivator {
 	 * <li>This will result in a call to dummyView.iGetEntryByKey(null, false, 42);</li>
 	 * <li>If iGetEntryByKey is called with a "null" vector and 42 as int, it will throw a "BackendBridgeSanityCheckException" (which we
 	 * expect)</li>
-	 * <li>If any other mehtod is called it will throw a different exception. (Most likely a NPE, because our view has no delegate)</li>
+	 * <li>If any other method is called it will throw a different exception. (Most likely a NPE, because our view has no delegate)</li>
 	 * </ol>
 	 * I hope the server would not crash then. I assume this because:
 	 * <ul>

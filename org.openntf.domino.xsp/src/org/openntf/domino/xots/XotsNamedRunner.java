@@ -5,9 +5,8 @@ import java.security.PrivilegedExceptionAction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import lotus.notes.NotesThread;
-
 import org.openntf.domino.Session;
+import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.thread.model.IDominoRunnable;
 import org.openntf.domino.utils.Factory;
 
@@ -121,12 +120,18 @@ public class XotsNamedRunner implements IXotsRunner {
 		return session_;
 	}
 
+	public Runnable getRunnable() {
+		return runnable_;
+	}
+
 	protected void preRun() {
+		ClassLoader cl = ((AbstractDominoRunnable) getRunnable()).getContextClassLoader();
+		if (cl == null) {
+			cl = classLoader_;
+		}
 		if (module_ != null) {
 			NotesContext nctx = new NotesContext(module_);
-			NotesContext.initThread(nctx);
-		} else {
-			NotesThread.sinitThread();
+			NotesContext.contextThreadLocal.set(nctx);
 		}
 		Session session = this.getNamedSession();
 		setSession(session);
@@ -145,11 +150,7 @@ public class XotsNamedRunner implements IXotsRunner {
 		} else {
 			System.out.println("ALERt: session was null for a " + runnable_.getClass().getName());
 		}
-		if (module_ != null) {
-			NotesContext.termThread();
-		} else {
-			NotesThread.stermThread();
-		}
+		NotesContext.contextThreadLocal.set(null);
 	}
 
 	@Override

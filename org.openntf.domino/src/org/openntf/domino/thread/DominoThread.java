@@ -23,6 +23,12 @@ import lotus.domino.NotesThread;
  */
 public class DominoThread extends NotesThread {
 	private transient Runnable runnable_;
+	protected Status status_ = Status.NONE;
+	protected int nativeId_;
+
+	public enum Status {
+		NONE, INITIALIZED, RUNNING, TERMINATED
+	}
 
 	/**
 	 * Instantiates a new domino thread.
@@ -75,6 +81,10 @@ public class DominoThread extends NotesThread {
 		return runnable_;
 	}
 
+	public Status getStatus() {
+		return status_;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -88,29 +98,34 @@ public class DominoThread extends NotesThread {
 			//until the Executor is shutdown or the keep alive expires.
 		} catch (Throwable t) {
 			t.printStackTrace();
-		} finally {
+		}/* finally {
 			termThread();
-		}
+			}*/
 	}
 
 	@Override
 	public void interrupt() {
-		termThread();
+		//		System.out.println("ALERT! Thread interrupted!");
+		//		termThread();
 		super.interrupt();
 	}
 
 	@Override
 	public void initThread() {
-		System.out.println("DEBUG: Initializing a " + getClass().getSimpleName() + ": " + this.getId() + " ("
-				+ System.identityHashCode(this) + ")");
 		super.initThread();
+		//		System.out.println("DEBUG: Initialized a " + toString());
 	}
 
 	@Override
 	public void termThread() {
+		System.out.println("DEBUG: Terminating a " + toString());
 		super.termThread();
-		System.out.println("DEBUG: Terminated a " + getClass().getSimpleName() + ": " + this.getId() + " (" + System.identityHashCode(this)
-				+ ")");
+	}
+
+	@Override
+	public String toString() {
+		return (getClass().getSimpleName() + ": " + this.getId() + " (" + System.identityHashCode(this) + ") native: " + this
+				.getNativeThreadID());
 	}
 
 	//	public synchronized void start(final ClassLoader loader) {

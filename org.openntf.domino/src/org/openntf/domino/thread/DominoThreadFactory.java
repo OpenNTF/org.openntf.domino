@@ -6,15 +6,13 @@ package org.openntf.domino.thread;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.security.AccessControlContext;
 import java.security.AccessController;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openntf.domino.annotations.Incomplete;
-import org.openntf.domino.thread.model.IDominoRunnable;
+import org.openntf.domino.utils.Factory;
 
 /**
  * @author Nathan T. Freeman
@@ -29,20 +27,28 @@ public class DominoThreadFactory implements ThreadFactory {
 		public void uncaughtException(final Thread paramThread, final Throwable paramThrowable) {
 			System.out.println("ALERT: Uncaught exception in DominoThread " + paramThread.getClass().getName());
 			paramThrowable.printStackTrace();
-			if (paramThread instanceof DominoThread) {
-				Runnable runnable = ((DominoThread) paramThread).getRunnable();
-				if (runnable instanceof IDominoRunnable) {
-					lotus.domino.Session s = ((IDominoRunnable) runnable).getSession();
-					if (s != null) {
-						try {
-							s.recycle();
-						} catch (Throwable t) {
-							t.printStackTrace();
-						}
+			//			if (paramThread instanceof DominoThread) {
+			//				Runnable runnable = ((DominoThread) paramThread).getRunnable();
+			//				if (runnable instanceof IDominoRunnable) {
+			//					lotus.domino.Session s = ((IDominoRunnable) runnable).getSession();
+			//					if (s != null) {
+			//						try {
+			//							s.recycle();
+			//						} catch (Throwable t) {
+			//							t.printStackTrace();
+			//						}
+			//					}
+			//				}
+			//			}
+			if (paramThread instanceof lotus.domino.NotesThread) {
+				lotus.domino.Session session = Factory.terminate();
+				if (session != null) {
+					try {
+						session.recycle();
+					} catch (Throwable t) {
+						t.printStackTrace();
 					}
 				}
-			}
-			if (paramThread instanceof lotus.domino.NotesThread) {
 				((lotus.domino.NotesThread) paramThread).termThread();
 			}
 		}
@@ -59,7 +65,6 @@ public class DominoThreadFactory implements ThreadFactory {
 	public DominoThreadFactory() {
 		factoryClassLoader_ = Thread.currentThread().getContextClassLoader();
 		factoryAccessController_ = AccessController.getContext();
-
 	}
 
 	private void stall() {
@@ -79,26 +84,16 @@ public class DominoThreadFactory implements ThreadFactory {
 		return new DominoThread(runnable);
 	}
 
-	private final Set<DominoThread> threads_ = new HashSet<DominoThread>();
-
 	@Override
 	public Thread newThread(final Runnable paramRunnable) {
 		DominoThread result = null;
 		result = makeThread(paramRunnable);
-		threads_.add(result);
 		lastThread_ = System.currentTimeMillis();
 		count_.incrementAndGet();
 		result.setUncaughtExceptionHandler(factoryExceptionHandler_);
-		System.out.println("DEBUG: Constructing a " + result.getClass().getSimpleName() + ": " + result.getId() + " ("
-				+ System.identityHashCode(result) + ")");
+		//		System.out.println("DEBUG: Constructing a " + result.getClass().getSimpleName() + ": " + result.getId() + " ("
+		//				+ System.identityHashCode(result) + ")");
 		return result;
-	}
-
-	public void terminate() {
-		System.out.println("DEBUG: Terminating a DominoThreadFactory");
-		for (DominoThread thread : threads_) {
-			thread.termThread();
-		}
 	}
 
 }
