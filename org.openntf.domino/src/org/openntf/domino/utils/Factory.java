@@ -90,6 +90,10 @@ public enum Factory {
 					public Object run() throws Exception {
 						String progpath = System.getProperty("notes.binary");
 						File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+						if (!iniFile.exists()) {
+							progpath = System.getProperty("user.dir");
+							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+						}
 						Scanner scanner = new Scanner(iniFile);
 						scanner.useDelimiter(System.getProperty("line.separator"));
 						//						while (scanner.hasNextLine()) {
