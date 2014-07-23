@@ -75,6 +75,9 @@ public enum Factory {
 
 	private static List<Terminatable> onTerminate_ = new ArrayList<Terminatable>();
 
+	// TODO: Determine if this is the right way to deal with Xots access to faces contexts
+	private static ThreadLocal<Database> currentDatabaseHolder_ = new ThreadLocal<Database>();
+
 	/**
 	 * setup the environment and loggers
 	 * 
@@ -689,6 +692,20 @@ public enum Factory {
 
 	public static void clearSession() {
 		currentSessionHolder_.set(null);
+	}
+
+	// TODO: Determine if this is the right way to deal with Xots access to faces contexts
+	public static Database getDatabase_unchecked() {
+		return currentDatabaseHolder_.get();
+	}
+
+	public static void setDatabase(final Database database) {
+		setNoRecycle(database, true);
+		currentDatabaseHolder_.set(database);
+	}
+
+	public static void clearDatabase() {
+		currentDatabaseHolder_.set(null);
 	}
 
 	public static ClassLoader getClassLoader() {

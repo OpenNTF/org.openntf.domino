@@ -30,7 +30,9 @@ import javax.servlet.http.HttpSession;
 
 import lotus.notes.NotesThread;
 
+import org.openntf.domino.Database;
 import org.openntf.domino.thread.DominoNativeRunner;
+import org.openntf.domino.utils.Factory;
 
 import com.ibm.commons.util.NotImplementedException;
 import com.ibm.designer.runtime.domino.adapter.servlet.LCDAdapterHttpSession;
@@ -106,6 +108,11 @@ public class XotsNativeFacesRunner extends DominoNativeRunner {
 			NotesThread.sinitThread();
 		}
 		super.preRun();
+
+		if (module_ != null) {
+			Database database = getSession().getDatabase(module_.getDatabasePath());
+			Factory.setDatabase(database);
+		}
 	}
 
 	@Override
@@ -158,6 +165,10 @@ public class XotsNativeFacesRunner extends DominoNativeRunner {
 		private final HttpSession session_;
 		private final Principal principal_;
 
+		private void debug(final Object message) {
+			System.out.println(">>> " + getClass().getName() + " >>> " + message);
+		}
+
 		public StubHttpServletRequest(final HttpSession session, final Principal principal) {
 			session_ = session;
 			principal_ = principal;
@@ -168,9 +179,10 @@ public class XotsNativeFacesRunner extends DominoNativeRunner {
 			return null;
 		}
 
+		@SuppressWarnings("rawtypes")
 		@Override
 		public Enumeration getAttributeNames() {
-			return null;
+			return Collections.enumeration(new ArrayList<String>());
 		}
 
 		@Override
@@ -185,7 +197,7 @@ public class XotsNativeFacesRunner extends DominoNativeRunner {
 
 		@Override
 		public String getContentType() {
-			return null;
+			return "";
 		}
 
 		@Override
@@ -213,6 +225,7 @@ public class XotsNativeFacesRunner extends DominoNativeRunner {
 			return Locale.getDefault();
 		}
 
+		@SuppressWarnings("rawtypes")
 		@Override
 		public Enumeration getLocales() {
 			return Collections.enumeration(Arrays.asList(Locale.getAvailableLocales()));
@@ -223,11 +236,13 @@ public class XotsNativeFacesRunner extends DominoNativeRunner {
 			return null;
 		}
 
+		@SuppressWarnings("rawtypes")
 		@Override
 		public Map getParameterMap() {
 			return Collections.emptyMap();
 		}
 
+		@SuppressWarnings("rawtypes")
 		@Override
 		public Enumeration getParameterNames() {
 			return Collections.enumeration(new ArrayList<String>());
@@ -250,6 +265,7 @@ public class XotsNativeFacesRunner extends DominoNativeRunner {
 
 		@Override
 		public String getRealPath(final String arg0) {
+			debug("asked for RealPath");
 			return null;
 		}
 
@@ -270,11 +286,13 @@ public class XotsNativeFacesRunner extends DominoNativeRunner {
 
 		@Override
 		public RequestDispatcher getRequestDispatcher(final String arg0) {
+			debug("asked for RequestDispatcher");
 			return null;
 		}
 
 		@Override
 		public String getScheme() {
+			debug("asked for Scheme");
 			return null;
 		}
 
@@ -315,6 +333,7 @@ public class XotsNativeFacesRunner extends DominoNativeRunner {
 
 		@Override
 		public String getContextPath() {
+			debug("asked for ContextPath");
 			return null;
 		}
 
@@ -330,14 +349,19 @@ public class XotsNativeFacesRunner extends DominoNativeRunner {
 
 		@Override
 		public String getHeader(final String arg0) {
+			if ("User-Agent".equals(arg0)) {
+				return "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:30.0) Gecko/20100101 Firefox/30.0";
+			}
 			return "";
 		}
 
+		@SuppressWarnings("rawtypes")
 		@Override
 		public Enumeration getHeaderNames() {
 			return Collections.enumeration(new ArrayList<String>());
 		}
 
+		@SuppressWarnings("rawtypes")
 		@Override
 		public Enumeration getHeaders(final String arg0) {
 			return Collections.enumeration(new ArrayList<String>());
@@ -355,11 +379,13 @@ public class XotsNativeFacesRunner extends DominoNativeRunner {
 
 		@Override
 		public String getPathInfo() {
+			debug("asked for PathInfo");
 			return "";
 		}
 
 		@Override
 		public String getPathTranslated() {
+			debug("asked for PathTranslated");
 			return "";
 		}
 
@@ -370,11 +396,12 @@ public class XotsNativeFacesRunner extends DominoNativeRunner {
 
 		@Override
 		public String getRemoteUser() {
-			return "";
+			return getUserPrincipal().getName();
 		}
 
 		@Override
 		public String getRequestURI() {
+			debug("asked for RequestURI");
 			return "";
 		}
 
