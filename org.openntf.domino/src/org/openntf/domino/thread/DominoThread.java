@@ -93,6 +93,26 @@ public class DominoThread extends NotesThread {
 		}
 	}
 
+	@Override
+	public void interrupt() {
+		termThread();
+		super.interrupt();
+	}
+
+	@Override
+	public void initThread() {
+		System.out.println("DEBUG: Initializing a " + getClass().getSimpleName() + ": " + this.getId() + " ("
+				+ System.identityHashCode(this) + ")");
+		super.initThread();
+	}
+
+	@Override
+	public void termThread() {
+		super.termThread();
+		System.out.println("DEBUG: Terminated a " + getClass().getSimpleName() + ": " + this.getId() + " (" + System.identityHashCode(this)
+				+ ")");
+	}
+
 	//	public synchronized void start(final ClassLoader loader) {
 	//		setContextClassLoader(loader);
 	//		start();

@@ -4,6 +4,7 @@
 package org.openntf.domino.thread;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
@@ -64,7 +65,7 @@ public class DominoExecutor extends ThreadPoolExecutor {
 	private static final long serialVersionUID = 1L;
 	private Set<IDominoListener> listeners_;
 
-	private static BlockingQueue<Runnable> getBlockingQueue(final int size) {
+	public static BlockingQueue<Runnable> getBlockingQueue(final int size) {
 		return new LinkedBlockingQueue<Runnable>(size);
 	}
 
@@ -88,26 +89,27 @@ public class DominoExecutor extends ThreadPoolExecutor {
 		this(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, getBlockingQueue(maximumPoolSize));
 	}
 
-	public DominoExecutor(final int paramInt1, final int paramInt2, final long paramLong, final TimeUnit paramTimeUnit,
-			final BlockingQueue<Runnable> paramBlockingQueue) {
-		this(paramInt1, paramInt2, paramLong, paramTimeUnit, paramBlockingQueue, new DominoThreadFactory());
+	public DominoExecutor(final int corePoolSize, final int maximumPoolSize, final long keepAliveTime, final TimeUnit paramTimeUnit,
+			final BlockingQueue<Runnable> runnableQueue) {
+		this(corePoolSize, maximumPoolSize, keepAliveTime, paramTimeUnit, runnableQueue, new DominoThreadFactory());
 	}
 
-	public DominoExecutor(final int paramInt1, final int paramInt2, final long paramLong, final TimeUnit paramTimeUnit,
-			final BlockingQueue<Runnable> paramBlockingQueue, final DominoThreadFactory paramThreadFactory) {
-		super(paramInt1, paramInt2, paramLong, paramTimeUnit, paramBlockingQueue, paramThreadFactory);
+	public DominoExecutor(final int corePoolSize, final int maximumPoolSize, final long keepAliveTime, final TimeUnit timeUnit,
+			final BlockingQueue<Runnable> runnableQueue, final DominoThreadFactory threadFactory) {
+		super(corePoolSize, maximumPoolSize, keepAliveTime, timeUnit, runnableQueue, threadFactory);
 		init();
 	}
 
-	public DominoExecutor(final int paramInt1, final int paramInt2, final long paramLong, final TimeUnit paramTimeUnit,
-			final BlockingQueue<Runnable> paramBlockingQueue, final RejectedExecutionHandler paramRejectedExecutionHandler) {
-		this(paramInt1, paramInt2, paramLong, paramTimeUnit, paramBlockingQueue, new DominoThreadFactory(), paramRejectedExecutionHandler);
+	public DominoExecutor(final int corePoolSize, final int maximumPoolSize, final long keepAliveTime, final TimeUnit timeUnit,
+			final BlockingQueue<Runnable> runnableQueue, final RejectedExecutionHandler paramRejectedExecutionHandler) {
+		this(corePoolSize, maximumPoolSize, keepAliveTime, timeUnit, runnableQueue, new DominoThreadFactory(),
+				paramRejectedExecutionHandler);
 	}
 
-	public DominoExecutor(final int paramInt1, final int paramInt2, final long paramLong, final TimeUnit paramTimeUnit,
-			final BlockingQueue<Runnable> paramBlockingQueue, final DominoThreadFactory paramThreadFactory,
+	public DominoExecutor(final int corePoolSize, final int maximumPoolSize, final long keepAliveTime, final TimeUnit timeUnit,
+			final BlockingQueue<Runnable> runnableQueue, final DominoThreadFactory threadFactory,
 			final RejectedExecutionHandler paramRejectedExecutionHandler) {
-		super(paramInt1, paramInt2, paramLong, paramTimeUnit, paramBlockingQueue, paramThreadFactory, paramRejectedExecutionHandler);
+		super(corePoolSize, maximumPoolSize, keepAliveTime, timeUnit, runnableQueue, threadFactory, paramRejectedExecutionHandler);
 		init();
 	}
 
@@ -234,5 +236,17 @@ public class DominoExecutor extends ThreadPoolExecutor {
 			listeners_.remove(listener);
 		}
 		return listener;
+	}
+
+	@Override
+	public void shutdown() {
+		((DominoThreadFactory) getThreadFactory()).terminate();
+		super.shutdown();
+	}
+
+	@Override
+	public List<Runnable> shutdownNow() {
+		((DominoThreadFactory) getThreadFactory()).terminate();
+		return super.shutdownNow();
 	}
 }

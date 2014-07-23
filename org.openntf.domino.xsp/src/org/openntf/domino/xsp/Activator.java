@@ -6,6 +6,7 @@ import java.net.URL;
 import javax.faces.context.FacesContext;
 
 import org.eclipse.core.runtime.Plugin;
+import org.openntf.domino.xots.XotsDaemon;
 import org.openntf.domino.xsp.readers.LogReader;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -321,6 +322,7 @@ public class Activator extends Plugin {
 	 */
 	@Override
 	public void stop(final BundleContext bundleContext) throws Exception {
+		XotsDaemon.stop();
 		Activator.context = null;
 	}
 

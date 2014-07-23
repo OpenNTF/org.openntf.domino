@@ -211,6 +211,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 
 	public Document(final int id, final Database parent, final WrapperFactory wf) {
 		this(Integer.toHexString(id), parent, wf);
+		//		System.out.println("Creating a deferred document for id " + id);
 	}
 
 	/* (non-Javadoc)

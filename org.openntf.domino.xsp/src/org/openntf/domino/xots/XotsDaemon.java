@@ -11,10 +11,14 @@ import org.openntf.domino.helpers.TrustedDispatcher;
 import org.openntf.domino.thread.DominoManualRunner;
 import org.openntf.domino.thread.DominoNoneRunner;
 import org.openntf.domino.thread.DominoSessionType;
+import org.openntf.domino.thread.DominoThread;
+import org.openntf.domino.thread.DominoThreadFactory;
 import org.openntf.domino.thread.model.IDominoRunnable;
 
 import com.ibm.designer.runtime.domino.adapter.HttpService;
 import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
+import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
+import com.ibm.domino.xsp.module.nsf.NotesContext;
 
 /*
  * This class and package is intended to become the space for the XPages implementation
@@ -28,16 +32,76 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 	private Set<XotsBaseTasklet> tasklets_;
 
 	protected class XotsExecutor extends TrustedDispatcher.TrustedExecutor {
-
 		protected XotsExecutor(final TrustedDispatcher dispatcher) {
-			super(dispatcher);
+			super(dispatcher, new XotsThreadFactory());
 		}
 
 		@Override
 		public void execute(final Runnable runnable) {
+			if (!(runnable instanceof IXotsRunner)) {
+				System.out.println("DEBUG: XotsExecutor has been asked to execute a " + runnable.getClass().getName());
+			}
 			super.execute(runnable);
 		}
 
+		@Override
+		protected void beforeExecute(final Thread t, final Runnable r) {
+			if (r instanceof IXotsRunner) {
+				ClassLoader loader = ((IXotsRunner) r).getContextClassLoader();
+				if (loader != null) {
+					t.setContextClassLoader(loader);
+				}
+				NSFComponentModule module = ((IXotsRunner) r).getModule();
+				((XotsThread) t).initThread(module);
+			}
+		}
+
+		@Override
+		protected void afterExecute(final Runnable r, final Throwable t) {
+			Thread thread = Thread.currentThread();
+			if (thread instanceof lotus.domino.NotesThread) {
+				((lotus.domino.NotesThread) thread).termThread();
+			}
+		}
+	}
+
+	protected class XotsThreadFactory extends DominoThreadFactory {
+		public XotsThreadFactory() {
+
+		}
+
+		@Override
+		protected DominoThread makeThread(final Runnable runnable) {
+			return new XotsThread(runnable);
+		}
+	}
+
+	protected class XotsThread extends DominoThread {
+
+		public XotsThread(final Runnable runnable) {
+			super(runnable);
+		}
+
+		public void initThread(final NSFComponentModule module) {
+			if (module != null) {
+				System.out.println("DEBUG: Initializing a thread using a module: " + module.getModuleName());
+				NotesContext nc = new NotesContext(module);
+				NotesContext.initThread(nc);
+			} else {
+				super.initThread();
+			}
+		}
+
+		@Override
+		public void termThread() {
+			NotesContext nc = NotesContext.getCurrentUnchecked();
+			if (nc == null) {
+				super.termThread();
+			} else {
+				System.out.println("DEBUG: Terminating a thread using a module: " + nc.getModule().getModuleName());
+				NotesContext.termThread();
+			}
+		}
 	}
 
 	private XotsDaemon() {
@@ -46,6 +110,12 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 		List<HttpService> services = env.getServices();
 		xotsService_ = new XotsService(env);
 		services.add(xotsService_);
+	}
+
+	public synchronized static void stop() {
+		if (null != INSTANCE) {
+			INSTANCE.getExecutor().shutdownNow();
+		}
 	}
 
 	public synchronized static void addToQueue(final Runnable runnable) {
@@ -67,6 +137,14 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 			INSTANCE = new XotsDaemon();
 		}
 		return INSTANCE;
+	}
+
+	@Override
+	protected TrustedExecutor getExecutor() {
+		if (intimidator_ == null) {
+			intimidator_ = new XotsExecutor(this);
+		}
+		return intimidator_;
 	}
 
 	public void scan(final String serverName) {
