@@ -9,6 +9,7 @@ import java.security.Permission;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.concurrent.RunnableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.openntf.domino.thread.DominoExecutor;
@@ -17,6 +18,7 @@ import org.openntf.domino.thread.DominoExecutor.OpenSecurityManager;
 import org.openntf.domino.thread.DominoFutureTask;
 import org.openntf.domino.thread.DominoNativeRunner;
 import org.openntf.domino.thread.DominoSessionType;
+import org.openntf.domino.thread.DominoThreadFactory;
 import org.openntf.domino.thread.model.IDominoRunnable;
 
 /**
@@ -26,11 +28,11 @@ import org.openntf.domino.thread.model.IDominoRunnable;
 public class TrustedDispatcher /*extends AbstractDominoDaemon*/{
 	private static final Logger log_ = Logger.getLogger(TrustedDispatcher.class.getName());
 	private static final long serialVersionUID = 1L;
-	private TrustedExecutor intimidator_;
+	protected TrustedExecutor intimidator_;
 
 	//	private Queue<Runnable> runQueue_ = new ArrayDeque<Runnable>();
 
-	private TrustedExecutor getExecutor() {
+	protected TrustedExecutor getExecutor() {
 		if (intimidator_ == null) {
 			intimidator_ = new TrustedExecutor(this);
 		}
@@ -74,6 +76,10 @@ public class TrustedDispatcher /*extends AbstractDominoDaemon*/{
 			loader_ = loader;
 		}
 
+		public Runnable getRunnable() {
+			return runnable_;
+		}
+
 		protected void superRun() {
 			super.run();
 		}
@@ -114,6 +120,11 @@ public class TrustedDispatcher /*extends AbstractDominoDaemon*/{
 		private SecurityManager securityManager_ = new TrustedSecurityManager();
 
 		protected TrustedExecutor(final TrustedDispatcher dispatcher) {
+			dispatcher_ = dispatcher;
+		}
+
+		protected TrustedExecutor(final TrustedDispatcher dispatcher, final DominoThreadFactory factory) {
+			super(5, 20, 3, TimeUnit.SECONDS, DominoExecutor.getBlockingQueue(100), factory);
 			dispatcher_ = dispatcher;
 		}
 
@@ -216,6 +227,14 @@ public class TrustedDispatcher /*extends AbstractDominoDaemon*/{
 	public Object process(final Runnable runnable) {
 		getExecutor().execute(runnable);
 		return runnable;
+	}
+
+	public void stop(final boolean immediate) {
+		if (immediate) {
+			getExecutor().shutdownNow();
+		} else {
+			getExecutor().shutdown();
+		}
 	}
 
 	//	@Override

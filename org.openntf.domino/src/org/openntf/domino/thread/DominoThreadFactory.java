@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openntf.domino.annotations.Incomplete;
-import org.openntf.domino.thread.model.IDominoRunnable;
+import org.openntf.domino.utils.Factory;
 
 /**
  * @author Nathan T. Freeman
@@ -27,20 +27,28 @@ public class DominoThreadFactory implements ThreadFactory {
 		public void uncaughtException(final Thread paramThread, final Throwable paramThrowable) {
 			System.out.println("ALERT: Uncaught exception in DominoThread " + paramThread.getClass().getName());
 			paramThrowable.printStackTrace();
-			if (paramThread instanceof DominoThread) {
-				Runnable runnable = ((DominoThread) paramThread).getRunnable();
-				if (runnable instanceof IDominoRunnable) {
-					lotus.domino.Session s = ((IDominoRunnable) runnable).getSession();
-					if (s != null) {
-						try {
-							s.recycle();
-						} catch (Throwable t) {
-							t.printStackTrace();
-						}
+			//			if (paramThread instanceof DominoThread) {
+			//				Runnable runnable = ((DominoThread) paramThread).getRunnable();
+			//				if (runnable instanceof IDominoRunnable) {
+			//					lotus.domino.Session s = ((IDominoRunnable) runnable).getSession();
+			//					if (s != null) {
+			//						try {
+			//							s.recycle();
+			//						} catch (Throwable t) {
+			//							t.printStackTrace();
+			//						}
+			//					}
+			//				}
+			//			}
+			if (paramThread instanceof lotus.domino.NotesThread) {
+				lotus.domino.Session session = Factory.terminate();
+				if (session != null) {
+					try {
+						session.recycle();
+					} catch (Throwable t) {
+						t.printStackTrace();
 					}
 				}
-			}
-			if (paramThread instanceof lotus.domino.NotesThread) {
 				((lotus.domino.NotesThread) paramThread).termThread();
 			}
 		}
@@ -55,12 +63,8 @@ public class DominoThreadFactory implements ThreadFactory {
 	private UncaughtExceptionHandler factoryExceptionHandler_ = new DominoUncaughtExceptionHandler();
 
 	public DominoThreadFactory() {
-		//		System.out.println("New DominoThreadFactory constructed");
 		factoryClassLoader_ = Thread.currentThread().getContextClassLoader();
 		factoryAccessController_ = AccessController.getContext();
-		//		factoryAccessController_.checkPermission(new RuntimePermission("setContextClassLoader"));
-		//		System.out.println("AccessControllerContext is " + factoryAccessController_.getClass().getName());
-
 	}
 
 	private void stall() {
@@ -76,13 +80,20 @@ public class DominoThreadFactory implements ThreadFactory {
 		}
 	}
 
+	protected DominoThread makeThread(final Runnable runnable) {
+		return new DominoThread(runnable);
+	}
+
 	@Override
 	public Thread newThread(final Runnable paramRunnable) {
 		DominoThread result = null;
-		result = new DominoThread(paramRunnable);
+		result = makeThread(paramRunnable);
 		lastThread_ = System.currentTimeMillis();
 		count_.incrementAndGet();
 		result.setUncaughtExceptionHandler(factoryExceptionHandler_);
+		//		System.out.println("DEBUG: Constructing a " + result.getClass().getSimpleName() + ": " + result.getId() + " ("
+		//				+ System.identityHashCode(result) + ")");
 		return result;
 	}
+
 }

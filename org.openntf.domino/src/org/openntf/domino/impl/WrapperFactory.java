@@ -267,6 +267,32 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	}
 
 	@Override
+	public boolean recacheLotusObject(final lotus.domino.Base lotus, final Base<?> wrapper, final Base<?> parent) {
+		boolean returnVal = false;
+		long[] prevent_recycling = new long[2];
+		long cpp_key = prevent_recycling[0] = org.openntf.domino.impl.Base.getLotusId(lotus);
+		prevent_recycling[1] = org.openntf.domino.impl.Base.getLotusId(parent);
+		Base<?> result = referenceCache.get(cpp_key, Base.class);
+
+		if (result == null) {
+			// RPr: If the result is null, we can be sure, that there is no element in our cache map.
+			// this happens if no one holds a strong reference to the wrapper. As "get" does some cleanup
+			// action, we must ensure, that we do not recycle the CURRENT (and parent) element in the next step
+
+			result = wrapper;
+
+			referenceCache.processQueue(prevent_recycling); // recycle all elements but not the current ones
+
+			referenceCache.put(cpp_key, result, lotus);
+			returnVal = true;
+		} else {	//NTF not sure what to do in this case. Don't even know what this means...
+			System.out.println("PANIC! Why are we recaching a lotus object " + lotus.getClass().getSimpleName()
+					+ " that we already have!???!");
+		}
+		return returnVal;
+	}
+
+	@Override
 	public void setNoRecycle(final Base<?> base, final boolean value) {
 		referenceCache.setNoRecycle(((org.openntf.domino.impl.Base) base).GetCppObj(), value);
 	}

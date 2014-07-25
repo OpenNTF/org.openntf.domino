@@ -133,4 +133,6 @@ public interface WrapperFactory {
 	 */
 	void setNoRecycle(final Base<?> base, boolean value);
 
+	public boolean recacheLotusObject(final lotus.domino.Base lotus, final Base<?> wrapper, final Base<?> parent);
+
 }

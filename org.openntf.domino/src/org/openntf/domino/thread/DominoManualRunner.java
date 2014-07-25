@@ -55,12 +55,12 @@ public class DominoManualRunner /*extends AbstractDominoRunnable */implements Ru
 			throw new IllegalStateException("Cannot run a " + DominoManualRunner.class.getName()
 					+ " without first calling setSession() to define the session.");
 		}
-		lotus.domino.NotesThread.sinitThread();
+		//		lotus.domino.NotesThread.sinitThread();
 	}
 
 	protected void postRun() {
 		lotus.domino.Session session = Factory.terminate();
-		lotus.domino.NotesThread.stermThread();
+		//		lotus.domino.NotesThread.stermThread();
 	}
 
 	@Override

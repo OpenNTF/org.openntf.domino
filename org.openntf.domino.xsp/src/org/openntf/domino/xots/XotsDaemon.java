@@ -8,9 +8,12 @@ import java.util.Observer;
 import java.util.Set;
 
 import org.openntf.domino.helpers.TrustedDispatcher;
+import org.openntf.domino.thread.DominoExecutor.ThreadCleaner;
 import org.openntf.domino.thread.DominoManualRunner;
 import org.openntf.domino.thread.DominoNoneRunner;
 import org.openntf.domino.thread.DominoSessionType;
+import org.openntf.domino.thread.DominoThread;
+import org.openntf.domino.thread.DominoThreadFactory;
 import org.openntf.domino.thread.model.IDominoRunnable;
 
 import com.ibm.designer.runtime.domino.adapter.HttpService;
@@ -28,16 +31,55 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 	private Set<XotsBaseTasklet> tasklets_;
 
 	protected class XotsExecutor extends TrustedDispatcher.TrustedExecutor {
-
 		protected XotsExecutor(final TrustedDispatcher dispatcher) {
-			super(dispatcher);
+			super(dispatcher, new XotsThreadFactory());
 		}
 
 		@Override
 		public void execute(final Runnable runnable) {
+			if (!(runnable instanceof IXotsRunner)) {
+				System.out.println("DEBUG: XotsExecutor has been asked to execute a " + runnable.getClass().getName());
+			}
 			super.execute(runnable);
 		}
 
+		@Override
+		protected void beforeExecute(final Thread t, final Runnable r) {
+			Runnable run = r;
+			if (r instanceof TrustedRunnable) {
+				run = ((TrustedRunnable) r).getRunnable();
+			}
+			if (run instanceof IXotsRunner) {
+				ClassLoader loader = ((IXotsRunner) run).getContextClassLoader();
+				if (loader != null) {
+					t.setContextClassLoader(loader);
+				}
+			} else {
+				System.out.println("DEBUG: XotsDaemon is running a " + run.getClass().getName());
+			}
+		}
+
+		@Override
+		protected void afterExecute(final Runnable r, final Throwable t) {
+
+		}
+	}
+
+	protected class XotsThreadFactory extends DominoThreadFactory {
+		public XotsThreadFactory() {
+
+		}
+
+		@Override
+		protected DominoThread makeThread(final Runnable runnable) {
+			return new XotsThread(runnable);
+		}
+	}
+
+	protected class XotsThread extends DominoThread {
+		public XotsThread(final Runnable runnable) {
+			super(runnable);
+		}
 	}
 
 	private XotsDaemon() {
@@ -46,6 +88,10 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 		List<HttpService> services = env.getServices();
 		xotsService_ = new XotsService(env);
 		services.add(xotsService_);
+	}
+
+	public synchronized static void stop() {
+		ThreadCleaner.INSTANCE.clean();
 	}
 
 	public synchronized static void addToQueue(final Runnable runnable) {
@@ -67,6 +113,14 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 			INSTANCE = new XotsDaemon();
 		}
 		return INSTANCE;
+	}
+
+	@Override
+	protected TrustedExecutor getExecutor() {
+		if (intimidator_ == null) {
+			intimidator_ = new XotsExecutor(this);
+		}
+		return intimidator_;
 	}
 
 	public void scan(final String serverName) {

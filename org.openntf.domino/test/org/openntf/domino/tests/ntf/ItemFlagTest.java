@@ -2,23 +2,24 @@ package org.openntf.domino.tests.ntf;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.Item;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.Session;
 import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.thread.DominoSessionType;
 
-public class DeferredDocumentTest extends AbstractDominoRunnable {
+public class ItemFlagTest extends AbstractDominoRunnable {
 	private static int THREAD_COUNT = 1;
 
 	public static void main(final String[] args) {
 		org.openntf.domino.thread.DominoExecutor de = new org.openntf.domino.thread.DominoExecutor(10);
 		for (int i = 0; i < THREAD_COUNT; i++) {
-			de.execute(new DeferredDocumentTest());
+			de.execute(new ItemFlagTest());
 		}
 		de.shutdown();
 	}
 
-	public DeferredDocumentTest() {
+	public ItemFlagTest() {
 		this.setSessionType(DominoSessionType.NATIVE);
 		// whatever you might want to do in your constructor, but stay away from Domino objects
 	}
@@ -49,10 +50,20 @@ public class DeferredDocumentTest extends AbstractDominoRunnable {
 			}
 			long documentTime = System.nanoTime();
 			documentBuildNS = documentTime - collectionTime;
-			int pageSize = 100;
+			int pageSize = 1000;
 			int pageStart = 2014;
 			for (int i = pageStart; i < (pageStart + pageSize); i++) {
-				String report = documents[i].getNoteID() + " is a " + documents[i].getItemValueString("Title");
+				Item titleItem = documents[i].getFirstItem("Title");
+				titleItem.isAuthors();
+				titleItem.isEncrypted();
+				titleItem.isNames();
+				titleItem.isProtected();
+				titleItem.isReaders();
+				titleItem.isSigned();
+				titleItem.isSummary();
+				String report = documents[i].getNoteID() + " is a " + titleItem.getText();
+				//				System.out.println(report);
+				//				report = report + (" Summary: " + String.valueOf());
 			}
 			documentPageNS = System.nanoTime() - documentTime;
 

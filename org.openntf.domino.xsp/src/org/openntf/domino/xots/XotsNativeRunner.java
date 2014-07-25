@@ -7,7 +7,7 @@ import com.ibm.domino.xsp.module.nsf.ModuleClassLoader;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 
-public class XotsNativeRunner extends DominoNativeRunner {
+public class XotsNativeRunner extends DominoNativeRunner implements IXotsRunner {
 	protected NSFComponentModule module_;
 
 	public XotsNativeRunner(final Runnable runnable) {
@@ -53,36 +53,32 @@ public class XotsNativeRunner extends DominoNativeRunner {
 		}
 	}
 
+	public NSFComponentModule getModule() {
+		return module_;
+	}
+
 	@Override
 	protected void preRun() {
 		ClassLoader cl = ((AbstractDominoRunnable) getRunnable()).getContextClassLoader();
 		if (cl == null) {
 			cl = classLoader_;
 		}
-		System.out.println("DEBUG: " + getClass().getName() + " is starting a run for a " + getRunnable().getClass().getName()
-				+ " from a loader of " + cl.getClass().getName());
 		if (module_ != null) {
 			NotesContext nctx = new NotesContext(module_);
-			NotesContext.initThread(nctx);
-		} else {
-			System.out.println("DEBUG: skipping thread initialization.");
-			// NotesThread.sinitThread();
+			NotesContext.contextThreadLocal.set(nctx);
 		}
 		super.preRun();
 	}
 
 	@Override
 	protected void postRun() {
+		NotesContext.contextThreadLocal.set(null);
 		super.postRun();
-		if (module_ != null) {
-			// System.out.println("DEBUG: Starting termination of NotesContext thread...");
-			// NotesContext.termThread();
-			// System.out.println("DEBUG: Completed termination of NotesContext thread");
-		} else {
-			// NotesThread.stermThread();
-		}
-		System.out.println("DEBUG: " + getClass().getName() + " completed a run for a " + getRunnable().getClass().getName());
+	}
 
+	@Override
+	public ClassLoader getContextClassLoader() {
+		return getClassLoader();
 	}
 
 }
