@@ -15,13 +15,13 @@
  */
 package org.openntf.domino.thread;
 
+import lotus.domino.NotesThread;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class DominoThread.
  */
-public class DominoThread extends Thread {
-	private long starttime_ = 0l;
-	private long endtime_ = 0l;
+public class DominoThread extends NotesThread {
 	private transient Runnable runnable_;
 
 	/**
@@ -38,7 +38,7 @@ public class DominoThread extends Thread {
 	 *            the runnable
 	 */
 	public DominoThread(final Runnable runnable) {
-		super(runnable);
+		super();
 		runnable_ = runnable;
 	}
 
@@ -49,12 +49,12 @@ public class DominoThread extends Thread {
 	 *            the runnable
 	 */
 	public DominoThread(final Runnable runnable, final String name) {
-		super(runnable, name);
+		super(name);
 		runnable_ = runnable;
 	}
 
 	public DominoThread(final AbstractDominoRunnable runnable) {
-		super(runnable);
+		super();
 		runnable_ = runnable;
 	}
 
@@ -67,20 +67,8 @@ public class DominoThread extends Thread {
 	 *            the thread name
 	 */
 	public DominoThread(final AbstractDominoRunnable runnable, final String threadName) {
-		super(runnable, threadName);
+		super(threadName);
 		runnable_ = runnable;
-	}
-
-	protected long getStartTime() {
-		return starttime_;
-	}
-
-	protected long getEndTime() {
-		return endtime_;
-	}
-
-	public long getNanoRuntime() {
-		return getEndTime() - getStartTime();
 	}
 
 	public Runnable getRunnable() {
@@ -93,22 +81,21 @@ public class DominoThread extends Thread {
 	 * @see java.lang.Thread#run()
 	 */
 	@Override
-	public void run() {
+	public void runNotes() {
 		try {
-			starttime_ = System.nanoTime();
-			lotus.domino.NotesThread.sinitThread();
-			super.run();
+			getRunnable().run();	//NTF: we're already inside the NotesThread.run();
+			//Note: if the runnable is a ThreadPoolExecutor.Worker, then this process will not end
+			//until the Executor is shutdown or the keep alive expires.
 		} catch (Throwable t) {
-			throw new RuntimeException(t);
+			t.printStackTrace();
 		} finally {
-			lotus.domino.NotesThread.stermThread();
-			endtime_ = System.nanoTime();
+			termThread();
 		}
 	}
 
-	public synchronized void start(final ClassLoader loader) {
-		setContextClassLoader(loader);
-		start();
-	}
+	//	public synchronized void start(final ClassLoader loader) {
+	//		setContextClassLoader(loader);
+	//		start();
+	//	}
 
 }

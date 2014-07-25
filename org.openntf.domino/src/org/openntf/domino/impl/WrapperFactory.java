@@ -57,7 +57,8 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	/** this is the holder for all other object that needs to be recycled **/
 	private DominoReferenceCache referenceCache = new DominoReferenceCache();
 
-	private void clearCaches() {
+	private long clearCaches() {
+		long result = 0;
 		// call gc once before processing the queues
 		System.gc();
 		try {
@@ -69,8 +70,9 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		}
 		// TODO: Recycle all?
 		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
-		referenceCache.processQueue(null);
+		result = referenceCache.processQueue(null);
 		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
+		return result;
 	}
 
 	/** The Constant log_. */
@@ -92,6 +94,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	//	}
 
 	// -- Factory methods
+	@Override
 	@SuppressWarnings("rawtypes")
 	public <T extends Base, D extends lotus.domino.Base, P extends Base> T fromLotus(final D lotus, final FactorySchema<T, D, P> schema,
 			final P parent) {
@@ -128,6 +131,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 
 	}
 
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public <T extends Base, D extends lotus.domino.Base, P extends Base> Collection<T> fromLotus(final Collection<?> lotusColl,
 			final FactorySchema<T, D, P> schema, final P parent) {
@@ -143,6 +147,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		return result;
 	}
 
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public <T extends Base, D extends lotus.domino.Base, P extends Base> Vector<T> fromLotusAsVector(final Collection<?> lotusColl,
 			final FactorySchema<T, D, P> schema, final P parent) {
@@ -255,6 +260,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 				// these are never recycled by default. If you create your own session, you have to recycle it after use
 				// or setNoRecycle to "false"
 				cache.setNoRecycle(cpp_key, true);
+				//				System.out.println("DEBUG: Wrapping a new Session with object id: " + System.identityHashCode(lotus));
 			}
 		}
 		return result;
@@ -456,10 +462,12 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		//		return null;
 	}
 
-	public void terminate() {
-		clearCaches();
+	@Override
+	public long terminate() {
+		return clearCaches();
 	}
 
+	@Override
 	public Vector<Object> wrapColumnValues(final Collection<?> values, final Session session) {
 		return wrapColumnValues(values, session, null);
 	}
@@ -510,6 +518,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		return result;
 	}
 
+	@Override
 	public <T extends lotus.domino.Base> T toLotus(final T base) {
 		return (T) org.openntf.domino.impl.Base.getDelegate(base);
 	}

@@ -539,6 +539,16 @@ public interface Database extends Base {
 	 */
 	public DatabaseTransaction getTransaction();
 
+	public String getUNID(String noteid);
+
+	public String getUNID(int noteid);
+
+	public Document getDocumentByUNID(String unid, boolean deferDelegate);
+
+	public Document getDocumentByID(String noteid, boolean deferDelegate);
+
+	public Document getDocumentByID(int noteid, boolean deferDelegate);
+
 	/**
 	 * Passes a DatabaseTransaction to a Database object. This allows a single Transaction to be used to process activity across multiple
 	 * databases

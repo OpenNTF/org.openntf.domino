@@ -377,6 +377,17 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		}
 	}
 
+	protected Base(final P parent, final WrapperFactory wf, final int classId) {
+		if (wf == null) {
+			factory_ = Factory.getWrapperFactory();
+		} else {
+			factory_ = wf;
+		}
+		parent_ = parent;
+		clsid = classId;
+		cpp_session = 0;
+	}
+
 	/**
 	 * Sets the delegate on init or if resurrect occured
 	 * 

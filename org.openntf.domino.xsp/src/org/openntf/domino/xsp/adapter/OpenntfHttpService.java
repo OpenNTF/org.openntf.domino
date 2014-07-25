@@ -96,7 +96,10 @@ public class OpenntfHttpService extends HttpService {
 			return false;
 		} finally {
 			doServiceEntered.set(Boolean.FALSE);
-			Factory.terminate();
+			lotus.domino.Session session = Factory.terminate();
+
+			// System.out.println("DEBUG: terminating a Session with object id: " + System.identityHashCode(session)
+			// + " after an http request");
 		}
 	}
 
