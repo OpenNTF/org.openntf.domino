@@ -36,7 +36,7 @@ import org.openntf.domino.utils.TypeUtils;
  * The Class DocumentCollection.
  */
 public class DocumentCollection extends Base<org.openntf.domino.DocumentCollection, lotus.domino.DocumentCollection, Database> implements
-		org.openntf.domino.DocumentCollection {
+org.openntf.domino.DocumentCollection {
 
 	/** The block nth. */
 	private static boolean BLOCK_NTH = true; // TODO replace with some static determination from a policy or permissions rule or
@@ -384,7 +384,7 @@ public class DocumentCollection extends Base<org.openntf.domino.DocumentCollecti
 	@Override
 	public void deleteDocument(final lotus.domino.Document doc) {
 		try {
-			getDelegate().deleteDocument((lotus.domino.Document) toLotus(doc));
+			getDelegate().deleteDocument(toLotus(doc));
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 

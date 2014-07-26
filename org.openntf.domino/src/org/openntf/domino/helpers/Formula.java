@@ -165,10 +165,12 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 		}
 	}
 
+	@Override
 	public void setSession(final Session session) {
 		parent_ = session;
 	}
 
+	@Override
 	public String getExpression() {
 		return expression_;
 	}
@@ -264,6 +266,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	 * 
 	 * @see org.openntf.domino.ext.Formula#getValue()
 	 */
+	@Override
 	public Vector<Object> getValue(final Session session) {
 		if (expression_ == null)
 			throw new NoFormulaSetException();
@@ -276,6 +279,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	 * 
 	 * @see org.openntf.domino.ext.Formula#getValue(java.lang.Class)
 	 */
+	@Override
 	public <T> T getValue(final Session session, final Class<?> T) {
 		Vector<Object> v = getValue(session);
 		return TypeUtils.vectorToClass(v, T, session);
@@ -326,6 +330,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	}
 
 	public static class ParserException extends RuntimeException {
+		private static final long serialVersionUID = 1L;
 		private final String expression_;
 
 		public ParserException(final String message, final String expression) {

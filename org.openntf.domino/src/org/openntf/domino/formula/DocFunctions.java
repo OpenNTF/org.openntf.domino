@@ -145,7 +145,6 @@ public enum DocFunctions {
 		return ValueHolder.valueOf(ctx.getDocument().getParentDocumentUNID());
 	}
 
-	@SuppressWarnings("deprecation")
 	@ParamCount(0)
 	public static ValueHolder atDocFields(final FormulaContextNotes ctx) {
 		Map<String, Object> doc = ctx.getDocument();

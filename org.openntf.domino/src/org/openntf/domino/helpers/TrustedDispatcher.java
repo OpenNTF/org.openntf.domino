@@ -26,8 +26,8 @@ import org.openntf.domino.thread.model.IDominoRunnable;
  * 
  */
 public class TrustedDispatcher /*extends AbstractDominoDaemon*/{
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(TrustedDispatcher.class.getName());
-	private static final long serialVersionUID = 1L;
 	protected TrustedExecutor intimidator_;
 
 	//	private Queue<Runnable> runQueue_ = new ArrayDeque<Runnable>();

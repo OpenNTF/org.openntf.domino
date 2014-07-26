@@ -157,7 +157,8 @@ public interface Document {
 	 * @param value
 	 *            Object
 	 * @param isSummary
-	 * @return
+	 *            Passed to the Item's setSummary method directly
+	 * @return An Item object for the resultant set item.
 	 */
 	public Item replaceItemValue(final String name, final Object value, final boolean isSummary);
 

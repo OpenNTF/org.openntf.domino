@@ -102,7 +102,7 @@ public interface Database extends Base {
 	 * @return An IDominoEvent which will be passed to {@link org.openntf.domino.ext.Base.fireListener}
 	 * @since org.openntf.domino 3.0.0
 	 */
-	public IDominoEvent generateEvent(EnumEvent event, org.openntf.domino.Base source, Object payload);
+	public IDominoEvent generateEvent(EnumEvent event, org.openntf.domino.Base<?> source, Object payload);
 
 	/**
 	 * NOT YET FULLY IMPLEMENTED. If memory serves me correctly, there were problems creating a blank DocumentCollection and merging other

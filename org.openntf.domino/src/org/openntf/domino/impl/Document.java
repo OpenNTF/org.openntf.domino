@@ -579,7 +579,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				// This item is for debugging only, so keep 5-10 items in that list
 				// http://www-01.ibm.com/support/docview.wss?uid=swg27002572
 
-				Vector mt = getItemValue("$MIMETrack");
+				Vector<Object> mt = getItemValue("$MIMETrack");
 				if (mt.size() > 10) {
 					replaceItemValue("$MIMETrack", mt.subList(mt.size() - 10, mt.size()));
 				}
@@ -1269,6 +1269,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * 
 	 * @see org.openntf.domino.Document#getItemValueDateTimeArray(java.lang.String)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<org.openntf.domino.Base<?>> getItemValueDateTimeArray(final String name) {		// cf. DateRange.java
 		checkMimeOpen();
@@ -1279,7 +1280,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			mayBeMime = false;
 			if (v == null || v.size() == 0)
 				return (Vector<org.openntf.domino.Base<?>>) v;
-			FactorySchema schema = DateTime.SCHEMA;
+			FactorySchema<?, ?, Session> schema = DateTime.SCHEMA;
 			if (v.elementAt(0) instanceof lotus.domino.DateRange)	// at moment: never
 				schema = DateRange.SCHEMA;
 			else {	// Workaround for Vector of DateRange-s
@@ -1311,7 +1312,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					break;
 				}
 			}
-			return fromLotusAsVector(v, schema, getAncestorSession());
+			return (Vector<org.openntf.domino.Base<?>>) fromLotusAsVector(v, schema, getAncestorSession());
 		} catch (NotesException e) {
 			while (mayBeMime) {
 				MIMEEntity entity = this.getMIMEEntity(name);
@@ -2574,6 +2575,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * returns the real LMBCS payload for a Vector of Strings
 	 * 
 	 * @param strVect
+	 *            The vector of Strings.
 	 * @return LMBCS payload
 	 */
 
@@ -2766,7 +2768,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				throw new Domino32KLimitException();
 			}
 			if (firstElementClass == String.class) { 	// Strings have to be further inspected, because
-														// each sign may demand up to 3 bytes in LMBCS
+				// each sign may demand up to 3 bytes in LMBCS
 				int calc = ((payload - payloadOverhead) * 3) + payloadOverhead;
 				if (calc >= MAX_NATIVE_FIELD_SIZE) {
 					payload = payloadOverhead + getLMBCSPayload(dominoFriendly);
@@ -3041,7 +3043,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public void send(final boolean attachForm, final String recipient) {
-		Vector v = new Vector(1);
+		Vector<String> v = new Vector<String>(1);
 		v.add(recipient);
 		send(attachForm, v);
 	}
@@ -3183,8 +3185,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				if (del != null) { // this is surprising. Why didn't we already get it?
 					log_.log(Level.WARNING,
 							"Document " + unid + " already existed in the database with noteid " + del.getNoteID()
-									+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
-									+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
+							+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
+							+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
 					if (isDirty()) { // we've already made other changes that we should tuck away...
 						log_.log(Level.WARNING,
 								"Attempting to stash changes to this document to apply to other document of the same UNID. This is pretty dangerous...");
@@ -3419,13 +3421,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINER,
 								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-										+ ")");
+								+ ")");
 					}
 					log_.log(Level.FINE,
 							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
@@ -3457,13 +3459,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINER,
 								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-										+ ")");
+								+ ")");
 					}
 					log_.log(Level.FINE,
 							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");

@@ -17,6 +17,7 @@ import org.openntf.domino.Document;
  * 
  */
 public class DocumentComparator implements Comparator<Document>, Serializable {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DocumentComparator.class.getName());
 	private static final long serialVersionUID = 1L;
 
@@ -35,6 +36,7 @@ public class DocumentComparator implements Comparator<Document>, Serializable {
 		this.sortKeys = sortKeys;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private int compareObj(final Object o1, final Object o2) {
 		if (o1 instanceof Comparable && o2 instanceof Comparable) {
 			return ((Comparable) o1).compareTo(o2);
@@ -43,17 +45,18 @@ public class DocumentComparator implements Comparator<Document>, Serializable {
 		}
 	}
 
+	@Override
 	public int compare(final Document doc1, final Document doc2) {
 		// loop all sortFields
 		for (String key : sortKeys) {
 			Object obj1 = doc1.get(key);
 			Object obj2 = doc2.get(key);
 			if (obj1 instanceof List && obj2 instanceof List) {
-				List l1 = (List) obj1;
-				List l2 = (List) obj2;
+				List<?> l1 = (List<?>) obj1;
+				List<?> l2 = (List<?>) obj2;
 				int min = l1.size() < l2.size() ? l1.size() : l2.size();
 				int fallback = Integer.valueOf(l1.size()).compareTo(l2.size());	// if all values are the same up to the end of the smaller
-																				// list, the smaller list wins
+				// list, the smaller list wins
 				for (int i = 0; i < min; i++) {
 					int result = compareObj(l1.get(i), l2.get(i));
 					if (result != 0)
