@@ -21,7 +21,6 @@ import lotus.domino.NotesFactory;
  */
 @Deprecated
 public class LogSetupRunnable implements Runnable {
-	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Constructor

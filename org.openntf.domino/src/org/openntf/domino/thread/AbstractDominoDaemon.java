@@ -13,6 +13,7 @@ import java.util.logging.Logger;
  * 
  */
 public abstract class AbstractDominoDaemon extends AbstractDominoRunnable {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDominoDaemon.class.getName());
 	private static final long serialVersionUID = 1L;
 	private volatile boolean shouldStop_ = false;

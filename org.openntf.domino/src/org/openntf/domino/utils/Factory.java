@@ -92,7 +92,6 @@ public enum Factory {
 					@Override
 					public Object run() throws Exception {
 						// Windows stores the notes.ini in the program directory; Linux stores it in the data directory
-						String os = String.valueOf(System.getProperty("os.name")).toLowerCase();
 						String progpath = "notes.binary";
 						File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
 						if (!iniFile.exists()) {
@@ -299,6 +298,7 @@ public enum Factory {
 	private static Counter manualRecycleCounter = new Counter(COUNT_PER_THREAD);
 
 	private static Map<Class<?>, Counter> objectCounter = new ConcurrentHashMap<Class<?>, Counter>() {
+		private static final long serialVersionUID = 1L;
 
 		/* (non-Javadoc)
 		 * @see java.util.concurrent.ConcurrentHashMap#get(java.lang.Object)
@@ -462,7 +462,7 @@ public enum Factory {
 	/**
 	 * returns the wrapper factory for this thread
 	 * 
-	 * @return
+	 * @return the thread's wrapper factory
 	 */
 	public static WrapperFactory getWrapperFactory() {
 		WrapperFactory wf = currentWrapperFactory.get();
@@ -505,7 +505,7 @@ public enum Factory {
 
 	@Deprecated
 	public static org.openntf.domino.Document fromLotusDocument(final lotus.domino.Document lotus, final Base parent) {
-		return (org.openntf.domino.Document) getWrapperFactory().fromLotus(lotus, Document.SCHEMA, (Database) parent);
+		return getWrapperFactory().fromLotus(lotus, Document.SCHEMA, (Database) parent);
 	}
 
 	public static void setNoRecycle(final Base<?> base, final boolean value) {
@@ -871,7 +871,7 @@ public enum Factory {
 	 * @return the parent database
 	 */
 	@Deprecated
-	public static Database getParentDatabase(final Base base) {
+	public static Database getParentDatabase(final Base<?> base) {
 		if (base instanceof org.openntf.domino.Database) {
 			return (org.openntf.domino.Database) base;
 		} else if (base instanceof DatabaseDescendant) {
@@ -1161,7 +1161,7 @@ public enum Factory {
 		if (collection instanceof DocumentCollection) {
 			org.openntf.domino.Database db = ((DocumentCollection) collection).getParent();
 			result = db.createNoteCollection(false);
-			result.add((DocumentCollection) collection);
+			result.add(collection);
 		} else {
 			throw new DataNotCompatibleException("Cannot convert a non-OpenNTF DocumentCollection to a NoteCollection");
 		}

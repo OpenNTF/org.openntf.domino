@@ -13,8 +13,8 @@ import org.openntf.domino.schema.exceptions.ItemException;
  * 
  */
 public class URLType extends StringType {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(URLType.class.getName());
-	private static final long serialVersionUID = 1L;
 	//URL Regex pattern from http://mathiasbynens.be/demo/url-regex
 	//MIT licensed at https://gist.github.com/dperini/729294
 	//Copyright (c) 2010-2013 Diego Perini (http://www.iport.it)
