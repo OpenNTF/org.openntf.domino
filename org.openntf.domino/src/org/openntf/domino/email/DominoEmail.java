@@ -160,7 +160,7 @@ public class DominoEmail implements IEmail {
 			if (mimePartsObj instanceof List) {
 				List<JsonObject> mimeParts = (List<JsonObject>) mimePartsObj;
 				for (JsonObject json : mimeParts) {
-					
+
 				}
 			}
 			return send();
@@ -169,7 +169,7 @@ public class DominoEmail implements IEmail {
 			return null;
 		}
 	}
-	*/
+	 */
 
 	/**
 	 * Takes an object - String, List, Array - and converts it to a List for passing into to, cc, bcc
@@ -181,6 +181,7 @@ public class DominoEmail implements IEmail {
 	 * @return List of Strings
 	 * @since org.openntf.domino 4.5.0
 	 */
+	@SuppressWarnings("unchecked")
 	public static List<String> convertObjectToList(final Object obj, final String separator) {
 		try {
 			// Quit out if the parameter was null
@@ -218,6 +219,7 @@ public class DominoEmail implements IEmail {
 	 * @return String result of @Unique
 	 * @since org.openntf.domino 4.5.0
 	 */
+	@SuppressWarnings("unused")
 	private String generateContentId() {
 		try {
 			Vector<Object> evalResult = getSession().evaluate("@Unique");

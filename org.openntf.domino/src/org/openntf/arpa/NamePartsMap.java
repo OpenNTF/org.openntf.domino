@@ -86,6 +86,7 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 
 	}
 
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(NamePartsMap.class.getName());
 	private static final long serialVersionUID = 1L;
 	private RFC822name _rfc822name;
@@ -514,14 +515,14 @@ public class NamePartsMap extends HashMap<NamePartsMap.Key, String> implements S
 		return false;
 
 	} /*
-		* ******************************************************************
-		* ******************************************************************
-		* 
-		* private methods
-		* 
-		* ******************************************************************
-		* ******************************************************************
-		*/
+	 * ******************************************************************
+	 * ******************************************************************
+	 * 
+	 * private methods
+	 * 
+	 * ******************************************************************
+	 * ******************************************************************
+	 */
 
 	/**
 	 * Retrieves and sets the various name values by parsing an input source string.
