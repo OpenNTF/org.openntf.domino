@@ -22,12 +22,13 @@ import java.util.Vector;
 
 import org.openntf.domino.types.DatabaseDescendant;
 import org.openntf.domino.types.FactorySchema;
+import org.openntf.domino.types.Resurrectable;
 
 /**
  * The Interface Document.
  */
-public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document, org.openntf.domino.ext.Document, DatabaseDescendant,
-		Map<String, Object> {
+public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document, org.openntf.domino.ext.Document, Resurrectable,
+		DatabaseDescendant, Map<String, Object> {
 
 	public static class Schema extends FactorySchema<Document, lotus.domino.Document, Database> {
 		@Override
@@ -311,6 +312,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * 
 	 * @see lotus.domino.Document#getFolderReferences()
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public Vector getFolderReferences();
 

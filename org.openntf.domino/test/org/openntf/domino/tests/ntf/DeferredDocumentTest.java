@@ -32,7 +32,7 @@ public class DeferredDocumentTest extends AbstractDominoRunnable {
 		int collectionSize = 0;
 		int dbDocs = 0;
 		try {
-			Database db = session.getDatabase("", "imdb/movies.nsf");
+			Database db = session.getDatabase("", "imdb/movies.bak");
 			dbDocs = db.getAllDocuments().getCount();
 			long testStartTime = System.nanoTime();
 			NoteCollection nc = db.createNoteCollection(false);
@@ -52,7 +52,7 @@ public class DeferredDocumentTest extends AbstractDominoRunnable {
 			int pageSize = 100;
 			int pageStart = 2014;
 			for (int i = pageStart; i < (pageStart + pageSize); i++) {
-				String report = documents[i].getNoteID() + " is a " + documents[i].getFormName();
+				String report = documents[i].getNoteID() + " is a " + documents[i].getItemValueString("Title");
 			}
 			documentPageNS = System.nanoTime() - documentTime;
 

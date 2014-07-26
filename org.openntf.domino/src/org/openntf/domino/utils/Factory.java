@@ -93,9 +93,12 @@ public enum Factory {
 					public Object run() throws Exception {
 						// Windows stores the notes.ini in the program directory; Linux stores it in the data directory
 						String os = String.valueOf(System.getProperty("os.name")).toLowerCase();
-						String progpath = System.getProperty(os.contains("windows") ? "notes.binary" : "user.dir");
+						String progpath = "notes.binary";
 						File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
-
+						if (!iniFile.exists()) {
+							progpath = System.getProperty("user.dir");
+							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+						}
 						Scanner scanner = new Scanner(iniFile);
 						scanner.useDelimiter("\n|\r\n");
 						//						while (scanner.hasNextLine()) {
@@ -103,13 +106,7 @@ public enum Factory {
 						//							System.out.println("DEBUG " + nextLine);
 						//						}
 
-						lotus.domino.Session session = null;
-						//								NotesFactory.createSession();
-						try {
-							loadEnvironment(/*session, */scanner);
-						} finally {
-							//							session.recycle();
-						}
+						loadEnvironment(/*session, */scanner);
 						scanner.close();
 						return null;
 					}
@@ -159,9 +156,11 @@ public enum Factory {
 
 	static {
 		SetupJob job = new SetupJob();
-		//		NotesThread nt = new NotesThread(job);
-		//		nt.start();
 		job.run();
+		//		TrustedDispatcher td = new TrustedDispatcher();
+		//		td.process(job);
+		//		System.out.println("DEBUG: SetupJob dispatched");
+		//		td.stop(false);
 	}
 
 	private static Map<String, String> ENVIRONMENT;
@@ -524,6 +523,10 @@ public enum Factory {
 		return getWrapperFactory().fromLotus(lotus, schema, parent);
 	}
 
+	public static boolean recacheLotus(final lotus.domino.Base lotus, final Base<?> wrapper, final Base<?> parent) {
+		return getWrapperFactory().recacheLotusObject(lotus, wrapper, parent);
+	}
+
 	/**
 	 * From lotus wraps a given lotus collection in an org.openntf.domino collection
 	 * 
@@ -675,7 +678,7 @@ public enum Factory {
 		}
 		if (result == null) {
 			System.out
-					.println("SEVERE: Unable to get default session. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation. If you're running in XPages, check the xsp.properties of your database. If you are running in an Agent, make sure you start with a call to Factory.fromLotus() and pass in your lotus.domino.Session");
+			.println("SEVERE: Unable to get default session. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation. If you're running in XPages, check the xsp.properties of your database. If you are running in an Agent, make sure you start with a call to Factory.fromLotus() and pass in your lotus.domino.Session");
 			Throwable t = new Throwable();
 			t.printStackTrace();
 		}

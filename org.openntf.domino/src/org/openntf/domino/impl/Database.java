@@ -2934,6 +2934,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			lotus.domino.Database d = rawSession.getDatabase(server_, path_);
 			//d.open();
 			setDelegate(d, 0);
+			Factory.recacheLotus(d, this, parent_);
 			if (log_.isLoggable(java.util.logging.Level.FINE)) {
 				Throwable t = new Throwable();
 				StackTraceElement[] elements = t.getStackTrace();

@@ -2590,6 +2590,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 			lotus.domino.Database d = toLotus(db);
 			lotus.domino.View view = d.getView(name_);
 			setDelegate(view, 0);
+			Factory.recacheLotus(d, this, parent_);
 			//			if (getAncestorSession().isFixEnabled(Fixes.VIEW_UPDATE_OFF)) {
 			view.setAutoUpdate(false);
 			//			}

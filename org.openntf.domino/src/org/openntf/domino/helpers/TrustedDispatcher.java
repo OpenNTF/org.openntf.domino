@@ -76,6 +76,10 @@ public class TrustedDispatcher /*extends AbstractDominoDaemon*/{
 			loader_ = loader;
 		}
 
+		public Runnable getRunnable() {
+			return runnable_;
+		}
+
 		protected void superRun() {
 			super.run();
 		}
@@ -120,7 +124,7 @@ public class TrustedDispatcher /*extends AbstractDominoDaemon*/{
 		}
 
 		protected TrustedExecutor(final TrustedDispatcher dispatcher, final DominoThreadFactory factory) {
-			super(10, 50, 5, TimeUnit.SECONDS, DominoExecutor.getBlockingQueue(100), factory);
+			super(5, 20, 3, TimeUnit.SECONDS, DominoExecutor.getBlockingQueue(100), factory);
 			dispatcher_ = dispatcher;
 		}
 
@@ -223,6 +227,14 @@ public class TrustedDispatcher /*extends AbstractDominoDaemon*/{
 	public Object process(final Runnable runnable) {
 		getExecutor().execute(runnable);
 		return runnable;
+	}
+
+	public void stop(final boolean immediate) {
+		if (immediate) {
+			getExecutor().shutdownNow();
+		} else {
+			getExecutor().shutdown();
+		}
 	}
 
 	//	@Override
