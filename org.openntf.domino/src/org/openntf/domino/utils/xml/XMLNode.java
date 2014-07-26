@@ -190,6 +190,14 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return null;
 	}
 
+	public XMLNode getNextSiblingElement() {
+		Node node = this.getNode().getNextSibling();
+		while (node != null && node.getNodeType() != Node.ELEMENT_NODE) {
+			node = node.getNextSibling();
+		}
+		return node == null ? null : new XMLNode(node);
+	}
+
 	public void appendChild(final XMLNode node) {
 		this.getNode().appendChild(node.getNode());
 	}
