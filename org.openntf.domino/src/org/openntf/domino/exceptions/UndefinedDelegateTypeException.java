@@ -15,57 +15,41 @@
  */
 package org.openntf.domino.exceptions;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class UndefinedDelegateTypeException.
- */
 public class UndefinedDelegateTypeException extends RuntimeException {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 7324366564552725530L;
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Instantiates a new undefined delegate type exception.
 	 */
 	public UndefinedDelegateTypeException() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
-	 * Instantiates a new undefined delegate type exception.
-	 * 
-	 * @param paramString
-	 *            the param string
+	 * @param message
+	 *            the detail message. The detail message is saved for later retrieval by the Throwable.getMessage() method.
 	 */
-	public UndefinedDelegateTypeException(final String paramString) {
-		super(paramString);
-		// TODO Auto-generated constructor stub
+	public UndefinedDelegateTypeException(final String message) {
+		super(message);
 	}
 
 	/**
-	 * Instantiates a new undefined delegate type exception.
-	 * 
-	 * @param paramThrowable
-	 *            the param throwable
+	 * @param cause
+	 *            the cause (which is saved for later retrieval by the Throwable.getCause() method). (A null value is permitted, and
+	 *            indicates that the cause is nonexistent or unknown.)
 	 */
-	public UndefinedDelegateTypeException(final Throwable paramThrowable) {
-		super(paramThrowable);
-		// TODO Auto-generated constructor stub
+	public UndefinedDelegateTypeException(final Throwable cause) {
+		super(cause);
 	}
 
 	/**
-	 * Instantiates a new undefined delegate type exception.
-	 * 
-	 * @param paramString
-	 *            the param string
-	 * @param paramThrowable
-	 *            the param throwable
+	 * @param message
+	 *            the detail message. The detail message is saved for later retrieval by the Throwable.getMessage() method.
+	 * @param cause
+	 *            the cause (which is saved for later retrieval by the Throwable.getCause() method). (A null value is permitted, and
+	 *            indicates that the cause is nonexistent or unknown.)
 	 */
-	public UndefinedDelegateTypeException(final String paramString, final Throwable paramThrowable) {
-		super(paramString, paramThrowable);
-		// TODO Auto-generated constructor stub
+	public UndefinedDelegateTypeException(final String message, final Throwable cause) {
+		super(message, cause);
 	}
 
 }
