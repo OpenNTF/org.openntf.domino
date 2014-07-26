@@ -152,6 +152,14 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return null;
 	}
 
+	public XMLNode getFirstChildElement() {
+		Node node = this.getNode().getFirstChild();
+		while (node != null && node.getNodeType() != Node.ELEMENT_NODE) {
+			node = node.getNextSibling();
+		}
+		return node == null ? null : new XMLNode(node);
+	}
+
 	public XMLNode getParentNode() {
 		Node node = this.getNode().getParentNode();
 		if (node != null) {
