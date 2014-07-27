@@ -3,12 +3,12 @@ package org.openntf.domino.nsfdata.ods.cd;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.openntf.domino.nsfdata.ods.SIG;
 
-public class CData implements Serializable, Enumeration<CDRecord> {
+public class CData implements Serializable, Iterator<CDRecord> {
 	private static final long serialVersionUID = 1L;
 
 	private final ByteBuffer data_;
@@ -20,13 +20,13 @@ public class CData implements Serializable, Enumeration<CDRecord> {
 	}
 
 	@Override
-	public boolean hasMoreElements() {
+	public boolean hasNext() {
 		return data_.hasRemaining();
 	}
 
 	@Override
-	public CDRecord nextElement() {
-		if (!hasMoreElements()) {
+	public CDRecord next() {
+		if (!hasNext()) {
 			throw new NoSuchElementException();
 		}
 		//		System.out.println("opening pos: " + data_.position());
@@ -59,5 +59,11 @@ public class CData implements Serializable, Enumeration<CDRecord> {
 		data_.position(data_.position() + dataLength + current_.getExtraLength());
 
 		return current_;
+	}
+
+	@Override
+	public void remove() {
+		// TODO implement removal
+		throw new UnsupportedOperationException();
 	}
 }

@@ -84,12 +84,12 @@ public class DXLNote implements NSFNote, Serializable {
 						CData cdata = ((DXLItemComposite) item).getValue();
 
 						int breaker = 0;
-						while (cdata.hasMoreElements()) {
+						while (cdata.hasNext()) {
 							if (breaker++ > 1000) {
 								System.out.println("we went too deep!");
 								break;
 							}
-							CDRecord record = cdata.nextElement();
+							CDRecord record = cdata.next();
 							System.out.print("\t\t\t[Signature: " + record.getSignature());
 							System.out.print(", Length: " + record.getDataLength());
 							System.out.print(", Value: " + record);
@@ -170,12 +170,12 @@ public class DXLNote implements NSFNote, Serializable {
 				CData cdata = ((DXLItemComposite) item).getValue();
 
 				int breaker = 0;
-				while (cdata.hasMoreElements()) {
+				while (cdata.hasNext()) {
 					if (breaker++ > 1000) {
 						System.out.println("we went too deep!");
 						break;
 					}
-					CDRecord record = cdata.nextElement();
+					CDRecord record = cdata.next();
 
 					if (record instanceof CDRecordFileHeader) {
 						CDRecordFileHeader header = (CDRecordFileHeader) record;
