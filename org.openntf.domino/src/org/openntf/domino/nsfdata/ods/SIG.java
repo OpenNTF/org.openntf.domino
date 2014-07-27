@@ -1,6 +1,8 @@
-package org.openntf.domino.nsfdata.cd;
+package org.openntf.domino.nsfdata.ods;
 
 import java.io.Serializable;
+
+import org.openntf.domino.nsfdata.ods.cd.CDSignature;
 
 @SuppressWarnings("serial")
 public abstract class SIG implements Serializable {

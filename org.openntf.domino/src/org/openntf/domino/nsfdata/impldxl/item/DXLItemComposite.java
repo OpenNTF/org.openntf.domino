@@ -1,6 +1,8 @@
 package org.openntf.domino.nsfdata.impldxl.item;
 
-import org.openntf.domino.nsfdata.cd.CData;
+import java.nio.ByteBuffer;
+
+import org.openntf.domino.nsfdata.ods.cd.CData;
 import org.openntf.domino.utils.xml.XMLNode;
 
 public class DXLItemComposite extends DXLItemRaw {
@@ -12,6 +14,6 @@ public class DXLItemComposite extends DXLItemRaw {
 
 	@Override
 	public CData getValue() {
-		return new CData(getBytes());
+		return new CData(ByteBuffer.wrap(getBytes()));
 	}
 }

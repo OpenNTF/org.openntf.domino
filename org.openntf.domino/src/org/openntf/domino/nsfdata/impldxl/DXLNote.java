@@ -15,16 +15,18 @@ import org.openntf.domino.nsfdata.NSFItem;
 import org.openntf.domino.nsfdata.NSFMimeData;
 import org.openntf.domino.nsfdata.NSFNote;
 import org.openntf.domino.nsfdata.NSFRichTextData;
-import org.openntf.domino.nsfdata.cd.CDRecord;
-import org.openntf.domino.nsfdata.cd.CDRecordFileHeader;
-import org.openntf.domino.nsfdata.cd.CDRecordFileSegment;
-import org.openntf.domino.nsfdata.cd.CData;
 import org.openntf.domino.nsfdata.impldxl.item.DXLItemComposite;
 import org.openntf.domino.nsfdata.impldxl.item.DXLItemFactory;
+import org.openntf.domino.nsfdata.ods.cd.CDRecord;
+import org.openntf.domino.nsfdata.ods.cd.CDRecordFileHeader;
+import org.openntf.domino.nsfdata.ods.cd.CDRecordFileSegment;
+import org.openntf.domino.nsfdata.ods.cd.CData;
 import org.openntf.domino.utils.xml.XMLNode;
 
 public class DXLNote implements NSFNote, Serializable {
 	private static final long serialVersionUID = 1L;
+
+	private static final boolean DEBUG = false;
 
 	private final NoteClass noteClass_;
 	private final int noteId_;
@@ -35,7 +37,7 @@ public class DXLNote implements NSFNote, Serializable {
 	private final List<NSFItem> items_ = new ArrayList<NSFItem>();
 	private transient Map<String, List<NSFItem>> itemsByName_ = new TreeMap<String, List<NSFItem>>(String.CASE_INSENSITIVE_ORDER);
 
-	protected static DXLNote create(final XMLNode node) {
+	public static DXLNote create(final XMLNode node) {
 		return new DXLNote(node);
 	}
 
@@ -48,10 +50,12 @@ public class DXLNote implements NSFNote, Serializable {
 		universalId_ = noteInfo.getAttribute("unid");
 		sequence_ = Integer.parseInt(noteInfo.getAttribute("sequence"), 10);
 
-		System.out.println("\tUNID: " + universalId_);
+		if (DEBUG)
+			System.out.println("\tUNID: " + universalId_);
 
-		for(XMLNode itemNode : node.selectNodes("./item")) {
-			System.out.println("\tItem: " + itemNode.getAttribute("name"));
+		for (XMLNode itemNode : node.selectNodes("./item")) {
+			if (DEBUG)
+				System.out.println("\tItem: " + itemNode.getAttribute("name"));
 
 			// Find out whether this is a duplicate item - solo items are all 0, while
 			// dups are 1-based. I am aware that this is horrible.
@@ -60,37 +64,38 @@ public class DXLNote implements NSFNote, Serializable {
 			int dupItemId = duplicate ? (getItems(name).size() + 1) : 0;
 
 			NSFItem item = DXLItemFactory.create(itemNode, dupItemId);
-			if(item != null) {
+			if (item != null) {
 				items_.add(item);
 
-				if(!itemsByName_.containsKey(name)) {
+				if (!itemsByName_.containsKey(name)) {
 					itemsByName_.put(name, new ArrayList<NSFItem>());
 				}
 				itemsByName_.get(name).add(item);
 
-				System.out.print("\t\t[" + item.getType());
-				System.out.print(", Class: " + item.getClass().getSimpleName());
-				System.out.print(", Dup ID: " + item.getDupItemId());
-				System.out.print(", Value: " + item.getValue());
-				System.out.println("]");
+				if (DEBUG) {
+					System.out.print("\t\t[" + item.getType());
+					System.out.print(", Class: " + item.getClass().getSimpleName());
+					System.out.print(", Dup ID: " + item.getDupItemId());
+					System.out.print(", Value: " + item.getValue());
+					System.out.println("]");
 
-				// Output composite data
-				if(item instanceof DXLItemComposite) {
-					CData cdata = ((DXLItemComposite)item).getValue();
+					// Output composite data
+					if (item instanceof DXLItemComposite) {
+						CData cdata = ((DXLItemComposite) item).getValue();
 
-					int breaker = 0;
-					while(cdata.hasMoreElements()) {
-						if(breaker++ > 1000) {
-							System.out.println("we went too deep!");
-							break;
+						int breaker = 0;
+						while (cdata.hasMoreElements()) {
+							if (breaker++ > 1000) {
+								System.out.println("we went too deep!");
+								break;
+							}
+							CDRecord record = cdata.nextElement();
+							System.out.print("\t\t\t[Signature: " + record.getSignature());
+							System.out.print(", Length: " + record.getDataLength());
+							System.out.print(", Value: " + record);
+							System.out.println("]");
+
 						}
-						CDRecord record = cdata.nextElement();
-						System.out.print("\t\t\t[Signature: " + record.getSignature());
-						System.out.print(", Length: " + record.getDataLength());
-						System.out.print(", Value: " + record);
-						System.out.println("]");
-
-
 					}
 				}
 			}
@@ -125,7 +130,7 @@ public class DXLNote implements NSFNote, Serializable {
 	@Override
 	public Collection<NSFItem> getItems(final String itemName) {
 		List<NSFItem> items = itemsByName_.get(itemName);
-		if(items != null) {
+		if (items != null) {
 			return items;
 		} else {
 			return Collections.emptyList();
@@ -142,6 +147,7 @@ public class DXLNote implements NSFNote, Serializable {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 	@Override
 	public NSFRichTextData getRichText(final String itemName) {
 		// TODO Auto-generated method stub
@@ -159,32 +165,32 @@ public class DXLNote implements NSFNote, Serializable {
 
 		int segmentCount = 0;
 		int totalSegments = 0;
-		for(NSFItem item : items) {
-			if(item instanceof DXLItemComposite) {
-				CData cdata = ((DXLItemComposite)item).getValue();
+		for (NSFItem item : items) {
+			if (item instanceof DXLItemComposite) {
+				CData cdata = ((DXLItemComposite) item).getValue();
 
 				int breaker = 0;
-				while(cdata.hasMoreElements()) {
-					if(breaker++ > 1000) {
+				while (cdata.hasMoreElements()) {
+					if (breaker++ > 1000) {
 						System.out.println("we went too deep!");
 						break;
 					}
 					CDRecord record = cdata.nextElement();
 
-					if(record instanceof CDRecordFileHeader) {
-						CDRecordFileHeader header = (CDRecordFileHeader)record;
+					if (record instanceof CDRecordFileHeader) {
+						CDRecordFileHeader header = (CDRecordFileHeader) record;
 						totalSegments = header.getSegCount();
 						segmentCount = 0;
 					}
-					if(record instanceof CDRecordFileSegment) {
-						CDRecordFileSegment seg = (CDRecordFileSegment)record;
+					if (record instanceof CDRecordFileSegment) {
+						CDRecordFileSegment seg = (CDRecordFileSegment) record;
 						ByteBuffer data = seg.getFileData().duplicate();
 						try {
 							os.write(data.array(), data.position(), data.limit() - data.position());
 						} catch (IOException e) {
 							throw new RuntimeException(e);
 						}
-						if(++segmentCount >= totalSegments) {
+						if (++segmentCount >= totalSegments) {
 							try {
 								os.flush();
 								return;
@@ -203,9 +209,9 @@ public class DXLNote implements NSFNote, Serializable {
 		in.defaultReadObject();
 
 		itemsByName_ = new TreeMap<String, List<NSFItem>>(String.CASE_INSENSITIVE_ORDER);
-		for(NSFItem item : items_) {
+		for (NSFItem item : items_) {
 			String itemName = item.getName();
-			if(!itemsByName_.containsKey(itemName)) {
+			if (!itemsByName_.containsKey(itemName)) {
 				itemsByName_.put(itemName, new ArrayList<NSFItem>());
 			}
 			itemsByName_.get(itemName).add(item);

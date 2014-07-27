@@ -1,4 +1,6 @@
-package org.openntf.domino.nsfdata.cd;
+package org.openntf.domino.nsfdata.ods;
+
+import org.openntf.domino.nsfdata.ods.cd.CDSignature;
 
 public class LSIG extends SIG {
 	private static final long serialVersionUID = 1L;

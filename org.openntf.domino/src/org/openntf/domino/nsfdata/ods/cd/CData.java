@@ -1,4 +1,4 @@
-package org.openntf.domino.nsfdata.cd;
+package org.openntf.domino.nsfdata.ods.cd;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -6,14 +6,16 @@ import java.nio.ByteOrder;
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
 
+import org.openntf.domino.nsfdata.ods.SIG;
+
 public class CData implements Serializable, Enumeration<CDRecord> {
 	private static final long serialVersionUID = 1L;
 
 	private final ByteBuffer data_;
 	private CDRecord current_ = null;
 
-	public CData(final byte[] data) {
-		data_ = ByteBuffer.wrap(data);
+	public CData(final ByteBuffer data) {
+		data_ = data.duplicate();
 		data_.order(ByteOrder.LITTLE_ENDIAN);
 	}
 
@@ -24,7 +26,7 @@ public class CData implements Serializable, Enumeration<CDRecord> {
 
 	@Override
 	public CDRecord nextElement() {
-		if(!hasMoreElements()) {
+		if (!hasMoreElements()) {
 			throw new NoSuchElementException();
 		}
 		//		System.out.println("opening pos: " + data_.position());
@@ -35,7 +37,6 @@ public class CData implements Serializable, Enumeration<CDRecord> {
 		// Skip past the Signature's two bytes and the length of the Length value
 		// The length value from the signature is the length of the data PLUS the length of the header
 		data_.position(data_.position() + sig.getSigLength());
-
 
 		//		System.out.println("pos: " + data_.position());
 		//		System.out.println("limit: " + data_.limit());

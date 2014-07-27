@@ -1,8 +1,8 @@
-package org.openntf.domino.nsfdata.cd;
+package org.openntf.domino.nsfdata.ods.cd;
 
 import java.nio.ByteBuffer;
 
-import org.openntf.domino.nsfdata.ODSUtils;
+import org.openntf.domino.nsfdata.ods.ODSUtils;
 
 public class CDRecordText extends CDRecord {
 	private static final long serialVersionUID = 1L;

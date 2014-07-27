@@ -1,4 +1,4 @@
-package org.openntf.domino.nsfdata.cd;
+package org.openntf.domino.nsfdata.ods.cd;
 
 import java.nio.ByteBuffer;
 
@@ -17,12 +17,15 @@ public class CDRecordFileSegment extends CDRecord {
 	public short getDataSize() {
 		return getData().getShort(getData().position() + 0);
 	}
+
 	public short getSegSize() {
 		return getData().getShort(getData().position() + 2);
 	}
+
 	public int getFlags() {
 		return getData().getInt(getData().position() + 4);
 	}
+
 	public int getReserved() {
 		return getData().getInt(getData().position() + 8);
 	}
@@ -36,7 +39,7 @@ public class CDRecordFileSegment extends CDRecord {
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ", Data Size: " + getDataSize() + ", Seg Size: " + getSegSize() +
-				", Flags: " + getFlags() + ", Reserved: " + getReserved() + "]";
+		return "[" + getClass().getSimpleName() + ", Data Size: " + getDataSize() + ", Seg Size: " + getSegSize() + ", Flags: "
+				+ getFlags() + ", Reserved: " + getReserved() + "]";
 	}
 }
