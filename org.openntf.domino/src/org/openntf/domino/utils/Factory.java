@@ -96,12 +96,7 @@ public enum Factory {
 						}
 						Scanner scanner = new Scanner(iniFile);
 						scanner.useDelimiter(System.getProperty("line.separator"));
-						//						while (scanner.hasNextLine()) {
-						//							String nextLine = scanner.nextLine();
-						//							System.out.println("DEBUG " + nextLine);
-						//						}
-
-						loadEnvironment(/*session, */scanner);
+						loadEnvironment(scanner);
 						scanner.close();
 						return null;
 					}

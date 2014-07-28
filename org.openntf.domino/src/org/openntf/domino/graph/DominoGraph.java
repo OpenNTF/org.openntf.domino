@@ -391,7 +391,7 @@ public class DominoGraph implements Graph, MetaGraph, TransactionalGraph {
 
 			result = map.get(unid);
 			if (result == null) {
-				result = getRawDatabase().getDocumentByKey(unid, createOnFail);
+				result = getRawDatabase().getDocumentWithKey(unid, createOnFail);
 				if (result != null) {
 					String localUnid = result.getUniversalID();
 					if (!unid.equalsIgnoreCase(localUnid)) {

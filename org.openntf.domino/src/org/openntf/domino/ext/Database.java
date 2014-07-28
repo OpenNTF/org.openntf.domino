@@ -315,7 +315,7 @@ public interface Database extends Base {
 	 * @return The Document corresponding to the key, or null if no matching document exists.
 	 * @since org.openntf.domino 1.0.0
 	 */
-	public Document getDocumentByKey(final Serializable key);
+	public Document getDocumentWithKey(final Serializable key);
 
 	/**
 	 * Retrieves a document by a String key, allowing for creation of a new document if no match was found.
@@ -331,7 +331,7 @@ public interface Database extends Base {
 	 * @return The Document corresponding to the key, or null if no matching document exists and createOnFail is false.
 	 * @since org.openntf.domino 1.0.0
 	 */
-	public Document getDocumentByKey(final Serializable key, final boolean createOnFail);
+	public Document getDocumentWithKey(final Serializable key, final boolean createOnFail);
 
 	// TODO: Combine the 
 	/**

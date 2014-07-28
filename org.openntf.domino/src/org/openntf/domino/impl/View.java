@@ -2732,4 +2732,44 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		return result;
 	}
 
+	@Override
+	public Document getFirstDocumentByKey(final Object key) {
+		return this.getDocumentByKey(key);
+	}
+
+	@Override
+	public Document getFirstDocumentByKey(final Object key, final boolean exact) {
+		return this.getDocumentByKey(key, exact);
+	}
+
+	@Override
+	public Document getFirstDocumentByKey(final Vector keys) {
+		return this.getDocumentByKey(keys);
+	}
+
+	@Override
+	public Document getFirstDocumentByKey(final Vector keys, final boolean exact) {
+		return this.getDocumentByKey(keys, exact);
+	}
+
+	@Override
+	public ViewEntry getFirstEntryByKey(final Object key) {
+		return this.getEntryByKey(key);
+	}
+
+	@Override
+	public ViewEntry getFirstEntryByKey(final Object key, final boolean exact) {
+		return this.getEntryByKey(key, exact);
+	}
+
+	@Override
+	public ViewEntry getFirstEntryByKey(final Vector keys) {
+		return this.getEntryByKey(keys);
+	}
+
+	@Override
+	public ViewEntry getFirstEntryByKey(final Vector keys, final boolean exact) {
+		return this.getEntryByKey(keys, exact);
+	}
+
 }
