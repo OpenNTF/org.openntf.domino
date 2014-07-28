@@ -35,58 +35,72 @@ public class ItemDefinition implements IItemDefinition, Externalizable {
 
 	}
 
+	@Override
 	public void setParent(final DatabaseSchema parent) {
 		parentSchema_ = parent;
 	}
 
+	@Override
 	public DatabaseSchema getParent() {
 		return parentSchema_;
 	}
 
+	@Override
 	public String getName() {
 		return name_;
 	}
 
+	@Override
 	public void setName(final String name) {
 		name_ = name;
 	}
 
+	@Override
 	public String getDefaultLabel() {
 		return defaultLabel_;
 	}
 
+	@Override
 	public void setDefaultLabel(final String defaultLabel) {
 		defaultLabel_ = defaultLabel;
 	}
 
+	@Override
 	public Class<? extends IDominoType> getType() {
 		return type_;
 	}
 
+	@Override
 	public void setType(final Class<? extends IDominoType> type) {
 		type_ = type;
 	}
 
+	@Override
 	public Set<Flags> getFlags() {
 		return flags_;
 	}
 
+	@Override
 	public void setFlags(final Set<Flags> flags) {
 		flags_ = flags;
 	}
 
+	@Override
 	public void addFlag(final Flags flag) {
 		flags_.add(flag);
 	}
 
+	@Override
 	public Object getDefaultValue() {
 		return defaultValue_;
 	}
 
+	@Override
 	public void setDefaultValue(final Object defaultValue) {
 		defaultValue_ = defaultValue;
 	}
 
+	@Override
 	public ItemValidation getValidator() {
 		return validator_;
 	}
@@ -100,11 +114,12 @@ public class ItemDefinition implements IItemDefinition, Externalizable {
 	 * 
 	 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 		name_ = in.readUTF();
 		defaultLabel_ = in.readUTF();
-		Class<?> cl = (Class<?>) Class.forName(in.readUTF(), true, Factory.getClassLoader());
+		Class<?> cl = Class.forName(in.readUTF(), true, Factory.getClassLoader());
 		if (cl.isAssignableFrom(IDominoType.class)) {
 			type_ = (Class<? extends IDominoType>) cl;
 		}
@@ -135,6 +150,7 @@ public class ItemDefinition implements IItemDefinition, Externalizable {
 		out.writeObject(validator_);
 	}
 
+	@Override
 	public Item createDefaultItem(final Document doc, final DocumentDefinition def) {
 		String name = getName();
 		Object defaultValue = getDefaultValue();
@@ -207,6 +223,7 @@ public class ItemDefinition implements IItemDefinition, Externalizable {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.schema.IItemDefinition#getShortName()
 	 */
+	@Override
 	public String getShortName() {
 		// TODO Auto-generated method stub
 		return null;
@@ -215,6 +232,7 @@ public class ItemDefinition implements IItemDefinition, Externalizable {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.schema.IItemDefinition#removeFlag(org.openntf.domino.schema.impl.DatabaseSchema.Flags)
 	 */
+	@Override
 	public void removeFlag(final Flags flag) {
 		// TODO Auto-generated method stub
 
@@ -223,6 +241,7 @@ public class ItemDefinition implements IItemDefinition, Externalizable {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.schema.IItemDefinition#setValidator(org.openntf.domino.schema.IItemValidation)
 	 */
+	@Override
 	public void setValidator(final IItemValidation validator) {
 		// TODO Auto-generated method stub
 
@@ -231,6 +250,7 @@ public class ItemDefinition implements IItemDefinition, Externalizable {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.schema.IItemDefinition#getItemListeners()
 	 */
+	@Override
 	public Set<IItemListener> getItemListeners() {
 		// TODO Auto-generated method stub
 		return null;
@@ -239,6 +259,7 @@ public class ItemDefinition implements IItemDefinition, Externalizable {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.schema.IItemDefinition#addItemListener(org.openntf.domino.schema.IItemListener)
 	 */
+	@Override
 	public void addItemListener(final IItemListener listener) {
 		// TODO Auto-generated method stub
 

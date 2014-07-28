@@ -15,24 +15,15 @@
  */
 package org.openntf.domino.exceptions;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class UnimplementedException.
- */
 public class UnimplementedException extends RuntimeException {
-
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Instantiates a new unimplemented exception.
-	 * 
 	 * @param message
-	 *            message
+	 *            the detail message. The detail message is saved for later retrieval by the Throwable.getMessage() method.
 	 */
 	public UnimplementedException(final String message) {
 		super(message);
-
 	}
 
 }

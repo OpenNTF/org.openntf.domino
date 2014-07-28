@@ -1,9 +1,6 @@
 package org.openntf.domino.xots.builtin;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
@@ -22,49 +19,10 @@ import org.openntf.domino.xots.annotations.Schedule;
 import com.ibm.designer.runtime.domino.adapter.HttpService;
 import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
-import com.ibm.domino.xsp.module.nsf.NotesContext;
 
 @Schedule(frequency = 4, timeunit = TimeUnit.HOURS)
 @Persistent
 public class XotsNsfScanner extends XotsBaseTasklet implements Serializable {
-	public static class LoaderRunnable implements Runnable {
-		private NSFComponentModule module_;
-		private String[] classNames_;
-		private Set<Class<?>> classes_;
-
-		public LoaderRunnable(final NSFComponentModule module, final String[] classNames) {
-			module_ = module;
-			classNames_ = classNames;
-		}
-
-		@Override
-		public void run() {
-			Set<Class<?>> result = new HashSet<Class<?>>();
-			try {
-				NotesContext ctxContext = new NotesContext(module_);
-				NotesContext.initThread(ctxContext);
-				ClassLoader mcl = module_.getModuleClassLoader();
-				for (String className : classNames_) {
-					Class<?> curClass = null;
-					try {
-						curClass = mcl.loadClass(className);
-					} catch (ClassNotFoundException e) {
-						e.printStackTrace();
-					}
-					result.add(curClass);
-				}
-			} catch (Throwable t) {
-				t.printStackTrace();
-			} finally {
-				NotesContext.termThread();
-			}
-			classes_ = result;
-		}
-
-		public Set<Class<?>> getClasses() {
-			return classes_;
-		}
-	}
 
 	private final boolean TRACE = true;
 	private final String serverName_;
@@ -79,42 +37,39 @@ public class XotsNsfScanner extends XotsBaseTasklet implements Serializable {
 
 	@Override
 	public void run() {
-		Set<Class<?>> taskletClasses = scan();
+		scan();
 		setChanged();
-		notifyObservers(taskletClasses);
+		notifyObservers(null);
 	}
 
-	public Set<Class<?>> scan() {
-		Set<Class<?>> result = new LinkedHashSet<Class<?>>();
+	public void scan() {
 		Session session = getSession();
 		DbDirectory dir = session.getDbDirectory(getServerName());
 		dir.setDirectoryType(DbDirectory.Type.DATABASE);
 		for (Database db : dir) {
 			try {
-				Set<Class<?>> taskletClasses = scanDatabase(db);
-				if (taskletClasses.size() > 0) {
-					result.addAll(taskletClasses);
-				}
+				scanDatabase(db);
 			} catch (Throwable t) {
 				t.printStackTrace();
 			}
 		}
-		if (TRACE) {
-			System.out.println("Found a total of " + result.size() + " Xots Tasklets.");
-		}
-		return result;
 	}
+
+	private XotsService service_;
 
 	private XotsService getXotsService() {
-		for (HttpService service : LCDEnvironment.getInstance().getServices()) {
-			if (service instanceof XotsService) {
-				return (XotsService) service;
+		if (service_ == null) {
+			for (HttpService service : LCDEnvironment.getInstance().getServices()) {
+				if (service instanceof XotsService) {
+					service_ = (XotsService) service;
+					break;
+				}
 			}
 		}
-		return null;
+		return service_;
 	}
 
-	public Set<Class<?>> scanDatabase(final Database db) throws ServletException, InterruptedException {
+	public void scanDatabase(final Database db) throws ServletException, InterruptedException {
 		if (TRACE) {
 			System.out.println("TRACE: Scanning database " + db.getApiPath() + " for Xots Tasklets");
 		}
@@ -124,12 +79,8 @@ public class XotsNsfScanner extends XotsBaseTasklet implements Serializable {
 		if (iconDoc.hasItem("$Xots")) {
 			String[] xotsClassNames = iconDoc.getItemValue("$Xots", String[].class);
 			NSFComponentModule module = (NSFComponentModule) getXotsService().getComponentModule("/" + db.getFilePath());
-			final LoaderRunnable loaderRunnable = new LoaderRunnable(module, xotsClassNames);
-			Thread t = new Thread(loaderRunnable);
-			t.start();
-			t.join();
+			getXotsService().loadXotsTasklets("/" + db.getFilePath(), xotsClassNames);
 		}
 
-		return new HashSet<Class<?>>();
 	}
 }

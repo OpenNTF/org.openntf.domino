@@ -75,6 +75,9 @@ public enum Factory {
 
 	private static List<Terminatable> onTerminate_ = new ArrayList<Terminatable>();
 
+	// TODO: Determine if this is the right way to deal with Xots access to faces contexts
+	private static ThreadLocal<Database> currentDatabaseHolder_ = new ThreadLocal<Database>();
+
 	/**
 	 * setup the environment and loggers
 	 * 
@@ -88,14 +91,15 @@ public enum Factory {
 				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 					@Override
 					public Object run() throws Exception {
-						String progpath = System.getProperty("notes.binary");
+						// Windows stores the notes.ini in the program directory; Linux stores it in the data directory
+						String progpath = "notes.binary";
 						File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
 						if (!iniFile.exists()) {
 							progpath = System.getProperty("user.dir");
 							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
 						}
 						Scanner scanner = new Scanner(iniFile);
-						scanner.useDelimiter(System.getProperty("line.separator"));
+						scanner.useDelimiter("\n|\r\n");
 						loadEnvironment(scanner);
 						scanner.close();
 						return null;
@@ -289,6 +293,7 @@ public enum Factory {
 	private static Counter manualRecycleCounter = new Counter(COUNT_PER_THREAD);
 
 	private static Map<Class<?>, Counter> objectCounter = new ConcurrentHashMap<Class<?>, Counter>() {
+		private static final long serialVersionUID = 1L;
 
 		/* (non-Javadoc)
 		 * @see java.util.concurrent.ConcurrentHashMap#get(java.lang.Object)
@@ -452,7 +457,7 @@ public enum Factory {
 	/**
 	 * returns the wrapper factory for this thread
 	 * 
-	 * @return
+	 * @return the thread's wrapper factory
 	 */
 	public static WrapperFactory getWrapperFactory() {
 		WrapperFactory wf = currentWrapperFactory.get();
@@ -495,7 +500,7 @@ public enum Factory {
 
 	@Deprecated
 	public static org.openntf.domino.Document fromLotusDocument(final lotus.domino.Document lotus, final Base parent) {
-		return (org.openntf.domino.Document) getWrapperFactory().fromLotus(lotus, Document.SCHEMA, (Database) parent);
+		return getWrapperFactory().fromLotus(lotus, Document.SCHEMA, (Database) parent);
 	}
 
 	public static void setNoRecycle(final Base<?> base, final boolean value) {
@@ -687,6 +692,20 @@ public enum Factory {
 		currentSessionHolder_.set(null);
 	}
 
+	// TODO: Determine if this is the right way to deal with Xots access to faces contexts
+	public static Database getDatabase_unchecked() {
+		return currentDatabaseHolder_.get();
+	}
+
+	public static void setDatabase(final Database database) {
+		setNoRecycle(database, true);
+		currentDatabaseHolder_.set(database);
+	}
+
+	public static void clearDatabase() {
+		currentDatabaseHolder_.set(null);
+	}
+
 	public static ClassLoader getClassLoader() {
 		if (currentClassLoader_.get() == null) {
 			ClassLoader loader = null;
@@ -847,7 +866,7 @@ public enum Factory {
 	 * @return the parent database
 	 */
 	@Deprecated
-	public static Database getParentDatabase(final Base base) {
+	public static Database getParentDatabase(final Base<?> base) {
 		if (base instanceof org.openntf.domino.Database) {
 			return (org.openntf.domino.Database) base;
 		} else if (base instanceof DatabaseDescendant) {
@@ -1137,7 +1156,7 @@ public enum Factory {
 		if (collection instanceof DocumentCollection) {
 			org.openntf.domino.Database db = ((DocumentCollection) collection).getParent();
 			result = db.createNoteCollection(false);
-			result.add((DocumentCollection) collection);
+			result.add(collection);
 		} else {
 			throw new DataNotCompatibleException("Cannot convert a non-OpenNTF DocumentCollection to a NoteCollection");
 		}

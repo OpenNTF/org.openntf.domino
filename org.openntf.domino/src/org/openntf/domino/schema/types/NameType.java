@@ -13,8 +13,8 @@ import org.openntf.domino.schema.exceptions.ItemException;
  * 
  */
 public class NameType extends StringType {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(NameType.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	NameType() {
 	}

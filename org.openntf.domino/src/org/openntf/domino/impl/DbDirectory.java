@@ -42,7 +42,7 @@ import org.openntf.domino.utils.Factory;
  * The Class DbDirectory.
  */
 public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domino.DbDirectory, Session> implements
-		org.openntf.domino.DbDirectory, Encapsulated {
+org.openntf.domino.DbDirectory, Encapsulated {
 	private static final Logger log_ = Logger.getLogger(DbDirectory.class.getName());
 
 	private SortedSet<org.openntf.domino.Database> dbSet_;
@@ -150,10 +150,12 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		return fromLotus(delegate.getParent(), Session.SCHEMA, null);
 	}
 
+	@Override
 	public boolean isSortByLastModified() {
 		return isDateSorted_;
 	}
 
+	@Override
 	public void setSortByLastModified(final boolean value) {
 		if (isDateSorted_ != value) {
 			isDateSorted_ = value;
@@ -161,10 +163,12 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 		}
 	}
 
+	@Override
 	public Type getDirectoryType() {
 		return type_;
 	}
 
+	@Override
 	public void setDirectoryType(final Type type) {
 		if (type_ != type) {
 			type_ = type;
@@ -305,6 +309,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.DbDirectory#getFirstDatabase(org.openntf.domino.DbDirectory.Type)
 	 */
+	@Override
 	@Deprecated
 	@Legacy(org.openntf.domino.annotations.Legacy.ITERATION_WARNING)
 	public Database getFirstDatabase(final Type type) {
@@ -484,7 +489,7 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	}
 
 	void resurrect() {
-		Session rawSessionUs = (Session) Factory.getSession();
+		Session rawSessionUs = Factory.getSession();
 		lotus.domino.Session rawSession = toLotus(rawSessionUs);
 		try {
 			lotus.domino.DbDirectory dir = rawSession.getDbDirectory(name_);
@@ -498,74 +503,89 @@ public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domi
 	/* (non-Javadoc)
 	 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
 	 */
-	public void readExternal(final ObjectInput arg0) throws IOException, ClassNotFoundException {
-		isDateSorted_ = arg0.readBoolean();
-		isInitialized_ = arg0.readBoolean();
-		isHonorOpenDialog_ = arg0.readBoolean();
-		type_ = Type.getType(arg0.readInt());
-		name_ = arg0.readUTF();
-		clusterName_ = arg0.readUTF();
-		dbSet_ = (SortedSet) arg0.readObject();
+	@Override
+	@SuppressWarnings("unchecked")
+	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+		isDateSorted_ = in.readBoolean();
+		isInitialized_ = in.readBoolean();
+		isHonorOpenDialog_ = in.readBoolean();
+		type_ = Type.getType(in.readInt());
+		name_ = in.readUTF();
+		clusterName_ = in.readUTF();
+		dbSet_ = (SortedSet<Database>) in.readObject();
 	}
 
 	/* (non-Javadoc)
 	 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
 	 */
-	public void writeExternal(final ObjectOutput arg0) throws IOException {
-		arg0.writeBoolean(isDateSorted_);
-		arg0.writeBoolean(isInitialized_);
-		arg0.writeBoolean(isHonorOpenDialog_);
-		arg0.writeInt(type_.getValue());
-		arg0.writeUTF(name_);
-		arg0.writeUTF(clusterName_);
-		arg0.writeObject(dbSet_);
+	@Override
+	public void writeExternal(final ObjectOutput out) throws IOException {
+		out.writeBoolean(isDateSorted_);
+		out.writeBoolean(isInitialized_);
+		out.writeBoolean(isHonorOpenDialog_);
+		out.writeInt(type_.getValue());
+		out.writeUTF(name_);
+		out.writeUTF(clusterName_);
+		out.writeObject(dbSet_);
 	}
 
+	@Override
 	public boolean add(final Database arg0) {
 		return getDbSet().add(arg0);
 	}
 
+	@Override
 	public boolean addAll(final Collection<? extends Database> arg0) {
 		return getDbSet().addAll(arg0);
 	}
 
+	@Override
 	public void clear() {
 		getDbSet().clear();
 		this.isInitialized_ = false;
 	}
 
+	@Override
 	public boolean contains(final Object arg0) {
 		return getDbSet().contains(arg0);
 	}
 
+	@Override
 	public boolean containsAll(final Collection<?> arg0) {
 		return getDbSet().containsAll(arg0);
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return getDbSet().isEmpty();
 	}
 
+	@Override
 	public boolean remove(final Object arg0) {
 		return getDbSet().remove(arg0);
 	}
 
+	@Override
 	public boolean removeAll(final Collection<?> arg0) {
 		return getDbSet().removeAll(arg0);
 	}
 
+	@Override
 	public boolean retainAll(final Collection<?> arg0) {
 		return getDbSet().retainAll(arg0);
 	}
 
+	@Override
 	public int size() {
 		return getDbSet().size();
 	}
 
+	@Override
 	public Object[] toArray() {
 		return getDbSet().toArray();
 	}
 
+	@Override
 	public <T> T[] toArray(final T[] arg0) {
 		return getDbSet().toArray(arg0);
 	}

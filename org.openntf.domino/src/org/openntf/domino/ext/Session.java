@@ -94,7 +94,7 @@ public interface Session {
 	 * @return An IDominoEvent which will be passed to {@link org.openntf.domino.ext.Base.fireListener}
 	 * @since org.openntf.domino 3.0.0
 	 */
-	public IDominoEvent generateEvent(EnumEvent event, org.openntf.domino.Base source, org.openntf.domino.Base target, Object payload);
+	public IDominoEvent generateEvent(EnumEvent event, org.openntf.domino.Base<?> source, org.openntf.domino.Base<?> target, Object payload);
 
 	// public RunContext getRunContext();
 

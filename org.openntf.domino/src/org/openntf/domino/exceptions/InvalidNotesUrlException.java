@@ -15,23 +15,15 @@
  */
 package org.openntf.domino.exceptions;
 
-// TODO: Auto-generated Javadoc
-/**
- * The Class InvalidNotesUrlException.
- */
 public class InvalidNotesUrlException extends RuntimeException {
-	
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Instantiates a new invalid notes url exception.
-	 * 
-	 * @param arg0
-	 *            the arg0
+	 * @param message
+	 *            the detail message. The detail message is saved for later retrieval by the Throwable.getMessage() method.
 	 */
-	public InvalidNotesUrlException(final String arg0) {
-		super(arg0);
+	public InvalidNotesUrlException(final String message) {
+		super(message);
 
 	}
 

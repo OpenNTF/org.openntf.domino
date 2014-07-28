@@ -25,7 +25,7 @@ public interface IDominoEvent {
 	 * 
 	 * @since openntf.domino 3.0.0
 	 */
-	public org.openntf.domino.Base getSource();
+	public org.openntf.domino.Base<?> getSource();
 
 	/**
 	 * Gets the target object for the event. For e.g. AFTER_UPDATE_DOCUMENT the target is the database where the Document is being updated.
@@ -34,7 +34,7 @@ public interface IDominoEvent {
 	 * 
 	 * @since openntf.domino 3.0.0
 	 */
-	public org.openntf.domino.Base getTarget();
+	public org.openntf.domino.Base<?> getTarget();
 
 	/**
 	 * Gets the payload being passed by the event.

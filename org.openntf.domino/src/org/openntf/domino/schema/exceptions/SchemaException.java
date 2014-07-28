@@ -10,30 +10,28 @@ import java.util.logging.Logger;
  * 
  */
 public class SchemaException extends RuntimeException {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(SchemaException.class.getName());
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
 	public SchemaException() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
-	 * @param arg0
+	 * @param message
+	 *            the detail message. The detail message is saved for later retrieval by the Throwable.getMessage() method.
 	 */
-	public SchemaException(String arg0) {
-		super(arg0);
-		// TODO Auto-generated constructor stub
+	public SchemaException(final String message) {
+		super(message);
 	}
 
 	/**
-	 * @param arg0
+	 * @param cause
+	 *            the cause (which is saved for later retrieval by the Throwable.getCause() method). (A null value is permitted, and
+	 *            indicates that the cause is nonexistent or unknown.)
 	 */
-	public SchemaException(Throwable arg0) {
-		super(arg0);
-		// TODO Auto-generated constructor stub
+	public SchemaException(final Throwable cause) {
+		super(cause);
 	}
 
 }

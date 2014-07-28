@@ -36,18 +36,18 @@ public class XMLDocument extends XMLNode {
 	}
 
 	public XMLNode getDocumentElement() {
-		return new XMLNode(((Document) this.node).getDocumentElement());
+		return new XMLNode(((Document) node_).getDocumentElement());
 	}
 
 	public void loadURL(final String urlString) throws SAXException, IOException, ParserConfigurationException {
 		URL url = new URL(urlString);
 		URLConnection conn = url.openConnection();
 
-		this.node = getBuilder().parse((InputStream) conn.getContent());
+		node_ = getBuilder().parse((InputStream) conn.getContent());
 	}
 
 	public void loadInputStream(final InputStream is) throws SAXException, IOException, ParserConfigurationException {
-		this.node = getBuilder().parse(is);
+		node_ = getBuilder().parse(is);
 	}
 
 	public void loadString(final String s) throws SAXException, IOException, ParserConfigurationException {

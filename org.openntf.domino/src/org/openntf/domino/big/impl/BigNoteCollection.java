@@ -30,6 +30,7 @@ import org.openntf.domino.utils.Factory;
  */
 @Incomplete
 public class BigNoteCollection implements org.openntf.domino.big.BigNoteCollection {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(BigNoteCollection.class.getName());
 	private Map<String, int[]> idMap_;
 
@@ -93,7 +94,9 @@ public class BigNoteCollection implements org.openntf.domino.big.BigNoteCollecti
 	public static class DocumentIterator implements Iterator<Document> {
 		private final BigNoteCollection coll_;
 		private Iterator<String> keyIterator_;
+		@SuppressWarnings("unused")
 		private final Set<String> completedKeys_ = new HashSet<String>();
+		@SuppressWarnings("unused")
 		private String currentKey_;
 		private int[] currentInts_;
 		private int currentIntLength_;

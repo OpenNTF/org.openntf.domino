@@ -180,6 +180,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#setSession(org.openntf.domino.Session)
 	 */
+	@Override
 	public void setSession(final Session s) {
 		_session = s;
 	}
@@ -187,6 +188,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#setBase(java.lang.Throwable)
 	 */
+	@Override
 	public void setBase(final Throwable base) {
 		_baseException = base;
 	}
@@ -194,6 +196,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#getBase()
 	 */
+	@Override
 	public Throwable getBase() {
 		return _baseException;
 	}
@@ -201,6 +204,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#setSeverity(java.util.logging.Level)
 	 */
+	@Override
 	public void setSeverity(final Level severity) {
 		_severity = severity;
 	}
@@ -208,6 +212,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#setMessage(java.lang.String)
 	 */
+	@Override
 	public void setMessage(final String message) {
 		_message = message;
 	}
@@ -215,6 +220,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#getThisServer()
 	 */
+	@Override
 	public String getThisServer() {
 		if (_thisServer == null) {
 			try {
@@ -229,7 +235,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	}
 
 	/**
-	 * @return
+	 * @return The context agent's name
 	 */
 	public String getThisAgent() {
 		if (_thisAgent == null) {
@@ -241,6 +247,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#setThisAgent()
 	 */
+	@Override
 	public void setThisAgent(final String fromContext) {
 		_thisAgent = fromContext;
 	}
@@ -248,6 +255,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#getLogDb()
 	 */
+	@Override
 	public Database getLogDb() {
 		if (_logDb == null) {
 			try {
@@ -268,6 +276,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#getCurrentDatabase()
 	 */
+	@Override
 	public Database getCurrentDatabase() {
 		/*
 		 * BaseOpenLogItem gets shared between calls and _currentDatabase is resurrected.
@@ -291,6 +300,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#getAccessLevel()
 	 */
+	@Override
 	public String getAccessLevel() {
 		if (_accessLevel == null) {
 			try {
@@ -330,6 +340,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#getUserRoles()
 	 */
+	@Override
 	public Vector<Object> getUserRoles() {
 		if (_userRoles == null) {
 			setUserRoles(Factory.getSession().evaluate("@UserRoles"));
@@ -340,6 +351,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.IOpenLogItem#setUserRoles(java.util.Vector)
 	 */
+	@Override
 	public void setUserRoles(final Vector<Object> roles) {
 		try {
 			_userRoles = roles;
@@ -351,6 +363,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#getClientVersion()
 	 */
+	@Override
 	public Vector<String> getClientVersion() {
 		if (_clientVersion == null) {
 			_clientVersion = new Vector<String>();
@@ -374,6 +387,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#getStartTime()
 	 */
+	@Override
 	public Date getStartTime() {
 		if (_startTime == null) {
 			try {
@@ -409,6 +423,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#getLogDbName()
 	 */
+	@Override
 	public String getLogDbName() {
 		if ("".equals(_logDbName)) {
 			String logDbName = loadFromProps("org.openntf.domino.logging.OpenLogHandler.logDbName");
@@ -424,6 +439,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.IOpenLogItem#isSuppressEventStack()
 	 */
+	@Override
 	public Boolean getSuppressEventStack() {
 		String suppressEventStackTmp = loadFromProps("org.openntf.domino.logging.OpenLogHandler.suppressEventStack");
 		if ("".equals(suppressEventStackTmp)) {
@@ -437,6 +453,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.IOpenLogItem#setSuppressEventStack(java.lang.Boolean)
 	 */
+	@Override
 	public void setSuppressEventStack(final Boolean suppressEventStack) {
 		_suppressEventStack = suppressEventStack;
 	}
@@ -444,6 +461,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#getLogFormName()
 	 */
+	@Override
 	public String getLogFormName() {
 		return _logFormName;
 	}
@@ -451,6 +469,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#getErrLine(java.lang.Throwable)
 	 */
+	@Override
 	public int getErrLine(final Throwable ee) {
 		return ee.getStackTrace()[0].getLineNumber();
 	}
@@ -458,6 +477,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#getSeverity()
 	 */
+	@Override
 	public Level getSeverity() {
 		return _severity;
 	}
@@ -465,6 +485,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#getEventTime()
 	 */
+	@Override
 	public Date getEventTime() {
 		if (_eventTime == null) {
 			_eventTime = new Date();
@@ -476,6 +497,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#getEventType()
 	 */
+	@Override
 	public String getEventType() {
 		return _eventType;
 	}
@@ -483,6 +505,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#getMessage()
 	 */
+	@Override
 	public String getMessage() {
 		if (_message.length() > 0)
 			return _message;
@@ -492,6 +515,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#getErrDoc()
 	 */
+	@Override
 	public Document getErrDoc() {
 		if (_errDoc != null) {
 			try {
@@ -506,6 +530,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#setErrDoc(org.openntf.domino.Document)
 	 */
+	@Override
 	public void setErrDoc(final Document doc) {
 		if (doc != null) {
 			_errDoc = doc;
@@ -520,6 +545,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#setLogDbName(java.lang.String)
 	 */
+	@Override
 	public void setLogDbName(final String newLogPath) {
 		_logDbName = newLogPath;
 	}
@@ -527,6 +553,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#setOlDebugLevel(org.openntf.domino.logging.OpenLogItem.DebugLevel)
 	 */
+	@Override
 	public void setOlDebugLevel(final DebugLevel newDebugLevel) {
 		olDebugLevel = newDebugLevel.getValue();
 	}
@@ -534,6 +561,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#getLogSuccess()
 	 */
+	@Override
 	public boolean getLogSuccess() {
 		return _logSuccess;
 	}
@@ -541,6 +569,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.IOpenLogItem#setLogSuccess(boolean)
 	 */
+	@Override
 	public void setLogSuccess(final boolean logSuccess) {
 		_logSuccess = logSuccess;
 	}
@@ -548,6 +577,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#logError(java.lang.Throwable)
 	 */
+	@Override
 	public String logError(final Throwable ee) {
 		if (ee != null) {
 			for (StackTraceElement elem : ee.getStackTrace()) {
@@ -586,6 +616,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#setEventType(org.openntf.domino.logging.OpenLogItem.LogType)
 	 */
+	@Override
 	public void setEventType(final LogType typeError) {
 		_eventType = typeError.getValue();
 	}
@@ -593,6 +624,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#logErrorEx(java.lang.Throwable, java.lang.String, java.util.logging.Level, org.openntf.domino.Document)
 	 */
+	@Override
 	public String logErrorEx(final Throwable ee, final String msg, final Level severityType, final Document doc) {
 		if (ee != null) {
 			for (StackTraceElement elem : ee.getStackTrace()) {
@@ -625,6 +657,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#logEvent(java.lang.Throwable, java.lang.String, java.util.logging.Level, org.openntf.domino.Document)
 	 */
+	@Override
 	public String logEvent(final Throwable ee, final String msg, final Level severityType, final Document doc) {
 		try {
 			setMessage(msg);
@@ -649,6 +682,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#getStackTrace(java.lang.Throwable, int)
 	 */
+	@Override
 	public ArrayList<String> getStackTrace(final Throwable ee, final int skip) {
 		ArrayList<String> v = new ArrayList<String>(32);
 		try {
@@ -673,6 +707,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#getStackTrace(java.lang.Throwable)
 	 */
+	@Override
 	public ArrayList<String> getStackTrace(final Throwable ee) {
 		return getStackTrace(ee, 0);
 	}
@@ -680,6 +715,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#logError(org.openntf.domino.Session, java.lang.Throwable)
 	 */
+	@Override
 	public void logError(final Session s, final Throwable ee) {
 		setSession(s);
 		logError(ee);
@@ -688,6 +724,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#logError(org.openntf.domino.Session, java.lang.Throwable, java.lang.String, java.util.logging.Level, org.openntf.domino.Document)
 	 */
+	@Override
 	public void logError(final Session s, final Throwable ee, final String msg, final Level severityType, final Document doc) {
 		setSession(s);
 		logErrorEx(ee, msg, severityType, doc);
@@ -696,6 +733,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#logEvent(org.openntf.domino.Session, java.lang.Throwable, java.lang.String, java.util.logging.Level, org.openntf.domino.Document)
 	 */
+	@Override
 	public void logEvent(final Session s, final Throwable ee, final String msg, final Level severityType, final Document doc) {
 		setSession(s);
 		logEvent(ee, msg, severityType, doc);
@@ -704,6 +742,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#writeToLog()
 	 */
+	@Override
 	public boolean writeToLog() {
 		// exit early if there is no database
 		Database db = getLogDb();
@@ -791,6 +830,7 @@ public class BaseOpenLogItem implements IOpenLogItem {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.logging.OpenLogItem#debugPrint(java.lang.Throwable)
 	 */
+	@Override
 	public void debugPrint(final Throwable ee) {
 		if ((ee == null) || (debugOut == null))
 			return;

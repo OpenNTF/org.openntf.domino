@@ -16,6 +16,7 @@ import org.openntf.domino.utils.Factory;
  */
 @SuppressWarnings("restriction")
 public abstract class AbstractDominoRunnable extends Observable implements IDominoRunnable {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDominoRunnable.class.getName());
 	private static final long serialVersionUID = 1L;
 	private transient org.openntf.domino.Session session_;

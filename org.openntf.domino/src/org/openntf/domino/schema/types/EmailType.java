@@ -13,8 +13,8 @@ import org.openntf.domino.schema.exceptions.ItemException;
  * 
  */
 public class EmailType extends StringType {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(EmailType.class.getName());
-	private static final long serialVersionUID = 1L;
 	public static final Pattern EMAIL_REGEX = Pattern.compile("\\\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\\\.[A-Z]{2,4}\\\\b",
 			Pattern.CASE_INSENSITIVE);
 

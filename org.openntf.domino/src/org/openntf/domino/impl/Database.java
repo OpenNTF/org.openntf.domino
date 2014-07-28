@@ -132,7 +132,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	public Database(final lotus.domino.Database delegate, final org.openntf.domino.Base<?> parent, final boolean extendedMetadata) {
 		super(delegate, //
 				(parent instanceof Session) ? (Session) parent : org.openntf.domino.utils.Factory.getSession(parent), //
-				org.openntf.domino.utils.Factory.getWrapperFactory(), 0, NOTES_DATABASE);
+						org.openntf.domino.utils.Factory.getWrapperFactory(), 0, NOTES_DATABASE);
 		initialize(delegate, extendedMetadata);
 		s_recycle(delegate);
 	}
@@ -491,7 +491,6 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	@Incomplete
 	public DocumentCollection createMergableDocumentCollection() {
-		final boolean debug = false;
 		try {
 			lotus.domino.Database db = getDelegate();
 			lotus.domino.DocumentCollection rawColl = getDelegate().search("@False", db.getLastModified(), 1);

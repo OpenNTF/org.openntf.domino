@@ -45,6 +45,7 @@ import org.openntf.domino.utils.TypeUtils;
  * The Class ViewEntry.
  */
 public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.ViewEntry, View> implements org.openntf.domino.ViewEntry {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ViewEntry.class.getName());
 
 	private Map<String, Object> columnValuesMap_;
@@ -177,7 +178,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 			return Factory.wrapColumnValues(getDelegate().getColumnValues(), this.getAncestorSession());
 		} catch (NotesException e) {
 			if (e.id == 4432) {
-				return new java.util.Vector();
+				return new Vector<Object>();
 			}
 			DominoUtils.handleException(e);
 			return null;
@@ -483,7 +484,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	 */
 	@Override
 	public Database getAncestorDatabase() {
-		return (Database) ((DatabaseDescendant) this.getParent()).getAncestorDatabase();
+		return ((DatabaseDescendant) this.getParent()).getAncestorDatabase();
 	}
 
 	/*
@@ -506,17 +507,19 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		return getColumnValuesMap().get(columnName);
 	}
 
+	@Override
 	public <T> T getColumnValue(final String columnName, final Class<?> T) {
 		Object rawResult = getColumnValue(columnName);
 		if (rawResult instanceof Vector) {
-			return TypeUtils.vectorToClass((Vector) rawResult, T, this.getAncestorSession());
+			return TypeUtils.vectorToClass((Vector<?>) rawResult, T, this.getAncestorSession());
 		} else {
-			Vector v = new Vector();
+			Vector<Object> v = new Vector<Object>();
 			v.add(rawResult);
 			return TypeUtils.vectorToClass(v, T, this.getAncestorSession());
 		}
 	}
 
+	@Override
 	public Map<String, Object> getColumnValuesMap() {
 		if (columnValuesMap_ == null) {
 			List<Object> columnValues = getColumnValues();
@@ -538,11 +541,13 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 		return columnValuesMap_;
 	}
 
+	@Override
 	public Collection<Object> getColumnValuesEx() {
 		//TODO - NTF not particularly happy with this. Should it be a List instead? Or should we rely on the caller to decide?
 		return Collections.unmodifiableCollection(getColumnValuesMap().values());
 	}
 
+	@Override
 	public String getPosition() {
 		char dot = '.';
 		String pos = this.getPosition(dot); // e.g. 2.1
