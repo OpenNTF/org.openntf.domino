@@ -97,7 +97,7 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 
 	public synchronized static void addToQueue(final Runnable runnable) {
 		try {
-			Object result = AccessController.doPrivileged(new PrivilegedAction<Object>() {
+			AccessController.doPrivileged(new PrivilegedAction<Object>() {
 				@Override
 				public Object run() {
 					getInstance().queue(runnable, runnable.getClass().getClassLoader());
@@ -127,7 +127,8 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 	public void scan(final String serverName) {
 		XotsNsfScanner scanner = new XotsNsfScanner(serverName);
 		scanner.addObserver(this);
-		taskletClasses_ = scanner.scan();
+		//taskletClasses_ = scanner.scan();
+		scanner.scan();
 	}
 
 	public void queue(final Runnable runnable) {
