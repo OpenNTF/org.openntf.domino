@@ -44,6 +44,7 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	 */
 	private List<MIMEEntity> trackedChildEntites_ = new ArrayList<MIMEEntity>();
 	private List<MIMEHeader> trackedHeaders_ = new ArrayList<MIMEHeader>();
+	private String itemName_;
 
 	/**
 	 * Instantiates a new outline.
@@ -795,8 +796,9 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 		}
 	}
 
-	void markDirty() {
-		getAncestorDocument().markDirty();
+	@Override
+	public void markDirty() {
+		((org.openntf.domino.impl.Document) getAncestorDocument()).markDirty(getItemName(), true);
 	}
 
 	/*
@@ -828,4 +830,25 @@ public class MIMEEntity extends Base<org.openntf.domino.MIMEEntity, lotus.domino
 	public Session getAncestorSession() {
 		return this.getAncestorDocument().getAncestorSession();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.MIMEEntity#initName(java.lang.String)
+	 */
+	@Override
+	public void initItemName(final String itemName) {
+		itemName_ = itemName;
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.openntf.domino.ext.MIMEEntity#getName()
+	 */
+	@Override
+	public String getItemName() {
+		if (itemName_ != null)
+			return itemName_;
+
+		return getParentEntity().getItemName();
+	}
+
 }

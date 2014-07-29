@@ -306,6 +306,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	 * 
 	 * @see org.openntf.domino.Item#getLastModified()
 	 */
+	@Override
 	public Date getLastModifiedDate() {
 		try {
 			lotus.domino.DateTime dt = getDelegate().getLastModified();
@@ -564,6 +565,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 		return null;
 	}
 
+	@Override
 	public <T> T getValues(final Class<?> T) {
 		return TypeUtils.itemValueToClass(this, T);
 	}
@@ -1017,7 +1019,8 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 		}
 	}
 
-	void markDirty() {
+	@Override
+	public void markDirty() {
 		getAncestorDocument().markDirty();
 	}
 
@@ -1098,6 +1101,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 		}
 	}
 
+	@Override
 	public boolean hasFlag(final org.openntf.domino.Item.Flags flag) {
 		switch (flag) {
 		case PROTECTED:
@@ -1120,6 +1124,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 		return false;
 	}
 
+	@Override
 	public boolean isReadersNamesAuthors() {
 		return (hasFlag(Flags.NAMES) || hasFlag(Flags.READERS) || hasFlag(Flags.AUTHORS));
 	}
