@@ -15,6 +15,7 @@
  */
 package org.openntf.domino.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.AccessControlException;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Scanner;
 import java.util.ServiceLoader;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,10 +40,6 @@ import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
-
-import lotus.domino.NotesException;
-import lotus.domino.NotesFactory;
-import lotus.domino.NotesThread;
 
 import org.openntf.domino.Base;
 import org.openntf.domino.Database;
@@ -85,6 +83,9 @@ public enum Factory {
 
 	private static List<Terminatable> onTerminate_ = new ArrayList<Terminatable>();
 
+	// TODO: Determine if this is the right way to deal with Xots access to faces contexts
+	private static ThreadLocal<Database> currentDatabaseHolder_ = new ThreadLocal<Database>();
+
 	/**
 	 * setup the environment and loggers
 	 * 
@@ -98,12 +99,17 @@ public enum Factory {
 				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 					@Override
 					public Object run() throws Exception {
-						lotus.domino.Session session = NotesFactory.createSession();
-						try {
-							loadEnvironment(session);
-						} finally {
-							session.recycle();
+						// Windows stores the notes.ini in the program directory; Linux stores it in the data directory
+						String progpath = "notes.binary";
+						File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+						if (!iniFile.exists()) {
+							progpath = System.getProperty("user.dir");
+							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
 						}
+						Scanner scanner = new Scanner(iniFile);
+						scanner.useDelimiter("\n|\r\n");
+						loadEnvironment(scanner);
+						scanner.close();
 						return null;
 					}
 				});
@@ -151,8 +157,12 @@ public enum Factory {
 	}
 
 	static {
-		NotesThread nt = new NotesThread(new SetupJob());
-		nt.start();
+		SetupJob job = new SetupJob();
+		job.run();
+		//		TrustedDispatcher td = new TrustedDispatcher();
+		//		td.process(job);
+		//		System.out.println("DEBUG: SetupJob dispatched");
+		//		td.stop(false);
 	}
 
 	private static Map<String, String> ENVIRONMENT;
@@ -164,35 +174,51 @@ public enum Factory {
 	 * 
 	 * @param session
 	 */
-	public static void loadEnvironment(final lotus.domino.Session session) {
+	public static void loadEnvironment(/*final lotus.domino.Session session, */final Scanner scanner) {
 		if (ENVIRONMENT == null) {
 			ENVIRONMENT = new HashMap<String, String>();
 		}
-		if (session != null && !session_init) {
-			try {
-				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-					@Override
-					public Object run() throws Exception {
-						try {
-							ENVIRONMENT.put("directory", session.getEnvironmentString("Directory", true));
-							ENVIRONMENT.put("notesprogram", session.getEnvironmentString("NotesProgram", true));
-							ENVIRONMENT.put("kittype", session.getEnvironmentString("KitType", true));
-							ENVIRONMENT.put("servicename", session.getEnvironmentString("ServiceName", true));
-							ENVIRONMENT.put("httpjvmmaxheapsize", session.getEnvironmentString("HTTPJVMMaxHeapSize", true));
-							ENVIRONMENT.put("dominocontrollercurrentlog", session.getEnvironmentString("DominoControllerCurrentLog", true));
-						} catch (NotesException ne) {
-							ne.printStackTrace();
-						}
-						return null;
-					}
-				});
-			} catch (AccessControlException e) {
-				e.printStackTrace();
-			} catch (PrivilegedActionException e) {
-				e.printStackTrace();
+		int keyCount = 0;
+		if (scanner != null) {
+			while (scanner.hasNextLine()) {
+				String nextLine = scanner.nextLine();
+				int i = nextLine.indexOf('=');
+				if (i > 0) {
+					keyCount++;
+					String key = nextLine.substring(0, i).toLowerCase();
+					String value = nextLine.substring(i + 1);
+					//					System.out.println("DEBUG " + key + " : " + value);
+					ENVIRONMENT.put(key, value);
+				}
 			}
+			//			System.out.println("DEBUG: Added " + keyCount + " environment variables to avoid using a session");
 			session_init = true;
 		}
+		//		if (session != null && !session_init) {
+		//			try {
+		//				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+		//					@Override
+		//					public Object run() throws Exception {
+		//						try {
+		//							ENVIRONMENT.put("directory", session.getEnvironmentString("Directory", true));
+		//							ENVIRONMENT.put("notesprogram", session.getEnvironmentString("NotesProgram", true));
+		//							ENVIRONMENT.put("kittype", session.getEnvironmentString("KitType", true));
+		//							ENVIRONMENT.put("servicename", session.getEnvironmentString("ServiceName", true));
+		//							ENVIRONMENT.put("httpjvmmaxheapsize", session.getEnvironmentString("HTTPJVMMaxHeapSize", true));
+		//							ENVIRONMENT.put("dominocontrollercurrentlog", session.getEnvironmentString("DominoControllerCurrentLog", true));
+		//						} catch (NotesException ne) {
+		//							ne.printStackTrace();
+		//						}
+		//						return null;
+		//					}
+		//				});
+		//			} catch (AccessControlException e) {
+		//				e.printStackTrace();
+		//			} catch (PrivilegedActionException e) {
+		//				e.printStackTrace();
+		//			}
+		//			session_init = true;
+		//		}
 		if (!jar_init) {
 			try {
 				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
@@ -258,9 +284,9 @@ public enum Factory {
 	private static final Logger log_ = Logger.getLogger(Factory.class.getName());
 
 	/** The Constant TRACE_COUNTERS. */
-	private static final boolean TRACE_COUNTERS = true;
+	private static final boolean TRACE_COUNTERS = false;
 	/** use a separate counter in each thread */
-	private static final boolean COUNT_PER_THREAD = true;
+	private static final boolean COUNT_PER_THREAD = false;
 
 	/** The lotus counter. */
 	private static Counter lotusCounter = new Counter(COUNT_PER_THREAD);
@@ -275,6 +301,7 @@ public enum Factory {
 	private static Counter manualRecycleCounter = new Counter(COUNT_PER_THREAD);
 
 	private static Map<Class<?>, Counter> objectCounter = new ConcurrentHashMap<Class<?>, Counter>() {
+		private static final long serialVersionUID = 1L;
 
 		/* (non-Javadoc)
 		 * @see java.util.concurrent.ConcurrentHashMap#get(java.lang.Object)
@@ -438,7 +465,7 @@ public enum Factory {
 	/**
 	 * returns the wrapper factory for this thread
 	 * 
-	 * @return
+	 * @return the thread's wrapper factory
 	 */
 	public static WrapperFactory getWrapperFactory() {
 		WrapperFactory wf = currentWrapperFactory.get();
@@ -479,6 +506,10 @@ public enum Factory {
 	public static <T extends Base, D extends lotus.domino.Base, P extends Base> T fromLotus(final D lotus,
 			final FactorySchema<T, D, P> schema, final P parent) {
 		return getWrapperFactory().fromLotus(lotus, schema, parent);
+	}
+
+	public static boolean recacheLotus(final lotus.domino.Base lotus, final Base<?> wrapper, final Base<?> parent) {
+		return getWrapperFactory().recacheLotusObject(lotus, wrapper, parent);
 	}
 
 	/**
@@ -675,6 +706,20 @@ public enum Factory {
 		currentSessionHolder_.set(null);
 	}
 
+	// TODO: Determine if this is the right way to deal with Xots access to faces contexts
+	public static Database getDatabase_unchecked() {
+		return currentDatabaseHolder_.get();
+	}
+
+	public static void setDatabase(final Database database) {
+		setNoRecycle(database, true);
+		currentDatabaseHolder_.set(database);
+	}
+
+	public static void clearDatabase() {
+		currentDatabaseHolder_.set(null);
+	}
+
 	public static ClassLoader getClassLoader() {
 		if (currentClassLoader_.get() == null) {
 			ClassLoader loader = null;
@@ -780,8 +825,8 @@ public enum Factory {
 			callback.terminate();
 		}
 		clearSession();
-		wf.terminate();
-
+		long termCount = wf.terminate();
+		//		System.out.println("DEBUG: cleared " + termCount + " references from the queue...");
 		clearBubbleExceptions();
 		clearDominoGraph();
 		clearWrapperFactory();
@@ -938,7 +983,7 @@ public enum Factory {
 	 * @return the parent database
 	 */
 	@Deprecated
-	public static Database getParentDatabase(final Base base) {
+	public static Database getParentDatabase(final Base<?> base) {
 		if (base instanceof org.openntf.domino.Database) {
 			return (org.openntf.domino.Database) base;
 		} else if (base instanceof DatabaseDescendant) {

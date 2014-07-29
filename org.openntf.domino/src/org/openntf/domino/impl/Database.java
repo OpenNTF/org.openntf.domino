@@ -133,7 +133,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	public Database(final lotus.domino.Database delegate, final org.openntf.domino.Base<?> parent, final boolean extendedMetadata) {
 		super(delegate, //
 				(parent instanceof Session) ? (Session) parent : org.openntf.domino.utils.Factory.getSession(parent), //
-				org.openntf.domino.utils.Factory.getWrapperFactory(), 0, NOTES_DATABASE);
+						org.openntf.domino.utils.Factory.getWrapperFactory(), 0, NOTES_DATABASE);
 		initialize(delegate, extendedMetadata);
 		s_recycle(delegate);
 	}
@@ -492,7 +492,6 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	@Override
 	@Incomplete
 	public DocumentCollection createMergableDocumentCollection() {
-		final boolean debug = false;
 		try {
 			lotus.domino.Database db = getDelegate();
 			lotus.domino.DocumentCollection rawColl = getDelegate().search("@False", db.getLastModified(), 1);
@@ -1049,12 +1048,12 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	@Override
-	public Document getDocumentByKey(final Serializable key) {
-		return this.getDocumentByKey(key, false);
+	public Document getDocumentWithKey(final Serializable key) {
+		return this.getDocumentWithKey(key, false);
 	}
 
 	@Override
-	public Document getDocumentByKey(final Serializable key, final boolean createOnFail) {
+	public Document getDocumentWithKey(final Serializable key, final boolean createOnFail) {
 		try {
 			if (key != null) {
 				String checksum = DominoUtils.toUnid(key);
@@ -2935,6 +2934,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			lotus.domino.Database d = rawSession.getDatabase(server_, path_);
 			//d.open();
 			setDelegate(d, 0);
+			Factory.recacheLotus(d, this, parent_);
 			if (log_.isLoggable(java.util.logging.Level.FINE)) {
 				Throwable t = new Throwable();
 				StackTraceElement[] elements = t.getStackTrace();
@@ -3271,14 +3271,14 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		public org.openntf.domino.Document get(final Object key) {
 			if (!(key instanceof Serializable))
 				throw new IllegalArgumentException();
-			return getDocumentByKey((Serializable) key);
+			return getDocumentWithKey((Serializable) key);
 		}
 
 		@Override
 		public org.openntf.domino.Document put(final Serializable key, final org.openntf.domino.Document value) {
 			// Ignore the value for now
 			if (key != null) {
-				Document doc = getDocumentByKey(key);
+				Document doc = getDocumentWithKey(key);
 				if (doc == null) {
 					Map<String, Object> valueMap = value;
 					doc = createDocument(valueMap);
@@ -3298,7 +3298,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		 */
 		public org.openntf.domino.Document remove(final Object key) {
 			if (key != null) {
-				Document doc = getDocumentByKey(key.toString());
+				Document doc = getDocumentWithKey(key.toString());
 				if (doc != null) {
 					doc.remove(false);
 				}
@@ -3446,5 +3446,57 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		String language = lStr.substring(0, 2).toLowerCase();
 		String country = (lStr.length() >= 5 && lStr.charAt(2) == '-') ? lStr.substring(3, 5).toUpperCase() : "";
 		return dbLocale = new Locale(language, country);
+	}
+	private transient NoteCollection intNC_;
+
+	private NoteCollection getInternalNoteCollection() {
+		if (null == intNC_) {
+			intNC_ = this.createNoteCollection(false);
+		} else {
+			try {
+				int junk = ((lotus.domino.NoteCollection) Base.getDelegate(intNC_)).getCount();
+			} catch (NotesException ne) {
+				intNC_ = this.createNoteCollection(false);
+			}
+		}
+		return intNC_;
+	}
+
+	@Override
+	public String getUNID(final String noteid) {
+		return getInternalNoteCollection().getUNID(noteid);
+	}
+
+	@Override
+	public String getUNID(final int noteid) {
+		String nid = Integer.toHexString(noteid);
+		return getUNID(nid);
+	}
+
+	@Override
+	public Document getDocumentByUNID(final String unid, final boolean deferDelegate) {
+		if (deferDelegate) {
+			return new org.openntf.domino.impl.Document(unid, this, null);
+		} else {
+			return getDocumentByUNID(unid);
+		}
+	}
+
+	@Override
+	public Document getDocumentByID(final String noteid, final boolean deferDelegate) {
+		if (deferDelegate) {
+			return new org.openntf.domino.impl.Document(noteid, this, null);
+		} else {
+			return getDocumentByID(noteid);
+		}
+	}
+
+	@Override
+	public Document getDocumentByID(final int noteid, final boolean deferDelegate) {
+		if (deferDelegate) {
+			return new org.openntf.domino.impl.Document(noteid, this, null);
+		} else {
+			return getDocumentByID(Integer.toHexString(noteid));
+		}
 	}
 }

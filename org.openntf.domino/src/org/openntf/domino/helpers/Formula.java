@@ -330,6 +330,7 @@ public class Formula implements org.openntf.domino.ext.Formula, Serializable {
 	}
 
 	public static class ParserException extends RuntimeException {
+		private static final long serialVersionUID = 1L;
 		private final String expression_;
 
 		public ParserException(final String message, final String expression) {

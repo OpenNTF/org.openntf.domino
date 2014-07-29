@@ -33,7 +33,6 @@ import org.openntf.domino.utils.Factory;
  * @param <T>
  *            the generic type
  */
-@SuppressWarnings({ "rawtypes" })
 public abstract class AbstractDominoListIterator<T> implements ListIterator<T> {
 
 	/** The server name_. */

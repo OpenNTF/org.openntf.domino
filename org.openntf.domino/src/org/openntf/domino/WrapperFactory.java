@@ -36,7 +36,7 @@ public interface WrapperFactory {
 	<T extends Base, D extends lotus.domino.Base, P extends Base> T fromLotus(D lotus, FactorySchema<T, D, P> schema, P parent);
 
 	/**
-	 * Wraps a collection of lotus objects in a collection of apropriate wrapper objects
+	 * Wraps a collection of lotus objects in a collection of appropriate wrapper objects
 	 * 
 	 * @param lotusColl
 	 *            the object-collection to wrap
@@ -105,14 +105,14 @@ public interface WrapperFactory {
 	/**
 	 * shuts down the factory
 	 */
-	void terminate();
+	long terminate();
 
 	/**
 	 * Wraps a Java-Date into a DateTime object
 	 * 
 	 * @param start
 	 * @param parent
-	 * @return
+	 * @return The resulant DateTime
 	 */
 	DateTime createDateTime(Date start, Session parent);
 
@@ -122,7 +122,7 @@ public interface WrapperFactory {
 	 * @param start
 	 * @param end
 	 * @param parent
-	 * @return
+	 * @return The resultant DateRange
 	 */
 	DateRange createDateRange(Date start, Date end, Session parent);
 
@@ -132,5 +132,7 @@ public interface WrapperFactory {
 	 * @param result
 	 */
 	void setNoRecycle(final Base<?> base, boolean value);
+
+	public boolean recacheLotusObject(final lotus.domino.Base lotus, final Base<?> wrapper, final Base<?> parent);
 
 }

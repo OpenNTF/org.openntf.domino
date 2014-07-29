@@ -96,7 +96,7 @@ public class KeyValueStore {
 		String hashKey = checksum(key, "MD5");
 		Database keyDB = getDatabaseForKey(hashKey);
 
-		Document keyDoc = keyDB.getDocumentByKey(key);
+		Document keyDoc = keyDB.getDocumentWithKey(key);
 		return keyDoc == null ? null : keyDoc.get("Value");
 	}
 
@@ -104,7 +104,7 @@ public class KeyValueStore {
 		String hashKey = checksum(key, "MD5");
 		Database keyDB = getDatabaseForKey(hashKey);
 
-		Document keyDoc = keyDB.getDocumentByKey(key, true);
+		Document keyDoc = keyDB.getDocumentWithKey(key, true);
 
 		keyDoc.replaceItemValue("Value", value);
 		keyDoc.save();

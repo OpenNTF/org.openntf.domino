@@ -18,24 +18,29 @@ public class DocumentEntrySet extends AbstractSet<Entry<String, Object>> {
 			keys = keySet.iterator();
 		}
 
+		@Override
 		public boolean hasNext() {
 			// TODO Auto-generated method stub
 			return keys.hasNext();
 		}
 
+		@Override
 		public Entry<String, Object> next() {
 			// TODO Auto-generated method stub
 			final String key = keys.next();
 
 			return new Entry<String, Object>() {
+				@Override
 				public String getKey() {
 					return key;
 				}
 
+				@Override
 				public Object getValue() {
 					return doc.get(key);
 				}
 
+				@Override
 				public Object setValue(final Object value) {
 					return doc.put(key, value);
 				}
@@ -47,6 +52,7 @@ public class DocumentEntrySet extends AbstractSet<Entry<String, Object>> {
 			};
 		}
 
+		@Override
 		public void remove() {
 			keys.remove();
 		}
@@ -80,6 +86,7 @@ public class DocumentEntrySet extends AbstractSet<Entry<String, Object>> {
 	@Override
 	public boolean remove(final Object arg0) {
 		if (arg0 instanceof Entry) {
+			@SuppressWarnings("unchecked")
 			final Entry<String, Object> entry = (Entry<String, Object>) arg0;
 			return doc.remove(entry.getKey()) != null;
 		}

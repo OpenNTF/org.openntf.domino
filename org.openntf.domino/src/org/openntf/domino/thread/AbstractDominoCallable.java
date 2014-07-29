@@ -13,8 +13,8 @@ import org.openntf.domino.utils.Factory;
  * 
  */
 public abstract class AbstractDominoCallable<V> implements Callable<V> {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDominoCallable.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	/**
 	 * 

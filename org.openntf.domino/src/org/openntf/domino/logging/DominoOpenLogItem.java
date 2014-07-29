@@ -52,11 +52,6 @@ package org.openntf.domino.logging;
 public class DominoOpenLogItem extends BaseOpenLogItem {
 
 	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	/**
 	 * Constructor
 	 * 
 	 * @since org.openntf.domino 1.0.0

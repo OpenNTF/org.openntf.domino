@@ -10,38 +10,38 @@ import java.util.logging.Logger;
  * 
  */
 public class IHaveNoIdeaHowThisHappenedException extends RuntimeException {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(IHaveNoIdeaHowThisHappenedException.class.getName());
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
 	public IHaveNoIdeaHowThisHappenedException() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
-	 * @param arg0
+	 * @param message
+	 *            the detail message. The detail message is saved for later retrieval by the Throwable.getMessage() method.
 	 */
-	public IHaveNoIdeaHowThisHappenedException(final String arg0) {
-		super(arg0);
-		// TODO Auto-generated constructor stub
+	public IHaveNoIdeaHowThisHappenedException(final String message) {
+		super(message);
 	}
 
 	/**
-	 * @param arg0
+	 * @param cause
+	 *            the cause (which is saved for later retrieval by the Throwable.getCause() method). (A null value is permitted, and
+	 *            indicates that the cause is nonexistent or unknown.)
 	 */
-	public IHaveNoIdeaHowThisHappenedException(final Throwable arg0) {
-		super(arg0);
-		// TODO Auto-generated constructor stub
+	public IHaveNoIdeaHowThisHappenedException(final Throwable cause) {
+		super(cause);
 	}
 
 	/**
-	 * @param arg0
-	 * @param arg1
+	 * @param message
+	 *            the detail message. The detail message is saved for later retrieval by the Throwable.getMessage() method.
+	 * @param cause
+	 *            the cause (which is saved for later retrieval by the Throwable.getCause() method). (A null value is permitted, and
+	 *            indicates that the cause is nonexistent or unknown.)
 	 */
-	public IHaveNoIdeaHowThisHappenedException(final String arg0, final Throwable arg1) {
-		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
+	public IHaveNoIdeaHowThisHappenedException(final String message, final Throwable cause) {
+		super(message, cause);
 	}
 }

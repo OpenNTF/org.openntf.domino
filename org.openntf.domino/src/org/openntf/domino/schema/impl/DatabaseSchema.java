@@ -27,6 +27,7 @@ import org.openntf.domino.utils.DominoUtils;
  */
 @Incomplete
 public class DatabaseSchema implements IDatabaseSchema, Externalizable {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DatabaseSchema.class.getName());
 	private static final long serialVersionUID = 1L;
 
@@ -45,6 +46,7 @@ public class DatabaseSchema implements IDatabaseSchema, Externalizable {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Override
 	public Map<String, DocumentDefinition> getDocumentDefinitions() {
 		return documentDefinitions_;
 	}
@@ -53,6 +55,7 @@ public class DatabaseSchema implements IDatabaseSchema, Externalizable {
 	// documentDefinitions_ = definitions;
 	// }
 
+	@Override
 	public Map<String, ItemDefinition> getItemDefinitions() {
 		return itemDefinitions_;
 	}
@@ -61,6 +64,7 @@ public class DatabaseSchema implements IDatabaseSchema, Externalizable {
 	// itemDefinitions_ = definitions;
 	// }
 
+	@Override
 	public Map<Class<? extends IDominoType>, IDominoType> getTypeDefinitions() {
 		if (typeDefinitions_ == null) {
 			typeDefinitions_ = new HashMap<Class<? extends IDominoType>, IDominoType>();
@@ -72,6 +76,7 @@ public class DatabaseSchema implements IDatabaseSchema, Externalizable {
 	// typeDefinitions_ = definitions;
 	// }
 
+	@Override
 	public IDominoType getTypeDefinition(final Class<? extends IDominoType> type) {
 		IDominoType result = getTypeDefinitions().get(type);
 		if (result == null) {
@@ -92,6 +97,7 @@ public class DatabaseSchema implements IDatabaseSchema, Externalizable {
 
 	}
 
+	@Override
 	public Document createDocument(final Database db, final String doctype) {
 		DocumentDefinition def = getDocumentDefinitions().get(doctype);
 		if (def == null)
@@ -108,6 +114,7 @@ public class DatabaseSchema implements IDatabaseSchema, Externalizable {
 		return result;
 	}
 
+	@Override
 	public boolean validateDocument(final Document doc) {
 		String doctype = doc.getItemValueString("$$SchemaType");
 		DocumentDefinition def = getDocumentDefinitions().get(doctype);
@@ -166,6 +173,7 @@ public class DatabaseSchema implements IDatabaseSchema, Externalizable {
 		}
 	}
 
+	@Override
 	public IItemDefinition createItemDefinition(final String itemKey, final Class<?> type) {
 		// TODO Auto-generated method stub
 		return null;

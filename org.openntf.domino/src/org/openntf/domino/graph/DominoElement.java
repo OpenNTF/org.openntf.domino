@@ -212,6 +212,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return getId().hashCode();
 	}
 
+	@Override
 	public Document getRawDocument() {
 		return getDocument();
 	}
@@ -221,6 +222,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return prefix + ": " + getRawDocument().getNoteID();
 	}
 
+	@Override
 	public int incrementProperty(final String propertyName) {
 		Integer result = getProperty(propertyName, Integer.class);
 		if (result == null)
@@ -229,6 +231,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return result;
 	}
 
+	@Override
 	public int decrementProperty(final String propertyName) {
 		Integer result = getProperty(propertyName, Integer.class);
 		if (result == null)
@@ -266,6 +269,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return parent_;
 	}
 
+	@Override
 	public boolean hasProperty(final String key) {
 		return getPropertyKeys().contains(key);
 	}
@@ -275,6 +279,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return getProperty(key, java.lang.Object.class);
 	}
 
+	@Override
 	public <T> T getProperty(final String propertyName, final Class<?> T) {
 		Object result = null;
 		Map<CharSequence, Serializable> props = getProps();
@@ -332,6 +337,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return (T) result;
 	}
 
+	@Override
 	public <T> T getProperty(final String propertyName, final Class<?> T, final boolean allowNull) {
 		T result = getProperty(propertyName, T);
 		if (allowNull) {
@@ -371,11 +377,13 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	@Override
 	public Set<String> getPropertyKeys() {
+
 		return getPropertyKeys(true);
 	}
 
-	private final Set<String> propKeys_ = new CaseInsensitiveHashSet();	//TODO MAKE THREAD SAFE!!;
+	private final Set<String> propKeys_ = Collections.synchronizedSet(new CaseInsensitiveHashSet());	//TODO MAKE THREAD SAFE!!;
 
+	@Override
 	public Set<String> getPropertyKeys(final boolean includeEdgeFields) {
 		if (propKeys_.isEmpty()) {
 			propKeys_.addAll(getRawDocument().keySet());
@@ -406,7 +414,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		getRawDocument().removePermanently(true);
 	}
 
-	private final Set<String> removedProperties_ = new CaseInsensitiveHashSet();
+	private final Set<String> removedProperties_ = Collections.synchronizedSet(new CaseInsensitiveHashSet());
 
 	@Override
 	public <T> T removeProperty(final String key) {
@@ -433,6 +441,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	// getRawDocument().save();
 	// }
 
+	@Override
 	public void setRawDocument(final org.openntf.domino.Document doc) {
 		unid_ = doc.getUniversalID().toUpperCase();
 	}
@@ -542,14 +551,17 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		}
 	}
 
+	@Override
 	public int incrementProperty(final IDominoProperties prop) {
 		return incrementProperty(prop.getName());
 	}
 
+	@Override
 	public int decrementProperty(final IDominoProperties prop) {
 		return decrementProperty(prop.getName());
 	}
 
+	@Override
 	public <T> T getProperty(final IDominoProperties prop) {
 		if (prop == null) {
 			log_.log(Level.WARNING, "getProperty was called with a null argument, therefore it's impossible to return a property.");
@@ -566,6 +578,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return (T) result;
 	}
 
+	@Override
 	public <T> T getProperty(final IDominoProperties prop, final boolean allowNull) {
 		Class<?> type = prop.getType();
 		Object result = getProperty(prop.getName(), type, allowNull);
@@ -578,6 +591,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return (T) result;
 	}
 
+	@Override
 	public void setProperty(final IDominoProperties prop, final java.lang.Object value) {
 		Object current = getProperty(prop, true);
 		if (current == null || !current.equals(value)) {
@@ -585,6 +599,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		}
 	}
 
+	@Override
 	public Map<String, Object> toMap(final IDominoProperties[] props) {
 		Map<String, Object> result = new LinkedHashMap<String, Object>();
 		for (IDominoProperties prop : props) {
@@ -596,6 +611,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		return result;
 	}
 
+	@Override
 	public Map<String, Object> toMap(final Set<IDominoProperties> props) {
 		return toMap(props.toArray(new IDominoProperties[props.size()]));
 	}

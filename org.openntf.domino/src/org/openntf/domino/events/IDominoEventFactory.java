@@ -34,7 +34,7 @@ public interface IDominoEventFactory {
 	 * 
 	 * @since openntf.domino 3.0.0
 	 */
-	public IDominoEvent generate(EnumEvent event, org.openntf.domino.Base source, org.openntf.domino.Base target, Object payload);
+	public IDominoEvent generate(EnumEvent event, org.openntf.domino.Base<?> source, org.openntf.domino.Base<?> target, Object payload);
 
 	/**
 	 * Initializes the IDominoFactory and allows code to be run while it loads

@@ -12,13 +12,13 @@ import java.util.logging.Logger;
  * 
  */
 public abstract class AbstractDominoEvent implements IDominoEvent {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDominoEvent.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	private final EnumEvent event_;
 
-	private final org.openntf.domino.Base source_;
-	private final org.openntf.domino.Base target_;
+	private final org.openntf.domino.Base<?> source_;
+	private final org.openntf.domino.Base<?> target_;
 	private final Object payload_;
 
 	/**
@@ -35,7 +35,7 @@ public abstract class AbstractDominoEvent implements IDominoEvent {
 	 * 
 	 * @since openntf.domino 3.0.0
 	 */
-	public AbstractDominoEvent(final EnumEvent event, final org.openntf.domino.Base source, final org.openntf.domino.Base target,
+	public AbstractDominoEvent(final EnumEvent event, final org.openntf.domino.Base<?> source, final org.openntf.domino.Base<?> target,
 			final Object payload) {
 		event_ = event;
 		source_ = source;
@@ -46,6 +46,7 @@ public abstract class AbstractDominoEvent implements IDominoEvent {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.events.IDominoEvent#getEvent()
 	 */
+	@Override
 	public EnumEvent getEvent() {
 		return event_;
 	}
@@ -53,20 +54,23 @@ public abstract class AbstractDominoEvent implements IDominoEvent {
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.events.IDominoEvent#getSource()
 	 */
-	public org.openntf.domino.Base getSource() {
+	@Override
+	public org.openntf.domino.Base<?> getSource() {
 		return source_;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.events.IDominoEvent#getTarget()
 	 */
-	public org.openntf.domino.Base getTarget() {
+	@Override
+	public org.openntf.domino.Base<?> getTarget() {
 		return target_;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.events.IDominoEvent#getPayload()
 	 */
+	@Override
 	public Object getPayload() {
 		return payload_;
 	}

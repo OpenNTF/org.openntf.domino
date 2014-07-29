@@ -28,7 +28,7 @@ import org.openntf.domino.utils.DominoUtils;
  */
 public class AclIterator implements Iterator<ACLEntry> {
 
-	/** The Constant log_. */
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AclIterator.class.getName());
 
 	/** The acl. */

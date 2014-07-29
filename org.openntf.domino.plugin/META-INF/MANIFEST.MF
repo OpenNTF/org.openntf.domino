@@ -6,8 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openntf.domino.plugin.Activator
 Bundle-Vendor: Red Pill Development
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: com.ibm.commons.xml,
- javax.annotation,
+Import-Package: javax.annotation,
  org.osgi.framework;version="1.3.0"
 Bundle-ActivationPolicy: lazy
 Export-Package: com.tinkerpop.blueprints,
@@ -39,6 +38,7 @@ Export-Package: com.tinkerpop.blueprints,
  javax.annotation.concurrent,
  javax.annotation.meta,
  org.openntf.arpa,
+ org.openntf.calendars,
  org.openntf.domino,
  org.openntf.domino.annotations,
  org.openntf.domino.big,
@@ -64,6 +64,7 @@ Export-Package: com.tinkerpop.blueprints,
  org.openntf.domino.schema.types,
  org.openntf.domino.thread,
  org.openntf.domino.thread.deprecated,
+ org.openntf.domino.thread.model,
  org.openntf.domino.transactions,
  org.openntf.domino.types,
  org.openntf.domino.utils,

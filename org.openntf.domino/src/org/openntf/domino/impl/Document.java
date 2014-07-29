@@ -198,6 +198,22 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		initialize(delegate);
 	}
 
+	public Document(final String id, final Database parent, final WrapperFactory wf) {
+		super(parent, wf, NOTES_NOTE);
+		if (DominoUtils.isUnid(id)) {
+			unid_ = id;
+		} else {
+			noteid_ = id;
+			unid_ = parent.getUNID(id);
+		}
+		isNew_ = false;
+	}
+
+	public Document(final int id, final Database parent, final WrapperFactory wf) {
+		this(Integer.toHexString(id), parent, wf);
+		//		System.out.println("Creating a deferred document for id " + id);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
 	 */
@@ -563,7 +579,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				// This item is for debugging only, so keep 5-10 items in that list
 				// http://www-01.ibm.com/support/docview.wss?uid=swg27002572
 
-				Vector mt = getItemValue("$MIMETrack");
+				Vector<Object> mt = getItemValue("$MIMETrack");
 				if (mt.size() > 10) {
 					replaceItemValue("$MIMETrack", mt.subList(mt.size() - 10, mt.size()));
 				}
@@ -1253,6 +1269,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * 
 	 * @see org.openntf.domino.Document#getItemValueDateTimeArray(java.lang.String)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<org.openntf.domino.Base<?>> getItemValueDateTimeArray(final String name) {		// cf. DateRange.java
 		checkMimeOpen();
@@ -1263,7 +1280,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			mayBeMime = false;
 			if (v == null || v.size() == 0)
 				return (Vector<org.openntf.domino.Base<?>>) v;
-			FactorySchema schema = DateTime.SCHEMA;
+			FactorySchema<?, ?, Session> schema = DateTime.SCHEMA;
 			if (v.elementAt(0) instanceof lotus.domino.DateRange)	// at moment: never
 				schema = DateRange.SCHEMA;
 			else {	// Workaround for Vector of DateRange-s
@@ -1295,7 +1312,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					break;
 				}
 			}
-			return fromLotusAsVector(v, schema, getAncestorSession());
+			return (Vector<org.openntf.domino.Base<?>>) fromLotusAsVector(v, schema, getAncestorSession());
 		} catch (NotesException e) {
 			while (mayBeMime) {
 				MIMEEntity entity = this.getMIMEEntity(name);
@@ -2558,6 +2575,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * returns the real LMBCS payload for a Vector of Strings
 	 * 
 	 * @param strVect
+	 *            The vector of Strings.
 	 * @return LMBCS payload
 	 */
 
@@ -2750,7 +2768,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				throw new Domino32KLimitException();
 			}
 			if (firstElementClass == String.class) { 	// Strings have to be further inspected, because
-														// each sign may demand up to 3 bytes in LMBCS
+				// each sign may demand up to 3 bytes in LMBCS
 				int calc = ((payload - payloadOverhead) * 3) + payloadOverhead;
 				if (calc >= MAX_NATIVE_FIELD_SIZE) {
 					payload = payloadOverhead + getLMBCSPayload(dominoFriendly);
@@ -3025,7 +3043,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public void send(final boolean attachForm, final String recipient) {
-		Vector v = new Vector(1);
+		Vector<String> v = new Vector<String>(1);
 		v.add(recipient);
 		send(attachForm, v);
 	}
@@ -3167,8 +3185,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				if (del != null) { // this is surprising. Why didn't we already get it?
 					log_.log(Level.WARNING,
 							"Document " + unid + " already existed in the database with noteid " + del.getNoteID()
-									+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
-									+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
+							+ " and we're trying to set a doc with noteid " + getNoteID() + " to that. The existing document is a "
+							+ del.getItemValueString("form") + " and the new document is a " + getItemValueString("form"));
 					if (isDirty()) { // we've already made other changes that we should tuck away...
 						log_.log(Level.WARNING,
 								"Attempting to stash changes to this document to apply to other document of the same UNID. This is pretty dangerous...");
@@ -3393,6 +3411,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					}
 				}
 				setDelegate(d, 0);
+				Factory.recacheLotus(d, this, parent_);
 				shouldResurrect_ = false;
 				if (log_.isLoggable(Level.FINE)) {
 					log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
@@ -3402,13 +3421,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINER,
 								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-										+ ")");
+								+ ")");
 					}
 					log_.log(Level.FINE,
 							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
@@ -3416,10 +3435,48 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			} catch (NotesException e) {
 				DominoUtils.handleException(e);
 			}
+		} else if (null != unid_) {
+			//NTF we have a unid but no noteid because this was a deferred document using a unid
+			try {
+				lotus.domino.Document d = null;
+				lotus.domino.Database db = toLotus(getParentDatabase());
+				if (db != null) {
+					try {
+						d = db.getDocumentByUNID(unid_);
+					} catch (NotesException ne) {
+						log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
+								+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
+								+ getParentDatabase().getFilePath() + " because of: " + ne.text);
+					}
+				}
+				setDelegate(d, 0);
+				shouldResurrect_ = false;
+				if (log_.isLoggable(Level.FINE)) {
+					log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
+							+ " had been recycled and was auto-restored. Changes may have been lost.");
+					if (log_.isLoggable(Level.FINER)) {
+						Throwable t = new Throwable();
+						StackTraceElement[] elements = t.getStackTrace();
+						log_.log(Level.FINER,
+								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
+								+ ")");
+						log_.log(Level.FINER,
+								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
+								+ ")");
+						log_.log(Level.FINER,
+								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
+								+ ")");
+					}
+					log_.log(Level.FINE,
+							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
+				}
+			} catch (Exception e) {
+				DominoUtils.handleException(e);
+			}
 		} else {
 			if (log_.isLoggable(Level.SEVERE)) {
 				log_.log(Level.SEVERE,
-						"Document doesn't have noteid value. Something went terribly wrong. Nothing good can come of this...");
+						"Document doesn't have noteid or unid value. Something went terribly wrong. Nothing good can come of this...");
 			}
 		}
 	}
