@@ -48,7 +48,6 @@ public enum DominoFunctions {
 	}
 
 	/*----------------------------------------------------------------------------*/
-	@SuppressWarnings("deprecation")
 	@ParamCount(2)
 	public static ValueHolder atGetDocField(final FormulaContextNotes ctx, final ValueHolder[] params) {
 		Database db = ctx.getDatabase();

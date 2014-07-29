@@ -56,7 +56,7 @@ class Counter {
 	/**
 	 * read the value
 	 * 
-	 * @return
+	 * @return the int value
 	 */
 	public int intValue() {
 		if (globalCounter == null) {

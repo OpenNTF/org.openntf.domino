@@ -33,15 +33,15 @@ import org.w3c.dom.NodeList;
 public class XMLNode implements Map<String, Object>, Serializable {
 	private static final long serialVersionUID = 2304991412510751453L;
 
-	protected org.w3c.dom.Node node = null;
-	private transient XPath xPath = null;
-	private Map<String, Object> getResults = new HashMap<String, Object>();
+	protected org.w3c.dom.Node node_ = null;
+	private transient XPath xPath_ = null;
+	private Map<String, Object> getResults_ = new HashMap<String, Object>();
 
 	protected XMLNode() {
 	}
 
 	public XMLNode(final org.w3c.dom.Node node) {
-		this.node = node;
+		node_ = node;
 	}
 
 	public XMLNode selectSingleNode(final String xpathString) {
@@ -51,7 +51,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 
 	public XMLNodeList selectNodes(final String xpathString) {
 		try {
-			NodeList nodes = (NodeList) this.getXPath().compile(xpathString).evaluate(node, XPathConstants.NODESET);
+			NodeList nodes = (NodeList) this.getXPath().compile(xpathString).evaluate(node_, XPathConstants.NODESET);
 			XMLNodeList result = new XMLNodeList(nodes.getLength());
 			for (int i = 0; i < nodes.getLength(); i++) {
 				result.add(new XMLNode(nodes.item(i)));
@@ -65,10 +65,10 @@ public class XMLNode implements Map<String, Object>, Serializable {
 	}
 
 	public String getAttribute(final String attribute) {
-		if (this.node == null) {
+		if (this.node_ == null) {
 			return "";
 		}
-		NamedNodeMap attributes = this.node.getAttributes();
+		NamedNodeMap attributes = this.node_.getAttributes();
 		if (attributes == null) {
 			return "";
 		}
@@ -80,30 +80,34 @@ public class XMLNode implements Map<String, Object>, Serializable {
 	}
 
 	public void setAttribute(final String attribute, final String value) {
-		Node attr = this.node.getAttributes().getNamedItem(attribute);
+		Node attr = this.node_.getAttributes().getNamedItem(attribute);
 		if (attr == null) {
 			attr = getDocument().createAttribute(attribute);
 		}
 		attr.setNodeValue(value == null ? "" : value);
-		this.node.getAttributes().setNamedItem(attr);
+		this.node_.getAttributes().setNamedItem(attr);
 	}
 
 	public String getNodeName() {
-		return node.getNodeName();
+		return node_.getNodeName();
+	}
+
+	public short getNodeType() {
+		return node_.getNodeType();
 	}
 
 	public String getText() {
-		if (node == null) {
+		if (node_ == null) {
 			return "";
 		}
-		return node.getTextContent();
+		return node_.getTextContent();
 	}
 
 	public void setText(final String text) {
-		if (node == null) {
+		if (node_ == null) {
 			return;
 		}
-		node.setTextContent(text);
+		node_.setTextContent(text);
 	}
 
 	public String getTextContent() {
@@ -115,28 +119,28 @@ public class XMLNode implements Map<String, Object>, Serializable {
 	}
 
 	public String getNodeValue() {
-		if (node == null) {
+		if (node_ == null) {
 			return "";
 		}
-		return node.getNodeValue();
+		return node_.getNodeValue();
 	}
 
 	public void setNodeValue(final String value) {
-		if (node == null) {
+		if (node_ == null) {
 			return;
 		}
-		node.setNodeValue(value);
+		node_.setNodeValue(value);
 	}
 
 	public XMLNode addChildElement(final String elementName) {
 		Node node = this.getDocument().createElement(elementName);
-		this.node.appendChild(node);
+		this.node_.appendChild(node);
 		return new XMLNode(node);
 	}
 
 	public XMLNode insertChildElementBefore(final String elementName, final XMLNode refNode) {
 		Node node = this.getDocument().createElement(elementName);
-		this.node.insertBefore(node, refNode.getNode());
+		this.node_.insertBefore(node, refNode.getNode());
 		return new XMLNode(node);
 	}
 
@@ -146,6 +150,14 @@ public class XMLNode implements Map<String, Object>, Serializable {
 			return new XMLNode(node);
 		}
 		return null;
+	}
+
+	public XMLNode getFirstChildElement() {
+		Node node = this.getNode().getFirstChild();
+		while (node != null && node.getNodeType() != Node.ELEMENT_NODE) {
+			node = node.getNextSibling();
+		}
+		return node == null ? null : new XMLNode(node);
 	}
 
 	public XMLNode getParentNode() {
@@ -178,6 +190,14 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		return null;
 	}
 
+	public XMLNode getNextSiblingElement() {
+		Node node = this.getNode().getNextSibling();
+		while (node != null && node.getNodeType() != Node.ELEMENT_NODE) {
+			node = node.getNextSibling();
+		}
+		return node == null ? null : new XMLNode(node);
+	}
+
 	public void appendChild(final XMLNode node) {
 		this.getNode().appendChild(node.getNode());
 	}
@@ -187,7 +207,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 	}
 
 	public org.w3c.dom.Node getNode() {
-		return this.node;
+		return this.node_;
 	}
 
 	@Override
@@ -200,20 +220,20 @@ public class XMLNode implements Map<String, Object>, Serializable {
 			return this.getNode().getTextContent();
 		}
 
-		if (!this.getResults.containsKey(path)) {
+		if (!this.getResults_.containsKey(path)) {
 			try {
 				XMLNodeList nodes = this.selectNodes(path);
 				if (nodes.size() == 1) {
 					// this.getResults.put(path, nodes.get(0).getNode());
-					this.getResults.put(path, nodes.get(0));
+					this.getResults_.put(path, nodes.get(0));
 				} else {
-					this.getResults.put(path, nodes);
+					this.getResults_.put(path, nodes);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		return this.getResults.get(path);
+		return this.getResults_.get(path);
 	}
 
 	public String getXml() throws IOException {
@@ -225,7 +245,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 			TransformerFactory tFactory = TransformerFactory.newInstance();
 			Transformer transformer = tFactory.newTransformer();
 			xResult = new StreamResult(new StringWriter());
-			source = new DOMSource(this.node);
+			source = new DOMSource(this.node_);
 			// We don't want the XML declaration in front
 			transformer.setOutputProperty("omit-xml-declaration", "yes");
 			transformer.transform(source, xResult);
@@ -240,14 +260,14 @@ public class XMLNode implements Map<String, Object>, Serializable {
 	}
 
 	private XPath getXPath() {
-		if (this.xPath == null) {
-			xPath = XPathFactory.newInstance().newXPath();
+		if (this.xPath_ == null) {
+			xPath_ = XPathFactory.newInstance().newXPath();
 		}
-		return this.xPath;
+		return this.xPath_;
 	}
 
 	private Document getDocument() {
-		return this.node.getOwnerDocument();
+		return this.node_.getOwnerDocument();
 	}
 
 	@Override

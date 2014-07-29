@@ -4,9 +4,13 @@
 package org.openntf.domino.ext;
 
 import java.util.Map;
+import java.util.Vector;
 
+import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.View.IndexType;
+import org.openntf.domino.ViewEntry;
+import org.openntf.domino.annotations.Legacy;
 
 /**
  * @author withersp
@@ -103,5 +107,86 @@ public interface View {
 	public int getAutoRefreshSeconds();
 
 	public int getDiscardHours();
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.View#getDocumentByKey(java.lang.Object)
+	 * The original method is poorly named, as it doesn't indicate what happens when more than one
+	 * Document matches the key.
+	 */
+	public Document getFirstDocumentByKey(final Object key);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.View#getDocumentByKey(java.lang.Object, boolean)
+	 * The original method is poorly named, as it doesn't indicate what happens when more than one
+	 * Document matches the key.
+	 */
+	public Document getFirstDocumentByKey(final Object key, final boolean exact);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.View#getDocumentByKey(java.util.Vector)
+	 * The original method is poorly named, as it doesn't indicate what happens when more than one
+	 * Document matches the key.
+	 */
+	@SuppressWarnings("rawtypes")
+	@Legacy({ Legacy.GENERICS_WARNING })
+	public Document getFirstDocumentByKey(final Vector keys);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.View#getDocumentByKey(java.util.Vector, boolean)
+	 * The original method is poorly named, as it doesn't indicate what happens when more than one
+	 * Document matches the key.
+	 */
+	@SuppressWarnings("rawtypes")
+	@Legacy({ Legacy.GENERICS_WARNING })
+	public Document getFirstDocumentByKey(final Vector keys, final boolean exact);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.View#getEntryByKey(java.lang.Object)
+	 * The original method is poorly named, as it doesn't indicate what happens when more than one
+	 * Document matches the key.
+	 */
+	public ViewEntry getFirstEntryByKey(final Object key);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.View#getEntryByKey(java.lang.Object, boolean)
+	 * The original method is poorly named, as it doesn't indicate what happens when more than one
+	 * ViewEntry matches the key.
+	 */
+	public ViewEntry getFirstEntryByKey(final Object key, final boolean exact);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.View#getEntryByKey(java.util.Vector)
+	 * The original method is poorly named, as it doesn't indicate what happens when more than one
+	 * ViewEntry matches the key.
+	 */
+	@SuppressWarnings("rawtypes")
+	@Legacy(Legacy.GENERICS_WARNING)
+	public ViewEntry getFirstEntryByKey(final Vector keys);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see lotus.domino.View#getEntryByKey(java.util.Vector, boolean)
+	 * The original method is poorly named, as it doesn't indicate what happens when more than one
+	 * ViewEntry matches the key.
+
+	 */
+	@SuppressWarnings("rawtypes")
+	@Legacy(Legacy.GENERICS_WARNING)
+	public ViewEntry getFirstEntryByKey(final Vector keys, final boolean exact);
 
 }

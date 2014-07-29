@@ -24,12 +24,12 @@ import org.openntf.domino.utils.DominoUtils;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class AclIterator.
+ * The Class DatabaseIterator.
  */
 @Deprecated
 public class DatabaseIterator implements Iterator<Database> {
 
-	/** The Constant log_. */
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DatabaseIterator.class.getName());
 
 	/** The DbDirectory. */

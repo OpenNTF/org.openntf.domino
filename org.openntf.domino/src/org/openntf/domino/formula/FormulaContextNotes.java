@@ -21,6 +21,7 @@ public class FormulaContextNotes extends FormulaContext {
 	static {
 		// this is not yet nice, but we assume that this context is always used in Domino/XPage environment
 		Factory.onTerminate(new Terminatable() {
+			@Override
 			public void terminate() {
 				Formulas.terminate();
 			}
@@ -36,7 +37,6 @@ public class FormulaContextNotes extends FormulaContext {
 	 *            the parameters are mapped to the field p1, p2 and so on
 	 * @return the value
 	 */
-	@SuppressWarnings("deprecation")
 	public ValueHolder evaluateNative(final String formula, final ValueHolder... params) {
 		Session session = Factory.getSession();
 

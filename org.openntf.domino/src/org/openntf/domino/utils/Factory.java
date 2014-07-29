@@ -100,8 +100,7 @@ public enum Factory {
 					@Override
 					public Object run() throws Exception {
 						// Windows stores the notes.ini in the program directory; Linux stores it in the data directory
-						String os = String.valueOf(System.getProperty("os.name")).toLowerCase();
-						String progpath = System.getProperty(os.contains("windows") ? "notes.binary" : "user.dir");
+						String progpath = "notes.binary";
 						File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
 						if (!iniFile.exists()) {
 							progpath = System.getProperty("user.dir");
@@ -109,12 +108,7 @@ public enum Factory {
 						}
 						Scanner scanner = new Scanner(iniFile);
 						scanner.useDelimiter("\n|\r\n");
-						//						while (scanner.hasNextLine()) {
-						//							String nextLine = scanner.nextLine();
-						//							System.out.println("DEBUG " + nextLine);
-						//						}
-
-						loadEnvironment(/*session, */scanner);
+						loadEnvironment(scanner);
 						scanner.close();
 						return null;
 					}
@@ -307,6 +301,7 @@ public enum Factory {
 	private static Counter manualRecycleCounter = new Counter(COUNT_PER_THREAD);
 
 	private static Map<Class<?>, Counter> objectCounter = new ConcurrentHashMap<Class<?>, Counter>() {
+		private static final long serialVersionUID = 1L;
 
 		/* (non-Javadoc)
 		 * @see java.util.concurrent.ConcurrentHashMap#get(java.lang.Object)
@@ -470,7 +465,7 @@ public enum Factory {
 	/**
 	 * returns the wrapper factory for this thread
 	 * 
-	 * @return
+	 * @return the thread's wrapper factory
 	 */
 	public static WrapperFactory getWrapperFactory() {
 		WrapperFactory wf = currentWrapperFactory.get();
@@ -988,7 +983,7 @@ public enum Factory {
 	 * @return the parent database
 	 */
 	@Deprecated
-	public static Database getParentDatabase(final Base base) {
+	public static Database getParentDatabase(final Base<?> base) {
 		if (base instanceof org.openntf.domino.Database) {
 			return (org.openntf.domino.Database) base;
 		} else if (base instanceof DatabaseDescendant) {

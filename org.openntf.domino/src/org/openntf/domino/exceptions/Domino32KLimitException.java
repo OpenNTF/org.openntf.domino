@@ -2,37 +2,38 @@ package org.openntf.domino.exceptions;
 
 public class Domino32KLimitException extends Exception {
 
-	/**
-	 * 
-	 */
+	private static final long serialVersionUID = 1L;
+
 	public Domino32KLimitException() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
-	 * @param arg0
-	 * @param arg1
+	 * @param message
+	 *            the detail message. The detail message is saved for later retrieval by the Throwable.getMessage() method.
 	 */
-	public Domino32KLimitException(final String arg0, final Throwable arg1) {
-		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
+	public Domino32KLimitException(final String message) {
+		super(message);
 	}
 
 	/**
-	 * @param arg0
+	 * @param cause
+	 *            the cause (which is saved for later retrieval by the Throwable.getCause() method). (A null value is permitted, and
+	 *            indicates that the cause is nonexistent or unknown.)
 	 */
-	public Domino32KLimitException(final String arg0) {
-		super(arg0);
-		// TODO Auto-generated constructor stub
+	public Domino32KLimitException(final Throwable cause) {
+		super(cause);
 	}
 
 	/**
-	 * @param arg0
+	 * @param message
+	 *            the detail message. The detail message is saved for later retrieval by the Throwable.getMessage() method.
+	 * @param cause
+	 *            the cause (which is saved for later retrieval by the Throwable.getCause() method). (A null value is permitted, and
+	 *            indicates that the cause is nonexistent or unknown.)
 	 */
-	public Domino32KLimitException(final Throwable arg0) {
-		super(arg0);
-		// TODO Auto-generated constructor stub
+	public Domino32KLimitException(final String message, final Throwable cause) {
+		super(message, cause);
 	}
 
 }

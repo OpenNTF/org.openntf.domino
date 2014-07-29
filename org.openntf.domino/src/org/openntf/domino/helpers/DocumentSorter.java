@@ -99,6 +99,8 @@ public class DocumentSorter implements Externalizable {
 			}
 		}
 
+		@Override
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		public int compareTo(final DocumentData o) {
 			int result = 0;
 			int count0 = values_.length;
@@ -158,6 +160,7 @@ public class DocumentSorter implements Externalizable {
 			return result;
 		}
 
+		@Override
 		public void readExternal(final ObjectInput arg0) throws IOException, ClassNotFoundException {
 			nid_ = arg0.readInt();
 			//			replid_ = arg0.readUTF();
@@ -176,6 +179,7 @@ public class DocumentSorter implements Externalizable {
 			}
 		}
 
+		@Override
 		public void writeExternal(final ObjectOutput arg0) throws IOException {
 			arg0.writeInt(nid_);
 			//			arg0.write(address_);
@@ -332,6 +336,7 @@ public class DocumentSorter implements Externalizable {
 		getCriteria().remove(crit);
 	}
 
+	@Override
 	public void readExternal(final ObjectInput arg0) throws IOException, ClassNotFoundException {
 		criteria_ = (List<String>) arg0.readObject();
 		int dLen = arg0.readInt();
@@ -342,6 +347,7 @@ public class DocumentSorter implements Externalizable {
 		//		System.out.println("Completed deserialization of a DocumentSorter with " + dLen + " in the dataset");
 	}
 
+	@Override
 	public void writeExternal(final ObjectOutput arg0) throws IOException {
 		arg0.writeObject(criteria_);
 		arg0.writeInt(dataset_.length);

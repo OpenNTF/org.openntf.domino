@@ -584,7 +584,6 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	public Vector<Object> getValues() {
 		// Just use the parent Doc for this, since it understands MIMEBean
 		// Check for null in case there was a problem with the parent's method
-		@SuppressWarnings("unchecked")
 		Vector<Object> values = this.getParent().getItemValue(this.getName());
 		if (values != null) {
 			return new Vector<Object>(values);
@@ -1076,13 +1075,13 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINER,
 								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-										+ ")");
+								+ ")");
 						log_.log(Level.FINER,
 								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-										+ ")");
+								+ ")");
 					}
 				}
 			} catch (NotesException e) {

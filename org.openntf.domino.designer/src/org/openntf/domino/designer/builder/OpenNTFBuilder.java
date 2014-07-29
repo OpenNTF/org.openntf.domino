@@ -28,7 +28,8 @@ public class OpenNTFBuilder extends IncrementalProjectBuilder {
 		 * 
 		 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
 		 */
-		public boolean visit(IResourceDelta delta) throws CoreException {
+		@Override
+		public boolean visit(final IResourceDelta delta) throws CoreException {
 			IResource resource = delta.getResource();
 			switch (delta.getKind()) {
 			case IResourceDelta.ADDED:
@@ -49,7 +50,8 @@ public class OpenNTFBuilder extends IncrementalProjectBuilder {
 	}
 
 	class SampleResourceVisitor implements IResourceVisitor {
-		public boolean visit(IResource resource) {
+		@Override
+		public boolean visit(final IResource resource) {
 			checkXML(resource);
 			//return true to continue visiting children.
 			return true;
@@ -57,27 +59,30 @@ public class OpenNTFBuilder extends IncrementalProjectBuilder {
 	}
 
 	class XMLErrorHandler extends DefaultHandler {
-		
+
 		private IFile file;
 
-		public XMLErrorHandler(IFile file) {
+		public XMLErrorHandler(final IFile file) {
 			this.file = file;
 		}
 
-		private void addMarker(SAXParseException e, int severity) {
+		private void addMarker(final SAXParseException e, final int severity) {
 			OpenNTFBuilder.this.addMarker(file, e.getMessage(), e
-					.getLineNumber(), severity);
+			                              .getLineNumber(), severity);
 		}
 
-		public void error(SAXParseException exception) throws SAXException {
+		@Override
+		public void error(final SAXParseException exception) throws SAXException {
 			addMarker(exception, IMarker.SEVERITY_ERROR);
 		}
 
-		public void fatalError(SAXParseException exception) throws SAXException {
+		@Override
+		public void fatalError(final SAXParseException exception) throws SAXException {
 			addMarker(exception, IMarker.SEVERITY_ERROR);
 		}
 
-		public void warning(SAXParseException exception) throws SAXException {
+		@Override
+		public void warning(final SAXParseException exception) throws SAXException {
 			addMarker(exception, IMarker.SEVERITY_WARNING);
 		}
 	}
@@ -88,8 +93,8 @@ public class OpenNTFBuilder extends IncrementalProjectBuilder {
 
 	private SAXParserFactory parserFactory;
 
-	private void addMarker(IFile file, String message, int lineNumber,
-			int severity) {
+	private void addMarker(final IFile file, final String message, int lineNumber,
+			final int severity) {
 		try {
 			IMarker marker = file.createMarker(MARKER_TYPE);
 			marker.setAttribute(IMarker.MESSAGE, message);
@@ -108,7 +113,9 @@ public class OpenNTFBuilder extends IncrementalProjectBuilder {
 	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int,
 	 *      java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
+	@SuppressWarnings("rawtypes")
+	@Override
+	protected IProject[] build(final int kind, final Map args, final IProgressMonitor monitor)
 			throws CoreException {
 		if (kind == FULL_BUILD) {
 			fullBuild(monitor);
@@ -123,12 +130,13 @@ public class OpenNTFBuilder extends IncrementalProjectBuilder {
 		return null;
 	}
 
-	protected void clean(IProgressMonitor monitor) throws CoreException {
+	@Override
+	protected void clean(final IProgressMonitor monitor) throws CoreException {
 		// delete markers set and files created
 		getProject().deleteMarkers(MARKER_TYPE, true, IResource.DEPTH_INFINITE);
 	}
 
-	void checkXML(IResource resource) {
+	void checkXML(final IResource resource) {
 		if (resource instanceof IFile && resource.getName().endsWith(".xml")) {
 			IFile file = (IFile) resource;
 			deleteMarkers(file);
@@ -140,7 +148,7 @@ public class OpenNTFBuilder extends IncrementalProjectBuilder {
 		}
 	}
 
-	private void deleteMarkers(IFile file) {
+	private void deleteMarkers(final IFile file) {
 		try {
 			file.deleteMarkers(MARKER_TYPE, false, IResource.DEPTH_ZERO);
 		} catch (CoreException ce) {
@@ -156,15 +164,15 @@ public class OpenNTFBuilder extends IncrementalProjectBuilder {
 	}
 
 	private SAXParser getParser() throws ParserConfigurationException,
-			SAXException {
+	SAXException {
 		if (parserFactory == null) {
 			parserFactory = SAXParserFactory.newInstance();
 		}
 		return parserFactory.newSAXParser();
 	}
 
-	protected void incrementalBuild(IResourceDelta delta,
-			IProgressMonitor monitor) throws CoreException {
+	protected void incrementalBuild(final IResourceDelta delta,
+			final IProgressMonitor monitor) throws CoreException {
 		// the visitor does the work.
 		delta.accept(new SampleDeltaVisitor());
 	}

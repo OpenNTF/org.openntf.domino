@@ -46,6 +46,7 @@ import org.openntf.domino.utils.TypeUtils;
  * The Class ViewEntry.
  */
 public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.ViewEntry, View> implements org.openntf.domino.ViewEntry {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ViewEntry.class.getName());
 	private Map<String, Object> columnValuesMap_;
 	private Vector columnValues_;
@@ -216,7 +217,7 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 			return columnValues_;
 		} catch (NotesException e) {
 			if (e.id == 4432) {
-				return new java.util.Vector();
+				return new Vector<Object>();
 			}
 			DominoUtils.handleException(e);
 			return null;
@@ -564,9 +565,9 @@ public class ViewEntry extends Base<org.openntf.domino.ViewEntry, lotus.domino.V
 	public <T> T getColumnValue(final String columnName, final Class<?> T) {
 		Object rawResult = getColumnValue(columnName);
 		if (rawResult instanceof Vector) {
-			return TypeUtils.vectorToClass((Vector) rawResult, T, this.getAncestorSession());
+			return TypeUtils.vectorToClass((Vector<?>) rawResult, T, this.getAncestorSession());
 		} else {
-			Vector v = new Vector();
+			Vector<Object> v = new Vector<Object>();
 			v.add(rawResult);
 			return TypeUtils.vectorToClass(v, T, this.getAncestorSession());
 		}

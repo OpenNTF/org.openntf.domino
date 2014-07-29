@@ -15,13 +15,14 @@ import org.openntf.domino.schema.exceptions.ItemException;
  * 
  */
 public abstract class AbstractDominoType implements IDominoType {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(AbstractDominoType.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	protected AbstractDominoType() {
 
 	}
 
+	@Override
 	public boolean validateItem(final org.openntf.domino.Item item) throws ItemException {
 		Collection<Object> values = item.getValues();
 		for (Object value : values) {
@@ -31,6 +32,7 @@ public abstract class AbstractDominoType implements IDominoType {
 		return true;
 	}
 
+	@Override
 	public boolean validateItem(final org.openntf.domino.Item item, final IItemDefinition defintion) throws ItemException {
 		//TODO make this work!
 		Collection<Object> values = item.getValues();
@@ -43,6 +45,7 @@ public abstract class AbstractDominoType implements IDominoType {
 
 	public abstract boolean validateValue(final Object value) throws ItemException;
 
+	@Override
 	public void setItemToDefault(final org.openntf.domino.Item item) {
 		item.setValueString("");
 	}

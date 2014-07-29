@@ -453,7 +453,6 @@ public enum Documents {
 				session.setConvertMIME(false);
 			}
 
-			Object result = null;
 			if (entity == null) {
 				entity = document.getMIMEEntity(itemname);
 				mustClose = true;
@@ -511,7 +510,7 @@ public enum Documents {
 	public static boolean isSet(final Document document, final String fieldName) {
 		if (!document.hasItem(fieldName))
 			return false;
-		Vector value = document.getItemValue(fieldName);
+		Vector<Object> value = document.getItemValue(fieldName);
 		if (value == null)
 			return false;
 		if (value.size() == 0)
