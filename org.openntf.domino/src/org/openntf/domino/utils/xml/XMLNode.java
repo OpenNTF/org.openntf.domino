@@ -5,12 +5,16 @@ package org.openntf.domino.utils.xml;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -21,9 +25,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import com.ibm.commons.xml.DOMUtil;
-import com.ibm.commons.xml.Format;
 
 /**
  * @author jgallagher
@@ -44,14 +45,14 @@ public class XMLNode implements Map<String, Object>, Serializable {
 	}
 
 	public XMLNode selectSingleNode(final String xpathString) {
-		List<XMLNode> result = this.selectNodes(xpathString);
+		XMLNodeList result = this.selectNodes(xpathString);
 		return result.size() == 0 ? null : result.get(0);
 	}
 
-	public List<XMLNode> selectNodes(final String xpathString) {
+	public XMLNodeList selectNodes(final String xpathString) {
 		try {
 			NodeList nodes = (NodeList) this.getXPath().compile(xpathString).evaluate(node, XPathConstants.NODESET);
-			List<XMLNode> result = new XMLNodeList(nodes.getLength());
+			XMLNodeList result = new XMLNodeList(nodes.getLength());
 			for (int i = 0; i < nodes.getLength(); i++) {
 				result.add(new XMLNode(nodes.item(i)));
 			}
@@ -159,7 +160,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 		this.getNode().removeChild(childNode.getNode());
 	}
 
-	public List<XMLNode> getChildNodes() {
+	public XMLNodeList getChildNodes() {
 		return new XMLNodeList(getNode().getChildNodes());
 	}
 
@@ -201,7 +202,7 @@ public class XMLNode implements Map<String, Object>, Serializable {
 
 		if (!this.getResults.containsKey(path)) {
 			try {
-				List<XMLNode> nodes = this.selectNodes(path);
+				XMLNodeList nodes = this.selectNodes(path);
 				if (nodes.size() == 1) {
 					// this.getResults.put(path, nodes.get(0).getNode());
 					this.getResults.put(path, nodes.get(0));
@@ -216,13 +217,26 @@ public class XMLNode implements Map<String, Object>, Serializable {
 	}
 
 	public String getXml() throws IOException {
+
+		StreamResult xResult = null;
+		DOMSource source = null;
+
 		try {
-			Format format = new Format(4, true, "UTF-8");
-			return DOMUtil.getXMLString(this.node, format);
+			TransformerFactory tFactory = TransformerFactory.newInstance();
+			Transformer transformer = tFactory.newTransformer();
+			xResult = new StreamResult(new StringWriter());
+			source = new DOMSource(this.node);
+			// We don't want the XML declaration in front
+			transformer.setOutputProperty("omit-xml-declaration", "yes");
+			transformer.transform(source, xResult);
+			return xResult.getWriter().toString();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 		return null;
+
 	}
 
 	private XPath getXPath() {

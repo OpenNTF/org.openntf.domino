@@ -255,12 +255,22 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		isAppUnderSurveillance(ctx);
 		String sessionKey = isAppGodMode(ctx) ? "session" : "opensession";
 		Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
-		lotus.domino.Session rawSession = (lotus.domino.Session) localMap.get("session");
-		if (rawSession == null) {
-			rawSession = (lotus.domino.Session) ctx.getApplication().getVariableResolver().resolveVariable(ctx, "session");
+
+		// See if the factory already has an explicit session set (e.g. in Xots)
+		session = Factory.getSession_unchecked();
+
+		// If we don't have a pre-established session, look for the standard XSP one
+		if (session == null) {
+			lotus.domino.Session rawSession = (lotus.domino.Session) localMap.get("session");
+			if (rawSession == null) {
+				rawSession = (lotus.domino.Session) ctx.getApplication().getVariableResolver().resolveVariable(ctx, "session");
+			}
+			if (rawSession != null) {
+				session = Factory.fromLotus(rawSession, org.openntf.domino.Session.SCHEMA, null);
+			}
 		}
-		if (rawSession != null) {
-			session = Factory.fromLotus(rawSession, org.openntf.domino.Session.SCHEMA, null);
+
+		if (session != null) {
 			// Factory.setNoRecycle(session, true);
 			session.setAutoMime(getAppAutoMime(ctx));
 			if (isAppMimeFriendly(ctx))
@@ -294,17 +304,23 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		org.openntf.domino.Database database = null;
 		String dbKey = isAppGodMode(ctx) ? "database" : "opendatabase";
 		Map<String, Object> localMap = TypedUtil.getRequestMap(ctx.getExternalContext());
-		lotus.domino.Database rawDatabase = (lotus.domino.Database) localMap.get("database");
-		if (rawDatabase == null) {
-			rawDatabase = (lotus.domino.Database) ctx.getApplication().getVariableResolver().resolveVariable(ctx, "database");
-		}
-		if (rawDatabase != null) {
-			database = Factory.fromLotus(rawDatabase, org.openntf.domino.Database.SCHEMA, session);
-			Factory.setNoRecycle(database, true);
 
-			localMap.put(dbKey, database);
-		} else {
-			System.out.println("Unable to locate 'database' through request map or variable resolver. Unable to auto-wrap.");
+		// TODO: Determine if this is the right way to deal with Xots access to faces contexts
+		database = Factory.getDatabase_unchecked();
+
+		if (database == null) {
+			lotus.domino.Database rawDatabase = (lotus.domino.Database) localMap.get("database");
+			if (rawDatabase == null) {
+				rawDatabase = (lotus.domino.Database) ctx.getApplication().getVariableResolver().resolveVariable(ctx, "database");
+			}
+			if (rawDatabase != null) {
+				database = Factory.fromLotus(rawDatabase, org.openntf.domino.Database.SCHEMA, session);
+				Factory.setNoRecycle(database, true);
+
+				localMap.put(dbKey, database);
+			} else {
+				System.out.println("Unable to locate 'database' through request map or variable resolver. Unable to auto-wrap.");
+			}
 		}
 		return database;
 	}
