@@ -32,7 +32,6 @@ import lotus.notes.NotesThread;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.thread.DominoNativeRunner;
-import org.openntf.domino.utils.Factory;
 
 import com.ibm.commons.util.NotImplementedException;
 import com.ibm.designer.runtime.domino.adapter.servlet.LCDAdapterHttpSession;
@@ -111,7 +110,7 @@ public class XotsNativeFacesRunner extends DominoNativeRunner {
 
 		if (module_ != null) {
 			Database database = getSession().getDatabase(module_.getDatabasePath());
-			Factory.setDatabase(database);
+			getSession().setCurrentDatabase(database);
 		}
 	}
 

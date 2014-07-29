@@ -84,7 +84,7 @@ public enum Factory {
 	private static List<Terminatable> onTerminate_ = new ArrayList<Terminatable>();
 
 	// TODO: Determine if this is the right way to deal with Xots access to faces contexts
-	private static ThreadLocal<Database> currentDatabaseHolder_ = new ThreadLocal<Database>();
+	// private static ThreadLocal<Database> currentDatabaseHolder_ = new ThreadLocal<Database>();
 
 	/**
 	 * setup the environment and loggers
@@ -671,17 +671,6 @@ public enum Factory {
 	}
 
 	/**
-	 * Returns the session's current database if available. Does never create a session.
-	 * 
-	 * @see #getSession_unchecked()
-	 * @return The session's current database
-	 */
-	public static Database getCurrentDatabase() {
-		Session sess = currentSessionHolder_.get();
-		return (sess == null) ? null : sess.getCurrentDatabase();
-	}
-
-	/**
 	 * Returns the current session, if available. Does never create a session
 	 * 
 	 * @return the session
@@ -707,18 +696,28 @@ public enum Factory {
 	}
 
 	// TODO: Determine if this is the right way to deal with Xots access to faces contexts
+	/**
+	 * Returns the session's current database if available. Does never create a session.
+	 * 
+	 * @see #getSession_unchecked()
+	 * @return The session's current database
+	 */
 	public static Database getDatabase_unchecked() {
-		return currentDatabaseHolder_.get();
+		Session sess = getSession_unchecked();
+		return (sess == null) ? null : sess.getCurrentDatabase();
 	}
 
-	public static void setDatabase(final Database database) {
-		setNoRecycle(database, true);
-		currentDatabaseHolder_.set(database);
-	}
+	// RPr: I think it is a better idea to set the currentDatabase on the currentSesssion
 
-	public static void clearDatabase() {
-		currentDatabaseHolder_.set(null);
-	}
+	// TODO remove that code
+	//	public static void setDatabase(final Database database) {
+	//		setNoRecycle(database, true);
+	//		currentDatabaseHolder_.set(database);
+	//	}
+	//
+	//	public static void clearDatabase() {
+	//		currentDatabaseHolder_.set(null);
+	//	}
 
 	public static ClassLoader getClassLoader() {
 		if (currentClassLoader_.get() == null) {

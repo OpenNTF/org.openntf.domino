@@ -1905,13 +1905,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		return "Anonymous".equals(getEffectiveUserName());
 	}
 
-	/**
-	 * This method is needed for testing purposes; isn't (yet) part of the Interface
-	 * 
-	 * @deprecated you cannot change currentDatabase in delegate (AFAIK)
-	 * @param db
-	 */
-	@Deprecated
+	@Override
 	public void setCurrentDatabase(final Database db) {
 		currentDatabase_ = db;
 	}
