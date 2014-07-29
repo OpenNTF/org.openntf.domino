@@ -2,7 +2,7 @@ package org.openntf.domino.nsfdata.impldxl.item;
 
 import java.nio.ByteBuffer;
 
-import org.openntf.domino.nsfdata.ods.cd.CData;
+import org.openntf.domino.nsfdata.structs.cd.CData;
 import org.openntf.domino.utils.xml.XMLNode;
 
 public class DXLItemComposite extends DXLItemRaw {

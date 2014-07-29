@@ -1,4 +1,4 @@
-package org.openntf.domino.nsfdata.ods.cd;
+package org.openntf.domino.nsfdata.structs.cd;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -10,15 +10,15 @@ public class CDRecord implements Serializable {
 	public static CDRecord create(final CDSignature signature, final ByteBuffer data, final int dataLength) {
 		switch (signature) {
 		case FILEHEADER:
-			return new CDRecordFileHeader(signature, data, dataLength);
+			return new CDFILEHEADER(signature, data, dataLength);
 		case FILESEGMENT:
-			return new CDRecordFileSegment(signature, data, dataLength);
+			return new CDFILESEGMENT(signature, data, dataLength);
 		case PABDEFINITION:
-			return new CDRecordParaDefinition(signature, data, dataLength);
+			return new CDPABDEFINITION(signature, data, dataLength);
 		case TEXT:
-			return new CDRecordText(signature, data, dataLength);
+			return new CDTEXT(signature, data, dataLength);
 		case LINK2:
-			return new CDRecordLink2(signature, data, dataLength);
+			return new CDLINK2(signature, data, dataLength);
 		default:
 			return new CDRecord(signature, data, dataLength);
 		}

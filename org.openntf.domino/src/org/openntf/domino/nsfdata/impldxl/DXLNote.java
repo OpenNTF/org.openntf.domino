@@ -17,10 +17,10 @@ import org.openntf.domino.nsfdata.NSFNote;
 import org.openntf.domino.nsfdata.NSFRichTextData;
 import org.openntf.domino.nsfdata.impldxl.item.DXLItemComposite;
 import org.openntf.domino.nsfdata.impldxl.item.DXLItemFactory;
-import org.openntf.domino.nsfdata.ods.cd.CDRecord;
-import org.openntf.domino.nsfdata.ods.cd.CDRecordFileHeader;
-import org.openntf.domino.nsfdata.ods.cd.CDRecordFileSegment;
-import org.openntf.domino.nsfdata.ods.cd.CData;
+import org.openntf.domino.nsfdata.structs.cd.CDFILEHEADER;
+import org.openntf.domino.nsfdata.structs.cd.CDFILESEGMENT;
+import org.openntf.domino.nsfdata.structs.cd.CDRecord;
+import org.openntf.domino.nsfdata.structs.cd.CData;
 import org.openntf.domino.utils.xml.XMLNode;
 
 public class DXLNote implements NSFNote, Serializable {
@@ -177,13 +177,13 @@ public class DXLNote implements NSFNote, Serializable {
 					}
 					CDRecord record = cdata.next();
 
-					if (record instanceof CDRecordFileHeader) {
-						CDRecordFileHeader header = (CDRecordFileHeader) record;
+					if (record instanceof CDFILEHEADER) {
+						CDFILEHEADER header = (CDFILEHEADER) record;
 						totalSegments = header.getSegCount();
 						segmentCount = 0;
 					}
-					if (record instanceof CDRecordFileSegment) {
-						CDRecordFileSegment seg = (CDRecordFileSegment) record;
+					if (record instanceof CDFILESEGMENT) {
+						CDFILESEGMENT seg = (CDFILESEGMENT) record;
 						ByteBuffer data = seg.getFileData().duplicate();
 						try {
 							os.write(data.array(), data.position(), data.limit() - data.position());

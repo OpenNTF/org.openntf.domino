@@ -1,4 +1,4 @@
-package org.openntf.domino.nsfdata.ods;
+package org.openntf.domino.nsfdata.structs;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;

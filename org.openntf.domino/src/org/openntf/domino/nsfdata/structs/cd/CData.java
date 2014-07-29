@@ -1,4 +1,4 @@
-package org.openntf.domino.nsfdata.ods.cd;
+package org.openntf.domino.nsfdata.structs.cd;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -6,7 +6,7 @@ import java.nio.ByteOrder;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.openntf.domino.nsfdata.ods.SIG;
+import org.openntf.domino.nsfdata.structs.SIG;
 
 public class CData implements Serializable, Iterator<CDRecord> {
 	private static final long serialVersionUID = 1L;

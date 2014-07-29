@@ -1,14 +1,14 @@
-package org.openntf.domino.nsfdata.ods.cd;
+package org.openntf.domino.nsfdata.structs.cd;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 
-import org.openntf.domino.nsfdata.ods.ODSUtils;
+import org.openntf.domino.nsfdata.structs.ODSUtils;
 
-public class CDRecordLink2 extends CDRecord {
+public class CDLINK2 extends CDRecord {
 	private static final long serialVersionUID = 1L;
 
-	public CDRecordLink2(final CDSignature signature, final ByteBuffer data, final int dataLength) {
+	public CDLINK2(final CDSignature signature, final ByteBuffer data, final int dataLength) {
 		super(signature, data, dataLength);
 	}
 

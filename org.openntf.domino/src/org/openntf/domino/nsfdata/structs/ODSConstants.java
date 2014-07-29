@@ -1,4 +1,4 @@
-package org.openntf.domino.nsfdata.ods;
+package org.openntf.domino.nsfdata.structs;
 
 public final class ODSConstants {
 	private ODSConstants() { }

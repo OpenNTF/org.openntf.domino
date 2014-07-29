@@ -1,11 +1,11 @@
-package org.openntf.domino.nsfdata.ods.cd;
+package org.openntf.domino.nsfdata.structs.cd;
 
 import java.nio.ByteBuffer;
 
-public class CDRecordFileSegment extends CDRecord {
+public class CDFILESEGMENT extends CDRecord {
 	private static final long serialVersionUID = 1L;
 
-	public CDRecordFileSegment(final CDSignature signature, final ByteBuffer data, final int dataLength) {
+	public CDFILESEGMENT(final CDSignature signature, final ByteBuffer data, final int dataLength) {
 		super(signature, data, dataLength);
 	}
 
