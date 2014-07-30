@@ -2814,7 +2814,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					closeMIMEEntities(true, itemName);
 				}
 			}
-
+			beginEdit();
 			if (dominoFriendly.size() == 1) {
 				result = getDelegate().replaceItemValue(itemName, firstElement);
 			} else {
