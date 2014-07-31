@@ -507,8 +507,8 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void attachVCard(final lotus.domino.Base document, final String charset) {
 		checkMimeOpen();
+		beginEdit();
 		try {
-			beginEdit();
 			getDelegate().attachVCard(toLotus(document), charset);
 			markDirty();
 		} catch (NotesException e) {
@@ -620,7 +620,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			markDirty();
 			return ret;
 		} catch (NotesException e) {
-
 			DominoUtils.handleException(e);
 		}
 		return false;
@@ -2209,7 +2208,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public void putInFolder(final String name, final boolean createOnFail) {
 		// TODO - NTF handle transaction context
 		checkMimeOpen();
-		beginEdit();
+		if (getAncestorDatabase().getFolderReferencesEnabled()) {
+			beginEdit();
+		}
 		try {
 			// This method will modify the fields $FolderInfo and $FolderRefInfo if FolderReferences are enabled in the database.
 			getDelegate().putInFolder(name, createOnFail);
@@ -2394,11 +2395,11 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	public Item replaceItemValueCustomData(final String itemName, final String dataTypeName, final Object value, final boolean returnItem) {
 		checkMimeOpen();
-		beginEdit();
 		lotus.domino.Item result = null;
 		try {
 			if (!"mime-bean".equalsIgnoreCase(dataTypeName)) {
 				// if data-type is != "mime-bean" the object is written in native mode.
+				beginEdit();
 				result = getDelegate().replaceItemValueCustomData(itemName, dataTypeName, value);
 				markDirty(itemName, true);
 			} else if (value instanceof Serializable) {
@@ -2486,7 +2487,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public Item replaceItemValueCustomDataBytes(final String itemName, String dataTypeName, final byte[] byteArray) throws IOException {
 		checkMimeOpen();
-		beginEdit();
 		if (dataTypeName == null)
 			dataTypeName = "";	// Passing null as par 2 to Lotus method crashes the Domino server
 
@@ -2498,6 +2498,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				// Then fall back to the normal method, which will MIMEBean it
 				return this.replaceItemValueCustomData(itemName, "mime-bean", itemName, true); // TODO: What about dataTypeName?
 			} else {
+				beginEdit();
 				Item result = fromLotus(getDelegate().replaceItemValueCustomDataBytes(itemName, dataTypeName, byteArray), Item.SCHEMA, this);
 				markDirty(itemName, true);
 				return result;
@@ -2687,7 +2688,6 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public Item replaceItemValueLotus(final String itemName, Object value, final Boolean isSummary, final boolean returnItem)
 			throws Domino32KLimitException {
 		checkMimeOpen();
-		beginEdit();
 		// writing a value of "Null" leads to a remove of the item if configured in SESSION
 		if (value == null || value instanceof Null) {
 			if (hasItem(itemName)) {
@@ -2718,6 +2718,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						closeMIMEEntities(true, itemName);
 					}
 				}
+				beginEdit();
 				result = getDelegate().replaceItemValue(itemName, toDominoFriendly(value, this, recycleThis));
 				markDirty(itemName, true);
 				if (returnItem) {
@@ -2829,7 +2830,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					closeMIMEEntities(true, itemName);
 				}
 			}
-
+			beginEdit();
 			if (dominoFriendly.size() == 1) {
 				result = getDelegate().replaceItemValue(itemName, firstElement);
 			} else {
