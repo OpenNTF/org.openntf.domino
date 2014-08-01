@@ -66,6 +66,19 @@ public enum CDSignature {
 		return recordLength_;
 	}
 
+	public int getSize() {
+		switch (recordLength_) {
+		case BYTE:
+			return 2;
+		case LONG:
+			return 6;
+		case WORD:
+			return 4;
+		default:
+			return 0;
+		}
+	}
+
 	public static SIG sigForData(final ByteBuffer data) {
 		data.order(ByteOrder.LITTLE_ENDIAN);
 		//		System.out.println("reading sig at position: " + data.position());

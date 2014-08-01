@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 public class CDFILESEGMENT extends CDRecord {
 	private static final long serialVersionUID = 1L;
 
-	public CDFILESEGMENT(final CDSignature signature, final ByteBuffer data, final int dataLength) {
+	protected CDFILESEGMENT(final CDSignature signature, final ByteBuffer data, final int dataLength) {
 		super(signature, data, dataLength);
 	}
 

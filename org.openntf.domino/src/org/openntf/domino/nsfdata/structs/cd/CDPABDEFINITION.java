@@ -6,7 +6,7 @@ import java.nio.ShortBuffer;
 public class CDPABDEFINITION extends CDRecord {
 	private static final long serialVersionUID = 1L;
 
-	public CDPABDEFINITION(final CDSignature signature, final ByteBuffer data, final int dataLength) {
+	protected CDPABDEFINITION(final CDSignature signature, final ByteBuffer data, final int dataLength) {
 		super(signature, data, dataLength);
 	}
 

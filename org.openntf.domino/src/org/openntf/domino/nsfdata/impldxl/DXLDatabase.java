@@ -20,7 +20,7 @@ import org.xml.sax.SAXException;
 
 public class DXLDatabase implements Serializable, NSFDatabase {
 	private static final long serialVersionUID = 1L;
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 
 	private Set<NSFNote> notes_ = new HashSet<NSFNote>();
 	private transient Map<Integer, NSFNote> notesByNoteId_ = new TreeMap<Integer, NSFNote>();

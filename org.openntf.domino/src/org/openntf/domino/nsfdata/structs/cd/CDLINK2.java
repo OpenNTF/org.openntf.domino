@@ -8,7 +8,7 @@ import org.openntf.domino.nsfdata.structs.ODSUtils;
 public class CDLINK2 extends CDRecord {
 	private static final long serialVersionUID = 1L;
 
-	public CDLINK2(final CDSignature signature, final ByteBuffer data, final int dataLength) {
+	protected CDLINK2(final CDSignature signature, final ByteBuffer data, final int dataLength) {
 		super(signature, data, dataLength);
 	}
 

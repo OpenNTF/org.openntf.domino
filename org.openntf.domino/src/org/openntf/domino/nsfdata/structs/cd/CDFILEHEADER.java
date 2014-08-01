@@ -7,7 +7,7 @@ import org.openntf.domino.nsfdata.structs.ODSUtils;
 public class CDFILEHEADER extends CDRecord {
 	private static final long serialVersionUID = 1L;
 
-	public CDFILEHEADER(final CDSignature signature, final ByteBuffer data, final int dataLength) {
+	protected CDFILEHEADER(final CDSignature signature, final ByteBuffer data, final int dataLength) {
 		super(signature, data, dataLength);
 	}
 
