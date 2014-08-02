@@ -9,7 +9,6 @@ import org.openntf.domino.nsfdata.structs.AbstractStruct;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 public abstract class CDRecord extends AbstractStruct {
-	private static final long serialVersionUID = 1L;
 
 	public static CDRecord create(final SIG signature, final ByteBuffer data) {
 		switch (signature.getSignature()) {
