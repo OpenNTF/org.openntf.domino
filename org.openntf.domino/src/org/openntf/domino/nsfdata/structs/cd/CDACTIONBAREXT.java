@@ -24,72 +24,72 @@ public class CDACTIONBAREXT extends CDRecord {
 		ByteBuffer data = getData().duplicate();
 		data.order(ByteOrder.LITTLE_ENDIAN);
 		data.position(data.position() + 0);
-		data.limit(data.position() + 4);
+		data.limit(data.position() + 6);
 		return new COLOR_VALUE(data);
 	}
 
 	public COLOR_VALUE getLineColor() {
 		ByteBuffer data = getData().duplicate();
 		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 4);
-		data.limit(data.position() + 4);
+		data.position(data.position() + 6);
+		data.limit(data.position() + 6);
 		return new COLOR_VALUE(data);
 	}
 
 	public COLOR_VALUE getFontColor() {
 		ByteBuffer data = getData().duplicate();
 		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 8);
-		data.limit(data.position() + 4);
+		data.position(data.position() + 12);
+		data.limit(data.position() + 6);
 		return new COLOR_VALUE(data);
 	}
 
 	public COLOR_VALUE getButtonColor() {
 		ByteBuffer data = getData().duplicate();
 		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 12);
-		data.limit(data.position() + 4);
+		data.position(data.position() + 18);
+		data.limit(data.position() + 6);
 		return new COLOR_VALUE(data);
 	}
 
 	public short getBtnBorderDisplay() {
-		return getData().getShort(getData().position() + 16);
+		return getData().getShort(getData().position() + 24);
 	}
 
 	/**
 	 * This is always recalculated on save
 	 */
 	public short getAppletHeight() {
-		return getData().getShort(getData().position() + 18);
+		return getData().getShort(getData().position() + 26);
 	}
 
 	public short getBarBackgroundRepeat() {
 		// TODO make enum
-		return getData().getShort(getData().position() + 20);
+		return getData().getShort(getData().position() + 28);
 	}
 
 	public byte getBtnWidthStyle() {
 		// TODO make enum
-		return getData().get(getData().position() + 22);
+		return getData().get(getData().position() + 30);
 	}
 
 	public byte getBtnTextJustify() {
 		// TODO make enum
-		return getData().get(getData().position() + 23);
+		return getData().get(getData().position() + 31);
 	}
 
 	/**
 	 * Valid only if BtnWidthStyle is ACTIONBAR_BUTTON_WIDTH_ABSOLUTE
 	 */
 	public short getBtnWidthAbsolute() {
-		return getData().getShort(getData().position() + 24);
+		return getData().getShort(getData().position() + 32);
 	}
 
 	/**
 	 * @return Extra margin on the inside right and left edges of a button to space image and text away from the right and left edges
 	 */
 	public short getBtnInternalMargin() {
-		return getData().getShort(getData().position() + 26);
+		return getData().getShort(getData().position() + 34);
 	}
 
 	/**
@@ -97,7 +97,7 @@ public class CDACTIONBAREXT extends CDRecord {
 	 */
 	public int getFlags() {
 		// TODO make enum
-		return getData().getInt(getData().position() + 28);
+		return getData().getInt(getData().position() + 36);
 	}
 
 	/**
@@ -105,13 +105,13 @@ public class CDACTIONBAREXT extends CDRecord {
 	 */
 	public int getBarFontId() {
 		// TODO map to font
-		return getData().getInt(getData().position() + 32);
+		return getData().getInt(getData().position() + 40);
 	}
 
 	public LENGTH_VALUE getBarHeight() {
 		ByteBuffer data = getData().duplicate();
 		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 36);
+		data.position(data.position() + 44);
 		data.limit(data.position() + 12);
 		return new LENGTH_VALUE(data);
 	}
@@ -122,7 +122,7 @@ public class CDACTIONBAREXT extends CDRecord {
 	public int[] getSpare() {
 		int[] result = new int[12];
 		for (int i = 0; i < 12; i++) {
-			result[i] = getData().getInt(getData().position() + (i * 4));
+			result[i] = getData().getInt(getData().position() + 56 + (i * 4));
 		}
 		return result;
 	}

@@ -145,7 +145,7 @@ public class CDBORDERINFO extends CDRecord {
 		ByteBuffer data = getData().duplicate();
 		data.order(ByteOrder.LITTLE_ENDIAN);
 		data.position(data.position() + 42);
-		data.limit(data.position() + 4);
+		data.limit(data.position() + 6);
 		return new COLOR_VALUE(data);
 	}
 
@@ -153,7 +153,7 @@ public class CDBORDERINFO extends CDRecord {
 		short[] result = new short[5];
 		ByteBuffer data = getData().duplicate();
 		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 46);
+		data.position(data.position() + 48);
 		data.limit(data.position() + 10);
 		for (int i = 0; i < 5; i++) {
 			result[i] = data.getShort();

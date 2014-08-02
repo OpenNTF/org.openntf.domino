@@ -61,33 +61,33 @@ public class CDPRETABLEBEGIN extends CDRecord {
 	public COLOR_VALUE getStyleColor1() {
 		ByteBuffer data = getData().duplicate();
 		data.position(data.position() + 26);
-		data.limit(data.position() + 4);
+		data.limit(data.position() + 6);
 		return new COLOR_VALUE(data);
 	}
 
 	public COLOR_VALUE getStyleColor2() {
 		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 30);
-		data.limit(data.position() + 4);
+		data.position(data.position() + 32);
+		data.limit(data.position() + 6);
 		return new COLOR_VALUE(data);
 	}
 
 	public COLOR_VALUE getInnerBorderColor() {
 		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 34);
-		data.limit(data.position() + 4);
+		data.position(data.position() + 38);
+		data.limit(data.position() + 6);
 		return new COLOR_VALUE(data);
 	}
 
 	public short getNameLength() {
-		return getData().getShort(getData().position() + 38);
+		return getData().getShort(getData().position() + 44);
 	}
 
 	public short getImagePacketLength() {
-		return getData().getShort(getData().position() + 40);
+		return getData().getShort(getData().position() + 46);
 	}
 
 	public short getRowLabelDataLength() {
-		return getData().getShort(getData().position() + 42);
+		return getData().getShort(getData().position() + 48);
 	}
 }

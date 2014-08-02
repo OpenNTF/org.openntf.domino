@@ -14,12 +14,12 @@ public class RECTSIZE extends AbstractStruct {
 		super(data);
 	}
 
-	public short getWidth() {
-		return getData().getShort(getData().position() + 0);
+	public int getWidth() {
+		return getData().getShort(getData().position() + 0) & 0xFFFF;
 	}
 
-	public short getHeight() {
-		return getData().getShort(getData().position() + 2);
+	public int getHeight() {
+		return getData().getShort(getData().position() + 2) & 0xFFFF;
 	}
 
 	@Override

@@ -16,16 +16,21 @@ public class COLOR_VALUE extends AbstractStruct {
 		super(data);
 	}
 
+	public short getFlags() {
+		// TODO make enum
+		return getData().getShort(getData().position() + 0);
+	}
+
 	public int getRed() {
-		return getData().get(getData().position() + 0) & 0xFF;
+		return getData().get(getData().position() + 2) & 0xFF;
 	}
 
 	public int getBlue() {
-		return getData().get(getData().position() + 1) & 0xFF;
+		return getData().get(getData().position() + 3) & 0xFF;
 	}
 
 	public int getGreen() {
-		return getData().get(getData().position() + 2) & 0xFF;
+		return getData().get(getData().position() + 4) & 0xFF;
 	}
 
 	public Color getColor() {
@@ -34,7 +39,7 @@ public class COLOR_VALUE extends AbstractStruct {
 
 	@Override
 	public int getStructSize() {
-		return 4;
+		return 6;
 	}
 
 	@Override

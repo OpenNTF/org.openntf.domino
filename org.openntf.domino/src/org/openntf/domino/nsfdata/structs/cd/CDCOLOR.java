@@ -19,7 +19,7 @@ public class CDCOLOR extends CDRecord {
 
 	public COLOR_VALUE getColor() {
 		ByteBuffer data = getData().duplicate();
-		data.limit(data.position() + 4);
+		data.limit(data.position() + 6);
 		return new COLOR_VALUE(data);
 	}
 }

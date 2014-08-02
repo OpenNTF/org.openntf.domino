@@ -10,5 +10,4 @@ public class BasicCDRecord extends CDRecord {
 	protected BasicCDRecord(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
-
 }

@@ -44,4 +44,10 @@ public class NFMT extends AbstractStruct {
 	public byte getUnused() {
 		return getData().get(getData().position() + 3);
 	}
+
+	@Override
+	public String toString() {
+		return "[" + getClass().getSimpleName() + ", Digits: " + getDigits() + ", Format: " + getFormat() + ", Attributes: "
+				+ getAttributes() + "]";
+	}
 }

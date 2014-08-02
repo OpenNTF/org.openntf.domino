@@ -21,10 +21,18 @@ public abstract class CDRecord extends AbstractStruct {
 			return new CDACTIONBAREXT(signature, data);
 		case BEGIN:
 			return new CDBEGINRECORD(signature, data);
+		case BITMAPHEADER:
+			return new CDBITMAPHEADER(signature, data);
+		case BITMAPSEGMENT:
+			return new CDBITMAPSEGMENT(signature, data);
 		case BORDERINFO:
 			return new CDBORDERINFO(signature, data);
+		case CAPTION:
+			return new CDCAPTION(signature, data);
 		case COLOR:
 			return new CDCOLOR(signature, data);
+		case COLORTABLE:
+			return new CDCOLORTABLE(signature, data);
 		case DATAFLAGS:
 			return new CDDATAFLAGS(signature, data);
 		case DECSFIELD:
@@ -47,8 +55,18 @@ public abstract class CDRecord extends AbstractStruct {
 			return new CDFILEHEADER(signature, data);
 		case FILESEGMENT:
 			return new CDFILESEGMENT(signature, data);
+		case FRAMESET:
+			return new CDFRAMESET(signature, data);
+		case FRAMESETHEADER:
+			return new CDFRAMESETHEADER(signature, data);
+		case FRAME:
+			return new CDFRAME(signature, data);
 		case GRAPHIC:
 			return new CDGRAPHIC(signature, data);
+		case HOTSPOTBEGIN:
+			return new CDHOTSPOTBEGIN(signature, data);
+		case HOTSPOTEND:
+			return new CDHOTSPOTEND(signature, data);
 		case IMAGEHEADER:
 			return new CDIMAGEHEADER(signature, data);
 		case IMAGESEGMENT:
@@ -63,6 +81,8 @@ public abstract class CDRecord extends AbstractStruct {
 			return new CDPABREFERENCE(signature, data);
 		case PARAGRAPH:
 			return new CDPARAGRAPH(signature, data);
+		case PATTERNTABLE:
+			return new CDPATTERNTABLE(signature, data);
 		case PRETABLEBEGIN:
 			return new CDPRETABLEBEGIN(signature, data);
 		case TABLEBEGIN:
@@ -102,10 +122,10 @@ public abstract class CDRecord extends AbstractStruct {
 	}
 
 	/**
-	 * @return Any additional bytes at the end of the record used for word alignment
+	 * @return Any additional byte at the end of the record used for word alignment
 	 */
 	public int getExtraLength() {
-		return 0;
+		return getDataLength() % 2;
 	}
 
 	@Override
@@ -115,7 +135,7 @@ public abstract class CDRecord extends AbstractStruct {
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + " " + getSignature().getSignature() + "]";
+		return "[" + getClass().getSimpleName() + ", Signature: " + getSignature() + "]";
 	}
 
 	@Override

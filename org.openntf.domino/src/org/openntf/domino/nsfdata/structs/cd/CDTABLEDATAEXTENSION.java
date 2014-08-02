@@ -95,7 +95,7 @@ public class CDTABLEDATAEXTENSION extends CDRecord {
 		if (getTabLabelFontLength() > 8) {
 			ByteBuffer data = getData().duplicate();
 			data.position(data.position() + 54);
-			data.limit(data.position() + 4);
+			data.limit(data.position() + 6);
 			return new COLOR_VALUE(data);
 		}
 		return null;

@@ -74,19 +74,19 @@ public class CDDOCUMENT extends CDRecord {
 	public COLOR_VALUE getPaperColorValue() {
 		ByteBuffer data = getData().duplicate();
 		data.position(getData().position() + 12);
-		data.limit(data.position() + 4);
+		data.limit(data.position() + 6);
 		return new COLOR_VALUE(data);
 	}
 
 	public short getFormFlags3() {
 		// TODO make an enum
 		// There's an extra byte at the end of the color value
-		return getData().getShort(getData().position() + 16);
+		return getData().getShort(getData().position() + 18);
 	}
 
 	public String getInheritFieldName() {
 		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 18);
+		data.position(data.position() + 20);
 		data.limit(data.position() + getInherFieldNameLength());
 		return ODSUtils.fromLMBCS(data);
 	}
@@ -96,12 +96,7 @@ public class CDDOCUMENT extends CDRecord {
 	 */
 	public String getFieldName() {
 		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 18 + getInherFieldNameLength());
+		data.position(data.position() + 20 + getInherFieldNameLength());
 		return ODSUtils.fromLMBCS(data);
-	}
-
-	@Override
-	public int getExtraLength() {
-		return getDataLength() % 2;
 	}
 }

@@ -20,7 +20,10 @@ public class LIST extends AbstractStruct {
 		return 2;
 	}
 
-	public short getListEntries() {
-		return getData().getShort(getData().position() + 0);
+	/**
+	 * This is a WORD - unsigned short - so upgrade it to int for Java's sake
+	 */
+	public int getListEntries() {
+		return getData().getShort(getData().position() + 0) & 0xFFFF;
 	}
 }

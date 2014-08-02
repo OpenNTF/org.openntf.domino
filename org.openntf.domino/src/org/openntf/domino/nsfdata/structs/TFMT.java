@@ -52,4 +52,9 @@ public class TFMT extends AbstractStruct {
 		return getData().get(getData().position() + 3);
 	}
 
+	@Override
+	public String toString() {
+		return "[" + getClass().getSimpleName() + ", Date: " + getDate() + ", Time: " + getTime() + ", Zone: " + getZone()
+				+ ", Structure: " + getStructure() + "]";
+	}
 }

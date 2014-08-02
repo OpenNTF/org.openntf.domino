@@ -108,6 +108,8 @@ public enum CDSignature {
 				}
 			}
 		}
+		System.out.println("length byte is " + highOrder);
+		System.out.println("sig byte is " + lowOrder);
 		throw new IllegalArgumentException("Unknown sig value " + lowOrder + " for length " + length);
 	}
 }
