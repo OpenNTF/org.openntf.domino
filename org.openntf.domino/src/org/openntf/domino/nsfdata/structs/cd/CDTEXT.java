@@ -3,12 +3,18 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.ODSUtils;
+import org.openntf.domino.nsfdata.structs.SIG;
 
+/**
+ * This structure defines the start of a run of text in a rich-text field. (editods.h)
+ * 
+ * @author jgallagher
+ *
+ */
 public class CDTEXT extends CDRecord {
-	private static final long serialVersionUID = 1L;
 
-	public CDTEXT(final CDSignature signature, final ByteBuffer data, final int dataLength) {
-		super(signature, data, dataLength);
+	public CDTEXT(final SIG signature, final ByteBuffer data) {
+		super(signature, data);
 	}
 
 	public int getFontId() {

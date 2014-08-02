@@ -4,18 +4,31 @@ import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.ODSUtils;
+import org.openntf.domino.nsfdata.structs.SIG;
 
+/**
+ * This structure implements a document link in a rich text field. It contains an index into a Doc Link Reference List. A Doc Link Reference
+ * (a NOTELINK structure) contains all the information necessary to open the specified document from any database on any server. (editods.h)
+ * 
+ * @author jgallagher
+ *
+ */
 public class CDLINK2 extends CDRecord {
-	private static final long serialVersionUID = 1L;
 
-	protected CDLINK2(final CDSignature signature, final ByteBuffer data, final int dataLength) {
-		super(signature, data, dataLength);
+	protected CDLINK2(final SIG signature, final ByteBuffer data) {
+		super(signature, data);
 	}
 
+	/**
+	 * @return ID of the link
+	 */
 	public short getLinkId() {
 		return getData().getShort(getData().position() + 0);
 	}
 
+	/**
+	 * @return Display comment
+	 */
 	public String getComment() {
 		ByteBuffer data = getData().duplicate();
 		data.position(data.position() + 2);
@@ -34,6 +47,9 @@ public class CDLINK2 extends CDRecord {
 		return ODSUtils.fromLMBCS(bos.toByteArray());
 	}
 
+	/**
+	 * @return Server "hint"
+	 */
 	public String getHint() {
 		// Seek to the first null byte (the end of Comment)
 		ByteBuffer data = getData().duplicate();
@@ -62,6 +78,9 @@ public class CDLINK2 extends CDRecord {
 		return ODSUtils.fromLMBCS(bos.toByteArray());
 	}
 
+	/**
+	 * @return Anchor text (optional)
+	 */
 	public String getAnchor() {
 		// TODO make this work - namely, figure out how to know when it's present
 		// Seek to the first null byte (the end of Comment)

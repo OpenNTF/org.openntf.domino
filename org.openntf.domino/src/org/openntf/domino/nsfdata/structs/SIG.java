@@ -24,4 +24,9 @@ public abstract class SIG implements Serializable {
 	}
 
 	public abstract int getSigLength();
+
+	@Override
+	public String toString() {
+		return "[" + getClass().getSimpleName() + ", Signature: " + getSignature() + ", Length: " + getLength() + "]";
+	}
 }

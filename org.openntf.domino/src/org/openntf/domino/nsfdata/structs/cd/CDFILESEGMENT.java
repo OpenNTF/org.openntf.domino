@@ -2,11 +2,20 @@ package org.openntf.domino.nsfdata.structs.cd;
 
 import java.nio.ByteBuffer;
 
-public class CDFILESEGMENT extends CDRecord {
-	private static final long serialVersionUID = 1L;
+import org.openntf.domino.nsfdata.structs.SIG;
 
-	protected CDFILESEGMENT(final CDSignature signature, final ByteBuffer data, final int dataLength) {
-		super(signature, data, dataLength);
+/**
+ * This structure defines the file segment data of a Cascading Style Sheet (CSS) and follows a CDFILEHEADER structure. The number of
+ * segments in the file is specified in the CDFILEHEADER record. (editods.h)
+ * 
+ * @author jgallagher
+ * @since Lotus Notes/Domino 6.0
+ *
+ */
+public class CDFILESEGMENT extends CDRecord {
+
+	protected CDFILESEGMENT(final SIG signature, final ByteBuffer data) {
+		super(signature, data);
 	}
 
 	@Override
@@ -14,22 +23,37 @@ public class CDFILESEGMENT extends CDRecord {
 		return getSegSize() - getDataSize();
 	}
 
+	/**
+	 * @return Actual Size of image [sic] bits in bytes, ignoring any filler
+	 */
 	public short getDataSize() {
 		return getData().getShort(getData().position() + 0);
 	}
 
+	/**
+	 * @return Size of segment, is equal to or larger than DataSize if filler byte added to maintain word boundary
+	 */
 	public short getSegSize() {
 		return getData().getShort(getData().position() + 2);
 	}
 
+	/**
+	 * @return Currently unused, but someday someone will be happy this is here
+	 */
 	public int getFlags() {
 		return getData().getInt(getData().position() + 4);
 	}
 
+	/**
+	 * @return Reserved for future use
+	 */
 	public int getReserved() {
 		return getData().getInt(getData().position() + 8);
 	}
 
+	/**
+	 * @return File bits for this segment
+	 */
 	public ByteBuffer getFileData() {
 		ByteBuffer data = getData().duplicate();
 		data.position(data.position() + 12);

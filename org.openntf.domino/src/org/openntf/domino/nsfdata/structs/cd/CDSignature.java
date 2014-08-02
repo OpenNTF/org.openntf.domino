@@ -82,9 +82,9 @@ public enum CDSignature {
 	public static SIG sigForData(final ByteBuffer data) {
 		data.order(ByteOrder.LITTLE_ENDIAN);
 		//		System.out.println("reading sig at position: " + data.position());
-		byte lowOrderByte = data.get();
+		byte lowOrderByte = data.get(data.position());
 		int lowOrder = lowOrderByte & 0xFF;
-		int highOrder = data.get() & 0xFF;
+		int highOrder = data.get(data.position() + 1) & 0xFF;
 		//		System.out.println("low order: " + lowOrder);
 		//		System.out.println("low order byte: " + lowOrderByte);
 		//		System.out.println("high order: " + highOrder);
@@ -100,9 +100,9 @@ public enum CDSignature {
 				case BYTE:
 					return new BSIG(cdSig, highOrder);
 				case WORD:
-					return new WSIG(cdSig, data.getShort());
+					return new WSIG(cdSig, data.getShort(data.position() + 2));
 				case LONG:
-					return new LSIG(cdSig, data.getInt());
+					return new LSIG(cdSig, data.getInt(data.position() + 2));
 				default:
 					break;
 				}

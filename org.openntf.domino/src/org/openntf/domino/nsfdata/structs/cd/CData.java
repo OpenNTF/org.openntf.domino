@@ -62,7 +62,8 @@ public class CData extends AbstractSequentialList<CDRecord> implements Serializa
 		// Now the ByteBuffer is positioned at the start of the data
 		// Create a view starting at the start of the data and going the length of the data
 		ByteBuffer recordData = data_.duplicate();
-		CDRecord record = CDRecord.create(sig.getSignature(), recordData, dataLength);
+		recordData.order(ByteOrder.LITTLE_ENDIAN);
+		CDRecord record = CDRecord.create(sig, recordData);
 
 		// Skip past the data for the next record
 		data_.position(data_.position() + dataLength + record.getExtraLength());

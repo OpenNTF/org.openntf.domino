@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,7 +27,7 @@ import org.openntf.domino.utils.xml.XMLNode;
 public class DXLNote implements NSFNote, Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
 	private final NoteClass noteClass_;
 	private final int noteId_;
@@ -184,6 +185,7 @@ public class DXLNote implements NSFNote, Serializable {
 					if (record instanceof CDFILESEGMENT) {
 						CDFILESEGMENT seg = (CDFILESEGMENT) record;
 						ByteBuffer data = seg.getFileData().duplicate();
+						data.order(ByteOrder.LITTLE_ENDIAN);
 						try {
 							os.write(data.array(), data.position(), data.limit() - data.position());
 						} catch (IOException e) {

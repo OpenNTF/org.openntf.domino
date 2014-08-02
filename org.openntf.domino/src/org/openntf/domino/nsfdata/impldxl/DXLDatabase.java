@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -20,9 +20,9 @@ import org.xml.sax.SAXException;
 
 public class DXLDatabase implements Serializable, NSFDatabase {
 	private static final long serialVersionUID = 1L;
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
-	private Set<NSFNote> notes_ = new HashSet<NSFNote>();
+	private Set<NSFNote> notes_ = new LinkedHashSet<NSFNote>();
 	private transient Map<Integer, NSFNote> notesByNoteId_ = new TreeMap<Integer, NSFNote>();
 	private transient Map<String, NSFNote> notesByUniversalId_ = new TreeMap<String, NSFNote>();
 

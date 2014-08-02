@@ -1,11 +1,8 @@
 package org.openntf.domino.nsfdata.structs;
 
-import java.io.Serializable;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
-public class MIME_PART implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class MIME_PART extends AbstractStruct {
 
 	public static final int MIME_PART_HAS_BOUNDARY = 0x00000001;
 	public static final int MIME_PART_HAS_HEADERS = 0x00000002;
@@ -13,47 +10,62 @@ public class MIME_PART implements Serializable {
 	public static final int MIME_PART_SHARED_DBOBJECT = 0x00000008;
 	public static final int MIME_PART_SKIP_FOR_CONVERSION = 0x00000010;
 
-	private final ByteBuffer data_;
-
+	// TODO add support for following MIME data
 	public MIME_PART(final ByteBuffer data) {
-		data_ = data.duplicate();
-		data_.order(ByteOrder.LITTLE_ENDIAN);
+		super(data);
 	}
 
+	/**
+	 * @return MIME_PART Version
+	 */
 	public short getVersion() {
-		return data_.getShort(data_.position() + 0);
+		return getData().getShort(getData().position() + 0);
 	}
 
 	public int getFlags() {
-		return data_.getInt(data_.position() + 2);
+		// TODO create enum
+		return getData().getInt(getData().position() + 2);
 	}
 
+	/**
+	 * @return Type of MIME_PART body
+	 */
 	public byte getPartType() {
-		return data_.get(data_.position() + 6);
+		// TODO create enum
+		return getData().get(getData().position() + 6);
 	}
 
 	public byte getSpare() {
-		return data_.get(data_.position() + 7);
+		return getData().get(getData().position() + 7);
 	}
 
+	/**
+	 * @return Bytes of variable length part data NOT including data in DB object
+	 */
 	public short getByteCount() {
-		return data_.getShort(data_.position() + 8);
+		return getData().getShort(getData().position() + 8);
 	}
 
+	/**
+	 * @return Length of the boundary string
+	 */
 	public short getBoundaryLen() {
-		return data_.getShort(data_.position() + 10);
+		return getData().getShort(getData().position() + 10);
 	}
 
+	/**
+	 * @return Length of the headers
+	 */
 	public short getHeadersLen() {
-		return data_.getShort(data_.position() + 12);
+		return getData().getShort(getData().position() + 12);
 	}
 
 	public short getSpare2() {
-		return data_.getShort(data_.position() + 14);
+		return getData().getShort(getData().position() + 14);
 	}
 
 	public int getSpare3() {
-		return data_.getInt(data_.position() + 16);
+		return getData().getInt(getData().position() + 16);
 	}
 
 	public boolean hasBoundary() {
@@ -70,5 +82,10 @@ public class MIME_PART implements Serializable {
 
 	public boolean isSkipForConversion() {
 		return (getFlags() & MIME_PART_SKIP_FOR_CONVERSION) > 0;
+	}
+
+	@Override
+	public int getStructSize() {
+		return 20;
 	}
 }

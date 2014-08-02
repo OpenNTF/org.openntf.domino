@@ -3,64 +3,118 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 
-public class CDPABDEFINITION extends CDRecord {
-	private static final long serialVersionUID = 1L;
+import org.openntf.domino.nsfdata.structs.SIG;
 
-	protected CDPABDEFINITION(final CDSignature signature, final ByteBuffer data, final int dataLength) {
-		super(signature, data, dataLength);
+/**
+ * This structure specifies a format for paragraphs in a rich-text field. There may be more than one paragraph using the same paragraph
+ * format, but there may be no more than one CDPABDEFINITION with the same ID in a rich-text field. (editods.h)
+ * 
+ * @author jgallagher
+ *
+ */
+public class CDPABDEFINITION extends CDRecord {
+	protected CDPABDEFINITION(final SIG signature, final ByteBuffer data) {
+		super(signature, data);
 	}
 
+	/**
+	 * @return ID of this PAB
+	 */
 	public short getId() {
 		return getData().getShort(getData().position() + 0);
 	}
 
+	/**
+	 * @return Paragraph justification type
+	 */
 	public short getJustifyMode() {
+		// TODO create enum
 		return getData().getShort(getData().position() + 2);
 	}
 
+	/**
+	 * @return (2*(Line Spacing-1)) (0:1,1:1.5,2:2,etc)
+	 */
 	public short getLineSpacing() {
 		return getData().getShort(getData().position() + 4);
 	}
 
+	/**
+	 * @return # LineSpacing units above para
+	 */
 	public short getParagraphSpacingBefore() {
 		return getData().getShort(getData().position() + 6);
 	}
 
+	/**
+	 * @return # LineSpacing units below para
+	 */
 	public short getParagraphSpacingAfter() {
 		return getData().getShort(getData().position() + 8);
 	}
 
+	/**
+	 * @return Leftmost margin, twips rel to abs left (16 bits = about 44")
+	 */
 	public short getLeftMargin() {
 		return getData().getShort(getData().position() + 10);
 	}
 
+	/**
+	 * @return Rightmost margin, twips rel to abs right (16 bits = about 44") Special value "0" means right margin will be placed 1" from
+	 *         right edge of paper, regardless of paper size.
+	 */
 	public short getRightMargin() {
 		return getData().getShort(getData().position() + 12);
 	}
 
+	/**
+	 * @return Leftmost margin on first line (16 bits = about 44")
+	 */
 	public short getFirstLineLeftMargin() {
 		return getData().getShort(getData().position() + 14);
 	}
 
+	/**
+	 * @return Number of tab stops in table
+	 */
+	public short getTabs() {
+		return getData().getShort(getData().position() + 16);
+	}
+
+	/**
+	 * @return Table of tab stop positions, negative value means decimal tab (15 bits = about 22")
+	 */
 	public short[] getTab() {
 		short[] result = new short[20];
 		ByteBuffer tabsRaw = getData().duplicate();
-		tabsRaw.position(tabsRaw.position() + 16);
+		tabsRaw.position(tabsRaw.position() + 18);
 		ShortBuffer tabs = tabsRaw.asShortBuffer();
 		tabs.get(result);
 		return result;
 	}
 
+	/**
+	 * @return Paragraph attribute flags - PABFLAG_xxx
+	 */
 	public short getFlags() {
-		return getData().getShort(getData().position() + 54);
-	}
-
-	public int getTabTypes() {
+		// TODO create enum
 		return getData().getShort(getData().position() + 56);
 	}
 
+	/**
+	 * @return 2 bits per tab
+	 */
+	public int getTabTypes() {
+		return getData().getShort(getData().position() + 58);
+	}
+
+	/**
+	 * @return Extra paragraph attribute flags - PABFLAG2_xxx
+	 */
 	public short getFlags2() {
-		return getData().getShort(getData().position() + 60);
+		// TODO create enum
+		return getData().getShort(getData().position() + 62);
 	}
 
 	@Override
