@@ -10,4 +10,8 @@ package org.openntf.domino.ext;
  */
 public interface RichTextItem {
 
+	/**
+	 * Sets the underlying document dirty.
+	 */
+	public void markDirty();
 }
