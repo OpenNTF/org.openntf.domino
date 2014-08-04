@@ -1,28 +1,49 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
 import java.nio.ByteBuffer;
+import java.util.EnumSet;
+import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
- * This CD Record gives information pertaining to data connection resource information in a field or form.
+ * This CD Record gives information pertaining to data connection resource information in a field or form. (editods.h)
  * 
  * @author jgallagher
  * @since Lotus Notes/Domino 6.0
  */
 public class CDDECSFIELD extends CDRecord {
+	public static enum Flag {
+		KEY_FIELD((short) 0x001), STORE_LOCALLY((short) 0x002);
+
+		private final short value_;
+
+		private Flag(final short value) {
+			value_ = value;
+		}
+
+		public short getValue() {
+			return value_;
+		}
+
+		public static Set<Flag> valuesOf(final short flags) {
+			Set<Flag> result = EnumSet.noneOf(Flag.class);
+			for (Flag flag : values()) {
+				if ((flag.getValue() & flags) > 0) {
+					result.add(flag);
+				}
+			}
+			return result;
+		}
+	}
 
 	public CDDECSFIELD(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
-	/**
-	 * @return see FDECS_xxx
-	 */
-	public short getFlags() {
-		// TODO make enum
-		return getData().getShort(getData().position() + 0);
+	public Set<Flag> getFlags() {
+		return Flag.valuesOf(getData().getShort(getData().position() + 0));
 	}
 
 	public short getExternalNameLength() {

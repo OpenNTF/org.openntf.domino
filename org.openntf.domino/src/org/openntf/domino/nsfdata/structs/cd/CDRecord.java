@@ -24,6 +24,8 @@ public abstract class CDRecord extends AbstractStruct {
 			return new CDBITMAPHEADER(signature, data);
 		case BITMAPSEGMENT:
 			return new CDBITMAPSEGMENT(signature, data);
+		case BLOBPART:
+			return new CDBLOBPART(signature, data);
 		case BORDERINFO:
 			return new CDBORDERINFO(signature, data);
 		case CAPTION:
@@ -42,6 +44,8 @@ public abstract class CDRecord extends AbstractStruct {
 			return new CDEMBEDDEDCTL(signature, data);
 		case END:
 			return new CDENDRECORD(signature, data);
+		case EVENT:
+			return new CDEVENT(signature, data);
 		case EVENT_LANGUAGE_ENTRY:
 			return new CDEVENTENTRY(signature, data);
 		case EXT_FIELD:
@@ -66,6 +70,9 @@ public abstract class CDRecord extends AbstractStruct {
 			return new CDHOTSPOTBEGIN(signature, data);
 		case HOTSPOTEND:
 			return new CDHOTSPOTEND(signature, data);
+		case HREF:
+			// I don't know why the names are mismatched; ask Lotus
+			return new CDRESOURCE(signature, data);
 		case IMAGEHEADER:
 			return new CDIMAGEHEADER(signature, data);
 		case IMAGESEGMENT:

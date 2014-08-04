@@ -15,6 +15,28 @@ import org.openntf.domino.nsfdata.structs.SIG;
  *
  */
 public class CDCAPTION extends CDRecord {
+	public static enum Position {
+		BELOW_CENTER((byte) 0), MIDDLE_CENTER((byte) 1);
+
+		private final byte value_;
+
+		private Position(final byte value) {
+			value_ = value;
+		}
+
+		public byte getValue() {
+			return value_;
+		}
+
+		public static Position valueOf(final byte typeCode) {
+			for (Position type : values()) {
+				if (type.getValue() == typeCode) {
+					return type;
+				}
+			}
+			throw new IllegalArgumentException("No matching Position found for type code " + typeCode);
+		}
+	}
 
 	public CDCAPTION(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
@@ -30,9 +52,8 @@ public class CDCAPTION extends CDRecord {
 	/**
 	 * @return CAPTION_POSITION_xxx
 	 */
-	public byte getPosition() {
-		// TODO make enum
-		return getData().get(getData().position() + 2);
+	public Position getPosition() {
+		return Position.valueOf(getData().get(getData().position() + 2));
 	}
 
 	public int getFontId() {

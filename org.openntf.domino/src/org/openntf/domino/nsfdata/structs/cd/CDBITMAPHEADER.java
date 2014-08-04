@@ -1,6 +1,8 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
 import java.nio.ByteBuffer;
+import java.util.EnumSet;
+import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.RECTSIZE;
 import org.openntf.domino.nsfdata.structs.SIG;
@@ -14,6 +16,44 @@ import org.openntf.domino.nsfdata.structs.SIG;
  *
  */
 public class CDBITMAPHEADER extends CDRecord {
+	/**
+	 * Option flags set in the CDBITMAPHEADER record
+	 * 
+	 * @author jgallagher
+	 *
+	 */
+	public static enum Flag {
+		/**
+		 * Bitmap uses >16 colors or >4 grey scale levels
+		 */
+		REQUIRES_PALETTE((short) 1),
+		/**
+		 * Initialized by import code for "first time" importing of bitmaps from clipboard or file, to tell Notes that it should compute
+		 * whether or not to use a color palette or not. All imports and API programs should initially set this bit to let the Editor
+		 * compute whether it needs the palette or not.
+		 */
+		COMPUTE_PALETTE((short) 2);
+
+		private final short value_;
+
+		private Flag(final short value) {
+			value_ = value;
+		}
+
+		public short getValue() {
+			return value_;
+		}
+
+		public static Set<Flag> valuesOf(final short flags) {
+			Set<Flag> result = EnumSet.noneOf(Flag.class);
+			for (Flag flag : values()) {
+				if ((flag.getValue() & flags) > 0) {
+					result.add(flag);
+				}
+			}
+			return result;
+		}
+	}
 
 	public CDBITMAPHEADER(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
@@ -44,9 +84,8 @@ public class CDBITMAPHEADER extends CDRecord {
 	 * 
 	 * @return CDBITMAP_FLAGS (version 2 and later)
 	 */
-	public short getFlags() {
-		// TODO make enum
-		return getData().getShort(getData().position() + 8);
+	public Set<Flag> getFlags() {
+		return Flag.valuesOf(getData().getShort(getData().position() + 8));
 	}
 
 	/**

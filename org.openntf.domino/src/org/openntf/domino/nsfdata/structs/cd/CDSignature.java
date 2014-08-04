@@ -37,26 +37,37 @@ public enum CDSignature {
 	HREF(WORD, 246), EMBEDDEDCTL(WORD, 247), HTML_ALTTEXT(WORD, 248), EVENT(WORD, 249), PRETABLEBEGIN(WORD, 251), BORDERINFO(WORD, 252),
 	EMBEDDEDSCHEDCTL(WORD, 253), EXT2_FIELD(WORD, 254), EMBEDDEDEDITCTL(WORD, 255),
 
-																																									DOCUMENT_PRE_26(BYTE, 128), FIELD_PRE_36(WORD, 132), FIELD(WORD, 138), DOCUMENT(BYTE, 134), METAFILE(WORD, 135), BITMAP(WORD, 136),
+	DOCUMENT_PRE_26(BYTE, 128), FIELD_PRE_36(WORD, 132), FIELD(WORD, 138), DOCUMENT(BYTE, 134), METAFILE(WORD, 135), BITMAP(WORD, 136),
 	FONTTABLE(WORD, 139), LINK(BYTE, 140), LINKEXPORT(BYTE, 141), KEYWORD(WORD, 143), LINK2(WORD, 145), CGM(WORD, 147), TIFF(LONG, 148),
 	PATTERNTABLE(LONG, 152), DDEBEGIN(WORD, 161), DDEEND(WORD, 162), OLEBEGIN(WORD, 167), OLEEND(WORD, 168), HOTSPOTBEGIN(WORD, 169),
 	HOTSPOTEND(BYTE, 170), BUTTON(WORD, 171), BAR(WORD, 172), V4HOTSPOTBEGIN(WORD, 173), V4HOTSPOTEND(BYTE, 170), EXT_FIELD(WORD, 176),
 	LSOBJECT(WORD, 177), HTMLHEADER(WORD, 178), HTMLSEGMENT(WORD, 179), LAYOUT(BYTE, 183), LAYOUTTEXT(BYTE, 184), LAYOUTEND(BYTE, 185),
-	LAYOUTFIELD(BYTE, 186), PABHIDE(WORD, 187), PABFORMREF(BYTE, 188), ACTIONBAR(BYTE, 189), ACTION(WORD, 190), DOCAUTOLAUNCH(WORD, 191),
-	LAYOUTGRAPHIC(BYTE, 192), OLEOBJINFO(WORD, 193), LAYOUTBUTTON(BYTE, 194), TEXTEFFECT(WORD, 195),
+	LAYOUTFIELD(BYTE, 186), PABHIDE(WORD, 187), PABFORMREF(BYTE, 188), ACTIONBAR(BYTE, 189), ACTION(WORD, 190, LONG),
+	DOCAUTOLAUNCH(WORD, 191), LAYOUTGRAPHIC(BYTE, 192), OLEOBJINFO(WORD, 193), LAYOUTBUTTON(BYTE, 194), TEXTEFFECT(WORD, 195),
 
-																																																					VMHEADER(BYTE, 175), VMBITMAP(BYTE, 176), BMRECT(BYTE, 177), VMPOLYGON_BYTE(BYTE, 178), VMPOLYLINE_BYTE(BYTE, 179),
+	VMHEADER(BYTE, 175), VMBITMAP(BYTE, 176), BMRECT(BYTE, 177), VMPOLYGON_BYTE(BYTE, 178), VMPOLYLINE_BYTE(BYTE, 179),
 	VMREGION(BYTE, 180), VMACTION(BYTE, 181), VMELLIPSE(BYTE, 182), VMRNDRECT(BYTE, 184), VMBUTTON(BYTE, 185), VMACTION_2(WORD, 186),
 	VMTEXTBOX(WORD, 197), VMPOLYGON(WORD, 188), VMPOLYLINE(WORD, 190), VMCIRCLE(BYTE, 191), VMPOLYRGN_BYTE(BYTE, 192),
 
-																																																									ALTERNATEBEGIN(WORD, 198), ALTERNATEEND(BYTE, 199), OLERTMARKER(WORD, 200);
+	ALTERNATEBEGIN(WORD, 198), ALTERNATEEND(BYTE, 199), OLERTMARKER(WORD, 200);
 
 	private final RecordLength recordLength_;
 	private final int baseValue_;
+	private final RecordLength trueRecordLength_;
 
 	private CDSignature(final RecordLength recordLength, final int baseValue) {
 		recordLength_ = recordLength;
 		baseValue_ = baseValue;
+		trueRecordLength_ = null;
+	}
+
+	/**
+	 * This exists because the ACTION record type has a signature defined with WORD but actually uses an LSIG
+	 */
+	private CDSignature(final RecordLength recordLength, final int baseValue, final RecordLength trueRecordLength) {
+		recordLength_ = recordLength;
+		baseValue_ = baseValue;
+		trueRecordLength_ = trueRecordLength;
 	}
 
 	public int getBaseValue() {
@@ -67,16 +78,33 @@ public enum CDSignature {
 		return recordLength_;
 	}
 
+	public RecordLength getEffectiveRecordLength() {
+		return trueRecordLength_ != null ? trueRecordLength_ : recordLength_;
+	}
+
 	public int getSize() {
-		switch (recordLength_) {
-		case BYTE:
-			return 2;
-		case LONG:
-			return 6;
-		case WORD:
-			return 4;
-		default:
-			return 0;
+		if (trueRecordLength_ != null) {
+			switch (trueRecordLength_) {
+			case BYTE:
+				return 2;
+			case LONG:
+				return 6;
+			case WORD:
+				return 4;
+			default:
+				return 0;
+			}
+		} else {
+			switch (recordLength_) {
+			case BYTE:
+				return 2;
+			case LONG:
+				return 6;
+			case WORD:
+				return 4;
+			default:
+				return 0;
+			}
 		}
 	}
 
@@ -97,7 +125,7 @@ public enum CDSignature {
 			if (lowOrder == cdSig.getBaseValue() && length == cdSig.getRecordLength()) {
 				//				System.out.println("matched signature " + cdSig);
 				// Now determine which SIG to return based on the record length
-				switch (cdSig.getRecordLength()) {
+				switch (cdSig.getEffectiveRecordLength()) {
 				case BYTE:
 					return new BSIG(cdSig, highOrder);
 				case WORD:
@@ -109,8 +137,6 @@ public enum CDSignature {
 				}
 			}
 		}
-		System.out.println("length byte is " + highOrder);
-		System.out.println("sig byte is " + lowOrder);
 		throw new IllegalArgumentException("Unknown sig value " + lowOrder + " for length " + length);
 	}
 }

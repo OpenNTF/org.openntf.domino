@@ -2,6 +2,8 @@ package org.openntf.domino.nsfdata.structs.cd;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.EnumSet;
+import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.LENGTH_VALUE;
@@ -15,6 +17,139 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * @since Lotus Notes/Domino 5.0
  */
 public class CDACTIONBAREXT extends CDRecord {
+	public static enum BackgroundRepeat {
+		/**
+		 * Image repeats once in upper left of action bar
+		 */
+		REPEATONCE((short) 1),
+		/**
+		 * Image repeats vertically along left of action bar
+		 */
+		REPEATVERT((short) 2),
+		/**
+		 * Image repeats horizontally along top of action bar
+		 */
+		REPEATHORIZ((short) 3),
+		/**
+		 * Image "tiles" (repeats) to fit action bar
+		 */
+		TILE((short) 4),
+		/**
+		 * Image is divided and "tiled" (repeated) to fit action bar
+		 */
+		CENTER_TILE((short) 5),
+		/**
+		 * Image is sized to fit action bar
+		 */
+		REPEATSIZE((short) 6),
+		/**
+		 * Image is centered in action bar
+		 */
+		REPEATCENTER((short) 7);
+
+		private final short value_;
+
+		private BackgroundRepeat(final short value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+
+		public static BackgroundRepeat valueOf(final short typeCode) {
+			for (BackgroundRepeat type : values()) {
+				if (type.getValue() == typeCode) {
+					return type;
+				}
+			}
+			throw new IllegalArgumentException("No matching BackgroundRepeat found for type code " + typeCode);
+		}
+	}
+
+	public static enum ButtonWidth {
+		/**
+		 * Width is calculated based on text length and image width
+		 */
+		DEFAULT((byte) 0),
+		/**
+		 * Width is at least button background image width or wider if needed to fit text and image
+		 */
+		BACKGROUND((byte) 1),
+		/**
+		 * Width is set to value in wBtnWidthAbsolute
+		 */
+		ABSOLUTE((byte) 2);
+
+		private final byte value_;
+
+		private ButtonWidth(final byte value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+
+		public static ButtonWidth valueOf(final byte typeCode) {
+			for (ButtonWidth type : values()) {
+				if (type.getValue() == typeCode) {
+					return type;
+				}
+			}
+			throw new IllegalArgumentException("No matching ButtonWidth found for type code " + typeCode);
+		}
+	}
+
+	public static enum Justify {
+		LEFT((byte) 0), CENTER((byte) 1), RIGHT((byte) 2);
+
+		private final byte value_;
+
+		private Justify(final byte value) {
+			value_ = value;
+		}
+
+		public byte getValue() {
+			return value_;
+		}
+
+		public static Justify valueOf(final byte typeCode) {
+			for (Justify type : values()) {
+				if (type.getValue() == typeCode) {
+					return type;
+				}
+			}
+			throw new IllegalArgumentException("No matching Justify found for type code " + typeCode);
+		}
+	}
+
+	public static enum Flag {
+		/**
+		 * Width style is valid
+		 */
+		WIDTH_STYLE_VALID(0x00000001);
+
+		private final int value_;
+
+		private Flag(final int value) {
+			value_ = value;
+		}
+
+		public int getValue() {
+			return value_;
+		}
+
+		public static Set<Flag> valuesOf(final int flags) {
+			Set<Flag> result = EnumSet.noneOf(Flag.class);
+			for (Flag flag : values()) {
+				if ((flag.getValue() & flags) > 0) {
+					result.add(flag);
+				}
+			}
+			return result;
+		}
+	}
 
 	public CDACTIONBAREXT(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
@@ -63,19 +198,16 @@ public class CDACTIONBAREXT extends CDRecord {
 		return getData().getShort(getData().position() + 26);
 	}
 
-	public short getBarBackgroundRepeat() {
-		// TODO make enum
-		return getData().getShort(getData().position() + 28);
+	public BackgroundRepeat getBarBackgroundRepeat() {
+		return BackgroundRepeat.valueOf(getData().getShort(getData().position() + 28));
 	}
 
-	public byte getBtnWidthStyle() {
-		// TODO make enum
-		return getData().get(getData().position() + 30);
+	public ButtonWidth getBtnWidthStyle() {
+		return ButtonWidth.valueOf(getData().get(getData().position() + 30));
 	}
 
-	public byte getBtnTextJustify() {
-		// TODO make enum
-		return getData().get(getData().position() + 31);
+	public Justify getBtnTextJustify() {
+		return Justify.valueOf(getData().get(getData().position() + 31));
 	}
 
 	/**
@@ -95,9 +227,8 @@ public class CDACTIONBAREXT extends CDRecord {
 	/**
 	 * @return See ACTIONBAREXT_xxx flags
 	 */
-	public int getFlags() {
-		// TODO make enum
-		return getData().getInt(getData().position() + 36);
+	public Set<Flag> getFlags() {
+		return Flag.valuesOf(getData().getInt(getData().position() + 36));
 	}
 
 	/**

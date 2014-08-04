@@ -12,6 +12,28 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * @since Lotus Notes/Domino 6.0
  */
 public class CDDATAFLAGS extends CDRecord {
+	public static enum ElemType {
+		SECTION((short) 128), FIELDLIMIT((short) 129), BUTTONEX((short) 130), TABLECELL((short) 131);
+
+		private final short value_;
+
+		private ElemType(final short value) {
+			value_ = value;
+		}
+
+		public short getValue() {
+			return value_;
+		}
+
+		public static ElemType valueOf(final short typeCode) {
+			for (ElemType type : values()) {
+				if (type.getValue() == typeCode) {
+					return type;
+				}
+			}
+			throw new IllegalArgumentException("No matching ElemType found for type code " + typeCode);
+		}
+	}
 
 	public CDDATAFLAGS(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
@@ -27,9 +49,8 @@ public class CDDATAFLAGS extends CDRecord {
 	/**
 	 * @return Element these flags are for, CD_xxx_ELEMENT
 	 */
-	public short getElemType() {
-		// TODO make enum
-		return getData().getShort(getData().position() + 2);
+	public ElemType getElemType() {
+		return ElemType.valueOf(getData().getShort(getData().position() + 2));
 	}
 
 	/**
