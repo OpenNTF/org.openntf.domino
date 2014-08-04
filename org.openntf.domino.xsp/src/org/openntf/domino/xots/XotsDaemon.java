@@ -127,7 +127,7 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 	public void scan(final String serverName) {
 		XotsNsfScanner scanner = new XotsNsfScanner(serverName);
 		scanner.addObserver(this);
-		taskletClasses_ = scanner.scan();
+		scanner.scan();
 	}
 
 	public void queue(final Runnable runnable) {

@@ -8,7 +8,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.ServletException;
 
+import org.openntf.domino.xots.annotations.Persistent;
+
 import com.ibm.designer.runtime.domino.adapter.ComponentModule;
+import com.ibm.designer.runtime.domino.adapter.HttpService;
 import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
 import com.ibm.designer.runtime.domino.bootstrap.adapter.HttpServletRequestAdapter;
 import com.ibm.designer.runtime.domino.bootstrap.adapter.HttpServletResponseAdapter;
@@ -75,6 +78,20 @@ public class XotsService extends NSFService {
 		return 100;
 	}
 
+	private NSFService nsfservice_;
+
+	private NSFService getNsfService() {
+		if (nsfservice_ == null) {
+			for (HttpService service : LCDEnvironment.getInstance().getServices()) {
+				if (service instanceof NSFService) {
+					nsfservice_ = (NSFService) service;
+					break;
+				}
+			}
+		}
+		return nsfservice_;
+	}
+
 	@Override
 	protected NSFComponentModule createNSFModule(final String arg0) throws ServletException {
 		System.out.println("DEBUG: XotsService created NSF module for path " + arg0);
@@ -107,11 +124,39 @@ public class XotsService extends NSFService {
 	}
 
 	public void loaderCallback(final LoaderRunnable runner) {
-		NSFComponentModule mod = runner.getModule();
+		NSFComponentModule referenceMod = runner.getModule();
 		Set<Class<?>> classes = runner.getClasses();
-		synchronized (classMap_) {
-			classMap_.put(mod, classes);
+		for (Class<?> clazz : classes) {
+			Persistent persistent = clazz.getAnnotation(Persistent.class);
+			Persistent.Context ctx = persistent.appContext();
+			Persistent.Scope scope = persistent.scope();
+			if (scope == Persistent.Scope.APPLICATION) {
+				if (ctx == Persistent.Context.XSPFORCED) {
+					try {
+						NSFComponentModule forcedMod = (NSFComponentModule) getNsfService().loadModule(referenceMod.getDatabasePath());
+						synchronized (classMap_) {
+							classMap_.put(forcedMod, classes);
+						}
+					} catch (Throwable t) {
+						t.printStackTrace();
+					}
+				} else if (ctx == Persistent.Context.XSPSCOPED) {
+
+				}
+
+			} else if (scope == Persistent.Scope.SERVER) {
+				NSFComponentModule mod = runner.getModule();
+				synchronized (classMap_) {
+					classMap_.put(mod, classes);	// TODO need to put actual objects rather than classes into the map
+				}
+			} else {
+				NSFComponentModule mod = runner.getModule();
+				synchronized (classMap_) {
+					classMap_.put(mod, classes);
+				}
+			}
 		}
+
 	}
 
 	@Override
