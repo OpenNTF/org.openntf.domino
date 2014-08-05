@@ -9,8 +9,14 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE })
 public @interface Persistent {
 	public enum Scope {
-		SERVER, TEMPLATE, APPLICATION, USER, OBJECT
+		SERVER, TEMPLATE, APPLICATION, USER, OBJECT, NONE
+	}
+
+	public enum Context {
+		XOTS, XSPBARE, XSPSCOPED, XSPFORCED
 	}
 
 	Scope scope() default Scope.SERVER;
+
+	Context appContext() default Context.XOTS;
 }
