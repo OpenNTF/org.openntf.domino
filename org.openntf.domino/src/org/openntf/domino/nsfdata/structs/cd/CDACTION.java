@@ -174,8 +174,6 @@ public class CDACTION extends CDRecord {
 
 	protected CDACTION(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
-
-		System.out.println(this);
 	}
 
 	/**
@@ -185,10 +183,6 @@ public class CDACTION extends CDRecord {
 		short typeCode = getData().getShort(getData().position() + 0);
 		return Type.valueOf(typeCode);
 	}
-
-	//	public short getType() {
-	//		return getData().getShort(getData().position() + 0 + SIG_BUFFER);
-	//	}
 
 	/**
 	 * @return Index into array of icons
