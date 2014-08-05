@@ -1047,12 +1047,12 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	@Override
-	public Document getDocumentByKey(final Serializable key) {
-		return this.getDocumentByKey(key, false);
+	public Document getDocumentWithKey(final Serializable key) {
+		return this.getDocumentWithKey(key, false);
 	}
 
 	@Override
-	public Document getDocumentByKey(final Serializable key, final boolean createOnFail) {
+	public Document getDocumentWithKey(final Serializable key, final boolean createOnFail) {
 		try {
 			if (key != null) {
 				String checksum = DominoUtils.toUnid(key);
@@ -3270,14 +3270,14 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		public org.openntf.domino.Document get(final Object key) {
 			if (!(key instanceof Serializable))
 				throw new IllegalArgumentException();
-			return getDocumentByKey((Serializable) key);
+			return getDocumentWithKey((Serializable) key);
 		}
 
 		@Override
 		public org.openntf.domino.Document put(final Serializable key, final org.openntf.domino.Document value) {
 			// Ignore the value for now
 			if (key != null) {
-				Document doc = getDocumentByKey(key);
+				Document doc = getDocumentWithKey(key);
 				if (doc == null) {
 					Map<String, Object> valueMap = value;
 					doc = createDocument(valueMap);
@@ -3297,7 +3297,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		 */
 		public org.openntf.domino.Document remove(final Object key) {
 			if (key != null) {
-				Document doc = getDocumentByKey(key.toString());
+				Document doc = getDocumentWithKey(key.toString());
 				if (doc != null) {
 					doc.remove(false);
 				}

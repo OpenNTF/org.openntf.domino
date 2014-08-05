@@ -15,6 +15,7 @@ import org.openntf.domino.thread.DominoSessionType;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.thread.DominoThreadFactory;
 import org.openntf.domino.thread.model.IDominoRunnable;
+import org.openntf.domino.xots.builtin.XotsNsfScanner;
 
 import com.ibm.designer.runtime.domino.adapter.HttpService;
 import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
@@ -126,7 +127,7 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 	public void scan(final String serverName) {
 		XotsNsfScanner scanner = new XotsNsfScanner(serverName);
 		scanner.addObserver(this);
-		taskletClasses_ = scanner.scan();
+		scanner.scan();
 	}
 
 	public void queue(final Runnable runnable) {

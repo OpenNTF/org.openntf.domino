@@ -100,12 +100,7 @@ public enum Factory {
 						}
 						Scanner scanner = new Scanner(iniFile);
 						scanner.useDelimiter("\n|\r\n");
-						//						while (scanner.hasNextLine()) {
-						//							String nextLine = scanner.nextLine();
-						//							System.out.println("DEBUG " + nextLine);
-						//						}
-
-						loadEnvironment(/*session, */scanner);
+						loadEnvironment(scanner);
 						scanner.close();
 						return null;
 					}
@@ -678,7 +673,7 @@ public enum Factory {
 		}
 		if (result == null) {
 			System.out
-			.println("SEVERE: Unable to get default session. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation. If you're running in XPages, check the xsp.properties of your database. If you are running in an Agent, make sure you start with a call to Factory.fromLotus() and pass in your lotus.domino.Session");
+					.println("SEVERE: Unable to get default session. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation. If you're running in XPages, check the xsp.properties of your database. If you are running in an Agent, make sure you start with a call to Factory.fromLotus() and pass in your lotus.domino.Session");
 			Throwable t = new Throwable();
 			t.printStackTrace();
 		}
