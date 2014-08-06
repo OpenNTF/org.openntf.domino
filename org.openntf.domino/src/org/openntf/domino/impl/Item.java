@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -35,6 +36,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.exceptions.DataNotCompatibleException;
 import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.Factory;
 import org.openntf.domino.utils.TypeUtils;
 import org.xml.sax.InputSource;
 
@@ -47,7 +49,8 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 
 	// TODO NTF - all setters should check to see if the new value is different from the old and only markDirty if there's a change
 	private String name_;
-	private Integer dataType_;
+	private int nativeDataType_;
+	private EnumSet<Flags> flagSet_;
 
 	/**
 	 * Instantiates a new item.
@@ -115,6 +118,31 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 			throw new RuntimeException(ne);
 		}
 		name_ = name;
+	}
+
+	private EnumSet<Flags> getFlagSet() {
+		if (flagSet_ == null) {
+			flagSet_ = EnumSet.noneOf(Flags.class);
+			try {
+				if (getDelegate().isAuthors())
+					flagSet_.add(Flags.AUTHORS);
+				if (getDelegate().isEncrypted())
+					flagSet_.add(Flags.ENCRYPTED);
+				if (getDelegate().isNames())
+					flagSet_.add(Flags.NAMES);
+				if (getDelegate().isProtected())
+					flagSet_.add(Flags.PROTECTED);
+				if (getDelegate().isReaders())
+					flagSet_.add(Flags.READERS);
+				if (getDelegate().isSigned())
+					flagSet_.add(Flags.SIGNED);
+				if (getDelegate().isSummary())
+					flagSet_.add(Flags.SUMMARY);
+			} catch (NotesException ne) {
+				DominoUtils.handleException(ne);
+			}
+		}
+		return flagSet_;
 	}
 
 	// private void initialize(lotus.domino.Item delegate) {
@@ -417,11 +445,13 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	@Override
 	public int getType() {
 		try {
-			return getDelegate().getType();
+			if (nativeDataType_ == 0) {
+				nativeDataType_ = getDelegate().getType();
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
-			return 0;
 		}
+		return nativeDataType_;
 	}
 
 	/*
@@ -577,13 +607,8 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	 */
 	@Override
 	public boolean isAuthors() {
-		try {
-			return getDelegate().isAuthors();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-			return false;
+		return getFlagSet().contains(Flags.AUTHORS);
 		}
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -592,13 +617,8 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	 */
 	@Override
 	public boolean isEncrypted() {
-		try {
-			return getDelegate().isEncrypted();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-			return false;
+		return getFlagSet().contains(Flags.ENCRYPTED);
 		}
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -607,13 +627,8 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	 */
 	@Override
 	public boolean isNames() {
-		try {
-			return getDelegate().isNames();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-			return false;
+		return getFlagSet().contains(Flags.NAMES);
 		}
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -622,13 +637,8 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	 */
 	@Override
 	public boolean isProtected() {
-		try {
-			return getDelegate().isProtected();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-			return false;
+		return getFlagSet().contains(Flags.PROTECTED);
 		}
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -637,13 +647,8 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	 */
 	@Override
 	public boolean isReaders() {
-		try {
-			return getDelegate().isReaders();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-			return false;
+		return getFlagSet().contains(Flags.READERS);
 		}
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -667,13 +672,8 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	 */
 	@Override
 	public boolean isSigned() {
-		try {
-			return getDelegate().isSigned();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-			return false;
+		return getFlagSet().contains(Flags.SIGNED);
 		}
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -682,13 +682,8 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	 */
 	@Override
 	public boolean isSummary() {
-		try {
-			return getDelegate().isSummary();
-		} catch (NotesException e) {
-			DominoUtils.handleException(e, this);
-			return false;
+		return getFlagSet().contains(Flags.SUMMARY);
 		}
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -1019,7 +1014,8 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 		}
 	}
 
-	void markDirty() {
+	@Override
+	public void markDirty() {
 		getAncestorDocument().markDirty();
 	}
 
@@ -1070,6 +1066,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 				lotus.domino.Document d = toLotus(getAncestorDocument());
 				lotus.domino.Item item = d.getFirstItem(name_);
 				setDelegate(item, 0);
+				Factory.recacheLotus(d, this, parent_);
 				if (log_.isLoggable(Level.INFO)) {
 					log_.log(Level.INFO, "Item " + name_ + " in document path " + getAncestorDocument().getNoteID()
 							+ " had been recycled and was auto-restored. Changes may have been lost.");

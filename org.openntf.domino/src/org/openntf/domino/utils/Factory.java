@@ -95,7 +95,10 @@ public enum Factory {
 						String os = String.valueOf(System.getProperty("os.name")).toLowerCase();
 						String progpath = System.getProperty(os.contains("windows") ? "notes.binary" : "user.dir");
 						File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
-
+						if (!iniFile.exists()) {
+							progpath = System.getProperty("user.dir");
+							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+						}
 						Scanner scanner = new Scanner(iniFile);
 						scanner.useDelimiter("\n|\r\n");
 						//						while (scanner.hasNextLine()) {
@@ -103,12 +106,7 @@ public enum Factory {
 						//							System.out.println("DEBUG " + nextLine);
 						//						}
 
-						//								NotesFactory.createSession();
-						try {
 							loadEnvironment(/*session, */scanner);
-						} finally {
-							//							session.recycle();
-						}
 						scanner.close();
 						return null;
 					}
@@ -137,9 +135,11 @@ public enum Factory {
 
 	static {
 		SetupJob job = new SetupJob();
-		//		NotesThread nt = new NotesThread(job);
-		//		nt.start();
 		job.run();
+		//		TrustedDispatcher td = new TrustedDispatcher();
+		//		td.process(job);
+		//		System.out.println("DEBUG: SetupJob dispatched");
+		//		td.stop(false);
 	}
 
 	private static Map<String, String> ENVIRONMENT;
@@ -259,9 +259,9 @@ public enum Factory {
 	private static final Logger log_ = Logger.getLogger(Factory.class.getName());
 
 	/** The Constant TRACE_COUNTERS. */
-	private static final boolean TRACE_COUNTERS = true;
+	private static final boolean TRACE_COUNTERS = false;
 	/** use a separate counter in each thread */
-	private static final boolean COUNT_PER_THREAD = true;
+	private static final boolean COUNT_PER_THREAD = false;
 
 	/** The lotus counter. */
 	private static Counter lotusCounter = new Counter(COUNT_PER_THREAD);
@@ -479,6 +479,10 @@ public enum Factory {
 	public static <T extends Base, D extends lotus.domino.Base, P extends Base> T fromLotus(final D lotus,
 			final FactorySchema<T, D, P> schema, final P parent) {
 		return getWrapperFactory().fromLotus(lotus, schema, parent);
+	}
+
+	public static boolean recacheLotus(final lotus.domino.Base lotus, final Base<?> wrapper, final Base<?> parent) {
+		return getWrapperFactory().recacheLotusObject(lotus, wrapper, parent);
 	}
 
 	/**
@@ -780,8 +784,8 @@ public enum Factory {
 			callback.terminate();
 		}
 		clearSession();
-		wf.terminate();
-
+		long termCount = wf.terminate();
+		//		System.out.println("DEBUG: cleared " + termCount + " references from the queue...");
 		clearBubbleExceptions();
 		clearDominoGraph();
 		clearWrapperFactory();

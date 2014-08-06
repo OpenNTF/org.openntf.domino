@@ -689,7 +689,7 @@ public class RichTextItem extends Item implements org.openntf.domino.RichTextIte
 	}
 
 	@Override
-	void markDirty() {
+	public void markDirty() {
 		getAncestorDocument().markDirty();
 	}
 }

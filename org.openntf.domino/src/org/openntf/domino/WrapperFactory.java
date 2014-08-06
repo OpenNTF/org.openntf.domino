@@ -105,7 +105,7 @@ public interface WrapperFactory {
 	/**
 	 * shuts down the factory
 	 */
-	void terminate();
+	long terminate();
 
 	/**
 	 * Wraps a Java-Date into a DateTime object
@@ -132,6 +132,8 @@ public interface WrapperFactory {
 	 * @param result
 	 */
 	void setNoRecycle(final Base<?> base, boolean value);
+
+	public boolean recacheLotusObject(final lotus.domino.Base lotus, final Base<?> wrapper, final Base<?> parent);
 
 	/**
 	 * Returns the last Documents (max. 10) which where wrapped in the current thread

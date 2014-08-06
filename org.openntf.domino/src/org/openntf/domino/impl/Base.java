@@ -207,7 +207,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	}
 
 	/** The parent_. */
-	private final P parent_;
+	protected final P parent_;
 
 	/**
 	 * returns the cpp-session id. Needed for some BackendBridge functions
@@ -377,6 +377,17 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		}
 	}
 
+	protected Base(final P parent, final WrapperFactory wf, final int classId) {
+		if (wf == null) {
+			factory_ = Factory.getWrapperFactory();
+		} else {
+			factory_ = wf;
+		}
+		parent_ = parent;
+		clsid = classId;
+		cpp_session = 0;
+	}
+
 	/**
 	 * Sets the delegate on init or if resurrect occured
 	 * 
@@ -403,6 +414,13 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			cpp_object = getLotusId(delegate);
 		}
 	}
+
+	//	void setDelegate(final D delegate, final long cppId, final boolean recache) {
+	//		setDelegate(delegate, cppId);
+	//		if (recache) {
+	//			Factory.recacheLotus(delegate, this, parent_);
+	//		}
+	//	}
 
 	/**
 	 * Gets the lotus id.

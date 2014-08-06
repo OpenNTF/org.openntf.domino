@@ -2935,6 +2935,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			lotus.domino.Database d = rawSession.getDatabase(server_, path_);
 			//d.open();
 			setDelegate(d, 0);
+			Factory.recacheLotus(d, this, parent_);
 			if (log_.isLoggable(java.util.logging.Level.FINE)) {
 				Throwable t = new Throwable();
 				StackTraceElement[] elements = t.getStackTrace();
@@ -3446,6 +3447,58 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		String language = lStr.substring(0, 2).toLowerCase();
 		String country = (lStr.length() >= 5 && lStr.charAt(2) == '-') ? lStr.substring(3, 5).toUpperCase() : "";
 		return dbLocale = new Locale(language, country);
+        }
+	private transient NoteCollection intNC_;
+
+	private NoteCollection getInternalNoteCollection() {
+		if (null == intNC_) {
+			intNC_ = this.createNoteCollection(false);
+		} else {
+			try {
+				int junk = ((lotus.domino.NoteCollection) Base.getDelegate(intNC_)).getCount();
+			} catch (NotesException ne) {
+				intNC_ = this.createNoteCollection(false);
+			}
+		}
+		return intNC_;
+	}
+
+	@Override
+	public String getUNID(final String noteid) {
+		return getInternalNoteCollection().getUNID(noteid);
+	}
+
+	@Override
+	public String getUNID(final int noteid) {
+		String nid = Integer.toHexString(noteid);
+		return getUNID(nid);
+	}
+
+	@Override
+	public Document getDocumentByUNID(final String unid, final boolean deferDelegate) {
+		if (deferDelegate) {
+			return new org.openntf.domino.impl.Document(unid, this, null);
+		} else {
+			return getDocumentByUNID(unid);
+		}
+	}
+
+	@Override
+	public Document getDocumentByID(final String noteid, final boolean deferDelegate) {
+		if (deferDelegate) {
+			return new org.openntf.domino.impl.Document(noteid, this, null);
+		} else {
+			return getDocumentByID(noteid);
+		}
+	}
+
+	@Override
+	public Document getDocumentByID(final int noteid, final boolean deferDelegate) {
+		if (deferDelegate) {
+			return new org.openntf.domino.impl.Document(noteid, this, null);
+		} else {
+			return getDocumentByID(Integer.toHexString(noteid));
+		}
 	}
 
 	@Override

@@ -8,10 +8,8 @@ import java.security.AccessController;
 import java.security.Permission;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.util.ArrayDeque;
-import java.util.Queue;
-import java.util.concurrent.Callable;
 import java.util.concurrent.RunnableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.openntf.domino.thread.DominoExecutor;
@@ -20,6 +18,7 @@ import org.openntf.domino.thread.DominoExecutor.OpenSecurityManager;
 import org.openntf.domino.thread.DominoFutureTask;
 import org.openntf.domino.thread.DominoNativeRunner;
 import org.openntf.domino.thread.DominoSessionType;
+import org.openntf.domino.thread.DominoThreadFactory;
 import org.openntf.domino.thread.model.IDominoRunnable;
 
 /**
@@ -29,11 +28,11 @@ import org.openntf.domino.thread.model.IDominoRunnable;
 public class TrustedDispatcher /*extends AbstractDominoDaemon*/{
 	private static final Logger log_ = Logger.getLogger(TrustedDispatcher.class.getName());
 	private static final long serialVersionUID = 1L;
-	private TrustedExecutor intimidator_;
+	protected TrustedExecutor intimidator_;
 
-	private Queue<Runnable> runQueue_ = new ArrayDeque<Runnable>();
+	//	private Queue<Runnable> runQueue_ = new ArrayDeque<Runnable>();
 
-	private TrustedExecutor getExecutor() {
+	protected TrustedExecutor getExecutor() {
 		if (intimidator_ == null) {
 			intimidator_ = new TrustedExecutor(this);
 		}
@@ -75,6 +74,10 @@ public class TrustedDispatcher /*extends AbstractDominoDaemon*/{
 		@Override
 		public void setClassLoader(final ClassLoader loader) {
 			loader_ = loader;
+		}
+
+		public Runnable getRunnable() {
+			return runnable_;
 		}
 
 		protected void superRun() {
@@ -120,6 +123,11 @@ public class TrustedDispatcher /*extends AbstractDominoDaemon*/{
 			dispatcher_ = dispatcher;
 		}
 
+		protected TrustedExecutor(final TrustedDispatcher dispatcher, final DominoThreadFactory factory) {
+			super(5, 20, 3, TimeUnit.SECONDS, DominoExecutor.getBlockingQueue(100), factory);
+			dispatcher_ = dispatcher;
+		}
+
 		@Override
 		protected void init() {
 			factoryAccessController_ = AccessController.getContext();
@@ -143,18 +151,11 @@ public class TrustedDispatcher /*extends AbstractDominoDaemon*/{
 		}
 
 		/* (non-Javadoc)
-		 * @see org.openntf.domino.thread.DominoExecutor#newTaskFor(java.util.concurrent.Callable)
-		 */
-		@Override
-		protected <T> RunnableFuture<T> newTaskFor(final Callable<T> callable) {
-			return new TrustedFutureTask(callable, dispatcher_);
-		}
-
-		/* (non-Javadoc)
 		 * @see org.openntf.domino.thread.DominoExecutor#newTaskFor(java.lang.Runnable, java.lang.Object)
 		 */
 		@Override
 		protected <T> RunnableFuture<T> newTaskFor(final Runnable runnable, final T value) {
+			System.out.println("DEBUG: Creating a new TrustedFutureTask for a " + runnable.getClass().getName());
 			return new TrustedFutureTask(runnable, value, dispatcher_);
 		}
 
@@ -177,7 +178,7 @@ public class TrustedDispatcher /*extends AbstractDominoDaemon*/{
 					runnable = new TrustedRunnable(nativeRunner, factoryAccessController_, securityManager_);
 					((TrustedRunnable) runnable).setClassLoader(loader);
 				} else {
-					System.out.println("IDominoRunnable has session type " + type.name());
+					System.out.println("DEBUG: IDominoRunnable has session type " + type.name());
 				}
 			}
 			super.execute(runnable);
@@ -185,10 +186,6 @@ public class TrustedDispatcher /*extends AbstractDominoDaemon*/{
 	}
 
 	protected static class TrustedFutureTask extends DominoFutureTask {
-		public TrustedFutureTask(final Callable callable, final TrustedDispatcher dispatcher) {
-			super(callable);
-		}
-
 		/**
 		 * @param runnable
 		 * @param result
@@ -221,15 +218,23 @@ public class TrustedDispatcher /*extends AbstractDominoDaemon*/{
 		//		super(delay);
 	}
 
-	public void queueJob(final Runnable runnable) {
-		synchronized (runQueue_) {
-			runQueue_.add(runnable);
-		}
-	}
+	//	public void queueJob(final Runnable runnable) {
+	//		synchronized (runQueue_) {
+	//			runQueue_.add(runnable);
+	//		}
+	//	}
 
 	public Object process(final Runnable runnable) {
 		getExecutor().execute(runnable);
 		return runnable;
+	}
+
+	public void stop(final boolean immediate) {
+		if (immediate) {
+			getExecutor().shutdownNow();
+		} else {
+			getExecutor().shutdown();
+		}
 	}
 
 	//	@Override

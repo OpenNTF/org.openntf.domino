@@ -92,6 +92,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	//		}
 	//	};
 
+	private boolean isDbCached_ = false;
 	public static final int DEFAULT_NSF_CACHE_SIZE = 16;
 
 	private LinkedHashMap<String, org.openntf.domino.Database> databases_ = new LinkedHashMap<String, org.openntf.domino.Database>(
@@ -758,19 +759,21 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		lotus.domino.Database database = null;
 		org.openntf.domino.Database result = null;
 		String key = db;
-		try {
-			if (server == null || server.length() < 1) {
-				key = "!!" + db;
-			} else {
-				key = server + "!!" + db;
+		if (isDbCached_) {
+			try {
+				if (server == null || server.length() < 1) {
+					key = "!!" + db;
+				} else {
+					key = server + "!!" + db;
+				}
+			} catch (Exception e) {
+				StackTraceElement ste = e.getStackTrace()[0];
+				System.out.println("Failed to build key on attempt to open a database at server " + String.valueOf(server)
+						+ " with filepath " + String.valueOf(db) + " because of an exception " + e.getClass().getSimpleName() + " at "
+						+ ste.getClassName() + "." + ste.getMethodName() + " (line " + ste.getLineNumber() + ")");
 			}
-		} catch (Exception e) {
-			StackTraceElement ste = e.getStackTrace()[0];
-			System.out.println("Failed to build key on attempt to open a database at server " + String.valueOf(server) + " with filepath "
-					+ String.valueOf(db) + " because of an exception " + e.getClass().getSimpleName() + " at " + ste.getClassName() + "."
-					+ ste.getMethodName() + " (line " + ste.getLineNumber() + ")");
+			result = databases_.get(key);
 		}
-		result = databases_.get(key);
 		if (result == null) {
 			try {
 				//				DbDirectory dir = this.getDbDirectory(server);
@@ -778,7 +781,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 
 				database = getDelegate().getDatabase(server, db, createOnFail);
 				result = fromLotus(database, Database.SCHEMA, this);
-				if (result != null)
+				if (isDbCached_ && result != null)
 					databases_.put(key, result);
 			} catch (NotesException e) {
 				String message = e.text;
@@ -847,7 +850,6 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 			return null;
-
 		}
 	}
 

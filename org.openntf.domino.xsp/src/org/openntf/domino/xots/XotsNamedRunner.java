@@ -5,9 +5,8 @@ import java.security.PrivilegedExceptionAction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import lotus.notes.NotesThread;
-
 import org.openntf.domino.Session;
+import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.thread.model.IDominoRunnable;
 import org.openntf.domino.utils.Factory;
 
@@ -17,7 +16,7 @@ import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 import com.ibm.domino.xsp.module.nsf.SessionCloner;
 
-public class XotsNamedRunner implements Runnable {
+public class XotsNamedRunner implements IXotsRunner {
 	private static final Logger log_ = Logger.getLogger(XotsNamedRunner.class.getName());
 	protected final Runnable runnable_;
 	protected ClassLoader classLoader_;
@@ -68,6 +67,10 @@ public class XotsNamedRunner implements Runnable {
 		}
 	}
 
+	public NSFComponentModule getModule() {
+		return module_;
+	}
+
 	protected org.openntf.domino.Session getNamedSession() {
 		lotus.domino.Session s = null;
 		String name = null;
@@ -94,7 +97,7 @@ public class XotsNamedRunner implements Runnable {
 		return Factory.fromLotus(s, org.openntf.domino.Session.SCHEMA, null);
 	}
 
-	public ClassLoader getClassLoader() {
+	public ClassLoader getContextClassLoader() {
 		if (classLoader_ == null) {
 			if (runnable_ instanceof IDominoRunnable) {
 				ClassLoader loader = ((IDominoRunnable) runnable_).getContextClassLoader();
@@ -117,12 +120,18 @@ public class XotsNamedRunner implements Runnable {
 		return session_;
 	}
 
+	public Runnable getRunnable() {
+		return runnable_;
+	}
+
 	protected void preRun() {
+		ClassLoader cl = ((AbstractDominoRunnable) getRunnable()).getContextClassLoader();
+		if (cl == null) {
+			cl = classLoader_;
+		}
 		if (module_ != null) {
 			NotesContext nctx = new NotesContext(module_);
-			NotesContext.initThread(nctx);
-		} else {
-			NotesThread.sinitThread();
+			NotesContext.contextThreadLocal.set(nctx);
 		}
 		Session session = this.getNamedSession();
 		setSession(session);
@@ -131,17 +140,17 @@ public class XotsNamedRunner implements Runnable {
 	protected void postRun() {
 		lotus.domino.Session session = Factory.terminate();
 		if (session != null) {
+			System.out.println("DEBUG: recycling a Session with object id: " + System.identityHashCode(session) + " after running a "
+					+ runnable_.getClass().getName());
 			try {
 				session.recycle();
 			} catch (Throwable t) {
 				t.printStackTrace();
 			}
-		}
-		if (module_ != null) {
-			NotesContext.termThread();
 		} else {
-			NotesThread.stermThread();
+			System.out.println("ALERt: session was null for a " + runnable_.getClass().getName());
 		}
+		NotesContext.contextThreadLocal.set(null);
 	}
 
 	@Override

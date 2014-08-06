@@ -198,6 +198,22 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		initialize(delegate);
 	}
 
+	public Document(final String id, final Database parent, final WrapperFactory wf) {
+		super(parent, wf, NOTES_NOTE);
+		if (DominoUtils.isUnid(id)) {
+			unid_ = id;
+		} else {
+			noteid_ = id;
+			unid_ = parent.getUNID(id);
+		}
+		isNew_ = false;
+	}
+
+	public Document(final int id, final Database parent, final WrapperFactory wf) {
+		this(Integer.toHexString(id), parent, wf);
+		//		System.out.println("Creating a deferred document for id " + id);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.impl.Base#findParent(lotus.domino.Base)
 	 */
@@ -412,7 +428,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	/**
-	 * appends a value to an item (if it is not yet there)
+	 * Appends a value to an item (if it is not yet there)
 	 */
 	@Override
 	public Item appendItemValue(final String name, final Object value) {
@@ -456,6 +472,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 							result = replaceItemValue(name, newVal);
 						}
 					} else {
+						beginEdit();
 						result = fromLotus(getDelegate().appendItemValue(name, domNode), Item.SCHEMA, this);
 						markDirty(name, true);
 					}
@@ -490,12 +507,21 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void attachVCard(final lotus.domino.Base document, final String charset) {
 		checkMimeOpen();
-		markDirty();
+		beginEdit();
 		try {
 			getDelegate().attachVCard(toLotus(document), charset);
+			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
+	}
+
+	/**
+	 * This method is called before any change is made to any content. Allows e.g. the locking of the document and the history
+	 * initialization.
+	 */
+	protected void beginEdit() {
+
 	}
 
 	/*
@@ -534,7 +560,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				} else {
 					markDirty("$NoteHasNativeMIME", true);
 					markDirty("MIME_Version", true);
-					markDirty("$MIMETrack", true); // TODO: Clear this field ?
+					markDirty("$MIMETrack", true);
 					markDirty(entityItemName, true);
 				}
 			}
@@ -553,7 +579,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			boolean ret = false;
 			try {
 				ret = getDelegate().closeMIMEEntities(saveChanges, entityItemName);
-			} catch (Exception e) {
+			} catch (NotesException e) {
 				log_.log(Level.INFO, "Attempted to close a MIMEEntity called " + entityItemName
 						+ " even though we can't find an item by that name.");
 				//				DominoUtils.handleException(e);
@@ -587,19 +613,12 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public boolean computeWithForm(final boolean doDataTypes, final boolean raiseError) {
-		if (true) {
-			System.out.println("Bypassing computeWithForm on document");
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			return true;
-		}
 		checkMimeOpen();
+		beginEdit();
+			try {
+			boolean ret = getDelegate().computeWithForm(doDataTypes, raiseError);
 		markDirty();
-		try {
-			return getDelegate().computeWithForm(doDataTypes, raiseError);
+			return ret;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -634,8 +653,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void convertToMIME(final int conversionType, final int options) {
 		checkMimeOpen();
+		beginEdit();
 		try {
 			getDelegate().convertToMIME(conversionType, options);
+			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -649,9 +670,14 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void copyAllItems(final lotus.domino.Document doc, final boolean replace) {
 		checkMimeOpen();
+		if (doc instanceof Document) {
+			((Document) doc).beginEdit();
+		}
 		try {
 			getDelegate().copyAllItems(toLotus(doc), replace);
-			markDirty();
+			if (doc instanceof Document) {
+				((Document) doc).markDirty();
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -677,6 +703,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		// TODO - NTF markDirty()? Yes. It's necessary.
 		// TODO RPr: ConvertMime?
 		checkMimeOpen();
+		beginEdit();
 		try {
 			Item ret = fromLotus(getDelegate().copyItem(toLotus(item), newName), Item.SCHEMA, this);
 			markDirty(ret.getName(), true);
@@ -725,15 +752,18 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public MIMEEntity createMIMEEntity(String itemName) {
 		// checkMimeOpen(); RPr: This is not needed here (just to tweak my grep command)
+		beginEdit();
 		try {
 			if (itemName == null) {
 				itemName = "Body";
 			}
 			try {
-				markDirty(itemName, true);
 				MIMEEntity wrapped = fromLotus(getDelegate().createMIMEEntity(itemName), MIMEEntity.SCHEMA, this);
-				if (wrapped != null)
+				if (wrapped != null) {
 					openMIMEEntities.put(itemName.toLowerCase(), wrapped);
+					wrapped.initItemName(itemName);
+					markDirty(itemName, true);
+				}
 				return wrapped;
 			} catch (NotesException alreadyThere) {
 				Item chk = getFirstItem(itemName);
@@ -743,13 +773,16 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					removeItem(itemName);
 				} else {
 					MIMEEntity me = getMIMEEntity(itemName);
+					markDirty(itemName, true);
 					return me;
 				}
 				closeMIMEEntities(false, itemName);
-				markDirty(itemName, true);
 				MIMEEntity wrapped = fromLotus(getDelegate().createMIMEEntity(itemName), MIMEEntity.SCHEMA, this);
-				if (wrapped != null)
+				if (wrapped != null) {
 					openMIMEEntities.put(itemName.toLowerCase(), wrapped);
+					wrapped.initItemName(itemName);
+					markDirty(itemName, true);
+				}
 				return wrapped;
 			}
 			// return fromLotus(getDelegate().createMIMEEntity(itemName), MIMEEntity.class, this);
@@ -766,8 +799,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public org.openntf.domino.Document createReplyMessage(final boolean toAll) {
-		// TODO - NTF markDirty()?
+		// DONE - NTF markDirty()? CHa: Does not make the current document dirty
 		checkMimeOpen();
+		beginEdit();
 		try {
 			return fromLotus(getDelegate().createReplyMessage(toAll), Document.SCHEMA, getParentDatabase());
 		} catch (NotesException e) {
@@ -784,6 +818,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public RichTextItem createRichTextItem(final String name) {
 		checkMimeOpen();
+		beginEdit();
 		RichTextItem ret = null;
 		try {
 			ret = fromLotus(getDelegate().createRichTextItem(name), RichTextItem.SCHEMA, this);
@@ -802,6 +837,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void encrypt() {
 		checkMimeOpen();
+		beginEdit();
 		try {
 			getDelegate().encrypt();
 			markDirty();
@@ -1468,8 +1504,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				getAncestorSession().setConvertMime(false);
 			MIMEEntity ret = fromLotus(getDelegate().getMIMEEntity(itemName), MIMEEntity.SCHEMA, this);
 
-			if (ret != null)
+			if (ret != null) {
 				openMIMEEntities.put(itemName.toLowerCase(), ret);
+				ret.initItemName(itemName); // here it is allowed to initialize the item with its name
+			}
 
 			if (openMIMEEntities.size() > 1) {
 				//	throw new BlockedCrashException("Accessing two different MIME items at once can cause a server crash!");
@@ -2090,6 +2128,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void makeResponse(final lotus.domino.Document doc) {
 		checkMimeOpen();
+		beginEdit();
 		try {
 			getDelegate().makeResponse(toLotus(doc));
 			markDirty("$ref", true);
@@ -2169,8 +2208,16 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public void putInFolder(final String name, final boolean createOnFail) {
 		// TODO - NTF handle transaction context
 		checkMimeOpen();
+		if (getAncestorDatabase().getFolderReferencesEnabled()) {
+			beginEdit();
+		}
 		try {
+			// This method will modify the fields $FolderInfo and $FolderRefInfo if FolderReferences are enabled in the database.
 			getDelegate().putInFolder(name, createOnFail);
+			if (getAncestorDatabase().getFolderReferencesEnabled()) {
+				markDirty("$FolderInfo", true);
+				markDirty("$FolderRefInfo", true);
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -2218,7 +2265,12 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		checkMimeOpen();
 		// TODO - NTF handle transaction context
 		try {
+			// This method will modify the fields $FolderInfo and $FolderRefInfo if FolderReferences are enabled in the database.
 			getDelegate().removeFromFolder(name);
+			if (getAncestorDatabase().getFolderReferencesEnabled()) {
+				markDirty("$FolderInfo", true);
+				markDirty("$FolderRefInfo", true);
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -2234,7 +2286,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		if (name == null)
 			return;	//TODO NTF There's nothing to do here. Maybe we should throw an exception?
 		checkMimeOpen();
-		markDirty(name, false);
+		beginEdit();
 		try {
 			// RPr: it is important to check if this is a MIME entity and remove that this way.
 			// Otherwise dangling $FILE items are hanging around in the document
@@ -2254,6 +2306,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				if (getDelegate().hasItem(name))
 					getDelegate().removeItem(name);
 			}
+			markDirty(name, false);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this, "Item=" + name);
 		}
@@ -2293,8 +2346,12 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public boolean renderToRTItem(final lotus.domino.RichTextItem rtitem) {
 		checkMimeOpen();
+		beginEdit();
 		try {
 			getDelegate().renderToRTItem(toLotus(rtitem));
+			if (rtitem instanceof org.openntf.domino.RichTextItem) {
+				((org.openntf.domino.RichTextItem) rtitem).markDirty();
+			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -2342,6 +2399,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		try {
 			if (!"mime-bean".equalsIgnoreCase(dataTypeName)) {
 				// if data-type is != "mime-bean" the object is written in native mode.
+				beginEdit();
 				result = getDelegate().replaceItemValueCustomData(itemName, dataTypeName, value);
 				markDirty(itemName, true);
 			} else if (value instanceof Serializable) {
@@ -2440,6 +2498,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				// Then fall back to the normal method, which will MIMEBean it
 				return this.replaceItemValueCustomData(itemName, "mime-bean", itemName, true); // TODO: What about dataTypeName?
 			} else {
+				beginEdit();
 				Item result = fromLotus(getDelegate().replaceItemValueCustomDataBytes(itemName, dataTypeName, byteArray), Item.SCHEMA, this);
 				markDirty(itemName, true);
 				return result;
@@ -2659,6 +2718,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 						closeMIMEEntities(true, itemName);
 					}
 				}
+				beginEdit();
 				result = getDelegate().replaceItemValue(itemName, toDominoFriendly(value, this, recycleThis));
 				markDirty(itemName, true);
 				if (returnItem) {
@@ -2770,7 +2830,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					closeMIMEEntities(true, itemName);
 				}
 			}
-
+			beginEdit();
 			if (dominoFriendly.size() == 1) {
 				result = getDelegate().replaceItemValue(itemName, firstElement);
 			} else {
@@ -3011,8 +3071,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void send(final boolean attachForm) {
 		checkMimeOpen();
+		beginEdit();
 		try {
 			getDelegate().send(false);
+			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -3040,8 +3102,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public void send(final boolean attachForm, final Vector recipients) {
 		// TODO - NTF handle transaction context
 		checkMimeOpen();
+		beginEdit();
 		try {
 			getDelegate().send(attachForm, recipients);
+			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -3066,9 +3130,11 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void send(final Vector recipients) {
 		checkMimeOpen();
+		beginEdit();
 		// TODO - NTF handle transaction context
 		try {
 			getDelegate().send(recipients);
+			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -3082,8 +3148,10 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void setEncryptOnSend(final boolean flag) {
 		checkMimeOpen();
+		beginEdit();
 		try {
 			getDelegate().setEncryptOnSend(flag);
+			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
@@ -3098,12 +3166,13 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void setEncryptionKeys(final Vector keys) {
 		checkMimeOpen();
+		beginEdit();
 		try {
 			getDelegate().setEncryptionKeys(keys);
+			markDirty("SecretEncryptionKeys", true);
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
-		markDirty("SecretEncryptionKeys", true);
 	}
 
 	/*
@@ -3161,6 +3230,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void setUniversalID(final String unid) {
 		checkMimeOpen();
+		beginEdit();
 		try {
 			try {
 				lotus.domino.Document del = getDelegate().getParentDatabase().getDocumentByUNID(unid);
@@ -3196,15 +3266,16 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				} else {
 					getDelegate().setUniversalID(unid);
 				}
+				markDirty();
 			} catch (NotesException ne) {
 				// this is what's expected
 				getDelegate().setUniversalID(unid);
+				markDirty();
 			}
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
 		unid_ = unid;
-		markDirty();
 	}
 
 	/*
@@ -3215,13 +3286,14 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	@Override
 	public void sign() {
 		checkMimeOpen();
+		beginEdit();
+		// TODO RPr: is it enough if we add $Signatue?
 		try {
 			getDelegate().sign();
+			markDirty();
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
-		// TODO RPr: is it enough if we add $Signatue?
-		markDirty();
 	}
 
 	/*
@@ -3257,6 +3329,14 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 		}
 	}
 
+	/**
+	 * This method marks a certain field dirty. Use this with care. So this method should not be part of an interface!
+	 * 
+	 * @param fieldName
+	 *            the fieldName of the item you currently modify
+	 * @param itemWritten
+	 *            true if you have written the item, false if not
+	 */
 	public void markDirty(final String fieldName, final boolean itemWritten) {
 		markDirtyInt();
 		if (itemWritten) {
@@ -3393,6 +3473,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					}
 				}
 				setDelegate(d, 0);
+				Factory.recacheLotus(d, this, parent_);
 				shouldResurrect_ = false;
 				if (log_.isLoggable(Level.FINE)) {
 					log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
@@ -3416,10 +3497,48 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			} catch (NotesException e) {
 				DominoUtils.handleException(e, this);
 			}
+		} else if (null != unid_) {
+			//NTF we have a unid but no noteid because this was a deferred document using a unid
+			try {
+				lotus.domino.Document d = null;
+				lotus.domino.Database db = toLotus(getParentDatabase());
+				if (db != null) {
+					try {
+						d = db.getDocumentByUNID(unid_);
+					} catch (NotesException ne) {
+						log_.log(Level.WARNING, "Attempted to resurrect non-new document unid " + String.valueOf(unid_)
+								+ ", but the document was not found in " + getParentDatabase().getServer() + "!!"
+								+ getParentDatabase().getFilePath() + " because of: " + ne.text);
+					}
+				}
+				setDelegate(d, 0);
+				shouldResurrect_ = false;
+				if (log_.isLoggable(Level.FINE)) {
+					log_.log(Level.FINE, "Document " + noteid_ + " in database path " + getParentDatabase().getFilePath()
+							+ " had been recycled and was auto-restored. Changes may have been lost.");
+					if (log_.isLoggable(Level.FINER)) {
+						Throwable t = new Throwable();
+						StackTraceElement[] elements = t.getStackTrace();
+						log_.log(Level.FINER,
+								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
+										+ ")");
+						log_.log(Level.FINER,
+								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
+										+ ")");
+						log_.log(Level.FINER,
+								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
+										+ ")");
+					}
+					log_.log(Level.FINE,
+							"If you recently rollbacked a transaction and this document was included in the rollback, this outcome is normal.");
+				}
+			} catch (Exception e) {
+				DominoUtils.handleException(e);
+			}
 		} else {
 			if (log_.isLoggable(Level.SEVERE)) {
 				log_.log(Level.SEVERE,
-						"Document doesn't have noteid value. Something went terribly wrong. Nothing good can come of this...");
+						"Document doesn't have noteid or unid value. Something went terribly wrong. Nothing good can come of this...");
 			}
 		}
 	}
