@@ -55,6 +55,8 @@ public interface DbDirectory extends Base<lotus.domino.DbDirectory>, lotus.domin
 
 		/** The database. */
 		DATABASE(DbDirectory.DATABASE),
+		/** Database with enabled XOTS */
+		XOTS_DATABASE(DbDirectory.DATABASE),
 		/** The template. */
 		TEMPLATE(DbDirectory.TEMPLATE),
 		/** The replica candidate. */

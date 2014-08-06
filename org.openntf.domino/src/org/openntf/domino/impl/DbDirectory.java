@@ -18,6 +18,8 @@ package org.openntf.domino.impl;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -33,6 +35,7 @@ import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
 import org.openntf.domino.annotations.Legacy;
 import org.openntf.domino.ext.Session.Fixes;
+import org.openntf.domino.helpers.DatabaseHolder;
 import org.openntf.domino.types.Encapsulated;
 import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
@@ -42,10 +45,10 @@ import org.openntf.domino.utils.Factory;
  * The Class DbDirectory.
  */
 public class DbDirectory extends Base<org.openntf.domino.DbDirectory, lotus.domino.DbDirectory, Session> implements
-org.openntf.domino.DbDirectory, Encapsulated {
+		org.openntf.domino.DbDirectory, Encapsulated {
 	private static final Logger log_ = Logger.getLogger(DbDirectory.class.getName());
 
-	private SortedSet<org.openntf.domino.Database> dbSet_;
+	private SortedSet<DatabaseHolder> dbHolderSet_;
 	private org.openntf.domino.DbDirectory.Type type_;
 	private boolean isDateSorted_ = false;
 	private String name_;
@@ -73,7 +76,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
-		dbSet_ = new ConcurrentSkipListSet<Database>(Database.FILEPATH_COMPARATOR);
+		dbHolderSet_ = new ConcurrentSkipListSet<DatabaseHolder>(DatabaseHolder.FILEPATH_COMPARATOR);
 		type_ = Type.TEMPLATE_CANDIDATE;
 	}
 
@@ -94,7 +97,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
-		dbSet_ = new ConcurrentSkipListSet<Database>(Database.FILEPATH_COMPARATOR);
+		dbHolderSet_ = new ConcurrentSkipListSet<DatabaseHolder>(DatabaseHolder.FILEPATH_COMPARATOR);
 		type_ = Type.TEMPLATE_CANDIDATE;
 	}
 
@@ -107,7 +110,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 		} catch (NotesException e) {
 			DominoUtils.handleException(e);
 		}
-		dbSet_ = new ConcurrentSkipListSet<Database>(Database.FILEPATH_COMPARATOR);
+		dbHolderSet_ = new ConcurrentSkipListSet<DatabaseHolder>(DatabaseHolder.FILEPATH_COMPARATOR);
 		type_ = type;
 	}
 
@@ -121,10 +124,10 @@ org.openntf.domino.DbDirectory, Encapsulated {
 			DominoUtils.handleException(e);
 		}
 		if (sortByLastModified) {
-			dbSet_ = new ConcurrentSkipListSet<Database>(Database.LASTMOD_COMPARATOR);
+			dbHolderSet_ = new ConcurrentSkipListSet<DatabaseHolder>(DatabaseHolder.LASTMOD_COMPARATOR);
 			isDateSorted_ = true;
 		} else {
-			dbSet_ = new ConcurrentSkipListSet<Database>(Database.FILEPATH_COMPARATOR);
+			dbHolderSet_ = new ConcurrentSkipListSet<DatabaseHolder>(DatabaseHolder.FILEPATH_COMPARATOR);
 		}
 		type_ = Type.TEMPLATE_CANDIDATE;
 	}
@@ -178,9 +181,9 @@ org.openntf.domino.DbDirectory, Encapsulated {
 
 	private void initialize(final lotus.domino.DbDirectory delegate) {
 		if (isDateSorted_) {
-			dbSet_ = new ConcurrentSkipListSet<Database>(Database.LASTMOD_COMPARATOR);
+			dbHolderSet_ = new ConcurrentSkipListSet<DatabaseHolder>(DatabaseHolder.LASTMOD_COMPARATOR);
 		} else {
-			dbSet_ = new ConcurrentSkipListSet<Database>(Database.FILEPATH_COMPARATOR);
+			dbHolderSet_ = new ConcurrentSkipListSet<DatabaseHolder>(DatabaseHolder.FILEPATH_COMPARATOR);
 		}
 		boolean isExtended = type_ == Type.REPLICA_CANDIDATE || isDateSorted_;
 		try {
@@ -195,23 +198,45 @@ org.openntf.domino.DbDirectory, Encapsulated {
 			}
 			lotus.domino.Database nextdb;
 			Database db;
+			boolean accessible = false;
+
 			while (rawdb != null) {
 				nextdb = delegate.getNextDatabase();
+
+				try {
+					// the Dbdirectory provides databases in a closed state.
+					// so we try to open the DB
+					rawdb.open();
+					accessible = true;
+				} catch (NotesException ne) {
+					accessible = false;
+				}
+
 				// TODO RPr: Should we do that with factory
-				db = new org.openntf.domino.impl.Database(rawdb, this, isExtended);
+				// YES, we MUST do this in the factory, otherwise we will get errors like: PANIC! Why are we recaching a lotus object"
+				db = getFactory().fromLotus(rawdb, Database.SCHEMA, null);
+
+				// And we MUST NOT use this constructor, as it recycles the delegate (which means that we close databases, that we have opened somewhere else in our code)
+
+				//new org.openntf.domino.impl.Database(rawdb, this, isExtended);
+
 				if (type_ == Type.REPLICA_CANDIDATE) {
 					if (org.openntf.domino.Database.Utils.isReplicaCandidate(db))
-						dbSet_.add(db);
+						dbHolderSet_.add(new DatabaseHolder(db));
 				} else if (type_ == Type.TEMPLATE) {
 					if (org.openntf.domino.Database.Utils.isTemplate(db))
-						dbSet_.add(db);
+						dbHolderSet_.add(new DatabaseHolder(db));
 				} else if (type_ == Type.DATABASE) {
 					if (org.openntf.domino.Database.Utils.isDatabase(db))
-						dbSet_.add(db);
+						dbHolderSet_.add(new DatabaseHolder(db));
+				} else if (type_ == Type.XOTS_DATABASE) {
+					if (accessible && org.openntf.domino.Database.Utils.isXotsDatabase(db))
+						dbHolderSet_.add(new DatabaseHolder(db));
 				} else {
 					if (org.openntf.domino.Database.Utils.isTemplateCandidate(db))
-						dbSet_.add(db);
+						dbHolderSet_.add(new DatabaseHolder(db));
 				}
+				// the "db" object will get out of scope here, so that it can get recycled through the GC
 				rawdb = nextdb;
 			}
 			Base.s_recycle(delegate);
@@ -320,13 +345,13 @@ org.openntf.domino.DbDirectory, Encapsulated {
 		return getFirstDatabase();
 	}
 
+	private Iterator<DatabaseHolder> dbIter;
+
 	@Deprecated
 	@Legacy(org.openntf.domino.annotations.Legacy.ITERATION_WARNING)
 	public Database getFirstDatabase() {
-		if (!isInitialized_) {
-			initialize(getDelegate());
-		}
-		return dbSet_.first();
+		dbIter = getDbHolderSet().iterator();
+		return getNextDatabase();
 	}
 
 	/*
@@ -348,12 +373,17 @@ org.openntf.domino.DbDirectory, Encapsulated {
 	@Deprecated
 	@Legacy(org.openntf.domino.annotations.Legacy.ITERATION_WARNING)
 	public Database getNextDatabase() {
-		try {
-			return fromLotus(getDelegate().getNextDatabase(), Database.SCHEMA, getAncestorSession());
-		} catch (NotesException e) {
-			DominoUtils.handleException(e);
-			return null;
-		}
+		// RPr: hopefully this will work the same way as the original lotus implementation does
+		if (dbIter.hasNext())
+			return dbIter.next().getDatabase(getAncestorSession());
+		return null;
+		// This will never work, as the DBs in the getDbHolderSet() are in a complete different order 
+		//		try {
+		//			return fromLotus(getDelegate().getNextDatabase(), Database.SCHEMA, getAncestorSession());
+		//		} catch (NotesException e) {
+		//			DominoUtils.handleException(e);
+		//			return null;
+		//		}
 	}
 
 	/*
@@ -376,11 +406,11 @@ org.openntf.domino.DbDirectory, Encapsulated {
 		return isHonorOpenDialog_;
 	}
 
-	private SortedSet<org.openntf.domino.Database> getDbSet() {
+	private SortedSet<DatabaseHolder> getDbHolderSet() {
 		if (!isInitialized_) {
 			initialize(getDelegate());
 		}
-		return dbSet_;
+		return dbHolderSet_;
 	}
 
 	/*
@@ -390,7 +420,25 @@ org.openntf.domino.DbDirectory, Encapsulated {
 	 */
 	@Override
 	public Iterator<org.openntf.domino.Database> iterator() {
-		return getDbSet().iterator();
+		// Create a proxy iterator
+		return new Iterator<org.openntf.domino.Database>() {
+			final Iterator<DatabaseHolder> holderIter_ = getDbHolderSet().iterator();
+
+			@Override
+			public boolean hasNext() {
+				return holderIter_.hasNext();
+			}
+
+			@Override
+			public Database next() {
+				return holderIter_.next().getDatabase(getAncestorSession());
+			}
+
+			@Override
+			public void remove() {
+				holderIter_.remove();
+			}
+		};
 	}
 
 	/*
@@ -512,7 +560,7 @@ org.openntf.domino.DbDirectory, Encapsulated {
 		type_ = Type.getType(in.readInt());
 		name_ = in.readUTF();
 		clusterName_ = in.readUTF();
-		dbSet_ = (SortedSet<Database>) in.readObject();
+		dbHolderSet_ = (SortedSet<DatabaseHolder>) in.readObject();
 	}
 
 	/* (non-Javadoc)
@@ -526,68 +574,114 @@ org.openntf.domino.DbDirectory, Encapsulated {
 		out.writeInt(type_.getValue());
 		out.writeUTF(name_);
 		out.writeUTF(clusterName_);
-		out.writeObject(dbSet_);
+		out.writeObject(dbHolderSet_);
 	}
 
 	@Override
-	public boolean add(final Database arg0) {
-		return getDbSet().add(arg0);
+	public boolean add(final Database db) {
+		return getDbHolderSet().add(new DatabaseHolder(db));
 	}
 
 	@Override
-	public boolean addAll(final Collection<? extends Database> arg0) {
-		return getDbSet().addAll(arg0);
+	public boolean addAll(final Collection<? extends Database> dbs) {
+		boolean ret = false;
+		for (Database db : dbs) {
+			if (add(db)) {
+				ret = true;
+			}
+		}
+		return ret;
 	}
 
 	@Override
 	public void clear() {
-		getDbSet().clear();
+		dbHolderSet_.clear();
 		this.isInitialized_ = false;
 	}
 
 	@Override
-	public boolean contains(final Object arg0) {
-		return getDbSet().contains(arg0);
+	public boolean contains(final Object obj) {
+		if (obj instanceof Database) {
+			return getDbHolderSet().contains(new DatabaseHolder((Database) obj));
+		} else {
+			return false;
+		}
 	}
 
 	@Override
-	public boolean containsAll(final Collection<?> arg0) {
-		return getDbSet().containsAll(arg0);
+	public boolean containsAll(final Collection<?> objs) {
+		for (Object obj : objs) {
+			if (!contains(obj)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
 	public boolean isEmpty() {
-		return getDbSet().isEmpty();
+		return getDbHolderSet().isEmpty();
 	}
 
 	@Override
-	public boolean remove(final Object arg0) {
-		return getDbSet().remove(arg0);
+	public boolean remove(final Object obj) {
+		if (obj instanceof Database) {
+			return getDbHolderSet().remove(new DatabaseHolder((Database) obj));
+		} else {
+			return false;
+		}
 	}
 
 	@Override
-	public boolean removeAll(final Collection<?> arg0) {
-		return getDbSet().removeAll(arg0);
+	public boolean removeAll(final Collection<?> objs) {
+		boolean ret = false;
+		for (Object obj : objs) {
+			if (remove(obj)) {
+				ret = true;
+			}
+		}
+		return ret;
 	}
 
 	@Override
-	public boolean retainAll(final Collection<?> arg0) {
-		return getDbSet().retainAll(arg0);
+	public boolean retainAll(final Collection<?> objs) {
+		Collection<DatabaseHolder> holders = new ArrayList<DatabaseHolder>(objs.size());
+
+		for (Object obj : objs) {
+			if (obj instanceof Database) {
+				holders.add(new DatabaseHolder((Database) obj));
+			}
+		}
+		return getDbHolderSet().retainAll(holders);
 	}
 
 	@Override
 	public int size() {
-		return getDbSet().size();
+		return getDbHolderSet().size();
 	}
 
 	@Override
 	public Object[] toArray() {
-		return getDbSet().toArray();
+		Object[] ret = new Object[size()];
+		int i = 0;
+		for (DatabaseHolder dbHolder_ : getDbHolderSet()) {
+			ret[i++] = dbHolder_.getDatabase(getAncestorSession());
+		}
+		return ret;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T[] toArray(final T[] arg0) {
-		return getDbSet().toArray(arg0);
+	public <T> T[] toArray(T[] paramArrayOfT) {
+		// DUH!
+		if (size() > paramArrayOfT.length) {
+			Class<?> localClass = paramArrayOfT.getClass().getComponentType();
+			paramArrayOfT = (T[]) Array.newInstance(localClass, size());
+		}
+		System.arraycopy(toArray(), 0, paramArrayOfT, 0, size());
+		if (size() < paramArrayOfT.length) {
+			paramArrayOfT[size()] = null;
+		}
+		return paramArrayOfT;
 	}
-
 }

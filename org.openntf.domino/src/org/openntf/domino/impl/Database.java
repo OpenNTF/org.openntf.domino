@@ -130,13 +130,14 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 * @param extendedMetadata
 	 *            true if DB should load extended metadata
 	 */
-	public Database(final lotus.domino.Database delegate, final org.openntf.domino.Base<?> parent, final boolean extendedMetadata) {
-		super(delegate, //
-				(parent instanceof Session) ? (Session) parent : org.openntf.domino.utils.Factory.getSession(parent), //
-						org.openntf.domino.utils.Factory.getWrapperFactory(), 0, NOTES_DATABASE);
-		initialize(delegate, extendedMetadata);
-		s_recycle(delegate);
-	}
+	// it's a very bad idea to use this constructor, as it recycles the delegate. This means all DB-objects that are open, will be closed afterwards
+	//	public Database(final lotus.domino.Database delegate, final org.openntf.domino.Base<?> parent, final boolean extendedMetadata) {
+	//		super(delegate, //
+	//				(parent instanceof Session) ? (Session) parent : org.openntf.domino.utils.Factory.getSession(parent), //
+	//						org.openntf.domino.utils.Factory.getWrapperFactory(), 0, NOTES_DATABASE);
+	//		initialize(delegate, extendedMetadata);
+	//		s_recycle(delegate);
+	//	}
 
 	private void initialize(final lotus.domino.Database delegate, final boolean extended) {
 		try {
@@ -3446,7 +3447,8 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		String language = lStr.substring(0, 2).toLowerCase();
 		String country = (lStr.length() >= 5 && lStr.charAt(2) == '-') ? lStr.substring(3, 5).toUpperCase() : "";
 		return dbLocale = new Locale(language, country);
-        }
+	}
+
 	private transient NoteCollection intNC_;
 
 	private NoteCollection getInternalNoteCollection() {
