@@ -89,6 +89,11 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 		List<HttpService> services = env.getServices();
 		xotsService_ = new XotsService(env);
 		services.add(xotsService_);
+
+		XotsNsfScanner scanner = new XotsNsfScanner("");
+		scanner.addObserver(this);
+		Thread t = new lotus.domino.NotesThread(scanner);
+		t.start();
 	}
 
 	public synchronized static void stop() {
@@ -97,7 +102,7 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 
 	public synchronized static void addToQueue(final Runnable runnable) {
 		try {
-			Object result = AccessController.doPrivileged(new PrivilegedAction<Object>() {
+			AccessController.doPrivileged(new PrivilegedAction<Object>() {
 				@Override
 				public Object run() {
 					getInstance().queue(runnable, runnable.getClass().getClassLoader());
