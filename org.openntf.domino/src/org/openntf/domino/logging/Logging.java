@@ -71,7 +71,7 @@ public class Logging {
 			return false;
 		if (!createFilterHandlers(logCfg))
 			return false;
-		if (_activeConfig == null)
+		if (_activeConfig == null)	// Necessary only if starting up
 			if (!getCfgPropFileNumbers())
 				return false;
 		activateFilterHandler(logCfg);
