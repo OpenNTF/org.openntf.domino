@@ -31,6 +31,42 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 	private Set<Class<?>> taskletClasses_;
 	private Set<XotsBaseTasklet> tasklets_;
 
+	protected class XotsScheduledExecutor extends TrustedDispatcher.TrustedScheduledExecutor {
+
+		protected XotsScheduledExecutor(final TrustedDispatcher dispatcher) {
+			super(dispatcher, new XotsThreadFactory());
+		}
+
+		@Override
+		public void execute(final Runnable runnable) {
+			if (!(runnable instanceof IXotsRunner)) {
+				System.out.println("DEBUG: XotsExecutor has been asked to execute a " + runnable.getClass().getName());
+			}
+			super.execute(runnable);
+		}
+
+		@Override
+		protected void beforeExecute(final Thread t, final Runnable r) {
+			Runnable run = r;
+			if (r instanceof TrustedRunnable) {
+				run = ((TrustedRunnable) r).getRunnable();
+			}
+			if (run instanceof IXotsRunner) {
+				ClassLoader loader = ((IXotsRunner) run).getContextClassLoader();
+				if (loader != null) {
+					t.setContextClassLoader(loader);
+				}
+			} else {
+				System.out.println("DEBUG: XotsDaemon is running a " + run.getClass().getName());
+			}
+		}
+
+		@Override
+		protected void afterExecute(final Runnable r, final Throwable t) {
+
+		}
+	}
+
 	protected class XotsExecutor extends TrustedDispatcher.TrustedExecutor {
 		protected XotsExecutor(final TrustedDispatcher dispatcher) {
 			super(dispatcher, new XotsThreadFactory());
