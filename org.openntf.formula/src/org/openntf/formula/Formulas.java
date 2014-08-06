@@ -80,6 +80,10 @@ public enum Formulas {
 		return functionFactory;
 	}
 
+	public static FormulaParser getMinimalParser() {
+		return getParser(getFormatter(), FunctionFactory.getMinimalFF());
+	}
+
 	public static FormulaContext createContext(final Map<String, Object> document, final FormulaParser parser) {
 		return createContext(document, parser == null ? null : parser.getFormatter(), parser);
 	}

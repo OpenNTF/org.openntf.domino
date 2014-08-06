@@ -60,7 +60,7 @@ public class FunctionFactory {
 	public static FunctionFactory createInstance() {
 
 		FunctionFactory instance = new FunctionFactory();
-		ServiceLoader<FunctionSet> loader = ServiceLoader.load(FunctionSet.class);
+		//		ServiceLoader<FunctionSet> loader = ServiceLoader.load(FunctionSet.class);
 
 		List<FunctionSet> loaderList = findApplicationServices(FunctionSet.class);
 
@@ -200,5 +200,26 @@ public class FunctionFactory {
 		} catch (PrivilegedActionException e) {
 		}
 		return ret;
+	}
+
+	public static FunctionFactory getMinimalFF() {
+		return minimalFF;
+	}
+
+	private static FunctionFactory minimalFF;
+	static {
+		minimalFF = new FunctionFactory();
+		ArrayList<FunctionSet> fsl = new ArrayList<FunctionSet>();
+		fsl.add(new org.openntf.formula.function.Operators.Functions());
+		fsl.add(new org.openntf.formula.function.OperatorsBool.Functions());
+		fsl.add(new org.openntf.formula.function.Negators.Functions());
+		fsl.add(new org.openntf.formula.function.Comparators.Functions());
+		fsl.add(new org.openntf.formula.function.Constants.Functions());
+		fsl.add(new org.openntf.formula.function.MathFunctions.Functions());
+		fsl.add(new org.openntf.formula.function.DateTimeFunctions.Functions());
+		fsl.add(new org.openntf.formula.function.TextFunctions.Functions());
+		for (FunctionSet fact : fsl)
+			minimalFF.functions.putAll(fact.getFunctions());
+		minimalFF.setImmutable();
 	}
 }

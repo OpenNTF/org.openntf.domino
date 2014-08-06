@@ -133,4 +133,11 @@ public interface WrapperFactory {
 	 */
 	void setNoRecycle(final Base<?> base, boolean value);
 
+	/**
+	 * Returns the last Documents (max. 10) which where wrapped in the current thread
+	 * 
+	 * @return null if there aren't any, array of correct size, if there are
+	 */
+	public String[] getLastWrappedDocsInThread();
+
 }

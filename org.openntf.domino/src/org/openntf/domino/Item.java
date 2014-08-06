@@ -30,7 +30,8 @@ import org.xml.sax.InputSource;
 /**
  * The Interface Item.
  */
-public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.openntf.domino.ext.Item, Resurrectable, DocumentDescendant {
+public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.openntf.domino.ext.Item, Resurrectable, DocumentDescendant,
+		HasExceptionDetails {
 	public static enum Flags {
 		PROTECTED(16), SUMMARY(1), AUTHORS(4), READERS(8), NAMES(2), SIGNED(32), ENCRYPTED(64);
 
@@ -66,7 +67,7 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 		private final int value_;
 
 		private Flags(final int value) {
-			value_ = (int) value;
+			value_ = value;
 		}
 
 		public int getValue() {

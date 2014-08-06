@@ -29,7 +29,7 @@ import org.openntf.domino.types.SessionDescendant;
  * The Interface Database.
  */
 public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database>, org.openntf.domino.ext.Database,
-		Resurrectable, SessionDescendant {
+		Resurrectable, SessionDescendant, HasExceptionDetails {
 
 	/**
 	 * Enum to allow easy access to Schema

@@ -27,7 +27,7 @@ import org.openntf.domino.types.FactorySchema;
  * The Interface Document.
  */
 public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document, org.openntf.domino.ext.Document, DatabaseDescendant,
-		Map<String, Object>, AsDocMap {
+		Map<String, Object>, AsDocMap, HasExceptionDetails {
 
 	public static class Schema extends FactorySchema<Document, lotus.domino.Document, Database> {
 		@Override

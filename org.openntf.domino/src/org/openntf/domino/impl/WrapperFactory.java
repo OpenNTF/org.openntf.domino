@@ -54,6 +54,63 @@ import org.openntf.domino.utils.Factory;
  */
 public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 
+	public static final int LWDCSIZE = 10;
+
+	private static class LastWrappedDocCache {
+
+		private String[] lastWrappedDocs;
+		private int cachedDocs;
+
+		private LastWrappedDocCache() {
+			lastWrappedDocs = new String[LWDCSIZE];
+			cachedDocs = 0;
+		}
+
+		private void push(final lotus.domino.Document doc, final Database db) {
+			String toPush;
+			try {
+				toPush = db.getApiPath() + "&" + doc.getUniversalID();
+			} catch (Exception e) {
+				System.out.println("Exception during LastWrappedDocs.push: " + e.getClass().getName());
+				e.printStackTrace();
+				return;
+			}
+			if (cachedDocs < LWDCSIZE)
+				cachedDocs++;
+			for (int i = cachedDocs - 1; i > 0; i--)
+				lastWrappedDocs[i] = lastWrappedDocs[i - 1];
+			lastWrappedDocs[0] = toPush;
+		}
+
+		private String[] getLastWrappedDocs() {
+			if (cachedDocs == 0)
+				return null;
+			String[] ret = new String[cachedDocs];
+			System.arraycopy(lastWrappedDocs, 0, ret, 0, cachedDocs);
+			return ret;
+		}
+	}
+
+	private static ThreadLocal<LastWrappedDocCache> lwdCache = new ThreadLocal<LastWrappedDocCache>() {
+		@Override
+		protected LastWrappedDocCache initialValue() {
+			return new LastWrappedDocCache();
+		}
+	};
+
+	protected void cacheDoc(final lotus.domino.Document lotusDoc, final Database parent) {
+		lwdCache.get().push(lotusDoc, parent);
+	}
+
+	private void clearLWDCache() {
+		lwdCache.get().cachedDocs = 0;
+	}
+
+	@Override
+	public String[] getLastWrappedDocsInThread() {
+		return lwdCache.get().getLastWrappedDocs();
+	}
+
 	/** this is the holder for all other object that needs to be recycled **/
 	private DominoReferenceCache referenceCache = new DominoReferenceCache();
 
@@ -71,6 +128,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
 		referenceCache.processQueue(null);
 		//System.out.println("Online objects: " + Factory.getActiveObjectCount());
+		clearLWDCache();
 	}
 
 	/** The Constant log_. */
@@ -92,6 +150,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	//	}
 
 	// -- Factory methods
+	@Override
 	@SuppressWarnings("rawtypes")
 	public <T extends Base, D extends lotus.domino.Base, P extends Base> T fromLotus(final D lotus, final FactorySchema<T, D, P> schema,
 			final P parent) {
@@ -128,6 +187,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 
 	}
 
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public <T extends Base, D extends lotus.domino.Base, P extends Base> Collection<T> fromLotus(final Collection<?> lotusColl,
 			final FactorySchema<T, D, P> schema, final P parent) {
@@ -143,6 +203,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		return result;
 	}
 
+	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public <T extends Base, D extends lotus.domino.Base, P extends Base> Vector<T> fromLotusAsVector(final Collection<?> lotusColl,
 			final FactorySchema<T, D, P> schema, final P parent) {
@@ -300,6 +361,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		}
 
 		if (lotus instanceof lotus.domino.Document) {
+			cacheDoc((lotus.domino.Document) lotus, (Database) parent);
 			return new org.openntf.domino.impl.Document((lotus.domino.Document) lotus, (Database) parent, this, cpp);
 		}
 
@@ -456,10 +518,12 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		//		return null;
 	}
 
+	@Override
 	public void terminate() {
 		clearCaches();
 	}
 
+	@Override
 	public Vector<Object> wrapColumnValues(final Collection<?> values, final Session session) {
 		return wrapColumnValues(values, session, null);
 	}
@@ -510,6 +574,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		return result;
 	}
 
+	@Override
 	public <T extends lotus.domino.Base> T toLotus(final T base) {
 		return (T) org.openntf.domino.impl.Base.getDelegate(base);
 	}
