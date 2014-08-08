@@ -24,6 +24,7 @@ import org.openntf.domino.Document;
 import org.openntf.domino.Session;
 import org.openntf.domino.View;
 import org.openntf.domino.WrapperFactory;
+import org.openntf.domino.ext.Session.Fixes;
 import org.openntf.domino.utils.DominoUtils;
 
 // TODO: Auto-generated Javadoc
@@ -108,6 +109,13 @@ public class ViewColumn extends Base<org.openntf.domino.ViewColumn, lotus.domino
 	 */
 	@Override
 	public int getColumnValuesIndex() {
+		return getColumnValuesIndex(getAncestorSession().isFixEnabled(Fixes.VIEWENTRY_RETURN_CONSTANT_VALUES));
+	}
+
+	@Override
+	public int getColumnValuesIndex(final boolean correctValue) {
+		if (correctValue)
+			return getIndex();
 		try {
 			return getDelegate().getColumnValuesIndex();
 		} catch (NotesException e) {

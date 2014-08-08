@@ -781,8 +781,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 
 				database = getDelegate().getDatabase(server, db, createOnFail);
 				result = fromLotus(database, Database.SCHEMA, this);
-
-				if (isDbCached_)
+				if (isDbCached_ && result != null)
 					databases_.put(key, result);
 			} catch (NotesException e) {
 				String message = e.text;
@@ -1904,5 +1903,10 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	@Override
 	public boolean isAnonymous() {
 		return "Anonymous".equals(getEffectiveUserName());
+	}
+
+	@Override
+	public void setCurrentDatabase(final Database db) {
+		currentDatabase_ = db;
 	}
 }

@@ -58,4 +58,9 @@ public interface Item {
 	 * @since org.openntf.domino 5.0.0
 	 */
 	public boolean isReadersNamesAuthors();
+
+	/**
+	 * Sets the underlying document dirty.
+	 */
+	public void markDirty();
 }

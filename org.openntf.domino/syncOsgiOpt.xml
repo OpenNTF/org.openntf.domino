@@ -4,7 +4,7 @@
     <sync todir="OSGI-OPT/src">
     	<fileset dir="src" includes="**/*.java" />
     	<fileset dir="tinkerpop" includes="**/*.java" />
-    	<fileset dir="commons" includes="**/*.java" />
+    	<fileset dir="jsr305" includes="**/*.java" />
     </sync>
   </target>
 </project>

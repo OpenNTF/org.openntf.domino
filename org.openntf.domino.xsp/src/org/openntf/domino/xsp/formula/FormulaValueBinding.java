@@ -59,6 +59,13 @@ public class FormulaValueBinding extends ValueBindingEx {
 	}
 
 	/**
+	 * Trivial Constructor (needed for restoreState)
+	 */
+	public FormulaValueBinding() {
+		this.formulaStr = null;
+	}
+
+	/**
 	 * returns the expected type
 	 */
 	@Override

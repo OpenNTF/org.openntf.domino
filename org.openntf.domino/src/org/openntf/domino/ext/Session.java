@@ -50,8 +50,12 @@ public interface Session {
 
 		/** block the MIME interface in the document while accessing MIME items */
 		MIME_BLOCK_ITEM_INTERFACE,
+
 		/** Document.getDocumentByUNID() returns null instead of an exception */
-		DOC_UNID_NULLS
+		DOC_UNID_NULLS,
+
+		/** ViewEntries should return correct column values. (Constant values are ommited) */
+		VIEWENTRY_RETURN_CONSTANT_VALUES
 	}
 
 	/**
@@ -372,4 +376,15 @@ public interface Session {
 	 * @since org.openntf.domino 5.0.0
 	 */
 	public void setAutoMime(AutoMime autoMime);
+
+	/**
+	 * This method is needed for testing purposes or for XOTS
+	 * 
+	 * ATTENTION: use that with care! You cannot change currentDatabase in delegate (AFAIK)
+	 * 
+	 * @param db
+	 *            the database that is the current one.
+	 * @since org.openntf.domino 5.0.0
+	 */
+	public void setCurrentDatabase(final Database db);
 }

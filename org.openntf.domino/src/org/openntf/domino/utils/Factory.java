@@ -23,9 +23,11 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
@@ -63,6 +65,10 @@ import org.openntf.domino.types.SessionDescendant;
 public enum Factory {
 	;
 
+	public interface AppServiceLocator {
+		public <T> List<T> findApplicationServices(final Class<T> serviceClazz);
+	}
+
 	/**
 	 * Holder for the wrapper-factory that converts lotus.domino objects to org.openntf.domino objects
 	 */
@@ -70,12 +76,14 @@ public enum Factory {
 
 	private static ThreadLocal<ClassLoader> currentClassLoader_ = new ThreadLocal<ClassLoader>();
 
+	private static ThreadLocal<AppServiceLocator> currentServiceLocator_ = new ThreadLocal<AppServiceLocator>();
+
 	private static ThreadLocal<Session> currentSessionHolder_ = new ThreadLocal<Session>();
 
 	private static List<Terminatable> onTerminate_ = new ArrayList<Terminatable>();
 
 	// TODO: Determine if this is the right way to deal with Xots access to faces contexts
-	private static ThreadLocal<Database> currentDatabaseHolder_ = new ThreadLocal<Database>();
+	// private static ThreadLocal<Database> currentDatabaseHolder_ = new ThreadLocal<Database>();
 
 	/**
 	 * setup the environment and loggers
@@ -462,26 +470,8 @@ public enum Factory {
 	public static WrapperFactory getWrapperFactory() {
 		WrapperFactory wf = currentWrapperFactory.get();
 		if (wf == null) {
-			ClassLoader cl = getClassLoader();
-			// System.out.println("Got this Classloader: " + cl);
-
-			if (cl != null) {
-				try {
-					ServiceLoader<WrapperFactory> loader = ServiceLoader.load(WrapperFactory.class, cl);
-					Iterator<WrapperFactory> it = loader.iterator();
-					if (it.hasNext()) {
-						wf = it.next();
-						// TODO RPr remove these debug prints
-						System.out.println("DEBUG: Using alternative WrapperFactory: " + wf);
-					}
-				} catch (Throwable t) {
-					DominoUtils.handleException(t);
-				}
-			}
-			if (wf == null) {
-				// System.out.println("Using default WrapperFactory");
-				wf = new org.openntf.domino.impl.WrapperFactory();
-			}
+			List<WrapperFactory> wfList = findApplicationServices(WrapperFactory.class);
+			wf = wfList.size() > 0 ? wfList.get(0) : new org.openntf.domino.impl.WrapperFactory();
 			currentWrapperFactory.set(wf);
 		}
 		return wf;
@@ -680,31 +670,54 @@ public enum Factory {
 		return result;
 	}
 
+	/**
+	 * Returns the current session, if available. Does never create a session
+	 * 
+	 * @return the session
+	 */
 	public static org.openntf.domino.Session getSession_unchecked() {
 		return currentSessionHolder_.get();
 	}
 
+	/**
+	 * Sets the current session
+	 * 
+	 * @param session
+	 */
 	public static void setSession(final lotus.domino.Session session) {
 		currentSessionHolder_.set(fromLotus(session, Session.SCHEMA, null));
 	}
 
+	/**
+	 * clears the current session
+	 */
 	public static void clearSession() {
 		currentSessionHolder_.set(null);
 	}
 
 	// TODO: Determine if this is the right way to deal with Xots access to faces contexts
+	/**
+	 * Returns the session's current database if available. Does never create a session.
+	 * 
+	 * @see #getSession_unchecked()
+	 * @return The session's current database
+	 */
 	public static Database getDatabase_unchecked() {
-		return currentDatabaseHolder_.get();
+		Session sess = getSession_unchecked();
+		return (sess == null) ? null : sess.getCurrentDatabase();
 	}
 
-	public static void setDatabase(final Database database) {
-		setNoRecycle(database, true);
-		currentDatabaseHolder_.set(database);
-	}
+	// RPr: I think it is a better idea to set the currentDatabase on the currentSesssion
 
-	public static void clearDatabase() {
-		currentDatabaseHolder_.set(null);
-	}
+	// TODO remove that code
+	//	public static void setDatabase(final Database database) {
+	//		setNoRecycle(database, true);
+	//		currentDatabaseHolder_.set(database);
+	//	}
+	//
+	//	public static void clearDatabase() {
+	//		currentDatabaseHolder_.set(null);
+	//	}
 
 	public static ClassLoader getClassLoader() {
 		if (currentClassLoader_.get() == null) {
@@ -726,11 +739,51 @@ public enum Factory {
 		return currentClassLoader_.get();
 	}
 
+	private static Map<Class, List> nonOSGIServicesCache;
+
+	@SuppressWarnings("unchecked")
+	public static <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
+
+		AppServiceLocator serviceLocator = currentServiceLocator_.get();
+		if (serviceLocator != null) {
+			return serviceLocator.findApplicationServices(serviceClazz);
+		}
+
+		// this is the non OSGI case:
+		if (nonOSGIServicesCache == null)
+			nonOSGIServicesCache = new HashMap<Class, List>();
+
+		@SuppressWarnings("unchecked")
+		List<T> ret = nonOSGIServicesCache.get(serviceClazz);
+		if (ret == null) {
+			ret = new ArrayList<T>();
+			nonOSGIServicesCache.put(serviceClazz, ret);
+
+			ClassLoader cl = getClassLoader();
+			if (cl != null) {
+				ServiceLoader<T> loader = ServiceLoader.load(serviceClazz, cl);
+				Iterator<T> it = loader.iterator();
+				while (it.hasNext()) {
+					ret.add(it.next());
+				}
+			}
+			if (Comparable.class.isAssignableFrom(serviceClazz)) {
+				Collections.sort((List<? extends Comparable>) ret);
+			}
+		}
+		return ret;
+	}
+
 	public static void setClassLoader(final ClassLoader loader) {
 		if (loader != null) {
 			//			System.out.println("Setting OpenNTF Factory ClassLoader to a " + loader.getClass().getName());
 		}
+		//		currentLoadedClasses_.get().clear();
 		currentClassLoader_.set(loader);
+	}
+
+	public static void setServiceLocator(final AppServiceLocator locator) {
+		currentServiceLocator_.set(locator);
 	}
 
 	public static void clearWrapperFactory() {
@@ -739,6 +792,10 @@ public enum Factory {
 
 	public static void clearClassLoader() {
 		currentClassLoader_.set(null);
+	}
+
+	public static void clearServiceLocator() {
+		currentServiceLocator_.set(null);
 	}
 
 	public static void clearDominoGraph() {
@@ -773,7 +830,66 @@ public enum Factory {
 		clearDominoGraph();
 		clearWrapperFactory();
 		clearClassLoader();
+		clearUserLocale();
+		clearServiceLocator();
 		return result;
+	}
+
+	/**
+	 * Support for different Locale
+	 */
+	private static ThreadLocal<Locale> userLocale_ = new ThreadLocal<Locale>();
+
+	public static void setUserLocale(final Locale loc) {
+		userLocale_.set(loc);
+	}
+
+	public static Locale getUserLocale() {
+		return userLocale_.get();
+	}
+
+	private static void clearUserLocale() {
+		userLocale_.set(null);
+	}
+
+	/**
+	 * Returns the internal locale. The Locale is retrieved by this way:
+	 * <ul>
+	 * <li>If a currentDatabase is set, the DB is queried for its locale</li>
+	 * <li>If there is no database.locale, the system default locale is returned</li>
+	 * </ul>
+	 * This locale should be used, if you write log entries in a server log for example.
+	 * 
+	 * @return the currentDatabase-locale or default-locale
+	 */
+	public static Locale getInternalLocale() {
+		Locale ret = null;
+		// are we in context of an NotesSession? Try to figure out the current database.
+		Session sess = getSession_unchecked();
+		Database db = (sess == null) ? null : sess.getCurrentDatabase();
+		if (db != null)
+			ret = db.getLocale();
+		if (ret == null)
+			ret = Locale.getDefault();
+		return ret;
+	}
+
+	/**
+	 * Returns the external locale. The Locale is retrieved by this way:
+	 * <ul>
+	 * <li>Return the external locale (= the browser's locale in most cases) if available</li>
+	 * <li>If a currentDatabase is set, the DB is queried for its locale</li>
+	 * <li>If there is no database.locale, the system default locale is returned</li>
+	 * </ul>
+	 * This locale should be used, if you generate messages for the current (browser)user.
+	 * 
+	 * @return the external-locale, currentDatabase-locale or default-locale
+	 */
+	public static Locale getExternalLocale() {
+		Locale ret = getUserLocale();
+		if (ret == null)
+			ret = getInternalLocale();
+		return ret;
 	}
 
 	/**

@@ -56,99 +56,99 @@ public interface AtFormulaParserImplConstants {
   /** RegularExpression Id. */
   int Assign = 20;
   /** RegularExpression Id. */
-  int BoolNot = 21;
+  int KW_DEFAULT = 21;
   /** RegularExpression Id. */
-  int KW_DEFAULT = 22;
+  int KW_ENVIRONMENT = 22;
   /** RegularExpression Id. */
-  int KW_ENVIRONMENT = 23;
+  int KW_FIELD = 23;
   /** RegularExpression Id. */
-  int KW_FIELD = 24;
+  int KW_REM = 24;
   /** RegularExpression Id. */
-  int KW_REM = 25;
+  int KW_SELECT = 25;
   /** RegularExpression Id. */
-  int KW_SELECT = 26;
+  int At_Include = 26;
   /** RegularExpression Id. */
-  int At_Include = 27;
+  int At_Function = 27;
   /** RegularExpression Id. */
-  int At_Function = 28;
+  int At_do = 28;
   /** RegularExpression Id. */
-  int At_do = 29;
+  int At_doWhile = 29;
   /** RegularExpression Id. */
-  int At_doWhile = 30;
+  int At_while = 30;
   /** RegularExpression Id. */
-  int At_while = 31;
+  int At_for = 31;
   /** RegularExpression Id. */
-  int At_for = 32;
+  int At_if = 32;
   /** RegularExpression Id. */
-  int At_if = 33;
+  int At_v2if = 33;
   /** RegularExpression Id. */
-  int At_v2if = 34;
+  int At_iferror = 34;
   /** RegularExpression Id. */
-  int At_iferror = 35;
+  int At_transform = 35;
   /** RegularExpression Id. */
-  int At_transform = 36;
+  int At_sort = 36;
   /** RegularExpression Id. */
-  int At_sort = 37;
+  int At_text = 37;
   /** RegularExpression Id. */
-  int At_text = 38;
+  int At_eval = 38;
   /** RegularExpression Id. */
-  int At_eval = 39;
+  int At_evalex = 39;
   /** RegularExpression Id. */
-  int At_evalex = 40;
+  int At_foceval = 40;
   /** RegularExpression Id. */
-  int At_foceval = 41;
+  int At_return = 41;
   /** RegularExpression Id. */
-  int At_return = 42;
+  int At_iserror = 42;
   /** RegularExpression Id. */
-  int At_iserror = 43;
+  int At_isavailable = 43;
   /** RegularExpression Id. */
-  int At_isavailable = 44;
+  int At_isunavailable = 44;
   /** RegularExpression Id. */
-  int At_isunavailable = 45;
+  int At_other = 45;
   /** RegularExpression Id. */
-  int At_other = 46;
+  int ListConcat = 46;
   /** RegularExpression Id. */
-  int ListConcat = 47;
+  int OpMul = 47;
   /** RegularExpression Id. */
-  int OpMul = 48;
+  int OpMulP = 48;
   /** RegularExpression Id. */
-  int OpMulP = 49;
+  int OpDiv = 49;
   /** RegularExpression Id. */
-  int OpDiv = 50;
+  int OpDivP = 50;
   /** RegularExpression Id. */
-  int OpDivP = 51;
+  int OpPlus = 51;
   /** RegularExpression Id. */
-  int OpPlus = 52;
+  int OpPlusP = 52;
   /** RegularExpression Id. */
-  int OpPlusP = 53;
+  int OpMinus = 53;
   /** RegularExpression Id. */
-  int OpMinus = 54;
+  int OpMinusP = 54;
   /** RegularExpression Id. */
-  int OpMinusP = 55;
+  int CmpEqual = 55;
   /** RegularExpression Id. */
-  int CmpEqual = 56;
+  int CmpEqualP = 56;
   /** RegularExpression Id. */
-  int CmpEqualP = 57;
+  int CmpNE = 57;
   /** RegularExpression Id. */
-  int CmpNE = 58;
+  int CmpNEP = 58;
   /** RegularExpression Id. */
-  int CmpNEP = 59;
+  int CmpLT = 59;
   /** RegularExpression Id. */
-  int CmpLT = 60;
+  int CmpLTP = 60;
   /** RegularExpression Id. */
-  int CmpLTP = 61;
+  int CmpGT = 61;
   /** RegularExpression Id. */
-  int CmpGT = 62;
+  int CmpGTP = 62;
   /** RegularExpression Id. */
-  int CmpGTP = 63;
+  int CmpLTE = 63;
   /** RegularExpression Id. */
-  int CmpLTE = 64;
+  int CmpLTEP = 64;
   /** RegularExpression Id. */
-  int CmpLTEP = 65;
+  int CmpGTE = 65;
   /** RegularExpression Id. */
-  int CmpGTE = 66;
+  int CmpGTEP = 66;
   /** RegularExpression Id. */
-  int CmpGTEP = 67;
+  int BoolNot = 67;
   /** RegularExpression Id. */
   int BoolAnd = 68;
   /** RegularExpression Id. */
@@ -206,7 +206,6 @@ public interface AtFormulaParserImplConstants {
     "\"(\"",
     "\")\"",
     "\":=\"",
-    "\"!\"",
     "\"DEFAULT\"",
     "\"ENVIRONMENT\"",
     "\"FIELD\"",
@@ -253,6 +252,7 @@ public interface AtFormulaParserImplConstants {
     "\"*<=\"",
     "\">=\"",
     "\"*>=\"",
+    "\"!\"",
     "\"&\"",
     "\"|\"",
     "\"!>\"",

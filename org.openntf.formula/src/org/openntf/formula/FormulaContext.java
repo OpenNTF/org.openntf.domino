@@ -33,6 +33,7 @@ public class FormulaContext {
 	private static final Logger log_ = Logger.getLogger(FormulaContext.class.getName());
 	protected Map<String, Object> dataMap;
 	private Map<String, ValueHolder> vars = new HashMap<String, ValueHolder>();
+	private Map<String, Object> parameters = new HashMap<String, Object>();
 
 	/** the formatter is needed to parse/convert number and dateTime values */
 	private Formatter formatter;
@@ -263,19 +264,23 @@ public class FormulaContext {
 		paramProvider = prov;
 	}
 
+	public void setParam(final String paramName, final Object value) {
+		parameters.put(paramName, value);
+	}
+
 	/**
 	 * Read a formula parameter
 	 * 
 	 * @param paramName
 	 * @return
-	 * @throws FormulaParseException
 	 */
-	public ValueHolder getParam(final String paramName) throws FormulaParseException {
-		if (paramProvider == null) {
-			return ValueHolder.valueDefault();
-		} else {
-			return ValueHolder.valueOf(paramProvider.get(paramName));
+	public Object getParam(final String paramName) {
+		if (parameters.containsKey(paramName))
+			return parameters.get(paramName);
+		if (paramProvider != null) {
+			return paramProvider.get(paramName);
 		}
+		return null;
 	}
 
 }
