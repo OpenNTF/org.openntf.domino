@@ -103,7 +103,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	 */
 	public Database(final lotus.domino.Database delegate, final Session parent, final WrapperFactory wf, final long cpp_id) {
 		super(delegate, parent, wf, cpp_id, NOTES_DATABASE);
-		initialize(delegate, false);
+		initialize(delegate);
 	}
 
 	/**
@@ -139,7 +139,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	//		s_recycle(delegate);
 	//	}
 
-	private void initialize(final lotus.domino.Database delegate, final boolean extended) {
+	private void initialize(final lotus.domino.Database delegate) {
 		try {
 			server_ = delegate.getServer();
 		} catch (NotesException e) {
@@ -170,22 +170,22 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		} catch (NotesException e) {
 			log_.log(java.util.logging.Level.FINE, "Unable to cache title for Database due to exception: " + e.text);
 		}
-		if (extended) {
-			try {
-				lotus.domino.DateTime dt = delegate.getLastModified();
-				lastModDate_ = dt.toJavaDate();
-				s_recycle(dt);
-			} catch (NotesException e) {
-				log_.log(java.util.logging.Level.FINE, "Unable to cache last modification date for Database due to exception: " + e.text);
-			}
-			try {
-				lotus.domino.Replication repl = delegate.getReplicationInfo();
-				isReplicationDisabled_ = repl.isDisabled();
-				s_recycle(repl);
-			} catch (NotesException e) {
-				log_.log(java.util.logging.Level.FINE, "Unable to cache replication status for Database due to exception: " + e.text);
-			}
-		}
+		//		if (extended) {
+		//			try {
+		//				lotus.domino.DateTime dt = delegate.getLastModified();
+		//				lastModDate_ = dt.toJavaDate();
+		//				s_recycle(dt);
+		//			} catch (NotesException e) {
+		//				log_.log(java.util.logging.Level.FINE, "Unable to cache last modification date for Database due to exception: " + e.text);
+		//			}
+		//			try {
+		//				lotus.domino.Replication repl = delegate.getReplicationInfo();
+		//				isReplicationDisabled_ = repl.isDisabled();
+		//				s_recycle(repl);
+		//			} catch (NotesException e) {
+		//				log_.log(java.util.logging.Level.FINE, "Unable to cache replication status for Database due to exception: " + e.text);
+		//			}
+		//		}
 		ident_ = System.identityHashCode(getParent()) + "!!!" + server_ + "!!" + path_;
 	}
 
@@ -2229,7 +2229,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 				}
 			}
 			if (result) {
-				initialize(getDelegate(), false);
+				initialize(getDelegate());
 			}
 			return result;
 		} catch (Exception e) {
@@ -2248,7 +2248,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			boolean result = getDelegate().openByReplicaID(server, replicaId);
 			if (result) {
-				initialize(getDelegate(), false);
+				initialize(getDelegate());
 			}
 			return result;
 		} catch (NotesException e) {
@@ -2270,7 +2270,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			lotus.domino.DateTime dt = toLotus(modifiedSince);
 			result = getDelegate().openIfModified(server, dbFile, dt);
 			if (result) {
-				initialize(getDelegate(), false);
+				initialize(getDelegate());
 			}
 			dt.recycle();
 			return result;
@@ -2290,7 +2290,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			boolean result = getDelegate().openWithFailover(server, dbFile);
 			if (result) {
-				initialize(getDelegate(), false);
+				initialize(getDelegate());
 			}
 			return result;
 		} catch (NotesException e) {
