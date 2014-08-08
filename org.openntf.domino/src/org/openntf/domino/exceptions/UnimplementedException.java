@@ -18,6 +18,10 @@ package org.openntf.domino.exceptions;
 public class UnimplementedException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 
+	public UnimplementedException() {
+		super();
+	}
+
 	/**
 	 * @param message
 	 *            the detail message. The detail message is saved for later retrieval by the Throwable.getMessage() method.
