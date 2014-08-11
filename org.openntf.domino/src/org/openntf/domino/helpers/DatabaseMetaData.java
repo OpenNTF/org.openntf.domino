@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import lotus.domino.DateTime;
 import lotus.domino.NotesException;
@@ -44,7 +45,7 @@ import org.openntf.domino.utils.DominoUtils;
  * 
  */
 public class DatabaseMetaData implements Serializable {
-
+	private static final Logger log_ = Logger.getLogger(DatabaseMetaData.class.getName());
 	private static final long serialVersionUID = 1L;
 	// These attributes will never change for a certain database object
 	private final String fileName_;
@@ -1837,7 +1838,10 @@ public class DatabaseMetaData implements Serializable {
 		 */
 		@Override
 		public boolean isOpen() {
-			return getDatabase().isOpen();
+			// isOpen does NOT open the database. Use open instead
+			if (db_ == null)
+				return false;
+			return db_.isOpen();
 		}
 
 		/*
@@ -1882,7 +1886,12 @@ public class DatabaseMetaData implements Serializable {
 		 */
 		@Override
 		public boolean open() {
-			return getDatabase().open();
+			try {
+				getDatabase().open();
+			} catch (Exception e) {
+				log_.log(java.util.logging.Level.FINE, "Could not open the database: " + getApiPath(), e);
+			}
+			return isOpen();
 		}
 
 		/*

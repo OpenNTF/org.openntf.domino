@@ -18,7 +18,6 @@ import org.openntf.domino.xots.annotations.Schedule;
 
 import com.ibm.designer.runtime.domino.adapter.HttpService;
 import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
-import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 
 @Schedule(frequency = 4, timeunit = TimeUnit.HOURS)
 @Persistent
@@ -53,6 +52,8 @@ public class XotsNsfScanner extends XotsBaseTasklet implements Serializable {
 				t.printStackTrace();
 			}
 		}
+		System.out.println("Current XOTS Classes:");
+		System.out.println(getXotsService().toString());
 	}
 
 	private XotsService service_;
@@ -73,13 +74,21 @@ public class XotsNsfScanner extends XotsBaseTasklet implements Serializable {
 		if (TRACE) {
 			System.out.println("TRACE: Scanning database " + db.getApiPath() + " for Xots Tasklets");
 		}
-		DatabaseDesign design = db.getDesign();
-		IconNote icon = design.getIconNote();
-		Document iconDoc = icon.getDocument();
-		if (iconDoc.hasItem("$Xots")) {
-			String[] xotsClassNames = iconDoc.getItemValue("$Xots", String[].class);
-			NSFComponentModule module = (NSFComponentModule) getXotsService().getComponentModule("/" + db.getFilePath());
-			getXotsService().loadXotsTasklets("/" + db.getFilePath(), xotsClassNames);
+		if (!db.open()) {
+			if (TRACE) {
+				System.out.println("TRACE: could not open database: " + db.getApiPath());
+			}
+		} else {
+			DatabaseDesign design = db.getDesign();
+			IconNote icon = design.getIconNote();
+			if (icon != null) { // RPr: There are databases that have no DB-icon!?
+				Document iconDoc = icon.getDocument();
+				if (iconDoc.hasItem("$Xots")) {
+					String[] xotsClassNames = iconDoc.getItemValue("$Xots", String[].class);
+					// getXotsService().getComponentModule("/" + db.getFilePath()); // RPr: This is not neccessary
+					getXotsService().loadXotsTasklets("/" + db.getFilePath(), xotsClassNames);
+				}
+			}
 		}
 
 	}

@@ -3,16 +3,19 @@ package org.openntf.domino.xots;
 import java.io.IOException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
 
 import org.openntf.domino.xots.annotations.Persistent;
+import org.openntf.domino.xots.annotations.Schedule;
 
-import com.ibm.designer.runtime.domino.adapter.ComponentModule;
 import com.ibm.designer.runtime.domino.adapter.HttpService;
 import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
 import com.ibm.designer.runtime.domino.bootstrap.adapter.HttpServletRequestAdapter;
@@ -35,7 +38,7 @@ public class XotsService extends NSFService {
 
 	public synchronized static void addToQueue(final Runnable runnable) {
 		try {
-			Object result = AccessController.doPrivileged(new PrivilegedAction<Object>() {
+			AccessController.doPrivileged(new PrivilegedAction<Object>() {
 				@Override
 				public Object run() {
 					// getInstance().queue(runnable, runnable.getClass().getClassLoader());
@@ -61,7 +64,7 @@ public class XotsService extends NSFService {
 
 		@Override
 		public void run() {
-			Set<Class<?>> result = new HashSet<Class<?>>();
+			classes_ = new HashSet<Class<?>>();
 			try {
 				NotesContext ctxContext = new NotesContext(module_);
 				NotesContext.initThread(ctxContext);
@@ -73,14 +76,15 @@ public class XotsService extends NSFService {
 					} catch (ClassNotFoundException e) {
 						e.printStackTrace();
 					}
-					result.add(curClass);
+					classes_.add(curClass);
+					callback_.loaderCallback(this);
 				}
 			} catch (Throwable t) {
 				t.printStackTrace();
 			} finally {
 				NotesContext.termThread();
 			}
-			classes_ = result;
+
 		}
 
 		public Set<Class<?>> getClasses() {
@@ -92,7 +96,7 @@ public class XotsService extends NSFService {
 		}
 	}
 
-	private final Map<String, NSFComponentModule> modules_ = new ConcurrentHashMap<String, NSFComponentModule>();
+	// private final Map<String, NSFComponentModule> modules_ = new ConcurrentHashMap<String, NSFComponentModule>();
 	private final Map<NSFComponentModule, Set<Class<?>>> classMap_ = new ConcurrentHashMap<NSFComponentModule, Set<Class<?>>>();
 
 	public XotsService(final LCDEnvironment arg0) {
@@ -124,16 +128,24 @@ public class XotsService extends NSFService {
 		return super.createNSFModule(arg0);
 	}
 
-	@Override
-	public ComponentModule getComponentModule(final String arg0) throws ServletException {
-		System.out.println("DEBUG: XotsService created NSF module for path " + arg0);
-		NSFComponentModule result = modules_.get(arg0);
-		if (result == null) {
-			result = super.createNSFModule(arg0);
-			modules_.put(arg0, result);
-		}
-		return result;
-	}
+	//	@Override
+	//	public ComponentModule getComponentModule(String modulePath) throws ServletException {
+	//		// RPr: on a windows machine, the databasePath is returned with "\\"
+	//		// BTW: why don't we use "loadModule" here
+	//		// BTW: Why do we override this method at all?
+	//		// [15.07.2014 20:38:57] Nathan T. Freeman: okay, if we call createNSFModule instead of loadModule, then it won't cache the module
+	//		// [15.07.2014 20:39:08] Nathan T. Freeman: but createNSFModule is protected
+	//		// but we DO cache the module, so I see no advantage
+	//		modulePath = StringUtil.replace(modulePath, '\\', '/');
+	//		
+	//		System.out.println("DEBUG: XotsService created NSF module for path " + modulePath);
+	//		NSFComponentModule result = modules_.get(modulePath);
+	//		if (result == null) {
+	//			result = super.createNSFModule(modulePath);
+	//			modules_.put(modulePath, result);
+	//		}
+	//		return result;
+	//	}
 
 	@Override
 	public boolean doService(final String arg0, final String arg1, final HttpSessionAdapter arg2, final HttpServletRequestAdapter arg3,
@@ -147,10 +159,16 @@ public class XotsService extends NSFService {
 		final LoaderRunnable loaderRunnable = new LoaderRunnable(module, classNames, this);
 		Thread t = new lotus.domino.NotesThread(loaderRunnable);
 		t.start();
+		try {
+			t.join();// RPr: should we really load all modules in an own thread async?s
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void loaderCallback(final LoaderRunnable runner) {
 		NSFComponentModule referenceMod = runner.getModule();
+
 		Set<Class<?>> classes = runner.getClasses();
 		for (Class<?> clazz : classes) {
 			Persistent persistent = clazz.getAnnotation(Persistent.class);
@@ -159,7 +177,7 @@ public class XotsService extends NSFService {
 			if (scope == Persistent.Scope.APPLICATION) {
 				if (ctx == Persistent.Context.XSPFORCED) {
 					try {
-						NSFComponentModule forcedMod = (NSFComponentModule) getNsfService().loadModule(referenceMod.getDatabasePath());
+						NSFComponentModule forcedMod = getNsfService().loadModule(referenceMod.getDatabasePath());
 						synchronized (classMap_) {
 							classMap_.put(forcedMod, classes);
 						}
@@ -195,4 +213,59 @@ public class XotsService extends NSFService {
 		System.out.println("DEBUG: XotsService is being terminated.");
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		System.out.println(TimeUnit.MINUTES);
+		for (Entry<NSFComponentModule, Set<Class<?>>> e : classMap_.entrySet()) {
+			if (sb.length() > 0)
+				sb.append('\n');
+			sb.append(e.getKey().getDatabasePath());
+			sb.append('\n');
+			for (Class<?> cls : e.getValue()) {
+				sb.append('\t');
+				sb.append(cls.getName());
+				Persistent persistent = cls.getAnnotation(Persistent.class);
+				if (persistent != null) {
+					sb.append(", Scope:");
+					sb.append(persistent.scope());
+					sb.append(", AppContext:");
+					sb.append(persistent.appContext());
+				}
+				Schedule schedule = cls.getAnnotation(Schedule.class);
+				if (schedule != null) {
+					sb.append(", Freq:");
+					sb.append(schedule.frequency());
+
+					// sb.append(", TimeUnit:");
+					// sb.append(schedule.timeunit());
+					//
+					// WHEE: Why do I get this error here:
+					//			java.lang.TypeNotPresentException: Type java.util.concurrent.TimeUnit not present
+					//				       at com.ibm.oti.reflect.AnnotationHelper$AnnotationInvocationHandler.invoke(AnnotationHelper.java:134)
+					//				       at com.sun.proxy.$Proxy1.timeunit(Unknown Source)
+					//				       at org.openntf.domino.xots.XotsService.toString(XotsService.java:242)
+					//				       at org.openntf.domino.xots.builtin.XotsNsfScanner.scan(XotsNsfScanner.java:56)
+					//				       at org.openntf.domino.xots.builtin.XotsNsfScanner.run(XotsNsfScanner.java:39)
+					//				       at lotus.domino.NotesThread.run(Unknown Source)
+					//				Caused by:
+					//				java.lang.ClassNotFoundException: java.util.concurrent.TimeUnit
+					//				       at com.ibm.oti.reflect.AnnotationHelper.getReturnValueForEntry(Native Method)
+					//				       at com.ibm.oti.reflect.AnnotationHelper.access$000(AnnotationHelper.java:19)
+					//				       at com.ibm.oti.reflect.AnnotationHelper$AnnotationInvocationHandler.invoke(AnnotationHelper.java:132)
+					//				       ... 5 more
+
+					sb.append(", WeekDays:");
+					sb.append(Arrays.toString(schedule.weekdays()));
+					sb.append(", ");
+					sb.append(schedule.starthour());
+					sb.append("-");
+					sb.append(schedule.endhour());
+					sb.append("h");
+				}
+				sb.append('\n');
+			}
+		}
+		return sb.toString();
+	}
 }
