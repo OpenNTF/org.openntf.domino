@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -201,7 +202,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			return fromLotus(getDelegate().FTDomainSearch(query, maxDocs, sortOpt, otherOpt, start, count, entryForm), Document.SCHEMA,
 					this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this, "Query=" + query);
 			return null;
 
 		}
@@ -234,7 +235,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().FTSearch(query, maxDocs, sortOpt, otherOpt), DocumentCollection.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this, "Query=" + query);
 			return null;
 		}
 	}
@@ -263,7 +264,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().FTSearch(query, maxDocs), DocumentCollection.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this, "Query=" + query);
 			return null;
 		}
 	}
@@ -278,7 +279,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().FTSearch(query), DocumentCollection.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this, "Query=" + query);
 			return null;
 
 		}
@@ -294,7 +295,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().FTSearchRange(query, maxDocs, sortOpt, otherOpt, start), DocumentCollection.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this, "Query=" + query);
 			return null;
 
 		}
@@ -325,7 +326,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().compact();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return 0;
 		}
 	}
@@ -340,7 +341,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().compactWithOptions(options, spaceThreshold);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return 0;
 
 		}
@@ -356,7 +357,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().compactWithOptions(options);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return 0;
 
 		}
@@ -372,7 +373,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().compactWithOptions(spaceThreshold);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return 0;
 
 		}
@@ -388,7 +389,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().createCopy(server, dbFile, maxSize), Database.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -404,7 +405,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().createCopy(server, dbFile), Database.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -431,7 +432,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			try {
 				result = fromLotus(getDelegate().createDocument(), Document.SCHEMA, this);
 			} catch (NotesException e) {
-				DominoUtils.handleException(e);
+				DominoUtils.handleException(e, this);
 			}
 			fireListener(generateEvent(Events.AFTER_CREATE_DOCUMENT, this, null));
 		}
@@ -485,7 +486,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().createDocumentCollection(), DocumentCollection.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 		}
 	}
@@ -505,7 +506,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			org.openntf.domino.DocumentCollection result = fromLotus(rawColl, DocumentCollection.SCHEMA, this);
 			return result;
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 		}
 
@@ -521,7 +522,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().createFTIndex(options, recreate);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -536,7 +537,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().createFromTemplate(server, dbFile, inherit, maxSize), Database.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -552,7 +553,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().createFromTemplate(server, dbFile, inherit), Database.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -568,7 +569,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().createNoteCollection(selectAllFlag), NoteCollection.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -584,7 +585,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().createOutline(name, defaultOutline), Outline.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -600,7 +601,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().createOutline(name), Outline.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -618,7 +619,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			return fromLotus(getDelegate().createQueryView(viewName, query, toLotus(templateView), prohibitDesignRefresh), View.SCHEMA,
 					this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -634,7 +635,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().createQueryView(viewName, query, toLotus(templateView)), View.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -650,7 +651,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().createQueryView(viewName, query), View.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -666,7 +667,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().createReplica(server, dbFile), Database.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -682,7 +683,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().createView(), View.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -700,7 +701,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			return fromLotus(getDelegate().createView(viewName, selectionFormula, toLotus(templateView), prohibitDesignRefresh),
 					View.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this, "View=" + viewName);
 			return null;
 
 		}
@@ -716,7 +717,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().createView(viewName, selectionFormula, toLotus(templateView)), View.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this, "View=" + viewName);
 			return null;
 
 		}
@@ -732,7 +733,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().createView(viewName, selectionFormula), View.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this, "View=" + viewName);
 			return null;
 
 		}
@@ -748,7 +749,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().createView(viewName), View.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this, "View=" + viewName);
 			return null;
 
 		}
@@ -764,7 +765,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().enableFolder(folder);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -779,7 +780,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().fixup();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -794,7 +795,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().fixup(options);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -809,7 +810,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().getACL(), ACL.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -826,7 +827,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getACLActivityLog();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -842,7 +843,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().getAgent(name), Agent.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -858,7 +859,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotusAsVector(getDelegate().getAgents(), org.openntf.domino.Agent.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -874,7 +875,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().getAllDocuments(), DocumentCollection.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -890,7 +891,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().getAllReadDocuments(), DocumentCollection.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -906,7 +907,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().getAllReadDocuments(userName), DocumentCollection.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -922,7 +923,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().getAllUnreadDocuments(), DocumentCollection.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -938,7 +939,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().getAllUnreadDocuments(userName), DocumentCollection.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -954,7 +955,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getCategories();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -973,7 +974,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			s_recycle(dt);
 			return ret;
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -989,7 +990,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getCurrentAccessLevel();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return 0;
 
 		}
@@ -1005,7 +1006,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getDB2Schema();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1026,7 +1027,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getDesignTemplateName();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1042,7 +1043,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().getDocumentByID(noteid), Document.SCHEMA, this);
 		} catch (NotesException e) {
-			// DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this, "NoteId=" + noteid);
 			return null;
 
 		}
@@ -1077,7 +1078,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 				return doc;
 			}
 		} catch (Exception e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 		}
 		return null;
 	}
@@ -1096,7 +1097,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		} catch (NotesException e) {
 			if (getAncestorSession().isFixEnabled(Fixes.DOC_UNID_NULLS) && "Invalid universal id".equals(e.text)) {
 			} else {
-				DominoUtils.handleException(e);
+				DominoUtils.handleException(e, this, "UNId=" + unid);
 			}
 			return null;
 		}
@@ -1123,9 +1124,9 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 				System.out.println("Content-type: " + conn.getContentType());
 				conn.disconnect();
 			} catch (MalformedURLException e) {
-				DominoUtils.handleException(e);
+				DominoUtils.handleException(e, this);
 			} catch (IOException e) {
-				DominoUtils.handleException(e);
+				DominoUtils.handleException(e, this);
 			}
 			if (true)
 				return null;
@@ -1134,7 +1135,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 					getDelegate().getDocumentByURL(url, reload, reloadIfModified, urlList, charSet, webUser, webPassword, proxyUser,
 							proxyPassword, returnImmediately), Document.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1167,7 +1168,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getFTIndexFrequency();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return 0;
 
 		}
@@ -1183,7 +1184,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getFileFormat();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return 0;
 
 		}
@@ -1199,7 +1200,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getFileName();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1225,7 +1226,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getFolderReferencesEnabled();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -1241,7 +1242,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().getForm(name), Form.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1257,7 +1258,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotusAsVector(getDelegate().getForms(), Form.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 		}
 	}
@@ -1272,7 +1273,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getHttpURL();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1286,7 +1287,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			try {
 				url = new URL(baseURL);
 			} catch (MalformedURLException e) {
-				DominoUtils.handleException(e);
+				DominoUtils.handleException(e, this);
 				return null;
 			}
 			String result = url.getProtocol();
@@ -1310,7 +1311,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().getLastFTIndexed(), DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1324,7 +1325,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			s_recycle(dt);
 			return ret;
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1340,7 +1341,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().getLastFixup(), DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1351,7 +1352,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return DominoUtils.toJavaDateSafe(getDelegate().getLastFixup());
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1367,7 +1368,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().getLastModified(), DateTime.SCHEMA, getAncestorSession());
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1381,7 +1382,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			lastModDate_ = DominoUtils.toJavaDateSafe(getDelegate().getLastModified());
 			return lastModDate_;
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 		}
 	}
@@ -1396,7 +1397,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getLimitRevisions();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return 0d;
 
 		}
@@ -1412,7 +1413,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getLimitUpdatedBy();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return 0d;
 
 		}
@@ -1428,7 +1429,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getListInDbCatalog();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -1445,7 +1446,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getManagers();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1461,7 +1462,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getMaxSize();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return 0L;
 
 		}
@@ -1477,7 +1478,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().getModifiedDocuments(), DocumentCollection.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1503,7 +1504,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			}
 			return result;
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 		}
 	}
@@ -1524,7 +1525,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			}
 			return result;
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 		}
 	}
@@ -1549,7 +1550,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getNotesURL();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1565,7 +1566,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getOption(optionName);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -1581,7 +1582,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().getOutline(outlineName), Outline.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1607,7 +1608,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getPercentUsed();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return 0d;
 
 		}
@@ -1623,7 +1624,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().getProfileDocCollection(profileName), DocumentCollection.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1639,7 +1640,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().getProfileDocument(profileName, key), Document.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1665,7 +1666,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().getReplicationInfo(), Replication.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1691,7 +1692,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getSize();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return 0d;
 
 		}
@@ -1707,7 +1708,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getSizeQuota();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return 0;
 
 		}
@@ -1723,7 +1724,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getSizeWarning();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return 0L;
 
 		}
@@ -1739,7 +1740,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getTemplateName();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1755,7 +1756,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getTitle();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1771,7 +1772,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getType();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return 0;
 
 		}
@@ -1787,7 +1788,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getURL();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1805,7 +1806,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getURLHeaderInfo(url, header, webUser, webPassword, proxyUser, proxyPassword);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1821,7 +1822,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().getUndeleteExpireTime();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return 0;
 
 		}
@@ -1843,7 +1844,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			}
 			return result;
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1859,7 +1860,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotusAsVector(getDelegate().getViews(), org.openntf.domino.View.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1875,7 +1876,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().grantAccess(name, level);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -1900,7 +1901,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().isAllowOpenSoftDeleted();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -1916,7 +1917,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().isClusterReplication();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -1932,7 +1933,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().isConfigurationDirectory();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -1948,7 +1949,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().isCurrentAccessPublicReader();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -1964,7 +1965,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().isCurrentAccessPublicWriter();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -1980,7 +1981,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().isDB2();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -1996,7 +1997,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().isDelayUpdates();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -2012,7 +2013,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().isDesignLockingEnabled();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -2028,7 +2029,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().isDirectoryCatalog();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -2044,7 +2045,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().isDocumentLockingEnabled();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -2060,7 +2061,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().isFTIndexed();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -2076,7 +2077,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().isInMultiDbIndexing();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -2092,7 +2093,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().isInService();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -2108,7 +2109,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().isLink();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -2124,7 +2125,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().isMultiDbSearch();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -2140,7 +2141,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().isOpen();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 		}
 	}
@@ -2155,7 +2156,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().isPendingDelete();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -2171,7 +2172,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().isPrivateAddressBook();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -2187,7 +2188,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().isPublicAddressBook();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -2203,7 +2204,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().markForDelete();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2224,7 +2225,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 						log_.log(java.util.logging.Level.FINE, "Suppressing a db already open error because, why?");
 					}
 				} else {
-					DominoUtils.handleException(ne);
+					DominoUtils.handleException(ne, this);
 					return false;
 				}
 			}
@@ -2233,7 +2234,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			}
 			return result;
 		} catch (Exception e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 		}
 	}
@@ -2252,7 +2253,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			}
 			return result;
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -2275,7 +2276,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			dt.recycle();
 			return result;
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 		}
 	}
@@ -2294,7 +2295,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			}
 			return result;
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 		}
 	}
@@ -2309,7 +2310,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().queryAccess(name);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return 0;
 
 		}
@@ -2325,7 +2326,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().queryAccessPrivileges(name);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return 0;
 
 		}
@@ -2342,7 +2343,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return getDelegate().queryAccessRoles(name);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 		}
 	}
@@ -2357,7 +2358,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().remove();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2372,7 +2373,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().removeFTIndex();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2391,7 +2392,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			try {
 				result = getDelegate().replicate(server);
 			} catch (NotesException e) {
-				DominoUtils.handleException(e);
+				DominoUtils.handleException(e, this);
 				result = false;
 			}
 			fireListener(generateEvent(Events.AFTER_REPLICATION, this, server));
@@ -2409,7 +2410,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().revokeAccess(name);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2430,7 +2431,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			}
 			return result;
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -2456,7 +2457,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			return fromLotus(getDelegate().search(formula), DocumentCollection.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -2472,7 +2473,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().setAllowOpenSoftDeleted(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2487,7 +2488,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().setCategories(categories);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2502,7 +2503,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().setDelayUpdates(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2517,7 +2518,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().setDesignLockingEnabled(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2532,7 +2533,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().setDocumentLockingEnabled(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2547,7 +2548,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().setFTIndexFrequency(frequency);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2562,7 +2563,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().setFolderReferencesEnabled(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2577,7 +2578,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().setInMultiDbIndexing(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2592,7 +2593,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().setInService(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2607,7 +2608,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().setLimitRevisions(revisions);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2622,7 +2623,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().setLimitUpdatedBy(updatedBys);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2637,7 +2638,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().setListInDbCatalog(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2652,7 +2653,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().setOption(optionName, flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2677,7 +2678,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().setSizeQuota(quota);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2692,7 +2693,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().setSizeWarning(warning);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2707,7 +2708,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().setTitle(title);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2722,7 +2723,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().setUndeleteExpireTime(hours);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2737,7 +2738,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().sign();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2752,7 +2753,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().sign(documentType, existingSigsOnly, name, nameIsNoteid);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 		}
 	}
 
@@ -2776,7 +2777,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().sign(documentType, existingSigsOnly, name);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 		}
 	}
 
@@ -2800,7 +2801,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().sign(documentType, existingSigsOnly);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2825,7 +2826,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().sign(documentType);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2850,7 +2851,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		try {
 			getDelegate().updateFTIndex(create);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -2953,7 +2954,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 
 			}
 		} catch (Exception e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 		}
 	}
 
@@ -3061,7 +3062,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			lotus.notes.addins.DominoServer server = new lotus.notes.addins.DominoServer(getServer());
 			return server;
 		} catch (Exception e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 		}
 		return null;
 	}
@@ -3072,7 +3073,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			lotus.notes.addins.DominoServer server = getDominoServer();
 			server.refreshDesign(getFilePath());
 		} catch (Exception e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 		}
 	}
 
@@ -3237,7 +3238,7 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 			this.setDelegate(rawDb, 0);
 			rawDir.recycle();
 		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
+			DominoUtils.handleException(ne, this);
 		}
 	}
 
@@ -3500,5 +3501,14 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 		} else {
 			return getDocumentByID(Integer.toHexString(noteid));
 		}
+	}
+
+	@Override
+	public void fillExceptionDetails(final List<String> result) {
+		Session mySess = getParent();
+		if (mySess != null)
+			mySess.fillExceptionDetails(result);
+		String myDetail = this.getClass().getName() + "=" + getApiPath();
+		result.add(myDetail);
 	}
 }

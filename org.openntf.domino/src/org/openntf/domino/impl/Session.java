@@ -203,7 +203,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			formatter_ = new DominoFormatter(session.getInternational());
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 		}
 	}
 
@@ -227,7 +227,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().createAdministrationProcess(server), AdministrationProcess.SCHEMA, this);
 		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
+			DominoUtils.handleException(ne, this);
 
 		}
 		return null;
@@ -243,7 +243,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().createColorObject(), ColorObject.SCHEMA, this);
 		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
+			DominoUtils.handleException(ne, this);
 		}
 		return null;
 	}
@@ -270,7 +270,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().createDateRange(), DateRange.SCHEMA, this);
 		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
+			DominoUtils.handleException(ne, this);
 		}
 		return null;
 	}
@@ -285,7 +285,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().createDateRange(startTime, endTime), DateRange.SCHEMA, this);
 		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
+			DominoUtils.handleException(ne, this);
 		}
 		return null;
 	}
@@ -304,7 +304,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().createDateRange(dt1, dt2), DateRange.SCHEMA, this);
 		} catch (Exception e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		} finally {
@@ -322,7 +322,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().createDateTime(date), DateTime.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -370,7 +370,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().createDateTime(date), DateTime.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 		}
 	}
@@ -385,7 +385,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().createDxlExporter(), DxlExporter.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -401,7 +401,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().createDxlImporter(), DxlImporter.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -417,7 +417,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().createLog(name), Log.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -433,7 +433,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().createName(name, lang), Name.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -449,7 +449,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().createName(name), Name.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -465,7 +465,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().createNewsletter(toLotus(collection)), Newsletter.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -481,7 +481,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().createRegistration(), Registration.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -497,7 +497,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().createRichTextParagraphStyle(), RichTextParagraphStyle.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -513,7 +513,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().createRichTextStyle(), RichTextStyle.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -529,7 +529,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().createStream(), Stream.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -581,7 +581,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 				return null;	//this really shouldn't be possible.
 			return wrapColumnValues(result, this);
 		} catch (Exception e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 		}
 	}
@@ -614,7 +614,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 			}
 			return ret;
 		} catch (Exception e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -631,7 +631,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotusAsVector(getDelegate().getAddressBooks(), Database.SCHEMA, this);
 		} catch (Exception e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -647,7 +647,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().getAgentContext(), AgentContext.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -669,7 +669,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 			}
 			return fromLotus(getDelegate().getCalendar(toLotus(db)), NotesCalendar.SCHEMA, parentDb);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -685,7 +685,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().getCommonUserName();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -701,7 +701,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().getCredentials();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -731,7 +731,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 			}
 
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -750,7 +750,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 			try {
 				return fromLotus(getDelegate().getDatabase("", ""), Database.SCHEMA, this);
 			} catch (NotesException e) {
-				DominoUtils.handleException(e);
+				DominoUtils.handleException(e, this);
 				return null;
 			}
 		}
@@ -789,7 +789,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 					throw new UserAccessException(
 							"User " + getEffectiveUserName() + " cannot open database " + db + " on server " + server, e);
 				} else {
-					DominoUtils.handleException(e);
+					DominoUtils.handleException(e, this);
 					return null;
 				}
 			}
@@ -832,7 +832,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().getDbDirectory(server), DbDirectory.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -848,7 +848,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().getDirectory(), Directory.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 		}
 	}
@@ -863,7 +863,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().getDirectory(server), Directory.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -879,7 +879,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().getEffectiveUserName();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -910,7 +910,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().getEnvironmentString(vname);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 		}
 	}
@@ -940,7 +940,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().getEnvironmentValue(vname);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -956,7 +956,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().getHttpURL();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -972,7 +972,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().getInternational(), International.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -988,7 +988,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().getNotesVersion();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1004,7 +1004,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().getOrgDirectoryPath();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1020,7 +1020,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().getPlatform();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1036,7 +1036,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().getPropertyBroker(), PropertyBroker.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1052,7 +1052,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().getServerName();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1068,7 +1068,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().getSessionToken();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1084,7 +1084,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().getSessionToken(serverName);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1100,7 +1100,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().getURL();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1116,7 +1116,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().getURLDatabase(), Database.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1132,7 +1132,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotusAsVector(getDelegate().getUserGroupNameList(), Name.SCHEMA, this);
 		} catch (Exception e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1148,7 +1148,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().getUserName();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1164,7 +1164,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotusAsVector(getDelegate().getUserNameList(), Name.SCHEMA, this);
 		} catch (Exception e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1180,7 +1180,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return fromLotus(getDelegate().getUserNameObject(), Name.SCHEMA, this);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1198,7 +1198,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 			Database db = fromLotus(doc.getParentDatabase(), Database.SCHEMA, this);
 			return fromLotus(doc, Document.SCHEMA, db);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1216,7 +1216,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 			Database db = fromLotus(doc.getParentDatabase(), Database.SCHEMA, this);
 			return fromLotus(doc, Document.SCHEMA, db);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1232,7 +1232,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().hashPassword(password);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1248,7 +1248,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().isConvertMIME();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -1264,7 +1264,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().isConvertMime();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -1280,7 +1280,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().isOnServer();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -1296,7 +1296,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().isRestricted();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return true;
 
 		}
@@ -1312,7 +1312,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().isTrackMillisecInJavaDates();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return true;
 
 		}
@@ -1328,7 +1328,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().isTrustedSession();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 
 		}
@@ -1354,7 +1354,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().resetUserPassword(serverName, userName, password, downloadCount);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 		}
 		return false;
 	}
@@ -1369,7 +1369,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().resetUserPassword(serverName, userName, password);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 		return false;
@@ -1418,7 +1418,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 			//			}
 
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 		}
 	}
@@ -1433,7 +1433,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().sendConsoleCommand(serverName, consoleCommand);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 
 		}
@@ -1449,7 +1449,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			getDelegate().setAllowLoopBack(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -1464,7 +1464,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			getDelegate().setConvertMIME(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -1479,7 +1479,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			getDelegate().setConvertMime(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -1494,7 +1494,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			getDelegate().setEnvironmentVar(vname, value, isSystem);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -1509,7 +1509,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			getDelegate().setEnvironmentVar(vname, value);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -1524,7 +1524,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			getDelegate().setTrackMillisecInJavaDates(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 
 		}
 	}
@@ -1539,7 +1539,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().verifyPassword(password, hashedPassword);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return false;
 		}
 	}
@@ -1730,7 +1730,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().freeResourceSearch(arg0, arg1, arg2, arg3, arg4);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 		}
 	}
@@ -1745,7 +1745,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 		try {
 			return getDelegate().freeResourceSearch(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 			return null;
 		}
 	}
@@ -1760,7 +1760,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 			Vector<?> v = getDelegate().evaluate("@Unique");
 			result = String.valueOf(v.get(0));
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, this);
 		}
 		return result;
 	}
@@ -1776,7 +1776,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 				s_recycle(nullDb);
 			}
 		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
+			DominoUtils.handleException(ne, this);
 		}
 		return null;
 	}
@@ -1792,7 +1792,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 				s_recycle(nullDb);
 			}
 		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
+			DominoUtils.handleException(ne, this);
 		}
 		return null;
 	}
@@ -1809,7 +1809,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 				s_recycle(nullDb);
 			}
 		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
+			DominoUtils.handleException(ne, this);
 		}
 		return null;
 	}
@@ -1827,7 +1827,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 				s_recycle(nullDb);
 			}
 		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
+			DominoUtils.handleException(ne, this);
 		}
 		return null;
 	}
@@ -1842,7 +1842,7 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 				return fromLotus(rawdb, Database.SCHEMA, this);
 			}
 		} catch (NotesException ne) {
-			DominoUtils.handleException(ne);
+			DominoUtils.handleException(ne, this);
 		}
 		return null;
 	}
@@ -1908,5 +1908,16 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	@Override
 	public void setCurrentDatabase(final Database db) {
 		currentDatabase_ = db;
+	}
+
+	@Override
+	public void fillExceptionDetails(final List<String> result) {
+		String myDetail = this.getClass().getName() + "=";
+		try {
+			myDetail += getDelegate().getEffectiveUserName();
+		} catch (NotesException e) {
+			myDetail += "[getEffectiveUserName -> NotesException: " + e.text + "]";
+		}
+		result.add(myDetail);
 	}
 }

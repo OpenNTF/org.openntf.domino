@@ -28,7 +28,7 @@ import org.openntf.domino.types.Resurrectable;
  * The Interface Document.
  */
 public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document, org.openntf.domino.ext.Document, Resurrectable,
-DatabaseDescendant, Map<String, Object> {
+		DatabaseDescendant, Map<String, Object>, AsDocMap, HasExceptionDetails {
 
 	public static class Schema extends FactorySchema<Document, lotus.domino.Document, Database> {
 		@Override

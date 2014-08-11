@@ -19,6 +19,7 @@ import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xsp.Activator;
 import org.openntf.domino.xsp.XspOpenLogErrorHolder;
+import org.openntf.formula.FunctionFactory;
 
 import com.ibm.xsp.application.ApplicationEx;
 import com.ibm.xsp.context.FacesContextEx;
@@ -426,16 +427,40 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		// TODO RPr: I enabled the "setClassLoader" here
 		Factory.setClassLoader(ctx.getContextClassLoader());
 
+		final ApplicationEx app = ctx.getApplicationEx();
+		final Map<Class<?>, List<?>> cache = new HashMap<Class<?>, List<?>>();
+
 		Factory.setServiceLocator(new Factory.AppServiceLocator() {
 
-			final ApplicationEx app = ctx.getApplicationEx();
-			Map<Class<?>, List<?>> cache = new HashMap<Class<?>, List<?>>();
-
+			@Override
 			public <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
 				List<T> ret = (List<T>) cache.get(serviceClazz);
 
 				if (ret == null) {
-					ret = (List<T>) AccessController.doPrivileged(new PrivilegedAction<List<T>>() {
+					ret = AccessController.doPrivileged(new PrivilegedAction<List<T>>() {
+						@Override
+						public List<T> run() {
+							return app.findServices(serviceClazz.getName());
+						}
+					});
+					if (Comparable.class.isAssignableFrom(serviceClazz)) {
+						Collections.sort((List<? extends Comparable>) ret);
+					}
+					cache.put(serviceClazz, ret);
+				}
+				return ret;
+			}
+		});
+
+		FunctionFactory.setServiceLocator(new FunctionFactory.AppServiceLocator() {
+
+			@Override
+			public <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
+				List<T> ret = (List<T>) cache.get(serviceClazz);
+
+				if (ret == null) {
+					ret = AccessController.doPrivileged(new PrivilegedAction<List<T>>() {
+						@Override
 						public List<T> run() {
 							return app.findServices(serviceClazz.getName());
 						}
@@ -450,8 +475,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		});
 
 		org.openntf.domino.Session session = createSession(ctx);
-		@SuppressWarnings("unused")
-		org.openntf.domino.Database database = createDatabase(ctx, session);
+		createDatabase(ctx, session);
 		createUserScope(ctx, session);
 		createIdentityScope(ctx, session);
 		createServerScope(ctx, session);
