@@ -60,6 +60,8 @@ import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.ExceptionDetails;
+import org.openntf.domino.ExceptionDetails.Entry;
 import org.openntf.domino.RichTextItem;
 import org.openntf.domino.Session;
 import org.openntf.domino.utils.Factory;
@@ -156,7 +158,7 @@ public class LogItemOpenLog {
 	protected String _message;
 	protected Throwable _baseException;
 	protected String _errDocUnid;
-	protected List<String> _exceptionDetails;
+	protected List<ExceptionDetails.Entry> _exceptionDetails;
 	protected String[] _lastWrappedDocs;
 	protected transient Session _session;
 	protected transient Database _logDb;
@@ -483,14 +485,24 @@ public class LogItemOpenLog {
 			logDoc.replaceItemValue("LogUserRoles", getUserRoles());
 			logDoc.replaceItemValue("LogClientVersion", getClientVersion());
 			logDoc.replaceItemValue("LogAgentStartTime", _startTime);
-			if (_exceptionDetails == null)
+			if (_exceptionDetails == null) {
 				logDoc.replaceItemValue("LogExceptionDetails", "* Not available *");
-			else
-				logDoc.replaceItemValue("LogExceptionDetails", _exceptionDetails);
-			if (_lastWrappedDocs == null)
+			} else {
+				Vector<String> v = new Vector<String>(_exceptionDetails.size());
+				for (Entry ed : _exceptionDetails) {
+					v.add(ed.toString());
+				}
+				logDoc.replaceItemValue("LogExceptionDetails", v);
+			}
+			if (_lastWrappedDocs == null) {
 				logDoc.replaceItemValue("LogLastWrappedDocuments", "* Not available *");
-			else
-				logDoc.replaceItemValue("LogLastWrappedDocuments", _lastWrappedDocs);
+			} else {
+				Vector<String> v = new Vector<String>(_lastWrappedDocs.length);
+				for (String docID : _lastWrappedDocs) {
+					v.add(docID.toString());
+				}
+				logDoc.replaceItemValue("LogLastWrappedDocuments", v);
+			}
 			if (getErrDoc() != null) {
 				docDb = getErrDoc().getParentDatabase();
 				rtitem = logDoc.createRichTextItem("LogDocInfo");

@@ -31,7 +31,7 @@ import org.xml.sax.InputSource;
  * The Interface Item.
  */
 public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.openntf.domino.ext.Item, Resurrectable, DocumentDescendant,
-		HasExceptionDetails {
+		ExceptionDetails {
 	public static enum Flags {
 		PROTECTED(16), SUMMARY(1), AUTHORS(4), READERS(8), NAMES(2), SIGNED(32), ENCRYPTED(64);
 
@@ -78,16 +78,16 @@ public interface Item extends Base<lotus.domino.Item>, lotus.domino.Item, org.op
 
 	public static enum Type {
 
-		ACTIONCD(lotus.domino.Item.ACTIONCD), ASSISTANTINFO(lotus.domino.Item.ASSISTANTINFO), ATTACHMENT(lotus.domino.Item.ATTACHMENT), AUTHORS(
-				lotus.domino.Item.AUTHORS), COLLATION(lotus.domino.Item.COLLATION), DATETIMES(lotus.domino.Item.DATETIMES), EMBEDDEDOBJECT(
-						lotus.domino.Item.EMBEDDEDOBJECT), ERRORITEM(lotus.domino.Item.ERRORITEM), FORMULA(lotus.domino.Item.FORMULA), HTML(
-								lotus.domino.Item.HTML), ICON(lotus.domino.Item.ICON), LSOBJECT(lotus.domino.Item.LSOBJECT), MIME_PART(
-										lotus.domino.Item.MIME_PART), NAMES(lotus.domino.Item.NAMES), NOTELINKS(lotus.domino.Item.NOTELINKS), NOTEREFS(
-												lotus.domino.Item.NOTEREFS), NUMBERS(lotus.domino.Item.NUMBERS), OTHEROBJECT(lotus.domino.Item.OTHEROBJECT), QUERYCD(
-														lotus.domino.Item.QUERYCD), READERS(lotus.domino.Item.READERS), RFC822TEXT(lotus.domino.Item.RFC822TEXT), RICHTEXT(
-																lotus.domino.Item.RICHTEXT), SIGNATURE(lotus.domino.Item.SIGNATURE), TEXT(lotus.domino.Item.TEXT), UNAVAILABLE(
-																		lotus.domino.Item.UNAVAILABLE), UNKNOWN(lotus.domino.Item.UNKNOWN), USERDATA(lotus.domino.Item.USERDATA), USERID(
-																				lotus.domino.Item.USERID), VIEWMAPDATA(lotus.domino.Item.VIEWMAPDATA), VIEWMAPLAYOUT(lotus.domino.Item.VIEWMAPLAYOUT);
+		ACTIONCD(lotus.domino.Item.ACTIONCD), ASSISTANTINFO(lotus.domino.Item.ASSISTANTINFO), ATTACHMENT(lotus.domino.Item.ATTACHMENT),
+		AUTHORS(lotus.domino.Item.AUTHORS), COLLATION(lotus.domino.Item.COLLATION), DATETIMES(lotus.domino.Item.DATETIMES),
+		EMBEDDEDOBJECT(lotus.domino.Item.EMBEDDEDOBJECT), ERRORITEM(lotus.domino.Item.ERRORITEM), FORMULA(lotus.domino.Item.FORMULA),
+		HTML(lotus.domino.Item.HTML), ICON(lotus.domino.Item.ICON), LSOBJECT(lotus.domino.Item.LSOBJECT),
+		MIME_PART(lotus.domino.Item.MIME_PART), NAMES(lotus.domino.Item.NAMES), NOTELINKS(lotus.domino.Item.NOTELINKS),
+		NOTEREFS(lotus.domino.Item.NOTEREFS), NUMBERS(lotus.domino.Item.NUMBERS), OTHEROBJECT(lotus.domino.Item.OTHEROBJECT),
+		QUERYCD(lotus.domino.Item.QUERYCD), READERS(lotus.domino.Item.READERS), RFC822TEXT(lotus.domino.Item.RFC822TEXT),
+		RICHTEXT(lotus.domino.Item.RICHTEXT), SIGNATURE(lotus.domino.Item.SIGNATURE), TEXT(lotus.domino.Item.TEXT),
+		UNAVAILABLE(lotus.domino.Item.UNAVAILABLE), UNKNOWN(lotus.domino.Item.UNKNOWN), USERDATA(lotus.domino.Item.USERDATA),
+		USERID(lotus.domino.Item.USERID), VIEWMAPDATA(lotus.domino.Item.VIEWMAPDATA), VIEWMAPLAYOUT(lotus.domino.Item.VIEWMAPLAYOUT);
 
 		public static Type getType(final int value) {
 			for (Type level : Type.values()) {

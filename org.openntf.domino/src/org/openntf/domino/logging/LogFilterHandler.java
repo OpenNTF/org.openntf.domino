@@ -12,6 +12,10 @@ import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import lotus.domino.cso.Database;
+
+import org.openntf.domino.ExceptionDetails;
+import org.openntf.domino.ExceptionDetails.Entry;
 import org.openntf.domino.Session;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.utils.Factory;
@@ -151,17 +155,18 @@ public class LogFilterHandler extends Handler {
 	public synchronized void publish(final LogRecord logRec) {
 		if (!_activated)
 			return;
-		if (publishing_.get() == Boolean.TRUE)
+		if (publishing_.get() == Boolean.TRUE) // this prevents loopig
 			return;
 		publishing_.set(Boolean.TRUE);
-		if (Logging._verbose)
-			System.out.println("Logging: " + logRec.getLoggerName() + " | " + logRec.getLevel().getName() + ": " + logRec.getMessage());
 		try {
+			if (Logging._verbose)
+				System.out.println("Logging: " + logRec.getLoggerName() + " | " + logRec.getLevel().getName() + ": " + logRec.getMessage());
+
 			resetMightPublish(logRec.getLevel());
 			publishDefault(logRec);
-			Map<String, Object> publishDocMap = null;
+			Map<String, Object> contextMap = null;
 			for (LogConfig.L_LogFilterHandler.L_LogFilterConfigEntry fce : _myConfigLFH._logFCEList)
-				publishDocMap = publishFCE(fce, logRec, publishDocMap);
+				contextMap = publishFCE(fce, logRec, contextMap);
 		} finally {
 			publishing_.set(Boolean.FALSE);
 		}
@@ -200,31 +205,32 @@ public class LogFilterHandler extends Handler {
 	}
 
 	private Map<String, Object> publishFCE(final LogConfig.L_LogFilterHandler.L_LogFilterConfigEntry fce, final LogRecord logRec,
-			Map<String, Object> publishDocMap) {
+			Map<String, Object> contextMap) {
 		if (!logRec.getLoggerName().startsWith(fce._logPrefix) || // Trivial preconditions
 				logRec.getLevel().intValue() < fce._level.intValue())
-			return publishDocMap;
+			return contextMap;
 		/* If FCE entry has expired meanwhile, let next config update throw it away. */
 		if (fce._validUntil != null && logRec.getMillis() > fce._validUntil.getTime())
-			return publishDocMap;
+			return contextMap;
 		/* Look for a handler that hasn't yet published the record in question */
 		int i;
 		for (i = 0; i < fce._logHandlerObjs.length; i++)
 			if (_myHandlers.get(fce._logHandlerObjs[i])._mightPublish)
 				break;
 		if (i >= fce._logHandlerObjs.length)
-			return publishDocMap;
+			return contextMap;
 		/* Finally, inspect complex condition */
 		if (fce._parsedCond != null) {
-			if (publishDocMap == null) {
-				publishDocMap = new HashMap<String, Object>();
-				publishDocMap.put(LogConfig.cLoggerName, logRec.getLoggerName());
-				publishDocMap.put(LogConfig.cLogMessage, logRec.getMessage());
+			if (contextMap == null) {
+				contextMap = new HashMap<String, Object>();
+				contextMap.put(LogConfig.cLoggerName, logRec.getLoggerName());
+				contextMap.put(LogConfig.cLogMessage, logRec.getMessage());
 			}
-			if (fce._condContUserName || fce._condContDBPath)
-				if (!insertSessionPars(fce, publishDocMap, logRec.getThrown()))
-					return publishDocMap;
-			FormulaContext ctx = Formulas.createContext(publishDocMap,
+			if (fce._condContUserName || fce._condContDBPath) {
+				if (!insertCurrentContext(fce, contextMap, logRec.getThrown()))
+					return contextMap;
+			}
+			FormulaContext ctx = Formulas.createContext(contextMap,
 					LogConfig.L_LogFilterHandler.L_LogFilterConfigEntry._myFormulaParser.get());
 			List<Object> result = null;
 			try {
@@ -240,22 +246,34 @@ public class LogFilterHandler extends Handler {
 					o = null;
 			}
 			if (o == null) // condition not fulfilled or result not size 1-boolean (or exception)
-				return publishDocMap;
+				return contextMap;
 		}
 		/* ... and now we are ready to publish */
 		for (i = 0; i < fce._logHandlerObjs.length; i++)
 			publishConditionally(fce._logHandlerObjs[i], logRec);
-		return publishDocMap;
+		return contextMap;
 	}
 
-	private boolean insertSessionPars(final LogConfig.L_LogFilterHandler.L_LogFilterConfigEntry fce,
+	/**
+	 * This method tries to insert the current context
+	 * 
+	 * @param fce
+	 * @param publishDocMap
+	 * @param exception
+	 * @return
+	 */
+	private boolean insertCurrentContext(final LogConfig.L_LogFilterHandler.L_LogFilterConfigEntry fce,
 			final Map<String, Object> publishDocMap, final Throwable exception) {
-		if (sessionParsAlreadyPresent(fce, publishDocMap))
+
+		if (contextComplete(fce, publishDocMap))
 			return true;
 		/* Try first to get from ExceptionDetails - that's cheap */
-		if (exception instanceof OpenNTFNotesException)
-			if (sessionParsFromExcDet(fce, publishDocMap, ((OpenNTFNotesException) exception).getExceptionDetails()))
-				return true;
+		if (exception instanceof OpenNTFNotesException) {
+			contextFromExceptionDetails(publishDocMap, ((OpenNTFNotesException) exception).getExceptionDetails());
+		}
+		if (contextComplete(fce, publishDocMap))
+			return true;
+
 		/* We have to ask Session - that's not cheap */
 		try {
 			Session sess = Factory.getSession_unchecked();
@@ -273,31 +291,42 @@ public class LogFilterHandler extends Handler {
 		return true;
 	}
 
-	private boolean sessionParsAlreadyPresent(final LogConfig.L_LogFilterHandler.L_LogFilterConfigEntry fce,
-			final Map<String, Object> publishDocMap) {
+	/**
+	 * Returns TRUE, if the context is complete available for this FCE
+	 * 
+	 * @param fce
+	 *            the LogFilterConfigEntry
+	 * @param contextMap
+	 * @return
+	 */
+	private boolean contextComplete(final LogConfig.L_LogFilterHandler.L_LogFilterConfigEntry fce, final Map<String, Object> contextMap) {
 		if (fce._condContUserName)
-			if (!publishDocMap.containsKey(LogConfig.cUserName))
+			if (!contextMap.containsKey(LogConfig.cUserName))
 				return false;
 		if (fce._condContDBPath)
-			if (!publishDocMap.containsKey(LogConfig.cDBPath))
+			if (!contextMap.containsKey(LogConfig.cDBPath))
 				return false;
 		return true;
 	}
 
-	private boolean sessionParsFromExcDet(final LogConfig.L_LogFilterHandler.L_LogFilterConfigEntry fce,
-			final Map<String, Object> publishDocMap, final List<String> exceptionDetails) {
-		if (exceptionDetails == null)
-			return false;
-		for (String detail : exceptionDetails) {
-			int ind;
-			if ((ind = detail.indexOf(".Session=")) > 0) {
-				String user = detail.substring(ind + ".Session=".length());
-				publishDocMap.put(LogConfig.cUserName, user);
-			} else if ((ind = detail.indexOf(".Database=")) > 0) {
-				String dbPath = detail.substring(ind + ".Database=".length());
-				publishDocMap.put(LogConfig.cDBPath, dbPath);
+	/**
+	 * reads the context from the exception details. Reads userName and database
+	 * 
+	 * @param fce
+	 *            the FilterConfigEntry
+	 * @param contextMap
+	 *            the map used for the formula engine
+	 * @param exceptionDetails
+	 * @return
+	 */
+	private void contextFromExceptionDetails(final Map<String, Object> contextMap, final List<ExceptionDetails.Entry> exceptionDetails) {
+		for (Entry detail : exceptionDetails) {
+			if (Session.class.isAssignableFrom(detail.getSource())) {
+				contextMap.put(LogConfig.cUserName, detail.getMessage());
+			} else if (Database.class.isAssignableFrom(detail.getSource())) {
+				contextMap.put(LogConfig.cDBPath, detail.getMessage());
 			}
 		}
-		return sessionParsAlreadyPresent(fce, publishDocMap);
 	}
+
 }

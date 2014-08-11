@@ -31,6 +31,7 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
+import org.openntf.domino.ExceptionDetails;
 import org.openntf.domino.MIMEEntity;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
@@ -607,7 +608,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	@Override
 	public boolean isAuthors() {
 		return getFlagSet().contains(Flags.AUTHORS);
-		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -617,7 +618,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	@Override
 	public boolean isEncrypted() {
 		return getFlagSet().contains(Flags.ENCRYPTED);
-		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -627,7 +628,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	@Override
 	public boolean isNames() {
 		return getFlagSet().contains(Flags.NAMES);
-		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -637,7 +638,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	@Override
 	public boolean isProtected() {
 		return getFlagSet().contains(Flags.PROTECTED);
-		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -647,7 +648,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	@Override
 	public boolean isReaders() {
 		return getFlagSet().contains(Flags.READERS);
-		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -672,7 +673,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	@Override
 	public boolean isSigned() {
 		return getFlagSet().contains(Flags.SIGNED);
-		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -682,7 +683,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	@Override
 	public boolean isSummary() {
 		return getFlagSet().contains(Flags.SUMMARY);
-		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -1076,13 +1077,13 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 						StackTraceElement[] elements = t.getStackTrace();
 						log_.log(Level.FINER,
 								elements[0].getClassName() + "." + elements[0].getMethodName() + " ( line " + elements[0].getLineNumber()
-								+ ")");
+										+ ")");
 						log_.log(Level.FINER,
 								elements[1].getClassName() + "." + elements[1].getMethodName() + " ( line " + elements[1].getLineNumber()
-								+ ")");
+										+ ")");
 						log_.log(Level.FINER,
 								elements[2].getClassName() + "." + elements[2].getMethodName() + " ( line " + elements[2].getLineNumber()
-								+ ")");
+										+ ")");
 					}
 				}
 			} catch (NotesException e) {
@@ -1125,17 +1126,23 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	}
 
 	@Override
-	public void fillExceptionDetails(final List<String> result) {
+	public void fillExceptionDetails(final List<ExceptionDetails.Entry> result) {
 		Document myDoc = getParent();
 		if (myDoc != null)
 			myDoc.fillExceptionDetails(result);
-		String myDetail = this.getClass().getName() + "=";
+		String myDetail = name_;
 		try {
-			myDetail += getDelegate().getName();
+			myDetail = ", Type:" + getDelegate().getType();
 		} catch (NotesException e) {
-			myDetail += "[getName -> NotesException: " + e.text + "]";
+			myDetail += ", [getType -> NotesException: " + e.text + "]";
 		}
-		result.add(myDetail);
+
+		try {
+			myDetail = ", ValueString:" + getDelegate().getValueString();
+		} catch (NotesException e) {
+			myDetail += ", [ValueString -> NotesException: " + e.text + "]";
+		}
+		result.add(new ExceptionDetails.Entry(this, myDetail));
 	}
 
 }

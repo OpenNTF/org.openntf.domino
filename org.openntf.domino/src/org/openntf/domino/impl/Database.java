@@ -40,6 +40,7 @@ import org.openntf.domino.AutoMime;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
+import org.openntf.domino.ExceptionDetails;
 import org.openntf.domino.Form;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.NoteCollection.SelectOption;
@@ -3504,11 +3505,10 @@ public class Database extends Base<org.openntf.domino.Database, lotus.domino.Dat
 	}
 
 	@Override
-	public void fillExceptionDetails(final List<String> result) {
+	public void fillExceptionDetails(final List<ExceptionDetails.Entry> result) {
 		Session mySess = getParent();
 		if (mySess != null)
 			mySess.fillExceptionDetails(result);
-		String myDetail = this.getClass().getName() + "=" + getApiPath();
-		result.add(myDetail);
+		result.add(new ExceptionDetails.Entry(this, getApiPath()));
 	}
 }

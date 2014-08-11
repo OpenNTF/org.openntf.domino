@@ -2268,6 +2268,13 @@ public class DatabaseMetaData implements Serializable {
 			getDatabase().updateFTIndex(create);
 		}
 
+		@Override
+		public void fillExceptionDetails(final List<Entry> result) {
+			if (db_ != null)
+				db_.fillExceptionDetails(result);
+
+		}
+
 	}
 
 }

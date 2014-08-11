@@ -41,6 +41,7 @@ import org.openntf.domino.Directory;
 import org.openntf.domino.Document;
 import org.openntf.domino.DxlExporter;
 import org.openntf.domino.DxlImporter;
+import org.openntf.domino.ExceptionDetails;
 import org.openntf.domino.International;
 import org.openntf.domino.Log;
 import org.openntf.domino.Name;
@@ -1911,13 +1912,13 @@ public class Session extends Base<org.openntf.domino.Session, lotus.domino.Sessi
 	}
 
 	@Override
-	public void fillExceptionDetails(final List<String> result) {
-		String myDetail = this.getClass().getName() + "=";
+	public void fillExceptionDetails(final List<ExceptionDetails.Entry> result) {
+		String userName;
 		try {
-			myDetail += getDelegate().getEffectiveUserName();
+			userName = getDelegate().getEffectiveUserName();
 		} catch (NotesException e) {
-			myDetail += "[getEffectiveUserName -> NotesException: " + e.text + "]";
+			userName = "[getEffectiveUserName -> NotesException: " + e.text + "]";
 		}
-		result.add(myDetail);
+		result.add(new ExceptionDetails.Entry(this, userName));
 	}
 }

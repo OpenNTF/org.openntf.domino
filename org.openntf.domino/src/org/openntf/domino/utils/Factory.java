@@ -449,6 +449,15 @@ public enum Factory {
 	}
 
 	/**
+	 * Returns the wrapper factory if initialized
+	 * 
+	 * @return
+	 */
+	public static WrapperFactory getWrapperFactory_unchecked() {
+		return currentWrapperFactory.get();
+	}
+
+	/**
 	 * Set/changes the wrapperFactory for this thread
 	 * 
 	 * @param wf
