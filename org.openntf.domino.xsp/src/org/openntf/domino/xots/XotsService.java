@@ -1,6 +1,8 @@
 package org.openntf.domino.xots;
 
 import java.io.IOException;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +23,30 @@ import com.ibm.domino.xsp.module.nsf.NSFService;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 
 public class XotsService extends NSFService {
+
+	public static XotsService getInstance() {
+		for (HttpService service : LCDEnvironment.getInstance().getServices()) {
+			if (service instanceof XotsService) {
+				return (XotsService) service;
+			}
+		}
+		return null;
+	}
+
+	public synchronized static void addToQueue(final Runnable runnable) {
+		try {
+			Object result = AccessController.doPrivileged(new PrivilegedAction<Object>() {
+				@Override
+				public Object run() {
+					// getInstance().queue(runnable, runnable.getClass().getClassLoader());
+					return null;
+				}
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static class LoaderRunnable implements Runnable {
 		private NSFComponentModule module_;
 		private String[] classNames_;

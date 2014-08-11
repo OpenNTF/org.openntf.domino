@@ -384,7 +384,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	private final Set<String> propKeys_ = Collections.synchronizedSet(new CaseInsensitiveHashSet());	//TODO MAKE THREAD SAFE!!;
 
 	@Override
-	public Set<String> getPropertyKeys(final boolean includeEdgeFields) {
+	public Set<String> getPropertyKeys(final boolean includeEdgeFields) {	//TODO NTF fix?
 		if (propKeys_.isEmpty()) {
 			propKeys_.addAll(getRawDocument().keySet());
 		}

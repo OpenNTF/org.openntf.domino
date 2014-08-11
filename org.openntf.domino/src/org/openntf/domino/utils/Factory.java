@@ -16,7 +16,6 @@
 package org.openntf.domino.utils;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.AccessControlException;
 import java.security.AccessController;
@@ -100,7 +99,7 @@ public enum Factory {
 					@Override
 					public Object run() throws Exception {
 						// Windows stores the notes.ini in the program directory; Linux stores it in the data directory
-						String progpath = "notes.binary";
+						String progpath = System.getProperty("notes.binary");
 						File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
 						if (!iniFile.exists()) {
 							progpath = System.getProperty("user.dir");
@@ -225,7 +224,8 @@ public enum Factory {
 					@Override
 					public Object run() throws Exception {
 						try {
-							InputStream inputStream = Factory.class.getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF");
+							ClassLoader cl = Thread.currentThread().getContextClassLoader();
+							InputStream inputStream = cl.getResourceAsStream("META-INF/MANIFEST.MF");
 							if (inputStream != null) {
 								Manifest mani;
 								mani = new Manifest(inputStream);
@@ -234,7 +234,7 @@ public enum Factory {
 								ENVIRONMENT.put("title", attrib.getValue("Implementation-Title"));
 								ENVIRONMENT.put("url", attrib.getValue("Implementation-Vendor-URL"));
 							}
-						} catch (IOException e) {
+						} catch (Exception e) {
 							e.printStackTrace();
 						}
 						return null;
