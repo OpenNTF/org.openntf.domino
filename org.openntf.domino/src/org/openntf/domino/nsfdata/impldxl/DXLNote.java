@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,10 +18,10 @@ import org.openntf.domino.nsfdata.NSFNote;
 import org.openntf.domino.nsfdata.NSFRichTextData;
 import org.openntf.domino.nsfdata.impldxl.item.DXLItemComposite;
 import org.openntf.domino.nsfdata.impldxl.item.DXLItemFactory;
-import org.openntf.domino.nsfdata.ods.cd.CDRecord;
-import org.openntf.domino.nsfdata.ods.cd.CDRecordFileHeader;
-import org.openntf.domino.nsfdata.ods.cd.CDRecordFileSegment;
-import org.openntf.domino.nsfdata.ods.cd.CData;
+import org.openntf.domino.nsfdata.structs.cd.CDFILEHEADER;
+import org.openntf.domino.nsfdata.structs.cd.CDFILESEGMENT;
+import org.openntf.domino.nsfdata.structs.cd.CDRecord;
+import org.openntf.domino.nsfdata.structs.cd.CData;
 import org.openntf.domino.utils.xml.XMLNode;
 
 public class DXLNote implements NSFNote, Serializable {
@@ -84,12 +85,11 @@ public class DXLNote implements NSFNote, Serializable {
 						CData cdata = ((DXLItemComposite) item).getValue();
 
 						int breaker = 0;
-						while (cdata.hasNext()) {
+						for (CDRecord record : cdata) {
 							if (breaker++ > 1000) {
 								System.out.println("we went too deep!");
 								break;
 							}
-							CDRecord record = cdata.next();
 							System.out.print("\t\t\t[Signature: " + record.getSignature());
 							System.out.print(", Length: " + record.getDataLength());
 							System.out.print(", Value: " + record);
@@ -159,6 +159,7 @@ public class DXLNote implements NSFNote, Serializable {
 		return !getItems(itemName).isEmpty();
 	}
 
+	// TODO Make sure it works with multiple files
 	@Override
 	public void extractFileResource(final String itemName, final java.io.OutputStream os) {
 		Collection<NSFItem> items = getItems(itemName);
@@ -170,21 +171,21 @@ public class DXLNote implements NSFNote, Serializable {
 				CData cdata = ((DXLItemComposite) item).getValue();
 
 				int breaker = 0;
-				while (cdata.hasNext()) {
+				for (CDRecord record : cdata) {
 					if (breaker++ > 1000) {
 						System.out.println("we went too deep!");
 						break;
 					}
-					CDRecord record = cdata.next();
 
-					if (record instanceof CDRecordFileHeader) {
-						CDRecordFileHeader header = (CDRecordFileHeader) record;
+					if (record instanceof CDFILEHEADER) {
+						CDFILEHEADER header = (CDFILEHEADER) record;
 						totalSegments = header.getSegCount();
 						segmentCount = 0;
 					}
-					if (record instanceof CDRecordFileSegment) {
-						CDRecordFileSegment seg = (CDRecordFileSegment) record;
+					if (record instanceof CDFILESEGMENT) {
+						CDFILESEGMENT seg = (CDFILESEGMENT) record;
 						ByteBuffer data = seg.getFileData().duplicate();
+						data.order(ByteOrder.LITTLE_ENDIAN);
 						try {
 							os.write(data.array(), data.position(), data.limit() - data.position());
 						} catch (IOException e) {
