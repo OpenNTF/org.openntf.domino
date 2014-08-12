@@ -22,6 +22,7 @@ import org.openntf.domino.Base;
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
 import org.openntf.domino.DocumentCollection;
+import org.openntf.domino.ExceptionDetails;
 import org.openntf.domino.Form;
 import org.openntf.domino.NoteCollection;
 import org.openntf.domino.NoteCollection.SelectOption;
@@ -2270,8 +2271,13 @@ public class DatabaseMetaData implements Serializable {
 
 		@Override
 		public void fillExceptionDetails(final List<Entry> result) {
-			if (db_ != null)
+			if (db_ != null) {
 				db_.fillExceptionDetails(result);
+			} else {
+				if (session_ != null)
+					session_.fillExceptionDetails(result);
+				result.add(new ExceptionDetails.Entry(this, getApiPath()));
+			}
 
 		}
 

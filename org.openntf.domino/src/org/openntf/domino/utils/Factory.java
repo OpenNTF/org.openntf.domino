@@ -100,10 +100,16 @@ public enum Factory {
 							progpath = System.getProperty("user.dir");
 							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
 						}
-						Scanner scanner = new Scanner(iniFile);
-						scanner.useDelimiter("\n|\r\n");
-						loadEnvironment(scanner);
-						scanner.close();
+						if (!iniFile.exists()) {
+							progpath = System.getProperty("java.library.path"); // Otherwise the tests will not work
+							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+						}
+						if (iniFile.exists()) {
+							Scanner scanner = new Scanner(iniFile);
+							scanner.useDelimiter("\n|\r\n");
+							loadEnvironment(scanner);
+							scanner.close();
+						}
 						return null;
 					}
 				});
