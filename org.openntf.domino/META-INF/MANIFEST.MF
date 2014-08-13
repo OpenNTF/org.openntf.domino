@@ -24,6 +24,7 @@ Export-Package: org.openntf.arpa,
  org.openntf.domino.helpers,
  org.openntf.domino.i18n,
  org.openntf.domino.impl,
+ org.openntf.domino.instrument,
  org.openntf.domino.iterators,
  org.openntf.domino.logging,
  org.openntf.domino.schema,
@@ -48,5 +49,7 @@ Require-Bundle: org.openntf.formula;bundle-version="1.0.0",
  com.ibm.commons.xml;bundle-version="9.0.1"
 Import-Package: javax.annotation
 Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .,
+ lib-instrument/asm-5.0.3.jar
 
 
