@@ -5,6 +5,7 @@
 	<classpathentry kind="src" path="tinkerpop"/>
 	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="src" path="jsr305"/>
+	<classpathentry kind="src" path="rxjava"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="output" path="bin"/>
