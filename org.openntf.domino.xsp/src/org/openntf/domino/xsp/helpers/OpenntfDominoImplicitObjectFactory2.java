@@ -321,6 +321,8 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 			} else {
 				System.out.println("Unable to locate 'database' through request map or variable resolver. Unable to auto-wrap.");
 			}
+		} else {
+			localMap.put(dbKey, database);
 		}
 		return database;
 	}
