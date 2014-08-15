@@ -16,7 +16,6 @@ public class DbHandleTest implements Runnable {
 		// whatever you might want to do in your constructor, but stay away from Domino objects
 	}
 
-	FileCreationInfo
 	@Override
 	public void run() {
 		try {

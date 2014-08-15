@@ -1,7 +1,6 @@
 package org.openntf.domino.instrument;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ThreadProfiler {
 
@@ -14,17 +13,22 @@ public class ThreadProfiler {
 
 	private long profilerTime[] = new long[1024];
 	private long codeTime[] = new long[1024];
-	private Map<String, Data> dataMap = new HashMap<String, Data>() {
+	private static ConcurrentHashMap<String, Data> dataMap = new ConcurrentHashMap<String, Data>() {
 
 		@Override
 		public Data get(final Object arg0) {
 			Data ret = super.get(arg0);
 			if (ret == null) {
-				ret = new Data();
+				synchronized (this) {
+					ret = super.get(arg0);
+					if (ret == null) {
+						ret = new Data();
+						super.put((String) arg0, ret);
+					}
+				}
 			}
 			return ret;
 		}
-
 	};
 	private int cnt = 0;
 	private int printCnt;

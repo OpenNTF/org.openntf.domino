@@ -23,6 +23,7 @@ public class OpenntfServiceFactory implements IServiceFactory {
 		// attach the agent as soon as possible, you can only instrument classes, that are not loaded at this time
 		// unfortunately the whole lotus.domino package is alredy loaded. 
 		// (so you will need to use the -javaagent option if you want to instrument these)
+
 		ProfilerAgent.attach();
 	}
 	private static XotsDaemon DAEMON = XotsDaemon.getInstance();
