@@ -2,6 +2,7 @@ package org.openntf.domino.logging;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,35 +25,61 @@ public class LogFilterHandler extends Handler {
 	private class L_HandlerEx {
 		Handler _handler;
 		boolean _mightPublish;
+		boolean _invalidated;
 
 		L_HandlerEx(final Handler h) {
 			_handler = h;
 			_mightPublish = true;
+			_invalidated = false;
+		}
+	}
+
+	private class L_HandlerUpdateEntry {
+		LogHandlerUpdateIF _oldHandlerUIF;
+		Map.Entry<LogConfig.L_LogHandler, L_HandlerEx> _newHandlerEnt;
+		L_HandlerEx _oldHex;
+		LogHandlerConfigIF _newHandlerConfig;
+		LogHandlerConfigIF _oldHandlerConfig;
+		boolean _useDefaultFormatter;
+		Formatter _newFormatter;
+
+		L_HandlerUpdateEntry(final LogHandlerUpdateIF oldHandlerUIF, final Map.Entry<LogConfig.L_LogHandler, L_HandlerEx> newHandlerEnt,
+				final L_HandlerEx oldHex, final LogHandlerConfigIF newHandlerConfig, final LogHandlerConfigIF oldHandlerConfig,
+				final boolean useDefaultFormatter, final Formatter newFormatter) {
+			_oldHandlerUIF = oldHandlerUIF;
+			_newHandlerEnt = newHandlerEnt;
+			_oldHex = oldHex;
+			_newHandlerConfig = newHandlerConfig;
+			_oldHandlerConfig = oldHandlerConfig;
+			_useDefaultFormatter = useDefaultFormatter;
+			_newFormatter = newFormatter;
 		}
 	}
 
 	private LogConfig.L_LogFilterHandler _myConfigLFH;
 	private HashMap<LogConfig.L_LogHandler, L_HandlerEx> _myHandlers;
 	private boolean _activated = false;
+	private Set<L_HandlerUpdateEntry> _handlerUpdateSet = null;
 
 	public LogFilterHandler() {
 		super();
 		_myHandlers = new HashMap<LogConfig.L_LogHandler, L_HandlerEx>();
 	}
 
-	public static LogFilterHandler getInitializedInstance(final LogConfig.L_LogFilterHandler lfh) throws Exception {
+	public static LogFilterHandler getInitializedInstance(final LogConfig.L_LogFilterHandler lfh, final LogConfig oldConfig)
+			throws Exception {
 		LogFilterHandler ret = new LogFilterHandler();
-		ret.startUp(lfh);
+		ret.startUp(lfh, oldConfig);
 		return ret;
 	}
 
-	public void startUp(final LogConfig.L_LogFilterHandler lfh) throws Exception {
+	public void startUp(final LogConfig.L_LogFilterHandler lfh, final LogConfig oldConfig) throws Exception {
 		try {
 			_myConfigLFH = lfh;
 			_myConfigLFH._myHandler = this;
 			setUpMyLevel();
 			getMyHandlers();
-			setUpMyHandlers();
+			setUpMyHandlers(oldConfig);
 		} catch (Exception e) {
 			finishUp();
 			throw e;
@@ -76,13 +103,35 @@ public class LogFilterHandler extends Handler {
 				_myHandlers.put(fce._logHandlerObjs[i], null);
 	}
 
-	private void setUpMyHandlers() throws Exception {
+	private void setUpMyHandlers(final LogConfig oldConfig) throws Exception {
 		Set<Map.Entry<LogConfig.L_LogHandler, L_HandlerEx>> handlerSet = _myHandlers.entrySet();
-		for (Map.Entry<LogConfig.L_LogHandler, L_HandlerEx> handlerEnt : handlerSet)
-			setUpHandler(handlerEnt);
+		for (Map.Entry<LogConfig.L_LogHandler, L_HandlerEx> handlerEnt : handlerSet) {
+			Map.Entry<LogConfig.L_LogHandler, L_HandlerEx> oldHandlerEnt = null;
+			do {
+				if (oldConfig == null)
+					break;
+				LogConfig.L_LogFilterHandler oldLLFH = oldConfig._logFilterHandlers.get(_myConfigLFH._myName);
+				if (oldLLFH == null)
+					break;
+				LogConfig.L_LogHandler oldLH = oldConfig._logHandlers.get(handlerEnt.getKey()._handlerName);
+				if (oldLH == null)
+					break;
+				Set<Map.Entry<LogConfig.L_LogHandler, L_HandlerEx>> oldHandEnts = oldLLFH._myHandler._myHandlers.entrySet();
+				for (Map.Entry<LogConfig.L_LogHandler, L_HandlerEx> me : oldHandEnts)
+					if (me.getKey() == oldLH) {
+						oldHandlerEnt = me;
+						break;
+					}
+			} while (false);
+			setUpHandler(handlerEnt, oldHandlerEnt);
+		}
 	}
 
-	private void setUpHandler(final Map.Entry<LogConfig.L_LogHandler, L_HandlerEx> handlerEnt) throws Exception {
+	private void setUpHandler(final Map.Entry<LogConfig.L_LogHandler, L_HandlerEx> handlerEnt,
+			final Map.Entry<LogConfig.L_LogHandler, L_HandlerEx> oldHandlerEnt) throws Exception {
+		if (oldHandlerEnt != null)
+			if (tryUpdateHandler(handlerEnt, oldHandlerEnt))
+				return;
 		LogConfig.L_LogHandler handlerCfgEnt = handlerEnt.getKey();
 		boolean useDefaultFormatter = (handlerCfgEnt._formatterClass == null);
 		try {
@@ -97,7 +146,47 @@ public class LogFilterHandler extends Handler {
 		}
 	}
 
+	private boolean tryUpdateHandler(final Map.Entry<LogConfig.L_LogHandler, L_HandlerEx> handlerEnt,
+			final Map.Entry<LogConfig.L_LogHandler, L_HandlerEx> oldHandlerEnt) {
+		LogConfig.L_LogHandler handlerCfgEnt = handlerEnt.getKey();
+		LogConfig.L_LogHandler oldHandlerCfgEnt = oldHandlerEnt.getKey();
+		if (handlerCfgEnt._handlerClass != oldHandlerCfgEnt._handlerClass)
+			return false;
+		L_HandlerEx oldHex = oldHandlerEnt.getValue();
+		if (!(oldHex._handler instanceof LogHandlerUpdateIF))
+			return false;
+		LogHandlerUpdateIF oldHandlerUIF = (LogHandlerUpdateIF) oldHex._handler;
+		if (!oldHandlerUIF.mayUpdateYourself(handlerCfgEnt._handlerConfig, oldHandlerCfgEnt._handlerConfig))
+			return false;
+		boolean useDefaultFormatter = (handlerCfgEnt._formatterClass == null);
+		Formatter formatter = null;
+		if (!useDefaultFormatter && handlerCfgEnt._formatterClass != oldHandlerCfgEnt._formatterClass)
+			try {
+				formatter = (Formatter) handlerCfgEnt._formatterGetInstance.invoke(null);
+			} catch (Exception e) {
+				System.err.println("Unexpected Exception " + e.getClass().getName() + " in tryUpdateHandler:");
+				e.printStackTrace();
+				return false;
+			}
+		if (_handlerUpdateSet == null)
+			_handlerUpdateSet = new HashSet<L_HandlerUpdateEntry>();
+		_handlerUpdateSet.add(new L_HandlerUpdateEntry(oldHandlerUIF, handlerEnt, oldHex, handlerCfgEnt._handlerConfig,
+				oldHandlerCfgEnt._handlerConfig, useDefaultFormatter, formatter));
+		return true;
+	}
+
 	void activateYourself(final LogFilterHandler[] oldLFHs) {
+		if (_handlerUpdateSet != null) {
+			for (L_HandlerUpdateEntry hue : _handlerUpdateSet) {
+				hue._oldHex._invalidated = true;
+				L_HandlerEx newHex = new L_HandlerEx(hue._oldHex._handler);
+				hue._newHandlerEnt.setValue(newHex);
+				hue._oldHex._handler = null;
+				hue._oldHandlerUIF.doUpdateYourself(hue._newHandlerConfig, hue._oldHandlerConfig, hue._useDefaultFormatter,
+						hue._newFormatter);
+			}
+			_handlerUpdateSet = null;
+		}
 		for (int i = 0; i < _myConfigLFH._loggerNames.length; i++)
 			activateOneLogger(_myConfigLFH._loggerNames[i], oldLFHs);
 		_activated = true;
@@ -133,7 +222,7 @@ public class LogFilterHandler extends Handler {
 		//			return;
 		Collection<L_HandlerEx> collHand = _myHandlers.values();
 		for (L_HandlerEx h : collHand)
-			if (h != null)
+			if (h != null && h._handler != null)
 				h._handler.close();
 	}
 
@@ -143,7 +232,7 @@ public class LogFilterHandler extends Handler {
 			return;
 		Collection<L_HandlerEx> collHand = _myHandlers.values();
 		for (L_HandlerEx h : collHand)
-			if (h != null)
+			if (h != null && h._handler != null)
 				h._handler.flush();
 	}
 
@@ -191,7 +280,7 @@ public class LogFilterHandler extends Handler {
 
 	private void publishConditionally(final LogConfig.L_LogHandler lHandler, final LogRecord logRec) {
 		L_HandlerEx hex = _myHandlers.get(lHandler);
-		if (hex._mightPublish) {
+		if (hex._mightPublish && !hex._invalidated) {
 			if (Logging._verbose)
 				System.out.println("Publishing with Handler " + lHandler._handlerName);
 			hex._handler.publish(logRec);

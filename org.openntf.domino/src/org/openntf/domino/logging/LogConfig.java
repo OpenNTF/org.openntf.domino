@@ -30,7 +30,7 @@ public class LogConfig {
 		Class<?> _handlerClass;
 		Method _handlerConfigFromProps;
 		Method _handlerGetInstance;
-		Object _handlerConfig;
+		LogHandlerConfigIF _handlerConfig;
 		String _formatterClassName;
 		Class<?> _formatterClass;
 		Method _formatterGetInstance;
@@ -54,12 +54,15 @@ public class LogConfig {
 			try {
 				_handlerClass = Class.forName(_handlerClassName);
 				_handlerConfigFromProps = _handlerClass.getMethod("configFromProps", String.class);
-				_handlerGetInstance = _handlerClass.getMethod("getInstance", Object.class, boolean.class);
+				_handlerGetInstance = _handlerClass.getMethod("getInstance", LogHandlerConfigIF.class, boolean.class);
 				if (_formatterClassName != null) {
 					_formatterClass = Class.forName(_formatterClassName);
 					_formatterGetInstance = _formatterClass.getMethod("getInstance");
 				}
-				_handlerConfig = _handlerConfigFromProps.invoke(null, _props);
+				Object o = _handlerConfigFromProps.invoke(null, _props);
+				if (!(o instanceof LogHandlerConfigIF))
+					throw new IllegalArgumentException(_handlerClassName + ".configFromProps returned " + o.getClass().getName());
+				_handlerConfig = (LogHandlerConfigIF) o;
 			} catch (Exception e) {
 				System.err.println("LogConfig: Caught " + e.getClass().getName() + ": " + e.getMessage());
 				e.printStackTrace();
@@ -163,6 +166,7 @@ public class LogConfig {
 
 		/*--------------------------------------------------------------*/
 
+		String _myName;
 		String[] _loggerNames;
 		String _defaultLevelName;
 		Level _defaultLevel;
@@ -172,7 +176,9 @@ public class LogConfig {
 		LogFilterHandler _myHandler;
 
 		/*--------------------------------------------------------------*/
-		L_LogFilterHandler(final String[] loggerNames, final String defaultLevelName, final String[] defaultHandlerNames) {
+		L_LogFilterHandler(final String yourName, final String[] loggerNames, final String defaultLevelName,
+				final String[] defaultHandlerNames) {
+			_myName = yourName;
 			_loggerNames = loggerNames;
 			_defaultLevelName = defaultLevelName;
 			_defaultHandlerNames = defaultHandlerNames;
@@ -277,7 +283,7 @@ public class LogConfig {
 		String[] defaultHandlerNames = readAndCheckPropAsList(props, keyPref + ".DefaultHandlers", true);
 		if (loggerNames == null || defaultLevelName == null || defaultHandlerNames == null)
 			return false;
-		L_LogFilterHandler lfh = new L_LogFilterHandler(loggerNames, defaultLevelName, defaultHandlerNames);
+		L_LogFilterHandler lfh = new L_LogFilterHandler(filterHandlerName, loggerNames, defaultLevelName, defaultHandlerNames);
 		_logFilterHandlers.put(filterHandlerName, lfh);
 		for (int i = 1;; i++) {
 			String keyPrefI = keyPref + ".FCE" + i;
