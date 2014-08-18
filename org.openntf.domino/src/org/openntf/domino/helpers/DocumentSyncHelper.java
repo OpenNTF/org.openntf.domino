@@ -79,6 +79,7 @@ import org.openntf.domino.transactions.DatabaseTransaction;
 public class DocumentSyncHelper {
 
 	/** The Constant log_. */
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DocumentSyncHelper.class.getName());
 
 	/**

@@ -14,8 +14,8 @@ import java.util.logging.Logger;
  * 
  */
 public class DominoReferenceMap {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DominoReferenceMap.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	public static final int NO_VALUE = Integer.MIN_VALUE;
 	private int[] keys = new int[1024];

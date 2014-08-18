@@ -30,7 +30,7 @@ public interface NapiDocument {
 	/**
 	 * Returns the form fields
 	 * 
-	 * @return
+	 * @return the form fields
 	 */
 	String[] getFormFields();
 
@@ -38,7 +38,7 @@ public interface NapiDocument {
 	 * Returns the content as text-vector
 	 * 
 	 * @param itemName
-	 * @return
+	 * @return the content as a Vector of Strings
 	 */
 	Vector<String> getItemAsTextVector(String itemName);
 
@@ -46,12 +46,12 @@ public interface NapiDocument {
 	 * Returns the value as String
 	 * 
 	 * @param itemName
-	 * @return
+	 * @return the value as a String
 	 */
 	String getItemValueAsString(String itemName);
 
 	/**
-	 * @return
+	 * @return a String array of Item names
 	 */
 	String[] getItemNames();
 
@@ -62,61 +62,61 @@ public interface NapiDocument {
 	//	String getItemValueAsString(String arg0);
 
 	/**
-	 * @return
+	 * @return The modified date/time seconds.
 	 */
 	long getModifiedDateTimeSeconds();
 
 	/**
-	 * @return
+	 * @return The integer note class.
 	 */
 	int getNoteClass();
 
 	/**
-	 * @return
+	 * @return An integer of the note flags.
 	 */
 	int getNoteFlags();
 
 	/**
-	 * @return
+	 * @return The note ID, as a String.
 	 */
 	String getNoteId();
 
 	/**
-	 * @return
+	 * @return The note UNID, as a String.
 	 */
 	String getNoteUnid();
 
 	/**
-	 * @param arg0
-	 * @return
+	 * @param itemName
+	 * @return Whether an item with the provided name is present.
 	 */
-	boolean isItemPresent(String arg0);
+	boolean isItemPresent(String itemName);
 
 	/**
-	 * @param arg0
+	 * @param noteClass
 	 * @return
 	 */
-	boolean setClass(int arg0);
+	boolean setClass(int noteClass);
 
 	/**
-	 * @param arg0
-	 * @param arg1
+	 * @param itemName
+	 * @param value
 	 * @return
 	 */
-	boolean setItemAsTextList(String arg0, List<String> arg1);
+	boolean setItemAsTextList(String itemName, List<String> value);
 
 	/**
-	 * @param arg0
-	 * @param arg1
+	 * @param itemName
+	 * @param value
 	 * @return
 	 */
-	boolean setItemText(String arg0, String arg1);
+	boolean setItemText(String itemName, String value);
 
 	/**
-	 * @param arg0
+	 * @param unid
 	 * @return
 	 */
-	boolean setUnid(String arg0);
+	boolean setUnid(String unid);
 
 	/**
 	 * @return

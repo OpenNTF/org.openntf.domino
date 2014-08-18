@@ -2,35 +2,35 @@
  * 
  */
 package org.openntf.domino.schema.exceptions;
+
 import java.util.logging.Logger;
+
 /**
  * @author nfreeman
  *
  */
 public class ItemLengthException extends ItemException {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ItemLengthException.class.getName());
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
 	public ItemLengthException() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
-	 * @param arg0
+	 * @param message
+	 *            the detail message. The detail message is saved for later retrieval by the Throwable.getMessage() method.
 	 */
-	public ItemLengthException(String arg0) {
-		super(arg0);
-		// TODO Auto-generated constructor stub
+	public ItemLengthException(final String message) {
+		super(message);
 	}
 
 	/**
-	 * @param arg0
+	 * @param cause
+	 *            the cause (which is saved for later retrieval by the Throwable.getCause() method). (A null value is permitted, and
+	 *            indicates that the cause is nonexistent or unknown.)
 	 */
-	public ItemLengthException(Throwable arg0) {
-		super(arg0);
-		// TODO Auto-generated constructor stub
+	public ItemLengthException(final Throwable cause) {
+		super(cause);
 	}
 }

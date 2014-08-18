@@ -592,76 +592,88 @@ public interface View extends lotus.domino.View, org.openntf.domino.ext.View, Ba
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.View#getDocumentByKey(java.lang.Object)
+	 * Do not use getDocumentByKey, instead use org.openntf.domino.View#getFirstDocumentByKey(java.lang.Object)
 	 */
 	@Override
+	@Deprecated
 	public Document getDocumentByKey(final Object key);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.View#getDocumentByKey(java.lang.Object, boolean)
+	 * Do not use getDocumentByKey, instead use org.openntf.domino.View#getFirstDocumentByKey(java.lang.Object, boolean)
 	 */
 	@Override
+	@Deprecated
 	public Document getDocumentByKey(final Object key, final boolean exact);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.View#getDocumentByKey(java.util.Vector)
+	 * Do not use getDocumentByKey, instead use org.openntf.domino.View#getFirstDocumentByKey(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy(Legacy.GENERICS_WARNING)
 	public Document getDocumentByKey(final Vector keys);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.View#getDocumentByKey(java.util.Vector, boolean)
+	 * Do not use getDocumentByKey, instead use org.openntf.domino.View#getFirstDocumentByKey(java.util.Vector, boolean)
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy(Legacy.GENERICS_WARNING)
 	public Document getDocumentByKey(final Vector keys, final boolean exact);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.View#getEntryByKey(java.lang.Object)
+	 * Do not use getEntryByKey, instead use org.openntf.domino.View#getFirstEntryByKey(java.lang.Object)
 	 */
 	@Override
+	@Deprecated
 	public ViewEntry getEntryByKey(final Object key);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.View#getEntryByKey(java.lang.Object, boolean)
+	 * Do not use getEntryByKey, instead use org.openntf.domino.View#getFirstEntryByKey(java.lang.Object, boolean)
 	 */
 	@Override
+	@Deprecated
 	public ViewEntry getEntryByKey(final Object key, final boolean exact);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.View#getEntryByKey(java.util.Vector)
+	 * Do not use getEntryByKey, instead use org.openntf.domino.View#getFirstEntryByKey(java.util.Vector)
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy(Legacy.GENERICS_WARNING)
 	public ViewEntry getEntryByKey(final Vector keys);
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.View#getEntryByKey(java.util.Vector, boolean)
+	 * Do not use getEntryByKey, instead use org.openntf.domino.View#getFirstEntryByKey(java.util.Vector, boolean)
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
 	@Deprecated
-	@Legacy({ Legacy.INTERFACES_WARNING, Legacy.GENERICS_WARNING })
+	@Legacy(Legacy.GENERICS_WARNING)
 	public ViewEntry getEntryByKey(final Vector keys, final boolean exact);
 
 	/*

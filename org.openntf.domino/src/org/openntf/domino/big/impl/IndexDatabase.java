@@ -234,7 +234,7 @@ public class IndexDatabase implements IScannerStateManager {
 
 	public Document getDbDocument(final CharSequence dbid) {
 		String key = dbid.toString().toUpperCase();
-		Document result = getIndexDb().getDocumentByKey(key, true);
+		Document result = getIndexDb().getDocumentWithKey(key, true);
 		if (result.isNewNote()) {
 			result.replaceItemValue("Form", DB_FORM_NAME);
 			result.replaceItemValue(DB_KEY_NAME, dbid);
@@ -246,7 +246,7 @@ public class IndexDatabase implements IScannerStateManager {
 	public Document getTermDocument(final CharSequence token) {
 		String key = caseSensitive_ ? token.toString() : token.toString().toLowerCase();
 
-		Document result = getIndexDb().getDocumentByKey(key, true);
+		Document result = getIndexDb().getDocumentWithKey(key, true);
 		if (result.isNewNote()) {
 			result.replaceItemValue("Form", TERM_FORM_NAME);
 			result.replaceItemValue(TERM_KEY_NAME, token);
@@ -258,7 +258,7 @@ public class IndexDatabase implements IScannerStateManager {
 	public Document getNameDocument(final CharSequence name) {
 		String key = caseSensitive_ ? name.toString() : name.toString().toLowerCase();
 
-		Document result = getIndexDb().getDocumentByKey(key, true);
+		Document result = getIndexDb().getDocumentWithKey(key, true);
 		if (result.isNewNote()) {
 			result.replaceItemValue("Form", TERM_FORM_NAME);
 			result.replaceItemValue("isName", "1");

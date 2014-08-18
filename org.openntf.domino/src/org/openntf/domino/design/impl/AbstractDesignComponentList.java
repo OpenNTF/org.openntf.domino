@@ -64,11 +64,11 @@ public abstract class AbstractDesignComponentList<E> extends AbstractList<E> {
 	}
 
 	public void swap(final int a, final int b) {
-		XMLNodeList fieldNodes = (XMLNodeList) getParent().getDxl().selectNodes(pattern_);
+		XMLNodeList fieldNodes = getParent().getDxl().selectNodes(pattern_);
 		fieldNodes.swap(a, b);
 	}
 
 	protected XMLNodeList getNodes() {
-		return (XMLNodeList) parent_.getDxl().selectNodes(pattern_);
+		return parent_.getDxl().selectNodes(pattern_);
 	}
 }

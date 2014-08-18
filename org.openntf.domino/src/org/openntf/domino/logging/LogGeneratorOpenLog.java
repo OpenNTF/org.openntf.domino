@@ -19,6 +19,7 @@ import lotus.domino.NotesException;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.ExceptionDetails;
 import org.openntf.domino.Session;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.utils.DominoUtils;
@@ -37,7 +38,7 @@ public class LogGeneratorOpenLog {
 
 	class OL_LogRecord {
 		LogRecord _logRec;
-		List<String> _exceptionDetails;
+		List<ExceptionDetails.Entry> _exceptionDetails;
 		String[] _lastWrappedDocs;
 		String _serverName;
 		String _agentName;
@@ -48,7 +49,7 @@ public class LogGeneratorOpenLog {
 		Vector<Object> _userRoles;
 		String[] _clientVersion;
 
-		OL_LogRecord(final LogRecord logRec, final List<String> exceptionDetails, final String[] lastWrappedDocs) {
+		OL_LogRecord(final LogRecord logRec, final List<ExceptionDetails.Entry> exceptionDetails, final String[] lastWrappedDocs) {
 			_logRec = logRec;
 			_exceptionDetails = exceptionDetails;
 			_lastWrappedDocs = lastWrappedDocs;
@@ -209,8 +210,13 @@ public class LogGeneratorOpenLog {
 				olDoc.replaceItemValue("LogAgentStartTime", _parentStartTime);
 				if (ollr._exceptionDetails == null)
 					olDoc.replaceItemValue("LogExceptionDetails", "* Not available *");
-				else
-					olDoc.replaceItemValue("LogExceptionDetails", ollr._exceptionDetails);
+				else {
+					int sz = ollr._exceptionDetails.size();
+					String[] excds = new String[sz];
+					for (int i = 0; i < sz; i++)
+						excds[i] = ollr._exceptionDetails.get(i).toString();
+					olDoc.replaceItemValue("LogExceptionDetails", excds);
+				}
 				if (ollr._lastWrappedDocs == null)
 					olDoc.replaceItemValue("LogLastWrappedDocuments", "* Not available *");
 				else

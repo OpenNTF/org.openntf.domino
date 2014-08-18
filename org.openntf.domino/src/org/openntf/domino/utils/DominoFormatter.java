@@ -31,7 +31,7 @@ import com.ibm.icu.util.ULocale;
  */
 public class DominoFormatter extends ThreadLocal<Object> {
 
-	/** The Constant log_. */
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DominoFormatter.class.getName());
 
 	/** The date only format_. */
@@ -73,7 +73,7 @@ public class DominoFormatter extends ThreadLocal<Object> {
 	private boolean ymd_;
 
 	/**
-	 * Instantiates a new domino formatter.
+	 * Instantiates a new Domino formatter.
 	 * 
 	 * @param intl
 	 *            the intl

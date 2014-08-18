@@ -41,8 +41,8 @@ public class DominoNativeRunner /*extends AbstractDominoRunnable */implements Ru
 			}
 
 		}
-		if (s instanceof lotus.domino.Session) {
-			return Factory.fromLotus((lotus.domino.Session) s, org.openntf.domino.Session.SCHEMA, null);
+		if (s != null) {
+			return Factory.fromLotus(s, org.openntf.domino.Session.SCHEMA, null);
 		}
 		return null;
 	}

@@ -82,7 +82,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			return getDelegate().exportDxl(toLotus(doc));
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return null;
 		}
 	}
@@ -97,7 +97,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			return getDelegate().exportDxl(toLotus(db));
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return null;
 		}
 	}
@@ -112,7 +112,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			return getDelegate().exportDxl(toLotus(docs));
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return null;
 		}
 	}
@@ -127,7 +127,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			return getDelegate().exportDxl(toLotus(notes));
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return null;
 		}
 	}
@@ -142,7 +142,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			return getDelegate().getAttachmentOmittedText();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return null;
 		}
 	}
@@ -157,7 +157,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			return getDelegate().getConvertNotesBitmapsToGIF();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return false;
 		}
 	}
@@ -172,7 +172,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			return getDelegate().getDoctypeSYSTEM();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return null;
 		}
 	}
@@ -187,7 +187,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			return getDelegate().getExitOnFirstFatalError();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return false;
 		}
 	}
@@ -202,7 +202,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			return getDelegate().getForceNoteFormat();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return false;
 		}
 	}
@@ -232,7 +232,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			return getDelegate().getLogComment();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return null;
 		}
 	}
@@ -247,7 +247,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			return getDelegate().getMIMEOption();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return 0;
 		}
 	}
@@ -262,7 +262,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			return getDelegate().getOLEObjectOmittedText();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return null;
 		}
 	}
@@ -278,7 +278,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			return getDelegate().getOmitItemNames();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return null;
 		}
 	}
@@ -293,7 +293,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			return getDelegate().getOmitMiscFileObjects();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return false;
 		}
 	}
@@ -308,7 +308,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			return getDelegate().getOmitOLEObjects();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return false;
 		}
 	}
@@ -323,7 +323,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			return getDelegate().getOmitRichtextAttachments();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return false;
 		}
 	}
@@ -338,7 +338,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			return getDelegate().getOmitRichtextPictures();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return false;
 		}
 	}
@@ -353,7 +353,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			return getDelegate().getOutputDOCTYPE();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return false;
 		}
 	}
@@ -368,7 +368,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			return getDelegate().getPictureOmittedText();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return null;
 		}
 	}
@@ -384,7 +384,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			return getDelegate().getRestrictToItemNames();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return null;
 		}
 	}
@@ -399,7 +399,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			return getDelegate().getRichTextOption();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return 0;
 		}
 	}
@@ -414,7 +414,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			return getDelegate().getUncompressAttachments();
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 			return false;
 		}
 	}
@@ -429,7 +429,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			getDelegate().setAttachmentOmittedText(replacementText);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -443,7 +443,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			getDelegate().setConvertNotesBitmapsToGIF(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -457,7 +457,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			getDelegate().setDoctypeSYSTEM(system);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -471,7 +471,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			getDelegate().setExitOnFirstFatalError(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -485,7 +485,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			getDelegate().setForceNoteFormat(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -499,7 +499,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			getDelegate().setLogComment(comment);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -514,7 +514,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			getDelegate().setMIMEOption(option);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -526,7 +526,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			getDelegate().setMIMEOption(option.getValue());
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -540,7 +540,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			getDelegate().setOLEObjectOmittedText(replacementText);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -555,7 +555,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			getDelegate().setOmitItemNames(names);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -569,7 +569,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			getDelegate().setOmitMiscFileObjects(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -583,7 +583,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			getDelegate().setOmitOLEObjects(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -597,7 +597,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			getDelegate().setOmitRichtextAttachments(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -611,7 +611,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			getDelegate().setOmitRichtextPictures(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -625,7 +625,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			getDelegate().setOutputDOCTYPE(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -639,7 +639,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			getDelegate().setPictureOmittedText(replacementText);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -654,7 +654,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			getDelegate().setRestrictToItemNames(names);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -669,7 +669,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			getDelegate().setRichTextOption(option);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -681,7 +681,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			getDelegate().setRichTextOption(option.getValue());
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 
@@ -695,7 +695,7 @@ public class DxlExporter extends Base<org.openntf.domino.DxlExporter, lotus.domi
 		try {
 			getDelegate().setUncompressAttachments(flag);
 		} catch (NotesException e) {
-			DominoUtils.handleException(e);
+			DominoUtils.handleException(e, getLog());
 		}
 	}
 

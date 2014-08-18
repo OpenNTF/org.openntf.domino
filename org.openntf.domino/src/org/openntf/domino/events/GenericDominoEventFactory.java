@@ -12,8 +12,8 @@ import org.openntf.domino.Base;
  * 
  */
 public class GenericDominoEventFactory implements IDominoEventFactory {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(GenericDominoEventFactory.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @author withersp
@@ -38,7 +38,7 @@ public class GenericDominoEventFactory implements IDominoEventFactory {
 		 * 
 		 * @since openntf.domino 3.0.0
 		 */
-		public GenericDominoEvent(final EnumEvent event, final Base source, final Base target, final Object payload) {
+		public GenericDominoEvent(final EnumEvent event, final Base<?> source, final Base<?> target, final Object payload) {
 			super(event, source, target, payload);
 		}
 
@@ -67,7 +67,7 @@ public class GenericDominoEventFactory implements IDominoEventFactory {
 	 * @see org.openntf.domino.events.IDominoEventFactory#generate(java.lang.Object[])
 	 */
 	@Override
-	public IDominoEvent generate(final EnumEvent event, final org.openntf.domino.Base source, final org.openntf.domino.Base target,
+	public IDominoEvent generate(final EnumEvent event, final org.openntf.domino.Base<?> source, final org.openntf.domino.Base<?> target,
 			final Object payload) {
 		return new GenericDominoEvent(event, source, target, payload);
 	}

@@ -13,8 +13,8 @@ import org.openntf.domino.annotations.Incomplete;
  */
 @Incomplete
 public class DocumentValidator {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DocumentValidator.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	/**
 	 * 

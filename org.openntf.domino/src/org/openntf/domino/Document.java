@@ -28,7 +28,7 @@ import org.openntf.domino.types.Resurrectable;
  * The Interface Document.
  */
 public interface Document extends Base<lotus.domino.Document>, lotus.domino.Document, org.openntf.domino.ext.Document, Resurrectable,
-		DatabaseDescendant, Map<String, Object>, AsDocMap, HasExceptionDetails {
+		DatabaseDescendant, Map<String, Object>, AsDocMap, ExceptionDetails {
 
 	public static class Schema extends FactorySchema<Document, lotus.domino.Document, Database> {
 		@Override
@@ -286,18 +286,16 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * 
 	 * @see lotus.domino.Document#getEmbeddedObjects()
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Vector getEmbeddedObjects();
+	public Vector<EmbeddedObject> getEmbeddedObjects();
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see lotus.domino.Document#getEncryptionKeys()
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Vector getEncryptionKeys();
+	public Vector<String> getEncryptionKeys();
 
 	/*
 	 * (non-Javadoc)
@@ -313,8 +311,7 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * @see lotus.domino.Document#getFolderReferences()
 	 */
 	@Override
-	@SuppressWarnings("rawtypes")
-	public Vector getFolderReferences();
+	public Vector<String> getFolderReferences();
 
 	/*
 	 * (non-Javadoc)
@@ -354,9 +351,8 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * 
 	 * @see lotus.domino.Document#getItemValue(java.lang.String)
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Vector getItemValue(final String name);
+	public Vector<Object> getItemValue(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -387,9 +383,8 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * 
 	 * @see lotus.domino.Document#getItemValueDateTimeArray(java.lang.String)
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Vector getItemValueDateTimeArray(final String name);
+	public Vector<Base<?>> getItemValueDateTimeArray(final String name);
 
 	/*
 	 * (non-Javadoc)
@@ -444,9 +439,8 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * 
 	 * @see lotus.domino.Document#getLockHolders()
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Vector getLockHolders();
+	public Vector<String> getLockHolders();
 
 	/*
 	 * (non-Javadoc)
@@ -533,9 +527,8 @@ public interface Document extends Base<lotus.domino.Document>, lotus.domino.Docu
 	 * 
 	 * @see lotus.domino.Document#getReceivedItemText()
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Vector getReceivedItemText();
+	public Vector<String> getReceivedItemText();
 
 	/*
 	 * (non-Javadoc)

@@ -118,8 +118,8 @@ public class DominoExecutor extends ThreadPoolExecutor {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DominoExecutor.class.getName());
-	private static final long serialVersionUID = 1L;
 	private Set<IDominoListener> listeners_;
 
 	public static BlockingQueue<Runnable> getBlockingQueue(final int size) {
@@ -249,7 +249,7 @@ public class DominoExecutor extends ThreadPoolExecutor {
 	 */
 	@Override
 	protected <T> RunnableFuture<T> newTaskFor(final Callable<T> callable) {
-		return new DominoFutureTask((Callable) callable);
+		return new DominoFutureTask(callable);
 	}
 
 	/* (non-Javadoc)

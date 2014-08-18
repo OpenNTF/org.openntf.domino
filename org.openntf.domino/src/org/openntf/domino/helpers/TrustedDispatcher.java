@@ -17,6 +17,7 @@ import org.openntf.domino.thread.DominoExecutor.OpenRunnable;
 import org.openntf.domino.thread.DominoExecutor.OpenSecurityManager;
 import org.openntf.domino.thread.DominoFutureTask;
 import org.openntf.domino.thread.DominoNativeRunner;
+import org.openntf.domino.thread.DominoScheduledExecutor;
 import org.openntf.domino.thread.DominoSessionType;
 import org.openntf.domino.thread.DominoThreadFactory;
 import org.openntf.domino.thread.model.IDominoRunnable;
@@ -26,8 +27,8 @@ import org.openntf.domino.thread.model.IDominoRunnable;
  * 
  */
 public class TrustedDispatcher /*extends AbstractDominoDaemon*/{
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(TrustedDispatcher.class.getName());
-	private static final long serialVersionUID = 1L;
 	protected TrustedExecutor intimidator_;
 
 	//	private Queue<Runnable> runQueue_ = new ArrayDeque<Runnable>();
@@ -125,6 +126,77 @@ public class TrustedDispatcher /*extends AbstractDominoDaemon*/{
 
 		protected TrustedExecutor(final TrustedDispatcher dispatcher, final DominoThreadFactory factory) {
 			super(5, 20, 3, TimeUnit.SECONDS, DominoExecutor.getBlockingQueue(100), factory);
+			dispatcher_ = dispatcher;
+		}
+
+		@Override
+		protected void init() {
+			factoryAccessController_ = AccessController.getContext();
+		}
+
+		/* (non-Javadoc)
+		 * @see java.util.concurrent.ThreadPoolExecutor#shutdown()
+		 */
+		@Override
+		public void shutdown() {
+			//			System.out.println("Executor shutdown requested");
+			super.shutdown();
+		}
+
+		/* (non-Javadoc)
+		 * @see org.openntf.domino.thread.DominoExecutor#afterExecute(java.lang.Runnable, java.lang.Throwable)
+		 */
+		@Override
+		protected void afterExecute(final Runnable r, final Throwable t) {
+			super.afterExecute(r, t);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.openntf.domino.thread.DominoExecutor#newTaskFor(java.lang.Runnable, java.lang.Object)
+		 */
+		@Override
+		protected <T> RunnableFuture<T> newTaskFor(final Runnable runnable, final T value) {
+			System.out.println("DEBUG: Creating a new TrustedFutureTask for a " + runnable.getClass().getName());
+			return new TrustedFutureTask(runnable, value, dispatcher_);
+		}
+
+		/* (non-Javadoc)
+		 * @see java.util.concurrent.ThreadPoolExecutor#execute(java.lang.Runnable)
+		 */
+		@Override
+		public void execute(Runnable runnable) {
+			if (runnable instanceof TrustedRunnable) {
+
+			} else if (runnable instanceof DominoNativeRunner) {
+				final ClassLoader loader = ((DominoNativeRunner) runnable).getClassLoader();
+				runnable = new TrustedRunnable(runnable, factoryAccessController_, securityManager_);
+				((TrustedRunnable) runnable).setClassLoader(loader);
+			} else if (runnable instanceof IDominoRunnable) {
+				DominoSessionType type = ((IDominoRunnable) runnable).getSessionType();
+				final ClassLoader loader = ((IDominoRunnable) runnable).getContextClassLoader();
+				if (type == DominoSessionType.NATIVE) {
+					DominoNativeRunner nativeRunner = new DominoNativeRunner(runnable, loader);
+					runnable = new TrustedRunnable(nativeRunner, factoryAccessController_, securityManager_);
+					((TrustedRunnable) runnable).setClassLoader(loader);
+				} else {
+					System.out.println("DEBUG: IDominoRunnable has session type " + type.name());
+				}
+			}
+			super.execute(runnable);
+		}
+	}
+
+	protected static class TrustedScheduledExecutor extends DominoScheduledExecutor {
+		private final TrustedDispatcher dispatcher_;
+		private AccessControlContext factoryAccessController_;
+		private SecurityManager securityManager_ = new TrustedSecurityManager();
+
+		protected TrustedScheduledExecutor(final TrustedDispatcher dispatcher) {
+			dispatcher_ = dispatcher;
+		}
+
+		protected TrustedScheduledExecutor(final TrustedDispatcher dispatcher, final DominoThreadFactory factory) {
+			super(5, factory);
 			dispatcher_ = dispatcher;
 		}
 
