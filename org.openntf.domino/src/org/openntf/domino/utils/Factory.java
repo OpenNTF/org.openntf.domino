@@ -673,7 +673,7 @@ public enum Factory {
 		}
 		if (result == null) {
 			System.out
-					.println("SEVERE: Unable to get default session. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation. If you're running in XPages, check the xsp.properties of your database. If you are running in an Agent, make sure you start with a call to Factory.fromLotus() and pass in your lotus.domino.Session");
+			.println("SEVERE: Unable to get default session. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation. If you're running in XPages, check the xsp.properties of your database. If you are running in an Agent, make sure you start with a call to Factory.fromLotus() and pass in your lotus.domino.Session");
 			Throwable t = new Throwable();
 			t.printStackTrace();
 		}
@@ -871,8 +871,10 @@ public enum Factory {
 			return (org.openntf.domino.Database) base;
 		} else if (base instanceof DatabaseDescendant) {
 			return ((DatabaseDescendant) base).getAncestorDatabase();
+		} else if (base == null) {
+			throw new NullPointerException("Base object cannot be null");
 		} else {
-			throw new UndefinedDelegateTypeException();
+			throw new UndefinedDelegateTypeException("Couldn't find session for object of type " + base.getClass().getName());
 		}
 	}
 
@@ -889,9 +891,10 @@ public enum Factory {
 			result = ((SessionDescendant) base).getAncestorSession();
 		} else if (base instanceof org.openntf.domino.Session) {
 			result = (org.openntf.domino.Session) base;
+		} else if (base == null) {
+			throw new NullPointerException("Base object cannot be null");
 		} else {
-			System.out.println("couldn't find session for object of type " + base.getClass().getName());
-			throw new UndefinedDelegateTypeException();
+			throw new UndefinedDelegateTypeException("Couldn't find session for object of type " + base.getClass().getName());
 		}
 		if (result == null)
 			result = getSession(); // last ditch, get the primary Session;
