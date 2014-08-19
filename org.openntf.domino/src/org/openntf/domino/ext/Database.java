@@ -320,7 +320,7 @@ public interface Database extends Base {
 	/**
 	 * Retrieves a document by a String key, allowing for creation of a new document if no match was found.
 	 * <p>
-	 * The key is hased using MD5 and treated as a UNID.
+	 * The key is hashed using MD5 and treated as a UNID.
 	 * </p>
 	 * 
 	 * @param key
