@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 import lotus.domino.cso.Database;
 
 import org.openntf.domino.ExceptionDetails;
-import org.openntf.domino.ExceptionDetails.Entry;
 import org.openntf.domino.Session;
 import org.openntf.domino.exceptions.OpenNTFNotesException;
 import org.openntf.domino.utils.Factory;
@@ -358,10 +357,13 @@ public class LogFilterHandler extends Handler {
 			return true;
 		/* Try first to get from ExceptionDetails - that's cheap */
 		if (exception instanceof OpenNTFNotesException) {
-			contextFromExceptionDetails(publishDocMap, ((OpenNTFNotesException) exception).getExceptionDetails());
+			List<ExceptionDetails.Entry> excds = ((OpenNTFNotesException) exception).getExceptionDetails();
+			if (excds != null) {
+				contextFromExceptionDetails(publishDocMap, ((OpenNTFNotesException) exception).getExceptionDetails());
+				if (contextComplete(fce, publishDocMap))
+					return true;
+			}
 		}
-		if (contextComplete(fce, publishDocMap))
-			return true;
 
 		/* We have to ask Session - that's not cheap */
 		try {
@@ -409,7 +411,7 @@ public class LogFilterHandler extends Handler {
 	 * @return
 	 */
 	private void contextFromExceptionDetails(final Map<String, Object> contextMap, final List<ExceptionDetails.Entry> exceptionDetails) {
-		for (Entry detail : exceptionDetails) {
+		for (ExceptionDetails.Entry detail : exceptionDetails) {
 			if (Session.class.isAssignableFrom(detail.getSource())) {
 				contextMap.put(LogConfig.cUserName, detail.getMessage());
 			} else if (Database.class.isAssignableFrom(detail.getSource())) {
