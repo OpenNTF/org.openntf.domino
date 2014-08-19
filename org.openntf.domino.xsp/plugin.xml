@@ -37,4 +37,27 @@
    <extension point="com.ibm.commons.Extension">
          <service type="com.ibm.xsp.adapter.serviceFactory" class="org.openntf.domino.xsp.adapter.OpenntfServiceFactory" />
    </extension>
+   <extension
+         point="com.ibm.commons.Extension">
+      <service
+            class="org.openntf.domino.xsp.script.WrapperOpenDomino"
+            type="org.openntf.domino.xsp.script.WrapperRegistry">
+      </service>
+   </extension>
+   
+   <extension
+         point="com.ibm.commons.Extension">
+      <service
+            class="org.openntf.domino.i18n.FormulaMessageProvider"
+            type="org.openntf.domino.i18n.MessageProvider">
+      </service>
+   </extension>
+   <extension
+         point="com.ibm.commons.Extension">
+      <service
+            class="org.openntf.domino.i18n.RawMessageProviderImpl"
+            type="org.openntf.domino.i18n.RawMessageProvider">
+      </service>
+   </extension>   
+
 </plugin>

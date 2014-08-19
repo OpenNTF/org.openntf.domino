@@ -244,18 +244,18 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 		return clsid;
 	}
 
-	public static class WrapCounter extends ThreadLocal<Long> {
-
-		@Override
-		protected Long initialValue() {
-			return new Long(0);
-		}
-
-		public void increment() {
-			long cur = super.get();
-			super.set(cur++);
-		}
-	}
+	//	public static class WrapCounter extends ThreadLocal<Long> {
+	//
+	//		@Override
+	//		protected Long initialValue() {
+	//			return new Long(0);
+	//		}
+	//
+	//		public void increment() {
+	//			long cur = super.get();
+	//			super.set(cur++);
+	//		}
+	//	}
 
 	//	public static WrapCounter traceWrapCount = new WrapCounter();
 	//

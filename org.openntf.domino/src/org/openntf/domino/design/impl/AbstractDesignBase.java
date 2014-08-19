@@ -44,24 +44,46 @@ public abstract class AbstractDesignBase implements DesignBase {
 
 	private String noteId_;
 	private transient Database database_;
+	private transient Document document_;
 	private XMLDocument dxl_;
 
 	protected AbstractDesignBase(final Document document) {
-		database_ = document.getAncestorDatabase();
+		this(document.getAncestorDatabase());
 		noteId_ = document.getNoteID();
-
-		DxlExporter exporter = document.getAncestorSession().createDxlExporter();
-		exporter.setOutputDOCTYPE(false);
-		loadDxl(exporter.exportDxl(document));
+		document_ = document;
 	}
 
 	protected AbstractDesignBase(final Database database) {
 		database_ = database;
 	}
 
+	/**
+	 * Called, when serializing the object. Needed to support lazy dxl initalization representation
+	 * 
+	 * @param out
+	 * @throws IOException
+	 */
+	private void writeObject(final java.io.ObjectOutputStream out) throws IOException {
+		getDxl();
+		out.defaultWriteObject();
+	}
+
+	/**
+	 * Called, when deserializing the object
+	 * 
+	 * @param in
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	private void readObject(final java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+		in.defaultReadObject();
+		// TODO: Reattach the database?
+	}
+
 	/* (non-Javadoc)
 	 * @see org.openntf.domino.design.DesignBase#getDxlString()
 	 */
+	@Override
 	public String getDxlString() {
 		try {
 			return getDxl().getXml();
@@ -121,6 +143,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 		return getDocumentElement().getAttribute("propagatenoreplace").equals("true");
 	}
 
+	@Override
 	public void reattach(final Database database) {
 		database_ = database;
 	}
@@ -244,6 +267,7 @@ public abstract class AbstractDesignBase implements DesignBase {
 		return getAncestorDatabase().getAncestorSession();
 	}
 
+	@Override
 	public boolean save() {
 
 		DxlImporter importer = getAncestorSession().createDxlImporter();
@@ -266,14 +290,26 @@ public abstract class AbstractDesignBase implements DesignBase {
 	}
 
 	protected XMLDocument getDxl() {
+		if (dxl_ == null) {
+
+			DxlExporter exporter = database_.getAncestorSession().createDxlExporter();
+			exporter.setOutputDOCTYPE(false);
+			// TODO: You will get an exporter error, if the design is protected. This should be handled correctly
+			if (document_ != null) {
+				loadDxl(exporter.exportDxl(document_));
+			} else {
+				loadDxl(exporter.exportDxl(database_));
+			}
+		}
 		return dxl_;
 	}
 
 	protected XMLNode getDocumentElement() {
-		return dxl_.getDocumentElement();
+		return getDxl().getDocumentElement();
 	}
 
 	protected void loadDxl(final String xml) {
+
 		dxl_ = new XMLDocument();
 		try {
 			dxl_.loadString(xml);

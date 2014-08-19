@@ -1,6 +1,10 @@
 package org.openntf.domino.xsp.helpers;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -11,6 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import org.openntf.domino.AutoMime;
 import org.openntf.domino.ext.Session.Fixes;
+import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.Factory;
 import org.openntf.domino.xsp.Activator;
 import org.openntf.domino.xsp.XspOpenLogErrorHolder;
@@ -82,6 +87,32 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	}
 
 	/**
+	 * common code to test if a flag is set in the Xsp properties
+	 * 
+	 * @param ctx
+	 * @param flagName
+	 *            use upperCase for flagName, e.g. RAID
+	 * @return
+	 */
+	private static boolean isAppFlagSet(final FacesContext ctx, final String flagName) {
+		// Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
+		Object current = getAppMap(ctx).get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_" + flagName);
+		if (current == null) {
+			current = Boolean.FALSE;
+			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
+			if (envs != null) {
+				for (String s : envs) {
+					if (s.equalsIgnoreCase(flagName)) {
+						current = Boolean.TRUE;
+					}
+				}
+			}
+			getAppMap(ctx).put(OpenntfDominoImplicitObjectFactory2.class.getName() + "_" + flagName, current);
+		}
+		return (Boolean) current;
+	}
+
+	/**
 	 * Gets whether the godMode flag is enabled for the application
 	 * 
 	 * @param ctx
@@ -90,30 +121,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	 * @since org.openntf.domino.xsp 2.5.0
 	 */
 	public static boolean isAppGodMode(final FacesContext ctx) {
-		// Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
-		Object current = getAppMap(ctx).get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_GODMODE");
-		if (current == null) {
-			// System.out.println("Current not found. Creating...");
-			current = Boolean.FALSE;
-			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
-			if (envs != null) {
-				// if (envs.length == 0) {
-				// System.out.println("Got an empty string array!");
-				// }
-				for (String s : envs) {
-					// System.out.println("Xsp check: " + s);
-					if (s.equalsIgnoreCase("godmode")) {
-						current = Boolean.TRUE;
-					}
-				}
-			} else {
-				// System.out.println("XSP ENV IS NULL!!");
-			}
-			getAppMap(ctx).put(OpenntfDominoImplicitObjectFactory2.class.getName() + "_GODMODE", current);
-		} else {
-			// System.out.println("Current found: " + String.valueOf(current));
-		}
-		return (Boolean) current;
+		return isAppFlagSet(ctx, "GODMODE");
 	}
 
 	/**
@@ -190,21 +198,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	 * @since org.openntf.domino.xsp 3.0.0
 	 */
 	private static boolean isAppMimeFriendly(final FacesContext ctx) {
-		// Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
-		Object current = getAppMap(ctx).get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_MARCEL");
-		if (current == null) {
-			current = Boolean.FALSE;
-			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
-			if (envs != null) {
-				for (String s : envs) {
-					if (s.equalsIgnoreCase("marcel")) {
-						current = Boolean.TRUE;
-					}
-				}
-			}
-			getAppMap(ctx).put(OpenntfDominoImplicitObjectFactory2.class.getName() + "_MARCEL", current);
-		}
-		return (Boolean) current;
+		return isAppFlagSet(ctx, "MARCEL");
 	}
 
 	/**
@@ -216,21 +210,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	 * @since org.openntf.domino.xsp 3.0.0
 	 */
 	private static boolean isAppAllFix(final FacesContext ctx) {
-		// Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
-		Object current = getAppMap(ctx).get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_KHAN");
-		if (current == null) {
-			current = Boolean.FALSE;
-			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
-			if (envs != null) {
-				for (String s : envs) {
-					if (s.equalsIgnoreCase("khan")) {
-						current = Boolean.TRUE;
-					}
-				}
-			}
-			getAppMap(ctx).put(OpenntfDominoImplicitObjectFactory2.class.getName() + "_KHAN", current);
-		}
-		return (Boolean) current;
+		return isAppFlagSet(ctx, "KHAN");
 	}
 
 	/**
@@ -242,21 +222,7 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 	 * @since org.openntf.domino.xsp 3.0.0
 	 */
 	private static boolean isAppDebug(final FacesContext ctx) {
-		// Map<String, Object> appMap = ctx.getExternalContext().getApplicationMap();
-		Object current = getAppMap(ctx).get(OpenntfDominoImplicitObjectFactory2.class.getName() + "_RAID");
-		if (current == null) {
-			current = Boolean.FALSE;
-			String[] envs = Activator.getXspProperty(Activator.PLUGIN_ID);
-			if (envs != null) {
-				for (String s : envs) {
-					if (s.equalsIgnoreCase("raid")) {
-						current = Boolean.TRUE;
-					}
-				}
-			}
-			getAppMap(ctx).put(OpenntfDominoImplicitObjectFactory2.class.getName() + "_RAID", current);
-		}
-		return (Boolean) current;
+		return isAppFlagSet(ctx, "RAID");
 	}
 
 	/**
@@ -314,6 +280,9 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 					session.setFixEnable(fix, true);
 				}
 			}
+			if (isAppFlagSet(ctx, "BUBBLEEXCEPTIONS")) {
+				DominoUtils.setBubbleExceptions(true);
+			}
 			localMap.put(sessionKey, session);
 		} else {
 			System.out.println("Unable to locate 'session' through request map or variable resolver. Unable to auto-wrap.");
@@ -352,6 +321,8 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 			} else {
 				System.out.println("Unable to locate 'database' through request map or variable resolver. Unable to auto-wrap.");
 			}
+		} else {
+			localMap.put(dbKey, database);
 		}
 		return database;
 	}
@@ -454,8 +425,32 @@ public class OpenntfDominoImplicitObjectFactory2 implements ImplicitObjectFactor
 		if (isAppDebug(ctx)) {
 			System.out.println("Beginning creation of implicit objects...");
 		}
-		// Factory.setClassLoader(ctx.getContextClassLoader());
-		// ctx.addRequestListener(new ContextListener());
+		// TODO RPr: I enabled the "setClassLoader" here
+		Factory.setClassLoader(ctx.getContextClassLoader());
+
+		Factory.setServiceLocator(new Factory.AppServiceLocator() {
+
+			final ApplicationEx app = ctx.getApplicationEx();
+			Map<Class<?>, List<?>> cache = new HashMap<Class<?>, List<?>>();
+
+			public <T> List<T> findApplicationServices(final Class<T> serviceClazz) {
+				List<T> ret = (List<T>) cache.get(serviceClazz);
+
+				if (ret == null) {
+					ret = (List<T>) AccessController.doPrivileged(new PrivilegedAction<List<T>>() {
+						public List<T> run() {
+							return app.findServices(serviceClazz.getName());
+						}
+					});
+					if (Comparable.class.isAssignableFrom(serviceClazz)) {
+						Collections.sort((List<? extends Comparable>) ret);
+					}
+					cache.put(serviceClazz, ret);
+				}
+				return ret;
+			}
+		});
+
 		org.openntf.domino.Session session = createSession(ctx);
 		@SuppressWarnings("unused")
 		org.openntf.domino.Database database = createDatabase(ctx, session);

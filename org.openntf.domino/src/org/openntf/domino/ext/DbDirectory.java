@@ -6,6 +6,7 @@ package org.openntf.domino.ext;
 import org.openntf.domino.Database;
 import org.openntf.domino.DbDirectory.Type;
 import org.openntf.domino.annotations.Legacy;
+import org.openntf.domino.helpers.DbDirectoryTree;
 
 /**
  * @author withersp
@@ -63,4 +64,19 @@ public interface DbDirectory {
 	 */
 	public void setDirectoryType(final Type type);
 
+	/**
+	 * Returns a tree datastructure, so that you easily can navigate through several directories
+	 * 
+	 * @return a DbDirectoryTree
+	 */
+	public DbDirectoryTree getTree();
+
+	/**
+	 * Returns a tree datastructure for a certain type, so that you easily can navigate through several directories
+	 * 
+	 * @param type
+	 *            the type
+	 * @return a DbDirectoryTree
+	 */
+	public DbDirectoryTree getTree(final Type type);
 }

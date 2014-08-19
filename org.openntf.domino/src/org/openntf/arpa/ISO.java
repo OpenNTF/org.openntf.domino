@@ -43,7 +43,7 @@ public enum ISO {
 	 * 
 	 */
 	public static enum ISO3166 {
-		AF("AFG", "Afghanistan"), AX("ALA", "�land Islands"), AL("ALB", "Albania"), DZ("DZA", "Algeria"), AS("ASM", "American Samoa"), AD(
+		AF("AFG", "Afghanistan"), AX("ALA", "Åland Islands"), AL("ALB", "Albania"), DZ("DZA", "Algeria"), AS("ASM", "American Samoa"), AD(
 				"AND", "Andorra"), AO("AGO", "Angola"), AI("AIA", "Anguilla"), AQ("ATA", "Antarctica"), AG("ATG", "Antigua and Barbuda"), AR(
 				"ARG", "Argentina"), AM("ARM", "Armenia"), AW("ABW", "Aruba"), AU("AUS", "Australia"), AT("AUT", "Austria"), AZ("AZE",
 				"Azerbaijan"), BS("BHS", "Bahamas"), BH("BHR", "Bahrain"), BD("BGD", "Bangladesh"), BB("BRB", "Barbados"), BY("BLR",
@@ -55,7 +55,7 @@ public enum ISO {
 				"Cayman Islands"), CF("CAF", "Central African Republic"), TD("TCD", "Chad "), CL("CHL", "Chile"), CN("CHN", "China"), CX(
 				"CXR", "Christmas Island"), CC("CCK", "Cocos (Keeling) Islands"), CO("COL", "Colombia"), KM("COM", "Comoros"), CG("COG",
 				"Congo"), CD("COD", "Congo, the Democratic Republic of the"), CK("COK", "Cook Islands"), CR("CRI", "Costa Rica"), CI("CIV",
-				"C�te d'Ivoire"), HR("HRV", "Croatia"), CU("CUB", "Cuba"), CW("CUW", "Cura�ao"), CY("CYP", "Cyprus"), CZ("CZE",
+				"Côte d'Ivoire"), HR("HRV", "Croatia"), CU("CUB", "Cuba"), CW("CUW", "Curaçao"), CY("CYP", "Cyprus"), CZ("CZE",
 				"Czech Republic"), DK("DNK", "Denmark"), DJ("DJI", "Djibouti"), DM("DMA", "Dominica"), DO("DOM", "Dominican Republic"), EC(
 				"ECU", "Ecuador"), EG("EGY", "Egypt"), SV("SLV", "El Salvador"), GQ("GNQ", "Equatorial Guinea"), ER("ERI", "Eritrea"), EE(
 				"EST", "Estonia"), ET("ETH", "Ethiopia"), FK("FLK", "Falkland Islands (Malvinas)"), FO("FRO", "Faroe Islands"), FJ("FJI",
@@ -81,8 +81,8 @@ public enum ISO {
 				"Norfolk Island"), MP("MNP", "Northern Mariana Islands"), NO("NOR", "Norway"), OM("OMN", "Oman"), PK("PAK", "Pakistan"), PW(
 				"PLW", "Palau"), PS("PSE", "Palestine, State of"), PA("PAN", "Panama"), PG("PNG", "Papua New Guinea"), PY("PRY", "Paraguay"), PE(
 				"PER", "Peru"), PH("PHL", "Philippines"), PN("PCN", "Pitcairn"), PL("POL", "Poland"), PT("PRT", "Portugal"), PR("PRI",
-				"Puerto Rico"), QA("QAT", "Qatar"), RE("REU", "R�union"), RO("ROU", "Romania"), RU("RUS", "Russian Federation"), RW("RWA",
-				"Rwanda"), BL("BLM", "Saint Barth�lemy"), SH("SHN", "Saint Helena, Ascension and Tristan da Cunha"), KN("KNA",
+				"Puerto Rico"), QA("QAT", "Qatar"), RE("REU", "Réunion"), RO("ROU", "Romania"), RU("RUS", "Russian Federation"), RW("RWA",
+				"Rwanda"), BL("BLM", "Saint Barthélemy"), SH("SHN", "Saint Helena, Ascension and Tristan da Cunha"), KN("KNA",
 				"Saint Kitts and Nevis"), LC("LCA", "Saint Lucia"), MF("MAF", "Saint Martin (French part)"), PM("SPM",
 				"Saint Pierre and Miquelon"), VC("VCT", "Saint Vincent and the Grenadines"), WS("WSM", "Samoa"), SM("SMR", "San Marino"), ST(
 				"STP", "Sao Tome and Principe"), SA("SAU", "Saudi Arabia"), SN("SEN", "Senegal"), RS("SRB", "Serbia"), SC("SYC",

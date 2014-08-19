@@ -1013,7 +1013,8 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 		}
 	}
 
-	void markDirty() {
+	@Override
+	public void markDirty() {
 		getAncestorDocument().markDirty();
 	}
 

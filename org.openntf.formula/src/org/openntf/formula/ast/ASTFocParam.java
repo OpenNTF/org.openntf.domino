@@ -4,11 +4,10 @@ package org.openntf.formula.ast;
 
 import java.util.Set;
 
-import org.openntf.formula.EvaluateException;
 import org.openntf.formula.FormulaContext;
-import org.openntf.formula.FormulaParseException;
 import org.openntf.formula.FormulaReturnException;
 import org.openntf.formula.ValueHolder;
+import org.openntf.formula.function.TextFunctions;
 import org.openntf.formula.parse.AtFormulaParserImpl;
 
 public class ASTFocParam extends SimpleNode {
@@ -24,11 +23,7 @@ public class ASTFocParam extends SimpleNode {
 
 	@Override
 	public ValueHolder evaluate(final FormulaContext ctx) throws FormulaReturnException {
-		try {
-			return ctx.getParam(paramName);
-		} catch (FormulaParseException e) {
-			return ValueHolder.valueOf(new EvaluateException(codeLine, codeColumn, e));
-		}
+		return TextFunctions.atText(ctx, new ValueHolder[] { ValueHolder.valueOf(ctx.getParam(paramName)) });
 	}
 
 	@Override

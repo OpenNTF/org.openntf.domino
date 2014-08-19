@@ -41,12 +41,6 @@ Declan Lynch, Paul Withers
    </requires>
 
    <plugin
-         id="org.openntf.formula"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
          id="org.openntf.domino.plugin"
          download-size="0"
          install-size="0"
@@ -54,6 +48,18 @@ Declan Lynch, Paul Withers
 
    <plugin
          id="org.openntf.domino.xsp"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openntf.formula"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openntf.domino"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
