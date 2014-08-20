@@ -451,6 +451,8 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
 		}
+		if (nativeDataType_ == 25)
+			return 26; //TODO: HACK!!!
 		return nativeDataType_;
 	}
 
@@ -608,7 +610,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	@Override
 	public boolean isAuthors() {
 		return getFlagSet().contains(Flags.AUTHORS);
-		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -618,7 +620,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	@Override
 	public boolean isEncrypted() {
 		return getFlagSet().contains(Flags.ENCRYPTED);
-		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -628,7 +630,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	@Override
 	public boolean isNames() {
 		return getFlagSet().contains(Flags.NAMES);
-		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -638,7 +640,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	@Override
 	public boolean isProtected() {
 		return getFlagSet().contains(Flags.PROTECTED);
-		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -648,7 +650,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	@Override
 	public boolean isReaders() {
 		return getFlagSet().contains(Flags.READERS);
-		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -673,7 +675,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	@Override
 	public boolean isSigned() {
 		return getFlagSet().contains(Flags.SIGNED);
-		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -683,7 +685,7 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	@Override
 	public boolean isSummary() {
 		return getFlagSet().contains(Flags.SUMMARY);
-		}
+	}
 
 	/*
 	 * (non-Javadoc)
