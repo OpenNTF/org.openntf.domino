@@ -64,6 +64,6 @@ public class DominoFutureTask<V> extends FutureTask<V> {
 		return runnable_;
 	}
 
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DominoFutureTask.class.getName());
-	private static final long serialVersionUID = 1L;
 }

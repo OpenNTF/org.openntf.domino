@@ -42,6 +42,7 @@ import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.DocumentCollection;
 import org.openntf.domino.EmbeddedObject;
+import org.openntf.domino.ExceptionDetails;
 import org.openntf.domino.Form;
 import org.openntf.domino.Item;
 import org.openntf.domino.Item.Flags;
@@ -589,7 +590,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				// This item is for debugging only, so keep 5-10 items in that list
 				// http://www-01.ibm.com/support/docview.wss?uid=swg27002572
 
-				Vector mt = getItemValue("$MIMETrack");
+				Vector<Object> mt = getItemValue("$MIMETrack");
 				if (mt.size() > 10) {
 					replaceItemValue("$MIMETrack", mt.subList(mt.size() - 10, mt.size()));
 				}
@@ -615,9 +616,9 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	public boolean computeWithForm(final boolean doDataTypes, final boolean raiseError) {
 		checkMimeOpen();
 		beginEdit();
-			try {
+		try {
 			boolean ret = getDelegate().computeWithForm(doDataTypes, raiseError);
-		markDirty();
+			markDirty();
 			return ret;
 		} catch (NotesException e) {
 			DominoUtils.handleException(e, this);
@@ -1289,6 +1290,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * 
 	 * @see org.openntf.domino.Document#getItemValueDateTimeArray(java.lang.String)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Vector<org.openntf.domino.Base<?>> getItemValueDateTimeArray(final String name) {		// cf. DateRange.java
 		checkMimeOpen();
@@ -1299,7 +1301,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 			mayBeMime = false;
 			if (v == null || v.size() == 0)
 				return (Vector<org.openntf.domino.Base<?>>) v;
-			FactorySchema schema = DateTime.SCHEMA;
+			FactorySchema<?, ?, Session> schema = DateTime.SCHEMA;
 			if (v.elementAt(0) instanceof lotus.domino.DateRange)	// at moment: never
 				schema = DateRange.SCHEMA;
 			else {	// Workaround for Vector of DateRange-s
@@ -1331,7 +1333,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 					break;
 				}
 			}
-			return fromLotusAsVector(v, schema, getAncestorSession());
+			return (Vector<org.openntf.domino.Base<?>>) fromLotusAsVector(v, schema, getAncestorSession());
 		} catch (NotesException e) {
 			while (mayBeMime) {
 				MIMEEntity entity = this.getMIMEEntity(name);
@@ -2617,6 +2619,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 * returns the real LMBCS payload for a Vector of Strings
 	 * 
 	 * @param strVect
+	 *            The vector of Strings.
 	 * @return LMBCS payload
 	 */
 
@@ -2810,7 +2813,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 				throw new Domino32KLimitException();
 			}
 			if (firstElementClass == String.class) { 	// Strings have to be further inspected, because
-														// each sign may demand up to 3 bytes in LMBCS
+				// each sign may demand up to 3 bytes in LMBCS
 				int calc = ((payload - payloadOverhead) * 3) + payloadOverhead;
 				if (calc >= MAX_NATIVE_FIELD_SIZE) {
 					payload = payloadOverhead + getLMBCSPayload(dominoFriendly);
@@ -3087,7 +3090,7 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	 */
 	@Override
 	public void send(final boolean attachForm, final String recipient) {
-		Vector v = new Vector(1);
+		Vector<String> v = new Vector<String>(1);
 		v.add(recipient);
 		send(attachForm, v);
 	}
@@ -3941,21 +3944,22 @@ public class Document extends Base<org.openntf.domino.Document, lotus.domino.Doc
 	}
 
 	@Override
-	public void fillExceptionDetails(final List<String> result) {
+	public void fillExceptionDetails(final List<ExceptionDetails.Entry> result) {
 		Database myDB = getAncestor();
 		String repId = "";
+
 		if (myDB != null) {
 			myDB.fillExceptionDetails(result);
-			repId = myDB.getReplicaID() + "-";
+			repId = "ReplicaID:" + myDB.getReplicaID() + ", ";
 		}
-		String myDetail = this.getClass().getName() + "=" + repId + unid_;
-		String myForm = null;
+		String myDetail = repId + "UNID:" + unid_ + ", NoteID:" + noteid_;
+
 		try {
-			myForm = getDelegate().getItemValueString("form");
+			String myForm = getDelegate().getItemValueString("form");
+			if (myForm != null && !myForm.isEmpty())
+				myDetail += ", Form:" + myForm;
 		} catch (NotesException e) {
 		}
-		if (myForm != null && !myForm.isEmpty())
-			myDetail += "/Form=" + myForm;
-		result.add(myDetail);
+		result.add(new ExceptionDetails.Entry(this, myDetail));
 	}
 }

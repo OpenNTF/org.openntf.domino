@@ -13,8 +13,8 @@ import org.openntf.domino.ViewNavigator;
  * 
  */
 public class ViewNavigatorSiblingIterator extends AbstractDominoIterator<ViewEntry> {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ViewNavigatorSiblingIterator.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	private transient ViewNavigator navigator_;
 
@@ -66,6 +66,7 @@ public class ViewNavigatorSiblingIterator extends AbstractDominoIterator<ViewEnt
 	 * 
 	 * @see java.util.Iterator#hasNext()
 	 */
+	@Override
 	public boolean hasNext() {
 		if (currentEntry_ != null) {
 			nextEntry_ = getNavigator().getNextSibling(currentEntry_);
@@ -98,6 +99,7 @@ public class ViewNavigatorSiblingIterator extends AbstractDominoIterator<ViewEnt
 	 * 
 	 * @see java.util.Iterator#next()
 	 */
+	@Override
 	public ViewEntry next() {
 		//		started_ = true;
 		ViewEntry result = null;
@@ -116,6 +118,7 @@ public class ViewNavigatorSiblingIterator extends AbstractDominoIterator<ViewEnt
 	 * 
 	 * @see java.util.Iterator#remove()
 	 */
+	@Override
 	public void remove() {
 		// NOOP
 	}

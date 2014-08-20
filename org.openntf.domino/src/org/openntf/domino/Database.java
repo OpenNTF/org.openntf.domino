@@ -29,7 +29,7 @@ import org.openntf.domino.types.SessionDescendant;
  * The Interface Database.
  */
 public interface Database extends lotus.domino.Database, org.openntf.domino.Base<lotus.domino.Database>, org.openntf.domino.ext.Database,
-		Resurrectable, SessionDescendant, HasExceptionDetails {
+		Resurrectable, SessionDescendant, ExceptionDetails {
 
 	/**
 	 * Enum to allow easy access to Schema
@@ -57,7 +57,10 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 
 	/**
 	 * Generic database utilities
+	 * 
+	 * @Deprecated RPr: As far as I know, this was only used in the DbDirectory
 	 */
+	@Deprecated
 	public enum Utils {
 		;
 		/**
@@ -69,10 +72,7 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		 * @since org.openntf.domino 4.5.0
 		 */
 		public static boolean isTemplate(final Database db) {
-			boolean result = false;
-			if (db.getFilePath().toLowerCase().endsWith("ntf"))
-				result = true;
-			return result;
+			return db.getFilePath().toLowerCase().endsWith(".ntf");
 		}
 
 		/**
@@ -84,11 +84,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 		 * @since org.openntf.domino 4.5.0
 		 */
 		public static boolean isDatabase(final Database db) {
-			boolean result = false;
 			String path = db.getFilePath().toLowerCase();
-			if (path.endsWith("nsf") || path.endsWith("nsh") || path.endsWith("nsg"))
-				result = true;
-			return result;
+			return (path.endsWith(".nsf") || path.endsWith(".nsh") || path.endsWith(".nsg"));
 		}
 
 		/**
@@ -124,8 +121,10 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/**
 	 * Comparator to allow easy checking whether two databases have the same filepath (e.g. on different servers)
 	 * 
+	 * @Deprecated better use the DatabaseHolder for sorting
 	 * @since org.openntf.domino 4.5.0
 	 */
+	@Deprecated
 	public final static Comparator<Database> FILEPATH_COMPARATOR = new Comparator<Database>() {
 		@Override
 		public int compare(final Database o1, final Database o2) {
@@ -136,8 +135,10 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/**
 	 * Comparator to alow easy checking whether database A was modified before/after database B
 	 * 
+	 * @Deprecated better use the DatabaseHolder for sorting
 	 * @since org.openntf.domino 4.5.0
 	 */
+	@Deprecated
 	public final static Comparator<Database> LASTMOD_COMPARATOR = new Comparator<Database>() {
 		@Override
 		public int compare(final Database o1, final Database o2) {
@@ -148,8 +149,10 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/**
 	 * Comparator to allow easy checking whether two databases have the same title
 	 * 
+	 * @Deprecated better use the DatabaseHolder for sorting
 	 * @since org.openntf.domino 4.5.0
 	 */
+	@Deprecated
 	public final static Comparator<Database> TITLE_COMPARATOR = new Comparator<Database>() {
 		@Override
 		public int compare(final Database o1, final Database o2) {
@@ -160,8 +163,10 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	/**
 	 * Comparator to allow easy checking whether two databases have the same API path (server!!filepath)
 	 * 
+	 * @Deprecated better use the DatabaseHolder for sorting
 	 * @since org.openntf.domino 4.5.0
 	 */
+	@Deprecated
 	public final static Comparator<Database> APIPATH_COMPARATOR = new Comparator<Database>() {
 		@Override
 		public int compare(final Database o1, final Database o2) {
@@ -175,14 +180,16 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @since org.openntf.domino 1.0.0
 	 */
 	public static enum DBOption {
-		LZ1(Database.DBOPT_LZ1), LZCOMPRESSION(Database.DBOPT_LZCOMPRESSION), MAINTAINLASTACCESSED(Database.DBOPT_MAINTAINLASTACCESSED), MOREFIELDS(
-				Database.DBOPT_MOREFIELDS), NOHEADLINEMONITORS(Database.DBOPT_NOHEADLINEMONITORS), NOOVERWRITE(Database.DBOPT_NOOVERWRITE), NORESPONSEINFO(
-				Database.DBOPT_NORESPONSEINFO), NOTRANSACTIONLOGGING(Database.DBOPT_NOTRANSACTIONLOGGING), NOUNREAD(Database.DBOPT_NOUNREAD), OPTIMIZAION(
-				Database.DBOPT_OPTIMIZATION), REPLICATEUNREADMARKSTOANY(Database.DBOPT_REPLICATEUNREADMARKSTOANY), REPLICATEUNREADMARKSTOCLUSTER(
-				Database.DBOPT_REPLICATEUNREADMARKSTOCLUSTER), REPLICATEUNREADMARKSNEVER(Database.DBOPT_REPLICATEUNREADMARKSNEVER), SOFTDELETE(
-				Database.DBOPT_SOFTDELETE), COMPRESSDESIGN(Database.DBOPT_COMPRESSDESIGN), COMPRESSDOCUMENTS(
-				Database.DBOPT_COMPRESSDOCUMENTS), OUTOFOFFICEENABLED(Database.DBOPT_OUTOFOFFICEENABLED), NOSIMPLESEARCH(
-				Database.DBOPT_NOSIMPLESEARCH), USEDAOS(Database.DBOPT_USEDAOS);
+		LZ1(Database.DBOPT_LZ1), LZCOMPRESSION(Database.DBOPT_LZCOMPRESSION), MAINTAINLASTACCESSED(Database.DBOPT_MAINTAINLASTACCESSED),
+		MOREFIELDS(Database.DBOPT_MOREFIELDS), NOHEADLINEMONITORS(Database.DBOPT_NOHEADLINEMONITORS),
+		NOOVERWRITE(Database.DBOPT_NOOVERWRITE), NORESPONSEINFO(Database.DBOPT_NORESPONSEINFO),
+		NOTRANSACTIONLOGGING(Database.DBOPT_NOTRANSACTIONLOGGING), NOUNREAD(Database.DBOPT_NOUNREAD),
+		OPTIMIZAION(Database.DBOPT_OPTIMIZATION), REPLICATEUNREADMARKSTOANY(Database.DBOPT_REPLICATEUNREADMARKSTOANY),
+		REPLICATEUNREADMARKSTOCLUSTER(Database.DBOPT_REPLICATEUNREADMARKSTOCLUSTER),
+		REPLICATEUNREADMARKSNEVER(Database.DBOPT_REPLICATEUNREADMARKSNEVER), SOFTDELETE(Database.DBOPT_SOFTDELETE),
+		COMPRESSDESIGN(Database.DBOPT_COMPRESSDESIGN), COMPRESSDOCUMENTS(Database.DBOPT_COMPRESSDOCUMENTS),
+		OUTOFOFFICEENABLED(Database.DBOPT_OUTOFOFFICEENABLED), NOSIMPLESEARCH(Database.DBOPT_NOSIMPLESEARCH),
+		USEDAOS(Database.DBOPT_USEDAOS);
 
 		/** The value_. */
 		private final int value_;
@@ -282,16 +289,16 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @since org.openntf.domino 1.0.0
 	 */
 	public static enum CompactOption {
-		ARCHIVE_DELETE_COMPACT(Database.CMPC_ARCHIVE_DELETE_COMPACT), ARCHIVE_DELETE_ONLY(Database.CMPC_ARCHIVE_DELETE_ONLY), CHK_OVERLAP(
-				Database.CMPC_CHK_OVERLAP), COPYSTYLE(Database.CMPC_COPYSTYLE), DISABLE_DOCTBLBIT_OPTMZN(
-				Database.CMPC_DISABLE_DOCTBLBIT_OPTMZN), DISABLE_LARGE_UNKTBL(Database.CMPC_DISABLE_LARGE_UNKTBL), DISABLE_RESPONSE_INFO(
-				Database.CMPC_DISABLE_RESPONSE_INFO), DISABLE_TRANSACTIONLOGGING(Database.CMPC_DISABLE_TRANSACTIONLOGGING), DISABLE_UNREAD_MARKS(
-				Database.CMPC_DISABLE_UNREAD_MARKS), DISCARD_VIEW_INDICIES(Database.CMPC_DISCARD_VIEW_INDICES), ENABLE_DOCTBLBIT_OPTMZN(
-				Database.CMPC_ENABLE_DOCTBLBIT_OPTMZN), ENABLE_LARGE_UNKTBL(Database.CMPC_ENABLE_LARGE_UNKTBL), ENABLE_RESPONSE_INFO(
-				Database.CMPC_ENABLE_RESPONSE_INFO), ENABLE_TRANSACTIONLOGGING(Database.CMPC_ENABLE_TRANSACTIONLOGGING), ENABLE_UNREAD_MARKS(
-				Database.CMPC_ENABLE_UNREAD_MARKS), IGNORE_COPYSTYLE_ERRORS(Database.CMPC_IGNORE_COPYSTYLE_ERRORS), MAX_4GB(
-				Database.CMPC_MAX_4GB), NO_LOCKOUT(Database.CMPC_NO_LOCKOUT), RECOVER_INPLACE(Database.CMPC_RECOVER_INPLACE), RECOVER_REDUCE_INPLACE(
-				Database.CMPC_RECOVER_REDUCE_INPLACE), REVERT_FILEFORMAT(Database.CMPC_REVERT_FILEFORMAT);
+		ARCHIVE_DELETE_COMPACT(Database.CMPC_ARCHIVE_DELETE_COMPACT), ARCHIVE_DELETE_ONLY(Database.CMPC_ARCHIVE_DELETE_ONLY),
+		CHK_OVERLAP(Database.CMPC_CHK_OVERLAP), COPYSTYLE(Database.CMPC_COPYSTYLE),
+		DISABLE_DOCTBLBIT_OPTMZN(Database.CMPC_DISABLE_DOCTBLBIT_OPTMZN), DISABLE_LARGE_UNKTBL(Database.CMPC_DISABLE_LARGE_UNKTBL),
+		DISABLE_RESPONSE_INFO(Database.CMPC_DISABLE_RESPONSE_INFO), DISABLE_TRANSACTIONLOGGING(Database.CMPC_DISABLE_TRANSACTIONLOGGING),
+		DISABLE_UNREAD_MARKS(Database.CMPC_DISABLE_UNREAD_MARKS), DISCARD_VIEW_INDICIES(Database.CMPC_DISCARD_VIEW_INDICES),
+		ENABLE_DOCTBLBIT_OPTMZN(Database.CMPC_ENABLE_DOCTBLBIT_OPTMZN), ENABLE_LARGE_UNKTBL(Database.CMPC_ENABLE_LARGE_UNKTBL),
+		ENABLE_RESPONSE_INFO(Database.CMPC_ENABLE_RESPONSE_INFO), ENABLE_TRANSACTIONLOGGING(Database.CMPC_ENABLE_TRANSACTIONLOGGING),
+		ENABLE_UNREAD_MARKS(Database.CMPC_ENABLE_UNREAD_MARKS), IGNORE_COPYSTYLE_ERRORS(Database.CMPC_IGNORE_COPYSTYLE_ERRORS),
+		MAX_4GB(Database.CMPC_MAX_4GB), NO_LOCKOUT(Database.CMPC_NO_LOCKOUT), RECOVER_INPLACE(Database.CMPC_RECOVER_INPLACE),
+		RECOVER_REDUCE_INPLACE(Database.CMPC_RECOVER_REDUCE_INPLACE), REVERT_FILEFORMAT(Database.CMPC_REVERT_FILEFORMAT);
 
 		private final int value_;
 
@@ -319,9 +326,9 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @since org.openntf.domino 2.5.0
 	 */
 	public static enum FTIndexOption {
-		ALL_BREAKS(Database.FTINDEX_ALL_BREAKS), ATTACHED_BIN_FILES(Database.FTINDEX_ATTACHED_BIN_FILES), ATTACHED_FILES(
-				Database.FTINDEX_ATTACHED_FILES), CASE_SENSITIVE(Database.FTINDEX_CASE_SENSITIVE), ENCRYPTED_FIELDS(
-				Database.FTINDEX_ENCRYPTED_FIELDS);
+		ALL_BREAKS(Database.FTINDEX_ALL_BREAKS), ATTACHED_BIN_FILES(Database.FTINDEX_ATTACHED_BIN_FILES),
+		ATTACHED_FILES(Database.FTINDEX_ATTACHED_FILES), CASE_SENSITIVE(Database.FTINDEX_CASE_SENSITIVE),
+		ENCRYPTED_FIELDS(Database.FTINDEX_ENCRYPTED_FIELDS);
 
 		private final int value_;
 
@@ -349,8 +356,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @since org.openntf.domino 2.5.0
 	 */
 	public static enum FixupOption {
-		INCREMENTAL(Database.FIXUP_INCREMENTAL), NODELETE(Database.FIXUP_NODELETE), NOVIEWS(Database.FIXUP_NOVIEWS), QUICK(
-				Database.FIXUP_QUICK), REVERT(Database.FIXUP_REVERT), TXLOGGED(Database.FIXUP_TXLOGGED), VERIFY(Database.FIXUP_VERIFY);
+		INCREMENTAL(Database.FIXUP_INCREMENTAL), NODELETE(Database.FIXUP_NODELETE), NOVIEWS(Database.FIXUP_NOVIEWS),
+		QUICK(Database.FIXUP_QUICK), REVERT(Database.FIXUP_REVERT), TXLOGGED(Database.FIXUP_TXLOGGED), VERIFY(Database.FIXUP_VERIFY);
 
 		private final int value_;
 
@@ -379,8 +386,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @since org.openntf.domino 2.5.0
 	 */
 	public static enum FTIndexFrequency {
-		DAILY(Database.FTINDEX_DAILY), HOURLY(Database.FTINDEX_HOURLY), IMMEDIATE(Database.FTINDEX_IMMEDIATE), SCHEDULED(
-				Database.FTINDEX_SCHEDULED);
+		DAILY(Database.FTINDEX_DAILY), HOURLY(Database.FTINDEX_HOURLY), IMMEDIATE(Database.FTINDEX_IMMEDIATE),
+		SCHEDULED(Database.FTINDEX_SCHEDULED);
 
 		private final int value_;
 
@@ -465,8 +472,8 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @since org.openntf.domino 2.5.0
 	 */
 	public static enum FTSortOption {
-		SCORES(Database.FT_SCORES), DATE_DES(Database.FT_DATE_DES), DATE_ASC(Database.FT_DATE_ASC), DATECREATED_DES(
-				Database.FT_DATECREATED_DES), DATECREATED_ASC(Database.FT_DATECREATED_ASC);
+		SCORES(Database.FT_SCORES), DATE_DES(Database.FT_DATE_DES), DATE_ASC(Database.FT_DATE_ASC),
+		DATECREATED_DES(Database.FT_DATECREATED_DES), DATECREATED_ASC(Database.FT_DATECREATED_ASC);
 
 		private final int value_;
 
@@ -523,9 +530,9 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @since org.openntf.domino 2.5.0
 	 */
 	public static enum ModifiedDocClass {
-		ACL(Database.DBMOD_DOC_ACL), AGENT(Database.DBMOD_DOC_AGENT), ALL(Database.DBMOD_DOC_ALL), DATA(Database.DBMOD_DOC_DATA), FORM(
-				Database.DBMOD_DOC_FORM), HELP(Database.DBMOD_DOC_HELP), ICON(Database.DBMOD_DOC_ICON), REPLFORMULA(
-				Database.DBMOD_DOC_REPLFORMULA), SHAREDFIELD(Database.DBMOD_DOC_SHAREDFIELD), VIEW(Database.DBMOD_DOC_VIEW);
+		ACL(Database.DBMOD_DOC_ACL), AGENT(Database.DBMOD_DOC_AGENT), ALL(Database.DBMOD_DOC_ALL), DATA(Database.DBMOD_DOC_DATA),
+		FORM(Database.DBMOD_DOC_FORM), HELP(Database.DBMOD_DOC_HELP), ICON(Database.DBMOD_DOC_ICON),
+		REPLFORMULA(Database.DBMOD_DOC_REPLFORMULA), SHAREDFIELD(Database.DBMOD_DOC_SHAREDFIELD), VIEW(Database.DBMOD_DOC_VIEW);
 
 		private final int value_;
 
@@ -553,11 +560,11 @@ public interface Database extends lotus.domino.Database, org.openntf.domino.Base
 	 * @since org.openntf.domino 2.5.0
 	 */
 	public static enum Type {
-		ADDR_BOOK(Database.DBTYPE_ADDR_BOOK), IMAP_SVR_PROXY(Database.DBTYPE_IMAP_SVR_PROXY), LIBRARY(Database.DBTYPE_LIBRARY), LIGHT_ADDR_BOOK(
-				Database.DBTYPE_LIGHT_ADDR_BOOK), MAILBOX(Database.DBTYPE_MAILBOX), MAILFILE(Database.DBTYPE_MAILFILE), MULTIDB_SRCH(
-				Database.DBTYPE_MULTIDB_SRCH), NEWS_SVR_PROXY(Database.DBTYPE_NEWS_SVR_PROXY), PERS_JOURNAL(Database.DBTYPE_PERS_JOURNAL), PORTFOLIO(
-				Database.DBTYPE_PORTFOLIO), STANDARD(Database.DBTYPE_STANDARD), SUBSCRIPTIONS(Database.DBTYPE_SUBSCRIPTIONS), WEB_APP(
-				Database.DBTYPE_WEB_APP);
+		ADDR_BOOK(Database.DBTYPE_ADDR_BOOK), IMAP_SVR_PROXY(Database.DBTYPE_IMAP_SVR_PROXY), LIBRARY(Database.DBTYPE_LIBRARY),
+		LIGHT_ADDR_BOOK(Database.DBTYPE_LIGHT_ADDR_BOOK), MAILBOX(Database.DBTYPE_MAILBOX), MAILFILE(Database.DBTYPE_MAILFILE),
+		MULTIDB_SRCH(Database.DBTYPE_MULTIDB_SRCH), NEWS_SVR_PROXY(Database.DBTYPE_NEWS_SVR_PROXY),
+		PERS_JOURNAL(Database.DBTYPE_PERS_JOURNAL), PORTFOLIO(Database.DBTYPE_PORTFOLIO), STANDARD(Database.DBTYPE_STANDARD),
+		SUBSCRIPTIONS(Database.DBTYPE_SUBSCRIPTIONS), WEB_APP(Database.DBTYPE_WEB_APP);
 
 		private final int value_;
 

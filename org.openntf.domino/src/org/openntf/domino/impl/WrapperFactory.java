@@ -224,8 +224,9 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	/**
 	 * determines all containing Cpp-Ids in the lotusColl
 	 * 
-	 * @param lotusColl
-	 * @return
+	 * @param obj
+	 *            The collection of objects.
+	 * @return An array of the CPP IDs for the contained objects.
 	 */
 	public long[] getContainingCppIds(final Object obj) {
 		List<lotus.domino.Base> lst = new ArrayList<lotus.domino.Base>();
@@ -352,7 +353,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 
 	@Override
 	public void setNoRecycle(final Base<?> base, final boolean value) {
-		referenceCache.setNoRecycle(((org.openntf.domino.impl.Base) base).GetCppObj(), value);
+		referenceCache.setNoRecycle(((org.openntf.domino.impl.Base<?, ?, ?>) base).GetCppObj(), value);
 	}
 
 	/**
@@ -367,7 +368,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 	 * @return
 	 */
 
-	protected Base wrapLotusObject(final lotus.domino.Base lotus, final Base parent, final long cpp) {
+	protected Base<?> wrapLotusObject(final lotus.domino.Base lotus, final Base<?> parent, final long cpp) {
 		// TODO Auto-generated method stub
 
 		if (lotus instanceof lotus.domino.Name) {
@@ -557,6 +558,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		return wrapColumnValues(values, session, null);
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected Vector<Object> wrapColumnValues(final Collection<?> values, final Session session, final long[] prevent_recycling) {
 		if (values == null) {
 			return null;
@@ -603,6 +605,7 @@ public class WrapperFactory implements org.openntf.domino.WrapperFactory {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends lotus.domino.Base> T toLotus(final T base) {
 		return (T) org.openntf.domino.impl.Base.getDelegate(base);

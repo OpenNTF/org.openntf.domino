@@ -17,6 +17,7 @@ import com.tinkerpop.blueprints.Element;
  * 
  */
 public class ElementComparator implements Comparator<Element>, Serializable {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(ElementComparator.class.getName());
 	private static final long serialVersionUID = 1L;
 
@@ -58,6 +59,7 @@ public class ElementComparator implements Comparator<Element>, Serializable {
 		return result;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private int compareProps(final IDominoElement arg0, final IDominoElement arg1) {
 		int result = 0;
 
@@ -97,7 +99,7 @@ public class ElementComparator implements Comparator<Element>, Serializable {
 				result = d0.compareTo(d1);
 			} else if (v0 != null && v1 != null) {
 				if (v1.getClass() == v0.getClass() && Comparable.class.isAssignableFrom(v0.getClass())) {
-					result = ((Comparable) v0).compareTo((Comparable) v1);
+					result = ((Comparable) v0).compareTo(v1);
 				}
 			}
 			if (result != 0) {
@@ -114,6 +116,7 @@ public class ElementComparator implements Comparator<Element>, Serializable {
 		return result;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private int compareStrs(final IDominoElement arg0, final IDominoElement arg1) {
 		int result = 0;
 
@@ -152,10 +155,8 @@ public class ElementComparator implements Comparator<Element>, Serializable {
 				DateTime d1 = (DateTime) v1;
 				result = d0.compareTo(d1);
 			} else if (v0 != null && v1 != null) {
-				Class<?> cl0 = v0.getClass();
-				Class<?> cl1 = v1.getClass();
 				if (v0 instanceof Comparable && v1 instanceof Comparable) {
-					result = ((Comparable) v0).compareTo((Comparable) v1);
+					result = ((Comparable) v0).compareTo(v1);
 				}
 			}
 			if (result != 0) {

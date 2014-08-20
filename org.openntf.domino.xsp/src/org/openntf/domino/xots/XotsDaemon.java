@@ -15,6 +15,7 @@ import org.openntf.domino.thread.DominoSessionType;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.thread.DominoThreadFactory;
 import org.openntf.domino.thread.model.IDominoRunnable;
+import org.openntf.domino.xots.builtin.XotsNsfScanner;
 
 import com.ibm.designer.runtime.domino.adapter.HttpService;
 import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
@@ -29,6 +30,42 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 	private XotsService xotsService_;
 	private Set<Class<?>> taskletClasses_;
 	private Set<XotsBaseTasklet> tasklets_;
+
+	protected class XotsScheduledExecutor extends TrustedDispatcher.TrustedScheduledExecutor {
+
+		protected XotsScheduledExecutor(final TrustedDispatcher dispatcher) {
+			super(dispatcher, new XotsThreadFactory());
+		}
+
+		@Override
+		public void execute(final Runnable runnable) {
+			if (!(runnable instanceof IXotsRunner)) {
+				System.out.println("DEBUG: XotsExecutor has been asked to execute a " + runnable.getClass().getName());
+			}
+			super.execute(runnable);
+		}
+
+		@Override
+		protected void beforeExecute(final Thread t, final Runnable r) {
+			Runnable run = r;
+			if (r instanceof TrustedRunnable) {
+				run = ((TrustedRunnable) r).getRunnable();
+			}
+			if (run instanceof IXotsRunner) {
+				ClassLoader loader = ((IXotsRunner) run).getContextClassLoader();
+				if (loader != null) {
+					t.setContextClassLoader(loader);
+				}
+			} else {
+				System.out.println("DEBUG: XotsDaemon is running a " + run.getClass().getName());
+			}
+		}
+
+		@Override
+		protected void afterExecute(final Runnable r, final Throwable t) {
+
+		}
+	}
 
 	protected class XotsExecutor extends TrustedDispatcher.TrustedExecutor {
 		protected XotsExecutor(final TrustedDispatcher dispatcher) {
@@ -88,6 +125,11 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 		List<HttpService> services = env.getServices();
 		xotsService_ = new XotsService(env);
 		services.add(xotsService_);
+
+		XotsNsfScanner scanner = new XotsNsfScanner("");
+		scanner.addObserver(this);
+		Thread t = new lotus.domino.NotesThread(scanner);
+		t.start();
 	}
 
 	public synchronized static void stop() {
@@ -96,7 +138,7 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 
 	public synchronized static void addToQueue(final Runnable runnable) {
 		try {
-			Object result = AccessController.doPrivileged(new PrivilegedAction<Object>() {
+			AccessController.doPrivileged(new PrivilegedAction<Object>() {
 				@Override
 				public Object run() {
 					getInstance().queue(runnable, runnable.getClass().getClassLoader());
@@ -126,7 +168,7 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 	public void scan(final String serverName) {
 		XotsNsfScanner scanner = new XotsNsfScanner(serverName);
 		scanner.addObserver(this);
-		taskletClasses_ = scanner.scan();
+		scanner.scan();
 	}
 
 	public void queue(final Runnable runnable) {

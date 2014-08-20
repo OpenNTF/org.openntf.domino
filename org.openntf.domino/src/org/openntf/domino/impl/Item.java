@@ -31,6 +31,7 @@ import lotus.domino.NotesException;
 import org.openntf.domino.Database;
 import org.openntf.domino.DateTime;
 import org.openntf.domino.Document;
+import org.openntf.domino.ExceptionDetails;
 import org.openntf.domino.MIMEEntity;
 import org.openntf.domino.Session;
 import org.openntf.domino.WrapperFactory;
@@ -586,7 +587,6 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	public Vector<Object> getValues() {
 		// Just use the parent Doc for this, since it understands MIMEBean
 		// Check for null in case there was a problem with the parent's method
-		@SuppressWarnings("unchecked")
 		Vector<Object> values = this.getParent().getItemValue(this.getName());
 		if (values != null) {
 			return new Vector<Object>(values);
@@ -1128,17 +1128,23 @@ public class Item extends Base<org.openntf.domino.Item, lotus.domino.Item, Docum
 	}
 
 	@Override
-	public void fillExceptionDetails(final List<String> result) {
+	public void fillExceptionDetails(final List<ExceptionDetails.Entry> result) {
 		Document myDoc = getParent();
 		if (myDoc != null)
 			myDoc.fillExceptionDetails(result);
-		String myDetail = this.getClass().getName() + "=";
+		String myDetail = name_;
 		try {
-			myDetail += getDelegate().getName();
+			myDetail = ", Type:" + getDelegate().getType();
 		} catch (NotesException e) {
-			myDetail += "[getName -> NotesException: " + e.text + "]";
+			myDetail += ", [getType -> NotesException: " + e.text + "]";
 		}
-		result.add(myDetail);
+
+		try {
+			myDetail = ", ValueString:" + getDelegate().getValueString();
+		} catch (NotesException e) {
+			myDetail += ", [ValueString -> NotesException: " + e.text + "]";
+		}
+		result.add(new ExceptionDetails.Entry(this, myDetail));
 	}
 
 }

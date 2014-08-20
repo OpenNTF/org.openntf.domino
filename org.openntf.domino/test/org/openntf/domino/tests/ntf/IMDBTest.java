@@ -154,7 +154,7 @@ public class IMDBTest implements Runnable {
 							if (rawReleaseDate.length() > 3 && !rawReleaseDate.startsWith("?")) {
 								releaseYear = Integer.valueOf(rawReleaseDate.substring(0, 4).trim());
 							}
-							Document doc = db.getDocumentByKey(entryKey, true);
+							Document doc = db.getDocumentWithKey(entryKey, true);
 							doc.replaceItemValue("StartDate", expectedFilmDate);
 							doc.replaceItemValue("Title", expectedTitle);
 							doc.replaceItemValue("Type", entryType);
@@ -238,7 +238,7 @@ public class IMDBTest implements Runnable {
 							}
 							if (!rawMovieTitle.equalsIgnoreCase(lastTitle)) {
 								movieCount++;
-								Document doc = db.getDocumentByKey(rawMovieTitle, false);
+								Document doc = db.getDocumentWithKey(rawMovieTitle, false);
 								if (doc != null) {
 									doc.replaceItemValue("Genres", genres);
 									doc.save();
@@ -346,7 +346,7 @@ public class IMDBTest implements Runnable {
 								String byLine = curLine.substring(3).trim();
 								plots.put(byLine, curPlot.toString());
 							} else if (curLine.startsWith("------")) {
-								Document doc = db.getDocumentByKey(expectedTitle, false);
+								Document doc = db.getDocumentWithKey(expectedTitle, false);
 								if (doc != null) {
 									int plotNumber = 0;
 									for (String author : plots.keySet()) {
@@ -446,7 +446,7 @@ public class IMDBTest implements Runnable {
 									System.out.println("Processing actor " + actorCount + ": " + curActor + " (" + lineCount + " lines)");
 								}
 								Database db = null; //TODO obviously not...
-								Document doc = db.getDocumentByKey(curActor, false);
+								Document doc = db.getDocumentWithKey(curActor, false);
 								if (doc != null) {
 									doc.replaceItemValue("Genres", genres);
 									doc.save();

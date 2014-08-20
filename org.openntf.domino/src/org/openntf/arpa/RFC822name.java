@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
  */
 public class RFC822name extends HashMap<RFC822name.Key, String> implements Serializable {
 
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(RFC822name.class.getName());
 	private static final long serialVersionUID = 1L;
 

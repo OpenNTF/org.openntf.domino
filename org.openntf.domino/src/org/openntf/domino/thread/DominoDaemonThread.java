@@ -10,8 +10,8 @@ import java.util.logging.Logger;
  * 
  */
 public class DominoDaemonThread extends DominoThread {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(DominoDaemonThread.class.getName());
-	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @param runnable

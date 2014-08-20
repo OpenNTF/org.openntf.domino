@@ -46,7 +46,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
 import org.openntf.domino.DateTime;
-import org.openntf.domino.HasExceptionDetails;
+import org.openntf.domino.ExceptionDetails;
 import org.openntf.domino.Item;
 import org.openntf.domino.Name;
 import org.openntf.domino.exceptions.InvalidNotesUrlException;
@@ -265,7 +265,7 @@ public enum DominoUtils {
 		return (handleException(t, null, null));
 	}
 
-	public static Throwable handleException(final Throwable t, final HasExceptionDetails hed) {
+	public static Throwable handleException(final Throwable t, final ExceptionDetails hed) {
 		return handleException(t, hed, null);
 	}
 
@@ -273,11 +273,10 @@ public enum DominoUtils {
 		return handleException(t, null, details);
 	}
 
-	public static Throwable handleException(final Throwable t, final HasExceptionDetails hed, final String details) {
+	public static Throwable handleException(final Throwable t, final ExceptionDetails hed, final String details) {
 		if (t instanceof OpenNTFNotesException) {
 			OpenNTFNotesException ne = (OpenNTFNotesException) t;
-			if (hed != null && ne.getHED() == null)
-				ne.setHED(hed);
+			ne.addExceptionDetails(hed);
 			throw ne;
 		}
 		if (getBubbleExceptions())

@@ -10,28 +10,35 @@ import java.util.logging.Logger;
  * 
  */
 public class BlockedCrashException extends RuntimeException {
+	@SuppressWarnings("unused")
 	private static final Logger log_ = Logger.getLogger(BlockedCrashException.class.getName());
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * @param arg0
+	 * @param message
+	 *            the detail message. The detail message is saved for later retrieval by the Throwable.getMessage() method.
 	 */
-	public BlockedCrashException(final String arg0) {
-		super(arg0);
+	public BlockedCrashException(final String message) {
+		super(message);
 	}
 
 	/**
-	 * @param arg0
+	 * @param cause
+	 *            the cause (which is saved for later retrieval by the Throwable.getCause() method). (A null value is permitted, and
+	 *            indicates that the cause is nonexistent or unknown.)
 	 */
-	public BlockedCrashException(final Throwable arg0) {
-		super(arg0);
+	public BlockedCrashException(final Throwable cause) {
+		super(cause);
 	}
 
 	/**
-	 * @param arg0
-	 * @param arg1
+	 * @param message
+	 *            the detail message. The detail message is saved for later retrieval by the Throwable.getMessage() method.
+	 * @param cause
+	 *            the cause (which is saved for later retrieval by the Throwable.getCause() method). (A null value is permitted, and
+	 *            indicates that the cause is nonexistent or unknown.)
 	 */
-	public BlockedCrashException(final String arg0, final Throwable arg1) {
-		super(arg0, arg1);
+	public BlockedCrashException(final String message, final Throwable cause) {
+		super(message, cause);
 	}
 }

@@ -4,13 +4,14 @@ import java.io.IOException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.logging.FileHandler;
+import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
 import org.openntf.domino.utils.Factory;
 
-public class LogHandlerFile extends FileHandler {
+public class LogHandlerFile extends FileHandler implements LogHandlerUpdateIF {
 
-	private static class LHFConfig {
+	private static class LHFConfig implements LogHandlerConfigIF {
 		String pattern;
 		int limit;
 		int count;
@@ -22,9 +23,17 @@ public class LogHandlerFile extends FileHandler {
 			count = 1;
 			append = false;
 		}
+
+		@Override
+		public boolean isEqual(final LogHandlerConfigIF o) {
+			if (!(o instanceof LHFConfig))
+				return false;
+			LHFConfig other = (LHFConfig) o;
+			return append == other.append && limit == other.limit && count == other.count && pattern.equals(other.pattern);
+		}
 	}
 
-	public static Object configFromProps(final String props) {
+	public static LogHandlerConfigIF configFromProps(final String props) {
 		if (props == null)
 			cfpError(props, "At least Pattern has to be specified");
 		LHFConfig ret = new LHFConfig();
@@ -89,7 +98,7 @@ public class LogHandlerFile extends FileHandler {
 		throw new IllegalArgumentException("Invalid Props-Property for LogHandlerFile (" + props + "): " + detail);
 	}
 
-	public static LogHandlerFile getInstance(final Object config, final boolean useDefaultFormatter) throws IOException {
+	public static LogHandlerFile getInstance(final LogHandlerConfigIF config, final boolean useDefaultFormatter) throws IOException {
 		if (!(config instanceof LHFConfig))
 			throw new IllegalArgumentException("Invalid call to LogHandlerFile.getInstance");
 		LogHandlerFile ret = new LogHandlerFile((LHFConfig) config);
@@ -100,6 +109,20 @@ public class LogHandlerFile extends FileHandler {
 
 	public LogHandlerFile(final LHFConfig config) throws IOException {
 		super(config.pattern, config.limit, config.count, config.append);
+	}
+
+	@Override
+	public boolean mayUpdateYourself(final LogHandlerConfigIF newHandlerConfig, final LogHandlerConfigIF oldHandlerConfig) {
+		return newHandlerConfig.isEqual(oldHandlerConfig);
+	}
+
+	@Override
+	public void doUpdateYourself(final LogHandlerConfigIF newhandlerConfig, final LogHandlerConfigIF oldHandlerConfig,
+			final boolean useDefaultFormatter, final Formatter newFormatter) {
+		if (newFormatter != null)
+			setFormatter(newFormatter);
+		else if (useDefaultFormatter && !(getFormatter() instanceof LogFormatterFileDefault))
+			setFormatter(new LogFormatterFileDefault());
 	}
 
 	/**

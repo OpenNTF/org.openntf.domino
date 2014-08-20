@@ -1,6 +1,7 @@
 package org.openntf.domino.logging;
 
 import java.io.IOException;
+import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
@@ -12,17 +13,24 @@ import org.openntf.domino.utils.Factory;
  * 
  * Handles outputting error log to OpenLog
  */
-public class LogHandlerOpenLog extends Handler {
+public class LogHandlerOpenLog extends Handler implements LogHandlerUpdateIF {
 
-	private static class LHOLConfig {
-		String logDB;
+	private static class LHOLConfig implements LogHandlerConfigIF {
+		String _logDB;
 
 		LHOLConfig() {
-			logDB = null;
+			_logDB = null;
+		}
+
+		@Override
+		public boolean isEqual(final LogHandlerConfigIF other) {
+			if (!(other instanceof LHOLConfig))
+				return false;
+			return _logDB.equals(((LHOLConfig) other)._logDB);
 		}
 	}
 
-	public static Object configFromProps(final String props) {
+	public static LogHandlerConfigIF configFromProps(final String props) {
 		if (props == null)
 			cfpError(props, "LogDB has to be specified");
 		LHOLConfig ret = new LHOLConfig();
@@ -37,7 +45,7 @@ public class LogHandlerOpenLog extends Handler {
 					break;
 				}
 				if (propKey.equals("LogDB")) {
-					ret.logDB = propValue;
+					ret._logDB = propValue;
 					break;
 				}
 				ind = -1;
@@ -46,7 +54,7 @@ public class LogHandlerOpenLog extends Handler {
 			if (ind <= 0)
 				cfpError(props, "Invalid Entry '" + propArr[i] + "'");
 		}
-		if (ret.logDB == null)
+		if (ret._logDB == null)
 			cfpError(props, "Missing entry 'LogDB'");
 		return ret;
 	}
@@ -55,14 +63,25 @@ public class LogHandlerOpenLog extends Handler {
 		throw new IllegalArgumentException("Invalid Props-Property for LogHandlerFile (" + props + "): " + detail);
 	}
 
-	public static LogHandlerOpenLog getInstance(final Object config, final boolean useDefaultFormatter) throws IOException {
+	public static LogHandlerOpenLog getInstance(final LogHandlerConfigIF config, final boolean useDefaultFormatter) throws IOException {
 		if (!(config instanceof LHOLConfig))
 			throw new IllegalArgumentException("Invalid call to LogHandlerOpenLog.getInstance");
 		return new LogHandlerOpenLog((LHOLConfig) config);
 	}
 
+	@Override
+	public boolean mayUpdateYourself(final LogHandlerConfigIF newHandlerConfig, final LogHandlerConfigIF oldHandlerConfig) {
+		return newHandlerConfig.isEqual(oldHandlerConfig);
+	}
+
+	@Override
+	public void doUpdateYourself(final LogHandlerConfigIF newhandlerConfig, final LogHandlerConfigIF oldHandlerConfig,
+			final boolean useDefaultFormatter, final Formatter newFormatter) {
+		// Nothing to do here
+	}
+
 	/** The ol_. */
-	private LogItemOpenLog ol_;
+	private LogGeneratorOpenLog _olGenerator;
 
 	/**
 	 * Instantiates a new open log handler.
@@ -73,8 +92,7 @@ public class LogHandlerOpenLog extends Handler {
 	 * @since org.openntf.domino 1.0.0
 	 */
 	public LogHandlerOpenLog(final LHOLConfig config) {
-		ol_ = new LogItemOpenLog();
-		ol_.setLogDbName(config.logDB);
+		_olGenerator = new LogGeneratorOpenLog(config._logDB);
 	}
 
 	/*
@@ -95,17 +113,6 @@ public class LogHandlerOpenLog extends Handler {
 	public void flush() {
 	}
 
-	/**
-	 * Sets the OpenLog database path for the OpenLogItem.
-	 * 
-	 * @param logDbPath
-	 *            the new log db path
-	 * @since org.openntf.domino 1.0.0
-	 */
-	public void setLogDbPath(final String logDbPath) {
-		ol_.setLogDbName(logDbPath);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -121,7 +128,7 @@ public class LogHandlerOpenLog extends Handler {
 		try {
 			Session session = Factory.getSession_unchecked();
 			if (session != null) {
-				ol_.logError(session, record, new LogRecordAdditionalInfo(record));
+				_olGenerator.log(session, record, new LogRecordAdditionalInfo(record));
 			}
 		} catch (Exception e) {
 			System.err.println("Exception " + e.getClass().getName() + " in LogHandlerOpenLog.publish:");

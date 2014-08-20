@@ -16,7 +16,6 @@
 package org.openntf.domino.utils;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.AccessControlException;
 import java.security.AccessController;
@@ -78,6 +77,9 @@ public enum Factory {
 
 	private static List<Terminatable> onTerminate_ = new ArrayList<Terminatable>();
 
+	// TODO: Determine if this is the right way to deal with Xots access to faces contexts
+	// private static ThreadLocal<Database> currentDatabaseHolder_ = new ThreadLocal<Database>();
+
 	/**
 	 * setup the environment and loggers
 	 * 
@@ -92,22 +94,22 @@ public enum Factory {
 					@Override
 					public Object run() throws Exception {
 						// Windows stores the notes.ini in the program directory; Linux stores it in the data directory
-						String os = String.valueOf(System.getProperty("os.name")).toLowerCase();
-						String progpath = System.getProperty(os.contains("windows") ? "notes.binary" : "user.dir");
+						String progpath = System.getProperty("notes.binary");
 						File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
 						if (!iniFile.exists()) {
 							progpath = System.getProperty("user.dir");
 							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
 						}
-						Scanner scanner = new Scanner(iniFile);
-						scanner.useDelimiter("\n|\r\n");
-						//						while (scanner.hasNextLine()) {
-						//							String nextLine = scanner.nextLine();
-						//							System.out.println("DEBUG " + nextLine);
-						//						}
-
-							loadEnvironment(/*session, */scanner);
-						scanner.close();
+						if (!iniFile.exists()) {
+							progpath = System.getProperty("java.library.path"); // Otherwise the tests will not work
+							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
+						}
+						if (iniFile.exists()) {
+							Scanner scanner = new Scanner(iniFile);
+							scanner.useDelimiter("\n|\r\n");
+							loadEnvironment(scanner);
+							scanner.close();
+						}
 						return null;
 					}
 				});
@@ -200,7 +202,8 @@ public enum Factory {
 					@Override
 					public Object run() throws Exception {
 						try {
-							InputStream inputStream = Factory.class.getClassLoader().getResourceAsStream("META-INF/MANIFEST.MF");
+							ClassLoader cl = Thread.currentThread().getContextClassLoader();
+							InputStream inputStream = cl.getResourceAsStream("META-INF/MANIFEST.MF");
 							if (inputStream != null) {
 								Manifest mani;
 								mani = new Manifest(inputStream);
@@ -209,7 +212,7 @@ public enum Factory {
 								ENVIRONMENT.put("title", attrib.getValue("Implementation-Title"));
 								ENVIRONMENT.put("url", attrib.getValue("Implementation-Vendor-URL"));
 							}
-						} catch (IOException e) {
+						} catch (Exception e) {
 							e.printStackTrace();
 						}
 						return null;
@@ -276,6 +279,7 @@ public enum Factory {
 	private static Counter manualRecycleCounter = new Counter(COUNT_PER_THREAD);
 
 	private static Map<Class<?>, Counter> objectCounter = new ConcurrentHashMap<Class<?>, Counter>() {
+		private static final long serialVersionUID = 1L;
 
 		/* (non-Javadoc)
 		 * @see java.util.concurrent.ConcurrentHashMap#get(java.lang.Object)
@@ -438,7 +442,7 @@ public enum Factory {
 	/**
 	 * returns the wrapper factory for this thread
 	 * 
-	 * @return
+	 * @return the thread's wrapper factory
 	 */
 	public static WrapperFactory getWrapperFactory() {
 		WrapperFactory wf = currentWrapperFactory.get();
@@ -448,6 +452,15 @@ public enum Factory {
 			currentWrapperFactory.set(wf);
 		}
 		return wf;
+	}
+
+	/**
+	 * Returns the wrapper factory if initialized
+	 * 
+	 * @return
+	 */
+	public static WrapperFactory getWrapperFactory_unchecked() {
+		return currentWrapperFactory.get();
 	}
 
 	/**
@@ -644,17 +657,6 @@ public enum Factory {
 	}
 
 	/**
-	 * Returns the session's current database if available. Does never create a session.
-	 * 
-	 * @see #getSession_unchecked()
-	 * @return The session's current database
-	 */
-	public static Database getCurrentDatabase() {
-		Session sess = currentSessionHolder_.get();
-		return (sess == null) ? null : sess.getCurrentDatabase();
-	}
-
-	/**
 	 * Returns the current session, if available. Does never create a session
 	 * 
 	 * @return the session
@@ -678,6 +680,30 @@ public enum Factory {
 	public static void clearSession() {
 		currentSessionHolder_.set(null);
 	}
+
+	// TODO: Determine if this is the right way to deal with Xots access to faces contexts
+	/**
+	 * Returns the session's current database if available. Does never create a session.
+	 * 
+	 * @see #getSession_unchecked()
+	 * @return The session's current database
+	 */
+	public static Database getDatabase_unchecked() {
+		Session sess = getSession_unchecked();
+		return (sess == null) ? null : sess.getCurrentDatabase();
+	}
+
+	// RPr: I think it is a better idea to set the currentDatabase on the currentSesssion
+
+	// TODO remove that code
+	//	public static void setDatabase(final Database database) {
+	//		setNoRecycle(database, true);
+	//		currentDatabaseHolder_.set(database);
+	//	}
+	//
+	//	public static void clearDatabase() {
+	//		currentDatabaseHolder_.set(null);
+	//	}
 
 	public static ClassLoader getClassLoader() {
 		if (currentClassLoader_.get() == null) {
@@ -942,7 +968,7 @@ public enum Factory {
 	 * @return the parent database
 	 */
 	@Deprecated
-	public static Database getParentDatabase(final Base base) {
+	public static Database getParentDatabase(final Base<?> base) {
 		if (base instanceof org.openntf.domino.Database) {
 			return (org.openntf.domino.Database) base;
 		} else if (base instanceof DatabaseDescendant) {

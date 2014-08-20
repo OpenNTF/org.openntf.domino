@@ -28,7 +28,6 @@ import com.ibm.xsp.model.domino.viewnavigator.NOIViewNavigatorEx9;
 public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 	private static final long serialVersionUID = -5568170248903953533L;
 	private static final Logger log_ = Logger.getLogger(OpenntfViewNavigatorEx.class.getName());
-	private Object[] constantValues;
 
 	/**
 	 * Constructor
@@ -55,7 +54,6 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 		super.initNavigator(paramView);
 
 		Vector<ViewColumn> cols = paramView.getColumns();
-		constantValues = new Object[cols.size()];
 
 		for (int i = 0; i < cols.size(); i++) {
 			ViewColumn col = cols.get(i);
@@ -70,9 +68,7 @@ public class OpenntfViewNavigatorEx extends NOIViewNavigatorEx9 {
 						openNtfSession = Factory.fromLotus(sess, org.openntf.domino.Session.SCHEMA, null);
 					}
 				}
-				// resolve the constant values (with the openntf session, to get proper dateTime values!)
-				Vector v = openNtfSession.evaluate(col.getFormula());
-				constantValues[i] = v.get(0);
+				openNtfSession.evaluate(col.getFormula());
 			}
 		}
 	}

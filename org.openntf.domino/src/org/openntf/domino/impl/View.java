@@ -58,7 +58,6 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	static {
 		try {
 			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
-				@SuppressWarnings("unused")
 				@Override
 				public Object run() throws Exception {
 					// There is no relation between method position in the two classes:
@@ -335,7 +334,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int, int, boolean, boolean, boolean, boolean)
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings("rawtypes")
 	@Override
 	public int FTSearchSorted(final Vector query, final int maxDocs, final int column, final boolean ascending, final boolean exact,
 			final boolean variants, final boolean fuzzy) {
@@ -356,7 +355,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int, java.lang.String)
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings("rawtypes")
 	@Override
 	public int FTSearchSorted(final Vector query, final int maxDocs, final String column) {
 		List<lotus.domino.Base> recycleThis = new ArrayList<lotus.domino.Base>();
@@ -375,7 +374,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#FTSearchSorted(java.util.Vector, int, java.lang.String, boolean, boolean, boolean, boolean)
 	 */
-	@SuppressWarnings({ "rawtypes" })
+	@SuppressWarnings("rawtypes")
 	@Override
 	public int FTSearchSorted(final Vector query, final int maxDocs, final String column, final boolean ascending, final boolean exact,
 			final boolean variants, final boolean fuzzy) {
@@ -709,7 +708,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * @return
 	 * @throws NotesException
 	 */
-	ViewEntry iGetEntryByKey(final Vector paramVector, final boolean paramBoolean, final int paramInt) {
+	ViewEntry iGetEntryByKey(final Vector<?> paramVector, final boolean paramBoolean, final int paramInt) {
 		if (paramVector == null && paramInt == 42) {
 			throw new BackendBridgeSanityCheckException("It seems that the backend bridge has called the correct method :)");
 		}
@@ -980,7 +979,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#getAllDocumentsByKey(java.util.Vector)
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings("rawtypes")
 	@Override
 	public DocumentCollection getAllDocumentsByKey(final java.util.Vector keys) {
 		return getAllDocumentsByKey((Object) keys, false);
@@ -991,7 +990,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#getAllDocumentsByKey(java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public DocumentCollection getAllDocumentsByKey(final java.util.Vector keys, final boolean exact) {
 		return getAllDocumentsByKey((Object) keys, exact);
@@ -1034,7 +1033,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 			Object domKey = toDominoFriendly(key, this, recycleThis);
 			lotus.domino.ViewEntryCollection rawColl;
 			if (domKey instanceof java.util.Vector) {
-				rawColl = getDelegate().getAllEntriesByKey((Vector) domKey, exact);
+				rawColl = getDelegate().getAllEntriesByKey((Vector<?>) domKey, exact);
 			} else {
 				rawColl = getDelegate().getAllEntriesByKey(domKey, exact);
 			}
@@ -1050,7 +1049,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#getAllEntriesByKey(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public ViewEntryCollection getAllEntriesByKey(final Vector keys) {
 		return getAllEntriesByKey((Object) keys, false);
@@ -1061,7 +1060,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#getAllEntriesByKey(java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public ViewEntryCollection getAllEntriesByKey(final Vector keys, final boolean exact) {
 		return getAllEntriesByKey((Object) keys, exact);
@@ -1293,7 +1292,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#getDocumentByKey(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Document getDocumentByKey(final java.util.Vector keys) {
 		return getDocumentByKey((Object) keys, false);
@@ -1304,9 +1303,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#getDocumentByKey(java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
-	public Document getDocumentByKey(final java.util.Vector keys, final boolean exact) {
+	public Document getDocumentByKey(final Vector keys, final boolean exact) {
 		return getDocumentByKey((Object) keys, exact);
 	}
 
@@ -1331,7 +1330,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		try {
 			Object domKey = toDominoFriendly(key, this, recycleThis);
 			if (domKey instanceof java.util.Vector) {
-				return fromLotus(getDelegate().getEntryByKey((java.util.Vector) domKey, exact), ViewEntry.SCHEMA, this);
+				return fromLotus(getDelegate().getEntryByKey((Vector<?>) domKey, exact), ViewEntry.SCHEMA, this);
 			} else {
 				return fromLotus(getDelegate().getEntryByKey(domKey, exact), ViewEntry.SCHEMA, this);
 
@@ -1349,9 +1348,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#getEntryByKey(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
-	public ViewEntry getEntryByKey(final java.util.Vector keys) {
+	public ViewEntry getEntryByKey(final Vector keys) {
 		return getEntryByKey((Object) keys, false);
 	}
 
@@ -1360,9 +1359,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#getEntryByKey(java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
-	public ViewEntry getEntryByKey(final java.util.Vector keys, final boolean exact) {
+	public ViewEntry getEntryByKey(final Vector keys, final boolean exact) {
 		return getEntryByKey((Object) keys, exact);
 	}
 
@@ -2012,9 +2011,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#lock(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
-	public boolean lock(final java.util.Vector names) {
+	public boolean lock(final Vector names) {
 		try {
 			return getDelegate().lock(names);
 		} catch (NotesException e) {
@@ -2028,9 +2027,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#lock(java.util.Vector, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
-	public boolean lock(final java.util.Vector names, final boolean provisionalOk) {
+	public boolean lock(final Vector names, final boolean provisionalOk) {
 		try {
 			return getDelegate().lock(names, provisionalOk);
 		} catch (NotesException e) {
@@ -2074,9 +2073,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#lockProvisional(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
-	public boolean lockProvisional(final java.util.Vector names) {
+	public boolean lockProvisional(final Vector names) {
 		try {
 			return getDelegate().lockProvisional(names);
 		} catch (NotesException e) {
@@ -2275,9 +2274,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#setAliases(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
-	public void setAliases(final java.util.Vector aliases) {
+	public void setAliases(final Vector aliases) {
 		try {
 			getDelegate().setAliases(aliases);
 		} catch (NotesException e) {
@@ -2390,9 +2389,9 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * 
 	 * @see org.openntf.domino.View#setReaders(java.util.Vector)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
-	public void setReaders(final java.util.Vector readers) {
+	public void setReaders(final Vector readers) {
 		try {
 			getDelegate().setReaders(readers);
 		} catch (NotesException e) {
@@ -2544,6 +2543,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	 * @since org.openntf.domino 3.0.0
 	 */
 	public static class DominoColumnInfo implements Serializable {
+		private static final long serialVersionUID = 1L;
 		private final String itemName_;
 		private final int columnValuesIndex_;
 		private final Object constantValue_;
@@ -2708,7 +2708,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 	'/R=' + the number of seconds between automatically refresh of view.
 	'/C' Don't show empty categories
 	'/L' Disable auto-update
-	*/
+	 */
 	public static Pattern R_MATCH = Pattern.compile("^.*\\bR=(\\d+).*$", Pattern.CASE_INSENSITIVE);
 	public static Pattern P_MATCH = Pattern.compile("^.*\\bP=(\\d+).*$", Pattern.CASE_INSENSITIVE);
 
@@ -2773,4 +2773,44 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		columnInfoMap_ = null;
 		columnMap_ = null;
 	}
+	@Override
+	public Document getFirstDocumentByKey(final Object key) {
+		return this.getDocumentByKey(key);
+	}
+
+	@Override
+	public Document getFirstDocumentByKey(final Object key, final boolean exact) {
+		return this.getDocumentByKey(key, exact);
+	}
+
+	@Override
+	public Document getFirstDocumentByKey(final Vector keys) {
+		return this.getDocumentByKey(keys);
+	}
+
+	@Override
+	public Document getFirstDocumentByKey(final Vector keys, final boolean exact) {
+		return this.getDocumentByKey(keys, exact);
+	}
+
+	@Override
+	public ViewEntry getFirstEntryByKey(final Object key) {
+		return this.getEntryByKey(key);
+	}
+
+	@Override
+	public ViewEntry getFirstEntryByKey(final Object key, final boolean exact) {
+		return this.getEntryByKey(key, exact);
+	}
+
+	@Override
+	public ViewEntry getFirstEntryByKey(final Vector keys) {
+		return this.getEntryByKey(keys);
+	}
+
+	@Override
+	public ViewEntry getFirstEntryByKey(final Vector keys, final boolean exact) {
+		return this.getEntryByKey(keys, exact);
+	}
+
 }

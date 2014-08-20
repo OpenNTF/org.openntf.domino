@@ -42,9 +42,8 @@ import org.openntf.domino.utils.Factory;
 
 import com.ibm.commons.util.NotImplementedException;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class Base.
+ * A common Base class for almost all org.openntf.domino types.
  * 
  * @param <T>
  *            the generic type
@@ -434,7 +433,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 			if (base instanceof lotus.domino.local.NotesBase) {
 				return ((Long) getCppObjMethod.invoke(base, (Object[]) null)).longValue();
 			} else if (base instanceof org.openntf.domino.impl.Base) {
-				return ((org.openntf.domino.impl.Base) base).GetCppObj();
+				return ((org.openntf.domino.impl.Base<?, ?, ?>) base).GetCppObj();
 			}
 		} catch (Exception e) {
 		}
@@ -740,13 +739,15 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 	 * toItemFriendly: special case for "toDominoFriendly" that handles "DateTime" / "DateRange" correctly
 	 * 
 	 * @param value
+	 *            The Object value to coerce into an Item-friendly type.
 	 * @param context
+	 *            The context object.
 	 * @param recycleThis
-	 * @return
+	 * @return An object value that can be stored in an Item.
 	 * @throws IllegalArgumentException
+	 *             When the provided value cannot be successfully converted into an Item-safe value.
 	 */
-	@SuppressWarnings("rawtypes")
-	public static Object toItemFriendly(final Object value, final org.openntf.domino.Base context,
+	public static Object toItemFriendly(final Object value, final org.openntf.domino.Base<?> context,
 			final Collection<lotus.domino.Base> recycleThis) throws IllegalArgumentException {
 		if (value == null) {
 			log_.log(Level.INFO, "Trying to convert a null argument to Domino friendly. Returning null...");
@@ -765,7 +766,7 @@ public abstract class Base<T extends org.openntf.domino.Base<D>, D extends lotus
 				return javaToDominoFriendly(value, context, recycleThis);
 			} else if (value instanceof org.openntf.domino.DateTime || value instanceof org.openntf.domino.DateRange) {
 				// according to documentation, these datatypes should be compatible to write to a field ... but DateRanges make problems
-				return toLotus((org.openntf.domino.Base) value, recycleThis);
+				return toLotus((org.openntf.domino.Base<?>) value, recycleThis);
 			} else if (value instanceof lotus.domino.DateTime || value instanceof lotus.domino.DateRange) {
 				return value;
 			}
