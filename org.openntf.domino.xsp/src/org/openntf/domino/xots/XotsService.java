@@ -35,7 +35,7 @@ public class XotsService extends NSFService {
 
 	public synchronized static void addToQueue(final Runnable runnable) {
 		try {
-			Object result = AccessController.doPrivileged(new PrivilegedAction<Object>() {
+			AccessController.doPrivileged(new PrivilegedAction<Object>() {
 				@Override
 				public Object run() {
 					// getInstance().queue(runnable, runnable.getClass().getClassLoader());
@@ -75,12 +75,15 @@ public class XotsService extends NSFService {
 					}
 					result.add(curClass);
 				}
+
+				classes_ = result;
+
+				callback_.loaderCallback(this);
 			} catch (Throwable t) {
 				t.printStackTrace();
 			} finally {
 				NotesContext.termThread();
 			}
-			classes_ = result;
 		}
 
 		public Set<Class<?>> getClasses() {
@@ -129,7 +132,10 @@ public class XotsService extends NSFService {
 		System.out.println("DEBUG: XotsService created NSF module for path " + arg0);
 		NSFComponentModule result = modules_.get(arg0);
 		if (result == null) {
-			result = super.createNSFModule(arg0);
+			// Loading seems to not return it immediately
+			getNsfService().loadModule(arg0);
+			result = (NSFComponentModule) getNsfService().getComponentModule(arg0);
+			//			result = super.createNSFModule(arg0);
 			modules_.put(arg0, result);
 		}
 		return result;
@@ -156,10 +162,11 @@ public class XotsService extends NSFService {
 			Persistent persistent = clazz.getAnnotation(Persistent.class);
 			Persistent.Context ctx = persistent.appContext();
 			Persistent.Scope scope = persistent.scope();
+			// TODO de-dupe based on replica ID to handle faux text ".nsf" redirection files
 			if (scope == Persistent.Scope.APPLICATION) {
 				if (ctx == Persistent.Context.XSPFORCED) {
 					try {
-						NSFComponentModule forcedMod = (NSFComponentModule) getNsfService().loadModule(referenceMod.getDatabasePath());
+						NSFComponentModule forcedMod = getNsfService().loadModule(referenceMod.getDatabasePath());
 						synchronized (classMap_) {
 							classMap_.put(forcedMod, classes);
 						}
@@ -193,6 +200,14 @@ public class XotsService extends NSFService {
 	@Override
 	public void termThreads() {
 		System.out.println("DEBUG: XotsService is being terminated.");
+	}
+
+	protected Set<Class<?>> getLoadedClasses() {
+		Set<Class<?>> result = new HashSet<Class<?>>();
+		for (Set<Class<?>> classes : classMap_.values()) {
+			result.addAll(classes);
+		}
+		return result;
 	}
 
 }

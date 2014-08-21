@@ -7,7 +7,9 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 
+import org.openntf.domino.events.IDominoEvent;
 import org.openntf.domino.helpers.TrustedDispatcher;
+import org.openntf.domino.thread.AbstractDominoRunnable;
 import org.openntf.domino.thread.DominoExecutor.ThreadCleaner;
 import org.openntf.domino.thread.DominoManualRunner;
 import org.openntf.domino.thread.DominoNoneRunner;
@@ -15,7 +17,10 @@ import org.openntf.domino.thread.DominoSessionType;
 import org.openntf.domino.thread.DominoThread;
 import org.openntf.domino.thread.DominoThreadFactory;
 import org.openntf.domino.thread.model.IDominoRunnable;
+import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.xots.annotations.Trigger;
 import org.openntf.domino.xots.builtin.XotsNsfScanner;
+import org.openntf.domino.xots.events.CustomNamedEvent;
 
 import com.ibm.designer.runtime.domino.adapter.HttpService;
 import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
@@ -157,6 +162,10 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 		return INSTANCE;
 	}
 
+	public synchronized static void publishEvent(final IDominoEvent event) {
+		getInstance().fireEvent(event);
+	}
+
 	@Override
 	protected TrustedExecutor getExecutor() {
 		if (intimidator_ == null) {
@@ -198,6 +207,63 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 		}
 	}
 
+	public void fireEvent(final IDominoEvent event) {
+		for (Class<?> clazz : XotsService.getInstance().getLoadedClasses()) {
+			if (XotsITriggeredTasklet.class.isAssignableFrom(clazz) && Runnable.class.isAssignableFrom(clazz)) {
+				// Then look to see if the annotation exists and matches this event
+				Trigger trigger = clazz.getAnnotation(Trigger.class);
+				if (trigger != null) {
+					String value = trigger.value();
+					if (value != null) {
+						// TODO Handle DB events
+						if (event instanceof CustomNamedEvent) {
+							String eventName = ((CustomNamedEvent) event).getName();
+							if (value.equals(eventName)) {
+								try {
+									Runnable runnable = (Runnable) clazz.newInstance();
+									queue(new TriggerRunnable((XotsITriggeredTasklet) runnable, event), clazz.getClassLoader());
+								} catch (InstantiationException e) {
+									DominoUtils.handleException(e);
+								} catch (IllegalAccessException e) {
+									DominoUtils.handleException(e);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private static class TriggerRunnable extends AbstractDominoRunnable {
+		private static final long serialVersionUID = 1L;
+
+		private final IDominoEvent event_;
+		private final XotsITriggeredTasklet tasklet_;
+		private boolean done_ = false;
+
+		public TriggerRunnable(final XotsITriggeredTasklet tasklet, final IDominoEvent event) {
+			event_ = event;
+			tasklet_ = tasklet;
+		}
+
+		@Override
+		public void run() {
+			tasklet_.handleEvent(event_);
+			done_ = true;
+		}
+
+		@Override
+		public boolean shouldStop() {
+			return done_;
+		}
+
+		@Override
+		public DominoSessionType getSessionType() {
+			return DominoSessionType.NATIVE;
+		}
+	}
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void update(final Observable arg0, final Object arg1) {
@@ -207,5 +273,4 @@ public class XotsDaemon extends TrustedDispatcher implements Observer {
 			}
 		}
 	}
-
 }
