@@ -605,7 +605,11 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		for (IDominoProperties prop : props) {
 			Object value = getProperty(prop, true);
 			if (value != null) {
-				result.put(prop.getName(), value);
+				if (Enum.class.isAssignableFrom(value.getClass())) {
+					result.put(prop.getName(), ((Enum) value).name());
+				} else {
+					result.put(prop.getName(), value);
+				}
 			}
 		}
 		return result;
