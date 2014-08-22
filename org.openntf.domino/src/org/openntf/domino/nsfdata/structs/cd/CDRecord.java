@@ -30,6 +30,12 @@ public abstract class CDRecord extends AbstractStruct {
 			return new CDBORDERINFO(signature, data);
 		case CAPTION:
 			return new CDCAPTION(signature, data);
+		case CLIENT_BLOBPART:
+			// Note: this structure is shared with BLOBPART
+			return new CDBLOBPART(signature, data);
+		case CLIENT_EVENT:
+			// Note: this structure is shared with EVENT
+			return new CDEVENT(signature, data);
 		case COLOR:
 			return new CDCOLOR(signature, data);
 		case COLORTABLE:
@@ -81,6 +87,8 @@ public abstract class CDRecord extends AbstractStruct {
 			return new CDLARGEPARAGRAPH(signature, data);
 		case LINK2:
 			return new CDLINK2(signature, data);
+		case OLEOBJINFO:
+			return new CDOLEOBJ_INFO(signature, data);
 		case PABDEFINITION:
 			return new CDPABDEFINITION(signature, data);
 		case PABREFERENCE:

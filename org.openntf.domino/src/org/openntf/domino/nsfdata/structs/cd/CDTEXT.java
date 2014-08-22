@@ -7,8 +7,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
  * This structure defines the start of a run of text in a rich-text field. (editods.h)
- * 
- * @author jgallagher
  *
  */
 public class CDTEXT extends CDRecord {

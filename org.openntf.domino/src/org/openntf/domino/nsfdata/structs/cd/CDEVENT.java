@@ -9,7 +9,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
 /**
  * This CD structure defines simple actions, formulas or LotusScript within a given image map. (editods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 5.0
  *
  */

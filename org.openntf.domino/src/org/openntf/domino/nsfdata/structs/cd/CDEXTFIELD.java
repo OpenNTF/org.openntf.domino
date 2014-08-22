@@ -10,7 +10,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * have been placed in this extension to the CDFIELD record. This record is optional, and may not be present in the $Body item of the form
  * note. (editods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes 4.0
  */
 public class CDEXTFIELD extends CDRecord {

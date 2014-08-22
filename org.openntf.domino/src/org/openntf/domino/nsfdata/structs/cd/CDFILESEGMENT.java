@@ -8,7 +8,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * This structure defines the file segment data of a Cascading Style Sheet (CSS) and follows a CDFILEHEADER structure. The number of
  * segments in the file is specified in the CDFILEHEADER record. (editods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 6.0
  *
  */

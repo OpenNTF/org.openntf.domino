@@ -10,7 +10,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * have been placed in this second extension to the CDFIELD record. This record will be present in the $Body item of the form note for each
  * field defined. (editods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 5.0
  *
  */

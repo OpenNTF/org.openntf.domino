@@ -7,7 +7,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
 /**
  * Contains additional event information for Notes/Domino 6. (editods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 6.0
  *
  */

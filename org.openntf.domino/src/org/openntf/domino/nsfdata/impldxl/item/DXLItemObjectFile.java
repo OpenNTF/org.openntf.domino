@@ -11,9 +11,17 @@ import org.openntf.domino.utils.xml.XMLNode;
 public class DXLItemObjectFile extends DXLItemObject {
 	private static final long serialVersionUID = 1L;
 
-	public static enum HostType { MSDOS }
-	public static enum CompressionType { NONE }
-	public static enum Flag { SIGN, STOREDINDOC }
+	public static enum HostType {
+		MSDOS, BYTEARRAYPAGE, BYTEARRAYEXT
+	}
+
+	public static enum CompressionType {
+		NONE
+	}
+
+	public static enum Flag {
+		SIGN, STOREDINDOC
+	}
 
 	private final HostType hostType_;
 	private final CompressionType compressionType_;
@@ -38,7 +46,7 @@ public class DXLItemObjectFile extends DXLItemObject {
 		fileSize_ = Long.parseLong(fileNode.getAttribute("size"), 10);
 
 		flags_ = EnumSet.noneOf(Flag.class);
-		for(String flag : fileNode.getAttribute("flags").split(",")) {
+		for (String flag : fileNode.getAttribute("flags").split(",")) {
 			flags_.add(Flag.valueOf(flag.toUpperCase()));
 		}
 
@@ -63,21 +71,27 @@ public class DXLItemObjectFile extends DXLItemObject {
 	public HostType getHostType() {
 		return hostType_;
 	}
+
 	public CompressionType getCompressionType() {
 		return compressionType_;
 	}
+
 	public String getEncoding() {
 		return encoding_;
 	}
+
 	public String getFileName() {
 		return fileName_;
 	}
+
 	public long getFileSize() {
 		return fileSize_;
 	}
+
 	public Date getFileCreated() {
 		return fileCreated_;
 	}
+
 	public Date getFileModified() {
 		return fileModified_;
 	}

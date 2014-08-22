@@ -9,7 +9,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * image is contained in the CDIMAGEHEADER and specifies the number of CDIMAGESEGMENT structures to follow. An image segment size is 10250
  * bytes. (editods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 5.0
  *
  */

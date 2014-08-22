@@ -8,7 +8,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * This structure is used to define a JPEG or GIF Image that is part of a Domino document. The CDIMAGEHEADER structure follows a CDGRAPHIC
  * structure. CDIMAGESEGMENT structure(s) then follow the CDIMAGEHEADER. (editods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 5.0
  *
  */

@@ -14,8 +14,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
 /**
  * A pattern table is one of the optional records following a CDBITMAPHEADER record. The pattern table is used to compress repetitive bitmap
  * data. (editods.h)
- * 
- * @author jgallagher
  *
  */
 public class CDPATTERNTABLE extends CDRecord {

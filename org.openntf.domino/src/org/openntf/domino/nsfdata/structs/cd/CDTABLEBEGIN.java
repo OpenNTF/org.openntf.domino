@@ -8,8 +8,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * This structure specifies the beginning of a table. It contains information about the format and size of the table. Use this structure
  * when accessing a table in a rich text field. As of R5, this structure is preceded by a CDPRETABLEBEGIN structure. The CDPRETABLEBEGIN
  * structure specifies additional table properties. (editods.h)
- * 
- * @author jgallagher
  *
  */
 public class CDTABLEBEGIN extends CDRecord {

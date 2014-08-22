@@ -10,8 +10,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * 10k bytes. For best display speed, the segments sould be as large as possible, up to the practical 10k limit. A scanline must be
  * contained within a single segment, and cannot be divided between two segments. A bitmap must contain at least one segment, but may have
  * many segments. (editods.h)
- * 
- * @author jgallagher
  *
  */
 public class CDBITMAPSEGMENT extends CDRecord {

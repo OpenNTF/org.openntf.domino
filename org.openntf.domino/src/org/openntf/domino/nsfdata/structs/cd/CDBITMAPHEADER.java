@@ -11,8 +11,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * A rich text field may contain a bitmap image. There are three types, monochrome, 8-bit mapped color, and 16-bit color; a gray scale
  * bitmap is stored as an 8-bit color bitmap with a color table having entries [0, 0, 0], [1, 1, 1], . . . , [255, 255, 255]. All bitmaps
  * are stored as a single plane (some graphics devices support multiple planes). (editods.h)
- * 
- * @author jgallagher
  *
  */
 public class CDBITMAPHEADER extends CDRecord {

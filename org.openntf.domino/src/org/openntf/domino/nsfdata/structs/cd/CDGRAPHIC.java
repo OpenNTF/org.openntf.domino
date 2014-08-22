@@ -9,8 +9,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
 /**
  * The CDGRAPHIC record contains information used to control display of graphic objects in a document. This record marks the beginning of a
  * composite graphic object, and must be present for any graphic object to be loaded or displayed. (editods.h)
- * 
- * @author jgallagher
  *
  */
 public class CDGRAPHIC extends CDRecord {

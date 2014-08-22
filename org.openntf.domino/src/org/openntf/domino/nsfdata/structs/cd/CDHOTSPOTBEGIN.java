@@ -7,8 +7,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
 /**
  * This structure specifies the start of a "hot" region in a rich text field. Clicking on a hot region causes some other action to occur.
  * For instance, clicking on a popup will cause a block of text associated with that popup to be displayed. (editods.h)
- * 
- * @author jgallagher
  *
  */
 public class CDHOTSPOTBEGIN extends CDRecord {

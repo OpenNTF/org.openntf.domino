@@ -9,8 +9,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * records which have either Lotus Script or Release 4.x (or 5.x) actions associated with them. These hotspots contain a CDHOTSPOTBEGIN
  * record with the signature SIG_CD_V4HOTSPOTBEGIN (or SIG_CD_V5HOTSPOTBEGIN), and a CDHOTSPOTEND record with the signature
  * SIG_CD_V4HOTSPOTEND (or SIG_CD_V5HOTSPOTEND). (editods.h)
- * 
- * @author jgallagher
  *
  */
 public class CDHOTSPOTEND extends CDRecord {

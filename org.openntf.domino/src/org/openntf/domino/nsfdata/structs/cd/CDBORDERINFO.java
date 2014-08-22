@@ -12,7 +12,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * This CD record describes border information for a given table. This CD record will be preceded with CD record CDPRETABLEBEGIN both
  * encapsulated between a CDBEGINRECORD and a CDENDRECORD record with CD record signature CDPRETABLEBEGIN. (editods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 5.0
  *
  */

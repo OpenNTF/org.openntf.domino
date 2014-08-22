@@ -10,8 +10,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
 /**
  * A color table is one of the optional records following a CDBITMAPHEADER record. The color table specifies the mapping between 8-bit
  * bitmap samples and 24-bit Red/Green/Blue colors. (editods.h)
- * 
- * @author jgallagher
  *
  */
 public class CDCOLORTABLE extends CDRecord {

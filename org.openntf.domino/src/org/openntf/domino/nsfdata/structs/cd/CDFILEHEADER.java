@@ -9,7 +9,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * This structure is used to define a Cascading Style Sheet (CSS) that is part of a Domino database. CDFILESEGMENT structure(s) follow the
  * CDFILEHEADER. (editods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 6.0
  *
  */
