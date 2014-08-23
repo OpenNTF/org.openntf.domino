@@ -11,6 +11,10 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDPABREFERENCE extends CDRecord {
 
+	static {
+		addFixed("PABID", Short.class);
+	}
+
 	protected CDPABREFERENCE(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -19,11 +23,6 @@ public class CDPABREFERENCE extends CDRecord {
 	 * @return ID number of the CDPABDEFINITION used by this paragraph
 	 */
 	public short getPabId() {
-		return getData().getShort(getData().position() + 0);
-	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ", PABID: " + getPabId() + "]";
+		return (Short) getStructElement("PABID");
 	}
 }

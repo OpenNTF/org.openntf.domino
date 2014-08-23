@@ -3,6 +3,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
+import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -13,92 +14,128 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDTABLEDATAEXTENSION extends CDRecord {
 
+	static {
+		addFixed("dwColumnSizeToFitBits1", Integer.class);
+		addFixed("dwColumnSizeToFitBits2", Integer.class);
+		addFixedUnsigned("wEqualSizeTabsWidthX", Short.class);
+		addFixedUnsigned("wTabsIndentWidthX", Short.class);
+		addFixed("wAvailable3", Short.class);
+		addFixed("wAvailable4", Short.class);
+		addFixed("dwAvailable5", Integer.class);
+		addFixed("dwAvailable6", Integer.class);
+		addFixed("dwAvailable7", Integer.class);
+		addFixed("dwAvailable8", Integer.class);
+		addFixed("dwAvailable9", Integer.class);
+
+		addFixedUnsigned("wcTabLabelFont", Short.class);
+		addFixedUnsigned("wAvailableLength11", Short.class);
+		addFixedUnsigned("wAvailableLength12", Short.class);
+		addFixedUnsigned("wExtension2Length", Short.class);
+
+		addFixed("FontID", FONTID.class);
+		addFixed("FontSpare", Integer.class);
+
+		// The COLOR_VALUE is missing from data created by some R6 beta releases
+		addVariableArray("FontColor", "getFontColorCount", COLOR_VALUE.class);
+
+		addVariableData("Available11", "getAvailableLength11");
+		addVariableData("Available12", "getAvailableLength12");
+		addVariableData("Extension2", "getExtension2Length");
+	}
+
 	public CDTABLEDATAEXTENSION(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
 	public int getColumnSizeToFitBits1() {
-		return getData().getInt(getData().position() + 0);
+		return (Integer) getStructElement("dwColumnSizeToFitBits1");
 	}
 
 	public int getColumnSizeToFitBits2() {
-		return getData().getInt(getData().position() + 4);
+		return (Integer) getStructElement("dwColumnSizeToFitBits2");
 	}
 
-	public short getEqualSizeTabsWidthX() {
-		return getData().getShort(getData().position() + 8);
+	public int getEqualSizeTabsWidthX() {
+		return (Integer) getStructElement("wEqualSizeTabsWidthX");
 	}
 
-	public short getTabsIndentWidthX() {
-		return getData().getShort(getData().position() + 10);
+	public int getTabsIndentWidthX() {
+		return (Integer) getStructElement("wTabsIndentWidthX");
 	}
 
 	public short getAvailable3() {
-		return getData().getShort(getData().position() + 12);
+		return (Short) getStructElement("wAvailable3");
 	}
 
 	public short getAvailable4() {
-		return getData().getShort(getData().position() + 14);
+		return (Short) getStructElement("wAvailable4");
 	}
 
 	public int getAvailable5() {
-		return getData().getInt(getData().position() + 18);
+		return (Integer) getStructElement("wAvailable5");
 	}
 
 	public int getAvailable6() {
-		return getData().getInt(getData().position() + 22);
+		return (Integer) getStructElement("wAvailable6");
 	}
 
 	public int getAvailable7() {
-		return getData().getInt(getData().position() + 26);
+		return (Integer) getStructElement("wAvailable7");
 	}
 
 	public int getAvailable8() {
-		return getData().getInt(getData().position() + 30);
+		return (Integer) getStructElement("wAvailable8");
 	}
 
 	public int getAvailable9() {
-		return getData().getInt(getData().position() + 34);
+		return (Integer) getStructElement("wAvailable9");
 	}
 
 	/**
 	 * @return Length of Tabs Label Font
 	 */
-	public short getTabLabelFontLength() {
-		return getData().getShort(getData().position() + 38);
+	public int getTabLabelFontLength() {
+		return (Integer) getStructElement("wcTabLabelFont");
 	}
 
-	public short getAvailableLength11() {
-		return getData().getShort(getData().position() + 40);
+	public int getAvailableLength11() {
+		return (Integer) getStructElement("wAvailableLength11");
 	}
 
-	public short getAvailableLength12() {
-		return getData().getShort(getData().position() + 42);
+	public int getAvailableLength12() {
+		return (Integer) getStructElement("wAvailableLength12");
 	}
 
-	public short getExtension2Length() {
-		return getData().getShort(getData().position() + 44);
+	public int getExtension2Length() {
+		return (Integer) getStructElement("wExtension2Length");
 	}
 
-	public int getFontId() {
-		// TODO map to fonts?
-		return getData().getInt(getData().position() + 46);
+	public FONTID getFontId() {
+		return (FONTID) getStructElement("FontID");
 	}
 
 	public int getFontSpare() {
-		return getData().getInt(getData().position() + 50);
+		return (Integer) getStructElement("FontSpare");
+	}
+
+	public int getFontColorCount() {
+		return getTabLabelFontLength() > 8 ? 1 : 0;
 	}
 
 	public COLOR_VALUE getFontColor() {
-		// See documentation - this may or may not be present
-		if (getTabLabelFontLength() > 8) {
-			ByteBuffer data = getData().duplicate();
-			data.position(data.position() + 54);
-			data.limit(data.position() + 6);
-			return new COLOR_VALUE(data);
-		}
-		return null;
+		COLOR_VALUE[] fontColor = (COLOR_VALUE[]) getStructElement("FontColor");
+		return fontColor.length > 0 ? fontColor[0] : null;
 	}
 
-	// There are available bytes after this based on the *Length fields at the end
+	public byte[] getAvailable11() {
+		return (byte[]) getStructElement("Available11");
+	}
+
+	public byte[] getAvailable12() {
+		return (byte[]) getStructElement("Available12");
+	}
+
+	public byte[] getExtension2() {
+		return (byte[]) getStructElement("Extension2");
+	}
 }

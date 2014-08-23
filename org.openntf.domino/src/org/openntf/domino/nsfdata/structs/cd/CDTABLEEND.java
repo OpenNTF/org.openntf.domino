@@ -10,11 +10,15 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDTABLEEND extends CDRecord {
 
+	static {
+		addFixed("Spare", Integer.class);
+	}
+
 	public CDTABLEEND(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
 	public int getSpare() {
-		return getData().getInt(getData().position() + 0);
+		return (Integer) getStructElement("Spare");
 	}
 }

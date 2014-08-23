@@ -12,6 +12,13 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDWINMETASEG extends CDRecord {
 
+	static {
+		addFixedUnsigned("DataSize", Short.class);
+		addFixedUnsigned("SegSize", Short.class);
+
+		addVariableData("Data", "getDataSize");
+	}
+
 	public CDWINMETASEG(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -20,28 +27,20 @@ public class CDWINMETASEG extends CDRecord {
 	 * @return The actual size of metafile, in bytes (ignoring any filler)
 	 */
 	public int getDataSize() {
-		return getData().getShort(getData().position() + 0) & 0xFFFF;
+		return (Integer) getStructElement("DataSize");
 	}
 
 	/**
 	 * @return The size of segment, in bytes
 	 */
 	public int getSegSize() {
-		return getData().getShort(getData().position() + 2) & 0xFFFF;
+		return (Integer) getStructElement("SegSize");
 	}
 
 	/**
 	 * @return Windows Metafile Bits for this segment. Each segment must be <= 64K bytes.
 	 */
 	public byte[] getSegmentData() {
-		int length = getDataSize();
-		byte[] result = new byte[length];
-		getData().get(result, 4, length);
-		return result;
-	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ": DataSize=" + getDataSize() + ", SegSize=" + getSegSize() + "]";
+		return (byte[]) getStructElement("Data");
 	}
 }

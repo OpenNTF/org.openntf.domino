@@ -38,26 +38,26 @@ public class CDTABLELABEL extends CDRecord {
 		}
 	}
 
+	static {
+		addFixedArray("Label", Byte.class, 128);
+		addFixedArray("Reserved", Short.class, 3);
+		addFixed("Flags", Short.class);
+	}
+
 	public CDTABLELABEL(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
 	public String getLabel() {
-		ByteBuffer data = getData().duplicate();
-		data.limit(data.position() + 128);
-		return ODSUtils.fromLMBCS(data);
+		return ODSUtils.fromLMBCS((byte[]) getStructElement("Label"));
 	}
 
 	public short[] getReserved() {
-		short[] result = new short[3];
-		for (int i = 0; i < 3; i++) {
-			result[i] = getData().getShort(getData().position() + 128 + (i * 2));
-		}
-		return result;
+		return (short[]) getStructElement("Reserved");
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf(getData().getShort(getData().position() + 134));
+		return Flag.valuesOf((Short) getStructElement("Flags"));
 	}
 
 	@Override

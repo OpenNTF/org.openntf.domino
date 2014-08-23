@@ -13,28 +13,30 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDPABHIDE extends CDRecord {
 
+	static {
+		addFixed("PABID", Short.class);
+		addFixedArray("Reserved", Byte.class, 8);
+
+		addVariableData("Formula", "getFormulaLength");
+	}
+
 	public CDPABHIDE(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
 	public short getPabId() {
-		return getData().getShort(getData().position() + 0);
+		return (Short) getStructElement("PABID");
 	}
 
 	public byte[] getReserved() {
-		byte[] result = new byte[8];
-		getData().duplicate().get(result, 2, 8);
-		return result;
+		return (byte[]) getStructElement("Reserved");
+	}
+
+	public int getFormulaLength() {
+		return getDataLength() - 10;
 	}
 
 	public NSFCompiledFormula getFormula() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 10);
-		return new NSFCompiledFormula(data);
-	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ": PABID=" + getPabId() + ", Formula=" + getFormula() + "]";
+		return new NSFCompiledFormula((byte[]) getStructElement("Formula"));
 	}
 }
