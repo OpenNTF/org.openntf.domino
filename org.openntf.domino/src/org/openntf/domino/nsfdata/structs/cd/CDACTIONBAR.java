@@ -182,6 +182,19 @@ public class CDACTIONBAR extends CDRecord {
 		}
 	}
 
+	static {
+		addFixed("BackColor", Short.class);
+		addFixed("LineColor", Short.class);
+		addFixed("LineStyle", Short.class);
+		addFixed("BorderStyle", Short.class);
+		addFixedUpgrade("BorderWidth", Short.class);
+		addFixed("dwFlags", Integer.class);
+		addFixed("ShareID", Integer.class);
+		addFixed("FontID", FONTID.class);
+		addFixedUpgrade("BtnHeight", Short.class);
+		addFixedUpgrade("HeightSpc", Short.class);
+	}
+
 	public CDACTIONBAR(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -191,7 +204,7 @@ public class CDACTIONBAR extends CDRecord {
 	 */
 	public short getBackColor() {
 		// TODO map to color?
-		return getData().getShort(getData().position() + 0);
+		return (Short) getStructElement("BackColor");
 	}
 
 	/**
@@ -199,65 +212,62 @@ public class CDACTIONBAR extends CDRecord {
 	 */
 	public short getLineColor() {
 		// TODO map to color?
-		return getData().getShort(getData().position() + 2);
+		return (Short) getStructElement("LineColor");
 	}
 
 	/**
 	 * @return Style of line
 	 */
 	public LineStyle getLineStyle() {
-		return LineStyle.valueOf(getData().getShort(getData().position() + 4));
+		return LineStyle.valueOf((Short) getStructElement("LineStyle"));
 	}
 
 	/**
 	 * @return Border style
 	 */
 	public BorderStyle getBorderStyle() {
-		return BorderStyle.valueOf(getData().getShort(getData().position() + 6));
+		return BorderStyle.valueOf((Short) getStructElement("BorderStyle"));
 	}
 
 	/**
 	 * @return Border width (twips)
 	 */
-	public short getBorderWidth() {
-		return getData().getShort(getData().position() + 8);
+	public int getBorderWidth() {
+		return (Integer) getStructElement("BorderWidth");
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf(getData().getInt(getData().position() + 10));
+		return Flag.valuesOf((Integer) getStructElement("dwFlags"));
 	}
 
 	/**
 	 * @return ID of Shared Action
 	 */
 	public int getShareId() {
-		return getData().getInt(getData().position() + 14);
+		return (Integer) getStructElement("ShareID");
 	}
 
 	public FONTID getFontId() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 18);
-		data.limit(data.position() + FONTID.SIZE);
-		return new FONTID(data);
+		return (FONTID) getStructElement("FontID");
 	}
 
 	/**
 	 * @return Height of the Button
 	 */
-	public short getBtnHeight() {
-		return getData().getShort(getData().position() + 22);
+	public int getBtnHeight() {
+		return (Integer) getStructElement("BtnHeight");
 	}
 
 	/**
 	 * @return Height spacing
 	 */
-	public short getHeightSpc() {
-		return getData().getShort(getData().position() + 24);
+	public int getHeightSpc() {
+		return (Integer) getStructElement("HeightSpc");
 	}
 
 	@Override
 	public String toString() {
 		return "[" + getClass().getSimpleName() + ", LineStyle: " + getLineStyle() + ", BorderStyle: " + getBorderStyle() + ", Flags: "
-				+ getFlags() + ", FontID=" + getFontId() + "]";
+				+ getFlags() + ", FontID=" + getFontId() + ", BtnHeight=" + getBtnHeight() + ", HeightSpc=" + getHeightSpc() + "]";
 	}
 }

@@ -165,22 +165,24 @@ public class CDBAR extends CDRecord {
 		}
 	}
 
+	static {
+		addFixed("Flags", Integer.class);
+		addFixed("FontID", FONTID.class);
+	}
+
 	public CDBAR(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf(getData().getInt(getData().position() + 0));
+		return Flag.valuesOf((Integer) getStructElement("Integer"));
 	}
 
 	/**
 	 * Specifies the font, size, and color of the bar title.
 	 */
 	public FONTID getFontId() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 4);
-		data.limit(data.position() + FONTID.SIZE);
-		return new FONTID(data);
+		return (FONTID) getStructElement("FONTID");
 	}
 
 	/**
@@ -196,6 +198,7 @@ public class CDBAR extends CDRecord {
 	}
 
 	public String getCaption() {
+		// Note: this can't use the standard methods because of the bizarre Color value above
 		int preceding = getFlags().contains(Flag.HAS_COLOR) ? 2 : 0;
 
 		int length = getDataLength() - 4 - FONTID.SIZE - preceding;

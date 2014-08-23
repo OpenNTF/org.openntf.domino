@@ -1,7 +1,6 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 import org.openntf.domino.nsfdata.structs.SIG;
 
@@ -14,6 +13,14 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDBITMAPSEGMENT extends CDRecord {
 
+	static {
+		addFixedArray("Reserved", Integer.class, 2);
+		addFixedUpgrade("ScanlineCount", Short.class);
+		addFixedUpgrade("DataSize", Short.class);
+
+		addVariableData("BitmapData", "getDataSize");
+	}
+
 	public CDBITMAPSEGMENT(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -23,11 +30,9 @@ public class CDBITMAPSEGMENT extends CDRecord {
 	 */
 	public int[] getReserved() {
 		int[] result = new int[2];
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 0);
-		result[0] = data.get();
-		result[1] = data.get();
+		Object[] value = (Object[]) getStructElement("Reserved");
+		result[0] = (Integer) value[0];
+		result[1] = (Integer) value[1];
 		return result;
 	}
 
@@ -35,21 +40,24 @@ public class CDBITMAPSEGMENT extends CDRecord {
 	 * @return Number of compressed scanlines in seg
 	 */
 	public int getScanlineCount() {
-		return getData().getShort(getData().position() + 8) & 0xFFFF;
+		return (Integer) getStructElement("ScanlineCount");
 	}
 
 	/**
 	 * @return Size, in bytes, of compressed data
 	 */
 	public int getDataSize() {
-		return getData().getShort(getData().position() + 12) & 0xFFFF;
+		return (Integer) getStructElement("DataSize");
 	}
 
 	// TODO uncompress the data (see docs)
+	public byte[] getBitmapData() {
+		return (byte[]) getStructElement("BitmapData");
+	}
+
 	@Override
-	public ByteBuffer getData() {
-		ByteBuffer result = getData().duplicate();
-		result.position(result.position() + 14);
-		return result;
+	public String toString() {
+		return "[" + getClass().getSimpleName() + ": ScanlineCount=" + getScanlineCount() + ", DataSize=" + getDataSize() + ", BitmapData="
+				+ getBitmapData() + "]";
 	}
 }

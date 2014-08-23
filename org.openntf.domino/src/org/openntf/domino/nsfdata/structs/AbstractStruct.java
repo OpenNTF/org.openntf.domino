@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Collection;
@@ -55,7 +56,7 @@ public abstract class AbstractStruct implements Externalizable {
 	 ********************************************************************************/
 
 	/**
-	 * This class represents an element in the static structure definition.
+	 * This class represents a fixed-length element in the static structure definition.
 	 * 
 	 * @author jgallagher
 	 *
@@ -66,7 +67,7 @@ public abstract class AbstractStruct implements Externalizable {
 		private final boolean upgrade;
 		private final int count;
 
-		public FixedElement(final String name, final Class<?> sizeClass, final boolean upgrade, final int count) {
+		private FixedElement(final String name, final Class<?> sizeClass, final boolean upgrade, final int count) {
 			this.name = name;
 			this.sizeClass = sizeClass;
 			this.upgrade = upgrade;
@@ -79,7 +80,31 @@ public abstract class AbstractStruct implements Externalizable {
 		}
 	}
 
+	/**
+	 * This class represents a variable-length element in the static structure definition.
+	 * 
+	 * @author jgallagher
+	 *
+	 */
+	private static class VariableElement {
+		private final String name;
+		private final String lengthMethodName;
+		private final boolean isString;
+
+		private VariableElement(final String name, final String lengthMethodName, final boolean isString) {
+			this.name = name;
+			this.lengthMethodName = lengthMethodName;
+			this.isString = isString;
+		}
+
+		@Override
+		public int hashCode() {
+			return 11 + name.hashCode() + lengthMethodName.hashCode() + (isString ? 2 : 1);
+		}
+	}
+
 	private static final Map<String, Collection<FixedElement>> fixedElements_ = new HashMap<String, Collection<FixedElement>>();
+	private static final Map<String, Collection<VariableElement>> variableElements_ = new HashMap<String, Collection<VariableElement>>();
 
 	protected static void addFixed(final String name, final Class<?> sizeClass) {
 		Exception e = new Exception();
@@ -117,9 +142,40 @@ public abstract class AbstractStruct implements Externalizable {
 		fixedElements_.get(caller).add(new FixedElement(name, sizeClass, true, size));
 	}
 
+	/**
+	 * @param name
+	 *            The name of the field, used in "getStructElement" calls
+	 * @param lengthMethodName
+	 *            The name of a method that can be called to get a int of the length in bytes
+	 */
+	protected static void addVariableData(final String name, final String lengthMethodName) {
+		Exception e = new Exception();
+		String caller = e.getStackTrace()[1].getClassName();
+		if (!variableElements_.containsKey(caller)) {
+			variableElements_.put(caller, new LinkedHashSet<VariableElement>());
+		}
+		variableElements_.get(caller).add(new VariableElement(name, lengthMethodName, false));
+	}
+
+	/**
+	 * @param name
+	 *            The name of the field, used in "getStructElement" calls
+	 * @param lengthMethodName
+	 *            The name of a method that can be called to get a int of the length in bytes
+	 */
+	protected static void addVariableString(final String name, final String lengthMethodName) {
+		Exception e = new Exception();
+		String caller = e.getStackTrace()[1].getClassName();
+		if (!variableElements_.containsKey(caller)) {
+			variableElements_.put(caller, new LinkedHashSet<VariableElement>());
+		}
+		variableElements_.get(caller).add(new VariableElement(name, lengthMethodName, true));
+	}
+
 	protected Object getStructElement(final String name) {
 		int preceding = 0;
 
+		// Look through the fixed elements first, building up the preceding byte count while we're at it
 		for (FixedElement element : fixedElements_.get(getClass().getName())) {
 			int size = _getSize(element.sizeClass);
 			if (StringUtil.equals(name, element.name)) {
@@ -145,7 +201,37 @@ public abstract class AbstractStruct implements Externalizable {
 
 				return element.count == 1 ? result[0] : result;
 			} else {
-				preceding += size;
+				preceding += size * element.count;
+			}
+		}
+
+		// Now see if it's one of the variable-length bits
+		for (VariableElement element : variableElements_.get(getClass().getName())) {
+			try {
+				Method method = getClass().getDeclaredMethod(element.lengthMethodName);
+				int size = (Integer) method.invoke(this);
+
+				if (StringUtil.equals(name, element.name)) {
+					if (element.isString) {
+						ByteBuffer data = getData().duplicate();
+						data.order(ByteOrder.LITTLE_ENDIAN);
+						data.position(data.position() + preceding);
+						data.limit(data.position() + size);
+						return ODSUtils.fromLMBCS(data);
+					} else {
+						byte[] result = new byte[size];
+						if (size > 0) {
+							for (int i = 0; i < size; i++) {
+								result[i] = getData().get(getData().position() + preceding + i);
+							}
+						}
+						return result;
+					}
+				} else {
+					preceding += size;
+				}
+			} catch (Throwable t) {
+				throw t instanceof RuntimeException ? (RuntimeException) t : new RuntimeException(t);
 			}
 		}
 

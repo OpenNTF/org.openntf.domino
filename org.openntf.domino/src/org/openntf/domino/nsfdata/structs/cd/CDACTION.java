@@ -1,12 +1,11 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.NSFCompiledFormula;
-import org.openntf.domino.nsfdata.structs.ODSUtils;
+import org.openntf.domino.nsfdata.structs.LSIG;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -22,7 +21,7 @@ public class CDACTION extends CDRecord {
 	 */
 	public static enum Type {
 		RUN_FORMULA((short) 1), RUN_SCRIPT((short) 2), RUN_AGENT((short) 3), OLDSYS_COMMAND((short) 4), SYS_COMMAND((short) 5),
-		PLACEHLDER((short) 7), RUN_JAVASCRIPT((short) 8);
+		PLACEHOLDER((short) 7), RUN_JAVASCRIPT((short) 8);
 
 		private final short value_;
 
@@ -171,6 +170,19 @@ public class CDACTION extends CDRecord {
 		}
 	}
 
+	static {
+		addFixed("Type", Short.class);
+		addFixedUpgrade("IconIndex", Short.class);
+		addFixed("Flags", Integer.class);
+		addFixedUpgrade("TitleLen", Short.class);
+		addFixedUpgrade("FormulaLen", Short.class);
+		addFixed("ShareId", Integer.class);
+
+		addVariableString("Title", "getTitleLen");
+		addVariableData("ActionData", "getActionDataLen");
+		addVariableData("Formula", "getFormulaLen");
+	}
+
 	protected CDACTION(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -179,73 +191,62 @@ public class CDACTION extends CDRecord {
 	 * @return Type of action (formula, script, etc.)
 	 */
 	public Type getType() {
-		short typeCode = getData().getShort(getData().position() + 0);
+		short typeCode = (Short) getStructElement("Type");
 		return Type.valueOf(typeCode);
 	}
 
 	/**
 	 * @return Index into array of icons
 	 */
-	public short getIconIndex() {
-		return getData().getShort(getData().position() + 2);
+	public int getIconIndex() {
+		return (Integer) getStructElement("IconIndex");
 	}
 
 	/**
 	 * @return Action flags
 	 */
 	public Set<Flag> getFlags() {
-		int flags = getData().getInt(getData().position() + 4);
-		return Flag.valuesOf(flags);
+		return Flag.valuesOf((Integer) getStructElement("Flags"));
 	}
 
 	/**
 	 * @return Length (in bytes) of action's title
 	 */
-	public short getTitleLen() {
-		return getData().getShort(getData().position() + 8);
+	public int getTitleLen() {
+		return (Integer) getStructElement("TitleLen");
 	}
 
 	/**
 	 * @return Length (in bytes) of "hide when" formula
 	 */
-	public short getFormulaLen() {
-		return getData().getShort(getData().position() + 10);
+	public int getFormulaLen() {
+		return (Integer) getStructElement("FormulaLen");
 	}
 
 	/**
 	 * @return Share ID of the Shared Action
 	 */
 	public int getShareId() {
-		return getData().getInt(getData().position() + 12);
+		return (Integer) getStructElement("ShareId");
 	}
 
 	public String getTitle() {
-		int titleLen = getTitleLen() & 0xFFFF;
-
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 16);
-		data.limit(data.position() + titleLen);
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("Title");
 	}
 
-	public ByteBuffer getActionData() {
-		int titleLen = getTitleLen() & 0xFFFF;
-		int formulaLen = getFormulaLen() & 0xFFF;
+	public int getActionDataLen() {
+		// This is an oddball one, since there's no ActionDataLen - it's implied by the total length minus everything else
+		return getSignature().getLength() - LSIG.SIZE - 16 - getTitleLen() - getFormulaLen();
+	}
 
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 16 + titleLen);
-		data.limit(data.position() + (getSignature().getLength() - 16 - titleLen - formulaLen));
-		return data;
+	public byte[] getActionData() {
+		return (byte[]) getStructElement("ActionData");
 	}
 
 	public NSFCompiledFormula getFormula() {
 		int length = getFormulaLen();
 		if (length > 0) {
-			ByteBuffer data = getData().duplicate();
-			data.position(data.limit() - getFormulaLen());
-			return new NSFCompiledFormula(data);
+			return new NSFCompiledFormula((byte[]) getStructElement("Formula"));
 		} else {
 			return null;
 		}
@@ -254,6 +255,7 @@ public class CDACTION extends CDRecord {
 	@Override
 	public String toString() {
 		return "[" + getClass().getSimpleName() + ", Type: " + getType() + ", IconIndex: " + getIconIndex() + ", Flags: " + getFlags()
-				+ ", Title: " + getTitle() + ", Formula: " + getFormula() + ", ShareId: " + getShareId() + "]";
+				+ ", Title: " + getTitle() + ", ActionData=" + getActionData() + ", Formula: " + getFormula() + ", ShareId: "
+				+ getShareId() + "]";
 	}
 }
