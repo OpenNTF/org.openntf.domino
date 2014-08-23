@@ -11,10 +11,10 @@ public class CROPRECT extends AbstractStruct {
 	public static final int SIZE = 8;
 
 	static {
-		addFixedUpgrade("left", Short.class);
-		addFixedUpgrade("top", Short.class);
-		addFixedUpgrade("right", Short.class);
-		addFixedUpgrade("bottom", Short.class);
+		addFixedUnsigned("left", Short.class);
+		addFixedUnsigned("top", Short.class);
+		addFixedUnsigned("right", Short.class);
+		addFixedUnsigned("bottom", Short.class);
 	}
 
 	public CROPRECT(final ByteBuffer data) {

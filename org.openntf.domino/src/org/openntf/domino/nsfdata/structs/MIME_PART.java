@@ -23,9 +23,9 @@ public class MIME_PART extends AbstractStruct {
 		addFixed("dwFlags", Integer.class);
 		addFixed("cPartType", Byte.class);
 		addFixed("cSpare", Byte.class);
-		addFixedUpgrade("wByteCount", Short.class);
-		addFixedUpgrade("wBoundaryLen", Short.class);
-		addFixedUpgrade("wHeadersLen", Short.class);
+		addFixedUnsigned("wByteCount", Short.class);
+		addFixedUnsigned("wBoundaryLen", Short.class);
+		addFixedUnsigned("wHeadersLen", Short.class);
 		addFixed("wSpare", Short.class);
 		addFixed("dwSpare", Integer.class);
 	}

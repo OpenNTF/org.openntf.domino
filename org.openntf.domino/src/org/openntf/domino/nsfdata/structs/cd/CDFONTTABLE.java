@@ -1,8 +1,6 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.Arrays;
 
 import org.openntf.domino.nsfdata.structs.AbstractStruct;
 import org.openntf.domino.nsfdata.structs.ODSUtils;
@@ -54,6 +52,12 @@ public class CDFONTTABLE extends CDRecord {
 
 		public static final int TRUETYPE_FONTTYPE = 0x004;
 
+		static {
+			addFixed("Face", Byte.class);
+			addFixed("Family", Byte.class);
+			addFixedArray("Name", Byte.class, MAXFACESIZE);
+		}
+
 		public CDFACE(final ByteBuffer data) {
 			super(data);
 		}
@@ -67,14 +71,14 @@ public class CDFONTTABLE extends CDRecord {
 		 * @return ID number of face
 		 */
 		public byte getId() {
-			return getData().get(getData().position() + 0);
+			return (Byte) getStructElement("Face");
 		}
 
 		/**
 		 * @return Font Family
 		 */
 		public byte getFamilyField() {
-			return getData().get(getData().position() + 1);
+			return (Byte) getStructElement("Family");
 		}
 
 		public boolean isTrueType() {
@@ -100,10 +104,7 @@ public class CDFONTTABLE extends CDRecord {
 		}
 
 		public String getName() {
-			ByteBuffer data = getData().duplicate();
-			data.position(data.position() + 2);
-			data.limit(data.position() + 32);
-			return ODSUtils.fromLMBCS(data);
+			return ODSUtils.fromLMBCS((byte[]) getStructElement("Name"));
 		}
 
 		@Override
@@ -113,28 +114,21 @@ public class CDFONTTABLE extends CDRecord {
 		}
 	}
 
+	static {
+		addFixedUnsigned("Fonts", Short.class);
+
+		addVariableArray("FontFaces", "getFontCount", CDFACE.class);
+	}
+
 	public CDFONTTABLE(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
 	public int getFontCount() {
-		return getData().getShort(getData().position() + 0) & 0xFFFF;
+		return (Integer) getStructElement("Fonts");
 	}
 
 	public CDFACE[] getFonts() {
-		int count = getFontCount();
-		CDFACE[] result = new CDFACE[count];
-		for (int i = 0; i < count; i++) {
-			ByteBuffer data = getData().duplicate();
-			data.order(ByteOrder.LITTLE_ENDIAN);
-			data.position(data.position() + 2 + (CDFACE.SIZE * i));
-			result[i] = new CDFACE(data);
-		}
-		return result;
-	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ": Count=" + getFontCount() + ", Fonts=" + Arrays.asList(getFonts()) + "]";
+		return (CDFACE[]) getStructElement("FontFaces");
 	}
 }

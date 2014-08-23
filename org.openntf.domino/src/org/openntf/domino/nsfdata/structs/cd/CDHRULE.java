@@ -59,6 +59,14 @@ public class CDHRULE extends CDRecord {
 		}
 	}
 
+	static {
+		addFixed("Flags", Integer.class);
+		addFixedUnsigned("Width", Short.class);
+		addFixedUnsigned("Height", Short.class);
+		addFixed("Color", Short.class);
+		addFixed("GradientColor", Short.class);
+	}
+
 	/**
 	 * Default value for Height member of the CDRULE structure in TWIPS.
 	 */
@@ -73,7 +81,7 @@ public class CDHRULE extends CDRecord {
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf(getData().getInt(getData().position() + 0));
+		return Flag.valuesOf((Integer) getStructElement("Flags"));
 	}
 
 	/**
@@ -82,7 +90,7 @@ public class CDHRULE extends CDRecord {
 	 * @return The horizontal length of the line in TWIPS (see the symbolic definition for ONEINCH for more information).
 	 */
 	public int getWidth() {
-		return getData().getShort(getData().position() + 4) & 0xFFFF;
+		return (Integer) getStructElement("Width");
 	}
 
 	/**
@@ -91,21 +99,21 @@ public class CDHRULE extends CDRecord {
 	 * @return The height of the line (or thickness) in TWIPS.
 	 */
 	public int getHeight() {
-		return getData().getShort(getData().position() + 6) & 0xFFFF;
+		return (Integer) getStructElement("Height");
 	}
 
 	/**
 	 * @return The color used to draw the line.
 	 */
 	public NOTES_COLOR getColor() {
-		return new NOTES_COLOR(getData().getShort(getData().position() + 8));
+		return new NOTES_COLOR((Short) getStructElement("Color"));
 	}
 
 	/**
 	 * @return The gradient color used to draw the line.
 	 */
 	public NOTES_COLOR getGradientColor() {
-		return new NOTES_COLOR(getData().getShort(getData().position() + 10));
+		return new NOTES_COLOR((Short) getStructElement("GradientColor"));
 	}
 
 	@Override

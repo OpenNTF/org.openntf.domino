@@ -14,8 +14,8 @@ public class CDBLOBPART extends CDRecord {
 
 	static {
 		addFixed("OwnerSig", Short.class);
-		addFixedUpgrade("Length", Short.class);
-		addFixedUpgrade("BlobMax", Short.class);
+		addFixedUnsigned("Length", Short.class);
+		addFixedUnsigned("BlobMax", Short.class);
 		addFixedArray("Reserved", Byte.class, 8);
 
 		addVariableData("BlobData", "getLength");

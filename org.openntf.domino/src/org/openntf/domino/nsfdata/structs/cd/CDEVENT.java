@@ -94,8 +94,8 @@ public class CDEVENT extends CDRecord {
 		addFixed("Flags", Integer.class);
 		addFixed("EventType", Short.class);
 		addFixed("ActionType", Short.class);
-		addFixedUpgrade("ActionLength", Integer.class);
-		addFixedUpgrade("SignatureLength", Short.class);
+		addFixedUnsigned("ActionLength", Integer.class);
+		addFixedUnsigned("SignatureLength", Short.class);
 		addFixedArray("Reserved", Byte.class, 14);
 
 		addVariableData("Action", "getActionLength");

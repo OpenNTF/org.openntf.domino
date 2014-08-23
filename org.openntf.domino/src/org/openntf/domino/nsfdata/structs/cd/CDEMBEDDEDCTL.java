@@ -14,13 +14,13 @@ public class CDEMBEDDEDCTL extends CDRecord {
 	static {
 		addFixed("CtlStyle", Integer.class);
 		addFixed("Flags", Short.class);
-		addFixedUpgrade("Width", Short.class);
-		addFixedUpgrade("Height", Short.class);
+		addFixedUnsigned("Width", Short.class);
+		addFixedUnsigned("Height", Short.class);
 		addFixed("Version", Short.class);
 		addFixed("CtlType", Short.class);
-		addFixedUpgrade("MaxChars", Short.class);
-		addFixedUpgrade("MaxLines", Short.class);
-		addFixedUpgrade("Percentage", Short.class);
+		addFixedUnsigned("MaxChars", Short.class);
+		addFixedUnsigned("MaxLines", Short.class);
+		addFixedUnsigned("Percentage", Short.class);
 		addFixedArray("Spare", Integer.class, 3);
 	}
 

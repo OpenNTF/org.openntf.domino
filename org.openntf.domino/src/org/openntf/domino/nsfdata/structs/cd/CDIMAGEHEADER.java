@@ -13,6 +13,16 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDIMAGEHEADER extends CDRecord {
 
+	static {
+		addFixed("ImageType", Short.class);
+		addFixedUnsigned("Width", Short.class);
+		addFixedUnsigned("Height", Short.class);
+		addFixedUnsigned("ImageDataSize", Integer.class);
+		addFixedUnsigned("SegCount", Integer.class);
+		addFixed("Flags", Integer.class);
+		addFixed("Reserved", Integer.class);
+	}
+
 	protected CDIMAGEHEADER(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -22,49 +32,48 @@ public class CDIMAGEHEADER extends CDRecord {
 	 */
 	public short getImageType() {
 		// TODO create enum
-		return getData().getShort(getData().position() + 0);
+		return (Short) getStructElement("ImageType");
 	}
 
 	/**
 	 * @return Width of the image (in pixels)
 	 */
-	public short getWidth() {
-		return getData().getShort(getData().position() + 2);
+	public int getWidth() {
+		return (Integer) getStructElement("Width");
 	}
 
 	/**
 	 * @return Height of the image (in pixels)
 	 */
-	public short getHeight() {
-		return getData().getShort(getData().position() + 4);
+	public int getHeight() {
+		return (Integer) getStructElement("Height");
 	}
 
 	/**
 	 * @return Size (in bytes) of the image data
 	 */
-	public int getImageDataSize() {
-		return getData().getInt(getData().position() + 6);
+	public long getImageDataSize() {
+		return (Long) getStructElement("ImageDataSize");
 	}
 
 	/**
 	 * @return Number of CDIMAGESEGMENT records expected to follow
 	 */
-	public int getSegCount() {
-		return getData().getInt(getData().position() + 10);
+	public long getSegCount() {
+		return (Long) getStructElement("SegCount");
 	}
 
 	/**
 	 * @return Flags (currently unused)
 	 */
 	public int getFlags() {
-		// TODO create enum
-		return getData().getInt(getData().position() + 14);
+		return (Integer) getStructElement("Flags");
 	}
 
 	/**
 	 * @return Reserved for future use
 	 */
 	public int getReserved() {
-		return getData().getInt(getData().position() + 18);
+		return (Integer) getStructElement("Reserved");
 	}
 }

@@ -3,7 +3,9 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import org.openntf.domino.nsfdata.NSFCompiledFormula;
 import org.openntf.domino.nsfdata.structs.FONTID;
@@ -19,6 +21,177 @@ import org.openntf.domino.nsfdata.structs.TFMT;
  *
  */
 public class CDFIELD extends CDRecord {
+	public static enum ListDelim {
+		SPACE((short) 0x0001), COMMA((short) 0x0002), SEMICOLON((short) 0x0004), NEWLINE((short) 0x0008), BLANKLINE((short) 0x0010),
+		D_SPACE((short) 0x1000), D_COMMA((short) 0x2000), D_SEMICOLON((short) 0x3000), D_NEWLINE((short) 0x4000),
+		D_BLANKLINE((short) 0x5000);
+
+		public static final int LD_MASK = 0x0fff;
+		public static final int LDD_MASK = 0xf000;
+
+		private final short value_;
+
+		private ListDelim(final short value) {
+			value_ = value;
+		}
+
+		public short getValue() {
+			return value_;
+		}
+
+		public static Set<ListDelim> valuesOf(final int flags) {
+			Set<ListDelim> result = EnumSet.noneOf(ListDelim.class);
+			for (ListDelim flag : values()) {
+				if ((flag.getValue() & flags) > 0) {
+					result.add(flag);
+				}
+			}
+			return result;
+		}
+	}
+
+	public static enum FieldType {
+		ERROR((short) 0), NUMBER((short) 1), TIME((short) 2), RICH_TEXT((short) 3), AUTHORS((short) 4), READERS((short) 5),
+		NAMES((short) 6), KEYWORDS((short) 7), TEXT((short) 8), SECTION((short) 9), PASSWORD((short) 10), FORMULA((short) 11),
+		TIMEZONE((short) 12);
+
+		private final short value_;
+
+		private FieldType(final short value) {
+			value_ = (short) (value + 1280);
+		}
+
+		public short getValue() {
+			return value_;
+		}
+
+		public static FieldType valueOf(final short typeCode) {
+			for (FieldType type : values()) {
+				if (type.getValue() == typeCode) {
+					return type;
+				}
+			}
+			throw new IllegalArgumentException("No matching FieldType found for type code " + typeCode);
+		}
+	}
+
+	public static enum Flag {
+		/**
+		 * Field contains read/writers
+		 */
+		READWRITERS((short) 0x0001),
+		/**
+		 * Field is editable, not read only
+		 */
+		EDITABLE((short) 0x0002),
+		/**
+		 * Field contains distinguished names
+		 */
+		NAMES((short) 0x0004),
+		/**
+		 * Store DV, even if not spec'ed by user
+		 */
+		STOREDV((short) 0x0008),
+		/**
+		 * Field contains document readers
+		 */
+		READERS((short) 0x0010),
+		/**
+		 * Field contains a section
+		 */
+		SECTION((short) 0x0020),
+		/**
+		 * can be assumed to be clear in memory, V3 & later
+		 */
+		SPARE3((short) 0x0040),
+		/**
+		 * IF CLEAR, CLEAR AS ABOVE
+		 */
+		V3FAB((short) 0x0080),
+		/**
+		 * Field is a computed field
+		 */
+		COMPUTED((short) 0x0100),
+		/**
+		 * Field is a keywords field
+		 */
+		KEYWORDS((short) 0x0200),
+		/**
+		 * Field is protected
+		 */
+		PROTECTED((short) 0x0400),
+		/**
+		 * Field name is simply a reference to a shared field note
+		 */
+		REFERENCE((short) 0x0800),
+		/**
+		 * sign field
+		 */
+		SIGN((short) 0x1000),
+		/**
+		 * seal field
+		 */
+		SEAL((short) 0x2000),
+		/**
+		 * standard UI
+		 */
+		KEYWORDS_UI_STANDARD((short) 0x0000),
+		/**
+		 * checkbox UI
+		 */
+		KEYWORDS_UI_CHECKBOX((short) 0x4000),
+		/**
+		 * radiobutton UI
+		 */
+		KEYWORDS_UI_RADIOBUTTON((short) 0x8000),
+		/**
+		 * allow doc editor to add new values
+		 */
+		KEYWORDS_UI_ALLOW_NEW((short) 0xc000);
+
+		private final short value_;
+
+		private Flag(final short value) {
+			value_ = value;
+		}
+
+		public short getValue() {
+			return value_;
+		}
+
+		public static Set<Flag> valuesOf(final short flags) {
+			Set<Flag> result = EnumSet.noneOf(Flag.class);
+			for (Flag flag : values()) {
+				if ((flag.getValue() & flags) > 0) {
+					result.add(flag);
+				}
+			}
+			return result;
+		}
+	}
+
+	static {
+		addFixed("Flags", Short.class);
+		addFixed("DataType", Short.class);
+		addFixed("ListDelim", Short.class);
+		addFixed("NumberFormat", NFMT.class);
+		addFixed("TimeFormat", TFMT.class);
+		addFixed("FontID", FONTID.class);
+		addFixedUnsigned("DVLength", Short.class);
+		addFixedUnsigned("ITLength", Short.class);
+		addFixedUnsigned("TabOrder", Short.class);
+		addFixedUnsigned("IVLength", Short.class);
+		addFixedUnsigned("NameLength", Short.class);
+		addFixedUnsigned("DescLength", Short.class);
+		addFixedUnsigned("TextValueLength", Short.class);
+
+		addVariableData("DV", "getDVLength");
+		addVariableData("IT", "getITLength");
+		addVariableData("IV", "getIVLength");
+		addVariableString("Name", "getNameLength");
+		addVariableString("Desc", "getDescLength");
+
+	}
 
 	public CDFIELD(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
@@ -27,130 +200,101 @@ public class CDFIELD extends CDRecord {
 	/**
 	 * @return Field Flags (see Fxxx)
 	 */
-	public short getFlags() {
-		// TODO create enum
-		return getData().getShort(getData().position() + 0);
+	public Set<Flag> getFlags() {
+		return Flag.valuesOf((Short) getStructElement("Flags"));
 	}
 
 	/**
 	 * @return Alleged NSF Data Type
 	 */
 	public short getDataType() {
-		// TODO create enum
-		return getData().getShort(getData().position() + 2);
+		// TODO Fix this
+		//		return FieldType.valueOf((Short) getStructElement("DataType"));
+		return (Short) getStructElement("DataType");
 	}
 
 	/**
-	 * @return List Delimiters (LDELIM_xxx and LDDELIM_xxx)
+	 * @return List Delimiters
 	 */
-	public short getListDelim() {
-		// TODO create enum
-		return getData().getShort(getData().position() + 4);
+	public Set<ListDelim> getListDelim() {
+		// TODO make this properly distinguish betwee display and input formats
+		return ListDelim.valuesOf((Short) getStructElement("ListDelim"));
 	}
 
 	/**
 	 * @return Number format, if applicable
 	 */
 	public NFMT getNumberFormat() {
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 6);
-		data.limit(data.position() + 4);
-		return new NFMT(data);
+		return (NFMT) getStructElement("NumberFormat");
 	}
 
 	/**
 	 * @return Time format, if applicable
 	 */
 	public TFMT getTimeFormat() {
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 10);
-		data.limit(data.position() + 4);
-		return new TFMT(data);
+		return (TFMT) getStructElement("TimeFormat");
 	}
 
 	/**
 	 * @return Displayed font
 	 */
 	public FONTID getFontId() {
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 14);
-		data.limit(data.position() + FONTID.SIZE);
-		return new FONTID(data);
+		return (FONTID) getStructElement("FontID");
 	}
 
 	/**
-	 * This is a WORD - unsigned short - so upgrade it to int for Java's sake
-	 * 
 	 * @return Default Value Formula length
 	 */
 	public int getDVLength() {
-		return getData().getShort(getData().position() + 18) & 0xFFFF;
+		return (Integer) getStructElement("DVLength");
 	}
 
 	/**
-	 * This is a WORD - unsigned short - so upgrade it to int for Java's sake
-	 * 
 	 * @return Input Translation Formula length
 	 */
 	public int getITLength() {
-		return getData().getShort(getData().position() + 20) & 0xFFFF;
+		return (Integer) getStructElement("ITLength");
 	}
 
 	/**
-	 * This is a WORD - unsigned short - so upgrade it to int for Java's sake
-	 * 
 	 * @return Order in tabbing sequence
 	 */
 	public int getTabOrder() {
-		return getData().getShort(getData().position() + 22) & 0xFFFF;
+		return (Integer) getStructElement("TabOrder");
 	}
 
 	/**
-	 * This is a WORD - unsigned short - so upgrade it to int for Java's sake
-	 * 
 	 * @return Input Validity Check Formula length
 	 */
 	public int getIVLength() {
-		return getData().getShort(getData().position() + 24) & 0xFFFF;
+		return (Integer) getStructElement("IVLength");
 	}
 
 	/**
-	 * This is a WORD - unsigned short - so upgrade it to int for Java's sake
-	 * 
 	 * @return NSF Item Name
 	 */
 	public int getNameLength() {
-		return getData().getShort(getData().position() + 26) & 0xFFFF;
+		return (Integer) getStructElement("NameLength");
 	}
 
 	/**
-	 * This is a WORD - unsigned short - so upgrade it to int for Java's sake
-	 * 
 	 * @return Length of the description of the item
 	 */
 	public int getDescLength() {
-		return getData().getShort(getData().position() + 28) & 0xFFFF;
+		return (Integer) getStructElement("DescLength");
 	}
 
 	/**
-	 * This is a WORD - unsigned short - so upgrade it to int for Java's sake
-	 * 
 	 * @return Length of the text list of valid text values
 	 */
 	public int getTextValueLength() {
-		return getData().getShort(getData().position() + 30) & 0xFFFF;
+		return (Integer) getStructElement("TextValueLength");
 	}
 
 	public NSFCompiledFormula getDefaultValueFormula() {
 		int length = getDVLength();
 		if (length > 0) {
-			ByteBuffer data = getData().duplicate();
-			data.position(data.position() + 32);
-			data.limit(data.position() + length);
-			return new NSFCompiledFormula(data);
+			return new NSFCompiledFormula((byte[]) getStructElement("DV"));
 		} else {
 			return null;
 		}
@@ -160,12 +304,7 @@ public class CDFIELD extends CDRecord {
 		int length = getITLength();
 
 		if (length > 0) {
-			int preceding = getDVLength();
-
-			ByteBuffer data = getData().duplicate();
-			data.position(data.position() + 32 + preceding);
-			data.limit(data.position() + length);
-			return new NSFCompiledFormula(data);
+			return new NSFCompiledFormula((byte[]) getStructElement("IT"));
 		} else {
 			return null;
 		}
@@ -175,35 +314,18 @@ public class CDFIELD extends CDRecord {
 		int length = getIVLength();
 
 		if (length > 0) {
-			int preceding = getDVLength() + getITLength();
-
-			ByteBuffer data = getData().duplicate();
-			data.position(data.position() + 32 + preceding);
-			data.limit(data.position() + length);
-			return new NSFCompiledFormula(data);
+			return new NSFCompiledFormula((byte[]) getStructElement("IV"));
 		} else {
 			return null;
 		}
 	}
 
 	public String getItemName() {
-		int preceding = getDVLength() + getITLength() + getIVLength();
-
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 32 + preceding);
-		data.limit(data.position() + getNameLength());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("Name");
 	}
 
 	public String getDescription() {
-		int preceding = getDVLength() + getITLength() + getIVLength() + getNameLength();
-
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 32 + preceding);
-		data.limit(data.position() + getDescLength());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("Desc");
 	}
 
 	/**

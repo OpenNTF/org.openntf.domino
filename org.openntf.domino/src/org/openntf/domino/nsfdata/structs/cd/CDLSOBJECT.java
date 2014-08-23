@@ -12,29 +12,26 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDLSOBJECT extends CDRecord {
 
+	static {
+		addFixedUnsigned("CodeSize", Integer.class);
+		addFixedArray("Reserved", Byte.class, 4);
+
+		addVariableData("ObjectCode", "getCodeSize");
+	}
+
 	public CDLSOBJECT(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
-	public long getCodeSize() {
-		return getData().getInt(getData().position() + 0) & 0xFFFFFFFF;
+	public int getCodeSize() {
+		return ((Long) getStructElement("CodeSize")).intValue();
 	}
 
 	public byte[] getReserved() {
-		byte[] result = new byte[4];
-		getData().duplicate().get(result, 4, 4);
-		return result;
+		return (byte[]) getStructElement("Reserved");
 	}
 
 	public byte[] getObjectCode() {
-		int length = getDataLength() - 8;
-		byte[] result = new byte[length];
-		getData().duplicate().get(result, 8, length);
-		return result;
-	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ": CodeSize=" + getCodeSize() + "]";
+		return (byte[]) getStructElement("ObjectCode");
 	}
 }

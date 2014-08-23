@@ -68,6 +68,15 @@ public class CDLAYOUT extends CDRecord {
 		}
 	}
 
+	static {
+		addFixedUnsigned("wLeft", Short.class);
+		addFixedUnsigned("wWidth", Short.class);
+		addFixedUnsigned("wHeight", Short.class);
+		addFixed("Flags", Integer.class);
+		addFixedUnsigned("wGridSize", Short.class);
+		addFixedArray("Reserved", Byte.class, 14);
+	}
+
 	public CDLAYOUT(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -76,43 +85,35 @@ public class CDLAYOUT extends CDRecord {
 	 * @return Left margin of the layout region in "twips"
 	 */
 	public int getLeft() {
-		return getData().getShort(getData().position() + 0) & 0xFFFF;
+		return (Integer) getStructElement("wLeft");
 	}
 
 	/**
 	 * @return Width of the layout region in "twips"
 	 */
 	public int getWidth() {
-		return getData().getShort(getData().position() + 2) & 0xFFFF;
+		return (Integer) getStructElement("wWidth");
 	}
 
 	/**
 	 * @return Height of the layout region in "twips"
 	 */
 	public int getHeight() {
-		return getData().getShort(getData().position() + 4) & 0xFFFF;
+		return (Integer) getStructElement("wHeight");
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf(getData().getInt(getData().position() + 6));
+		return Flag.valuesOf((Integer) getStructElement("Flags"));
 	}
 
 	/**
 	 * @return Spacing of grid points in "twips"
 	 */
 	public int getGridSize() {
-		return getData().getShort(getData().position() + 10) & 0xFFFF;
+		return (Integer) getStructElement("wGridSize");
 	}
 
 	public byte[] getReserved() {
-		byte[] result = new byte[14];
-		getData().duplicate().get(result, 12, 14);
-		return result;
-	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ": Left=" + getLeft() + ", Width=" + getWidth() + ", Height=" + getHeight() + ", Flags="
-				+ getFlags() + ", GridSize=" + getGridSize() + "]";
+		return (byte[]) getStructElement("Reserved");
 	}
 }

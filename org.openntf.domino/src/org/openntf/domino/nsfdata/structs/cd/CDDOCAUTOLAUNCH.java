@@ -208,7 +208,7 @@ public class CDDOCAUTOLAUNCH extends CDRecord {
 		addFixed("Spare1", Integer.class);
 		addFixed("Spare2", Integer.class);
 		addFixed("OleObjClass", OLE_GUID.class);
-		addFixedUpgrade("FieldNameLength", Short.class);
+		addFixedUnsigned("FieldNameLength", Short.class);
 
 		addVariableString("FieldName", "getFieldNameLength");
 	}

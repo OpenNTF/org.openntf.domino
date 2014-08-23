@@ -14,9 +14,9 @@ public class COLOR_VALUE extends AbstractStruct {
 
 	static {
 		addFixed("Flags", Short.class);
-		addFixedUpgrade("Component1", Byte.class);
-		addFixedUpgrade("Component2", Byte.class);
-		addFixedUpgrade("Component3", Byte.class);
+		addFixedUnsigned("Component1", Byte.class);
+		addFixedUnsigned("Component2", Byte.class);
+		addFixedUnsigned("Component3", Byte.class);
 		addFixed("Component4", Byte.class);
 	}
 

@@ -10,8 +10,8 @@ public class RECTSIZE extends AbstractStruct {
 	public static final int SIZE = 4;
 
 	static {
-		addFixedUpgrade("width", Short.class);
-		addFixedUpgrade("height", Short.class);
+		addFixedUnsigned("width", Short.class);
+		addFixedUnsigned("height", Short.class);
 	}
 
 	public RECTSIZE(final ByteBuffer data) {

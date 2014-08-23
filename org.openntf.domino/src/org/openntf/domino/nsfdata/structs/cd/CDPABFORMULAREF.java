@@ -14,6 +14,11 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDPABFORMULAREF extends CDRecord {
 
+	static {
+		addFixed("SourcePABID", Short.class);
+		addFixed("DestPABID", Short.class);
+	}
+
 	public CDPABFORMULAREF(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -22,14 +27,14 @@ public class CDPABFORMULAREF extends CDRecord {
 	 * @return ID number of the source PAB containing the formula.
 	 */
 	public short getSourcePabId() {
-		return getData().getShort(getData().position() + 0);
+		return (Short) getStructElement("SourcePABID");
 	}
 
 	/**
 	 * @return ID number of the dest PAB
 	 */
 	public short getDestPabId() {
-		return getData().getShort(getData().position() + 2);
+		return (Short) getStructElement("DestPABID");
 	}
 
 	@Override

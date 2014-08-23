@@ -11,6 +11,14 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDHOTSPOTBEGIN extends CDRecord {
 
+	static {
+		addFixed("Type", Short.class);
+		addFixed("Flags", Integer.class);
+		addFixedUnsigned("DataLength", Short.class);
+
+		addVariableData("Data", "getHotspotDataLength");
+	}
+
 	public CDHOTSPOTBEGIN(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -20,7 +28,7 @@ public class CDHOTSPOTBEGIN extends CDRecord {
 	 */
 	public short getType() {
 		// TODO make enum
-		return getData().getShort(getData().position() + 0);
+		return (Short) getStructElement("Type");
 	}
 
 	/**
@@ -28,18 +36,17 @@ public class CDHOTSPOTBEGIN extends CDRecord {
 	 */
 	public int getFlags() {
 		// TODO make enum
-		return getData().getInt(getData().position() + 2);
+		return (Integer) getStructElement("Flags");
 	}
 
 	public int getHotspotDataLength() {
-		return getData().getShort(getData().position() + 6) & 0xFFFF;
+		return (Integer) getStructElement("DataLength");
 	}
 
-	public ByteBuffer getHotspotData() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 8);
-		return data;
+	public byte[] getHotspotData() {
+		return (byte[]) getStructElement("Data");
 	}
 
 	// TODO add accessors for data
+	//			/*  if HOTSPOTREC_RUNFLAG_SIGNED, WORD SigLen then SigData follows. */
 }

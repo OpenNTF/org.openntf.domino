@@ -187,12 +187,12 @@ public class CDACTIONBAR extends CDRecord {
 		addFixed("LineColor", Short.class);
 		addFixed("LineStyle", Short.class);
 		addFixed("BorderStyle", Short.class);
-		addFixedUpgrade("BorderWidth", Short.class);
+		addFixedUnsigned("BorderWidth", Short.class);
 		addFixed("dwFlags", Integer.class);
 		addFixed("ShareID", Integer.class);
 		addFixed("FontID", FONTID.class);
-		addFixedUpgrade("BtnHeight", Short.class);
-		addFixedUpgrade("HeightSpc", Short.class);
+		addFixedUnsigned("BtnHeight", Short.class);
+		addFixedUnsigned("HeightSpc", Short.class);
 	}
 
 	public CDACTIONBAR(final SIG signature, final ByteBuffer data) {

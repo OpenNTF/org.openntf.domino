@@ -1,7 +1,6 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.Arrays;
 
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
@@ -16,6 +15,31 @@ import org.openntf.domino.nsfdata.structs.SIG;
  *
  */
 public class CDFRAMESET extends CDRecord {
+
+	static {
+		addFixed("Flags", Integer.class);
+		addFixed("BorderEnable", Byte.class);
+		addFixed("byAvail1", Byte.class);
+		addFixed("Reserved1", Short.class);
+		addFixed("Reserved2", Short.class);
+		addFixedUnsigned("FrameBorderWidth", Short.class);
+		addFixed("Reserved3", Short.class);
+		addFixedUnsigned("FrameSpacingWidth", Short.class);
+		addFixed("Reserved4", Short.class);
+		addFixed("ReservedColor1", COLOR_VALUE.class);
+		addFixed("ReservedColro2", COLOR_VALUE.class);
+		addFixedUnsigned("RowQty", Short.class);
+		addFixedUnsigned("ColQty", Short.class);
+		addFixed("Reserved5", Short.class);
+		addFixed("Reserved6", Short.class);
+		addFixed("FrameBorderColor", COLOR_VALUE.class);
+		addFixed("ThemeSetting", Byte.class);
+		addFixed("Reserved7", Byte.class);
+
+		addVariableArray("Rows", "getRowQty", FRAMESETLENGTH.class);
+		addVariableArray("Cols", "getColQty", FRAMESETLENGTH.class);
+	}
+
 	public CDFRAMESET(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -25,124 +49,112 @@ public class CDFRAMESET extends CDRecord {
 	 */
 	public int getFlags() {
 		// TODO make enum
-		return getData().getInt(getData().position() + 0);
+		return (Integer) getStructElement("Flags");
 	}
 
 	/**
 	 * @return HTML FRAMEBORDER attribute
 	 */
 	public boolean getBorderEnable() {
-		return getData().get(getData().position() + 4) != 0;
+		return (Byte) getStructElement("BorderEnable") != 0;
 	}
 
 	/**
 	 * Reserved, must be 0
 	 */
 	public byte getAvailable1() {
-		return getData().get(getData().position() + 5);
+		return (Byte) getStructElement("byAvail1");
 	}
 
 	/**
 	 * Reserved, must be 0
 	 */
 	public short getReserved1() {
-		return getData().getShort(getData().position() + 6);
+		return (Short) getStructElement("Reserved1");
 	}
 
 	/**
 	 * Reserved, must be 0
 	 */
 	public short getReserved2() {
-		return getData().getShort(getData().position() + 8);
+		return (Short) getStructElement("Reserved2");
 	}
 
 	/**
 	 * @return HTML BORDER attribute
 	 */
 	public int getFrameBorderWidth() {
-		return getData().getShort(getData().position() + 10) & 0xFFFF;
+		return (Integer) getStructElement("FrameBorderWidth");
 	}
 
 	/**
 	 * Reserved, must be 0
 	 */
 	public short getReserved3() {
-		return getData().getShort(getData().position() + 12);
+		return (Short) getStructElement("Reserved3");
 	}
 
 	/**
 	 * @return HTML FRAMESPACING attribute
 	 */
 	public int getFrameSpacingWidth() {
-		return getData().getShort(getData().position() + 14) & 0xFFFF;
+		return (Integer) getStructElement("FrameSpacingWidth");
 	}
 
 	/**
 	 * Reserved, must be 0
 	 */
 	public short getReserved4() {
-		return getData().getShort(getData().position() + 16);
+		return (Short) getStructElement("Reserved4");
 	}
 
 	/**
 	 * reserved for future use
 	 */
 	public COLOR_VALUE getReservedColor1() {
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 18);
-		data.limit(data.position() + 6);
-		return new COLOR_VALUE(data);
+		return (COLOR_VALUE) getStructElement("ReservedColor1");
 	}
 
 	/**
 	 * reserved for future use
 	 */
 	public COLOR_VALUE getReservedColor2() {
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 24);
-		data.limit(data.position() + 6);
-		return new COLOR_VALUE(data);
+		return (COLOR_VALUE) getStructElement("ReservedColor2");
 	}
 
 	/**
 	 * @return The number of FRAMESETLENGTH structures defining row information
 	 */
 	public int getRowQty() {
-		return getData().getShort(getData().position() + 30) & 0xFFFF;
+		return (Integer) getStructElement("RowQty");
 	}
 
 	/**
 	 * @return The number of FRAMESETLENGTH structures defining column information
 	 */
 	public int getColQty() {
-		return getData().getShort(getData().position() + 32) & 0xFFFF;
+		return (Integer) getStructElement("ColQty");
 	}
 
 	/**
 	 * Reserved, must be 0
 	 */
 	public short getReserved5() {
-		return getData().getShort(getData().position() + 34);
+		return (Short) getStructElement("Reserved5");
 	}
 
 	/**
 	 * Reserved, must be 0
 	 */
 	public short getReserved6() {
-		return getData().getShort(getData().position() + 36);
+		return (Short) getStructElement("Reserved6");
 	}
 
 	/**
 	 * @return HTML BORDERCOLOR attribute
 	 */
 	public COLOR_VALUE getFrameBorderColor() {
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 38);
-		data.limit(data.position() + 6);
-		return new COLOR_VALUE(data);
+		return (COLOR_VALUE) getStructElement("FrameBorderColor");
 	}
 
 	/**
@@ -151,40 +163,22 @@ public class CDFRAMESET extends CDRecord {
 	 */
 	public byte getThemeSetting() {
 		// TODO make enum?
-		return getData().get(getData().position() + 44);
+		return (Byte) getStructElement("ThemeSetting");
 	}
 
 	/**
 	 * Reserved, must be 0
 	 */
 	public byte getReserved7() {
-		return getData().get(getData().position() + 45);
+		return (Byte) getStructElement("Reserved7");
 	}
 
 	public FRAMESETLENGTH[] getRows() {
-		int count = getRowQty();
-		FRAMESETLENGTH[] result = new FRAMESETLENGTH[count];
-		for (int i = 0; i < count; i++) {
-			ByteBuffer data = getData().duplicate();
-			data.position(data.position() + 46 + (4 * i));
-			data.limit(data.position() + 4);
-			result[i] = new FRAMESETLENGTH(data);
-		}
-		return result;
+		return (FRAMESETLENGTH[]) getStructElement("Rows");
 	}
 
 	public FRAMESETLENGTH[] getCols() {
-		int preceding = 4 * getRowQty();
-
-		int count = getColQty();
-		FRAMESETLENGTH[] result = new FRAMESETLENGTH[count];
-		for (int i = 0; i < count; i++) {
-			ByteBuffer data = getData().duplicate();
-			data.position(data.position() + 46 + preceding + (4 * i));
-			data.limit(data.position() + 4);
-			result[i] = new FRAMESETLENGTH(data);
-		}
-		return result;
+		return (FRAMESETLENGTH[]) getStructElement("Cols");
 	}
 
 	@Override

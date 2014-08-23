@@ -157,12 +157,12 @@ public class CDACTIONBAREXT extends CDRecord {
 		addFixed("FontColor", COLOR_VALUE.class);
 		addFixed("ButtonColor", COLOR_VALUE.class);
 		addFixed("BtnBorderDisplay", Short.class);
-		addFixedUpgrade("wAppletHeight", Short.class);
+		addFixedUnsigned("wAppletHeight", Short.class);
 		addFixed("wBarBackgroundRepeat", Short.class);
 		addFixed("BtnWidthStyle", Byte.class);
 		addFixed("BtnTextJustify", Byte.class);
-		addFixedUpgrade("wBtnWidthAbsolute", Short.class);
-		addFixedUpgrade("wBtnInternalMargin", Short.class);
+		addFixedUnsigned("wBtnWidthAbsolute", Short.class);
+		addFixedUnsigned("wBtnInternalMargin", Short.class);
 		addFixed("dwFlags", Integer.class);
 		addFixed("barFontID", FONTID.class);
 		addFixed("barHeight", LENGTH_VALUE.class);

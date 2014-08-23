@@ -13,6 +13,16 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDGRAPHIC extends CDRecord {
 
+	static {
+		addFixed("DestSize", RECTSIZE.class);
+		addFixed("CropSize", RECTSIZE.class);
+		addFixed("CropOffset", CROPRECT.class);
+		addFixed("fResize", Short.class);
+		addFixed("Version", Byte.class);
+		addFixed("bFlags", Byte.class);
+		addFixed("wReserved", Short.class);
+	}
+
 	protected CDGRAPHIC(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -21,38 +31,28 @@ public class CDGRAPHIC extends CDRecord {
 	 * @return Destination Display size in TWIPS (1/1440 inch)
 	 */
 	public RECTSIZE getDestSize() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 0);
-		data.limit(data.position() + RECTSIZE.SIZE);
-		return new RECTSIZE(data);
+		return (RECTSIZE) getStructElement("DestSize");
 	}
 
 	/**
 	 * @return Reserved
 	 */
 	public RECTSIZE getCropSize() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + RECTSIZE.SIZE);
-		data.limit(data.position() + RECTSIZE.SIZE);
-		return new RECTSIZE(data);
+		return (RECTSIZE) getStructElement("CropSize");
 	}
 
 	/**
 	 * @return Reserved
 	 */
 	public CROPRECT getCropOffset() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + RECTSIZE.SIZE + RECTSIZE.SIZE);
-		data.limit(data.position() + CROPRECT.SIZE);
-		return new CROPRECT(data);
+		return (CROPRECT) getStructElement("CropOffset");
 	}
 
 	/**
 	 * @return True if user resized object
 	 */
 	public boolean isResize() {
-		short value = getData().getShort(getData().position() + RECTSIZE.SIZE + RECTSIZE.SIZE + CROPRECT.SIZE);
-		return value != 0;
+		return (Short) getStructElement("fRezize") != 0;
 	}
 
 	/**
@@ -60,7 +60,7 @@ public class CDGRAPHIC extends CDRecord {
 	 */
 	public byte getVersion() {
 		// TODO create enum
-		return getData().get(getData().position() + 2 + RECTSIZE.SIZE + RECTSIZE.SIZE + CROPRECT.SIZE);
+		return (Byte) getStructElement("Version");
 	}
 
 	/**
@@ -68,16 +68,10 @@ public class CDGRAPHIC extends CDRecord {
 	 */
 	public byte getFlags() {
 		// TODO create enum
-		return getData().get(getData().position() + 3 + RECTSIZE.SIZE + RECTSIZE.SIZE + CROPRECT.SIZE);
+		return (Byte) getStructElement("bFlags");
 	}
 
 	public short getReserved() {
-		return getData().getShort(getData().position() + 4 + RECTSIZE.SIZE + RECTSIZE.SIZE + CROPRECT.SIZE);
-	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ": DestSize=" + getDestSize() + ", CropSize=" + getCropSize() + ", CropOffset="
-				+ getCropOffset() + ", Resize=" + isResize() + ", Version=" + getVersion() + ", Flags=" + getFlags() + "]";
+		return (Short) getStructElement("wReserved");
 	}
 }

@@ -23,7 +23,7 @@ public class FONTID extends AbstractStruct {
 		addFixed("Face", Byte.class);
 		addFixed("Attrib", Byte.class);
 		addFixed("Color", Byte.class);
-		addFixedUpgrade("PointSize", Byte.class);
+		addFixedUnsigned("PointSize", Byte.class);
 	}
 
 	public FONTID(final ByteBuffer data) {

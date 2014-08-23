@@ -10,6 +10,10 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDOLEEND extends CDRecord {
 
+	static {
+		addFixed("Flags", Integer.class);
+	}
+
 	public CDOLEEND(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -18,7 +22,7 @@ public class CDOLEEND extends CDRecord {
 	 * Currently unused, but reserve some flags
 	 */
 	public int getFlags() {
-		return getData().getInt(getData().position() + 0);
+		return (Integer) getStructElement("Flags");
 	}
 
 	@Override

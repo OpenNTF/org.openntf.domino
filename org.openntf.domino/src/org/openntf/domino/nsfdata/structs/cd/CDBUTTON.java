@@ -104,9 +104,9 @@ public class CDBUTTON extends CDRecord {
 
 	static {
 		addFixed("Flags", Short.class);
-		addFixedUpgrade("Width", Short.class);
-		addFixedUpgrade("Height", Short.class);
-		addFixedUpgrade("Lines", Short.class);
+		addFixedUnsigned("Width", Short.class);
+		addFixedUnsigned("Height", Short.class);
+		addFixedUnsigned("Lines", Short.class);
 		addFixed("FontID", FONTID.class);
 
 		addVariableString("Text", "getTextLen");

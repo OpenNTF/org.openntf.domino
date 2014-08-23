@@ -16,8 +16,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
 public class CDBITMAPHEADER extends CDRecord {
 	/**
 	 * Option flags set in the CDBITMAPHEADER record
-	 * 
-	 * @author jgallagher
 	 *
 	 */
 	public static enum Flag {
@@ -59,14 +57,14 @@ public class CDBITMAPHEADER extends CDRecord {
 		addFixed("Flags", Short.class);
 		addFixed("wReserved", Short.class);
 		addFixed("lReserved", Integer.class);
-		addFixedUpgrade("Width", Short.class);
-		addFixedUpgrade("Height", Short.class);
-		addFixedUpgrade("BitsPerPixel", Short.class);
-		addFixedUpgrade("SamplesPerPixel", Short.class);
-		addFixedUpgrade("BitsPerSample", Short.class);
-		addFixedUpgrade("SegmentCount", Short.class);
-		addFixedUpgrade("ColorCount", Short.class);
-		addFixedUpgrade("PatternCount", Short.class);
+		addFixedUnsigned("Width", Short.class);
+		addFixedUnsigned("Height", Short.class);
+		addFixedUnsigned("BitsPerPixel", Short.class);
+		addFixedUnsigned("SamplesPerPixel", Short.class);
+		addFixedUnsigned("BitsPerSample", Short.class);
+		addFixedUnsigned("SegmentCount", Short.class);
+		addFixedUnsigned("ColorCount", Short.class);
+		addFixedUnsigned("PatternCount", Short.class);
 	}
 
 	public CDBITMAPHEADER(final SIG signature, final ByteBuffer data) {

@@ -38,7 +38,7 @@ public class CDCAPTION extends CDRecord {
 	}
 
 	static {
-		addFixedUpgrade("wLength", Short.class);
+		addFixedUnsigned("wLength", Short.class);
 		addFixed("Position", Byte.class);
 		addFixed("FontID", FONTID.class);
 		addFixed("FontColor", COLOR_VALUE.class);

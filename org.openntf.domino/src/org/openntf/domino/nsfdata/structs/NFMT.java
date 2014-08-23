@@ -11,7 +11,7 @@ public class NFMT extends AbstractStruct {
 	public static final int SIZE = 4;
 
 	static {
-		addFixedUpgrade("Digits", Byte.class);
+		addFixedUnsigned("Digits", Byte.class);
 		addFixed("Format", Byte.class);
 		addFixed("Attributes", Byte.class);
 		addFixed("Unused", Byte.class);

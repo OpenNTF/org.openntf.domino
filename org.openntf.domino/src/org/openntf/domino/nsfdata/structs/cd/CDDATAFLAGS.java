@@ -35,7 +35,7 @@ public class CDDATAFLAGS extends CDRecord {
 	}
 
 	static {
-		addFixedUpgrade("nFlags", Short.class);
+		addFixedUnsigned("nFlags", Short.class);
 		addFixed("elemType", Short.class);
 		addFixed("dwReserved", Integer.class);
 

@@ -14,6 +14,13 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDIMAGESEGMENT extends CDRecord {
 
+	static {
+		addFixedUnsigned("DataSize", Short.class);
+		addFixedUnsigned("SegSize", Short.class);
+
+		addVariableData("Data", "getDataSize");
+	}
+
 	protected CDIMAGESEGMENT(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -21,21 +28,18 @@ public class CDIMAGESEGMENT extends CDRecord {
 	/**
 	 * @return Actual Size of image bits in bytes, ignoring any filler
 	 */
-	public short getDataSize() {
-		return getData().getShort(getData().position() + 0);
+	public int getDataSize() {
+		return (Integer) getStructElement("DataSize");
 	}
 
 	/**
 	 * @return Size of segment, is equal to or larger than DataSize if filler byte added to maintain word boundary
 	 */
-	public short getSegSize() {
-		return getData().getShort(getData().position() + 2);
+	public int getSegSize() {
+		return (Integer) getStructElement("SegSize");
 	}
 
-	public ByteBuffer getImageData() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 4);
-		data.limit(data.position() + getDataSize());
-		return data;
+	public byte[] getImageData() {
+		return (byte[]) getStructElement("Data");
 	}
 }

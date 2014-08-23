@@ -4,6 +4,7 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
@@ -118,7 +119,7 @@ public abstract class AbstractStruct implements Externalizable {
 		fixedElements_.get(caller).add(new FixedElement(name, sizeClass, false, 1));
 	}
 
-	protected static void addFixedUpgrade(final String name, final Class<?> sizeClass) {
+	protected static void addFixedUnsigned(final String name, final Class<?> sizeClass) {
 		Exception e = new Exception();
 		String caller = e.getStackTrace()[1].getClassName();
 		if (!fixedElements_.containsKey(caller)) {
@@ -136,7 +137,7 @@ public abstract class AbstractStruct implements Externalizable {
 		fixedElements_.get(caller).add(new FixedElement(name, sizeClass, false, size));
 	}
 
-	protected static void addFixedArrayUpgrade(final String name, final Class<?> sizeClass, final int size) {
+	protected static void addFixedArrayUnsigned(final String name, final Class<?> sizeClass, final int size) {
 		Exception e = new Exception();
 		String caller = e.getStackTrace()[1].getClassName();
 		if (!fixedElements_.containsKey(caller)) {
@@ -281,21 +282,20 @@ public abstract class AbstractStruct implements Externalizable {
 								}
 							}
 						}
-						//						byte[] result = new byte[size];
-						//						if (size > 0) {
-						//							for (int i = 0; i < size; i++) {
-						//								result[i] = getData().get(getData().position() + preceding + i);
-						//							}
-						//						}
-						//						return result;
+
 						if (_isPrimitive(element.dataClass)) {
 							return _toPrimitiveArray(result, element.dataClass);
 						} else {
-							return result;
+							// TODO see if there's a better way
+							Object resultArray = Array.newInstance(element.dataClass, length);
+							for (int i = 0; i < length; i++) {
+								Array.set(resultArray, i, result[i]);
+							}
+							return resultArray;
 						}
 					}
 				} else {
-					preceding += length + (size * length) + extra;
+					preceding += (size * length) + extra;
 				}
 			} catch (Throwable t) {
 				throw t instanceof RuntimeException ? (RuntimeException) t : new RuntimeException(t);

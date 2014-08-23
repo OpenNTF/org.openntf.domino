@@ -12,7 +12,7 @@ public class LIST extends AbstractStruct {
 	public static final int SIZE = 2;
 
 	static {
-		addFixedUpgrade("ListEntries", Short.class);
+		addFixedUnsigned("ListEntries", Short.class);
 	}
 
 	public LIST(final ByteBuffer data) {

@@ -12,10 +12,10 @@ public class ELEMENTHEADER extends AbstractStruct {
 	public static final int SIZE = 10 + FONTID.SIZE + COLOR_VALUE.SIZE;
 
 	static {
-		addFixedUpgrade("wLeft", Short.class);
-		addFixedUpgrade("wTop", Short.class);
-		addFixedUpgrade("wWidth", Short.class);
-		addFixedUpgrade("wHeight", Short.class);
+		addFixedUnsigned("wLeft", Short.class);
+		addFixedUnsigned("wTop", Short.class);
+		addFixedUnsigned("wWidth", Short.class);
+		addFixedUnsigned("wHeight", Short.class);
 		addFixed("FontID", FONTID.class);
 		addFixed("byBackColor", Byte.class);
 		addFixed("bSpare", Byte.class);

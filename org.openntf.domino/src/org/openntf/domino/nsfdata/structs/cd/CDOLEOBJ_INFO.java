@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.OLE_GUID;
 import org.openntf.domino.nsfdata.structs.SIG;
 
@@ -110,6 +109,30 @@ public class CDOLEOBJ_INFO extends CDRecord {
 		}
 	}
 
+	static {
+		addFixedUnsigned("FileObjNameLength", Short.class);
+		addFixedUnsigned("DescriptionNameLength", Short.class);
+		addFixedUnsigned("FieldNameLength", Short.class);
+		addFixedUnsigned("TextIndexObjNameLength", Short.class);
+		addFixed("OleObjClass", OLE_GUID.class);
+		addFixed("StorageFormat", Short.class);
+		addFixed("DisplayFormat", Short.class);
+		addFixed("Flags", Integer.class);
+		addFixed("StorageFormatAppearedIn", Short.class);
+		addFixedUnsigned("HTMLDataLength", Short.class);
+		addFixedUnsigned("AssociatedFILEsLength", Short.class);
+		addFixed("Reserved3", Short.class);
+		addFixed("Reserved4", Integer.class);
+
+		// TODO verify that these are indeed ASCII
+		addVariableAsciiString("FileObjectName", "getFileObjNameLength");
+		addVariableAsciiString("DescriptionName", "getDescriptionNameLength");
+		addVariableAsciiString("FieldName", "getFieldNameLength");
+		addVariableAsciiString("TextIndexObjName", "getTextIndexObjNameLength");
+		addVariableData("HTMLData", "getHTMLDataLength");
+		addVariableData("AssociatedFILEs", "getAssociatedFILEsLength");
+	}
+
 	public CDOLEOBJ_INFO(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -118,50 +141,47 @@ public class CDOLEOBJ_INFO extends CDRecord {
 	 * @return Length of the name of extendable $FILE object containing object data
 	 */
 	public int getFileObjNameLength() {
-		return getData().getShort(getData().position() + 0) & 0xFFFF;
+		return (Integer) getStructElement("FileObjNameLength");
 	}
 
 	/**
 	 * @return Length of object description
 	 */
 	public int getDescriptionNameLength() {
-		return getData().getShort(getData().position() + 2) & 0xFFFF;
+		return (Integer) getStructElement("DescriptionNameLength");
 	}
 
 	/**
 	 * @return Length of field name in which object resides
 	 */
 	public int getFieldNameLength() {
-		return getData().getShort(getData().position() + 4) & 0xFFFF;
+		return (Integer) getStructElement("FieldNameLength");
 	}
 
 	/**
 	 * @return Length of the name of the $FILE object containing LMBCS text for object
 	 */
 	public int getTextIndexObjNameLength() {
-		return getData().getShort(getData().position() + 6) & 0xFFFF;
+		return (Integer) getStructElement("TextIndexObjNameLength");
 	}
 
 	/**
 	 * @return OLE ClassID GUID of OLE object
 	 */
 	public OLE_GUID getOleObjClass() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 8);
-		data.limit(data.position() + OLE_GUID.SIZE);
-		return new OLE_GUID(data);
+		return (OLE_GUID) getStructElement("OleObjClass");
 	}
 
 	public StorageFormat getStorageFormat() {
-		return StorageFormat.valueOf(getData().getShort(getData().position() + OLE_GUID.SIZE + 8));
+		return StorageFormat.valueOf((Short) getStructElement("StorageFormat"));
 	}
 
 	public DDEFormat getDisplayFormat() {
-		return DDEFormat.valueOf(getData().getShort(getData().position() + OLE_GUID.SIZE + 10));
+		return DDEFormat.valueOf((Short) getStructElement("DisplayFormat"));
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf(getData().getInt(getData().position() + OLE_GUID.SIZE + 12));
+		return Flag.valuesOf((Integer) getStructElement("Flags"));
 	}
 
 	/**
@@ -179,105 +199,70 @@ public class CDOLEOBJ_INFO extends CDRecord {
 	 * @return Length of HTML data for object
 	 */
 	public int getHTMLDataLength() {
-		return getData().getShort(getData().position() + OLE_GUID.SIZE + 18) & 0xFFFF;
+		return (Integer) getStructElement("HTMLDataLength");
 	}
 
 	/**
 	 * @return Length of Associated $FILEs data for object
 	 */
 	public int getAssociatedFILEsLength() {
-		return getData().getShort(getData().position() + OLE_GUID.SIZE + 20) & 0xFFFF;
+		return (Integer) getStructElement("AssociatedFILEsLength");
 	}
 
 	/**
 	 * Unused, must be 0
 	 */
 	public short getReserved3() {
-		return getData().getShort(getData().position() + OLE_GUID.SIZE + 22);
+		return (Short) getStructElement("Reserved3");
 	}
 
 	/**
 	 * Unused, must be 0
 	 */
 	public int getReserved4() {
-		return getData().getInt(getData().position() + OLE_GUID.SIZE + 24);
+		return (Integer) getStructElement("Reserved4");
 	}
 
 	/**
 	 * @return Name of extendable $FILE object containing object data
 	 */
 	public String getFileObjectName() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + OLE_GUID.SIZE + 28);
-		data.limit(data.position() + getFileObjNameLength());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("FileObjectName");
 	}
 
 	/**
 	 * @return Object description
 	 */
 	public String getDescriptionName() {
-		int preceding = getFileObjNameLength();
-
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + OLE_GUID.SIZE + 28 + preceding);
-		data.limit(data.position() + getDescriptionNameLength());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("DescriptionName");
 	}
 
 	/**
 	 * @return Field Name in Document in which this object resides
 	 */
 	public String getFieldName() {
-		int preceding = getFileObjNameLength() + getDescriptionNameLength();
-
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + OLE_GUID.SIZE + 28 + preceding);
-		data.limit(data.position() + getFieldNameLength());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("FieldName");
 	}
 
 	/**
 	 * @return Full Text index $FILE object name
 	 */
 	public String getTextIndexObjName() {
-		int preceding = getFileObjNameLength() + getDescriptionNameLength() + getFieldNameLength();
-
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + OLE_GUID.SIZE + 28 + preceding);
-		data.limit(data.position() + getTextIndexObjNameLength());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("TextIndexObjName");
 	}
 
 	/**
 	 * @return HTML data, as a byte array
 	 */
 	public byte[] getHTMLData() {
-		int preceding = getFileObjNameLength() + getDescriptionNameLength() + getFieldNameLength() + getTextIndexObjNameLength();
-
-		ByteBuffer data = getData().duplicate();
-		int length = getHTMLDataLength();
-		byte[] result = new byte[length];
-		if (length > 0) {
-			data.get(result, OLE_GUID.SIZE + 28 + preceding, length);
-		}
-		return result;
+		return (byte[]) getStructElement("HTMLData");
 	}
 
 	/**
 	 * @return Associated $FILEs Data
 	 */
 	public byte[] getAssociatedFILEs() {
-		int preceding = getFileObjNameLength() + getDescriptionNameLength() + getFieldNameLength() + getTextIndexObjNameLength()
-				+ getHTMLDataLength();
-
-		ByteBuffer data = getData().duplicate();
-		int length = getAssociatedFILEsLength();
-		byte[] result = new byte[length];
-		if (length > 0) {
-			data.get(result, OLE_GUID.SIZE + 28 + preceding, length);
-		}
-		return result;
+		return (byte[]) getStructElement("AssociatedFILEs");
 	}
 
 	@Override

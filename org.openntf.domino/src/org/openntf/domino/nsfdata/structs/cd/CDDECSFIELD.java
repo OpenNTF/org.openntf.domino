@@ -38,9 +38,9 @@ public class CDDECSFIELD extends CDRecord {
 
 	static {
 		addFixed("Flags", Short.class);
-		addFixedUpgrade("ExternalNameLength", Short.class);
-		addFixedUpgrade("MetadataNameLength", Short.class);
-		addFixedUpgrade("DCRNameLength", Short.class);
+		addFixedUnsigned("ExternalNameLength", Short.class);
+		addFixedUnsigned("MetadataNameLength", Short.class);
+		addFixedUnsigned("DCRNameLength", Short.class);
 		addFixedArray("Spare", Short.class, 8);
 
 		addVariableString("ExternalName", "getExternalNameLength");

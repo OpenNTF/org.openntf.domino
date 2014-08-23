@@ -12,18 +12,15 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDLAYOUTEND extends CDRecord {
 
+	static {
+		addFixedArray("Reserved", Byte.class, 16);
+	}
+
 	public CDLAYOUTEND(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
 	public byte[] getReserved() {
-		byte[] result = new byte[16];
-		getData().duplicate().get(result, 0, 16);
-		return result;
-	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + "]";
+		return (byte[]) getStructElement("Reserved");
 	}
 }

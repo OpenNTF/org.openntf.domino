@@ -14,9 +14,9 @@ public class OLE_GUID extends AbstractStruct {
 	public static final int SIZE = 16;
 
 	static {
-		addFixedUpgrade("Data1", Integer.class);
-		addFixedUpgrade("Data2", Short.class);
-		addFixedUpgrade("Data3", Short.class);
+		addFixedUnsigned("Data1", Integer.class);
+		addFixedUnsigned("Data2", Short.class);
+		addFixedUnsigned("Data3", Short.class);
 		addFixedArray("Data4", Byte.class, 8);
 	}
 

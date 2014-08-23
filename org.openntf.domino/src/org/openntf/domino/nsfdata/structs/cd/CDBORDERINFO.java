@@ -114,21 +114,21 @@ public class CDBORDERINFO extends CDRecord {
 	static {
 		addFixed("Flags", Integer.class);
 		addFixed("BorderStyle", Short.class);
-		addFixedUpgrade("BorderWidthTop", Short.class);
-		addFixedUpgrade("BorderWidthLeft", Short.class);
-		addFixedUpgrade("BorderWidthBottom", Short.class);
-		addFixedUpgrade("BorderWidthRight", Short.class);
+		addFixedUnsigned("BorderWidthTop", Short.class);
+		addFixedUnsigned("BorderWidthLeft", Short.class);
+		addFixedUnsigned("BorderWidthBottom", Short.class);
+		addFixedUnsigned("BorderWidthRight", Short.class);
 		addFixed("dwSpare", Integer.class);
 		addFixed("BorderFlags", Short.class);
-		addFixedUpgrade("DropShadowWidth", Short.class);
-		addFixedUpgrade("InnerWidthTop", Short.class);
-		addFixedUpgrade("InnerWidthLeft", Short.class);
-		addFixedUpgrade("InnerWidthBottom", Short.class);
-		addFixedUpgrade("InnerWidthRight", Short.class);
-		addFixedUpgrade("OuterWidthTop", Short.class);
-		addFixedUpgrade("OuterWidthLeft", Short.class);
-		addFixedUpgrade("OuterWidthBottom", Short.class);
-		addFixedUpgrade("OuterWidthRight", Short.class);
+		addFixedUnsigned("DropShadowWidth", Short.class);
+		addFixedUnsigned("InnerWidthTop", Short.class);
+		addFixedUnsigned("InnerWidthLeft", Short.class);
+		addFixedUnsigned("InnerWidthBottom", Short.class);
+		addFixedUnsigned("InnerWidthRight", Short.class);
+		addFixedUnsigned("OuterWidthTop", Short.class);
+		addFixedUnsigned("OuterWidthLeft", Short.class);
+		addFixedUnsigned("OuterWidthBottom", Short.class);
+		addFixedUnsigned("OuterWidthRight", Short.class);
 		addFixed("Color", COLOR_VALUE.class);
 		addFixedArray("wSpares", Short.class, 5);
 	}

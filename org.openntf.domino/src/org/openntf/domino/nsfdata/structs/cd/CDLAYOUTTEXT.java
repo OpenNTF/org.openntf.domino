@@ -1,12 +1,10 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.ELEMENTHEADER;
-import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -88,25 +86,32 @@ public class CDLAYOUTTEXT extends CDRecord {
 		}
 	}
 
+	static {
+		addFixed("ElementHeader", ELEMENTHEADER.class);
+		addFixed("Flags", Integer.class);
+		addFixedArray("Reserved", Byte.class, 16);
+
+		addVariableString("Text", "getTextSize");
+	}
+
 	public CDLAYOUTTEXT(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
 	public ELEMENTHEADER getElementHeader() {
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.limit(data.position() + ELEMENTHEADER.SIZE);
-		return new ELEMENTHEADER(data);
+		return (ELEMENTHEADER) getStructElement("ElementHeader");
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf(getData().getInt(getData().position() + ELEMENTHEADER.SIZE));
+		return Flag.valuesOf((Integer) getStructElement("Flags"));
 	}
 
 	public byte[] getReserved() {
-		byte[] result = new byte[16];
-		getData().duplicate().get(result, ELEMENTHEADER.SIZE + 4, 16);
-		return result;
+		return (byte[]) getStructElement("Reserved");
+	}
+
+	public int getTextSize() {
+		return getDataLength() - ELEMENTHEADER.SIZE - 20;
 	}
 
 	/**
@@ -118,12 +123,7 @@ public class CDLAYOUTTEXT extends CDRecord {
 	 */
 	@Deprecated
 	public String getText() {
-		if (getDataLength() > ELEMENTHEADER.SIZE + 20) {
-			ByteBuffer data = getData().duplicate();
-			data.position(data.position() + ELEMENTHEADER.SIZE + 20);
-			return ODSUtils.fromLMBCS(data);
-		}
-		return "";
+		return (String) getStructElement("Text");
 	}
 
 	@Override

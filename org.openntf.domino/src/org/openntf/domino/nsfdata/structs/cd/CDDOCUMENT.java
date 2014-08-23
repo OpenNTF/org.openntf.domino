@@ -18,7 +18,7 @@ public class CDDOCUMENT extends CDRecord {
 		addFixed("FormFlags", Short.class);
 		addFixed("NotePrivileges", Short.class);
 		addFixed("FormFlags2", Short.class);
-		addFixedUpgrade("InherFieldNameLength", Short.class);
+		addFixedUnsigned("InherFieldNameLength", Short.class);
 		addFixed("PaperColorExt", Short.class);
 		addFixed("PaperColorValue", COLOR_VALUE.class);
 		addFixed("FormFlags3", Short.class);

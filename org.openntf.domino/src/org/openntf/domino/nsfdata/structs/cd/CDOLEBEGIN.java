@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -79,19 +78,19 @@ public class CDOLEBEGIN extends CDRecord {
 	 *
 	 */
 	public static enum OLEVersion {
-		VERSION1(1), VERSION2(2);
+		VERSION1((short) 1), VERSION2((short) 2);
 
-		private final int value_;
+		private final short value_;
 
-		private OLEVersion(final int value) {
+		private OLEVersion(final short value) {
 			value_ = value;
 		}
 
-		public int getValue() {
+		public short getValue() {
 			return value_;
 		}
 
-		public static OLEVersion valueOf(final int typeCode) {
+		public static OLEVersion valueOf(final short typeCode) {
 			for (OLEVersion type : values()) {
 				if (type.getValue() == typeCode) {
 					return type;
@@ -99,6 +98,19 @@ public class CDOLEBEGIN extends CDRecord {
 			}
 			throw new IllegalArgumentException("No matching OLEVersion found for type code " + typeCode);
 		}
+	}
+
+	static {
+		addFixed("Version", Short.class);
+		addFixed("Flags", Integer.class);
+		addFixed("ClipFormat", Short.class);
+		addFixedUnsigned("AttachNameLength", Short.class);
+		addFixedUnsigned("ClassNameLength", Short.class);
+		addFixedUnsigned("TemplateNameLength", Short.class);
+
+		addVariableString("AttachName", "getAttachNameLength");
+		addVariableString("ClassName", "getClassNameLength");
+		addVariableString("TemplateName", "getTemplateNameLength");
 	}
 
 	public CDOLEBEGIN(final SIG signature, final ByteBuffer data) {
@@ -109,73 +121,60 @@ public class CDOLEBEGIN extends CDRecord {
 	 * @return The Notes OLE implementation version.
 	 */
 	public OLEVersion getVersion() {
-		return OLEVersion.valueOf(getData().getShort(getData().position() + 0) & 0xFFFF);
+		return OLEVersion.valueOf((Short) getStructElement("Version"));
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf(getData().getInt(getData().position() + 2));
+		return Flag.valuesOf((Integer) getStructElement("Flags"));
 	}
 
 	/**
 	 * @return Clipboard format with which to render data.
 	 */
 	public DDEFormat getClipFormat() {
-		return DDEFormat.valueOf(getData().getShort(getData().position() + 6));
+		return DDEFormat.valueOf((Short) getStructElement("ClipFormat"));
 	}
 
 	/**
 	 * @return Filename length (without the '\0' terminator) of the attached OLE object file.
 	 */
 	public int getAttachNameLength() {
-		return getData().getShort(getData().position() + 8) & 0xFFFF;
+		return (Integer) getStructElement("AttachNameLength");
 	}
 
 	/**
 	 * @return (Optional) Length of the object's readable OLE class name.
 	 */
 	public int getClassNameLength() {
-		return getData().getShort(getData().position() + 10) & 0xFFFF;
+		return (Integer) getStructElement("ClassNameLength");
 	}
 
 	/**
 	 * @return (Optional) Length of the object's template class name.
 	 */
 	public int getTemplateNameLength() {
-		return getData().getShort(getData().position() + 12) & 0xFFFF;
+		return (Integer) getStructElement("TemplateNameLength");
 	}
 
 	/**
 	 * @return Name of the attached OLE object file.
 	 */
 	public String getAttachName() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 14);
-		data.limit(data.position() + getAttachNameLength());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("AttachName");
 	}
 
 	/**
 	 * @return The object's readable OLE class name.
 	 */
 	public String getClassName() {
-		int preceding = getAttachNameLength();
-
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 14 + preceding);
-		data.limit(data.position() + getClassNameLength());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("ClassName");
 	}
 
 	/**
 	 * @return The object's template class name.
 	 */
 	public String getTemplateName() {
-		int preceding = getAttachNameLength() + getClassNameLength();
-
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 14 + preceding);
-		data.limit(data.position() + getTemplateNameLength());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("TemplateName");
 	}
 
 	@Override

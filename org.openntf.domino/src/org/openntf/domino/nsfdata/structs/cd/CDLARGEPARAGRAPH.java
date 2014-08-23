@@ -13,6 +13,12 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDLARGEPARAGRAPH extends CDRecord {
 
+	static {
+		addFixed("Version", Short.class);
+		addFixed("Flags", Short.class);
+		addFixedArray("Spare", Integer.class, 2);
+	}
+
 	public CDLARGEPARAGRAPH(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -22,7 +28,7 @@ public class CDLARGEPARAGRAPH extends CDRecord {
 	 */
 	public short getVersion() {
 		// TODO make enum
-		return getData().getShort(getData().position() + 0);
+		return (Short) getStructElement("Version");
 	}
 
 	/**
@@ -30,16 +36,13 @@ public class CDLARGEPARAGRAPH extends CDRecord {
 	 */
 	public short getFlags() {
 		// TODO make enum
-		return getData().getShort(getData().position() + 2);
+		return (Short) getStructElement("Flags");
 	}
 
 	/**
 	 * @return Future use
 	 */
 	public int[] getSpare() {
-		int[] result = new int[2];
-		result[0] = getData().getInt(getData().position() + 4);
-		result[1] = getData().getInt(getData().position() + 8);
-		return result;
+		return (int[]) getStructElement("Spare");
 	}
 }

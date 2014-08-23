@@ -172,10 +172,10 @@ public class CDACTION extends CDRecord {
 
 	static {
 		addFixed("Type", Short.class);
-		addFixedUpgrade("IconIndex", Short.class);
+		addFixedUnsigned("IconIndex", Short.class);
 		addFixed("Flags", Integer.class);
-		addFixedUpgrade("TitleLen", Short.class);
-		addFixedUpgrade("FormulaLen", Short.class);
+		addFixedUnsigned("TitleLen", Short.class);
+		addFixedUnsigned("FormulaLen", Short.class);
 		addFixed("ShareId", Integer.class);
 
 		addVariableString("Title", "getTitleLen");

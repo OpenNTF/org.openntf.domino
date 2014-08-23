@@ -1,7 +1,6 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.Collections;
 import java.util.Set;
 
@@ -18,15 +17,18 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDLAYOUTBUTTON extends CDRecord {
 
+	static {
+		addFixed("ElementHeader", ELEMENTHEADER.class);
+		addFixed("Flags", Integer.class);
+		addFixedArray("Reserved", Byte.class, 16);
+	}
+
 	public CDLAYOUTBUTTON(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
 	public ELEMENTHEADER getElementHeader() {
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.limit(data.position() + ELEMENTHEADER.SIZE);
-		return new ELEMENTHEADER(data);
+		return (ELEMENTHEADER) getStructElement("ElementHeader");
 	}
 
 	public Set<?> getFlags() {
@@ -34,13 +36,6 @@ public class CDLAYOUTBUTTON extends CDRecord {
 	}
 
 	public byte[] getReserved() {
-		byte[] result = new byte[16];
-		getData().duplicate().get(result, 4, 16);
-		return result;
-	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + "]";
+		return (byte[]) getStructElement("Reserved");
 	}
 }

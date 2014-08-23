@@ -60,9 +60,9 @@ public class CDEXTFIELD extends CDRecord {
 		addFixed("Flags1", Integer.class);
 		addFixed("Flags2", Integer.class);
 		addFixed("EntryHelper", Short.class);
-		addFixedUpgrade("EntryDBNameLen", Short.class);
-		addFixedUpgrade("EntryViewNameLen", Short.class);
-		addFixedUpgrade("EntryColumnNumber", Short.class);
+		addFixedUnsigned("EntryDBNameLen", Short.class);
+		addFixedUnsigned("EntryViewNameLen", Short.class);
+		addFixedUnsigned("EntryColumnNumber", Short.class);
 
 		addVariableString("EntryDBName", "getEntryDBNameLen");
 		addVariableString("EntryViewName", "getEntryViewNameLen");

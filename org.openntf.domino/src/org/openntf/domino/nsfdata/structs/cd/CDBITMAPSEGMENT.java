@@ -15,8 +15,8 @@ public class CDBITMAPSEGMENT extends CDRecord {
 
 	static {
 		addFixedArray("Reserved", Integer.class, 2);
-		addFixedUpgrade("ScanlineCount", Short.class);
-		addFixedUpgrade("DataSize", Short.class);
+		addFixedUnsigned("ScanlineCount", Short.class);
+		addFixedUnsigned("DataSize", Short.class);
 
 		addVariableData("BitmapData", "getDataSize");
 	}

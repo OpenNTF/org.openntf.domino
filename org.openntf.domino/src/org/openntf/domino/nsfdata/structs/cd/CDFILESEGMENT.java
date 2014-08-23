@@ -13,6 +13,15 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDFILESEGMENT extends CDRecord {
 
+	static {
+		addFixedUnsigned("DataSize", Short.class);
+		addFixedUnsigned("SegSize", Short.class);
+		addFixed("Flags", Integer.class);
+		addFixed("Reserved", Integer.class);
+
+		addVariableData("FileData", "getDataSize");
+	}
+
 	protected CDFILESEGMENT(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -25,44 +34,35 @@ public class CDFILESEGMENT extends CDRecord {
 	/**
 	 * @return Actual Size of image [sic] bits in bytes, ignoring any filler
 	 */
-	public short getDataSize() {
-		return getData().getShort(getData().position() + 0);
+	public int getDataSize() {
+		return (Integer) getStructElement("DataSize");
 	}
 
 	/**
 	 * @return Size of segment, is equal to or larger than DataSize if filler byte added to maintain word boundary
 	 */
-	public short getSegSize() {
-		return getData().getShort(getData().position() + 2);
+	public int getSegSize() {
+		return (Integer) getStructElement("SegSize");
 	}
 
 	/**
 	 * @return Currently unused, but someday someone will be happy this is here
 	 */
 	public int getFlags() {
-		return getData().getInt(getData().position() + 4);
+		return (Integer) getStructElement("Flags");
 	}
 
 	/**
 	 * @return Reserved for future use
 	 */
 	public int getReserved() {
-		return getData().getInt(getData().position() + 8);
+		return (Integer) getStructElement("Reserved");
 	}
 
 	/**
 	 * @return File bits for this segment
 	 */
-	public ByteBuffer getFileData() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 12);
-		data.limit(data.position() + getDataSize());
-		return data;
-	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ", Data Size: " + getDataSize() + ", Seg Size: " + getSegSize() + ", Flags: "
-				+ getFlags() + ", Reserved: " + getReserved() + "]";
+	public byte[] getFileData() {
+		return (byte[]) getStructElement("FileData");
 	}
 }

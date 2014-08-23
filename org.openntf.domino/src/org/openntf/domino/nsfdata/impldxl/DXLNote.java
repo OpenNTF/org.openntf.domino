@@ -188,7 +188,7 @@ public class DXLNote implements NSFNote, Serializable {
 					}
 					if (record instanceof CDFILESEGMENT) {
 						CDFILESEGMENT seg = (CDFILESEGMENT) record;
-						ByteBuffer data = seg.getFileData().duplicate();
+						ByteBuffer data = ByteBuffer.wrap(seg.getFileData());
 						data.order(ByteOrder.LITTLE_ENDIAN);
 						try {
 							os.write(data.array(), data.position(), data.limit() - data.position());
