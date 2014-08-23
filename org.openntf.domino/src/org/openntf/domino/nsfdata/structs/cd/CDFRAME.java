@@ -106,7 +106,7 @@ public class CDFRAME extends CDRecord {
 	public COLOR_VALUE getFrameBorderColor() {
 		ByteBuffer data = getData().duplicate();
 		data.position(data.position() + 22);
-		data.limit(data.limit() + 6);
+		data.limit(data.position() + COLOR_VALUE.SIZE);
 		return new COLOR_VALUE(data);
 	}
 
@@ -131,5 +131,13 @@ public class CDFRAME extends CDRecord {
 		data.position(data.position() + 30 + preceding);
 		data.limit(data.position() + getFrameTargetLength());
 		return ODSUtils.fromLMBCS(data);
+	}
+
+	@Override
+	public String toString() {
+		return "[" + getClass().getSimpleName() + ": Flags=" + getFlags() + ", DataFlags=" + getDataFlags() + ", BorderEnable="
+				+ getBorderEnable() + ", NoResize=" + getNoResize() + ", ScrollBarStyle=" + getScrollBarStyle() + ", MarginWidth="
+				+ getMarginWidth() + ", MarginHeight=" + getMarginHeight() + ", FrameBorderColor=" + getFrameBorderColor() + ", FrameName="
+				+ getFrameName() + ", FrameTarget=" + getFrameTarget() + "]";
 	}
 }

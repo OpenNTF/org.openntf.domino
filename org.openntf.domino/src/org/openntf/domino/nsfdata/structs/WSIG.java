@@ -5,12 +5,12 @@ import org.openntf.domino.nsfdata.structs.cd.CDSignature;
 /**
  * Every CD record begins with a header. There are three types of headers, BSIG, WSIG, and LSIG. The first byte of the header is a signature
  * which identifies the type of the header and the type of the CD record that follows. (ods.h)
- * 
- * @author jgallagher
  *
  */
 public class WSIG extends SIG {
 	private static final long serialVersionUID = 1L;
+
+	public static final int SIZE = 4;
 
 	public WSIG(final CDSignature signature, final short length) {
 		super(signature, length);
@@ -18,6 +18,6 @@ public class WSIG extends SIG {
 
 	@Override
 	public int getSigLength() {
-		return 2 + 2;
+		return 4;
 	}
 }

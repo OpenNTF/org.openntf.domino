@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
+import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -233,9 +234,11 @@ public class CDACTIONBAR extends CDRecord {
 		return getData().getInt(getData().position() + 14);
 	}
 
-	public int getFontId() {
-		// TODO map to font
-		return getData().getInt(getData().position() + 18);
+	public FONTID getFontId() {
+		ByteBuffer data = getData().duplicate();
+		data.position(data.position() + 18);
+		data.limit(data.position() + FONTID.SIZE);
+		return new FONTID(data);
 	}
 
 	/**
@@ -255,6 +258,6 @@ public class CDACTIONBAR extends CDRecord {
 	@Override
 	public String toString() {
 		return "[" + getClass().getSimpleName() + ", LineStyle: " + getLineStyle() + ", BorderStyle: " + getBorderStyle() + ", Flags: "
-				+ getFlags() + "]";
+				+ getFlags() + ", FontID=" + getFontId() + "]";
 	}
 }

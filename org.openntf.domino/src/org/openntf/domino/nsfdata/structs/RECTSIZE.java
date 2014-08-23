@@ -9,16 +9,21 @@ import java.nio.ByteBuffer;
 public class RECTSIZE extends AbstractStruct {
 	public static final int SIZE = 4;
 
+	static {
+		addFixedUpgrade("width", Short.class);
+		addFixedUpgrade("height", Short.class);
+	}
+
 	public RECTSIZE(final ByteBuffer data) {
 		super(data);
 	}
 
 	public int getWidth() {
-		return getData().getShort(getData().position() + 0) & 0xFFFF;
+		return (Integer) getStructElement("width");
 	}
 
 	public int getHeight() {
-		return getData().getShort(getData().position() + 2) & 0xFFFF;
+		return (Integer) getStructElement("height");
 	}
 
 	@Override

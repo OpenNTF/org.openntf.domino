@@ -5,11 +5,17 @@ import java.nio.ByteBuffer;
 /**
  * This structure holds the format for character time/date strings. You set up this structure based on the time/date format you want to use.
  * Definitions for the various fields of this structure are found in TDFMT_xxx, TTFMT_xxx, TZFMT_xxx, and TSFMT_xxx. (misc.h)
- * 
- * @author jgallagher
  *
  */
 public class TFMT extends AbstractStruct {
+	public static final int SIZE = 4;
+
+	static {
+		addFixed("Date", Byte.class);
+		addFixed("Time", Byte.class);
+		addFixed("Zone", Byte.class);
+		addFixed("Structure", Byte.class);
+	}
 
 	public TFMT(final ByteBuffer data) {
 		super(data);
@@ -17,7 +23,7 @@ public class TFMT extends AbstractStruct {
 
 	@Override
 	public int getStructSize() {
-		return 4;
+		return SIZE;
 	}
 
 	/**
@@ -25,7 +31,7 @@ public class TFMT extends AbstractStruct {
 	 */
 	public byte getDate() {
 		// TODO create enum, TDFMT_xxx
-		return getData().get(getData().position() + 0);
+		return (Byte) getStructElement("Date");
 	}
 
 	/**
@@ -33,7 +39,7 @@ public class TFMT extends AbstractStruct {
 	 */
 	public byte getTime() {
 		// TODO create enum, TTFMT_xxx
-		return getData().get(getData().position() + 1);
+		return (Byte) getStructElement("Time");
 	}
 
 	/**
@@ -41,7 +47,7 @@ public class TFMT extends AbstractStruct {
 	 */
 	public byte getZone() {
 		// TODO create enum, TZFMT_xxx
-		return getData().get(getData().position() + 2);
+		return (Byte) getStructElement("Zone");
 	}
 
 	/**
@@ -49,7 +55,7 @@ public class TFMT extends AbstractStruct {
 	 */
 	public byte getStructure() {
 		// TODO create enum, TSFMT_xxx
-		return getData().get(getData().position() + 3);
+		return (Byte) getStructElement("Structure");
 	}
 
 	@Override

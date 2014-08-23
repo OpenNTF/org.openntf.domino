@@ -23,7 +23,7 @@ public class CDGRAPHIC extends CDRecord {
 	public RECTSIZE getDestSize() {
 		ByteBuffer data = getData().duplicate();
 		data.position(data.position() + 0);
-		data.limit(data.position() + 4);
+		data.limit(data.position() + RECTSIZE.SIZE);
 		return new RECTSIZE(data);
 	}
 
@@ -32,8 +32,8 @@ public class CDGRAPHIC extends CDRecord {
 	 */
 	public RECTSIZE getCropSize() {
 		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 4);
-		data.limit(data.position() + 4);
+		data.position(data.position() + RECTSIZE.SIZE);
+		data.limit(data.position() + RECTSIZE.SIZE);
 		return new RECTSIZE(data);
 	}
 
@@ -42,8 +42,8 @@ public class CDGRAPHIC extends CDRecord {
 	 */
 	public CROPRECT getCropOffset() {
 		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 8);
-		data.limit(data.position() + 4);
+		data.position(data.position() + RECTSIZE.SIZE + RECTSIZE.SIZE);
+		data.limit(data.position() + CROPRECT.SIZE);
 		return new CROPRECT(data);
 	}
 
@@ -51,7 +51,7 @@ public class CDGRAPHIC extends CDRecord {
 	 * @return True if user resized object
 	 */
 	public boolean isResize() {
-		short value = getData().getShort(getData().position() + 12);
+		short value = getData().getShort(getData().position() + RECTSIZE.SIZE + RECTSIZE.SIZE + CROPRECT.SIZE);
 		return value != 0;
 	}
 
@@ -60,7 +60,7 @@ public class CDGRAPHIC extends CDRecord {
 	 */
 	public byte getVersion() {
 		// TODO create enum
-		return getData().get(getData().position() + 14);
+		return getData().get(getData().position() + 2 + RECTSIZE.SIZE + RECTSIZE.SIZE + CROPRECT.SIZE);
 	}
 
 	/**
@@ -68,10 +68,16 @@ public class CDGRAPHIC extends CDRecord {
 	 */
 	public byte getFlags() {
 		// TODO create enum
-		return getData().get(getData().position() + 15);
+		return getData().get(getData().position() + 3 + RECTSIZE.SIZE + RECTSIZE.SIZE + CROPRECT.SIZE);
 	}
 
 	public short getReserved() {
-		return getData().getShort(getData().position() + 16);
+		return getData().getShort(getData().position() + 4 + RECTSIZE.SIZE + RECTSIZE.SIZE + CROPRECT.SIZE);
+	}
+
+	@Override
+	public String toString() {
+		return "[" + getClass().getSimpleName() + ": DestSize=" + getDestSize() + ", CropSize=" + getCropSize() + ", CropOffset="
+				+ getCropOffset() + ", Resize=" + isResize() + ", Version=" + getVersion() + ", Flags=" + getFlags() + "]";
 	}
 }

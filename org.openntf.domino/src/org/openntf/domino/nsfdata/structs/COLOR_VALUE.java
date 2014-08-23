@@ -6,12 +6,19 @@ import java.nio.ByteBuffer;
 /**
  * This data structure defines the three components of an RGB color which consist of a red, green, and blue color value. (colorods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 5.0
  *
  */
 public class COLOR_VALUE extends AbstractStruct {
 	public static final int SIZE = 6;
+
+	static {
+		addFixed("Flags", Short.class);
+		addFixedUpgrade("Component1", Byte.class);
+		addFixedUpgrade("Component2", Byte.class);
+		addFixedUpgrade("Component3", Byte.class);
+		addFixed("Component4", Byte.class);
+	}
 
 	public COLOR_VALUE(final ByteBuffer data) {
 		super(data);
@@ -19,19 +26,19 @@ public class COLOR_VALUE extends AbstractStruct {
 
 	public short getFlags() {
 		// TODO make enum
-		return getData().getShort(getData().position() + 0);
+		return (Short) getStructElement("Flags");
 	}
 
-	public int getRed() {
-		return getData().get(getData().position() + 2) & 0xFF;
+	public short getRed() {
+		return (Short) getStructElement("Component1");
 	}
 
-	public int getBlue() {
-		return getData().get(getData().position() + 3) & 0xFF;
+	public short getBlue() {
+		return (Short) getStructElement("Component2");
 	}
 
-	public int getGreen() {
-		return getData().get(getData().position() + 4) & 0xFF;
+	public short getGreen() {
+		return (Short) getStructElement("Component3");
 	}
 
 	public Color getColor() {

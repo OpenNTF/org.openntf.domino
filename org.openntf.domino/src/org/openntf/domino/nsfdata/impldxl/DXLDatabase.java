@@ -27,6 +27,8 @@ public class DXLDatabase implements Serializable, NSFDatabase {
 	private transient Map<String, NSFNote> notesByUniversalId_ = new TreeMap<String, NSFNote>();
 
 	public DXLDatabase(final InputStream is) throws IOException, SAXException, ParserConfigurationException {
+
+		// TODO Redo this with SAX, because holy crap it is slow currently
 		XMLDocument xml = new XMLDocument();
 		xml.loadInputStream(is);
 

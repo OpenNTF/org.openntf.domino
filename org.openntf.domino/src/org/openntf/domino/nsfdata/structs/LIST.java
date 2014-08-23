@@ -5,11 +5,15 @@ import java.nio.ByteBuffer;
 /**
  * This datatype is used by several data structures to specify that a field contains a list of one or more values. A list is made up of one
  * or more items of a datatype, separated by a delimiter. (global.h)
- * 
- * @author jgallagher
  *
  */
 public class LIST extends AbstractStruct {
+
+	public static final int SIZE = 2;
+
+	static {
+		addFixedUpgrade("ListEntries", Short.class);
+	}
 
 	public LIST(final ByteBuffer data) {
 		super(data);
@@ -17,13 +21,10 @@ public class LIST extends AbstractStruct {
 
 	@Override
 	public int getStructSize() {
-		return 2;
+		return SIZE;
 	}
 
-	/**
-	 * This is a WORD - unsigned short - so upgrade it to int for Java's sake
-	 */
 	public int getListEntries() {
-		return getData().getShort(getData().position() + 0) & 0xFFFF;
+		return (Integer) getStructElement("ListEntries");
 	}
 }

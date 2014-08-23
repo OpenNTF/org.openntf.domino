@@ -16,7 +16,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
  *
  */
 public class CDFRAMESET extends CDRecord {
-
 	public CDFRAMESET(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}

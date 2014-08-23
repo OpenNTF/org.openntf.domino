@@ -1,7 +1,6 @@
 package org.openntf.domino.nsfdata.structs;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 /**
  * This structure contains the common fields for the graphical elements in a layout region of a form.
@@ -11,6 +10,17 @@ import java.nio.ByteOrder;
  */
 public class ELEMENTHEADER extends AbstractStruct {
 	public static final int SIZE = 10 + FONTID.SIZE + COLOR_VALUE.SIZE;
+
+	static {
+		addFixedUpgrade("wLeft", Short.class);
+		addFixedUpgrade("wTop", Short.class);
+		addFixedUpgrade("wWidth", Short.class);
+		addFixedUpgrade("wHeight", Short.class);
+		addFixed("FontID", FONTID.class);
+		addFixed("byBackColor", Byte.class);
+		addFixed("bSpare", Byte.class);
+		addFixed("BackgroundColor", COLOR_VALUE.class);
+	}
 
 	public ELEMENTHEADER(final ByteBuffer data) {
 		super(data);
@@ -25,58 +35,50 @@ public class ELEMENTHEADER extends AbstractStruct {
 	 * @return Location of the left edge of the element in twips
 	 */
 	public int getLeft() {
-		return getData().getShort(getData().position() + 0) & 0xFFFF;
+		return (Integer) getStructElement("wLeft");
 	}
 
 	/**
 	 * @return Location of the top of the element in twips
 	 */
 	public int getTop() {
-		return getData().getShort(getData().position() + 2) & 0xFFFF;
+		return (Integer) getStructElement("wTop");
 	}
 
 	/**
 	 * @return Width of the element in twips
 	 */
 	public int getWidth() {
-		return getData().getShort(getData().position() + 4) & 0xFFFF;
+		return (Integer) getStructElement("wWidth");
 	}
 
 	/**
 	 * @return Height of the element in twips
 	 */
 	public int getHeight() {
-		return getData().getShort(getData().position() + 6) & 0xFFFF;
+		return (Integer) getStructElement("wHeight");
 	}
 
 	/**
 	 * @return Font used to display text in the element
 	 */
 	public FONTID getFontId() {
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 8);
-		data.limit(data.position() + FONTID.SIZE);
-		return new FONTID(data);
+		return (FONTID) getStructElement("FontID");
 	}
 
 	/**
 	 * @return Background color for the element
 	 */
 	public byte getBackColor() {
-		return getData().get(getData().position() + 8 + FONTID.SIZE);
+		return (Byte) getStructElement("byBackColor");
 	}
 
 	public byte getSpare() {
-		return getData().get(getData().position() + 9 + FONTID.SIZE);
+		return (Byte) getStructElement("bSpare");
 	}
 
 	public COLOR_VALUE getBackgroundColor() {
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 10 + FONTID.SIZE);
-		data.limit(data.position() + COLOR_VALUE.SIZE);
-		return new COLOR_VALUE(data);
+		return (COLOR_VALUE) getStructElement("BackgroundColor");
 	}
 
 	@Override

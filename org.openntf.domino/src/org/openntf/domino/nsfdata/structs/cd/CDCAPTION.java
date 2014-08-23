@@ -1,9 +1,11 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
+import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -55,9 +57,11 @@ public class CDCAPTION extends CDRecord {
 		return Position.valueOf(getData().get(getData().position() + 2));
 	}
 
-	public int getFontId() {
-		// TODO map to font
-		return getData().getInt(getData().position() + 3);
+	public FONTID getFontId() {
+		ByteBuffer data = getData().duplicate();
+		data.position(data.position() + 3);
+		data.limit(data.position() + FONTID.SIZE);
+		return new FONTID(data);
 	}
 
 	public COLOR_VALUE getFontColor() {
@@ -77,7 +81,7 @@ public class CDCAPTION extends CDRecord {
 
 	public String getCaption() {
 		ByteBuffer data = getData().duplicate();
-		//		data.order(ByteOrder.LITTLE_ENDIAN);
+		data.order(ByteOrder.LITTLE_ENDIAN);
 		data.position(data.position() + 24);
 		//		data.limit(data.position() + getCaptionLength());
 		byte[] chars = new byte[getCaptionLength()];
@@ -90,6 +94,6 @@ public class CDCAPTION extends CDRecord {
 	@Override
 	public String toString() {
 		return "[" + getClass().getSimpleName() + ", FontColor: " + getFontColor() + ", Length: " + getCaptionLength() + ", Caption: "
-				+ getCaption() + "]";
+				+ getCaption() + ", FontID=" + getFontId() + "]";
 	}
 }

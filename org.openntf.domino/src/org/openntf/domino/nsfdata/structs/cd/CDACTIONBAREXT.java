@@ -6,6 +6,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
+import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.LENGTH_VALUE;
 import org.openntf.domino.nsfdata.structs.SIG;
 
@@ -17,6 +18,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDACTIONBAREXT extends CDRecord {
 	public static enum BackgroundRepeat {
+		DEFAULT((short) 0),
 		/**
 		 * Image repeats once in upper left of action bar
 		 */
@@ -233,15 +235,18 @@ public class CDACTIONBAREXT extends CDRecord {
 	/**
 	 * @return Used in conjunction with barHeight
 	 */
-	public int getBarFontId() {
-		// TODO map to font
-		return getData().getInt(getData().position() + 40);
+	public FONTID getBarFontId() {
+		ByteBuffer data = getData().duplicate();
+		data.order(ByteOrder.LITTLE_ENDIAN);
+		data.position(data.position() + 40);
+		data.limit(data.position() + FONTID.SIZE);
+		return new FONTID(data);
 	}
 
 	public LENGTH_VALUE getBarHeight() {
 		ByteBuffer data = getData().duplicate();
 		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 44);
+		data.position(data.position() + 40 + FONTID.SIZE);
 		data.limit(data.position() + 12);
 		return new LENGTH_VALUE(data);
 	}
@@ -255,5 +260,15 @@ public class CDACTIONBAREXT extends CDRecord {
 			result[i] = getData().getInt(getData().position() + 56 + (i * 4));
 		}
 		return result;
+	}
+
+	@Override
+	public String toString() {
+		return "[" + getClass().getSimpleName() + ": BackColor=" + getBackColor() + ", LineColor=" + getLineColor() + ", FontColor="
+				+ getFontColor() + ", ButtonColor=" + getButtonColor() + ", BtnBorderDisplay=" + getBtnBorderDisplay() + ", AppletHeight="
+				+ getAppletHeight() + ", BarBackgroundRepeat=" + getBarBackgroundRepeat() + ", BtnWidthStyle=" + getBtnWidthStyle()
+				+ ", BtnTextJustify=" + getBtnTextJustify() + ", BtnWidthAbsolute=" + getBtnWidthAbsolute() + ", BtnInternalMargin="
+				+ getBtnInternalMargin() + ", Flags=" + getFlags() + ", BarFontId=" + getBarFontId() + ", BarHeight=" + getBarHeight()
+				+ "]";
 	}
 }

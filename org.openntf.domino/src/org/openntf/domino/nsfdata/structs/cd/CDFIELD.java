@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openntf.domino.nsfdata.NSFCompiledFormula;
+import org.openntf.domino.nsfdata.structs.FONTID;
 import org.openntf.domino.nsfdata.structs.LIST;
 import org.openntf.domino.nsfdata.structs.NFMT;
 import org.openntf.domino.nsfdata.structs.ODSUtils;
@@ -72,9 +73,12 @@ public class CDFIELD extends CDRecord {
 	/**
 	 * @return Displayed font
 	 */
-	public int getFontId() {
-		// TODO map to font
-		return getData().getInt(getData().position() + 14);
+	public FONTID getFontId() {
+		ByteBuffer data = getData().duplicate();
+		data.order(ByteOrder.LITTLE_ENDIAN);
+		data.position(data.position() + 14);
+		data.limit(data.position() + FONTID.SIZE);
+		return new FONTID(data);
 	}
 
 	/**
@@ -243,5 +247,15 @@ public class CDFIELD extends CDRecord {
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "[" + getClass().getSimpleName() + ": Flags=" + getFlags() + ", DataType=" + getDataType() + ", ListDelim=" + getListDelim()
+				+ ", NumberFormat=" + getNumberFormat() + ", TimeFormat=" + getTimeFormat() + ", FontID=" + getFontId() + ", DVLength="
+				+ getDVLength() + ", ITLength=" + getITLength() + ", TabOrder=" + getTabOrder() + ", DefaultValueFormula="
+				+ getDefaultValueFormula() + ", InputTranslationFormula=" + getInputTranslationFormula() + ", InputValidationFormula="
+				+ getInputValidationFormula() + ", ItemName=" + getItemName() + ", Description=" + getDescription() + ", TextValues="
+				+ getTextValues() + "]";
 	}
 }
