@@ -55,9 +55,4 @@ public class LENGTH_VALUE extends AbstractStruct {
 	public byte getReserved() {
 		return (Byte) getStructElement("Reserved");
 	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ": Flags=" + getFlags() + ", Length=" + getLength() + ", Units=" + getUnits() + "]";
-	}
 }

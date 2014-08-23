@@ -29,11 +29,7 @@ public class CDBITMAPSEGMENT extends CDRecord {
 	 * Reserved for future use
 	 */
 	public int[] getReserved() {
-		int[] result = new int[2];
-		Object[] value = (Object[]) getStructElement("Reserved");
-		result[0] = (Integer) value[0];
-		result[1] = (Integer) value[1];
-		return result;
+		return (int[]) getStructElement("Reserved");
 	}
 
 	/**
@@ -53,11 +49,5 @@ public class CDBITMAPSEGMENT extends CDRecord {
 	// TODO uncompress the data (see docs)
 	public byte[] getBitmapData() {
 		return (byte[]) getStructElement("BitmapData");
-	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ": ScanlineCount=" + getScanlineCount() + ", DataSize=" + getDataSize() + ", BitmapData="
-				+ getBitmapData() + "]";
 	}
 }

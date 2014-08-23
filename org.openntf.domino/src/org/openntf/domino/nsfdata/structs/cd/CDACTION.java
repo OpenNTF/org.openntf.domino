@@ -251,11 +251,4 @@ public class CDACTION extends CDRecord {
 			return null;
 		}
 	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ", Type: " + getType() + ", IconIndex: " + getIconIndex() + ", Flags: " + getFlags()
-				+ ", Title: " + getTitle() + ", ActionData=" + getActionData() + ", Formula: " + getFormula() + ", ShareId: "
-				+ getShareId() + "]";
-	}
 }

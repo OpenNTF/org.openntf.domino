@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -31,7 +32,7 @@ public abstract class AbstractStruct implements Externalizable {
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + "]";
+		return buildDebugString();
 	}
 
 	@Override
@@ -89,17 +90,19 @@ public abstract class AbstractStruct implements Externalizable {
 	private static class VariableElement {
 		private final String name;
 		private final String lengthMethodName;
-		private final boolean isString;
+		private final Class<?> dataClass;
+		private final boolean isAscii;
 
-		private VariableElement(final String name, final String lengthMethodName, final boolean isString) {
+		private VariableElement(final String name, final String lengthMethodName, final Class<?> dataClass, final boolean isAscii) {
 			this.name = name;
 			this.lengthMethodName = lengthMethodName;
-			this.isString = isString;
+			this.dataClass = dataClass;
+			this.isAscii = isAscii;
 		}
 
 		@Override
 		public int hashCode() {
-			return 11 + name.hashCode() + lengthMethodName.hashCode() + (isString ? 2 : 1);
+			return 11 + name.hashCode() + lengthMethodName.hashCode() + dataClass.hashCode() + (isAscii ? 2 : 1);
 		}
 	}
 
@@ -154,7 +157,16 @@ public abstract class AbstractStruct implements Externalizable {
 		if (!variableElements_.containsKey(caller)) {
 			variableElements_.put(caller, new LinkedHashSet<VariableElement>());
 		}
-		variableElements_.get(caller).add(new VariableElement(name, lengthMethodName, false));
+		variableElements_.get(caller).add(new VariableElement(name, lengthMethodName, Byte.class, false));
+	}
+
+	protected static void addVariableArray(final String name, final String lengthMethodName, final Class<?> dataClass) {
+		Exception e = new Exception();
+		String caller = e.getStackTrace()[1].getClassName();
+		if (!variableElements_.containsKey(caller)) {
+			variableElements_.put(caller, new LinkedHashSet<VariableElement>());
+		}
+		variableElements_.get(caller).add(new VariableElement(name, lengthMethodName, dataClass, false));
 	}
 
 	/**
@@ -169,7 +181,23 @@ public abstract class AbstractStruct implements Externalizable {
 		if (!variableElements_.containsKey(caller)) {
 			variableElements_.put(caller, new LinkedHashSet<VariableElement>());
 		}
-		variableElements_.get(caller).add(new VariableElement(name, lengthMethodName, true));
+		variableElements_.get(caller).add(new VariableElement(name, lengthMethodName, String.class, false));
+	}
+
+	/**
+	 * @param name
+	 *            The name of the field, used in "getStructElement" calls
+	 * @param lengthMethodName
+	 *            The name of a method that can be called to get a int of the length in bytes
+	 */
+	protected static void addVariableAsciiString(final String name, final String lengthMethodName) {
+		Exception e = new Exception();
+		String caller = e.getStackTrace()[1].getClassName();
+		if (!variableElements_.containsKey(caller)) {
+			variableElements_.put(caller, new LinkedHashSet<VariableElement>());
+		}
+		variableElements_.get(caller).add(new VariableElement(name, lengthMethodName, String.class, true));
+
 	}
 
 	protected Object getStructElement(final String name) {
@@ -189,7 +217,7 @@ public abstract class AbstractStruct implements Externalizable {
 						// Then it's a struct
 						ByteBuffer data = getData().duplicate();
 						data.order(ByteOrder.LITTLE_ENDIAN);
-						data.position(data.position() + preceding);
+						data.position(data.position() + preceding + (size * i));
 						data.limit(data.position() + size);
 						try {
 							result[i] = element.sizeClass.getDeclaredConstructor(ByteBuffer.class).newInstance(data);
@@ -199,7 +227,13 @@ public abstract class AbstractStruct implements Externalizable {
 					}
 				}
 
-				return element.count == 1 ? result[0] : result;
+				if (element.count == 1) {
+					return result[0];
+				} else if (_isPrimitive(element.sizeClass)) {
+					return _toPrimitiveArray(result, element.sizeClass);
+				} else {
+					return result;
+				}
 			} else {
 				preceding += size * element.count;
 			}
@@ -209,26 +243,59 @@ public abstract class AbstractStruct implements Externalizable {
 		for (VariableElement element : variableElements_.get(getClass().getName())) {
 			try {
 				Method method = getClass().getDeclaredMethod(element.lengthMethodName);
-				int size = (Integer) method.invoke(this);
+				int length = (Integer) method.invoke(this);
+				int size = String.class.equals(element.dataClass) ? 1 : _getSize(element.dataClass);
+
+				// LMBCS strings are always even length
+				int extra = String.class.equals(element.dataClass) && !element.isAscii ? length % 2 : 0;
 
 				if (StringUtil.equals(name, element.name)) {
-					if (element.isString) {
+					if (String.class.equals(element.dataClass)) {
 						ByteBuffer data = getData().duplicate();
 						data.order(ByteOrder.LITTLE_ENDIAN);
 						data.position(data.position() + preceding);
-						data.limit(data.position() + size);
-						return ODSUtils.fromLMBCS(data);
+						data.limit(data.position() + length);
+						if (element.isAscii) {
+							byte[] chars = new byte[length];
+							data.get(chars);
+							return new String(chars, Charset.forName("US-ASCII"));
+						} else {
+							return ODSUtils.fromLMBCS(data);
+						}
 					} else {
-						byte[] result = new byte[size];
-						if (size > 0) {
-							for (int i = 0; i < size; i++) {
-								result[i] = getData().get(getData().position() + preceding + i);
+						Object[] result = new Object[length];
+						for (int i = 0; i < length; i++) {
+							Object primitive = _getPrimitive(element.dataClass, preceding + (size * i), false);
+							if (primitive != null) {
+								result[i] = primitive;
+							} else {
+								// Then it's a struct
+								ByteBuffer data = getData().duplicate();
+								data.order(ByteOrder.LITTLE_ENDIAN);
+								data.position(data.position() + preceding + (size * i));
+								data.limit(data.position() + size);
+								try {
+									result[i] = element.dataClass.getDeclaredConstructor(ByteBuffer.class).newInstance(data);
+								} catch (Throwable t) {
+									throw t instanceof RuntimeException ? (RuntimeException) t : new RuntimeException(t);
+								}
 							}
 						}
-						return result;
+						//						byte[] result = new byte[size];
+						//						if (size > 0) {
+						//							for (int i = 0; i < size; i++) {
+						//								result[i] = getData().get(getData().position() + preceding + i);
+						//							}
+						//						}
+						//						return result;
+						if (_isPrimitive(element.dataClass)) {
+							return _toPrimitiveArray(result, element.dataClass);
+						} else {
+							return result;
+						}
 					}
 				} else {
-					preceding += size;
+					preceding += length + (size * length) + extra;
 				}
 			} catch (Throwable t) {
 				throw t instanceof RuntimeException ? (RuntimeException) t : new RuntimeException(t);
@@ -247,6 +314,8 @@ public abstract class AbstractStruct implements Externalizable {
 			return 4;
 		} else if (Long.class.equals(sizeClass)) {
 			return 8;
+		} else if (Float.class.equals(sizeClass)) {
+			return 4;
 		} else if (Double.class.equals(sizeClass)) {
 			return 8;
 		} else {
@@ -269,6 +338,11 @@ public abstract class AbstractStruct implements Externalizable {
 		}
 
 		throw new UnsupportedOperationException("Unknown size class " + sizeClass);
+	}
+
+	private boolean _isPrimitive(final Class<?> clazz) {
+		return Byte.class.equals(clazz) || Short.class.equals(clazz) || Integer.class.equals(clazz) || Long.class.equals(clazz)
+				|| Float.class.equals(clazz) || Double.class.equals(clazz);
 	}
 
 	private Object _getPrimitive(final Class<?> sizeClass, final int preceding, final boolean upgrade) {
@@ -296,10 +370,121 @@ public abstract class AbstractStruct implements Externalizable {
 		} else if (Long.class.equals(sizeClass)) {
 			// Ignore upgrade
 			return getData().getLong(getData().position() + preceding);
+		} else if (Float.class.equals(sizeClass)) {
+			// Ignore upgrade
+			return getData().getFloat(getData().position() + preceding);
 		} else if (Double.class.equals(sizeClass)) {
 			// Ignore upgrade
 			return getData().getDouble(getData().position() + preceding);
 		}
 		return null;
+	}
+
+	// TODO check if any stdlib array-copy methods do this unboxing
+	private Object _toPrimitiveArray(final Object[] value, final Class<?> primitiveClass) {
+		if (Byte.class.equals(primitiveClass)) {
+			byte[] result = new byte[value.length];
+			for (int i = 0; i < value.length; i++) {
+				result[i] = (Byte) value[i];
+			}
+			return result;
+		} else if (Short.class.equals(primitiveClass)) {
+			short[] result = new short[value.length];
+			for (int i = 0; i < value.length; i++) {
+				result[i] = (Short) value[i];
+			}
+			return result;
+		} else if (Integer.class.equals(primitiveClass)) {
+			int[] result = new int[value.length];
+			for (int i = 0; i < value.length; i++) {
+				result[i] = (Integer) value[i];
+			}
+			return result;
+		} else if (Long.class.equals(primitiveClass)) {
+			long[] result = new long[value.length];
+			for (int i = 0; i < value.length; i++) {
+				result[i] = (Long) value[i];
+			}
+			return result;
+		} else if (Float.class.equals(primitiveClass)) {
+			float[] result = new float[value.length];
+			for (int i = 0; i < value.length; i++) {
+				result[i] = (Float) value[i];
+			}
+			return result;
+		} else if (Double.class.equals(primitiveClass)) {
+			double[] result = new double[value.length];
+			for (int i = 0; i < value.length; i++) {
+				result[i] = (Double) value[i];
+			}
+			return result;
+		}
+		return value;
+	}
+
+	protected String buildDebugString(final String... properties) {
+		StringBuilder result = new StringBuilder();
+		result.append("[");
+		result.append(getClass().getSimpleName());
+		result.append(": ");
+		boolean addedProp = false;
+		for (String property : properties) {
+			if (addedProp) {
+				result.append(", ");
+			} else {
+				addedProp = true;
+			}
+			result.append(property);
+			result.append("=");
+
+			try {
+				Method getter = getClass().getMethod("get" + property);
+				result.append(getter.invoke(this));
+			} catch (Throwable t) {
+				throw t instanceof RuntimeException ? (RuntimeException) t : new RuntimeException(t);
+			}
+		}
+		result.append("]");
+		return result.toString();
+	}
+
+	protected String buildDebugString() {
+		StringBuilder result = new StringBuilder();
+		result.append("[");
+		result.append(getClass().getSimpleName());
+		result.append(": ");
+
+		boolean addedProp = false;
+
+		if (fixedElements_.containsKey(getClass().getName())) {
+			for (FixedElement element : fixedElements_.get(getClass().getName())) {
+				if (addedProp) {
+					result.append(", ");
+				} else {
+					addedProp = true;
+				}
+
+				result.append(element.name);
+				result.append("=");
+				result.append(getStructElement(element.name));
+			}
+		}
+
+		if (variableElements_.containsKey(getClass().getName())) {
+			for (VariableElement element : variableElements_.get(getClass().getName())) {
+				if (addedProp) {
+					result.append(", ");
+				} else {
+					addedProp = true;
+				}
+
+				result.append(element.name);
+				result.append("=");
+				result.append(getStructElement(element.name));
+			}
+		}
+
+		result.append("]");
+		return result.toString();
 	}
 }

@@ -12,6 +12,14 @@ import org.openntf.domino.nsfdata.structs.SIG;
  */
 public class CDEVENTENTRY extends CDRecord {
 
+	static {
+		addFixed("wPlatform", Short.class);
+		addFixed("wEventId", Short.class);
+		addFixed("wActionType", Short.class);
+		addFixed("wReserved", Short.class);
+		addFixed("dwReserved", Integer.class);
+	}
+
 	protected CDEVENTENTRY(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -21,7 +29,7 @@ public class CDEVENTENTRY extends CDRecord {
 	 */
 	public short getPlatform() {
 		// TODO create enum
-		return getData().getShort(getData().position() + 0);
+		return (Short) getStructElement("wPlatform");
 	}
 
 	/**
@@ -29,7 +37,7 @@ public class CDEVENTENTRY extends CDRecord {
 	 */
 	public short getEventId() {
 		// TODO create enum
-		return getData().getShort(getData().position() + 2);
+		return (Short) getStructElement("wEventId");
 	}
 
 	/**
@@ -37,20 +45,20 @@ public class CDEVENTENTRY extends CDRecord {
 	 */
 	public short getActionType() {
 		// TODO create enum
-		return getData().getShort(getData().position() + 4);
+		return (Short) getStructElement("wActionType");
 	}
 
 	/**
 	 * @return future use
 	 */
 	public short getReserved() {
-		return getData().getShort(getData().position() + 6);
+		return (Short) getStructElement("wReserved");
 	}
 
 	/**
 	 * @return future use
 	 */
 	public int getReserved2() {
-		return getData().getInt(getData().position() + 8);
+		return (Integer) getStructElement("dwReserved");
 	}
 }

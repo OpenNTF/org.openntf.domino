@@ -1,8 +1,6 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.charset.Charset;
 
 import org.openntf.domino.nsfdata.structs.COLOR_VALUE;
 import org.openntf.domino.nsfdata.structs.FONTID;
@@ -39,6 +37,16 @@ public class CDCAPTION extends CDRecord {
 		}
 	}
 
+	static {
+		addFixedUpgrade("wLength", Short.class);
+		addFixed("Position", Byte.class);
+		addFixed("FontID", FONTID.class);
+		addFixed("FontColor", COLOR_VALUE.class);
+		addFixedArray("Reserved", Byte.class, 11);
+
+		addVariableAsciiString("Caption", "getCaptionLength");
+	}
+
 	public CDCAPTION(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -47,53 +55,29 @@ public class CDCAPTION extends CDRecord {
 	 * @return Caption text length
 	 */
 	public int getCaptionLength() {
-		return getData().getShort(getData().position() + 0) & 0xFFFF;
+		return (Integer) getStructElement("wLength");
 	}
 
 	/**
 	 * @return CAPTION_POSITION_xxx
 	 */
 	public Position getPosition() {
-		return Position.valueOf(getData().get(getData().position() + 2));
+		return Position.valueOf((Byte) getStructElement("Position"));
 	}
 
 	public FONTID getFontId() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 3);
-		data.limit(data.position() + FONTID.SIZE);
-		return new FONTID(data);
+		return (FONTID) getStructElement("FontID");
 	}
 
 	public COLOR_VALUE getFontColor() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 7);
-		data.limit(data.position() + 6);
-		return new COLOR_VALUE(data);
+		return (COLOR_VALUE) getStructElement("FontColor");
 	}
 
 	public byte[] getReserved() {
-		byte[] result = new byte[11];
-		for (int i = 0; i < 11; i++) {
-			result[i] = getData().get(getData().position() + 13 + i);
-		}
-		return result;
+		return (byte[]) getStructElement("Reserved");
 	}
 
 	public String getCaption() {
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 24);
-		//		data.limit(data.position() + getCaptionLength());
-		byte[] chars = new byte[getCaptionLength()];
-		data.get(chars);
-		return new String(chars, Charset.forName("US-ASCII"));
-		//		return data.asCharBuffer().toString();
-		//		return ODSUtils.fromLMBCS(data);
-	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ", FontColor: " + getFontColor() + ", Length: " + getCaptionLength() + ", Caption: "
-				+ getCaption() + ", FontID=" + getFontId() + "]";
+		return (String) getStructElement("Caption");
 	}
 }

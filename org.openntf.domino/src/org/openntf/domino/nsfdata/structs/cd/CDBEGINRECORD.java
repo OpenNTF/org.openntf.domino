@@ -34,9 +34,4 @@ public class CDBEGINRECORD extends CDRecord {
 		// TODO implement mapping method to CDSignature
 		return (Short) getStructElement("Signature");
 	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ": Version=" + getVersion() + ", Signature=" + getBeginSignature() + "]";
-	}
 }

@@ -57,11 +57,6 @@ public abstract class CDRecord extends AbstractStruct {
 	}
 
 	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ", Signature: " + getSignature() + "]";
-	}
-
-	@Override
 	public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
 		super.readExternal(in);
 		signature_ = (SIG) in.readObject();

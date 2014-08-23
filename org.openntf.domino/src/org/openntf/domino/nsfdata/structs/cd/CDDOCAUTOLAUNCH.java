@@ -1,11 +1,9 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.OLE_GUID;
 import org.openntf.domino.nsfdata.structs.SIG;
 
@@ -201,6 +199,20 @@ public class CDDOCAUTOLAUNCH extends CDRecord {
 		}
 	}
 
+	static {
+		addFixed("ObjectType", Integer.class);
+		addFixed("HideWhenFlags", Integer.class);
+		addFixed("LaunchWhenFlags", Integer.class);
+		addFixed("OleFlags", Integer.class);
+		addFixed("CopyToFieldFlags", Integer.class);
+		addFixed("Spare1", Integer.class);
+		addFixed("Spare2", Integer.class);
+		addFixed("OleObjClass", OLE_GUID.class);
+		addFixedUpgrade("FieldNameLength", Short.class);
+
+		addVariableString("FieldName", "getFieldNameLength");
+	}
+
 	public CDDOCAUTOLAUNCH(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -209,62 +221,48 @@ public class CDDOCAUTOLAUNCH extends CDRecord {
 	 * @return Type of object to launch
 	 */
 	public ObjectType getObjectType() {
-		return ObjectType.valueOf(getData().getInt(getData().position() + 0));
+		return ObjectType.valueOf((Integer) getStructElement("ObjectType"));
 	}
 
 	public Set<HideWhenFlag> getHideWhenFlags() {
-		return HideWhenFlag.valuesOf(getData().getInt(getData().position() + 4));
+		return HideWhenFlag.valuesOf((Integer) getStructElement("HideWhenFlags"));
 	}
 
 	public Set<LaunchWhenFlag> getLaunchWhenFlags() {
-		return LaunchWhenFlag.valuesOf(getData().getInt(getData().position() + 8));
+		return LaunchWhenFlag.valuesOf((Integer) getStructElement("LaunchWhenFlags"));
 	}
 
 	public Set<OLEFlag> getOLEFlags() {
-		return OLEFlag.valuesOf(getData().getInt(getData().position() + 12));
+		return OLEFlag.valuesOf((Integer) getStructElement("OleFlags"));
 	}
 
 	public Set<FieldCopyFlag> getCopyToFieldFlags() {
-		return FieldCopyFlag.valuesOf(getData().getInt(getData().position() + 16));
+		return FieldCopyFlag.valuesOf((Integer) getStructElement("CopyToFieldFlags"));
 	}
 
 	public int getSpare1() {
-		return getData().getInt(getData().position() + 20);
+		return (Integer) getStructElement("Spare1");
 	}
 
 	public int getSpare2() {
-		return getData().getInt(getData().position() + 24);
+		return (Integer) getStructElement("Spare2");
 	}
 
 	/**
 	 * @return If named field, field name length
 	 */
 	public int getFieldNameLength() {
-		return getData().getShort(getData().position() + 28) & 0xFFFF;
+		return (Integer) getStructElement("FieldNameLength");
 	}
 
 	public OLE_GUID getOLEObjectClass() {
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 30);
-		data.limit(data.position() + OLE_GUID.SIZE);
-		return new OLE_GUID(data);
+		return (OLE_GUID) getStructElement("OleObjClass");
 	}
 
 	/**
 	 * @return ClassID GUID of OLE object, if create new
 	 */
 	public String getFieldName() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + OLE_GUID.SIZE + 30);
-		data.limit(data.position() + getFieldNameLength());
-		return ODSUtils.fromLMBCS(data);
-	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ": ObjectType=" + getObjectType() + ", HideWhenFlags=" + getHideWhenFlags()
-				+ ", LaunchWhenFlags=" + getLaunchWhenFlags() + ", OLEFlags=" + getOLEFlags() + ", CopyToFieldFlags="
-				+ getCopyToFieldFlags() + ", OLEObjectClass=" + getOLEObjectClass() + ", FieldName=" + getFieldName() + "]";
+		return (String) getStructElement("FieldName");
 	}
 }

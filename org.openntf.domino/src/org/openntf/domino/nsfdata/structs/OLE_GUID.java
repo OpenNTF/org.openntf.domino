@@ -42,12 +42,7 @@ public class OLE_GUID extends AbstractStruct {
 	}
 
 	public byte[] getData4() {
-		Object[] value = (Object[]) getStructElement("Data4");
-		byte[] result = new byte[value.length];
-		for (int i = 0; i < value.length; i++) {
-			result[i] = (Byte) value[i];
-		}
-		return result;
+		return (byte[]) getStructElement("Data4");
 	}
 
 	@Override

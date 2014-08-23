@@ -264,10 +264,4 @@ public class CDACTIONBAR extends CDRecord {
 	public int getHeightSpc() {
 		return (Integer) getStructElement("HeightSpc");
 	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ", LineStyle: " + getLineStyle() + ", BorderStyle: " + getBorderStyle() + ", Flags: "
-				+ getFlags() + ", FontID=" + getFontId() + ", BtnHeight=" + getBtnHeight() + ", HeightSpc=" + getHeightSpc() + "]";
-	}
 }

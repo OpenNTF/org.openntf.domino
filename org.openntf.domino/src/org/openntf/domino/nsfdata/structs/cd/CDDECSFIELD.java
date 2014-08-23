@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -37,58 +36,51 @@ public class CDDECSFIELD extends CDRecord {
 		}
 	}
 
+	static {
+		addFixed("Flags", Short.class);
+		addFixedUpgrade("ExternalNameLength", Short.class);
+		addFixedUpgrade("MetadataNameLength", Short.class);
+		addFixedUpgrade("DCRNameLength", Short.class);
+		addFixedArray("Spare", Short.class, 8);
+
+		addVariableString("ExternalName", "getExternalNameLength");
+		addVariableString("MetadataName", "getMetadataNameLength");
+		addVariableString("DCRName", "getDCRNameLength");
+	}
+
 	public CDDECSFIELD(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf(getData().getShort(getData().position() + 0));
+		return Flag.valuesOf((Short) getStructElement("Flags"));
 	}
 
-	public short getExternalNameLength() {
-		return getData().getShort(getData().position() + 2);
+	public int getExternalNameLength() {
+		return (Integer) getStructElement("ExternalNameLength");
 	}
 
-	public short getMetadataNameLength() {
-		return getData().getShort(getData().position() + 4);
+	public int getMetadataNameLength() {
+		return (Integer) getStructElement("MetadataNameLength");
 	}
 
-	public short getDCRNameLength() {
-		return getData().getShort(getData().position() + 6);
+	public int getDCRNameLength() {
+		return (Integer) getStructElement("DCRNameLength");
 	}
 
 	public short[] getSpare() {
-		short[] result = new short[8];
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 8);
-		for (int i = 0; i < 8; i++) {
-			result[i] = data.getShort();
-		}
-		return result;
+		return (short[]) getStructElement("Spare");
 	}
 
 	public String getExternalName() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 24);
-		data.limit(data.position() + getExternalNameLength());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("ExternalName");
 	}
 
 	public String getMetadataName() {
-		int preceding = getExternalNameLength();
-
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 24 + preceding);
-		data.limit(data.position() + getMetadataNameLength());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("MetadataName");
 	}
 
 	public String getDCRName() {
-		int preceding = getExternalNameLength() + getMetadataNameLength();
-
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 24 + preceding);
-		data.limit(data.position() + getDCRNameLength());
-		return ODSUtils.fromLMBCS(data);
+		return (String) getStructElement("DCRName");
 	}
 }

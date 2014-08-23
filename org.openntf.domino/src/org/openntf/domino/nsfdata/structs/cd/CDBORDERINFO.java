@@ -1,7 +1,6 @@
 package org.openntf.domino.nsfdata.structs.cd;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -112,6 +111,28 @@ public class CDBORDERINFO extends CDRecord {
 		}
 	}
 
+	static {
+		addFixed("Flags", Integer.class);
+		addFixed("BorderStyle", Short.class);
+		addFixedUpgrade("BorderWidthTop", Short.class);
+		addFixedUpgrade("BorderWidthLeft", Short.class);
+		addFixedUpgrade("BorderWidthBottom", Short.class);
+		addFixedUpgrade("BorderWidthRight", Short.class);
+		addFixed("dwSpare", Integer.class);
+		addFixed("BorderFlags", Short.class);
+		addFixedUpgrade("DropShadowWidth", Short.class);
+		addFixedUpgrade("InnerWidthTop", Short.class);
+		addFixedUpgrade("InnerWidthLeft", Short.class);
+		addFixedUpgrade("InnerWidthBottom", Short.class);
+		addFixedUpgrade("InnerWidthRight", Short.class);
+		addFixedUpgrade("OuterWidthTop", Short.class);
+		addFixedUpgrade("OuterWidthLeft", Short.class);
+		addFixedUpgrade("OuterWidthBottom", Short.class);
+		addFixedUpgrade("OuterWidthRight", Short.class);
+		addFixed("Color", COLOR_VALUE.class);
+		addFixedArray("wSpares", Short.class, 5);
+	}
+
 	public CDBORDERINFO(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
@@ -120,138 +141,126 @@ public class CDBORDERINFO extends CDRecord {
 	 * Not Used must be 0
 	 */
 	public int getFlags() {
-		return getData().getInt(getData().position() + 0);
+		return (Integer) getStructElement("Flags");
 	}
 
 	/**
 	 * @return CDBORDERSTYLE_xxx
 	 */
 	public BorderStyle getBorderStyle() {
-		return BorderStyle.valueOf(getData().getShort(getData().position() + 4));
+		return BorderStyle.valueOf((Short) getStructElement("BorderStyle"));
 	}
 
 	/**
 	 * @return Thickness Top
 	 */
-	public short getBorderWidthTop() {
-		return getData().getShort(getData().position() + 6);
+	public int getBorderWidthTop() {
+		return (Integer) getStructElement("BorderWidthTop");
 	}
 
 	/**
 	 * @return Thickness Left
 	 */
-	public short getBorderWidthLeft() {
-		return getData().getShort(getData().position() + 8);
+	public int getBorderWidthLeft() {
+		return (Integer) getStructElement("BorderWidthLeft");
 	}
 
 	/**
 	 * @return Thickness Bottom
 	 */
-	public short getBorderWidthBottom() {
-		return getData().getShort(getData().position() + 10);
+	public int getBorderWidthBottom() {
+		return (Integer) getStructElement("BorderWidthBottom");
 	}
 
 	/**
 	 * @return Thickness Right
 	 */
-	public short getBorderWidthRight() {
-		return getData().getShort(getData().position() + 12);
+	public int getBorderWidthRight() {
+		return (Integer) getStructElement("BorderWidthRight");
 	}
 
 	public int getSpare() {
-		return getData().getInt(getData().position() + 14);
+		return (Integer) getStructElement("dwSpare");
 	}
 
 	/**
 	 * @return CDBORDER_FLAGS_xxx
 	 */
 	public Set<BorderFlag> getBorderFlags() {
-		return BorderFlag.valuesOf(getData().getShort(getData().position() + 18));
+		return BorderFlag.valuesOf((Short) getStructElement("BorderFlags"));
 	}
 
 	/**
 	 * @return Border Effects Drop Shadow Width
 	 */
-	public short getDropShadowWidth() {
-		return getData().getShort(getData().position() + 20);
+	public int getDropShadowWidth() {
+		return (Integer) getStructElement("DropShadowWidth");
 	}
 
 	/**
 	 * @return Inside Thickness Top
 	 */
-	public short getInnerWidthTop() {
-		return getData().getShort(getData().position() + 22);
+	public int getInnerWidthTop() {
+		return (Integer) getStructElement("InnerWidthTop");
 	}
 
 	/**
 	 * @return Inside Thickness Left
 	 */
-	public short getInnerWidthLeft() {
-		return getData().getShort(getData().position() + 24);
+	public int getInnerWidthLeft() {
+		return (Integer) getStructElement("InnerWidthLeft");
 	}
 
 	/**
 	 * @return Inside Thickness Bottom
 	 */
-	public short getInnerWidthBottom() {
-		return getData().getShort(getData().position() + 26);
+	public int getInnerWidthBottom() {
+		return (Integer) getStructElement("InnerWidthBottom");
 	}
 
 	/**
 	 * @return Inside Thickness Right
 	 */
-	public short getInnerWidthRight() {
-		return getData().getShort(getData().position() + 28);
+	public int getInnerWidthRight() {
+		return (Integer) getStructElement("InnerWidthRight");
 	}
 
 	/**
 	 * @return Outside Thickness Top
 	 */
-	public short getOuterWidthTop() {
-		return getData().getShort(getData().position() + 30);
+	public int getOuterWidthTop() {
+		return (Integer) getStructElement("OuterWidthTop");
 	}
 
 	/**
 	 * @return Outside Thickness Left
 	 */
-	public short getOuterWidthLeft() {
-		return getData().getShort(getData().position() + 32);
+	public int getOuterWidthLeft() {
+		return (Integer) getStructElement("OuterWidthLeft");
 	}
 
 	/**
 	 * @return Outside Thickness Bottom
 	 */
-	public short getOuterWidthBottom() {
-		return getData().getShort(getData().position() + 34);
+	public int getOuterWidthBottom() {
+		return (Integer) getStructElement("OuterWidthBottom");
 	}
 
 	/**
 	 * @return Outside Thickness Right
 	 */
-	public short getOuterWidthRight() {
-		return getData().getShort(getData().position() + 36);
+	public int getOuterWidthRight() {
+		return (Integer) getStructElement("OuterWidthRight");
 	}
 
 	/**
 	 * @return Border Color
 	 */
 	public COLOR_VALUE getColor() {
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 38);
-		data.limit(data.position() + 6);
-		return new COLOR_VALUE(data);
+		return (COLOR_VALUE) getStructElement("Color");
 	}
 
 	public short[] getSpares() {
-		short[] result = new short[5];
-		ByteBuffer data = getData().duplicate();
-		data.order(ByteOrder.LITTLE_ENDIAN);
-		data.position(data.position() + 44);
-		data.limit(data.position() + 10);
-		for (int i = 0; i < 5; i++) {
-			result[i] = data.getShort();
-		}
-		return result;
+		return (short[]) getStructElement("wSpares");
 	}
 }

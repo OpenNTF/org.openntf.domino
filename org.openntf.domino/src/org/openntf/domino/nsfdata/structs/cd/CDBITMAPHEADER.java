@@ -165,12 +165,4 @@ public class CDBITMAPHEADER extends CDRecord {
 	public int getPatternCount() {
 		return (Integer) getStructElement("PatternCount");
 	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ", Dest=" + getDest() + ", Crop=" + getCrop() + ", Flags=" + getFlags() + ", Width="
-				+ getWidth() + ", Height=" + getHeight() + ", BitsPerPixel=" + getBitsPerPixel() + ", SamplesPerPixel="
-				+ getSamplesPerPixel() + ", SegmentCount=" + getSegmentCount() + ", ColorCount: " + getColorCount() + ", PatternCount="
-				+ getPatternCount() + "]";
-	}
 }

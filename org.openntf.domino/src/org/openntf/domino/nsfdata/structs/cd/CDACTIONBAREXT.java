@@ -248,21 +248,11 @@ public class CDACTIONBAREXT extends CDRecord {
 	 * @return Leaving many spares for future mouse down/ mouse over colors and whatever else we want
 	 */
 	public int[] getSpare() {
-		int[] result = new int[12];
-		Object[] value = (Object[]) getStructElement("Spare");
-		for (int i = 0; i < 12; i++) {
-			result[i] = (Integer) value[i];
-		}
-		return result;
+		return (int[]) getStructElement("Spare");
 	}
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ": BackColor=" + getBackColor() + ", LineColor=" + getLineColor() + ", FontColor="
-				+ getFontColor() + ", ButtonColor=" + getButtonColor() + ", BtnBorderDisplay=" + getBtnBorderDisplay() + ", AppletHeight="
-				+ getAppletHeight() + ", BarBackgroundRepeat=" + getBarBackgroundRepeat() + ", BtnWidthStyle=" + getBtnWidthStyle()
-				+ ", BtnTextJustify=" + getBtnTextJustify() + ", BtnWidthAbsolute=" + getBtnWidthAbsolute() + ", BtnInternalMargin="
-				+ getBtnInternalMargin() + ", Flags=" + getFlags() + ", BarFontId=" + getBarFontId() + ", BarHeight=" + getBarHeight()
-				+ "]";
+		return buildDebugString();
 	}
 }

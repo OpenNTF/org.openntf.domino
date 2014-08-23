@@ -207,10 +207,4 @@ public class CDBAR extends CDRecord {
 		data.limit(data.position() + length);
 		return ODSUtils.fromLMBCS(data);
 	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ": Flags=" + getFlags() + ", FontID=" + getFontId() + ", Color=" + getColor()
-				+ ", Caption=" + getCaption() + "]";
-	}
 }

@@ -3,7 +3,6 @@ package org.openntf.domino.nsfdata.structs.cd;
 import java.awt.Color;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Arrays;
 
 import org.openntf.domino.nsfdata.structs.SIG;
 
@@ -19,6 +18,7 @@ public class CDCOLORTABLE extends CDRecord {
 	}
 
 	public Color[] getColors() {
+		// This doesn't fit into the usual pattern
 		int count = getDataLength() / 3;
 		Color[] result = new Color[count];
 		ByteBuffer data = getData().duplicate();
@@ -30,10 +30,5 @@ public class CDCOLORTABLE extends CDRecord {
 			result[i] = new Color(r, g, b);
 		}
 		return result;
-	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ", Colors: " + Arrays.asList(getColors()) + "]";
 	}
 }

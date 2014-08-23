@@ -5,7 +5,6 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.openntf.domino.nsfdata.structs.FONTID;
-import org.openntf.domino.nsfdata.structs.ODSUtils;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -103,54 +102,54 @@ public class CDBUTTON extends CDRecord {
 		}
 	}
 
+	static {
+		addFixed("Flags", Short.class);
+		addFixedUpgrade("Width", Short.class);
+		addFixedUpgrade("Height", Short.class);
+		addFixedUpgrade("Lines", Short.class);
+		addFixed("FontID", FONTID.class);
+
+		addVariableString("Text", "getTextLen");
+	}
+
 	public CDBUTTON(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
 	}
 
 	public Set<Flag> getFlags() {
-		return Flag.valuesOf(getData().getShort(getData().position() + 0));
+		return Flag.valuesOf((Short) getStructElement("Flags"));
 	}
 
 	/**
 	 * @return The width of the button in TWIPS (see the symbolic definition for ONEINCH for more information).
 	 */
 	public int getWidth() {
-		return getData().getShort(getData().position() + 2) & 0xFFFF;
+		return (Integer) getStructElement("Width");
 	}
 
 	/**
 	 * Reserved. Should be set to NULL.
 	 */
 	public int getHeight() {
-		return getData().getShort(getData().position() + 4) & 0xFFFF;
+		return (Integer) getStructElement("Height");
 	}
 
 	/**
 	 * @return The maximum number of lines of text to use to display the button text.
 	 */
 	public int getLines() {
-		return getData().getShort(getData().position() + 6) & 0xFFFF;
+		return (Integer) getStructElement("Lines");
 	}
 
 	public FONTID getFontId() {
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + 8);
-		data.limit(data.position() + FONTID.SIZE);
-		return new FONTID(data);
+		return (FONTID) getStructElement("FontID");
+	}
+
+	public int getTextLen() {
+		return getDataLength() - 8 - FONTID.SIZE;
 	}
 
 	public String getText() {
-		int length = getDataLength() - 8 - FONTID.SIZE;
-
-		ByteBuffer data = getData().duplicate();
-		data.position(data.position() + FONTID.SIZE + 8);
-		data.limit(data.position() + length);
-		return ODSUtils.fromLMBCS(data);
-	}
-
-	@Override
-	public String toString() {
-		return "[" + getClass().getSimpleName() + ": Flags=" + getFlags() + ", Width=" + getWidth() + ", Height=" + getHeight()
-				+ ", Lines=" + getLines() + ", FontID=" + getFontId() + ", Text=" + getText() + "]";
+		return (String) getStructElement("Text");
 	}
 }
