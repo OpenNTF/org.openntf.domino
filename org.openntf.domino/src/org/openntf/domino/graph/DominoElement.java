@@ -282,20 +282,24 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	@Override
 	public <T> T getProperty(final String propertyName, final Class<?> T) {
 		Object result = null;
+		CharSequence key = new CaseInsensitiveString(propertyName);
 		Map<CharSequence, Serializable> props = getProps();
 		// synchronized (props) {
-		result = props.get(propertyName);
+		result = props.get(key);
 		if (result == null) {
+			//			if ("PROGNAME".equalsIgnoreCase(propertyName)) {
+			//				System.out.println("DEBUG: " + propertyName + " getting from Document");
+			//			}
 			try {
 				Document doc = getRawDocument();
 				result = doc.getItemValue(propertyName, T);
 				if (result == null) {
 					synchronized (props) {
-						props.put(propertyName, Null.INSTANCE);
+						props.put(key, Null.INSTANCE);
 					}
 				} else if (result instanceof Serializable) {
 					synchronized (props) {
-						props.put(propertyName, (Serializable) result);
+						props.put(key, (Serializable) result);
 					}
 				} else {
 					log_.log(Level.WARNING, "Got a value from the document but it's not Serializable. It's a "
@@ -309,31 +313,42 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 		} else {
 			if (result != null && !T.isAssignableFrom(result.getClass())) {
+				//				if ("PROGNAME".equalsIgnoreCase(propertyName)) {
+				//					System.out.println("DEBUG: " + propertyName + " result is a " + result.getClass().getSimpleName());
+				//				}
 				// System.out.println("AH! We have the wrong type in the property cache! How did this happen?");
 				try {
 					Document doc = getRawDocument();
 					result = doc.getItemValue(propertyName, T);
 					if (result == null) {
 						synchronized (props) {
-							props.put(propertyName, Null.INSTANCE);
+							props.put(key, Null.INSTANCE);
 						}
 					} else if (result instanceof Serializable) {
 						synchronized (props) {
-							props.put(propertyName, (Serializable) result);
+							props.put(key, (Serializable) result);
 						}
 					}
 				} catch (Exception e) {
 					log_.log(Level.WARNING, "Exception occured attempting to get value from document for " + propertyName
 							+ " but we have a value in the cache.", e);
 				}
+			} else {
+				//				if ("PROGNAME".equalsIgnoreCase(propertyName)) {
+				//					System.out.println("DEBUG: " + propertyName + " result is a " + result.getClass().getSimpleName());
+				//				}
 			}
 		}
 		// }
 		//		if (result != null && !T.isAssignableFrom(result.getClass())) {
 		//			log_.log(Level.WARNING, "Returning a " + result.getClass().getName() + " when we asked for a " + T.getName());
 		//		}
-		if (result == Null.INSTANCE)
+		if (result == Null.INSTANCE) {
 			result = null;
+		}
+		//		if ("PROGNAME".equalsIgnoreCase(propertyName)) {
+		//			System.out.println("DEBUG: " + propertyName + " result is a " + (result == null ? "null" : result.getClass().getSimpleName()));
+		//		}
 		return (T) result;
 	}
 
@@ -454,6 +469,9 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 
 	@Override
 	public void setProperty(final String propertyName, final java.lang.Object value) {
+		//		if ("PROGNAME".equalsIgnoreCase(propertyName)) {
+		//			System.out.println("DEBUG Setting " + propertyName);
+		//		}
 		boolean isEdgeCollection = false;
 		boolean isEqual = false;
 		CharSequence key = new CaseInsensitiveString(propertyName);
@@ -461,6 +479,7 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		Object old = null;
 		if (props != null) {
 			if (propertyName != null) {
+
 				synchronized (propKeys_) {
 					propKeys_.add(propertyName);
 				}
@@ -481,8 +500,13 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 				}
 				boolean changeMade = false;
 				synchronized (props) {
+
 					if (value instanceof Serializable) {
 						if (current == null || Null.INSTANCE.equals(current)) {
+							//							if ("PROGNAME".equalsIgnoreCase(propertyName)) {
+							//								System.out.println("DEBUG: " + propertyName + " checking FROM NULL values from " + String.valueOf(current)
+							//										+ " to " + String.valueOf(value));
+							//							}
 							getParent().startTransaction(this);
 							old = props.put(key, (Serializable) value);
 							synchronized (changedProperties_) {
@@ -494,6 +518,11 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 							synchronized (changedProperties_) {
 								changedProperties_.add(propertyName);
 							}
+						} else {
+							//							if ("PROGNAME".equalsIgnoreCase(propertyName)) {
+							//								System.out.println("DEBUG: " + propertyName + " equal?? values match from " + String.valueOf(current)
+							//										+ " to " + String.valueOf(value));
+							//							}
 						}
 					} else if (value == null) {
 						if (!current.equals(Null.INSTANCE)) {
@@ -504,6 +533,10 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 							}
 						}
 					} else {
+						//						if ("PROGNAME".equalsIgnoreCase(propertyName)) {
+						//							System.out.println("DEBUG: " + propertyName + " values from " + String.valueOf(current) + " to "
+						//									+ String.valueOf(value));
+						//						}
 						log_.log(Level.WARNING, "Attempted to set property " + propertyName + " to a non-serializable value: "
 								+ value.getClass().getName());
 					}

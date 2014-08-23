@@ -2601,7 +2601,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 
 	@Override
 	public boolean isIndexed() {
-		return getDocument().hasItem("$Collation");
+		return getDocument().hasItem("$Collection");
 	}
 
 	/*
@@ -2773,6 +2773,7 @@ public class View extends Base<org.openntf.domino.View, lotus.domino.View, Datab
 		columnInfoMap_ = null;
 		columnMap_ = null;
 	}
+
 	@Override
 	public Document getFirstDocumentByKey(final Object key) {
 		return this.getDocumentByKey(key);
