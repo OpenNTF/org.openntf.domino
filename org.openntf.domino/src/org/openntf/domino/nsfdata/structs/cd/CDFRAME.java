@@ -9,7 +9,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
 /**
  * Frame Name String and Target Name string follow the fixed portion of this CD Record. The strings are not null terminated. (fsods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 5.0.1
  *
  */

@@ -19,6 +19,8 @@ Import-Package: com.ibm.designer.runtime.domino.adapter,
  org.osgi.framework;version="1.3.0"
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openntf.domino.xots,
+ org.openntf.domino.xots.annotations,
+ org.openntf.domino.xots.events,
  org.openntf.domino.xsp,
  org.openntf.domino.xsp.adapter,
  org.openntf.domino.xsp.components,

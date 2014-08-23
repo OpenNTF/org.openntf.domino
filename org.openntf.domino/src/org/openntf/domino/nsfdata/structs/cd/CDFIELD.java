@@ -15,8 +15,6 @@ import org.openntf.domino.nsfdata.structs.TFMT;
 /**
  * This defines the structure of a CDFIELD record in the $Body item of a form note. Each CDFIELD record defines the attributes of one field
  * in the form. (editods.h)
- * 
- * @author jgallagher
  *
  */
 public class CDFIELD extends CDRecord {

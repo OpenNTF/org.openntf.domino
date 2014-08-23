@@ -13,8 +13,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * The designer of a form or view may define custom actions associated with that form or view. Actions may be presented to the user as
  * buttons on the action button bar or as options on the "Actions" menu. (actods.h)
  * 
- * @author jgallagher
- * @since Lotus Notes 4.5
+ * @since Lotus Notes/Domino 4.5
  *
  */
 public class CDACTION extends CDRecord {

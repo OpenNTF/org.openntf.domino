@@ -10,8 +10,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * This defines the structure of the document information field in a form note. A document information field is an item with name $INFO
  * (ITEM_NAME_DOCUMENT) and data type TYPE_COMPOSITE. The document information field defines attributes of documents created with that form.
  * (editods.h)
- * 
- * @author jgallagher
  *
  */
 public class CDDOCUMENT extends CDRecord {

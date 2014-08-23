@@ -8,7 +8,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * Contains collapsible section, button type, style sheet or field limit information for Notes/Domino 6. A CD record (CDBAR, CDBUTTON,
  * CDBORDERINFO, CDFIELDHINT, etc.) may be followed by a CDDATAFLAGS structure. (editods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 6.0
  */
 public class CDDATAFLAGS extends CDRecord {

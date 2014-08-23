@@ -6,8 +6,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
  * This structure specifies the cell of a table. Use this structure when accessing a table in a rich text field. (editods.h)
- * 
- * @author jgallagher
  *
  */
 public class CDTABLECELL extends CDRecord {

@@ -6,8 +6,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
  * This structure specifies the end of a table. Use this structure when accessing a table in a rich text field.
- * 
- * @author jgallagher
  *
  */
 public class CDTABLEEND extends CDRecord {

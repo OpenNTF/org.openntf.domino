@@ -9,8 +9,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
 /**
  * This structure implements a document link in a rich text field. It contains an index into a Doc Link Reference List. A Doc Link Reference
  * (a NOTELINK structure) contains all the information necessary to open the specified document from any database on any server. (editods.h)
- * 
- * @author jgallagher
  *
  */
 public class CDLINK2 extends CDRecord {

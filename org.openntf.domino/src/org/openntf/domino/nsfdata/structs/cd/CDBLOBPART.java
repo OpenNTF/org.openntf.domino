@@ -8,8 +8,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * This CD record is used in conjunction with CD record CDEVENT. If a CDEVENT record has an ActionType of ACTION_TYPE_JAVASCRIPT then
  * CDBLOBPART contains the JavaScript code. There may be more then one CDBLOBPART record for each CDEVENT. Therefore it may be necessary to
  * loop thorough all of the CDBLOBPART records to read in the complete JavaScript code. (editods.h)
- * 
- * @author jgallagher
  *
  */
 public class CDBLOBPART extends CDRecord {

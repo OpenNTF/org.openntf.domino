@@ -11,7 +11,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * This CD record defines a resource within a database. There may be many resources defined within a particular database. A resource can be
  * an image, an applet, a shared field or a script library. (rsrcods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 5.0
  *
  */

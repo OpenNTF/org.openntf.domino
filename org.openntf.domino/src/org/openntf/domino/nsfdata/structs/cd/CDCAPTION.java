@@ -10,7 +10,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * This CD record defines the properties of a caption for a grapic [sic] record. The actual caption text follows the fixed part of the
  * record.
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 5.0
  *
  */

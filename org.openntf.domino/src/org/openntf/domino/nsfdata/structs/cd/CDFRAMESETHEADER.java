@@ -7,7 +7,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
 /**
  * Beginning header record to both a CDFRAMESET and CDFRAME record. (fsods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 5.0.1
  *
  */

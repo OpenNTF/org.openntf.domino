@@ -12,7 +12,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * A FRAMESETLENGTH structure will follow depending on the value found in either RowQty or ColQty. There could be multiple FRAMESETLENGTH
  * structures defining the RowQty and ColQty values. (fsods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 5.0.1
  *
  */

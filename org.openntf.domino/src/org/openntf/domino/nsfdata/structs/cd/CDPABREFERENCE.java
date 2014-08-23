@@ -7,8 +7,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
 /**
  * This structure is placed at the start of each paragraph in a rich-text field, and specifies which CDPABDEFINITION is used as the format
  * for the paragraph. (editods.h)
- * 
- * @author jgallagher
  *
  */
 public class CDPABREFERENCE extends CDRecord {

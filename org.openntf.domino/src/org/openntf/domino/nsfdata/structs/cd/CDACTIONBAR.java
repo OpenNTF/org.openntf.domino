@@ -10,8 +10,7 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * The designer of a form or view may define custom actions for that form or view. The attributes for the button bar are stored in the
  * CDACTIONBAR record in the $ACTIONS and/or $V5ACTIONS item for the design note describing the form or view. (actods.h)
  * 
- * @author jgallagher
- * @since Lotus Notes 4.5
+ * @since Lotus Notes/Domino 4.5
  */
 public class CDACTIONBAR extends CDRecord {
 	public static enum LineStyle {

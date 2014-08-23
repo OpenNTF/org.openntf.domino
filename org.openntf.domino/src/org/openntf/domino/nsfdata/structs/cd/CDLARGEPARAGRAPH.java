@@ -9,7 +9,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * smaller paragraphs which are bracketed by a CDLARGEPARAGRAPH record with its Flags member set to CDLARGEPARAGRAPH_BEGIN and a
  * CDLARGEPARAGRAPH record with its Flags member set to CDLARGEPARAGRAPH_END. (editods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 6.0
  */
 public class CDLARGEPARAGRAPH extends CDRecord {

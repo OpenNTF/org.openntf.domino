@@ -13,7 +13,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * This CD record defines the Action Bar attributes. It is an extension of the CDACTIONBAR record. It is found within a $V5ACTIONS item and
  * is preceded by a CDACTIONBAR record. (actods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 5.0
  */
 public class CDACTIONBAREXT extends CDRecord {

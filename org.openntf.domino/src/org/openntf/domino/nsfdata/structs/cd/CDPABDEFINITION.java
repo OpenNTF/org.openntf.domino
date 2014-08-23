@@ -8,8 +8,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
 /**
  * This structure specifies a format for paragraphs in a rich-text field. There may be more than one paragraph using the same paragraph
  * format, but there may be no more than one CDPABDEFINITION with the same ID in a rich-text field. (editods.h)
- * 
- * @author jgallagher
  *
  */
 public class CDPABDEFINITION extends CDRecord {

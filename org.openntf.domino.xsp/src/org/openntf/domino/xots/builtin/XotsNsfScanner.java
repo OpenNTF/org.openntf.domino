@@ -18,11 +18,11 @@ import org.openntf.domino.xots.annotations.Schedule;
 
 import com.ibm.designer.runtime.domino.adapter.HttpService;
 import com.ibm.designer.runtime.domino.adapter.LCDEnvironment;
-import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 
 @Schedule(frequency = 4, timeunit = TimeUnit.HOURS)
 @Persistent
 public class XotsNsfScanner extends XotsBaseTasklet implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	private final boolean TRACE = true;
 	private final String serverName_;
@@ -78,7 +78,7 @@ public class XotsNsfScanner extends XotsBaseTasklet implements Serializable {
 		Document iconDoc = icon.getDocument();
 		if (iconDoc.hasItem("$Xots")) {
 			String[] xotsClassNames = iconDoc.getItemValue("$Xots", String[].class);
-			NSFComponentModule module = (NSFComponentModule) getXotsService().getComponentModule("/" + db.getFilePath());
+			getXotsService().getComponentModule("/" + db.getFilePath());
 			getXotsService().loadXotsTasklets("/" + db.getFilePath(), xotsClassNames);
 		}
 

@@ -9,7 +9,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * This CD record provides additional table properties, expanding the information provided in CDTABLEBEGIN. It will only be recognized in
  * Domino versions 5.0 and greater. This record will be ignored in pre 5.0 versions. (editods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 5.0
  *
  */

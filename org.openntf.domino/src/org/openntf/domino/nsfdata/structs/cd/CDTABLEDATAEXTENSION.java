@@ -8,7 +8,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
 /**
  * This record was added because the Pre Table Begin Record can not be expanded and R6 required more data to be stored. (editods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 6.0
  *
  */

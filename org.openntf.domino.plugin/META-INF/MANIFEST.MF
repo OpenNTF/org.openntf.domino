@@ -107,7 +107,7 @@ Bundle-ClassPath: ext/jsr305.jar,
  ext/gremlin-java-2.4.0.jar,
  ext/pipes-2.4.0.jar,
  ext/org.openntf.rxjava.jar,
- .,
  core/,
- formula/
+ formula/,
+ plugin/
 

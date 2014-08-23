@@ -7,7 +7,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
 /**
  * This CD record may further define attributes within a CDFIELD such as tab order.
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 5.0
  */
 public class CDEMBEDDEDCTL extends CDRecord {

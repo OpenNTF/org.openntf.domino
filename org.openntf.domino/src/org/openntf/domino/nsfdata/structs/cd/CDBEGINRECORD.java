@@ -8,7 +8,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
  * This CD record defines the beginning of a series of CD Records. Not all CD records are enclosed within a CDBEGINRECORD/CDENDRECORD
  * combination. (editods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 5.0
  *
  */

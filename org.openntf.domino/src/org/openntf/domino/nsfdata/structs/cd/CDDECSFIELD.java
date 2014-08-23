@@ -10,7 +10,6 @@ import org.openntf.domino.nsfdata.structs.SIG;
 /**
  * This CD Record gives information pertaining to data connection resource information in a field or form. (editods.h)
  * 
- * @author jgallagher
  * @since Lotus Notes/Domino 6.0
  */
 public class CDDECSFIELD extends CDRecord {
