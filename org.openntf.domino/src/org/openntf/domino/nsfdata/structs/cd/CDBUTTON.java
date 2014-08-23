@@ -132,7 +132,7 @@ public class CDBUTTON extends CDRecord {
 		return getData().getShort(getData().position() + 6) & 0xFFFF;
 	}
 
-	public FONTID getFontID() {
+	public FONTID getFontId() {
 		ByteBuffer data = getData().duplicate();
 		data.position(data.position() + 8);
 		data.limit(data.position() + FONTID.SIZE);
@@ -151,6 +151,6 @@ public class CDBUTTON extends CDRecord {
 	@Override
 	public String toString() {
 		return "[" + getClass().getSimpleName() + ": Flags=" + getFlags() + ", Width=" + getWidth() + ", Height=" + getHeight()
-				+ ", Lines=" + getLines() + ", FontID=" + getFontID() + ", Text=" + getText() + "]";
+				+ ", Lines=" + getLines() + ", FontID=" + getFontId() + ", Text=" + getText() + "]";
 	}
 }

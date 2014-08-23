@@ -11,6 +11,7 @@ import java.nio.ByteBuffer;
  *
  */
 public class COLOR_VALUE extends AbstractStruct {
+	public static final int SIZE = 6;
 
 	public COLOR_VALUE(final ByteBuffer data) {
 		super(data);
@@ -39,7 +40,7 @@ public class COLOR_VALUE extends AbstractStruct {
 
 	@Override
 	public int getStructSize() {
-		return 6;
+		return SIZE;
 	}
 
 	@Override

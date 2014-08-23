@@ -176,7 +176,7 @@ public class CDBAR extends CDRecord {
 	/**
 	 * Specifies the font, size, and color of the bar title.
 	 */
-	public FONTID getFontID() {
+	public FONTID getFontId() {
 		ByteBuffer data = getData().duplicate();
 		data.position(data.position() + 4);
 		data.limit(data.position() + FONTID.SIZE);
@@ -207,7 +207,7 @@ public class CDBAR extends CDRecord {
 
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ": Flags=" + getFlags() + ", FontID=" + getFontID() + ", Color=" + getColor()
+		return "[" + getClass().getSimpleName() + ": Flags=" + getFlags() + ", FontID=" + getFontId() + ", Color=" + getColor()
 				+ ", Caption=" + getCaption() + "]";
 	}
 }
