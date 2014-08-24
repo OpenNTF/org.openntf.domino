@@ -15,8 +15,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.openntf.domino.nsfdata.NSFDatabase;
 import org.openntf.domino.nsfdata.NSFNote;
 import org.openntf.domino.utils.xml.XMLDocument;
-import org.openntf.domino.utils.xml.XMLNode;
 import org.xml.sax.SAXException;
+
+import com.ibm.commons.util.io.StreamUtil;
 
 public class DXLDatabase implements Serializable, NSFDatabase {
 	private static final long serialVersionUID = 1L;
@@ -27,18 +28,24 @@ public class DXLDatabase implements Serializable, NSFDatabase {
 	private transient Map<String, NSFNote> notesByUniversalId_ = new TreeMap<String, NSFNote>();
 
 	public DXLDatabase(final InputStream is) throws IOException, SAXException, ParserConfigurationException {
+		String fullXML = StreamUtil.readString(is);
 
-		// TODO Redo this with SAX, because holy crap it is slow currently
-		XMLDocument xml = new XMLDocument();
-		xml.loadInputStream(is);
+		int noteStart = fullXML.indexOf("<note ");
 
-		for (XMLNode noteNode : xml.selectNodes("/database/note")) {
+		while (noteStart > -1) {
+			int noteEnd = fullXML.indexOf("</note>", noteStart + 1);
+
+			String noteXML = fullXML.substring(noteStart, noteEnd + 7);
+			XMLDocument xml = new XMLDocument();
+			xml.loadString(noteXML);
 			if (DEBUG)
-				System.out.println("want to add note of class " + noteNode.getAttribute("class"));
-			DXLNote note = DXLNote.create(noteNode);
+				System.out.println("want to add note of class " + xml.getDocumentElement().getAttribute("class"));
+			DXLNote note = DXLNote.create(xml.getDocumentElement());
 			notes_.add(note);
 			notesByNoteId_.put(note.getNoteId(), note);
 			notesByUniversalId_.put(note.getUniversalId(), note);
+
+			noteStart = fullXML.indexOf("<note ", noteEnd);
 		}
 	}
 
