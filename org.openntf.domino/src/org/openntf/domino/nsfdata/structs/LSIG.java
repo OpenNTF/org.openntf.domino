@@ -12,7 +12,7 @@ public class LSIG extends SIG {
 
 	public static final int SIZE = 6;
 
-	public LSIG(final CDSignature signature, final int length) {
+	public LSIG(final CDSignature signature, final long length) {
 		super(signature, length);
 	}
 

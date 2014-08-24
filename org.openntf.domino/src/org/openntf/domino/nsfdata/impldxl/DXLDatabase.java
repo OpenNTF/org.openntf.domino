@@ -1,7 +1,11 @@
 package org.openntf.domino.nsfdata.impldxl;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Collections;
@@ -17,8 +21,6 @@ import org.openntf.domino.nsfdata.NSFNote;
 import org.openntf.domino.utils.xml.XMLDocument;
 import org.xml.sax.SAXException;
 
-import com.ibm.commons.util.io.StreamUtil;
-
 public class DXLDatabase implements Serializable, NSFDatabase {
 	private static final long serialVersionUID = 1L;
 	private static final boolean DEBUG = false;
@@ -28,24 +30,46 @@ public class DXLDatabase implements Serializable, NSFDatabase {
 	private transient Map<String, NSFNote> notesByUniversalId_ = new TreeMap<String, NSFNote>();
 
 	public DXLDatabase(final InputStream is) throws IOException, SAXException, ParserConfigurationException {
-		String fullXML = StreamUtil.readString(is);
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
-		int noteStart = fullXML.indexOf("<note ");
+		boolean inNote = false;
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		while (reader.ready()) {
+			String aLine = reader.readLine();
 
-		while (noteStart > -1) {
-			int noteEnd = fullXML.indexOf("</note>", noteStart + 1);
+			// Assume that we don't have multiple notes per line, but one may end and another may start
+			int startIndex = aLine.indexOf("<note ");
+			int endIndex = aLine.indexOf("</note>");
 
-			String noteXML = fullXML.substring(noteStart, noteEnd + 7);
-			XMLDocument xml = new XMLDocument();
-			xml.loadString(noteXML);
-			if (DEBUG)
-				System.out.println("want to add note of class " + xml.getDocumentElement().getAttribute("class"));
-			DXLNote note = DXLNote.create(xml.getDocumentElement());
-			notes_.add(note);
-			notesByNoteId_.put(note.getNoteId(), note);
-			notesByUniversalId_.put(note.getUniversalId(), note);
+			// We may be in a note
+			if (inNote) {
+				String remainder = aLine.substring(startIndex > -1 ? startIndex : 0, endIndex > -1 ? (endIndex + 7) : aLine.length());
+				bos.write(remainder.getBytes());
+			}
 
-			noteStart = fullXML.indexOf("<note ", noteEnd);
+			// See if we ended
+			if (endIndex > -1) {
+				ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+				XMLDocument xml = new XMLDocument();
+				xml.loadInputStream(bis);
+
+				if (DEBUG)
+					System.out.println("want to add note of class " + xml.getDocumentElement().getAttribute("class"));
+				DXLNote note = DXLNote.create(xml.getDocumentElement());
+				notes_.add(note);
+				notesByNoteId_.put(note.getNoteId(), note);
+				notesByUniversalId_.put(note.getUniversalId(), note);
+
+				inNote = false;
+			}
+
+			if (startIndex > -1) {
+				String outputLine = aLine.substring(startIndex, endIndex > -1 ? (endIndex + 7) : aLine.length());
+				bos.reset();
+				bos.write(outputLine.getBytes());
+
+				inNote = true;
+			}
 		}
 	}
 

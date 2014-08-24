@@ -12,7 +12,7 @@ public class DXLItemObjectFile extends DXLItemObject {
 	private static final long serialVersionUID = 1L;
 
 	public static enum HostType {
-		MSDOS, BYTEARRAYPAGE, BYTEARRAYEXT
+		MSDOS, BYTEARRAYPAGE, BYTEARRAYEXT, STREAM
 	}
 
 	public static enum CompressionType {

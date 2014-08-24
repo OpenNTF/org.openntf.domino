@@ -63,7 +63,7 @@ public class CDFONTTABLE extends CDRecord {
 		}
 
 		@Override
-		public int getStructSize() {
+		public long getStructSize() {
 			return SIZE;
 		}
 

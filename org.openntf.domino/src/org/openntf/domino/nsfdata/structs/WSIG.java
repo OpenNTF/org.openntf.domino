@@ -12,7 +12,7 @@ public class WSIG extends SIG {
 
 	public static final int SIZE = 4;
 
-	public WSIG(final CDSignature signature, final short length) {
+	public WSIG(final CDSignature signature, final int length) {
 		super(signature, length);
 	}
 

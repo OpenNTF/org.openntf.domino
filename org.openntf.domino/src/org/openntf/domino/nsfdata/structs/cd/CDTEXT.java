@@ -30,7 +30,7 @@ public class CDTEXT extends CDRecord {
 	}
 
 	public int getTextLength() {
-		return getDataLength() - 4;
+		return (int) (getDataLength() - 4);
 	}
 
 	@Override

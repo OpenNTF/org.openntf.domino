@@ -201,7 +201,7 @@ public class CDBAR extends CDRecord {
 		// Note: this can't use the standard methods because of the bizarre Color value above
 		int preceding = getFlags().contains(Flag.HAS_COLOR) ? 2 : 0;
 
-		int length = getDataLength() - 4 - FONTID.SIZE - preceding;
+		int length = (int) (getDataLength() - 4 - FONTID.SIZE - preceding);
 		ByteBuffer data = getData().duplicate();
 		data.position(data.position() + FONTID.SIZE + 4 + preceding);
 		data.limit(data.position() + length);

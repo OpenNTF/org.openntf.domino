@@ -33,7 +33,7 @@ public class CDPABHIDE extends CDRecord {
 	}
 
 	public int getFormulaLength() {
-		return getDataLength() - 10;
+		return (int) (getDataLength() - 10);
 	}
 
 	public NSFCompiledFormula getFormula() {

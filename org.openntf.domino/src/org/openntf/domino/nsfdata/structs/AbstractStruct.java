@@ -29,7 +29,7 @@ public abstract class AbstractStruct implements Externalizable {
 		return data_;
 	}
 
-	public abstract int getStructSize();
+	public abstract long getStructSize();
 
 	@Override
 	public String toString() {
@@ -243,8 +243,19 @@ public abstract class AbstractStruct implements Externalizable {
 		// Now see if it's one of the variable-length bits
 		for (VariableElement element : variableElements_.get(getClass().getName())) {
 			try {
-				Method method = getClass().getDeclaredMethod(element.lengthMethodName);
-				int length = (Integer) method.invoke(this);
+				int length = -1;
+				boolean found = false;
+				// The length method name could either be the name of a fixed variable or a method
+				for (FixedElement fixElem : fixedElements_.get(getClass().getName())) {
+					if (StringUtil.equals(fixElem.name, element.lengthMethodName)) {
+						length = (Integer) getStructElement(element.lengthMethodName);
+						found = true;
+					}
+				}
+				if (!found) {
+					Method method = getClass().getDeclaredMethod(element.lengthMethodName);
+					length = (Integer) method.invoke(this);
+				}
 				int size = String.class.equals(element.dataClass) ? 1 : _getSize(element.dataClass);
 
 				// LMBCS strings are always even length

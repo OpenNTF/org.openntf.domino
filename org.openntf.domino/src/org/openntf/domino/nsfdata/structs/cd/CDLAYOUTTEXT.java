@@ -111,7 +111,7 @@ public class CDLAYOUTTEXT extends CDRecord {
 	}
 
 	public int getTextSize() {
-		return getDataLength() - ELEMENTHEADER.SIZE - 20;
+		return (int) (getDataLength() - ELEMENTHEADER.SIZE - 20);
 	}
 
 	/**

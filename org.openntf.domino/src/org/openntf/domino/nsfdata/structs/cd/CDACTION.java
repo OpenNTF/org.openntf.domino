@@ -178,9 +178,9 @@ public class CDACTION extends CDRecord {
 		addFixedUnsigned("FormulaLen", Short.class);
 		addFixed("ShareId", Integer.class);
 
-		addVariableString("Title", "getTitleLen");
+		addVariableString("Title", "TitleLen");
 		addVariableData("ActionData", "getActionDataLen");
-		addVariableData("Formula", "getFormulaLen");
+		addVariableData("Formula", "FormulaLen");
 	}
 
 	protected CDACTION(final SIG signature, final ByteBuffer data) {
@@ -236,7 +236,8 @@ public class CDACTION extends CDRecord {
 
 	public int getActionDataLen() {
 		// This is an oddball one, since there's no ActionDataLen - it's implied by the total length minus everything else
-		return getSignature().getLength() - LSIG.SIZE - 16 - getTitleLen() - getFormulaLen();
+		int extra = getTitleLen() % 2 + getFormulaLen() % 2;
+		return (int) (getSignature().getLength() - LSIG.SIZE - 16 - getTitleLen() - getFormulaLen() - extra);
 	}
 
 	public byte[] getActionData() {

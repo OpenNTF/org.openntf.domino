@@ -127,7 +127,7 @@ public class CDLINK2 extends CDRecord {
 
 	@Override
 	public int getExtraLength() {
-		return getDataLength() % 2;
+		return (int) (getDataLength() % 2);
 	}
 
 	@Override

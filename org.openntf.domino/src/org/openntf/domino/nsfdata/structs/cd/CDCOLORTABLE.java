@@ -19,7 +19,7 @@ public class CDCOLORTABLE extends CDRecord {
 
 	public Color[] getColors() {
 		// This doesn't fit into the usual pattern
-		int count = getDataLength() / 3;
+		int count = (int) (getDataLength() / 3);
 		Color[] result = new Color[count];
 		ByteBuffer data = getData().duplicate();
 		data.order(ByteOrder.LITTLE_ENDIAN);

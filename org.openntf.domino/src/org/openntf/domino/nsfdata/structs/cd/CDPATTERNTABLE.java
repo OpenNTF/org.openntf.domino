@@ -22,7 +22,7 @@ public class CDPATTERNTABLE extends CDRecord {
 	}
 
 	public int getPatternCount() {
-		return getDataLength() / 24;
+		return (int) (getDataLength() / 24);
 	}
 
 	public Pattern[] getPatterns() {

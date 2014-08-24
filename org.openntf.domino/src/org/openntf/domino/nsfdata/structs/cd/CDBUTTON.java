@@ -146,7 +146,7 @@ public class CDBUTTON extends CDRecord {
 	}
 
 	public int getTextLen() {
-		return getDataLength() - 8 - FONTID.SIZE;
+		return (int) (getDataLength() - 8 - FONTID.SIZE);
 	}
 
 	public String getText() {

@@ -176,7 +176,9 @@ public class CDRESOURCE extends CDRecord {
 		 * An old (4.6) or new style portfolio. Which gets incorporated into the bookmark bar as a tab, rather than getting opened as a
 		 * database
 		 */
-		PORTFOLIO((short) 21), OUTLINE((short) 22);
+		PORTFOLIO((short) 21), OUTLINE((short) 22),
+
+		NOTFOUND((short) -1);
 
 		private final short value_;
 
@@ -194,7 +196,8 @@ public class CDRESOURCE extends CDRecord {
 					return type;
 				}
 			}
-			throw new IllegalArgumentException("No matching ResourceClass found for type code " + typeCode);
+			return NOTFOUND;
+			//			throw new IllegalArgumentException("No matching ResourceClass found for type code " + typeCode);
 		}
 	}
 

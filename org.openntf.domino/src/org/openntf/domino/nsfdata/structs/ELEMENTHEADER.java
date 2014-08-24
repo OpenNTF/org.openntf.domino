@@ -27,7 +27,7 @@ public class ELEMENTHEADER extends AbstractStruct {
 	}
 
 	@Override
-	public int getStructSize() {
+	public long getStructSize() {
 		return SIZE;
 	}
 

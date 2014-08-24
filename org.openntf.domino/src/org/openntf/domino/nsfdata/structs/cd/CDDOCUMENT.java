@@ -97,7 +97,7 @@ public class CDDOCUMENT extends CDRecord {
 	}
 
 	public int getFieldNameLength() {
-		return getDataLength() - 22 - getInherFieldNameLength();
+		return (int) (getDataLength() - 22 - getInherFieldNameLength());
 	}
 
 	/**
