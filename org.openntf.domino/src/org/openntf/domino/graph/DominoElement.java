@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -632,25 +633,64 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		}
 	}
 
-	@Override
-	public Map<String, Object> toMap(final IDominoProperties[] props) {
+	public static Object toMapValue(final Object value) {
+		Object result = value;
+		if (EnumSet.class.isAssignableFrom(value.getClass())) {
+			System.out.println("DEBUG: Mapping an EnumSet");
+			if (!((EnumSet) value).isEmpty()) {
+				StringBuilder eListing = new StringBuilder();
+				eListing.append('[');
+				for (Object rawEnum : (EnumSet) value) {
+					if (Enum.class.isAssignableFrom(rawEnum.getClass())) {
+						eListing.append(((Enum) rawEnum).name());
+					} else {
+						eListing.append("ERROR: expected Enum was a " + rawEnum.getClass().getName());
+					}
+					eListing.append(',');
+				}
+				eListing.deleteCharAt(eListing.length() - 1);
+				eListing.append(']');
+				result = eListing.toString();
+			} else {
+				result = "";
+			}
+		} else if (Enum.class.isAssignableFrom(value.getClass())) {
+			result = ((Enum) value).name();
+		} else {
+			result = value;
+		}
+		return result;
+	}
+
+	public Map<String, Object> toMap(final IDominoProperties[] props, final byte keyStyle) {
 		Map<String, Object> result = new LinkedHashMap<String, Object>();
 		for (IDominoProperties prop : props) {
+			String mapKey = prop.getName();
+			if (keyStyle == Character.LOWERCASE_LETTER) {
+				mapKey = mapKey.toLowerCase();
+			} else if (keyStyle == Character.UPPERCASE_LETTER) {
+				mapKey = mapKey.toUpperCase();
+			}
 			Object value = getProperty(prop, true);
 			if (value != null) {
-				if (Enum.class.isAssignableFrom(value.getClass())) {
-					result.put(prop.getName(), ((Enum) value).name());
-				} else {
-					result.put(prop.getName(), value);
-				}
+				result.put(mapKey, toMapValue(value));
 			}
 		}
 		return result;
 	}
 
 	@Override
+	public Map<String, Object> toMap(final IDominoProperties[] props) {
+		return toMap(props, (byte) 0);
+	}
+
+	public Map<String, Object> toMap(final Set<IDominoProperties> props, final byte keyStyle) {
+		return toMap(props.toArray(new IDominoProperties[props.size()]), keyStyle);
+	}
+
+	@Override
 	public Map<String, Object> toMap(final Set<IDominoProperties> props) {
-		return toMap(props.toArray(new IDominoProperties[props.size()]));
+		return toMap(props, (byte) 0);
 	}
 
 }
