@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 import org.openntf.domino.Database;
 import org.openntf.domino.Document;
+import org.openntf.domino.types.BigString;
 import org.openntf.domino.types.CaseInsensitiveHashSet;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.types.Null;
@@ -656,6 +657,10 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 			}
 		} else if (Enum.class.isAssignableFrom(value.getClass())) {
 			result = ((Enum) value).name();
+		} else if (CharSequence.class.isAssignableFrom(value.getClass())) {
+			result = ((CharSequence) value).toString();
+		} else if (BigString.class.isAssignableFrom(value.getClass())) {
+			result = ((BigString) value).toString();
 		} else {
 			result = value;
 		}
