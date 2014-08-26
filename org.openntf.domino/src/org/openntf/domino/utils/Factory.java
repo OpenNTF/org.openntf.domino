@@ -102,12 +102,12 @@ public enum Factory {
 						String progpath = System.getProperty("notes.binary");
 						File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
 						if (!iniFile.exists()) {
-							System.out.println("Inifile not found on path: " + progpath);
+							System.out.println("Inifile not found on notes.binary path: " + progpath);
 							progpath = System.getProperty("user.dir");
 							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
 						}
 						if (!iniFile.exists()) {
-							System.out.println("Inifile still not found on path: " + progpath);
+							System.out.println("Inifile still not found on user.dir path: " + progpath);
 							if (progpath.contains("framework")) {
 								progpath = progpath.replace("framework", "");
 								iniFile = new File(progpath + "notes.ini");
@@ -672,7 +672,7 @@ public enum Factory {
 		}
 		if (result == null) {
 			System.out
-					.println("SEVERE: Unable to get default session. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation. If you're running in XPages, check the xsp.properties of your database. If you are running in an Agent, make sure you start with a call to Factory.fromLotus() and pass in your lotus.domino.Session");
+			.println("SEVERE: Unable to get default session. This probably means that you are running in an unsupported configuration or you forgot to set up your context at the start of the operation. If you're running in XPages, check the xsp.properties of your database. If you are running in an Agent, make sure you start with a call to Factory.fromLotus() and pass in your lotus.domino.Session");
 			Throwable t = new Throwable();
 			t.printStackTrace();
 		}
