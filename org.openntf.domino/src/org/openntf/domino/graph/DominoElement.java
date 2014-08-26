@@ -2,7 +2,6 @@ package org.openntf.domino.graph;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -20,6 +19,7 @@ import org.openntf.domino.types.CaseInsensitiveHashSet;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.types.Null;
 import org.openntf.domino.utils.BeanUtils;
+import org.openntf.domino.utils.DominoUtils;
 import org.openntf.domino.utils.TypeUtils;
 
 import com.tinkerpop.blueprints.Element;
@@ -42,12 +42,10 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 			try {
 				setter.invoke(element, localValues);
 				result = true;
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+			} catch (Exception e) {
+				DominoUtils.handleException(e);
+				System.out.println("Unable to invoke " + setter.getName() + " on a " + element.getClass() + " for property: " + prop
+						+ " with a value of " + String.valueOf(value));
 			}
 		} else {
 			if (domProp != null) {
@@ -70,12 +68,9 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		if (getter != null) {
 			try {
 				result = getter.invoke(element, (Object[]) null);
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+			} catch (Exception e) {
+				DominoUtils.handleException(e);
+				System.out.println("Unable to invoke " + getter.getName() + " on a " + element.getClass() + " for property: " + prop);
 			}
 		} else {
 			IDominoProperties domProp = IDominoProperties.Reflect.findMappedProperty(elemClass, prop);

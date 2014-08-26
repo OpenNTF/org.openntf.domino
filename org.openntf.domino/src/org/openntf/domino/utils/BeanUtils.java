@@ -4,21 +4,19 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.openntf.domino.graph.DominoElement;
-
 public enum BeanUtils {
 	;
 
 	private static Map<Class<?>, Map<String, Method>> PROP_REFLECT_MAP_GET = new ConcurrentHashMap<Class<?>, Map<String, Method>>();
 	private static Map<Class<?>, Map<String, Method>> PROP_REFLECT_MAP_SET = new ConcurrentHashMap<Class<?>, Map<String, Method>>();
 
-	protected static void NULL_METHOD() {
-		//void
+	public Object NULL_METHOD() {
+		return null;
 	}
 
 	public static Method getNullMethod() {
 		try {
-			return DominoElement.class.getMethod("NULL_METHOD");
+			return BeanUtils.class.getMethod("NULL_METHOD", (Class<?>[]) null);
 		} catch (Throwable t) {
 			t.printStackTrace();	//this really should be impossible.
 			return null;
@@ -65,7 +63,7 @@ public enum BeanUtils {
 			}
 
 		}
-		if (crystal == BeanUtils.getNullMethod())
+		if (BeanUtils.getNullMethod().equals(crystal))
 			return null;
 		return crystal;
 	}
@@ -134,7 +132,7 @@ public enum BeanUtils {
 			}
 
 		}
-		if (crystal == BeanUtils.getNullMethod())
+		if (BeanUtils.getNullMethod().equals(crystal))
 			return null;
 		return crystal;
 	}

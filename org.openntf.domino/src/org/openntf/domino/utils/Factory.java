@@ -105,6 +105,13 @@ public enum Factory {
 							progpath = System.getProperty("user.dir");
 							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
 						}
+						if (!iniFile.exists()) {
+							System.out.println("Unable to determine location of notes.ini file from program path " + progpath);
+						}
+						if (progpath.contains("framework")) {
+							progpath.replace("framework", "");
+							iniFile = new File(progpath + "notes.ini");
+						}
 						Scanner scanner = new Scanner(iniFile);
 						scanner.useDelimiter("\n|\r\n");
 						loadEnvironment(scanner);
