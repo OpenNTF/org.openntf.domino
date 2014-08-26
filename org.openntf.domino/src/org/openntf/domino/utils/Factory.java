@@ -109,8 +109,9 @@ public enum Factory {
 						if (!iniFile.exists()) {
 							System.out.println("Inifile still not found on user.dir path: " + progpath);
 							if (progpath.contains("framework")) {
-								progpath = progpath.replace("framework", "");
-								iniFile = new File(progpath + "notes.ini");
+								String pp2 = progpath.replace("framework", "");
+								iniFile = new File(pp2 + "notes.ini");
+								System.out.println("Attempting to use path: " + pp2);
 							}
 						}
 
