@@ -19,6 +19,28 @@ import org.openntf.domino.nsfdata.structs.SIG;
  *
  */
 public class CDACTIONEXT extends CDRecord {
+	public static enum Type {
+		BUTTON((short) 0), CHECKBOX((short) 1), MENU_SEPARATOR((short) 2);
+
+		private final short value_;
+
+		private Type(final short value) {
+			value_ = value;
+		}
+
+		public short getValue() {
+			return value_;
+		}
+
+		public static Type valueOf(final short typeCode) {
+			for (Type type : values()) {
+				if (type.getValue() == typeCode) {
+					return type;
+				}
+			}
+			throw new IllegalArgumentException("No matching Type found for type code " + typeCode);
+		}
+	}
 
 	static {
 		addFixed("dwFlags", Integer.class);
@@ -41,12 +63,8 @@ public class CDACTIONEXT extends CDRecord {
 		super(signature, data);
 	}
 
-	/**
-	 * See ACTION_CONTROL_TYPE_xxx.
-	 */
-	public short getControlType() {
-		// TODO make enum
-		return (Short) getStructElement("wControlType");
+	public Type getControlType() {
+		return Type.valueOf((Short) getStructElement("wControlType"));
 	}
 
 	public NSFCompiledFormula getControlFormula() {

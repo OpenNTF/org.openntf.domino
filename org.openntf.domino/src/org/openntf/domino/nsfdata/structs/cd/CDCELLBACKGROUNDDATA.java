@@ -2,6 +2,7 @@ package org.openntf.domino.nsfdata.structs.cd;
 
 import java.nio.ByteBuffer;
 
+import org.openntf.domino.nsfdata.structs.Repeat;
 import org.openntf.domino.nsfdata.structs.SIG;
 
 /**
@@ -22,8 +23,7 @@ public class CDCELLBACKGROUNDDATA extends CDRecord {
 		super(signature, data);
 	}
 
-	public byte getRepeat() {
-		// TODO make enum
-		return (Byte) getStructElement("Repeat");
+	public Repeat getRepeat() {
+		return Repeat.valueOf((Byte) getStructElement("Repeat"));
 	}
 }
