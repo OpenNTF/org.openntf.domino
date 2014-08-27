@@ -50,11 +50,37 @@ public class CDPOSITIONING extends CDRecord {
 
 	public CDPOSITIONING(final SIG signature, final ByteBuffer data) {
 		super(signature, data);
-
-		System.out.println(this);
 	}
 
 	public Scheme getScheme() {
 		return Scheme.valueOf((Byte) getStructElement("Scheme"));
+	}
+
+	public int getZIndex() {
+		return (Integer) getStructElement("ZIndex");
+	}
+
+	public LENGTH_VALUE getTop() {
+		return (LENGTH_VALUE) getStructElement("Top");
+	}
+
+	public LENGTH_VALUE getLeft() {
+		return (LENGTH_VALUE) getStructElement("Left");
+	}
+
+	public LENGTH_VALUE getBottom() {
+		return (LENGTH_VALUE) getStructElement("Bottom");
+	}
+
+	public LENGTH_VALUE getRight() {
+		return (LENGTH_VALUE) getStructElement("Right");
+	}
+
+	public double getBrowserLeftOffset() {
+		return (Double) getStructElement("BrowserLeftOffset");
+	}
+
+	public double getBrowserRightOffset() {
+		return (Double) getStructElement("BrowserRightOffset");
 	}
 }

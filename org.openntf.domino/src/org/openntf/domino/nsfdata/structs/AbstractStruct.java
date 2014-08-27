@@ -231,9 +231,28 @@ public abstract class AbstractStruct implements Externalizable {
 				if (element.count == 1) {
 					return result[0];
 				} else if (_isPrimitive(element.sizeClass)) {
-					return _toPrimitiveArray(result, element.sizeClass);
+					if (element.upgrade) {
+						if (Byte.class.equals(element.sizeClass)) {
+							return _toPrimitiveArray(result, Short.class);
+						} else if (Short.class.equals(element.sizeClass)) {
+							return _toPrimitiveArray(result, Integer.class);
+						} else if (Integer.class.equals(element.sizeClass)) {
+							return _toPrimitiveArray(result, Long.class);
+						} else if (Float.class.equals(element.sizeClass)) {
+							return _toPrimitiveArray(result, Double.class);
+						} else {
+							return _toPrimitiveArray(result, element.sizeClass);
+						}
+					} else {
+						return _toPrimitiveArray(result, element.sizeClass);
+					}
 				} else {
-					return result;
+					// Then switch it to an array of the appropriate class
+					Object structArray = Array.newInstance(element.sizeClass, result.length);
+					for (int i = 0; i < result.length; i++) {
+						Array.set(structArray, i, result[i]);
+					}
+					return structArray;
 				}
 			} else {
 				preceding += size * element.count;
