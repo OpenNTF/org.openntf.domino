@@ -18,57 +18,69 @@ import org.openntf.domino.types.BigString;
 import org.openntf.domino.types.CaseInsensitiveHashSet;
 import org.openntf.domino.types.CaseInsensitiveString;
 import org.openntf.domino.types.Null;
-import org.openntf.domino.utils.Strings;
+import org.openntf.domino.utils.BeanUtils;
+import org.openntf.domino.utils.DominoUtils;
+import org.openntf.domino.utils.TypeUtils;
+
+import com.tinkerpop.blueprints.Element;
 
 public abstract class DominoElement implements IDominoElement, Serializable {
-	private static Map<Class<?>, Map<String, Method>> PROP_REFLECT_MAP = new ConcurrentHashMap<Class<?>, Map<String, Method>>();
+
+	public static boolean setReflectiveProperty(final IDominoElement element, final String prop, final Object value) {
+		if (prop == null || prop.isEmpty())
+			throw new IllegalArgumentException("Cannot set a null or empty property on a DominoElement");
+		boolean result = false;
+		Object localValues = value;
+		Class<? extends Element> elemClass = element.getClass();
+		IDominoProperties domProp = IDominoProperties.Reflect.findMappedProperty(elemClass, prop);
+		if (domProp != null) {
+			localValues = TypeUtils.objectToClass(value, domProp.getType(), null);
+		}
+		//TODO NTF - first see if it's a mapped property and if so, find out the type and coerce the value to the proper type
+		Method setter = BeanUtils.findSetter(elemClass, prop, BeanUtils.toParameterType(localValues));
+		if (setter != null) {
+			try {
+				setter.invoke(element, localValues);
+				result = true;
+			} catch (Exception e) {
+				DominoUtils.handleException(e);
+				System.out.println("Unable to invoke " + setter.getName() + " on a " + element.getClass() + " for property: " + prop
+						+ " with a value of " + String.valueOf(value));
+			}
+		} else {
+			if (domProp != null) {
+				element.setProperty(domProp, localValues);
+				result = true;
+			} else {
+				element.setProperty(prop, localValues);
+				result = true;
+			}
+		}
+		return result;
+	}
 
 	public static Object getReflectiveProperty(final IDominoElement element, final String prop) {
 		if (prop == null || prop.isEmpty())
-			return null;
-		if (element.hasProperty(prop)) {
-			//			System.out.println("Directory property found: " + prop);
-			return element.getProperty(prop);
+			throw new IllegalArgumentException("Cannot set a null or empty property on a DominoElement");
+		Object result = false;
+		Class<? extends Element> elemClass = element.getClass();
+		Method getter = BeanUtils.findGetter(elemClass, prop);
+		if (getter != null) {
+			try {
+				result = getter.invoke(element, (Object[]) null);
+			} catch (Exception e) {
+				DominoUtils.handleException(e);
+				System.out.println("Unable to invoke " + getter.getName() + " on a " + element.getClass() + " for property: " + prop);
+			}
 		} else {
-			Class<?> cls = element.getClass();
-			Map<String, Method> clsMap = PROP_REFLECT_MAP.get(cls);
-			if (clsMap == null) {
-				clsMap = new ConcurrentHashMap<String, Method>();
-				synchronized (DominoElement.class) {
-					PROP_REFLECT_MAP.put(cls, clsMap);
-				}
-			}
-			Method crystal = clsMap.get(prop);
-			if (crystal == null) {
-				String getKey = "get" + Strings.toProperCase(prop);
-				try {
-					crystal = cls.getMethod(getKey, null);
-				} catch (Exception e) {
-					try {
-						String isKey = "is" + Strings.toProperCase(prop);
-						crystal = cls.getMethod(isKey, null);
-					} catch (Exception e1) {
-						//this is actually okay. It just happens we don't have a method for this thing.
-					}
-				}
-				if (crystal != null) {
-					synchronized (clsMap) {
-						clsMap.put(prop, crystal);
-						//						System.out.print("Caching method for " + crystal.getName());
-					}
-				}
-			}
-			if (crystal != null) {
-				try {
-					return crystal.invoke(element, null);
-				} catch (Throwable t) {
-					//TODO NTF should really replace the map with some kind of method reference that returns null in the future...
-					System.out.println("Unable to discover a property " + prop + " through invoking a method called " + crystal.getName()
-							+ " due to " + t.getMessage());
-				}
+			IDominoProperties domProp = IDominoProperties.Reflect.findMappedProperty(elemClass, prop);
+			if (domProp != null) {
+				result = element.getProperty(domProp);
+			} else {
+				result = element.getProperty(prop);
 			}
 		}
-		return null;
+		return result;
 	}
 
 	public static Object getReflectiveProperty(final IDominoElement element, final IDominoProperties prop) {
@@ -634,6 +646,12 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 		}
 	}
 
+	public static Object fromMapValue(final String key, final Object value) {
+		Object result = value;
+
+		return result;
+	}
+
 	public static Object toMapValue(final Object value) {
 		Object result = value;
 		if (EnumSet.class.isAssignableFrom(value.getClass())) {
@@ -696,6 +714,16 @@ public abstract class DominoElement implements IDominoElement, Serializable {
 	@Override
 	public Map<String, Object> toMap(final Set<IDominoProperties> props) {
 		return toMap(props, (byte) 0);
+	}
+
+	public boolean fromMap(final Map<String, Object> map) {
+		boolean result = true;
+		for (String key : map.keySet()) {
+			boolean success = DominoElement.setReflectiveProperty(this, key, map.get(key));
+			if (!success)
+				result = false;
+		}
+		return result;
 	}
 
 }

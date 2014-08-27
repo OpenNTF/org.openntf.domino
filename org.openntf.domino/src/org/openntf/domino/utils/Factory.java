@@ -102,9 +102,19 @@ public enum Factory {
 						String progpath = System.getProperty("notes.binary");
 						File iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
 						if (!iniFile.exists()) {
+							System.out.println("Inifile not found on notes.binary path: " + progpath);
 							progpath = System.getProperty("user.dir");
 							iniFile = new File(progpath + System.getProperty("file.separator") + "notes.ini");
 						}
+						if (!iniFile.exists()) {
+							System.out.println("Inifile still not found on user.dir path: " + progpath);
+							if (progpath.contains("framework")) {
+								String pp2 = progpath.replace("framework", "");
+								iniFile = new File(pp2 + "notes.ini");
+								System.out.println("Attempting to use path: " + pp2);
+							}
+						}
+
 						Scanner scanner = new Scanner(iniFile);
 						scanner.useDelimiter("\n|\r\n");
 						loadEnvironment(scanner);
