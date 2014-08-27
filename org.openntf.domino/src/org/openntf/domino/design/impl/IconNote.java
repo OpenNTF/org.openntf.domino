@@ -72,15 +72,21 @@ public class IconNote extends AbstractDesignBaseNamed implements org.openntf.dom
 	}
 
 	public void setDASMode(final DASMode mode) {
+		XMLNode node = getDxlNode("/note/item[@name='$AllowRESTDbAPI']");
+		if (node == null) {
+			node = getDxlNode("/note").addChildElement("item");
+			node.setAttribute("name", "AllowRESTDbAPI");
+			node = node.addChildElement("number");
+		}
 		switch (mode) {
 		case NONE:
-			getDxlNode("/note/item[@name='$AllowRESTDbAPI']/number").setTextContent("0");
+			node.setTextContent("0");
 			break;
 		case VIEWS:
-			getDxlNode("/note/item[@name='$AllowRESTDbAPI']/number").setTextContent("1");
+			node.setTextContent("1");
 			break;
 		case VIEWSANDDOCUMENTS:
-			getDxlNode("/note/item[@name='$AllowRESTDbAPI']/number").setTextContent("2");
+			node.setTextContent("2");
 			break;
 		}
 	}
